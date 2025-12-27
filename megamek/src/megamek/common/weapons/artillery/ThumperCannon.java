@@ -80,7 +80,7 @@ public class ThumperCannon extends ArtilleryCannonWeapon {
         medAV = 5;
         longAV = 5;
         maxRange = RANGE_MED;
-        rulesRefs = "285, TO";
+        rulesRefs = "97, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.B)

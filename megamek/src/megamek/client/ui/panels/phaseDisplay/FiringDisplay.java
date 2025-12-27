@@ -72,6 +72,8 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.INarcPod;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
@@ -118,6 +120,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         FIRE_CALLED("fireCalled"),
         FIRE_CANCEL("fireCancel"),
         FIRE_ACTIVATE_SPA("fireActivateSPA"),
+        FIRE_RHS("fireRHS"),
         FIRE_MORE("fireMore");
 
         final String cmd;
@@ -475,6 +478,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             setFindClubEnabled(FindClubAction.canMekFindClub(game, en));
             setFlipArmsEnabled(!currentEntity().getAlreadyTwisted() && currentEntity().canFlipArms());
             updateSearchlight();
+            updateRHS();
             updateClearTurret();
             updateClearWeaponJam();
             updateStrafe();
@@ -1192,9 +1196,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // check if we now shoot at a target in the front arc and previously
         // shot a target in side/rear arc that then was primary target
         // if so, ask and tell the user that to-hits will change
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_FORCED_PRIMARY_TARGETS)
-              && (currentEntity() instanceof Mek) || (currentEntity() instanceof Tank)
-              || (currentEntity() instanceof ProtoMek)) {
+        // Skip this check during strafing since strafing attacks multiple hexes, not a single target
+        // Also skip for LAMs in aero mode since they use aero arc rules, not Mek arc rules
+        if (!isStrafing
+              && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_FORCED_PRIMARY_TARGETS)
+              && ((currentEntity() instanceof Mek mek && !mek.isAero()) || (currentEntity() instanceof Tank)
+              || (currentEntity() instanceof ProtoMek))) {
             EntityAction lastAction = null;
             try {
                 lastAction = attacks.lastElement();
@@ -1709,6 +1716,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
 
         updateSearchlight();
+        updateRHS();
         updateActivateSPA();
         updateClearWeaponJam();
         updateClearTurret();
@@ -1976,6 +1984,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             startStrafe();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_ACTIVATE_SPA.getCmd())) {
             doActivateSpecialAbility();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_RHS.getCmd())) {
+            doToggleRHS();
         }
     }
 
@@ -2047,6 +2057,46 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
     private void updateActivateSPA() {
         setActivateSPAEnabled(canActivateBloodStalker());
+    }
+
+    /**
+     * Updates the RHS button state and label based on current entity's RHS status.
+     */
+    private void updateRHS() {
+        Entity entity = currentEntity();
+        boolean hasRHS = (entity != null) && entity.hasWorkingRadicalHS() && !entity.hasDamagedRHS();
+        setRHSEnabled(hasRHS);
+
+        if (hasRHS) {
+            MegaMekButton rhsButton = buttons.get(FiringCommand.FIRE_RHS);
+            if (entity.hasActivatedRadicalHS()) {
+                rhsButton.setText(Messages.getString("FiringDisplay.fireRHSOn"));
+            } else {
+                rhsButton.setText(Messages.getString("FiringDisplay.fireRHS"));
+            }
+        }
+    }
+
+    /**
+     * Toggles the Radical Heat Sink on or off for the current entity.
+     */
+    private void doToggleRHS() {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            return;
+        }
+
+        // Find the RHS equipment
+        for (MiscMounted mounted : entity.getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+                String newModeStr = entity.hasActivatedRadicalHS() ? Weapon.MODE_AMS_OFF : Weapon.MODE_AMS_ON;
+                int newMode = mounted.setMode(newModeStr);
+                clientgui.getClient().sendModeChange(entity.getId(), mounted.getEquipmentNum(), newMode);
+                break;
+            }
+        }
+
+        updateRHS();
     }
 
     protected void setFireEnabled(boolean enabled) {
@@ -2132,6 +2182,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     protected void setActivateSPAEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_ACTIVATE_SPA).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_ACTIVATE_SPA.getCmd(), enabled);
+    }
+
+    protected void setRHSEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_RHS).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_RHS.getCmd(), enabled);
     }
 
     @Override
@@ -2318,7 +2373,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     private List<Coords> getStrafingCoords(Coords center) {
         Entity strafingAero = currentEntity();
 
-        if (!(strafingAero instanceof Aero)) {
+        if ((strafingAero == null) || !strafingAero.isAero()) {
             return Collections.emptyList();
         }
 

@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Vector;
 
+import megamek.client.ui.Messages;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.LosEffects;
@@ -62,6 +63,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.ArtilleryHandlerHelper;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
@@ -76,7 +78,7 @@ import megamek.server.totalWarfare.TWGameManager;
  * @since Sep 24, 2004
  */
 public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
-    private static final MMLogger logger = MMLogger.create(ArtilleryBayWeaponIndirectFireHandler.class);
+    private static final MMLogger logger = MMLogger.create(ArtilleryWeaponIndirectFireHandler.class);
 
     @Serial
     private static final long serialVersionUID = -1277649123562229298L;
@@ -157,6 +159,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return true;
         }
         final Vector<Integer> spottersBefore = artilleryAttackAction.getSpotterIds();
+        logger.debug("Artillery resolution: spottersBefore={}, size={}",
+              spottersBefore, spottersBefore != null ? spottersBefore.size() : "null");
 
         Coords targetPos = target.getPosition();
         Coords finalPos;
@@ -183,17 +187,54 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             Optional<Entity> bestSpotter = ArtilleryHandlerHelper.findSpotter(spottersBefore,
                   artilleryAttackAction.getPlayerId(), game, target);
 
-            // If at least one valid spotter, then get the benefits thereof.
-            if (bestSpotter.isPresent()) {
-                int foMod = 0;
-                if (bestSpotter.get().hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
-                    foMod = -1;
-                }
-                int mod = ((useArtillerySkill ?
+            // Check if this is adjusted fire (previous shot has landed at this hex)
+            // Spotter bonuses only apply to adjusted fire, not first shots
+            int existingMod = attackingEntity.aTracker.getModifier(weapon, targetPos);
+            boolean isAdjustedFire = (existingMod != 0);
+            logger.debug("Artillery spotter check: existingMod={}, isAdjustedFire={}, bestSpotter={}",
+                  existingMod, isAdjustedFire, bestSpotter.isPresent() ? bestSpotter.get().getDisplayName() : "none");
+
+            // Remove informational message from first-shot preview
+            toHit.removeModifier("spotter available");
+
+            // If at least one valid spotter AND this is adjusted fire, apply spotter bonuses
+            if (bestSpotter.isPresent() && isAdjustedFire) {
+                logger.debug("Applying adjusted fire spotter bonuses");
+                // Remove FO/comm implant if present from ComputeToHit preview
+                // to avoid double-counting - we recalculate everything here
+                toHit.removeModifier("forward observer");
+                toHit.removeModifier("comm implant");
+
+                // Add spotter gunnery modifier
+                int spotterGunnery = useArtillerySkill ?
                       bestSpotter.get().getCrew().getArtillery() :
-                      bestSpotter.get().getCrew().getGunnery()) - 4) / 2;
-                mod += foMod;
-                toHit.addModifier(mod, "Spotting modifier");
+                      bestSpotter.get().getCrew().getGunnery();
+                int gunneryMod = (spotterGunnery - 4) / 2;
+                logger.debug("  Spotter gunnery: skill={}, modifier={}", spotterGunnery, gunneryMod);
+                if (gunneryMod != 0) {
+                    toHit.addModifier(gunneryMod, Messages.getString("WeaponAttackAction.SpotterGunnery"));
+                }
+
+                // Add Forward Observer modifier separately
+                boolean hasFO = bestSpotter.get().hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER);
+                logger.debug("  Spotter FO check: hasFO={}, modifier={}", hasFO, hasFO ? -2 : 0);
+                if (hasFO) {
+                    toHit.addModifier(-2, Messages.getString("WeaponAttackAction.SpotterFO"));
+                }
+
+                // Comm implant bonus only applies to non-infantry spotters
+                // Boosted comm implant provides same benefit as regular comm implant
+                boolean isInfantry = bestSpotter.get() instanceof Infantry;
+                boolean hasCommImplant = bestSpotter.get().hasAbility(OptionsConstants.MD_COMM_IMPLANT) ||
+                      bestSpotter.get().hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT);
+                int commImplantMod = (!isInfantry && hasCommImplant) ? -1 : 0;
+                logger.debug("  Spotter comm implant check: isInfantry={}, hasCommImplant={}, modifier={}",
+                      isInfantry, hasCommImplant, commImplantMod);
+                if (!isInfantry && hasCommImplant) {
+                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.CommImplantArtillerySpotter"));
+                }
+
+                logger.debug("  Final toHit value after spotter bonuses: {}", toHit.getValue());
             }
 
             // If the shot hit the target hex, then all subsequent
@@ -202,6 +243,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             if (roll.getIntValue() >= toHit.getValue()
                   && !(this instanceof ArtilleryWeaponDirectFireHandler)) {
                 attackingEntity.aTracker.setModifier(TargetRoll.AUTOMATIC_SUCCESS, targetPos);
+                logger.debug("Artillery HIT - setting AUTOMATIC_SUCCESS for pos={}", targetPos);
             }
             // If the shot missed, but was adjusted by a
             // spotter, future shots are more likely to hit.
@@ -219,9 +261,21 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                     if (bestSpotter.get().hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
                         attackingEntity.aTracker.setSpotterHasForwardObs(true);
                     }
-                    attackingEntity.aTracker.setModifier(attackingEntity.aTracker.getModifier(weapon, targetPos) - 1,
-                          targetPos);
+                    // Comm implant bonus only applies to non-infantry spotters
+                    // Boosted comm implant provides same benefit as regular comm implant
+                    if (!(bestSpotter.get() instanceof Infantry) &&
+                          (bestSpotter.get().hasAbility(OptionsConstants.MD_COMM_IMPLANT) ||
+                                bestSpotter.get().hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT))) {
+                        attackingEntity.aTracker.setSpotterHasCommImplant(true);
+                    }
+                    int newMod = attackingEntity.aTracker.getModifier(weapon, targetPos) - 1;
+                    attackingEntity.aTracker.setModifier(newMod, targetPos);
+                    logger.debug("Artillery MISSED with spotter - setting modifier={} for pos={}, spotter={}",
+                          newMod, targetPos, bestSpotter.get().getDisplayName());
                 }
+            } else {
+                logger.debug("Artillery MISSED - no spotter found, bestSpotter.isPresent()={}",
+                      bestSpotter.isPresent());
             }
         }
 

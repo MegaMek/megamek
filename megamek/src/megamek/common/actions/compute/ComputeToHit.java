@@ -70,12 +70,11 @@ import megamek.common.weapons.attacks.InfantryAttack;
 import megamek.common.weapons.battleArmor.clan.CLBALBX;
 import megamek.common.weapons.bayWeapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
+import megamek.common.weapons.handlers.ARADEquipmentDetector;
 import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.lasers.innerSphere.ISBombastLaser;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
-import megamek.common.weapons.missiles.MRMWeapon;
-import megamek.common.weapons.handlers.ARADEquipmentDetector;
 import megamek.logging.MMLogger;
 
 public class ComputeToHit {
@@ -1461,12 +1460,13 @@ public class ComputeToHit {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.WaypointLaunch"));
         }
 
-        // Capital weapon (except missiles) penalties at small targets
+        // Capital weapon (except missiles) penalties at small targets (under 500 tons)
+        // Per TO:AUE: +5 for capital, +3 for sub-capital direct-fire weapons
         if (weaponType.isCapital() &&
               (weaponType.getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE) &&
               (weaponType.getAtClass() != WeaponType.CLASS_AR10) &&
               te != null &&
-              !te.isLargeCraft()) {
+              (!te.isLargeCraft() || te.getWeight() < 500)) {
             // Capital Lasers have an AAA mode for shooting at small targets
             int aaaMod = 0;
             if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_CAP_LASER_AAA)) {
@@ -1541,6 +1541,12 @@ public class ComputeToHit {
                       !spotter.getCrew().hasActiveCommandConsole() &&
                       !Compute.isTargetTagged(target, game)) {
                     toHit.addModifier(1, Messages.getString("WeaponAttackAction.SpotterAttacking"));
+                }
+                // Comm implant provides -1 bonus when spotting for indirect LRM
+                // Boosted comm implant provides same benefit as regular comm implant
+                if (spotter.hasAbility(OptionsConstants.MD_COMM_IMPLANT) ||
+                      spotter.hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT)) {
+                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.CommImplantSpotter"));
                 }
             }
         }
@@ -1667,7 +1673,7 @@ public class ComputeToHit {
             ComputeAbilityMods.processAttackerSPAs(toHit, ae, te, weapon, game);
             ComputeAbilityMods.processDefenderSPAs(toHit, ae, te, game);
 
-            return artilleryIndirectToHit(ae, target, toHit, weaponType, weapon, srt);
+            return artilleryIndirectToHit(game, ae, target, toHit, weaponType, weapon, srt);
         }
 
         // If we get here, this isn't an artillery attack
@@ -1786,6 +1792,7 @@ public class ComputeToHit {
     /**
      * Convenience method that compiles the ToHit modifiers applicable to indirect artillery attacks
      *
+     * @param game                     The current {@link Game}
      * @param ae                       The Entity making this attack
      * @param target                   The Targetable object being attacked
      * @param toHit                    The running total ToHitData for this WeaponAttackAction
@@ -1793,7 +1800,7 @@ public class ComputeToHit {
      * @param weapon                   The Mounted weapon being used
      * @param specialResolutionTracker Class that stores whether this WAA should return a special resolution
      */
-    private static ToHitData artilleryIndirectToHit(Entity ae, Targetable target, ToHitData toHit,
+    private static ToHitData artilleryIndirectToHit(Game game, Entity ae, Targetable target, ToHitData toHit,
           WeaponType weaponType, Mounted<?> weapon, SpecialResolutionTracker specialResolutionTracker) {
 
         // See MegaMek/megamek#5168
@@ -1802,17 +1809,34 @@ public class ComputeToHit {
             mod--;
         }
         toHit.addModifier(mod, Messages.getString("WeaponAttackAction.IndirectArty"));
+
+        // Check for adjusted fire from previous shots
         int adjust = 0;
         if (weapon != null) {
             adjust = ae.aTracker.getModifier(weapon, target.getPosition());
+            logger.debug("Artillery aTracker check: weapon={}, targetPos={}, adjust={}",
+                  weapon.getName(), target.getPosition(), adjust);
+        } else {
+            logger.debug("Artillery aTracker check: weapon is null");
         }
-        boolean spotterIsForwardObserver = ae.aTracker.getSpotterHasForwardObs();
+
         if (adjust == TargetRoll.AUTOMATIC_SUCCESS) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Artillery firing at target that's been hit before.");
         } else if (adjust != 0) {
+            // Adjusted fire - use stored modifiers from aTracker
             toHit.addModifier(adjust, Messages.getString("WeaponAttackAction.AdjustedFire"));
-            if (spotterIsForwardObserver) {
-                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.FooSpotter"));
+            if (ae.aTracker.getSpotterHasForwardObs()) {
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.SpotterFO"));
+            }
+            if (ae.aTracker.getSpotterHasCommImplant()) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.CommImplantArtillerySpotter"));
+            }
+        } else {
+            // First shot - show informational message if spotter exists
+            // The handler will remove this and add actual modifiers during resolution
+            Entity bestSpotter = findBestArtillerySpotter(game, ae, target);
+            if (bestSpotter != null) {
+                toHit.addModifier(0, Messages.getString("WeaponAttackAction.SpotterAvailable"));
             }
         }
         // Capital missiles used for surface-to-surface artillery attacks
@@ -1840,6 +1864,58 @@ public class ComputeToHit {
         }
         specialResolutionTracker.setSpecialResolution(true);
         return toHit;
+    }
+
+    /**
+     * Finds the best available artillery spotter with LOS to the target. For artillery spotting, any friendly unit with
+     * LOS is an implicit spotter.
+     *
+     * @param game   The game instance
+     * @param ae     The attacking entity
+     * @param target The target being attacked
+     *
+     * @return The best spotter, or null if no valid spotter exists
+     */
+    private static Entity findBestArtillerySpotter(Game game, Entity ae, Targetable target) {
+        Entity bestSpotter = null;
+        int bestGunnery = Integer.MAX_VALUE;
+        boolean bestIsFO = false;
+
+        for (Entity entity : game.getEntitiesVector()) {
+            // Must be same owner, active, have LOS, not airborne aero, not haywire INarced
+            if (entity.getOwnerId() != ae.getOwnerId()) {
+                continue;
+            }
+            if (!entity.isActive()) {
+                continue;
+            }
+            if (entity.isAero() && entity.isAirborne()) {
+                continue;
+            }
+            if (entity.isINarcedWith(INarcPod.HAYWIRE)) {
+                continue;
+            }
+
+            // Check LOS to target
+            LosEffects los = LosEffects.calculateLOS(game, entity, target, true);
+            if (los.isBlocked()) {
+                continue;
+            }
+
+            boolean isFO = entity.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER);
+            int gunnery = entity.getCrew().getGunnery();
+
+            // Pick best: prefer Forward Observer, then lowest gunnery
+            if (bestSpotter == null ||
+                  (isFO && !bestIsFO) ||
+                  (isFO == bestIsFO && gunnery < bestGunnery)) {
+                bestSpotter = entity;
+                bestGunnery = gunnery;
+                bestIsFO = isFO;
+            }
+        }
+
+        return bestSpotter;
     }
 
     private ComputeToHit() {}

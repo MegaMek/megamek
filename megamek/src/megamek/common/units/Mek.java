@@ -34,6 +34,8 @@
 
 package megamek.common.units;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 import java.io.PrintWriter;
 import java.io.Serial;
 import java.time.LocalDate;
@@ -49,6 +51,7 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import megamek.SuiteConstants;
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.battleArmor.BattleArmorHandles;
@@ -68,7 +71,6 @@ import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.loaders.MtfFile;
-import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
@@ -81,8 +83,6 @@ import megamek.common.weapons.autoCannons.UACWeapon;
 import megamek.common.weapons.gaussRifles.GaussWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.logging.MMLogger;
-
-import static megamek.common.bays.Bay.UNSET_BAY;
 
 /**
  * You know what Meks are, silly.
@@ -3359,17 +3359,26 @@ public abstract class Mek extends Entity {
             roll.addModifier(-1, "Enhanced Imaging");
         }
 
-        // VDNI bonus?
-        if (hasAbility(OptionsConstants.MD_VDNI)
+        // Prototype DNI gives -3 piloting (IO pg 83)
+        // VDNI gives -1 piloting (IO pg 71) - BVDNI does NOT get piloting bonus due to "neuro-lag"
+        // Check Proto DNI first as it's more powerful
+        if (hasAbility(OptionsConstants.MD_PROTO_DNI)) {
+            roll.addModifier(-3, Messages.getString("PilotingRoll.ProtoDni"));
+        } else if (hasAbility(OptionsConstants.MD_VDNI)
               && !hasAbility(OptionsConstants.MD_BVDNI)) {
             roll.addModifier(-1, "VDNI");
+        } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+            roll.addModifier(0, "BVDNI (no piloting bonus)");
         }
 
         // Small/torso-mounted cockpit penalty?
-        if (((getCockpitType() == Mek.COCKPIT_SMALL) || (getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE))
-              && (!hasAbility(OptionsConstants.MD_BVDNI)
-              && !hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT))) {
-            roll.addModifier(1, "Small Cockpit");
+        // BVDNI negates small cockpit penalty, but Proto DNI does not
+        if ((getCockpitType() == Mek.COCKPIT_SMALL) || (getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE)) {
+            if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                roll.addModifier(0, "Small Cockpit (negated by BVDNI)");
+            } else if (!hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
+                roll.addModifier(1, "Small Cockpit");
+            }
         } else if (getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
             roll.addModifier(1, "Torso-Mounted Cockpit");
             int sensorHits = getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
@@ -4302,10 +4311,21 @@ public abstract class Mek extends Entity {
         }
         sb.append(newLine);
 
-        getQuirks().getOptionsList().stream()
-              .filter(IOption::booleanValue)
-              .map(IBasicOption::getName)
-              .forEach(quirk -> sb.append(MtfFile.QUIRK).append(quirk).append(newLine));
+        for (IOption quirk : getQuirks().getOptionsList()) {
+            if (quirk.getType() == IOption.INTEGER) {
+                int value = quirk.intValue();
+                if (value != 0) {
+                    sb.append(MtfFile.QUIRK).append(quirk.getName()).append(":").append(value).append(newLine);
+                }
+            } else if (quirk.getType() == IOption.STRING) {
+                String value = quirk.stringValue();
+                if (value != null && !value.isEmpty()) {
+                    sb.append(MtfFile.QUIRK).append(quirk.getName()).append(":").append(value).append(newLine);
+                }
+            } else if (quirk.booleanValue()) {
+                sb.append(MtfFile.QUIRK).append(quirk.getName()).append(newLine);
+            }
+        }
 
         for (Mounted<?> equipment : getEquipment()) {
             for (IOption weaponQuirk : equipment.getQuirks().activeQuirks()) {

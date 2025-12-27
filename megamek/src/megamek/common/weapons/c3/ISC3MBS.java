@@ -75,7 +75,7 @@ public class ISC3MBS extends TAGWeapon {
         mediumRange = 9;
         longRange = 15;
         extremeRange = 18;
-        rulesRefs = "298, TO";
+        rulesRefs = "110, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

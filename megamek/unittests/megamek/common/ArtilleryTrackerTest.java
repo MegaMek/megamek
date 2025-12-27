@@ -34,6 +34,8 @@
 package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
@@ -161,5 +163,51 @@ class ArtilleryTrackerTest {
         assertEquals(2, artilleryTracker.getSize());
         assertEquals(1, artilleryTracker.getWeaponModifiers(weapon1).size());
         assertEquals(1, artilleryTracker.getWeaponModifiers(weapon2).size());
+    }
+
+    // Comm Implant Flag Tests
+
+    /**
+     * Test that spotterHasCommImplant defaults to false
+     */
+    @Test
+    void test_spotterHasCommImplant_defaultFalse() {
+        assertFalse(artilleryTracker.getSpotterHasCommImplant());
+    }
+
+    /**
+     * Test setting spotterHasCommImplant to true
+     */
+    @Test
+    void test_setSpotterHasCommImplant_true() {
+        artilleryTracker.setSpotterHasCommImplant(true);
+        assertTrue(artilleryTracker.getSpotterHasCommImplant());
+    }
+
+    /**
+     * Test setting spotterHasCommImplant back to false
+     */
+    @Test
+    void test_setSpotterHasCommImplant_false() {
+        artilleryTracker.setSpotterHasCommImplant(true);
+        artilleryTracker.setSpotterHasCommImplant(false);
+        assertFalse(artilleryTracker.getSpotterHasCommImplant());
+    }
+
+    /**
+     * Test that spotterHasForwardObs defaults to false
+     */
+    @Test
+    void test_spotterHasForwardObs_defaultFalse() {
+        assertFalse(artilleryTracker.getSpotterHasForwardObs());
+    }
+
+    /**
+     * Test setting spotterHasForwardObs to true
+     */
+    @Test
+    void test_setSpotterHasForwardObs_true() {
+        artilleryTracker.setSpotterHasForwardObs(true);
+        assertTrue(artilleryTracker.getSpotterHasForwardObs());
     }
 }

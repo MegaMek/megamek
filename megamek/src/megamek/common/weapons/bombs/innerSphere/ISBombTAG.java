@@ -70,13 +70,15 @@ public class ISBombTAG extends TAGWeapon {
         this.cost = 50000;
         flags = flags.or(F_BOMB_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         rulesRefs = "238, TM";
-        techAdvancement.setTechBase(TechBase.IS)
+        techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2600, 2605, 2645, 2835, 3035)
               .setISApproximate(true, false, false, false, false)
+              .setClanAdvancement(2600, 2605, 2645, DATE_NONE, DATE_NONE)
+              .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH);
     }

@@ -599,11 +599,11 @@ public class AreaEffectHelper {
         // Reveal hidden entity caught in the blast (per TW pg. 259)
         if (entity.isHidden()) {
             entity.setHidden(false);
+            report = new Report(9963);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            vPhaseReport.add(report);
         }
-        report = new Report(9963);
-        report.subject = entity.getId();
-        report.addDesc(entity);
-        vPhaseReport.add(report);
 
         if (entity instanceof BattleArmor) {
             // BA take full damage to each trooper, ouch!
@@ -910,6 +910,15 @@ public class AreaEffectHelper {
         r.addDesc(entity);
         r.add(damage);
         vDesc.addElement(r);
+
+        // Reveal hidden entity caught in the blast (per TW pg. 259)
+        if (entity.isHidden()) {
+            entity.setHidden(false);
+            Report revealReport = new Report(9963);
+            revealReport.subject = entity.getId();
+            revealReport.addDesc(entity);
+            vDesc.addElement(revealReport);
+        }
 
         while (damage > 0) {
             int cluster = Math.min(clusterAmt, damage);

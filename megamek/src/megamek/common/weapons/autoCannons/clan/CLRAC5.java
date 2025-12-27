@@ -73,7 +73,7 @@ public class CLRAC5 extends RACWeapon {
         medAV = 20;
         longAV = 20;
         maxRange = RANGE_LONG;
-        rulesRefs = "286, TO";
+        rulesRefs = "98, TO:AUE";
         flags = flags.andNot(F_PROTO_WEAPON);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)

@@ -154,7 +154,8 @@ public class HexTarget implements Targetable {
             default -> "";
         };
         // When the board ID is 0, assume (for now) that there is only one board and no board info is necessary
-        return "Hex: " + ((boardId == 0) ? coords : getBoardLocation()) + typeString;
+        // Use getBoardNum() for user-friendly display (e.g., "0808") instead of coords.toString()
+        return "Hex: " + ((boardId == 0) ? coords.getBoardNum() : getBoardLocation()) + typeString;
     }
 
     public boolean isIgniting() {

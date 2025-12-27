@@ -1861,8 +1861,11 @@ public class MULParser {
 
                         } // End have-good-shots-value
 
-                        double capVal = MathUtility.parseDouble(capacity);
-                        ((AmmoMounted) mounted).setAmmoCapacity(capVal);
+                        Double capVal = MathUtility.parseDouble(capacity, null);
+                        if (capVal != null) {
+                            ((AmmoMounted) mounted).setAmmoCapacity(capVal);
+                        }
+
 
                         if (capacity.equals(VALUE_NA)) {
                             if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)

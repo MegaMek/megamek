@@ -196,6 +196,22 @@ public interface IAero {
     OffBoardDirection getFlyingOffDirection();
 
     /**
+     * Gets the altitude at which this unit climbed out of the atmosphere. Used for returning units that left via
+     * vertical climb out at altitude 10.
+     *
+     * @return The exit altitude (0 if not a climb out, typically 10 for climb outs)
+     */
+    int getExitAltitude();
+
+    /**
+     * Sets the altitude at which this unit is climbing out of the atmosphere. Should be set when a unit leaves the map
+     * vertically at altitude 10.
+     *
+     * @param altitude The exit altitude (typically 10 for climb out, 0 to clear)
+     */
+    void setExitAltitude(int altitude);
+
+    /**
      * @return True when this aero requires fuel to move. Note that the result is undefined when the unit has no engine.
      *       Callers should consider this case themselves. Also note that this method does not check whether fuel use as
      *       a game option is active, only if the unit technically requires fuel to move. For example, returns false for

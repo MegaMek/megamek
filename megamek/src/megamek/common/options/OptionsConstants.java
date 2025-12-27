@@ -91,12 +91,6 @@ public class OptionsConstants {
     public static final String QUIRK_POS_UBIQUITOUS_IS = "ubiquitous_is";
     public static final String QUIRK_POS_UBIQUITOUS_CLAN = "ubiquitous_clan";
     public static final String QUIRK_POS_VAR_RNG_TARG = "variable_range_targeting";
-    /** @deprecated Use {@link #QUIRK_POS_VAR_RNG_TARG} instead. Kept for backward compatibility. */
-    @Deprecated(since = "0.50.06", forRemoval = true)
-    public static final String QUIRK_POS_VAR_RNG_TARG_L = "variable_range_long";
-    /** @deprecated Use {@link #QUIRK_POS_VAR_RNG_TARG} instead. Kept for backward compatibility. */
-    @Deprecated(since = "0.50.06", forRemoval = true)
-    public static final String QUIRK_POS_VAR_RNG_TARG_S = "variable_range_short";
     // TODO Game Rules
     public static final String QUIRK_POS_VESTIGIAL_HANDS_LA = "vestigial_hands_la";
     public static final String QUIRK_POS_VESTIGIAL_HANDS_RA = "vestigial_hands_ra";
@@ -263,6 +257,7 @@ public class OptionsConstants {
     public static final String MD_CYBER_IMP_AUDIO = "cyber_imp_audio";
     public static final String MD_CYBER_IMP_VISUAL = "cyber_imp_visual";
     public static final String MD_CYBER_IMP_LASER = "cyber_imp_laser";
+    public static final String MD_CYBER_IMP_TELE = "cyber_imp_tele";
     public static final String MD_MM_IMPLANTS = "mm_implants";
     public static final String MD_ENH_MM_IMPLANTS = "enh_mm_implants";
     public static final String MD_COMM_IMPLANT = "comm_implant";
@@ -509,6 +504,7 @@ public class OptionsConstants {
     public static final String ADVANCED_AERO_RULES_AT2_NUKES = "at2_nukes";
     public static final String ADVANCED_AERO_RULES_AERO_SANITY = "aero_sanity";
     public static final String ADVANCED_AERO_RULES_RETURN_FLYOVER = "return_flyover";
+    public static final String ADVANCED_AERO_RULES_CLIMB_OUT = "climb_out";
     public static final String ADVANCED_AERO_RULES_AA_MOVE_MOD = "aa_move_mod";
     public static final String ADVANCED_AERO_RULES_ALLOW_LARGE_SQUADRONS = "allow_large_squadrons";
     public static final String ADVANCED_AERO_RULES_SINGLE_NO_CAP = "single_no_cap";

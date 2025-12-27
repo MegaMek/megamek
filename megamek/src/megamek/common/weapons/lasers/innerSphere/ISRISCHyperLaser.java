@@ -88,7 +88,7 @@ public class ISRISCHyperLaser extends LaserWeapon {
         maxRange = RANGE_EXT;
         explosionDamage = 10;
         explosive = true;
-        rulesRefs = "93, IO";
+        rulesRefs = "87, IO:AE";
         this.flags = flags.or(F_LASER).or(F_DIRECT_FIRE).or(F_HYPER);
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.F)

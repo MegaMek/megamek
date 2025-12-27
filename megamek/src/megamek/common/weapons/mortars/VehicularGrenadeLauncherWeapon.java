@@ -85,7 +85,7 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
         explosive = false;
         bv = 15.0;
         cost = 10000;
-        rulesRefs = "315, TO";
+        rulesRefs = "127, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)

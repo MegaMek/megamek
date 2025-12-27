@@ -77,7 +77,7 @@ public class ISSRM4IOS extends SRMWeapon {
         cost = 48000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        rulesRefs = "327, TO";
+        rulesRefs = "139, TO:AUE";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

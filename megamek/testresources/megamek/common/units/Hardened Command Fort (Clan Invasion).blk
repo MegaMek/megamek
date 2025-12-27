@@ -1,0 +1,156 @@
+# MegaMek Data (C) 2025 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+<UnitType>
+BuildingEntity
+</UnitType>
+
+<Name>
+Hardened Command Fort
+</Name>
+
+<Model>
+(Clan Invasion)
+</Model>
+
+<year>
+3052
+</year>
+
+<originalBuildYear>
+3052
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+None
+</motion_type>
+
+<transporters>
+crewquarters:24.0:0
+lightvehiclebay:40.0:4:1
+infantrybay:60.0:6:2:Foot
+cargobay:70.0:2:3
+</transporters>
+
+<cruiseMP>
+0
+</cruiseMP>
+
+<building_class>
+2
+</building_class>
+
+<building_type>
+4
+</building_type>
+
+<cf>
+150
+</cf>
+
+<armor>
+144
+</armor>
+
+<Level 0 0.0,0.0,0.0 Equipment>
+IS Arrow IV Ammo
+IS Arrow IV Ammo
+IS Arrow IV Ammo
+IS Arrow IV Ammo
+IS Arrow IV Ammo
+IS Arrow IV Ammo
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+MASH Equipment:SIZE:2.0
+Cargo:SIZE:20.0
+ISCASE
+</Level 0 0.0,0.0,0.0 Equipment>
+
+<Level 1 0.0,0.0,0.0 Equipment>
+ISArrowIVSystem (ST)
+ISMediumPulseLaser (F)
+ISMediumPulseLaser (FR)
+ISMediumPulseLaser (FL)
+Machine Gun (F)
+Machine Gun (F)
+Machine Gun (FR)
+Machine Gun (FR)
+Machine Gun (FL)
+Machine Gun (FL)
+ISERPPC (F)
+ISERPPC (FR)
+ISERPPC (FL)
+Searchlight (F)
+Searchlight (FR)
+Searchlight (FL)
+ISGuardianECMSuite
+</Level 1 0.0,0.0,0.0 Equipment>
+
+<Level 0 0.0,1.0,-1.0 Equipment>
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+Cargo:SIZE:50.0
+Communications Equipment:SIZE:7.0
+FUSION PowerGenerator:SIZE:9.5
+</Level 0 0.0,1.0,-1.0 Equipment>
+
+<Level 1 0.0,1.0,-1.0 Equipment>
+ISGaussRifle (ST)
+ISERLargeLaser (ST)
+ISMediumPulseLaser (RR)
+ISMediumPulseLaser (R)
+ISMediumPulseLaser (RL)
+Machine Gun (RR)
+Machine Gun (RR)
+Machine Gun (R)
+Machine Gun (R)
+Machine Gun (RL)
+Machine Gun (RL)
+ISERLargeLaser (RR)
+ISERLargeLaser (R)
+ISERLargeLaser (RL)
+Searchlight (RR)
+Searchlight (R)
+Searchlight (RL)
+ISMobileFieldBase
+FieldKitchen
+FieldKitchen
+</Level 1 0.0,1.0,-1.0 Equipment>
+
+<coords>
+0.0,0.0,0.0
+0.0,1.0,-1.0
+</coords>
+
+<height>
+2
+</height>
+
+<source>
+HexPack Promotion 1
+</source>

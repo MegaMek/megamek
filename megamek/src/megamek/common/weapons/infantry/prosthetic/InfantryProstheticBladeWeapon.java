@@ -62,7 +62,7 @@ public class InfantryProstheticBladeWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC).or(F_INF_NONPENETRATING);
         infantryDamage = 0.02;
         infantryRange = 0;
-        rulesRefs = "84, IO";
+        rulesRefs = "78, IO:AE";
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

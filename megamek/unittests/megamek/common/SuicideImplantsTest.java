@@ -429,17 +429,23 @@ public class SuicideImplantsTest {
         }
 
         @Test
-        @DisplayName("Infantry with Suicide Implants has higher BV than without")
+        @DisplayName("Infantry with Suicide Implants has higher BV (+0.12 per trooper base bonus)")
         void infantryWithSuicideImplantsHasHigherBv() {
             Infantry withImplants = createInfantry(21, true, 0);
             Infantry withoutImplants = createInfantry(21, false, 0);
 
             int bvWith = withImplants.calculateBattleValue();
             int bvWithout = withoutImplants.calculateBattleValue();
+            int actualDifference = bvWith - bvWithout;
 
+            // Base bonus is 21 troopers * 0.12 = 2.52, but gets multiplied by various BV factors
+            // Just verify the BV is higher and the difference is positive
             assertTrue(bvWith > bvWithout,
                   "Infantry with Suicide Implants should have higher BV. " +
-                        "With: " + bvWith + ", Without: " + bvWithout);
+                        "With: " + bvWith + ", Without: " + bvWithout + ", Difference: " + actualDifference);
+            assertTrue(actualDifference > 0,
+                  "BV difference should be positive (base bonus: 21 x 0.12 = 2.52). " +
+                        "Actual difference: " + actualDifference);
         }
 
         @Test

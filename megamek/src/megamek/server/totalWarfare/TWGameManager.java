@@ -13013,11 +13013,14 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Handle a Suicide Implants attack (IO pg 83). The entity detonates their explosive implants, destroying themselves
-     * and causing damage based on entity type: - Conventional Infantry: 0.57 damage per trooper to all entities in hex
-     * + building CF damage - Battle Armor: Destroys selected troopers only, no damage to others - MekWarrior/Pilot: 1
-     * IS to Mek head (or 1 armor to fighter nose) + crit + cockpit destroyed - Vehicle Crew: Crew Killed + 1 IS to all
-     * facings + crit rolls
+     * Handle a Suicide Implants attack (IO pg 83). The entity detonates their explosive implants,
+     * destroying themselves and causing damage based on entity type:
+     * <ul>
+     *   <li>Conventional Infantry: 0.57 damage per trooper to all entities in hex + building CF damage</li>
+     *   <li>Battle Armor: Destroys selected troopers only, no damage to others</li>
+     *   <li>MekWarrior/Pilot: 1 IS to Mek head (or 1 armor to fighter nose) + crit + cockpit destroyed</li>
+     *   <li>Vehicle Crew: Crew Killed + 1 IS to all facings + crit rolls</li>
+     * </ul>
      */
     private void resolveSuicideImplantsAttack(PhysicalResult physicalResult, int lastEntityId) {
         final SuicideImplantsAttackAction suicideAction = (SuicideImplantsAttackAction) physicalResult.aaa;
@@ -13056,19 +13059,7 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
-        // Handle based on entity type
-        if (attackingEntity.isConventionalInfantry()) {
-            resolveConventionalInfantrySuicide(attackingEntity, troopersDetonating, damage);
-        } else if (attackingEntity instanceof BattleArmor battleArmor) {
-            resolveBattleArmorSuicide(battleArmor, troopersDetonating);
-        } else if (attackingEntity instanceof Mek mek) {
-            resolveMekPilotSuicide(mek);
-        } else if (attackingEntity instanceof Aero aero) {
-            resolveAeroPilotSuicide(aero);
-        } else if (attackingEntity instanceof Tank tank) {
-            resolveVehicleCrewSuicide(tank);
-        }
-
+        dispatchSuicideImplantsResolution(attackingEntity, troopersDetonating, damage);
         addNewLines();
     }
 
@@ -13102,7 +13093,18 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
-        // Handle based on entity type
+        dispatchSuicideImplantsResolution(attackingEntity, troopersDetonating, damage);
+        addNewLines();
+    }
+
+    /**
+     * Dispatches suicide implant resolution to the appropriate entity-type-specific handler.
+     *
+     * @param attackingEntity   the entity detonating their implants
+     * @param troopersDetonating the number of troopers detonating (for infantry/BA)
+     * @param damage            the calculated damage (for conventional infantry area effect)
+     */
+    private void dispatchSuicideImplantsResolution(Entity attackingEntity, int troopersDetonating, int damage) {
         if (attackingEntity.isConventionalInfantry()) {
             resolveConventionalInfantrySuicide(attackingEntity, troopersDetonating, damage);
         } else if (attackingEntity instanceof BattleArmor battleArmor) {
@@ -13114,8 +13116,6 @@ public class TWGameManager extends AbstractGameManager {
         } else if (attackingEntity instanceof Tank tank) {
             resolveVehicleCrewSuicide(tank);
         }
-
-        addNewLines();
     }
 
     /**
@@ -13141,7 +13141,7 @@ public class TWGameManager extends AbstractGameManager {
             report = new Report(4583);
             report.subject = target.getId();
             report.indent(2);
-            report.addDesc(target);
+            report.add(target.getDisplayName());
             report.add(damage);
             addReport(report);
 

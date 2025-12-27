@@ -101,7 +101,7 @@ public class ISAC2Primitive extends ACWeapon {
         // Herb, and
         // they would always be around. This to cover some of the back worlds in the
         // Periphery.
-        rulesRefs = "118, IO";
+        rulesRefs = "112, IO:AE";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

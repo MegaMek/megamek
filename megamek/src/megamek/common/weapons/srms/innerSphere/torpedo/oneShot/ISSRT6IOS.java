@@ -68,7 +68,7 @@ public class ISSRT6IOS extends SRTWeapon {
         bv = 12;
         flags = flags.or(F_NO_FIRES).or(F_ONE_SHOT);
         cost = 64000;
-        rulesRefs = "327, TO";
+        rulesRefs = "139, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

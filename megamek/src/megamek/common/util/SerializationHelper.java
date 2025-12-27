@@ -47,6 +47,7 @@ import megamek.common.equipment.NarcPod;
 import megamek.common.equipment.Sensor;
 import megamek.common.equipment.Transporter;
 import megamek.common.game.GameTurn;
+import megamek.common.game.InitiativeBonusBreakdown;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.common.options.AbstractOptions;
@@ -331,6 +332,54 @@ public class SerializationHelper {
                 }
                 return (!Double.isNaN(q) && !Double.isNaN(r) && !Double.isNaN(s))
                     ? new CubeCoords(q, r, s) : null;
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == InitiativeBonusBreakdown.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                int hq = 0;
+                int quirk = 0;
+                String quirkName = null;
+                int console = 0;
+                int crewCommand = 0;
+                int tcp = 0;
+                int constant = 0;
+                int compensation = 0;
+                int crew = 0;
+
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    try {
+                        switch (reader.getNodeName()) {
+                            case "hq" -> hq = Integer.parseInt(reader.getValue());
+                            case "quirk" -> quirk = Integer.parseInt(reader.getValue());
+                            case "quirkName" -> quirkName = reader.getValue();
+                            case "console" -> console = Integer.parseInt(reader.getValue());
+                            case "crewCommand" -> crewCommand = Integer.parseInt(reader.getValue());
+                            case "tcp" -> tcp = Integer.parseInt(reader.getValue());
+                            case "constant" -> constant = Integer.parseInt(reader.getValue());
+                            case "compensation" -> compensation = Integer.parseInt(reader.getValue());
+                            case "crew" -> crew = Integer.parseInt(reader.getValue());
+                        }
+                        reader.moveUp();
+                    } catch (NumberFormatException e) {
+                        // InitiativeBonusBreakdown with malformed entries will return defaults
+                        return InitiativeBonusBreakdown.zero();
+                    }
+                }
+                return new InitiativeBonusBreakdown(hq, quirk, quirkName, console, crewCommand,
+                      tcp, constant, compensation, crew);
             }
 
             @Override

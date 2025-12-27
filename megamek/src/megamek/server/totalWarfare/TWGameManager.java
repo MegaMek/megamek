@@ -234,6 +234,7 @@ public class TWGameManager extends AbstractGameManager {
         terrainProcessors.add(new FireProcessor(this));
         terrainProcessors.add(new GeyserProcessor(this));
         terrainProcessors.add(new ElevatorProcessor(this));
+        terrainProcessors.add(new IndustrialElevatorProcessor(this));
         terrainProcessors.add(new ScreenProcessor(this));
         terrainProcessors.add(new WeatherProcessor(this));
         terrainProcessors.add(new QuicksandProcessor(this));
@@ -2386,6 +2387,42 @@ public class TWGameManager extends AbstractGameManager {
                   game.getPlanetaryConditions().getWind());
         }
         game.setBoard(newBoard);
+
+
+        // Initialize industrial elevators from terrain data
+        initializeIndustrialElevators();
+    }
+
+
+    /**
+     * Initializes industrial elevators by scanning the board for elevator terrain. Called after board is set to ensure
+     * elevators exist before movement phase. Skips if elevators already exist to preserve runtime state (platform
+     * positions).
+     */
+    private void initializeIndustrialElevators() {
+        LOGGER.info("[ELEVATOR] TWGameManager.initializeIndustrialElevators: Starting initialization");
+
+        // Skip if elevators already exist to preserve platform positions
+        if (!game.getIndustrialElevators().isEmpty()) {
+            LOGGER.info(
+                  "[ELEVATOR] TWGameManager.initializeIndustrialElevators: Elevators already exist ({}), skipping init",
+                  game.getIndustrialElevators().size());
+            return;
+        }
+
+        for (DynamicTerrainProcessor processor : terrainProcessors) {
+            if (processor instanceof IndustrialElevatorProcessor elevatorProcessor) {
+                LOGGER.info("[ELEVATOR] TWGameManager.initializeIndustrialElevators: Found IndustrialElevatorProcessor");
+                elevatorProcessor.initializeElevators();
+                LOGGER.info(
+                      "[ELEVATOR] TWGameManager.initializeIndustrialElevators: After initializeElevators, elevator count={}",
+                      game.getIndustrialElevators().size());
+                sendIndustrialElevatorUpdate();
+                break;
+            }
+        }
+        LOGGER.info("[ELEVATOR] TWGameManager.initializeIndustrialElevators: Complete, elevator count={}",
+              game.getIndustrialElevators().size());
     }
 
     /**
@@ -29949,6 +29986,19 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void sendGroundObjectUpdate() {
         send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, game.getGroundObjects()));
+    }
+
+    /**
+     * Sends industrial elevator state to all clients.
+     */
+    public void sendIndustrialElevatorUpdate() {
+        Collection<IndustrialElevator> elevators = game.getIndustrialElevators();
+        LOGGER.info("[ELEVATOR] TWGameManager.sendIndustrialElevatorUpdate: Sending {} elevators to clients",
+              elevators.size());
+        for (IndustrialElevator elevator : elevators) {
+            LOGGER.info("[ELEVATOR]   - {}", elevator);
+        }
+        send(new Packet(PacketCommand.UPDATE_INDUSTRIAL_ELEVATORS, new ArrayList<>(elevators)));
     }
 }
 

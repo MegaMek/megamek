@@ -48,6 +48,7 @@ import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
+import megamek.common.IndustrialElevator;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.TagInfo;
@@ -196,6 +197,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     // smoke clouds
     private final List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
+
+    // industrial elevators (player-controlled)
+    private final Map<BoardLocation, IndustrialElevator> industrialElevators = new HashMap<>();
 
     /**
      * Stores princess behaviors for game factions. It does not indicate that a faction is currently played by a bot,
@@ -3435,6 +3439,90 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     public void removeCompletelyDissipatedSmokeClouds() {
         smokeCloudList.removeIf(SmokeCloud::isCompletelyDissipated);
+    }
+
+    // --- Industrial Elevator Methods ---
+
+    /**
+     * Adds an industrial elevator to the game.
+     *
+     * @param elevator The industrial elevator to add
+     */
+    public void addIndustrialElevator(IndustrialElevator elevator) {
+        industrialElevators.put(elevator.getLocation(), elevator);
+    }
+
+    /**
+     * Gets an industrial elevator at the specified location.
+     *
+     * @param location The board location to check
+     *
+     * @return The elevator at this location, or null if none exists
+     */
+    public IndustrialElevator getIndustrialElevator(BoardLocation location) {
+        return industrialElevators.get(location);
+    }
+
+    /**
+     * Gets an industrial elevator at the specified coordinates and board.
+     *
+     * @param coords  The coordinates to check
+     * @param boardId The board ID
+     *
+     * @return The elevator at this location, or null if none exists
+     */
+    public IndustrialElevator getIndustrialElevator(Coords coords, int boardId) {
+        return getIndustrialElevator(BoardLocation.of(coords, boardId));
+    }
+
+    /**
+     * Returns all industrial elevators in the game.
+     *
+     * @return An unmodifiable collection of all industrial elevators
+     */
+    public Collection<IndustrialElevator> getIndustrialElevators() {
+        return Collections.unmodifiableCollection(industrialElevators.values());
+    }
+
+    /**
+     * Checks if there is an industrial elevator at the specified location.
+     *
+     * @param location The board location to check
+     *
+     * @return true if an elevator exists at this location
+     */
+    public boolean hasIndustrialElevator(BoardLocation location) {
+        return industrialElevators.containsKey(location);
+    }
+
+    /**
+     * Removes an industrial elevator from the game.
+     *
+     * @param location The location of the elevator to remove
+     *
+     * @return The removed elevator, or null if none was found
+     */
+    public IndustrialElevator removeIndustrialElevator(BoardLocation location) {
+        return industrialElevators.remove(location);
+    }
+
+    /**
+     * Clears all industrial elevators from the game.
+     */
+    public void clearIndustrialElevators() {
+        industrialElevators.clear();
+    }
+
+    /**
+     * Sets the industrial elevators from the provided collection, replacing any existing ones.
+     *
+     * @param elevators Collection of industrial elevators to set
+     */
+    public void setIndustrialElevators(Collection<IndustrialElevator> elevators) {
+        industrialElevators.clear();
+        for (IndustrialElevator elevator : elevators) {
+            industrialElevators.put(elevator.getLocation(), elevator);
+        }
     }
 
     /**

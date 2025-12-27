@@ -181,10 +181,15 @@ public class Terrains implements Serializable {
 
     public static final int ULTRA_SUBLEVEL = 59;
 
+    // Industrial elevator (player-controlled, with capacity and shaft)
+    // level = shaft bottom elevation, exits encodes (shaftTop << 8) | capacityTens
+    public static final int INDUSTRIAL_ELEVATOR = 60;
+
     /**
      * Keeps track of the different type of terrains that can have exits.
      */
-    public static final int[] exitableTerrains = { PAVEMENT, ROAD, BUILDING, FUEL_TANK, BRIDGE, WATER };
+    public static final int[] exitableTerrains = { PAVEMENT, ROAD, BUILDING, FUEL_TANK, BRIDGE, WATER,
+                                                   INDUSTRIAL_ELEVATOR };
 
     private static final String[] names = { "none", "woods", "water", "rough", "rubble", "jungle", "sand", "tundra",
                                             "magma", "planted_fields", "heavy_industrial", "space", "pavement", "road",
@@ -199,7 +204,8 @@ public class Terrains implements Serializable {
                                             "water_fluff", "cliff_top", "cliff_bottom",
                                             "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom",
                                             "foliage_elev", "black_ice", "sky",
-                                            "deployment_zone", "hazardous_liquid", "ultra_sublevel" };
+                                            "deployment_zone", "hazardous_liquid", "ultra_sublevel",
+                                            "industrial_elevator" };
 
     /** Terrains in this set are hidden in the Editor, not saved to board files and handled internally. */
     public static final HashSet<Integer> AUTOMATIC = new HashSet<>(Arrays.asList(
@@ -442,6 +448,8 @@ public class Terrains implements Serializable {
                 return "Impassable terrain";
             case ELEVATOR:
                 return "Elevator";
+            case INDUSTRIAL_ELEVATOR:
+                return "Industrial Elevator";
             case METAL_CONTENT:
                 if (level < 1) {
                     return "No metal content";

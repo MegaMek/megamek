@@ -631,10 +631,8 @@ public class EquipChoicePanel extends JPanel {
                     bTechMatch = atCheck.getStaticTechLevel().ordinal() <= legalLevel.ordinal() && canUseThisAmmo;
                 }
 
-                // If clan_ignore_eq_limits is unchecked, do NOT allow Clans to use IS-only ammo. "Incendiary"
-                // munition type gets removed here for reasons unknown.
+                // If clan_ignore_eq_limits is unchecked, do NOT allow Clans to use IS-only ammo.
                 EnumSet<AmmoType.Munitions> munitionsTypes = atCheck.getMunitionType();
-                munitionsTypes.remove(AmmoType.Munitions.M_INCENDIARY_LRM);
                 if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH) &&
                       entity.isClan() &&
                       atCheck.notAllowedByClanRules()) {

@@ -311,7 +311,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             targetingHex = true;
         }
 
-        Coords coords = target.getPosition();
+        // Use original target coordinates for splash damage, not current entity position.
+        // If target was converted from hex to entity, use saved coords; otherwise use current position.
+        Coords coords = (aaa.getOldTargetCoords() != null) ? aaa.getOldTargetCoords() : target.getPosition();
         int ratedDamage = 5; // splash damage is 5 from all launchers
 
         // If AMS shoots down a missile, it shouldn't deal any splash damage
@@ -358,6 +360,10 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) weaponAttackAction;
 
         final Coords tc = target.getPosition();
+        // Save original target coordinates before converting to entity target.
+        // This ensures splash damage is applied at the original targeted hex,
+        // not wherever the entity moved to. (Fix for issue #7274)
+        aaa.setOldTargetCoords(tc);
         Targetable newTarget = null;
 
         Vector<TagInfo> v = game.getTagInfo();

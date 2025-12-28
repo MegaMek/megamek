@@ -498,5 +498,30 @@ public class IndustrialElevator implements Serializable {
             return String.format("ElevatorCall[player=%d, level=%d, turn=%d, distance=%d]",
                   playerId, targetLevel, turnCalled, distanceFromPlatform);
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof ElevatorCall other)) {
+                return false;
+            }
+            return playerId == other.playerId
+                  && targetLevel == other.targetLevel
+                  && turnCalled == other.turnCalled
+                  && initiativeBonus == other.initiativeBonus
+                  && distanceFromPlatform == other.distanceFromPlatform;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = playerId;
+            result = 31 * result + targetLevel;
+            result = 31 * result + turnCalled;
+            result = 31 * result + initiativeBonus;
+            result = 31 * result + distanceFromPlatform;
+            return result;
+        }
     }
 }

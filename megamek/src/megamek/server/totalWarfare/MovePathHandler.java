@@ -44,6 +44,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.common.Hex;
 import megamek.common.HitData;
+import megamek.common.IndustrialElevator;
 import megamek.common.LosEffects;
 import megamek.common.MPCalculationSetting;
 import megamek.common.Player;
@@ -165,6 +166,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     void processMovement() {
+        logger.debug("[ELEVATOR] MovePathHandler.processMovement: ENTRY - entity={}, pathLength={}, mpUsed={}",
+              entity.getDisplayName(), md.length(), md.getMpUsed());
+        for (MoveStep step : md.getStepVector()) {
+            logger.debug("[ELEVATOR]   Step: type={}, elevation={}, position={}",
+                  step.getType(), step.getElevation(), step.getPosition());
+        }
         if (md.getMpUsed() > 0) {
             // All auto-hit hexes for this unit (not including preset targets) are cleared
             // if any MP are expended.
@@ -2436,6 +2443,83 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     buildings.add(bldg);
                     gameManager.sendChangedBuildings(buildings);
                 }
+            }
+
+            // Handle elevator platform movement - platform moves WITH the entity
+            if ((step.getType() == MoveStepType.ELEVATOR_ASCEND)
+                  || (step.getType() == MoveStepType.ELEVATOR_DESCEND)) {
+                BoardLocation elevatorLocation = BoardLocation.of(curPos, curBoardId);
+                IndustrialElevator elevator = getGame().getIndustrialElevator(elevatorLocation);
+                if (elevator != null) {
+                    // Move the platform to the entity's new elevation
+                    elevator.setPlatformLevel(curElevation);
+                    logger.debug("[ELEVATOR] MovePathHandler: Updated platform to level {} for {}",
+                          curElevation, entity.getDisplayName());
+                    // Send the updated elevator state to all clients
+                    gameManager.sendIndustrialElevatorUpdate();
+                }
+            }
+
+            // check for fall into industrial elevator shaft without platform
+            // (skip this check for elevator movement steps - platform moves with entity)
+            boolean isElevatorStep = (step.getType() == MoveStepType.ELEVATOR_ASCEND)
+                  || (step.getType() == MoveStepType.ELEVATOR_DESCEND);
+            if (curHex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR)
+                  && (stepMoveType != EntityMovementType.MOVE_JUMP)
+                  && !isElevatorStep) {
+                BoardLocation elevatorLocation = BoardLocation.of(curPos, curBoardId);
+                IndustrialElevator elevator = getGame().getIndustrialElevator(elevatorLocation);
+                if ((elevator != null) && elevator.isFunctional()
+                      && !elevator.isPlatformAt(curElevation)) {
+                    // Entity is in the shaft but not on the platform - they fall!
+                    int platformLevel = elevator.getPlatformLevel();
+                    int shaftBottom = elevator.getShaftBottom();
+                    // Fall to platform if it's below, otherwise fall to shaft bottom
+                    int fallToLevel = (platformLevel < curElevation) ? platformLevel : shaftBottom;
+                    int fallDistance = curElevation - fallToLevel;
+
+                    if (fallDistance > 0) {
+                        // Report the fall
+                        Report fallReport = new Report(5298, Report.PUBLIC);
+                        fallReport.subject = entity.getId();
+                        fallReport.add(entity.getDisplayName());
+                        addReport(fallReport);
+
+                        // Apply fall damage - entity falls within same hex
+                        PilotingRollData prd = entity.getBasePilotingRoll(stepMoveType);
+                        prd.addModifier(fallDistance, "fell down elevator shaft");
+                        addReport(gameManager.doEntityFallsInto(entity, curElevation,
+                              curPos, curPos, prd, false, 0));
+                        fellDuringMovement = true;
+
+                        // Update local elevation tracking after fall
+                        curElevation = entity.getElevation();
+
+                        // Movement ends after falling
+                        break;
+                    }
+                }
+            }
+
+            // Generate report for successful elevator use
+            if ((step.getType() == MoveStepType.ELEVATOR_ASCEND)
+                  || (step.getType() == MoveStepType.ELEVATOR_DESCEND)) {
+                String direction = (step.getType() == MoveStepType.ELEVATOR_ASCEND) ? "up" : "down";
+                logger.info(
+                      "[ELEVATOR] MovePathHandler: Processing {} step for {}, stepElevation={}, curElevation={}, entityElevation={}",
+                      step.getType(),
+                      entity.getDisplayName(),
+                      step.getElevation(),
+                      curElevation,
+                      entity.getElevation());
+                Report elevatorReport = new Report(5299, Report.PUBLIC);
+                elevatorReport.subject = entity.getId();
+                elevatorReport.add(entity.getDisplayName());
+                elevatorReport.add(direction);
+                elevatorReport.add(curElevation);
+                addReport(elevatorReport);
+                logger.debug("[ELEVATOR] MovePathHandler: Added report 5299 for {} moving {} to level {}",
+                      entity.getDisplayName(), direction, curElevation);
             }
 
             // check for automatic unstick

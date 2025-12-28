@@ -78,6 +78,7 @@ import megamek.client.ui.widget.MekPanelTabStrip;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.AtmosphericLandingMovePath;
 import megamek.common.Hex;
+import megamek.common.IndustrialElevator;
 import megamek.common.LandingDirection;
 import megamek.common.ManeuverType;
 import megamek.common.OffBoardDirection;
@@ -683,6 +684,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateSearchlightButton();
         updateLoadButtons();
         updateElevationButtons();
+        updateElevatorButtons();
         updateTakeOffButtons();
         updateLandButtons();
         updateJoinButton();
@@ -1178,6 +1180,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setVLandEnabled(false);
         setLowerEnabled(false);
         setRaiseEnabled(false);
+        setElevatorUpEnabled(false);
+        setElevatorDownEnabled(false);
         setRecklessEnabled(false);
         setGoProneEnabled(false);
         setManeuverEnabled(false);
@@ -1241,6 +1245,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateRACButton();
         updateSearchlightButton();
         updateElevationButtons();
+        updateElevatorButtons();
         updateTakeOffButtons();
         updateLandButtons();
         updateFlyOffButton();
@@ -2133,6 +2138,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             updateSearchlightButton();
             updateLoadButtons();
             updateElevationButtons();
+            updateElevatorButtons();
             updateTakeOffButtons();
             updateLandButtons();
             updateEvadeButton();
@@ -2299,6 +2305,86 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setRaiseEnabled(currentEntity.canGoUp(cmd.getFinalElevation(), cmd.getFinalCoords(), cmd.getFinalBoardId()));
         }
         setLowerEnabled(currentEntity.canGoDown(cmd.getFinalElevation(), cmd.getFinalCoords(), cmd.getFinalBoardId()));
+    }
+
+    /**
+     * Updates the elevator up/down buttons based on whether the entity is on an industrial elevator platform.
+     */
+    private synchronized void updateElevatorButtons() {
+        final Entity currentEntity = currentEntity();
+        if (currentEntity == null || cmd == null) {
+            LOGGER.debug("[ELEVATOR] updateElevatorButtons: No entity or cmd, disabling buttons");
+            setElevatorUpEnabled(false);
+            setElevatorDownEnabled(false);
+            return;
+        }
+
+        // Airborne entities can't use elevators
+        if (currentEntity.isAirborne()) {
+            LOGGER.debug("[ELEVATOR] updateElevatorButtons: Entity airborne, disabling buttons");
+            setElevatorUpEnabled(false);
+            setElevatorDownEnabled(false);
+            return;
+        }
+
+        Coords finalPos = cmd.getFinalCoords();
+        int finalBoardId = cmd.getFinalBoardId();
+        int finalElevation = cmd.getFinalElevation();
+
+        LOGGER.debug("[ELEVATOR] updateElevatorButtons: entity={}, finalPos={}, finalBoardId={}, finalElevation={}",
+              currentEntity.getDisplayName(), finalPos, finalBoardId, finalElevation);
+
+        if (finalPos == null) {
+            LOGGER.debug("[ELEVATOR] updateElevatorButtons: No finalPos, disabling buttons");
+            setElevatorUpEnabled(false);
+            setElevatorDownEnabled(false);
+            return;
+        }
+
+        // Check if the hex actually contains an industrial elevator terrain
+        Hex hex = game.getBoard(finalBoardId).getHex(finalPos);
+        if (hex == null || !hex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR)) {
+            LOGGER.info(
+                  "[ELEVATOR] updateElevatorButtons: Hex at {} has no INDUSTRIAL_ELEVATOR terrain, disabling buttons",
+                  finalPos);
+            setElevatorUpEnabled(false);
+            setElevatorDownEnabled(false);
+            return;
+        }
+
+        // Check if the entity is on an industrial elevator platform
+        BoardLocation location = BoardLocation.of(finalPos, finalBoardId);
+        IndustrialElevator elevator = game.getIndustrialElevator(location);
+
+        LOGGER.debug("[ELEVATOR] updateElevatorButtons: Looking for elevator at {}, found: {}",
+              location, elevator);
+
+        if (elevator == null || !elevator.isFunctional() || !elevator.isPlatformAt(finalElevation)) {
+            LOGGER.info(
+                  "[ELEVATOR] updateElevatorButtons: No valid elevator (elevator={}, functional={}, platformAt={}), disabling buttons",
+                  elevator,
+                  (elevator != null ? elevator.isFunctional() : "N/A"),
+                  (elevator != null ? elevator.isPlatformAt(finalElevation) : "N/A"));
+            setElevatorUpEnabled(false);
+            setElevatorDownEnabled(false);
+            return;
+        }
+
+        // Can go up if not at shaft top
+        boolean canGoUp = finalElevation < elevator.getShaftTop();
+        // Can go down if not at shaft bottom
+        boolean canGoDown = finalElevation > elevator.getShaftBottom();
+
+        LOGGER.info(
+              "[ELEVATOR] updateElevatorButtons: Elevator found! shaftBottom={}, shaftTop={}, platform={}, canGoUp={}, canGoDown={}",
+              elevator.getShaftBottom(),
+              elevator.getShaftTop(),
+              elevator.getPlatformLevel(),
+              canGoUp,
+              canGoDown);
+
+        setElevatorUpEnabled(canGoUp);
+        setElevatorDownEnabled(canGoDown);
     }
 
     private synchronized void updateTakeOffButtons() {
@@ -5361,6 +5447,20 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 }
             }
             addStepToMovePath(MoveStepType.DOWN);
+        } else if (actionCmd.equals(MoveCommand.MOVE_ELEVATOR_UP.getCmd())) {
+            Entity currentEntity = currentEntity();
+            LOGGER.debug("[ELEVATOR] MovementDisplay: Elevator UP button clicked for entity {}",
+                  (currentEntity != null ? currentEntity.getDisplayName() : "null"));
+            addStepToMovePath(MoveStepType.ELEVATOR_ASCEND);
+            LOGGER.debug("[ELEVATOR] MovementDisplay: After adding ELEVATOR_ASCEND step, path length={}, lastStep={}",
+                  cmd.length(), (cmd.getLastStep() != null ? cmd.getLastStep().getType() : "null"));
+        } else if (actionCmd.equals(MoveCommand.MOVE_ELEVATOR_DOWN.getCmd())) {
+            Entity currentEntity = currentEntity();
+            LOGGER.debug("[ELEVATOR] MovementDisplay: Elevator DOWN button clicked for entity {}",
+                  (currentEntity != null ? currentEntity.getDisplayName() : "null"));
+            addStepToMovePath(MoveStepType.ELEVATOR_DESCEND);
+            LOGGER.debug("[ELEVATOR] MovementDisplay: After adding ELEVATOR_DESCEND step, path length={}, lastStep={}",
+                  cmd.length(), (cmd.getLastStep() != null ? cmd.getLastStep().getType() : "null"));
         } else if (actionCmd.equals(MoveCommand.MOVE_CLIMB_MODE.getCmd())) {
             MoveStep ms = cmd.getLastStep();
             if ((ms != null) &&
@@ -5636,6 +5736,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateRACButton();
         updateSearchlightButton();
         updateElevationButtons();
+        updateElevatorButtons();
         updateTakeOffButtons();
         updateLandButtons();
         updateFlyOffButton();
@@ -6205,6 +6306,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void setLowerEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_LOWER_ELEVATION).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_LOWER_ELEVATION.getCmd(), enabled);
+    }
+
+    private void setElevatorUpEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_ELEVATOR_UP).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_ELEVATOR_UP.getCmd(), enabled);
+    }
+
+    private void setElevatorDownEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_ELEVATOR_DOWN).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_ELEVATOR_DOWN.getCmd(), enabled);
     }
 
     private void setRecklessEnabled(boolean enabled) {

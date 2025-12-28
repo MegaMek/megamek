@@ -267,7 +267,7 @@ public class BoardsTagger {
                           0;
                 }
                 impassable += hex.containsTerrain(IMPASSABLE) ? 1 : 0;
-                elevator += hex.containsTerrain(ELEVATOR) ? 1 : 0;
+                elevator += hex.containsTerrain(SOLARIS_ELEVATOR) ? 1 : 0;
                 if (hex.containsTerrain(WATER)
                       && hex.containsTerrain(BRIDGE)
                       && (hex.terrainLevel(BRIDGE_ELEV) < hex.terrainLevel(WATER))) {

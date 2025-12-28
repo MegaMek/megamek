@@ -34,6 +34,7 @@ package megamek.common.actions;
 
 import java.io.Serial;
 
+import megamek.common.Messages;
 import megamek.common.ToHitData;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.game.Game;
@@ -148,35 +149,42 @@ public class SuicideImplantsAttackAction extends AbstractAttackAction {
         // Validate attacker exists
         if (attackingEntity == null) {
             LOGGER.error("Attacker not valid");
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                  Messages.getString("SuicideImplantsAttackAction.attackerNotValid"));
         }
 
         // Must have Suicide Implants
         if (!attackingEntity.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Unit lacks Explosive Suicide Implants");
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                  Messages.getString("SuicideImplantsAttackAction.noImplants"));
         }
 
         // Entity must be active
         if (!attackingEntity.isActive()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Unit is not active");
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                  Messages.getString("SuicideImplantsAttackAction.notActive"));
         }
 
         // Crew must be alive and conscious
         if (attackingEntity.getCrew() == null) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Unit has no crew");
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                  Messages.getString("SuicideImplantsAttackAction.noCrew"));
         }
 
         if (attackingEntity.getCrew().isDead()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Crew is dead");
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                  Messages.getString("SuicideImplantsAttackAction.crewDead"));
         }
 
         if (attackingEntity.getCrew().isUnconscious()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Crew is unconscious");
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                  Messages.getString("SuicideImplantsAttackAction.crewUnconscious"));
         }
 
         // Cannot detonate if being transported (except in buildings)
         if (attackingEntity.getTransportId() != Entity.NONE) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Cannot detonate while being transported");
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                  Messages.getString("SuicideImplantsAttackAction.transported"));
         }
 
         // Automatic success - no roll needed for suicide implants
@@ -196,17 +204,17 @@ public class SuicideImplantsAttackAction extends AbstractAttackAction {
             Infantry infantry = (Infantry) entity;
             int maxTroopers = infantry.getShootingStrength();
             int maxDamage = getDamageFor(maxTroopers);
-            return "Detonate: up to " + maxDamage + " damage to all units in hex";
+            return Messages.getString("SuicideImplantsAttackAction.detonateInfantry", maxDamage);
         } else if (entity instanceof BattleArmor) {
-            return "Detonate: Destroys selected battlesuits only";
+            return Messages.getString("SuicideImplantsAttackAction.detonateBA");
         } else if (entity instanceof Mek) {
-            return "Detonate: 1 internal damage to head, critical hit, cockpit destroyed";
+            return Messages.getString("SuicideImplantsAttackAction.detonateMek");
         } else if (entity instanceof Aero) {
-            return "Detonate: 1 armor damage to nose, critical hit, cockpit destroyed";
+            return Messages.getString("SuicideImplantsAttackAction.detonateAero");
         } else if (entity instanceof Tank) {
-            return "Detonate: Crew Killed, 1 internal damage to all facings";
+            return Messages.getString("SuicideImplantsAttackAction.detonateVehicle");
         }
-        return "Detonate suicide implants";
+        return Messages.getString("SuicideImplantsAttackAction.detonateGeneric");
     }
 
     /**

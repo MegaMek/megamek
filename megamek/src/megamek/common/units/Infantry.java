@@ -180,7 +180,7 @@ public class Infantry extends Entity {
 
     // Prosthetic Enhancement (Enhanced Limbs) - IO p.84
     // Standard Enhanced (MD_PL_ENHANCED): Uses slot 1 only, same type up to 2x
-    // Improved Enhanced (MD_PL_IENHANCED): Uses both slots, different types, each up to 2x, max 4 total
+    // Improved Enhanced (MD_PL_I_ENHANCED): Uses both slots, different types, each up to 2x, max 4 total
     private ProstheticEnhancementType prostheticEnhancement1 = null;
     private int prostheticEnhancement1Count = 0; // 0, 1, or 2 per trooper
     private ProstheticEnhancementType prostheticEnhancement2 = null;
@@ -1813,6 +1813,7 @@ public class Infantry extends Entity {
         }
         if (hasProstheticEnhancement2() && prostheticEnhancement2.hasAntiMekBonus()) {
             if (prostheticEnhancement2.getAntiMekModifier() < best) {
+                best = prostheticEnhancement2.getAntiMekModifier();
                 name = prostheticEnhancement2.getDisplayName();
             }
         }

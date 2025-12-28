@@ -164,7 +164,7 @@ public class ComputeAttackerToHitMods {
               && (infantry.hasAbility(OptionsConstants.MD_PL_ENHANCED)
               || infantry.hasAbility(OptionsConstants.MD_PL_I_ENHANCED))) {
             // Only apply at range 0 (same hex) when prosthetic is being used
-            int range = attacker.getPosition() != null && target.getPosition() != null
+            int range = (target != null) && (attacker.getPosition() != null) && (target.getPosition() != null)
                   ? attacker.getPosition().distance(target.getPosition()) : -1;
             if (range == 0) {
                 int meleeModifier = infantry.getProstheticMeleeToHitModifier();

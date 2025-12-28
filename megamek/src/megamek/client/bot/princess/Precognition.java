@@ -227,6 +227,9 @@ public class Precognition implements Runnable {
                 case BLDG_ADD:
                     receiveBuildingAdd(c);
                     break;
+                case BLDG_REMOVE:
+                    receiveBuildingRemove(c);
+                    break;
                 case BLDG_UPDATE:
                     receiveBuildingUpdate(c);
                     break;
@@ -854,6 +857,12 @@ public class Precognition implements Runnable {
     private void receiveBuildingUpdate(Packet packet) throws InvalidPacketDataException {
         for (IBuilding building : (List<IBuilding>) packet.getObject(0)) {
             game.getBoard(building.getBoardId()).updateBuilding(building);
+        }
+    }
+
+    private void receiveBuildingRemove(Packet packet) throws InvalidPacketDataException {
+        for (IBuilding building : (List<IBuilding>) packet.getObject(0)) {
+            game.getBoard(building.getBoardId()).removeBuilding(building);
         }
     }
 

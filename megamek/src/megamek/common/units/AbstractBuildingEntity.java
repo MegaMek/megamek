@@ -37,10 +37,12 @@ package megamek.common.units;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
@@ -222,64 +224,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public boolean isLocationProhibited(Coords testPosition, int testBoardId, int testElevation) {
-        if (!game.hasBoardLocation(testPosition, testBoardId)) {
-            return true;
-        }
-
-        Hex hex = game.getHex(testPosition, testBoardId);
-        if (testElevation != 0) {
-            return hex.containsTerrain(Terrains.IMPASSABLE);
-        }
-
-        // Check prohibited terrain
-        boolean isProhibited = false;
-        // Check for other entities
-        var currentEntitiesIter = game.getEntities(testPosition);
-        while (currentEntitiesIter.hasNext()) {
-            Entity entity = currentEntitiesIter.next();
-            isProhibited = isProhibited || !this.equals(entity);
-            if (isProhibited) {
-                return true;
-            }
-        }
-
-        // Check for other buildings - we can't replace it if it's another AbstractBuildingEntity
-        Optional<IBuilding> otherBuilding = game.getBuildingAt(testPosition, getBoardId());
-        if (otherBuilding.isPresent() && !equals(otherBuilding.get()) && (otherBuilding.get() instanceof AbstractBuildingEntity)) {
-            return true;
-        }
-
-        boolean noInvalidPositions = true;
-        int elevation = hex.getLevel();
-        List<CubeCoords> allPositions = getInternalBuilding().getCoordsList();
-        for (CubeCoords cubeCoords : allPositions) {
-            boolean invalidPosition = false;
-            Coords secondaryCoords = testPosition.toCube().add(rotateCoordByFacing(cubeCoords, getFacing())).toOffset();
-            Hex secondaryHex = game.getBoard(testBoardId).getHex(secondaryCoords);
-            currentEntitiesIter = game.getEntities(secondaryCoords);
-            boolean secondaryHexPresent = secondaryHex != null;
-            // TODO: Secondary hex present for Mobile Structures has some kind of nuance
-            isProhibited = isProhibited || !secondaryHexPresent;
-            while (!isProhibited && currentEntitiesIter.hasNext()) {
-                Entity entity = currentEntitiesIter.next();
-                invalidPosition |= !this.equals(entity);
-            }
-
-            // Check for other buildings - we can't replace it if it's another AbstractBuildingEntity
-            Optional<IBuilding> otherBuildingSecondary = game.getBuildingAt(testPosition, getBoardId());
-            if (otherBuildingSecondary.isPresent() && !equals(otherBuildingSecondary.get()) && (otherBuildingSecondary.get() instanceof AbstractBuildingEntity)) {
-                return true;
-            }
-
-            if (secondaryHexPresent) {
-                invalidPosition |= secondaryHex.getLevel() != elevation;
-            }
-            if (invalidPosition) {
-                noInvalidPositions = false;
-            }
-        }
-
-        return isProhibited || !noInvalidPositions;
+        return !isPositionAndFacingValid(testPosition, getFacing(), testElevation, testBoardId);
     }
 
     /**
@@ -355,54 +300,42 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
             return false;
         }
 
-        Map<CubeCoords, Coords> hypotheticalLayout = computeLayoutForPositionAndFacing(testPosition, testFacing);
-        Board board = game.getBoard(testBoardId);
-
-        // All hexes must be at the same elevation
-        Hex originHex = board.getHex(testPosition);
-        if (originHex == null) {
+        Hex primaryHex = game.getHex(testPosition, testBoardId);
+        if (primaryHex == null) {
             return false;
         }
-        int requiredElevation = originHex.getLevel();
 
-        // Check each hex in the hypothetical layout
-        for (Coords boardCoord : hypotheticalLayout.values()) {
-            if (!game.hasBoardLocation(boardCoord, testBoardId)) {
-                return false;
-            }
+        // At non-zero elevation, only check for IMPASSABLE terrain
+        if (testElevation != 0) {
+            return !primaryHex.containsTerrain(Terrains.IMPASSABLE);
+        }
 
-            Hex hex = board.getHex(boardCoord);
-            if (hex == null) {
-                return false;
-            }
+        // Calculate where this building's hexes would be at testPosition with testFacing
+        List<Coords> thisBuildingCoords = computeBuildingCoordsForPositionAndFacing(testPosition, testFacing);
 
-            // Check elevation consistency
-            if (hex.getLevel() != requiredElevation) {
-                return false;
-            }
+        // Check that all hexes exist and are valid
+        if (!areCoordsValid(thisBuildingCoords, testBoardId)) {
+            return false;
+        }
 
-            // Check impassable terrain at non-ground elevations
-            if (testElevation != 0 && hex.containsTerrain(Terrains.IMPASSABLE)) {
-                return false;
-            }
+        // Check that all hexes are at the same elevation
+        if (!areAllCoordsAtSameElevation(thisBuildingCoords, testBoardId)) {
+            return false;
+        }
 
-            // Check for other entities at this hex
-            var entitiesAtHex = game.getEntities(boardCoord);
-            while (entitiesAtHex.hasNext()) {
-                Entity otherEntity = entitiesAtHex.next();
-                if (!this.equals(otherEntity)) {
-                    return false; // Another entity is blocking
-                }
-            }
+        // Check for overlapping buildings
+        if (hasInvalidBuildingOverlap(thisBuildingCoords, testBoardId)) {
+            return false;
+        }
 
-            // Check for other buildings - we can't replace it if it's another AbstractBuildingEntity
-            Optional<IBuilding> otherBuilding = game.getBuildingAt(boardCoord, getBoardId());
-            if (otherBuilding.isPresent() && !equals(otherBuilding.get()) && (otherBuilding.get() instanceof AbstractBuildingEntity)) {
-                return false;
-            }
+        // Check for other entities at all positions
+        if (hasEntityConflict(thisBuildingCoords)) {
+            return false;
+        }
 
-            // Check stacking violations
-            if (Compute.stackingViolation(game, this, testElevation, boardCoord,
+        // Check stacking violations at each position
+        for (Coords coord : thisBuildingCoords) {
+            if (Compute.stackingViolation(game, this, testElevation, coord,
                   testBoardId, null, climbMode(), true) != null) {
                 return false;
             }
@@ -430,6 +363,122 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         }
 
         return validFacings;
+    }
+
+    /**
+     * Computes the board coordinates this building would occupy at the given position and facing.
+     *
+     * @param testPosition The position to test
+     * @param testFacing The facing to test
+     * @return List of all board coordinates the building would occupy
+     */
+    private List<Coords> computeBuildingCoordsForPositionAndFacing(Coords testPosition, int testFacing) {
+        return getInternalBuilding().getCoordsList().stream()
+            .map(cube -> testPosition.toCube().add(rotateCoordByFacing(cube, testFacing)).toOffset())
+            .toList();
+    }
+
+    /**
+     * Checks if all given coordinates are valid (exist on the board and have valid hexes).
+     *
+     * @param coords The coordinates to check
+     * @param testBoardId The board ID to check against
+     * @return true if all coordinates are valid
+     */
+    private boolean areCoordsValid(List<Coords> coords, int testBoardId) {
+        Board board = game.getBoard(testBoardId);
+        for (Coords coord : coords) {
+            if (!game.hasBoardLocation(coord, testBoardId)) {
+                return false;
+            }
+            if (board.getHex(coord) == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if all given coordinates are at the same elevation.
+     *
+     * @param coords The coordinates to check
+     * @param testBoardId The board ID to check against
+     * @return true if all coordinates are at the same elevation
+     */
+    private boolean areAllCoordsAtSameElevation(List<Coords> coords, int testBoardId) {
+        if (coords.isEmpty()) {
+            return true;
+        }
+
+        Board board = game.getBoard(testBoardId);
+        Hex firstHex = board.getHex(coords.get(0));
+        if (firstHex == null) {
+            return false;
+        }
+        int requiredElevation = firstHex.getLevel();
+
+        for (Coords coord : coords) {
+            Hex hex = board.getHex(coord);
+            if (hex == null || hex.getLevel() != requiredElevation) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if this building would have an invalid overlap with other buildings.
+     * - Cannot overlap with another AbstractBuildingEntity
+     * - Can only overlap with other IBuilding if we completely contain it
+     *
+     * @param thisBuildingCoords The coordinates this building would occupy
+     * @param testBoardId The board ID to check against
+     * @return true if there's an invalid overlap
+     */
+    private boolean hasInvalidBuildingOverlap(List<Coords> thisBuildingCoords, int testBoardId) {
+        // Collect all unique buildings we'd be overlapping with
+        Set<IBuilding> overlappingBuildings = new HashSet<>();
+        for (Coords coord : thisBuildingCoords) {
+            Optional<IBuilding> buildingAtCoord = game.getBuildingAt(coord, testBoardId);
+            if (buildingAtCoord.isPresent() && !equals(buildingAtCoord.get())) {
+                overlappingBuildings.add(buildingAtCoord.get());
+            }
+        }
+
+        // Check each overlapping building
+        for (IBuilding otherBuilding : overlappingBuildings) {
+            // Can't replace another AbstractBuildingEntity
+            if (otherBuilding instanceof AbstractBuildingEntity) {
+                return true;
+            }
+
+            // For any other IBuilding, we can only be placed if we contain ALL hexes of that building
+            List<Coords> otherBuildingCoords = otherBuilding.getCoordsList();
+            if (!thisBuildingCoords.containsAll(otherBuildingCoords)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if there are any entity conflicts at the given coordinates.
+     *
+     * @param coords The coordinates to check
+     * @return true if there's an entity conflict (another entity at any of the coords)
+     */
+    private boolean hasEntityConflict(List<Coords> coords) {
+        for (Coords coord : coords) {
+            var entitiesAtCoord = game.getEntities(coord);
+            while (entitiesAtCoord.hasNext()) {
+                Entity otherEntity = entitiesAtCoord.next();
+                if (!this.equals(otherEntity)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -1075,9 +1124,23 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     public void updateBuildingEntityHexes(int boardId, TWGameManager gameManager) {
         Board board = getGame().getBoard(boardId);
+        Vector<IBuilding> removedBuildings = new Vector<>();
+
         for (Coords buildingCoords : getCoordsList()) {
             Hex targetHex = board.getHex(buildingCoords);
             if (targetHex != null) {
+                // Remove any existing building at this hex
+                Optional<IBuilding> existingBuilding = getGame().getBuildingAt(buildingCoords, boardId);
+                if (existingBuilding.isPresent() && !existingBuilding.get().equals(this)) {
+                    removedBuildings.add(existingBuilding.get());
+                    targetHex.removeTerrain(Terrains.BUILDING);
+                    targetHex.removeTerrain(Terrains.BLDG_CF);
+                    targetHex.removeTerrain(Terrains.BLDG_ELEV);
+                    targetHex.removeTerrain(Terrains.BLDG_CLASS);
+                    targetHex.removeTerrain(Terrains.BLDG_ARMOR);
+                    targetHex.removeTerrain(Terrains.BLDG_BASEMENT_TYPE);
+                }
+
                 // Add building terrain with the building type
                 targetHex.addTerrain(new Terrain(Terrains.BUILDING,
                       getBuildingType().getTypeValue()));
@@ -1108,6 +1171,11 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         }
 
         board.addBuildingToBoard(this);
+
+        // Send removed buildings to clients if any were replaced
+        if (!removedBuildings.isEmpty()) {
+            gameManager.sendRemovedBuildings(removedBuildings);
+        }
 
         gameManager.sendNewBuildings(new Vector<IBuilding>(List.of(this)));
 

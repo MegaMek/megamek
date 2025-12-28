@@ -121,8 +121,8 @@ public class DeploymentDisplayTest {
             initializeBoard("BOARD", """
                   size 2 2
                   hex 0101 0 "" ""
-                  hex 0102 0 "" ""
                   hex 0201 0 "" ""
+                  hex 0102 0 "" ""
                   hex 0202 0 "" ""
                   end"""
             );

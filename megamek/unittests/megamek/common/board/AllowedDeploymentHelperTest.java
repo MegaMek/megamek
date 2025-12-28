@@ -202,13 +202,13 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
                 size 3 3
                 option exit_roads_to_pavement false
                 hex 0101 0 "" ""
-                hex 0102 0 "" ""
-                hex 0103 0 "" ""
                 hex 0201 0 "" ""
-                hex 0202 0 "" ""
-                hex 0203 0 "" ""
                 hex 0301 0 "" ""
+                hex 0102 0 "" ""
+                hex 0202 0 "" ""
                 hex 0302 0 "" ""
+                hex 0103 0 "" ""
+                hex 0203 0 "" ""
                 hex 0303 0 "" ""
                 end
                 """);
@@ -217,8 +217,8 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
                 size 2 2
                 option exit_roads_to_pavement false
                 hex 0101 0 "water:2" ""
-                hex 0102 0 "water:2" ""
                 hex 0201 0 "water:2" ""
+                hex 0102 0 "water:2" ""
                 hex 0202 0 "water:2" ""
                 end
                 """);
@@ -228,8 +228,8 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
                 option exit_roads_to_pavement false
                 option set_atmospheric true
                 hex 0101 0 "" ""
-                hex 0102 0 "" ""
                 hex 0201 0 "" ""
+                hex 0102 0 "" ""
                 hex 0202 0 "" ""
                 end
                 """);
@@ -393,14 +393,14 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
                 size 3 3
                 option exit_roads_to_pavement false
                 hex 0101 0 "" ""
-                hex 0102 1 "" ""
-                hex 0103 0 "" ""
                 hex 0201 0 "" ""
-                hex 0202 0 "" ""
-                hex 0203 0 "" ""
                 hex 0301 0 "" ""
-                hex 0302 1 "" ""
-                hex 0303 0 "" ""
+                hex 0102 1 "" ""
+                hex 0202 0 "" ""
+                hex 0302 0 "" ""
+                hex 0103 0 "" ""
+                hex 0203 0 "" ""
+                hex 0303 1 "" ""
                 end
                 """);
         }
@@ -473,7 +473,7 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
         }
 
         @Test
-        @DisplayName(value = "should return 2 facings for the long building on the test map")
+        @DisplayName(value = "should return 2 facings for the x shaped building on the test map")
         void shouldReturn2Facings_ForXShapeBuilding() {
             // Arrange
             Entity entity = newXShapeMultiHexBuildingEntity();

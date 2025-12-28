@@ -26465,6 +26465,17 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Tell the clients to remove the given buildings.
+     *
+     * @param buildings - a <code>Vector</code> of <code>Building</code>s that need to be removed.
+     *
+     * @return a <code>Packet</code> for the command.
+     */
+    private Packet createRemoveBuildingPacket(Vector<IBuilding> buildings) {
+        return new Packet(PacketCommand.BLDG_REMOVE, buildings);
+    }
+
+    /**
      * Apply this phase's damage to all buildings. Buildings may collapse due to damage.
      */
     void applyBuildingDamage() {
@@ -26912,6 +26923,10 @@ public class TWGameManager extends AbstractGameManager {
 
     public void sendChangedBuildings(Vector<IBuilding> buildings) {
         send(createUpdateBuildingPacket(buildings));
+    }
+
+    public void sendRemovedBuildings(Vector<IBuilding> buildings) {
+        send(createRemoveBuildingPacket(buildings));
     }
 
     /**

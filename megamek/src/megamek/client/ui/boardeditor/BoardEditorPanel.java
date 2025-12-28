@@ -891,6 +891,8 @@ public class BoardEditorPanel extends JPanel
                     cheTerrExitSpecified.setSelected(true); // Auto-select
                     cheTerrExitSpecified.setText(Messages.getString("BoardEditor.elevatorProperties"));
                     butTerrExits.setActionCommand(CMD_EDIT_INDUSTRIAL_ELEVATOR);
+                    // Allow negative terrain levels for basement elevator shafts
+                    texTerrainLevel.setMinValue(-100);
                     // Set default exits value if not already set (shaft top 0, capacity 100 tons)
                     if (texTerrExits.getNumber() == 0) {
                         texTerrExits.setNumber(10); // (0 << 8) | 10 = capacity 100 tons
@@ -902,6 +904,8 @@ public class BoardEditorPanel extends JPanel
                     cheTerrExitSpecified.setEnabled(true);
                     cheTerrExitSpecified.setText(Messages.getString("BoardEditor.cheTerrExitSpecified"));
                     butTerrExits.setActionCommand("");
+                    // Reset terrain level minimum to default for other terrain types
+                    texTerrainLevel.setMinValue(0);
                 }
             }
         });

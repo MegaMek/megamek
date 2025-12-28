@@ -57,7 +57,8 @@ public enum ProstheticEnhancementType {
     RUMAL_GARROTE("Rumal/Garrote", EnhancementCategory.MELEE, 0.14, 0.14, true, true, 2, 0),
 
     // Non-Weapon enhancements (anti-Mek bonuses)
-    // Note: Grappler and Climbing Claws provide 1.2x multiplier on Anti-Mek Battle Rating instead of flat BV
+    // Note: bvPerTrooper and getAntiMekBvMultiplier() are reserved for future BV calculation implementation.
+    // Per IO p.84, Grappler and Climbing Claws provide 1.2x multiplier on Anti-Mek Battle Rating instead of flat BV.
     GRAPPLER("Grappler", EnhancementCategory.NON_WEAPON, 0.0, 0.0, false, false, 0, -2),
     CLIMBING_CLAWS("Climbing Claws", EnhancementCategory.NON_WEAPON, 0.02, 0.02, true, true, 0, -1);
 

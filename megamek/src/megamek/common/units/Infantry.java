@@ -1803,7 +1803,7 @@ public class Infantry extends Entity {
         if (hasProstheticEnhancement2() && prostheticEnhancement2.hasAntiMekBonus()) {
             best = Math.min(best, prostheticEnhancement2.getAntiMekModifier());
         }
-        // Check extraneous limb enhancements (bonuses stack with regular prosthetics, but only best applies)
+        // Check extraneous limb enhancements (only the single best modifier from all sources applies)
         if (hasExtraneousPair1() && extraneousPair1.hasAntiMekBonus()) {
             best = Math.min(best, extraneousPair1.getAntiMekModifier());
         }

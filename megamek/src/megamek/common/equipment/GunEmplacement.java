@@ -440,6 +440,7 @@ public class GunEmplacement extends Tank {
      * Replaced most instances of `instanceof GunEmplacement` to support {@link BuildingEntity}
      * @return true if this unit is a {@link BuildingEntity} or {@link GunEmplacement}, false otherwise
      */
+    @Override
     public boolean isBuildingEntityOrGunEmplacement() {
         return true;
     }

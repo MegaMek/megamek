@@ -209,18 +209,15 @@ public class CustomMekDialog extends AbstractButtonDialog
     private final boolean editable;
     private final boolean editableDeployment;
 
-    // Prosthetic Enhancement UI components (for conventional infantry only)
-    // Slot 1: Used by both Standard Enhanced and Improved Enhanced
-    // Slot 2: Only used by Improved Enhanced
-    private JPanel panProstheticEnhancement;
-    private JLabel labProstheticType1;
-    private JComboBox<String> choProstheticType1;
-    private JLabel labProstheticCount1;
-    private JSpinner spinProstheticCount1;
-    private JLabel labProstheticType2;
-    private JComboBox<String> choProstheticType2;
-    private JLabel labProstheticCount2;
-    private JSpinner spinProstheticCount2;
+    // Prosthetic Enhancement UI components (inline with checkbox, for conventional infantry only)
+    // Standard Enhanced (MD_PL_ENHANCED) - inline controls for slot 1 only
+    private JComboBox<String> choProstheticTypeStd;
+    private JSpinner spinProstheticCountStd;
+    // Improved Enhanced (MD_PL_I_ENHANCED) - inline controls for slot 1 and slot 2
+    private JComboBox<String> choProstheticType1Imp;
+    private JSpinner spinProstheticCount1Imp;
+    private JComboBox<String> choProstheticType2Imp;
+    private JSpinner spinProstheticCount2Imp;
 
     private int distance = 17;
     private int fuel = 0;
@@ -379,9 +376,6 @@ public class CustomMekDialog extends AbstractButtonDialog
             }
         }
 
-        // Initialize prosthetic enhancement dropdown visibility based on current option state
-        updateProstheticSlotVisibility();
-
         validate();
     }
 
@@ -484,6 +478,16 @@ public class CustomMekDialog extends AbstractButtonDialog
             optionComp.addValue(Crew.ENVIRONMENT_SPECIALIST_WIND);
         }
 
+        // Prosthetic Limbs, Enhanced - add inline dropdown and spinner for slot 1
+        if (OptionsConstants.MD_PL_ENHANCED.equals(option.getName()) && entity.isConventionalInfantry()) {
+            addInlineProstheticControls(optionComp, entity, true);
+        }
+
+        // Prosthetic Limbs, Improved Enhanced - add inline dropdowns and spinners for both slots
+        if (OptionsConstants.MD_PL_I_ENHANCED.equals(option.getName()) && entity.isConventionalInfantry()) {
+            addInlineProstheticControls(optionComp, entity, false);
+        }
+
         gridBagLayout.setConstraints(optionComp, gridBagConstraints);
         panOptions.add(optionComp);
         optionComps.add(optionComp);
@@ -496,111 +500,139 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     /**
-     * Sets up the prosthetic enhancement panel for conventional infantry. Slot 1 is used by Standard Enhanced
-     * (MD_PL_ENHANCED). Both slots are used by Improved Enhanced (MD_PL_IENHANCED).
+     * Adds inline prosthetic enhancement controls (dropdown + spinner) to the option component panel.
+     * For Standard Enhanced: adds slot 1 controls only.
+     * For Improved Enhanced: adds slot 1 and slot 2 controls.
+     *
+     * @param optionComp The DialogOptionComponentYPanel to add controls to
+     * @param entity The entity being configured
+     * @param isStandardEnhanced True for MD_PL_ENHANCED (slot 1 only), false for MD_PL_I_ENHANCED (both slots)
      */
-    private void setupProstheticEnhancementPanel(Entity entity) {
-        panProstheticEnhancement = new JPanel(new GridBagLayout());
+    private void addInlineProstheticControls(DialogOptionComponentYPanel optionComp, Entity entity,
+          boolean isStandardEnhanced) {
+        Infantry infantry = (entity instanceof Infantry) ? (Infantry) entity : null;
+        String typeTooltip = Messages.getString("CustomMekDialog.ProstheticTypeTooltip");
+        String countTooltip = Messages.getString("CustomMekDialog.ProstheticCountTooltip");
 
-        // Create slot 1 components
-        labProstheticType1 = new JLabel(Messages.getString("CustomMekDialog.labProstheticType1"), SwingConstants.RIGHT);
-        choProstheticType1 = new JComboBox<>();
-        labProstheticCount1 = new JLabel(Messages.getString("CustomMekDialog.labProstheticCount"),
-              SwingConstants.RIGHT);
-        SpinnerNumberModel countModel1 = new SpinnerNumberModel(1, 1, 2, 1);
-        spinProstheticCount1 = new JSpinner(countModel1);
+        if (isStandardEnhanced) {
+            // Standard Enhanced: Create slot 1 controls only
+            choProstheticTypeStd = new JComboBox<>();
+            populateProstheticDropdown(choProstheticTypeStd);
+            SpinnerNumberModel countModel = new SpinnerNumberModel(1, 1, 2, 1);
+            spinProstheticCountStd = new JSpinner(countModel);
 
-        // Create slot 2 components
-        labProstheticType2 = new JLabel(Messages.getString("CustomMekDialog.labProstheticType2"), SwingConstants.RIGHT);
-        choProstheticType2 = new JComboBox<>();
-        labProstheticCount2 = new JLabel(Messages.getString("CustomMekDialog.labProstheticCount"),
-              SwingConstants.RIGHT);
-        SpinnerNumberModel countModel2 = new SpinnerNumberModel(1, 1, 2, 1);
-        spinProstheticCount2 = new JSpinner(countModel2);
-
-        // Populate both dropdowns
-        populateProstheticDropdown(choProstheticType1);
-        populateProstheticDropdown(choProstheticType2);
-
-        // Set current values from entity
-        if (entity instanceof Infantry infantry) {
-            // Slot 1
-            if (infantry.hasProstheticEnhancement1()) {
+            // Set initial values from entity slot 1
+            if ((infantry != null) && infantry.hasProstheticEnhancement1()) {
                 ProstheticEnhancementType type1 = infantry.getProstheticEnhancement1();
                 String itemText = type1.getCategory().getDisplayName() + ": " + type1.getDisplayName();
-                choProstheticType1.setSelectedItem(itemText);
-                spinProstheticCount1.setValue(infantry.getProstheticEnhancement1Count());
+                choProstheticTypeStd.setSelectedItem(itemText);
+                spinProstheticCountStd.setValue(infantry.getProstheticEnhancement1Count());
             } else {
-                choProstheticType1.setSelectedIndex(0);
-                spinProstheticCount1.setValue(1);
+                choProstheticTypeStd.setSelectedIndex(0);
+                spinProstheticCountStd.setValue(1);
             }
 
-            // Slot 2
-            if (infantry.hasProstheticEnhancement2()) {
+            // Enable/disable spinner based on dropdown selection
+            spinProstheticCountStd.setEnabled(choProstheticTypeStd.getSelectedIndex() > 0);
+            choProstheticTypeStd.addItemListener(e -> {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    spinProstheticCountStd.setEnabled(choProstheticTypeStd.getSelectedIndex() > 0);
+                }
+            });
+
+            // Set tooltips
+            choProstheticTypeStd.setToolTipText(typeTooltip);
+            spinProstheticCountStd.setToolTipText(countTooltip);
+
+            // Add controls inline
+            optionComp.add(choProstheticTypeStd);
+            optionComp.add(spinProstheticCountStd);
+
+            // Disable if not editable
+            if (!editable) {
+                choProstheticTypeStd.setEnabled(false);
+                spinProstheticCountStd.setEnabled(false);
+            }
+
+            // Set initial visibility based on current checkbox state
+            boolean isChecked = entity.hasAbility(OptionsConstants.MD_PL_ENHANCED);
+            choProstheticTypeStd.setVisible(isChecked);
+            spinProstheticCountStd.setVisible(isChecked);
+        } else {
+            // Improved Enhanced: Create controls for both slot 1 and slot 2
+            choProstheticType1Imp = new JComboBox<>();
+            populateProstheticDropdown(choProstheticType1Imp);
+            SpinnerNumberModel countModel1 = new SpinnerNumberModel(1, 1, 2, 1);
+            spinProstheticCount1Imp = new JSpinner(countModel1);
+
+            choProstheticType2Imp = new JComboBox<>();
+            populateProstheticDropdown(choProstheticType2Imp);
+            SpinnerNumberModel countModel2 = new SpinnerNumberModel(1, 1, 2, 1);
+            spinProstheticCount2Imp = new JSpinner(countModel2);
+
+            // Set initial values from entity
+            if ((infantry != null) && infantry.hasProstheticEnhancement1()) {
+                ProstheticEnhancementType type1 = infantry.getProstheticEnhancement1();
+                String itemText = type1.getCategory().getDisplayName() + ": " + type1.getDisplayName();
+                choProstheticType1Imp.setSelectedItem(itemText);
+                spinProstheticCount1Imp.setValue(infantry.getProstheticEnhancement1Count());
+            } else {
+                choProstheticType1Imp.setSelectedIndex(0);
+                spinProstheticCount1Imp.setValue(1);
+            }
+
+            if ((infantry != null) && infantry.hasProstheticEnhancement2()) {
                 ProstheticEnhancementType type2 = infantry.getProstheticEnhancement2();
                 String itemText = type2.getCategory().getDisplayName() + ": " + type2.getDisplayName();
-                choProstheticType2.setSelectedItem(itemText);
-                spinProstheticCount2.setValue(infantry.getProstheticEnhancement2Count());
+                choProstheticType2Imp.setSelectedItem(itemText);
+                spinProstheticCount2Imp.setValue(infantry.getProstheticEnhancement2Count());
             } else {
-                choProstheticType2.setSelectedIndex(0);
-                spinProstheticCount2.setValue(1);
+                choProstheticType2Imp.setSelectedIndex(0);
+                spinProstheticCount2Imp.setValue(1);
             }
+
+            // Enable/disable spinners based on dropdown selection
+            spinProstheticCount1Imp.setEnabled(choProstheticType1Imp.getSelectedIndex() > 0);
+            choProstheticType1Imp.addItemListener(e -> {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    spinProstheticCount1Imp.setEnabled(choProstheticType1Imp.getSelectedIndex() > 0);
+                }
+            });
+
+            spinProstheticCount2Imp.setEnabled(choProstheticType2Imp.getSelectedIndex() > 0);
+            choProstheticType2Imp.addItemListener(e -> {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    spinProstheticCount2Imp.setEnabled(choProstheticType2Imp.getSelectedIndex() > 0);
+                }
+            });
+
+            // Set tooltips
+            choProstheticType1Imp.setToolTipText(typeTooltip);
+            spinProstheticCount1Imp.setToolTipText(countTooltip);
+            choProstheticType2Imp.setToolTipText(typeTooltip);
+            spinProstheticCount2Imp.setToolTipText(countTooltip);
+
+            // Add controls inline
+            optionComp.add(choProstheticType1Imp);
+            optionComp.add(spinProstheticCount1Imp);
+            optionComp.add(choProstheticType2Imp);
+            optionComp.add(spinProstheticCount2Imp);
+
+            // Disable if not editable
+            if (!editable) {
+                choProstheticType1Imp.setEnabled(false);
+                spinProstheticCount1Imp.setEnabled(false);
+                choProstheticType2Imp.setEnabled(false);
+                spinProstheticCount2Imp.setEnabled(false);
+            }
+
+            // Set initial visibility based on current checkbox state
+            boolean isChecked = entity.hasAbility(OptionsConstants.MD_PL_I_ENHANCED);
+            choProstheticType1Imp.setVisible(isChecked);
+            spinProstheticCount1Imp.setVisible(isChecked);
+            choProstheticType2Imp.setVisible(isChecked);
+            spinProstheticCount2Imp.setVisible(isChecked);
         }
-
-        // Enable/disable count spinners based on type selection
-        spinProstheticCount1.setEnabled(choProstheticType1.getSelectedIndex() > 0);
-        choProstheticType1.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                spinProstheticCount1.setEnabled(choProstheticType1.getSelectedIndex() > 0);
-            }
-        });
-
-        spinProstheticCount2.setEnabled(choProstheticType2.getSelectedIndex() > 0);
-        choProstheticType2.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                spinProstheticCount2.setEnabled(choProstheticType2.getSelectedIndex() > 0);
-            }
-        });
-
-        // Add header
-        JLabel headerLabel = new JLabel(Messages.getString("CustomMekDialog.ProstheticEnhancementHeader"));
-        panProstheticEnhancement.add(headerLabel, GBC.eol());
-
-        // Add slot 1 components
-        panProstheticEnhancement.add(labProstheticType1, GBC.std());
-        panProstheticEnhancement.add(choProstheticType1, GBC.eol());
-        panProstheticEnhancement.add(labProstheticCount1, GBC.std());
-        panProstheticEnhancement.add(spinProstheticCount1, GBC.eol());
-
-        // Add slot 2 components
-        panProstheticEnhancement.add(labProstheticType2, GBC.std());
-        panProstheticEnhancement.add(choProstheticType2, GBC.eol());
-        panProstheticEnhancement.add(labProstheticCount2, GBC.std());
-        panProstheticEnhancement.add(spinProstheticCount2, GBC.eol());
-
-        // Set tooltips
-        String typeTooltip = Messages.getString("CustomMekDialog.ProstheticTypeTooltip");
-        labProstheticType1.setToolTipText(typeTooltip);
-        choProstheticType1.setToolTipText(typeTooltip);
-        labProstheticType2.setToolTipText(typeTooltip);
-        choProstheticType2.setToolTipText(typeTooltip);
-
-        String countTooltip = Messages.getString("CustomMekDialog.ProstheticCountTooltip");
-        labProstheticCount1.setToolTipText(countTooltip);
-        spinProstheticCount1.setToolTipText(countTooltip);
-        labProstheticCount2.setToolTipText(countTooltip);
-        spinProstheticCount2.setToolTipText(countTooltip);
-
-        // Disable if not editable
-        if (!editable) {
-            choProstheticType1.setEnabled(false);
-            spinProstheticCount1.setEnabled(false);
-            choProstheticType2.setEnabled(false);
-            spinProstheticCount2.setEnabled(false);
-        }
-
-        // Update visibility based on current pilot options
-        updateProstheticSlotVisibility();
     }
 
     /**
@@ -618,72 +650,60 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     /**
-     * Updates the visibility of prosthetic enhancement slots based on pilot options. Slot 1: Visible when
-     * MD_PL_ENHANCED or MD_PL_IENHANCED is selected Slot 2: Only visible when MD_PL_IENHANCED is selected
+     * Updates the visibility of inline prosthetic enhancement controls when checkbox state changes.
+     *
+     * @param optionName The option that was toggled (MD_PL_ENHANCED or MD_PL_I_ENHANCED)
+     * @param isChecked Whether the checkbox is now checked
      */
-    private void updateProstheticSlotVisibility() {
-        if (panProstheticEnhancement == null) {
-            return;
-        }
-
-        boolean hasEnhanced = false;
-        boolean hasImprovedEnhanced = false;
-
-        // Check current state of the pilot option checkboxes if available
-        boolean foundInUI = false;
-        for (DialogOptionComponentYPanel comp : optionComps) {
-            if (comp.getOption().getName().equals(OptionsConstants.MD_PL_ENHANCED)) {
-                hasEnhanced = (Boolean) comp.getValue();
-                foundInUI = true;
-            } else if (comp.getOption().getName().equals(OptionsConstants.MD_PL_I_ENHANCED)) {
-                hasImprovedEnhanced = (Boolean) comp.getValue();
-                foundInUI = true;
+    private void updateInlineProstheticVisibility(String optionName, boolean isChecked) {
+        if (OptionsConstants.MD_PL_ENHANCED.equals(optionName)) {
+            // Standard Enhanced uses its own slot 1 controls
+            if (choProstheticTypeStd != null) {
+                choProstheticTypeStd.setVisible(isChecked);
+                spinProstheticCountStd.setVisible(isChecked);
+            }
+        } else if (OptionsConstants.MD_PL_I_ENHANCED.equals(optionName)) {
+            // Improved Enhanced uses its own slot 1 and slot 2 controls
+            if (choProstheticType1Imp != null) {
+                choProstheticType1Imp.setVisible(isChecked);
+                spinProstheticCount1Imp.setVisible(isChecked);
+            }
+            if (choProstheticType2Imp != null) {
+                choProstheticType2Imp.setVisible(isChecked);
+                spinProstheticCount2Imp.setVisible(isChecked);
             }
         }
-
-        // Fallback to entity's actual abilities if UI components not yet populated
-        if (!foundInUI && !entities.isEmpty()) {
-            Entity entity = entities.get(0);
-            hasEnhanced = entity.hasAbility(OptionsConstants.MD_PL_ENHANCED);
-            hasImprovedEnhanced = entity.hasAbility(OptionsConstants.MD_PL_I_ENHANCED);
-        }
-
-        boolean showSlot1 = hasEnhanced || hasImprovedEnhanced;
-        boolean showSlot2 = hasImprovedEnhanced;
-
-        // Update slot 1 visibility
-        labProstheticType1.setVisible(showSlot1);
-        choProstheticType1.setVisible(showSlot1);
-        labProstheticCount1.setVisible(showSlot1);
-        spinProstheticCount1.setVisible(showSlot1);
-
-        // Update slot 2 visibility
-        labProstheticType2.setVisible(showSlot2);
-        choProstheticType2.setVisible(showSlot2);
-        labProstheticCount2.setVisible(showSlot2);
-        spinProstheticCount2.setVisible(showSlot2);
-
-        // Hide entire panel if neither option is selected
-        panProstheticEnhancement.setVisible(showSlot1 || showSlot2);
     }
 
     /**
      * Applies prosthetic enhancement settings from the UI to the entity.
+     * Reads from the controls of whichever prosthetic option (Standard or Improved) is currently selected.
      */
     private void applyProstheticEnhancement(Entity entity) {
         if (!(entity instanceof Infantry infantry)) {
             return;
         }
 
-        // Apply slot 1
-        applyProstheticSlot(infantry, choProstheticType1, spinProstheticCount1, true);
-
-        // Apply slot 2 (only if Improved Enhanced)
+        // Check which prosthetic option is selected (they are mutually exclusive)
+        boolean hasStandardEnhanced = entity.hasAbility(OptionsConstants.MD_PL_ENHANCED);
         boolean hasImprovedEnhanced = entity.hasAbility(OptionsConstants.MD_PL_I_ENHANCED);
-        if (hasImprovedEnhanced) {
-            applyProstheticSlot(infantry, choProstheticType2, spinProstheticCount2, false);
+
+        if (hasStandardEnhanced && (choProstheticTypeStd != null)) {
+            // Standard Enhanced: Apply slot 1 from Standard controls
+            applyProstheticSlot(infantry, choProstheticTypeStd, spinProstheticCountStd, true);
+            // Clear slot 2 (not used by Standard Enhanced)
+            infantry.setProstheticEnhancement2(null);
+            infantry.setProstheticEnhancement2Count(0);
+        } else if (hasImprovedEnhanced && (choProstheticType1Imp != null)) {
+            // Improved Enhanced: Apply slot 1 and slot 2 from Improved controls
+            applyProstheticSlot(infantry, choProstheticType1Imp, spinProstheticCount1Imp, true);
+            if (choProstheticType2Imp != null) {
+                applyProstheticSlot(infantry, choProstheticType2Imp, spinProstheticCount2Imp, false);
+            }
         } else {
-            // Clear slot 2 if not using Improved Enhanced
+            // Neither option selected - clear both slots
+            infantry.setProstheticEnhancement1(null);
+            infantry.setProstheticEnhancement1Count(0);
             infantry.setProstheticEnhancement2(null);
             infantry.setProstheticEnhancement2Count(0);
         }
@@ -754,10 +774,10 @@ public class CustomMekDialog extends AbstractButtonDialog
             deselectOption(OptionsConstants.MD_PL_ENHANCED);
         }
 
-        // Update prosthetic enhancement slot visibility when Enhanced/Improved Enhanced is toggled
+        // Update prosthetic enhancement inline control visibility when Enhanced/Improved Enhanced is toggled
         if (option.getName().equals(OptionsConstants.MD_PL_ENHANCED)
               || option.getName().equals(OptionsConstants.MD_PL_I_ENHANCED)) {
-            updateProstheticSlotVisibility();
+            updateInlineProstheticVisibility(option.getName(), state);
         }
 
         // Gas Effuser (Pheromone/Toxin) is only for Conventional Infantry (IO pg 79)
@@ -1393,7 +1413,7 @@ public class CustomMekDialog extends AbstractButtonDialog
             m_equip.applyChoices();
 
             // Apply prosthetic enhancement for conventional infantry
-            if (entity.isConventionalInfantry() && panProstheticEnhancement != null) {
+            if (entity.isConventionalInfantry()) {
                 applyProstheticEnhancement(entity);
             }
 
@@ -1769,12 +1789,6 @@ public class CustomMekDialog extends AbstractButtonDialog
         chCommander.setSelected(entity.isCommander());
         panOptions = new JPanel(new GridBagLayout());
         panCrew.add(panOptions, GBC.eop());
-
-        // Prosthetic Enhancement panel for conventional infantry (IO p.84)
-        if (entity.isConventionalInfantry() && gameOptions().booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) {
-            setupProstheticEnhancementPanel(entity);
-            panCrew.add(panProstheticEnhancement, GBC.eop());
-        }
 
         // **DEPLOYMENT TAB**//
 

@@ -135,9 +135,12 @@ public class InfantryWeaponHandler extends WeaponHandler {
 
         // Prosthetic Enhancement damage bonus at range 0 (IO p.84)
         // Must check each slot separately for conventionalInfantryOnly
+        // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
         double prostheticBonusDamage = 0;
         if ((attackingEntity instanceof Infantry infantry) && (nRange == 0)
-              && infantry.hasProstheticEnhancement()) {
+              && infantry.hasProstheticEnhancement()
+              && (infantry.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+              || infantry.hasAbility(OptionsConstants.MD_PL_I_ENHANCED))) {
             boolean targetIsConventionalInfantry = target.isConventionalInfantry();
 
             // Check slot 1
@@ -211,8 +214,21 @@ public class InfantryWeaponHandler extends WeaponHandler {
         r.newlines = 0;
         vPhaseReport.addElement(r);
 
-        // Report TSM Implant bonus damage
-        if (tsmDamageDealt > 0) {
+        // Report bonus damage breakdown (TSM and/or Prosthetic Enhancement)
+        // Only show one combined report to avoid confusion
+        if (tsmDamageDealt > 0 && prostheticDamageDealt > 0) {
+            // Both bonuses - show combined report
+            int baseDamageDealt = damageDealt - tsmDamageDealt - prostheticDamageDealt;
+            Report combinedReport = new Report(3421);
+            combinedReport.subject = subjectId;
+            combinedReport.indent(2);
+            combinedReport.add(baseDamageDealt);
+            combinedReport.add(tsmDamageDealt);
+            combinedReport.add(prostheticDamageDealt);
+            combinedReport.add(((Infantry) attackingEntity).getProstheticEnhancement1().getDisplayName());
+            vPhaseReport.addElement(combinedReport);
+        } else if (tsmDamageDealt > 0) {
+            // TSM only
             int baseDamageDealt = damageDealt - tsmDamageDealt;
             Report tsmReport = new Report(3418);
             tsmReport.subject = subjectId;
@@ -220,17 +236,15 @@ public class InfantryWeaponHandler extends WeaponHandler {
             tsmReport.add(baseDamageDealt);
             tsmReport.add(tsmDamageDealt);
             vPhaseReport.addElement(tsmReport);
-        }
-
-        // Report Prosthetic Enhancement bonus damage
-        if (prostheticDamageDealt > 0) {
-            int baseDamageDealt = damageDealt - prostheticDamageDealt - tsmDamageDealt;
+        } else if (prostheticDamageDealt > 0) {
+            // Prosthetic only
+            int baseDamageDealt = damageDealt - prostheticDamageDealt;
             Report prostheticReport = new Report(3419);
             prostheticReport.subject = subjectId;
             prostheticReport.indent(2);
             prostheticReport.add(baseDamageDealt);
             prostheticReport.add(prostheticDamageDealt);
-            prostheticReport.add(((Infantry) attackingEntity).getProstheticEnhancement().getDisplayName());
+            prostheticReport.add(((Infantry) attackingEntity).getProstheticEnhancement1().getDisplayName());
             vPhaseReport.addElement(prostheticReport);
         }
 

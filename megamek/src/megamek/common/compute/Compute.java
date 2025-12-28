@@ -5747,7 +5747,10 @@ public class Compute {
 
         // Prosthetic enhancement anti-Mek bonus (Grappler or Climbing Claws) - IO p.84
         // Uses the best (most negative) modifier from either enhancement slot
-        if (attacker.hasProstheticEnhancement()) {
+        // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
+        if (attacker.hasProstheticEnhancement()
+              && (attacker.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+              || attacker.hasAbility(OptionsConstants.MD_PL_I_ENHANCED))) {
             int antiMekMod = attacker.getBestProstheticAntiMekModifier();
             if (antiMekMod != 0) {
                 String modName = attacker.getBestProstheticAntiMekName();

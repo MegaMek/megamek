@@ -159,7 +159,10 @@ public class ComputeAttackerToHitMods {
 
         // Prosthetic enhancement melee weapons have +2 to-hit penalty (IO p.84)
         // Per IO p.83, maximum modifier is +2 regardless of number of melee enhancements
-        if ((attacker instanceof Infantry infantry) && infantry.hasProstheticMeleeEnhancement()) {
+        // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
+        if ((attacker instanceof Infantry infantry) && infantry.hasProstheticMeleeEnhancement()
+              && (infantry.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+              || infantry.hasAbility(OptionsConstants.MD_PL_I_ENHANCED))) {
             // Only apply at range 0 (same hex) when prosthetic is being used
             int range = attacker.getPosition() != null && target.getPosition() != null
                   ? attacker.getPosition().distance(target.getPosition()) : -1;

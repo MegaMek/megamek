@@ -42,6 +42,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
+import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
@@ -131,8 +132,40 @@ public class InfantryWeaponHandler extends WeaponHandler {
             tsmBonusDamage = 0.14;
             damage += tsmBonusDamage;
         }
+
+        // Prosthetic Enhancement damage bonus at range 0 (IO p.84)
+        // Must check each slot separately for conventionalInfantryOnly
+        double prostheticBonusDamage = 0;
+        if ((attackingEntity instanceof Infantry infantry) && (nRange == 0)
+              && infantry.hasProstheticEnhancement()) {
+            boolean targetIsConventionalInfantry = target.isConventionalInfantry();
+
+            // Check slot 1
+            if (infantry.hasProstheticEnhancement1()) {
+                ProstheticEnhancementType enhancement1 = infantry.getProstheticEnhancement1();
+                boolean damageApplies = !enhancement1.isConventionalInfantryOnly() || targetIsConventionalInfantry;
+                if (damageApplies && enhancement1.hasDamageBonus()) {
+                    prostheticBonusDamage += enhancement1.getDamagePerTrooper()
+                          * infantry.getProstheticEnhancement1Count();
+                }
+            }
+
+            // Check slot 2
+            if (infantry.hasProstheticEnhancement2()) {
+                ProstheticEnhancementType enhancement2 = infantry.getProstheticEnhancement2();
+                boolean damageApplies = !enhancement2.isConventionalInfantryOnly() || targetIsConventionalInfantry;
+                if (damageApplies && enhancement2.hasDamageBonus()) {
+                    prostheticBonusDamage += enhancement2.getDamagePerTrooper()
+                          * infantry.getProstheticEnhancement2Count();
+                }
+            }
+
+            damage += prostheticBonusDamage;
+        }
+
         int damageDealt = (int) Math.round(damage * troopersHit);
         int tsmDamageDealt = (int) Math.round(tsmBonusDamage * troopersHit);
+        int prostheticDamageDealt = (int) Math.round(prostheticBonusDamage * troopersHit);
 
         // beast-mounted infantry get range 0 bonus damage per platoon
         if ((attackingEntity instanceof Infantry) && (nRange == 0)) {
@@ -188,6 +221,19 @@ public class InfantryWeaponHandler extends WeaponHandler {
             tsmReport.add(tsmDamageDealt);
             vPhaseReport.addElement(tsmReport);
         }
+
+        // Report Prosthetic Enhancement bonus damage
+        if (prostheticDamageDealt > 0) {
+            int baseDamageDealt = damageDealt - prostheticDamageDealt - tsmDamageDealt;
+            Report prostheticReport = new Report(3419);
+            prostheticReport.subject = subjectId;
+            prostheticReport.indent(2);
+            prostheticReport.add(baseDamageDealt);
+            prostheticReport.add(prostheticDamageDealt);
+            prostheticReport.add(((Infantry) attackingEntity).getProstheticEnhancement().getDisplayName());
+            vPhaseReport.addElement(prostheticReport);
+        }
+
         if (target.isConventionalInfantry()) {
             // this is a little strange, but I can't just do this in calcDamagePerHit
             // because

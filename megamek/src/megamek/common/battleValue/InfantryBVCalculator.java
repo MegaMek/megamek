@@ -172,6 +172,17 @@ public class InfantryBVCalculator extends BVCalculator {
                   "= +" + formatForReport(tsmBonus));
         }
 
+        // Prosthetic Enhancement adds damage bonus per trooper to Offensive BV (IO p.84)
+        // Sum damage from both slots for BV calculation
+        double prostheticDamagePerTrooper = infantry.getProstheticDamageBonus();
+        if (prostheticDamagePerTrooper > 0) {
+            double prostheticBonus = troopers * prostheticDamagePerTrooper;
+            offensiveValue += prostheticBonus;
+            bvReport.addLine(Messages.getString("BV.ProstheticEnhancement"),
+                  troopers + " x " + formatForReport(prostheticDamagePerTrooper),
+                  "= +" + formatForReport(prostheticBonus));
+        }
+
         bvReport.startTentativeSection();
         bvReport.addLine("Field Guns:", "", "");
         Predicate<Mounted<?>> weaponFilter = m -> countAsOffensiveWeapon(m)

@@ -5745,9 +5745,14 @@ public class Compute {
             data.addModifier(-1, "exposed actuators");
         }
 
-        // MD Infantry with grappler/magnets get bonus
-        if (attacker.hasAbility(OptionsConstants.MD_PL_ENHANCED)) {
-            data.addModifier(-2, "MD Grapple/Magnet");
+        // Prosthetic enhancement anti-Mek bonus (Grappler or Climbing Claws) - IO p.84
+        // Uses the best (most negative) modifier from either enhancement slot
+        if (attacker.hasProstheticEnhancement()) {
+            int antiMekMod = attacker.getBestProstheticAntiMekModifier();
+            if (antiMekMod != 0) {
+                String modName = attacker.getBestProstheticAntiMekName();
+                data.addModifier(antiMekMod, modName != null ? modName : "Prosthetic Enhancement");
+            }
         }
 
         // swarm/leg attacks take target movement mods into account

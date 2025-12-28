@@ -56,6 +56,7 @@ public class BLKStructureFileTest {
     static final String FILENAME_SIMPLE_GUN_EMPLACEMENT_BUILDING_ENTITY = "Simple Gun Emplacement (Gauss).blk";
     static final String FILENAME_SIMPLE_LARGE_BUILDING_ENTITY = "Simple Large Building Entity.blk";
     static final String FILENAME_HARDENED_COMMAND_FORT = "Hardened Command Fort (Clan Invasion).blk";
+    static final String FILENAME_LIGHT_MISSILE_GE = "Light Missile Gun Emplacement 3039.blk";
 
     @BeforeAll
     static void initialize() {
@@ -102,16 +103,26 @@ public class BLKStructureFileTest {
                     15,
                     10,
                     7),
-              Arguments.of(FILENAME_HARDENED_COMMAND_FORT,
-                    "Hardened Command Fort",
-                    "(Clan Invasion)",
-                    3052,
-                    2,
-                    BuildingType.HARDENED,
-                    2,
-                    150,
-                    144,
-                    2));
+                Arguments.of(FILENAME_HARDENED_COMMAND_FORT,
+                        "Hardened Command Fort",
+                        "(Clan Invasion)",
+                        3052,
+                        2,
+                        BuildingType.HARDENED,
+                        2,
+                        150,
+                        144,
+                        2),
+                Arguments.of(FILENAME_LIGHT_MISSILE_GE,
+                        "Light Missile Gun Emplacement",
+                        "(3039)",
+                        3039,
+                        3,
+                        BuildingType.LIGHT,
+                        1,
+                        30,
+                        20,
+                        1));
     }
 
     @ParameterizedTest(name = "{1}")

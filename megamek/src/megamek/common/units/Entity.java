@@ -5577,6 +5577,24 @@ public abstract class Entity extends TurnOrdered
         return stateAppliesCount;
     }
 
+    /**
+     * What {@link Coords} is this weapon physically firing from?
+     * @param weapon {@link WeaponMounted}
+     * @return {@link Coords}
+     */
+    public Coords getWeaponFiringPosition(WeaponMounted weapon) {
+        return getPosition();
+    }
+
+    /**
+     * What height is this weapon physically firing from?
+     * @param weapon {@link WeaponMounted}
+     * @return int
+     */
+    public int getWeaponFiringHeight(WeaponMounted weapon) {
+        return getHeight();
+    }
+
     protected abstract int[] getNoOfSlots();
 
     /**

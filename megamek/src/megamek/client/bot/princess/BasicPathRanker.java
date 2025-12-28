@@ -1346,6 +1346,10 @@ public class BasicPathRanker extends PathRanker {
 
     private double checkHexForHazards(Hex hex, Entity movingUnit, boolean endHex, MoveStep step, boolean jumpLanding,
           MovePath movePath, Board board) {
+        // Building Entities are quirky, let's prefer an empty hex if the entity is one.
+        double hazardValue = 0;
+
+
         logger.trace("Checking Hex ({}) for hazards.", hex.getCoords());
         Set<Integer> hazards = getHazardTerrainIds(hex);
         // No hazards were found, so nothing to worry about.
@@ -1355,7 +1359,7 @@ public class BasicPathRanker extends PathRanker {
         }
 
         // Calculate hazard value by terrain type.
-        double hazardValue = 0;
+
         for (int hazard : hazards) {
             switch (hazard) {
                 case Terrains.FIRE:

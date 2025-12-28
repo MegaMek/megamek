@@ -48,9 +48,13 @@ import java.util.List;
 import megamek.client.Client;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.board.Coords;
+import megamek.common.board.CubeCoords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.BuildingType;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
@@ -62,15 +66,23 @@ import megamek.common.options.PilotOptions;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
+import megamek.common.units.BuildingEntity;
 import megamek.common.units.Crew;
+import megamek.common.units.Entity;
 import megamek.common.units.CrewType;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
+import megamek.common.weapons.lasers.innerSphere.medium.ISLaserMedium;
 import megamek.common.units.TripodMek;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
 
 class ComputeTest {
 
@@ -170,6 +182,30 @@ class ComputeTest {
         mockAeroSpaceFighter.setCrew(mockCrew);
 
         return mockAeroSpaceFighter;
+    }
+
+    BuildingEntity createBuildingEntity(String chassis, String model, String crewName) {
+        // Create a real BuildingEntity unit with some mocked fields
+        BuildingEntity buildingEntity = new BuildingEntity(BuildingType.HARDENED, 2);
+        buildingEntity.setGame(game);
+        buildingEntity.setChassis(chassis);
+        buildingEntity.setModel(model);
+
+        buildingEntity.getInternalBuilding().setBuildingHeight(3);
+        buildingEntity.getInternalBuilding().addHex(CubeCoords.ZERO, 60, 15, null, false);
+        buildingEntity.getInternalBuilding().addHex(new CubeCoords(-1.0, 0, 1.0), 60, 15, null, false);
+        buildingEntity.getInternalBuilding().addHex(new CubeCoords(1.0, -1.0, 0), 60, 15, null, false);
+        buildingEntity.refreshLocations();
+        buildingEntity.refreshAdditionalLocations();
+
+        Crew mockCrew = mock(Crew.class);
+        PilotOptions pOpt = new PilotOptions();
+        when(mockCrew.getName(anyInt())).thenCallRealMethod();
+        when(mockCrew.getNames()).thenReturn(new String[] { crewName });
+        when(mockCrew.getOptions()).thenReturn(pOpt);
+        buildingEntity.setCrew(mockCrew);
+
+        return buildingEntity;
     }
 
     @Test
@@ -682,5 +718,169 @@ class ComputeTest {
         assertEquals(TargetRoll.IMPOSSIBLE,
               mods.getValue(),
               "Right leg-mounted weapon should be impossible to fire when prone");
+    }
+
+    /**
+     * Tests for {@link Compute#getRangeMods(Game, megamek.common.units.Entity, WeaponMounted, AmmoMounted, megamek.common.units.Targetable)}
+     */
+    @Nested
+    @DisplayName(value = "getRangeMods Tests")
+    class ComputeTestGetRangeMods extends GameBoardTestCase {
+
+        private Entity attacker;
+        private Targetable target;
+        private WeaponMounted smallLaser;
+        private static WeaponType smallLaserType;
+        private static WeaponType mediumLaserType;
+
+        static {
+            initializeBoard("01_BY_05_NO_OBSTRUCTIONS", """
+                  size 1 5
+                  hex 0101 0 "" ""
+                  hex 0102 0 "" ""
+                  hex 0103 0 "" ""
+                  hex 0104 0 "" ""
+                  hex 0105 0 "" ""
+                  end"""
+            );
+
+            initializeBoard("03_BY_05_CENTER_HILLS", """
+                  size 3 5
+                  hex 0101 0 "" ""
+                  hex 0201 0 "" ""
+                  hex 0301 0 "" ""
+                  hex 0102 0 "" ""
+                  hex 0202 0 "" ""
+                  hex 0302 0 "" ""
+                  hex 0103 1 "" ""
+                  hex 0203 4 "" ""
+                  hex 0303 2 "" ""
+                  hex 0104 0 "" ""
+                  hex 0204 0 "" ""
+                  hex 0304 0 "" ""
+                  hex 0105 0 "" ""
+                  hex 0205 0 "" ""
+                  hex 0305 0 "" ""
+                  end""");
+
+            // IS Small Laser: Short 0-1, Medium 2, Long 3
+            smallLaserType = (WeaponType) EquipmentType.get("ISSmallLaser");
+
+            mediumLaserType = (WeaponType) EquipmentType.get("ISMediumLaser");
+        }
+
+        @Nested
+        class ComputeTestGetRangeMods_SimpleTestCases {
+
+            @BeforeEach
+            void beforeEach () throws LocationFullException {
+                setBoard("01_BY_05_NO_OBSTRUCTIONS");
+
+                // Create attacker with IS Small Laser (position will vary per test)
+                attacker = createMek("Attacker", "ATK-1", "Alice");
+                attacker.setOwnerId(player1.getId());
+                attacker.setId(1);
+
+                // Add IS Small Laser (no ammo needed for energy weapons)
+                smallLaser = (WeaponMounted) attacker.addEquipment(smallLaserType, Mek.LOC_RIGHT_TORSO);
+
+                // Create target at fixed position (0, 0)
+                Entity targetEntity = createMek("Target", "TGT-2", "Bob");
+                targetEntity.setOwnerId(player2.getId());
+                targetEntity.setId(2);
+                targetEntity.setPosition(new Coords(0, 0));
+
+                target = targetEntity;
+
+                game.addEntity(attacker);
+                game.addEntity(targetEntity);
+            }
+
+            @Test
+            @DisplayName(value = "should return 0 modifier at short range (1 hex)")
+            void shouldReturn0Modifier_AtShortRange () {
+                // Arrange - Small Laser short range is 0-1 hexes
+                attacker.setPosition(new Coords(0, 1)); // 1 hex away from target at (0,0)
+
+                // Act
+                ToHitData result = Compute.getRangeMods(game, attacker, smallLaser, null, target);
+
+                // Assert
+                assertEquals(0, result.getValue(), "Should have 0 range modifier at short range (1 hex)");
+            }
+
+            @Test
+            @DisplayName(value = "should return +2 modifier at medium range (2 hexes)")
+            void shouldReturn2Modifier_AtMediumRange () {
+                // Arrange - Small Laser medium range is 2 hexes
+                attacker.setPosition(new Coords(0, 2)); // 2 hexes away from target at (0,0)
+
+                // Act
+                ToHitData result = Compute.getRangeMods(game, attacker, smallLaser, null, target);
+
+                // Assert
+                assertEquals(2, result.getValue(), "Should have +2 range modifier at medium range (2 hexes)");
+            }
+
+            @Test
+            @DisplayName(value = "should return +4 modifier at long range (4 hexes)")
+            void shouldReturn4Modifier_AtLongRange () {
+                // Arrange - Small Laser long range is 3 hexes
+                attacker.setPosition(new Coords(0, 3)); // 3 hexes away from target at (0,0)
+
+                // Act
+                ToHitData result = Compute.getRangeMods(game, attacker, smallLaser, null, target);
+
+                // Assert
+                assertEquals(4, result.getValue(), "Should have +4 range modifier at long range (3 hexes)");
+            }
+        }
+
+        @Nested
+        class ComputeTestGetRangeMods_AbstractBuildingEntityTestCases {
+            Entity targetEntity;
+
+            @BeforeEach
+            void beforeEach() {
+                setBoard("03_BY_05_CENTER_HILLS");
+
+                // Create attacker with IS Medium Laser
+                attacker = createBuildingEntity("Attacker", "ATK-1", "Alice");
+                attacker.setOwnerId(player1.getId());
+                attacker.setId(1);
+                attacker.setPosition(new Coords(1, 4));
+
+                // Add IS Small Laser (no ammo needed for energy weapons)
+                //smallLaser = (WeaponMounted) attacker.addEquipment(smallLaserType, Mek.LOC_RIGHT_TORSO);
+
+                // Create target
+                targetEntity = createMek("Target", "TGT-2", "Bob");
+                targetEntity.setOwnerId(player2.getId());
+                targetEntity.setId(2);
+                targetEntity.setPosition(new Coords(1, 0));
+
+                target = targetEntity;
+
+
+                game.addEntity(attacker);
+                game.addEntity(targetEntity);
+            }
+
+            @Test
+            @Disabled
+            void getRangeModsTargetBehind2LevelHill() throws LocationFullException {
+                // Arrange
+                targetEntity.setPosition(new Coords(1, 2));
+                WeaponMounted mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType, 0);
+                mediumLaser.setFacing(0);
+
+                // Act
+                ToHitData result = Compute.getRangeMods(game, attacker, mediumLaser, null, target);
+
+
+                // Assert
+                assertEquals(4, result.getValue(), "Should have +4 range modifier at long range (3 hexes)");
+            }
+        }
     }
 }

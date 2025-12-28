@@ -36,6 +36,7 @@ package megamek.common.loaders;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
+import megamek.common.equipment.Engine;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Building;
 import megamek.common.units.BuildingEntity;
@@ -69,6 +70,8 @@ public class BLKStructureFile extends BLKFile implements IMekLoader {
         AbstractBuildingEntity be = new BuildingEntity(buildingType, buildingClass);
         setBasicEntityData(be);
 
+        // Buildings don't use engines.
+        be.setEngine(new Engine(0, Engine.NONE, 0));
 
         if (!dataFile.exists("height")) {
             throw new EntityLoadingException("Could not find height block.");
@@ -115,9 +118,9 @@ public class BLKStructureFile extends BLKFile implements IMekLoader {
             int height = be.getInternalBuilding().getBuildingHeight();
             for (int floor = 0; floor < height; floor++) {
                 int loc = floor + (index * height);
-                // The entity doesn't use entity armor/internal
-                be.initializeInternal(1, loc);
-                be.initializeArmor(0, loc);
+                // Armor & internal are set but only used to display to the user
+                be.initializeInternal(cf, loc);
+                be.initializeArmor(armor, loc);
 
                 String equipmentBlockName = be.getLocationName(loc);
                 loadEquipment(be, equipmentBlockName, loc);

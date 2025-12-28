@@ -345,53 +345,9 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             }
         }
 
-        // If deploying a AbstractBuildingEntity, add building terrain to all hexes it occupies
-        if (entity instanceof AbstractBuildingEntity abstractBuildingEntity) {
-            Board board = getGame().getBoard(boardId);
-            for (Coords buildingCoords : abstractBuildingEntity.getCoordsList()) {
-                Hex targetHex = board.getHex(buildingCoords);
-                if (targetHex != null) {
-                    // Add building terrain with the building type
-                    targetHex.addTerrain(new Terrain(Terrains.BUILDING,
-                          abstractBuildingEntity.getBuildingType().getTypeValue()));
-
-                    // Add building class
-                    targetHex.addTerrain(new Terrain(Terrains.BLDG_CLASS, abstractBuildingEntity.getBldgClass()));
-
-                    // Add CF value
-                    int cf = abstractBuildingEntity.getCurrentCF(buildingCoords);
-                    targetHex.addTerrain(new Terrain(Terrains.BLDG_CF, cf));
-
-                    // Add armor if present
-                    int armor = abstractBuildingEntity.getArmor(buildingCoords);
-                    if (armor > 0) {
-                        targetHex.addTerrain(new Terrain(Terrains.BLDG_ARMOR, armor));
-                    }
-
-                    // Add height (BLDG_ELEV)
-                    int height = abstractBuildingEntity.getHeight(buildingCoords);
-                    targetHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, height));
-
-                    // Add basement type if present
-                    if (abstractBuildingEntity.getBasement(buildingCoords) != null) {
-                        targetHex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE,
-                              abstractBuildingEntity.getBasement(buildingCoords).ordinal()));
-                    }
-                }
-            }
-
-            board.addBuildingToBoard(abstractBuildingEntity);
-
-            gameManager.sendNewBuildings(new Vector<IBuilding>(List.of(abstractBuildingEntity)));
-
-            // Do this as a separate loop - All building terrains need added before we can initialize building exits
-            for (Coords buildingCoords : abstractBuildingEntity.getCoordsList()) {
-                // Set up building exits to adjacent hexes with matching building type and class
-                initializeBuildingExits(buildingCoords, boardId);
-
-                // Notify clients of hex changes
-                gameManager.sendChangedHex(buildingCoords, boardId);
-            }
+        // If deploying a BuildingEntity, add building terrain to all hexes it occupies
+        if (entity instanceof AbstractBuildingEntity buildingEntity) {
+            buildingEntity.updateBuildingEntityHexes(boardId, gameManager);
         }
 
         entity.setDone(true);
@@ -400,50 +356,5 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         addReport(gameManager.doSetLocationsExposure(entity, hex, false, entity.getElevation()));
     }
 
-    /**
-     * Initializes building exits for a hex containing building terrain. This ensures that
-     * building hexes properly connect to adjacent building hexes with matching building type
-     * and building class.
-     *
-     * @param buildingCoords the coordinates of the building hex
-     * @param boardId the board ID where the building is located
-     */
-    private void initializeBuildingExits(Coords buildingCoords, int boardId) {
-        Hex hex = getGame().getBoard(boardId).getHex(buildingCoords);
-        if (hex == null || !hex.containsTerrain(Terrains.BUILDING)) {
-            return;
-        }
 
-        Terrain buildingTerrain = hex.getTerrain(Terrains.BUILDING);
-        if (buildingTerrain == null) {
-            return;
-        }
-
-        // Check each of the 6 directions
-        for (int direction = 0; direction < 6; direction++) {
-            Coords adjacentCoords = buildingCoords.translated(direction);
-            Hex adjacentHex = getGame().getBoard(boardId).getHex(adjacentCoords);
-
-            if (adjacentHex != null && adjacentHex.containsTerrain(Terrains.BUILDING)) {
-                Terrain adjacentBuilding = adjacentHex.getTerrain(Terrains.BUILDING);
-
-                // Buildings connect if they have the same building type (level)
-                // and the same building class
-                boolean sameType = (buildingTerrain.getLevel() == adjacentBuilding.getLevel());
-                boolean sameClass = (hex.terrainLevel(Terrains.BLDG_CLASS) == adjacentHex.terrainLevel(Terrains.BLDG_CLASS));
-
-                // Gun emplacements never connect (single hex buildings)
-                boolean isGunEmplacement = (hex.terrainLevel(Terrains.BLDG_CLASS) == IBuilding.GUN_EMPLACEMENT);
-
-                if (sameType && sameClass && !isGunEmplacement) {
-                    buildingTerrain.setExit(direction, true);
-                } else {
-                    buildingTerrain.setExit(direction, false);
-                }
-            } else {
-                // No building adjacent in this direction
-                buildingTerrain.setExit(direction, false);
-            }
-        }
-    }
 }

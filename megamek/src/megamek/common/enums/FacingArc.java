@@ -95,7 +95,14 @@ public enum FacingArc {
     ARC_RIGHT_SIDE_AFT_SPHERE_WPL(46, 0, 240, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
     ARC_AFT_WPL(47, 60, 300, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
     ARC_LEFT_BROADSIDE_WPL(48, 180, 360, arc -> ((arc.target() > arc.start()) && (arc.target() <= arc.end()))),
-    ARC_RIGHT_BROADSIDE_WPL(49, 0, 180, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end())));
+    ARC_RIGHT_BROADSIDE_WPL(49, 0, 180, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
+
+    // Some additional arcs for buildings!
+    ARC_BLDG_FR(50, 0, 120, arc -> ((arc.target() >= arc.start()) && (arc.target() <= arc.end()))),
+    ARC_BLDG_RR(51, 60, 180, arc -> ((arc.target() >= arc.start()) && (arc.target() <= arc.end()))),
+    ARC_BLDG_R(52, 120, 240, arc -> ((arc.target() >= arc.start()) && (arc.target() <= arc.end()))),
+    ARC_BLDG_RL(53, 180, 300, arc -> ((arc.target() >= arc.start()) && (arc.target() <= arc.end()))),
+    ARC_BLDG_FL(54, 240, 0, arc -> ((arc.target() >= arc.start()) || (arc.target() <= arc.end())));
 
     private final int arcCode;
     private final int startAngle;

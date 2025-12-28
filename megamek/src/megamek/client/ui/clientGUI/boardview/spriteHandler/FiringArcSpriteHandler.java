@@ -124,11 +124,11 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
             isUnderWater = testUnderWater(movePath);
             updateFacing(weapon, movePath.getFinalFacing());
         } else {
-            firingPosition = entity.getPosition();
+            firingPosition = entity.getWeaponFiringPosition(weapon);
             isUnderWater = testUnderWater();
             updateFacing(weapon);
         }
-        firingPosition = (movePath != null) ? movePath.getFinalCoords() : entity.getPosition();
+        firingPosition = (movePath != null) ? movePath.getFinalCoords() : entity.getWeaponFiringPosition(weapon);
         arc = firingEntity.getWeaponArc(weaponId);
         isCapOrSCap = weapon.getType().isCapital() || weapon.getType().isSubCapital();
 

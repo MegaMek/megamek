@@ -1681,8 +1681,7 @@ public class TWDamageManager implements IDamageManager {
                                         ((ammoExplosion && !autoEject) || areaSatArty))) {
                                 entity.getCrew().setDoomed(true);
                             }
-                            if (game.getOptions()
-                                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
+                            if (manager.shouldAutoEjectOnDestruction()) {
                                 reportVec.addAll(manager.abandonEntity(entity));
                             }
                         }
@@ -1854,8 +1853,7 @@ public class TWDamageManager implements IDamageManager {
                     if (!engineExploded && (numEngineHits >= hitsToDestroy)) {
                         // third engine hit
                         reportVec.addAll(manager.destroyEntity(entity, "engine destruction"));
-                        if (game.getOptions()
-                              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
+                        if (manager.shouldAutoEjectOnDestruction()) {
                             reportVec.addAll(manager.abandonEntity(entity));
                         }
                         entity.setSelfDestructing(false);

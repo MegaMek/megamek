@@ -212,7 +212,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 return;
             }
         }
-
         if (md.contains(MoveStepType.CAREFUL_STAND)) {
             entity.setCarefulStand(true);
         }

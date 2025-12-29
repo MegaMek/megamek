@@ -403,6 +403,18 @@ public abstract class Entity extends TurnOrdered
     protected boolean selfDestructedThisTurn = false;
 
     /**
+     * Indicates this unit has announced abandonment during the End Phase. The crew will exit during the End Phase of
+     * the following turn (TacOps:AR p.165). Only applies to Meks - vehicles abandon immediately.
+     */
+    protected boolean pendingAbandon = false;
+
+    /**
+     * The round number when abandonment was announced. Used to ensure execution happens in a subsequent round, not the
+     * same round.
+     */
+    protected int abandonmentAnnouncedRound = -1;
+
+    /**
      * True when the entity has an undestroyed searchlight that is neither a Quirk searchlight nor a mounted (0.5t /
      * 1slot) searchlight.
      */
@@ -1940,7 +1952,7 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean isSelectableThisTurn() {
         return !done && (conveyance == Entity.NONE) && !unloadedThisTurn && !isClearingMinefield() && !isCarcass()
-              && (isSpaceborneInSpaceTurn() || isNonSpaceborneInNonSpaceTurn());
+              && !isAbandoned() && (isSpaceborneInSpaceTurn() || isNonSpaceborneInNonSpaceTurn());
     }
 
     private boolean isSpaceborneInSpaceTurn() {
@@ -10512,6 +10524,11 @@ public abstract class Entity extends TurnOrdered
      * full-round physical attack or sprinting.
      */
     public boolean isEligibleForFiring() {
+        // Meks with pending abandonment cannot take any actions (TacOps:AR p.165)
+        if (isPendingAbandon()) {
+            return false;
+        }
+
         // if you're charging, no shooting
         // PLAYTEST3 unjamming RAC you can still shoot
         if ((isUnjammingRAC() && !gameOptions().booleanOption(OptionsConstants.PLAYTEST_3))
@@ -10549,6 +10566,11 @@ public abstract class Entity extends TurnOrdered
      * @return whether the entity is allowed to move
      */
     public boolean isEligibleForMovement() {
+        // Meks with pending abandonment cannot take any actions (TacOps:AR p.165)
+        if (isPendingAbandon()) {
+            return false;
+        }
+
         // check if entity is off board
         if (isOffBoard() || (isAssaultDropInProgress() && !(movementMode == EntityMovementMode.WIGE))) {
             return false;
@@ -10576,6 +10598,10 @@ public abstract class Entity extends TurnOrdered
     }
 
     public boolean isEligibleForOffboard() {
+        // Meks with pending abandonment cannot take any actions (TacOps:AR p.165)
+        if (isPendingAbandon()) {
+            return false;
+        }
 
         // if you're charging, no shooting
         // PLAYTEST3 Unjamming RAC no longer prevents this
@@ -10612,6 +10638,11 @@ public abstract class Entity extends TurnOrdered
      * Check if the entity has any valid targets for physical attacks.
      */
     public boolean isEligibleForPhysical() {
+        // Meks with pending abandonment cannot take any actions (TacOps:AR p.165)
+        if (isPendingAbandon()) {
+            return false;
+        }
+
         boolean canHit = false;
         boolean friendlyFire = gameOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
@@ -11999,6 +12030,16 @@ public abstract class Entity extends TurnOrdered
      */
     public void setCarcass(boolean carcass) {
         this.carcass = carcass;
+    }
+
+    /**
+     * Returns true if this unit has been abandoned (crew ejected but unit not destroyed).
+     * Base implementation returns false; subclasses like Mek override this.
+     *
+     * @return true if abandoned, false otherwise
+     */
+    public boolean isAbandoned() {
+        return false;
     }
 
     /**
@@ -14651,6 +14692,47 @@ public abstract class Entity extends TurnOrdered
 
     public void setSelfDestructedThisTurn(boolean tf) {
         selfDestructedThisTurn = tf;
+    }
+
+    /**
+     * Returns true if this unit has announced abandonment and is waiting
+     * for the crew to exit during the next End Phase.
+     *
+     * @return true if abandonment is pending
+     */
+    public boolean isPendingAbandon() {
+        return pendingAbandon;
+    }
+
+    /**
+     * Sets whether this unit has announced abandonment. Used during End Phase processing to track two-phase abandonment
+     * for Meks.
+     *
+     * @param pendingAbandon true if abandonment has been announced
+     */
+    public void setPendingAbandon(boolean pendingAbandon) {
+        this.pendingAbandon = pendingAbandon;
+        if (!pendingAbandon) {
+            this.abandonmentAnnouncedRound = -1;
+        }
+    }
+
+    /**
+     * Returns the round number when abandonment was announced.
+     *
+     * @return the round number, or -1 if not announced
+     */
+    public int getAbandonmentAnnouncedRound() {
+        return abandonmentAnnouncedRound;
+    }
+
+    /**
+     * Sets the round number when abandonment was announced.
+     *
+     * @param round the round number
+     */
+    public void setAbandonmentAnnouncedRound(int round) {
+        this.abandonmentAnnouncedRound = round;
     }
 
     public void setIsJumpingNow(boolean jumped) {

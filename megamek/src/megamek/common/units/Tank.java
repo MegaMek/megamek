@@ -3052,4 +3052,43 @@ public class Tank extends Entity {
     public boolean canPerformGroundSalvageOperations() {
         return true;
     }
+
+    /**
+     * Returns true if this vehicle can be abandoned by its crew. Per TacOps, vehicles can be abandoned during the End
+     * Phase. Requires both the abandon option and TacOps vehicle crews option.
+     *
+     * @return true if this vehicle can be abandoned
+     */
+    public boolean canAbandon() {
+        // Must have a living crew that hasn't already ejected
+        if (getCrew() == null || getCrew().isEjected() || getCrew().isDead()) {
+            return false;
+        }
+
+        // Can't abandon if already pending abandonment
+        if (isPendingAbandon()) {
+            return false;
+        }
+
+        if (game == null) {
+            return false;
+        }
+
+        // Requires both the abandon option and TacOps vehicle crews
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT)
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_TANK_CREWS);
+    }
+
+    /**
+     * Returns true if this vehicle has been abandoned - the crew has exited but the vehicle itself is not destroyed.
+     *
+     * @return true if this vehicle is crewless but intact
+     */
+    @Override
+    public boolean isAbandoned() {
+        if (getCrew() == null) {
+            return false;
+        }
+        return getCrew().isEjected() && !isDestroyed();
+    }
 }

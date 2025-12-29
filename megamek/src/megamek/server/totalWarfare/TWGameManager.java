@@ -833,6 +833,9 @@ public class TWGameManager extends AbstractGameManager {
                 case ENTITY_VARIABLE_RANGE_MODE_CHANGE:
                     receiveEntityVariableRangeModeChange(packet, connId);
                     break;
+                case ENTITY_ABANDON_ANNOUNCE:
+                    receiveEntityAbandonAnnounce(packet, connId);
+                    break;
                 case ENTITY_MOUNTED_FACING_CHANGE:
                     receiveEntityMountedFacingChange(packet, connId);
                     break;
@@ -19357,7 +19360,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (!engineExploded && (numEngineHits >= hitsToDestroy)) {
                     // third engine hit
                     reports.addAll(destroyEntity(en, "engine destruction"));
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
+                    if (shouldAutoEjectOnDestruction()) {
                         reports.addAll(abandonEntity(en));
                     }
                     en.setSelfDestructing(false);
@@ -22361,7 +22364,7 @@ public class TWGameManager extends AbstractGameManager {
             // Check location for engine/cockpit breach and report accordingly
             if (loc == Mek.LOC_CENTER_TORSO) {
                 vDesc.addAll(destroyEntity(entity, "hull breach"));
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
+                if (shouldAutoEjectOnDestruction()) {
                     vDesc.addAll(abandonEntity(entity));
                 }
             }
@@ -22394,7 +22397,7 @@ public class TWGameManager extends AbstractGameManager {
                   entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_RIGHT_TORSO)) >=
                   hitsToDestroy) {
                 vDesc.addAll(destroyEntity(entity, "engine destruction"));
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
+                if (shouldAutoEjectOnDestruction()) {
                     vDesc.addAll(abandonEntity(entity));
                 }
             }
@@ -24095,6 +24098,15 @@ public class TWGameManager extends AbstractGameManager {
               game.getPhase().isDuringOrAfter(GamePhase.DEPLOYMENT);
     }
 
+    /**
+     * @return whether crews should be automatically created when their unit is destroyed. True if either "Ejected Crews
+     *       Flee" or legacy "Auto Abandon Unit" option is enabled.
+     */
+    boolean shouldAutoEjectOnDestruction() {
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE)
+              || game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT);
+    }
+
     private boolean suppressBlindBV() {
         return game.getOptions().booleanOption(OptionsConstants.ADVANCED_SUPPRESS_DB_BV);
     }
@@ -25305,6 +25317,55 @@ public class TWGameManager extends AbstractGameManager {
             entityUpdate(entityId);
         } catch (Exception ex) {
             LOGGER.error("Error processing Variable Range Targeting mode change", ex);
+        }
+    }
+
+    /**
+     * Receives and processes a unit abandonment announcement packet. For Meks (TacOps:AR p.165): Must be prone and
+     * shutdown. For Vehicles (TacOps): Can be abandoned anytime.
+     *
+     * @param packet    the packet to be processed
+     * @param connIndex the id for connection that received the packet
+     */
+    private void receiveEntityAbandonAnnounce(Packet packet, int connIndex) {
+        try {
+            int entityId = packet.getIntValue(0);
+            Entity entity = game.getEntity(entityId);
+
+            if (entity == null || entity.getOwner() != game.getPlayer(connIndex)) {
+                LOGGER.debug("Abandon announce rejected: entity null or wrong owner");
+                return;
+            }
+
+            // Check if this is a Mek that can abandon
+            if (entity instanceof Mek mek) {
+                if (!mek.canAbandon()) {
+                    LOGGER.debug("Abandon announce rejected: Mek cannot abandon");
+                    return;
+                }
+                Vector<Report> reports = announceUnitAbandonment(entity);
+                for (Report report : reports) {
+                    addReport(report);
+                }
+                return;
+            }
+
+            // Check if this is a Tank that can abandon
+            if (entity instanceof Tank tank) {
+                if (!tank.canAbandon()) {
+                    LOGGER.debug("Abandon announce rejected: Tank cannot abandon");
+                    return;
+                }
+                Vector<Report> reports = announceUnitAbandonment(entity);
+                for (Report report : reports) {
+                    addReport(report);
+                }
+                return;
+            }
+
+            LOGGER.debug("Abandon announce rejected: entity is not a Mek or Tank");
+        } catch (Exception ex) {
+            LOGGER.error("Error processing unit abandonment announcement", ex);
         }
     }
 
@@ -28175,13 +28236,54 @@ public class TWGameManager extends AbstractGameManager {
         Coords targetCoords = entity.getPosition();
 
         if (entity instanceof Mek || (entity.isAero() && !entity.isAirborne())) {
-            // okay, print the info
-            r = new Report(2027);
-            r.subject = entity.getId();
-            r.add(entity.getCrew().getName());
-            r.addDesc(entity);
-            r.indent(3);
-            vDesc.addElement(r);
+            boolean pilotsWillFlee = game.getOptions()
+                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE);
+
+            // Build crew names list for multi-crew units
+            Crew crew = entity.getCrew();
+            int crewCount = crew.getSlotCount();
+            String crewNames;
+            String verb;
+            if (crewCount == 1) {
+                crewNames = crew.getName();
+                verb = "has";
+            } else {
+                StringBuilder names = new StringBuilder();
+                for (int i = 0; i < crewCount; i++) {
+                    if (i > 0) {
+                        if (i == crewCount - 1) {
+                            names.append(", and ");
+                        } else {
+                            names.append(", ");
+                        }
+                    }
+                    names.append(crew.getName(i));
+                }
+                crewNames = names.toString();
+                verb = "have";
+            }
+
+            // Generate appropriate report based on whether pilot will flee
+            if (pilotsWillFlee) {
+                // Combined abandon + flee message
+                r = new Report(5330);
+                r.subject = entity.getId();
+                r.add(crewNames);
+                r.add(verb);
+                r.addDesc(entity);
+                r.indent(3);
+                vDesc.addElement(r);
+            } else {
+                // Standard abandon message
+                r = new Report(2027);
+                r.subject = entity.getId();
+                r.add(crewNames);
+                r.add(verb);
+                r.addDesc(entity);
+                r.indent(3);
+                vDesc.addElement(r);
+            }
+
             // Don't make ill-equipped pilots abandon into vacuum
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             if (conditions.getAtmosphere().isLighterThan(Atmosphere.THIN) && !entity.isAero()) {
@@ -28220,7 +28322,7 @@ public class TWGameManager extends AbstractGameManager {
                   entity.getPosition(),
                   targetCoords,
                   entity.getElevation()));
-            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE)) {
+            if (pilotsWillFlee) {
                 game.removeEntity(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
@@ -28260,6 +28362,97 @@ public class TWGameManager extends AbstractGameManager {
         entity.getCrew().setEjected(true);
 
         return vDesc;
+    }
+
+    /**
+     * Processes pending Mek abandonments per TacOps:AR p.165.
+     * Called during End Phase to:
+     * 1. Execute abandonments that were announced in the previous End Phase
+     * 2. Cancel abandonments if the Mek is no longer prone and shutdown (Meks only)
+     */
+    void processUnitAbandonments() {
+        int currentRound = game.getRoundCount();
+        LOGGER.debug("processUnitAbandonments called in round {}", currentRound);
+
+        for (Entity entity : game.getEntitiesVector()) {
+            if (!entity.isPendingAbandon()) {
+                continue;
+            }
+
+            LOGGER.debug("Found entity {} with pendingAbandon=true, announcedRound={}",
+                  entity.getDisplayName(), entity.getAbandonmentAnnouncedRound());
+
+            // Per TW/TacOps, abandonment executes in the End Phase of the FOLLOWING turn
+            // Skip if we're still in the same round as the announcement
+            int announcedRound = entity.getAbandonmentAnnouncedRound();
+            if (announcedRound >= currentRound) {
+                // Still the same round or announcement round is in the future (shouldn't happen)
+                // Wait until next round
+                LOGGER.debug("Skipping {} - announced round {} >= current round {}",
+                      entity.getDisplayName(), announcedRound, currentRound);
+                continue;
+            }
+
+            // For Meks: check if still eligible (prone AND shutdown)
+            if (entity instanceof Mek mek) {
+                LOGGER.debug("Processing Mek abandonment for {} - prone={}, shutdown={}",
+                      mek.getDisplayName(), mek.isProne(), mek.isShutDown());
+
+                if (!mek.isProne() || !mek.isShutDown()) {
+                    // Cancellation report: 5326
+                    LOGGER.debug("Cancelling abandonment for {} - no longer prone+shutdown", mek.getDisplayName());
+                    Report cancelReport = new Report(5326);
+                    cancelReport.subject = entity.getId();
+                    cancelReport.addDesc(entity);
+                    addReport(cancelReport);
+                    entity.setPendingAbandon(false);
+                    entityUpdate(entity.getId());
+                    continue;
+                }
+            }
+            // For Tanks: no additional eligibility check needed
+
+            // Execute the abandonment
+            LOGGER.debug("Executing abandonment for {}", entity.getDisplayName());
+            Vector<Report> abandonReports = abandonEntity(entity);
+            if (!abandonReports.isEmpty()) {
+                for (Report abandonReport : abandonReports) {
+                    addReport(abandonReport);
+                }
+            }
+
+            // Clear the pending flag
+            entity.setPendingAbandon(false);
+            entityUpdate(entity.getId());
+            LOGGER.debug("Abandonment complete for {}", entity.getDisplayName());
+        }
+    }
+
+    /**
+     * Announces that a unit will abandon during the next End Phase. For Meks (TacOps:AR p.165): Must be prone and
+     * shutdown. For Vehicles (TacOps): Can be abandoned anytime.
+     *
+     * @param entity the unit announcing abandonment
+     *
+     * @return a Vector of reports for the game log
+     */
+    public Vector<Report> announceUnitAbandonment(Entity entity) {
+        Vector<Report> reports = new Vector<>();
+
+        int currentRound = game.getRoundCount();
+        entity.setPendingAbandon(true);
+        entity.setAbandonmentAnnouncedRound(currentRound);
+
+        LOGGER.info("Unit {} announces abandonment in round {}", entity.getDisplayName(), currentRound);
+
+        // Report 5325: announces abandonment
+        Report announceReport = new Report(5325);
+        announceReport.subject = entity.getId();
+        announceReport.addDesc(entity);
+        reports.add(announceReport);
+
+        entityUpdate(entity.getId());
+        return reports;
     }
 
     /**

@@ -60,6 +60,8 @@ public enum MoveStepType {
     CLEAR_MINEFIELD(false, "ClearMinefield"),
     UP(false, "U"),
     DOWN(false, "D"),
+    ELEVATOR_ASCEND(false, "ElevUp"),
+    ELEVATOR_DESCEND(false, "ElevDn"),
     SEARCHLIGHT(false, "SLight"),
     LAY_MINE(false, "LayMine"),
     HULL_DOWN(false, "HullDown"),

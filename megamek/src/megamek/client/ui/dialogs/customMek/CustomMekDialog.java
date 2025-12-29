@@ -668,10 +668,8 @@ public class CustomMekDialog extends AbstractButtonDialog
      */
     private void addInlineExtraneousControls(DialogOptionComponentYPanel optionComp, Entity entity) {
         Infantry infantry = (entity instanceof Infantry) ? (Infantry) entity : null;
-        String pair1Tooltip = Messages.getString("CustomMekDialog.ExtraneousPair1Tooltip",
-              "Select enhancement type for extraneous limb pair 1 (provides 2 items)");
-        String pair2Tooltip = Messages.getString("CustomMekDialog.ExtraneousPair2Tooltip",
-              "Select enhancement type for extraneous limb pair 2 (provides 2 items)");
+        String pair1Tooltip = Messages.getString("CustomMekDialog.ExtraneousPair1Tooltip");
+        String pair2Tooltip = Messages.getString("CustomMekDialog.ExtraneousPair2Tooltip");
 
         // Create pair 1 dropdown
         choExtraneousPair1 = new JComboBox<>();
@@ -703,8 +701,8 @@ public class CustomMekDialog extends AbstractButtonDialog
         choExtraneousPair2.setToolTipText(pair2Tooltip);
 
         // Create labels
-        lblExtraneousPair1 = new JLabel("Pair 1:");
-        lblExtraneousPair2 = new JLabel("Pair 2:");
+        lblExtraneousPair1 = new JLabel(Messages.getString("CustomMekDialog.labExtraneousPair1"));
+        lblExtraneousPair2 = new JLabel(Messages.getString("CustomMekDialog.labExtraneousPair2"));
 
         // Add labels and controls inline
         optionComp.add(lblExtraneousPair1);

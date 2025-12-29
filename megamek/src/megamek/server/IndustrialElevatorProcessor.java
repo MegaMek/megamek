@@ -37,6 +37,7 @@ import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.IndustrialElevator;
+import megamek.common.Messages;
 import megamek.common.Report;
 import megamek.common.actions.CallElevatorAction;
 import megamek.common.actions.EntityAction;
@@ -266,7 +267,9 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
 
             if (moved) {
                 int newLevel = elevator.getPlatformLevel();
-                String direction = (newLevel > previousLevel) ? "up" : "down";
+                String direction = (newLevel > previousLevel)
+                      ? Messages.getString("IndustrialElevator.directionUp")
+                      : Messages.getString("IndustrialElevator.directionDown");
 
                 // Report elevator movement
                 Report report = new Report(5297, Report.PUBLIC);

@@ -5754,7 +5754,8 @@ public class Compute {
             int antiMekMod = attacker.getBestProstheticAntiMekModifier();
             if (antiMekMod != 0) {
                 String modName = attacker.getBestProstheticAntiMekName();
-                data.addModifier(antiMekMod, modName != null ? modName : "Prosthetic Enhancement");
+                data.addModifier(antiMekMod,
+                      modName != null ? modName : Messages.getString("Compute.ProstheticEnhancement"));
             }
         }
 

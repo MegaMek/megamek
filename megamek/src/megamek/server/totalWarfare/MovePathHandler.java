@@ -212,6 +212,23 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 return;
             }
         }
+
+        // Combat Vehicle Escape Pod launch (TO:AUE p.121)
+        if (md.contains(MoveStepType.LAUNCH_ESCAPE_POD)) {
+            if ((entity instanceof Tank tank) && tank.canLaunchEscapePod()) {
+                // Find the step to get the player-chosen landing hex
+                Coords landingCoords = null;
+                for (MoveStep step : md.getStepVector()) {
+                    if (step.getType() == MoveStepType.LAUNCH_ESCAPE_POD) {
+                        landingCoords = step.getEscapePodLandingCoords();
+                        break;
+                    }
+                }
+                addReport(gameManager.launchCombatVehicleEscapePod(tank, landingCoords));
+                return;
+            }
+        }
+
         if (md.contains(MoveStepType.CAREFUL_STAND)) {
             entity.setCarefulStand(true);
         }

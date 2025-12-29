@@ -112,6 +112,9 @@ public class MoveStep implements Serializable {
 
     private int mineToLay = -1;
 
+    /** Distance for Combat Vehicle Escape Pod launch (0-4 hexes per TO:AUE p.121) */
+    private int escapePodDistance = 4;
+
     /**
      * This step's static movement type. Additional steps in the path will not change this value.
      */
@@ -306,6 +309,8 @@ public class MoveStep implements Serializable {
             this.additionalData.put(CARGO_PICKUP_KEY, additionalIntData);
         } else if (type == MoveStepType.DROP_CARGO) {
             this.additionalData.put(CARGO_LOCATION_KEY, additionalIntData);
+        } else if (type == MoveStepType.LAUNCH_ESCAPE_POD) {
+            this.escapePodDistance = additionalIntData;
         }
     }
 
@@ -1826,6 +1831,14 @@ public class MoveStep implements Serializable {
         if (type == MoveStepType.EJECT) {
             movementType = EntityMovementType.MOVE_NONE;
         }
+        // Combat Vehicle Escape Pod launch (TO:AUE p.121)
+        if (type == MoveStepType.LAUNCH_ESCAPE_POD) {
+            movementType = EntityMovementType.MOVE_NONE;
+        }
+        // Unit abandonment (TacOps:AR p.165)
+        if (type == MoveStepType.ABANDON) {
+            movementType = EntityMovementType.MOVE_NONE;
+        }
         if (type == MoveStepType.SEARCHLIGHT) {
             movementType = prev.movementType;
         }
@@ -2989,6 +3002,8 @@ public class MoveStep implements Serializable {
               !entity.getCrew().isUnconscious() &&
               ((type == MoveStepType.UNJAM_RAC) ||
                     (type == MoveStepType.EJECT) ||
+                    (type == MoveStepType.LAUNCH_ESCAPE_POD) ||
+                    (type == MoveStepType.ABANDON) ||
                     (type == MoveStepType.SEARCHLIGHT))) {
             return true;
         }
@@ -3594,6 +3609,32 @@ public class MoveStep implements Serializable {
 
     public int getMineToLay() {
         return mineToLay;
+    }
+
+    /**
+     * Returns the distance for Combat Vehicle Escape Pod launch (0-4 hexes). Per TO:AUE p.121, the player chooses how
+     * far the pod travels behind the vehicle.
+     *
+     * @deprecated Use getEscapePodLandingCoords() instead for hex-based selection
+     */
+    @Deprecated
+    public int getEscapePodDistance() {
+        return escapePodDistance;
+    }
+
+    /**
+     * Returns the landing coordinates for Combat Vehicle Escape Pod launch. Per TO:AUE p.121, the player chooses a hex
+     * in the rear arc within 4 hexes.
+     *
+     * @return The landing coordinates, or null if not set
+     */
+    public Coords getEscapePodLandingCoords() {
+        Integer x = additionalData.get(0);
+        Integer y = additionalData.get(1);
+        if (x != null && y != null) {
+            return new Coords(x, y);
+        }
+        return null;
     }
 
     public int getBraceLocation() {

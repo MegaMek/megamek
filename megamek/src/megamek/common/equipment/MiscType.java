@@ -5248,7 +5248,6 @@ public class MiscType extends EquipmentType {
     // Ejection and Escape Systems
 
     public static MiscType createISCombatVehicleEscapePod() {
-        // TODO: implement game rules
         MiscType misc = new MiscType();
         misc.name = "Combat Vehicle Escape Pod";
         misc.setInternalName("ISCombatVehicleEscapePod");

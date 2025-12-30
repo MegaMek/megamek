@@ -262,8 +262,22 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
 
     @ParameterizedTest
     @MethodSource("buildingProvider")
-    void testIsRepairable(AbstractBuildingEntity building) {
-        assertEquals(building.isSalvage(), building.isRepairable());
+    void testIsRepairable_WithStructure(AbstractBuildingEntity building) {
+        initializeBuildingOnBoard(building);
+        // Building with structure is repairable
+        assertTrue(building.isRepairable());
+    }
+
+    @ParameterizedTest
+    @MethodSource("buildingProvider")
+    void testIsRepairable_CompletelyCollapsed(AbstractBuildingEntity building) {
+        initializeBuildingOnBoard(building);
+        // Destroy all structure (completely collapsed)
+        Coords buildingCoords = building.getPosition();
+        building.setCurrentCF(0, buildingCoords);
+
+        // Completely collapsed building is not repairable
+        assertFalse(building.isRepairable());
     }
 
     @ParameterizedTest
@@ -329,14 +343,60 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
 
     @ParameterizedTest
     @MethodSource("buildingProvider")
-    void testIsCrippled(AbstractBuildingEntity building) {
+    void testIsCrippled_NotCrippled(AbstractBuildingEntity building) {
+        // Pristine building with no weapons is not crippled
         assertFalse(building.isCrippled());
         assertFalse(building.isCrippled(true));
     }
 
     @ParameterizedTest
     @MethodSource("buildingProvider")
-    void testIsDmgHeavy(AbstractBuildingEntity building) {
+    void testIsCrippled_WithDisabledWeapons(AbstractBuildingEntity building) throws Exception {
+        initializeBuildingOnBoard(building);
+
+        // Add a weapon
+        WeaponMounted weapon = new WeaponMounted(building, new ISLaserMedium());
+        building.addEquipment(weapon, 0, false);
+
+        // Initialize as military building (has weapons)
+        building.initMilitary();
+
+        // Building with operational weapon is not crippled
+        assertFalse(building.isCrippled());
+
+        // Disable the weapon
+        weapon.setDestroyed(true);
+
+        // Military building with all weapons disabled is crippled
+        assertTrue(building.isCrippled());
+    }
+
+    @ParameterizedTest
+    @MethodSource("buildingProvider")
+    void testIsDmgHeavy_NotHeavyDamage(AbstractBuildingEntity building) {
+        // Pristine building is not heavily damaged
+        assertFalse(building.isDmgHeavy());
+    }
+
+    @ParameterizedTest
+    @MethodSource("buildingProvider")
+    void testIsDmgHeavy_WithHeavyDamage(AbstractBuildingEntity building) {
+        initializeBuildingOnBoard(building);
+
+        // Building starts with CF=50 per hex, 1 hex
+        // Heavy damage is <= 50% of original, so <= 25 CF
+        Coords buildingCoords = building.getPosition();
+
+        // Damage to 25 CF (exactly 50%) - should be heavy damage
+        building.setCurrentCF(25, buildingCoords);
+        assertTrue(building.isDmgHeavy());
+
+        // Damage to 20 CF (40% - less than 50%) - should still be heavy damage
+        building.setCurrentCF(20, buildingCoords);
+        assertTrue(building.isDmgHeavy());
+
+        // Restore to 26 CF (52% - more than 50%) - should not be heavy damage
+        building.setCurrentCF(26, buildingCoords);
         assertFalse(building.isDmgHeavy());
     }
 

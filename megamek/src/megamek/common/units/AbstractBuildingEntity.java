@@ -106,6 +106,11 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         initializeInternal(0, LOC_BASE);
     }
 
+    @Override
+    public CrewType defaultCrewType() {
+        return CrewType.BUILDING;
+    }
+
     // ========== IBuilding Coordinate Translation Overrides ==========
 
     @Override
@@ -798,9 +803,32 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      *
      * @return boolean
      */
+    /**
+     * Buildings are destroyed if their crew is dead, like Meks and Tanks.
+     */
+    @Override
+    public boolean isDestroyed() {
+        // Check crew death first (like Meks/Tanks)
+        if (getCrew() != null && !getCrew().isActive()) {
+            return true;
+        }
+        // Otherwise use standard destroyed flag
+        return super.isDestroyed();
+    }
+
+    /**
+     * Buildings are salvageable unless they have completely collapsed.
+     * A building has completely collapsed when all hexes have 0 CF.
+     */
+    @Override
+    public boolean isSalvage() {
+        // Building is salvageable if it has any remaining structure
+        return calculateTotalCurrentCF() > 0;
+    }
+
     @Override
     public boolean isCrippled() {
-        return false;
+        return isCrippled(true);
     }
 
     /**
@@ -813,7 +841,9 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public boolean isCrippled(boolean checkCrew) {
-        return false;
+        // Building is crippled if it's military and all weapons are disabled
+        // (crew death is handled by isDestroyed(), not isCrippled())
+        return isMilitary() && !hasViableWeapons();
     }
 
     /**
@@ -823,7 +853,8 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public boolean isDmgHeavy() {
-        return false;
+        // Heavy damage: 50% or less of original structure
+        return getStructurePercentage() <= 0.5;
     }
 
     /**
@@ -833,7 +864,9 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public boolean isDmgModerate() {
-        return false;
+        // Moderate damage: 75% or less (but more than 50%)
+        double pct = getStructurePercentage();
+        return pct <= 0.75 && pct > 0.5;
     }
 
     /**
@@ -843,7 +876,62 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public boolean isDmgLight() {
-        return false;
+        // Light damage: less than 100% (but more than 75%)
+        double pct = getStructurePercentage();
+        return pct < 1.0 && pct > 0.75;
+    }
+
+    /**
+     * Calculate the percentage of remaining structure compared to original.
+     *
+     * @return percentage from 0.0 to 1.0
+     */
+    private double getStructurePercentage() {
+        int currentCF = calculateTotalCurrentCF();
+        int originalCF = calculateTotalOriginalCF();
+
+        if (originalCF == 0) {
+            return 1.0;
+        }
+
+        return (double) currentCF / (double) originalCF;
+    }
+
+    /**
+     * Calculate total current CF across all hexes and levels.
+     *
+     * @return total current CF
+     */
+    private int calculateTotalCurrentCF() {
+        if (building == null || building.getCoordsList() == null) {
+            return 0;
+        }
+
+        int total = 0;
+        for (CubeCoords coords : building.getCoordsList()) {
+            total += building.getCurrentCF(coords);
+        }
+        return total;
+    }
+
+    /**
+     * Calculate total original CF across all hexes and levels.
+     * Uses the original coords list to determine original structure.
+     *
+     * @return total original CF
+     */
+    private int calculateTotalOriginalCF() {
+        if (building == null || building.getOriginalCoordsList() == null) {
+            return 0;
+        }
+
+        // Sum CF from all original coordinates
+        int total = 0;
+        for (CubeCoords coords : building.getOriginalCoordsList()) {
+            // Get CF for this coordinate (using phase CF as reference for original)
+            total += building.getPhaseCF(coords);
+        }
+        return total;
     }
 
     @Override

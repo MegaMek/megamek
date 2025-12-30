@@ -1387,4 +1387,83 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
             }
         }
     }
+
+    /**
+     * Calculate building crew based on Advanced Building Minimum Crew Table (TO:AUE).
+     * Crew = Non-Gunners + Gunners + Officers
+     *
+     * @return total crew count
+     */
+    @Override
+    public int getNCrew() {
+        int nonGunners = calculateNonGunnerCrew();
+        int gunners = calculateGunnerCrew();
+        int officers = calculateOfficerCrew(nonGunners + gunners);
+
+        return nonGunners + gunners + officers;
+    }
+
+    /**
+     * Calculate non-gunner crew based on building equipment.
+     * Does NOT include bay personnel - those are counted separately via getBayPersonnel().
+     *
+     * @return non-gunner crew count
+     */
+    private int calculateNonGunnerCrew() {
+        int crew = 0;
+
+        // TODO: Implement equipment-based crew calculation when equipment system is available
+        // (Field Kitchens, Helipads, Landing Decks, etc.)
+        // For now, return 0 - bay personnel are counted separately
+
+        return crew;
+    }
+
+    /**
+     * Calculate gunner crew based on mounted weapons.
+     * - Light Weapon: 1 gunner
+     * - Medium Weapon: 1 gunner
+     * - Heavy Weapon: Weapon Tons ÷ 5 (round up)
+     * - Capital Weapon: 7 gunners
+     *
+     * @return gunner crew count
+     */
+    private int calculateGunnerCrew() {
+        int gunners = 0;
+
+        for (megamek.common.equipment.Mounted<?> mounted : getWeaponList()) {
+            if (mounted.getType() instanceof megamek.common.equipment.WeaponType weapon) {
+                // Determine weapon size and calculate gunners
+                double weaponTonnage = weapon.getTonnage(this);
+
+                if (weapon.isCapital()) {
+                    gunners += 7;  // Capital weapon
+                } else if (weaponTonnage >= 10) {
+                    gunners += (int) Math.ceil(weaponTonnage / 5.0);  // Heavy weapon
+                } else {
+                    gunners += 1;  // Light or Medium weapon
+                }
+            }
+        }
+
+        return gunners;
+    }
+
+    /**
+     * Calculate officer crew based on total non-officer crew.
+     * - 1-9 crew: 1 officer
+     * - 10+ crew: Total Crew ÷ 10 (round up)
+     *
+     * @param nonOfficerCrew total non-officer crew
+     * @return officer crew count
+     */
+    private int calculateOfficerCrew(int nonOfficerCrew) {
+        if (nonOfficerCrew == 0) {
+            return 0;
+        } else if (nonOfficerCrew <= 9) {
+            return 1;
+        } else {
+            return (int) Math.ceil(nonOfficerCrew / 10.0);
+        }
+    }
 }

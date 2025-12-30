@@ -211,6 +211,7 @@ public class TWGameManager extends AbstractGameManager {
 
     private final TWPhaseEndManager phaseEndManager = new TWPhaseEndManager(this);
     private final TWPhasePreparationManager phasePreparationManager = new TWPhasePreparationManager(this);
+    private final InfantryBuildingCombatTracker infantryCombatTracker = new InfantryBuildingCombatTracker();
     private final BuildingCollapseHandler buildingCollapseHandler = new BuildingCollapseHandler(this);
     private final DeploymentProcessor deploymentProcessor = new DeploymentProcessor(this);
     final HeatResolver heatResolver = new HeatResolver(this);
@@ -15218,6 +15219,493 @@ public class TWGameManager extends AbstractGameManager {
         sendChangedBuildings(updatedBuildings);
     }
 
+    /**
+     * Process an infantry combat action declaration (joining or initiating combat).
+     * Called when a player declares InfantryCombatAction during END phase.
+     *
+     * @param action the infantry combat action
+     */
+    void processInfantryCombatAction(megamek.common.actions.InfantryCombatAction action) {
+        Entity entity = game.getEntity(action.getEntityId());
+        Entity targetEntity = game.getEntity(action.getTargetId());
+
+        if (!(entity instanceof Infantry inf)) {
+            return;  // Invalid entity type
+        }
+
+        if (!(targetEntity instanceof megamek.common.units.AbstractBuildingEntity building)) {
+            return;  // Invalid target
+        }
+
+        // Handle withdrawal
+        if (action.isWithdrawing()) {
+            inf.setInfantryCombatWantsWithdrawal(true);
+            return;  // Actual withdrawal processed during combat resolution
+        }
+
+        // Check if combat already exists in this building
+        boolean combatExists = infantryCombatTracker.hasCombat(building.getId());
+        boolean isAttacker = true;  // Default to attacker
+
+        if (combatExists) {
+            // Determine if we're joining attackers or defenders
+            InfantryBuildingCombatTracker.BuildingCombat combat = infantryCombatTracker.getCombat(building.getId());
+            if (combat != null) {
+                // Check if any defenders are enemies - if so, we're attackers
+                for (int defenderId : combat.defenderIds) {
+                    Entity defender = game.getEntity(defenderId);
+                    if (defender != null && defender.getOwner().isEnemyOf(entity.getOwner())) {
+                        isAttacker = true;
+                        break;
+                    }
+                }
+                // Check if any attackers are allies - if so, join them
+                for (int attackerId : combat.attackerIds) {
+                    Entity attacker = game.getEntity(attackerId);
+                    if (attacker != null && !attacker.getOwner().isEnemyOf(entity.getOwner())) {
+                        isAttacker = true;
+                        break;
+                    }
+                }
+            }
+
+            // Add as reinforcement
+            infantryCombatTracker.addReinforcement(building.getId(), inf, isAttacker);
+            Report r = new Report(isAttacker ? 5640 : 5641);  // Reinforces attackers/defenders
+            r.add(building.getDisplayName());
+            r.subject = inf.getId();
+            addReport(r);
+        } else {
+            // New combat - find all defenders (building crew AND any infantry)
+            List<Entity> defenders = new ArrayList<>();
+
+            // Check if building has crew - crew are always defenders if present
+            int buildingCrew = building.getNCrew() + building.getBayPersonnel() + building.getNMarines();
+            if (buildingCrew > 0) {
+                // Building crew defends regardless of building ownership
+                // (crew defends their building from attackers)
+                defenders.add(building);
+            }
+
+            // Find enemy infantry in the building (additional defenders)
+            for (Entity e : game.getEntitiesVector()) {
+                if (e instanceof Infantry &&
+                    e.getPosition().equals(building.getPosition()) &&
+                    e.getOwner().isEnemyOf(entity.getOwner())) {
+                    defenders.add(e);
+                }
+            }
+
+            if (defenders.isEmpty()) {
+                // No defenders at all - cannot initiate combat
+                Report r = new Report(5645);  // No defenders in {0}
+                r.add(building.getDisplayName());
+                r.subject = inf.getId();
+                addReport(r);
+                return;
+            }
+
+            // Add new combat with first defender, then add rest as reinforcements
+            infantryCombatTracker.addCombat(building.getId(), inf, defenders.get(0));
+            for (int i = 1; i < defenders.size(); i++) {
+                infantryCombatTracker.addReinforcement(building.getId(), defenders.get(i), false);
+            }
+
+            Report r = new Report(5630);  // Infantry combat in {0}
+            r.add(building.getDisplayName());
+            r.subject = inf.getId();
+            addReport(r);
+        }
+    }
+
+    /**
+     * Resolve infantry vs. infantry combat inside buildings.
+     * Called during End Phase to process all active building combats.
+     */
+    void resolveInfantryBuildingCombat() {
+        // Get all active combats from persistent tracker
+        Map<Integer, InfantryBuildingCombatTracker.BuildingCombat> combats = infantryCombatTracker.getAllCombats();
+
+        if (combats.isEmpty()) {
+            return;  // No combats to resolve
+        }
+
+        // Resolve each combat
+        for (InfantryBuildingCombatTracker.BuildingCombat combat : new ArrayList<>(combats.values())) {
+            resolveOneBuildingCombat(combat, infantryCombatTracker);
+        }
+
+        // Increment turn counters for ongoing combats
+        infantryCombatTracker.incrementAllTurnCounters();
+    }
+
+    /**
+     * Rebuild combat tracker from entity states.
+     * This is temporary until tracker becomes a persistent field.
+     */
+    private void rebuildCombatTrackerFromEntityStates(InfantryBuildingCombatTracker tracker) {
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.getInfantryCombatTargetId() != Entity.NONE) {
+                InfantryBuildingCombatTracker.BuildingCombat combat = tracker.getCombat(entity.getInfantryCombatTargetId());
+                if (combat == null) {
+                    combat = new InfantryBuildingCombatTracker.BuildingCombat(entity.getInfantryCombatTargetId());
+                    tracker.getAllCombats().put(entity.getInfantryCombatTargetId(), combat);
+                }
+
+                if (entity.isInfantryCombatAttacker()) {
+                    combat.addAttacker(entity.getId());
+                } else {
+                    combat.addDefender(entity.getId());
+                }
+            }
+        }
+    }
+
+    /**
+     * Resolve one building combat.
+     */
+    private void resolveOneBuildingCombat(InfantryBuildingCombatTracker.BuildingCombat combat,
+                                           InfantryBuildingCombatTracker tracker) {
+        // Get building entity
+        Entity buildingEntity = game.getEntity(combat.buildingEntityId);
+        if (!(buildingEntity instanceof megamek.common.units.AbstractBuildingEntity building)) {
+            // Building no longer exists, end combat
+            cleanupCombat(combat, tracker);
+            return;
+        }
+
+        // Check for withdrawals (attackers only)
+        boolean withdrawalRequested = false;
+        for (int attackerId : new ArrayList<>(combat.attackerIds)) {
+            Entity attacker = game.getEntity(attackerId);
+            if (attacker != null && attacker.isInfantryCombatWantsWithdrawal()) {
+                withdrawalRequested = true;
+                break;
+            }
+        }
+
+        if (withdrawalRequested) {
+            processWithdrawal(combat, tracker, building);
+            return;
+        }
+
+        // Calculate Marine Points Score for each side
+        int attackerMPS = calculateTotalMPS(combat.attackerIds, building);
+        int defenderMPS = calculateTotalMPS(combat.defenderIds, building);
+
+        // Check if either side is eliminated before combat
+        if (attackerMPS <= 0) {
+            reportCombatHeader(building);
+            reportSideEliminated(combat, tracker, building, true);  // Attackers eliminated
+            return;
+        }
+        if (defenderMPS <= 0) {
+            reportCombatHeader(building);
+            reportSideEliminated(combat, tracker, building, false);  // Defenders eliminated
+            return;
+        }
+
+        // Calculate combat ratio
+        String ratio = megamek.common.compute.InfantryCombatTables.calculateRatio(attackerMPS, defenderMPS);
+
+        // Roll 2D6
+        int roll = Compute.d6(2);
+
+        // Resolve combat on table
+        megamek.common.InfantryCombatResult result =
+            megamek.common.compute.InfantryCombatTables.resolveAction(ratio, roll);
+
+        // Report combat header
+        reportCombatHeader(building);
+        reportCombatRatio(building, attackerMPS, defenderMPS, ratio);
+        reportCombatRoll(building, roll, result);
+
+        // Check for Partial control (TOAR p. 172)
+        // Once attackers achieve Partial control, defenders lose half-damage bonus
+        if (result.getType() == megamek.common.InfantryCombatResult.ResultType.PARTIAL) {
+            combat.hasPartialControl = true;
+        }
+
+        // Apply casualties
+        applyCasualties(combat, result.getAttackerCasualtiesPercent(), true);
+        applyCasualties(combat, result.getDefenderCasualtiesPercent(), false);
+
+
+        checkAndApplyStructureDamage(building);
+
+        // Check for combat end conditions
+        if (result.isDefenderEliminated()) {
+            reportSideEliminated(combat, tracker, building, false);
+        } else if (result.isAttackerRepulsed()) {
+            reportSideRepulsed(combat, tracker, building);
+        } else if (!combat.isActive()) {
+            // One side eliminated during casualties
+            cleanupCombat(combat, tracker);
+        }
+    }
+
+    /**
+     * Calculate total MPS for a list of entity IDs.
+     */
+    private int calculateTotalMPS(List<Integer> entityIds, megamek.common.units.AbstractBuildingEntity building) {
+        int total = 0;
+        for (int entityId : entityIds) {
+            Entity entity = game.getEntity(entityId);
+            if (entity != null && !entity.isDestroyed() && !entity.isDoomed()) {
+                total += megamek.common.compute.MarinePointsScoreCalculator.calculateMPS(entity, game, building);
+            }
+        }
+        return total;
+    }
+
+    /**
+     * Process attacker withdrawal.
+     */
+    private void processWithdrawal(InfantryBuildingCombatTracker.BuildingCombat combat,
+                                    InfantryBuildingCombatTracker tracker,
+                                    megamek.common.units.AbstractBuildingEntity building) {
+        Report r = new Report(5639);  // "Attacking forces withdraw from {0}"
+        r.add(building.getDisplayName());
+        addReport(r);
+
+        // Clear all attacker states
+        for (int attackerId : combat.attackerIds) {
+            Entity attacker = game.getEntity(attackerId);
+            if (attacker != null) {
+                attacker.clearInfantryCombatState();
+            }
+        }
+
+        // Clear all defender states (combat ended)
+        for (int defenderId : combat.defenderIds) {
+            Entity defender = game.getEntity(defenderId);
+            if (defender != null) {
+                defender.clearInfantryCombatState();
+            }
+        }
+
+        tracker.removeCombat(combat.buildingEntityId);
+    }
+
+    /**
+     * Apply casualties to one side.
+     */
+    private void applyCasualties(InfantryBuildingCombatTracker.BuildingCombat combat,
+                                  int percentCasualties, boolean isAttacker) {
+        if (percentCasualties <= 0) {
+            return;
+        }
+
+        // TOAR p. 172: Defenders get half damage until Partial control achieved
+        int effectivePercent = percentCasualties;
+        if (!isAttacker && !combat.hasPartialControl) {
+            effectivePercent = percentCasualties / 2;
+        }
+
+        List<Integer> entityIds = isAttacker ? combat.attackerIds : combat.defenderIds;
+        String sideName = isAttacker ? "Attackers" : "Defenders";
+
+        int totalCasualties = 0;
+        for (int entityId : new ArrayList<>(entityIds)) {
+            Entity entity = game.getEntity(entityId);
+            if (entity == null || entity.isDestroyed()) {
+                continue;
+            }
+
+            // Apply damage based on entity type
+            if (entity instanceof megamek.common.battleArmor.BattleArmor ba) {
+                // Battle Armor: use complex method (TOAR p. 6)
+                int troopersBefore = ba.getShootingStrength();
+                int troopersLost = (int) Math.ceil(troopersBefore * effectivePercent / 100.0);
+
+                // Convert troopers lost to damage points (10 points per trooper)
+                int damagePoints = troopersLost * 10;
+
+                // Apply damage to troopers starting with lightest weight class
+                // (This will automatically distribute to lightest armor first)
+                int remainingDamage = damagePoints;
+                while (remainingDamage > 0 && ba.getShootingStrength() > 0) {
+                    // Apply 1 point of damage at a time
+                    HitData hit = ba.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                    damageEntity(ba, hit, 1);
+                    remainingDamage--;
+                }
+
+                totalCasualties += troopersLost;
+
+                // Check if eliminated
+                if (ba.isDestroyed() || ba.getShootingStrength() <= 0) {
+                    entity.clearInfantryCombatState();
+                    if (isAttacker) {
+                        combat.attackerIds.remove(Integer.valueOf(entityId));
+                    } else {
+                        combat.defenderIds.remove(Integer.valueOf(entityId));
+                    }
+                }
+            } else if (entity instanceof Infantry inf) {
+                // Regular infantry: simple percentage application
+                int troopersBefore = inf.getShootingStrength();
+                int troopersLost = (int) Math.ceil(troopersBefore * effectivePercent / 100.0);
+
+                // Use existing damage system
+                HitData hit = new HitData(Infantry.LOC_INFANTRY);
+                damageEntity(inf, hit, troopersLost);
+
+                totalCasualties += troopersLost;
+
+                // Check if eliminated
+                if (inf.isDestroyed() || inf.getShootingStrength() <= 0) {
+                    entity.clearInfantryCombatState();
+                    if (isAttacker) {
+                        combat.attackerIds.remove(Integer.valueOf(entityId));
+                    } else {
+                        combat.defenderIds.remove(Integer.valueOf(entityId));
+                    }
+                }
+            } else if (entity instanceof megamek.common.units.AbstractBuildingEntity building) {
+                // Handle building crew casualties (TOAR p. 174)
+                Crew crew = building.getCrew();
+                int crewBefore = crew.getCurrentSize();
+
+                // Calculate crew lost based on percentage
+                int crewLost = (int) Math.ceil(crewBefore * effectivePercent / 100.0);
+                crew.setCurrentSize(Math.max(0, crewBefore - crewLost));
+
+                // Convert casualties to crew hits (TOAR Crew Casualties Table)
+                int oldHits = crew.getHits();
+                int newHits = crew.calculateHits();
+
+                // Apply crew hits (affects weapon to-hit)
+                for (int i = 0; i < crew.getSlotCount(); i++) {
+                    crew.setHits(newHits, i);
+                }
+
+                totalCasualties += crewLost;
+
+                // Report crew hits if they increased
+                if (newHits > oldHits) {
+                    Report r = new Report(5636);  // "{0} crew suffers {1} hits"
+                    r.add(building.getDisplayName());
+                    r.add(newHits - oldHits);
+                    addReport(r);
+                }
+            }
+        }
+
+        if (totalCasualties > 0) {
+            Report r = new Report(isAttacker ? 5633 : 5634);  // "{Side} lose {0} personnel"
+            r.add(totalCasualties);
+            addReport(r);
+        }
+    }
+
+    /**
+     * Apply structure/SI damage to building on 2D6 roll of 12 (TOAR p. 174).
+     *
+     * @param building the building entity
+     */
+    private void checkAndApplyStructureDamage(megamek.common.units.AbstractBuildingEntity building) {
+        // Apply building/structure damage on 2D6 roll of 12 (TOAR p. 174)
+        int structureRoll = Compute.d6(2);
+        if (structureRoll != 12) {
+            return;
+        }
+
+        // Apply 1 point of damage to every hex on every level
+        // TODO: We only track CF per hex, not level. Once we track per level this will need updated
+        for (var coords : building.getCoordsList()) {
+            // Apply 1 point of CF damage
+            int currentCF = building.getCurrentCF(coords);
+            if (currentCF > 0) {
+                building.setCurrentCF(currentCF - 1, coords);
+            }
+        }
+
+        Report r = new Report(5637);  // "{0} structure damaged by infantry combat (rolled {1})"
+        r.add(building.getDisplayName());
+        r.add(structureRoll);
+        addReport(r);
+    }
+
+    /**
+     * Report combat header.
+     */
+    private void reportCombatHeader(megamek.common.units.AbstractBuildingEntity building) {
+        Report r = new Report(5630);  // "Infantry combat in {0}"
+        r.add(building.getDisplayName());
+        addReport(r);
+    }
+
+    /**
+     * Report combat ratio.
+     */
+    private void reportCombatRatio(megamek.common.units.AbstractBuildingEntity building,
+                                    int attackerMPS, int defenderMPS, String ratio) {
+        Report r = new Report(5631);  // "Attackers: {0} MPS, Defenders: {1} MPS (ratio {2})"
+        r.add(attackerMPS);
+        r.add(defenderMPS);
+        r.add(ratio);
+        addReport(r);
+    }
+
+    /**
+     * Report combat roll and result.
+     */
+    private void reportCombatRoll(megamek.common.units.AbstractBuildingEntity building,
+                                   int roll, megamek.common.InfantryCombatResult result) {
+        Report r = new Report(5632);  // "Combat roll: {0}, Result: {1}"
+        r.add(roll);
+        r.add(result.toString());
+        addReport(r);
+    }
+
+    /**
+     * Report and handle one side being eliminated.
+     */
+    private void reportSideEliminated(InfantryBuildingCombatTracker.BuildingCombat combat,
+                                       InfantryBuildingCombatTracker tracker,
+                                       megamek.common.units.AbstractBuildingEntity building,
+                                       boolean attackersEliminated) {
+        Report r = new Report(attackersEliminated ? 5636 : 5638);  // "Side eliminated"
+        addReport(r);
+
+        cleanupCombat(combat, tracker);
+    }
+
+    /**
+     * Report and handle attackers being repulsed.
+     */
+    private void reportSideRepulsed(InfantryBuildingCombatTracker.BuildingCombat combat,
+                                     InfantryBuildingCombatTracker tracker,
+                                     megamek.common.units.AbstractBuildingEntity building) {
+        Report r = new Report(5637);  // "Attacking forces repulsed"
+        addReport(r);
+
+        cleanupCombat(combat, tracker);
+    }
+
+    /**
+     * Clean up combat and clear entity states.
+     */
+    private void cleanupCombat(InfantryBuildingCombatTracker.BuildingCombat combat,
+                                InfantryBuildingCombatTracker tracker) {
+        // Clear all entity states
+        for (int entityId : combat.attackerIds) {
+            Entity entity = game.getEntity(entityId);
+            if (entity != null) {
+                entity.clearInfantryCombatState();
+            }
+        }
+        for (int entityId : combat.defenderIds) {
+            Entity entity = game.getEntity(entityId);
+            if (entity != null) {
+                entity.clearInfantryCombatState();
+            }
+        }
+
+        tracker.removeCombat(combat.buildingEntityId);
+    }
+
     private void resolveLayExplosivesAttack(PhysicalResult pr) {
         final LayExplosivesAttackAction laa = (LayExplosivesAttackAction) pr.aaa;
         final Entity ae = game.getEntity(laa.getEntityId());
@@ -27249,6 +27737,8 @@ public class TWGameManager extends AbstractGameManager {
         } else if (aaa instanceof LayExplosivesAttackAction layExplosivesAttackAction) {
             toHit = layExplosivesAttackAction.toHit(game);
             damage = LayExplosivesAttackAction.getDamageFor(ae);
+        } else if (aaa instanceof megamek.common.actions.InfantryCombatAction infantryCombatAction) {
+            toHit = infantryCombatAction.toHit(game);
         } else if (aaa instanceof ThrashAttackAction taa) {
             toHit = taa.toHit(game);
             damage = ThrashAttackAction.getDamageFor(ae);
@@ -27349,6 +27839,9 @@ public class TWGameManager extends AbstractGameManager {
             cen = aaa.getEntityId();
         } else if (aaa instanceof LayExplosivesAttackAction) {
             resolveLayExplosivesAttack(pr);
+            cen = aaa.getEntityId();
+        } else if (aaa instanceof megamek.common.actions.InfantryCombatAction) {
+            processInfantryCombatAction((megamek.common.actions.InfantryCombatAction) aaa);
             cen = aaa.getEntityId();
         } else if (aaa instanceof TripAttackAction) {
             resolveTripAttack(pr, cen);

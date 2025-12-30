@@ -683,6 +683,31 @@ public abstract class Entity extends TurnOrdered
     private int swarmAttackerId = Entity.NONE;
 
     /**
+     * The id of the target entity this infantry unit is engaged in boarding combat with.
+     * NONE (-1) indicates not in infantry vs. infantry combat.
+     * Target can be AbstractBuildingEntity or Large Naval Vessel.
+     */
+    private int infantryCombatTargetId = Entity.NONE;
+
+    /**
+     * True if this entity is the attacker in an infantry vs. infantry combat.
+     * False if defender. Only meaningful if infantryCombatTargetId != NONE.
+     */
+    private boolean infantryCombatIsAttacker = false;
+
+    /**
+     * Number of turns this entity has been engaged in infantry vs. infantry combat.
+     * Used for tracking combat duration.
+     */
+    private int infantryCombatTurnCount = 0;
+
+    /**
+     * True if this entity (as attacker) wants to withdraw from infantry combat.
+     * Processed during End Phase before combat resolution.
+     */
+    private boolean infantryCombatWantsWithdrawal = false;
+
+    /**
      * Flag that indicates that the unit can still be salvaged (given enough time and parts).
      */
     private boolean salvageable = true;
@@ -9852,6 +9877,95 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Get the ID of the target entity this infantry is engaged in combat with.
+     *
+     * @return the target entity ID, or Entity.NONE if not in infantry combat
+     */
+    public int getInfantryCombatTargetId() {
+        return infantryCombatTargetId;
+    }
+
+    /**
+     * Set the ID of the target entity this infantry is engaged in combat with.
+     *
+     * @param targetId the target entity ID, or Entity.NONE to clear
+     */
+    public void setInfantryCombatTargetId(int targetId) {
+        infantryCombatTargetId = targetId;
+    }
+
+    /**
+     * Check if this entity is the attacker in infantry combat.
+     *
+     * @return true if attacker, false if defender (only meaningful if in combat)
+     */
+    public boolean isInfantryCombatAttacker() {
+        return infantryCombatIsAttacker;
+    }
+
+    /**
+     * Set whether this entity is the attacker in infantry combat.
+     *
+     * @param isAttacker true if attacker, false if defender
+     */
+    public void setInfantryCombatAttacker(boolean isAttacker) {
+        infantryCombatIsAttacker = isAttacker;
+    }
+
+    /**
+     * Get the number of turns this entity has been in infantry combat.
+     *
+     * @return turn count (0 = just started)
+     */
+    public int getInfantryCombatTurnCount() {
+        return infantryCombatTurnCount;
+    }
+
+    /**
+     * Set the number of turns in infantry combat.
+     *
+     * @param turnCount the turn count
+     */
+    public void setInfantryCombatTurnCount(int turnCount) {
+        infantryCombatTurnCount = turnCount;
+    }
+
+    /**
+     * Increment the infantry combat turn counter.
+     */
+    public void incrementInfantryCombatTurnCount() {
+        infantryCombatTurnCount++;
+    }
+
+    /**
+     * Check if this entity wants to withdraw from infantry combat.
+     *
+     * @return true if withdrawal requested
+     */
+    public boolean isInfantryCombatWantsWithdrawal() {
+        return infantryCombatWantsWithdrawal;
+    }
+
+    /**
+     * Set whether this entity wants to withdraw from infantry combat.
+     *
+     * @param wantsWithdrawal true to request withdrawal
+     */
+    public void setInfantryCombatWantsWithdrawal(boolean wantsWithdrawal) {
+        infantryCombatWantsWithdrawal = wantsWithdrawal;
+    }
+
+    /**
+     * Clear all infantry combat state (called when combat ends).
+     */
+    public void clearInfantryCombatState() {
+        infantryCombatTargetId = Entity.NONE;
+        infantryCombatIsAttacker = false;
+        infantryCombatTurnCount = 0;
+        infantryCombatWantsWithdrawal = false;
+    }
+
+    /**
      * Scans through the ammo on the unit for any inferno rounds.
      *
      * @return <code>true</code> if the unit is still loaded with Inferno
@@ -10637,14 +10751,28 @@ public abstract class Entity extends TurnOrdered
             return false; // not on board?
         }
 
-        if ((this instanceof Infantry) && hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_DEMOLITION_CHARGE)) {
+        if ((this instanceof Infantry)) {
             Hex hex = game.getHex(position, boardId);
 
             if (hex == null) {
                 return false;
             }
 
-            return hex.containsTerrain(Terrains.BUILDING);
+            // Check if can engage in infantry vs. infantry building combat
+            IBuilding building = game.getBuildingAt(getBoardLocation()).orElse(null);
+            if (building != null && building instanceof AbstractBuildingEntity) {
+                if (building instanceof AbstractBuildingEntity abstractBuildingEntity && abstractBuildingEntity.getOwner().isEnemyOf(getOwner()) || getGame().getEntitiesVector(getBoardLocation()).stream().anyMatch(e -> e.getInfantryCombatTargetId() == building.getId())) {
+                    return true;
+                }
+                // Check if already in combat and can withdraw
+                if (getInfantryCombatTargetId() != Entity.NONE && isInfantryCombatAttacker()) {
+                    return true;  // Can withdraw
+                }
+            }
+
+            // Check if can lay demolition charges
+            return hex.containsTerrain(Terrains.BUILDING) && hasWorkingMisc(MiscType.F_TOOLS,
+                  MiscType.S_DEMOLITION_CHARGE);
         }
 
         // only Meks and ProtoMek's have physical attacks (except tank charges)

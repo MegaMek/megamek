@@ -210,11 +210,19 @@ public class InfantryCombatTables {
     /**
      * Calculates the combat ratio between attacker and defender MPS.
      *
+     * <p>Per TOAR p. 172: "round in favor of the defender" when the ratio doesn't
+     * exactly match a table column. Unless the ratio reaches the next tier exactly,
+     * it rounds down.</p>
+     *
+     * <p>Example from TOAR: A ratio of 2.1:1 (attacker 2.1, defender 1.0) equals
+     * 2.1, which meets the 2:1 tier threshold (2.0) and uses the 2:1 column.</p>
+     *
      * @param attackerMPS attacker Marine Points Score
      * @param defenderMPS defender Marine Points Score
      * @return ratio string for table lookup (e.g., "2:1", "1:3", "1:1")
      */
     public static String calculateRatio(int attackerMPS, int defenderMPS) {
+        // Edge cases: zero MPS
         if (attackerMPS <= 0 && defenderMPS <= 0) {
             return "1:1"; // Both zero, treat as even
         }
@@ -227,21 +235,24 @@ public class InfantryCombatTables {
 
         double ratio = (double) attackerMPS / (double) defenderMPS;
 
+        // Per TOAR p. 172: "round in favor of the defender"
+        // Rule: Unless the ratio reaches the next tier exactly, round down.
+        // Standard ratios: 1:3 (1/3), 1:2 (1/2), 2:3 (2/3), 1:1 (1),
+        //                  3:2 (3/2), 2:1 (2), 3:1 (3)
+
         if (ratio >= 3.0) {
-            return ">3:1";
-        } else if (ratio >= 2.5) {
             return "3:1";
-        } else if (ratio >= 1.75) {
+        } else if (ratio >= 2.0) {
             return "2:1";
-        } else if (ratio >= 1.25) {
+        } else if (ratio >= 3.0 / 2.0) {
             return "3:2";
-        } else if (ratio >= 0.9 && ratio <= 1.1) {
+        } else if (ratio >= 1.0) {
             return "1:1";
-        } else if (ratio >= 0.65) {
+        } else if (ratio >= 2.0 / 3.0) {
             return "2:3";
-        } else if (ratio >= 0.45) {
+        } else if (ratio >= 1.0 / 2.0) {
             return "1:2";
-        } else if (ratio >= 0.30) {
+        } else if (ratio >= 1.0 / 3.0) {
             return "1:3";
         } else {
             return "1:3<";

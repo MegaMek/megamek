@@ -100,6 +100,28 @@ public class InfantryCombatTablesTest {
         assertEquals(">3:1", InfantryCombatTables.calculateRatio(28, 0));
     }
 
+    @Test
+    void testCalculateRatio_TOARExamples() {
+        // TOAR p. 172 example: "a ratio of 2.1:1 in the attacker's favor would become 2:1"
+        // Attacker MPS = 21, Defender MPS = 10 → ratio = 2.1 → uses 2:1 column
+        assertEquals("2:1", InfantryCombatTables.calculateRatio(21, 10));
+
+        // TOAR "round in favor of defender" - unless you reach the next tier, round DOWN
+        // Ratio 1.4 < 1.5, so rounds DOWN to 1:1
+        assertEquals("1:1", InfantryCombatTables.calculateRatio(14, 10)); // 1.4 → "1:1"
+        assertEquals("1:1", InfantryCombatTables.calculateRatio(11, 10)); // 1.1 → "1:1"
+        assertEquals("1:1", InfantryCombatTables.calculateRatio(14, 10)); // 1.4 → "1:1"
+        assertEquals("1:1", InfantryCombatTables.calculateRatio(149, 100)); // 1.49 → "1:1"
+
+        // When you reach the tier exactly (>= 1.5), you get that tier
+        assertEquals("3:2", InfantryCombatTables.calculateRatio(150, 100)); // 1.50 → "3:2"
+        assertEquals("3:2", InfantryCombatTables.calculateRatio(15, 10)); // 1.5 → "3:2"
+
+        // Verify 2:1 threshold (>= 2.0)
+        assertEquals("3:2", InfantryCombatTables.calculateRatio(199, 100)); // 1.99 → "3:2"
+        assertEquals("2:1", InfantryCombatTables.calculateRatio(200, 100)); // 2.00 → "2:1"
+    }
+
     // ==================== Action Resolution Tests ====================
 
     @Test

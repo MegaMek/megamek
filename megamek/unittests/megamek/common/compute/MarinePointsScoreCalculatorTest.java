@@ -85,7 +85,7 @@ public class MarinePointsScoreCalculatorTest {
         infantry.initializeInternal(28, Infantry.LOC_INFANTRY);
 
         // Full strength platoon: 28 troopers * 1 point = 28 MPS
-        int mps = MarinePointsScoreCalculator.calculateMPS(infantry, game);
+        int mps = MarinePointsScoreCalculator.calculateMPS(infantry);
         assertEquals(28, mps, "Full strength infantry should have MPS equal to trooper count");
     }
 
@@ -102,7 +102,7 @@ public class MarinePointsScoreCalculatorTest {
         infantry.setSquadCount(1);
         infantry.initializeInternal(14, Infantry.LOC_INFANTRY);
 
-        int mps = MarinePointsScoreCalculator.calculateMPS(infantry, game);
+        int mps = MarinePointsScoreCalculator.calculateMPS(infantry);
         assertEquals(14, mps, "Damaged infantry should have MPS equal to remaining troopers");
     }
 
@@ -120,7 +120,7 @@ public class MarinePointsScoreCalculatorTest {
         infantry.initializeInternal(28, Infantry.LOC_INFANTRY);
         infantry.setSpecializations(Infantry.MARINES);
 
-        int mps = MarinePointsScoreCalculator.calculateMPS(infantry, game);
+        int mps = MarinePointsScoreCalculator.calculateMPS(infantry);
         assertEquals(28, mps, "Marines should have MPS equal to trooper count");
     }
 
@@ -143,7 +143,7 @@ public class MarinePointsScoreCalculatorTest {
 
         // Base MPS = 28
         // Building modifier requires building to be on board, so may return base MPS
-        int mps = MarinePointsScoreCalculator.calculateMPS(infantry, game, building);
+        int mps = MarinePointsScoreCalculator.calculateMPS(infantry, building);
         assertTrue(mps >= 28, "MPS with building should be at least base value");
     }
 
@@ -165,7 +165,7 @@ public class MarinePointsScoreCalculatorTest {
 
         // Base MPS = 28
         // No building modifier for buildings < 60 hexes
-        int mps = MarinePointsScoreCalculator.calculateMPS(infantry, game, building);
+        int mps = MarinePointsScoreCalculator.calculateMPS(infantry, building);
         assertEquals(28, mps, "Small buildings should not provide MPS bonus");
     }
 
@@ -175,7 +175,7 @@ public class MarinePointsScoreCalculatorTest {
      */
     @Test
     void testCalculateMPS_NullEntity() {
-        int mps = MarinePointsScoreCalculator.calculateMPS(null, game);
+        int mps = MarinePointsScoreCalculator.calculateMPS(null);
         assertEquals(0, mps, "Null entity should return 0 MPS");
     }
 
@@ -191,7 +191,7 @@ public class MarinePointsScoreCalculatorTest {
         infantry.setSquadSize(0);  // Zero strength
         infantry.setSquadCount(0);
 
-        int mps = MarinePointsScoreCalculator.calculateMPS(infantry, game);
+        int mps = MarinePointsScoreCalculator.calculateMPS(infantry);
         assertEquals(0, mps, "Zero-strength infantry should return 0 MPS");
     }
 

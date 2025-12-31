@@ -15452,7 +15452,7 @@ public class TWGameManager extends AbstractGameManager {
         for (int entityId : entityIds) {
             Entity entity = game.getEntity(entityId);
             if (entity != null && !entity.isDestroyed() && !entity.isDoomed()) {
-                total += megamek.common.compute.MarinePointsScoreCalculator.calculateMPS(entity, game, building);
+                total += megamek.common.compute.MarinePointsScoreCalculator.calculateMPS(entity, building);
             }
         }
         return total;

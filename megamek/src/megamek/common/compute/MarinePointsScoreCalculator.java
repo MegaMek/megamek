@@ -37,7 +37,6 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
-import megamek.common.game.Game;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
@@ -64,11 +63,10 @@ public class MarinePointsScoreCalculator {
      * Generic version without building-specific modifiers.
      *
      * @param entity the entity (Infantry or BattleArmor)
-     * @param game the current game
      * @return Marine Points Score
      */
-    public static int calculateMPS(Entity entity, Game game) {
-        return calculateMPS(entity, game, null);
+    public static int calculateMPS(Entity entity) {
+        return calculateMPS(entity, null);
     }
 
     /**
@@ -76,11 +74,10 @@ public class MarinePointsScoreCalculator {
      * Includes building-specific modifiers.
      *
      * @param entity the entity (Infantry or BattleArmor)
-     * @param game the current game
      * @param building the building (for building modifier), can be null
      * @return Marine Points Score
      */
-    public static int calculateMPS(Entity entity, Game game, AbstractBuildingEntity building) {
+    public static int calculateMPS(Entity entity, AbstractBuildingEntity building) {
         if (entity == null) {
             return 0;
         }
@@ -91,7 +88,7 @@ public class MarinePointsScoreCalculator {
         if (entity instanceof BattleArmor ba) {
             mps = calculateBattleArmorMPS(ba);
         } else if (entity instanceof Infantry inf) {
-            mps = calculateInfantryMPS(inf, entity);
+            mps = calculateInfantryMPS(inf);
         } else {
             // For other entities (potential naval vessels), use crew
             mps = calculateCrewMPS(entity);
@@ -164,10 +161,9 @@ public class MarinePointsScoreCalculator {
      * Calculate MPS for conventional infantry platoon.
      *
      * @param inf the infantry entity
-     * @param entity the base entity (for crew access)
      * @return base MPS before building modifier
      */
-    private static int calculateInfantryMPS(Infantry inf, Entity entity) {
+    private static int calculateInfantryMPS(Infantry inf) {
         int mps = 0;
 
         // Check if marines (specialized infantry)
@@ -193,7 +189,7 @@ public class MarinePointsScoreCalculator {
      * @return base MPS before building modifier
      */
     private static int calculateCrewMPS(Entity entity) {
-        int mps = 0;
+        double mps = 0;
 
         // Get crew composition from entity
         int marines = entity.getNMarines();
@@ -212,9 +208,9 @@ public class MarinePointsScoreCalculator {
         mps += crew * 0.5;             // Crew (officers, enlisted)
         mps += bayPersonnel * 0.5;     // Bay personnel (technicians, bay crew)
         // Passengers assumed to be civilians
-        mps += (int) (passengers * 0.15);
+        mps += passengers * 0.15;
 
-        return mps;
+        return (int) Math.round(mps);
     }
 
     /**

@@ -191,7 +191,7 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.addReport(new Report(5005, Report.PUBLIC));
                 gameManager.addReport(gameManager.resolveInternalBombHits());
                 gameManager.checkLayExplosives();
-                gameManager.resolveInfantryBuildingCombat();
+                gameManager.resolveInfantryActions();
                 gameManager.resolveHarJelRepairs();
                 gameManager.resolveEmergencyCoolantSystem();
                 gameManager.checkForSuffocation();

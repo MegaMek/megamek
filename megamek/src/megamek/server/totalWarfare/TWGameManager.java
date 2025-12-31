@@ -211,7 +211,7 @@ public class TWGameManager extends AbstractGameManager {
 
     private final TWPhaseEndManager phaseEndManager = new TWPhaseEndManager(this);
     private final TWPhasePreparationManager phasePreparationManager = new TWPhasePreparationManager(this);
-    private final InfantryBuildingCombatTracker infantryCombatTracker = new InfantryBuildingCombatTracker();
+    private final InfantryActionTracker infantryActionTracker = new InfantryActionTracker();
     private final BuildingCollapseHandler buildingCollapseHandler = new BuildingCollapseHandler(this);
     private final DeploymentProcessor deploymentProcessor = new DeploymentProcessor(this);
     final HeatResolver heatResolver = new HeatResolver(this);
@@ -15244,12 +15244,12 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Check if combat already exists in this building
-        boolean combatExists = infantryCombatTracker.hasCombat(building.getId());
+        boolean combatExists = infantryActionTracker.hasCombat(building.getId());
         boolean isAttacker = true;  // Default to attacker
 
         if (combatExists) {
             // Determine if we're joining attackers or defenders
-            InfantryBuildingCombatTracker.BuildingCombat combat = infantryCombatTracker.getCombat(building.getId());
+            InfantryActionTracker.InfantryAction combat = infantryActionTracker.getCombat(building.getId());
             if (combat != null) {
                 // Check if any defenders are enemies - if so, we're attackers
                 for (int defenderId : combat.defenderIds) {
@@ -15270,7 +15270,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // Add as reinforcement
-            infantryCombatTracker.addReinforcement(building.getId(), inf, isAttacker);
+            infantryActionTracker.addReinforcement(building.getId(), inf, isAttacker);
             Report r = new Report(isAttacker ? 5640 : 5641);  // Reinforces attackers/defenders
             r.add(building.getDisplayName());
             r.subject = inf.getId();
@@ -15306,9 +15306,9 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // Add new combat with first defender, then add rest as reinforcements
-            infantryCombatTracker.addCombat(building.getId(), inf, defenders.get(0));
+            infantryActionTracker.addCombat(building.getId(), inf, defenders.get(0));
             for (int i = 1; i < defenders.size(); i++) {
-                infantryCombatTracker.addReinforcement(building.getId(), defenders.get(i), false);
+                infantryActionTracker.addReinforcement(building.getId(), defenders.get(i), false);
             }
 
             Report r = new Report(5630);  // Infantry combat in {0}
@@ -15319,36 +15319,38 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Resolve infantry vs. infantry combat inside buildings.
-     * Called during End Phase to process all active building combats.
+     * Resolve infantry vs. infantry actions (TOAR p. 167-174).
+     * Called during End Phase to process all active infantry actions.
+     *
+     * <p>Supports actions in buildings, Large Naval Vessels, and aerospace units.</p>
      */
-    void resolveInfantryBuildingCombat() {
-        // Get all active combats from persistent tracker
-        Map<Integer, InfantryBuildingCombatTracker.BuildingCombat> combats = infantryCombatTracker.getAllCombats();
+    void resolveInfantryActions() {
+        // Get all active actions from persistent tracker
+        Map<Integer, InfantryActionTracker.InfantryAction> actions = infantryActionTracker.getAllCombats();
 
-        if (combats.isEmpty()) {
-            return;  // No combats to resolve
+        if (actions.isEmpty()) {
+            return;  // No actions to resolve
         }
 
-        // Resolve each combat
-        for (InfantryBuildingCombatTracker.BuildingCombat combat : new ArrayList<>(combats.values())) {
-            resolveOneBuildingCombat(combat, infantryCombatTracker);
+        // Resolve each action
+        for (InfantryActionTracker.InfantryAction action : new ArrayList<>(actions.values())) {
+            resolveOneInfantryAction(action, infantryActionTracker);
         }
 
-        // Increment turn counters for ongoing combats
-        infantryCombatTracker.incrementAllTurnCounters();
+        // Increment turn counters for ongoing actions
+        infantryActionTracker.incrementAllTurnCounters();
     }
 
     /**
      * Rebuild combat tracker from entity states.
      * This is temporary until tracker becomes a persistent field.
      */
-    private void rebuildCombatTrackerFromEntityStates(InfantryBuildingCombatTracker tracker) {
+    private void rebuildCombatTrackerFromEntityStates(InfantryActionTracker tracker) {
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getInfantryCombatTargetId() != Entity.NONE) {
-                InfantryBuildingCombatTracker.BuildingCombat combat = tracker.getCombat(entity.getInfantryCombatTargetId());
+                InfantryActionTracker.InfantryAction combat = tracker.getCombat(entity.getInfantryCombatTargetId());
                 if (combat == null) {
-                    combat = new InfantryBuildingCombatTracker.BuildingCombat(entity.getInfantryCombatTargetId());
+                    combat = new InfantryActionTracker.InfantryAction(entity.getInfantryCombatTargetId());
                     tracker.getAllCombats().put(entity.getInfantryCombatTargetId(), combat);
                 }
 
@@ -15362,14 +15364,15 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Resolve one building combat.
+     * Resolve one infantry vs. infantry action.
+     * Supports buildings, Large Naval Vessels, and aerospace units.
      */
-    private void resolveOneBuildingCombat(InfantryBuildingCombatTracker.BuildingCombat combat,
-                                           InfantryBuildingCombatTracker tracker) {
-        // Get building entity
-        Entity buildingEntity = game.getEntity(combat.buildingEntityId);
+    private void resolveOneInfantryAction(InfantryActionTracker.InfantryAction combat,
+                                           InfantryActionTracker tracker) {
+        // Get target entity (building, ship, or aerospace unit)
+        Entity buildingEntity = game.getEntity(combat.targetId);
         if (!(buildingEntity instanceof megamek.common.units.AbstractBuildingEntity building)) {
-            // Building no longer exists, end combat
+            // Target no longer exists, end action
             cleanupCombat(combat, tracker);
             return;
         }
@@ -15392,6 +15395,8 @@ public class TWGameManager extends AbstractGameManager {
         // Calculate Marine Points Score for each side
         int attackerMPS = calculateTotalMPS(combat.attackerIds, building);
         int defenderMPS = calculateTotalMPS(combat.defenderIds, building);
+
+        LOGGER.debug("Initial MPS: attackers={}, defenders={}", attackerMPS, defenderMPS);
 
         // Check if either side is eliminated before combat
         if (attackerMPS <= 0) {
@@ -15438,9 +15443,17 @@ public class TWGameManager extends AbstractGameManager {
             reportSideEliminated(combat, tracker, building, false);
         } else if (result.isAttackerRepulsed()) {
             reportSideRepulsed(combat, tracker, building);
-        } else if (!combat.isActive()) {
-            // One side eliminated during casualties
-            cleanupCombat(combat, tracker);
+        } else {
+            // Check if one side was eliminated during casualties
+            // Must recalculate MPS to account for entities killed by external sources
+            // (entities destroyed externally remain in ID lists but contribute 0 MPS)
+            int finalAttackerMPS = calculateTotalMPS(combat.attackerIds, building);
+            int finalDefenderMPS = calculateTotalMPS(combat.defenderIds, building);
+
+            if (finalAttackerMPS <= 0 || finalDefenderMPS <= 0) {
+                // One side eliminated - end action
+                cleanupCombat(combat, tracker);
+            }
         }
     }
 
@@ -15452,17 +15465,22 @@ public class TWGameManager extends AbstractGameManager {
         for (int entityId : entityIds) {
             Entity entity = game.getEntity(entityId);
             if (entity != null && !entity.isDestroyed() && !entity.isDoomed()) {
-                total += megamek.common.compute.MarinePointsScoreCalculator.calculateMPS(entity, building);
+                int entityMPS = megamek.common.compute.MarinePointsScoreCalculator.calculateMPS(entity, building);
+                LOGGER.debug("Entity {} ({}) MPS: {}", entityId, entity.getDisplayName(), entityMPS);
+                total += entityMPS;
+            } else if (entity != null) {
+                LOGGER.debug("Entity {} ({}) is destroyed/doomed, contributes 0 MPS", entityId, entity.getDisplayName());
             }
         }
+        LOGGER.debug("Total MPS: {}", total);
         return total;
     }
 
     /**
      * Process attacker withdrawal.
      */
-    private void processWithdrawal(InfantryBuildingCombatTracker.BuildingCombat combat,
-                                    InfantryBuildingCombatTracker tracker,
+    private void processWithdrawal(InfantryActionTracker.InfantryAction combat,
+                                    InfantryActionTracker tracker,
                                     megamek.common.units.AbstractBuildingEntity building) {
         Report r = new Report(5639);  // "Attacking forces withdraw from {0}"
         r.add(building.getDisplayName());
@@ -15484,13 +15502,13 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        tracker.removeCombat(combat.buildingEntityId);
+        tracker.removeCombat(combat.targetId);
     }
 
     /**
      * Apply casualties to one side.
      */
-    private void applyCasualties(InfantryBuildingCombatTracker.BuildingCombat combat,
+    private void applyCasualties(InfantryActionTracker.InfantryAction combat,
                                   int percentCasualties, boolean isAttacker) {
         if (percentCasualties <= 0) {
             return;
@@ -15662,8 +15680,8 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Report and handle one side being eliminated.
      */
-    private void reportSideEliminated(InfantryBuildingCombatTracker.BuildingCombat combat,
-                                       InfantryBuildingCombatTracker tracker,
+    private void reportSideEliminated(InfantryActionTracker.InfantryAction combat,
+                                       InfantryActionTracker tracker,
                                        megamek.common.units.AbstractBuildingEntity building,
                                        boolean attackersEliminated) {
         Report r = new Report(attackersEliminated ? 5636 : 5638);  // "Side eliminated"
@@ -15675,8 +15693,8 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Report and handle attackers being repulsed.
      */
-    private void reportSideRepulsed(InfantryBuildingCombatTracker.BuildingCombat combat,
-                                     InfantryBuildingCombatTracker tracker,
+    private void reportSideRepulsed(InfantryActionTracker.InfantryAction combat,
+                                     InfantryActionTracker tracker,
                                      megamek.common.units.AbstractBuildingEntity building) {
         Report r = new Report(5637);  // "Attacking forces repulsed"
         addReport(r);
@@ -15687,8 +15705,8 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Clean up combat and clear entity states.
      */
-    private void cleanupCombat(InfantryBuildingCombatTracker.BuildingCombat combat,
-                                InfantryBuildingCombatTracker tracker) {
+    private void cleanupCombat(InfantryActionTracker.InfantryAction combat,
+                                InfantryActionTracker tracker) {
         // Clear all entity states
         for (int entityId : combat.attackerIds) {
             Entity entity = game.getEntity(entityId);
@@ -15703,7 +15721,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        tracker.removeCombat(combat.buildingEntityId);
+        tracker.removeCombat(combat.targetId);
     }
 
     private void resolveLayExplosivesAttack(PhysicalResult pr) {

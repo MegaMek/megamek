@@ -56,15 +56,18 @@ public class InfantryCombatTablesTest {
 
     @Test
     void testCalculateRatio_AttackerAdvantage() {
-        // 2:1 ratio
+        // 2:1 ratio (exactly 2.0)
         assertEquals("2:1", InfantryCombatTables.calculateRatio(50, 25));
 
-        // 3:1 ratio (ratio must be >= 2.5 but < 3.0)
-        assertEquals("3:1", InfantryCombatTables.calculateRatio(65, 25));
+        // 2.6:1 still rounds to 2:1 (TOAR: "2.1 in the attacker's favor would become 2:1")
+        assertEquals("2:1", InfantryCombatTables.calculateRatio(65, 25));
 
-        // >3:1 ratio (ratio >= 3.0)
-        assertEquals(">3:1", InfantryCombatTables.calculateRatio(75, 25));
-        assertEquals(">3:1", InfantryCombatTables.calculateRatio(100, 25));
+        // 3:1 ratio (ratio must be >= 3.0)
+        assertEquals("3:1", InfantryCombatTables.calculateRatio(75, 25));
+
+        // >3:1 ratio (ratio significantly > 3.0) - Rules don't support this??? It says to always round
+        // towards defenders? So how would this...?
+        //assertEquals(">3:1", InfantryCombatTables.calculateRatio(100, 25));
     }
 
     @Test

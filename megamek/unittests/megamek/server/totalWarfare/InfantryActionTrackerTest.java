@@ -49,18 +49,18 @@ import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
-import megamek.server.totalWarfare.InfantryBuildingCombatTracker.BuildingCombat;
+import megamek.server.totalWarfare.InfantryActionTracker.InfantryAction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link InfantryBuildingCombatTracker} focusing on tracking
- * infantry vs. infantry combat inside real BuildingEntity instances (TOAR p. 172-174).
+ * Tests for {@link InfantryActionTracker} focusing on tracking
+ * infantry vs. infantry actions in buildings, ships, and aerospace units (TOAR p. 167-174).
  */
-public class InfantryBuildingCombatTrackerTest {
+public class InfantryActionTrackerTest {
 
-    private InfantryBuildingCombatTracker tracker;
+    private InfantryActionTracker tracker;
     private megamek.common.game.Game game;
     private Player player1;
     private Player player2;
@@ -72,7 +72,7 @@ public class InfantryBuildingCombatTrackerTest {
 
     @BeforeEach
     void beforeEach() {
-        tracker = new InfantryBuildingCombatTracker();
+        tracker = new InfantryActionTracker();
         game = new megamek.common.game.Game();
         player1 = new Player(0, "Player 1");
         player2 = new Player(1, "Player 2");
@@ -92,9 +92,9 @@ public class InfantryBuildingCombatTrackerTest {
         tracker.addCombat(building.getId(), attacker, defender);
 
         assertTrue(tracker.hasCombat(building.getId()));
-        BuildingCombat combat = tracker.getCombat(building.getId());
+        InfantryAction combat = tracker.getCombat(building.getId());
         assertNotNull(combat);
-        assertEquals(building.getId(), combat.buildingEntityId);
+        assertEquals(building.getId(), combat.targetId);
         assertEquals(1, combat.attackerIds.size());
         assertEquals(1, combat.defenderIds.size());
         assertTrue(combat.attackerIds.contains(attacker.getId()));
@@ -112,7 +112,7 @@ public class InfantryBuildingCombatTrackerTest {
         // Building can be the defender (building has crew)
         tracker.addCombat(building.getId(), attacker, building);
 
-        BuildingCombat combat = tracker.getCombat(building.getId());
+        InfantryAction combat = tracker.getCombat(building.getId());
         assertNotNull(combat);
         assertEquals(1, combat.attackerIds.size());
         assertEquals(1, combat.defenderIds.size());
@@ -133,7 +133,7 @@ public class InfantryBuildingCombatTrackerTest {
         tracker.addCombat(building.getId(), attacker1, defender);
         tracker.addCombat(building.getId(), attacker2, null);
 
-        BuildingCombat combat = tracker.getCombat(building.getId());
+        InfantryAction combat = tracker.getCombat(building.getId());
         assertNotNull(combat);
         assertEquals(2, combat.attackerIds.size());
         assertEquals(1, combat.defenderIds.size());
@@ -155,7 +155,7 @@ public class InfantryBuildingCombatTrackerTest {
         boolean added = tracker.addReinforcement(building.getId(), reinforcement, false);
 
         assertTrue(added);
-        BuildingCombat combat = tracker.getCombat(building.getId());
+        InfantryAction combat = tracker.getCombat(building.getId());
         assertEquals(1, combat.attackerIds.size());
         assertEquals(2, combat.defenderIds.size());
         assertTrue(combat.defenderIds.contains(reinforcement.getId()));
@@ -209,7 +209,7 @@ public class InfantryBuildingCombatTrackerTest {
 
         tracker.addCombat(building.getId(), attacker, defender);
 
-        BuildingCombat combat = tracker.getCombat(building.getId());
+        InfantryAction combat = tracker.getCombat(building.getId());
         assertFalse(combat.hasPartialControl);
 
         // Achieve partial control
@@ -228,7 +228,7 @@ public class InfantryBuildingCombatTrackerTest {
 
         tracker.addCombat(building.getId(), attacker, defender);
 
-        BuildingCombat combat = tracker.getCombat(building.getId());
+        InfantryAction combat = tracker.getCombat(building.getId());
         assertEquals(0, combat.turnCount);
 
         tracker.incrementAllTurnCounters();
@@ -249,7 +249,7 @@ public class InfantryBuildingCombatTrackerTest {
 
         tracker.addCombat(building.getId(), attacker, defender);
 
-        BuildingCombat combat = tracker.getCombat(building.getId());
+        InfantryAction combat = tracker.getCombat(building.getId());
         assertTrue(combat.isActive());
 
         // Remove all attackers
@@ -336,9 +336,9 @@ public class InfantryBuildingCombatTrackerTest {
         tracker.addCombat(building.getId(), attacker, defender);
         assertTrue(tracker.hasCombat(building.getId()));
 
-        BuildingCombat removed = tracker.removeCombat(building.getId());
+        InfantryAction removed = tracker.removeCombat(building.getId());
         assertNotNull(removed);
-        assertEquals(building.getId(), removed.buildingEntityId);
+        assertEquals(building.getId(), removed.targetId);
         assertFalse(tracker.hasCombat(building.getId()));
     }
 
@@ -355,8 +355,173 @@ public class InfantryBuildingCombatTrackerTest {
         tracker.addCombat(building.getId(), attacker1, defender);
         tracker.addCombat(building.getId(), attacker2, null);
 
-        BuildingCombat combat = tracker.getCombat(building.getId());
+        InfantryAction combat = tracker.getCombat(building.getId());
         assertEquals(3, combat.getTotalCombatants());
+    }
+
+    // ==================== Combat Ending Tests ====================
+
+    /**
+     * Test combat ends when all defenders are eliminated.
+     * Verifies that when the last defender (including building crew) is removed,
+     * the combat is properly cleaned up and removed from tracking.
+     */
+    @Test
+    void testCombatEnds_WhenAllDefendersEliminated() {
+        AbstractBuildingEntity building = createBuilding(player2, 100);
+        Infantry attacker1 = createInfantry(player1, 1);
+        Infantry attacker2 = createInfantry(player1, 2);
+        Infantry defender1 = createInfantry(player2, 3);
+        Infantry defender2 = createInfantry(player2, 4);
+
+        // Set up combat with 2 attackers vs 2 defenders
+        tracker.addCombat(building.getId(), attacker1, defender1);
+        tracker.addCombat(building.getId(), attacker2, defender2);
+
+        InfantryAction combat = tracker.getCombat(building.getId());
+        assertNotNull(combat);
+        assertTrue(combat.isActive());
+        assertEquals(2, combat.attackerIds.size());
+        assertEquals(2, combat.defenderIds.size());
+
+        // Eliminate first defender
+        tracker.removeEntity(building.getId(), defender1.getId());
+        combat = tracker.getCombat(building.getId());
+        assertNotNull(combat, "Combat should still exist with one defender remaining");
+        assertTrue(combat.isActive(), "Combat should still be active");
+        assertEquals(2, combat.attackerIds.size());
+        assertEquals(1, combat.defenderIds.size());
+
+        // Eliminate last defender - combat should end
+        tracker.removeEntity(building.getId(), defender2.getId());
+        combat = tracker.getCombat(building.getId());
+        assertNull(combat, "Combat should be removed when all defenders are eliminated");
+        assertFalse(tracker.hasCombat(building.getId()), "Tracker should not have this combat anymore");
+    }
+
+    /**
+     * Test combat ends when building (as defender) crew is defeated.
+     * Verifies that when a building's crew is eliminated and there are no
+     * other defenders, the combat properly ends.
+     */
+    @Test
+    void testCombatEnds_WhenBuildingCrewDefeated() {
+        AbstractBuildingEntity building = createBuilding(player2, 100);
+        Infantry attacker = createInfantry(player1, 1);
+
+        // Building itself is the defender (has crew)
+        tracker.addCombat(building.getId(), attacker, building);
+
+        InfantryAction combat = tracker.getCombat(building.getId());
+        assertNotNull(combat);
+        assertTrue(combat.isActive());
+        assertEquals(1, combat.attackerIds.size());
+        assertEquals(1, combat.defenderIds.size());
+        assertTrue(combat.defenderIds.contains(building.getId()));
+
+        // Building crew is eliminated
+        tracker.removeEntity(building.getId(), building.getId());
+
+        combat = tracker.getCombat(building.getId());
+        assertNull(combat, "Combat should end when building crew is defeated");
+        assertFalse(tracker.hasCombat(building.getId()));
+    }
+
+    /**
+     * Test combat ends when all attackers are eliminated.
+     * Verifies that when the last attacker is removed (killed or withdrawn),
+     * the combat is properly cleaned up.
+     */
+    @Test
+    void testCombatEnds_WhenAllAttackersEliminated() {
+        AbstractBuildingEntity building = createBuilding(player2, 100);
+        Infantry attacker1 = createInfantry(player1, 1);
+        Infantry attacker2 = createInfantry(player1, 2);
+        Infantry defender = createInfantry(player2, 3);
+
+        // Set up combat with 2 attackers vs 1 defender
+        tracker.addCombat(building.getId(), attacker1, defender);
+        tracker.addCombat(building.getId(), attacker2, null);
+
+        InfantryAction combat = tracker.getCombat(building.getId());
+        assertNotNull(combat);
+        assertTrue(combat.isActive());
+        assertEquals(2, combat.attackerIds.size());
+        assertEquals(1, combat.defenderIds.size());
+
+        // Eliminate first attacker
+        tracker.removeEntity(building.getId(), attacker1.getId());
+        combat = tracker.getCombat(building.getId());
+        assertNotNull(combat, "Combat should still exist with one attacker remaining");
+        assertTrue(combat.isActive(), "Combat should still be active");
+        assertEquals(1, combat.attackerIds.size());
+        assertEquals(1, combat.defenderIds.size());
+
+        // Eliminate last attacker - combat should end
+        tracker.removeEntity(building.getId(), attacker2.getId());
+        combat = tracker.getCombat(building.getId());
+        assertNull(combat, "Combat should be removed when all attackers are eliminated");
+        assertFalse(tracker.hasCombat(building.getId()), "Tracker should not have this combat anymore");
+    }
+
+    /**
+     * Test combat ends when attackers withdraw.
+     * Verifies that withdrawing all attackers properly ends the combat.
+     */
+    @Test
+    void testCombatEnds_WhenAttackersWithdraw() {
+        AbstractBuildingEntity building = createBuilding(player2, 100);
+        Infantry attacker1 = createInfantry(player1, 1);
+        Infantry attacker2 = createInfantry(player1, 2);
+        Infantry defender = createInfantry(player2, 3);
+
+        // Set up combat
+        tracker.addCombat(building.getId(), attacker1, defender);
+        tracker.addCombat(building.getId(), attacker2, null);
+
+        assertTrue(tracker.hasCombat(building.getId()));
+        InfantryAction combat = tracker.getCombat(building.getId());
+        assertTrue(combat.isActive());
+
+        // All attackers withdraw
+        var withdrawn = tracker.withdrawAttackers(building.getId());
+
+        assertEquals(2, withdrawn.size(), "Both attackers should be withdrawn");
+        assertFalse(tracker.hasCombat(building.getId()), "Combat should end when all attackers withdraw");
+        assertNull(tracker.getCombat(building.getId()), "Combat should be removed from tracker");
+    }
+
+    /**
+     * Test multiple combats can end independently.
+     * Verifies that ending one combat doesn't affect other ongoing combats.
+     */
+    @Test
+    void testMultipleCombats_EndIndependently() {
+        AbstractBuildingEntity building1 = createBuilding(player2, 100);
+        AbstractBuildingEntity building2 = createBuilding(player2, 101);
+        Infantry attacker1 = createInfantry(player1, 1);
+        Infantry attacker2 = createInfantry(player1, 2);
+        Infantry defender1 = createInfantry(player2, 3);
+        Infantry defender2 = createInfantry(player2, 4);
+
+        // Set up two separate combats
+        tracker.addCombat(building1.getId(), attacker1, defender1);
+        tracker.addCombat(building2.getId(), attacker2, defender2);
+
+        assertEquals(2, tracker.getActiveCombatCount());
+
+        // End first combat by eliminating all defenders
+        tracker.removeEntity(building1.getId(), defender1.getId());
+
+        assertFalse(tracker.hasCombat(building1.getId()), "First combat should have ended");
+        assertTrue(tracker.hasCombat(building2.getId()), "Second combat should still be active");
+        assertEquals(1, tracker.getActiveCombatCount());
+
+        // End second combat
+        tracker.removeEntity(building2.getId(), defender2.getId());
+
+        assertFalse(tracker.hasCombat(building2.getId()), "Second combat should have ended");
+        assertEquals(0, tracker.getActiveCombatCount());
     }
 
     // ==================== Helper Methods ====================

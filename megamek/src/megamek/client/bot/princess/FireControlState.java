@@ -70,7 +70,7 @@ public class FireControlState {
      * @return A new list from the additional target list.
      */
     public List<Targetable> getAdditionalTargets() {
-        return additionalTargets;
+        return new ArrayList<>(additionalTargets);
     }
 
     /**

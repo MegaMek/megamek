@@ -54,7 +54,7 @@ import megamek.logging.MMLogger;
  * The entity detonates their suicide implants, destroying themselves and causing damage to nearby units depending on
  * entity type:
  *
- * <h3>Implemented Rules:</h3>
+ * <h2>Implemented Rules:</h2>
  * <ul>
  *   <li>Conventional Infantry: 0.57 damage per trooper to all entities in hex</li>
  *   <li>Battle Armor: Destroys selected troopers only, no damage to others</li>
@@ -65,7 +65,7 @@ import megamek.logging.MMLogger;
  *   <li>Suicide Charges inside Structures: CF reduced by (troopers / 2)</li>
  * </ul>
  *
- * <h3>NOT Implemented (Transport Complexity):</h3>
+ * <h2>NOT Implemented (Transport Complexity):</h2>
  * <p>The following IO pg 83 rules for suicide implants detonated inside other units are NOT implemented
  * due to the complexity of transport bay damage mechanics. Transported units are blocked from detonating.</p>
  * <ul>

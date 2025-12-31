@@ -67,7 +67,7 @@ public class FireControlState {
     /**
      * The list of "additional targets", such as buildings, bridges and arbitrary hexes that the bot will want to shoot
      *
-     * @return Additional target list.
+     * @return A new list from the additional target list.
      */
     public List<Targetable> getAdditionalTargets() {
         return new ArrayList<>(additionalTargets);
@@ -80,6 +80,15 @@ public class FireControlState {
      */
     public void setAdditionalTargets(List<Targetable> value) {
         additionalTargets = value;
+    }
+
+    /**
+     * Add a single value to the additional targets list.
+     *
+     * @param target
+     */
+    public void addAdditionalTarget(Targetable target) {
+        additionalTargets.add(target);
     }
 
     public void clearEntityIDFStates() {

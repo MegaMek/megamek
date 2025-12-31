@@ -33,6 +33,7 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -2105,14 +2106,8 @@ public class TWDamageManager implements IDamageManager {
             return reports;
         }
 
-        // Report the reactive detonation
-        Report report = new Report(4596);
-        report.subject = infantry.getId();
-        report.add(deadTroopers);
-        report.add(damage);
-        reports.add(report);
-
-        // Find all enemies in the hex and apply damage
+        // First, find all valid enemy targets in the hex
+        List<Entity> validTargets = new ArrayList<>();
         for (Entity target : game.getEntitiesVector(position)) {
             // Skip the infantry itself
             if (target.getId() == infantry.getId()) {
@@ -2126,7 +2121,23 @@ public class TWDamageManager implements IDamageManager {
             if (target.isDestroyed() || target.isDoomed()) {
                 continue;
             }
+            validTargets.add(target);
+        }
 
+        // If no enemies in hex, reactive detonation has no effect - skip reporting
+        if (validTargets.isEmpty()) {
+            return reports;
+        }
+
+        // Report the reactive detonation
+        Report report = new Report(4596);
+        report.subject = infantry.getId();
+        report.add(deadTroopers);
+        report.add(damage);
+        reports.add(report);
+
+        // Apply damage to all valid enemy targets
+        for (Entity target : validTargets) {
             // Report damage to this target
             Report targetReport = new Report(4583);
             targetReport.subject = target.getId();

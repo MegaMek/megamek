@@ -37,18 +37,32 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Vector;
+
 import megamek.common.actions.SuicideImplantsAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.DamageType;
+import megamek.server.Server;
+import megamek.server.totalWarfare.TWDamageManager;
+import megamek.server.totalWarfare.TWGameManager;
+import megamek.utils.ServerFactory;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -462,6 +476,174 @@ public class SuicideImplantsTest {
             assertEquals(bvWithout, bvWith,
                   "BA should NOT get BV bonus for Suicide Implants. " +
                         "With: " + bvWith + ", Without: " + bvWithout);
+        }
+    }
+
+    // =========================================================================
+    // INTEGRATION TESTS - Actually resolve damage and verify game state
+    // =========================================================================
+
+    /**
+     * Test adapter to access protected methods in TWDamageManager.
+     */
+    static class TestDamageManager extends TWDamageManager {
+        public TestDamageManager(TWGameManager gameManager, Game game) {
+            super(gameManager, game);
+        }
+
+        /**
+         * Exposes protected method for testing.
+         */
+        public Vector<Report> testApplySuicideImplantReaction(Entity infantry, int deadTroopers) {
+            return applySuicideImplantReaction(infantry, deadTroopers);
+        }
+    }
+
+    @Nested
+    @DisplayName("Reactive Detonation Integration Tests")
+    class ReactiveDetonationIntegrationTests {
+
+        private TWGameManager gameManager;
+        private TestDamageManager damageManager;
+        private Server server;
+
+        @BeforeEach
+        void setUpIntegration() throws IOException {
+            gameManager = new TWGameManager();
+            game = gameManager.getGame();
+            game.setOptions(new GameOptions());
+
+            damageManager = new TestDamageManager(gameManager, game);
+            gameManager.setDamageManager(damageManager);
+
+            server = ServerFactory.createServer(gameManager);
+
+            game.addPlayer(0, new Player(0, "Test Player"));
+            game.addPlayer(1, new Player(1, "Enemy Player"));
+        }
+
+        @AfterEach
+        void tearDownIntegration() {
+            if (server != null) {
+                server.die();
+            }
+        }
+
+        private BipedMek loadMek(String filename) throws EntityLoadingException {
+            String resourcesPath = "testresources/megamek/common/units/";
+            File file = new File(resourcesPath + filename);
+            MekFileParser mfParser = new MekFileParser(file);
+            BipedMek mek = (BipedMek) mfParser.getEntity();
+            mek.setId(game.getNextEntityId());
+            mek.setOwner(game.getPlayer(1)); // Enemy player
+            game.addEntity(mek);
+            return mek;
+        }
+
+        @Test
+        @DisplayName("Reactive detonation returns empty reports when no enemies in hex")
+        void reactiveDetonationReturnsEmptyWhenNoEnemiesInHex() {
+            // Arrange: Infantry alone in hex (no enemies)
+            Infantry infantry = createInfantry(21, true, 0);
+            infantry.setPosition(new Coords(5, 5));
+            infantry.setDeployed(true);
+            game.addEntity(infantry);
+
+            // Act: Call reactive detonation with 10 dead troopers
+            Vector<Report> reports = damageManager.testApplySuicideImplantReaction(infantry, 10);
+
+            // Assert: Should return empty - no message when no enemies to damage
+            assertTrue(reports.isEmpty(),
+                  "Reactive detonation should return empty reports when no enemies in hex");
+        }
+
+        @Test
+        @DisplayName("Reactive detonation damages enemy Mek in same hex")
+        void reactiveDetonationDamagesEnemyInSameHex() throws EntityLoadingException {
+            // Arrange: Infantry and enemy Mek in same hex
+            Infantry infantry = createInfantry(21, true, 0);
+            Coords sharedHex = new Coords(5, 5);
+            infantry.setPosition(sharedHex);
+            infantry.setDeployed(true);
+            game.addEntity(infantry);
+
+            BipedMek enemyMek = loadMek("Crab CRB-20.mtf");
+            enemyMek.setPosition(sharedHex);
+            enemyMek.setDeployed(true);
+            int startingArmor = enemyMek.getTotalArmor();
+
+            // Act: 10 dead troopers = 6 damage (10 * 0.57 = 5.7, rounds to 6)
+            Vector<Report> reports = damageManager.testApplySuicideImplantReaction(infantry, 10);
+
+            // Assert: Reports generated and enemy took damage
+            assertFalse(reports.isEmpty(),
+                  "Should generate reports when enemy is in hex");
+            assertTrue(enemyMek.getTotalArmor() < startingArmor,
+                  "Enemy Mek should have taken damage. " +
+                        "Starting: " + startingArmor + ", Current: " + enemyMek.getTotalArmor());
+        }
+
+        @Test
+        @DisplayName("Reactive detonation does NOT damage friendly units in same hex")
+        void reactiveDetonationDoesNotDamageFriendlyUnits() throws EntityLoadingException {
+            // Arrange: Infantry and friendly Mek in same hex (same owner)
+            Infantry infantry = createInfantry(21, true, 0);
+            Coords sharedHex = new Coords(5, 5);
+            infantry.setPosition(sharedHex);
+            infantry.setDeployed(true);
+            game.addEntity(infantry);
+
+            // Load Mek but set it to same owner (friendly)
+            String resourcesPath = "testresources/megamek/common/units/";
+            File file = new File(resourcesPath + "Crab CRB-20.mtf");
+            MekFileParser mfParser = new MekFileParser(file);
+            BipedMek friendlyMek = (BipedMek) mfParser.getEntity();
+            friendlyMek.setId(game.getNextEntityId());
+            friendlyMek.setOwner(game.getPlayer(0)); // Same owner as infantry (friendly)
+            game.addEntity(friendlyMek);
+            friendlyMek.setPosition(sharedHex);
+            friendlyMek.setDeployed(true);
+            int startingArmor = friendlyMek.getTotalArmor();
+
+            // Act: 10 dead troopers
+            Vector<Report> reports = damageManager.testApplySuicideImplantReaction(infantry, 10);
+
+            // Assert: No reports (no enemies), friendly undamaged
+            assertTrue(reports.isEmpty(),
+                  "Should return empty reports - friendly is not a valid target");
+            assertEquals(startingArmor, friendlyMek.getTotalArmor(),
+                  "Friendly Mek should NOT have taken damage");
+        }
+
+        @Test
+        @DisplayName("Reactive detonation damages all enemies in hex")
+        void reactiveDetonationDamagesAllEnemiesInHex() throws EntityLoadingException {
+            // Arrange: Infantry and TWO enemy Meks in same hex
+            Infantry infantry = createInfantry(21, true, 0);
+            Coords sharedHex = new Coords(5, 5);
+            infantry.setPosition(sharedHex);
+            infantry.setDeployed(true);
+            game.addEntity(infantry);
+
+            BipedMek enemyMek1 = loadMek("Crab CRB-20.mtf");
+            enemyMek1.setPosition(sharedHex);
+            enemyMek1.setDeployed(true);
+            int startingArmor1 = enemyMek1.getTotalArmor();
+
+            BipedMek enemyMek2 = loadMek("Cyclops CP-10-Z.mtf");
+            enemyMek2.setPosition(sharedHex);
+            enemyMek2.setDeployed(true);
+            int startingArmor2 = enemyMek2.getTotalArmor();
+
+            // Act: 10 dead troopers = 6 damage to EACH enemy
+            Vector<Report> reports = damageManager.testApplySuicideImplantReaction(infantry, 10);
+
+            // Assert: Both enemies took damage
+            assertFalse(reports.isEmpty(), "Should generate reports");
+            assertTrue(enemyMek1.getTotalArmor() < startingArmor1,
+                  "First enemy Mek should have taken damage");
+            assertTrue(enemyMek2.getTotalArmor() < startingArmor2,
+                  "Second enemy Mek should have taken damage");
         }
     }
 }

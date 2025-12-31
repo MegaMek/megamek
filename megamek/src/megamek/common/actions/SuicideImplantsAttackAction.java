@@ -53,6 +53,8 @@ import megamek.logging.MMLogger;
  * <p>
  * The entity detonates their suicide implants, destroying themselves and causing damage to nearby units depending on
  * entity type:
+ *
+ * <h3>Implemented Rules:</h3>
  * <ul>
  *   <li>Conventional Infantry: 0.57 damage per trooper to all entities in hex</li>
  *   <li>Battle Armor: Destroys selected troopers only, no damage to others</li>
@@ -60,6 +62,19 @@ import megamek.logging.MMLogger;
  *       plus critical hit roll. Cockpit destroyed for salvage.</li>
  *   <li>Vehicle Crew: Crew Killed result, 1 point internal to all facings,
  *       plus critical hit rolls.</li>
+ *   <li>Suicide Charges inside Structures: CF reduced by (troopers / 2)</li>
+ * </ul>
+ *
+ * <h3>NOT Implemented (Transport Complexity):</h3>
+ * <p>The following IO pg 83 rules for suicide implants detonated inside other units are NOT implemented
+ * due to the complexity of transport bay damage mechanics. Transported units are blocked from detonating.</p>
+ * <ul>
+ *   <li>Conventional Infantry/Dismounted Personnel inside a Transport Bay: Would deliver damage to the bay
+ *       as a critical hit, then assess damage to internal structure of the transport unit.</li>
+ *   <li>Suicide Charges inside Other Aerospace Units: For every 10 charges, apply 1 SI damage
+ *       with critical hit roll.</li>
+ *   <li>Suicide Charges inside Other Units: For every 2 charges, apply 1 point IS damage
+ *       to appropriate location (or rear facing if unspecified), with critical hit roll.</li>
  * </ul>
  */
 public class SuicideImplantsAttackAction extends AbstractAttackAction {
@@ -181,7 +196,11 @@ public class SuicideImplantsAttackAction extends AbstractAttackAction {
                   Messages.getString("SuicideImplantsAttackAction.crewUnconscious"));
         }
 
-        // Cannot detonate if being transported (except in buildings)
+        // Cannot detonate if being transported.
+        // IO pg 83 has rules for detonating inside transport bays (damage to bay as crit,
+        // then IS damage to transport), inside aerospace units (1 SI per 10 charges), and
+        // inside other units (1 IS per 2 charges). These are NOT implemented due to
+        // transport bay damage mechanics complexity. See class Javadoc for details.
         if (attackingEntity.getTransportId() != Entity.NONE) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   Messages.getString("SuicideImplantsAttackAction.transported"));

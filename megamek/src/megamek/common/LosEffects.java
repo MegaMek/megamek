@@ -564,6 +564,29 @@ public class LosEffects {
           final @Nullable Coords targetPosition,
           int boardId,
           final boolean spotting) {
+        // Use attacker's height if not explicitly specified
+        int attackHeight = (attacker != null) ? attacker.getHeight() : 0;
+        return calculateLOS(game, attacker, target, attackerPosition, targetPosition, attackHeight, boardId, spotting);
+    }
+
+    /**
+     * This calculates LOS effects with an explicit attack height, allowing for weapons firing from specific
+     * levels of multi-level entities like buildings.
+     *
+     * @param attackerPosition The nominal position of the attacker on the board with the given board ID
+     * @param targetPosition   The nominal position of the target on the board with the given board ID
+     * @param attackHeight     The height from which the attack is being made
+     * @param boardId          The board on which the nominal positions are
+     *
+     * @return LOS effects between the given positions
+     */
+    public static LosEffects calculateLOS(final Game game, final @Nullable Entity attacker,
+          final @Nullable Targetable target,
+          final @Nullable Coords attackerPosition,
+          final @Nullable Coords targetPosition,
+          int attackHeight,
+          int boardId,
+          final boolean spotting) {
 
         // LOS fails if one of the entities is not deployed.
         if ((attacker == null) || (target == null) || (attackerPosition == null)
@@ -616,10 +639,11 @@ public class LosEffects {
         }
 
         ai.targetInfantry = target instanceof Infantry;
-        ai.attackHeight = (ai.attLowAlt) ? attacker.getAltitude() : attacker.getHeight();
+        ai.attackHeight = (ai.attLowAlt) ? attacker.getAltitude() : attackHeight;
         ai.targetHeight = (ai.targetLowAlt) ? target.getAltitude() : target.getHeight() + targetHeightAdjustment;
 
-        int attackerElevation = (ai.attLowAlt) ? attacker.getAltitude() : attacker.relHeight() + attackerHex.getLevel();
+        int attackerElevation = (ai.attLowAlt) ? attacker.getAltitude() :
+              attackHeight + attacker.getElevation() + attackerHex.getLevel();
         // for spotting, a mast mount raises our elevation by 1
         if (spotting && attacker.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1)) {
             attackerElevation += (ai.attLowAlt) ? 0 : 1;

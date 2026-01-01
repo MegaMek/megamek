@@ -227,6 +227,9 @@ public class Precognition implements Runnable {
                 case BLDG_ADD:
                     receiveBuildingAdd(c);
                     break;
+                case BLDG_REMOVE:
+                    receiveBuildingRemove(c);
+                    break;
                 case BLDG_UPDATE:
                     receiveBuildingUpdate(c);
                     break;
@@ -857,10 +860,22 @@ public class Precognition implements Runnable {
         }
     }
 
+    private void receiveBuildingRemove(Packet packet) throws InvalidPacketDataException {
+        for (IBuilding building : (List<IBuilding>) packet.getObject(0)) {
+            game.getBoard(building.getBoardId()).removeBuilding(building);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private void receiveBuildingCollapse(Packet packet) throws InvalidPacketDataException {
         int boardId = packet.getIntValue(1);
         game.getBoard(boardId).collapseBuilding((Vector<Coords>) packet.getObject(0));
+        // If this is a strategic building target, we should probably remove it if it collapsed...
+        for(Coords coords : (Vector<Coords>) packet.getObject(0)) {
+            if (getOwner().hasStrategicBuildingTargets(coords)) {
+                getOwner().removeStrategicBuildingTarget(coords);
+            }
+        }
     }
 
     /**

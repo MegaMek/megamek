@@ -346,8 +346,8 @@ class TWGameManagerTest {
             initializeBoard("BUILDING_BOARD", """
                 size 2 2
                 hex 0101 0 "" ""
-                hex 0102 0 "" ""
                 hex 0201 0 "" ""
+                hex 0102 0 "" ""
                 hex 0202 0 "bldg_elev:3;building:1;bldg_cf:50" ""
                 end
                 """);
@@ -548,13 +548,13 @@ class TWGameManagerTest {
             initializeBoard("COMBAT_BOARD", """
                 size 3 3
                 hex 0101 0 "" ""
-                hex 0102 0 "" ""
-                hex 0103 0 "" ""
                 hex 0201 0 "" ""
-                hex 0202 0 "" ""
-                hex 0203 0 "" ""
                 hex 0301 0 "" ""
+                hex 0102 0 "" ""
+                hex 0202 0 "" ""
                 hex 0302 0 "" ""
+                hex 0103 0 "" ""
+                hex 0203 0 "" ""
                 hex 0303 0 "" ""
                 end
                 """);
@@ -791,13 +791,13 @@ class TWGameManagerTest {
             initializeBoard("BUILDING_COMBAT_BOARD", """
                 size 3 3
                 hex 0101 0 "" ""
-                hex 0102 0 "" ""
-                hex 0103 0 "" ""
                 hex 0201 0 "" ""
-                hex 0202 0 "bldg_elev:2;building:1;bldg_cf:40" ""
-                hex 0203 0 "" ""
                 hex 0301 0 "" ""
+                hex 0102 0 "" ""
+                hex 0202 0 "bldg_elev:2;building:1;bldg_cf:40" ""
                 hex 0302 0 "" ""
+                hex 0103 0 "" ""
+                hex 0203 0 "" ""
                 hex 0303 0 "" ""
                 end
                 """);

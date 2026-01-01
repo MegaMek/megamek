@@ -40,6 +40,7 @@ import java.util.Map;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
+import megamek.common.equipment.GunEmplacement;
 import megamek.common.game.InGameObject;
 
 public interface Targetable extends InGameObject, Serializable {
@@ -195,5 +196,14 @@ public interface Targetable extends InGameObject, Serializable {
         }
 
         return first.getPosition().equals(second.getPosition());
+    }
+
+
+    /**
+     * Replaced most instances of `instanceof GunEmplacement` to support {@link BuildingEntity}
+     * @return true if this unit is a {@link BuildingEntity} or {@link GunEmplacement}, false otherwise
+     */
+    default boolean isBuildingEntityOrGunEmplacement() {
+        return false;
     }
 }

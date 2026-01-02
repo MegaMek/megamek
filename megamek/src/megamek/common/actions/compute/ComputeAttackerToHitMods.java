@@ -399,6 +399,15 @@ public class ComputeAttackerToHitMods {
             }
         }
 
+        // Building and Vessel crew hits from infantry combat (TOAR p. 174)
+        if (attacker.getCrew().getCrewType() == CrewType.BUILDING
+              || attacker.getCrew().getCrewType() == CrewType.VESSEL) {
+            int crewHits = attacker.getCrew().getHits();
+            if (crewHits > 0) {
+                toHit.addModifier(crewHits, "crew hits from infantry combat");
+            }
+        }
+
         // Manei Domini Upgrades
 
         // Prototype DNI gives -2 gunnery (IO pg 83)

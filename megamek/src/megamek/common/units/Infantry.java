@@ -2100,4 +2100,70 @@ public class Infantry extends Entity {
         // Conventional infantry units have no listed recovery time in CamOps, so we're copying from Battle Armor
         return 10;
     }
+
+    @Override
+    public boolean canInitiateInfantryVsInfantryCombat() {
+        if (!game.hasBoardLocationOf(this)) {
+            return false; // not on board?
+        }
+
+        // Must be inside the building to initiate combat (TO:AR p. 169)
+        if (!isInBuilding()) {
+            return false;
+        }
+
+        Hex hex = game.getHex(getPosition(), getBoardId());
+        if (hex == null) {
+            return false;
+        }
+
+        // Look for enemy boardable entities at this location
+        Entity enemyBoardableEntity = null;
+        for (Entity e : game.getEntitiesVector(getBoardLocation())) {
+            if (e.isBoardable() && e.getOwner().isEnemyOf(getOwner())) {
+                enemyBoardableEntity = e;
+                break;
+            }
+        }
+
+        if (enemyBoardableEntity != null) {
+            // Check if combat DOES NOT already exist (this is for INITIATING new combat only)
+            boolean combatExists = getGame().getEntitiesVector(getBoardLocation()).stream()
+                  .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
+
+            return !combatExists; // Can only initiate if no combat exists yet
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean canReinforceInfantryVsInfantry() {
+        if (!game.hasBoardLocationOf(this)) {
+            return false; // not on board?
+        }
+
+        Hex hex = game.getHex(getPosition(), getBoardId());
+        if (hex == null) {
+            return false;
+        }
+
+        // Check if already in combat and can withdraw
+        if (getInfantryCombatTargetId() != Entity.NONE && isInfantryCombatAttacker()) {
+            return true;  // Can withdraw
+        }
+
+        // Check if can reinforce EXISTING infantry vs. infantry combat
+        // Simply check if there's ongoing combat in this hex
+        boolean combatExists = getGame().getEntitiesVector(getBoardLocation()).stream()
+              .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
+
+        if (combatExists && getInfantryCombatTargetId() == Entity.NONE) {
+            // Combat exists and we're not in it yet - can reinforce
+            return getGame().getEntitiesVector(getBoardLocation()).stream()
+                  .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
+        }
+
+        return false;
+    }
 }

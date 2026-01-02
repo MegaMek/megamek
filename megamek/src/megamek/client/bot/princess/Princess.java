@@ -66,8 +66,11 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.DisengageAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
+import megamek.common.actions.InitiateInfantryCombatAction;
+import megamek.common.actions.ReinforceInfantryCombatAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.WithdrawInfantryCombatAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
@@ -110,6 +113,7 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.logging.MMLogger;
+import megamek.server.totalWarfare.InfantryActionTracker;
 import org.apache.logging.log4j.Level;
 
 public class Princess extends BotClient {
@@ -2223,6 +2227,227 @@ public class Princess extends BotClient {
         } catch (Exception ignored) {
             return null;
         }
+    }
+
+    @Override
+    protected void calculatePreEndDeclarationsTurn() {
+        try {
+            initialize();
+            Entity entity = game.getFirstEntity(getMyTurn());
+
+            // Only infantry can initiate combat
+            if (!(entity instanceof Infantry)) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+                sendDone(true);
+                return;
+            }
+
+            // Check if already in combat
+            if (entity.getInfantryCombatTargetId() != Entity.NONE) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+                sendDone(true);
+                return;
+            }
+
+            // Find potential targets (buildings/vessels in same hex or adjacent)
+            List<Entity> potentialTargets = findInfantryCombatTargets(entity);
+
+            if (potentialTargets.isEmpty()) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+                sendDone(true);
+                return;
+            }
+
+            // Evaluate each target and pick best
+            Entity bestTarget = null;
+            double bestRatio = 0;
+            double initiationThreshold = InfantryCombatHelper
+                  .calculateInitiationThreshold(getBehaviorSettings().getBraveryValue());
+
+            for (Entity target : potentialTargets) {
+                if (InfantryCombatHelper.shouldInitiateCombat(
+                      entity, target, game, getBehaviorSettings())) {
+                    double ratio = calculateCombatRatio(entity, target);
+                    if (ratio > bestRatio) {
+                        bestRatio = ratio;
+                        bestTarget = target;
+                    }
+                }
+            }
+
+            if (bestTarget != null) {
+                LOGGER.info("{} initiating infantry combat at {} (MPS ratio: {}, threshold: {})",
+                      entity.getDisplayName(), bestTarget.getDisplayName(),
+                      String.format("%.2f", bestRatio),
+                      String.format("%.2f", initiationThreshold));
+
+                Vector<EntityAction> actions = new Vector<>();
+                actions.add(new InitiateInfantryCombatAction(
+                      entity.getId(), bestTarget.getId()));
+                sendAttackData(entity.getId(), actions);
+            } else {
+                sendAttackData(entity.getId(), new Vector<>(0));
+            }
+
+            sendDone(true);
+
+        } catch (Exception e) {
+            LOGGER.error(e, "Error in calculatePreEndDeclarationsTurn");
+            Entity entity = game.getFirstEntity(getMyTurn());
+            if (entity != null) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+            }
+            sendDone(true);
+        }
+    }
+
+    @Override
+    protected void calculateInfantryVsInfantryCombatTurn() {
+        try {
+            initialize();
+            Entity entity = game.getFirstEntity(getMyTurn());
+
+            if (!(entity instanceof Infantry)) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+                sendDone(true);
+                return;
+            }
+
+            Vector<EntityAction> actions = new Vector<>();
+
+            // Check if entity is already in infantry vs infantry combat
+            int targetId = entity.getInfantryCombatTargetId();
+
+            if (targetId != Entity.NONE) {
+                // Already in combat - check if should withdraw (attackers only)
+                if (entity.isInfantryCombatAttacker()) {
+                    if (InfantryCombatHelper.shouldWithdraw(
+                          entity, targetId, game, getBehaviorSettings())) {
+
+                        Entity target = game.getEntity(targetId);
+                        LOGGER.info("{} withdrawing from infantry combat at {}",
+                              entity.getDisplayName(),
+                              target != null ? target.getDisplayName() : "unknown");
+
+                        actions.add(new WithdrawInfantryCombatAction(
+                              entity.getId(), targetId));
+                    }
+                }
+            } else {
+                // Not in combat - check if should reinforce existing combat
+                List<Integer> activeCombatTargets = findEligibleInfantryCombatsToReinforce(entity);
+
+                for (int combatTargetId : activeCombatTargets) {
+                    if (InfantryCombatHelper.shouldReinforce(
+                          entity, combatTargetId, game, getBehaviorSettings())) {
+
+                        Entity target = game.getEntity(combatTargetId);
+                        LOGGER.info("{} reinforcing infantry combat at {}",
+                              entity.getDisplayName(),
+                              target != null ? target.getDisplayName() : "unknown");
+
+                        actions.add(new ReinforceInfantryCombatAction(
+                              entity.getId(), combatTargetId));
+                        break; // Only reinforce one combat per turn
+                    }
+                }
+            }
+
+            if (!actions.isEmpty()) {
+                sendAttackData(entity.getId(), actions);
+            } else {
+                sendAttackData(entity.getId(), new Vector<>(0));
+            }
+
+            sendDone(true);
+
+        } catch (Exception e) {
+            LOGGER.error(e, "Error in calculateInfantryVsInfantryCombatTurn");
+            Entity entity = game.getFirstEntity(getMyTurn());
+            if (entity != null) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+            }
+            sendDone(true);
+        }
+    }
+
+    /**
+     * Find buildings/vessels in same hex or adjacent that could be targets for infantry combat.
+     *
+     * @param infantry The infantry unit looking for targets
+     * @return List of potential target buildings/vessels
+     */
+    private List<Entity> findInfantryCombatTargets(Entity infantry) {
+        List<Entity> targets = new ArrayList<>();
+        Coords position = infantry.getPosition();
+
+        for (Entity e : game.getEntitiesVector(position)) {
+            if (e.isBoardable() && e.getOwner().isEnemyOf(infantry.getOwner())) {
+                targets.add(e);
+            }
+        }
+
+        return targets;
+    }
+
+    /**
+     * Get the building entity at a specific position.
+     *
+     * @param position The coordinates to check
+     * @return The building entity at this position, or null if none
+     */
+    private Entity getBuildingAtPosition(Coords position) {
+        for (Entity e : game.getEntitiesVector(position)) {
+            if (e instanceof AbstractBuildingEntity) {
+                return e;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Find eligible infantry combats that this entity can reinforce.
+     * Returns target IDs of buildings/vessels with active combat in the SAME building as the entity.
+     * Per TO:AR p. 172, reinforcements must be in the same multi-hex building.
+     *
+     * @param entity The entity looking to reinforce (must be in a building)
+     * @return List of combat target IDs in the same building, empty if not in a building
+     */
+    private List<Integer> findEligibleInfantryCombatsToReinforce(Entity entity) {
+        List<Integer> nearbyCombatTargets = new ArrayList<>();
+
+        // Get the building the infantry is in (if any)
+        Entity entityBuilding = getBuildingAtPosition(entity.getPosition());
+        if (entityBuilding == null) {
+            return nearbyCombatTargets; // Not in a building
+        }
+
+        // Find all unique target IDs where combat is happening IN THE SAME BUILDING
+        for (Entity e : game.getEntitiesVector()) {
+            int targetId = e.getInfantryCombatTargetId();
+            if (targetId != Entity.NONE && !nearbyCombatTargets.contains(targetId)) {
+                Entity target = game.getEntity(targetId);
+                // Check if target IS the same building the entity is in
+                if (target != null && target.getId() == entityBuilding.getId()) {
+                    nearbyCombatTargets.add(targetId);
+                }
+            }
+        }
+
+        return nearbyCombatTargets;
+    }
+
+    /**
+     * Calculate MPS ratio for combat evaluation.
+     *
+     * @param attacker The attacking entity
+     * @param target   The target building/vessel
+     * @return MPS ratio (attacker / defender)
+     */
+    private double calculateCombatRatio(Entity attacker, Entity target) {
+        int attackerMPS = InfantryCombatHelper.calculateAttackerMPS(attacker, target);
+        int defenderMPS = InfantryCombatHelper.calculateEnemyMPS(game, target, attacker);
+        return InfantryCombatHelper.calculateMPSRatio(attackerMPS, defenderMPS);
     }
 
     boolean wantsToFallBack(final Entity entity) {

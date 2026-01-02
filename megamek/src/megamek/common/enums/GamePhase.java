@@ -62,6 +62,8 @@ public enum GamePhase {
     FIRING_REPORT("GamePhase.FIRING_REPORT.text"),
     PHYSICAL("GamePhase.PHYSICAL.text"),
     PHYSICAL_REPORT("GamePhase.PHYSICAL_REPORT.text"),
+    PREEND_DECLARATIONS("GamePhase.PREEND_DECLARATIONS.text"),
+    INFANTRY_VS_INFANTRY_COMBAT("GamePhase.INFANTRY_VS_INFANTRY_COMBAT.text"),
     END("GamePhase.END.text"),
     END_REPORT("GamePhase.END_REPORT.text"),
     VICTORY("GamePhase.VICTORY.text"),
@@ -158,6 +160,14 @@ public enum GamePhase {
         return this == PHYSICAL_REPORT;
     }
 
+    public boolean isPreEndDeclarations() {
+        return this == PREEND_DECLARATIONS;
+    }
+
+    public boolean isInfantryVsInfantryCombat() {
+        return this == INFANTRY_VS_INFANTRY_COMBAT;
+    }
+
     public boolean isEnd() {
         return this == END;
     }
@@ -208,7 +218,7 @@ public enum GamePhase {
     public boolean usesTurns() {
         return switch (this) {
             case SET_ARTILLERY_AUTO_HIT_HEXES, DEPLOY_MINEFIELDS, DEPLOYMENT, PREMOVEMENT, MOVEMENT, PRE_FIRING, FIRING,
-                 PHYSICAL, TARGETING, OFFBOARD -> true;
+                 PHYSICAL, TARGETING, OFFBOARD, PREEND_DECLARATIONS, INFANTRY_VS_INFANTRY_COMBAT -> true;
             default -> false;
         };
     }

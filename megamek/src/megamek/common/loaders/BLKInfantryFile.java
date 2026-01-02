@@ -34,6 +34,7 @@
 
 package megamek.common.loaders;
 
+import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.InfantryWeaponMounted;
@@ -247,6 +248,54 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
                 }
             }
         }
+
+        // Prosthetic Enhancement (Enhanced Limbs) - IO p.84
+        // Slot 1 (Standard Enhanced and Improved Enhanced)
+        if (dataFile.exists("prostheticEnhancement1")) {
+            String enhancementName = dataFile.getDataAsString("prostheticEnhancement1")[0];
+            ProstheticEnhancementType enhancement = ProstheticEnhancementType.parseFromString(enhancementName);
+            if (enhancement == null) {
+                throw new EntityLoadingException("Invalid prosthetic enhancement 1: " + enhancementName);
+            }
+            infantry.setProstheticEnhancement1(enhancement);
+
+            if (dataFile.exists("prostheticEnhancement1Count")) {
+                infantry.setProstheticEnhancement1Count(dataFile.getDataAsInt("prostheticEnhancement1Count")[0]);
+            } else {
+                infantry.setProstheticEnhancement1Count(1);
+            }
+        } else if (dataFile.exists("prostheticEnhancement")) {
+            // Legacy format support - old single-slot format maps to slot 1
+            String enhancementName = dataFile.getDataAsString("prostheticEnhancement")[0];
+            ProstheticEnhancementType enhancement = ProstheticEnhancementType.parseFromString(enhancementName);
+            if (enhancement == null) {
+                throw new EntityLoadingException("Invalid prosthetic enhancement: " + enhancementName);
+            }
+            infantry.setProstheticEnhancement1(enhancement);
+
+            if (dataFile.exists("prostheticEnhancementCount")) {
+                infantry.setProstheticEnhancement1Count(dataFile.getDataAsInt("prostheticEnhancementCount")[0]);
+            } else {
+                infantry.setProstheticEnhancement1Count(1);
+            }
+        }
+
+        // Slot 2 (Improved Enhanced only)
+        if (dataFile.exists("prostheticEnhancement2")) {
+            String enhancementName = dataFile.getDataAsString("prostheticEnhancement2")[0];
+            ProstheticEnhancementType enhancement = ProstheticEnhancementType.parseFromString(enhancementName);
+            if (enhancement == null) {
+                throw new EntityLoadingException("Invalid prosthetic enhancement 2: " + enhancementName);
+            }
+            infantry.setProstheticEnhancement2(enhancement);
+
+            if (dataFile.exists("prostheticEnhancement2Count")) {
+                infantry.setProstheticEnhancement2Count(dataFile.getDataAsInt("prostheticEnhancement2Count")[0]);
+            } else {
+                infantry.setProstheticEnhancement2Count(1);
+            }
+        }
+
         infantry.recalculateTechAdvancement();
         loadQuirks(infantry);
         return infantry;

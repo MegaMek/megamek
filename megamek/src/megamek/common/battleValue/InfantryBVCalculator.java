@@ -172,6 +172,32 @@ public class InfantryBVCalculator extends BVCalculator {
                   "= +" + formatForReport(tsmBonus));
         }
 
+        // Explosive Suicide Implant: +0.12 per trooper to Weapon Battle Value (IO pg 83)
+        // Only applies to conventional infantry
+        if (infantry.isConventionalInfantry() && infantry.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS)) {
+            double suicideImplantBonus = troopers * 0.12;
+            offensiveValue += suicideImplantBonus;
+            bvReport.addLine(Messages.getString("BV.SuicideImplant"),
+                  troopers + " x 0.12",
+                  "= +" + formatForReport(suicideImplantBonus));
+        }
+
+        // Prosthetic Enhancement adds damage bonus per trooper to Offensive BV (IO p.84)
+        // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
+        // Sum damage from both slots for BV calculation
+        boolean hasProstheticAbility = infantry.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+              || infantry.hasAbility(OptionsConstants.MD_PL_I_ENHANCED);
+        if (hasProstheticAbility) {
+            double prostheticDamagePerTrooper = infantry.getProstheticDamageBonus();
+            if (prostheticDamagePerTrooper > 0) {
+                double prostheticBonus = troopers * prostheticDamagePerTrooper;
+                offensiveValue += prostheticBonus;
+                bvReport.addLine(Messages.getString("BV.ProstheticEnhancement"),
+                      troopers + " x " + formatForReport(prostheticDamagePerTrooper),
+                      "= +" + formatForReport(prostheticBonus));
+            }
+        }
+
         bvReport.startTentativeSection();
         bvReport.addLine("Field Guns:", "", "");
         Predicate<Mounted<?>> weaponFilter = m -> countAsOffensiveWeapon(m)

@@ -49,10 +49,10 @@ public class IgnoreTurretsCommand implements ChatCommand {
     @Override
     public void execute(Princess princess, Arguments arguments) {
         princess.getGame()
-                .getInGameObjects()
-                .stream()
-                .filter(e -> e instanceof GunEmplacement || e instanceof BuildingEntity)
-                .map(InGameObject::getId)
+              .getInGameObjects()
+              .stream()
+              .filter(e -> e instanceof GunEmplacement || e instanceof BuildingEntity)
+              .map(InGameObject::getId)
               .forEach(i -> princess.getBehaviorSettings().addIgnoredUnitTarget(i));
         princess.sendChat(Messages.getString("Princess.command.ignoreTurrets.ignoringAllTurrets"));
     }

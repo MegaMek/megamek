@@ -125,7 +125,8 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
         return setupBuilding(building);
     }
 
-    private static AbstractBuildingEntity setupBuilding(AbstractBuildingEntity building) {        // Initialize a test board for BuildingEntity tests
+    private static AbstractBuildingEntity setupBuilding(
+          AbstractBuildingEntity building) {        // Initialize a test board for BuildingEntity tests
         building.getInternalBuilding().setBuildingHeight(3);
         building.getInternalBuilding().addHex(new CubeCoords(0, 0, 0), 50, 10, BasementType.UNKNOWN, false);
         return building;

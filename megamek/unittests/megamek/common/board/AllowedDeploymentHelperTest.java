@@ -75,9 +75,9 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
     // Provider method for ground units - shared across all nested test classes
     static Stream<Entity> groundUnits() {
         return Stream.of(
-            newEntity(BipedMek.class),
-            newEntity(Tank.class),
-            newEntity(SupportTank.class)
+              newEntity(BipedMek.class),
+              newEntity(Tank.class),
+              newEntity(SupportTank.class)
         );
     }
 
@@ -92,15 +92,15 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
     // Provider method for aerospace units - shared across all nested test classes
     static Stream<Entity> aerospaceUnits() {
         return Stream.of(
-            newEntity(AeroSpaceFighter.class),
-            newEntity(ConvFighter.class)
+              newEntity(AeroSpaceFighter.class),
+              newEntity(ConvFighter.class)
         );
     }
 
     // Provider method for building entities - shared across all nested test classes
     static Stream<Entity> singleHexAbstractBuildings() {
         return Stream.of(
-            newSingleHexBuildingEntity()
+              newSingleHexBuildingEntity()
         );
     }
 
@@ -115,8 +115,8 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
     // Provider method for all single-hex units - shared across all nested test classes
     static Stream<Entity> singleHexUnits() {
         return Stream.concat(
-            Stream.concat(groundUnits(), aerospaceUnits()),
-            singleHexAbstractBuildings()
+              Stream.concat(groundUnits(), aerospaceUnits()),
+              singleHexAbstractBuildings()
         );
     }
 
@@ -199,40 +199,40 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
 
         static {
             initializeBoard("GROUND_BOARD", """
-                size 3 3
-                option exit_roads_to_pavement false
-                hex 0101 0 "" ""
-                hex 0201 0 "" ""
-                hex 0301 0 "" ""
-                hex 0102 0 "" ""
-                hex 0202 0 "" ""
-                hex 0302 0 "" ""
-                hex 0103 0 "" ""
-                hex 0203 0 "" ""
-                hex 0303 0 "" ""
-                end
-                """);
+                  size 3 3
+                  option exit_roads_to_pavement false
+                  hex 0101 0 "" ""
+                  hex 0201 0 "" ""
+                  hex 0301 0 "" ""
+                  hex 0102 0 "" ""
+                  hex 0202 0 "" ""
+                  hex 0302 0 "" ""
+                  hex 0103 0 "" ""
+                  hex 0203 0 "" ""
+                  hex 0303 0 "" ""
+                  end
+                  """);
 
             initializeBoard("WATER_BOARD", """
-                size 2 2
-                option exit_roads_to_pavement false
-                hex 0101 0 "water:2" ""
-                hex 0201 0 "water:2" ""
-                hex 0102 0 "water:2" ""
-                hex 0202 0 "water:2" ""
-                end
-                """);
+                  size 2 2
+                  option exit_roads_to_pavement false
+                  hex 0101 0 "water:2" ""
+                  hex 0201 0 "water:2" ""
+                  hex 0102 0 "water:2" ""
+                  hex 0202 0 "water:2" ""
+                  end
+                  """);
 
             initializeBoard("LOW_ALTITUDE_BOARD", """
-                size 2 2
-                option exit_roads_to_pavement false
-                option set_atmospheric true
-                hex 0101 0 "" ""
-                hex 0201 0 "" ""
-                hex 0102 0 "" ""
-                hex 0202 0 "" ""
-                end
-                """);
+                  size 2 2
+                  option exit_roads_to_pavement false
+                  option set_atmospheric true
+                  hex 0101 0 "" ""
+                  hex 0201 0 "" ""
+                  hex 0102 0 "" ""
+                  hex 0202 0 "" ""
+                  end
+                  """);
         }
 
         @BeforeEach
@@ -258,7 +258,7 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
             // Assert
             assertFalse(elevations.isEmpty(), "Ground units should have at least one elevation option");
             assertTrue(elevations.stream().anyMatch(e -> e.elevation() == 0),
-                "Ground units should be able to deploy at elevation 0");
+                  "Ground units should be able to deploy at elevation 0");
         }
 
         @ParameterizedTest(name = "{index} - {0}")
@@ -278,7 +278,7 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
             // Assert
             assertFalse(elevations.isEmpty(), "Aerospace units should have elevation options");
             assertTrue(elevations.stream().anyMatch(e -> e.type() == DeploymentElevationType.ALTITUDE),
-                "Aerospace units should have altitude options");
+                  "Aerospace units should have altitude options");
         }
 
         @Test
@@ -317,8 +317,9 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
             List<ElevationOption> elevations = helper.findAllowedElevations();
 
             // Assert
-            assertTrue(elevations.stream().anyMatch(e -> e.elevation() == 0 && e.type() == DeploymentElevationType.ON_GROUND),
-                "Aerospace units should be able to land at elevation 0 on ground boards");
+            assertTrue(elevations.stream()
+                        .anyMatch(e -> e.elevation() == 0 && e.type() == DeploymentElevationType.ON_GROUND),
+                  "Aerospace units should be able to land at elevation 0 on ground boards");
         }
 
         @ParameterizedTest(name = "{index} - {0}")
@@ -340,7 +341,7 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
             // Assert
             assertFalse(elevations.isEmpty(), "Aerospace units should have altitude options");
             assertTrue(elevations.stream().allMatch(e -> e.elevation() >= 1),
-                "On low altitude boards, aerospace units should start at altitude 1 or higher");
+                  "On low altitude boards, aerospace units should start at altitude 1 or higher");
         }
 
         @ParameterizedTest(name = "{index} - {0}")
@@ -359,14 +360,14 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
 
             // Assert
             assertTrue(elevations.stream().allMatch(e -> e.type() == DeploymentElevationType.ON_GROUND),
-                "When limitToType is specified, all returned elevations should match that type");
+                  "When limitToType is specified, all returned elevations should match that type");
         }
 
         @Test
         @DisplayName(value = "should throw IllegalStateException for space board")
         void shouldThrowIllegalStateException_ForSpaceBoard() {
             // Arrange
-            Board spaceBoard = Board.getSpaceBoard(1,1);
+            Board spaceBoard = Board.getSpaceBoard(1, 1);
             spaceBoard.setMapName("SPACE_BOARD");
             Entity entity = new AeroSpaceFighter();
             entity.setOwner(player);
@@ -377,7 +378,7 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
 
             // Act & Assert
             assertThrows(IllegalStateException.class, helper::findAllowedElevations,
-                "Should throw IllegalStateException when board is space");
+                  "Should throw IllegalStateException when board is space");
         }
     }
 
@@ -390,19 +391,19 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
 
         static {
             initializeBoard("FACING_BOARD", """
-                size 3 3
-                option exit_roads_to_pavement false
-                hex 0101 0 "" ""
-                hex 0201 0 "" ""
-                hex 0301 0 "" ""
-                hex 0102 1 "" ""
-                hex 0202 0 "" ""
-                hex 0302 0 "" ""
-                hex 0103 0 "" ""
-                hex 0203 0 "" ""
-                hex 0303 1 "" ""
-                end
-                """);
+                  size 3 3
+                  option exit_roads_to_pavement false
+                  hex 0101 0 "" ""
+                  hex 0201 0 "" ""
+                  hex 0301 0 "" ""
+                  hex 0102 1 "" ""
+                  hex 0202 0 "" ""
+                  hex 0302 0 "" ""
+                  hex 0103 0 "" ""
+                  hex 0203 0 "" ""
+                  hex 0303 1 "" ""
+                  end
+                  """);
         }
 
         @BeforeEach
@@ -428,7 +429,7 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
             // Assert
             assertNotNull(facingOption, "Single-hex units should have facing options");
             assertEquals(6, facingOption.getValidFacings().size(),
-                "Single-hex units should have all 6 facings available");
+                  "Single-hex units should have all 6 facings available");
         }
 
         @ParameterizedTest(name = "{index} - {0}")

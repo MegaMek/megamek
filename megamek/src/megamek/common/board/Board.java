@@ -1466,6 +1466,36 @@ public class Board implements Serializable {
     }
 
     /**
+     * Remove a building from the board without adding rubble (clean removal).
+     * Used when a building is replaced by another building.
+     *
+     * @param bldg The building to remove
+     */
+    public void removeBuilding(IBuilding bldg) {
+        // Remove the building from our building vector.
+        buildings.removeElement(bldg);
+
+        // Walk through the building's hexes and remove building terrain
+        for (Coords coords : bldg.getCoordsList()) {
+            final Hex curHex = getHex(coords);
+            if (curHex == null) {
+                continue;
+            }
+
+            // Remove the building from the building map
+            bldgByCoords.remove(coords);
+
+            // Remove all building-related terrain
+            curHex.removeTerrain(Terrains.BUILDING);
+            curHex.removeTerrain(Terrains.BLDG_CF);
+            curHex.removeTerrain(Terrains.BLDG_ELEV);
+            curHex.removeTerrain(Terrains.BLDG_CLASS);
+            curHex.removeTerrain(Terrains.BLDG_ARMOR);
+            curHex.removeTerrain(Terrains.BLDG_BASEMENT_TYPE);
+        }
+    }
+
+    /**
      * Update a locally stored building with CF and other values from a building received from the server.
      *
      * @param receivedBuilding The Building received from the server

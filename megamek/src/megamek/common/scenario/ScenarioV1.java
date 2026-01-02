@@ -392,9 +392,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                 return null;
             }
 
-            // Construct EnumSet with all the relevant
-            final EnumSet<AmmoType.Munitions> munitionTypes = newAmmoType.getMunitionType();
-            munitionTypes.add(AmmoType.Munitions.M_INCENDIARY_LRM);
+            // Note: Incendiary LRM effects are handled in LRMHandler.isIncendiaryMixed()
+            // which checks if ammo has M_INCENDIARY_LRM munition type
         }
 
         if (AmmoType.canDeliverMinefield(newAmmoType) &&

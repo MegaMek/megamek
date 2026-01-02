@@ -57,16 +57,16 @@ import megamek.common.actions.SuicideImplantsAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
-import megamek.common.units.Mek;
-import megamek.common.units.Tank;
 
 /**
  * Dialog for configuring suicide implant detonation.
  * <p>
  * For conventional infantry and Battle Armor, this dialog presents a slider to select the number of troopers to
  * detonate, along with a damage preview.
+ * </p>
  * <p>
  * For Meks, Aeros, and Vehicles, this dialog presents a simple confirmation message describing what will happen.
+ * </p>
  */
 public class SuicideImplantsDialog extends JDialog implements ActionListener, ChangeListener {
     @Serial
@@ -155,7 +155,7 @@ public class SuicideImplantsDialog extends JDialog implements ActionListener, Ch
         JLabel minLabel = new JLabel("1");
         trooperSlider = new JSlider(SwingConstants.HORIZONTAL, 1, maxTroopers, maxTroopers);
         trooperSlider.addChangeListener(this);
-        trooperSlider.setMajorTickSpacing(Math.max(1, maxTroopers / 5));
+        trooperSlider.setMajorTickSpacing(Math.max(1, (int) Math.floor(maxTroopers / 5.0)));
         trooperSlider.setMinorTickSpacing(1);
         trooperSlider.setPaintTicks(true);
         JLabel maxLabel = new JLabel(String.valueOf(maxTroopers));
@@ -188,11 +188,12 @@ public class SuicideImplantsDialog extends JDialog implements ActionListener, Ch
 
     private void addConfirmationPanel(JPanel mainPanel) {
         String confirmMessage;
-        if (entity instanceof Mek) {
+        if (entity.isMek()) {
             confirmMessage = Messages.getString("SuicideImplantsDialog.confirmMek");
         } else if (entity instanceof Aero) {
+            // Note: Keep instanceof Aero - entity.isAero() is not equivalent
             confirmMessage = Messages.getString("SuicideImplantsDialog.confirmAero");
-        } else if (entity instanceof Tank) {
+        } else if (entity.isVehicle()) {
             confirmMessage = Messages.getString("SuicideImplantsDialog.confirmVehicle");
         } else {
             confirmMessage = Messages.getString("SuicideImplantsDialog.confirmGeneric");

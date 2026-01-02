@@ -2070,13 +2070,20 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      */
     private void updateSuicideImplants() {
         Entity entity = currentEntity();
-        boolean canDetonate = (entity != null)
-              && entity.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS)
-              && entity.isActive()
-              && (entity.getCrew() != null)
+        if (entity == null) {
+            setSuicideImplantsEnabled(false);
+            return;
+        }
+
+        boolean hasImplants = entity.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS);
+        boolean isActiveUnit = entity.isActive();
+        boolean hasLiveCrew = (entity.getCrew() != null)
               && !entity.getCrew().isDead()
-              && !entity.getCrew().isUnconscious()
-              && (entity.getTransportId() == Entity.NONE);
+              && !entity.getCrew().isUnconscious();
+        boolean isNotTransported = entity.getTransportId() == Entity.NONE;
+        boolean isNotLargeCraft = !entity.isLargeCraft();
+
+        boolean canDetonate = hasImplants && isActiveUnit && hasLiveCrew && isNotTransported && isNotLargeCraft;
         setSuicideImplantsEnabled(canDetonate);
     }
 

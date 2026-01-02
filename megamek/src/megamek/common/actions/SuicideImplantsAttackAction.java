@@ -43,8 +43,6 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
-import megamek.common.units.Mek;
-import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
@@ -65,9 +63,10 @@ import megamek.logging.MMLogger;
  *   <li>Suicide Charges inside Structures: CF reduced by (troopers / 2)</li>
  * </ul>
  *
- * <h2>NOT Implemented (Transport Complexity):</h2>
- * <p>The following IO pg 83 rules for suicide implants detonated inside other units are NOT implemented
- * due to the complexity of transport bay damage mechanics. Transported units are blocked from detonating.</p>
+ * <h2>NOT Implemented:</h2>
+ * <p>The following IO pg 83 rules for suicide implants detonated inside other units are NOT implemented.
+ * The existing unit types need more fleshing out of the base rules before these transport-related rules
+ * can be added. Transported units are currently blocked from detonating.</p>
  * <ul>
  *   <li>Conventional Infantry/Dismounted Personnel inside a Transport Bay: Would deliver damage to the bay
  *       as a critical hit, then assess damage to internal structure of the transport unit.</li>
@@ -76,6 +75,9 @@ import megamek.logging.MMLogger;
  *   <li>Suicide Charges inside Other Units: For every 2 charges, apply 1 point IS damage
  *       to appropriate location (or rear facing if unspecified), with critical hit roll.</li>
  * </ul>
+ *
+ * <p>Additionally, large craft (DropShips, JumpShips, WarShips, SpaceStations) cannot use suicide implants
+ * as these units have large crews and the rules do not cover crew-wide implant detonation.</p>
  */
 public class SuicideImplantsAttackAction extends AbstractAttackAction {
     private static final MMLogger LOGGER = MMLogger.create(SuicideImplantsAttackAction.class);
@@ -85,6 +87,12 @@ public class SuicideImplantsAttackAction extends AbstractAttackAction {
 
     /** Damage per conventional infantry trooper (per IO pg 83) */
     public static final double DAMAGE_PER_TROOPER = 0.57;
+
+    /** Damage dealt to host unit (Mek head IS, Aero nose armor, Vehicle IS per facing) per IO pg 83 */
+    public static final int HOST_DAMAGE = 1;
+
+    /** Divisor for calculating building CF damage (1 CF per 2 troopers) per IO pg 83 */
+    public static final int BUILDING_DAMAGE_DIVISOR = 2;
 
     /** Number of troopers/crew members detonating their implants */
     private int troopersDetonating;
@@ -127,10 +135,10 @@ public class SuicideImplantsAttackAction extends AbstractAttackAction {
      *   <li>Vehicle: 1 point internal structure to all facings</li>
      * </ul>
      *
-     * @return 1 (constant per IO pg 83)
+     * @return HOST_DAMAGE (constant per IO pg 83)
      */
     public static int getHostDamageFor() {
-        return 1;
+        return HOST_DAMAGE;
     }
 
     /**
@@ -142,7 +150,7 @@ public class SuicideImplantsAttackAction extends AbstractAttackAction {
      * @return the CF damage to the building
      */
     public static int getBuildingDamageFor(int trooperCount) {
-        return trooperCount / 2;
+        return trooperCount / BUILDING_DAMAGE_DIVISOR;
     }
 
     public ToHitData toHit(Game game) {
@@ -196,6 +204,13 @@ public class SuicideImplantsAttackAction extends AbstractAttackAction {
                   Messages.getString("SuicideImplantsAttackAction.crewUnconscious"));
         }
 
+        // Large craft (DropShips, JumpShips, WarShips, SpaceStations) cannot detonate.
+        // These units have large crews and the rules don't cover crew-wide implant detonation.
+        if (attackingEntity.isLargeCraft()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                  Messages.getString("SuicideImplantsAttackAction.largeCraft"));
+        }
+
         // Cannot detonate if being transported.
         // IO pg 83 has rules for detonating inside transport bays (damage to bay as crit,
         // then IS damage to transport), inside aerospace units (1 SI per 10 charges), and
@@ -226,11 +241,12 @@ public class SuicideImplantsAttackAction extends AbstractAttackAction {
             return Messages.getString("SuicideImplantsAttackAction.detonateInfantry", maxDamage);
         } else if (entity instanceof BattleArmor) {
             return Messages.getString("SuicideImplantsAttackAction.detonateBA");
-        } else if (entity instanceof Mek) {
+        } else if (entity.isMek()) {
             return Messages.getString("SuicideImplantsAttackAction.detonateMek");
         } else if (entity instanceof Aero) {
+            // Note: Keep instanceof Aero - entity.isAero() is not equivalent
             return Messages.getString("SuicideImplantsAttackAction.detonateAero");
-        } else if (entity instanceof Tank) {
+        } else if (entity.isVehicle()) {
             return Messages.getString("SuicideImplantsAttackAction.detonateVehicle");
         }
         return Messages.getString("SuicideImplantsAttackAction.detonateGeneric");

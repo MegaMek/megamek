@@ -141,6 +141,7 @@ public class BotConfigDialog extends AbstractButtonDialog
     private final TipSlider herdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private final TipSlider selfPreservationSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private final TipSlider braverySlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
+    private final TipSlider hiddenUnitRevealSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private final TipSlider antiCrowdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 0);
     private final TipSlider favorHigherTMMSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 0);
     private final TipSlider numberOfEnemiesToConsiderFacingSlidebar = new TipSlider(SwingConstants.HORIZONTAL,
@@ -341,6 +342,13 @@ public class BotConfigDialog extends AbstractButtonDialog
               "BotConfigDialog.braverySliderTitle"));
         panContent.add(Box.createVerticalStrut(7));
 
+        panContent.add(buildSliderWithDynamicTitle(hiddenUnitRevealSlidebar,
+              Messages.getString("BotConfigDialog.hiddenUnitRevealSliderMin"),
+              Messages.getString("BotConfigDialog.hiddenUnitRevealSliderMax"),
+              Messages.getString("BotConfigDialog.hiddenUnitRevealTooltip"),
+              "BotConfigDialog.hiddenUnitRevealSliderTitle"));
+        panContent.add(Box.createVerticalStrut(7));
+
         panContent.add(buildSliderWithDynamicTitle(selfPreservationSlidebar,
               Messages.getString("BotConfigDialog.selfPreservationSliderMin"),
               Messages.getString("BotConfigDialog.selfPreservationSliderMax"),
@@ -535,6 +543,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         fallShameSlidebar.setValue(princessBehavior.getFallShameIndex());
         herdingSlidebar.setValue(princessBehavior.getHerdMentalityIndex());
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
+        hiddenUnitRevealSlidebar.setValue(princessBehavior.getHiddenUnitRevealIndex());
         antiCrowdingSlidebar.setValue(princessBehavior.getAntiCrowding());
         favorHigherTMMSlidebar.setValue(princessBehavior.getFavorHigherTMM());
         exclusiveHerdingCheck.setSelected(princessBehavior.isExclusiveHerding());
@@ -593,6 +602,7 @@ public class BotConfigDialog extends AbstractButtonDialog
                     chosenPreset.getFallShameIndex() != fallShameSlidebar.getValue() ||
                     chosenPreset.getHerdMentalityIndex() != herdingSlidebar.getValue() ||
                     chosenPreset.getBraveryIndex() != braverySlidebar.getValue() ||
+                    chosenPreset.getHiddenUnitRevealIndex() != hiddenUnitRevealSlidebar.getValue() ||
                     chosenPreset.getAntiCrowding() != antiCrowdingSlidebar.getValue() ||
                     chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue() ||
                     chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected() ||
@@ -779,6 +789,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         newBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
         newBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());
         newBehavior.setBraveryIndex(braverySlidebar.getValue());
+        newBehavior.setHiddenUnitRevealIndex(hiddenUnitRevealSlidebar.getValue());
         newBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
         newBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
         newBehavior.setNumberOfEnemiesToConsiderFacing(numberOfEnemiesToConsiderFacingSlidebar.getValue());
@@ -828,6 +839,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         tempBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
         tempBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());
         tempBehavior.setBraveryIndex(braverySlidebar.getValue());
+        tempBehavior.setHiddenUnitRevealIndex(hiddenUnitRevealSlidebar.getValue());
         tempBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
         tempBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
         tempBehavior.setNumberOfEnemiesToConsiderFacing(numberOfEnemiesToConsiderFacingSlidebar.getValue());

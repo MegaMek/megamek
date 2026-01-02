@@ -33,6 +33,7 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -43,6 +44,7 @@ import megamek.common.HexTarget;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.actions.SuicideImplantsAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -300,6 +302,18 @@ public class TWDamageManager implements IDamageManager {
         boolean tookInternalDamage = damageIS;
         boolean tookAnyDamage = damage > 0; // Track if any damage was applied for Proto DNI feedback
         Hex te_hex = null;
+
+        // Track initial trooper count for suicide implant reactive damage (IO pg 83)
+        // Only track if: conventional infantry, has suicide implants, and this is NOT reactive damage
+        int initialTroopers = -1;
+        boolean hasSuicideImplants = entity.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS);
+        boolean checkSuicideImplantReaction = isPlatoon
+              && hasSuicideImplants
+              && !damageType.equals(DamageType.SUICIDE_IMPLANT_REACTION);
+
+        if (checkSuicideImplantReaction) {
+            initialTroopers = entity.getInternal(Infantry.LOC_INFANTRY);
+        }
 
         boolean hardenedArmor = ((entity instanceof Mek) || (entity instanceof Tank)) &&
               (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
@@ -2053,7 +2067,92 @@ public class TWDamageManager implements IDamageManager {
             entity.baVDNINeedsFeedbackMessage = true;
         }
 
+        // Suicide Implant Reactive Damage (IO pg 83)
+        // When conventional infantry with suicide implants loses troopers, they automatically
+        // deal 0.57 damage per dead trooper to all opposing units in the hex
+        if (checkSuicideImplantReaction && initialTroopers > 0) {
+            int currentTroopers = Math.max(0, entity.getInternal(Infantry.LOC_INFANTRY));
+            int deadTroopers = initialTroopers - currentTroopers;
+            if (deadTroopers > 0) {
+                reportVec.addAll(applySuicideImplantReaction(entity, deadTroopers));
+            }
+        }
+
         return reportVec;
+    }
+
+    /**
+     * Applies suicide implant reactive damage when conventional infantry troopers are killed. Per IO pg 83:
+     * "Conventional infantry equipped with suicide implants will also deliver an automatic 'attack' against all
+     * opposing units in the same hex for every trooper they lose during the same attack."
+     *
+     * @param infantry     The infantry unit that lost troopers
+     * @param deadTroopers The number of troopers killed
+     *
+     * @return Vector of reports describing the reactive damage
+     */
+    protected Vector<Report> applySuicideImplantReaction(Entity infantry, int deadTroopers) {
+        Vector<Report> reports = new Vector<>();
+        Coords position = infantry.getPosition();
+
+        if (position == null) {
+            return reports;
+        }
+
+        // Calculate damage: 0.57 per dead trooper
+        int damage = (int) Math.round(deadTroopers * SuicideImplantsAttackAction.DAMAGE_PER_TROOPER);
+        if (damage <= 0) {
+            return reports;
+        }
+
+        // First, find all valid enemy targets in the hex
+        List<Entity> validTargets = new ArrayList<>();
+        for (Entity target : game.getEntitiesVector(position)) {
+            // Skip the infantry itself
+            if (target.getId() == infantry.getId()) {
+                continue;
+            }
+            // Only damage opposing (enemy) units
+            if (!target.isEnemyOf(infantry)) {
+                continue;
+            }
+            // Skip already destroyed units
+            if (target.isDestroyed() || target.isDoomed()) {
+                continue;
+            }
+            validTargets.add(target);
+        }
+
+        // If no enemies in hex, reactive detonation has no effect - skip reporting
+        if (validTargets.isEmpty()) {
+            return reports;
+        }
+
+        // Report the reactive detonation
+        Report report = new Report(4596);
+        report.subject = infantry.getId();
+        report.add(deadTroopers);
+        report.add(damage);
+        reports.add(report);
+
+        // Apply damage to all valid enemy targets
+        for (Entity target : validTargets) {
+            // Report damage to this target
+            Report targetReport = new Report(4583);
+            targetReport.subject = target.getId();
+            targetReport.indent(2);
+            targetReport.add(target.getDisplayName());
+            targetReport.add(damage);
+            reports.add(targetReport);
+
+            // Apply damage using SUICIDE_IMPLANT_REACTION type to prevent recursion
+            HitData hit = new HitData(target.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT).getLocation());
+            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            reports.addAll(damageEntity(target, hit, damage, false,
+                  DamageType.SUICIDE_IMPLANT_REACTION, false, false, true, false, false, new Vector<>()));
+        }
+
+        return reports;
     }
 
     private static boolean isSpotlightHittable(Entity entity, HitData hit) {

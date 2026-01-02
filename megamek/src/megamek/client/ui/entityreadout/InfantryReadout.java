@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import megamek.client.ui.Messages;
+import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
@@ -161,7 +162,16 @@ class InfantryReadout extends GeneralEntityReadout {
                   e.hasMoreElements(); ) {
                 final IOption o = e.nextElement();
                 if (o.booleanValue()) {
-                    augmentations.add(o.getDisplayableName());
+                    String augName = o.getDisplayableName();
+                    // Append prosthetic enhancement details for Enhanced/Improved Enhanced
+                    if (OptionsConstants.MD_PL_ENHANCED.equals(o.getName())
+                          || OptionsConstants.MD_PL_I_ENHANCED.equals(o.getName())) {
+                        String details = getProstheticEnhancementDetails();
+                        if (!details.isEmpty()) {
+                            augName += " (" + details + ")";
+                        }
+                    }
+                    augmentations.add(augName);
                 }
             }
 
@@ -175,6 +185,27 @@ class InfantryReadout extends GeneralEntityReadout {
             }
         }
         return result;
+    }
+
+    /**
+     * Gets a formatted string describing the configured prosthetic enhancements.
+     *
+     * @return String like "Laser x2, Grappler x1" or empty string if none configured
+     */
+    private String getProstheticEnhancementDetails() {
+        StringBuilder details = new StringBuilder();
+        if (infantry.hasProstheticEnhancement1()) {
+            ProstheticEnhancementType type1 = infantry.getProstheticEnhancement1();
+            details.append(type1.getDisplayName()).append(" x").append(infantry.getProstheticEnhancement1Count());
+        }
+        if (infantry.hasProstheticEnhancement2()) {
+            if (details.length() > 0) {
+                details.append(", ");
+            }
+            ProstheticEnhancementType type2 = infantry.getProstheticEnhancement2();
+            details.append(type2.getDisplayName()).append(" x").append(infantry.getProstheticEnhancement2Count());
+        }
+        return details.toString();
     }
 
     @Override

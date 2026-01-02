@@ -54,6 +54,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.EquipmentType;
@@ -176,6 +177,14 @@ public class Infantry extends Entity {
     private boolean isCallingSupport = false;
     private boolean pheromoneImpaired = false;
     private InfantryMount mount = null;
+
+    // Prosthetic Enhancement (Enhanced Limbs) - IO p.84
+    // Standard Enhanced (MD_PL_ENHANCED): Uses slot 1 only, same type up to 2x
+    // Improved Enhanced (MD_PL_I_ENHANCED): Uses both slots, different types, each up to 2x, max 4 total
+    private ProstheticEnhancementType prostheticEnhancement1 = null;
+    private int prostheticEnhancement1Count = 0; // 0, 1, or 2 per trooper
+    private ProstheticEnhancementType prostheticEnhancement2 = null;
+    private int prostheticEnhancement2Count = 0; // 0, 1, or 2 per trooper
 
     /** The maximum number of troopers in an infantry platoon. */
     public static final int INF_PLT_MAX_MEN = 30;
@@ -1654,6 +1663,238 @@ public class Infantry extends Entity {
     public @Nullable InfantryMount getMount() {
         return mount;
     }
+
+    // region Prosthetic Enhancement
+
+    // --- Slot 1 (Standard Enhanced uses this, Improved Enhanced uses both) ---
+
+    /**
+     * @return The prosthetic enhancement type in slot 1, or null if none
+     */
+    public @Nullable ProstheticEnhancementType getProstheticEnhancement1() {
+        return prostheticEnhancement1;
+    }
+
+    /**
+     * Sets the prosthetic enhancement type in slot 1.
+     *
+     * @param enhancement The enhancement type to set, or null to remove
+     */
+    public void setProstheticEnhancement1(@Nullable ProstheticEnhancementType enhancement) {
+        this.prostheticEnhancement1 = enhancement;
+        if (enhancement == null) {
+            prostheticEnhancement1Count = 0;
+        }
+    }
+
+    /**
+     * @return The number of slot 1 enhancements per trooper (0, 1, or 2)
+     */
+    public int getProstheticEnhancement1Count() {
+        return prostheticEnhancement1Count;
+    }
+
+    /**
+     * Sets the number of slot 1 enhancements per trooper. Clamped to valid range of 0-2.
+     *
+     * @param count The enhancement count (0, 1, or 2)
+     */
+    public void setProstheticEnhancement1Count(int count) {
+        this.prostheticEnhancement1Count = Math.max(0, Math.min(2, count));
+    }
+
+    // --- Slot 2 (Improved Enhanced only) ---
+
+    /**
+     * @return The prosthetic enhancement type in slot 2, or null if none
+     */
+    public @Nullable ProstheticEnhancementType getProstheticEnhancement2() {
+        return prostheticEnhancement2;
+    }
+
+    /**
+     * Sets the prosthetic enhancement type in slot 2.
+     *
+     * @param enhancement The enhancement type to set, or null to remove
+     */
+    public void setProstheticEnhancement2(@Nullable ProstheticEnhancementType enhancement) {
+        this.prostheticEnhancement2 = enhancement;
+        if (enhancement == null) {
+            prostheticEnhancement2Count = 0;
+        }
+    }
+
+    /**
+     * @return The number of slot 2 enhancements per trooper (0, 1, or 2)
+     */
+    public int getProstheticEnhancement2Count() {
+        return prostheticEnhancement2Count;
+    }
+
+    /**
+     * Sets the number of slot 2 enhancements per trooper. Clamped to valid range of 0-2.
+     *
+     * @param count The enhancement count (0, 1, or 2)
+     */
+    public void setProstheticEnhancement2Count(int count) {
+        this.prostheticEnhancement2Count = Math.max(0, Math.min(2, count));
+    }
+
+    // --- Combined helpers ---
+
+    /**
+     * @return True if this unit has any prosthetic enhancement configured (in either slot)
+     */
+    public boolean hasProstheticEnhancement() {
+        return (prostheticEnhancement1 != null && prostheticEnhancement1Count > 0)
+              || (prostheticEnhancement2 != null && prostheticEnhancement2Count > 0);
+    }
+
+    /**
+     * @return True if this unit has a prosthetic enhancement in slot 1
+     */
+    public boolean hasProstheticEnhancement1() {
+        return prostheticEnhancement1 != null && prostheticEnhancement1Count > 0;
+    }
+
+    /**
+     * @return True if this unit has a prosthetic enhancement in slot 2
+     */
+    public boolean hasProstheticEnhancement2() {
+        return prostheticEnhancement2 != null && prostheticEnhancement2Count > 0;
+    }
+
+    /**
+     * Calculates the total prosthetic enhancement damage bonus per trooper from both slots. This sums the damage from
+     * both enhancement slots.
+     *
+     * @return The total damage bonus per trooper from all prosthetic enhancements
+     */
+    public double getProstheticDamageBonus() {
+        double bonus = 0.0;
+        if (hasProstheticEnhancement1()) {
+            bonus += prostheticEnhancement1.getDamagePerTrooper() * prostheticEnhancement1Count;
+        }
+        if (hasProstheticEnhancement2()) {
+            bonus += prostheticEnhancement2.getDamagePerTrooper() * prostheticEnhancement2Count;
+        }
+        return bonus;
+    }
+
+    /**
+     * Gets the best (most negative) anti-Mek modifier from all prosthetic enhancements.
+     *
+     * @return The best anti-Mek modifier, or 0 if no enhancement provides one
+     */
+    public int getBestProstheticAntiMekModifier() {
+        int best = 0;
+        if (hasProstheticEnhancement1() && prostheticEnhancement1.hasAntiMekBonus()) {
+            best = Math.min(best, prostheticEnhancement1.getAntiMekModifier());
+        }
+        if (hasProstheticEnhancement2() && prostheticEnhancement2.hasAntiMekBonus()) {
+            best = Math.min(best, prostheticEnhancement2.getAntiMekModifier());
+        }
+        return best;
+    }
+
+    /**
+     * Gets the display name of the enhancement providing the best anti-Mek bonus.
+     *
+     * @return The display name, or null if no enhancement provides anti-Mek bonus
+     */
+    public @Nullable String getBestProstheticAntiMekName() {
+        int best = 0;
+        String name = null;
+        if (hasProstheticEnhancement1() && prostheticEnhancement1.hasAntiMekBonus()) {
+            if (prostheticEnhancement1.getAntiMekModifier() < best) {
+                best = prostheticEnhancement1.getAntiMekModifier();
+                name = prostheticEnhancement1.getDisplayName();
+            }
+        }
+        if (hasProstheticEnhancement2() && prostheticEnhancement2.hasAntiMekBonus()) {
+            if (prostheticEnhancement2.getAntiMekModifier() < best) {
+                best = prostheticEnhancement2.getAntiMekModifier();
+                name = prostheticEnhancement2.getDisplayName();
+            }
+        }
+        return name;
+    }
+
+    /**
+     * Checks if any prosthetic enhancement is a melee type.
+     *
+     * @return True if any enhancement is melee
+     */
+    public boolean hasProstheticMeleeEnhancement() {
+        return (hasProstheticEnhancement1() && prostheticEnhancement1.isMelee())
+              || (hasProstheticEnhancement2() && prostheticEnhancement2.isMelee());
+    }
+
+    /**
+     * Gets the melee to-hit modifier from prosthetic enhancements. Per IO p.83, maximum modifier is +2 regardless of
+     * number of melee weapons.
+     *
+     * @return The melee to-hit modifier (capped at +2)
+     */
+    public int getProstheticMeleeToHitModifier() {
+        int modifier = 0;
+        if (hasProstheticEnhancement1() && prostheticEnhancement1.isMelee()) {
+            modifier = Math.max(modifier, prostheticEnhancement1.getToHitModifier());
+        }
+        if (hasProstheticEnhancement2() && prostheticEnhancement2.isMelee()) {
+            modifier = Math.max(modifier, prostheticEnhancement2.getToHitModifier());
+        }
+        // Cap at +2 per IO p.83
+        return Math.min(modifier, 2);
+    }
+
+    // --- Legacy compatibility methods ---
+
+    /**
+     * @return The prosthetic enhancement type in slot 1 (legacy method)
+     *
+     * @deprecated Use {@link #getProstheticEnhancement1()} instead
+     */
+    @Deprecated(since = "0.50.07")
+    public @Nullable ProstheticEnhancementType getProstheticEnhancement() {
+        return getProstheticEnhancement1();
+    }
+
+    /**
+     * Sets the prosthetic enhancement type in slot 1 (legacy method).
+     *
+     * @param enhancement The enhancement type to set
+     *
+     * @deprecated Use {@link #setProstheticEnhancement1(ProstheticEnhancementType)} instead
+     */
+    @Deprecated(since = "0.50.07")
+    public void setProstheticEnhancement(@Nullable ProstheticEnhancementType enhancement) {
+        setProstheticEnhancement1(enhancement);
+    }
+
+    /**
+     * @return The slot 1 enhancement count (legacy method)
+     *
+     * @deprecated Use {@link #getProstheticEnhancement1Count()} instead
+     */
+    @Deprecated(since = "0.50.07")
+    public int getProstheticEnhancementCount() {
+        return getProstheticEnhancement1Count();
+    }
+
+    /**
+     * Sets the slot 1 enhancement count (legacy method).
+     *
+     * @param count The count to set
+     *
+     * @deprecated Use {@link #setProstheticEnhancement1Count(int)} instead
+     */
+    @Deprecated(since = "0.50.07")
+    public void setProstheticEnhancementCount(int count) {
+        setProstheticEnhancement1Count(count);
+    }
+
+    // endregion Prosthetic Enhancement
 
     /**
      * Used to check for standard or motorized SCUBA infantry, which have a maximum depth of 2.

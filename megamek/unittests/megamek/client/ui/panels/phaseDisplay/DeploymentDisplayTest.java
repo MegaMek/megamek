@@ -307,11 +307,11 @@ public class DeploymentDisplayTest {
         void shouldReturnValid_ForNormalGroundDeployment() {
             // Act
             BoardValidationResult result = deploymentDisplay.validateDeploymentBoard(
-                groundEntity, groundBoard, coords);
+                  groundEntity, groundBoard, coords);
 
             // Assert
             assertEquals(BoardValidationResult.VALID, result,
-                "Should return VALID for legal ground deployment");
+                  "Should return VALID for legal ground deployment");
         }
 
         @Test
@@ -323,11 +323,11 @@ public class DeploymentDisplayTest {
 
             // Act
             BoardValidationResult result = deploymentDisplay.validateDeploymentBoard(
-                spyEntity, groundBoard, coords);
+                  spyEntity, groundBoard, coords);
 
             // Assert
             assertEquals(BoardValidationResult.WRONG_BOARD_TYPE, result,
-                "Should return WRONG_BOARD_TYPE when board is prohibited");
+                  "Should return WRONG_BOARD_TYPE when board is prohibited");
         }
 
         @Test
@@ -338,11 +338,11 @@ public class DeploymentDisplayTest {
 
             // Act
             BoardValidationResult result = deploymentDisplay.validateDeploymentBoard(
-                groundEntity, groundBoard, illegalCoords);
+                  groundEntity, groundBoard, illegalCoords);
 
             // Assert
             assertEquals(BoardValidationResult.OUTSIDE_DEPLOYMENT_AREA, result,
-                "Should return OUTSIDE_DEPLOYMENT_AREA for illegal coordinates");
+                  "Should return OUTSIDE_DEPLOYMENT_AREA for illegal coordinates");
         }
     }
 
@@ -384,9 +384,9 @@ public class DeploymentDisplayTest {
 
             // Assert
             assertEquals(5, aeroUnit.getAltitude(),
-                "Aero unit altitude should be set to 5");
+                  "Aero unit altitude should be set to 5");
             assertEquals(2, aeroUnit.getFacing(),
-                "Aero unit facing should be set to 2");
+                  "Aero unit facing should be set to 2");
             assertNotEquals(EntityMovementMode.WHEELED, aeroUnit.getMovementMode(),
                   "Aero unit should not be wheeled (ground) movement mode.");
         }
@@ -403,9 +403,9 @@ public class DeploymentDisplayTest {
 
             // Assert
             assertEquals(0, aeroUnit.getAltitude(),
-                "Aero unit altitude should be 0");
+                  "Aero unit altitude should be 0");
             assertEquals(4, aeroUnit.getFacing(),
-                "Aero unit facing should be set to 4");
+                  "Aero unit facing should be set to 4");
             assertEquals(EntityMovementMode.WHEELED, aeroUnit.getMovementMode(),
                   "Aero should be landed on ground");
         }
@@ -422,7 +422,7 @@ public class DeploymentDisplayTest {
                 deploymentDisplay.applyDeploymentToEntity(entity, position);
 
                 assertEquals(facing, entity.getFacing(),
-                    "Entity facing should be set to " + facing);
+                      "Entity facing should be set to " + facing);
             }
         }
 
@@ -438,7 +438,7 @@ public class DeploymentDisplayTest {
 
             // Assert
             assertEquals(-2, entity.getElevation(),
-                "Entity should have negative elevation for underwater deployment");
+                  "Entity should have negative elevation for underwater deployment");
         }
     }
 

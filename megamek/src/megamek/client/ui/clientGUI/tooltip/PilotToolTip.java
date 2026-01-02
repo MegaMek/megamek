@@ -50,13 +50,13 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
-import megamek.common.units.Crew;
-import megamek.common.units.Entity;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.game.Game;
 import megamek.common.game.InGameObject;
-import megamek.common.units.MekWarrior;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Crew;
+import megamek.common.units.Entity;
+import megamek.common.units.MekWarrior;
 import megamek.common.util.CrewSkillSummaryUtil;
 import megamek.logging.MMLogger;
 
@@ -280,7 +280,9 @@ public final class PilotToolTip {
         String result;
         String sOptionList;
         Crew crew = entity.getCrew();
-        sOptionList = getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed);
+        // Pass entity to getOptionList so it can add prosthetic enhancement details during generation
+        sOptionList = getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed, entity);
+
         String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipQuirkColor()));
         sOptionList = UIUtil.tag("FONT", attr, sOptionList);
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());

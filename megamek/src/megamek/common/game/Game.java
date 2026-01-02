@@ -1102,7 +1102,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 for (Coords coords : buildingEntity.getSecondaryPositions().values()) {
                     final BoardLocation secondaryLocation = new BoardLocation(coords, entity.getBoardId(), false);
                     if (hasBoardLocation(secondaryLocation)) {
-                        List<Entity> listForLocation = positionMap.computeIfAbsent(secondaryLocation, k -> new ArrayList<>());
+                        List<Entity> listForLocation = positionMap.computeIfAbsent(secondaryLocation,
+                              k -> new ArrayList<>());
                         listForLocation.add(entity);
                     }
                 }
@@ -2164,7 +2165,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Removes the first turn found that the specified entity can move in. Used when a turn is played out of order
+     * Removes the first turn found that the specified entity can move in. Used when a turn is played out of order.
+     *
+     * @param entity the entity to remove a turn for
+     * @return the removed GameTurn, or null if not found
+     * @throws Exception if called during the movement phase
      */
     public @Nullable GameTurn removeFirstTurnFor(final Entity entity) throws Exception {
         if (getPhase().isMovement()) {

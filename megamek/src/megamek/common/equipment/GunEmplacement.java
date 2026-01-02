@@ -56,6 +56,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.units.BuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.IBuilding;
@@ -433,5 +434,14 @@ public class GunEmplacement extends Tank {
     @Override
     public boolean isSideLocation(int location) {
         return false;
+    }
+
+    /**
+     * Replaced most instances of `instanceof GunEmplacement` to support {@link BuildingEntity}
+     * @return true if this unit is a {@link BuildingEntity} or {@link GunEmplacement}, false otherwise
+     */
+    @Override
+    public boolean isBuildingEntityOrGunEmplacement() {
+        return true;
     }
 }

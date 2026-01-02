@@ -333,7 +333,7 @@ public class CustomMekDialog extends AbstractButtonDialog
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
-                if (entity instanceof GunEmplacement) {
+                if (entity.isBuildingEntityOrGunEmplacement()) {
                     continue;
                 }
 
@@ -1391,7 +1391,7 @@ public class CustomMekDialog extends AbstractButtonDialog
             //  gun emplacements, especially if they are allowed
             final boolean entityEligibleForOffBoard = !space &&
                   (e.getAltitude() == 0) &&
-                  !(e instanceof GunEmplacement) &&
+                  !(e.isBuildingEntityOrGunEmplacement()) &&
                   e.getWeaponList()
                         .stream()
                         .map(Mounted::getType)
@@ -1549,7 +1549,7 @@ public class CustomMekDialog extends AbstractButtonDialog
 
         if (gameOptions().booleanOption(OptionsConstants.RPG_BEGIN_SHUTDOWN) &&
               !(entity instanceof Infantry) &&
-              !(entity instanceof GunEmplacement)) {
+              !(entity.isBuildingEntityOrGunEmplacement())) {
             panDeploy.add(labDeployShutdown, GBC.std());
             panDeploy.add(chDeployShutdown, GBC.eol());
             chDeployShutdown.setSelected(entity.isManualShutdown());

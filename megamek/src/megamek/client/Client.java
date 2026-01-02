@@ -726,6 +726,12 @@ public class Client extends AbstractClient {
         }
     }
 
+    protected void receiveBuildingRemove(Packet packet) throws InvalidPacketDataException {
+        for (IBuilding building : packet.getBuildingList(0)) {
+            game.getBoard(building.getBoardId()).removeBuilding(building);
+        }
+    }
+
     protected void receiveBuildingCollapse(Packet packet) throws InvalidPacketDataException {
         int boardId = packet.getIntValue(1);
         game.getBoard(boardId).collapseBuilding(packet.getCoordsVector(0));
@@ -1031,6 +1037,9 @@ public class Client extends AbstractClient {
                     break;
                 case BLDG_ADD:
                     receiveBuildingAdd(packet);
+                    break;
+                case BLDG_REMOVE:
+                    receiveBuildingRemove(packet);
                     break;
                 case BLDG_UPDATE:
                     receiveBuildingUpdate(packet);

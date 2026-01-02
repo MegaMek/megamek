@@ -36,6 +36,7 @@ import megamek.client.bot.Messages;
 import megamek.client.bot.princess.Princess;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.game.InGameObject;
+import megamek.common.units.BuildingEntity;
 import megamek.server.commands.arguments.Arguments;
 
 /**
@@ -47,8 +48,11 @@ public class IgnoreTurretsCommand implements ChatCommand {
 
     @Override
     public void execute(Princess princess, Arguments arguments) {
-        princess.getGame().getInGameObjects().stream().filter(e -> e instanceof GunEmplacement)
-              .map(InGameObject::getId)
+        princess.getGame()
+                .getInGameObjects()
+                .stream()
+                .filter(e -> e instanceof GunEmplacement || e instanceof BuildingEntity)
+                .map(InGameObject::getId)
               .forEach(i -> princess.getBehaviorSettings().addIgnoredUnitTarget(i));
         princess.sendChat(Messages.getString("Princess.command.ignoreTurrets.ignoringAllTurrets"));
     }

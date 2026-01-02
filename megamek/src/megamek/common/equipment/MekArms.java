@@ -35,7 +35,9 @@ package megamek.common.equipment;
 
 import java.util.List;
 
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.units.MekWithArms;
 import megamek.logging.MMLogger;
 
@@ -80,7 +82,7 @@ public class MekArms extends ExternalCargo {
      */
     @Override
     public boolean canLoad(Entity unit) {
-        return unit.getTonnage() <= getUnused();
+        return canLoadCarryable(unit);
     }
 
     /**
@@ -116,5 +118,42 @@ public class MekArms extends ExternalCargo {
     @Override
     public String getTransporterType() {
         return "Arms";
+    }
+
+    @Override
+    public String toString() {
+        return "Mek Arms - tons:" + getUnused();
+    }
+
+    @Override
+    boolean allowedCarryable(ICarryable carryable) {
+        // Can't carry null Entity!
+        if (carryable == null) {
+            return false;
+        }
+
+        // Special BA Handler - in addition to normal restrictions, a Mek can only carry additional BA in its arms
+        // based on Mek's weight class & the BA trooper count.
+        if (carryable instanceof BattleArmor battleArmor && battleArmor.getNumberActiveTroopers() > maxAdditionalBA()) {
+            return false;
+        }
+
+
+        // A Mek's arms are able to transport any "carryable" object, including some units
+        return carryable.isCarryableObject();
+    }
+
+    private int maxAdditionalBA() {
+        if (entity == null) {
+            return 0;
+        }
+
+        switch (entity.getWeightClass()) {
+            case EntityWeightClass.WEIGHT_LIGHT: return 2;
+            case EntityWeightClass.WEIGHT_MEDIUM: return 3;
+            case EntityWeightClass.WEIGHT_HEAVY: return 4;
+            case EntityWeightClass.WEIGHT_ASSAULT, EntityWeightClass.WEIGHT_SUPER_HEAVY: return 6;
+            default: return 0;
+        }
     }
 }

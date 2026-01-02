@@ -54,6 +54,7 @@ public enum CrewType {
     DUAL(new String[] { "Pilot", "Gunner" }, 0, 1, -1, -1, 2),
     COMMAND_CONSOLE(new String[] { "Pilot", "Commander" }, 0, 0, 1, -1, 1),
     INFANTRY_CREW(new String[] { "Commander" }, 0, 0, -1, -1, 1),
+    BUILDING(new String[] { "Commander" }, 0, 0, -1, -1, -1),
     NONE(new String[] {}, 0, 0, -1, -1, -1);
 
     private final String[] roleNames;

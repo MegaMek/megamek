@@ -515,7 +515,7 @@ tasks.register('iconTest', JavaExec) {
     description = 'Icon Tool'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'megamek.utilities.IconTest'
+    mainClass = 'megamek.test.IconTest'
 }
 
 tasks.register('mekCacheCSVTool', JavaExec) {

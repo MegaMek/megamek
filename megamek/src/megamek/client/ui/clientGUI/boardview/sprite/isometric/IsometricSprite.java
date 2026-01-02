@@ -73,7 +73,7 @@ public class IsometricSprite extends HexSprite {
         int altAdjust = 0;
         if (bv.useIsometric() && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
             altAdjust = (int) (bv.DROP_SHADOW_DISTANCE * bv.getScale());
-        } else if (bv.useIsometric() && (entity.getElevation() != 0) && !(entity instanceof GunEmplacement)) {
+        } else if (bv.useIsometric() && (entity.getElevation() != 0) && !(entity.isBuildingEntityOrGunEmplacement())) {
             altAdjust = (int) (entity.getElevation() * BoardView.HEX_ELEV * bv.getScale());
         }
 
@@ -141,7 +141,7 @@ public class IsometricSprite extends HexSprite {
             } else {
                 g.drawImage(shadow, p.x, p.y, this);
             }
-        } else if ((entity.getElevation() != 0) && !(entity instanceof GunEmplacement)) {
+        } else if ((entity.getElevation() != 0) && !(entity.isBuildingEntityOrGunEmplacement())) {
             Image shadow = bv.createShadowMask(bv.getTileManager().imageFor(entity, entity.getFacing(), secondaryPos));
             shadow = bv.getScaledImage(shadow, true);
 

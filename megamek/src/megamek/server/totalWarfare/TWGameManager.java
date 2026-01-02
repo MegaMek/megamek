@@ -7205,7 +7205,7 @@ public class TWGameManager extends AbstractGameManager {
                     vPhaseReport.add(r);
                     te.heatFromExternal += 2 * missiles;
                     Report.addNewline(vPhaseReport);
-                } else if (te instanceof GunEmplacement && ae != null) {
+                } else if (te.isBuildingEntityOrGunEmplacement() && ae != null) {
                     int direction = ComputeSideTable.sideTable(ae, te, called);
                     while (missiles-- > 0) {
                         HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, direction);
@@ -16222,7 +16222,7 @@ public class TWGameManager extends AbstractGameManager {
             r.choose(false);
             r.newlines = 1;
             addReport(r);
-            // gun emplacements have their own critical rules
+            // gun emplacements have their own critical rules TODO BuildingEntitys too
             if (entity instanceof GunEmplacement) {
                 Vector<GunEmplacement> gun = new Vector<>();
                 gun.add((GunEmplacement) entity);
@@ -26335,9 +26335,10 @@ public class TWGameManager extends AbstractGameManager {
                 int newRack;
                 int newDamage;
                 if (mounted.getType() instanceof AmmoType ammoType) {
-                    if (!ammoType.isExplosive(mounted) ||
-                          (!(ammoType.getMunitionType().contains(Munitions.M_INFERNO)) &&
-                                !(ammoType.getMunitionType().contains(Munitions.M_IATM_IIW)))) {
+                    boolean isInfernoType = ammoType.getMunitionType().contains(Munitions.M_INFERNO) ||
+                          ammoType.getMunitionType().contains(Munitions.M_IATM_IIW) ||
+                          ammoType.getMunitionType().contains(Munitions.M_INCENDIARY_LRM);
+                    if (!ammoType.isExplosive(mounted) || !isInfernoType) {
                         continue;
                     }
                     // ignore empty, destroyed, or missing bins
@@ -26789,6 +26790,17 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Tell the clients to remove the given buildings.
+     *
+     * @param buildings - a <code>Vector</code> of <code>Building</code>s that need to be removed.
+     *
+     * @return a <code>Packet</code> for the command.
+     */
+    private Packet createRemoveBuildingPacket(Vector<IBuilding> buildings) {
+        return new Packet(PacketCommand.BLDG_REMOVE, buildings);
+    }
+
+    /**
      * Apply this phase's damage to all buildings. Buildings may collapse due to damage.
      */
     void applyBuildingDamage() {
@@ -27236,6 +27248,10 @@ public class TWGameManager extends AbstractGameManager {
 
     public void sendChangedBuildings(Vector<IBuilding> buildings) {
         send(createUpdateBuildingPacket(buildings));
+    }
+
+    public void sendRemovedBuildings(Vector<IBuilding> buildings) {
+        send(createRemoveBuildingPacket(buildings));
     }
 
     /**
@@ -30103,7 +30119,7 @@ public class TWGameManager extends AbstractGameManager {
 
         List<Entity> hitEntities = game.getEntitiesVector()
               .stream()
-              .filter(e -> coords.equals(e.getPosition()) && !(e instanceof GunEmplacement))
+              .filter(e -> coords.equals(e.getPosition()) && !(e.isBuildingEntityOrGunEmplacement()))
               .toList();
 
         for (Entity entity : hitEntities) {

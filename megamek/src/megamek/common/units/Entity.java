@@ -5577,6 +5577,24 @@ public abstract class Entity extends TurnOrdered
         return stateAppliesCount;
     }
 
+    /**
+     * What {@link Coords} is this weapon physically firing from?
+     * @param weapon {@link WeaponMounted}
+     * @return {@link Coords}
+     */
+    public Coords getWeaponFiringPosition(WeaponMounted weapon) {
+        return getPosition();
+    }
+
+    /**
+     * What height is this weapon physically firing from?
+     * @param weapon {@link WeaponMounted}
+     * @return int
+     */
+    public int getWeaponFiringHeight(WeaponMounted weapon) {
+        return getHeight();
+    }
+
     protected abstract int[] getNoOfSlots();
 
     /**
@@ -9854,6 +9872,11 @@ public abstract class Entity extends TurnOrdered
             }
             if ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.IATM) &&
                   (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)) &&
+                  (amounted.getHittableShotsLeft() > 0)) {
+                found = true;
+            }
+            // Incendiary LRM checks for heat-induced explosions as Inferno (TO:AUE pg 181)
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM) &&
                   (amounted.getHittableShotsLeft() > 0)) {
                 found = true;
             }

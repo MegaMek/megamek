@@ -51,7 +51,6 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.MiscType;
@@ -1151,7 +1150,7 @@ public class TWDamageManager implements IDamageManager {
                     report.subject = entityId;
                     report.indent(3);
                     reportVec.addElement(report);
-                    if (entity instanceof GunEmplacement) {
+                    if (entity.isBuildingEntityOrGunEmplacement()) {
                         // gun emplacements have no internal,
                         // destroy the section
                         entity.destroyLocation(hit.getLocation());

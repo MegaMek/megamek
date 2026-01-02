@@ -37,28 +37,37 @@ package megamek.common.units;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CriticalSlot;
+import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
+import megamek.common.compute.Compute;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.rolls.PilotingRollData;
 import megamek.logging.MMLogger;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * AbstractBuildingEntity represents a non-terrain building (e.g., a moving fortress).
@@ -73,8 +82,14 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     private static final MMLogger logger = MMLogger.create(AbstractBuildingEntity.class);
 
     private final Building building;
-    private final Map<CubeCoords, Coords> relativeLayout = new HashMap<>();  // Relative CubeCoords -> actual board coords
-
+    /**
+     * Relative {@link CubeCoords} -> actual board {@link Coords}
+     */
+    private final Map<CubeCoords, Coords> relativeLayout = new HashMap<>();
+    /**
+     *  Entity location -> relative {@link CubeCoords}
+     */
+    private final Map<Integer, CubeCoords> locationToRelativeCoordsMap = new HashMap<>();
     private static final int LOC_BASE = 0;
 
     public static final String[] HIT_LOCATION_NAMES = { "building" };
@@ -89,6 +104,11 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         building = new Building(type, bldgClass, getId(), Terrains.BUILDING);
 
         initializeInternal(0, LOC_BASE);
+    }
+
+    @Override
+    public CrewType defaultCrewType() {
+        return CrewType.BUILDING;
     }
 
     // ========== IBuilding Coordinate Translation Overrides ==========
@@ -109,7 +129,10 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     @Override
-    public CubeCoords boardToRelative(Coords boardCoords) {
+    public @Nullable CubeCoords boardToRelative(@Nullable Coords boardCoords) {
+        if (boardCoords == null) {
+            return null;
+        }
         // Find which relative CubeCoord maps to this board coordinate
         return relativeLayout.entrySet().stream()
             .filter(e -> e.getValue().equals(boardCoords))
@@ -122,6 +145,58 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     public Coords relativeToBoard(CubeCoords relativeCoords) {
         // Return the board coordinate this relative CubeCoord maps to
         return relativeLayout.get(relativeCoords);
+    }
+
+    /**
+     * Converts board coordinates to all entity location numbers at that hex.
+     * Returns all floors (locations) that exist at the given coordinates.
+     *
+     * @param coords the board coordinates to convert
+     * @return list of all location numbers at these coords (one per floor)
+     */
+    private List<Integer> coordsToLocations(@Nullable Coords coords) {
+        CubeCoords relativeCoords = boardToRelative(coords);
+        if (relativeCoords == null) {
+            return List.of();
+        }
+
+        // Find all locations that map to these relative coords
+        List<Integer> locations = new ArrayList<>();
+        for (Map.Entry<Integer, CubeCoords> entry : locationToRelativeCoordsMap.entrySet()) {
+            if (entry.getValue().equals(relativeCoords)) {
+                locations.add(entry.getKey());
+            }
+        }
+
+        return locations;
+    }
+
+    @Override
+    public Coords getWeaponFiringPosition(WeaponMounted weapon) {
+        if (weapon == null) {
+            return super.getWeaponFiringPosition(weapon);
+        }
+        int location = weapon.getLocation();
+        Coords firingPos = relativeToBoard(locationToRelativeCoordsMap.get(location));
+        if (firingPos == null) {
+            return super.getWeaponFiringPosition(weapon);
+        }
+        return firingPos;
+    }
+
+    @Override
+    /**
+     * TODO: Duplicate of subclass {@link BuildingEntity}, remove one
+     */
+    public int getWeaponFiringHeight(WeaponMounted weapon) {
+        if (weapon == null || getInternalBuilding() == null) {
+            return super.getWeaponFiringHeight(weapon);
+        }
+        int location = weapon.getLocation();
+        // Extract the level from the location number (location % building height)
+        // Level 0 = ground floor, level 1 = first floor above ground, etc.
+        int level = location % getInternalBuilding().getBuildingHeight();
+        return level;
     }
 
     /**
@@ -142,6 +217,276 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
+     * Returns true when the given location cannot legally be entered or deployed into by this unit at the given
+     * elevation or altitude. Also returns true when the location doesn't exist. Even when this method returns true, the
+     * location need not be deadly to the unit.
+     *
+     * @param testPosition  The position to test
+     * @param testBoardId   The board to test
+     * @param testElevation The elevation or altitude to test
+     * @return True when the location is illegal to be in for this unit, regardless of elevation
+     * @see #isLocationDeadly(Coords)
+     */
+    @Override
+    public boolean isLocationProhibited(Coords testPosition, int testBoardId, int testElevation) {
+        return !isPositionAndFacingValid(testPosition, getFacing(), testElevation, testBoardId);
+    }
+
+    /**
+     * Rotates a cube coordinate clockwise around the origin by the given facing.
+     * Facing 0 is UP (no rotation), and each facing increment is 60° clockwise.
+     *
+     * @param coord  the CubeCoords to rotate
+     * @param facing the facing direction (0-5), where 0 is UP and increments are 60° clockwise
+     *
+     * @return a new CubeCoords rotated by the given facing
+     */
+    private CubeCoords rotateCoordByFacing(CubeCoords coord, int facing) {
+        // Normalize facing to 0-5 range
+        int normalizedFacing = ((facing % 6) + 6) % 6;
+
+        return switch (normalizedFacing) {
+            case 0 -> coord; // No rotation
+            case 1 -> new CubeCoords(-coord.r(), -coord.s(), -coord.q()); // 60° clockwise
+            case 2 -> new CubeCoords(coord.s(), coord.q(), coord.r()); // 120° clockwise
+            case 3 -> new CubeCoords(-coord.q(), -coord.r(), -coord.s()); // 180°
+            case 4 -> new CubeCoords(coord.r(), coord.s(), coord.q()); // 240° clockwise
+            case 5 -> new CubeCoords(-coord.s(), -coord.q(), -coord.r()); // 300° clockwise
+            default -> coord; // Should never happen due to normalization
+        };
+    }
+
+    /**
+     * Computes what the relative layout would be for a hypothetical position and facing
+     * WITHOUT modifying the entity's actual position or facing.
+     * This is a pure calculation method with no side effects.
+     *
+     * @param testPosition The position to test
+     * @param testFacing The facing to test (0-5)
+     * @return Map of relative CubeCoords to their board Coords at the given position/facing
+     */
+    public Map<CubeCoords, Coords> computeLayoutForPositionAndFacing(Coords testPosition, int testFacing) {
+        Map<CubeCoords, Coords> hypotheticalLayout = new HashMap<>();
+
+        if (testPosition == null || building == null) {
+            return hypotheticalLayout;
+        }
+
+        // Add origin
+        hypotheticalLayout.put(CubeCoords.ZERO, testPosition);
+
+        // Map each relative CubeCoord to its hypothetical board coordinate
+        for (CubeCoords relCoord : building.getCoordsList()) {
+            if (!relCoord.equals(CubeCoords.ZERO)) {
+                // Rotate by the TEST facing, not the entity's actual facing
+                CubeCoords rotatedRelCoord = rotateCoordByFacing(relCoord, testFacing);
+                CubeCoords positionCubeCoords = testPosition.toCube();
+                Coords boardCoord = positionCubeCoords.add(rotatedRelCoord).toOffset();
+
+                hypotheticalLayout.put(relCoord, boardCoord);
+            }
+        }
+
+        return hypotheticalLayout;
+    }
+
+    /**
+     * Checks if all hexes of this building would be valid at the given position and facing
+     * WITHOUT modifying the entity's state. This is a pure calculation method.
+     *
+     * @param testPosition The position to test
+     * @param testFacing The facing to test (0-5)
+     * @param testElevation The elevation to test
+     * @param testBoardId The board ID to test
+     * @return true if all building hexes would be valid at this position/facing
+     */
+    public boolean isPositionAndFacingValid(Coords testPosition, int testFacing, int testElevation, int testBoardId) {
+        if (!game.hasBoardLocation(testPosition, testBoardId)) {
+            return false;
+        }
+
+        Hex primaryHex = game.getHex(testPosition, testBoardId);
+        if (primaryHex == null) {
+            return false;
+        }
+
+        // At non-zero elevation, only check for IMPASSABLE terrain
+        if (testElevation != 0) {
+            return !primaryHex.containsTerrain(Terrains.IMPASSABLE);
+        }
+
+        // Calculate where this building's hexes would be at testPosition with testFacing
+        List<Coords> thisBuildingCoords = computeBuildingCoordsForPositionAndFacing(testPosition, testFacing);
+
+        // Check that all hexes exist and are valid
+        if (!areCoordsValid(thisBuildingCoords, testBoardId)) {
+            return false;
+        }
+
+        // Check that all hexes are at the same elevation
+        if (!areAllCoordsAtSameElevation(thisBuildingCoords, testBoardId)) {
+            return false;
+        }
+
+        // Check for overlapping buildings
+        if (hasInvalidBuildingOverlap(thisBuildingCoords, testBoardId)) {
+            return false;
+        }
+
+        // Check for other entities at all positions
+        if (hasEntityConflict(thisBuildingCoords)) {
+            return false;
+        }
+
+        // Check stacking violations at each position
+        for (Coords coord : thisBuildingCoords) {
+            if (Compute.stackingViolation(game, this, testElevation, coord,
+                  testBoardId, null, climbMode(), true) != null) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns all valid facings for this building at the given position and elevation.
+     * Does NOT modify the entity's facing - this is a pure calculation method.
+     *
+     * @param testPosition The position to test
+     * @param testElevation The elevation to test
+     * @param testBoardId The board ID to test
+     * @return List of valid facings (0-5), or empty list if none valid
+     */
+    public List<Integer> getValidFacingsAt(Coords testPosition, int testElevation, int testBoardId) {
+        List<Integer> validFacings = new ArrayList<>();
+
+        for (int facing = 0; facing < 6; facing++) {
+            if (isPositionAndFacingValid(testPosition, facing, testElevation, testBoardId)) {
+                validFacings.add(facing);
+            }
+        }
+
+        return validFacings;
+    }
+
+    /**
+     * Computes the board coordinates this building would occupy at the given position and facing.
+     *
+     * @param testPosition The position to test
+     * @param testFacing The facing to test
+     * @return List of all board coordinates the building would occupy
+     */
+    private List<Coords> computeBuildingCoordsForPositionAndFacing(Coords testPosition, int testFacing) {
+        return getInternalBuilding().getCoordsList().stream()
+            .map(cube -> testPosition.toCube().add(rotateCoordByFacing(cube, testFacing)).toOffset())
+            .toList();
+    }
+
+    /**
+     * Checks if all given coordinates are valid (exist on the board and have valid hexes).
+     *
+     * @param coords The coordinates to check
+     * @param testBoardId The board ID to check against
+     * @return true if all coordinates are valid
+     */
+    private boolean areCoordsValid(List<Coords> coords, int testBoardId) {
+        Board board = game.getBoard(testBoardId);
+        for (Coords coord : coords) {
+            if (!game.hasBoardLocation(coord, testBoardId)) {
+                return false;
+            }
+            if (board.getHex(coord) == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if all given coordinates are at the same elevation.
+     *
+     * @param coords The coordinates to check
+     * @param testBoardId The board ID to check against
+     * @return true if all coordinates are at the same elevation
+     */
+    private boolean areAllCoordsAtSameElevation(List<Coords> coords, int testBoardId) {
+        if (coords.isEmpty()) {
+            return true;
+        }
+
+        Board board = game.getBoard(testBoardId);
+        Hex firstHex = board.getHex(coords.get(0));
+        if (firstHex == null) {
+            return false;
+        }
+        int requiredElevation = firstHex.getLevel();
+
+        for (Coords coord : coords) {
+            Hex hex = board.getHex(coord);
+            if (hex == null || hex.getLevel() != requiredElevation) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if this building would have an invalid overlap with other buildings.
+     * - Cannot overlap with another AbstractBuildingEntity
+     * - Can only overlap with other IBuilding if we completely contain it
+     *
+     * @param thisBuildingCoords The coordinates this building would occupy
+     * @param testBoardId The board ID to check against
+     * @return true if there's an invalid overlap
+     */
+    private boolean hasInvalidBuildingOverlap(List<Coords> thisBuildingCoords, int testBoardId) {
+        // Collect all unique buildings we'd be overlapping with
+        Set<IBuilding> overlappingBuildings = new HashSet<>();
+        for (Coords coord : thisBuildingCoords) {
+            Optional<IBuilding> buildingAtCoord = game.getBuildingAt(coord, testBoardId);
+            if (buildingAtCoord.isPresent() && !equals(buildingAtCoord.get())) {
+                overlappingBuildings.add(buildingAtCoord.get());
+            }
+        }
+
+        // Check each overlapping building
+        for (IBuilding otherBuilding : overlappingBuildings) {
+            // Can't replace another AbstractBuildingEntity
+            if (otherBuilding instanceof AbstractBuildingEntity) {
+                return true;
+            }
+
+            // For any other IBuilding, we can only be placed if we contain ALL hexes of that building
+            List<Coords> otherBuildingCoords = otherBuilding.getCoordsList();
+            if (!thisBuildingCoords.containsAll(otherBuildingCoords)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if there are any entity conflicts at the given coordinates.
+     *
+     * @param coords The coordinates to check
+     * @return true if there's an entity conflict (another entity at any of the coords)
+     */
+    private boolean hasEntityConflict(List<Coords> coords) {
+        for (Coords coord : coords) {
+            var entitiesAtCoord = game.getEntities(coord);
+            while (entitiesAtCoord.hasNext()) {
+                Entity otherEntity = entitiesAtCoord.next();
+                if (!this.equals(otherEntity)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Updates the relativeLayout map to reflect the current building configuration.
      * Maps each relative CubeCoord in the building to its actual board position.
      */
@@ -151,23 +496,26 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         if (getPosition() == null) {
             return;
         }
+        int position = 0;
 
-        secondaryPositions.put(0, getPosition());
+        if (getInternalBuilding() != null && getInternalBuilding().getHeight(CubeCoords.ZERO) > 0) {
+            secondaryPositions.put(position++, getPosition());
+        }
         relativeLayout.put(CubeCoords.ZERO, getPosition());
 
         // Map each relative CubeCoord to its actual board coordinate
-        int position = 1;
         for (CubeCoords relCoord : building.getCoordsList()) {
             // We add the origin manually
             if (!relCoord.equals(CubeCoords.ZERO)) {
-                // TODO: When rotation is implemented, rotate by facing before adding to entity position
-                // For now, with no rotation, convert CubeCoord to offset and add to entity position
+                // Rotate the relative coordinate by the entity's facing before adding to position
+                CubeCoords rotatedRelCoord = rotateCoordByFacing(relCoord, getFacing());
                 CubeCoords positionCubeCoords = getPosition().toCube();
-                Coords boardCoord = positionCubeCoords.add(relCoord).toOffset();
+                Coords boardCoord = positionCubeCoords.add(rotatedRelCoord).toOffset();
 
                 relativeLayout.put(relCoord, boardCoord);
-                secondaryPositions.put(position, boardCoord);
-                position++;
+                if (getInternalBuilding() != null && getInternalBuilding().getHeight(relCoord) > 0) {
+                    secondaryPositions.put(position++, boardCoord);
+                }
             }
         }
     }
@@ -177,10 +525,11 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public int locations() {
-        if (getInternalBuilding() == null || getInternalBuilding().getCoordsList() == null) {
+        // Map can be null during construction
+        if (locationToRelativeCoordsMap == null || locationToRelativeCoordsMap.isEmpty()) {
             return 1;
         }
-        return getInternalBuilding().getOriginalHexCount() * getInternalBuilding().getBuildingHeight();
+        return locationToRelativeCoordsMap.size();
     }
 
     public void refreshAdditionalLocations() {
@@ -189,6 +538,17 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         hardenedArmorDamaged = new boolean[locations()];
         locationBlownOff = new boolean[locations()];
         locationBlownOffThisPhase = new boolean[locations()];
+    }
+
+    /**
+     * Sets the primary facing.
+     *
+     * @param facing
+     */
+    @Override
+    public void setFacing(int facing) {
+        super.setFacing(facing);
+        updateRelativeLayout();
     }
 
     /**
@@ -223,34 +583,32 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     @Override
     public String[] getLocationNames() {
-        ArrayList<String> locationNames = new ArrayList<String>();
-        if (getInternalBuilding() == null || getInternalBuilding().getCoordsList() == null) {
-            return new String[] { LOCATION_NAMES_PREFIX + ' ' + LOC_BASE };
-        }
-        for (CubeCoords coord : getInternalBuilding().getCoordsList()) {
-            // Starts at Level 0 for ground floor
-            // Can't use boardNum when unit isn't deployed or negative hexes break
-            String coordString = getPosition() != null ? coord.toOffset().getBoardNum() :
-                  coord.q() + "," + coord.r() + "," + coord.s();
-            for (int level = 0; level < getInternalBuilding().getBuildingHeight(); level++) {
-                locationNames.add(LOCATION_NAMES_PREFIX + ' ' + level + ' ' + coordString);
-            }
-        }
-        return locationNames.toArray(new String[0]);
+        return getLocationStrings(LOCATION_NAMES_PREFIX);
     }
 
     @Override
     public String[] getLocationAbbreviations() {
+        return getLocationStrings(LOCATION_ABBREVIATIONS_PREFIX);
+    }
+
+    private String[] getLocationStrings(String locationPrefix) {
         ArrayList<String> locationAbbrvNames = new ArrayList<String>();
-        if (getInternalBuilding() == null || getInternalBuilding().getCoordsList() == null) {
-            return new String[] { LOCATION_ABBREVIATIONS_PREFIX + ' ' + LOC_BASE };
+        if (getInternalBuilding() == null || getInternalBuilding().getOriginalCoordsList() == null) {
+            return new String[] { locationPrefix + ' ' + LOC_BASE };
         }
-        for (CubeCoords coord : getInternalBuilding().getCoordsList()) {
-            String coordString = getPosition() != null ? coord.toOffset().getBoardNum() :
-                  coord.q() + "," + coord.r() + "," + coord.s();
-            for (int level = 0; level < getInternalBuilding().getBuildingHeight(); level++) {
-                locationAbbrvNames.add(LOCATION_ABBREVIATIONS_PREFIX + ' ' + level + ' ' + coordString);
+        for (int location : locationToRelativeCoordsMap.keySet()) {
+            CubeCoords cubeCoords = locationToRelativeCoordsMap.get(location);
+            String coordString;
+            if (getPosition() == null) {
+                coordString = cubeCoords.q() + "," + cubeCoords.r() + "," + cubeCoords.s();
+            } else {
+                CubeCoords positionCubeCoords = getPosition().toCube();
+                coordString = positionCubeCoords.add(cubeCoords).toOffset().getBoardNum();
             }
+
+            // Result is 0 indexed
+            int level = (location % getInternalBuilding().getBuildingHeight());
+            locationAbbrvNames.add(locationPrefix + ' ' + level + ' ' + coordString);
         }
         return locationAbbrvNames.toArray(new String[0]);
     }
@@ -445,9 +803,32 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      *
      * @return boolean
      */
+    /**
+     * Buildings are destroyed if their crew is dead, like Meks and Tanks.
+     */
+    @Override
+    public boolean isDestroyed() {
+        // Check crew death first (like Meks/Tanks)
+        if (getCrew() != null && !getCrew().isActive()) {
+            return true;
+        }
+        // Otherwise use standard destroyed flag
+        return super.isDestroyed();
+    }
+
+    /**
+     * Buildings are salvageable unless they have completely collapsed.
+     * A building has completely collapsed when all hexes have 0 CF.
+     */
+    @Override
+    public boolean isSalvage() {
+        // Building is salvageable if it has any remaining structure
+        return calculateTotalCurrentCF() > 0;
+    }
+
     @Override
     public boolean isCrippled() {
-        return false;
+        return isCrippled(true);
     }
 
     /**
@@ -460,7 +841,9 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public boolean isCrippled(boolean checkCrew) {
-        return false;
+        // Building is crippled if it's military and all weapons are disabled
+        // (crew death is handled by isDestroyed(), not isCrippled())
+        return isMilitary() && !hasViableWeapons();
     }
 
     /**
@@ -470,7 +853,8 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public boolean isDmgHeavy() {
-        return false;
+        // Heavy damage: 50% or less of original structure
+        return getStructurePercentage() <= 0.5;
     }
 
     /**
@@ -480,7 +864,9 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public boolean isDmgModerate() {
-        return false;
+        // Moderate damage: 75% or less (but more than 50%)
+        double pct = getStructurePercentage();
+        return pct <= 0.75 && pct > 0.5;
     }
 
     /**
@@ -490,7 +876,62 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public boolean isDmgLight() {
-        return false;
+        // Light damage: less than 100% (but more than 75%)
+        double pct = getStructurePercentage();
+        return pct < 1.0 && pct > 0.75;
+    }
+
+    /**
+     * Calculate the percentage of remaining structure compared to original.
+     *
+     * @return percentage from 0.0 to 1.0
+     */
+    private double getStructurePercentage() {
+        int currentCF = calculateTotalCurrentCF();
+        int originalCF = calculateTotalOriginalCF();
+
+        if (originalCF == 0) {
+            return 1.0;
+        }
+
+        return (double) currentCF / (double) originalCF;
+    }
+
+    /**
+     * Calculate total current CF across all hexes and levels.
+     *
+     * @return total current CF
+     */
+    private int calculateTotalCurrentCF() {
+        if (building == null || building.getCoordsList() == null) {
+            return 0;
+        }
+
+        int total = 0;
+        for (CubeCoords coords : building.getCoordsList()) {
+            total += building.getCurrentCF(coords);
+        }
+        return total;
+    }
+
+    /**
+     * Calculate total original CF across all hexes and levels.
+     * Uses the original coords list to determine original structure.
+     *
+     * @return total original CF
+     */
+    private int calculateTotalOriginalCF() {
+        if (building == null || building.getOriginalCoordsList() == null) {
+            return 0;
+        }
+
+        // Sum CF from all original coordinates
+        int total = 0;
+        for (CubeCoords coords : building.getOriginalCoordsList()) {
+            // Get CF for this coordinate (using phase CF as reference for original)
+            total += building.getPhaseCF(coords);
+        }
+        return total;
     }
 
     @Override
@@ -513,6 +954,20 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         return Entity.ETYPE_BUILDING_ENTITY;
     }
 
+
+    private void setInternalFromHex() {
+
+    }
+
+    @Override
+    public int getInternalForReal(int loc) {
+        if (locationToRelativeCoordsMap.containsKey(loc)) {
+            CubeCoords relativeCoords = locationToRelativeCoordsMap.get(loc);
+            return getInternalBuilding().getPhaseCF(relativeCoords);
+        }
+        return 0;
+    }
+
     /**
      * Returns the amount of armor in the location specified, or IArmorState.ARMOR_NA, or IArmorState.ARMOR_DESTROYED.
      *
@@ -521,7 +976,54 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public int getArmor(int loc, boolean rear) {
+        if (locationToRelativeCoordsMap.containsKey(loc)) {
+            CubeCoords relativeCoords = locationToRelativeCoordsMap.get(loc);
+            return getInternalBuilding().getArmor(relativeCoords);
+        }
         return IArmorState.ARMOR_NA;
+    }
+
+    /**
+     * Private method to set armor for both the entity and the building simultaneously.
+     * Ensures entity armor and building armor stay synchronized.
+     *
+     * @param armor the armor value to set
+     * @param coords coordinates that need the armor updated
+     */
+    private void setArmorInternal(int armor, Coords coords) {
+        for (Integer location : coordsToLocations(coords)) {
+            // Set entity armor
+            super.setArmor(armor, location, false);
+        }
+        CubeCoords relativeCoords = boardToRelative(coords);
+        // Set building Armor
+        building.setArmor(armor, relativeCoords);
+    }
+
+
+    /**
+     * Private method to set internal structure/CF for both the entity and the building simultaneously.
+     * Ensures entity internal and building CF stay synchronized.
+     *
+     * @param internal the internal/CF value to set
+     * @param coords coordinates that need the armor updated
+     */
+    private void setInternalInternal(int internal, Coords coords) {
+        for (Integer location : coordsToLocations(coords)) {
+            super.setInternal(internal, location);
+        }
+        CubeCoords relativeCoords = boardToRelative(coords);
+        // Set building CF
+        building.setPhaseCF(internal, relativeCoords);
+
+    }
+
+    /**
+     * Override to keep entity internal and building CF synchronized.
+     */
+    @Override
+    public void setInternal(int val, int loc) {
+        setInternalInternal(val, relativeToBoard(locationToRelativeCoordsMap.get(loc)));
     }
 
     @Override
@@ -535,6 +1037,9 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         // Return board coords by translating all relative coords
         Vector<Coords> boardCoords = new Vector<>();
         for (CubeCoords relCoord : building.getCoordsList()) {
+            if (!building.hasCFIn(relCoord)) {
+                continue;
+            }
             Coords boardCoord = relativeToBoard(relCoord);
             if (boardCoord != null) {
                 boardCoords.add(boardCoord);
@@ -547,9 +1052,10 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     public List<Coords> getCoordsList() {
         // Return board coords by translating all relative coords
         return building.getCoordsList().stream()
-            .map(this::relativeToBoard)
-            .filter(c -> c != null)
-            .toList();
+              .filter(building::hasCFIn)
+              .map(this::relativeToBoard)
+              .filter(Objects::nonNull)
+              .toList();
     }
 
     @Override
@@ -609,12 +1115,16 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     @Override
     public void setPhaseCF(int cf, Coords coords) {
-        building.setPhaseCF(cf, boardToRelative(coords));
+        // Set internal structure for all locations (floors) at this hex
+        // The private method will handle setting both building CF and entity internal
+        setInternalInternal(cf, coords);
     }
 
     @Override
     public void setArmor(int a, Coords coords) {
-        building.setArmor(a, boardToRelative(coords));
+        // Set armor for all locations (floors) at this hex
+        // The private method will handle setting both building armor and entity armor
+        setArmorInternal(a, coords);
     }
 
     @Override
@@ -667,7 +1177,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         CubeCoords relative = boardToRelative(coords);
         building.removeHex(relative);
         // Remove from layout
-        relativeLayout.remove(relative);
+        //relativeLayout.remove(relative);
     }
 
     @Override
@@ -693,5 +1203,188 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     @Override
     public void setBasementCollapsed(Coords coords, boolean collapsed) {
         building.setBasementCollapsed(boardToRelative(coords), collapsed);
+    }
+
+    /**
+     * Once a building entity has set its position, we need to update the board itself and share that with the clients
+     * @param boardId
+     * @param gameManager
+     */
+    public void updateBuildingEntityHexes(int boardId, TWGameManager gameManager) {
+        Board board = getGame().getBoard(boardId);
+        Vector<IBuilding> removedBuildings = new Vector<>();
+
+        for (Coords buildingCoords : getCoordsList()) {
+            Hex targetHex = board.getHex(buildingCoords);
+            if (targetHex != null) {
+                // Remove any existing building at this hex
+                Optional<IBuilding> existingBuilding = getGame().getBuildingAt(buildingCoords, boardId);
+                if (existingBuilding.isPresent() && !existingBuilding.get().equals(this)) {
+                    removedBuildings.add(existingBuilding.get());
+                    targetHex.removeTerrain(Terrains.BUILDING);
+                    targetHex.removeTerrain(Terrains.BLDG_CF);
+                    targetHex.removeTerrain(Terrains.BLDG_ELEV);
+                    targetHex.removeTerrain(Terrains.BLDG_CLASS);
+                    targetHex.removeTerrain(Terrains.BLDG_ARMOR);
+                    targetHex.removeTerrain(Terrains.BLDG_BASEMENT_TYPE);
+                }
+
+                // Add building terrain with the building type
+                targetHex.addTerrain(new Terrain(Terrains.BUILDING,
+                      getBuildingType().getTypeValue()));
+
+                // Add building class
+                targetHex.addTerrain(new Terrain(Terrains.BLDG_CLASS, getBldgClass()));
+
+                // Add CF value
+                int cf = getCurrentCF(buildingCoords);
+                targetHex.addTerrain(new Terrain(Terrains.BLDG_CF, cf));
+
+                // Add armor if present
+                int armor = getArmor(buildingCoords);
+                if (armor > 0) {
+                    targetHex.addTerrain(new Terrain(Terrains.BLDG_ARMOR, armor));
+                }
+
+                // Add height (BLDG_ELEV)
+                int height = getHeight(buildingCoords);
+                targetHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, height));
+
+                // Add basement type if present
+                if (getBasement(buildingCoords) != null) {
+                    targetHex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE,
+                          getBasement(buildingCoords).ordinal()));
+                }
+            }
+        }
+
+        board.addBuildingToBoard(this);
+
+        // Send removed buildings to clients if any were replaced
+        if (!removedBuildings.isEmpty()) {
+            gameManager.sendRemovedBuildings(removedBuildings);
+        }
+
+        gameManager.sendNewBuildings(new Vector<IBuilding>(List.of(this)));
+
+        // Do this as a separate loop - All building terrains need added before we can initialize building exits
+        for (Coords buildingCoords : getCoordsList()) {
+            // Set up building exits to adjacent hexes with matching building type and class
+            initializeBuildingExits(buildingCoords, boardId);
+
+            // Notify clients of hex changes
+            gameManager.sendChangedHex(buildingCoords, boardId);
+        }
+    }
+
+    /**
+     * Initializes building exits for a hex containing building terrain. This ensures that building hexes properly
+     * connect to adjacent building hexes with matching building type and building class.
+     *
+     * @param buildingCoords the coordinates of the building hex
+     * @param boardId        the board ID where the building is located
+     */
+    private void initializeBuildingExits(Coords buildingCoords, int boardId) {
+        Hex hex = getGame().getBoard(boardId).getHex(buildingCoords);
+        if (hex == null || !hex.containsTerrain(Terrains.BUILDING)) {
+            return;
+        }
+
+        Terrain buildingTerrain = hex.getTerrain(Terrains.BUILDING);
+        if (buildingTerrain == null) {
+            return;
+        }
+
+        // Check each of the 6 directions
+        for (int direction = 0; direction < 6; direction++) {
+            Coords adjacentCoords = buildingCoords.translated(direction);
+            Hex adjacentHex = getGame().getBoard(boardId).getHex(adjacentCoords);
+
+            if (adjacentHex != null && adjacentHex.containsTerrain(Terrains.BUILDING)) {
+                Terrain adjacentBuilding = adjacentHex.getTerrain(Terrains.BUILDING);
+
+                // Buildings connect if they have the same building type (level)
+                // and the same building class
+                boolean sameType = (buildingTerrain.getLevel() == adjacentBuilding.getLevel());
+                boolean sameClass = (hex.terrainLevel(Terrains.BLDG_CLASS)
+                      == adjacentHex.terrainLevel(Terrains.BLDG_CLASS));
+
+                // Gun emplacements never connect (single hex buildings)
+                boolean isGunEmplacement = (hex.terrainLevel(Terrains.BLDG_CLASS) == IBuilding.GUN_EMPLACEMENT);
+
+                if (sameType && sameClass && !isGunEmplacement) {
+                    buildingTerrain.setExit(direction, true);
+                } else {
+                    buildingTerrain.setExit(direction, false);
+                }
+            } else {
+                // No building adjacent in this direction
+                buildingTerrain.setExit(direction, false);
+            }
+        }
+    }
+
+
+    @Override
+    public void refreshLocations() {
+        // We do not remove locations when the internal building removes a hex - we need to track the destroyed
+        // locations!
+        if (!(getInternalBuilding() == null || getInternalBuilding().getOriginalCoordsList() == null)) {
+            int location = 0;
+            for (CubeCoords coords : getInternalBuilding().getOriginalCoordsList()) {
+                for (int level = 0; level < getInternalBuilding().getBuildingHeight(); level++) {
+                    locationToRelativeCoordsMap.put(location, coords);
+                    location++;
+                }
+            }
+        }
+        super.refreshLocations();
+    }
+
+    /**
+     *
+     * @param coords Board {@link Coords} that contain this building and are collapsing
+     * @param numLevelsToCollapse number of floors to collapse, from the top
+     */
+    public void collapseFloorsOnHex(Coords coords, int numLevelsToCollapse) {
+        if (numLevelsToCollapse <= 0) {
+            return;
+        }
+        int startHexBuildingHeight = getHeight(coords);
+        if (startHexBuildingHeight <= 0) {
+            return;
+        }
+        for (int levelsRemoved = 1; levelsRemoved <= numLevelsToCollapse; levelsRemoved++) {
+            applyCollapseFloorLocationDamage(coords, startHexBuildingHeight - levelsRemoved);
+            setHeight(startHexBuildingHeight - levelsRemoved, coords);
+            if (startHexBuildingHeight - levelsRemoved <= 0) {
+                // Stop the for loop, hex is fully destroyed. If basements...
+                // I don't think we deal with basements like that yet
+                break;
+            }
+        }
+        updateRelativeLayout();
+    }
+
+    private void applyCollapsedHexLocationDamage(Coords coords) {
+        for (int floor = 0; floor < getInternalBuilding().getBuildingHeight(); floor++) {
+            applyCollapseFloorLocationDamage(coords, floor);
+        }
+    }
+
+    /**
+     *
+     * @param coords
+     * @param floor
+     */
+    private void applyCollapseFloorLocationDamage(Coords coords, int floor) {
+        for (int location : locationToRelativeCoordsMap.keySet()) {
+            if (coords.equals(relativeToBoard(locationToRelativeCoordsMap.get(location)))) {
+                if (location % getInternalBuilding().getBuildingHeight() == floor) {
+                    setInternal(0, location);
+                    destroyLocation(location, true);
+                }
+            }
+        }
     }
 }

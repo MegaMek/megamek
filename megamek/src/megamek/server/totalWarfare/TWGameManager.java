@@ -13013,8 +13013,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Handle a Suicide Implants attack (IO pg 83). The entity detonates their explosive implants,
-     * destroying themselves and causing damage based on entity type:
+     * Handle a Suicide Implants attack (IO pg 83). The entity detonates their explosive implants, destroying themselves
+     * and causing damage based on entity type:
      * <ul>
      *   <li>Conventional Infantry: 0.57 damage per trooper to all entities in hex + building CF damage</li>
      *   <li>Battle Armor: Destroys selected troopers only, no damage to others</li>
@@ -13100,9 +13100,9 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Dispatches suicide implant resolution to the appropriate entity-type-specific handler.
      *
-     * @param attackingEntity   the entity detonating their implants
+     * @param attackingEntity    the entity detonating their implants
      * @param troopersDetonating the number of troopers detonating (for infantry/BA)
-     * @param damage            the calculated damage (for conventional infantry area effect)
+     * @param damage             the calculated damage (for conventional infantry area effect)
      */
     private void dispatchSuicideImplantsResolution(Entity attackingEntity, int troopersDetonating, int damage) {
         if (attackingEntity.isConventionalInfantry()) {

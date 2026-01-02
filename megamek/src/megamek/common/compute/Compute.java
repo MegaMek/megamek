@@ -1913,14 +1913,15 @@ public class Compute {
      * @return the effective distance
      */
     /**
-     * Calculates effective distance from a weapon's firing position to a target,
-     * accounting for altitude differences and same-building elevation modifiers.
-     * This is used for entities with multiple firing positions like BuildingEntity.
+     * Calculates effective distance from a weapon's firing position to a target, accounting for altitude differences
+     * and same-building elevation modifiers. This is used for entities with multiple firing positions like
+     * BuildingEntity.
      *
-     * @param game The current game
+     * @param game         The current game
      * @param weaponEntity The entity with the weapon
-     * @param weapon The weapon being fired
-     * @param target The target being attacked
+     * @param weapon       The weapon being fired
+     * @param target       The target being attacked
+     *
      * @return The effective distance from the weapon's firing position to the target
      */
     public static int effectiveWeaponDistance(final Game game, final Entity weaponEntity,
@@ -5808,9 +5809,18 @@ public class Compute {
             data.addModifier(-1, "exposed actuators");
         }
 
-        // MD Infantry with grappler/magnets get bonus
-        if (attacker.hasAbility(OptionsConstants.MD_PL_ENHANCED)) {
-            data.addModifier(-2, "MD Grapple/Magnet");
+        // Prosthetic enhancement anti-Mek bonus (Grappler or Climbing Claws) - IO p.84
+        // Uses the best (most negative) modifier from either enhancement slot
+        // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
+        if (attacker.hasProstheticEnhancement()
+              && (attacker.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+              || attacker.hasAbility(OptionsConstants.MD_PL_I_ENHANCED))) {
+            int antiMekMod = attacker.getBestProstheticAntiMekModifier();
+            if (antiMekMod != 0) {
+                String modName = attacker.getBestProstheticAntiMekName();
+                data.addModifier(antiMekMod,
+                      modName != null ? modName : Messages.getString("Compute.ProstheticEnhancement"));
+            }
         }
 
         // swarm/leg attacks take target movement mods into account

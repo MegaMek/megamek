@@ -1596,6 +1596,21 @@ public class EntityListFile {
             output.write("\" " + MULParser.ATTR_IMPLANTS + "=\"");
             output.write(String.valueOf(crew.getOptionList("::", PilotOptions.MD_ADVANTAGES)));
         }
+        // Write prosthetic enhancement data for infantry (IO p.84)
+        if (entity instanceof Infantry infantry) {
+            if (infantry.getProstheticEnhancement1() != null) {
+                output.write("\" " + MULParser.ATTR_PROSTHETIC_ENHANCEMENT_1 + "=\"");
+                output.write(infantry.getProstheticEnhancement1().name());
+                output.write("\" " + MULParser.ATTR_PROSTHETIC_ENHANCEMENT_1_COUNT + "=\"");
+                output.write(String.valueOf(infantry.getProstheticEnhancement1Count()));
+            }
+            if (infantry.getProstheticEnhancement2() != null) {
+                output.write("\" " + MULParser.ATTR_PROSTHETIC_ENHANCEMENT_2 + "=\"");
+                output.write(infantry.getProstheticEnhancement2().name());
+                output.write("\" " + MULParser.ATTR_PROSTHETIC_ENHANCEMENT_2_COUNT + "=\"");
+                output.write(String.valueOf(infantry.getProstheticEnhancement2Count()));
+            }
+        }
         if (entity instanceof Mek) {
             if (((Mek) entity).isAutoEject()) {
                 output.write("\" " + MULParser.ATTR_AUTO_EJECT + "=\"true");

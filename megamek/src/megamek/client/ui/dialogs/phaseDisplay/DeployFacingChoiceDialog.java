@@ -52,19 +52,19 @@ import megamek.client.ui.util.UIUtil;
 import megamek.common.board.FacingOption;
 
 /**
- * This dialog allows selecting a facing during deployment for multi-hex entities
- * where the facing affects which hexes the entity occupies.
+ * This dialog allows selecting a facing during deployment for multi-hex entities where the facing affects which hexes
+ * the entity occupies.
  */
 public class DeployFacingChoiceDialog extends AbstractChoiceDialog<Integer> {
 
     private static final int BASE_PADDING = 10;
     private static final String[] FACING_NAMES = {
-        "DeploymentDisplay.facingNorth",
-        "DeploymentDisplay.facingNorthEast",
-        "DeploymentDisplay.facingSouthEast",
-        "DeploymentDisplay.facingSouth",
-        "DeploymentDisplay.facingSouthWest",
-        "DeploymentDisplay.facingNorthWest"
+          "DeploymentDisplay.facingNorth",
+          "DeploymentDisplay.facingNorthEast",
+          "DeploymentDisplay.facingSouthEast",
+          "DeploymentDisplay.facingSouth",
+          "DeploymentDisplay.facingSouthWest",
+          "DeploymentDisplay.facingNorthWest"
     };
 
     public DeployFacingChoiceDialog(JFrame parent, FacingOption facingOption) {

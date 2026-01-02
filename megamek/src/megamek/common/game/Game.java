@@ -1102,7 +1102,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 for (Coords coords : buildingEntity.getSecondaryPositions().values()) {
                     final BoardLocation secondaryLocation = new BoardLocation(coords, entity.getBoardId(), false);
                     if (hasBoardLocation(secondaryLocation)) {
-                        List<Entity> listForLocation = positionMap.computeIfAbsent(secondaryLocation, k -> new ArrayList<>());
+                        List<Entity> listForLocation = positionMap.computeIfAbsent(secondaryLocation,
+                              k -> new ArrayList<>());
                         listForLocation.add(entity);
                     }
                 }

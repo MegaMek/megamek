@@ -157,6 +157,27 @@ public class ComputeAttackerToHitMods {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.PheromoneImpaired"));
         }
 
+        // Prosthetic enhancement melee weapons have +2 to-hit penalty (IO p.84)
+        // Per IO p.83, maximum modifier is +2 regardless of number of melee enhancements
+        // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
+        if (attacker instanceof Infantry infantry) {
+            boolean hasMeleeEnhancement = infantry.hasProstheticMeleeEnhancement();
+            boolean hasEnhancedAbility = infantry.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+                  || infantry.hasAbility(OptionsConstants.MD_PL_I_ENHANCED);
+            boolean isInSameHex = (target != null)
+                  && (attacker.getPosition() != null)
+                  && (target.getPosition() != null)
+                  && (attacker.getPosition().distance(target.getPosition()) == 0);
+
+            if (hasMeleeEnhancement && hasEnhancedAbility && isInSameHex) {
+                int meleeModifier = infantry.getProstheticMeleeToHitModifier();
+                if (meleeModifier != 0) {
+                    toHit.addModifier(meleeModifier,
+                          Messages.getString("WeaponAttackAction.ProstheticMelee"));
+                }
+            }
+        }
+
         // Quadvee converting to a new mode
         if (attacker instanceof QuadVee && attacker.isConvertingNow()) {
             toHit.addModifier(+3, Messages.getString("WeaponAttackAction.QuadVeeConverting"));

@@ -1624,6 +1624,14 @@ public class MoveStep implements Serializable {
                 return;
             }
 
+            // aerodynes cannot fly backwards in atmosphere
+            if (useAeroAtmosphere(game, entity) &&
+                  ((type == MoveStepType.BACKWARDS) ||
+                        (type == MoveStepType.LATERAL_LEFT_BACKWARDS) ||
+                        (type == MoveStepType.LATERAL_RIGHT_BACKWARDS))) {
+                return;
+            }
+
             // spheroids in atmosphere can move a max of 1 hex on the low atmosphere map and 8 hexes on the ground
             // map, regardless of any other considerations unless they're out of control, in which case, well...
             if (useSpheroidAtmosphere(game, entity) &&

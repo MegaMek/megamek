@@ -138,38 +138,42 @@ public class InfantryWeaponHandler extends WeaponHandler {
         // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
         double prostheticBonusDamage = 0;
         StringBuilder prostheticEnhancementNames = new StringBuilder();
-        if ((attackingEntity instanceof Infantry infantry) && (nRange == 0)
-              && infantry.hasProstheticEnhancement()
-              && (infantry.hasAbility(OptionsConstants.MD_PL_ENHANCED)
-              || infantry.hasAbility(OptionsConstants.MD_PL_I_ENHANCED))) {
-            boolean targetIsConventionalInfantry = target.isConventionalInfantry();
+        if (attackingEntity instanceof Infantry infantry) {
+            boolean isInSameHex = nRange == 0;
+            boolean hasProsthetics = infantry.hasProstheticEnhancement();
+            boolean hasEnhancedAbility = infantry.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+                  || infantry.hasAbility(OptionsConstants.MD_PL_I_ENHANCED);
 
-            // Check slot 1
-            if (infantry.hasProstheticEnhancement1()) {
-                ProstheticEnhancementType enhancement1 = infantry.getProstheticEnhancement1();
-                boolean damageApplies = !enhancement1.isConventionalInfantryOnly() || targetIsConventionalInfantry;
-                if (damageApplies && enhancement1.hasDamageBonus()) {
-                    prostheticBonusDamage += enhancement1.getDamagePerTrooper()
-                          * infantry.getProstheticEnhancement1Count();
-                    prostheticEnhancementNames.append(enhancement1.getDisplayName());
-                }
-            }
+            if (isInSameHex && hasProsthetics && hasEnhancedAbility) {
+                boolean targetIsConventionalInfantry = target.isConventionalInfantry();
 
-            // Check slot 2
-            if (infantry.hasProstheticEnhancement2()) {
-                ProstheticEnhancementType enhancement2 = infantry.getProstheticEnhancement2();
-                boolean damageApplies = !enhancement2.isConventionalInfantryOnly() || targetIsConventionalInfantry;
-                if (damageApplies && enhancement2.hasDamageBonus()) {
-                    prostheticBonusDamage += enhancement2.getDamagePerTrooper()
-                          * infantry.getProstheticEnhancement2Count();
-                    if (prostheticEnhancementNames.length() > 0) {
-                        prostheticEnhancementNames.append(", ");
+                // Check slot 1
+                if (infantry.hasProstheticEnhancement1()) {
+                    ProstheticEnhancementType enhancement1 = infantry.getProstheticEnhancement1();
+                    boolean damageApplies = !enhancement1.isConventionalInfantryOnly() || targetIsConventionalInfantry;
+                    if (damageApplies && enhancement1.hasDamageBonus()) {
+                        prostheticBonusDamage += enhancement1.getDamagePerTrooper()
+                              * infantry.getProstheticEnhancement1Count();
+                        prostheticEnhancementNames.append(enhancement1.getDisplayName());
                     }
-                    prostheticEnhancementNames.append(enhancement2.getDisplayName());
                 }
-            }
 
-            damage += prostheticBonusDamage;
+                // Check slot 2
+                if (infantry.hasProstheticEnhancement2()) {
+                    ProstheticEnhancementType enhancement2 = infantry.getProstheticEnhancement2();
+                    boolean damageApplies = !enhancement2.isConventionalInfantryOnly() || targetIsConventionalInfantry;
+                    if (damageApplies && enhancement2.hasDamageBonus()) {
+                        prostheticBonusDamage += enhancement2.getDamagePerTrooper()
+                              * infantry.getProstheticEnhancement2Count();
+                        if (prostheticEnhancementNames.length() > 0) {
+                            prostheticEnhancementNames.append(", ");
+                        }
+                        prostheticEnhancementNames.append(enhancement2.getDisplayName());
+                    }
+                }
+
+                damage += prostheticBonusDamage;
+            }
         }
 
         int damageDealt = (int) Math.round(damage * troopersHit);

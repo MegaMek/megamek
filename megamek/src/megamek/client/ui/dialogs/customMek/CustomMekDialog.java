@@ -359,16 +359,20 @@ public class CustomMekDialog extends AbstractButtonDialog
                 // Prosthetic enhancements (Enhanced/Improved Enhanced) are infantry-only (IO p.84)
                 // Sensory implants (audio, visual, laser, tele) are infantry-only
                 // Gas Effuser (Pheromone/Toxin) is infantry-only (IO pg 79)
-                if (!entity.isConventionalInfantry()
-                      && (option.getName().equals(OptionsConstants.MD_PL_ENHANCED)
-                      || option.getName().equals(OptionsConstants.MD_PL_I_ENHANCED)
-                      || option.getName().equals(OptionsConstants.MD_PL_MASC)
-                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO)
-                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL)
-                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_LASER)
-                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_TELE)
-                      || option.getName().equals(OptionsConstants.MD_GAS_EFFUSER_PHEROMONE)
-                      || option.getName().equals(OptionsConstants.MD_GAS_EFFUSER_TOXIN))) {
+                String optionName = option.getName();
+                boolean isInfantryOnlyOption = switch (optionName) {
+                    case OptionsConstants.MD_PL_ENHANCED,
+                         OptionsConstants.MD_PL_I_ENHANCED,
+                         OptionsConstants.MD_PL_MASC,
+                         OptionsConstants.MD_CYBER_IMP_AUDIO,
+                         OptionsConstants.MD_CYBER_IMP_VISUAL,
+                         OptionsConstants.MD_CYBER_IMP_LASER,
+                         OptionsConstants.MD_CYBER_IMP_TELE,
+                         OptionsConstants.MD_GAS_EFFUSER_PHEROMONE,
+                         OptionsConstants.MD_GAS_EFFUSER_TOXIN -> true;
+                    default -> false;
+                };
+                if (!entity.isConventionalInfantry() && isInfantryOnlyOption) {
                     continue;
                 }
 

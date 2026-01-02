@@ -3055,7 +3055,7 @@ public class Tank extends Entity {
 
     /**
      * Returns true if this vehicle can be abandoned by its crew. Per TacOps, vehicles can be abandoned during the End
-     * Phase. Requires both the abandon option and TacOps vehicle crews option.
+     * Phase. Crew size (1 per 15 tons) is defined in TM p.103 and is available regardless of optional rules.
      *
      * @return true if this vehicle can be abandoned
      */
@@ -3074,9 +3074,9 @@ public class Tank extends Entity {
             return false;
         }
 
-        // Requires both the abandon option and TacOps vehicle crews
-        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT)
-              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_TANK_CREWS);
+        // Only requires the vehicle eject/abandon option
+        // Crew size is defined in TM p.103, not dependent on TacOps Vehicle Crews option
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT);
     }
 
     /**

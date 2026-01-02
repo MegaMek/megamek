@@ -212,6 +212,19 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 return;
             }
         }
+
+        // Handle Mek abandonment announcements during Movement Phase (TacOps:AR p.165)
+        // Mek must be prone and shutdown; crew exits during End Phase of following turn
+        if (md.contains(MoveStepType.ABANDON) && (entity instanceof Mek mek) && mek.canAbandon()) {
+            Vector<Report> abandonReports = gameManager.announceUnitAbandonment(entity);
+            for (Report abandonReport : abandonReports) {
+                addReport(abandonReport);
+            }
+            entity.setDone(true);
+            gameManager.entityUpdate(entity.getId());
+            return;
+        }
+
         if (md.contains(MoveStepType.CAREFUL_STAND)) {
             entity.setCarefulStand(true);
         }

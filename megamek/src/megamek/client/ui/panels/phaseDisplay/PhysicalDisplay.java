@@ -123,8 +123,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         PHYSICAL_PROTO("protoPhysical"),
         PHYSICAL_SEARCHLIGHT("fireSearchlight"),
         PHYSICAL_EXPLOSIVES("explosives"),
-        PHYSICAL_INFANTRY_COMBAT("infantryCombat"),
-        PHYSICAL_WITHDRAW_INFANTRY_COMBAT("withdrawInfantryCombat"),
         PHYSICAL_VIBRO("vibro"),
         PHYSICAL_PHEROMONE("pheromone"),
         PHYSICAL_TOXIN("toxin"),
@@ -569,7 +567,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         setPheromoneEnabled(false);
         setToxinEnabled(false);
         setExplosivesEnabled(false);
-        setInfantryCombatEnabled(false);
         butDone.setEnabled(false);
         setNextEnabled(false);
     }
@@ -1321,83 +1318,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     }
 
     /**
-     * Initiate or join infantry vs. infantry combat in a building.
-     */
-    private void infantryCombat() {
-        if (target == null) {
-            return;
-        }
-
-        ToHitData toHit = megamek.common.actions.InfantryCombatAction.toHit(
-              clientgui.getClient().getGame(),
-              currentEntity,
-              target.getId(),
-              false);
-
-        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-            clientgui.doAlertDialog("Impossible",
-                  "Infantry combat is not possible: " + toHit.getDesc());
-            return;
-        }
-
-        String title = Messages.getString("PhysicalDisplay.InfantryCombatDialog.title");
-        String message = Messages.getString("PhysicalDisplay.InfantryCombatDialog.message",
-              clientgui.getClient().getGame().getEntity(currentEntity).getDisplayName(),
-              target.getDisplayName());
-
-        if (clientgui.doYesNoDialog(title, message)) {
-            disableButtons();
-            addAttack(new megamek.common.actions.InfantryCombatAction(
-                  currentEntity,
-                  target.getId(),
-                  false));
-            ready();
-        }
-    }
-
-    /**
-     * Withdraw from infantry vs. infantry combat.
-     */
-    private void withdrawInfantryCombat() {
-        Entity ce = game.getEntity(currentEntity);
-        if (ce == null || ce.getInfantryCombatTargetId() == Entity.NONE) {
-            return;
-        }
-
-        int targetId = ce.getInfantryCombatTargetId();
-        Entity targetEntity = game.getEntity(targetId);
-        if (targetEntity == null) {
-            return;
-        }
-
-        ToHitData toHit = megamek.common.actions.InfantryCombatAction.toHit(
-              clientgui.getClient().getGame(),
-              currentEntity,
-              targetId,
-              true);
-
-        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-            clientgui.doAlertDialog("Impossible",
-                  "Cannot withdraw from infantry combat: " + toHit.getDesc());
-            return;
-        }
-
-        String title = Messages.getString("PhysicalDisplay.WithdrawInfantryCombatDialog.title");
-        String message = Messages.getString("PhysicalDisplay.WithdrawInfantryCombatDialog.message",
-              ce.getDisplayName(),
-              targetEntity.getDisplayName());
-
-        if (clientgui.doYesNoDialog(title, message)) {
-            disableButtons();
-            addAttack(new megamek.common.actions.InfantryCombatAction(
-                  currentEntity,
-                  targetId,
-                  true));
-            ready();
-        }
-    }
-
-    /**
      * Sweep off the target with the arms that the player selects.
      */
     private void brush() {
@@ -1752,14 +1672,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                       target);
                 setExplosivesEnabled(explosives.getValue() != TargetRoll.IMPOSSIBLE);
 
-                // infantry combat?
-                ToHitData infantryCombat = megamek.common.actions.InfantryCombatAction.toHit(
-                      clientgui.getClient().getGame(),
-                      currentEntity,
-                      target.getId(),
-                      false);
-                setInfantryCombatEnabled(infantryCombat.getValue() != TargetRoll.IMPOSSIBLE);
-
                 // vibro attack?
                 ToHitData vibro = BAVibroClawAttackAction.toHit(clientgui.getClient().getGame(), currentEntity, target);
                 setVibroEnabled(vibro.getValue() != TargetRoll.IMPOSSIBLE);
@@ -2022,10 +1934,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             proto();
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_EXPLOSIVES.getCmd())) {
             explosives();
-        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_INFANTRY_COMBAT.getCmd())) {
-            infantryCombat();
-        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_WITHDRAW_INFANTRY_COMBAT.getCmd())) {
-            withdrawInfantryCombat();
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_VIBRO.getCmd())) {
             vibroclawAttack();
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_PHEROMONE.getCmd())) {
@@ -2141,11 +2049,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     public void setExplosivesEnabled(boolean enabled) {
         buttons.get(PhysicalCommand.PHYSICAL_EXPLOSIVES).setEnabled(enabled);
         // clientGUI.getMenuBar().setExplosivesEnabled(enabled);
-    }
-
-    public void setInfantryCombatEnabled(boolean enabled) {
-        buttons.get(PhysicalCommand.PHYSICAL_INFANTRY_COMBAT).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_INFANTRY_COMBAT.getCmd(), enabled);
     }
 
     public void setNextEnabled(boolean enabled) {

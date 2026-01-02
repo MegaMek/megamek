@@ -1466,4 +1466,16 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
             return (int) Math.ceil(nonOfficerCrew / 10.0);
         }
     }
+
+    @Override
+    public boolean isBoardable() {
+        return true;
+    }
+
+    @Override
+    public boolean canReinforceInfantryVsInfantry() {
+        // AbstractBuildingEntity can reinforce if it's the target of ongoing combat
+        return getGame().getEntitiesVector(getBoardLocation()).stream()
+              .anyMatch(e -> e.getInfantryCombatTargetId() == this.getId());
+    }
 }

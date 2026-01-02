@@ -155,6 +155,8 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
             case PHYSICAL:
             case TARGETING:
             case OFFBOARD:
+            case PREEND_DECLARATIONS:
+            case INFANTRY_VS_INFANTRY_COMBAT:
                 gameManager.deployOffBoardEntities();
 
                 // Check for activating hidden units

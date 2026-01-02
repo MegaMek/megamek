@@ -19,13 +19,13 @@
  * NOTICE: The MegaMek organization is a non-profit group of volunteers
  * creating free software for the BattleTech community.
  *
- * BattleMek, `Mek and AeroTek are registered trademarks
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
  * of The Topps Company, Inc. All Rights Reserved.
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  *
- * BattleMekWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
  * Microsoft's "Game Content Usage Rules"
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
@@ -35,12 +35,8 @@ package megamek.common.actions;
 
 import java.io.Serial;
 
-import megamek.common.ToHitData;
 import megamek.common.game.Game;
-import megamek.common.rolls.TargetRoll;
-import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 
 /**
  * Represents an infantry vs. infantry boarding combat action.
@@ -53,9 +49,14 @@ import megamek.common.units.Infantry;
  *
  * <p>Uses TOAR Infantry vs. Infantry rules with Marine Points Score calculations.</p>
  */
-public class InfantryCombatAction extends AbstractAttackAction {
+public class InfantryCombatAction extends AbstractEntityAction {
     @Serial
     private static final long serialVersionUID = -1234567890123456789L;
+
+    /**
+     * The target entity ID (AbstractBuildingEntity or vessel).
+     */
+    private final int targetId;
 
     /**
      * True if this action represents a withdrawal from combat (attackers only).
@@ -80,8 +81,13 @@ public class InfantryCombatAction extends AbstractAttackAction {
      * @param isWithdrawing true if withdrawing from combat
      */
     public InfantryCombatAction(int entityId, int targetEntityId, boolean isWithdrawing) {
-        super(entityId, targetEntityId);
+        super(entityId);
+        this.targetId = targetEntityId;
         this.isWithdrawing = isWithdrawing;
+    }
+
+    public int getTargetId() {
+        return targetId;
     }
 
     public boolean isWithdrawing() {
@@ -90,81 +96,6 @@ public class InfantryCombatAction extends AbstractAttackAction {
 
     public void setWithdrawing(boolean withdrawing) {
         isWithdrawing = withdrawing;
-    }
-
-    /**
-     * Validates whether this action is possible.
-     *
-     * @param game the current game
-     * @return ToHitData indicating if action is possible
-     */
-    public ToHitData toHit(Game game) {
-        return toHit(game, getEntityId(), getTargetId(), isWithdrawing);
-    }
-
-    /**
-     * Static validation method for infantry boarding combat actions.
-     *
-     * @param game the current game
-     * @param attackerId the attacking infantry ID
-     * @param targetId the target entity ID
-     * @param isWithdrawing true if this is a withdrawal action
-     * @return ToHitData indicating if action is possible
-     */
-    public static ToHitData toHit(Game game, int attackerId, int targetId, boolean isWithdrawing) {
-        final Entity attacker = game.getEntity(attackerId);
-        final Entity target = game.getEntity(targetId);
-
-        // Validate attacker exists and is infantry
-        if (attacker == null) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker does not exist");
-        }
-        if (!(attacker instanceof Infantry)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker must be infantry");
-        }
-
-        // Validate target exists and is an AbstractBuildingEntity (for now)
-        // TODO: Add support for large naval vessels when naval boarding is implemented
-        if (target == null) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target does not exist");
-        }
-        if (!(target instanceof AbstractBuildingEntity)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                  "Target must be an advanced building");
-        }
-
-        final Infantry inf = (Infantry) attacker;
-
-        // If withdrawing, must already be in combat as attacker
-        if (isWithdrawing) {
-            if (inf.getInfantryCombatTargetId() != targetId) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                      "Not engaged in combat with this target");
-            }
-            if (!inf.isInfantryCombatAttacker()) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                      "Only attackers can withdraw from boarding combat");
-            }
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                  "Withdrawing from boarding combat");
-        }
-
-        // If already in combat, can't initiate new combat
-        if (inf.getInfantryCombatTargetId() != Entity.NONE) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                  "Already engaged in boarding combat");
-        }
-
-        // Must be in same hex as target
-        if (!attacker.getPosition().equals(target.getPosition())) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                  "Must be in same hex as target");
-        }
-
-        // TODO: Check if there are enemy infantry in the target to fight
-
-        return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-              "Initiating boarding combat");
     }
 
     @Override

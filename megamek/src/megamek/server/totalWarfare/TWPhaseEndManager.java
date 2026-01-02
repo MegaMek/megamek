@@ -192,11 +192,21 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                     gameManager.addReport(new Report(1205, Report.PUBLIC));
                     gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                     gameManager.sendReport();
-                    gameManager.changePhase(GamePhase.END);
+                    gameManager.changePhase(GamePhase.PREEND_DECLARATIONS);
                 }
                 gameManager.sendGroundObjectUpdate();
                 break;
             case PHYSICAL_REPORT:
+                gameManager.changePhase(GamePhase.PREEND_DECLARATIONS);
+                break;
+            case PREEND_DECLARATIONS:
+                // Actions already added during player turns
+                // No processing needed here - just transition
+                gameManager.changePhase(GamePhase.INFANTRY_VS_INFANTRY_COMBAT);
+                break;
+            case INFANTRY_VS_INFANTRY_COMBAT:
+                // Actions already added during player turns
+                // No processing needed here - just transition
                 gameManager.changePhase(GamePhase.END);
                 break;
             case TARGETING:

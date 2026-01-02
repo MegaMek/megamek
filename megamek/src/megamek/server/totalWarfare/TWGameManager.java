@@ -1948,6 +1948,8 @@ public class TWGameManager extends AbstractGameManager {
             case PHYSICAL:
             case TARGETING:
             case OFFBOARD:
+            case PREEND_DECLARATIONS:
+            case INFANTRY_VS_INFANTRY_COMBAT:
                 changeToNextTurn(-1);
                 if (game.getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     autoSave();
@@ -2275,6 +2277,8 @@ public class TWGameManager extends AbstractGameManager {
             case PHYSICAL:
             case TARGETING:
             case OFFBOARD:
+            case PREEND_DECLARATIONS:
+            case INFANTRY_VS_INFANTRY_COMBAT:
                 if (toSkip != null) {
                     processAttack(toSkip, new ArrayList<>(0));
                 }
@@ -9587,7 +9591,9 @@ public class TWGameManager extends AbstractGameManager {
         if (!getGame().getPhase().isFiring() &&
               !getGame().getPhase().isPhysical() &&
               !getGame().getPhase().isTargeting() &&
-              !getGame().getPhase().isOffboard()) {
+              !getGame().getPhase().isOffboard() &&
+              !getGame().getPhase().isPreEndDeclarations() &&
+              !getGame().getPhase().isInfantryVsInfantryCombat()) {
             LOGGER.error("Server got attack packet in wrong phase");
             return;
         }
@@ -9808,6 +9814,10 @@ public class TWGameManager extends AbstractGameManager {
                 if (hexesAdded) {
                     send(createIlluminatedHexesPacket());
                 }
+            }
+
+            if (ea instanceof InfantryCombatAction infantryCombatAction) {
+                processInfantryCombatAction(infantryCombatAction);
             }
         }
 
@@ -27755,8 +27765,6 @@ public class TWGameManager extends AbstractGameManager {
         } else if (aaa instanceof LayExplosivesAttackAction layExplosivesAttackAction) {
             toHit = layExplosivesAttackAction.toHit(game);
             damage = LayExplosivesAttackAction.getDamageFor(ae);
-        } else if (aaa instanceof megamek.common.actions.InfantryCombatAction infantryCombatAction) {
-            toHit = infantryCombatAction.toHit(game);
         } else if (aaa instanceof ThrashAttackAction taa) {
             toHit = taa.toHit(game);
             damage = ThrashAttackAction.getDamageFor(ae);
@@ -27857,9 +27865,6 @@ public class TWGameManager extends AbstractGameManager {
             cen = aaa.getEntityId();
         } else if (aaa instanceof LayExplosivesAttackAction) {
             resolveLayExplosivesAttack(pr);
-            cen = aaa.getEntityId();
-        } else if (aaa instanceof megamek.common.actions.InfantryCombatAction) {
-            processInfantryCombatAction((megamek.common.actions.InfantryCombatAction) aaa);
             cen = aaa.getEntityId();
         } else if (aaa instanceof TripAttackAction) {
             resolveTripAttack(pr, cen);

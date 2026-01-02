@@ -10608,6 +10608,8 @@ public abstract class Entity extends TurnOrdered
             case PHYSICAL -> isEligibleForPhysical();
             case TARGETING -> isEligibleForTargetingPhase();
             case OFFBOARD -> isEligibleForOffboard();
+            case PREEND_DECLARATIONS -> isEligibleForPreEndDeclarations();
+            case INFANTRY_VS_INFANTRY_COMBAT -> isEligibleForInfantryVsInfantry();
             default -> true;
         };
     }
@@ -10758,18 +10760,6 @@ public abstract class Entity extends TurnOrdered
                 return false;
             }
 
-            // Check if can engage in infantry vs. infantry building combat
-            IBuilding building = game.getBuildingAt(getBoardLocation()).orElse(null);
-            if (building != null && building instanceof AbstractBuildingEntity) {
-                if (building instanceof AbstractBuildingEntity abstractBuildingEntity && abstractBuildingEntity.getOwner().isEnemyOf(getOwner()) || getGame().getEntitiesVector(getBoardLocation()).stream().anyMatch(e -> e.getInfantryCombatTargetId() == building.getId())) {
-                    return true;
-                }
-                // Check if already in combat and can withdraw
-                if (getInfantryCombatTargetId() != Entity.NONE && isInfantryCombatAttacker()) {
-                    return true;  // Can withdraw
-                }
-            }
-
             // Check if can lay demolition charges
             return hex.containsTerrain(Terrains.BUILDING) && hasWorkingMisc(MiscType.F_TOOLS,
                   MiscType.S_DEMOLITION_CHARGE);
@@ -10879,6 +10869,53 @@ public abstract class Entity extends TurnOrdered
         } // Check the next building
 
         return canHit;
+    }
+
+    /**
+     * Determines if this entity can be boarded by infantry for interior combat.
+     * Used for TO:AR p. 167 Infantry vs Infantry combat eligibility as a target for initiation.
+     * This will eventually include dropships, large naval vessels, and other boardable entities.
+     *
+     * @return true if infantry can board this entity to initiate interior combat
+     */
+    public boolean isBoardable() {
+        return false;
+    }
+
+    /**
+     * Determines if this entity can initiate infantry vs infantry combat.
+     * Default implementation returns false. Infantry units override this.
+     *
+     * @return true if this entity can initiate infantry vs infantry combat
+     */
+    public boolean canInitiateInfantryVsInfantryCombat() {
+        return false;
+    }
+
+    /**
+     * Determines if this entity can reinforce ongoing infantry vs infantry combat.
+     * Default implementation returns false. Infantry units override this.
+     *
+     * @return true if this entity can reinforce infantry vs infantry combat
+     */
+    public boolean canReinforceInfantryVsInfantry() {
+        return false;
+    }
+
+    /**
+     * Check if the entity can initiate NEW infantry vs. infantry combat.
+     * This is for the PREEND_DECLARATIONS phase.
+     */
+    public boolean isEligibleForPreEndDeclarations() {
+        return canInitiateInfantryVsInfantryCombat();
+    }
+
+    /**
+     * Check if the entity can participate in ONGOING infantry vs. infantry combat.
+     * This is for the INFANTRY_VS_INFANTRY_COMBAT phase.
+     */
+    public boolean isEligibleForInfantryVsInfantry() {
+        return canReinforceInfantryVsInfantry();
     }
 
     /**

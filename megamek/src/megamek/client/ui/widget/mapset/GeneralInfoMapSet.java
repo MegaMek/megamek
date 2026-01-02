@@ -56,7 +56,6 @@ import megamek.client.ui.widget.picmap.PMSimpleLabel;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.common.Configuration;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -451,7 +450,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             visualRangeR.setVisible(false);
         }
 
-        if (en instanceof GunEmplacement) {
+        if (en.isBuildingEntityOrGunEmplacement()) {
             weightL.setVisible(false);
             weightR.setVisible(false);
             mpL0.setVisible(false);

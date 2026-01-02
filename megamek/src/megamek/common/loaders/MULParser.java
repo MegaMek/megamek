@@ -1262,12 +1262,8 @@ public class MULParser {
                     if (enhancement != null) {
                         infantry.setProstheticEnhancement1(enhancement);
                         if (attributes.containsKey(ATTR_PROSTHETIC_ENHANCEMENT_1_COUNT)) {
-                            try {
-                                infantry.setProstheticEnhancement1Count(
-                                      Integer.parseInt(attributes.get(ATTR_PROSTHETIC_ENHANCEMENT_1_COUNT)));
-                            } catch (NumberFormatException ignored) {
-                                infantry.setProstheticEnhancement1Count(1);
-                            }
+                            infantry.setProstheticEnhancement1Count(
+                                  MathUtility.parseInt(attributes.get(ATTR_PROSTHETIC_ENHANCEMENT_1_COUNT), 1));
                         }
                     }
                 }
@@ -1278,12 +1274,8 @@ public class MULParser {
                     if (enhancement != null) {
                         infantry.setProstheticEnhancement2(enhancement);
                         if (attributes.containsKey(ATTR_PROSTHETIC_ENHANCEMENT_2_COUNT)) {
-                            try {
-                                infantry.setProstheticEnhancement2Count(
-                                      Integer.parseInt(attributes.get(ATTR_PROSTHETIC_ENHANCEMENT_2_COUNT)));
-                            } catch (NumberFormatException ignored) {
-                                infantry.setProstheticEnhancement2Count(1);
-                            }
+                            infantry.setProstheticEnhancement2Count(
+                                  MathUtility.parseInt(attributes.get(ATTR_PROSTHETIC_ENHANCEMENT_2_COUNT), 1));
                         }
                     }
                 }

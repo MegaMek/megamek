@@ -349,7 +349,7 @@ public class CustomMekDialog extends AbstractButtonDialog
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
-                if (entity instanceof GunEmplacement) {
+                if (entity.isBuildingEntityOrGunEmplacement()) {
                     continue;
                 }
 
@@ -364,16 +364,20 @@ public class CustomMekDialog extends AbstractButtonDialog
                 // Prosthetic enhancements (Enhanced/Improved Enhanced) are infantry-only (IO p.84)
                 // Sensory implants (audio, visual, laser, tele) are infantry-only
                 // Gas Effuser (Pheromone/Toxin) is infantry-only (IO pg 79)
-                if (!entity.isConventionalInfantry()
-                      && (option.getName().equals(OptionsConstants.MD_PL_ENHANCED)
-                      || option.getName().equals(OptionsConstants.MD_PL_I_ENHANCED)
-                      || option.getName().equals(OptionsConstants.MD_PL_MASC)
-                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO)
-                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL)
-                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_LASER)
-                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_TELE)
-                      || option.getName().equals(OptionsConstants.MD_GAS_EFFUSER_PHEROMONE)
-                      || option.getName().equals(OptionsConstants.MD_GAS_EFFUSER_TOXIN))) {
+                String optionName = option.getName();
+                boolean isInfantryOnlyOption = switch (optionName) {
+                    case OptionsConstants.MD_PL_ENHANCED,
+                         OptionsConstants.MD_PL_I_ENHANCED,
+                         OptionsConstants.MD_PL_MASC,
+                         OptionsConstants.MD_CYBER_IMP_AUDIO,
+                         OptionsConstants.MD_CYBER_IMP_VISUAL,
+                         OptionsConstants.MD_CYBER_IMP_LASER,
+                         OptionsConstants.MD_CYBER_IMP_TELE,
+                         OptionsConstants.MD_GAS_EFFUSER_PHEROMONE,
+                         OptionsConstants.MD_GAS_EFFUSER_TOXIN -> true;
+                    default -> false;
+                };
+                if (!entity.isConventionalInfantry() && isInfantryOnlyOption) {
                     continue;
                 }
 
@@ -1846,7 +1850,7 @@ public class CustomMekDialog extends AbstractButtonDialog
             //  gun emplacements, especially if they are allowed
             final boolean entityEligibleForOffBoard = !space &&
                   (e.getAltitude() == 0) &&
-                  !(e instanceof GunEmplacement) &&
+                  !(e.isBuildingEntityOrGunEmplacement()) &&
                   e.getWeaponList()
                         .stream()
                         .map(Mounted::getType)
@@ -2004,7 +2008,7 @@ public class CustomMekDialog extends AbstractButtonDialog
 
         if (gameOptions().booleanOption(OptionsConstants.RPG_BEGIN_SHUTDOWN) &&
               !(entity instanceof Infantry) &&
-              !(entity instanceof GunEmplacement)) {
+              !(entity.isBuildingEntityOrGunEmplacement())) {
             panDeploy.add(labDeployShutdown, GBC.std());
             panDeploy.add(chDeployShutdown, GBC.eol());
             chDeployShutdown.setSelected(entity.isManualShutdown());

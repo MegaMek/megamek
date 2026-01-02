@@ -39,6 +39,7 @@ import java.util.function.Function;
 
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -103,9 +104,15 @@ public final class TipUtil {
     /**
      * Returns an HTML String listing the options given as optGroups, with optional entity context for enhanced display
      * of entity-specific options like prosthetic enhancements.
+     *
+     * @param optGroups the option groups to list
+     * @param counter   function to count options by name
+     * @param detailed  if true, returns full option list; if false, returns short summary
+     * @param entity    optional entity context for enhanced display (may be null)
+     * @return HTML formatted string listing the options
      */
     public static String getOptionList(Enumeration<IOptionGroup> optGroups,
-          Function<String, Integer> counter, boolean detailed, Entity entity) {
+          Function<String, Integer> counter, boolean detailed, @Nullable Entity entity) {
         if (detailed) {
             return optionListFull(optGroups, counter, IOptionGroup::getDisplayableName, entity);
         } else {

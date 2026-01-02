@@ -37,7 +37,6 @@ package megamek.client.ui.util;
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.common.*;
 import megamek.common.equipment.Engine;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
@@ -67,7 +66,7 @@ public class EntityWreckHelper {
         return !entity.getGame().getBoard(entity).isSpace() &&
               (!(entity instanceof Mek)) &&
               (!(entity instanceof Infantry)) &&
-              (!(entity instanceof GunEmplacement)) &&
+              (!(entity.isBuildingEntityOrGunEmplacement())) &&
               entity.getSecondaryPositions().isEmpty() &&
               !entityOnBridge(entity);
     }

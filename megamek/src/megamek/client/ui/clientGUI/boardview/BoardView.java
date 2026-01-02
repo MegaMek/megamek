@@ -1671,13 +1671,18 @@ public final class BoardView extends AbstractBoardView
      * Draw a layer of a solid color (alpha possible) on the hex at {@link Point} no padding by default
      */
     void drawHexLayer(Point point, Graphics2D graphics2D, Color color, boolean outOfFOV) {
-        drawHexLayer(point, graphics2D, color, outOfFOV, 0);
+        drawHexLayer(point, graphics2D, color, outOfFOV, false, 0);
+    }
+
+    void drawHexLayer(Point point, Graphics2D graphics2D, Color color, boolean outOfFOV, boolean reverseStripes) {
+        drawHexLayer(point, graphics2D, color, outOfFOV, reverseStripes, 0);
     }
 
     /**
      * Draw a layer of a solid color (alpha possible) on the hex at {@link Point} with some padding around the border
      */
-    private void drawHexLayer(Point point, Graphics2D graphics2D, Color color, boolean outOfFOV, double padding) {
+    private void drawHexLayer(Point point, Graphics2D graphics2D, Color color, boolean outOfFOV,
+          boolean reverseStripes, double padding) {
         graphics2D.setColor(color);
 
         // create stripe effect for FOV darkening but not for colored weapon ranges
@@ -1685,7 +1690,7 @@ public final class BoardView extends AbstractBoardView
 
         if (outOfFOV && fogStripes > 0) {
             // totally transparent here hurts the eyes
-            GradientPaint gradientPaint = getGradientPaint(color, (float) fogStripes);
+            GradientPaint gradientPaint = getGradientPaint(color, (float) fogStripes, reverseStripes);
             graphics2D.setPaint(gradientPaint);
         }
 
@@ -1695,20 +1700,31 @@ public final class BoardView extends AbstractBoardView
         graphics2D.setComposite(svComposite);
     }
 
-    private static GradientPaint getGradientPaint(Color startingColor, float fogStripes) {
+    private static GradientPaint getGradientPaint(Color startingColor, float fogStripes, boolean reversed) {
         Color endingColor = new Color(startingColor.getRed() / 2,
               startingColor.getGreen() / 2,
               startingColor.getBlue() / 2,
               startingColor.getAlpha() / 2);
 
         // the numbers make the lines align across hexes
-        return new GradientPaint(42.0f / fogStripes,
-              0.0f,
-              startingColor,
-              104.0f / fogStripes,
-              106.0f / fogStripes,
-              endingColor,
-              true);
+        // reversed changes stripe direction from bottom-left/top-right to top-left/bottom-right
+        if (reversed) {
+            return new GradientPaint(104.0f / fogStripes,
+                  0.0f,
+                  startingColor,
+                  42.0f / fogStripes,
+                  106.0f / fogStripes,
+                  endingColor,
+                  true);
+        } else {
+            return new GradientPaint(42.0f / fogStripes,
+                  0.0f,
+                  startingColor,
+                  104.0f / fogStripes,
+                  106.0f / fogStripes,
+                  endingColor,
+                  true);
+        }
     }
 
     public void drawHexBorder(Graphics2D graphics2D, Color color, double padding, double lineWidth) {

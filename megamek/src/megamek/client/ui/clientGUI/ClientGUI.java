@@ -266,6 +266,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_TOGGLE_SENSOR_RANGE = "viewToggleSensorRange";
     public static final String VIEW_TOGGLE_FOV_DARKEN = "viewToggleFovDarken";
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight";
+    public static final String VIEW_TOGGLE_FOV_SPOTTING = "viewToggleFovSpotting";
     public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions";
     public static final String VIEW_TOGGLE_CF_WARNING = "viewToggleCFWarnings";
     public static final String VIEW_MOVE_ENV = "viewMovementEnvelope";
@@ -1157,6 +1158,11 @@ public class ClientGUI extends AbstractClientGUI
                 if (client.getGame().getPhase().isMovement()) {
                     ((BoardView) boardViews.get(0)).clearHexImageCache();
                 }
+                break;
+            case VIEW_TOGGLE_FOV_SPOTTING:
+                GUIP.setFovSpottingMode(!GUIP.getFovSpottingMode());
+                boardViews.get(0).refreshDisplayables();
+                ((BoardView) boardViews.get(0)).clearHexImageCache();
                 break;
             case VIEW_TOGGLE_FIRING_SOLUTIONS:
                 GUIP.setShowFiringSolutions(!GUIP.getShowFiringSolutions());
@@ -2716,6 +2722,11 @@ public class ClientGUI extends AbstractClientGUI
             // Swap to this phase's panel.
             GamePhase phase = getClient().getGame().getPhase();
             switchPanel(phase);
+
+            // Reset spotting FOV mode at game start to prevent player confusion
+            if (phase.isLounge()) {
+                GUIP.setFovSpottingMode(false);
+            }
 
             if (phase.isDeployment()) {
                 setWeaponOrderPrefs(false);

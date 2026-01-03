@@ -10593,10 +10593,9 @@ public abstract class Entity extends TurnOrdered
      * @return whether the entity is allowed to move
      */
     public boolean isEligibleForMovement() {
-        // Meks with pending abandonment cannot take any actions (TacOps:AR p.165)
-        if (isPendingAbandon()) {
-            return false;
-        }
+        // Note: Units with pending abandonment still get a Movement Phase turn
+        // so they can startup (cancelling the abandonment) or skip their turn.
+        // The unit is shutdown so normal movement is already disabled.
 
         // check if entity is off board
         if (isOffBoard() || (isAssaultDropInProgress() && !(movementMode == EntityMovementMode.WIGE))) {

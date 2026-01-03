@@ -69,6 +69,7 @@ import megamek.common.game.Game;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
 import megamek.common.rolls.PilotingRollData;
@@ -1227,8 +1228,44 @@ public class Infantry extends Entity {
         }
 
         EntityMovementMode moveMode = getMovementMode();
-        return (List.of(EntityMovementMode.INF_JUMP, EntityMovementMode.HOVER, EntityMovementMode.VTOL)
-              .contains(moveMode) || hasSpecialization(PARATROOPS));
+        boolean hasInherentDropCapability = List.of(
+              EntityMovementMode.INF_JUMP,
+              EntityMovementMode.HOVER,
+              EntityMovementMode.VTOL).contains(moveMode);
+        boolean hasGliderWings = isConventionalInfantry()
+              && hasAbility(OptionsConstants.MD_PL_GLIDER)
+              && canUseGliderWings();
+
+        return hasInherentDropCapability || hasSpecialization(PARATROOPS) || hasGliderWings;
+    }
+
+    /**
+     * Returns true if this infantry unit can use glider wings in the current conditions.
+     * Glider wings cannot be used in vacuum or trace (very thin) atmospheres (IO p.85).
+     *
+     * @return true if glider wings are usable
+     */
+    public boolean canUseGliderWings() {
+        if (game == null) {
+            return true; // Allow if no game context
+        }
+        Atmosphere atmosphere = game.getPlanetaryConditions().getAtmosphere();
+        // Glider wings require at least THIN atmosphere (vacuum and trace are too thin)
+        return !atmosphere.isLighterThan(Atmosphere.THIN);
+    }
+
+    /**
+     * Returns true if this infantry unit is protected from fall damage.
+     * Glider wings protect against damage from falls, whether from walking off
+     * terrain 2+ levels high (including buildings) or by displacement (IO p.85).
+     * Only conventional infantry can use glider wings.
+     *
+     * @return true if protected from fall damage
+     */
+    public boolean isProtectedFromFallDamage() {
+        return isConventionalInfantry()
+              && hasAbility(OptionsConstants.MD_PL_GLIDER)
+              && canUseGliderWings();
     }
 
     @Override

@@ -3056,6 +3056,9 @@ public class Tank extends Entity {
     /**
      * Returns true if this vehicle can be abandoned by its crew. Per TacOps, vehicles can be abandoned during the End
      * Phase. Crew size (1 per 15 tons) is defined in TM p.103 and is available regardless of optional rules.
+     * <p>
+     * Note: Naval vessels (surface ships, hydrofoils, submarines) are currently excluded. A future PR will address
+     * naval vessel abandonment once Large Naval Craft are implemented.
      *
      * @return true if this vehicle can be abandoned
      */
@@ -3071,6 +3074,11 @@ public class Tank extends Entity {
         }
 
         if (game == null) {
+            return false;
+        }
+
+        // Naval vessels excluded until Large Naval Craft abandonment is implemented
+        if (isNaval()) {
             return false;
         }
 

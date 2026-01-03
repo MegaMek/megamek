@@ -32,12 +32,14 @@
  */
 package megamek.common.units;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
@@ -315,6 +317,97 @@ class InfantryGliderWingsTest {
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.canAssaultDrop());
+        }
+    }
+
+    @Nested
+    @DisplayName("Construction Rule Tests (IO p.85)")
+    class ConstructionRuleTests {
+
+        /**
+         * Creates infantry with both wing types enabled for testing mutual exclusivity.
+         */
+        private Infantry createInfantryWithBothWings() {
+            Infantry infantry = new Infantry();
+            infantry.setId(1);
+            infantry.setMovementMode(EntityMovementMode.INF_LEG);
+            infantry.setSquadSize(7);
+            infantry.setSquadCount(4);
+            infantry.autoSetInternal();
+
+            Crew crew = new Crew(CrewType.INFANTRY_CREW);
+            crew.setGunnery(4, crew.getCrewType().getGunnerPos());
+            crew.setPiloting(5, crew.getCrewType().getPilotPos());
+            crew.setName("Test Crew", 0);
+
+            PilotOptions options = new PilotOptions();
+            options.getOption(OptionsConstants.MD_PL_GLIDER).setValue(true);
+            options.getOption(OptionsConstants.MD_PL_FLIGHT).setValue(true);
+            crew.setOptions(options);
+            infantry.setCrew(crew);
+
+            return infantry;
+        }
+
+        @Test
+        @DisplayName("Glider wings and powered flight wings are mutually exclusive")
+        void gliderAndFlightWingsMutuallyExclusive() {
+            Infantry infantry = createInfantryWithBothWings();
+
+            assertTrue(infantry.hasInvalidWingsConfiguration());
+        }
+
+        @Test
+        @DisplayName("Glider wings alone is valid configuration")
+        void gliderWingsAloneIsValid() {
+            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+
+            assertFalse(infantry.hasInvalidWingsConfiguration());
+        }
+
+        @Test
+        @DisplayName("Without glider wings, max extraneous limb pairs is 2")
+        void withoutGliderWingsMaxPairsIsTwo() {
+            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
+
+            assertEquals(2, infantry.getMaxExtraneousLimbPairs());
+        }
+
+        @Test
+        @DisplayName("With glider wings, max extraneous limb pairs is 1")
+        void withGliderWingsMaxPairsIsOne() {
+            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+
+            assertEquals(1, infantry.getMaxExtraneousLimbPairs());
+        }
+
+        @Test
+        @DisplayName("Glider wings with two extraneous pairs is invalid")
+        void gliderWingsWithTwoExtraneousPairsInvalid() {
+            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            infantry.setExtraneousPair1(ProstheticEnhancementType.CLIMBING_CLAWS);
+            infantry.setExtraneousPair2(ProstheticEnhancementType.GRAPPLER);
+
+            assertTrue(infantry.hasExcessiveExtraneousLimbs());
+        }
+
+        @Test
+        @DisplayName("Glider wings with one extraneous pair is valid")
+        void gliderWingsWithOneExtraneousPairValid() {
+            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            infantry.setExtraneousPair1(ProstheticEnhancementType.CLIMBING_CLAWS);
+
+            assertFalse(infantry.hasExcessiveExtraneousLimbs());
+        }
+
+        @Test
+        @DisplayName("Without glider wings, two extraneous pairs is valid")
+        void withoutGliderWingsTwoExtraneousPairsValid() {
+            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
+            infantry.setExtraneousPair1(ProstheticEnhancementType.CLIMBING_CLAWS);
+            infantry.setExtraneousPair2(ProstheticEnhancementType.GRAPPLER);
+
+            assertFalse(infantry.hasExcessiveExtraneousLimbs());
         }
     }
 }

@@ -1268,6 +1268,45 @@ public class Infantry extends Entity {
               && canUseGliderWings();
     }
 
+    /**
+     * Returns true if both glider wings and powered flight wings are enabled.
+     * Per IO p.85, these are mutually exclusive - a trooper cannot have both.
+     *
+     * @return true if invalid configuration (both wing types enabled)
+     */
+    public boolean hasInvalidWingsConfiguration() {
+        return hasAbility(OptionsConstants.MD_PL_GLIDER)
+              && hasAbility(OptionsConstants.MD_PL_FLIGHT);
+    }
+
+    /**
+     * Returns the maximum number of extraneous limb pairs allowed.
+     * Per IO p.85, if glider wings are installed, only one pair of extraneous
+     * limbs is allowed (instead of the normal two pairs).
+     *
+     * @return 1 if glider wings are installed, 2 otherwise
+     */
+    public int getMaxExtraneousLimbPairs() {
+        if (hasAbility(OptionsConstants.MD_PL_GLIDER)) {
+            return 1;
+        }
+        return 2;
+    }
+
+    /**
+     * Returns true if the current extraneous limb configuration exceeds the allowed maximum.
+     * Per IO p.85, if glider wings are installed, only one pair is allowed.
+     *
+     * @return true if invalid configuration (too many extraneous limb pairs)
+     */
+    public boolean hasExcessiveExtraneousLimbs() {
+        if (!hasAbility(OptionsConstants.MD_PL_GLIDER)) {
+            return false;
+        }
+        // With glider wings, only 1 pair allowed - pair 2 must be empty
+        return hasExtraneousPair2();
+    }
+
     @Override
     public boolean isEligibleFor(GamePhase phase) {
         if ((turnsLayingExplosives > 0) && !phase.isPhysical()) {

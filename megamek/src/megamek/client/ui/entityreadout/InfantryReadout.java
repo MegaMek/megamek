@@ -171,6 +171,13 @@ class InfantryReadout extends GeneralEntityReadout {
                             augName += " (" + details + ")";
                         }
                     }
+                    // Append extraneous limb details for Extraneous Limbs option
+                    if (OptionsConstants.MD_PL_EXTRA_LIMBS.equals(o.getName())) {
+                        String details = getExtraneousLimbDetails();
+                        if (!details.isEmpty()) {
+                            augName += " (" + details + ")";
+                        }
+                    }
                     augmentations.add(augName);
                 }
             }
@@ -188,7 +195,7 @@ class InfantryReadout extends GeneralEntityReadout {
     }
 
     /**
-     * Gets a formatted string describing the configured prosthetic enhancements.
+     * Gets a formatted string describing the configured prosthetic enhancements (regular slots).
      *
      * @return String like "Laser x2, Grappler x1" or empty string if none configured
      */
@@ -204,6 +211,28 @@ class InfantryReadout extends GeneralEntityReadout {
             }
             ProstheticEnhancementType type2 = infantry.getProstheticEnhancement2();
             details.append(type2.getDisplayName()).append(" x").append(infantry.getProstheticEnhancement2Count());
+        }
+        return details.toString();
+    }
+
+    /**
+     * Gets a formatted string describing the configured extraneous limb enhancements. Each pair always provides 2
+     * items.
+     *
+     * @return String like "Laser x2, Grappler x2" or empty string if none configured
+     */
+    private String getExtraneousLimbDetails() {
+        StringBuilder details = new StringBuilder();
+        if (infantry.hasExtraneousPair1()) {
+            ProstheticEnhancementType pair1Type = infantry.getExtraneousPair1();
+            details.append(pair1Type.getDisplayName()).append(" x2");
+        }
+        if (infantry.hasExtraneousPair2()) {
+            if (details.length() > 0) {
+                details.append(", ");
+            }
+            ProstheticEnhancementType pair2Type = infantry.getExtraneousPair2();
+            details.append(pair2Type.getDisplayName()).append(" x2");
         }
         return details.toString();
     }

@@ -23729,6 +23729,10 @@ public class TWGameManager extends AbstractGameManager {
             if (damageHeight < 2) {
                 damage = 0;
             }
+            // Prosthetic glider wings protect conventional infantry from fall damage (IO p.85)
+            if (!(entity instanceof BattleArmor) && ((Infantry) entity).isProtectedFromFallDamage()) {
+                damage = 0;
+            }
             if (!(entity instanceof BattleArmor)) {
                 int dice = 3;
                 if (entity.getMovementMode() == EntityMovementMode.INF_MOTORIZED) {

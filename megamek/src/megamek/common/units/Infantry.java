@@ -69,6 +69,7 @@ import megamek.common.game.Game;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
 import megamek.common.rolls.PilotingRollData;
@@ -1227,8 +1228,83 @@ public class Infantry extends Entity {
         }
 
         EntityMovementMode moveMode = getMovementMode();
-        return (List.of(EntityMovementMode.INF_JUMP, EntityMovementMode.HOVER, EntityMovementMode.VTOL)
-              .contains(moveMode) || hasSpecialization(PARATROOPS));
+        boolean hasInherentDropCapability = List.of(
+              EntityMovementMode.INF_JUMP,
+              EntityMovementMode.HOVER,
+              EntityMovementMode.VTOL).contains(moveMode);
+        boolean hasGliderWings = isConventionalInfantry()
+              && hasAbility(OptionsConstants.MD_PL_GLIDER)
+              && canUseGliderWings();
+
+        return hasInherentDropCapability || hasSpecialization(PARATROOPS) || hasGliderWings;
+    }
+
+    /**
+     * Returns true if this infantry unit can use glider wings in the current conditions.
+     * Glider wings cannot be used in vacuum or trace (very thin) atmospheres (IO p.85).
+     *
+     * @return true if glider wings are usable
+     */
+    public boolean canUseGliderWings() {
+        if (game == null) {
+            return true; // Allow if no game context
+        }
+        Atmosphere atmosphere = game.getPlanetaryConditions().getAtmosphere();
+        // Glider wings require at least THIN atmosphere (vacuum and trace are too thin)
+        return !atmosphere.isLighterThan(Atmosphere.THIN);
+    }
+
+    /**
+     * Returns true if this infantry unit is protected from fall damage.
+     * Glider wings protect against damage from falls, whether from walking off
+     * terrain 2+ levels high (including buildings) or by displacement (IO p.85).
+     * Only conventional infantry can use glider wings.
+     *
+     * @return true if protected from fall damage
+     */
+    public boolean isProtectedFromFallDamage() {
+        return isConventionalInfantry()
+              && hasAbility(OptionsConstants.MD_PL_GLIDER)
+              && canUseGliderWings();
+    }
+
+    /**
+     * Returns true if both glider wings and powered flight wings are enabled.
+     * Per IO p.85, these are mutually exclusive - a trooper cannot have both.
+     *
+     * @return true if invalid configuration (both wing types enabled)
+     */
+    public boolean hasInvalidWingsConfiguration() {
+        return hasAbility(OptionsConstants.MD_PL_GLIDER)
+              && hasAbility(OptionsConstants.MD_PL_FLIGHT);
+    }
+
+    /**
+     * Returns the maximum number of extraneous limb pairs allowed.
+     * Per IO p.85, if glider wings are installed, only one pair of extraneous
+     * limbs is allowed (instead of the normal two pairs).
+     *
+     * @return 1 if glider wings are installed, 2 otherwise
+     */
+    public int getMaxExtraneousLimbPairs() {
+        if (hasAbility(OptionsConstants.MD_PL_GLIDER)) {
+            return 1;
+        }
+        return 2;
+    }
+
+    /**
+     * Returns true if the current extraneous limb configuration exceeds the allowed maximum.
+     * Per IO p.85, if glider wings are installed, only one pair is allowed.
+     *
+     * @return true if invalid configuration (too many extraneous limb pairs)
+     */
+    public boolean hasExcessiveExtraneousLimbs() {
+        if (!hasAbility(OptionsConstants.MD_PL_GLIDER)) {
+            return false;
+        }
+        // With glider wings, only 1 pair allowed - pair 2 must be empty
+        return hasExtraneousPair2();
     }
 
     @Override

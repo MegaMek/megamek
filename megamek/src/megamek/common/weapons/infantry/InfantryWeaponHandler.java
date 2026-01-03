@@ -37,6 +37,7 @@ package megamek.common.weapons.infantry;
 import java.io.Serial;
 import java.util.Vector;
 
+import megamek.common.Messages;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -212,10 +213,22 @@ public class InfantryWeaponHandler extends WeaponHandler {
             damage += extraneousBonusDamage;
         }
 
+        // Prosthetic Tail, Enhanced damage bonus at range 0 (IO p.85)
+        // Adds 0.21 damage per trooper against any target in same hex
+        // Only conventional infantry can use this enhancement
+        double tailBonusDamage = 0;
+        if ((attackingEntity instanceof Infantry infantry) && (nRange == 0)
+              && infantry.isConventionalInfantry()
+              && infantry.hasAbility(OptionsConstants.MD_PL_TAIL)) {
+            tailBonusDamage = 0.21;
+            damage += tailBonusDamage;
+        }
+
         int damageDealt = (int) Math.round(damage * troopersHit);
         int tsmDamageDealt = (int) Math.round(tsmBonusDamage * troopersHit);
         int prostheticDamageDealt = (int) Math.round(prostheticBonusDamage * troopersHit);
         int extraneousDamageDealt = (int) Math.round(extraneousBonusDamage * troopersHit);
+        int tailDamageDealt = (int) Math.round(tailBonusDamage * troopersHit);
 
         // beast-mounted infantry get range 0 bonus damage per platoon
         if ((attackingEntity instanceof Infantry) && (nRange == 0)) {
@@ -261,14 +274,19 @@ public class InfantryWeaponHandler extends WeaponHandler {
         r.newlines = 0;
         vPhaseReport.addElement(r);
 
-        // Report bonus damage breakdown (TSM, Prosthetic Enhancement, and/or Extraneous Limbs)
+        // Report bonus damage breakdown (TSM, Prosthetic Enhancement, Extraneous Limbs, and/or Tail)
         // Calculate true base damage by subtracting all bonus sources
-        int baseDamageDealt = damageDealt - tsmDamageDealt - prostheticDamageDealt - extraneousDamageDealt;
+        int baseDamageDealt = damageDealt
+              - tsmDamageDealt
+              - prostheticDamageDealt
+              - extraneousDamageDealt
+              - tailDamageDealt;
         boolean hasTsm = tsmDamageDealt > 0;
         boolean hasProsthetic = prostheticDamageDealt > 0;
         boolean hasExtraneous = extraneousDamageDealt > 0;
+        boolean hasTail = tailDamageDealt > 0;
 
-        if (hasTsm || hasProsthetic || hasExtraneous) {
+        if (hasTsm || hasProsthetic || hasExtraneous || hasTail) {
             // Build combined enhancement names for reporting
             StringBuilder allEnhancementNames = new StringBuilder();
             if (hasProsthetic) {
@@ -280,11 +298,17 @@ public class InfantryWeaponHandler extends WeaponHandler {
                 }
                 allEnhancementNames.append(extraneousEnhancementNames);
             }
+            if (hasTail) {
+                if (allEnhancementNames.length() > 0) {
+                    allEnhancementNames.append(", ");
+                }
+                allEnhancementNames.append(Messages.getString("Compute.ProstheticTail"));
+            }
 
-            int totalProstheticDamage = prostheticDamageDealt + extraneousDamageDealt;
+            int totalProstheticDamage = prostheticDamageDealt + extraneousDamageDealt + tailDamageDealt;
 
-            if (hasTsm && (hasProsthetic || hasExtraneous)) {
-                // TSM + any prosthetic/extraneous bonuses - show combined report
+            if (hasTsm && (hasProsthetic || hasExtraneous || hasTail)) {
+                // TSM + any prosthetic/extraneous/tail bonuses - show combined report
                 Report combinedReport = new Report(3421);
                 combinedReport.subject = subjectId;
                 combinedReport.indent(2);

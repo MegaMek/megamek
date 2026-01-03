@@ -1027,6 +1027,15 @@ public class BLKFile {
                     blk.writeBlockData("prostheticEnhancement2Count", infantry.getProstheticEnhancement2Count());
                 }
             }
+
+            // Extraneous (Enhanced) Limbs - IO p.84
+            // Each pair always provides 2 items, so no count needed
+            if (infantry.hasExtraneousPair1()) {
+                blk.writeBlockData("extraneousPair1", infantry.getExtraneousPair1().toString());
+            }
+            if (infantry.hasExtraneousPair2()) {
+                blk.writeBlockData("extraneousPair2", infantry.getExtraneousPair2().toString());
+            }
         } else if (t instanceof GunEmplacement gunEmplacement) {
             if (!gunEmplacement.hasNoTurret()) {
                 blk.writeBlockData("turret", 1);

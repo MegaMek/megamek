@@ -296,6 +296,25 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             }
         }
 
+        // Extraneous (Enhanced) Limbs - each pair always provides 2 items
+        if (dataFile.exists("extraneousPair1")) {
+            String enhancementName = dataFile.getDataAsString("extraneousPair1")[0];
+            ProstheticEnhancementType enhancement = ProstheticEnhancementType.parseFromString(enhancementName);
+            if (enhancement == null) {
+                throw new EntityLoadingException("Invalid extraneous pair 1: " + enhancementName);
+            }
+            infantry.setExtraneousPair1(enhancement);
+        }
+
+        if (dataFile.exists("extraneousPair2")) {
+            String enhancementName = dataFile.getDataAsString("extraneousPair2")[0];
+            ProstheticEnhancementType enhancement = ProstheticEnhancementType.parseFromString(enhancementName);
+            if (enhancement == null) {
+                throw new EntityLoadingException("Invalid extraneous pair 2: " + enhancementName);
+            }
+            infantry.setExtraneousPair2(enhancement);
+        }
+
         infantry.recalculateTechAdvancement();
         loadQuirks(infantry);
         return infantry;

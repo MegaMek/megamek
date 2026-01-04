@@ -160,7 +160,8 @@ public class BuildingEntityTest extends GameBoardTestCase {
 
     @Test
     void testGetGenericBattleValue() {
-        assertEquals(0, building.getGenericBattleValue());
+        // Currently we don't calculate a generic BV
+        assertEquals(building.calculateBattleValue(), building.getGenericBattleValue());
     }
 
     @Test

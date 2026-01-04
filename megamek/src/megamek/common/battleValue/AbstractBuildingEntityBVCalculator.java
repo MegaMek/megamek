@@ -44,9 +44,9 @@ import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 
 /**
- * Battle Value calculator for Mobile Structures (AbstractBuildingEntity).
+ * Battle Value calculator for Structures (AbstractBuildingEntity).
  *
- * Mobile structures follow special BV calculation rules from TechManual:
+ * Structures follow special BV calculation rules from TO:AUE:
  *
  * Defensive BV = (Armor × 2.5 + CF × 1.5 + Defensive Equipment BV) × 0.5
  * Offensive BV = (Weapon BV + Hex Count × 50) × Speed Factor
@@ -64,7 +64,7 @@ public class AbstractBuildingEntityBVCalculator extends BVCalculator {
 
     @Override
     protected void processArmor() {
-        // Mobile structures use Armor Factor × 2.5
+        // Structures use Armor Factor × 2.5
         int armorFactor = entity.getOArmor(0);
         double armorBV = armorFactor * 2.5;
 
@@ -76,7 +76,7 @@ public class AbstractBuildingEntityBVCalculator extends BVCalculator {
 
     @Override
     protected void processStructure() {
-        // Mobile structures use Construction Factor (CF) × 1.5
+        // Structures use Construction Factor (CF) × 1.5
         AbstractBuildingEntity building = (AbstractBuildingEntity) entity;
 
         if (!building.getCoordsList().isEmpty()) {
@@ -93,7 +93,7 @@ public class AbstractBuildingEntityBVCalculator extends BVCalculator {
 
     @Override
     protected void processDefensiveFactor() {
-        // Mobile structures apply a final × 0.5 multiplier to defensive BV
+        // Structures apply a final × 0.5 multiplier to defensive BV
         double beforeFactor = defensiveValue;
         defensiveValue *= 0.5;
         bvReport.addLine("Defensive Factor:",
@@ -103,19 +103,19 @@ public class AbstractBuildingEntityBVCalculator extends BVCalculator {
 
     @Override
     protected Predicate<Mounted<?>> frontWeaponFilter() {
-        // Mobile structures don't apply arc modifiers - all weapons count as "front"
+        // Structures don't apply arc modifiers - all weapons count as "front"
         return weapon -> true;
     }
 
     @Override
     protected Predicate<Mounted<?>> rearWeaponFilter() {
-        // Mobile structures don't have rear arc penalties
+        // Structures don't have rear arc penalties
         return weapon -> false;
     }
 
     @Override
     protected void processWeight() {
-        // Mobile structures add (Hex Count × 50) to offensive BV
+        // Structures add (Hex Count × 50) to offensive BV
         AbstractBuildingEntity building = (AbstractBuildingEntity) entity;
         int hexCount = building.getOriginalHexCount();
         double hexBV = hexCount * 50;

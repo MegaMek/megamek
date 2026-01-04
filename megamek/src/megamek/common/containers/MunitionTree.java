@@ -78,7 +78,8 @@ public class MunitionTree {
           "Listen-Kill",
           "Smoke",
           "Mine Clearance",
-          "Anti-Radiation"));
+          "Anti-Radiation",
+          "Incendiary"));
 
     public static final List<String> SRM_MUNITION_NAMES = new ArrayList<>(List.of("Dead-Fire",
           "Standard",
@@ -103,7 +104,8 @@ public class MunitionTree {
           "Tracer",
           "Flechette",
           "Armor-Piercing Playtest",
-          "Precision Playtest"));
+          "Precision Playtest",
+          "Incendiary"));
 
     public static final List<String> ATM_MUNITION_NAMES = new ArrayList<>(List.of("HE", "ER", "Standard"));
     public static final List<String> iATM_MUNITION_NAMES = new ArrayList<>(List.of("HE", "ER", "Standard", "IIW",

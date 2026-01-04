@@ -44,6 +44,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -259,6 +260,40 @@ class TeamLoadOutGeneratorTest {
         assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_ARAD));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_ARAD));
+    }
+
+    @Test
+    void testReconfigureEntityMekSemiGuidedInfernoAmmoType() throws LocationFullException {
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
+
+        Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
+
+        MunitionTree mt = new MunitionTree();
+        mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Semi-Guided w/ Incendiary");
+
+        HashMap<String, Object> availMap = tlg.generateValidMunitionsForFactionAndEra("IS");
+        // We expect that all bins are set to the desired munition type as only one type
+        // is provided
+        tlg.reconfigureEntity(mockMek, mt, availMap);
+        assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin1.getType()).getMunitionType().containsAll(EnumSet.of(Munitions.M_SEMIGUIDED,
+              Munitions.M_INCENDIARY_LRM)));
+        assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin2.getType()).getMunitionType().containsAll(EnumSet.of(Munitions.M_SEMIGUIDED,
+              Munitions.M_INCENDIARY_LRM)));
+
+        // Now reset the ammo
+        mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Standard");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
+        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertFalse(((AmmoType) bin1.getType()).getMunitionType().containsAll(EnumSet.of(Munitions.M_SEMIGUIDED,
+              Munitions.M_INCENDIARY_LRM)));
+        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertFalse(((AmmoType) bin2.getType()).getMunitionType().containsAll(EnumSet.of(Munitions.M_SEMIGUIDED,
+              Munitions.M_INCENDIARY_LRM)));
+
     }
 
     @Test

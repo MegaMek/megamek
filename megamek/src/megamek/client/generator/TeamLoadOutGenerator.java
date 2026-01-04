@@ -752,6 +752,7 @@ public class TeamLoadOutGenerator {
           boolean showExtinct,
           boolean allowNukes
     ){
+        Map<String, String> subMunitions = Map.of("Incendiary", " w/ Incendiary");
         Faction factionEnum = Faction.fromMMAbbr(faction);
         HashMap<String, Object> legalMunitions = new HashMap<>();
         for (String weaponName : TYPE_LIST) {
@@ -786,6 +787,11 @@ public class TeamLoadOutGenerator {
 
             // Munitions must be named in one of the TYPE_MAP sub-maps to be utilized!
             for (String munitionName: TYPE_MAP.get(weaponName)) {
+                // Munition types that are actually add-on subtypes require more specific lookups
+                String lookup = (subMunitions.containsKey(munitionName)) ?
+                      munitionName + subMunitions.get(munitionName) :
+                      munitionName;
+
                 // Get the first munition that matches; tube count or barrel size shouldn't matter for validity checks
                 // Munitions without a base ammo _are_ the base munition and will be marked as "Standard"
                 AmmoType exemplar = ammoTypes.stream()
@@ -1327,6 +1333,10 @@ public class TeamLoadOutGenerator {
             munitionWeightCollection.decreaseUtilityMunitions();
         }
 
+        // Create weights for Incendiary versions of any LRM ammo that currently would be selected.
+        insertIncendiaryLRMWeights(munitionWeightCollection);
+
+        // Apply overrides, modifiers, and prohibitions to the final weights before updating the MunitionsTree
         applyModifiersToWeights(reconfigurationParameters, munitionWeightCollection, subMap("Overrides", weightMap),
               subList("Prohibited", weightMap));
 
@@ -1346,6 +1356,30 @@ public class TeamLoadOutGenerator {
         return mt;
     }
 
+    public static void insertIncendiaryLRMWeights(MunitionWeightCollection munitionWeightCollection) {
+        HashMap<String, Double> originalWeights = new HashMap(munitionWeightCollection.getLrmWeights());
+        double cutoff = castPropertyDouble("Defaults.Factors.mtMunitionWeightThreshold", 0.0);
+        double incendiaryWeight = originalWeights.getOrDefault("Incendiary", 0.0);
+
+        // If the weight for Incendiary is above the cutoff, we should add Incendiary versions of all
+        // LRM munitions (including Standard).
+        if ( incendiaryWeight > cutoff) {
+            double oldWeight;
+            double newWeight;
+            String incendiaryType;
+            for (String munitionType : originalWeights.keySet()) {
+                if (!munitionType.contains("Incendiary")) {
+                    // Combine the two weights, but only if the original weight was above the cutoff as well
+                    // This way, only incendiary versions of high-scoring candidates will be considered.
+                    oldWeight = originalWeights.get(munitionType);
+                    newWeight = (oldWeight == cutoff) ? oldWeight : oldWeight + incendiaryWeight;
+                    incendiaryType = munitionType + " w/ Incendiary";
+                    munitionWeightCollection.getLrmWeights().put(incendiaryType, newWeight);
+                }
+            }
+        }
+
+    }
     /**
      * Apply global and specific modifiers to the generated weight values.
      * This is where Overrides and Prohibitions are applied.
@@ -1680,6 +1714,7 @@ public class TeamLoadOutGenerator {
             String lookup = "";
             boolean random = priorities.get(i).contains("Random");
             String binType = (random) ? getRandomBin(binName, trueRandom) : priorities.get(i);
+            String subType = (binType.contains(" w/")) ? binType.substring(0, binType.indexOf(" w/")) : null;
             Mounted<AmmoType> bin = binList.get(0);
             AmmoType desired;
             boolean available = false;
@@ -1691,6 +1726,10 @@ public class TeamLoadOutGenerator {
                 if (desired == null) {
                     // Some ammo, like AC/XX ammo, is named funny
                     desired = (AmmoType) EquipmentType.get(techBase + " Ammo " + binName);
+                }
+                if (desired == null) {
+                    // Incendiary ammo contains an additional sub-type string
+                    desired = (AmmoType) EquipmentType.get(techBase + " Ammo " + binName + subType);
                 }
 
             } else {
@@ -1704,7 +1743,8 @@ public class TeamLoadOutGenerator {
                 desired = vAllTypes.stream()
                       .filter(m -> m.getInternalName().startsWith(techBase) &&
                             m.getBaseName().contains(binName) &&
-                            m.getName().contains(binType))
+                            m.getName().contains(binType) &&
+                            (subType == null || m.getName().contains(subType)))
                       .findFirst()
                       .orElse(null);
                 lookup = binType;

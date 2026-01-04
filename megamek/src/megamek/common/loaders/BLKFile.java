@@ -1013,6 +1013,29 @@ public class BLKFile {
             if (!augmentations.isEmpty()) {
                 blk.writeBlockData("augmentation", augmentations.toArray(new String[0]));
             }
+
+            // Prosthetic Enhancement (Enhanced Limbs) - IO p.84
+            if (infantry.hasProstheticEnhancement1()) {
+                blk.writeBlockData("prostheticEnhancement1", infantry.getProstheticEnhancement1().toString());
+                if (infantry.getProstheticEnhancement1Count() > 0) {
+                    blk.writeBlockData("prostheticEnhancement1Count", infantry.getProstheticEnhancement1Count());
+                }
+            }
+            if (infantry.hasProstheticEnhancement2()) {
+                blk.writeBlockData("prostheticEnhancement2", infantry.getProstheticEnhancement2().toString());
+                if (infantry.getProstheticEnhancement2Count() > 0) {
+                    blk.writeBlockData("prostheticEnhancement2Count", infantry.getProstheticEnhancement2Count());
+                }
+            }
+
+            // Extraneous (Enhanced) Limbs - IO p.84
+            // Each pair always provides 2 items, so no count needed
+            if (infantry.hasExtraneousPair1()) {
+                blk.writeBlockData("extraneousPair1", infantry.getExtraneousPair1().toString());
+            }
+            if (infantry.hasExtraneousPair2()) {
+                blk.writeBlockData("extraneousPair2", infantry.getExtraneousPair2().toString());
+            }
         } else if (t instanceof GunEmplacement gunEmplacement) {
             if (!gunEmplacement.hasNoTurret()) {
                 blk.writeBlockData("turret", 1);

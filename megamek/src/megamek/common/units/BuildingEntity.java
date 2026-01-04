@@ -319,11 +319,11 @@ public class BuildingEntity extends AbstractBuildingEntity {
     /**
      * Calculates the internal weight capacity for this building.
      * <p>
-     * For each hex of area covered, advanced buildings may internally carry a total tonnage
-     * of equipment equal to their Construction Factor times the number of levels of structure height.
+     * For each hex of area covered, advanced buildings may internally carry a total tonnage of equipment equal to their
+     * Construction Factor times the number of levels of structure height.
      * <p>
-     * Hangar-type structures may triple this capacity, but are limited to a maximum of 600 tons
-     * per hex for every 4 levels of structural height (or fraction thereof).
+     * Hangar-type structures may triple this capacity, but are limited to a maximum of 600 tons per hex for every 4
+     * levels of structural height (or fraction thereof).
      *
      * @return The total internal weight capacity in tons
      */

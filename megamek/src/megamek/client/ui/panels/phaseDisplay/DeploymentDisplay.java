@@ -169,8 +169,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private final Game game;
 
     /**
-     * Represents the result of determining a deployment position.
-     * Contains the final elevation and facing for deployment, or null if deployment was cancelled.
+     * Represents the result of determining a deployment position. Contains the final elevation and facing for
+     * deployment, or null if deployment was cancelled.
      */
     record DeploymentPosition(int elevation, int facing) {
     }
@@ -550,12 +550,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Checks whether a hex mouse event should be processed for deployment.
-     * Validates event type, button, modifiers, game state, and entity readiness.
+     * Checks whether a hex mouse event should be processed for deployment. Validates event type, button, modifiers,
+     * game state, and entity readiness.
      *
      * @param event  The board view event
      * @param coords The coordinates from the event
      * @param entity The current entity being deployed (may be null)
+     *
      * @return true if the event should be processed, false if it should be ignored
      */
     boolean shouldProcessDeployment(BoardViewEvent event, Coords coords, @Nullable Entity entity) {
@@ -572,9 +573,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     /**
      * Validates whether an entity can deploy on the given board at the specified coordinates.
      *
-     * @param entity   The entity to deploy
-     * @param board    The board to deploy on
-     * @param coords   The coordinates for deployment
+     * @param entity The entity to deploy
+     * @param board  The board to deploy on
+     * @param coords The coordinates for deployment
+     *
      * @return VALID if deployment can proceed, WRONG_BOARD_TYPE or OUTSIDE_DEPLOYMENT_AREA otherwise
      */
     BoardValidationResult validateDeploymentBoard(Entity entity, Board board, Coords coords) {
@@ -588,10 +590,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Applies the deployment position to an entity, setting elevation/altitude and facing.
-     * Handles special logic for aerospace units (landing/liftoff).
+     * Applies the deployment position to an entity, setting elevation/altitude and facing. Handles special logic for
+     * aerospace units (landing/liftoff).
      *
-     * @param entity           The entity to apply settings to
+     * @param entity             The entity to apply settings to
      * @param deploymentPosition The deployment position containing elevation and facing
      */
     void applyDeploymentToEntity(Entity entity, DeploymentPosition deploymentPosition) {
@@ -610,8 +612,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Updates the UI after an entity has been positioned for deployment.
-     * Sets entity position, redraws board, updates firing arcs, and handles hex selection.
+     * Updates the UI after an entity has been positioned for deployment. Sets entity position, redraws board, updates
+     * firing arcs, and handles hex selection.
      *
      * @param entity    The entity that was positioned
      * @param coords    The coordinates where the entity was placed
@@ -633,12 +635,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Determines the deployment position (elevation and facing) for an entity at the given coordinates.
-     * Handles user interaction for elevation and facing choices when multiple options are available.
+     * Determines the deployment position (elevation and facing) for an entity at the given coordinates. Handles user
+     * interaction for elevation and facing choices when multiple options are available.
      *
      * @param entity The entity being deployed
      * @param coords The coordinates where deployment is attempted
      * @param board  The board on which deployment is occurring
+     *
      * @return DeploymentPosition with elevation and facing, or null if deployment was cancelled or invalid
      */
     private @Nullable DeploymentPosition determineDeploymentPosition(Entity entity, Coords coords, Board board) {
@@ -745,11 +748,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Shows a dialog allowing the user to choose a facing from the valid facings.
-     * For facing-dependent entities (like non-symmetrical multi-hex buildings), this allows
-     * the user to select which facing to deploy with.
+     * Shows a dialog allowing the user to choose a facing from the valid facings. For facing-dependent entities (like
+     * non-symmetrical multi-hex buildings), this allows the user to select which facing to deploy with.
      *
      * @param facingOption The FacingOption containing valid facings for the position
+     *
      * @return The chosen facing (0-5), or -1 if cancelled or no valid facings
      */
     private int showFacingChoiceDialog(FacingOption facingOption) {
@@ -1160,9 +1163,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Updates the deployment cache with the given elevation options and chosen option.
-     * This tracks the last deployment state to enable automatic re-use when clicking
-     * adjacent hexes with identical deployment options.
+     * Updates the deployment cache with the given elevation options and chosen option. This tracks the last deployment
+     * state to enable automatic re-use when clicking adjacent hexes with identical deployment options.
      *
      * @param elevationOptions All available elevation options for the hex
      * @param chosenOption     The elevation option that was chosen
@@ -1174,12 +1176,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Prompts the user to select a facing if needed, based on the available facing options.
-     * If all 6 facings are valid, no prompt is shown and the current facing is returned.
-     * If some facings are restricted, shows a dialog to let the user choose.
+     * Prompts the user to select a facing if needed, based on the available facing options. If all 6 facings are valid,
+     * no prompt is shown and the current facing is returned. If some facings are restricted, shows a dialog to let the
+     * user choose.
      *
      * @param facingOption  The FacingOption containing valid facings, or null if not applicable
      * @param currentFacing The entity's current facing
+     *
      * @return The chosen facing (0-5), or currentFacing if no selection was made
      */
     private int promptForFacingIfNeeded(FacingOption facingOption, int currentFacing) {

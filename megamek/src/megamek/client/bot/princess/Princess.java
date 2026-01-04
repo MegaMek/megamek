@@ -879,7 +879,9 @@ public class Princess extends BotClient {
                 deployStep.setPosition(dest);
                 if (null != super.getFirstValidCoords(deployedUnit, List.of(dest))) {
                     hazard = -((BasicPathRanker) ranker).checkPathForHazards(mp, deployedUnit, game);
-                    if (deployedUnit instanceof BuildingEntity && getBoard() != null && getBoard().getHex(dest) != null) {
+                    if (deployedUnit instanceof BuildingEntity
+                          && getBoard() != null
+                          && getBoard().getHex(dest) != null) {
                         // If there's anything in the hex, let's increase the hazard so we don't prefer it
                         hazard -= getBoard().getHex(dest).getTerrainTypesSet().size();
                     }

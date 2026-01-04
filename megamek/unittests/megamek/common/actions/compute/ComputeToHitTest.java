@@ -85,7 +85,9 @@ import org.junit.jupiter.api.Test;
 import java.util.Vector;
 
 /**
- * Tests for {@link ComputeToHit#toHitCalc(Game, int, Targetable, int, int, AimingMode, boolean, boolean, Targetable, Targetable, boolean, boolean, java.util.List, boolean, int, int)}
+ * Tests for
+ * {@link ComputeToHit#toHitCalc(Game, int, Targetable, int, int, AimingMode, boolean, boolean, Targetable, Targetable,
+ * boolean, boolean, java.util.List, boolean, int, int)}
  */
 @DisplayName(value = "ComputeToHit Tests")
 public class ComputeToHitTest extends GameBoardTestCase {
@@ -95,42 +97,42 @@ public class ComputeToHitTest extends GameBoardTestCase {
     private static String LOS_BLOCKED_BY_TERRAIN = "LOS blocked by terrain.";
 
     private static final String BOARD_03_BY_05_CENTER_HILLS_DATA = """
-              size 3 5
-              hex 0101 0 "" ""
-              hex 0201 0 "" ""
-              hex 0301 0 "" ""
-              hex 0102 0 "" ""
-              hex 0202 0 "" ""
-              hex 0302 0 "" ""
-              hex 0103 1 "" ""
-              hex 0203 4 "" ""
-              hex 0303 2 "" ""
-              hex 0104 0 "" ""
-              hex 0204 0 "" ""
-              hex 0304 0 "" ""
-              hex 0105 0 "" ""
-              hex 0205 0 "" ""
-              hex 0305 0 "" ""
-              end""";
+          size 3 5
+          hex 0101 0 "" ""
+          hex 0201 0 "" ""
+          hex 0301 0 "" ""
+          hex 0102 0 "" ""
+          hex 0202 0 "" ""
+          hex 0302 0 "" ""
+          hex 0103 1 "" ""
+          hex 0203 4 "" ""
+          hex 0303 2 "" ""
+          hex 0104 0 "" ""
+          hex 0204 0 "" ""
+          hex 0304 0 "" ""
+          hex 0105 0 "" ""
+          hex 0205 0 "" ""
+          hex 0305 0 "" ""
+          end""";
 
     private static final String BOARD_03_BY_05_FLAT_DATA = """
-              size 3 5
-              hex 0101 0 "" ""
-              hex 0201 0 "" ""
-              hex 0301 0 "" ""
-              hex 0102 0 "" ""
-              hex 0202 0 "" ""
-              hex 0302 0 "" ""
-              hex 0103 0 "" ""
-              hex 0203 0 "" ""
-              hex 0303 0 "" ""
-              hex 0104 0 "" ""
-              hex 0204 0 "" ""
-              hex 0304 0 "" ""
-              hex 0105 0 "" ""
-              hex 0205 0 "" ""
-              hex 0305 0 "" ""
-              end""";
+          size 3 5
+          hex 0101 0 "" ""
+          hex 0201 0 "" ""
+          hex 0301 0 "" ""
+          hex 0102 0 "" ""
+          hex 0202 0 "" ""
+          hex 0302 0 "" ""
+          hex 0103 0 "" ""
+          hex 0203 0 "" ""
+          hex 0303 0 "" ""
+          hex 0104 0 "" ""
+          hex 0204 0 "" ""
+          hex 0304 0 "" ""
+          hex 0105 0 "" ""
+          hex 0205 0 "" ""
+          hex 0305 0 "" ""
+          end""";
 
     private static TWGameManager mockGameManager;
     private static GameOptions mockGameOptions;
@@ -319,326 +321,326 @@ public class ComputeToHitTest extends GameBoardTestCase {
                 game.addEntity(targetEntity);
             }
 
-        @Test
-        @DisplayName("LOS from 0205 level 0 (default) to 0201 - blocked by elevation 4 terrain")
-        void testLOS_0205L0_To0201_BlockedDefault() throws LocationFullException {
-            // Weapon at default location (level 0) in building at hex 0205
-            // Target at hex 0201, LOS passes through hex 0203 (elevation 4)
-            // Expected: BLOCKED (height 0 < terrain elevation 4)
-            mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType, 0);
-            mediumLaser.setFacing(0);
-            targetEntity.setPosition(new Coords(1, 0));
+            @Test
+            @DisplayName("LOS from 0205 level 0 (default) to 0201 - blocked by elevation 4 terrain")
+            void testLOS_0205L0_To0201_BlockedDefault() throws LocationFullException {
+                // Weapon at default location (level 0) in building at hex 0205
+                // Target at hex 0201, LOS passes through hex 0203 (elevation 4)
+                // Expected: BLOCKED (height 0 < terrain elevation 4)
+                mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType, 0);
+                mediumLaser.setFacing(0);
+                targetEntity.setPosition(new Coords(1, 0));
 
-            ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
-                  mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
-                  false, false, null, null, false, false, null, false,
-                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+                ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                      mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                      false, false, null, null, false, false, null, false,
+                      WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
 
-            assertNotNull(result, "ToHitData should not be null");
-            var modifiers = result.getModifiers();
-            var blockingModifier = modifiers.stream()
-                  .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
-                  .findFirst();
+                assertNotNull(result, "ToHitData should not be null");
+                var modifiers = result.getModifiers();
+                var blockingModifier = modifiers.stream()
+                      .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
+                      .findFirst();
 
-            assertTrue(blockingModifier.isPresent(),
-                  "LOS should be BLOCKED - firing from height 0 through elevation 4 terrain. Modifiers: "
-                        + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
-                        .collect(java.util.stream.Collectors.joining(", ")));
-            assertTrue(result.cannotSucceed(), "Shot should NOT succeed when LOS is blocked");
-        }
+                assertTrue(blockingModifier.isPresent(),
+                      "LOS should be BLOCKED - firing from height 0 through elevation 4 terrain. Modifiers: "
+                            + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
+                            .collect(java.util.stream.Collectors.joining(", ")));
+                assertTrue(result.cannotSucceed(), "Shot should NOT succeed when LOS is blocked");
+            }
 
-        @Test
-        @DisplayName("LOS from 0105 level 2 to 0101 - clear over elevation 1 terrain")
-        void testLOS_0105L2_To0101_Clear() throws LocationFullException {
-            // Weapon at level 2 in hex 0105
-            // Target at hex 0101, LOS passes through hex 0103 (elevation 1)
-            // Expected: CLEAR (height 2 > terrain elevation 1)
-            mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
-                  attacker.getLocationFromAbbr("LVL 2 0105"));
-            mediumLaser.setFacing(0);
-            targetEntity.setPosition(new Coords(0, 0));
+            @Test
+            @DisplayName("LOS from 0105 level 2 to 0101 - clear over elevation 1 terrain")
+            void testLOS_0105L2_To0101_Clear() throws LocationFullException {
+                // Weapon at level 2 in hex 0105
+                // Target at hex 0101, LOS passes through hex 0103 (elevation 1)
+                // Expected: CLEAR (height 2 > terrain elevation 1)
+                mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
+                      attacker.getLocationFromAbbr("LVL 2 0105"));
+                mediumLaser.setFacing(0);
+                targetEntity.setPosition(new Coords(0, 0));
 
-            ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
-                  mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
-                  false, false, null, null, false, false, null, false,
-                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+                ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                      mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                      false, false, null, null, false, false, null, false,
+                      WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
 
-            assertNotNull(result, "ToHitData should not be null");
-            var modifiers = result.getModifiers();
-            var blockingModifier = modifiers.stream()
-                  .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
-                  .findFirst();
+                assertNotNull(result, "ToHitData should not be null");
+                var modifiers = result.getModifiers();
+                var blockingModifier = modifiers.stream()
+                      .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
+                      .findFirst();
 
-            assertFalse(blockingModifier.isPresent(),
-                  "LOS should be CLEAR - firing from height 2 over elevation 1 terrain. Modifiers: "
-                        + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
-                        .collect(java.util.stream.Collectors.joining(", ")));
-            assertFalse(result.cannotSucceed(), "Shot should succeed when LOS is clear");
-        }
+                assertFalse(blockingModifier.isPresent(),
+                      "LOS should be CLEAR - firing from height 2 over elevation 1 terrain. Modifiers: "
+                            + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
+                            .collect(java.util.stream.Collectors.joining(", ")));
+                assertFalse(result.cannotSucceed(), "Shot should succeed when LOS is clear");
+            }
 
-        @Test
-        @DisplayName("LOS from 0105 level 0 to 0101 - blocked by elevation 1 terrain")
-        @Disabled("IDK the rules on this, let's ignore for now")
-        void testLOS_0105L0_To0101_Blocked() throws LocationFullException {
-            // Weapon at level 0 in hex 0105
-            // Target at hex 0101, LOS passes through hex 0103 (elevation 1)
-            // Expected: BLOCKED (height 0 < terrain elevation 1)
-            mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
-                  attacker.getLocationFromAbbr("LVL 0 0105"));
-            mediumLaser.setFacing(0);
-            targetEntity.setPosition(new Coords(0, 0));
+            @Test
+            @DisplayName("LOS from 0105 level 0 to 0101 - blocked by elevation 1 terrain")
+            @Disabled("IDK the rules on this, let's ignore for now")
+            void testLOS_0105L0_To0101_Blocked() throws LocationFullException {
+                // Weapon at level 0 in hex 0105
+                // Target at hex 0101, LOS passes through hex 0103 (elevation 1)
+                // Expected: BLOCKED (height 0 < terrain elevation 1)
+                mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
+                      attacker.getLocationFromAbbr("LVL 0 0105"));
+                mediumLaser.setFacing(0);
+                targetEntity.setPosition(new Coords(0, 0));
 
-            ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
-                  mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
-                  false, false, null, null, false, false, null, false,
-                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+                ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                      mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                      false, false, null, null, false, false, null, false,
+                      WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
 
-            assertNotNull(result, "ToHitData should not be null");
-            var modifiers = result.getModifiers();
-            var blockingModifier = modifiers.stream()
-                  .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
-                  .findFirst();
+                assertNotNull(result, "ToHitData should not be null");
+                var modifiers = result.getModifiers();
+                var blockingModifier = modifiers.stream()
+                      .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
+                      .findFirst();
 
-            assertTrue(blockingModifier.isPresent(),
-                  "LOS should be BLOCKED - firing from height 0 through elevation 1 terrain. Modifiers: "
-                        + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
-                        .collect(java.util.stream.Collectors.joining(", ")));
-            assertFalse(result.cannotSucceed(), "Shot should NOT succeed when LOS is blocked");
-        }
+                assertTrue(blockingModifier.isPresent(),
+                      "LOS should be BLOCKED - firing from height 0 through elevation 1 terrain. Modifiers: "
+                            + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
+                            .collect(java.util.stream.Collectors.joining(", ")));
+                assertFalse(result.cannotSucceed(), "Shot should NOT succeed when LOS is blocked");
+            }
 
-        @Test
-        @DisplayName("LOS from 0305 level 2 to 0301 - clear over elevation 2 terrain")
-        void testLOS_0305L2_To0301_Clear() throws LocationFullException {
-            // Weapon at level 2 in hex 0305
-            // Target at hex 0301, LOS passes through hex 0303 (elevation 2)
-            // Expected: CLEAR (height 2 >= terrain elevation 2)
-            mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
-                  attacker.getLocationFromAbbr("LVL 2 0305"));
-            mediumLaser.setFacing(0);
-            targetEntity.setPosition(new Coords(2, 0));
+            @Test
+            @DisplayName("LOS from 0305 level 2 to 0301 - clear over elevation 2 terrain")
+            void testLOS_0305L2_To0301_Clear() throws LocationFullException {
+                // Weapon at level 2 in hex 0305
+                // Target at hex 0301, LOS passes through hex 0303 (elevation 2)
+                // Expected: CLEAR (height 2 >= terrain elevation 2)
+                mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
+                      attacker.getLocationFromAbbr("LVL 2 0305"));
+                mediumLaser.setFacing(0);
+                targetEntity.setPosition(new Coords(2, 0));
 
-            ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
-                  mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
-                  false, false, null, null, false, false, null, false,
-                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+                ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                      mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                      false, false, null, null, false, false, null, false,
+                      WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
 
-            assertNotNull(result, "ToHitData should not be null");
-            var modifiers = result.getModifiers();
-            var blockingModifier = modifiers.stream()
-                  .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
-                  .findFirst();
+                assertNotNull(result, "ToHitData should not be null");
+                var modifiers = result.getModifiers();
+                var blockingModifier = modifiers.stream()
+                      .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
+                      .findFirst();
 
-            assertFalse(blockingModifier.isPresent(),
-                  "LOS should be CLEAR - firing from height 2 at/over elevation 2 terrain. Modifiers: "
-                        + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
-                        .collect(java.util.stream.Collectors.joining(", ")));
-            assertFalse(result.cannotSucceed(), "Shot should succeed when LOS is clear");
-        }
+                assertFalse(blockingModifier.isPresent(),
+                      "LOS should be CLEAR - firing from height 2 at/over elevation 2 terrain. Modifiers: "
+                            + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
+                            .collect(java.util.stream.Collectors.joining(", ")));
+                assertFalse(result.cannotSucceed(), "Shot should succeed when LOS is clear");
+            }
 
-        @Test
-        @DisplayName("LOS from 0305 level 0 to 0301 - blocked by elevation 2 terrain")
-        void testLOS_0305L0_To0301_Blocked() throws LocationFullException {
-            // Weapon at level 0 in hex 0305
-            // Target at hex 0301, LOS passes through hex 0303 (elevation 2)
-            // Expected: BLOCKED (height 0 < terrain elevation 2)
-            mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
-                  attacker.getLocationFromAbbr("LVL 0 0305"));
-            mediumLaser.setFacing(0);
-            targetEntity.setPosition(new Coords(2, 0));
-            assertEquals(0, attacker.getWeaponFiringHeight(mediumLaser), "Weapon should be at height 0");
+            @Test
+            @DisplayName("LOS from 0305 level 0 to 0301 - blocked by elevation 2 terrain")
+            void testLOS_0305L0_To0301_Blocked() throws LocationFullException {
+                // Weapon at level 0 in hex 0305
+                // Target at hex 0301, LOS passes through hex 0303 (elevation 2)
+                // Expected: BLOCKED (height 0 < terrain elevation 2)
+                mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
+                      attacker.getLocationFromAbbr("LVL 0 0305"));
+                mediumLaser.setFacing(0);
+                targetEntity.setPosition(new Coords(2, 0));
+                assertEquals(0, attacker.getWeaponFiringHeight(mediumLaser), "Weapon should be at height 0");
 
-            ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
-                  mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
-                  false, false, null, null, false, false, null, false,
-                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+                ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                      mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                      false, false, null, null, false, false, null, false,
+                      WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
 
-            assertNotNull(result, "ToHitData should not be null");
-            var modifiers = result.getModifiers();
-            var blockingModifier = modifiers.stream()
-                  .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
-                  .findFirst();
+                assertNotNull(result, "ToHitData should not be null");
+                var modifiers = result.getModifiers();
+                var blockingModifier = modifiers.stream()
+                      .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
+                      .findFirst();
 
-            assertTrue(blockingModifier.isPresent(),
-                  "LOS should be BLOCKED - firing from height 0 through elevation 2 terrain. Modifiers: "
-                        + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
-                        .collect(java.util.stream.Collectors.joining(", ")));
-            assertTrue(result.cannotSucceed(), "Shot should NOT succeed when LOS is blocked");
-        }
+                assertTrue(blockingModifier.isPresent(),
+                      "LOS should be BLOCKED - firing from height 0 through elevation 2 terrain. Modifiers: "
+                            + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
+                            .collect(java.util.stream.Collectors.joining(", ")));
+                assertTrue(result.cannotSucceed(), "Shot should NOT succeed when LOS is blocked");
+            }
 
-        @Test
-        @DisplayName("LOS from 0305 level 4 to 0301 - clear over elevation 2 terrain with facing")
-        void testLOS_0305L4_To0301_ClearWithFacing() throws LocationFullException {
-            // Weapon at level 4 in hex 0305 with facing set
-            // Target at hex 0301, LOS passes through hex 0303 (elevation 2)
-            // Expected: CLEAR (height 4 > terrain elevation 2)
-            mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
-                  attacker.getLocationFromAbbr("LVL 4 0305"));
-            mediumLaser.setFacing(0);
-            targetEntity.setPosition(new Coords(2, 0));
+            @Test
+            @DisplayName("LOS from 0305 level 4 to 0301 - clear over elevation 2 terrain with facing")
+            void testLOS_0305L4_To0301_ClearWithFacing() throws LocationFullException {
+                // Weapon at level 4 in hex 0305 with facing set
+                // Target at hex 0301, LOS passes through hex 0303 (elevation 2)
+                // Expected: CLEAR (height 4 > terrain elevation 2)
+                mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
+                      attacker.getLocationFromAbbr("LVL 4 0305"));
+                mediumLaser.setFacing(0);
+                targetEntity.setPosition(new Coords(2, 0));
 
-            ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
-                  mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
-                  false, false, null, null, false, false, null, false,
-                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+                ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                      mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                      false, false, null, null, false, false, null, false,
+                      WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
 
-            assertNotNull(result, "ToHitData should not be null");
-            var modifiers = result.getModifiers();
-            var blockingModifier = modifiers.stream()
-                  .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
-                  .findFirst();
+                assertNotNull(result, "ToHitData should not be null");
+                var modifiers = result.getModifiers();
+                var blockingModifier = modifiers.stream()
+                      .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
+                      .findFirst();
 
-            assertFalse(blockingModifier.isPresent(),
-                  "LOS should be CLEAR - firing from height 4 over elevation 2 terrain. Modifiers: "
-                        + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
-                        .collect(java.util.stream.Collectors.joining(", ")));
-            assertFalse(result.cannotSucceed(), "Shot should succeed when LOS is clear");
-        }
+                assertFalse(blockingModifier.isPresent(),
+                      "LOS should be CLEAR - firing from height 4 over elevation 2 terrain. Modifiers: "
+                            + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
+                            .collect(java.util.stream.Collectors.joining(", ")));
+                assertFalse(result.cannotSucceed(), "Shot should succeed when LOS is clear");
+            }
 
-        @Test
-        @DisplayName("LOS from 0305 level 5 (turret) to 0301 - clear over elevation 2 terrain")
-        void testLOS_0305L5_To0301_ClearTurret() throws LocationFullException {
-            // Weapon at level 5 (top floor) in hex 0305 as turret
-            // Target at hex 0301, LOS passes through hex 0303 (elevation 2)
-            // Expected: CLEAR (height 5 > terrain elevation 2)
-            mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
-                  attacker.getLocationFromAbbr("LVL 5 0305"));
-            mediumLaser.setMekTurretMounted(true);
-            targetEntity.setPosition(new Coords(2, 0));
+            @Test
+            @DisplayName("LOS from 0305 level 5 (turret) to 0301 - clear over elevation 2 terrain")
+            void testLOS_0305L5_To0301_ClearTurret() throws LocationFullException {
+                // Weapon at level 5 (top floor) in hex 0305 as turret
+                // Target at hex 0301, LOS passes through hex 0303 (elevation 2)
+                // Expected: CLEAR (height 5 > terrain elevation 2)
+                mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
+                      attacker.getLocationFromAbbr("LVL 5 0305"));
+                mediumLaser.setMekTurretMounted(true);
+                targetEntity.setPosition(new Coords(2, 0));
 
-            ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
-                  mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
-                  false, false, null, null, false, false, null, false,
-                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+                ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                      mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                      false, false, null, null, false, false, null, false,
+                      WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
 
-            assertNotNull(result, "ToHitData should not be null");
-            var modifiers = result.getModifiers();
-            var blockingModifier = modifiers.stream()
-                  .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
-                  .findFirst();
+                assertNotNull(result, "ToHitData should not be null");
+                var modifiers = result.getModifiers();
+                var blockingModifier = modifiers.stream()
+                      .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
+                      .findFirst();
 
-            assertFalse(blockingModifier.isPresent(),
-                  "LOS should be CLEAR - turret at height 5 over elevation 2 terrain. Modifiers: "
-                        + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
-                        .collect(java.util.stream.Collectors.joining(", ")));
-            assertFalse(result.cannotSucceed(), "Shot should succeed when LOS is clear");
-        }
+                assertFalse(blockingModifier.isPresent(),
+                      "LOS should be CLEAR - turret at height 5 over elevation 2 terrain. Modifiers: "
+                            + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
+                            .collect(java.util.stream.Collectors.joining(", ")));
+                assertFalse(result.cannotSucceed(), "Shot should succeed when LOS is clear");
+            }
 
-        @Test
-        @DisplayName("LOS from 0205 level 2 to 0201 - blocked by elevation 4 terrain")
-        void testLOS_0205L2_To0201_Blocked() throws LocationFullException {
-            // Weapon at level 2 in hex 0205
-            // Target at hex 0201, LOS passes through hex 0203 (elevation 4)
-            // Expected: BLOCKED (height 2 < terrain elevation 4)
-            mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
-                  attacker.getLocationFromAbbr("LVL 2 0205"));
-            mediumLaser.setFacing(0);
-            targetEntity.setPosition(new Coords(1, 0));
+            @Test
+            @DisplayName("LOS from 0205 level 2 to 0201 - blocked by elevation 4 terrain")
+            void testLOS_0205L2_To0201_Blocked() throws LocationFullException {
+                // Weapon at level 2 in hex 0205
+                // Target at hex 0201, LOS passes through hex 0203 (elevation 4)
+                // Expected: BLOCKED (height 2 < terrain elevation 4)
+                mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
+                      attacker.getLocationFromAbbr("LVL 2 0205"));
+                mediumLaser.setFacing(0);
+                targetEntity.setPosition(new Coords(1, 0));
 
-            ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
-                  mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
-                  false, false, null, null, false, false, null, false,
-                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+                ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                      mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                      false, false, null, null, false, false, null, false,
+                      WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
 
-            assertNotNull(result, "ToHitData should not be null");
-            var modifiers = result.getModifiers();
-            var blockingModifier = modifiers.stream()
-                  .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
-                  .findFirst();
+                assertNotNull(result, "ToHitData should not be null");
+                var modifiers = result.getModifiers();
+                var blockingModifier = modifiers.stream()
+                      .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
+                      .findFirst();
 
-            assertTrue(blockingModifier.isPresent(),
-                  "LOS should be BLOCKED - firing from height 2 through elevation 4 terrain. Modifiers: "
-                        + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
-                        .collect(java.util.stream.Collectors.joining(", ")));
-            assertTrue(result.cannotSucceed(), "Shot should NOT succeed when LOS is blocked");
-        }
+                assertTrue(blockingModifier.isPresent(),
+                      "LOS should be BLOCKED - firing from height 2 through elevation 4 terrain. Modifiers: "
+                            + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
+                            .collect(java.util.stream.Collectors.joining(", ")));
+                assertTrue(result.cannotSucceed(), "Shot should NOT succeed when LOS is blocked");
+            }
 
-        @Test
-        @DisplayName("LOS from 0205 level 0 to 0201 - blocked by elevation 4 terrain")
-        void testLOS_0205L0_To0201_Blocked() throws LocationFullException {
-            // Weapon at level 0 in hex 0205
-            // Target at hex 0201, LOS passes through hex 0203 (elevation 4)
-            // Expected: BLOCKED (height 0 < terrain elevation 4)
-            mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
-                  attacker.getLocationFromAbbr("LVL 0 0205"));
-            mediumLaser.setFacing(0);
-            targetEntity.setPosition(new Coords(1, 0));
-            assertEquals(0, attacker.getWeaponFiringHeight(mediumLaser), "Weapon should be at height 0");
+            @Test
+            @DisplayName("LOS from 0205 level 0 to 0201 - blocked by elevation 4 terrain")
+            void testLOS_0205L0_To0201_Blocked() throws LocationFullException {
+                // Weapon at level 0 in hex 0205
+                // Target at hex 0201, LOS passes through hex 0203 (elevation 4)
+                // Expected: BLOCKED (height 0 < terrain elevation 4)
+                mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
+                      attacker.getLocationFromAbbr("LVL 0 0205"));
+                mediumLaser.setFacing(0);
+                targetEntity.setPosition(new Coords(1, 0));
+                assertEquals(0, attacker.getWeaponFiringHeight(mediumLaser), "Weapon should be at height 0");
 
-            ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
-                  mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
-                  false, false, null, null, false, false, null, false,
-                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+                ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                      mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                      false, false, null, null, false, false, null, false,
+                      WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
 
-            assertNotNull(result, "ToHitData should not be null");
-            var modifiers = result.getModifiers();
-            var blockingModifier = modifiers.stream()
-                  .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
-                  .findFirst();
+                assertNotNull(result, "ToHitData should not be null");
+                var modifiers = result.getModifiers();
+                var blockingModifier = modifiers.stream()
+                      .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
+                      .findFirst();
 
-            assertTrue(blockingModifier.isPresent(),
-                  "LOS should be BLOCKED - firing from height 0 through elevation 4 terrain. Modifiers: "
-                        + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
-                        .collect(java.util.stream.Collectors.joining(", ")));
-            assertTrue(result.cannotSucceed(), "Shot should NOT succeed when LOS is blocked");
-        }
+                assertTrue(blockingModifier.isPresent(),
+                      "LOS should be BLOCKED - firing from height 0 through elevation 4 terrain. Modifiers: "
+                            + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
+                            .collect(java.util.stream.Collectors.joining(", ")));
+                assertTrue(result.cannotSucceed(), "Shot should NOT succeed when LOS is blocked");
+            }
 
-        @Test
-        @DisplayName("LOS from 0205 level 4 to 0201 - clear at elevation 4 terrain with facing")
-        void testLOS_0205L4_To0201_ClearWithFacing() throws LocationFullException {
-            // Weapon at level 4 in hex 0205 with facing set
-            // Target at hex 0201, LOS passes through hex 0203 (elevation 4)
-            // Expected: CLEAR (height 4 >= terrain elevation 4)
-            mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
-                  attacker.getLocationFromAbbr("LVL 4 0205"));
-            mediumLaser.setFacing(0);
-            targetEntity.setPosition(new Coords(1, 0));
+            @Test
+            @DisplayName("LOS from 0205 level 4 to 0201 - clear at elevation 4 terrain with facing")
+            void testLOS_0205L4_To0201_ClearWithFacing() throws LocationFullException {
+                // Weapon at level 4 in hex 0205 with facing set
+                // Target at hex 0201, LOS passes through hex 0203 (elevation 4)
+                // Expected: CLEAR (height 4 >= terrain elevation 4)
+                mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
+                      attacker.getLocationFromAbbr("LVL 4 0205"));
+                mediumLaser.setFacing(0);
+                targetEntity.setPosition(new Coords(1, 0));
 
-            ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
-                  mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
-                  false, false, null, null, false, false, null, false,
-                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+                ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                      mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                      false, false, null, null, false, false, null, false,
+                      WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
 
-            assertNotNull(result, "ToHitData should not be null");
-            var modifiers = result.getModifiers();
-            var blockingModifier = modifiers.stream()
-                  .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
-                  .findFirst();
+                assertNotNull(result, "ToHitData should not be null");
+                var modifiers = result.getModifiers();
+                var blockingModifier = modifiers.stream()
+                      .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
+                      .findFirst();
 
-            assertFalse(blockingModifier.isPresent(),
-                  "LOS should be CLEAR - firing from height 4 at/over elevation 4 terrain. Modifiers: "
-                        + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
-                        .collect(java.util.stream.Collectors.joining(", ")));
-            assertFalse(result.cannotSucceed(), "Shot should succeed when LOS is clear");
-        }
+                assertFalse(blockingModifier.isPresent(),
+                      "LOS should be CLEAR - firing from height 4 at/over elevation 4 terrain. Modifiers: "
+                            + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
+                            .collect(java.util.stream.Collectors.joining(", ")));
+                assertFalse(result.cannotSucceed(), "Shot should succeed when LOS is clear");
+            }
 
-        @Test
-        @DisplayName("LOS from 0205 level 5 (turret) to 0201 - clear over elevation 4 terrain")
-        void testLOS_0205L5_To0201_ClearTurret() throws LocationFullException {
-            // Weapon at level 5 (top floor) in hex 0205 as turret
-            // Target at hex 0201, LOS passes through hex 0203 (elevation 4)
-            // Expected: CLEAR (height 5 > terrain elevation 4)
-            mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
-                  attacker.getLocationFromAbbr("LVL 5 0205"));
-            mediumLaser.setMekTurretMounted(true);
-            targetEntity.setPosition(new Coords(1, 0));
+            @Test
+            @DisplayName("LOS from 0205 level 5 (turret) to 0201 - clear over elevation 4 terrain")
+            void testLOS_0205L5_To0201_ClearTurret() throws LocationFullException {
+                // Weapon at level 5 (top floor) in hex 0205 as turret
+                // Target at hex 0201, LOS passes through hex 0203 (elevation 4)
+                // Expected: CLEAR (height 5 > terrain elevation 4)
+                mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
+                      attacker.getLocationFromAbbr("LVL 5 0205"));
+                mediumLaser.setMekTurretMounted(true);
+                targetEntity.setPosition(new Coords(1, 0));
 
-            ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
-                  mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
-                  false, false, null, null, false, false, null, false,
-                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+                ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                      mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                      false, false, null, null, false, false, null, false,
+                      WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
 
-            assertNotNull(result, "ToHitData should not be null");
-            var modifiers = result.getModifiers();
-            var blockingModifier = modifiers.stream()
-                  .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
-                  .findFirst();
+                assertNotNull(result, "ToHitData should not be null");
+                var modifiers = result.getModifiers();
+                var blockingModifier = modifiers.stream()
+                      .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
+                      .findFirst();
 
-            assertFalse(blockingModifier.isPresent(),
-                  "LOS should be CLEAR - turret at height 5 over elevation 4 terrain. Modifiers: "
-                        + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
-                        .collect(java.util.stream.Collectors.joining(", ")));
-            assertFalse(result.cannotSucceed(), "Shot should succeed when LOS is clear");
-        }
+                assertFalse(blockingModifier.isPresent(),
+                      "LOS should be CLEAR - turret at height 5 over elevation 4 terrain. Modifiers: "
+                            + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
+                            .collect(java.util.stream.Collectors.joining(", ")));
+                assertFalse(result.cannotSucceed(), "Shot should succeed when LOS is clear");
+            }
         }
 
         @Nested

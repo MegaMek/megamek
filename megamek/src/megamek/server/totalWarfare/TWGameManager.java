@@ -10400,6 +10400,8 @@ public class TWGameManager extends AbstractGameManager {
                 }
             } else if (ea instanceof SearchlightAttackAction saa) {
                 addReport(saa.resolveAction(game));
+            } else if (ea instanceof SuicideImplantsAttackAction suicideAction) {
+                resolveSuicideImplantsAttackDirect(entity, suicideAction);
             } else if (ea instanceof UnjamTurretAction) {
                 if (entity instanceof Tank tank) {
                     tank.unjamTurret(tank.getLocTurret());
@@ -13008,6 +13010,328 @@ public class TWGameManager extends AbstractGameManager {
             addReport(damageEntity(targetEntity, hit, damage));
         }
         addNewLines();
+    }
+
+    /**
+     * Handle a Suicide Implants attack (IO pg 83). The entity detonates their explosive implants, destroying themselves
+     * and causing damage based on entity type:
+     * <ul>
+     *   <li>Conventional Infantry: 0.57 damage per trooper to all entities in hex + building CF damage</li>
+     *   <li>Battle Armor: Destroys selected troopers only, no damage to others</li>
+     *   <li>MekWarrior/Pilot: 1 IS to Mek head (or 1 armor to fighter nose) + crit + cockpit destroyed</li>
+     *   <li>Vehicle Crew: Crew Killed + 1 IS to all facings + crit rolls</li>
+     * </ul>
+     */
+    private void resolveSuicideImplantsAttack(PhysicalResult physicalResult, int lastEntityId) {
+        final SuicideImplantsAttackAction suicideAction = (SuicideImplantsAttackAction) physicalResult.aaa;
+        final Entity attackingEntity = game.getEntity(suicideAction.getEntityId());
+
+        if (attackingEntity == null) {
+            LOGGER.error("Attacking entity is null for Suicide Implants Attack");
+            return;
+        }
+
+        final ToHitData toHit = physicalResult.toHit;
+        int damage = physicalResult.damage;
+        int troopersDetonating = suicideAction.getTroopersDetonating();
+        Report report;
+
+        // Report who is detonating
+        if (lastEntityId != suicideAction.getEntityId()) {
+            report = new Report(4005);
+            report.subject = attackingEntity.getId();
+            report.addDesc(attackingEntity);
+            addReport(report);
+        }
+
+        // Report the detonation
+        report = new Report(4580);
+        report.subject = attackingEntity.getId();
+        report.indent();
+        report.addDesc(attackingEntity);
+        addReport(report);
+
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+            report = new Report(4581);
+            report.subject = attackingEntity.getId();
+            report.add(toHit.getDesc());
+            addReport(report);
+            return;
+        }
+
+        dispatchSuicideImplantsResolution(attackingEntity, troopersDetonating, damage);
+        addNewLines();
+    }
+
+    /**
+     * Direct resolution of Suicide Implants attack (called from firing phase). This version doesn't use PhysicalResult
+     * wrapper.
+     */
+    private void resolveSuicideImplantsAttackDirect(Entity attackingEntity, SuicideImplantsAttackAction suicideAction) {
+        if (attackingEntity == null) {
+            LOGGER.error("Attacking entity is null for Suicide Implants Attack");
+            return;
+        }
+
+        int troopersDetonating = suicideAction.getTroopersDetonating();
+        int damage = SuicideImplantsAttackAction.getDamageFor(troopersDetonating);
+        Report report;
+
+        // Report the detonation
+        report = new Report(4580);
+        report.subject = attackingEntity.getId();
+        report.addDesc(attackingEntity);
+        addReport(report);
+
+        // Validate the action
+        ToHitData toHit = SuicideImplantsAttackAction.toHit(game, attackingEntity.getId());
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+            report = new Report(4581);
+            report.subject = attackingEntity.getId();
+            report.add(toHit.getDesc());
+            addReport(report);
+            return;
+        }
+
+        dispatchSuicideImplantsResolution(attackingEntity, troopersDetonating, damage);
+        addNewLines();
+    }
+
+    /**
+     * Dispatches suicide implant resolution to the appropriate entity-type-specific handler.
+     *
+     * @param attackingEntity    the entity detonating their implants
+     * @param troopersDetonating the number of troopers detonating (for infantry/BA)
+     * @param damage             the calculated damage (for conventional infantry area effect)
+     */
+    private void dispatchSuicideImplantsResolution(Entity attackingEntity, int troopersDetonating, int damage) {
+        if (attackingEntity.isConventionalInfantry()) {
+            resolveConventionalInfantrySuicide(attackingEntity, troopersDetonating, damage);
+        } else if (attackingEntity instanceof BattleArmor battleArmor) {
+            resolveBattleArmorSuicide(battleArmor, troopersDetonating);
+        } else if (attackingEntity instanceof Mek mek) {
+            resolveMekPilotSuicide(mek);
+        } else if (attackingEntity instanceof Aero aero) {
+            resolveAeroPilotSuicide(aero);
+        } else if (attackingEntity instanceof Tank tank) {
+            resolveVehicleCrewSuicide(tank);
+        }
+    }
+
+    /**
+     * Resolve suicide implant detonation for conventional infantry. Damage = 0.57 * trooper count, applied to ALL
+     * entities in hex (friend or foe). Also damages buildings (trooperCount / 2 to CF).
+     */
+    private void resolveConventionalInfantrySuicide(Entity infantry, int troopersDetonating, int damage) {
+        Coords position = infantry.getPosition();
+        Report report;
+
+        // Report the explosion damage
+        report = new Report(4582);
+        report.subject = infantry.getId();
+        report.add(damage);
+        addReport(report);
+
+        // Damage all entities in the same hex (friend or foe)
+        for (Entity target : game.getEntitiesVector(position)) {
+            if (target.getId() == infantry.getId()) {
+                continue; // Don't double-process the detonating unit
+            }
+
+            report = new Report(4583);
+            report.subject = target.getId();
+            report.indent(2);
+            report.add(target.getDisplayName());
+            report.add(damage);
+            addReport(report);
+
+            HitData hit = target.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            addReport(damageEntity(target, hit, damage));
+        }
+
+        // Damage building if present
+        IBuilding building = game.getBoard().getBuildingAt(position);
+        if (building != null) {
+            int buildingDamage = SuicideImplantsAttackAction.getBuildingDamageFor(troopersDetonating);
+            if (buildingDamage > 0) {
+                report = new Report(4584);
+                report.subject = infantry.getId();
+                report.add(buildingDamage);
+                addReport(report);
+                Vector<Report> buildingReports = damageBuilding(building, buildingDamage, position);
+                for (Report r : buildingReports) {
+                    r.indent(2);
+                    addReport(r);
+                }
+            }
+        }
+
+        // Report trooper deaths and destroy the unit (or reduce troopers)
+        report = new Report(4585);
+        report.subject = infantry.getId();
+        report.add(troopersDetonating);
+        addReport(report);
+
+        // If all troopers detonate, destroy the unit
+        Infantry infantryUnit = (Infantry) infantry;
+        int remainingTroopers = infantryUnit.getShootingStrength() - troopersDetonating;
+        if (remainingTroopers <= 0) {
+            addReport(destroyEntity(infantry, "suicide implant detonation", false, false));
+        } else {
+            // Reduce trooper count
+            infantryUnit.setInternal(remainingTroopers, Infantry.LOC_INFANTRY);
+            infantryUnit.applyDamage();
+        }
+    }
+
+    /**
+     * Resolve suicide implant detonation for Battle Armor. Only destroys the selected troopers, no damage to other
+     * targets.
+     */
+    private void resolveBattleArmorSuicide(BattleArmor battleArmor, int troopersDetonating) {
+        Report report;
+
+        report = new Report(4586);
+        report.subject = battleArmor.getId();
+        report.add(troopersDetonating);
+        addReport(report);
+
+        // Destroy the specified number of troopers
+        int currentTroopers = battleArmor.getShootingStrength();
+        int remainingTroopers = currentTroopers - troopersDetonating;
+
+        if (remainingTroopers <= 0) {
+            // Destroy entire BA squad
+            addReport(destroyEntity(battleArmor, "suicide implant detonation", false, false));
+        } else {
+            // Destroy individual troopers starting from the highest numbered location
+            for (int i = 0; i < troopersDetonating; i++) {
+                for (int loc = battleArmor.locations() - 1; loc >= BattleArmor.LOC_TROOPER_1; loc--) {
+                    if (battleArmor.getInternal(loc) > 0) {
+                        battleArmor.setInternal(0, loc);
+                        battleArmor.setArmor(0, loc);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Resolve suicide implant detonation for a MekWarrior in a Mek. 1 point internal damage to head, critical hit roll,
+     * cockpit destroyed for salvage.
+     */
+    private void resolveMekPilotSuicide(Mek mek) {
+        Report report;
+
+        // Report the internal explosion
+        report = new Report(4587);
+        report.subject = mek.getId();
+        addReport(report);
+
+        // Apply 1 point internal damage to head
+        int damage = SuicideImplantsAttackAction.getHostDamageFor();
+        HitData hit = new HitData(Mek.LOC_HEAD);
+        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+
+        report = new Report(4588);
+        report.subject = mek.getId();
+        addReport(report);
+
+        // Apply damage, bypassing armor to internal structure
+        addReport(damageEntity(mek, hit, damage, false, DamageType.NONE, true, false, false));
+
+        // Roll for critical hit in head
+        report = new Report(4589);
+        report.subject = mek.getId();
+        addReport(report);
+        addReport(criticalEntity(mek, Mek.LOC_HEAD, false, 0, 0));
+
+        // Kill the crew
+        report = new Report(4590);
+        report.subject = mek.getId();
+        addReport(report);
+        addReport(damageCrew(mek, 6)); // 6 hits = guaranteed death
+
+        // Report cockpit destroyed (for salvage purposes - the pilot death handles game mechanics)
+        report = new Report(4592);
+        report.subject = mek.getId();
+        addReport(report);
+    }
+
+    /**
+     * Resolve suicide implant detonation for a pilot in an Aerospace fighter. 1 point armor damage to nose, critical
+     * hit roll, cockpit destroyed.
+     */
+    private void resolveAeroPilotSuicide(Aero aero) {
+        Report report;
+
+        // Report the internal explosion
+        report = new Report(4591);
+        report.subject = aero.getId();
+        addReport(report);
+
+        // Apply 1 point damage to nose (armor first)
+        int damage = SuicideImplantsAttackAction.getHostDamageFor();
+        HitData hit = new HitData(Aero.LOC_NOSE);
+        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+
+        addReport(damageEntity(aero, hit, damage));
+
+        // Roll for critical hit
+        report = new Report(4589);
+        report.subject = aero.getId();
+        addReport(report);
+        addReport(criticalEntity(aero, Aero.LOC_NOSE, false, 0, 0));
+
+        // Kill the crew
+        report = new Report(4590);
+        report.subject = aero.getId();
+        addReport(report);
+        addReport(damageCrew(aero, 6));
+
+        // Report cockpit destroyed (the pilot death handles game mechanics)
+        report = new Report(4592);
+        report.subject = aero.getId();
+        addReport(report);
+    }
+
+    /**
+     * Resolve suicide implant detonation for vehicle crew. Crew Killed result, 1 point internal damage to ALL facings,
+     * critical hits.
+     */
+    private void resolveVehicleCrewSuicide(Tank tank) {
+        Report report;
+
+        // Report the explosion
+        report = new Report(4593);
+        report.subject = tank.getId();
+        addReport(report);
+
+        // Apply Crew Killed critical
+        report = new Report(4594);
+        report.subject = tank.getId();
+        addReport(report);
+        addReport(applyCriticalHit(tank, 0, new CriticalSlot(0, Tank.CRIT_CREW_KILLED), false, 0, false));
+
+        // Apply 1 point internal damage to all facings
+        int damage = SuicideImplantsAttackAction.getHostDamageFor();
+        for (int location = 0; location < tank.locations(); location++) {
+            if (tank.getInternal(location) > 0) {
+                report = new Report(4595);
+                report.subject = tank.getId();
+                report.add(tank.getLocationAbbr(location));
+                addReport(report);
+
+                HitData hit = new HitData(location);
+                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                addReport(damageEntity(tank, hit, damage, false, DamageType.NONE, true, false, false));
+
+                // Roll for critical hit
+                addReport(criticalEntity(tank, location, false, 0, 0));
+            }
+        }
     }
 
     /**
@@ -27284,6 +27608,9 @@ public class TWGameManager extends AbstractGameManager {
         } else if (aaa instanceof ToxinAttackAction toxinAttackAction) {
             toHit = toxinAttackAction.toHit(game);
             damage = ToxinAttackAction.getDamageFor((Infantry) ae);
+        } else if (aaa instanceof SuicideImplantsAttackAction suicideImplantsAction) {
+            toHit = suicideImplantsAction.toHit(game);
+            damage = SuicideImplantsAttackAction.getDamageFor(suicideImplantsAction.getTroopersDetonating());
         }
         pr.toHit = toHit;
         pr.damage = damage;
@@ -27377,6 +27704,9 @@ public class TWGameManager extends AbstractGameManager {
             cen = aaa.getEntityId();
         } else if (aaa instanceof ToxinAttackAction) {
             resolveToxinAttack(pr, cen);
+            cen = aaa.getEntityId();
+        } else if (aaa instanceof SuicideImplantsAttackAction) {
+            resolveSuicideImplantsAttack(pr, cen);
             cen = aaa.getEntityId();
         } else {
             LOGGER.error("Unknown attack action declared.");

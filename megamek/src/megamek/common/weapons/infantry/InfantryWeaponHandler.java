@@ -42,6 +42,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
+import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
@@ -131,8 +132,90 @@ public class InfantryWeaponHandler extends WeaponHandler {
             tsmBonusDamage = 0.14;
             damage += tsmBonusDamage;
         }
+
+        // Prosthetic Enhancement damage bonus at range 0 (IO p.84)
+        // Must check each slot separately for conventionalInfantryOnly
+        // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
+        double prostheticBonusDamage = 0;
+        StringBuilder prostheticEnhancementNames = new StringBuilder();
+        if (attackingEntity instanceof Infantry infantry) {
+            boolean isInSameHex = nRange == 0;
+            boolean hasProsthetics = infantry.hasProstheticEnhancement();
+            boolean hasEnhancedAbility = infantry.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+                  || infantry.hasAbility(OptionsConstants.MD_PL_I_ENHANCED);
+
+            if (isInSameHex && hasProsthetics && hasEnhancedAbility) {
+                boolean targetIsConventionalInfantry = target.isConventionalInfantry();
+
+                // Check slot 1
+                if (infantry.hasProstheticEnhancement1()) {
+                    ProstheticEnhancementType enhancement1 = infantry.getProstheticEnhancement1();
+                    boolean damageApplies = !enhancement1.isConventionalInfantryOnly() || targetIsConventionalInfantry;
+                    if (damageApplies && enhancement1.hasDamageBonus()) {
+                        prostheticBonusDamage += enhancement1.getDamagePerTrooper()
+                              * infantry.getProstheticEnhancement1Count();
+                        prostheticEnhancementNames.append(enhancement1.getDisplayName());
+                    }
+                }
+
+                // Check slot 2
+                if (infantry.hasProstheticEnhancement2()) {
+                    ProstheticEnhancementType enhancement2 = infantry.getProstheticEnhancement2();
+                    boolean damageApplies = !enhancement2.isConventionalInfantryOnly() || targetIsConventionalInfantry;
+                    if (damageApplies && enhancement2.hasDamageBonus()) {
+                        prostheticBonusDamage += enhancement2.getDamagePerTrooper()
+                              * infantry.getProstheticEnhancement2Count();
+                        if (prostheticEnhancementNames.length() > 0) {
+                            prostheticEnhancementNames.append(", ");
+                        }
+                        prostheticEnhancementNames.append(enhancement2.getDisplayName());
+                    }
+                }
+
+                damage += prostheticBonusDamage;
+            }
+        }
+
+        // Extraneous (Enhanced) Limbs damage bonus at range 0 (IO p.84)
+        // Each pair provides 2 items, damage stacks with regular prosthetic enhancements
+        // Only applies if the unit has the MD_PL_EXTRA_LIMBS ability
+        double extraneousBonusDamage = 0;
+        StringBuilder extraneousEnhancementNames = new StringBuilder();
+        if ((attackingEntity instanceof Infantry infantry) && (nRange == 0)
+              && infantry.hasExtraneousLimbs()
+              && infantry.hasAbility(OptionsConstants.MD_PL_EXTRA_LIMBS)) {
+            boolean targetIsConventionalInfantry = target.isConventionalInfantry();
+
+            // Check pair 1 (2 items per pair)
+            if (infantry.hasExtraneousPair1()) {
+                ProstheticEnhancementType enhancement1 = infantry.getExtraneousPair1();
+                boolean damageApplies = !enhancement1.isConventionalInfantryOnly() || targetIsConventionalInfantry;
+                if (damageApplies && enhancement1.hasDamageBonus()) {
+                    extraneousBonusDamage += enhancement1.getDamagePerTrooper() * 2; // 2 items per pair
+                    extraneousEnhancementNames.append(enhancement1.getDisplayName());
+                }
+            }
+
+            // Check pair 2 (2 items per pair)
+            if (infantry.hasExtraneousPair2()) {
+                ProstheticEnhancementType enhancement2 = infantry.getExtraneousPair2();
+                boolean damageApplies = !enhancement2.isConventionalInfantryOnly() || targetIsConventionalInfantry;
+                if (damageApplies && enhancement2.hasDamageBonus()) {
+                    extraneousBonusDamage += enhancement2.getDamagePerTrooper() * 2; // 2 items per pair
+                    if (extraneousEnhancementNames.length() > 0) {
+                        extraneousEnhancementNames.append(", ");
+                    }
+                    extraneousEnhancementNames.append(enhancement2.getDisplayName());
+                }
+            }
+
+            damage += extraneousBonusDamage;
+        }
+
         int damageDealt = (int) Math.round(damage * troopersHit);
         int tsmDamageDealt = (int) Math.round(tsmBonusDamage * troopersHit);
+        int prostheticDamageDealt = (int) Math.round(prostheticBonusDamage * troopersHit);
+        int extraneousDamageDealt = (int) Math.round(extraneousBonusDamage * troopersHit);
 
         // beast-mounted infantry get range 0 bonus damage per platoon
         if ((attackingEntity instanceof Infantry) && (nRange == 0)) {
@@ -178,16 +261,58 @@ public class InfantryWeaponHandler extends WeaponHandler {
         r.newlines = 0;
         vPhaseReport.addElement(r);
 
-        // Report TSM Implant bonus damage
-        if (tsmDamageDealt > 0) {
-            int baseDamageDealt = damageDealt - tsmDamageDealt;
-            Report tsmReport = new Report(3418);
-            tsmReport.subject = subjectId;
-            tsmReport.indent(2);
-            tsmReport.add(baseDamageDealt);
-            tsmReport.add(tsmDamageDealt);
-            vPhaseReport.addElement(tsmReport);
+        // Report bonus damage breakdown (TSM, Prosthetic Enhancement, and/or Extraneous Limbs)
+        // Calculate true base damage by subtracting all bonus sources
+        int baseDamageDealt = damageDealt - tsmDamageDealt - prostheticDamageDealt - extraneousDamageDealt;
+        boolean hasTsm = tsmDamageDealt > 0;
+        boolean hasProsthetic = prostheticDamageDealt > 0;
+        boolean hasExtraneous = extraneousDamageDealt > 0;
+
+        if (hasTsm || hasProsthetic || hasExtraneous) {
+            // Build combined enhancement names for reporting
+            StringBuilder allEnhancementNames = new StringBuilder();
+            if (hasProsthetic) {
+                allEnhancementNames.append(prostheticEnhancementNames);
+            }
+            if (hasExtraneous) {
+                if (allEnhancementNames.length() > 0) {
+                    allEnhancementNames.append(", ");
+                }
+                allEnhancementNames.append(extraneousEnhancementNames);
+            }
+
+            int totalProstheticDamage = prostheticDamageDealt + extraneousDamageDealt;
+
+            if (hasTsm && (hasProsthetic || hasExtraneous)) {
+                // TSM + any prosthetic/extraneous bonuses - show combined report
+                Report combinedReport = new Report(3421);
+                combinedReport.subject = subjectId;
+                combinedReport.indent(2);
+                combinedReport.add(baseDamageDealt);
+                combinedReport.add(tsmDamageDealt);
+                combinedReport.add(totalProstheticDamage);
+                combinedReport.add(allEnhancementNames.toString());
+                vPhaseReport.addElement(combinedReport);
+            } else if (hasTsm) {
+                // TSM only
+                Report tsmReport = new Report(3418);
+                tsmReport.subject = subjectId;
+                tsmReport.indent(2);
+                tsmReport.add(baseDamageDealt);
+                tsmReport.add(tsmDamageDealt);
+                vPhaseReport.addElement(tsmReport);
+            } else {
+                // Prosthetic and/or Extraneous only (no TSM)
+                Report prostheticReport = new Report(3419);
+                prostheticReport.subject = subjectId;
+                prostheticReport.indent(2);
+                prostheticReport.add(baseDamageDealt);
+                prostheticReport.add(totalProstheticDamage);
+                prostheticReport.add(allEnhancementNames.toString());
+                vPhaseReport.addElement(prostheticReport);
+            }
         }
+
         if (target.isConventionalInfantry()) {
             // this is a little strange, but I can't just do this in calcDamagePerHit
             // because

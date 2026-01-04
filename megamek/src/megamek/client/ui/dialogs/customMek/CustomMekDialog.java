@@ -67,6 +67,7 @@ import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.enums.Gender;
+import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscMounted;
@@ -208,6 +209,21 @@ public class CustomMekDialog extends AbstractButtonDialog
     private final boolean editable;
     private final boolean editableDeployment;
 
+    // Prosthetic Enhancement UI components (inline with checkbox, for conventional infantry only)
+    // Standard Enhanced (MD_PL_ENHANCED) - inline controls for slot 1 only
+    private JComboBox<String> choProstheticTypeStd;
+    private JSpinner spinProstheticCountStd;
+    // Improved Enhanced (MD_PL_I_ENHANCED) - inline controls for slot 1 and slot 2
+    private JComboBox<String> choProstheticType1Imp;
+    private JSpinner spinProstheticCount1Imp;
+    private JComboBox<String> choProstheticType2Imp;
+    private JSpinner spinProstheticCount2Imp;
+    // Extraneous Limbs (MD_PL_EXTRA_LIMBS) - inline controls for pair 1 and pair 2 (no count, always 2)
+    private JLabel lblExtraneousPair1;
+    private JComboBox<String> choExtraneousPair1;
+    private JLabel lblExtraneousPair2;
+    private JComboBox<String> choExtraneousPair2;
+
     private int distance = 17;
     private int fuel = 0;
 
@@ -345,17 +361,23 @@ public class CustomMekDialog extends AbstractButtonDialog
                 }
 
                 // a bunch of stuff should get disabled for all but conventional infantry
+                // Prosthetic enhancements (Enhanced/Improved Enhanced) are infantry-only (IO p.84)
                 // Sensory implants (audio, visual, laser, tele) are infantry-only
                 // Gas Effuser (Pheromone/Toxin) is infantry-only (IO pg 79)
-                if (!entity.isConventionalInfantry()
-                      && (option.getName().equals(OptionsConstants.MD_PL_ENHANCED)
-                      || option.getName().equals(OptionsConstants.MD_PL_MASC)
-                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO)
-                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL)
-                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_LASER)
-                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_TELE)
-                      || option.getName().equals(OptionsConstants.MD_GAS_EFFUSER_PHEROMONE)
-                      || option.getName().equals(OptionsConstants.MD_GAS_EFFUSER_TOXIN))) {
+                String optionName = option.getName();
+                boolean isInfantryOnlyOption = switch (optionName) {
+                    case OptionsConstants.MD_PL_ENHANCED,
+                         OptionsConstants.MD_PL_I_ENHANCED,
+                         OptionsConstants.MD_PL_MASC,
+                         OptionsConstants.MD_CYBER_IMP_AUDIO,
+                         OptionsConstants.MD_CYBER_IMP_VISUAL,
+                         OptionsConstants.MD_CYBER_IMP_LASER,
+                         OptionsConstants.MD_CYBER_IMP_TELE,
+                         OptionsConstants.MD_GAS_EFFUSER_PHEROMONE,
+                         OptionsConstants.MD_GAS_EFFUSER_TOXIN -> true;
+                    default -> false;
+                };
+                if (!entity.isConventionalInfantry() && isInfantryOnlyOption) {
                     continue;
                 }
 
@@ -465,6 +487,21 @@ public class CustomMekDialog extends AbstractButtonDialog
             optionComp.addValue(Crew.ENVIRONMENT_SPECIALIST_WIND);
         }
 
+        // Prosthetic Limbs, Enhanced - add inline dropdown and spinner for slot 1
+        if (OptionsConstants.MD_PL_ENHANCED.equals(option.getName()) && entity.isConventionalInfantry()) {
+            addInlineProstheticControls(optionComp, entity, true);
+        }
+
+        // Prosthetic Limbs, Improved Enhanced - add inline dropdowns and spinners for both slots
+        if (OptionsConstants.MD_PL_I_ENHANCED.equals(option.getName()) && entity.isConventionalInfantry()) {
+            addInlineProstheticControls(optionComp, entity, false);
+        }
+
+        // Prosthetic Limbs, Extraneous (Enhanced) - add inline dropdowns for pair 1 and pair 2
+        if (OptionsConstants.MD_PL_EXTRA_LIMBS.equals(option.getName()) && entity.isConventionalInfantry()) {
+            addInlineExtraneousControls(optionComp, entity);
+        }
+
         gridBagLayout.setConstraints(optionComp, gridBagConstraints);
         panOptions.add(optionComp);
         optionComps.add(optionComp);
@@ -474,6 +511,395 @@ public class CustomMekDialog extends AbstractButtonDialog
         DialogOptionComponentYPanel optionComp = new DialogOptionComponentYPanel(this, option, editable);
         panPartReps.add(optionComp, GBC.eol());
         partRepsComps.add(optionComp);
+    }
+
+    /**
+     * Adds inline prosthetic enhancement controls (dropdown + spinner) to the option component panel.
+     * For Standard Enhanced: adds slot 1 controls only.
+     * For Improved Enhanced: adds slot 1 and slot 2 controls.
+     *
+     * @param optionComp The DialogOptionComponentYPanel to add controls to
+     * @param entity The entity being configured
+     * @param isStandardEnhanced True for MD_PL_ENHANCED (slot 1 only), false for MD_PL_I_ENHANCED (both slots)
+     */
+    private void addInlineProstheticControls(DialogOptionComponentYPanel optionComp, Entity entity,
+          boolean isStandardEnhanced) {
+        Infantry infantry = (entity instanceof Infantry) ? (Infantry) entity : null;
+        String typeTooltip = Messages.getString("CustomMekDialog.ProstheticTypeTooltip");
+        String countTooltip = Messages.getString("CustomMekDialog.ProstheticCountTooltip");
+
+        if (isStandardEnhanced) {
+            // Standard Enhanced: Create slot 1 controls only
+            choProstheticTypeStd = new JComboBox<>();
+            populateProstheticDropdown(choProstheticTypeStd);
+            SpinnerNumberModel countModel = new SpinnerNumberModel(1, 1, 2, 1);
+            spinProstheticCountStd = new JSpinner(countModel);
+
+            // Set initial values from entity slot 1
+            if ((infantry != null) && infantry.hasProstheticEnhancement1()) {
+                ProstheticEnhancementType type1 = infantry.getProstheticEnhancement1();
+                String itemText = type1.getCategory().getDisplayName() + ": " + type1.getDisplayName();
+                choProstheticTypeStd.setSelectedItem(itemText);
+                spinProstheticCountStd.setValue(infantry.getProstheticEnhancement1Count());
+            } else {
+                choProstheticTypeStd.setSelectedIndex(0);
+                spinProstheticCountStd.setValue(1);
+            }
+
+            // Enable/disable spinner based on dropdown selection
+            spinProstheticCountStd.setEnabled(choProstheticTypeStd.getSelectedIndex() > 0);
+            choProstheticTypeStd.addItemListener(e -> {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    spinProstheticCountStd.setEnabled(choProstheticTypeStd.getSelectedIndex() > 0);
+                }
+            });
+
+            // Set tooltips
+            choProstheticTypeStd.setToolTipText(typeTooltip);
+            spinProstheticCountStd.setToolTipText(countTooltip);
+
+            // Add controls inline
+            optionComp.add(choProstheticTypeStd);
+            optionComp.add(spinProstheticCountStd);
+
+            // Disable if not editable
+            if (!editable) {
+                choProstheticTypeStd.setEnabled(false);
+                spinProstheticCountStd.setEnabled(false);
+            }
+
+            // Set initial visibility based on current checkbox state
+            boolean isChecked = entity.hasAbility(OptionsConstants.MD_PL_ENHANCED);
+            choProstheticTypeStd.setVisible(isChecked);
+            spinProstheticCountStd.setVisible(isChecked);
+        } else {
+            // Improved Enhanced: Create controls for both slot 1 and slot 2
+            choProstheticType1Imp = new JComboBox<>();
+            populateProstheticDropdown(choProstheticType1Imp);
+            SpinnerNumberModel countModel1 = new SpinnerNumberModel(1, 1, 2, 1);
+            spinProstheticCount1Imp = new JSpinner(countModel1);
+
+            choProstheticType2Imp = new JComboBox<>();
+            populateProstheticDropdown(choProstheticType2Imp);
+            SpinnerNumberModel countModel2 = new SpinnerNumberModel(1, 1, 2, 1);
+            spinProstheticCount2Imp = new JSpinner(countModel2);
+
+            // Set initial values from entity
+            if ((infantry != null) && infantry.hasProstheticEnhancement1()) {
+                ProstheticEnhancementType type1 = infantry.getProstheticEnhancement1();
+                String itemText = type1.getCategory().getDisplayName() + ": " + type1.getDisplayName();
+                choProstheticType1Imp.setSelectedItem(itemText);
+                spinProstheticCount1Imp.setValue(infantry.getProstheticEnhancement1Count());
+            } else {
+                choProstheticType1Imp.setSelectedIndex(0);
+                spinProstheticCount1Imp.setValue(1);
+            }
+
+            if ((infantry != null) && infantry.hasProstheticEnhancement2()) {
+                ProstheticEnhancementType type2 = infantry.getProstheticEnhancement2();
+                String itemText = type2.getCategory().getDisplayName() + ": " + type2.getDisplayName();
+                choProstheticType2Imp.setSelectedItem(itemText);
+                spinProstheticCount2Imp.setValue(infantry.getProstheticEnhancement2Count());
+            } else {
+                choProstheticType2Imp.setSelectedIndex(0);
+                spinProstheticCount2Imp.setValue(1);
+            }
+
+            // Enable/disable spinners based on dropdown selection
+            spinProstheticCount1Imp.setEnabled(choProstheticType1Imp.getSelectedIndex() > 0);
+            choProstheticType1Imp.addItemListener(e -> {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    spinProstheticCount1Imp.setEnabled(choProstheticType1Imp.getSelectedIndex() > 0);
+                }
+            });
+
+            spinProstheticCount2Imp.setEnabled(choProstheticType2Imp.getSelectedIndex() > 0);
+            choProstheticType2Imp.addItemListener(e -> {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    spinProstheticCount2Imp.setEnabled(choProstheticType2Imp.getSelectedIndex() > 0);
+                }
+            });
+
+            // Set tooltips
+            choProstheticType1Imp.setToolTipText(typeTooltip);
+            spinProstheticCount1Imp.setToolTipText(countTooltip);
+            choProstheticType2Imp.setToolTipText(typeTooltip);
+            spinProstheticCount2Imp.setToolTipText(countTooltip);
+
+            // Add controls inline
+            optionComp.add(choProstheticType1Imp);
+            optionComp.add(spinProstheticCount1Imp);
+            optionComp.add(choProstheticType2Imp);
+            optionComp.add(spinProstheticCount2Imp);
+
+            // Disable if not editable
+            if (!editable) {
+                choProstheticType1Imp.setEnabled(false);
+                spinProstheticCount1Imp.setEnabled(false);
+                choProstheticType2Imp.setEnabled(false);
+                spinProstheticCount2Imp.setEnabled(false);
+            }
+
+            // Set initial visibility based on current checkbox state
+            boolean isChecked = entity.hasAbility(OptionsConstants.MD_PL_I_ENHANCED);
+            choProstheticType1Imp.setVisible(isChecked);
+            spinProstheticCount1Imp.setVisible(isChecked);
+            choProstheticType2Imp.setVisible(isChecked);
+            spinProstheticCount2Imp.setVisible(isChecked);
+        }
+    }
+
+    /**
+     * Populates a prosthetic enhancement dropdown with all enhancement types grouped by category.
+     */
+    private void populateProstheticDropdown(JComboBox<String> dropdown) {
+        dropdown.addItem(Messages.getString("CustomMekDialog.None"));
+        for (ProstheticEnhancementType.EnhancementCategory category : ProstheticEnhancementType.EnhancementCategory.values()) {
+            for (ProstheticEnhancementType type : ProstheticEnhancementType.values()) {
+                if (type.getCategory() == category) {
+                    dropdown.addItem(category.getDisplayName() + ": " + type.getDisplayName());
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds inline extraneous limb controls (2 dropdowns for pair 1 and pair 2) to the option component panel. Each pair
+     * always provides 2 items, so no count spinner is needed.
+     *
+     * @param optionComp The DialogOptionComponentYPanel to add controls to
+     * @param entity     The entity being configured
+     */
+    private void addInlineExtraneousControls(DialogOptionComponentYPanel optionComp, Entity entity) {
+        Infantry infantry = (entity instanceof Infantry) ? (Infantry) entity : null;
+        String pair1Tooltip = Messages.getString("CustomMekDialog.ExtraneousPair1Tooltip");
+        String pair2Tooltip = Messages.getString("CustomMekDialog.ExtraneousPair2Tooltip");
+
+        // Create pair 1 dropdown
+        choExtraneousPair1 = new JComboBox<>();
+        populateProstheticDropdown(choExtraneousPair1);
+
+        // Create pair 2 dropdown
+        choExtraneousPair2 = new JComboBox<>();
+        populateProstheticDropdown(choExtraneousPair2);
+
+        // Set initial values from entity
+        if ((infantry != null) && infantry.hasExtraneousPair1()) {
+            ProstheticEnhancementType pair1Type = infantry.getExtraneousPair1();
+            String itemText = pair1Type.getCategory().getDisplayName() + ": " + pair1Type.getDisplayName();
+            choExtraneousPair1.setSelectedItem(itemText);
+        } else {
+            choExtraneousPair1.setSelectedIndex(0);
+        }
+
+        if ((infantry != null) && infantry.hasExtraneousPair2()) {
+            ProstheticEnhancementType pair2Type = infantry.getExtraneousPair2();
+            String itemText = pair2Type.getCategory().getDisplayName() + ": " + pair2Type.getDisplayName();
+            choExtraneousPair2.setSelectedItem(itemText);
+        } else {
+            choExtraneousPair2.setSelectedIndex(0);
+        }
+
+        // Set tooltips
+        choExtraneousPair1.setToolTipText(pair1Tooltip);
+        choExtraneousPair2.setToolTipText(pair2Tooltip);
+
+        // Create labels
+        lblExtraneousPair1 = new JLabel(Messages.getString("CustomMekDialog.labExtraneousPair1"));
+        lblExtraneousPair2 = new JLabel(Messages.getString("CustomMekDialog.labExtraneousPair2"));
+
+        // Add labels and controls inline
+        optionComp.add(lblExtraneousPair1);
+        optionComp.add(choExtraneousPair1);
+        optionComp.add(lblExtraneousPair2);
+        optionComp.add(choExtraneousPair2);
+
+        // Disable if not editable
+        if (!editable) {
+            choExtraneousPair1.setEnabled(false);
+            choExtraneousPair2.setEnabled(false);
+        }
+
+        // Set initial visibility based on current checkbox state
+        boolean isChecked = entity.hasAbility(OptionsConstants.MD_PL_EXTRA_LIMBS);
+        lblExtraneousPair1.setVisible(isChecked);
+        choExtraneousPair1.setVisible(isChecked);
+        lblExtraneousPair2.setVisible(isChecked);
+        choExtraneousPair2.setVisible(isChecked);
+    }
+
+    /**
+     * Updates the visibility of inline prosthetic enhancement controls when checkbox state changes.
+     *
+     * @param optionName The option that was toggled (MD_PL_ENHANCED, MD_PL_I_ENHANCED, or MD_PL_EXTRA_LIMBS)
+     * @param isChecked Whether the checkbox is now checked
+     */
+    private void updateInlineProstheticVisibility(String optionName, boolean isChecked) {
+        if (OptionsConstants.MD_PL_ENHANCED.equals(optionName)) {
+            // Standard Enhanced uses its own slot 1 controls
+            if (choProstheticTypeStd != null) {
+                choProstheticTypeStd.setVisible(isChecked);
+                spinProstheticCountStd.setVisible(isChecked);
+            }
+        } else if (OptionsConstants.MD_PL_I_ENHANCED.equals(optionName)) {
+            // Improved Enhanced uses its own slot 1 and slot 2 controls
+            if (choProstheticType1Imp != null) {
+                choProstheticType1Imp.setVisible(isChecked);
+                spinProstheticCount1Imp.setVisible(isChecked);
+            }
+            if (choProstheticType2Imp != null) {
+                choProstheticType2Imp.setVisible(isChecked);
+                spinProstheticCount2Imp.setVisible(isChecked);
+            }
+        } else if (OptionsConstants.MD_PL_EXTRA_LIMBS.equals(optionName)) {
+            // Extraneous Limbs uses pair 1 and pair 2 dropdowns
+            if (lblExtraneousPair1 != null) {
+                lblExtraneousPair1.setVisible(isChecked);
+            }
+            if (choExtraneousPair1 != null) {
+                choExtraneousPair1.setVisible(isChecked);
+            }
+            if (lblExtraneousPair2 != null) {
+                lblExtraneousPair2.setVisible(isChecked);
+            }
+            if (choExtraneousPair2 != null) {
+                choExtraneousPair2.setVisible(isChecked);
+            }
+        }
+    }
+
+    /**
+     * Applies prosthetic enhancement settings from the UI to the entity.
+     * Reads from the controls of whichever prosthetic option (Standard or Improved) is currently selected.
+     */
+    private void applyProstheticEnhancement(Entity entity) {
+        if (!(entity instanceof Infantry infantry)) {
+            return;
+        }
+
+        // Check which prosthetic option is selected (they are mutually exclusive)
+        boolean hasStandardEnhanced = entity.hasAbility(OptionsConstants.MD_PL_ENHANCED);
+        boolean hasImprovedEnhanced = entity.hasAbility(OptionsConstants.MD_PL_I_ENHANCED);
+
+        if (hasStandardEnhanced && (choProstheticTypeStd != null)) {
+            // Standard Enhanced: Apply slot 1 from Standard controls
+            applyProstheticSlot(infantry, choProstheticTypeStd, spinProstheticCountStd, true);
+            // Clear slot 2 (not used by Standard Enhanced)
+            infantry.setProstheticEnhancement2(null);
+            infantry.setProstheticEnhancement2Count(0);
+        } else if (hasImprovedEnhanced && (choProstheticType1Imp != null)) {
+            // Improved Enhanced: Apply slot 1 and slot 2 from Improved controls
+            applyProstheticSlot(infantry, choProstheticType1Imp, spinProstheticCount1Imp, true);
+            if (choProstheticType2Imp != null) {
+                applyProstheticSlot(infantry, choProstheticType2Imp, spinProstheticCount2Imp, false);
+            }
+        } else {
+            // Neither option selected - clear both slots
+            infantry.setProstheticEnhancement1(null);
+            infantry.setProstheticEnhancement1Count(0);
+            infantry.setProstheticEnhancement2(null);
+            infantry.setProstheticEnhancement2Count(0);
+        }
+    }
+
+    /**
+     * Applies a single prosthetic enhancement slot from UI to entity.
+     */
+    private void applyProstheticSlot(Infantry infantry, JComboBox<String> typeDropdown,
+          JSpinner countSpinner, boolean isSlot1) {
+        int selectedIndex = typeDropdown.getSelectedIndex();
+        if (selectedIndex <= 0) {
+            // "None" selected - clear this slot
+            if (isSlot1) {
+                infantry.setProstheticEnhancement1(null);
+                infantry.setProstheticEnhancement1Count(0);
+            } else {
+                infantry.setProstheticEnhancement2(null);
+                infantry.setProstheticEnhancement2Count(0);
+            }
+        } else {
+            // Parse the selected item to find the enhancement type
+            String selectedText = (String) typeDropdown.getSelectedItem();
+            ProstheticEnhancementType selectedType = null;
+
+            for (ProstheticEnhancementType type : ProstheticEnhancementType.values()) {
+                String itemText = type.getCategory().getDisplayName() + ": " + type.getDisplayName();
+                if (itemText.equals(selectedText)) {
+                    selectedType = type;
+                    break;
+                }
+            }
+
+            if (selectedType != null) {
+                if (isSlot1) {
+                    infantry.setProstheticEnhancement1(selectedType);
+                    infantry.setProstheticEnhancement1Count((Integer) countSpinner.getValue());
+                } else {
+                    infantry.setProstheticEnhancement2(selectedType);
+                    infantry.setProstheticEnhancement2Count((Integer) countSpinner.getValue());
+                }
+            }
+        }
+    }
+
+    /**
+     * Applies extraneous limb settings from the UI to the entity. Each pair always provides 2 items, so no count is
+     * needed.
+     */
+    private void applyExtraneousLimbs(Entity entity) {
+        if (!(entity instanceof Infantry infantry)) {
+            return;
+        }
+
+        boolean hasExtraneousLimbs = entity.hasAbility(OptionsConstants.MD_PL_EXTRA_LIMBS);
+
+        if (hasExtraneousLimbs && (choExtraneousPair1 != null)) {
+            // Apply pair 1
+            applyExtraneousPair(infantry, choExtraneousPair1, true);
+            // Apply pair 2
+            if (choExtraneousPair2 != null) {
+                applyExtraneousPair(infantry, choExtraneousPair2, false);
+            }
+        } else {
+            // Option not selected - clear both pairs
+            infantry.setExtraneousPair1(null);
+            infantry.setExtraneousPair2(null);
+        }
+    }
+
+    /**
+     * Applies a single extraneous limb pair from UI to entity.
+     */
+    private void applyExtraneousPair(Infantry infantry, JComboBox<String> typeDropdown, boolean isPair1) {
+        int selectedIndex = typeDropdown.getSelectedIndex();
+        if (selectedIndex <= 0) {
+            // "None" selected - clear this pair
+            if (isPair1) {
+                infantry.setExtraneousPair1(null);
+            } else {
+                infantry.setExtraneousPair2(null);
+            }
+        } else {
+            // Parse the selected item to find the enhancement type
+            String selectedText = (String) typeDropdown.getSelectedItem();
+            ProstheticEnhancementType selectedType = null;
+
+            for (ProstheticEnhancementType type : ProstheticEnhancementType.values()) {
+                String itemText = type.getCategory().getDisplayName() + ": " + type.getDisplayName();
+                if (itemText.equals(selectedText)) {
+                    selectedType = type;
+                    break;
+                }
+            }
+
+            if (selectedType != null) {
+                if (isPair1) {
+                    infantry.setExtraneousPair1(selectedType);
+                } else {
+                    infantry.setExtraneousPair2(selectedType);
+                }
+            }
+        }
     }
 
     @Override
@@ -491,6 +917,21 @@ public class CustomMekDialog extends AbstractButtonDialog
                       Messages.getString("CustomMekDialog.MaxSensoryImplantsTitle"),
                       JOptionPane.WARNING_MESSAGE);
             }
+        }
+
+        // Enhanced and Improved Enhanced are mutually exclusive
+        // When one is selected, deselect the other
+        if (state && option.getName().equals(OptionsConstants.MD_PL_ENHANCED)) {
+            deselectOption(OptionsConstants.MD_PL_I_ENHANCED);
+        } else if (state && option.getName().equals(OptionsConstants.MD_PL_I_ENHANCED)) {
+            deselectOption(OptionsConstants.MD_PL_ENHANCED);
+        }
+
+        // Update prosthetic enhancement inline control visibility when Enhanced/Improved Enhanced/Extraneous is toggled
+        if (option.getName().equals(OptionsConstants.MD_PL_ENHANCED)
+              || option.getName().equals(OptionsConstants.MD_PL_I_ENHANCED)
+              || option.getName().equals(OptionsConstants.MD_PL_EXTRA_LIMBS)) {
+            updateInlineProstheticVisibility(option.getName(), state);
         }
 
         // Gas Effuser (Pheromone/Toxin) is only for Conventional Infantry (IO pg 79)
@@ -591,6 +1032,18 @@ public class CustomMekDialog extends AbstractButtonDialog
             }
         }
         return false;
+    }
+
+    /**
+     * Deselects the option with the given name.
+     */
+    private void deselectOption(String optionName) {
+        for (DialogOptionComponentYPanel optComp : optionComps) {
+            if (optComp.getOption().getName().equals(optionName)) {
+                optComp.setSelected(false);
+                break;
+            }
+        }
     }
 
     /**
@@ -1112,6 +1565,12 @@ public class CustomMekDialog extends AbstractButtonDialog
             setQuirks();
             setPartReps();
             m_equip.applyChoices();
+
+            // Apply prosthetic enhancement and extraneous limbs for conventional infantry
+            if (entity.isConventionalInfantry()) {
+                applyProstheticEnhancement(entity);
+                applyExtraneousLimbs(entity);
+            }
 
             if (entity instanceof BattleArmor) {
                 // have to reset internals because of dermal armor option

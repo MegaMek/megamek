@@ -58,6 +58,7 @@ import megamek.common.weapons.lasers.innerSphere.medium.ISLaserMedium;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -160,7 +161,8 @@ public class BuildingEntityTest extends GameBoardTestCase {
 
     @Test
     void testGetGenericBattleValue() {
-        assertEquals(0, building.getGenericBattleValue());
+        // Currently we don't calculate a generic BV
+        assertEquals(building.calculateBattleValue(), building.getGenericBattleValue());
     }
 
     @Test

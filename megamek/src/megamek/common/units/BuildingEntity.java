@@ -201,7 +201,8 @@ public class BuildingEntity extends AbstractBuildingEntity {
      */
     @Override
     public int getGenericBattleValue() {
-        return 0;
+        // TODO: Actually calculate this? I ripped this from Aerospace
+        return calculateBattleValue();
     }
 
     /**

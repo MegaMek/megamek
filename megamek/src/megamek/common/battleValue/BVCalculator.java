@@ -120,6 +120,8 @@ public abstract class BVCalculator {
             return new GunEmplacementBVCalculator(entity);
         } else if (entity instanceof HandheldWeapon) {
             return new HandheldWeaponBVCalculator(entity);
+        } else if (entity instanceof AbstractBuildingEntity) {
+            return new AbstractBuildingEntityBVCalculator(entity);
         } else { // Tank
             return new CombatVehicleBVCalculator(entity);
         }

@@ -1280,6 +1280,20 @@ public class Infantry extends Entity {
     }
 
     /**
+     * Returns true if glider wings are installed on non-foot infantry. Per IO p.85 and confirmed by the rules team,
+     * glider wings can only be used by foot infantry - motorized, mechanized, and beast-mounted infantry cannot use
+     * them.
+     *
+     * @return true if invalid configuration (glider wings on non-foot infantry)
+     */
+    public boolean hasGliderWingsOnInvalidInfantryType() {
+        if (!hasAbility(OptionsConstants.MD_PL_GLIDER)) {
+            return false;
+        }
+        return isMechanized() || getMovementMode().isMotorizedInfantry() || (getMount() != null);
+    }
+
+    /**
      * Returns the maximum number of extraneous limb pairs allowed.
      * Per IO p.85, if glider wings are installed, only one pair of extraneous
      * limbs is allowed (instead of the normal two pairs).

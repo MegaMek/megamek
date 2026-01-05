@@ -233,6 +233,24 @@ public class TestInfantry extends TestEntity {
             correct = false;
         }
 
+        // Glider wings can only be used by foot infantry (IO p.85, confirmed by rules team)
+        if (inf.hasGliderWingsOnInvalidInfantryType()) {
+            buff.append("Glider wings can only be used by foot infantry, not motorized, mechanized, or beast-mounted!\n");
+            correct = false;
+        }
+
+        // Glider wings and powered flight wings are mutually exclusive (IO p.85)
+        if (inf.hasInvalidWingsConfiguration()) {
+            buff.append("Glider wings and powered flight wings cannot both be installed!\n");
+            correct = false;
+        }
+
+        // Glider wings limit extraneous limbs to one pair (IO p.85)
+        if (inf.hasExcessiveExtraneousLimbs()) {
+            buff.append("Glider wings limit extraneous limbs to one pair!\n");
+            correct = false;
+        }
+
         if (infantry.hasFieldWeapon()) {
             // These tests include field artillery
             Mounted<?> firstFieldGun = infantry.originalFieldWeapons().get(0);

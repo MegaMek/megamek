@@ -50,6 +50,11 @@ import megamek.logging.MMLogger;
  *
  * <p>The pod itself is immobile and uses the Life Boat sprite.
  *
+ * <p><b>Damage Model (TO:AUE p.121):</b> Attacks against a jettisoned CVEP may be made as if targeting
+ * an immobile unit. The CVEP is considered breached (and its occupants killed) after sustaining more
+ * than 2 points of damage. This class tracks cumulative damage rather than using the infantry
+ * trooper-based damage model.
+ *
  * @author MegaMek Team
  */
 public class CombatVehicleEscapePod extends EjectedCrew {
@@ -61,8 +66,20 @@ public class CombatVehicleEscapePod extends EjectedCrew {
     /** Chassis name used for image lookup in mekset.txt */
     public static final String CVEP_CHASSIS = "Life Boat";
 
+    /**
+     * Per TO:AUE p.121, the CVEP is breached after sustaining MORE than this amount of damage. So 1-2 damage = OK, 3+
+     * damage = breached and crew killed.
+     */
+    public static final int BREACH_THRESHOLD = 2;
+
     /** Whether the crew is still inside the pod (vs having exited as infantry) */
     private boolean crewInside = true;
+
+    /** Cumulative damage sustained by the pod. Pod is breached when this exceeds BREACH_THRESHOLD. */
+    private int cumulativeDamage = 0;
+
+    /** Whether the pod has been breached (crew killed). */
+    private boolean breached = false;
 
     /**
      * Creates a new Combat Vehicle Escape Pod from a launching vehicle.
@@ -102,8 +119,8 @@ public class CombatVehicleEscapePod extends EjectedCrew {
 
     @Override
     public boolean isImmobile() {
-        // Escape pods cannot move while crew is inside
-        return crewInside;
+        // Per TO:AUE p.121, CVEP is always targeted as an immobile unit
+        return true;
     }
 
     @Override
@@ -144,12 +161,69 @@ public class CombatVehicleEscapePod extends EjectedCrew {
     }
 
     /**
+     * Returns the cumulative damage sustained by this pod.
+     *
+     * @return the total damage taken
+     */
+    public int getCumulativeDamage() {
+        return cumulativeDamage;
+    }
+
+    /**
+     * Applies damage to the escape pod. Per TO:AUE p.121, the pod is breached (and occupants killed) after sustaining
+     * more than 2 points of damage.
+     *
+     * @param damage the amount of damage to apply
+     *
+     * @return true if the pod was breached by this damage
+     */
+    public boolean applyDamage(int damage) {
+        if (breached || damage <= 0) {
+            return false;
+        }
+
+        cumulativeDamage += damage;
+        logger.debug("CVEP {} took {} damage, cumulative: {}", getDisplayName(), damage, cumulativeDamage);
+
+        if (cumulativeDamage > BREACH_THRESHOLD) {
+            breached = true;
+            logger.debug("CVEP {} breached! Crew killed.", getDisplayName());
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether this pod has been breached (hull integrity compromised). A breached pod has its occupants
+     * killed.
+     *
+     * @return true if the pod has been breached
+     */
+    public boolean isBreached() {
+        return breached;
+    }
+
+    /**
+     * Sets the breached status of the pod.
+     *
+     * @param breached true if the pod is breached
+     */
+    public void setBreached(boolean breached) {
+        this.breached = breached;
+    }
+
+    /**
      * Checks if the crew can safely exit the pod at its current location. Crew cannot exit into deep water or other
      * hazardous terrain without appropriate equipment.
      *
      * @return true if crew can safely exit
      */
     public boolean canCrewExit() {
+        // Can't exit if pod is breached (crew is dead)
+        if (breached) {
+            return false;
+        }
+
         if (!crewInside || getCrew() == null || getCrew().isDead()) {
             return false;
         }

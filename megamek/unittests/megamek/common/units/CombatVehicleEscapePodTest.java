@@ -32,11 +32,13 @@
  */
 package megamek.common.units;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
@@ -380,6 +382,173 @@ class CombatVehicleEscapePodTest {
 
             assertFalse(tank.canLaunchEscapePod(),
                   "Cannot launch when vehicle is doomed");
+        }
+    }
+
+    @Nested
+    @DisplayName("CVEP Damage Model Tests (TO:AUE p.121)")
+    class CvepDamageModelTests {
+
+        /**
+         * Creates a CVEP using the default constructor for testing damage mechanics. This avoids the complexity of
+         * setting up a full Tank with crew.
+         */
+        private CombatVehicleEscapePod createTestCvep() {
+            CombatVehicleEscapePod cvep = new CombatVehicleEscapePod();
+            cvep.setPosition(new Coords(5, 5));
+            return cvep;
+        }
+
+        @Test
+        @DisplayName("New CVEP has zero cumulative damage")
+        void newCvep_HasZeroDamage() {
+            CombatVehicleEscapePod cvep = createTestCvep();
+
+            assertEquals(0, cvep.getCumulativeDamage(),
+                  "New CVEP should have zero cumulative damage");
+            assertFalse(cvep.isBreached(),
+                  "New CVEP should not be breached");
+        }
+
+        @Test
+        @DisplayName("CVEP survives 1 point of damage")
+        void cvep_Survives1Damage() {
+            CombatVehicleEscapePod cvep = createTestCvep();
+
+            boolean breached = cvep.applyDamage(1);
+
+            assertFalse(breached, "CVEP should not be breached by 1 damage");
+            assertEquals(1, cvep.getCumulativeDamage(), "CVEP should track 1 damage");
+            assertFalse(cvep.isBreached(), "CVEP should not be breached");
+        }
+
+        @Test
+        @DisplayName("CVEP survives 2 points of damage")
+        void cvep_Survives2Damage() {
+            CombatVehicleEscapePod cvep = createTestCvep();
+
+            boolean breached = cvep.applyDamage(2);
+
+            assertFalse(breached, "CVEP should not be breached by exactly 2 damage");
+            assertEquals(2, cvep.getCumulativeDamage(), "CVEP should track 2 damage");
+            assertFalse(cvep.isBreached(), "CVEP should not be breached");
+        }
+
+        @Test
+        @DisplayName("CVEP is breached by 3 points of damage")
+        void cvep_BreachedBy3Damage() {
+            CombatVehicleEscapePod cvep = createTestCvep();
+
+            boolean breached = cvep.applyDamage(3);
+
+            assertTrue(breached, "CVEP should be breached by 3 damage (more than 2)");
+            assertEquals(3, cvep.getCumulativeDamage(), "CVEP should track 3 damage");
+            assertTrue(cvep.isBreached(), "CVEP should be breached");
+        }
+
+        @Test
+        @DisplayName("CVEP cumulative damage - 1 + 1 = survives")
+        void cvep_CumulativeDamage_1Plus1_Survives() {
+            CombatVehicleEscapePod cvep = createTestCvep();
+
+            cvep.applyDamage(1);
+            boolean breached = cvep.applyDamage(1);
+
+            assertFalse(breached, "CVEP should survive 1+1=2 cumulative damage");
+            assertEquals(2, cvep.getCumulativeDamage(), "CVEP should track 2 cumulative damage");
+            assertFalse(cvep.isBreached(), "CVEP should not be breached");
+        }
+
+        @Test
+        @DisplayName("CVEP cumulative damage - 1 + 1 + 1 = breached")
+        void cvep_CumulativeDamage_1Plus1Plus1_Breached() {
+            CombatVehicleEscapePod cvep = createTestCvep();
+
+            cvep.applyDamage(1);
+            cvep.applyDamage(1);
+            boolean breached = cvep.applyDamage(1);
+
+            assertTrue(breached, "CVEP should be breached by 1+1+1=3 cumulative damage");
+            assertEquals(3, cvep.getCumulativeDamage(), "CVEP should track 3 cumulative damage");
+            assertTrue(cvep.isBreached(), "CVEP should be breached");
+        }
+
+        @Test
+        @DisplayName("CVEP cumulative damage - 2 + 1 = breached")
+        void cvep_CumulativeDamage_2Plus1_Breached() {
+            CombatVehicleEscapePod cvep = createTestCvep();
+
+            cvep.applyDamage(2);
+            boolean breached = cvep.applyDamage(1);
+
+            assertTrue(breached, "CVEP should be breached by 2+1=3 cumulative damage");
+            assertTrue(cvep.isBreached(), "CVEP should be breached");
+        }
+
+        @Test
+        @DisplayName("Breached CVEP ignores additional damage")
+        void cvep_BreachedIgnoresAdditionalDamage() {
+            CombatVehicleEscapePod cvep = createTestCvep();
+
+            cvep.applyDamage(3); // Breach
+            int damageAfterBreach = cvep.getCumulativeDamage();
+
+            boolean result = cvep.applyDamage(5); // Additional damage after breach
+
+            assertFalse(result, "applyDamage should return false when already breached");
+            assertEquals(damageAfterBreach, cvep.getCumulativeDamage(),
+                  "Cumulative damage should not increase after breach");
+        }
+
+        @Test
+        @DisplayName("Zero damage does not affect CVEP")
+        void cvep_ZeroDamage_NoEffect() {
+            CombatVehicleEscapePod cvep = createTestCvep();
+
+            boolean breached = cvep.applyDamage(0);
+
+            assertFalse(breached, "Zero damage should not breach CVEP");
+            assertEquals(0, cvep.getCumulativeDamage(), "Zero damage should not be tracked");
+        }
+
+        @Test
+        @DisplayName("Negative damage does not affect CVEP")
+        void cvep_NegativeDamage_NoEffect() {
+            CombatVehicleEscapePod cvep = createTestCvep();
+
+            boolean breached = cvep.applyDamage(-5);
+
+            assertFalse(breached, "Negative damage should not breach CVEP");
+            assertEquals(0, cvep.getCumulativeDamage(), "Negative damage should not be tracked");
+        }
+
+        @Test
+        @DisplayName("CVEP is always immobile per TO:AUE p.121")
+        void cvep_AlwaysImmobile() {
+            CombatVehicleEscapePod cvep = createTestCvep();
+
+            assertTrue(cvep.isImmobile(), "CVEP should always be immobile for targeting purposes");
+
+            // Even if crew is outside, the pod itself is still immobile
+            cvep.setCrewInside(false);
+            assertTrue(cvep.isImmobile(), "Empty CVEP should still be immobile");
+        }
+
+        @Test
+        @DisplayName("Breached CVEP cannot have crew exit")
+        void cvep_Breached_CrewCannotExit() {
+            CombatVehicleEscapePod cvep = createTestCvep();
+            cvep.applyDamage(3); // Breach the pod
+
+            assertFalse(cvep.canCrewExit(),
+                  "Crew cannot exit a breached CVEP (they are dead)");
+        }
+
+        @Test
+        @DisplayName("BREACH_THRESHOLD constant is 2")
+        void cvep_BreachThresholdIs2() {
+            assertEquals(2, CombatVehicleEscapePod.BREACH_THRESHOLD,
+                  "BREACH_THRESHOLD should be 2 per TO:AUE p.121");
         }
     }
 }

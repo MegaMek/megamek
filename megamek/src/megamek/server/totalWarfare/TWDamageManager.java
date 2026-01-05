@@ -210,6 +210,13 @@ public class TWDamageManager implements IDamageManager {
             return reportVec;
         }
 
+        // Combat Vehicle Escape Pod (CVEP) has a special damage model per TO:AUE p.121:
+        // - Targeted as an immobile unit
+        // - Breached (and occupants killed) after sustaining more than 2 points of damage
+        if (entity instanceof CombatVehicleEscapePod cvep) {
+            return handleCombatVehicleEscapePodDamage(cvep, damage, reportVec);
+        }
+
         // This is good for shields if a shield absorbs the hit it shouldn't
         // affect the pilot.
         // TC SRM's that hit the head do external and internal damage but its
@@ -295,7 +302,9 @@ public class TWDamageManager implements IDamageManager {
             }
         }
         boolean isBattleArmor = entity instanceof BattleArmor;
-        boolean isPlatoon = !isBattleArmor && (entity instanceof Infantry);
+        // CVEP uses its own damage model (2-damage threshold), not infantry platoon model
+        boolean isCombatVehicleEscapePod = entity instanceof CombatVehicleEscapePod;
+        boolean isPlatoon = !isBattleArmor && !isCombatVehicleEscapePod && (entity instanceof Infantry);
         boolean isFerroFibrousTarget = false;
         boolean wasDamageIS = false;
         boolean tookInternalDamage = damageIS;
@@ -2087,5 +2096,56 @@ public class TWDamageManager implements IDamageManager {
 
         }
         return spotlightHittable;
+    }
+
+    /**
+     * Handles damage to a Combat Vehicle Escape Pod per TO:AUE p.121. The pod is breached (and occupants killed) after
+     * sustaining more than 2 points of damage.
+     *
+     * @param cvep      the escape pod taking damage
+     * @param damage    the amount of damage
+     * @param reportVec the report vector for game log
+     *
+     * @return the updated report vector
+     */
+    private Vector<Report> handleCombatVehicleEscapePodDamage(CombatVehicleEscapePod cvep, int damage,
+          Vector<Report> reportVec) {
+        Report report;
+
+        // Report damage taken
+        report = new Report(5342);
+        report.subject = cvep.getId();
+        report.addDesc(cvep);
+        report.add(damage);
+        report.add(cvep.getCumulativeDamage());
+        report.add(cvep.getCumulativeDamage() + damage);
+        reportVec.add(report);
+
+        // Apply damage and check for breach
+        boolean wasBreached = cvep.applyDamage(damage);
+
+        if (wasBreached) {
+            // Pod breached - crew killed
+            report = new Report(5343);
+            report.subject = cvep.getId();
+            report.addDesc(cvep);
+            reportVec.add(report);
+
+            // Kill the crew
+            if (cvep.getCrew() != null) {
+                cvep.getCrew().setDead(true);
+            }
+
+            // Destroy the pod
+            reportVec.addAll(manager.destroyEntity(cvep, "hull breach", false, false));
+        } else {
+            // Pod damaged but not breached
+            report = new Report(5344);
+            report.subject = cvep.getId();
+            report.add(CombatVehicleEscapePod.BREACH_THRESHOLD - cvep.getCumulativeDamage());
+            reportVec.add(report);
+        }
+
+        return reportVec;
     }
 }

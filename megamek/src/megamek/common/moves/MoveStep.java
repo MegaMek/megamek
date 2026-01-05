@@ -2315,8 +2315,20 @@ public class MoveStep implements Serializable {
                     if (getTargetPosition() != null) {
                         curPos = getTargetPosition();
                     }
+                    // Infantry with jump capability or glider wings dismounting from VTOLs
+                    // land at ground level, not VTOL elevation (TW p.31, IO p.85)
+                    int unloadElevation = getElevation();
+                    if (entity instanceof VTOL && other.isInfantry()) {
+                        Infantry inf = (Infantry) other;
+                        if (inf.getJumpMP() > 0 || inf.canExitVTOLWithGliderWings()) {
+                            Hex destHex = game.getBoard(boardId).getHex(curPos);
+                            if (destHex != null) {
+                                unloadElevation = destHex.getLevel();
+                            }
+                        }
+                    }
                     if ((null != Compute.stackingViolation(game, other, curPos, entity, climbMode, true)) ||
-                          other.isLocationProhibited(curPos, getElevation())) {
+                          other.isLocationProhibited(curPos, unloadElevation)) {
                         movementType = EntityMovementType.MOVE_ILLEGAL;
                     }
                 } else {

@@ -957,6 +957,18 @@ public class Infantry extends Entity {
         return hasSpecialization(MOUNTAIN_TROOPS) ? 3 : 1;
     }
 
+    /**
+     * Returns the maximum downward elevation change this infantry can make. Infantry with glider wings can descend any
+     * number of levels safely (IO p.85).
+     */
+    @Override
+    public int getMaxElevationDown(int currElevation) {
+        if (canUseGliderWings() && hasAbility(OptionsConstants.MD_PL_GLIDER)) {
+            return Integer.MAX_VALUE;
+        }
+        return getMaxElevationChange();
+    }
+
     @Override
     public void applyDamage() {
         super.applyDamage();
@@ -1263,6 +1275,18 @@ public class Infantry extends Entity {
      * @return true if protected from fall damage
      */
     public boolean isProtectedFromFallDamage() {
+        return isConventionalInfantry()
+              && hasAbility(OptionsConstants.MD_PL_GLIDER)
+              && canUseGliderWings();
+    }
+
+    /**
+     * Returns true if this infantry unit can exit a VTOL using glider wings. Per IO p.85, glider wings give a soldier
+     * the ability to leave a VTOL during movement as if the soldier were jump infantry.
+     *
+     * @return true if this infantry can exit a VTOL using glider wings
+     */
+    public boolean canExitVTOLWithGliderWings() {
         return isConventionalInfantry()
               && hasAbility(OptionsConstants.MD_PL_GLIDER)
               && canUseGliderWings();

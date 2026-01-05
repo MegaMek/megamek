@@ -47,7 +47,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -408,6 +407,65 @@ class InfantryGliderWingsTest {
             infantry.setExtraneousPair2(ProstheticEnhancementType.GRAPPLER);
 
             assertFalse(infantry.hasExcessiveExtraneousLimbs());
+        }
+
+        @Test
+        @DisplayName("Foot infantry with glider wings is valid configuration")
+        void footInfantryWithGliderWingsValid() {
+            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+
+            assertFalse(infantry.hasGliderWingsOnInvalidInfantryType());
+        }
+
+        @Test
+        @DisplayName("Jump infantry with glider wings is valid configuration")
+        void jumpInfantryWithGliderWingsValid() {
+            Infantry infantry = createInfantry(EntityMovementMode.INF_JUMP, true);
+
+            assertFalse(infantry.hasGliderWingsOnInvalidInfantryType());
+        }
+
+        @Test
+        @DisplayName("Motorized infantry with glider wings is INVALID")
+        void motorizedInfantryWithGliderWingsInvalid() {
+            Infantry infantry = createInfantry(EntityMovementMode.INF_MOTORIZED, true);
+
+            assertTrue(infantry.hasGliderWingsOnInvalidInfantryType());
+        }
+
+        @Test
+        @DisplayName("Wheeled infantry with glider wings is INVALID (mechanized)")
+        void wheeledInfantryWithGliderWingsInvalid() {
+            Infantry infantry = createInfantry(EntityMovementMode.WHEELED, true);
+
+            assertTrue(infantry.hasGliderWingsOnInvalidInfantryType());
+        }
+
+        @Test
+        @DisplayName("Tracked infantry with glider wings is INVALID (mechanized)")
+        void trackedInfantryWithGliderWingsInvalid() {
+            Infantry infantry = createInfantry(EntityMovementMode.TRACKED, true);
+
+            assertTrue(infantry.hasGliderWingsOnInvalidInfantryType());
+        }
+
+        @Test
+        @DisplayName("Beast-mounted infantry with glider wings is INVALID")
+        void beastMountedInfantryWithGliderWingsInvalid() {
+            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            infantry.setMount(InfantryMount.HORSE);
+
+            assertTrue(infantry.hasGliderWingsOnInvalidInfantryType());
+        }
+
+        @Test
+        @DisplayName("Infantry without glider wings always passes infantry type check")
+        void infantryWithoutGliderWingsAlwaysValid() {
+            Infantry motorized = createInfantry(EntityMovementMode.INF_MOTORIZED, false);
+            Infantry tracked = createInfantry(EntityMovementMode.TRACKED, false);
+
+            assertFalse(motorized.hasGliderWingsOnInvalidInfantryType());
+            assertFalse(tracked.hasGliderWingsOnInvalidInfantryType());
         }
     }
 }

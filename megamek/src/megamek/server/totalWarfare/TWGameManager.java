@@ -3354,6 +3354,9 @@ public class TWGameManager extends AbstractGameManager {
                 // -> sit on the roof
                 unit.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
             } else {
+                // Check if infantry can use glider wings to descend (IO p.85)
+                boolean canGlide = unit.isInfantry() &&
+                      ((Infantry) unit).hasAbility(OptionsConstants.MD_PL_GLIDER);
                 while (elevation >= -hex.depth()) {
                     if (unit.isElevationValid(elevation, hex)) {
                         unit.setElevation(elevation);
@@ -3362,8 +3365,8 @@ public class TWGameManager extends AbstractGameManager {
                     elevation--;
                     // If unit is landed, the while loop breaks before here
                     // And unit.moved will be MOVE_NONE
-                    // If we can jump, use jump
-                    if (unit.getJumpMP() > 0) {
+                    // If we can jump or glide, use jump
+                    if (unit.getJumpMP() > 0 || canGlide) {
                         unit.moved = EntityMovementType.MOVE_JUMP;
                     } else { // Otherwise, use walk trigger check for ziplines
                         unit.moved = EntityMovementType.MOVE_WALK;
@@ -3397,7 +3400,10 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Check for zip lines PSR -- MOVE_WALK implies ziplines
-        if (unit.moved == EntityMovementType.MOVE_WALK) {
+        // Skip zipline PSR if infantry has glider wings (safer option, IO p.85)
+        boolean hasGliderWings = (unit instanceof Infantry) &&
+              ((Infantry) unit).hasAbility(OptionsConstants.MD_PL_GLIDER);
+        if (unit.moved == EntityMovementType.MOVE_WALK && !hasGliderWings) {
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES) &&
                   (unit instanceof Infantry) &&
                   !((Infantry) unit).isMechanized()) {

@@ -69,7 +69,6 @@ import megamek.common.board.Board;
 import megamek.common.enums.Gender;
 import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.EquipmentMode;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
@@ -726,6 +725,32 @@ public class CustomMekDialog extends AbstractButtonDialog
         choExtraneousPair1.setVisible(isChecked);
         lblExtraneousPair2.setVisible(isChecked);
         choExtraneousPair2.setVisible(isChecked);
+
+        // Glider wings limit extraneous limbs to one pair (IO p.85)
+        // Disable pair 2 if glider wings is already enabled
+        boolean hasGliderWings = entity.hasAbility(OptionsConstants.MD_PL_GLIDER);
+        if (hasGliderWings && editable) {
+            choExtraneousPair2.setEnabled(false);
+            lblExtraneousPair2.setEnabled(false);
+            // Clear pair 2 if it was set (shouldn't happen with valid data, but be safe)
+            if (choExtraneousPair2.getSelectedIndex() > 0) {
+                choExtraneousPair2.setSelectedIndex(0);
+            }
+        }
+
+        // Add listener to prevent pair 2 selection when glider wings is enabled
+        choExtraneousPair2.addItemListener(event -> {
+            if (event.getStateChange() == ItemEvent.SELECTED
+                  && choExtraneousPair2.getSelectedIndex() > 0
+                  && isOptionSelected(OptionsConstants.MD_PL_GLIDER)) {
+                // Revert to None
+                choExtraneousPair2.setSelectedIndex(0);
+                JOptionPane.showMessageDialog(this,
+                      Messages.getString("CustomMekDialog.GliderWingsLimitExtraneousLimbs"),
+                      Messages.getString("CustomMekDialog.GliderWingsLimitExtraneousLimbsTitle"),
+                      JOptionPane.WARNING_MESSAGE);
+            }
+        });
     }
 
     /**
@@ -969,6 +994,15 @@ public class CustomMekDialog extends AbstractButtonDialog
             deselectOtherDniOptions(comp);
         }
 
+        // Glider wings limit extraneous limbs to one pair (IO p.85)
+        if (state && option.getName().equals(OptionsConstants.MD_PL_GLIDER)
+              && entity.isConventionalInfantry()) {
+            updateExtraneousPair2ForGliderWings(true);
+        } else if (!state && option.getName().equals(OptionsConstants.MD_PL_GLIDER)
+              && entity.isConventionalInfantry()) {
+            updateExtraneousPair2ForGliderWings(false);
+        }
+
         // Proto DNI is BattleMek only (IO pg 83)
         if (state && option.getName().equals(OptionsConstants.MD_PROTO_DNI)
               && !isValidForProtoDni(entity)) {
@@ -1042,6 +1076,52 @@ public class CustomMekDialog extends AbstractButtonDialog
             if (optComp.getOption().getName().equals(optionName)) {
                 optComp.setSelected(false);
                 break;
+            }
+        }
+    }
+
+    /**
+     * Checks if a boolean option is currently selected.
+     */
+    private boolean isOptionSelected(String optionName) {
+        for (DialogOptionComponentYPanel optComp : optionComps) {
+            if (optComp.getOption().getName().equals(optionName)) {
+                Object value = optComp.getValue();
+                return (value instanceof Boolean) && (Boolean) value;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Updates extraneous limbs pair 2 availability based on glider wings state. Per IO p.85, glider wings limit
+     * extraneous limbs to one pair.
+     *
+     * @param gliderWingsEnabled True if glider wings is being enabled
+     */
+    private void updateExtraneousPair2ForGliderWings(boolean gliderWingsEnabled) {
+        if (choExtraneousPair2 == null) {
+            return;
+        }
+
+        if (gliderWingsEnabled) {
+            // Clear and disable pair 2
+            if (choExtraneousPair2.getSelectedIndex() > 0) {
+                choExtraneousPair2.setSelectedIndex(0);
+                JOptionPane.showMessageDialog(this,
+                      Messages.getString("CustomMekDialog.GliderWingsLimitExtraneousLimbs"),
+                      Messages.getString("CustomMekDialog.GliderWingsLimitExtraneousLimbsTitle"),
+                      JOptionPane.INFORMATION_MESSAGE);
+            }
+            choExtraneousPair2.setEnabled(false);
+            if (lblExtraneousPair2 != null) {
+                lblExtraneousPair2.setEnabled(false);
+            }
+        } else {
+            // Re-enable pair 2
+            choExtraneousPair2.setEnabled(editable);
+            if (lblExtraneousPair2 != null) {
+                lblExtraneousPair2.setEnabled(true);
             }
         }
     }

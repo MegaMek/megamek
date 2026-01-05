@@ -36,10 +36,10 @@ package megamek.common;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
+import java.util.Vector;
 import java.util.stream.Stream;
 
 import megamek.common.board.Coords;
@@ -251,7 +251,15 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
     @ParameterizedTest
     @MethodSource("buildingProvider")
     void testVictoryReport(AbstractBuildingEntity building) {
-        assertNull(building.victoryReport());
+        // Arrange
+        initializeBuildingOnBoard(building);
+
+        // Act
+        Vector<Report> victoryReports = building.victoryReport();
+
+        // Assert
+        assertNotNull(victoryReports);
+        assertEquals(4, victoryReports.size());
     }
 
     @ParameterizedTest

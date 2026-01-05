@@ -715,7 +715,43 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public Vector<Report> victoryReport() {
-        return null;
+        Vector<Report> vDesc = new Vector<>();
+
+        Report report = new Report(7025);
+        report.type = Report.PUBLIC;
+        report.addDesc(this);
+        vDesc.addElement(report);
+
+        report = new Report(7036);
+        report.type = Report.PUBLIC;
+        report.newlines = 0;
+        vDesc.addElement(report);
+        vDesc.addAll(getCrew().getDescVector(false));
+        report = new Report(7070, Report.PUBLIC);
+        report.add(getKillNumber());
+        vDesc.addElement(report);
+
+        if (isDestroyed()) {
+            Entity killer = game.getEntity(killerId);
+            if (killer == null) {
+                killer = game.getOutOfGameEntity(killerId);
+            }
+            if (killer != null) {
+                report = new Report(7072, Report.PUBLIC);
+                report.addDesc(killer);
+            } else {
+                report = new Report(7073, Report.PUBLIC);
+            }
+            vDesc.addElement(report);
+            report.newlines = 2;
+        } else if (getCrew().isEjected()) {
+            report = new Report(7071, Report.PUBLIC);
+            vDesc.addElement(report);
+            report.newlines = 2;
+        }
+
+
+        return vDesc;
     }
 
     /**

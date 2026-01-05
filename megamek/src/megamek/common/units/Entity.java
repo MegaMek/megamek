@@ -13853,8 +13853,13 @@ public abstract class Entity extends TurnOrdered
             // PLAYTEST3 C3 BV changes. each unit is +30% BV, +35% for boosted
             boolean playtestThree = gameOptions().booleanOption(OptionsConstants.PLAYTEST_3);
 
+            // C3 network bonus requires at least 2 members. Check conditions:
+            // - C3MM: has at least one C3M connected
+            // - C3M: has C3S slaves connected OR is connected to a C3MM master
+            // - C3S: has a master (C3M or C3MM) connected
+            // - C3i/Naval C3: has at least one other network member
             if ((hasC3MM() && (calculateFreeC3MNodes() < 2)) ||
-                  (hasC3M() && (calculateFreeC3Nodes() < 3)) ||
+                  (hasC3M() && ((calculateFreeC3Nodes() < 3) || (getC3Master() != null))) ||
                   (hasC3S() && (c3Master > NONE)) ||
                   ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5))) {
                 totalForceBV += baseBV;

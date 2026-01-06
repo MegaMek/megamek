@@ -206,6 +206,7 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.resolveSelfDestruct();
                 gameManager.resolveShutdownCrashes();
                 gameManager.checkForIndustrialEndOfTurn();
+                gameManager.processUnitAbandonments();
                 gameManager.resolveMekWarriorPickUp();
                 gameManager.resolveVeeINarcPodRemoval();
                 gameManager.resolveFortify();

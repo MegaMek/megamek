@@ -6377,4 +6377,44 @@ public abstract class Mek extends Entity {
     public int getRecoveryTime() {
         return 60;
     }
+
+    /**
+     * Determines if this Mek can announce abandonment per TacOps:AR p.165. Requirements: must be prone, must be
+     * shutdown, must have crew that hasn't ejected, game option must be enabled, and abandonment must not already be
+     * pending.
+     *
+     * @return true if this Mek can announce abandonment
+     */
+    public boolean canAbandon() {
+        if (!isProne()) {
+            return false;
+        }
+        if (!isShutDown()) {
+            return false;
+        }
+        if (getCrew() == null || getCrew().isEjected() || getCrew().isDead()) {
+            return false;
+        }
+        if (isPendingAbandon()) {
+            return false;
+        }
+        if (game == null) {
+            return false;
+        }
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT);
+    }
+
+    /**
+     * Returns true if this Mek has been abandoned - the crew has exited but the Mek itself is not destroyed. This is
+     * different from ejection which destroys the cockpit.
+     *
+     * @return true if this Mek is crewless but intact
+     */
+    @Override
+    public boolean isAbandoned() {
+        if (getCrew() == null) {
+            return false;
+        }
+        return getCrew().isEjected() && !isDestroyed();
+    }
 }

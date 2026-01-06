@@ -2479,11 +2479,8 @@ public class Infantry extends Entity {
         // Check for hostile environment armor kit
         EquipmentType armorKit = getArmorKit();
         if (armorKit != null) {
-            if (armorKit.hasSubType(MiscType.S_SPACE_SUIT)
-                  || armorKit.hasSubType(MiscType.S_XCT_VACUUM)
-                  || armorKit.hasSubType(MiscType.S_TOXIC_ATMOSPHERE)) {
-                return true;
-            }
+            return armorKit.hasAnyFlag(MiscTypeFlag.S_SPACE_SUIT, MiscTypeFlag.S_XCT_VACUUM,
+                  MiscTypeFlag.S_TOXIC_ATMOSPHERE);
         }
 
         return false;

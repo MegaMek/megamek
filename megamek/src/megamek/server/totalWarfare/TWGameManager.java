@@ -17593,6 +17593,9 @@ public class TWGameManager extends AbstractGameManager {
                 if (crewPos >= 0 && (crewPos != pos || crew.isDead(crewPos))) {
                     continue;
                 }
+                if (crew.isMissing(pos)) {
+                    continue;
+                }
                 boolean wasPilot = crew.getCurrentPilotIndex() == pos;
                 boolean wasGunner = crew.getCurrentGunnerIndex() == pos;
                 crew.setHits(crew.getHits(pos) + damage, pos);

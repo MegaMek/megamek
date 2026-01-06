@@ -64,7 +64,7 @@ import org.junit.jupiter.api.Test;
  *   <li>Cannot combine with glider wings</li>
  *   <li>Limits extraneous limb pairs to 1</li>
  *   <li>Conventional infantry only (not battle armor)</li>
- *   <li>No BV impact</li>
+ *   <li>BV impact: 2 VTOL MP contributes to defensive TMM factor (unlike glider wings which have no BV impact)</li>
  * </ul>
  */
 class InfantryPoweredFlightWingsTest {

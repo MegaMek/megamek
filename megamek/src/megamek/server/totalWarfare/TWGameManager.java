@@ -13821,7 +13821,7 @@ public class TWGameManager extends AbstractGameManager {
         // If the attacker is Zweihandering with an improvised club, it will break on
         // the attack.
         // Otherwise, only a tree club will break on the attack
-        if (caa.isZweihandering() && caa.getClub().getType().hasAnyFlag(MiscTypeFlag.S_CLUB, MiscTypeFlag.S_TREE_CLUB)) {
+        if ((caa.isZweihandering() && caa.getClub().getType().hasFlag(MiscTypeFlag.S_CLUB)) || caa.getClub().getType().hasFlag(MiscTypeFlag.S_TREE_CLUB)) {
             // the club breaks
             r = new Report(4150);
             r.subject = ae.getId();

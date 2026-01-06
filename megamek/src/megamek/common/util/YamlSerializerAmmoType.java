@@ -57,6 +57,7 @@ public class YamlSerializerAmmoType extends YamlSerializerEquipmentType {
      *
      * @return A map containing the YAML-serializable data for the equipment type
      */
+    @Override
     public Map<String, Object> serialize(EquipmentType equipment) {
         if (!(equipment instanceof AmmoType ammo)) {
             throw new IllegalArgumentException("Expected AmmoType but got " + equipment.getClass().getSimpleName());

@@ -45,7 +45,7 @@ public class YamlSerializerWeaponType extends YamlSerializerEquipmentType {
     static public final String TYPENAME = "weapon";
 
     /**
-     * Constructor for YamlSerializerAmmoType.
+     * Constructor for YamlSerializerWeaponType.
      */
     public YamlSerializerWeaponType() {
     }
@@ -57,6 +57,7 @@ public class YamlSerializerWeaponType extends YamlSerializerEquipmentType {
      *
      * @return A map containing the YAML-serializable data for the equipment type
      */
+    @Override
     public Map<String, Object> serialize(EquipmentType equipment) {
         if (!(equipment instanceof WeaponType weapon)) {
             throw new IllegalArgumentException("Expected WeaponType but got " + equipment.getClass().getSimpleName());

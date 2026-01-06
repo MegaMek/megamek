@@ -1053,8 +1053,8 @@ public class TestMek extends TestEntity {
                   || misc.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
                   || misc.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
                   || (misc.hasFlag(MiscType.F_CLUB)
-                  && (misc.hasFlag(MiscTypeFlag.S_BACKHOE))
-                  || (misc.hasFlag(MiscTypeFlag.S_COMBINE))))) {
+                  && misc.hasFlag(MiscTypeFlag.S_BACKHOE)
+                  || misc.hasFlag(MiscTypeFlag.S_COMBINE)))) {
                 buff.append("LAMs may not mount ").append(misc.getName()).append("\n");
                 illegal = true;
             }

@@ -57,7 +57,7 @@ public class YamlSerializerMiscType extends YamlSerializerEquipmentType {
      *
      * @return A map containing the YAML-serializable data for the equipment type
      */
-
+    @Override
     public Map<String, Object> serialize(EquipmentType equipment) {
         if (!(equipment instanceof MiscType misc)) {
             throw new IllegalArgumentException("Expected MiscType but got " + equipment.getClass().getSimpleName());

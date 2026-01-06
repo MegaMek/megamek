@@ -35,52 +35,60 @@ package megamek.common.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.enums.AmmoTypeFlag;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 
-public class YamlSerializerAmmoType extends YamlSerializerEquipmentType {
-    static public final String TYPENAME = "ammo";
+public class YamlSerializerMiscType extends YamlSerializerEquipmentType {
+    static public final String TYPENAME = "misc";
 
     /**
      * Constructor for YamlSerializerAmmoType.
      */
-    public YamlSerializerAmmoType() {
+    public YamlSerializerMiscType() {
     }
 
     /**
-     * Constructs a map containing the YAML-serializable data for the given ammo type.
+     * Constructs a map containing the YAML-serializable data for the given misc type.
      *
-     * @param equipment The ammo type to serialize
+     * @param equipment The misc type to serialize
      *
      * @return A map containing the YAML-serializable data for the equipment type
      */
     @Override
     public Map<String, Object> serialize(EquipmentType equipment) {
-        if (!(equipment instanceof AmmoType ammo)) {
-            throw new IllegalArgumentException("Expected AmmoType but got " + equipment.getClass().getSimpleName());
+        if (!(equipment instanceof MiscType misc)) {
+            throw new IllegalArgumentException("Expected MiscType but got " + equipment.getClass().getSimpleName());
         }
-        Map<String, Object> data = super.serialize(ammo);
+        Map<String, Object> data = super.serialize(misc);
         data.put("type", TYPENAME);
-        String[] flagStrings = ammo.getFlags().getSetFlagNamesAsArray(AmmoTypeFlag.class);
+        String[] flagStrings = misc.getFlags().getSetFlagNamesAsArray(MiscTypeFlag.class);
         if (flagStrings.length > 0) {
             data.put("flags", flagStrings);
         }
-        addAmmoDetails(data, ammo);
+        addMiscDetails(data, misc);
         return data;
     }
 
-    private static void addAmmoDetails(Map<String, Object> data, AmmoType ammo) {
-        AmmoType defaultAmmo = new AmmoType();
+    private static void addMiscDetails(Map<String, Object> data, MiscType misc) {
+        MiscType defaultMisc = new MiscType();
         Map<String, Object> details = new LinkedHashMap<>();
-        details.put("type", ammo.getAmmoType().name());
         YamlEncDec.addPropIfNotDefault(details,
-              "kgPerShot",
-              getDoubleFieldValue(ammo, "kgPerShot"),
-              getDoubleFieldValue(defaultAmmo, "kgPerShot"));
-
-        //TODO: work in progress!
-
-        data.put("ammo", details);
+              "damageDivisor",
+              getDoubleFieldValue(misc, "damageDivisor"),
+              getDoubleFieldValue(defaultMisc, "damageDivisor"));
+        YamlEncDec.addPropIfNotDefault(details,
+              "baseDamageAbsorptionRate",
+              getIntegerFieldValue(misc, "baseDamageAbsorptionRate"),
+              getIntegerFieldValue(defaultMisc, "baseDamageAbsorptionRate"));
+        YamlEncDec.addPropIfNotDefault(details,
+              "baseDamageCapacity",
+              getIntegerFieldValue(misc, "baseDamageCapacity"),
+              getIntegerFieldValue(defaultMisc, "baseDamageCapacity"));
+        YamlEncDec.addPropIfNotDefault(details,
+              "industrial",
+              getBooleanFieldValue(misc, "industrial"),
+              getBooleanFieldValue(defaultMisc, "industrial"));
+        data.put("misc", details);
     }
 }

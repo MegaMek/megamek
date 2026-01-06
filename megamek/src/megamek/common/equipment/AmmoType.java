@@ -16408,10 +16408,6 @@ public class AmmoType extends EquipmentType {
     @Override
     public Map<String, Object> getYamlData() {
         Map<String, Object> data = super.getYamlData();
-        data.put("type", "ammo");
-        if (kgPerShot > 0) {
-            data.put("kgPerShot", this.getKgPerShot());
-        }
         return data;
     }
 }

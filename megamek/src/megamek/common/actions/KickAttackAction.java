@@ -42,7 +42,6 @@ import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeSideTable;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
@@ -125,7 +124,8 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         double talonMultiplier = 1;
-        if (entity.hasWorkingMisc(MiscType.F_TALON, -1, legLoc) && entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, legLoc)) {
+        if (entity.hasWorkingMisc(MiscType.F_TALON, null, legLoc) && entity.hasWorkingSystem(Mek.ACTUATOR_FOOT,
+              legLoc)) {
             talonMultiplier += 0.5;
         }
 

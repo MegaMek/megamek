@@ -156,7 +156,8 @@ public enum KeyCommandBind {
     UNDO_SINGLE_STEP("undoSingleStep", VK_BACK_SPACE, CTRL_DOWN_MASK),
     FORCE_DISPLAY(true, "toggleForceDisplay", VK_F, CTRL_DOWN_MASK),
     EXTEND_TURN_TIMER("extendTurnTimer", VK_F4, CTRL_DOWN_MASK),
-    BOT_COMMANDS(true, "toggleBotCommandsDisplay", VK_G, CTRL_DOWN_MASK | SHIFT_DOWN_MASK);
+    BOT_COMMANDS(true, "toggleBotCommandsDisplay", VK_G, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    FOV_SPOTTING(true, "toggleFovSpotting", VK_O);
 
     /** The command associated with this binding. */
     public String cmd;

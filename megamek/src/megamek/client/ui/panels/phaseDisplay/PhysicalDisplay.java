@@ -73,8 +73,8 @@ import megamek.common.compute.ComputeArc;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.game.GameTurn;
@@ -1154,9 +1154,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                       target.isConventionalInfantry(), false);
                 // Need to do this outside getDamageFor, as it only returns int
                 String dmgString = String.valueOf(dmg);
-                if ((club.getType().hasSubType(MiscType.S_COMBINE) ||
-                      club.getType().hasSubType(MiscType.S_CHAINSAW) ||
-                      club.getType().hasSubType(MiscType.S_DUAL_SAW)) && target.isConventionalInfantry()) {
+                if ((club.getType().hasAnyFlag(MiscTypeFlag.S_COMBINE, MiscTypeFlag.S_CHAINSAW,
+                      MiscTypeFlag.S_DUAL_SAW)) && target.isConventionalInfantry()) {
                     dmgString = "1d6";
                 }
                 names[loop] = Messages.getString("PhysicalDisplay.ChooseClubDialog.line",
@@ -1221,9 +1220,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         final int clubDmg = ClubAttackAction.getDamageFor(en, club, target.isConventionalInfantry(), false);
         // Need to do this outside getDamageFor, as it only returns int
         String dmgString = String.valueOf(clubDmg);
-        if ((club.getType().hasSubType(MiscType.S_COMBINE) ||
-              club.getType().hasSubType(MiscType.S_CHAINSAW) ||
-              club.getType().hasSubType(MiscType.S_DUAL_SAW)) && target.isConventionalInfantry()) {
+        if ((club.getType().hasAnyFlag(MiscTypeFlag.S_COMBINE, MiscTypeFlag.S_CHAINSAW, MiscTypeFlag.S_DUAL_SAW))
+              && target.isConventionalInfantry()) {
             dmgString = "1d6";
         }
         String title = Messages.getString("PhysicalDisplay.ClubDialog.title", target.getDisplayName());
@@ -1637,18 +1635,18 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                         canClub |= (clubToHit.getValue() != TargetRoll.IMPOSSIBLE);
                         // assuming S7 vibroswords count as swords and maces
                         // count as hatchets
-                        if (club.getType().hasSubType(MiscType.S_SWORD) ||
-                              club.getType().hasSubType(MiscType.S_HATCHET) ||
-                              club.getType().hasSubType(MiscType.S_VIBRO_SMALL) ||
-                              club.getType().hasSubType(MiscType.S_VIBRO_MEDIUM) ||
-                              club.getType().hasSubType(MiscType.S_VIBRO_LARGE) ||
-                              club.getType().hasSubType(MiscType.S_MACE) ||
-                              club.getType().hasSubType(MiscType.S_LANCE) ||
-                              club.getType().hasSubType(MiscType.S_CHAIN_WHIP) ||
-                              club.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE) ||
-                              club.getType().hasSubType(MiscType.S_SHIELD_LARGE) ||
-                              club.getType().hasSubType(MiscType.S_SHIELD_MEDIUM) ||
-                              club.getType().hasSubType(MiscType.S_SHIELD_SMALL)) {
+                        if (club.getType().hasAnyFlag(MiscTypeFlag.S_SWORD,
+                              MiscTypeFlag.S_HATCHET,
+                              MiscTypeFlag.S_VIBRO_SMALL,
+                              MiscTypeFlag.S_VIBRO_MEDIUM,
+                              MiscTypeFlag.S_VIBRO_LARGE,
+                              MiscTypeFlag.S_MACE,
+                              MiscTypeFlag.S_LANCE,
+                              MiscTypeFlag.S_CHAIN_WHIP,
+                              MiscTypeFlag.S_RETRACTABLE_BLADE,
+                              MiscTypeFlag.S_SHIELD_LARGE,
+                              MiscTypeFlag.S_SHIELD_MEDIUM,
+                              MiscTypeFlag.S_SHIELD_SMALL)) {
                             canAim = true;
                         }
                     }

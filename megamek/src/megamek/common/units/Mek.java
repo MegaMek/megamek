@@ -67,6 +67,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.interfaces.ITechnology;
@@ -788,8 +789,8 @@ public abstract class Mek extends Entity {
     public boolean hasExtendedRetractableBlade() {
         for (Mounted<?> m : getEquipment()) {
             if (!m.isInoperable() && (m.getType() instanceof MiscType)
-                  && m.getType().hasFlag(MiscType.F_CLUB)
-                  && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                  && m.getType().hasFlag(MiscTypeFlag.F_CLUB)
+                  && m.getType().hasFlag(MiscTypeFlag.S_RETRACTABLE_BLADE)
                   && m.curMode().equals("extended")) {
                 return true;
             }
@@ -1079,7 +1080,7 @@ public abstract class Mek extends Entity {
 
     @Override
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
-        if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
+        if (hasShield() && (getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE) > 0)) {
             return 0;
         }
 
@@ -1108,7 +1109,7 @@ public abstract class Mek extends Entity {
         }
 
         // Medium shield reduces jump mp by 1/shield
-        mp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
+        mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
 
         if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {
             mp--;
@@ -1133,7 +1134,7 @@ public abstract class Mek extends Entity {
 
     @Override
     public int getMechanicalJumpBoosterMP(MPCalculationSetting mpCalculationSetting) {
-        if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
+        if (hasShield() && (getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE) > 0)) {
             return 0;
         }
 
@@ -1158,7 +1159,7 @@ public abstract class Mek extends Entity {
         }
 
         // Medium shield reduces jump mp by 1/shield
-        mp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
+        mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
 
         if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {
             mp--;
@@ -1261,12 +1262,12 @@ public abstract class Mek extends Entity {
         jumpType = JUMP_NONE;
         for (MiscMounted m : miscList) {
             if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
-                if (m.getType().hasSubType(MiscType.S_IMPROVED)
-                      && m.getType().hasSubType(MiscType.S_PROTOTYPE)) {
+                if (m.getType().hasFlag(MiscTypeFlag.S_IMPROVED)
+                      && m.getType().hasFlag(MiscTypeFlag.S_PROTOTYPE)) {
                     jumpType = JUMP_PROTOTYPE_IMPROVED;
-                } else if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
+                } else if (m.getType().hasFlag(MiscTypeFlag.S_IMPROVED)) {
                     jumpType = JUMP_IMPROVED;
-                } else if (m.getType().hasSubType(MiscType.S_PROTOTYPE)) {
+                } else if (m.getType().hasFlag(MiscTypeFlag.S_PROTOTYPE)) {
                     jumpType = JUMP_PROTOTYPE;
                 } else {
                     jumpType = JUMP_STANDARD;
@@ -6180,8 +6181,8 @@ public abstract class Mek extends Entity {
             Mounted<?> m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType)
-                  && type.hasFlag(MiscType.F_HAND_WEAPON)
-                  && type.hasSubType(MiscType.S_CLAW)) {
+                  && type.hasFlag(MiscTypeFlag.F_HAND_WEAPON)
+                  && type.hasFlag(MiscTypeFlag.S_CLAW)) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached());
             }
         }
@@ -6375,5 +6376,45 @@ public abstract class Mek extends Entity {
     @Override
     public int getRecoveryTime() {
         return 60;
+    }
+
+    /**
+     * Determines if this Mek can announce abandonment per TacOps:AR p.165. Requirements: must be prone, must be
+     * shutdown, must have crew that hasn't ejected, game option must be enabled, and abandonment must not already be
+     * pending.
+     *
+     * @return true if this Mek can announce abandonment
+     */
+    public boolean canAbandon() {
+        if (!isProne()) {
+            return false;
+        }
+        if (!isShutDown()) {
+            return false;
+        }
+        if (getCrew() == null || getCrew().isEjected() || getCrew().isDead()) {
+            return false;
+        }
+        if (isPendingAbandon()) {
+            return false;
+        }
+        if (game == null) {
+            return false;
+        }
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT);
+    }
+
+    /**
+     * Returns true if this Mek has been abandoned - the crew has exited but the Mek itself is not destroyed. This is
+     * different from ejection which destroys the cockpit.
+     *
+     * @return true if this Mek is crewless but intact
+     */
+    @Override
+    public boolean isAbandoned() {
+        if (getCrew() == null) {
+            return false;
+        }
+        return getCrew().isEjected() && !isDestroyed();
     }
 }

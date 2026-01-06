@@ -36,7 +36,6 @@ package megamek.common;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -46,15 +45,11 @@ import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
-import megamek.common.rolls.PilotingRollData;
-import megamek.common.units.BuildingEntity;
 import megamek.common.units.Building;
+import megamek.common.units.BuildingEntity;
 import megamek.common.units.EntityMovementType;
-import megamek.common.weapons.lasers.innerSphere.medium.ISLaserMedium;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -160,7 +155,8 @@ public class BuildingEntityTest extends GameBoardTestCase {
 
     @Test
     void testGetGenericBattleValue() {
-        assertEquals(0, building.getGenericBattleValue());
+        // Currently we don't calculate a generic BV
+        assertEquals(building.calculateBattleValue(), building.getGenericBattleValue());
     }
 
     @Test

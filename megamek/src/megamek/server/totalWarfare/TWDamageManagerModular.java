@@ -507,8 +507,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                                     ((ammoExplosion && !autoEject) || areaSatArty))) {
                             proto.getCrew().setDoomed(true);
                         }
-                        if (game.getOptions()
-                              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
+                        if (manager.shouldAutoEjectOnDestruction()) {
                             reportVec.addAll(manager.abandonEntity(proto));
                         }
 
@@ -971,8 +970,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                                         ((ammoExplosion && !autoEject) || areaSatArty))) {
                                 mek.getCrew().setDoomed(true);
                             }
-                            if (game.getOptions()
-                                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
+                            if (manager.shouldAutoEjectOnDestruction()) {
                                 reportVec.addAll(manager.abandonEntity(mek));
                             }
                         }
@@ -1072,8 +1070,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     if (!engineExploded && (numEngineHits >= hitsToDestroy)) {
                         // the third engine hit
                         reportVec.addAll(manager.destroyEntity(mek, "engine destruction"));
-                        if (game.getOptions()
-                              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
+                        if (manager.shouldAutoEjectOnDestruction()) {
                             reportVec.addAll(manager.abandonEntity(mek));
                         }
                         mek.setSelfDestructing(false);
@@ -1619,8 +1616,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                                   ((hit.getLocation() == Mek.LOC_CENTER_TORSO) && (ammoExplosion || areaSatArty))) {
                                 tank.getCrew().setDoomed(true);
                             }
-                            if (game.getOptions()
-                                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
+                            if (manager.shouldAutoEjectOnDestruction()) {
                                 reportVec.addAll(manager.abandonEntity(tank));
                             }
                         }
@@ -2328,8 +2324,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                               ((hit.getLocation() == Mek.LOC_CENTER_TORSO) && (ammoExplosion || areaSatArty))) {
                             infantry.getCrew().setDoomed(true);
                         }
-                        if (game.getOptions()
-                              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
+                        if (manager.shouldAutoEjectOnDestruction()) {
                             reportVec.addAll(manager.abandonEntity(infantry));
                         }
 
@@ -2626,7 +2621,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             reportVec.addAll(manager.vehicleMotiveDamage((Tank) entity, hit.getMotiveMod()));
         }
         // Damage from any source can break spikes
-        if (entity.hasWorkingMisc(MiscType.F_SPIKES, -1, hit.getLocation())) {
+        if (entity.hasWorkingMisc(MiscType.F_SPIKES, null, hit.getLocation())) {
             reportVec.add(manager.checkBreakSpikes(entity, hit.getLocation()));
         }
 
@@ -3038,7 +3033,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // any amount of damage (0 is no damage)
             if ((entity instanceof VTOL) &&
                   (hit.getLocation() == VTOL.LOC_ROTOR) &&
-                  entity.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) &&
+                  entity.hasWorkingMisc(MiscType.F_MAST_MOUNT, null, VTOL.LOC_ROTOR) &&
                   (damage > 0)) {
                 report = new Report(6081);
                 report.subject = entityId;

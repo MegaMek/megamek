@@ -34,17 +34,6 @@
 
 package megamek.common.units;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.CriticalSlot;
-import megamek.common.Hex;
-import megamek.common.HitData;
 import megamek.common.MPCalculationSetting;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
@@ -54,16 +43,13 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
-import megamek.common.equipment.GunEmplacement;
-import megamek.common.equipment.Engine;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.PowerGeneratorType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.equipment.enums.StructureEngine;
-import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * Implementation of TO:AR's Advanced Buildings.
@@ -201,7 +187,8 @@ public class BuildingEntity extends AbstractBuildingEntity {
      */
     @Override
     public int getGenericBattleValue() {
-        return 0;
+        // TODO: Actually calculate this? I ripped this from Aerospace
+        return calculateBattleValue();
     }
 
     /**

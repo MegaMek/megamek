@@ -42,9 +42,9 @@ import java.util.stream.Collectors;
 import megamek.common.Messages;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.options.IOption;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Infantry;
@@ -238,16 +238,16 @@ public class InfantryTROView extends TROView {
     }
 
     private void addArmorNotes(List<String> notes, EquipmentType armorKit) {
-        if (armorKit.hasSubType(MiscType.S_DEST)) {
+        if (armorKit.hasFlag(MiscTypeFlag.S_DEST)) {
             notes.add(Messages.getString("TROView.InfantryNote.DESTArmor"));
         }
-        if (armorKit.hasSubType(MiscType.S_SNEAK_CAMO)) {
+        if (armorKit.hasFlag(MiscTypeFlag.S_SNEAK_CAMO)) {
             notes.add(Messages.getString("TROView.InfantryNote.CamoArmor"));
         }
-        if (armorKit.hasSubType(MiscType.S_SNEAK_IR)) {
+        if (armorKit.hasFlag(MiscTypeFlag.S_SNEAK_IR)) {
             notes.add(Messages.getString("TROView.InfantryNote.IRArmor"));
         }
-        if (armorKit.hasSubType(MiscType.S_SNEAK_ECM)) {
+        if (armorKit.hasFlag(MiscTypeFlag.S_SNEAK_ECM)) {
             notes.add(Messages.getString("TROView.InfantryNote.ECMArmor"));
         }
     }

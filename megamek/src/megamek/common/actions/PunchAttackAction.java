@@ -44,10 +44,10 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
@@ -429,13 +429,13 @@ public class PunchAttackAction extends PhysicalAttackAction {
                 EquipmentType type = m.getType();
                 if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
                     if ((((MiscMounted) m).getDamageAbsorption(entity, armLoc) > 0) && (((MiscMounted) m).getCurrentDamageCapacity(entity, armLoc) > 0)) {
-                        if (type.hasSubType(MiscType.S_SHIELD_LARGE)) {
+                        if (type.hasFlag(MiscTypeFlag.S_SHIELD_LARGE)) {
                             damage += 3;
                             break;
-                        } else if (type.hasSubType(MiscType.S_SHIELD_MEDIUM)) {
+                        } else if (type.hasFlag(MiscTypeFlag.S_SHIELD_MEDIUM)) {
                             damage += 2;
                             break;
-                        } else if (type.hasSubType(MiscType.S_SHIELD_SMALL)) {
+                        } else if (type.hasFlag(MiscTypeFlag.S_SHIELD_SMALL)) {
                             damage += 1;
                             break;
                         }

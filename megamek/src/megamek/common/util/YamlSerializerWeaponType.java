@@ -35,52 +35,45 @@ package megamek.common.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.enums.AmmoTypeFlag;
+import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.WeaponTypeFlag;
 
-public class YamlSerializerAmmoType extends YamlSerializerEquipmentType {
-    static public final String TYPENAME = "ammo";
+public class YamlSerializerWeaponType extends YamlSerializerEquipmentType {
+    static public final String TYPENAME = "weapon";
 
     /**
-     * Constructor for YamlSerializerAmmoType.
+     * Constructor for YamlSerializerWeaponType.
      */
-    public YamlSerializerAmmoType() {
+    public YamlSerializerWeaponType() {
     }
 
     /**
-     * Constructs a map containing the YAML-serializable data for the given ammo type.
+     * Constructs a map containing the YAML-serializable data for the given weapon type.
      *
-     * @param equipment The ammo type to serialize
+     * @param equipment The weapon type to serialize
      *
      * @return A map containing the YAML-serializable data for the equipment type
      */
     @Override
     public Map<String, Object> serialize(EquipmentType equipment) {
-        if (!(equipment instanceof AmmoType ammo)) {
-            throw new IllegalArgumentException("Expected AmmoType but got " + equipment.getClass().getSimpleName());
+        if (!(equipment instanceof WeaponType weapon)) {
+            throw new IllegalArgumentException("Expected WeaponType but got " + equipment.getClass().getSimpleName());
         }
-        Map<String, Object> data = super.serialize(ammo);
+        Map<String, Object> data = super.serialize(weapon);
         data.put("type", TYPENAME);
-        String[] flagStrings = ammo.getFlags().getSetFlagNamesAsArray(AmmoTypeFlag.class);
+        String[] flagStrings = weapon.getFlags().getSetFlagNamesAsArray(WeaponTypeFlag.class);
         if (flagStrings.length > 0) {
             data.put("flags", flagStrings);
         }
-        addAmmoDetails(data, ammo);
+        addWeaponDetails(data, weapon);
         return data;
     }
 
-    private static void addAmmoDetails(Map<String, Object> data, AmmoType ammo) {
-        AmmoType defaultAmmo = new AmmoType();
+    private static void addWeaponDetails(Map<String, Object> data, WeaponType weapon) {
+        WeaponType defaultWeapon = new WeaponType();
         Map<String, Object> details = new LinkedHashMap<>();
-        details.put("type", ammo.getAmmoType().name());
-        YamlEncDec.addPropIfNotDefault(details,
-              "kgPerShot",
-              getDoubleFieldValue(ammo, "kgPerShot"),
-              getDoubleFieldValue(defaultAmmo, "kgPerShot"));
-
         //TODO: work in progress!
-
-        data.put("ammo", details);
+        data.put("weapon", details);
     }
 }

@@ -40,7 +40,7 @@ import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.MiscType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.internationalization.I18n;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
@@ -177,7 +177,7 @@ public class HazardousLiquidPoolUtil {
         // BA take damage as normal.
         if (entity.isInfantry() && !entity.isBattleArmor() && entity instanceof Infantry inf) {
             if (inf.hasSpecialization(Infantry.XCT) && inf.getArmorKit() != null && inf.getArmorKit()
-                  .hasSubType(MiscType.S_TOXIC_ATMOSPHERE)) {
+                  .hasFlag(MiscTypeFlag.S_TOXIC_ATMOSPHERE)) {
                 return 3.0;
             } else {
                 return .5;

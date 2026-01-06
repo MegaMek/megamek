@@ -47,6 +47,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.dialogs.phaseDisplay.BombPayloadDialog;
+import megamek.client.ui.dialogs.phaseDisplay.SuicideImplantsDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TriggerAPPodDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TriggerBPodDialog;
@@ -72,6 +73,8 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.INarcPod;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
@@ -118,6 +121,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         FIRE_CALLED("fireCalled"),
         FIRE_CANCEL("fireCancel"),
         FIRE_ACTIVATE_SPA("fireActivateSPA"),
+        FIRE_RHS("fireRHS"),
+        FIRE_SUICIDE_IMPLANTS("fireSuicideImplants"),
         FIRE_MORE("fireMore");
 
         final String cmd;
@@ -475,6 +480,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             setFindClubEnabled(FindClubAction.canMekFindClub(game, en));
             setFlipArmsEnabled(!currentEntity().getAlreadyTwisted() && currentEntity().canFlipArms());
             updateSearchlight();
+            updateRHS();
             updateClearTurret();
             updateClearWeaponJam();
             updateStrafe();
@@ -1192,9 +1198,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // check if we now shoot at a target in the front arc and previously
         // shot a target in side/rear arc that then was primary target
         // if so, ask and tell the user that to-hits will change
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_FORCED_PRIMARY_TARGETS)
-              && (currentEntity() instanceof Mek) || (currentEntity() instanceof Tank)
-              || (currentEntity() instanceof ProtoMek)) {
+        // Skip this check during strafing since strafing attacks multiple hexes, not a single target
+        // Also skip for LAMs in aero mode since they use aero arc rules, not Mek arc rules
+        if (!isStrafing
+              && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_FORCED_PRIMARY_TARGETS)
+              && ((currentEntity() instanceof Mek mek && !mek.isAero()) || (currentEntity() instanceof Tank)
+              || (currentEntity() instanceof ProtoMek))) {
             EntityAction lastAction = null;
             try {
                 lastAction = attacks.lastElement();
@@ -1709,7 +1718,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
 
         updateSearchlight();
+        updateRHS();
         updateActivateSPA();
+        updateSuicideImplants();
         updateClearWeaponJam();
         updateClearTurret();
 
@@ -1976,6 +1987,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             startStrafe();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_ACTIVATE_SPA.getCmd())) {
             doActivateSpecialAbility();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_RHS.getCmd())) {
+            doToggleRHS();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_SUICIDE_IMPLANTS.getCmd())) {
+            doSuicideImplants();
         }
     }
 
@@ -2047,6 +2062,87 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
     private void updateActivateSPA() {
         setActivateSPAEnabled(canActivateBloodStalker());
+    }
+
+    /**
+     * Updates the suicide implants button state based on whether the current entity has the suicide implants ability
+     * and can activate it.
+     */
+    private void updateSuicideImplants() {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            setSuicideImplantsEnabled(false);
+            return;
+        }
+
+        boolean hasImplants = entity.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS);
+        boolean isActiveUnit = entity.isActive();
+        boolean hasLiveCrew = (entity.getCrew() != null)
+              && !entity.getCrew().isDead()
+              && !entity.getCrew().isUnconscious();
+        boolean isNotTransported = entity.getTransportId() == Entity.NONE;
+        boolean isNotLargeCraft = !entity.isLargeCraft();
+
+        boolean canDetonate = hasImplants && isActiveUnit && hasLiveCrew && isNotTransported && isNotLargeCraft;
+        setSuicideImplantsEnabled(canDetonate);
+    }
+
+    /**
+     * Handles the suicide implants button action. Shows a dialog to configure the detonation, then adds the attack
+     * action.
+     */
+    private void doSuicideImplants() {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            return;
+        }
+
+        SuicideImplantsDialog dialog = new SuicideImplantsDialog(clientgui.getFrame(), entity);
+        if (dialog.showDialog()) {
+            int trooperCount = dialog.getTrooperCount();
+            attacks.add(new SuicideImplantsAttackAction(entity.getId(), trooperCount));
+            ready();
+        }
+    }
+
+    /**
+     * Updates the RHS button state and label based on current entity's RHS status.
+     */
+    private void updateRHS() {
+        Entity entity = currentEntity();
+        boolean hasRHS = (entity != null) && entity.hasWorkingRadicalHS() && !entity.hasDamagedRHS();
+        setRHSEnabled(hasRHS);
+
+        if (hasRHS) {
+            MegaMekButton rhsButton = buttons.get(FiringCommand.FIRE_RHS);
+            if (entity.hasActivatedRadicalHS()) {
+                rhsButton.setText(Messages.getString("FiringDisplay.fireRHSOn"));
+            } else {
+                rhsButton.setText(Messages.getString("FiringDisplay.fireRHS"));
+            }
+        }
+    }
+
+    /**
+     * Toggles the Radical Heat Sink on or off for the current entity.
+     */
+    private void doToggleRHS() {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            return;
+        }
+
+        // Find the RHS equipment
+        for (MiscMounted mounted : entity.getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+                String newModeStr = entity.hasActivatedRadicalHS() ? Weapon.MODE_AMS_OFF : Weapon.MODE_AMS_ON;
+                int newMode = mounted.setMode(newModeStr);
+                clientgui.getClient().sendModeChange(entity.getId(), mounted.getEquipmentNum(), newMode);
+                break;
+            }
+        }
+
+        updateRHS();
     }
 
     protected void setFireEnabled(boolean enabled) {
@@ -2132,6 +2228,16 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     protected void setActivateSPAEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_ACTIVATE_SPA).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_ACTIVATE_SPA.getCmd(), enabled);
+    }
+
+    protected void setRHSEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_RHS).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_RHS.getCmd(), enabled);
+    }
+
+    protected void setSuicideImplantsEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_SUICIDE_IMPLANTS).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SUICIDE_IMPLANTS.getCmd(), enabled);
     }
 
     @Override
@@ -2318,7 +2424,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     private List<Coords> getStrafingCoords(Coords center) {
         Entity strafingAero = currentEntity();
 
-        if (!(strafingAero instanceof Aero)) {
+        if ((strafingAero == null) || !strafingAero.isAero()) {
             return Collections.emptyList();
         }
 

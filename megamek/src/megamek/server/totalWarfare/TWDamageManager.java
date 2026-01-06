@@ -33,6 +33,7 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -43,13 +44,13 @@ import megamek.common.HexTarget;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.actions.SuicideImplantsAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.MiscType;
@@ -150,6 +151,7 @@ public class TWDamageManager implements IDamageManager {
 
         Report report;
         int entityId = entity.getId();
+        boolean baTookCrit = false; // Track if BA took a crit for VDNI/BVDNI feedback
 
         // if this is a fighter squadron then pick an active fighter and pass on
         // the damage
@@ -160,15 +162,15 @@ public class TWDamageManager implements IDamageManager {
                 return reportVec;
             }
             Entity fighter = fighters.get(hit.getLocation());
-            HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-            new_hit.setBoxCars(hit.rolledBoxCars());
-            new_hit.setGeneralDamageType(hit.getGeneralDamageType());
-            new_hit.setCapital(hit.isCapital());
-            new_hit.setCapMisCritMod(hit.getCapMisCritMod());
-            new_hit.setSingleAV(hit.getSingleAV());
-            new_hit.setAttackerId(hit.getAttackerId());
+            HitData newHit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+            newHit.setBoxCars(hit.rolledBoxCars());
+            newHit.setGeneralDamageType(hit.getGeneralDamageType());
+            newHit.setCapital(hit.isCapital());
+            newHit.setCapMisCritMod(hit.getCapMisCritMod());
+            newHit.setSingleAV(hit.getSingleAV());
+            newHit.setAttackerId(hit.getAttackerId());
             return damageEntity(fighter,
-                  new_hit,
+                  newHit,
                   damage,
                   ammoExplosion,
                   damageType,
@@ -223,9 +225,11 @@ public class TWDamageManager implements IDamageManager {
         boolean critSI = false;
         boolean critThresh = false;
 
-        // get the relevant damage for damage thresholding
+        // Per SO p.116: For weapon groups/bays, threshold critical checks use only the
+        // damage of a SINGLE weapon (singleAV), not the combined damage from all weapons
+        // that hit. This prevents massed small weapons from always triggering threshold
+        // criticals. The full damage is still applied to the target.
         int threshDamage = damage;
-        // weapon groups only get the damage to one weapon
         if ((hit.getSingleAV() > -1) && !game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             threshDamage = hit.getSingleAV();
@@ -296,7 +300,20 @@ public class TWDamageManager implements IDamageManager {
         boolean isFerroFibrousTarget = false;
         boolean wasDamageIS = false;
         boolean tookInternalDamage = damageIS;
+        boolean tookAnyDamage = damage > 0; // Track if any damage was applied for Proto DNI feedback
         Hex te_hex = null;
+
+        // Track initial trooper count for suicide implant reactive damage (IO pg 83)
+        // Only track if: conventional infantry, has suicide implants, and this is NOT reactive damage
+        int initialTroopers = -1;
+        boolean hasSuicideImplants = entity.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS);
+        boolean checkSuicideImplantReaction = isPlatoon
+              && hasSuicideImplants
+              && !damageType.equals(DamageType.SUICIDE_IMPLANT_REACTION);
+
+        if (checkSuicideImplantReaction) {
+            initialTroopers = entity.getInternal(Infantry.LOC_INFANTRY);
+        }
 
         boolean hardenedArmor = ((entity instanceof Mek) || (entity instanceof Tank)) &&
               (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
@@ -393,6 +410,7 @@ public class TWDamageManager implements IDamageManager {
             report.subject = entityId;
             report.indent(2);
             reportVec.addElement(report);
+            baTookCrit = true;
 
             crits = 0;
             damage = Math.max(entity.getInternal(hit.getLocation()) + entity.getArmor(hit.getLocation()), damage);
@@ -635,9 +653,9 @@ public class TWDamageManager implements IDamageManager {
             }
 
             if (entity.isAero()) {
-                // chance of a critical if damage greater than threshold
+                // chance of a critical if damage exceeds threshold
                 IAero a = (IAero) entity;
-                if ((threshDamage > a.getThresh(hit.getLocation()))) {
+                if (threshDamage > a.getThresh(hit.getLocation())) {
                     critThresh = true;
                     a.setCritThresh(true);
                 }
@@ -1132,7 +1150,7 @@ public class TWDamageManager implements IDamageManager {
                     report.subject = entityId;
                     report.indent(3);
                     reportVec.addElement(report);
-                    if (entity instanceof GunEmplacement) {
+                    if (entity.isBuildingEntityOrGunEmplacement()) {
                         // gun emplacements have no internal,
                         // destroy the section
                         entity.destroyLocation(hit.getLocation());
@@ -1810,9 +1828,16 @@ public class TWDamageManager implements IDamageManager {
                       nukeS2S);
             }
 
-            if (isHeadHit && !entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
-                Report.addNewline(reportVec);
-                reportVec.addAll(manager.damageCrew(entity, 1));
+            if (isHeadHit) {
+                if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                      || entity.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)) {
+                    Report r = new Report(6651);
+                    r.subject = entity.getId();
+                    reportVec.add(r);
+                } else {
+                    Report.addNewline(reportVec);
+                    reportVec.addAll(manager.damageCrew(entity, 1));
+                }
             }
 
             // If the location has run out of internal structure, finally
@@ -1925,10 +1950,17 @@ public class TWDamageManager implements IDamageManager {
             }
         }
 
-        // if using VDNI (but not buffered), check for damage on an internal hit
+        // VDNI feedback on internal damage - Meks only (IO pg 71)
+        // Per IO rules: Only Meks/IndustrialMeks get feedback on internal structure damage.
+        // Vehicles get feedback on specific critical hits only (handled in applyTankCritical).
+        // Fighters get feedback on any critical hit (handled in applyAeroCritical).
+        // Battle Armor gets no feedback at all.
+        // Proto DNI takes precedence and handles its own feedback separately.
         if (tookInternalDamage &&
+              (entity instanceof Mek) &&
               entity.hasAbility(OptionsConstants.MD_VDNI) &&
               !entity.hasAbility(OptionsConstants.MD_BVDNI) &&
+              !entity.hasAbility(OptionsConstants.MD_PROTO_DNI) &&
               !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
             Report.addNewline(reportVec);
             Roll diceRoll = Compute.rollD6(2);
@@ -1942,6 +1974,43 @@ public class TWDamageManager implements IDamageManager {
             reportVec.add(report);
 
             if (diceRoll.getIntValue() >= 8) {
+                reportVec.addAll(manager.damageCrew(entity, 1));
+            }
+        } else if (tookInternalDamage &&
+              (entity instanceof Mek) &&
+              entity.hasAbility(OptionsConstants.MD_VDNI) &&
+              !entity.hasAbility(OptionsConstants.MD_BVDNI) &&
+              entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            // Pain Shunt blocks VDNI feedback - show message for clarity
+            Report.addNewline(reportVec);
+            report = new Report(3585);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            report.indent(2);
+            reportVec.add(report);
+        }
+
+        // Prototype DNI feedback on ANY damage (IO pg 83)
+        // TN 6 for armor-only hits, TN 8 for internal damage or critical hits
+        // Only applies to BattleMeks (not IndustrialMeks)
+        if (tookAnyDamage &&
+              (entity instanceof Mek) &&
+              !entity.isIndustrialMek() &&
+              entity.hasAbility(OptionsConstants.MD_PROTO_DNI) &&
+              !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            Report.addNewline(reportVec);
+            Roll diceRoll = Compute.rollD6(2);
+            int targetNumber = tookInternalDamage ? 8 : 6;
+            report = new Report(3589);
+            report.subject = entity.getId();
+            report.indent(2);  // Indent BEFORE addDesc to suppress unit icon
+            report.addDesc(entity);
+            report.add(targetNumber - 1); // Display as "needs X or less"
+            report.add(diceRoll);
+            report.choose(diceRoll.getIntValue() >= targetNumber);
+            reportVec.add(report);
+
+            if (diceRoll.getIntValue() >= targetNumber) {
                 reportVec.addAll(manager.damageCrew(entity, 1));
             }
         }
@@ -1989,7 +2058,101 @@ public class TWDamageManager implements IDamageManager {
         if (wasDamageIS) {
             Report.addNewline(reportVec);
         }
+
+        // BA VDNI/BVDNI immunity feedback - track that crit happened (IO pg 71)
+        // Actual message is printed after all attacks complete in handleAttacks()
+        if (baTookCrit &&
+              (entity.hasAbility(OptionsConstants.MD_VDNI) || entity.hasAbility(OptionsConstants.MD_BVDNI)) &&
+              !entity.reportedVDNIFeedbackThisPhase) {
+            entity.baVDNINeedsFeedbackMessage = true;
+        }
+
+        // Suicide Implant Reactive Damage (IO pg 83)
+        // When conventional infantry with suicide implants loses troopers, they automatically
+        // deal 0.57 damage per dead trooper to all opposing units in the hex
+        if (checkSuicideImplantReaction && initialTroopers > 0) {
+            int currentTroopers = Math.max(0, entity.getInternal(Infantry.LOC_INFANTRY));
+            int deadTroopers = initialTroopers - currentTroopers;
+            if (deadTroopers > 0) {
+                reportVec.addAll(applySuicideImplantReaction(entity, deadTroopers));
+            }
+        }
+
         return reportVec;
+    }
+
+    /**
+     * Applies suicide implant reactive damage when conventional infantry troopers are killed. Per IO pg 83:
+     * "Conventional infantry equipped with suicide implants will also deliver an automatic 'attack' against all
+     * opposing units in the same hex for every trooper they lose during the same attack."
+     *
+     * @param infantry     The infantry unit that lost troopers
+     * @param deadTroopers The number of troopers killed
+     *
+     * @return Vector of reports describing the reactive damage
+     */
+    protected Vector<Report> applySuicideImplantReaction(Entity infantry, int deadTroopers) {
+        Vector<Report> reports = new Vector<>();
+        Coords position = infantry.getPosition();
+
+        if (position == null) {
+            return reports;
+        }
+
+        // Calculate damage: 0.57 per dead trooper
+        int damage = (int) Math.round(deadTroopers * SuicideImplantsAttackAction.DAMAGE_PER_TROOPER);
+        if (damage <= 0) {
+            return reports;
+        }
+
+        // First, find all valid enemy targets in the hex
+        List<Entity> validTargets = new ArrayList<>();
+        for (Entity target : game.getEntitiesVector(position)) {
+            // Skip the infantry itself
+            if (target.getId() == infantry.getId()) {
+                continue;
+            }
+            // Only damage opposing (enemy) units
+            if (!target.isEnemyOf(infantry)) {
+                continue;
+            }
+            // Skip already destroyed units
+            if (target.isDestroyed() || target.isDoomed()) {
+                continue;
+            }
+            validTargets.add(target);
+        }
+
+        // If no enemies in hex, reactive detonation has no effect - skip reporting
+        if (validTargets.isEmpty()) {
+            return reports;
+        }
+
+        // Report the reactive detonation
+        Report report = new Report(4596);
+        report.subject = infantry.getId();
+        report.add(deadTroopers);
+        report.add(damage);
+        reports.add(report);
+
+        // Apply damage to all valid enemy targets
+        for (Entity target : validTargets) {
+            // Report damage to this target
+            Report targetReport = new Report(4583);
+            targetReport.subject = target.getId();
+            targetReport.indent(2);
+            targetReport.add(target.getDisplayName());
+            targetReport.add(damage);
+            reports.add(targetReport);
+
+            // Apply damage using SUICIDE_IMPLANT_REACTION type to prevent recursion
+            HitData hit = new HitData(target.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT).getLocation());
+            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            reports.addAll(damageEntity(target, hit, damage, false,
+                  DamageType.SUICIDE_IMPLANT_REACTION, false, false, true, false, false, new Vector<>()));
+        }
+
+        return reports;
     }
 
     private static boolean isSpotlightHittable(Entity entity, HitData hit) {

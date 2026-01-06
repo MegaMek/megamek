@@ -89,7 +89,7 @@ public class ISPulseLaserSmallPrototype extends PulseLaserWeapon {
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_POINT_DEFENSE;
         this.flags = flags.or(F_BURST_FIRE).or(F_PROTOTYPE);
-        rulesRefs = "71, IO";
+        rulesRefs = "67, IO:AE";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

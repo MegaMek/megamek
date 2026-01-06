@@ -1482,7 +1482,7 @@ public class Compute {
         }
 
         // determine base distance & range bracket
-        int distance = effectiveDistance(game, attackingEntity, target, false);
+        int distance = effectiveWeaponDistance(game, attackingEntity, weapon, target);
         int range = RangeType.rangeBracket(distance, weaponRanges, useExtremeRange, useLOSRange);
 
         // Additional checks for LOS range and some weapon types, TO 85
@@ -1912,6 +1912,65 @@ public class Compute {
      *
      * @return the effective distance
      */
+    /**
+     * Calculates effective distance from a weapon's firing position to a target, accounting for altitude differences
+     * and same-building elevation modifiers. This is used for entities with multiple firing positions like
+     * BuildingEntity.
+     *
+     * @param game         The current game
+     * @param weaponEntity The entity with the weapon
+     * @param weapon       The weapon being fired
+     * @param target       The target being attacked
+     *
+     * @return The effective distance from the weapon's firing position to the target
+     */
+    public static int effectiveWeaponDistance(final Game game, final Entity weaponEntity,
+          final WeaponMounted weapon, final Targetable target) {
+        Coords weaponFiringPos = weaponEntity.getWeaponFiringPosition(weapon);
+
+        if (weaponFiringPos != null && !weaponFiringPos.equals(weaponEntity.getPosition())) {
+            // For entities with multiple firing positions (BuildingEntity, etc.),
+            // calculate distance from the weapon's actual firing position
+            int distance = weaponFiringPos.distance(target.getPosition());
+
+            // If attack is inside same building, add elevation difference
+            if (isInSameBuilding(game, weaponEntity, target)) {
+                int aElev = weaponEntity.getElevation();
+                int tElev = target.getElevation();
+                distance += Math.abs(aElev - tElev);
+            }
+
+            // Air-to-air altitude differences
+            if (isAirToAir(game, weaponEntity, target) && !weaponEntity.isSpaceborne()) {
+                int aAlt = weaponEntity.getAltitude();
+                int tAlt = target.getAltitude();
+                if (target.isAirborneVTOLorWIGE()) {
+                    tAlt++;
+                }
+                distance += Math.abs(aAlt - tAlt);
+            }
+
+            // Ground-to-air altitude adjustments
+            if (isGroundToAir(weaponEntity, target)) {
+                if (weaponEntity.usesWeaponBays() && game.getBoard().isGround()) {
+                    distance += target.getAltitude();
+                } else {
+                    distance += (2 * target.getAltitude());
+                }
+            }
+
+            // Attacking ground unit while dropping
+            if (weaponEntity.isDropping() && target.getAltitude() == 0) {
+                distance += (2 * weaponEntity.getAltitude());
+            }
+
+            return distance;
+        } else {
+            // Use standard effective distance calculation
+            return effectiveDistance(game, weaponEntity, target, false);
+        }
+    }
+
     public static int effectiveDistance(final Game game, final Entity attacker,
           final @Nullable Targetable target) {
         return Compute.effectiveDistance(game, attacker, target, false);
@@ -1940,7 +1999,12 @@ public class Compute {
         Vector<Coords> attackPos = new Vector<>();
         attackPos.add(attacker.getPosition());
         Vector<Coords> targetPos = new Vector<>();
-        targetPos.add(target.getPosition());
+
+        if (target instanceof BuildingEntity) {
+            targetPos.addAll(target.getSecondaryPositions().values());
+        } else {
+            targetPos.add(target.getPosition());
+        }
 
         if (CrossBoardAttackHelper.isOrbitToSurface(game, attacker, target)) {
             // The effective position of the target is the ground map position on the ground hex row of the high
@@ -2264,13 +2328,15 @@ public class Compute {
                 // No legs destroyed and no hip crits: no penalty and can fire all weapons
                 return null; // no modifier
             } else if (legsDead >= 3) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone with three or more legs destroyed.");
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                      Messages.getString("WeaponAttackAction.AeProneQuadThreeLegs"));
             }
             // we have one or two dead legs...
 
             // Need an intact front leg
             if (attacker.isLocationBad(Mek.LOC_RIGHT_ARM) && attacker.isLocationBad(Mek.LOC_LEFT_ARM)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone with both front legs destroyed.");
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                      Messages.getString("WeaponAttackAction.AeProneQuadBothFrontLegs"));
             }
 
             // front leg-mounted weapons have additional trouble
@@ -2280,18 +2346,95 @@ public class Compute {
                       || weapon.getSecondLocation() == Mek.LOC_RIGHT_ARM) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
                 // check previous attacks for weapons fire from the other arm
                 if (Compute.isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone and firing from other front leg already.");
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                          Messages.getString("WeaponAttackAction.AeProneQuadFiringOtherLeg"));
                 }
             }
             // can't fire rear leg weapons
             if ((weapon.getLocation() == Mek.LOC_LEFT_LEG) || (weapon.getLocation() == Mek.LOC_RIGHT_LEG)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                      "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
+                      Messages.getString("WeaponAttackAction.AeProneQuadRearLegWeapon"));
             }
             if (((Mek) attacker).getCockpitType() == Mek.COCKPIT_DUAL && attacker.getCrew().hasDedicatedGunner()) {
-                mods.addModifier(1, "attacker prone");
+                mods.addModifier(1, Messages.getString("WeaponAttackAction.AeProne"));
             } else {
-                mods.addModifier(2, "attacker prone");
+                mods.addModifier(2, Messages.getString("WeaponAttackAction.AeProne"));
+            }
+        } else if (attacker.isTripodMek()) {
+            // Tripod Meks have special prone rules per TacOps
+            Mek tripod = (Mek) attacker;
+            int legsDead = tripod.countBadLegs();
+            if (legsDead == 0 && !attacker.hasHipCrit()) {
+                // All 3 legs intact and no hip crits: +1 modifier (or +0 with dual cockpit/dedicated gunner)
+                // Can fire weapons from head, torsos, and both arms
+                // Can't fire leg weapons
+                if (weapon.getLocation() == Mek.LOC_LEFT_LEG
+                      || weapon.getLocation() == Mek.LOC_RIGHT_LEG
+                      || weapon.getLocation() == Mek.LOC_CENTER_LEG) {
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                          Messages.getString("WeaponAttackAction.AeProneLegWeapon"));
+                }
+                if (tripod.getCockpitType() == Mek.COCKPIT_DUAL && attacker.getCrew().hasDedicatedGunner()) {
+                    mods.addModifier(0, Messages.getString("WeaponAttackAction.AeProneTripod"));
+                } else {
+                    mods.addModifier(1, Messages.getString("WeaponAttackAction.AeProneTripod"));
+                }
+            } else {
+                // Has hip crit or lost leg(s): follow standard biped prone rules
+                int l3ProneFiringArm = Entity.LOC_NONE;
+
+                if (attacker.isLocationBad(Mek.LOC_RIGHT_ARM) || attacker.isLocationBad(Mek.LOC_LEFT_ARM)) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PRONE_FIRE)) {
+                        // Can fire with only one arm
+                        if (attacker.isLocationBad(Mek.LOC_RIGHT_ARM) && attacker.isLocationBad(Mek.LOC_LEFT_ARM)) {
+                            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                                  Messages.getString("WeaponAttackAction.AeProneBothArmsDestroyed"));
+                        }
+
+                        l3ProneFiringArm = attacker.isLocationBad(Mek.LOC_RIGHT_ARM) ?
+                              Mek.LOC_LEFT_ARM :
+                              Mek.LOC_RIGHT_ARM;
+                    } else {
+                        // must have an arm intact
+                        return new ToHitData(TargetRoll.IMPOSSIBLE,
+                              Messages.getString("WeaponAttackAction.AeProneArmDestroyed"));
+                    }
+                }
+
+                // arm-mounted weapons have additional trouble
+                if ((weapon.getLocation() == Mek.LOC_RIGHT_ARM) || (weapon.getSecondLocation() == Mek.LOC_RIGHT_ARM)
+                      || (weapon.getLocation() == Mek.LOC_LEFT_ARM) || (weapon.getSecondLocation()
+                      == Mek.LOC_LEFT_ARM)) {
+                    if (l3ProneFiringArm == weapon.getLocation() || (weapon.getSecondLocation() != Entity.LOC_NONE
+                          && l3ProneFiringArm == weapon.getSecondLocation())) {
+                        return new ToHitData(TargetRoll.IMPOSSIBLE,
+                              Messages.getString("WeaponAttackAction.AeProneProppingArm"));
+                    }
+
+                    int otherArm = (weapon.getLocation() == Mek.LOC_RIGHT_ARM
+                          || weapon.getSecondLocation() == Mek.LOC_RIGHT_ARM) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
+                    // check previous attacks for weapons fire from the other arm
+                    if (Compute.isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
+                        return new ToHitData(TargetRoll.IMPOSSIBLE,
+                              Messages.getString("WeaponAttackAction.AeProneFiringOtherArm"));
+                    }
+                }
+                // can't fire leg weapons
+                if (weapon.getLocation() == Mek.LOC_LEFT_LEG
+                      || weapon.getLocation() == Mek.LOC_RIGHT_LEG
+                      || weapon.getLocation() == Mek.LOC_CENTER_LEG) {
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                          Messages.getString("WeaponAttackAction.AeProneLegWeapon"));
+                }
+                if (tripod.getCockpitType() == Mek.COCKPIT_DUAL && attacker.getCrew().hasDedicatedGunner()) {
+                    mods.addModifier(1, Messages.getString("WeaponAttackAction.AeProne"));
+                } else {
+                    mods.addModifier(2, Messages.getString("WeaponAttackAction.AeProne"));
+                }
+
+                if (l3ProneFiringArm != Entity.LOC_NONE) {
+                    mods.addModifier(1, Messages.getString("WeaponAttackAction.AePronePropping"));
+                }
             }
         } else {
             int l3ProneFiringArm = Entity.LOC_NONE;
@@ -2300,43 +2443,48 @@ public class Compute {
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PRONE_FIRE)) {
                     // Can fire with only one arm
                     if (attacker.isLocationBad(Mek.LOC_RIGHT_ARM) && attacker.isLocationBad(Mek.LOC_LEFT_ARM)) {
-                        return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone with both arms destroyed.");
+                        return new ToHitData(TargetRoll.IMPOSSIBLE,
+                              Messages.getString("WeaponAttackAction.AeProneBothArmsDestroyed"));
                     }
 
                     l3ProneFiringArm = attacker.isLocationBad(Mek.LOC_RIGHT_ARM) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
                 } else {
                     // must have an arm intact
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone with one or both arms destroyed.");
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                          Messages.getString("WeaponAttackAction.AeProneArmDestroyed"));
                 }
             }
 
             // arm-mounted weapons have additional trouble
             if ((weapon.getLocation() == Mek.LOC_RIGHT_ARM) || (weapon.getSecondLocation() == Mek.LOC_RIGHT_ARM)
                   || (weapon.getLocation() == Mek.LOC_LEFT_ARM) || (weapon.getSecondLocation() == Mek.LOC_LEFT_ARM)) {
-                if (l3ProneFiringArm == weapon.getLocation() || (weapon.getSecondLocation() != Entity.NONE
+                if (l3ProneFiringArm == weapon.getLocation() || (weapon.getSecondLocation() != Entity.LOC_NONE
                       && l3ProneFiringArm == weapon.getSecondLocation())) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone and propping up with this arm.");
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                          Messages.getString("WeaponAttackAction.AeProneProppingArm"));
                 }
 
                 int otherArm = (weapon.getLocation() == Mek.LOC_RIGHT_ARM
                       || weapon.getSecondLocation() == Mek.LOC_RIGHT_ARM) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
                 // check previous attacks for weapons fire from the other arm
                 if (Compute.isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone and firing from other arm already.");
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                          Messages.getString("WeaponAttackAction.AeProneFiringOtherArm"));
                 }
             }
             // can't fire leg weapons
             if ((weapon.getLocation() == Mek.LOC_LEFT_LEG) || (weapon.getLocation() == Mek.LOC_RIGHT_LEG)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Can't fire leg-mounted weapons while prone.");
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                      Messages.getString("WeaponAttackAction.AeProneLegWeapon"));
             }
             if (((Mek) attacker).getCockpitType() == Mek.COCKPIT_DUAL && attacker.getCrew().hasDedicatedGunner()) {
-                mods.addModifier(1, "attacker prone");
+                mods.addModifier(1, Messages.getString("WeaponAttackAction.AeProne"));
             } else {
-                mods.addModifier(2, "attacker prone");
+                mods.addModifier(2, Messages.getString("WeaponAttackAction.AeProne"));
             }
 
             if (l3ProneFiringArm != Entity.LOC_NONE) {
-                mods.addModifier(1, "attacker propping on single arm");
+                mods.addModifier(1, Messages.getString("WeaponAttackAction.AePronePropping"));
             }
         }
         return mods;
@@ -2794,7 +2942,7 @@ public class Compute {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL)
               && (entity.mpUsed == 0)
               && !entity.isImmobile()
-              && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
+              && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity.isBuildingEntityOrGunEmplacement()))) {
             ToHitData toHit = new ToHitData();
             toHit.addModifier(-1, "target did not move");
             return toHit;
@@ -3177,7 +3325,7 @@ public class Compute {
 
             if (targetEntity == null) {
                 return 0;
-            } else if (targetEntity instanceof GunEmplacement) {
+            } else if (targetEntity.isBuildingEntityOrGunEmplacement()) {
                 // If this is a gun emplacement, handle it as the building hex it is in.
                 final IBuilding parentBuilding = game.getBoard().getBuildingAt(position);
                 return (parentBuilding == null) ? 0
@@ -4198,6 +4346,11 @@ public class Compute {
         Coords targetPos = target.getPosition();
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity targetedEntity = (Entity) target;
+
+            // Beyond altitude 8, on ground maps, aerospace can't spot ground units
+            if (attackingEntity.isAirborneAeroOnGroundMap() && (attackingEntity.getAltitude() > 8) && !target.isAirborne()) {
+                visualRange = 0;
+            }
 
             // check for camo and null sig on the target
             if (targetedEntity.isVoidSigActive()) {
@@ -5656,9 +5809,18 @@ public class Compute {
             data.addModifier(-1, "exposed actuators");
         }
 
-        // MD Infantry with grappler/magnets get bonus
-        if (attacker.hasAbility(OptionsConstants.MD_PL_ENHANCED)) {
-            data.addModifier(-2, "MD Grapple/Magnet");
+        // Prosthetic enhancement anti-Mek bonus (Grappler or Climbing Claws) - IO p.84
+        // Uses the best (most negative) modifier from either enhancement slot
+        // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
+        if (attacker.hasProstheticEnhancement()
+              && (attacker.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+              || attacker.hasAbility(OptionsConstants.MD_PL_I_ENHANCED))) {
+            int antiMekMod = attacker.getBestProstheticAntiMekModifier();
+            if (antiMekMod != 0) {
+                String modName = attacker.getBestProstheticAntiMekName();
+                data.addModifier(antiMekMod,
+                      modName != null ? modName : Messages.getString("Compute.ProstheticEnhancement"));
+            }
         }
 
         // swarm/leg attacks take target movement mods into account
@@ -5962,7 +6124,11 @@ public class Compute {
             return true;
         }
 
-        return PheromoneAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE;
+        if (PheromoneAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE) {
+            return true;
+        }
+
+        return ToxinAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE;
     }
 
     /**

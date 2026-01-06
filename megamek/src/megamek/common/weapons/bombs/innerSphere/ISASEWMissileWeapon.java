@@ -95,7 +95,7 @@ public class ISASEWMissileWeapon extends ThunderboltWeapon {
         this.ammoType = AmmoType.AmmoTypeEnum.ASEW_MISSILE;
         this.capital = false;
         this.missileArmor = 30;
-        rulesRefs = "358, TO";
+        rulesRefs = "170, TO:AUE";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

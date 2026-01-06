@@ -200,6 +200,15 @@ public class PunchAttackAction extends PhysicalAttackAction {
             return "Target elevation not in range";
         }
 
+        // Prone 'Mechs can only be punched if they are one level higher than the attacker
+        // See BMM 7th Printing, Physical Attacks and Prone 'Mechs
+        if ((target instanceof Entity) && ((Entity) target).isProne()) {
+            int attackerLevel = attHex.getLevel() + ae.getElevation();
+            if (targetElevation != attackerLevel + 1) {
+                return Messages.getString("PhysicalAttackAction.ProneMekPunch");
+            }
+        }
+
         // Cannot punch with an arm that has an active shield on it.
         if (ae.hasActiveShield(armLoc)) {
             return "Cannot punch with shield in active mode";
@@ -235,8 +244,13 @@ public class PunchAttackAction extends PhysicalAttackAction {
         final int attackerHeight = ae.relHeight() + attHex.getLevel(); // The absolute level of the attacker's arms
         final int targetElevation = target.getElevation()
               + targHex.getLevel(); // The absolute level of the target's arms
-        final int armArc = (arm == PunchAttackAction.RIGHT) ? Compute.ARC_RIGHT_ARM
-              : Compute.ARC_LEFT_ARM;
+        // Tripods can only punch targets in front arc per IO:AE p.158
+        final int armArc;
+        if (ae.isTripodMek()) {
+            armArc = Compute.ARC_FORWARD;
+        } else {
+            armArc = (arm == PunchAttackAction.RIGHT) ? Compute.ARC_RIGHT_ARM : Compute.ARC_LEFT_ARM;
+        }
 
         ToHitData toHit;
 
@@ -277,7 +291,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         // Attacks against adjacent buildings automatically hit.
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)
               || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-              || (target instanceof GunEmplacement)) {
+              || (target.isBuildingEntityOrGunEmplacement())) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                   "Targeting adjacent building.");
         }

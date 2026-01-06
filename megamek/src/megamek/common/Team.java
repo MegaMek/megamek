@@ -45,6 +45,7 @@ import megamek.client.ratgenerator.FactionRecord;
 import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
+import megamek.common.game.InitiativeBonusBreakdown;
 import megamek.common.turns.TurnOrdered;
 import megamek.common.turns.TurnVectors;
 
@@ -232,18 +233,57 @@ public final class Team extends TurnOrdered {
 
     /** @return The best initiative among the team's players. */
     public int getTotalInitBonus(boolean bInitiativeCompensationBonus) {
-        int dynamicBonus = Integer.MIN_VALUE;
-        int constantBonus = Integer.MIN_VALUE;
+        return getInitBonusBreakdown(bInitiativeCompensationBonus).total();
+    }
+
+    /**
+     * Returns a breakdown of all initiative bonus components for this team. This allows the initiative report to show
+     * what contributes to the total bonus.
+     *
+     * @param bInitiativeCompensationBonus Whether to include initiative compensation bonus
+     *
+     * @return The breakdown of all bonus components
+     */
+    public InitiativeBonusBreakdown getInitBonusBreakdown(boolean bInitiativeCompensationBonus) {
+        int hqBonus = 0;
+        int quirkBonus = 0;
+        String quirkName = null;
+        int consoleBonus = 0;
+        int crewCommandBonus = 0;
+        int tcpBonus = 0;
 
         for (Player player : players) {
-            dynamicBonus = Math.max(dynamicBonus, player.getTurnInitBonus());
-            dynamicBonus = Math.max(dynamicBonus, player.getOverallCommandBonus());
+            // Track each source separately - these bonuses are always >= 0
+            hqBonus = Math.max(hqBonus, player.getHQInitBonus());
 
-            // this is a special case: it's an arbitrary bonus associated with a player
-            constantBonus = Math.max(constantBonus, player.getConstantInitBonus());
+            // For quirks, track both the bonus and the name of the quirk
+            int playerQuirkBonus = player.getQuirkInitBonus();
+            if (playerQuirkBonus > quirkBonus) {
+                quirkBonus = playerQuirkBonus;
+                quirkName = player.getQuirkInitBonusName();
+            }
+
+            consoleBonus = Math.max(consoleBonus, player.getCommandConsoleBonus());
+            crewCommandBonus = Math.max(crewCommandBonus, player.getCrewCommandBonus());
+            tcpBonus = Math.max(tcpBonus, player.getTCPInitBonus());
         }
 
-        return constantBonus + dynamicBonus + getInitCompensationBonus(bInitiativeCompensationBonus);
+        // Constant bonus can be negative, so we need to take max across players properly
+        int constantBonus = players.stream().mapToInt(Player::getConstantInitBonus).max().orElse(0);
+
+        int compensationBonus = getInitCompensationBonus(bInitiativeCompensationBonus);
+
+        return new InitiativeBonusBreakdown(
+              hqBonus,
+              quirkBonus,
+              quirkName,
+              consoleBonus,
+              crewCommandBonus,
+              tcpBonus,
+              constantBonus,
+              compensationBonus,
+              0  // crew bonus is for individual initiative mode only
+        );
     }
 
     @Override

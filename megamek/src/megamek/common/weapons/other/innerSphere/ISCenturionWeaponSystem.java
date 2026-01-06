@@ -84,7 +84,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         waterExtremeRange = 14;
         maxRange = RANGE_MED;
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_CWS);
-        rulesRefs = "85, IO";
+        rulesRefs = "79, IO:AE";
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X)
               .setISAdvancement(2762, DATE_NONE, DATE_NONE, 2770, DATE_NONE)

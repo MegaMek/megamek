@@ -458,4 +458,23 @@ public class BuildingTerrain implements IBuilding {
     public void setBoardId(int boardId) {
         building.setBoardId(boardId);
     }
+
+    /**
+     * Compare the internal building
+     */
+    @Override
+    public boolean equals(Object other) {
+        return (this == other) || ((other instanceof IBuilding otherBuilding) && (getInternalBuilding().equals(
+              otherBuilding.getInternalBuilding())));
+    }
+
+    @Override
+    public String toString() {
+        return getInternalBuilding().toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return getId();
+    }
 }

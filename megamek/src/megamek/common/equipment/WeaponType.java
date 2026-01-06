@@ -111,7 +111,6 @@ import megamek.common.weapons.bombs.BombISRLP10;
 import megamek.common.weapons.bombs.clan.CLAAAMissileWeapon;
 import megamek.common.weapons.bombs.clan.CLASEWMissileWeapon;
 import megamek.common.weapons.bombs.clan.CLASMissileWeapon;
-import megamek.common.weapons.bombs.clan.CLBombTAG;
 import megamek.common.weapons.bombs.clan.CLLAAMissileWeapon;
 import megamek.common.weapons.bombs.innerSphere.ISAAAMissileWeapon;
 import megamek.common.weapons.bombs.innerSphere.ISASEWMissileWeapon;
@@ -2402,7 +2401,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLLAAMissileWeapon());
         EquipmentType.addType(new BombArrowIV());
         EquipmentType.addType(new ISBombTAG());
-        EquipmentType.addType(new CLBombTAG());
         EquipmentType.addType(new BombISRL10());
         EquipmentType.addType(new BombISRLP10());
         EquipmentType.addType(new AlamoMissileWeapon());

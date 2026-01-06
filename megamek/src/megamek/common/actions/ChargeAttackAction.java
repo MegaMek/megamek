@@ -262,7 +262,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // Attacks against adjacent buildings automatically hit.
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)
               || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-              || (target instanceof GunEmplacement)) {
+              || (target.isBuildingEntityOrGunEmplacement())) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Targeting adjacent building.");
         }
 
@@ -542,16 +542,18 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     }
 
     public static int getDamageTakenBy(Entity entity, Entity target, boolean tacOps, int distance) {
+        // Per TW p.148, DropShips are "unusual targets" - use attacker's weight for self-damage
+        // (same as buildings which have no tonnage)
+        double effectiveTargetWeight = (target instanceof Dropship) ? entity.getWeight() : target.getWeight();
+
         if (!tacOps) {
             return (int) Math
-                  .ceil((target.getWeight()
-                        / 10.0)
-                        * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5
-                        : 1));
+                  .ceil((effectiveTargetWeight / 10.0)
+                        * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
         }
         return (int) Math
-              .floor((((target.getWeight() * entity.getWeight()) * distance) / (target
-                    .getWeight() + entity.getWeight())) / 10);
+              .floor((((effectiveTargetWeight * entity.getWeight()) * distance)
+                    / (effectiveTargetWeight + entity.getWeight())) / 10);
     }
 
     @Override

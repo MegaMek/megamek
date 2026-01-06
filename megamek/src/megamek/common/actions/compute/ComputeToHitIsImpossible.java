@@ -927,13 +927,12 @@ class ComputeToHitIsImpossible {
                     }
                 }
 
-                // Only direct-fire energy weapons can strafe
-                //FIXME we have different checks for this in FiringDisplay, here and in MML for some table
+                // Per TW p. 243: "The unit may fire one, some, or all of its non-ammo-dependent
+                // direct-fire energy and pulse weapons when strafing."
+                // This excludes plasma weapons since they require ammo.
                 boolean isDirectFireEnergy = (weaponType.hasFlag(WeaponType.F_DIRECT_FIRE) &&
                       (weaponType.hasFlag(WeaponType.F_LASER) ||
-                            weaponType.hasFlag(WeaponType.F_PPC) ||
-                            weaponType.hasFlag(WeaponType.F_PLASMA) ||
-                            weaponType.hasFlag(WeaponType.F_PLASMA_MFUK))) ||
+                            weaponType.hasFlag(WeaponType.F_PPC))) ||
                       weaponType.hasFlag(WeaponType.F_FLAMER);
                 // Note: flamers are direct fire energy, but don't have the flag,
                 // so they won't work with targeting computers
@@ -1242,10 +1241,13 @@ class ComputeToHitIsImpossible {
                 }
             }
 
-            // BA Mine launchers can not hit infantry
+            // BA Mine launchers can only target 'Mek, vehicle, or grounded fighter (TW p.229)
             if (BattleArmor.MINE_LAUNCHER.equals(weaponType.getInternalName())) {
-                if (entityTarget instanceof Infantry) {
-                    return Messages.getString("WeaponAttackAction.CantShootInfantry");
+                boolean isValidTarget = (entityTarget instanceof Mek)
+                      || (entityTarget instanceof Tank)
+                      || ((entityTarget instanceof Aero) && !entityTarget.isAirborne());
+                if (!isValidTarget) {
+                    return Messages.getString("WeaponAttackAction.PopUpMineInvalidTarget");
                 }
             }
 

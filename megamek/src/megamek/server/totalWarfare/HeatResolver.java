@@ -108,6 +108,9 @@ class HeatResolver extends AbstractTWRuleHandler {
                     LOGGER.error("Radical heat sinks mounted on non-mek, non-aero Entity!");
                 }
 
+                // Mark that RHS was used this turn (for tracking consecutive uses in newRound)
+                entity.setUsedRHSLastTurn(true);
+
                 // RHS activation report
                 report = new Report(5540);
                 report.subject = entity.getId();
@@ -117,6 +120,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                 rhsReports.add(report);
 
                 Roll diceRoll = Compute.rollD6(2);
+                // Increment consecutive RHS uses for this activation attempt (success or failure),
+                // then look up the target number based on the updated count.
                 entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
                 int targetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses());
                 boolean rhsFailure = diceRoll.getIntValue() < targetNumber;
@@ -128,6 +133,18 @@ class HeatResolver extends AbstractTWRuleHandler {
                 report.add(diceRoll);
                 report.choose(rhsFailure);
                 rhsReports.add(report);
+
+                // Show RHS stress level and next activation TN (only if RHS didn't fail)
+                if (!rhsFailure) {
+                    int nextTargetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses()
+                          + 1);
+                    report = new Report(5547);
+                    report.indent(2);
+                    report.subject = entity.getId();
+                    report.add(entity.getConsecutiveRHSUses());
+                    report.add(nextTargetNumber);
+                    rhsReports.add(report);
+                }
 
                 if (rhsFailure) {
                     entity.setHasDamagedRHS(true);
@@ -152,6 +169,21 @@ class HeatResolver extends AbstractTWRuleHandler {
                         }
                     }
                 }
+            } else if (entity.hasWorkingRadicalHS() && (entity.getConsecutiveRHSUses() > 0)) {
+                // RHS not activated this turn, but has stress - show settling message
+                int currentStress = entity.getConsecutiveRHSUses();
+                // Calculate reduced stress: single decrement, plus extra if rhsWentUp (double decrement)
+                int decrement = entity.hasRHSWentUp() ? 2 : 1;
+                int reducedStress = Math.max(0, currentStress - decrement);
+                // If activated next turn, stress will increment from reduced level
+                int nextActivationTN = ServerHelper.radicalHeatSinkSuccessTarget(reducedStress + 1);
+                report = new Report(5548);
+                report.indent();
+                report.subject = entity.getId();
+                report.add(currentStress);
+                report.add(reducedStress);
+                report.add(nextActivationTN);
+                rhsReports.add(report);
             }
 
             Hex entityHex = getGame().getHex(entity.getPosition(), entity.getBoardId());
@@ -581,6 +613,9 @@ class HeatResolver extends AbstractTWRuleHandler {
                         report.addDesc(entity);
                         addReport(report);
                         entity.setShutDown(true);
+                    } else if ((report = createTCPShutdownAvoidanceReport(entity)) != null) {
+                        addReport(report);
+                        // No shutdown - TCP automatically avoids
                     } else {
                         int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
                         TargetRoll target;
@@ -1136,6 +1171,9 @@ class HeatResolver extends AbstractTWRuleHandler {
                     report.addDesc(entity);
                     vPhaseReport.add(report);
                     entity.setShutDown(true);
+                } else if ((report = createTCPShutdownAvoidanceReport(entity)) != null) {
+                    vPhaseReport.add(report);
+                    // No shutdown - TCP automatically avoids
                 } else {
                     int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
                     if (mtHeat) {
@@ -1286,5 +1324,24 @@ class HeatResolver extends AbstractTWRuleHandler {
         }
     }
 
+    /**
+     * Creates a report for TCP automatic shutdown avoidance if the entity has a Triple-Core Processor. Per IO pg 81,
+     * TCP-implanted MechWarriors and fighter pilots automatically succeed at all shutdown-avoidance checks for extreme
+     * heat, except for those described as "automatic shutdown". Note: Unlike aimed shots, TCP heat shutdown avoidance
+     * does NOT require VDNI - the implant works standalone for this benefit.
+     *
+     * @param entity The entity to check
+     *
+     * @return A Report for TCP shutdown avoidance, or null if entity doesn't have TCP
+     */
+    private Report createTCPShutdownAvoidanceReport(Entity entity) {
+        if (!entity.hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR)) {
+            return null;
+        }
+        Report report = new Report(5057);
+        report.subject = entity.getId();
+        report.addDesc(entity);
+        return report;
+    }
 
 }

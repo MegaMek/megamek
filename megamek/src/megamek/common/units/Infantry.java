@@ -54,6 +54,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.EquipmentType;
@@ -177,6 +178,22 @@ public class Infantry extends Entity {
     private boolean isCallingSupport = false;
     private boolean pheromoneImpaired = false;
     private InfantryMount mount = null;
+
+    // Prosthetic Enhancement (Enhanced Limbs) - IO p.84
+    // Standard Enhanced (MD_PL_ENHANCED): Uses slot 1 only, same type up to 2x
+    // Improved Enhanced (MD_PL_I_ENHANCED): Uses both slots, different types, each up to 2x, max 4 total
+    private ProstheticEnhancementType prostheticEnhancement1 = null;
+    private int prostheticEnhancement1Count = 0; // 0, 1, or 2 per trooper
+    private ProstheticEnhancementType prostheticEnhancement2 = null;
+    private int prostheticEnhancement2Count = 0; // 0, 1, or 2 per trooper
+
+    // Extraneous (Enhanced) Limbs - IO p.84
+    // MD_PL_EXTRA_LIMBS: Up to 2 pairs of extra limbs (4 limbs total)
+    // Each pair provides 2 identical enhancement items (1 per limb)
+    // Items in a pair must be same type but can differ from other prosthetics
+    // Conventional infantry only
+    private ProstheticEnhancementType extraneousPair1 = null; // Always 2 items per pair
+    private ProstheticEnhancementType extraneousPair2 = null; // Always 2 items per pair
 
     /** The maximum number of troopers in an infantry platoon. */
     public static final int INF_PLT_MAX_MEN = 30;
@@ -1371,8 +1388,12 @@ public class Infantry extends Entity {
         if ((divisor == 1.0) && hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             divisor = 0.5;
         }
-        // Dermal armor adds one to the divisor, cumulative with armor kit and TSM
-        // implant
+        // Dermal camo armor provides divisor of 1.0 (prevents 0.5 from TSM alone)
+        // but does NOT add to divisor like regular dermal armor
+        if ((divisor == 0.5) && hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)) {
+            divisor = 1.0;
+        }
+        // Dermal armor adds one to the divisor, cumulative with armor kit and TSM implant
         if (hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
             divisor += 1.0;
         }
@@ -1586,6 +1607,17 @@ public class Infantry extends Entity {
             }
         }
 
+        // Dermal camo armor provides mimetic stealth for foot/jump infantry only
+        // when not wearing other armor. Modifier based on movement: +3/+2/+1/+0
+        if (hasDermalCamoStealth() && (delta_distance < 3)) {
+            int mod = Math.max(3 - delta_distance, 0);
+            if (result == null) {
+                result = new TargetRoll(mod, "Dermal Camo");
+            } else {
+                result.append(new TargetRoll(mod, "Dermal Camo"));
+            }
+        }
+
         if (dest && (delta_distance == 0)) {
             if (result == null) {
                 result = new TargetRoll(1, "DEST suit");
@@ -1604,6 +1636,16 @@ public class Infantry extends Entity {
     /** @return True if this infantry has any type of stealth system. */
     public boolean isStealthy() {
         return dest || sneak_camo || sneak_ir || sneak_ecm;
+    }
+
+    /**
+     * @return True if this infantry has Dermal Camo Armor and can benefit from its mimetic
+     *         stealth properties (leg or jump infantry only, not wearing other armor).
+     */
+    public boolean hasDermalCamoStealth() {
+        return hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)
+              && (getMovementMode().isLegInfantry() || getMovementMode().isJumpInfantry())
+              && (getArmorKit() == null);
     }
 
     public boolean hasMicrolite() {
@@ -1631,6 +1673,408 @@ public class Infantry extends Entity {
     public @Nullable InfantryMount getMount() {
         return mount;
     }
+
+    // region Prosthetic Enhancement
+
+    // --- Slot 1 (Standard Enhanced uses this, Improved Enhanced uses both) ---
+
+    /**
+     * @return The prosthetic enhancement type in slot 1, or null if none
+     */
+    public @Nullable ProstheticEnhancementType getProstheticEnhancement1() {
+        return prostheticEnhancement1;
+    }
+
+    /**
+     * Sets the prosthetic enhancement type in slot 1.
+     *
+     * @param enhancement The enhancement type to set, or null to remove
+     */
+    public void setProstheticEnhancement1(@Nullable ProstheticEnhancementType enhancement) {
+        this.prostheticEnhancement1 = enhancement;
+        if (enhancement == null) {
+            prostheticEnhancement1Count = 0;
+        }
+    }
+
+    /**
+     * @return The number of slot 1 enhancements per trooper (0, 1, or 2)
+     */
+    public int getProstheticEnhancement1Count() {
+        return prostheticEnhancement1Count;
+    }
+
+    /**
+     * Sets the number of slot 1 enhancements per trooper. Clamped to valid range of 0-2.
+     *
+     * @param count The enhancement count (0, 1, or 2)
+     */
+    public void setProstheticEnhancement1Count(int count) {
+        this.prostheticEnhancement1Count = Math.max(0, Math.min(2, count));
+    }
+
+    // --- Slot 2 (Improved Enhanced only) ---
+
+    /**
+     * @return The prosthetic enhancement type in slot 2, or null if none
+     */
+    public @Nullable ProstheticEnhancementType getProstheticEnhancement2() {
+        return prostheticEnhancement2;
+    }
+
+    /**
+     * Sets the prosthetic enhancement type in slot 2.
+     *
+     * @param enhancement The enhancement type to set, or null to remove
+     */
+    public void setProstheticEnhancement2(@Nullable ProstheticEnhancementType enhancement) {
+        this.prostheticEnhancement2 = enhancement;
+        if (enhancement == null) {
+            prostheticEnhancement2Count = 0;
+        }
+    }
+
+    /**
+     * @return The number of slot 2 enhancements per trooper (0, 1, or 2)
+     */
+    public int getProstheticEnhancement2Count() {
+        return prostheticEnhancement2Count;
+    }
+
+    /**
+     * Sets the number of slot 2 enhancements per trooper. Clamped to valid range of 0-2.
+     *
+     * @param count The enhancement count (0, 1, or 2)
+     */
+    public void setProstheticEnhancement2Count(int count) {
+        this.prostheticEnhancement2Count = Math.max(0, Math.min(2, count));
+    }
+
+    // --- Combined helpers ---
+
+    /**
+     * @return True if this unit has any prosthetic enhancement configured (in either slot)
+     */
+    public boolean hasProstheticEnhancement() {
+        return (prostheticEnhancement1 != null && prostheticEnhancement1Count > 0)
+              || (prostheticEnhancement2 != null && prostheticEnhancement2Count > 0);
+    }
+
+    /**
+     * @return True if this unit has a prosthetic enhancement in slot 1
+     */
+    public boolean hasProstheticEnhancement1() {
+        return prostheticEnhancement1 != null && prostheticEnhancement1Count > 0;
+    }
+
+    /**
+     * @return True if this unit has a prosthetic enhancement in slot 2
+     */
+    public boolean hasProstheticEnhancement2() {
+        return prostheticEnhancement2 != null && prostheticEnhancement2Count > 0;
+    }
+
+    /**
+     * Calculates the total prosthetic enhancement damage bonus per trooper from both slots. This sums the damage from
+     * both enhancement slots.
+     *
+     * @return The total damage bonus per trooper from all prosthetic enhancements
+     */
+    public double getProstheticDamageBonus() {
+        double bonus = 0.0;
+        if (hasProstheticEnhancement1()) {
+            bonus += prostheticEnhancement1.getDamagePerTrooper() * prostheticEnhancement1Count;
+        }
+        if (hasProstheticEnhancement2()) {
+            bonus += prostheticEnhancement2.getDamagePerTrooper() * prostheticEnhancement2Count;
+        }
+        return bonus;
+    }
+
+    /**
+     * Gets the best (most negative) anti-Mek modifier from all prosthetic enhancements.
+     *
+     * @return The best anti-Mek modifier, or 0 if no enhancement provides one
+     */
+    public int getBestProstheticAntiMekModifier() {
+        int best = 0;
+        // Check regular prosthetic enhancements
+        if (hasProstheticEnhancement1() && prostheticEnhancement1.hasAntiMekBonus()) {
+            best = Math.min(best, prostheticEnhancement1.getAntiMekModifier());
+        }
+        if (hasProstheticEnhancement2() && prostheticEnhancement2.hasAntiMekBonus()) {
+            best = Math.min(best, prostheticEnhancement2.getAntiMekModifier());
+        }
+        // Check extraneous limb enhancements (only the single best modifier from all sources applies)
+        if (hasExtraneousPair1() && extraneousPair1.hasAntiMekBonus()) {
+            best = Math.min(best, extraneousPair1.getAntiMekModifier());
+        }
+        if (hasExtraneousPair2() && extraneousPair2.hasAntiMekBonus()) {
+            best = Math.min(best, extraneousPair2.getAntiMekModifier());
+        }
+        return best;
+    }
+
+    /**
+     * Gets the display name of the enhancement providing the best anti-Mek bonus.
+     *
+     * @return The display name, or null if no enhancement provides anti-Mek bonus
+     */
+    public @Nullable String getBestProstheticAntiMekName() {
+        int best = 0;
+        String name = null;
+        // Check regular prosthetic enhancements
+        if (hasProstheticEnhancement1() && prostheticEnhancement1.hasAntiMekBonus()) {
+            if (prostheticEnhancement1.getAntiMekModifier() < best) {
+                best = prostheticEnhancement1.getAntiMekModifier();
+                name = prostheticEnhancement1.getDisplayName();
+            }
+        }
+        if (hasProstheticEnhancement2() && prostheticEnhancement2.hasAntiMekBonus()) {
+            if (prostheticEnhancement2.getAntiMekModifier() < best) {
+                best = prostheticEnhancement2.getAntiMekModifier();
+                name = prostheticEnhancement2.getDisplayName();
+            }
+        }
+        // Check extraneous limb enhancements
+        if (hasExtraneousPair1() && extraneousPair1.hasAntiMekBonus()) {
+            if (extraneousPair1.getAntiMekModifier() < best) {
+                best = extraneousPair1.getAntiMekModifier();
+                name = extraneousPair1.getDisplayName();
+            }
+        }
+        if (hasExtraneousPair2() && extraneousPair2.hasAntiMekBonus()) {
+            if (extraneousPair2.getAntiMekModifier() < best) {
+                best = extraneousPair2.getAntiMekModifier();
+                name = extraneousPair2.getDisplayName();
+            }
+        }
+        return name;
+    }
+
+    /**
+     * Checks if any prosthetic enhancement (regular or extraneous) is a melee type.
+     *
+     * @return True if any enhancement is melee
+     */
+    public boolean hasProstheticMeleeEnhancement() {
+        return (hasProstheticEnhancement1() && prostheticEnhancement1.isMelee())
+              || (hasProstheticEnhancement2() && prostheticEnhancement2.isMelee())
+              || (hasExtraneousPair1() && extraneousPair1.isMelee())
+              || (hasExtraneousPair2() && extraneousPair2.isMelee());
+    }
+
+    /**
+     * Gets the melee to-hit modifier from prosthetic enhancements. Per IO p.83, maximum modifier is +2 regardless of
+     * number of melee weapons.
+     *
+     * @return The melee to-hit modifier (capped at +2)
+     */
+    public int getProstheticMeleeToHitModifier() {
+        int modifier = 0;
+        // Check regular prosthetic enhancements
+        if (hasProstheticEnhancement1() && prostheticEnhancement1.isMelee()) {
+            modifier = Math.max(modifier, prostheticEnhancement1.getToHitModifier());
+        }
+        if (hasProstheticEnhancement2() && prostheticEnhancement2.isMelee()) {
+            modifier = Math.max(modifier, prostheticEnhancement2.getToHitModifier());
+        }
+        // Check extraneous limb enhancements
+        if (hasExtraneousPair1() && extraneousPair1.isMelee()) {
+            modifier = Math.max(modifier, extraneousPair1.getToHitModifier());
+        }
+        if (hasExtraneousPair2() && extraneousPair2.isMelee()) {
+            modifier = Math.max(modifier, extraneousPair2.getToHitModifier());
+        }
+        // Cap at +2 per IO p.83
+        return Math.min(modifier, 2);
+    }
+
+    // --- Legacy compatibility methods ---
+
+    /**
+     * @return The prosthetic enhancement type in slot 1 (legacy method)
+     *
+     * @deprecated Use {@link #getProstheticEnhancement1()} instead
+     */
+    @Deprecated(since = "0.50.07")
+    public @Nullable ProstheticEnhancementType getProstheticEnhancement() {
+        return getProstheticEnhancement1();
+    }
+
+    /**
+     * Sets the prosthetic enhancement type in slot 1 (legacy method).
+     *
+     * @param enhancement The enhancement type to set
+     *
+     * @deprecated Use {@link #setProstheticEnhancement1(ProstheticEnhancementType)} instead
+     */
+    @Deprecated(since = "0.50.07")
+    public void setProstheticEnhancement(@Nullable ProstheticEnhancementType enhancement) {
+        setProstheticEnhancement1(enhancement);
+    }
+
+    /**
+     * @return The slot 1 enhancement count (legacy method)
+     *
+     * @deprecated Use {@link #getProstheticEnhancement1Count()} instead
+     */
+    @Deprecated(since = "0.50.07")
+    public int getProstheticEnhancementCount() {
+        return getProstheticEnhancement1Count();
+    }
+
+    /**
+     * Sets the slot 1 enhancement count (legacy method).
+     *
+     * @param count The count to set
+     *
+     * @deprecated Use {@link #setProstheticEnhancement1Count(int)} instead
+     */
+    @Deprecated(since = "0.50.07")
+    public void setProstheticEnhancementCount(int count) {
+        setProstheticEnhancement1Count(count);
+    }
+
+    // --- Extraneous (Enhanced) Limbs methods ---
+
+    /**
+     * @return The prosthetic enhancement type for extraneous pair 1, or null if not set
+     */
+    public @Nullable ProstheticEnhancementType getExtraneousPair1() {
+        return extraneousPair1;
+    }
+
+    /**
+     * Sets the prosthetic enhancement type for extraneous pair 1. Each pair always provides 2 items.
+     *
+     * @param enhancement The enhancement type to set, or null to clear
+     */
+    public void setExtraneousPair1(@Nullable ProstheticEnhancementType enhancement) {
+        this.extraneousPair1 = enhancement;
+    }
+
+    /**
+     * @return True if extraneous pair 1 has an enhancement type set
+     */
+    public boolean hasExtraneousPair1() {
+        return extraneousPair1 != null;
+    }
+
+    /**
+     * @return The prosthetic enhancement type for extraneous pair 2, or null if not set
+     */
+    public @Nullable ProstheticEnhancementType getExtraneousPair2() {
+        return extraneousPair2;
+    }
+
+    /**
+     * Sets the prosthetic enhancement type for extraneous pair 2. Each pair always provides 2 items.
+     *
+     * @param enhancement The enhancement type to set, or null to clear
+     */
+    public void setExtraneousPair2(@Nullable ProstheticEnhancementType enhancement) {
+        this.extraneousPair2 = enhancement;
+    }
+
+    /**
+     * @return True if extraneous pair 2 has an enhancement type set
+     */
+    public boolean hasExtraneousPair2() {
+        return extraneousPair2 != null;
+    }
+
+    /**
+     * @return True if this infantry unit has any extraneous limb pairs configured
+     */
+    public boolean hasExtraneousLimbs() {
+        return hasExtraneousPair1() || hasExtraneousPair2();
+    }
+
+    /**
+     * Gets the total bonus damage per trooper from extraneous limb enhancements. Each pair provides 2 items (1 per
+     * limb), so the damage is multiplied by 2 for each pair.
+     *
+     * @return Total damage bonus from extraneous limb enhancements
+     */
+    public double getExtraneousDamageBonus() {
+        double bonus = 0;
+        if (hasExtraneousPair1() && extraneousPair1.hasDamageBonus()) {
+            bonus += extraneousPair1.getDamagePerTrooper() * 2; // 2 items per pair
+        }
+        if (hasExtraneousPair2() && extraneousPair2.hasDamageBonus()) {
+            bonus += extraneousPair2.getDamagePerTrooper() * 2; // 2 items per pair
+        }
+        return bonus;
+    }
+
+    /**
+     * Gets the best anti-Mek modifier from extraneous limb enhancements. Multiple enhancements do not stack; only the
+     * best modifier is used.
+     *
+     * @return Best anti-Mek modifier from extraneous limbs (negative values are better), or 0 if none
+     */
+    public int getExtraneousAntiMekModifier() {
+        int best = 0;
+        if (hasExtraneousPair1() && extraneousPair1.hasAntiMekBonus()) {
+            best = Math.min(best, extraneousPair1.getAntiMekModifier());
+        }
+        if (hasExtraneousPair2() && extraneousPair2.hasAntiMekBonus()) {
+            best = Math.min(best, extraneousPair2.getAntiMekModifier());
+        }
+        return best;
+    }
+
+    /**
+     * Gets the name of the extraneous limb enhancement that provides the best anti-Mek modifier.
+     *
+     * @return Name of the enhancement with best anti-Mek modifier, or null if none
+     */
+    public @Nullable String getExtraneousAntiMekEnhancementName() {
+        int best = 0;
+        String name = null;
+        if (hasExtraneousPair1() && extraneousPair1.hasAntiMekBonus()) {
+            if (extraneousPair1.getAntiMekModifier() < best) {
+                best = extraneousPair1.getAntiMekModifier();
+                name = extraneousPair1.getDisplayName();
+            }
+        }
+        if (hasExtraneousPair2() && extraneousPair2.hasAntiMekBonus()) {
+            if (extraneousPair2.getAntiMekModifier() < best) {
+                best = extraneousPair2.getAntiMekModifier();
+                name = extraneousPair2.getDisplayName();
+            }
+        }
+        return name;
+    }
+
+    /**
+     * @return True if any extraneous limb enhancement is a melee weapon
+     */
+    public boolean hasExtraneousMeleeEnhancement() {
+        return (hasExtraneousPair1() && extraneousPair1.isMelee())
+              || (hasExtraneousPair2() && extraneousPair2.isMelee());
+    }
+
+    /**
+     * Gets the melee to-hit modifier from extraneous limb enhancements. Per IO p.83, maximum modifier is +2 regardless
+     * of number of melee weapons.
+     *
+     * @return The melee to-hit modifier from extraneous limbs (capped at +2)
+     */
+    public int getExtraneousMeleeToHitModifier() {
+        int modifier = 0;
+        if (hasExtraneousPair1() && extraneousPair1.isMelee()) {
+            modifier = Math.max(modifier, extraneousPair1.getToHitModifier());
+        }
+        if (hasExtraneousPair2() && extraneousPair2.isMelee()) {
+            modifier = Math.max(modifier, extraneousPair2.getToHitModifier());
+        }
+        // Cap at +2 per IO p.83
+        return Math.min(modifier, 2);
+    }
+
+    // endregion Prosthetic Enhancement
 
     /**
      * Used to check for standard or motorized SCUBA infantry, which have a maximum depth of 2.
@@ -2021,12 +2465,12 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Checks if this infantry unit is protected from pheromone gas attacks. Protection comes from MD_FILTRATION implant
-     * or hostile environment gear (space suit, XCT vacuum, or toxic atmosphere armor kits).
+     * Checks if this infantry unit is protected from gas attacks (including pheromone and toxin gas attacks).
+     * Protection comes from MD_FILTRATION implant or hostile environment gear (space suit, XCT vacuum, or toxic atmosphere armor kits).
      *
-     * @return true if protected from pheromone attacks
+     * @return true if protected from gas attacks
      */
-    public boolean isProtectedFromPheromone() {
+    public boolean isProtectedFromGasAttacks() {
         // Check for filtration implants
         if (hasAbility(OptionsConstants.MD_FILTRATION)) {
             return true;

@@ -1038,9 +1038,16 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // Deal special effect damage and crits
             dealSpecialCritEffects(mek, reportVec, hit, mods, underWater, damageType);
 
-            if (mods.isHeadHit && !mek.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
-                Report.addNewline(reportVec);
-                reportVec.addAll(manager.damageCrew(mek, 1));
+            if (mods.isHeadHit) {
+                if (mek.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                      || mek.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)) {
+                    Report r = new Report(6651);
+                    r.subject = mek.getId();
+                    reportVec.add(r);
+                } else {
+                    Report.addNewline(reportVec);
+                    reportVec.addAll(manager.damageCrew(mek, 1));
+                }
             }
 
             // If the location has run out of internal structure, finally
@@ -1136,6 +1143,27 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         }
     }
 
+    /**
+     * Applies damage to an aerospace unit (fighter, small craft, dropship, etc.).
+     *
+     * <p>Per Strategic Operations p.116, when a weapon group/bay fires multiple weapons,
+     * the threshold critical check uses only a single weapon's damage value (stored in {@link HitData#getSingleAV()}),
+     * NOT the total damage from all weapons. The full damage is still applied to the target, but threshold is checked
+     * against the single weapon value. This prevents unrealistic threshold criticals from massed small weapons like 22
+     * medium lasers (110 damage total, but threshold check uses only 5 damage from one laser).</p>
+     *
+     * @param reportVec     the vector to add combat reports to
+     * @param aero          the aerospace unit taking damage
+     * @param hit           the hit location data, including singleAV for weapon groups
+     * @param damage        the total damage to apply
+     * @param ammoExplosion true if this damage is from an ammo explosion
+     * @param damageType    the type of damage (standard, armor-piercing, etc.)
+     * @param areaSatArty   true if this is area saturation artillery
+     * @param throughFront  true if attack came through front arc
+     * @param underWater    true if target is underwater
+     * @param nukeS2S       true if this is ship-to-ship nuclear damage
+     * @param mods          damage modifiers and state tracking
+     */
     public void damageAeroSpace(Vector<Report> reportVec, Aero aero, HitData hit, int damage, boolean ammoExplosion,
           DamageType damageType, boolean areaSatArty, boolean throughFront, boolean underWater, boolean nukeS2S,
           ModsInfo mods) {
@@ -1159,10 +1187,14 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         // save the relevant damage for damage thresholding
         int damageThisAttack = aero.damageThisPhase;
 
-        // weapon groups only get the damage of one weapon
+        // Per SO p.116: For weapon groups/bays, threshold critical checks use only the
+        // damage of a SINGLE weapon (singleAV), not the combined damage from all weapons
+        // that hit. This prevents massed small weapons from always triggering threshold
+        // criticals. The full damage is still applied to the target.
+        int threshDamage = damage;
         if ((hit.getSingleAV() > -1) && !game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
-            damage = hit.getSingleAV();
+            threshDamage = hit.getSingleAV();
         }
 
         // is this capital-scale damage
@@ -1173,11 +1205,13 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
               (!aero.isCapitalScale() ||
                     game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY))) {
             damage = 10 * damage;
+            threshDamage = 10 * threshDamage;
         }
         if (!isCapital &&
               aero.isCapitalScale() &&
               !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             damage = (int) Math.round(damage / 10.0);
+            threshDamage = (int) Math.round(threshDamage / 10.0);
         }
         int damage_orig = damage;
 
@@ -1256,6 +1290,11 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 if (hit.getAttackerId() != Entity.NONE) {
                     manager.creditKill(aero, game.getEntity(hit.getAttackerId()));
                 }
+            }
+            // chance of critical hit if damage exceeds threshold
+            if (threshDamage > aero.getThresh(hit.getLocation())) {
+                critThresh = true;
+                aero.setCritThresh(true);
             }
             // check for aero crits from natural 12 or threshold; LAMs take damage as meks
             manager.checkAeroCrits(reportVec, aero, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
@@ -1395,8 +1434,11 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         // Damage _applied_ by this attack should be original damageThisPhase minus current value
         damageThisAttack = aero.damageThisPhase - damageThisAttack;
 
-        // chance of critical hit if total suffered damage greater than a threshold
-        if ((damageThisAttack > aero.getThresh(hit.getLocation()))) {
+        // chance of critical hit if damage exceeds threshold
+        // Per SO p.116: For weapon groups, use singleAV for threshold check (single weapon damage)
+        // For non-weapon-groups, use actual damage applied (which accounts for armor reductions)
+        int threshCheckDamage = (hit.getSingleAV() > -1) ? threshDamage : damageThisAttack;
+        if (threshCheckDamage > aero.getThresh(hit.getLocation())) {
             critThresh = true;
             aero.setCritThresh(true);
         }
@@ -1784,15 +1826,15 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             return;
         }
         Entity fighter = fighters.get(hit.getLocation());
-        HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-        new_hit.setBoxCars(hit.rolledBoxCars());
-        new_hit.setGeneralDamageType(hit.getGeneralDamageType());
-        new_hit.setCapital(hit.isCapital());
-        new_hit.setCapMisCritMod(hit.getCapMisCritMod());
-        new_hit.setSingleAV(hit.getSingleAV());
-        new_hit.setAttackerId(hit.getAttackerId());
+        HitData newHit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+        newHit.setBoxCars(hit.rolledBoxCars());
+        newHit.setGeneralDamageType(hit.getGeneralDamageType());
+        newHit.setCapital(hit.isCapital());
+        newHit.setCapMisCritMod(hit.getCapMisCritMod());
+        newHit.setSingleAV(hit.getSingleAV());
+        newHit.setAttackerId(hit.getAttackerId());
         reportVec.addAll(damageEntity(fighter,
-              new_hit,
+              newHit,
               damage,
               ammoExplosion,
               damageType,
@@ -2092,6 +2134,14 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         boolean damageIS = mods.damageIS;
         Report report;
 
+        // Track initial trooper count for suicide implant reactive damage (IO pg 83)
+        // Only track if: conventional infantry, has suicide implants, and this is NOT reactive damage
+        boolean hasSuicideImplants = infantry.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS);
+        boolean checkSuicideImplantReaction = infantry.isConventionalInfantry()
+              && hasSuicideImplants
+              && !damageType.equals(DamageType.SUICIDE_IMPLANT_REACTION);
+        int initialTroopers = checkSuicideImplantReaction ? infantry.getInternal(Infantry.LOC_INFANTRY) : -1;
+
         // Infantry with TSM implants get 2d6 burst damage from ATSM munitions
         if (damageType.equals(DamageType.ANTI_TSM) &&
               infantry.isConventionalInfantry() &&
@@ -2326,6 +2376,17 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 if (!(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor)) {
                     mods.specCrits = mods.specCrits + 1;
                 }
+            }
+        }
+
+        // Suicide Implant Reactive Damage (IO pg 83)
+        // When conventional infantry with suicide implants loses troopers, they automatically
+        // deal 0.57 damage per dead trooper to all opposing units in the hex
+        if (checkSuicideImplantReaction && initialTroopers > 0) {
+            int currentTroopers = Math.max(0, infantry.getInternal(Infantry.LOC_INFANTRY));
+            int deadTroopers = initialTroopers - currentTroopers;
+            if (deadTroopers > 0) {
+                reportVec.addAll(applySuicideImplantReaction(infantry, deadTroopers));
             }
         }
     }
@@ -3090,7 +3151,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 report.subject = entityId;
                 report.indent(3);
                 reportVec.addElement(report);
-                if (entity instanceof GunEmplacement) {
+                if (entity.isBuildingEntityOrGunEmplacement()) {
                     // gun emplacements have no internal,
                     // destroy the section
                     entity.destroyLocation(hit.getLocation());

@@ -80,6 +80,7 @@ import megamek.common.AtmosphericLandingMovePath;
 import megamek.common.Hex;
 import megamek.common.LandingDirection;
 import megamek.common.ManeuverType;
+import megamek.common.OffBoardDirection;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -2534,7 +2535,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         final Entity currentEntity = currentEntity();
 
         // Aerospace should be able to fly off if they reach a border hex with velocity remaining and facing the
-        // right direction
+        // right direction, OR if at altitude 10 they can climb out
         if ((currentEntity == null) || !currentEntity.isAero() || !currentEntity.isAirborne()) {
             setFlyOffEnabled(false);
             return;
@@ -2544,42 +2545,65 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MoveStep step = cmd.getLastStep();
         Coords position = currentEntity.getPosition();
         int facing = currentEntity.getFacing();
+        int altitude = currentEntity.getAltitude();
 
         int velocityLeft = a.getCurrentVelocity();
         if (step != null) {
             position = step.getPosition();
             facing = step.getFacing();
             velocityLeft = step.getVelocityLeft();
+            altitude = step.getAltitude();
         }
 
         final Board board = game.getBoard(currentEntity);
+
+        // Check if at altitude 10 - can climb out of atmosphere (requires both return flyover and climb out options)
+        boolean canClimbOut = altitude == 10 && board.isGround()
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT);
+
+        // Check if can fly off edge (calculate before using)
+        boolean canFlyOffEdge = false;
+
         // for spheroids in atmosphere we just need to check being on the edge
         if (a.isSpheroid() && !board.isSpace()) {
-            setFlyOffEnabled((position != null) &&
+            canFlyOffEdge = (position != null) &&
                   (currentEntity.getWalkMP() > 0) &&
                   ((position.getX() == 0) ||
                         (position.getX() == (board.getWidth() - 1)) ||
                         (position.getY() == 0) ||
-                        (position.getY() == (board.getHeight() - 1))));
-            return;
+                        (position.getY() == (board.getHeight() - 1)));
+        } else if (position != null) {
+            // for all aerodynes and spheroids in space, it is more complicated - the nose of the aircraft must be facing
+            // in the right direction, and there must be velocity remaining
+            boolean evenX = (position.getX() % 2) == 0;
+            canFlyOffEdge = (velocityLeft > 0) &&
+                  (((position.getX() == 0) && ((facing == 5) || (facing == 4))) ||
+                        ((position.getX() == (board.getWidth() - 1)) &&
+                              ((facing == 1) || (facing == 2))) ||
+                        ((position.getY() == 0) &&
+                              ((facing == 1) || (facing == 5) || (facing == 0)) &&
+                              evenX) ||
+                        ((position.getY() == 0) && (facing == 0)) ||
+                        ((position.getY() == (board.getHeight() - 1)) &&
+                              ((facing == 2) || (facing == 3) || (facing == 4)) &&
+                              !evenX) ||
+                        ((position.getY() == (board.getHeight() - 1)) && (facing == 3)));
         }
 
-        // for all aerodynes and spheroids in space, it is more complicated - the nose of the aircraft must be facing
-        // in the right direction, and there must be velocity remaining
-
-        boolean evenX = (position.getX() % 2) == 0;
-        setFlyOffEnabled((velocityLeft > 0) &&
-              (((position.getX() == 0) && ((facing == 5) || (facing == 4))) ||
-                    ((position.getX() == (board.getWidth() - 1)) &&
-                          ((facing == 1) || (facing == 2))) ||
-                    ((position.getY() == 0) &&
-                          ((facing == 1) || (facing == 5) || (facing == 0)) &&
-                          evenX) ||
-                    ((position.getY() == 0) && (facing == 0)) ||
-                    ((position.getY() == (board.getHeight() - 1)) &&
-                          ((facing == 2) || (facing == 3) || (facing == 4)) &&
-                          !evenX) ||
-                    ((position.getY() == (board.getHeight() - 1)) && (facing == 3))));
+        // Determine button state and label
+        if (canClimbOut && !canFlyOffEdge) {
+            // Only climb out available - show "Climb Out" button
+            setFlyOffEnabled(true, true);
+        } else if (canClimbOut && canFlyOffEdge) {
+            // Both options available - show "Fly Off" button, dialog will offer choice
+            setFlyOffEnabled(true, false);
+        } else if (canFlyOffEdge) {
+            // Only fly off edge available
+            setFlyOffEnabled(true, false);
+        } else {
+            setFlyOffEnabled(false);
+        }
     }
 
     private void updateLaunchButton() {
@@ -5175,17 +5199,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             addStepToMovePath(MoveStepType.FLEE);
             ready();
             clear();
-        } else if (actionCmd.equals(MoveCommand.MOVE_FLY_OFF.getCmd()) &&
-              clientgui.doYesNoDialog(Messages.getString("MovementDisplay.FlyOffDialog.title"),
-                    Messages.getString("MovementDisplay.FlyOffDialog.message"))) {
-            if (opts.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER) &&
-                  clientgui.doYesNoDialog(Messages.getString("MovementDisplay.ReturnFly.title"),
-                        Messages.getString("MovementDisplay.ReturnFly.message"))) {
-                addStepToMovePath(MoveStepType.RETURN);
-            } else {
-                addStepToMovePath(MoveStepType.OFF);
-            }
-            ready();
+        } else if (actionCmd.equals(MoveCommand.MOVE_FLY_OFF.getCmd())) {
+            handleFlyOffOrClimbOut();
         } else if (actionCmd.equals(MoveCommand.MOVE_EJECT.getCmd())) {
             if (entity instanceof Tank) {
                 if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.AbandonDialog.title"),
@@ -5980,8 +5995,161 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void setFlyOffEnabled(boolean enabled) {
+        setFlyOffEnabled(enabled, false);
+    }
+
+    private void setFlyOffEnabled(boolean enabled, boolean isClimbOut) {
+        String label = isClimbOut
+              ? Messages.getString("MovementDisplay.butClimbOut")
+              : Messages.getString("MovementDisplay.MoveOff");
+        getBtn(MoveCommand.MOVE_FLY_OFF).setText(label);
         getBtn(MoveCommand.MOVE_FLY_OFF).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_FLY_OFF.getCmd(), enabled);
+    }
+
+    /**
+     * Handles the fly off or climb out action when player clicks the Fly Off/Climb Out button. At altitude 10, units
+     * can "climb out" of the atmosphere vertically. At map edges, units can fly off normally. When both options are
+     * available, player chooses.
+     */
+    private void handleFlyOffOrClimbOut() {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            return;
+        }
+
+        // Get current position and altitude (from move path if steps exist, otherwise entity)
+        MoveStep step = cmd.getLastStep();
+        int altitude = entity.getAltitude();
+        Coords position = entity.getPosition();
+        int facing = entity.getFacing();
+        int velocityLeft = ((IAero) entity).getCurrentVelocity();
+
+        if (step != null) {
+            altitude = step.getAltitude();
+            position = step.getPosition();
+            facing = step.getFacing();
+            velocityLeft = step.getVelocityLeft();
+        }
+
+        Board board = game.getBoard(entity);
+        boolean isGroundBoard = board.isGround();
+
+        // Check if can climb out (altitude 10 on ground map, requires both return flyover and climb out options)
+        boolean canClimbOut = (altitude == 10) && isGroundBoard
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT);
+
+        // Check if can fly off edge (same logic as updateFlyOffButton)
+        boolean canFlyOffEdge = false;
+        if (position != null) {
+            IAero aero = (IAero) entity;
+            if (aero.isSpheroid() && !board.isSpace()) {
+                // Spheroids in atmosphere just need to be on edge
+                canFlyOffEdge = (entity.getWalkMP() > 0) &&
+                      ((position.getX() == 0) ||
+                            (position.getX() == (board.getWidth() - 1)) ||
+                            (position.getY() == 0) ||
+                            (position.getY() == (board.getHeight() - 1)));
+            } else {
+                // Aerodynes and space - need correct facing and velocity
+                boolean evenX = (position.getX() % 2) == 0;
+                canFlyOffEdge = (velocityLeft > 0) &&
+                      (((position.getX() == 0) && ((facing == 5) || (facing == 4))) ||
+                            ((position.getX() == (board.getWidth() - 1)) &&
+                                  ((facing == 1) || (facing == 2))) ||
+                            ((position.getY() == 0) &&
+                                  ((facing == 1) || (facing == 5) || (facing == 0)) &&
+                                  evenX) ||
+                            ((position.getY() == 0) && (facing == 0)) ||
+                            ((position.getY() == (board.getHeight() - 1)) &&
+                                  ((facing == 2) || (facing == 3) || (facing == 4)) &&
+                                  !evenX) ||
+                            ((position.getY() == (board.getHeight() - 1)) && (facing == 3)));
+            }
+        }
+
+        // Determine which action to take
+        boolean doClimbOut = false;
+        if (canClimbOut && canFlyOffEdge) {
+            // Both options available - ask player to choose
+            // Yes = climb out, No = fly off edge
+            doClimbOut = clientgui.doYesNoDialog(
+                  Messages.getString("MovementDisplay.ClimbOrFlyOff.title"),
+                  Messages.getString("MovementDisplay.ClimbOrFlyOff.message"));
+        } else if (canClimbOut) {
+            doClimbOut = true;
+        }
+
+        if (doClimbOut) {
+            // Climb out path
+            if (clientgui.doYesNoDialog(
+                  Messages.getString("MovementDisplay.ClimbOutDialog.title"),
+                  Messages.getString("MovementDisplay.ClimbOutDialog.message"))) {
+
+                IGameOptions opts = game.getOptions();
+                if (opts.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)) {
+                    // Allow deployment anywhere on map when returning from climb out
+                    entity.setStartingPos(Board.START_ANY);
+                    ((IAero) entity).setExitAltitude(altitude);
+                    addStepToMovePath(MoveStepType.RETURN);
+                    ready();
+                } else {
+                    // No return option - just leave
+                    addStepToMovePath(MoveStepType.OFF);
+                    ready();
+                }
+            }
+        } else {
+            // Normal fly off edge path (existing behavior)
+            if (clientgui.doYesNoDialog(
+                  Messages.getString("MovementDisplay.FlyOffDialog.title"),
+                  Messages.getString("MovementDisplay.FlyOffDialog.message"))) {
+
+                IGameOptions opts = game.getOptions();
+                if (opts.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER) &&
+                      clientgui.doYesNoDialog(
+                            Messages.getString("MovementDisplay.ReturnFly.title"),
+                            Messages.getString("MovementDisplay.ReturnFly.message"))) {
+                    addStepToMovePath(MoveStepType.RETURN);
+                } else {
+                    addStepToMovePath(MoveStepType.OFF);
+                }
+                ready();
+            }
+        }
+    }
+
+    /**
+     * Shows a dialog for the player to select which edge to return from when climbing out.
+     *
+     * @return The selected edge direction, or NONE if cancelled
+     */
+    private OffBoardDirection showEdgeSelectionDialog() {
+        String[] options = {
+              Messages.getString("MovementDisplay.Edge.North"),
+              Messages.getString("MovementDisplay.Edge.South"),
+              Messages.getString("MovementDisplay.Edge.East"),
+              Messages.getString("MovementDisplay.Edge.West")
+        };
+
+        int result = JOptionPane.showOptionDialog(
+              clientgui.getFrame(),
+              Messages.getString("MovementDisplay.ClimbOutEdge.message"),
+              Messages.getString("MovementDisplay.ClimbOutEdge.title"),
+              JOptionPane.DEFAULT_OPTION,
+              JOptionPane.QUESTION_MESSAGE,
+              null,
+              options,
+              options[0]);
+
+        return switch (result) {
+            case 0 -> OffBoardDirection.NORTH;
+            case 1 -> OffBoardDirection.SOUTH;
+            case 2 -> OffBoardDirection.EAST;
+            case 3 -> OffBoardDirection.WEST;
+            default -> OffBoardDirection.NONE;
+        };
     }
 
     private void setEjectEnabled(boolean enabled) {

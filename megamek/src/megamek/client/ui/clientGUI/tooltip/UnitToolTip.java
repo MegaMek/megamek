@@ -1520,7 +1520,7 @@ public final class UnitToolTip {
 
     public static String getOneLineSummary(Entity entity) {
         String result = "";
-        boolean isGunEmplacement = entity instanceof GunEmplacement;
+        boolean isGunEmplacement = entity.isBuildingEntityOrGunEmplacement();
         String armorStr = entity.getTotalArmor() + " / " + entity.getTotalOArmor();
         String internalStr = entity.getTotalInternal() + " / " + entity.getTotalOInternal();
         result += Messages.getString("BoardView1.Tooltip.ArmorInternals", armorStr, internalStr);
@@ -1775,9 +1775,8 @@ public final class UnitToolTip {
         String result = "";
 
         // Gun Emplacement Status
-        if (isGunEmplacement) {
-            GunEmplacement emp = (GunEmplacement) entity;
-            if (emp.isTurret() && emp.isTurretLocked(emp.getLocTurret())) {
+        if (entity instanceof GunEmplacement gunEmplacement) {
+            if (gunEmplacement.isTurret() && gunEmplacement.isTurretLocked(gunEmplacement.getLocTurret())) {
                 String sTurretLocked = addToTT("TurretLocked", NOBR) + " ";
                 attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getWarningColor())));
                 sTurretLocked = UIUtil.tag("FONT", attr, sTurretLocked);
@@ -1956,7 +1955,7 @@ public final class UnitToolTip {
         Game game = entity.getGame();
         GameOptions gameOptions = game.getOptions();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
-        boolean isGunEmplacement = entity instanceof GunEmplacement;
+        boolean isGunEmplacement = entity.isBuildingEntityOrGunEmplacement();
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
 
         if (!inGameValue) {
@@ -2073,7 +2072,7 @@ public final class UnitToolTip {
      * Returns unit values that are relevant in-game and in the lobby such as movement ability.
      */
     private static StringBuilder getMovement(Entity entity) {
-        boolean isGunEmplacement = entity instanceof GunEmplacement;
+        boolean isGunEmplacement = entity.isBuildingEntityOrGunEmplacement();
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         String result;
         String col;
@@ -2335,7 +2334,7 @@ public final class UnitToolTip {
     }
 
     private static StringBuilder getArmor(Entity entity) {
-        boolean isGunEmplacement = entity instanceof GunEmplacement;
+        boolean isGunEmplacement = entity.isBuildingEntityOrGunEmplacement();
         String result;
         String col;
         String row;

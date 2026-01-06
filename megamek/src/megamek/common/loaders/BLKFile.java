@@ -53,7 +53,6 @@ import megamek.common.bays.*;
 import megamek.common.board.CubeCoords;
 import megamek.common.equipment.*;
 import megamek.common.exceptions.LocationFullException;
-import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
 import megamek.common.units.*;
@@ -667,8 +666,8 @@ public class BLKFile {
         List<String> quirkList = t.getQuirks()
               .getOptionsList()
               .stream()
-              .filter(IOption::booleanValue)
-              .map(IBasicOption::getName)
+              .filter(BLKFile::isQuirkActive)
+              .map(BLKFile::formatQuirkForSave)
               .collect(Collectors.toList());
 
         if (!quirkList.isEmpty()) {
@@ -1014,6 +1013,29 @@ public class BLKFile {
             if (!augmentations.isEmpty()) {
                 blk.writeBlockData("augmentation", augmentations.toArray(new String[0]));
             }
+
+            // Prosthetic Enhancement (Enhanced Limbs) - IO p.84
+            if (infantry.hasProstheticEnhancement1()) {
+                blk.writeBlockData("prostheticEnhancement1", infantry.getProstheticEnhancement1().toString());
+                if (infantry.getProstheticEnhancement1Count() > 0) {
+                    blk.writeBlockData("prostheticEnhancement1Count", infantry.getProstheticEnhancement1Count());
+                }
+            }
+            if (infantry.hasProstheticEnhancement2()) {
+                blk.writeBlockData("prostheticEnhancement2", infantry.getProstheticEnhancement2().toString());
+                if (infantry.getProstheticEnhancement2Count() > 0) {
+                    blk.writeBlockData("prostheticEnhancement2Count", infantry.getProstheticEnhancement2Count());
+                }
+            }
+
+            // Extraneous (Enhanced) Limbs - IO p.84
+            // Each pair always provides 2 items, so no count needed
+            if (infantry.hasExtraneousPair1()) {
+                blk.writeBlockData("extraneousPair1", infantry.getExtraneousPair1().toString());
+            }
+            if (infantry.hasExtraneousPair2()) {
+                blk.writeBlockData("extraneousPair2", infantry.getExtraneousPair2().toString());
+            }
         } else if (t instanceof GunEmplacement gunEmplacement) {
             if (!gunEmplacement.hasNoTurret()) {
                 blk.writeBlockData("turret", 1);
@@ -1184,6 +1206,47 @@ public class BLKFile {
             default -> engineCode;
         };
         return engineCode;
+    }
+
+    /**
+     * Checks if a quirk is active and should be saved. Boolean quirks are active if true, integer quirks
+     * are active if they have a non-zero value, string quirks (like obsolete) are active if they have a
+     * non-empty value.
+     *
+     * @param quirk The quirk option to check
+     *
+     * @return true if the quirk should be saved
+     */
+    private static boolean isQuirkActive(IOption quirk) {
+        if (quirk.getType() == IOption.INTEGER) {
+            return quirk.intValue() != 0;
+        }
+        if (quirk.getType() == IOption.STRING) {
+            String value = quirk.stringValue();
+            return value != null && !value.isEmpty();
+        }
+        return quirk.booleanValue();
+    }
+
+    /**
+     * Formats a quirk for saving to a unit file. Boolean quirks are saved as just their name,
+     * while integer quirks are saved as "name:value" and string quirks (like obsolete) are saved
+     * as "name:value" (e.g., "obsolete:2950,3146").
+     *
+     * @param quirk The quirk option to format
+     * @return The formatted string for saving
+     */
+    private static String formatQuirkForSave(IOption quirk) {
+        if (quirk.getType() == IOption.INTEGER) {
+            return quirk.getName() + ":" + quirk.intValue();
+        }
+        if (quirk.getType() == IOption.STRING) {
+            String value = quirk.stringValue();
+            if (value != null && !value.isEmpty()) {
+                return quirk.getName() + ":" + value;
+            }
+        }
+        return quirk.getName();
     }
 
     private static String encodeEquipmentLine(Mounted<?> m) {

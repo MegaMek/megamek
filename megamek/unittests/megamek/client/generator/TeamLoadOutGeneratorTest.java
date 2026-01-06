@@ -46,6 +46,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +54,9 @@ import megamek.client.Client;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.Player;
+import megamek.common.SimpleTechLevel;
 import megamek.common.Team;
+import megamek.common.TechConstants;
 import megamek.common.containers.MunitionTree;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.Munitions;
@@ -76,6 +79,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class TeamLoadOutGeneratorTest {
 
@@ -92,6 +97,9 @@ class TeamLoadOutGeneratorTest {
     static AmmoType mockSRM6AmmoType = (AmmoType) EquipmentType.get("IS SRM 6 Ammo");
     static AmmoType mockMML7LRMAmmoType = (AmmoType) EquipmentType.get("ISMML7 LRM Ammo");
     static AmmoType mockMML7SRMAmmoType = (AmmoType) EquipmentType.get("ISMML7 SRM Ammo");
+
+    // Test version; may be loaded with YAML values or set explicitly
+    static LinkedHashMap<String, Object> testMap;
 
     @BeforeAll
     static void setUpAll() {
@@ -118,6 +126,8 @@ class TeamLoadOutGeneratorTest {
 
         team.addPlayer(player);
         game.addPlayer(0, player);
+
+        testMap = new LinkedHashMap<>();
     }
 
     @AfterEach
@@ -163,7 +173,8 @@ class TeamLoadOutGeneratorTest {
         // Create a set of imperatives, some of which won't work
         MunitionTree mt = new MunitionTree();
         mt.insertImperative("Mauler", "MAL-1K", "any", "AC/5", "Inferno:Standard:Smoke:Flak");
-        tlg.reconfigureEntity(mockMek, mt, "IS");
+        HashMap<String, Object> availMap = tlg.generateValidMunitionsForFactionAndEra("IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
 
         // First imperative entry is invalid, so bin1 should get second choice
         // (Standard)
@@ -186,7 +197,8 @@ class TeamLoadOutGeneratorTest {
         MunitionTree mt = new MunitionTree();
 
         // We expect to see no change in loadouts
-        tlg.reconfigureEntity(mockMek, mt, "IS");
+        HashMap<String, Object> availMap = tlg.generateValidMunitionsForFactionAndEra("IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
     }
@@ -202,9 +214,10 @@ class TeamLoadOutGeneratorTest {
         MunitionTree mt = new MunitionTree();
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Dead-Fire");
 
+        HashMap<String, Object> availMap = tlg.generateValidMunitionsForFactionAndEra("IS");
         // We expect that all bins are set to the desired munition type as only one type
         // is provided
-        tlg.reconfigureEntity(mockMek, mt, "IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_DEAD_FIRE));
         assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
@@ -212,7 +225,7 @@ class TeamLoadOutGeneratorTest {
 
         // Now reset the ammo
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Standard");
-        tlg.reconfigureEntity(mockMek, mt, "IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_DEAD_FIRE));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
@@ -230,9 +243,10 @@ class TeamLoadOutGeneratorTest {
         MunitionTree mt = new MunitionTree();
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Anti-Radiation");
 
+        HashMap<String, Object> availMap = tlg.generateValidMunitionsForFactionAndEra("IS");
         // We expect that all bins are set to the desired munition type as only one type
         // is provided
-        tlg.reconfigureEntity(mockMek, mt, "IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_ARAD));
         assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
@@ -240,7 +254,7 @@ class TeamLoadOutGeneratorTest {
 
         // Now reset the ammo
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Standard");
-        tlg.reconfigureEntity(mockMek, mt, "IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_ARAD));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
@@ -260,7 +274,8 @@ class TeamLoadOutGeneratorTest {
         MunitionTree mt = new MunitionTree();
         // First, set all bins to Smoke
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Smoke");
-        tlg.reconfigureEntity(mockMek, mt, "IS");
+        HashMap<String, Object> availMap = tlg.generateValidMunitionsForFactionAndEra("IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_SMOKE_WARHEAD));
 
         // Then reset bins with useful ammo
@@ -268,7 +283,7 @@ class TeamLoadOutGeneratorTest {
 
         // We expect that all bins are set to the desired munition type as only one type
         // is provided
-        tlg.reconfigureEntity(mockMek, mt, "IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_DEAD_FIRE));
@@ -306,8 +321,9 @@ class TeamLoadOutGeneratorTest {
               "Smoke");
         mt.insertImperative("Catapult", "any", "any", "LRM", "Standard", "Swarm", "Semi-guided");
 
+        HashMap<String, Object> availMap = tlg.generateValidMunitionsForFactionAndEra("IS");
         // J. Robert H. should get the first load out
-        tlg.reconfigureEntity(mockMek, mt, "IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_DEAD_FIRE));
         assertTrue(((AmmoType) bin3.getType()).getMunitionType().contains(Munitions.M_HEAT_SEEKING));
@@ -315,7 +331,7 @@ class TeamLoadOutGeneratorTest {
 
         // John Q. should get the generalized load out; last bin should be set to
         // Standard
-        tlg.reconfigureEntity(mockMek2, mt, "IS");
+        tlg.reconfigureEntity(mockMek2, mt, availMap);
         assertTrue(((AmmoType) bin5.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin6.getType()).getMunitionType().contains(Munitions.M_SWARM));
         assertTrue(((AmmoType) bin7.getType()).getMunitionType().contains(Munitions.M_SEMIGUIDED));
@@ -356,7 +372,7 @@ class TeamLoadOutGeneratorTest {
         // Kintaro's go under different keys
         mt.insertImperative("Kintaro", "KTO-18", "any", "SRM", "Inferno:Standard");
 
-        tlg.reconfigureEntities(game.getPlayerEntities(player, false), "FS", mt, rp);
+        tlg.reconfigureEntities(game.getPlayerEntities(player, false), "FS", mt, rp, null);
 
         // Check loadouts
         // 1. AC20 HBK should have two tons of Caseless
@@ -568,20 +584,20 @@ class TeamLoadOutGeneratorTest {
     }
 
     @Test
-    void testAPMunitionWeightCollectionTopN() {
+    void testAPMunitionWeightCollectionCutoff() {
         MunitionWeightCollection mwc = new MunitionWeightCollection();
         // Assume we're up against reflective and heavy targets, not fliers
         mwc.increaseAPMunitions();
         mwc.decreaseFlakMunitions();
 
-        HashMap<String, List<String>> topN = mwc.getTopN(3);
-        assertEquals("Armor-Piercing=3.0", topN.get("AC").get(0));
-        assertEquals("Standard=2.0", topN.get("AC").get(1));
-        assertEquals("Caseless=1.0", topN.get("AC").get(2));
+        HashMap<String, List<String>> cutoff = mwc.getAboveCutoff(0.0);
+        assertEquals("Armor-Piercing=3.0", cutoff.get("AC").get(0));
+        assertEquals("Standard=2.0", cutoff.get("AC").get(1));
+        assertEquals("Caseless=1.0", cutoff.get("AC").get(2));
 
-        assertEquals("Tandem-Charge=3.0", topN.get("SRM").get(0));
-        assertEquals("Dead-Fire=3.0", topN.get("SRM").get(1));
-        assertEquals("Standard=2.0", topN.get("SRM").get(2));
+        assertEquals("Tandem-Charge=3.0", cutoff.get("SRM").get(0));
+        assertEquals("Dead-Fire=3.0", cutoff.get("SRM").get(1));
+        assertEquals("Standard=2.0", cutoff.get("SRM").get(2));
     }
 
     @Test
@@ -591,8 +607,59 @@ class TeamLoadOutGeneratorTest {
         mwc.increaseMunitions(tsmOnly);
         mwc.increaseMunitions(tsmOnly);
         mwc.increaseMunitions(tsmOnly);
-        assertEquals(15.0, mwc.getSrmWeights().get("Anti-TSM"));
-        assertEquals("Anti-TSM=15.0", mwc.getTopN(1).get("SRM").get(0));
+        assertEquals(7.0, mwc.getSrmWeights().get("Anti-TSM"));
+        assertEquals("Anti-TSM=7.0", mwc.getAboveCutoff(6.0).get("SRM").get(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void testArtemisDefaultIsNegative(boolean clan) {
+        // We don't want to assign Artemis ammo based on weighting, we only want to
+        // consider if the launcher is suitable (within TeamLoadOutGenerator)
+        // Test for both IS and Clan
+        MunitionWeightCollection mwc = new MunitionWeightCollection("FakeFaction", clan);
+        assertTrue(mwc.getLrmWeights().containsKey("Artemis-capable"));
+        double weight = mwc.getLrmWeights().get("Artemis-capable");
+        assertTrue(weight < 0);
+    }
+
+    @Test
+    void testFedSunsAntiTSMWeightNotZero() {
+        // This does not check for era or tech, only default weights
+        MunitionWeightCollection mwc = new MunitionWeightCollection("FS", false);
+        assertTrue(mwc.getLrmWeights().containsKey("Anti-TSM"));
+        double weight = mwc.getLrmWeights().get("Anti-TSM");
+        assertTrue(weight > 0);
+
+        // Compare to Lyran Commonwealth weight, which should be 0
+        mwc = new MunitionWeightCollection("LC", false);
+        assertTrue(mwc.getLrmWeights().containsKey("Anti-TSM"));
+        weight = mwc.getLrmWeights().get("Anti-TSM");
+        assertTrue(weight <= 0);
+
+        // Compare to Jade Falcon default weight which should be 0
+        mwc = new MunitionWeightCollection("JF", true);
+        assertTrue(mwc.getLrmWeights().containsKey("Anti-TSM"));
+        weight = mwc.getLrmWeights().get("Anti-TSM");
+        assertTrue(weight <= 0);
+    }
+
+    @Test
+    void testUpdatedDeadFireOverride() throws Exception {
+        // Insert a new Overrides.Munitions.Dead-Fire entry that applies to all factions equally.
+        // We know we can cast this because every level of the map is either a ref to a HashMap,
+        // or a value.
+        HashMap<String, Object> overrideMap = (HashMap<String, Object>) TeamLoadOutGenerator.searchMap(
+              "Overrides");
+        HashMap<String, Object> newBranch = new HashMap<>();
+        newBranch.put("Dead-Fire", 4.0);
+        overrideMap.put("Munitions", newBranch);
+
+        // Now search through the complete tree to get the updated value
+        double dfOverride = (double) TeamLoadOutGenerator.searchMap("Overrides.Munitions.Dead-Fire");
+        double defaultWeight = (double) TeamLoadOutGenerator.searchMap("Defaults.Munitions.Weight");
+        assertTrue(dfOverride > 0);
+        assertTrue(defaultWeight == 0.0);
     }
 
     @Test
@@ -609,7 +676,7 @@ class TeamLoadOutGeneratorTest {
         entityIterator.forEachRemaining(ownTeamEntities::add);
         TeamLoadOutGenerator.generateMunitionTree(rp, ownTeamEntities, "", mwc);
 
-        assertEquals(0.0, mwc.getArtyWeights().get("Davy Crockett-M"));
+        assertEquals(0.0, mwc.getLongTomWeights().get("Davy Crockett-M"));
         assertEquals(0.0, mwc.getBombWeights().get("AlamoMissile Ammo"));
     }
 
@@ -789,5 +856,133 @@ class TeamLoadOutGeneratorTest {
               mixedTech);
         // Pre-2823, Clan units can take RL-P bombs
         assertTrue(generatedBombs.getCount(BombTypeEnum.RLP) > 0);
+    }
+
+    @Test
+    void testMapSearchWithKnownGoodDoubleValue() throws Exception {
+        testMap = new LinkedHashMap<String, Object>(
+              Map.of(
+                    "Defaults", Map.of(
+                          "Munitions", Map.of(
+                            "Dead-Fire", Map.of(
+                                  "IS", 2.0)
+                          )
+                    )
+              )
+        );
+        Object value = TeamLoadOutGenerator.searchMap("Defaults.Munitions.Dead-Fire.IS", testMap);
+        assertEquals(2.0, value);
+    }
+
+    @Test
+    void testMapSearchWithKnownGoodListValue() throws Exception {
+        testMap = new LinkedHashMap<String, Object>(
+              Map.of(
+                    "Prohibited", List.of(
+                          "Tandem-Charge",
+                          "AlamoMissile Ammo"
+                    )
+              )
+        );
+        List<String> prohibitedList = (List<String>) TeamLoadOutGenerator.searchMap("Prohibited", testMap);
+        assertEquals(2, prohibitedList.size());
+        assertTrue(prohibitedList.contains("Tandem-Charge"));
+        assertTrue(prohibitedList.contains("AlamoMissile Ammo"));
+    }
+
+    @Test
+    void testValidMunitionsGeneratorHasMaxStandardAmmos() {
+        // All the "Standard" ammo types should be available in 3151 with all ammo treated as mixed and
+        // techLevel set to Advanced.  In practice that means "available bins is set to MAX_INT".
+        String faction = "FS";
+        int year = 3151;
+        int techLevel = TechConstants.T_SIMPLE_ADVANCED;
+        SimpleTechLevel legalLevel = SimpleTechLevel.parse(TechConstants.T_SIMPLE_NAMES[techLevel]);
+        boolean allowMixed = true;
+        boolean eraBased = true;
+        boolean showExtinct = false;
+        boolean allowNukes = false;
+
+        HashMap<String, Object> availMap = TeamLoadOutGenerator.generateValidMunitionsForFactionAndEra(
+              EquipmentType.allTypes(),
+              faction,
+              year,
+              legalLevel,
+              allowMixed,
+              eraBased,
+              showExtinct,
+              allowNukes
+        );
+
+        for (String weaponName: TeamLoadOutGenerator.TYPE_LIST) {
+            HashMap<String, Integer> entries = (HashMap<String, Integer>) availMap.getOrDefault(weaponName, null);
+            assertNotEquals(null, entries);
+            assertFalse(entries.isEmpty());
+            assertTrue(entries.getOrDefault("Standard", 0) == Integer.MAX_VALUE);
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"IS", "CC", "CF", "CP", "CS", "DC", "EI", "FC", "FR", "FS", "FW", "LC",
+    "MC", "MH", "OA", "TA", "TC", "TH", "RD", "RS", "RA", "RW", "WB", "MERC", "PER",
+    "CLAN", "CBR", "CBS", "CCY", "CCC", "CFM", "CGB", "CGS", "CHH", "CIH", "CJF", "CMN", "CNC",
+    "CSF", "CSJ", "CSR", "CSV", "CSA", "CWM", "CWF", "CWX", "CWV"})
+    void testValidMunitionsGeneratorNoStandardBeforeIntro(String faction) {
+        // While some extant ammo types predate even manned spaceflight, the vast majority
+        // (even Standard ammo) were created in the 23rd century or later.
+        // Confirm that valid munition maps don't include Standard ammo when they shouldn't.
+        int year = 2100;
+        int techLevel = TechConstants.T_SIMPLE_STANDARD;
+        SimpleTechLevel legalLevel = SimpleTechLevel.parse(TechConstants.T_SIMPLE_NAMES[techLevel]);
+        boolean allowMixed = false;
+        boolean eraBased = true;
+        boolean showExtinct = false;
+        boolean allowNukes = false;
+
+        HashMap<String, Object> availMap = TeamLoadOutGenerator.generateValidMunitionsForFactionAndEra(
+              EquipmentType.allTypes(),
+              faction,
+              year,
+              legalLevel,
+              allowMixed,
+              eraBased,
+              showExtinct,
+              allowNukes
+        );
+
+        for (String weaponName: TeamLoadOutGenerator.TYPE_LIST) {
+            // "Smaller" Artillery existed pre-spaceflight so don't worry about them
+            if (List.of("Sniper", "Thumper").contains(weaponName)) {
+                continue;
+            }
+            HashMap<String, Integer> entries = (HashMap<String, Integer>) availMap.getOrDefault(weaponName, null);
+            if (entries != null) {
+                assertFalse(entries.getOrDefault("Standard", 0) > 0);
+            }
+        }
+    }
+
+    @Test
+    void testOverridesAndProhibitionsApplyToWeights() {
+        ReconfigurationParameters rp = new ReconfigurationParameters();
+        rp.nukesBannedForMe = true;
+        MunitionWeightCollection mwc = new MunitionWeightCollection();
+        HashMap<String, Object> overrides = new HashMap<String, Object>(
+              Map.of(
+                  "LRM", Map.of(
+                        "Dead-Fire", Map.of(
+                              "IS", 5.0)
+                  )
+              )
+        );
+        ArrayList<String> prohibited = new ArrayList<>(
+              List.of(
+                    "Inferno"
+              )
+        );
+        TeamLoadOutGenerator.applyModifiersToWeights(rp, mwc, overrides, prohibited);
+
+        assertEquals(5.0, mwc.getLrmWeights().get("Dead-Fire"));
+        assertEquals(0.0, mwc.getSrmWeights().get("Inferno"));
     }
 }

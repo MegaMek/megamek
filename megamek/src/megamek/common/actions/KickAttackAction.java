@@ -249,22 +249,38 @@ public class KickAttackAction extends PhysicalAttackAction {
 
         // check facing
         // Don't check arc for stomping infantry or tanks.
-        if ((0 != range)
-              && (mule != 1)
-              && !ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
+        // Tripods use torso facing (secondary) for physical attacks per IO:AE p.158
+        if ((0 != range) && (mule != 1)) {
+            int facing = ae.isTripodMek() ? ae.getSecondaryFacing() : ae.getFacing();
+            if (!ComputeArc.isInArc(ae.getPosition(), facing, target, Compute.ARC_FORWARD)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
+            }
         }
 
         // check facing, part 2: Mule kick
-        if ((0 != range)
-              && (mule == 1)
-              && !ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_REAR)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
+        // Tripods cannot perform mule kicks per IO:AE p.158
+        if (mule == 1) {
+            if (ae.isTripodMek()) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Tripods cannot perform mule kicks");
+            }
+            if ((0 != range)
+                  && !ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_REAR)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
+            }
         }
 
         // can't kick while prone
         if (ae.isProne()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
+        }
+
+        // Prone 'Mechs can only be kicked if they are at the same level as the attacker
+        // See BMM 7th Printing, Physical Attacks and Prone 'Mechs
+        if ((target instanceof Entity) && ((Entity) target).isProne()) {
+            if (targetElevation != attackerElevation) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                      Messages.getString("PhysicalAttackAction.ProneMekKick"));
+            }
         }
 
         if (ae.isHullDown()) {
@@ -274,7 +290,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         // Attacks against adjacent buildings automatically hit.
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)
               || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-              || (target instanceof GunEmplacement)) {
+              || (target.isBuildingEntityOrGunEmplacement())) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                   "Targeting adjacent building.");
         }

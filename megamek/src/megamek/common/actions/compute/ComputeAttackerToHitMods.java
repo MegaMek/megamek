@@ -158,9 +158,35 @@ public class ComputeAttackerToHitMods {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.PheromoneImpaired"));
         }
 
+        // Prosthetic enhancement melee weapons have +2 to-hit penalty (IO p.84)
+        // Per IO p.83, maximum modifier is +2 regardless of number of melee enhancements
+        // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
+        if (attacker instanceof Infantry infantry) {
+            boolean hasMeleeEnhancement = infantry.hasProstheticMeleeEnhancement();
+            boolean hasEnhancedAbility = infantry.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+                  || infantry.hasAbility(OptionsConstants.MD_PL_I_ENHANCED);
+            boolean isInSameHex = (target != null)
+                  && (attacker.getPosition() != null)
+                  && (target.getPosition() != null)
+                  && (attacker.getPosition().distance(target.getPosition()) == 0);
+
+            if (hasMeleeEnhancement && hasEnhancedAbility && isInSameHex) {
+                int meleeModifier = infantry.getProstheticMeleeToHitModifier();
+                if (meleeModifier != 0) {
+                    toHit.addModifier(meleeModifier,
+                          Messages.getString("WeaponAttackAction.ProstheticMelee"));
+                }
+            }
+        }
+
         // Quadvee converting to a new mode
         if (attacker instanceof QuadVee && attacker.isConvertingNow()) {
             toHit.addModifier(+3, Messages.getString("WeaponAttackAction.QuadVeeConverting"));
+        }
+
+        // LAM converting to a new mode (IO:AE p.101)
+        if (attacker instanceof LandAirMek && attacker.isConvertingNow()) {
+            toHit.addModifier(+3, Messages.getString("WeaponAttackAction.LAMConverting"));
         }
 
         // we are bracing
@@ -274,6 +300,12 @@ public class ComputeAttackerToHitMods {
                 } else {
                     toHit.addModifier(6, Messages.getString("WeaponAttackAction.AimWithEiOnly"));
                 }
+            } else if (attacker.hasTCPAimedShotCapability() && attacker.hasTargComp()) {
+                // TCP+VDNI with actual TC gets additional -1 per IO pg 81
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.AimWithTCPAndTC"));
+            } else if (attacker.hasTCPAimedShotCapability()) {
+                // TCP+VDNI without TC acts as if equipped with TC per IO pg 81
+                toHit.addModifier(3, Messages.getString("WeaponAttackAction.AimWithTCPOnly"));
             } else {
                 toHit.addModifier(3, Messages.getString("WeaponAttackAction.AimWithTCompOnly"));
             }
@@ -391,22 +423,30 @@ public class ComputeAttackerToHitMods {
 
         // Manei Domini Upgrades
 
-        // VDNI
-        if (attacker.hasAbility(OptionsConstants.MD_VDNI) || attacker.hasAbility(OptionsConstants.MD_BVDNI)) {
+        // Prototype DNI gives -2 gunnery (IO pg 83)
+        // VDNI/BVDNI gives -1 gunnery (IO pg 71)
+        // Check Proto DNI first as it's more powerful and shouldn't stack with VDNI/BVDNI
+        // Check BVDNI before VDNI since pilots with BVDNI also have VDNI
+        if (attacker.hasAbility(OptionsConstants.MD_PROTO_DNI)) {
+            toHit.addModifier(-2, Messages.getString("WeaponAttackAction.ProtoDni"));
+        } else if (attacker.hasAbility(OptionsConstants.MD_BVDNI)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Bvdni"));
+        } else if (attacker.hasAbility(OptionsConstants.MD_VDNI)) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
         }
 
         // Sensory implants: laser-sight, telescopic, or multi-modal = -1 to-hit
         // Benefits don't stack - having multiple still only gives -1
         // Basic implants (laser/tele): infantry only
-        // MM/Enhanced MM implants: infantry, OR non-infantry with VDNI/BVDNI (syncs with vehicle sensors)
+        // MM/Enhanced MM implants: infantry, OR non-infantry with VDNI/BVDNI/Proto DNI (syncs with vehicle sensors)
         if ((weapon != null) && !(weapon.getType() instanceof InfantryAttack)) {
             boolean hasLaser = attacker.hasAbility(OptionsConstants.MD_CYBER_IMP_LASER);
             boolean hasTele = attacker.hasAbility(OptionsConstants.MD_CYBER_IMP_TELE);
             boolean hasMmImplants = attacker.hasAbility(OptionsConstants.MD_MM_IMPLANTS)
                   || attacker.hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS);
             boolean hasVdni = attacker.hasAbility(OptionsConstants.MD_VDNI)
-                  || attacker.hasAbility(OptionsConstants.MD_BVDNI);
+                  || attacker.hasAbility(OptionsConstants.MD_BVDNI)
+                  || attacker.hasAbility(OptionsConstants.MD_PROTO_DNI);
 
             // MM implants work for infantry OR for any unit type when combined with VDNI
             boolean mmImplantsApply = hasMmImplants

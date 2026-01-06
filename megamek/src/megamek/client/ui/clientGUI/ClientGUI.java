@@ -114,12 +114,12 @@ import megamek.client.ui.dialogs.miniReport.MiniReportDisplayDialog;
 import megamek.client.ui.dialogs.miniReport.MiniReportDisplayPanel;
 import megamek.client.ui.dialogs.minimap.MinimapDialog;
 import megamek.client.ui.dialogs.minimap.MinimapPanel;
+import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkViewDialog;
 import megamek.client.ui.dialogs.randomArmy.RandomArmyDialog;
 import megamek.client.ui.dialogs.unitDisplay.IHasUnitDisplay;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MegaMekUnitSelectorDialog;
-import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkViewDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.ReceivingGameDataPanel;
 import megamek.client.ui.panels.StartingScenarioPanel;
@@ -625,10 +625,30 @@ public class ClientGUI extends AbstractClientGUI
      * Lays out the frame by setting this Client object to take up the full frame display area.
      */
     private void layoutFrame() {
-        frame.setTitle(client.getName() + Messages.getString("ClientGUI.clientTitleSuffix"));
+        updateFrameTitle();
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(clientGuiPanel, BorderLayout.CENTER);
         frame.validate();
+    }
+
+    /**
+     * Updates the frame title to show the current round and phase information. The title format is: "PlayerName - Round
+     * X - Phase phase - MegaMek" For phases before the game starts (lobby, selection, etc.), only shows: "PlayerName -
+     * MegaMek"
+     */
+    private void updateFrameTitle() {
+        StringBuilder title = new StringBuilder(client.getName());
+
+        GamePhase phase = client.getGame().getPhase();
+        int round = client.getGame().getCurrentRound();
+
+        // Only show round/phase info for in-game phases (after round 0)
+        if ((round > 0) && phase.isOnMap()) {
+            title.append(Messages.getString("ClientGUI.titleRoundPhase", round, phase.localizedName()));
+        }
+
+        title.append(Messages.getString("ClientGUI.clientTitleSuffix"));
+        frame.setTitle(title.toString());
     }
 
     private void initializeSpriteHandlers() {
@@ -741,6 +761,62 @@ public class ClientGUI extends AbstractClientGUI
      */
     private void showAbout() {
         new CommonAboutDialog(frame).setVisible(true);
+    }
+
+    /**
+     * Shows a confirmation dialog when attempting to load a game from the lobby.
+     *
+     * @return true if the user confirms, false otherwise
+     */
+    private boolean confirmLoadFromLobby() {
+        int result = JOptionPane.showConfirmDialog(
+              frame,
+              Messages.getString("ClientGUI.LoadFromLobby.message"),
+              Messages.getString("ClientGUI.LoadFromLobby.title"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.WARNING_MESSAGE
+        );
+        return result == JOptionPane.YES_OPTION;
+    }
+
+    /**
+     * Handles loading a game from the lobby. Shows file chooser first, then confirms disconnect, then loads directly.
+     */
+    private void loadGameFromLobby() {
+        // Show file chooser first (before closing lobby)
+        JFileChooser fileChooser = new JFileChooser(MMConstants.SAVEGAME_DIR);
+        fileChooser.setDialogTitle(Messages.getString("MegaMek.SaveGameDialog.title"));
+        fileChooser.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.getName().endsWith(MMConstants.SAVE_FILE_EXT)
+                      || f.getName().endsWith(MMConstants.SAVE_FILE_GZ_EXT)
+                      || f.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Savegames";
+            }
+        });
+
+        int returnVal = fileChooser.showOpenDialog(frame);
+        if (returnVal != JFileChooser.APPROVE_OPTION || fileChooser.getSelectedFile() == null) {
+            return;
+        }
+
+        File selectedFile = fileChooser.getSelectedFile();
+
+        // Now confirm disconnect
+        if (!confirmLoadFromLobby()) {
+            return;
+        }
+
+        // Close lobby and load the selected file directly (skip HostDialog)
+        controller.setPostUnlaunchAction(() ->
+              controller.megaMekGUI.loadGameFile(selectedFile));
+        setDisconnectQuietly(true);
+        die();
     }
 
     /**
@@ -918,6 +994,16 @@ public class ClientGUI extends AbstractClientGUI
                     client.sendChat(CG_CHAT_COMMAND_SAVE + " " + filename);
                 }
                 ignoreHotKeys = false;
+                break;
+            case FILE_GAME_LOAD:
+                loadGameFromLobby();
+                break;
+            case FILE_GAME_QUICK_LOAD:
+                if (confirmLoadFromLobby()) {
+                    controller.setPostUnlaunchAction(() -> controller.megaMekGUI.quickLoadGame());
+                    setDisconnectQuietly(true);
+                    die();
+                }
                 break;
             case HELP_ABOUT:
                 showAbout();
@@ -2636,6 +2722,9 @@ public class ClientGUI extends AbstractClientGUI
             }
 
             menuBar.setPhase(phase);
+
+            // Update the frame title to show current round and phase
+            updateFrameTitle();
 
             // Update Nova Networks menu based on whether Nova CEWS units exist
             updateNovaNetworksMenu();

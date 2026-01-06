@@ -63,7 +63,7 @@ public class InfantryProstheticNeedlerWeapon extends InfantryWeapon {
         infantryDamage = 0.04;
         infantryRange = 0;
         // Rating and Dates not available below is compiled from various books
-        rulesRefs = "84, IO";
+        rulesRefs = "78, IO:AE";
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

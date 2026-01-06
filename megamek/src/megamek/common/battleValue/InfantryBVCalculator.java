@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import megamek.common.Messages;
 import megamek.common.equipment.Mounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -78,7 +79,17 @@ public class InfantryBVCalculator extends BVCalculator {
 
     @Override
     protected double tmmFactor(int tmmRunning, int tmmJumping, int tmmUmu) {
-        double tmmFactor = super.tmmFactor(tmmRunning, tmmJumping, tmmUmu);
+        // Dermal Camo provides +3 when stationary, use as potential max TMM
+        int maxTmm = Math.max(tmmRunning, Math.max(tmmJumping, tmmUmu));
+        if (infantry.hasDermalCamoStealth()) {
+            int dermalCamoTmm = 3; // +3 when stationary
+            if (dermalCamoTmm > maxTmm) {
+                maxTmm = dermalCamoTmm;
+                bvReport.addLine("Dermal Camo TMM:", "+3 (stationary)");
+            }
+        }
+        double tmmFactor = 1 + (maxTmm / 10.0);
+
         if (infantry.hasDEST()) {
             tmmFactor += 0.2;
             bvReport.addLine("DEST:", "+0.2");
@@ -135,12 +146,56 @@ public class InfantryBVCalculator extends BVCalculator {
             }
         }
 
+        // Cybernetic Gas Effuser (Toxin): +0.23 per trooper to Offensive BR (IO pg 79)
+        if (infantry.hasAbility(OptionsConstants.MD_GAS_EFFUSER_TOXIN)) {
+            double toxinBonus = originalTroopers * 0.23;
+            offensiveValue += toxinBonus;
+            bvReport.addLine("Gas Effuser (Toxin):",
+                  originalTroopers + " x 0.23",
+                  "= +" + formatForReport(toxinBonus));
+        }
+
         int troopers = Math.max(0, infantry.getInternal(Infantry.LOC_INFANTRY));
         if (troopers < originalTroopers) {
             bvReport.addLine("Surviving troopers:",
                   formatForReport(offensiveValue) + " x " + troopers + " / " + originalTroopers,
                   "= " + formatForReport(offensiveValue * troopers / originalTroopers));
             offensiveValue *= (double) troopers / originalTroopers;
+        }
+
+        // TSM Implant adds +0.1 per trooper to Weapon Battle Value
+        if (entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+            double tsmBonus = troopers * 0.1;
+            offensiveValue += tsmBonus;
+            bvReport.addLine(Messages.getString("BV.TSMImplant"),
+                  troopers + " x 0.1",
+                  "= +" + formatForReport(tsmBonus));
+        }
+
+        // Explosive Suicide Implant: +0.12 per trooper to Weapon Battle Value (IO pg 83)
+        // Only applies to conventional infantry
+        if (infantry.isConventionalInfantry() && infantry.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS)) {
+            double suicideImplantBonus = troopers * 0.12;
+            offensiveValue += suicideImplantBonus;
+            bvReport.addLine(Messages.getString("BV.SuicideImplant"),
+                  troopers + " x 0.12",
+                  "= +" + formatForReport(suicideImplantBonus));
+        }
+
+        // Prosthetic Enhancement adds damage bonus per trooper to Offensive BV (IO p.84)
+        // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
+        // Sum damage from both slots for BV calculation
+        boolean hasProstheticAbility = infantry.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+              || infantry.hasAbility(OptionsConstants.MD_PL_I_ENHANCED);
+        if (hasProstheticAbility) {
+            double prostheticDamagePerTrooper = infantry.getProstheticDamageBonus();
+            if (prostheticDamagePerTrooper > 0) {
+                double prostheticBonus = troopers * prostheticDamagePerTrooper;
+                offensiveValue += prostheticBonus;
+                bvReport.addLine(Messages.getString("BV.ProstheticEnhancement"),
+                      troopers + " x " + formatForReport(prostheticDamagePerTrooper),
+                      "= +" + formatForReport(prostheticBonus));
+            }
         }
 
         bvReport.startTentativeSection();

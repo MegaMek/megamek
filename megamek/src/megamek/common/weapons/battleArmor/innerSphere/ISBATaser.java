@@ -87,7 +87,7 @@ public class ISBATaser extends AmmoWeapon {
               .andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON)
               .andNot(F_PROTO_WEAPON);
-        rulesRefs = "346, TO";
+        rulesRefs = "158, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

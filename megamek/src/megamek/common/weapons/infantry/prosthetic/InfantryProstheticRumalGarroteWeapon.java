@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,53 +30,49 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-
-package megamek.common.weapons.bombs.clan;
+package megamek.common.weapons.infantry.prosthetic;
 
 import java.io.Serial;
 
 import megamek.common.enums.AvailabilityValue;
-import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
-import megamek.common.equipment.enums.BombType.BombTypeEnum;
-import megamek.common.weapons.tag.TAGWeapon;
+import megamek.common.equipment.AmmoType;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
- * @author Sebastian Brocks
- * @since Sep 7, 2005
+ * Prosthetic Rumal/Garrote weapon for infantry. A strangling weapon built into prosthetic limbs. Damage only affects
+ * conventional infantry.
+ *
+ * @since 0.50.07
  */
-public class CLBombTAG extends TAGWeapon {
+public class InfantryProstheticRumalGarroteWeapon extends InfantryWeapon {
     @Serial
-    private static final long serialVersionUID = -7692653575300083613L;
+    private static final long serialVersionUID = -3164871600230559642L;
 
-    public CLBombTAG() {
+    public InfantryProstheticRumalGarroteWeapon() {
         super();
 
-        this.name = "TAG Pod";
-        this.setInternalName(BombTypeEnum.TAG.getWeaponName());
-        this.tonnage = 1;
-        this.criticalSlots = 0;
-        this.hittable = false;
-        this.spreadable = false;
-        this.heat = 0;
-        this.damage = 0;
-        this.shortRange = 5;
-        this.mediumRange = 10;
-        this.longRange = 15;
-        this.extremeRange = 20;
-        this.bv = 0;
-        this.cost = 50000;
-        flags = flags.or(F_BOMB_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
-        rulesRefs = "238, TM";
-        techAdvancement.setTechBase(TechBase.CLAN)
+        name = "Prosthetic Rumal/Garrote";
+        setInternalName(name);
+        addLookupName("ProstheticRumalGarrote");
+        addLookupName("Prosthetic Rumal");
+        addLookupName("Prosthetic Garrote");
+        ammoType = AmmoType.AmmoTypeEnum.NA;
+        cost = 500;
+        bv = 0.0;
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        infantryDamage = 0.14;
+        infantryRange = 0;
+        rulesRefs = "84, IO";
+        techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
               .setTechRating(TechRating.E)
-              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
-              .setClanAdvancement(2600, 2605, 2645, DATE_NONE, DATE_NONE)
-              .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+              .setISAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, false, false, false)
+              .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, false, false, false);
     }
 }

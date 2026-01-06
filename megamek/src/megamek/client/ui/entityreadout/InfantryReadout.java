@@ -89,6 +89,13 @@ class InfantryReadout extends GeneralEntityReadout {
             String modeLetter = infantry.getMovementMode().isVTOL() ? "V" : "J";
             movement.add("%d (%s)".formatted(jumpMP, modeLetter));
         }
+        // Show VTOL MP for powered flight infantry (IO p.85)
+        if (infantry.hasVTOLMovementCapability() && !infantry.getMovementMode().isVTOL()) {
+            int vtolMP = infantry.getVTOLMP();
+            if (vtolMP > 0) {
+                movement.add("%d (V)".formatted(vtolMP));
+            }
+        }
         if (umuMP > 0) {
             movement.add("%d (U)".formatted(umuMP));
         }

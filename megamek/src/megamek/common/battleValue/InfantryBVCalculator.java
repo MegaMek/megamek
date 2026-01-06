@@ -209,6 +209,9 @@ public class InfantryBVCalculator extends BVCalculator {
         }
 
         // Note: Prosthetic Glider Wings (MD_PL_GLIDER) have no impact on BV per IO p.85
+        // Note: Prosthetic Powered Flight Wings (MD_PL_FLIGHT) DO affect BV per IO p.85 -
+        // the 2 VTOL MP is accounted for in getJumpMP() which contributes to the defensive
+        // TMM factor via processDefensiveFactor().
 
         bvReport.startTentativeSection();
         bvReport.addLine("Field Guns:", "", "");

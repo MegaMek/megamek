@@ -197,19 +197,21 @@ public class TestInfantry extends TestEntity {
             }
         }
 
-        max = maxSquadSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1), inf.getMount());
+        // Use getBaseMovementMode() for validation - powered flight doesn't change squad/platoon limits
+        EntityMovementMode baseMode = inf.getBaseMovementMode();
+        max = maxSquadSize(baseMode, inf.hasMicrolite() || (inf.getAllUMUCount() > 1), inf.getMount());
         if (inf.getSquadSize() > max) {
             buff.append("Maximum squad size is ").append(max).append("\n\n");
             correct = false;
         }
 
-        max = maxSquadCount(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
+        max = maxSquadCount(baseMode, inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
               inf.getSpecializations(), inf.getMount());
         if (inf.getSquadCount() > max) {
             buff.append("Maximum squad count is ").append(max).append("\n\n");
         }
 
-        max = maxUnitSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
+        max = maxUnitSize(baseMode, inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
               inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS), inf.getMount());
         if (inf.getShootingStrength() > max) {
             buff.append("Maximum platoon size is ").append(max).append("\n\n");
@@ -239,15 +241,22 @@ public class TestInfantry extends TestEntity {
             correct = false;
         }
 
+        // Powered flight wings can only be used by foot infantry (IO p.85)
+        if (inf.hasPoweredFlightWingsOnInvalidInfantryType()) {
+            buff.append(
+                  "Powered flight wings can only be used by foot infantry, not motorized, mechanized, or beast-mounted!\n");
+            correct = false;
+        }
+
         // Glider wings and powered flight wings are mutually exclusive (IO p.85)
         if (inf.hasInvalidWingsConfiguration()) {
             buff.append("Glider wings and powered flight wings cannot both be installed!\n");
             correct = false;
         }
 
-        // Glider wings limit extraneous limbs to one pair (IO p.85)
+        // Wings limit extraneous limbs to one pair (IO p.85)
         if (inf.hasExcessiveExtraneousLimbs()) {
-            buff.append("Glider wings limit extraneous limbs to one pair!\n");
+            buff.append("With prosthetic wings, only one pair of extraneous limbs is allowed!\n");
             correct = false;
         }
 
@@ -315,11 +324,13 @@ public class TestInfantry extends TestEntity {
 
     public static int maxSecondaryWeapons(Infantry inf) {
         int max;
+        // Use getBaseMovementMode() to get the actual infantry type, not the virtual VTOL from powered flight
+        EntityMovementMode baseMode = inf.getBaseMovementMode();
         if (inf.getMount() != null) {
             max = inf.getMount().size().supportWeaponsPerCreature;
-        } else if (inf.getMovementMode() == EntityMovementMode.VTOL) {
+        } else if (baseMode == EntityMovementMode.VTOL) {
             max = inf.hasMicrolite() ? 0 : 1;
-        } else if (inf.getMovementMode() == EntityMovementMode.INF_UMU) {
+        } else if (baseMode == EntityMovementMode.INF_UMU) {
             max = inf.getAllUMUCount();
         } else {
             max = 2;
@@ -546,7 +557,8 @@ public class TestInfantry extends TestEntity {
 
         } else { // not beast-mounted
             double multiplier;
-            switch (infantry.getMovementMode()) {
+            // Use getBaseMovementMode() for BV - powered flight doesn't change base BV multiplier
+            switch (infantry.getBaseMovementMode()) {
                 case INF_MOTORIZED:
                     multiplier = 0.195;
                     break;

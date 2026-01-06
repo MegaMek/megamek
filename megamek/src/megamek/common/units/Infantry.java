@@ -591,6 +591,14 @@ public class Infantry extends Entity {
     @Override
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
         int mp = hasUMU() ? 0 : getOriginalJumpMP();
+
+        // Powered flight infantry (non-native VTOL) get 2 MP from their wings (IO p.85)
+        // Note: Use the stored movementMode field, not getMovementMode() which returns VTOL for powered flight
+        if (movementMode != EntityMovementMode.VTOL &&
+              hasPoweredFlightWings() && canUsePoweredFlightWings()) {
+            mp = 2;
+        }
+
         if (mount == null) {
             if ((getSecondaryWeaponsPerSquad() > 1) &&
                   !hasAbility(OptionsConstants.MD_TSM_IMPLANT) &&
@@ -1249,8 +1257,9 @@ public class Infantry extends Entity {
         boolean hasGliderWings = isConventionalInfantry()
               && hasAbility(OptionsConstants.MD_PL_GLIDER)
               && canUseGliderWings();
+        boolean hasPoweredFlightWings = hasPoweredFlightWings() && canUsePoweredFlightWings();
 
-        return hasInherentDropCapability || hasSpecialization(PARATROOPS) || hasGliderWings;
+        return hasInherentDropCapability || hasSpecialization(PARATROOPS) || hasGliderWings || hasPoweredFlightWings;
     }
 
     /**
@@ -1269,17 +1278,87 @@ public class Infantry extends Entity {
     }
 
     /**
+     * Returns true if this conventional infantry unit has powered flight wings. Powered flight wings can only be used
+     * by conventional infantry (IO p.85).
+     *
+     * @return true if unit has powered flight wings ability
+     */
+    public boolean hasPoweredFlightWings() {
+        return isConventionalInfantry() && hasAbility(OptionsConstants.MD_PL_FLIGHT);
+    }
+
+    /**
+     * Returns true if this infantry unit can use powered flight wings in the current conditions. Powered flight wings
+     * cannot be used in vacuum (IO p.85). Note: Unlike glider wings, powered flight only mentions vacuum restriction,
+     * not trace atmosphere. However, for consistency and realism, we apply the same atmospheric restriction as glider
+     * wings.
+     *
+     * @return true if powered flight wings are usable
+     */
+    public boolean canUsePoweredFlightWings() {
+        if (game == null) {
+            return true; // Allow if no game context
+        }
+        Atmosphere atmosphere = game.getPlanetaryConditions().getAtmosphere();
+        // Powered flight wings require at least THIN atmosphere (vacuum and trace are too thin)
+        return !atmosphere.isLighterThan(Atmosphere.THIN);
+    }
+
+    /**
+     * Returns the VTOL movement points provided by powered flight wings. Per IO p.85, powered flight wings provide 2
+     * MPs of VTOL movement.
+     *
+     * @return 2 if powered flight is usable, 0 otherwise
+     */
+    public int getPoweredFlightMP() {
+        if (hasPoweredFlightWings() && canUsePoweredFlightWings()) {
+            return 2;
+        }
+        return 0;
+    }
+
+    /**
+     * Returns true if this infantry unit can use VTOL-style movement. This includes infantry with VTOL movement mode
+     * (microcopter/microlite) OR infantry with usable powered flight wings.
+     *
+     * @return true if unit can use VTOL movement
+     */
+    public boolean hasVTOLMovementCapability() {
+        if (getMovementMode() == EntityMovementMode.VTOL) {
+            return true;
+        }
+        return hasPoweredFlightWings() && canUsePoweredFlightWings();
+    }
+
+    /**
+     * Returns the VTOL movement points for this infantry unit. For VTOL infantry (microcopter/microlite), this returns
+     * jumpMP. For powered flight infantry, this returns 2 MP per IO p.85.
+     *
+     * @return VTOL MP available, or 0 if no VTOL capability
+     */
+    public int getVTOLMP() {
+        if (getMovementMode() == EntityMovementMode.VTOL) {
+            return getJumpMP();
+        }
+        return getPoweredFlightMP();
+    }
+
+    /**
      * Returns true if this infantry unit is protected from fall damage.
-     * Glider wings protect against damage from falls, whether from walking off
-     * terrain 2+ levels high (including buildings) or by displacement (IO p.85).
-     * Only conventional infantry can use glider wings.
+     * Glider wings and powered flight wings protect against damage from falls,
+     * whether from walking off terrain 2+ levels high (including buildings)
+     * or by displacement (IO p.85).
+     * Only conventional infantry can use these prosthetic wings.
      *
      * @return true if protected from fall damage
      */
     public boolean isProtectedFromFallDamage() {
-        return isConventionalInfantry()
-              && hasAbility(OptionsConstants.MD_PL_GLIDER)
-              && canUseGliderWings();
+        if (!isConventionalInfantry()) {
+            return false;
+        }
+        boolean hasGliderProtection = hasAbility(OptionsConstants.MD_PL_GLIDER) && canUseGliderWings();
+        boolean hasPoweredFlightProtection = hasPoweredFlightWings() && canUsePoweredFlightWings();
+        return hasGliderProtection || hasPoweredFlightProtection;
     }
 
     /**
@@ -1320,14 +1399,28 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Returns the maximum number of extraneous limb pairs allowed.
-     * Per IO p.85, if glider wings are installed, only one pair of extraneous
-     * limbs is allowed (instead of the normal two pairs).
+     * Returns true if powered flight wings are installed on non-foot infantry.
+     * Per IO p.85, powered flight wings can only be used by foot infantry -
+     * motorized, mechanized, and beast-mounted infantry cannot use them.
      *
-     * @return 1 if glider wings are installed, 2 otherwise
+     * @return true if invalid configuration (powered flight wings on non-foot infantry)
+     */
+    public boolean hasPoweredFlightWingsOnInvalidInfantryType() {
+        if (!hasAbility(OptionsConstants.MD_PL_FLIGHT)) {
+            return false;
+        }
+        return isMechanized() || getBaseMovementMode().isMotorizedInfantry() || (getMount() != null);
+    }
+
+    /**
+     * Returns the maximum number of extraneous limb pairs allowed.
+     * Per IO p.85, if glider wings or powered flight wings are installed,
+     * only one pair of extraneous limbs is allowed (instead of the normal two pairs).
+     *
+     * @return 1 if any wing type is installed, 2 otherwise
      */
     public int getMaxExtraneousLimbPairs() {
-        if (hasAbility(OptionsConstants.MD_PL_GLIDER)) {
+        if (hasAbility(OptionsConstants.MD_PL_GLIDER) || hasAbility(OptionsConstants.MD_PL_FLIGHT)) {
             return 1;
         }
         return 2;
@@ -1335,15 +1428,16 @@ public class Infantry extends Entity {
 
     /**
      * Returns true if the current extraneous limb configuration exceeds the allowed maximum.
-     * Per IO p.85, if glider wings are installed, only one pair is allowed.
+     * Per IO p.85, if any wing prosthetics are installed, only one pair of extraneous limbs is allowed.
      *
      * @return true if invalid configuration (too many extraneous limb pairs)
      */
     public boolean hasExcessiveExtraneousLimbs() {
-        if (!hasAbility(OptionsConstants.MD_PL_GLIDER)) {
+        boolean hasWings = hasAbility(OptionsConstants.MD_PL_GLIDER) || hasAbility(OptionsConstants.MD_PL_FLIGHT);
+        if (!hasWings) {
             return false;
         }
-        // With glider wings, only 1 pair allowed - pair 2 must be empty
+        // With any wing type, only 1 pair allowed - pair 2 must be empty
         return hasExtraneousPair2();
     }
 
@@ -2282,6 +2376,35 @@ public class Infantry extends Entity {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Returns the movement mode for this infantry unit.
+     * For powered flight infantry (IO p.85), this returns VTOL when the wings are usable,
+     * allowing them to use existing VTOL movement infrastructure.
+     * Note: During construction, crew is null so hasPoweredFlightWings() returns false,
+     * ensuring this override doesn't interfere with setMovementMode() initialization.
+     */
+    @Override
+    public EntityMovementMode getMovementMode() {
+        // If powered flight is usable, behave like VTOL
+        // But only if not already VTOL (to avoid breaking native VTOL infantry)
+        if (movementMode != EntityMovementMode.VTOL &&
+              hasPoweredFlightWings() && canUsePoweredFlightWings()) {
+            return EntityMovementMode.VTOL;
+        }
+        return movementMode;
+    }
+
+    /**
+     * Returns the base (stored) movement mode for this infantry unit, ignoring any virtual VTOL mode from powered
+     * flight wings. This should be used for validation and construction rules that need to know the actual infantry
+     * type (leg, motorized, etc.) rather than the effective movement mode.
+     *
+     * @return The actual stored movement mode, not affected by powered flight
+     */
+    public EntityMovementMode getBaseMovementMode() {
+        return movementMode;
     }
 
     @Override

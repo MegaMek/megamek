@@ -177,6 +177,14 @@ public class ComputeAttackerToHitMods {
                           Messages.getString("WeaponAttackAction.ProstheticMelee"));
                 }
             }
+
+            // Prosthetic Tail, Enhanced has +2 to-hit penalty for melee attacks (IO p.85)
+            // Only conventional infantry can use prosthetic tails
+            if (infantry.isConventionalInfantry()
+                  && infantry.hasAbility(OptionsConstants.MD_PL_TAIL)
+                  && isInSameHex) {
+                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.ProstheticTail"));
+            }
         }
 
         // Quadvee converting to a new mode

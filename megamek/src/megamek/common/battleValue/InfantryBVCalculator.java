@@ -198,6 +198,16 @@ public class InfantryBVCalculator extends BVCalculator {
             }
         }
 
+        // Prosthetic Tail, Enhanced: +0.2 per trooper to Offensive Battle Value (IO p.85)
+        // Only applies to conventional infantry
+        if (infantry.isConventionalInfantry() && infantry.hasAbility(OptionsConstants.MD_PL_TAIL)) {
+            double tailBonus = troopers * 0.2;
+            offensiveValue += tailBonus;
+            bvReport.addLine(Messages.getString("BV.ProstheticTail"),
+                  troopers + " x 0.2",
+                  "= +" + formatForReport(tailBonus));
+        }
+
         bvReport.startTentativeSection();
         bvReport.addLine("Field Guns:", "", "");
         Predicate<Mounted<?>> weaponFilter = m -> countAsOffensiveWeapon(m)

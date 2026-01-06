@@ -32,14 +32,12 @@
  */
 package megamek.common.util;
 
-import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.WeaponType;
-import megamek.common.equipment.WeaponTypeFlag;
-import megamek.common.equipment.enums.MiscTypeFlag;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.WeaponTypeFlag;
 
 public class YamlSerializerWeaponType extends YamlSerializerEquipmentType {
     static public final String TYPENAME = "weapon";

@@ -47,13 +47,13 @@ import javax.swing.JTextField;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.equipment.enums.MiscTypeFlag;
-import megamek.common.units.Entity;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.units.Infantry;
-import megamek.common.equipment.MiscType;
 import megamek.common.SimpleTechLevel;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 
 public class InfantryArmorPanel extends JPanel {
     @Serial

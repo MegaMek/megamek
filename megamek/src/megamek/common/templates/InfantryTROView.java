@@ -42,7 +42,6 @@ import java.util.stream.Collectors;
 import megamek.common.Messages;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;

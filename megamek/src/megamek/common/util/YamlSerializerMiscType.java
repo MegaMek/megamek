@@ -35,10 +35,8 @@ package megamek.common.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
-import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 
 public class YamlSerializerMiscType extends YamlSerializerEquipmentType {

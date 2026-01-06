@@ -914,7 +914,9 @@ public class TestTank extends TestEntity {
                 return false;
             }
             if (eq.hasFlag(MiscTypeFlag.F_CLUB)
-                  && !eq.hasAnyFlag(MiscTypeFlag.S_PILE_DRIVER, MiscTypeFlag.S_SPOT_WELDER, MiscTypeFlag.S_WRECKING_BALL)
+                  && !eq.hasAnyFlag(MiscTypeFlag.S_PILE_DRIVER,
+                  MiscTypeFlag.S_SPOT_WELDER,
+                  MiscTypeFlag.S_WRECKING_BALL)
                   && (location != Tank.LOC_FRONT) && !isRearLocation && !isTurretLocation) {
                 buffer.append(eq.getName()).append(" must be mounted on the front, rear, or turret.\n");
                 return false;

@@ -79,7 +79,7 @@ public class EquipmentBitSet {
     }
 
     public boolean contains(EquipmentBitSet other) {
-        if (other == null) return false;
+        if (other == null) {return false;}
         BitSet oBits = other.bitSet;
         // Iterate over the bits set in 'other'
         for (int i = oBits.nextSetBit(0); i >= 0; i = oBits.nextSetBit(i + 1)) {
@@ -92,7 +92,7 @@ public class EquipmentBitSet {
     }
 
     public boolean intersects(EquipmentBitSet other) {
-        if (other == null) return false;
+        if (other == null) {return false;}
         return this.bitSet.intersects(other.bitSet);
     }
 

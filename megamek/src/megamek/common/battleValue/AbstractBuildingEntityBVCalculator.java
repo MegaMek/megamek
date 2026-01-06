@@ -45,16 +45,14 @@ import megamek.common.units.Entity;
 
 /**
  * Battle Value calculator for Structures (AbstractBuildingEntity).
- *
+ * <p>
  * Structures follow special BV calculation rules from TO:AUE:
- *
- * Defensive BV = (Armor × 2.5 + CF × 1.5 + Defensive Equipment BV) × 0.5
- * Offensive BV = (Weapon BV + Hex Count × 50) × Speed Factor
- *
- * Special rules:
- * - No arc modifiers (all weapons count full BV)
- * - Ammo BV capped at weapon BV per weapon type
- * - Speed factor uses maximum MP rating
+ * <p>
+ * Defensive BV = (Armor × 2.5 + CF × 1.5 + Defensive Equipment BV) × 0.5 Offensive BV = (Weapon BV + Hex Count × 50) ×
+ * Speed Factor
+ * <p>
+ * Special rules: - No arc modifiers (all weapons count full BV) - Ammo BV capped at weapon BV per weapon type - Speed
+ * factor uses maximum MP rating
  */
 public class AbstractBuildingEntityBVCalculator extends BVCalculator {
 
@@ -70,8 +68,8 @@ public class AbstractBuildingEntityBVCalculator extends BVCalculator {
 
         defensiveValue += armorBV;
         bvReport.addLine("Armor Factor:",
-            armorFactor + " × 2.5",
-            "= " + formatForReport(armorBV));
+              armorFactor + " × 2.5",
+              "= " + formatForReport(armorBV));
     }
 
     @Override
@@ -86,8 +84,8 @@ public class AbstractBuildingEntityBVCalculator extends BVCalculator {
 
             defensiveValue += cfBV;
             bvReport.addLine("Construction Factor:",
-                cf + " × 1.5",
-                "= " + formatForReport(cfBV));
+                  cf + " × 1.5",
+                  "= " + formatForReport(cfBV));
         }
     }
 
@@ -97,8 +95,8 @@ public class AbstractBuildingEntityBVCalculator extends BVCalculator {
         double beforeFactor = defensiveValue;
         defensiveValue *= 0.5;
         bvReport.addLine("Defensive Factor:",
-            formatForReport(beforeFactor) + " × 0.5",
-            "= " + formatForReport(defensiveValue));
+              formatForReport(beforeFactor) + " × 0.5",
+              "= " + formatForReport(defensiveValue));
     }
 
     @Override
@@ -122,8 +120,8 @@ public class AbstractBuildingEntityBVCalculator extends BVCalculator {
 
         offensiveValue += hexBV;
         bvReport.addLine("Building Hexes:",
-            hexCount + " × 50",
-            "= " + formatForReport(hexBV));
+              hexCount + " × 50",
+              "= " + formatForReport(hexBV));
     }
 
     @Override

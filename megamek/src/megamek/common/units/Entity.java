@@ -12059,8 +12059,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true if this unit has been abandoned (crew ejected but unit not destroyed).
-     * Base implementation returns false; subclasses like Mek override this.
+     * Returns true if this unit has been abandoned (crew ejected but unit not destroyed). Base implementation returns
+     * false; subclasses like Mek override this.
      *
      * @return true if abandoned, false otherwise
      */
@@ -14727,8 +14727,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true if this unit has announced abandonment and is waiting
-     * for the crew to exit during the next End Phase.
+     * Returns true if this unit has announced abandonment and is waiting for the crew to exit during the next End
+     * Phase.
      *
      * @return true if abandonment is pending
      */

@@ -32,14 +32,13 @@
  */
 package megamek.common.util;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.EquipmentType;
 import static megamek.common.equipment.EquipmentType.*;
-import megamek.common.equipment.enums.AmmoTypeFlag;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
 
 public class YamlSerializerArmorType extends YamlSerializerEquipmentType {
     static public final String TYPENAME = "armor";

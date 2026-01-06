@@ -62,17 +62,13 @@ public class YamlEncDec {
         YamlSerializerEquipmentType serializer;
         if (equipmentType instanceof AmmoType) {
             serializer = new YamlSerializerAmmoType();
-        }
-        else if (equipmentType instanceof WeaponType) {
+        } else if (equipmentType instanceof WeaponType) {
             serializer = new YamlSerializerWeaponType();
-        }
-        else if (equipmentType instanceof ArmorType) {
+        } else if (equipmentType instanceof ArmorType) {
             serializer = new YamlSerializerArmorType();
-        }
-        else if (equipmentType instanceof MiscType) {
+        } else if (equipmentType instanceof MiscType) {
             serializer = new YamlSerializerMiscType();
-        }
-        else {
+        } else {
             serializer = new YamlSerializerEquipmentType();
         }
         return serializer.serialize(equipmentType);

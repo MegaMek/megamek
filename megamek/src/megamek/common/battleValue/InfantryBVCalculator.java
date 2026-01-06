@@ -208,6 +208,8 @@ public class InfantryBVCalculator extends BVCalculator {
                   "= +" + formatForReport(tailBonus));
         }
 
+        // Note: Prosthetic Glider Wings (MD_PL_GLIDER) have no impact on BV per IO p.85
+
         bvReport.startTentativeSection();
         bvReport.addLine("Field Guns:", "", "");
         Predicate<Mounted<?>> weaponFilter = m -> countAsOffensiveWeapon(m)

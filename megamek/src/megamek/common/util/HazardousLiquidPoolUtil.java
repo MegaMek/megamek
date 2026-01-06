@@ -40,7 +40,6 @@ import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.MiscType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.internationalization.I18n;
 import megamek.common.rolls.Roll;

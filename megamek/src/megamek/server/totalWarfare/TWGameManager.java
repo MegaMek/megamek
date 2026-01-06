@@ -3358,6 +3358,9 @@ public class TWGameManager extends AbstractGameManager {
                 // -> sit on the roof
                 unit.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
             } else {
+                // Check if infantry can use glider wings to descend (IO p.85)
+                boolean canGlide = unit.isInfantry() &&
+                      ((Infantry) unit).hasAbility(OptionsConstants.MD_PL_GLIDER);
                 while (elevation >= -hex.depth()) {
                     if (unit.isElevationValid(elevation, hex)) {
                         unit.setElevation(elevation);
@@ -3366,8 +3369,8 @@ public class TWGameManager extends AbstractGameManager {
                     elevation--;
                     // If unit is landed, the while loop breaks before here
                     // And unit.moved will be MOVE_NONE
-                    // If we can jump, use jump
-                    if (unit.getJumpMP() > 0) {
+                    // If we can jump or glide, use jump
+                    if (unit.getJumpMP() > 0 || canGlide) {
                         unit.moved = EntityMovementType.MOVE_JUMP;
                     } else { // Otherwise, use walk trigger check for ziplines
                         unit.moved = EntityMovementType.MOVE_WALK;
@@ -3401,7 +3404,10 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Check for zip lines PSR -- MOVE_WALK implies ziplines
-        if (unit.moved == EntityMovementType.MOVE_WALK) {
+        // Skip zipline PSR if infantry has glider wings (safer option, IO p.85)
+        boolean hasGliderWings = (unit instanceof Infantry) &&
+              ((Infantry) unit).hasAbility(OptionsConstants.MD_PL_GLIDER);
+        if (unit.moved == EntityMovementType.MOVE_WALK && !hasGliderWings) {
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES) &&
                   (unit instanceof Infantry) &&
                   !((Infantry) unit).isMechanized()) {
@@ -13418,7 +13424,8 @@ public class TWGameManager extends AbstractGameManager {
         addReport(r);
 
         // Flail/Wrecking Ball auto misses on a 2 and hits themselves.
-        if ((caa.getClub().getType().hasAnyFlag(MiscTypeFlag.S_FLAIL, MiscTypeFlag.S_WRECKING_BALL)) && (rollValue == 2)) {
+        if ((caa.getClub().getType().hasAnyFlag(MiscTypeFlag.S_FLAIL, MiscTypeFlag.S_WRECKING_BALL)) && (rollValue
+              == 2)) {
             // miss
             r = new Report(4025);
             r.subject = ae.getId();
@@ -13824,7 +13831,9 @@ public class TWGameManager extends AbstractGameManager {
         // If the attacker is Zweihandering with an improvised club, it will break on
         // the attack.
         // Otherwise, only a tree club will break on the attack
-        if ((caa.isZweihandering() && caa.getClub().getType().hasFlag(MiscTypeFlag.S_CLUB)) || caa.getClub().getType().hasFlag(MiscTypeFlag.S_TREE_CLUB)) {
+        if ((caa.isZweihandering() && caa.getClub().getType().hasFlag(MiscTypeFlag.S_CLUB)) || caa.getClub()
+              .getType()
+              .hasFlag(MiscTypeFlag.S_TREE_CLUB)) {
             // the club breaks
             r = new Report(4150);
             r.subject = ae.getId();
@@ -23734,6 +23743,10 @@ public class TWGameManager extends AbstractGameManager {
             if (damageHeight < 2) {
                 damage = 0;
             }
+            // Prosthetic glider wings protect conventional infantry from fall damage (IO p.85)
+            if (!(entity instanceof BattleArmor) && ((Infantry) entity).isProtectedFromFallDamage()) {
+                damage = 0;
+            }
             if (!(entity instanceof BattleArmor)) {
                 int dice = 3;
                 if (entity.getMovementMode() == EntityMovementMode.INF_MOTORIZED) {
@@ -28713,10 +28726,9 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Processes pending Mek abandonments per TacOps:AR p.165.
-     * Called during End Phase to:
-     * 1. Execute abandonments that were announced in the previous End Phase
-     * 2. Cancel abandonments if the Mek is no longer prone and shutdown (Meks only)
+     * Processes pending Mek abandonments per TacOps:AR p.165. Called during End Phase to: 1. Execute abandonments that
+     * were announced in the previous End Phase 2. Cancel abandonments if the Mek is no longer prone and shutdown (Meks
+     * only)
      */
     void processUnitAbandonments() {
         int currentRound = game.getRoundCount();

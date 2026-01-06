@@ -37,8 +37,6 @@ import java.util.Map;
 
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.WeaponTypeFlag;
 import megamek.common.equipment.enums.AmmoTypeFlag;
 
 public class YamlSerializerAmmoType extends YamlSerializerEquipmentType {

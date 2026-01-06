@@ -394,7 +394,7 @@ public class FovHighlightingAndDarkening {
             // Mast mounts only provide benefit for spotting (C3, TAG, indirect fire), not direct fire
             if (!attackInfo.lowAltitude &&
                   guip.getFovSpottingMode() &&
-                  selectedEntity.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1)) {
+                  selectedEntity.hasWorkingMisc(MiscType.F_MAST_MOUNT)) {
                 attackInfo.attackAbsHeight += 1;
             }
         } else {

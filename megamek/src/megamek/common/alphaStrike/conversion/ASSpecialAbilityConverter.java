@@ -44,7 +44,6 @@ import static megamek.common.alphaStrike.ASUnitType.PM;
 import static megamek.common.alphaStrike.ASUnitType.SV;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 import static megamek.common.equipment.MiscType.*;
-import static megamek.common.equipment.enums.MiscTypeFlag.S_MINING_DRILL;
 
 import java.util.Arrays;
 

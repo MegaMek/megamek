@@ -7004,15 +7004,14 @@ public class Compute {
         Hex hex = game.getHex(position, boardId);
         // Prohibited terrain is any that the unit cannot move into or through, or would cause a stacking violation, or
         // is not 0, 1, or 2 elevations up or down from the hex elevation - but ignore that last if the unloading unit
-        // has Jump MP or VTOL movement.
+        // has Jump MP, VTOL movement, or glider wings (IO p.85).
+        boolean canIgnoreElevation = unitToUnload.getMovementMode() == EntityMovementMode.VTOL ||
+              unitToUnload.getMovementMode() == EntityMovementMode.INF_JUMP ||
+              ((unitToUnload.getAnyTypeMaxJumpMP() > 0) && !unitToUnload.isImmobileForJump()) ||
+              (unitToUnload.isInfantry() && ((Infantry) unitToUnload).canExitVTOLWithGliderWings());
         return (hex != null) && !unitToUnload.isLocationProhibited(position, boardId, unitToUnload.getElevation())
               && (null == stackingViolation(game, unitToUnload.getId(), position, unitToUnload.climbMode()))
-              && ((Math.abs(hex.getLevel() - elev) < 3) ||
-              (unitToUnload.getMovementMode() == EntityMovementMode.VTOL ||
-                    unitToUnload.getMovementMode() == EntityMovementMode.INF_JUMP ||
-                    ((unitToUnload.getAnyTypeMaxJumpMP() > 0) && !unitToUnload.isImmobileForJump())
-              )
-        );
+              && ((Math.abs(hex.getLevel() - elev) < 3) || canIgnoreElevation);
     }
 
     /**

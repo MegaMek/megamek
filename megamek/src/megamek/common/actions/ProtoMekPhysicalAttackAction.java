@@ -42,7 +42,6 @@ import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.MiscType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;

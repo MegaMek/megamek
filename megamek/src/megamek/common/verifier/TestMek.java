@@ -1492,13 +1492,13 @@ public class TestMek extends TestEntity {
               || misc.hasFlag(MiscType.F_HAND_WEAPON)
               || (misc.hasFlag(MiscType.F_CLUB)
               && (misc.hasAnyFlag(MiscTypeFlag.S_CHAINSAW,
-                MiscTypeFlag.S_BACKHOE,
-                MiscTypeFlag.S_DUAL_SAW,
-                MiscTypeFlag.S_MINING_DRILL,
-                MiscTypeFlag.S_ROCK_CUTTER,
-                MiscTypeFlag.S_SPOT_WELDER,
-                MiscTypeFlag.S_WRECKING_BALL,
-                MiscTypeFlag.S_FLAIL)));
+              MiscTypeFlag.S_BACKHOE,
+              MiscTypeFlag.S_DUAL_SAW,
+              MiscTypeFlag.S_MINING_DRILL,
+              MiscTypeFlag.S_ROCK_CUTTER,
+              MiscTypeFlag.S_SPOT_WELDER,
+              MiscTypeFlag.S_WRECKING_BALL,
+              MiscTypeFlag.S_FLAIL)));
     }
 
     /**
@@ -1510,12 +1510,12 @@ public class TestMek extends TestEntity {
         return (equipment instanceof MiscType)
               && equipment.hasFlag(MiscType.F_CLUB)
               && equipment.hasAnyFlag(MiscTypeFlag.S_CHAIN_WHIP,
-                  MiscTypeFlag.S_HATCHET,
-                  MiscTypeFlag.S_MACE,
-                  MiscTypeFlag.S_SWORD,
-                  MiscTypeFlag.S_VIBRO_SMALL,
-                  MiscTypeFlag.S_VIBRO_MEDIUM,
-                  MiscTypeFlag.S_VIBRO_LARGE);
+              MiscTypeFlag.S_HATCHET,
+              MiscTypeFlag.S_MACE,
+              MiscTypeFlag.S_SWORD,
+              MiscTypeFlag.S_VIBRO_SMALL,
+              MiscTypeFlag.S_VIBRO_MEDIUM,
+              MiscTypeFlag.S_VIBRO_LARGE);
     }
 
     /**
@@ -1549,9 +1549,9 @@ public class TestMek extends TestEntity {
     public static boolean isValidMekLocation(Mek mek, EquipmentType eq, int location, @Nullable StringBuffer buffer) {
         if (eq instanceof MiscType) {
             if (eq.hasFlag(MiscType.F_CLUB) && (eq.hasAnyFlag(MiscTypeFlag.S_DUAL_SAW, MiscTypeFlag.S_PILE_DRIVER,
-                    MiscTypeFlag.S_BACKHOE, MiscTypeFlag.S_MINING_DRILL,
-                    MiscTypeFlag.S_COMBINE, MiscTypeFlag.S_CHAINSAW,
-                    MiscTypeFlag.S_ROCK_CUTTER, MiscTypeFlag.S_BUZZSAW, MiscTypeFlag.S_SPOT_WELDER))) {
+                  MiscTypeFlag.S_BACKHOE, MiscTypeFlag.S_MINING_DRILL,
+                  MiscTypeFlag.S_COMBINE, MiscTypeFlag.S_CHAINSAW,
+                  MiscTypeFlag.S_ROCK_CUTTER, MiscTypeFlag.S_BUZZSAW, MiscTypeFlag.S_SPOT_WELDER))) {
                 if (mek.entityIsQuad() && (location != Mek.LOC_LEFT_TORSO) && (location != Mek.LOC_RIGHT_TORSO)) {
                     if (buffer != null) {
                         buffer.append(eq.getName()).append(" must be mounted in a side torso.\n");

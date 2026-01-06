@@ -23743,9 +23743,35 @@ public class TWGameManager extends AbstractGameManager {
             if (damageHeight < 2) {
                 damage = 0;
             }
-            // Prosthetic glider wings protect conventional infantry from fall damage (IO p.85)
-            if (!(entity instanceof BattleArmor) && ((Infantry) entity).isProtectedFromFallDamage()) {
-                damage = 0;
+            // Prosthetic wings and VTOL protect conventional infantry from fall damage (IO p.85)
+            // Track the flight capability used for the safe landing report
+            String flightCapability = null;
+            if (!(entity instanceof BattleArmor)) {
+                Infantry infantry = (Infantry) entity;
+                if (infantry.isProtectedFromFallDamage()) {
+                    damage = 0;
+                    // Determine what type of flight capability protected them
+                    if (infantry.hasAbility(OptionsConstants.MD_PL_GLIDER)) {
+                        flightCapability = ReportMessages.getString("2316");
+                    } else if (infantry.hasPoweredFlightWings()) {
+                        flightCapability = ReportMessages.getString("2314");
+                    }
+                } else if (infantry.getBaseMovementMode() == EntityMovementMode.VTOL) {
+                    // Native VTOL infantry (microcopter/microlite) are also protected
+                    damage = 0;
+                    flightCapability = infantry.hasMicrolite() ?
+                          ReportMessages.getString("2312") :
+                          ReportMessages.getString("2313");
+                }
+            }
+            // Report safe landing if flight capability was used
+            if (flightCapability != null && damageHeight >= 2) {
+                r = new Report(2311);
+                r.subject = entity.getId();
+                r.indent();
+                r.addDesc(entity);
+                r.add(flightCapability);
+                vPhaseReport.add(r);
             }
             if (!(entity instanceof BattleArmor)) {
                 int dice = 3;

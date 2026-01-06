@@ -37,9 +37,7 @@ import static megamek.common.board.DeploymentElevationType.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import megamek.common.Hex;
 import megamek.common.annotations.Nullable;
@@ -207,9 +205,10 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
                   (o.elevation() + entity.getHeight() >= bridgeHeight));
         }
 
+        // Check for VTOL movement mode (includes powered flight infantry whose getMovementMode() returns VTOL)
         if (entity.getMovementMode().isVTOL()) {
             List<ElevationOption> vtolElevations = findAllowedVTOLElevations();
-            // remove VTOL elevations that are already present (= where the VTOl can land)
+            // remove VTOL elevations that are already present (= where the VTOL can land)
             for (ElevationOption elevationOption : result) {
                 vtolElevations.removeIf(o -> (o.elevation() == elevationOption.elevation()));
             }
@@ -272,7 +271,10 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
 
     private List<ElevationOption> findAllowedVTOLElevations() {
         List<ElevationOption> result = new ArrayList<>();
-        if (entity instanceof VTOL || entity.getMovementMode().isHoverVTOLOrWiGE()) {
+        // Check for VTOL vehicles or VTOL/Hover/WiGE movement modes (includes powered flight infantry)
+        boolean hasVTOLCapability = (entity instanceof VTOL) ||
+              entity.getMovementMode().isHoverVTOLOrWiGE();
+        if (hasVTOLCapability) {
             for (int elevation = 1; elevation < Math.max(10, hex.ceiling() + 1); elevation++) {
                 result.add(new ElevationOption(elevation, ELEVATION));
             }

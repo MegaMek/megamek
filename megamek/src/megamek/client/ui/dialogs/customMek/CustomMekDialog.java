@@ -726,10 +726,11 @@ public class CustomMekDialog extends AbstractButtonDialog
         lblExtraneousPair2.setVisible(isChecked);
         choExtraneousPair2.setVisible(isChecked);
 
-        // Glider wings limit extraneous limbs to one pair (IO p.85)
-        // Disable pair 2 if glider wings is already enabled
-        boolean hasGliderWings = entity.hasAbility(OptionsConstants.MD_PL_GLIDER);
-        if (hasGliderWings && editable) {
+        // Glider or powered flight wings limit extraneous limbs to one pair (IO p.85)
+        // Disable pair 2 if any wing type is already enabled
+        boolean hasWings = entity.hasAbility(OptionsConstants.MD_PL_GLIDER)
+              || entity.hasAbility(OptionsConstants.MD_PL_FLIGHT);
+        if (hasWings && editable) {
             choExtraneousPair2.setEnabled(false);
             lblExtraneousPair2.setEnabled(false);
             // Clear pair 2 if it was set (shouldn't happen with valid data, but be safe)
@@ -738,11 +739,12 @@ public class CustomMekDialog extends AbstractButtonDialog
             }
         }
 
-        // Add listener to prevent pair 2 selection when glider wings is enabled
+        // Add listener to prevent pair 2 selection when any wing type is enabled
         choExtraneousPair2.addItemListener(event -> {
             if (event.getStateChange() == ItemEvent.SELECTED
                   && choExtraneousPair2.getSelectedIndex() > 0
-                  && isOptionSelected(OptionsConstants.MD_PL_GLIDER)) {
+                  && (isOptionSelected(OptionsConstants.MD_PL_GLIDER)
+                  || isOptionSelected(OptionsConstants.MD_PL_FLIGHT))) {
                 // Revert to None
                 choExtraneousPair2.setSelectedIndex(0);
                 JOptionPane.showMessageDialog(this,
@@ -950,6 +952,24 @@ public class CustomMekDialog extends AbstractButtonDialog
             deselectOption(OptionsConstants.MD_PL_I_ENHANCED);
         } else if (state && option.getName().equals(OptionsConstants.MD_PL_I_ENHANCED)) {
             deselectOption(OptionsConstants.MD_PL_ENHANCED);
+        }
+
+        // Glider Wings and Powered Flight Wings are mutually exclusive (IO p.85)
+        // When one is selected, deselect the other
+        if (state && option.getName().equals(OptionsConstants.MD_PL_GLIDER)) {
+            deselectOption(OptionsConstants.MD_PL_FLIGHT);
+            updateExtraneousPair2ForWings(true);
+        } else if (state && option.getName().equals(OptionsConstants.MD_PL_FLIGHT)) {
+            deselectOption(OptionsConstants.MD_PL_GLIDER);
+            updateExtraneousPair2ForWings(true);
+        }
+
+        // When wings are deselected, re-enable extraneous pair 2 if no other wing type is active
+        if (!state && (option.getName().equals(OptionsConstants.MD_PL_GLIDER)
+              || option.getName().equals(OptionsConstants.MD_PL_FLIGHT))) {
+            boolean anyWingsActive = isOptionSelected(OptionsConstants.MD_PL_GLIDER)
+                  || isOptionSelected(OptionsConstants.MD_PL_FLIGHT);
+            updateExtraneousPair2ForWings(anyWingsActive);
         }
 
         // Update prosthetic enhancement inline control visibility when Enhanced/Improved Enhanced/Extraneous is toggled
@@ -1168,6 +1188,24 @@ public class CustomMekDialog extends AbstractButtonDialog
               || entity.isSupportVehicle()
               || entity.isAerospaceFighter()
               || entity.isConventionalFighter();
+    }
+
+    /**
+     * Updates the extraneous limbs pair 2 control based on wing selection. Per IO p.85, when any wing type (glider or
+     * powered flight) is installed, only one pair of extraneous limbs is allowed.
+     *
+     * @param hasWings true if any wing option is selected
+     */
+    private void updateExtraneousPair2ForWings(boolean hasWings) {
+        if (choExtraneousPair2 != null) {
+            choExtraneousPair2.setEnabled(!hasWings && editable);
+            if (hasWings) {
+                choExtraneousPair2.setSelectedIndex(0); // Reset to "None"
+            }
+        }
+        if (lblExtraneousPair2 != null) {
+            lblExtraneousPair2.setEnabled(!hasWings);
+        }
     }
 
     @Override

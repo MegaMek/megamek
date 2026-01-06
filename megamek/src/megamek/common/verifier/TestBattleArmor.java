@@ -878,7 +878,7 @@ public class TestBattleArmor extends TestEntity {
         for (int t = 0; t <= ba.getTroopers(); t++) {
             for (int loc = 0; loc < BattleArmor.MOUNT_NUM_LOCS; loc++) {
                 if (critsUsed[t][loc] > ba.getNumCrits(loc)) {
-                    buff.append(BattleArmor.getBaMountLocAbbr(loc))
+                    buff.append(BattleArmor.getBaMountLocName(loc))
                           .append(" of ")
                           .append(ba.getLocationAbbr(t))
                           .append(" has ")
@@ -892,7 +892,7 @@ public class TestBattleArmor extends TestEntity {
                     continue;
                 }
                 if (numAMWeapons[t][loc] > ba.getNumAllowedAntiMekWeapons(loc)) {
-                    buff.append(BattleArmor.getBaMountLocAbbr(loc))
+                    buff.append(BattleArmor.getBaMountLocName(loc))
                           .append(" of ")
                           .append(ba.getLocationAbbr(t))
                           .append(" has ")
@@ -904,7 +904,7 @@ public class TestBattleArmor extends TestEntity {
                 }
                 if (numAPWeapons[t][loc] > ba
                       .getNumAllowedAntiPersonnelWeapons(loc, t)) {
-                    buff.append(BattleArmor.getBaMountLocAbbr(loc))
+                    buff.append(BattleArmor.getBaMountLocName(loc))
                           .append(" of ")
                           .append(ba.getLocationAbbr(t))
                           .append(" has ")

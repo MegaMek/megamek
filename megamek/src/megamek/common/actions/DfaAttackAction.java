@@ -430,18 +430,18 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
             if (entity instanceof BipedMek) {
 
-                return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RIGHT_LEG) &&
+                return (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_LEG) &&
                       entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_LEG)) ||
-                      (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LEFT_LEG) &&
+                      (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_LEFT_LEG) &&
                             entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG));
             }
-            return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RIGHT_LEG) &&
+            return (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_LEG) &&
                   entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_LEG)) ||
-                  (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LEFT_LEG) &&
+                  (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_LEFT_LEG) &&
                         entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG)) ||
-                  ((entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RIGHT_ARM)) &&
+                  ((entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_ARM)) &&
                         (entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_ARM) ||
-                              (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LEFT_ARM) &&
+                              (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_LEFT_ARM) &&
                                     entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_ARM))));
         }
 

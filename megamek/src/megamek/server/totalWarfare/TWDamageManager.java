@@ -1042,7 +1042,7 @@ public class TWDamageManager implements IDamageManager {
                 // on it get destroyed
                 if ((entity instanceof VTOL) &&
                       (hit.getLocation() == VTOL.LOC_ROTOR) &&
-                      entity.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) &&
+                      entity.hasWorkingMisc(MiscType.F_MAST_MOUNT, null, VTOL.LOC_ROTOR) &&
                       (damage > 0)) {
                     report = new Report(6081);
                     report.subject = entityId;
@@ -1771,7 +1771,7 @@ public class TWDamageManager implements IDamageManager {
                 reportVec.addAll(manager.vehicleMotiveDamage((Tank) entity, hit.getMotiveMod()));
             }
             // Damage from any source can break spikes
-            if (entity.hasWorkingMisc(MiscType.F_SPIKES, -1, hit.getLocation())) {
+            if (entity.hasWorkingMisc(MiscType.F_SPIKES, null, hit.getLocation())) {
                 reportVec.add(manager.checkBreakSpikes(entity, hit.getLocation()));
             }
 

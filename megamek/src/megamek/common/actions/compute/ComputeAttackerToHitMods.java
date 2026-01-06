@@ -50,6 +50,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
@@ -247,7 +248,7 @@ public class ComputeAttackerToHitMods {
         }
 
         // Heavy infantry have +1 penalty
-        if ((attacker instanceof Infantry) && attacker.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR)) {
+        if ((attacker instanceof Infantry) && attacker.hasWorkingMisc(MiscType.F_TOOLS, MiscTypeFlag.S_HEAVY_ARMOR)) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.HeavyArmor"));
         }
 

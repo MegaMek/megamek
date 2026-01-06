@@ -65,6 +65,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.*;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.moves.MovePath;
@@ -899,7 +900,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                     // If the swarmer has Assault claws, give a 1 modifier.
                     // We can stop looking when we find our first match.
-                    if (swarmer.hasWorkingMisc(MiscType.F_MAGNET_CLAW, -1)) {
+                    if (swarmer.hasWorkingMisc(MiscTypeFlag.F_MAGNET_CLAW)) {
                         rollTarget.addModifier(1, "swarmer has magnetic claws");
                     }
 

@@ -60,6 +60,7 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.moves.MoveStep;
@@ -1355,8 +1356,8 @@ public class ProtoMek extends Entity {
     public int getJumpType() {
         jumpType = JUMP_NONE;
         for (Mounted<?> m : miscList) {
-            if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
-                if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
+            if (m.getType().hasFlag(MiscTypeFlag.F_JUMP_JET)) {
+                if (m.getType().hasFlag(MiscTypeFlag.S_IMPROVED)) {
                     jumpType = JUMP_IMPROVED;
                 } else {
                     jumpType = JUMP_STANDARD;

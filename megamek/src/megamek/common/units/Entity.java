@@ -422,6 +422,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean illuminated = false;
     protected boolean searchlightIsActive = false;
     protected boolean usedSearchlight = false;
+    protected boolean eiShutdown = false;
     protected boolean stuckInSwamp = false;
     protected boolean canUnstickByJumping = false;
     protected int taggedBy = -1;
@@ -6053,6 +6054,12 @@ public abstract class Entity extends TurnOrdered
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
 
+        // EI Interface provides 1-hex active probe per IO p.77
+        // This works even without the pilot implant (just the hardware)
+        if (hasEiCockpit()) {
+            return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
+        }
+
         return false;
     }
 
@@ -6147,6 +6154,12 @@ public abstract class Entity extends TurnOrdered
         // No BAP equipped - return base probe from implants/quirks/SPA
         if ((cyberBaseProbe + quirkBonus + spaBonus) > 0) {
             return cyberBaseProbe + quirkBonus + spaBonus;
+        }
+
+        // EI Interface provides 1-hex active probe per IO p.77
+        // This works even without the pilot implant (just the hardware)
+        if (hasEiCockpit()) {
+            return 1;
         }
 
         return Entity.NONE;
@@ -11638,12 +11651,56 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
+    /**
+     * Returns whether this entity has an Enhanced Imaging (EI) Interface. This is determined by having the EI Interface
+     * equipment installed. ProtoMeks always have EI built-in.
+     *
+     * @return true if this entity has an EI Interface
+     */
     public boolean hasEiCockpit() {
-        return ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT));
+        return hasWorkingMisc(MiscType.F_EI_INTERFACE);
     }
 
     public boolean hasActiveEiCockpit() {
-        return (hasEiCockpit() && hasAbility(OptionsConstants.UNOFFICIAL_EI_IMPLANT));
+        return (hasEiCockpit() && hasAbility(OptionsConstants.MD_EI_IMPLANT) && !eiShutdown);
+    }
+
+    /**
+     * Returns whether the EI Interface is currently shut down.
+     */
+    public boolean isEiShutdown() {
+        return eiShutdown;
+    }
+
+    /**
+     * Sets the EI shutdown state. ProtoMeks and units with MDI cannot shut down EI. Per IO p.77, EI can be voluntarily
+     * shut down during the End Phase.
+     *
+     * @param shutdown true to shut down EI, false to activate it
+     */
+    public void setEiShutdown(boolean shutdown) {
+        if (canShutdownEi()) {
+            this.eiShutdown = shutdown;
+        }
+    }
+
+    /**
+     * Returns whether this unit can shut down its EI Interface. ProtoMeks cannot shut down EI (it's integral to their
+     * design). Units with MDI (Machine/Direct Interface) cannot shut down EI. Per IO p.77.
+     */
+    public boolean canShutdownEi() {
+        if (!hasEiCockpit()) {
+            return false;
+        }
+        // ProtoMeks cannot shut down EI - it's integral to their design
+        if (this.isProtoMek()) {
+            return false;
+        }
+        // Units with MDI cannot shut down EI per IO
+        if (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)) {
+            return false;
+        }
+        return true;
     }
 
     public boolean isLayingMines() {

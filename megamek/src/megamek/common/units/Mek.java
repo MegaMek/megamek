@@ -3951,11 +3951,6 @@ public abstract class Mek extends Entity {
     }
 
     @Override
-    public boolean hasEiCockpit() {
-        return isClan() || super.hasEiCockpit();
-    }
-
-    @Override
     public boolean hasActiveEiCockpit() {
         if (cockpitStatus == COCKPIT_OFF) {
             return false;

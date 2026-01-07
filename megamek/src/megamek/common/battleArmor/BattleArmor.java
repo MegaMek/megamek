@@ -1186,11 +1186,6 @@ public class BattleArmor extends Infantry {
               false);
     }
 
-    @Override
-    public boolean hasEiCockpit() {
-        return true;
-    }
-
     public void setWeightClass(int inWC) {
         switch (inWC) {
             case 0:

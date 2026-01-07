@@ -112,6 +112,7 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_ACTUATOR_ENHANCEMENT_SYSTEM = MiscTypeFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM;
     public static final MiscTypeFlag F_ECM = MiscTypeFlag.F_ECM;
     public static final MiscTypeFlag F_BAP = MiscTypeFlag.F_BAP;
+    public static final MiscTypeFlag F_EI_INTERFACE = MiscTypeFlag.F_EI_INTERFACE;
     public static final MiscTypeFlag F_MODULAR_ARMOR = MiscTypeFlag.F_MODULAR_ARMOR;
     public static final MiscTypeFlag F_TALON = MiscTypeFlag.F_TALON;
     public static final MiscTypeFlag F_VISUAL_CAMO = MiscTypeFlag.F_VISUAL_CAMO;
@@ -1635,6 +1636,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISSpaceMineDispenser());
         EquipmentType.addType(MiscType.createEmergencyC3M());
         EquipmentType.addType(MiscType.createNovaCEWS());
+        EquipmentType.addType(MiscType.createEIInterface());
 
         // ProtoMek Stuff
         EquipmentType.addType(MiscType.createCLProtoMyomerBooster());
@@ -5838,6 +5840,41 @@ public class MiscType extends EquipmentType {
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.CCY)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        return misc;
+    }
+
+    /**
+     * Creates the Enhanced Imaging (EI) Interface equipment. This is the unit-side equipment that allows a pilot with
+     * an EI Implant to use Enhanced Imaging capabilities. ProtoMeks have this built-in. See IO p.77 for rules.
+     *
+     * @return the EI Interface equipment
+     */
+    public static MiscType createEIInterface() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Enhanced Imaging (EI) Interface";
+        misc.setInternalName("EIInterface");
+        misc.addLookupName("EI Interface");
+        misc.addLookupName("Enhanced Imaging Interface");
+        misc.tonnage = 0;
+        misc.criticalSlots = 0;
+        misc.cost = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_EI_INTERFACE,
+                F_MEK_EQUIPMENT,
+                F_BA_EQUIPMENT,
+                F_PROTOMEK_EQUIPMENT);
+        misc.bv = 0;
+        misc.rulesRefs = "77, IO";
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
+                .setClanAdvancement(3040, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false)
+                .setPrototypeFactions(Faction.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
 

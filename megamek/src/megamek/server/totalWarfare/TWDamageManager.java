@@ -1988,6 +1988,38 @@ public class TWDamageManager implements IDamageManager {
             reportVec.add(report);
         }
 
+        // EI (Enhanced Imaging) feedback on internal damage per IO p.77
+        // When taking IS damage, roll 2d6 - if result < 7, take 1 pilot damage
+        // Pain Shunt blocks this feedback
+        if (tookInternalDamage &&
+              entity.hasActiveEiCockpit() &&
+              !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            Report.addNewline(reportVec);
+            Roll diceRoll = Compute.rollD6(2);
+            report = new Report(3593);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            report.add(7);
+            report.add(diceRoll);
+            report.choose(diceRoll.getIntValue() >= 7);
+            report.indent(2);
+            reportVec.add(report);
+
+            if (diceRoll.getIntValue() < 7) {
+                reportVec.addAll(manager.damageCrew(entity, 1));
+            }
+        } else if (tookInternalDamage &&
+              entity.hasActiveEiCockpit() &&
+              entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            // Pain Shunt blocks EI feedback - show message for clarity
+            Report.addNewline(reportVec);
+            report = new Report(3594);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            report.indent(2);
+            reportVec.add(report);
+        }
+
         // Prototype DNI feedback on ANY damage (IO pg 83)
         // TN 6 for armor-only hits, TN 8 for internal damage or critical hits
         // Only applies to BattleMeks (not IndustrialMeks)

@@ -1031,6 +1031,17 @@ public class ProtoMek extends Entity {
         return 1 + (weight / 100.0);
     }
 
+    /**
+     * ProtoMeks always have Enhanced Imaging (EI) built-in per IO rules. The EI Interface is integral to ProtoMek
+     * design.
+     *
+     * @return always true for ProtoMeks
+     */
+    @Override
+    public boolean hasEiCockpit() {
+        return true;
+    }
+
     @Override
     public boolean hasActiveEiCockpit() {
         return (super.hasActiveEiCockpit() && (getCritsHit(LOC_HEAD) == 0));

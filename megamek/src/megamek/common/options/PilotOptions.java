@@ -108,7 +108,6 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.INFANTRY_URBAN_GUERRILLA, false);
 
         // Unofficial
-        addOption(adv, OptionsConstants.UNOFFICIAL_EI_IMPLANT, false);
         addOption(adv, OptionsConstants.UNOFFICIAL_GUNNERY_LASER, false);
         addOption(adv, OptionsConstants.UNOFFICIAL_GUNNERY_MISSILE, false);
         addOption(adv, OptionsConstants.UNOFFICIAL_GUNNERY_BALLISTIC, false);
@@ -183,6 +182,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_PL_GLIDER, false);
         addOption(md, OptionsConstants.MD_PL_FLIGHT, false);
         addOption(md, OptionsConstants.MD_SUICIDE_IMPLANTS, false);
+        addOption(md, OptionsConstants.MD_EI_IMPLANT, false);
     }
 
     /*

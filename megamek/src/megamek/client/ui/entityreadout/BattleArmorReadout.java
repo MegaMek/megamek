@@ -144,14 +144,14 @@ class BattleArmorReadout extends GeneralEntityReadout {
     }
 
     private static String getLocation(Mounted<?> mounted) {
-        String location = BattleArmor.getBaMountLocAbbr(mounted.getBaMountLoc());
+        String location = BattleArmor.getBaMountLocName(mounted.getBaMountLoc());
         if (mounted.isDWPMounted()) {
             location = "DWP";
         }
         if (mounted.isAPMMounted()) {
             Mounted<?> apMount = mounted.getLinkedBy();
             if (apMount != null) {
-                location = BattleArmor.getBaMountLocAbbr(apMount.getBaMountLoc());
+                location = BattleArmor.getBaMountLocName(apMount.getBaMountLoc());
             }
             location += " (APM)";
         }
@@ -162,7 +162,7 @@ class BattleArmorReadout extends GeneralEntityReadout {
     }
 
     private String sanitizeMountedDesc(Mounted<?> mounted) {
-        String toRemove = " (%s)".formatted(BattleArmor.getBaMountLocAbbr(mounted.getBaMountLoc()));
+        String toRemove = " (%s)".formatted(BattleArmor.getBaMountLocName(mounted.getBaMountLoc()));
         String name = mounted.getDesc();
         EquipmentType type = mounted.getType();
         if (type instanceof MiscType && type.hasFlag(MiscType.F_BA_MANIPULATOR)) {

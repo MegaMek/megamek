@@ -101,15 +101,16 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.AllowedDeploymentHelper;
 import megamek.common.board.Board;
 import megamek.common.board.BoardHelper;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
+import megamek.common.board.FacingOption;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeECM;
 import megamek.common.enums.MoveStepType;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
@@ -137,6 +138,7 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.EntityVisibilityUtils;
@@ -638,7 +640,7 @@ public final class BoardView extends AbstractBoardView
                 }
                 for (Entity entity : game.getEntitiesVector()) {
                     if ((entity.getDamageLevel() != Entity.DMG_NONE) && ((entity.damageThisRound != 0)
-                          || (entity instanceof GunEmplacement))) {
+                          || (entity.isBuildingEntityOrGunEmplacement()))) {
                         tileManager.reloadImage(entity);
                     }
                 }
@@ -1572,6 +1574,17 @@ public final class BoardView extends AbstractBoardView
                           maxHeight) && !en_Deployer.isBoardProhibited(board)) {
                         drawHexBorder(graphics2D, getHexLocation(coords), Color.cyan);
                     }
+                } else if (en_Deployer instanceof AbstractBuildingEntity) {
+                    AllowedDeploymentHelper deploymentHelper = new AllowedDeploymentHelper(en_Deployer, coords, board,
+                          board.getHex(coords), game);
+                    FacingOption facingOption = deploymentHelper.findAllowedFacings(0);
+                    if (facingOption != null && facingOption.hasValidFacings()) {
+                        if (board.isLegalDeployment(coords, en_Deployer)
+                              //Draw hexes that're legal if we rotate
+                              && !en_Deployer.isBoardProhibited(board)) {
+                            drawHexBorder(graphics2D, getHexLocation(coords), Color.yellow);
+                        }
+                    }
                 }
 
                 if (board.isLegalDeployment(coords, en_Deployer)
@@ -1658,13 +1671,18 @@ public final class BoardView extends AbstractBoardView
      * Draw a layer of a solid color (alpha possible) on the hex at {@link Point} no padding by default
      */
     void drawHexLayer(Point point, Graphics2D graphics2D, Color color, boolean outOfFOV) {
-        drawHexLayer(point, graphics2D, color, outOfFOV, 0);
+        drawHexLayer(point, graphics2D, color, outOfFOV, false, 0);
+    }
+
+    void drawHexLayer(Point point, Graphics2D graphics2D, Color color, boolean outOfFOV, boolean reverseStripes) {
+        drawHexLayer(point, graphics2D, color, outOfFOV, reverseStripes, 0);
     }
 
     /**
      * Draw a layer of a solid color (alpha possible) on the hex at {@link Point} with some padding around the border
      */
-    private void drawHexLayer(Point point, Graphics2D graphics2D, Color color, boolean outOfFOV, double padding) {
+    private void drawHexLayer(Point point, Graphics2D graphics2D, Color color, boolean outOfFOV,
+          boolean reverseStripes, double padding) {
         graphics2D.setColor(color);
 
         // create stripe effect for FOV darkening but not for colored weapon ranges
@@ -1672,7 +1690,7 @@ public final class BoardView extends AbstractBoardView
 
         if (outOfFOV && fogStripes > 0) {
             // totally transparent here hurts the eyes
-            GradientPaint gradientPaint = getGradientPaint(color, (float) fogStripes);
+            GradientPaint gradientPaint = getGradientPaint(color, (float) fogStripes, reverseStripes);
             graphics2D.setPaint(gradientPaint);
         }
 
@@ -1682,20 +1700,31 @@ public final class BoardView extends AbstractBoardView
         graphics2D.setComposite(svComposite);
     }
 
-    private static GradientPaint getGradientPaint(Color startingColor, float fogStripes) {
+    private static GradientPaint getGradientPaint(Color startingColor, float fogStripes, boolean reversed) {
         Color endingColor = new Color(startingColor.getRed() / 2,
               startingColor.getGreen() / 2,
               startingColor.getBlue() / 2,
               startingColor.getAlpha() / 2);
 
         // the numbers make the lines align across hexes
-        return new GradientPaint(42.0f / fogStripes,
-              0.0f,
-              startingColor,
-              104.0f / fogStripes,
-              106.0f / fogStripes,
-              endingColor,
-              true);
+        // reversed changes stripe direction from bottom-left/top-right to top-left/bottom-right
+        if (reversed) {
+            return new GradientPaint(104.0f / fogStripes,
+                  0.0f,
+                  startingColor,
+                  42.0f / fogStripes,
+                  106.0f / fogStripes,
+                  endingColor,
+                  true);
+        } else {
+            return new GradientPaint(42.0f / fogStripes,
+                  0.0f,
+                  startingColor,
+                  104.0f / fogStripes,
+                  106.0f / fogStripes,
+                  endingColor,
+                  true);
+        }
     }
 
     public void drawHexBorder(Graphics2D graphics2D, Color color, double padding, double lineWidth) {

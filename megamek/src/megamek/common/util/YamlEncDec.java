@@ -42,6 +42,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponType;
@@ -61,6 +62,12 @@ public class YamlEncDec {
         YamlSerializerEquipmentType serializer;
         if (equipmentType instanceof AmmoType) {
             serializer = new YamlSerializerAmmoType();
+        } else if (equipmentType instanceof WeaponType) {
+            serializer = new YamlSerializerWeaponType();
+        } else if (equipmentType instanceof ArmorType) {
+            serializer = new YamlSerializerArmorType();
+        } else if (equipmentType instanceof MiscType) {
+            serializer = new YamlSerializerMiscType();
         } else {
             serializer = new YamlSerializerEquipmentType();
         }

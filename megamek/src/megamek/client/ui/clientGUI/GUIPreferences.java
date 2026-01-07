@@ -287,6 +287,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FOV_DARKEN_ALPHA = "FovDarkenAlpha";
     public static final String FOV_STRIPES = "FoVFogStripes";
     public static final String FOV_GRAYSCALE = "FoVFogGrayscale";
+    public static final String FOV_SPOTTING_MODE = "FovSpottingMode";
     public static final String GUI_SCALE = "GUIScale";
     public static final String LOBBY_MEK_TABLE_UNIT_WIDTH = "LobbyMekTableUnitWidth";
     public static final String LOBBY_MEK_TABLE_PILOT_WIDTH = "LobbyMekTablePilotWidth";
@@ -637,6 +638,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FOV_DARKEN_ALPHA, 100);
         store.setDefault(FOV_STRIPES, 35);
         store.setDefault(FOV_GRAYSCALE, false);
+        store.setDefault(FOV_SPOTTING_MODE, false);
 
         store.setDefault(HIGH_QUALITY_GRAPHICS, true);
         store.setDefault(AO_HEX_SHADOWS, false);
@@ -1238,6 +1240,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getFovGrayscale() {
         return store.getBoolean(FOV_GRAYSCALE);
+    }
+
+    public boolean getFovSpottingMode() {
+        return store.getBoolean(FOV_SPOTTING_MODE);
     }
 
     public int getMapZoomIndex() {
@@ -2118,6 +2124,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setFovGrayscale(boolean state) {
         store.setValue(FOV_GRAYSCALE, state);
+    }
+
+    public void setFovSpottingMode(boolean state) {
+        store.setValue(FOV_SPOTTING_MODE, state);
     }
 
     public void setMapZoomIndex(int zoomIndex) {

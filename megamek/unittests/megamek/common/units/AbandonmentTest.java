@@ -217,26 +217,26 @@ class AbandonmentTest {
     class TankAbandonmentTests {
 
         @Test
-        @DisplayName("Tank can abandon when both options enabled")
-        void canAbandon_BothOptionsEnabled_ReturnsTrue() {
+        @DisplayName("Tank can abandon when eject option enabled")
+        void canAbandon_EjectOptionEnabled_ReturnsTrue() {
             Tank tank = new Tank();
             tank.setGame(mockGame);
             tank.setCrew(mockCrew);
             when(mockCrew.isEjected()).thenReturn(false);
             when(mockCrew.isDead()).thenReturn(false);
 
+            // Only requires the vehicle eject/abandon option
+            // Crew size is defined in TM p.103, not dependent on TacOps Vehicle Crews option
             when(mockOptions.booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT))
-                  .thenReturn(true);
-            when(mockOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_TANK_CREWS))
                   .thenReturn(true);
 
             assertTrue(tank.canAbandon(),
-                  "Tank should be able to abandon when both options enabled");
+                  "Tank should be able to abandon when eject option enabled");
         }
 
         @Test
-        @DisplayName("Tank cannot abandon without TacOps Vehicle Crews option")
-        void canAbandon_MissingTacOpsOption_ReturnsFalse() {
+        @DisplayName("Tank cannot abandon without eject option")
+        void canAbandon_MissingEjectOption_ReturnsFalse() {
             Tank tank = new Tank();
             tank.setGame(mockGame);
             tank.setCrew(mockCrew);
@@ -244,30 +244,10 @@ class AbandonmentTest {
             when(mockCrew.isDead()).thenReturn(false);
 
             when(mockOptions.booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT))
-                  .thenReturn(true);
-            when(mockOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_TANK_CREWS))
-                  .thenReturn(false);  // Missing TacOps Vehicle Crews
+                  .thenReturn(false);  // Missing eject option
 
             assertFalse(tank.canAbandon(),
-                  "Tank cannot abandon without TacOps Vehicle Crews option");
-        }
-
-        @Test
-        @DisplayName("Tank cannot abandon without abandon option")
-        void canAbandon_MissingAbandonOption_ReturnsFalse() {
-            Tank tank = new Tank();
-            tank.setGame(mockGame);
-            tank.setCrew(mockCrew);
-            when(mockCrew.isEjected()).thenReturn(false);
-            when(mockCrew.isDead()).thenReturn(false);
-
-            when(mockOptions.booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT))
-                  .thenReturn(false);  // Missing abandon option
-            when(mockOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_TANK_CREWS))
-                  .thenReturn(true);
-
-            assertFalse(tank.canAbandon(),
-                  "Tank cannot abandon without abandon option");
+                  "Tank cannot abandon without eject option");
         }
 
         @Test
@@ -280,8 +260,6 @@ class AbandonmentTest {
             when(mockCrew.isDead()).thenReturn(true);  // Dead crew
 
             when(mockOptions.booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT))
-                  .thenReturn(true);
-            when(mockOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_TANK_CREWS))
                   .thenReturn(true);
 
             assertFalse(tank.canAbandon(),

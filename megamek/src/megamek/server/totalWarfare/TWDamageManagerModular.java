@@ -2130,6 +2130,14 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         boolean damageIS = mods.damageIS;
         Report report;
 
+        // Track initial trooper count for suicide implant reactive damage (IO pg 83)
+        // Only track if: conventional infantry, has suicide implants, and this is NOT reactive damage
+        boolean hasSuicideImplants = infantry.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS);
+        boolean checkSuicideImplantReaction = infantry.isConventionalInfantry()
+              && hasSuicideImplants
+              && !damageType.equals(DamageType.SUICIDE_IMPLANT_REACTION);
+        int initialTroopers = checkSuicideImplantReaction ? infantry.getInternal(Infantry.LOC_INFANTRY) : -1;
+
         // Infantry with TSM implants get 2d6 burst damage from ATSM munitions
         if (damageType.equals(DamageType.ANTI_TSM) &&
               infantry.isConventionalInfantry() &&
@@ -2363,6 +2371,17 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 if (!(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor)) {
                     mods.specCrits = mods.specCrits + 1;
                 }
+            }
+        }
+
+        // Suicide Implant Reactive Damage (IO pg 83)
+        // When conventional infantry with suicide implants loses troopers, they automatically
+        // deal 0.57 damage per dead trooper to all opposing units in the hex
+        if (checkSuicideImplantReaction && initialTroopers > 0) {
+            int currentTroopers = Math.max(0, infantry.getInternal(Infantry.LOC_INFANTRY));
+            int deadTroopers = initialTroopers - currentTroopers;
+            if (deadTroopers > 0) {
+                reportVec.addAll(applySuicideImplantReaction(infantry, deadTroopers));
             }
         }
     }
@@ -2602,7 +2621,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             reportVec.addAll(manager.vehicleMotiveDamage((Tank) entity, hit.getMotiveMod()));
         }
         // Damage from any source can break spikes
-        if (entity.hasWorkingMisc(MiscType.F_SPIKES, -1, hit.getLocation())) {
+        if (entity.hasWorkingMisc(MiscType.F_SPIKES, null, hit.getLocation())) {
             reportVec.add(manager.checkBreakSpikes(entity, hit.getLocation()));
         }
 
@@ -3014,7 +3033,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // any amount of damage (0 is no damage)
             if ((entity instanceof VTOL) &&
                   (hit.getLocation() == VTOL.LOC_ROTOR) &&
-                  entity.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) &&
+                  entity.hasWorkingMisc(MiscType.F_MAST_MOUNT, null, VTOL.LOC_ROTOR) &&
                   (damage > 0)) {
                 report = new Report(6081);
                 report.subject = entityId;
@@ -3127,7 +3146,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 report.subject = entityId;
                 report.indent(3);
                 reportVec.addElement(report);
-                if (entity instanceof GunEmplacement) {
+                if (entity.isBuildingEntityOrGunEmplacement()) {
                     // gun emplacements have no internal,
                     // destroy the section
                     entity.destroyLocation(hit.getLocation());

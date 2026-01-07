@@ -62,6 +62,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.FuelType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
@@ -2512,7 +2513,7 @@ public class Tank extends Entity {
                   !m.isBreached() &&
                   (m.getType() instanceof MiscType) &&
                   m.getType().hasFlag(MiscType.F_MASC) &&
-                  (m.curMode().equals("Armed") || m.getType().hasSubType(MiscType.S_JET_BOOSTER))) {
+                  (m.curMode().equals("Armed") || m.getType().hasFlag(MiscTypeFlag.S_JET_BOOSTER))) {
                 return true;
             }
         }
@@ -3055,7 +3056,10 @@ public class Tank extends Entity {
 
     /**
      * Returns true if this vehicle can be abandoned by its crew. Per TacOps, vehicles can be abandoned during the End
-     * Phase. Requires both the abandon option and TacOps vehicle crews option.
+     * Phase. Crew size (1 per 15 tons) is defined in TM p.103 and is available regardless of optional rules.
+     * <p>
+     * Note: Naval vessels (surface ships, hydrofoils, submarines) are currently excluded. A future PR will address
+     * naval vessel abandonment once Large Naval Craft are implemented.
      *
      * @return true if this vehicle can be abandoned
      */
@@ -3074,9 +3078,14 @@ public class Tank extends Entity {
             return false;
         }
 
-        // Requires both the abandon option and TacOps vehicle crews
-        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT)
-              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_TANK_CREWS);
+        // Naval vessels excluded until Large Naval Craft abandonment is implemented
+        if (isNaval()) {
+            return false;
+        }
+
+        // Only requires the vehicle eject/abandon option
+        // Crew size is defined in TM p.103, not dependent on TacOps Vehicle Crews option
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT);
     }
 
     /**

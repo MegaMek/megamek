@@ -37,6 +37,7 @@ import java.util.Map;
 
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.enums.AmmoTypeFlag;
 
 public class YamlSerializerAmmoType extends YamlSerializerEquipmentType {
     static public final String TYPENAME = "ammo";
@@ -50,23 +51,36 @@ public class YamlSerializerAmmoType extends YamlSerializerEquipmentType {
     /**
      * Constructs a map containing the YAML-serializable data for the given ammo type.
      *
-     * @param ammo The ammo type to serialize
+     * @param equipment The ammo type to serialize
      *
      * @return A map containing the YAML-serializable data for the equipment type
      */
-    public Map<String, Object> serialize(AmmoType ammo) {
+    @Override
+    public Map<String, Object> serialize(EquipmentType equipment) {
+        if (!(equipment instanceof AmmoType ammo)) {
+            throw new IllegalArgumentException("Expected AmmoType but got " + equipment.getClass().getSimpleName());
+        }
         Map<String, Object> data = super.serialize(ammo);
         data.put("type", TYPENAME);
+        String[] flagStrings = ammo.getFlags().getSetFlagNamesAsArray(AmmoTypeFlag.class);
+        if (flagStrings.length > 0) {
+            data.put("flags", flagStrings);
+        }
         addAmmoDetails(data, ammo);
         return data;
     }
 
     private static void addAmmoDetails(Map<String, Object> data, AmmoType ammo) {
-        EquipmentType defaultAmmo = new AmmoType();
+        AmmoType defaultAmmo = new AmmoType();
         Map<String, Object> details = new LinkedHashMap<>();
         details.put("type", ammo.getAmmoType().name());
+        YamlEncDec.addPropIfNotDefault(details,
+              "kgPerShot",
+              getDoubleFieldValue(ammo, "kgPerShot"),
+              getDoubleFieldValue(defaultAmmo, "kgPerShot"));
+
         //TODO: work in progress!
 
-        data.put("details", details);
+        data.put("ammo", details);
     }
 }

@@ -47,12 +47,13 @@ import javax.swing.JTextField;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.units.Entity;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.units.Infantry;
-import megamek.common.equipment.MiscType;
 import megamek.common.SimpleTechLevel;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 
 public class InfantryArmorPanel extends JPanel {
     @Serial
@@ -180,12 +181,12 @@ public class InfantryArmorPanel extends JPanel {
         if (cbArmorKit.getSelectedIndex() > 0) {
             EquipmentType kit = armorKits.get(cbArmorKit.getSelectedIndex() - 1);
             fldDivisor.setText(Double.toString(((MiscType) kit).getDamageDivisor()));
-            chEncumber.setSelected((kit.getSubType() & MiscType.S_ENCUMBERING) != 0);
-            chSpaceSuit.setSelected((kit.getSubType() & MiscType.S_SPACE_SUIT) != 0);
-            chDEST.setSelected((kit.getSubType() & MiscType.S_DEST) != 0);
-            chSneakCamo.setSelected((kit.getSubType() & MiscType.S_SNEAK_CAMO) != 0);
-            chSneakIR.setSelected((kit.getSubType() & MiscType.S_SNEAK_IR) != 0);
-            chSneakECM.setSelected((kit.getSubType() & MiscType.S_SNEAK_ECM) != 0);
+            chEncumber.setSelected(kit.hasFlag(MiscTypeFlag.S_ENCUMBERING));
+            chSpaceSuit.setSelected(kit.hasFlag(MiscTypeFlag.S_SPACE_SUIT));
+            chDEST.setSelected(kit.hasFlag(MiscTypeFlag.S_DEST));
+            chSneakCamo.setSelected(kit.hasFlag(MiscTypeFlag.S_SNEAK_CAMO));
+            chSneakIR.setSelected(kit.hasFlag(MiscTypeFlag.S_SNEAK_IR));
+            chSneakECM.setSelected(kit.hasFlag(MiscTypeFlag.S_SNEAK_ECM));
         }
     }
 

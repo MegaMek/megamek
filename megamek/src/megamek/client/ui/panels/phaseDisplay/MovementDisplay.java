@@ -3081,6 +3081,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       .filter(Entity::isInfantry)
                       .anyMatch(en -> !((Infantry) en).isMechanized());
             }
+            // Glider wings allow infantry to exit VTOLs as if jump infantry (IO p.85)
+            if (currentEntity instanceof VTOL) {
+                canUnloadHere |= unloadableUnits.stream()
+                      .filter(Entity::isInfantry)
+                      .anyMatch(en -> ((Infantry) en).canExitVTOLWithGliderWings());
+            }
         }
         setUnloadEnabled(legalGear && canUnloadHere && !unloadableUnits.isEmpty());
     }
@@ -5484,8 +5490,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 ready();
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_STARTUP.getCmd())) {
-            if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.StartupDialog.title"),
-                  Messages.getString("MovementDisplay.StartupDialog.message"))) {
+            // Check if unit has pending abandonment - warn that startup will cancel it
+            boolean proceedWithStartup = true;
+            if (entity.isPendingAbandon()) {
+                proceedWithStartup = clientgui.doYesNoDialog(
+                      Messages.getString("MovementDisplay.StartupCancelAbandonDialog.title"),
+                      Messages.getString("MovementDisplay.StartupCancelAbandonDialog.message"));
+            } else {
+                proceedWithStartup = clientgui.doYesNoDialog(
+                      Messages.getString("MovementDisplay.StartupDialog.title"),
+                      Messages.getString("MovementDisplay.StartupDialog.message"));
+            }
+            if (proceedWithStartup) {
                 clear();
                 addStepToMovePath(MoveStepType.STARTUP);
                 ready();

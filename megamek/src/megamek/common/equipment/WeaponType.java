@@ -35,6 +35,7 @@
 package megamek.common.equipment;
 
 import java.util.List;
+import java.util.Map;
 
 import megamek.common.RangeType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -2518,5 +2519,11 @@ public class WeaponType extends EquipmentType {
     @Override
     public String toString() {
         return "[Weapon] " + internalName;
+    }
+
+    @Override
+    public Map<String, Object> getYamlData() {
+        Map<String, Object> data = super.getYamlData();
+        return data;
     }
 }

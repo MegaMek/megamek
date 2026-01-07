@@ -326,10 +326,11 @@ public class PunchAttackAction extends PhysicalAttackAction {
         // the normal +1 bth for missing hand actuator.
         // Damned if you do damned if you dont. --Torren.
         final boolean hasClaws = ((Mek) ae).hasClaw(armLoc);
-        // Missing hand actuator is cumulative with missing actuator
+        final boolean hasHandActuator = ae.hasSystem(Mek.ACTUATOR_HAND, armLoc);
+        // Missing hand actuator is cumulative with missing lower arm actuator
         if (!hasClaws && !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc) 
               && (((arm == PunchAttackAction.RIGHT) && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_RA))
-              || (arm == PunchAttackAction.LEFT) && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_LA))) {
+              || ((arm == PunchAttackAction.LEFT) && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)))) {
             toHit.addModifier(1, "Hand actuator missing or destroyed");
         } else if (hasClaws) {
             // PLAYTEST3 claw modifier removed

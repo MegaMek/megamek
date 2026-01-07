@@ -551,4 +551,60 @@ class CombatVehicleEscapePodTest {
                   "BREACH_THRESHOLD should be 2 per TO:AUE p.121");
         }
     }
+
+    @Nested
+    @DisplayName("CVEP Critical Hit Vulnerability Tests (TO:AUE p.121)")
+    class CvepCriticalHitTests {
+
+        /**
+         * Per TO:AUE p.121: "CVEP is treated as a weapon item in the rear and may thus be damaged by any weapon
+         * critical hits to that location."
+         *
+         * <p>This requires tankSlots = 1 so it occupies a hittable slot.</p>
+         */
+        @Test
+        @DisplayName("CVEP MiscType has tankSlots = 1 for critical hit vulnerability")
+        void cvepMiscType_HasTankSlots() {
+            MiscType cvepType = (MiscType) EquipmentType.get("ISCombatVehicleEscapePod");
+
+            assertEquals(1, cvepType.getTankSlots(null),
+                  "CVEP should have tankSlots = 1 to be hittable by rear criticals per TO:AUE p.121");
+        }
+
+        @Test
+        @DisplayName("CVEP MiscType has F_COMBAT_VEHICLE_ESCAPE_POD flag")
+        void cvepMiscType_HasCorrectFlag() {
+            MiscType cvepType = (MiscType) EquipmentType.get("ISCombatVehicleEscapePod");
+
+            assertTrue(cvepType.hasFlag(MiscType.F_COMBAT_VEHICLE_ESCAPE_POD),
+                  "CVEP should have F_COMBAT_VEHICLE_ESCAPE_POD flag");
+        }
+
+        @Test
+        @DisplayName("CVEP MiscType has F_TANK_EQUIPMENT flag")
+        void cvepMiscType_IsTankEquipment() {
+            MiscType cvepType = (MiscType) EquipmentType.get("ISCombatVehicleEscapePod");
+
+            assertTrue(cvepType.hasFlag(MiscType.F_TANK_EQUIPMENT),
+                  "CVEP should have F_TANK_EQUIPMENT flag");
+        }
+
+        @Test
+        @DisplayName("CVEP MiscType has correct tonnage")
+        void cvepMiscType_HasCorrectTonnage() {
+            MiscType cvepType = (MiscType) EquipmentType.get("ISCombatVehicleEscapePod");
+
+            assertEquals(4.0, cvepType.getTonnage(null),
+                  "CVEP should weigh 4 tons per TO:AUE p.121");
+        }
+
+        @Test
+        @DisplayName("CVEP MiscType references TO:AUE p.121")
+        void cvepMiscType_HasCorrectRulesRef() {
+            MiscType cvepType = (MiscType) EquipmentType.get("ISCombatVehicleEscapePod");
+
+            assertEquals("121, TO:AUE", cvepType.getRulesRefs(),
+                  "CVEP should reference TO:AUE p.121");
+        }
+    }
 }

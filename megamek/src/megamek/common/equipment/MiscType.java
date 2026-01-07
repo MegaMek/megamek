@@ -5253,6 +5253,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ISCombatVehicleEscapePod");
         misc.tonnage = 4;
         misc.criticalSlots = 0;
+        misc.tankSlots = 1; // Treated as weapon item in rear, hittable by criticals (TO:AUE p.121)
         misc.cost = 10000;
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_COMBAT_VEHICLE_ESCAPE_POD);
         misc.rulesRefs = "121, TO:AUE";

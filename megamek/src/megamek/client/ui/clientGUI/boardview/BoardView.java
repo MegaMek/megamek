@@ -47,6 +47,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.lang.System;
 import java.util.*;
 import java.util.List;
 import java.util.Queue;
@@ -138,15 +139,7 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.AbstractBuildingEntity;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityMovementType;
-import megamek.common.units.EntityVisibilityUtils;
-import megamek.common.units.Infantry;
-import megamek.common.units.Targetable;
-import megamek.common.units.Terrain;
-import megamek.common.units.Terrains;
-import megamek.common.units.UnitLocation;
+import megamek.common.units.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
@@ -3473,8 +3466,10 @@ public final class BoardView extends AbstractBoardView
         while (e.hasMoreElements()) {
             Entity entity = e.nextElement();
             Coords position = entity.getPosition();
+            // Infantry don't leave wrecks, but CVEP (which extends Infantry) should show crashed pod wreckage
+            boolean isInfantryButNotCVEP = (entity instanceof Infantry) && !(entity instanceof CombatVehicleEscapePod);
             if (isOnThisBord(entity)
-                  && !(entity instanceof Infantry)
+                  && !isInfantryButNotCVEP
                   && (position != null)
                   && board.contains(position)) {
                 WreckSprite wreckSprite;

@@ -226,6 +226,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     }
                 }
                 addReport(gameManager.launchCombatVehicleEscapePod(tank, landingCoords));
+                // Mark entity's turn as complete so client advances to next unit
+                entity.setDone(true);
+                gameManager.entityUpdate(entity.getId());
                 return;
             }
         }

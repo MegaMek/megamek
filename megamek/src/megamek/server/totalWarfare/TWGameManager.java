@@ -28821,19 +28821,41 @@ public class TWGameManager extends AbstractGameManager {
         if (!launchSuccess) {
             // One crewman takes a hit
             survivingCrew--;
+
+            // If all crew are dead from launch failure, create crashed pod wreckage
+            if (survivingCrew <= 0) {
+                report = new Report(5337);
+                report.subject = tank.getId();
+                vDesc.addElement(report);
+
+                // Create CVEP 1 hex behind the tank (rear direction = facing + 3)
+                int rearDirection = (tank.getFacing() + 3) % 6;
+                Coords crashCoords = tank.getPosition().translated(rearDirection);
+                // Fall back to tank's position if rear hex is off-board
+                if (!game.getBoard().contains(crashCoords)) {
+                    crashCoords = tank.getPosition();
+                }
+                CombatVehicleEscapePod crashedPod = new CombatVehicleEscapePod(tank, crashCoords);
+                crashedPod.setDeployed(true);
+                crashedPod.setId(game.getNextEntityId());
+                game.addEntity(crashedPod);
+                send(createAddEntityPacket(crashedPod.getId()));
+                crashedPod.setDone(true);
+
+                // Destroy the crashed pod to show wreckage marker
+                vDesc.addAll(destroyEntity(crashedPod,
+                      Messages.getString("MovementDisplay.CVEP.destroyReason.crewLossInPodCrash"), false, false));
+
+                // Vehicle is abandoned - crew died in the escape pod crash
+                vDesc.addAll(destroyEntity(tank,
+                      Messages.getString("MovementDisplay.CVEP.destroyReason.crewLossInPodCrash"), false, true));
+                return vDesc;
+            }
+
+            // Crew injured but survivors remain
             Report damageReport = new Report(5336);
             damageReport.subject = tank.getId();
             vDesc.addElement(damageReport);
-        }
-
-        // If all crew are dead from launch failure, skip landing
-        if (survivingCrew <= 0) {
-            report = new Report(5337);
-            report.subject = tank.getId();
-            vDesc.addElement(report);
-            // Destroy the vehicle
-            vDesc.addAll(destroyEntity(tank, "escape pod launch - crew killed", false, true));
-            return vDesc;
         }
 
         // Step 2: Pod travels to the player-chosen hex in the rear arc
@@ -28867,27 +28889,30 @@ public class TWGameManager extends AbstractGameManager {
         if (!landingSuccess) {
             // One crewman takes a hit
             survivingCrew--;
-            Report damageReport = new Report(5338);
-            damageReport.subject = tank.getId();
-            vDesc.addElement(damageReport);
+
+            // Crew injured but survivors remain
+            if (survivingCrew > 0) {
+                Report damageReport = new Report(5338);
+                damageReport.subject = tank.getId();
+                vDesc.addElement(damageReport);
+            }
         }
 
-        // Step 4: Create escape pod entity for surviving crew (if any)
-        // Per TO:AUE p.121, crew can exit as infantry or remain in pod
-        if (survivingCrew > 0) {
-            // Create CombatVehicleEscapePod entity containing the crew
-            CombatVehicleEscapePod escapePod = new CombatVehicleEscapePod(tank, landingCoords);
+        // Step 4: Create escape pod entity at landing location
+        // The pod physically lands even if all crew die - it just becomes wreckage
+        CombatVehicleEscapePod escapePod = new CombatVehicleEscapePod(tank, landingCoords);
+        escapePod.setDeployed(true);
+        escapePod.setId(game.getNextEntityId());
+        game.addEntity(escapePod);
+        send(createAddEntityPacket(escapePod.getId()));
+        escapePod.setDone(true);
 
+        if (survivingCrew > 0) {
             // Apply crew injuries from failed launch/landing rolls
             if (survivingCrew < crewSize) {
                 escapePod.setInternal(survivingCrew, Infantry.LOC_INFANTRY);
             }
 
-            escapePod.setDeployed(true);
-            escapePod.setId(game.getNextEntityId());
-            game.addEntity(escapePod);
-            send(createAddEntityPacket(escapePod.getId()));
-            escapePod.setDone(true);
             entityUpdate(escapePod.getId());
 
             report = new Report(5335);
@@ -28899,9 +28924,18 @@ public class TWGameManager extends AbstractGameManager {
             // Check for minefield
             vDesc.addAll(doEntityDisplacementMinefieldCheck(escapePod,
                   startCoords, landingCoords, 0));
+        } else {
+            // All crew died - pod crashed, leaving wreckage at landing site
+            report = new Report(5337);
+            report.subject = tank.getId();
+            vDesc.addElement(report);
+
+            // Destroy the crashed pod to show wreckage marker
+            vDesc.addAll(destroyEntity(escapePod,
+                  Messages.getString("MovementDisplay.CVEP.destroyReason.crewLossInPodCrash"), false, false));
         }
 
-        // Step 5: Mark crew as ejected and destroy the vehicle
+        // Step 5: Mark crew as ejected and destroy the abandoned vehicle
         crew.setEjected(true);
 
         report = new Report(5339);
@@ -28909,7 +28943,8 @@ public class TWGameManager extends AbstractGameManager {
         report.addDesc(tank);
         vDesc.addElement(report);
 
-        vDesc.addAll(destroyEntity(tank, "escape pod launch", true, true));
+        vDesc.addAll(destroyEntity(tank,
+              Messages.getString("MovementDisplay.CVEP.destroyReason.escapePodLaunch"), true, true));
 
         return vDesc;
     }

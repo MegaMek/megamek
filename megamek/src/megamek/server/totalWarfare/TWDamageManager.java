@@ -303,9 +303,8 @@ public class TWDamageManager implements IDamageManager {
             }
         }
         boolean isBattleArmor = entity instanceof BattleArmor;
-        // CVEP uses its own damage model (2-damage threshold), not infantry platoon model
-        boolean isCombatVehicleEscapePod = entity instanceof CombatVehicleEscapePod;
-        boolean isPlatoon = !isBattleArmor && !isCombatVehicleEscapePod && (entity instanceof Infantry);
+        // Note: CVEP is already handled and returned early (lines 217-218), so no need to check here
+        boolean isPlatoon = !isBattleArmor && (entity instanceof Infantry);
         boolean isFerroFibrousTarget = false;
         boolean wasDamageIS = false;
         boolean tookInternalDamage = damageIS;

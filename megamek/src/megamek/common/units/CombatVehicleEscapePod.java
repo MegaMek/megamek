@@ -64,7 +64,10 @@ public class CombatVehicleEscapePod extends EjectedCrew {
     private static final long serialVersionUID = 1L;
 
     /** Chassis name used for image lookup in mekset.txt */
-    public static final String CVEP_CHASSIS = "Life Boat";
+    public static final String CVEP_SPRITE_NAME = "Life Boat";
+
+    /** Display name for the escape pod in game logs and UI */
+    public static final String CVEP_DISPLAY_NAME = "CVEP";
 
     /**
      * Per TO:AUE p.121, the CVEP is breached after sustaining MORE than this amount of damage. So 1-2 damage = OK, 3+
@@ -90,12 +93,12 @@ public class CombatVehicleEscapePod extends EjectedCrew {
     public CombatVehicleEscapePod(Tank originalRide, Coords landingCoords) {
         super(originalRide);
 
-        // Override chassis to use Life Boat sprite
-        setChassis(CVEP_CHASSIS);
+        // Override chassis to use Life Boat sprite for image lookup
+        setChassis(CVEP_SPRITE_NAME);
         setModel("from " + originalRide.getDisplayName());
 
-        // Generate the display name
-        setDisplayName(CVEP_CHASSIS + " from " + originalRide.getDisplayName());
+        // Generate the display name using CVEP terminology
+        setDisplayName(CVEP_DISPLAY_NAME + " from " + originalRide.getDisplayName());
 
         // Set position
         setPosition(landingCoords);
@@ -113,7 +116,7 @@ public class CombatVehicleEscapePod extends EjectedCrew {
      */
     public CombatVehicleEscapePod() {
         super();
-        setChassis(CVEP_CHASSIS);
+        setChassis(CVEP_SPRITE_NAME);
         setMovementMode(EntityMovementMode.NONE);
     }
 
@@ -250,6 +253,18 @@ public class CombatVehicleEscapePod extends EjectedCrew {
         return Entity.ETYPE_COMBAT_VEHICLE_ESCAPE_POD | Entity.ETYPE_INFANTRY;
     }
 
+    /**
+     * Returns false because CVEP uses its own damage model (2-point threshold breach), not the infantry platoon damage
+     * model (burst-fire multipliers, "in the open" doubling, etc.). Per TO:AUE p.121, attacks against a jettisoned CVEP
+     * are treated as targeting an immobile unit.
+     *
+     * @return false - CVEP is not conventional infantry for damage purposes
+     */
+    @Override
+    public boolean isConventionalInfantry() {
+        return false;
+    }
+
     @Override
     public boolean isEligibleForMovement() {
         // Pods don't move while crew is inside
@@ -287,5 +302,18 @@ public class CombatVehicleEscapePod extends EjectedCrew {
             return canCrewExit();
         }
         return super.isSelectableThisTurn();
+    }
+
+    /**
+     * Override to use CVEP display name instead of chassis name ("Life Boat") for game messages. The chassis is set to
+     * "Life Boat" for sprite lookup, but we want "CVEP" in messages.
+     *
+     * @return Short name using CVEP terminology
+     */
+    @Override
+    public String getShortNameRaw() {
+        String unitName = CVEP_DISPLAY_NAME;
+        unitName += (model == null || model.isBlank()) ? "" : " " + model;
+        return unitName;
     }
 }

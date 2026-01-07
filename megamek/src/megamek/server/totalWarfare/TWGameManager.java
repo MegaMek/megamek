@@ -28766,7 +28766,6 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-<<<<<<< HEAD
      * Launches a Combat Vehicle Escape Pod per TO:AUE p.121.
      * <p>
      * The crew attempts to escape via the CVEP:

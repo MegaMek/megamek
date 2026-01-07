@@ -66,7 +66,9 @@ public enum MissionRole {
     /* Infantry roles */
     MARINE, MOUNTAINEER, XCT, PARATROOPER, ANTI_MEK, FIELD_GUN,
     /* allows artillery but does not filter out all other roles */
-    MIXED_ARTILLERY;
+    MIXED_ARTILLERY,
+    /* Roles for advanced buildings and mobile structures */
+    GENERATOR, CONTROL;
 
     /**
      * Identifies if a role applies to a given unit type
@@ -277,6 +279,14 @@ public enum MissionRole {
                   (unitType >= UnitType.SMALL_CRAFT && unitType <= UnitType.SPACE_STATION) ||
                   unitType == UnitType.ADVANCED_BUILDING ||
                   unitType == UnitType.MOBILE_STRUCTURE;
+
+            // GENERATOR applies to advanced buildings which power other advanced
+            // buildings
+            case GENERATOR -> unitType == UnitType.ADVANCED_BUILDING;
+
+            // CONTROL applies to advanced buildings which control portals, gates,
+            // and similar advanced structures
+            case CONTROL -> unitType == UnitType.ADVANCED_BUILDING;
         };
     }
 
@@ -361,9 +371,8 @@ public enum MissionRole {
                         break;
 
                     // Calling for SPOTTER returns units with TAG for precision guided weapons.
-                    // Other
-                    // units, primarily infantry and battle armor, may be included at a lower
-                    // priority especially in eras where TAG does not exist.
+                    // Other units, primarily infantry and battle armor, may be included at a
+                    // lower priority especially in eras where TAG does not exist.
                     case SPOTTER:
                         if (isSpecialized(desiredRoles, mRec)) {
                             return null;
@@ -1114,8 +1123,7 @@ public enum MissionRole {
 
                     // Calling for SUPPORT non-combat units may include units with the APC,
                     // CIVILIAN, CARGO, or ENGINEER roles at a lower priority. This should filter
-                    // out
-                    // all combat units, although some of the selected units may have weapons.
+                    // out all combat units, although some of the selected units may have weapons.
                     case SUPPORT:
                         if (mRec.getRoles().contains(SUPPORT)) {
                             avRating += medium_adjust;
@@ -1168,6 +1176,22 @@ public enum MissionRole {
                         }
                         break;
 
+                    // Calling for a generator structure will only return advanced buildings
+                    // which function as one
+                    case GENERATOR:
+                        if (!mRec.getRoles().contains(GENERATOR)) {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for a control building will only return buildings which
+                    // function as one
+                    case CONTROL:
+                        if (!mRec.getRoles().contains(CONTROL)) {
+                            return null;
+                        }
+                        break;
+
                     default:
                         roleApplied = false;
                 }
@@ -1176,10 +1200,8 @@ public enum MissionRole {
         }
 
         // If no roles are required, or a role was requested that was not handled, then
-        // revert to
-        // generic checking. This is much simpler, only checking for a few exclusions
-        // otherwise
-        // using the unmodified availability values.
+        // revert to generic checking. This is much simpler, only checking for a few
+        // exclusions otherwise using the unmodified availability values.
         if (!roleApplied) {
 
             // DropShips and JumpShips are excluded from non-combat and civilian role
@@ -1239,13 +1261,18 @@ public enum MissionRole {
         // Units that only provide artillery are considered specialized enough to be
         // non-combat.
         // DropShips are excluded from this check as they provide additional functions
-        // even if they
-        // mount artillery.
+        // even if they mount artillery.
         return (mRec.getUnitType() != UnitType.DROPSHIP) &&
               (mRec.getRoles().size() == 1) &&
               (mRec.getRoles().contains(ARTILLERY) || mRec.getRoles().contains(MISSILE_ARTILLERY));
     }
 
+    /**
+     * Convert role from string to enum. Underscores (_) are treated as spaces, all characters are forced
+     * to lower case for comparisons.
+     * @param role
+     * @return Null if an unrecognized role string is provided
+     */
     public static MissionRole parseRole(String role) {
         return switch (role.toLowerCase().replace("_", " ")) {
             case "recon" -> RECON;
@@ -1301,6 +1328,8 @@ public enum MissionRole {
             case "civilian" -> CIVILIAN;
             case "minesweeper" -> MINESWEEPER;
             case "minelayer" -> MINELAYER;
+            case "generator" -> GENERATOR;
+            case "control" -> CONTROL;
             default -> null;
         };
     }

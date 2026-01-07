@@ -284,8 +284,7 @@ public enum MissionRole {
             // buildings
             case GENERATOR -> unitType == UnitType.ADVANCED_BUILDING;
 
-            // CONTROL applies to advanced buildings which control portals, gates,
-            // and similar advanced structures
+            // CONTROL applies to advanced buildings which represent basic control centers
             case CONTROL -> unitType == UnitType.ADVANCED_BUILDING;
         };
     }

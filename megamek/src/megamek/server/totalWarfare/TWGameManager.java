@@ -28877,6 +28877,12 @@ public class TWGameManager extends AbstractGameManager {
         if (survivingCrew > 0) {
             // Create CombatVehicleEscapePod entity containing the crew
             CombatVehicleEscapePod escapePod = new CombatVehicleEscapePod(tank, landingCoords);
+
+            // Apply crew injuries from failed launch/landing rolls
+            if (survivingCrew < crewSize) {
+                escapePod.setInternal(survivingCrew, Infantry.LOC_INFANTRY);
+            }
+
             escapePod.setDeployed(true);
             escapePod.setId(game.getNextEntityId());
             game.addEntity(escapePod);

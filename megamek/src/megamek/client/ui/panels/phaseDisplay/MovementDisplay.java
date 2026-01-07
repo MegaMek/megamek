@@ -1220,6 +1220,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public void clear() {
         final Entity currentlySelectedEntity = currentEntity();
 
+        // Cancel escape pod hex selection if active
+        if (isSelectingEscapePodLanding) {
+            cancelEscapePodHexSelection();
+        }
+
         // clear board cursors
         clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
         // Needed to clear best move modifiers
@@ -6604,8 +6609,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (isSelectingEscapePodLanding && event.getCoords() != null) {
             if (validEscapePodHexes.contains(event.getCoords())) {
                 completeEscapePodLaunch(event.getCoords());
+            } else {
+                // Cancel selection on click outside valid hexes
+                cancelEscapePodHexSelection();
             }
-            // Ignore clicks outside valid hexes
             return;
         }
     }

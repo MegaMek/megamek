@@ -72,8 +72,8 @@ public enum MissionRole {
 
     /**
      * Identifies if a role applies to a given unit type
-     * @param unitType
-     * @return
+     * @param unitType  type of unit to check
+     * @return  {@code true} if role applies to the provided unit type
      */
     public boolean fitsUnitType(int unitType) {
         return switch (this) {
@@ -1269,7 +1269,7 @@ public enum MissionRole {
     /**
      * Convert role from string to enum. Underscores (_) are treated as spaces, all characters are forced
      * to lower case for comparisons.
-     * @param role
+     * @param role  role name
      * @return Null if an unrecognized role string is provided
      */
     public static MissionRole parseRole(String role) {

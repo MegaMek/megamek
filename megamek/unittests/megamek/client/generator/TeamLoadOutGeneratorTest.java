@@ -612,7 +612,8 @@ class TeamLoadOutGeneratorTest {
         HashMap<String, List<String>> topN = mwc.getTopN(3);
 
         assertTrue(topN.get("LRM").get(0).contains("Dead-Fire"));
-        assertTrue(topN.get("LRM").get(1).contains("Standard"));
+        assertTrue(topN.get("LRM").get(1).contains("Dead-Fire w/ Incendiary"));
+        assertTrue(topN.get("LRM").get(2).contains("Standard"));
         assertTrue(topN.get("SRM").get(0).contains("Dead-Fire"));
         assertTrue(topN.get("SRM").get(1).contains("Standard"));
 

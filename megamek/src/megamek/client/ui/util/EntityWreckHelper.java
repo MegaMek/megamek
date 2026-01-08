@@ -76,7 +76,8 @@ public class EntityWreckHelper {
     }
 
     public static boolean useExplicitWreckImage(Entity entity) {
-        return entity instanceof Mek;
+        // Meks have specialized wreck images; CVEP uses wreckset.txt lookup for small_boom.png
+        return (entity instanceof Mek) || (entity instanceof CombatVehicleEscapePod);
     }
 
     /**

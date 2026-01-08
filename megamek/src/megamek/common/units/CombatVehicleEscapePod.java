@@ -42,18 +42,18 @@ import megamek.logging.MMLogger;
  * Represents a Combat Vehicle Escape Pod (CVEP) that has been launched from a combat vehicle. Per TO:AUE p.121, this is
  * a one-use system that allows vehicle crew to escape their vehicle.
  *
- * <p>The escape pod lands on the battlefield and the crew can choose to:
+ * <p>The escape pod lands on the battlefield and the crew can choose to:</p>
  * <ul>
  *   <li>Exit the pod as conventional foot infantry</li>
  *   <li>Remain inside the pod (useful in water or toxic environments)</li>
  * </ul>
  *
- * <p>The pod itself is immobile and uses the Life Boat sprite.
+ * <p>The pod itself is immobile and uses the Life Boat sprite.</p>
  *
  * <p><b>Damage Model (TO:AUE p.121):</b> Attacks against a jettisoned CVEP may be made as if targeting
  * an immobile unit. The CVEP is considered breached (and its occupants killed) after sustaining more
  * than 2 points of damage. This class tracks cumulative damage rather than using the infantry
- * trooper-based damage model.
+ * trooper-based damage model.</p>
  *
  * @author MegaMek Team
  */

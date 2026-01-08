@@ -28994,7 +28994,8 @@ public class TWGameManager extends AbstractGameManager {
 
         // Mark pod as empty and remove it
         pod.setCrewInside(false);
-        vDesc.addAll(destroyEntity(pod, "crew exited", false, false));
+        vDesc.addAll(destroyEntity(pod,
+              Messages.getString("MovementDisplay.CVEP.destroyReason.crewExited"), false, false));
 
         return vDesc;
     }

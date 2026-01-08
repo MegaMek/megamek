@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.client.ui.Messages;
 import megamek.common.CriticalSlot;
 import megamek.common.DamageInfo;
 import megamek.common.Hex;
@@ -2234,7 +2235,8 @@ public class TWDamageManager implements IDamageManager {
             }
 
             // Destroy the pod
-            reportVec.addAll(manager.destroyEntity(cvep, "hull breach", false, false));
+            reportVec.addAll(manager.destroyEntity(cvep,
+                  Messages.getString("MovementDisplay.CVEP.destroyReason.hullBreach"), false, false));
         } else {
             // Pod damaged but not breached
             report = new Report(5344);

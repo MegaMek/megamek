@@ -32,6 +32,7 @@
  */
 package megamek.client.generator;
 
+import static megamek.common.equipment.AmmoType.INCENDIARY_MOD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -270,8 +271,9 @@ class TeamLoadOutGeneratorTest {
         Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
         Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
 
+        MunitionWeightCollection mwc = new MunitionWeightCollection();
         MunitionTree mt = new MunitionTree();
-        mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Semi-Guided w/ Incendiary");
+        mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Semi-Guided " + INCENDIARY_MOD);
 
         HashMap<String, Object> availMap = tlg.generateValidMunitionsForFactionAndEra("IS");
         // We expect that all bins are set to the desired munition type as only one type
@@ -354,7 +356,7 @@ class TeamLoadOutGeneratorTest {
               "Dead-Fire",
               "Heat-Seeking",
               "Smoke");
-        mt.insertImperative("Catapult", "any", "any", "LRM", "Standard", "Swarm", "Semi-guided");
+        mt.insertImperative("Catapult", "any", "any", "LRM", "Standard", "Swarm", "Semi-Guided");
 
         HashMap<String, Object> availMap = tlg.generateValidMunitionsForFactionAndEra("IS");
         // J. Robert H. should get the first load out

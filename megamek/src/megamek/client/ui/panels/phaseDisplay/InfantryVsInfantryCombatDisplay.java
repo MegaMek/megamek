@@ -119,6 +119,7 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
         // Initialize buttons to disabled state
         setReinforceInfantryCombatEnabled(false);
         setWithdrawInfantryCombatEnabled(false);
+        updateDonePanel();
     }
 
     @Override
@@ -357,7 +358,7 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
      */
     public void target(Targetable t) {
         setTarget(t);
-        clientgui.getBoardView().select(t.getPosition());
+        //clientgui.getBoardView().select(t.getPosition());
     }
 
     /**
@@ -369,7 +370,7 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
 
         // Gather all entities at hex
         for (Entity e : game.getEntitiesVector()) {
-            if (e.getPosition() != null && e.getPosition().equals(coords)) {
+            if (e.getPosition() != null && e.getPosition().equals(coords) && e.getInfantryCombatTargetId() == e.getId()) {
                 targets.add(e);
             }
         }
@@ -423,6 +424,7 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
               && inf.isInfantryCombatAttacker();
 
         setWithdrawInfantryCombatEnabled(canWithdraw);
+        updateDonePanel();
     }
 
     /**

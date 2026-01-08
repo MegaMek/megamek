@@ -119,6 +119,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
 
         // Initialize buttons to disabled state
         setInitiateInfantryCombatEnabled(false);
+        updateDonePanel();
     }
 
     @Override
@@ -319,7 +320,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      */
     public void target(Targetable t) {
         setTarget(t);
-        clientgui.getBoardView().select(t.getPosition());
+        //clientgui.getBoardView().select(t.getPosition());
     }
 
     /**
@@ -331,7 +332,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
 
         // Gather all entities at hex
         for (Entity e : game.getEntitiesVector()) {
-            if (e.getPosition() != null && e.getPosition().equals(coords)) {
+            if (e.getPosition() != null && e.getPosition().equals(coords) && e.isBoardable()) {
                 targets.add(e);
             }
         }
@@ -371,6 +372,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
               && isValidBuildingTargetNoCombat(ce, target);
 
         setInitiateInfantryCombatEnabled(canInitiate);
+        updateDonePanel();
     }
 
     /**
@@ -434,7 +436,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         }
 
         updateButtons();
-        butDone.setEnabled(true);
+        butDone.setEnabled(false);
         startTimer();
     }
 

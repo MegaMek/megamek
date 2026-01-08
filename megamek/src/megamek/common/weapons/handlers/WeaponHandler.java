@@ -880,9 +880,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 weaponReport.newlines = 0;
                 weaponReport.subject = subjectId;
                 String base = weaponType.isClan() ? " (Clan)" : "";
-                String mod = (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)) ?
-                      INCENDIARY_MOD : "";
-                weaponReport.add(weaponType.getName() + base + number + mod);
+                weaponReport.add(weaponType.getName() + base + number);
                 if (entityTarget != null) {
                     if ((weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
                           && (weapon.getLinked() != null)

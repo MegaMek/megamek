@@ -3796,7 +3796,7 @@ public class AmmoType extends EquipmentType {
 
         incendiary.shortName = base.shortName + spacedIncendiaryMod;
         incendiary.setInternalName(base.getInternalName() + spacedIncendiaryMod);
-        incendiary.subMunitionName = INCENDIARY_MOD;
+        incendiary.subMunitionName = (base.subMunitionName.isBlank()) ? INCENDIARY_MOD : base.subMunitionName + spacedIncendiaryMod;
 
         // Add all base lookup names with " w/ Incendiary" suffix
         incendiary.addToEnd(base, spacedIncendiaryMod);

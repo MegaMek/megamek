@@ -39,8 +39,13 @@ import java.util.function.Function;
 
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 
 /** Provides static helper functions for creating entity and crew tooltips. */
 public final class TipUtil {
@@ -79,7 +84,7 @@ public final class TipUtil {
     public static String getOptionList(Enumeration<IOptionGroup> optGroups, Function<String, Integer> counter,
           Function<IOptionGroup, String> namer, boolean detailed) {
         if (detailed) {
-            return optionListFull(optGroups, counter, namer);
+            return optionListFull(optGroups, counter, namer, null);
         } else {
             return optionListShort(optGroups, counter, namer);
         }
@@ -93,8 +98,23 @@ public final class TipUtil {
      */
     public static String getOptionList(Enumeration<IOptionGroup> optGroups,
           Function<String, Integer> counter, boolean detailed) {
+        return getOptionList(optGroups, counter, detailed, null);
+    }
+
+    /**
+     * Returns an HTML String listing the options given as optGroups, with optional entity context for enhanced display
+     * of entity-specific options like prosthetic enhancements.
+     *
+     * @param optGroups the option groups to list
+     * @param counter   function to count options by name
+     * @param detailed  if true, returns full option list; if false, returns short summary
+     * @param entity    optional entity context for enhanced display (may be null)
+     * @return HTML formatted string listing the options
+     */
+    public static String getOptionList(Enumeration<IOptionGroup> optGroups,
+          Function<String, Integer> counter, boolean detailed, @Nullable Entity entity) {
         if (detailed) {
-            return optionListFull(optGroups, counter, IOptionGroup::getDisplayableName);
+            return optionListFull(optGroups, counter, IOptionGroup::getDisplayableName, entity);
         } else {
             return optionListShort(optGroups, counter, IOptionGroup::getDisplayableName);
         }
@@ -108,8 +128,12 @@ public final class TipUtil {
     // PRIVATE
 
     private static String optionListFull(Enumeration<IOptionGroup> advGroups, Function<String, Integer> counter,
-          Function<IOptionGroup, String> namer) {
+          Function<IOptionGroup, String> namer, Entity entity) {
         StringBuilder result = new StringBuilder();
+
+        // Get prosthetic enhancement details if this is an infantry entity
+        String regularProstheticDetails = getRegularProstheticDetails(entity);
+        String extraneousLimbDetails = getExtraneousLimbDetails(entity);
 
         while (advGroups.hasMoreElements()) {
             IOptionGroup advGroup = advGroups.nextElement();
@@ -122,7 +146,22 @@ public final class TipUtil {
                 for (Enumeration<IOption> advantages = advGroup.getOptions(); advantages.hasMoreElements(); ) {
                     IOption advantage = advantages.nextElement();
                     if (advantage != null && advantage.booleanValue()) {
-                        origList.add(advantage.getDisplayableNameWithValue());
+                        String displayText = advantage.getDisplayableNameWithValue();
+
+                        // Append prosthetic enhancement details for Enhanced/Improved Enhanced options
+                        if (!regularProstheticDetails.isEmpty()
+                              && (OptionsConstants.MD_PL_ENHANCED.equals(advantage.getName())
+                              || OptionsConstants.MD_PL_I_ENHANCED.equals(advantage.getName()))) {
+                            displayText += " (" + regularProstheticDetails + ")";
+                        }
+
+                        // Append extraneous limb details for Extraneous Limbs option
+                        if (!extraneousLimbDetails.isEmpty()
+                              && OptionsConstants.MD_PL_EXTRA_LIMBS.equals(advantage.getName())) {
+                            displayText += " (" + extraneousLimbDetails + ")";
+                        }
+
+                        origList.add(displayText);
                     }
                 }
 
@@ -134,6 +173,83 @@ public final class TipUtil {
             }
         }
         return result.toString();
+    }
+
+    /**
+     * Gets regular prosthetic enhancement details for an infantry entity (slot 1 and 2 only).
+     *
+     * @param entity The entity to check (may be null or non-Infantry)
+     *
+     * @return String like "Laser x2, Grappler x1" or empty string if not applicable
+     */
+    private static String getRegularProstheticDetails(Entity entity) {
+        if (!(entity instanceof Infantry infantry)) {
+            return "";
+        }
+
+        StringBuilder details = new StringBuilder();
+        if (infantry.hasProstheticEnhancement1()) {
+            ProstheticEnhancementType type1 = infantry.getProstheticEnhancement1();
+            details.append(type1.getDisplayName()).append(" x").append(infantry.getProstheticEnhancement1Count());
+        }
+        if (infantry.hasProstheticEnhancement2()) {
+            if (details.length() > 0) {
+                details.append(", ");
+            }
+            ProstheticEnhancementType type2 = infantry.getProstheticEnhancement2();
+            details.append(type2.getDisplayName()).append(" x").append(infantry.getProstheticEnhancement2Count());
+        }
+        return details.toString();
+    }
+
+    /**
+     * Gets extraneous limb details for an infantry entity (pair 1 and 2 only).
+     *
+     * @param entity The entity to check (may be null or non-Infantry)
+     *
+     * @return String like "Laser x2, Grappler x2" or empty string if not applicable
+     */
+    private static String getExtraneousLimbDetails(Entity entity) {
+        if (!(entity instanceof Infantry infantry)) {
+            return "";
+        }
+
+        StringBuilder details = new StringBuilder();
+        if (infantry.hasExtraneousPair1()) {
+            ProstheticEnhancementType pair1Type = infantry.getExtraneousPair1();
+            details.append(pair1Type.getDisplayName()).append(" x2");
+        }
+        if (infantry.hasExtraneousPair2()) {
+            if (details.length() > 0) {
+                details.append(", ");
+            }
+            ProstheticEnhancementType pair2Type = infantry.getExtraneousPair2();
+            details.append(pair2Type.getDisplayName()).append(" x2");
+        }
+        return details.toString();
+    }
+
+    /**
+     * Gets all prosthetic enhancement details for an infantry entity (regular + extraneous). Used for combined tooltip
+     * display.
+     *
+     * @param entity The entity to check (may be null or non-Infantry)
+     *
+     * @return String like "Laser x2, Grappler x1; Extra: Blade x2" or empty string if not applicable
+     */
+    private static String getProstheticEnhancementDetails(Entity entity) {
+        String regular = getRegularProstheticDetails(entity);
+        String extraneous = getExtraneousLimbDetails(entity);
+
+        if (regular.isEmpty() && extraneous.isEmpty()) {
+            return "";
+        } else if (regular.isEmpty()) {
+            return "Extra: " + extraneous;
+        } else if (extraneous.isEmpty()) {
+            return regular;
+        } else {
+            return regular + "; Extra: " + extraneous;
+        }
     }
 
     private static String optionListShort(Enumeration<IOptionGroup> advGroups,

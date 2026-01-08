@@ -1624,6 +1624,14 @@ public class MoveStep implements Serializable {
                 return;
             }
 
+            // aerodynes cannot fly backwards in atmosphere
+            if (useAeroAtmosphere(game, entity) &&
+                  ((type == MoveStepType.BACKWARDS) ||
+                        (type == MoveStepType.LATERAL_LEFT_BACKWARDS) ||
+                        (type == MoveStepType.LATERAL_RIGHT_BACKWARDS))) {
+                return;
+            }
+
             // spheroids in atmosphere can move a max of 1 hex on the low atmosphere map and 8 hexes on the ground
             // map, regardless of any other considerations unless they're out of control, in which case, well...
             if (useSpheroidAtmosphere(game, entity) &&
@@ -2007,6 +2015,7 @@ public class MoveStep implements Serializable {
             tmpWalkMP = entity.getActiveUMUCount();
         }
 
+        // VTOLs use jump MP when airborne (includes powered flight infantry whose getMovementMode() returns VTOL)
         if ((getEntity().getMovementMode() == EntityMovementMode.VTOL) &&
               getClearance() > 0 &&
               !(getEntity() instanceof VTOL)) {
@@ -2044,8 +2053,11 @@ public class MoveStep implements Serializable {
             }
 
             if (getMpUsed() <= tmpWalkMP) {
-                if ((getEntity().getMovementMode() == EntityMovementMode.VTOL ||
-                      getEntity().getMovementMode() == EntityMovementMode.WIGE) && getClearance() > 0) {
+                // VTOL includes powered flight infantry whose getMovementMode() returns VTOL
+                boolean isVTOLMovement = (getEntity().getMovementMode() == EntityMovementMode.VTOL ||
+                      getEntity().getMovementMode() == EntityMovementMode.WIGE) && getClearance() > 0;
+
+                if (isVTOLMovement) {
                     movementType = EntityMovementType.MOVE_VTOL_WALK;
                 } else if ((getEntity().getMovementMode() == EntityMovementMode.SUBMARINE) && getElevation() < 0) {
                     movementType = EntityMovementType.MOVE_SUBMARINE_WALK;
@@ -2061,7 +2073,9 @@ public class MoveStep implements Serializable {
                 // This ensures that Infantry always get their minimum 1 hex movement when TO fast infantry movement
                 // is on. A MovePath that consists of a single step from one hex to the next should always be a walk,
                 // since it's covered under the infantry's 1 free movement
-                if ((getEntity().getMovementMode() == EntityMovementMode.VTOL) && getClearance() > 0) {
+                // VTOL includes powered flight infantry whose getMovementMode() returns VTOL
+                boolean isVTOLMode = (getEntity().getMovementMode() == EntityMovementMode.VTOL) && getClearance() > 0;
+                if (isVTOLMode) {
                     movementType = EntityMovementType.MOVE_VTOL_WALK;
                 } else {
                     movementType = EntityMovementType.MOVE_WALK;
@@ -2088,8 +2102,11 @@ public class MoveStep implements Serializable {
                     }
                 }
 
-                if ((entity.getMovementMode() == EntityMovementMode.VTOL ||
-                      entity.getMovementMode() == EntityMovementMode.WIGE) && getClearance() > 0) {
+                // VTOL includes powered flight infantry whose getMovementMode() returns VTOL
+                boolean isVTOLRun = (entity.getMovementMode() == EntityMovementMode.VTOL ||
+                      entity.getMovementMode() == EntityMovementMode.WIGE) && getClearance() > 0;
+
+                if (isVTOLRun) {
                     movementType = EntityMovementType.MOVE_VTOL_RUN;
                 } else if ((entity.getMovementMode() == EntityMovementMode.SUBMARINE) && getElevation() < 0) {
                     movementType = EntityMovementType.MOVE_SUBMARINE_RUN;
@@ -2109,8 +2126,11 @@ public class MoveStep implements Serializable {
                     }
                 }
 
-                if (entity.getMovementMode() == EntityMovementMode.VTOL ||
-                      (entity.getMovementMode() == EntityMovementMode.WIGE && getClearance() > 0)) {
+                // VTOL includes powered flight infantry whose getMovementMode() returns VTOL
+                boolean isVTOLSprint = entity.getMovementMode() == EntityMovementMode.VTOL ||
+                      (entity.getMovementMode() == EntityMovementMode.WIGE && getClearance() > 0);
+
+                if (isVTOLSprint) {
                     movementType = EntityMovementType.MOVE_VTOL_SPRINT;
                 } else {
                     movementType = EntityMovementType.MOVE_SPRINT;
@@ -2315,8 +2335,20 @@ public class MoveStep implements Serializable {
                     if (getTargetPosition() != null) {
                         curPos = getTargetPosition();
                     }
+                    // Infantry with jump capability or glider wings dismounting from VTOLs
+                    // land at ground level, not VTOL elevation (TW p.31, IO p.85)
+                    int unloadElevation = getElevation();
+                    if (entity instanceof VTOL && other.isInfantry()) {
+                        Infantry inf = (Infantry) other;
+                        if (inf.getJumpMP() > 0 || inf.canExitVTOLWithGliderWings()) {
+                            Hex destHex = game.getBoard(boardId).getHex(curPos);
+                            if (destHex != null) {
+                                unloadElevation = destHex.getLevel();
+                            }
+                        }
+                    }
                     if ((null != Compute.stackingViolation(game, other, curPos, entity, climbMode, true)) ||
-                          other.isLocationProhibited(curPos, getElevation())) {
+                          other.isLocationProhibited(curPos, unloadElevation)) {
                         movementType = EntityMovementType.MOVE_ILLEGAL;
                     }
                 } else {
@@ -2705,6 +2737,7 @@ public class MoveStep implements Serializable {
 
         boolean applyNightPen = !game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_NIGHT_MOVE_PEN);
+        // VTOL (includes powered flight infantry), jumping are exempt from careful movement penalties
         boolean carefulExempt = (moveMode == EntityMovementMode.VTOL) || isJumping();
 
         // Apply careful movement MP penalties for fog and light (TO pg 63)
@@ -2771,7 +2804,7 @@ public class MoveStep implements Serializable {
             }
         }
 
-        // VTOLs pay 1 for everything
+        // VTOLs pay 1 for everything (includes powered flight infantry whose getMovementMode() returns VTOL)
         if (moveMode == EntityMovementMode.VTOL) {
             return;
         }
@@ -3191,7 +3224,17 @@ public class MoveStep implements Serializable {
             return false;
         }
 
-        if ((movementType != EntityMovementType.MOVE_JUMP) && (nMove != EntityMovementMode.VTOL)) {
+        // Check if using VTOL-style flight (either VTOL mode or VTOL movement type)
+        // Also explicitly check for powered flight infantry as a fallback in case getMovementMode()
+        // doesn't return VTOL (e.g., if crew/abilities aren't accessible during validation)
+        boolean hasPoweredFlight = (entity instanceof Infantry infantry) && infantry.hasVTOLMovementCapability();
+        boolean isVTOLFlight = (nMove == EntityMovementMode.VTOL) ||
+              hasPoweredFlight ||
+              (movementType == EntityMovementType.MOVE_VTOL_WALK) ||
+              (movementType == EntityMovementType.MOVE_VTOL_RUN) ||
+              (movementType == EntityMovementType.MOVE_VTOL_SPRINT);
+
+        if ((movementType != EntityMovementType.MOVE_JUMP) && !isVTOLFlight) {
             int maxDown = entity.getMaxElevationDown(srcAlt);
             if (movementMode == EntityMovementMode.WIGE &&
                   (srcEl == 0 ||
@@ -3231,9 +3274,11 @@ public class MoveStep implements Serializable {
         // except for Mountain Troops across a level 1 cliff.
         // Climbing actions do not seem to be implemented, so Infantry cannot
         // cross sheer cliffs at all except for Mountain Troops across a level 1 cliff.
-        if (entity instanceof Infantry && (isUpCliff || isDownCliff) && !isPavementStep) {
+        // Flying VTOL infantry (native VTOL, powered flight) can bypass cliffs.
+        // Note: Glider infantry cannot traverse cliffs - they only get fall damage protection.
+        if (entity instanceof Infantry infantry && (isUpCliff || isDownCliff) && !isPavementStep && !isVTOLFlight) {
 
-            boolean isMountainTroop = ((Infantry) entity).hasSpecialization(Infantry.MOUNTAIN_TROOPS);
+            boolean isMountainTroop = infantry.hasSpecialization(Infantry.MOUNTAIN_TROOPS);
             if (!isMountainTroop || stepHeight == 2) {
                 return false;
             }
@@ -3462,7 +3507,7 @@ public class MoveStep implements Serializable {
         }
 
         // Jumping into a building hex below the roof ends the move
-        // assume this applies also to sylph vtol movement
+        // Applies also to VTOL movement (includes powered flight infantry whose getMovementMode() returns VTOL)
         if (!(src.equals(dest)) &&
               (src != entity.getPosition()) &&
               (isJumping() || (entity.getMovementMode() == EntityMovementMode.VTOL)) &&

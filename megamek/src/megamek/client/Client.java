@@ -951,6 +951,17 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_VARIABLE_RANGE_MODE_CHANGE, entityId, mode));
     }
 
+    /**
+     * Sends a unit abandonment announcement to the server. For Meks (TacOps:AR p.165): Must be prone and shutdown. For
+     * Vehicles (TacOps): Can be abandoned anytime. The abandonment will execute during the End Phase of the following
+     * turn.
+     *
+     * @param entityId the ID of the unit announcing abandonment
+     */
+    public void sendUnitAbandonmentAnnouncement(int entityId) {
+        send(new Packet(PacketCommand.ENTITY_ABANDON_ANNOUNCE, entityId));
+    }
+
     public void sendSpecialHexDisplayAppend(Coords c, int boardId, SpecialHexDisplay shd) {
         send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_APPEND, c, boardId, shd));
     }

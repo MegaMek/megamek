@@ -57,6 +57,7 @@ public enum MoveStepType {
     LOAD(false, "Load"),
     UNLOAD(false, "Unload"),
     EJECT(false, "Eject"),
+    ABANDON(false, "Abandon"),
     CLEAR_MINEFIELD(false, "ClearMinefield"),
     UP(false, "U"),
     DOWN(false, "D"),

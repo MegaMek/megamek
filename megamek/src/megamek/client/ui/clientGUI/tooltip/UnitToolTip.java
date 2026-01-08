@@ -71,6 +71,7 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.game.InGameObject;
 import megamek.common.loaders.MapSettings;
@@ -2255,8 +2256,8 @@ public final class UnitToolTip {
             if ((entity instanceof BipedMek) || (entity instanceof TripodMek)) {
                 int shieldMod = 0;
                 if (entity.hasShield()) {
-                    shieldMod -= entity.getNumberOfShields(MiscType.S_SHIELD_LARGE);
-                    shieldMod -= entity.getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
+                    shieldMod -= entity.getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE);
+                    shieldMod -= entity.getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
                 }
 
                 if (shieldMod != 0) {

@@ -52,6 +52,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeECM;
+import megamek.common.equipment.MiscType;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameTurnChangeEvent;
@@ -83,6 +84,10 @@ public class FovHighlightingAndDarkening {
                   eName.equals(GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB) ||
                   eName.equals(GUIPreferences.FOV_HIGHLIGHT_ALPHA)) {
                 updateRingsProperties();
+            }
+            // Clear LOS cache when spotting mode changes so FOV recalculates with/without mast mount bonus
+            if (eName.equals(GUIPreferences.FOV_SPOTTING_MODE)) {
+                clearCache();
             }
         };
         gs.addPreferenceChangeListener(ringsChangeListener);
@@ -166,8 +171,15 @@ public class FovHighlightingAndDarkening {
                 max_dist = 60;
             }
 
-            final Color transparent_gray = new Color(0, 0, 0, gs.getInt(GUIPreferences.FOV_DARKEN_ALPHA));
-            final Color transparent_light_gray = new Color(0, 0, 0, gs.getInt(GUIPreferences.FOV_DARKEN_ALPHA) / 2);
+            // Use blue tint when spotting mode is active to indicate non-standard FOV
+            final boolean spottingMode = gs.getFovSpottingMode();
+            final int darkenAlpha = gs.getInt(GUIPreferences.FOV_DARKEN_ALPHA);
+            final Color transparent_gray = spottingMode
+                  ? new Color(0, 0, 80, darkenAlpha)  // Blue tint for spotting mode
+                  : new Color(0, 0, 0, darkenAlpha);
+            final Color transparent_light_gray = spottingMode
+                  ? new Color(0, 0, 80, darkenAlpha / 2)
+                  : new Color(0, 0, 0, darkenAlpha / 2);
             final Color selected_color = new Color(50, 80, 150, 70);
 
             int dist = viewerPosition.distance(c);
@@ -215,7 +227,8 @@ public class FovHighlightingAndDarkening {
                         if (sensorsOn && (dist > minSensorRange) && (dist <= maxSensorRange)) {
                             boardView.drawHexLayer(p, boardGraph, transparent_light_gray, false);
                         } else {
-                            boardView.drawHexLayer(p, boardGraph, transparent_gray, true);
+                            // Reverse stripe direction when in spotting mode for visual distinction
+                            boardView.drawHexLayer(p, boardGraph, transparent_gray, true, spottingMode);
                         }
                     }
                     hasLoS = false;
@@ -234,7 +247,8 @@ public class FovHighlightingAndDarkening {
             } else {
                 // Max dist should be >= visual dist, this hex can't be seen
                 if (darken) {
-                    boardView.drawHexLayer(p, boardGraph, transparent_gray, true);
+                    // Reverse stripe direction when in spotting mode for visual distinction
+                    boardView.drawHexLayer(p, boardGraph, transparent_gray, true, spottingMode);
                 }
                 hasLoS = false;
             }
@@ -376,6 +390,13 @@ public class FovHighlightingAndDarkening {
             attackInfo.attackAbsHeight = (attackInfo.lowAltitude) ?
                   elevation :
                   srcHex.getLevel() + elevation + selectedEntity.getHeight();
+            // Apply mast mount +1 elevation bonus when spotting mode is enabled
+            // Mast mounts only provide benefit for spotting (C3, TAG, indirect fire), not direct fire
+            if (!attackInfo.lowAltitude &&
+                  guip.getFovSpottingMode() &&
+                  selectedEntity.hasWorkingMisc(MiscType.F_MAST_MOUNT)) {
+                attackInfo.attackAbsHeight += 1;
+            }
         } else {
             // For hexes, getLevel is functionally the same as getAltitude()
             attackInfo.attackAbsHeight = srcHex.getLevel() + attackInfo.attackHeight;

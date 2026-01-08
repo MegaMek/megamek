@@ -43,10 +43,10 @@ import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeSideTable;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
@@ -112,51 +112,51 @@ public class ClubAttackAction extends PhysicalAttackAction {
     public static int getDamageFor(Entity entity, MiscMounted club, boolean targetInfantry, boolean zweihandering) {
         MiscType mType = club.getType();
         int nDamage = (int) Math.floor(entity.getWeight() / 5.0);
-        if (mType.hasSubType(MiscType.S_SWORD)) {
+        if (mType.hasFlag(MiscTypeFlag.S_SWORD)) {
             nDamage = (int) (Math.ceil(entity.getWeight() / 10.0) + 1.0);
-        } else if (mType.hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
+        } else if (mType.hasFlag(MiscTypeFlag.S_RETRACTABLE_BLADE)) {
             nDamage = (int) Math.ceil(entity.getWeight() / 10.0);
-        } else if (mType.hasSubType(MiscType.S_MACE)) {
+        } else if (mType.hasFlag(MiscTypeFlag.S_MACE)) {
             nDamage = (int) Math.ceil(entity.getWeight() / 4.0);
-        } else if (mType.hasSubType(MiscType.S_PILE_DRIVER)) {
+        } else if (mType.hasFlag(MiscTypeFlag.S_PILE_DRIVER)) {
             // Pile Drivers have constant damage, not variable like most.
             nDamage = 10;
-        } else if (mType.hasSubType(MiscType.S_FLAIL)) {
+        } else if (mType.hasFlag(MiscTypeFlag.S_FLAIL)) {
             // Flails have constant damage, not variable like most.
             nDamage = 9;
-        } else if (mType.hasSubType(MiscType.S_DUAL_SAW)) {
+        } else if (mType.hasFlag(MiscTypeFlag.S_DUAL_SAW)) {
             if (targetInfantry) {
                 nDamage = Compute.d6();
             } else {
                 // Saws have constant damage, not variable like most.
                 nDamage = 7;
             }
-        } else if (mType.hasSubType(MiscType.S_CHAINSAW)) {
+        } else if (mType.hasFlag(MiscTypeFlag.S_CHAINSAW)) {
             if (targetInfantry) {
                 nDamage = Compute.d6();
             } else {
                 // Saws have constant damage, not variable like most.
                 nDamage = 5;
             }
-        } else if (mType.hasSubType(MiscType.S_BACKHOE)) {
+        } else if (mType.hasFlag(MiscTypeFlag.S_BACKHOE)) {
             // Backhoes have constant damage, not variable like most.
             nDamage = 6;
-        } else if (mType.hasSubType(MiscType.S_MINING_DRILL)) {
+        } else if (mType.hasFlag(MiscTypeFlag.S_MINING_DRILL)) {
             // Mining drills have constant damage, not variable like most.
             nDamage = 4;
         } else if (mType.isShield()) {
             nDamage = club.getDamageAbsorption(entity, club.getLocation());
-        } else if (mType.hasSubType(MiscType.S_WRECKING_BALL)) {
+        } else if (mType.hasFlag(MiscTypeFlag.S_WRECKING_BALL)) {
             // Wrecking Balls have constant damage, not variable like most.
             nDamage = 8;
-        } else if (mType.hasSubType(MiscType.S_BUZZSAW)) {
+        } else if (mType.hasFlag(MiscTypeFlag.S_BUZZSAW)) {
             // buzzsaw does 2d6 damage, not weight dependant
             nDamage = Compute.d6(2);
         } else if (mType.isVibroblade()) {
             if (club.curMode().equals("Active")) {
-                if (mType.hasSubType(MiscType.S_VIBRO_LARGE)) {
+                if (mType.hasFlag(MiscTypeFlag.S_VIBRO_LARGE)) {
                     nDamage = 14;
-                } else if (mType.hasSubType(MiscType.S_VIBRO_MEDIUM)) {
+                } else if (mType.hasFlag(MiscTypeFlag.S_VIBRO_MEDIUM)) {
                     nDamage = 10;
                 } else {
                     nDamage = 7;
@@ -165,17 +165,17 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 // when not active a vibro blade does normal sword damage
                 nDamage = (int) (Math.ceil(entity.getWeight() / 10.0) + 1.0);
             }
-        } else if (mType.hasSubType(MiscType.S_CHAIN_WHIP)) {
+        } else if (mType.hasFlag(MiscTypeFlag.S_CHAIN_WHIP)) {
             nDamage = 3;
-        } else if (mType.hasSubType(MiscType.S_COMBINE)) {
+        } else if (mType.hasFlag(MiscTypeFlag.S_COMBINE)) {
             if (targetInfantry) {
                 nDamage = Compute.d6();
             } else {
                 nDamage = 3;
             }
-        } else if (mType.hasSubType(MiscType.S_ROCK_CUTTER)) {
+        } else if (mType.hasFlag(MiscTypeFlag.S_ROCK_CUTTER)) {
             nDamage = 5;
-        } else if (mType.hasSubType(MiscType.S_SPOT_WELDER)) {
+        } else if (mType.hasFlag(MiscTypeFlag.S_SPOT_WELDER)) {
             nDamage = 5;
         }
 
@@ -186,18 +186,18 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         // TSM doesn't apply to some weapons, including Saws.
         if ((entity instanceof Mek) && ((Mek) entity).hasActiveTSM()
-              && !(mType.hasSubType(MiscType.S_DUAL_SAW)
-              || mType.hasSubType(MiscType.S_CHAINSAW)
-              || mType.hasSubType(MiscType.S_PILE_DRIVER)
+              && !(mType.hasFlag(MiscTypeFlag.S_DUAL_SAW)
+              || mType.hasFlag(MiscTypeFlag.S_CHAINSAW)
+              || mType.hasFlag(MiscTypeFlag.S_PILE_DRIVER)
               || mType.isShield()
-              || mType.hasSubType(MiscType.S_WRECKING_BALL)
-              || mType.hasSubType(MiscType.S_FLAIL)
+              || mType.hasFlag(MiscTypeFlag.S_WRECKING_BALL)
+              || mType.hasFlag(MiscTypeFlag.S_FLAIL)
               || (mType.isVibroblade() && club.curMode().equals("Active"))
-              || mType.hasSubType(MiscType.S_BUZZSAW)
-              || mType.hasSubType(MiscType.S_MINING_DRILL)
-              || mType.hasSubType(MiscType.S_ROCK_CUTTER)
-              || mType.hasSubType(MiscType.S_SPOT_WELDER)
-              || mType.hasSubType(MiscType.S_CHAIN_WHIP) || mType.hasSubType(MiscType.S_COMBINE))) {
+              || mType.hasFlag(MiscTypeFlag.S_BUZZSAW)
+              || mType.hasFlag(MiscTypeFlag.S_MINING_DRILL)
+              || mType.hasFlag(MiscTypeFlag.S_ROCK_CUTTER)
+              || mType.hasFlag(MiscTypeFlag.S_SPOT_WELDER)
+              || mType.hasFlag(MiscTypeFlag.S_CHAIN_WHIP) || mType.hasFlag(MiscTypeFlag.S_COMBINE))) {
             nDamage *= 2;
         }
         int clubLocation = club.getLocation();
@@ -225,32 +225,32 @@ public class ClubAttackAction extends PhysicalAttackAction {
      * @return The modifier to hit with the weapon
      */
     public static int getHitModFor(MiscType clubType) {
-        if (clubType.hasSubType(MiscType.S_PILE_DRIVER)) {
+        if (clubType.hasFlag(MiscTypeFlag.S_PILE_DRIVER)) {
             return 2;
-        } else if (clubType.hasSubType(MiscType.S_BACKHOE)
-              || clubType.hasSubType(MiscType.S_ROCK_CUTTER)
-              || clubType.hasSubType(MiscType.S_WRECKING_BALL)
-              || clubType.hasSubType(MiscType.S_LANCE)
-              || clubType.hasSubType(MiscType.S_MACE)) {
+        } else if (clubType.hasFlag(MiscTypeFlag.S_BACKHOE)
+              || clubType.hasFlag(MiscTypeFlag.S_ROCK_CUTTER)
+              || clubType.hasFlag(MiscTypeFlag.S_WRECKING_BALL)
+              || clubType.hasFlag(MiscTypeFlag.S_LANCE)
+              || clubType.hasFlag(MiscTypeFlag.S_MACE)) {
             return 1;
-        } else if (clubType.hasSubType(MiscType.S_CHAINSAW)
-              || clubType.hasSubType(MiscType.S_DUAL_SAW)
-              || clubType.hasSubType(MiscType.S_FLAIL)) {
+        } else if (clubType.hasFlag(MiscTypeFlag.S_CHAINSAW)
+              || clubType.hasFlag(MiscTypeFlag.S_DUAL_SAW)
+              || clubType.hasFlag(MiscTypeFlag.S_FLAIL)) {
             return 0;
-        } else if (clubType.hasSubType(MiscType.S_HATCHET)
-              || clubType.hasSubType(MiscType.S_MINING_DRILL)) {
+        } else if (clubType.hasFlag(MiscTypeFlag.S_HATCHET)
+              || clubType.hasFlag(MiscTypeFlag.S_MINING_DRILL)) {
             return -1;
-        } else if (clubType.hasSubType(MiscType.S_COMBINE)
-              || clubType.hasSubType(MiscType.S_RETRACTABLE_BLADE)
-              || clubType.hasSubType(MiscType.S_SWORD)
-              || clubType.hasSubType(MiscType.S_CHAIN_WHIP)
-              || clubType.hasSubType(MiscType.S_SHIELD_SMALL)
+        } else if (clubType.hasFlag(MiscTypeFlag.S_COMBINE)
+              || clubType.hasFlag(MiscTypeFlag.S_RETRACTABLE_BLADE)
+              || clubType.hasFlag(MiscTypeFlag.S_SWORD)
+              || clubType.hasFlag(MiscTypeFlag.S_CHAIN_WHIP)
+              || clubType.hasFlag(MiscTypeFlag.S_SHIELD_SMALL)
               || clubType.isVibroblade()
-              || clubType.hasSubType(MiscType.S_COMBINE)) {
+              || clubType.hasFlag(MiscTypeFlag.S_COMBINE)) {
             return -2;
-        } else if (clubType.hasSubType(MiscType.S_SHIELD_MEDIUM)) {
+        } else if (clubType.hasFlag(MiscTypeFlag.S_SHIELD_MEDIUM)) {
             return -3;
-        } else if (clubType.hasSubType(MiscType.S_SHIELD_LARGE)) {
+        } else if (clubType.hasFlag(MiscTypeFlag.S_SHIELD_LARGE)) {
             return -4;
         } else {
             return -1;
@@ -322,19 +322,19 @@ public class ClubAttackAction extends PhysicalAttackAction {
         // Quads can't club...
         // except for torso mounted industrial tools of course!
         if (ae.entityIsQuad()
-              && !(clubType.hasSubType(MiscType.S_BACKHOE))
+              && !(clubType.hasFlag(MiscTypeFlag.S_BACKHOE))
               && !(clubType
-              .hasSubType(MiscType.S_WRECKING_BALL))
-              // && !(clubType.hasSubType(MiscType.S_LANCE))
+              .hasFlag(MiscTypeFlag.S_WRECKING_BALL))
+              // && !(clubType.hasFlag(MiscTypeFlag.S_LANCE))
               // Not sure if Lance can be used on a quad, comment out for now.
-              && !(clubType.hasSubType(MiscType.S_BUZZSAW))
-              && !(clubType.hasSubType(MiscType.S_DUAL_SAW))
-              && !(clubType.hasSubType(MiscType.S_COMBINE))
-              && !(clubType.hasSubType(MiscType.S_CHAINSAW))) {
+              && !(clubType.hasFlag(MiscTypeFlag.S_BUZZSAW))
+              && !(clubType.hasFlag(MiscTypeFlag.S_DUAL_SAW))
+              && !(clubType.hasFlag(MiscTypeFlag.S_COMBINE))
+              && !(clubType.hasFlag(MiscTypeFlag.S_CHAINSAW))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is a quad");
         }
 
-        if (clubType.hasSubType(MiscType.S_RETRACTABLE_BLADE)
+        if (clubType.hasFlag(MiscTypeFlag.S_RETRACTABLE_BLADE)
               && !((Mek) ae).hasExtendedRetractableBlade()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Blade is Retracted.");
         }
@@ -359,7 +359,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
               + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
         final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB)
-              && club.getType().hasSubType(MiscType.S_CLUB))
+              && club.getType().hasFlag(MiscTypeFlag.S_CLUB))
               || zweihandering;
         // Cast is safe because non-'Meks never even get here.
         final boolean hasClaws = ((Mek) ae).hasClaw(Mek.LOC_RIGHT_ARM)
@@ -370,19 +370,19 @@ public class ClubAttackAction extends PhysicalAttackAction {
               || club.getLocation() == Mek.LOC_RIGHT_ARM);
 
         if (hasClaws
-              || (clubType.hasSubType(MiscType.S_BACKHOE))
-              || (clubType.hasSubType(MiscType.S_BUZZSAW))
-              || (clubType.hasSubType(MiscType.S_CHAINSAW))
-              || (clubType.hasSubType(MiscType.S_COMBINE))
-              || (clubType.hasSubType(MiscType.S_DUAL_SAW))
-              || (clubType.hasSubType(MiscType.S_FLAIL))
-              || (clubType.hasSubType(MiscType.S_LANCE))
-              || (clubType.hasSubType(MiscType.S_MINING_DRILL))
-              || (clubType.hasSubType(MiscType.S_PILE_DRIVER))
-              || (clubType.hasSubType(MiscType.S_ROCK_CUTTER))
-              || (clubType.hasSubType(MiscType.S_SPOT_WELDER))
+              || (clubType.hasFlag(MiscTypeFlag.S_BACKHOE))
+              || (clubType.hasFlag(MiscTypeFlag.S_BUZZSAW))
+              || (clubType.hasFlag(MiscTypeFlag.S_CHAINSAW))
+              || (clubType.hasFlag(MiscTypeFlag.S_COMBINE))
+              || (clubType.hasFlag(MiscTypeFlag.S_DUAL_SAW))
+              || (clubType.hasFlag(MiscTypeFlag.S_FLAIL))
+              || (clubType.hasFlag(MiscTypeFlag.S_LANCE))
+              || (clubType.hasFlag(MiscTypeFlag.S_MINING_DRILL))
+              || (clubType.hasFlag(MiscTypeFlag.S_PILE_DRIVER))
+              || (clubType.hasFlag(MiscTypeFlag.S_ROCK_CUTTER))
+              || (clubType.hasFlag(MiscTypeFlag.S_SPOT_WELDER))
               || (clubType
-              .hasSubType(MiscType.S_WRECKING_BALL))) {
+              .hasFlag(MiscTypeFlag.S_WRECKING_BALL))) {
             needsHand = false;
         }
 
@@ -560,7 +560,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
             }
             // Rules state +2 bth if your using a club with claws.
             if (hasClaws
-                  && (clubType.hasSubType(MiscType.S_CLUB))) {
+                  && (clubType.hasFlag(MiscTypeFlag.S_CLUB))) {
                 toHit.addModifier(2, "Mek has claws");
             }
             if (ae.hasFunctionalArmAES(club.getLocation())) {

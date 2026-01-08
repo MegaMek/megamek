@@ -37,9 +37,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Represents the valid facings for deploying a multi-hex entity at a specific position and elevation.
- * For facing-dependent entities (like non-symmetrical BuildingEntity), different facings may result
- * in different deployment validity due to secondary hex positions being rotated.
+ * Represents the valid facings for deploying a multi-hex entity at a specific position and elevation. For
+ * facing-dependent entities (like non-symmetrical BuildingEntity), different facings may result in different deployment
+ * validity due to secondary hex positions being rotated.
  */
 public class FacingOption {
     private final Coords position;
@@ -100,6 +100,7 @@ public class FacingOption {
      * Checks if a specific facing is valid for deployment.
      *
      * @param facing The facing to check (0-5)
+     *
      * @return true if this facing allows deployment
      */
     public boolean isFacingValid(int facing) {

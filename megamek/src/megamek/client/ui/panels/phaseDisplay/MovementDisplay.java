@@ -778,6 +778,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                   !selectedUnit.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
         }
 
+        // Mek abandonment - only available for prone+shutdown Meks per TacOps:AR p.165
+        if (isMEK && (selectedUnit instanceof Mek mek)) {
+            setAbandonEnabled(mek.canAbandon());
+        } else {
+            setAbandonEnabled(false);
+        }
+
         // if dropping unit only allows turning
         if (!selectedUnit.isAero() && cmd.getFinalAltitude() > 0) {
             disableButtons();
@@ -1127,6 +1134,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setFleeEnabled(false);
         setFlyOffEnabled(false);
         setEjectEnabled(false);
+        setAbandonEnabled(false);
         setUnjamEnabled(false);
         setSearchlightEnabled(false, false);
         setGetUpEnabled(false);
@@ -3058,6 +3066,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 canUnloadHere |= unloadableUnits.stream()
                       .filter(Entity::isInfantry)
                       .anyMatch(en -> !((Infantry) en).isMechanized());
+            }
+            // Glider wings allow infantry to exit VTOLs as if jump infantry (IO p.85)
+            if (currentEntity instanceof VTOL) {
+                canUnloadHere |= unloadableUnits.stream()
+                      .filter(Entity::isInfantry)
+                      .anyMatch(en -> ((Infantry) en).canExitVTOLWithGliderWings());
             }
         }
         setUnloadEnabled(legalGear && canUnloadHere && !unloadableUnits.isEmpty());
@@ -5229,6 +5243,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 addStepToMovePath(MoveStepType.EJECT);
                 ready();
             }
+        } else if (actionCmd.equals(MoveCommand.MOVE_ABANDON.getCmd())) {
+            // Mek abandonment (two-phase per TacOps:AR p.165)
+            if ((entity instanceof Mek mek) && mek.canAbandon()) {
+                if (clientgui.doYesNoDialog(
+                      Messages.getString("MovementDisplay.MekAbandonDialog.title"),
+                      Messages.getString("MovementDisplay.MekAbandonDialog.message"))) {
+                    clear();
+                    addStepToMovePath(MoveStepType.ABANDON);
+                    ready();
+                }
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_LOAD.getCmd())) {
             // Find the other friendly unit in our hex, add it
             // to our local list of loaded units, and then stop.
@@ -5446,8 +5471,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 ready();
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_STARTUP.getCmd())) {
-            if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.StartupDialog.title"),
-                  Messages.getString("MovementDisplay.StartupDialog.message"))) {
+            // Check if unit has pending abandonment - warn that startup will cancel it
+            boolean proceedWithStartup = true;
+            if (entity.isPendingAbandon()) {
+                proceedWithStartup = clientgui.doYesNoDialog(
+                      Messages.getString("MovementDisplay.StartupCancelAbandonDialog.title"),
+                      Messages.getString("MovementDisplay.StartupCancelAbandonDialog.message"));
+            } else {
+                proceedWithStartup = clientgui.doYesNoDialog(
+                      Messages.getString("MovementDisplay.StartupDialog.title"),
+                      Messages.getString("MovementDisplay.StartupDialog.message"));
+            }
+            if (proceedWithStartup) {
                 clear();
                 addStepToMovePath(MoveStepType.STARTUP);
                 ready();
@@ -6155,6 +6190,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void setEjectEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_EJECT).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_EJECT.getCmd(), enabled);
+    }
+
+    private void setAbandonEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_ABANDON).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_ABANDON.getCmd(), enabled);
     }
 
     private void setUnjamEnabled(boolean enabled) {

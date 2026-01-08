@@ -87,7 +87,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     private final Map<CubeCoords, Coords> relativeLayout = new HashMap<>();
     /**
-     *  Entity location -> relative {@link CubeCoords}
+     * Entity location -> relative {@link CubeCoords}
      */
     private final Map<Integer, CubeCoords> locationToRelativeCoordsMap = new HashMap<>();
     private static final int LOC_BASE = 0;
@@ -148,10 +148,11 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Converts board coordinates to all entity location numbers at that hex.
-     * Returns all floors (locations) that exist at the given coordinates.
+     * Converts board coordinates to all entity location numbers at that hex. Returns all floors (locations) that exist
+     * at the given coordinates.
      *
      * @param coords the board coordinates to convert
+     *
      * @return list of all location numbers at these coords (one per floor)
      */
     private List<Integer> coordsToLocations(@Nullable Coords coords) {
@@ -224,7 +225,9 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      * @param testPosition  The position to test
      * @param testBoardId   The board to test
      * @param testElevation The elevation or altitude to test
+     *
      * @return True when the location is illegal to be in for this unit, regardless of elevation
+     *
      * @see #isLocationDeadly(Coords)
      */
     @Override
@@ -233,8 +236,8 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Rotates a cube coordinate clockwise around the origin by the given facing.
-     * Facing 0 is UP (no rotation), and each facing increment is 60° clockwise.
+     * Rotates a cube coordinate clockwise around the origin by the given facing. Facing 0 is UP (no rotation), and each
+     * facing increment is 60° clockwise.
      *
      * @param coord  the CubeCoords to rotate
      * @param facing the facing direction (0-5), where 0 is UP and increments are 60° clockwise
@@ -257,12 +260,12 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Computes what the relative layout would be for a hypothetical position and facing
-     * WITHOUT modifying the entity's actual position or facing.
-     * This is a pure calculation method with no side effects.
+     * Computes what the relative layout would be for a hypothetical position and facing WITHOUT modifying the entity's
+     * actual position or facing. This is a pure calculation method with no side effects.
      *
      * @param testPosition The position to test
-     * @param testFacing The facing to test (0-5)
+     * @param testFacing   The facing to test (0-5)
+     *
      * @return Map of relative CubeCoords to their board Coords at the given position/facing
      */
     public Map<CubeCoords, Coords> computeLayoutForPositionAndFacing(Coords testPosition, int testFacing) {
@@ -291,13 +294,14 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Checks if all hexes of this building would be valid at the given position and facing
-     * WITHOUT modifying the entity's state. This is a pure calculation method.
+     * Checks if all hexes of this building would be valid at the given position and facing WITHOUT modifying the
+     * entity's state. This is a pure calculation method.
      *
-     * @param testPosition The position to test
-     * @param testFacing The facing to test (0-5)
+     * @param testPosition  The position to test
+     * @param testFacing    The facing to test (0-5)
      * @param testElevation The elevation to test
-     * @param testBoardId The board ID to test
+     * @param testBoardId   The board ID to test
+     *
      * @return true if all building hexes would be valid at this position/facing
      */
     public boolean isPositionAndFacingValid(Coords testPosition, int testFacing, int testElevation, int testBoardId) {
@@ -350,12 +354,13 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Returns all valid facings for this building at the given position and elevation.
-     * Does NOT modify the entity's facing - this is a pure calculation method.
+     * Returns all valid facings for this building at the given position and elevation. Does NOT modify the entity's
+     * facing - this is a pure calculation method.
      *
-     * @param testPosition The position to test
+     * @param testPosition  The position to test
      * @param testElevation The elevation to test
-     * @param testBoardId The board ID to test
+     * @param testBoardId   The board ID to test
+     *
      * @return List of valid facings (0-5), or empty list if none valid
      */
     public List<Integer> getValidFacingsAt(Coords testPosition, int testElevation, int testBoardId) {
@@ -374,20 +379,22 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      * Computes the board coordinates this building would occupy at the given position and facing.
      *
      * @param testPosition The position to test
-     * @param testFacing The facing to test
+     * @param testFacing   The facing to test
+     *
      * @return List of all board coordinates the building would occupy
      */
     private List<Coords> computeBuildingCoordsForPositionAndFacing(Coords testPosition, int testFacing) {
         return getInternalBuilding().getCoordsList().stream()
-            .map(cube -> testPosition.toCube().add(rotateCoordByFacing(cube, testFacing)).toOffset())
-            .toList();
+              .map(cube -> testPosition.toCube().add(rotateCoordByFacing(cube, testFacing)).toOffset())
+              .toList();
     }
 
     /**
      * Checks if all given coordinates are valid (exist on the board and have valid hexes).
      *
-     * @param coords The coordinates to check
+     * @param coords      The coordinates to check
      * @param testBoardId The board ID to check against
+     *
      * @return true if all coordinates are valid
      */
     private boolean areCoordsValid(List<Coords> coords, int testBoardId) {
@@ -406,8 +413,9 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     /**
      * Checks if all given coordinates are at the same elevation.
      *
-     * @param coords The coordinates to check
+     * @param coords      The coordinates to check
      * @param testBoardId The board ID to check against
+     *
      * @return true if all coordinates are at the same elevation
      */
     private boolean areAllCoordsAtSameElevation(List<Coords> coords, int testBoardId) {
@@ -432,12 +440,12 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Checks if this building would have an invalid overlap with other buildings.
-     * - Cannot overlap with another AbstractBuildingEntity
-     * - Can only overlap with other IBuilding if we completely contain it
+     * Checks if this building would have an invalid overlap with other buildings. - Cannot overlap with another
+     * AbstractBuildingEntity - Can only overlap with other IBuilding if we completely contain it
      *
      * @param thisBuildingCoords The coordinates this building would occupy
-     * @param testBoardId The board ID to check against
+     * @param testBoardId        The board ID to check against
+     *
      * @return true if there's an invalid overlap
      */
     private boolean hasInvalidBuildingOverlap(List<Coords> thisBuildingCoords, int testBoardId) {
@@ -471,6 +479,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      * Checks if there are any entity conflicts at the given coordinates.
      *
      * @param coords The coordinates to check
+     *
      * @return true if there's an entity conflict (another entity at any of the coords)
      */
     private boolean hasEntityConflict(List<Coords> coords) {
@@ -706,7 +715,43 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public Vector<Report> victoryReport() {
-        return null;
+        Vector<Report> vDesc = new Vector<>();
+
+        Report report = new Report(7025);
+        report.type = Report.PUBLIC;
+        report.addDesc(this);
+        vDesc.addElement(report);
+
+        report = new Report(7036);
+        report.type = Report.PUBLIC;
+        report.newlines = 0;
+        vDesc.addElement(report);
+        vDesc.addAll(getCrew().getDescVector(false));
+        report = new Report(7070, Report.PUBLIC);
+        report.add(getKillNumber());
+        vDesc.addElement(report);
+
+        if (isDestroyed()) {
+            Entity killer = game.getEntity(killerId);
+            if (killer == null) {
+                killer = game.getOutOfGameEntity(killerId);
+            }
+            if (killer != null) {
+                report = new Report(7072, Report.PUBLIC);
+                report.addDesc(killer);
+            } else {
+                report = new Report(7073, Report.PUBLIC);
+            }
+            vDesc.addElement(report);
+            report.newlines = 2;
+        } else if (getCrew().isEjected()) {
+            report = new Report(7071, Report.PUBLIC);
+            vDesc.addElement(report);
+            report.newlines = 2;
+        }
+
+
+        return vDesc;
     }
 
     /**
@@ -817,8 +862,8 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Buildings are salvageable unless they have completely collapsed.
-     * A building has completely collapsed when all hexes have 0 CF.
+     * Buildings are salvageable unless they have completely collapsed. A building has completely collapsed when all
+     * hexes have 0 CF.
      */
     @Override
     public boolean isSalvage() {
@@ -915,8 +960,8 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Calculate total original CF across all hexes and levels.
-     * Uses the original coords list to determine original structure.
+     * Calculate total original CF across all hexes and levels. Uses the original coords list to determine original
+     * structure.
      *
      * @return total original CF
      */
@@ -984,10 +1029,10 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Private method to set armor for both the entity and the building simultaneously.
-     * Ensures entity armor and building armor stay synchronized.
+     * Private method to set armor for both the entity and the building simultaneously. Ensures entity armor and
+     * building armor stay synchronized.
      *
-     * @param armor the armor value to set
+     * @param armor  the armor value to set
      * @param coords coordinates that need the armor updated
      */
     private void setArmorInternal(int armor, Coords coords) {
@@ -1002,11 +1047,11 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
 
     /**
-     * Private method to set internal structure/CF for both the entity and the building simultaneously.
-     * Ensures entity internal and building CF stay synchronized.
+     * Private method to set internal structure/CF for both the entity and the building simultaneously. Ensures entity
+     * internal and building CF stay synchronized.
      *
      * @param internal the internal/CF value to set
-     * @param coords coordinates that need the armor updated
+     * @param coords   coordinates that need the armor updated
      */
     private void setInternalInternal(int internal, Coords coords) {
         for (Integer location : coordsToLocations(coords)) {
@@ -1207,6 +1252,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     /**
      * Once a building entity has set its position, we need to update the board itself and share that with the clients
+     *
      * @param boardId
      * @param gameManager
      */
@@ -1343,7 +1389,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     /**
      *
-     * @param coords Board {@link Coords} that contain this building and are collapsing
+     * @param coords              Board {@link Coords} that contain this building and are collapsing
      * @param numLevelsToCollapse number of floors to collapse, from the top
      */
     public void collapseFloorsOnHex(Coords coords, int numLevelsToCollapse) {

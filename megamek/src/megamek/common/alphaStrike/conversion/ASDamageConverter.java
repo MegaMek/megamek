@@ -425,7 +425,7 @@ public class ASDamageConverter {
         }
 
         // Actuator Enhancement System
-        if (entity.hasWorkingMisc(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM, -1, weapon.getLocation()) &&
+        if (entity.hasWorkingMisc(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM, null, weapon.getLocation()) &&
               ((weapon.getLocation() == Mek.LOC_LEFT_ARM) || (weapon.getLocation() == Mek.LOC_RIGHT_ARM))) {
             damageModifier *= 1.05;
         }
@@ -979,13 +979,13 @@ public class ASDamageConverter {
             totalHeat += weaponHeat(mount, onlyRear, onlyLongRange);
         }
 
-        if (entity.hasWorkingMisc(MiscType.F_STEALTH, -1) ||
-              entity.hasWorkingMisc(MiscType.F_VOID_SIG, -1) ||
-              entity.hasWorkingMisc(MiscType.F_NULL_SIG, -1)) {
+        if (entity.hasWorkingMisc(MiscType.F_STEALTH) ||
+              entity.hasWorkingMisc(MiscType.F_VOID_SIG) ||
+              entity.hasWorkingMisc(MiscType.F_NULL_SIG)) {
             totalHeat += 10;
         }
 
-        if (entity.hasWorkingMisc(MiscType.F_CHAMELEON_SHIELD, -1)) {
+        if (entity.hasWorkingMisc(MiscType.F_CHAMELEON_SHIELD)) {
             totalHeat += 6;
         }
 

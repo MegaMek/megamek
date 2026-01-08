@@ -143,8 +143,8 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
     }
 
     /**
-     * Resets the gameManager spy and re-applies the base mocks needed for tests.
-     * Should be called at the start of parameterized tests to prevent interaction accumulation.
+     * Resets the gameManager spy and re-applies the base mocks needed for tests. Should be called at the start of
+     * parameterized tests to prevent interaction accumulation.
      */
     private void resetGameManagerSpy() {
         Mockito.reset(gameManager);
@@ -612,7 +612,8 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
             // Verify building has 3 hexes before collapse
             var hexList = building.getCoordsList();
             assertEquals(3, hexList.size(),
-                  String.format("%s: Building should have 3 hexes before collapse", building.getClass().getSimpleName()));
+                  String.format("%s: Building should have 3 hexes before collapse",
+                        building.getClass().getSimpleName()));
 
             // Collapse only the first hex
             collapseHandler.collapseBuilding(building, positionMap, position, true, vPhaseReport);
@@ -668,7 +669,8 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
             // Verify building has 3 hexes before collapse
             var hexList = building.getCoordsList();
             assertEquals(3, hexList.size(),
-                  String.format("%s: Building should have 3 hexes before collapse", building.getClass().getSimpleName()));
+                  String.format("%s: Building should have 3 hexes before collapse",
+                        building.getClass().getSimpleName()));
 
             collapseHandler.collapseBuilding(building, positionMap, position, true, vPhaseReport);
 
@@ -742,7 +744,8 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
             // Verify building has 3 hexes before collapse
             var hexList = building.getCoordsList();
             assertEquals(3, hexList.size(),
-                  String.format("%s: Building should have 3 hexes before collapse", building.getClass().getSimpleName()));
+                  String.format("%s: Building should have 3 hexes before collapse",
+                        building.getClass().getSimpleName()));
 
             mockGameManagerDamageMethods();
 
@@ -795,7 +798,8 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
             // Verify building has 3 hexes before collapse
             var hexList = building.getCoordsList();
             assertEquals(3, hexList.size(),
-                  String.format("%s: Building should have 3 hexes before collapse", building.getClass().getSimpleName()));
+                  String.format("%s: Building should have 3 hexes before collapse",
+                        building.getClass().getSimpleName()));
 
             mockGameManagerDamageMethods();
 

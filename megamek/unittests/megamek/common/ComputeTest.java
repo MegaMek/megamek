@@ -721,7 +721,9 @@ class ComputeTest {
     }
 
     /**
-     * Tests for {@link Compute#getRangeMods(Game, megamek.common.units.Entity, WeaponMounted, AmmoMounted, megamek.common.units.Targetable)}
+     * Tests for
+     * {@link Compute#getRangeMods(Game, megamek.common.units.Entity, WeaponMounted, AmmoMounted,
+     * megamek.common.units.Targetable)}
      */
     @Nested
     @DisplayName(value = "getRangeMods Tests")
@@ -773,7 +775,7 @@ class ComputeTest {
         class ComputeTestGetRangeMods_SimpleTestCases {
 
             @BeforeEach
-            void beforeEach () throws LocationFullException {
+            void beforeEach() throws LocationFullException {
                 setBoard("01_BY_05_NO_OBSTRUCTIONS");
 
                 // Create attacker with IS Small Laser (position will vary per test)
@@ -798,7 +800,7 @@ class ComputeTest {
 
             @Test
             @DisplayName(value = "should return 0 modifier at short range (1 hex)")
-            void shouldReturn0Modifier_AtShortRange () {
+            void shouldReturn0Modifier_AtShortRange() {
                 // Arrange - Small Laser short range is 0-1 hexes
                 attacker.setPosition(new Coords(0, 1)); // 1 hex away from target at (0,0)
 
@@ -811,7 +813,7 @@ class ComputeTest {
 
             @Test
             @DisplayName(value = "should return +2 modifier at medium range (2 hexes)")
-            void shouldReturn2Modifier_AtMediumRange () {
+            void shouldReturn2Modifier_AtMediumRange() {
                 // Arrange - Small Laser medium range is 2 hexes
                 attacker.setPosition(new Coords(0, 2)); // 2 hexes away from target at (0,0)
 
@@ -824,7 +826,7 @@ class ComputeTest {
 
             @Test
             @DisplayName(value = "should return +4 modifier at long range (4 hexes)")
-            void shouldReturn4Modifier_AtLongRange () {
+            void shouldReturn4Modifier_AtLongRange() {
                 // Arrange - Small Laser long range is 3 hexes
                 attacker.setPosition(new Coords(0, 3)); // 3 hexes away from target at (0,0)
 

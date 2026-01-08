@@ -40,6 +40,7 @@ import megamek.common.ToHitData;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
@@ -104,7 +105,7 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
         boolean ok = false;
         for (Mounted<?> m : ae.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_TOOLS)
-                  && m.getType().hasSubType(MiscType.S_DEMOLITION_CHARGE)) {
+                  && m.getType().hasFlag(MiscTypeFlag.S_DEMOLITION_CHARGE)) {
                 ok = true;
                 break;
             }

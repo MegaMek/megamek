@@ -34,17 +34,6 @@
 
 package megamek.common.units;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.CriticalSlot;
-import megamek.common.Hex;
-import megamek.common.HitData;
 import megamek.common.MPCalculationSetting;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
@@ -54,16 +43,13 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
-import megamek.common.equipment.GunEmplacement;
-import megamek.common.equipment.Engine;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.PowerGeneratorType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.equipment.enums.StructureEngine;
-import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * Implementation of TO:AR's Advanced Buildings.
@@ -201,7 +187,8 @@ public class BuildingEntity extends AbstractBuildingEntity {
      */
     @Override
     public int getGenericBattleValue() {
-        return 0;
+        // TODO: Actually calculate this? I ripped this from Aerospace
+        return calculateBattleValue();
     }
 
     /**
@@ -319,11 +306,11 @@ public class BuildingEntity extends AbstractBuildingEntity {
     /**
      * Calculates the internal weight capacity for this building.
      * <p>
-     * For each hex of area covered, advanced buildings may internally carry a total tonnage
-     * of equipment equal to their Construction Factor times the number of levels of structure height.
+     * For each hex of area covered, advanced buildings may internally carry a total tonnage of equipment equal to their
+     * Construction Factor times the number of levels of structure height.
      * <p>
-     * Hangar-type structures may triple this capacity, but are limited to a maximum of 600 tons
-     * per hex for every 4 levels of structural height (or fraction thereof).
+     * Hangar-type structures may triple this capacity, but are limited to a maximum of 600 tons per hex for every 4
+     * levels of structural height (or fraction thereof).
      *
      * @return The total internal weight capacity in tons
      */

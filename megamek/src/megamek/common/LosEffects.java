@@ -570,8 +570,8 @@ public class LosEffects {
     }
 
     /**
-     * This calculates LOS effects with an explicit attack height, allowing for weapons firing from specific
-     * levels of multi-level entities like buildings.
+     * This calculates LOS effects with an explicit attack height, allowing for weapons firing from specific levels of
+     * multi-level entities like buildings.
      *
      * @param attackerPosition The nominal position of the attacker on the board with the given board ID
      * @param targetPosition   The nominal position of the target on the board with the given board ID
@@ -645,7 +645,7 @@ public class LosEffects {
         int attackerElevation = (ai.attLowAlt) ? attacker.getAltitude() :
               attackHeight + attacker.getElevation() + attackerHex.getLevel();
         // for spotting, a mast mount raises our elevation by 1
-        if (spotting && attacker.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1)) {
+        if (spotting && attacker.hasWorkingMisc(MiscType.F_MAST_MOUNT)) {
             attackerElevation += (ai.attLowAlt) ? 0 : 1;
         }
         final int targetElevation = (ai.targetLowAlt) ?

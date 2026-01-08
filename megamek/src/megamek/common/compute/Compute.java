@@ -1913,14 +1913,15 @@ public class Compute {
      * @return the effective distance
      */
     /**
-     * Calculates effective distance from a weapon's firing position to a target,
-     * accounting for altitude differences and same-building elevation modifiers.
-     * This is used for entities with multiple firing positions like BuildingEntity.
+     * Calculates effective distance from a weapon's firing position to a target, accounting for altitude differences
+     * and same-building elevation modifiers. This is used for entities with multiple firing positions like
+     * BuildingEntity.
      *
-     * @param game The current game
+     * @param game         The current game
      * @param weaponEntity The entity with the weapon
-     * @param weapon The weapon being fired
-     * @param target The target being attacked
+     * @param weapon       The weapon being fired
+     * @param target       The target being attacked
+     *
      * @return The effective distance from the weapon's firing position to the target
      */
     public static int effectiveWeaponDistance(final Game game, final Entity weaponEntity,
@@ -4354,7 +4355,7 @@ public class Compute {
             // check for camo and null sig on the target
             if (targetedEntity.isVoidSigActive()) {
                 visualRange = visualRange / 4;
-            } else if (targetedEntity.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
+            } else if (targetedEntity.hasWorkingMisc(MiscType.F_VISUAL_CAMO)) {
                 visualRange = visualRange / 2;
             } else if (targetedEntity.isChameleonShieldActive()) {
                 visualRange = visualRange / 2;
@@ -5808,9 +5809,18 @@ public class Compute {
             data.addModifier(-1, "exposed actuators");
         }
 
-        // MD Infantry with grappler/magnets get bonus
-        if (attacker.hasAbility(OptionsConstants.MD_PL_ENHANCED)) {
-            data.addModifier(-2, "MD Grapple/Magnet");
+        // Prosthetic enhancement anti-Mek bonus (Grappler or Climbing Claws) - IO p.84
+        // Uses the best (most negative) modifier from either enhancement slot
+        // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
+        if (attacker.hasProstheticEnhancement()
+              && (attacker.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+              || attacker.hasAbility(OptionsConstants.MD_PL_I_ENHANCED))) {
+            int antiMekMod = attacker.getBestProstheticAntiMekModifier();
+            if (antiMekMod != 0) {
+                String modName = attacker.getBestProstheticAntiMekName();
+                data.addModifier(antiMekMod,
+                      modName != null ? modName : Messages.getString("Compute.ProstheticEnhancement"));
+            }
         }
 
         // swarm/leg attacks take target movement mods into account
@@ -6994,15 +7004,14 @@ public class Compute {
         Hex hex = game.getHex(position, boardId);
         // Prohibited terrain is any that the unit cannot move into or through, or would cause a stacking violation, or
         // is not 0, 1, or 2 elevations up or down from the hex elevation - but ignore that last if the unloading unit
-        // has Jump MP or VTOL movement.
+        // has Jump MP, VTOL movement, or glider wings (IO p.85).
+        boolean canIgnoreElevation = unitToUnload.getMovementMode() == EntityMovementMode.VTOL ||
+              unitToUnload.getMovementMode() == EntityMovementMode.INF_JUMP ||
+              ((unitToUnload.getAnyTypeMaxJumpMP() > 0) && !unitToUnload.isImmobileForJump()) ||
+              (unitToUnload.isInfantry() && ((Infantry) unitToUnload).canExitVTOLWithGliderWings());
         return (hex != null) && !unitToUnload.isLocationProhibited(position, boardId, unitToUnload.getElevation())
               && (null == stackingViolation(game, unitToUnload.getId(), position, unitToUnload.climbMode()))
-              && ((Math.abs(hex.getLevel() - elev) < 3) ||
-              (unitToUnload.getMovementMode() == EntityMovementMode.VTOL ||
-                    unitToUnload.getMovementMode() == EntityMovementMode.INF_JUMP ||
-                    ((unitToUnload.getAnyTypeMaxJumpMP() > 0) && !unitToUnload.isImmobileForJump())
-              )
-        );
+              && ((Math.abs(hex.getLevel() - elev) < 3) || canIgnoreElevation);
     }
 
     /**

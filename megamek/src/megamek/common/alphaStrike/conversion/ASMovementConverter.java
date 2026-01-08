@@ -42,6 +42,7 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
@@ -197,14 +198,14 @@ final class ASMovementConverter {
     private static boolean hasSupercharger(Entity entity) {
         return entity.getMisc().stream()
               .map(Mounted::getType)
-              .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && m.hasSubType(MiscType.S_SUPERCHARGER)));
+              .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && m.hasFlag(MiscTypeFlag.S_SUPERCHARGER)));
     }
 
     /** Returns true if the given entity has a Jet Booster, regardless of its state (convert as if undamaged). */
     private static boolean hasJetBooster(Entity entity) {
         return entity.getMisc().stream()
               .map(Mounted::getType)
-              .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && m.hasSubType(MiscType.S_JET_BOOSTER)));
+              .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && m.hasFlag(MiscTypeFlag.S_JET_BOOSTER)));
     }
 
     /** Returns true if the given entity has a ProtoMek Myomer Booster. */
@@ -217,7 +218,7 @@ final class ASMovementConverter {
         return (entity instanceof Mek)
               && entity.getMisc().stream()
               .map(Mounted::getType)
-              .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && !m.hasSubType(MiscType.S_SUPERCHARGER)));
+              .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && !m.hasFlag(MiscTypeFlag.S_SUPERCHARGER)));
     }
 
     /**
@@ -228,8 +229,7 @@ final class ASMovementConverter {
         return entity.getMisc().stream()
               .map(Mounted::getType)
               .anyMatch(m -> (m.hasFlag(MiscType.F_CLUB)
-                    && (m.hasSubType(MiscType.S_SHIELD_LARGE)
-                    || m.hasSubType(MiscType.S_SHIELD_MEDIUM))));
+                    && (m.hasAnyFlag(MiscTypeFlag.S_SHIELD_LARGE, MiscTypeFlag.S_SHIELD_MEDIUM))));
     }
 
     /** Returns the AlphaStrike movement type code letter such as "v" for VTOL. */

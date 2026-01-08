@@ -1466,8 +1466,8 @@ public class Board implements Serializable {
     }
 
     /**
-     * Remove a building from the board without adding rubble (clean removal).
-     * Used when a building is replaced by another building.
+     * Remove a building from the board without adding rubble (clean removal). Used when a building is replaced by
+     * another building.
      *
      * @param bldg The building to remove
      */

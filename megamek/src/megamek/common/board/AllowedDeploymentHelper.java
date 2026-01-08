@@ -37,9 +37,7 @@ import static megamek.common.board.DeploymentElevationType.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import megamek.common.Hex;
 import megamek.common.annotations.Nullable;
@@ -105,13 +103,13 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
     }
 
     /**
-     * Returns a FacingOption that indicates which facings are valid for deploying this entity
-     * at the given coordinates and elevation. For facing-independent entities (single-hex or
-     * symmetrical multi-hex), all facings (0-5) will be valid. For facing-dependent entities
-     * (like non-symmetrical BuildingEntity), only facings where all secondary hexes are valid
-     * will be included.
+     * Returns a FacingOption that indicates which facings are valid for deploying this entity at the given coordinates
+     * and elevation. For facing-independent entities (single-hex or symmetrical multi-hex), all facings (0-5) will be
+     * valid. For facing-dependent entities (like non-symmetrical BuildingEntity), only facings where all secondary
+     * hexes are valid will be included.
      *
      * @param elevation The elevation/altitude to check
+     *
      * @return FacingOption containing all valid facings, or null if no facings are valid
      */
     public FacingOption findAllowedFacings(int elevation) {
@@ -129,7 +127,7 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
             // For facing-independent entities, all facings are valid if the position is valid
             boolean isValid = !entity.isLocationProhibited(coords, board().getBoardId(), elevation)
                   && Compute.stackingViolation(game, entity, elevation, coords,
-                        board.getBoardId(), null, entity.climbMode(), true) == null;
+                  board.getBoardId(), null, entity.climbMode(), true) == null;
 
             if (isValid) {
                 for (int facing = 0; facing < 6; facing++) {
@@ -142,8 +140,8 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
     }
 
     /**
-     * Checks if this entity's deployment validity depends on its facing.
-     * Currently only multi-hex BuildingEntity instances are facing-dependent.
+     * Checks if this entity's deployment validity depends on its facing. Currently only multi-hex BuildingEntity
+     * instances are facing-dependent.
      *
      * @return true if deployment validity varies with facing
      */
@@ -207,9 +205,10 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
                   (o.elevation() + entity.getHeight() >= bridgeHeight));
         }
 
+        // Check for VTOL movement mode (includes powered flight infantry whose getMovementMode() returns VTOL)
         if (entity.getMovementMode().isVTOL()) {
             List<ElevationOption> vtolElevations = findAllowedVTOLElevations();
-            // remove VTOL elevations that are already present (= where the VTOl can land)
+            // remove VTOL elevations that are already present (= where the VTOL can land)
             for (ElevationOption elevationOption : result) {
                 vtolElevations.removeIf(o -> (o.elevation() == elevationOption.elevation()));
             }
@@ -272,7 +271,10 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
 
     private List<ElevationOption> findAllowedVTOLElevations() {
         List<ElevationOption> result = new ArrayList<>();
-        if (entity instanceof VTOL || entity.getMovementMode().isHoverVTOLOrWiGE()) {
+        // Check for VTOL vehicles or VTOL/Hover/WiGE movement modes (includes powered flight infantry)
+        boolean hasVTOLCapability = (entity instanceof VTOL) ||
+              entity.getMovementMode().isHoverVTOLOrWiGE();
+        if (hasVTOLCapability) {
             for (int elevation = 1; elevation < Math.max(10, hex.ceiling() + 1); elevation++) {
                 result.add(new ElevationOption(elevation, ELEVATION));
             }

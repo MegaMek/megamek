@@ -35,6 +35,7 @@
 package megamek.common.weapons.handlers;
 
 import static java.lang.Math.floor;
+import static megamek.common.equipment.AmmoType.INCENDIARY_MOD;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -879,7 +880,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 weaponReport.newlines = 0;
                 weaponReport.subject = subjectId;
                 String base = weaponType.isClan() ? " (Clan)" : "";
-                weaponReport.add(weaponType.getName() + base + number);
+                String mod = (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)) ?
+                      INCENDIARY_MOD : "";
+                weaponReport.add(weaponType.getName() + base + number + mod);
                 if (entityTarget != null) {
                     if ((weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
                           && (weapon.getLinked() != null)

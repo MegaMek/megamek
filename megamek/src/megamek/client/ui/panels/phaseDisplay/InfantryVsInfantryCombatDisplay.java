@@ -411,7 +411,7 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
         // - Has a valid building target
         // - In same hex as target
         // - Combat DOES exist in that building
-        boolean canReinforce = inf.getInfantryCombatTargetId() == Entity.NONE
+        boolean canReinforce = ce.canReinforceInfantryVsInfantry()
               && target != null
               && isValidBuildingTargetWithCombat(ce, target);
 
@@ -436,14 +436,14 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
             return false;
         }
 
-        if (!entity.getPosition().equals(targetEntity.getPosition())) {
+        if (targetEntity.getSecondaryPositions().containsValue(entity.getPosition())) {
             return false;
         }
 
         // Check if combat exists in this building
         boolean combatExists = game.getEntitiesVector().stream()
               .filter(e -> e instanceof Infantry)
-              .filter(e -> e.getPosition().equals(targetEntity.getPosition()))
+              .filter(e -> targetEntity.getSecondaryPositions().containsValue(e.getPosition()))
               .map(e -> (Infantry) e)
               .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
 

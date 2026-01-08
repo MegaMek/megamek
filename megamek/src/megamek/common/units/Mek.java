@@ -5625,6 +5625,54 @@ public abstract class Mek extends Entity {
         return fullHeadEject;
     }
 
+    /**
+     * Checks if this Mek can use the Full Head Ejection System this turn. Per TO:AUE p.121 (Mek equivalent rules):
+     * <ul>
+     *   <li>Must have the Full Head Ejection System installed</li>
+     *   <li>Cockpit must be head-mounted (not torso-mounted)</li>
+     *   <li>Life Support must not be damaged</li>
+     *   <li>If submerged, head must not be breached</li>
+     *   <li>Crew must be alive and not already ejected</li>
+     * </ul>
+     *
+     * @return true if Full Head Ejection can be activated
+     */
+    public boolean canUseFullHeadEjection() {
+        // Must have the system installed
+        if (!hasFullHeadEject()) {
+            return false;
+        }
+
+        // Cannot use with torso-mounted cockpit (no head to eject)
+        if (getCockpitType() == COCKPIT_TORSO_MOUNTED) {
+            return false;
+        }
+
+        // Crew must be alive and not already ejected
+        if (getCrew() == null || getCrew().isEjected() || getCrew().isDead()) {
+            return false;
+        }
+
+        // Life Support must not be damaged - any damage disables the system
+        if (getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT, LOC_HEAD) > 0) {
+            return false;
+        }
+
+        // If submerged, head must not be breached
+        if (isUnderwater()) {
+            if (getLocationStatus(LOC_HEAD) == ILocationExposureStatus.BREACHED) {
+                return false;
+            }
+        }
+
+        // Mek must not already be destroyed
+        if (isDestroyed() || isDoomed()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public void setRiscHeatSinkOverrideKit(boolean heatSinkKit) {
         this.riscHeatSinkKit = heatSinkKit;
     }

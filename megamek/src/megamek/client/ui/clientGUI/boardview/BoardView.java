@@ -3466,10 +3466,12 @@ public final class BoardView extends AbstractBoardView
         while (e.hasMoreElements()) {
             Entity entity = e.nextElement();
             Coords position = entity.getPosition();
-            // Infantry don't leave wrecks, but CVEP (which extends Infantry) should show crashed pod wreckage
-            boolean isInfantryButNotCVEP = (entity instanceof Infantry) && !(entity instanceof CombatVehicleEscapePod);
+            // Infantry don't leave wrecks, but CVEP/FHEP (which extend Infantry) should show crashed pod wreckage
+            boolean isInfantryButNotPod = (entity instanceof Infantry)
+                  && !(entity instanceof CombatVehicleEscapePod)
+                  && !(entity instanceof FullHeadEjectionPod);
             if (isOnThisBord(entity)
-                  && !isInfantryButNotCVEP
+                  && !isInfantryButNotPod
                   && (position != null)
                   && board.contains(position)) {
                 WreckSprite wreckSprite;

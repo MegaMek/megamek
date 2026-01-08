@@ -177,6 +177,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
     /** Valid hexes for escape pod landing (rear arc, 0-4 hexes) */
     private Set<Coords> validEscapePodHexes = new HashSet<>();
 
+    /** True when selecting a hex for Full-Head Ejection Pod landing (TO:AUE p.121) */
+    private boolean isSelectingFullHeadEjectLanding;
+    /** Valid hexes for FHEP landing (12 hexes, all directions or forward arc if prone) */
+    private Set<Coords> validFullHeadEjectHexes = new HashSet<>();
+
     // buttons
     private Map<MoveCommand, MegaMekButton> buttons;
 
@@ -798,6 +803,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setLaunchEscapePodEnabled(false);
         }
 
+        // Full-Head Ejection System - only available for Meks with FHES per TO:AUE p.121
+        if (isMEK && (selectedUnit instanceof Mek mek)) {
+            setLaunchFullHeadEjectEnabled(mek.canUseFullHeadEjection());
+        } else {
+            setLaunchFullHeadEjectEnabled(false);
+        }
+
         // if dropping unit only allows turning
         if (!selectedUnit.isAero() && cmd.getFinalAltitude() > 0) {
             disableButtons();
@@ -1149,6 +1161,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setEjectEnabled(false);
         setAbandonEnabled(false);
         setLaunchEscapePodEnabled(false);
+        setLaunchFullHeadEjectEnabled(false);
         setUnjamEnabled(false);
         setSearchlightEnabled(false, false);
         setGetUpEnabled(false);
@@ -1223,6 +1236,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // Cancel escape pod hex selection if active
         if (isSelectingEscapePodLanding) {
             cancelEscapePodHexSelection();
+        }
+
+        // Cancel full-head eject hex selection if active
+        if (isSelectingFullHeadEjectLanding) {
+            cancelFullHeadEjectHexSelection();
         }
 
         // clear board cursors
@@ -5278,6 +5296,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if ((entity instanceof Tank tank) && tank.canLaunchEscapePod()) {
                 startEscapePodHexSelection(tank);
             }
+        } else if (actionCmd.equals(MoveCommand.MOVE_LAUNCH_FULL_HEAD_EJECT.getCmd())) {
+            // Full-Head Ejection System launch (TO:AUE p.121)
+            if ((entity instanceof Mek mek) && mek.canUseFullHeadEjection()) {
+                startFullHeadEjectHexSelection(mek);
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_LOAD.getCmd())) {
             // Find the other friendly unit in our hex, add it
             // to our local list of loaded units, and then stop.
@@ -6226,6 +6249,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_LAUNCH_ESCAPE_POD.getCmd(), enabled);
     }
 
+    private void setLaunchFullHeadEjectEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_LAUNCH_FULL_HEAD_EJECT).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_LAUNCH_FULL_HEAD_EJECT.getCmd(), enabled);
+    }
+
     private void setUnjamEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_UNJAM).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_UNJAM.getCmd(), enabled);
@@ -6603,6 +6631,79 @@ public class MovementDisplay extends ActionPhaseDisplay {
         ready();
     }
 
+    // ==================== Full-Head Ejection Pod Hex Selection ====================
+
+    /**
+     * Starts the Full-Head Ejection Pod landing hex selection mode. Per TO:AUE p.121, the pod can travel up to 12 hexes
+     * in any direction (if upright) or forward arc only (if prone).
+     */
+    private void startFullHeadEjectHexSelection(Mek mek) {
+        isSelectingFullHeadEjectLanding = true;
+        validFullHeadEjectHexes.clear();
+
+        Coords mekPos = mek.getPosition();
+        int facing = mek.getFacing();
+        Board board = game.getBoard();
+        boolean isProne = mek.isProne();
+
+        // Include the Mek's own hex (distance 0)
+        validFullHeadEjectHexes.add(mekPos);
+
+        // Get all hexes within 12 hexes
+        for (int range = 1; range <= 12; range++) {
+            List<Coords> hexesAtRange = mekPos.allAtDistance(range);
+            for (Coords coords : hexesAtRange) {
+                if (!board.contains(coords)) {
+                    continue;
+                }
+                // If prone, only forward arc; if upright, all directions
+                if (isProne) {
+                    if (ComputeArc.isInArc(mekPos, facing, coords, Compute.ARC_FORWARD)) {
+                        validFullHeadEjectHexes.add(coords);
+                    }
+                } else {
+                    validFullHeadEjectHexes.add(coords);
+                }
+            }
+        }
+
+        // Highlight valid hexes on the board using movement envelope
+        Map<Coords, Integer> highlightData = new HashMap<>();
+        for (Coords coords : validFullHeadEjectHexes) {
+            highlightData.put(coords, 0);  // 0 = walkable range color
+        }
+        clientgui.showMovementEnvelope(mek, highlightData, GEAR_LAND);
+
+        // Set status bar message
+        setStatusBarText(Messages.getString("MovementDisplay.LaunchFullHeadEjectDialog.selectHex"));
+    }
+
+    /**
+     * Cancels Full-Head Ejection Pod hex selection mode and clears highlighting.
+     */
+    private void cancelFullHeadEjectHexSelection() {
+        isSelectingFullHeadEjectLanding = false;
+        validFullHeadEjectHexes.clear();
+        clientgui.clearMovementEnvelope();
+    }
+
+    /**
+     * Completes the Full-Head Ejection Pod launch with the selected landing hex.
+     */
+    private void completeFullHeadEjectLaunch(Coords landingHex) {
+        isSelectingFullHeadEjectLanding = false;
+        validFullHeadEjectHexes.clear();
+        clientgui.clearMovementEnvelope();
+
+        clear();
+        // Store landing coords in MoveStep using additionalData map
+        Map<Integer, Integer> coordData = new HashMap<>();
+        coordData.put(0, landingHex.getX());  // Key 0 = X coordinate
+        coordData.put(1, landingHex.getY());  // Key 1 = Y coordinate
+        cmd.addStep(MoveStepType.LAUNCH_FULL_HEAD_EJECT, coordData);
+        ready();
+    }
+
     @Override
     public void hexSelected(BoardViewEvent event) {
         // Handle escape pod hex selection
@@ -6612,6 +6713,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
             } else {
                 // Cancel selection on click outside valid hexes
                 cancelEscapePodHexSelection();
+            }
+            return;
+        }
+
+        // Handle Full-Head Ejection Pod hex selection
+        if (isSelectingFullHeadEjectLanding && event.getCoords() != null) {
+            if (validFullHeadEjectHexes.contains(event.getCoords())) {
+                completeFullHeadEjectLaunch(event.getCoords());
+            } else {
+                // Cancel selection on click outside valid hexes
+                cancelFullHeadEjectHexSelection();
             }
             return;
         }

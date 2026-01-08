@@ -3682,6 +3682,21 @@ public class MoveStep implements Serializable {
         return null;
     }
 
+    /**
+     * Returns the landing coordinates for Full-Head Ejection Pod launch. Per TO:AUE p.121, the player chooses a hex
+     * within 12 hexes (all directions if upright, forward arc only if prone).
+     *
+     * @return The landing coordinates, or null if not set
+     */
+    public Coords getFullHeadEjectLandingCoords() {
+        Integer x = additionalData.get(0);
+        Integer y = additionalData.get(1);
+        if (x != null && y != null) {
+            return new Coords(x, y);
+        }
+        return null;
+    }
+
     public int getBraceLocation() {
         return braceLocation;
     }

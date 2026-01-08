@@ -59,6 +59,7 @@ public enum MoveStepType {
     EJECT(false, "Eject"),
     ABANDON(false, "Abandon"),
     LAUNCH_ESCAPE_POD(false, "LaunchEscapePod"),
+    LAUNCH_FULL_HEAD_EJECT(false, "LaunchFullHeadEject"),
     CLEAR_MINEFIELD(false, "ClearMinefield"),
     UP(false, "U"),
     DOWN(false, "D"),

@@ -219,6 +219,10 @@ public class TWDamageManager implements IDamageManager {
             return handleCombatVehicleEscapePodDamage(cvep, damage, reportVec);
         }
 
+        if (entity instanceof FullHeadEjectionPod fhep) {
+            return handleFullHeadEjectionPodDamage(fhep, damage, reportVec);
+        }
+
         // This is good for shields if a shield absorbs the hit it shouldn't
         // affect the pilot.
         // TC SRM's that hit the head do external and internal damage but its
@@ -2243,6 +2247,69 @@ public class TWDamageManager implements IDamageManager {
             report.subject = cvep.getId();
             report.add(CombatVehicleEscapePod.BREACH_THRESHOLD - cvep.getCumulativeDamage());
             reportVec.add(report);
+        }
+
+        return reportVec;
+    }
+
+    /**
+     * Handles damage to a Full-Head Ejection Pod. Per TO:AUE p.121, the FHEP uses the head's original armor and
+     * internal structure values. Damage applies to armor first, then structure. The pod is breached (and occupants
+     * killed) when internal structure is reduced to 0.
+     *
+     * @param fhep      The escape pod taking damage
+     * @param damage    The amount of damage to apply
+     * @param reportVec The vector to add reports to
+     *
+     * @return The updated report vector
+     */
+    private Vector<Report> handleFullHeadEjectionPodDamage(FullHeadEjectionPod fhep, int damage,
+          Vector<Report> reportVec) {
+        Report report;
+
+        int armorBefore = fhep.getCurrentHeadArmor();
+        int structureBefore = fhep.getCurrentHeadInternalStructure();
+
+        // Apply damage and check for breach
+        boolean wasBreached = fhep.applyDamage(damage);
+
+        int armorAfter = fhep.getCurrentHeadArmor();
+        int structureAfter = fhep.getCurrentHeadInternalStructure();
+
+        // Report armor damage if any was applied
+        if (armorBefore > armorAfter) {
+            int armorDamage = armorBefore - armorAfter;
+            report = new Report(5369);
+            report.subject = fhep.getId();
+            report.add(armorDamage);
+            report.add(armorAfter);
+            reportVec.add(report);
+        }
+
+        // Report structure damage if any was applied
+        if (structureBefore > structureAfter) {
+            int structureDamage = structureBefore - structureAfter;
+            report = new Report(5370);
+            report.subject = fhep.getId();
+            report.add(structureDamage);
+            report.add(structureAfter);
+            reportVec.add(report);
+        }
+
+        if (wasBreached) {
+            // Pod breached - crew killed
+            report = new Report(5371);
+            report.subject = fhep.getId();
+            reportVec.add(report);
+
+            // Kill the crew
+            if (fhep.getCrew() != null) {
+                fhep.getCrew().setDead(true);
+            }
+
+            // Destroy the pod
+            reportVec.addAll(manager.destroyEntity(fhep,
+                  Messages.getString("MovementDisplay.FHEP.destroyReason.podBreach"), false, false));
         }
 
         return reportVec;

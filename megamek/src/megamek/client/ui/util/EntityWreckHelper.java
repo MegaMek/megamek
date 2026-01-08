@@ -42,6 +42,7 @@ import megamek.common.units.CombatVehicleEscapePod;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityWeightClass;
+import megamek.common.units.FullHeadEjectionPod;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
@@ -63,21 +64,25 @@ public class EntityWreckHelper {
         // for meks/infantry/VTOLs (needs specialized icons)
         // for units that were destroyed by ejection rather than unit destruction
         // for units on top of a bridge (looks kind of stupid)
-        // Exception: CVEP should display wrecks even though it extends Infantry
+        // Exception: CVEP and FHEP should display wrecks even though they extend Infantry
 
-        boolean isInfantryButNotCVEP = (entity instanceof Infantry) && !(entity instanceof CombatVehicleEscapePod);
+        boolean isInfantryButNotPod = (entity instanceof Infantry)
+              && !(entity instanceof CombatVehicleEscapePod)
+              && !(entity instanceof FullHeadEjectionPod);
 
         return !entity.getGame().getBoard(entity).isSpace() &&
               (!(entity instanceof Mek)) &&
-              (!isInfantryButNotCVEP) &&
+              (!isInfantryButNotPod) &&
               (!(entity.isBuildingEntityOrGunEmplacement())) &&
               entity.getSecondaryPositions().isEmpty() &&
               !entityOnBridge(entity);
     }
 
     public static boolean useExplicitWreckImage(Entity entity) {
-        // Meks have specialized wreck images; CVEP uses wreckset.txt lookup for small_boom.png
-        return (entity instanceof Mek) || (entity instanceof CombatVehicleEscapePod);
+        // Meks have specialized wreck images; CVEP and FHEP use wreckset.txt lookup for small_boom.png
+        return (entity instanceof Mek)
+              || (entity instanceof CombatVehicleEscapePod)
+              || (entity instanceof FullHeadEjectionPod);
     }
 
     /**

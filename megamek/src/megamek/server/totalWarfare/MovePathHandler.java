@@ -233,6 +233,25 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
         }
 
+        // Full-Head Ejection System launch (TO:AUE p.121)
+        if (md.contains(MoveStepType.LAUNCH_FULL_HEAD_EJECT)) {
+            if ((entity instanceof Mek mek) && mek.canUseFullHeadEjection()) {
+                // Find the step to get the player-chosen landing hex
+                Coords landingCoords = null;
+                for (MoveStep step : md.getStepVector()) {
+                    if (step.getType() == MoveStepType.LAUNCH_FULL_HEAD_EJECT) {
+                        landingCoords = step.getFullHeadEjectLandingCoords();
+                        break;
+                    }
+                }
+                addReport(gameManager.launchFullHeadEjectionPod(mek, landingCoords));
+                // Mark entity's turn as complete so client advances to next unit
+                entity.setDone(true);
+                gameManager.entityUpdate(entity.getId());
+                return;
+            }
+        }
+
         // Handle Mek abandonment announcements during Movement Phase (TacOps:AR p.165)
         // Mek must be prone and shutdown; crew exits during End Phase of following turn
         if (md.contains(MoveStepType.ABANDON) && (entity instanceof Mek mek) && mek.canAbandon()) {

@@ -29001,6 +29001,212 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Launches a Full-Head Ejection Pod from a BattleMek or IndustrialMek. Per TO:AUE p.121, the Full-Head Ejection
+     * System launches the entire head assembly as an escape capsule.
+     *
+     * <p>Key differences from standard ejection:</p>
+     * <ul>
+     *   <li>MekWarrior takes 1 automatic damage on launch</li>
+     *   <li>12 hex landing range (forward arc only if prone)</li>
+     *   <li>PSR +3 to land on target; scatter 1d6/2 hexes on failure</li>
+     *   <li>Additional ejection roll +2 for second damage point</li>
+     *   <li>Uses head's armor/structure values (not simple threshold)</li>
+     *   <li>If submerged: rockets to surface and floats as displacement hull</li>
+     * </ul>
+     *
+     * @param mek              The Mek launching the Full-Head Ejection System
+     * @param chosenLandingHex The player-chosen landing hex
+     *
+     * @return Vector of Reports for the game log
+     */
+    public Vector<Report> launchFullHeadEjectionPod(Mek mek, Coords chosenLandingHex) {
+        Vector<Report> vDesc = new Vector<>();
+        Report report;
+
+        // Validate the Mek can launch
+        if (!mek.canUseFullHeadEjection()) {
+            return vDesc;
+        }
+
+        Crew crew = mek.getCrew();
+        Coords startCoords = mek.getPosition();
+        boolean wasSubmerged = mek.isUnderwater();
+
+        // Report the launch attempt
+        report = new Report(5360);
+        report.subject = mek.getId();
+        report.addDesc(mek);
+        vDesc.addElement(report);
+
+        LOGGER.debug("FHEP launch: Mek at {}, submerged={}, prone={}",
+              startCoords.toFriendlyString(), wasSubmerged, mek.isProne());
+
+        // Step 1: Apply 1 automatic damage to the MekWarrior
+        report = new Report(5361);
+        report.subject = mek.getId();
+        vDesc.addElement(report);
+
+        int hits = crew.getHits();
+        crew.setHits(hits + 1, 0);  // Apply 1 damage to crew slot 0 (MekWarrior)
+
+        if (crew.isDead() || crew.getHits() >= 6) {
+            // MekWarrior killed by launch damage
+            report = new Report(5372);
+            report.subject = mek.getId();
+            vDesc.addElement(report);
+
+            // Create crashed pod 1 hex in front of the Mek
+            int frontDirection = mek.getFacing();
+            Coords crashCoords = startCoords.translated(frontDirection);
+            if (!game.getBoard().contains(crashCoords)) {
+                crashCoords = startCoords;
+            }
+            FullHeadEjectionPod crashedPod = new FullHeadEjectionPod(mek, crashCoords);
+            crashedPod.setBreached(true);
+            crashedPod.setDeployed(true);
+            crashedPod.setId(game.getNextEntityId());
+            game.addEntity(crashedPod);
+            send(createAddEntityPacket(crashedPod.getId()));
+            crashedPod.setDone(true);
+
+            // Destroy the crashed pod
+            vDesc.addAll(destroyEntity(crashedPod,
+                  Messages.getString("MovementDisplay.FHEP.destroyReason.crewLoss"), false, false));
+
+            // Destroy the Mek with head blown off
+            vDesc.addAll(destroyEntity(mek,
+                  Messages.getString("MovementDisplay.FHEP.destroyReason.headBlownOff"), false, true));
+            return vDesc;
+        }
+
+        // Step 2: PSR +3 landing roll
+        Coords landingCoords = (chosenLandingHex != null) ? chosenLandingHex : startCoords;
+        if (!game.getBoard().contains(landingCoords)) {
+            landingCoords = startCoords;
+        }
+
+        int landingTarget = crew.getPiloting() + 3;
+        Roll landingRoll = Compute.rollD6(2);
+        boolean landingSuccess = landingRoll.getIntValue() >= landingTarget;
+
+        report = new Report(5362);
+        report.subject = mek.getId();
+        report.add(landingTarget);
+        report.add(landingRoll.getIntValue());
+        report.choose(landingSuccess);
+        vDesc.addElement(report);
+
+        if (!landingSuccess) {
+            // Scatter 1d6/2 hexes
+            int scatterDistance = (int) Math.floor(Compute.d6() / 2.0);
+            if (scatterDistance > 0) {
+                int scatterDirection = Compute.d6() - 1;  // 0-5 direction
+                Coords scatteredCoords = landingCoords;
+                for (int i = 0; i < scatterDistance; i++) {
+                    Coords nextCoords = scatteredCoords.translated(scatterDirection);
+                    if (game.getBoard().contains(nextCoords)) {
+                        scatteredCoords = nextCoords;
+                    } else {
+                        break;  // Stop at board edge
+                    }
+                }
+                landingCoords = scatteredCoords;
+
+                report = new Report(5363);
+                report.subject = mek.getId();
+                report.add(scatterDistance);
+                report.add(landingCoords.toFriendlyString());
+                vDesc.addElement(report);
+            }
+        }
+
+        // Step 3: Ejection roll +2 for possible second damage
+        int ejectionTarget = crew.getPiloting() + 2;
+        Roll ejectionRoll = Compute.rollD6(2);
+        boolean ejectionSuccess = ejectionRoll.getIntValue() >= ejectionTarget;
+
+        report = new Report(5364);
+        report.subject = mek.getId();
+        report.add(ejectionTarget);
+        report.add(ejectionRoll.getIntValue());
+        report.choose(ejectionSuccess);
+        vDesc.addElement(report);
+
+        if (!ejectionSuccess) {
+            // Apply second damage point
+            report = new Report(5365);
+            report.subject = mek.getId();
+            vDesc.addElement(report);
+
+            crew.setHits(crew.getHits() + 1, 0);
+
+            if (crew.isDead() || crew.getHits() >= 6) {
+                // MekWarrior killed by rough landing
+                report = new Report(5372);
+                report.subject = mek.getId();
+                vDesc.addElement(report);
+
+                FullHeadEjectionPod crashedPod = new FullHeadEjectionPod(mek, landingCoords);
+                crashedPod.setBreached(true);
+                crashedPod.setDeployed(true);
+                crashedPod.setId(game.getNextEntityId());
+                game.addEntity(crashedPod);
+                send(createAddEntityPacket(crashedPod.getId()));
+                crashedPod.setDone(true);
+
+                vDesc.addAll(destroyEntity(crashedPod,
+                      Messages.getString("MovementDisplay.FHEP.destroyReason.crewLoss"), false, false));
+
+                vDesc.addAll(destroyEntity(mek,
+                      Messages.getString("MovementDisplay.FHEP.destroyReason.headBlownOff"), false, true));
+                return vDesc;
+            }
+        }
+
+        // Step 4: Create escape pod at landing location
+        FullHeadEjectionPod escapePod = new FullHeadEjectionPod(mek, landingCoords);
+        escapePod.setDeployed(true);
+        escapePod.setId(game.getNextEntityId());
+
+        // If was submerged, pod floats to surface
+        if (wasSubmerged) {
+            escapePod.setFloating(true);
+            report = new Report(5366);
+            report.subject = mek.getId();
+            report.add(landingCoords.toFriendlyString());
+            vDesc.addElement(report);
+        }
+
+        game.addEntity(escapePod);
+        send(createAddEntityPacket(escapePod.getId()));
+        escapePod.setDone(true);
+        entityUpdate(escapePod.getId());
+
+        // Report successful landing
+        report = new Report(5367);
+        report.subject = mek.getId();
+        report.add(crew.getName());
+        report.add(landingCoords.toFriendlyString());
+        vDesc.addElement(report);
+
+        // Check for minefield
+        vDesc.addAll(doEntityDisplacementMinefieldCheck(escapePod, startCoords, landingCoords, 0));
+
+        // Step 5: Mark crew as ejected and destroy the Mek with "Head Blown Off"
+        crew.setEjected(true);
+
+        report = new Report(5368);
+        report.subject = mek.getId();
+        report.addDesc(mek);
+        vDesc.addElement(report);
+
+        vDesc.addAll(destroyEntity(mek,
+              Messages.getString("MovementDisplay.FHEP.destroyReason.headBlownOff"), true, true));
+
+        return vDesc;
+    }
+
+    /**
      * Processes pending Mek abandonments per TacOps:AR p.165.
      * Called during End Phase to:
      * 1. Execute abandonments that were announced in the previous End Phase

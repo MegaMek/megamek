@@ -264,7 +264,7 @@ class TeamLoadOutGeneratorTest {
     }
 
     @Test
-    void testReconfigureEntityMekSemiGuidedInfernoAmmoType() throws LocationFullException {
+    void testReconfigureEntityMekSemiGuidedIncendiaryAmmoType() throws LocationFullException {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
@@ -607,7 +607,9 @@ class TeamLoadOutGeneratorTest {
     void testMunitionWeightCollectionTopN() {
         MunitionWeightCollection mwc = new MunitionWeightCollection();
         // Default weighting for all munition types.
-        // For missiles, "Dead-Fire" is first, followed by "Standard" by default.
+        // For missiles, "Dead-Fire" is first, followed by "Dead-Fire w/ Incendiary", then "Standard" by default.
+        // This is due to "Dead-Fire" having a 3.0 weight by default; DF + Incendiary then gets 2.4 by dint of 0.8x
+        // weight multiplier that reflects its lower damage output.
         // For other rounds, "Standard" should be first.
         HashMap<String, List<String>> topN = mwc.getTopN(3);
 

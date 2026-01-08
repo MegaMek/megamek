@@ -111,10 +111,10 @@ Defaults:
       Anti-Radiation:
         IS: 1.0
         Clan: 1.0
+      Incendiary:
         # Incendiary is a special class that modifies other LRM munition types.
         # Changes here (or Incendiary: entries in the Prohibited: or Overrides: sections) will apply to all
         # "<Munition> w/ Incendiary" combinations.
-      Incendiary:
         IS: 1.0
         Clan: 1.0
 

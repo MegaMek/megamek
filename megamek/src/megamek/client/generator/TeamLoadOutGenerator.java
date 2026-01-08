@@ -1379,7 +1379,7 @@ public class TeamLoadOutGenerator {
                     // Combine the two weights, but only if the original weight was above the cutoff as well
                     // This way, only incendiary versions of high-scoring candidates will be considered.
                     oldWeight = originalWeights.get(munitionType);
-                    newWeight = (oldWeight == cutoff) ? oldWeight : oldWeight + incendiaryWeight;
+                    newWeight = (oldWeight > cutoff) ? oldWeight + incendiaryWeight : oldWeight;
                     incendiaryType = munitionType + " " + INCENDIARY_MOD;
                     munitionWeightCollection.getLrmWeights().put(incendiaryType, newWeight);
                 }

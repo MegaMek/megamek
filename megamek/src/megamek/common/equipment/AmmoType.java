@@ -3837,7 +3837,6 @@ public class AmmoType extends EquipmentType {
         incendiary.bv = base.bv;
 
         // Combine tech advancements to get earliest / lowest legal TA
-        // NOTE: this alone does not sufficiently restrict modified munitions!
         incendiary.techAdvancement = combineTechAdvancements(
               base.techAdvancement,
               INCENDIARY_LRM_MUNITION_MUTATOR.techAdvancement
@@ -3851,7 +3850,7 @@ public class AmmoType extends EquipmentType {
     /**
      * Create a new techAdvancement that uses:
      * 1. the more restrictive tech base
-     * 2. the more-restrictive of all faction tach advancements
+     * 2. the more-restrictive of all faction tech advancements
      * 3. the later of all intro dates,
      * 4. the earlier of all extinction dates,
      * 5. the smaller of all prototype / production / reintroduction faction lists,
@@ -3990,8 +3989,8 @@ public class AmmoType extends EquipmentType {
             } else if (right.isEmpty()) {
                 return left;
             } else {
-                // Both have entries so we want the intersection of the two sets, which may be then be empty,
-                // indicating everyone has the same access (which may be not at all)
+                // Both have entries so we want the intersection of the two sets, which may then be empty,
+                // indicating everyone has the same access (which may be "none at all")
                 Set<Faction> result = new HashSet<>(left);
                 result.retainAll(right);
                 return result;

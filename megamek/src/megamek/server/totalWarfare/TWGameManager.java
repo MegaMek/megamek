@@ -15795,9 +15795,10 @@ public class TWGameManager extends AbstractGameManager {
             int finalAttackerMPS = calculateTotalMPS(combat.attackerIds, building);
             int finalDefenderMPS = calculateTotalMPS(combat.defenderIds, building);
 
-            if (finalAttackerMPS <= 0 || finalDefenderMPS <= 0) {
-                // One side eliminated - end action
-                cleanupCombat(combat, tracker);
+            if (finalAttackerMPS <= 0 ) {
+                reportSideEliminated(combat, tracker, building, true);
+            } else if (finalDefenderMPS <= 0) {
+                reportSideEliminated(combat, tracker, building, false);
             }
         }
     }
@@ -15947,7 +15948,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 // Report crew hits if they increased
                 if (newHits > oldHits) {
-                    Report r = new Report(5636);  // "{0} crew suffers {1} hits"
+                    Report r = new Report(5635);  // "{0} crew suffers {1} hits"
                     r.add(building.getDisplayName());
                     r.add(newHits - oldHits);
                     addReport(r);

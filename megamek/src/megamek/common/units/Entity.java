@@ -10800,8 +10800,8 @@ public abstract class Entity extends TurnOrdered
             }
 
             // Check if can lay demolition charges
-            return hex.containsTerrain(Terrains.BUILDING) && hasWorkingMisc(MiscType.F_TOOLS,
-                  MiscType.S_DEMOLITION_CHARGE);
+            return hex.containsTerrain(Terrains.BUILDING) && hasWorkingMisc(MiscTypeFlag.F_TOOLS,
+                  MiscTypeFlag.S_DEMOLITION_CHARGE);
         }
 
         // only Meks and ProtoMek's have physical attacks (except tank charges)

@@ -1049,6 +1049,13 @@ public class CustomMekDialog extends AbstractButtonDialog
                   Messages.getString("CustomMekDialog.VdniInvalidUnitTypeTitle"),
                   JOptionPane.WARNING_MESSAGE);
         }
+
+        // EI Implant pilot option should auto-enable EI Interface equipment if available (IO p.69)
+        // The pilot needs the implant AND the unit needs the interface hardware for EI to function
+        if (state && option.getName().equals(OptionsConstants.MD_EI_IMPLANT)
+              && canHaveEIInterface(entity) && chEIInterface.isEnabled()) {
+            chEIInterface.setSelected(true);
+        }
     }
 
     /**

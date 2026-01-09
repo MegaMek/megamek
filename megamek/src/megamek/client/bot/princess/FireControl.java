@@ -3304,7 +3304,8 @@ public class FireControl {
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_FRAGMENTATION)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)
-                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV)) {
+                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV)
+                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)) {
 
                 // MMLs have additional considerations.
                 if (!(weaponType instanceof MMLWeapon)) {

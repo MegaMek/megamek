@@ -326,19 +326,12 @@ public class PunchAttackAction extends PhysicalAttackAction {
         // the normal +1 bth for missing hand actuator.
         // Damned if you do damned if you dont. --Torren.
         final boolean hasClaws = ((Mek) ae).hasClaw(armLoc);
-        final boolean hasLowerArmActuator = ae.hasSystem(Mek.ACTUATOR_LOWER_ARM, armLoc);
         final boolean hasHandActuator = ae.hasSystem(Mek.ACTUATOR_HAND, armLoc);
-        // Missing hand actuator is not cumulative with missing actuator,
-        // but critical damage is cumulative
-        if (!hasClaws && !hasHandActuator && hasLowerArmActuator
+        // Missing hand actuator is cumulative with missing lower arm actuator
+        if (!hasClaws && !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc) 
               && (((arm == PunchAttackAction.RIGHT) && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_RA))
-              || (arm == PunchAttackAction.LEFT)
-              && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_LA))) {
-            toHit.addModifier(1, "Hand actuator missing");
-            // Check for present but damaged hand actuator
-        } else if (hasHandActuator && !hasClaws &&
-              !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc)) {
-            toHit.addModifier(1, "Hand actuator destroyed");
+              || ((arm == PunchAttackAction.LEFT) && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)))) {
+            toHit.addModifier(1, "Hand actuator missing or destroyed");
         } else if (hasClaws) {
             // PLAYTEST3 claw modifier removed
             if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {

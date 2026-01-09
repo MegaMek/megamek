@@ -2001,7 +2001,8 @@ public class TWDamageManager implements IDamageManager {
             report.addDesc(entity);
             report.add(7);
             report.add(diceRoll);
-            report.choose(diceRoll.getIntValue() >= 7);
+            // choose(true) shows "takes a hit!", choose(false) shows "no damage."
+            report.choose(diceRoll.getIntValue() < 7);
             report.indent(2);
             reportVec.add(report);
 

@@ -1908,13 +1908,19 @@ public class CustomMekDialog extends AbstractButtonDialog
         m_equip = new EquipChoicePanel(entity, clientGUI, client);
         panEquip.add(m_equip, GBC.eol());
 
-        // EI Interface checkbox - only show for eligible units (Clan Meks/BA, game year >= 3040)
+        // EI Interface checkbox - show for eligible units and ProtoMeks (always have EI)
         boolean eligibleForEI = entities.stream().allMatch(this::canHaveEIInterface);
-        if (eligibleForEI) {
+        boolean allProtoMeks = entities.stream().allMatch(Entity::isProtoMek);
+        if (eligibleForEI || allProtoMeks) {
             panEquip.add(labEIInterface, GBC.std());
             panEquip.add(chEIInterface, GBC.eol());
             chEIInterface.setSelected(entity.hasEiCockpit());
             chEIInterface.setToolTipText(Messages.getString("CustomMekDialog.eiInterfaceTooltip"));
+            // ProtoMeks have EI built-in and cannot disable it
+            if (allProtoMeks) {
+                chEIInterface.setEnabled(false);
+                chEIInterface.setToolTipText(Messages.getString("CustomMekDialog.eiInterfaceProtoMekTooltip"));
+            }
         }
     }
 

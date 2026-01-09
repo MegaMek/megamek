@@ -1042,9 +1042,15 @@ public class ProtoMek extends Entity {
         return true;
     }
 
+    /**
+     * ProtoMeks have EI built-in and always active (unless head is damaged). Unlike other units, ProtoMek pilots don't
+     * need the EI Implant option - they are neurally connected by default per IO p.77.
+     *
+     * @return true if head is undamaged, false otherwise
+     */
     @Override
     public boolean hasActiveEiCockpit() {
-        return (super.hasActiveEiCockpit() && (getCritsHit(LOC_HEAD) == 0));
+        return (getCritsHit(LOC_HEAD) == 0);
     }
 
     @Override

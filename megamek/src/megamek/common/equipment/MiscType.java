@@ -5866,6 +5866,10 @@ public class MiscType extends EquipmentType {
                 F_PROTOMEK_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "69, IO";
+        // EI modes: Off disables EI completely, On enables all EI benefits including aimed shots
+        String[] modes = { "Off", "Initiate enhanced imaging" };
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
         // EI Interface introduced 3040 by Clan Smoke Jaguar, per IO p.69
         // Can be installed in any Clan-tech BattleMek or BA (no weight/space cost, but has C-Bill cost)
         misc.techAdvancement.setTechBase(TechBase.CLAN)

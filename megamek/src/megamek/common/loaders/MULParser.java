@@ -181,6 +181,8 @@ public class MULParser {
     public static final String ATTR_ADVANTAGES = "advantages";
     public static final String ATTR_EDGE = "edge";
     public static final String ATTR_IMPLANTS = "implants";
+    public static final String ATTR_EI_IMPLANTS = "eiImplants";
+    public static final String ATTR_EI_MODE = "eiMode";
     public static final String ATTR_PROSTHETIC_ENHANCEMENT_1 = "prostheticEnhancement1";
     public static final String ATTR_PROSTHETIC_ENHANCEMENT_1_COUNT = "prostheticEnhancement1Count";
     public static final String ATTR_PROSTHETIC_ENHANCEMENT_2 = "prostheticEnhancement2";
@@ -1220,6 +1222,23 @@ public class MULParser {
             }
         }
 
+        // EI Implants are loaded unconditionally - they require EI Interface equipment which is
+        // the primary gatekeeper, not a game option (EI is official Clan tech from IO p.69)
+        if (attributes.containsKey(ATTR_EI_IMPLANTS) && !attributes.get(ATTR_EI_IMPLANTS).isBlank()) {
+            StringTokenizer st = new StringTokenizer(attributes.get(ATTR_EI_IMPLANTS), "::");
+            while (st.hasMoreTokens()) {
+                String eiImplant = st.nextToken();
+                String eiImplantName = Crew.parseAdvantageName(eiImplant);
+                Object value = Crew.parseAdvantageValue(eiImplant);
+
+                try {
+                    crew.getOptions().getOption(eiImplantName).setValue(value);
+                } catch (Exception e) {
+                    warning.append("Error restoring EI implant: ").append(eiImplant).append(".\n");
+                }
+            }
+        }
+
         if (attributes.containsKey(ATTR_EJECTED) && !attributes.get(ATTR_EJECTED).isBlank()) {
             crew.setEjected(Boolean.parseBoolean(attributes.get(ATTR_EJECTED)));
         }
@@ -1250,6 +1269,23 @@ public class MULParser {
                 if (attributes.containsKey(ATTR_COND_EJECT_HEAD_SHOT) && !attributes.get(ATTR_COND_EJECT_HEAD_SHOT)
                       .isBlank()) {
                     mek.setCondEjectHeadshot(Boolean.parseBoolean(attributes.get(ATTR_COND_EJECT_HEAD_SHOT)));
+                }
+            }
+
+            // Restore EI Interface equipment mode
+            if (attributes.containsKey(ATTR_EI_MODE) && !attributes.get(ATTR_EI_MODE).isBlank()) {
+                String eiModeName = attributes.get(ATTR_EI_MODE);
+                for (Mounted<?> m : entity.getMisc()) {
+                    if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                        // Find the mode index that matches the saved mode name
+                        for (int i = 0; i < m.getType().getModesCount(); i++) {
+                            if (m.getType().getMode(i).getName().equals(eiModeName)) {
+                                m.setMode(i);
+                                break;
+                            }
+                        }
+                        break;
+                    }
                 }
             }
 

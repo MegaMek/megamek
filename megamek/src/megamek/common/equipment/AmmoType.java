@@ -38,10 +38,12 @@ import java.util.*;
 import megamek.common.RangeType;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
+import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Era;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -291,6 +293,9 @@ public class AmmoType extends EquipmentType {
 
     // Used for Internal Bomb Bay bombs; to differentiate them from
     public static final AmmoTypeFlag F_INTERNAL_BOMB = AmmoTypeFlag.F_INTERNAL_BOMB;
+
+    // Used for Incendiary ammo modification and lookups
+    public static final String INCENDIARY_MOD = "w/ Incendiary";
 
     private static final MunitionMutator CLAN_MPM_MUNITION_MUTATOR = new MunitionMutator("(Clan) Multi-Purpose",
           1,
@@ -713,7 +718,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "181, TO:AUE");
 
-    private static final MunitionMutator SEMI_GUIDED_MUNITION_MUTATOR = new MunitionMutator("Semi-guided",
+    private static final MunitionMutator SEMI_GUIDED_MUNITION_MUTATOR = new MunitionMutator("Semi-Guided",
           1,
           Munitions.M_SEMIGUIDED,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -874,7 +879,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "180, TO:AUE");
 
-    private static final MunitionMutator CLAN_SEMI_GUIDED = new MunitionMutator("(Clan) Semi-guided",
+    private static final MunitionMutator CLAN_SEMI_GUIDED = new MunitionMutator("(Clan) Semi-Guided",
           1,
           Munitions.M_SEMIGUIDED,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -2073,7 +2078,7 @@ public class AmmoType extends EquipmentType {
         M_ANTI_PERSONNEL,
         // The rest were already defined
         // Flare
-        // Semi-guided
+        // Semi-Guided
         // Smoke
 
         // More SRM+LRM Munitions types
@@ -3775,6 +3780,7 @@ public class AmmoType extends EquipmentType {
      */
     private static AmmoType createIncendiaryVariant(AmmoType base) {
         AmmoType incendiary = new AmmoType();
+        String spacedIncendiaryMod = " " + INCENDIARY_MOD;
 
         // Build names with " w/ Incendiary" suffix
         // Follow the pattern from MunitionMutator for LRM/MML/NLRM types
@@ -3782,18 +3788,18 @@ public class AmmoType extends EquipmentType {
         int index = base.name.lastIndexOf("Ammo");
         if (index > 0) {
             nameBuf.insert(index, " ");
-            nameBuf.insert(index, "w/ Incendiary");
+            nameBuf.insert(index, INCENDIARY_MOD);
         } else {
-            nameBuf.append(" w/ Incendiary");
+            nameBuf.append(spacedIncendiaryMod);
         }
         incendiary.name = nameBuf.toString();
 
-        incendiary.shortName = base.shortName + " w/ Incendiary";
-        incendiary.setInternalName(base.getInternalName() + " w/ Incendiary");
-        incendiary.subMunitionName = "w/ Incendiary";
+        incendiary.shortName = base.shortName + spacedIncendiaryMod;
+        incendiary.setInternalName(base.getInternalName() + spacedIncendiaryMod);
+        incendiary.subMunitionName = (base.subMunitionName.isBlank()) ? INCENDIARY_MOD : base.subMunitionName + spacedIncendiaryMod;
 
         // Add all base lookup names with " w/ Incendiary" suffix
-        incendiary.addToEnd(base, " w/ Incendiary");
+        incendiary.addToEnd(base, spacedIncendiaryMod);
 
         // Copy base reference
         incendiary.base = (base.base != null) ? base.base : base;
@@ -3830,16 +3836,168 @@ public class AmmoType extends EquipmentType {
         incendiary.cost = base.cost * 1.5;
         incendiary.bv = base.bv;
 
-        // Copy tech advancement from the incendiary mutator
-        incendiary.techAdvancement = new TechAdvancement(INCENDIARY_LRM_MUNITION_MUTATOR.techAdvancement);
-        // Use the higher tech level between base and incendiary
-        incendiary.techAdvancement.setStaticTechLevel(SimpleTechLevel.max(
-              INCENDIARY_LRM_MUNITION_MUTATOR.techAdvancement.getStaticTechLevel(),
-              base.techAdvancement.getStaticTechLevel()));
+        // Combine tech advancements to get earliest / lowest legal TA
+        incendiary.techAdvancement = combineTechAdvancements(
+              base.techAdvancement,
+              INCENDIARY_LRM_MUNITION_MUTATOR.techAdvancement
+        );
 
         incendiary.rulesRefs = "181, TO:AUE";
 
         return incendiary;
+    }
+
+    /**
+     * Create a new techAdvancement that uses:
+     * 1. the more restrictive tech base
+     * 2. the more-restrictive of all faction tech advancements
+     * 3. the later of all intro dates,
+     * 4. the earlier of all extinction dates,
+     * 5. the smaller of all prototype / production / reintroduction faction lists,
+     * 6. the greater of all extinction faction lists,
+     * 7. the higher static tech level,
+     * 8. the rarer availability level
+     * 9. the higher TechRating score
+     * given two other TechAdvancements.
+     *
+     * @param base  TechAdvancement of base ammo type being modified
+     * @param mod   TechAdvancement of the mod/mutator; currently only Incendiary
+     * @return combination TechAdvancement
+     */
+    private static TechAdvancement combineTechAdvancements(TechAdvancement base, TechAdvancement mod) {
+        TechAdvancement combination = new TechAdvancement(mod);
+
+        // Tech Base
+        if (base.getTechBase() != mod.getTechBase()) {
+            combination.setTechBase(TechBase.fromIndex(Math.max(base.getTechBase().getIndex(),
+                  mod.getTechBase().getIndex())));
+        }
+
+        // Advancement - later takes precendent except for extinction, but -1 trumps all
+        for (AdvancementPhase phase : List.of(AdvancementPhase.PROTOTYPE, AdvancementPhase.PRODUCTION, AdvancementPhase.COMMON,
+              AdvancementPhase.REINTRODUCED)) {
+            combination.setISAdvancement(phase, laterOrUnsetYear(base.getISAdvancement(phase), mod.getISAdvancement(phase)));
+            combination.setISApproximate(phase, (base.getISApproximate(phase) || mod.getISApproximate(phase)));
+            combination.setClanAdvancement(phase, laterOrUnsetYear(base.getClanAdvancement(phase), mod.getClanAdvancement(phase)));
+            combination.setClanApproximate(phase, (base.getClanApproximate(phase) || mod.getClanApproximate(phase)));
+        }
+
+        // Extinction dates: earlier non-"-1" value wins
+        AdvancementPhase phase = AdvancementPhase.EXTINCT;
+        combination.setISAdvancement(phase, earlierNotUnsetYear(base.getISAdvancement(phase),
+                    mod.getISAdvancement(phase)));
+        combination.setISApproximate(phase, (base.getISApproximate(phase) || mod.getISApproximate(phase)));
+        combination.setClanAdvancement(phase, earlierNotUnsetYear(base.getClanAdvancement(phase),
+              mod.getClanAdvancement(phase)));
+        combination.setClanApproximate(phase, (base.getClanApproximate(phase) || mod.getClanApproximate(phase)));
+
+        // Faction lists - eugh.
+        Set<Faction> bProto = base.getPrototypeFactions();
+        Set<Faction> mProto = mod.getPrototypeFactions();
+        Set<Faction> bProd = base.getProductionFactions();
+        Set<Faction> mProd = mod.getProductionFactions();
+        Set<Faction> bExtinct = base.getExtinctionFactions();
+        Set<Faction> mExtinct = mod.getExtinctionFactions();
+        Set<Faction> bReintro = base.getReintroductionFactions();
+        Set<Faction> mReintro = mod.getReintroductionFactions();
+
+        // Take intersections except for Extinction
+        combination.setPrototypeFactions(restrictFactions(bProto, mProto).toArray(new Faction[0]));
+        combination.setProductionFactions(restrictFactions(bProd, mProd).toArray(new Faction[0]));
+        combination.setReintroductionFactions(restrictFactions(bReintro, mReintro).toArray(new Faction[0]));
+
+        // Extinction should cover the most possible factions
+        Set<Faction> extinct = new HashSet<Faction>(bExtinct);
+        extinct.addAll(mExtinct);
+        combination.setExtinctionFactions(extinct.toArray(new Faction[0]));
+
+        // Use the higher static tech level between base and incendiary
+        combination.setStaticTechLevel(SimpleTechLevel.max(
+              base.getStaticTechLevel(),
+              mod.getStaticTechLevel()
+        ));
+
+        // Availability
+        for (Era era: Era.values()) {
+            combination.setAvailability(
+                  era,
+                  (base.calcEraAvailability(era).isBetterThan(mod.calcEraAvailability(era)))
+                        ? base.getBaseAvailability(era)
+                        : mod.getBaseAvailability(era)
+            );
+        }
+
+        // Tech Rating
+        combination.setTechRating(
+              (base.getTechRating().isBetterThan(mod.getTechRating()))
+                    ? base.getTechRating()
+                    : mod.getTechRating()
+        );
+
+        return combination;
+    }
+
+    /**
+     * Determine the earlier of two years for purposes of setting extinction year of modified munitions
+     * @param left  Left year
+     * @param right Right year
+     * @return Lower year that is not "DATE_NONE", that is, the unset value of -1, or -1 if both are unset.
+     */
+    private static int earlierNotUnsetYear(int left, int right) {
+        if (!(left == DATE_NONE && right == DATE_NONE)) {
+            if (left == DATE_NONE) {
+                return right;
+            } else if (right == DATE_NONE) {
+                return left;
+            } else {
+                return Math.min(left, right);
+            }
+        }
+        return left;
+    }
+
+    /**
+     * Determine the later of two years for purposes of setting intro or re-intro of modified munitions
+     * @param left  Left year
+     * @param right Right year
+     * @return DATE_NONE if either or both are DATE_NONE, or later year if both are not DATE_NONE
+     */
+    private static int laterOrUnsetYear(int left, int right) {
+        if (!(left == DATE_NONE && right == DATE_NONE)) {
+            if (left == DATE_NONE) {
+                return left;
+            } else if (right == DATE_NONE) {
+                return right;
+            } else {
+                return Math.max(left, right);
+            }
+        }
+        return left;
+    }
+
+    /**
+     * Determine which factions should be in a restricted Faction set based on Set composition
+     * @param left      Left set
+     * @param right     Right set
+     * @return the most restrictive set / intersection of both sets / empty set if no matches exist.
+     */
+    private static Set<Faction> restrictFactions(Set<Faction> left, Set<Faction> right) {
+        if (!(left.isEmpty() && right.isEmpty())) {
+            // If both are not empty, choose the smallest non-empty set.
+            if (left.isEmpty()) {
+                return right;
+            } else if (right.isEmpty()) {
+                return left;
+            } else {
+                // Both have entries so we want the intersection of the two sets, which may then be empty,
+                // indicating everyone has the same access (which may be "none at all")
+                Set<Faction> result = new HashSet<>(left);
+                result.retainAll(right);
+                return result;
+            }
+        }
+        // If both are empty, return whichever
+        return left;
     }
 
     // Anti-Missile Ammo

@@ -34,7 +34,9 @@
 package megamek.client.generator;
 
 import static java.util.Map.entry;
+import static megamek.client.generator.TeamLoadOutGenerator.castPropertyDouble;
 import static megamek.client.generator.TeamLoadOutGenerator.searchMap;
+import static megamek.common.equipment.AmmoType.INCENDIARY_MOD;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,7 +86,8 @@ class MunitionWeightCollection {
 
     public void resetWeights() {
         // Initialize weights for all the weapon types using known munition names
-        lrmWeights = initializeWeaponWeightsYAML("LRM", factionName, clan, MunitionTree.LRM_MUNITION_NAMES);
+        lrmWeights = setIncendiary(initializeWeaponWeightsYAML("LRM", factionName, clan,
+              MunitionTree.LRM_MUNITION_NAMES));
         srmWeights = initializeWeaponWeightsYAML("SRM", factionName, clan, MunitionTree.SRM_MUNITION_NAMES);
         acWeights = initializeWeaponWeightsYAML( "AC", factionName, clan, MunitionTree.AC_MUNITION_NAMES);
         arrowWeights = initializeWeaponWeightsYAML("Arrow IV", factionName, clan, MunitionTree.ARROW_MUNITION_NAMES);
@@ -122,6 +125,38 @@ class MunitionWeightCollection {
               entry("Mortar", mortarWeights),
               entry("Narc", narcWeights),
               entry("Bomb", bombWeights)));
+    }
+
+    /**
+     * We want to be able to search for valid LRM munitions types that also include 'w/ Incendiary',
+     * without having to track every IS/Clan, rack size, Mek/BA/Infantry weapon, OS/not OS, etc.
+     * combination.
+     *
+     * For now, MunitionTree adds a version of each ammo type string with ' w/ Incendiary' appended;
+     * here we set the weights at 0.8 x the original value (representing 20% damage loss from Incendiary).
+     * @param original
+     * @return original, but modified
+     */
+    public HashMap<String, Double> setIncendiary(HashMap<String, Double> original) {
+        HashMap<String, Double> withIncendiary = new HashMap<>();
+
+        for (Map.Entry<String, Double> entry : original.entrySet()) {
+            // Skip the top-level Incendiary class, which is needed for weight calcs.
+            if (entry.getKey().equals("Incendiary")) {
+                continue;
+            } else if (!entry.getKey().contains(INCENDIARY_MOD)) {
+                withIncendiary.put(
+                      entry.getKey() + " " + INCENDIARY_MOD,
+                      entry.getValue() *
+                            castPropertyDouble("Defaults.Factors.mwcDefaultIncendiaryModWeight", 0.8)
+                );
+            }
+        }
+
+        // Update all " w/ Incendiary" entries
+        original.putAll(withIncendiary);
+
+        return original;
     }
 
     /**

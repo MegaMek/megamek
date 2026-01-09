@@ -47,6 +47,7 @@ public class PilotOptions extends AbstractOptions {
     private static final long serialVersionUID = 6628080570425023949L;
     public static final String LVL3_ADVANTAGES = "lvl3Advantages";
     public static final String EDGE_ADVANTAGES = "edgeAdvantages";
+    public static final String EI_ADVANTAGES = "eiAdvantages";
     public static final String MD_ADVANTAGES = "MDAdvantages";
 
     public PilotOptions() {
@@ -152,6 +153,10 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST, true);
 
+        // Enhanced Imaging (Clan technology, IO p.69)
+        IBasicOptionGroup ei = addGroup("ei", EI_ADVANTAGES);
+        addOption(ei, OptionsConstants.MD_EI_IMPLANT, false);
+
         // manei domini
         IBasicOptionGroup md = addGroup("md", MD_ADVANTAGES);
         addOption(md, OptionsConstants.MD_PAIN_SHUNT, false);
@@ -182,7 +187,6 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_PL_GLIDER, false);
         addOption(md, OptionsConstants.MD_PL_FLIGHT, false);
         addOption(md, OptionsConstants.MD_SUICIDE_IMPLANTS, false);
-        addOption(md, OptionsConstants.MD_EI_IMPLANT, false);
     }
 
     /*

@@ -69,11 +69,13 @@ import megamek.common.board.Board;
 import megamek.common.enums.Gender;
 import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
@@ -157,6 +159,10 @@ public class CustomMekDialog extends AbstractButtonDialog
     private final JLabel labDeployStealth = new JLabel(Messages.getString("CustomMekDialog.labDeployStealth"),
           SwingConstants.RIGHT);
     private final JCheckBox chDeployStealth = new JCheckBox();
+
+    private final JLabel labEIInterface = new JLabel(Messages.getString("CustomMekDialog.labEIInterface"),
+          SwingConstants.RIGHT);
+    private final JCheckBox chEIInterface = new JCheckBox();
 
     private final JLabel labOffBoard = new JLabel(Messages.getString("CustomMekDialog.labOffBoard"),
           SwingConstants.RIGHT);
@@ -1704,6 +1710,9 @@ public class CustomMekDialog extends AbstractButtonDialog
         for (Entity entity : entities) {
             entity.setHidden(chHidden.isSelected());
             setStealth(entity, chDeployStealth.isSelected());
+            if (canHaveEIInterface(entity)) {
+                setEIInterface(entity, chEIInterface.isSelected());
+            }
 
             if (chOffBoard.isSelected()) {
                 offBoardDistance = distance;
@@ -1897,7 +1906,16 @@ public class CustomMekDialog extends AbstractButtonDialog
         GridBagLayout gbl = new GridBagLayout();
         panEquip.setLayout(gbl);
         m_equip = new EquipChoicePanel(entity, clientGUI, client);
-        panEquip.add(m_equip, GBC.std());
+        panEquip.add(m_equip, GBC.eol());
+
+        // EI Interface checkbox - only show for eligible units (Clan Meks/BA, game year >= 3040)
+        boolean eligibleForEI = entities.stream().allMatch(this::canHaveEIInterface);
+        if (eligibleForEI) {
+            panEquip.add(labEIInterface, GBC.std());
+            panEquip.add(chEIInterface, GBC.eol());
+            chEIInterface.setSelected(entity.hasEiCockpit());
+            chEIInterface.setToolTipText(Messages.getString("CustomMekDialog.eiInterfaceTooltip"));
+        }
     }
 
     private void setStealth(Entity e, boolean stealthEnabled) {
@@ -1910,6 +1928,81 @@ public class CustomMekDialog extends AbstractButtonDialog
 
             m.setMode(newStealth);
             m.newRound(-1);
+        }
+    }
+
+    /**
+     * Checks if the entity is eligible for an EI Interface. Per IO p.69, EI Interface may be installed in any BattleMek
+     * or Battle Armor built using a Clan technology base. ProtoMeks always have EI built-in and cannot toggle it. EI
+     * Interface was introduced in 3040.
+     *
+     * @param entity the entity to check
+     *
+     * @return true if the entity can have an EI Interface toggled
+     */
+    private boolean canHaveEIInterface(Entity entity) {
+        // EI Interface introduced in 3040
+        int gameYear = client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+        if (gameYear < 3040) {
+            return false;
+        }
+        // ProtoMeks always have EI - cannot toggle
+        if (entity.isProtoMek()) {
+            return false;
+        }
+        // Only Meks and Battle Armor can have EI Interface
+        if (!entity.isMek() && !(entity instanceof BattleArmor)) {
+            return false;
+        }
+        // Must have Clan or Mixed tech base (IO p.69)
+        return entity.isClan() || entity.isMixedTech();
+    }
+
+    /**
+     * Sets the EI Interface equipment on an entity. Adds the equipment if enabled, removes it if disabled.
+     *
+     * @param entity  the entity to modify
+     * @param enabled true to add EI Interface, false to remove it
+     */
+    private void setEIInterface(Entity entity, boolean enabled) {
+        boolean hasEI = entity.hasEiCockpit();
+
+        if (enabled && !hasEI) {
+            // Add EI Interface equipment
+            try {
+                EquipmentType eiType = EquipmentType.get("EIInterface");
+                if (eiType != null) {
+                    entity.addEquipment(eiType, Entity.LOC_NONE);
+
+                    // EI Interface was introduced in 3040 - if unit is older but game year allows it,
+                    // mark entity to bypass intro year validation (IO p.69 - retrofittable equipment)
+                    int eiIntroYear = eiType.getIntroductionDate(entity.isClan());
+                    int unitYear = entity.getYear();
+                    int gameYear = client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+
+                    if ((eiIntroYear > unitYear) && (gameYear >= eiIntroYear)) {
+                        List<Entity.InvalidSourceBuildReason> reasons =
+                              new ArrayList<>(entity.getInvalidSourceBuildReasons());
+                        if (!reasons.contains(Entity.InvalidSourceBuildReason.UNIT_OLDER_THAN_EQUIPMENT_INTRO_YEAR)) {
+                            reasons.add(Entity.InvalidSourceBuildReason.UNIT_OLDER_THAN_EQUIPMENT_INTRO_YEAR);
+                            entity.setInvalidSourceBuildReasons(reasons);
+                        }
+                    }
+                }
+            } catch (LocationFullException e) {
+                // Should not happen for 0-slot equipment
+            }
+        } else if (!enabled && hasEI) {
+            // Remove EI Interface equipment
+            List<Mounted<?>> toRemove = new ArrayList<>();
+            for (Mounted<?> mounted : entity.getEquipment()) {
+                if ((mounted.getType() instanceof MiscType) &&
+                      mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                    toRemove.add(mounted);
+                }
+            }
+            entity.getEquipment().removeAll(toRemove);
+            entity.getMisc().removeAll(toRemove);
         }
     }
 
@@ -2217,6 +2310,7 @@ public class CustomMekDialog extends AbstractButtonDialog
             chCommander.setEnabled(false);
             chHidden.setEnabled(false);
             chDeployStealth.setEnabled(false);
+            chEIInterface.setEnabled(false);
             chOffBoard.setEnabled(false);
             choOffBoardDirection.setEnabled(false);
             fldOffBoardDistance.setEnabled(false);

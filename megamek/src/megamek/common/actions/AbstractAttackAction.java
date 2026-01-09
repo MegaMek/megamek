@@ -133,7 +133,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
             return toHit;
         }
 
-        // Enhanced Imaging (EI) ignores darkness modifiers per IO p.77
+        // Enhanced Imaging (EI) ignores darkness modifiers per IO p.69
         if (attacker.hasActiveEiCockpit()) {
             return toHit;
         }

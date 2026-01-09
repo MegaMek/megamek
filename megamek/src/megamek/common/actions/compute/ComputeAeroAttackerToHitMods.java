@@ -123,7 +123,7 @@ public class ComputeAeroAttackerToHitMods {
         }
 
         // add targeting computer (except with LBX cluster ammo)
-        // EI aimed shot modifiers per IO p.77: EI only = +2, EI with TC = -1
+        // EI aimed shot modifiers per IO p.69: EI only = +2, EI with TC = -1
         if (aimingMode.isTargetingComputer() && (aimingAt != Entity.LOC_NONE)) {
             if (attacker.hasActiveEiCockpit()) {
                 if (attacker.hasTargComp()) {

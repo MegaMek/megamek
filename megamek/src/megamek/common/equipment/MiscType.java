@@ -5858,14 +5858,16 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Enhanced Imaging Interface");
         misc.tonnage = 0;
         misc.criticalSlots = 0;
-        misc.cost = 0;
+        misc.cost = 1500000;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_EI_INTERFACE,
                 F_MEK_EQUIPMENT,
                 F_BA_EQUIPMENT,
                 F_PROTOMEK_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "77, IO";
+        misc.rulesRefs = "69, IO";
+        // EI Interface introduced 3040 by Clan Smoke Jaguar, per IO p.69
+        // Can be installed in any Clan-tech BattleMek or BA (no weight/space cost, but has C-Bill cost)
         misc.techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -5873,8 +5875,8 @@ public class MiscType extends EquipmentType {
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(3040, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(Faction.CLAN)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+              .setPrototypeFactions(Faction.CSJ)
+              .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
 

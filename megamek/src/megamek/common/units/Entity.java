@@ -6054,7 +6054,7 @@ public abstract class Entity extends TurnOrdered
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
 
-        // EI Interface provides 1-hex active probe per IO p.77
+        // EI Interface provides 1-hex active probe per IO p.69
         // This works even without the pilot implant (just the hardware)
         if (hasEiCockpit()) {
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
@@ -6156,7 +6156,7 @@ public abstract class Entity extends TurnOrdered
             return cyberBaseProbe + quirkBonus + spaBonus;
         }
 
-        // EI Interface provides 1-hex active probe per IO p.77
+        // EI Interface provides 1-hex active probe per IO p.69
         // This works even without the pilot implant (just the hardware)
         if (hasEiCockpit()) {
             return 1;
@@ -11673,7 +11673,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Sets the EI shutdown state. ProtoMeks and units with MDI cannot shut down EI. Per IO p.77, EI can be voluntarily
+     * Sets the EI shutdown state. ProtoMeks and units with MDI cannot shut down EI. Per IO p.69, EI can be voluntarily
      * shut down during the End Phase.
      *
      * @param shutdown true to shut down EI, false to activate it
@@ -11686,7 +11686,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns whether this unit can shut down its EI Interface. ProtoMeks cannot shut down EI (it's integral to their
-     * design). Units with MDI (Machine/Direct Interface) cannot shut down EI. Per IO p.77.
+     * design). Units with MDI (Machine/Direct Interface) cannot shut down EI. Per IO p.69.
      */
     public boolean canShutdownEi() {
         if (!hasEiCockpit()) {

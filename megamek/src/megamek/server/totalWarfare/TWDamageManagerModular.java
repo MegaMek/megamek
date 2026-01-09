@@ -374,7 +374,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             }
         }
 
-        // EI (Enhanced Imaging) feedback on internal damage per IO p.77
+        // EI (Enhanced Imaging) feedback on internal damage per IO p.69
         // When taking IS damage, roll 2d6 - if result < 7, take 1 pilot damage
         // Pain Shunt blocks this feedback
         if (tookInternalDamage &&

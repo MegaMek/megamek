@@ -100,6 +100,7 @@ import megamek.common.board.BoardHelper;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.DockingCollar;
 import megamek.common.equipment.ExternalCargo;
@@ -170,6 +171,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private boolean isUnJammingRAC;
     private boolean isUsingChaff;
+
+    /** True when selecting a hex for Combat Vehicle Escape Pod landing (TO:AUE p.121) */
+    private boolean isSelectingEscapePodLanding;
+    /** Valid hexes for escape pod landing (rear arc, 0-4 hexes) */
+    private Set<Coords> validEscapePodHexes = new HashSet<>();
 
     // buttons
     private Map<MoveCommand, MegaMekButton> buttons;
@@ -785,6 +791,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setAbandonEnabled(false);
         }
 
+        // Combat Vehicle Escape Pod - only available for vehicles with undamaged CVEP per TO:AUE p.121
+        if (isTank && (selectedUnit instanceof Tank tank)) {
+            setLaunchEscapePodEnabled(tank.canLaunchEscapePod());
+        } else {
+            setLaunchEscapePodEnabled(false);
+        }
+
         // if dropping unit only allows turning
         if (!selectedUnit.isAero() && cmd.getFinalAltitude() > 0) {
             disableButtons();
@@ -1135,6 +1148,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setFlyOffEnabled(false);
         setEjectEnabled(false);
         setAbandonEnabled(false);
+        setLaunchEscapePodEnabled(false);
         setUnjamEnabled(false);
         setSearchlightEnabled(false, false);
         setGetUpEnabled(false);
@@ -1205,6 +1219,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
     @Override
     public void clear() {
         final Entity currentlySelectedEntity = currentEntity();
+
+        // Cancel escape pod hex selection if active
+        if (isSelectingEscapePodLanding) {
+            cancelEscapePodHexSelection();
+        }
 
         // clear board cursors
         clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
@@ -5254,6 +5273,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     ready();
                 }
             }
+        } else if (actionCmd.equals(MoveCommand.MOVE_LAUNCH_ESCAPE_POD.getCmd())) {
+            // Combat Vehicle Escape Pod launch (TO:AUE p.121)
+            if ((entity instanceof Tank tank) && tank.canLaunchEscapePod()) {
+                startEscapePodHexSelection(tank);
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_LOAD.getCmd())) {
             // Find the other friendly unit in our hex, add it
             // to our local list of loaded units, and then stop.
@@ -6197,6 +6221,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_ABANDON.getCmd(), enabled);
     }
 
+    private void setLaunchEscapePodEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_LAUNCH_ESCAPE_POD).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_LAUNCH_ESCAPE_POD.getCmd(), enabled);
+    }
+
     private void setUnjamEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_UNJAM).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_UNJAM.getCmd(), enabled);
@@ -6507,5 +6536,84 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private boolean hasLandingMoveStep() {
         return (cmd != null) && (cmd.contains(MoveStepType.LAND) || cmd.contains(MoveStepType.VERTICAL_LAND));
+    }
+
+    // ==================== Combat Vehicle Escape Pod Hex Selection ====================
+
+    /**
+     * Starts the escape pod landing hex selection mode. Calculates valid hexes in the rear arc within 4 hexes and
+     * highlights them. Per TO:AUE p.121, the pod travels up to 4 hexes behind the vehicle.
+     */
+    private void startEscapePodHexSelection(Tank tank) {
+        isSelectingEscapePodLanding = true;
+        validEscapePodHexes.clear();
+
+        Coords tankPos = tank.getPosition();
+        int facing = tank.getFacing();
+        Board board = game.getBoard();
+
+        // Include the tank's own hex (distance 0)
+        validEscapePodHexes.add(tankPos);
+
+        // Get all hexes within 4 hexes and filter to rear arc
+        for (int range = 1; range <= 4; range++) {
+            List<Coords> hexesAtRange = tankPos.allAtDistance(range);
+            for (Coords coords : hexesAtRange) {
+                if (board.contains(coords) &&
+                      ComputeArc.isInArc(tankPos, facing, coords, Compute.ARC_REAR)) {
+                    validEscapePodHexes.add(coords);
+                }
+            }
+        }
+
+        // Highlight valid hexes on the board using movement envelope
+        Map<Coords, Integer> highlightData = new HashMap<>();
+        for (Coords coords : validEscapePodHexes) {
+            highlightData.put(coords, 0);  // 0 = walkable range color
+        }
+        clientgui.showMovementEnvelope(tank, highlightData, GEAR_LAND);
+
+        // Set status bar message instead of modal dialog
+        setStatusBarText(Messages.getString("MovementDisplay.LaunchEscapePodDialog.selectHex"));
+    }
+
+    /**
+     * Cancels escape pod hex selection mode and clears highlighting.
+     */
+    private void cancelEscapePodHexSelection() {
+        isSelectingEscapePodLanding = false;
+        validEscapePodHexes.clear();
+        clientgui.clearMovementEnvelope();
+    }
+
+    /**
+     * Completes the escape pod launch with the selected landing hex.
+     */
+    private void completeEscapePodLaunch(Coords landingHex) {
+        isSelectingEscapePodLanding = false;
+        validEscapePodHexes.clear();
+        clientgui.clearMovementEnvelope();
+
+        clear();
+        // Store landing coords in MoveStep using additionalData map
+        Map<Integer, Integer> coordData = new HashMap<>();
+        coordData.put(0, landingHex.getX());  // Key 0 = X coordinate
+        coordData.put(1, landingHex.getY());  // Key 1 = Y coordinate
+        cmd.addStep(MoveStepType.LAUNCH_ESCAPE_POD, coordData);
+        ready();
+    }
+
+    @Override
+    public void hexSelected(BoardViewEvent event) {
+        // Handle escape pod hex selection
+        if (isSelectingEscapePodLanding && event.getCoords() != null) {
+            if (validEscapePodHexes.contains(event.getCoords())) {
+                completeEscapePodLaunch(event.getCoords());
+            } else {
+                // Cancel selection on click outside valid hexes
+                cancelEscapePodHexSelection();
+            }
+            return;
+        }
     }
 }

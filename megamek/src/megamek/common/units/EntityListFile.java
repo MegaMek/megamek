@@ -1600,7 +1600,7 @@ public class EntityListFile {
             output.write("\" " + MULParser.ATTR_EI_IMPLANTS + "=\"");
             output.write(String.valueOf(crew.getOptionList("::", PilotOptions.EI_ADVANTAGES)));
         }
-        // Save EI Interface equipment mode (Off, On, Aimed shot)
+        // Save EI Interface equipment mode (Off, Initiate enhanced imaging)
         for (Mounted<?> m : entity.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
                 output.write("\" " + MULParser.ATTR_EI_MODE + "=\"");

@@ -5826,7 +5826,7 @@ public class Compute {
         // Enhanced Imaging bonus for anti-Mek attacks - IO p.69
         // "All Piloting Skill rolls required for the EI-equipped unit receives a -1
         // target number modifier. This includes checks made for physical attacks,
-        // as well as anti-Mech attacks by EI-equipped battle armor."
+        // as well as anti-Mek attacks by EI-equipped battle armor."
         if (attacker.hasActiveEiCockpit()) {
             data.addModifier(-1, Messages.getString("Compute.EnhancedImaging"));
         }

@@ -252,22 +252,25 @@ public class EiImplantTest {
     class HasActiveEiCockpitTests {
 
         @Test
-        @DisplayName("ProtoMek with EI implant has active EI cockpit")
-        void protoMekWithImplantHasActiveEiCockpit() {
+        @DisplayName("ProtoMek always has active EI cockpit (built-in per IO p.77)")
+        void protoMekAlwaysHasActiveEiCockpit() {
             ProtoMek proto = createProtoMek();
-            proto.getCrew().getOptions().getOption(OptionsConstants.MD_EI_IMPLANT).setValue(true);
-
+            // ProtoMeks have built-in EI that doesn't require crew implant option
+            // per IO p.77 - they are neurally connected by design
             assertTrue(proto.hasActiveEiCockpit(),
-                  "ProtoMek with EI implant should have active EI cockpit");
+                  "ProtoMek should always have active EI cockpit (built-in, no crew option needed)");
         }
 
         @Test
-        @DisplayName("ProtoMek without EI implant does not have active EI cockpit")
-        void protoMekWithoutImplantDoesNotHaveActiveEiCockpit() {
+        @DisplayName("ProtoMek EI active without MD_EI_IMPLANT option")
+        void protoMekEiActiveWithoutImplantOption() {
             ProtoMek proto = createProtoMek();
-
-            assertFalse(proto.hasActiveEiCockpit(),
-                  "ProtoMek without EI implant should not have active EI cockpit");
+            // Explicitly verify crew does NOT have MD_EI_IMPLANT set
+            assertFalse(proto.getCrew().getOptions().booleanOption(OptionsConstants.MD_EI_IMPLANT),
+                  "Test setup: crew should not have MD_EI_IMPLANT option");
+            // ProtoMek EI should still be active
+            assertTrue(proto.hasActiveEiCockpit(),
+                  "ProtoMek EI should be active even without crew MD_EI_IMPLANT option");
         }
 
         @Test
@@ -298,7 +301,7 @@ public class EiImplantTest {
         @DisplayName("setEiShutdown does not affect ProtoMek")
         void setEiShutdownDoesNotAffectProtoMek() {
             ProtoMek proto = createProtoMek();
-            proto.getCrew().getOptions().getOption(OptionsConstants.MD_EI_IMPLANT).setValue(true);
+            // ProtoMek EI is built-in - no crew option needed
 
             assertTrue(proto.hasActiveEiCockpit(), "ProtoMek should have active EI before shutdown attempt");
 

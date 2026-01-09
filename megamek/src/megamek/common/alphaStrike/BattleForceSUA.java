@@ -152,6 +152,11 @@ public enum BattleForceSUA {
               || isArtillery();
     }
 
+    /** @return True when this SUA optionally uses an Integer (can be null or Integer). */
+    public boolean usesOptionalIntegerObject() {
+        return isAnyOf(MFB);
+    }
+
     /** @return True when this SUA uses an Integer or Double value (the transport SUAs). */
     public boolean usesDoubleOrIntegerObject() {
         return isTransport() || this == IT;
@@ -187,7 +192,8 @@ public enum BattleForceSUA {
               || (abilityObject instanceof Integer) && usesIntegerObject())
               || (this == TUR && abilityObject instanceof ASSpecialAbilityCollection)
               || ((abilityObject == null) && usesNoObject())
-              || ((abilityObject instanceof Map) && usesMapObject());
+              || ((abilityObject instanceof Map) && usesMapObject())
+              || (((abilityObject == null) || (abilityObject instanceof Integer)) && usesOptionalIntegerObject());
     }
 
     /**

@@ -214,6 +214,25 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
         }
 
+        // Combat Vehicle Escape Pod launch (TO:AUE p.121)
+        if (md.contains(MoveStepType.LAUNCH_ESCAPE_POD)) {
+            if ((entity instanceof Tank tank) && tank.canLaunchEscapePod()) {
+                // Find the step to get the player-chosen landing hex
+                Coords landingCoords = null;
+                for (MoveStep step : md.getStepVector()) {
+                    if (step.getType() == MoveStepType.LAUNCH_ESCAPE_POD) {
+                        landingCoords = step.getEscapePodLandingCoords();
+                        break;
+                    }
+                }
+                addReport(gameManager.launchCombatVehicleEscapePod(tank, landingCoords));
+                // Mark entity's turn as complete so client advances to next unit
+                entity.setDone(true);
+                gameManager.entityUpdate(entity.getId());
+                return;
+            }
+        }
+
         // Handle Mek abandonment announcements during Movement Phase (TacOps:AR p.165)
         // Mek must be prone and shutdown; crew exits during End Phase of following turn
         if (md.contains(MoveStepType.ABANDON) && (entity instanceof Mek mek) && mek.canAbandon()) {

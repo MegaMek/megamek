@@ -2067,6 +2067,26 @@ public class Infantry extends Entity {
     }
 
     /**
+     * Checks if any prosthetic enhancement provides an Anti-Mek BV multiplier. Per IO p.84, Grappler Lines and Climbing
+     * Claws provide a 1.2x multiplier on the Anti-Mek Battle Rating.
+     *
+     * @return True if any enhancement provides an Anti-Mek BV multiplier
+     */
+    public boolean hasAntiMekBvMultiplier() {
+        return getBestProstheticAntiMekModifier() != 0;
+    }
+
+    /**
+     * Gets the Anti-Mek BV multiplier from prosthetic enhancements. Per IO p.84, units with Grappler Lines or Climbing
+     * Claws multiply their Anti-Mek Battle Rating by 1.2.
+     *
+     * @return 1.2 if the unit has Grappler or Climbing Claws, 1.0 otherwise
+     */
+    public double getAntiMekBvMultiplier() {
+        return hasAntiMekBvMultiplier() ? 1.2 : 1.0;
+    }
+
+    /**
      * Checks if any prosthetic enhancement (regular or extraneous) is a melee type.
      *
      * @return True if any enhancement is melee

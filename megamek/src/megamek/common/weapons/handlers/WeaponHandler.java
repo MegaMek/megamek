@@ -35,6 +35,7 @@
 package megamek.common.weapons.handlers;
 
 import static java.lang.Math.floor;
+import static megamek.common.equipment.AmmoType.INCENDIARY_MOD;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

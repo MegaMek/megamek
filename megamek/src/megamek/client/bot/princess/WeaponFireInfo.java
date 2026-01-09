@@ -35,6 +35,7 @@ package megamek.client.bot.princess;
 
 import static megamek.common.equipment.AmmoType.FLARE_MUNITIONS;
 import static megamek.common.equipment.AmmoType.MINE_MUNITIONS;
+import static megamek.common.equipment.AmmoType.Munitions.M_INCENDIARY_LRM;
 import static megamek.common.equipment.AmmoType.SMOKE_MUNITIONS;
 
 import java.text.DecimalFormat;
@@ -549,6 +550,16 @@ public class WeaponFireInfo {
                 boolean artillery = (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY);
                 int rs = weaponType.getRackSize();
                 int damage = Compute.calculateClusterHitTableAmount(7, rs);
+
+                // Account for Incendiary-modded munitions when firing on infantry
+                if ((target != null && target.isInfantry()) &&
+                      (preferredAmmo != null && preferredAmmo.getType() != null)) {
+                    AmmoType ammoType = preferredAmmo.getType();
+                    if (ammoType.getMunitionType().contains(M_INCENDIARY_LRM)) {
+                        damage += Math.ceil(weaponType.getRackSize() / 5.0);
+                    }
+                }
+
                 return new double[] {
                       damage,
                       (artillery) ? damage * 4 : 0D,

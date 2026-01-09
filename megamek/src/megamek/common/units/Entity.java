@@ -234,6 +234,8 @@ public abstract class Entity extends TurnOrdered
 
     public static final long ETYPE_BUILDING_ENTITY = 1L << 30;
 
+    public static final long ETYPE_COMBAT_VEHICLE_ESCAPE_POD = 1L << 31;
+
     public static final int BLOOD_STALKER_TARGET_CLEARED = -2;
 
     public static final int LOC_NONE = -1;

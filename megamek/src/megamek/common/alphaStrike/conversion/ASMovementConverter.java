@@ -302,6 +302,9 @@ final class ASMovementConverter {
             case WIGE:
                 report.addLine(type, "Wige", "g");
                 return "g";
+            case RAIL:
+                report.addLine(type, "Rail", "r");
+                return "r";
             case AERODYNE:
                 report.addLine(type, "Aerodyne", "a");
                 return "a";

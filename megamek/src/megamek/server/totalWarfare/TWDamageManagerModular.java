@@ -303,6 +303,10 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                   underWater,
                   nukeS2S,
                   mods);
+        } else if (entity instanceof CombatVehicleEscapePod) {
+            // CVEP uses parent's specialized handler (2-damage threshold breach model per TO:AUE p.121)
+            super.damageEntity(entity, hit, damage, ammoExplosion, damageType, damageIS,
+                  areaSatArty, throughFront, underWater, nukeS2S, reportVec);
         } else if (entity instanceof Infantry teCast && teCast.isConventionalInfantry()) {
             damageInfantry(reportVec,
                   teCast,

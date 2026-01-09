@@ -301,13 +301,15 @@ public class ComputeAttackerToHitMods {
         }
 
         // add targeting computer (except with LBX cluster ammo)
-        // EI aimed shot modifiers per IO p.69: EI only = +2, EI with TC = -1
+        // EI aimed shot modifiers per IO p.69: EI allows aimed shots "as if equipped with a TC" (TW p.143 = +3 base)
+        // EI only: +3 base + +2 additional = +5 total
+        // EI + TC: +3 base + (-1 replaces +2) = +2 total
         if (aimingMode.isTargetingComputer() && (aimingAt != Entity.LOC_NONE)) {
             if (attacker.hasActiveEiCockpit()) {
                 if (attacker.hasTargComp()) {
-                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.AimWithTCompEi"));
+                    toHit.addModifier(2, Messages.getString("WeaponAttackAction.AimWithTCompEi"));
                 } else {
-                    toHit.addModifier(2, Messages.getString("WeaponAttackAction.AimWithEiOnly"));
+                    toHit.addModifier(5, Messages.getString("WeaponAttackAction.AimWithEiOnly"));
                 }
             } else if (attacker.hasTCPAimedShotCapability() && attacker.hasTargComp()) {
                 // TCP+VDNI with actual TC gets additional -1 per IO pg 81

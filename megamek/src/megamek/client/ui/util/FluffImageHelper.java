@@ -108,7 +108,7 @@ public final class FluffImageHelper {
         if (unit == null) {
             return null;
         }
-        File fluffImageFile = findFluffFile(unit, true);
+        File fluffImageFile = findFluffFiles(unit, true).stream().findFirst().orElse(null);
         if (fluffImageFile != null) {
             return fluffImageFile.toString();
         } else {

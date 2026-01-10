@@ -35,9 +35,10 @@
 package megamek.client.ui.util;
 
 import megamek.client.ui.tileset.TilesetManager;
-import megamek.common.*;
+import megamek.common.Hex;
 import megamek.common.equipment.Engine;
 import megamek.common.interfaces.IEntityRemovalConditions;
+import megamek.common.units.CombatVehicleEscapePod;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityWeightClass;
@@ -62,17 +63,21 @@ public class EntityWreckHelper {
         // for meks/infantry/VTOLs (needs specialized icons)
         // for units that were destroyed by ejection rather than unit destruction
         // for units on top of a bridge (looks kind of stupid)
+        // Exception: CVEP should display wrecks even though it extends Infantry
+
+        boolean isInfantryButNotCVEP = (entity instanceof Infantry) && !(entity instanceof CombatVehicleEscapePod);
 
         return !entity.getGame().getBoard(entity).isSpace() &&
               (!(entity instanceof Mek)) &&
-              (!(entity instanceof Infantry)) &&
+              (!isInfantryButNotCVEP) &&
               (!(entity.isBuildingEntityOrGunEmplacement())) &&
               entity.getSecondaryPositions().isEmpty() &&
               !entityOnBridge(entity);
     }
 
     public static boolean useExplicitWreckImage(Entity entity) {
-        return entity instanceof Mek;
+        // Meks have specialized wreck images; CVEP uses wreckset.txt lookup for small_boom.png
+        return (entity instanceof Mek) || (entity instanceof CombatVehicleEscapePod);
     }
 
     /**

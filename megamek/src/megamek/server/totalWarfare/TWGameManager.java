@@ -26245,7 +26245,21 @@ public class TWGameManager extends AbstractGameManager {
                 return;
             }
 
-            LOGGER.debug("Abandon announce rejected: entity is not a Mek or Tank");
+            // Check if this is an escape pod where crew can exit
+            if (entity instanceof CombatVehicleEscapePod pod) {
+                if (!pod.canCrewExit()) {
+                    LOGGER.debug("Pod exit rejected: crew cannot exit");
+                    return;
+                }
+                // Crew exits immediately (unlike Mek/Tank abandonment which waits a turn)
+                Vector<Report> reports = exitEscapePod(pod);
+                for (Report report : reports) {
+                    addReport(report);
+                }
+                return;
+            }
+
+            LOGGER.debug("Abandon announce rejected: entity is not a Mek, Tank, or Escape Pod");
         } catch (Exception ex) {
             LOGGER.error("Error processing unit abandonment announcement", ex);
         }
@@ -29269,9 +29283,245 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Processes pending Mek abandonments per TacOps:AR p.165. Called during End Phase to: 1. Execute abandonments that
-     * were announced in the previous End Phase 2. Cancel abandonments if the Mek is no longer prone and shutdown (Meks
-     * only)
+     * Launches a Combat Vehicle Escape Pod per TO:AUE p.121.
+     * <p>
+     * The crew attempts to escape via the CVEP:
+     * 1. Piloting Skill Roll +2 for launch
+     * 2. Pod travels up to 4 hexes directly behind the vehicle
+     * 3. Landing roll (MekWarrior Ejection roll) +2
+     * 4. Each failed roll results in one crewman taking a hit
+     * 5. Surviving crew become conventional foot infantry
+     * 6. Vehicle is destroyed (Crew Killed result)
+     *
+     * @param tank The Tank launching the escape pod
+     * @return Vector of Reports for the game log
+     */
+    public Vector<Report> launchCombatVehicleEscapePod(Tank tank, Coords chosenLandingHex) {
+        Vector<Report> vDesc = new Vector<>();
+        Report report;
+
+        // Validate the tank can launch
+        if (!tank.canLaunchEscapePod()) {
+            return vDesc;
+        }
+
+        // Report the launch attempt
+        report = new Report(5331);
+        report.subject = tank.getId();
+        report.addDesc(tank);
+        vDesc.addElement(report);
+
+        Crew crew = tank.getCrew();
+        int crewSize = crew.getSlotCount();
+        int survivingCrew = crewSize;
+        int facing = tank.getFacing();
+        // Pod launches directly behind the vehicle (opposite of facing)
+        int rearFacing = (facing + 3) % 6;
+        LOGGER.debug("CVEP launch: tank at {}, facing {}, rear direction {}",
+              tank.getPosition().toFriendlyString(), facing, rearFacing);
+
+        // Step 1: Piloting Skill Roll +2 for launch
+        // TODO: Per TO:AUE p.121, failed launch/landing rolls should apply physical damage to a
+        // randomly determined crewman. Currently we just decrement the surviving crew count.
+        // This needs MekHQ coordination to properly track which crew member is injured and
+        // apply appropriate hit location/damage for campaign continuity.
+        int launchTarget = crew.getPiloting() + 2;
+        Roll launchRoll = Compute.rollD6(2);
+
+        report = new Report(5332);
+        report.subject = tank.getId();
+        report.add(launchTarget);
+        report.add(launchRoll.getIntValue());
+        boolean launchSuccess = launchRoll.getIntValue() >= launchTarget;
+        report.choose(launchSuccess);
+        vDesc.addElement(report);
+        if (!launchSuccess) {
+            // One crewman takes a hit
+            survivingCrew--;
+
+            // If all crew are dead from launch failure, create crashed pod wreckage
+            if (survivingCrew <= 0) {
+                report = new Report(5337);
+                report.subject = tank.getId();
+                vDesc.addElement(report);
+
+                // Create CVEP 1 hex behind the tank (rear direction = facing + 3)
+                int rearDirection = (tank.getFacing() + 3) % 6;
+                Coords crashCoords = tank.getPosition().translated(rearDirection);
+                // Fall back to tank's position if rear hex is off-board
+                if (!game.getBoard().contains(crashCoords)) {
+                    crashCoords = tank.getPosition();
+                }
+                CombatVehicleEscapePod crashedPod = new CombatVehicleEscapePod(tank, crashCoords);
+                crashedPod.setDeployed(true);
+                crashedPod.setId(game.getNextEntityId());
+                game.addEntity(crashedPod);
+                send(createAddEntityPacket(crashedPod.getId()));
+                crashedPod.setDone(true);
+
+                // Destroy the crashed pod to show wreckage marker
+                vDesc.addAll(destroyEntity(crashedPod,
+                      Messages.getString("MovementDisplay.CVEP.destroyReason.crewLossInPodCrash"), false, false));
+
+                // Vehicle is abandoned - crew died in the escape pod crash
+                vDesc.addAll(destroyEntity(tank,
+                      Messages.getString("MovementDisplay.CVEP.destroyReason.crewLossInPodCrash"), false, true));
+                return vDesc;
+            }
+
+            // Crew injured but survivors remain
+            Report damageReport = new Report(5336);
+            damageReport.subject = tank.getId();
+            vDesc.addElement(damageReport);
+        }
+
+        // Step 2: Pod travels to the player-chosen hex in the rear arc
+        Coords startCoords = tank.getPosition();
+        Coords landingCoords = (chosenLandingHex != null) ? chosenLandingHex : startCoords;
+
+        // Validate landing hex is on the board, fall back to tank's position if not
+        if (!game.getBoard().contains(landingCoords)) {
+            landingCoords = startCoords;
+        }
+
+        int podDistance = startCoords.distance(landingCoords);
+        LOGGER.debug("CVEP landing: distance {}, landing at {}",
+              podDistance, landingCoords.toFriendlyString());
+        report = new Report(5333);
+        report.subject = tank.getId();
+        report.add(podDistance);
+        vDesc.addElement(report);
+
+        // Step 3: Landing roll (Ejection roll +2)
+        int landingTarget = crew.getPiloting() + 2;
+        Roll landingRoll = Compute.rollD6(2);
+
+        report = new Report(5334);
+        report.subject = tank.getId();
+        report.add(landingTarget);
+        report.add(landingRoll.getIntValue());
+        boolean landingSuccess = landingRoll.getIntValue() >= landingTarget;
+        report.choose(landingSuccess);
+        vDesc.addElement(report);
+        if (!landingSuccess) {
+            // One crewman takes a hit
+            survivingCrew--;
+
+            // Crew injured but survivors remain
+            if (survivingCrew > 0) {
+                Report damageReport = new Report(5338);
+                damageReport.subject = tank.getId();
+                vDesc.addElement(damageReport);
+            }
+        }
+
+        // Step 4: Create escape pod entity at landing location
+        // The pod physically lands even if all crew die - it just becomes wreckage
+        CombatVehicleEscapePod escapePod = new CombatVehicleEscapePod(tank, landingCoords);
+        escapePod.setDeployed(true);
+        escapePod.setId(game.getNextEntityId());
+        game.addEntity(escapePod);
+        send(createAddEntityPacket(escapePod.getId()));
+        escapePod.setDone(true);
+
+        if (survivingCrew > 0) {
+            // Apply crew injuries from failed launch/landing rolls
+            if (survivingCrew < crewSize) {
+                escapePod.setInternal(survivingCrew, Infantry.LOC_INFANTRY);
+            }
+
+            entityUpdate(escapePod.getId());
+
+            report = new Report(5335);
+            report.subject = tank.getId();
+            report.add(crew.getName());
+            report.add(landingCoords.toFriendlyString());
+            vDesc.addElement(report);
+
+            // Check for minefield
+            vDesc.addAll(doEntityDisplacementMinefieldCheck(escapePod,
+                  startCoords, landingCoords, 0));
+        } else {
+            // All crew died - pod crashed, leaving wreckage at landing site
+            report = new Report(5337);
+            report.subject = tank.getId();
+            vDesc.addElement(report);
+
+            // Destroy the crashed pod to show wreckage marker
+            vDesc.addAll(destroyEntity(escapePod,
+                  Messages.getString("MovementDisplay.CVEP.destroyReason.crewLossInPodCrash"), false, false));
+        }
+
+        // Step 5: Mark crew as ejected and destroy the abandoned vehicle
+        crew.setEjected(true);
+
+        report = new Report(5339);
+        report.subject = tank.getId();
+        report.addDesc(tank);
+        vDesc.addElement(report);
+
+        vDesc.addAll(destroyEntity(tank,
+              Messages.getString("MovementDisplay.CVEP.destroyReason.escapePodLaunch"), true, true));
+
+        return vDesc;
+    }
+
+    /**
+     * Handles crew exiting a Combat Vehicle Escape Pod. Per TO:AUE p.121, crew can exit the pod as conventional foot
+     * infantry, or remain inside if in water/toxic environment.
+     *
+     * @param pod The escape pod being exited
+     *
+     * @return Vector of Reports for the game log
+     */
+    public Vector<Report> exitEscapePod(CombatVehicleEscapePod pod) {
+        Vector<Report> vDesc = new Vector<>();
+        Report report;
+
+        if (!pod.canCrewExit()) {
+            return vDesc;
+        }
+
+        Crew crew = pod.getCrew();
+        Coords podPosition = pod.getPosition();
+
+        // Report crew exiting
+        report = new Report(5340);
+        report.subject = pod.getId();
+        report.add(crew.getName());
+        report.addDesc(pod);
+        vDesc.addElement(report);
+
+        // Create EjectedCrew infantry unit
+        EjectedCrew infantry = new EjectedCrew(crew, pod.getOwner(), game);
+        infantry.setDeployed(true);
+        infantry.setId(game.getNextEntityId());
+        infantry.setPosition(podPosition);
+        game.addEntity(infantry);
+        send(createAddEntityPacket(infantry.getId()));
+        infantry.setDone(true);
+        entityUpdate(infantry.getId());
+
+        // Report infantry created
+        report = new Report(5341);
+        report.subject = pod.getId();
+        report.add(crew.getName());
+        report.add(podPosition.toFriendlyString());
+        vDesc.addElement(report);
+
+        // Mark pod as empty and remove it
+        pod.setCrewInside(false);
+        vDesc.addAll(destroyEntity(pod,
+              Messages.getString("MovementDisplay.CVEP.destroyReason.crewExited"), false, false));
+
+        return vDesc;
+    }
+
+    /**
+     * Processes pending Mek abandonments per TacOps:AR p.165.
+     * Called during End Phase to:
+     * 1. Execute abandonments that were announced in the previous End Phase
+     * 2. Cancel abandonments if the Mek is no longer prone and shutdown (Meks only)
      */
     void processUnitAbandonments() {
         int currentRound = game.getRoundCount();

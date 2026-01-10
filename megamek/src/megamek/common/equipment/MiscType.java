@@ -5138,12 +5138,12 @@ public class MiscType extends EquipmentType {
     // Ejection and Escape Systems
 
     public static MiscType createISCombatVehicleEscapePod() {
-        // TODO: implement game rules
         MiscType misc = new MiscType();
         misc.name = "Combat Vehicle Escape Pod";
         misc.setInternalName("ISCombatVehicleEscapePod");
         misc.tonnage = 4;
         misc.criticalSlots = 0;
+        misc.tankSlots = 1; // Treated as weapon item in rear, hittable by criticals (TO:AUE p.121)
         misc.cost = 10000;
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT, F_VTOL_EQUIPMENT, F_COMBAT_VEHICLE_ESCAPE_POD);
         misc.rulesRefs = "121, TO:AUE";

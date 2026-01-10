@@ -119,40 +119,36 @@ public final class FluffImageHelper {
     /**
      * Returns a list of all fluff images for the given unit/object to be shown e.g. in the unit summary.
      *
-     * <P>If a fluff image is stored in the unit/object itself, e.g. if it was part of the
+     * <p>If a fluff image is stored in the unit/object itself, e.g. if it was part of the
      * unit's file or is created by the unit itself, only this is returned. Note that this is not used for canon units, but may be used in
-     * custom ones by adding a fluff image to the unit in MML.
+     * custom ones by adding a fluff image to the unit in MML.</p>
      *
-     * <P>Otherwise, the fluff image directories are searched. First searches the user dir,
+     * <p>Otherwise, the fluff image directories are searched. First searches the user dir,
      * then the internal dir. Tries to match the image by chassis + model or chassis alone. Chassis and model names are cleaned from " and /
      * characters before matching. For Meks with clan names, both names and the combinations are searched. The model alone is not used to
-     * search.
-     *
-     * Returns null if no fluff image can be found.
+     * search.</p>
      *
      * @param unit The unit
-     * @return a fluff image or null, if no match is found
+     * @return a list of fluff images, or an empty list if none are found
      */
     public static List<Image> getFluffImages(@Nullable BTObject unit) {
         return getFluffImageList(unit, false);
     }
 
     /**
-     * Returns a list of all fluff images for the given unit/object to be shown e.g. in the unit summary.
+     * Returns a list of all fluff image records for the given unit/object to be shown e.g. in the unit summary.
      *
-     * <P>If a fluff image is stored in the unit/object itself, e.g. if it was part of the
+     * <p>If a fluff image is stored in the unit/object itself, e.g. if it was part of the
      * unit's file or is created by the unit itself, only this is returned. Note that this is not used for canon units, but may be used in
-     * custom ones by adding a fluff image to the unit in MML.
+     * custom ones by adding a fluff image to the unit in MML.</p>
      *
-     * <P>Otherwise, the fluff image directories are searched. First searches the user dir,
+     * <p>Otherwise, the fluff image directories are searched. First searches the user dir,
      * then the internal dir. Tries to match the image by chassis + model or chassis alone. Chassis and model names are cleaned from " and /
      * characters before matching. For Meks with clan names, both names and the combinations are searched. The model alone is not used to
-     * search.
-     *
-     * Returns null if no fluff image can be found.
+     * search.</p>
      *
      * @param unit The unit
-     * @return a fluff image or null, if no match is found
+     * @return a list of fluff image records, or an empty list if none are found
      */
     public static List<FluffImageRecord> getFluffRecords(@Nullable BTObject unit) {
         return getFluffImageRecords(unit, false);
@@ -176,11 +172,7 @@ public final class FluffImageHelper {
     private static @Nullable Image getFluffImage(@Nullable BTObject unit, boolean recordSheet) {
         List<Image> fluffImages = getFluffImageList(unit, recordSheet);
         if (!fluffImages.isEmpty()) {
-            //return fluffImages.get(0);
-            // TEST --- just choose a random image from the available ones. Should be get(0) instead
-            int rndIndex = (int) (Math.random() * fluffImages.size());
-            return fluffImages.get(rndIndex);
-            // ---
+            return fluffImages.get(0);
         } else {
             return null;
         }
@@ -346,11 +338,11 @@ public final class FluffImageHelper {
 
     private static List<File> getFluffInDir(File dir) {
         List<File> result = new ArrayList<>();
-        try (Stream<Path> entries = Files.walk(dir.toPath())) {
+        try (Stream<Path> entries = Files.walk(dir.toPath(), 1)) {
             result.addAll(entries.map(Objects::toString).map(File::new).toList());
             result.removeIf(FluffImageHelper::isNoImageFile);
         } catch (IOException e) {
-            LogManager.getLogger().warn("Error while reading files from " + dir, e);
+            LogManager.getLogger().warn("Error while reading files from {}", dir, e);
         }
         return result;
     }
@@ -481,8 +473,10 @@ public final class FluffImageHelper {
         public Image getImage() throws IOException {
             if (image != null) {
                 return image;
-            } else {
+            } else if (file != null) {
                 return ImageIO.read(file);
+            } else {
+                return null;
             }
         }
     }
@@ -502,6 +496,6 @@ public final class FluffImageHelper {
     public static Optional<String> getExtension(String filename) {
         return Optional.ofNullable(filename)
                 .filter(f -> f.contains("."))
-                .map(f -> f.substring(filename.lastIndexOf(".")));
+                .map(f -> f.substring(f.lastIndexOf(".")));
     }
 }

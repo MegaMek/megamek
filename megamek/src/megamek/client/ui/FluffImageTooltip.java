@@ -115,17 +115,41 @@ public class FluffImageTooltip {
     }
 
     private static Optional<File> getYamlFile(File imageFile) {
-        try (Stream<Path> entries = Files.walk(imageFile.getParentFile().toPath())) {
+        File parent = imageFile.getParentFile();
+        if (parent == null) {
+            LogManager.getLogger().warn("Image file {} has no parent directory; cannot search for YAML.", imageFile);
+            return Optional.empty();
+        }
+        try (Stream<Path> entries = Files.walk(parent.toPath(), 1)) {
             return entries.filter(p -> isSuitableYamlFile(p, imageFile)).map(Path::toFile).findFirst();
         } catch (Exception e) {
-            LogManager.getLogger().warn("Error while reading files from {}", imageFile.getParentFile(), e);
+            LogManager.getLogger().warn("Error while reading files from {}", parent, e);
             return Optional.empty();
         }
     }
 
     private static boolean isSuitableYamlFile(Path yamlFile, File imageFile) {
-        String yamlFileName = yamlFile.getFileName().toString();
-        return !Files.isDirectory(yamlFile) && yamlFileName.endsWith("data.yaml")
-                && imageFile.getName().contains(yamlFileName.substring(0, yamlFileName.length() - 9));
+        if (Files.isDirectory(yamlFile)) {
+            return false;
+        }
+
+        Path yamlFileNamePath = yamlFile.getFileName();
+        if (yamlFileNamePath == null) {
+            return false;
+        }
+
+        String yamlFileName = yamlFileNamePath.toString();
+        String suffix = "data.yaml";
+        if (!yamlFileName.endsWith(suffix)) {
+            return false;
+        }
+
+        int baseLength = yamlFileName.length() - suffix.length();
+        if (baseLength <= 0) {
+            return false;
+        }
+
+        String baseName = yamlFileName.substring(0, baseLength);
+        return imageFile.getName().contains(baseName);
     }
 }

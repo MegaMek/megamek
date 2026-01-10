@@ -88,13 +88,14 @@ public class EntityReadoutPanel extends JPanel {
     private final JLabel fluffImageLabel = new JLabel();
     private final List<FluffImageHelper.FluffImageRecord> fluffImageList = new ArrayList<>();
     private int fluffImageIndex = 0;
-    private final JButton nextImageButton = new JButton("   >   ");
-    private final JButton prevImageButton = new JButton("   <   ");
+    private final JButton nextImageButton = new JButton(">");
+    private final JButton prevImageButton = new JButton("<");
     private final JLabel imageInfoLabel = new JLabel("", JLabel.CENTER);
 
     public static final int DEFAULT_WIDTH = 360;
 
-    private static final String PLACEHOLDER_IMAGE_NAME = Configuration.fluffImagesDir() + "/fluff_placeholder.png";
+    private static final String PLACEHOLDER_IMAGE_NAME =
+            new File(Configuration.fluffImagesDir(), "fluff_placeholder.png").getPath();
     private static final Image PLACEHOLDER_IMAGE = readPlaceHolderImage();
 
     public EntityReadoutPanel() {
@@ -157,22 +158,6 @@ public class EntityReadoutPanel extends JPanel {
             textPanel.setPreferredSize(new Dimension(width, height));
         }
         textPanel.add(scrollPane);
-
-//        var fluffPanel = new FixedXPanel();
-//        if (width != -1) {
-//            fluffPanel.setMinimumSize(new Dimension(width, height));
-//            fluffPanel.setPreferredSize(new Dimension(width, height));
-//        }
-//        fluffPanel.add(fluffImageComponent);
-//
-//        JPanel p = new JPanel();
-//        p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
-//        p.add(textPanel);
-//        p.add(fluffPanel);
-//        p.add(Box.createHorizontalGlue());
-//        setLayout(new BorderLayout());
-//        add(p);
-//        addMouseWheelListener(wheelForwarder);
 
         var imageControlsPanel = new UIUtil.FixedYPanel(new FlowLayout());
         imageControlsPanel.add(prevImageButton);
@@ -317,7 +302,6 @@ public class EntityReadoutPanel extends JPanel {
             try {
                 FluffImageHelper.FluffImageRecord record = fluffImageList.get(fluffImageIndex);
                 setFluffImage(record.getImage());
-                imageInfoLabel.setText(prepareLabelText(record.file()));
                 fluffImageLabel.setToolTipText(FluffImageTooltip.getTooltip(record));
                 imageInfoLabel.setText(FluffImageTooltip.getTooltip(record));
             } catch (IOException ex) {
@@ -328,18 +312,6 @@ public class EntityReadoutPanel extends JPanel {
             setFluffImage(PLACEHOLDER_IMAGE);
             imageInfoLabel.setText("");
         }
-    }
-
-    private String prepareLabelText(File file) {
-        String labelText = "";
-        String labelInfo = file.toString();
-        if (labelInfo.contains("__")) {
-            labelText = labelInfo.substring(labelInfo.lastIndexOf("__") + 2);
-        }
-        if (labelText.contains(".")) {
-            labelText = labelText.substring(0, labelText.lastIndexOf("."));
-        }
-        return labelText;
     }
 
     private static Image readPlaceHolderImage() {

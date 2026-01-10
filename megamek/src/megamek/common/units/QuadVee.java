@@ -25,7 +25,7 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  *
- * MechWarrior Copyright Microsoft Corporation. <Package Name> was created under
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
  * Microsoft's "Game Content Usage Rules"
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
@@ -208,7 +208,7 @@ public class QuadVee extends QuadMek {
         }
 
         if (!mpCalculationSetting.ignoreHeat()) {
-            if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
+            if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
                 if (heat < 30) {
                     mp -= (heat / 5);
                 } else if (heat >= 49) {
@@ -252,7 +252,7 @@ public class QuadVee extends QuadMek {
     public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
         if (!mpCalculationSetting.ignoreConversion() && (getConversionMode() == CONV_MODE_VEHICLE)
               && ((game == null) ||
-              !game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ADVANCED_MANEUVERS))) {
+              !gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ADVANCED_MANEUVERS))) {
             return getRunMP(mpCalculationSetting);
         } else {
             return super.getSprintMP(mpCalculationSetting);
@@ -506,10 +506,11 @@ public class QuadVee extends QuadMek {
                   && (hex.terrainLevel(Terrains.SNOW) == 1)) {
                 roll.addModifier(1, "thin snow");
             }
-            // VDNI bonus?
-            if (hasAbility(OptionsConstants.MD_VDNI)
-                  && !hasAbility(OptionsConstants.MD_BVDNI)) {
+            // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
+            if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
                 roll.addModifier(-1, "VDNI");
+            } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                roll.addModifier(0, "BVDNI (no piloting bonus)");
             }
             if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
                   && !hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
@@ -532,7 +533,7 @@ public class QuadVee extends QuadMek {
     @Override
     public boolean usesTurnMode() {
         return getConversionMode() == CONV_MODE_VEHICLE && !convertingNow
-              && game != null && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TURN_MODE);
+              && game != null && gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TURN_MODE);
     }
 
     /**
@@ -546,7 +547,7 @@ public class QuadVee extends QuadMek {
         if (getConversionMode() == CONV_MODE_VEHICLE != convertingNow) {
             Hex occupiedHex = game.getHexOf(this);
             return occupiedHex.containsTerrain(Terrains.FORTIFIED)
-                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
+                  && gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
         }
         return super.canGoHullDown();
     }

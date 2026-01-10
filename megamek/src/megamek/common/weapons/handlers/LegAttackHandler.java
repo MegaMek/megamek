@@ -46,9 +46,9 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
-import megamek.common.units.Building;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -77,7 +77,7 @@ public class LegAttackHandler extends WeaponHandler {
 
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-          Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+          Vector<Report> vPhaseReport, IBuilding bldg, int hits, int nCluster,
           int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
               toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
@@ -101,11 +101,28 @@ public class LegAttackHandler extends WeaponHandler {
         vPhaseReport.addElement(report);
 
         int damage = 4;
-        if (attackingEntity instanceof BattleArmor) {
+        int tsmBonusDamage = 0;
+        if (attackingEntity instanceof BattleArmor battleArmor) {
             damage += attackingEntity.getVibroClaws();
-            if (((BattleArmor) attackingEntity).hasMyomerBooster()) {
-                damage += ((BattleArmor) attackingEntity).getTroopers() * 2;
+            if (battleArmor.hasMyomerBooster()) {
+                damage += battleArmor.getTroopers() * 2;
             }
+            // TSM Implant adds +1 damage per trooper for same-hex attacks
+            if (attackingEntity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+                tsmBonusDamage = battleArmor.getTroopers();
+                damage += tsmBonusDamage;
+            }
+        }
+
+        // Report TSM Implant bonus damage
+        if (tsmBonusDamage > 0) {
+            int baseDamage = damage - tsmBonusDamage;
+            Report tsmReport = new Report(3418);
+            tsmReport.subject = subjectId;
+            tsmReport.indent(2);
+            tsmReport.add(baseDamage);
+            tsmReport.add(tsmBonusDamage);
+            vPhaseReport.addElement(tsmReport);
         }
 
         // ASSUMPTION: buildings CAN'T absorb *this* damage.

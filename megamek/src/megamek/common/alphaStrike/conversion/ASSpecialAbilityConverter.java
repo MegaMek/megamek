@@ -61,6 +61,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.Sensor;
 import megamek.common.equipment.Transporter;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.InfantryCompartment;
@@ -150,7 +151,7 @@ public class ASSpecialAbilityConverter {
             assign(misc, PRB);
         } else if (miscType.isAnyOf(Sensor.CL_IMPROVED, Sensor.IS_IMPROVED)) {
             assign(misc, RCN);
-        } else if (miscType.isAnyOf(Sensor.LIGHT_AP, Sensor.IS_BA_LIGHT_AP)) {
+        } else if (miscType.isAnyOf(Sensor.LIGHT_AP, Sensor.IS_BA_LIGHT_AP, Sensor.CL_BA_LIGHT_AP)) {
             assign(misc, LPRB);
         } else if (miscType.isAnyOf(Sensor.BLOODHOUND)) {
             assign(misc, BH);
@@ -228,12 +229,12 @@ public class ASSpecialAbilityConverter {
             assign(misc, MEL);
         } else if (miscType.hasFlag(F_CLUB)) {
             assign(misc, MEL);
-            if ((miscType.getSubType() & (S_BACKHOE | S_PILE_DRIVER
-                  | S_MINING_DRILL | S_ROCK_CUTTER
-                  | S_WRECKING_BALL)) != 0) {
+            if ((miscType.hasAnyFlag(MiscTypeFlag.S_BACKHOE, MiscTypeFlag.S_PILE_DRIVER,
+                  MiscTypeFlag.S_MINING_DRILL, MiscTypeFlag.S_ROCK_CUTTER,
+                  MiscTypeFlag.S_WRECKING_BALL))) {
                 assign(misc, ENG);
-            } else if ((miscType.getSubType() & (S_DUAL_SAW | S_CHAINSAW
-                  | S_BUZZSAW | S_RETRACTABLE_BLADE)) != 0) {
+            } else if ((miscType.hasAnyFlag(MiscTypeFlag.S_DUAL_SAW, MiscTypeFlag.S_CHAINSAW,
+                  MiscTypeFlag.S_BUZZSAW, MiscTypeFlag.S_RETRACTABLE_BLADE))) {
                 assign(misc, SAW);
             }
             if (miscType.isShield()) {

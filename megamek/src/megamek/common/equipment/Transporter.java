@@ -35,6 +35,7 @@
 package megamek.common.equipment;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.annotations.Nullable;
@@ -175,11 +176,46 @@ public interface Transporter extends Serializable {
     }
 
 
-    default String getType() {
+    default String getTransporterType() {
         return "Unknown";
     }
 
     default String getNameForRecordSheets() {
-        return getType();
+        return getTransporterType();
+    }
+
+    /**
+     * Sets the specified entity to the transporter. Not implemented by default, only implemented for Transporters that
+     * need it (like {@link ExternalCargo})
+     *
+     * @param entity the {@code Entity} to be set for the transporter
+     */
+    default void setEntity(Entity entity) {}
+
+    /**
+     * Returns true if the transporter can pick up ground objects
+     */
+    default boolean canPickupGroundObject() {
+        return false;
+    }
+
+    /**
+     * Returns true if the transporter damages its cargo if the transport is hit, otherwise false.
+     */
+    default boolean alwaysDamageCargoIfTransportHit() {
+        return false;
+    }
+
+    /**
+     * Retrieves a list of all {@link ICarryable} objects currently carried by this transporter. If no objects are being
+     * carried, the returned list will be empty.
+     * <p>
+     * The returned list is a separate instance and modifying it will not affect the underlying data structure of
+     * carried objects.
+     *
+     * @return a list of {@link ICarryable} objects currently carried. Never null, but may be empty.
+     */
+    default List<ICarryable> getCarryables() {
+        return new ArrayList<>(getLoadedUnits());
     }
 }

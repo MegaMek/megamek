@@ -93,8 +93,8 @@ import megamek.common.board.Coords;
 import megamek.common.internationalization.I18n;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.logging.MMLogger;
 import megamek.server.ServerBoardHelper;
 
@@ -1049,12 +1049,12 @@ public class BotConfigDialog extends AbstractButtonDialog
      */
     static String buildingInfoIfPresent(Coords coords, Board board) {
         final Hex hex = board.getHex(coords);
-        final Building bldg = board.getBuildingAt(coords);
+        final IBuilding bldg = board.getBuildingAt(coords);
         String content = "";
         if (hex.containsTerrain(BUILDING)) {
             content += Messages.getString("BotConfigDialog.hexListBldg",
-                  bldg.getType().toString(),
-                  Building.className(bldg.getBldgClass()),
+                  bldg.getBuildingType().toString(),
+                  IBuilding.className(bldg.getBldgClass()),
                   hex.terrainLevel(BLDG_ELEV),
                   hex.terrainLevel(BLDG_CF));
         } else if (hex.containsTerrain(FUEL_TANK)) {
@@ -1063,7 +1063,7 @@ public class BotConfigDialog extends AbstractButtonDialog
                   hex.terrainLevel(FUEL_TANK_MAGN));
         } else {
             content += Messages.getString("BotConfigDialog.hexListBrdg",
-                  bldg.getType().toString(),
+                  bldg.getBuildingType().toString(),
                   hex.terrainLevel(BRIDGE_ELEV),
                   hex.terrainLevel(BRIDGE_CF));
         }

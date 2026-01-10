@@ -60,6 +60,7 @@ import megamek.common.enums.MPBoosters;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.CeilNotProvidedForWeightException;
 import megamek.common.interfaces.ITechManager;
 import megamek.common.interfaces.ITechnology;
@@ -67,6 +68,7 @@ import megamek.common.units.*;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.battleArmor.BAFlamerWeapon;
 import megamek.common.weapons.lasers.clan.CLChemicalLaserWeapon;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Abstract parent class for testing and validating instantiations of
@@ -780,24 +782,22 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public int calcMiscCrits(MiscType mt, double size) {
-        if (mt.hasFlag(MiscType.F_CLUB)
-              && (mt.hasSubType(MiscType.S_HATCHET)
-              || mt.hasSubType(MiscType.S_SWORD)
-              || mt.hasSubType(MiscType.S_CHAIN_WHIP))) {
+        if (mt.hasFlag(MiscTypeFlag.F_CLUB)
+              && (mt.hasAnyFlag(MiscTypeFlag.S_HATCHET, MiscTypeFlag.S_SWORD, MiscTypeFlag.S_CHAIN_WHIP))) {
             return (int) Math.ceil(getWeight() / 15.0);
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_MACE)) {
+        } else if (mt.hasFlag(MiscTypeFlag.F_CLUB) && mt.hasFlag(MiscTypeFlag.S_MACE)) {
             return (int) Math.ceil(getWeight() / 10.0);
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
+        } else if (mt.hasFlag(MiscTypeFlag.F_CLUB) && mt.hasFlag(MiscTypeFlag.S_RETRACTABLE_BLADE)) {
             return 1 + (int) Math.ceil(getWeight() / 20.0);
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_PILE_DRIVER)) {
+        } else if (mt.hasFlag(MiscTypeFlag.F_CLUB) && mt.hasFlag(MiscTypeFlag.S_PILE_DRIVER)) {
             return 8;
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_CHAINSAW)) {
+        } else if (mt.hasFlag(MiscTypeFlag.F_CLUB) && mt.hasFlag(MiscTypeFlag.S_CHAINSAW)) {
             return 5;
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_DUAL_SAW)) {
+        } else if (mt.hasFlag(MiscTypeFlag.F_CLUB) && mt.hasFlag(MiscTypeFlag.S_DUAL_SAW)) {
             return 7;
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_BACKHOE)) {
+        } else if (mt.hasFlag(MiscTypeFlag.F_CLUB) && mt.hasFlag(MiscTypeFlag.S_BACKHOE)) {
             return 6;
-        } else if (mt.hasFlag(MiscType.F_MASC)) {
+        } else if (mt.hasFlag(MiscTypeFlag.F_MASC)) {
             if (mt.getInternalName().equals("ISMASC")) {
                 return (int) Math.round(getWeight() / 20.0);
             } else if (mt.getInternalName().equals("CLMASC")) {
@@ -920,14 +920,14 @@ public abstract class TestEntity implements TestEntityOption {
             }
 
             if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof MiscType)
-                  && m.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                  && m.getLinkedBy().getType().hasFlag(MiscTypeFlag.F_PPC_CAPACITOR)) {
                 heat += 5;
             }
         }
         for (Mounted<?> m : entity.getMisc()) {
             // Spot welders are treated as energy weapons on units that don't have a fusion
             // or fission engine
-            if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)
+            if (m.getType().hasFlag(MiscTypeFlag.F_CLUB) && m.getType().hasFlag(MiscTypeFlag.S_SPOT_WELDER)
                   && entity.hasEngine() && (entity.getEngine().isFusion()
                   || (entity.getEngine().getEngineType() == Engine.FISSION))) {
                 continue;
@@ -1788,14 +1788,15 @@ public abstract class TestEntity implements TestEntityOption {
 
         // Find all locations with modular armor and map the number in that location to
         // the location index.
-        Map<Integer, Long> modArmorByLocation = getEntity().getMisc().stream()
+        // Front and rear are seperate locations: https://battletech.com/forums/index.php?topic=89727.0
+        Map<Pair<Integer, Boolean>, Long> modArmorByLocation = getEntity().getMisc().stream()
               .filter(m -> m.getType().hasFlag(MiscType.F_MODULAR_ARMOR))
               .filter(m -> m.getLocation() != Entity.LOC_NONE)
-              .collect(Collectors.groupingBy(Mounted::getLocation, Collectors.counting()));
-        for (Integer loc : modArmorByLocation.keySet()) {
+              .collect(Collectors.groupingBy(m -> Pair.of(m.getLocation(), m.isRearMounted()), Collectors.counting()));
+        for (var loc : modArmorByLocation.keySet()) {
             if (modArmorByLocation.get(loc) > 1) {
                 buff.append("Only one modular armor slot may be mounted in a single location (")
-                      .append(getEntity().getLocationName(loc)).append(")\n");
+                      .append(getEntity().getLocationName(loc.getLeft())).append(loc.getRight() ? " (R))" : ")").append('\n');
                 illegal = true;
             }
         }

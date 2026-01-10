@@ -50,8 +50,8 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
@@ -176,8 +176,12 @@ public class StreakHandler extends MissileWeaponHandler {
             if (weaponType.hasFlag(WeaponType.F_ONE_SHOT)) {
                 weapon.setFired(true);
             }
-            setDone();
         }
+
+        // Always mark weapon as used even if lock-on fails. Per official ruling,
+        // attempting to fire a Streak counts as "firing" for physical attack restrictions.
+        // See: https://battletech.com/forums/index.php?topic=34443.msg803644#msg803644
+        setDone();
     }
 
     @Override
@@ -201,7 +205,7 @@ public class StreakHandler extends MissileWeaponHandler {
 
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss,
-          Building bldg, Vector<Report> vPhaseReport) {
+          IBuilding bldg, Vector<Report> vPhaseReport) {
         return false;
     }
 }

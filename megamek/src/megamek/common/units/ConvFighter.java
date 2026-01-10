@@ -174,4 +174,8 @@ public class ConvFighter extends AeroSpaceFighter {
         return (int) Math.round(Math.exp(2.943 + 0.795 * Math.log(getWeight())));
     }
 
+    @Override
+    public int getRecoveryTime() {
+        return 60;
+    }
 }

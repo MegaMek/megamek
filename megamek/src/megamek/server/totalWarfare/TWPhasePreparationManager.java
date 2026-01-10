@@ -206,6 +206,7 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.resolveSelfDestruct();
                 gameManager.resolveShutdownCrashes();
                 gameManager.checkForIndustrialEndOfTurn();
+                gameManager.processUnitAbandonments();
                 gameManager.resolveMekWarriorPickUp();
                 gameManager.resolveVeeINarcPodRemoval();
                 gameManager.resolveFortify();
@@ -228,6 +229,8 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 break;
             case INITIATIVE_REPORT:
                 gameManager.autoSave();
+                // We need to send out player updates so everyone knows what their initiative is!
+                gameManager.transmitAllPlayerUpdates();
             case TARGETING_REPORT:
             case MOVEMENT_REPORT:
             case OFFBOARD_REPORT:

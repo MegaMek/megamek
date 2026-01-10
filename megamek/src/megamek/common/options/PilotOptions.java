@@ -157,12 +157,11 @@ public class PilotOptions extends AbstractOptions {
         IBasicOptionGroup md = addGroup("md", MD_ADVANTAGES);
         addOption(md, OptionsConstants.MD_PAIN_SHUNT, false);
         addOption(md, OptionsConstants.MD_COMM_IMPLANT, false);
-        //TODO - -1 bonus when spotting for LRMs and moving through mines.
         addOption(md, OptionsConstants.MD_BOOST_COMM_IMPLANT, false);
-        //TODO - -1 bonus when spotting for LRMs and moving through mines.
         addOption(md, OptionsConstants.MD_CYBER_IMP_AUDIO, false);
         addOption(md, OptionsConstants.MD_CYBER_IMP_VISUAL, false);
         addOption(md, OptionsConstants.MD_CYBER_IMP_LASER, false);
+        addOption(md, OptionsConstants.MD_CYBER_IMP_TELE, false);
         addOption(md, OptionsConstants.MD_MM_IMPLANTS, false);
         addOption(md, OptionsConstants.MD_ENH_MM_IMPLANTS, false);
         addOption(md, OptionsConstants.MD_FILTRATION, false);
@@ -184,8 +183,6 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_PL_GLIDER, false);
         addOption(md, OptionsConstants.MD_PL_FLIGHT, false);
         addOption(md, OptionsConstants.MD_SUICIDE_IMPLANTS, false);
-
-        //TODO - Prototype DNI IO pg 83
     }
 
     /*

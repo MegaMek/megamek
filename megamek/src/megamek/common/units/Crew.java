@@ -236,7 +236,7 @@ public class Crew implements Serializable {
 
         this.extraData = extraData;
 
-        int slots = crewType.getCrewSlots();
+        int slots = Math.max(1, crewType.getCrewSlots());
         names = new String[slots];
         Arrays.fill(getNames(), name);
         nicknames = new String[slots];
@@ -687,7 +687,8 @@ public class Crew implements Serializable {
                 return false;
             }
         }
-        return true;
+        // A unit with no crew is not dead.
+        return getSlotCount() >= 1;
     }
 
     public boolean isDead(int pos) {
@@ -825,7 +826,9 @@ public class Crew implements Serializable {
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
-                option.clearValue();
+                if (option != null) {
+                    option.clearValue();
+                }
             }
         }
 
@@ -1442,4 +1445,9 @@ public class Crew implements Serializable {
         }
     }
     // endregion extraData
+
+    public boolean isCrewTypeNone() {
+        return getCrewType() != null && getCrewType().equals(CrewType.NONE);
+    }
+
 }

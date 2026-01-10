@@ -120,7 +120,7 @@ public class DataStreamConnection extends AbstractConnection {
         synchronized (out) {
             out.writeBoolean(isZipped);
             out.writeInt(marshallingType);
-            out.writeInt(data.length);
+            out.writeInt((data != null) ? data.length : 0);
             out.write(data);
         }
     }

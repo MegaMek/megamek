@@ -463,14 +463,18 @@ public class MovePath implements Cloneable, Serializable {
      * been declared illegal
      */
     private void performIllegalCheck(MoveStep step, Coords start, Coords land) {
-        // can't do anything after loading
-        if (contains(MoveStepType.LOAD)) {
+        // can't do anything after loading except loading again (if MPs exist)
+        if (contains(MoveStepType.LOAD) && !(getLastStep().getType() == MoveStepType.LOAD)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            return;
+        }
+        // can't do anything after unloading except unloading again
+        if (contains(MoveStepType.UNLOAD) && !(getLastStep().getType() == MoveStepType.UNLOAD)) {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             return;
         }
 
         // check for illegal jumps
-
         if ((start == null) || (land == null)) {
             // If we have null for either coordinate then we know the step
             // isn't legal.
@@ -484,6 +488,22 @@ public class MovePath implements Cloneable, Serializable {
                 int distance = start.distance(land);
 
                 if (step.isThisStepBackwards() || (step.getDistance() > distance)) {
+                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                    return;
+                }
+            }
+        }
+
+        // Check if jumping entity has enough MPs to reach building elevation
+        if (isJumping() && !(entity instanceof Infantry)) {
+            Hex destHex = game.getBoard(step.getBoardId()).getHex(step.getPosition());
+            int building = destHex.terrainLevel(Terrains.BLDG_ELEV);
+            if (building > 0) {
+                int maxElevation = (entity.getJumpMP() +
+                      entity.getElevation() +
+                      game.getBoard(entity.getBoardId()).getHex(entity.getPosition()).getLevel()) -
+                      destHex.getLevel();
+                if (building > maxElevation) {
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                     return;
                 }
@@ -662,7 +682,7 @@ public class MovePath implements Cloneable, Serializable {
         Coords pos = getEntity().getPosition();
         boolean isMek = getEntity() instanceof Mek;
         int elev = getEntity().getElevation();
-        if (Compute.isEnemyIn(getGame(), getEntity(), pos, false, isMek, elev)) {
+        if (Compute.isEnemyIn(getGame(), getEntity(), pos, false, isMek, elev, true)) {
             // There is an enemy, can't go out and back in, and go out again
             boolean left = false;
             boolean returned = false;
@@ -810,8 +830,9 @@ public class MovePath implements Cloneable, Serializable {
         return true;
     }
 
-    public Enumeration<MoveStep> getSteps() {
-        return steps.elements();
+    public ListIterator<MoveStep> getSteps() {
+        // Create shallow copy for iterator thread safety.
+        return new Vector<MoveStep>(steps).listIterator();
     }
 
     public @Nullable MoveStep getStep(final int index) {
@@ -857,8 +878,8 @@ public class MovePath implements Cloneable, Serializable {
      * Check for MASC use
      */
     public boolean hasActiveMASC() {
-        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             if (step.isUsingMASC()) {
                 return true;
             }
@@ -870,8 +891,8 @@ public class MovePath implements Cloneable, Serializable {
      * Check for Supercharger use
      */
     public boolean hasActiveSupercharger() {
-        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             if (step.isUsingSupercharger()) {
                 return true;
             }
@@ -911,8 +932,8 @@ public class MovePath implements Cloneable, Serializable {
      * Returns the starting {@link Coords} of this path.
      */
     public @Nullable Coords getStartCoords() {
-        for (final Enumeration<MoveStep> e = getSteps(); e.hasMoreElements(); ) {
-            final MoveStep step = e.nextElement();
+        for (final ListIterator<MoveStep> e = getSteps(); e.hasNext(); ) {
+            final MoveStep step = e.next();
             final Coords coords = step.getPosition();
             if (coords != null) {
                 return coords;
@@ -997,8 +1018,8 @@ public class MovePath implements Cloneable, Serializable {
      * returns if the unit had any altitude above 0 during the movement path
      */
     public boolean isAirborne() {
-        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             if (step.getAltitude() > 0) {
                 return true;
             }
@@ -1260,50 +1281,48 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Extend the current path to the destination <code>Coords</code>, moving only in one direction. This method works
      * by applying the supplied move step as long as it moves closer to the destination. If the destination cannot be
-     * reached solely by the provided move step, the pathfinder will quit once it gets as closer as it can.
+     * reached solely by the provided move step, the pathfinder will quit once it gets as closer as it can. Only used
+     * for Mek Mechanical Jump Boosters.
      *
      * @param dest      the destination <code>Coords</code> of the move.
      * @param type      the type of movement step required.
      * @param direction the direction of movement.
      */
-    public void findSimplePathTo(final Coords dest, final MoveStepType type, int direction, int facing) {
+    public void findSimplePathTo(Coords dest, MoveStepType type, int direction, int facing) {
         Coords currStep = getFinalCoords();
         Coords nextStep = currStep.translated(direction);
         while (dest.distance(nextStep) < dest.distance(currStep)) {
-            addStep(type);
+            MoveStepType finalType = type;
+            if (!game.hasBoardLocation(nextStep, getFinalBoardId())) {
+                // When the path hits a hex outside the board, currStep is on a north or south board edge and the
+                // current direction cannot be used for the next hex. Use any of the two adjacent directions instead
+                // that stays on the board
+                // FIXME: Unfortunately this problem at board edges makes the "simple" path finder rather complicated
+                //  It would probably be better to search Mek Mechanical Jump Booster paths with the standard path
+                //  finder. Normally units can use turns but must move forward into other hexes. For MMJB, the Mek
+                //  cannot turn but enter hexes in any direction. isMovementPossible() in MoveStep would have to reflect
+                //  that in order for the path finder to find suitable paths.
+                int adjacentDirection = (direction + 1) % 6;
+                nextStep = currStep.translated(adjacentDirection);
+                if (game.hasBoardLocation(nextStep, getFinalBoardId())) {
+                    finalType = MoveStepType.stepTypeForRelativeDirection(adjacentDirection, facing);
+                } else {
+                    adjacentDirection = (direction + 5) % 6;
+                    nextStep = currStep.translated(adjacentDirection);
+                    if (game.hasBoardLocation(nextStep, getFinalBoardId())) {
+                        finalType = MoveStepType.stepTypeForRelativeDirection(adjacentDirection, facing);
+                    }
+                }
+            }
+            addStep(finalType);
             currStep = nextStep;
             nextStep = currStep.translated(direction);
         }
 
         // Did we reach the destination? If not, try another direction
         if (!currStep.equals(dest)) {
-            int dir = currStep.direction(dest);
-            // Java does mod different from how we want...
-            dir = (((dir - facing) % 6) + 6) % 6;
-            switch (dir) {
-                case 0:
-                    findSimplePathTo(dest, MoveStepType.FORWARDS, currStep.direction(dest), facing);
-                    break;
-                case 1:
-                    findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT, currStep.direction(dest), facing);
-                    break;
-                case 2:
-                    // TODO: backwards lateral shifts are switched:
-                    // LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
-                    findSimplePathTo(dest, MoveStepType.LATERAL_LEFT_BACKWARDS, currStep.direction(dest), facing);
-                    break;
-                case 3:
-                    findSimplePathTo(dest, MoveStepType.BACKWARDS, currStep.direction(dest), facing);
-                    break;
-                case 4:
-                    // TODO: backwards lateral shifts are switched:
-                    // LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
-                    findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT_BACKWARDS, currStep.direction(dest), facing);
-                    break;
-                case 5:
-                    findSimplePathTo(dest, MoveStepType.LATERAL_LEFT, currStep.direction(dest), facing);
-                    break;
-            }
+            MoveStepType moveStepType = MoveStepType.stepTypeForRelativeDirection(currStep.direction(dest), facing);
+            findSimplePathTo(dest, moveStepType, currStep.direction(dest), facing);
         }
     }
 
@@ -1813,8 +1832,8 @@ public class MovePath implements Cloneable, Serializable {
             return priorPos;
         }
 
-        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             if (!step.getPosition().equals(finalPos)) {
                 priorPos = step.getPosition();
             }

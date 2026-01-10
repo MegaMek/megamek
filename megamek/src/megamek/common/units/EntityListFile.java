@@ -54,6 +54,7 @@ import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.CriticalSlot;
+import megamek.common.Player;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.*;
@@ -590,7 +591,7 @@ public class EntityListFile {
 
     /**
      * Save the <code>Entity</code>s in the list to the given file.
-     * <p>
+     * <br><br>
      * The <code>Entity</code>'s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained, but data specific to a particular game is ignored. This method is a simpler version of the overloaded
      * method {@code saveTo}, with a default generic battle value of 0 (this causes GBV to be ignored), and with unit
@@ -608,7 +609,7 @@ public class EntityListFile {
 
     /**
      * Save the <code>Entity</code>s in the list to the given file.
-     * <p>
+     * <br><br>
      * The <code>Entity</code>'s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained, but data specific to a particular game is ignored. This method is a simpler version of the overloaded
      * method {@code saveTo}, with a default generic battle value of 0 (this causes GBV to be ignored).
@@ -628,7 +629,7 @@ public class EntityListFile {
 
     /**
      * Save the <code>Entity</code>s in the list to the given file.
-     * <p>
+     * <br><br>
      * The <code>Entity</code>'s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained, but data specific to a particular game is ignored. Unit embedding is off, see
      * {@link #saveTo(File, ArrayList, int, boolean) the overloaded version of this function}
@@ -647,7 +648,7 @@ public class EntityListFile {
 
     /**
      * Save the <code>Entity</code>s in the list to the given file.
-     * <p>
+     * <br><br>
      * The <code>Entity</code>'s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained, but data specific to a particular game is ignored.
      *
@@ -686,7 +687,7 @@ public class EntityListFile {
     /**
      * Save the entities from the game of client to the given file. This will create separate sections for salvage,
      * devastated, and ejected crews in addition to the surviving units
-     * <p>
+     * <br><br>
      * The <code>Entity</code>s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained but data specific to a particular game is ignored.
      *
@@ -697,7 +698,25 @@ public class EntityListFile {
      * @throws IOException is thrown on any error.
      */
     public static void saveTo(File file, Client client) throws IOException {
-        if (null == client.getGame()) {
+        saveTo(file, client, client.getLocalPlayer());
+    }
+
+    /**
+     * Save the entities from the game of client to the given file. This will create separate sections for salvage,
+     * devastated, and ejected crews in addition to the surviving units
+     * <br><br>
+     * The <code>Entity</code>s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
+     * retained but data specific to a particular game is ignored.
+     *
+     * @param file        - The current contents of the file will be discarded and all
+     *                    <code>Entity</code>s in the list will be written to the file.
+     * @param client      - a <code>Client</code> containing the <code>Game</code>s to be used
+     * @param localPlayer - What player should we treat as "the" player?
+     *
+     * @throws IOException is thrown on any error.
+     */
+    public static void saveTo(File file, Client client, Player localPlayer) throws IOException {
+        if (null == client.getGame() || !client.playerExists(localPlayer.getId())) {
             return;
         }
 
@@ -718,9 +737,9 @@ public class EntityListFile {
         // Sort entities into player's, enemies, and allies and add to survivors,
         // salvage, and allies.
         for (Entity entity : client.getGame().inGameTWEntities()) {
-            if (entity.getOwner().getId() == client.getLocalPlayer().getId()) {
+            if (entity.getOwner().getId() == localPlayer.getId()) {
                 living.add(entity);
-            } else if (entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
+            } else if (entity.getOwner().isEnemyOf(localPlayer)) {
                 if (!entity.canEscape()) {
                     kills.put(entity.getDisplayName(), MULParser.VALUE_NONE);
                 }
@@ -734,9 +753,9 @@ public class EntityListFile {
         // sections
         for (Enumeration<Entity> iter = client.getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {
             Entity ent = iter.nextElement();
-            if (ent.getOwner().getId() == client.getLocalPlayer().getId()) {
+            if (ent.getOwner().getId() == localPlayer.getId()) {
                 living.add(ent);
-            } else if (!ent.getOwner().isEnemyOf(client.getLocalPlayer())) {
+            } else if (!ent.getOwner().isEnemyOf(localPlayer)) {
                 allied.add(ent);
             } else {
                 retreated.add(ent);
@@ -747,7 +766,7 @@ public class EntityListFile {
         Enumeration<Entity> graveyard = client.getGame().getGraveyardEntities();
         while (graveyard.hasMoreElements()) {
             Entity entity = graveyard.nextElement();
-            if (entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
+            if (entity.getOwner().isEnemyOf(localPlayer)) {
                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
                 if (null != killer && !killer.getExternalIdAsString().equals("-1")) {
                     kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
@@ -762,7 +781,7 @@ public class EntityListFile {
         Enumeration<Entity> devastation = client.getGame().getDevastatedEntities();
         while (devastation.hasMoreElements()) {
             Entity entity = devastation.nextElement();
-            if (entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
+            if (entity.getOwner().isEnemyOf(localPlayer)) {
                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
                 if (null != killer && !killer.getExternalIdAsString().equals("-1")) {
                     kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
@@ -906,7 +925,7 @@ public class EntityListFile {
                     output.write(entityC3Master.getC3UUIDAsString());
                 }
             }
-            if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3()) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3() || entity.hasNovaCEWS()) {
                 if (entity.getC3UUIDAsString() != null) {
                     output.write("\" " + MULParser.ATTR_C3UUID + "=\"");
                     output.write(entity.getC3UUIDAsString());
@@ -1233,10 +1252,15 @@ public class EntityListFile {
             }
 
             // Write the NC3 Data if needed
-            if (entity.hasNavalC3()) {
+            if (entity.hasNavalC3() || entity.hasNovaCEWS()) {
+                logger.debug("[EntityListFile] Saving NC3 for entity {} ({}), hasNavalC3={}, hasNovaCEWS={}",
+                    entity.getId(), entity.getShortName(), entity.hasNavalC3(), entity.hasNovaCEWS());
                 output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_NC3 + ">\n");
+                int linkCount = 0;
                 for (Entity NC3Entity : list) {
                     if ((NC3Entity.getC3UUIDAsString() != null) && NC3Entity.onSameC3NetworkAs(entity, true)) {
+                        logger.debug("[EntityListFile]   Writing NC3LINK for entity {} UUID: {}",
+                            NC3Entity.getId(), NC3Entity.getC3UUIDAsString());
                         output.write(indentStr(indentLvl + 1) +
                               '<' +
                               MULParser.ELE_NC3LINK +
@@ -1245,8 +1269,10 @@ public class EntityListFile {
                               "=\"");
                         output.write(NC3Entity.getC3UUIDAsString());
                         output.write("\"/>\n");
+                        linkCount++;
                     }
                 }
+                logger.debug("[EntityListFile] Saved {} NC3 links for entity {}", linkCount, entity.getId());
                 output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_NC3 + ">\n");
             }
 
@@ -1464,7 +1490,7 @@ public class EntityListFile {
         output.write("\" " + MULParser.ATTR_CLAN_PILOT + "=\"" + crew.isClanPilot(pos));
 
         if ((null != entity.getGame()) &&
-              entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
+              entity.gameOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
             output.write("\" " + MULParser.ATTR_GUNNERY_L + "=\"");
             output.write(String.valueOf(crew.getGunneryL(pos)));
             output.write("\" " + MULParser.ATTR_GUNNERY_M + "=\"");
@@ -1481,10 +1507,10 @@ public class EntityListFile {
             writeLAMAeroAttributes(output,
                   (LAMPilot) crew,
                   (null != entity.getGame()) &&
-                        entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
+                        entity.gameOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
         }
         if ((null != entity.getGame()) &&
-              entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
+              entity.gameOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
             output.write("\" " + MULParser.ATTR_ARTILLERY + "=\"");
             output.write(String.valueOf(crew.getArtillery(pos)));
         }
@@ -1570,6 +1596,21 @@ public class EntityListFile {
             output.write("\" " + MULParser.ATTR_IMPLANTS + "=\"");
             output.write(String.valueOf(crew.getOptionList("::", PilotOptions.MD_ADVANTAGES)));
         }
+        // Write prosthetic enhancement data for infantry (IO p.84)
+        if (entity instanceof Infantry infantry) {
+            if (infantry.getProstheticEnhancement1() != null) {
+                output.write("\" " + MULParser.ATTR_PROSTHETIC_ENHANCEMENT_1 + "=\"");
+                output.write(infantry.getProstheticEnhancement1().name());
+                output.write("\" " + MULParser.ATTR_PROSTHETIC_ENHANCEMENT_1_COUNT + "=\"");
+                output.write(String.valueOf(infantry.getProstheticEnhancement1Count()));
+            }
+            if (infantry.getProstheticEnhancement2() != null) {
+                output.write("\" " + MULParser.ATTR_PROSTHETIC_ENHANCEMENT_2 + "=\"");
+                output.write(infantry.getProstheticEnhancement2().name());
+                output.write("\" " + MULParser.ATTR_PROSTHETIC_ENHANCEMENT_2_COUNT + "=\"");
+                output.write(String.valueOf(infantry.getProstheticEnhancement2Count()));
+            }
+        }
         if (entity instanceof Mek) {
             if (((Mek) entity).isAutoEject()) {
                 output.write("\" " + MULParser.ATTR_AUTO_EJECT + "=\"true");
@@ -1577,7 +1618,7 @@ public class EntityListFile {
                 output.write("\" " + MULParser.ATTR_AUTO_EJECT + "=\"false");
             }
             if ((null != entity.getGame()) &&
-                  (entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION))) {
+                  (entity.gameOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION))) {
                 if (((Mek) entity).isCondEjectAmmo()) {
                     output.write("\" " + MULParser.ATTR_COND_EJECT_AMMO + "=\"true");
                 } else {

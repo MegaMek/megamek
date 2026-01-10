@@ -104,12 +104,13 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
      * @param movePath planned movement in the movement phase
      */
     public void update(@Nullable Entity entity, @Nullable WeaponMounted weapon, @Nullable MovePath movePath) {
-        firingEntity = entity;
         if ((entity == null) || (weapon == null)) {
             clearValues();
             return;
         }
-        int weaponId = entity.getEquipmentNum(weapon);
+
+        firingEntity = weapon.getEntity();
+        int weaponId = firingEntity.getEquipmentNum(weapon);
         if (weaponId == -1) {
             // entities are replaced all the time by server-sent changes, must always guard
             clearValues();
@@ -123,11 +124,11 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
             isUnderWater = testUnderWater(movePath);
             updateFacing(weapon, movePath.getFinalFacing());
         } else {
-            firingPosition = entity.getPosition();
+            firingPosition = entity.getWeaponFiringPosition(weapon);
             isUnderWater = testUnderWater();
             updateFacing(weapon);
         }
-        firingPosition = (movePath != null) ? movePath.getFinalCoords() : entity.getPosition();
+        firingPosition = (movePath != null) ? movePath.getFinalCoords() : entity.getWeaponFiringPosition(weapon);
         arc = firingEntity.getWeaponArc(weaponId);
         isCapOrSCap = weapon.getType().isCapital() || weapon.getType().isSubCapital();
 

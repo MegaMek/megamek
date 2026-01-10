@@ -466,8 +466,8 @@ public class PointblankShotDisplay extends FiringDisplay {
                 if (o instanceof ArtilleryAttackAction) {
                     newAttacks.addElement(o);
                 } else if (o instanceof WeaponAttackAction waa) {
-                    Entity attacker = waa
-                          .getEntity(game);
+                    Entity weaponEntity = waa.getEntity(game);
+                    Entity attacker = weaponEntity.getAttackingEntity();
                     Targetable target1 = waa.getTarget(clientgui.getClient()
                           .getGame());
                     boolean curInFrontArc = ComputeArc.isInArc(attacker.getPosition(),
@@ -496,7 +496,8 @@ public class PointblankShotDisplay extends FiringDisplay {
             // now add the attacks in rear/arm arcs
             for (EntityAction o : attacks) {
                 if (!(o instanceof ArtilleryAttackAction) && (o instanceof WeaponAttackAction waa)) {
-                    Entity attacker = waa.getEntity(game);
+                    Entity weaponEntity = waa.getEntity(game);
+                    Entity attacker = weaponEntity.getAttackingEntity();
                     Targetable target1 = waa.getTarget(clientgui.getClient().getGame());
                     boolean curInFrontArc = ComputeArc.isInArc(attacker.getPosition(),
                           attacker.getSecondaryFacing(), target1,

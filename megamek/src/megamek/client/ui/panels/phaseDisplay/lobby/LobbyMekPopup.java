@@ -64,6 +64,7 @@ import megamek.client.ui.util.MenuScroller;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.AmmoType;
@@ -111,6 +112,8 @@ class LobbyMekPopup {
     static final String LMP_RAPID_FIRE_MG_ON = "RAPIDFIREMG_ON";
     static final String LMP_HOT_LOAD_OFF = "HOTLOAD_OFF";
     static final String LMP_HOT_LOAD_ON = "HOTLOAD_ON";
+    static final String LMP_VRT_LONG = "VRT_LONG";
+    static final String LMP_VRT_SHORT = "VRT_SHORT";
     static final String LMP_SWAP = "SWAP";
     static final String LMP_ASSIGN = "ASSIGN";
     static final String LMP_C3CONNECT = "C3CONNECT";
@@ -197,6 +200,9 @@ class LobbyMekPopup {
         boolean anyRFMGOff = joinedEntities.stream().anyMatch(LobbyMekPopup::hasNormalFireMG);
         boolean anyHLOn = joinedEntities.stream().anyMatch(LobbyMekPopup::hasHotLoaded);
         boolean anyHLOff = joinedEntities.stream().anyMatch(LobbyMekPopup::hasNonHotLoaded);
+        boolean anyVRTLong = joinedEntities.stream().anyMatch(LobbyMekPopup::hasVRTLong);
+        boolean anyVRTShort = joinedEntities.stream().anyMatch(LobbyMekPopup::hasVRTShort);
+        boolean anyVRT = joinedEntities.stream().anyMatch(LobbyMekPopup::hasVRT);
 
         boolean oneSelected = entities.size() == 1;
         boolean hasJoinedEntities = !joinedEntities.isEmpty();
@@ -244,8 +250,9 @@ class LobbyMekPopup {
         popup.add(swapPilotMenu(hasJoinedEntities, joinedEntities, clientGui, listener));
         popup.add(priorityTargetMenu(clientGui, hasJoinedEntities, listener, joinedEntities));
 
-        if (optBurstMG || optLRMHotLoad) {
-            popup.add(equipMenu(anyRFMGOn, anyRFMGOff, anyHLOn, anyHLOff, optLRMHotLoad, optBurstMG, listener, seIds));
+        if (optBurstMG || optLRMHotLoad || anyVRT) {
+            popup.add(equipMenu(anyRFMGOn, anyRFMGOff, anyHLOn, anyHLOff, anyVRTLong, anyVRTShort, anyVRT,
+                  optLRMHotLoad, optBurstMG, listener, seIds));
         }
 
         popup.add(ScalingPopup.spacer());
@@ -388,6 +395,29 @@ class LobbyMekPopup {
                             "<HTML>" + e.getShortNameRaw() + idString(game, e.getId()) + " (Free Collars: "
                                   + ((Jumpship) e).getFreeDockingCollars() + ")",
                             LMP_LOAD + "|" + e.getId() + ":-1" + enToken(entities), true, listener)));
+            } else if (entities.size() == 1) {
+                Entity transportedUnit = entities.iterator().next();
+                // Standard loading, not ProtoMeks, not DropShip -> JumpShip
+                game.getEntitiesVector().stream()
+                      .filter(e -> !e.isCapitalFighter(true))
+                      .filter(e -> !entities.contains(e))
+                      .filter(e -> canLoadAll(e, entities))
+                      .forEach(e -> {
+                          JMenu loaderMenu = new JMenu("<HTML>" + e.getShortNameRaw() + idString(game, e.getId()));
+                          e.getTransports().forEach(t -> {
+                              if (t.canLoad(transportedUnit)) {
+                                  // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into that transporter.
+                                  loaderMenu.add(menuItem(
+                                        "Onto " + t.toString(),
+                                        LMP_LOAD + "|" + e.getId() + ":" + (Integer.MAX_VALUE
+                                              - e.getTransports().indexOf(t)) + enToken(entities),
+                                        true, listener));
+                              }
+                          });
+                          if (loaderMenu.getItemCount() > 0) {
+                              menu.add(loaderMenu);
+                          }
+                      });
             } else if (entities.stream().noneMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMEK))) {
                 // Standard loading, not ProtoMeks, not DropShip -> JumpShip
                 game.getEntitiesVector().stream()
@@ -792,13 +822,14 @@ class LobbyMekPopup {
     }
 
     /**
-     * @return the "Equipment" submenu, allowing hot loading LRMs and setting MGs to rapid fire mode
+     * @return the "Equipment" submenu, allowing hot loading LRMs, setting MGs to rapid fire mode,
+     *         and Variable Range Targeting mode selection
      */
     private static JMenu equipMenu(boolean anyRFOn, boolean anyRFOff, boolean anyHLOn,
-          boolean anyHLOff, boolean optHL, boolean optRF,
-          ActionListener listener, String eIds) {
+          boolean anyHLOff, boolean anyVRTLong, boolean anyVRTShort, boolean anyVRT,
+          boolean optHL, boolean optRF, ActionListener listener, String eIds) {
         JMenu menu = new JMenu(Messages.getString("ChatLounge.Equipment"));
-        menu.setEnabled(anyRFOff || anyRFOn || anyHLOff || anyHLOn);
+        menu.setEnabled(anyRFOff || anyRFOn || anyHLOff || anyHLOn || anyVRT);
         if (optRF) {
             menu.add(menuItem(Messages.getString("ChatLounge.RapidFireToggleOn"), LMP_RAPID_FIRE_MG_ON + NO_INFO + eIds,
                   anyRFOff, listener));
@@ -812,6 +843,12 @@ class LobbyMekPopup {
                   anyHLOff, listener));
             menu.add(menuItem(Messages.getString("ChatLounge.HotLoadToggleOff"), LMP_HOT_LOAD_OFF + NO_INFO + eIds,
                   anyHLOn, listener));
+        }
+        if (anyVRT) {
+            menu.add(menuItem(Messages.getString("ChatLounge.VRTSetLong"), LMP_VRT_LONG + NO_INFO + eIds,
+                  anyVRTShort, listener));
+            menu.add(menuItem(Messages.getString("ChatLounge.VRTSetShort"), LMP_VRT_SHORT + NO_INFO + eIds,
+                  anyVRTLong, listener));
         }
         return menu;
     }
@@ -993,6 +1030,10 @@ class LobbyMekPopup {
      * @return true when the entity has an MG set to rapid fire.
      */
     private static boolean hasRapidFireMG(Entity entity) {
+        // Battle armor cannot use burst-fire MGs per errata
+        if (entity instanceof BattleArmor) {
+            return false;
+        }
         for (Mounted<?> m : entity.getWeaponList()) {
             EquipmentType etype = m.getType();
             if (etype.hasFlag(WeaponType.F_MG) && m.isRapidFire()) {
@@ -1004,6 +1045,10 @@ class LobbyMekPopup {
 
     /** Returns true when the entity has an MG set to normal (non-rapid) fire. */
     private static boolean hasNormalFireMG(Entity entity) {
+        // Battle armor cannot use burst-fire MGs per errata
+        if (entity instanceof BattleArmor) {
+            return false;
+        }
         for (Mounted<?> m : entity.getWeaponList()) {
             EquipmentType etype = m.getType();
             if (etype.hasFlag(WeaponType.F_MG) && !m.isRapidFire()) {
@@ -1035,5 +1080,26 @@ class LobbyMekPopup {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns true when the entity has Variable Range Targeting quirk set to LONG mode.
+     */
+    private static boolean hasVRTLong(Entity entity) {
+        return entity.hasVariableRangeTargeting() && entity.getVariableRangeTargetingMode().isLong();
+    }
+
+    /**
+     * Returns true when the entity has Variable Range Targeting quirk set to SHORT mode.
+     */
+    private static boolean hasVRTShort(Entity entity) {
+        return entity.hasVariableRangeTargeting() && entity.getVariableRangeTargetingMode().isShort();
+    }
+
+    /**
+     * Returns true when the entity has the Variable Range Targeting quirk.
+     */
+    private static boolean hasVRT(Entity entity) {
+        return entity.hasVariableRangeTargeting();
     }
 }

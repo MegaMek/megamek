@@ -41,24 +41,24 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import megamek.common.TargetRollModifier;
 import megamek.common.board.Coords;
+import megamek.common.board.CubeCoords;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.NarcPod;
 import megamek.common.equipment.Sensor;
 import megamek.common.equipment.Transporter;
 import megamek.common.game.GameTurn;
+import megamek.common.game.InitiativeBonusBreakdown;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.common.options.AbstractOptions;
 import megamek.common.rolls.Roll;
 import megamek.common.units.BTObject;
-import megamek.common.units.Building;
 import megamek.common.units.Crew;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.IBuilding;
 import megamek.common.units.InfantryMount;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.victory.VictoryCondition;
-
-import java.io.Serializable;
 
 /**
  * Class that off-loads serialization related code from Server.java
@@ -81,7 +81,7 @@ public class SerializationHelper {
         xStream.allowTypesByRegExp(SanityInputFilter.getFilterList());
 
         xStream.allowTypeHierarchy(BTObject.class);
-        xStream.allowTypeHierarchy(Building.class);
+        xStream.allowTypeHierarchy(IBuilding.class);
         xStream.allowTypeHierarchy(Crew.class);
         xStream.allowTypeHierarchy(GameTurn.class);
         xStream.allowTypeHierarchy(ITechnology.class);
@@ -260,7 +260,7 @@ public class SerializationHelper {
                 return (read) ? new InfantryMount(
                       name, size, weight, movementPoints, movementMode, burstDamage, vehicleDamage,
                       damageDivisor, maxWaterDepth, secondaryGroundMP, uwEndurance, custom
-                ): null;
+                ) : null;
             }
 
             @Override
@@ -277,7 +277,7 @@ public class SerializationHelper {
 
             @Override
             public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-                int value = Integer.MIN_VALUE;
+                Integer value = null;
                 String description = "";
                 boolean cumulative = false;
 
@@ -295,7 +295,91 @@ public class SerializationHelper {
                         return null;
                     }
                 }
-                return (value > Integer.MIN_VALUE) ? new TargetRollModifier(value, description, cumulative) : null;
+                return (value != null) ? new TargetRollModifier(value, description, cumulative) : null;
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == CubeCoords.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                double q = Double.NaN;
+                double r = Double.NaN;
+                double s = Double.NaN;
+
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    try {
+                        switch (reader.getNodeName()) {
+                            case "q" -> q = Double.parseDouble(reader.getValue());
+                            case "r" -> r = Double.parseDouble(reader.getValue());
+                            case "s" -> s = Double.parseDouble(reader.getValue());
+                        }
+                        reader.moveUp();
+                    } catch (NumberFormatException e) {
+                        // CubeCoords with malformed entries will be silently ignored
+                        return null;
+                    }
+                }
+                return (!Double.isNaN(q) && !Double.isNaN(r) && !Double.isNaN(s))
+                    ? new CubeCoords(q, r, s) : null;
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == InitiativeBonusBreakdown.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                int hq = 0;
+                int quirk = 0;
+                String quirkName = null;
+                int console = 0;
+                int crewCommand = 0;
+                int tcp = 0;
+                int constant = 0;
+                int compensation = 0;
+                int crew = 0;
+
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    try {
+                        switch (reader.getNodeName()) {
+                            case "hq" -> hq = Integer.parseInt(reader.getValue());
+                            case "quirk" -> quirk = Integer.parseInt(reader.getValue());
+                            case "quirkName" -> quirkName = reader.getValue();
+                            case "console" -> console = Integer.parseInt(reader.getValue());
+                            case "crewCommand" -> crewCommand = Integer.parseInt(reader.getValue());
+                            case "tcp" -> tcp = Integer.parseInt(reader.getValue());
+                            case "constant" -> constant = Integer.parseInt(reader.getValue());
+                            case "compensation" -> compensation = Integer.parseInt(reader.getValue());
+                            case "crew" -> crew = Integer.parseInt(reader.getValue());
+                        }
+                        reader.moveUp();
+                    } catch (NumberFormatException e) {
+                        // InitiativeBonusBreakdown with malformed entries will return defaults
+                        return InitiativeBonusBreakdown.zero();
+                    }
+                }
+                return new InitiativeBonusBreakdown(hq, quirk, quirkName, console, crewCommand,
+                      tcp, constant, compensation, crew);
             }
 
             @Override

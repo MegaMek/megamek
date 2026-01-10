@@ -72,7 +72,7 @@ public class MassDriverLight extends MassDriverWeapon {
         this.medAV = 60;
         this.longAV = 60;
         this.maxRange = RANGE_LONG;
-        rulesRefs = "323, TO";
+        rulesRefs = "135, TO:AUE";
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(2715, DATE_NONE, DATE_NONE, 2855, 3066)

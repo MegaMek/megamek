@@ -80,6 +80,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.AmmoType.Munitions;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
@@ -134,34 +135,47 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         public void mouseDragged(MouseEvent e) {
             removeListeners();
 
-            Object src = e.getSource();
-            // Check to see if we are in a state we care about
-            if (!mouseDragging || !(src instanceof JList<?> srcList)) {
-                return;
-            }
-            WeaponListModel srcModel = (WeaponListModel) srcList.getModel();
-            int currentIndex = srcList.locationToIndex(e.getPoint());
-            if (currentIndex != dragSourceIndex) {
-                int dragTargetIndex = srcList.getSelectedIndex();
-                WeaponMounted weaponAt = srcModel.getWeaponAt(dragSourceIndex);
-                srcModel.swapIdx(dragSourceIndex, dragTargetIndex);
-                dragSourceIndex = currentIndex;
-                Entity ent = weaponAt.getEntity();
-
-                // If this is a Custom Sort Order, update the weapon sort order drop down
-                if (!Objects.requireNonNull(comboWeaponSortOrder.getSelectedItem()).isCustom()) {
-                    // Set the order to custom
-                    ent.setWeaponSortOrder(WeaponSortOrder.CUSTOM);
-                    comboWeaponSortOrder.setSelectedItem(WeaponSortOrder.CUSTOM);
+            try {
+                Object src = e.getSource();
+                // Check to see if we are in a state we care about
+                if (!mouseDragging || !(src instanceof JList<?> srcList)) {
+                    return;
                 }
+                WeaponListModel srcModel = (WeaponListModel) srcList.getModel();
+                int currentIndex = srcList.locationToIndex(e.getPoint());
+                if (currentIndex != dragSourceIndex) {
+                    int dragTargetIndex = srcList.getSelectedIndex();
+                    WeaponMounted weaponAt = srcModel.getWeaponAt(dragSourceIndex);
 
-                // Update custom order
-                for (int i = 0; i < srcModel.getSize(); i++) {
-                    WeaponMounted m = srcModel.getWeaponAt(i);
-                    ent.setCustomWeaponOrder(m, i);
+                    if (weaponAt == null) {
+                        // Somehow we found no weapon there.
+                        return;
+                    }
+
+                    srcModel.swapIdx(dragSourceIndex, dragTargetIndex);
+                    dragSourceIndex = currentIndex;
+                    Entity ent = weaponAt.getEntity();
+
+                    // If this is a Custom Sort Order, update the weapon sort order drop down
+                    if (!Objects.requireNonNull(comboWeaponSortOrder.getSelectedItem()).isCustom()) {
+                        // Set the order to custom
+                        ent.setWeaponSortOrder(WeaponSortOrder.CUSTOM);
+                        comboWeaponSortOrder.setSelectedItem(WeaponSortOrder.CUSTOM);
+                    }
+
+                    // Update custom order
+                    for (int i = 0; i < srcModel.getSize(); i++) {
+                        WeaponMounted m = srcModel.getWeaponAt(i);
+                        ent.setCustomWeaponOrder(m, i);
+                    }
                 }
+            } catch (Exception ex) {
+                logger.error("Unable to handle unexpected drag event: {}", e.toString());
+
+            } finally {
+                // Return listeners before returning!
+                addListeners();
             }
-            addListeners();
         }
     }
 
@@ -929,17 +943,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 currentHeatBuildup += en.infernos.getHeat();
             }
 
-            if (!((Mek) en).hasLaserHeatSinks()) {
-                // extreme temperatures.
-                if ((game != null) && (game.getPlanetaryConditions().getTemperature() > 0)) {
-                    int buildup = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
-                    if (((Mek) en).hasIntactHeatDissipatingArmor()) {
-                        buildup /= 2;
-                    }
-                    currentHeatBuildup += buildup;
-                } else if (game != null) {
-                    currentHeatBuildup -= game.getPlanetaryConditions().getTemperatureDifference(50, -30);
+            // extreme temperatures.
+            if ((game != null) && (game.getPlanetaryConditions().getTemperature() > 0)) {
+                int buildup = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
+                if (((Mek) en).hasIntactHeatDissipatingArmor()) {
+                    buildup /= 2;
                 }
+                currentHeatBuildup += buildup;
+            } else if (game != null) {
+                currentHeatBuildup -= game.getPlanetaryConditions().getTemperatureDifference(50, -30);
             }
         }
         Coords position = entity.getPosition();
@@ -1003,8 +1015,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         boolean hasFiredWeapons = false;
-        for (int i = 0; i < entity.getWeaponList().size(); i++) {
-            WeaponMounted mounted = entity.getWeaponList().get(i);
+        for (int i = 0; i < entity.getWeaponListWithHHW().size(); i++) {
+            WeaponMounted mounted = entity.getWeaponListWithHHW().get(i);
 
             // Don't add bomb weapons for LAMs in mek mode except RL and TAG.
             if ((entity instanceof LandAirMek)
@@ -1042,7 +1054,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         }
                     }
                 } else {
-                    if (!mounted.isBombMounted()) {
+                    if (!mounted.isBombMounted() && entity.equals(mounted.getEntity())) {
                         currentHeatBuildup += mounted.getHeatByBay();
                     }
                 }
@@ -1177,6 +1189,22 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         weaponList.repaint();
     }
 
+    public void selectWeapon(WeaponMounted weapon) {
+        if (weapon == null) {
+            weaponList.setSelectedIndex(-1);
+            return;
+        }
+        int index = ((WeaponListModel) weaponList.getModel()).getIndex(weapon);
+        if (index == -1) {
+            weaponList.setSelectedIndex(-1);
+            return;
+        }
+        weaponList.setSelectedIndex(index);
+        weaponList.ensureIndexIsVisible(index);
+        displaySelected();
+        weaponList.repaint();
+    }
+
     /**
      * @return the Mounted for the selected weapon in the weapon list.
      */
@@ -1209,7 +1237,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (selected == -1) {
             return -1;
         }
-        return entity.getEquipmentNum(((WeaponListModel) weaponList.getModel()).getWeaponAt(selected));
+        Entity weaponEntity = getSelectedWeapon().getEntity();
+        return weaponEntity.getEquipmentNum(((WeaponListModel) weaponList.getModel()).getWeaponAt(selected));
     }
 
     /**
@@ -1217,7 +1246,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      */
     public void selectFirstWeapon() {
         // Entity has no weapons, return -1;
-        if (entity.getWeaponList().isEmpty()
+        if (entity.getWeaponListWithHHW().isEmpty()
               || (entity.usesWeaponBays() && entity.getWeaponBayList().isEmpty())) {
             return;
         }
@@ -1261,7 +1290,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                   .getWeaponAt(selected);
         } while (!hasLooped && !entity.isWeaponValidForPhase(selectedWeapon));
 
-        if ((selected >= 0) && (selected < entity.getWeaponList().size())
+        if ((selected >= 0) && (selected < entity.getWeaponListWithHHW().size())
               && !hasLooped) {
             return selected;
         } else {
@@ -1294,7 +1323,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                   .getWeaponAt(selected);
         } while (!hasLooped && !entity.isWeaponValidForPhase(selectedWeapon));
 
-        if ((selected >= 0) && (selected < entity.getWeaponList().size())
+        if ((selected >= 0) && (selected < entity.getWeaponListWithHHW().size())
               && !hasLooped) {
             return selected;
         } else {
@@ -1304,11 +1333,23 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     public int getNextWeaponNum() {
         int selected = getNextWeaponListIdx();
-        if ((selected >= 0) && (selected < entity.getWeaponList().size())) {
-            return entity.getEquipmentNum(((WeaponListModel) weaponList
-                  .getModel()).getWeaponAt(selected));
+        if ((selected >= 0) && (selected < entity.getWeaponListWithHHW().size())) {
+            WeaponMounted weapon = ((WeaponListModel) weaponList
+                  .getModel()).getWeaponAt(selected);
+            Entity weaponEntity = weapon.getEntity();
+            return weaponEntity.getEquipmentNum(weapon);
         } else {
             return -1;
+        }
+    }
+
+    public WeaponMounted getNextWeapon() {
+        int selected = getNextWeaponListIdx();
+        if ((selected >= 0) && (selected < entity.getWeaponListWithHHW().size())) {
+            return ((WeaponListModel) weaponList
+                  .getModel()).getWeaponAt(selected);
+        } else {
+            return null;
         }
     }
 
@@ -1321,7 +1362,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         int selected = getNextWeaponListIdx();
         weaponList.setSelectedIndex(selected);
         weaponList.ensureIndexIsVisible(selected);
-        if ((selected >= 0) && (selected < entity.getWeaponList().size())) {
+        if ((selected >= 0) && (selected < entity.getWeaponListWithHHW().size())) {
             return entity.getEquipmentNum(((WeaponListModel) weaponList
                   .getModel()).getWeaponAt(selected));
         } else {
@@ -1338,7 +1379,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         int selected = getPrevWeaponListIdx();
         weaponList.setSelectedIndex(selected);
         weaponList.ensureIndexIsVisible(selected);
-        if ((selected >= 0) && (selected < entity.getWeaponList().size())) {
+        if ((selected >= 0) && (selected < entity.getWeaponListWithHHW().size())) {
             return entity.getEquipmentNum(((WeaponListModel) weaponList
                   .getModel()).getWeaponAt(selected));
         } else {
@@ -1351,8 +1392,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      */
     private void displaySelected() {
         removeListeners();
-        // short circuit if not selected
-        if (weaponList.getSelectedIndex() == -1) {
+        try {
+            // short circuit if not selected
+            if (weaponList.getSelectedIndex() == -1) {
             ((DefaultComboBoxModel<String>) m_chAmmo.getModel())
                   .removeAllElements();
             m_chAmmo.setEnabled(false);
@@ -1714,6 +1756,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 wDamR.setText(Integer.toString(Compute.dialDownDamage(
                       mounted, weaponType)));
             }
+        } else if (mounted.curMode().getName().contains("Dazzle")) {
+            // Gothic Dazzle Mode: half damage (rounded down, min 1)
+            int baseDamage = weaponType.getDamage();
+            int dazzleDamage = Math.max(1, baseDamage / 2);
+            wDamR.setText(Integer.toString(dazzleDamage));
         } else {
             wDamR.setText(Integer.toString(weaponType.getDamage()));
         }
@@ -1943,14 +1990,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         unitDisplayPanel.getClientGUI().showSensorRanges(entity);
         unitDisplayPanel.processMekDisplayEvent(new MekDisplayEvent(this, entity, mounted));
         onResize();
-        addListeners();
+        } finally {
+            addListeners();
+        }
     }
 
     private String formatAmmo(Mounted<?> m) {
         StringBuilder sb = new StringBuilder(64);
         int ammoIndex = m.getDesc().indexOf(Messages.getString("MekDisplay.0"));
         int loc = m.getLocation();
-        if (!m.getEntity().equals(entity)) {
+        if (!m.getEntity().equals(entity) && !(m.getEntity() instanceof HandheldWeapon)) {
             sb.append("[TR] ");
         } else if (loc != Entity.LOC_NONE) {
             sb.append('[').append(entity.getLocationAbbr(loc)).append("] ");

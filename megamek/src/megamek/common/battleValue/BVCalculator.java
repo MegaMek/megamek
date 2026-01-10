@@ -120,6 +120,8 @@ public abstract class BVCalculator {
             return new GunEmplacementBVCalculator(entity);
         } else if (entity instanceof HandheldWeapon) {
             return new HandheldWeaponBVCalculator(entity);
+        } else if (entity instanceof AbstractBuildingEntity) {
+            return new AbstractBuildingEntityBVCalculator(entity);
         } else { // Tank
             return new CombatVehicleBVCalculator(entity);
         }
@@ -1275,16 +1277,16 @@ public abstract class BVCalculator {
 
     /**
      * Returns the BV multiplier for the gunnery/piloting of the given entity's pilot (TM p.315) as well as MD implants
-     * of the pilot. Returns 1 if the given entity's crew is null. Special treatment is given to infantry units where
-     * units unable to make anti-mek attacks use 5 as their anti-mek (piloting) value as well as LAM pilots that use the
-     * average of their aero and mek values.
+     * of the pilot. Returns 1 if the given entity's crew is null or {@link CrewType#NONE}. Special treatment is given
+     * to infantry units where units unable to make anti-mek attacks use 5 as their anti-mek (piloting) value as well as
+     * LAM pilots that use the average of their aero and mek values.
      *
      * @param entity The entity to get the skill modifier for
      *
      * @return The BV multiplier for the given entity's pilot
      */
     public static double bvMultiplier(Entity entity, List<String> pilotModifiers) {
-        if (entity.getCrew() == null) {
+        if (entity.isUncrewed()) {
             if (entity.isConventionalInfantry() && !((Infantry) entity).hasAntiMekGear()) {
                 return bvSkillMultiplier(4, Infantry.ANTI_MEK_SKILL_NO_GEAR);
             } else {
@@ -1314,26 +1316,37 @@ public abstract class BVCalculator {
             piloting = Math.max(0, piloting - 1);
             pilotModifiers.add("Pain Shunt");
         }
+        // Comm Implant: Piloting -1 for BV purposes
+        // Note: Boosted Comm Implant does NOT get piloting -1; it's treated as C3 slave instead
         if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_COMM_IMPLANT)) {
             piloting = Math.max(0, piloting - 1);
             pilotModifiers.add("Comm. Implant");
         }
+        // VDNI: -1 Gunnery, -1 Piloting for Meks, Vehicles, Fighters, BA (IO pg 71)
+        // Note: BVDNI implies VDNI, so check VDNI && !BVDNI to avoid double-counting
         if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI) &&
-              entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
+              !entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             piloting = Math.max(0, piloting - 1);
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("VDNI");
         }
-        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI) &&
-              entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
+        // BVDNI: -1 Gunnery only (no piloting bonus due to "neuro-lag") (IO pg 71)
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("Buf. VDNI");
         }
-        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS) ||
-              entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_ENH_MM_IMPLANTS) ||
-              entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_LASER) ||
-              entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO) ||
-              entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)) {
+        // Sensory Implants (All Types): For BV purposes, any unit with sensory implants
+        // of any kind applies -1 gunnery modifier. Benefits don't stack.
+        // MM/Enhanced MM implants work for any unit type.
+        // Basic sensory implants (audio, visual, laser, tele) only apply to infantry.
+        boolean hasMmImplants = entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS)
+              || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_ENH_MM_IMPLANTS);
+        boolean hasBasicSensoryImplants = entity.isConventionalInfantry()
+              && (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO)
+              || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)
+              || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_LASER)
+              || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_TELE));
+        if (hasMmImplants || hasBasicSensoryImplants) {
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("Sensory Implants");
         }
@@ -1384,7 +1397,7 @@ public abstract class BVCalculator {
         boolean hasGuided = false;
 
         for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
-            if ((otherEntity == entity) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
+            if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
                 continue;
             }
             for (Mounted<?> mounted : otherEntity.getAmmo()) {

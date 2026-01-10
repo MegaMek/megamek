@@ -50,9 +50,9 @@ import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
@@ -151,7 +151,7 @@ public class LosEffects {
     boolean blockedByWater = false;
     int targetCover = COVER_NONE; // that means partial cover
     int attackerCover = COVER_NONE; // ditto
-    Building thruBldg = null;
+    IBuilding thruBldg = null;
     Coords targetLoc;
     /**
      * Indicates if the primary cover is damageable.
@@ -166,13 +166,13 @@ public class LosEffects {
      * primary cover is used if there is a sole piece of cover (horizontal cover, 25% cover). In the case of a primary
      * and secondary, the primary cover protects the right side.
      */
-    Building coverBuildingPrimary = null;
+    IBuilding coverBuildingPrimary = null;
     /**
      * Keeps track of the building that provides cover. This is used to assign damage for shots that hit cover. The
      * secondary cover is used if there are two buildings that provide cover, like in the case of 75% cover or two
      * buildings providing 25% cover for a total of horizontal cover. The secondary cover protects the left side.
      */
-    Building coverBuildingSecondary = null;
+    IBuilding coverBuildingSecondary = null;
     /**
      * Keeps track of the grounded DropShip that provides cover. This is used to assign damage for shots that hit cover.
      * The primary cover is used if there is a sole piece of cover (horizontal cover, 25% cover). In the case of a
@@ -353,7 +353,7 @@ public class LosEffects {
      *
      * @return Value of property thruBldg.
      */
-    public Building getThruBldg() {
+    public IBuilding getThruBldg() {
         return thruBldg;
     }
 
@@ -362,7 +362,7 @@ public class LosEffects {
      *
      * @param thruBldg New value of property thruBldg.
      */
-    public void setThruBldg(Building thruBldg) {
+    public void setThruBldg(IBuilding thruBldg) {
         this.thruBldg = thruBldg;
     }
 
@@ -564,6 +564,29 @@ public class LosEffects {
           final @Nullable Coords targetPosition,
           int boardId,
           final boolean spotting) {
+        // Use attacker's height if not explicitly specified
+        int attackHeight = (attacker != null) ? attacker.getHeight() : 0;
+        return calculateLOS(game, attacker, target, attackerPosition, targetPosition, attackHeight, boardId, spotting);
+    }
+
+    /**
+     * This calculates LOS effects with an explicit attack height, allowing for weapons firing from specific levels of
+     * multi-level entities like buildings.
+     *
+     * @param attackerPosition The nominal position of the attacker on the board with the given board ID
+     * @param targetPosition   The nominal position of the target on the board with the given board ID
+     * @param attackHeight     The height from which the attack is being made
+     * @param boardId          The board on which the nominal positions are
+     *
+     * @return LOS effects between the given positions
+     */
+    public static LosEffects calculateLOS(final Game game, final @Nullable Entity attacker,
+          final @Nullable Targetable target,
+          final @Nullable Coords attackerPosition,
+          final @Nullable Coords targetPosition,
+          int attackHeight,
+          int boardId,
+          final boolean spotting) {
 
         // LOS fails if one of the entities is not deployed.
         if ((attacker == null) || (target == null) || (attackerPosition == null)
@@ -616,12 +639,13 @@ public class LosEffects {
         }
 
         ai.targetInfantry = target instanceof Infantry;
-        ai.attackHeight = (ai.attLowAlt) ? attacker.getAltitude() : attacker.getHeight();
+        ai.attackHeight = (ai.attLowAlt) ? attacker.getAltitude() : attackHeight;
         ai.targetHeight = (ai.targetLowAlt) ? target.getAltitude() : target.getHeight() + targetHeightAdjustment;
 
-        int attackerElevation = (ai.attLowAlt) ? attacker.getAltitude() : attacker.relHeight() + attackerHex.getLevel();
+        int attackerElevation = (ai.attLowAlt) ? attacker.getAltitude() :
+              attackHeight + attacker.getElevation() + attackerHex.getLevel();
         // for spotting, a mast mount raises our elevation by 1
-        if (spotting && attacker.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1)) {
+        if (spotting && attacker.hasWorkingMisc(MiscType.F_MAST_MOUNT)) {
             attackerElevation += (ai.attLowAlt) ? 0 : 1;
         }
         final int targetElevation = (ai.targetLowAlt) ?
@@ -1207,7 +1231,7 @@ public class LosEffects {
     /**
      * Returns a LosEffects object representing the LOS effects of anything at the specified coordinate.
      */
-    private static LosEffects losForCoords(Game game, AttackInfo ai, Coords coords, Building thruBldg,
+    private static LosEffects losForCoords(Game game, AttackInfo ai, Coords coords, IBuilding thruBldg,
           boolean diagramLoS, boolean partialCover) {
 
         // Handle Low Atmosphere hexes differently
@@ -1222,7 +1246,7 @@ public class LosEffects {
         }
 
         // Is there a building in this hex?
-        Building bldg = game.getBoard(ai.boardId).getBuildingAt(coords);
+        IBuilding bldg = game.getBoard(ai.boardId).getBuildingAt(coords);
 
         // We're only tracing through a single building if there
         // is a building in this hex, and if it isn't the same
@@ -1773,7 +1797,6 @@ public class LosEffects {
      * @param cover       The int id that represents the cover type.
      * @param switchSides A boolean that determines if left/right side should be switched. This is useful since cover is
      *                    given from the perspective of the attacker, and the sides need to be switched for the target.
-     *
      */
     static public String getCoverName(int cover, boolean switchSides) {
         switch (cover) {
@@ -1826,11 +1849,11 @@ public class LosEffects {
         }
     }
 
-    public Building getCoverBuildingPrimary() {
+    public IBuilding getCoverBuildingPrimary() {
         return coverBuildingPrimary;
     }
 
-    public void setCoverBuildingPrimary(Building coverBuilding) {
+    public void setCoverBuildingPrimary(IBuilding coverBuilding) {
         this.coverBuildingPrimary = coverBuilding;
     }
 
@@ -1858,11 +1881,11 @@ public class LosEffects {
         this.coverLocPrimary = coverLoc;
     }
 
-    public Building getCoverBuildingSecondary() {
+    public IBuilding getCoverBuildingSecondary() {
         return coverBuildingSecondary;
     }
 
-    public void setCoverBuildingSecondary(Building coverBuildingSecondary) {
+    public void setCoverBuildingSecondary(IBuilding coverBuildingSecondary) {
         this.coverBuildingSecondary = coverBuildingSecondary;
     }
 

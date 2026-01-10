@@ -132,7 +132,7 @@ public class NavalRepairFacility extends UnitBay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         StringBuilder sb = new StringBuilder();
         if (arts) {
             sb.append("ARTS ");
@@ -153,9 +153,13 @@ public class NavalRepairFacility extends UnitBay {
         }
         // We can carry two dropships or one JS/WS/SS.
         if (unit.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
+            if (troops.isEmpty()) {
+                return true;
+            }
+
             Entity troop = unit.getGame().getEntity(troops.get(0));
 
-            return troops.isEmpty() || ((troops.size() == 1)
+            return ((troops.size() == 1)
                   && (null != troop) && (troop.hasETypeFlag(Entity.ETYPE_DROPSHIP)));
         } else if (unit.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             return troops.isEmpty();
@@ -250,6 +254,19 @@ public class NavalRepairFacility extends UnitBay {
             cost += 1000000L;
         }
         return cost;
+    }
+
+    /**
+     * Most bay types track space by individual units. Infantry bays have variable space requirements and must track by
+     * cubicle tonnage.
+     *
+     * @param unit The unit to load/unload.
+     *
+     * @return The amount of bay space taken up by the unit.
+     */
+    @Override
+    public double spaceForUnit(Entity unit) {
+        return unit.getTonnage();
     }
 
 }

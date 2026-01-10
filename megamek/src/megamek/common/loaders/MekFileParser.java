@@ -55,6 +55,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.Sensor;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
@@ -209,8 +210,13 @@ public class MekFileParser {
                     case "Tank", "Naval", "Surface", "Hydrofoil" -> new BLKTankFile(bb);
                     case "Infantry" -> new BLKInfantryFile(bb);
                     case "BattleArmor" -> new BLKBattleArmorFile(bb);
-                    case "ProtoMek" -> new BLKProtoMekFile(bb);
-                    case "Mek" -> new BLKMekFile(bb);
+                    // CHECKSTYLE IGNORE ForbiddenWords FOR 6 LINES
+                    // Do not remove <50.0 compatibility handler 'ProtoMech' as this will break our cross-version
+                    // compatibility promise
+                    case "ProtoMech", "ProtoMek" -> new BLKProtoMekFile(bb);
+                    // Do not remove <50.0 compatibility handler 'Mech' as this will break our cross-version
+                    // compatibility promise
+                    case "Mek", "Mech" -> new BLKMekFile(bb);
                     case "VTOL" -> new BLKVTOLFile(bb);
                     case "GunEmplacement" -> new BLKGunEmplacementFile(bb);
                     case "SupportTank" -> new BLKSupportTankFile(bb);
@@ -225,6 +231,7 @@ public class MekFileParser {
                     case "Warship" -> new BLKWarshipFile(bb);
                     case "SpaceStation" -> new BLKSpaceStationFile(bb);
                     case "HandheldWeapon" -> new BLKHandheldWeaponFile(bb);
+                    case "BuildingEntity" -> new BLKStructureFile(bb);
                     default -> throw new EntityLoadingException("Unknown UnitType: " + sType);
                 };
             } else {
@@ -243,7 +250,6 @@ public class MekFileParser {
      * Parse a string containing the representation of a unit.
      *
      * @param content String containing the unit representation
-     *
      */
     public void parse(String content) throws Exception {
         final boolean isBlk = content.contains("<BlockVersion>") || content.contains("<UnitType>");
@@ -538,7 +544,7 @@ public class MekFileParser {
                 if (ent.hasTargComp() ||
                       ((Mek) ent).hasTSM(true) ||
                       (!ent.getMPBoosters().isNone() &&
-                            !ent.hasWorkingMisc(MiscType.F_MASC, MiscType.S_SUPERCHARGER))) {
+                            !ent.hasWorkingMisc(MiscType.F_MASC, MiscTypeFlag.S_SUPERCHARGER))) {
                     LOGGER.error("Loading AES with incompatible systems for {}", ent.getShortName());
                 }
 
@@ -570,7 +576,7 @@ public class MekFileParser {
                         throw new EntityLoadingException("Talons are only legal in the Legs for " + ent.getShortName());
                     }
                     for (int loc = 0; loc < ent.locations(); loc++) {
-                        if (ent.locationIsLeg(loc) && !ent.hasWorkingMisc(MiscType.F_TALON, -1, loc)) {
+                        if (ent.locationIsLeg(loc) && !ent.hasWorkingMisc(MiscType.F_TALON, null, loc)) {
                             throw new EntityLoadingException("Talons must be in all legs for " + ent.getShortName());
                         }
                     }
@@ -852,33 +858,52 @@ public class MekFileParser {
      */
     public static void linkMGAs(Entity entity) {
         List<Integer> usedMG = new ArrayList<>();
-        for (WeaponMounted mga : entity.getWeaponList()) {
-            if (mga.getType().hasFlag(WeaponType.F_MGA)) {
+        for (WeaponMounted machineGunArray : entity.getWeaponList()) {
+            if (machineGunArray.getType().hasFlag(WeaponType.F_MGA)) {
                 // This may be called from MML after changing equipment location, so there may be old data that needs
                 // to be cleared
-                mga.clearBayWeapons();
-                for (int i = 0; i < entity.getNumberOfCriticalSlots(mga.getLocation()); i++) {
-                    CriticalSlot slot = entity.getCritical(mga.getLocation(), i);
+                machineGunArray.clearBayWeapons();
+                for (int i = 0; i < entity.getNumberOfCriticalSlots(machineGunArray.getLocation()); i++) {
+                    CriticalSlot slot = entity.getCritical(machineGunArray.getLocation(), i);
                     if ((slot != null) &&
                           (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) &&
                           (slot.getMount().getType() instanceof WeaponType weaponType)) {
                         int eqNum = entity.getEquipmentNum(slot.getMount());
                         if (!usedMG.contains(eqNum) &&
                               weaponType.hasFlag(WeaponType.F_MG) &&
-                              (mga.getType().getRackSize() == weaponType.getRackSize())) {
-                            mga.addWeaponToBay(eqNum);
+                              (machineGunArray.getType().getRackSize() == weaponType.getRackSize())) {
+                            machineGunArray.addWeaponToBay(eqNum);
                             usedMG.add(eqNum);
-                            if (mga.getBayWeapons().size() >= 4) {
+                            if (machineGunArray.getBayWeapons().size() >= 4) {
                                 break;
                             }
                         } else {
-                            if (!mga.getBayWeapons().isEmpty()) {
+                            if (!machineGunArray.getBayWeapons().isEmpty()) {
                                 break;
                             }
                         }
                     } else {
-                        if (!mga.getBayWeapons().isEmpty()) {
+                        if (!machineGunArray.getBayWeapons().isEmpty()) {
                             break;
+                        }
+                    }
+                }
+
+                // Fallback for entities that don't use critical slots (e.g., ProtoMeks)
+                // If no MGs were linked via critical slots, search the weapon list directly
+                if (machineGunArray.getBayWeapons().isEmpty()) {
+                    for (WeaponMounted weapon : entity.getWeaponList()) {
+                        if (weapon.getLocation() == machineGunArray.getLocation() &&
+                              weapon.getType().hasFlag(WeaponType.F_MG) &&
+                              machineGunArray.getType().getRackSize() == weapon.getType().getRackSize()) {
+                            int eqNum = entity.getEquipmentNum(weapon);
+                            if (!usedMG.contains(eqNum)) {
+                                machineGunArray.addWeaponToBay(eqNum);
+                                usedMG.add(eqNum);
+                                if (machineGunArray.getBayWeapons().size() >= 4) {
+                                    break;
+                                }
+                            }
                         }
                     }
                 }

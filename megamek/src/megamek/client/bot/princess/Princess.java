@@ -59,6 +59,7 @@ import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.LosEffects;
 import megamek.common.MPCalculationSetting;
+import megamek.common.Player;
 import megamek.common.Team;
 import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -91,6 +92,7 @@ import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.game.IGame;
+import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.net.enums.PacketCommand;
@@ -502,6 +504,10 @@ public class Princess extends BotClient {
         return strategicBuildingTargets;
     }
 
+    public boolean hasStrategicBuildingTargets(final Coords coords) {
+        return getStrategicBuildingTargets().contains(coords);
+    }
+
     public void addStrategicBuildingTarget(final Coords coords) {
         if (null == coords) {
             throw new NullPointerException("Coords is null.");
@@ -511,6 +517,23 @@ public class Princess extends BotClient {
             return;
         }
         getStrategicBuildingTargets().add(coords);
+    }
+
+    public void removeStrategicBuildingTarget(final Coords coords) {
+        if (null == coords) {
+            throw new NullPointerException("Coords is null.");
+        }
+        if (!getGame().getBoard().contains(coords)) {
+            LOGGER.warn("Board does not contain {}", coords.toFriendlyString());
+            return;
+        }
+        if (!hasStrategicBuildingTargets(coords)) {
+            LOGGER.warn("Strategic Building Targets does not contain {}", coords.toFriendlyString());
+            return;
+        }
+
+        getStrategicBuildingTargets().remove(coords);
+
     }
 
     public Set<Integer> getPriorityUnitTargets() {
@@ -713,7 +736,7 @@ public class Princess extends BotClient {
         final List<Coords> turretDeploymentLocations = new Vector<>();
 
         for (final Coords coords : possibleDeployCoords) {
-            final Building building = game.getBoard(deployedUnit).getBuildingAt(coords);
+            final IBuilding building = game.getBoard(deployedUnit).getBuildingAt(coords);
             final Hex hex = game.getBoard(deployedUnit).getHex(coords);
 
             if (null != building) {
@@ -726,7 +749,8 @@ public class Princess extends BotClient {
                       buildingHeight,
                       coords,
                       null,
-                      deployedUnit.climbMode());
+                      deployedUnit.climbMode(),
+                      true);
                 // Ignore coords that could cause a stacking violation
                 if (null == violation) {
                     turretDeploymentLocations.add(coords);
@@ -751,7 +775,7 @@ public class Princess extends BotClient {
         //      (CF + height * 2) / # turrets placed on the roof
         //      This way, we will generally favor unpopulated higher CF buildings,
         //      but have some wiggle room in case of a really tall high CF building
-        final Building building = game.getBoard().getBuildingAt(coords);
+        final IBuilding building = game.getBoard().getBuildingAt(coords);
         final Hex hex = game.getBoard().getHex(coords);
         final int turretCount = 1 + game.getGunEmplacements(coords).size();
 
@@ -809,7 +833,6 @@ public class Princess extends BotClient {
      *         </ol>
      *     </li>
      * </ol>
-     *
      */
     protected Coords rankDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         StringBuilder sb = null;
@@ -856,6 +879,12 @@ public class Princess extends BotClient {
                 deployStep.setPosition(dest);
                 if (null != super.getFirstValidCoords(deployedUnit, List.of(dest))) {
                     hazard = -((BasicPathRanker) ranker).checkPathForHazards(mp, deployedUnit, game);
+                    if (deployedUnit instanceof BuildingEntity
+                          && getBoard() != null
+                          && getBoard().getHex(dest) != null) {
+                        // If there's anything in the hex, let's increase the hazard so we don't prefer it
+                        hazard -= getBoard().getHex(dest).getTerrainTypesSet().size();
+                    }
                     if (!rankedCoords.containsKey(hazard)) {
                         rankedCoords.put(hazard, new ArrayList<>());
                     }
@@ -2435,9 +2464,9 @@ public class Princess extends BotClient {
             // pre-movement(infantry can move so we only set target buildings
             // after they do).
             for (Board board : game.getBoards().values()) {
-                final Enumeration<Building> buildings = board.getBuildings();
+                final Enumeration<IBuilding> buildings = board.getBuildings();
                 while (buildings.hasMoreElements()) {
-                    final Building bldg = buildings.nextElement();
+                    final IBuilding bldg = buildings.nextElement();
                     final Enumeration<Coords> bldgCoords = bldg.getCoords();
                     while (bldgCoords.hasMoreElements()) {
                         final Coords coords = bldgCoords.nextElement();
@@ -2448,7 +2477,7 @@ public class Princess extends BotClient {
                             if (isEnemyInfantry(entity, coords) &&
                                   entity.isInBuilding() &&
                                   !entity.isHidden()) {
-                                fireControlState.getAdditionalTargets().add(bt);
+                                fireControlState.addAdditionalTarget(bt);
                                 sendChat("Building in Hex " +
                                       coords.toFriendlyString() +
                                       " designated target due to infantry inside building.", Level.INFO);
@@ -2535,7 +2564,7 @@ public class Princess extends BotClient {
                 if (bulldozerPaths.get(0).needsLeveling()) {
                     levelingTarget = getAppropriateTarget(bulldozerPaths.get(0).getCoordsToLevel().get(0),
                           mover.getBoardId());
-                    getFireControlState().getAdditionalTargets().add(levelingTarget);
+                    getFireControlState().addAdditionalTarget(levelingTarget);
                     sendChat("Hex " +
                           levelingTarget.getPosition().toFriendlyString() +
                           " impedes route to destination, targeting for clearing.", Level.INFO);
@@ -2681,12 +2710,12 @@ public class Princess extends BotClient {
             fireControlState.setAdditionalTargets(new ArrayList<>());
             for (final Coords strategicTarget : getStrategicBuildingTargets()) {
                 if (null == game.getBoard().getBuildingAt(strategicTarget)) {
-                    fireControlState.getAdditionalTargets().add(getAppropriateTarget(strategicTarget));
+                    fireControlState.addAdditionalTarget(getAppropriateTarget(strategicTarget));
                     sendChat("No building to target in Hex " +
                           strategicTarget.toFriendlyString() +
                           ", targeting for clearing.", Level.INFO);
                 } else {
-                    fireControlState.getAdditionalTargets().add(getAppropriateTarget(strategicTarget));
+                    fireControlState.addAdditionalTarget(getAppropriateTarget(strategicTarget));
                     sendChat("Building in Hex " + strategicTarget.toFriendlyString() + " designated strategic target.",
                           Level.INFO);
                 }
@@ -2694,9 +2723,9 @@ public class Princess extends BotClient {
 
             // Pick up on any turrets and shoot their buildings as well.
             for (Board board : game.getBoards().values()) {
-                final Enumeration<Building> buildings = board.getBuildings();
+                final Enumeration<IBuilding> buildings = board.getBuildings();
                 while (buildings.hasMoreElements()) {
-                    final Building bldg = buildings.nextElement();
+                    final IBuilding bldg = buildings.nextElement();
                     final Enumeration<Coords> bldgCoords = bldg.getCoords();
                     while (bldgCoords.hasMoreElements()) {
                         final Coords coords = bldgCoords.nextElement();
@@ -2704,10 +2733,17 @@ public class Princess extends BotClient {
                             final Targetable bt = getAppropriateTarget(coords, board.getBoardId());
 
                             if (isEnemyGunEmplacement(entity, coords)) {
-                                fireControlState.getAdditionalTargets().add(bt);
+                                fireControlState.addAdditionalTarget(bt);
                                 sendChat("Building in Hex " +
                                       coords.toFriendlyString() +
                                       " designated target due to Gun Emplacement.", Level.INFO);
+                            }
+
+                            if (isEnemyBuildingEntity(entity, coords)) {
+                                fireControlState.getAdditionalTargets().add(bt);
+                                sendChat("Building in Hex " +
+                                      coords.toFriendlyString() +
+                                      " designated target due to Building Entity.", Level.INFO);
                             }
                         }
                     }
@@ -2758,9 +2794,9 @@ public class Princess extends BotClient {
 
             // Pick up any turrets and add their buildings to the strategic targets list.
             for (Board board : game.getBoards().values()) {
-                final Enumeration<Building> buildings = board.getBuildings();
+                final Enumeration<IBuilding> buildings = board.getBuildings();
                 while (buildings.hasMoreElements()) {
-                    final Building bldg = buildings.nextElement();
+                    final IBuilding bldg = buildings.nextElement();
                     final Enumeration<Coords> bldgCoords = bldg.getCoords();
                     while (bldgCoords.hasMoreElements()) {
                         final Coords coords = bldgCoords.nextElement();
@@ -2771,6 +2807,14 @@ public class Princess extends BotClient {
                                 sendChat("Building in Hex " +
                                       coords.toFriendlyString() +
                                       " designated target due to Gun Emplacement.", Level.INFO);
+                            }
+
+
+                            if (isEnemyBuildingEntity(entity, coords)) {
+                                getStrategicBuildingTargets().add(coords);
+                                sendChat("Building in Hex " +
+                                      coords.toFriendlyString() +
+                                      " designated target due to Building Entity.", Level.INFO);
                             }
                         }
                     }
@@ -2840,7 +2884,6 @@ public class Princess extends BotClient {
     /**
      * Reduce utility of TAGging something if we're already trying.  Update the utility if it's better, otherwise try to
      * dissuade the next attacker.
-     *
      */
     public int computeTeamTagUtility(Targetable te, int damage) {
         int key = te.getId();
@@ -2955,6 +2998,14 @@ public class Princess extends BotClient {
               !entity.isCrippled();
     }
 
+    private boolean isEnemyBuildingEntity(final Entity entity, final Coords coords) {
+        return entity.hasETypeFlag(Entity.ETYPE_BUILDING_ENTITY) &&
+              !getBehaviorSettings().getIgnoredUnitTargets().contains(entity.getId()) &&
+              entity.getOwner().isEnemyOf(getLocalPlayer()) &&
+              !getStrategicBuildingTargets().contains(coords) &&
+              !entity.isCrippled();
+    }
+
     private boolean isEnemyInfantry(final Entity entity, final Coords coords) {
         return entity.hasETypeFlag(Entity.ETYPE_INFANTRY) &&
               !entity.hasETypeFlag(Entity.ETYPE_MEKWARRIOR) &&
@@ -3035,13 +3086,13 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Lazy-loaded calculation of the "to-hit target number" threshold for spinning up a rapid fire autocannon.
+     * Lazy-loaded calculation of the "to-hit target number" threshold, below which rapid fire autocannon will fire
+     * multiple shots. More aggressive behavior (left on the Self Preservation slider) start at TN 11 and under, while
+     * less aggressive behavior (right on the slider) start at 4 and under.
      */
     public int getSpinUpThreshold() {
         if (spinUpThreshold == null) {
-            // we start spinning up the cannon at 11+ TN at highest aggression levels
-            // dropping it down to 6+ TN at the lower aggression levels
-            spinUpThreshold = Math.min(11, Math.max(getBehaviorSettings().getHyperAggressionIndex() + 2, 6));
+            spinUpThreshold = Math.max(4, Math.min(11, 13 - getBehaviorSettings().getSelfPreservationIndex()));
         }
 
         return spinUpThreshold;
@@ -3293,7 +3344,8 @@ public class Princess extends BotClient {
                       loadedEntity,
                       pathEndpoint,
                       movingEntity,
-                      loadedEntity.climbMode()) != null;
+                      loadedEntity.climbMode(),
+                      true) != null;
 
                 // this is a primitive condition that checks whether we're within "engagement range" of an enemy
                 // where "engagement range" is defined as the maximum range of our weapons plus our walking movement
@@ -3456,7 +3508,8 @@ public class Princess extends BotClient {
                               loadedEntity,
                               dismountLocation,
                               (dismountLocations.size() == 1) ? movingEntity : null,
-                              loadedEntity.climbMode()) != null;
+                              loadedEntity.climbMode(),
+                              true) != null;
 
                         if (unloadIllegal) {
                             // Try the next hex
@@ -3653,7 +3706,6 @@ public class Princess extends BotClient {
 
     /**
      * Flag an entity as having used manual AMS this round
-     *
      */
     public void flagManualAMSUse(int id) {
         if (manualAMSIds == null) {
@@ -3684,7 +3736,6 @@ public class Princess extends BotClient {
 
     /**
      * Get a list of all hot spots (positions of high activity) for opposing units
-     *
      */
     public List<Coords> getEnemyHotSpots() {
         List<Coords> accumulatedHotSpots = new ArrayList<>();
@@ -3713,7 +3764,6 @@ public class Princess extends BotClient {
 
     /**
      * Get the nearest top-rated hot spot for friendly units
-     *
      */
     public Coords getFriendlyHotSpot(Coords testPosition) {
         return friendlyHeatMap == null ? null : friendlyHeatMap.getHotSpot(testPosition, true);
@@ -3836,5 +3886,131 @@ public class Princess extends BotClient {
 
     public ArtilleryCommandAndControl getArtilleryCommandAndControl() {
         return artilleryCommandAndControl;
+    }
+
+    /**
+     * Determines whether Princess should reroll initiative using the Tactical Genius special ability.
+     *
+     * <p>The decision is based on:</p>
+     *
+     * <ul>
+     *   <li>Whether Tactical Genius is available to the player</li>
+     *   <li>Whether it has already been used this round</li>
+     *   <li>The probability that rerolling will improve the net initiative outcome against enemies</li>
+     * </ul>
+     *
+     * <p>Princess will only reroll if currently losing more initiative comparisons than winning, and if the
+     * probability of improvement exceeds the configured threshold.</p>
+     *
+     * @return {@code true} if Tactical Genius should be used to reroll initiative
+     */
+    @Override
+    protected boolean decideToRerollInitiative() {
+        Player me = getLocalPlayer();
+
+        if (!game.hasTacticalGenius(me) || rerolledInitiative) {
+            return false;
+        }
+
+        int myRoll = getLastInitiativeRoll(me);
+        List<Integer> enemyRolls = game.getPlayersList().stream()
+              .filter(p -> p != me && p.isEnemyOf(me))
+              .map(this::getLastInitiativeRoll)
+              .sorted()
+              .toList();
+
+        int winsNow = countWins(myRoll, enemyRolls);
+        int lossesNow = countLosses(myRoll, enemyRolls);
+
+        // We're only interested in rerolling if we're actually losing overall.
+        if (winsNow >= lossesNow) {
+            return false;
+        }
+
+        double pMajority = probabilityOfMajorityWinOnReroll(enemyRolls);
+
+        // Threshold can be tweaked; 0.5 = only reroll if it's more likely than not to help.
+        double THRESHOLD = 0.5;
+        return pMajority >= THRESHOLD;
+    }
+
+    /**
+     * Retrieves the most recent initiative roll for the specified player.
+     *
+     * @param player the player whose initiative roll to retrieve
+     *
+     * @return the player's last initiative roll value, or {@code 0} if no roll exists
+     */
+    private int getLastInitiativeRoll(Player player) {
+        InitiativeRoll roll = player.getInitiative();
+        if (roll == null || roll.size() == 0) {
+            return 0;
+        }
+        return roll.getRoll(roll.size() - 1);
+    }
+
+    /**
+     * Counts how many enemy initiative rolls Princess' roll beats.
+     *
+     * @param myRoll     the initiative roll to compare
+     * @param enemyRolls the list of enemy initiative rolls to compare against
+     *
+     * @return the number of enemy rolls that are lower than myRoll
+     */
+    private int countWins(int myRoll, List<Integer> enemyRolls) {
+        int wins = 0;
+        for (int roll : enemyRolls) {
+            if (myRoll > roll) {
+                wins++;
+            }
+        }
+        return wins;
+    }
+
+    /**
+     * Counts how many enemy initiative rolls beat Princess' roll.
+     *
+     * @param myRoll     the initiative roll to compare
+     * @param enemyRolls the list of enemy initiative rolls to compare against
+     *
+     * @return the number of enemy rolls that are higher than myRoll
+     */
+    private int countLosses(int myRoll, List<Integer> enemyRolls) {
+        int losses = 0;
+        for (int roll : enemyRolls) {
+            if (myRoll < roll) {
+                losses++;
+            }
+        }
+        return losses;
+    }
+
+    /**
+     * Calculates the probability that rerolling 2d6 initiative will result in beating more enemy rolls than lose to.
+     *
+     * <p>Uses the standard 2d6 probability distribution to determine favorable outcomes, where a favorable outcome
+     * is defined as winning more initiative comparisons than losing.</p>
+     *
+     * @param enemyRolls the list of enemy initiative rolls to compare against
+     *
+     * @return the probability (0.0 to 1.0) that a reroll will improve the net initiative outcome
+     */
+    private double probabilityOfMajorityWinOnReroll(List<Integer> enemyRolls) {
+        // Number of ways to roll each total on 2d6
+        int[] ways = { 0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1 };
+
+        int favorableOutcomes = 0;
+        int totalOutcomes = 36;
+
+        for (int myRoll = 2; myRoll <= 12; myRoll++) {
+            int wins = countWins(myRoll, enemyRolls);
+            int losses = countLosses(myRoll, enemyRolls);
+
+            if (wins > losses) {
+                favorableOutcomes += ways[myRoll];
+            }
+        }
+
+        return (double) favorableOutcomes / totalOutcomes;
     }
 }

@@ -33,6 +33,8 @@
 
 package megamek.common.enums;
 
+import static megamek.codeUtilities.MathUtility.clamp;
+
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -43,27 +45,32 @@ import megamek.logging.MMLogger;
 
 public enum SkillLevel {
     // region Enum Declarations
-    NONE("SkillLevel.NONE.text", "SkillLevel.NONE.toolTipText", 0),
-    ULTRA_GREEN("SkillLevel.ULTRA_GREEN.text", "SkillLevel.ULTRA_GREEN.toolTipText", 1),
-    GREEN("SkillLevel.GREEN.text", "SkillLevel.GREEN.toolTipText", 2),
-    REGULAR("SkillLevel.REGULAR.text", "SkillLevel.REGULAR.toolTipText", 3),
-    VETERAN("SkillLevel.VETERAN.text", "SkillLevel.VETERAN.toolTipText", 4),
-    ELITE("SkillLevel.ELITE.text", "SkillLevel.ELITE.toolTipText", 5),
-    HEROIC("SkillLevel.HEROIC.text", "SkillLevel.HEROIC.toolTipText", 6),
-    LEGENDARY("SkillLevel.LEGENDARY.text", "SkillLevel.LEGENDARY.toolTipText", 7);
+    NONE("SkillLevel.NONE.text", "SkillLevel.NONE.toolTipText", "SkillLevel.NONE.shortName", 0),
+    ULTRA_GREEN("SkillLevel.ULTRA_GREEN.text",
+          "SkillLevel.ULTRA_GREEN.toolTipText",
+          "SkillLevel.ULTRA_GREEN.shortName",
+          1),
+    GREEN("SkillLevel.GREEN.text", "SkillLevel.GREEN.toolTipText", "SkillLevel.GREEN.shortName", 2),
+    REGULAR("SkillLevel.REGULAR.text", "SkillLevel.REGULAR.toolTipText", "SkillLevel.REGULAR.shortName", 3),
+    VETERAN("SkillLevel.VETERAN.text", "SkillLevel.VETERAN.toolTipText", "SkillLevel.VETERAN.shortName", 4),
+    ELITE("SkillLevel.ELITE.text", "SkillLevel.ELITE.toolTipText", "SkillLevel.ELITE.shortName", 5),
+    HEROIC("SkillLevel.HEROIC.text", "SkillLevel.HEROIC.toolTipText", "SkillLevel.HEROIC.shortName", 6),
+    LEGENDARY("SkillLevel.LEGENDARY.text", "SkillLevel.LEGENDARY.toolTipText", "SkillLevel.LEGENDARY.shortName", 7);
     // endregion Enum Declarations
 
     // region Variable Declarations
     private final String name;
     private final String toolTipText;
+    private final String shortName;
     private final int experienceLevel;
     // endregion Variable Declarations
 
     // region Constructors
-    SkillLevel(final String name, final String toolTipText, final int experienceLevel) {
+    SkillLevel(final String name, final String toolTipText, final String shortName, final int experienceLevel) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
               MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
+        this.shortName = resources.getString(shortName);
         this.toolTipText = resources.getString(toolTipText);
         this.experienceLevel = experienceLevel;
     }
@@ -72,6 +79,10 @@ public enum SkillLevel {
     // region Getters
     public String getToolTipText() {
         return toolTipText;
+    }
+
+    public String getShortName() {
+        return shortName;
     }
 
     /**
@@ -186,6 +197,28 @@ public enum SkillLevel {
      */
     public static List<SkillLevel> getGeneratableValues() {
         return Stream.of(values()).filter(skillLevel -> !skillLevel.isNone()).collect(Collectors.toList());
+    }
+
+    /**
+     * Adjusts a {@link SkillLevel} by a given delta, clamping the result within valid bounds.
+     *
+     * <p>This method increases or decreases the current skill level by the specified {@code delta}, ensuring that
+     * the resulting experience level remains between {@link #ULTRA_GREEN} and {@link #LEGENDARY}. It then returns the
+     * corresponding {@link SkillLevel} for the resulting experience level.
+     *
+     * @param current the current {@link SkillLevel} to adjust
+     * @param delta   the change in experience level (positive to increase, negative to decrease)
+     *
+     * @return the resulting {@link SkillLevel} after applying the delta and clamping within bounds
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public static SkillLevel changeByDelta(final SkillLevel current, final int delta) {
+        int newExperienceLevel = clamp(current.experienceLevel + delta,
+              ULTRA_GREEN.getExperienceLevel(),
+              LEGENDARY.getExperienceLevel());
+        return parseFromInteger(newExperienceLevel);
     }
 
     // region File I/O

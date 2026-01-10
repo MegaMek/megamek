@@ -15,17 +15,17 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         java-distribution: [ temurin ]
-        java-version: [ 17, 21 ]
+        java-version: [ 17, 21, 25 ]
 
     steps:
       - name: Checkout Data Repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: megamek/mm-data
           path: mm-data
 
       - name: "Check out MegaMek"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           path: megamek
 
@@ -43,7 +43,7 @@ jobs:
         run: ./gradlew test
 
       - name: Upload Test Logs on Failure
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: cd-failure-logs

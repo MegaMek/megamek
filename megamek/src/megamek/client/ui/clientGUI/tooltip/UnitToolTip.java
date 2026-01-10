@@ -37,6 +37,7 @@ import static megamek.client.ui.clientGUI.tooltip.TipUtil.NOBR;
 import static megamek.client.ui.clientGUI.tooltip.TipUtil.getOptionList;
 import static megamek.client.ui.util.UIUtil.DOT_SPACER;
 import static megamek.client.ui.util.UIUtil.ECM_SIGN;
+import static megamek.client.ui.util.UIUtil.VRT_SIGN;
 import static megamek.client.ui.util.UIUtil.repeat;
 import static megamek.common.units.LandAirMek.CONV_MODE_FIGHTER;
 
@@ -67,8 +68,10 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.compute.Compute;
+import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.game.InGameObject;
 import megamek.common.loaders.MapSettings;
@@ -1517,7 +1520,7 @@ public final class UnitToolTip {
 
     public static String getOneLineSummary(Entity entity) {
         String result = "";
-        boolean isGunEmplacement = entity instanceof GunEmplacement;
+        boolean isGunEmplacement = entity.isBuildingEntityOrGunEmplacement();
         String armorStr = entity.getTotalArmor() + " / " + entity.getTotalOArmor();
         String internalStr = entity.getTotalInternal() + " / " + entity.getTotalOInternal();
         result += Messages.getString("BoardView1.Tooltip.ArmorInternals", armorStr, internalStr);
@@ -1772,9 +1775,8 @@ public final class UnitToolTip {
         String result = "";
 
         // Gun Emplacement Status
-        if (isGunEmplacement) {
-            GunEmplacement emp = (GunEmplacement) entity;
-            if (emp.isTurret() && emp.isTurretLocked(emp.getLocTurret())) {
+        if (entity instanceof GunEmplacement gunEmplacement) {
+            if (gunEmplacement.isTurret() && gunEmplacement.isTurretLocked(gunEmplacement.getLocTurret())) {
                 String sTurretLocked = addToTT("TurretLocked", NOBR) + " ";
                 attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getWarningColor())));
                 sTurretLocked = UIUtil.tag("FONT", attr, sTurretLocked);
@@ -1828,6 +1830,13 @@ public final class UnitToolTip {
             String sNarced = addToTT(entity.hasNarcPodsAttached() ? "Narced" : "INarced", NOBR) + " ";
             attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getPrecautionColor())));
             result += UIUtil.tag("FONT", attr, sNarced);
+        }
+
+        // Pheromone impaired (IO pg 79)
+        if ((entity instanceof Infantry infantry) && infantry.isPheromoneImpaired()) {
+            String sPheromone = addToTT("PheromoneImpaired", NOBR) + " ";
+            attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getWarningColor())));
+            result += UIUtil.tag("FONT", attr, sPheromone);
         }
 
         // Towing
@@ -1917,6 +1926,25 @@ public final class UnitToolTip {
         return sensors;
     }
 
+    /**
+     * Returns Variable Range Targeting mode info for tooltip display. Shows icon + mode name for units with VRT quirk
+     * (BMM pg. 86).
+     */
+    private static String getVariableRangeTargetingInfo(Entity entity) {
+        if (!entity.hasVariableRangeTargeting()) {
+            return "";
+        }
+
+        VariableRangeTargetingMode mode = entity.getVariableRangeTargetingMode();
+        String modeKey = mode.isLong()
+              ? "BoardView1.Tooltip.VRTModeLong"
+              : "BoardView1.Tooltip.VRTModeShort";
+        String modeText = Messages.getString(modeKey);
+
+        // Format: VRT_SIGN VRT: Long (or Short)
+        return VRT_SIGN + Messages.getString("BoardView1.Tooltip.VRT") + ": " + modeText;
+    }
+
     /** Returns values that only are relevant when in-game such as heat. */
     private static StringBuilder inGameValues(Entity entity, Player localPlayer, boolean inGameValue, boolean showBV,
           boolean showSensors, boolean showSeenBy) {
@@ -1927,7 +1955,7 @@ public final class UnitToolTip {
         Game game = entity.getGame();
         GameOptions gameOptions = game.getOptions();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
-        boolean isGunEmplacement = entity instanceof GunEmplacement;
+        boolean isGunEmplacement = entity.isBuildingEntityOrGunEmplacement();
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
 
         if (!inGameValue) {
@@ -1975,6 +2003,18 @@ public final class UnitToolTip {
             sFacingTwist = UIUtil.tag("FONT", attr, sFacingTwist);
             sFacingTwist = UIUtil.tag("span", fontSizeAttr, sFacingTwist);
             col = UIUtil.tag("TD", "", sFacingTwist);
+            row = UIUtil.tag("TR", "", col);
+            rows += row;
+        }
+
+        // Variable Range Targeting mode (BMM pg. 86)
+        String vrtInfo = getVariableRangeTargetingInfo(entity);
+        if (!vrtInfo.isEmpty()) {
+            attr = String.format("FACE=Dialog COLOR=%s",
+                  UIUtil.toColorHexString((GUIP.getUnitToolTipHighlightColor())));
+            vrtInfo = UIUtil.tag("FONT", attr, vrtInfo);
+            vrtInfo = UIUtil.tag("span", fontSizeAttr, vrtInfo);
+            col = UIUtil.tag("TD", "", vrtInfo);
             row = UIUtil.tag("TR", "", col);
             rows += row;
         }
@@ -2032,7 +2072,7 @@ public final class UnitToolTip {
      * Returns unit values that are relevant in-game and in the lobby such as movement ability.
      */
     private static StringBuilder getMovement(Entity entity) {
-        boolean isGunEmplacement = entity instanceof GunEmplacement;
+        boolean isGunEmplacement = entity.isBuildingEntityOrGunEmplacement();
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         String result;
         String col;
@@ -2216,8 +2256,8 @@ public final class UnitToolTip {
             if ((entity instanceof BipedMek) || (entity instanceof TripodMek)) {
                 int shieldMod = 0;
                 if (entity.hasShield()) {
-                    shieldMod -= entity.getNumberOfShields(MiscType.S_SHIELD_LARGE);
-                    shieldMod -= entity.getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
+                    shieldMod -= entity.getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE);
+                    shieldMod -= entity.getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
                 }
 
                 if (shieldMod != 0) {
@@ -2294,7 +2334,7 @@ public final class UnitToolTip {
     }
 
     private static StringBuilder getArmor(Entity entity) {
-        boolean isGunEmplacement = entity instanceof GunEmplacement;
+        boolean isGunEmplacement = entity.isBuildingEntityOrGunEmplacement();
         String result;
         String col;
         String row;
@@ -2516,7 +2556,15 @@ public final class UnitToolTip {
                 if (entity.hasNhC3()) {
                     String msg_c3i = Messages.getString("BoardView1.Tooltip.C3i");
                     String msg_nc3 = Messages.getString("BoardView1.Tooltip.NC3");
-                    sC3Info = entity.hasC3i() ? msg_c3i : msg_nc3;
+                    String msg_nova = Messages.getString("BoardView1.Tooltip.NovaCEWS");
+
+                    if (entity.hasC3i()) {
+                        sC3Info = msg_c3i;
+                    } else if (entity.hasNovaCEWS()) {
+                        sC3Info = msg_nova;
+                    } else {  // hasNavalC3()
+                        sC3Info = msg_nc3;
+                    }
                 } else {
                     sC3Info = Messages.getString("BoardView1.Tooltip.C3");
                 }

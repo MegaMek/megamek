@@ -47,11 +47,13 @@ import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.interfaces.PhaseUpdated;
 import megamek.common.interfaces.RoundUpdated;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.Tank;
 import megamek.common.util.RoundWeight;
@@ -85,6 +87,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean hotLoaded = false; // Hot loading for ammoType
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
+    // PLAYTEST3 entries
+    private boolean autocannonHit = false;
+    private boolean AMSused = false;
     private boolean mekTurretMounted = false; // is this mounted in a mek turret
     private boolean sponsonTurretMounted = false; // is this mounted in a sponson turret
     private boolean pintleTurretMounted = false; // is this mounted in a pintle turret
@@ -402,6 +407,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public void newRound(int roundNumber) {
         setUsedThisRound(false);
 
+        // PLAYTEST3 reset AMS usage value
+        setAMSused(false);
+
         if ((type != null) && (type.hasModes() && (pendingMode != -1))) {
             mode = pendingMode;
             pendingMode = -1;
@@ -411,7 +419,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     @Override
     public void newPhase(GamePhase phase) {
+
         jammed = jammedThisPhase;
+
+        // PLAYTEST3 reset shield mode at the beginning of the phase
+        if (entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
+                this.setMode(MiscType.S_NO_SHIELD);
+            }
+        }
     }
 
     /**
@@ -465,8 +481,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (pintleTurretMounted) {
             desc.append(" (PT)");
         }
-        // Append the facing for VGLs
-        if ((getType() instanceof WeaponType) && getType().hasFlag(WeaponType.F_VGL)) {
+        // Append the facing for VGLs or if mounted on an AbstractBuildingEntity
+        if (((getType() instanceof WeaponType) && getType().hasFlag(WeaponType.F_VGL))
+              || getEntity() instanceof AbstractBuildingEntity) {
             switch (facing) {
                 case 0:
                     desc.append(" (F)");
@@ -496,7 +513,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
         if (getEntity() instanceof BattleArmor) {
             if ((getBaMountLoc() >= BattleArmor.MOUNT_LOC_BODY) && (getBaMountLoc() <= BattleArmor.MOUNT_LOC_TURRET)) {
-                desc.append(" (%s)".formatted(BattleArmor.getBaMountLocAbbr(getBaMountLoc())));
+                desc.append(" (%s)".formatted(BattleArmor.getBaMountLocName(getBaMountLoc())));
             }
             if (isDWPMounted()) {
                 desc.append(" (DWP)");
@@ -595,6 +612,12 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         } else {
             phase = GamePhase.UNKNOWN;
         }
+    }
+
+    public boolean isAMSused() {return AMSused;}
+
+    public void setAMSused(boolean usedAMS) {
+        this.AMSused = usedAMS;
     }
 
     public GamePhase usedInPhase() {
@@ -1123,27 +1146,27 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     public int getExplosionDamage() {
         if (type instanceof MiscType miscType) {
-            if (miscType.hasFlag(MiscType.F_PPC_CAPACITOR)) {
+            if (miscType.hasFlag(MiscTypeFlag.F_PPC_CAPACITOR)) {
                 if (curMode().equals("Charge") && (linked != null) && !linked.isFired()) {
                     return 15;
                 }
             }
-            if (miscType.hasFlag(MiscType.F_FUEL)) {
+            if (miscType.hasFlag(MiscTypeFlag.F_FUEL)) {
                 return 20;
             }
-            if (miscType.hasFlag(MiscType.F_BLUE_SHIELD)) {
+            if (miscType.hasFlag(MiscTypeFlag.F_BLUE_SHIELD)) {
                 return 5;
             }
-            if (miscType.hasFlag(MiscType.F_JUMP_JET) &&
-                  miscType.hasSubType(MiscType.S_PROTOTYPE) &&
-                  miscType.hasSubType(MiscType.S_IMPROVED)) {
+            if (miscType.hasFlag(MiscTypeFlag.F_JUMP_JET) &&
+                  miscType.hasFlag(MiscTypeFlag.S_PROTOTYPE) &&
+                  miscType.hasFlag(MiscTypeFlag.S_IMPROVED)) {
                 return 10;
             }
             if (miscType.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
                 return 2;
             }
 
-            if (miscType.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+            if (miscType.hasFlag(MiscTypeFlag.F_EMERGENCY_COOLANT_SYSTEM)) {
                 return 5;
             }
             return 0;
@@ -1191,7 +1214,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
 
         // Is the entity even active?
-        return !entity.isShutDown() && ((null == entity.getCrew()) || entity.getCrew().isActive());
+        return !entity.isShutDown() && ((entity.getCrew() == null)
+              || entity.getCrew().isActive()
+              || entity.getAttackingEntity()
+              .getCrew()
+              .isActive());
 
         // Otherwise, the equipment can be fired.
     }
@@ -1409,6 +1436,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     public boolean isRepairable() {
         return repairable;
+    }
+
+    // PLAYTEST3 set and get autocannon hit
+    public void setAutocannonHit(boolean acHit) {
+        this.autocannonHit = acHit;
+    }
+
+    public boolean isAutocannonHit() {
+        return autocannonHit;
     }
 
     public Entity getEntity() {

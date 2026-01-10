@@ -51,8 +51,8 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.AmmoBayWeaponHandler;
 import megamek.common.weapons.ppc.clan.CLPlasmaCannon;
@@ -81,7 +81,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
      */
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-          Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+          Vector<Report> vPhaseReport, IBuilding bldg, int hits, int nCluster,
           int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
               nCluster, bldgAbsorbs);
@@ -133,7 +133,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
 
     @Override
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
-          Building bldg, int hits) {
+          IBuilding bldg, int hits) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -151,7 +151,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
 
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
-          Building bldg, int nDamage) {
+          IBuilding bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -191,7 +191,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
 
     @Override
     protected void handleBuildingDamage(Vector<Report> vPhaseReport,
-          Building bldg, int nDamage, Coords coords) {
+          IBuilding bldg, int nDamage, Coords coords) {
         // Plasma weapons deal double damage to buildings.
         super.handleBuildingDamage(vPhaseReport, bldg, nDamage * 2, coords);
     }

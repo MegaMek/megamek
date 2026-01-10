@@ -91,7 +91,7 @@ public class ATMHandler extends MissileWeaponHandler {
                   weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
                   weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
             toReturn = applyGlancingBlowModifier(toReturn, true);
         }
 
@@ -117,6 +117,16 @@ public class ATMHandler extends MissileWeaponHandler {
         hits = nDamPerHit * hits;
         nDamPerHit = 1;
         return hits;
+    }
+
+    // PLAYTEST3 ATMs now cluster in 6s
+    @Override
+    protected int calculateNumCluster() {
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            return 6;
+        } else {
+            return 5;
+        }
     }
 
     /**

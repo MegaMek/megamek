@@ -59,6 +59,7 @@ public class HitData {
     private int location;
     private final boolean rear;
     private int effect;
+    private boolean heat_weapon;
     private final boolean hitAimedLocation;
     private int specCritMod;
     private boolean specCrit;
@@ -88,6 +89,9 @@ public class HitData {
     private boolean firstHit = true;
 
     private boolean ignoreInfantryDoubleDamage = false;
+
+    // Track Edge usage on this hit
+    private boolean usedEdge = false;
 
 
     public HitData(int location) {
@@ -134,12 +138,39 @@ public class HitData {
         this.glancing = glancing;
     }
 
+    public void setHeatWeapon(boolean heatWeapon) {
+        this.heat_weapon = heatWeapon;
+    }
+
     public void setFromFront(boolean dir) {
         fromFront = dir;
     }
 
     public boolean isFromFront() {
         return fromFront;
+    }
+
+    // PLAYTEST 3 - Only called if playtest 3 is enabled
+    public void makeArmorPiercingPlaytest(AmmoType inType, int modifier) {
+        specCrit = true;
+        if (inType.getRackSize() == 2) {
+            specCritMod = -2;
+        } else if (inType.getRackSize() == 4) {
+            specCritMod = -2;
+        } else if (inType.getRackSize() == 5) {
+            specCritMod = -2;
+        } else if (inType.getRackSize() == 6) {
+            specCritMod = -2;
+        } else if (inType.getRackSize() == 8) {
+            specCritMod = -1;
+        } else if (inType.getRackSize() == 10) {
+            specCritMod = -1;
+        } else if (inType.getRackSize() == 15) {
+            specCritMod = -1;
+        } else if (inType.getRackSize() == 20) {
+            specCritMod = -1;
+        }
+        specCritMod += modifier;
     }
 
     public void makeArmorPiercing(AmmoType inType, int modifier) {
@@ -161,7 +192,6 @@ public class HitData {
         } else if (inType.getRackSize() == 20) {
             specCritMod = -1;
         }
-
         specCritMod += modifier;
     }
 
@@ -239,6 +269,11 @@ public class HitData {
         return generalDamageType;
     }
 
+    // PLAYTEST3 for heat-causing weapons
+    public boolean getHeatWeapon() {
+        return heat_weapon;
+    }
+
     public void setGeneralDamageType(int type) {
         generalDamageType = type;
     }
@@ -310,5 +345,13 @@ public class HitData {
 
     public void setAttackerId(int attackerId) {
         this.attackerId = attackerId;
+    }
+
+    public void setUsedEdge() {
+        this.usedEdge = true;
+    }
+
+    public boolean getUsedEdge() {
+        return this.usedEdge;
     }
 }

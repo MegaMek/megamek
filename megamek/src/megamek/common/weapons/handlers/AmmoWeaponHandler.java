@@ -49,6 +49,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.IBomber;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
@@ -78,24 +79,40 @@ public class AmmoWeaponHandler extends WeaponHandler {
             return;
         }
 
+        // Skip ammo consumption for spawned rapid-fire attacks.
+        // The parent RapidFireACWeaponHandler already consumed ammo for all shots.
+        if (isSpawnedRapidFireAttack()) {
+            super.useAmmo();
+            return;
+        }
+
         if (ammo.getUsableShotsLeft() <= 0) {
-            attackingEntity.loadWeaponWithSameAmmo(weapon);
+            weaponEntity.loadWeaponWithSameAmmo(weapon);
             ammo = (AmmoMounted) weapon.getLinked();
         }
         ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
 
         if (weapon.isInternalBomb()) {
-            ((IBomber) attackingEntity).increaseUsedInternalBombs(1);
+            ((IBomber) weaponEntity).increaseUsedInternalBombs(1);
         }
 
         super.useAmmo();
+    }
+
+    /**
+     * Checks if this attack was spawned from a rapid-fire AC handler. Spawned attacks use auto-hit and have the
+     * rapid-fire spawn marker.
+     */
+    private boolean isSpawnedRapidFireAttack() {
+        return (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS)
+              && toHit.getDesc().contains(RapidFireACWeaponHandler.RAPID_FIRE_SPAWN_MARKER);
     }
 
     protected void checkAmmo() {
         if (weapon.getLinked() instanceof AmmoMounted ammoMounted) {
             ammo = ammoMounted;
         } else {
-            attackingEntity.loadWeapon(weapon);
+            weaponEntity.loadWeapon(weapon);
             if (weapon.getLinked() instanceof AmmoMounted ammoMounted) {
                 ammo = ammoMounted;
             } else {
@@ -115,7 +132,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
             // shouldn't happen
             return weapon.getNWeapons();
         }
-        int totalShots = attackingEntity.getTotalAmmoOfType(ammo.getType());
+        int totalShots = weaponEntity.getTotalAmmoOfType(ammo.getType());
         return Math.min(weapon.getNWeapons(),
               (int) Math.floor((double) totalShots / (double) weapon.getCurrentShots()));
     }
@@ -133,7 +150,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
         // don't have neg ammo feed problem quirk
         if (!weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_AMMO_FEED_PROBLEMS)) {
             return false;
-        } else if ((roll.getIntValue() <= 2) && !attackingEntity.isConventionalInfantry()) {
+        } else if ((roll.getIntValue() <= 2) && !weaponEntity.isConventionalInfantry()) {
             // attack roll was a 2, may explode
             Roll diceRoll = Compute.rollD6(2);
 
@@ -179,19 +196,19 @@ public class AmmoWeaponHandler extends WeaponHandler {
         weapon.setHit(true);
 
         int weaponLocation = weapon.getLocation();
-        for (int i = 0; i < attackingEntity.getNumberOfCriticalSlots(weaponLocation); i++) {
-            CriticalSlot slot1 = attackingEntity.getCritical(weaponLocation, i);
+        for (int i = 0; i < weaponEntity.getNumberOfCriticalSlots(weaponLocation); i++) {
+            CriticalSlot slot1 = weaponEntity.getCritical(weaponLocation, i);
             if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                 continue;
             }
             Mounted<?> mounted = slot1.getMount();
             if (mounted.equals(weapon)) {
-                attackingEntity.hitAllCriticalSlots(weaponLocation, i);
+                weaponEntity.hitAllCriticalSlots(weaponLocation, i);
                 break;
             }
         }
 
         // if we're here, the weapon is going to explode whether it's flagged as explosive or not
-        vPhaseReport.addAll(gameManager.explodeEquipment(attackingEntity, weaponLocation, weapon, true));
+        vPhaseReport.addAll(gameManager.explodeEquipment(weaponEntity, weaponLocation, weapon, true));
     }
 }

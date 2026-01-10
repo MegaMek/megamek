@@ -182,6 +182,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     // track leaving the ground map
     private OffBoardDirection flyingOff = OffBoardDirection.NONE;
 
+    // track altitude when climbing out (leaving map vertically at altitude 10)
+    private int exitAltitude = 0;
+
     public LandAirMek(int inGyroType, int inCockpitType, int inLAMType) {
         super(inGyroType, inCockpitType);
         lamType = inLAMType;
@@ -733,16 +736,20 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             roll.addModifier(-1, "Enhanced Imaging");
         }
 
-        // VDNI bonus?
+        // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
         if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
             roll.addModifier(-1, "VDNI");
+        } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+            roll.addModifier(0, "BVDNI (no piloting bonus)");
         }
 
         // Small/torso-mounted cockpit penalty?
-        if ((getCockpitType() == Mek.COCKPIT_SMALL) &&
-              !hasAbility(OptionsConstants.MD_BVDNI) &&
-              !hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
-            roll.addModifier(1, "Small Cockpit");
+        if (getCockpitType() == Mek.COCKPIT_SMALL) {
+            if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                roll.addModifier(0, "Small Cockpit (negated by BVDNI)");
+            } else if (!hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
+                roll.addModifier(1, "Small Cockpit");
+            }
         }
 
         if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
@@ -814,7 +821,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                     // check for damaged hip actuators
                     if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
                         roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
-                        if (!game.getOptions()
+                        if (!gameOptions()
                               .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
                             continue;
                         }
@@ -912,7 +919,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             resetAltLossThisRound();
         }
 
-        // Reset flying off dir
+        // Reset flying off direction (exitAltitude is preserved for returning units
+        // and cleared in DeploymentProcessor when deployed)
         flyingOff = OffBoardDirection.NONE;
     }
 
@@ -1862,7 +1870,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public void autoSetCapArmor() {
         double divisor = 10.0;
-        if ((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+        if ((null != game) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             divisor = 1.0;
         }
         capitalArmor_orig = (int) Math.round(getTotalOArmor() / divisor);
@@ -1872,7 +1880,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public void autoSetFatalThresh() {
         int baseThresh = 2;
-        if ((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+        if ((null != game) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             baseThresh = 20;
         }
         fatalThresh = Math.max(baseThresh, (int) Math.ceil(capitalArmor / 4.0));
@@ -1963,7 +1971,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
         // Move on to actual damage...
         int damage = getCap0Armor() - getCapArmor();
-        if ((getGame() != null) && !getGame().getOptions()
+        if ((getGame() != null) && !gameOptions()
               .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             damage *= 10;
         }
@@ -2205,5 +2213,15 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public OffBoardDirection getFlyingOffDirection() {
         return this.flyingOff;
+    }
+
+    @Override
+    public int getExitAltitude() {
+        return exitAltitude;
+    }
+
+    @Override
+    public void setExitAltitude(int altitude) {
+        this.exitAltitude = altitude;
     }
 }

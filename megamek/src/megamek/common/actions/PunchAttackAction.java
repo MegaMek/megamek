@@ -37,12 +37,17 @@ package megamek.common.actions;
 import java.io.Serial;
 
 import megamek.client.ui.Messages;
+import megamek.common.CriticalSlot;
 import megamek.common.Hex;
 import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeSideTable;
-import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
@@ -194,6 +199,15 @@ public class PunchAttackAction extends PhysicalAttackAction {
             return "Target elevation not in range";
         }
 
+        // Prone 'Mechs can only be punched if they are one level higher than the attacker
+        // See BMM 7th Printing, Physical Attacks and Prone 'Mechs
+        if ((target instanceof Entity) && ((Entity) target).isProne()) {
+            int attackerLevel = attHex.getLevel() + ae.getElevation();
+            if (targetElevation != attackerLevel + 1) {
+                return Messages.getString("PhysicalAttackAction.ProneMekPunch");
+            }
+        }
+
         // Cannot punch with an arm that has an active shield on it.
         if (ae.hasActiveShield(armLoc)) {
             return "Cannot punch with shield in active mode";
@@ -229,8 +243,13 @@ public class PunchAttackAction extends PhysicalAttackAction {
         final int attackerHeight = ae.relHeight() + attHex.getLevel(); // The absolute level of the attacker's arms
         final int targetElevation = target.getElevation()
               + targHex.getLevel(); // The absolute level of the target's arms
-        final int armArc = (arm == PunchAttackAction.RIGHT) ? Compute.ARC_RIGHT_ARM
-              : Compute.ARC_LEFT_ARM;
+        // Tripods can only punch targets in front arc per IO:AE p.158
+        final int armArc;
+        if (ae.isTripodMek()) {
+            armArc = Compute.ARC_FORWARD;
+        } else {
+            armArc = (arm == PunchAttackAction.RIGHT) ? Compute.ARC_RIGHT_ARM : Compute.ARC_LEFT_ARM;
+        }
 
         ToHitData toHit;
 
@@ -271,7 +290,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         // Attacks against adjacent buildings automatically hit.
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)
               || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-              || (target instanceof GunEmplacement)) {
+              || (target.isBuildingEntityOrGunEmplacement())) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                   "Targeting adjacent building.");
         }
@@ -307,21 +326,19 @@ public class PunchAttackAction extends PhysicalAttackAction {
         // the normal +1 bth for missing hand actuator.
         // Damned if you do damned if you dont. --Torren.
         final boolean hasClaws = ((Mek) ae).hasClaw(armLoc);
-        final boolean hasLowerArmActuator = ae.hasSystem(Mek.ACTUATOR_LOWER_ARM, armLoc);
         final boolean hasHandActuator = ae.hasSystem(Mek.ACTUATOR_HAND, armLoc);
-        // Missing hand actuator is not cumulative with missing actuator,
-        // but critical damage is cumulative
-        if (!hasClaws && !hasHandActuator && hasLowerArmActuator
+        // Missing hand actuator is cumulative with missing lower arm actuator
+        if (!hasClaws && !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc) 
               && (((arm == PunchAttackAction.RIGHT) && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_RA))
-              || (arm == PunchAttackAction.LEFT)
-              && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_LA))) {
-            toHit.addModifier(1, "Hand actuator missing");
-            // Check for present but damaged hand actuator
-        } else if (hasHandActuator && !hasClaws &&
-              !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc)) {
-            toHit.addModifier(1, "Hand actuator destroyed");
+              || ((arm == PunchAttackAction.LEFT) && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)))) {
+            toHit.addModifier(1, "Hand actuator missing or destroyed");
         } else if (hasClaws) {
-            toHit.addModifier(1, "Using Claws");
+            // PLAYTEST3 claw modifier removed
+            if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                toHit.addModifier(1, "Using Claws");
+            } else {
+                toHit.addModifier(0, "Using Claws");
+            }
         }
 
         if (hasHandActuator
@@ -388,6 +405,41 @@ public class PunchAttackAction extends PhysicalAttackAction {
             damage = (int) Math.ceil(entity.getWeight() / 7.0);
         }
 
+        // PLAYTEST3 shields boost punching power. We only need to find the first shield entry to figure it out.
+        if (entity.hasShield() && entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            for (int slot = 0; slot < entity.getNumberOfCriticalSlots(armLoc); slot++) {
+                CriticalSlot cs = entity.getCritical(armLoc, slot);
+
+                if (cs == null) {
+                    continue;
+                }
+
+                if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
+                    continue;
+                }
+
+                Mounted<?> m = cs.getMount();
+                EquipmentType type = m.getType();
+                if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
+                    if ((((MiscMounted) m).getDamageAbsorption(entity, armLoc) > 0) && (((MiscMounted) m).getCurrentDamageCapacity(entity, armLoc) > 0)) {
+                        if (type.hasFlag(MiscTypeFlag.S_SHIELD_LARGE)) {
+                            damage += 3;
+                            break;
+                        } else if (type.hasFlag(MiscTypeFlag.S_SHIELD_MEDIUM)) {
+                            damage += 2;
+                            break;
+                        } else if (type.hasFlag(MiscTypeFlag.S_SHIELD_SMALL)) {
+                            damage += 1;
+                            break;
+                        }
+                    } else {
+                        // Shield DA or DC is 0, so no bonus
+                        break;
+                    }
+                }
+            }
+        }
+        
         // CamOps, pg. 82
         if (zweihandering) {
             damage += (int) Math.floor(entity.getWeight() / 10.0);

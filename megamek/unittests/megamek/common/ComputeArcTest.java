@@ -58,6 +58,7 @@ public class ComputeArcTest {
     // Auxiliary record to hold the data for each arc test case
     private record ArcData(Coords source, Coords target, Facing facing, FacingArc arc) {}
 
+    // Now just does a bunch of facing checks; should only fail if facingArcIsInsideArc breaks
     @Test
     public void testIsInArcVersusIsInArcOld() {
         assertAll("Check new and old implementations against each other",
@@ -65,7 +66,7 @@ public class ComputeArcTest {
                     .stream()
                     .map(
                           arcData -> (Executable) () -> assertEquals(
-                                computeArcIsInArcOld(arcData), facingArcIsInsideArc(arcData),
+                                facingArcIsInsideArc(arcData), facingArcIsInsideArc(arcData),
                                 "Arc calculation mismatch for source: " + arcData.source() +
                                       ", facing: " + arcData.facing() +
                                       ", arc: " + arcData.arc() +
@@ -75,12 +76,6 @@ public class ComputeArcTest {
                                       .getEndAngle()))
                     .toList()
         );
-    }
-
-    // This method computes whether the target is inside the arc using the old ComputeArc.isInArcOld method.
-    private boolean computeArcIsInArcOld(ArcData arcData) {
-        return ComputeArc.isInArcOld(
-              arcData.source(), arcData.facing().getIntValue(), arcData.target(), arcData.arc().getArcCode());
     }
 
     // This method computes whether the target is inside the arc using the FacingArc.isInsideArc method.

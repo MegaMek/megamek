@@ -45,16 +45,16 @@ import megamek.client.ui.clientGUI.tooltip.EntityActionLog;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.StraightArrowPolygon;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.compute.Compute;
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
 import megamek.common.IdealHex;
-import megamek.common.units.Targetable;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.exceptions.AttackingEntityIsNullException;
 import megamek.common.exceptions.TargetedEntityIsNullException;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 
 /**
  * Sprite and info for angle attack. Does not actually use the image buffer as this can be horribly inefficient for long
@@ -101,7 +101,8 @@ public class AttackSprite extends Sprite {
         entityId = attack.getEntityId();
         int targetType = attack.getTargetType();
         targetId = attack.getTargetId();
-        attackingEntity = this.boardView1.game.getEntity(attack.getEntityId());
+        Entity weaponEntity = this.boardView1.game.getEntity(attack.getEntityId());
+        attackingEntity = weaponEntity != null ? weaponEntity.getAttackingEntity() : null;
         targetedEntity = this.boardView1.game.getTarget(targetType, targetId);
 
         if (attackingEntity == null) {

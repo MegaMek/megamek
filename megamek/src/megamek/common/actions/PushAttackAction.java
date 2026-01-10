@@ -42,12 +42,13 @@ import megamek.common.Hex;
 import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
@@ -144,7 +145,7 @@ public class PushAttackAction extends DisplacementAttackAction {
 
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
-        Building bldg = null;
+        IBuilding bldg = null;
         if (targetInBuilding) {
             bldg = game.getBuildingAt(te.getBoardLocation()).orElse(null);
         }
@@ -245,6 +246,12 @@ public class PushAttackAction extends DisplacementAttackAction {
         // check facing
         if (!target.getPosition().equals(ae.getPosition().translated(ae.getFacing()))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not directly ahead of feet");
+        }
+
+        // Tripods can only push targets in front arc based on torso facing per IO:AE p.158
+        if (ae.isTripodMek() && !ComputeArc.isInArc(ae.getPosition(), ae.getSecondaryFacing(),
+              target, Compute.ARC_FORWARD)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in torso front arc");
         }
 
         // can't push while prone

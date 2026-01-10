@@ -310,6 +310,7 @@ public class BattleArmor extends Infantry {
 
     public static final String[] MOUNT_LOC_NAMES = { "Body", "Right Arm",
                                                      "Left Arm", "Turret" };
+    private static final String[] MOUNT_LOC_ABBREVIATIONS = { "Body", "Arms", "Arms", "Turret" };
 
     /**
      * How many mount locations are possible?
@@ -336,15 +337,18 @@ public class BattleArmor extends Infantry {
         return IS_LOCATION_ABBREVIATIONS;
     }
 
-    public String[] getBaMountLocAbbr() {
-        return MOUNT_LOC_NAMES;
-    }
-
-    public static String getBaMountLocAbbr(int loc) {
+    public static String getBaMountLocName(int loc) {
         if (loc == MOUNT_LOC_NONE) {
             return "None";
         }
         return MOUNT_LOC_NAMES[loc];
+    }
+
+    public static String getBaMountLocAbbr(int loc) {
+        if (loc == MOUNT_LOC_NONE) {
+            return "-";
+        }
+        return MOUNT_LOC_ABBREVIATIONS[loc];
     }
 
     @Override
@@ -1310,41 +1314,23 @@ public class BattleArmor extends Infantry {
 
     /**
      * return if this BA has fire-resistant armor
-     *
      */
     public boolean isFireResistant() {
-        for (Mounted<?> equip : getMisc()) {
-            if (equip.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
-                return true;
-            }
-        }
-        return false;
+        return getArmorType(LOC_TROOPER_1) == EquipmentType.T_ARMOR_BA_FIRE_RESIST;
     }
 
     /**
      * return if this BA has laser reflective armor
-     *
      */
     public boolean isReflective() {
-        for (Mounted<?> equip : getMisc()) {
-            if (equip.getType().hasFlag(MiscType.F_REFLECTIVE)) {
-                return true;
-            }
-        }
-        return false;
+        return getArmorType(LOC_TROOPER_1) == EquipmentType.T_ARMOR_BA_REFLECTIVE;
     }
 
     /**
      * return if this BA has reactive armor
-     *
      */
     public boolean isReactive() {
-        for (Mounted<?> equip : getMisc()) {
-            if (equip.getType().hasFlag(MiscType.F_REACTIVE)) {
-                return true;
-            }
-        }
-        return false;
+        return getArmorType(LOC_TROOPER_1) == EquipmentType.T_ARMOR_BA_REACTIVE;
     }
 
     /**
@@ -1934,5 +1920,25 @@ public class BattleArmor extends Infantry {
     @Override
     public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(3.157 + 1.514 * Math.log(getWeight())));
+    }
+
+    @Override
+    public boolean isCarryableObject() {
+        return (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS));
+    }
+
+    @Override
+    public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
+        return CarriedObjectDamageAllocation.ARM_HIT;
+    }
+
+    @Override
+    public int targetForArmHitToHitCarriedObject() {
+        return 5;
+    }
+
+    @Override
+    public int getRecoveryTime() {
+        return 10;
     }
 }

@@ -378,7 +378,8 @@ public class Engine implements Serializable, ITechnology {
               && isValidEngine()) {
             double weight = getWeight(entity);
 
-            return roundWeight.round(weight, entity);
+            // SV engine weight rounds to nearest half-ton (or kg for small SVs) per TM p.133
+            return RoundWeight.SV_ENGINE.round(weight, entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK) && (engineRating < 40)) {
             // ProtoMek engines with rating < 40 use a special calculation
             return roundWeight.round(engineRating * 0.025, entity);
@@ -676,38 +677,47 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * @return the heat generated while the mek is walking.
+     * @return the heat generated while the mek is walking. Only Meks generate movement heat.
      */
     public int getWalkHeat(Entity entity) {
-        boolean hasSCM = (entity instanceof Mek) && entity.hasWorkingSCM();
+        if (!(entity instanceof Mek mek)) {
+            return 0;
+        }
         return switch (engineType) {
-            case COMBUSTION_ENGINE, FUEL_CELL -> 0;
-            case XXL_ENGINE -> hasSCM ? 0 : 4;
-            default -> hasSCM ? 0 : 1;
+            // ICE/Fuel Cell Meks generate movement heat per TacOps pg 85
+            case COMBUSTION_ENGINE, FUEL_CELL -> 1;
+            case XXL_ENGINE -> mek.hasWorkingSCM() ? 0 : 4;
+            default -> mek.hasWorkingSCM() ? 0 : 1;
         };
     }
 
     /**
-     * @return the heat generated while the mek is running.
+     * @return the heat generated while the mek is running. Only Meks generate movement heat.
      */
     public int getRunHeat(Entity entity) {
-        boolean hasSCM = (entity instanceof Mek) && entity.hasWorkingSCM();
+        if (!(entity instanceof Mek mek)) {
+            return 0;
+        }
         return switch (engineType) {
-            case COMBUSTION_ENGINE, FUEL_CELL -> 0;
-            case XXL_ENGINE -> hasSCM ? 0 : 6;
-            default -> hasSCM ? 0 : 2;
+            // ICE/Fuel Cell Meks generate movement heat per TacOps pg 85
+            case COMBUSTION_ENGINE, FUEL_CELL -> 2;
+            case XXL_ENGINE -> mek.hasWorkingSCM() ? 0 : 6;
+            default -> mek.hasWorkingSCM() ? 0 : 2;
         };
     }
 
     /**
-     * @return the heat generated while the mek is sprinting.
+     * @return the heat generated while the mek is sprinting. Only Meks generate movement heat.
      */
-    public int getSprintHeat(Entity e) {
-        boolean hasSCM = (e instanceof Mek) && e.hasWorkingSCM();
+    public int getSprintHeat(Entity entity) {
+        if (!(entity instanceof Mek mek)) {
+            return 0;
+        }
         return switch (engineType) {
-            case COMBUSTION_ENGINE, FUEL_CELL -> 0;
-            case XXL_ENGINE -> hasSCM ? 0 : 9;
-            default -> hasSCM ? 0 : 3;
+            // ICE/Fuel Cell Meks generate movement heat per TacOps pg 85
+            case COMBUSTION_ENGINE, FUEL_CELL -> 3;
+            case XXL_ENGINE -> mek.hasWorkingSCM() ? 0 : 9;
+            default -> mek.hasWorkingSCM() ? 0 : 3;
         };
     }
 

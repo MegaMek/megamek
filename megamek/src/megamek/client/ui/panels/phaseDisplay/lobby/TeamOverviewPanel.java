@@ -71,7 +71,8 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.TableColumnManager;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Player;
+import megamek.common.Team;
 import megamek.common.game.Game;
 import megamek.common.loaders.MapSettings;
 import megamek.common.options.OptionsConstants;
@@ -270,7 +271,10 @@ public class TeamOverviewPanel extends JPanel {
                               || (!entity.isDesignValid())) {
                             unitCritical[classIndex(entity)] = true;
                         }
-                        if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
+                        if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes()
+                              == (Entity.MAX_C3i_NODES - 1)))
+                              || (entity.hasNovaCEWS() && (entity.calculateFreeC3Nodes() == (Entity.MAX_NOVA_CEWS_NODES
+                              - 1)))
                               || ((entity.getC3Master() == null) && entity.hasC3S())) {
                             unitWarnings[classIndex(entity)] = true;
                         }

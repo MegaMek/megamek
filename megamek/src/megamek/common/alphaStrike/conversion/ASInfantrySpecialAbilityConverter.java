@@ -37,13 +37,14 @@ package megamek.common.alphaStrike.conversion;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.battleArmor.BattleArmor;
-import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
-import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 
 public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter {
 
@@ -74,7 +75,7 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
                   && !misc.getType().getName().equals(BattleArmor.MIMETIC_ARMOR)) {
                 assign("Visual Camo, not Mimetic", LMAS);
             } else if (misc.getType().hasFlag(MiscType.F_TOOLS)
-                  && ((misc.getType().getSubType() & MiscType.S_MINESWEEPER) == MiscType.S_MINESWEEPER)) {
+                  && misc.getType().hasFlag(MiscTypeFlag.S_MINESWEEPER)) {
                 assign("Minesweeper", MSW);
             } else if (misc.getType().hasFlag(MiscType.F_PARAFOIL)) {
                 assign(misc, PAR);

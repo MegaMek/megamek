@@ -25,7 +25,7 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  *
- * MechWarrior Copyright Microsoft Corporation. <Package Name> was created under
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
  * Microsoft's "Game Content Usage Rules"
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
@@ -71,6 +71,8 @@ public class EntityViewPane extends EnhancedTabbedPane {
      * don't want to remember the selected tab between the different locations.
      */
     protected void initialize() {
+        setName("EntityViewPane");
+
         JButton menuButton = new MenuButton();
         menuButton.setToolTipText("Show/hide menus");
         menuButton.addActionListener(ev -> toggleMenus());
@@ -112,7 +114,7 @@ public class EntityViewPane extends EnhancedTabbedPane {
             factionPanel.reset();
         } else {
             troPanel.showEntity(entity, TROView.createView(entity, ViewFormatting.HTML));
-            factionPanel.setUnit(entity.getModel(), entity.getChassis());
+            factionPanel.setUnit(entity.getModel(), entity.getFullChassis());
         }
 
         summaryPanel.setEntity(entity);

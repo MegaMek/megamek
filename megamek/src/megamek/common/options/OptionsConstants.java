@@ -90,8 +90,7 @@ public class OptionsConstants {
     public static final String QUIRK_POS_TRAILER_HITCH = "trailer_hitch";
     public static final String QUIRK_POS_UBIQUITOUS_IS = "ubiquitous_is";
     public static final String QUIRK_POS_UBIQUITOUS_CLAN = "ubiquitous_clan";
-    public static final String QUIRK_POS_VAR_RNG_TARG_L = "variable_range_long";
-    public static final String QUIRK_POS_VAR_RNG_TARG_S = "variable_range_short";
+    public static final String QUIRK_POS_VAR_RNG_TARG = "variable_range_targeting";
     // TODO Game Rules
     public static final String QUIRK_POS_VESTIGIAL_HANDS_LA = "vestigial_hands_la";
     public static final String QUIRK_POS_VESTIGIAL_HANDS_RA = "vestigial_hands_ra";
@@ -258,6 +257,7 @@ public class OptionsConstants {
     public static final String MD_CYBER_IMP_AUDIO = "cyber_imp_audio";
     public static final String MD_CYBER_IMP_VISUAL = "cyber_imp_visual";
     public static final String MD_CYBER_IMP_LASER = "cyber_imp_laser";
+    public static final String MD_CYBER_IMP_TELE = "cyber_imp_tele";
     public static final String MD_MM_IMPLANTS = "mm_implants";
     public static final String MD_ENH_MM_IMPLANTS = "enh_mm_implants";
     public static final String MD_COMM_IMPLANT = "comm_implant";
@@ -412,6 +412,7 @@ public class OptionsConstants {
     public static final String ADVANCED_COMBAT_TAC_OPS_JUMP_JET_ATTACK = "tacops_jump_jet_attack";
     public static final String ADVANCED_COMBAT_TAC_OPS_TRIP_ATTACK = "tacops_trip_attack";
     public static final String ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS = "tacops_energy_weapons";
+    public static final String ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE = "gothic_dazzle_mode";
     public static final String ADVANCED_COMBAT_TAC_OPS_GAUSS_WEAPONS = "tacops_gauss_weapons";
     public static final String ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES = "tacops_retractable_blades";
     public static final String ADVANCED_COMBAT_TAC_OPS_AMMUNITION = "tacops_ammunition";
@@ -424,9 +425,6 @@ public class OptionsConstants {
     public static final String ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE = "tacops_coolant_failure";
     public static final String ADVANCED_COMBAT_TAC_OPS_BA_VS_BA = "tacops_ba_vs_ba";
     public static final String ADVANCED_COMBAT_NO_TAC = "no_tac";
-    public static final String ADVANCED_COMBAT_VEHICLES_THRESHOLD = "vehicles_threshold";
-    public static final String ADVANCED_COMBAT_VEHICLES_THRESHOLD_VARIABLE = "vehicles_threshold_variable";
-    public static final String ADVANCED_COMBAT_VEHICLES_THRESHOLD_DIVISOR = "vehicles_threshold_divisor";
     public static final String ADVANCED_COMBAT_VTOL_STRAFING = "vtol_strafing";
     public static final String ADVANCED_COMBAT_VEHICLES_SAFE_FROM_INFERNOS = "vehicles_safe_from_infernos";
     public static final String ADVANCED_COMBAT_PROTOMEKS_SAFE_FROM_INFERNOS = "protos_safe_from_infernos";
@@ -445,6 +443,7 @@ public class OptionsConstants {
     public static final String ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE = "forest_fires_no_smoke";
     public static final String ADVANCED_COMBAT_HOT_LOAD_IN_GAME = "hotload_in_game";
     public static final String ADVANCED_COMBAT_MULTI_USE_AMS = "multiuse_ams";
+    public static final String ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS = "picking_up_and_throwing_units";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_SPRINT = "tacops_sprint";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL = "tacops_standing_still";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_EVADE = "tacops_evade";
@@ -505,6 +504,7 @@ public class OptionsConstants {
     public static final String ADVANCED_AERO_RULES_AT2_NUKES = "at2_nukes";
     public static final String ADVANCED_AERO_RULES_AERO_SANITY = "aero_sanity";
     public static final String ADVANCED_AERO_RULES_RETURN_FLYOVER = "return_flyover";
+    public static final String ADVANCED_AERO_RULES_CLIMB_OUT = "climb_out";
     public static final String ADVANCED_AERO_RULES_AA_MOVE_MOD = "aa_move_mod";
     public static final String ADVANCED_AERO_RULES_ALLOW_LARGE_SQUADRONS = "allow_large_squadrons";
     public static final String ADVANCED_AERO_RULES_SINGLE_NO_CAP = "single_no_cap";
@@ -538,6 +538,7 @@ public class OptionsConstants {
 
     public static final String PLAYTEST_1 = "playtest_1";
     public static final String PLAYTEST_2 = "playtest_2";
+    public static final String PLAYTEST_3 = "playtest_3";
 
     private OptionsConstants() {
     }

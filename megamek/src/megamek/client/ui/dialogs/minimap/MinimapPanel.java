@@ -332,8 +332,9 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                     if (!dir.exists()) {
                         dir.mkdirs();
                     }
-                    File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
-                          + e.getOldPhase() + ".png");
+                    String filenameTemplate = "round_%d_%d_%s.png";
+                    File imgFile = new File(dir,
+                          filenameTemplate.formatted(game.getRoundCount(), e.getOldPhase().ordinal(), e.getOldPhase()));
 
                     try {
                         BufferedImage image = getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, clientGui, null,
@@ -1238,7 +1239,9 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
      * Draw a line to represent an attack
      */
     private void paintAttack(Graphics g, AttackAction attack) {
-        Entity source = game.getEntity(attack.getEntityId());
+        Entity weaponEntity = game.getEntity(attack.getEntityId()); // ex. HHW
+        Entity source = weaponEntity != null ? weaponEntity.getAttackingEntity() : null;
+
         Targetable target = game.getTarget(attack.getTargetType(), attack.getTargetId());
         // sanity check...
         // cross-board attacks don't get attack arrows (for now, must possibly allow some A2G, O2G, A2A attacks later

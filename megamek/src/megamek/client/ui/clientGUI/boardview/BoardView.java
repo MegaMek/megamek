@@ -47,6 +47,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.lang.System;
 import java.util.*;
 import java.util.List;
 import java.util.Queue;
@@ -101,15 +102,16 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.AllowedDeploymentHelper;
 import megamek.common.board.Board;
 import megamek.common.board.BoardHelper;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
+import megamek.common.board.FacingOption;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeECM;
 import megamek.common.enums.MoveStepType;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
@@ -137,14 +139,7 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityMovementType;
-import megamek.common.units.EntityVisibilityUtils;
-import megamek.common.units.Infantry;
-import megamek.common.units.Targetable;
-import megamek.common.units.Terrain;
-import megamek.common.units.Terrains;
-import megamek.common.units.UnitLocation;
+import megamek.common.units.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
@@ -340,6 +335,9 @@ public final class BoardView extends AbstractBoardView
     // wreck sprites
     private ArrayList<WreckSprite> wreckSprites = new ArrayList<>();
     private ArrayList<IsometricWreckSprite> isometricWreckSprites = new ArrayList<>();
+
+    // highlighted entity hexes (for Nova CEWS network dialog)
+    private List<Coords> highlightedEntityHexes = new ArrayList<>();
 
     private Coords rulerStart;
     private Coords rulerEnd;
@@ -580,7 +578,7 @@ public final class BoardView extends AbstractBoardView
                       || gamePhaseChangeEvent.getOldPhase().isPhysical())) {
                     File dir = new File(Configuration.gameSummaryImagesBVDir(), game.getUUIDString());
 
-                    if (!dir.exists() || dir.mkdirs()) {
+                    if (dir.exists() || dir.mkdirs()) {
                         String fileName = String.format("round_%03d_%03d_%s.png",
                               game.getRoundCount(),
                               gamePhaseChangeEvent.getOldPhase().ordinal(),
@@ -612,6 +610,14 @@ public final class BoardView extends AbstractBoardView
                     case INITIATIVE:
                         clearAllAttacks();
                         break;
+                    case INITIATIVE_REPORT:
+                    case MOVEMENT_REPORT:
+                    case FIRING_REPORT:
+                    case PHYSICAL_REPORT:
+                    case END_REPORT:
+                        // Rebuild entity sprites (including C3 connection lines) for report phases
+                        redrawAllEntities();
+                        break;
                     case END:
                     case VICTORY:
                         clearSprites();
@@ -627,7 +633,7 @@ public final class BoardView extends AbstractBoardView
                 }
                 for (Entity entity : game.getEntitiesVector()) {
                     if ((entity.getDamageLevel() != Entity.DMG_NONE) && ((entity.damageThisRound != 0)
-                          || (entity instanceof GunEmplacement))) {
+                          || (entity.isBuildingEntityOrGunEmplacement()))) {
                         tileManager.reloadImage(entity);
                     }
                 }
@@ -1181,6 +1187,9 @@ public final class BoardView extends AbstractBoardView
         // draw highlight border
         drawSprite(graphics2D, highlightSprite);
 
+        // draw entity hex highlights (Nova CEWS network dialog)
+        drawEntityHexHighlights(graphics2D);
+
         // draw cursors
         drawSprite(graphics2D, cursorSprite);
         drawSprite(graphics2D, selectedSprite);
@@ -1558,6 +1567,17 @@ public final class BoardView extends AbstractBoardView
                           maxHeight) && !en_Deployer.isBoardProhibited(board)) {
                         drawHexBorder(graphics2D, getHexLocation(coords), Color.cyan);
                     }
+                } else if (en_Deployer instanceof AbstractBuildingEntity) {
+                    AllowedDeploymentHelper deploymentHelper = new AllowedDeploymentHelper(en_Deployer, coords, board,
+                          board.getHex(coords), game);
+                    FacingOption facingOption = deploymentHelper.findAllowedFacings(0);
+                    if (facingOption != null && facingOption.hasValidFacings()) {
+                        if (board.isLegalDeployment(coords, en_Deployer)
+                              //Draw hexes that're legal if we rotate
+                              && !en_Deployer.isBoardProhibited(board)) {
+                            drawHexBorder(graphics2D, getHexLocation(coords), Color.yellow);
+                        }
+                    }
                 }
 
                 if (board.isLegalDeployment(coords, en_Deployer)
@@ -1644,13 +1664,18 @@ public final class BoardView extends AbstractBoardView
      * Draw a layer of a solid color (alpha possible) on the hex at {@link Point} no padding by default
      */
     void drawHexLayer(Point point, Graphics2D graphics2D, Color color, boolean outOfFOV) {
-        drawHexLayer(point, graphics2D, color, outOfFOV, 0);
+        drawHexLayer(point, graphics2D, color, outOfFOV, false, 0);
+    }
+
+    void drawHexLayer(Point point, Graphics2D graphics2D, Color color, boolean outOfFOV, boolean reverseStripes) {
+        drawHexLayer(point, graphics2D, color, outOfFOV, reverseStripes, 0);
     }
 
     /**
      * Draw a layer of a solid color (alpha possible) on the hex at {@link Point} with some padding around the border
      */
-    private void drawHexLayer(Point point, Graphics2D graphics2D, Color color, boolean outOfFOV, double padding) {
+    private void drawHexLayer(Point point, Graphics2D graphics2D, Color color, boolean outOfFOV,
+          boolean reverseStripes, double padding) {
         graphics2D.setColor(color);
 
         // create stripe effect for FOV darkening but not for colored weapon ranges
@@ -1658,7 +1683,7 @@ public final class BoardView extends AbstractBoardView
 
         if (outOfFOV && fogStripes > 0) {
             // totally transparent here hurts the eyes
-            GradientPaint gradientPaint = getGradientPaint(color, (float) fogStripes);
+            GradientPaint gradientPaint = getGradientPaint(color, (float) fogStripes, reverseStripes);
             graphics2D.setPaint(gradientPaint);
         }
 
@@ -1668,20 +1693,31 @@ public final class BoardView extends AbstractBoardView
         graphics2D.setComposite(svComposite);
     }
 
-    private static GradientPaint getGradientPaint(Color startingColor, float fogStripes) {
+    private static GradientPaint getGradientPaint(Color startingColor, float fogStripes, boolean reversed) {
         Color endingColor = new Color(startingColor.getRed() / 2,
               startingColor.getGreen() / 2,
               startingColor.getBlue() / 2,
               startingColor.getAlpha() / 2);
 
         // the numbers make the lines align across hexes
-        return new GradientPaint(42.0f / fogStripes,
-              0.0f,
-              startingColor,
-              104.0f / fogStripes,
-              106.0f / fogStripes,
-              endingColor,
-              true);
+        // reversed changes stripe direction from bottom-left/top-right to top-left/bottom-right
+        if (reversed) {
+            return new GradientPaint(104.0f / fogStripes,
+                  0.0f,
+                  startingColor,
+                  42.0f / fogStripes,
+                  106.0f / fogStripes,
+                  endingColor,
+                  true);
+        } else {
+            return new GradientPaint(42.0f / fogStripes,
+                  0.0f,
+                  startingColor,
+                  104.0f / fogStripes,
+                  106.0f / fogStripes,
+                  endingColor,
+                  true);
+        }
     }
 
     public void drawHexBorder(Graphics2D graphics2D, Color color, double padding, double lineWidth) {
@@ -1746,6 +1782,28 @@ public final class BoardView extends AbstractBoardView
     @Nullable
     private Mounted<?> selectedWeapon() {
         return (clientgui != null) ? clientgui.getDisplayedWeapon().orElse(null) : null;
+    }
+
+    /**
+     * Draws hex borders for highlighted entity hexes (Nova CEWS network dialog).
+     *
+     * @param graphics The graphics object to draw on
+     */
+    private void drawEntityHexHighlights(Graphics2D graphics) {
+        graphics.setColor(UIUtil.uiGreen());
+        graphics.setStroke(new BasicStroke((float) (2.0 * scale)));
+
+        for (Coords hex : highlightedEntityHexes) {
+            Point hexPos = getHexLocation(hex);
+            Shape hexBorder = HexDrawUtilities.getHexFullBorderLine(0);
+            Shape scaled = AffineTransform
+                    .getScaleInstance(scale, scale)
+                    .createTransformedShape(hexBorder);
+            Shape translated = AffineTransform
+                    .getTranslateInstance(hexPos.x, hexPos.y)
+                    .createTransformedShape(scaled);
+            graphics.draw(translated);
+        }
     }
 
     /**
@@ -3367,7 +3425,7 @@ public final class BoardView extends AbstractBoardView
               == entity.getId()));
 
         // Update C3 link, if necessary
-        if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
+        if (entity.hasC3() || entity.hasC3i() || entity.hasNovaCEWS() || entity.hasNavalC3()) {
             addC3Link(entity);
         }
 
@@ -3408,8 +3466,10 @@ public final class BoardView extends AbstractBoardView
         while (e.hasMoreElements()) {
             Entity entity = e.nextElement();
             Coords position = entity.getPosition();
+            // Infantry don't leave wrecks, but CVEP (which extends Infantry) should show crashed pod wreckage
+            boolean isInfantryButNotCVEP = (entity instanceof Infantry) && !(entity instanceof CombatVehicleEscapePod);
             if (isOnThisBord(entity)
-                  && !(entity instanceof Infantry)
+                  && !isInfantryButNotCVEP
                   && (position != null)
                   && board.contains(position)) {
                 WreckSprite wreckSprite;
@@ -3473,7 +3533,7 @@ public final class BoardView extends AbstractBoardView
                 }
             }
 
-            if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasNovaCEWS() || entity.hasNavalC3()) {
                 addC3Link(entity);
             }
         }
@@ -3648,14 +3708,14 @@ public final class BoardView extends AbstractBoardView
         if (scrollPane == null) {
             return;
         }
-        
+
         // restrict both values to between 0 and 1
         xRelative = Math.max(0, xRelative);
         xRelative = Math.min(1, xRelative);
         yRelative = Math.max(0, yRelative);
         yRelative = Math.min(1, yRelative);
         Point point = new Point((int) (boardSize.getWidth() * xRelative) + HEX_W,
-              (int) (boardSize.getHeight() * yRelative) + HEX_H);        
+              (int) (boardSize.getHeight() * yRelative) + HEX_H);
         JScrollBar verticalScroll = scrollPane.getVerticalScrollBar();
         verticalScroll.setValue(point.y - (verticalScroll.getVisibleAmount() / 2));
         JScrollBar horizontalScroll = scrollPane.getHorizontalScrollBar();
@@ -3722,9 +3782,9 @@ public final class BoardView extends AbstractBoardView
 
         refreshMoveVectors(entity, movePath, color);
 
-        for (Enumeration<MoveStep> i = movePath.getSteps();
-              i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (ListIterator<MoveStep> i = movePath.getSteps();
+              i.hasNext(); ) {
+            final MoveStep step = i.next();
             if ((null != previousStep) && ((step.getType() == MoveStepType.UP)
                   || (step.getType() == MoveStepType.DOWN)
                   || (step.getType() == MoveStepType.ACC)
@@ -3938,7 +3998,7 @@ public final class BoardView extends AbstractBoardView
                     c3Sprites.add(new C3Sprite(this, entity, entity1));
                 }
             }
-        } else if (entity.hasActiveNovaCEWS()) {
+        } else if (entity.hasNovaCEWS()) {
             // WOR Nova CEWS
             for (Entity entity1 : game.getEntitiesVector()) {
                 if (entity1.getPosition() == null) {
@@ -3986,7 +4046,11 @@ public final class BoardView extends AbstractBoardView
         // Don't make sprites for unknown entities and sensor returns
         // cross-board attacks don't get attack arrows (for now, must possibly allow some A2G, O2G, A2A attacks later
         // when target/attacker hexes are not really but effectively on the same board)
-        Entity attacker = game.getEntity(attackAction.getEntityId());
+        Entity weaponEntity = game.getEntity(attackAction.getEntityId());
+        if (weaponEntity == null) {
+            return;
+        }
+        Entity attacker = weaponEntity.getAttackingEntity();
         Targetable target = game.getTarget(attackAction.getTargetType(), attackAction.getTargetId());
         if ((attacker == null)
               || (target == null)
@@ -4570,6 +4634,30 @@ public final class BoardView extends AbstractBoardView
         for (EntitySprite sprite : entitySprites) {
             sprite.setSelected(sprite.getEntity().equals(entity));
         }
+    }
+
+    /**
+     * Highlights multiple entities on the board view.
+     * All entities in the provided list will be highlighted.
+     * All other entities will be unhighlighted.
+     *
+     * @param entities List of entities to highlight (can be empty to clear all highlights)
+     */
+    public synchronized void highlightSelectedEntities(List<Entity> entities) {
+        for (EntitySprite sprite : entitySprites) {
+            sprite.setSelected(entities.contains(sprite.getEntity()));
+        }
+    }
+
+    /**
+     * Sets the hexes to highlight with white borders (for Nova CEWS network dialog).
+     * Draws white hexagon borders around the specified hex coordinates.
+     *
+     * @param hexes List of hex coordinates to highlight (can be empty to clear all highlights)
+     */
+    public void setHighlightedEntityHexes(List<Coords> hexes) {
+        highlightedEntityHexes = new ArrayList<>(hexes);
+        repaint();
     }
 
     /**

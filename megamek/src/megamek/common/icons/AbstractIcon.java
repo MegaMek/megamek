@@ -249,6 +249,14 @@ public abstract class AbstractIcon implements Serializable {
 
                 // <50.07 compatibility handlers
                 category = category.replaceAll("Mek Tech", "MekTech");
+                // <50.10 compatibility handlers
+                category = category.replace("Vehicle Gunner", "Vehicle Crew Ground");
+                category = category.replace("Vehicle Driver", "Vehicle Crew Ground");
+                category = category.replace("Naval Driver", "Vehicle Crew Naval");
+                category = category.replace("VTOL Pilot", "Vehicle Crew VTOL");
+                category = category.replace("Vehicle Crewmember", "Vehicle Crew/Generic");
+                category = category.replace("Combat Technician", "Vehicle Crew/Generic");
+                category = category.replace("Conventional Aircraft Pilot", "Conventional Aircraft Crew");
 
                 setCategory(category);
                 break;

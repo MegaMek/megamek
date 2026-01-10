@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 import java.util.Vector;
 
@@ -82,7 +84,7 @@ public class MGHandler extends AmmoWeaponHandler {
             toReturn = applyGlancingBlowModifier(toReturn, false);
 
             if (bDirect) {
-                toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0),
+                toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0),
                       toReturn * 2);
             }
         } else {
@@ -91,13 +93,13 @@ public class MGHandler extends AmmoWeaponHandler {
                       weaponType.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
                       weaponType.getInfantryDamageClass(),
                       ((Infantry) target).isMechanized(),
-                      toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
+                      toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
 
                 toReturn = applyGlancingBlowModifier(toReturn, true);
             } else {
                 toReturn = weaponType.getDamage();
                 if (bDirect) {
-                    toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0),
+                    toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0),
                           toReturn * 2);
                 }
 
@@ -127,7 +129,7 @@ public class MGHandler extends AmmoWeaponHandler {
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (weapon.isRapidFire()) {
-                attackingEntity.heatBuildup += nRapidDamHeatPerHit;
+                weaponEntity.heatBuildup += nRapidDamHeatPerHit;
             } else {
                 super.addHeat();
             }
@@ -186,7 +188,7 @@ public class MGHandler extends AmmoWeaponHandler {
             int ammoUsage = 3 * nRapidDamHeatPerHit;
             for (int i = 0; i < ammoUsage; i++) {
                 if (ammo.getUsableShotsLeft() <= 0) {
-                    attackingEntity.loadWeapon(weapon);
+                    weaponEntity.loadWeapon(weapon);
                     ammo = (AmmoMounted) weapon.getLinked();
                 }
                 ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);

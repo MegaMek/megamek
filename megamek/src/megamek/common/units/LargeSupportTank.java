@@ -184,13 +184,13 @@ public class LargeSupportTank extends SupportTank {
                     break;
                 case 8:
                     if ((bSide || bRearSide)
-                          && !game.getOptions().booleanOption(
+                          && !gameOptions().booleanOption(
                           OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_EFFECTIVE)) {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
                     }
                     break;
                 case 9:
-                    if (!game.getOptions().booleanOption(
+                    if (!gameOptions().booleanOption(
                           OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_EFFECTIVE)) {
                         rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         rv.setMotiveMod(motiveMod);
@@ -320,11 +320,11 @@ public class LargeSupportTank extends SupportTank {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_FRONT;
                 }
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
+                if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
                     return Compute.ARC_NOSE;
                 }
             case LOC_TURRET:
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
+                if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
                     return Compute.ARC_TURRET;
                 }
                 return Compute.ARC_FORWARD;
@@ -336,7 +336,7 @@ public class LargeSupportTank extends SupportTank {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_RIGHT;
                 }
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
+                if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
                     return Compute.ARC_RIGHT_BROADSIDE;
                 }
                 return Compute.ARC_RIGHT_SIDE;
@@ -348,7 +348,7 @@ public class LargeSupportTank extends SupportTank {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_LEFT;
                 }
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
+                if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
                     return Compute.ARC_LEFT_BROADSIDE;
                 }
                 return Compute.ARC_LEFT_SIDE;
@@ -356,7 +356,7 @@ public class LargeSupportTank extends SupportTank {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_REAR;
                 }
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
+                if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
                     return Compute.ARC_AFT;
                 }
                 return Compute.ARC_REAR;
@@ -390,9 +390,6 @@ public class LargeSupportTank extends SupportTank {
             return true;
         } else if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
             LOGGER.debug("{} CRIPPLED: Rear armor destroyed.", getDisplayName());
-            return true;
-        } else if (isPermanentlyImmobilized(checkCrew)) {
-            LOGGER.debug("{} CRIPPLED: Immobilized.", getDisplayName());
             return true;
         }
 

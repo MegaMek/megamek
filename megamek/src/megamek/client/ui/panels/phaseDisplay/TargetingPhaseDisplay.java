@@ -81,10 +81,10 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.turns.TriggerAPPodTurn;
 import megamek.common.turns.TriggerBPodTurn;
-import megamek.common.units.Building;
 import megamek.common.units.BuildingTarget;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
@@ -345,7 +345,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             if (cmd == TargetingCommand.FIRE_CANCEL) {
                 continue;
             }
-            if ((cmd == TargetingCommand.FIRE_DISENGAGE) && ((currentEntity() == null) || !currentEntity().isOffBoard())) {
+            if ((cmd == TargetingCommand.FIRE_DISENGAGE) && ((currentEntity() == null)
+                  || !currentEntity().isOffBoard())) {
                 continue;
             }
             if (cmd == TargetingCommand.FIRE_CLEAR_WEAPON && !(currentEntity() instanceof Tank)) {
@@ -441,7 +442,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         if (GUIP.getAutoSelectNextUnit()) {
             selectEntity(clientgui.getClient().getFirstEntityNum());
         }
-        setDisengageEnabled((currentEntity() != null) && attacks.isEmpty() && currentEntity().canFlee(currentEntity().getPosition()));
+        setDisengageEnabled((currentEntity() != null)
+              && attacks.isEmpty()
+              && currentEntity().canFlee(currentEntity().getPosition()));
 
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
@@ -522,41 +525,37 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
      * Fire Mode - Adds a Fire Mode Change to the current Attack Action
      */
     private void changeMode(boolean forward) {
-        int wn = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        WeaponMounted weaponMounted = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
 
-        // Do nothing we have no unit selected.
-        if (null == currentEntity()) {
-            return;
-        }
-
-        // If the weapon does not have modes, just exit.
-        Mounted<?> m = currentEntity().getEquipment(wn);
-        if ((m == null) || !m.hasModes()) {
+        // Do nothing we have no unit selected or no weapon selected or if the weapon doesn't have modes
+        if (currentEntity() == null || weaponMounted == null || !weaponMounted.hasModes()) {
             return;
         }
 
         // DropShip Artillery cannot be switched to "Direct" Fire
-        final WeaponType weaponType = (WeaponType) m.getType();
+        final WeaponType weaponType = (WeaponType) weaponMounted.getType();
         if ((currentEntity() instanceof Dropship) && (weaponType instanceof ArtilleryWeapon)) {
             return;
         }
 
         // send change to the server
-        int nMode = m.switchMode(forward);
-        clientgui.getClient().sendModeChange(currentEntity, wn, nMode);
+        int nMode = weaponMounted.switchMode(forward);
+        clientgui.getClient().sendModeChange(weaponMounted.getEntity().getId(), weaponMounted.getEquipmentNum(), nMode);
 
         // notify the player
-        if (m.canInstantSwitch(nMode)) {
+        if (weaponMounted.canInstantSwitch(nMode)) {
             clientgui.systemMessage(Messages.getString(
-                  "FiringDisplay.switched", m.getName(), m.curMode().getDisplayableName()));
+                  "FiringDisplay.switched", weaponMounted.getName(), weaponMounted.curMode().getDisplayableName()));
         } else {
             clientgui.systemMessage(Messages.getString(
-                  "FiringDisplay.willSwitch", m.getName(), m.pendingMode().getDisplayableName()));
+                  "FiringDisplay.willSwitch",
+                  weaponMounted.getName(),
+                  weaponMounted.pendingMode().getDisplayableName()));
         }
 
         updateTarget();
         clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
-        clientgui.getUnitDisplay().wPan.selectWeapon(wn);
+        clientgui.getUnitDisplay().wPan.selectWeapon(weaponMounted);
     }
 
     private boolean checkNags() {
@@ -799,7 +798,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             if (o instanceof WeaponAttackAction waa) {
                 currentEntity().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
                 removeAttack(o);
-                setDisengageEnabled(attacks.isEmpty() && currentEntity().isOffBoard() && currentEntity().canFlee(currentEntity().getPosition()));
+                setDisengageEnabled(attacks.isEmpty() && currentEntity().isOffBoard() && currentEntity().canFlee(
+                      currentEntity().getPosition()));
                 clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
                 game.removeAction(o);
                 clientgui.boardViews().forEach(bv -> ((BoardView) bv).refreshAttacks());
@@ -840,52 +840,56 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         // update target panel
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        Entity attacker = currentEntity();
-        if ((attacker != null) && attacker.equals(clientgui.getUnitDisplay().getCurrentEntity())
-              && (target != null) && (weaponId != -1) && (attacker.getPosition() != null)) {
-            clientgui.getUnitDisplay().wPan.setTarget(target, null);
+        final WeaponMounted selectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        if (selectedWeapon != null) {
+            Entity weaponEntity = selectedWeapon.getEntity();
+            Entity attacker = weaponEntity.getAttackingEntity();
+            if ((attacker != null) && attacker.equals(clientgui.getUnitDisplay().getCurrentEntity())
+                  && (target != null) && (weaponId != -1) && (attacker.getPosition() != null)) {
+                clientgui.getUnitDisplay().wPan.setTarget(target, null);
 
-            Mounted<?> weapon = attacker.getEquipment(weaponId);
-            int effectiveDistance = Compute.effectiveDistance(game, attacker, target);
-            String distanceText = Integer.toString(effectiveDistance);
-            if (!game.onConnectedBoards(attacker, target)) {
-                distanceText = "Unreachable";
-            } else if (showDistanceAsMapSheets(attacker, target, weapon)) {
-                distanceText = effectiveDistance / Board.DEFAULT_BOARD_HEIGHT + " Map sheets";
-                if (isArtilleryAttack(weapon)) {
-                    ArtilleryAttackAction aaa = new ArtilleryAttackAction(attacker.getId(), target.getTargetType(),
-                          target.getId(), weaponId, game);
-                    distanceText += String.format(" (%d turns)", aaa.getTurnsTilHit());
+                Mounted<?> weapon = attacker.getEquipment(weaponId);
+                int effectiveDistance = Compute.effectiveDistance(game, attacker, target);
+                String distanceText = Integer.toString(effectiveDistance);
+                if (!game.onConnectedBoards(attacker, target)) {
+                    distanceText = "Unreachable";
+                } else if (showDistanceAsMapSheets(attacker, target, weapon)) {
+                    distanceText = effectiveDistance / Board.DEFAULT_BOARD_HEIGHT + " Map sheets";
+                    if (isArtilleryAttack(weapon)) {
+                        ArtilleryAttackAction aaa = new ArtilleryAttackAction(attacker.getId(), target.getTargetType(),
+                              target.getId(), weaponId, game);
+                        distanceText += String.format(" (%d turns)", aaa.getTurnsTilHit());
+                    }
                 }
-            }
-            clientgui.getUnitDisplay().wPan.wRangeR.setText(distanceText);
+                clientgui.getUnitDisplay().wPan.wRangeR.setText(distanceText);
 
-            ToHitData toHit = WeaponAttackAction.toHit(game,
-                  currentEntity, target, weaponId, Entity.LOC_NONE, AimingMode.NONE, false);
+                ToHitData toHit = WeaponAttackAction.toHit(game,
+                      currentEntity, target, weaponId, Entity.LOC_NONE, AimingMode.NONE, false);
 
-            if (weapon.isUsedThisRound()) {
-                clientgui.getUnitDisplay().wPan.setToHit(
-                      Messages.getString("TargetingPhaseDisplay.alreadyFired"));
-                setFireEnabled(false);
-            } else if (weapon.isInBearingsOnlyMode() && effectiveDistance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
-                clientgui.getUnitDisplay().wPan.setToHit(
-                      Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
-                setFireEnabled(false);
-            } else if ((weapon.getType().hasFlag(WeaponType.F_AUTO_TARGET)
-                  && !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
-                clientgui.getUnitDisplay().wPan.setToHit(
-                      Messages.getString("TargetingPhaseDisplay.autoFiringWeapon"));
-                setFireEnabled(false);
-            } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                clientgui.getUnitDisplay().wPan.setToHit(toHit);
-                setFireEnabled(false);
-            } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-                clientgui.getUnitDisplay().wPan.setToHit(toHit);
-                setFireEnabled(true);
-            } else {
-                clientgui.getUnitDisplay().wPan.setToHit(toHit,
-                      attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
-                setFireEnabled(true);
+                if (weapon.isUsedThisRound()) {
+                    clientgui.getUnitDisplay().wPan.setToHit(
+                          Messages.getString("TargetingPhaseDisplay.alreadyFired"));
+                    setFireEnabled(false);
+                } else if (weapon.isInBearingsOnlyMode() && effectiveDistance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+                    clientgui.getUnitDisplay().wPan.setToHit(
+                          Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
+                    setFireEnabled(false);
+                } else if ((weapon.getType().hasFlag(WeaponType.F_AUTO_TARGET)
+                      && !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
+                    clientgui.getUnitDisplay().wPan.setToHit(
+                          Messages.getString("TargetingPhaseDisplay.autoFiringWeapon"));
+                    setFireEnabled(false);
+                } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+                    clientgui.getUnitDisplay().wPan.setToHit(toHit);
+                    setFireEnabled(false);
+                } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+                    clientgui.getUnitDisplay().wPan.setToHit(toHit);
+                    setFireEnabled(true);
+                } else {
+                    clientgui.getUnitDisplay().wPan.setToHit(toHit,
+                          attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
+                    setFireEnabled(true);
+                }
             }
             setSkipEnabled(true);
         } else {
@@ -1155,7 +1159,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         // Is there a building in the hex?
-        Building bldg = game.getBoard()
+        IBuilding bldg = game.getBoard()
               .getBuildingAt(location.coords());
         if (bldg != null) {
             targets.add(new BuildingTarget(location.coords(), game

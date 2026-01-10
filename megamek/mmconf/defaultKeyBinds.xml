@@ -43,49 +43,49 @@
     </KeyBind>
 
     <KeyBind>
-        <command>deployTurnUnit</command> <!-- Shift-T -->
+        <command>deployTurnUnit</command> <!-- Shift+T -->
         <keyCode>84</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>moveStepForward</command> <!-- Shift-W -->
+        <command>moveStepForward</command> <!-- Shift+W -->
         <keyCode>87</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>moveStepBackward</command> <!-- Shift-S -->
+        <command>moveStepBackward</command> <!-- Shift+S -->
         <keyCode>83</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>turnLeft</command> <!-- Shift-A -->
+        <command>turnLeft</command> <!-- Shift+A -->
         <keyCode>65</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>turnRight</command> <!-- Shift-D -->
+        <command>turnRight</command> <!-- Shift+D -->
         <keyCode>68</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>twistLeft</command> <!-- Shift-A -->
+        <command>twistLeft</command> <!-- Shift+A -->
         <keyCode>65</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>twistRight</command> <!-- Shift-D -->
+        <command>twistRight</command> <!-- Shift+D -->
         <keyCode>68</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
@@ -120,7 +120,7 @@
     </KeyBind>
 
     <KeyBind>
-        <command>prevUnit</command> <!-- Shift-Tab -->
+        <command>prevUnit</command> <!-- Shift+Tab -->
         <keyCode>9</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
@@ -141,42 +141,42 @@
     </KeyBind>
 
     <KeyBind>
-        <command>nextTargetValid</command> <!-- Shift-Right -->
+        <command>nextTargetValid</command> <!-- Shift+Right -->
         <keyCode>39</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>prevTargetValid</command> <!-- Shift-Left -->
+        <command>prevTargetValid</command> <!-- Shift+Left -->
         <keyCode>37</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>nextTargetNoAllies</command> <!-- Ctrl-Right -->
+        <command>nextTargetNoAllies</command> <!-- Ctrl+Right -->
         <keyCode>39</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>prevTargetNoAllies</command> <!-- Ctrl-Left -->
+        <command>prevTargetNoAllies</command> <!-- Ctrl+Left -->
         <keyCode>37</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>nextTargetValidNoAllies</command> <!-- Ctrl+Shift-Right -->
+        <command>nextTargetValidNoAllies</command> <!-- Ctrl+Shift+Right -->
         <keyCode>39</keyCode>
         <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>prevTargetValidNoAllies</command> <!-- Ctrl+Shift-Left -->
+        <command>prevTargetValidNoAllies</command> <!-- Ctrl+Shift+Left -->
         <keyCode>37</keyCode>
         <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
@@ -197,7 +197,7 @@
     </KeyBind>
 
     <KeyBind>
-        <command>physPush</command> <!-- Shift-P -->
+        <command>physPush</command> <!-- Shift+P -->
         <keyCode>80</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
@@ -218,14 +218,14 @@
     </KeyBind>
 
     <KeyBind>
-        <command>undo</command> <!-- Ctrl-Z -->
+        <command>undo</command> <!-- Ctrl+Z -->
         <keyCode>90</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>redo</command> <!-- Ctrl-Y -->
+        <command>redo</command> <!-- Ctrl+Y -->
         <keyCode>89</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
@@ -239,7 +239,7 @@
     </KeyBind>
 
     <KeyBind>
-        <command>autoArtyDeployZone</command> <!-- Shift-Z -->
+        <command>autoArtyDeployZone</command> <!-- Shift+Z -->
         <keyCode>90</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
@@ -253,14 +253,14 @@
     </KeyBind>
 
     <KeyBind>
-        <command>done</command> <!-- Ctrl-Enter -->
+        <command>done</command> <!-- Ctrl+Enter -->
         <keyCode>10</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>doneNoAction</command> <!-- Ctrl+Shift-Enter -->
+        <command>doneNoAction</command> <!-- Ctrl+Shift+Enter -->
         <keyCode>10</keyCode>
         <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
@@ -358,14 +358,14 @@
     </KeyBind>
 
     <KeyBind>
-        <command>pause</command> <!-- Ctrl+Shift-P -->
+        <command>pause</command> <!-- Ctrl+Shift+P -->
         <keyCode>80</keyCode>
         <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>unpause</command> <!-- Ctrl+Alt-P -->
+        <command>unpause</command> <!-- Ctrl+Alt+P -->
         <keyCode>80</keyCode>
         <modifier>640</modifier>
         <isRepeatable>false</isRepeatable>
@@ -379,35 +379,35 @@
     </KeyBind>
 
     <KeyBind>
-        <command>reportKeyPrev</command> <!-- Shift-N -->
+        <command>reportKeyPrev</command> <!-- Shift+N -->
         <keyCode>78</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>reportKeySelNext</command> <!-- Ctrl-N -->
+        <command>reportKeySelNext</command> <!-- Ctrl+N -->
         <keyCode>78</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>reportKeySelPrev</command> <!-- Ctrl+Shift-N -->
+        <command>reportKeySelPrev</command> <!-- Ctrl+Shift+N -->
         <keyCode>78</keyCode>
         <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>reportFilterKeySelNext</command> <!-- Ctrl-Shift-F -->
+        <command>reportFilterKeySelNext</command> <!-- Ctrl+Shift+F -->
         <keyCode>70</keyCode>
         <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>reportFilterKey</command> <!-- Shift-F -->
+        <command>reportFilterKey</command> <!-- Shift+F -->
         <keyCode>70</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
@@ -421,7 +421,7 @@
     </KeyBind>
 
     <KeyBind>
-        <command>movementEnvelope</command> <!-- Ctrl-Q -->
+        <command>movementEnvelope</command> <!-- Ctrl+Q -->
         <keyCode>81</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
@@ -435,106 +435,106 @@
     </KeyBind>
 
     <KeyBind>
-        <command>toggleDrawLabels</command> <!-- Ctrl-B -->
+        <command>toggleDrawLabels</command> <!-- Ctrl+B -->
         <keyCode>66</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>toggleHexCoords</command> <!-- Ctrl-G -->
+        <command>toggleHexCoords</command> <!-- Ctrl+G -->
         <keyCode>71</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>toggleMinimap</command> <!-- Ctrl-M -->
+        <command>toggleMinimap</command> <!-- Ctrl+M -->
         <keyCode>77</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>viewLosSetting</command> <!-- Ctrl+Alt-L -->
+        <command>viewLosSetting</command> <!-- Ctrl+Alt+L -->
         <keyCode>76</keyCode>
         <modifier>640</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>toggleUnitDisplay</command> <!-- Ctrl-D -->
+        <command>toggleUnitDisplay</command> <!-- Ctrl+D -->
         <keyCode>68</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>toggleUnitOverview</command> <!-- Ctrl-U -->
+        <command>toggleUnitOverview</command> <!-- Ctrl+U -->
         <keyCode>85</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>toggleKeybinds</command> <!-- Ctrl-K -->
+        <command>toggleKeybinds</command> <!-- Ctrl+K -->
         <keyCode>75</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>togglePlanetaryConditions</command> <!-- Ctrl-P -->
+        <command>togglePlanetaryConditions</command> <!-- Ctrl+P -->
         <keyCode>80</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>toggleTurnDetails</command> <!-- Ctrl-T -->
+        <command>toggleTurnDetails</command> <!-- Ctrl+T -->
         <keyCode>84</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>clientSettings</command> <!-- Alt-C -->
+        <command>clientSettings</command> <!-- Alt+C -->
         <keyCode>67</keyCode>
         <modifier>512</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>incGuiScale</command> <!-- Ctrl-NumPad + -->
+        <command>incGuiScale</command> <!-- Ctrl+NumPad + -->
         <keyCode>107</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>decGuiScale</command> <!-- Ctrl-NumPad - -->
+        <command>decGuiScale</command> <!-- Ctrl+NumPad - -->
         <keyCode>109</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>roundReport</command> <!-- Ctrl-R -->
+        <command>roundReport</command> <!-- Ctrl+R -->
         <keyCode>82</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>zoomIn</command> <!-- Plus -->
-        <keyCode>521</keyCode>
+        <command>zoomIn</command> <!-- NumPad + -->
+        <keyCode>107</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>zoomOut</command> <!-- Minus -->
-        <keyCode>45</keyCode>
+        <command>zoomOut</command> <!-- NumPad - -->
+        <keyCode>109</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
@@ -547,42 +547,42 @@
     </KeyBind>
 
     <KeyBind>
-        <command>quickLoad</command> <!-- Ctrl+Shift-L -->
+        <command>quickLoad</command> <!-- Ctrl+Shift+L -->
         <keyCode>76</keyCode>
         <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>quickSave</command> <!-- Ctrl+Shift-S -->
+        <command>quickSave</command> <!-- Ctrl+Shift+S -->
         <keyCode>83</keyCode>
         <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>localLoad</command> <!-- Ctrl-L -->
+        <command>localLoad</command> <!-- Ctrl+L -->
         <keyCode>76</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>localSave</command> <!-- Ctrl-S -->
+        <command>localSave</command> <!-- Ctrl+S -->
         <keyCode>83</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>replacePlayer</command> <!-- Ctrl+Shift-R -->
+        <command>replacePlayer</command> <!-- Ctrl+Shift+R -->
         <keyCode>82</keyCode>
         <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>viewModEnvelope</command> <!-- Ctrl-W -->
+        <command>viewModEnvelope</command> <!-- Ctrl+W -->
         <keyCode>87</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
@@ -596,28 +596,28 @@
     </KeyBind>
 
     <KeyBind>
-        <command>undoSingleStep</command> <!-- Ctrl-Backspace -->
+        <command>undoSingleStep</command> <!-- Ctrl+Backspace -->
         <keyCode>8</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>toggleForceDisplay</command> <!-- Ctrl-F -->
+        <command>toggleForceDisplay</command> <!-- Ctrl+F -->
         <keyCode>70</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>extendTurnTimer</command> <!-- Ctrl-F4 -->
+        <command>extendTurnTimer</command> <!-- Ctrl+F4 -->
         <keyCode>115</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>toggleBotCommandsDisplay</command> <!-- Ctrl+Shift-G -->
+        <command>toggleBotCommandsDisplay</command> <!-- Ctrl+Shift+G -->
         <keyCode>71</keyCode>
         <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>

@@ -33,9 +33,11 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Hex;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
@@ -45,10 +47,12 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.turns.SpecificEntityTurn;
-import megamek.common.units.Building;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.IAero;
+import megamek.common.units.IBuilding;
+import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.common.units.VTOL;
 import megamek.logging.MMLogger;
@@ -250,6 +254,16 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         entity.setFacing(nFacing);
         entity.setSecondaryFacing(nFacing);
 
+        // For returning climb out units, restore the exit altitude
+        // (entity was not never deployed if returning from off-map)
+        if (!entity.wasNeverDeployed() && entity instanceof IAero aeroReturning) {
+            int exitAlt = aeroReturning.getExitAltitude();
+            if (exitAlt > 0) {
+                elevation = exitAlt;
+                aeroReturning.setExitAltitude(0);  // Clear after use
+            }
+        }
+
         // entity.isAero will check if a unit is a LAM in Fighter mode
         if (entity instanceof IAero aero && entity.isAero()) {
             entity.setAltitude(elevation);
@@ -268,7 +282,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             // from the sky!
             entity.setAssaultDropInProgress(true);
         } else if ((entity instanceof VTOL) && (entity.getExternalUnits().isEmpty())) {
-            while ((Compute.stackingViolation(getGame(), entity, coords, null, entity.climbMode()) != null) &&
+            while ((Compute.stackingViolation(getGame(), entity, coords, null, entity.climbMode(), false) != null) &&
                   (entity.getElevation() <= 500)) {
                 entity.setElevation(entity.getElevation() + 1);
             }
@@ -297,8 +311,8 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
                 }
             }
         } else {
-            Building bld = getGame().getBoard(boardId).getBuildingAt(entity.getPosition());
-            if ((bld != null) && (bld.getType() == BuildingType.WALL)) {
+            IBuilding bld = getGame().getBoard(boardId).getBuildingAt(entity.getPosition());
+            if ((bld != null) && (bld.getBuildingType() == BuildingType.WALL)) {
                 entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
             }
 
@@ -310,13 +324,13 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
 
         // when first entering a building, we need to roll what type
         // of basement it has
-        Building bldg = getGame().getBoard(boardId).getBuildingAt(entity.getPosition());
+        IBuilding bldg = getGame().getBoard(boardId).getBuildingAt(entity.getPosition());
         if ((bldg != null)) {
             if (bldg.rollBasement(entity.getPosition(),
                   getGame().getBoard(boardId),
                   gameManager.getMainPhaseReport())) {
                 gameManager.sendChangedHex(entity.getPosition(), boardId);
-                Vector<Building> buildings = new Vector<>();
+                Vector<IBuilding> buildings = new Vector<>();
                 buildings.add(bldg);
                 gameManager.sendChangedBuildings(buildings);
             }
@@ -331,9 +345,16 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             }
         }
 
+        // If deploying a BuildingEntity, add building terrain to all hexes it occupies
+        if (entity instanceof AbstractBuildingEntity buildingEntity) {
+            buildingEntity.updateBuildingEntityHexes(boardId, gameManager);
+        }
+
         entity.setDone(true);
         entity.setDeployed(true);
         gameManager.entityUpdate(entity.getId());
         addReport(gameManager.doSetLocationsExposure(entity, hex, false, entity.getElevation()));
     }
+
+
 }

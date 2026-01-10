@@ -34,6 +34,8 @@
 
 package megamek.common.loaders;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -48,9 +50,9 @@ import megamek.common.QuirkEntry;
 import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.*;
+import megamek.common.board.CubeCoords;
 import megamek.common.equipment.*;
 import megamek.common.exceptions.LocationFullException;
-import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
 import megamek.common.units.*;
@@ -250,6 +252,10 @@ public class BLKFile {
                 }
 
                 int facing = -1;
+                if (equipName.toUpperCase().endsWith(("(F)"))) {
+                    facing = 0;
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
+                }
                 if (equipName.toUpperCase().endsWith("(FL)")) {
                     facing = 5;
                     equipName = equipName.substring(0, equipName.length() - 4).trim();
@@ -294,18 +300,25 @@ public class BLKFile {
                               isTurreted,
                               isPintleTurreted,
                               isOmniMounted);
-                        // Need to set facing for VGLs
+                        // Need to set facing for VGLs & AbstractBuildingEntity instances
                         if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_VGL)) {
                             if (facing == -1) {
                                 mount.setFacing(defaultVGLFacing(nLoc, false));
                             } else {
                                 mount.setFacing(facing);
                             }
+                        } else if (t instanceof AbstractBuildingEntity) {
+                            mount.setFacing(facing);
                         }
                         if (shots > 0) {
                             mount.setOriginalShots(shots);
                             mount.setShotsLeft(shots);
                             mount.setSize(shots);
+                        }
+                        if (etype instanceof MiscType && mount.getType().hasFlag(MiscType.F_LIFT_HOIST)) { //
+                            // Cargo
+                            // Container too?
+                            t.addTransporter(new LiftHoist(mount, t.getWeight() / 2), isOmniMounted);
                         }
                         if (etype.isVariableSize()) {
                             if (size == 0) {
@@ -487,10 +500,6 @@ public class BLKFile {
         if (dataFile.exists("height")) {
             e.getFluff().setHeight(dataFile.getDataAsString("height")[0]);
         }
-
-        if (dataFile.exists("source")) {
-            e.setSource(dataFile.getDataAsString("source")[0]);
-        }
     }
 
     public void checkManualBV(Entity e) {
@@ -634,6 +643,8 @@ public class BLKFile {
             blk.writeBlockData("UnitType", "Aero");
         } else if (t instanceof HandheldWeapon) {
             blk.writeBlockData("UnitType", "HandheldWeapon");
+        } else if (t instanceof AbstractBuildingEntity) {
+            blk.writeBlockData("UnitType", "BuildingEntity");
         }
 
         blk.writeBlockData("Name", t.getChassis());
@@ -655,8 +666,8 @@ public class BLKFile {
         List<String> quirkList = t.getQuirks()
               .getOptionsList()
               .stream()
-              .filter(IOption::booleanValue)
-              .map(IBasicOption::getName)
+              .filter(BLKFile::isQuirkActive)
+              .map(BLKFile::formatQuirkForSave)
               .collect(Collectors.toList());
 
         if (!quirkList.isEmpty()) {
@@ -713,7 +724,7 @@ public class BLKFile {
         }
 
         int numLocs = t.locations();
-        if (!(t instanceof Infantry || t instanceof GunEmplacement)) {
+        if (!(t instanceof Infantry || t instanceof GunEmplacement || t instanceof AbstractBuildingEntity)) {
             if (t instanceof Aero) {
                 if (t.isFighter()) {
                     blk.writeBlockData("cockpit_type", ((Aero) t).getCockpitType());
@@ -788,6 +799,8 @@ public class BLKFile {
                 }
             }
             blk.writeBlockData("armor", armor_array);
+        } else if (t instanceof AbstractBuildingEntity abstractBuildingEntity) {
+            blk.writeBlockData("armor", abstractBuildingEntity.getInternalBuilding().getArmor(CubeCoords.ZERO));
         }
 
         // Write out armor_type and armor_tech entries for BA
@@ -1000,10 +1013,41 @@ public class BLKFile {
             if (!augmentations.isEmpty()) {
                 blk.writeBlockData("augmentation", augmentations.toArray(new String[0]));
             }
+
+            // Prosthetic Enhancement (Enhanced Limbs) - IO p.84
+            if (infantry.hasProstheticEnhancement1()) {
+                blk.writeBlockData("prostheticEnhancement1", infantry.getProstheticEnhancement1().toString());
+                if (infantry.getProstheticEnhancement1Count() > 0) {
+                    blk.writeBlockData("prostheticEnhancement1Count", infantry.getProstheticEnhancement1Count());
+                }
+            }
+            if (infantry.hasProstheticEnhancement2()) {
+                blk.writeBlockData("prostheticEnhancement2", infantry.getProstheticEnhancement2().toString());
+                if (infantry.getProstheticEnhancement2Count() > 0) {
+                    blk.writeBlockData("prostheticEnhancement2Count", infantry.getProstheticEnhancement2Count());
+                }
+            }
+
+            // Extraneous (Enhanced) Limbs - IO p.84
+            // Each pair always provides 2 items, so no count needed
+            if (infantry.hasExtraneousPair1()) {
+                blk.writeBlockData("extraneousPair1", infantry.getExtraneousPair1().toString());
+            }
+            if (infantry.hasExtraneousPair2()) {
+                blk.writeBlockData("extraneousPair2", infantry.getExtraneousPair2().toString());
+            }
         } else if (t instanceof GunEmplacement gunEmplacement) {
             if (!gunEmplacement.hasNoTurret()) {
                 blk.writeBlockData("turret", 1);
             }
+        } else if (t instanceof AbstractBuildingEntity abstractBuildingEntity) {
+            blk.writeBlockData("building_class", abstractBuildingEntity.getBldgClass());
+            blk.writeBlockData("building_type", abstractBuildingEntity.getBuildingType().getTypeValue());
+            blk.writeBlockData("height", abstractBuildingEntity.getInternalBuilding().getBuildingHeight());
+            blk.writeBlockData("cf", abstractBuildingEntity.getInternalBuilding().getCurrentCF(CubeCoords.ZERO));
+
+            blk.writeBlockData("coords",
+                  abstractBuildingEntity.getInternalBuilding().getCoordsList().toArray(new CubeCoords[0]));
         } else {
             blk.writeBlockData("tonnage", t.getWeight());
         }
@@ -1164,8 +1208,72 @@ public class BLKFile {
         return engineCode;
     }
 
+    /**
+     * Checks if a quirk is active and should be saved. Boolean quirks are active if true, integer quirks
+     * are active if they have a non-zero value, string quirks (like obsolete) are active if they have a
+     * non-empty value.
+     *
+     * @param quirk The quirk option to check
+     *
+     * @return true if the quirk should be saved
+     */
+    private static boolean isQuirkActive(IOption quirk) {
+        if (quirk.getType() == IOption.INTEGER) {
+            return quirk.intValue() != 0;
+        }
+        if (quirk.getType() == IOption.STRING) {
+            String value = quirk.stringValue();
+            return value != null && !value.isEmpty();
+        }
+        return quirk.booleanValue();
+    }
+
+    /**
+     * Formats a quirk for saving to a unit file. Boolean quirks are saved as just their name,
+     * while integer quirks are saved as "name:value" and string quirks (like obsolete) are saved
+     * as "name:value" (e.g., "obsolete:2950,3146").
+     *
+     * @param quirk The quirk option to format
+     * @return The formatted string for saving
+     */
+    private static String formatQuirkForSave(IOption quirk) {
+        if (quirk.getType() == IOption.INTEGER) {
+            return quirk.getName() + ":" + quirk.intValue();
+        }
+        if (quirk.getType() == IOption.STRING) {
+            String value = quirk.stringValue();
+            if (value != null && !value.isEmpty()) {
+                return quirk.getName() + ":" + value;
+            }
+        }
+        return quirk.getName();
+    }
+
     private static String encodeEquipmentLine(Mounted<?> m) {
         String name = m.getType().getInternalName();
+        if (m.getEntity() instanceof AbstractBuildingEntity) {
+            // Append the facing for VGLs or if mounted on an AbstractBuildingEntity
+                switch (m.getFacing()) {
+                    case 0:
+                        name = name + (" (F)");
+                        break;
+                    case 1:
+                        name = name + " (FR)";
+                        break;
+                    case 2:
+                        name = name + " (RR)";
+                        break;
+                    case 3:
+                        name = name + " (R)";
+                        break;
+                    case 4:
+                        name = name + " (RL)";
+                        break;
+                    case 5:
+                        name = name + " (FL)";
+                        break;
+                }
+            }
         if (m.isRearMounted()) {
             name = "(R) " + name;
         }
@@ -1471,7 +1579,7 @@ public class BLKFile {
             // if a positive bay number was not specified, assign one
             // if a bay number was specified but is a duplicate, assign a different one
             int newBay = 1;
-            if (bayNumber == -1 || usedBayNumbers.contains(bayNumber)) {
+            if (bayNumber == UNSET_BAY || usedBayNumbers.contains(bayNumber)) {
                 while (usedBayNumbers.contains(newBay)) {
                     newBay++;
                 }
@@ -1535,7 +1643,7 @@ public class BLKFile {
             // Copy initial two fields; later fields get defaults or are set later
             java.lang.System.arraycopy(numbersArray, 0, temp, 0, 2);
             // Fill in other fields with default/unset values
-            temp[2] = String.valueOf(-1);
+            temp[2] = String.valueOf(UNSET_BAY);
             temp[3] = "";
             temp[4] = String.valueOf(Entity.LOC_NONE);
             temp[5] = String.valueOf(0);
@@ -1579,7 +1687,7 @@ public class BLKFile {
                     temp[3] = potentialBayTypeIndicator;
                     if (temp[2].equals(temp[3])) {
                         // We found the infantry type in the bay number field; unset bay number
-                        temp[2] = String.valueOf(-1);
+                        temp[2] = String.valueOf(UNSET_BAY);
                     }
                 } else if (potentialBayTypeIndicator.startsWith(Bay.FACING_PREFIX)) {
                     // Strip old facing prefix, set field to remaining value.
@@ -1626,6 +1734,13 @@ public class BLKFile {
             entity.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         } else {
             entity.setArmorTechLevel(entity.getStaticTechLevel().getCompoundTechLevel(entity.isClan()));
+        }
+    }
+
+
+    protected void resetCrew(Entity entity) {
+        if (entity.getCrew() != null && entity.getCrew().getCrewType() != entity.defaultCrewType()) {
+            entity.setCrew(new Crew(entity.defaultCrewType()));
         }
     }
 }

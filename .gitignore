@@ -75,6 +75,7 @@ megamek/userdata/**
 OfficialUnitList.txt
 equipment.txt
 .github/copilot-instructions.md
+.github/workflows
 *.iml
 
 # Testing Temp Folder
@@ -88,3 +89,4 @@ equipment.txt
 # No need to re-commit this folder
 /megamek/data
 units.cache
+

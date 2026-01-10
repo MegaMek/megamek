@@ -39,6 +39,7 @@ import megamek.common.Report;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponType;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 
 /**
@@ -64,17 +65,29 @@ public class FlamerHandlerHelper {
 
         boolean heatDamageReducedByArmor = false;
         int actualDamage = heatDamage;
+        boolean playtestThree = false;
+        if (entityTarget != null && entityTarget.getGame() != null) {
+            playtestThree = entityTarget.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
+        }
 
         // armor can't reduce damage if there isn't any
         if (entityTarget.getArmor(hit) > 0) {
             // heat dissipating armor divides heat damage by 2
-            if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING) {
-                actualDamage = heatDamage / 2;
-                heatDamageReducedByArmor = true;
-                // reflective armor divides heat damage by 2, with a minimum of 1
-            } else if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE) {
-                actualDamage = Math.max(1, heatDamage / 2);
-                heatDamageReducedByArmor = true;
+            // PLAYTEST3 reduce heat
+            if (playtestThree) {
+                if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING) {
+                    actualDamage = 0;
+                    heatDamageReducedByArmor = true;
+                }
+            } else {
+                if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING) {
+                    actualDamage = heatDamage / 2;
+                    heatDamageReducedByArmor = true;
+                    // reflective armor divides heat damage by 2, with a minimum of 1
+                } else if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE) {
+                    actualDamage = Math.max(1, heatDamage / 2);
+                    heatDamageReducedByArmor = true;
+                }
             }
 
         }

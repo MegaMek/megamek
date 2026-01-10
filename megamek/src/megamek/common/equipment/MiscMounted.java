@@ -36,6 +36,7 @@ package megamek.common.equipment;
 import megamek.common.CriticalSlot;
 import megamek.common.Messages;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 
@@ -128,7 +129,6 @@ public class MiscMounted extends Mounted<MiscType> {
                 }
             }
         }
-
         if (entity.hasSystem(Mek.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER,
               location)) {
             base -= 2;
@@ -142,7 +142,8 @@ public class MiscMounted extends Mounted<MiscType> {
               location)) {
             base--;
         }
-        if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND, location)) {
+        if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND,
+              location)) {
             base--;
         }
 
@@ -201,7 +202,8 @@ public class MiscMounted extends Mounted<MiscType> {
               location)) {
             base--;
         }
-        if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND, location)) {
+        if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND,
+              location)) {
             base--;
         }
 

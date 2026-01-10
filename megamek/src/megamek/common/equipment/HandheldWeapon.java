@@ -43,17 +43,21 @@ import megamek.common.Report;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
+import megamek.common.compute.Compute;
 import megamek.common.cost.HandheldWeaponCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
+import megamek.common.moves.MoveStep;
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.UnitType;
 import megamek.common.util.RoundWeight;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class HandheldWeapon extends Entity {
 
@@ -64,6 +68,12 @@ public class HandheldWeapon extends Entity {
         super();
         setArmorType(MiscType.T_ARMOR_STANDARD);
         setArmorTechLevel(TechConstants.T_INTRO_BOX_SET);
+    }
+
+    @Override
+    public CrewType defaultCrewType() {
+        // Handheld Weapons don't have a crew
+        return CrewType.NONE;
     }
 
     @Override
@@ -105,42 +115,42 @@ public class HandheldWeapon extends Entity {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        throw new UnsupportedOperationException("Construction only.");
+        return false;
     }
 
     @Override
     public boolean isValidSecondaryFacing(int dir) {
-        throw new UnsupportedOperationException("Construction only.");
+        return false;
     }
 
     @Override
     public int clipSecondaryFacing(int dir) {
-        throw new UnsupportedOperationException("Construction only.");
+        return Compute.ARC_FORWARD;
     }
 
     @Override
     public String getMovementString(EntityMovementType movementType) {
-        throw new UnsupportedOperationException("Construction only.");
+        return "None";
     }
 
     @Override
     public String getMovementAbbr(EntityMovementType movementType) {
-        throw new UnsupportedOperationException("Construction only.");
+        return "N";
     }
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover) {
-        throw new UnsupportedOperationException("Construction only.");
+        return new HitData(LOC_GUN);
     }
 
     @Override
     public HitData rollHitLocation(int table, int side) {
-        throw new UnsupportedOperationException("Construction only.");
+        return new HitData(LOC_GUN);
     }
 
     @Override
     public HitData getTransferLocation(HitData hit) {
-        throw new UnsupportedOperationException("Construction only.");
+        return hit;
     }
 
     @Override
@@ -150,12 +160,26 @@ public class HandheldWeapon extends Entity {
 
     @Override
     public int getWeaponArc(int weaponNumber) {
-        throw new UnsupportedOperationException("Construction only.");
+        return Compute.ARC_FORWARD;
+    }
+
+    /**
+     * Returns the primary facing, or -1 if n/a
+     */
+    @Override
+    public int getFacing() {
+        if (isTransported() && getGame() != null) {
+            Entity carryingEntity = getGame().getEntity(getTransportId());
+            if (carryingEntity != null && carryingEntity.getDistinctCarriedObjects().contains(this)) {
+                return carryingEntity.getSecondaryFacing();
+            }
+        }
+        return super.getFacing();
     }
 
     @Override
     public boolean isSecondaryArcWeapon(int weaponId) {
-        throw new UnsupportedOperationException("Construction only.");
+        return false;
     }
 
     private static final int[] NUM_OF_SLOTS = new int[] { 25 };
@@ -167,22 +191,56 @@ public class HandheldWeapon extends Entity {
 
     @Override
     public int getGenericBattleValue() {
-        throw new UnsupportedOperationException("Construction only.");
+        return calculateBattleValue();
     }
 
     @Override
     public Vector<Report> victoryReport() {
-        throw new UnsupportedOperationException("Construction only.");
+        Vector<Report> vDesc = new Vector<>();
+
+        Report r = new Report(7025);
+        r.type = Report.PUBLIC;
+        r.addDesc(this);
+        vDesc.addElement(r);
+
+        r = new Report(7035);
+        r.type = Report.PUBLIC;
+        r.newlines = 0;
+        vDesc.addElement(r);
+        vDesc.addAll(getCrew().getDescVector(false));
+        r = new Report(7070, Report.PUBLIC);
+        r.add(getKillNumber());
+        vDesc.addElement(r);
+
+        if (isDestroyed()) {
+            Entity killer = game.getEntity(killerId);
+            if (killer == null) {
+                killer = game.getOutOfGameEntity(killerId);
+            }
+            if (killer != null) {
+                r = new Report(7072, Report.PUBLIC);
+                r.addDesc(killer);
+            } else {
+                r = new Report(7073, Report.PUBLIC);
+            }
+            vDesc.addElement(r);
+        } else if (getCrew().isEjected()) {
+            r = new Report(7071, Report.PUBLIC);
+            vDesc.addElement(r);
+        }
+        r.newlines = 2;
+
+        return vDesc;
     }
 
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
-        throw new UnsupportedOperationException("Construction only.");
+        return roll;
     }
 
     @Override
     public int getMaxElevationChange() {
-        throw new UnsupportedOperationException("Construction only.");
+        return 0;
     }
 
     @Override
@@ -193,7 +251,7 @@ public class HandheldWeapon extends Entity {
     @Override
     public boolean isNuclearHardened() {
         // Genuinely I have no idea
-        throw new UnsupportedOperationException("Construction only.");
+        return false;
     }
 
     @Override
@@ -213,27 +271,27 @@ public class HandheldWeapon extends Entity {
 
     @Override
     public boolean isCrippled() {
-        return getArmor(LOC_GUN) == 0;
+        return (getOArmor(LOC_GUN)) > 0 && (double) getArmor(LOC_GUN) / getOArmor(LOC_GUN) <= 0.5;
     }
 
     @Override
     public boolean isCrippled(boolean checkCrew) {
-        return getArmor(LOC_GUN) == 0;
+        return isCrippled();
     }
 
     @Override
     public boolean isDmgHeavy() {
-        return getArmor(LOC_GUN) == 0;
+        return (getOArmor(LOC_GUN)) > 0 && (double) getArmor(LOC_GUN) / getOArmor(LOC_GUN) < 0.5;
     }
 
     @Override
     public boolean isDmgModerate() {
-        return getArmor(LOC_GUN) == 0;
+        return (getOArmor(LOC_GUN)) > 0 && (double) getArmor(LOC_GUN) / getOArmor(LOC_GUN) < 0.75;
     }
 
     @Override
     public boolean isDmgLight() {
-        return getArmor(LOC_GUN) == 0;
+        return (getOArmor(LOC_GUN)) > 0 && (double) getArmor(LOC_GUN) / getOArmor(LOC_GUN) < 0.9;
     }
 
     @Override
@@ -249,5 +307,97 @@ public class HandheldWeapon extends Entity {
     @Override
     public double getArmorWeight() {
         return RoundWeight.nextHalfTon(getOArmor(LOC_GUN) / 16.0);
+    }
+
+    @Override
+    public boolean isCarryableObject() {
+        return true;
+    }
+
+    /**
+     * Returns true if the carryable object is able to be picked up. Units must be hull down to pick up other units,
+     * unless the unit is tall. Airborne aeros cannot be grabbed either.
+     *
+     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up ground-level
+     *                          objects
+     *
+     * @return true if the object can be picked up, false if it cannot
+     */
+    @Override
+    public boolean canBePickedUp(boolean isCarrierHullDown) {
+        return true;
+    }
+
+    /**
+     * What entity is using this weapon to attack?
+     *
+     * @return entity carrying this weapon, or the entity itself
+     */
+    @Override
+    public Entity getAttackingEntity() {
+        return isTransported() ? game.getEntity(getTransportId()) : super.getAttackingEntity();
+    }
+
+    @Override
+    public void processPickupStep(MoveStep step, Integer cargoPickupLocation, TWGameManager gameManager,
+          Entity entityPickingUpTarget, EntityMovementType overallMoveType) {
+        processPickupStepEntity(step, cargoPickupLocation, gameManager, entityPickingUpTarget);
+    }
+
+    @Override
+    public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
+        return CarriedObjectDamageAllocation.ARM_HIT;
+    }
+
+    @Override
+    public int targetForArmHitToHitCarriedObject() {
+        return 6;
+    }
+
+    /**
+     * An entity is eligible for firing if it's not taking some kind of action that prevents it from firing, such as a
+     * full-round physical attack or sprinting.
+     */
+    @Override
+    public boolean isEligibleForFiring() {
+        return false;
+    }
+
+    /**
+     * Pretty much anybody's eligible for movement. If the game option is toggled on, inactive and immobile entities are
+     * not eligible. OffBoard units are always ineligible
+     *
+     * @return whether the entity is allowed to move
+     */
+    @Override
+    public boolean isEligibleForMovement() {
+        return false;
+    }
+
+    @Override
+    public boolean isEligibleForOffboard() {
+        return false;
+    }
+
+    /**
+     * Check if the entity has any valid targets for physical attacks.
+     */
+    @Override
+    public boolean isEligibleForPhysical() {
+        return false;
+    }
+
+    @Override
+    public boolean isEligibleForTargetingPhase() {
+        return false;
+    }
+
+    /**
+     * @return True if this Entity is eligible to pre-designate hexes as auto-hits. Per TacOps pg 180, if a player has
+     *       off board artillery they get 5 pre-designated hexes per map sheet.
+     */
+    @Override
+    public boolean isEligibleForArtyAutoHitHexes() {
+        return false;
     }
 }

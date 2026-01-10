@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 import java.util.Vector;
 
@@ -48,6 +50,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.Weapon;
@@ -79,7 +82,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         setDone();
         checkAmmo();
         howManyShots = (weapon.curMode().equals(Weapon.MODE_AC_SINGLE) ? 1 : 2);
-        int total = attackingEntity.getTotalAmmoOfType(ammo.getType());
+        int total = weaponEntity.getTotalAmmoOfType(ammo.getType());
         if (total == 1) {
             howManyShots = 1;
         } else if (total < 1) {
@@ -95,7 +98,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         // We _may_ be able to reload from another ammo source, but in case
         // a previous attack burned through all the ammo, this attack may be SOL.
         if (ammo.getUsableShotsLeft() == 0) {
-            attackingEntity.loadWeapon(weapon);
+            weaponEntity.loadWeapon(weapon);
             ammo = (AmmoMounted) weapon.getLinked();
         }
     }
@@ -159,18 +162,43 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             return true;
         }
 
-        if ((roll.getIntValue() == 2) && (howManyShots == 2) && !attackingEntity.isConventionalInfantry()) {
-            Report r = new Report();
-            r.subject = subjectId;
-            weapon.setJammed(true);
-            isJammed = true;
-            if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
-                  || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
-                r.messageId = 3160;
-            } else {
-                r.messageId = 3170;
+        if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if ((roll.getIntValue() == 2) && (howManyShots == 2) && !weaponEntity.isConventionalInfantry()) {
+                Report r = new Report();
+                r.subject = subjectId;
+                weapon.setJammed(true);
+                isJammed = true;
+                if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
+                      || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
+                    r.messageId = 3160;
+                } else {
+                    r.messageId = 3170;
+                }
+                vPhaseReport.addElement(r);
             }
-            vPhaseReport.addElement(r);
+        } else {
+            // PLAYTEST3 Caseless ammo support for RAC
+            // Will potentially explode when rolling a 2. Can still jam if not blowing up.
+            // The check above will only get to this if playtest3 is enabled
+            if ((roll.getIntValue() <= 2) && !attackingEntity.isConventionalInfantry() 
+                  && ammoType.getMunitionType().contains(AmmoType.Munitions.M_CASELESS)) {
+                Roll diceRoll = Compute.rollD6(2);
+
+                Report r = new Report(3164);
+                r.subject = subjectId;
+                r.add(diceRoll);
+
+                if (diceRoll.getIntValue() >= 8) {
+                    // Round explodes destroying weapon
+                    weapon.setDestroyed(true);
+                    r.choose(false);
+                } else {
+                    // Just a jam
+                    weapon.setJammed(true);
+                    r.choose(true);
+                }
+                vPhaseReport.addElement(r);
+            }
         }
         return false;
     }
@@ -187,20 +215,20 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                       bDirect ? toHit.getMoS() / 3 : 0,
                       WeaponType.WEAPON_CLUSTER_BALLISTIC, // treat as cluster
                       ((Infantry) target).isMechanized(),
-                      toHit.getThruBldg() != null, attackingEntity.getId(),
+                      toHit.getThruBldg() != null, weaponEntity.getId(),
                       calcDmgPerHitReport);
             } else { // No - only one shot fired
                 toReturn = Compute.directBlowInfantryDamage(weaponType.getDamage(),
                       bDirect ? toHit.getMoS() / 3 : 0,
                       weaponType.getInfantryDamageClass(),
                       ((Infantry) target).isMechanized(),
-                      toHit.getThruBldg() != null, attackingEntity.getId(),
+                      toHit.getThruBldg() != null, weaponEntity.getId(),
                       calcDmgPerHitReport);
             }
             // Cluster bonuses or penalties can't apply to "two rolls" UACs, so
             // if we have one, modify the damage per hit directly.
         } else if (bDirect && (howManyShots == 1 || twoRollsUltra)) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
+            toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);
         }
 
         if (howManyShots == 1 || twoRollsUltra) {
@@ -225,7 +253,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     @Override
     protected int calculateNumClusterAero(Entity entityTarget) {
-        if (usesClusterTable() && !attackingEntity.isCapitalFighter() && (entityTarget != null)
+        if (usesClusterTable() && !weaponEntity.isCapitalFighter() && (entityTarget != null)
               && !entityTarget.isCapitalScale()) {
             return (int) Math.ceil(attackValue / 2.0);
         } else {

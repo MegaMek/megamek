@@ -99,6 +99,15 @@ class WeaponListModel extends AbstractListModel<String> {
         return -1;
     }
 
+    public int getIndex(WeaponMounted weapon) {
+        for (int i = 0; i < weapons.size(); i++) {
+            if (weapons.get(i).equals(weapon)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public void removeAllElements() {
         int numWeapons = weapons.size() - 1;
         weapons.clear();
@@ -123,6 +132,9 @@ class WeaponListModel extends AbstractListModel<String> {
     }
 
     public WeaponMounted getWeaponAt(int index) {
+        if (index < 0 || index >= weapons.size()) {
+            return null;
+        }
         return weapons.get(index);
     }
 
@@ -140,6 +152,7 @@ class WeaponListModel extends AbstractListModel<String> {
             game = weaponPanel.unitDisplayPanel.getClientGUI().getClient().getGame();
         }
 
+        Entity entityMounted = mounted.getEntity();
         StringBuilder wn = new StringBuilder(mounted.getDesc());
         if ((mounted.getLinkedBy() != null)
               && (mounted.getLinkedBy().getType() instanceof MiscType)
@@ -147,14 +160,14 @@ class WeaponListModel extends AbstractListModel<String> {
             wn.append("+").append(mounted.getLinkedBy().getShortName());
         }
         wn.append(" [");
-        wn.append(entity.getLocationAbbr(mounted.getLocation()));
+        wn.append(entityMounted.getLocationAbbr(mounted.getLocation()));
         //Check if mixedTech and add Clan or IS tag
-        if (entity.isMixedTech()) {
+        if (entityMounted.isMixedTech()) {
             wn.insert(0, weaponType.isClan() ? "(C) " : "(IS) ");
         }
         if (mounted.isSplit()) {
             wn.append('/');
-            wn.append(entity.getLocationAbbr(mounted.getSecondLocation()));
+            wn.append(entityMounted.getLocationAbbr(mounted.getSecondLocation()));
         }
         wn.append(']');
         // determine shots left & total shots left
@@ -168,7 +181,7 @@ class WeaponListModel extends AbstractListModel<String> {
                 shotsLeft = mounted.getLinked().getUsableShotsLeft();
             }
 
-            int totalShotsLeft = entity.getTotalMunitionsOfType(mounted);
+            int totalShotsLeft = entityMounted.getTotalMunitionsOfType(mounted);
 
             wn.append(" (");
             wn.append(shotsLeft);
@@ -176,7 +189,7 @@ class WeaponListModel extends AbstractListModel<String> {
             wn.append(totalShotsLeft);
             wn.append(')');
         } else if (weaponType.hasFlag(WeaponType.F_DOUBLE_ONE_SHOT)
-              || (entity.isSupportVehicle() && (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.INFANTRY))) {
+              || (entityMounted.isSupportVehicle() && (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.INFANTRY))) {
             int shotsLeft = 0;
             int totalShots = 0;
             EnumSet<AmmoType.Munitions> munition = ((AmmoType) mounted.getLinked().getType()).getMunitionType();

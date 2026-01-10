@@ -60,6 +60,7 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.moves.MoveStep;
@@ -545,8 +546,9 @@ public class ProtoMek extends Entity {
 
     @Override
     public boolean canPickupGroundObject() {
-        return !isLocationBad(ProtoMek.LOC_LEFT_ARM) && (getCarriedObject(ProtoMek.LOC_LEFT_ARM) == null) ||
-              !isLocationBad(ProtoMek.LOC_RIGHT_ARM) && (getCarriedObject(ProtoMek.LOC_RIGHT_ARM) == null);
+        return (!isLocationBad(ProtoMek.LOC_LEFT_ARM) && (getCarriedObject(ProtoMek.LOC_LEFT_ARM) == null)) ||
+              (!isLocationBad(ProtoMek.LOC_RIGHT_ARM) && (getCarriedObject(ProtoMek.LOC_RIGHT_ARM) == null)) ||
+              super.canPickupGroundObject();
     }
 
     @Override
@@ -1354,8 +1356,8 @@ public class ProtoMek extends Entity {
     public int getJumpType() {
         jumpType = JUMP_NONE;
         for (Mounted<?> m : miscList) {
-            if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
-                if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
+            if (m.getType().hasFlag(MiscTypeFlag.F_JUMP_JET)) {
+                if (m.getType().hasFlag(MiscTypeFlag.S_IMPROVED)) {
                     jumpType = JUMP_IMPROVED;
                 } else {
                     jumpType = JUMP_STANDARD;
@@ -1413,5 +1415,10 @@ public class ProtoMek extends Entity {
     @Override
     public boolean hasPatchworkArmor() {
         return false;
+    }
+
+    @Override
+    public int getRecoveryTime() {
+        return 20;
     }
 }

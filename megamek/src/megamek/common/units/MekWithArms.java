@@ -41,9 +41,11 @@ import megamek.common.CriticalSlot;
 import megamek.common.MPCalculationSetting;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.MekArms;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
@@ -95,6 +97,17 @@ public abstract class MekWithArms extends Mek {
 
     @Override
     public double maxGroundObjectTonnage() {
+        double heavyLifterMultiplier = hasAbility(OptionsConstants.PILOT_HVY_LIFTER) ? 1.5 : 1.0;
+        double tsmModifier = getTSMPickupModifier();
+        return unmodifiedMaxGroundObjectTonnage() * heavyLifterMultiplier * tsmModifier;
+    }
+
+    /**
+     * The ground object tonnage this unit can lift, unmodified by TSM or Heavy Lifter
+     *
+     * @return the tonnage this mek can lift based on its weight and how many arms it has
+     */
+    public double unmodifiedMaxGroundObjectTonnage() {
         double percentage = 0.0;
 
         if (hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM) && (getCarriedObject(Mek.LOC_LEFT_ARM) == null)) {
@@ -104,8 +117,7 @@ public abstract class MekWithArms extends Mek {
             percentage += 0.05;
         }
 
-        double heavyLifterMultiplier = hasAbility(OptionsConstants.PILOT_HVY_LIFTER) ? 1.5 : 1.0;
-        return getWeight() * percentage * heavyLifterMultiplier;
+        return getWeight() * percentage;
     }
 
     @Override
@@ -177,7 +189,7 @@ public abstract class MekWithArms extends Mek {
             if ((m.getLocation() == loc) && !m.isDestroyed() && !m.isBreached()
                   && (m.getType() instanceof MiscType)
                   && m.getType().hasFlag(MiscType.F_CLUB)
-                  && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                  && m.getType().hasFlag(MiscTypeFlag.S_RETRACTABLE_BLADE)
                   && !m.curMode().equals("extended")) {
                 return true;
             }
@@ -244,9 +256,9 @@ public abstract class MekWithArms extends Mek {
             if ((type instanceof MiscType miscType) && miscType.isVibroblade()
                   && (mounted.curMode().equals("Active") || ignoreMode)
                   && mounted.isOperable()) {
-                if (miscType.hasSubType(MiscType.S_VIBRO_LARGE)) {
+                if (miscType.hasFlag(MiscTypeFlag.S_VIBRO_LARGE)) {
                     return 7;
-                } else if (miscType.hasSubType(MiscType.S_VIBRO_MEDIUM)) {
+                } else if (miscType.hasFlag(MiscTypeFlag.S_VIBRO_MEDIUM)) {
                     return 5;
                 } else {
                     return 3;
@@ -257,14 +269,14 @@ public abstract class MekWithArms extends Mek {
     }
 
     @Override
-    public int getNumberOfShields(long size) {
+    public int getNumberOfShields(MiscTypeFlag shieldSize) {
 
         int raShield = 0;
         int laShield = 0;
 
         for (MiscMounted misc : getMisc()) {
             MiscType type = misc.getType();
-            if (type.hasFlag(MiscType.F_CLUB) && (type.hasSubType(size))) {
+            if (type.hasFlag(MiscType.F_CLUB) && (type.hasFlag(shieldSize))) {
                 // ok so we have a shield of certain size. know which arm is it.
                 if (misc.getLocation() == Mek.LOC_RIGHT_ARM) {
                     raShield = 1;
@@ -388,8 +400,11 @@ public abstract class MekWithArms extends Mek {
 
     @Override
     public boolean canPickupGroundObject() {
-        return hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM) && (getCarriedObject(Mek.LOC_LEFT_ARM) == null) ||
-              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) && (getCarriedObject(Mek.LOC_RIGHT_ARM) == null);
+        return (hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM) && (getCarriedObject(Mek.LOC_LEFT_ARM) == null))
+              ||
+              (hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) && (getCarriedObject(Mek.LOC_RIGHT_ARM) == null))
+              ||
+              super.canPickupGroundObject();
     }
 
     @Override
@@ -403,16 +418,16 @@ public abstract class MekWithArms extends Mek {
 
     private void addAttemptStandingPenalties(PilotingRollData roll) {
         // PLAYTEST2 Standing has -1 PSR
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+        if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
             roll.addModifier(-1, "Trying to stand");
         }
-        
+
         if (hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             roll.addModifier(2, "no/minimal arms");
             return;
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ATTEMPTING_STAND)) {
+        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ATTEMPTING_STAND)) {
             for (int loc : List.of(Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM)) {
                 if (isLocationBad(loc)) {
                     roll.addModifier(2, getLocationName(loc) + " destroyed");
@@ -437,6 +452,27 @@ public abstract class MekWithArms extends Mek {
             return super.getRunMP(mpCalculationSetting);
         } else {
             return getWalkMP(mpCalculationSetting);
+        }
+    }
+
+    @Override
+    public boolean canPerformGroundSalvageOperations() {
+        return hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) &&
+              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM);
+    }
+
+    @Override
+    public void addIntrinsicTransporters() {
+        setMekArms();
+        super.addIntrinsicTransporters();
+    }
+
+    /**
+     * Add transporter for mek's arms for externally carried cargo
+     */
+    public void setMekArms() {
+        if (getTransports().stream().noneMatch(transporter -> transporter instanceof MekArms)) {
+            addTransporter(new MekArms(this));
         }
     }
 }

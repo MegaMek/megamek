@@ -493,6 +493,14 @@ public class ComputeECM {
 
         // Get intervening Coords
         ArrayList<Coords> coords = Coords.intervening(a, b);
+
+        // PLAYTEST3 only if the two coordinates are affected by ECM, not intervening
+        if (ae.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            coords.clear();
+            coords.add(a);
+            coords.add(b);
+        }
+        
         ECMInfo worstECMEffects = null;
         // Loop through intervening coords, and find the worst effects
         for (Coords c : coords) {
@@ -592,8 +600,9 @@ public class ComputeECM {
                     newInfo = new ECMInfo(6, 0, entity);
                     newInfo.setAngelECMStrength(1);
                 } else if (m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECM & Ghost Targets")) {
+                    // In dual mode, Angel ECM operates as two standard ECM suites,
+                    // losing Angel abilities but gaining simultaneous ECM+ECCM (TO p.100)
                     newInfo = new ECMInfo(6, 1, entity);
-                    // Doesn't count as Angel ECM
                 }
                 // BA Angel ECM has a shorter range
                 if ((newInfo != null) && (entity instanceof BattleArmor)) {
@@ -680,8 +689,9 @@ public class ComputeECM {
                     newInfo = new ECMInfo(6, 0, entity);
                     newInfo.setAngelECCMStrength(1);
                 } else if (m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECCM & Ghost Targets")) {
-                    newInfo = new ECMInfo(6, 1, entity);
-                    // Doesn't count as Angel
+                    // In dual mode, ECCM operates at regular strength, not Angel strength
+                    newInfo = new ECMInfo(6, 0, entity);
+                    newInfo.setECCMStrength(1);
                 }
                 // BA Angel ECM has a shorter range
                 if ((newInfo != null) && (entity instanceof BattleArmor)) {

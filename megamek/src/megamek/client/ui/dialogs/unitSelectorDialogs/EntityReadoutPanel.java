@@ -70,9 +70,10 @@ import megamek.client.ui.util.FluffImageHelper;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.Configuration;
-import megamek.common.units.Entity;
 import megamek.common.Report;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
+import megamek.common.units.Entity;
 
 /**
  * @author Jay Lawson
@@ -238,7 +239,7 @@ public class EntityReadoutPanel extends JPanel {
         EntityReadout mekView = EntityReadout.createReadout(entity,
               false,
               false,
-              entity.getCrew() == null
+              (entity.isUncrewed())
         );
         showEntity(entity, mekView, fontName);
     }
@@ -250,19 +251,6 @@ public class EntityReadoutPanel extends JPanel {
               ignorePilotBV);
         showEntity(entity, mekView, fontName, sections);
     }
-
-//    private void setFluffImage(Entity entity) {
-    //        Image image = FluffImageHelper.getFluffImage(entity);
-    //        // Scale down to the default width if the image is wider than that
-    //        if (null != image) {
-    //            if (image.getWidth(this) > DEFAULT_WIDTH) {
-    //                image = image.getScaledInstance(DEFAULT_WIDTH, -1, Image.SCALE_SMOOTH);
-    //            }
-    //            fluffImageComponent.setIcon(new ImageIcon(image));
-    //        } else {
-    //            fluffImageComponent.setIcon(null);
-    //        }
-    //    }
 
     private void setFluffImage(Image image) {
         // Scale down to the default width if the image is wider than that
@@ -278,6 +266,11 @@ public class EntityReadoutPanel extends JPanel {
     }
 
     private void setFluffImage(Entity entity) {
+        boolean isSpritesOnly = PreferenceManager.getClientPreferences().getSpritesOnly();
+        if (isSpritesOnly) {
+            setFluffImage((Image) null);
+            return;
+        }
         fluffImageList.clear();
         fluffImageList.addAll(FluffImageHelper.getFluffRecords(entity));
         fluffImageIndex = 0;

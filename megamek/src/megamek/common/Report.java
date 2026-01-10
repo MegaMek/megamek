@@ -492,6 +492,10 @@ public class Report implements ReportEntry {
         return this;
     }
 
+    public String span(String name, String text, String attributes) {
+        return "<span class='" + name + "' " + attributes + ">" + text + "</span>";
+    }
+
     /**
      * Shortcut method for adding entity name and owner data at the same time. Assumes that the entity name should be
      * obscured, but the owner should not.
@@ -511,6 +515,8 @@ public class Report implements ReportEntry {
             String ownerName = (owner != null) ? owner.getName() : ReportMessages.getString("report.unknownOwner");
 
             String unitName = href(ENTITY_LINK + entity.getId(), entity.getShortName());
+            // Wrap unit name in span with class and data attribute
+            unitName = span("entity-name", unitName, "data-entity-id='" + entity.getId() + "'");
 
             if ((entity.getCrew().getSize() >= 1) && !entity.getCrew().getNickname().isBlank()) {
                 unitName += fgColor(ownerColor, ' ' + entity.getCrew().getNickname().toUpperCase());
@@ -681,10 +687,9 @@ public class Report implements ReportEntry {
             // add the sprite code at the beginning of the line
             if (imageCode != null && !imageCode.isEmpty()) {
                 if (text.toString().startsWith("<br>")) {
-                    text.insert(4, imageCode + "<br>" + getSpaces());
-                    // put text in a new line after the sprite image and add the current indentation level to it
+                    text.insert(4, imageCode);
                 } else {
-                    text.insert(0, imageCode + "<br>" + getSpaces());
+                    text.insert(0, imageCode);
                 }
             }
             text.append(raw.substring(mark));
@@ -697,6 +702,7 @@ public class Report implements ReportEntry {
             Report.mark(text);
         }
 
+        String finalReport;
         if (messageId == 3100 || messageId == 3101 || messageId == 3102 || messageId == 4005) { // if new attack
             Color clr = new Color(0, 0, 0);
 
@@ -707,7 +713,7 @@ public class Report implements ReportEntry {
                 clr = Color.decode(matcher.group());
             }
 
-            return "<div style='padding: 2px; background-color: rgba("
+            finalReport = "<div style='padding: 2px; background-color: rgba("
                   + clr.getRed()
                   + ","
                   + clr.getGreen()
@@ -719,9 +725,11 @@ public class Report implements ReportEntry {
                   + "</div>";
             //shade lines of each attacker in its player color
         } else {
-            return text.toString();
+            finalReport = text.toString();
         }
 
+        // Use span to keep reports inline - <br> tags handle line breaks
+        return "<span class='report-entry'>" + finalReport + "</span>";
     }
 
     @Override
@@ -796,38 +804,98 @@ public class Report implements ReportEntry {
         styleSheet.addRule("span.xx-small { font-size: xx-small; }");
     }
 
+    /**
+     * Wraps text in a span with the given class name.
+     *
+     * @param name The class name.
+     * @param text The text to wrap.
+     * @return The HTML string.
+     */
     public String span(String name, String text) {
         return "<span class='" + name + "'>" + text + "</span>";
     }
 
+    /**
+     * Wraps text in a warning span.
+     *
+     * @param text The text to wrap.
+     * @return The HTML string.
+     */
     public String warning(String text) {
         return span("warning", text);
     }
 
+    /**
+     * Converts a Color object to a hex string.
+     *
+     * @param color The Color object.
+     * @return The hex string (e.g., "#RRGGBB").
+     */
     private static String hexColor(Color color) {
         return String.format("#%06x", color.getRGB() & 0x00FFFFFF);
     }
 
+    /**
+     * Wraps text in a span with the given foreground color.
+     *
+     * @param color The color to use.
+     * @param str   The text to wrap.
+     * @return The HTML string.
+     */
     public String fgColor(Color color, String str) {
         return fgColor(hexColor(color), str);
     }
 
+    /**
+     * Wraps text in a span with the given hex foreground color.
+     *
+     * @param hexColor The hex color string (e.g., "#RRGGBB").
+     * @param str      The text to wrap.
+     * @return The HTML string.
+     */
     public String fgColor(String hexColor, String str) {
         return "<span style='color:" + hexColor + "'>" + str + "</span>";
     }
 
+    /**
+     * Wraps text in a span with the given background color.
+     *
+     * @param color The color to use.
+     * @param str   The text to wrap.
+     * @return The HTML string.
+     */
     public String bgColor(Color color, String str) {
         return bgColor(hexColor(color), str);
     }
 
+    /**
+     * Wraps text in a span with the given hex background color.
+     *
+     * @param hexColor The hex color string (e.g., "#RRGGBB").
+     * @param str      The text to wrap.
+     * @return The HTML string.
+     */
     public String bgColor(String hexColor, String str) {
         return "<span style='background-color:" + hexColor + "'>" + str + "</span>";
     }
 
+    /**
+     * Wraps text in a bold tag.
+     *
+     * @param str The text to wrap.
+     * @return The HTML string.
+     */
     public static String bold(String str) {
         return "<B>" + str + "</B>";
     }
 
+    /**
+     * Creates an HTML anchor tag.
+     *
+     * @param href The URL.
+     * @param str  The link text.
+     * @return The HTML string.
+     */
     public String href(String href, String str) {
         return "<a href='" + href + "'>" + str + "</a>";
     }

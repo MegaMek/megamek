@@ -49,6 +49,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.Weapon;
@@ -95,11 +96,16 @@ public abstract class ACWeapon extends AmmoWeapon {
                 if (mountedEquipment instanceof AmmoType ammoType) {
                     Mounted<?> weapon = entity.getEquipment(waa.getWeaponId());
 
-                    if (weapon.curMode().equals("Rapid")) {
+                    // Auto-hit attacks (spawned from rapid-fire parent) skip rapid-fire routing
+                    // to prevent infinite recursion and allow special ammo handlers to process hits
+                    boolean isAutoHit = (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS);
+
+                    if (!isAutoHit && weapon.curMode().equals("Rapid")) {
                         return new RapidFireACWeaponHandler(toHit, waa, game, gameManager);
                     }
 
-                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)) {
+                    // PLAYTEST3 AP Ammo
+                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING) || ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST)) {
                         return new ACAPHandler(toHit, waa, game, gameManager);
                     }
 

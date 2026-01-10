@@ -64,6 +64,7 @@ import megamek.client.ui.dialogs.iconChooser.CamoChooserDialog;
 import megamek.common.Player;
 import megamek.common.bays.Bay;
 import megamek.common.enums.Gender;
+import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.Transporter;
 import megamek.common.equipment.WeaponType;
@@ -615,6 +616,30 @@ public class LobbyActions {
         sendUpdates(updateCandidates);
     }
 
+    /**
+     * Sets Variable Range Targeting mode for the given entities. Only affects entities that have the Variable Range
+     * Targeting quirk.
+     *
+     * @param entities the entities to update
+     * @param longMode true for LONG mode, false for SHORT mode
+     */
+    void setVRTMode(Collection<Entity> entities, boolean longMode) {
+        if (!validateUpdate(entities)) {
+            return;
+        }
+        Set<Entity> updateCandidates = new HashSet<>();
+        VariableRangeTargetingMode mode = longMode
+              ? VariableRangeTargetingMode.LONG
+              : VariableRangeTargetingMode.SHORT;
+        for (Entity entity : entities) {
+            if (entity.hasVariableRangeTargeting()) {
+                entity.setVariableRangeTargetingMode(mode);
+                updateCandidates.add(entity);
+            }
+        }
+        sendUpdates(updateCandidates);
+    }
+
     public void load(Collection<Entity> selEntities, String info) {
         StringTokenizer stLoad = new StringTokenizer(info, ":");
         int loaderId = Integer.parseInt(stLoad.nextToken());
@@ -824,9 +849,21 @@ public class LobbyActions {
      * Entity, units cannot disconnect from a C3 network with an id that is the entity's own id.
      */
     void c3DisconnectFromNetwork(Collection<Entity> entities) {
+        // Check if any entity is the master unit of its network (C3i/NC3/Nova CEWS)
+        for (Entity entity : entities) {
+            if (entity.hasNhC3()) {
+                String networkId = entity.getC3NetId();
+                if (networkId != null && networkId.endsWith(Entity.C3_NETWORK_ID_SEPARATOR + entity.getId())) {
+                    LobbyErrors.showCannotDisconnectMasterUnit(frame());
+                    return;
+                }
+            }
+        }
+
         if (!validateUpdate(entities)) {
             return;
         }
+
         sendUpdates(C3Util.disconnectFromNetwork(game(), entities));
     }
 

@@ -70,6 +70,14 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
     }
 
     /**
+     * Screen Launchers always deal 15 damage.
+     */
+    @Override
+    protected int calcAttackValue() {
+        return 15;
+    }
+
+    /**
      * handle this weapons firing
      *
      * @return a <code>boolean</code> value indicating whether this should be kept or not
@@ -79,6 +87,9 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
         if (!this.cares(phase)) {
             return true;
         }
+
+        // Calculate attack value (damage) - must be done before applying damage
+        attackValue = calcAttackValue();
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3115);
@@ -119,21 +130,39 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
         for (Entity entity : game.getEntitiesVector(coords)) {
             // if fighter squadron all fighters are damaged
             if (entity instanceof FighterSquadron) {
+                // Squadron: each fighter takes a single hit (standard-scale damage)
                 entity.getSubEntities().forEach(
                       ent -> {
-                          ToHitData squadronToHit = new ToHitData();
-                          squadronToHit.setHitTable(ToHitData.HIT_NORMAL);
-                          HitData hit = ent.rollHitLocation(squadronToHit.getHitTable(), ToHitData.SIDE_FRONT);
+                          // Per TM p.237: damage rolled on Nose column of Hit Location Table
+                          HitData hit = ent.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                          // Standard-scale damage - will be divided by 10 for capital-scale targets
                           hit.setCapital(false);
                           vPhaseReport.addAll(gameManager.damageEntity(ent, hit, attackValue));
                           gameManager.creditKill(ent, attackingEntity);
                       });
-            } else {
-                ToHitData hexToHit = new ToHitData();
-                hexToHit.setHitTable(ToHitData.HIT_NORMAL);
-                HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
+            } else if (entity.isCapitalScale() || entity.isLargeCraft()) {
+                // Capital-scale targets (capital fighters) or large craft (DropShips, etc.): single hit
+                // Capital fighters take 15 -> 2 damage after capital-scale conversion
+                // DropShips have standard-scale armor so take full 15 damage
+                // Per TM p.237: damage rolled on Nose column of Hit Location Table
+                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                // Standard-scale damage - will be divided by 10 for capital-scale targets
                 hit.setCapital(false);
                 vPhaseReport.addAll(gameManager.damageEntity(entity, hit, attackValue));
+                gameManager.creditKill(entity, attackingEntity);
+            } else {
+                // Standard-scale small craft (individual non-capital fighters): 5-point clusters
+                // See: https://battletech.com/forums/index.php?topic=77239
+                int clusterSize = 5;
+                int remainingDamage = attackValue;
+                while (remainingDamage > 0) {
+                    int clusterDamage = Math.min(clusterSize, remainingDamage);
+                    // Per TM p.237: damage rolled on Nose column of Hit Location Table
+                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                    hit.setCapital(false);
+                    vPhaseReport.addAll(gameManager.damageEntity(entity, hit, clusterDamage));
+                    remainingDamage -= clusterDamage;
+                }
                 gameManager.creditKill(entity, attackingEntity);
             }
         }

@@ -451,7 +451,7 @@ public class FighterSquadron extends AeroSpaceFighter {
         for (Entity fighter : activeFighters) {
             pilotingTotal += fighter.getCrew().getPiloting();
             gunneryTotal += fighter.getCrew().getGunnery();
-            if (fighter.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
+            if (fighter.gameOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
                 gunneryLTotal += fighter.getCrew().getGunneryL();
                 gunneryMTotal += fighter.getCrew().getGunneryM();
                 gunneryBTotal += fighter.getCrew().getGunneryB();
@@ -723,7 +723,7 @@ public class FighterSquadron extends AeroSpaceFighter {
      * @return The maximum fighter count of a fighter squadron. This depends on game options ("Large Squadrons").
      */
     public int getMaxSize() {
-        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_ALLOW_LARGE_SQUADRONS)
+        return gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_ALLOW_LARGE_SQUADRONS)
               ? ALTERNATE_MAX_SIZE
               : MAX_SIZE;
     }
@@ -914,4 +914,8 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
     }
 
+    @Override
+    public boolean isCarryableObject() {
+        return false;
+    }
 }

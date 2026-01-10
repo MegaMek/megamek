@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers.srm;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 import java.util.Vector;
 
@@ -45,8 +47,8 @@ import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -82,7 +84,7 @@ public class SRMFragHandler extends SRMHandler {
         if (target.isConventionalInfantry()) {
             toReturn *= weaponType.getRackSize();
             if (bDirect) {
-                toReturn += toHit.getMoS() / 3.0;
+                toReturn += (int) floor(toHit.getMoS() / 3.0);
             }
 
             toReturn = applyGlancingBlowModifier(toReturn, true);
@@ -95,7 +97,7 @@ public class SRMFragHandler extends SRMHandler {
     }
 
     @Override
-    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -135,6 +137,6 @@ public class SRMFragHandler extends SRMHandler {
     }
 
     @Override
-    protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage, Coords coords) {
+    protected void handleBuildingDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage, Coords coords) {
     }
 }

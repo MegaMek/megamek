@@ -34,6 +34,10 @@
 package megamek.common.equipment;
 
 import megamek.common.game.InGameObject;
+import megamek.common.moves.MoveStep;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * An interface defining all the required properties of a carryable object.
@@ -70,5 +74,53 @@ public interface ICarryable extends InGameObject {
     @Override
     default boolean isCarryableObject() {
         return true;
+    }
+
+    /**
+     * Returns true if the carryable object is able to be picked up.
+     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up
+     *                          ground-level objects
+     * @return true if the object can be picked up, false if it cannot
+     */
+    boolean canBePickedUp(boolean isCarrierHullDown);
+
+    default CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
+        return CarriedObjectDamageAllocation.NEVER;
+    }
+
+    void processPickupStep(MoveStep step, Integer cargoPickupLocation,
+          TWGameManager gameManager, Entity entityPickingUpTarget, EntityMovementType overallMoveType);
+
+    /**
+     * Despite being carried by a unit in the same manner, the type of object impacts when it should be damaged if a
+     * carried object's carrier is attacked.
+     *  - Cargo (TW 261) always has a chance to get damaged when the carrier is hit
+     *  - Handheld Weapons (TO:AUE 128) and Battle Armor (TO:AR 96) have a chance to be hit when the carrier is hit in
+     *  the arms
+     *  - Vehicles (TO:AR 95) follow the Grappling rules (TO:AR 88): If the attack misses, make another attack
+     *  against the other unit (NOT IMPLEMENTED)
+     */
+    enum CarriedObjectDamageAllocation {
+        ANY_HIT,
+        ARM_HIT,
+        ON_MISS,
+        NEVER;
+
+        public boolean isCarryableAlwaysDamaged() {
+            return this == ANY_HIT;
+        }
+
+        public boolean isCarryableDamageOnArmHit() {
+            return this == ARM_HIT;
+        }
+
+        public boolean isCarryableAttackedOnMiss() {
+            return this == ON_MISS;
+        }
+
+    }
+
+    default int targetForArmHitToHitCarriedObject() {
+        return 0;
     }
 }

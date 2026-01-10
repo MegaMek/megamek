@@ -35,8 +35,8 @@
 package megamek.client.ui;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
+import java.util.ListIterator;
 
 import megamek.client.Client;
 import megamek.common.Hex;
@@ -106,8 +106,8 @@ public class SharedUtility {
         EntityMovementType overallMoveType = md.getLastStepMovementType();
 
         // iterate through steps
-        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = md.getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
 
             // stop for illegal movement
             if (step.getMovementType(md.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
@@ -224,8 +224,8 @@ public class SharedUtility {
         firstStep = true;
         /* Bug 754610: Revert fix for bug 702735. */
         MoveStep prevStep = null;
-        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = md.getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             boolean isPavementStep = step.isPavementStep();
 
             // stop for illegal movement
@@ -413,7 +413,7 @@ public class SharedUtility {
             }
 
             // Check if used more MPs than Mek/Vehicle would have w/o gravity
-            if (!i.hasMoreElements() && !firstStep) {
+            if (!i.hasNext() && !firstStep) {
                 if ((entity instanceof Mek) || (entity instanceof Tank)) {
                     if ((moveType == EntityMovementType.MOVE_WALK)
                           || (moveType == EntityMovementType.MOVE_VTOL_WALK)
@@ -509,7 +509,7 @@ public class SharedUtility {
             int buildingMove = entity.checkMovementInBuilding(step, prevStep, curPos, lastPos);
             if ((buildingMove > 1) && !(entity instanceof ProtoMek)) {
                 // Get the building being entered.
-                Building bldg = null;
+                IBuilding bldg = null;
                 String reason = "entering";
                 if ((buildingMove & 2) == 2) {
                     bldg = board.getBuildingAt(curPos);
@@ -562,10 +562,10 @@ public class SharedUtility {
                       && (((Entity) targ).getJumpMP() < 1)
                       && !((Infantry) targ).isMechanized()) {
                     rollTarget = TWGameManager.getEjectModifiers(game, (Entity) targ, 0,
-                          false, entity.getPosition(), "zip lining");
+                          false, md.getFinalCoords(), "zip lining");
                     // Factor in Elevation
-                    if (entity.getElevation() > 0) {
-                        rollTarget.addModifier(entity.getElevation(), "elevation");
+                    if (md.getFinalElevation() > 0) {
+                        rollTarget.addModifier(md.getFinalElevation(), "elevation");
                     }
                     checkNag(rollTarget, nagReport, psrList);
                 }
@@ -727,8 +727,8 @@ public class SharedUtility {
         // cycle through movement. Collect thrust used until position changes.
         int thrustUsed = 0;
         int j = 0;
-        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = md.getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             j++;
             // how do I figure out last step?
             if ((step.getDistance() == 0) && (md.length() != j)) {
@@ -1018,7 +1018,6 @@ public class SharedUtility {
      * Per TacOps p 20, a leap carries the following risks: 1. risk of damaging each leg by distance leaped (3 or more
      * per leg); mod is 2 x distance leaped. 1.a 1 critical roll _per leg_. 1.b 1 _additional_ critical per leg that
      * takes internal structure damage due to leaping damage. 2. risk of falling; mod is distance leaped.
-     *
      */
     public static double predictLeapDamage(Entity movingEntity, TargetRoll data) {
         int legMultiplier = (movingEntity.isQuadMek()) ? 4 : 2;

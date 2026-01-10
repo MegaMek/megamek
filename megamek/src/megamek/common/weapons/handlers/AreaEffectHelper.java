@@ -401,7 +401,7 @@ public class AreaEffectHelper {
      * @param vPhaseReport   Vector of reports to which we append reports
      * @param gameManager    GameManager object for invocation of various methods
      */
-    public static void artilleryDamageEntity(Entity entity, int damage, Building bldg, int bldgAbsorbs,
+    public static void artilleryDamageEntity(Entity entity, int damage, IBuilding bldg, int bldgAbsorbs,
           boolean variableDamage, boolean asfFlak, boolean flak, int altitude, Coords attackSource, AmmoType ammo,
           Coords coords, boolean isFuelAirBomb, Entity killer, Hex hex, int subjectId, Vector<Report> vPhaseReport,
           TWGameManager gameManager) {
@@ -595,6 +595,15 @@ public class AreaEffectHelper {
         report.add(toHit.getTableDesc());
         report.add(hits);
         vPhaseReport.add(report);
+
+        // Reveal hidden entity caught in the blast (per TW pg. 259)
+        if (entity.isHidden()) {
+            entity.setHidden(false);
+            report = new Report(9963);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            vPhaseReport.add(report);
+        }
 
         if (entity instanceof BattleArmor) {
             // BA take full damage to each trooper, ouch!
@@ -901,6 +910,15 @@ public class AreaEffectHelper {
         r.addDesc(entity);
         r.add(damage);
         vDesc.addElement(r);
+
+        // Reveal hidden entity caught in the blast (per TW pg. 259)
+        if (entity.isHidden()) {
+            entity.setHidden(false);
+            Report revealReport = new Report(9963);
+            revealReport.subject = entity.getId();
+            revealReport.addDesc(entity);
+            vDesc.addElement(revealReport);
+        }
 
         while (damage > 0) {
             int cluster = Math.min(clusterAmt, damage);

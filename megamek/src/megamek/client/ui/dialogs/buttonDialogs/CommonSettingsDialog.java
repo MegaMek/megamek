@@ -272,6 +272,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           "CommonSettingsDialog.showIPAddressesInChat"));
     private final JCheckBox startSearchlightsOn = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.startSearchlightsOn"));
+    private final JCheckBox spritesOnly = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.spritesOnly"));
     private final JCheckBox showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel"));
     private final JCheckBox showDamageDecal = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageDecal"));
     private final JCheckBox showMapSheets = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapsheets"));
@@ -2188,6 +2190,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               Messages.getString("CommonSettingsDialog.showIPAddressesInChat.tooltip")));
         comps.add(checkboxEntry(startSearchlightsOn,
               Messages.getString("CommonSettingsDialog.startSearchlightsOn.tooltip")));
+        comps.add(checkboxEntry(spritesOnly,
+              Messages.getString("CommonSettingsDialog.spritesOnly.tooltip")));
         return createSettingsPanel(comps);
     }
 
@@ -2296,6 +2300,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             reportFilterKeywordsTextPane.setText(CLIENT_PREFERENCES.getReportFilterKeywords());
             showIPAddressesInChat.setSelected(CLIENT_PREFERENCES.getShowIPAddressesInChat());
             startSearchlightsOn.setSelected(CLIENT_PREFERENCES.getStartSearchlightsOn());
+            spritesOnly.setSelected(CLIENT_PREFERENCES.getSpritesOnly());
 
             defaultAutoEjectDisabled.setSelected(CLIENT_PREFERENCES.defaultAutoEjectDisabled());
             useAverageSkills.setSelected(CLIENT_PREFERENCES.useAverageSkills());
@@ -2368,9 +2373,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             xmlFiles.addAll(filteredFiles(internalUserDataDir, ".xml"));
             xmlFiles.removeIf(file -> !SkinXMLHandler.validSkinSpecFile(file));
             Collections.sort(xmlFiles);
-            var model = new DefaultComboBoxModel<>(xmlFiles.toArray(new String[0]));
+            ComboBoxModel<String> model = new DefaultComboBoxModel<>(xmlFiles.toArray(new String[0]));
+            model.setSelectedItem(GUIP.getSkinFile());
             skinFiles.setModel(model);
-            skinFiles.setSelectedItem(GUIP.getSkinFile());
 
             uiThemes.removeAllItems();
             for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {
@@ -2790,6 +2795,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         CLIENT_PREFERENCES.setReportFilterKeywords(reportFilterKeywordsTextPane.getText());
         CLIENT_PREFERENCES.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
         CLIENT_PREFERENCES.setStartSearchlightsOn(startSearchlightsOn.isSelected());
+        CLIENT_PREFERENCES.setSpritesOnly(spritesOnly.isSelected());
         CLIENT_PREFERENCES.setEnableExperimentalBotFeatures(enableExperimentalBotFeatures.isSelected());
         CLIENT_PREFERENCES.setDefaultAutoEjectDisabled(defaultAutoEjectDisabled.isSelected());
         CLIENT_PREFERENCES.setUseAverageSkills(useAverageSkills.isSelected());

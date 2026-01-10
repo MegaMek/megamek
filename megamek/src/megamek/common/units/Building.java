@@ -44,10 +44,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.board.Board;
-import megamek.common.board.Coords;
+import megamek.common.board.CubeCoords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
@@ -68,33 +67,26 @@ import megamek.logging.MMLogger;
  * @author Suvarov454@sourceforge.net (James A. Damour)
  */
 public class Building implements Serializable {
+
     @Serial
     private static final long serialVersionUID = -8236017592012683793L;
 
     private static final MMLogger logger = MMLogger.create(Building.class);
 
     /**
-     * Generic flag for uninitialized values.
-     */
-    protected static final int UNKNOWN = -1;
-
-    /**
      * The Building Type of the building; equal to the terrain elevation of the BUILDING terrain of a hex.
      */
     private final BuildingType type;
-
-    // The Building Classes
-    public static final int STANDARD = 0;
-    public static final int HANGAR = 1;
-    public static final int FORTRESS = 2;
-    public static final int GUN_EMPLACEMENT = 3;
-    // TODO: leaving out Castles Brian until issues with damage scaling are resolved
-    // public static final int CASTLE_BRIAN = 3;
 
     /**
      * The Building Class of the building; equal to the terrain elevation of the BUILDING CLASS terrain of a hex.
      */
     private final int bldgClass;
+
+    /**
+     * The height of the building (BLDG_ELEV). Individual hexes start with this height and can be set to 0 when destroyed.
+     */
+    private int buildingHeight;
 
     /**
      * The ID of this building.
@@ -104,13 +96,14 @@ public class Building implements Serializable {
     /**
      * The coordinates of every hex of this building.
      */
-    private final Vector<Coords> coordinates = new Vector<>();
+    private final Vector<CubeCoords> coordinates = new Vector<>();
+    private final Vector<CubeCoords> originalCoordinates = new Vector<>();
     private int boardId;
 
     /**
      * The Basement type of the building.
      */
-    private final Map<Coords, BasementType> basement = new HashMap<>();
+    private final Map<CubeCoords, BasementType> basement = new HashMap<>();
 
     private int collapsedHexes = 0;
 
@@ -119,23 +112,28 @@ public class Building implements Serializable {
     /**
      * The current construction factor of the building hexes. Any damage immediately updates this value.
      */
-    private final Map<Coords, Integer> currentCF = new HashMap<>();
+    private final Map<CubeCoords, Integer> currentCF = new HashMap<>();
 
     /**
      * The construction factor of the building hexes at the start of this attack phase. Damage that is received during
      * the phase is applied at the end of the phase.
      */
-    private final Map<Coords, Integer> phaseCF = new HashMap<>();
+    private final Map<CubeCoords, Integer> phaseCF = new HashMap<>();
 
     /**
      * The current armor of the building hexes.
      */
-    private final Map<Coords, Integer> armor = new HashMap<>();
+    private final Map<CubeCoords, Integer> armor = new HashMap<>();
+
+    /**
+     * The height of the building hexes (BLDG_ELEV).
+     */
+    private final Map<CubeCoords, Integer> height = new HashMap<>();
 
     /**
      * The current state of the basement.
      */
-    private final Map<Coords, Boolean> basementCollapsed = new HashMap<>();
+    private final Map<CubeCoords, Boolean> basementCollapsed = new HashMap<>();
 
     /**
      * The name of the building.
@@ -145,170 +143,64 @@ public class Building implements Serializable {
     /**
      * Flag that indicates whether this building is burning
      */
-    private final Map<Coords, Boolean> burning = new HashMap<>();
+    private final Map<CubeCoords, Boolean> burning = new HashMap<>();
 
     private List<DemolitionCharge> demolitionCharges = new ArrayList<>();
 
     /**
-     * Update this building to include the new hex (and all hexes off the new hex, which aren't already included).
+     * Determine if the building occupies given coordinates. Multi-hex buildings will occupy multiple coordinates. Only
+     * one building per hex.
      *
-     * @param coords the <code>Coords</code> of the new hex.
-     * @param board  the game's <code>Board</code> object.
+     * @param coords - the <code>CubeCoords</code> being examined.
      *
-     * @throws IllegalArgumentException will be thrown if the given coordinates do not contain a building, or if the
-     *                                  building covers multiple hexes with different CF.
+     * @return <code>true</code> if the building occupies the coordinates.
+     *       <code>false</code> otherwise.
      */
-    protected void include(Coords coords, Board board, int structureType) {
-
-        // If the hex is already in the building, we've covered it before.
-        if (isIn(coords)) {
-            return;
-        }
-
-        // Get the nextHex hex.
-        Hex nextHex = board.getHex(coords);
-        if ((null == nextHex) || !(nextHex.containsTerrain(structureType))) {
-            return;
-        }
-
-        if (structureType == Terrains.BUILDING) {
-            // Error if the Building Type (Light, Medium...) or Building Class (Standard,
-            // Hangar...) is off.
-            if (getType().getTypeValue() != nextHex.terrainLevel(Terrains.BUILDING)) {
-                throw new IllegalArgumentException("The coordinates, "
-                      + coords.getBoardNum()
-                      + ", should contain the same type of building as "
-                      + coordinates.elementAt(0).getBoardNum());
-            }
-            if (bldgClass != nextHex.terrainLevel(Terrains.BLDG_CLASS)) {
-                throw new IllegalArgumentException("The coordinates, "
-                      + coords.getBoardNum()
-                      + ", should contain the same class of building as "
-                      + coordinates.elementAt(0).getBoardNum());
-            }
-
-        }
-        // We passed our tests, add the next hex to this building.
-        coordinates.addElement(coords);
-        originalHexes++;
-        currentCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));
-        phaseCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));
-        basement.put(coords, BasementType.getType(nextHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
-        basementCollapsed.put(coords, nextHex.terrainLevel(Terrains.BLDG_BASE_COLLAPSED) == 1);
-        if (structureType == Terrains.BRIDGE) {
-            currentCF.put(coords, nextHex.terrainLevel(Terrains.BRIDGE_CF));
-            phaseCF.put(coords, nextHex.terrainLevel(Terrains.BRIDGE_CF));
-        }
-        if (structureType == Terrains.FUEL_TANK) {
-            currentCF.put(coords, nextHex.terrainLevel(Terrains.FUEL_TANK_CF));
-            phaseCF.put(coords, nextHex.terrainLevel(Terrains.FUEL_TANK_CF));
-        }
-        if (nextHex.containsTerrain(Terrains.BLDG_ARMOR)) {
-            armor.put(coords, nextHex.terrainLevel(Terrains.BLDG_ARMOR));
-        } else {
-            armor.put(coords, 0);
-        }
-
-        burning.put(coords, false);
-
-        // Walk through the exit directions and
-        // identify all hexes in this building.
-        for (int dir = 0; dir < 6; dir++) {
-
-            // Does the building exit in this direction?
-            if (nextHex.containsTerrainExit(structureType, dir)) {
-                include(coords.translated(dir), board, structureType);
-            }
-
-        }
-
+    public boolean isIn(CubeCoords coords) {
+        return coordinates.contains(coords);
     }
 
     /**
-     * Construct a building for the given coordinates from the board's information. If the building covers multiple
-     * hexes, every hex will be included in the building.
+     * Add a hex to this building at the given RELATIVE coordinates.
+     * All coordinates are relative to the building's origin (0,0,0).
      *
-     * @param coords the <code>Coords</code> of a hex of the building. If the building covers multiple hexes, this
-     *               constructor will include them all in this building automatically.
-     * @param board  the game's <code>Board</code> object.
+     * Building stores everything in its own local coordinate space using CubeCoords.
+     * BuildingTerrain and AbstractBuildingEntity handle translation between board Coords and relative CubeCoords.
      *
-     * @throws IllegalArgumentException will be thrown if the given coordinates do not contain a building, or if the
-     *                                  building covers multiple hexes with different CFs.
+     * @param relativeCoords the relative <code>CubeCoords</code> of the hex within the building
+     * @param cf the construction factor for this hex
+     * @param armorValue the armor value for this hex
+     * @param basementType the basement type for this hex
+     * @param collapsed whether the basement is collapsed
      */
-    public Building(Coords coords, Board board, int structureType, BasementType basementType) {
+    public void addHex(CubeCoords relativeCoords, int cf, int armorValue, BasementType basementType, boolean collapsed) {
+        if (isIn(relativeCoords)) {
+            return; // Already added
+        }
 
-        // The ID of the building will be deterministic based on the position of its first hex. 999 hexes in the Y
-        // direction ought to be enough for anyone. This has been changed to accommodate the board ID. Now only allows
-        // maximum board size of 1000x1000 which still seems enough. The ID cannot allow collisions (unlike the
-        // hashcode).
-        //
-        // ASSUMPTION: this will be unique ID across ALL the building's hexes for ALL the clients of this board.
-        id = board.getBoardId() * 1_000_000 + coords.getX() * 1000 + coords.getY();
-
-        // The building occupies the given coords, at least.
-        coordinates.addElement(coords);
+        coordinates.addElement(relativeCoords);
+        originalCoordinates.addElement(relativeCoords);
         originalHexes++;
-        boardId = board.getBoardId();
-        burning.put(coords, false);
+        currentCF.put(relativeCoords, cf);
+        phaseCF.put(relativeCoords, cf);
+        armor.put(relativeCoords, armorValue);
+        basement.put(relativeCoords, basementType);
+        basementCollapsed.put(relativeCoords, collapsed);
+        burning.put(relativeCoords, false);
+        height.put(relativeCoords, buildingHeight);
+    }
 
-        // Get the Hex for those coords.
-        Hex startHex = board.getHex(coords);
+    public Building(BuildingType type, int bldgClass, int id, int structureType) {
+        this.type = type;
+        this.bldgClass = bldgClass;
+        this.id = id;
 
-        // Read our construction type from the hex.
-        if (!startHex.containsTerrain(structureType)) {
-            throw new IllegalArgumentException("The coordinates, "
-                  + coords.getBoardNum() + ", do not contain a building.");
-        }
-        type = BuildingType.getType(startHex.terrainLevel(structureType));
-        bldgClass = startHex.terrainLevel(Terrains.BLDG_CLASS);
-
-        // Ensure that we've got a good type (and initialize our CF).
-        currentCF.put(coords, getDefaultCF(type));
-        if (currentCF.get(coords) == Building.UNKNOWN) {
-            throw new IllegalArgumentException("Unknown construction type: "
-                  + type + ".  The board is invalid.");
-        }
-
-        // Now read the *real* CF, if the board specifies one.
-        if ((structureType == Terrains.BUILDING)
-              && startHex.containsTerrain(Terrains.BLDG_CF)) {
-            currentCF.put(coords, startHex.terrainLevel(Terrains.BLDG_CF));
-        }
-        if ((structureType == Terrains.BRIDGE)
-              && startHex.containsTerrain(Terrains.BRIDGE_CF)) {
-            currentCF.put(coords, startHex.terrainLevel(Terrains.BRIDGE_CF));
-        }
-        if ((structureType == Terrains.FUEL_TANK)
-              && startHex.containsTerrain(Terrains.FUEL_TANK_CF)) {
-            currentCF.put(coords, startHex.terrainLevel(Terrains.FUEL_TANK_CF));
-        }
-        if (startHex.containsTerrain(Terrains.BLDG_ARMOR)) {
-            armor.put(coords, startHex.terrainLevel(Terrains.BLDG_ARMOR));
-        } else {
-            armor.put(coords, 0);
-        }
-
-        phaseCF.putAll(currentCF);
-
-        basement.put(coords, basementType);
-        basementCollapsed.put(coords, startHex.terrainLevel(Terrains.BLDG_BASE_COLLAPSED) == 1);
-
-        // Walk through the exit directions and
-        // identify all hexes in this building.
-        for (int dir = 0; dir < 6; dir++) {
-
-            // Does the building exit in this direction?
-            if (startHex.containsTerrainExit(structureType, dir)) {
-                include(coords.translated(dir), board, structureType);
-            }
-
-        }
 
         // Set the building's name.
         StringBuilder sb = new StringBuilder();
         if (structureType == Terrains.FUEL_TANK) {
             sb.append("Fuel Tank #");
-        } else if (getType() == BuildingType.WALL) {
+        } else if (getBuildingType() == BuildingType.WALL) {
             sb.append("Wall #");
         } else if (structureType == Terrains.BUILDING) {
             sb.append("Building #");
@@ -321,6 +213,7 @@ public class Building implements Serializable {
         name = sb.toString();
     }
 
+
     /**
      * Get the ID of this building. The same ID applies to all hexes.
      *
@@ -331,43 +224,34 @@ public class Building implements Serializable {
     }
 
     /**
-     * Determine if the building occupies given coordinates. Multi-hex buildings will occupy multiple coordinates. Only
-     * one building per hex.
-     *
-     * @param coords - the <code>Coords</code> being examined.
-     *
-     * @return <code>true</code> if the building occupies the coordinates.
-     *       <code>false</code> otherwise.
-     */
-    public boolean isIn(Coords coords) {
-        return coordinates.contains(coords);
-    }
-
-    /**
      * Determines if the coord exist in the currentCF has.
      *
-     * @param coords - the <code>Coords</code> being examined.
+     * @param coords - the <code>CubeCoords</code> being examined.
      *
      * @return <code>true</code> if the building has CF at the coordinates.
      *       <code>false</code> otherwise.
      */
-    public boolean hasCFIn(Coords coords) {
+    public boolean hasCFIn(CubeCoords coords) {
         return currentCF.containsKey(coords);
-
     }
 
     /**
      * Get the coordinates that the building occupies.
      *
-     * @return an <code>Enumeration</code> of the <code>Coord</code> objects.
+     * @return an <code>Enumeration</code> of the <code>CubeCoord</code> objects.
      */
-    public Enumeration<Coords> getCoords() {
+    public Enumeration<CubeCoords> getCoords() {
         return coordinates.elements();
     }
 
     /** Returns a list of this Building's coords. The list is unmodifiable. */
-    public List<Coords> getCoordsList() {
+    public List<CubeCoords> getCoordsList() {
         return Collections.unmodifiableList(coordinates);
+    }
+
+    /** Returns a list of this Building's original coords (before any hexes were removed). The list is unmodifiable. */
+    public List<CubeCoords> getOriginalCoordsList() {
+        return Collections.unmodifiableList(originalCoordinates);
     }
 
     /**
@@ -376,7 +260,8 @@ public class Building implements Serializable {
      *
      * @return the <code>int</code> code of the building's construction type.
      */
-    public BuildingType getType() {
+    
+    public BuildingType getBuildingType() {
         return type;
     }
 
@@ -385,6 +270,7 @@ public class Building implements Serializable {
      *
      * @return the <code>int</code> code of the building's classification.
      */
+    
     public int getBldgClass() {
         return bldgClass;
     }
@@ -394,11 +280,13 @@ public class Building implements Serializable {
      *
      * @return the <code>int</code> code of the building basement type.
      */
-    public boolean getBasementCollapsed(Coords coords) {
+    public boolean getBasementCollapsed(CubeCoords coords) {
         return basementCollapsed.get(coords);
     }
 
-    public void collapseBasement(Coords coords, Board board, Vector<Report> vPhaseReport) {
+    public void collapseBasement(CubeCoords coords, Board board, Vector<Report> vPhaseReport) {
+        // Building works in relative CubeCoords
+        // BuildingTerrain/BuildingEntity handle board coord translation and Board updates
         if (basement.get(coords).isNone() || basement.get(coords).isOneDeepNormalInfantryOnly()) {
             logger.error("Hex has no basement to collapse");
             return;
@@ -408,56 +296,49 @@ public class Building implements Serializable {
         }
         Report r = new Report(2112, Report.PUBLIC);
         r.add(getName());
-        r.add(coords.getBoardNum());
+        r.add(coords.toOffset().getBoardNum());
         vPhaseReport.add(r);
-        logger.error("basement {}is collapsing, hex:{} set terrain!", basement, coords);
-        board.getHex(coords).addTerrain(new Terrain(Terrains.BLDG_BASE_COLLAPSED, 1));
+        logger.error("basement {}is collapsing at relative coords: {}", basement, coords);
         basementCollapsed.put(coords, true);
-
+        // Note: BuildingTerrain/Entity will handle board.getHex(boardCoords).addTerrain()
     }
 
     /**
-     * Roll what kind of basement this building has
+     * Roll what kind of basement this building has at the given RELATIVE coordinates.
+     * Building works in relative CubeCoords - BuildingTerrain/BuildingEntity handle board coord translation.
      *
-     * @param coords       the <code>Coords</code> of the building to roll for
+     * @param coords       the RELATIVE <code>CubeCoords</code> of the building hex to roll for
      * @param vPhaseReport the {@link Report} <code>Vector</code> containing the phase report
      *
-     * @return a <code>boolean</code> indicating weather the hex and building was changed or not
+     * @return a <code>boolean</code> indicating whether the hex and building was changed or not
      */
-    public boolean rollBasement(Coords coords, Board board, Vector<Report> vPhaseReport) {
+    public boolean rollBasement(CubeCoords coords, Board board, Vector<Report> vPhaseReport) {
         if (basement.get(coords).isUnknown()) {
-            Hex hex = board.getHex(coords);
             Report r = new Report(2111, Report.PUBLIC);
             r.add(getName());
-            r.add(coords.getBoardNum());
+            r.add(coords.toOffset().getBoardNum());
             Roll diceRoll = Compute.rollD6(2);
             r.add(diceRoll);
 
+            BasementType rolledType;
             if (diceRoll.getIntValue() == 2) {
-                basement.put(coords, BasementType.TWO_DEEP_FEET);
-                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
+                rolledType = BasementType.TWO_DEEP_FEET;
             } else if (diceRoll.getIntValue() == 3) {
-                basement.put(coords, BasementType.ONE_DEEP_FEET);
-                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
-            } else if (diceRoll.getIntValue() == 4) {
-                basement.put(coords, BasementType.ONE_DEEP_NORMAL);
-                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
-            } else if (diceRoll.getIntValue() == 10) {
-                basement.put(coords, BasementType.ONE_DEEP_NORMAL);
-                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
+                rolledType = BasementType.ONE_DEEP_FEET;
+            } else if (diceRoll.getIntValue() == 4 || diceRoll.getIntValue() == 10) {
+                rolledType = BasementType.ONE_DEEP_NORMAL;
             } else if (diceRoll.getIntValue() == 11) {
-                basement.put(coords, BasementType.ONE_DEEP_HEAD);
-                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
+                rolledType = BasementType.ONE_DEEP_HEAD;
             } else if (diceRoll.getIntValue() == 12) {
-                basement.put(coords, BasementType.TWO_DEEP_HEAD);
-                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
+                rolledType = BasementType.TWO_DEEP_HEAD;
             } else {
-                basement.put(coords, BasementType.NONE);
-                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
+                rolledType = BasementType.NONE;
             }
 
-            r.add(BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).toString());
+            basement.put(coords, rolledType);
+            r.add(rolledType.toString());
             vPhaseReport.add(r);
+            // Note: BuildingTerrain/Entity will handle board.getHex(boardCoords).addTerrain()
             return true;
         }
 
@@ -468,43 +349,43 @@ public class Building implements Serializable {
      * Get the current construction factor of the building hex at the passed coords. Any damage immediately updates this
      * value.
      *
-     * @param coords the <code>Coords</code> of the hex in question
+     * @param coords the <code>CubeCoords</code> of the hex in question
      *
      * @return the <code>int</code> value of the building hex's current construction factor. This value will be greater
      *       than or equal to zero.
      */
-    public int getCurrentCF(Coords coords) {
-        return currentCF.get(coords);
+    public int getCurrentCF(CubeCoords coords) {
+        return currentCF.getOrDefault(coords, 0);
     }
 
     /**
      * Get the construction factor of the building hex at the passed coords at the start of the current phase. Damage
      * that is received during the phase is applied at the end of the phase.
      *
-     * @param coords the <code>Coords</code> of the hex in question
+     * @param coords the <code>CubeCoords</code> of the hex in question
      *
      * @return the <code>int</code> value of the building's construction factor at the start of this phase. This value
      *       will be greater than or equal to zero.
      */
-    public int getPhaseCF(Coords coords) {
-        return phaseCF.get(coords);
+    public int getPhaseCF(CubeCoords coords) {
+        return phaseCF.getOrDefault(coords, 0);
     }
 
-    public int getArmor(Coords coords) {
-        return armor.get(coords);
+    public int getArmor(CubeCoords coords) {
+        return armor.getOrDefault(coords, 0);
     }
 
     /**
      * Set the current construction factor of the building hex. Call this method immediately when the building sustains
      * any damage.
      *
-     * @param coords the <code>Coords</code> of the hex in question
+     * @param coords the <code>CubeCoords</code> of the hex in question
      * @param cf     the <code>int</code> value of the building hex's current construction factor. This value must be
      *               greater than or equal to zero.
      *
      * @throws IllegalArgumentException if the passed value is less than zero
      */
-    public void setCurrentCF(int cf, Coords coords) {
+    public void setCurrentCF(int cf, CubeCoords coords) {
         if (cf < 0) {
             throw new IllegalArgumentException("Invalid value for Construction Factor: " + cf);
         }
@@ -516,13 +397,13 @@ public class Building implements Serializable {
      * Set the construction factor of the building hex for the start of the next phase. Call this method at the end of
      * the phase to apply damage sustained by the building during the phase.
      *
-     * @param coords the <code>Coords</code> of the hex in question
+     * @param coords the <code>CubeCoords</code> of the hex in question
      * @param cf     the <code>int</code> value of the building hex's current construction factor. This value must be
      *               greater than or equal to zero.
      *
      * @throws IllegalArgumentException if the passed value is less than zero
      */
-    public void setPhaseCF(int cf, Coords coords) {
+    public void setPhaseCF(int cf, CubeCoords coords) {
         if (cf < 0) {
             throw new IllegalArgumentException(
                   "Invalid value for Construction Factor: " + cf);
@@ -531,7 +412,7 @@ public class Building implements Serializable {
         phaseCF.put(coords, cf);
     }
 
-    public void setArmor(int a, Coords coords) {
+    public void setArmor(int a, CubeCoords coords) {
         if (a < 0) {
             throw new IllegalArgumentException("Invalid value for armor: " + a);
         }
@@ -540,32 +421,59 @@ public class Building implements Serializable {
     }
 
     /**
+     * Get the height (BLDG_ELEV) of the building hex at the passed coords.
+     *
+     * @param coords the <code>CubeCoords</code> of the hex in question
+     *
+     * @return the <code>int</code> value of the building hex's height. This value will be 0 if the hex is destroyed.
+     */
+    public int getHeight(CubeCoords coords) {
+        return height.getOrDefault(coords, 0);
+    }
+
+    /**
+     * Set the height of a specific building hex. Call this method when a hex is destroyed (set to 0).
+     *
+     * @param coords the <code>CubeCoords</code> of the hex in question
+     * @param h      the <code>int</code> value of the building hex's height. This value must be greater than or equal to
+     *               zero.
+     *
+     * @throws IllegalArgumentException if the passed value is less than zero
+     */
+    public void setHeight(int h, CubeCoords coords) {
+        if (h < 0) {
+            throw new IllegalArgumentException("Invalid value for height: " + h);
+        }
+
+        height.put(coords, h);
+    }
+
+    /**
+     * Get the default height of the building. All hexes start with this height.
+     *
+     * @return the <code>int</code> value of the building's height (BLDG_ELEV).
+     */
+    public int getBuildingHeight() {
+        return buildingHeight;
+    }
+
+    /**
+     * Set the default height of the building. This should be called when creating a BuildingTerrain from board data.
+     *
+     * @param buildingHeight the <code>int</code> value of the building's height (BLDG_ELEV).
+     */
+    public void setBuildingHeight(int buildingHeight) {
+        this.buildingHeight = buildingHeight;
+    }
+
+    /**
      * Get the name of this building.
      *
      * @return the <code>String</code> name of this building.
      */
+    
     public String getName() {
         return name;
-    }
-
-    /**
-     * Get the default construction factor for the given type of building.
-     */
-    public static int getDefaultCF(BuildingType type) {
-        return type.getDefaultCF();
-    }
-
-    /**
-     * Get the default construction factor for the given type of building. Retained for backwards compatibility
-     *
-     * @param type - the <code>int</code> construction type of the building.
-     *
-     * @return the <code>int</code> default construction factor for that type of building. If a bad type value is
-     *       passed, the constant
-     *       <code>Building.UNKNOWN</code> will be returned instead.
-     */
-    public static int getDefaultCF(int type) {
-        return getDefaultCF(BuildingType.getType(type));
     }
 
     /**
@@ -577,7 +485,7 @@ public class Building implements Serializable {
      */
     @Override
     public boolean equals(Object other) {
-        return (this == other) || ((other instanceof Building otherBuilding) && (id == otherBuilding.id));
+        return (this == other) || ((other instanceof Building otherBuilding) && (getId() == otherBuilding.getId()));
     }
 
     @Override
@@ -590,16 +498,16 @@ public class Building implements Serializable {
      */
     public static String className(int bldgClass) {
         return switch (bldgClass) {
-            case Building.HANGAR -> "Hangar";
-            case Building.FORTRESS -> "Fortress";
-            case Building.GUN_EMPLACEMENT -> "Gun Emplacement";
+            case IBuilding.HANGAR -> "Hangar";
+            case IBuilding.FORTRESS -> "Fortress";
+            case IBuilding.GUN_EMPLACEMENT -> "Gun Emplacement";
             default -> "Building";
         };
     }
 
     @Override
     public String toString() {
-        return getType().toString() + " " + className(getBldgClass()) + " " + name;
+        return getBuildingType().toString() + " " + className(getBldgClass()) + " " + name;
     }
 
     /**
@@ -607,7 +515,7 @@ public class Building implements Serializable {
      *
      * @return <code>true</code> if the building is on fire.
      */
-    public boolean isBurning(Coords coords) {
+    public boolean isBurning(CubeCoords coords) {
         return burning.get(coords);
     }
 
@@ -616,23 +524,26 @@ public class Building implements Serializable {
      *
      * @param onFire - a <code>boolean</code> value that indicates whether this building is on fire.
      */
-    public void setBurning(boolean onFire, Coords coords) {
+    public void setBurning(boolean onFire, CubeCoords coords) {
         burning.put(coords, onFire);
     }
 
-    public void addDemolitionCharge(int playerId, int damage, Coords pos) {
-        DemolitionCharge charge = new DemolitionCharge(playerId, damage, pos);
+    public void addDemolitionCharge(int playerId, int damage, CubeCoords pos) {
+        DemolitionCharge charge = new DemolitionCharge(playerId, damage, pos.toOffset());
         demolitionCharges.add(charge);
     }
 
+    
     public void removeDemolitionCharge(DemolitionCharge charge) {
         demolitionCharges.remove(charge);
     }
 
+    
     public List<DemolitionCharge> getDemolitionCharges() {
         return demolitionCharges;
     }
 
+    
     public void setDemolitionCharges(List<DemolitionCharge> charges) {
         demolitionCharges = charges;
     }
@@ -640,9 +551,9 @@ public class Building implements Serializable {
     /**
      * Remove one building hex from the building
      *
-     * @param coords - the <code>Coords</code> of the hex to be removed
+     * @param coords - the <code>CubeCoords</code> of the hex to be removed
      */
-    public void removeHex(Coords coords) {
+    public void removeHex(CubeCoords coords) {
         coordinates.remove(coords);
         currentCF.remove(coords);
         phaseCF.remove(coords);
@@ -657,80 +568,25 @@ public class Building implements Serializable {
         return collapsedHexes;
     }
 
-    /**
-     * @return the damage scale multiplier for units passing through this building
-     */
-    public double getDamageFromScale() {
-        return switch (getBldgClass()) {
-            case Building.HANGAR -> 0.5;
-            case Building.FORTRESS, Building.GUN_EMPLACEMENT -> 2.0;
-            default -> 1.0;
-        };
-    }
-
-    /**
-     * @return the damage scale multiplier for damage applied to this building (and occupants)
-     */
-    public double getDamageToScale() {
-        return switch (getBldgClass()) {
-            case Building.FORTRESS, Building.GUN_EMPLACEMENT -> 0.5;
-            default -> 1.0;
-        };
-    }
-
-    /**
-     * @return the amount of damage the building absorbs
-     */
-    public int getAbsorption(Coords pos) {
-        return (int) Math.ceil(getPhaseCF(pos) / 10.0);
-    }
-
-    /**
-     * Returns the percentage of damage done to the building for attacks against infantry in the building from other
-     * units within the building. TW pg175.
-     *
-     */
-    public double getInfDmgFromInside() {
-        return switch (getType()) {
-            case LIGHT, MEDIUM -> 0.0;
-            case HEAVY -> 0.5;
-            case HARDENED -> 0.75;
-            default -> 0;
-        };
-    }
-
-    /**
-     * Per page 172 of Total Warfare, this is the fraction of a weapon's damage that passes through to infantry inside
-     * the building.
-     *
-     * @return Damage fraction.
-     */
-    public float getDamageReductionFromOutside() {
-        return switch (getType()) {
-            case LIGHT -> 0.75f;
-            case MEDIUM -> 0.5f;
-            case HEAVY -> 0.25f;
-            default -> 0f;
-        };
-    }
-
-    public BasementType getBasement(Coords coords) {
+    public BasementType getBasement(CubeCoords coords) {
         return basement.get(coords);
     }
 
-    public void setBasement(Coords coords, BasementType basement) {
+    public void setBasement(CubeCoords coords, BasementType basement) {
         this.basement.put(coords, basement);
     }
 
-    public void setBasementCollapsed(Coords coords, boolean collapsed) {
+    public void setBasementCollapsed(CubeCoords coords, boolean collapsed) {
         basementCollapsed.put(coords, collapsed);
     }
 
+    
     public int getBoardId() {
         return boardId;
     }
 
-    public void setBoardId(int boardId) {
+    public void
+    setBoardId(int boardId) {
         this.boardId = boardId;
     }
 }

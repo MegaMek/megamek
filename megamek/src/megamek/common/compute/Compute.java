@@ -34,6 +34,11 @@
 
 package megamek.common.compute;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static megamek.codeUtilities.MathUtility.clamp;
+import static megamek.common.equipment.AmmoType.Munitions.M_INCENDIARY_LRM;
+
 import java.util.*;
 
 import megamek.common.*;
@@ -66,6 +71,9 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.attacks.DiveBombAttack;
 import megamek.common.weapons.attacks.InfantryAttack;
+import megamek.common.weapons.autoCannons.ACWeapon;
+import megamek.common.weapons.autoCannons.RACWeapon;
+import megamek.common.weapons.autoCannons.UACWeapon;
 import megamek.common.weapons.battleArmor.innerSphere.ISBAPopUpMineLauncher;
 import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.gaussRifles.HAGWeapon;
@@ -280,6 +288,52 @@ public class Compute {
     }
 
     /**
+     * Returns the sum of the highest two values from the provided list of integer values.
+     *
+     * <p>This method efficiently computes the top two results without sorting, making it suitable for rules that
+     * require selecting the best two dice out of several rolled, such as natural aptitude-empowered skill checks.</p>
+     *
+     * <p>Edge cases are handled gracefully:</p>
+     * <ul>
+     *     <li>If no values are provided, the result is {@code 0}.</li>
+     *     <li>If only one value is provided, that value is returned.</li>
+     *     <li>If two or more values are provided, the sum of the highest two is returned.</li>
+     * </ul>
+     *
+     * @param values one or more integers
+     *
+     * @return the sum of the highest two values (clamped within Integer Min/Max), or a fallback value for edge cases
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public static int getHighestTwoIntegers(int... values) {
+        int highest = Integer.MIN_VALUE;
+        int second = Integer.MIN_VALUE;
+
+        // Edge cases
+        if (values.length == 0) {
+            return 0;
+        } else if (values.length == 1) {
+            return values[0];
+        }
+
+        // Find the highest two values
+        for (int value : values) {
+            if (value > highest) {
+                second = highest;
+                highest = value;
+            } else if (value > second) {
+                second = value;
+            }
+        }
+
+        // Compute sum in long to avoid overflow, then clamp to int range
+        long sum = (long) highest + (long) second;
+        return (int) clamp(sum, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+
+    /**
      * Generates a number between 0 and  max value exclusive (this means maxValue-1). e.g. randomInt(3) will generate 0,
      * 1, or 2.
      */
@@ -360,7 +414,6 @@ public class Compute {
      * set.
      *
      * @param dropLowest Flag that determines whether 2d6 or 3d6 drop the lowest is used
-     *
      */
     public static double oddsAbove(int n, boolean dropLowest) {
         if (n <= 2) {
@@ -386,18 +439,20 @@ public class Compute {
      * <p>
      * The position and elevation for the stacking violation are derived from the Entity represented by the passed
      * Entity ID.
+     * By default, ignores hidden units.
      *
      * @param game       The Game instance
      * @param enteringId The gameId of the moving Entity
      * @param coords     The hex being entered
      * @param climbMode  The moving Entity's climb mode at the point it enters the destination hex
+     * @return Entity instance that is causing the violation
      */
     public static Entity stackingViolation(Game game, int enteringId, Coords coords, boolean climbMode) {
         Entity entering = game.getEntity(enteringId);
         if (entering == null) {
             return null;
         }
-        return Compute.stackingViolation(game, entering, coords, null, climbMode);
+        return Compute.stackingViolation(game, entering, coords, null, climbMode, true);
     }
 
     /**
@@ -411,11 +466,13 @@ public class Compute {
      * @param dest      The hex being entered
      * @param transport Represents the unit transporting entering, which may affect stacking, can be null
      * @param climbMode The moving Entity's climb mode at the point it enters the destination hex
+     * @param ignoreHidden true by default.
+     * @return Entity instance that is causing the violation
      */
     public static Entity stackingViolation(Game game, Entity entering,
-          Coords dest, Entity transport, boolean climbMode) {
+          Coords dest, Entity transport, boolean climbMode, boolean ignoreHidden) {
         return stackingViolation(game, entering, entering.getElevation(), dest,
-              transport, climbMode);
+              transport, climbMode, ignoreHidden);
     }
 
     /**
@@ -430,23 +487,50 @@ public class Compute {
      * @param dest      The hex being entered
      * @param transport Represents the unit transporting entering, which may affect stacking, can be null
      * @param climbMode The moving Entity's climb mode at the point it enters the destination hex
+     * @param ignoreHidden true by default.
+     * @return Entity instance that is causing the violation
      */
     public static Entity stackingViolation(Game game, Entity entering,
-          int elevation, Coords dest, Entity transport, boolean climbMode) {
+          int elevation, Coords dest, Entity transport, boolean climbMode, boolean ignoreHidden) {
         return stackingViolation(game, entering, entering.getPosition(),
-              elevation, dest, entering.getBoardId(), transport, climbMode);
+              elevation, dest, entering.getBoardId(), transport, climbMode, ignoreHidden);
     }
 
+    /** Used by Princess / bots for checking deployment positions.
+     *
+     * @param game      The Game instance
+     * @param entering  The Entity entering the hex
+     * @param origPosition The coords of the hex the moving Entity is leaving
+     * @param elevation The elevation of the moving Entity
+     * @param dest      The hex being entered
+     * @param transport Represents the unit transporting entering, which may affect stacking, can be null
+     * @param climbMode The moving Entity's climb mode at the point it enters the destination hex
+     * @param ignoreHidden true by default.
+     * @return Entity instance that is causing the violation
+     */
     public static Entity stackingViolation(Game game, Entity entering,
-          Coords origPosition, int elevation, Coords dest, Entity transport, boolean climbMode) {
+          Coords origPosition, int elevation, Coords dest, Entity transport, boolean climbMode, boolean ignoreHidden) {
         return stackingViolation(game, entering, origPosition,
-              elevation, dest, entering.getBoardId(), transport, climbMode);
+              elevation, dest, entering.getBoardId(), transport, climbMode, ignoreHidden);
     }
 
+    /**
+     * Board-aware check used when compiling movepaths
+     *
+     * @param game      The Game instance
+     * @param entering  The Entity entering the hex
+     * @param elevation The elevation of the moving Entity
+     * @param dest      The hex being entered
+     * @param destBoardId Allows setting a different board for checking destination hex
+     * @param transport Represents the unit transporting entering, which may affect stacking, can be null
+     * @param climbMode The moving Entity's climb mode at the point it enters the destination hex
+     * @param ignoreHidden true by default.
+     * @return Entity instance that is causing the violation
+     */
     public static Entity stackingViolation(Game game, Entity entering,
-          int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode) {
+          int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode, boolean ignoreHidden) {
         return stackingViolation(game, entering, entering.getPosition(),
-              elevation, dest, destBoardId, transport, climbMode);
+              elevation, dest, destBoardId, transport, climbMode, ignoreHidden);
     }
 
     /**
@@ -460,11 +544,15 @@ public class Compute {
      * @param origPosition The coords of the hex the moving Entity is leaving
      * @param elevation    The elevation of the moving Entity
      * @param dest         The hex being entered
+     * @param destBoardId Allows setting a different board for checking destination hex
      * @param transport    Represents the unit transporting entering, which may affect stacking, can be null
      * @param climbMode    The moving Entity's climb mode at the point it enters the destination hex
+     * @param ignoreHidden true by default.
+     * @return Entity instance that is causing the violation
      */
     public static Entity stackingViolation(Game game, Entity entering,
-          Coords origPosition, int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode) {
+          Coords origPosition, int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode,
+          boolean ignoreHidden) {
         // no stacking violations on low-atmosphere and space maps
         if (!game.getBoard(destBoardId).isGround()) {
             return null;
@@ -475,7 +563,9 @@ public class Compute {
             return null;
         }
 
-        boolean isMek = (entering instanceof Mek)
+        // LAM in fighter mode shouldn't be treated as a Mek for all this
+        boolean isMek =
+              ((entering instanceof Mek) && !(entering instanceof LandAirMek lam && lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER))
               || (entering instanceof SmallCraft);
         boolean isLargeSupport = (entering instanceof LargeSupportTank)
               || (entering instanceof Dropship)
@@ -537,6 +627,11 @@ public class Compute {
                     continue;
                 }
 
+                // We are not allowed to consider hidden units here!
+                if (ignoreHidden && inHex.isHidden()) {
+                    continue;
+                }
+
                 int lowStackingLevel = inHex.getElevation();
                 int highStackingLevel = lowStackingLevel;
                 // units only occupy one level of a building
@@ -575,9 +670,10 @@ public class Compute {
 
                     // If the entering entity is a mek, then any other mek in the hex is a violation. Unless grappled
                     // (but chain whip grapples don't count) grounded small craft are treated as meks for purposes
-                    // of stacking
+                    // of stacking. A LAM in fighter mode is not treated like a mek for this.
                     if (isMek
-                          && (((inHex instanceof Mek) && (inHex
+                          && ((((inHex instanceof Mek && !(entering instanceof LandAirMek lam
+                          && lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER))) && (inHex
                           .getGrappled() != entering.getId() || inHex
                           .isChainWhipGrappled()))
                           || (inHex instanceof SmallCraft))) {
@@ -627,9 +723,14 @@ public class Compute {
      * called for stacking purposes, and so does not return true if the enemy unit is currently making a DFA.
      */
     public static boolean isEnemyIn(Game game, Entity entity, Coords coords,
-          boolean onlyMeks, boolean ignoreInfantry, int enLowEl) {
+          boolean onlyMeks, boolean ignoreInfantry, int enLowEl, boolean ignoreHidden) {
         int enHighEl = enLowEl + entity.getHeight();
         for (Entity inHex : game.getEntitiesVector(coords)) {
+            // If we're ignoring hidden units and this one *is* hidden, pretend we don't see it.
+            if (inHex.isHidden() && ignoreHidden) {
+                continue;
+            }
+
             int inHexAlt = inHex.getAltitude();
             boolean crewOnGround = (inHex instanceof EjectedCrew) && (inHexAlt == 0);
             int inHexEnLowEl = inHex.getElevation();
@@ -652,11 +753,16 @@ public class Compute {
           Coords src, Coords dest, EntityMovementType movementType,
           boolean isTurning, boolean prevStepIsOnPavement, int srcElevation,
           int destElevation, MoveStep moveStep) {
-        // It's possible to get a real ID for an entity we've forgotten (Double Blind,
-        // for instance).
+        // It's possible to get a real ID for an entity we've forgotten (Double Blind, for instance).
         final Entity entity = game.getEntity(entityId);
         if (entity == null) {
-            throw new IllegalArgumentException("Entity invalid. ID " + entityId);
+            if (game.getEntityFromAllSources(entityId) == null) {
+                // We have no recollection of the entity anywhere. At this point an error will be thrown.
+                throw new IllegalArgumentException("Entity invalid. ID " + entityId);
+            }
+
+            // Otherwise, it's likely the unit has been destroyed prior to this point.
+            return false;
         }
 
         Board board = game.getBoard(moveStep.getBoardId());
@@ -792,10 +898,10 @@ public class Compute {
         // need to make a piloting check to avoid damage.
         if ((destElevation < destHex.terrainLevel(Terrains.BLDG_ELEV))
               && !(entity instanceof Infantry)) {
-            Building bldg = board.getBuildingAt(dest);
+            IBuilding bldg = board.getBuildingAt(dest);
             boolean insideHangar = (null != bldg)
                   && bldg.isIn(src)
-                  && (bldg.getBldgClass() == Building.HANGAR)
+                  && (bldg.getBldgClass() == IBuilding.HANGAR)
                   && (destHex.terrainLevel(Terrains.BLDG_ELEV) > entity
                   .height());
             if (!insideHangar) {
@@ -1377,7 +1483,7 @@ public class Compute {
         }
 
         // determine base distance & range bracket
-        int distance = effectiveDistance(game, attackingEntity, target, false);
+        int distance = effectiveWeaponDistance(game, attackingEntity, weapon, target);
         int range = RangeType.rangeBracket(distance, weaponRanges, useExtremeRange, useLOSRange);
 
         // Additional checks for LOS range and some weapon types, TO 85
@@ -1457,6 +1563,8 @@ public class Compute {
 
         // find any c3 spotters that could help
         Entity c3spotter = ComputeC3Spotter.findC3Spotter(game, attackingEntity, target);
+        Entity c3spotterWithECM = ComputeC3Spotter.playtestFindC3Spotter(game, attackingEntity, target);
+
         if (isIndirect) {
             c3spotter = attackingEntity; // no c3 when using indirect fire
         }
@@ -1466,24 +1574,46 @@ public class Compute {
         }
 
         int c3dist = Compute.effectiveDistance(game, c3spotter, target, false);
+        // PLAYTEST3 if there is a member that is ECM blocked
+        int c3ecmDist = Compute.effectiveDistance(game, c3spotterWithECM, target, false);
 
         // C3 can't benefit from LOS range.
         int c3range = RangeType.rangeBracketC3(c3dist, distance, weaponRanges, useExtremeRange, false);
+        // PLAYTEST3 checking for ECM ranged member
+        int c3ecmRange = RangeType.rangeBracketC3(c3ecmDist, distance, weaponRanges, useExtremeRange, false);
 
         /*
          * Tac Ops Extreme Range Rule p. 85 if the weapons normal range is
          * Extreme then C3 uses the next highest range bracket, i.e. medium
          * instead of short.
          */
-        if ((range == RangeType.RANGE_EXTREME) && (c3range < range)) {
+        if ((range == RangeType.RANGE_EXTREME) && (c3range < range || c3ecmRange < range)) {
             c3range++;
+            c3ecmRange++;
         }
 
         // determine which range we're using
-        int usingRange = Math.min(range, c3range);
+        int usingRange = range;
+        boolean usingC3 = false;
+
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            // PLAYTEST3 check ecm vs non ecm affected C3
+            if ((c3range > c3ecmRange) && (c3range > range)) {
+                usingRange = c3ecmRange;
+                usingC3 = true;
+            } else if (range > c3range) {
+                usingRange = c3range;
+                usingC3 = true;
+            }
+        } else {
+            usingRange = min(range, c3range);
+            if (usingRange == c3range && range > c3range) {
+                usingC3 = true;
+            }
+        }
 
         // add range modifier, C3 can't be used with LOS Range
-        if ((usingRange == range) || (range == RangeType.RANGE_LOS) || (attackingEntity.hasNavalC3()
+        if (((usingRange == range) && !usingC3) || (range == RangeType.RANGE_LOS) || (attackingEntity.hasNavalC3()
               && !nc3EnergyGuided)) {
             // Ensure usingRange is set to range, ie with C3
             usingRange = range;
@@ -1537,13 +1667,50 @@ public class Compute {
             }
         } else {
             // report c3 adjustment
-            if ((c3range == RangeType.RANGE_SHORT) || (c3range == RangeType.RANGE_MINIMUM)) {
-                mods.addModifier(attackingEntity.getShortRangeModifier(), "short range due to C3 spotter");
-            } else if (c3range == RangeType.RANGE_MEDIUM) {
-                mods.addModifier(attackingEntity.getMediumRangeModifier(), "medium range due to C3 spotter");
-            } else if (c3range == RangeType.RANGE_LONG) {
-                mods.addModifier(attackingEntity.getLongRangeModifier(), "long range due to C3 spotter");
+            // PLAYTEST3 C3 ECM halving
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)
+                  && usingRange == c3ecmRange
+                  && usingRange != c3range
+                  && c3spotterWithECM.getC3ecmAffected()) {
+                // Halve the bonus, so we need to know what the original range was too.
+                int rangeModifier = 0;
+                if (range == RangeType.RANGE_LONG) {
+                    rangeModifier = attackingEntity.getLongRangeModifier();
+                } else if (range == RangeType.RANGE_MEDIUM) {
+                    rangeModifier = attackingEntity.getMediumRangeModifier();
+                } else if (range == RangeType.RANGE_EXTREME) {
+                    rangeModifier = attackingEntity.getExtremeRangeModifier();
+                }
+                if ((c3ecmRange == RangeType.RANGE_SHORT) || (c3ecmRange == RangeType.RANGE_MINIMUM)) {
+                    rangeModifier = (int) (rangeModifier + attackingEntity.getShortRangeModifier()) / 2;
+                    mods.addModifier(rangeModifier, "short range due to C3 spotter under ECM");
+                } else if (c3ecmRange == RangeType.RANGE_MEDIUM) {
+                    rangeModifier = (int) (rangeModifier + attackingEntity.getMediumRangeModifier()) / 2;
+                    mods.addModifier(rangeModifier, "medium range due to C3 spotter under ECM");
+                } else if (c3ecmRange == RangeType.RANGE_LONG) {
+                    rangeModifier = (int) (rangeModifier + attackingEntity.getLongRangeModifier()) / 2;
+                    mods.addModifier(rangeModifier, "long range due to C3 spotter under ECM");
+                }
+            } else {
+                // Normal C3 operation, no ECM
+                if ((c3range == RangeType.RANGE_SHORT) || (c3range == RangeType.RANGE_MINIMUM)) {
+                    mods.addModifier(attackingEntity.getShortRangeModifier(), "short range due to C3 spotter");
+                } else if (c3range == RangeType.RANGE_MEDIUM) {
+                    mods.addModifier(attackingEntity.getMediumRangeModifier(), "medium range due to C3 spotter");
+                } else if (c3range == RangeType.RANGE_LONG) {
+                    mods.addModifier(attackingEntity.getLongRangeModifier(), "long range due to C3 spotter");
+                }
             }
+        }
+
+        // Variable Range Targeting quirk modifier (BMM pg. 86)
+        // Shows as a separate line item in the to-hit breakdown
+        int vrtModifier = attackingEntity.getVariableRangeTargetingModifier(usingRange);
+        if (vrtModifier != 0) {
+            String vrtMode = attackingEntity.getVariableRangeTargetingMode().isShort()
+                  ? Messages.getString("Compute.VariableRangeTargetingShort")
+                  : Messages.getString("Compute.VariableRangeTargetingLong");
+            mods.addModifier(vrtModifier, vrtMode);
         }
 
         // add minimum range modifier (only for ground-to-ground attacks)
@@ -1557,7 +1724,7 @@ public class Compute {
         // calculation
         // to figure out range, so overwrite whatever we have at this point
         if (isWeaponInfantry) {
-            mods = Compute.getInfantryRangeMods(Math.min(distance, c3dist),
+            mods = Compute.getInfantryRangeMods(min(distance, c3dist),
                   (InfantryWeapon) weaponType,
                   (attackingEntity instanceof Infantry) ? ((Infantry) attackingEntity).getSecondaryWeapon() : null,
                   weaponUnderwater);
@@ -1746,6 +1913,65 @@ public class Compute {
      *
      * @return the effective distance
      */
+    /**
+     * Calculates effective distance from a weapon's firing position to a target, accounting for altitude differences
+     * and same-building elevation modifiers. This is used for entities with multiple firing positions like
+     * BuildingEntity.
+     *
+     * @param game         The current game
+     * @param weaponEntity The entity with the weapon
+     * @param weapon       The weapon being fired
+     * @param target       The target being attacked
+     *
+     * @return The effective distance from the weapon's firing position to the target
+     */
+    public static int effectiveWeaponDistance(final Game game, final Entity weaponEntity,
+          final WeaponMounted weapon, final Targetable target) {
+        Coords weaponFiringPos = weaponEntity.getWeaponFiringPosition(weapon);
+
+        if (weaponFiringPos != null && !weaponFiringPos.equals(weaponEntity.getPosition())) {
+            // For entities with multiple firing positions (BuildingEntity, etc.),
+            // calculate distance from the weapon's actual firing position
+            int distance = weaponFiringPos.distance(target.getPosition());
+
+            // If attack is inside same building, add elevation difference
+            if (isInSameBuilding(game, weaponEntity, target)) {
+                int aElev = weaponEntity.getElevation();
+                int tElev = target.getElevation();
+                distance += Math.abs(aElev - tElev);
+            }
+
+            // Air-to-air altitude differences
+            if (isAirToAir(game, weaponEntity, target) && !weaponEntity.isSpaceborne()) {
+                int aAlt = weaponEntity.getAltitude();
+                int tAlt = target.getAltitude();
+                if (target.isAirborneVTOLorWIGE()) {
+                    tAlt++;
+                }
+                distance += Math.abs(aAlt - tAlt);
+            }
+
+            // Ground-to-air altitude adjustments
+            if (isGroundToAir(weaponEntity, target)) {
+                if (weaponEntity.usesWeaponBays() && game.getBoard().isGround()) {
+                    distance += target.getAltitude();
+                } else {
+                    distance += (2 * target.getAltitude());
+                }
+            }
+
+            // Attacking ground unit while dropping
+            if (weaponEntity.isDropping() && target.getAltitude() == 0) {
+                distance += (2 * weaponEntity.getAltitude());
+            }
+
+            return distance;
+        } else {
+            // Use standard effective distance calculation
+            return effectiveDistance(game, weaponEntity, target, false);
+        }
+    }
+
     public static int effectiveDistance(final Game game, final Entity attacker,
           final @Nullable Targetable target) {
         return Compute.effectiveDistance(game, attacker, target, false);
@@ -1774,7 +2000,12 @@ public class Compute {
         Vector<Coords> attackPos = new Vector<>();
         attackPos.add(attacker.getPosition());
         Vector<Coords> targetPos = new Vector<>();
-        targetPos.add(target.getPosition());
+
+        if (target instanceof BuildingEntity) {
+            targetPos.addAll(target.getSecondaryPositions().values());
+        } else {
+            targetPos.add(target.getPosition());
+        }
 
         if (CrossBoardAttackHelper.isOrbitToSurface(game, attacker, target)) {
             // The effective position of the target is the ground map position on the ground hex row of the high
@@ -1968,6 +2199,30 @@ public class Compute {
     }
 
     /**
+     * @param flyingEntity   the flyer
+     * @param targetPosition target
+     *
+     * @return the closest position along <code>flyingEntity</code>'s flight path to <code>targetPosition</code>. In the
+     *       case of multiple equidistance positions, the first one is picked.
+     */
+    public static @Nullable Coords getClosestToFlightPath(Entity flyingEntity, Coords targetPosition) {
+        Coords flyerPosition = flyingEntity.getPosition();
+        Coords finalPos = flyerPosition;
+        int distance = Integer.MAX_VALUE;
+        if (finalPos != null) {
+            distance = flyerPosition.distance(finalPos);
+        }
+        for (Coords coord : flyingEntity.getPassedThrough()) {
+            if ((coord != null)
+                  && ((coord.distance(targetPosition) < distance) || (distance == 0))) {
+                finalPos = coord;
+                distance = coord.distance(targetPosition);
+            }
+        }
+        return finalPos;
+    }
+
+    /**
      * WOR: Need this function to find out where my nova stuff doesn't work. Delete it if nova works but remember to
      * alter the /nova debug server command.
      */
@@ -2074,13 +2329,15 @@ public class Compute {
                 // No legs destroyed and no hip crits: no penalty and can fire all weapons
                 return null; // no modifier
             } else if (legsDead >= 3) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone with three or more legs destroyed.");
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                      Messages.getString("WeaponAttackAction.AeProneQuadThreeLegs"));
             }
             // we have one or two dead legs...
 
             // Need an intact front leg
             if (attacker.isLocationBad(Mek.LOC_RIGHT_ARM) && attacker.isLocationBad(Mek.LOC_LEFT_ARM)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone with both front legs destroyed.");
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                      Messages.getString("WeaponAttackAction.AeProneQuadBothFrontLegs"));
             }
 
             // front leg-mounted weapons have additional trouble
@@ -2090,18 +2347,95 @@ public class Compute {
                       || weapon.getSecondLocation() == Mek.LOC_RIGHT_ARM) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
                 // check previous attacks for weapons fire from the other arm
                 if (Compute.isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone and firing from other front leg already.");
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                          Messages.getString("WeaponAttackAction.AeProneQuadFiringOtherLeg"));
                 }
             }
             // can't fire rear leg weapons
             if ((weapon.getLocation() == Mek.LOC_LEFT_LEG) || (weapon.getLocation() == Mek.LOC_RIGHT_LEG)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                      "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
+                      Messages.getString("WeaponAttackAction.AeProneQuadRearLegWeapon"));
             }
             if (((Mek) attacker).getCockpitType() == Mek.COCKPIT_DUAL && attacker.getCrew().hasDedicatedGunner()) {
-                mods.addModifier(1, "attacker prone");
+                mods.addModifier(1, Messages.getString("WeaponAttackAction.AeProne"));
             } else {
-                mods.addModifier(2, "attacker prone");
+                mods.addModifier(2, Messages.getString("WeaponAttackAction.AeProne"));
+            }
+        } else if (attacker.isTripodMek()) {
+            // Tripod Meks have special prone rules per TacOps
+            Mek tripod = (Mek) attacker;
+            int legsDead = tripod.countBadLegs();
+            if (legsDead == 0 && !attacker.hasHipCrit()) {
+                // All 3 legs intact and no hip crits: +1 modifier (or +0 with dual cockpit/dedicated gunner)
+                // Can fire weapons from head, torsos, and both arms
+                // Can't fire leg weapons
+                if (weapon.getLocation() == Mek.LOC_LEFT_LEG
+                      || weapon.getLocation() == Mek.LOC_RIGHT_LEG
+                      || weapon.getLocation() == Mek.LOC_CENTER_LEG) {
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                          Messages.getString("WeaponAttackAction.AeProneLegWeapon"));
+                }
+                if (tripod.getCockpitType() == Mek.COCKPIT_DUAL && attacker.getCrew().hasDedicatedGunner()) {
+                    mods.addModifier(0, Messages.getString("WeaponAttackAction.AeProneTripod"));
+                } else {
+                    mods.addModifier(1, Messages.getString("WeaponAttackAction.AeProneTripod"));
+                }
+            } else {
+                // Has hip crit or lost leg(s): follow standard biped prone rules
+                int l3ProneFiringArm = Entity.LOC_NONE;
+
+                if (attacker.isLocationBad(Mek.LOC_RIGHT_ARM) || attacker.isLocationBad(Mek.LOC_LEFT_ARM)) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PRONE_FIRE)) {
+                        // Can fire with only one arm
+                        if (attacker.isLocationBad(Mek.LOC_RIGHT_ARM) && attacker.isLocationBad(Mek.LOC_LEFT_ARM)) {
+                            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                                  Messages.getString("WeaponAttackAction.AeProneBothArmsDestroyed"));
+                        }
+
+                        l3ProneFiringArm = attacker.isLocationBad(Mek.LOC_RIGHT_ARM) ?
+                              Mek.LOC_LEFT_ARM :
+                              Mek.LOC_RIGHT_ARM;
+                    } else {
+                        // must have an arm intact
+                        return new ToHitData(TargetRoll.IMPOSSIBLE,
+                              Messages.getString("WeaponAttackAction.AeProneArmDestroyed"));
+                    }
+                }
+
+                // arm-mounted weapons have additional trouble
+                if ((weapon.getLocation() == Mek.LOC_RIGHT_ARM) || (weapon.getSecondLocation() == Mek.LOC_RIGHT_ARM)
+                      || (weapon.getLocation() == Mek.LOC_LEFT_ARM) || (weapon.getSecondLocation()
+                      == Mek.LOC_LEFT_ARM)) {
+                    if (l3ProneFiringArm == weapon.getLocation() || (weapon.getSecondLocation() != Entity.LOC_NONE
+                          && l3ProneFiringArm == weapon.getSecondLocation())) {
+                        return new ToHitData(TargetRoll.IMPOSSIBLE,
+                              Messages.getString("WeaponAttackAction.AeProneProppingArm"));
+                    }
+
+                    int otherArm = (weapon.getLocation() == Mek.LOC_RIGHT_ARM
+                          || weapon.getSecondLocation() == Mek.LOC_RIGHT_ARM) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
+                    // check previous attacks for weapons fire from the other arm
+                    if (Compute.isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
+                        return new ToHitData(TargetRoll.IMPOSSIBLE,
+                              Messages.getString("WeaponAttackAction.AeProneFiringOtherArm"));
+                    }
+                }
+                // can't fire leg weapons
+                if (weapon.getLocation() == Mek.LOC_LEFT_LEG
+                      || weapon.getLocation() == Mek.LOC_RIGHT_LEG
+                      || weapon.getLocation() == Mek.LOC_CENTER_LEG) {
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                          Messages.getString("WeaponAttackAction.AeProneLegWeapon"));
+                }
+                if (tripod.getCockpitType() == Mek.COCKPIT_DUAL && attacker.getCrew().hasDedicatedGunner()) {
+                    mods.addModifier(1, Messages.getString("WeaponAttackAction.AeProne"));
+                } else {
+                    mods.addModifier(2, Messages.getString("WeaponAttackAction.AeProne"));
+                }
+
+                if (l3ProneFiringArm != Entity.LOC_NONE) {
+                    mods.addModifier(1, Messages.getString("WeaponAttackAction.AePronePropping"));
+                }
             }
         } else {
             int l3ProneFiringArm = Entity.LOC_NONE;
@@ -2110,43 +2444,48 @@ public class Compute {
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PRONE_FIRE)) {
                     // Can fire with only one arm
                     if (attacker.isLocationBad(Mek.LOC_RIGHT_ARM) && attacker.isLocationBad(Mek.LOC_LEFT_ARM)) {
-                        return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone with both arms destroyed.");
+                        return new ToHitData(TargetRoll.IMPOSSIBLE,
+                              Messages.getString("WeaponAttackAction.AeProneBothArmsDestroyed"));
                     }
 
                     l3ProneFiringArm = attacker.isLocationBad(Mek.LOC_RIGHT_ARM) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
                 } else {
                     // must have an arm intact
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone with one or both arms destroyed.");
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                          Messages.getString("WeaponAttackAction.AeProneArmDestroyed"));
                 }
             }
 
             // arm-mounted weapons have additional trouble
             if ((weapon.getLocation() == Mek.LOC_RIGHT_ARM) || (weapon.getSecondLocation() == Mek.LOC_RIGHT_ARM)
                   || (weapon.getLocation() == Mek.LOC_LEFT_ARM) || (weapon.getSecondLocation() == Mek.LOC_LEFT_ARM)) {
-                if (l3ProneFiringArm == weapon.getLocation() || (weapon.getSecondLocation() != Entity.NONE
+                if (l3ProneFiringArm == weapon.getLocation() || (weapon.getSecondLocation() != Entity.LOC_NONE
                       && l3ProneFiringArm == weapon.getSecondLocation())) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone and propping up with this arm.");
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                          Messages.getString("WeaponAttackAction.AeProneProppingArm"));
                 }
 
                 int otherArm = (weapon.getLocation() == Mek.LOC_RIGHT_ARM
                       || weapon.getSecondLocation() == Mek.LOC_RIGHT_ARM) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
                 // check previous attacks for weapons fire from the other arm
                 if (Compute.isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone and firing from other arm already.");
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                          Messages.getString("WeaponAttackAction.AeProneFiringOtherArm"));
                 }
             }
             // can't fire leg weapons
             if ((weapon.getLocation() == Mek.LOC_LEFT_LEG) || (weapon.getLocation() == Mek.LOC_RIGHT_LEG)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Can't fire leg-mounted weapons while prone.");
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                      Messages.getString("WeaponAttackAction.AeProneLegWeapon"));
             }
             if (((Mek) attacker).getCockpitType() == Mek.COCKPIT_DUAL && attacker.getCrew().hasDedicatedGunner()) {
-                mods.addModifier(1, "attacker prone");
+                mods.addModifier(1, Messages.getString("WeaponAttackAction.AeProne"));
             } else {
-                mods.addModifier(2, "attacker prone");
+                mods.addModifier(2, Messages.getString("WeaponAttackAction.AeProne"));
             }
 
             if (l3ProneFiringArm != Entity.LOC_NONE) {
-                mods.addModifier(1, "attacker propping on single arm");
+                mods.addModifier(1, Messages.getString("WeaponAttackAction.AePronePropping"));
             }
         }
         return mods;
@@ -2604,7 +2943,7 @@ public class Compute {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL)
               && (entity.mpUsed == 0)
               && !entity.isImmobile()
-              && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
+              && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity.isBuildingEntityOrGunEmplacement()))) {
             ToHitData toHit = new ToHitData();
             toHit.addModifier(-1, "target did not move");
             return toHit;
@@ -2976,7 +3315,7 @@ public class Compute {
             // Buildings are a simple sum of their current CF and armor values.
             // the building the targeted hex belongs to. We have to get this and then get
             // values for the specific hex internally to it.
-            final Building parentBuilding = game.getBoard().getBuildingAt(position);
+            final IBuilding parentBuilding = game.getBoard().getBuildingAt(position);
             return (parentBuilding == null) ? 0
                   : parentBuilding.getCurrentCF(position) + parentBuilding.getArmor(position);
         } else if (targetType == Targetable.TYPE_ENTITY) {
@@ -2987,9 +3326,9 @@ public class Compute {
 
             if (targetEntity == null) {
                 return 0;
-            } else if (targetEntity instanceof GunEmplacement) {
+            } else if (targetEntity.isBuildingEntityOrGunEmplacement()) {
                 // If this is a gun emplacement, handle it as the building hex it is in.
-                final Building parentBuilding = game.getBoard().getBuildingAt(position);
+                final IBuilding parentBuilding = game.getBoard().getBuildingAt(position);
                 return (parentBuilding == null) ? 0
                       : parentBuilding.getCurrentCF(position) + parentBuilding.getArmor(position);
             } else {
@@ -3515,7 +3854,7 @@ public class Compute {
 
             // Cap damage to prevent run-away values
             if (infShootingStrength > 0) {
-                fDamage = Math.min(infShootingStrength, fDamage);
+                fDamage = min(infShootingStrength, fDamage);
             }
         }
         return fDamage;
@@ -3672,11 +4011,15 @@ public class Compute {
                             // to reflect scaled crit chance
                             // Other armor-penetrating ammo types should be
                             // tested here, such as Tandem-charge SRMs
+
+                            // PLAYTEST added
                             if (((ammoBinType.getAmmoType() == AmmoTypeEnum.AC)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.LAC)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.AC_IMP)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.PAC))
-                                  && (ammoBinType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING))) {
+                                  && (ammoBinType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)
+                                  || ammoBinType.getMunitionType()
+                                  .contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST))) {
                                 if ((target instanceof Mek) || (target instanceof Tank)) {
                                     ammoMultiple = 1.0 + (weaponType.getRackSize() / 10.0);
                                 }
@@ -3813,82 +4156,117 @@ public class Compute {
      *
      * @return the <code>int</code> ID of weapon mode
      */
+    @Deprecated
     public static int spinUpCannon(Game cgame, WeaponAttackAction atk) {
         return spinUpCannon(cgame, atk, Compute.d6(2) - 1);
     }
 
     /**
-     * If this is an ultra or rotary cannon, lets see about 'spinning it up' for extra damage
+     * Determine if autocannon should fire more than one round. Includes standard ACs if the game option for
+     * rapid-fire-mode is enabled.
      *
-     * @return the <code>int</code> ID of weapon mode
+     * @param atk             Attack action with weapon attack properties
+     * @param spinupThreshold Maximum to-hit number to consider for rapid fire
+     *
+     * @return the <code>int</code> ID of weapon mode, which is also the number of mode changes from single shot
      */
 
     public static int spinUpCannon(Game cgame, WeaponAttackAction atk, int spinupThreshold) {
 
-        int threshold;
-        int final_spin;
+        int to_hit;
+        // The number of mode changes needed to set a specific rate of fire
+        int final_spin = 0;
         Entity shooter;
         Mounted<?> weapon;
         WeaponType weaponType;
+        boolean isUAC = false;
+        boolean isRAC = false;
 
-        // Double check this is an Ultra or Rotary cannon
-        // or a standard AC with the TacOps rapid fire rule turned on
+        // Basic protections against null values
+        if (null == atk || null == cgame || null == atk.toHit(cgame)) {
+            LOGGER.warn("null parameter passed to Compute.spinUpCannon");
+            return final_spin;
+        }
+
+        // Get the to-hit number for this attack
+        to_hit = atk.toHit(cgame).getValue();
+
+        // If weapon can't hit target, exit with the default mode setting
+        if (to_hit > 12) {
+            return final_spin;
+        }
+
         shooter = atk.getEntity(cgame);
         weapon = shooter.getEquipment(atk.getWeaponId());
         weaponType = (WeaponType) shooter.getEquipment(atk.getWeaponId()).getType();
 
-        boolean rapidAC = (weaponType.getAmmoType() == AmmoTypeEnum.AC)
-              && cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RAPID_AC);
+        // If optional rapid fire autocannons are enabled, check for conventional, LAC, and
+        // PAC types
+        boolean isRapidFireAC =
+              cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RAPID_AC) &&
+                    weaponType instanceof ACWeapon;
 
-        if (!((weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA)
-              || (weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA_THB)
-              || (weaponType.getAmmoType() == AmmoTypeEnum.AC_ROTARY)
-              || rapidAC)) {
-            return 0;
+        // Anything other than a standard AC or equivalent, UAC, or RAC does not apply
+        if (!isRapidFireAC) {
+            isRAC = weaponType instanceof RACWeapon;
+            isUAC = !isRAC && (weaponType instanceof UACWeapon);
+
+            if (!isRAC && !isUAC) {
+                return final_spin;
+            }
         }
-
-        // Get the to-hit number
-        threshold = atk.toHit(cgame).getValue();
 
         // Set the weapon to single shot mode
-        weapon.setMode(rapidAC ? "" : Weapon.MODE_AC_SINGLE);
-        final_spin = 0;
+        weapon.setMode(isRapidFireAC ? "" : Weapon.MODE_AC_SINGLE);
 
-        // If weapon can't hit target, exit the function with the weapon on
-        // single shot
-        if ((threshold == TargetRoll.IMPOSSIBLE)
-              || (threshold == TargetRoll.AUTOMATIC_FAIL)) {
-            return final_spin;
-        }
-
-        // If random roll is >= to-hit + 1, then set double-spin
-        if (spinupThreshold >= threshold) {
+        // If the to-hit number is under or at the provided threshold, set multiple shots
+        if (to_hit <= spinupThreshold) {
             final_spin = 1;
-            if ((weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA)
-                  || (weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA_THB)) {
+            if (isUAC) {
                 weapon.setMode(Weapon.MODE_UAC_ULTRA);
-            } else if (weaponType.getAmmoType() == AmmoTypeEnum.AC_ROTARY) {
+            } else if (isRAC) {
+
                 weapon.setMode(Weapon.MODE_RAC_TWO_SHOT);
-            } else if (rapidAC) {
-                weapon.setMode(Weapon.MODE_AC_RAPID);
+
+                // If the to-hit number is significantly lower than the provided threshold,
+                // set for either five or six shots
+
+                if (to_hit <= (spinupThreshold - 3)) {
+                    final_spin = 5;
+                    weapon.setMode(Weapon.MODE_RAC_SIX_SHOT);
+                    return final_spin;
+                }
+
+                if (to_hit <= (spinupThreshold - 2)) {
+                    final_spin = 4;
+                    weapon.setMode(Weapon.MODE_RAC_FIVE_SHOT);
+                    return final_spin;
+                }
+
+                // If the to-hit number is slightly lower than the provided threshold, set for
+                // four shots.  Reduce to three shots for high to-hit numbers to reduce ammo
+                // use and chance of jamming.
+                if (to_hit <= (spinupThreshold - 1)) {
+                    final_spin = to_hit >= 6 ? 2 : 3;
+                    weapon.setMode(to_hit >= 6 ? Weapon.MODE_RAC_THREE_SHOT : Weapon.MODE_RAC_FOUR_SHOT);
+                    return final_spin;
+                }
+
+            } else {
+                // Rapid firing standard autocannon is risky, so save it for better to-hit numbers,
+                // infantry field guns, or when the 'kinder' optional rule is set
+                if (to_hit <= (spinupThreshold - 2) ||
+                      shooter.isConventionalInfantry() ||
+                      cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_KIND_RAPID_AC)) {
+                    weapon.setMode(Weapon.MODE_AC_RAPID);
+                } else {
+                    final_spin = 0;
+                    weapon.setMode("");
+                }
             }
         }
 
-        // If this is a Rotary cannon
-        if (weaponType.getAmmoType() == AmmoTypeEnum.AC_ROTARY) {
-
-            // If random roll is >= to-hit + 2 then set to quad-spin
-            if (spinupThreshold >= (threshold + 1)) {
-                final_spin = 2;
-                weapon.setMode(Weapon.MODE_RAC_FOUR_SHOT);
-            }
-
-            // If random roll is >= to-hit + 3 then set to six-spin
-            if (spinupThreshold >= (threshold + 2)) {
-                final_spin = 3;
-                weapon.setMode(Weapon.MODE_RAC_SIX_SHOT);
-            }
-        }
+        // Return the number of mode changes needed to set the rate of fire
         return final_spin;
     }
 
@@ -3970,10 +4348,15 @@ public class Compute {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity targetedEntity = (Entity) target;
 
+            // Beyond altitude 8, on ground maps, aerospace can't spot ground units
+            if (attackingEntity.isAirborneAeroOnGroundMap() && (attackingEntity.getAltitude() > 8) && !target.isAirborne()) {
+                visualRange = 0;
+            }
+
             // check for camo and null sig on the target
             if (targetedEntity.isVoidSigActive()) {
                 visualRange = visualRange / 4;
-            } else if (targetedEntity.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
+            } else if (targetedEntity.hasWorkingMisc(MiscType.F_VISUAL_CAMO)) {
                 visualRange = visualRange / 2;
             } else if (targetedEntity.isChameleonShieldActive()) {
                 visualRange = visualRange / 2;
@@ -3986,26 +4369,30 @@ public class Compute {
                 targetPos = Compute.getClosestFlightPath(attackingEntity.getId(),
                       attackingEntity.getPosition(), targetedEntity);
             }
-
-            // Airborne units targeting ground have special rules
-            if (isAirToGround(attackingEntity, target)) {
-                // In Low Altitude, Airborne aerosphere can only see ground targets
-                // they overfly, and only at Alt <=8. It should also spot units
-                // next to this; Low-atmo board with ground units isn't implemented
-                if (game.isOnAtmosphericMap(attackingEntity)) {
-                    if (attackingEntity.getAltitude() > 8) {
-                        return false;
-                    }
-                    return attackingEntity.passedOver(target);
-                }
-            }
         }
 
+        // Airborne units targeting ground have special rules
+        Coords attackingPos = attackingEntity.getPosition();
+        if (isAirToGround(attackingEntity, target)) {
+            // In Low Altitude, Airborne aerosphere can only see ground targets
+            // they overfly, and only at Alt <=8. It should also spot units
+            // next to this; Low-atmo board with ground units isn't implemented
+            if (game.isOnAtmosphericMap(attackingEntity)) {
+                if (attackingEntity.getAltitude() > 8) {
+                    return false;
+                }
+                return attackingEntity.passedOver(target);
+            }
+            // On ground maps, we should consider the aircraft to be attacking from
+            // the closest point on the flight path
+            if (attackingEntity.isAirborneAeroOnGroundMap()) {
+                attackingPos = Compute.getClosestToFlightPath(attackingEntity, targetPos);
+            }
+        }
         // Undoes any negative visual ranges
-        visualRange = Math.max(visualRange, 1);
-        int distance;
+        visualRange = max(visualRange, 1);
         // Ground distance
-        distance = attackingEntity.getPosition().distance(targetPos);
+        int distance = attackingPos.distance(targetPos);
         // Need to track difference in altitude, not just add altitude to the range
         distance += Math.abs(2 * target.getAltitude() - 2 * attackingEntity.getAltitude());
         return distance <= visualRange;
@@ -4042,7 +4429,6 @@ public class Compute {
      *
      * @param detector - the entity making a sensor scan
      * @param targetId - the entity id of the scan target
-     *
      */
     public static boolean hasSensorContact(Entity detector, int targetId) {
         return detector.hasSensorContactFor(targetId);
@@ -4075,7 +4461,6 @@ public class Compute {
      * @param game            The current {@link Game}
      * @param attackingEntity - the entity making a sensor scan
      * @param target          - the entity we're trying to spot
-     *
      */
     private static int calcSpaceECM(Game game, Entity attackingEntity, Targetable target) {
         int mod = 0;
@@ -4083,7 +4468,7 @@ public class Compute {
         if (!attackingEntity.isLargeCraft()) {
             ecm += ComputeECM.getSmallCraftECM(attackingEntity, attackingEntity.getPosition(), target.getPosition());
         }
-        ecm = Math.min(4, ecm);
+        ecm = min(4, ecm);
         int eccm = 0;
         if (attackingEntity.isLargeCraft()) {
             eccm = ((Aero) attackingEntity).getECCMBonus();
@@ -4091,7 +4476,7 @@ public class Compute {
         if (ecm > 0) {
             mod += ecm;
             if (eccm > 0) {
-                mod -= (Math.min(ecm, eccm));
+                mod -= (min(ecm, eccm));
             }
         }
         return mod;
@@ -4103,7 +4488,6 @@ public class Compute {
      * @param game   The current {@link Game}
      * @param ae     the entity making a sensor scan
      * @param target the entity we're trying to spot
-     *
      */
     private static int calcSensorShadow(Game game, Entity ae, Targetable target) {
         int mod = 0;
@@ -4236,7 +4620,6 @@ public class Compute {
      * @param game   The current {@link Game}
      * @param ae     the entity making a sensor scan
      * @param target the entity we're trying to spot
-     *
      */
     public static boolean calcFiringSolution(Game game, Entity ae, Targetable target) {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -4448,7 +4831,6 @@ public class Compute {
      * @param game   The current {@link Game}
      * @param ae     the entity making a sensor scan
      * @param target the entity we're trying to spot
-     *
      */
     public static boolean calcSensorContact(Game game, Entity ae, Targetable target) {
         // NPE check. Fighter squadrons don't start with sensors, but pick them up from
@@ -4543,7 +4925,7 @@ public class Compute {
         int visualRange = game.getPlanetaryConditions().getVisualRange(ae, targetIlluminated);
         visualRange -= los.getLightSmoke();
         visualRange -= 2 * los.getHeavySmoke();
-        visualRange = Math.max(1, visualRange);
+        visualRange = max(1, visualRange);
         return visualRange;
     }
 
@@ -4628,7 +5010,7 @@ public class Compute {
         int range = Compute.getSensorRangeByBracket(game, ae, target, los);
 
         int maxSensorRange = bracket * range;
-        int minSensorRange = Math.max((bracket - 1) * range, 0);
+        int minSensorRange = max((bracket - 1) * range, 0);
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
         }
@@ -4825,7 +5207,7 @@ public class Compute {
 
         // now adjust for anything about the target entity (size, heat, etc.)
         range = sensor.entityAdjustments(range, te, game);
-        return Math.max(range, 0);
+        return max(range, 0);
     }
 
     public static int getADARangeModifier(int distance) {
@@ -4901,9 +5283,9 @@ public class Compute {
         }
 
         int maxSensorRange = bracket * range;
-        int minSensorRange = Math.max((bracket - 1) * range, 0);
+        int minSensorRange = max((bracket - 1) * range, 0);
         int maxGroundSensorRange = bracket * groundRange;
-        int minGroundSensorRange = Math.max((maxGroundSensorRange - 1), 0);
+        int minGroundSensorRange = max((maxGroundSensorRange - 1), 0);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
@@ -4955,7 +5337,6 @@ public class Compute {
 
     /**
      * Maintain backwards compatability.
-     *
      */
     public static int missilesHit(int missiles, int nMod) {
         return missilesHit(missiles, nMod, false);
@@ -4963,7 +5344,6 @@ public class Compute {
 
     /**
      * Maintain backwards compatability.
-     *
      */
     public static int missilesHit(int missiles, int nMod, boolean hotLoaded) {
         return Compute.missilesHit(missiles, nMod, hotLoaded, false, false);
@@ -4990,13 +5370,13 @@ public class Compute {
 
             if ((roll1 <= roll2) && (roll1 <= roll3)) {
                 lowRoll1 = roll1;
-                lowRoll2 = Math.min(roll2, roll3);
+                lowRoll2 = min(roll2, roll3);
             } else if ((roll2 <= roll1) && (roll2 <= roll3)) {
                 lowRoll1 = roll2;
-                lowRoll2 = Math.min(roll1, roll3);
+                lowRoll2 = min(roll1, roll3);
             } else {
                 lowRoll1 = roll3;
-                lowRoll2 = Math.min(roll2, roll1);
+                lowRoll2 = min(roll2, roll1);
             }
             nRoll = lowRoll1 + lowRoll2;
         }
@@ -5005,9 +5385,9 @@ public class Compute {
         }
         nRoll += nMod;
         if (!advancedAMS) {
-            nRoll = Math.min(Math.max(nRoll, 2), 12);
+            nRoll = min(max(nRoll, 2), 12);
         } else {
-            nRoll = Math.min(nRoll, 12);
+            nRoll = min(nRoll, 12);
         }
         if (nRoll < 2) {
             return 0;
@@ -5244,7 +5624,7 @@ public class Compute {
         // according to the following rules clarification, this should be maxed
         // out at +4
         // http://www.classicbattletech.com/forums/index.php?topic=66036.0
-        return Math.min(4, highestMod + totalGT);
+        return min(4, highestMod + totalGT);
     }
 
     /**
@@ -5430,9 +5810,18 @@ public class Compute {
             data.addModifier(-1, "exposed actuators");
         }
 
-        // MD Infantry with grappler/magnets get bonus
-        if (attacker.hasAbility(OptionsConstants.MD_PL_ENHANCED)) {
-            data.addModifier(-2, "MD Grapple/Magnet");
+        // Prosthetic enhancement anti-Mek bonus (Grappler or Climbing Claws) - IO p.84
+        // Uses the best (most negative) modifier from either enhancement slot
+        // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
+        if (attacker.hasProstheticEnhancement()
+              && (attacker.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+              || attacker.hasAbility(OptionsConstants.MD_PL_I_ENHANCED))) {
+            int antiMekMod = attacker.getBestProstheticAntiMekModifier();
+            if (antiMekMod != 0) {
+                String modName = attacker.getBestProstheticAntiMekName();
+                data.addModifier(antiMekMod,
+                      modName != null ? modName : Messages.getString("Compute.ProstheticEnhancement"));
+            }
         }
 
         // swarm/leg attacks take target movement mods into account
@@ -5616,6 +6005,14 @@ public class Compute {
             return toReturn;
         }
 
+        // Apply shared anti-mek modifiers (includes isBurdened check for BA)
+        if (attacker instanceof Infantry inf) {
+            toReturn = Compute.getAntiMekMods(toReturn, inf, defender);
+            if (toReturn.getValue() == TargetRoll.IMPOSSIBLE) {
+                return toReturn;
+            }
+        }
+
         // If the attacker has assault claws, give a -1 modifier.
         // We can stop looking when we find our first match.
         for (Mounted<?> mount : attacker.getMisc()) {
@@ -5724,7 +6121,15 @@ public class Compute {
             return true;
         }
 
-        return BAVibroClawAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE;
+        if (BAVibroClawAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE) {
+            return true;
+        }
+
+        if (PheromoneAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE) {
+            return true;
+        }
+
+        return ToxinAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE;
     }
 
     /**
@@ -5817,8 +6222,8 @@ public class Compute {
             return false;
         }
 
-        Building attackingBuilding = game.getBoard().getBuildingAt(attacker.getPosition());
-        Building targetBuilding = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding attackingBuilding = game.getBoard().getBuildingAt(attacker.getPosition());
+        IBuilding targetBuilding = game.getBoard().getBuildingAt(target.getPosition());
         return attackingBuilding.equals(targetBuilding);
     }
 
@@ -6036,7 +6441,6 @@ public class Compute {
 
     /**
      * method to change a set of active vectors for a one-point thrust expenditure in the giving facing
-     *
      */
     public static int[] changeVectors(int[] v, int facing) {
 
@@ -6097,7 +6501,6 @@ public class Compute {
 
     /**
      * compare two vectors and determine if they are the same
-     *
      */
     public static boolean sameVectors(int[] v1, int[] v2) {
 
@@ -6117,10 +6520,10 @@ public class Compute {
         int angle = te.sideTableRam(src);
 
         return switch (angle) {
-            case Aero.RAM_TOWARD_DIR -> Math.max(attackerVelocity + targetVelocity, 1);
-            case Aero.RAM_TOWARD_OBL -> Math.max(attackerVelocity + (targetVelocity / 2), 1);
-            case Aero.RAM_AWAY_OBL -> Math.max(attackerVelocity - (targetVelocity / 2), 1);
-            case Aero.RAM_AWAY_DIR -> Math.max(attackerVelocity - targetVelocity, 1);
+            case Aero.RAM_TOWARD_DIR -> max(attackerVelocity + targetVelocity, 1);
+            case Aero.RAM_TOWARD_OBL -> max(attackerVelocity + (targetVelocity / 2), 1);
+            case Aero.RAM_AWAY_OBL -> max(attackerVelocity - (targetVelocity / 2), 1);
+            case Aero.RAM_AWAY_DIR -> max(attackerVelocity - targetVelocity, 1);
             default -> 0;
         };
     }
@@ -6132,7 +6535,6 @@ public class Compute {
      * @param damage     Original weapon damage
      * @param damageType The damage type for BA vs BA damage
      * @param target     The target, used for ensuring the target BA isn't fire-resistant
-     *
      */
     public static int directBlowBADamage(double damage, int damageType,
           BattleArmor target) {
@@ -6188,7 +6590,6 @@ public class Compute {
     /**
      * Method replicates the Non-Conventional Damage against Infantry damage table as well as shifting for direct blows.
      * also adjust for non-infantry damaging mechanized infantry
-     *
      */
     public static int directBlowInfantryDamage(double damage, int mos, int damageType,
           boolean isNonInfantryAgainstMechanized, boolean isAttackThruBuilding, int attackerId,
@@ -6407,7 +6808,7 @@ public class Compute {
             }
         }
 
-        return Math.min(weaponType.getDamage(range), toReturn);
+        return min(weaponType.getDamage(range), toReturn);
 
     }
 
@@ -6435,8 +6836,8 @@ public class Compute {
         int damage = weaponType.getDamage(range);
         int newDamage = Compute.dialDownDamage(weapon, weaponType, range);
 
-        toReturn = Math.max(1,
-              weaponType.getHeat() - Math.max(0, damage - newDamage));
+        toReturn = max(1,
+              weaponType.getHeat() - max(0, damage - newDamage));
         return toReturn;
 
     }
@@ -6512,7 +6913,7 @@ public class Compute {
               && (target.getTargetType() != Targetable.TYPE_HEX_ARTILLERY)
               && !attacker.isSpaceborne()
               && attacker.isAirborne()
-              && target.isGround()
+              && !target.isAirborne()
               && attacker.isAero();
     }
 
@@ -6602,9 +7003,16 @@ public class Compute {
     public static boolean isAcceptableUnloadPosition(Coords position, int boardId, Entity unitToUnload,
           Game game, int elev) {
         Hex hex = game.getHex(position, boardId);
+        // Prohibited terrain is any that the unit cannot move into or through, or would cause a stacking violation, or
+        // is not 0, 1, or 2 elevations up or down from the hex elevation - but ignore that last if the unloading unit
+        // has Jump MP, VTOL movement, or glider wings (IO p.85).
+        boolean canIgnoreElevation = unitToUnload.getMovementMode() == EntityMovementMode.VTOL ||
+              unitToUnload.getMovementMode() == EntityMovementMode.INF_JUMP ||
+              ((unitToUnload.getAnyTypeMaxJumpMP() > 0) && !unitToUnload.isImmobileForJump()) ||
+              (unitToUnload.isInfantry() && ((Infantry) unitToUnload).canExitVTOLWithGliderWings());
         return (hex != null) && !unitToUnload.isLocationProhibited(position, boardId, unitToUnload.getElevation())
               && (null == stackingViolation(game, unitToUnload.getId(), position, unitToUnload.climbMode()))
-              && (Math.abs(hex.getLevel() - elev) < 3);
+              && ((Math.abs(hex.getLevel() - elev) < 3) || canIgnoreElevation);
     }
 
     /**
@@ -6787,7 +7195,9 @@ public class Compute {
         } else if (entity.isSupportVehicle()) {
             return getSupportVehicleGunnerNeeds(entity);
         } else if (entity instanceof Tank) {
-            return (getFullCrewSize(entity) - 1);
+            return (getFullCrewSize(entity)
+                  - getTotalDriverNeeds(entity)
+                  - getAdditionalNonGunner(entity));
         } else if (entity instanceof Infantry) {
             return getFullCrewSize(entity);
         } else if (entity.getCrew().getCrewType().getGunnerPos() > 0) {
@@ -6896,7 +7306,7 @@ public class Compute {
                 if (advFireCon) {
                     // Advanced fire control lets the driver count as a gunner, so one fewer
                     // dedicated gunners is needed.
-                    return Math.max(0, pintleLocations.size() + facings.size() - 1);
+                    return max(0, pintleLocations.size() + facings.size() - 1);
                 } else {
                     return pintleLocations.size() + facings.size();
                 }
@@ -6922,14 +7332,56 @@ public class Compute {
     }
 
     /**
-     * Calculates additional crew required by support vehicles and advanced aerospace vessels for certain misc
-     * equipment.
+     * Calculates the number of additional non-gunner crew members required by vehicles and advanced aerospace vessels
+     * due to specific miscellaneous equipment mounts or special unit features.
      *
-     * @param entity The unit
+     * <p>Crew additions are based on the tonnage or equipment size of certain mounted systems, such as:</p>
      *
-     * @return The number of additional crew required
+     * <ul>
+     *   <li>Communications equipment ({@code F_COMMUNICATIONS}): +1 crew per ton of equipment</li>
+     *   <li>Field Kitchens ({@code F_FIELD_KITCHEN}): +3 crew per mount</li>
+     *   <li>Mobile Field Bases ({@code F_MOBILE_FIELD_BASE}): +5 crew per mount</li>
+     *   <li>MASH units ({@code F_MASH}): +5 crew per size unit</li>
+     * </ul>
+     *
+     * <p>For tanks, any additional crew seats (via {@code getExtraCrewSeats()}) are added.</p>
+     *
+     * <p>If the unit has a drone operating system it requires 0 additional crew. For super-heavy meks, this always
+     * returns {@code 1} (to represent the Tactical Officer).</p>
+     *
+     * @param entity The unit for which to calculate the additional crew requirements
+     *
+     * @return The number of additional non-gunner crew required for the given unit
      */
     public static int getAdditionalNonGunner(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
+        int crew = 0;
+        crew += getCommunicationsCrew(entity);
+        crew += getDoctorCrew(entity);
+        crew += getMedicCrew(entity);
+        crew += getCombatTechCrew(entity);
+        crew += getAstechCrew(entity);
+        for (Mounted<?> m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
+                crew += 3;
+            }
+        }
+
+        if (entity instanceof Tank tank) {
+            crew += tank.getExtraCrewSeats();
+        }
+
+        if (entity instanceof Mek && entity.isSuperHeavy()) {
+            // Tactical Officer
+            return 1;
+        }
+        return crew;
+    }
+
+    public static int getCommunicationsCrew(Entity entity) {
         if (entity.hasDroneOs()) {
             return 0;
         }
@@ -6938,18 +7390,69 @@ public class Compute {
         for (Mounted<?> m : entity.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
                 crew += (int) m.getTonnage();
-            } else if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
-                crew += 3;
-            } else if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
-                crew += 5;
-            } else if (m.getType().hasFlag(MiscType.F_MASH)) {
-                crew += 5 * (int) m.getSize();
             }
         }
-        if (entity instanceof Mek && entity.isSuperHeavy()) {
-            // Tactical Officer
-            return 1;
+
+        return crew;
+    }
+
+    public static int getDoctorCrew(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
         }
+
+        int crew = 0;
+        for (Mounted<?> m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_MASH)) {
+                crew += (int) m.getSize();
+            }
+        }
+
+        return crew;
+    }
+
+    public static int getMedicCrew(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
+        int crew = 0;
+        for (Mounted<?> m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_MASH)) {
+                crew += 4 * (int) m.getSize();
+            }
+        }
+
+        return crew;
+    }
+
+    public static int getCombatTechCrew(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
+        int crew = 0;
+        for (Mounted<?> m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+                crew++;
+            }
+        }
+
+        return crew;
+    }
+
+    public static int getAstechCrew(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
+        int crew = 0;
+        for (Mounted<?> m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+                crew += 4;
+            }
+        }
+
         return crew;
     }
 
@@ -6958,7 +7461,7 @@ public class Compute {
         if (entity.hasDroneOs()) {
             return 0;
         }
-        if (entity.defaultCrewType().equals(CrewType.NONE)) {
+        if (entity.isNotCrewedEntityType()) {
             return 0;
         }
         if (entity.isSupportVehicle()) {
@@ -6969,7 +7472,7 @@ public class Compute {
             }
             return crew + (int) Math.ceil(crew / 6.0);
         } else if (entity instanceof Tank) {
-            return (int) Math.ceil(entity.getWeight() / 15.0) + ((Tank) entity).getExtraCrewSeats();
+            return (int) Math.ceil(entity.getWeight() / 15.0) + getAdditionalNonGunner(entity);
         } else if (entity instanceof BattleArmor) {
             int numTroopers = 0;
             for (int trooper = 1; trooper < entity.locations(); trooper++) {
@@ -7008,7 +7511,7 @@ public class Compute {
         if (entity.hasDroneOs()) {
             return 0;
         }
-        if (entity.defaultCrewType().equals(CrewType.NONE)) {
+        if (entity.isNotCrewedEntityType()) {
             return 0;
         }
         // Fix for MHQ Bug #3. Space stations have as much need for pilots as jumpships
@@ -7111,7 +7614,6 @@ public class Compute {
      * @param ae       Attacker
      * @param target   Target hex/entity
      * @param velocity speed of round, default 50 according to WeaponAttackAction
-     *
      */
     public static int turnsTilBOMHit(Game game, Entity ae, Targetable target, int velocity) {
         int distance = Compute.effectiveDistance(game, ae, target);
@@ -7228,7 +7730,7 @@ public class Compute {
             // (https://bg.battletech.com/forums/index.php?topic=84054.0)
             return distance == 0;
         } else {return (distance == 1) && endStep;}
-        // Active Probe detection happens is handled in detectHiddenUnits
+        // Active Probe detection is handled in detectHiddenUnits
         // Anything not explicitly detected is not detected.
     }
 
@@ -7353,6 +7855,53 @@ public class Compute {
         }
         // No enemies in the volume == all outside
         return entities;
+    }
+
+    /**
+     * Fast log2 implementation; throws if number &le; 0
+     * @param number        positive int to get the log2 of
+     * @return int          approximate log2 of number; functionally (Math.floor(log10(10)/log10(2))
+     */
+    public static int log2(int number) throws IllegalArgumentException {
+        if (number <= 0) {
+            throw new IllegalArgumentException();
+        }
+        return 31 - Integer.numberOfLeadingZeros(number);
+    }
+
+    /**
+     * Helper to get the coordinates from which a unit can load other units.  Not in Entity to avoid bloat.
+     * May need extension for different map types but unlikely.
+     * @param carrier   Entity that will be doing the loading
+     * @param position  Coords of hex to use as the center of the carrier; may not match carrier's current position
+     *                  value.
+     * @param boardId   For future use, e.g. low-altitude or multi-board maps
+     * @return ArrayList of Coords that the carrier entity can legally load units from
+     */
+    public static ArrayList<Coords> getLoadableCoords(Entity carrier, Coords position, int boardId) {
+        ArrayList<Coords> list = new ArrayList<Coords>();
+        // No coords for no carrier
+        if (carrier == null) {
+            return list;
+        }
+
+        // Landed DropShip occupies 7 hexes, loads from the adjacent ring of hexes
+        if (carrier.isDropShip() && carrier.isAeroLandedOnGroundMap()) {
+            list.addAll(position.allAtDistance(2));
+        } else if (
+              // SmallCraft, Large Support Vehicles, flying DropShips, and presumably spaceborne WarShips load from
+              // directly adjacent hexes
+              carrier instanceof SmallCraft ||
+              (carrier.isSupportVehicle() && (carrier.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT)) ||
+              (carrier.isDropShip() && carrier.isAirborne()) ||
+              (carrier.isWarShip())
+        ) {
+            list.addAll(position.allAtDistance(1));
+        } else {
+            list.add(position);
+        }
+
+        return list;
     }
 
     private Compute() {}

@@ -85,6 +85,7 @@ import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.equipment.Flare;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
@@ -112,13 +113,14 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.turns.UnloadStrandedTurn;
-import megamek.common.units.Building;
 import megamek.common.units.Crew;
 import megamek.common.units.DemolitionCharge;
 import megamek.common.units.Entity;
 import megamek.common.units.EntitySelector;
 import megamek.common.units.FighterSquadron;
+import megamek.common.units.IBuilding;
 import megamek.common.units.UnitLocation;
+import megamek.common.util.C3Util;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
@@ -409,7 +411,6 @@ public class Client extends AbstractClient {
      *
      * @param entities The collection of Entity objects to add. This should ideally be an {@link ArrayList<Entity>}, but
      *                 other kinds of {@link List} will be converted to an {@link ArrayList}.
-     *
      */
     public void sendAddEntity(List<Entity> entities) {
         // Trying to pass a non-ArrayList jams the receiving client and prevents it from ever receiving more packets.
@@ -528,6 +529,28 @@ public class Client extends AbstractClient {
         }
 
         game.setEntitiesVector(newEntities);
+
+        // CRITICAL FIX: Reconstruct C3 networks from UUIDs (matches server-side handling)
+        // This is necessary for lobby-configured networks (Naval C3, Nova CEWS, C3i)
+        for (Entity entity : newEntities) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3() || entity.hasNovaCEWS()) {
+                C3Util.wireC3(game, entity);
+            }
+        }
+
+        // Diagnostic logging for Nova CEWS networks (enable DEBUG logging for C3 debugging)
+        if (LOGGER.isDebugEnabled()) {
+            for (Entity entity : newEntities) {
+                if (entity.hasNovaCEWS()) {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < Entity.MAX_C3i_NODES; i++) {
+                        sb.append(entity.getNC3NextUUIDAsString(i)).append(", ");
+                    }
+                    LOGGER.debug("[CLIENT] receiveEntities: Entity {} ({}), c3NetIdString: {}, NC3UUIDs: [{}]",
+                        entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
+                }
+            }
+        }
         game.setOutOfGameEntitiesVector(newOutOfGame);
         for (Entity entity : newOutOfGame) {
             cacheImgTag(entity);
@@ -645,7 +668,7 @@ public class Client extends AbstractClient {
     }
 
     protected void receiveUpdateGroundObjects(Packet packet) throws InvalidPacketDataException {
-        game.setGroundObjects(packet.getCoordsWithICarryableListMap(0));
+        game.setGroundObjects(packet.getCoordsWithGroundObjectListMap(0));
         game.processGameEvent(new GameBoardChangeEvent(this));
     }
 
@@ -691,9 +714,21 @@ public class Client extends AbstractClient {
         }
     }
 
+    protected void receiveBuildingAdd(Packet packet) throws InvalidPacketDataException {
+        for (IBuilding building : packet.getBuildingList(0)) {
+            game.getBoard(building.getBoardId()).addBuildingToBoard(building);
+        }
+    }
+
     protected void receiveBuildingUpdate(Packet packet) throws InvalidPacketDataException {
-        for (Building building : packet.getBuildingList(0)) {
+        for (IBuilding building : packet.getBuildingList(0)) {
             game.getBoard(building.getBoardId()).updateBuilding(building);
+        }
+    }
+
+    protected void receiveBuildingRemove(Packet packet) throws InvalidPacketDataException {
+        for (IBuilding building : packet.getBuildingList(0)) {
+            game.getBoard(building.getBoardId()).removeBuilding(building);
         }
     }
 
@@ -905,6 +940,28 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_NOVA_NETWORK_CHANGE, id, net));
     }
 
+    /**
+     * Send a Variable Range Targeting mode change packet (BMM pg. 86). Mode changes are applied at the start of the
+     * next round.
+     *
+     * @param entityId the ID of the entity changing modes
+     * @param mode     the new VariableRangeTargetingMode to apply next round
+     */
+    public void sendVariableRangeTargetingModeChange(int entityId, VariableRangeTargetingMode mode) {
+        send(new Packet(PacketCommand.ENTITY_VARIABLE_RANGE_MODE_CHANGE, entityId, mode));
+    }
+
+    /**
+     * Sends a unit abandonment announcement to the server. For Meks (TacOps:AR p.165): Must be prone and shutdown. For
+     * Vehicles (TacOps): Can be abandoned anytime. The abandonment will execute during the End Phase of the following
+     * turn.
+     *
+     * @param entityId the ID of the unit announcing abandonment
+     */
+    public void sendUnitAbandonmentAnnouncement(int entityId) {
+        send(new Packet(PacketCommand.ENTITY_ABANDON_ANNOUNCE, entityId));
+    }
+
     public void sendSpecialHexDisplayAppend(Coords c, int boardId, SpecialHexDisplay shd) {
         send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_APPEND, c, boardId, shd));
     }
@@ -989,6 +1046,12 @@ public class Client extends AbstractClient {
                     var changedHexes = packet.getBoardLocationHexMap(0);
                     game.getBoards().values().forEach(board -> board.setHexes(changedHexes));
                     break;
+                case BLDG_ADD:
+                    receiveBuildingAdd(packet);
+                    break;
+                case BLDG_REMOVE:
+                    receiveBuildingRemove(packet);
+                    break;
                 case BLDG_UPDATE:
                     receiveBuildingUpdate(packet);
                     break;
@@ -1009,7 +1072,7 @@ public class Client extends AbstractClient {
                             initGameLog();
                         }
                         if (log != null) {
-                            log.append(phaseReport);
+                            log.appendRaw(phaseReport);
                         }
                     }
                     game.addReports(packet.getReportList(0));
@@ -1029,7 +1092,7 @@ public class Client extends AbstractClient {
                         initGameLog();
                         if (log != null) {
                             for (List<Report> allReport : allReports) {
-                                log.append(receiveReport(allReport));
+                                log.appendRaw(receiveReport(allReport));
                             }
                         }
                     }
@@ -1107,6 +1170,8 @@ public class Client extends AbstractClient {
                             }
                         } catch (Exception ex) {
                             LOGGER.error(ex, "Unable to create savegames directory.");
+                        } finally {
+                            setAwaitingSave(false);
                         }
                     }
 
@@ -1120,6 +1185,7 @@ public class Client extends AbstractClient {
                     } catch (Exception ex) {
                         LOGGER.error(ex, "Unable to save file {}", sFinalFile);
                     }
+                    setAwaitingSave(false);
                     break;
                 case LOAD_SAVEGAME:
                     String loadFile = packet.getStringValue(0);

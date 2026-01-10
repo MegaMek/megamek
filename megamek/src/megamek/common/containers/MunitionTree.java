@@ -54,30 +54,52 @@ import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
+import static megamek.common.equipment.AmmoType.INCENDIARY_MOD;
+
 public class MunitionTree {
     private static final MMLogger LOGGER = MMLogger.create(MunitionTree.class);
 
     // Validated munition names that will work in ADF files.
-    // TODO: validate all these strings!
-    public static final List<String> LRM_MUNITION_NAMES = new ArrayList<>(List.of("Dead-Fire",
-          "Standard",
-          "Swarm-I",
-          "Swarm",
-          "Heat-Seeking",
-          "Semi-guided",
-          "Artemis-capable",
-          "Narc-capable",
-          "Follow The Leader",
-          "Fragmentation",
-          "Thunder",
-          "Thunder-Active",
-          "Thunder-Augmented",
-          "Thunder-Vibrabomb",
-          "Thunder-Inferno",
-          "Anti-TSM",
-          "Listen-Kill",
-          "Smoke",
-          "Mine Clearance"));
+    // All LRM munitions can be combined with Incendiary to add some fire-starting and
+    // anti-infantry/BA damage, at the cost of regular damage.  But let's create those
+    // options programmatically instead of by hand.
+    // We do, however, need a single overall "Incendiary" entry to track computed overall weight.
+    public static final List<String> LRM_MUNITION_NAMES =
+          addIncendiary(new ArrayList<>(List.of(
+                "Dead-Fire",
+                "Standard",
+                "Swarm-I",
+                "Swarm",
+                "Heat-Seeking",
+                "Semi-Guided",
+                "Artemis-capable",
+                "Narc-capable",
+                "Follow The Leader",
+                "Fragmentation",
+                "Thunder",
+                "Thunder-Active",
+                "Thunder-Augmented",
+                "Thunder-Vibrabomb",
+                "Thunder-Inferno",
+                "Anti-TSM",
+                "Listen-Kill",
+                "Smoke",
+                "Mine Clearance",
+                "Anti-Radiation",
+                "Incendiary"
+          )));
+
+    private static List<String> addIncendiary(ArrayList<String> strings) {
+        ArrayList<String> newStrings = new ArrayList<>();
+
+        for (String s : strings) {
+            if (!s.toLowerCase().contains("incendiary")) {
+                newStrings.add(s + " " + INCENDIARY_MOD);
+            }
+        }
+        strings.addAll(newStrings);
+        return strings;
+    }
 
     public static final List<String> SRM_MUNITION_NAMES = new ArrayList<>(List.of("Dead-Fire",
           "Standard",
@@ -91,7 +113,8 @@ public class MunitionTree {
           "Anti-TSM",
           "Listen-Kill",
           "Mine Clearance",
-          "Smoke"));
+          "Smoke",
+          "Anti-Radiation"));
 
     public static final List<String> AC_MUNITION_NAMES = new ArrayList<>(List.of("Precision",
           "Standard",
@@ -99,9 +122,13 @@ public class MunitionTree {
           "Caseless",
           "Flak",
           "Tracer",
-          "Flechette"));
+          "Flechette",
+          "Armor-Piercing Playtest",
+          "Precision Playtest"));
 
     public static final List<String> ATM_MUNITION_NAMES = new ArrayList<>(List.of("HE", "ER", "Standard"));
+    public static final List<String> iATM_MUNITION_NAMES = new ArrayList<>(List.of("HE", "ER", "Standard", "IIW",
+          "IMP"));
 
     public static final List<String> ARROW_MUNITION_NAMES = new ArrayList<>(List.of("Fuel-Air",
           "Standard",
@@ -128,12 +155,12 @@ public class MunitionTree {
 
     public static final List<String> ARTILLERY_CANNON_MUNITION_NAMES = new ArrayList<>(List.of("Fuel-Air", "Standard"));
 
-    public static final List<String> MEK_MORTAR_MUNITION_NAMES = new ArrayList<>(List.of("Standard",
-          "Semi-Guided",
-          "Anti-personnel",
-          "Airburst",
-          "Flare",
-          "Smoke"));
+    public static final List<String> MORTAR_MUNITION_NAMES = new ArrayList<>(List.of("SC",
+          "SG",
+          "AP",
+          "AB",
+          "FL",
+          "SM"));
 
     public static final List<String> NARC_MUNITION_NAMES = new ArrayList<>(List.of("Narc Explosive", "Standard"));
 

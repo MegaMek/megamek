@@ -92,12 +92,12 @@ public class ISSilverBulletGauss extends GaussWeapon {
         maxRange = RANGE_LONG;
         ammoType = AmmoType.AmmoTypeEnum.SBGAUSS;
         // SB Gauss rifles can neither benefit from a targeting computer nor
-        // do they add to its mass and size (TacOps pp. 314/5); thus, the
+        // do they add to its mass and size (TacOps:AUE pp. 126/7); thus, the
         // "direct fire" flag inherited from the superclass needs to go again.
         flags = flags.or(F_NO_AIM).andNot(F_DIRECT_FIRE);
         atClass = CLASS_LBX_AC;
         explosionDamage = 20;
-        rulesRefs = "314, TO";
+        rulesRefs = "127, TO:AUE";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)

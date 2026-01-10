@@ -53,7 +53,6 @@ import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.board.Board;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.force.Force;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ForceAssignable;
@@ -90,7 +89,7 @@ class ForceDisplayMekCellFormatter {
                 uType = Messages.getString("ChatLounge.0");
             } else if (entity instanceof ProtoMek) {
                 uType = Messages.getString("ChatLounge.1");
-            } else if (entity instanceof GunEmplacement) {
+            } else if (entity.isBuildingEntityOrGunEmplacement()) {
                 uType = Messages.getString("ChatLounge.2");
             } else if (entity.isSupportVehicle()) {
                 uType = entity.getWeightClassName();
@@ -300,11 +299,20 @@ class ForceDisplayMekCellFormatter {
 
         // C3 ...
         if (GUIP.getForceDisplayBtnC3()) {
-            if (entity.hasC3i() || entity.hasNavalC3()) {
+            if (entity.hasC3i() || entity.hasNavalC3() || entity.hasNovaCEWS()) {
                 String msg_c3i = Messages.getString("ChatLounge.C3i");
                 String msg_nc3 = Messages.getString("ChatLounge.NC3");
+                String msg_nova = Messages.getString("BoardView1.Tooltip.NovaCEWS");
 
-                String c3Name = entity.hasC3i() ? msg_c3i : msg_nc3;
+                String c3Name;
+                if (entity.hasC3i()) {
+                    c3Name = msg_c3i;
+                } else if (entity.hasNovaCEWS()) {
+                    c3Name = msg_nova;
+                } else {  // hasNavalC3()
+                    c3Name = msg_nc3;
+                }
+
                 if (entity.calculateFreeC3Nodes() >= 5) {
                     c3Name += UNCONNECTED_SIGN;
                 } else {

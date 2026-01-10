@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers.capitalMissile;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -60,9 +62,9 @@ import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.bayWeapons.TeleOperatedMissileBayWeapon;
@@ -213,6 +215,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
 
         // This has to be up here so that we don't screw up glancing/direct blow reports
         attackValue = calcAttackValue();
+        nDamPerHit = attackValue;
 
         // CalcAttackValue triggers counterfire, so now we can safely get this
         CapMissileAMSMod = getCapMissileAMSMod();
@@ -410,7 +413,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         // Bearings-only missiles shouldn't be able to target buildings, being
         // space-only weapons
         // but if these two things aren't defined, handleEntityDamage() doesn't work.
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
         int bldgAbsorbs = 0;
 
         // We have to adjust the reports on a miss, so they line up
@@ -704,7 +707,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     }
 
     @Override
-    protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss, Building bldg,
+    protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss, IBuilding bldg,
           Vector<Report> vPhaseReport) {
         return true;
     }
@@ -796,7 +799,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         CapMissileAMSMod = calcCapMissileAMSMod();
 
         if (bDirect) {
-            attackValue = Math.min(attackValue + (toHit.getMoS() / 3.0f), attackValue * 2);
+            attackValue = Math.min(attackValue + (int) floor(toHit.getMoS() / 3.0), attackValue * 2);
         }
 
         attackValue = applyGlancingBlowModifier(attackValue, false);
@@ -840,7 +843,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
 
         // we default to direct fire weapons for anti-infantry damage
         if (bDirect) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0f), toReturn * 2);
+            toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);
         }
 
         toReturn = applyGlancingBlowModifier(toReturn, false);

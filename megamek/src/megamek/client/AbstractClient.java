@@ -69,7 +69,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.units.Entity;
 import megamek.common.units.UnitNameTracker;
 import megamek.logging.MMLogger;
-import megamek.server.ConnectionHandler;
 
 /**
  * AbstractClient that handles basic client features.
@@ -84,6 +83,7 @@ public abstract class AbstractClient implements IClient {
     protected String name;
     protected boolean connected = false;
     protected boolean disconnectFlag = false;
+    protected boolean awaitingSave = false;
     protected final String host;
     protected final int port;
     private ConnectionHandler packetUpdate;
@@ -157,7 +157,6 @@ public abstract class AbstractClient implements IClient {
     /** Shuts down threads and sockets */
     @Override
     public synchronized void die() {
-        // If we're still connected, tell the server that we're going down.
         if (connected) {
             // Stop listening for in coming packets, this should be done before
             // sending the close connection command
@@ -178,6 +177,7 @@ public abstract class AbstractClient implements IClient {
 
         if (log != null) {
             try {
+                log.appendRaw("</BODY></HTML>");
                 log.close();
             } catch (Exception ex) {
                 logger.error(ex, "Failed to close the client game log file.");
@@ -203,7 +203,7 @@ public abstract class AbstractClient implements IClient {
 
     protected void initGameLog() {
         log = new GameLog(PreferenceManager.getClientPreferences().getGameLogFilename());
-        log.append("<HTML><BODY>");
+        log.appendRaw("<HTML><HEAD><LINK rel=\"stylesheet\" type=\"text/css\" href=\"megamek-gamelog.css\"></HEAD><BODY>");
     }
 
     /**
@@ -580,6 +580,13 @@ public abstract class AbstractClient implements IClient {
         return bots;
     }
 
+    public void setAwaitingSave(boolean awaitingSave) {
+        this.awaitingSave = awaitingSave;
+    }
+
+    public boolean isAwaitingSave() {
+        return awaitingSave;
+    }
     /**
      * Custom connection Listener for AbstractClient
      *

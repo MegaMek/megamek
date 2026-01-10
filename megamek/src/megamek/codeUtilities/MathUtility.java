@@ -33,6 +33,8 @@
 
 package megamek.codeUtilities;
 
+import java.util.List;
+
 import megamek.logging.MMLogger;
 
 public class MathUtility {
@@ -40,6 +42,215 @@ public class MathUtility {
 
     private MathUtility() {
         // Do nothing Private Constructor
+    }
+
+    /**
+     * Rounds a double value away from zero ("up" for both positive and negative values).
+     *
+     * <p>For positive values, this method returns the least integer greater than or equal to the value. For negative
+     * values, it returns the greatest integer less than or equal to the value (i.e., rounds further away from
+     * zero).</p>
+     *
+     * <p><b>Special cases:</b></p>
+     * <ul>
+     *   <li>If the input is {@code NaN}, returns {@code 0} and logs a warning.</li>
+     *   <li>If the rounded value is out of {@code int} range, returns {@link Integer#MAX_VALUE} or
+     *   {@link Integer#MIN_VALUE} as appropriate and logs a warning.</li>
+     *   <li>If the input is positive or negative infinity, returns {@link Integer#MAX_VALUE} or
+     *   {@link Integer#MIN_VALUE} and logs a warning.</li>
+     * </ul>
+     *
+     * @param value The double value to round.
+     *
+     * @return The rounded integer value, away from zero.
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public static int roundAwayFromZero(double value) {
+        if (Double.isNaN(value)) {
+            LOGGER.warn("roundAwayFromZero: Cannot round NaN value. Returning 0.");
+            return 0;
+        }
+        if (value == Double.POSITIVE_INFINITY) {
+            LOGGER.warn("roundAwayFromZero: Value is positive infinity. Returning Integer.MAX_VALUE.");
+            return Integer.MAX_VALUE;
+        }
+        if (value == Double.NEGATIVE_INFINITY) {
+            LOGGER.warn("roundAwayFromZero: Value is negative infinity. Returning Integer.MIN_VALUE.");
+            return Integer.MIN_VALUE;
+        }
+
+        double roundedValue = value > 0 ? Math.ceil(value) : Math.floor(value);
+
+        try {
+            return Math.toIntExact((long) roundedValue);
+        } catch (ArithmeticException e) {
+            int extreme = value > 0 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+            LOGGER.warn("Can't round '{}' away from zero due to {}. Returning {}.", value, e.getMessage(), extreme);
+            return extreme;
+        }
+    }
+
+    /**
+     * Rounds a double value toward zero ("down" for both positive and negative values).
+     *
+     * <p>For positive values, this method returns the greatest integer less than or equal to the value. For negative
+     * values, it returns the least integer greater than or equal to the value (i.e., rounds closer to zero).</p>
+     *
+     * <p><b>Special cases:</b></p>
+     * <ul>
+     *   <li>If the input is {@code NaN}, returns {@code 0} and logs a warning.</li>
+     *   <li>If the rounded value is out of {@code int} range, returns {@link Integer#MAX_VALUE} or
+     *   {@link Integer#MIN_VALUE} as appropriate and logs a warning.</li>
+     *   <li>If the input is positive or negative infinity, returns {@link Integer#MAX_VALUE} or
+     *   {@link Integer#MIN_VALUE} and logs a warning.</li>
+     * </ul>
+     *
+     * @param value The double value to round.
+     *
+     * @return The rounded integer value, toward zero.
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public static int roundTowardsZero(double value) {
+        if (Double.isNaN(value)) {
+            LOGGER.warn("roundTowardsZero: Cannot round NaN value. Returning 0.");
+            return 0;
+        }
+        if (value == Double.POSITIVE_INFINITY) {
+            LOGGER.warn("roundTowardsZero: Value is positive infinity. Returning Integer.MAX_VALUE.");
+            return Integer.MAX_VALUE;
+        }
+        if (value == Double.NEGATIVE_INFINITY) {
+            LOGGER.warn("roundTowardsZero: Value is negative infinity. Returning Integer.MIN_VALUE.");
+            return Integer.MIN_VALUE;
+        }
+
+        double roundedValue = value > 0 ? Math.floor(value) : Math.ceil(value);
+
+        try {
+            return Math.toIntExact((long) roundedValue);
+        } catch (ArithmeticException e) {
+            int extreme = value > 0 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+            LOGGER.warn("Can't round '{}' towards zero due to {}. Returning {}.", value, e.getMessage(), extreme);
+            return extreme;
+        }
+    }
+
+    /**
+     * This is a convenience method for calling {@link #getGaussianAverage(List, double)} with a strictness of 1.0
+     * (neutral).
+     *
+     * @param values the list of integer values to average; must not be {@code null}
+     *
+     * @return the Gaussian-weighted average as an {@code int}, or {@code 0} if the list is empty
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public static int getGaussianAverage(List<Integer> values) {
+        return getGaussianAverage(values, 1.0);
+    }
+
+    /**
+     * Calculates a Gaussian-weighted average from a list of integer values.
+     *
+     * <p>This method computes a "soft" average that down-weights statistical outliers using a Gaussian
+     * (normal-distribution) weighting function. This is useful when a handful of extreme values should not influence
+     * the final result as strongly as values clustered near the center of the distribution.</p>
+     *
+     * <p><b>How It Works</b></p>
+     * <ol>
+     *   <li>Compute the arithmetic mean of all values.</li>
+     *   <li>Compute the standard deviation. This measures how far values typically lie from the mean.</li>
+     *   <li>If the standard deviation is zero (all values identical), simply return the mean. This avoids a
+     *   divide-by-zero error when standardizing distances.</li>
+     *   <li>Apply a configurable strictness factor to the standard deviation. Values less than {@code 1.0} increase
+     *   strictness by shrinking the effective deviation (causing outliers to be down-weighted more aggressively).
+     *   Values greater than {@code 1.0} reduce strictness.</li>
+     *   <li>For each value, compute its standardized distance from the mean and apply a Gaussian weighting function:
+     *       {@code weight = exp( -0.5 * ((value - mean) / adjustedDeviation)^2)}. Values closer to the mean receive
+     *       weights near {@code 1.0}, while more distant values rapidly approach zero weight.</li>
+     *   <li>Return the ratio of the weighted sum of values to the total weight.</li>
+     * </ol>
+     *
+     * <p>The result behaves like a robust average: representative values dominate the calculation, while extreme
+     * outliers exert proportionally less influence. This is especially useful when working with mixed-force Battle
+     * Value (BV) or unit count arrays where unusually large or unusually small BVs/counts should not skew budgeting
+     * logic.</p>
+     *
+     * <p><b>Strictness Guidelines</b></p>
+     * <ul>
+     *   <li>{@code strictness < 1.0}: more strict; outliers are strongly suppressed.</li>
+     *   <li>{@code strictness = 1.0}: neutral; standard Gaussian weighting (default).</li>
+     *   <li>{@code strictness > 1.0}: less strict; outliers retain more influence.</li>
+     * </ul>
+     *
+     * <p>The strictness value should rarely be set below {@code 0.5} or above {@code 2.0}. The default of
+     * {@code 1.0} should work well for most distributions.</p>
+     *
+     * <p>To protect against overflow during conversion to {@code int}, the final result is clamped within
+     * {@link Integer#MIN_VALUE} and {@link Integer#MIN_VALUE} using {@link MathUtility#clamp(int, int, int)}.</p>
+     *
+     * @param values     the list of integer values to average; must not be {@code null}
+     * @param strictness how strict the calculations should be. Used to increase or decrease the influence of outliers.
+     *
+     * @return the Gaussian-weighted average as an {@code int}, or {@code 0} if the list is empty
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public static int getGaussianAverage(List<Integer> values, double strictness) {
+        if (values.isEmpty()) {
+            return 0;
+        }
+
+        // Start with the crude mean, this is going to be the middle-ground we use to weight everything
+        double total = 0;
+        for (int value : values) {
+            total += value;
+        }
+        double crudeMean = total / values.size();
+
+        // Then, we need to calculate standard deviation.
+        double varianceTotal = 0;
+        for (int value : values) {
+            double difference = value - crudeMean;
+            varianceTotal += difference * difference;
+        }
+        double variance = varianceTotal / values.size();
+        double baseDeviation = Math.sqrt(variance);
+
+        // Miraculously, all the values are identical (most likely because there is only one value). This guards
+        // against divide by 0 errors.
+        if (baseDeviation == 0) {
+            // We use MathUtility.clamp() to avoid the risk of an overflow when dealing with insanely large player
+            // campaigns. This probably isn't necessary, but no reason not to include it.
+            return MathUtility.clamp((int) Math.round(crudeMean), Integer.MIN_VALUE, Integer.MAX_VALUE);
+        }
+
+        // Below, we define how strict we want the calculations. strictness < 1.0 -> more strict. strictness > 1.0 ->
+        // less strict.
+        double adjustedDeviation = baseDeviation * strictness;
+
+        // This is where the magic happens.
+        // weight(value) = exp( -0.5 * ((value - mean) / adjustedDeviation)^2 )
+        double weightedSum = 0;
+        double weightTotal = 0;
+
+        for (int value : values) {
+            double distanceFromMean = (value - crudeMean) / adjustedDeviation;
+            double weight = Math.exp(-0.5 * distanceFromMean * distanceFromMean);
+            weightedSum += value * weight;
+            weightTotal += weight;
+        }
+
+        double gaussianMean = weightedSum / weightTotal;
+
+        // Using Math.min() for the same reason as outlined above.
+        return MathUtility.clamp((int) Math.round(gaussianMean), Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     // region Linear Interpolation
@@ -271,7 +482,7 @@ public class MathUtility {
      *
      * @return The <code>double</code> value or defaultValue.
      */
-    public static double parseDouble(final String value, double defaultValue) {
+    public static Double parseDouble(final String value, Double defaultValue) {
         if (value == null || value.isEmpty()) {
             return defaultValue;
         }
@@ -286,7 +497,7 @@ public class MathUtility {
 
     /**
      * Parses the provided string into a double. If parsing fails, a default value of 0.0 is returned. This method
-     * delegates to {@link #parseDouble(String, double)} with a default value.
+     * delegates to {@link #parseDouble(String, Double)} with a default value.
      *
      * @param value the string to parse. Can be a numeric string or {@code null}.
      *

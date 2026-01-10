@@ -25,7 +25,7 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of 
  * InMediaRes Productions, LLC.
  *
- * MechWarrior Copyright Microsoft Corporation. <Package Name> was created under
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
  * Microsoft's "Game Content Usage Rules"
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
@@ -33,14 +33,6 @@
 
 
 package megamek.common;
-
-import megamek.common.equipment.EquipmentType;
-import megamek.common.units.BipedMek;
-import megamek.common.units.Mek;
-import megamek.common.units.QuadMek;
-import megamek.common.units.TripodMek;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
 import static megamek.common.ToHitData.HIT_KICK;
 import static megamek.common.ToHitData.HIT_NORMAL;
@@ -55,7 +47,16 @@ import static megamek.common.units.Mek.LOC_LEFT_TORSO;
 import static megamek.common.units.Mek.LOC_RIGHT_ARM;
 import static megamek.common.units.Mek.LOC_RIGHT_LEG;
 import static megamek.common.units.Mek.LOC_RIGHT_TORSO;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import megamek.common.equipment.EquipmentType;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
+import megamek.common.units.TripodMek;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class PlaytestTests {
     @BeforeAll

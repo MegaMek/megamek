@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 
 import megamek.common.HitData;
@@ -75,6 +77,20 @@ public class EnergyWeaponHandler extends WeaponHandler {
               && weapon.hasModes()) || weaponType.hasFlag(WeaponType.F_BOMBAST_LASER)) {
             toReturn = Compute.dialDownDamage(weapon, weaponType, nRange);
         }
+
+        // Apply Gothic Dazzle Mode damage reduction
+        if (weapon.curMode().getName().contains("Dazzle")) {
+            // TODO: Check if target is Abomination when that system is implemented
+            // For now, assume all targets are BattleMechs (not Abominations)
+            boolean isAbomination = false; // Stub for future implementation
+
+            if (!isAbomination) {
+                // Half damage vs BattleMechs (rounded down, min 1)
+                toReturn = Math.max(1, toReturn / 2);
+            }
+            // Full damage vs Abominations (no change to toReturn)
+        }
+
         // during a swarm, all damage gets applied as one block to one location
         if ((attackingEntity instanceof BattleArmor)
               && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
@@ -108,7 +124,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
+            toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);
         }
 
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());

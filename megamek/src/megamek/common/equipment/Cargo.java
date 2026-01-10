@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,17 +30,26 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.common.jacksonAdapters.dtos;
 
-import com.fasterxml.jackson.annotation.JsonRootName;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import megamek.common.board.Coords;
-import megamek.common.equipment.ICarryable;
-import megamek.common.jacksonAdapters.CarryableDeserializer;
+package megamek.common.equipment;
 
 /**
- * This is a temporary record for parsed info about a Carryable object (which do not have a position field)
+ * Represents a cargo object.
+ * <p>
+ * TODO: Rules for generic objects in TO:AR p. 90
  */
-@JsonRootName(value = "Carryable")
-@JsonDeserialize(using = CarryableDeserializer.class)
-public record CarryableInfo(ICarryable carryable, Coords position) {}
+public class Cargo extends GroundObject {
+
+    /**
+     * Returns true if the carryable object is able to be picked up. Briefcases can always be picked up.
+     *
+     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up ground-level
+     *                          objects
+     *
+     * @return true if the object can be picked up, false if it cannot
+     */
+    @Override
+    public boolean canBePickedUp(boolean isCarrierHullDown) {
+        return false; // TODO: Support picking up cargo in game
+    }
+}

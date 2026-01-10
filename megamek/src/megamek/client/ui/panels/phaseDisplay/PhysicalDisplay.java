@@ -73,8 +73,8 @@ import megamek.common.compute.ComputeArc;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.game.GameTurn;
@@ -84,6 +84,7 @@ import megamek.common.turns.CounterGrappleTurn;
 import megamek.common.units.BipedMek;
 import megamek.common.units.BuildingTarget;
 import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
 import megamek.common.units.Targetable;
@@ -123,6 +124,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         PHYSICAL_SEARCHLIGHT("fireSearchlight"),
         PHYSICAL_EXPLOSIVES("explosives"),
         PHYSICAL_VIBRO("vibro"),
+        PHYSICAL_PHEROMONE("pheromone"),
+        PHYSICAL_TOXIN("toxin"),
         PHYSICAL_MORE("more");
 
         final String cmd;
@@ -561,6 +564,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         setDodgeEnabled(false);
         setProtoEnabled(false);
         setVibroEnabled(false);
+        setPheromoneEnabled(false);
+        setToxinEnabled(false);
         setExplosivesEnabled(false);
         butDone.setEnabled(false);
         setNextEnabled(false);
@@ -671,8 +676,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             boolean rightBladeExtend = false;
             if ((en instanceof Mek)
                   && (target instanceof Entity)
-                  && game.getOptions()
-                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES)
+                  && (game.getOptions()
+                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES) || game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))
                   && (leftArm.getValue() != TargetRoll.IMPOSSIBLE)
                   && ((Mek) currentEntity()).hasRetractedBlade(Mek.LOC_LEFT_ARM)) {
                 leftBladeExtend = clientgui.doYesNoDialog(
@@ -683,8 +688,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             if ((en instanceof Mek)
                   && (target instanceof Entity)
                   && (rightArm.getValue() != TargetRoll.IMPOSSIBLE)
-                  && game.getOptions()
-                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES)
+                  && (game.getOptions()
+                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES) || game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))
                   && ((Mek) en).hasRetractedBlade(Mek.LOC_RIGHT_ARM)) {
                 rightBladeExtend = clientgui.doYesNoDialog(
                       Messages.getString("PhysicalDisplay.ExtendBladeDialog" + ".title"),
@@ -1032,6 +1037,54 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
     }
 
+    /**
+     * Release pheromone gas to impair enemy conventional infantry (IO pg 79).
+     */
+    public void pheromoneAttack() {
+        PheromoneAttackAction act = new PheromoneAttackAction(currentEntity,
+              target.getTargetType(),
+              target.getId());
+        ToHitData toHit = act.toHit(game);
+
+        String title = Messages.getString("PhysicalDisplay.PheromoneDialog.title", target.getDisplayName());
+        String message = Messages.getString("PhysicalDisplay.PheromoneDialog.message",
+              toHit.getValueAsString(),
+              Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+              toHit.getDesc());
+
+        // Give the user a chance to cancel the attack.
+        if (clientgui.doYesNoDialog(title, message)) {
+            disableButtons();
+            addAttack(act);
+            ready();
+        }
+    }
+
+    /**
+     * Release toxin gas to damage enemy conventional infantry (IO pg 79).
+     */
+    public void toxinAttack() {
+        ToxinAttackAction act = new ToxinAttackAction(currentEntity,
+              target.getTargetType(),
+              target.getId());
+        ToHitData toHit = act.toHit(game);
+        int damage = ToxinAttackAction.getDamageFor((Infantry) currentEntity());
+
+        String title = Messages.getString("PhysicalDisplay.ToxinDialog.title", target.getDisplayName());
+        String message = Messages.getString("PhysicalDisplay.ToxinDialog.message",
+              toHit.getValueAsString(),
+              Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+              toHit.getDesc(),
+              damage);
+
+        // Give the user a chance to cancel the attack.
+        if (clientgui.doYesNoDialog(title, message)) {
+            disableButtons();
+            addAttack(act);
+            ready();
+        }
+    }
+
     public void jumpJetAttack() {
         ToHitData toHit;
         int leg;
@@ -1101,9 +1154,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                       target.isConventionalInfantry(), false);
                 // Need to do this outside getDamageFor, as it only returns int
                 String dmgString = String.valueOf(dmg);
-                if ((club.getType().hasSubType(MiscType.S_COMBINE) ||
-                      club.getType().hasSubType(MiscType.S_CHAINSAW) ||
-                      club.getType().hasSubType(MiscType.S_DUAL_SAW)) && target.isConventionalInfantry()) {
+                if ((club.getType().hasAnyFlag(MiscTypeFlag.S_COMBINE, MiscTypeFlag.S_CHAINSAW,
+                      MiscTypeFlag.S_DUAL_SAW)) && target.isConventionalInfantry()) {
                     dmgString = "1d6";
                 }
                 names[loop] = Messages.getString("PhysicalDisplay.ChooseClubDialog.line",
@@ -1168,9 +1220,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         final int clubDmg = ClubAttackAction.getDamageFor(en, club, target.isConventionalInfantry(), false);
         // Need to do this outside getDamageFor, as it only returns int
         String dmgString = String.valueOf(clubDmg);
-        if ((club.getType().hasSubType(MiscType.S_COMBINE) ||
-              club.getType().hasSubType(MiscType.S_CHAINSAW) ||
-              club.getType().hasSubType(MiscType.S_DUAL_SAW)) && target.isConventionalInfantry()) {
+        if ((club.getType().hasAnyFlag(MiscTypeFlag.S_COMBINE, MiscTypeFlag.S_CHAINSAW, MiscTypeFlag.S_DUAL_SAW))
+              && target.isConventionalInfantry()) {
             dmgString = "1d6";
         }
         String title = Messages.getString("PhysicalDisplay.ClubDialog.title", target.getDisplayName());
@@ -1584,18 +1635,18 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                         canClub |= (clubToHit.getValue() != TargetRoll.IMPOSSIBLE);
                         // assuming S7 vibroswords count as swords and maces
                         // count as hatchets
-                        if (club.getType().hasSubType(MiscType.S_SWORD) ||
-                              club.getType().hasSubType(MiscType.S_HATCHET) ||
-                              club.getType().hasSubType(MiscType.S_VIBRO_SMALL) ||
-                              club.getType().hasSubType(MiscType.S_VIBRO_MEDIUM) ||
-                              club.getType().hasSubType(MiscType.S_VIBRO_LARGE) ||
-                              club.getType().hasSubType(MiscType.S_MACE) ||
-                              club.getType().hasSubType(MiscType.S_LANCE) ||
-                              club.getType().hasSubType(MiscType.S_CHAIN_WHIP) ||
-                              club.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE) ||
-                              club.getType().hasSubType(MiscType.S_SHIELD_LARGE) ||
-                              club.getType().hasSubType(MiscType.S_SHIELD_MEDIUM) ||
-                              club.getType().hasSubType(MiscType.S_SHIELD_SMALL)) {
+                        if (club.getType().hasAnyFlag(MiscTypeFlag.S_SWORD,
+                              MiscTypeFlag.S_HATCHET,
+                              MiscTypeFlag.S_VIBRO_SMALL,
+                              MiscTypeFlag.S_VIBRO_MEDIUM,
+                              MiscTypeFlag.S_VIBRO_LARGE,
+                              MiscTypeFlag.S_MACE,
+                              MiscTypeFlag.S_LANCE,
+                              MiscTypeFlag.S_CHAIN_WHIP,
+                              MiscTypeFlag.S_RETRACTABLE_BLADE,
+                              MiscTypeFlag.S_SHIELD_LARGE,
+                              MiscTypeFlag.S_SHIELD_MEDIUM,
+                              MiscTypeFlag.S_SHIELD_SMALL)) {
                             canAim = true;
                         }
                     }
@@ -1622,6 +1673,18 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                 // vibro attack?
                 ToHitData vibro = BAVibroClawAttackAction.toHit(clientgui.getClient().getGame(), currentEntity, target);
                 setVibroEnabled(vibro.getValue() != TargetRoll.IMPOSSIBLE);
+
+                // pheromone attack?
+                ToHitData pheromone = PheromoneAttackAction.toHit(clientgui.getClient().getGame(),
+                      currentEntity,
+                      target);
+                setPheromoneEnabled(pheromone.getValue() != TargetRoll.IMPOSSIBLE);
+
+                // toxin attack?
+                ToHitData toxin = ToxinAttackAction.toHit(clientgui.getClient().getGame(),
+                      currentEntity,
+                      target);
+                setToxinEnabled(toxin.getValue() != TargetRoll.IMPOSSIBLE);
             }
             // Brush off swarming infantry or iNarcPods?
             ToHitData brushRight = BrushOffAttackAction.toHit(clientgui.getClient().getGame(),
@@ -1647,6 +1710,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             setThrashEnabled(false);
             setProtoEnabled(false);
             setVibroEnabled(false);
+            setPheromoneEnabled(false);
+            setToxinEnabled(false);
         }
         setSearchlightEnabled((currentEntity() != null) && (target != null) && currentEntity().isUsingSearchlight());
     }
@@ -1869,6 +1934,10 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             explosives();
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_VIBRO.getCmd())) {
             vibroclawAttack();
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_PHEROMONE.getCmd())) {
+            pheromoneAttack();
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_TOXIN.getCmd())) {
+            toxinAttack();
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_NEXT.getCmd())) {
             selectEntity(clientgui.getClient().getNextEntityNum(currentEntity));
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_SEARCHLIGHT.getCmd())) {
@@ -1963,6 +2032,16 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     public void setVibroEnabled(boolean enabled) {
         buttons.get(PhysicalCommand.PHYSICAL_VIBRO).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_VIBRO.getCmd(), enabled);
+    }
+
+    public void setPheromoneEnabled(boolean enabled) {
+        buttons.get(PhysicalCommand.PHYSICAL_PHEROMONE).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_PHEROMONE.getCmd(), enabled);
+    }
+
+    public void setToxinEnabled(boolean enabled) {
+        buttons.get(PhysicalCommand.PHYSICAL_TOXIN).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_TOXIN.getCmd(), enabled);
     }
 
     public void setExplosivesEnabled(boolean enabled) {

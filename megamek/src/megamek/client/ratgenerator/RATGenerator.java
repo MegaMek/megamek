@@ -25,7 +25,7 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  *
- * MechWarrior Copyright Microsoft Corporation. <Package Name> was created under
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
  * Microsoft's "Game Content Usage Rules"
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
@@ -1575,14 +1575,24 @@ public class RATGenerator {
                 for (String code : codes) {
 
                     AvailabilityRating ar = new AvailabilityRating(chassisKey, era, code);
-                    // If it provides availability values based on equipment ratings,
-                    // generate index values in addition to letter values
-                    if (ar.hasMultipleRatings()) {
-                        ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
-                    }
+                    FactionRecord chassisFaction = factions.get(ar.getFaction());
+                    if (null != chassisFaction || code.startsWith("General")) {
 
-                    cr.getIncludedFactions().add(ar.getFaction());
-                    chassisIndex.get(era).get(chassisKey).put(ar.getFactionCode(), ar);
+                        // If it provides availability values based on equipment ratings,
+                        // generate index values in addition to letter values
+                        if (ar.hasMultipleRatings()) {
+                            ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
+                        }
+
+                        cr.getIncludedFactions().add(ar.getFaction());
+                        chassisIndex.get(era).get(chassisKey).put(ar.getFactionCode(), ar);
+
+                    } else {
+                        LOGGER.warn("{} not a valid faction code in year {}. See {}.",
+                              ar.getFaction(),
+                              ar.era,
+                              ar.unitName);
+                    }
 
                 }
             } else if (wn2.getNodeName().equalsIgnoreCase("model")) {
@@ -1633,14 +1643,23 @@ public class RATGenerator {
                 for (String code : codes) {
 
                     AvailabilityRating ar = new AvailabilityRating(modelRecord.getKey(), era, code);
-                    // If it provides availability values based on equipment ratings,
-                    // generate index values in addition to letter values
-                    if (ar.hasMultipleRatings()) {
-                        ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
-                    }
+                    FactionRecord modelFaction = factions.get(ar.getFaction());
+                    if (null != modelFaction || code.startsWith("General")) {
+                        // If it provides availability values based on equipment ratings,
+                        // generate index values in addition to letter values
+                        if (ar.hasMultipleRatings()) {
+                            ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
+                        }
 
-                    modelRecord.getIncludedFactions().add(ar.getFaction());
-                    modelIndex.get(era).get(modelRecord.getKey()).put(ar.getFactionCode(), ar);
+                        modelRecord.getIncludedFactions().add(ar.getFaction());
+                        modelIndex.get(era).get(modelRecord.getKey()).put(ar.getFactionCode(), ar);
+
+                    } else {
+                        LOGGER.warn("{} not a valid faction code in year {}. See model {}.",
+                              ar.getFaction(),
+                              ar.era,
+                              ar.unitName);
+                    }
 
                 }
             }

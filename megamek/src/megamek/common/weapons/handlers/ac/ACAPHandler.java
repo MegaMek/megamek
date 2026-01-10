@@ -46,8 +46,9 @@ import megamek.common.compute.ComputeSideTable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.units.Building;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -66,7 +67,7 @@ public class ACAPHandler extends ACWeaponHandler {
     }
 
     @Override
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, Building bldg, int hits,
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
           int nCluster, int bldgAbsorbs) {
         AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(),
@@ -143,7 +144,12 @@ public class ACAPHandler extends ACWeaponHandler {
             if (bDirect) {
                 critModifier += toHit.getMoS() / 3;
             }
-            hit.makeArmorPiercing(ammoType, critModifier);
+            // PLAYTEST3 new AP values
+            if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                hit.makeArmorPiercing(ammoType, critModifier);
+            } else {
+                hit.makeArmorPiercingPlaytest(ammoType, critModifier);
+            }
             vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, nDamage, false,
                   attackingEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
                   false, false, throughFront, underWater));

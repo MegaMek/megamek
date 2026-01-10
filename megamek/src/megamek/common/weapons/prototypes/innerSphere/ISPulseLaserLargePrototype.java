@@ -87,7 +87,7 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
         shortAV = 9;
         medAV = 9;
         maxRange = RANGE_MED;
-        rulesRefs = "71, IO";
+        rulesRefs = "67, IO:AE";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

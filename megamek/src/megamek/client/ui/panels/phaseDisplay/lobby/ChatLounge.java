@@ -67,6 +67,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serial;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -357,6 +359,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
     private transient ClientGUI clientgui;
+    private boolean lobbySavePerformed = false;
 
     /** Creates a new chat lounge for the clientGUI.getClient(). */
     public ChatLounge(ClientGUI clientGUI) {
@@ -1102,6 +1105,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             comMapSizes.addItem(size);
         }
 
+        comMapSizes.addItem(Messages.getString("ChatLounge.CustomMapSize"));
         comMapSizes.setSelectedIndex(oldSelection != -1 ? oldSelection : 0);
         comMapSizes.addActionListener(lobbyListener);
     }
@@ -1827,6 +1831,10 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         if (clientgui.getClient().getGame().getPhase().isLounge()) {
+            // Only reset the save flag when entering lounge from a different phase
+            if (!e.getOldPhase().isLounge()) {
+                lobbySavePerformed = false;
+            }
             refreshDoneButton();
             refreshGameSettings();
             refreshPlayerTable();
@@ -2500,6 +2508,16 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         boolean done = !localPlayer().isDone();
+
+        // Save lobby state if setting is enabled, player is marking as done, and we haven't saved yet
+        if (done && GUIP.getSaveLobbyOnStart() && !lobbySavePerformed) {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss"));
+            String filename = "Lobby_Save_" + timestamp;
+            String path = "./" + MMConstants.SAVEGAME_DIR;
+            client.sendChat(ClientGUI.CG_CHAT_COMMAND_LOCAL_SAVE + " " + filename + " " + path);
+            lobbySavePerformed = true;
+        }
+
         client.sendDone(done);
         refreshDoneButton(done);
         for (AbstractClient botClient : clientgui.getLocalBots().values()) {

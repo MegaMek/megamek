@@ -135,6 +135,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JCheckBoxMenuItem viewMinimap = new JCheckBoxMenuItem(getString("CommonMenuBar.viewMinimap"));
     private final JCheckBoxMenuItem viewMekDisplay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewMekDisplay"));
     private final JCheckBoxMenuItem viewForceDisplay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewForceDisplay"));
+    private final JMenuItem viewNovaNetworks = new JMenuItem(getString("CommonMenuBar.viewNovaNetworks"));
     private final JMenuItem viewAccessibilityWindow = new JMenuItem(getString("CommonMenuBar.viewAccessibilityWindow"));
     private final JCheckBoxMenuItem viewKeybindsOverlay = new JCheckBoxMenuItem(getString(
           "CommonMenuBar.viewKeyboardShortcuts"));
@@ -158,6 +159,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
           "CommonMenuBar.viewToggleFovHighlight"));
     private final JCheckBoxMenuItem toggleFovDarken = new JCheckBoxMenuItem(getString(
           "CommonMenuBar.viewToggleFovDarken"));
+    private final JCheckBoxMenuItem toggleFovSpotting = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.viewToggleFovSpotting"));
     private final JCheckBoxMenuItem toggleFiringSolutions = new JCheckBoxMenuItem(getString(
           "CommonMenuBar.viewToggleFiringSolutions"));
     private final JCheckBoxMenuItem toggleCFWarning = new JCheckBoxMenuItem(getString(
@@ -304,6 +307,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(gamePlayerList, menu, VIEW_PLAYER_LIST, GUIP.getPlayerListEnabled());
         GUIP.setForceDisplayEnabled(false);
         initMenuItem(viewForceDisplay, menu, VIEW_FORCE_DISPLAY, GUIP.getForceDisplayEnabled());
+        initMenuItem(viewNovaNetworks, menu, VIEW_NOVA_NETWORKS);
         GUIP.setBotCommandsEnabled(false);
         initMenuItem(viewBotCommands, menu, VIEW_BOT_COMMANDS, VK_G, GUIP.getBotCommandsEnabled());
         menu.addSeparator();
@@ -335,6 +339,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         toggleFovDarken.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFovDarkenTooltip"));
         initMenuItem(viewLOSSetting, menu, VIEW_LOS_SETTING);
         initMenuItem(toggleFovHighlight, menu, VIEW_TOGGLE_FOV_HIGHLIGHT, GUIP.getFovHighlight());
+        initMenuItem(toggleFovSpotting, menu, VIEW_TOGGLE_FOV_SPOTTING, GUIP.getFovSpottingMode());
+        toggleFovSpotting.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFovSpottingTooltip"));
         initMenuItem(viewMovementEnvelope, menu, VIEW_MOVE_ENV, GUIP.getMoveEnvelope());
         initMenuItem(viewMovModEnvelope, menu, VIEW_MOVE_MOD_ENV);
         menu.addSeparator();
@@ -375,6 +381,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     /** Sets/updates the accelerators from the KeyCommandBinds preferences. */
     private void setKeyBinds() {
         toggleSensorRange.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.SENSOR_RANGE));
+        toggleFovSpotting.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.FOV_SPOTTING));
         toggleFieldOfFire.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.FIELD_FIRE));
         toggleIsometric.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.TOGGLE_ISO));
         viewMovementEnvelope.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.MOVE_ENVELOPE));
@@ -499,8 +506,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardValidate.setEnabled(isBoardEditor);
         boardResize.setEnabled(isBoardEditor);
         boardSourceFile.setEnabled(isBoardEditor);
-        gameQLoad.setEnabled(isMainMenu);
-        gameLoad.setEnabled(isMainMenu);
+        gameQLoad.setEnabled(isMainMenu || isLobby);
+        gameLoad.setEnabled(isMainMenu || isLobby);
         gameStart.setEnabled(isMainMenu);
         gameConnect.setEnabled(isMainMenu);
 
@@ -544,6 +551,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         toggleFleeZone.setEnabled(isInGameBoardView);
         toggleFovHighlight.setEnabled(isInGameBoardView);
         toggleFovDarken.setEnabled(isInGameBoardView);
+        toggleFovSpotting.setEnabled(isInGameBoardView);
         toggleFiringSolutions.setEnabled(isInGameBoardView);
         toggleCFWarning.setEnabled(isInGameBoardView);
         viewMovementEnvelope.setEnabled(isInGameBoardView);
@@ -581,6 +589,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             case GUIPreferences.USE_ISOMETRIC -> toggleIsometric.setSelected((Boolean) e.getNewValue());
             case GUIPreferences.SHOW_FIELD_OF_FIRE -> toggleFieldOfFire.setSelected((Boolean) e.getNewValue());
             case GUIPreferences.SHOW_SENSOR_RANGE -> toggleSensorRange.setSelected((Boolean) e.getNewValue());
+            case GUIPreferences.FOV_SPOTTING_MODE -> {
+                // Use invokeLater to avoid interfering with accelerator processing
+                final boolean newState = (Boolean) e.getNewValue();
+                javax.swing.SwingUtilities.invokeLater(() -> toggleFovSpotting.setSelected(newState));
+            }
             case GUIPreferences.SHOW_KEYBINDS_OVERLAY -> viewKeybindsOverlay.setSelected((Boolean) e.getNewValue());
             case GUIPreferences.SHOW_PLANETARY_CONDITIONS_OVERLAY ->
                   viewPlanetaryConditionsOverlay.setSelected((Boolean) e.getNewValue());

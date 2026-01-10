@@ -34,6 +34,7 @@
 package megamek.common.game;
 
 import static java.util.stream.Collectors.toList;
+import static megamek.common.enums.GamePhase.INITIATIVE_REPORT;
 import static megamek.common.options.OptionsConstants.ATOW_COMBAT_PARALYSIS;
 import static megamek.common.options.OptionsConstants.ATOW_COMBAT_SENSE;
 
@@ -60,7 +61,14 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
-import megamek.common.equipment.*;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Flare;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.INarcPod;
+import megamek.common.equipment.Minefield;
+import megamek.common.equipment.MinefieldTarget;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.event.GameEndEvent;
 import megamek.common.event.GameEvent;
@@ -606,11 +614,12 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @return true if the player has a valid unit with the Tactical Genius pilot special ability.
      */
     public boolean hasTacticalGenius(Player player) {
+        // Note: rules do not state that Tactical Genius cannot apply to deployment initiative roll (CamOps pg 80)
         for (Entity entity : inGameTWEntities()) {
             if (entity.hasAbility(OptionsConstants.MISC_TACTICAL_GENIUS) &&
                   entity.getOwner().equals(player) &&
                   !entity.isDestroyed() &&
-                  entity.isDeployed() &&
+                  (entity.isDeployed() || (getPhase() == INITIATIVE_REPORT)) &&
                   !entity.isCarcass() &&
                   !entity.getCrew().isUnconscious()) {
                 return true;
@@ -1088,6 +1097,17 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 List<Entity> listForLocation = positionMap.computeIfAbsent(location, k -> new ArrayList<>());
                 listForLocation.add(entity);
             }
+
+            if (entity instanceof BuildingEntity buildingEntity) {
+                for (Coords coords : buildingEntity.getSecondaryPositions().values()) {
+                    final BoardLocation secondaryLocation = new BoardLocation(coords, entity.getBoardId(), false);
+                    if (hasBoardLocation(secondaryLocation)) {
+                        List<Entity> listForLocation = positionMap.computeIfAbsent(secondaryLocation,
+                              k -> new ArrayList<>());
+                        listForLocation.add(entity);
+                    }
+                }
+            }
         }
         return positionMap;
     }
@@ -1275,20 +1295,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public synchronized void addEntity(Entity entity, boolean genEvent) {
         entity.setGame(this);
-        if (entity instanceof Mek entityMek) {
-            entityMek.setBAGrabBars();
-            entityMek.setProtoMekClampMounts();
-        } else if (entity instanceof Tank entityTank) {
-            entityTank.setBAGrabBars();
-            entityTank.setTrailerHitches();
-        }
-
-        // Add magnetic clamp mounts
-        if ((entity instanceof Mek) && !entity.isOmni() && !entity.hasBattleArmorHandles()) {
-            entity.addTransporter(new ClampMountMek());
-        } else if ((entity instanceof Tank entityTank) && !entityTank.isOmni() && !entityTank.hasBattleArmorHandles()) {
-            entityTank.addTransporter(new ClampMountTank());
-        }
+        entity.addIntrinsicTransporters();
 
         entity.setGameOptions();
         if (entity.getC3UUIDAsString() == null) {
@@ -1509,6 +1516,22 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
+     * Returns an Iterator for all entities in _all_ of the coordinates provided.
+     * Coords must not be null.
+     * @param coordList     ArrayList of coordinates to check.
+     * @return Iterator over the vector of entities.  The vector must exist to get the iterator.
+     */
+    public Iterator<Entity> getEntities(ArrayList<Coords> coordList) {
+        Vector<Entity> entities = new Vector<>();
+        for (Coords coords : coordList) {
+            if (coords != null) {
+                entities.addAll(getEntitiesVector(coords));
+            }
+        }
+        return entities.iterator();
+    }
+
+    /**
      * Returns an Enumeration of the active entities at the given coordinates.
      */
     public Iterator<Entity> getEntities(Coords c, boolean ignore) {
@@ -1609,7 +1632,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Return a Vector of gun emplacements at Coords <code>c</code>
+     * Return a Vector of gun emplacements at Coords <code>c</code>.
      *
      * @param c The coordinates to check
      *
@@ -1618,7 +1641,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public List<GunEmplacement> getGunEmplacements(Coords c, int boardId) {
         List<GunEmplacement> result = new ArrayList<>();
 
-        // Only build the list if the coords are on the board.
+        // Only build the list if the coords are on the board. // TODO Ensure this works w/ BuildingEntity
         if (hasBoardLocation(c, boardId)) {
             for (Entity entity : getEntitiesVector(c, boardId, true)) {
                 if (entity instanceof GunEmplacement gunEmplacement) {
@@ -1638,9 +1661,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public boolean hasRooftopGunEmplacement(Coords c, int boardId) {
         if (!hasBoardLocation(c, boardId)) {
             return false;
-        }
+        } // TODO Ensure this works with BuildingEntity
         Board board = getBoard(boardId);
-        Building building = board.getBuildingAt(c);
+        IBuilding building = board.getBuildingAt(c);
         if (building == null) {
             return false;
         }
@@ -2142,7 +2165,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Removes the first turn found that the specified entity can move in. Used when a turn is played out of order
+     * Removes the first turn found that the specified entity can move in. Used when a turn is played out of order.
+     *
+     * @param entity the entity to remove a turn for
+     * @return the removed GameTurn, or null if not found
+     * @throws Exception if called during the movement phase
      */
     public @Nullable GameTurn removeFirstTurnFor(final Entity entity) throws Exception {
         if (getPhase().isMovement()) {
@@ -2578,7 +2605,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                     rollTarget.addElement(roll.getValue());
                     rollLocation.addElement(1);
                     rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("right leg actuator hit") || roll.getDesc().equals("right hip actuator hit")) {
+                } else if (roll.getDesc().equals("right leg actuator hit") || roll.getDesc()
+                      .equals("right hip actuator hit")) {
                     rollTarget.addElement(roll.getValue());
                     rollLocation.addElement(2);
                     rollsToRemove.addElement(i);
@@ -2611,7 +2639,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 saveEntry = 0;
                 entrySaved = false;
                 for (int i = 0; i < rollTarget.size(); i++) {
-                    if ((rollTarget.elementAt(i) > highTarget) && (rollLocation.elementAt(i)==location)) {
+                    if ((rollTarget.elementAt(i) > highTarget) && (rollLocation.elementAt(i) == location)) {
                         saveEntry = i;
                         entrySaved = true;
                         highTarget = rollTarget.elementAt(i);
@@ -2623,7 +2651,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             }
             logger.debug("Playtest: Removing PSR rolls for " + entity.getDisplayName());
             // Remove the saved element from our removal list
-            for (int i = saveRolls.size()-1; i > -1; i--) {
+            for (int i = saveRolls.size() - 1; i > -1; i--) {
                 roll = pilotRolls.elementAt(saveRolls.elementAt(i));
                 logger.debug("Saving PSR roll: " + roll.getDesc());
                 rollsToRemove.removeElementAt(saveRolls.elementAt(i));
@@ -3452,7 +3480,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Updates the map that maps a position to the list of Entity's in that position.
-     *
      */
     public synchronized void updateEntityPositionLookup(Entity e, HashSet<Coords> oldPositions) {
         HashSet<Coords> newPositions = e.getOccupiedCoords();
@@ -3686,7 +3713,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return The building at the location, if any
      */
-    public Optional<Building> getBuildingAt(@Nullable BoardLocation boardLocation) {
+    public Optional<IBuilding> getBuildingAt(@Nullable BoardLocation boardLocation) {
         return getBuildingAt(boardLocation.coords(), boardLocation.boardId());
     }
 
@@ -3698,7 +3725,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return The building at the location, if any
      */
-    public Optional<Building> getBuildingAt(@Nullable Coords coords, int boardId) {
+    public Optional<IBuilding> getBuildingAt(@Nullable Coords coords, int boardId) {
         if (hasBoardLocation(coords, boardId)) {
             return Optional.ofNullable(getBoard(boardId).getBuildingAt(coords));
         } else {

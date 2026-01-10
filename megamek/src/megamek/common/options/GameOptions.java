@@ -81,6 +81,7 @@ public class GameOptions extends BasicGameOptions {
         // Change this to false for normal release
         addOption(base, OptionsConstants.PLAYTEST_1, false);
         addOption(base, OptionsConstants.PLAYTEST_2, false);
+        addOption(base, OptionsConstants.PLAYTEST_3, false);
         addOption(base, OptionsConstants.BASE_PUSH_OFF_BOARD, true);
         addOption(base, OptionsConstants.BASE_DUMPING_FROM_ROUND, 1);
         addOption(base, OptionsConstants.BASE_LOBBY_AMMO_DUMP, false);
@@ -137,12 +138,17 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_TAKE_COVER, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_ANGEL_ECM, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_BATTLE_WRECK, false);
-        addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_SKIN_OF_THE_TEETH_EJECTION, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_MOBILE_HQS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_FATIGUE, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_FUMBLES, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_SELF_DESTRUCT, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_TANK_CREWS, false);
+        // Ejection and crew abandonment options grouped together
+        addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_SKIN_OF_THE_TEETH_EJECTION, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT, false);
+        addOption(advancedRules, OptionsConstants.RPG_CONDITIONAL_EJECTION, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_QUIRKS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_PARTIAL_REPAIRS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_ASSAULT_DROP, false);
@@ -195,6 +201,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_JUMP_JET_ATTACK, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_TRIP_ATTACK, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS, false);
+        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GAUSS_WEAPONS, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMMUNITION, false);
@@ -206,9 +213,6 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BA_VS_BA, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_NO_TAC, false);
-        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD, false);
-        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD_VARIABLE, false);
-        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD_DIVISOR, 10);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_VTOL_STRAFING, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_VEHICLES_SAFE_FROM_INFERNOS, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_PROTOMEKS_SAFE_FROM_INFERNOS, false);
@@ -227,6 +231,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_HOT_LOAD_IN_GAME, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS, false);
+        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS, false);
 
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement");
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_SPRINT, false);
@@ -255,9 +260,6 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT_NUMBER, 4);
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_UNOFF_NO_IMMOBILE_VEHICLES, false);
-        addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT, false);
-        addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE, false);
-        addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_HOVER_CHARGE, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_PRE_MOVE_VIBRA, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_FALLS_END_MOVEMENT, false);
@@ -290,6 +292,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER, true);
+        addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT, true);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_AA_FIRE, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_AA_MOVE_MOD, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_ALLOW_LARGE_SQUADRONS, false);
@@ -326,7 +329,6 @@ public class GameOptions extends BasicGameOptions {
         addOption(rpg, OptionsConstants.RPG_RPG_GUNNERY, false);
         addOption(rpg, OptionsConstants.RPG_ARTILLERY_SKILL, false);
         addOption(rpg, OptionsConstants.RPG_TOUGHNESS, false);
-        addOption(rpg, OptionsConstants.RPG_CONDITIONAL_EJECTION, false);
         addOption(rpg, OptionsConstants.RPG_BEGIN_SHUTDOWN, false);
     }
 

@@ -3100,4 +3100,60 @@ public class Tank extends Entity {
         }
         return getCrew().isEjected() && !isDestroyed();
     }
+
+    // Combat Vehicle Escape Pod (CVEP) - TO:AUE p.121
+
+    /**
+     * Returns true if this vehicle has a Combat Vehicle Escape Pod installed.
+     *
+     * @return true if this vehicle has a CVEP
+     */
+    public boolean hasCombatVehicleEscapePod() {
+        for (MiscMounted misc : getMisc()) {
+            if (misc.getType().hasFlag(MiscType.F_COMBAT_VEHICLE_ESCAPE_POD)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if this vehicle has an undamaged Combat Vehicle Escape Pod. Per TO:AUE p.121, the CVEP is treated as
+     * a weapon item and can be damaged by critical hits to the rear location.
+     *
+     * @return true if this vehicle has an undamaged CVEP
+     */
+    public boolean hasUndamagedCombatVehicleEscapePod() {
+        for (MiscMounted misc : getMisc()) {
+            if (misc.getType().hasFlag(MiscType.F_COMBAT_VEHICLE_ESCAPE_POD)) {
+                return !misc.isDestroyed() && !misc.isBreached() && !misc.isMissing();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if the crew can launch the Combat Vehicle Escape Pod this turn. Per TO:AUE p.121, the crew may
+     * choose to use the CVEP during the Movement Phase if the system has not been previously damaged.
+     *
+     * @return true if the CVEP can be launched
+     */
+    public boolean canLaunchEscapePod() {
+        // Must have a living crew
+        if (getCrew() == null || getCrew().isEjected() || getCrew().isDead()) {
+            return false;
+        }
+
+        // Must have an undamaged CVEP
+        if (!hasUndamagedCombatVehicleEscapePod()) {
+            return false;
+        }
+
+        // Vehicle must not already be destroyed
+        if (isDestroyed() || isDoomed()) {
+            return false;
+        }
+
+        return true;
+    }
 }

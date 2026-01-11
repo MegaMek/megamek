@@ -34,6 +34,7 @@
 package megamek.client.generator;
 
 import static java.util.Map.entry;
+import static megamek.common.equipment.AmmoType.INCENDIARY_MOD;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -103,6 +104,13 @@ public class TeamLoadOutGenerator {
 
     public static float UNSET_FILL_RATIO = Float.NEGATIVE_INFINITY;
 
+    // The following ArrayLists represent notional categories with strings that _should_ match entries in the per-weapon
+    // ammo lists in MunitionTree, which are then used for lookups in the EquipmentType entries for AmmoType instances.
+    // So these entries need to allow lookups in the MT lists, but neither need to _exactly_ match specific munition
+    // names so long as:
+    // 1. these entries produce 1 and only 1 result when used to look up MT list entries, and
+    // 2. entries in the MT lists, combined with a weapon type name (with or without rack size / damage rating)
+    //    produce 1 and only 1 matching AmmoType entry.
     public static final ArrayList<String> AP_MUNITIONS = new ArrayList<>(List.of("Armor-Piercing", "Tandem-Charge"));
 
     public static final ArrayList<String> FLAK_MUNITIONS = new ArrayList<>(List.of("ADA",
@@ -125,6 +133,7 @@ public class TeamLoadOutGenerator {
 
     public static final ArrayList<String> ANTI_INF_MUNITIONS = new ArrayList<>(List.of("Inferno",
           "Inferno-IV",
+          "Incendiary",
           "Fragmentation",
           "Flechette",
           "Fuel-Air",
@@ -139,6 +148,7 @@ public class TeamLoadOutGenerator {
 
     public static final ArrayList<String> ANTI_BA_MUNITIONS = new ArrayList<>(List.of("Inferno",
           "Inferno-IV",
+          "Incendiary",
           "Fuel-Air",
           "Tandem-Charge",
           "Acid",
@@ -147,8 +157,8 @@ public class TeamLoadOutGenerator {
           "IIW",
           "IMP"));
 
+    // Incendiary causes fires and burns people, but does not add heat to units, so no entry here.
     public static final ArrayList<String> HEAT_MUNITIONS = new ArrayList<>(List.of("Inferno",
-          "Incendiary",
           "InfernoBomb",
           "Inferno-IV",
           "IIW",
@@ -194,7 +204,7 @@ public class TeamLoadOutGenerator {
           "Thunder Vibrabomb-IV"
           ));
 
-    // Guided munitions come in two main flavors
+    // Guided munitions come in two main flavors: TAG, and NARC
     public static final ArrayList<String> GUIDED_MUNITIONS = new ArrayList<>(List.of("Semi-Guided",
           "SG",
           "Narc-capable",
@@ -202,6 +212,7 @@ public class TeamLoadOutGenerator {
           "Copperhead",
           "LGBomb",
           "ArrowIVHomingMissile Ammo"));
+
     public static final ArrayList<String> TAG_GUIDED_MUNITIONS = new ArrayList<>(List.of("Semi-Guided",
           "SG",
           "Homing",
@@ -211,12 +222,14 @@ public class TeamLoadOutGenerator {
 
     public static final ArrayList<String> NARC_GUIDED_MUNITIONS = new ArrayList<>(List.of("Narc-capable"));
 
+    // Seeking munitions are self-guiding, but weak against countermeasures like ECM
     public static final ArrayList<String> SEEKING_MUNITIONS = new ArrayList<>(List.of("Heat-Seeking",
           "Listen-Kill",
           "Swarm",
           "Swarm-I",
           "Anti-Radiation"));
 
+    // We don't include Incendiary here because the number of _shots_ isn't reduced, only some damage potential.
     public static final ArrayList<String> AMMO_REDUCING_MUNITIONS = new ArrayList<>(List.of("Acid",
           "Laser Inhibiting",
           "Follow The Leader",
@@ -1327,6 +1340,10 @@ public class TeamLoadOutGenerator {
             munitionWeightCollection.decreaseUtilityMunitions();
         }
 
+        // Create weights for Incendiary versions of any LRM ammo that currently would be selected.
+        modifyIncendiaryLRMWeights(munitionWeightCollection);
+
+        // Apply overrides, modifiers, and prohibitions to the final weights before updating the MunitionsTree
         applyModifiersToWeights(reconfigurationParameters, munitionWeightCollection, subMap("Overrides", weightMap),
               subList("Prohibited", weightMap));
 
@@ -1346,6 +1363,29 @@ public class TeamLoadOutGenerator {
         return mt;
     }
 
+    public static void modifyIncendiaryLRMWeights(MunitionWeightCollection munitionWeightCollection) {
+        HashMap<String, Double> originalWeights = new HashMap(munitionWeightCollection.getLrmWeights());
+        double cutoff = castPropertyDouble("Defaults.Factors.mtMunitionWeightThreshold", 0.0);
+        double incendiaryWeight = originalWeights.getOrDefault("Incendiary", 0.0);
+
+        // If the weight for Incendiary, as a class, is above the cutoff, we should modify the Incendiary versions
+        // of all LRM munitions (including Standard).
+        if ( incendiaryWeight > cutoff) {
+            double oldWeight;
+            double newWeight;
+            String incendiaryType;
+            for (String munitionType : originalWeights.keySet()) {
+                if (!munitionType.contains("Incendiary")) {
+                    // Combine the two weights, but only if the original weight was above the cutoff as well
+                    // This way, only incendiary versions of high-scoring candidates will be considered.
+                    oldWeight = originalWeights.get(munitionType);
+                    newWeight = (oldWeight > cutoff) ? oldWeight + incendiaryWeight : oldWeight;
+                    incendiaryType = munitionType + " " + INCENDIARY_MOD;
+                    munitionWeightCollection.getLrmWeights().put(incendiaryType, newWeight);
+                }
+            }
+        }
+    }
     /**
      * Apply global and specific modifiers to the generated weight values.
      * This is where Overrides and Prohibitions are applied.
@@ -1680,6 +1720,7 @@ public class TeamLoadOutGenerator {
             String lookup = "";
             boolean random = priorities.get(i).contains("Random");
             String binType = (random) ? getRandomBin(binName, trueRandom) : priorities.get(i);
+            String subType = (binType.contains(" w/")) ? binType.substring(0, binType.indexOf(" w/")) : null;
             Mounted<AmmoType> bin = binList.get(0);
             AmmoType desired;
             boolean available = false;
@@ -1691,6 +1732,10 @@ public class TeamLoadOutGenerator {
                 if (desired == null) {
                     // Some ammo, like AC/XX ammo, is named funny
                     desired = (AmmoType) EquipmentType.get(techBase + " Ammo " + binName);
+                }
+                if (desired == null) {
+                    // Incendiary ammo contains an additional sub-type string
+                    desired = (AmmoType) EquipmentType.get(techBase + " Ammo " + binName + subType);
                 }
 
             } else {
@@ -1704,7 +1749,8 @@ public class TeamLoadOutGenerator {
                 desired = vAllTypes.stream()
                       .filter(m -> m.getInternalName().startsWith(techBase) &&
                             m.getBaseName().contains(binName) &&
-                            m.getName().contains(binType))
+                            m.getName().contains(binType) &&
+                            (subType == null || m.getName().contains(subType)))
                       .findFirst()
                       .orElse(null);
                 lookup = binType;

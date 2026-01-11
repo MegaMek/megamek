@@ -525,7 +525,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         fileUnitsPaste.setEnabled(isLobby);
         fileUnitsCopy.setEnabled(isLobby);
         fileUnitsReinforce.setEnabled((isInGame) && isNotVictory);
-        fileUnitsReinforceRAT.setEnabled((isLobby || isInGame) && isNotVictory);
+        fileUnitsReinforceRAT.setEnabled((isMainMenu || isLobby || isInGame) && isNotVictory);
         fileUnitsSave.setEnabled(isLobby || (isInGame && canSave));
         fileUnitsBrowse.setEnabled(isMainMenu);
         boardSaveAsImageUnits.setEnabled(isInGame);

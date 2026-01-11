@@ -42,6 +42,7 @@ import javax.swing.JTabbedPane;
 import com.formdev.flatlaf.extras.components.FlatTriStateCheckBox;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.advancedsearch.exceptions.FilterParsingException;
+import megamek.common.equipment.EquipmentType;
 
 /**
  * Panel that allows the user to create a unit filter.
@@ -67,6 +68,7 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
      */
     public TWAdvancedSearchPanel(int year) {
         gameYear = year;
+        EquipmentType.initializeTypes();
 
         basePanel = new MiscSearchTab();
         weaponEqPanel = new WeaponSearchTab(this);

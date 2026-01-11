@@ -90,6 +90,7 @@ import megamek.client.ui.dialogs.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.dialogs.gameConnectionDialogs.HostDialog;
 import megamek.client.ui.dialogs.helpDialogs.HelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
+import megamek.client.ui.dialogs.randomArmy.MMMainMenuRandomArmyDialog;
 import megamek.client.ui.dialogs.scenario.ScenarioChooserDialog;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MainMenuUnitBrowserDialog;
 import megamek.client.ui.enums.DialogResult;
@@ -1327,6 +1328,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 MainMenuUnitBrowserDialog unitSelectorDialog = new MainMenuUnitBrowserDialog(frame, unitLoadingDialog);
                 new Thread(unitSelectorDialog, "Mek Selector Dialog").start();
                 unitSelectorDialog.setVisible(true);
+                break;
+            case ClientGUI.FILE_UNITS_REINFORCE_RAT:
+                new MMMainMenuRandomArmyDialog(frame).setVisible(true);
                 break;
         }
     };

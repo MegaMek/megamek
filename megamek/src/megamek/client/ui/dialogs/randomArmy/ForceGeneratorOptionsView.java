@@ -55,10 +55,11 @@ import javax.swing.*;
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.Ruleset.ProgressListener;
 import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.MulWriterGui;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Player;
 import megamek.common.game.Game;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
@@ -133,11 +134,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JButton btnExportMUL;
     private JButton btnClear;
 
-    private final ClientGUI clientGui;
+    private final GameOptions gameOptions;
 
-    public ForceGeneratorOptionsView(ClientGUI gui, Consumer<ForceDescriptor> onGenerate) {
-        clientGui = gui;
+    public ForceGeneratorOptionsView(Consumer<ForceDescriptor> onGenerate, GameOptions gameOptions) {
         this.onGenerate = onGenerate;
+        this.gameOptions = gameOptions;
         if (!Ruleset.isInitialized()) {
             Ruleset.loadData();
         }
@@ -145,7 +146,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void initUi() {
-        currentYear = clientGui.getClient().getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+        currentYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
         forceDesc.setYear(currentYear);
         RATGenerator rg = RATGenerator.getInstance();
         rg.loadYear(currentYear);
@@ -917,7 +918,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // Add a player to prevent complaining in the log file
         Player p = new Player(1, "Observer");
         game.addPlayer(1, p);
-        game.setOptions(clientGui.getClient().getGame().getOptions());
+        game.setOptions(gameOptions);
         list.forEach(en -> {
             en.setOwner(p);
             // If we don't set the id, the first unit will be left at -1, which in most
@@ -927,7 +928,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             game.addEntity(en);
         });
         configureNetworks(fd);
-        clientGui.saveListFile(list, clientGui.getClient().getLocalPlayer().getName());
+        new MulWriterGui().saveAndShowError(list, fd.parseName(), SwingUtilities.getWindowAncestor(this));
     }
 
     /**

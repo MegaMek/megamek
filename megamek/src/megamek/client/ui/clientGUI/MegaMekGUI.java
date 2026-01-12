@@ -90,6 +90,7 @@ import megamek.client.ui.dialogs.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.dialogs.gameConnectionDialogs.HostDialog;
 import megamek.client.ui.dialogs.helpDialogs.HelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
+import megamek.client.ui.dialogs.randomArmy.AbstractRandomArmyDialog;
 import megamek.client.ui.dialogs.randomArmy.MMMainMenuRandomArmyDialog;
 import megamek.client.ui.dialogs.scenario.ScenarioChooserDialog;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MainMenuUnitBrowserDialog;
@@ -159,6 +160,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private ManagedVolatileImage logoImage;
     private ManagedVolatileImage medalImage;
     private TipOfTheDay tipOfTheDay;
+    private AbstractRandomArmyDialog randomArmyDialog;
 
     private static MegaMekController controller;
 
@@ -1225,6 +1227,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (tipOfTheDay != null) {
             tipOfTheDay.stopCycling();
         }
+        // clean up disposable things
+        if (randomArmyDialog != null) {
+            randomArmyDialog.dispose();
+            randomArmyDialog = null;
+        }
         // listen to new frame
         launched.addWindowListener(new WindowAdapter() {
             @Override
@@ -1330,7 +1337,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 unitSelectorDialog.setVisible(true);
                 break;
             case ClientGUI.FILE_UNITS_REINFORCE_RAT:
-                new MMMainMenuRandomArmyDialog(frame).setVisible(true);
+                if (randomArmyDialog == null) {
+                    randomArmyDialog = new MMMainMenuRandomArmyDialog(frame);
+                }
+                randomArmyDialog.setVisible(true);
                 break;
         }
     };

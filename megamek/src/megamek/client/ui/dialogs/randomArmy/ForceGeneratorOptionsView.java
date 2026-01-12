@@ -41,6 +41,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -55,13 +57,13 @@ import javax.swing.*;
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.Ruleset.ProgressListener;
 import megamek.client.ui.Messages;
-import megamek.client.ui.MulWriterGui;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Player;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityListFile;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
@@ -928,7 +930,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             game.addEntity(en);
         });
         configureNetworks(fd);
-        new MulWriterGui().saveAndShowError(list, fd.parseName(), SwingUtilities.getWindowAncestor(this));
+        try {
+            EntityListFile.saveTo(new File(fd.parseName()), list);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error while saving file!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**

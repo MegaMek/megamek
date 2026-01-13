@@ -680,7 +680,8 @@ public class Engine implements Serializable, ITechnology {
      * @return the heat generated while the mek is walking. Only Meks generate movement heat.
      */
     public int getWalkHeat(Entity entity) {
-        if (!(entity instanceof Mek mek)) {
+        // IndustrialMeks don't take movement heat, TW pg. 158
+        if (!(entity instanceof Mek mek) || mek.isIndustrialMek()) {
             return 0;
         }
         return switch (engineType) {
@@ -695,7 +696,8 @@ public class Engine implements Serializable, ITechnology {
      * @return the heat generated while the mek is running. Only Meks generate movement heat.
      */
     public int getRunHeat(Entity entity) {
-        if (!(entity instanceof Mek mek)) {
+        // IndustrialMeks don't take movement heat, TW pg. 158
+        if (!(entity instanceof Mek mek) || mek.isIndustrialMek()) {
             return 0;
         }
         return switch (engineType) {
@@ -710,7 +712,8 @@ public class Engine implements Serializable, ITechnology {
      * @return the heat generated while the mek is sprinting. Only Meks generate movement heat.
      */
     public int getSprintHeat(Entity entity) {
-        if (!(entity instanceof Mek mek)) {
+        // IndustrialMeks don't take movement heat, TW pg. 158
+        if (!(entity instanceof Mek mek) || mek.isIndustrialMek()) {
             return 0;
         }
         return switch (engineType) {

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,6 +31,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
+
 package megamek.client.ui.dialogs.randomArmy;
 
 import megamek.client.AbstractClient;

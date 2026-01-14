@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,6 +45,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -256,6 +257,10 @@ public class ForceGeneratorViewUi implements ActionListener {
 
     public void setYear(int year) {
         panControls.setCurrentYear(year);
+    }
+
+    public List<Entity> getChosenUnits() {
+        return Collections.unmodifiableList(modelChosen.allEntities());
     }
 
     /**

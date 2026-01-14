@@ -391,6 +391,4 @@ public class ARADEquipmentDetector {
               !equipment.isMissing() &&
               !equipment.isBreached();
     }
-
-    public static int calcClusterModifier(boolean ecmAffected, boolean )
 }

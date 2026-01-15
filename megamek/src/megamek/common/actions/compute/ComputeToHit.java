@@ -354,7 +354,8 @@ public class ComputeToHit {
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM)) &&
-                  (munition.contains(AmmoType.Munitions.M_NARC_CAPABLE))) {
+                  (munition.contains(AmmoType.Munitions.M_NARC_CAPABLE) ||
+                        munition.contains(AmmoType.Munitions.M_ARAD))) {
                 isINarcGuided = true;
             }
         }
@@ -371,7 +372,7 @@ public class ComputeToHit {
                   (te != null) &&
                   (ammoType != null) &&
                   usesAmmo &&
-                  (munition.contains(AmmoType.Munitions.M_NARC_CAPABLE) &&
+                  ((munition.contains(AmmoType.Munitions.M_NARC_CAPABLE) || munition.contains(AmmoType.Munitions.M_ARAD) )&&
                         (te.isNarcedBy(ae.getOwner().getTeam()) || te.isINarcedBy(ae.getOwner().getTeam())))) {
                 spotter = te;
                 narcSpotter = true;

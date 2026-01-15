@@ -39,6 +39,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
@@ -55,6 +56,7 @@ import megamek.common.actions.compute.ComputeToHit;
 import megamek.common.board.CrossBoardAttackHelper;
 import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.INarcPod;
@@ -441,12 +443,22 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
     /**
      * To-hit number for attacker firing a generic weapon at the target. Does not factor in any special weapon or ammo
-     * considerations, including range modifiers. Also does not include gunnery skill.
+     * considerations, including range modifiers. Also does not include gunnery skill. However, to accurately decide
+     * which targets should appear as "valid", we need to know the weapon mode and ammo type.
      *
      * @param game The current {@link Game}
      */
-    public static ToHitData toHit(Game game, int attackerId, Targetable target) {
+    public static ToHitData toHit(Game game, int attackerId, Optional<WeaponMounted> weaponOpt,
+          Optional<AmmoMounted> ammoOpt, Optional<Entity> spotterOpt,
+          Targetable target) {
         final Entity attackingEntity = game.getEntity(attackerId);
+        final Entity spotter = spotterOpt.orElse(null);
+        final WeaponMounted weapon = weaponOpt.orElse(null);
+        final AmmoMounted ammo = ammoOpt.orElse(null);
+        final WeaponType weaponType = (weapon != null) ? weapon.getType() : null;
+        final AmmoType ammoType = (ammo != null) ? ammo.getType() : null;
+        final boolean isIndirect = ((weapon != null) && (weapon.hasModes() && weapon.curMode().isIndirect()));
+        final boolean spotting = (spotter != null);
 
         if (attackingEntity == null) {
             return null;
@@ -479,15 +491,20 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // woods is only +1 total)
         int eiStatus = 0;
 
-        // Bogus value, since this method doesn't account for weapons but some of its
+        // Possibly set bogus value, since this method doesn't account for weapons but some of its
         // calls do
-        int weaponId = WeaponType.WEAPON_NA;
+        int weaponId = (weapon != null) ? attackingEntity.getEquipmentNum(weapon) : WeaponType.WEAPON_NA;
 
         boolean isAttackerInfantry = attackingEntity instanceof Infantry;
         boolean inSameBuilding = Compute.isInSameBuilding(game, attackingEntity, targetEntity);
 
-        // check LOS
-        LosEffects los = LosEffects.calculateLOS(game, attackingEntity, target);
+        // check LOS; need spotter info to mark some icons correctly
+        LosEffects los;
+        if (isIndirect) {
+            los = LosEffects.calculateLOS(game, spotting ? spotter : attackingEntity, target, spotting);
+        } else {
+            los = LosEffects.calculateLOS(game, attackingEntity, target);
+        }
 
         if (attackingEntity.hasActiveEiCockpit()) {
             if (los.getLightWoods() > 0) {
@@ -504,13 +521,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
         toHit = ComputeEnvironmentalToHitMods.compileEnvironmentalToHitMods(game,
               attackingEntity,
               target,
-              null,
-              null,
+              weaponType,
+              ammoType,
               toHit,
               false);
 
         // Collect the modifiers for the crew/pilot
-        toHit = ComputeAttackerToHitMods.compileCrewToHitMods(game, attackingEntity, toHit, null);
+        toHit = ComputeAttackerToHitMods.compileCrewToHitMods(game, attackingEntity, toHit, weapon);
 
         // Collect the modifiers for the attacker's condition/actions
         // Conventional fighter, Aerospace and fighter LAM attackers
@@ -523,9 +540,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
                   Entity.LOC_NONE,
                   AimingMode.NONE,
                   eiStatus,
-                  null,
-                  null,
-                  null,
+                  weaponType,
+                  weapon,
+                  ammoType,
                   EnumSet.of(AmmoType.Munitions.M_STANDARD),
                   false,
                   false,
@@ -541,10 +558,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
                   toHit,
                   Entity.LOC_NONE,
                   AimingMode.NONE,
-                  null,
-                  null,
+                  weaponType,
+                  weapon,
                   weaponId,
-                  null,
+                  ammoType,
                   EnumSet.of(AmmoType.Munitions.M_STANDARD),
                   false,
                   false,
@@ -561,15 +578,15 @@ public class WeaponAttackAction extends AbstractAttackAction {
               Entity.LOC_NONE,
               AimingMode.NONE,
               distance,
-              null,
-              null,
-              null,
+              weaponType,
+              weapon,
+              ammoType,
               EnumSet.of(AmmoType.Munitions.M_STANDARD),
               false,
               false,
               isAttackerInfantry,
               false,
-              false,
+              isIndirect,
               false,
               false);
 
@@ -587,14 +604,14 @@ public class WeaponAttackAction extends AbstractAttackAction {
               toHit,
               losMods,
               eiStatus,
-              null,
-              null,
+              weaponType,
+              weapon,
               weaponId,
-              null,
-              null,
+              ammoType,
+              ammo,
               isAttackerInfantry,
               inSameBuilding,
-              false,
+              isIndirect,
               false,
               false);
 

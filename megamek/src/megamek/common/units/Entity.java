@@ -2682,8 +2682,8 @@ public abstract class Entity extends TurnOrdered
             // only Meks can move underwater
             if (hex.containsTerrain(Terrains.WATER) &&
                   (assumedAlt < hex.getLevel()) &&
-                  !(this instanceof Mek) &&
-                  !(this instanceof ProtoMek)) {
+                  !((this instanceof Mek) || (this instanceof ProtoMek)) &&
+                  !(hasEnvironmentalSealing())) {
                 return false;
             }
             // can move on the ground unless its underwater

@@ -33,6 +33,7 @@
 package megamek.client.ui.dialogs.phaseDisplay;
 
 import java.util.List;
+import java.util.Optional;
 import javax.swing.JFrame;
 import javax.swing.JToggleButton;
 
@@ -105,7 +106,8 @@ public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
                           firingEntity.getId(), target, BrushOffAttackAction.LEFT);
                 }
             } else {
-                thd = WeaponAttackAction.toHit(clientGUI.getClient().getGame(), firingEntity.getId(), target);
+                thd = WeaponAttackAction.toHit(clientGUI.getClient().getGame(), firingEntity.getId(),
+                      Optional.empty(), Optional.empty(), Optional.empty(), target);
                 thd.setLocation(target.getPosition());
                 thd.setRange(firingEntity.getPosition().distance(target.getPosition()));
             }

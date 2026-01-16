@@ -321,6 +321,7 @@ public class BehaviorSettingsFactory {
             berserkBehavior.setSelfPreservationIndex(2);
             berserkBehavior.setHerdMentalityIndex(5);
             berserkBehavior.setBraveryIndex(9);
+            berserkBehavior.setHiddenUnitRevealIndex(9);
             berserkBehavior.setAntiCrowding(0);
             berserkBehavior.setFavorHigherTMM(0);
             berserkBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
@@ -355,6 +356,7 @@ public class BehaviorSettingsFactory {
             cowardlyBehavior.setSelfPreservationIndex(10);
             cowardlyBehavior.setHerdMentalityIndex(8);
             cowardlyBehavior.setBraveryIndex(2);
+            cowardlyBehavior.setHiddenUnitRevealIndex(1);
             cowardlyBehavior.setAntiCrowding(0);
             cowardlyBehavior.setFavorHigherTMM(0);
             cowardlyBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
@@ -390,6 +392,7 @@ public class BehaviorSettingsFactory {
             escapeBehavior.setSelfPreservationIndex(10);
             escapeBehavior.setHerdMentalityIndex(5);
             escapeBehavior.setBraveryIndex(2);
+            escapeBehavior.setHiddenUnitRevealIndex(2);
             escapeBehavior.setAntiCrowding(0);
             escapeBehavior.setFavorHigherTMM(0);
             escapeBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
@@ -425,6 +428,7 @@ public class BehaviorSettingsFactory {
             ruthlessBehavior.setSelfPreservationIndex(10);
             ruthlessBehavior.setHerdMentalityIndex(1);
             ruthlessBehavior.setBraveryIndex(7);
+            ruthlessBehavior.setHiddenUnitRevealIndex(7);
             ruthlessBehavior.setAntiCrowding(10);
             ruthlessBehavior.setFavorHigherTMM(8);
             ruthlessBehavior.setNumberOfEnemiesToConsiderFacing(2);
@@ -460,6 +464,7 @@ public class BehaviorSettingsFactory {
             pirateBehavior.setSelfPreservationIndex(6);
             pirateBehavior.setHerdMentalityIndex(9);
             pirateBehavior.setBraveryIndex(10);
+            pirateBehavior.setHiddenUnitRevealIndex(8);
             pirateBehavior.setAntiCrowding(5);
             pirateBehavior.setFavorHigherTMM(5);
             pirateBehavior.setIAmAPirate(true);
@@ -498,6 +503,7 @@ public class BehaviorSettingsFactory {
             convoyBehavior.setFallShameIndex(6);
             convoyBehavior.setHyperAggressionIndex(3);
             convoyBehavior.setBraveryIndex(2);
+            convoyBehavior.setHiddenUnitRevealIndex(0);
             convoyBehavior.setSelfPreservationIndex(10);
             convoyBehavior.setHerdMentalityIndex(5);
             convoyBehavior.setAntiCrowding(5);
@@ -538,6 +544,7 @@ public class BehaviorSettingsFactory {
             defaultBehavior.setSelfPreservationIndex(5);
             defaultBehavior.setHerdMentalityIndex(5);
             defaultBehavior.setBraveryIndex(5);
+            defaultBehavior.setHiddenUnitRevealIndex(5);
             defaultBehavior.setAntiCrowding(0);
             defaultBehavior.setFavorHigherTMM(0);
             defaultBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);

@@ -362,7 +362,7 @@ class EntityTest {
             String ecmName = (angelECM) ? "ISAngelECMSuite" : "ISGuardianECMSuite";
             try {
                 EquipmentType ecmType = EquipmentType.get(ecmName);
-                Mounted<?> ecmMounted = entity.addEquipment(ecmType, Entity.LOC_NONE);
+                entity.addEquipment(ecmType, Entity.LOC_NONE);
             } catch (Exception e) {
                 fail("Failed to add equipment: " + e.getMessage());
             }
@@ -393,9 +393,9 @@ class EntityTest {
             String masterName = (boosted) ? "ISC3MasterBoostedSystemUnit" : "ISC3MasterUnit";
             try {
                 EquipmentType boostedSlave = EquipmentType.get(slaveName);
-                Mounted<?> bsMounted = e2.addEquipment(boostedSlave, Entity.LOC_NONE);
+                e2.addEquipment(boostedSlave, Entity.LOC_NONE);
                 EquipmentType boostedMaster = EquipmentType.get(masterName);
-                Mounted<?> bmMounted = e1.addEquipment(boostedMaster, Entity.LOC_NONE);
+                e1.addEquipment(boostedMaster, Entity.LOC_NONE);
             } catch (Exception e) {
                 fail("Failed to add Boosted C3 equipment: " + e.getMessage());
             }

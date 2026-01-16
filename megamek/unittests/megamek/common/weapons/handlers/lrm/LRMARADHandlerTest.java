@@ -207,11 +207,11 @@ public class LRMARADHandlerTest {
     }
 
     @Test
-    void testTargetWithNarcInECMNoElectronics() throws EntityLoadingException {
+    void testTargetWithNarcNoElectronics() throws EntityLoadingException {
         Entity attacker = createMockEntity(FRIENDLY_TEAM);
         Entity target = createMockEntity(ENEMY_TEAM);
 
-        // Configure target with C3 and Narc
+        // Configure target with no C3 but with Narc
         doReturn(false).when(target).hasC3();
         doReturn(true).when(target).isNarcedBy(FRIENDLY_TEAM);  // Narc-tagged
         doReturn(Collections.emptyIterator()).when(target).getINarcPodsAttached();
@@ -220,12 +220,12 @@ public class LRMARADHandlerTest {
         List<Mounted<?>> equipment = new ArrayList<>();
         doReturn(equipment).when(target).getEquipment();
 
-        Game game = createMockGame(attacker);  // ECM present (but Narc overrides)
+        Game game = createMockGame(attacker);
 
         LRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(+1, handler.getSalvoBonus(),
-              "Narc-tagged target should receive +1 bonus even with ECM (overrides ECM vs Narc malus)");
+              "Narc-tagged target should receive +1 bonus");
     }
 
     @Test
@@ -233,9 +233,9 @@ public class LRMARADHandlerTest {
         Entity attacker = createMockEntity(FRIENDLY_TEAM);
         Entity target = createMockEntity(ENEMY_TEAM);
 
-        // Configure target with C3 and Narc
+        // Configure target with C3 but no Narc
         doReturn(true).when(target).hasC3();
-        doReturn(false).when(target).isNarcedBy(FRIENDLY_TEAM);  // Narc-tagged
+        doReturn(false).when(target).isNarcedBy(FRIENDLY_TEAM);  // Not Narc-tagged
         doReturn(Collections.emptyIterator()).when(target).getINarcPodsAttached();
         doReturn(false).when(target).isStealthActive();
 

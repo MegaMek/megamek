@@ -83,7 +83,7 @@ public class LRMARADHandler extends LRMHandler {
      *   <li>Check if target is an Entity (only Entities have electronics)</li>
      *   <li>Check if target has qualifying electronics (via ARADEquipmentDetector)</li>
      *   <li>Check if Narc-tagged &rarr; +1 (ARAD overrides ECM vs NARC)</li>
-     *   <li>If YES electronics:+1 (standard bonus)</li>
+     *   <li>If YES electronics: +1 (standard bonus)</li>
      *   <li>If NO electronics or NARC &rarr; -2 (penalty, minimum 2 enforced automatically)</li>
      * </ol>
      *

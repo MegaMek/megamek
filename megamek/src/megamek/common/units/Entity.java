@@ -6794,6 +6794,14 @@ public abstract class Entity extends TurnOrdered
                     // punched through
                     m = master;
                     master = m.getC3Master();
+                } else {
+                    // Somehow still failed; this should not be possible!
+                    throw new IllegalStateException(
+                          "C3 slave/master connection not affected by ECM/AECM but master is!" +
+                          String.format(
+                            "\nSlave: %s @ %s\nMaster: %s @ %s", m, master, m.getPosition(), master.getPosition()
+                          )
+                    );
                 }
             } else {
                 // Can no longer contact master

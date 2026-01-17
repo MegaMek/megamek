@@ -750,18 +750,22 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
         this.turnIndex = turnIndex;
     }
 
+    @Override
     public boolean hasBoardLocation(@Nullable BoardLocation boardLocation) {
         return hasBoardLocation(boardLocation.coords(), boardLocation.boardId());
     }
 
+    @Override
     public boolean hasBoardLocation(Coords coords, int boardId) {
         return hasBoard(boardId) && coords.getX() < board.size();
     }
 
+    @Override
     public boolean hasBoard(@Nullable BoardLocation boardLocation) {
         return (boardLocation != null) && hasBoard(boardLocation.boardId());
     }
 
+    @Override
     @SuppressWarnings("unused")
     public boolean hasBoard(int boardId) {
         return true;

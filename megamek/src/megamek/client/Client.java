@@ -156,6 +156,7 @@ public class Client extends AbstractClient {
         }
     }
 
+    @Override
     public Game getGame() {
         return game;
     }

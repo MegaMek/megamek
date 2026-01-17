@@ -378,10 +378,12 @@ public class Bay implements Transporter, ITechnology {
         setCurrentDoors(getDoors());
     }
 
+    @Override
     public int getNumberUnloadedThisTurn() {
         return unloadedThisTurn;
     }
 
+    @Override
     public int getNumberLoadedThisTurn() {
         return loadedThisTurn;
     }

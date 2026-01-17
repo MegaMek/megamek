@@ -58,6 +58,7 @@ public abstract class AbstractGameManager implements IGameManager {
      *
      * @see Server#send(Packet)
      */
+    @Override
     public void send(Packet packet) {
         Server.getServerInstance().send(packet);
     }
@@ -67,6 +68,7 @@ public abstract class AbstractGameManager implements IGameManager {
      *
      * @see Server#send(int, Packet)
      */
+    @Override
     public void send(int connId, Packet p) {
         Server.getServerInstance().send(connId, p);
     }

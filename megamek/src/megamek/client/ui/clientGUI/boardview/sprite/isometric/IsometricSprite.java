@@ -42,7 +42,6 @@ import megamek.client.ui.clientGUI.boardview.sprite.HexSprite;
 import megamek.client.ui.util.EntityWreckHelper;
 import megamek.common.Player;
 import megamek.common.board.Coords;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -96,6 +95,7 @@ public class IsometricSprite extends HexSprite {
         return entity;
     }
 
+    @Override
     public Coords getPosition() {
         if (secondaryPos == -1) {
             return entity.getPosition();

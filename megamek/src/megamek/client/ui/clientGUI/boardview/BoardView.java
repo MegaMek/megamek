@@ -4577,6 +4577,7 @@ public final class BoardView extends AbstractBoardView
      *
      * @param coords the Coords.
      */
+    @Override
     public void select(Coords coords) {
         if ((coords == null) || game.getBoard(boardId).contains(coords)) {
             setSelected(coords);
@@ -4602,6 +4603,7 @@ public final class BoardView extends AbstractBoardView
      *
      * @param coords the Coords.
      */
+    @Override
     public void highlight(Coords coords) {
         if ((coords == null) || game.getBoard(boardId).contains(coords)) {
             moveCursor(highlightSprite, coords);
@@ -4665,6 +4667,7 @@ public final class BoardView extends AbstractBoardView
      *
      * @param coords the Coords.
      */
+    @Override
     public void cursor(Coords coords) {
         if ((coords == null) || game.getBoard(boardId).contains(coords)) {
             if ((getLastCursor() == null) || (coords == null) || !coords.equals(getLastCursor())) {

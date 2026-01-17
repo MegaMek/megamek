@@ -262,6 +262,7 @@ public abstract class AbstractClient implements IClient {
         flushConn();
     }
 
+    @Override
     public void sendPause() {
         send(new Packet(PacketCommand.PAUSE));
         flushConn();

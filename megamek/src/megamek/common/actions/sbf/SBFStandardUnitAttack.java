@@ -82,6 +82,7 @@ public class SBFStandardUnitAttack extends AbstractSBFAttackAction {
         return new SBFStandardUnitAttackHandler(this, gameManager);
     }
 
+    @Override
     public boolean isDataValid(SBFGame game) {
         Optional<SBFFormation> possibleAttacker = game.getFormation(getEntityId());
         Optional<SBFFormation> possibleTarget = game.getFormation(getTargetId());

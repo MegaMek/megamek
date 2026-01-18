@@ -58,6 +58,14 @@ import org.apache.commons.lang3.ArrayUtils;
 public class AmmoType extends EquipmentType {
     private static final MMLogger LOGGER = MMLogger.create(AmmoType.class);
 
+    /**
+     * Get the name of the mutator of this ammo type. If this is the "standard" ammo type for the weapon, returns null.
+     * @return A string like "Inferno", or null
+     */
+    public String getMutatorName() {
+        return mutatorName;
+    }
+
     public enum AmmoCategory {
         Ballistic,
         Missile,
@@ -2119,6 +2127,9 @@ public class AmmoType extends EquipmentType {
 
     // Reference to the base ammo type, if any
     protected AmmoType base = null;
+
+    // Name of mutator, such as "Inferno"
+    private String mutatorName = null;
 
     // Collate artillery / artillery cannon types for flak check
     // Add ADA here when implemented
@@ -15920,6 +15931,7 @@ public class AmmoType extends EquipmentType {
             // Create an uninitialized munition object.
             AmmoType munition = new AmmoType();
             munition.setTonnage(base.getTonnage(null));
+            munition.mutatorName = name;
             munition.subMunitionName = name;
             munition.base = base;
 

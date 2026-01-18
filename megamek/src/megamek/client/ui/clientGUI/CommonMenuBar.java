@@ -261,7 +261,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(boardSave, menu, BOARD_SAVE);
         initMenuItem(boardSaveAs, menu, BOARD_SAVE_AS);
         menu.addSeparator();
-        
+
         initMenuItem(boardValidate, menu, BOARD_VALIDATE);
         initMenuItem(boardSourceFile, menu, BOARD_SOURCE_FILE);
         initMenuItem(boardRunBoardTagger, menu, BOARD_RUN_BOARD_TAGGER);

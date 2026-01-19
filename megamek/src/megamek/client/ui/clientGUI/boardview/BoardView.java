@@ -172,7 +172,7 @@ public final class BoardView extends AbstractBoardView
      * This value is the vertical offset used currently for hex drawing. Its value is set to 0 for non-iso mode and
      * ISOMETRIC_OFFSET for iso mode. The drawing code itself uses the same logic to draw both modes.
      */
-    public static int verticalOffset = 0;
+    private int verticalOffset = 0;
 
     private static final float[] ZOOM_FACTORS = { 0.30f, 0.41f, 0.50f, 0.60f, 0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f,
                                                   1.3f, 1.6f, 2.0f, 3.0f };
@@ -5647,5 +5647,12 @@ public final class BoardView extends AbstractBoardView
      */
     private void setVerticalOffset() {
         verticalOffset = GUIP.getIsometricEnabled() ? ISOMETRIC_OFFSET : 0;
+    }
+
+    /**
+     * @return The currently used hex elevation vertical offset; when isometric mode is off, this is 0.
+     */
+    public int getVerticalOffset() {
+        return verticalOffset;
     }
 }

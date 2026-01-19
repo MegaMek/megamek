@@ -73,7 +73,7 @@ public class MovingEntitySprite extends Sprite {
         if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
             altAdjust = (int) (bv.DROP_SHADOW_DISTANCE * bv.getScale());
         } else if (elevation != 0) {
-            altAdjust = (int) (elevation * BoardView.verticalOffset * bv.getScale());
+            altAdjust = (int) (elevation * boardView.getVerticalOffset() * bv.getScale());
         }
 
         Dimension dim = new Dimension(bv.getHexSize().width, bv.getHexSize().height + altAdjust);
@@ -99,13 +99,13 @@ public class MovingEntitySprite extends Sprite {
             Image shadow = bv.createShadowMask(bv.getTilesetManager().imageFor(entity, facing, -1));
             shadow = bv.getScaledImage(shadow, true);
 
-            graphics.drawImage(shadow, x, y + (int) (elevation * BoardView.verticalOffset * bv.getScale()), observer);
+            graphics.drawImage(shadow, x, y + (int) (elevation * bv.getVerticalOffset() * bv.getScale()), observer);
         }
         // submerged?
         if ((elevation + entity.getHeight()) < 0) {
             Graphics2D g2 = (Graphics2D) graphics;
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f));
-            g2.drawImage(image, x, y - (int) (elevation * BoardView.verticalOffset * bv.getScale()), observer);
+            g2.drawImage(image, x, y - (int) (elevation * bv.getVerticalOffset() * bv.getScale()), observer);
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         } else {
             // create final image

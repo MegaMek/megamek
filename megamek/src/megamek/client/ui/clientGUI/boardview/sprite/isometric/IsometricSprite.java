@@ -73,7 +73,7 @@ public class IsometricSprite extends HexSprite {
         if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
             altAdjust = (int) (bv.DROP_SHADOW_DISTANCE * bv.getScale());
         } else if ((entity.getElevation() != 0) && !(entity.isBuildingEntityOrGunEmplacement())) {
-            altAdjust = (int) (entity.getElevation() * BoardView.verticalOffset * bv.getScale());
+            altAdjust = (int) (entity.getElevation() * bv.getVerticalOffset() * bv.getScale());
         }
 
         Dimension dim = new Dimension(bv.getHexSize().width, bv.getHexSize().height + altAdjust);
@@ -146,7 +146,7 @@ public class IsometricSprite extends HexSprite {
             shadow = bv.getScaledImage(shadow, true);
 
             // Entities on a bridge hex or submerged in water.
-            int altAdjust = (int) (entity.getElevation() * BoardView.verticalOffset * bv.getScale());
+            int altAdjust = (int) (entity.getElevation() * bv.getVerticalOffset() * bv.getScale());
             if (makeTranslucent) {
                 if (entity.relHeight() < 0) {
                     g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f));

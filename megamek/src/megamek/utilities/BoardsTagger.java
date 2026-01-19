@@ -356,6 +356,10 @@ public class BoardsTagger {
     }
 
     public static void main(String... args) {
+        runBoardTagger();
+    }
+
+    public static void runBoardTagger() {
         try {
             Map<String, List<String>> boardCheckSum = new HashMap<>();
 
@@ -370,7 +374,6 @@ public class BoardsTagger {
             });
         } catch (Exception ex) {
             logger.error(ex, "Board tagger cannot scan boards");
-            System.exit(64);
         }
 
         logger.info("Finished.");

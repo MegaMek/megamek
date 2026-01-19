@@ -113,10 +113,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JMenuItem boardSaveAs = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAs"));
     private final JMenuItem boardSaveAsImage = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAsImage"));
     private final JMenuItem boardSaveAsImageUnits = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAsImageUnits"));
-    private final JCheckBoxMenuItem boardTraceOverlay = new JCheckBoxMenuItem(getString(
-          "CommonMenuBar.boardTraceOverlay"));
+    private final JCheckBoxMenuItem boardTraceOverlay = new JCheckBoxMenuItem(getString("CommonMenuBar.boardTraceOverlay"));
     private final JMenuItem boardResize = new JMenuItem(getString("CommonMenuBar.boardResize"));
     private final JMenuItem boardValidate = new JMenuItem(getString("CommonMenuBar.boardValidate"));
+    private final JMenuItem boardRunBoardTagger = new JMenuItem(getString("CommonMenuBar.boardRunBoardTagger"));
     private final JMenuItem boardSourceFile = new JMenuItem(getString("CommonMenuBar.boardSourceFile"));
     private final JMenuItem boardUndo = new JMenuItem(getString("CommonMenuBar.boardUndo"));
     private final JMenuItem boardRedo = new JMenuItem(getString("CommonMenuBar.boardRedo"));
@@ -260,8 +260,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initializeRecentBoardsMenu();
         initMenuItem(boardSave, menu, BOARD_SAVE);
         initMenuItem(boardSaveAs, menu, BOARD_SAVE_AS);
+        menu.addSeparator();
+
         initMenuItem(boardValidate, menu, BOARD_VALIDATE);
         initMenuItem(boardSourceFile, menu, BOARD_SOURCE_FILE);
+        initMenuItem(boardRunBoardTagger, menu, BOARD_RUN_BOARD_TAGGER);
         menu.addSeparator();
 
         initMenuItem(boardSaveAsImage, menu, BOARD_SAVE_AS_IMAGE);
@@ -504,6 +507,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardRemoveForests.setEnabled(isBoardEditor);
         boardFlatten.setEnabled(isBoardEditor);
         boardValidate.setEnabled(isBoardEditor);
+        boardRunBoardTagger.setEnabled(isBoardEditor);
         boardResize.setEnabled(isBoardEditor);
         boardSourceFile.setEnabled(isBoardEditor);
         gameQLoad.setEnabled(isMainMenu || isLobby);

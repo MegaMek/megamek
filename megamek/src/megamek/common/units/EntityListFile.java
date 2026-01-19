@@ -1596,6 +1596,18 @@ public class EntityListFile {
             output.write("\" " + MULParser.ATTR_IMPLANTS + "=\"");
             output.write(String.valueOf(crew.getOptionList("::", PilotOptions.MD_ADVANTAGES)));
         }
+        if (crew.countOptions(PilotOptions.EI_ADVANTAGES) > 0) {
+            output.write("\" " + MULParser.ATTR_EI_IMPLANTS + "=\"");
+            output.write(String.valueOf(crew.getOptionList("::", PilotOptions.EI_ADVANTAGES)));
+        }
+        // Save EI Interface equipment mode (Off, Initiate enhanced imaging)
+        for (Mounted<?> m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                output.write("\" " + MULParser.ATTR_EI_MODE + "=\"");
+                output.write(m.curMode().getName());
+                break;
+            }
+        }
         // Write prosthetic enhancement data for infantry (IO p.84)
         if (entity instanceof Infantry infantry) {
             if (infantry.getProstheticEnhancement1() != null) {

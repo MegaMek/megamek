@@ -1364,6 +1364,14 @@ public abstract class BVCalculator {
             }
             pilotModifiers.add("TCP");
         }
+        // EI Implant: -1 Gunnery, -1 Piloting for BV purposes, but only if unit has EI Interface (IO p.69)
+        // A warrior with EI implants assigned to a unit lacking the interface uses non-augmented skills.
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_EI_IMPLANT) &&
+              entity.hasEiCockpit()) {
+            piloting = Math.max(0, piloting - 1);
+            gunnery = Math.max(0, gunnery - 1);
+            pilotModifiers.add("EI Implant");
+        }
         return bvSkillMultiplier(gunnery, piloting);
     }
 

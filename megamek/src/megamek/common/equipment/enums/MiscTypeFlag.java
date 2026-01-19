@@ -134,6 +134,7 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_ACTUATOR_ENHANCEMENT_SYSTEM,
 
     F_BAP,
+    F_EI_INTERFACE,
     F_VISUAL_CAMO,
     F_APOLLO,
 

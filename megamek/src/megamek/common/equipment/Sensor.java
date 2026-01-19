@@ -82,6 +82,7 @@ public record Sensor(int type) implements Serializable {
     public static final int TYPE_SPACECRAFT_ESM = 20;
     public static final int TYPE_SPACECRAFT_THERMAL = 21;
     public static final int TYPE_AERO_THERMAL = 22;
+    public static final int TYPE_EI_PROBE = 23;
 
     public static final String WATCHDOG = "WatchdogECMSuite";
     public static final String NOVA = "NovaCEWS";
@@ -105,7 +106,8 @@ public record Sensor(int type) implements Serializable {
                                                   "Aero Sensor Suite (Active)", "Spacecraft Radar (Active)",
                                                   "Spacecraft Electronic Support Measures (Passive)",
                                                   "Spacecraft Thermal/Optical Sensors (Passive)",
-                                                  "Aero Thermal/Optical Sensors (Passive)" };
+                                                  "Aero Thermal/Optical Sensors (Passive)",
+                                                  "EI Interface Probe" };
     public static final int SIZE = sensorNames.length;
 
     //Constants for space automatic visual detection ranges
@@ -134,7 +136,8 @@ public record Sensor(int type) implements Serializable {
         return (type == TYPE_BAP) || (type == TYPE_BLOODHOUND)
               || (type == TYPE_CLAN_AP) || (type == TYPE_WATCHDOG)
               || (type == TYPE_LIGHT_AP) || (type == TYPE_EW_EQUIPMENT)
-              || (type == TYPE_NOVA) || (type == TYPE_BAPP);
+              || (type == TYPE_NOVA) || (type == TYPE_BAPP)
+              || (type == TYPE_EI_PROBE);
     }
 
     public int getRangeByBracket() {
@@ -155,7 +158,7 @@ public record Sensor(int type) implements Serializable {
             case TYPE_VEE_RADAR, TYPE_BA_IMPROVED -> 6;
             case TYPE_EW_EQUIPMENT -> 3;
             case TYPE_MEK_SEISMIC -> 2;
-            case TYPE_VEE_SEISMIC -> 1;
+            case TYPE_VEE_SEISMIC, TYPE_EI_PROBE -> 1;
             //The ranges listed for the various sensors in SO are so far beyond gameplay distances that I'm condensing
             //them into just the types that have different detection mechanics.
             case TYPE_SPACECRAFT_RADAR, TYPE_SPACECRAFT_ESM -> 5555;

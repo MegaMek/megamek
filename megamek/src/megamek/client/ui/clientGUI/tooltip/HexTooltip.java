@@ -434,7 +434,7 @@ public final class HexTooltip {
     public static String getWrecks(GUIPreferences GUIP, BoardView bv, Coords coords) {
         String result = "";
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
-        var wreckList = bv.useIsometric() ? bv.getIsoWreckSprites() : bv.getWreckSprites();
+        var wreckList = bv.getIsoWreckSprites();
         for (var wSprite : wreckList) {
             if (wSprite.getPosition().equals(coords)) {
                 String sWreck = wSprite.getTooltip().toString();

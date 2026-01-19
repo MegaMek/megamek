@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import megamek.common.Hex;
+import megamek.common.HexTarget;
 import megamek.common.Player;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -89,7 +91,7 @@ public class LRMARADHandlerTest {
     /**
      * Test helper: Create a mock handler with specified attacker and target.
      */
-    private LRMARADHandler createHandler(Entity attacker, Entity target, Game game) throws EntityLoadingException {
+    private LRMARADHandler createHandler(Entity attacker, Targetable target, Game game) throws EntityLoadingException {
         ToHitData mockToHit = mock(ToHitData.class);
         WeaponAttackAction mockAction = mock(WeaponAttackAction.class);
         TWGameManager mockGameManager = mock(TWGameManager.class);
@@ -140,7 +142,7 @@ public class LRMARADHandlerTest {
     /**
      * Test helper: Create mock game with ECM behavior.
      */
-    private Game createMockGame(boolean ecmAffected, Entity attacker) {
+    private Game createMockGame(Entity attacker) {
         Game game = mock(Game.class);
         Board mockBoard = mock(Board.class);
         GameOptions mockOptions = mock(GameOptions.class);
@@ -158,14 +160,27 @@ public class LRMARADHandlerTest {
         // ComputeECM.isAffectedByECM() calls attackingEntity.getGame()
         doReturn(game).when(attacker).getGame();
 
-        // Mock ECM detection globally
-        // Note: ComputeECM.isAffectedByECM is static, so we'll test both ECM states
-        // by creating different test scenarios
         return game;
     }
 
-    // NOTE: Non-entity target test removed - requires complex Targetable mocking infrastructure
-    // Production code handles this case in getSalvoBonus() by checking target.getTargetType()
+    @Test
+    void testTargetableIsNotEntity() throws EntityLoadingException {
+        Entity attacker = createMockEntity(FRIENDLY_TEAM);
+        Game game = createMockGame(attacker);  // No ECM
+
+        // Set up a targetable hex.
+        Coords coords = new Coords(7, 6);
+        Hex hex = new Hex(1, "", null, coords);
+        Board board =  new Board(17, 16);
+        board.setHex(coords, hex);
+
+        // HexTargets take a type, the "mode" in which the hex is being targeted.
+        HexTarget target = new HexTarget(coords, board, HexTarget.TYPE_HEX_CLEAR);
+        LRMARADHandler handler = createHandler(attacker, target, game);
+        int salvoBonus = handler.getSalvoBonus();
+
+        assertEquals(-2, salvoBonus);
+    }
 
     @Test
     void testTargetWithElectronicsNoECM() throws EntityLoadingException {
@@ -183,12 +198,58 @@ public class LRMARADHandlerTest {
         equipment.add(c3Equipment);
         doReturn(equipment).when(target).getEquipment();
 
-        Game game = createMockGame(false, attacker);  // No ECM
+        Game game = createMockGame(attacker);  // No ECM
 
         LRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(+1, handler.getSalvoBonus(),
               "Target with electronics and no ECM should receive +1 bonus");
+    }
+
+    @Test
+    void testTargetWithNarcNoElectronics() throws EntityLoadingException {
+        Entity attacker = createMockEntity(FRIENDLY_TEAM);
+        Entity target = createMockEntity(ENEMY_TEAM);
+
+        // Configure target with no C3 but with Narc
+        doReturn(false).when(target).hasC3();
+        doReturn(true).when(target).isNarcedBy(FRIENDLY_TEAM);  // Narc-tagged
+        doReturn(Collections.emptyIterator()).when(target).getINarcPodsAttached();
+        doReturn(false).when(target).isStealthActive();
+
+        List<Mounted<?>> equipment = new ArrayList<>();
+        doReturn(equipment).when(target).getEquipment();
+
+        Game game = createMockGame(attacker);
+
+        LRMARADHandler handler = createHandler(attacker, target, game);
+
+        assertEquals(+1, handler.getSalvoBonus(),
+              "Narc-tagged target should receive +1 bonus");
+    }
+
+    @Test
+    void testTargetWithElectronicsAndECMNoNarc() throws EntityLoadingException {
+        Entity attacker = createMockEntity(FRIENDLY_TEAM);
+        Entity target = createMockEntity(ENEMY_TEAM);
+
+        // Configure target with C3 but no Narc
+        doReturn(true).when(target).hasC3();
+        doReturn(false).when(target).isNarcedBy(FRIENDLY_TEAM);  // Not Narc-tagged
+        doReturn(Collections.emptyIterator()).when(target).getINarcPodsAttached();
+        doReturn(false).when(target).isStealthActive();
+
+        Mounted<?> c3Equipment = createMockEquipment(MiscType.F_C3S, false);
+        List<Mounted<?>> equipment = new ArrayList<>();
+        equipment.add(c3Equipment);
+        doReturn(equipment).when(target).getEquipment();
+
+        Game game = createMockGame(attacker);  // ECM present (but Narc overrides)
+
+        LRMARADHandler handler = createHandler(attacker, target, game);
+
+        assertEquals(+1, handler.getSalvoBonus(),
+              "Target should receive +1 bonus even with ECM (Has electronics)");
     }
 
     @Test
@@ -207,7 +268,7 @@ public class LRMARADHandlerTest {
         equipment.add(c3Equipment);
         doReturn(equipment).when(target).getEquipment();
 
-        Game game = createMockGame(true, attacker);  // ECM present (but Narc overrides)
+        Game game = createMockGame(attacker);  // ECM present (but Narc overrides)
 
         LRMARADHandler handler = createHandler(attacker, target, game);
 
@@ -232,7 +293,7 @@ public class LRMARADHandlerTest {
         doReturn(false).when(target).isStealthActive();
         doReturn(new ArrayList<>()).when(target).getEquipment();
 
-        Game game = createMockGame(false, attacker);
+        Game game = createMockGame(attacker);
 
         LRMARADHandler handler = createHandler(attacker, target, game);
 
@@ -256,7 +317,7 @@ public class LRMARADHandlerTest {
         equipment.add(c3Equipment);
         doReturn(equipment).when(target).getEquipment();
 
-        Game game = createMockGame(false, attacker);
+        Game game = createMockGame(attacker);
 
         LRMARADHandler handler = createHandler(attacker, target, game);
 
@@ -280,7 +341,7 @@ public class LRMARADHandlerTest {
         equipment.add(c3Equipment);
         doReturn(equipment).when(target).getEquipment();
 
-        Game game = createMockGame(false, attacker);
+        Game game = createMockGame(attacker);
 
         LRMARADHandler handler = createHandler(attacker, target, game);
 
@@ -301,7 +362,7 @@ public class LRMARADHandlerTest {
         doReturn(false).when(target).isStealthActive();
         doReturn(new ArrayList<>()).when(target).getEquipment();
 
-        Game game = createMockGame(false, attacker);
+        Game game = createMockGame(attacker);
 
         LRMARADHandler handler = createHandler(attacker, target, game);
 
@@ -321,7 +382,7 @@ public class LRMARADHandlerTest {
         doReturn(false).when(target).isStealthActive();
         doReturn(new ArrayList<>()).when(target).getEquipment();
 
-        Game game = createMockGame(false, attacker);
+        Game game = createMockGame(attacker);
 
         LRMARADHandler handler = createHandler(attacker, target, game);
 

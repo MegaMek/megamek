@@ -266,8 +266,7 @@ public class ARADEquipmentDetector {
     /**
      * Checks if target has active ECM suite.
      * <p>
-     * ECM equipment qualifies regardless of mode (ECM/ECCM/Ghost Targets). The ECM field blocking effect is handled
-     * separately in cluster calculation.
+     * ECM equipment qualifies regardless of mode (ECM/ECCM/Ghost Targets).
      *
      * @param target The entity to check
      *

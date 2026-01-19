@@ -1504,23 +1504,30 @@ public final class BoardView extends AbstractBoardView
         }
     }
 
+    /**
+     * Checks if a deployment indicator (yellow or cyan hex border) should be drawn for the given hex and draws it.
+     *
+     * @param graphics2D The graphics to draw to
+     * @param coords     The hex coords of the hex to check
+     */
     private void drawDeployment(Graphics2D graphics2D, Coords coords) {
         Board board = game.getBoard(boardId);
+        if (en_Deployer == null || !board.isLegalDeployment(coords, en_Deployer)) {
+            return;
+        }
         boolean isAirDeployGround = en_Deployer.getMovementMode().isHover() || en_Deployer.getMovementMode().isVTOL();
         boolean isWiGE = en_Deployer.getMovementMode().isWiGE();
         if (en_Deployer.isAero()) {
             if (en_Deployer.getAltitude() > 0) {
                 // Flying Aeros are always above it all
-                if (board.isLegalDeployment(coords, en_Deployer) && !en_Deployer.isLocationProhibited(coords,
-                      boardId,
-                      board.getMaxElevation()) && !en_Deployer.isBoardProhibited(board)) {
+                if (!en_Deployer.isLocationProhibited(coords, boardId, board.getMaxElevation())
+                      && !en_Deployer.isBoardProhibited(board)) {
                     drawHexBorder(graphics2D, getHexLocation(coords), Color.yellow);
                 }
             } else if (en_Deployer.getAltitude() == 0) {
                 // Show prospective Altitude 1+ hexes
-                if (board.isLegalDeployment(coords, en_Deployer) && !en_Deployer.isLocationProhibited(coords,
-                      boardId,
-                      1) && !en_Deployer.isBoardProhibited(board)) {
+                if (!en_Deployer.isLocationProhibited(coords, boardId, 1)
+                      && !en_Deployer.isBoardProhibited(board)) {
                     drawHexBorder(graphics2D, getHexLocation(coords), Color.cyan);
                 }
             }
@@ -1529,33 +1536,28 @@ public final class BoardView extends AbstractBoardView
             Hex hex = board.getHex(coords);
             // Default to Elevation 1 if ceiling + 1 <= 0.
             int maxHeight = (isWiGE) ? 1 : (hex != null) ? Math.max(hex.ceiling() + 1, 1) : 1;
-            if (board.isLegalDeployment(coords, en_Deployer) && !en_Deployer.isLocationProhibited(coords,
-                  boardId,
-                  maxHeight) && !en_Deployer.isBoardProhibited(board)) {
+            if (!en_Deployer.isLocationProhibited(coords, boardId, maxHeight)
+                  && !en_Deployer.isBoardProhibited(board)) {
                 drawHexBorder(graphics2D, getHexLocation(coords), Color.cyan);
             }
         } else if (en_Deployer instanceof AbstractBuildingEntity) {
-            AllowedDeploymentHelper deploymentHelper = new AllowedDeploymentHelper(en_Deployer, coords, board,
-                  board.getHex(coords), game);
+            var deploymentHelper = new AllowedDeploymentHelper(en_Deployer, coords, board, board.getHex(coords), game);
             FacingOption facingOption = deploymentHelper.findAllowedFacings(0);
             if (facingOption != null && facingOption.hasValidFacings()) {
-                if (board.isLegalDeployment(coords, en_Deployer)
-                      //Draw hexes that're legal if we rotate
-                      && !en_Deployer.isBoardProhibited(board)) {
+                // Draw hexes that're legal if we rotate
+                if (!en_Deployer.isBoardProhibited(board)) {
                     drawHexBorder(graphics2D, getHexLocation(coords), Color.yellow);
                 }
             }
         }
 
-        if (board.isLegalDeployment(coords, en_Deployer)
-              &&
-              // Draw hexes that are legal at lowest deployment elevation
-              !en_Deployer.isLocationProhibited(BoardLocation.of(coords, boardId))
+        if (!en_Deployer.isLocationProhibited(BoardLocation.of(coords, boardId))
               && !en_Deployer.isBoardProhibited(board)) {
+            // Draw hexes that are legal at lowest deployment elevation
             drawHexBorder(graphics2D, getHexLocation(coords), Color.yellow);
         }
-        if (board.isLegalDeployment(coords, en_Deployer) && !en_Deployer.isLocationProhibited(BoardLocation.of(coords,
-              boardId)) && en_Deployer.isLocationDeadly(coords)) {
+        if (!en_Deployer.isLocationProhibited(BoardLocation.of(coords, boardId))
+              && en_Deployer.isLocationDeadly(coords)) {
             drawHexBorder(graphics2D, getHexLocation(coords), GUIP.getWarningColor());
         }
     }
@@ -2085,11 +2087,7 @@ public final class BoardView extends AbstractBoardView
                         drawHex(coords, graphics2D, saveBoardImage);
                         drawOrthograph(coords, graphics2D);
                         drawHexSpritesForHex(coords, graphics2D, behindTerrainHexSprites);
-
-                        if ((en_Deployer != null)) {
-                            drawDeployment(graphics2D, coords);
-                        }
-
+                        drawDeployment(graphics2D, coords);
                         drawOrthograph(coords, graphics2D);
                     }
                 }

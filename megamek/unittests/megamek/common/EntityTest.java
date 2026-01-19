@@ -41,13 +41,19 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.actions.DfaAttackAction;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.loaders.MekFileParser;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
@@ -55,6 +61,8 @@ import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
+import megamek.common.units.VTOL;
+import megamek.common.util.C3Util;
 import megamek.utils.EntityLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -338,4 +346,216 @@ class EntityTest {
             }
         }
     }
+
+    // region ECM Checks
+    @Nested
+    class ecmTopTests {
+        public void setUpECMEntity(Game game, Player player, Entity entity, Coords entityPosition, boolean angelECM) {
+            if (entity.getId() == -1) {
+                entity.setId(3);
+            }
+            entity.setOwner(player);
+            entity.setPosition(entityPosition);
+            entity.setBoardId(1);
+            game.addEntity(entity);
+
+            String ecmName = (angelECM) ? "ISAngelECMSuite" : "ISGuardianECMSuite";
+            try {
+                EquipmentType ecmType = EquipmentType.get(ecmName);
+                entity.addEquipment(ecmType, Entity.LOC_NONE);
+            } catch (Exception e) {
+                fail("Failed to add equipment: " + e.getMessage());
+            }
+        }
+
+        public void setUpC3Link(Game game, Player player, Entity e1, Coords e1Position, Entity e2,
+              Coords e2Position, boolean boosted)
+              throws C3Util.C3CapacityException, C3Util.MismatchingC3MException {
+
+            // Configure IDs, owner, game state
+            if (e1.getId() == -1) {
+                e1.setId(1);
+            }
+            if (e2.getId() == -1) {
+                e2.setId(2);
+            }
+            e1.setOwner(player);
+            e2.setOwner(player);
+            e1.setPosition(e1Position);
+            e1.setBoardId(1);
+            e2.setPosition(e2Position);
+            e2.setBoardId(1);
+            game.addEntity(e1);
+            game.addEntity(e2);
+
+            // Add and connect Boosted C3 equipment
+            String slaveName = (boosted) ? "ISC3BoostedSystemSlaveUnit" : "ISC3SlaveUnit";
+            String masterName = (boosted) ? "ISC3MasterBoostedSystemUnit" : "ISC3MasterUnit";
+            try {
+                EquipmentType boostedSlave = EquipmentType.get(slaveName);
+                e2.addEquipment(boostedSlave, Entity.LOC_NONE);
+                EquipmentType boostedMaster = EquipmentType.get(masterName);
+                e1.addEquipment(boostedMaster, Entity.LOC_NONE);
+            } catch (Exception e) {
+                fail("Failed to add Boosted C3 equipment: " + e.getMessage());
+            }
+
+            C3Util.connect(game, new ArrayList<Entity>(List.of(e1, e2)), e1.getId(), false);
+
+        }
+
+        public Game setUpGame() {
+            Game game = new Game();
+            game.setBoard(1, new Board(16, 17));
+            return game;
+        }
+
+        @Test
+        public void testGetBoostedC3TopUnderAECMNoInfiniteLoop()
+              throws C3Util.C3CapacityException, C3Util.MismatchingC3MException {
+
+            Mek mek = new BipedMek();
+            Tank tank = new Tank();
+            VTOL vtol = new VTOL();
+
+            // Set up game
+            Game game = setUpGame();
+            Player player1 = new Player(1, "C3 side");
+            Player player2 = new Player(2, "ECM side");
+            game.addPlayer(player1.getId(), player1);
+            game.addPlayer(player2.getId(), player2);
+
+            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
+
+            // Set up initial C3 link
+            setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), true);
+
+            // Initial test of connection
+            assertEquals(mek, tank.getC3Master());
+            assertEquals(mek, tank.getC3Top());
+
+            // Actual test: if AECM affects Boosted connection, slave entity returns self as "top" of network.
+            setUpECMEntity(game, player2, vtol, new Coords(2, 2), true);
+            assertEquals(tank, tank.getC3Top());
+        }
+
+        @Test
+        public void testGetC3TopUnderECMNoInfiniteLoop()
+              throws C3Util.C3CapacityException, C3Util.MismatchingC3MException {
+
+            Mek mek = new BipedMek();
+            Tank tank = new Tank();
+            VTOL vtol = new VTOL();
+
+            // Set up game
+            Game game = setUpGame();
+            Player player1 = new Player(1, "C3 side");
+            Player player2 = new Player(2, "ECM side");
+            game.addPlayer(player1.getId(), player1);
+            game.addPlayer(player2.getId(), player2);
+
+            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
+
+            // Set up initial C3 link
+            setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), false);
+
+            // Initial test of connection
+            assertEquals(mek, tank.getC3Master());
+            assertEquals(mek, tank.getC3Top());
+
+            // Actual test: if ECM affects C3 connection, slave entity returns self as "top" of network.
+            setUpECMEntity(game, player2, vtol, new Coords(2, 2), false);
+            assertEquals(tank, tank.getC3Top());
+        }
+
+        @Test
+        public void testGetBoostedC3TopUnderECMNoInfiniteLoop()
+              throws C3Util.C3CapacityException, C3Util.MismatchingC3MException {
+
+            Mek mek = new BipedMek();
+            Tank tank = new Tank();
+            VTOL vtol = new VTOL();
+
+            // Set up game
+            Game game = setUpGame();
+            Player player1 = new Player(1, "C3 side");
+            Player player2 = new Player(2, "ECM side");
+            game.addPlayer(player1.getId(), player1);
+            game.addPlayer(player2.getId(), player2);
+
+            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
+
+            // Set up initial C3 link
+            setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), true);
+
+            // Initial test of connection
+            assertEquals(mek, tank.getC3Master());
+            assertEquals(mek, tank.getC3Top());
+
+            // Actual test: ECM doesn't affect C3 connection, slave entity returns master as "top" of network.
+            setUpECMEntity(game, player2, vtol, new Coords(2, 2), false);
+            assertEquals(mek, tank.getC3Top());
+        }
+
+        @Test
+        public void testGetC3TopUnderAECMNoInfiniteLoop()
+              throws C3Util.C3CapacityException, C3Util.MismatchingC3MException {
+
+            Mek mek = new BipedMek();
+            Tank tank = new Tank();
+            VTOL vtol = new VTOL();
+
+            // Set up game
+            Game game = setUpGame();
+            Player player1 = new Player(1, "C3 side");
+            Player player2 = new Player(2, "ECM side");
+            game.addPlayer(player1.getId(), player1);
+            game.addPlayer(player2.getId(), player2);
+
+            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
+
+            // Set up initial C3 link
+            setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), false);
+
+            // Initial test of connection
+            assertEquals(mek, tank.getC3Master());
+            assertEquals(mek, tank.getC3Top());
+
+            // Actual test: if AECM affects C3 connection, slave entity returns self as "top" of network.
+            setUpECMEntity(game, player2, vtol, new Coords(2, 2), true);
+            assertEquals(tank, tank.getC3Top());
+        }
+
+        @Test
+        public void testGetBoostedC3TopOnlyMasterUnderAECMNoInfiniteLoop()
+              throws C3Util.C3CapacityException, C3Util.MismatchingC3MException {
+
+            Mek mek = new BipedMek();
+            Tank tank = new Tank();
+            VTOL vtol = new VTOL();
+
+            // Set up game
+            Game game = setUpGame();
+            Player player1 = new Player(1, "C3 side");
+            Player player2 = new Player(2, "ECM side");
+            game.addPlayer(player1.getId(), player1);
+            game.addPlayer(player2.getId(), player2);
+
+            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
+
+            // Set up initial C3 link
+            setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), true);
+
+            // Initial test of connection
+            assertEquals(mek, tank.getC3Master());
+            assertEquals(mek, tank.getC3Top());
+
+            // Actual test: if AECM affects Boosted connection, even only at one end,
+            // slave entity returns self as "top" of network.
+            setUpECMEntity(game, player2, vtol, new Coords(3, 9), true);
+            assertEquals(tank, tank.getC3Top());
+        }
+
+    }
+    // endregion ECM Checks
 }

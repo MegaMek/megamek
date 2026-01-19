@@ -114,7 +114,11 @@ public enum ChatCommands {
     SET_WAYPOINT("sw",
           "set-waypoints",
           Messages.getString("Princess.command.setWaypoints.description"),
-          new SetWaypointsCommand());
+          new SetWaypointsCommand()),
+    REVEAL("rv",
+          "reveal",
+          Messages.getString("Princess.command.reveal.description"),
+          new RevealCommand());
 
     private final String abbreviation;
     private final String command;

@@ -42,13 +42,14 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import megamek.common.compute.Compute;
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
+import megamek.logging.MMLogger;
 
 /**
  * Tracks enemy units and calculates threat scores based on their positions and capabilities.
@@ -56,6 +57,8 @@ import megamek.common.actions.WeaponAttackAction;
  * @author Luana Coppio
  */
 public class EnemyTracker {
+    private static final MMLogger LOGGER = MMLogger.create(EnemyTracker.class);
+
     private final Map<Integer, EnemyProfile> enemyProfiles = new HashMap<>();
 
     private final Princess owner;
@@ -165,9 +168,16 @@ public class EnemyTracker {
               && enemyProfiles.size() == visibleEnemies.size()) {
             return;
         }
+
+        LOGGER.debug("Round {}: Updating threat assessment - {} visible enemies",
+              currentRound, visibleEnemies.size());
+
         lastRoundUpdate = getOwner().getGame().getCurrentRound();
+        int previousProfileCount = enemyProfiles.size();
+
         // 1. Update known enemy positions/states
         visibleEnemies.forEach(enemy -> {
+            boolean isNewEnemy = !enemyProfiles.containsKey(enemy.getId());
             EnemyProfile profile = enemyProfiles.computeIfAbsent(enemy.getId(),
                   id -> new EnemyProfile(enemy));
 
@@ -183,18 +193,38 @@ public class EnemyTracker {
                   averageDamagePotential,
                   currentRound
             );
+
+            if (isNewEnemy) {
+                LOGGER.debug("  [NEW] Detected enemy: {} at {} (avg damage potential: {})",
+                      enemy.getDisplayName(), enemy.getPosition(), String.format("%.1f", averageDamagePotential));
+            } else {
+                LOGGER.debug("  [UPDATE] Tracking enemy: {} at {} (avg damage potential: {})",
+                      enemy.getDisplayName(), enemy.getPosition(), String.format("%.1f", averageDamagePotential));
+            }
         });
 
         // remove all the dead entities and the entities that have not been seen for 3 turns
-        enemyProfiles.entrySet().removeIf(entry ->
-              (owner.getGame().getEntity(entry.getValue().id()) == null)
-                    || (entry.getValue().getLastSeenTurn() < currentRound - 3)
-        );
+        enemyProfiles.entrySet().removeIf(entry -> {
+            Entity entity = owner.getGame().getEntity(entry.getValue().id());
+            boolean shouldRemove = (entity == null)
+                  || (entry.getValue().getLastSeenTurn() < currentRound - 3);
+            if (shouldRemove && entity != null) {
+                LOGGER.debug("  [LOST] Lost track of enemy: {} (last seen round {})",
+                      entity.getDisplayName(), entry.getValue().getLastSeenTurn());
+            }
+            return shouldRemove;
+        });
 
         // 3. Calculate threat scores
         enemyProfiles.values().forEach(profile ->
               profile.calculateThreatScore(currentSwarmCenter)
         );
+
+        int newEnemies = enemyProfiles.size() - previousProfileCount;
+        if (newEnemies > 0) {
+            LOGGER.debug("Round {}: Now tracking {} enemies ({} new this round)",
+                  currentRound, enemyProfiles.size(), newEnemies);
+        }
     }
 
     private static class EnemyProfile implements Comparable<Double> {

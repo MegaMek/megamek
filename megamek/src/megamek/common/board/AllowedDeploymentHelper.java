@@ -42,6 +42,7 @@ import java.util.List;
 import megamek.common.Hex;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
+import megamek.common.equipment.MiscType;
 import megamek.common.game.Game;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
@@ -235,6 +236,9 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
 
     private List<ElevationOption> allowedElevationsWithWater() {
         List<ElevationOption> result = new ArrayList<>();
+        boolean hasFlotationHull = entity.hasWorkingMisc(MiscType.F_FLOTATION_HULL);
+        boolean isAmphibious = entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
+        boolean sealed = entity.hasEnvironmentalSealing();
         int depth = hex.terrainLevel(Terrains.WATER);
         // Ice matters only when there is water
         boolean hasIce = hex.containsTerrain(Terrains.ICE);
@@ -252,6 +256,8 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
             }
         } else if (!moveMode.isTrackedWheeledOrHover() && (!hasIce || (depth > entity.height()))) {
             // when there is ice over depth 1 water, don't allow standing Meks to deploy under the ice
+            result.add(new ElevationOption(hex.floor() - hex.getLevel(), ON_SEAFLOOR));
+        } else if (hasFlotationHull || sealed || isAmphibious) {
             result.add(new ElevationOption(hex.floor() - hex.getLevel(), ON_SEAFLOOR));
         }
         if (hasIce && !entity.getMovementMode().isSubmarine()) {

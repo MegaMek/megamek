@@ -111,6 +111,12 @@ Defaults:
       Anti-Radiation:
         IS: 1.0
         Clan: 1.0
+      Incendiary:
+        # Incendiary is a special class that modifies other LRM munition types.
+        # Changes here (or Incendiary: entries in the Prohibited: or Overrides: sections) will apply to all
+        # "<Munition> w/ Incendiary" combinations.
+        IS: 1.0
+        Clan: 1.0
 
     SRM:
       Dead-Fire:
@@ -586,6 +592,8 @@ Defaults:
     minimumAvailFactor: 0.25
     # Maximum factor to apply to availabilityMap values (the factor will not go above this value):
     maximumAvailFactor: 2.0
+    # Default factor to apply to Incendiary-modified munitions before weights are calculated
+    mwcDefaultIncendiaryModWeight: 0.8
 
     ### These factors determine how far up and down an "increase" or "decrease" step actually moves the weight
     # of a munition type.  The default values increase a weight by (2.0 x weight) + 1, and decrease by

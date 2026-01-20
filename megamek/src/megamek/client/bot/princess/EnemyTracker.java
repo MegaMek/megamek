@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Vector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -124,8 +125,8 @@ public class EnemyTracker {
      * @return The hit chance of the attack.
      */
     public static double hitChance(Game game, Entity entity, Targetable target) {
-        ToHitData toHit = WeaponAttackAction.toHit(
-              game, entity.getId(), target);
+        ToHitData toHit = WeaponAttackAction.toHit(game, entity.getId(), Optional.empty(), Optional.empty(),
+              Optional.empty(), target);
         if (toHit.getValue() <= 12) {
             return 1 - (1 - toHit.getValue() / 36.0);
         } else {

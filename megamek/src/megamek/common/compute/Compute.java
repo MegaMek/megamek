@@ -37,6 +37,7 @@ package megamek.common.compute;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static megamek.codeUtilities.MathUtility.clamp;
+import static megamek.common.equipment.AmmoType.Munitions.M_INCENDIARY_LRM;
 
 import java.util.*;
 

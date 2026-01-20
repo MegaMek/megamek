@@ -889,6 +889,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return lastPhase;
     }
 
+    @Override
     public void setLastPhase(GamePhase lastPhase) {
         this.lastPhase = lastPhase;
     }
@@ -1251,6 +1252,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * looks for an entity by id number even if out of the game
      */
+    @Override
     public Entity getEntityFromAllSources(int id) {
         Entity en = getEntity(id);
         if (null == en) {

@@ -66,78 +66,91 @@ public enum MissionRole {
     /* Infantry roles */
     MARINE, MOUNTAINEER, XCT, PARATROOPER, ANTI_MEK, FIELD_GUN,
     /* allows artillery but does not filter out all other roles */
-    MIXED_ARTILLERY;
+    MIXED_ARTILLERY,
+    /* Roles for advanced buildings and mobile structures */
+    GENERATOR, CONTROL;
 
+    /**
+     * Identifies if a role applies to a given unit type
+     * @param unitType  type of unit to check
+     * @return  {@code true} if role applies to the provided unit type
+     */
     public boolean fitsUnitType(int unitType) {
         return switch (this) {
 
             // RECON applies to all unit types except gun emplacements, JumpShips,
-            // space stations, and some specialized aerospace
+            // space stations, some specialized aerospace, buildings, and HHWs
             case RECON -> unitType != UnitType.GUN_EMPLACEMENT &&
                   unitType != UnitType.JUMPSHIP &&
                   unitType != UnitType.SPACE_STATION &&
-                  unitType != UnitType.AERO;
+                  unitType != UnitType.AERO &&
+                  unitType != UnitType.ADVANCED_BUILDING &&
+                  unitType != UnitType.MOBILE_STRUCTURE &&
+                  unitType != UnitType.HANDHELD_WEAPON;
 
             // EW_SUPPORT role applies to all ground units, VTOL, blue water naval, gun
-            // emplacement,
-            // and small craft. Infantry and large spacecraft are excluded.
+            // emplacement, and small craft. Infantry and large spacecraft are excluded.
             case EW_SUPPORT -> unitType == UnitType.MEK ||
                   unitType == UnitType.TANK ||
                   unitType == UnitType.PROTOMEK ||
                   unitType == UnitType.VTOL ||
                   unitType == UnitType.NAVAL ||
                   unitType == UnitType.GUN_EMPLACEMENT ||
-                  unitType == UnitType.SMALL_CRAFT;
+                  unitType == UnitType.SMALL_CRAFT ||
+                  unitType == UnitType.ADVANCED_BUILDING ||
+                  unitType == UnitType.HANDHELD_WEAPON;
 
             // SPOTTER role applies to all ground units plus VTOL, blue water naval, gun
             // emplacements, and fixed wing aircraft.
-            case SPOTTER -> unitType <= UnitType.AEROSPACE_FIGHTER;
+            case SPOTTER -> unitType <= UnitType.AEROSPACE_FIGHTER ||
+                  unitType == UnitType.ADVANCED_BUILDING ||
+                  unitType == UnitType.HANDHELD_WEAPON;
 
             // COMMAND role applies to all ground units, VTOLs, blue water naval,
-            // conventional
-            // fixed wing aircraft, and small craft. Conventional infantry, battle armor,
-            // ProtoMeks, gun emplacements, and large space vessels are excluded.
+            // conventional fixed wing aircraft, and small craft. Conventional infantry,
+            // battle armor, ProtoMeks, gun emplacements, and large space vessels are
+            // excluded.
             case COMMAND -> unitType == UnitType.MEK ||
                   unitType == UnitType.TANK ||
                   unitType == UnitType.VTOL ||
                   unitType == UnitType.NAVAL ||
                   unitType == UnitType.CONV_FIGHTER ||
-                  unitType == UnitType.SMALL_CRAFT;
+                  unitType == UnitType.SMALL_CRAFT ||
+                  unitType == UnitType.ADVANCED_BUILDING ||
+                  unitType == UnitType.MOBILE_STRUCTURE;
 
             // Fire support roles apply to most types except fixed wing aircraft and
             // spacecraft
-            case FIRE_SUPPORT, SR_FIRE_SUPPORT -> unitType <= UnitType.GUN_EMPLACEMENT;
+            case FIRE_SUPPORT, SR_FIRE_SUPPORT -> unitType <= UnitType.GUN_EMPLACEMENT ||
+                  unitType == UnitType.ADVANCED_BUILDING ||
+                  unitType == UnitType.HANDHELD_WEAPON;
 
             // Artillery roles apply to all ground units, VTOL, blue water naval, gun
-            // emplacements,
-            // and conventional fighters. Small craft and DropShips, which are capable of
-            // mounting
-            // artillery type weapons, are included. ProtoMeks cannot carry any existing
-            // artillery
-            // weapons so are excluded.
+            // emplacements, and conventional fighters. Small craft and DropShips,
+            // which are capable of mounting artillery type weapons, are included.
+            // ProtoMeks cannot carry any existing artillery weapons so are excluded.
             case ARTILLERY, MISSILE_ARTILLERY, MIXED_ARTILLERY -> unitType <= UnitType.INFANTRY ||
                   unitType == UnitType.VTOL ||
                   unitType == UnitType.NAVAL ||
                   unitType == UnitType.GUN_EMPLACEMENT ||
                   unitType == UnitType.CONV_FIGHTER ||
                   unitType == UnitType.SMALL_CRAFT ||
-                  unitType == UnitType.DROPSHIP;
+                  unitType == UnitType.DROPSHIP ||
+                  unitType == UnitType.ADVANCED_BUILDING ||
+                  unitType == UnitType.MOBILE_STRUCTURE;
 
             // URBAN role applies to all ground units. Although infantry are inherently
             // urban-oriented this role should be reserved for mechanized (wheeled) and
-            // others which
-            // are not optimized for non-urban terrain.
+            // others which are not optimized for non-urban terrain.
             case URBAN -> unitType <= UnitType.PROTOMEK;
 
             // Infantry support roles are limited to ground units and VTOLs. This includes
-            // infantry
-            // and battle armor that are armed primarily with anti-infantry weapons.
+            // infantry and battle armor that are armed primarily with anti-infantry weapons.
             case ANTI_INFANTRY, INF_SUPPORT -> unitType <= UnitType.PROTOMEK ||
                   unitType == UnitType.VTOL;
 
             // APC role is limited to units which can carry conventional infantry. Although
-            // blue
-            // water naval units can carry infantry they have limited use so are excluded.
+            // blue water naval units can carry infantry they have limited use so are excluded.
             case APC -> unitType == UnitType.TANK ||
                   unitType == UnitType.VTOL;
 
@@ -149,8 +162,7 @@ public enum MissionRole {
                   unitType == UnitType.PROTOMEK;
 
             // MARINE role applies to select battle armor and conventional infantry units
-            // equipped
-            // for space combat
+            // equipped for space combat
             case MARINE -> unitType == UnitType.BATTLE_ARMOR ||
                   unitType == UnitType.INFANTRY;
 
@@ -171,21 +183,21 @@ public enum MissionRole {
 
             // ANTI_AIRCRAFT role applies to all ground units, plus blue water naval and
             // gun emplacements. Conventional infantry are included (field guns/artillery)
-            // but
-            // not battle armor or ProtoMeks.
+            // but not battle armor or ProtoMeks.
             case ANTI_AIRCRAFT -> unitType == UnitType.MEK ||
                   unitType == UnitType.TANK ||
                   unitType == UnitType.INFANTRY ||
                   unitType == UnitType.NAVAL ||
-                  unitType == UnitType.GUN_EMPLACEMENT;
+                  unitType == UnitType.GUN_EMPLACEMENT ||
+                  unitType == UnitType.ADVANCED_BUILDING ||
+                  unitType == UnitType.MOBILE_STRUCTURE;
 
             // INCENDIARY applies to all ground units. This excludes VTOL, blue water naval,
             // and gun emplacements.
             case INCENDIARY -> unitType <= UnitType.PROTOMEK;
 
             // SPECOPS role applies to Meks, ground vehicles, VTOLs, conventional infantry,
-            // and
-            // battle armor.
+            // and battle armor.
             case SPECOPS -> unitType == UnitType.MEK ||
                   unitType == UnitType.TANK ||
                   unitType == UnitType.INFANTRY ||
@@ -193,10 +205,8 @@ public enum MissionRole {
                   unitType == UnitType.VTOL;
 
             // OMNI applies to all units which are capable of being built to make use of
-            // pod-mounted
-            // equipment. This is primarily used to determine suitability for mechanized
-            // battle
-            // armor but other uses may be added later.
+            // pod-mounted equipment. This is primarily used to determine suitability for
+            // mechanized battle armor but other uses may be added later.
             case OMNI -> unitType == UnitType.MEK ||
                   unitType == UnitType.TANK ||
                   unitType == UnitType.AEROSPACE_FIGHTER;
@@ -221,9 +231,8 @@ public enum MissionRole {
             case CORVETTE, DESTROYER, FRIGATE, CRUISER, BATTLESHIP -> unitType == UnitType.WARSHIP;
 
             // TRAINING applies to Meks, ground vehicles, VTOLs, blue water naval, and
-            // conventional
-            // fighters. Infantry, battle armor, ProtoMeks, and gun emplacements are
-            // excluded.
+            // conventional fighters. Infantry, battle armor, ProtoMeks, and gun
+            // emplacements are excluded.
             case TRAINING -> unitType == UnitType.MEK ||
                   unitType == UnitType.TANK ||
                   unitType == UnitType.VTOL ||
@@ -242,35 +251,41 @@ public enum MissionRole {
                   unitType == UnitType.INFANTRY;
 
             // SUPPORT applies to all non-combat ground units, VTOLs, blue water naval,
-            // conventional
-            // fighters, small craft, and some specialized aerospace. ProtoMeks, gun
-            // emplacements, and WarShips are excluded as these are strictly combat units.
+            // conventional fighters, small craft, and some specialized aerospace.
+            // ProtoMeks, gun emplacements, WarShips, and HHWs are excluded as these are
+            // strictly combat units.
             case SUPPORT -> unitType != UnitType.PROTOMEK &&
                   unitType != UnitType.GUN_EMPLACEMENT &&
-                  unitType != UnitType.WARSHIP;
+                  unitType != UnitType.WARSHIP &&
+                  unitType != UnitType.HANDHELD_WEAPON;
 
             // CIVILIAN applies to all non-combat vehicles in civilian service, which
-            // includes
-            // all ground units, VTOLs, blue water naval, conventional fighters, small
-            // craft,
-            // DropShips, JumpShips, space stations, and some specialized aerospace.
-            // ProtoMeks,
-            // gun emplacements, aerospace fighters, and WarShips are excluded as they are
-            // strictly
-            // combat units.
+            // includes all ground units, VTOLs, blue water naval, conventional fighters,
+            // small craft, DropShips, JumpShips, space stations, and some specialized
+            // aerospace. ProtoMeks, gun emplacements, aerospace fighters, WarShips,
+            // and HHWs are excluded as they are strictly combat units.
             case CIVILIAN -> unitType != UnitType.PROTOMEK &&
                   unitType != UnitType.GUN_EMPLACEMENT &&
                   unitType != UnitType.AEROSPACE_FIGHTER &&
-                  unitType != UnitType.WARSHIP;
+                  unitType != UnitType.WARSHIP &&
+                  unitType != UnitType.HANDHELD_WEAPON;
 
             // CARGO applies to ground vehicles, VTOLs, blue water naval, conventional
-            // fighters,
-            // small craft, and all large space vessels.
+            // fighters, small craft, and all large space vessels.
             case CARGO -> unitType == UnitType.TANK ||
                   unitType == UnitType.VTOL ||
                   unitType == UnitType.NAVAL ||
                   unitType == UnitType.CONV_FIGHTER ||
-                  (unitType >= UnitType.SMALL_CRAFT && unitType <= UnitType.SPACE_STATION);
+                  (unitType >= UnitType.SMALL_CRAFT && unitType <= UnitType.SPACE_STATION) ||
+                  unitType == UnitType.ADVANCED_BUILDING ||
+                  unitType == UnitType.MOBILE_STRUCTURE;
+
+            // GENERATOR applies to advanced buildings which power other advanced
+            // buildings
+            case GENERATOR -> unitType == UnitType.ADVANCED_BUILDING;
+
+            // CONTROL applies to advanced buildings which represent basic control centers
+            case CONTROL -> unitType == UnitType.ADVANCED_BUILDING;
         };
     }
 
@@ -355,9 +370,8 @@ public enum MissionRole {
                         break;
 
                     // Calling for SPOTTER returns units with TAG for precision guided weapons.
-                    // Other
-                    // units, primarily infantry and battle armor, may be included at a lower
-                    // priority especially in eras where TAG does not exist.
+                    // Other units, primarily infantry and battle armor, may be included at a
+                    // lower priority especially in eras where TAG does not exist.
                     case SPOTTER:
                         if (isSpecialized(desiredRoles, mRec)) {
                             return null;
@@ -1108,8 +1122,7 @@ public enum MissionRole {
 
                     // Calling for SUPPORT non-combat units may include units with the APC,
                     // CIVILIAN, CARGO, or ENGINEER roles at a lower priority. This should filter
-                    // out
-                    // all combat units, although some of the selected units may have weapons.
+                    // out all combat units, although some of the selected units may have weapons.
                     case SUPPORT:
                         if (mRec.getRoles().contains(SUPPORT)) {
                             avRating += medium_adjust;
@@ -1162,6 +1175,22 @@ public enum MissionRole {
                         }
                         break;
 
+                    // Calling for a generator structure will only return advanced buildings
+                    // which function as one
+                    case GENERATOR:
+                        if (!mRec.getRoles().contains(GENERATOR)) {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for a control building will only return buildings which
+                    // function as one
+                    case CONTROL:
+                        if (!mRec.getRoles().contains(CONTROL)) {
+                            return null;
+                        }
+                        break;
+
                     default:
                         roleApplied = false;
                 }
@@ -1170,10 +1199,8 @@ public enum MissionRole {
         }
 
         // If no roles are required, or a role was requested that was not handled, then
-        // revert to
-        // generic checking. This is much simpler, only checking for a few exclusions
-        // otherwise
-        // using the unmodified availability values.
+        // revert to generic checking. This is much simpler, only checking for a few
+        // exclusions otherwise using the unmodified availability values.
         if (!roleApplied) {
 
             // DropShips and JumpShips are excluded from non-combat and civilian role
@@ -1233,13 +1260,18 @@ public enum MissionRole {
         // Units that only provide artillery are considered specialized enough to be
         // non-combat.
         // DropShips are excluded from this check as they provide additional functions
-        // even if they
-        // mount artillery.
+        // even if they mount artillery.
         return (mRec.getUnitType() != UnitType.DROPSHIP) &&
               (mRec.getRoles().size() == 1) &&
               (mRec.getRoles().contains(ARTILLERY) || mRec.getRoles().contains(MISSILE_ARTILLERY));
     }
 
+    /**
+     * Convert role from string to enum. Underscores (_) are treated as spaces, all characters are forced
+     * to lower case for comparisons.
+     * @param role  role name
+     * @return Null if an unrecognized role string is provided
+     */
     public static MissionRole parseRole(String role) {
         return switch (role.toLowerCase().replace("_", " ")) {
             case "recon" -> RECON;
@@ -1295,6 +1327,8 @@ public enum MissionRole {
             case "civilian" -> CIVILIAN;
             case "minesweeper" -> MINESWEEPER;
             case "minelayer" -> MINELAYER;
+            case "generator" -> GENERATOR;
+            case "control" -> CONTROL;
             default -> null;
         };
     }

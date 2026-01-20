@@ -193,6 +193,28 @@ public class TechAdvancement implements ITechnology {
         return this;
     }
 
+    public TechAdvancement setISAdvancement(AdvancementPhase phase, int prog) {
+        isAdvancement.put(phase, prog);
+        return this;
+    }
+
+    public TechAdvancement setClanAdvancement(AdvancementPhase phase, int prog) {
+        clanAdvancement.put(phase, prog);
+        return this;
+    }
+
+
+    public TechAdvancement setISApproximate(AdvancementPhase phase, boolean approximate) {
+        isApproximate.put(phase, approximate);
+        return this;
+    }
+
+
+    public TechAdvancement setClanApproximate(AdvancementPhase phase, boolean approximate) {
+        clanApproximate.put(phase, approximate);
+        return this;
+    }
+
     /**
      * Indicate whether the years for prototype, production, common, extinction, and reintroduction for IS factions
      * should be considered approximate.

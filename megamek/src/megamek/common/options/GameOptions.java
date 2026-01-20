@@ -332,10 +332,12 @@ public class GameOptions extends BasicGameOptions {
         addOption(rpg, OptionsConstants.RPG_BEGIN_SHUTDOWN, false);
     }
 
+    @Override
     public Vector<IOption> loadOptions() {
         return loadOptions(new File(GAME_OPTIONS_FILE_NAME), true);
     }
 
+    @Override
     public synchronized Vector<IOption> loadOptions(File file, boolean print) {
         Vector<IOption> changedOptions = new Vector<>(1, 1);
 

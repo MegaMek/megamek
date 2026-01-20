@@ -2,9 +2,9 @@ import java.time.LocalDateTime
 
 plugins {
     id 'application'
-    id 'com.palantir.git-version' version '4.0.0'
+    id 'com.palantir.git-version' version '4.2.0'
     id 'edu.sc.seis.launch4j' version '4.0.0'
-    id "io.sentry.jvm.gradle" version '5.8.0'
+    id "io.sentry.jvm.gradle" version '5.12.2'
     id 'jacoco'
     id 'java'
     id 'checkstyle'
@@ -41,45 +41,45 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.20.0'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.20.0'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.0'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.20.1'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.20.1'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1'
 
-    implementation 'com.formdev:flatlaf:3.6.1'
-    implementation 'com.formdev:flatlaf-extras:3.6.1'
+    implementation 'com.formdev:flatlaf:3.7'
+    implementation 'com.formdev:flatlaf-extras:3.7'
 
     implementation 'com.sun.mail:jakarta.mail:2.0.2'
 
     implementation 'com.thoughtworks.xstream:xstream:1.4.21'
 
-    implementation 'commons-io:commons-io:2.20.0'
+    implementation 'commons-io:commons-io:2.21.0'
 
-    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.4'
     implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
 
     implementation 'org.apache.commons:commons-collections4:4.5.0'
     implementation 'org.apache.commons:commons-lang3:3.20.0'
-    implementation 'org.apache.commons:commons-text:1.14.0'
+    implementation 'org.apache.commons:commons-text:1.15.0'
 
     implementation 'org.apache.logging.log4j:log4j-api:2.25.3'
     implementation 'org.apache.logging.log4j:log4j-core:2.25.3'
 
-    implementation 'org.apache.pdfbox:pdfbox:3.0.5'
+    implementation 'org.apache.pdfbox:pdfbox:3.0.6'
 
     implementation 'org.freemarker:freemarker:2.3.34'
 
-    implementation 'org.commonmark:commonmark:0.25.1'
+    implementation 'org.commonmark:commonmark:0.27.1'
 
     implementation 'com.squareup:gifencoder:0.10.1'
 
-    implementation 'com.ibm.icu:icu4j:77.1'
+    implementation 'com.ibm.icu:icu4j:78.2'
 
-    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
+    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.6'
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.14.2'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.13.4'
-    testImplementation 'org.mockito:mockito-core:5.19.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.14.2'
+    testImplementation 'org.mockito:mockito-core:5.21.0'
 }
 
 application {
@@ -121,7 +121,7 @@ jar {
 }
 
 checkstyle {
-    toolVersion = '11.0.1'
+    toolVersion = '12.3.1'
     configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
     configProperties = [
             'suppressionFile': file("${rootDir}/config/checkstyle/checkstyle-suppressions.xml")

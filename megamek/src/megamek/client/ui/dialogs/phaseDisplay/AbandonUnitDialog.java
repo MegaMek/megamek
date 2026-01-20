@@ -61,6 +61,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.game.Game;
+import megamek.common.units.CombatVehicleEscapePod;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -129,9 +130,12 @@ public class AbandonUnitDialog extends JDialog implements ActionListener {
                 continue;
             }
 
-            // Check if this unit can be abandoned
+            // Check if this unit can be abandoned or has crew that can exit
             if (entity instanceof Mek mek && mek.canAbandon()) {
                 abandonableUnits.add(mek);
+            } else if (entity instanceof CombatVehicleEscapePod pod && pod.canCrewExit()) {
+                // Escape pods: crew can exit to become infantry
+                abandonableUnits.add(pod);
             } else if (entity instanceof Tank tank && tank.canAbandon()) {
                 abandonableUnits.add(tank);
             }

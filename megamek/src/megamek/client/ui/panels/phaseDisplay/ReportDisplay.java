@@ -49,6 +49,7 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.units.CombatVehicleEscapePod;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
@@ -385,6 +386,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         return clientgui.getClient().getGame().getEntitiesVector().stream()
               .filter(e -> e.getOwnerId() == localPlayerId)
               .anyMatch(e -> (e instanceof Mek mek && mek.canAbandon())
+                    || (e instanceof CombatVehicleEscapePod pod && pod.canCrewExit())
                     || (e instanceof Tank tank && tank.canAbandon()));
     }
 

@@ -34,25 +34,39 @@
 package megamek.client.ui.dialogs.randomArmy;
 
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.function.Consumer;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import megamek.client.ratgenerator.RATGenerator;
+
+import megamek.client.ui.Messages;
 import megamek.common.loaders.MekSummary;
 import megamek.common.units.Entity;
 
 /**
- * This Random Army Dialog is shown in MML's force builder UI. It allows generating armies and saving the chosen units
- * to a MUL file.
+ * This Random Army Dialog is shown in MML's force builder UI. It allows generating armies and adding them to the force.
+ * It can be used by other callers that can supply a consumer for a list of Entities.
  */
 public class MMLForceBuilderRandomArmyDialog extends AbstractRandomArmyDialog {
 
+    // TODO: remember this dialog's size like in MM
+
     private final Consumer<List<Entity>> unitsReceiver;
 
+    /**
+     * Creates a random army dialog for the given parent frame. It has an "Add to force" button; when pressed, the given
+     * consumer is called to accept the presently generated list of units and the dialog is closed.
+     *
+     * @param parent   A parent frame for the dialog
+     * @param consumer A method that processes a generated unit list
+     */
     public MMLForceBuilderRandomArmyDialog(JFrame parent, Consumer<List<Entity>> consumer) {
         super(parent);
         this.unitsReceiver = consumer;
@@ -62,23 +76,24 @@ public class MMLForceBuilderRandomArmyDialog extends AbstractRandomArmyDialog {
     @Override
     protected JComponent createButtonsPanel() {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JButton addButton = new JButton("Add to force");
-        buttonPanel.add(addButton);
-        addButton.addActionListener(e -> addAndClose());
+        buttonPanel.add(new JButton(addAndCloseAction));
         return buttonPanel;
     }
 
-    private void addAndClose() {
-        List<Entity> unitList;
-        if (tabbedPane.getSelectedIndex() == TAB_FORCE_GENERATOR) {
-            unitList = m_pForceGen.getChosenUnits();
-        } else {
-            unitList = armyModel.getAllUnits().stream().map(MekSummary::loadEntity).toList();
+    Action addAndCloseAction = new AbstractAction(Messages.getString("RandomArmyDialog.AddToForce")) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            List<Entity> unitList;
+            if (tabbedPane.getSelectedIndex() == TAB_FORCE_GENERATOR) {
+                unitList = m_pForceGen.getChosenUnits();
+            } else {
+                unitList = armyModel.getAllUnits().stream().map(MekSummary::loadEntity).toList();
+            }
+            if (unitList != null && !unitList.isEmpty()) {
+                unitsReceiver.accept(unitList);
+                clearData();
+                setVisible(false);
+            }
         }
-        if (unitList != null && !unitList.isEmpty()) {
-            unitsReceiver.accept(unitList);
-            clearData();
-            setVisible(false);
-        }
-    }
+    };
 }

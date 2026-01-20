@@ -38,6 +38,8 @@ import megamek.common.loaders.MekSummary;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityListFile;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -46,6 +48,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,11 +56,17 @@ import java.util.List;
 import static megamek.client.ui.clientGUI.ClientGUI.CG_FILEPATH_MUL;
 
 /**
- * This Random Army Dialog is shown in MM's main menu when "Reinforce from RAT" is selected. It allows generating armies
- * and saving the chosen units to a MUL file.
+ * This Random Army Dialog is shown in MM's main menu. It allows generating armies and saving the chosen units to a MUL
+ * file. It can be used in other places.
  */
 public class MMMainMenuRandomArmyDialog extends AbstractRandomArmyDialog {
 
+    /**
+     * Creates a random army dialog for the given parent frame. It has a button that allows saving the chosen units
+     * to a MUL file.
+     *
+     * @param parent   A parent frame for the dialog
+     */
     public MMMainMenuRandomArmyDialog(JFrame parent) {
         super(parent);
     }
@@ -65,43 +74,46 @@ public class MMMainMenuRandomArmyDialog extends AbstractRandomArmyDialog {
     @Override
     protected JComponent createButtonsPanel() {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JButton saveButton = new JButton("Save as MUL file");
-        buttonPanel.add(saveButton);
-        saveButton.addActionListener(e -> saveAction());
+        buttonPanel.add(new JButton(saveAction));
         return buttonPanel;
     }
 
-    private void saveAction() {
-        List<Entity> unitList;
-        if (tabbedPane.getSelectedIndex() == TAB_FORCE_GENERATOR) {
-            unitList = m_pForceGen.getChosenUnits();
-        } else {
-            unitList = armyModel.getAllUnits().stream().map(MekSummary::loadEntity).toList();
-        }
-        if (unitList == null || unitList.isEmpty()) {
-            return;
-        }
+    // TODO: Unify MUL saving
 
-        var dlgSaveList = new JFileChooser(".");
+    Action saveAction = new AbstractAction(Messages.getString("ChatLounge.butSaveList")) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            List<Entity> unitList;
+            if (tabbedPane.getSelectedIndex() == TAB_FORCE_GENERATOR) {
+                unitList = m_pForceGen.getChosenUnits();
+            } else {
+                unitList = armyModel.getAllUnits().stream().map(MekSummary::loadEntity).toList();
+            }
+            if (unitList == null || unitList.isEmpty()) {
+                return;
+            }
 
-        dlgSaveList.setDialogTitle(Messages.getString("ClientGUI.saveUnitListFileDialog.title"));
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(Messages.getString(
-              "ClientGUI.descriptionMULFiles"), CG_FILEPATH_MUL);
-        dlgSaveList.setFileFilter(filter);
+            var dlgSaveList = new JFileChooser(".");
 
-        int returnVal = dlgSaveList.showSaveDialog(parentFrame);
-        File unitFile = dlgSaveList.getSelectedFile();
-        if ((returnVal != JFileChooser.APPROVE_OPTION) || (unitFile == null)) {
-            return;
+            dlgSaveList.setDialogTitle(Messages.getString("ClientGUI.saveUnitListFileDialog.title"));
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(Messages.getString(
+                  "ClientGUI.descriptionMULFiles"), CG_FILEPATH_MUL);
+            dlgSaveList.setFileFilter(filter);
+
+            int returnVal = dlgSaveList.showSaveDialog(parentFrame);
+            File unitFile = dlgSaveList.getSelectedFile();
+            if ((returnVal != JFileChooser.APPROVE_OPTION) || (unitFile == null)) {
+                return;
+            }
+
+            try {
+                EntityListFile.saveTo(unitFile, new ArrayList<>(unitList));
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(parentFrame,
+                      "Error saving unitListFile",
+                      "Error",
+                      JOptionPane.ERROR_MESSAGE);
+            }
         }
-
-        try {
-            EntityListFile.saveTo(unitFile, new ArrayList<>(unitList));
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(parentFrame,
-                  "Error saving unitListFile",
-                  "Error",
-                  JOptionPane.ERROR_MESSAGE);
-        }
-    }
+   };
 }

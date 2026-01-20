@@ -58,8 +58,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 
+/**
+ * This is the random army dialog shown in MM's lobby and game (reinforcement), where the system was initially
+ * developed. This dialog is tied to the ClientGUI, Client and Game states.
+ */
 public class RandomArmyDialog extends AbstractRandomArmyDialog {
-    private static final MMLogger logger = MMLogger.create(RandomArmyDialog.class);
+    private static final MMLogger LOGGER = MMLogger.create(RandomArmyDialog.class);
 
     private final ClientGUI clientGui;
     private final Client client;
@@ -71,6 +75,13 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
     private final JButton cancelButton = new JButton(Messages.getString("Cancel"));
     private final JButton skillsButton = new JButton(Messages.getString("SkillGenerationDialog.title"));
 
+    /**
+     * Creates a random army dialog for the given parent frame and ClientGUI. This dialog is specialized towards use in
+     * MM's lobby and game.
+     *
+     * @param parent    A parent frame for the dialog
+     * @param clientGui The ClientGUI this dialog operates on
+     */
     public RandomArmyDialog(JFrame parent, ClientGUI clientGui) {
         super(parent);
         this.clientGui = clientGui;
@@ -136,7 +147,7 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
                     }
                     entities.add(entity);
                 } catch (EntityLoadingException ex) {
-                    logger.error(ex, "Unable to load Mek: %s: %s".formatted(ms.getSourceFile(), ms.getEntryName()));
+                    LOGGER.error(ex, "Unable to load Mek: %s: %s".formatted(ms.getSourceFile(), ms.getEntryName()));
                     return;
                 }
             }

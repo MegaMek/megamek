@@ -69,8 +69,17 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
+/**
+ * This class is the framework for the random army dialog that is most prominently used in MM's lobby. Subclasses of
+ * it can be used anywhere. It requires the data/names and data/rat folders for full functionality. Subclasses can
+ * generate a button panel that allows interaction with the results (see the present subclasses for examples).
+ * Subclasses or callers can also supply GameOptions that influence some of the generators.
+ */
 public abstract class AbstractRandomArmyDialog extends JDialog implements ActionListener, TreeSelectionListener {
-    private static final MMLogger logger = MMLogger.create(AbstractRandomArmyDialog.class);
+    private static final MMLogger LOGGER = MMLogger.create(AbstractRandomArmyDialog.class);
+
+    // TODO: separate the panels
+    // TODO: provide a common results API
 
     protected static final int TAB_BV_MATCHING = 0;
     protected static final int TAB_RAT = 1;
@@ -766,7 +775,7 @@ public abstract class AbstractRandomArmyDialog extends JDialog implements Action
                             }
                         }
                     } else {
-                        logger.error("Could not find formation type {}",
+                        LOGGER.error("Could not find formation type {}",
                               m_pFormationOptions.getStringOption("formationType"));
                     }
                     unitsModel.setData(unitList);
@@ -1145,6 +1154,9 @@ public abstract class AbstractRandomArmyDialog extends JDialog implements Action
         }
     }
 
+    /**
+     * Clears all rolled results from all of the tabs.
+     */
     protected void clearData() {
         armyModel.clearData();
         unitsModel.clearData();

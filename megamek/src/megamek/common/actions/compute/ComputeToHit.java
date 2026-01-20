@@ -1007,7 +1007,7 @@ public class ComputeToHit {
               (targetType == Targetable.TYPE_FUEL_TANK_IGNITE) ||
               (target.isBuildingEntityOrGunEmplacement());
 
-        if ((distance == 1) && isBuilding && !(weaponEntity.moved == EntityMovementType.MOVE_SPRINT)) {
+        if ((distance == 1) && isBuilding && (weaponEntity.moved != EntityMovementType.MOVE_SPRINT && weaponEntity.moved != EntityMovementType.MOVE_VTOL_SPRINT)) {
             return Messages.getString("WeaponAttackAction.AdjBuilding");
         }
         

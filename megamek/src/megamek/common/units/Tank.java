@@ -744,6 +744,7 @@ public class Tank extends Entity {
 
         boolean hasFlotationHull = hasWorkingMisc(MiscType.F_FLOTATION_HULL);
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
+        boolean sealed = hasEnvironmentalSealing();
         boolean hexHasRoad = hex.containsTerrain(Terrains.ROAD);
         boolean scoutBikeIntoLightWoods = (hex.terrainLevel(Terrains.WOODS) == 1) &&
               hasQuirk(OptionsConstants.QUIRK_POS_SCOUT_BIKE);
@@ -757,28 +758,27 @@ public class Tank extends Entity {
         switch (movementMode) {
             case TRACKED:
                 if (isCrossCountry && !isSuperHeavy()) {
+                    // Water, no ice, no amphibious measures... or magma?  Bad.
                     return ((hex.terrainLevel(Terrains.WATER) > 0) &&
                           !hex.containsTerrain(Terrains.ICE) &&
-                          !hasFlotationHull &&
-                          !isAmphibious) || (hex.terrainLevel(Terrains.MAGMA) > 1);
+                          !(hasFlotationHull || sealed || isAmphibious) ||
+                          (hex.terrainLevel(Terrains.MAGMA) > 1));
                 }
 
                 if (!isSuperHeavy()) {
                     return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.WATER) > 0) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !hasFlotationHull &&
-                                !isAmphibious) ||
+                                !(hasFlotationHull || sealed || isAmphibious)) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.MAGMA) > 1) ||
                           (hex.terrainLevel(Terrains.ROUGH) > 1) ||
                           ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad);
                 } else {
                     return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad) ||
-                          ((hex.terrainLevel(Terrains.WATER) > 0) &&
+                          ((hex.terrainLevel(Terrains.WATER) > 1) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !hasFlotationHull &&
-                                !isAmphibious) ||
+                                !(hasFlotationHull || sealed || isAmphibious)) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
@@ -786,8 +786,7 @@ public class Tank extends Entity {
                 if (isCrossCountry && !isSuperHeavy()) {
                     return ((hex.terrainLevel(Terrains.WATER) > 0) &&
                           !hex.containsTerrain(Terrains.ICE) &&
-                          !hasFlotationHull &&
-                          !isAmphibious) ||
+                          !(hasFlotationHull || sealed || isAmphibious)) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           ((hex.terrainLevel(Terrains.SNOW) > 1) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.GEYSER) == 2);
@@ -798,8 +797,7 @@ public class Tank extends Entity {
                           (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.WATER) > 0) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !hasFlotationHull &&
-                                !isAmphibious) ||
+                                !(hasFlotationHull || sealed || isAmphibious)) ||
                           (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
@@ -808,10 +806,9 @@ public class Tank extends Entity {
                 } else {
                     return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad) ||
                           (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad) ||
-                          ((hex.terrainLevel(Terrains.WATER) > 0) &&
+                          ((hex.terrainLevel(Terrains.WATER) > 1) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !hasFlotationHull &&
-                                !isAmphibious) ||
+                                !(hasFlotationHull || sealed || isAmphibious)) ||
                           (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||

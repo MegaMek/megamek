@@ -1007,10 +1007,10 @@ public class ComputeToHit {
               (targetType == Targetable.TYPE_FUEL_TANK_IGNITE) ||
               (target.isBuildingEntityOrGunEmplacement());
 
-        if ((distance == 1) && isBuilding) {
+        if ((distance == 1) && isBuilding && !(weaponEntity.moved == EntityMovementType.MOVE_SPRINT)) {
             return Messages.getString("WeaponAttackAction.AdjBuilding");
         }
-
+        
         // Attacks against buildings from inside automatically hit.
         if ((null != los.getThruBldg()) && isBuilding) {
             return Messages.getString("WeaponAttackAction.InsideBuilding");

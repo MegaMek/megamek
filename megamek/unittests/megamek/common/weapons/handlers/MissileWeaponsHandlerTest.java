@@ -41,6 +41,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +88,7 @@ import org.mockito.Mockito;
  *
  * @since 2025-12-14
  */
-public class MissileWeaponHandlerTest {
+public class MissileWeaponsHandlerTest {
 
     private BattleArmor mockAttacker;
     private Game mockGame;
@@ -116,7 +120,7 @@ public class MissileWeaponHandlerTest {
         mockMekTarget = mock(BipedMek.class);
         targetCoords = new Coords(5, 5);
         mockHitData = new HitData(Mek.LOC_CENTER_TORSO, false);
-        mockAMS = mock(WeaponMounted);
+        mockAMS = mock(WeaponMounted.class);
         mockPlaytest3 = true;
 
         // Configure basic mocks
@@ -210,14 +214,26 @@ public class MissileWeaponHandlerTest {
         AMSweapons.add(amsEquipment);
         doReturn(AMSweapons).when(mockAction).getCounterEquipment();
         
-        doReturn(false).when(handler).multiAMS;
-        doReturn(false).when(handler).amsEngaged;
+        //doReturn(false).when(handler).multiAMS;
+        //doReturn(false).when(handler).amsEngaged;
         
         // Call handle for getAMSHitsMod.
-        int AMSmod = handler.getAMSHitsMod(reports);
+        int AMSmod = 0;
+        AMSmod = handler.getAMSHitsMod(reports);
         
-        // Verify AMS was called twice.
-        verify();
+        assertEquals(-4, AMSmod, "AMS did not engage");
+        
+        // first call should return -4
+
+        AMSmod = handler.getAMSHitsMod(reports);
+        
+        assertEquals( -4, AMSmod, "AMS did not engage a 2nd time");
+        // second call should return -4
+        
+        AMSmod = handler.getAMSHitsMod(reports);
+        
+        assertEquals(0, AMSmod, "AMS triggered when it shouldn't have");
+        // third call should return 0.
     }
 
     private Mounted<?> createMockAMS() {
@@ -229,8 +245,8 @@ public class MissileWeaponHandlerTest {
         doReturn(false).when(mockAMS).hasModes();
         doReturn(true).when(mockAMSWeaponType).hasFlag(WeaponType.F_AMS);
         doReturn(true).when(mockAMS).isReady();
-        doReturn(mockAMSWeaponType).when(WeaponMounted).getType();
-        doReturn(mockAMS).when(WeaponMounted).getEquipment(0);
+        doReturn(mockAMSWeaponType).when(mockAMS).getType();
+        doReturn(mockAMS).when(mockMekTarget).getEquipment(0);
 
         return weaponMounted;
         

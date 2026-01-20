@@ -84,7 +84,7 @@ import org.mockito.Mockito;
  *
  * @since 2025-12-14
  */
-class MissileWeaponHandlerTest {
+public class MissileWeaponHandlerTest {
 
     private BattleArmor mockAttacker;
     private Game mockGame;
@@ -196,7 +196,7 @@ class MissileWeaponHandlerTest {
      * hits are a separate outcome from damage".
      */
     @Test
-    void testAMSWorksForPlaytestThreek() throws EntityLoadingException {
+    void testAMSWorksForPlaytestThree() throws EntityLoadingException {
 
         // Configure target
         doReturn(mockMekTarget).when(mockGame).getTarget(Targetable.TYPE_ENTITY, 2);

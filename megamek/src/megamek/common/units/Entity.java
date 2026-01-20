@@ -3718,14 +3718,26 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if the given board is prohibited to this unit.
+     * @return True if the given board is prohibited to this unit according to the type of unit and type of board or if
+     *       the unit cannot survive on this board; e.g., JumpShips are prohibited from entering ground maps while BA
+     *       are not allowed on an atmospheric map. This refers to the various doomed... methods.
+     *
+     * @see #doomedOnGround()
+     * @see #doomedInAtmosphere()
+     * @see #doomedInSpace()
      */
     public boolean isBoardProhibited(Board board) {
         return isBoardProhibited(board.getBoardType());
     }
 
     /**
-     * @return True if the given board is prohibited to this unit.
+     * @return True if the given board type is prohibited to this unit according to the type of unit or if the unit
+     *       cannot survive on this board; e.g., JumpShips are prohibited from entering ground maps while BA are not
+     *       allowed on an atmospheric map. This refers to the various doomed... methods.
+     *
+     * @see #doomedOnGround()
+     * @see #doomedInAtmosphere()
+     * @see #doomedInSpace()
      */
     public boolean isBoardProhibited(BoardType boardType) {
         return (boardType.isGround() && doomedOnGround()) ||

@@ -858,9 +858,6 @@ public class EntityListFile {
     public static void writeEntityList(Writer output, ArrayList<Entity> list, boolean embedUnits) throws IOException {
         // Walk through the list of entities.
         for (Entity entity : list) {
-            if (entity instanceof FighterSquadron) {
-                continue;
-            }
             int indentLvl = 2;
 
             // Start writing this entity to the file.
@@ -869,7 +866,7 @@ public class EntityListFile {
             output.write("\" " + MULParser.ATTR_MODEL + "=\"");
             output.write(entity.getModel().replaceAll("\"", "&quot;"));
             output.write("\" " + MULParser.ATTR_TYPE + "=\"");
-            output.write(entity.getMovementModeAsString());
+            output.write((entity instanceof FighterSquadron) ? MULParser.VALUE_SQUADRON : entity.getMovementModeAsString());
             output.write("\" " + MULParser.ATTR_COMMANDER + "=\"");
             output.write(String.valueOf(entity.isCommander()));
             output.write("\" " + MULParser.ATTR_OFFBOARD + "=\"");

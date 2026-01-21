@@ -564,6 +564,8 @@ public class MULParser {
         // First check if this is a squadron - if so, just create a squadron instead of attempting to load one.
         if (entityNode.getAttribute(ATTR_TYPE).equals(VALUE_SQUADRON)) {
             entity = new FighterSquadron();
+            entity.setChassis(chassis);
+            entity.setModel(model);
         }
 
         // Attempt to load the entity from the data embedded into the MUL file

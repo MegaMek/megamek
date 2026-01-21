@@ -333,6 +333,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         return Collections.unmodifiableList(turnList);
     }
 
+    @Override
     public List<InGameObject> getGraveyard() {
         return graveyard;
     }

@@ -2683,8 +2683,8 @@ public abstract class Entity extends TurnOrdered
             // only Meks can move underwater
             if (hex.containsTerrain(Terrains.WATER) &&
                   (assumedAlt < hex.getLevel()) &&
-                  !(this instanceof Mek) &&
-                  !(this instanceof ProtoMek)) {
+                  !((this instanceof Mek) || (this instanceof ProtoMek)) &&
+                  !(hasEnvironmentalSealing())) {
                 return false;
             }
             // can move on the ground unless its underwater
@@ -3719,14 +3719,26 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if the given board is prohibited to this unit.
+     * @return True if the given board is prohibited to this unit according to the type of unit and type of board or if
+     *       the unit cannot survive on this board; e.g., JumpShips are prohibited from entering ground maps while BA
+     *       are not allowed on an atmospheric map. This refers to the various doomed... methods.
+     *
+     * @see #doomedOnGround()
+     * @see #doomedInAtmosphere()
+     * @see #doomedInSpace()
      */
     public boolean isBoardProhibited(Board board) {
         return isBoardProhibited(board.getBoardType());
     }
 
     /**
-     * @return True if the given board is prohibited to this unit.
+     * @return True if the given board type is prohibited to this unit according to the type of unit or if the unit
+     *       cannot survive on this board; e.g., JumpShips are prohibited from entering ground maps while BA are not
+     *       allowed on an atmospheric map. This refers to the various doomed... methods.
+     *
+     * @see #doomedOnGround()
+     * @see #doomedInAtmosphere()
+     * @see #doomedInSpace()
      */
     public boolean isBoardProhibited(BoardType boardType) {
         return (boardType.isGround() && doomedOnGround()) ||
@@ -6790,6 +6802,7 @@ public abstract class Entity extends TurnOrdered
     public Entity getC3Top() {
         Entity m = this;
         Entity master = m.getC3Master();
+        // Except if there's ECM, we can't _reach_ the master.
         while ((master != null) &&
               !master.equals(m) &&
               master.hasC3()) {
@@ -6797,14 +6810,28 @@ public abstract class Entity extends TurnOrdered
             if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                 m = master;
                 master = m.getC3Master();
-            } else if (((m.hasBoostedC3() &&
+            } else if ((m.hasBoostedC3() &&
                   !ComputeECM.isAffectedByAngelECM(m, m.getPosition(), master.getPosition())) ||
-                  !(ComputeECM.isAffectedByECM(m, m.getPosition(), master.getPosition()))) &&
-                  ((master.hasBoostedC3() &&
-                        !ComputeECM.isAffectedByAngelECM(master, master.getPosition(), master.getPosition())) ||
-                        !(ComputeECM.isAffectedByECM(master, master.getPosition(), master.getPosition())))) {
-                m = master;
-                master = m.getC3Master();
+                  !(ComputeECM.isAffectedByECM(m, m.getPosition(), master.getPosition())))
+            {
+                if ((master.hasBoostedC3() &&
+                      !ComputeECM.isAffectedByAngelECM(master, master.getPosition(), master.getPosition())) ||
+                      !(ComputeECM.isAffectedByECM(master, master.getPosition(), master.getPosition()))) {
+                    // punched through
+                    m = master;
+                    master = m.getC3Master();
+                } else {
+                    // Somehow still failed; this should not be possible!
+                    throw new IllegalStateException(
+                          "C3 slave/master connection not affected by ECM/AECM but master is!" +
+                          String.format(
+                            "\nSlave: %s @ %s\nMaster: %s @ %s", m, master, m.getPosition(), master.getPosition()
+                          )
+                    );
+                }
+            } else {
+                // Can no longer contact master
+                master = null;
             }
         }
         return m;
@@ -10144,6 +10171,7 @@ public abstract class Entity extends TurnOrdered
      *
      * @return an int
      */
+    @Override
     public int getDeployRound() {
         return deployRound;
     }
@@ -10161,6 +10189,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Checks to see if an entity has been deployed
      */
+    @Override
     public boolean isDeployed() {
         return deployed;
     }

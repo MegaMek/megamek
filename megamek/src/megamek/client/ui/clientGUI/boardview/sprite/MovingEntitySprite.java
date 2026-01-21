@@ -70,10 +70,10 @@ public class MovingEntitySprite extends Sprite {
               bv.getPanel().getFontMetrics(font).getAscent());
 
         int altAdjust = 0;
-        if (bv.useIsometric() && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
+        if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
             altAdjust = (int) (bv.DROP_SHADOW_DISTANCE * bv.getScale());
-        } else if (bv.useIsometric() && (elevation != 0)) {
-            altAdjust = (int) (elevation * BoardView.HEX_ELEV * bv.getScale());
+        } else if (elevation != 0) {
+            altAdjust = (int) (elevation * boardView.getVerticalOffset() * bv.getScale());
         }
 
         Dimension dim = new Dimension(bv.getHexSize().width, bv.getHexSize().height + altAdjust);
@@ -90,7 +90,7 @@ public class MovingEntitySprite extends Sprite {
     @Override
     public void drawOnto(Graphics graphics, int x, int y, ImageObserver observer) {
         // If this is an airborne unit, render the shadow.
-        if (bv.useIsometric() && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
+        if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
             Image shadow = bv.createShadowMask(bv.getTileManager().imageFor(entity, facing, -1));
             shadow = bv.getScaledImage(shadow, true);
 
@@ -99,20 +99,20 @@ public class MovingEntitySprite extends Sprite {
             Image shadow = bv.createShadowMask(bv.getTilesetManager().imageFor(entity, facing, -1));
             shadow = bv.getScaledImage(shadow, true);
 
-            graphics.drawImage(shadow, x, y + (int) (elevation * BoardView.HEX_ELEV * bv.getScale()), observer);
+            graphics.drawImage(shadow, x, y + (int) (elevation * bv.getVerticalOffset() * bv.getScale()), observer);
         }
         // submerged?
-        if (bv.useIsometric() && ((elevation + entity.getHeight()) < 0)) {
+        if ((elevation + entity.getHeight()) < 0) {
             Graphics2D g2 = (Graphics2D) graphics;
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f));
-            g2.drawImage(image, x, y - (int) (elevation * BoardView.HEX_ELEV * bv.getScale()), observer);
+            g2.drawImage(image, x, y - (int) (elevation * bv.getVerticalOffset() * bv.getScale()), observer);
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         } else {
             // create final image
             drawOnto(graphics, x, y, observer, false);
         }
         // If this is a submerged unit, render the shadow after the unit.
-        if (bv.useIsometric() && (elevation < 0)) {
+        if (elevation < 0) {
             Image shadow = bv.createShadowMask(bv.getTileManager().imageFor(entity, facing, -1));
             shadow = bv.getScaledImage(shadow, true);
 

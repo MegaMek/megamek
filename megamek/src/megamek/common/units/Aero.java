@@ -1538,15 +1538,19 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             prd.addModifier(1, "Modular Armor");
         }
         // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
-        if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
-            prd.addModifier(-1, "VDNI");
-        } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
-            prd.addModifier(0, "BVDNI (no piloting bonus)");
+        // When tracking neural interface hardware, require DNI cockpit mod for benefits
+        if (hasActiveDNI()) {
+            if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                prd.addModifier(-1, "VDNI");
+            } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                prd.addModifier(0, "BVDNI (no piloting bonus)");
+            }
         }
 
         // Small/torso-mounted cockpit penalty?
+        // BVDNI negates small cockpit penalty, requires active DNI when tracking
         if (getCockpitType() == Aero.COCKPIT_SMALL) {
-            if (hasAbility(OptionsConstants.MD_BVDNI)) {
+            if (hasActiveDNI() && hasAbility(OptionsConstants.MD_BVDNI)) {
                 prd.addModifier(0, "Small Cockpit (negated by BVDNI)");
             } else if (!hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
                 prd.addModifier(1, "Small Cockpit");

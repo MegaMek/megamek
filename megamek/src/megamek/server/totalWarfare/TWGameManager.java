@@ -19473,7 +19473,9 @@ public class TWGameManager extends AbstractGameManager {
         // BVDNI critical hit feedback - Meks and Vehicles only (IO pg 71)
         // Per BVDNI rules: "Fighters and battle armor operated via buffered VDNI do not have
         // to check for feedback damage at all."
-        if (en.hasAbility(OptionsConstants.MD_BVDNI) &&
+        // When tracking neural interface hardware, require DNI cockpit mod for feedback
+        if (en.hasActiveDNI() &&
+              en.hasAbility(OptionsConstants.MD_BVDNI) &&
               !en.hasAbility(OptionsConstants.MD_PAIN_SHUNT) &&
               !(en instanceof Aero) &&
               !(en instanceof BattleArmor)) {
@@ -19490,7 +19492,8 @@ public class TWGameManager extends AbstractGameManager {
             if (diceRoll.getIntValue() >= 8) {
                 vDesc.addAll(damageCrew(en, 1));
             }
-        } else if (en.hasAbility(OptionsConstants.MD_BVDNI) &&
+        } else if (en.hasActiveDNI() &&
+              en.hasAbility(OptionsConstants.MD_BVDNI) &&
               en.hasAbility(OptionsConstants.MD_PAIN_SHUNT) &&
               !(en instanceof Aero) &&
               !(en instanceof BattleArmor)) {
@@ -20714,8 +20717,10 @@ public class TWGameManager extends AbstractGameManager {
         // BVDNI fighters get NO feedback at all per rules.
         // Important: Only trigger on actual critical hits, not when threshold/SI damage rolls
         // resulted in no effect (CRIT_NONE).
+        // When tracking neural interface hardware, require DNI cockpit mod for feedback
         if (cs.getIndex() != Aero.CRIT_NONE &&
               aero.isFighter() &&
+              aero.hasActiveDNI() &&
               aero.hasAbility(OptionsConstants.MD_VDNI) &&
               !aero.hasAbility(OptionsConstants.MD_BVDNI) &&
               !aero.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
@@ -20734,6 +20739,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         } else if (cs.getIndex() != Aero.CRIT_NONE &&
               aero.isFighter() &&
+              aero.hasActiveDNI() &&
               aero.hasAbility(OptionsConstants.MD_VDNI) &&
               !aero.hasAbility(OptionsConstants.MD_BVDNI) &&
               aero.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
@@ -20746,6 +20752,7 @@ public class TWGameManager extends AbstractGameManager {
             reports.add(r);
         } else if (cs.getIndex() != Aero.CRIT_NONE &&
               aero.isFighter() &&
+              aero.hasActiveDNI() &&
               aero.hasAbility(OptionsConstants.MD_BVDNI)) {
             // BVDNI fighters are immune to critical hit feedback - show message for clarity
             Report.addNewline(reports);
@@ -21116,7 +21123,9 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case Tank.CRIT_COMMANDER:
                 // VDNI vehicles get 1 damage on Commander critical (IO pg 71)
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                // When tracking neural interface hardware, require DNI cockpit mod for feedback
+                if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     r = new Report(3587);
@@ -21124,7 +21133,8 @@ public class TWGameManager extends AbstractGameManager {
                     r.addDesc(tank);
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
-                } else if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                } else if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     // Pain Shunt blocks VDNI feedback, falls through to crew stunned
@@ -21156,7 +21166,9 @@ public class TWGameManager extends AbstractGameManager {
                 // apply
             case Tank.CRIT_CREW_STUNNED:
                 // VDNI vehicles get 1 damage on Crew Stunned critical (IO pg 71)
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                // When tracking neural interface hardware, require DNI cockpit mod for feedback
+                if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     r = new Report(3587);
@@ -21164,7 +21176,8 @@ public class TWGameManager extends AbstractGameManager {
                     r.addDesc(tank);
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
-                } else if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                } else if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     // Pain Shunt blocks VDNI feedback (no message - may have been shown by Commander fall-through)
@@ -21187,7 +21200,9 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case Tank.CRIT_DRIVER:
                 // VDNI vehicles get 1 damage on Driver critical (IO pg 71)
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                // When tracking neural interface hardware, require DNI cockpit mod for feedback
+                if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     r = new Report(3587);
@@ -21195,7 +21210,8 @@ public class TWGameManager extends AbstractGameManager {
                     r.addDesc(tank);
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
-                } else if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                } else if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     // Pain Shunt blocks VDNI feedback
@@ -21221,7 +21237,9 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case Tank.CRIT_CREW_KILLED:
                 // VDNI Crew Killed kills the pilot outright (IO pg 71)
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                // When tracking neural interface hardware, require DNI cockpit mod for feedback
+                if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     r = new Report(3588);
@@ -21232,7 +21250,8 @@ public class TWGameManager extends AbstractGameManager {
                     if (tank.isAirborneVTOLorWIGE()) {
                         reports.addAll(crashVTOLorWiGE(tank));
                     }
-                } else if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                } else if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     // Pain Shunt blocks VDNI feedback
@@ -23480,9 +23499,10 @@ public class TWGameManager extends AbstractGameManager {
         if (en.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE) || en.hasAbility(OptionsConstants.MISC_IRON_MAN)) {
             pilotDamage -= 1;
         }
-        // tanks only take pilot damage when using BVDNI or VDNI
+        // tanks only take pilot damage when using BVDNI or VDNI (with active DNI when tracking hardware)
         if ((en instanceof Tank) &&
-              !(en.hasAbility(OptionsConstants.MD_VDNI) || en.hasAbility(OptionsConstants.MD_BVDNI))) {
+              !(en.hasActiveDNI() && (en.hasAbility(OptionsConstants.MD_VDNI)
+                    || en.hasAbility(OptionsConstants.MD_BVDNI)))) {
             pilotDamage = 0;
         }
         if (!en.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {

@@ -4663,8 +4663,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createBattleMekNeuralInterfaceUnit() {
         MiscType misc = new MiscType();
-        // TODO - not sure how we capturing this in code, Maybe a quirk would be
-        // better.
         // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
         misc.name = "Direct Neural Interface Cockpit Modification";
         misc.setInternalName("BABattleMechNIU");
@@ -4673,14 +4671,16 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 0;
         misc.cost = 250000;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_BATTLEMEK_NIU, F_BA_EQUIPMENT);
+        // Available for BM, IM, BA, CV, SV, AF, CF per IO p.83
+        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_BATTLEMEK_NIU, F_BA_EQUIPMENT,
+              F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT, F_FIGHTER_EQUIPMENT);
 
-        misc.rulesRefs = "62, IO:AE";
+        misc.rulesRefs = "83, IO";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
               .setTechRating(TechRating.E)
-              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.F)
               .setISAdvancement(3052, 3055, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.FS)

@@ -1963,8 +1963,10 @@ public class TWDamageManager implements IDamageManager {
         // Fighters get feedback on any critical hit (handled in applyAeroCritical).
         // Battle Armor gets no feedback at all.
         // Proto DNI takes precedence and handles its own feedback separately.
+        // When tracking neural interface hardware, require DNI cockpit mod for feedback
         if (tookInternalDamage &&
               (entity instanceof Mek) &&
+              entity.hasActiveDNI() &&
               entity.hasAbility(OptionsConstants.MD_VDNI) &&
               !entity.hasAbility(OptionsConstants.MD_BVDNI) &&
               !entity.hasAbility(OptionsConstants.MD_PROTO_DNI) &&
@@ -1985,6 +1987,7 @@ public class TWDamageManager implements IDamageManager {
             }
         } else if (tookInternalDamage &&
               (entity instanceof Mek) &&
+              entity.hasActiveDNI() &&
               entity.hasAbility(OptionsConstants.MD_VDNI) &&
               !entity.hasAbility(OptionsConstants.MD_BVDNI) &&
               entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
@@ -2068,7 +2071,9 @@ public class TWDamageManager implements IDamageManager {
 
         // BA VDNI/BVDNI immunity feedback - track that crit happened (IO pg 71)
         // Actual message is printed after all attacks complete in handleAttacks()
+        // When tracking neural interface hardware, require DNI cockpit mod for feedback
         if (baTookCrit &&
+              entity.hasActiveDNI() &&
               (entity.hasAbility(OptionsConstants.MD_VDNI) || entity.hasAbility(OptionsConstants.MD_BVDNI)) &&
               !entity.reportedVDNIFeedbackThisPhase) {
             entity.baVDNINeedsFeedbackMessage = true;

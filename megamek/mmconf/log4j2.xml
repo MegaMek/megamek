@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Configuration status="debug">
+<Configuration status="info">
     <Properties>
         <Property name="layout">%d{ABSOLUTE} %-5p [%logger{36}] {%t}%n%l - %m%n%ex%n</Property>
         <Property name="tsvLayout">%d{ABSOLUTE}\t%p\t[%logger{36}]\t{%t}\t%l\t%m\t%ex%n</Property>
@@ -65,7 +65,7 @@
         <Logger name="BotLogger" level="info" additivity="false">
             <AppenderRef ref="BotLog" />
         </Logger>
-        <Logger name="megamek" level="debug" additivity="false">
+        <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />
             <AppenderRef ref="MegaMekLog" />

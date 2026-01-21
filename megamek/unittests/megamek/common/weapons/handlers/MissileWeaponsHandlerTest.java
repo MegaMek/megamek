@@ -91,7 +91,7 @@ import org.mockito.Mockito;
 /**
  * Unit tests for MissileWeaponHandler.
  * <p>
- * Test to verify that with Playtest 3, AMS can engage twice
+ * Test to verify that with Playtest 3, AMS can engage twice.
  *
  * @since 2025-12-14
  */
@@ -102,14 +102,10 @@ public class MissileWeaponsHandlerTest {
     private TWGameManager gameManager;
     private ToHitData toHit;
     private WeaponAttackAction weaponAttack;
-    private Coords targetCoords;
     private HitData hitData;
-    private WeaponMounted mountedWeapon;
-    private WeaponMounted mockWeaponTwo;
     private WeaponType weaponType = (WeaponType) EquipmentType.get("ISLRM20");
     private WeaponType AMSWeaponType = (WeaponType) EquipmentType.get("ISAMS");
     private AmmoType AMSammo = (AmmoType) EquipmentType.get("IS Ammo AMS");
-    private WeaponMounted mountedAMS;
     private Entity attacker;
     private Entity target;
     private Mounted<?> lrmOne;
@@ -128,24 +124,25 @@ public class MissileWeaponsHandlerTest {
 
     @BeforeEach
     void setUp() {
+        
+        // create the game
         game = new Game();
         nextEntityId=1;
         
         gameManager = new TWGameManager();
         game = gameManager.getGame();
 
+        // Set Playtest3 option to True to be able to test AMS shooting twice
         game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(true);
 
+        // Instantiate the players
         aPlayer = new Player(0, "Attacker");
         dPlayer = new Player(1, "Defender");
         game.addPlayer(aPlayer.getId(), aPlayer);
         game.addPlayer(dPlayer.getId(), dPlayer);
-        // Configure board
-        Board mockBoard = new Board();
-        Hex mockHex = new Hex();
-        
-    }
+     }
 
+     // Use to create the attacker
     private Entity createAttackerEntity() {
         Entity entity = new BipedMek();
         entity.setGame(game);
@@ -159,7 +156,7 @@ public class MissileWeaponsHandlerTest {
         entity.setWeight(50.0);
         entity.setOriginalWalkMP(5);
 
-        // Add two LRM20s
+        // Add three LRM20s
         try {
             lrmOne = entity.addEquipment(weaponType, Mek.LOC_RIGHT_TORSO);
             lrmTwo = entity.addEquipment(weaponType, Mek.LOC_LEFT_TORSO);
@@ -171,6 +168,7 @@ public class MissileWeaponsHandlerTest {
         return entity;
     }
 
+    // Create the target that mounts AMS
     private Entity createTargetEntity() {
         Entity entity = new BipedMek();
         entity.setGame(game);
@@ -183,10 +181,9 @@ public class MissileWeaponsHandlerTest {
         entity.setOwner(game.getPlayer(1));
         entity.setWeight(50.0);
         entity.setOriginalWalkMP(5);
-
-        // Add AMS
+        
         try {
-            //AmmoType amsAmmo = AmmoType.get("AMMO");
+            // Add AMS, ammo for the AMS, and link the two
             Mounted<?> amsMounted = entity.addEquipment(AMSWeaponType, Mek.LOC_CENTER_TORSO);
             amsMount = (WeaponMounted) amsMounted;
             Mounted<?> amsAmmoMount = entity.addEquipment(AMSammo, Mek.LOC_LEFT_TORSO);
@@ -198,17 +195,16 @@ public class MissileWeaponsHandlerTest {
         return entity;
     }
     /**
-     * Test that zero-damage swarm attacks against Meks still roll for critical hits. Per BattleTech rules, "critical
-     * hits are a separate outcome from damage".
+     * Test for AMS with playtest three
      */
     @Test
     void testAMSWorksForPlaytestThree() throws EntityLoadingException {
 
+        // Create the meks and set their positions
         attacker = createAttackerEntity();
         target = createTargetEntity();
         game.addEntity(attacker);
         game.addEntity(target);
-        // create to-hit, create attack action
         
         Coords attackerPostion = new Coords(1,1);
         Coords targetPositon = new Coords(1,8);
@@ -217,42 +213,45 @@ public class MissileWeaponsHandlerTest {
         target.setPosition(targetPositon);
         attacker.setFacing(0);
         target.setFacing(3);
+
+        hitData = new HitData(Mek.LOC_CENTER_TORSO, false);
+        toHit = new ToHitData();
         
+        // Setup first weapon attack and AMS ready.
         weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmOne));
         weaponAttack.addCounterEquipment(amsMount);
-        hitData = new HitData(Mek.LOC_CENTER_TORSO, false);
         
-        toHit = new ToHitData();
-                
         MissileWeaponHandler handler = new MissileWeaponHandler(toHit, weaponAttack, game, gameManager);
-
         Vector<Report> reports = new Vector<>();
         
-        
-        // Call handle for getAMSHitsMod.
+        // Call getAMSHitsMod, which is what determines if AMS can shoot or not
         int AMSmod = 0;
         AMSmod = handler.getAMSHitsMod(reports);
-        
-        assertEquals(-4, AMSmod, "AMS did not engage");
-        
-        // first call should return -4
 
+        // first call should return -4
+        assertEquals(-4, AMSmod, "AMS did not engage");
+        // End first AMS test
+        
+        // Setup second AMS test shot. Will pass with Playtest 3, and fail without
         weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmTwo));
         weaponAttack.addCounterEquipment(amsMount);
         
         handler = new MissileWeaponHandler(toHit, weaponAttack, game, gameManager);
         AMSmod = handler.getAMSHitsMod(reports);
-        
-        assertEquals( -4, AMSmod, "AMS did not engage a 2nd time");
-        // second call should return -4
 
+        // second call should return -4. If 0 is returned, the playtest did not work or is not enabled.
+        assertEquals( -4, AMSmod, "AMS did not engage a 2nd time");
+
+        // Setup 3rd AMS test. This should always return 0 (no AMS) if multiAMS is not enabled.
         weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmThree));
         weaponAttack.addCounterEquipment(amsMount);
 
         handler = new MissileWeaponHandler(toHit, weaponAttack, game, gameManager);
         AMSmod = handler.getAMSHitsMod(reports);
         
+        // This should return 0, showing we did not engage.
         assertEquals(0, AMSmod, "AMS triggered when it shouldn't have");
-        // third call should return 0.
+
+        // End testing of AMS for playtest3
     }
 }

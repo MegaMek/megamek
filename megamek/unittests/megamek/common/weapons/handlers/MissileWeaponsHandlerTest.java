@@ -115,6 +115,7 @@ public class MissileWeaponsHandlerTest {
     private Mounted<?> lrmOne;
     private Mounted<?> lrmTwo;
     private Mounted<?> lrmThree;
+    private WeaponMounted amsMount;
 
     private Player aPlayer;
     private Player dPlayer;
@@ -186,7 +187,8 @@ public class MissileWeaponsHandlerTest {
         // Add AMS
         try {
             //AmmoType amsAmmo = AmmoType.get("AMMO");
-            entity.addEquipment(AMSWeaponType, Mek.LOC_CENTER_TORSO);
+            Mounted<?> amsMounted = entity.addEquipment(AMSWeaponType, Mek.LOC_CENTER_TORSO);
+            amsMount = (WeaponMounted) amsMounted;
             entity.addEquipment(AMSammo, Mek.LOC_LEFT_TORSO);
         } catch (Exception e) {
             fail("Failed to add AMS: " + e.getMessage());
@@ -207,14 +209,16 @@ public class MissileWeaponsHandlerTest {
         game.addEntity(target);
         // create to-hit, create attack action
         
-        Coords attackerPostion = new Coords(8,15);
-        Coords targetPositon = new Coords(8,1);
+        Coords attackerPostion = new Coords(1,1);
+        Coords targetPositon = new Coords(2,1);
         
         attacker.setPosition(attackerPostion);
         target.setPosition(targetPositon);
+        attacker.setFacing(2);
+        target.setFacing(4);
         
         weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmOne));
-        
+        weaponAttack.addCounterEquipment(amsMount);
         hitData = new HitData(Mek.LOC_CENTER_TORSO, false);
         
         toHit = new ToHitData();
@@ -222,6 +226,7 @@ public class MissileWeaponsHandlerTest {
         MissileWeaponHandler handler = new MissileWeaponHandler(toHit, weaponAttack, game, gameManager);
 
         Vector<Report> reports = new Vector<>();
+        
         
         // Call handle for getAMSHitsMod.
         int AMSmod = 0;

@@ -1189,6 +1189,68 @@ public abstract class Entity extends TurnOrdered
             transport.setEntity(this);
             transport.setGame(game);
         }
+
+        // Auto-add DNI Cockpit Modification when tracking neural interface hardware
+        // and pilot has a compatible DNI implant (IO p.83)
+        autoAddDNICockpitMod();
+    }
+
+    /**
+     * Auto-adds DNI Cockpit Modification equipment when the tracking option is enabled and the pilot has a compatible
+     * DNI implant (VDNI, BVDNI, or Proto DNI). This ensures the pilot can use their implant benefits per IO p.83. DNI
+     * is Inner Sphere tech (E/X-X-E-F) and is not available for pure Clan units.
+     */
+    private void autoAddDNICockpitMod() {
+        // Only auto-add when tracking neural interface hardware
+        if ((game == null) || !gameOptions().booleanOption(
+              OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            return;
+        }
+
+        // Check if pilot has a DNI implant
+        if (!hasDNIImplant()) {
+            return;
+        }
+
+        // Check if entity already has DNI cockpit mod
+        if (hasDNICockpitMod()) {
+            return;
+        }
+
+        // Get the DNI cockpit mod equipment
+        MiscType dniMod = (MiscType) EquipmentType.get("BABattleMechNIU");
+        if (dniMod == null) {
+            return;
+        }
+
+        // Check if the equipment is valid for this unit type
+        boolean validUnitType = false;
+        if (dniMod.hasFlag(MiscType.F_MEK_EQUIPMENT) && isMek()) {
+            validUnitType = true;
+        } else if (dniMod.hasFlag(MiscType.F_TANK_EQUIPMENT) && (isCombatVehicle() || isSupportVehicle())) {
+            validUnitType = true;
+        } else if (dniMod.hasFlag(MiscType.F_FIGHTER_EQUIPMENT) && isAerospaceFighter()) {
+            validUnitType = true;
+        } else if (dniMod.hasFlag(MiscType.F_BA_EQUIPMENT) && (this instanceof BattleArmor)) {
+            validUnitType = true;
+        }
+
+        if (!validUnitType) {
+            return;
+        }
+
+        // DNI is Inner Sphere tech (E/X-X-E-F) - not available for pure Clan units
+        // Must be IS, Mixed IS, or Mixed Clan
+        if (isClan() && !isMixedTech()) {
+            return;
+        }
+
+        // Add the DNI cockpit modification
+        try {
+            addEquipment(dniMod, Entity.LOC_NONE);
+        } catch (Exception e) {
+            // Equipment addition failed - silently ignore
+        }
     }
 
     /**
@@ -7901,6 +7963,13 @@ public abstract class Entity extends TurnOrdered
             roll.addModifier(+1, "hard to pilot");
         }
 
+        // DNI Cockpit Modification adds Hard to Pilot effect for pilots without compatible implants (IO p.83)
+        // Only applies when tracking neural interface hardware
+        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)
+              && hasDNICockpitMod() && !hasDNIImplant()) {
+            roll.addModifier(+1, "DNI cockpit (no implant)");
+        }
+
         if (getPartialRepairs() != null) {
             if (getPartialRepairs().booleanOption("mek_gyro_1_crit")) {
                 roll.addModifier(+1, "Partial repair of Gyro (+1)");
@@ -11693,6 +11762,14 @@ public abstract class Entity extends TurnOrdered
         return hasWorkingMisc(MiscType.F_EI_INTERFACE);
     }
 
+    /**
+     * Returns whether this unit has an active Enhanced Imaging (EI) cockpit system.
+     * When the "Track Neural Interface Hardware" option is enabled, this requires both
+     * the EI cockpit equipment and the pilot to have the EI implant.
+     * When tracking is disabled, only the implant is required (original behavior).
+     *
+     * @return true if the unit has an active EI cockpit system
+     */
     public boolean hasActiveEiCockpit() {
         if (!hasEiCockpit() || !hasAbility(OptionsConstants.MD_EI_IMPLANT)) {
             return false;
@@ -11758,6 +11835,45 @@ public abstract class Entity extends TurnOrdered
         if (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)) {
             return false;
         }
+        return true;
+    }
+
+    /**
+     * Returns whether this unit has the DNI Cockpit Modification equipment installed.
+     *
+     * @return true if the unit has DNI cockpit modification equipment
+     */
+    public boolean hasDNICockpitMod() {
+        return hasMisc(MiscType.F_BATTLEMEK_NIU);
+    }
+
+    /**
+     * Returns whether the pilot has any DNI-compatible implant (VDNI, BVDNI, or Proto DNI).
+     *
+     * @return true if the pilot has a DNI-compatible implant
+     */
+    public boolean hasDNIImplant() {
+        return hasAbility(OptionsConstants.MD_VDNI)
+              || hasAbility(OptionsConstants.MD_BVDNI)
+              || hasAbility(OptionsConstants.MD_PROTO_DNI);
+    }
+
+    /**
+     * Returns whether this unit has an active DNI system providing bonuses. When the "Track Neural Interface Hardware"
+     * option is enabled, this requires both the DNI cockpit modification equipment and a pilot with a compatible
+     * implant. When tracking is disabled, only the implant is required.
+     *
+     * @return true if the unit has an active DNI system
+     */
+    public boolean hasActiveDNI() {
+        if (!hasDNIImplant()) {
+            return false;
+        }
+        // When tracking hardware, require the DNI cockpit modification
+        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            return hasDNICockpitMod();
+        }
+        // When not tracking hardware, any pilot with DNI implant gets benefits
         return true;
     }
 

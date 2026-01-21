@@ -134,6 +134,7 @@ public class EquipChoicePanel extends JPanel {
     private final JCheckBox chCondEjectFuel = new JCheckBox();
     private final JCheckBox chCondEjectSIDest = new JCheckBox();
     private final JCheckBox chSearchlight = new JCheckBox();
+    private final JCheckBox chDNICockpitMod = new JCheckBox();
     private final JComboBox<String> choC3 = new JComboBox<>();
     ClientGUI clientgui;
     Client client;
@@ -312,6 +313,24 @@ public class EquipChoicePanel extends JPanel {
             chSearchlight.setSelected(entity.hasSearchlight() ||
                   entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
             chSearchlight.setEnabled(!entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
+        }
+
+        // Set up DNI Cockpit Modification (IO p.83)
+        // Only show when tracking neural interface hardware is enabled
+        // DNI is Inner Sphere tech (E/X-X-E-F) - not available for pure Clan units
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            // DNI cockpit mod is available for Meks, Tanks, Fighters, BA, and Support Vehicles
+            // Must be IS, Mixed IS, or Mixed Clan (not pure Clan)
+            boolean validUnitType = entity.isMek() || entity.isCombatVehicle() || entity.isFighter()
+                  || entity.isSupportVehicle() || (entity instanceof BattleArmor);
+            boolean validTechBase = !entity.isClan() || entity.isMixedTech();
+            if (validUnitType && validTechBase) {
+                JLabel labDNICockpitMod = new JLabel(Messages.getString("CustomMekDialog.labDNICockpitMod"),
+                      SwingConstants.RIGHT);
+                add(labDNICockpitMod, GBC.std());
+                add(chDNICockpitMod, GBC.eol());
+                chDNICockpitMod.setSelected(entity.hasDNICockpitMod());
+            }
         }
 
         // Set up mines
@@ -920,6 +939,32 @@ public class EquipChoicePanel extends JPanel {
         if (!entity.getsAutoExternalSearchlight()) {
             entity.setExternalSearchlight(chSearchlight.isSelected());
             entity.setSearchlightState(chSearchlight.isSelected());
+        }
+
+        // update DNI Cockpit Modification setting (IO p.83)
+        Game game = (clientgui == null) ? client.getGame() : clientgui.getClient().getGame();
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            boolean wantsDNI = chDNICockpitMod.isSelected();
+            boolean hasDNI = entity.hasDNICockpitMod();
+            if (wantsDNI && !hasDNI) {
+                // Add DNI Cockpit Mod
+                MiscType dniMod = (MiscType) EquipmentType.get("BABattleMechNIU");
+                if (dniMod != null) {
+                    try {
+                        entity.addEquipment(dniMod, Entity.LOC_NONE);
+                    } catch (Exception e) {
+                        // Equipment addition failed - ignore
+                    }
+                }
+            } else if (!wantsDNI && hasDNI) {
+                // Remove DNI Cockpit Mod
+                for (MiscMounted mounted : entity.getMisc()) {
+                    if (mounted.getType().hasFlag(MiscType.F_BATTLEMEK_NIU)) {
+                        entity.removeMisc(mounted.getName());
+                        break;
+                    }
+                }
+            }
         }
 
         if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {

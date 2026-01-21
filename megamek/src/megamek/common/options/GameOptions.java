@@ -160,6 +160,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT, 5);
         addOption(advancedRules, OptionsConstants.ADVANCED_NO_IGNITE_CLEAR, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_EXTREME_TEMPERATURE_SURVIVAL, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_ARMED_MEKWARRIORS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_VISUAL_RANGE_ONE, false);

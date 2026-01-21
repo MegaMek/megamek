@@ -798,6 +798,58 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     /**
+     * Auto-adds DNI Cockpit Modification equipment when the tracking option is enabled and the pilot has a compatible
+     * DNI implant (VDNI, BVDNI, or Proto DNI). This ensures the pilot can use their implant benefits per IO p.83.
+     *
+     * @param entity The entity to potentially add DNI cockpit mod to
+     */
+    private void autoAddDNICockpitMod(Entity entity) {
+        // Only auto-add when tracking neural interface hardware
+        Game game = entity.getGame();
+        if ((game == null) || !game.getOptions().booleanOption(
+              OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            return;
+        }
+
+        // Check if pilot has a DNI implant
+        if (!entity.hasDNIImplant()) {
+            return;
+        }
+
+        // Check if entity already has DNI cockpit mod
+        if (entity.hasDNICockpitMod()) {
+            return;
+        }
+
+        // Get the DNI cockpit mod equipment
+        MiscType dniMod = (MiscType) EquipmentType.get("BABattleMechNIU");
+        if (dniMod == null) {
+            return;
+        }
+
+        // Check if the equipment is valid for this unit type
+        if (!dniMod.hasFlag(MiscType.F_MEK_EQUIPMENT) && entity.isMek()) {
+            return;
+        }
+        if (!dniMod.hasFlag(MiscType.F_TANK_EQUIPMENT) && (entity.isCombatVehicle() || entity.isSupportVehicle())) {
+            return;
+        }
+        if (!dniMod.hasFlag(MiscType.F_FIGHTER_EQUIPMENT) && entity.isAerospaceFighter()) {
+            return;
+        }
+        if (!dniMod.hasFlag(MiscType.F_BA_EQUIPMENT) && (entity instanceof BattleArmor)) {
+            return;
+        }
+
+        // Add the DNI cockpit modification
+        try {
+            entity.addEquipment(dniMod, Entity.LOC_NONE);
+        } catch (Exception e) {
+            // Equipment addition failed - silently ignore
+        }
+    }
+
+    /**
      * Applies prosthetic enhancement settings from the UI to the entity.
      * Reads from the controls of whichever prosthetic option (Standard or Improved) is currently selected.
      */
@@ -1727,6 +1779,10 @@ public class CustomMekDialog extends AbstractButtonDialog
                     ((BattleArmor) entity).setInternal(1);
                 }
             }
+
+            // Auto-add DNI Cockpit Modification when tracking neural interface hardware
+            // and pilot has a compatible DNI implant (IO p.83)
+            autoAddDNICockpitMod(entity);
         }
 
         // Apply multiple-entity settings

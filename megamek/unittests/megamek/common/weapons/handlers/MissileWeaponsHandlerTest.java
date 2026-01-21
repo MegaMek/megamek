@@ -53,6 +53,7 @@ import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.HitData;
+import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -107,12 +108,16 @@ public class MissileWeaponsHandlerTest {
     private WeaponMounted mockWeaponTwo;
     private WeaponType weaponType = (WeaponType) EquipmentType.get("ISLRM20");
     private WeaponType AMSWeaponType = (WeaponType) EquipmentType.get("ISAMS");
+    private AmmoType AMSammo = (AmmoType) EquipmentType.get("IS Ammo AMS");
     private WeaponMounted mountedAMS;
     private Entity attacker;
     private Entity target;
     private Mounted<?> lrmOne;
     private Mounted<?> lrmTwo;
     private Mounted<?> lrmThree;
+
+    private Player aPlayer;
+    private Player dPlayer;
     
 
     @BeforeAll
@@ -124,14 +129,20 @@ public class MissileWeaponsHandlerTest {
     void setUp() {
         game = new Game();
         nextEntityId=1;
-                      
-        game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(true);    
         
         gameManager = new TWGameManager();
-        
+        game = gameManager.getGame();
+
+        game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(true);
+
+        aPlayer = new Player(0, "Attacker");
+        dPlayer = new Player(1, "Defender");
+        game.addPlayer(aPlayer.getId(), aPlayer);
+        game.addPlayer(dPlayer.getId(), dPlayer);
         // Configure board
         Board mockBoard = new Board();
         Hex mockHex = new Hex();
+        
     }
 
     private Entity createAttackerEntity() {
@@ -168,7 +179,7 @@ public class MissileWeaponsHandlerTest {
 
         Crew crew = new Crew(CrewType.SINGLE);
         entity.setCrew(crew);
-        entity.setOwner(game.getPlayer(0));
+        entity.setOwner(game.getPlayer(1));
         entity.setWeight(50.0);
         entity.setOriginalWalkMP(5);
 
@@ -176,7 +187,7 @@ public class MissileWeaponsHandlerTest {
         try {
             //AmmoType amsAmmo = AmmoType.get("AMMO");
             entity.addEquipment(AMSWeaponType, Mek.LOC_CENTER_TORSO);
-            //entity.addEquipment(amsAmmo, Mek.LOC_LEFT_TORSO);
+            entity.addEquipment(AMSammo, Mek.LOC_LEFT_TORSO);
         } catch (Exception e) {
             fail("Failed to add AMS: " + e.getMessage());
         }
@@ -206,8 +217,8 @@ public class MissileWeaponsHandlerTest {
         
         hitData = new HitData(Mek.LOC_CENTER_TORSO, false);
         
-        toHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS);
-        
+        toHit = new ToHitData();
+                
         MissileWeaponHandler handler = new MissileWeaponHandler(toHit, weaponAttack, game, gameManager);
 
         Vector<Report> reports = new Vector<>();
@@ -222,7 +233,7 @@ public class MissileWeaponsHandlerTest {
 
         weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmTwo));
 
-        handler = new MissileWeaponHandler(mockToHit, weaponAttack, game, gameManager);
+        handler = new MissileWeaponHandler(toHit, weaponAttack, game, gameManager);
         AMSmod = handler.getAMSHitsMod(reports);
         
         assertEquals( -4, AMSmod, "AMS did not engage a 2nd time");
@@ -230,7 +241,7 @@ public class MissileWeaponsHandlerTest {
 
         weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmThree));
 
-        handler = new MissileWeaponHandler(mockToHit, weaponAttack, game, gameManager);
+        handler = new MissileWeaponHandler(toHit, weaponAttack, game, gameManager);
         AMSmod = handler.getAMSHitsMod(reports);
         
         assertEquals(0, AMSmod, "AMS triggered when it shouldn't have");

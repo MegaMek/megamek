@@ -189,7 +189,8 @@ public class MissileWeaponsHandlerTest {
             //AmmoType amsAmmo = AmmoType.get("AMMO");
             Mounted<?> amsMounted = entity.addEquipment(AMSWeaponType, Mek.LOC_CENTER_TORSO);
             amsMount = (WeaponMounted) amsMounted;
-            entity.addEquipment(AMSammo, Mek.LOC_LEFT_TORSO);
+            Mounted<?> amsAmmoMount = entity.addEquipment(AMSammo, Mek.LOC_LEFT_TORSO);
+            amsMount.setLinked(amsAmmoMount);
         } catch (Exception e) {
             fail("Failed to add AMS: " + e.getMessage());
         }
@@ -210,12 +211,12 @@ public class MissileWeaponsHandlerTest {
         // create to-hit, create attack action
         
         Coords attackerPostion = new Coords(1,1);
-        Coords targetPositon = new Coords(2,1);
+        Coords targetPositon = new Coords(1,8);
         
         attacker.setPosition(attackerPostion);
         target.setPosition(targetPositon);
-        attacker.setFacing(2);
-        target.setFacing(4);
+        attacker.setFacing(0);
+        target.setFacing(3);
         
         weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmOne));
         weaponAttack.addCounterEquipment(amsMount);
@@ -237,7 +238,8 @@ public class MissileWeaponsHandlerTest {
         // first call should return -4
 
         weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmTwo));
-
+        weaponAttack.addCounterEquipment(amsMount);
+        
         handler = new MissileWeaponHandler(toHit, weaponAttack, game, gameManager);
         AMSmod = handler.getAMSHitsMod(reports);
         
@@ -245,6 +247,7 @@ public class MissileWeaponsHandlerTest {
         // second call should return -4
 
         weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmThree));
+        weaponAttack.addCounterEquipment(amsMount);
 
         handler = new MissileWeaponHandler(toHit, weaponAttack, game, gameManager);
         AMSmod = handler.getAMSHitsMod(reports);

@@ -1272,8 +1272,29 @@ public class MULParser {
                 }
             }
 
-            // Restore EI Interface equipment mode
-            if (attributes.containsKey(ATTR_EI_MODE) && !attributes.get(ATTR_EI_MODE).isBlank()) {
+            // If pilot has EI Implant, ensure entity has EI Interface equipment (IO p.69)
+            // This handles MUL files where the pilot was configured with EI Implant
+            if (crew.getOptions().booleanOption(OptionsConstants.MD_EI_IMPLANT) && !entity.hasEiCockpit()) {
+                // Only add EI Interface for Meks and BA with Clan or Mixed tech (per IO p.69)
+                // ProtoMeks already have EI Interface added in BLKProtoMekFile
+                boolean canHaveEI = (entity.isMek() || entity.isBattleArmor())
+                      && (entity.isClan() || entity.isMixedTech());
+                if (canHaveEI) {
+                    try {
+                        EquipmentType eiType = EquipmentType.get("EIInterface");
+                        if (eiType != null) {
+                            entity.addEquipment(eiType, Entity.LOC_NONE);
+                        }
+                    } catch (LocationFullException e) {
+                        // Should not happen for 0-slot equipment
+                        warning.append("Could not add EI Interface equipment.\n");
+                    }
+                }
+            }
+
+            // Restore EI Interface equipment mode (skip for ProtoMeks - they're always on per IO p.77)
+            if (!entity.isProtoMek() && attributes.containsKey(ATTR_EI_MODE)
+                  && !attributes.get(ATTR_EI_MODE).isBlank()) {
                 String eiModeName = attributes.get(ATTR_EI_MODE);
                 for (Mounted<?> m : entity.getMisc()) {
                     if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {

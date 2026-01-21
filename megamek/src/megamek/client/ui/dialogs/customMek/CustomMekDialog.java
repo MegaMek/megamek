@@ -160,10 +160,6 @@ public class CustomMekDialog extends AbstractButtonDialog
           SwingConstants.RIGHT);
     private final JCheckBox chDeployStealth = new JCheckBox();
 
-    private final JLabel labEIInterface = new JLabel(Messages.getString("CustomMekDialog.labEIInterface"),
-          SwingConstants.RIGHT);
-    private final JCheckBox chEIInterface = new JCheckBox();
-
     private final JLabel labOffBoard = new JLabel(Messages.getString("CustomMekDialog.labOffBoard"),
           SwingConstants.RIGHT);
     private final JCheckBox chOffBoard = new JCheckBox();
@@ -1050,11 +1046,31 @@ public class CustomMekDialog extends AbstractButtonDialog
                   JOptionPane.WARNING_MESSAGE);
         }
 
-        // EI Implant pilot option should auto-enable EI Interface equipment if available (IO p.69)
+        // EI Implant pilot option automatically adds/removes EI Interface equipment (IO p.69)
         // The pilot needs the implant AND the unit needs the interface hardware for EI to function
-        if (state && option.getName().equals(OptionsConstants.MD_EI_IMPLANT)
-              && canHaveEIInterface(entity) && chEIInterface.isEnabled()) {
-            chEIInterface.setSelected(true);
+        // ProtoMeks already have EI built-in, so no action needed for them
+        if (option.getName().equals(OptionsConstants.MD_EI_IMPLANT)) {
+            boolean anyChanged = false;
+            for (Entity e : entities) {
+                if (canHaveEIInterface(e)) {
+                    boolean hadEI = e.hasEiCockpit();
+                    setEIInterface(e, state);
+                    if (hadEI != state) {
+                        anyChanged = true;
+                    }
+                }
+            }
+            // Show feedback message - use invokeLater to avoid interfering with checkbox event handling
+            if (anyChanged) {
+                final boolean added = state;
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    String msg = added
+                          ? Messages.getString("CustomMekDialog.EIInterfaceAdded")
+                          : Messages.getString("CustomMekDialog.EIInterfaceRemoved");
+                    String title = Messages.getString("CustomMekDialog.EIInterfaceTitle");
+                    JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
+                });
+            }
         }
     }
 
@@ -1717,9 +1733,6 @@ public class CustomMekDialog extends AbstractButtonDialog
         for (Entity entity : entities) {
             entity.setHidden(chHidden.isSelected());
             setStealth(entity, chDeployStealth.isSelected());
-            if (canHaveEIInterface(entity)) {
-                setEIInterface(entity, chEIInterface.isSelected());
-            }
 
             if (chOffBoard.isSelected()) {
                 offBoardDistance = distance;
@@ -1914,21 +1927,8 @@ public class CustomMekDialog extends AbstractButtonDialog
         panEquip.setLayout(gbl);
         m_equip = new EquipChoicePanel(entity, clientGUI, client);
         panEquip.add(m_equip, GBC.eol());
-
-        // EI Interface checkbox - show for eligible units and ProtoMeks (always have EI)
-        boolean eligibleForEI = entities.stream().allMatch(this::canHaveEIInterface);
-        boolean allProtoMeks = entities.stream().allMatch(Entity::isProtoMek);
-        if (eligibleForEI || allProtoMeks) {
-            panEquip.add(labEIInterface, GBC.std());
-            panEquip.add(chEIInterface, GBC.eol());
-            chEIInterface.setSelected(entity.hasEiCockpit());
-            chEIInterface.setToolTipText(Messages.getString("CustomMekDialog.eiInterfaceTooltip"));
-            // ProtoMeks have EI built-in and cannot disable it
-            if (allProtoMeks) {
-                chEIInterface.setEnabled(false);
-                chEIInterface.setToolTipText(Messages.getString("CustomMekDialog.eiInterfaceProtoMekTooltip"));
-            }
-        }
+        // EI Interface is automatically added/removed based on pilot EI Implant option
+        // No checkbox needed - the pilot option drives it (IO p.69)
     }
 
     private void setStealth(Entity e, boolean stealthEnabled) {
@@ -1982,25 +1982,12 @@ public class CustomMekDialog extends AbstractButtonDialog
 
         if (enabled && !hasEI) {
             // Add EI Interface equipment
+            // Game year validation is done in canHaveEIInterface() - if we get here, the game year allows EI
+            // EI is retrofittable equipment (IO p.69), so unit intro year doesn't matter
             try {
                 EquipmentType eiType = EquipmentType.get("EIInterface");
                 if (eiType != null) {
                     entity.addEquipment(eiType, Entity.LOC_NONE);
-
-                    // EI Interface was introduced in 3040 - if unit is older but game year allows it,
-                    // mark entity to bypass intro year validation (IO p.69 - retrofittable equipment)
-                    int eiIntroYear = eiType.getIntroductionDate(entity.isClan());
-                    int unitYear = entity.getYear();
-                    int gameYear = client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
-
-                    if ((eiIntroYear > unitYear) && (gameYear >= eiIntroYear)) {
-                        List<Entity.InvalidSourceBuildReason> reasons =
-                              new ArrayList<>(entity.getInvalidSourceBuildReasons());
-                        if (!reasons.contains(Entity.InvalidSourceBuildReason.UNIT_OLDER_THAN_EQUIPMENT_INTRO_YEAR)) {
-                            reasons.add(Entity.InvalidSourceBuildReason.UNIT_OLDER_THAN_EQUIPMENT_INTRO_YEAR);
-                            entity.setInvalidSourceBuildReasons(reasons);
-                        }
-                    }
                 }
             } catch (LocationFullException e) {
                 // Should not happen for 0-slot equipment
@@ -2323,7 +2310,6 @@ public class CustomMekDialog extends AbstractButtonDialog
             chCommander.setEnabled(false);
             chHidden.setEnabled(false);
             chDeployStealth.setEnabled(false);
-            chEIInterface.setEnabled(false);
             chOffBoard.setEnabled(false);
             choOffBoardDirection.setEnabled(false);
             fldOffBoardDistance.setEnabled(false);

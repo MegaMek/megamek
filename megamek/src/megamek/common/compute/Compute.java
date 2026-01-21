@@ -37,7 +37,6 @@ package megamek.common.compute;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static megamek.codeUtilities.MathUtility.clamp;
-import static megamek.common.equipment.AmmoType.Munitions.M_INCENDIARY_LRM;
 
 import java.util.*;
 
@@ -3178,11 +3177,19 @@ public class Compute {
               || (targetable.getTargetType() == Targetable.TYPE_HEX_BOMB)
               || (targetable.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
               || (targetable.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER))) {
-            if ((woodsLevel == 1) && (eiStatus != 2)) {
-                toHit.addModifier(1, woodsText);
+            if (woodsLevel == 1) {
+                if (eiStatus > 0) {
+                    // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                    // Light woods is already +1, so minimum applies - no reduction
+                    toHit.addModifier(1, woodsText + " (EI min +1/hex)");
+                } else {
+                    toHit.addModifier(1, woodsText);
+                }
             } else if (woodsLevel > 1) {
                 if (eiStatus > 0) {
-                    toHit.addModifier(woodsLevel - 1, woodsText);
+                    // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                    // Heavy woods +2 reduced to +1
+                    toHit.addModifier(1, woodsText + " (EI -1)");
                 } else {
                     toHit.addModifier(woodsLevel, woodsText);
                 }
@@ -3195,11 +3202,19 @@ public class Compute {
                 case SmokeCloud.SMOKE_LI_HEAVY:
                 case SmokeCloud.SMOKE_CHAFF_LIGHT:
                 case SmokeCloud.SMOKE_GREEN:
-                    toHit.addModifier(1, "target in light smoke");
+                    if (eiStatus > 0) {
+                        // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                        // Light smoke is already +1, so minimum applies - no reduction
+                        toHit.addModifier(1, "target in light smoke (EI min +1/hex)");
+                    } else {
+                        toHit.addModifier(1, "target in light smoke");
+                    }
                     break;
                 case SmokeCloud.SMOKE_HEAVY:
                     if (eiStatus > 0) {
-                        toHit.addModifier(1, "target in heavy smoke");
+                        // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                        // Heavy smoke +2 reduced to +1
+                        toHit.addModifier(1, "target in heavy smoke (EI -1)");
                     } else {
                         toHit.addModifier(2, "target in heavy smoke");
                     }
@@ -3208,7 +3223,8 @@ public class Compute {
         }
         if (hex.terrainLevel(Terrains.GEYSER) == 2) {
             if (eiStatus > 0) {
-                toHit.addModifier(1, "target in erupting geyser");
+                // EI reduces geyser modifier by 1 (IO p.69)
+                toHit.addModifier(1, "target in erupting geyser (EI -1)");
             } else {
                 toHit.addModifier(2, "target in erupting geyser");
             }
@@ -3263,11 +3279,19 @@ public class Compute {
         }
 
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_WOODS_COVER)) {
-            if ((woodsLevel == 1) && (eiStatus != 2)) {
-                toHit.addModifier(1, woodsText);
+            if (woodsLevel == 1) {
+                if (eiStatus > 0) {
+                    // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                    // Light woods is already +1, so minimum applies - no reduction
+                    toHit.addModifier(1, woodsText + " (EI min +1/hex)");
+                } else {
+                    toHit.addModifier(1, woodsText);
+                }
             } else if (woodsLevel > 1) {
                 if (eiStatus > 0) {
-                    toHit.addModifier(woodsLevel - 1, woodsText);
+                    // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                    // Heavy woods +2 reduced to +1
+                    toHit.addModifier(1, woodsText + " (EI -1)");
                 } else {
                     toHit.addModifier(woodsLevel, woodsText);
                 }
@@ -3280,11 +3304,19 @@ public class Compute {
             case SmokeCloud.SMOKE_LI_HEAVY:
             case SmokeCloud.SMOKE_CHAFF_LIGHT:
             case SmokeCloud.SMOKE_GREEN:
-                toHit.addModifier(1, "target in light smoke");
+                if (eiStatus > 0) {
+                    // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                    // Light smoke is already +1, so minimum applies - no reduction
+                    toHit.addModifier(1, "target in light smoke (EI min +1/hex)");
+                } else {
+                    toHit.addModifier(1, "target in light smoke");
+                }
                 break;
             case SmokeCloud.SMOKE_HEAVY:
                 if (eiStatus > 0) {
-                    toHit.addModifier(1, "target in heavy smoke");
+                    // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                    // Heavy smoke +2 reduced to +1
+                    toHit.addModifier(1, "target in heavy smoke (EI -1)");
                 } else {
                     toHit.addModifier(2, "target in heavy smoke");
                 }
@@ -3293,7 +3325,8 @@ public class Compute {
 
         if (hex.terrainLevel(Terrains.GEYSER) == 2) {
             if (eiStatus > 0) {
-                toHit.addModifier(1, "erupting geyser");
+                // EI reduces geyser modifier by 1 (IO p.69)
+                toHit.addModifier(1, "erupting geyser (EI -1)");
             } else {
                 toHit.addModifier(2, "erupting geyser");
             }

@@ -877,6 +877,14 @@ public class ProtoMek extends Entity {
             }
         }
         super.addEquipment(mounted, loc, rearMounted);
+
+        // ProtoMeks have EI Interface built-in and cannot disable it (IO p.77)
+        // Lock the mode to prevent UI from allowing toggle
+        if ((mounted.getType() instanceof MiscType) &&
+              mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+            mounted.setMode(1); // "Initiate enhanced imaging" - always on for ProtoMeks
+            mounted.setModeSwitchable(false);
+        }
     }
 
     public int maxWeapons(int location) {

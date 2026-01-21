@@ -821,7 +821,15 @@ class SystemPanel extends PicMap
                           && mounted.getType().hasFlag(MiscType.F_NOVA)
                           && mounted.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
-                    } // if the max tech eccm option is not set then the ECM
+                    }
+                    // EI Interface modes should be switchable even when not deployed (IO p.69)
+                    if (!mounted.isInoperable()
+                          && (mounted.getType() instanceof MiscType)
+                          && mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)
+                          && mounted.isModeSwitchable()) {
+                        m_chMode.setEnabled(true);
+                    }
+                    // if the max tech eccm option is not set then the ECM
                     // should not show anything.
                     // Exception: Nova CEWS has built-in "ECM"/"Off" modes and should always be switchable
                     if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_ECM)

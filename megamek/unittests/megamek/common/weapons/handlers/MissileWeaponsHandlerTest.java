@@ -47,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
@@ -65,12 +66,17 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.equipment.*;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IBasicOption;
+import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.BipedMek;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
@@ -89,21 +95,25 @@ import org.mockito.Mockito;
  * @since 2025-12-14
  */
 public class MissileWeaponsHandlerTest {
-
-    private BattleArmor mockAttacker;
-    private Game mockGame;
-    private TWGameManager mockGameManager;
-    private ToHitData mockToHit;
-    private WeaponAttackAction mockAction;
-    private Mek mockMekTarget;
+    
+    private Game game;
+    private int nextEntityId = 1;
+    private TWGameManager gameManager;
+    private ToHitData toHit;
+    private WeaponAttackAction weaponAttack;
     private Coords targetCoords;
-    private HitData mockHitData;
-    private WeaponMounted mockWeapon;
+    private HitData hitData;
+    private WeaponMounted mountedWeapon;
     private WeaponMounted mockWeaponTwo;
-    private WeaponType mockWeaponType;
-    private WeaponType mockAMSWeaponType;
-    private boolean mockPlaytest3;
-    private WeaponMounted mockAMS;
+    private WeaponType weaponType = (WeaponType) EquipmentType.get("ISLRM20");
+    private WeaponType AMSWeaponType = (WeaponType) EquipmentType.get("ISAMS");
+    private WeaponMounted mountedAMS;
+    private Entity attacker;
+    private Entity target;
+    private Mounted<?> lrmOne;
+    private Mounted<?> lrmTwo;
+    private Mounted<?> lrmThree;
+    
 
     @BeforeAll
     static void initializeEquipment() {
@@ -112,89 +122,67 @@ public class MissileWeaponsHandlerTest {
 
     @BeforeEach
     void setUp() {
-        mockAttacker = mock(BattleArmor.class);
-        mockGame = mock(Game.class);
-        mockGameManager = mock(TWGameManager.class);
-        mockToHit = mock(ToHitData.class);
-        mockAction = mock(WeaponAttackAction.class);
-        mockMekTarget = mock(BipedMek.class);
-        targetCoords = new Coords(5, 5);
-        mockHitData = new HitData(Mek.LOC_CENTER_TORSO, false);
-        mockAMS = mock(WeaponMounted.class);
-        mockPlaytest3 = true;
-
-        // Configure basic mocks
-        Board mockBoard = mock(Board.class);
-        GameOptions mockOptions = mock(GameOptions.class);
-        Hex mockHex = mock(Hex.class);
-
-        doReturn(mockBoard).when(mockGame).getBoard();
-        doReturn(mockOptions).when(mockGame).getOptions();
-        doReturn(mockPlaytest3).when(mockGame).getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
-        doReturn(false).when(mockOptions).booleanOption(any(String.class));
-        doReturn(mockHex).when(mockGame).getHexOf(any(Entity.class));
-        doReturn(mockHex).when(mockGame).getHexOf(any(Targetable.class));
-
-        // Configure attacker as both weapon entity and attacking entity
-        doReturn(1).when(mockAttacker).getId();
-        doReturn(mockAttacker).when(mockGame).getEntity(1);
-        doReturn(mockGame).when(mockAttacker).getGame();
-        doReturn(targetCoords).when(mockAttacker).getPosition();
-        doReturn(mockAttacker).when(mockAttacker).getAttackingEntity();
-
-        // Configure weapon
-        mockWeapon = mock(WeaponMounted.class);
-        mockWeaponType = mock(WeaponType.class);
-
-        doReturn(mockWeaponType).when(mockWeapon).getType();
-        doReturn("ISLRM20").when(mockWeaponType).getInternalName();
-        doReturn(null).when(mockWeapon).getLinked();
-        doReturn(false).when(mockWeapon).hasModes();
-        doReturn(mockWeapon).when(mockAttacker).getEquipment(0);
-
-        doReturn(mockWeaponType).when(mockWeaponTwo).getType();
-        doReturn(mockWeaponTwo).when(mockAttacker).getEquipment(1);
-
-        // Configure action
-        doReturn(1).when(mockAction).getEntityId();
-        doReturn(0).when(mockAction).getWeaponId();
-        doReturn(mockAttacker).when(mockAction).getEntity(mockGame);
-        doReturn(Targetable.TYPE_ENTITY).when(mockAction).getTargetType();
-        doReturn(2).when(mockAction).getTargetId();
-        doReturn(Mek.LOC_NONE).when(mockAction).getAimedLocation();
-        doReturn(AimingMode.NONE).when(mockAction).getAimingMode();
-
-        // Configure Mek target
-        doReturn(2).when(mockMekTarget).getId();
-        doReturn(targetCoords).when(mockMekTarget).getPosition();
-        doReturn(mockHitData).when(mockMekTarget).rollHitLocation(anyInt(), anyInt(), anyInt(), any(), anyInt());
-        doReturn(mockHitData).when(mockMekTarget).rollHitLocation(anyInt(), anyInt());
-        doReturn("CT").when(mockMekTarget).getLocationAbbr(any(HitData.class));
-        doReturn(Targetable.TYPE_ENTITY).when(mockMekTarget).getTargetType();
-        // doReturn(mockAMS).when(mockAction).getCounterEquipment();
-        doReturn(false).when(mockMekTarget).removePartialCoverHits(anyInt(), anyInt(), anyInt());
-
-        // Configure toHit
-        doReturn(TargetRoll.AUTOMATIC_SUCCESS).when(mockToHit).getValue();
-        doReturn(0).when(mockToHit).getCover();
-
-        // Configure gameManager to return empty reports
-        doReturn(new Vector<Report>()).when(mockGameManager).damageEntity(any(), any(), anyInt());
-        doReturn(new Vector<Report>()).when(mockGameManager).damageEntity(
-              any(),
-              any(),
-              anyInt(),
-              anyBoolean(),
-              any(),
-              anyBoolean(),
-              anyBoolean(),
-              anyBoolean(),
-              anyBoolean(),
-              anyBoolean());
-        doReturn(new Vector<Report>()).when(mockGameManager).criticalEntity(
-              any(Entity.class), anyInt(), anyBoolean(), anyInt(), anyInt());
+        game = new Game();
+        nextEntityId=1;
+                      
+        game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(true);    
+        
+        gameManager = new TWGameManager();
+        
+        // Configure board
+        Board mockBoard = new Board();
+        Hex mockHex = new Hex();
     }
 
+    private Entity createAttackerEntity() {
+        Entity entity = new BipedMek();
+        entity.setGame(game);
+        entity.setId(nextEntityId++);
+        entity.setChassis("Test Mek Attacker");
+        entity.setModel("Attacker");
+
+        Crew crew = new Crew(CrewType.SINGLE);
+        entity.setCrew(crew);
+        entity.setOwner(game.getPlayer(0));
+        entity.setWeight(50.0);
+        entity.setOriginalWalkMP(5);
+
+        // Add two LRM20s
+        try {
+            lrmOne = entity.addEquipment(weaponType, Mek.LOC_RIGHT_TORSO);
+            lrmTwo = entity.addEquipment(weaponType, Mek.LOC_LEFT_TORSO);
+            lrmThree = entity.addEquipment(weaponType, Mek.LOC_RIGHT_TORSO);
+        } catch (Exception e) {
+            fail("Failed to add LRMs: " + e.getMessage());
+        }
+
+        return entity;
+    }
+
+    private Entity createTargetEntity() {
+        Entity entity = new BipedMek();
+        entity.setGame(game);
+        entity.setId(nextEntityId++);
+        entity.setChassis("Target Mek");
+        entity.setModel("Target");
+
+        Crew crew = new Crew(CrewType.SINGLE);
+        entity.setCrew(crew);
+        entity.setOwner(game.getPlayer(0));
+        entity.setWeight(50.0);
+        entity.setOriginalWalkMP(5);
+
+        // Add AMS
+        try {
+            //AmmoType amsAmmo = AmmoType.get("AMMO");
+            entity.addEquipment(AMSWeaponType, Mek.LOC_CENTER_TORSO);
+            //entity.addEquipment(amsAmmo, Mek.LOC_LEFT_TORSO);
+        } catch (Exception e) {
+            fail("Failed to add AMS: " + e.getMessage());
+        }
+
+        return entity;
+    }
     /**
      * Test that zero-damage swarm attacks against Meks still roll for critical hits. Per BattleTech rules, "critical
      * hits are a separate outcome from damage".
@@ -202,20 +190,27 @@ public class MissileWeaponsHandlerTest {
     @Test
     void testAMSWorksForPlaytestThree() throws EntityLoadingException {
 
-        // Configure target
-        doReturn(mockMekTarget).when(mockGame).getTarget(Targetable.TYPE_ENTITY, 2);
+        attacker = createAttackerEntity();
+        target = createTargetEntity();
+        game.addEntity(attacker);
+        game.addEntity(target);
+        // create to-hit, create attack action
         
-        MissileWeaponHandler handler = new MissileWeaponHandler(mockToHit, mockAction, mockGame, mockGameManager);
+        Coords attackerPostion = new Coords(8,15);
+        Coords targetPositon = new Coords(8,1);
+        
+        attacker.setPosition(attackerPostion);
+        target.setPosition(targetPositon);
+        
+        weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmOne));
+        
+        hitData = new HitData(Mek.LOC_CENTER_TORSO, false);
+        
+        toHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS);
+        
+        MissileWeaponHandler handler = new MissileWeaponHandler(toHit, weaponAttack, game, gameManager);
 
         Vector<Report> reports = new Vector<>();
-
-        Mounted<?> amsEquipment = createMockAMS();
-        List<Mounted<?>> AMSweapons = new ArrayList<>();
-        AMSweapons.add(amsEquipment);
-        doReturn(AMSweapons).when(mockAction).getCounterEquipment();
-        
-        //doReturn(false).when(handler).multiAMS;
-        //doReturn(false).when(handler).amsEngaged;
         
         // Call handle for getAMSHitsMod.
         int AMSmod = 0;
@@ -225,31 +220,20 @@ public class MissileWeaponsHandlerTest {
         
         // first call should return -4
 
+        weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmTwo));
+
+        handler = new MissileWeaponHandler(mockToHit, weaponAttack, game, gameManager);
         AMSmod = handler.getAMSHitsMod(reports);
         
         assertEquals( -4, AMSmod, "AMS did not engage a 2nd time");
         // second call should return -4
-        
+
+        weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmThree));
+
+        handler = new MissileWeaponHandler(mockToHit, weaponAttack, game, gameManager);
         AMSmod = handler.getAMSHitsMod(reports);
         
         assertEquals(0, AMSmod, "AMS triggered when it shouldn't have");
         // third call should return 0.
-    }
-
-    private Mounted<?> createMockAMS() {
-        Mounted<?> weaponMounted = mock(WeaponMounted.class);
-        mockAMSWeaponType = mock(WeaponType.class);
-
-        doReturn("ISAntiMissileSystem").when(mockAMSWeaponType).getInternalName();
-        doReturn(null).when(mockAMS).getLinked();
-        doReturn(false).when(mockAMS).hasModes();
-        doReturn(true).when(mockAMSWeaponType).hasFlag(WeaponType.F_AMS);
-        doReturn(true).when(mockAMS).isReady();
-        doReturn(mockAMSWeaponType).when(mockAMS).getType();
-        doReturn(mockAMS).when(mockMekTarget).getEquipment(0);
-
-        return weaponMounted;
-        
-
     }
 }

@@ -129,6 +129,11 @@ public class CostCalculator {
                   && mounted.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
                 continue;
             }
+            // EI Interface is built-in for ProtoMeks and doesn't add cost (IO p.77)
+            if (entity.isProtoMek() && (mounted.getType() instanceof MiscType)
+                  && mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                continue;
+            }
             long itemCost = (long) mounted.getCost();
             if (!ignoreAmmo && entity.isSupportVehicle() && (mounted.getSize() > 1)
                   && (mounted.getType() instanceof InfantryWeapon)) {

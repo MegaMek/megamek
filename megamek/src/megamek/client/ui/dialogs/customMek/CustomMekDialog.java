@@ -69,11 +69,13 @@ import megamek.common.board.Board;
 import megamek.common.enums.Gender;
 import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
@@ -1043,6 +1045,33 @@ public class CustomMekDialog extends AbstractButtonDialog
                   Messages.getString("CustomMekDialog.VdniInvalidUnitTypeTitle"),
                   JOptionPane.WARNING_MESSAGE);
         }
+
+        // EI Implant pilot option automatically adds/removes EI Interface equipment (IO p.69)
+        // The pilot needs the implant AND the unit needs the interface hardware for EI to function
+        // ProtoMeks already have EI built-in, so no action needed for them
+        if (option.getName().equals(OptionsConstants.MD_EI_IMPLANT)) {
+            boolean anyChanged = false;
+            for (Entity e : entities) {
+                if (canHaveEIInterface(e)) {
+                    boolean hadEI = e.hasEiCockpit();
+                    setEIInterface(e, state);
+                    if (hadEI != state) {
+                        anyChanged = true;
+                    }
+                }
+            }
+            // Show feedback message - use invokeLater to avoid interfering with checkbox event handling
+            if (anyChanged) {
+                final boolean added = state;
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    String msg = added
+                          ? Messages.getString("CustomMekDialog.EIInterfaceAdded")
+                          : Messages.getString("CustomMekDialog.EIInterfaceRemoved");
+                    String title = Messages.getString("CustomMekDialog.EIInterfaceTitle");
+                    JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
+                });
+            }
+        }
     }
 
     /**
@@ -1897,7 +1926,9 @@ public class CustomMekDialog extends AbstractButtonDialog
         GridBagLayout gbl = new GridBagLayout();
         panEquip.setLayout(gbl);
         m_equip = new EquipChoicePanel(entity, clientGUI, client);
-        panEquip.add(m_equip, GBC.std());
+        panEquip.add(m_equip, GBC.eol());
+        // EI Interface is automatically added/removed based on pilot EI Implant option
+        // No checkbox needed - the pilot option drives it (IO p.69)
     }
 
     private void setStealth(Entity e, boolean stealthEnabled) {
@@ -1910,6 +1941,68 @@ public class CustomMekDialog extends AbstractButtonDialog
 
             m.setMode(newStealth);
             m.newRound(-1);
+        }
+    }
+
+    /**
+     * Checks if the entity is eligible for an EI Interface. Per IO p.69, EI Interface may be installed in any BattleMek
+     * or Battle Armor built using a Clan technology base. ProtoMeks always have EI built-in and cannot toggle it. EI
+     * Interface was introduced in 3040.
+     *
+     * @param entity the entity to check
+     *
+     * @return true if the entity can have an EI Interface toggled
+     */
+    private boolean canHaveEIInterface(Entity entity) {
+        // EI Interface introduced in 3040
+        int gameYear = client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+        if (gameYear < 3040) {
+            return false;
+        }
+        // ProtoMeks always have EI - cannot toggle
+        if (entity.isProtoMek()) {
+            return false;
+        }
+        // Only Meks and Battle Armor can have EI Interface
+        if (!entity.isMek() && !(entity instanceof BattleArmor)) {
+            return false;
+        }
+        // Must have Clan or Mixed tech base (IO p.69)
+        return entity.isClan() || entity.isMixedTech();
+    }
+
+    /**
+     * Sets the EI Interface equipment on an entity. Adds the equipment if enabled, removes it if disabled.
+     *
+     * @param entity  the entity to modify
+     * @param enabled true to add EI Interface, false to remove it
+     */
+    private void setEIInterface(Entity entity, boolean enabled) {
+        boolean hasEI = entity.hasEiCockpit();
+
+        if (enabled && !hasEI) {
+            // Add EI Interface equipment
+            // Game year validation is done in canHaveEIInterface() - if we get here, the game year allows EI
+            // EI is retrofittable equipment (IO p.69), so unit intro year doesn't matter
+            try {
+                EquipmentType eiType = EquipmentType.get("EIInterface");
+                if (eiType != null) {
+                    entity.addEquipment(eiType, Entity.LOC_NONE);
+                }
+            } catch (LocationFullException e) {
+                // Should not happen for 0-slot equipment
+            }
+        } else if (!enabled && hasEI) {
+            // Remove EI Interface equipment
+            List<Mounted<?>> toRemove = new ArrayList<>();
+            for (Mounted<?> mounted : entity.getEquipment()) {
+                if ((mounted.getType() instanceof MiscType) &&
+                      mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                    toRemove.add(mounted);
+                }
+            }
+            entity.getEquipment().removeAll(toRemove);
+            entity.getMisc().removeAll(toRemove);
         }
     }
 

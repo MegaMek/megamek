@@ -576,7 +576,8 @@ public class TestProtoMek extends TestEntity {
         if (etype instanceof MiscType) {
             return !(etype.hasFlag(MiscType.F_MASC)
                   || etype.hasFlag(MiscType.F_UMU)
-                  || etype.hasFlag(MiscType.F_JUMP_JET));
+                  || etype.hasFlag(MiscType.F_JUMP_JET)
+                  || etype.hasFlag(MiscType.F_EI_INTERFACE));
         }
         return true;
     }

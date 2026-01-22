@@ -863,6 +863,7 @@ public class LosEffects {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by building hexes or levels.");
         }
 
+        // LOS blocking is not affected by EI - EI only reduces to-hit modifiers (IO p.69)
         if ((ultraWoods >= 1) || (lightWoods + (heavyWoods * 2) > 2)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by woods.");
         }
@@ -883,10 +884,6 @@ public class LosEffects {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by screen.");
         }
 
-        if (!underwaterWeapon && (lightSmoke + (heavySmoke * 2) + lightWoods + (heavyWoods * 2) > 2)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by smoke and woods.");
-        }
-
         if (plantedFields > 0) {
             modifiers.addModifier((int) Math.floor(plantedFields / 2.0), plantedFields + " intervening planted fields");
         }
@@ -897,42 +894,47 @@ public class LosEffects {
 
         if (lightWoods > 0) {
             if (eiStatus > 0) {
-                modifiers.addModifier(1, "firing through light woods with EI system");
+                // EI reduces woods modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                // Light woods is already +1, so minimum applies - no reduction
+                modifiers.addModifier(lightWoods, lightWoods + " intervening light woods (EI min +1/hex)");
             } else {
                 modifiers.addModifier(lightWoods, lightWoods + " intervening light woods");
             }
         }
 
+        // EI does not affect building modifiers - IO p.69 only mentions woods, jungle, smoke
         if (buildingLevelsOrHexes > 0) {
-            if (eiStatus > 0) {
-                modifiers.addModifier(1, "firing through building hex/level with EI system");
-            } else {
-                modifiers.addModifier(buildingLevelsOrHexes,
-                      buildingLevelsOrHexes + " intervening building levels or hexes");
-            }
+            modifiers.addModifier(buildingLevelsOrHexes,
+                  buildingLevelsOrHexes + " intervening building levels or hexes");
         }
 
         if (heavyWoods > 0) {
             if (eiStatus > 0) {
-                modifiers.addModifier(heavyWoods, heavyWoods + " intervening heavy woods");
+                // EI reduces woods modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                // Heavy woods +2 reduced to +1 per hex
+                modifiers.addModifier(heavyWoods, heavyWoods + " intervening heavy woods (EI -" + heavyWoods + ")");
             } else {
                 modifiers.addModifier(heavyWoods * 2, heavyWoods + " intervening heavy woods");
             }
         }
 
         if (lightSmoke > 0 && !underwaterWeapon) {
-            modifiers.addModifier(lightSmoke, lightSmoke + " intervening light smoke");
+            if (eiStatus > 0) {
+                // EI reduces smoke modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                // Light smoke is already +1, so minimum applies - no reduction
+                modifiers.addModifier(lightSmoke, lightSmoke + " intervening light smoke (EI min +1/hex)");
+            } else {
+                modifiers.addModifier(lightSmoke, lightSmoke + " intervening light smoke");
+            }
         }
 
         if (heavySmoke > 0 && !underwaterWeapon) {
-            StringBuilder text = new StringBuilder(heavySmoke);
-            text.append(" intervening");
-            text.append(" heavy");
-            text.append(" smoke");
             if (eiStatus > 0) {
-                modifiers.addModifier(heavySmoke, text.toString());
+                // EI reduces heavy smoke modifier by 1 per hex (IO p.69)
+                modifiers.addModifier(heavySmoke,
+                      heavySmoke + " intervening heavy smoke (EI -" + heavySmoke + ")");
             } else {
-                modifiers.addModifier(heavySmoke * 2, text.toString());
+                modifiers.addModifier(heavySmoke * 2, heavySmoke + " intervening heavy smoke");
             }
         }
 

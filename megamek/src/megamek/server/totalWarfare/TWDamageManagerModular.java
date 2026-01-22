@@ -378,6 +378,39 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             }
         }
 
+        // EI (Enhanced Imaging) feedback on internal damage per IO p.69
+        // When taking IS damage, roll 2d6 - if result < 7, take 1 pilot damage
+        // Pain Shunt blocks this feedback
+        if (tookInternalDamage &&
+              entity.hasActiveEiCockpit() &&
+              !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            Report.addNewline(reportVec);
+            Roll diceRoll = Compute.rollD6(2);
+            report = new Report(3593);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            report.add(7);
+            report.add(diceRoll);
+            // choose(true) shows "takes a hit!", choose(false) shows "no damage."
+            report.choose(diceRoll.getIntValue() < 7);
+            report.indent(2);
+            reportVec.add(report);
+
+            if (diceRoll.getIntValue() < 7) {
+                reportVec.addAll(manager.damageCrew(entity, 1));
+            }
+        } else if (tookInternalDamage &&
+              entity.hasActiveEiCockpit() &&
+              entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            // Pain Shunt blocks EI feedback - show message for clarity
+            Report.addNewline(reportVec);
+            report = new Report(3594);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            report.indent(2);
+            reportVec.add(report);
+        }
+
         // TacOps p.78 Ammo booms can hurt other units in the same and adjacent hexes, But this does not apply to
         // CASE'd units, and it only applies if the ammo explosion destroyed the unit.
         // For `Meks we care whether there was CASE specifically in the location that went boom...

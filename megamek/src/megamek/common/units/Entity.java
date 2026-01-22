@@ -11771,9 +11771,21 @@ public abstract class Entity extends TurnOrdered
      * @return true if the unit has an active EI cockpit system
      */
     public boolean hasActiveEiCockpit() {
-        if (!hasEiCockpit() || !hasAbility(OptionsConstants.MD_EI_IMPLANT)) {
+        // Must have EI implant
+        if (!hasAbility(OptionsConstants.MD_EI_IMPLANT)) {
             return false;
         }
+
+        // When not tracking hardware, implant alone provides benefits
+        if ((game == null) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            return true;
+        }
+
+        // When tracking hardware, require EI Interface equipment
+        if (!hasEiCockpit()) {
+            return false;
+        }
+
         // Check if EI Interface equipment is in "Off" mode
         for (MiscMounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
@@ -11784,7 +11796,7 @@ public abstract class Entity extends TurnOrdered
                 break;
             }
         }
-        // ProtoMeks always have EI active (no equipment to turn off)
+
         return true;
     }
 

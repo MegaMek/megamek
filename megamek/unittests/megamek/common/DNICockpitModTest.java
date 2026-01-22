@@ -110,7 +110,7 @@ public class DNICockpitModTest {
                     crew.getOptions().getOption(OptionsConstants.MD_PROTO_DNI).setValue(true);
                     break;
                 case "EI":
-                    crew.getOptions().getOption(OptionsConstants.UNOFFICIAL_EI_IMPLANT).setValue(true);
+                    crew.getOptions().getOption(OptionsConstants.MD_EI_IMPLANT).setValue(true);
                     break;
                 default:
                     break;

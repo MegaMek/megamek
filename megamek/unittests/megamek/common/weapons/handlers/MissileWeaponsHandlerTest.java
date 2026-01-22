@@ -32,23 +32,9 @@
  */
 package megamek.common.weapons.handlers;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Hex;
@@ -57,36 +43,24 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.battleArmor.BattleArmor;
-import megamek.common.board.Board;
 import megamek.common.board.Coords;
-import megamek.common.enums.AimingMode;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
-import megamek.common.equipment.enums.MiscTypeFlag;
-import megamek.common.equipment.*;
+import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.options.GameOptions;
-import megamek.common.options.IBasicOption;
-import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-import megamek.common.units.Tank;
-import megamek.common.units.Targetable;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 /**
  * Unit tests for MissileWeaponHandler.
@@ -206,11 +180,11 @@ public class MissileWeaponsHandlerTest {
         game.addEntity(attacker);
         game.addEntity(target);
         
-        Coords attackerPostion = new Coords(1,1);
-        Coords targetPositon = new Coords(1,8);
+        Coords attackerPosition = new Coords(1,1);
+        Coords targetPosition = new Coords(1,8);
         
-        attacker.setPosition(attackerPostion);
-        target.setPosition(targetPositon);
+        attacker.setPosition(attackerPosition);
+        target.setPosition(targetPosition);
         attacker.setFacing(0);
         target.setFacing(3);
 

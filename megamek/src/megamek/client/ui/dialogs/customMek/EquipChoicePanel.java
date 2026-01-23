@@ -375,16 +375,19 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // Set up Damage Interrupt Circuit (IO p.39) - BattleMeks and IndustrialMeks only, IS or Mixed tech
-        // DIC introduced 3055 (prototype), available to any IS or Mixed tech Mek after that year
         if ((entity instanceof Mek mek) && ((!entity.isClan()) || (entity.isMixedTech()))) {
-            int gameYear = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
-            if (gameYear >= 3055) {
-                JLabel labDamageInterruptCircuit = new JLabel(
-                      Messages.getString("CustomMekDialog.labDamageInterruptCircuit"),
-                      SwingConstants.RIGHT);
-                add(labDamageInterruptCircuit, GBC.std());
-                add(chDamageInterruptCircuit, GBC.eol());
-                chDamageInterruptCircuit.setSelected(mek.hasDamageInterruptCircuit());
+            EquipmentType dicEquipment = EquipmentType.get("DamageInterruptCircuit");
+            if (dicEquipment != null) {
+                int gameYear = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+                int dicIntroYear = dicEquipment.getIntroductionDate(false); // IS tech
+                if (gameYear >= dicIntroYear) {
+                    JLabel labDamageInterruptCircuit = new JLabel(
+                          Messages.getString("CustomMekDialog.labDamageInterruptCircuit"),
+                          SwingConstants.RIGHT);
+                    add(labDamageInterruptCircuit, GBC.std());
+                    add(chDamageInterruptCircuit, GBC.eol());
+                    chDamageInterruptCircuit.setSelected(mek.hasDamageInterruptCircuit());
+                }
             }
         }
 

@@ -424,6 +424,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean illuminated = false;
     protected boolean searchlightIsActive = false;
     protected boolean usedSearchlight = false;
+    protected boolean eiShutdown = false;
     protected boolean stuckInSwamp = false;
     protected boolean canUnstickByJumping = false;
     protected int taggedBy = -1;
@@ -2682,8 +2683,8 @@ public abstract class Entity extends TurnOrdered
             // only Meks can move underwater
             if (hex.containsTerrain(Terrains.WATER) &&
                   (assumedAlt < hex.getLevel()) &&
-                  !(this instanceof Mek) &&
-                  !(this instanceof ProtoMek)) {
+                  !((this instanceof Mek) || (this instanceof ProtoMek)) &&
+                  !(hasEnvironmentalSealing())) {
                 return false;
             }
             // can move on the ground unless its underwater
@@ -3718,14 +3719,26 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if the given board is prohibited to this unit.
+     * @return True if the given board is prohibited to this unit according to the type of unit and type of board or if
+     *       the unit cannot survive on this board; e.g., JumpShips are prohibited from entering ground maps while BA
+     *       are not allowed on an atmospheric map. This refers to the various doomed... methods.
+     *
+     * @see #doomedOnGround()
+     * @see #doomedInAtmosphere()
+     * @see #doomedInSpace()
      */
     public boolean isBoardProhibited(Board board) {
         return isBoardProhibited(board.getBoardType());
     }
 
     /**
-     * @return True if the given board is prohibited to this unit.
+     * @return True if the given board type is prohibited to this unit according to the type of unit or if the unit
+     *       cannot survive on this board; e.g., JumpShips are prohibited from entering ground maps while BA are not
+     *       allowed on an atmospheric map. This refers to the various doomed... methods.
+     *
+     * @see #doomedOnGround()
+     * @see #doomedInAtmosphere()
+     * @see #doomedInSpace()
      */
     public boolean isBoardProhibited(BoardType boardType) {
         return (boardType.isGround() && doomedOnGround()) ||
@@ -6055,6 +6068,12 @@ public abstract class Entity extends TurnOrdered
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
 
+        // EI Interface provides 1-hex active probe per IO p.69
+        // This works even without the pilot implant (just the hardware)
+        if (hasEiCockpit()) {
+            return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
+        }
+
         return false;
     }
 
@@ -6151,6 +6170,12 @@ public abstract class Entity extends TurnOrdered
             return cyberBaseProbe + quirkBonus + spaBonus;
         }
 
+        // EI Interface provides 1-hex active probe per IO p.69
+        // This works even without the pilot implant (just the hardware)
+        if (hasEiCockpit()) {
+            return 1;
+        }
+
         return Entity.NONE;
     }
 
@@ -6175,24 +6200,25 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns whether this entity has a Targeting Computer that is in aimed shot mode.
+     * Returns whether this entity has a Targeting Computer or EI Interface that is in aimed shot mode.
      * This also returns true for Triple-Core Processor + VDNI/BVDNI combinations,
      * which grant aimed shot capability as if equipped with a Targeting Computer.
      */
     public boolean hasAimModeTargComp() {
+        // Active EI Interface grants aimed shot capability (IO p.69)
+        // hasActiveEiCockpit() verifies EI is not in "Off" mode
         if (hasActiveEiCockpit()) {
-            if (this instanceof Mek) {
-                if (((Mek) this).getCockpitStatus() == Mek.COCKPIT_AIMED_SHOT) {
+            for (MiscMounted m : getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_EI_INTERFACE) && !m.isInoperable()) {
                     return true;
                 }
-            } else {
-                return true;
             }
         }
         // TCP + VDNI/BVDNI grants aimed shot capability for Meks, vehicles, and aerospace
         if (hasTCPAimedShotCapability()) {
             return true;
         }
+        // Check Targeting Computer in "Aimed shot" mode
         for (MiscMounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_TARGETING_COMPUTER) && m.curMode().equals("Aimed shot")) {
                 return !m.isInoperable();
@@ -6776,6 +6802,7 @@ public abstract class Entity extends TurnOrdered
     public Entity getC3Top() {
         Entity m = this;
         Entity master = m.getC3Master();
+        // Except if there's ECM, we can't _reach_ the master.
         while ((master != null) &&
               !master.equals(m) &&
               master.hasC3()) {
@@ -6783,14 +6810,28 @@ public abstract class Entity extends TurnOrdered
             if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                 m = master;
                 master = m.getC3Master();
-            } else if (((m.hasBoostedC3() &&
+            } else if ((m.hasBoostedC3() &&
                   !ComputeECM.isAffectedByAngelECM(m, m.getPosition(), master.getPosition())) ||
-                  !(ComputeECM.isAffectedByECM(m, m.getPosition(), master.getPosition()))) &&
-                  ((master.hasBoostedC3() &&
-                        !ComputeECM.isAffectedByAngelECM(master, master.getPosition(), master.getPosition())) ||
-                        !(ComputeECM.isAffectedByECM(master, master.getPosition(), master.getPosition())))) {
-                m = master;
-                master = m.getC3Master();
+                  !(ComputeECM.isAffectedByECM(m, m.getPosition(), master.getPosition())))
+            {
+                if ((master.hasBoostedC3() &&
+                      !ComputeECM.isAffectedByAngelECM(master, master.getPosition(), master.getPosition())) ||
+                      !(ComputeECM.isAffectedByECM(master, master.getPosition(), master.getPosition()))) {
+                    // punched through
+                    m = master;
+                    master = m.getC3Master();
+                } else {
+                    // Somehow still failed; this should not be possible!
+                    throw new IllegalStateException(
+                          "C3 slave/master connection not affected by ECM/AECM but master is!" +
+                          String.format(
+                            "\nSlave: %s @ %s\nMaster: %s @ %s", m, master, m.getPosition(), master.getPosition()
+                          )
+                    );
+                }
+            } else {
+                // Can no longer contact master
+                master = null;
             }
         }
         return m;
@@ -10130,6 +10171,7 @@ public abstract class Entity extends TurnOrdered
      *
      * @return an int
      */
+    @Override
     public int getDeployRound() {
         return deployRound;
     }
@@ -10147,6 +10189,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Checks to see if an entity has been deployed
      */
+    @Override
     public boolean isDeployed() {
         return deployed;
     }
@@ -11640,12 +11683,82 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
+    /**
+     * Returns whether this entity has an Enhanced Imaging (EI) Interface. This is determined by having the EI Interface
+     * equipment installed. ProtoMeks always have EI built-in.
+     *
+     * @return true if this entity has an EI Interface
+     */
     public boolean hasEiCockpit() {
-        return ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT));
+        return hasWorkingMisc(MiscType.F_EI_INTERFACE);
     }
 
     public boolean hasActiveEiCockpit() {
-        return (hasEiCockpit() && hasAbility(OptionsConstants.UNOFFICIAL_EI_IMPLANT));
+        if (!hasEiCockpit() || !hasAbility(OptionsConstants.MD_EI_IMPLANT)) {
+            return false;
+        }
+        // Check if EI Interface equipment is in "Off" mode
+        for (MiscMounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                // If equipment exists and is in "Off" mode, EI is not active
+                if (m.curMode().getName().equals("Off")) {
+                    return false;
+                }
+                break;
+            }
+        }
+        // ProtoMeks always have EI active (no equipment to turn off)
+        return true;
+    }
+
+    /**
+     * Returns whether the EI Interface is currently shut down (in "Off" mode).
+     */
+    public boolean isEiShutdown() {
+        for (MiscMounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                return m.curMode().getName().equals("Off");
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Sets the EI shutdown state by changing the EI Interface equipment mode. ProtoMeks and units with MDI cannot
+     * shut down EI. Per IO p.69, EI can be voluntarily shut down during the End Phase.
+     *
+     * @param shutdown true to shut down EI (set to "Off" mode), false to activate it (set to "On" mode)
+     */
+    public void setEiShutdown(boolean shutdown) {
+        if (!canShutdownEi()) {
+            return;
+        }
+        for (MiscMounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                int targetMode = shutdown ? 0 : 1; // 0 = "Off", 1 = "On"
+                m.setMode(targetMode);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Returns whether this unit can shut down its EI Interface. ProtoMeks cannot shut down EI (it's integral to their
+     * design). Units with MDI (Machine/Direct Interface) cannot shut down EI. Per IO p.69.
+     */
+    public boolean canShutdownEi() {
+        if (!hasEiCockpit()) {
+            return false;
+        }
+        // ProtoMeks cannot shut down EI - it's integral to their design
+        if (this.isProtoMek()) {
+            return false;
+        }
+        // Units with MDI cannot shut down EI per IO
+        if (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)) {
+            return false;
+        }
+        return true;
     }
 
     public boolean isLayingMines() {

@@ -29599,6 +29599,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Add a single report to the report queue of all players and the master vPhaseReport queue
      */
+    @Override
     public void addReport(ReportEntry report) {
         mainPhaseReport.addElement((Report) report);
     }

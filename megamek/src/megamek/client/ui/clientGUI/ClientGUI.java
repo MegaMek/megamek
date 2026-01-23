@@ -184,6 +184,7 @@ import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.handlers.WeaponOrderHandler;
 import megamek.logging.MMLogger;
+import megamek.utilities.BoardsTagger;
 
 public class ClientGUI extends AbstractClientGUI
       implements BoardViewListener, ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots,
@@ -218,6 +219,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String BOARD_SAVE_AS = "fileBoardSaveAs";
     public static final String BOARD_SAVE_AS_IMAGE = "fileBoardSaveAsImage";
     public static final String BOARD_SAVE_AS_IMAGE_UNITS = "fileBoardSaveAsImageUnits";
+    public static final String BOARD_RUN_BOARD_TAGGER = "boardRunBoardTagger";
     public static final String BOARD_RESIZE = "boardResize";
     public static final String BOARD_VALIDATE = "boardValidate";
     public static final String BOARD_SOURCE_FILE = "boardSourcefile";
@@ -746,7 +748,7 @@ public class ClientGUI extends AbstractClientGUI
             unitLoadingDialog.setVisible(true);
         }
         mekSelectorDialog = new MegaMekUnitSelectorDialog(this, unitLoadingDialog);
-        randomArmyDialog = new RandomArmyDialog(this);
+        randomArmyDialog = new RandomArmyDialog(frame, this);
         new Thread(mekSelectorDialog, Messages.getString("ClientGUI.mekSelectorDialog")).start();
         frame.setVisible(true);
         GUIP.addPreferenceChangeListener(this);
@@ -1250,6 +1252,7 @@ public class ClientGUI extends AbstractClientGUI
     /**
      * Saves the current settings to the cfg file.
      */
+    @Override
     void saveSettings() {
         super.saveSettings();
 
@@ -3155,6 +3158,7 @@ public class ClientGUI extends AbstractClientGUI
         }
     };
 
+    @Override
     public Client getClient() {
         return client;
     }
@@ -3536,7 +3540,7 @@ public class ClientGUI extends AbstractClientGUI
      * @param entity The attacking entity
      */
     public void showFiringSolutions(Entity entity) {
-        firingSolutionSpriteHandler.showFiringSolutions(entity);
+        firingSolutionSpriteHandler.showFiringSolutions(entity, getDisplayedWeapon(), getDisplayedAmmo());
     }
 
     public JPanel getMainPanel() {

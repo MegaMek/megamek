@@ -2002,4 +2002,113 @@ public class ArmorType extends MiscType {
     public String toString() {
         return "[Armor] " + internalName;
     }
+
+    @Override
+    protected String getYamlTypeName() {
+        return "armor";
+    }
+
+    // ArmorType uses MiscType's addFlags() which uses MiscTypeFlag
+
+    @Override
+    public Map<String, Object> getYamlData() {
+        Map<String, Object> data = super.getYamlData();
+        Map<String, Object> armorDetails = new java.util.LinkedHashMap<>();
+
+        armorDetails.put("type", getArmorTypeIdName(armorType));
+
+        if (fighterSlots != 0) {
+            armorDetails.put("fighterSlots", fighterSlots);
+        }
+        if (patchworkSlotsMekSV != 0) {
+            armorDetails.put("patchworkSlotsMekSV", patchworkSlotsMekSV);
+        }
+        if (patchworkSlotsCVFtr != 0) {
+            armorDetails.put("patchworkSlotsCVFtr", patchworkSlotsCVFtr);
+        }
+        if (bar != 10) {
+            armorDetails.put("bar", bar);
+        }
+        if (pptMultiplier != 1.0) {
+            armorDetails.put("pptMultiplier", pptMultiplier);
+        }
+        if (weightPerPoint != 0.0) {
+            armorDetails.put("weightPerPoint", weightPerPoint);
+        }
+        if (pptDropship != null && pptDropship.length > 0) {
+            armorDetails.put("pptDropship", pptDropship);
+        }
+        if (pptCapital != null && pptCapital.length > 0) {
+            armorDetails.put("pptCapital", pptCapital);
+        }
+        if (!weightPerPointSV.isEmpty()) {
+            // Convert EnumMap to a simpler Map<String, Double> for YAML
+            Map<String, Double> svWeights = new java.util.LinkedHashMap<>();
+            for (Map.Entry<TechRating, Double> entry : weightPerPointSV.entrySet()) {
+                svWeights.put(entry.getKey().name(), entry.getValue());
+            }
+            armorDetails.put("weightPerPointSV", svWeights);
+        }
+
+        data.put("armor", armorDetails);
+        return data;
+    }
+
+    private static String getArmorTypeIdName(int armorId) {
+        return switch (armorId) {
+            case T_ARMOR_STANDARD -> "STANDARD";
+            case T_ARMOR_FERRO_FIBROUS -> "FERRO_FIBROUS";
+            case T_ARMOR_REACTIVE -> "REACTIVE";
+            case T_ARMOR_REFLECTIVE -> "REFLECTIVE";
+            case T_ARMOR_HARDENED -> "HARDENED";
+            case T_ARMOR_LIGHT_FERRO -> "LIGHT_FERRO";
+            case T_ARMOR_HEAVY_FERRO -> "HEAVY_FERRO";
+            case T_ARMOR_PATCHWORK -> "PATCHWORK";
+            case T_ARMOR_STEALTH -> "STEALTH";
+            case T_ARMOR_FERRO_FIBROUS_PROTO -> "FERRO_FIBROUS_PROTO";
+            case T_ARMOR_COMMERCIAL -> "COMMERCIAL";
+            case T_ARMOR_LC_FERRO_CARBIDE -> "LC_FERRO_CARBIDE";
+            case T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE -> "LC_LAMELLOR_FERRO_CARBIDE";
+            case T_ARMOR_LC_FERRO_IMP -> "LC_FERRO_IMP";
+            case T_ARMOR_INDUSTRIAL -> "INDUSTRIAL";
+            case T_ARMOR_HEAVY_INDUSTRIAL -> "HEAVY_INDUSTRIAL";
+            case T_ARMOR_FERRO_LAMELLOR -> "FERRO_LAMELLOR";
+            case T_ARMOR_PRIMITIVE -> "PRIMITIVE";
+            case T_ARMOR_EDP -> "EDP";
+            case T_ARMOR_ALUM -> "ALUM";
+            case T_ARMOR_HEAVY_ALUM -> "HEAVY_ALUM";
+            case T_ARMOR_LIGHT_ALUM -> "LIGHT_ALUM";
+            case T_ARMOR_STEALTH_VEHICLE -> "STEALTH_VEHICLE";
+            case T_ARMOR_ANTI_PENETRATIVE_ABLATION -> "ANTI_PENETRATIVE_ABLATION";
+            case T_ARMOR_HEAT_DISSIPATING -> "HEAT_DISSIPATING";
+            case T_ARMOR_IMPACT_RESISTANT -> "IMPACT_RESISTANT";
+            case T_ARMOR_BALLISTIC_REINFORCED -> "BALLISTIC_REINFORCED";
+            case T_ARMOR_FERRO_ALUM_PROTO -> "FERRO_ALUM_PROTO";
+            case T_ARMOR_BA_STANDARD -> "BA_STANDARD";
+            case T_ARMOR_BA_STANDARD_PROTOTYPE -> "BA_STANDARD_PROTOTYPE";
+            case T_ARMOR_BA_STANDARD_ADVANCED -> "BA_STANDARD_ADVANCED";
+            case T_ARMOR_BA_STEALTH_BASIC -> "BA_STEALTH_BASIC";
+            case T_ARMOR_BA_STEALTH -> "BA_STEALTH";
+            case T_ARMOR_BA_STEALTH_IMP -> "BA_STEALTH_IMP";
+            case T_ARMOR_BA_STEALTH_PROTOTYPE -> "BA_STEALTH_PROTOTYPE";
+            case T_ARMOR_BA_FIRE_RESIST -> "BA_FIRE_RESIST";
+            case T_ARMOR_BA_MIMETIC -> "BA_MIMETIC";
+            case T_ARMOR_BA_REFLECTIVE -> "BA_REFLECTIVE";
+            case T_ARMOR_BA_REACTIVE -> "BA_REACTIVE";
+            case T_ARMOR_PRIMITIVE_FIGHTER -> "PRIMITIVE_FIGHTER";
+            case T_ARMOR_PRIMITIVE_AERO -> "PRIMITIVE_AERO";
+            case T_ARMOR_AEROSPACE -> "AEROSPACE";
+            case T_ARMOR_STANDARD_PROTOMEK -> "STANDARD_PROTOMEK";
+            case T_ARMOR_SV_BAR_2 -> "SV_BAR_2";
+            case T_ARMOR_SV_BAR_3 -> "SV_BAR_3";
+            case T_ARMOR_SV_BAR_4 -> "SV_BAR_4";
+            case T_ARMOR_SV_BAR_5 -> "SV_BAR_5";
+            case T_ARMOR_SV_BAR_6 -> "SV_BAR_6";
+            case T_ARMOR_SV_BAR_7 -> "SV_BAR_7";
+            case T_ARMOR_SV_BAR_8 -> "SV_BAR_8";
+            case T_ARMOR_SV_BAR_9 -> "SV_BAR_9";
+            case T_ARMOR_SV_BAR_10 -> "SV_BAR_10";
+            default -> "UNKNOWN";
+        };
+    }
 }

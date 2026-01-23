@@ -85,7 +85,7 @@ import org.mockito.MockedStatic;
 class TWDamageManagerTest {
 
     private final TWGameManager gameMan = new TWGameManager();
-    private TWDamageManager newMan;
+    private TWDamageManager manager;
     private Game game;
     private Player player;
     private Server server;
@@ -103,7 +103,7 @@ class TWDamageManagerTest {
         game.setOptions(gOp);
 
         // DamageManagers will throw if uninitialized at use
-        newMan = new TWDamageManager(gameMan, game);
+        manager = new TWDamageManager(gameMan, game);
 
         // Need servers to handle unit destruction (sad face)
         server = ServerFactory.createServer(gameMan);
@@ -163,23 +163,23 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageBAComparison() throws EntityLoadingException {
+    void testDamageBASingle() throws EntityLoadingException {
         String unit = "Elemental BA [Laser] (Sqd5).blk";
         BattleArmor baEntity = loadBA(unit);
 
         // Validate starting armor
         assertEquals(10, baEntity.getArmor(BattleArmor.LOC_TROOPER_1));
 
-        // Deal damage with original method
+        // Deal damage to one trooper
         HitData hit = new HitData(BattleArmor.LOC_TROOPER_1);
         DamageInfo damageInfo = new DamageInfo(baEntity, hit, 5);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
         assertEquals(5, baEntity.getArmor(BattleArmor.LOC_TROOPER_1));
     }
 
     @Test
-    void killBAComparison() throws EntityLoadingException {
-        // We need to show that both old and new damagers kill BAs _dead_.
+    void testKillBASquad() throws EntityLoadingException {
+        // Show that the damageBA method within damageEntity code kills BAs _dead_.
 
         String unit = "Elemental BA [Laser] (Sqd5).blk";
         BattleArmor baEntity = loadBA(unit);
@@ -188,32 +188,30 @@ class TWDamageManagerTest {
         // Validate starting armor
         assertEquals(10, baEntity.getArmor(BattleArmor.LOC_TROOPER_1));
 
-        // Deal damage with original method
+        // Deal repeated damage to the whole BA squad
         for (int count = 0; count <= 15; count++) {
             HitData hit = baEntity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
             damageInfo = new DamageInfo(baEntity, hit, 5);
-            newMan.damageEntity(damageInfo);
+            manager.damageEntity(damageInfo);
         }
 
         assertTrue(baEntity.isDoomed());
     }
 
     @Test
-    void destroySectionDamageTransferComparison() throws EntityLoadingException {
-        // We need to show that both old and new damagers transfer damage correctly.
-
+    void testDestroySectionDamageTransfers() throws EntityLoadingException {
+        // Confirm that damage transfers appropriately
         String unit = "Crab CRB-20.mtf";
         Mek mek = loadMek(unit);
 
         // Validate starting armor
         assertEquals(14, mek.getArmor(Mek.LOC_LEFT_ARM));
 
-        // Deal damage with original method; have to explicitly set the damage manager
-        // for the game manager due to ping-pong callbacks during ammo explosions and such.
-        gameMan.setDamageManager(newMan);
+        // Deal damage to one location and confirm armor is all removed
+        gameMan.setDamageManager(manager);
         HitData hit = new HitData(Mek.LOC_LEFT_ARM);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 49);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
         // Armor is at least DOOMED on destroyed component
         assertTrue(IArmorState.ARMOR_DOOMED >= mek.getArmor(Mek.LOC_LEFT_ARM));
         // Internal Structure should be gone.
@@ -230,18 +228,15 @@ class TWDamageManagerTest {
         }
     }
 
-    void destroySectionCritTransfers(String manager) throws EntityLoadingException {
-        TWDamageManager damageManager = newMan;
+    @Test
+    void testDestroySectionCritTransfers() throws EntityLoadingException {
+        gameMan.setDamageManager(manager);
 
         String unit = "Crab CRB-20.mtf";
         Mek mek = loadMek(unit);
 
         // Validate starting armor
         assertEquals(14, mek.getArmor(Mek.LOC_LEFT_TORSO));
-
-        // Deal damage with provided method; have to explicitly set the damage manager
-        // for the game manager due to ping-pong callbacks during ammo explosions and such.
-        gameMan.setDamageManager(damageManager);
 
         // set phase to Firing
         game.setPhase(GamePhase.FIRING);
@@ -250,7 +245,7 @@ class TWDamageManagerTest {
         // Destroy LT
         HitData hit = new HitData(Mek.LOC_LEFT_TORSO);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 26);
-        damageManager.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
         // Armor is DOOMED on destroyed component
         assertEquals(IArmorState.ARMOR_DOOMED, mek.getArmor(Mek.LOC_LEFT_TORSO));
         // Internal Structure should be gone.
@@ -269,7 +264,7 @@ class TWDamageManagerTest {
         // Now destroy the left leg plus 1
         hit = new HitData(Mek.LOC_LEFT_LEG);
         damageInfo = new DamageInfo(mek, hit, 35);
-        damageManager.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         // LL now destroyed
         assertEquals(IArmorState.ARMOR_DOOMED, mek.getArmor(Mek.LOC_LEFT_LEG));
@@ -283,7 +278,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageReactiveArmorBA() throws EntityLoadingException {
+    void testDamageReactiveArmorBA() throws EntityLoadingException {
         String unit = "Black Wolf BA (ER Pulse) (Sqd5).blk";
         BattleArmor baEntity = loadBA(unit);
 
@@ -297,13 +292,13 @@ class TWDamageManagerTest {
         // Set areaSatArty so all suits take damage
         DamageInfo damageInfo = new DamageInfo(baEntity, hit, 20, false, DamageType.NONE,
               false, true);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(1, baEntity.getArmor(BattleArmor.LOC_TROOPER_1));
     }
 
     @Test
-    void damageMekHardenedArmorNoPSR() throws EntityLoadingException {
+    void testDamageMekHardenedArmorNoPSR() throws EntityLoadingException {
         String unit = "Hachiwara HCA-6P.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -313,14 +308,14 @@ class TWDamageManagerTest {
         // Deal "39" points of damage (should fill 19 circles and half of 1)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 39);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(14, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertFalse(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageMekHardenedArmorWithPSR() throws EntityLoadingException {
+    void testDamageMekHardenedArmorWithPSR() throws EntityLoadingException {
         String unit = "Hachiwara HCA-6P.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -330,14 +325,14 @@ class TWDamageManagerTest {
         // Deal "40" points of damage (should fill 20 circles and cause a PSR)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 40);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(13, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertTrue(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageMekHardenedArmorNoCritAP() throws EntityLoadingException {
+    void testDamageMekHardenedArmorNoCritAP() throws EntityLoadingException {
         String unit = "Hachiwara HCA-6P.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -345,14 +340,14 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO, false, 0, false,
               -1, true, true, HitData.DAMAGE_ARMOR_PIERCING, 0);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 20);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(13, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertTrue(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageMekStandardArmorCritFromAP() throws EntityLoadingException {
+    void testDamageMekStandardArmorCritFromAP() throws EntityLoadingException {
         String unit = "Cyclops CP-10-Z.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -360,14 +355,14 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO, false, 0, false,
               -1, true, true, HitData.DAMAGE_ARMOR_PIERCING, 0);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 20);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         // Don't check for exact remaining armor as AP may produce fatal crits, but PSRs will remain
         assertTrue(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageMekBallisticReinforcedArmorNoPSR() throws EntityLoadingException {
+    void testDamageMekBallisticReinforcedArmorNoPSR() throws EntityLoadingException {
         String unit = "Dervish DV-11DK.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -378,14 +373,14 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         hit.setGeneralDamageType(HitData.DAMAGE_MISSILE);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 39);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(6, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertFalse(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageMekBallisticReinforcedArmorWithPSR() throws EntityLoadingException {
+    void testDamageMekBallisticReinforcedArmorWithPSR() throws EntityLoadingException {
         String unit = "Dervish DV-11DK.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -396,14 +391,14 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         hit.setGeneralDamageType(HitData.DAMAGE_MISSILE);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 40);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(5, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertTrue(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageMekImpactResistantArmorNoPSR() throws EntityLoadingException {
+    void testDamageMekImpactResistantArmorNoPSR() throws EntityLoadingException {
         // Takes 2 damage per 3 full damage dealt
         String unit = "Storm Raider STM-R4.mtf";
         BipedMek mek = loadMek(unit);
@@ -415,14 +410,14 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 24);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(1, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertFalse(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageMekImpactResistantArmorWithPSR() throws EntityLoadingException {
+    void testDamageMekImpactResistantArmorWithPSR() throws EntityLoadingException {
         // Takes 2 damage per 3 full damage dealt
         String unit = "Storm Raider STM-R4.mtf";
         BipedMek mek = loadMek(unit);
@@ -434,14 +429,14 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 30);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(IArmorState.ARMOR_DESTROYED, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertTrue(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageMekImpactResistantArmorNonphysicalWithPSR() throws EntityLoadingException {
+    void testDamageMekImpactResistantArmorNonphysicalWithPSR() throws EntityLoadingException {
         // Takes normal damage when not physical damage
         String unit = "Storm Raider STM-R4.mtf";
         BipedMek mek = loadMek(unit);
@@ -453,14 +448,14 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         hit.setGeneralDamageType(HitData.DAMAGE_ENERGY);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 20);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(IArmorState.ARMOR_DESTROYED, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertTrue(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageMekFerroLamellorArmorNoPSR() throws EntityLoadingException {
+    void testDamageMekFerroLamellorArmorNoPSR() throws EntityLoadingException {
         String unit = "Charger C.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -471,14 +466,14 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         hit.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 24);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(21, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertFalse(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageMekFerroLamellorArmorWithPSR() throws EntityLoadingException {
+    void testDamageMekFerroLamellorArmorWithPSR() throws EntityLoadingException {
         String unit = "Charger C.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -489,14 +484,14 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         hit.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 25);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(20, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertTrue(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageAeroFerroLamellorArmorCritChecksChecks() throws EntityLoadingException {
+    void testDamageAeroFerroLamellorArmorCritChecksChecks() throws EntityLoadingException {
         String unit = "Slayer SL-CX1.blk";
         AeroSpaceFighter asf = loadASF(unit);
 
@@ -508,7 +503,7 @@ class TWDamageManagerTest {
         HitData hit = new HitData(AeroSpaceFighter.LOC_NOSE);
         hit.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
         DamageInfo damageInfo = new DamageInfo(asf, hit, 9);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(73, asf.getArmor(AeroSpaceFighter.LOC_NOSE));
         assertFalse(asf.wasCritThresh());
@@ -519,12 +514,12 @@ class TWDamageManagerTest {
         HitData hit2 = new HitData(AeroSpaceFighter.LOC_NOSE);
         hit2.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
         DamageInfo damageInfo2 = new DamageInfo(asf2, hit2, 12);  // ~9-10 actual, exceeds threshold
-        newMan.damageEntity(damageInfo2);
+        manager.damageEntity(damageInfo2);
         assertTrue(asf2.wasCritThresh());
     }
 
     @Test
-    void damageMekCowlDamageCowlOnly() throws EntityLoadingException {
+    void testDamageMekCowlDamageCowlOnly() throws EntityLoadingException {
         String unit = "Cyclops CP-10-Z.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -539,7 +534,7 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_HEAD);
         hit.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 3);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(9, mek.getArmor(BipedMek.LOC_HEAD));
         assertFalse(gameMan.checkForPSRFromDamage(mek));
@@ -549,7 +544,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekCowlDamageAllHeadArmor() throws EntityLoadingException {
+    void testDamageMekCowlDamageAllHeadArmor() throws EntityLoadingException {
         String unit = "Cyclops CP-10-Z.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -565,7 +560,7 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_HEAD);
         hit.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 12);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         // Armor is _gone_ but not _destroyed
         assertEquals(0, mek.getArmor(BipedMek.LOC_HEAD));
@@ -574,7 +569,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekReactiveArmorNoPSR() throws EntityLoadingException {
+    void testDamageMekReactiveArmorNoPSR() throws EntityLoadingException {
         String unit = "Warwolf A.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -585,14 +580,14 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         hit.setGeneralDamageType(HitData.DAMAGE_MISSILE);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 39);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(16, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertFalse(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageMekReactiveArmorWithPSR() throws EntityLoadingException {
+    void testDamageMekReactiveArmorWithPSR() throws EntityLoadingException {
         String unit = "Warwolf A.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -603,14 +598,14 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         hit.setGeneralDamageType(HitData.DAMAGE_MISSILE);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 40);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(15, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertTrue(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageMekReflectiveArmorNoPSR() throws EntityLoadingException {
+    void testDamageMekReflectiveArmorNoPSR() throws EntityLoadingException {
         String unit = "Flashman FLS-10E.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -621,14 +616,14 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         hit.setGeneralDamageType(HitData.DAMAGE_ENERGY);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 39);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(11, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertFalse(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageMekReflectiveArmorWithPSR() throws EntityLoadingException {
+    void testDamageMekReflectiveArmorWithPSR() throws EntityLoadingException {
         String unit = "Flashman FLS-10E.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -639,14 +634,14 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         hit.setGeneralDamageType(HitData.DAMAGE_ENERGY);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 40);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(10, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertTrue(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageAeroReflectiveArmorCritChecks() throws EntityLoadingException {
+    void testDamageAeroReflectiveArmorCritChecks() throws EntityLoadingException {
         String unit = "Seydlitz C.blk";
         AeroSpaceFighter asf = loadASF(unit);
 
@@ -658,7 +653,7 @@ class TWDamageManagerTest {
         HitData hit = new HitData(AeroSpaceFighter.LOC_NOSE);
         hit.setGeneralDamageType(HitData.DAMAGE_ENERGY);
         DamageInfo damageInfo = new DamageInfo(asf, hit, 2);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(17, asf.getArmor(AeroSpaceFighter.LOC_NOSE));
         assertFalse(asf.wasCritThresh());
@@ -669,12 +664,12 @@ class TWDamageManagerTest {
         HitData hit2 = new HitData(AeroSpaceFighter.LOC_NOSE);
         hit2.setGeneralDamageType(HitData.DAMAGE_ENERGY);
         DamageInfo damageInfo2 = new DamageInfo(asf2, hit2, 6);  // 3 actual, exceeds threshold
-        newMan.damageEntity(damageInfo2);
+        manager.damageEntity(damageInfo2);
         assertTrue(asf2.wasCritThresh());
     }
 
     @Test
-    void damageAeroSIWithHalvedDamageTransfer() throws EntityLoadingException {
+    void testDamageAeroSIWithHalvedDamageTransfer() throws EntityLoadingException {
         String unit = "Seydlitz C.blk";
         AeroSpaceFighter asf = loadASF(unit);
 
@@ -687,7 +682,7 @@ class TWDamageManagerTest {
         HitData hit = new HitData(AeroSpaceFighter.LOC_LEFT_WING);
         hit.setGeneralDamageType(HitData.DAMAGE_MISSILE);
         DamageInfo damageInfo = new DamageInfo(asf, hit, 13);
-        newMan.damageEntity(damageInfo);
+        manager.damageEntity(damageInfo);
 
         assertEquals(IArmorState.ARMOR_DESTROYED, asf.getArmor(AeroSpaceFighter.LOC_LEFT_WING));
         assertEquals(10, asf.getSI());
@@ -721,7 +716,7 @@ class TWDamageManagerTest {
 
         @ParameterizedTest
         @ValueSource(ints = { 6 })
-        void damageMekWithHHWHitHHWLArm(int roll) throws EntityLoadingException {
+        void testDamageMekWithHHWHitHHWLArm(int roll) throws EntityLoadingException {
             // Arrange
             HandheldWeapon hhwInArms = loadHHW(unit2);
             int TARGET = hhwInArms.targetForArmHitToHitCarriedObject();
@@ -748,7 +743,7 @@ class TWDamageManagerTest {
             try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
                 mockedCompute.when(() -> Compute.rollD6(1)).thenReturn(mockRoll);
 
-                newMan.damageEntity(damageInfo);
+                manager.damageEntity(damageInfo);
             }
 
             // Assert
@@ -759,7 +754,7 @@ class TWDamageManagerTest {
 
         @ParameterizedTest
         @ValueSource(ints = { 1, 2, 3, 4, 5 })
-        void damageMekWithHHWHitArmsNoHitHHWLArm(int roll) throws EntityLoadingException {
+        void testDamageMekWithHHWHitArmsNoHitHHWLArm(int roll) throws EntityLoadingException {
             // Arrange
             HandheldWeapon hhwInArms = loadHHW(unit2);
             int TARGET = hhwInArms.targetForArmHitToHitCarriedObject();
@@ -786,7 +781,7 @@ class TWDamageManagerTest {
             try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
                 mockedCompute.when(() -> Compute.rollD6(1)).thenReturn(mockRoll);
 
-                newMan.damageEntity(damageInfo);
+                manager.damageEntity(damageInfo);
             }
 
             // Assert
@@ -797,7 +792,7 @@ class TWDamageManagerTest {
 
         @ParameterizedTest
         @ValueSource(ints = { 6 })
-        void damageMekWithHHWHitHHWRArm(int roll) throws EntityLoadingException {
+        void testDamageMekWithHHWHitHHWRArm(int roll) throws EntityLoadingException {
             // Arrange
             HandheldWeapon hhwInArms = loadHHW(unit2);
             int TARGET = hhwInArms.targetForArmHitToHitCarriedObject();
@@ -824,7 +819,7 @@ class TWDamageManagerTest {
             try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
                 mockedCompute.when(() -> Compute.rollD6(1)).thenReturn(mockRoll);
 
-                newMan.damageEntity(damageInfo);
+                manager.damageEntity(damageInfo);
             }
 
             // Assert
@@ -835,7 +830,7 @@ class TWDamageManagerTest {
 
         @ParameterizedTest
         @ValueSource(ints = { 1, 2, 3, 4, 5 })
-        void damageMekWithHHWHitArmsNoHitHHWRArm(int roll) throws EntityLoadingException {
+        void testDamageMekWithHHWHitArmsNoHitHHWRArm(int roll) throws EntityLoadingException {
             // Arrange
             HandheldWeapon hhwInArms = loadHHW(unit2);
             int TARGET = hhwInArms.targetForArmHitToHitCarriedObject();
@@ -862,7 +857,7 @@ class TWDamageManagerTest {
             try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
                 mockedCompute.when(() -> Compute.rollD6(1)).thenReturn(mockRoll);
 
-                newMan.damageEntity(damageInfo);
+                manager.damageEntity(damageInfo);
             }
 
             // Assert
@@ -873,7 +868,7 @@ class TWDamageManagerTest {
 
         @ParameterizedTest
         @MethodSource(value = "nonArmLocations")
-        void damageMekWithHHWHitArmsNoHitNotArm(int location) throws EntityLoadingException {
+        void testDamageMekWithHHWHitArmsNoHitNotArm(int location) throws EntityLoadingException {
             // Arrange
             HandheldWeapon hhwInArms = loadHHW(unit2);
             int TARGET = hhwInArms.targetForArmHitToHitCarriedObject();
@@ -901,7 +896,7 @@ class TWDamageManagerTest {
             try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
                 mockedCompute.when(() -> Compute.rollD6(1)).thenReturn(mockRoll);
 
-                newMan.damageEntity(damageInfo);
+                manager.damageEntity(damageInfo);
             }
 
             // Assert
@@ -925,7 +920,7 @@ class TWDamageManagerTest {
         }
 
         @Test
-        void damageMekLiftHoistHHW() throws EntityLoadingException {
+        void testDamageMekLiftHoistHHW() throws EntityLoadingException {
 
             HandheldWeapon hhwInLiftHoist = loadHHW(unit2);
 
@@ -944,7 +939,7 @@ class TWDamageManagerTest {
             // Deal "10" points of damage to the Mek
             HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
             DamageInfo damageInfo = new DamageInfo(mek, hit, 10);
-            newMan.damageEntity(damageInfo);
+            manager.damageEntity(damageInfo);
 
             // This should also hurt the HHW in the Lift Hoist
             assertEquals(20, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
@@ -953,7 +948,7 @@ class TWDamageManagerTest {
         }
 
         @Test
-        void damageMekLiftHoistedHHWAndHHWInArms() throws EntityLoadingException {
+        void testDamageMekLiftHoistedHHWAndHHWInArms() throws EntityLoadingException {
 
             HandheldWeapon hhwInArms = loadHHW(unit2);
             HandheldWeapon hhwInLiftHoist = loadHHW(unit2);
@@ -977,7 +972,7 @@ class TWDamageManagerTest {
             // Deal "10" points of damage to the Mek
             HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
             DamageInfo damageInfo = new DamageInfo(mek, hit, 10);
-            newMan.damageEntity(damageInfo);
+            manager.damageEntity(damageInfo);
 
             // This should also hurt the HHW in the Lift Hoist but not the HHW in the Mek's Arms
             assertEquals(20, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
@@ -987,7 +982,7 @@ class TWDamageManagerTest {
         }
 
         @Test
-        void damageMekArmsHHW() throws EntityLoadingException {
+        void testDamageMekArmsHHW() throws EntityLoadingException {
 
             HandheldWeapon hhwInArms = loadHHW(unit2);
 
@@ -1006,7 +1001,7 @@ class TWDamageManagerTest {
             // Deal "10" points of damage to the Mek
             HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
             DamageInfo damageInfo = new DamageInfo(mek, hit, 10);
-            newMan.damageEntity(damageInfo);
+            manager.damageEntity(damageInfo);
 
             // This should not hurt the HHW in the Mek's Arms
             assertEquals(20, mek.getArmor(BipedMek.LOC_CENTER_TORSO));

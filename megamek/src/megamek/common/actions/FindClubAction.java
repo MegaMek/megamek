@@ -42,6 +42,7 @@ import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 import megamek.common.units.Terrains;
 import megamek.common.units.TripodMek;
@@ -76,6 +77,10 @@ public class FindClubAction extends AbstractEntityAction {
             return false;
         }
 
+        // Prevent finding a club if sprinting
+        if (entity.moved == EntityMovementType.MOVE_SPRINT) {
+            return false;
+        }
         // Check game options
         if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
               && entity.getCrew().isClanPilot()) {

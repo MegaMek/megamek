@@ -827,6 +827,11 @@ public class CustomMekDialog extends AbstractButtonDialog
             return;
         }
 
+        // DNI is IS-only tech - cannot be added to pure Clan units (IO p.83)
+        if (entity.isClan() && !entity.isMixedTech()) {
+            return;
+        }
+
         // Check if the equipment is valid for this unit type
         if (!dniMod.hasFlag(MiscType.F_MEK_EQUIPMENT) && entity.isMek()) {
             return;

@@ -85,8 +85,7 @@ import org.mockito.MockedStatic;
 class TWDamageManagerTest {
 
     private final TWGameManager gameMan = new TWGameManager();
-    private TWDamageManager oldMan;
-    private TWDamageManagerModular newMan;
+    private TWDamageManager newMan;
     private Game game;
     private Player player;
     private Server server;
@@ -104,8 +103,7 @@ class TWDamageManagerTest {
         game.setOptions(gOp);
 
         // DamageManagers will throw if uninitialized at use
-        oldMan = new TWDamageManager(gameMan, game);
-        newMan = new TWDamageManagerModular(gameMan, game);
+        newMan = new TWDamageManager(gameMan, game);
 
         // Need servers to handle unit destruction (sad face)
         server = ServerFactory.createServer(gameMan);
@@ -167,28 +165,16 @@ class TWDamageManagerTest {
     @Test
     void damageBAComparison() throws EntityLoadingException {
         String unit = "Elemental BA [Laser] (Sqd5).blk";
-        BattleArmor mek = loadBA(unit);
+        BattleArmor baEntity = loadBA(unit);
 
         // Validate starting armor
-        assertEquals(10, mek.getArmor(BattleArmor.LOC_TROOPER_1));
+        assertEquals(10, baEntity.getArmor(BattleArmor.LOC_TROOPER_1));
 
         // Deal damage with original method
         HitData hit = new HitData(BattleArmor.LOC_TROOPER_1);
-        DamageInfo damageInfo = new DamageInfo(mek, hit, 5);
-        oldMan.damageEntity(damageInfo);
-        assertEquals(5, mek.getArmor(BattleArmor.LOC_TROOPER_1));
-
-        // Reset for new damage method
-        BattleArmor mek2 = loadBA(unit);
-
-        // Validate starting armor
-        assertEquals(10, mek2.getArmor(BattleArmor.LOC_TROOPER_1));
-
-        // Deal damage with new method
-        hit = new HitData(BattleArmor.LOC_TROOPER_1);
-        damageInfo = new DamageInfo(mek2, hit, 5);
+        DamageInfo damageInfo = new DamageInfo(baEntity, hit, 5);
         newMan.damageEntity(damageInfo);
-        assertEquals(5, mek2.getArmor(BattleArmor.LOC_TROOPER_1));
+        assertEquals(5, baEntity.getArmor(BattleArmor.LOC_TROOPER_1));
     }
 
     @Test
@@ -196,34 +182,20 @@ class TWDamageManagerTest {
         // We need to show that both old and new damagers kill BAs _dead_.
 
         String unit = "Elemental BA [Laser] (Sqd5).blk";
-        BattleArmor mek = loadBA(unit);
+        BattleArmor baEntity = loadBA(unit);
         DamageInfo damageInfo;
 
         // Validate starting armor
-        assertEquals(10, mek.getArmor(BattleArmor.LOC_TROOPER_1));
+        assertEquals(10, baEntity.getArmor(BattleArmor.LOC_TROOPER_1));
 
         // Deal damage with original method
         for (int count = 0; count <= 15; count++) {
-            HitData hit = mek.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-            damageInfo = new DamageInfo(mek, hit, 5);
-            oldMan.damageEntity(damageInfo);
-        }
-
-        assertTrue(mek.isDoomed());
-
-        // Reset for new damage method
-        BattleArmor mek2 = loadBA(unit);
-
-        // Validate starting armor
-        assertEquals(10, mek2.getArmor(BattleArmor.LOC_TROOPER_1));
-
-        // Deal damage with new method
-        for (int count = 0; count <= 15; count++) {
-            HitData hit = mek2.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-            damageInfo = new DamageInfo(mek2, hit, 5);
+            HitData hit = baEntity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+            damageInfo = new DamageInfo(baEntity, hit, 5);
             newMan.damageEntity(damageInfo);
         }
-        assertTrue(mek2.isDoomed());
+
+        assertTrue(baEntity.isDoomed());
     }
 
     @Test
@@ -238,10 +210,10 @@ class TWDamageManagerTest {
 
         // Deal damage with original method; have to explicitly set the damage manager
         // for the game manager due to ping-pong callbacks during ammo explosions and such.
-        gameMan.setDamageManager(oldMan);
+        gameMan.setDamageManager(newMan);
         HitData hit = new HitData(Mek.LOC_LEFT_ARM);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 49);
-        oldMan.damageEntity(damageInfo);
+        newMan.damageEntity(damageInfo);
         // Armor is at least DOOMED on destroyed component
         assertTrue(IArmorState.ARMOR_DOOMED >= mek.getArmor(Mek.LOC_LEFT_ARM));
         // Internal Structure should be gone.
@@ -256,36 +228,10 @@ class TWDamageManagerTest {
             // One damage transfers to CT
             assertEquals(17, mek.getArmor(Mek.LOC_CENTER_TORSO));
         }
-
-        // Reset for new damage method; have to explicitly set the damage manager
-        // for the game manager due to ping-pong callbacks during ammo explosions and such.
-        gameMan.setDamageManager(newMan);
-        Mek mek2 = loadMek(unit);
-
-        // Validate starting armor
-        assertEquals(14, mek2.getArmor(Mek.LOC_LEFT_ARM));
-
-        // Deal damage with new method
-        // Check for ARMOR_DOOMED _or less_, in case of chain crits
-        hit = new HitData(Mek.LOC_LEFT_ARM);
-        damageInfo = new DamageInfo(mek2, hit, 49);
-        newMan.damageEntity(damageInfo);
-        assertTrue(IArmorState.ARMOR_DOOMED >= mek2.getArmor(Mek.LOC_LEFT_ARM));
-        assertTrue(IArmorState.ARMOR_DOOMED >= mek2.getInternal(Mek.LOC_LEFT_ARM));
-        if (mek2.getArmor(Mek.LOC_LEFT_ARM) == IArmorState.ARMOR_DOOMED) {
-            // Shouldn't be blown off if armor state is ARMOR_DOOMED
-            assertFalse(mek2.isLocationBlownOff(Mek.LOC_LEFT_ARM));
-            assertEquals(IArmorState.ARMOR_DOOMED, mek2.getArmor(Mek.LOC_LEFT_TORSO));
-            assertEquals(IArmorState.ARMOR_DOOMED, mek2.getInternal(Mek.LOC_LEFT_TORSO));
-            assertEquals(17, mek2.getArmor(Mek.LOC_CENTER_TORSO));
-        }
     }
 
-    @ParameterizedTest()
-    @ValueSource(strings = { "Original", "Modular" })
     void destroySectionCritTransfers(String manager) throws EntityLoadingException {
-        // We need to show that both old and new damage managers transfer damage correctly.
-        TWDamageManager damageManager = (manager.equals("Original")) ? oldMan : newMan;
+        TWDamageManager damageManager = newMan;
 
         String unit = "Crab CRB-20.mtf";
         Mek mek = loadMek(unit);
@@ -339,21 +285,21 @@ class TWDamageManagerTest {
     @Test
     void damageReactiveArmorBA() throws EntityLoadingException {
         String unit = "Black Wolf BA (ER Pulse) (Sqd5).blk";
-        BattleArmor mek = loadBA(unit);
+        BattleArmor baEntity = loadBA(unit);
 
         // Validate starting armor
-        assertEquals(11, mek.getArmor(BattleArmor.LOC_TROOPER_1));
+        assertEquals(11, baEntity.getArmor(BattleArmor.LOC_TROOPER_1));
 
         // Deal "20" points of damage (should fill 10 circles)
         HitData hit = new HitData(BattleArmor.LOC_TROOPER_1);
         // All AmmoWeaponHandlers (including artillery) use Ballistic damage type
         hit.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
         // Set areaSatArty so all suits take damage
-        DamageInfo damageInfo = new DamageInfo(mek, hit, 20, false, DamageType.NONE,
+        DamageInfo damageInfo = new DamageInfo(baEntity, hit, 20, false, DamageType.NONE,
               false, true);
         newMan.damageEntity(damageInfo);
 
-        assertEquals(1, mek.getArmor(BattleArmor.LOC_TROOPER_1));
+        assertEquals(1, baEntity.getArmor(BattleArmor.LOC_TROOPER_1));
     }
 
     @Test
@@ -371,13 +317,6 @@ class TWDamageManagerTest {
 
         assertEquals(14, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertFalse(gameMan.checkForPSRFromDamage(mek));
-
-        // Show old system incorrectly causing a PSR
-        BipedMek mek2 = loadMek(unit);
-        HitData hit2 = new HitData(BipedMek.LOC_CENTER_TORSO);
-        DamageInfo damageInfo2 = new DamageInfo(mek2, hit2, 39);
-        oldMan.damageEntity(damageInfo2);
-        assertTrue(gameMan.checkForPSRFromDamage(mek2));
     }
 
     @Test
@@ -443,14 +382,6 @@ class TWDamageManagerTest {
 
         assertEquals(6, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertFalse(gameMan.checkForPSRFromDamage(mek));
-
-        // Show old system incorrectly causing a PSR
-        BipedMek mek2 = loadMek(unit);
-        HitData hit2 = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit2.setGeneralDamageType(HitData.DAMAGE_MISSILE);
-        DamageInfo damageInfo2 = new DamageInfo(mek2, hit2, 39);
-        oldMan.damageEntity(damageInfo2);
-        assertTrue(gameMan.checkForPSRFromDamage(mek2));
     }
 
     @Test
@@ -488,14 +419,6 @@ class TWDamageManagerTest {
 
         assertEquals(1, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertFalse(gameMan.checkForPSRFromDamage(mek));
-
-        // Show old system incorrectly causing a PSR
-        BipedMek mek2 = loadMek(unit);
-        HitData hit2 = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit2.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-        DamageInfo damageInfo2 = new DamageInfo(mek2, hit2, 24);
-        oldMan.damageEntity(damageInfo2);
-        assertTrue(gameMan.checkForPSRFromDamage(mek2));
     }
 
     @Test
@@ -552,14 +475,6 @@ class TWDamageManagerTest {
 
         assertEquals(21, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertFalse(gameMan.checkForPSRFromDamage(mek));
-
-        // Show old system incorrectly causing a PSR
-        BipedMek mek2 = loadMek(unit);
-        HitData hit2 = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit2.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
-        DamageInfo damageInfo2 = new DamageInfo(mek2, hit2, 24);
-        oldMan.damageEntity(damageInfo2);
-        assertTrue(gameMan.checkForPSRFromDamage(mek2));
     }
 
     @Test
@@ -674,14 +589,6 @@ class TWDamageManagerTest {
 
         assertEquals(16, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertFalse(gameMan.checkForPSRFromDamage(mek));
-
-        // Show old system incorrectly causing a PSR
-        BipedMek mek2 = loadMek(unit);
-        HitData hit2 = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit2.setGeneralDamageType(HitData.DAMAGE_MISSILE);
-        DamageInfo damageInfo2 = new DamageInfo(mek2, hit2, 24);
-        oldMan.damageEntity(damageInfo2);
-        assertTrue(gameMan.checkForPSRFromDamage(mek2));
     }
 
     @Test
@@ -718,14 +625,6 @@ class TWDamageManagerTest {
 
         assertEquals(11, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
         assertFalse(gameMan.checkForPSRFromDamage(mek));
-
-        // Show old system incorrectly causing a PSR
-        BipedMek mek2 = loadMek(unit);
-        HitData hit2 = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit2.setGeneralDamageType(HitData.DAMAGE_ENERGY);
-        DamageInfo damageInfo2 = new DamageInfo(mek2, hit2, 24);
-        oldMan.damageEntity(damageInfo2);
-        assertTrue(gameMan.checkForPSRFromDamage(mek2));
     }
 
     @Test
@@ -783,7 +682,7 @@ class TWDamageManagerTest {
         assertEquals(11, asf.getArmor(AeroSpaceFighter.LOC_LEFT_WING));
         assertEquals(11, asf.getSI());
 
-        // Deal 13 points of damage (should fill 11 circles and deal 1 SI damage without overflowing and 
+        // Deal 13 points of damage (should fill 11 circles and deal 1 SI damage without overflowing and
         // destroying the unit)
         HitData hit = new HitData(AeroSpaceFighter.LOC_LEFT_WING);
         hit.setGeneralDamageType(HitData.DAMAGE_MISSILE);

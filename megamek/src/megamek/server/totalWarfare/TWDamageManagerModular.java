@@ -33,37 +33,11 @@
 
 package megamek.server.totalWarfare;
 
-import java.util.List;
-import java.util.Vector;
-
-import megamek.common.CriticalSlot;
-import megamek.common.DamageInfo;
-import megamek.common.Hex;
-import megamek.common.HexTarget;
-import megamek.common.HitData;
-import megamek.common.Report;
-import megamek.common.ToHitData;
-import megamek.common.battleArmor.BattleArmor;
-import megamek.common.board.Coords;
-import megamek.common.compute.Compute;
-import megamek.common.equipment.*;
-import megamek.common.equipment.AmmoType.Munitions;
-import megamek.common.equipment.enums.BombType;
 import megamek.common.game.Game;
-import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryConditions.Atmosphere;
-import megamek.common.rolls.PilotingRollData;
-import megamek.common.rolls.Roll;
-import megamek.common.rolls.TargetRoll;
-import megamek.common.units.*;
-import megamek.common.weapons.DamageType;
-import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
 import megamek.server.IDamageManager;
-import megamek.server.ServerHelper;
 
 public class TWDamageManagerModular extends TWDamageManager implements IDamageManager {
-    private static final MMLogger logger = MMLogger.create(TWDamageManagerModular.class);
 
     public TWDamageManagerModular() {
         super();
@@ -77,27 +51,6 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         super(manager, game);
     }
 
-    /**
-     * Top-level damage function; calls specialized functions to deal with damage to specific unit types.
-     *
-     * @param entity        Entity being damaged
-     * @param hit           HitData recording aspects of the incoming damage
-     * @param damage        Actual amount of incoming damage
-     * @param ammoExplosion Whether damage was caused by an ammo explosion
-     * @param damageType    Type of damage, mainly used for specialized armor
-     * @param damageIS      Whether damage is going straight to the internal structure
-     * @param areaSatArty   Whether damage is caused by AE attack
-     * @param throughFront  Through front arc or no, for some specialized armors
-     * @param underWater    Whether damage is being dealt underwater, for breach check
-     * @param nukeS2S       Whether damage is from a nuclear weapon
-     * @param reportVec     Vector of Reports containing prior reports; usually modded and returned
-     *
-     * @return A Vector of {@link Report} objects
-     */
-    @Override
-    public Vector<Report> damageEntity(Entity entity, HitData hit, int damage, boolean ammoExplosion,
-          DamageType damageType, boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater,
-          boolean nukeS2S, Vector<Report> reportVec) {
 
         Report report;
         int entityId = entity.getId();
@@ -3052,7 +3005,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 reportVec.addElement(report);
             } else if (heatArmor && hit.getHeatWeapon() && game.getOptions()
                   .booleanOption(OptionsConstants.PLAYTEST_3)) {
-                // PLAYTEST3 only applies if heat_weapon is true in hitdata, which can only occur when playtest 
+                // PLAYTEST3 only applies if heat_weapon is true in hitdata, which can only occur when playtest
                 // is on.
                 tmpDamageHold = damage;
                 damage = (int) Math.ceil((((double) damage) / 2));

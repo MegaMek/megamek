@@ -316,7 +316,6 @@ public class OptionsConstants {
     public static final String BASE_GM_CONTROLS_DONE_REPORT_PHASE = "gm_controls_done_report_phase";
     public static final String BASE_HIDE_UNOFFICIAL = "hide_unofficial";
     public static final String BASE_HIDE_LEGACY = "hide_legacy";
-    public static final String BASE_NEW_DAMAGE_MANAGER = "new_damage_manager";
 
     public static final String VICTORY_SKIP_FORCED_VICTORY = "skip_forced_victory";
     public static final String VICTORY_CHECK_VICTORY = "check_victory";

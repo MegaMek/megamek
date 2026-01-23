@@ -56,6 +56,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.common.util.YamlEncDec;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalWarfare.TWGameManager;
@@ -350,7 +351,7 @@ public abstract class InfantryWeapon extends Weapon {
             infantry.put("crew", this.crew);
         }
         if (ammoWeight > 0) {
-            infantry.put("ammoWeight", this.ammoWeight);
+            infantry.put("ammoWeight", YamlEncDec.formatDouble(this.ammoWeight));
         }
         if (ammoCost > 0) {
             infantry.put("ammoCost", this.ammoCost);

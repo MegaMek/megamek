@@ -34,6 +34,7 @@
 
 package megamek.common.equipment;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -144,6 +145,7 @@ import megamek.common.weapons.gaussRifles.innerSphere.ISMagshotGaussRifle;
 import megamek.common.weapons.gaussRifles.innerSphere.ISSilverBulletGauss;
 import megamek.common.weapons.infantry.InfantrySniperStalkerWeapon;
 import megamek.common.weapons.infantry.InfantryTWFlamerWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.infantry.archaic.*;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeInfernoWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeMicroWeapon;
@@ -2522,8 +2524,169 @@ public class WeaponType extends EquipmentType {
     }
 
     @Override
+    protected String getYamlTypeName() {
+        return "weapon";
+    }
+
+    @Override
+    protected void addFlags(Map<String, Object> data) {
+        String[] flagStrings = getFlags().getSetFlagNamesAsArray(WeaponTypeFlag.class);
+        if (flagStrings.length > 0) {
+            data.put("flags", flagStrings);
+        }
+    }
+
+    @Override
     public Map<String, Object> getYamlData() {
         Map<String, Object> data = super.getYamlData();
+        Map<String, Object> weapon = new LinkedHashMap<>();
+
+        weapon.put("damage", formatDamage());
+        if (explosionDamage > 0) {
+            weapon.put("explosionDamage", explosionDamage);
+        }
+
+        if (rackSize > 0) {
+            weapon.put("rackSize", this.rackSize);
+        }
+        weapon.put("ammoType", ammoType.name());
+        if (heat > 0) {
+            weapon.put("heat", this.heat);
+        }
+
+        // Export ranges (trimmed of trailing zeros)
+        int[] ranges = {
+            this.getShortRange(),
+            this.getMediumRange(),
+            this.getLongRange(),
+            this.getExtremeRange()
+        };
+        int[] trimmedRanges = trimTrailingZeros(ranges);
+        if (trimmedRanges.length > 0) {
+            weapon.put("ranges", trimmedRanges);
+        }
+
+        // Export water ranges (trimmed of trailing zeros, only if different from ranges)
+        int[] wRanges = {
+            this.getWShortRange(),
+            this.getWMediumRange(),
+            this.getWLongRange(),
+            this.getWExtremeRange()
+        };
+        int[] trimmedWRanges = trimTrailingZeros(wRanges);
+        if (trimmedWRanges.length > 0 && !java.util.Arrays.equals(trimmedRanges, trimmedWRanges)) {
+            weapon.put("wRanges", trimmedWRanges);
+        }
+
+        int minRange = Math.max(this.getMinimumRange(), 0);
+        if (minRange > 0) {
+            weapon.put("minRange", minRange);
+        }
+        weapon.put("maxRangeBracket", rangeBracketToString(this.getMaxRange()));
+
+        // Export AV values (trimmed of trailing zeros)
+        double[] av = {
+            this.getShortAV(),
+            this.getMedAV(),
+            this.getLongAV(),
+            this.getExtAV()
+        };
+        double[] trimmedAV = trimTrailingZeros(av);
+        if (trimmedAV.length > 0) {
+            weapon.put("av", trimmedAV);
+        }
+
+        if (this.capital) {
+            weapon.put("capital", this.capital);
+        }
+        if (this.subCapital) {
+            weapon.put("subCapital", this.subCapital);
+        }
+        data.put("weapon", weapon);
         return data;
+    }
+
+    /**
+     * Formats the damage value for YAML export.
+     * Returns:
+     * - A special damage type string ("variable", "cluster", "special", "artillery")
+     * - An array [short, medium, long] if range-specific damages are defined
+     * - A simple numeric value if damage is constant across ranges
+     */
+    private Object formatDamage() {
+        // Handle infantry weapons specially
+        if (this instanceof InfantryWeapon wi) {
+            return wi.getInfantryDamage();
+        }
+
+        // Handle special damage types first.
+        if (damage == DAMAGE_VARIABLE) {
+            // Check if we have range-specific damages.
+            boolean hasRangeDamage = damageShort > 0 || damageMedium > 0 || damageLong > 0;
+            if (hasRangeDamage) {
+                return new int[] { damageShort, damageMedium, damageLong };
+            }
+            return "variable";
+        }
+        if (damage == DAMAGE_BY_CLUSTER_TABLE) {
+            return "cluster";
+        }
+        if (damage == DAMAGE_SPECIAL) {
+            return "special";
+        }
+        if (damage == DAMAGE_ARTILLERY) {
+            return "artillery";
+        }
+
+        // Default: simple damage value
+        return damage;
+    }
+
+    private String rangeBracketToString(int rangeBracket) {
+        return switch (rangeBracket) {
+            case RANGE_SHORT -> "short";
+            case RANGE_MED -> "medium";
+            case RANGE_LONG -> "long";
+            case RANGE_EXT -> "extreme";
+            default -> "unknown";
+        };
+    }
+
+    /**
+     * Trims trailing zeros from an int array.
+     * E.g., [0, 3, 6, 9, 0] becomes [0, 3, 6, 9]
+     * E.g., [0, 0, 0, 0, 0] becomes []
+     */
+    private int[] trimTrailingZeros(int[] arr) {
+        int lastNonZero = -1;
+        for (int i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] != 0) {
+                lastNonZero = i;
+                break;
+            }
+        }
+        if (lastNonZero < 0) {
+            return new int[0];
+        }
+        return java.util.Arrays.copyOf(arr, lastNonZero + 1);
+    }
+
+    /**
+     * Trims trailing zeros from a double array.
+     * E.g., [1.0, 2.0, 0.0, 0.0] becomes [1.0, 2.0]
+     * E.g., [0.0, 0.0, 0.0, 0.0] becomes []
+     */
+    private double[] trimTrailingZeros(double[] arr) {
+        int lastNonZero = -1;
+        for (int i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] != 0.0) {
+                lastNonZero = i;
+                break;
+            }
+        }
+        if (lastNonZero < 0) {
+            return new double[0];
+        }
+        return java.util.Arrays.copyOf(arr, lastNonZero + 1);
     }
 }

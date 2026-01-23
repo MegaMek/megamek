@@ -556,6 +556,9 @@ public class AreaEffectHelper {
                             case THUMPER:
                                 // no need to check for damage, because falloff = damage for the thumper
                                 break;
+                            default:
+                                // other types require no special treatment
+                                break;
                         }
                     } else {
                         // ugh, patchwork armor
@@ -581,6 +584,9 @@ public class AreaEffectHelper {
                             case THUMPER:
                                 // no need to check for damage, because
                                 // falloff = damage for the thumper
+                                break;
+                            default:
+                                // other types require no special treatment
                                 break;
                         }
                     }

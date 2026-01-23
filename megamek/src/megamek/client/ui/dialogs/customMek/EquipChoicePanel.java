@@ -140,6 +140,7 @@ public class EquipChoicePanel extends JPanel {
     private final JCheckBox chSearchlight = new JCheckBox();
     private final JCheckBox chDNICockpitMod = new JCheckBox();
     private final JCheckBox chEICockpit = new JCheckBox();
+    private final JCheckBox chDamageInterruptCircuit = new JCheckBox();
     private final JComboBox<String> choC3 = new JComboBox<>();
     ClientGUI clientgui;
     Client client;
@@ -370,6 +371,20 @@ public class EquipChoicePanel extends JPanel {
                     boolean hasImplant = entity.hasAbility(OptionsConstants.MD_EI_IMPLANT);
                     chEICockpit.setSelected(hasHardware || hasImplant);
                 }
+            }
+        }
+
+        // Set up Damage Interrupt Circuit (IO p.39) - BattleMeks and IndustrialMeks only, IS or Mixed tech
+        // DIC introduced 3055 (prototype), available to any IS or Mixed tech Mek after that year
+        if ((entity instanceof Mek mek) && ((!entity.isClan()) || (entity.isMixedTech()))) {
+            int gameYear = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+            if (gameYear >= 3055) {
+                JLabel labDamageInterruptCircuit = new JLabel(
+                      Messages.getString("CustomMekDialog.labDamageInterruptCircuit"),
+                      SwingConstants.RIGHT);
+                add(labDamageInterruptCircuit, GBC.std());
+                add(chDamageInterruptCircuit, GBC.eol());
+                chDamageInterruptCircuit.setSelected(mek.hasDamageInterruptCircuit());
             }
         }
 
@@ -855,6 +870,7 @@ public class EquipChoicePanel extends JPanel {
         choC3.setEnabled(false);
         chAutoEject.setEnabled(false);
         chSearchlight.setEnabled(false);
+        chDamageInterruptCircuit.setEnabled(false);
         if (m_bombs != null) {
             m_bombs.setEnabled(false);
         }
@@ -1028,6 +1044,31 @@ public class EquipChoicePanel extends JPanel {
                 for (MiscMounted mounted : entity.getMisc()) {
                     if (mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
                         entity.removeMisc(mounted.getName());
+                        break;
+                    }
+                }
+            }
+        }
+
+        // update Damage Interrupt Circuit setting (IO p.39)
+        if ((entity instanceof Mek mek) && ((!entity.isClan()) || (entity.isMixedTech()))) {
+            boolean hasDamageInterruptCircuit = mek.hasDamageInterruptCircuit();
+            boolean wantsDamageInterruptCircuit = chDamageInterruptCircuit.isSelected();
+            if ((wantsDamageInterruptCircuit) && (!hasDamageInterruptCircuit)) {
+                // Add Damage Interrupt Circuit equipment
+                try {
+                    EquipmentType damageInterruptCircuitType = EquipmentType.get("DamageInterruptCircuit");
+                    if (damageInterruptCircuitType != null) {
+                        entity.addEquipment(damageInterruptCircuitType, Entity.LOC_NONE);
+                    }
+                } catch (Exception e) {
+                    // 0-crit equipment shouldn't fail to add
+                }
+            } else if ((!wantsDamageInterruptCircuit) && (hasDamageInterruptCircuit)) {
+                // Remove Damage Interrupt Circuit equipment
+                for (MiscMounted mounted : entity.getMisc()) {
+                    if (mounted.getType().hasFlag(MiscType.F_DAMAGE_INTERRUPT_CIRCUIT)) {
+                        entity.removeMisc(mounted.getType().getInternalName());
                         break;
                     }
                 }

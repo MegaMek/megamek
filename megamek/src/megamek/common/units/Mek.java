@@ -286,6 +286,12 @@ public abstract class Mek extends Entity {
 
     private boolean riscHeatSinkKit = false;
 
+    /**
+     * Tracks whether the Damage Interrupt Circuit is disabled. DIC is disabled by Life Support critical hit or any hit
+     * rolling "2" on hit location table.
+     */
+    private boolean dicDisabled = false;
+
     protected static int[] EMERGENCY_COOLANT_SYSTEM_FAILURE = { 3, 5, 7, 10, 13, 13, 13 };
 
     // nCoolantSystemLevel is the # of turns RISC emergency coolant system has been
@@ -3423,6 +3429,11 @@ public abstract class Mek extends Entity {
             roll.addModifier(1, "Industrial TSM");
         }
 
+        // Damage Interrupt Circuit (IO p.39) adds +1 to all PSR when disabled
+        if ((hasDamageInterruptCircuit()) && (isDICDisabled())) {
+            roll.addModifier(1, "Damage Interrupt Circuit disabled");
+        }
+
         return roll;
     }
 
@@ -5630,6 +5641,43 @@ public abstract class Mek extends Entity {
 
     public boolean hasRiscHeatSinkOverrideKit() {
         return riscHeatSinkKit;
+    }
+
+    /**
+     * Returns true if this Mek has the Damage Interrupt Circuit cockpit modification installed.
+     *
+     * @return true if DIC is installed
+     */
+    public boolean hasDamageInterruptCircuit() {
+        return hasWorkingMisc(MiscType.F_DAMAGE_INTERRUPT_CIRCUIT);
+    }
+
+    /**
+     * Returns true if the Damage Interrupt Circuit is currently disabled. DIC is disabled by Life Support critical hit
+     * or any hit rolling "2" on hit location table.
+     *
+     * @return true if DIC is disabled
+     */
+    public boolean isDICDisabled() {
+        return dicDisabled;
+    }
+
+    /**
+     * Sets the disabled state of the Damage Interrupt Circuit.
+     *
+     * @param disabled true to disable the DIC
+     */
+    public void setDICDisabled(boolean disabled) {
+        this.dicDisabled = disabled;
+    }
+
+    /**
+     * Returns true if this Mek has a working (installed and not disabled) Damage Interrupt Circuit.
+     *
+     * @return true if DIC is installed and functional
+     */
+    public boolean hasWorkingDIC() {
+        return hasDamageInterruptCircuit() && !isDICDisabled();
     }
 
     public abstract boolean hasMPReducingHardenedArmor();

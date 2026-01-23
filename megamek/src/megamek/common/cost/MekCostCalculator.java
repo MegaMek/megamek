@@ -45,7 +45,7 @@ import megamek.common.units.QuadVee;
 public class MekCostCalculator {
 
     public static double calculateCost(Mek mek, CalculationReport costReport, boolean ignoreAmmo) {
-        double[] costs = new double[17 + mek.locations()];
+        double[] costs = new double[18 + mek.locations()];
         int i = 0;
 
         double cockpitCost = switch (mek.getCockpitType()) {
@@ -119,6 +119,12 @@ public class MekCostCalculator {
         // cost of sinks
         costs[i++] = sinkCost * (mek.heatSinks() - freeSinks);
         costs[i++] = mek.hasFullHeadEject() ? 1725000 : 0;
+        // Damage Interrupt Circuit (IO p.39) costs 150 C-bills per pilot seat
+        int dicCost = 0;
+        if (mek.hasDamageInterruptCircuit() && (mek.getCrew() != null)) {
+            dicCost = 150 * mek.getCrew().getCrewType().getCrewSlots();
+        }
+        costs[i++] = dicCost;
         // armored components
         int armoredCrits = 0;
         for (int j = 0; j < mek.locations(); j++) {

@@ -2007,17 +2007,19 @@ public class CustomMekDialog extends AbstractButtonDialog
 
     /**
      * Checks if the entity is eligible for an EI Interface. Per IO p.69, EI Interface may be installed in any BattleMek
-     * or Battle Armor built using a Clan technology base. ProtoMeks always have EI built-in and cannot toggle it. EI
-     * Interface was introduced in 3040.
+     * or Battle Armor built using a Clan technology base. ProtoMeks always have EI built-in and cannot toggle it.
+     * Availability is determined by the equipment's introduction date.
      *
      * @param entity the entity to check
      *
      * @return true if the entity can have an EI Interface toggled
      */
     private boolean canHaveEIInterface(Entity entity) {
-        // EI Interface introduced in 3040
+        // Check game year against EI Interface introduction date
+        EquipmentType eiEquipment = EquipmentType.get("EIInterface");
         int gameYear = client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
-        if (gameYear < 3040) {
+        int eiIntroYear = (eiEquipment != null) ? eiEquipment.getIntroductionDate(true) : 3040; // Clan tech
+        if (gameYear < eiIntroYear) {
             return false;
         }
         // ProtoMeks always have EI - cannot toggle

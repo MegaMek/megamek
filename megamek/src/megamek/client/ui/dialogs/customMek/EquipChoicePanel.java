@@ -325,11 +325,17 @@ public class EquipChoicePanel extends JPanel {
                   || entity.isSupportVehicle() || (entity instanceof BattleArmor);
             boolean validTechBase = !entity.isClan() || entity.isMixedTech();
             if (validUnitType && validTechBase) {
-                JLabel labDNICockpitMod = new JLabel(Messages.getString("CustomMekDialog.labDNICockpitMod"),
-                      SwingConstants.RIGHT);
-                add(labDNICockpitMod, GBC.std());
-                add(chDNICockpitMod, GBC.eol());
-                chDNICockpitMod.setSelected(entity.hasDNICockpitMod());
+                // Check game year against equipment introduction date
+                EquipmentType dniEquipment = EquipmentType.get("BABattleMechNIU");
+                int gameYear = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+                int dniIntroYear = (dniEquipment != null) ? dniEquipment.getIntroductionDate(false) : 3052;
+                if (gameYear >= dniIntroYear) {
+                    JLabel labDNICockpitMod = new JLabel(Messages.getString("CustomMekDialog.labDNICockpitMod"),
+                          SwingConstants.RIGHT);
+                    add(labDNICockpitMod, GBC.std());
+                    add(chDNICockpitMod, GBC.eol());
+                    chDNICockpitMod.setSelected(entity.hasDNICockpitMod());
+                }
             }
         }
 

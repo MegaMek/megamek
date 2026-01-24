@@ -7125,36 +7125,14 @@ public class Compute {
                 }
 
                 switch (ammoType.getAmmoType()) {
-                    case SRM_STREAK:
-                    case LRM_STREAK:
-                    case LRM:
-                    case LRM_IMP:
-                    case LRM_TORPEDO:
-                    case SRM:
-                    case SRM_IMP:
-                    case SRM_TORPEDO:
-                    case MRM:
-                    case NARC:
-                    case INARC:
-                    case AMS:
-                    case ARROW_IV:
-                    case LONG_TOM:
-                    case SNIPER:
-                    case THUMPER:
-                    case SRM_ADVANCED:
-                    case LRM_TORPEDO_COMBO:
-                    case ATM:
-                    case IATM:
-                    case MML:
-                    case EXLRM:
-                    case NLRM:
-                    case TBOLT_5:
-                    case TBOLT_10:
-                    case TBOLT_15:
-                    case TBOLT_20:
-                    case HAG:
-                    case ROCKET_LAUNCHER:
+                    case SRM_STREAK, LRM_STREAK, LRM, LRM_IMP, LRM_TORPEDO, SRM, SRM_IMP, SRM_TORPEDO, MRM, NARC,
+                         INARC, AMS, ARROW_IV, LONG_TOM, SNIPER, THUMPER, SRM_ADVANCED, LRM_TORPEDO_COMBO, ATM, IATM,
+                         MML, EXLRM, NLRM, TBOLT_5, TBOLT_10, TBOLT_15, TBOLT_20, HAG, ROCKET_LAUNCHER -> {
                         return false;
+                    }
+                    default -> {
+                        // intentional fallthrough
+                    }
                 }
                 if (((ammoType.getAmmoType() == AmmoTypeEnum.AC_LBX_THB)
                       || (ammoType.getAmmoType() == AmmoTypeEnum.AC_LBX)

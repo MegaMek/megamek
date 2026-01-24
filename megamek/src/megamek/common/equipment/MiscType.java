@@ -11797,8 +11797,39 @@ public class MiscType extends EquipmentType {
     }
 
     @Override
+    protected String getYamlTypeName() {
+        return "misc";
+    }
+
+    @Override
+    protected void addFlags(Map<String, Object> data) {
+        String[] flagStrings = getFlags().getSetFlagNamesAsArray(MiscTypeFlag.class);
+        if (flagStrings.length > 0) {
+            data.put("flags", flagStrings);
+        }
+    }
+
+    @Override
     public Map<String, Object> getYamlData() {
         Map<String, Object> data = super.getYamlData();
+        Map<String, Object> miscDetails = new java.util.LinkedHashMap<>();
+
+        if (damageDivisor != 1.0) {
+            miscDetails.put("damageDivisor", damageDivisor);
+        }
+        if (baseDamageAbsorptionRate != 0) {
+            miscDetails.put("baseDamageAbsorptionRate", baseDamageAbsorptionRate);
+        }
+        if (baseDamageCapacity != 0) {
+            miscDetails.put("baseDamageCapacity", baseDamageCapacity);
+        }
+        if (industrial) {
+            miscDetails.put("industrial", true);
+        }
+
+        if (!miscDetails.isEmpty()) {
+            data.put("misc", miscDetails);
+        }
         return data;
     }
 }

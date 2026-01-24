@@ -239,12 +239,8 @@ public class TWGameManager extends AbstractGameManager {
         terrainProcessors.add(new WeatherProcessor(this));
         terrainProcessors.add(new QuicksandProcessor(this));
 
-        // add damage manager
-        TWDamageManager newDamageManager = (game.getOptions().booleanOption("new_damage_manager")) ?
-              new TWDamageManagerModular() :
-              new TWDamageManager();
-
-        setDamageManager(newDamageManager);
+        // Set damage manager
+        setDamageManager(new TWDamageManager());
     }
 
     public TWGameManager(@Nullable TWDamageManager damageManager) {

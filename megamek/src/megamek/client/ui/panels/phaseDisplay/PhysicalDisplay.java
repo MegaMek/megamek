@@ -160,29 +160,15 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         public String getHotKeyDesc() {
-            String result = "";
-
-            switch (this) {
-                case PHYSICAL_NEXT:
-                    result = "<BR>";
-                    result += "&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
-                    result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
-                    break;
-                case PHYSICAL_PUNCH:
-                    result = "<BR>";
-                    result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUNCH);
-                    break;
-                case PHYSICAL_KICK:
-                    result = "<BR>";
-                    result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_KICK);
-                    break;
-                case PHYSICAL_PUSH:
-                    result = "<BR>";
-                    result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUSH);
-                    break;
-            }
-
-            return result;
+            return switch (this) {
+                case PHYSICAL_NEXT ->
+                    "<BR>&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT)
+                    + "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+                case PHYSICAL_PUNCH -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUNCH);
+                case PHYSICAL_KICK -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_KICK);
+                case PHYSICAL_PUSH -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUSH);
+                default -> "";
+            };
         }
     }
 

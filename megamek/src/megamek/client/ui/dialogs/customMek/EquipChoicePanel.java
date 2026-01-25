@@ -85,6 +85,8 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This class builds the Equipment Panel for use in MegaMek and MekHQ
@@ -96,6 +98,8 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 public class EquipChoicePanel extends JPanel {
     @Serial
     private static final long serialVersionUID = 672299770230285567L;
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final Entity entity;
     private final List<MunitionChoicePanel> m_vMunitions = new ArrayList<>();
@@ -135,6 +139,7 @@ public class EquipChoicePanel extends JPanel {
     private final JCheckBox chCondEjectSIDest = new JCheckBox();
     private final JCheckBox chSearchlight = new JCheckBox();
     private final JCheckBox chDNICockpitMod = new JCheckBox();
+    private final JCheckBox chEICockpit = new JCheckBox();
     private final JComboBox<String> choC3 = new JComboBox<>();
     ClientGUI clientgui;
     Client client;
@@ -334,7 +339,36 @@ public class EquipChoicePanel extends JPanel {
                           SwingConstants.RIGHT);
                     add(labDNICockpitMod, GBC.std());
                     add(chDNICockpitMod, GBC.eol());
-                    chDNICockpitMod.setSelected(entity.hasDNICockpitMod());
+                    // Auto-select if pilot has DNI implant (smart detection)
+                    boolean hasHardware = entity.hasDNICockpitMod();
+                    boolean hasImplant = entity.hasDNIImplant();
+                    chDNICockpitMod.setSelected(hasHardware || hasImplant);
+                }
+            }
+        }
+
+        // Set up EI Interface (IO p.69)
+        // Only show when tracking neural interface hardware is enabled
+        // EI is Clan tech (F/X-X-D-D) - not available for pure IS units
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            // EI Interface is available for Meks, BA, and ProtoMeks
+            // Must be Clan, Mixed Clan, or Mixed IS (not pure IS)
+            boolean validUnitType = entity.isMek() || (entity instanceof BattleArmor) || entity.isProtoMek();
+            boolean validTechBase = entity.isClan() || entity.isMixedTech();
+            if (validUnitType && validTechBase) {
+                // Check game year against equipment introduction date
+                EquipmentType eiEquipment = EquipmentType.get("EIInterface");
+                int gameYear = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+                int eiIntroYear = (eiEquipment != null) ? eiEquipment.getIntroductionDate(true) : 3040;
+                if (gameYear >= eiIntroYear) {
+                    JLabel labEICockpit = new JLabel(Messages.getString("CustomMekDialog.labEICockpit"),
+                          SwingConstants.RIGHT);
+                    add(labEICockpit, GBC.std());
+                    add(chEICockpit, GBC.eol());
+                    // Auto-select if pilot has EI implant (smart detection)
+                    boolean hasHardware = entity.hasEiCockpit();
+                    boolean hasImplant = entity.hasAbility(OptionsConstants.MD_EI_IMPLANT);
+                    chEICockpit.setSelected(hasHardware || hasImplant);
                 }
             }
         }
@@ -959,13 +993,40 @@ public class EquipChoicePanel extends JPanel {
                     try {
                         entity.addEquipment(dniMod, Entity.LOC_NONE);
                     } catch (Exception e) {
-                        // Equipment addition failed - ignore
+                        LOGGER.debug("Failed to add DNI cockpit modification to {}: {}",
+                              entity.getDisplayName(), e.getMessage());
                     }
                 }
             } else if (!wantsDNI && hasDNI) {
                 // Remove DNI Cockpit Mod
                 for (MiscMounted mounted : entity.getMisc()) {
                     if (mounted.getType().hasFlag(MiscType.F_BATTLEMEK_NIU)) {
+                        entity.removeMisc(mounted.getName());
+                        break;
+                    }
+                }
+            }
+        }
+
+        // update EI Interface setting (IO p.69)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            boolean wantsEI = chEICockpit.isSelected();
+            boolean hasEI = entity.hasEiCockpit();
+            if (wantsEI && !hasEI) {
+                // Add EI Interface
+                MiscType eiInterface = (MiscType) EquipmentType.get("EIInterface");
+                if (eiInterface != null) {
+                    try {
+                        entity.addEquipment(eiInterface, Entity.LOC_NONE);
+                    } catch (Exception e) {
+                        LOGGER.debug("Failed to add EI Interface to {}: {}",
+                              entity.getDisplayName(), e.getMessage());
+                    }
+                }
+            } else if (!wantsEI && hasEI) {
+                // Remove EI Interface
+                for (MiscMounted mounted : entity.getMisc()) {
+                    if (mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
                         entity.removeMisc(mounted.getName());
                         break;
                     }
@@ -1003,5 +1064,46 @@ public class EquipChoicePanel extends JPanel {
         } else if (entity.hasNavalC3() && (choC3.getSelectedIndex() > -1)) {
             entity.setC3NetId(client.getEntity(entityCorrespondence[choC3.getSelectedIndex()]));
         }
+    }
+
+    /**
+     * Refreshes the neural interface checkboxes based on current pilot implant status. Called when switching to the
+     * Equipment tab to pick up changes made in the Pilot tab.
+     */
+    public void refreshNeuralInterfaceCheckboxes() {
+        Game game = (clientgui == null) ? client.getGame() : clientgui.getClient().getGame();
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            return;
+        }
+
+        // Refresh DNI checkbox based on pilot implant
+        boolean hasDNIHardware = entity.hasDNICockpitMod();
+        boolean hasDNIImplant = entity.hasDNIImplant();
+        chDNICockpitMod.setSelected(hasDNIHardware || hasDNIImplant);
+
+        // Refresh EI checkbox based on pilot implant
+        boolean hasEIHardware = entity.hasEiCockpit();
+        boolean hasEIImplant = entity.hasAbility(OptionsConstants.MD_EI_IMPLANT);
+        chEICockpit.setSelected(hasEIHardware || hasEIImplant);
+    }
+
+    /**
+     * Sets the DNI Cockpit Modification checkbox state directly. Called from CustomMekDialog when a DNI implant option
+     * is toggled.
+     *
+     * @param selected true to check the checkbox, false to uncheck
+     */
+    public void setDNICockpitModSelected(boolean selected) {
+        chDNICockpitMod.setSelected(selected);
+    }
+
+    /**
+     * Sets the EI Interface checkbox state directly. Called from CustomMekDialog when the EI implant option is
+     * toggled.
+     *
+     * @param selected true to check the checkbox, false to uncheck
+     */
+    public void setEICockpitSelected(boolean selected) {
+        chEICockpit.setSelected(selected);
     }
 }

@@ -1190,9 +1190,9 @@ public abstract class Entity extends TurnOrdered
             transport.setGame(game);
         }
 
-        // Auto-add DNI Cockpit Modification when tracking neural interface hardware
-        // and pilot has a compatible DNI implant (IO p.83)
-        autoAddDNICockpitMod();
+        // DNI Cockpit Modification is manually controlled via EquipChoicePanel when
+        // tracking neural interface hardware is enabled. Auto-add removed to allow
+        // testing scenarios where pilot has implant but unit lacks DNI hardware (IO p.83).
     }
 
     /**
@@ -1249,7 +1249,7 @@ public abstract class Entity extends TurnOrdered
         try {
             addEquipment(dniMod, Entity.LOC_NONE);
         } catch (Exception e) {
-            // Equipment addition failed - silently ignore
+            LOGGER.debug("Failed to add DNI cockpit modification to {}: {}", getDisplayName(), e.getMessage());
         }
     }
 
@@ -7959,15 +7959,19 @@ public abstract class Entity extends TurnOrdered
             roll.addModifier(-2, "careful stand");
         }
 
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_HARD_PILOT)) {
-            roll.addModifier(+1, "hard to pilot");
-        }
-
-        // DNI Cockpit Modification adds Hard to Pilot effect for pilots without compatible implants (IO p.83)
-        // Only applies when tracking neural interface hardware
-        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)
-              && hasDNICockpitMod() && !hasDNIImplant()) {
-            roll.addModifier(+1, "DNI cockpit (no implant)");
+        // Augmented pilots with DNI cockpit ignore Hard to Pilot quirk entirely (IO p.83)
+        // This only applies when Design Quirks rules are in use
+        if (!hasActiveDNI()) {
+            if (hasQuirk(OptionsConstants.QUIRK_NEG_HARD_PILOT)) {
+                roll.addModifier(+1, "hard to pilot");
+            } else if (gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)
+                  && gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)
+                  && hasDNICockpitMod()) {
+                // DNI Cockpit Modification adds Hard to Pilot effect for pilots without compatible implants (IO p.83)
+                // Only applies if unit doesn't already have Hard to Pilot quirk (no stacking)
+                // Only applies when Design Quirks rules are in use
+                roll.addModifier(+1, "DNI cockpit (no implant)");
+            }
         }
 
         if (getPartialRepairs() != null) {
@@ -11756,48 +11760,66 @@ public abstract class Entity extends TurnOrdered
      * Returns whether this entity has an Enhanced Imaging (EI) Interface. This is determined by having the EI Interface
      * equipment installed. ProtoMeks always have EI built-in.
      *
+     * <p>Note: This checks for equipment presence, not whether it's functional. Use {@link #hasActiveEiCockpit()}
+     * to check if EI is currently providing benefits (includes damage checks, shutdown state, etc.).</p>
+     *
      * @return true if this entity has an EI Interface
      */
     public boolean hasEiCockpit() {
-        return hasWorkingMisc(MiscType.F_EI_INTERFACE);
+        return hasMisc(MiscType.F_EI_INTERFACE);
     }
 
     /**
-     * Returns whether this unit has an active Enhanced Imaging (EI) cockpit system.
-     * When the "Track Neural Interface Hardware" option is enabled, this requires both
-     * the EI cockpit equipment and the pilot to have the EI implant.
-     * When tracking is disabled, only the implant is required (original behavior).
+     * Checks if a neural interface system is active based on implant and hardware requirements.
+     * When tracking neural interface hardware, requires both implant and hardware.
+     * When not tracking, implant alone is sufficient.
      *
-     * @return true if the unit has an active EI cockpit system
+     * <p>This is a shared helper for DNI and EI systems which follow the same pattern.</p>
+     *
+     * @param hasImplant whether the pilot has the required implant
+     * @param hasHardware whether the unit has the required hardware
+     * @return true if the neural interface is considered active
      */
-    public boolean hasActiveEiCockpit() {
-        // Must have EI implant
-        if (!hasAbility(OptionsConstants.MD_EI_IMPLANT)) {
+    private boolean isNeuralInterfaceActive(boolean hasImplant, boolean hasHardware) {
+        if (!hasImplant) {
             return false;
         }
-
         // When not tracking hardware, implant alone provides benefits
         if ((game == null) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
             return true;
         }
+        // When tracking hardware, require the interface equipment
+        return hasHardware;
+    }
 
-        // When tracking hardware, require EI Interface equipment
+    /**
+     * Returns whether this unit has an active Enhanced Imaging (EI) cockpit system. EI cockpit is always required (it's
+     * built into the unit at construction). When the "Track Neural Interface Hardware" option is enabled, the pilot
+     * must also have the EI implant. When tracking is disabled, only the cockpit is required (original behavior).
+     *
+     * <p>Note: EI has inverted requirements compared to DNI:</p>
+     * <ul>
+     *   <li>DNI: Implant always required, hardware conditional on tracking</li>
+     *   <li>EI: Hardware (cockpit) always required, implant conditional on tracking</li>
+     * </ul>
+     *
+     * @return true if the unit has an active EI cockpit system
+     */
+    public boolean hasActiveEiCockpit() {
+        // EI cockpit is always required (it's built into the unit)
         if (!hasEiCockpit()) {
             return false;
         }
 
-        // Check if EI Interface equipment is in "Off" mode
-        for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
-                // If equipment exists and is in "Off" mode, EI is not active
-                if (m.curMode().getName().equals("Off")) {
-                    return false;
-                }
-                break;
+        // When tracking hardware, also require EI implant on pilot
+        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            if (!hasAbility(OptionsConstants.MD_EI_IMPLANT)) {
+                return false;
             }
         }
 
-        return true;
+        // EI-specific: check if interface is in "Off" mode
+        return !isEiShutdown();
     }
 
     /**
@@ -11878,15 +11900,7 @@ public abstract class Entity extends TurnOrdered
      * @return true if the unit has an active DNI system
      */
     public boolean hasActiveDNI() {
-        if (!hasDNIImplant()) {
-            return false;
-        }
-        // When tracking hardware, require the DNI cockpit modification
-        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
-            return hasDNICockpitMod();
-        }
-        // When not tracking hardware, any pilot with DNI implant gets benefits
-        return true;
+        return isNeuralInterfaceActive(hasDNIImplant(), hasDNICockpitMod());
     }
 
     public boolean isLayingMines() {

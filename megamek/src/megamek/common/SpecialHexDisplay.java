@@ -439,8 +439,7 @@ public class SpecialHexDisplay implements Serializable {
         }
 
         // Hide icons the player doesn't want to see
-        // Check user settings and Hide some "hits" because they are actually drifts
-        // that did damage
+        // Check user settings and Hide some "hits" because they are actually drifts that did damage
         if (guiPref != null) {
             switch (type) {
                 case ARTILLERY_HIT -> shouldDisplay &= !info.contains(Messages.getString("ArtilleryMessage.drifted"));
@@ -448,6 +447,7 @@ public class SpecialHexDisplay implements Serializable {
                 case ARTILLERY_DRIFT -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_ARTILLERY_DRIFTS);
                 case BOMB_MISS -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_MISSES);
                 case BOMB_DRIFT -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_DRIFTS);
+                default -> { } // intentionally ignored
             }
         }
 

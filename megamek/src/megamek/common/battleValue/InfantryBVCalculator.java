@@ -136,6 +136,7 @@ public class InfantryBVCalculator extends BVCalculator {
 
         if (infantry.canMakeAntiMekAttacks()) {
             bvReport.addLine("Anti-Mek:", "", "");
+            double preAntiMekBV = offensiveValue;
             if (primaryWeapon != null && !primaryWeapon.hasFlag(InfantryWeapon.F_INF_ARCHAIC)) {
                 Mounted<?> primaryWeaponMounted = Mounted.createMounted(infantry, primaryWeapon);
                 processWeapon(primaryWeaponMounted, true, true, primaryShooterCount);
@@ -143,6 +144,19 @@ public class InfantryBVCalculator extends BVCalculator {
             if (secondaryWeapon != null && !secondaryWeapon.hasFlag(InfantryWeapon.F_INF_ARCHAIC)) {
                 Mounted<?> secondaryWeaponMounted = Mounted.createMounted(infantry, secondaryWeapon);
                 processWeapon(secondaryWeaponMounted, true, true, secondaryShooterCount);
+            }
+
+            // Apply 1.2x multiplier to Anti-Mek BR if unit has Grappler or Climbing Claws (IO p.84)
+            double antiMekMultiplier = infantry.getAntiMekBvMultiplier();
+            if (antiMekMultiplier > 1.0) {
+                double antiMekBV = offensiveValue - preAntiMekBV;
+                double multipliedAntiMekBV = antiMekBV * antiMekMultiplier;
+                double bonus = multipliedAntiMekBV - antiMekBV;
+                offensiveValue += bonus;
+                bvReport.addLine("Anti-Mek x " + formatForReport(antiMekMultiplier) + " (" +
+                            infantry.getBestProstheticAntiMekName() + "):",
+                      formatForReport(antiMekBV) + " x " + formatForReport(antiMekMultiplier),
+                      "= +" + formatForReport(bonus));
             }
         }
 
@@ -171,6 +185,47 @@ public class InfantryBVCalculator extends BVCalculator {
                   troopers + " x 0.1",
                   "= +" + formatForReport(tsmBonus));
         }
+
+        // Explosive Suicide Implant: +0.12 per trooper to Weapon Battle Value (IO pg 83)
+        // Only applies to conventional infantry
+        if (infantry.isConventionalInfantry() && infantry.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS)) {
+            double suicideImplantBonus = troopers * 0.12;
+            offensiveValue += suicideImplantBonus;
+            bvReport.addLine(Messages.getString("BV.SuicideImplant"),
+                  troopers + " x 0.12",
+                  "= +" + formatForReport(suicideImplantBonus));
+        }
+
+        // Prosthetic Enhancement adds damage bonus per trooper to Offensive BV (IO p.84)
+        // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
+        // Sum damage from both slots for BV calculation
+        boolean hasProstheticAbility = infantry.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+              || infantry.hasAbility(OptionsConstants.MD_PL_I_ENHANCED);
+        if (hasProstheticAbility) {
+            double prostheticDamagePerTrooper = infantry.getProstheticDamageBonus();
+            if (prostheticDamagePerTrooper > 0) {
+                double prostheticBonus = troopers * prostheticDamagePerTrooper;
+                offensiveValue += prostheticBonus;
+                bvReport.addLine(Messages.getString("BV.ProstheticEnhancement"),
+                      troopers + " x " + formatForReport(prostheticDamagePerTrooper),
+                      "= +" + formatForReport(prostheticBonus));
+            }
+        }
+
+        // Prosthetic Tail, Enhanced: +0.2 per trooper to Offensive Battle Value (IO p.85)
+        // Only applies to conventional infantry
+        if (infantry.isConventionalInfantry() && infantry.hasAbility(OptionsConstants.MD_PL_TAIL)) {
+            double tailBonus = troopers * 0.2;
+            offensiveValue += tailBonus;
+            bvReport.addLine(Messages.getString("BV.ProstheticTail"),
+                  troopers + " x 0.2",
+                  "= +" + formatForReport(tailBonus));
+        }
+
+        // Note: Prosthetic Glider Wings (MD_PL_GLIDER) have no impact on BV per IO p.85
+        // Note: Prosthetic Powered Flight Wings (MD_PL_FLIGHT) DO affect BV per IO p.85 -
+        // the 2 VTOL MP is accounted for in getJumpMP() which contributes to the defensive
+        // TMM factor via processDefensiveFactor().
 
         bvReport.startTentativeSection();
         bvReport.addLine("Field Guns:", "", "");

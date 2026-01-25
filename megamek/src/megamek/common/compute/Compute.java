@@ -1482,7 +1482,7 @@ public class Compute {
         }
 
         // determine base distance & range bracket
-        int distance = effectiveDistance(game, attackingEntity, target, false);
+        int distance = effectiveWeaponDistance(game, attackingEntity, weapon, target);
         int range = RangeType.rangeBracket(distance, weaponRanges, useExtremeRange, useLOSRange);
 
         // Additional checks for LOS range and some weapon types, TO 85
@@ -1912,6 +1912,65 @@ public class Compute {
      *
      * @return the effective distance
      */
+    /**
+     * Calculates effective distance from a weapon's firing position to a target, accounting for altitude differences
+     * and same-building elevation modifiers. This is used for entities with multiple firing positions like
+     * BuildingEntity.
+     *
+     * @param game         The current game
+     * @param weaponEntity The entity with the weapon
+     * @param weapon       The weapon being fired
+     * @param target       The target being attacked
+     *
+     * @return The effective distance from the weapon's firing position to the target
+     */
+    public static int effectiveWeaponDistance(final Game game, final Entity weaponEntity,
+          final WeaponMounted weapon, final Targetable target) {
+        Coords weaponFiringPos = weaponEntity.getWeaponFiringPosition(weapon);
+
+        if (weaponFiringPos != null && !weaponFiringPos.equals(weaponEntity.getPosition())) {
+            // For entities with multiple firing positions (BuildingEntity, etc.),
+            // calculate distance from the weapon's actual firing position
+            int distance = weaponFiringPos.distance(target.getPosition());
+
+            // If attack is inside same building, add elevation difference
+            if (isInSameBuilding(game, weaponEntity, target)) {
+                int aElev = weaponEntity.getElevation();
+                int tElev = target.getElevation();
+                distance += Math.abs(aElev - tElev);
+            }
+
+            // Air-to-air altitude differences
+            if (isAirToAir(game, weaponEntity, target) && !weaponEntity.isSpaceborne()) {
+                int aAlt = weaponEntity.getAltitude();
+                int tAlt = target.getAltitude();
+                if (target.isAirborneVTOLorWIGE()) {
+                    tAlt++;
+                }
+                distance += Math.abs(aAlt - tAlt);
+            }
+
+            // Ground-to-air altitude adjustments
+            if (isGroundToAir(weaponEntity, target)) {
+                if (weaponEntity.usesWeaponBays() && game.getBoard().isGround()) {
+                    distance += target.getAltitude();
+                } else {
+                    distance += (2 * target.getAltitude());
+                }
+            }
+
+            // Attacking ground unit while dropping
+            if (weaponEntity.isDropping() && target.getAltitude() == 0) {
+                distance += (2 * weaponEntity.getAltitude());
+            }
+
+            return distance;
+        } else {
+            // Use standard effective distance calculation
+            return effectiveDistance(game, weaponEntity, target, false);
+        }
+    }
+
     public static int effectiveDistance(final Game game, final Entity attacker,
           final @Nullable Targetable target) {
         return Compute.effectiveDistance(game, attacker, target, false);
@@ -1940,7 +1999,12 @@ public class Compute {
         Vector<Coords> attackPos = new Vector<>();
         attackPos.add(attacker.getPosition());
         Vector<Coords> targetPos = new Vector<>();
-        targetPos.add(target.getPosition());
+
+        if (target instanceof BuildingEntity) {
+            targetPos.addAll(target.getSecondaryPositions().values());
+        } else {
+            targetPos.add(target.getPosition());
+        }
 
         if (CrossBoardAttackHelper.isOrbitToSurface(game, attacker, target)) {
             // The effective position of the target is the ground map position on the ground hex row of the high
@@ -2878,7 +2942,7 @@ public class Compute {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL)
               && (entity.mpUsed == 0)
               && !entity.isImmobile()
-              && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
+              && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity.isBuildingEntityOrGunEmplacement()))) {
             ToHitData toHit = new ToHitData();
             toHit.addModifier(-1, "target did not move");
             return toHit;
@@ -3113,11 +3177,19 @@ public class Compute {
               || (targetable.getTargetType() == Targetable.TYPE_HEX_BOMB)
               || (targetable.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
               || (targetable.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER))) {
-            if ((woodsLevel == 1) && (eiStatus != 2)) {
-                toHit.addModifier(1, woodsText);
+            if (woodsLevel == 1) {
+                if (eiStatus > 0) {
+                    // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                    // Light woods is already +1, so minimum applies - no reduction
+                    toHit.addModifier(1, woodsText + " (EI min +1/hex)");
+                } else {
+                    toHit.addModifier(1, woodsText);
+                }
             } else if (woodsLevel > 1) {
                 if (eiStatus > 0) {
-                    toHit.addModifier(woodsLevel - 1, woodsText);
+                    // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                    // Heavy woods +2 reduced to +1
+                    toHit.addModifier(1, woodsText + " (EI -1)");
                 } else {
                     toHit.addModifier(woodsLevel, woodsText);
                 }
@@ -3130,11 +3202,19 @@ public class Compute {
                 case SmokeCloud.SMOKE_LI_HEAVY:
                 case SmokeCloud.SMOKE_CHAFF_LIGHT:
                 case SmokeCloud.SMOKE_GREEN:
-                    toHit.addModifier(1, "target in light smoke");
+                    if (eiStatus > 0) {
+                        // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                        // Light smoke is already +1, so minimum applies - no reduction
+                        toHit.addModifier(1, "target in light smoke (EI min +1/hex)");
+                    } else {
+                        toHit.addModifier(1, "target in light smoke");
+                    }
                     break;
                 case SmokeCloud.SMOKE_HEAVY:
                     if (eiStatus > 0) {
-                        toHit.addModifier(1, "target in heavy smoke");
+                        // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                        // Heavy smoke +2 reduced to +1
+                        toHit.addModifier(1, "target in heavy smoke (EI -1)");
                     } else {
                         toHit.addModifier(2, "target in heavy smoke");
                     }
@@ -3143,7 +3223,8 @@ public class Compute {
         }
         if (hex.terrainLevel(Terrains.GEYSER) == 2) {
             if (eiStatus > 0) {
-                toHit.addModifier(1, "target in erupting geyser");
+                // EI reduces geyser modifier by 1 (IO p.69)
+                toHit.addModifier(1, "target in erupting geyser (EI -1)");
             } else {
                 toHit.addModifier(2, "target in erupting geyser");
             }
@@ -3198,11 +3279,19 @@ public class Compute {
         }
 
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_WOODS_COVER)) {
-            if ((woodsLevel == 1) && (eiStatus != 2)) {
-                toHit.addModifier(1, woodsText);
+            if (woodsLevel == 1) {
+                if (eiStatus > 0) {
+                    // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                    // Light woods is already +1, so minimum applies - no reduction
+                    toHit.addModifier(1, woodsText + " (EI min +1/hex)");
+                } else {
+                    toHit.addModifier(1, woodsText);
+                }
             } else if (woodsLevel > 1) {
                 if (eiStatus > 0) {
-                    toHit.addModifier(woodsLevel - 1, woodsText);
+                    // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                    // Heavy woods +2 reduced to +1
+                    toHit.addModifier(1, woodsText + " (EI -1)");
                 } else {
                     toHit.addModifier(woodsLevel, woodsText);
                 }
@@ -3215,11 +3304,19 @@ public class Compute {
             case SmokeCloud.SMOKE_LI_HEAVY:
             case SmokeCloud.SMOKE_CHAFF_LIGHT:
             case SmokeCloud.SMOKE_GREEN:
-                toHit.addModifier(1, "target in light smoke");
+                if (eiStatus > 0) {
+                    // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                    // Light smoke is already +1, so minimum applies - no reduction
+                    toHit.addModifier(1, "target in light smoke (EI min +1/hex)");
+                } else {
+                    toHit.addModifier(1, "target in light smoke");
+                }
                 break;
             case SmokeCloud.SMOKE_HEAVY:
                 if (eiStatus > 0) {
-                    toHit.addModifier(1, "target in heavy smoke");
+                    // EI reduces modifier by 1 per hex, minimum +1 per hex (IO p.69)
+                    // Heavy smoke +2 reduced to +1
+                    toHit.addModifier(1, "target in heavy smoke (EI -1)");
                 } else {
                     toHit.addModifier(2, "target in heavy smoke");
                 }
@@ -3228,7 +3325,8 @@ public class Compute {
 
         if (hex.terrainLevel(Terrains.GEYSER) == 2) {
             if (eiStatus > 0) {
-                toHit.addModifier(1, "erupting geyser");
+                // EI reduces geyser modifier by 1 (IO p.69)
+                toHit.addModifier(1, "erupting geyser (EI -1)");
             } else {
                 toHit.addModifier(2, "erupting geyser");
             }
@@ -3261,7 +3359,7 @@ public class Compute {
 
             if (targetEntity == null) {
                 return 0;
-            } else if (targetEntity instanceof GunEmplacement) {
+            } else if (targetEntity.isBuildingEntityOrGunEmplacement()) {
                 // If this is a gun emplacement, handle it as the building hex it is in.
                 final IBuilding parentBuilding = game.getBoard().getBuildingAt(position);
                 return (parentBuilding == null) ? 0
@@ -4291,7 +4389,7 @@ public class Compute {
             // check for camo and null sig on the target
             if (targetedEntity.isVoidSigActive()) {
                 visualRange = visualRange / 4;
-            } else if (targetedEntity.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
+            } else if (targetedEntity.hasWorkingMisc(MiscType.F_VISUAL_CAMO)) {
                 visualRange = visualRange / 2;
             } else if (targetedEntity.isChameleonShieldActive()) {
                 visualRange = visualRange / 2;
@@ -5745,9 +5843,26 @@ public class Compute {
             data.addModifier(-1, "exposed actuators");
         }
 
-        // MD Infantry with grappler/magnets get bonus
-        if (attacker.hasAbility(OptionsConstants.MD_PL_ENHANCED)) {
-            data.addModifier(-2, "MD Grapple/Magnet");
+        // Prosthetic enhancement anti-Mek bonus (Grappler or Climbing Claws) - IO p.84
+        // Uses the best (most negative) modifier from either enhancement slot
+        // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
+        if (attacker.hasProstheticEnhancement()
+              && (attacker.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+              || attacker.hasAbility(OptionsConstants.MD_PL_I_ENHANCED))) {
+            int antiMekMod = attacker.getBestProstheticAntiMekModifier();
+            if (antiMekMod != 0) {
+                String modName = attacker.getBestProstheticAntiMekName();
+                data.addModifier(antiMekMod,
+                      modName != null ? modName : Messages.getString("Compute.ProstheticEnhancement"));
+            }
+        }
+
+        // Enhanced Imaging bonus for anti-Mek attacks - IO p.69
+        // "All Piloting Skill rolls required for the EI-equipped unit receives a -1
+        // target number modifier. This includes checks made for physical attacks,
+        // as well as anti-Mek attacks by EI-equipped battle armor."
+        if (attacker.hasActiveEiCockpit()) {
+            data.addModifier(-1, Messages.getString("Compute.EnhancedImaging"));
         }
 
         // swarm/leg attacks take target movement mods into account
@@ -6931,15 +7046,14 @@ public class Compute {
         Hex hex = game.getHex(position, boardId);
         // Prohibited terrain is any that the unit cannot move into or through, or would cause a stacking violation, or
         // is not 0, 1, or 2 elevations up or down from the hex elevation - but ignore that last if the unloading unit
-        // has Jump MP or VTOL movement.
+        // has Jump MP, VTOL movement, or glider wings (IO p.85).
+        boolean canIgnoreElevation = unitToUnload.getMovementMode() == EntityMovementMode.VTOL ||
+              unitToUnload.getMovementMode() == EntityMovementMode.INF_JUMP ||
+              ((unitToUnload.getAnyTypeMaxJumpMP() > 0) && !unitToUnload.isImmobileForJump()) ||
+              (unitToUnload.isInfantry() && ((Infantry) unitToUnload).canExitVTOLWithGliderWings());
         return (hex != null) && !unitToUnload.isLocationProhibited(position, boardId, unitToUnload.getElevation())
               && (null == stackingViolation(game, unitToUnload.getId(), position, unitToUnload.climbMode()))
-              && ((Math.abs(hex.getLevel() - elev) < 3) ||
-              (unitToUnload.getMovementMode() == EntityMovementMode.VTOL ||
-                    unitToUnload.getMovementMode() == EntityMovementMode.INF_JUMP ||
-                    ((unitToUnload.getAnyTypeMaxJumpMP() > 0) && !unitToUnload.isImmobileForJump())
-              )
-        );
+              && ((Math.abs(hex.getLevel() - elev) < 3) || canIgnoreElevation);
     }
 
     /**
@@ -7011,36 +7125,14 @@ public class Compute {
                 }
 
                 switch (ammoType.getAmmoType()) {
-                    case SRM_STREAK:
-                    case LRM_STREAK:
-                    case LRM:
-                    case LRM_IMP:
-                    case LRM_TORPEDO:
-                    case SRM:
-                    case SRM_IMP:
-                    case SRM_TORPEDO:
-                    case MRM:
-                    case NARC:
-                    case INARC:
-                    case AMS:
-                    case ARROW_IV:
-                    case LONG_TOM:
-                    case SNIPER:
-                    case THUMPER:
-                    case SRM_ADVANCED:
-                    case LRM_TORPEDO_COMBO:
-                    case ATM:
-                    case IATM:
-                    case MML:
-                    case EXLRM:
-                    case NLRM:
-                    case TBOLT_5:
-                    case TBOLT_10:
-                    case TBOLT_15:
-                    case TBOLT_20:
-                    case HAG:
-                    case ROCKET_LAUNCHER:
+                    case SRM_STREAK, LRM_STREAK, LRM, LRM_IMP, LRM_TORPEDO, SRM, SRM_IMP, SRM_TORPEDO, MRM, NARC,
+                         INARC, AMS, ARROW_IV, LONG_TOM, SNIPER, THUMPER, SRM_ADVANCED, LRM_TORPEDO_COMBO, ATM, IATM,
+                         MML, EXLRM, NLRM, TBOLT_5, TBOLT_10, TBOLT_15, TBOLT_20, HAG, ROCKET_LAUNCHER -> {
                         return false;
+                    }
+                    default -> {
+                        // intentional fallthrough
+                    }
                 }
                 if (((ammoType.getAmmoType() == AmmoTypeEnum.AC_LBX_THB)
                       || (ammoType.getAmmoType() == AmmoTypeEnum.AC_LBX)

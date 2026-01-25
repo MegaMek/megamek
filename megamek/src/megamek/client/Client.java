@@ -156,6 +156,7 @@ public class Client extends AbstractClient {
         }
     }
 
+    @Override
     public Game getGame() {
         return game;
     }
@@ -726,6 +727,12 @@ public class Client extends AbstractClient {
         }
     }
 
+    protected void receiveBuildingRemove(Packet packet) throws InvalidPacketDataException {
+        for (IBuilding building : packet.getBuildingList(0)) {
+            game.getBoard(building.getBoardId()).removeBuilding(building);
+        }
+    }
+
     protected void receiveBuildingCollapse(Packet packet) throws InvalidPacketDataException {
         int boardId = packet.getIntValue(1);
         game.getBoard(boardId).collapseBuilding(packet.getCoordsVector(0));
@@ -945,6 +952,17 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_VARIABLE_RANGE_MODE_CHANGE, entityId, mode));
     }
 
+    /**
+     * Sends a unit abandonment announcement to the server. For Meks (TacOps:AR p.165): Must be prone and shutdown. For
+     * Vehicles (TacOps): Can be abandoned anytime. The abandonment will execute during the End Phase of the following
+     * turn.
+     *
+     * @param entityId the ID of the unit announcing abandonment
+     */
+    public void sendUnitAbandonmentAnnouncement(int entityId) {
+        send(new Packet(PacketCommand.ENTITY_ABANDON_ANNOUNCE, entityId));
+    }
+
     public void sendSpecialHexDisplayAppend(Coords c, int boardId, SpecialHexDisplay shd) {
         send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_APPEND, c, boardId, shd));
     }
@@ -1031,6 +1049,9 @@ public class Client extends AbstractClient {
                     break;
                 case BLDG_ADD:
                     receiveBuildingAdd(packet);
+                    break;
+                case BLDG_REMOVE:
+                    receiveBuildingRemove(packet);
                     break;
                 case BLDG_UPDATE:
                     receiveBuildingUpdate(packet);

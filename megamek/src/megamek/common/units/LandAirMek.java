@@ -1123,6 +1123,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         whoFirst = Compute.randomInt(500);
     }
 
+    @Override
     public int getMaxBombPoints() {
         return getMaxExtBombPoints() + getMaxIntBombPoints();
     }

@@ -97,6 +97,7 @@ public class Building implements Serializable {
      * The coordinates of every hex of this building.
      */
     private final Vector<CubeCoords> coordinates = new Vector<>();
+    private final Vector<CubeCoords> originalCoordinates = new Vector<>();
     private int boardId;
 
     /**
@@ -178,6 +179,7 @@ public class Building implements Serializable {
         }
 
         coordinates.addElement(relativeCoords);
+        originalCoordinates.addElement(relativeCoords);
         originalHexes++;
         currentCF.put(relativeCoords, cf);
         phaseCF.put(relativeCoords, cf);
@@ -245,6 +247,11 @@ public class Building implements Serializable {
     /** Returns a list of this Building's coords. The list is unmodifiable. */
     public List<CubeCoords> getCoordsList() {
         return Collections.unmodifiableList(coordinates);
+    }
+
+    /** Returns a list of this Building's original coords (before any hexes were removed). The list is unmodifiable. */
+    public List<CubeCoords> getOriginalCoordsList() {
+        return Collections.unmodifiableList(originalCoordinates);
     }
 
     /**
@@ -348,7 +355,7 @@ public class Building implements Serializable {
      *       than or equal to zero.
      */
     public int getCurrentCF(CubeCoords coords) {
-        return currentCF.get(coords);
+        return currentCF.getOrDefault(coords, 0);
     }
 
     /**
@@ -361,11 +368,11 @@ public class Building implements Serializable {
      *       will be greater than or equal to zero.
      */
     public int getPhaseCF(CubeCoords coords) {
-        return phaseCF.get(coords);
+        return phaseCF.getOrDefault(coords, 0);
     }
 
     public int getArmor(CubeCoords coords) {
-        return armor.get(coords);
+        return armor.getOrDefault(coords, 0);
     }
 
     /**
@@ -421,7 +428,7 @@ public class Building implements Serializable {
      * @return the <code>int</code> value of the building hex's height. This value will be 0 if the hex is destroyed.
      */
     public int getHeight(CubeCoords coords) {
-        return height.get(coords);
+        return height.getOrDefault(coords, 0);
     }
 
     /**

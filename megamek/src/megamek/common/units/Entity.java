@@ -234,6 +234,8 @@ public abstract class Entity extends TurnOrdered
 
     public static final long ETYPE_BUILDING_ENTITY = 1L << 30;
 
+    public static final long ETYPE_COMBAT_VEHICLE_ESCAPE_POD = 1L << 31;
+
     public static final int BLOOD_STALKER_TARGET_CLEARED = -2;
 
     public static final int LOC_NONE = -1;
@@ -403,6 +405,18 @@ public abstract class Entity extends TurnOrdered
     protected boolean selfDestructedThisTurn = false;
 
     /**
+     * Indicates this unit has announced abandonment during the End Phase. The crew will exit during the End Phase of
+     * the following turn (TacOps:AR p.165). Only applies to Meks - vehicles abandon immediately.
+     */
+    protected boolean pendingAbandon = false;
+
+    /**
+     * The round number when abandonment was announced. Used to ensure execution happens in a subsequent round, not the
+     * same round.
+     */
+    protected int abandonmentAnnouncedRound = -1;
+
+    /**
      * True when the entity has an undestroyed searchlight that is neither a Quirk searchlight nor a mounted (0.5t /
      * 1slot) searchlight.
      */
@@ -410,6 +424,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean illuminated = false;
     protected boolean searchlightIsActive = false;
     protected boolean usedSearchlight = false;
+    protected boolean eiShutdown = false;
     protected boolean stuckInSwamp = false;
     protected boolean canUnstickByJumping = false;
     protected int taggedBy = -1;
@@ -1940,7 +1955,7 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean isSelectableThisTurn() {
         return !done && (conveyance == Entity.NONE) && !unloadedThisTurn && !isClearingMinefield() && !isCarcass()
-              && (isSpaceborneInSpaceTurn() || isNonSpaceborneInNonSpaceTurn());
+              && !isAbandoned() && (isSpaceborneInSpaceTurn() || isNonSpaceborneInNonSpaceTurn());
     }
 
     private boolean isSpaceborneInSpaceTurn() {
@@ -2668,8 +2683,8 @@ public abstract class Entity extends TurnOrdered
             // only Meks can move underwater
             if (hex.containsTerrain(Terrains.WATER) &&
                   (assumedAlt < hex.getLevel()) &&
-                  !(this instanceof Mek) &&
-                  !(this instanceof ProtoMek)) {
+                  !((this instanceof Mek) || (this instanceof ProtoMek)) &&
+                  !(hasEnvironmentalSealing())) {
                 return false;
             }
             // can move on the ground unless its underwater
@@ -3704,14 +3719,26 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if the given board is prohibited to this unit.
+     * @return True if the given board is prohibited to this unit according to the type of unit and type of board or if
+     *       the unit cannot survive on this board; e.g., JumpShips are prohibited from entering ground maps while BA
+     *       are not allowed on an atmospheric map. This refers to the various doomed... methods.
+     *
+     * @see #doomedOnGround()
+     * @see #doomedInAtmosphere()
+     * @see #doomedInSpace()
      */
     public boolean isBoardProhibited(Board board) {
         return isBoardProhibited(board.getBoardType());
     }
 
     /**
-     * @return True if the given board is prohibited to this unit.
+     * @return True if the given board type is prohibited to this unit according to the type of unit or if the unit
+     *       cannot survive on this board; e.g., JumpShips are prohibited from entering ground maps while BA are not
+     *       allowed on an atmospheric map. This refers to the various doomed... methods.
+     *
+     * @see #doomedOnGround()
+     * @see #doomedInAtmosphere()
+     * @see #doomedInSpace()
      */
     public boolean isBoardProhibited(BoardType boardType) {
         return (boardType.isGround() && doomedOnGround()) ||
@@ -5013,23 +5040,23 @@ public abstract class Entity extends TurnOrdered
      * @return true if at least one ready item.
      */
     public boolean hasWorkingMisc(EquipmentFlag flag) {
-        return hasWorkingMisc(flag, -1);
+        return hasWorkingMisc(flag, null);
     }
 
     /**
      * Check if the entity has an arbitrary type of misc equipment
      *
      * @param flag      A MiscType.F_XXX
-     * @param secondary A MiscType.S_XXX or -1 for don't care
+     * @param secondaryFlag A MiscType.S_XXX or null for don't care
      *
      * @return true if at least one ready item.
      */
-    public boolean hasWorkingMisc(EquipmentFlag flag, long secondary) {
+    public boolean hasWorkingMisc(EquipmentFlag flag, MiscTypeFlag secondaryFlag) {
         for (MiscMounted miscMounted : miscList) {
             if (miscMounted.isReady()
                   && miscMounted.getType().hasFlag(flag)
-                  && ((secondary == -1)
-                  || miscMounted.getType().hasSubType(secondary))) {
+                  && ((secondaryFlag == null)
+                  || miscMounted.getType().hasFlag(secondaryFlag))) {
                 return true;
             }
         }
@@ -5184,12 +5211,12 @@ public abstract class Entity extends TurnOrdered
      * Check if the entity has an arbitrary type of misc equipment
      *
      * @param flag      A MiscType.F_XXX
-     * @param secondary A MiscType.S_XXX or -1 for don't care
+     * @param secondaryFlag A MiscType.S_XXX or null for don't care
      * @param location  The location to check e.g. Mek.LOC_LEFT_ARM
      *
      * @return true if at least one ready item.
      */
-    public boolean hasWorkingMisc(EquipmentFlag flag, long secondary, int location) {
+    public boolean hasWorkingMisc(EquipmentFlag flag, MiscTypeFlag secondaryFlag, int location) {
         // go through the location slot by slot, because of misc equipment that
         // is spreadable
         for (int slot = 0; slot < getNumberOfCriticalSlots(location); slot++) {
@@ -5200,7 +5227,7 @@ public abstract class Entity extends TurnOrdered
                     continue;
                 }
                 if ((mount.getType() instanceof MiscType type) && mount.isReady()) {
-                    if (type.hasFlag(flag) && ((secondary == -1) || type.hasSubType(secondary))) {
+                    if (type.hasFlag(flag) && ((secondaryFlag == null) || type.hasFlag(secondaryFlag))) {
                         return true;
                     }
                 }
@@ -5577,6 +5604,28 @@ public abstract class Entity extends TurnOrdered
         return stateAppliesCount;
     }
 
+    /**
+     * What {@link Coords} is this weapon physically firing from?
+     *
+     * @param weapon {@link WeaponMounted}
+     *
+     * @return {@link Coords}
+     */
+    public Coords getWeaponFiringPosition(WeaponMounted weapon) {
+        return getPosition();
+    }
+
+    /**
+     * What height is this weapon physically firing from?
+     *
+     * @param weapon {@link WeaponMounted}
+     *
+     * @return int
+     */
+    public int getWeaponFiringHeight(WeaponMounted weapon) {
+        return getHeight();
+    }
+
     protected abstract int[] getNoOfSlots();
 
     /**
@@ -5724,7 +5773,7 @@ public abstract class Entity extends TurnOrdered
      * be of different size and each size has its own draw backs. So check each size and add modifiers based on the
      * number shields of that size.
      */
-    public int getNumberOfShields(long size) {
+    public int getNumberOfShields(MiscTypeFlag shieldSize) {
         return 0;
     }
 
@@ -5778,12 +5827,12 @@ public abstract class Entity extends TurnOrdered
      * @return number <code>int</code>of usable UMU's
      */
     public int getActiveUMUCount() {
-        if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
+        if (hasShield() && (getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE) > 0)) {
             return 0;
         }
         int count = 0;
         for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_UMU) && !(m.isDestroyed() || m.isMissing() || m.isBreached())) {
+            if (m.getType().hasFlag(MiscTypeFlag.F_UMU) && !(m.isDestroyed() || m.isMissing() || m.isBreached())) {
                 count++;
             }
         }
@@ -5796,7 +5845,7 @@ public abstract class Entity extends TurnOrdered
      * @return <code>int</code>Total number of UMUs a Mek has.
      */
     public int getAllUMUCount() {
-        if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
+        if (hasShield() && (getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE) > 0)) {
             return 0;
         }
         int count = 0;
@@ -6019,6 +6068,12 @@ public abstract class Entity extends TurnOrdered
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
 
+        // EI Interface provides 1-hex active probe per IO p.69
+        // This works even without the pilot implant (just the hardware)
+        if (hasEiCockpit()) {
+            return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
+        }
+
         return false;
     }
 
@@ -6115,6 +6170,12 @@ public abstract class Entity extends TurnOrdered
             return cyberBaseProbe + quirkBonus + spaBonus;
         }
 
+        // EI Interface provides 1-hex active probe per IO p.69
+        // This works even without the pilot implant (just the hardware)
+        if (hasEiCockpit()) {
+            return 1;
+        }
+
         return Entity.NONE;
     }
 
@@ -6139,24 +6200,25 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns whether this entity has a Targeting Computer that is in aimed shot mode.
+     * Returns whether this entity has a Targeting Computer or EI Interface that is in aimed shot mode.
      * This also returns true for Triple-Core Processor + VDNI/BVDNI combinations,
      * which grant aimed shot capability as if equipped with a Targeting Computer.
      */
     public boolean hasAimModeTargComp() {
+        // Active EI Interface grants aimed shot capability (IO p.69)
+        // hasActiveEiCockpit() verifies EI is not in "Off" mode
         if (hasActiveEiCockpit()) {
-            if (this instanceof Mek) {
-                if (((Mek) this).getCockpitStatus() == Mek.COCKPIT_AIMED_SHOT) {
+            for (MiscMounted m : getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_EI_INTERFACE) && !m.isInoperable()) {
                     return true;
                 }
-            } else {
-                return true;
             }
         }
         // TCP + VDNI/BVDNI grants aimed shot capability for Meks, vehicles, and aerospace
         if (hasTCPAimedShotCapability()) {
             return true;
         }
+        // Check Targeting Computer in "Aimed shot" mode
         for (MiscMounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_TARGETING_COMPUTER) && m.curMode().equals("Aimed shot")) {
                 return !m.isInoperable();
@@ -6740,6 +6802,7 @@ public abstract class Entity extends TurnOrdered
     public Entity getC3Top() {
         Entity m = this;
         Entity master = m.getC3Master();
+        // Except if there's ECM, we can't _reach_ the master.
         while ((master != null) &&
               !master.equals(m) &&
               master.hasC3()) {
@@ -6747,14 +6810,28 @@ public abstract class Entity extends TurnOrdered
             if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                 m = master;
                 master = m.getC3Master();
-            } else if (((m.hasBoostedC3() &&
+            } else if ((m.hasBoostedC3() &&
                   !ComputeECM.isAffectedByAngelECM(m, m.getPosition(), master.getPosition())) ||
-                  !(ComputeECM.isAffectedByECM(m, m.getPosition(), master.getPosition()))) &&
-                  ((master.hasBoostedC3() &&
-                        !ComputeECM.isAffectedByAngelECM(master, master.getPosition(), master.getPosition())) ||
-                        !(ComputeECM.isAffectedByECM(master, master.getPosition(), master.getPosition())))) {
-                m = master;
-                master = m.getC3Master();
+                  !(ComputeECM.isAffectedByECM(m, m.getPosition(), master.getPosition())))
+            {
+                if ((master.hasBoostedC3() &&
+                      !ComputeECM.isAffectedByAngelECM(master, master.getPosition(), master.getPosition())) ||
+                      !(ComputeECM.isAffectedByECM(master, master.getPosition(), master.getPosition()))) {
+                    // punched through
+                    m = master;
+                    master = m.getC3Master();
+                } else {
+                    // Somehow still failed; this should not be possible!
+                    throw new IllegalStateException(
+                          "C3 slave/master connection not affected by ECM/AECM but master is!" +
+                          String.format(
+                            "\nSlave: %s @ %s\nMaster: %s @ %s", m, master, m.getPosition(), master.getPosition()
+                          )
+                    );
+                }
+            } else {
+                // Can no longer contact master
+                master = null;
             }
         }
         return m;
@@ -9857,6 +9934,11 @@ public abstract class Entity extends TurnOrdered
                   (amounted.getHittableShotsLeft() > 0)) {
                 found = true;
             }
+            // Incendiary LRM checks for heat-induced explosions as Inferno (TO:AUE pg 181)
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM) &&
+                  (amounted.getHittableShotsLeft() > 0)) {
+                found = true;
+            }
         }
         return found;
     }
@@ -10089,6 +10171,7 @@ public abstract class Entity extends TurnOrdered
      *
      * @return an int
      */
+    @Override
     public int getDeployRound() {
         return deployRound;
     }
@@ -10106,6 +10189,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Checks to see if an entity has been deployed
      */
+    @Override
     public boolean isDeployed() {
         return deployed;
     }
@@ -10512,6 +10596,11 @@ public abstract class Entity extends TurnOrdered
      * full-round physical attack or sprinting.
      */
     public boolean isEligibleForFiring() {
+        // Meks with pending abandonment cannot take any actions (TacOps:AR p.165)
+        if (isPendingAbandon()) {
+            return false;
+        }
+
         // if you're charging, no shooting
         // PLAYTEST3 unjamming RAC you can still shoot
         if ((isUnjammingRAC() && !gameOptions().booleanOption(OptionsConstants.PLAYTEST_3))
@@ -10549,6 +10638,10 @@ public abstract class Entity extends TurnOrdered
      * @return whether the entity is allowed to move
      */
     public boolean isEligibleForMovement() {
+        // Note: Units with pending abandonment still get a Movement Phase turn
+        // so they can startup (cancelling the abandonment) or skip their turn.
+        // The unit is shutdown so normal movement is already disabled.
+
         // check if entity is off board
         if (isOffBoard() || (isAssaultDropInProgress() && !(movementMode == EntityMovementMode.WIGE))) {
             return false;
@@ -10576,6 +10669,10 @@ public abstract class Entity extends TurnOrdered
     }
 
     public boolean isEligibleForOffboard() {
+        // Meks with pending abandonment cannot take any actions (TacOps:AR p.165)
+        if (isPendingAbandon()) {
+            return false;
+        }
 
         // if you're charging, no shooting
         // PLAYTEST3 Unjamming RAC no longer prevents this
@@ -10612,6 +10709,11 @@ public abstract class Entity extends TurnOrdered
      * Check if the entity has any valid targets for physical attacks.
      */
     public boolean isEligibleForPhysical() {
+        // Meks with pending abandonment cannot take any actions (TacOps:AR p.165)
+        if (isPendingAbandon()) {
+            return false;
+        }
+
         boolean canHit = false;
         boolean friendlyFire = gameOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
@@ -10619,7 +10721,7 @@ public abstract class Entity extends TurnOrdered
             return false; // not on board?
         }
 
-        if ((this instanceof Infantry) && hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_DEMOLITION_CHARGE)) {
+        if ((this instanceof Infantry) && hasWorkingMisc(MiscTypeFlag.F_TOOLS, MiscTypeFlag.S_DEMOLITION_CHARGE)) {
             Hex hex = game.getHex(position, boardId);
 
             if (hex == null) {
@@ -11581,12 +11683,82 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
+    /**
+     * Returns whether this entity has an Enhanced Imaging (EI) Interface. This is determined by having the EI Interface
+     * equipment installed. ProtoMeks always have EI built-in.
+     *
+     * @return true if this entity has an EI Interface
+     */
     public boolean hasEiCockpit() {
-        return ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT));
+        return hasWorkingMisc(MiscType.F_EI_INTERFACE);
     }
 
     public boolean hasActiveEiCockpit() {
-        return (hasEiCockpit() && hasAbility(OptionsConstants.UNOFFICIAL_EI_IMPLANT));
+        if (!hasEiCockpit() || !hasAbility(OptionsConstants.MD_EI_IMPLANT)) {
+            return false;
+        }
+        // Check if EI Interface equipment is in "Off" mode
+        for (MiscMounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                // If equipment exists and is in "Off" mode, EI is not active
+                if (m.curMode().getName().equals("Off")) {
+                    return false;
+                }
+                break;
+            }
+        }
+        // ProtoMeks always have EI active (no equipment to turn off)
+        return true;
+    }
+
+    /**
+     * Returns whether the EI Interface is currently shut down (in "Off" mode).
+     */
+    public boolean isEiShutdown() {
+        for (MiscMounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                return m.curMode().getName().equals("Off");
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Sets the EI shutdown state by changing the EI Interface equipment mode. ProtoMeks and units with MDI cannot
+     * shut down EI. Per IO p.69, EI can be voluntarily shut down during the End Phase.
+     *
+     * @param shutdown true to shut down EI (set to "Off" mode), false to activate it (set to "On" mode)
+     */
+    public void setEiShutdown(boolean shutdown) {
+        if (!canShutdownEi()) {
+            return;
+        }
+        for (MiscMounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                int targetMode = shutdown ? 0 : 1; // 0 = "Off", 1 = "On"
+                m.setMode(targetMode);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Returns whether this unit can shut down its EI Interface. ProtoMeks cannot shut down EI (it's integral to their
+     * design). Units with MDI (Machine/Direct Interface) cannot shut down EI. Per IO p.69.
+     */
+    public boolean canShutdownEi() {
+        if (!hasEiCockpit()) {
+            return false;
+        }
+        // ProtoMeks cannot shut down EI - it's integral to their design
+        if (this.isProtoMek()) {
+            return false;
+        }
+        // Units with MDI cannot shut down EI per IO
+        if (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)) {
+            return false;
+        }
+        return true;
     }
 
     public boolean isLayingMines() {
@@ -11999,6 +12171,16 @@ public abstract class Entity extends TurnOrdered
      */
     public void setCarcass(boolean carcass) {
         this.carcass = carcass;
+    }
+
+    /**
+     * Returns true if this unit has been abandoned (crew ejected but unit not destroyed). Base implementation returns
+     * false; subclasses like Mek override this.
+     *
+     * @return true if abandoned, false otherwise
+     */
+    public boolean isAbandoned() {
+        return false;
     }
 
     /**
@@ -12542,8 +12724,8 @@ public abstract class Entity extends TurnOrdered
             if ((m.getLocation() == loc) &&
                   !m.isDestroyed() &&
                   !m.isBreached() &&
-                  m.getType().hasFlag(MiscType.F_CLUB) &&
-                  m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
+                  m.getType().hasFlag(MiscTypeFlag.F_CLUB) &&
+                  m.getType().hasFlag(MiscTypeFlag.S_RETRACTABLE_BLADE)) {
                 m.setMode("extended");
                 return;
             }
@@ -12566,8 +12748,8 @@ public abstract class Entity extends TurnOrdered
                   !m.isHit() &&
                   !m.isBreached() &&
                   (m.getType() instanceof MiscType) &&
-                  m.getType().hasFlag(MiscType.F_CLUB) &&
-                  m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
+                  m.getType().hasFlag(MiscTypeFlag.F_CLUB) &&
+                  m.getType().hasFlag(MiscTypeFlag.S_RETRACTABLE_BLADE)) {
                 slot.setHit(true);
                 m.setHit(true);
                 return;
@@ -13798,7 +13980,8 @@ public abstract class Entity extends TurnOrdered
             }
         }
         for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
+            if (m.getType().hasFlag(MiscTypeFlag.F_CLUB)
+                  && m.getType().hasFlag(MiscTypeFlag.S_SPOT_WELDER)) {
                 total += m.getTonnage();
             }
         }
@@ -13826,8 +14009,13 @@ public abstract class Entity extends TurnOrdered
             // PLAYTEST3 C3 BV changes. each unit is +30% BV, +35% for boosted
             boolean playtestThree = gameOptions().booleanOption(OptionsConstants.PLAYTEST_3);
 
+            // C3 network bonus requires at least 2 members. Check conditions:
+            // - C3MM: has at least one C3M connected
+            // - C3M: has C3S slaves connected OR is connected to a C3MM master
+            // - C3S: has a master (C3M or C3MM) connected
+            // - C3i/Naval C3: has at least one other network member
             if ((hasC3MM() && (calculateFreeC3MNodes() < 2)) ||
-                  (hasC3M() && (calculateFreeC3Nodes() < 3)) ||
+                  (hasC3M() && ((calculateFreeC3Nodes() < 3) || (getC3Master() != null))) ||
                   (hasC3S() && (c3Master > NONE)) ||
                   ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5))) {
                 totalForceBV += baseBV;
@@ -14159,7 +14347,7 @@ public abstract class Entity extends TurnOrdered
             Roll diceRoll = Compute.rollD6(2);
             int rollValue = diceRoll.getIntValue();
             String rollCalc = String.valueOf(rollValue);
-            boolean isSupercharger = masc.getType().hasSubType(MiscType.S_SUPERCHARGER);
+            boolean isSupercharger = masc.getType().hasFlag(MiscTypeFlag.S_SUPERCHARGER);
             // WHY is this -1 here?
             if (isSupercharger &&
                   (((this instanceof Mek) && ((Mek) this).isIndustrial()) ||
@@ -14314,10 +14502,10 @@ public abstract class Entity extends TurnOrdered
     public @Nullable MiscMounted getMASC() {
         for (MiscMounted m : getMisc()) {
             MiscType miscType = m.getType();
-            if (miscType.hasFlag(MiscType.F_MASC) &&
+            if (miscType.hasFlag(MiscTypeFlag.F_MASC) &&
                   m.isReady() &&
-                  !miscType.hasSubType(MiscType.S_SUPERCHARGER) &&
-                  !miscType.hasSubType(MiscType.S_JET_BOOSTER)) {
+                  !miscType.hasFlag(MiscTypeFlag.S_SUPERCHARGER) &&
+                  !miscType.hasFlag(MiscTypeFlag.S_JET_BOOSTER)) {
                 return m;
             }
         }
@@ -14330,7 +14518,7 @@ public abstract class Entity extends TurnOrdered
     public MiscMounted getSuperCharger() {
         for (MiscMounted m : getMisc()) {
             MiscType miscType = m.getType();
-            if (miscType.hasFlag(MiscType.F_MASC) && m.isReady() && miscType.hasSubType(MiscType.S_SUPERCHARGER)) {
+            if (miscType.hasFlag(MiscType.F_MASC) && m.isReady() && miscType.hasFlag(MiscTypeFlag.S_SUPERCHARGER)) {
                 return m;
             }
         }
@@ -14651,6 +14839,47 @@ public abstract class Entity extends TurnOrdered
 
     public void setSelfDestructedThisTurn(boolean tf) {
         selfDestructedThisTurn = tf;
+    }
+
+    /**
+     * Returns true if this unit has announced abandonment and is waiting for the crew to exit during the next End
+     * Phase.
+     *
+     * @return true if abandonment is pending
+     */
+    public boolean isPendingAbandon() {
+        return pendingAbandon;
+    }
+
+    /**
+     * Sets whether this unit has announced abandonment. Used during End Phase processing to track two-phase abandonment
+     * for Meks.
+     *
+     * @param pendingAbandon true if abandonment has been announced
+     */
+    public void setPendingAbandon(boolean pendingAbandon) {
+        this.pendingAbandon = pendingAbandon;
+        if (!pendingAbandon) {
+            this.abandonmentAnnouncedRound = -1;
+        }
+    }
+
+    /**
+     * Returns the round number when abandonment was announced.
+     *
+     * @return the round number, or -1 if not announced
+     */
+    public int getAbandonmentAnnouncedRound() {
+        return abandonmentAnnouncedRound;
+    }
+
+    /**
+     * Sets the round number when abandonment was announced.
+     *
+     * @param round the round number
+     */
+    public void setAbandonmentAnnouncedRound(int round) {
+        this.abandonmentAnnouncedRound = round;
     }
 
     public void setIsJumpingNow(boolean jumped) {
@@ -16406,7 +16635,7 @@ public abstract class Entity extends TurnOrdered
         for (MiscMounted m : getMisc()) {
             if (!m.isInoperable() && m.getType().hasFlag(MiscType.F_MASC)) {
                 // Supercharger is a subtype of MASC in MiscType
-                if (m.getType().hasSubType(MiscType.S_SUPERCHARGER)) {
+                if (m.getType().hasFlag(MiscTypeFlag.S_SUPERCHARGER)) {
                     hasSupercharger = !onlyArmed || m.curMode().equals("Armed");
                 } else {
                     hasMASC = !onlyArmed || m.curMode().equals("Armed");

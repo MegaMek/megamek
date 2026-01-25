@@ -425,7 +425,7 @@ public class ASDamageConverter {
         }
 
         // Actuator Enhancement System
-        if (entity.hasWorkingMisc(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM, -1, weapon.getLocation()) &&
+        if (entity.hasWorkingMisc(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM, null, weapon.getLocation()) &&
               ((weapon.getLocation() == Mek.LOC_LEFT_ARM) || (weapon.getLocation() == Mek.LOC_RIGHT_ARM))) {
             damageModifier *= 1.05;
         }
@@ -874,36 +874,23 @@ public class ASDamageConverter {
      * Translates an Artillery WeaponType to the AlphaStrike Special Unit Ability, if any can be found.
      */
     protected static BattleForceSUA getArtilleryType(WeaponType weaponType) {
-        switch (weaponType.getAmmoType()) {
-            case ARROW_IV:
-                return (weaponType.getTechBase() == TechBase.CLAN) ? ARTAC : ARTAIS;
-            case LONG_TOM:
-                return ARTLT;
-            case SNIPER:
-                return ARTS;
-            case THUMPER:
-                return ARTT;
-            case LONG_TOM_CANNON:
-                return ARTLTC;
-            case SNIPER_CANNON:
-                return ARTSC;
-            case THUMPER_CANNON:
-                return ARTTC;
-            case CRUISE_MISSILE:
-                switch (weaponType.getRackSize()) {
-                    case 50:
-                        return ARTCM5;
-                    case 70:
-                        return ARTCM7;
-                    case 90:
-                        return ARTCM9;
-                    case 120:
-                        return ARTCM12;
-                }
-            case BA_TUBE:
-                return ARTBA;
-        }
-        return UNKNOWN;
+        return switch (weaponType.getAmmoType()) {
+            case ARROW_IV -> (weaponType.getTechBase() == TechBase.CLAN) ? ARTAC : ARTAIS;
+            case LONG_TOM -> ARTLT;
+            case SNIPER -> ARTS;
+            case THUMPER -> ARTT;
+            case LONG_TOM_CANNON -> ARTLTC;
+            case SNIPER_CANNON -> ARTSC;
+            case THUMPER_CANNON -> ARTTC;
+            case CRUISE_MISSILE -> switch (weaponType.getRackSize()) {
+                case 50 -> ARTCM5;
+                case 70 -> ARTCM7;
+                case 90 -> ARTCM9;
+                default -> ARTCM12;
+            };
+            case BA_TUBE -> ARTBA;
+            default -> UNKNOWN;
+        };
     }
 
     private static int resultingHTValue(int heatSum) {
@@ -979,13 +966,13 @@ public class ASDamageConverter {
             totalHeat += weaponHeat(mount, onlyRear, onlyLongRange);
         }
 
-        if (entity.hasWorkingMisc(MiscType.F_STEALTH, -1) ||
-              entity.hasWorkingMisc(MiscType.F_VOID_SIG, -1) ||
-              entity.hasWorkingMisc(MiscType.F_NULL_SIG, -1)) {
+        if (entity.hasWorkingMisc(MiscType.F_STEALTH) ||
+              entity.hasWorkingMisc(MiscType.F_VOID_SIG) ||
+              entity.hasWorkingMisc(MiscType.F_NULL_SIG)) {
             totalHeat += 10;
         }
 
-        if (entity.hasWorkingMisc(MiscType.F_CHAMELEON_SHIELD, -1)) {
+        if (entity.hasWorkingMisc(MiscType.F_CHAMELEON_SHIELD)) {
             totalHeat += 6;
         }
 

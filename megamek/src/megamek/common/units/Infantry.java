@@ -54,6 +54,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.EquipmentType;
@@ -63,11 +64,13 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
 import megamek.common.rolls.PilotingRollData;
@@ -176,6 +179,22 @@ public class Infantry extends Entity {
     private boolean isCallingSupport = false;
     private boolean pheromoneImpaired = false;
     private InfantryMount mount = null;
+
+    // Prosthetic Enhancement (Enhanced Limbs) - IO p.84
+    // Standard Enhanced (MD_PL_ENHANCED): Uses slot 1 only, same type up to 2x
+    // Improved Enhanced (MD_PL_I_ENHANCED): Uses both slots, different types, each up to 2x, max 4 total
+    private ProstheticEnhancementType prostheticEnhancement1 = null;
+    private int prostheticEnhancement1Count = 0; // 0, 1, or 2 per trooper
+    private ProstheticEnhancementType prostheticEnhancement2 = null;
+    private int prostheticEnhancement2Count = 0; // 0, 1, or 2 per trooper
+
+    // Extraneous (Enhanced) Limbs - IO p.84
+    // MD_PL_EXTRA_LIMBS: Up to 2 pairs of extra limbs (4 limbs total)
+    // Each pair provides 2 identical enhancement items (1 per limb)
+    // Items in a pair must be same type but can differ from other prosthetics
+    // Conventional infantry only
+    private ProstheticEnhancementType extraneousPair1 = null; // Always 2 items per pair
+    private ProstheticEnhancementType extraneousPair2 = null; // Always 2 items per pair
 
     /** The maximum number of troopers in an infantry platoon. */
     public static final int INF_PLT_MAX_MEN = 30;
@@ -572,6 +591,14 @@ public class Infantry extends Entity {
     @Override
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
         int mp = hasUMU() ? 0 : getOriginalJumpMP();
+
+        // Powered flight infantry (non-native VTOL) get 2 MP from their wings (IO p.85)
+        // Note: Use the stored movementMode field, not getMovementMode() which returns VTOL for powered flight
+        if (movementMode != EntityMovementMode.VTOL &&
+              hasPoweredFlightWings() && canUsePoweredFlightWings()) {
+            mp = 2;
+        }
+
         if (mount == null) {
             if ((getSecondaryWeaponsPerSquad() > 1) &&
                   !hasAbility(OptionsConstants.MD_TSM_IMPLANT) &&
@@ -638,7 +665,8 @@ public class Infantry extends Entity {
         }
         EquipmentType armorKit = getArmorKit();
         return (armorKit == null) ||
-              !armorKit.hasSubType(MiscType.S_SPACE_SUIT | MiscType.S_XCT_VACUUM | MiscType.S_TOXIC_ATMOSPHERE);
+              !armorKit.hasAnyFlag(MiscTypeFlag.S_SPACE_SUIT, MiscTypeFlag.S_XCT_VACUUM,
+                    MiscTypeFlag.S_TOXIC_ATMOSPHERE);
     }
 
     @Override
@@ -931,12 +959,30 @@ public class Infantry extends Entity {
 
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
+        // EI bonus for anti-Mek attacks per IO p.69
+        // "All Piloting Skill rolls required for the EI-equipped unit receives a -1 target number modifier.
+        // This includes checks made for physical attacks, as well as anti-Mek attacks by EI-equipped battle armor."
+        if (hasActiveEiCockpit()) {
+            prd.addModifier(-1, "Enhanced Imaging");
+        }
         return prd;
     }
 
     @Override
     public int getMaxElevationChange() {
         return hasSpecialization(MOUNTAIN_TROOPS) ? 3 : 1;
+    }
+
+    /**
+     * Returns the maximum downward elevation change this infantry can make. Infantry with glider wings can descend any
+     * number of levels safely (IO p.85).
+     */
+    @Override
+    public int getMaxElevationDown(int currElevation) {
+        if (canUseGliderWings() && hasAbility(OptionsConstants.MD_PL_GLIDER)) {
+            return Integer.MAX_VALUE;
+        }
+        return getMaxElevationChange();
     }
 
     @Override
@@ -1185,13 +1231,13 @@ public class Infantry extends Entity {
     public boolean doomedInExtremeTemp() {
         // If there is no game object, count any temperature protection.
         if (getArmorKit() != null) {
-            if (getArmorKit().hasSubType(MiscType.S_XCT_VACUUM)) {
+            if (getArmorKit().hasFlag(MiscTypeFlag.S_XCT_VACUUM)) {
                 return false;
-            } else if (getArmorKit().hasSubType(MiscType.S_COLD_WEATHER) &&
+            } else if (getArmorKit().hasFlag(MiscTypeFlag.S_COLD_WEATHER) &&
                   ((game == null) || game.getPlanetaryConditions().getTemperature() < -30)) {
                 return false;
             } else {
-                return !getArmorKit().hasSubType(MiscType.S_HOT_WEATHER) ||
+                return !getArmorKit().hasFlag(MiscTypeFlag.S_HOT_WEATHER) ||
                       ((game != null) && game.getPlanetaryConditions().getTemperature() <= 50);
             }
         }
@@ -1210,8 +1256,195 @@ public class Infantry extends Entity {
         }
 
         EntityMovementMode moveMode = getMovementMode();
-        return (List.of(EntityMovementMode.INF_JUMP, EntityMovementMode.HOVER, EntityMovementMode.VTOL)
-              .contains(moveMode) || hasSpecialization(PARATROOPS));
+        boolean hasInherentDropCapability = List.of(
+              EntityMovementMode.INF_JUMP,
+              EntityMovementMode.HOVER,
+              EntityMovementMode.VTOL).contains(moveMode);
+        boolean hasGliderWings = isConventionalInfantry()
+              && hasAbility(OptionsConstants.MD_PL_GLIDER)
+              && canUseGliderWings();
+        boolean hasPoweredFlightWings = hasPoweredFlightWings() && canUsePoweredFlightWings();
+
+        return hasInherentDropCapability || hasSpecialization(PARATROOPS) || hasGliderWings || hasPoweredFlightWings;
+    }
+
+    /**
+     * Returns true if this infantry unit can use glider wings in the current conditions.
+     * Glider wings cannot be used in vacuum or trace (very thin) atmospheres (IO p.85).
+     *
+     * @return true if glider wings are usable
+     */
+    public boolean canUseGliderWings() {
+        if (game == null) {
+            return true; // Allow if no game context
+        }
+        Atmosphere atmosphere = game.getPlanetaryConditions().getAtmosphere();
+        // Glider wings require at least THIN atmosphere (vacuum and trace are too thin)
+        return !atmosphere.isLighterThan(Atmosphere.THIN);
+    }
+
+    /**
+     * Returns true if this conventional infantry unit has powered flight wings. Powered flight wings can only be used
+     * by conventional infantry (IO p.85).
+     *
+     * @return true if unit has powered flight wings ability
+     */
+    public boolean hasPoweredFlightWings() {
+        return isConventionalInfantry() && hasAbility(OptionsConstants.MD_PL_FLIGHT);
+    }
+
+    /**
+     * Returns true if this infantry unit can use powered flight wings in the current conditions. Powered flight wings
+     * cannot be used in vacuum (IO p.85). Note: Unlike glider wings, powered flight only mentions vacuum restriction,
+     * not trace atmosphere. However, for consistency and realism, we apply the same atmospheric restriction as glider
+     * wings.
+     *
+     * @return true if powered flight wings are usable
+     */
+    public boolean canUsePoweredFlightWings() {
+        if (game == null) {
+            return true; // Allow if no game context
+        }
+        Atmosphere atmosphere = game.getPlanetaryConditions().getAtmosphere();
+        // Powered flight wings require at least THIN atmosphere (vacuum and trace are too thin)
+        return !atmosphere.isLighterThan(Atmosphere.THIN);
+    }
+
+    /**
+     * Returns the VTOL movement points provided by powered flight wings. Per IO p.85, powered flight wings provide 2
+     * MPs of VTOL movement.
+     *
+     * @return 2 if powered flight is usable, 0 otherwise
+     */
+    public int getPoweredFlightMP() {
+        if (hasPoweredFlightWings() && canUsePoweredFlightWings()) {
+            return 2;
+        }
+        return 0;
+    }
+
+    /**
+     * Returns true if this infantry unit can use VTOL-style movement. This includes infantry with VTOL movement mode
+     * (microcopter/microlite) OR infantry with usable powered flight wings.
+     *
+     * @return true if unit can use VTOL movement
+     */
+    public boolean hasVTOLMovementCapability() {
+        if (getMovementMode() == EntityMovementMode.VTOL) {
+            return true;
+        }
+        return hasPoweredFlightWings() && canUsePoweredFlightWings();
+    }
+
+    /**
+     * Returns the VTOL movement points for this infantry unit. For VTOL infantry (microcopter/microlite), this returns
+     * jumpMP. For powered flight infantry, this returns 2 MP per IO p.85.
+     *
+     * @return VTOL MP available, or 0 if no VTOL capability
+     */
+    public int getVTOLMP() {
+        if (getMovementMode() == EntityMovementMode.VTOL) {
+            return getJumpMP();
+        }
+        return getPoweredFlightMP();
+    }
+
+    /**
+     * Returns true if this infantry unit is protected from fall damage.
+     * Glider wings and powered flight wings protect against damage from falls,
+     * whether from walking off terrain 2+ levels high (including buildings)
+     * or by displacement (IO p.85).
+     * Only conventional infantry can use these prosthetic wings.
+     *
+     * @return true if protected from fall damage
+     */
+    public boolean isProtectedFromFallDamage() {
+        if (!isConventionalInfantry()) {
+            return false;
+        }
+        boolean hasGliderProtection = hasAbility(OptionsConstants.MD_PL_GLIDER) && canUseGliderWings();
+        boolean hasPoweredFlightProtection = hasPoweredFlightWings() && canUsePoweredFlightWings();
+        return hasGliderProtection || hasPoweredFlightProtection;
+    }
+
+    /**
+     * Returns true if this infantry unit can exit a VTOL using glider wings. Per IO p.85, glider wings give a soldier
+     * the ability to leave a VTOL during movement as if the soldier were jump infantry.
+     *
+     * @return true if this infantry can exit a VTOL using glider wings
+     */
+    public boolean canExitVTOLWithGliderWings() {
+        return isConventionalInfantry()
+              && hasAbility(OptionsConstants.MD_PL_GLIDER)
+              && canUseGliderWings();
+    }
+
+    /**
+     * Returns true if both glider wings and powered flight wings are enabled.
+     * Per IO p.85, these are mutually exclusive - a trooper cannot have both.
+     *
+     * @return true if invalid configuration (both wing types enabled)
+     */
+    public boolean hasInvalidWingsConfiguration() {
+        return hasAbility(OptionsConstants.MD_PL_GLIDER)
+              && hasAbility(OptionsConstants.MD_PL_FLIGHT);
+    }
+
+    /**
+     * Returns true if glider wings are installed on non-foot infantry. Per IO p.85 and confirmed by the rules team,
+     * glider wings can only be used by foot infantry - motorized, mechanized, and beast-mounted infantry cannot use
+     * them.
+     *
+     * @return true if invalid configuration (glider wings on non-foot infantry)
+     */
+    public boolean hasGliderWingsOnInvalidInfantryType() {
+        if (!hasAbility(OptionsConstants.MD_PL_GLIDER)) {
+            return false;
+        }
+        return isMechanized() || getMovementMode().isMotorizedInfantry() || (getMount() != null);
+    }
+
+    /**
+     * Returns true if powered flight wings are installed on non-foot infantry.
+     * Per IO p.85, powered flight wings can only be used by foot infantry -
+     * motorized, mechanized, and beast-mounted infantry cannot use them.
+     *
+     * @return true if invalid configuration (powered flight wings on non-foot infantry)
+     */
+    public boolean hasPoweredFlightWingsOnInvalidInfantryType() {
+        if (!hasAbility(OptionsConstants.MD_PL_FLIGHT)) {
+            return false;
+        }
+        return isMechanized() || getBaseMovementMode().isMotorizedInfantry() || (getMount() != null);
+    }
+
+    /**
+     * Returns the maximum number of extraneous limb pairs allowed.
+     * Per IO p.85, if glider wings or powered flight wings are installed,
+     * only one pair of extraneous limbs is allowed (instead of the normal two pairs).
+     *
+     * @return 1 if any wing type is installed, 2 otherwise
+     */
+    public int getMaxExtraneousLimbPairs() {
+        if (hasAbility(OptionsConstants.MD_PL_GLIDER) || hasAbility(OptionsConstants.MD_PL_FLIGHT)) {
+            return 1;
+        }
+        return 2;
+    }
+
+    /**
+     * Returns true if the current extraneous limb configuration exceeds the allowed maximum.
+     * Per IO p.85, if any wing prosthetics are installed, only one pair of extraneous limbs is allowed.
+     *
+     * @return true if invalid configuration (too many extraneous limb pairs)
+     */
+    public boolean hasExcessiveExtraneousLimbs() {
+        boolean hasWings = hasAbility(OptionsConstants.MD_PL_GLIDER) || hasAbility(OptionsConstants.MD_PL_FLIGHT);
+        if (!hasWings) {
+            return false;
+        }
+        // With any wing type, only 1 pair allowed - pair 2 must be empty
+        return hasExtraneousPair2();
     }
 
     @Override
@@ -1327,12 +1560,12 @@ public class Infantry extends Entity {
             } catch (LocationFullException ex) {
                 logger.error("", ex);
             }
-            encumbering = (armorKit.getSubType() & MiscType.S_ENCUMBERING) != 0;
-            spaceSuit = (armorKit.getSubType() & MiscType.S_SPACE_SUIT) != 0;
-            dest = (armorKit.getSubType() & MiscType.S_DEST) != 0;
-            sneak_camo = (armorKit.getSubType() & MiscType.S_SNEAK_CAMO) != 0;
-            sneak_ir = (armorKit.getSubType() & MiscType.S_SNEAK_IR) != 0;
-            sneak_ecm = (armorKit.getSubType() & MiscType.S_SNEAK_ECM) != 0;
+            encumbering = armorKit.hasFlag(MiscTypeFlag.S_ENCUMBERING);
+            spaceSuit = armorKit.hasFlag(MiscTypeFlag.S_SPACE_SUIT);
+            dest = armorKit.hasFlag(MiscTypeFlag.S_DEST);
+            sneak_camo = armorKit.hasFlag(MiscTypeFlag.S_SNEAK_CAMO);
+            sneak_ir = armorKit.hasFlag(MiscTypeFlag.S_SNEAK_IR);
+            sneak_ecm = armorKit.hasFlag(MiscTypeFlag.S_SNEAK_ECM);
         }
         calcDamageDivisor();
     }
@@ -1458,7 +1691,7 @@ public class Infantry extends Entity {
             // Need to remove vibro shovels
             List<Mounted<?>> eqToRemove = new ArrayList<>();
             for (Mounted<?> eq : getEquipment()) {
-                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasSubType(MiscType.S_VIBRO_SHOVEL)) {
+                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasFlag(MiscTypeFlag.S_VIBRO_SHOVEL)) {
                     eqToRemove.add(eq);
                 }
             }
@@ -1484,7 +1717,7 @@ public class Infantry extends Entity {
             // Need to remove vibro shovels
             List<Mounted<?>> eqToRemove = new ArrayList<>();
             for (Mounted<?> eq : getEquipment()) {
-                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasSubType(MiscType.S_DEMOLITION_CHARGE)) {
+                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasFlag(MiscTypeFlag.S_DEMOLITION_CHARGE)) {
                     eqToRemove.add(eq);
                 }
             }
@@ -1655,6 +1888,428 @@ public class Infantry extends Entity {
         return mount;
     }
 
+    // region Prosthetic Enhancement
+
+    // --- Slot 1 (Standard Enhanced uses this, Improved Enhanced uses both) ---
+
+    /**
+     * @return The prosthetic enhancement type in slot 1, or null if none
+     */
+    public @Nullable ProstheticEnhancementType getProstheticEnhancement1() {
+        return prostheticEnhancement1;
+    }
+
+    /**
+     * Sets the prosthetic enhancement type in slot 1.
+     *
+     * @param enhancement The enhancement type to set, or null to remove
+     */
+    public void setProstheticEnhancement1(@Nullable ProstheticEnhancementType enhancement) {
+        this.prostheticEnhancement1 = enhancement;
+        if (enhancement == null) {
+            prostheticEnhancement1Count = 0;
+        }
+    }
+
+    /**
+     * @return The number of slot 1 enhancements per trooper (0, 1, or 2)
+     */
+    public int getProstheticEnhancement1Count() {
+        return prostheticEnhancement1Count;
+    }
+
+    /**
+     * Sets the number of slot 1 enhancements per trooper. Clamped to valid range of 0-2.
+     *
+     * @param count The enhancement count (0, 1, or 2)
+     */
+    public void setProstheticEnhancement1Count(int count) {
+        this.prostheticEnhancement1Count = Math.max(0, Math.min(2, count));
+    }
+
+    // --- Slot 2 (Improved Enhanced only) ---
+
+    /**
+     * @return The prosthetic enhancement type in slot 2, or null if none
+     */
+    public @Nullable ProstheticEnhancementType getProstheticEnhancement2() {
+        return prostheticEnhancement2;
+    }
+
+    /**
+     * Sets the prosthetic enhancement type in slot 2.
+     *
+     * @param enhancement The enhancement type to set, or null to remove
+     */
+    public void setProstheticEnhancement2(@Nullable ProstheticEnhancementType enhancement) {
+        this.prostheticEnhancement2 = enhancement;
+        if (enhancement == null) {
+            prostheticEnhancement2Count = 0;
+        }
+    }
+
+    /**
+     * @return The number of slot 2 enhancements per trooper (0, 1, or 2)
+     */
+    public int getProstheticEnhancement2Count() {
+        return prostheticEnhancement2Count;
+    }
+
+    /**
+     * Sets the number of slot 2 enhancements per trooper. Clamped to valid range of 0-2.
+     *
+     * @param count The enhancement count (0, 1, or 2)
+     */
+    public void setProstheticEnhancement2Count(int count) {
+        this.prostheticEnhancement2Count = Math.max(0, Math.min(2, count));
+    }
+
+    // --- Combined helpers ---
+
+    /**
+     * @return True if this unit has any prosthetic enhancement configured (in either slot)
+     */
+    public boolean hasProstheticEnhancement() {
+        return (prostheticEnhancement1 != null && prostheticEnhancement1Count > 0)
+              || (prostheticEnhancement2 != null && prostheticEnhancement2Count > 0);
+    }
+
+    /**
+     * @return True if this unit has a prosthetic enhancement in slot 1
+     */
+    public boolean hasProstheticEnhancement1() {
+        return prostheticEnhancement1 != null && prostheticEnhancement1Count > 0;
+    }
+
+    /**
+     * @return True if this unit has a prosthetic enhancement in slot 2
+     */
+    public boolean hasProstheticEnhancement2() {
+        return prostheticEnhancement2 != null && prostheticEnhancement2Count > 0;
+    }
+
+    /**
+     * Calculates the total prosthetic enhancement damage bonus per trooper from both slots. This sums the damage from
+     * both enhancement slots.
+     *
+     * @return The total damage bonus per trooper from all prosthetic enhancements
+     */
+    public double getProstheticDamageBonus() {
+        double bonus = 0.0;
+        if (hasProstheticEnhancement1()) {
+            bonus += prostheticEnhancement1.getDamagePerTrooper() * prostheticEnhancement1Count;
+        }
+        if (hasProstheticEnhancement2()) {
+            bonus += prostheticEnhancement2.getDamagePerTrooper() * prostheticEnhancement2Count;
+        }
+        return bonus;
+    }
+
+    /**
+     * Gets the best (most negative) anti-Mek modifier from all prosthetic enhancements.
+     *
+     * @return The best anti-Mek modifier, or 0 if no enhancement provides one
+     */
+    public int getBestProstheticAntiMekModifier() {
+        int best = 0;
+        // Check regular prosthetic enhancements
+        if (hasProstheticEnhancement1() && prostheticEnhancement1.hasAntiMekBonus()) {
+            best = Math.min(best, prostheticEnhancement1.getAntiMekModifier());
+        }
+        if (hasProstheticEnhancement2() && prostheticEnhancement2.hasAntiMekBonus()) {
+            best = Math.min(best, prostheticEnhancement2.getAntiMekModifier());
+        }
+        // Check extraneous limb enhancements (only the single best modifier from all sources applies)
+        if (hasExtraneousPair1() && extraneousPair1.hasAntiMekBonus()) {
+            best = Math.min(best, extraneousPair1.getAntiMekModifier());
+        }
+        if (hasExtraneousPair2() && extraneousPair2.hasAntiMekBonus()) {
+            best = Math.min(best, extraneousPair2.getAntiMekModifier());
+        }
+        return best;
+    }
+
+    /**
+     * Gets the display name of the enhancement providing the best anti-Mek bonus.
+     *
+     * @return The display name, or null if no enhancement provides anti-Mek bonus
+     */
+    public @Nullable String getBestProstheticAntiMekName() {
+        int best = 0;
+        String name = null;
+        // Check regular prosthetic enhancements
+        if (hasProstheticEnhancement1() && prostheticEnhancement1.hasAntiMekBonus()) {
+            if (prostheticEnhancement1.getAntiMekModifier() < best) {
+                best = prostheticEnhancement1.getAntiMekModifier();
+                name = prostheticEnhancement1.getDisplayName();
+            }
+        }
+        if (hasProstheticEnhancement2() && prostheticEnhancement2.hasAntiMekBonus()) {
+            if (prostheticEnhancement2.getAntiMekModifier() < best) {
+                best = prostheticEnhancement2.getAntiMekModifier();
+                name = prostheticEnhancement2.getDisplayName();
+            }
+        }
+        // Check extraneous limb enhancements
+        if (hasExtraneousPair1() && extraneousPair1.hasAntiMekBonus()) {
+            if (extraneousPair1.getAntiMekModifier() < best) {
+                best = extraneousPair1.getAntiMekModifier();
+                name = extraneousPair1.getDisplayName();
+            }
+        }
+        if (hasExtraneousPair2() && extraneousPair2.hasAntiMekBonus()) {
+            if (extraneousPair2.getAntiMekModifier() < best) {
+                best = extraneousPair2.getAntiMekModifier();
+                name = extraneousPair2.getDisplayName();
+            }
+        }
+        return name;
+    }
+
+    /**
+     * Checks if any prosthetic enhancement provides an Anti-Mek BV multiplier. Per IO p.84, Grappler Lines and Climbing
+     * Claws provide a 1.2x multiplier on the Anti-Mek Battle Rating.
+     *
+     * @return True if any enhancement provides an Anti-Mek BV multiplier
+     */
+    public boolean hasAntiMekBvMultiplier() {
+        return getBestProstheticAntiMekModifier() != 0;
+    }
+
+    /**
+     * Gets the Anti-Mek BV multiplier from prosthetic enhancements. Per IO p.84, units with Grappler Lines or Climbing
+     * Claws multiply their Anti-Mek Battle Rating by 1.2.
+     *
+     * @return 1.2 if the unit has Grappler or Climbing Claws, 1.0 otherwise
+     */
+    public double getAntiMekBvMultiplier() {
+        return hasAntiMekBvMultiplier() ? 1.2 : 1.0;
+    }
+
+    /**
+     * Checks if any prosthetic enhancement (regular or extraneous) is a melee type.
+     *
+     * @return True if any enhancement is melee
+     */
+    public boolean hasProstheticMeleeEnhancement() {
+        return (hasProstheticEnhancement1() && prostheticEnhancement1.isMelee())
+              || (hasProstheticEnhancement2() && prostheticEnhancement2.isMelee())
+              || (hasExtraneousPair1() && extraneousPair1.isMelee())
+              || (hasExtraneousPair2() && extraneousPair2.isMelee());
+    }
+
+    /**
+     * Gets the melee to-hit modifier from prosthetic enhancements. Per IO p.83, maximum modifier is +2 regardless of
+     * number of melee weapons.
+     *
+     * @return The melee to-hit modifier (capped at +2)
+     */
+    public int getProstheticMeleeToHitModifier() {
+        int modifier = 0;
+        // Check regular prosthetic enhancements
+        if (hasProstheticEnhancement1() && prostheticEnhancement1.isMelee()) {
+            modifier = Math.max(modifier, prostheticEnhancement1.getToHitModifier());
+        }
+        if (hasProstheticEnhancement2() && prostheticEnhancement2.isMelee()) {
+            modifier = Math.max(modifier, prostheticEnhancement2.getToHitModifier());
+        }
+        // Check extraneous limb enhancements
+        if (hasExtraneousPair1() && extraneousPair1.isMelee()) {
+            modifier = Math.max(modifier, extraneousPair1.getToHitModifier());
+        }
+        if (hasExtraneousPair2() && extraneousPair2.isMelee()) {
+            modifier = Math.max(modifier, extraneousPair2.getToHitModifier());
+        }
+        // Cap at +2 per IO p.83
+        return Math.min(modifier, 2);
+    }
+
+    // --- Legacy compatibility methods ---
+
+    /**
+     * @return The prosthetic enhancement type in slot 1 (legacy method)
+     *
+     * @deprecated Use {@link #getProstheticEnhancement1()} instead
+     */
+    @Deprecated(since = "0.50.07")
+    public @Nullable ProstheticEnhancementType getProstheticEnhancement() {
+        return getProstheticEnhancement1();
+    }
+
+    /**
+     * Sets the prosthetic enhancement type in slot 1 (legacy method).
+     *
+     * @param enhancement The enhancement type to set
+     *
+     * @deprecated Use {@link #setProstheticEnhancement1(ProstheticEnhancementType)} instead
+     */
+    @Deprecated(since = "0.50.07")
+    public void setProstheticEnhancement(@Nullable ProstheticEnhancementType enhancement) {
+        setProstheticEnhancement1(enhancement);
+    }
+
+    /**
+     * @return The slot 1 enhancement count (legacy method)
+     *
+     * @deprecated Use {@link #getProstheticEnhancement1Count()} instead
+     */
+    @Deprecated(since = "0.50.07")
+    public int getProstheticEnhancementCount() {
+        return getProstheticEnhancement1Count();
+    }
+
+    /**
+     * Sets the slot 1 enhancement count (legacy method).
+     *
+     * @param count The count to set
+     *
+     * @deprecated Use {@link #setProstheticEnhancement1Count(int)} instead
+     */
+    @Deprecated(since = "0.50.07")
+    public void setProstheticEnhancementCount(int count) {
+        setProstheticEnhancement1Count(count);
+    }
+
+    // --- Extraneous (Enhanced) Limbs methods ---
+
+    /**
+     * @return The prosthetic enhancement type for extraneous pair 1, or null if not set
+     */
+    public @Nullable ProstheticEnhancementType getExtraneousPair1() {
+        return extraneousPair1;
+    }
+
+    /**
+     * Sets the prosthetic enhancement type for extraneous pair 1. Each pair always provides 2 items.
+     *
+     * @param enhancement The enhancement type to set, or null to clear
+     */
+    public void setExtraneousPair1(@Nullable ProstheticEnhancementType enhancement) {
+        this.extraneousPair1 = enhancement;
+    }
+
+    /**
+     * @return True if extraneous pair 1 has an enhancement type set
+     */
+    public boolean hasExtraneousPair1() {
+        return extraneousPair1 != null;
+    }
+
+    /**
+     * @return The prosthetic enhancement type for extraneous pair 2, or null if not set
+     */
+    public @Nullable ProstheticEnhancementType getExtraneousPair2() {
+        return extraneousPair2;
+    }
+
+    /**
+     * Sets the prosthetic enhancement type for extraneous pair 2. Each pair always provides 2 items.
+     *
+     * @param enhancement The enhancement type to set, or null to clear
+     */
+    public void setExtraneousPair2(@Nullable ProstheticEnhancementType enhancement) {
+        this.extraneousPair2 = enhancement;
+    }
+
+    /**
+     * @return True if extraneous pair 2 has an enhancement type set
+     */
+    public boolean hasExtraneousPair2() {
+        return extraneousPair2 != null;
+    }
+
+    /**
+     * @return True if this infantry unit has any extraneous limb pairs configured
+     */
+    public boolean hasExtraneousLimbs() {
+        return hasExtraneousPair1() || hasExtraneousPair2();
+    }
+
+    /**
+     * Gets the total bonus damage per trooper from extraneous limb enhancements. Each pair provides 2 items (1 per
+     * limb), so the damage is multiplied by 2 for each pair.
+     *
+     * @return Total damage bonus from extraneous limb enhancements
+     */
+    public double getExtraneousDamageBonus() {
+        double bonus = 0;
+        if (hasExtraneousPair1() && extraneousPair1.hasDamageBonus()) {
+            bonus += extraneousPair1.getDamagePerTrooper() * 2; // 2 items per pair
+        }
+        if (hasExtraneousPair2() && extraneousPair2.hasDamageBonus()) {
+            bonus += extraneousPair2.getDamagePerTrooper() * 2; // 2 items per pair
+        }
+        return bonus;
+    }
+
+    /**
+     * Gets the best anti-Mek modifier from extraneous limb enhancements. Multiple enhancements do not stack; only the
+     * best modifier is used.
+     *
+     * @return Best anti-Mek modifier from extraneous limbs (negative values are better), or 0 if none
+     */
+    public int getExtraneousAntiMekModifier() {
+        int best = 0;
+        if (hasExtraneousPair1() && extraneousPair1.hasAntiMekBonus()) {
+            best = Math.min(best, extraneousPair1.getAntiMekModifier());
+        }
+        if (hasExtraneousPair2() && extraneousPair2.hasAntiMekBonus()) {
+            best = Math.min(best, extraneousPair2.getAntiMekModifier());
+        }
+        return best;
+    }
+
+    /**
+     * Gets the name of the extraneous limb enhancement that provides the best anti-Mek modifier.
+     *
+     * @return Name of the enhancement with best anti-Mek modifier, or null if none
+     */
+    public @Nullable String getExtraneousAntiMekEnhancementName() {
+        int best = 0;
+        String name = null;
+        if (hasExtraneousPair1() && extraneousPair1.hasAntiMekBonus()) {
+            if (extraneousPair1.getAntiMekModifier() < best) {
+                best = extraneousPair1.getAntiMekModifier();
+                name = extraneousPair1.getDisplayName();
+            }
+        }
+        if (hasExtraneousPair2() && extraneousPair2.hasAntiMekBonus()) {
+            if (extraneousPair2.getAntiMekModifier() < best) {
+                best = extraneousPair2.getAntiMekModifier();
+                name = extraneousPair2.getDisplayName();
+            }
+        }
+        return name;
+    }
+
+    /**
+     * @return True if any extraneous limb enhancement is a melee weapon
+     */
+    public boolean hasExtraneousMeleeEnhancement() {
+        return (hasExtraneousPair1() && extraneousPair1.isMelee())
+              || (hasExtraneousPair2() && extraneousPair2.isMelee());
+    }
+
+    /**
+     * Gets the melee to-hit modifier from extraneous limb enhancements. Per IO p.83, maximum modifier is +2 regardless
+     * of number of melee weapons.
+     *
+     * @return The melee to-hit modifier from extraneous limbs (capped at +2)
+     */
+    public int getExtraneousMeleeToHitModifier() {
+        int modifier = 0;
+        if (hasExtraneousPair1() && extraneousPair1.isMelee()) {
+            modifier = Math.max(modifier, extraneousPair1.getToHitModifier());
+        }
+        if (hasExtraneousPair2() && extraneousPair2.isMelee()) {
+            modifier = Math.max(modifier, extraneousPair2.getToHitModifier());
+        }
+        // Cap at +2 per IO p.83
+        return Math.min(modifier, 2);
+    }
+
+    // endregion Prosthetic Enhancement
+
     /**
      * Used to check for standard or motorized SCUBA infantry, which have a maximum depth of 2.
      *
@@ -1747,6 +2402,35 @@ public class Infantry extends Entity {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Returns the movement mode for this infantry unit.
+     * For powered flight infantry (IO p.85), this returns VTOL when the wings are usable,
+     * allowing them to use existing VTOL movement infrastructure.
+     * Note: During construction, crew is null so hasPoweredFlightWings() returns false,
+     * ensuring this override doesn't interfere with setMovementMode() initialization.
+     */
+    @Override
+    public EntityMovementMode getMovementMode() {
+        // If powered flight is usable, behave like VTOL
+        // But only if not already VTOL (to avoid breaking native VTOL infantry)
+        if (movementMode != EntityMovementMode.VTOL &&
+              hasPoweredFlightWings() && canUsePoweredFlightWings()) {
+            return EntityMovementMode.VTOL;
+        }
+        return movementMode;
+    }
+
+    /**
+     * Returns the base (stored) movement mode for this infantry unit, ignoring any virtual VTOL mode from powered
+     * flight wings. This should be used for validation and construction rules that need to know the actual infantry
+     * type (leg, motorized, etc.) rather than the effective movement mode.
+     *
+     * @return The actual stored movement mode, not affected by powered flight
+     */
+    public EntityMovementMode getBaseMovementMode() {
+        return movementMode;
     }
 
     @Override
@@ -2058,11 +2742,8 @@ public class Infantry extends Entity {
         // Check for hostile environment armor kit
         EquipmentType armorKit = getArmorKit();
         if (armorKit != null) {
-            if (armorKit.hasSubType(MiscType.S_SPACE_SUIT)
-                  || armorKit.hasSubType(MiscType.S_XCT_VACUUM)
-                  || armorKit.hasSubType(MiscType.S_TOXIC_ATMOSPHERE)) {
-                return true;
-            }
+            return armorKit.hasAnyFlag(MiscTypeFlag.S_SPACE_SUIT, MiscTypeFlag.S_XCT_VACUUM,
+                  MiscTypeFlag.S_TOXIC_ATMOSPHERE);
         }
 
         return false;

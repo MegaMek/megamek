@@ -504,6 +504,10 @@ public class Princess extends BotClient {
         return strategicBuildingTargets;
     }
 
+    public boolean hasStrategicBuildingTargets(final Coords coords) {
+        return getStrategicBuildingTargets().contains(coords);
+    }
+
     public void addStrategicBuildingTarget(final Coords coords) {
         if (null == coords) {
             throw new NullPointerException("Coords is null.");
@@ -513,6 +517,23 @@ public class Princess extends BotClient {
             return;
         }
         getStrategicBuildingTargets().add(coords);
+    }
+
+    public void removeStrategicBuildingTarget(final Coords coords) {
+        if (null == coords) {
+            throw new NullPointerException("Coords is null.");
+        }
+        if (!getGame().getBoard().contains(coords)) {
+            LOGGER.warn("Board does not contain {}", coords.toFriendlyString());
+            return;
+        }
+        if (!hasStrategicBuildingTargets(coords)) {
+            LOGGER.warn("Strategic Building Targets does not contain {}", coords.toFriendlyString());
+            return;
+        }
+
+        getStrategicBuildingTargets().remove(coords);
+
     }
 
     public Set<Integer> getPriorityUnitTargets() {
@@ -858,6 +879,12 @@ public class Princess extends BotClient {
                 deployStep.setPosition(dest);
                 if (null != super.getFirstValidCoords(deployedUnit, List.of(dest))) {
                     hazard = -((BasicPathRanker) ranker).checkPathForHazards(mp, deployedUnit, game);
+                    if (deployedUnit instanceof BuildingEntity
+                          && getBoard() != null
+                          && getBoard().getHex(dest) != null) {
+                        // If there's anything in the hex, let's increase the hazard so we don't prefer it
+                        hazard -= getBoard().getHex(dest).getTerrainTypesSet().size();
+                    }
                     if (!rankedCoords.containsKey(hazard)) {
                         rankedCoords.put(hazard, new ArrayList<>());
                     }
@@ -2508,7 +2535,7 @@ public class Princess extends BotClient {
                             if (isEnemyInfantry(entity, coords) &&
                                   entity.isInBuilding() &&
                                   !entity.isHidden()) {
-                                fireControlState.getAdditionalTargets().add(bt);
+                                fireControlState.addAdditionalTarget(bt);
                                 sendChat("Building in Hex " +
                                       coords.toFriendlyString() +
                                       " designated target due to infantry inside building.", Level.INFO);
@@ -2595,7 +2622,7 @@ public class Princess extends BotClient {
                 if (bulldozerPaths.get(0).needsLeveling()) {
                     levelingTarget = getAppropriateTarget(bulldozerPaths.get(0).getCoordsToLevel().get(0),
                           mover.getBoardId());
-                    getFireControlState().getAdditionalTargets().add(levelingTarget);
+                    getFireControlState().addAdditionalTarget(levelingTarget);
                     sendChat("Hex " +
                           levelingTarget.getPosition().toFriendlyString() +
                           " impedes route to destination, targeting for clearing.", Level.INFO);
@@ -2741,12 +2768,12 @@ public class Princess extends BotClient {
             fireControlState.setAdditionalTargets(new ArrayList<>());
             for (final Coords strategicTarget : getStrategicBuildingTargets()) {
                 if (null == game.getBoard().getBuildingAt(strategicTarget)) {
-                    fireControlState.getAdditionalTargets().add(getAppropriateTarget(strategicTarget));
+                    fireControlState.addAdditionalTarget(getAppropriateTarget(strategicTarget));
                     sendChat("No building to target in Hex " +
                           strategicTarget.toFriendlyString() +
                           ", targeting for clearing.", Level.INFO);
                 } else {
-                    fireControlState.getAdditionalTargets().add(getAppropriateTarget(strategicTarget));
+                    fireControlState.addAdditionalTarget(getAppropriateTarget(strategicTarget));
                     sendChat("Building in Hex " + strategicTarget.toFriendlyString() + " designated strategic target.",
                           Level.INFO);
                 }
@@ -2764,10 +2791,17 @@ public class Princess extends BotClient {
                             final Targetable bt = getAppropriateTarget(coords, board.getBoardId());
 
                             if (isEnemyGunEmplacement(entity, coords)) {
-                                fireControlState.getAdditionalTargets().add(bt);
+                                fireControlState.addAdditionalTarget(bt);
                                 sendChat("Building in Hex " +
                                       coords.toFriendlyString() +
                                       " designated target due to Gun Emplacement.", Level.INFO);
+                            }
+
+                            if (isEnemyBuildingEntity(entity, coords)) {
+                                fireControlState.getAdditionalTargets().add(bt);
+                                sendChat("Building in Hex " +
+                                      coords.toFriendlyString() +
+                                      " designated target due to Building Entity.", Level.INFO);
                             }
                         }
                     }
@@ -2844,6 +2878,14 @@ public class Princess extends BotClient {
                                 sendChat("Building in Hex " +
                                       coords.toFriendlyString() +
                                       " designated target due to Gun Emplacement.", Level.INFO);
+                            }
+
+
+                            if (isEnemyBuildingEntity(entity, coords)) {
+                                getStrategicBuildingTargets().add(coords);
+                                sendChat("Building in Hex " +
+                                      coords.toFriendlyString() +
+                                      " designated target due to Building Entity.", Level.INFO);
                             }
                         }
                     }
@@ -3021,6 +3063,14 @@ public class Princess extends BotClient {
 
     private boolean isEnemyGunEmplacement(final Entity entity, final Coords coords) {
         return entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT) &&
+              !getBehaviorSettings().getIgnoredUnitTargets().contains(entity.getId()) &&
+              entity.getOwner().isEnemyOf(getLocalPlayer()) &&
+              !getStrategicBuildingTargets().contains(coords) &&
+              !entity.isCrippled();
+    }
+
+    private boolean isEnemyBuildingEntity(final Entity entity, final Coords coords) {
+        return entity.hasETypeFlag(Entity.ETYPE_BUILDING_ENTITY) &&
               !getBehaviorSettings().getIgnoredUnitTargets().contains(entity.getId()) &&
               entity.getOwner().isEnemyOf(getLocalPlayer()) &&
               !getStrategicBuildingTargets().contains(coords) &&

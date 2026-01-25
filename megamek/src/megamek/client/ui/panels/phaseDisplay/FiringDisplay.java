@@ -47,6 +47,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.dialogs.phaseDisplay.BombPayloadDialog;
+import megamek.client.ui.dialogs.phaseDisplay.SuicideImplantsDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TriggerAPPodDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TriggerBPodDialog;
@@ -121,6 +122,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         FIRE_CANCEL("fireCancel"),
         FIRE_ACTIVATE_SPA("fireActivateSPA"),
         FIRE_RHS("fireRHS"),
+        FIRE_SUICIDE_IMPLANTS("fireSuicideImplants"),
         FIRE_MORE("fireMore");
 
         final String cmd;
@@ -1718,6 +1720,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         updateSearchlight();
         updateRHS();
         updateActivateSPA();
+        updateSuicideImplants();
         updateClearWeaponJam();
         updateClearTurret();
 
@@ -1986,6 +1989,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             doActivateSpecialAbility();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_RHS.getCmd())) {
             doToggleRHS();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_SUICIDE_IMPLANTS.getCmd())) {
+            doSuicideImplants();
         }
     }
 
@@ -2057,6 +2062,47 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
     private void updateActivateSPA() {
         setActivateSPAEnabled(canActivateBloodStalker());
+    }
+
+    /**
+     * Updates the suicide implants button state based on whether the current entity has the suicide implants ability
+     * and can activate it.
+     */
+    private void updateSuicideImplants() {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            setSuicideImplantsEnabled(false);
+            return;
+        }
+
+        boolean hasImplants = entity.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS);
+        boolean isActiveUnit = entity.isActive();
+        boolean hasLiveCrew = (entity.getCrew() != null)
+              && !entity.getCrew().isDead()
+              && !entity.getCrew().isUnconscious();
+        boolean isNotTransported = entity.getTransportId() == Entity.NONE;
+        boolean isNotLargeCraft = !entity.isLargeCraft();
+
+        boolean canDetonate = hasImplants && isActiveUnit && hasLiveCrew && isNotTransported && isNotLargeCraft;
+        setSuicideImplantsEnabled(canDetonate);
+    }
+
+    /**
+     * Handles the suicide implants button action. Shows a dialog to configure the detonation, then adds the attack
+     * action.
+     */
+    private void doSuicideImplants() {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            return;
+        }
+
+        SuicideImplantsDialog dialog = new SuicideImplantsDialog(clientgui.getFrame(), entity);
+        if (dialog.showDialog()) {
+            int trooperCount = dialog.getTrooperCount();
+            attacks.add(new SuicideImplantsAttackAction(entity.getId(), trooperCount));
+            ready();
+        }
     }
 
     /**
@@ -2187,6 +2233,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     protected void setRHSEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_RHS).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_RHS.getCmd(), enabled);
+    }
+
+    protected void setSuicideImplantsEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_SUICIDE_IMPLANTS).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SUICIDE_IMPLANTS.getCmd(), enabled);
     }
 
     @Override

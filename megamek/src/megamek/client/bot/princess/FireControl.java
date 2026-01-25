@@ -378,7 +378,7 @@ public class FireControl {
               && (EntityMovementType.MOVE_NONE == targetState.getMovementType())
               && !targetState.isImmobile()
               && !((target instanceof Infantry) || (target instanceof VTOL) ||
-              (target instanceof GunEmplacement))) {
+              (target.isBuildingEntityOrGunEmplacement()))) {
             toHitData.addModifier(TH_TAR_NO_MOVE);
         }
 
@@ -3368,7 +3368,8 @@ public class FireControl {
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_FRAGMENTATION)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)
-                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV)) {
+                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV)
+                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)) {
 
                 // MMLs have additional considerations.
                 if (!(weaponType instanceof MMLWeapon)) {
@@ -3450,10 +3451,10 @@ public class FireControl {
         for (final AmmoMounted ammo : ammoList) {
             final AmmoType ammoType = ammo.getType();
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY)
-                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)
-                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV)) {
+                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV)
+                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)) {
 
                 // MMLs have additional considerations.
                 if (!(weaponType instanceof MMLWeapon)) {
@@ -3506,9 +3507,9 @@ public class FireControl {
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_HAYWIRE)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC)
-                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV)
+                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_LASER_INHIB)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_OIL_SLICK)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_NEMESIS)

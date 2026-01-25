@@ -171,18 +171,16 @@ public class FlyOverSprite extends Sprite {
         next = en.getPassedThrough().get(numPassedThrough - 2);
         currPoint = bv.getCentreHexLocation(curr, true);
         nextPoint = bv.getCentreHexLocation(next, true);
-        if (bv.useIsometric()) {
-            xDiff = Math.sqrt(Math.pow(currPoint.x - nextPoint.x, 2));
-            yDiff = Math.sqrt(Math.pow(currPoint.y - nextPoint.y, 2));
-            if (nextPoint.x > currPoint.x) {
-                xDiff *= -1;
-            }
-            if (nextPoint.y >= currPoint.y) {
-                yDiff *= -1;
-            }
-            currPoint.x = (int) (currPoint.x - xDiff / 2 + 0.5);
-            currPoint.y = (int) (currPoint.y - yDiff / 2 + 0.5);
+        xDiff = Math.sqrt(Math.pow(currPoint.x - nextPoint.x, 2));
+        yDiff = Math.sqrt(Math.pow(currPoint.y - nextPoint.y, 2));
+        if (nextPoint.x > currPoint.x) {
+            xDiff *= -1;
         }
+        if (nextPoint.y >= currPoint.y) {
+            yDiff *= -1;
+        }
+        currPoint.x = (int) (currPoint.x - xDiff / 2 + 0.5);
+        currPoint.y = (int) (currPoint.y - yDiff / 2 + 0.5);
         angle = (curr.radian(next) + Math.PI) % (2 * Math.PI);
         flyOverPoly.addPoint(currPoint.x + (int) (Math.cos(angle) * lw + 0.5),
               currPoint.y + (int) (Math.sin(angle) * lw + 0.5));
@@ -193,18 +191,16 @@ public class FlyOverSprite extends Sprite {
         next = en.getPassedThrough().get(numPassedThrough - 2);
         currPoint = bv.getCentreHexLocation(curr, true);
         nextPoint = bv.getCentreHexLocation(next, true);
-        if (bv.useIsometric()) {
-            xDiff = Math.sqrt(Math.pow(currPoint.x - nextPoint.x, 2));
-            yDiff = Math.sqrt(Math.pow(currPoint.y - nextPoint.y, 2));
-            if (nextPoint.x > currPoint.x) {
-                xDiff *= -1;
-            }
-            if (nextPoint.y >= currPoint.y) {
-                yDiff *= -1;
-            }
-            currPoint.x = (int) (currPoint.x - xDiff / 2 + 0.5);
-            currPoint.y = (int) (currPoint.y - yDiff / 2 + 0.5);
+        xDiff = Math.sqrt(Math.pow(currPoint.x - nextPoint.x, 2));
+        yDiff = Math.sqrt(Math.pow(currPoint.y - nextPoint.y, 2));
+        if (nextPoint.x > currPoint.x) {
+            xDiff *= -1;
         }
+        if (nextPoint.y >= currPoint.y) {
+            yDiff *= -1;
+        }
+        currPoint.x = (int) (currPoint.x - xDiff / 2 + 0.5);
+        currPoint.y = (int) (currPoint.y - yDiff / 2 + 0.5);
         angle = curr.radian(next);
         flyOverPoly.addPoint(currPoint.x + (int) (Math.cos(angle) * lw + 0.5),
               currPoint.y + (int) (Math.sin(angle) * lw + 0.5));

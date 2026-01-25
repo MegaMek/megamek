@@ -807,7 +807,7 @@ public class TestMek extends TestEntity {
             hasVoidSig |= m.getType().hasFlag(MiscType.F_VOID_SIG);
             hasTC |= m.getType().hasFlag(MiscType.F_TARGETING_COMPUTER);
             hasMASC |= m.getType().hasFlag(MiscType.F_MASC)
-                  && !m.getType().hasSubType(MiscType.S_SUPERCHARGER);
+                  && !m.getType().hasFlag(MiscTypeFlag.S_SUPERCHARGER);
             hasAES |= m.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM);
             if (m.getType().hasFlag(MiscType.F_TSM)
                   || m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)
@@ -818,9 +818,9 @@ public class TestMek extends TestEntity {
             hasPartialWing |= m.getType().hasFlag(MiscType.F_PARTIAL_WING);
 
             if (m.getType().hasFlag(MiscType.F_CLUB) &&
-                  (m.getType().getSubType() & (MiscType.S_SHIELD_SMALL
-                        | MiscType.S_SHIELD_MEDIUM
-                        | MiscType.S_SHIELD_LARGE)) != 0) {
+                  (m.getType().hasAnyFlag(MiscTypeFlag.S_SHIELD_SMALL,
+                        MiscTypeFlag.S_SHIELD_MEDIUM,
+                        MiscTypeFlag.S_SHIELD_LARGE))) {
                 if (shieldLocations.contains(m.getLocation())) {
                     illegal = true;
                     buff.append("Only one shield can be mounted in a location.\n");
@@ -846,7 +846,7 @@ public class TestMek extends TestEntity {
             }
 
             if (misc.hasFlag(MiscType.F_MASC)
-                  && misc.hasSubType(MiscType.S_SUPERCHARGER)) {
+                  && misc.hasFlag(MiscTypeFlag.S_SUPERCHARGER)) {
                 if (mek instanceof LandAirMek) {
                     buff.append("LAMs may not mount a supercharger\n");
                     illegal = true;
@@ -946,12 +946,12 @@ public class TestMek extends TestEntity {
 
             if (misc.hasFlag(MiscType.F_TRACKS)) {
                 if (mek instanceof QuadVee) {
-                    if (misc.hasSubType(
-                          MiscType.S_QUADVEE_WHEELS) != (((QuadVee) mek).getMotiveType() == QuadVee.MOTIVE_WHEEL)) {
+                    if (misc.hasFlag(
+                          MiscTypeFlag.S_QUADVEE_WHEELS) != (((QuadVee) mek).getMotiveType() == QuadVee.MOTIVE_WHEEL)) {
                         illegal = true;
                         buff.append("Motive equipment does not match QuadVee motive type.\n");
                     }
-                } else if (misc.hasSubType(MiscType.S_QUADVEE_WHEELS)) {
+                } else if (misc.hasFlag(MiscTypeFlag.S_QUADVEE_WHEELS)) {
                     illegal = true;
                     buff.append("Wheels can only be used on QuadVees.\n");
                 }
@@ -1013,7 +1013,7 @@ public class TestMek extends TestEntity {
             if (mek.isIndustrial()) {
                 if (misc.hasFlag(MiscType.F_TSM)
                       || misc.hasFlag(MiscType.F_SCM)
-                      || (misc.hasFlag(MiscType.F_MASC) && !misc.hasSubType(MiscType.S_SUPERCHARGER))) {
+                      || (misc.hasFlag(MiscType.F_MASC) && !misc.hasFlag(MiscTypeFlag.S_SUPERCHARGER))) {
                     buff.append("industrial mek can't mount ").append(misc.getName()).append("\n");
                     illegal = true;
                 }
@@ -1053,8 +1053,8 @@ public class TestMek extends TestEntity {
                   || misc.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
                   || misc.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
                   || (misc.hasFlag(MiscType.F_CLUB)
-                  && (misc.getSubType() == MiscType.S_BACKHOE)
-                  || (misc.getSubType() == MiscType.S_COMBINE)))) {
+                  && misc.hasFlag(MiscTypeFlag.S_BACKHOE)
+                  || misc.hasFlag(MiscTypeFlag.S_COMBINE)))) {
                 buff.append("LAMs may not mount ").append(misc.getName()).append("\n");
                 illegal = true;
             }
@@ -1491,14 +1491,14 @@ public class TestMek extends TestEntity {
         return misc.hasFlag(MiscType.F_SALVAGE_ARM)
               || misc.hasFlag(MiscType.F_HAND_WEAPON)
               || (misc.hasFlag(MiscType.F_CLUB)
-              && (misc.hasSubType(MiscType.S_CHAINSAW)
-              || misc.hasSubType(MiscType.S_BACKHOE)
-              || misc.hasSubType(MiscType.S_DUAL_SAW)
-              || misc.hasSubType(MiscType.S_MINING_DRILL)
-              || misc.hasSubType(MiscType.S_ROCK_CUTTER)
-              || misc.hasSubType(MiscType.S_SPOT_WELDER)
-              || misc.hasSubType(MiscType.S_WRECKING_BALL)
-              || misc.hasSubType(MiscType.S_FLAIL)));
+              && (misc.hasAnyFlag(MiscTypeFlag.S_CHAINSAW,
+              MiscTypeFlag.S_BACKHOE,
+              MiscTypeFlag.S_DUAL_SAW,
+              MiscTypeFlag.S_MINING_DRILL,
+              MiscTypeFlag.S_ROCK_CUTTER,
+              MiscTypeFlag.S_SPOT_WELDER,
+              MiscTypeFlag.S_WRECKING_BALL,
+              MiscTypeFlag.S_FLAIL)));
     }
 
     /**
@@ -1509,13 +1509,13 @@ public class TestMek extends TestEntity {
     public static boolean requiresHandActuator(EquipmentType equipment) {
         return (equipment instanceof MiscType)
               && equipment.hasFlag(MiscType.F_CLUB)
-              && equipment.hasSubType(MiscType.S_CHAIN_WHIP
-              | MiscType.S_HATCHET
-              | MiscType.S_MACE
-              | MiscType.S_SWORD
-              | MiscType.S_VIBRO_SMALL
-              | MiscType.S_VIBRO_MEDIUM
-              | MiscType.S_VIBRO_LARGE);
+              && equipment.hasAnyFlag(MiscTypeFlag.S_CHAIN_WHIP,
+              MiscTypeFlag.S_HATCHET,
+              MiscTypeFlag.S_MACE,
+              MiscTypeFlag.S_SWORD,
+              MiscTypeFlag.S_VIBRO_SMALL,
+              MiscTypeFlag.S_VIBRO_MEDIUM,
+              MiscTypeFlag.S_VIBRO_LARGE);
     }
 
     /**
@@ -1526,7 +1526,7 @@ public class TestMek extends TestEntity {
     public static boolean requiresLowerArm(MiscType misc) {
         return replacesHandActuator(misc) ||
               (misc.hasFlag(MiscType.F_CLUB)
-                    && misc.hasSubType(MiscType.S_LANCE | MiscType.S_RETRACTABLE_BLADE));
+                    && misc.hasAnyFlag(MiscTypeFlag.S_LANCE, MiscTypeFlag.S_RETRACTABLE_BLADE));
     }
 
     /**
@@ -1535,7 +1535,7 @@ public class TestMek extends TestEntity {
      * @return Whether the equipment replaces the lower arm and hand actuators
      */
     public static boolean replacesLowerArm(MiscType misc) {
-        return misc.hasFlag(MiscType.F_CLUB) && misc.hasSubType(MiscType.S_PILE_DRIVER);
+        return misc.hasFlag(MiscType.F_CLUB) && misc.hasFlag(MiscTypeFlag.S_PILE_DRIVER);
     }
 
     /**
@@ -1548,10 +1548,10 @@ public class TestMek extends TestEntity {
      */
     public static boolean isValidMekLocation(Mek mek, EquipmentType eq, int location, @Nullable StringBuffer buffer) {
         if (eq instanceof MiscType) {
-            if (eq.hasFlag(MiscType.F_CLUB) && (eq.hasSubType(MiscType.S_DUAL_SAW | MiscType.S_PILE_DRIVER
-                  | MiscType.S_BACKHOE | MiscType.S_MINING_DRILL
-                  | MiscType.S_COMBINE | MiscType.S_CHAINSAW
-                  | MiscType.S_ROCK_CUTTER | MiscType.S_BUZZSAW | MiscType.S_SPOT_WELDER))) {
+            if (eq.hasFlag(MiscType.F_CLUB) && (eq.hasAnyFlag(MiscTypeFlag.S_DUAL_SAW, MiscTypeFlag.S_PILE_DRIVER,
+                  MiscTypeFlag.S_BACKHOE, MiscTypeFlag.S_MINING_DRILL,
+                  MiscTypeFlag.S_COMBINE, MiscTypeFlag.S_CHAINSAW,
+                  MiscTypeFlag.S_ROCK_CUTTER, MiscTypeFlag.S_BUZZSAW, MiscTypeFlag.S_SPOT_WELDER))) {
                 if (mek.entityIsQuad() && (location != Mek.LOC_LEFT_TORSO) && (location != Mek.LOC_RIGHT_TORSO)) {
                     if (buffer != null) {
                         buffer.append(eq.getName()).append(" must be mounted in a side torso.\n");
@@ -1564,9 +1564,9 @@ public class TestMek extends TestEntity {
                     return false;
                 }
             }
-            if (eq.hasFlag(MiscType.F_CLUB) && (eq.hasSubType(MiscType.S_HATCHET | MiscType.S_SWORD
-                  | MiscType.S_CHAIN_WHIP | MiscType.S_FLAIL | MiscType.S_LANCE | MiscType.S_WRECKING_BALL
-                  | MiscType.S_MACE | MiscType.S_RETRACTABLE_BLADE)
+            if (eq.hasFlag(MiscType.F_CLUB) && (eq.hasAnyFlag(MiscTypeFlag.S_HATCHET, MiscTypeFlag.S_SWORD,
+                  MiscTypeFlag.S_CHAIN_WHIP, MiscTypeFlag.S_FLAIL, MiscTypeFlag.S_LANCE, MiscTypeFlag.S_WRECKING_BALL,
+                  MiscTypeFlag.S_MACE, MiscTypeFlag.S_RETRACTABLE_BLADE)
                   || ((MiscType) eq).isShield() || ((MiscType) eq).isVibroblade())
                   && (mek.entityIsQuad() || ((location != Mek.LOC_LEFT_ARM) && (location != Mek.LOC_RIGHT_ARM)))) {
                 if (buffer != null) {
@@ -1574,7 +1574,7 @@ public class TestMek extends TestEntity {
                 }
                 return false;
             }
-            if (eq.hasFlag(MiscType.F_HAND_WEAPON) && eq.hasSubType(MiscType.S_CLAW)
+            if (eq.hasFlag(MiscType.F_HAND_WEAPON) && eq.hasFlag(MiscTypeFlag.S_CLAW)
                   && (mek.entityIsQuad() || ((location != Mek.LOC_LEFT_ARM) && (location != Mek.LOC_RIGHT_ARM)))) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
@@ -1621,7 +1621,7 @@ public class TestMek extends TestEntity {
                 }
                 return false;
             }
-            if (((eq.hasFlag(MiscType.F_MASC) && eq.hasSubType(MiscType.S_SUPERCHARGER))
+            if (((eq.hasFlag(MiscType.F_MASC) && eq.hasFlag(MiscTypeFlag.S_SUPERCHARGER))
                   || eq.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM))
                   && !mek.hasSystem(Mek.SYSTEM_ENGINE, location)) {
                 if (buffer != null) {

@@ -354,7 +354,8 @@ public class ComputeToHit {
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM)) &&
-                  (munition.contains(AmmoType.Munitions.M_NARC_CAPABLE))) {
+                  (munition.contains(AmmoType.Munitions.M_NARC_CAPABLE) ||
+                        munition.contains(AmmoType.Munitions.M_ARAD))) {
                 isINarcGuided = true;
             }
         }
@@ -371,7 +372,7 @@ public class ComputeToHit {
                   (te != null) &&
                   (ammoType != null) &&
                   usesAmmo &&
-                  (munition.contains(AmmoType.Munitions.M_NARC_CAPABLE) &&
+                  ((munition.contains(AmmoType.Munitions.M_NARC_CAPABLE) || munition.contains(AmmoType.Munitions.M_ARAD) )&&
                         (te.isNarcedBy(ae.getOwner().getTeam()) || te.isINarcedBy(ae.getOwner().getTeam())))) {
                 spotter = te;
                 narcSpotter = true;
@@ -421,7 +422,16 @@ public class ComputeToHit {
             losMods = new ToHitData();
         } else if (!isIndirect || (spotter == null)) {
             if (!exchangeSwarmTarget) {
-                los = LosEffects.calculateLOS(game, game.getEntity(ae.getId()), target);
+                Coords firingPosition = weaponEntity.getWeaponFiringPosition(weapon);
+                int firingHeight = weaponEntity.getWeaponFiringHeight(weapon);
+                los = LosEffects.calculateLOS(game,
+                      game.getEntity(ae.getId()),
+                      target,
+                      firingPosition,
+                      target.getPosition(),
+                      firingHeight,
+                      ae.getBoardId(),
+                      false);
             } else {
                 // Swarm should draw LoS between targets, not attacker, since we don't want LoS to be blocked
                 if (oldTarget.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -480,9 +490,9 @@ public class ComputeToHit {
         }
 
         // determine some more variables
-        int aElev = ae.getElevation();
+        int aElev = weaponEntity.getWeaponFiringHeight(weapon);
         int tElev = target.getElevation();
-        int distance = Compute.effectiveDistance(game, ae, target);
+        int distance = Compute.effectiveWeaponDistance(game, weaponEntity, weapon, target);
 
         // Set up our initial toHit data
         ToHitData toHit = new ToHitData();
@@ -995,12 +1005,12 @@ public class ComputeToHit {
               (targetType == Targetable.TYPE_BLDG_IGNITE) ||
               (targetType == Targetable.TYPE_FUEL_TANK) ||
               (targetType == Targetable.TYPE_FUEL_TANK_IGNITE) ||
-              (target instanceof GunEmplacement);
-
-        if ((distance == 1) && isBuilding) {
+              (target.isBuildingEntityOrGunEmplacement());
+        
+        if ((distance == 1) && isBuilding && (ae.moved != EntityMovementType.MOVE_SPRINT && ae.moved != EntityMovementType.MOVE_VTOL_SPRINT)) {
             return Messages.getString("WeaponAttackAction.AdjBuilding");
         }
-
+        
         // Attacks against buildings from inside automatically hit.
         if ((null != los.getThruBldg()) && isBuilding) {
             return Messages.getString("WeaponAttackAction.InsideBuilding");

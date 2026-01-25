@@ -38,10 +38,12 @@ import java.util.*;
 import megamek.common.RangeType;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
+import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Era;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -55,6 +57,14 @@ import org.apache.commons.lang3.ArrayUtils;
 
 public class AmmoType extends EquipmentType {
     private static final MMLogger LOGGER = MMLogger.create(AmmoType.class);
+
+    /**
+     * Get the name of the mutator of this ammo type. If this is the "standard" ammo type for the weapon, returns null.
+     * @return A string like "Inferno", or null
+     */
+    public String getMutatorName() {
+        return mutatorName;
+    }
 
     public enum AmmoCategory {
         Ballistic,
@@ -292,7 +302,12 @@ public class AmmoType extends EquipmentType {
     // Used for Internal Bomb Bay bombs; to differentiate them from
     public static final AmmoTypeFlag F_INTERNAL_BOMB = AmmoTypeFlag.F_INTERNAL_BOMB;
 
+    // Used for Incendiary ammo modification and lookups
+    public static final String INCENDIARY_MOD = "w/ Incendiary";
+    public static final String INCENDIARY_MOD_SHORTNAME = "w/Inc";
+
     private static final MunitionMutator CLAN_MPM_MUNITION_MUTATOR = new MunitionMutator("(Clan) Multi-Purpose",
+          "Multi",
           1,
           Munitions.M_MULTI_PURPOSE,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -356,7 +371,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "179, TO:AUE");
 
-    private static final MunitionMutator HEAT_SEEKING_MUNITION_MUTATOR = new MunitionMutator("Heat-Seeking",
+    private static final MunitionMutator HEAT_SEEKING_MUNITION_MUTATOR = new MunitionMutator("Heat-Seeking", "HS",
           2,
           Munitions.M_HEAT_SEEKING,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -385,7 +400,7 @@ public class AmmoType extends EquipmentType {
           "183, TO:AUE");
 
     // Tandem Charge Updated to alight with fluff text in TacOps.
-    private static final MunitionMutator TANDEM_CHARGE_MUNITION_MUTATOR = new MunitionMutator("Tandem-Charge",
+    private static final MunitionMutator TANDEM_CHARGE_MUNITION_MUTATOR = new MunitionMutator("Tandem-Charge", "Tandem",
           2,
           Munitions.M_TANDEM_CHARGE,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -415,6 +430,7 @@ public class AmmoType extends EquipmentType {
           "98, IO:AE");
 
     private static final MunitionMutator ARTEMIS_CAPABLE_MUNITION_MUTATOR = new MunitionMutator("Artemis-capable",
+          "Artemis",
           1,
           Munitions.M_ARTEMIS_CAPABLE,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -438,7 +454,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "125, IO:AE");
 
-    private static final MunitionMutator FRAGMENTATION_MUNITION_MUTATOR = new MunitionMutator("Fragmentation",
+    private static final MunitionMutator FRAGMENTATION_MUNITION_MUTATOR = new MunitionMutator("Fragmentation", "Frag",
           1,
           Munitions.M_FRAGMENTATION,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -465,7 +481,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "99, IO:AE");
 
-    private static final MunitionMutator MINE_CLEARANCE_MUNITION_MUTATOR = new MunitionMutator("Mine Clearance",
+    private static final MunitionMutator MINE_CLEARANCE_MUNITION_MUTATOR = new MunitionMutator("Mine Clearance", "MC",
           1,
           Munitions.M_MINE_CLEARANCE,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -479,7 +495,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "182, TO:AUE");
 
-    private static final MunitionMutator NARC_CAPABLE_MUNITION_MUTATOR = new MunitionMutator("Narc-capable",
+    private static final MunitionMutator NARC_CAPABLE_MUNITION_MUTATOR = new MunitionMutator("Narc-capable", "Narc",
           1,
           Munitions.M_NARC_CAPABLE,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -505,7 +521,8 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "179, TO:AUE");
 
-    private static final MunitionMutator CLAN_HEAT_SEEKING_MUNITIONS_MUTATOR = new MunitionMutator("(Clan) Heat-Seeking",
+    private static final MunitionMutator CLAN_HEAT_SEEKING_MUNITIONS_MUTATOR = new MunitionMutator("(Clan) "
+          + "Heat-Seeking", "HS",
           2,
           Munitions.M_HEAT_SEEKING,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -579,7 +596,7 @@ public class AmmoType extends EquipmentType {
           "98, IO:AE");
 
     private static final MunitionMutator CLAN_ARTEMIS_CAPABLE_MUNITION_MUTATOR_FOR_SRM = new MunitionMutator(
-          "(Clan) Artemis-capable",
+          "(Clan) Artemis-capable", "Artemis",
           1,
           Munitions.M_ARTEMIS_CAPABLE,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -595,7 +612,7 @@ public class AmmoType extends EquipmentType {
 
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     private static final MunitionMutator CLAN_ARTEMIS_V_CAPABLE_MUNITION_MUTATOR = new MunitionMutator(
-          "(Clan) Artemis V-capable",
+          "(Clan) Artemis V-capable", "Artemis V",
           1,
           Munitions.M_ARTEMIS_V_CAPABLE,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -621,7 +638,7 @@ public class AmmoType extends EquipmentType {
           "125, IO:AE");
 
     private static final MunitionMutator CLAN_FRAGMENTATION_MUNITION_MUTATOR = new MunitionMutator(
-          "(Clan) Fragmentation",
+          "(Clan) Fragmentation", "Frag",
           1,
           Munitions.M_FRAGMENTATION,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -636,7 +653,7 @@ public class AmmoType extends EquipmentType {
           "230, TM");
 
     private static final MunitionMutator CLAN_LISTEN_KILL_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
-          "(Clan) Listen-Kill",
+          "(Clan) Listen-Kill", "LK",
           1,
           Munitions.M_LISTEN_KILL,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -650,7 +667,7 @@ public class AmmoType extends EquipmentType {
           "230, TM");
 
     private static final MunitionMutator CLAN_MINE_CLEARANCE_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
-          "(Clan) Mine Clearance",
+          "(Clan) Mine Clearance", "MC",
           1,
           Munitions.M_MINE_CLEARANCE,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -665,7 +682,7 @@ public class AmmoType extends EquipmentType {
           "182, TO:AUE");
 
     private static final MunitionMutator CLAN_NARC_CAPABLE_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
-          "(Clan) Narc-capable",
+          "(Clan) Narc-capable", "Narc",
           1,
           Munitions.M_NARC_CAPABLE,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -677,7 +694,8 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "142, TW");
 
-    private static final MunitionMutator FOLLOW_THE_LEADER_MUNITION_MUTATOR = new MunitionMutator("Follow The Leader",
+    private static final MunitionMutator FOLLOW_THE_LEADER_MUNITION_MUTATOR = new MunitionMutator("Follow The Leader"
+          , "FTL",
           2,
           Munitions.M_FOLLOW_THE_LEADER,
           new TechAdvancement(TechBase.IS).setTechRating(TechRating.E)
@@ -689,7 +707,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "180, TO:AUE");
 
-    private static final MunitionMutator ARAD_MUNITION_MUTATOR = new MunitionMutator("Anti-Radiation",
+    private static final MunitionMutator ARAD_MUNITION_MUTATOR = new MunitionMutator("Anti-Radiation", "AR",
           1,
           Munitions.M_ARAD,
           new TechAdvancement(TechBase.IS).setTechRating(TechRating.E)
@@ -701,7 +719,19 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "180, TO:AUE");
 
-    private static final MunitionMutator SEMI_GUIDED_MUNITION_MUTATOR = new MunitionMutator("Semi-guided",
+    private static final MunitionMutator INCENDIARY_LRM_MUNITION_MUTATOR = new MunitionMutator("Incendiary", "Inc",
+          1,
+          Munitions.M_INCENDIARY_LRM,
+          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
+                .setAdvancement(2341, 2342, 2352, DATE_NONE, DATE_NONE)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          "181, TO:AUE");
+
+    private static final MunitionMutator SEMI_GUIDED_MUNITION_MUTATOR = new MunitionMutator("Semi-Guided", "SG",
           1,
           Munitions.M_SEMIGUIDED,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -762,6 +792,7 @@ public class AmmoType extends EquipmentType {
           "185, TO:AUE");
 
     private static final MunitionMutator THUNDER_ACTIVE_MUNITION_MUTATOR = new MunitionMutator("Thunder-Active",
+          "T-Act",
           2,
           Munitions.M_THUNDER_ACTIVE,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -775,7 +806,8 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "185, TO:AUE");
 
-    private static final MunitionMutator THUNDER_AUGMENTED_MUNITION_MUTATOR = new MunitionMutator("Thunder-Augmented",
+    private static final MunitionMutator THUNDER_AUGMENTED_MUNITION_MUTATOR = new MunitionMutator("Thunder-Augmented"
+          , "T-Aug",
           2,
           Munitions.M_THUNDER_AUGMENTED,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -789,7 +821,8 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "185, TO:AUE");
 
-    private static final MunitionMutator THUNDER_BIBRABOMB_MUNITION_MUTATOR = new MunitionMutator("Thunder-Vibrabomb",
+    private static final MunitionMutator THUNDER_BIBRABOMB_MUNITION_MUTATOR = new MunitionMutator("Thunder-Vibrabomb"
+          , "T-Vbb",
           2,
           Munitions.M_THUNDER_VIBRABOMB,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -804,6 +837,7 @@ public class AmmoType extends EquipmentType {
           "185, TO:AUE");
 
     private static final MunitionMutator THUNDER_INFERNO_MUTATION_MUTATOR = new MunitionMutator("Thunder-Inferno",
+          "T-Inf",
           2,
           Munitions.M_THUNDER_INFERNO,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -817,7 +851,8 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "185, TO:AUE");
 
-    private static final MunitionMutator FRAGMENTATION_MUNITION_MUTATOR_FOR_LRM = new MunitionMutator("Fragmentation",
+    private static final MunitionMutator FRAGMENTATION_MUNITION_MUTATOR_FOR_LRM = new MunitionMutator("Fragmentation"
+          , "Frag",
           1,
           Munitions.M_FRAGMENTATION,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -833,7 +868,7 @@ public class AmmoType extends EquipmentType {
           "230, TM");
 
     private static final MunitionMutator CLAN_FOLLOW_THE_LEADER_MUNITION_MUTATOR = new MunitionMutator(
-          "(Clan) Follow The Leader",
+          "(Clan) Follow The Leader", "FTL",
           2,
           Munitions.M_FOLLOW_THE_LEADER,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -848,7 +883,7 @@ public class AmmoType extends EquipmentType {
           "180, TO:AUE");
 
     private static final MunitionMutator CLAN_ARAD_MUNITION_MUTATOR = new MunitionMutator(
-          "(Clan) Anti-Radiation",
+          "(Clan) Anti-Radiation", "AR",
           1,
           Munitions.M_ARAD,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -862,7 +897,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "180, TO:AUE");
 
-    private static final MunitionMutator CLAN_SEMI_GUIDED = new MunitionMutator("(Clan) Semi-guided",
+    private static final MunitionMutator CLAN_SEMI_GUIDED = new MunitionMutator("(Clan) Semi-Guided", "SG",
           1,
           Munitions.M_SEMIGUIDED,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -934,7 +969,7 @@ public class AmmoType extends EquipmentType {
           "185, TO:AUE");
 
     private static final MunitionMutator CLAN_THUNDER_ACTIVE_MUNITION_MUTATOR = new MunitionMutator(
-          "(Clan) Thunder-Active",
+          "(Clan) Thunder-Active", "T-Act",
           2,
           Munitions.M_THUNDER_ACTIVE,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -949,7 +984,7 @@ public class AmmoType extends EquipmentType {
           "185, TO:AUE");
 
     private static final MunitionMutator CLAN_THUNDER_AUGMENTED_MUNITION_MUTATOR = new MunitionMutator(
-          "(Clan) Thunder-Augmented",
+          "(Clan) Thunder-Augmented", "T-Aug",
           2,
           Munitions.M_THUNDER_AUGMENTED,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -964,7 +999,7 @@ public class AmmoType extends EquipmentType {
           "185, TO:AUE");
 
     private static final MunitionMutator CLAN_THUNDER_VIBRABOMB_MUNITION_MUTATOR = new MunitionMutator(
-          "(Clan) Thunder-Vibrabomb",
+          "(Clan) Thunder-Vibrabomb", "T-Vbb",
           2,
           Munitions.M_THUNDER_VIBRABOMB,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -979,7 +1014,7 @@ public class AmmoType extends EquipmentType {
           "185, TO:AUE");
 
     private static final MunitionMutator CLAN_THUNDER_INFORMATION_MUNITION_MUTATOR = new MunitionMutator(
-          "(Clan) Thunder-Inferno",
+          "(Clan) Thunder-Inferno", "T-Inf",
           2,
           Munitions.M_THUNDER_INFERNO,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -994,7 +1029,7 @@ public class AmmoType extends EquipmentType {
           "185, TO:AUE");
 
     private static final MunitionMutator CLAN_ARTEMIS_CAPABLE_MUNITION_MUTATOR_FOR_LRM = new MunitionMutator(
-          "(Clan) Artemis-capable",
+          "(Clan) Artemis-capable", "Artemis",
           1,
           Munitions.M_ARTEMIS_CAPABLE,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -1010,7 +1045,7 @@ public class AmmoType extends EquipmentType {
 
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     private static final MunitionMutator CLAN_ARTEMIS_V_CAPABLE_MUNITION_MUTATOR_FOR_MISSILE_AND_TORPEDO = new MunitionMutator(
-          "(Clan) Artemis V-capable",
+          "(Clan) Artemis V-capable", "Artemis V",
           1,
           Munitions.M_ARTEMIS_V_CAPABLE,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -1025,6 +1060,7 @@ public class AmmoType extends EquipmentType {
           "95, TO:AUE");
 
     private static final MunitionMutator CLAN_DEAD_FIRE_MUNITION_MUTATOR = new MunitionMutator("(Clan) Dead-Fire",
+          "DF",
           1,
           Munitions.M_DEAD_FIRE,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -1037,7 +1073,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "125, IO:AE");
 
-    private static final MunitionMutator ARMOR_PIERCING_MUNITION_MUTATOR = new MunitionMutator("Armor-Piercing",
+    private static final MunitionMutator ARMOR_PIERCING_MUNITION_MUTATOR = new MunitionMutator("Armor-Piercing", "AP",
           2,
           Munitions.M_ARMOR_PIERCING,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -1171,7 +1207,7 @@ public class AmmoType extends EquipmentType {
           "165, TO:AUE");
 
     private static final MunitionMutator CLAN_IMPROVED_ARMOR_PIERCING_MUNITION_MUTATOR = new MunitionMutator(
-          "Armor-Piercing",
+          "Armor-Piercing", "AP",
           2,
           Munitions.M_ARMOR_PIERCING,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -1282,7 +1318,8 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "165, TO:AUE");
 
-    private static final MunitionMutator ADA_MUNITION_MUTATOR = new MunitionMutator("Air-Defense Arrow (ADA) Missiles",
+    private static final MunitionMutator ADA_MUNITION_MUTATOR = new MunitionMutator("Air-Defense Arrow (ADA) "
+          + "Missiles", "ADA",
           1,
           Munitions.M_ADA,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -1326,7 +1363,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "166, TO:AUE");
 
-    private static final MunitionMutator ILLUMINATION_MUNITION_MUTATOR = new MunitionMutator("Illumination",
+    private static final MunitionMutator ILLUMINATION_MUNITION_MUTATOR = new MunitionMutator("Illumination", "ILL",
           1,
           Munitions.M_FLARE,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -1356,6 +1393,7 @@ public class AmmoType extends EquipmentType {
           "168, TO:AUE");
 
     private static final MunitionMutator LASER_INHIBITING_MUNITION_MUTATOR = new MunitionMutator("Laser Inhibiting",
+          "LI",
           1,
           Munitions.M_LASER_INHIB,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -1384,6 +1422,7 @@ public class AmmoType extends EquipmentType {
           "168, TO:AUE");
 
     private static final MunitionMutator THUNDER_FASCAM_MUNITION_MUTATOR = new MunitionMutator("Thunder (FASCAM)",
+          "T-FASCAM",
           1,
           Munitions.M_FASCAM,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -1399,7 +1438,7 @@ public class AmmoType extends EquipmentType {
           "169, TO:AUE");
 
     private static final MunitionMutator THUNDER_VIBRABOMB_IV_MUNITION_MUTATOR = new MunitionMutator(
-          "Thunder Vibrabomb-IV",
+          "Thunder Vibrabomb-IV", "T-V",
           1,
           Munitions.M_VIBRABOMB_IV,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -1413,7 +1452,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "169, TO:AUE");
 
-    private static final MunitionMutator DAVY_CROCKETT_M_MUNITION_MUTATOR = new MunitionMutator("Davy Crockett-M",
+    private static final MunitionMutator DAVY_CROCKETT_M_MUNITION_MUTATOR = new MunitionMutator("Davy Crockett-M", "DC-M",
           5,
           Munitions.M_DAVY_CROCKETT_M,
           new TechAdvancement(TechBase.IS).setTechRating(TechRating.D)
@@ -1422,7 +1461,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "168, IO:AE");
 
-    private static final MunitionMutator FUEL_AIR_MUNITION_MUTATOR = new MunitionMutator("Fuel-Air",
+    private static final MunitionMutator FUEL_AIR_MUNITION_MUTATOR = new MunitionMutator("Fuel-Air", "FA",
           1,
           Munitions.M_FAE,
           new TechAdvancement(TechBase.ALL).setIntroLevel(false)
@@ -1435,7 +1474,7 @@ public class AmmoType extends EquipmentType {
           "159, IO:AE");
 
     private static final MunitionMutator CLAN_ADA_MUNITION_MUTATOR = new MunitionMutator(
-          "Air-Defense Arrow (ADA) Missiles",
+          "Air-Defense Arrow (ADA) Missiles", "ADA",
           1,
           Munitions.M_ADA,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -1479,7 +1518,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "166, TO:AUE");
 
-    private static final MunitionMutator CLAN_ILLUMINATION_MUNITION_MUTATOR = new MunitionMutator("Illumination",
+    private static final MunitionMutator CLAN_ILLUMINATION_MUNITION_MUTATOR = new MunitionMutator("Illumination", "ILL",
           1,
           Munitions.M_FLARE,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -1509,7 +1548,7 @@ public class AmmoType extends EquipmentType {
           "168, TO:AUE");
 
     private static final MunitionMutator CLAN_LASER_INHIBITING_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
-          "Laser Inhibiting",
+          "Laser Inhibiting", "LI",
           1,
           Munitions.M_LASER_INHIB,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -1537,7 +1576,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "168, TO:AUE");
 
-    private static final MunitionMutator CLAN_THUNDER_FASCAM_MUNITION_MUTATOR = new MunitionMutator("Thunder (FASCAM)",
+    private static final MunitionMutator CLAN_THUNDER_FASCAM_MUNITION_MUTATOR = new MunitionMutator("Thunder (FASCAM)", "T-FASCAM",
           1,
           Munitions.M_FASCAM,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -1553,7 +1592,7 @@ public class AmmoType extends EquipmentType {
           "169, TO:AUE");
 
     private static final MunitionMutator CLAN_THUNDER_VIBRABOMB_IV_MUNITION_MUTATOR = new MunitionMutator(
-          "Thunder Vibrabomb-IV",
+          "Thunder Vibrabomb-IV", "T-V",
           1,
           Munitions.M_VIBRABOMB_IV,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -1581,7 +1620,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "175, TO:AUE");
 
-    private static final MunitionMutator CLAN_INDENCIARY_VEE_MUNITION_MUTATOR = new MunitionMutator("Incendiary",
+    private static final MunitionMutator CLAN_INDENCIARY_VEE_MUNITION_MUTATOR = new MunitionMutator("Incendiary", "Inc",
           1,
           Munitions.M_INCENDIARY,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -1621,7 +1660,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "175, TO:AUE");
 
-    private static final MunitionMutator INCENDIARY_VEE_MUNITION_MUTATOR = new MunitionMutator("Incendiary",
+    private static final MunitionMutator INCENDIARY_VEE_MUNITION_MUTATOR = new MunitionMutator("Incendiary", "Inc",
           1,
           Munitions.M_INCENDIARY,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -1704,6 +1743,7 @@ public class AmmoType extends EquipmentType {
           "168, TO:AUE");
 
     private static final MunitionMutator FUEL_AIR_ARTY_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator("Fuel-Air",
+          "FA",
           1,
           Munitions.M_FAE,
           new TechAdvancement(TechBase.ALL).setIntroLevel(false)
@@ -1730,7 +1770,7 @@ public class AmmoType extends EquipmentType {
           "187, TO:AUE");
 
     private static final MunitionMutator CLAN_ARTEMIS_CAPABLE_MUNTION_MUTATOR_FOR_TORPEDO = new MunitionMutator(
-          "Artemis-capable",
+          "Artemis-capable", "Artemis",
           1,
           Munitions.M_ARTEMIS_CAPABLE,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -1757,6 +1797,7 @@ public class AmmoType extends EquipmentType {
           "173, TO:AUE");
 
     private static final MunitionMutator CLAN_COOLANT_MUNITION_MUTATOR = new MunitionMutator("(Clan) Coolant",
+          "Coolant",
           1,
           Munitions.M_COOLANT,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -1781,7 +1822,7 @@ public class AmmoType extends EquipmentType {
           "173, TO:AUE");
 
     private static final MunitionMutator CLAN_COOLANT_MUNITION_MUTATOR_FOR_HEAVY_FLAMER = new MunitionMutator(
-          "(Clan) Coolant",
+          "(Clan) Coolant", "Coolant",
           1,
           Munitions.M_COOLANT,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -1794,7 +1835,7 @@ public class AmmoType extends EquipmentType {
           "173, TO:AUE");
 
     private static final MunitionMutator CLAN_NARC_CAPABLE_MUNITION_MUTATOR_FOR_MISSILE = new MunitionMutator(
-          "(Clan) Narc-capable",
+          "(Clan) Narc-capable", "Narc",
           1,
           Munitions.M_NARC_CAPABLE,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -1849,7 +1890,7 @@ public class AmmoType extends EquipmentType {
           "186, TO:AUE");
 
     private static final MunitionMutator CLAN_ANTI_PERSONNEL_MORTAR_MUNITION_MUTATOR = new MunitionMutator(
-          "Anti-personnel",
+          "Anti-personnel", "AP",
           1,
           Munitions.M_ANTI_PERSONNEL,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -1892,7 +1933,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "187, TO:AUE");
 
-    private static final MunitionMutator SEMI_GUIDED_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Semi-Guided",
+    private static final MunitionMutator SEMI_GUIDED_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Semi-Guided", "SG",
           1,
           Munitions.M_SEMIGUIDED,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -1921,7 +1962,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "186, TO:AUE");
 
-    private static final MunitionMutator ANTI_PERSONNEL_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Anti-personnel",
+    private static final MunitionMutator ANTI_PERSONNEL_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Anti-personnel", "AP",
           1,
           Munitions.M_ANTI_PERSONNEL,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -2061,7 +2102,7 @@ public class AmmoType extends EquipmentType {
         M_ANTI_PERSONNEL,
         // The rest were already defined
         // Flare
-        // Semi-guided
+        // Semi-Guided
         // Smoke
 
         // More SRM+LRM Munitions types
@@ -2102,6 +2143,9 @@ public class AmmoType extends EquipmentType {
 
     // Reference to the base ammo type, if any
     protected AmmoType base = null;
+
+    // Name of mutator, such as "Inferno"
+    private String mutatorName = null;
 
     // Collate artillery / artillery cannon types for flak check
     // Add ADA here when implemented
@@ -3468,10 +3512,11 @@ public class AmmoType extends EquipmentType {
          * .setPrototypeFactions(Faction.TH) .setProductionFactions(Faction.TH),"369, TO"));
          */
         // TODO Flare LRMs IO pg 230
-        // TODO Incendiary LRMs - IO pg 61, TO pg 369
         // TODO Mag Pulse see IO pg 62
         munitions.add(ARAD_MUNITION_MUTATOR);
         munitions.add(FOLLOW_THE_LEADER_MUNITION_MUTATOR);
+        // Incendiary LRM is created via createIncendiaryVariants() as separate ammo types (e.g., "LRM 5 w/ Incendiary Ammo")
+        // See LRMHandler.isIncendiaryMixed() for combat effects (TO:AUE pg 181)
         munitions.add(HEAT_SEEKING_MUNITION_MUTATOR);
         munitions.add(SEMI_GUIDED_MUNITION_MUTATOR);
         munitions.add(SMOKE_MUNITION_MUTATOR);
@@ -3503,10 +3548,10 @@ public class AmmoType extends EquipmentType {
          * DATE_NONE, DATE_NONE) .setClanApproximate(false, false, false, false, false)
          * .setPrototypeFactions(Faction.TH) .setProductionFactions(Faction.TH),"369, TO"));
          */
-        // TODO Incendiary LRMs - IO pg 61, TO pg 369
         // TODO Mag Pulse see IO pg 62
         munitions.add(CLAN_ARAD_MUNITION_MUTATOR);
         munitions.add(CLAN_FOLLOW_THE_LEADER_MUNITION_MUTATOR);
+        // Incendiary LRM is created via createIncendiaryVariants() as separate ammo types
         munitions.add(CLAN_HEAT_SEEKING_MUNITIONS_MUTATOR);
         munitions.add(CLAN_SEMI_GUIDED);
         munitions.add(CLAN_SMOKE_STANDARD_MUNITION_MUTATOR);
@@ -3680,6 +3725,9 @@ public class AmmoType extends EquipmentType {
         munitions.add(CLAN_COOLANT_MUNITION_MUTATOR_FOR_HEAVY_FLAMER);
         AmmoType.createMunitions(clanHeavyFlamerAmmos, munitions);
 
+        // Create incendiary variants of all LRM-compatible ammo types (TO:AUE pg 181)
+        createIncendiaryVariants();
+
         // cache types that share a launcher for load out purposes
         for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes();
               equipmentTypes.hasMoreElements(); ) {
@@ -3703,6 +3751,287 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.addType(mutator.createMunitionType(base));
             }
         }
+    }
+
+    /**
+     * Creates incendiary variants of all LRM-compatible ammo types. Per TO:AUE pg 181, incendiary rounds can be mixed
+     * with any LRM ammo. This creates distinct ammo types for MekHQ inventory tracking. Called after all standard
+     * munition variants are created.
+     */
+    private static void createIncendiaryVariants() {
+        List<AmmoType> incendiaryVariants = new ArrayList<>();
+
+        for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements(); ) {
+            EquipmentType et = e.nextElement();
+            if (!(et instanceof AmmoType ammo)) {
+                continue;
+            }
+
+            // Only LRM-compatible types (LRM, LRM_IMP, MML, NLRM)
+            AmmoTypeEnum type = ammo.getAmmoType();
+            if (type != AmmoTypeEnum.LRM && type != AmmoTypeEnum.LRM_IMP &&
+                  type != AmmoTypeEnum.MML && type != AmmoTypeEnum.NLRM) {
+                continue;
+            }
+
+            // Skip if already has incendiary (avoid duplicates)
+            if (ammo.getMunitionType().contains(Munitions.M_INCENDIARY_LRM)) {
+                continue;
+            }
+
+            // For MML, only create incendiary variants of LRM-mode ammo
+            if (type == AmmoTypeEnum.MML && !ammo.hasFlag(F_MML_LRM)) {
+                continue;
+            }
+
+            // Create incendiary variant
+            AmmoType incendiary = createIncendiaryVariant(ammo);
+            if (incendiary != null) {
+                incendiaryVariants.add(incendiary);
+            }
+        }
+
+        // Register all incendiary variants
+        for (AmmoType variant : incendiaryVariants) {
+            EquipmentType.addType(variant);
+        }
+    }
+
+    /**
+     * Creates an incendiary variant of the given LRM-compatible ammo type. Per TO:AUE pg 181, incendiary rounds are
+     * mixed with LRM ammo at 1:5 ratio.
+     *
+     * @param base The base ammo type to create an incendiary variant of
+     *
+     * @return The new incendiary variant ammo type
+     */
+    private static AmmoType createIncendiaryVariant(AmmoType base) {
+        AmmoType incendiary = new AmmoType();
+        String spacedIncendiaryMod = " " + INCENDIARY_MOD;
+        String spacedIncendiaryModShortName = " " + INCENDIARY_MOD_SHORTNAME;
+
+        // Build names with " w/ Incendiary" suffix
+        // Follow the pattern from MunitionMutator for LRM/MML/NLRM types
+        StringBuilder nameBuf = new StringBuilder(base.name);
+        int index = base.name.lastIndexOf("Ammo");
+        if (index > 0) {
+            nameBuf.insert(index, " ");
+            nameBuf.insert(index, INCENDIARY_MOD);
+        } else {
+            nameBuf.append(spacedIncendiaryMod);
+        }
+        incendiary.name = nameBuf.toString();
+
+        if (base.mutatorName != null) {
+            incendiary.mutatorName = base.mutatorName + spacedIncendiaryMod;
+        } else {
+            incendiary.mutatorName = INCENDIARY_MOD;
+        }
+
+        incendiary.shortName = base.shortName + spacedIncendiaryModShortName;
+        incendiary.setInternalName(base.getInternalName() + spacedIncendiaryMod);
+        incendiary.subMunitionName = (base.subMunitionName.isBlank()) ? INCENDIARY_MOD : base.subMunitionName + spacedIncendiaryMod;
+
+        // Add all base lookup names with " w/ Incendiary" suffix
+        incendiary.addToEnd(base, spacedIncendiaryMod);
+
+        // Copy base reference
+        incendiary.base = (base.base != null) ? base.base : base;
+
+        // Copy tonnage (critical for ammo compatibility)
+        incendiary.setTonnage(base.getTonnage(null));
+
+        // Copy numeric properties
+        incendiary.damagePerShot = base.damagePerShot;
+        incendiary.rackSize = base.rackSize;
+        incendiary.ammoType = base.ammoType;
+        incendiary.shots = base.shots;
+        incendiary.kgPerShot = base.kgPerShot;
+        incendiary.flags = base.flags;
+        incendiary.hittable = base.hittable;
+        incendiary.explosive = base.explosive;
+        incendiary.toHitModifier = base.toHitModifier;
+
+        // Copy modes if base has them (e.g., HotLoad)
+        if (base.getModesCount() > 0) {
+            List<String> modeNames = new ArrayList<>();
+            Enumeration<EquipmentMode> modes = base.getModes();
+            while (modes.hasMoreElements()) {
+                modeNames.add(modes.nextElement().getName());
+            }
+            incendiary.setModes(modeNames.toArray(new String[0]));
+        }
+
+        // Add M_INCENDIARY_LRM to existing munition types
+        incendiary.munitionType = EnumSet.copyOf(base.getMunitionType());
+        incendiary.munitionType.add(Munitions.M_INCENDIARY_LRM);
+
+        // Apply 1.5x cost multiplier per TO:AUE pg 181
+        incendiary.cost = base.cost * 1.5;
+        incendiary.bv = base.bv;
+
+        // Combine tech advancements to get earliest / lowest legal TA
+        incendiary.techAdvancement = combineTechAdvancements(
+              base.techAdvancement,
+              INCENDIARY_LRM_MUNITION_MUTATOR.techAdvancement
+        );
+
+        incendiary.rulesRefs = "181, TO:AUE";
+
+        return incendiary;
+    }
+
+    /**
+     * Create a new techAdvancement that uses:
+     * 1. the more restrictive tech base
+     * 2. the more-restrictive of all faction tech advancements
+     * 3. the later of all intro dates,
+     * 4. the earlier of all extinction dates,
+     * 5. the smaller of all prototype / production / reintroduction faction lists,
+     * 6. the greater of all extinction faction lists,
+     * 7. the higher static tech level,
+     * 8. the rarer availability level
+     * 9. the higher TechRating score
+     * given two other TechAdvancements.
+     *
+     * @param base  TechAdvancement of base ammo type being modified
+     * @param mod   TechAdvancement of the mod/mutator; currently only Incendiary
+     * @return combination TechAdvancement
+     */
+    private static TechAdvancement combineTechAdvancements(TechAdvancement base, TechAdvancement mod) {
+        TechAdvancement combination = new TechAdvancement(mod);
+
+        // Tech Base
+        if (base.getTechBase() != mod.getTechBase()) {
+            combination.setTechBase(TechBase.fromIndex(Math.max(base.getTechBase().getIndex(),
+                  mod.getTechBase().getIndex())));
+        }
+
+        // Advancement - later takes precendent except for extinction, but -1 trumps all
+        for (AdvancementPhase phase : List.of(AdvancementPhase.PROTOTYPE, AdvancementPhase.PRODUCTION, AdvancementPhase.COMMON,
+              AdvancementPhase.REINTRODUCED)) {
+            combination.setISAdvancement(phase, laterOrUnsetYear(base.getISAdvancement(phase), mod.getISAdvancement(phase)));
+            combination.setISApproximate(phase, (base.getISApproximate(phase) || mod.getISApproximate(phase)));
+            combination.setClanAdvancement(phase, laterOrUnsetYear(base.getClanAdvancement(phase), mod.getClanAdvancement(phase)));
+            combination.setClanApproximate(phase, (base.getClanApproximate(phase) || mod.getClanApproximate(phase)));
+        }
+
+        // Extinction dates: earlier non-"-1" value wins
+        AdvancementPhase phase = AdvancementPhase.EXTINCT;
+        combination.setISAdvancement(phase, earlierNotUnsetYear(base.getISAdvancement(phase),
+                    mod.getISAdvancement(phase)));
+        combination.setISApproximate(phase, (base.getISApproximate(phase) || mod.getISApproximate(phase)));
+        combination.setClanAdvancement(phase, earlierNotUnsetYear(base.getClanAdvancement(phase),
+              mod.getClanAdvancement(phase)));
+        combination.setClanApproximate(phase, (base.getClanApproximate(phase) || mod.getClanApproximate(phase)));
+
+        // Faction lists - eugh.
+        Set<Faction> bProto = base.getPrototypeFactions();
+        Set<Faction> mProto = mod.getPrototypeFactions();
+        Set<Faction> bProd = base.getProductionFactions();
+        Set<Faction> mProd = mod.getProductionFactions();
+        Set<Faction> bExtinct = base.getExtinctionFactions();
+        Set<Faction> mExtinct = mod.getExtinctionFactions();
+        Set<Faction> bReintro = base.getReintroductionFactions();
+        Set<Faction> mReintro = mod.getReintroductionFactions();
+
+        // Take intersections except for Extinction
+        combination.setPrototypeFactions(restrictFactions(bProto, mProto).toArray(new Faction[0]));
+        combination.setProductionFactions(restrictFactions(bProd, mProd).toArray(new Faction[0]));
+        combination.setReintroductionFactions(restrictFactions(bReintro, mReintro).toArray(new Faction[0]));
+
+        // Extinction should cover the most possible factions
+        Set<Faction> extinct = new HashSet<Faction>(bExtinct);
+        extinct.addAll(mExtinct);
+        combination.setExtinctionFactions(extinct.toArray(new Faction[0]));
+
+        // Use the higher static tech level between base and incendiary
+        combination.setStaticTechLevel(SimpleTechLevel.max(
+              base.getStaticTechLevel(),
+              mod.getStaticTechLevel()
+        ));
+
+        // Availability
+        for (Era era: Era.values()) {
+            combination.setAvailability(
+                  era,
+                  (base.calcEraAvailability(era).isBetterThan(mod.calcEraAvailability(era)))
+                        ? base.getBaseAvailability(era)
+                        : mod.getBaseAvailability(era)
+            );
+        }
+
+        // Tech Rating
+        combination.setTechRating(
+              (base.getTechRating().isBetterThan(mod.getTechRating()))
+                    ? base.getTechRating()
+                    : mod.getTechRating()
+        );
+
+        return combination;
+    }
+
+    /**
+     * Determine the earlier of two years for purposes of setting extinction year of modified munitions
+     * @param left  Left year
+     * @param right Right year
+     * @return Lower year that is not "DATE_NONE", that is, the unset value of -1, or -1 if both are unset.
+     */
+    private static int earlierNotUnsetYear(int left, int right) {
+        if (!(left == DATE_NONE && right == DATE_NONE)) {
+            if (left == DATE_NONE) {
+                return right;
+            } else if (right == DATE_NONE) {
+                return left;
+            } else {
+                return Math.min(left, right);
+            }
+        }
+        return left;
+    }
+
+    /**
+     * Determine the later of two years for purposes of setting intro or re-intro of modified munitions
+     * @param left  Left year
+     * @param right Right year
+     * @return DATE_NONE if either or both are DATE_NONE, or later year if both are not DATE_NONE
+     */
+    private static int laterOrUnsetYear(int left, int right) {
+        if (!(left == DATE_NONE && right == DATE_NONE)) {
+            if (left == DATE_NONE) {
+                return left;
+            } else if (right == DATE_NONE) {
+                return right;
+            } else {
+                return Math.max(left, right);
+            }
+        }
+        return left;
+    }
+
+    /**
+     * Determine which factions should be in a restricted Faction set based on Set composition
+     * @param left      Left set
+     * @param right     Right set
+     * @return the most restrictive set / intersection of both sets / empty set if no matches exist.
+     */
+    private static Set<Faction> restrictFactions(Set<Faction> left, Set<Faction> right) {
+        if (!(left.isEmpty() && right.isEmpty())) {
+            // If both are not empty, choose the smallest non-empty set.
+            if (left.isEmpty()) {
+                return right;
+            } else if (right.isEmpty()) {
+                return left;
+            } else {
+                // Both have entries so we want the intersection of the two sets, which may then be empty,
+                // indicating everyone has the same access (which may be "none at all")
+                Set<Faction> result = new HashSet<>(left);
+                result.retainAll(right);
+                return result;
+            }
+        }
+        // If both are empty, return whichever
+        return left;
     }
 
     // Anti-Missile Ammo
@@ -15587,6 +15916,11 @@ public class AmmoType extends EquipmentType {
         private final String name;
 
         /**
+         * The shortened name of this munition type.
+         */
+        private final String shortName;
+
+        /**
          * The weight ratio of a round of this munition to a standard round.
          */
         private final double weight;
@@ -15601,13 +15935,24 @@ public class AmmoType extends EquipmentType {
         private final TechAdvancement techAdvancement;
 
         // PLAyTEST3 changed to float for weightRatio
-        public MunitionMutator(String munitionName, double weightRatio, Munitions munitionType,
+        public MunitionMutator(String munitionName, String munitionShortName, double weightRatio,
+              Munitions munitionType,
               TechAdvancement techAdvancement, String rulesRefs) {
             name = munitionName;
+            if (munitionShortName != null && !munitionShortName.isEmpty()) {
+                shortName = munitionShortName;
+            } else {
+                shortName = munitionName;
+            }
             weight = weightRatio;
             type = EnumSet.of(munitionType);
             this.techAdvancement = new TechAdvancement(techAdvancement);
             this.rulesRefs = rulesRefs;
+        }
+
+        public MunitionMutator(String munitionName, double weightRatio, Munitions munitionType,
+              TechAdvancement techAdvancement, String rulesRefs) {
+            this(munitionName, null, weightRatio, munitionType, techAdvancement, rulesRefs);
         }
 
         /**
@@ -15619,12 +15964,14 @@ public class AmmoType extends EquipmentType {
          */
         public AmmoType createMunitionType(AmmoType base) {
             StringBuilder nameBuf;
+            StringBuilder shortNameBuf;
             StringBuilder internalName;
             int index;
 
             // Create an uninitialized munition object.
             AmmoType munition = new AmmoType();
             munition.setTonnage(base.getTonnage(null));
+            munition.mutatorName = name;
             munition.subMunitionName = name;
             munition.base = base;
 
@@ -15653,7 +16000,14 @@ public class AmmoType extends EquipmentType {
                     nameBuf.insert(index, ' ');
                     nameBuf.insert(index, name);
                     munition.setInternalName(nameBuf.toString());
-                    munition.shortName = munition.name.replace(base.name, base.shortName);
+                    if (name.equals(shortName)) {
+                        munition.shortName = munition.name;
+                    } else {
+                        shortNameBuf = new StringBuilder(shortName);
+                        shortNameBuf.append(" ");
+                        shortNameBuf.append(base.shortName);
+                        munition.shortName = shortNameBuf.toString();
+                    }
                     munition.addBeforeString(base, "Ammo", name + " ");
                     break;
                 case ARROWIV_PROTO:
@@ -15678,13 +16032,15 @@ public class AmmoType extends EquipmentType {
                     nameBuf.insert(index, name);
                     munition.setInternalName(nameBuf.toString());
 
-                    // ADA full name is embarrassingly long.
-                    if (base.name.contains("ADA")) {
-                        munition.shortName = "ADA Missile";
-                        munition.addLookupName("ADA");
+                    if (name.equals(shortName)) {
+                        munition.shortName = munition.name;
                     } else {
-                        munition.shortName = munition.name.replace("Prototype ", "p");
+                        shortNameBuf = new StringBuilder(base.shortName);
+                        shortNameBuf.append(" ");
+                        shortNameBuf.append(shortName);
+                        munition.shortName = shortNameBuf.toString();
                     }
+                    munition.shortName = munition.shortName.replace("Prototype ", "p");
 
                     munition.addBeforeString(base, "Ammo", name + " ");
                     munition.addToEnd(base, " - " + name);
@@ -15717,10 +16073,18 @@ public class AmmoType extends EquipmentType {
                     nameBuf.insert(index, ' ');
                     nameBuf.insert(index, name);
                     munition.name = nameBuf.toString();
-                    nameBuf = new StringBuilder(base.shortName);
-                    nameBuf.append(' ');
-                    nameBuf.append(name.replace("-capable", ""));
-                    munition.shortName = nameBuf.toString();
+
+                    if (name.equals(shortName)) {
+                        nameBuf = new StringBuilder(base.shortName);
+                        nameBuf.append(' ');
+                        nameBuf.append(name.replace("-capable", ""));
+                        munition.shortName = nameBuf.toString();
+                    } else {
+                        shortNameBuf = new StringBuilder(base.shortName);
+                        shortNameBuf.append(" ");
+                        shortNameBuf.append(shortName);
+                        munition.shortName = shortNameBuf.toString();
+                    }
                     munition.addBeforeString(base, "Ammo", name + " ");
                     break;
                 case VGL:
@@ -15771,7 +16135,14 @@ public class AmmoType extends EquipmentType {
                     munition.setInternalName(munition.name);
                     munition.addToEnd(base, munition.name);
 
-                    munition.shortName = munition.name;
+                    if (name.equals(shortName)) {
+                        munition.shortName = munition.name;
+                    } else {
+                        shortNameBuf = new StringBuilder(shortName);
+                        shortNameBuf.append(" ");
+                        shortNameBuf.append(base.shortName);
+                        munition.shortName = shortNameBuf.toString();
+                    }
                     // The munition name appears in the middle of the other names.
                     munition.addBeforeString(base, "Ammo", name + " ");
                     break;
@@ -15779,6 +16150,10 @@ public class AmmoType extends EquipmentType {
                     throw new IllegalArgumentException("Don't know how to create munitions for " + base.ammoType);
             }
 
+
+            if (munition.shortName.endsWith(" Ammo")) {
+                munition.shortName = munition.shortName.substring(0, munition.shortName.length() - 5);
+            }
             munition.shortName = munition.shortName.replace("(Clan) ", "");
             munition.subMunitionName = munition.shortName;
 
@@ -16137,7 +16512,6 @@ public class AmmoType extends EquipmentType {
                 bv *= 1.3;
                 cost *= 3.0;
             }
-
             // Account for floating point imprecision
             munition.bv = Math.round(bv * 1000.0) / 1000.0;
             munition.cost = Math.round(cost * 1000.0) / 1000.0;
@@ -16269,12 +16643,62 @@ public class AmmoType extends EquipmentType {
     }
 
     @Override
+    protected String getYamlTypeName() {
+        return "ammo";
+    }
+
+    @Override
+    protected void addFlags(Map<String, Object> data) {
+        String[] flagStrings = getFlags().getSetFlagNamesAsArray(AmmoTypeFlag.class);
+        if (flagStrings.length > 0) {
+            data.put("flags", flagStrings);
+        }
+    }
+
+    @Override
     public Map<String, Object> getYamlData() {
         Map<String, Object> data = super.getYamlData();
-        data.put("type", "ammo");
-        if (kgPerShot > 0) {
-            data.put("kgPerShot", this.getKgPerShot());
+        Map<String, Object> ammoDetails = new LinkedHashMap<>();
+
+        ammoDetails.put("type", ammoType.name());
+        ammoDetails.put("category", ammoType.getCategory().name());
+
+        if (rackSize != 0) {
+            ammoDetails.put("rackSize", rackSize);
         }
+        if (damagePerShot != 0) {
+            ammoDetails.put("damagePerShot", damagePerShot);
+        }
+        if (shots != 0) {
+            ammoDetails.put("shots", shots);
+        }
+        if (kgPerShot > 0) {
+            ammoDetails.put("kgPerShot", kgPerShot);
+        }
+        if (ammoRatio != 0) {
+            ammoDetails.put("ammoRatio", ammoRatio);
+        }
+        if (base != null) {
+            ammoDetails.put("baseAmmo", base.getInternalName());
+        }
+        if (capital) {
+            ammoDetails.put("capital", true);
+        }
+        if (!subMunitionName.isEmpty()) {
+            ammoDetails.put("subMunition", subMunitionName);
+        }
+
+        String[] munitionStrings = munitionType.stream()
+              .map(Enum::name)
+              .toArray(String[]::new);
+        if (munitionStrings.length > 0) {
+            ammoDetails.put("munitionType", munitionStrings);
+        }
+        if (this.mutatorName != null && !this.mutatorName.isEmpty()) {
+            ammoDetails.put("mutatorName", this.mutatorName);
+        }
+
+        data.put("ammo", ammoDetails);
         return data;
     }
 }

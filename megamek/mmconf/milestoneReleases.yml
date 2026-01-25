@@ -13,3 +13,6 @@ milestone_releases:
   - label: "v0.50.06"
     version: "0.50.06"
     useFallbackHyperlink: false
+  - label: "v0.50.11"
+    version: "0.50.11"
+    useFallbackHyperlink: false

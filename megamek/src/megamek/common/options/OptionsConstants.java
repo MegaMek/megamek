@@ -213,6 +213,8 @@ public class OptionsConstants {
     public static final String INFANTRY_URBAN_GUERRILLA = "urban_guerrilla";
 
     // UNOFFICIAL
+    /** @deprecated Use {@link #MD_EI_IMPLANT} instead. EI Implant is now an official Manei Domini augmentation. */
+    @Deprecated(since = "0.50.07", forRemoval = true)
     public static final String UNOFFICIAL_EI_IMPLANT = "ei_implant";
     public static final String UNOFFICIAL_GUNNERY_LASER = "gunnery_laser";
     public static final String UNOFFICIAL_GUNNERY_MISSILE = "gunnery_missile";
@@ -271,6 +273,7 @@ public class OptionsConstants {
     public static final String MD_TRIPLE_CORE_PROCESSOR = "triple_core_processor";
     public static final String MD_SUICIDE_IMPLANTS = "suicide_implants";
     public static final String MD_PROTO_DNI = "proto_dni";
+    public static final String MD_EI_IMPLANT = "ei_implant";
 
 
     // GAME OPTIONS TO BE MOVED.
@@ -313,7 +316,6 @@ public class OptionsConstants {
     public static final String BASE_GM_CONTROLS_DONE_REPORT_PHASE = "gm_controls_done_report_phase";
     public static final String BASE_HIDE_UNOFFICIAL = "hide_unofficial";
     public static final String BASE_HIDE_LEGACY = "hide_legacy";
-    public static final String BASE_NEW_DAMAGE_MANAGER = "new_damage_manager";
 
     public static final String VICTORY_SKIP_FORCED_VICTORY = "skip_forced_victory";
     public static final String VICTORY_CHECK_VICTORY = "check_victory";

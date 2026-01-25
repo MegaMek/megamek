@@ -902,6 +902,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return lastPhase;
     }
 
+    @Override
     public void setLastPhase(GamePhase lastPhase) {
         this.lastPhase = lastPhase;
     }
@@ -1110,6 +1111,17 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 List<Entity> listForLocation = positionMap.computeIfAbsent(location, k -> new ArrayList<>());
                 listForLocation.add(entity);
             }
+
+            if (entity instanceof BuildingEntity buildingEntity) {
+                for (Coords coords : buildingEntity.getSecondaryPositions().values()) {
+                    final BoardLocation secondaryLocation = new BoardLocation(coords, entity.getBoardId(), false);
+                    if (hasBoardLocation(secondaryLocation)) {
+                        List<Entity> listForLocation = positionMap.computeIfAbsent(secondaryLocation,
+                              k -> new ArrayList<>());
+                        listForLocation.add(entity);
+                    }
+                }
+            }
         }
         return positionMap;
     }
@@ -1253,6 +1265,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * looks for an entity by id number even if out of the game
      */
+    @Override
     public Entity getEntityFromAllSources(int id) {
         Entity en = getEntity(id);
         if (null == en) {
@@ -1635,7 +1648,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Return a Vector of gun emplacements at Coords <code>c</code>
+     * Return a Vector of gun emplacements at Coords <code>c</code>.
      *
      * @param c The coordinates to check
      *
@@ -1644,7 +1657,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public List<GunEmplacement> getGunEmplacements(Coords c, int boardId) {
         List<GunEmplacement> result = new ArrayList<>();
 
-        // Only build the list if the coords are on the board.
+        // Only build the list if the coords are on the board. // TODO Ensure this works w/ BuildingEntity
         if (hasBoardLocation(c, boardId)) {
             for (Entity entity : getEntitiesVector(c, boardId, true)) {
                 if (entity instanceof GunEmplacement gunEmplacement) {
@@ -1664,7 +1677,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public boolean hasRooftopGunEmplacement(Coords c, int boardId) {
         if (!hasBoardLocation(c, boardId)) {
             return false;
-        }
+        } // TODO Ensure this works with BuildingEntity
         Board board = getBoard(boardId);
         IBuilding building = board.getBuildingAt(c);
         if (building == null) {
@@ -2168,7 +2181,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Removes the first turn found that the specified entity can move in. Used when a turn is played out of order
+     * Removes the first turn found that the specified entity can move in. Used when a turn is played out of order.
+     *
+     * @param entity the entity to remove a turn for
+     * @return the removed GameTurn, or null if not found
+     * @throws Exception if called during the movement phase
      */
     public @Nullable GameTurn removeFirstTurnFor(final Entity entity) throws Exception {
         if (getPhase().isMovement()) {

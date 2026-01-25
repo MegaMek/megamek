@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,6 +45,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,7 +69,9 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
+import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.options.GameOptions;
 import megamek.common.units.Entity;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
@@ -89,10 +92,12 @@ import megamek.logging.MMLogger;
 public class ForceGeneratorViewUi implements ActionListener {
     private final static MMLogger logger = MMLogger.create(ForceGeneratorViewUi.class);
 
+    private final JFrame parentFrame;
+    
     private JPanel leftPanel;
     private JPanel rightPanel;
 
-    private ForceGeneratorOptionsView panControls;
+    private final ForceGeneratorOptionsView panControls;
     private JLabel lblOrganization;
     private JLabel lblFaction;
     private JLabel lblRating;
@@ -108,16 +113,15 @@ public class ForceGeneratorViewUi implements ActionListener {
     static final String FGV_COST = "FGV_COST";
     static final String FGV_VIEW = "FGV_VIEW";
 
-    ClientGUI clientGui;
     protected static MekSummaryCache mscInstance = MekSummaryCache.getInstance();
 
-    public ForceGeneratorViewUi(ClientGUI gui) {
-        clientGui = gui;
+    public ForceGeneratorViewUi(JFrame parentFrame, GameOptions gameOptions) {
+        this.parentFrame = parentFrame;
+        panControls = new ForceGeneratorOptionsView(this::setGeneratedForce, gameOptions);
         initUi();
     }
 
     private void initUi() {
-        panControls = new ForceGeneratorOptionsView(clientGui, this::setGeneratedForce);
 
         rightPanel = new JPanel();
         rightPanel = new JPanel(new GridBagLayout());
@@ -255,10 +259,14 @@ public class ForceGeneratorViewUi implements ActionListener {
         panControls.setCurrentYear(year);
     }
 
+    public List<Entity> getChosenUnits() {
+        return Collections.unmodifiableList(modelChosen.allEntities());
+    }
+
     /**
      * Adds the chosen units to the game
      */
-    public void addChosenUnits(String playerName) {
+    public void addChosenUnits(String playerName, ClientGUI clientGui) {
         if ((null != forceTree.getModel().getRoot())
               && (forceTree.getModel().getRoot() instanceof ForceDescriptor)) {
             configureNetworks((ForceDescriptor) forceTree.getModel().getRoot());
@@ -453,17 +461,17 @@ public class ForceGeneratorViewUi implements ActionListener {
             case FGV_VIEW -> {
                 // The entities list may be empty
                 Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
-                LobbyUtility.mekReadoutAction(entities, true, true, clientGui.getFrame());
+                LobbyUtility.mekReadoutAction(entities, true, true, parentFrame);
             }
             case FGV_BV -> {
                 // The entities list may be empty
                 Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
-                LobbyUtility.mekBVAction(entities, true, true, clientGui.getFrame());
+                LobbyUtility.mekBVAction(entities, true, true, parentFrame);
             }
             case FGV_COST -> {
                 // The entities list may be empty
                 Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
-                LobbyUtility.mekCostAction(entities, true, true, clientGui.getFrame());
+                LobbyUtility.mekCostAction(entities, true, true, parentFrame);
             }
         }
     }
@@ -553,7 +561,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         }
     }
 
-    private class UnitRenderer extends DefaultTreeCellRenderer {
+    private static class UnitRenderer extends DefaultTreeCellRenderer {
         public UnitRenderer() {
 
         }
@@ -590,7 +598,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                 setText("<html>" + name + ", " + uname + "</html>");
                 if (fd.getEntity() != null) {
                     try {
-                        clientGui.loadPreviewImage(this, fd.getEntity());
+                        setIcon(new ImageIcon(MMStaticDirectoryManager.getMekTileset().imageFor(fd.getEntity())));
                     } catch (NullPointerException ex) {
                         logger.warn("No image found for {}", fd.getEntity().getShortNameRaw());
                     }

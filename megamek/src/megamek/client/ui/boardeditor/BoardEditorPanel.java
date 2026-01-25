@@ -108,6 +108,7 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
+import megamek.utilities.BoardsTagger;
 
 // TODO: center map
 // TODO: background on the whole screen
@@ -1883,6 +1884,16 @@ public class BoardEditorPanel extends JPanel
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_VALIDATE)) {
             correctExits();
             validateBoard(true);
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_RUN_BOARD_TAGGER)) {
+            ignoreHotKeys = true;
+
+            BoardsTagger.runBoardTagger();
+
+            JOptionPane.showMessageDialog(frame,
+                  Messages.getString("BoardEditor.boardRunBoardTagger.report"),
+                  Messages.getString("BoardEditor.boardRunBoardTagger.title"),
+                  JOptionPane.PLAIN_MESSAGE);
+            ignoreHotKeys = false;
         } else if (ae.getSource().equals(butDelTerrain) && !lisTerrain.isSelectionEmpty()) {
             Terrain toRemove = new Terrain(lisTerrain.getSelectedValue().getTerrain());
             curHex.removeTerrain(toRemove.getType());

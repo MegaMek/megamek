@@ -1080,24 +1080,17 @@ public class EquipChoicePanel extends JPanel {
             return;
         }
 
-        // Refresh DNI checkbox - respect manual unchecking
-        boolean hasDNIHardware = entity.hasDNICockpitMod();
-        boolean hasDNIImplant = entity.hasDNIImplant();
-        // Always reflect actual hardware state
-        if (hasDNIHardware) {
+        // Refresh DNI checkbox - only force checked when hardware is present
+        // Respects manual unchecking when pilot has implant but user wants to test without hardware
+        if (entity.hasDNICockpitMod()) {
             chDNICockpitMod.setSelected(true);
         }
-        // Only auto-check if implant present, no hardware, AND checkbox not already handled
-        // Don't override if user manually unchecked (implant but no hardware and unchecked = user choice)
 
-        // Refresh EI checkbox - respect manual unchecking
-        boolean hasEIHardware = entity.hasEiCockpit();
-        boolean hasEIImplant = entity.hasAbility(OptionsConstants.MD_EI_IMPLANT);
-        // Always reflect actual hardware state
-        if (hasEIHardware) {
+        // Refresh EI checkbox - only force checked when hardware is present
+        // Respects manual unchecking when pilot has implant but user wants to test without hardware
+        if (entity.hasEiCockpit()) {
             chEICockpit.setSelected(true);
         }
-        // Only auto-check if implant present, no hardware, AND checkbox not already handled
     }
 
     /**

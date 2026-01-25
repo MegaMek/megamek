@@ -1189,68 +1189,6 @@ public abstract class Entity extends TurnOrdered
             transport.setEntity(this);
             transport.setGame(game);
         }
-
-        // DNI Cockpit Modification is manually controlled via EquipChoicePanel when
-        // tracking neural interface hardware is enabled. Auto-add removed to allow
-        // testing scenarios where pilot has implant but unit lacks DNI hardware (IO p.83).
-    }
-
-    /**
-     * Auto-adds DNI Cockpit Modification equipment when the tracking option is enabled and the pilot has a compatible
-     * DNI implant (VDNI, BVDNI, or Proto DNI). This ensures the pilot can use their implant benefits per IO p.83. DNI
-     * is Inner Sphere tech (E/X-X-E-F) and is not available for pure Clan units.
-     */
-    private void autoAddDNICockpitMod() {
-        // Only auto-add when tracking neural interface hardware
-        if ((game == null) || !gameOptions().booleanOption(
-              OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
-            return;
-        }
-
-        // Check if pilot has a DNI implant
-        if (!hasDNIImplant()) {
-            return;
-        }
-
-        // Check if entity already has DNI cockpit mod
-        if (hasDNICockpitMod()) {
-            return;
-        }
-
-        // Get the DNI cockpit mod equipment
-        MiscType dniMod = (MiscType) EquipmentType.get("BABattleMechNIU");
-        if (dniMod == null) {
-            return;
-        }
-
-        // Check if the equipment is valid for this unit type
-        boolean validUnitType = false;
-        if (dniMod.hasFlag(MiscType.F_MEK_EQUIPMENT) && isMek()) {
-            validUnitType = true;
-        } else if (dniMod.hasFlag(MiscType.F_TANK_EQUIPMENT) && (isCombatVehicle() || isSupportVehicle())) {
-            validUnitType = true;
-        } else if (dniMod.hasFlag(MiscType.F_FIGHTER_EQUIPMENT) && isAerospaceFighter()) {
-            validUnitType = true;
-        } else if (dniMod.hasFlag(MiscType.F_BA_EQUIPMENT) && (this instanceof BattleArmor)) {
-            validUnitType = true;
-        }
-
-        if (!validUnitType) {
-            return;
-        }
-
-        // DNI is Inner Sphere tech (E/X-X-E-F) - not available for pure Clan units
-        // Must be IS, Mixed IS, or Mixed Clan
-        if (isClan() && !isMixedTech()) {
-            return;
-        }
-
-        // Add the DNI cockpit modification
-        try {
-            addEquipment(dniMod, Entity.LOC_NONE);
-        } catch (Exception e) {
-            LOGGER.debug("Failed to add DNI cockpit modification to {}: {}", getDisplayName(), e.getMessage());
-        }
     }
 
     /**

@@ -4663,21 +4663,24 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    /**
+     * BattleMech Neural Interface Unit (NIU) for PA(L) suits. IO p.110: The BattleMech NIU can only be mounted in the
+     * interface suit, which must be constructed as a PA(L)-type battlesuit (as larger battlesuits cannot fit in the
+     * interface cockpit). The BattleMech NIU weighs 100 kilograms and occupies 2 slots in the suit's torso.
+     */
     public static MiscType createBattleMekNeuralInterfaceUnit() {
         MiscType misc = new MiscType();
-        // TODO - not sure how we capturing this in code, Maybe a quirk would be
-        // better.
         // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
-        misc.name = "Direct Neural Interface Cockpit Modification";
+        misc.name = "BattleMech Neural Interface Unit";
         misc.setInternalName("BABattleMechNIU");
 
-        misc.tonnage = 0;
-        misc.criticalSlots = 0;
+        misc.tonnage = 0.1; // 100kg
+        misc.criticalSlots = 2; // 2 slots in torso
         misc.cost = 250000;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_BATTLEMEK_NIU, F_BA_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BATTLEMEK_NIU, F_BA_EQUIPMENT);
 
-        misc.rulesRefs = "62, IO:AE";
+        misc.rulesRefs = "110, IO:AE";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

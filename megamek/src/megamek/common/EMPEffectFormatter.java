@@ -59,7 +59,6 @@ public final class EMPEffectFormatter {
      *   <li>Interference: Bold text</li>
      *   <li>No Effect: Plain text</li>
      * </ul>
-     * </p>
      * <p>
      * Note: EMP_EFFECT_* and TSEMP_EFFECT_* constants have identical values,
      * so this method works for both EMP mines and TSEMP weapons.
@@ -102,7 +101,6 @@ public final class EMPEffectFormatter {
      *   <li>No modifier: "8"</li>
      *   <li>With modifier: "8 (+2)"</li>
      * </ul>
-     * </p>
      *
      * @param rollValue           The dice roll result
      * @param modifier            The modifier applied (0 for no modifier)

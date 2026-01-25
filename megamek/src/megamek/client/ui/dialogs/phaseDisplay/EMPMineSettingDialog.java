@@ -52,7 +52,7 @@ import megamek.codeUtilities.StringUtility;
  * Dialog to set the weight threshold for an EMP mine.
  * <p>
  * EMP mines trigger when a unit of sufficient weight enters the hex. The setting determines the minimum weight (in
- * tons) that can trigger the mine. Units must weigh at least (setting - 10) tons to trigger the mine.
+ * tons) that can trigger the mine. Units must weigh more than (setting - 10) tons to trigger the mine.
  * </p>
  */
 public class EMPMineSettingDialog extends JDialog implements ActionListener {

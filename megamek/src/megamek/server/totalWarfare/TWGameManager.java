@@ -7409,8 +7409,8 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Minefield> fieldsToRemove = new Vector<>();
         // loop through mines in this hex
         for (Minefield mf : game.getMinefields(c)) {
-            // VibraBombs are handled differently
-            if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
+            // VibraBombs and EMP mines are handled differently (proximity-based detection)
+            if ((mf.getType() == Minefield.TYPE_VIBRABOMB) || (mf.getType() == Minefield.TYPE_EMP)) {
                 continue;
             }
 
@@ -7966,6 +7966,78 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Checks to see if an entity sets off any EMP mines.
+     * <p>
+     * EMP mines trigger when a unit enters the same hex and meets the weight threshold. Per TO:AR, EMP mines may make
+     * only one attack per scenario (one-use).
+     * </p>
+     */
+    private boolean checkEMPMines(Entity entity, Coords coords, boolean displaced, Vector<Report> vMineReport) {
+        return checkEMPMines(entity, coords, displaced, null, null, vMineReport);
+    }
+
+    /**
+     * Checks to see if an entity sets off any EMP mines.
+     * <p>
+     * EMP mines trigger when a unit enters the same hex and meets the weight threshold. Unlike Vibrobombs, EMP mines
+     * have no distance-based detection - only same-hex triggering. Per TO:AR, EMP mines may make only one attack per
+     * scenario (one-use).
+     * </p>
+     */
+    boolean checkEMPMines(Entity entity, Coords coords, boolean displaced, Coords lastPos, Coords curPos,
+          Vector<Report> vMineReport) {
+        boolean boom = false;
+
+        Vector<Minefield> fieldsToRemove = new Vector<>();
+
+        for (Minefield mf : game.getEMPMines()) {
+            // Only trigger if unit is in the same hex as the mine
+            if (!coords.equals(mf.getCoords())) {
+                continue;
+            }
+
+            try {
+                // EMP mines cannot be placed in water and don't work underwater
+                if (game.getBoard().getHex(mf.getCoords()) != null &&
+                      game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER) &&
+                      !game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.PAVEMENT) &&
+                      !game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.ICE)) {
+                    continue;
+                }
+
+                // Check weight threshold - unit must weigh more than (setting - 10) tons to trigger
+                // Per TO:AR, EMP mines use same weight threshold mechanic as Vibromines
+                double mass = entity.getWeight();
+                if (mass <= (mf.getSetting() - 10)) {
+                    continue;
+                }
+
+            } catch (NullPointerException _ignored) {
+                LOGGER.warn("EMP mine not found on board: {}", mf.toString());
+                continue;
+            }
+
+            // EMP mine triggered - resolve effects
+            EMPMineEffectResolver empResolver = new EMPMineEffectResolver(this);
+            vMineReport.addAll(empResolver.resolveEMPMineDetonation(mf, entity, mf.getCoords()));
+
+            // EMP mines are one-use - mark for removal
+            fieldsToRemove.add(mf);
+            boom = true;
+
+            // Reveal the minefield
+            revealMinefield(mf);
+        }
+
+        // Remove detonated EMP mines (one-use)
+        for (Minefield mf : fieldsToRemove) {
+            removeMinefield(mf);
+        }
+
+        return boom;
+    }
+
+    /**
      * Removes the minefield from the game.
      *
      * @param mf The <code>Minefield</code> to remove
@@ -7973,6 +8045,9 @@ public class TWGameManager extends AbstractGameManager {
     public void removeMinefield(Minefield mf) {
         if (game.containsVibrabomb(mf)) {
             game.removeVibrabomb(mf);
+        }
+        if (game.containsEMPMine(mf)) {
+            game.removeEMPMine(mf);
         }
         game.removeMinefield(mf);
 
@@ -9386,6 +9461,7 @@ public class TWGameManager extends AbstractGameManager {
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity, Coords src, Coords dest, int elev) {
         Vector<Report> vPhaseReport = new Vector<>();
         boolean boom = checkVibraBombs(entity, dest, true, vPhaseReport);
+        boom = checkEMPMines(entity, dest, true, vPhaseReport) || boom;
         if (game.containsMinefield(dest)) {
             boom = enterMinefield(entity, dest, elev, true, vPhaseReport) || boom;
         }
@@ -9495,6 +9571,8 @@ public class TWGameManager extends AbstractGameManager {
             game.addMinefield(mf);
             if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
                 game.addVibrabomb(mf);
+            } else if (mf.getType() == Minefield.TYPE_EMP) {
+                game.addEMPMine(mf);
             }
         }
 
@@ -26126,6 +26204,17 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Creates a packet containing a specific Vector of Reports which needs to be sent during a phase that is not a
+     * report phase. Use this when you want to send only specific reports (e.g., EMP mine detonation) rather than all
+     * accumulated reports.
+     *
+     * @param reports The specific reports to include in the packet
+     */
+    public Packet createSpecialReportPacket(Vector<Report> reports) {
+        return new Packet(PacketCommand.SENDING_REPORTS_SPECIAL, reports.clone());
+    }
+
+    /**
      * Creates a packet containing a Vector of Reports that represent a Tactical Genius re-roll request which needs to
      * update a current phase's report.
      */
@@ -26283,6 +26372,19 @@ public class TWGameManager extends AbstractGameManager {
 
     public void sendSmokeCloudAdded(SmokeCloud cloud) {
         send(new Packet(PacketCommand.ADD_SMOKE_CLOUD, cloud));
+    }
+
+    public void sendTemporaryECMFieldAdded(TemporaryECMField field) {
+        send(new Packet(PacketCommand.ADD_TEMPORARY_ECM_FIELD, field));
+    }
+
+    /**
+     * Sends all temporary ECM fields to clients, replacing their existing list. Called after expired fields are removed
+     * to sync client state.
+     */
+    public void sendSyncTemporaryECMFields() {
+        send(new Packet(PacketCommand.SYNC_TEMPORARY_ECM_FIELDS,
+              new ArrayList<>(game.getTemporaryECMFields())));
     }
 
     /**

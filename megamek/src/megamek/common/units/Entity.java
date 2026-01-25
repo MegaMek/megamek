@@ -863,6 +863,11 @@ public abstract class Entity extends TurnOrdered
     protected int taserInterferenceRounds = 0;
     protected boolean taserInterferenceHeat = false;
 
+    // EMP mine effects (Tactical Operations: Advanced Rules)
+    protected int empInterferenceRounds = 0;
+    protected boolean empInterferenceHeat = false;
+    protected int empShutdownRounds = 0;
+
     // for how many rounds has blue shield been active?
     private int blueShieldRounds = 0;
 
@@ -1607,8 +1612,9 @@ public abstract class Entity extends TurnOrdered
             return;
         }
         setManualShutdown(false);
-        // Can't start up if a taser shutdown or a TSEMP shutdown
-        if ((getTaserShutdownRounds() == 0) && (getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
+        // Can't start up if a taser shutdown, TSEMP shutdown, or EMP mine shutdown
+        if ((getTaserShutdownRounds() == 0) && (getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)
+              && (getEMPShutdownRounds() == 0)) {
             setShutDown(false);
             setStartupThisPhase(true);
         }
@@ -7261,6 +7267,15 @@ public abstract class Entity extends TurnOrdered
                 taserInterference = 0;
                 taserInterferenceHeat = false;
             }
+        }
+        if (empInterferenceRounds > 0) {
+            empInterferenceRounds--;
+            if (empInterferenceRounds == 0) {
+                empInterferenceHeat = false;
+            }
+        }
+        if (empShutdownRounds > 0) {
+            empShutdownRounds--;
         }
         if (taserFeedBackRounds > 0) {
             taserFeedBackRounds--;
@@ -13297,6 +13312,47 @@ public abstract class Entity extends TurnOrdered
 
     public int getTaserInterferenceRounds() {
         return taserInterferenceRounds;
+    }
+
+    /**
+     * Sets EMP mine interference effect on this entity.
+     *
+     * @param rounds Number of rounds the interference lasts
+     * @param heat   true if the entity suffers +5 heat per turn (Meks/Aero)
+     */
+    public void setEMPInterference(int rounds, boolean heat) {
+        empInterferenceRounds = rounds;
+        empInterferenceHeat = heat;
+    }
+
+    /**
+     * @return Number of rounds remaining for EMP interference effect
+     */
+    public int getEMPInterferenceRounds() {
+        return empInterferenceRounds;
+    }
+
+    /**
+     * @return true if this entity suffers +5 heat per turn from EMP interference
+     */
+    public boolean hasEMPInterferenceHeat() {
+        return empInterferenceHeat;
+    }
+
+    /**
+     * Sets EMP shutdown duration from EMP mine effect.
+     *
+     * @param rounds Number of turns the unit is shutdown
+     */
+    public void setEMPShutdownRounds(int rounds) {
+        empShutdownRounds = rounds;
+    }
+
+    /**
+     * @return Number of rounds remaining for EMP shutdown effect
+     */
+    public int getEMPShutdownRounds() {
+        return empShutdownRounds;
     }
 
     public void addIMPHits(int missiles) {

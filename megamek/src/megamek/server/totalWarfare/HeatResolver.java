@@ -89,6 +89,9 @@ class HeatResolver extends AbstractTWRuleHandler {
             if (entity.getTaserInterferenceHeat()) {
                 entity.heatBuildup += 5;
             }
+            if (entity.hasEMPInterferenceHeat()) {
+                entity.heatBuildup += 5;
+            }
             if (entity.hasDamagedRHS() && entity.weaponFired()) {
                 entity.heatBuildup += 1;
             }
@@ -234,7 +237,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                     entity.setBATaserShutdown(false);
                     if (entity.isShutDown() &&
                           !entity.isManualShutdown() &&
-                          (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
+                          (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN) &&
+                          (entity.getEMPShutdownRounds() == 0)) {
                         entity.setShutDown(false);
                         report = new Report(5045);
                         report.subject = entity.getId();
@@ -524,7 +528,8 @@ class HeatResolver extends AbstractTWRuleHandler {
             // heat effects: start up
             if ((entity.heat < autoShutDownHeat) && entity.isShutDown() && !entity.isStalled()) {
                 if ((entity.getTaserShutdownRounds() == 0) &&
-                      (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
+                      (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN) &&
+                      (entity.getEMPShutdownRounds() == 0)) {
                     if ((entity.heat < 14) && !(entity.isManualShutdown())) {
                         // automatically starts up again
                         entity.setShutDown(false);
@@ -1086,9 +1091,10 @@ class HeatResolver extends AbstractTWRuleHandler {
 
         // heat effects: start up
         if ((entity.heat < autoShutDownHeat) && entity.isShutDown()) {
-            // only start up if not shut down by taser or a TSEMP
+            // only start up if not shut down by taser, TSEMP, or EMP mine
             if ((entity.getTaserShutdownRounds() == 0)
-                  && (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
+                  && (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)
+                  && (entity.getEMPShutdownRounds() == 0)) {
                 if ((entity.heat < 14) && !entity.isManualShutdown()) {
                     // automatically starts up again
                     entity.setShutDown(false);

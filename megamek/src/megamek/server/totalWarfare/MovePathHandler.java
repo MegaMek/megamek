@@ -2901,6 +2901,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (isOnGround) {
                     boom = gameManager.checkVibraBombs(entity, curPos, false, lastPos, curPos,
                           gameManager.getMainPhaseReport());
+                    // Collect EMP reports separately for popup, then add to main report
+                    Vector<Report> empReports = new Vector<>();
+                    boolean empBoom = gameManager.checkEMPMines(entity, curPos, false, lastPos, curPos,
+                          empReports);
+                    // Send popup FIRST with only EMP reports, before adding to mainPhaseReport
+                    if (empBoom && !empReports.isEmpty()) {
+                        gameManager.send(entity.getOwner().getId(),
+                              gameManager.createSpecialReportPacket(empReports));
+                    }
+                    // Now add to main phase report for end-of-phase display
+                    gameManager.getMainPhaseReport().addAll(empReports);
+                    boom = empBoom || boom;
                 }
                 if (getGame().containsMinefield(curPos)) {
                     // set the new position temporarily, because

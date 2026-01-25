@@ -7961,7 +7961,11 @@ public abstract class Entity extends TurnOrdered
 
         // Augmented pilots with DNI cockpit ignore Hard to Pilot quirk entirely (IO p.83)
         // hasQuirk() now includes DNI-induced Hard to Pilot via hasDNIInducedHardToPilot()
-        if (!hasActiveDNI() && hasQuirk(OptionsConstants.QUIRK_NEG_HARD_PILOT)) {
+        boolean activeDNI = hasActiveDNI();
+        boolean hasHTP = hasQuirk(OptionsConstants.QUIRK_NEG_HARD_PILOT);
+        LOGGER.trace("[PSR] {} - hasActiveDNI: {}, hasQuirk(HTP): {}", getDisplayName(), activeDNI, hasHTP);
+        if (!activeDNI && hasHTP) {
+            LOGGER.trace("[PSR] {} - Adding +1 Hard to Pilot modifier", getDisplayName());
             roll.addModifier(+1, "hard to pilot");
         }
 
@@ -13633,8 +13637,12 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
         // DNI Cockpit Mod induces Hard to Pilot quirk for pilots without compatible implants (IO p.83)
-        if (name.equals(OptionsConstants.QUIRK_NEG_HARD_PILOT) && hasDNIInducedHardToPilot()) {
-            return true;
+        if (name.equals(OptionsConstants.QUIRK_NEG_HARD_PILOT)) {
+            boolean dniInduced = hasDNIInducedHardToPilot();
+            if (dniInduced) {
+                LOGGER.trace("[Quirk] {} - Hard to Pilot induced by DNI cockpit mod", getDisplayName());
+                return true;
+            }
         }
         return quirks.booleanOption(name);
     }
@@ -13649,14 +13657,22 @@ public abstract class Entity extends TurnOrdered
     public boolean hasDNIInducedHardToPilot() {
         // Only applies when tracking neural interface hardware
         if ((game == null) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            LOGGER.trace("[DNI-HTP] {} - Tracking option OFF or no game, returning false", getDisplayName());
             return false;
         }
         // Unit must have DNI Cockpit Mod
         if (!hasDNICockpitMod()) {
+            LOGGER.trace("[DNI-HTP] {} - No DNI cockpit mod, returning false", getDisplayName());
             return false;
         }
         // Pilot must lack compatible DNI implant
-        return !hasActiveDNI();
+        boolean hasActive = hasActiveDNI();
+        boolean result = !hasActive;
+        LOGGER.trace("[DNI-HTP] {} - DNI mod: true, hasActiveDNI: {}, induces HTP: {}",
+              getDisplayName(),
+              hasActive,
+              result);
+        return result;
     }
 
     /**

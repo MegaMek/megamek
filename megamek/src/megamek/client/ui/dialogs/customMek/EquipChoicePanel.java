@@ -1069,6 +1069,10 @@ public class EquipChoicePanel extends JPanel {
     /**
      * Refreshes the neural interface checkboxes based on current pilot implant status. Called when switching to the
      * Equipment tab to pick up changes made in the Pilot tab.
+     *
+     * <p>This method only auto-CHECKS the checkbox when an implant is detected but hardware is missing.
+     * It respects manual unchecking - if the user has unchecked the box (hardware not present and box unchecked),
+     * it won't force it back to checked. This allows testing scenarios where pilot has implant but unit lacks hardware.</p>
      */
     public void refreshNeuralInterfaceCheckboxes() {
         Game game = (clientgui == null) ? client.getGame() : clientgui.getClient().getGame();
@@ -1076,15 +1080,24 @@ public class EquipChoicePanel extends JPanel {
             return;
         }
 
-        // Refresh DNI checkbox based on pilot implant
+        // Refresh DNI checkbox - respect manual unchecking
         boolean hasDNIHardware = entity.hasDNICockpitMod();
         boolean hasDNIImplant = entity.hasDNIImplant();
-        chDNICockpitMod.setSelected(hasDNIHardware || hasDNIImplant);
+        // Always reflect actual hardware state
+        if (hasDNIHardware) {
+            chDNICockpitMod.setSelected(true);
+        }
+        // Only auto-check if implant present, no hardware, AND checkbox not already handled
+        // Don't override if user manually unchecked (implant but no hardware and unchecked = user choice)
 
-        // Refresh EI checkbox based on pilot implant
+        // Refresh EI checkbox - respect manual unchecking
         boolean hasEIHardware = entity.hasEiCockpit();
         boolean hasEIImplant = entity.hasAbility(OptionsConstants.MD_EI_IMPLANT);
-        chEICockpit.setSelected(hasEIHardware || hasEIImplant);
+        // Always reflect actual hardware state
+        if (hasEIHardware) {
+            chEICockpit.setSelected(true);
+        }
+        // Only auto-check if implant present, no hardware, AND checkbox not already handled
     }
 
     /**

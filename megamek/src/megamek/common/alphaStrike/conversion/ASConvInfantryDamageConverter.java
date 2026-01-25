@@ -125,9 +125,11 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
                     report.addLine("Insufficient S damage", "No HT", "");
                 } else {
                     report.addLine(weapon.getName(), "(has heat damage)", "");
-                    ASDamageVector finalHtValue = ASDamageVector.createNormRndDmg(Math.min(2, finalSDamage.damage), 0,
-                          0);
-                    locations[0].setSUA(HT, finalHtValue); // don't set it directly, it gets overwritten
+                    final int heatDmg = Math.min(2, finalSDamage.damage);
+                    int mHeatDmg = (finalMDamage != null) ? heatDmg : 0;
+                    int lHeatDmg = (finalLDamage != null) ? heatDmg : 0;
+                    ASDamageVector finalHtValue = ASDamageVector.createNormRndDmg(heatDmg, mHeatDmg, lHeatDmg);
+                    locations[0].setSUA(HT, finalHtValue);
                     report.addLine("Final Ability", "", "HT" + finalHtValue);
                 }
                 report.endTentativeSection();

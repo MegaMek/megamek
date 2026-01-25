@@ -105,6 +105,8 @@ class PrototypeDniToHitModsTest {
                 String arg = invocation.getArgument(0);
                 return OptionsConstants.MD_PROTO_DNI.equals(arg);
             });
+            // Mock hasActiveDNI() to return true for entities with Proto DNI
+            when(mockEntity.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockEntity, toHit, mockWeapon);
@@ -138,6 +140,7 @@ class PrototypeDniToHitModsTest {
                 return OptionsConstants.MD_PROTO_DNI.equals(arg)
                       || OptionsConstants.MD_VDNI.equals(arg);
             });
+            when(mockEntity.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockEntity, toHit, mockWeapon);
@@ -156,6 +159,7 @@ class PrototypeDniToHitModsTest {
                 return OptionsConstants.MD_PROTO_DNI.equals(arg)
                       || OptionsConstants.MD_BVDNI.equals(arg);
             });
+            when(mockEntity.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockEntity, toHit, mockWeapon);
@@ -175,6 +179,7 @@ class PrototypeDniToHitModsTest {
                       || OptionsConstants.MD_VDNI.equals(arg)
                       || OptionsConstants.MD_BVDNI.equals(arg);
             });
+            when(mockEntity.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockEntity, toHit, mockWeapon);
@@ -196,6 +201,7 @@ class PrototypeDniToHitModsTest {
                 return OptionsConstants.MD_PROTO_DNI.equals(arg)
                       || OptionsConstants.MD_MM_IMPLANTS.equals(arg);
             });
+            when(mockEntity.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockEntity, toHit, mockWeapon);
@@ -212,6 +218,7 @@ class PrototypeDniToHitModsTest {
                 return OptionsConstants.MD_PROTO_DNI.equals(arg)
                       || OptionsConstants.MD_ENH_MM_IMPLANTS.equals(arg);
             });
+            when(mockEntity.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockEntity, toHit, mockWeapon);
@@ -229,6 +236,7 @@ class PrototypeDniToHitModsTest {
                       || OptionsConstants.MD_VDNI.equals(arg)
                       || OptionsConstants.MD_MM_IMPLANTS.equals(arg);
             });
+            when(mockEntity.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockEntity, toHit, mockWeapon);
@@ -249,6 +257,7 @@ class PrototypeDniToHitModsTest {
                 String arg = invocation.getArgument(0);
                 return OptionsConstants.MD_VDNI.equals(arg);
             });
+            when(mockEntity.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockEntity, toHit, mockWeapon);
@@ -264,6 +273,7 @@ class PrototypeDniToHitModsTest {
                 String arg = invocation.getArgument(0);
                 return OptionsConstants.MD_BVDNI.equals(arg);
             });
+            when(mockEntity.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockEntity, toHit, mockWeapon);

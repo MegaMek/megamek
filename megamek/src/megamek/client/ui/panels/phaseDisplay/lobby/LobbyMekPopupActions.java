@@ -122,6 +122,8 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
             case LMP_HOT_LOAD_OFF:
             case LMP_VRT_LONG:
             case LMP_VRT_SHORT:
+            case LMP_EI_ON:
+            case LMP_EI_OFF:
             case LMP_SQUADRON:
             case LMP_LOAD:
             case LMP_UNLOAD:
@@ -273,6 +275,11 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
                 case LMP_VRT_LONG:
                 case LMP_VRT_SHORT:
                     lobby.lobbyActions.setVRTMode(entities, command.equals(LMP_VRT_LONG));
+                    break;
+
+                case LMP_EI_ON:
+                case LMP_EI_OFF:
+                    lobby.lobbyActions.toggleEI(entities, command.equals(LMP_EI_ON));
                     break;
 
                 case LMP_SQUADRON:

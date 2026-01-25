@@ -91,6 +91,8 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.bayWeapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
 import megamek.server.ServerBoardHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * A dialog that a player can use to customize his mek before battle. Currently, changing pilots, setting up C3
@@ -102,6 +104,8 @@ import megamek.server.ServerBoardHelper;
  */
 public class CustomMekDialog extends AbstractButtonDialog
       implements ActionListener, DialogOptionListener, ItemListener {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public static final int DONE = 0;
     public static final int NEXT = 1;
@@ -1050,26 +1054,36 @@ public class CustomMekDialog extends AbstractButtonDialog
         // The pilot needs the implant AND the unit needs the interface hardware for EI to function
         // ProtoMeks already have EI built-in, so no action needed for them
         if (option.getName().equals(OptionsConstants.MD_EI_IMPLANT)) {
-            boolean anyChanged = false;
             for (Entity e : entities) {
                 if (canHaveEIInterface(e)) {
-                    boolean hadEI = e.hasEiCockpit();
                     setEIInterface(e, state);
-                    if (hadEI != state) {
-                        anyChanged = true;
-                    }
                 }
             }
-            // Show feedback message - use invokeLater to avoid interfering with checkbox event handling
-            if (anyChanged) {
-                final boolean added = state;
-                javax.swing.SwingUtilities.invokeLater(() -> {
-                    String msg = added
-                          ? Messages.getString("CustomMekDialog.EIInterfaceAdded")
-                          : Messages.getString("CustomMekDialog.EIInterfaceRemoved");
-                    String title = Messages.getString("CustomMekDialog.EIInterfaceTitle");
-                    JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
-                });
+            // Also update the Equipment tab checkbox directly
+            if (m_equip != null) {
+                m_equip.setEICockpitSelected(state);
+            }
+        }
+
+        // DNI implant options (VDNI, BVDNI, Proto DNI) update entity crew options directly
+        // This ensures Equipment tab sees correct implant state when checking hasDNIImplant()
+        // The equipment is not auto-added - user must confirm via the checkbox (IO p.83)
+        if (option.getName().equals(OptionsConstants.MD_VDNI)
+              || option.getName().equals(OptionsConstants.MD_BVDNI)
+              || option.getName().equals(OptionsConstants.MD_PROTO_DNI)) {
+            // Update entity crew options directly (like EI does via setEIInterface)
+            for (Entity e : entities) {
+                e.getCrew().getOptions().getOption(option.getName()).setValue(state);
+            }
+            // Also update Equipment tab checkbox if it exists
+            if (m_equip != null) {
+                boolean anyDniSelected = isOptionSelected(OptionsConstants.MD_VDNI)
+                      || isOptionSelected(OptionsConstants.MD_BVDNI)
+                      || isOptionSelected(OptionsConstants.MD_PROTO_DNI);
+                if (state) {
+                    anyDniSelected = true;
+                }
+                m_equip.setDNICockpitModSelected(anyDniSelected);
             }
         }
     }
@@ -1727,6 +1741,17 @@ public class CustomMekDialog extends AbstractButtonDialog
                     ((BattleArmor) entity).setInternal(1);
                 }
             }
+
+            // Sync EI Interface equipment with EI Implant pilot option state
+            // This ensures equipment is correct even if user didn't click the checkbox
+            if (canHaveEIInterface(entity)) {
+                boolean hasEIImplant = entity.hasAbility(OptionsConstants.MD_EI_IMPLANT);
+                setEIInterface(entity, hasEIImplant);
+            }
+
+            // DNI Cockpit Modification is manually controlled via EquipChoicePanel when
+            // tracking neural interface hardware is enabled. Auto-add removed to allow
+            // testing scenarios where pilot has implant but unit lacks DNI hardware (IO p.83).
         }
 
         // Apply multiple-entity settings
@@ -1946,17 +1971,19 @@ public class CustomMekDialog extends AbstractButtonDialog
 
     /**
      * Checks if the entity is eligible for an EI Interface. Per IO p.69, EI Interface may be installed in any BattleMek
-     * or Battle Armor built using a Clan technology base. ProtoMeks always have EI built-in and cannot toggle it. EI
-     * Interface was introduced in 3040.
+     * or Battle Armor built using a Clan technology base. ProtoMeks always have EI built-in and cannot toggle it.
+     * Availability is determined by the equipment's introduction date.
      *
      * @param entity the entity to check
      *
      * @return true if the entity can have an EI Interface toggled
      */
     private boolean canHaveEIInterface(Entity entity) {
-        // EI Interface introduced in 3040
+        // Check game year against EI Interface introduction date
+        EquipmentType eiEquipment = EquipmentType.get("EIInterface");
         int gameYear = client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
-        if (gameYear < 3040) {
+        int eiIntroYear = (eiEquipment != null) ? eiEquipment.getIntroductionDate(true) : 3040; // Clan tech
+        if (gameYear < eiIntroYear) {
             return false;
         }
         // ProtoMeks always have EI - cannot toggle
@@ -1987,7 +2014,10 @@ public class CustomMekDialog extends AbstractButtonDialog
             try {
                 EquipmentType eiType = EquipmentType.get("EIInterface");
                 if (eiType != null) {
-                    entity.addEquipment(eiType, Entity.LOC_NONE);
+                    Mounted<?> eiMounted = entity.addEquipment(eiType, Entity.LOC_NONE);
+                    // Set EI to "On" mode by default - pilot got the implant to use it
+                    // Mode 1 is "Initiate enhanced imaging" (On)
+                    eiMounted.setMode(1);
                 }
             } catch (LocationFullException e) {
                 // Should not happen for 0-slot equipment
@@ -2122,6 +2152,14 @@ public class CustomMekDialog extends AbstractButtonDialog
                 tabAll.addTab(Messages.getString("CustomMekDialog.tabPartialRepairs"), new JScrollPane(panPartReps));
             }
         }
+
+        // Refresh neural interface checkboxes when switching to Equipment tab
+        // This picks up changes made in the Pilot tab (e.g., adding EI/DNI implant)
+        tabAll.addChangeListener(e -> {
+            if (m_equip != null) {
+                m_equip.refreshNeuralInterfaceCheckboxes();
+            }
+        });
 
         options = entity.getCrew().getOptions();
         partReps = entity.getPartialRepairs();

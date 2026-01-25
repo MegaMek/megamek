@@ -125,6 +125,8 @@ public class VdniBvdniTest {
                 String arg = invocation.getArgument(0);
                 return OptionsConstants.MD_VDNI.equals(arg);
             });
+            // Mock hasActiveDNI() to return true for entities with VDNI
+            when(mockEntity.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockEntity, toHit, mockWeapon);
@@ -141,6 +143,8 @@ public class VdniBvdniTest {
                 String arg = invocation.getArgument(0);
                 return OptionsConstants.MD_BVDNI.equals(arg);
             });
+            // Mock hasActiveDNI() to return true for entities with BVDNI
+            when(mockEntity.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockEntity, toHit, mockWeapon);
@@ -157,6 +161,8 @@ public class VdniBvdniTest {
                 String arg = invocation.getArgument(0);
                 return OptionsConstants.MD_VDNI.equals(arg) || OptionsConstants.MD_BVDNI.equals(arg);
             });
+            // Mock hasActiveDNI() to return true for entities with VDNI/BVDNI
+            when(mockEntity.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockEntity, toHit, mockWeapon);

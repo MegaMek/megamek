@@ -1324,14 +1324,18 @@ public abstract class BVCalculator {
         }
         // VDNI: -1 Gunnery, -1 Piloting for Meks, Vehicles, Fighters, BA (IO pg 71)
         // Note: BVDNI implies VDNI, so check VDNI && !BVDNI to avoid double-counting
-        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI) &&
-              !entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+        // When tracking neural interface hardware, require DNI cockpit mod for benefits
+        if (entity.hasActiveDNI()
+              && entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+              && !entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             piloting = Math.max(0, piloting - 1);
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("VDNI");
         }
         // BVDNI: -1 Gunnery only (no piloting bonus due to "neuro-lag") (IO pg 71)
-        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+        // When tracking neural interface hardware, require DNI cockpit mod for benefits
+        if (entity.hasActiveDNI()
+              && entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("Buf. VDNI");
         }
@@ -1350,8 +1354,10 @@ public abstract class BVCalculator {
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("Sensory Implants");
         }
-        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_PROTO_DNI) &&
-              entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
+        // Proto DNI: -3 Piloting, -2 Gunnery (IO pg 83)
+        // When tracking neural interface hardware, require DNI cockpit mod for benefits
+        if (entity.hasActiveDNI()
+              && entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_PROTO_DNI)) {
             piloting = Math.max(0, piloting - 3);
             gunnery = Math.max(0, gunnery - 2);
             pilotModifiers.add("Proto DNI");

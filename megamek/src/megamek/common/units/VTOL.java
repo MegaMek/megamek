@@ -621,10 +621,13 @@ public class VTOL extends Tank implements IBomber {
         }
 
         // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
-        if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
-            prd.addModifier(-1, "VDNI");
-        } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
-            prd.addModifier(0, "BVDNI (no piloting bonus)");
+        // When tracking neural interface hardware, require DNI cockpit mod for benefits
+        if (hasActiveDNI()) {
+            if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                prd.addModifier(-1, "VDNI");
+            } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                prd.addModifier(0, "BVDNI (no piloting bonus)");
+            }
         }
 
         return prd;

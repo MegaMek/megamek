@@ -507,10 +507,13 @@ public class QuadVee extends QuadMek {
                 roll.addModifier(1, "thin snow");
             }
             // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
-            if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
-                roll.addModifier(-1, "VDNI");
-            } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
-                roll.addModifier(0, "BVDNI (no piloting bonus)");
+            // When tracking neural interface hardware, require DNI cockpit mod for benefits
+            if (hasActiveDNI()) {
+                if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                    roll.addModifier(-1, "VDNI");
+                } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                    roll.addModifier(0, "BVDNI (no piloting bonus)");
+                }
             }
             if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
                   && !hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {

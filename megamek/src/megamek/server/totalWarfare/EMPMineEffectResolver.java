@@ -111,7 +111,7 @@ public class EMPMineEffectResolver {
 
         // Apply effects to each entity
         for (Entity entity : entitiesInHex) {
-            reports.addAll(applyEMPEffects(entity, minefield));
+            reports.addAll(applyEMPEffects(entity));
         }
 
         // Create temporary ECM bubble
@@ -159,7 +159,7 @@ public class EMPMineEffectResolver {
     /**
      * Applies EMP effects to a single entity.
      */
-    private Vector<Report> applyEMPEffects(Entity entity, Minefield minefield) {
+    private Vector<Report> applyEMPEffects(Entity entity) {
         Vector<Report> reports = new Vector<>();
 
         // Check for immunity
@@ -324,7 +324,7 @@ public class EMPMineEffectResolver {
 
         // Check for skid on hover/WiGE vehicles
         if (isHoverOrWiGE(entity)) {
-            reports.addAll(checkHoverWiGESkid(entity));
+            addHoverWiGESkidCheck(entity);
         }
 
         return reports;
@@ -341,21 +341,17 @@ public class EMPMineEffectResolver {
     }
 
     /**
-     * Checks for skid on hover/WiGE vehicle shutdown.
+     * Adds a skid check for hover/WiGE vehicle shutdown.
      * <p>
      * Per TO:AR, hover/WiGE must make Drive Skill check at +3 or skid.
      * </p>
      */
-    private Vector<Report> checkHoverWiGESkid(Entity entity) {
-        Vector<Report> reports = new Vector<>();
-
+    private void addHoverWiGESkidCheck(Entity entity) {
         // Per TO:AR, hover/WiGE must make Drive Skill check at +3 or skid
         PilotingRollData psr = new PilotingRollData(entity.getId(), 3, "EMP shutdown");
 
         // Add control roll for the vehicle - will be processed in the movement phase
         game.addControlRoll(psr);
-
-        return reports;
     }
 
     /**

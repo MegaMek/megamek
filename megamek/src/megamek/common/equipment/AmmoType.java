@@ -16629,7 +16629,7 @@ public class AmmoType extends EquipmentType {
 
         boolean hasStaticFeed = weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_STATIC_FEED);
         boolean staticFeedMismatch = hasStaticFeed &&
-              (currentAmmoType.getMunitionType() != otherAmmo.getMunitionType());
+              !currentAmmoType.getMunitionType().equals(otherAmmo.getMunitionType());
 
         return (ammoOfSameType || mmlAmmoMatch || lbxAmmoMatch || ar10Match) &&
               !caselessMismatch &&

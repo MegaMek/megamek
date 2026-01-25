@@ -858,9 +858,6 @@ public class EntityListFile {
     public static void writeEntityList(Writer output, ArrayList<Entity> list, boolean embedUnits) throws IOException {
         // Walk through the list of entities.
         for (Entity entity : list) {
-            if (entity instanceof FighterSquadron) {
-                continue;
-            }
             int indentLvl = 2;
 
             // Start writing this entity to the file.
@@ -869,7 +866,7 @@ public class EntityListFile {
             output.write("\" " + MULParser.ATTR_MODEL + "=\"");
             output.write(entity.getModel().replaceAll("\"", "&quot;"));
             output.write("\" " + MULParser.ATTR_TYPE + "=\"");
-            output.write(entity.getMovementModeAsString());
+            output.write((entity instanceof FighterSquadron) ? MULParser.VALUE_SQUADRON : entity.getMovementModeAsString());
             output.write("\" " + MULParser.ATTR_COMMANDER + "=\"");
             output.write(String.valueOf(entity.isCommander()));
             output.write("\" " + MULParser.ATTR_OFFBOARD + "=\"");
@@ -1595,6 +1592,18 @@ public class EntityListFile {
         if (crew.countOptions(PilotOptions.MD_ADVANTAGES) > 0) {
             output.write("\" " + MULParser.ATTR_IMPLANTS + "=\"");
             output.write(String.valueOf(crew.getOptionList("::", PilotOptions.MD_ADVANTAGES)));
+        }
+        if (crew.countOptions(PilotOptions.EI_ADVANTAGES) > 0) {
+            output.write("\" " + MULParser.ATTR_EI_IMPLANTS + "=\"");
+            output.write(String.valueOf(crew.getOptionList("::", PilotOptions.EI_ADVANTAGES)));
+        }
+        // Save EI Interface equipment mode (Off, Initiate enhanced imaging)
+        for (Mounted<?> m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                output.write("\" " + MULParser.ATTR_EI_MODE + "=\"");
+                output.write(m.curMode().getName());
+                break;
+            }
         }
         // Write prosthetic enhancement data for infantry (IO p.84)
         if (entity instanceof Infantry infantry) {

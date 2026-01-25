@@ -1409,6 +1409,11 @@ public abstract class TestEntity implements TestEntityOption {
             if (checked.contains(nextE) || (nextE instanceof AmmoType)) {
                 continue;
             }
+            // Skip EI Interface - it's retrofittable equipment (IO p.69)
+            // Its intro year should not be compared against unit intro year
+            if ((nextE instanceof MiscType) && nextE.hasFlag(MiscType.F_EI_INTERFACE)) {
+                continue;
+            }
             checked.add(nextE);
             int introDate = nextE.getIntroductionDate(getEntity().isClan());
             if (getEntity().isMixedTech()) {

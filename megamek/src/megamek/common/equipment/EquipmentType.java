@@ -41,9 +41,12 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -62,6 +65,7 @@ import megamek.common.interfaces.ITechnology;
 import megamek.common.units.Entity;
 import megamek.common.util.RoundWeight;
 import megamek.common.util.YamlEncDec;
+import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.weapons.autoCannons.HVACWeapon;
 import megamek.common.weapons.defensivePods.BPodWeapon;
 import megamek.common.weapons.defensivePods.MPodWeapon;
@@ -1150,14 +1154,279 @@ public class EquipmentType implements ITechnology {
         }
     }
 
+    public static final String YAML_VERSION = "1.0";
+    public static final String VARIABLE = "variable";
 
     /**
      * Constructs a map containing the YAML-serializable data for this equipment type.
+     * Subclasses should override this method to add type-specific data.
      *
      * @return A map containing the YAML-serializable data for this equipment type.
      */
     public Map<String, Object> getYamlData() {
-        return YamlEncDec.serialize(this);
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("version", YAML_VERSION);
+        data.put("type", getYamlTypeName());
+
+        // Basic identification
+        addBasicIdentification(data);
+
+        // Equipment statistics
+        addStatistics(data);
+
+        // Equipment modes
+        addModes(data);
+
+        // Technology advancement
+        addTechAdvancement(data);
+
+        // Flags (subclasses should override addFlags to add type-specific flags)
+        addFlags(data);
+
+        return data;
+    }
+
+    /**
+     * Returns the YAML type name for this equipment type.
+     * Subclasses should override this to return their specific type name.
+     *
+     * @return The YAML type name (e.g., "weapon", "ammo", "misc", "armor")
+     */
+    protected String getYamlTypeName() {
+        return "equipment";
+    }
+
+    /**
+     * Adds equipment flags to the YAML data map.
+     * Subclasses should override this to add type-specific flags.
+     *
+     * @param data The YAML data map to add flags to
+     */
+    protected void addFlags(Map<String, Object> data) {
+        // Base EquipmentType has no flags to add
+        // Subclasses override this to add their specific flags
+    }
+
+    /**
+     * Adds basic identification information to the YAML data map.
+     */
+    private void addBasicIdentification(Map<String, Object> data) {
+        data.put("id", internalName);
+        data.put("name", name);
+
+        YamlEncDec.addPropIfNotEmpty(data, "shortName", shortName);
+        YamlEncDec.addPropIfNotEmpty(data, "sortingName", sortingName);
+        YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", rulesRefs);
+
+        addAliases(data);
+    }
+
+    /**
+     * Adds alias names to the YAML data map, excluding duplicates.
+     */
+    private void addAliases(Map<String, Object> data) {
+        Enumeration<String> names = getNames();
+        if (names == null || !names.hasMoreElements()) {
+            return;
+        }
+
+        Set<String> uniqueAliases = new LinkedHashSet<>();
+
+        while (names.hasMoreElements()) {
+            String aliasName = names.nextElement();
+            if (aliasName != null && !aliasName.trim().isEmpty()) {
+                if (aliasName.equals(internalName) || aliasName.equals(name) || aliasName.equals(shortName)) {
+                    continue;
+                }
+                uniqueAliases.add(aliasName);
+            }
+        }
+
+        if (!uniqueAliases.isEmpty()) {
+            data.put("aliases", new ArrayList<>(uniqueAliases));
+        }
+    }
+
+    /**
+     * Adds equipment statistics to the YAML data map.
+     */
+    private void addStatistics(Map<String, Object> data) {
+        Map<String, Object> stats = new LinkedHashMap<>();
+
+        // Core statistics - use formatDouble to avoid scientific notation
+        stats.put("tonnage", isVariableTonnage() ? VARIABLE : YamlEncDec.formatDouble(tonnage));
+        stats.put("cost", isVariableCost() ? VARIABLE : YamlEncDec.formatDouble(cost));
+        stats.put("bv", isVariableBV() ? VARIABLE : YamlEncDec.formatDouble(bv));
+        stats.put("criticalSlots", isVariableCriticalSlots() ? VARIABLE : criticalSlots);
+
+        // Optional statistics - only add if not default
+        if (!hittable) {
+            stats.put("hittable", false);
+        }
+        if (spreadable) {
+            stats.put("spreadable", true);
+        }
+        if (explosive) {
+            stats.put("explosive", true);
+        }
+        if (toHitModifier != 0) {
+            stats.put("toHitModifier", toHitModifier);
+        }
+        if (tankSlots > -1) {
+            stats.put("tankSlots", tankSlots);
+        }
+        if (svSlots > -1) {
+            stats.put("svSlots", svSlots);
+        }
+        if (omniFixedOnly) {
+            stats.put("omniFixedOnly", true);
+        }
+        if (!instantModeSwitch) {
+            stats.put("instantModeSwitch", false);
+        }
+
+        data.put("stats", stats);
+    }
+
+    /**
+     * Adds equipment modes to the YAML data map.
+     */
+    private void addModes(Map<String, Object> data) {
+        if (!hasModes()) {
+            return;
+        }
+
+        List<String> modeNames = new ArrayList<>();
+        Enumeration<EquipmentMode> modeEnum = getModes();
+
+        while (modeEnum.hasMoreElements()) {
+            EquipmentMode mode = modeEnum.nextElement();
+            if (mode != null && mode.getName() != null) {
+                modeNames.add(mode.getName());
+            }
+        }
+
+        if (!modeNames.isEmpty()) {
+            data.put("modes", modeNames);
+        }
+    }
+
+    /**
+     * Adds technology advancement information to the YAML data map.
+     */
+    private void addTechAdvancement(Map<String, Object> data) {
+        if (techAdvancement == null) {
+            return;
+        }
+
+        Map<String, Object> techData = new LinkedHashMap<>();
+
+        // Basic tech information
+        techData.put("base", techAdvancement.getTechBase().toString());
+        techData.put("rating", techAdvancement.getTechRating().name());
+        techData.put("level", techAdvancement.getStaticTechLevel().toString());
+
+        // Availability by era
+        addAvailabilityData(techData);
+
+        // Advancement dates
+        addAdvancementData(techData);
+
+        // Faction information
+        addFactionData(techData);
+
+        data.put("tech", techData);
+    }
+
+    /**
+     * Adds availability information by era to the technology data.
+     */
+    private void addAvailabilityData(Map<String, Object> techData) {
+        Map<String, Object> availability = new LinkedHashMap<>();
+        for (Era era : Era.values()) {
+            AvailabilityValue availabilityValue = techAdvancement.getBaseAvailability(era);
+            availability.put(era.name().toLowerCase(), availabilityValue.name());
+        }
+        techData.put("availability", availability);
+    }
+
+    /**
+     * Adds advancement phase dates to the technology data.
+     */
+    private void addAdvancementData(Map<String, Object> techData) {
+        Map<String, Object> advancement = new LinkedHashMap<>();
+
+        Map<String, Object> advancementIS = createAdvancementPhaseMap(false);
+        Map<String, Object> advancementClan = createAdvancementPhaseMap(true);
+
+        if (!advancementIS.isEmpty()) {
+            advancement.put("is", advancementIS);
+        }
+        if (!advancementClan.isEmpty()) {
+            advancement.put("clan", advancementClan);
+        }
+
+        if (!advancement.isEmpty()) {
+            techData.put("advancement", advancement);
+        }
+    }
+
+    /**
+     * Creates advancement phase map for IS or Clan technology.
+     */
+    private Map<String, Object> createAdvancementPhaseMap(boolean isClan) {
+        Map<String, Object> advancementMap = new LinkedHashMap<>();
+
+        for (AdvancementPhase phase : AdvancementPhase.values()) {
+            Integer advancementDate = isClan ? techAdvancement.getClanAdvancement(phase)
+                  : techAdvancement.getISAdvancement(phase);
+            if (advancementDate == null || advancementDate < 0) {
+                continue;
+            }
+
+            boolean isApproximate = isClan ? techAdvancement.getClanApproximate(phase)
+                  : techAdvancement.getISApproximate(phase);
+            String advancementStr = (isApproximate ? "~" : "") + advancementDate;
+
+            advancementMap.put(phase.name().toLowerCase(), advancementStr);
+        }
+
+        return advancementMap;
+    }
+
+    /**
+     * Adds faction information to the technology data.
+     */
+    private void addFactionData(Map<String, Object> techData) {
+        Map<String, Object> factions = new LinkedHashMap<>();
+
+        addFactionList(factions, "prototype", techAdvancement.getPrototypeFactions());
+        addFactionList(factions, "production", techAdvancement.getProductionFactions());
+        addFactionList(factions, "extinction", techAdvancement.getExtinctionFactions());
+        addFactionList(factions, "reintroduction", techAdvancement.getReintroductionFactions());
+
+        if (!factions.isEmpty()) {
+            techData.put("factions", factions);
+        }
+    }
+
+    /**
+     * Adds a faction list to the factions map if not empty.
+     */
+    private void addFactionList(Map<String, Object> factions, String key, Set<Faction> factionSet) {
+        if (factionSet == null || factionSet.isEmpty()) {
+            return;
+        }
+
+        List<String> factionCodes = factionSet.stream()
+              .filter(Objects::nonNull)
+              .map(Faction::getCodeMM)
+              .filter(Objects::nonNull)
+              .collect(Collectors.toList());
+
+        if (!factionCodes.isEmpty()) {
+            factions.put(key, factionCodes);
+        }
     }
 
     public static void writeEquipmentExtendedDatabase(File f) {

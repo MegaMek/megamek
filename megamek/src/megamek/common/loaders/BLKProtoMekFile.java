@@ -146,6 +146,21 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
         t.setArmorTonnage(t.getArmorWeight());
 
         loadQuirks(t);
+
+        // ProtoMeks have EI Interface built-in per IO p.77
+        // Add it automatically so it shows in the Equipment tab
+        // ProtoMeks cannot shut down EI, so it's always "On" (mode index 1)
+        try {
+            EquipmentType eiInterface = EquipmentType.get("EIInterface");
+            if (eiInterface != null) {
+                Mounted<?> eiMount = t.addEquipment(eiInterface, ProtoMek.LOC_BODY);
+                eiMount.setMode(1); // "Initiate enhanced imaging" (always on for ProtoMeks)
+            }
+        } catch (LocationFullException e) {
+            // Should never happen for slotless equipment, but log if it does
+            throw new EntityLoadingException("Failed to add built-in EI Interface to ProtoMek", e);
+        }
+
         return t;
     }
 

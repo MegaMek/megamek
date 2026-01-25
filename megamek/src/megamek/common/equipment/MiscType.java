@@ -112,6 +112,7 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_ACTUATOR_ENHANCEMENT_SYSTEM = MiscTypeFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM;
     public static final MiscTypeFlag F_ECM = MiscTypeFlag.F_ECM;
     public static final MiscTypeFlag F_BAP = MiscTypeFlag.F_BAP;
+    public static final MiscTypeFlag F_EI_INTERFACE = MiscTypeFlag.F_EI_INTERFACE;
     public static final MiscTypeFlag F_MODULAR_ARMOR = MiscTypeFlag.F_MODULAR_ARMOR;
     public static final MiscTypeFlag F_TALON = MiscTypeFlag.F_TALON;
     public static final MiscTypeFlag F_VISUAL_CAMO = MiscTypeFlag.F_VISUAL_CAMO;
@@ -1635,6 +1636,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISSpaceMineDispenser());
         EquipmentType.addType(MiscType.createEmergencyC3M());
         EquipmentType.addType(MiscType.createNovaCEWS());
+        EquipmentType.addType(MiscType.createEIInterface());
 
         // ProtoMek Stuff
         EquipmentType.addType(MiscType.createCLProtoMyomerBooster());
@@ -5837,6 +5839,47 @@ public class MiscType extends EquipmentType {
               .setClanAdvancement(3065, DATE_NONE, DATE_NONE, 3085, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.CCY)
+              .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        return misc;
+    }
+
+    /**
+     * Creates the Enhanced Imaging (EI) Interface equipment. This is the unit-side equipment that allows a pilot with
+     * an EI Implant to use Enhanced Imaging capabilities. ProtoMeks have this built-in. See IO p.77 for rules.
+     *
+     * @return the EI Interface equipment
+     */
+    public static MiscType createEIInterface() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Enhanced Imaging (EI) Interface";
+        misc.setInternalName("EIInterface");
+        misc.addLookupName("EI Interface");
+        misc.addLookupName("Enhanced Imaging Interface");
+        misc.tonnage = 0;
+        misc.criticalSlots = 0;
+        misc.cost = 1500000;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_EI_INTERFACE,
+                F_MEK_EQUIPMENT,
+                F_BA_EQUIPMENT,
+                F_PROTOMEK_EQUIPMENT);
+        misc.bv = 0;
+        misc.rulesRefs = "69, IO";
+        // EI modes: Off disables EI completely, On enables all EI benefits including aimed shots
+        String[] modes = { "Off", "Initiate enhanced imaging" };
+        misc.setModes(modes);
+        misc.setInstantModeSwitch(false);
+        // EI Interface introduced 3040 by Clan Smoke Jaguar, per IO p.69
+        // Can be installed in any Clan-tech BattleMek or BA (no weight/space cost, but has C-Bill cost)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
+                .setClanAdvancement(3040, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false)
+              .setPrototypeFactions(Faction.CSJ)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -11754,8 +11797,39 @@ public class MiscType extends EquipmentType {
     }
 
     @Override
+    protected String getYamlTypeName() {
+        return "misc";
+    }
+
+    @Override
+    protected void addFlags(Map<String, Object> data) {
+        String[] flagStrings = getFlags().getSetFlagNamesAsArray(MiscTypeFlag.class);
+        if (flagStrings.length > 0) {
+            data.put("flags", flagStrings);
+        }
+    }
+
+    @Override
     public Map<String, Object> getYamlData() {
         Map<String, Object> data = super.getYamlData();
+        Map<String, Object> miscDetails = new java.util.LinkedHashMap<>();
+
+        if (damageDivisor != 1.0) {
+            miscDetails.put("damageDivisor", damageDivisor);
+        }
+        if (baseDamageAbsorptionRate != 0) {
+            miscDetails.put("baseDamageAbsorptionRate", baseDamageAbsorptionRate);
+        }
+        if (baseDamageCapacity != 0) {
+            miscDetails.put("baseDamageCapacity", baseDamageCapacity);
+        }
+        if (industrial) {
+            miscDetails.put("industrial", true);
+        }
+
+        if (!miscDetails.isEmpty()) {
+            data.put("misc", miscDetails);
+        }
         return data;
     }
 }

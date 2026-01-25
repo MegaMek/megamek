@@ -124,6 +124,11 @@ public final class MMConstants extends SuiteConstants {
     public static final int TSEMP_EFFECT_NONE = 0;
     public static final int TSEMP_EFFECT_INTERFERENCE = 1;
     public static final int TSEMP_EFFECT_SHUTDOWN = 2;
+
+    // EMP Mine Effect Constants (Tactical Operations: Advanced Rules)
+    public static final int EMP_EFFECT_NONE = 0;
+    public static final int EMP_EFFECT_INTERFERENCE = 1;
+    public static final int EMP_EFFECT_SHUTDOWN = 2;
     // endregion Magic Numbers That Should Be Enums
 
     public static final String CL_KEY_FILE_EXTENSION_BOARD = ".board";

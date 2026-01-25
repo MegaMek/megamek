@@ -248,6 +248,11 @@ public class ComputeAttackerToHitMods {
             toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeTsemped"));
         }
 
+        // Attacker affected by EMP mine interference
+        if (attacker.getEMPInterferenceRounds() > 0) {
+            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeEMPInterference"));
+        }
+
         // Special Equipment that that attacker possesses
 
         // Attacker has an AES system

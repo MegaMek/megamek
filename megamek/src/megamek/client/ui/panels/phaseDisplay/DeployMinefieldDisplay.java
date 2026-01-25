@@ -48,19 +48,20 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
+import megamek.client.ui.dialogs.phaseDisplay.EMPMineSettingDialog;
 import megamek.client.ui.dialogs.phaseDisplay.MineDensityDialog;
 import megamek.client.ui.dialogs.phaseDisplay.SeaMineDepthDialog;
 import megamek.client.ui.dialogs.phaseDisplay.VibrabombSettingDialog;
 import megamek.client.ui.widget.MegaMekButton;
-import megamek.common.board.Coords;
-import megamek.common.game.Game;
 import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
-import megamek.common.Player;
-import megamek.common.units.Terrains;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.game.Game;
+import megamek.common.units.Terrains;
 
 public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     @Serial
@@ -79,12 +80,13 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         DEPLOY_MINE_VIBRA("deployMineVibra"),
         DEPLOY_MINE_ACTIVE("deployMineActive"),
         DEPLOY_MINE_INFERNO("deployMineInferno"),
+        DEPLOY_MINE_EMP("deployMineEMP"),
         DEPLOY_CARRYABLE("deployCarriable"),
         REMOVE_MINES("removeMines");
 
         private static final DeployMinefieldCommand[] actualCommands =
               { DEPLOY_MINE_CONV, DEPLOY_MINE_COM, DEPLOY_MINE_VIBRA, DEPLOY_MINE_ACTIVE,
-                DEPLOY_MINE_INFERNO, DEPLOY_CARRYABLE, REMOVE_MINES };
+                DEPLOY_MINE_INFERNO, DEPLOY_MINE_EMP, DEPLOY_CARRYABLE, REMOVE_MINES };
 
         /**
          * Priority that determines this buttons order
@@ -168,6 +170,10 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         return currentCommand.equals(DeployMinefieldCommand.DEPLOY_MINE_VIBRA);
     }
 
+    private boolean deployingEMPMinefields() {
+        return currentCommand.equals(DeployMinefieldCommand.DEPLOY_MINE_EMP);
+    }
+
     private Player p;
     private final Vector<Minefield> deployedMinefields = new Vector<>();
 
@@ -226,6 +232,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         setVibrabombEnabled(p.getNbrMFVibra());
         setActiveEnabled(p.getNbrMFActive());
         setInfernoEnabled(p.getNbrMFInferno());
+        setEMPEnabled(p.getNbrMFEMP());
         setCarryableEnabled(p.getGroundObjectsToPlace().size());
         setRemoveMineEnabled(true);
         butDone.setEnabled(true);
@@ -251,6 +258,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         setVibrabombEnabled(0);
         setActiveEnabled(0);
         setInfernoEnabled(0);
+        setEMPEnabled(0);
         setCarryableEnabled(0);
         setRemoveMineEnabled(false);
 
@@ -294,6 +302,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                         p.setNbrMFActive(p.getNbrMFActive() + 1);
                     } else if (mf.getType() == Minefield.TYPE_INFERNO) {
                         p.setNbrMFInferno(p.getNbrMFInferno() + 1);
+                    } else if (mf.getType() == Minefield.TYPE_EMP) {
+                        p.setNbrMFEMP(p.getNbrMFEMP() + 1);
                     }
                 }
             }
@@ -342,7 +352,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                       || (deployingCommandMinefields() && (mf.getType() == Minefield.TYPE_COMMAND_DETONATED))
                       || (deployingVibrabombMinefields() && (mf.getType() == Minefield.TYPE_VIBRABOMB))
                       || (deployingActiveMinefields() && (mf.getType() == Minefield.TYPE_ACTIVE))
-                      || (deployingInfernoMinefields() && (mf.getType() == Minefield.TYPE_INFERNO))) {
+                      || (deployingInfernoMinefields() && (mf.getType() == Minefield.TYPE_INFERNO))
+                      || (deployingEMPMinefields() && (mf.getType() == Minefield.TYPE_EMP))) {
                     clientgui.doAlertDialog(Messages.getString("DeployMinefieldDisplay.IllegalPlacement"),
                           Messages.getString("DeployMinefieldDisplay.DuplicateMinefield"));
                     return;
@@ -436,6 +447,27 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                         currentCommand = DeployMinefieldCommand.COMMAND_NONE;
                     }
                 }
+            } else if (deployingEMPMinefields()) {
+                // EMP mines cannot be placed in water
+                if (sea) {
+                    clientgui.doAlertDialog(Messages.getString("DeployMinefieldDisplay.IllegalPlacement"),
+                          Messages.getString("DeployMinefieldDisplay.WaterPlacement"));
+                    return;
+                }
+                // Get weight threshold setting from dialog
+                EMPMineSettingDialog esd = new EMPMineSettingDialog(clientgui.getFrame());
+                esd.setVisible(true);
+
+                if (esd.getSetting() > 0) {
+                    // Fixed density of 5 since EMP mines are one-use
+                    mf = Minefield.createMinefield(coords, p.getId(),
+                          Minefield.TYPE_EMP, 5, esd.getSetting());
+                    p.setNbrMFEMP(p.getNbrMFEMP() - 1);
+
+                    if (p.getNbrMFEMP() <= 0) {
+                        currentCommand = DeployMinefieldCommand.COMMAND_NONE;
+                    }
+                }
             } else {
                 return;
             }
@@ -452,6 +484,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         setVibrabombEnabled(p.getNbrMFVibra());
         setActiveEnabled(p.getNbrMFActive());
         setInfernoEnabled(p.getNbrMFInferno());
+        setEMPEnabled(p.getNbrMFEMP());
         setCarryableEnabled(p.getGroundObjectsToPlace().size());
     }
 
@@ -535,6 +568,31 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void ready() {
+        // Check if player has undeployed mines and warn them
+        int undeployedMines = p.getNbrMFConventional() + p.getNbrMFCommand() + p.getNbrMFVibra()
+              + p.getNbrMFActive() + p.getNbrMFInferno() + p.getNbrMFEMP();
+        int undeployedCarryables = p.getGroundObjectsToPlace().size();
+
+        if ((undeployedMines > 0) || (undeployedCarryables > 0)) {
+            String message;
+            if ((undeployedMines > 0) && (undeployedCarryables > 0)) {
+                message = Messages.getString("DeployMinefieldDisplay.undeployedBoth",
+                      undeployedMines, undeployedCarryables);
+            } else if (undeployedMines > 0) {
+                message = Messages.getString("DeployMinefieldDisplay.undeployedMines", undeployedMines);
+            } else {
+                message = Messages.getString("DeployMinefieldDisplay.undeployedCarryables", undeployedCarryables);
+            }
+
+            if (JOptionPane.showConfirmDialog(clientgui.getFrame(),
+                  message,
+                  Messages.getString("DeployMinefieldDisplay.undeployedTitle"),
+                  JOptionPane.YES_NO_OPTION,
+                  JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION) {
+                return;
+            }
+        }
+
         endMyTurn();
         clientgui.getClient().sendDeployGroundObjects(clientgui.getClient().getGame().getGroundObjects());
         clientgui.getClient().sendDeployMinefields(deployedMinefields);
@@ -569,6 +627,12 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         buttons.get(DeployMinefieldCommand.DEPLOY_MINE_INFERNO).setText(Messages.getString(
               "DeployMinefieldDisplay." + DeployMinefieldCommand.DEPLOY_MINE_INFERNO.getCmd(), nbr));
         buttons.get(DeployMinefieldCommand.DEPLOY_MINE_INFERNO).setEnabled(nbr > 0);
+    }
+
+    private void setEMPEnabled(int nbr) {
+        buttons.get(DeployMinefieldCommand.DEPLOY_MINE_EMP).setText(Messages.getString(
+              "DeployMinefieldDisplay." + DeployMinefieldCommand.DEPLOY_MINE_EMP.getCmd(), nbr));
+        buttons.get(DeployMinefieldCommand.DEPLOY_MINE_EMP).setEnabled(nbr > 0);
     }
 
     private void setCarryableEnabled(int nbr) {

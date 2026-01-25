@@ -72,6 +72,7 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
+import megamek.common.TemporaryECMField;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -1031,6 +1032,24 @@ public class Client extends AbstractClient {
                     if (cloud != null) {
                         game.addSmokeCloud(cloud);
                     }
+
+                    break;
+                case ADD_TEMPORARY_ECM_FIELD:
+                    TemporaryECMField ecmField = packet.getTemporaryECMField(0);
+
+                    if (ecmField != null) {
+                        game.addTemporaryECMField(ecmField);
+                        // Trigger ECM list update in BoardView
+                        game.processGameEvent(new GameBoardChangeEvent(this));
+                    }
+
+                    break;
+                case SYNC_TEMPORARY_ECM_FIELDS:
+                    @SuppressWarnings("unchecked")
+                    List<TemporaryECMField> ecmFields = (List<TemporaryECMField>) packet.getObject(0);
+                    game.setTemporaryECMFields(ecmFields);
+                    // Trigger ECM list update in BoardView
+                    game.processGameEvent(new GameBoardChangeEvent(this));
 
                     break;
                 case CHANGE_HEX:

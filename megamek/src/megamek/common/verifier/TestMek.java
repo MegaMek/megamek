@@ -1091,6 +1091,11 @@ public class TestMek extends TestEntity {
                 buff.append("Interface cockpits may not use component armoring.\n");
                 illegal = true;
             }
+            // IO p.110: Interface cockpit cannot employ the Cramped Cockpit Design Quirk
+            if (mek.hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
+                buff.append("Interface cockpits may not use the Cramped Cockpit quirk.\n");
+                illegal = true;
+            }
         }
 
         if (mek.isIndustrial()) {

@@ -53,7 +53,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.UnitType;
-import megamek.common.util.RandomArmyCreator;
 import megamek.logging.MMLogger;
 
 import javax.swing.*;
@@ -107,15 +106,9 @@ public abstract class AbstractRandomArmyDialog extends JDialog implements Action
     private ForceGenerationOptionsPanel m_pRATGenOptions;
     private final JPanel m_pUnitTypeOptions = new JPanel(new CardLayout());
     protected ForceGenerationOptionsPanel m_pFormationOptions;
-    private final JPanel m_pParameters = new JPanel();
     private final JPanel m_pPreview = new JPanel();
-    private final JPanel m_pAdvSearch = new JPanel();
     private final JButton m_bAdvSearch = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearch"));
     private final JButton m_bAdvSearchClear = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearchClear"));
-    private final JLabel m_lMekCount = new JLabel();
-    private final JLabel m_lVehicleCount = new JLabel();
-    private final JLabel m_lBattleArmorCount = new JLabel();
-    private final JLabel m_lInfantryCount = new JLabel();
     private final JButton m_bGenerate = new JButton(Messages.getString("RandomArmyDialog.Generate"));
     private final JButton m_bAddToForce = new JButton(Messages.getString("RandomArmyDialog.AddToForce"));
 
@@ -144,27 +137,10 @@ public abstract class AbstractRandomArmyDialog extends JDialog implements Action
     protected UnitTableModel unitsModel;
     private RATTableModel ratModel;
 
-    private final JLabel m_labBV = new JLabel(Messages.getString("RandomArmyDialog.BV"));
-    private final JLabel m_labYear = new JLabel(Messages.getString("RandomArmyDialog.Year"));
-    private final JLabel m_labMeks = new JLabel(Messages.getString("RandomArmyDialog.Meks"));
-    private final JLabel m_labVees = new JLabel(Messages.getString("RandomArmyDialog.Vees"));
-    private final JLabel m_labBA = new JLabel(Messages.getString("RandomArmyDialog.BA"));
-    private final JLabel m_labInfantry = new JLabel(Messages.getString("RandomArmyDialog.Infantry"));
-    private final JLabel m_labTech = new JLabel(Messages.getString("RandomArmyDialog.Tech"));
     private final JLabel m_labUnits = new JLabel(Messages.getString("RandomArmyDialog.Unit"));
     private final JLabel m_ratStatus;
 
-    private final JTextField m_tBVMin = new JTextField(6);
-    private final JTextField m_tBVMax = new JTextField(6);
-    private final JTextField m_tMinYear = new JTextField(4);
-    private final JTextField m_tMaxYear = new JTextField(4);
-    private final JTextField m_tMeks = new JTextField(3);
-    private final JTextField m_tVees = new JTextField(3);
-    private final JTextField m_tBA = new JTextField(3);
-    private final JTextField m_tInfantry = new JTextField(3);
     private final JTextField m_tUnits = new JTextField(3);
-    private final JCheckBox m_chkPad = new JCheckBox(Messages.getString("RandomArmyDialog.Pad"));
-    private final JCheckBox m_chkCanon = new JCheckBox(Messages.getString("RandomArmyDialog.Canon"));
 
     protected final RandomUnitGenerator rug;
     private UnitTable generatedRAT;
@@ -197,18 +173,20 @@ public abstract class AbstractRandomArmyDialog extends JDialog implements Action
             m_ratStatus = new JLabel(Messages.getString("RandomArmyDialog.ratStatusLoading"));
         }
 
-        createBVPanel();
         createRATPanel();
         createRATGenPanel();
         createFormationPanel();
         createPreviewPanel();
         m_pForceGen = new ForceGeneratorViewUi(parentFrame, gameOptions);
 
+        JPanel m_pParameters = new JPanel();
         tabbedPane.addTab(Messages.getString("RandomArmyDialog.BVtab"), new JScrollPane(m_pParameters));
         tabbedPane.addTab(Messages.getString("RandomArmyDialog.RATtab"), m_pRAT);
         tabbedPane.addTab(Messages.getString("RandomArmyDialog.RATGentab"), m_pRATGen);
         tabbedPane.addTab(Messages.getString("RandomArmyDialog.Formationtab"), m_pFormations);
         tabbedPane.addTab(Messages.getString("RandomArmyDialog.Forcetab"), m_pForceGen.getLeftPanel());
+        tabbedPane.addTab(Messages.getString("RandomArmyDialog.BVtab"), new RandomArmyBvTab(parentFrame, gameOptions));
+        tabbedPane.addTab("Simple", new SimpleRandomLancePanel(this));
         tabbedPane.addChangeListener(ev -> {
             if (tabbedPane.getSelectedIndex() == TAB_FORCE_GENERATOR) {
                 m_lRightCards.show(m_pRightPane, CARD_FORCE_TREE);
@@ -257,120 +235,6 @@ public abstract class AbstractRandomArmyDialog extends JDialog implements Action
      * @return A button panel for the dialog
      */
     protected abstract JComponent createButtonsPanel();
-
-    private void createBVPanel() {
-        asd = new AdvancedSearchDialog(parentFrame, gameOptions.intOption(OptionsConstants.ALLOWED_YEAR));
-
-        // set defaults
-        m_tMeks.setText(GUIP.getRATNumMeks());
-        m_tBVMin.setText(GUIP.getRATBVMin());
-        m_tBVMax.setText(GUIP.getRATBVMax());
-        m_tVees.setText(GUIP.getRATNumVees());
-        m_tBA.setText(GUIP.getRATNumBA());
-        m_tMinYear.setText(GUIP.getRATYearMin());
-        m_tMaxYear.setText(GUIP.getRATYearMax());
-        m_tInfantry.setText(GUIP.getRATNumInf());
-        m_chkPad.setSelected(GUIP.getRATPadBV());
-        m_chkCanon.setSelected(gameOptions.booleanOption(OptionsConstants.ALLOWED_CANON_ONLY));
-        updateTechChoice();
-
-        // construct the Adv Search Panel
-        m_pAdvSearch.setLayout(new FlowLayout(FlowLayout.LEADING));
-        m_pAdvSearch.add(m_bAdvSearch);
-        m_pAdvSearch.add(m_bAdvSearchClear);
-        m_bAdvSearchClear.setEnabled(false);
-        m_bAdvSearch.addActionListener(this);
-        m_bAdvSearchClear.addActionListener(this);
-
-        // construct the parameters panel
-        GridBagLayout layout = new GridBagLayout();
-        GridBagConstraints constraints = new GridBagConstraints();
-        m_pParameters.setLayout(layout);
-        constraints.insets = new Insets(5, 5, 0, 0);
-        constraints.weightx = 0.0;
-        constraints.weighty = 0.0;
-        constraints.anchor = GridBagConstraints.WEST;
-        layout.setConstraints(m_labTech, constraints);
-        m_pParameters.add(m_labTech);
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.weightx = 1.0;
-        layout.setConstraints(m_chType, constraints);
-        m_pParameters.add(m_chType);
-        constraints.gridwidth = 1;
-        constraints.weightx = 0.0;
-        layout.setConstraints(m_labBV, constraints);
-        m_pParameters.add(m_labBV);
-        layout.setConstraints(m_tBVMin, constraints);
-        m_pParameters.add(m_tBVMin);
-        JLabel dash = new JLabel("-");
-        layout.setConstraints(dash, constraints);
-        m_pParameters.add(dash);
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.weightx = 1.0;
-        layout.setConstraints(m_tBVMax, constraints);
-        m_pParameters.add(m_tBVMax);
-        constraints.gridwidth = 1;
-        constraints.weightx = 0.0;
-        layout.setConstraints(m_labMeks, constraints);
-        m_pParameters.add(m_labMeks);
-        layout.setConstraints(m_tMeks, constraints);
-        m_pParameters.add(m_tMeks);
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.weightx = 1.0;
-        layout.setConstraints(m_lMekCount, constraints);
-        m_pParameters.add(m_lMekCount);
-        constraints.gridwidth = 1;
-        constraints.weightx = 0.0;
-        layout.setConstraints(m_labVees, constraints);
-        m_pParameters.add(m_labVees);
-        layout.setConstraints(m_tVees, constraints);
-        m_pParameters.add(m_tVees);
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.weightx = 1.0;
-        layout.setConstraints(m_lVehicleCount, constraints);
-        m_pParameters.add(m_lVehicleCount);
-        constraints.gridwidth = 1;
-        constraints.weightx = 0.0;
-        layout.setConstraints(m_labBA, constraints);
-        m_pParameters.add(m_labBA);
-        layout.setConstraints(m_tBA, constraints);
-        m_pParameters.add(m_tBA);
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.weightx = 1.0;
-        layout.setConstraints(m_lBattleArmorCount, constraints);
-        m_pParameters.add(m_lBattleArmorCount);
-        constraints.gridwidth = 1;
-        constraints.weightx = 0.0;
-        layout.setConstraints(m_labInfantry, constraints);
-        m_pParameters.add(m_labInfantry);
-        layout.setConstraints(m_tInfantry, constraints);
-        m_pParameters.add(m_tInfantry);
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.weightx = 1.0;
-        layout.setConstraints(m_lInfantryCount, constraints);
-        m_pParameters.add(m_lInfantryCount);
-        constraints.gridwidth = 1;
-        constraints.weightx = 0.0;
-        layout.setConstraints(m_labYear, constraints);
-        m_pParameters.add(m_labYear);
-        layout.setConstraints(m_tMinYear, constraints);
-        m_pParameters.add(m_tMinYear);
-        dash = new JLabel("-");
-        layout.setConstraints(dash, constraints);
-        m_pParameters.add(dash);
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.weightx = 1.0;
-        layout.setConstraints(m_tMaxYear, constraints);
-        m_pParameters.add(m_tMaxYear);
-        layout.setConstraints(m_chkPad, constraints);
-        m_pParameters.add(m_chkPad);
-        layout.setConstraints(m_chkCanon, constraints);
-        m_pParameters.add(m_chkCanon);
-        constraints.anchor = GridBagConstraints.NORTHWEST;
-        constraints.weighty = 1.0;
-        layout.setConstraints(m_pAdvSearch, constraints);
-        m_pParameters.add(m_pAdvSearch);
-    }
 
     private void createRATPanel() {
         // construct the RAT panel
@@ -666,98 +530,45 @@ public abstract class AbstractRandomArmyDialog extends JDialog implements Action
         } else if (actionEvent.getSource().equals(m_bRoll)) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             try {
-                if (tabbedPane.getSelectedIndex() == TAB_RAT) {
-                    int units = Integer.parseInt(m_tUnits.getText());
-                    if (units > 0) {
-                        unitsModel.setData(RandomUnitGenerator.getInstance().generate(units));
-                    }
-                } else if (tabbedPane.getSelectedIndex() == TAB_RAT_GENERATOR) {
-                    int units = m_pRATGenOptions.getNumUnits();
-                    if (units > 0 && generatedRAT != null && generatedRAT.getNumEntries() > 0) {
-                        unitsModel.setData(generatedRAT.generateUnits(units));
-                    }
-                    // generateUnits removes salvage entries that have no units meeting criteria
-                    ratModel.refreshData();
-                } else if (tabbedPane.getSelectedIndex() == TAB_FORMATION_BUILDER) {
-                    ArrayList<MekSummary> unitList = new ArrayList<>();
-                    FactionRecord fRec = m_pFormationOptions.getFaction();
-                    FormationType ft = FormationType.getFormationType(m_pFormationOptions.getStringOption(
-                          "formationType"));
-                    List<Parameters> params = new ArrayList<>();
-                    params.add(new Parameters(fRec,
-                          m_pFormationOptions.getUnitType(),
-                          m_pFormationOptions.getYear(),
-                          m_pFormationOptions.getRating(),
-                          null,
-                          ModelRecord.NETWORK_NONE,
-                          EnumSet.noneOf(EntityMovementMode.class),
-                          EnumSet.noneOf(MissionRole.class),
-                          0,
-                          fRec));
-                    List<Integer> numUnits = new ArrayList<>();
-                    numUnits.add(m_pFormationOptions.getNumUnits());
-
-                    if (m_pFormationOptions.getIntegerOption("numOtherUnits") > 0) {
-                        if (m_pFormationOptions.getIntegerOption("otherUnitType") >= 0) {
-                            params.add(new Parameters(fRec,
-                                  m_pFormationOptions.getIntegerOption("otherUnitType"),
-                                  m_pFormationOptions.getYear(),
-                                  m_pFormationOptions.getRating(),
-                                  null,
-                                  ModelRecord.NETWORK_NONE,
-                                  EnumSet.noneOf(EntityMovementMode.class),
-                                  EnumSet.noneOf(MissionRole.class),
-                                  0,
-                                  fRec));
-                            numUnits.add(m_pFormationOptions.getIntegerOption("numOtherUnits"));
-                        } else if (m_pFormationOptions.getBooleanOption("mekBA")) {
-                            // Make sure at least a number of units equals to the number of BA points/squads
-                            // are omni
-                            numUnits.set(0,
-                                  Math.min(m_pFormationOptions.getIntegerOption("numOtherUnits"),
-                                        m_pFormationOptions.getNumUnits()));
-                            if (m_pFormationOptions.getNumUnits() >
-                                  m_pFormationOptions.getIntegerOption("numOtherUnits")) {
-                                params.add(params.get(0).copy());
-                                numUnits.add(m_pFormationOptions.getNumUnits() -
-                                      m_pFormationOptions.getIntegerOption("numOtherUnits"));
-                            }
-                            params.get(0).getRoles().add(MissionRole.MECHANIZED_BA);
-                            // BA do not count for formation rules; add as a separate formation
+                if (tabbedPane.getSelectedComponent() instanceof RandomArmyTab armyGeneratorTab) {
+                    unitsModel.setData(armyGeneratorTab.generateMekSummaries());
+                    m_lUnitsBVTotal.setText(msg_bvTotal + calculateTotal(m_lUnits, 1));
+                } else {
+                    if (tabbedPane.getSelectedIndex() == TAB_RAT) {
+                        int units = Integer.parseInt(m_tUnits.getText());
+                        if (units > 0) {
+                            unitsModel.setData(RandomUnitGenerator.getInstance().generate(units));
                         }
-                    }
+                    } else if (tabbedPane.getSelectedIndex() == TAB_RAT_GENERATOR) {
+                        int units = m_pRATGenOptions.getNumUnits();
+                        if (units > 0 && generatedRAT != null && generatedRAT.getNumEntries() > 0) {
+                            unitsModel.setData(generatedRAT.generateUnits(units));
+                        }
+                        // generateUnits removes salvage entries that have no units meeting criteria
+                        ratModel.refreshData();
+                    } else if (tabbedPane.getSelectedIndex() == TAB_FORMATION_BUILDER) {
+                        ArrayList<MekSummary> unitList = new ArrayList<>();
+                        FactionRecord fRec = m_pFormationOptions.getFaction();
+                        FormationType ft = FormationType.getFormationType(m_pFormationOptions.getStringOption(
+                              "formationType"));
+                        List<Parameters> params = new ArrayList<>();
+                        params.add(new Parameters(fRec,
+                              m_pFormationOptions.getUnitType(),
+                              m_pFormationOptions.getYear(),
+                              m_pFormationOptions.getRating(),
+                              null,
+                              ModelRecord.NETWORK_NONE,
+                              EnumSet.noneOf(EntityMovementMode.class),
+                              EnumSet.noneOf(MissionRole.class),
+                              0,
+                              fRec));
+                        List<Integer> numUnits = new ArrayList<>();
+                        numUnits.add(m_pFormationOptions.getNumUnits());
 
-                    if (ft != null) {
-                        unitList.addAll(ft.generateFormation(params,
-                              numUnits,
-                              m_pFormationOptions.getIntegerOption("network"),
-                              false));
-                        if (!unitList.isEmpty() && (m_pFormationOptions.getIntegerOption("numOtherUnits") > 0)) {
-                            if (m_pFormationOptions.getBooleanOption("mekBA")) {
-                                // Try to generate the BA portion using the same formation type as
-                                // the parent, otherwise generate randomly.
-                                Parameters p = new Parameters(fRec,
-                                      UnitType.BATTLE_ARMOR,
-                                      m_pFormationOptions.getYear(),
-                                      m_pFormationOptions.getRating(),
-                                      null,
-                                      ModelRecord.NETWORK_NONE,
-                                      EnumSet.noneOf(EntityMovementMode.class),
-                                      EnumSet.of(MissionRole.MECHANIZED_BA),
-                                      0,
-                                      fRec);
-                                List<MekSummary> ba = ft.generateFormation(p,
-                                      m_pFormationOptions.getIntegerOption("numOtherUnits"),
-                                      ModelRecord.NETWORK_NONE,
-                                      true);
-                                if (ba.isEmpty()) {
-                                    ba = UnitTable.findTable(p)
-                                          .generateUnits(m_pFormationOptions.getIntegerOption("numOtherUnits"));
-                                }
-                                unitList.addAll(ba);
-                            } else if (m_pFormationOptions.getBooleanOption("airLance")) {
-                                UnitTable t = UnitTable.findTable(fRec,
-                                      UnitType.AEROSPACE_FIGHTER,
+                        if (m_pFormationOptions.getIntegerOption("numOtherUnits") > 0) {
+                            if (m_pFormationOptions.getIntegerOption("otherUnitType") >= 0) {
+                                params.add(new Parameters(fRec,
+                                      m_pFormationOptions.getIntegerOption("otherUnitType"),
                                       m_pFormationOptions.getYear(),
                                       m_pFormationOptions.getRating(),
                                       null,
@@ -765,53 +576,83 @@ public abstract class AbstractRandomArmyDialog extends JDialog implements Action
                                       EnumSet.noneOf(EntityMovementMode.class),
                                       EnumSet.noneOf(MissionRole.class),
                                       0,
-                                      fRec);
-                                MekSummary unit = t.generateUnit();
-                                if (unit != null) {
-                                    unitList.add(unit);
-                                    MekSummary unit2 = t.generateUnit(ms -> ms.getChassis().equals(unit.getChassis()));
-                                    unitList.add(Objects.requireNonNullElse(unit2, unit));
+                                      fRec));
+                                numUnits.add(m_pFormationOptions.getIntegerOption("numOtherUnits"));
+                            } else if (m_pFormationOptions.getBooleanOption("mekBA")) {
+                                // Make sure at least a number of units equals to the number of BA points/squads
+                                // are omni
+                                numUnits.set(0,
+                                      Math.min(m_pFormationOptions.getIntegerOption("numOtherUnits"),
+                                            m_pFormationOptions.getNumUnits()));
+                                if (m_pFormationOptions.getNumUnits() >
+                                      m_pFormationOptions.getIntegerOption("numOtherUnits")) {
+                                    params.add(params.get(0).copy());
+                                    numUnits.add(m_pFormationOptions.getNumUnits() -
+                                          m_pFormationOptions.getIntegerOption("numOtherUnits"));
                                 }
+                                params.get(0).getRoles().add(MissionRole.MECHANIZED_BA);
+                                // BA do not count for formation rules; add as a separate formation
                             }
                         }
-                    } else {
-                        LOGGER.error("Could not find formation type {}",
-                              m_pFormationOptions.getStringOption("formationType"));
-                    }
-                    unitsModel.setData(unitList);
-                    m_pFormationOptions.updateGeneratedUnits(unitList);
-                } else {
-                    StringBuilder sbMek = new StringBuilder();
-                    StringBuilder sbVehicle = new StringBuilder();
-                    StringBuilder sbBattleArmor = new StringBuilder();
-                    StringBuilder sbInfantry = new StringBuilder();
-                    RandomArmyCreator.Parameters parameters = new RandomArmyCreator.Parameters();
-                    parameters.advancedSearchFilter = searchFilter;
-                    parameters.asPanel = asd.getASAdvancedSearch();
-                    parameters.meks = Integer.parseInt(m_tMeks.getText());
-                    parameters.tanks = Integer.parseInt(m_tVees.getText());
-                    parameters.ba = Integer.parseInt(m_tBA.getText());
-                    parameters.infantry = Integer.parseInt(m_tInfantry.getText());
-                    parameters.canon = m_chkCanon.isSelected();
-                    parameters.maxBV = Integer.parseInt(m_tBVMax.getText());
-                    parameters.minBV = Integer.parseInt(m_tBVMin.getText());
-                    parameters.padWithInfantry = m_chkPad.isSelected();
-                    parameters.tech = m_chType.getSelectedIndex();
-                    parameters.minYear = Integer.parseInt(m_tMinYear.getText());
-                    parameters.maxYear = Integer.parseInt(m_tMaxYear.getText());
-                    unitsModel.setData(RandomArmyCreator.generateArmy(parameters,
-                          sbMek,
-                          sbVehicle,
-                          sbBattleArmor,
-                          sbInfantry));
-                    String msg_outOf = Messages.getString("RandomArmyDialog.OutOf");
-                    m_lMekCount.setText(String.format(msg_outOf + sbMek));
-                    m_lVehicleCount.setText(String.format(msg_outOf + sbVehicle));
-                    m_lBattleArmorCount.setText(String.format(msg_outOf + sbBattleArmor));
-                    m_lInfantryCount.setText(String.format(msg_outOf + sbInfantry));
-                }
 
-                m_lUnitsBVTotal.setText(msg_bvTotal + calculateTotal(m_lUnits, 1));
+                        if (ft != null) {
+                            unitList.addAll(ft.generateFormation(params,
+                                  numUnits,
+                                  m_pFormationOptions.getIntegerOption("network"),
+                                  false));
+                            if (!unitList.isEmpty() && (m_pFormationOptions.getIntegerOption("numOtherUnits") > 0)) {
+                                if (m_pFormationOptions.getBooleanOption("mekBA")) {
+                                    // Try to generate the BA portion using the same formation type as
+                                    // the parent, otherwise generate randomly.
+                                    Parameters p = new Parameters(fRec,
+                                          UnitType.BATTLE_ARMOR,
+                                          m_pFormationOptions.getYear(),
+                                          m_pFormationOptions.getRating(),
+                                          null,
+                                          ModelRecord.NETWORK_NONE,
+                                          EnumSet.noneOf(EntityMovementMode.class),
+                                          EnumSet.of(MissionRole.MECHANIZED_BA),
+                                          0,
+                                          fRec);
+                                    List<MekSummary> ba = ft.generateFormation(p,
+                                          m_pFormationOptions.getIntegerOption("numOtherUnits"),
+                                          ModelRecord.NETWORK_NONE,
+                                          true);
+                                    if (ba.isEmpty()) {
+                                        ba = UnitTable.findTable(p)
+                                              .generateUnits(m_pFormationOptions.getIntegerOption("numOtherUnits"));
+                                    }
+                                    unitList.addAll(ba);
+                                } else if (m_pFormationOptions.getBooleanOption("airLance")) {
+                                    UnitTable t = UnitTable.findTable(fRec,
+                                          UnitType.AEROSPACE_FIGHTER,
+                                          m_pFormationOptions.getYear(),
+                                          m_pFormationOptions.getRating(),
+                                          null,
+                                          ModelRecord.NETWORK_NONE,
+                                          EnumSet.noneOf(EntityMovementMode.class),
+                                          EnumSet.noneOf(MissionRole.class),
+                                          0,
+                                          fRec);
+                                    MekSummary unit = t.generateUnit();
+                                    if (unit != null) {
+                                        unitList.add(unit);
+                                        MekSummary unit2 = t.generateUnit(ms -> ms.getChassis()
+                                              .equals(unit.getChassis()));
+                                        unitList.add(Objects.requireNonNullElse(unit2, unit));
+                                    }
+                                }
+                            }
+                        } else {
+                            LOGGER.error("Could not find formation type {}",
+                                  m_pFormationOptions.getStringOption("formationType"));
+                        }
+                        unitsModel.setData(unitList);
+                        m_pFormationOptions.updateGeneratedUnits(unitList);
+                    }
+
+                    m_lUnitsBVTotal.setText(msg_bvTotal + calculateTotal(m_lUnits, 1));
+                }
             } catch (NumberFormatException ignored) {
 
             } finally {

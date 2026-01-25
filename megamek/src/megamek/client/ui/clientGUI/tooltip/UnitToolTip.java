@@ -1172,7 +1172,11 @@ public final class UnitToolTip {
                             }
                         }
 
-                        wpInfos.put(curWp.getName() + msg_ammo, currAmmo);
+                        // Only add ammo entry if there's ammunition to display
+                        // Avoids "NULL Weapon Name!" for Static Ammo Feed weapons with incompatible ammo types
+                        if (!currAmmo.ammunition.isEmpty()) {
+                            wpInfos.put(curWp.getName() + msg_ammo, currAmmo);
+                        }
                     }
                 }
             }

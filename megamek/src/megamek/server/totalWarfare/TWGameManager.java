@@ -7968,24 +7968,18 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Checks to see if an entity sets off any EMP mines.
      * <p>
-     * EMP mines trigger when a unit enters the same hex and meets the weight threshold. Per TO:AR, EMP mines may make
-     * only one attack per scenario (one-use).
-     * </p>
-     */
-    private boolean checkEMPMines(Entity entity, Coords coords, boolean displaced, Vector<Report> vMineReport) {
-        return checkEMPMines(entity, coords, displaced, null, null, vMineReport);
-    }
-
-    /**
-     * Checks to see if an entity sets off any EMP mines.
-     * <p>
      * EMP mines trigger when a unit enters the same hex and meets the weight threshold. Unlike Vibrobombs, EMP mines
      * have no distance-based detection - only same-hex triggering. Per TO:AR, EMP mines may make only one attack per
      * scenario (one-use).
      * </p>
+     *
+     * @param entity       The entity to check for triggering EMP mines
+     * @param coords       The coordinates to check for EMP mines
+     * @param vMineReport  Vector to collect reports from mine detonation
+     *
+     * @return true if any EMP mines were triggered
      */
-    boolean checkEMPMines(Entity entity, Coords coords, boolean displaced, Coords lastPos, Coords curPos,
-          Vector<Report> vMineReport) {
+    boolean checkEMPMines(Entity entity, Coords coords, Vector<Report> vMineReport) {
         boolean boom = false;
 
         Vector<Minefield> fieldsToRemove = new Vector<>();
@@ -9461,7 +9455,7 @@ public class TWGameManager extends AbstractGameManager {
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity, Coords src, Coords dest, int elev) {
         Vector<Report> vPhaseReport = new Vector<>();
         boolean boom = checkVibraBombs(entity, dest, true, vPhaseReport);
-        boom = checkEMPMines(entity, dest, true, vPhaseReport) || boom;
+        boom = checkEMPMines(entity, dest, vPhaseReport) || boom;
         if (game.containsMinefield(dest)) {
             boom = enterMinefield(entity, dest, elev, true, vPhaseReport) || boom;
         }

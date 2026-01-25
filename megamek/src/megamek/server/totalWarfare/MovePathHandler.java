@@ -2903,8 +2903,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                           gameManager.getMainPhaseReport());
                     // Collect EMP reports separately for popup, then add to main report
                     Vector<Report> empReports = new Vector<>();
-                    boolean empBoom = gameManager.checkEMPMines(entity, curPos, false, lastPos, curPos,
-                          empReports);
+                    boolean empBoom = gameManager.checkEMPMines(entity, curPos, empReports);
                     // Send popup FIRST with only EMP reports, before adding to mainPhaseReport
                     if (empBoom && !empReports.isEmpty()) {
                         gameManager.send(entity.getOwner().getId(),

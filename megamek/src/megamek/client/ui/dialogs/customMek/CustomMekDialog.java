@@ -1122,17 +1122,21 @@ public class CustomMekDialog extends AbstractButtonDialog
             }
         }
 
-        // DNI implant options (VDNI, BVDNI, Proto DNI) auto-check the DNI checkbox in Equipment tab
+        // DNI implant options (VDNI, BVDNI, Proto DNI) update entity crew options directly
+        // This ensures Equipment tab sees correct implant state when checking hasDNIImplant()
         // The equipment is not auto-added - user must confirm via the checkbox (IO p.83)
         if (option.getName().equals(OptionsConstants.MD_VDNI)
               || option.getName().equals(OptionsConstants.MD_BVDNI)
               || option.getName().equals(OptionsConstants.MD_PROTO_DNI)) {
+            // Update entity crew options directly (like EI does via setEIInterface)
+            for (Entity e : entities) {
+                e.getCrew().getOptions().getOption(option.getName()).setValue(state);
+            }
+            // Also update Equipment tab checkbox if it exists
             if (m_equip != null) {
-                // Check if ANY DNI implant is now selected
                 boolean anyDniSelected = isOptionSelected(OptionsConstants.MD_VDNI)
                       || isOptionSelected(OptionsConstants.MD_BVDNI)
                       || isOptionSelected(OptionsConstants.MD_PROTO_DNI);
-                // Include the current change (state) since isOptionSelected reads old state
                 if (state) {
                     anyDniSelected = true;
                 }

@@ -7960,18 +7960,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         // Augmented pilots with DNI cockpit ignore Hard to Pilot quirk entirely (IO p.83)
-        // This only applies when Design Quirks rules are in use
-        if (!hasActiveDNI()) {
-            if (hasQuirk(OptionsConstants.QUIRK_NEG_HARD_PILOT)) {
-                roll.addModifier(+1, "hard to pilot");
-            } else if (gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)
-                  && gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)
-                  && hasDNICockpitMod()) {
-                // DNI Cockpit Modification adds Hard to Pilot effect for pilots without compatible implants (IO p.83)
-                // Only applies if unit doesn't already have Hard to Pilot quirk (no stacking)
-                // Only applies when Design Quirks rules are in use
-                roll.addModifier(+1, "DNI cockpit (no implant)");
-            }
+        // hasQuirk() now includes DNI-induced Hard to Pilot via hasDNIInducedHardToPilot()
+        if (!hasActiveDNI() && hasQuirk(OptionsConstants.QUIRK_NEG_HARD_PILOT)) {
+            roll.addModifier(+1, "hard to pilot");
         }
 
         if (getPartialRepairs() != null) {
@@ -13641,7 +13632,31 @@ public abstract class Entity extends TurnOrdered
         if ((game != null) && !gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return false;
         }
+        // DNI Cockpit Mod induces Hard to Pilot quirk for pilots without compatible implants (IO p.83)
+        if (name.equals(OptionsConstants.QUIRK_NEG_HARD_PILOT) && hasDNIInducedHardToPilot()) {
+            return true;
+        }
         return quirks.booleanOption(name);
+    }
+
+    /**
+     * Returns whether this unit has DNI-induced Hard to Pilot quirk. Per IO p.83, units with DNI Cockpit Modification
+     * gain the Hard to Pilot quirk when piloted by someone without a compatible DNI implant (VDNI, BVDNI, or Proto
+     * DNI). This only applies when the Track Neural Interface Hardware game option is enabled.
+     *
+     * @return true if DNI cockpit induces Hard to Pilot quirk
+     */
+    public boolean hasDNIInducedHardToPilot() {
+        // Only applies when tracking neural interface hardware
+        if ((game == null) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            return false;
+        }
+        // Unit must have DNI Cockpit Mod
+        if (!hasDNICockpitMod()) {
+            return false;
+        }
+        // Pilot must lack compatible DNI implant
+        return !hasActiveDNI();
     }
 
     /**

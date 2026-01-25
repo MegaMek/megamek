@@ -585,43 +585,51 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("No implant with DNI - DNI cockpit penalty applies (quirks ON)")
-        void noImplant_withDni_dniPenaltyApplies() {
-            // DNI cockpit penalty only applies when Design Quirks rules are in use (IO p.83)
+        @DisplayName("No implant with DNI - gains Hard to Pilot quirk (IO p.83)")
+        void noImplant_withDni_gainsHardToPilotQuirk() {
+            // DNI cockpit induces Hard to Pilot quirk when Design Quirks rules are in use (IO p.83)
             game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
             Mek mek = createMek(true, null);
 
-            PilotingRollData roll = mek.getBasePilotingRoll();
+            // Should now have the Hard to Pilot quirk via DNI
+            assertTrue(mek.hasQuirk(OptionsConstants.QUIRK_NEG_HARD_PILOT),
+                  "DNI without implant should induce Hard to Pilot quirk");
 
-            assertTrue(hasModifier(roll, "DNI cockpit (no implant)"),
-                  "DNI without implant should apply DNI cockpit penalty when quirks enabled");
+            PilotingRollData roll = mek.getBasePilotingRoll();
+            assertTrue(hasModifier(roll, "hard to pilot"),
+                  "DNI without implant should apply 'hard to pilot' modifier");
         }
 
         @Test
-        @DisplayName("No implant with DNI - no penalty when quirks OFF")
-        void noImplant_withDni_noPenaltyWhenQuirksOff() {
-            // DNI cockpit penalty should NOT apply when Design Quirks rules are off
+        @DisplayName("No implant with DNI - no quirk when quirks OFF")
+        void noImplant_withDni_noQuirkWhenQuirksOff() {
+            // DNI-induced quirk should NOT apply when Design Quirks rules are off
             game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(false);
             Mek mek = createMek(true, null);
 
-            PilotingRollData roll = mek.getBasePilotingRoll();
+            assertFalse(mek.hasQuirk(OptionsConstants.QUIRK_NEG_HARD_PILOT),
+                  "DNI without implant should NOT have quirk when quirks disabled");
 
-            assertFalse(hasModifier(roll, "DNI cockpit (no implant)"),
+            PilotingRollData roll = mek.getBasePilotingRoll();
+            assertFalse(hasModifier(roll, "hard to pilot"),
                   "DNI without implant should NOT apply penalty when quirks disabled");
         }
 
         @Test
-        @DisplayName("No implant with DNI and HTP quirk - only HTP applies (no stacking)")
-        void noImplant_withDni_htpQuirk_noStacking() {
+        @DisplayName("No implant with DNI and existing HTP quirk - no double penalty")
+        void noImplant_withDni_htpQuirk_noDoublePenalty() {
             Mek mek = createMek(true, null);
             enableHardToPilotQuirk(mek);
 
             PilotingRollData roll = mek.getBasePilotingRoll();
 
+            // Should only have ONE "hard to pilot" modifier, not two
             assertTrue(hasModifier(roll, "hard to pilot"),
-                  "With HTP quirk, should show 'hard to pilot'");
-            assertFalse(hasModifier(roll, "DNI cockpit (no implant)"),
-                  "With HTP quirk, should NOT also show 'DNI cockpit' (no stacking)");
+                  "Should show 'hard to pilot'");
+            // Count occurrences - should only appear once
+            String desc = roll.getDesc();
+            int count = desc.split("hard to pilot", -1).length - 1;
+            assertEquals(1, count, "Should only have one 'hard to pilot' modifier, not stacked");
         }
 
         @Test
@@ -696,6 +704,250 @@ public class DNICockpitModTest {
 
             assertTrue(mek.hasActiveDNI(),
                   "With tracking ON, implant with hardware should return true");
+        }
+    }
+
+    @Nested
+    @DisplayName("hasDNIInducedHardToPilot() Tests")
+    class HasDNIInducedHardToPilotTests {
+
+        @Test
+        @DisplayName("Tracking OFF - never induces quirk")
+        void trackingOff_neverInducesQuirk() {
+            setTrackingOption(false);
+            game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
+            Mek mek = createMek(true, null); // DNI hardware, no implant
+
+            assertFalse(mek.hasDNIInducedHardToPilot(),
+                  "Should not induce HTP quirk when tracking is OFF");
+        }
+
+        @Test
+        @DisplayName("Tracking ON, no DNI hardware - no quirk")
+        void trackingOn_noDniHardware_noQuirk() {
+            setTrackingOption(true);
+            game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
+            Mek mek = createMek(false, null); // No DNI hardware
+
+            assertFalse(mek.hasDNIInducedHardToPilot(),
+                  "Should not induce HTP quirk without DNI hardware");
+        }
+
+        @Test
+        @DisplayName("Tracking ON, DNI hardware, no implant - induces quirk")
+        void trackingOn_dniHardware_noImplant_inducesQuirk() {
+            setTrackingOption(true);
+            game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
+            Mek mek = createMek(true, null); // DNI hardware, no implant
+
+            assertTrue(mek.hasDNIInducedHardToPilot(),
+                  "Should induce HTP quirk with DNI hardware but no implant");
+        }
+
+        @Test
+        @DisplayName("Tracking ON, DNI hardware, with VDNI - no quirk")
+        void trackingOn_dniHardware_withVdni_noQuirk() {
+            setTrackingOption(true);
+            game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
+            Mek mek = createMek(true, "VDNI"); // DNI hardware + VDNI implant
+
+            assertFalse(mek.hasDNIInducedHardToPilot(),
+                  "Should not induce HTP quirk with compatible implant");
+        }
+
+        @Test
+        @DisplayName("Tracking ON, DNI hardware, with BVDNI - no quirk")
+        void trackingOn_dniHardware_withBvdni_noQuirk() {
+            setTrackingOption(true);
+            game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
+            Mek mek = createMek(true, "BVDNI"); // DNI hardware + BVDNI implant
+
+            assertFalse(mek.hasDNIInducedHardToPilot(),
+                  "Should not induce HTP quirk with BVDNI implant");
+        }
+
+        @Test
+        @DisplayName("Tracking ON, DNI hardware, with Proto DNI - no quirk")
+        void trackingOn_dniHardware_withProtoDni_noQuirk() {
+            setTrackingOption(true);
+            game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
+            Mek mek = createMek(true, "PROTO_DNI"); // DNI hardware + Proto DNI implant
+
+            assertFalse(mek.hasDNIInducedHardToPilot(),
+                  "Should not induce HTP quirk with Proto DNI implant");
+        }
+
+        @Test
+        @DisplayName("Tracking ON, DNI hardware, with EI implant (wrong type) - induces quirk")
+        void trackingOn_dniHardware_withEiImplant_inducesQuirk() {
+            setTrackingOption(true);
+            game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
+            Mek mek = createMek(true, "EI"); // DNI hardware + EI implant (not compatible)
+
+            assertTrue(mek.hasDNIInducedHardToPilot(),
+                  "EI implant is not compatible with DNI - should still induce HTP quirk");
+        }
+    }
+
+    @Nested
+    @DisplayName("Crew Option Update Tests - Simulates Dialog Behavior")
+    class CrewOptionUpdateTests {
+
+        /**
+         * Simulates what CustomMekDialog.optionClicked() does when VDNI is selected: directly updating the entity's
+         * crew options.
+         */
+        private void setCrewOption(Mek mek, String optionName, boolean value) {
+            mek.getCrew().getOptions().getOption(optionName).setValue(value);
+        }
+
+        @Test
+        @DisplayName("Tracking ON: Setting VDNI option updates hasDNIImplant()")
+        void trackingOn_settingVdniUpdatesHasDniImplant() {
+            setTrackingOption(true);
+            Mek mek = createMek(false, null);
+
+            // Initially no implant
+            assertFalse(mek.hasDNIImplant(), "Should not have DNI implant initially");
+
+            // Simulate dialog setting VDNI (like optionClicked does)
+            setCrewOption(mek, OptionsConstants.MD_VDNI, true);
+
+            // Now should detect implant
+            assertTrue(mek.hasDNIImplant(), "Should detect DNI implant after setting VDNI");
+        }
+
+        @Test
+        @DisplayName("Tracking ON: Setting BVDNI option updates hasDNIImplant()")
+        void trackingOn_settingBvdniUpdatesHasDniImplant() {
+            setTrackingOption(true);
+            Mek mek = createMek(false, null);
+
+            assertFalse(mek.hasDNIImplant(), "Should not have DNI implant initially");
+
+            // BVDNI requires VDNI to be set first
+            setCrewOption(mek, OptionsConstants.MD_VDNI, true);
+            setCrewOption(mek, OptionsConstants.MD_BVDNI, true);
+
+            assertTrue(mek.hasDNIImplant(), "Should detect DNI implant after setting BVDNI");
+        }
+
+        @Test
+        @DisplayName("Tracking ON: Setting Proto DNI option updates hasDNIImplant()")
+        void trackingOn_settingProtoDniUpdatesHasDniImplant() {
+            setTrackingOption(true);
+            Mek mek = createMek(false, null);
+
+            assertFalse(mek.hasDNIImplant(), "Should not have DNI implant initially");
+
+            setCrewOption(mek, OptionsConstants.MD_PROTO_DNI, true);
+
+            assertTrue(mek.hasDNIImplant(), "Should detect DNI implant after setting Proto DNI");
+        }
+
+        @Test
+        @DisplayName("Tracking OFF: Setting VDNI option updates hasDNIImplant()")
+        void trackingOff_settingVdniUpdatesHasDniImplant() {
+            setTrackingOption(false);
+            Mek mek = createMek(false, null);
+
+            assertFalse(mek.hasDNIImplant(), "Should not have DNI implant initially");
+
+            setCrewOption(mek, OptionsConstants.MD_VDNI, true);
+
+            assertTrue(mek.hasDNIImplant(), "Should detect DNI implant after setting VDNI");
+        }
+
+        @Test
+        @DisplayName("Tracking ON: VDNI set then hasActiveDNI requires hardware")
+        void trackingOn_vdniSetThenHasActiveDniRequiresHardware() {
+            setTrackingOption(true);
+            Mek mek = createMek(false, null);
+
+            setCrewOption(mek, OptionsConstants.MD_VDNI, true);
+
+            // Has implant but no hardware
+            assertTrue(mek.hasDNIImplant(), "Should have DNI implant");
+            assertFalse(mek.hasDNICockpitMod(), "Should not have DNI hardware");
+            assertFalse(mek.hasActiveDNI(), "Should NOT have active DNI without hardware");
+        }
+
+        @Test
+        @DisplayName("Tracking ON: VDNI set with hardware then hasActiveDNI is true")
+        void trackingOn_vdniSetWithHardwareThenHasActiveDniTrue() {
+            setTrackingOption(true);
+            Mek mek = createMek(true, null); // Has DNI hardware
+
+            setCrewOption(mek, OptionsConstants.MD_VDNI, true);
+
+            assertTrue(mek.hasDNIImplant(), "Should have DNI implant");
+            assertTrue(mek.hasDNICockpitMod(), "Should have DNI hardware");
+            assertTrue(mek.hasActiveDNI(), "Should have active DNI with implant AND hardware");
+        }
+
+        @Test
+        @DisplayName("Tracking OFF: VDNI set then hasActiveDNI is true (no hardware needed)")
+        void trackingOff_vdniSetThenHasActiveDniTrue() {
+            setTrackingOption(false);
+            Mek mek = createMek(false, null); // No DNI hardware
+
+            setCrewOption(mek, OptionsConstants.MD_VDNI, true);
+
+            assertTrue(mek.hasDNIImplant(), "Should have DNI implant");
+            assertFalse(mek.hasDNICockpitMod(), "Should not have DNI hardware");
+            assertTrue(mek.hasActiveDNI(), "Should have active DNI with just implant when tracking OFF");
+        }
+
+        @Test
+        @DisplayName("Unsetting VDNI removes implant detection")
+        void unsettingVdniRemovesImplantDetection() {
+            setTrackingOption(true);
+            Mek mek = createMek(false, "VDNI");
+
+            assertTrue(mek.hasDNIImplant(), "Should have DNI implant initially");
+
+            // Simulate dialog unchecking VDNI
+            setCrewOption(mek, OptionsConstants.MD_VDNI, false);
+
+            assertFalse(mek.hasDNIImplant(), "Should not have DNI implant after unsetting VDNI");
+        }
+
+        @Test
+        @DisplayName("Tracking ON: EI implant set updates hasAbility correctly")
+        void trackingOn_eiImplantSetUpdatesHasAbility() {
+            setTrackingOption(true);
+            Mek mek = createMek(false, null);
+
+            assertFalse(mek.hasAbility(OptionsConstants.MD_EI_IMPLANT), "Should not have EI implant initially");
+
+            setCrewOption(mek, OptionsConstants.MD_EI_IMPLANT, true);
+
+            assertTrue(mek.hasAbility(OptionsConstants.MD_EI_IMPLANT), "Should have EI implant after setting");
+        }
+
+        @Test
+        @DisplayName("Tracking ON: EI implant with EI cockpit gives active EI")
+        void trackingOn_eiImplantWithCockpitGivesActiveEi() {
+            setTrackingOption(true);
+            Mek mek = createMek(false, null);
+            addEiCockpit(mek);
+
+            assertFalse(mek.hasActiveEiCockpit(), "Should not have active EI without implant");
+
+            setCrewOption(mek, OptionsConstants.MD_EI_IMPLANT, true);
+
+            assertTrue(mek.hasActiveEiCockpit(), "Should have active EI with implant AND cockpit");
+        }
+
+        @Test
+        @DisplayName("Tracking OFF: EI cockpit alone gives active EI (no implant needed)")
+        void trackingOff_eiCockpitAloneGivesActiveEi() {
+            setTrackingOption(false);
+            Mek mek = createMek(false, null);
+            addEiCockpit(mek);
+
+            // No implant, but tracking is off so cockpit alone should work
+            assertTrue(mek.hasActiveEiCockpit(), "Should have active EI with just cockpit when tracking OFF");
         }
     }
 }

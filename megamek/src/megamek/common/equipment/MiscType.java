@@ -4666,14 +4666,14 @@ public class MiscType extends EquipmentType {
     }
 
     /**
-     * BattleMek Neural Interface Unit (NIU) for PA(L) suits. IO p.110: The BattleMek NIU can only be mounted in the
+     * BattleMech Neural Interface Unit (NIU) for PA(L) suits. IO p.110: The BattleMech NIU can only be mounted in the
      * interface suit, which must be constructed as a PA(L)-type battlesuit (as larger battlesuits cannot fit in the
-     * interface cockpit). The BattleMek NIU weighs 100 kilograms and occupies 2 slots in the suit's torso.
+     * interface cockpit). The BattleMech NIU weighs 100 kilograms and occupies 2 slots in the suit's torso.
      */
     public static MiscType createBattleMekNeuralInterfaceUnit() {
         MiscType misc = new MiscType();
         // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
-        misc.name = "BattleMek Neural Interface Unit";
+        misc.name = "BattleMech Neural Interface Unit";
         misc.setInternalName("BABattleMechNIU");
 
         misc.tonnage = 0.1; // 100kg

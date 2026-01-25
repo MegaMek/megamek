@@ -1351,10 +1351,10 @@ public class TestBattleArmor extends TestEntity {
                     currentErrors.add("Quad BattleArmor cannot use a Standard Modular Weapon Mount");
                 }
 
-                // IO p.110: BattleMek NIU can only be mounted in PA(L)-type battlesuit
+                // IO p.110: BattleMech NIU can only be mounted in PA(L)-type battlesuit
                 if (misc.hasFlag(MiscType.F_BATTLEMEK_NIU)
                       && battleArmor.getWeightClass() != EntityWeightClass.WEIGHT_ULTRA_LIGHT) {
-                    currentErrors.add("BattleMek Neural Interface Unit can only be mounted in PA(L) battlesuits");
+                    currentErrors.add("BattleMech Neural Interface Unit can only be mounted in PA(L) battlesuits");
                 }
             }
         }

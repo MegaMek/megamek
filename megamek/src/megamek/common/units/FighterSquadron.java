@@ -857,6 +857,10 @@ public class FighterSquadron extends AeroSpaceFighter {
 
     @Override
     public List<Entity> getSubEntities() {
+        if (fighters == null) {
+            return List.of();
+        }
+
         return fighters.stream().map(fid -> game.getEntity(fid))
               .filter(Objects::nonNull)
               .collect(Collectors.toList());
@@ -918,4 +922,26 @@ public class FighterSquadron extends AeroSpaceFighter {
     public boolean isCarryableObject() {
         return false;
     }
+
+
+    @Override
+    public boolean isClan() {
+        // If the first fighter is a clan fighter, then we'll say this is a clan squadron
+        // This shouldn't matter for anything except record sheets, which will check isMixed() first,
+        // so in practice this will be used to determine if *every* fighter is clan
+        return getSubEntities().stream().findFirst().map(Entity::isClan).orElse(false);
+    }
+
+    @Override
+    public boolean isMixedTech() {
+        // If any fighter is mixed tech, or if the squadron has both clan and IS fighters,
+        // then the whole squadron is mixed tech.
+        return getSubEntities().stream().anyMatch(Entity::isMixedTech)
+              || (
+                    getSubEntities().stream().anyMatch(Entity::isClan)
+                    && getSubEntities().stream().anyMatch(Predicate.not(Entity::isClan))
+        );
+    }
+
+
 }

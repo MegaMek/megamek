@@ -1,0 +1,33 @@
+name: Checkstyle
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  pr_build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        java-distribution: [ temurin ]
+        java-version: [ 25 ]
+      fail-fast: false
+
+    steps:
+      - name: "Check out MegaMek"
+        uses: actions/checkout@v6
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Checkstyle
+        run: ./gradlew checkstyleMain
+
+      - name: Upload Test Logs on Failure
+        uses: actions/upload-artifact@v6
+        if: failure()
+        with:
+          name: cd-failure-logs
+          path: ./megamek/megamek/build/reports/

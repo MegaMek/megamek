@@ -31,9 +31,9 @@ interface RandomArmyTab {
      *
      * @return A list of units generated
      */
-    default List<Entity> generateUnits() {
-        return generateMekSummaries().stream().map(MekSummary::loadEntity).toList();
-    }
+//    default List<Entity> generateUnits() {
+//        return generateMekSummaries().stream().map(MekSummary::loadEntity).toList();
+//    }
 
     /**
      * Makes this Tab use its present parameters to roll up a force and returns this force.
@@ -42,7 +42,7 @@ interface RandomArmyTab {
      */
     List<MekSummary> generateMekSummaries();
 
-    void setGameOptions(GameOptions gameOptions);
+    default void setGameOptions(GameOptions gameOptions) { }
 
-    void setSkillGenerator(AbstractSkillGenerator skillGenerator);
+    default void setSkillGenerator(AbstractSkillGenerator skillGenerator) { }
 }

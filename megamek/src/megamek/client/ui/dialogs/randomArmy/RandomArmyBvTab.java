@@ -36,7 +36,6 @@ package megamek.client.ui.dialogs.randomArmy;
 
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.dialogs.advancedsearch.ASAdvancedSearchPanel;
 import megamek.client.ui.dialogs.advancedsearch.AdvancedSearchDialog;
 import megamek.client.ui.dialogs.advancedsearch.MekSearchFilter;
@@ -75,7 +74,6 @@ import static megamek.client.ui.clientGUI.calculationReport.HTMLCalculationRepor
 
 class RandomArmyBvTab extends JPanel implements RandomArmyTab {
 
-    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final String WARNING_SIGN_COLORED = "<FONT COLOR = YELLOW> " + UIUtil.WARNING_SIGN + "</FONT> ";
 
     private GameOptions gameOptions;
@@ -311,16 +309,14 @@ class RandomArmyBvTab extends JPanel implements RandomArmyTab {
     }
 
     private void setDefaults() {
-        mekCount.setText(GUIP.getRATNumMeks());
-        bvMin.setText(GUIP.getRATBVMin());
-        bvMax.setText(GUIP.getRATBVMax());
-        veeCount.setText(GUIP.getRATNumVees());
-        baCount.setText(GUIP.getRATNumBA());
-        yearMin.setText(GUIP.getRATYearMin());
-        yearMax.setText(GUIP.getRATYearMax());
-        infCount.setText(GUIP.getRATNumInf());
-        padWithInf.setSelected(GUIP.getRATPadBV());
-        onlyCanon.setSelected(gameOptions.booleanOption(OptionsConstants.ALLOWED_CANON_ONLY));
+        mekCount.setText("4");
+        veeCount.setText("0");
+        baCount.setText("0");
+        infCount.setText("0");
+        bvMin.setText("4000");
+        bvMax.setText("8000");
+        yearMin.setText("3000");
+        yearMax.setText("3047");
     }
 
     private int yearMin() {

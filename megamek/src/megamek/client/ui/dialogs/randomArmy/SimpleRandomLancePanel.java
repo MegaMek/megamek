@@ -34,13 +34,11 @@
 package megamek.client.ui.dialogs.randomArmy;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.advancedsearch.ASAdvancedSearchPanel;
 import megamek.client.ui.dialogs.advancedsearch.AdvancedSearchDialog;
 import megamek.client.ui.dialogs.advancedsearch.MekSearchFilter;
 import megamek.common.loaders.MekSummary;
-import megamek.common.options.GameOptions;
 import megamek.common.util.SimpleRandomLanceCreator;
 
 import javax.swing.AbstractAction;
@@ -62,7 +60,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 
-public class SimpleRandomLancePanel extends JPanel implements RandomArmyTab {
+class SimpleRandomLancePanel extends JPanel implements RandomArmyTab {
 
     private enum BalanceBy {
         BV("RandomArmyDialog.Simple.BV_NAME"),
@@ -227,16 +225,6 @@ public class SimpleRandomLancePanel extends JPanel implements RandomArmyTab {
         } else {
             return "" + (int) resultValue;
         }
-    }
-
-    @Override
-    public void setGameOptions(GameOptions gameOptions) {
-        // ignored in this creator
-    }
-
-    @Override
-    public void setSkillGenerator(AbstractSkillGenerator skillGenerator) {
-        // ignored in this creator
     }
 
     //region ACTIONS

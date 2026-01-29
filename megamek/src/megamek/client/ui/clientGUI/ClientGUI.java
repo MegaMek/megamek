@@ -172,6 +172,7 @@ import megamek.common.loaders.MULParser;
 import megamek.common.loaders.MekSummaryCache;
 import megamek.common.moves.MovePath;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
@@ -2948,7 +2949,7 @@ public class ClientGUI extends AbstractClientGUI
                         return;
                     }
                     ArrayList<String> amsOptions = new ArrayList<>();
-                    amsOptions.add(Messages.getString("NONE"));
+                    //amsOptions.add(Messages.getString("NONE"));
                     for (WeaponAttackAction waa : gameCFREvent.getWAAs()) {
                         Entity ae = waa.getEntity(client.getGame());
                         String waaMsg;
@@ -2960,7 +2961,32 @@ public class ClientGUI extends AbstractClientGUI
                         }
                         amsOptions.add(waaMsg);
                     }
+                    
+                    // Updated AMS selection code for dealing with Multi_AMS, Playtest3 and standard selection
+                    JList amsList = new JList(amsOptions.toArray());
+                    JScrollPane amsScrollPane = new JScrollPane(amsList);
+                    if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS)) {
+                        amsList.setSelectionModel(new AmsAssignGUI(amsList, amsOptions.size()));
+                    } else if (entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                        amsList.setSelectionModel(new AmsAssignGUI(amsList, 2));
+                    } else {
+                        amsList.setSelectionModel(new AmsAssignGUI(amsList, 1));
+                    }
 
+                    int amsResult = JOptionPane.showConfirmDialog(frame, 
+                          amsScrollPane,
+                          Messages.getString("CFRAMSAssign.Message", entity.getDisplayName()),
+                          JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE
+                    );
+
+                    if (amsResult == JOptionPane.OK_OPTION) {
+                        int[] selectedItems = amsList.getSelectedIndices();
+                        client.sendAMSAssignCFRResponse(selectedItems);
+                    } else {
+                        client.sendAMSAssignCFRResponse(null);
+                    }
+                    
+                    /* Old code for single option only
                     result = JOptionPane.showInputDialog(frame,
                           Messages.getString("CFRAMSAssign.Message", entity.getDisplayName()),
                           Messages.getString("CFRAMSAssign.Title", entity.getDisplayName()),
@@ -2974,6 +3000,8 @@ public class ClientGUI extends AbstractClientGUI
                     } else {
                         client.sendAMSAssignCFRResponse(amsOptions.indexOf(result) - 1);
                     }
+                 
+                     */
                     break;
                 case CFR_APDS_ASSIGN:
                     if (entity == null) {

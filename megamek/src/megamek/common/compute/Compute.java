@@ -3398,6 +3398,27 @@ public class Compute {
         return waaHighest;
     }
 
+    /**
+     * Returns the weapon attack out of a list that has the second highest expected damage
+     * Used for Playtest 3 AMS engaging multiple salvos
+     */
+    public static WeaponAttackAction getSecondHighestExpectedDamage(Game g,
+          List<WeaponAttackAction> vAttacks, boolean assumeHit) {
+        WeaponAttackAction waaHighest = null;
+        WeaponAttackAction waaSecondHighest = null;
+        
+        // Copy the list to a new list
+        List<WeaponAttackAction> attacksClone = new ArrayList<>(vAttacks);
+        // Find the highest damage
+        waaHighest = getHighestExpectedDamage(g, attacksClone, true);
+        // Remove that entry from the list
+        attacksClone.remove(waaHighest);
+        // Get the next highest damage
+        waaSecondHighest = getHighestExpectedDamage(g, attacksClone, true);
+        // Returns the second highest damage
+        return waaSecondHighest;
+    }
+
     // store these as constants since the tables will never change
     private static final float[] expectedHitsByRackSize = { 0.0f, 1.0f, 1.58f, 2.0f, 2.63f, 3.17f, 4.0f, 4.49f, 4.98f,
                                                             5.47f, 6.31f, 7.23f, 8.14f, 8.59f, 9.04f, 9.5f, 10.1f,

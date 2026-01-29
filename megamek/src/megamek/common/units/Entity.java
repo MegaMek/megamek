@@ -7512,6 +7512,16 @@ public abstract class Entity extends TurnOrdered
                 // Point defense bays are assigned to the attack with the greatest threat Unlike single AMS, PD bays
                 // can gang up on 1 attack
                 Compute.getHighestExpectedDamage(getGame(), attacksInArc, true).addCounterEquipment(ams);
+            } else if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                // PLAYTEST3 AMS shoots twice handling
+                // Assuming AMS has not been used at all yet, so both shots are available.
+                final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), attacksInArc, true);
+                waa.addCounterEquipment(ams);
+                targets.add(waa);
+                final WeaponAttackAction secondWaa = Compute.getSecondHighestExpectedDamage(getGame(), attacksInArc,
+                      true);
+                secondWaa.addCounterEquipment(ams);
+                targets.add(secondWaa);
             } else {
                 // Otherwise, find the most dangerous salvo by expected damage and target it this ensures that only 1
                 // AMS targets the strike. Use for non-bays.

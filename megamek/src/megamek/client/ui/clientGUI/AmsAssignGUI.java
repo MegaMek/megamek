@@ -50,6 +50,11 @@ public class AmsAssignGUI extends DefaultListSelectionModel {
     }
 
     @Override
+    public java.lang.Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+    
+    @Override
     public void setSelectionInterval(int index0, int index1)
     {
         if (index1 - index0 >= maxCount)

@@ -2949,7 +2949,7 @@ public class ClientGUI extends AbstractClientGUI
                         return;
                     }
                     ArrayList<String> amsOptions = new ArrayList<>();
-                    //amsOptions.add(Messages.getString("NONE"));
+                    amsOptions.add(Messages.getString("NONE"));
                     for (WeaponAttackAction waa : gameCFREvent.getWAAs()) {
                         Entity ae = waa.getEntity(client.getGame());
                         String waaMsg;
@@ -2979,29 +2979,19 @@ public class ClientGUI extends AbstractClientGUI
                           JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE
                     );
 
-                    if (amsResult == JOptionPane.OK_OPTION) {
-                        int[] selectedItems = amsList.getSelectedIndices();
+                    int[] selectedItems = amsList.getSelectedIndices();
+                    if (amsResult == JOptionPane.OK_OPTION && !(selectedItems.length == 1
+                          && amsList.getSelectedValue() == "NONE") ) {
+                        // Due to the "None" option, reduce all selected index values by 1.
+                        // This makes "None" a -1 value.
+                        for (int i = 0; i < selectedItems.length; i++) {
+                            selectedItems[i] = selectedItems[i]--;
+                        }
                         client.sendAMSAssignCFRResponse(selectedItems);
                     } else {
                         client.sendAMSAssignCFRResponse(null);
                     }
                     
-                    /* Old code for single option only
-                    result = JOptionPane.showInputDialog(frame,
-                          Messages.getString("CFRAMSAssign.Message", entity.getDisplayName()),
-                          Messages.getString("CFRAMSAssign.Title", entity.getDisplayName()),
-                          JOptionPane.QUESTION_MESSAGE,
-                          null,
-                          amsOptions.toArray(),
-                          null);
-                    // If they closed it, assume no action
-                    if ((result == null) || result.equals(Messages.getString("NONE"))) {
-                        client.sendAMSAssignCFRResponse(null);
-                    } else {
-                        client.sendAMSAssignCFRResponse(amsOptions.indexOf(result) - 1);
-                    }
-                 
-                     */
                     break;
                 case CFR_APDS_ASSIGN:
                     if (entity == null) {

@@ -10131,6 +10131,11 @@ public class TWGameManager extends AbstractGameManager {
                         int[] waaIndex = (int[]) rp.getPacket().data()[1];
                         if (waaIndex != null) {
                             for (int waaNum : waaIndex) {
+                                // -1 in the waaNum indicates that None was selected in addition to others, and can be 
+                                // ignored
+                                if (waaNum == -1) {
+                                    continue;
+                                }
                                 targetedWAA = vAttacksInArc.get(waaNum);
                                 targetedWAA.addCounterEquipment(ams);
                                 amsTargets.add(targetedWAA);

@@ -3410,11 +3410,11 @@ public class Compute {
         // Copy the list to a new list
         List<WeaponAttackAction> attacksClone = new ArrayList<>(vAttacks);
         // Find the highest damage
-        waaHighest = getHighestExpectedDamage(g, attacksClone, true);
+        waaHighest = getHighestExpectedDamage(g, attacksClone, assumeHit);
         // Remove that entry from the list
         attacksClone.remove(waaHighest);
         // Get the next highest damage
-        waaSecondHighest = getHighestExpectedDamage(g, attacksClone, true);
+        waaSecondHighest = getHighestExpectedDamage(g, attacksClone, assumeHit);
         // Returns the second highest damage
         return waaSecondHighest;
     }

@@ -5688,11 +5688,9 @@ public class TWGameManager extends AbstractGameManager {
 
         // Aerospace that fly off to return in a later round must be handled
         // at the end of the round, but set some state here for simplicity
-        if (entity.isAero() && flewOff) {
-            Aero aero = (Aero) entity;
-
+        if ((aeroUnit != null) && flewOff) {
             // Record direction
-            aero.setFlyingOff(fleeDirection);
+            aeroUnit.setFlyingOff(fleeDirection);
 
             // Currently only Aerospace can fly off and return.
             if (returnable > -1) {
@@ -5803,9 +5801,10 @@ public class TWGameManager extends AbstractGameManager {
             // Handle Aerospace units that flew off the board this round but lingered through the
             // various phases for full attack opportunities.
             // TODO: use off-board state with flown-off aerospace units
-            if (entity instanceof Aero aero) {
+            if (entity.isAero()) {
+                IAero aero = (IAero) entity;
                 if (aero.isFlyingOff()) {
-                    reports.add(processFlyingOff(aero));
+                    reports.add(processFlyingOff(entity));
                 }
             }
         }
@@ -5816,21 +5815,22 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Compile report for Aerospace unit flying off the map at the end of the round, and finalize the unit's state.
      *
-     * @param aero Unit leaving the map using Thrust MPs
+     * @param entity Unit leaving the map using Thrust MPs (must implement IAero)
      *
-     * @return Vector of reports
+     * @return Report describing the unit flying off the map
      */
-    protected Report processFlyingOff(Aero aero) {
-        String retreatEdge = setRetreatEdge(aero, aero.getFlyingOffDirection());
+    protected Report processFlyingOff(Entity entity) {
+        IAero aero = (IAero) entity;
+        String retreatEdge = setRetreatEdge(entity, aero.getFlyingOffDirection());
 
         // Report aerospace flying off at the end of the round
         Report r = new Report(9370, Report.PUBLIC);
-        r.addDesc(aero);
+        r.addDesc(entity);
         r.add(retreatEdge);
 
         // Set un-deployed state
-        aero.setDeployed(false);
-        aero.setPosition(null);
+        entity.setDeployed(false);
+        entity.setPosition(null);
         aero.setFlyingOff(OffBoardDirection.NONE);
 
         // If we're flying off because we're OOC, when we come back we

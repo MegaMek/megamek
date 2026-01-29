@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.OffBoardDirection;
 import megamek.common.equipment.EquipmentType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -175,6 +176,53 @@ class LandAirMekTest {
             lam.setConversionMode(LandAirMek.CONV_MODE_AIR_MEK);
 
             assertFalse(lam.isAero(), "AirMek mode LAM should not pass isAero() check for strafing");
+        }
+    }
+
+    @Nested
+    @DisplayName("Fly Off Eligibility Tests (Issue #7932)")
+    class FlyOffEligibilityTests {
+
+        @Test
+        @DisplayName("LAM in Fighter mode can use IAero fly off methods")
+        void fighterModeCanUseFlyOffMethods() {
+            // This test verifies the fix for issue #7932:
+            // LAMs in fighter mode must be able to fly off the map.
+            // The fix changed instanceof Aero checks to isAero() with IAero casts.
+            lam.setConversionMode(LandAirMek.CONV_MODE_FIGHTER);
+
+            // LAM should pass isAero() check used in handleFlyOffs()
+            assertTrue(lam.isAero(), "Fighter mode LAM should pass isAero() check");
+
+            // LAM should be castable to IAero (pattern used in processFlyingOff)
+            IAero aero = (IAero) lam;
+
+            // IAero fly off methods should work
+            aero.setFlyingOff(OffBoardDirection.EAST);
+            assertTrue(aero.isFlyingOff(), "LAM should be marked as flying off");
+            assertEquals(OffBoardDirection.EAST, aero.getFlyingOffDirection());
+
+            // Reset
+            aero.setFlyingOff(OffBoardDirection.NONE);
+            assertFalse(aero.isFlyingOff(), "LAM should no longer be flying off after reset");
+        }
+
+        @Test
+        @DisplayName("LAM in Mek mode is not eligible for fly off")
+        void mekModeNotEligibleForFlyOff() {
+            lam.setConversionMode(LandAirMek.CONV_MODE_MEK);
+
+            // Mek mode LAM should not pass the isAero() check used in handleFlyOffs()
+            assertFalse(lam.isAero(), "Mek mode LAM should not pass isAero() check for fly off");
+        }
+
+        @Test
+        @DisplayName("LAM in AirMek mode is not eligible for fly off")
+        void airMekModeNotEligibleForFlyOff() {
+            lam.setConversionMode(LandAirMek.CONV_MODE_AIR_MEK);
+
+            // AirMek mode LAM should not pass the isAero() check used in handleFlyOffs()
+            assertFalse(lam.isAero(), "AirMek mode LAM should not pass isAero() check for fly off");
         }
     }
 }

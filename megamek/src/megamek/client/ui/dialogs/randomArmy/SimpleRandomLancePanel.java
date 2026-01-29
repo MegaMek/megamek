@@ -105,7 +105,7 @@ class SimpleRandomLancePanel extends JPanel implements RandomArmyTab {
         this.parentFrame = parentDialog.parentFrame;
 
         Box contentPanel = Box.createVerticalBox();
-        filterButton = new JButton("Unit Filter...");
+        filterButton = new JButton("");
 
         filterButton.addActionListener(e -> showFilter());
         toleranceButton.addActionListener(this::showTolerancePopup);
@@ -138,7 +138,7 @@ class SimpleRandomLancePanel extends JPanel implements RandomArmyTab {
         balanceByButton.setText(Messages.getString("RandomArmyDialog.Simple.BalanceBy", balanceBy.displayName()));
 
         roster = SimpleRandomLanceCreator.advancedFilterResult(asSearchFilter, twSearchFilter, null);
-        filterButton.setText("Unit Filter... [%d units]".formatted(roster.size()));
+        filterButton.setText(Messages.getString("RandomArmyDialog.Simple.Filter", roster.size()));
     }
 
     private int tolerancePV() {
@@ -216,6 +216,9 @@ class SimpleRandomLancePanel extends JPanel implements RandomArmyTab {
         double achievedValue = result.stream().mapToDouble(strengthMapper).sum();
         resultLabel.putClientProperty(FlatClientProperties.STYLE_CLASS, "small");
         resultLabel.setText("Created units: " + formatResult(achievedValue) + " " + balanceBy.displayName());
+        resultLabel.setText(Messages.getString("RandomArmyDialog.Simple.Created",
+              achievedValue,
+              balanceBy.displayName()));
         return result;
     }
 

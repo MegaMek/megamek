@@ -53,7 +53,7 @@ import java.util.*;
  * a button panel that allows interaction with the results (see the present subclasses for examples). Subclasses or
  * callers can also supply GameOptions that influence some of the generators.
  */
-public abstract class AbstractRandomArmyDialog extends JDialog implements ActionListener {
+public abstract class AbstractRandomArmyDialog extends JDialog {
 
     // TODO: provide a common results API
 
@@ -65,13 +65,15 @@ public abstract class AbstractRandomArmyDialog extends JDialog implements Action
     protected final JFrame parentFrame;
 
     protected final JTabbedPane tabbedPane = new JTabbedPane();
+    private final Map<Integer, RandomArmyTab> generators = new HashMap<>();
+
     protected final ForceGeneratorViewUi forceGeneratorPanel;
     protected ForceGenerationOptionsPanel formationPanel;
 
     private final JComponent previewPanel = Box.createVerticalBox();
 
-    private final CardLayout m_lRightCards = new CardLayout();
-    private final JPanel m_pRightPane = new JPanel(m_lRightCards);
+    private final CardLayout previewPaneCardLayout = new CardLayout();
+    private final JPanel previewPane = new JPanel(previewPaneCardLayout);
     private final JSplitPane splitPane;
 
     private final JButton addAllButton = new JButton(Messages.getString("RandomArmyDialog.AddAll"));
@@ -101,29 +103,33 @@ public abstract class AbstractRandomArmyDialog extends JDialog implements Action
         createPreviewPanel();
         forceGeneratorPanel = new ForceGeneratorViewUi(parentFrame, gameOptions);
 
-        tabbedPane.addTab(Messages.getString("RandomArmyDialog.BVtab"),
-              new RandomArmyBvTab(parentFrame, gameOptions));
-        tabbedPane.addTab(Messages.getString("RandomArmyDialog.SimpleTab"), new SimpleRandomLancePanel(this));
-        tabbedPane.addTab(Messages.getString("RandomArmyDialog.RATtab"), new RandomArmyRatTab());
-        tabbedPane.addTab(Messages.getString("RandomArmyDialog.RATGentab"),
-              new RandomArmyRatGenTab(this, gameOptions));
-        tabbedPane.addTab(Messages.getString("RandomArmyDialog.Formationtab"),
+        var bvTab = new RandomArmyBvTab(parentFrame, gameOptions);
+        var simpleTab = new SimpleRandomLancePanel(this);
+        var ratTab = new RandomArmyRatTab();
+        var ratGenTab = new RandomArmyRatGenTab(this, gameOptions);
+
+        addTab(Messages.getString("RandomArmyDialog.BVtab"), new BorderlessScrollPane(bvTab), bvTab);
+        addTab(Messages.getString("RandomArmyDialog.SimpleTab"), new BorderlessScrollPane(simpleTab), simpleTab);
+        addTab(Messages.getString("RandomArmyDialog.RATtab"), ratTab, ratTab);
+        addTab(Messages.getString("RandomArmyDialog.RATGentab"), ratGenTab, ratGenTab);
+        addTab(Messages.getString("RandomArmyDialog.Formationtab"),
+              new BorderlessScrollPane(formationPanel),
               formationPanel);
         tabbedPane.addTab(Messages.getString("RandomArmyDialog.Forcetab"), forceGeneratorPanel.getLeftPanel());
 
         tabbedPane.addChangeListener(ev -> {
             if (tabbedPane.getSelectedIndex() == TAB_FORCE_GENERATOR) {
-                m_lRightCards.show(m_pRightPane, CARD_FORCE_TREE);
+                previewPaneCardLayout.show(previewPane, CARD_FORCE_TREE);
             } else {
-                m_lRightCards.show(m_pRightPane, CARD_PREVIEW);
+                previewPaneCardLayout.show(previewPane, CARD_PREVIEW);
             }
         });
 
-        m_pRightPane.add(previewPanel, CARD_PREVIEW);
-        m_pRightPane.add(forceGeneratorPanel.getRightPanel(), CARD_FORCE_TREE);
-        m_pRightPane.setMinimumSize(new Dimension(0, 0));
+        previewPane.add(previewPanel, CARD_PREVIEW);
+        previewPane.add(forceGeneratorPanel.getRightPanel(), CARD_FORCE_TREE);
+        previewPane.setMinimumSize(new Dimension(0, 0));
 
-        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tabbedPane, m_pRightPane);
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tabbedPane, previewPane);
         splitPane.setResizeWeight(0.5);
 
         // construct the main dialog
@@ -145,13 +151,26 @@ public abstract class AbstractRandomArmyDialog extends JDialog implements Action
         addWindowListener(windowListener);
     }
 
+    static class BorderlessScrollPane extends JScrollPane {
+        public BorderlessScrollPane(Component view) {
+            super(view);
+            setBorder(null);
+            getVerticalScrollBar().setUnitIncrement(16);
+        }
+    }
+
+    private void addTab(String name, JComponent tabComponent, RandomArmyTab generatorTab) {
+        tabbedPane.addTab(name, tabComponent);
+        generators.put(tabbedPane.indexOfComponent(tabComponent), generatorTab);
+    }
+
     public void setGameOptions(GameOptions newOptions) {
         gameOptions = newOptions;
         updateRATYear();
     }
 
     /**
-     * Override to add buttons or other components to the bottom of the dialog. The returned panel is added when
+     * Override to add buttons or other components to the bottom of the dialog. The returned component is added when
      * setVisible(true) is called for the first time; it is added as BorderLayout.SOUTH and is therefore stretched to
      * the width of the dialog.
      *
@@ -167,12 +186,16 @@ public abstract class AbstractRandomArmyDialog extends JDialog implements Action
     private void createPreviewPanel() {
         rolledUnitsTable.setName("Rolled Units");
         JScrollPane rolledUnitsScrollPane = new JScrollPane(rolledUnitsTable);
-        rolledUnitsScrollPane.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.Army")));
+        rolledUnitsScrollPane.setBorder(BorderFactory.createTitledBorder(
+              Messages.getString("RandomArmyDialog.Army")));
 
         chosenUnitsTable.setName("Chosen Units");
         JScrollPane chosenUnitsScrollPane = new JScrollPane(chosenUnitsTable);
-        chosenUnitsScrollPane.setBorder(BorderFactory.createTitledBorder(Messages.getString(
-              "RandomArmyDialog.SelectedUnits")));
+        chosenUnitsScrollPane.setBorder(BorderFactory.createTitledBorder(
+              Messages.getString("RandomArmyDialog.SelectedUnits")));
+
+        rolledBvTotalLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        chosenBvTotalLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel addButtonsPanel = new JPanel();
         addButtonsPanel.add(rollButton);
@@ -192,38 +215,38 @@ public abstract class AbstractRandomArmyDialog extends JDialog implements Action
         previewPanel.add(chosenBvTotalLabel);
         previewPanel.setMinimumSize(new Dimension(0, 0));
 
-        rollButton.addActionListener(this);
-        addAllButton.addActionListener(this);
-        addSelectedButton.addActionListener(this);
+        rollButton.addActionListener(e -> roll());
+        addAllButton.addActionListener(e -> addAll());
+        addSelectedButton.addActionListener(e -> addSelected());
         clearButton.addActionListener(e -> clearData());
     }
 
-    @Override
-    public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getSource() == addAllButton) {
-            rolledUnitsModel.getAllUnits().forEach(chosenUnitsModel::addUnit);
-            updateBvTotals();
+    private void addAll() {
+        rolledUnitsModel.getAllUnits().forEach(chosenUnitsModel::addUnit);
+        updateBvTotals();
+    }
 
-        } else if (actionEvent.getSource() == addSelectedButton) {
-            Arrays.stream(rolledUnitsTable.getSelectedRows())
-                  .map(rolledUnitsTable::convertRowIndexToModel)
-                  .mapToObj(rolledUnitsModel::getUnitAt)
-                  .forEach(chosenUnitsModel::addUnit);
-            updateBvTotals();
+    private void addSelected() {
+        Arrays.stream(rolledUnitsTable.getSelectedRows())
+              .map(rolledUnitsTable::convertRowIndexToModel)
+              .mapToObj(rolledUnitsModel::getUnitAt)
+              .forEach(chosenUnitsModel::addUnit);
+        updateBvTotals();
+    }
 
-        } else if (actionEvent.getSource() == rollButton) {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            try {
-                if (tabbedPane.getSelectedComponent() instanceof RandomArmyTab randomArmyTab) {
-                    rolledUnitsModel.setData(randomArmyTab.generateMekSummaries());
-                    updateBvTotals();
-                }
-            } catch (NumberFormatException ignored) {
-                JOptionPane.showMessageDialog(this,
-                      "Some numbers could not be parsed. Please check the input fields.");
-            } finally {
-                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    private void roll() {
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        try {
+            if (generators.containsKey(tabbedPane.getSelectedIndex())) {
+                RandomArmyTab randomArmyTab = generators.get(tabbedPane.getSelectedIndex());
+                rolledUnitsModel.setData(randomArmyTab.generateMekSummaries());
+                updateBvTotals();
             }
+        } catch (NumberFormatException ignored) {
+            JOptionPane.showMessageDialog(this,
+                  "Some numbers could not be parsed. Please check the input fields.");
+        } finally {
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
 
@@ -269,9 +292,10 @@ public abstract class AbstractRandomArmyDialog extends JDialog implements Action
     }
 
     private void updateBvTotals() {
-        String totalLabel = Messages.getString("RandomArmyDialog.BVTotal");
-        rolledBvTotalLabel.setText(totalLabel + calculateTotal(rolledUnitsTable));
-        chosenBvTotalLabel.setText(totalLabel + calculateTotal(chosenUnitsTable));
+        String rolledTotal = Messages.getString("RandomArmyDialog.BVTotal", calculateTotal(rolledUnitsTable));
+        rolledBvTotalLabel.setText(rolledTotal);
+        String chosenTotal = Messages.getString("RandomArmyDialog.BVTotal", calculateTotal(chosenUnitsTable));
+        chosenBvTotalLabel.setText(chosenTotal);
     }
 
     protected void addToChosenUnits(MekSummary unit) {

@@ -41,6 +41,7 @@ import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
 import megamek.client.ui.util.LambdaAction;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.loaders.MekSummary;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -52,6 +53,7 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -100,16 +102,30 @@ public class RandomArmyRatGenTab extends JPanel implements RandomArmyTab {
         rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
         ratTable.getColumnModel().getColumn(RatTableModel.COL_BV).setCellRenderer(rightRenderer);
 
+        var fixingPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
+        fixingPanel.add(forceOptionsPanel);
+
+        var optionsScrollPane = new AbstractRandomArmyDialog.BorderlessScrollPane(fixingPanel) {
+            @Override
+            public Dimension getMaximumSize() {
+                return getPreferredSize();
+            }
+        };
+
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.weightx = 1;
+        gbc.weighty = 0.5;
+        gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(5, 5, 5, 5);
-        add(forceOptionsPanel, gbc);
+        add(optionsScrollPane, gbc);
         gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weighty = 0;
         add(generateRatButton, gbc);
-        gbc.weighty = 1;
+        gbc.weighty = 0.5;
         gbc.fill = GridBagConstraints.BOTH;
         add(new JScrollPane(ratTable), gbc);
     }

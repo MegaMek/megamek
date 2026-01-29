@@ -399,7 +399,7 @@ class LobbyMekPopup {
                 Entity transportedUnit = entities.iterator().next();
                 // Standard loading, not ProtoMeks, not DropShip -> JumpShip
                 game.getEntitiesVector().stream()
-                      .filter(e -> !e.isCapitalFighter(true))
+                      .filter(e -> !e.isCapitalFighter())
                       .filter(e -> !entities.contains(e))
                       .filter(e -> canLoadAll(e, entities))
                       .forEach(e -> {
@@ -421,7 +421,7 @@ class LobbyMekPopup {
             } else if (entities.stream().noneMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMEK))) {
                 // Standard loading, not ProtoMeks, not DropShip -> JumpShip
                 game.getEntitiesVector().stream()
-                      .filter(e -> !e.isCapitalFighter(true))
+                      .filter(e -> !e.isCapitalFighter())
                       .filter(e -> !entities.contains(e))
                       .filter(e -> canLoadAll(e, entities))
                       .forEach(e -> menu.add(menuItem(
@@ -513,7 +513,7 @@ class LobbyMekPopup {
 
         // Handle all other valid loaders, such as Dropships
         loaders.stream()
-              .filter(e -> !e.isCapitalFighter(true))
+              .filter(e -> !e.isCapitalFighter())
               .filter(e -> !entities.contains(e))
               .filter(e -> canLoadAll(e, entities))
               .forEach(e -> menu.add(menuItem(

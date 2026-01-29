@@ -32,7 +32,6 @@
  * affiliated with Microsoft.
  */
 
-
 package megamek.client.ui.dialogs.randomArmy;
 
 import megamek.client.ratgenerator.FactionRecord;
@@ -83,7 +82,7 @@ public class RandomArmyRatGenTab extends JPanel implements RandomArmyTab {
         this.parentDialog = parentDialog;
 
         forceOptionsPanel = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.RAT_GENERATOR);
-        forceOptionsPanel.setYear(gameOptions.intOption(OptionsConstants.ALLOWED_YEAR));
+        setGameOptions(gameOptions);
 
         JButton generateRatButton = new JButton(Messages.getString("RandomArmyDialog.Generate"));
         generateRatButton.addActionListener(e -> generateRAT());

@@ -5817,7 +5817,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @param entity Unit leaving the map using Thrust MPs (must implement IAero)
      *
-     * @return Vector of reports
+     * @return Report describing the unit flying off the map
      */
     protected Report processFlyingOff(Entity entity) {
         IAero aero = (IAero) entity;

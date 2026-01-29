@@ -53,6 +53,7 @@ import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import megamek.common.Configuration;
@@ -380,26 +381,33 @@ public class BoardsTagger {
     }
 
     /**
-     * Recursively scans the supplied file/directory for any boards and auto-tags them.
+     * Recursively scans the supplied file/directory and applies the given processor to each file found.
+     *
+     * @param file          the file or directory to scan
+     * @param fileProcessor the action to perform on each file
      */
-    private static void scanForBoards(File file, Map<String, List<String>> boardCheckSum) {
+    private static void scanBoardFiles(File file, Consumer<File> fileProcessor) {
         if (file.isDirectory()) {
             String[] fileList = file.list();
             if (fileList != null) {
                 for (String filename : fileList) {
                     File filepath = new File(file, filename);
-                    if (filepath.isDirectory()) {
-                        scanForBoards(new File(file, filename), boardCheckSum);
-                    } else {
-                        tagBoard(filepath);
-                        checkSum(boardCheckSum, filepath);
-                    }
+                    scanBoardFiles(filepath, fileProcessor);
                 }
             }
         } else {
-            tagBoard(file);
-            checkSum(boardCheckSum, file);
+            fileProcessor.accept(file);
         }
+    }
+
+    /**
+     * Recursively scans the supplied file/directory for any boards and auto-tags them.
+     */
+    private static void scanForBoards(File file, Map<String, List<String>> boardCheckSum) {
+        scanBoardFiles(file, boardFile -> {
+            tagBoard(boardFile);
+            checkSum(boardCheckSum, boardFile);
+        });
     }
 
     /**
@@ -516,17 +524,7 @@ public class BoardsTagger {
      * @param file the file or directory to scan
      */
     private static void scanForBoardsAndUpdateHeaders(File file) {
-        if (file.isDirectory()) {
-            String[] fileList = file.list();
-            if (fileList != null) {
-                for (String filename : fileList) {
-                    File filepath = new File(file, filename);
-                    scanForBoardsAndUpdateHeaders(filepath);
-                }
-            }
-        } else {
-            updateCopyrightHeader(file);
-        }
+        scanBoardFiles(file, BoardsTagger::updateCopyrightHeader);
     }
 
     /**

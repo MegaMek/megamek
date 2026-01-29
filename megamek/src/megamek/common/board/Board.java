@@ -108,6 +108,29 @@ public class Board implements Serializable {
     private static final int UNDEFINED_MIN_ELEV = 10000;
     private static final int UNDEFINED_MAX_ELEV = -10000;
 
+    /**
+     * License header for board files, compatible with Creative Commons BY-NC-SA 4.0. The year is dynamically set to the
+     * current year when saving.
+     */
+    public static final String LICENSE_HEADER = """
+          # MegaMek Data (C) %d by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+          # To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+          #
+          # NOTICE: The MegaMek organization is a non-profit group of volunteers
+          # creating free software for the BattleTech community.
+          #
+          # MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+          # of The Topps Company, Inc. All Rights Reserved.
+          #
+          # Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+          # InMediaRes Productions, LLC.
+          #
+          # MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+          # Microsoft's "Game Content Usage Rules"
+          # <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+          # affiliated with Microsoft.
+          """;
+
     // The min and max elevation values for this board.
     // set when getMinElevation/getMax is called for the first time.
     private int minElevation = UNDEFINED_MIN_ELEV;
@@ -1179,10 +1202,29 @@ public class Board implements Serializable {
     }
 
     /**
-     * Writes data for the board, as text to the OutputStream
+     * Writes data for the board, as text to the OutputStream.
+     * Uses the GUI preference to determine whether to include the license header.
+     *
+     * @param os the OutputStream to write to
      */
     public void save(OutputStream os) {
+        boolean includeLicense = GUIPreferences.getInstance().getBoardSaveIncludeLicense();
+        save(os, includeLicense);
+    }
+
+    /**
+     * Writes data for the board, as text to the OutputStream.
+     *
+     * @param os             the OutputStream to write to
+     * @param includeLicense if true, writes the CC BY-NC-SA 4.0 license header at the start of the file
+     */
+    public void save(OutputStream os, boolean includeLicense) {
         try (Writer w = new OutputStreamWriter(os)) {
+            if (includeLicense) {
+                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+                w.write(LICENSE_HEADER.formatted(currentYear));
+                w.write("\r\n");
+            }
             w.write("size " + width + ' ' + height + "\r\n");
             if (!roadsAutoExit) {
                 w.write("option exit_roads_to_pavement false\r\n");

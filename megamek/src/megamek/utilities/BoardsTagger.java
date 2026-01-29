@@ -494,4 +494,75 @@ public class BoardsTagger {
             logger.error(e, "SHA-256 Algorithm Can't be Found");
         }
     }
+
+    /**
+     * Runs the copyright header updater on all boards in the default boards directory. Adds or updates the MegaMek Data
+     * copyright header to all valid board files.
+     */
+    public static void runCopyrightHeaderUpdater() {
+        try {
+            File boardDir = Configuration.boardsDir();
+            scanForBoardsAndUpdateHeaders(boardDir);
+        } catch (Exception ex) {
+            logger.error(ex, "Copyright header updater cannot scan boards");
+        }
+
+        logger.info("Copyright header update finished.");
+    }
+
+    /**
+     * Recursively scans the supplied file/directory for any boards and updates their copyright headers.
+     *
+     * @param file the file or directory to scan
+     */
+    private static void scanForBoardsAndUpdateHeaders(File file) {
+        if (file.isDirectory()) {
+            String[] fileList = file.list();
+            if (fileList != null) {
+                for (String filename : fileList) {
+                    File filepath = new File(file, filename);
+                    scanForBoardsAndUpdateHeaders(filepath);
+                }
+            }
+        } else {
+            updateCopyrightHeader(file);
+        }
+    }
+
+    /**
+     * Updates the copyright header on a single board file. If the board already has a copyright header (lines starting
+     * with #), it is replaced. If not, a new header is added at the beginning of the file.
+     *
+     * @param boardFile the board file to update
+     */
+    private static void updateCopyrightHeader(File boardFile) {
+        // If this isn't a board, ignore it
+        if (!boardFile.toString().endsWith(".board")) {
+            return;
+        }
+
+        // Load the board
+        Board board = new Board();
+        try (InputStream is = new FileInputStream(boardFile)) {
+            List<String> errors = new ArrayList<>();
+            board.load(is, errors, true);
+            if (!errors.isEmpty()) {
+                logger.debug("Board has errors, skipping: {}", boardFile);
+                return;
+            }
+        } catch (Exception e) {
+            logger.error(e, "Could not load board: {}", boardFile);
+            return;
+        }
+
+        // Re-save the board with the license header
+        try (OutputStream os = new FileOutputStream(boardFile)) {
+            board.save(os, true);
+            if (DEBUG) {
+                logger.debug("Updated copyright header: {}", boardFile);
+            }
+        } catch (Exception ex) {
+            logger.error(ex, "Could not save board: {}", boardFile);
+        }
+    }
 }

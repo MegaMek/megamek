@@ -5,42 +5,44 @@
 
 <module name="Checker">
     <module name="SuppressionFilter">
-        <property name="file" value="${suppressionFile}"/>
+        <property name="file" value="${suppressionFile}" />
     </module>
 
     <module name="RegexpSingleline">
-        <property name="format" value="^(?!.*(bg\.battletech|MechWarrior Copyright|MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks|BattleMech Manual)).*\b(?i)(mech|mechwarrior|battlemech|aerotech|protomech|'mech|`Mech|TripodMech|BipedMech|QuadMech|LandAirMech|OmniMech|'Mechs)\b.*$"/>
-        <property name="ignoreCase" value="true"/>
-        <property name="message" value="Forbidden word found"/>
-        <property name="fileExtensions" value="properties, md"/>
+        <property name="format" value="^(?!.*(bg\.battletech|MechWarrior Copyright|MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks|BattleMech Manual)).*\b(?i)(mech|mechwarrior|battlemech|aerotech|protomech|'mech|`Mech|TripodMech|BipedMech|QuadMech|LandAirMech|OmniMech|'Mechs)\b.*$" />
+        <property name="ignoreCase" value="true" />
+        <property name="message" value="Forbidden word found" />
+        <property name="fileExtensions" value="properties, md" />
+        <property name="severity" value="error" />
     </module>
 
     <!-- Check that "license" appears at least once in the file -->
     <module name="RegexpSingleline">
-        <property name="format" value="(?i)\b(license|copyright)\b"/>
-        <property name="minimum" value="1"/>
-        <property name="maximum" value="9999"/>
-        <property name="ignoreCase" value="true"/>
-        <property name="message" value="File must contain a license header"/>
-        <property name="severity" value="warning"/>
-        <property name="fileExtensions" value="java"/>
+        <property name="format" value="(?i)\b(license|copyright)\b" />
+        <property name="minimum" value="1" />
+        <property name="maximum" value="9999" />
+        <property name="ignoreCase" value="true" />
+        <property name="message" value="File must contain a license header" />
+        <property name="severity" value="error" />
+        <property name="fileExtensions" value="java" />
     </module>
 
     <module name="TreeWalker">
         <module name="SuppressWithNearbyCommentFilter">
-            <property name="commentFormat" value="CHECKSTYLE IGNORE ForbiddenWords FOR (\d+) LINES"/>
-            <property name="checkFormat" value=".*"/>
-            <property name="influenceFormat" value="$1"/>
+            <property name="commentFormat" value="CHECKSTYLE IGNORE ForbiddenWords FOR (\d+) LINES" />
+            <property name="checkFormat" value=".*" />
+            <property name="influenceFormat" value="$1" />
         </module>
 
-        <module name="SuppressionCommentFilter"/>
+        <module name="SuppressionCommentFilter" />
 
         <module name="RegexpSinglelineJava">
-            <property name="id" value="ForbiddenWords"/>
-            <property name="format" value="^(?!.*(bg\.battletech|MechWarrior Copyright|MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks)).*\b(?i)(mech|mechwarrior|battlemech|aerotech|protomech|'mech|`Mech|TripodMech|BipedMech|QuadMech|LandAirMech|OmniMech|’Mechs)\b.*$"/>
-            <property name="ignoreCase" value="true"/>
-            <property name="ignoreComments" value="false"/>
-            <property name="message" value="Forbidden word found"/>
+            <property name="id" value="ForbiddenWords" />
+            <property name="format" value="^(?!.*(bg\.battletech|MechWarrior Copyright|MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks)).*\b(?i)(mech|mechwarrior|battlemech|aerotech|protomech|'mech|`Mech|TripodMech|BipedMech|QuadMech|LandAirMech|OmniMech|’Mechs)\b.*$" />
+            <property name="ignoreCase" value="true" />
+            <property name="ignoreComments" value="false" />
+            <property name="message" value="Forbidden word found" />
+            <property name="severity" value="error" />
         </module>
     </module>
 </module>

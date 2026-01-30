@@ -36,16 +36,22 @@ package megamek.client.ui.dialogs.unitSelectorDialogs;
 import java.awt.BorderLayout;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -57,12 +63,13 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 
+import megamek.client.ui.FluffImageTooltip;
 import megamek.client.ui.entityreadout.EntityReadout;
 import megamek.client.ui.entityreadout.ReadoutSections;
 import megamek.client.ui.util.FluffImageHelper;
 import megamek.client.ui.util.UIUtil;
-import megamek.client.ui.util.UIUtil.FixedXPanel;
 import megamek.client.ui.util.ViewFormatting;
+import megamek.common.Configuration;
 import megamek.common.Report;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
@@ -78,7 +85,18 @@ public class EntityReadoutPanel extends JPanel {
     private final JLabel fluffImageComponent = new JLabel();
     private final JScrollPane scrollPane = new JScrollPane(readoutTextComponent);
 
+    private final JLabel fluffImageLabel = new JLabel();
+    private final List<FluffImageHelper.FluffImageRecord> fluffImageList = new ArrayList<>();
+    private int fluffImageIndex = 0;
+    private final JButton nextImageButton = new JButton(">");
+    private final JButton prevImageButton = new JButton("<");
+    private final JLabel imageInfoLabel = new JLabel("", JLabel.CENTER);
+
     public static final int DEFAULT_WIDTH = 360;
+
+    private static final String PLACEHOLDER_IMAGE_NAME =
+            new File(Configuration.fluffImagesDir(), "fluff_placeholder.png").getPath();
+    private static final Image PLACEHOLDER_IMAGE = readPlaceHolderImage();
 
     public EntityReadoutPanel() {
         this(-1, -1);
@@ -141,21 +159,31 @@ public class EntityReadoutPanel extends JPanel {
         }
         textPanel.add(scrollPane);
 
-        var fluffPanel = new FixedXPanel();
-        if (width != -1) {
-            fluffPanel.setMinimumSize(new Dimension(width, height));
-            fluffPanel.setPreferredSize(new Dimension(width, height));
-        }
-        fluffPanel.add(fluffImageComponent);
+        var imageControlsPanel = new UIUtil.FixedYPanel(new FlowLayout());
+        imageControlsPanel.add(prevImageButton);
+        imageControlsPanel.add(nextImageButton);
 
-        JPanel p = new JPanel();
-        p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
+        imageControlsPanel.setAlignmentX(0.5f);
+        fluffImageLabel.setAlignmentX(0.5f);
+        imageInfoLabel.setAlignmentX(0.5f);
+
+        Box fluffPanel = Box.createVerticalBox();
+        fluffPanel.setAlignmentY(0);
+        fluffPanel.add(imageControlsPanel);
+        fluffPanel.add(fluffImageLabel);
+        fluffPanel.add(Box.createVerticalStrut(10));
+        fluffPanel.add(imageInfoLabel);
+
+        Box p = Box.createHorizontalBox();
         p.add(textPanel);
         p.add(fluffPanel);
         p.add(Box.createHorizontalGlue());
         setLayout(new BorderLayout());
         add(p);
         addMouseWheelListener(wheelForwarder);
+
+        nextImageButton.addActionListener(e -> showNextFluffImage());
+        prevImageButton.addActionListener(e -> showPrevFluffImage());
     }
 
     public void showEntity(Entity entity, EntityReadout mekView) {
@@ -209,17 +237,34 @@ public class EntityReadoutPanel extends JPanel {
         showEntity(entity, mekView, fontName, sections);
     }
 
-    private void setFluffImage(Entity entity) {
-        boolean isSpritesOnly = PreferenceManager.getClientPreferences().getSpritesOnly();
-        Image image = isSpritesOnly ? null : FluffImageHelper.getFluffImage(entity);
+    private void setFluffImage(Image image) {
         // Scale down to the default width if the image is wider than that
         if (null != image) {
             if (image.getWidth(this) > DEFAULT_WIDTH) {
                 image = image.getScaledInstance(DEFAULT_WIDTH, -1, Image.SCALE_SMOOTH);
             }
-            fluffImageComponent.setIcon(new ImageIcon(image));
+            fluffImageLabel.setIcon(new ImageIcon(image));
         } else {
-            fluffImageComponent.setIcon(null);
+            fluffImageLabel.setIcon(null);
+            fluffImageLabel.setToolTipText(null);
+        }
+    }
+
+    private void setFluffImage(Entity entity) {
+        boolean isSpritesOnly = PreferenceManager.getClientPreferences().getSpritesOnly();
+        if (isSpritesOnly) {
+            setFluffImage((Image) null);
+            return;
+        }
+        fluffImageList.clear();
+        fluffImageList.addAll(FluffImageHelper.getFluffRecords(entity));
+        fluffImageIndex = 0;
+        nextImageButton.setEnabled(fluffImageList.size() > 1);
+        prevImageButton.setEnabled(fluffImageList.size() > 1);
+        if (entity != null) {
+            showNextFluffImage();
+        } else {
+            setFluffImage((Image) null);
         }
     }
 
@@ -236,4 +281,44 @@ public class EntityReadoutPanel extends JPanel {
             listener.mouseWheelMoved(converted);
         }
     };
+
+    private void showNextFluffImage() {
+        changeFluffImageIndex(1);
+    }
+
+    private void showPrevFluffImage() {
+        changeFluffImageIndex(-1);
+    }
+
+    private void changeFluffImageIndex(int delta) {
+        fluffImageIndex += delta;
+        if (fluffImageIndex >= fluffImageList.size()) {
+            fluffImageIndex = 0;
+        }
+        if (fluffImageIndex < 0) {
+            fluffImageIndex = fluffImageList.size() - 1;
+        }
+        if ((fluffImageIndex >= 0) && (fluffImageIndex < fluffImageList.size())) {
+            try {
+                FluffImageHelper.FluffImageRecord record = fluffImageList.get(fluffImageIndex);
+                setFluffImage(record.getImage());
+                fluffImageLabel.setToolTipText(FluffImageTooltip.getTooltip(record));
+                imageInfoLabel.setText(FluffImageTooltip.getTooltip(record));
+            } catch (IOException ex) {
+                setFluffImage((Image) null);
+                imageInfoLabel.setText("Error loading fluff image");
+            }
+        } else {
+            setFluffImage(PLACEHOLDER_IMAGE);
+            imageInfoLabel.setText("");
+        }
+    }
+
+    private static Image readPlaceHolderImage() {
+        try {
+            return ImageIO.read(new File(PLACEHOLDER_IMAGE_NAME));
+        } catch (IOException e) {
+            return null;
+        }
+    }
 }

@@ -3479,6 +3479,14 @@ public class Compute {
      */
     public static float getExpectedDamage(Game game, WeaponAttackAction weaponAttackAction, boolean assumeHit,
           List<ECMInfo> allECMInfo) {
+
+        if (weaponAttackAction.getAssumedHit() == assumeHit && weaponAttackAction.getExpectedDamage() >= 0.0) {
+            // Reuse previous calc results
+            return weaponAttackAction.getExpectedDamage();
+        }
+
+        weaponAttackAction.setAssumedHit(assumeHit);
+
         boolean use_table = false;
 
         AmmoType loaded_ammo;
@@ -3487,6 +3495,7 @@ public class Compute {
         Entity target = game.getEntity(weaponAttackAction.getTargetId());
 
         if (attacker == null) {
+            weaponAttackAction.setExpectedDamage(0.0f);
             return 0.0f;
         }
 
@@ -3514,6 +3523,7 @@ public class Compute {
             fChance = 1.0f;
         } else {
             if ((hitData.getValue() == TargetRoll.IMPOSSIBLE) || (hitData.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
+                weaponAttackAction.setExpectedDamage(0.0f);
                 return 0.0f;
             }
 
@@ -3571,6 +3581,7 @@ public class Compute {
         if (use_table) {
             if (!(attacker instanceof BattleArmor)) {
                 if (weapon.getLinked() == null) {
+                    weaponAttackAction.setExpectedDamage(0.0f);
                     return 0.0f;
                 }
             }
@@ -3911,6 +3922,7 @@ public class Compute {
                 fDamage = min(infShootingStrength, fDamage);
             }
         }
+        weaponAttackAction.setExpectedDamage(fDamage);
         return fDamage;
     }
 

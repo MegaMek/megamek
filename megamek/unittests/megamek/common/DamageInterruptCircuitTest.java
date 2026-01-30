@@ -385,14 +385,52 @@ public class DamageInterruptCircuitTest {
     class CostCalculationTests {
 
         @Test
-        @DisplayName("DIC base cost should be 150 C-bills")
-        void dicBaseCost() {
+        @DisplayName("DIC should use variable cost (150 C-bills per pilot seat)")
+        void dicUsesVariableCost() {
             EquipmentType dicType = EquipmentType.get("DamageInterruptCircuit");
             assertNotNull(dicType, "DIC equipment should exist");
 
-            // Per IO p.39: Cost is 150 C-bills per pilot seat
-            // The base cost in MiscType is 150
-            assertEquals(150, dicType.getRawCost(), 0.01, "DIC base cost should be 150 C-bills");
+            // Per IO:AE p.62: Cost is 150 C-bills per pilot seat
+            // DIC uses COST_VARIABLE and calculates cost based on crew slots
+            assertEquals(EquipmentType.COST_VARIABLE, dicType.getRawCost(), 0.01,
+                  "DIC should use COST_VARIABLE for dynamic cost calculation");
+        }
+
+        @Test
+        @DisplayName("DIC cost should be 150 C-bills for single pilot Mek")
+        void dicCostForSinglePilot() throws Exception {
+            Mek mek = createMek(true, false);
+            EquipmentType dicType = EquipmentType.get("DamageInterruptCircuit");
+            assertNotNull(dicType, "DIC equipment should exist");
+
+            // Get the mounted DIC and check its calculated cost
+            double dicCost = dicType.getCost(mek, false, Entity.LOC_NONE, 1.0);
+            assertEquals(150, dicCost, 0.01,
+                  "DIC cost should be 150 C-bills for single pilot (150 * 1 seat)");
+        }
+
+        @Test
+        @DisplayName("DIC cost should be 300 C-bills for Command Console Mek")
+        void dicCostForCommandConsole() {
+            BipedMek mek = new BipedMek();
+            mek.setGame(game);
+            mek.setId(1);
+            mek.setChassis("Test Mek");
+            mek.setModel("DIC Command Cost");
+            mek.setWeight(50);
+
+            // Set up dual crew (Command Console has 2 crew slots)
+            Crew crew = new Crew(CrewType.COMMAND_CONSOLE);
+            mek.setCrew(crew);
+            mek.setOwner(game.getPlayer(0));
+
+            EquipmentType dicType = EquipmentType.get("DamageInterruptCircuit");
+            assertNotNull(dicType, "DIC equipment should exist");
+
+            // Command Console = 2 crew slots, so DIC cost should be 300 C-bills
+            double dicCost = dicType.getCost(mek, false, Entity.LOC_NONE, 1.0);
+            assertEquals(300, dicCost, 0.01,
+                  "DIC cost should be 300 C-bills for Command Console (150 * 2 seats)");
         }
 
         @Test

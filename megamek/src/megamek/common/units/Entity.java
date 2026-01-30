@@ -11821,7 +11821,7 @@ public abstract class Entity extends TurnOrdered
      * @return true if the unit has DNI cockpit modification equipment
      */
     public boolean hasDNICockpitMod() {
-        return hasMisc(MiscType.F_BATTLEMEK_NIU);
+        return hasMisc(MiscType.F_DNI_COCKPIT_MOD);
     }
 
     /**

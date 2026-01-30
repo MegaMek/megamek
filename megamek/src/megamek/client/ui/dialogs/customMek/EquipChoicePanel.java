@@ -332,7 +332,7 @@ public class EquipChoicePanel extends JPanel {
             boolean validTechBase = !entity.isClan() || entity.isMixedTech();
             if (validUnitType && validTechBase) {
                 // Check game year against equipment introduction date
-                EquipmentType dniEquipment = EquipmentType.get("BABattleMechNIU");
+                EquipmentType dniEquipment = EquipmentType.get("DNICockpitModification");
                 int gameYear = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
                 int dniIntroYear = (dniEquipment != null) ? dniEquipment.getIntroductionDate(false) : 3052;
                 if (gameYear >= dniIntroYear) {
@@ -1007,7 +1007,7 @@ public class EquipChoicePanel extends JPanel {
             boolean hasDNI = entity.hasDNICockpitMod();
             if (wantsDNI && !hasDNI) {
                 // Add DNI Cockpit Mod
-                MiscType dniMod = (MiscType) EquipmentType.get("BABattleMechNIU");
+                MiscType dniMod = (MiscType) EquipmentType.get("DNICockpitModification");
                 if (dniMod != null) {
                     try {
                         entity.addEquipment(dniMod, Entity.LOC_NONE);
@@ -1019,7 +1019,7 @@ public class EquipChoicePanel extends JPanel {
             } else if (!wantsDNI && hasDNI) {
                 // Remove DNI Cockpit Mod
                 for (MiscMounted mounted : entity.getMisc()) {
-                    if (mounted.getType().hasFlag(MiscType.F_BATTLEMEK_NIU)) {
+                    if (mounted.getType().hasFlag(MiscType.F_DNI_COCKPIT_MOD)) {
                         entity.removeMisc(mounted.getName());
                         break;
                     }

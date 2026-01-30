@@ -7453,14 +7453,10 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = "61, IO:AE";
-        /*
-         * IntOPs doesn't have an extinct date for IIW but code indicates its extinct.
-         * Giving benefit of the doubt and assigning F code for Dark Age for Homeworld
-         * Clans.
-         */
+        // IO:AE p.61 lists availability as F/XXFE
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
-              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3070, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.CCY)
@@ -7488,14 +7484,10 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = "61, IO:AE";
-        /*
-         * IntOPs doesn't have an extinct date for IIW but code indicates its extinct.
-         * Giving benefit of the doubt and assigning F code for Dark Age for Homeworld
-         * Clans.
-         */
+        // IO:AE p.61 lists availability as F/XXFE
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
-              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3070, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.CCY)
@@ -7523,14 +7515,10 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = "61, IO:AE";
-        /*
-         * IntOPs doesn't have an extinct date for IIW but code indicates its extinct.
-         * Giving benefit of the doubt and assigning F code for Dark Age for Homeworld
-         * Clans.
-         */
+        // IO:AE p.61 lists availability as F/XXFE
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
-              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3070, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.CCY)
@@ -7558,14 +7546,10 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = "61, IO:AE";
-        /*
-         * IntOPs doesn't have an extinct date for IIW but code indicates its extinct.
-         * Giving benefit of the doubt and assigning F code for Dark Age for Homeworld
-         * Clans.
-         */
+        // IO:AE p.61 lists availability as F/XXFE
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
-              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3070, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.CCY)

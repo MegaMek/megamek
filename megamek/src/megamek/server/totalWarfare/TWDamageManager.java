@@ -400,7 +400,9 @@ public class TWDamageManager implements IDamageManager {
         }
 
         // if using VDNI (but not buffered), check for damage on an internal hit
+        // When tracking neural interface hardware, require DNI cockpit mod for feedback
         if (tookInternalDamage &&
+              entity.hasActiveDNI() &&
               entity.hasAbility(OptionsConstants.MD_VDNI) &&
               !entity.hasAbility(OptionsConstants.MD_BVDNI) &&
               !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {

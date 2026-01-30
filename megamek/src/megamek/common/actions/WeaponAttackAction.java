@@ -621,6 +621,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
               false,
               false);
 
+        // Add the combined EI terrain reduction as a single modifier (if any was accumulated)
+        toHit.finalizeEiModifier();
+
         // okay!
         return toHit;
     }

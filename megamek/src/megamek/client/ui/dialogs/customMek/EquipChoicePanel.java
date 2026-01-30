@@ -85,6 +85,8 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This class builds the Equipment Panel for use in MegaMek and MekHQ
@@ -96,6 +98,8 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 public class EquipChoicePanel extends JPanel {
     @Serial
     private static final long serialVersionUID = 672299770230285567L;
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final Entity entity;
     private final List<MunitionChoicePanel> m_vMunitions = new ArrayList<>();
@@ -134,6 +138,8 @@ public class EquipChoicePanel extends JPanel {
     private final JCheckBox chCondEjectFuel = new JCheckBox();
     private final JCheckBox chCondEjectSIDest = new JCheckBox();
     private final JCheckBox chSearchlight = new JCheckBox();
+    private final JCheckBox chDNICockpitMod = new JCheckBox();
+    private final JCheckBox chEICockpit = new JCheckBox();
     private final JComboBox<String> choC3 = new JComboBox<>();
     ClientGUI clientgui;
     Client client;
@@ -312,6 +318,59 @@ public class EquipChoicePanel extends JPanel {
             chSearchlight.setSelected(entity.hasSearchlight() ||
                   entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
             chSearchlight.setEnabled(!entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
+        }
+
+        // Set up DNI Cockpit Modification (IO p.83)
+        // Only show when tracking neural interface hardware is enabled
+        // DNI is Inner Sphere tech (E/X-X-E-F) - not available for pure Clan units
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            // DNI cockpit mod is available for Meks, Tanks, Fighters, BA, and Support Vehicles
+            // Must be IS, Mixed IS, or Mixed Clan (not pure Clan)
+            boolean validUnitType = entity.isMek() || entity.isCombatVehicle() || entity.isFighter()
+                  || entity.isSupportVehicle() || (entity instanceof BattleArmor);
+            boolean validTechBase = !entity.isClan() || entity.isMixedTech();
+            if (validUnitType && validTechBase) {
+                // Check game year against equipment introduction date
+                EquipmentType dniEquipment = EquipmentType.get("BABattleMechNIU");
+                int gameYear = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+                int dniIntroYear = (dniEquipment != null) ? dniEquipment.getIntroductionDate(false) : 3052;
+                if (gameYear >= dniIntroYear) {
+                    JLabel labDNICockpitMod = new JLabel(Messages.getString("CustomMekDialog.labDNICockpitMod"),
+                          SwingConstants.RIGHT);
+                    add(labDNICockpitMod, GBC.std());
+                    add(chDNICockpitMod, GBC.eol());
+                    // Auto-select if pilot has DNI implant (smart detection)
+                    boolean hasHardware = entity.hasDNICockpitMod();
+                    boolean hasImplant = entity.hasDNIImplant();
+                    chDNICockpitMod.setSelected(hasHardware || hasImplant);
+                }
+            }
+        }
+
+        // Set up EI Interface (IO p.69)
+        // Only show when tracking neural interface hardware is enabled
+        // EI is Clan tech (F/X-X-D-D) - not available for pure IS units
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            // EI Interface is available for Meks, BA, and ProtoMeks
+            // Must be Clan, Mixed Clan, or Mixed IS (not pure IS)
+            boolean validUnitType = entity.isMek() || (entity instanceof BattleArmor) || entity.isProtoMek();
+            boolean validTechBase = entity.isClan() || entity.isMixedTech();
+            if (validUnitType && validTechBase) {
+                // Check game year against equipment introduction date
+                EquipmentType eiEquipment = EquipmentType.get("EIInterface");
+                int gameYear = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+                int eiIntroYear = (eiEquipment != null) ? eiEquipment.getIntroductionDate(true) : 3040;
+                if (gameYear >= eiIntroYear) {
+                    JLabel labEICockpit = new JLabel(Messages.getString("CustomMekDialog.labEICockpit"),
+                          SwingConstants.RIGHT);
+                    add(labEICockpit, GBC.std());
+                    add(chEICockpit, GBC.eol());
+                    // Auto-select if pilot has EI implant (smart detection)
+                    boolean hasHardware = entity.hasEiCockpit();
+                    boolean hasImplant = entity.hasAbility(OptionsConstants.MD_EI_IMPLANT);
+                    chEICockpit.setSelected(hasHardware || hasImplant);
+                }
+            }
         }
 
         // Set up mines
@@ -922,6 +981,59 @@ public class EquipChoicePanel extends JPanel {
             entity.setSearchlightState(chSearchlight.isSelected());
         }
 
+        // update DNI Cockpit Modification setting (IO p.83)
+        Game game = (clientgui == null) ? client.getGame() : clientgui.getClient().getGame();
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            boolean wantsDNI = chDNICockpitMod.isSelected();
+            boolean hasDNI = entity.hasDNICockpitMod();
+            if (wantsDNI && !hasDNI) {
+                // Add DNI Cockpit Mod
+                MiscType dniMod = (MiscType) EquipmentType.get("BABattleMechNIU");
+                if (dniMod != null) {
+                    try {
+                        entity.addEquipment(dniMod, Entity.LOC_NONE);
+                    } catch (Exception e) {
+                        LOGGER.debug("Failed to add DNI cockpit modification to {}: {}",
+                              entity.getDisplayName(), e.getMessage());
+                    }
+                }
+            } else if (!wantsDNI && hasDNI) {
+                // Remove DNI Cockpit Mod
+                for (MiscMounted mounted : entity.getMisc()) {
+                    if (mounted.getType().hasFlag(MiscType.F_BATTLEMEK_NIU)) {
+                        entity.removeMisc(mounted.getName());
+                        break;
+                    }
+                }
+            }
+        }
+
+        // update EI Interface setting (IO p.69)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            boolean wantsEI = chEICockpit.isSelected();
+            boolean hasEI = entity.hasEiCockpit();
+            if (wantsEI && !hasEI) {
+                // Add EI Interface
+                MiscType eiInterface = (MiscType) EquipmentType.get("EIInterface");
+                if (eiInterface != null) {
+                    try {
+                        entity.addEquipment(eiInterface, Entity.LOC_NONE);
+                    } catch (Exception e) {
+                        LOGGER.debug("Failed to add EI Interface to {}: {}",
+                              entity.getDisplayName(), e.getMessage());
+                    }
+                }
+            } else if (!wantsEI && hasEI) {
+                // Remove EI Interface
+                for (MiscMounted mounted : entity.getMisc()) {
+                    if (mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                        entity.removeMisc(mounted.getName());
+                        break;
+                    }
+                }
+            }
+        }
+
         if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
             Entity chosen = client.getEntity(entityCorrespondence[choC3.getSelectedIndex()]);
             int entC3nodeCount = client.getGame().getC3SubNetworkMembers(entity).size();
@@ -952,5 +1064,52 @@ public class EquipChoicePanel extends JPanel {
         } else if (entity.hasNavalC3() && (choC3.getSelectedIndex() > -1)) {
             entity.setC3NetId(client.getEntity(entityCorrespondence[choC3.getSelectedIndex()]));
         }
+    }
+
+    /**
+     * Refreshes the neural interface checkboxes based on current pilot implant status. Called when switching to the
+     * Equipment tab to pick up changes made in the Pilot tab.
+     *
+     * <p>This method only auto-CHECKS the checkbox when an implant is detected but hardware is missing.
+     * It respects manual unchecking - if the user has unchecked the box (hardware not present and box unchecked),
+     * it won't force it back to checked. This allows testing scenarios where pilot has implant but unit lacks hardware.</p>
+     */
+    public void refreshNeuralInterfaceCheckboxes() {
+        Game game = (clientgui == null) ? client.getGame() : clientgui.getClient().getGame();
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            return;
+        }
+
+        // Refresh DNI checkbox - only force checked when hardware is present
+        // Respects manual unchecking when pilot has implant but user wants to test without hardware
+        if (entity.hasDNICockpitMod()) {
+            chDNICockpitMod.setSelected(true);
+        }
+
+        // Refresh EI checkbox - only force checked when hardware is present
+        // Respects manual unchecking when pilot has implant but user wants to test without hardware
+        if (entity.hasEiCockpit()) {
+            chEICockpit.setSelected(true);
+        }
+    }
+
+    /**
+     * Sets the DNI Cockpit Modification checkbox state directly. Called from CustomMekDialog when a DNI implant option
+     * is toggled.
+     *
+     * @param selected true to check the checkbox, false to uncheck
+     */
+    public void setDNICockpitModSelected(boolean selected) {
+        chDNICockpitMod.setSelected(selected);
+    }
+
+    /**
+     * Sets the EI Interface checkbox state directly. Called from CustomMekDialog when the EI implant option is
+     * toggled.
+     *
+     * @param selected true to check the checkbox, false to uncheck
+     */
+    public void setEICockpitSelected(boolean selected) {
+        chEICockpit.setSelected(selected);
     }
 }

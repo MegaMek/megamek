@@ -125,7 +125,7 @@ public class DNICockpitModTest {
         // Add DNI cockpit modification if requested
         if (withDNICockpitMod) {
             try {
-                MiscType dniMod = (MiscType) EquipmentType.get("BABattleMechNIU");
+                MiscType dniMod = (MiscType) EquipmentType.get("DNICockpitModification");
                 if (dniMod != null) {
                     mek.addEquipment(dniMod, Entity.LOC_NONE);
                 }
@@ -192,22 +192,22 @@ public class DNICockpitModTest {
         @Test
         @DisplayName("DNI Cockpit Mod equipment exists")
         void dniCockpitModEquipmentExists() {
-            EquipmentType dniMod = EquipmentType.get("BABattleMechNIU");
+            EquipmentType dniMod = EquipmentType.get("DNICockpitModification");
             assertNotNull(dniMod, "DNI Cockpit Mod equipment should exist");
         }
 
         @Test
-        @DisplayName("DNI Cockpit Mod has F_BATTLEMEK_NIU flag")
+        @DisplayName("DNI Cockpit Mod has F_DNI_COCKPIT_MOD flag")
         void dniCockpitModHasCorrectFlag() {
-            MiscType dniMod = (MiscType) EquipmentType.get("BABattleMechNIU");
-            assertTrue(dniMod.hasFlag(MiscType.F_BATTLEMEK_NIU),
-                  "DNI Cockpit Mod should have F_BATTLEMEK_NIU flag");
+            MiscType dniMod = (MiscType) EquipmentType.get("DNICockpitModification");
+            assertTrue(dniMod.hasFlag(MiscType.F_DNI_COCKPIT_MOD),
+                  "DNI Cockpit Mod should have F_DNI_COCKPIT_MOD flag");
         }
 
         @Test
         @DisplayName("DNI Cockpit Mod costs 250,000 C-bills")
         void dniCockpitModCostIsCorrect() {
-            MiscType dniMod = (MiscType) EquipmentType.get("BABattleMechNIU");
+            MiscType dniMod = (MiscType) EquipmentType.get("DNICockpitModification");
             assertEquals(250000, dniMod.getCost(null, false, Entity.LOC_NONE),
                   "DNI Cockpit Mod should cost 250,000 C-bills");
         }
@@ -241,7 +241,7 @@ public class DNICockpitModTest {
         @Test
         @DisplayName("DNI Cockpit Mod has zero tonnage")
         void dniCockpitModHasZeroTonnage() {
-            MiscType dniMod = (MiscType) EquipmentType.get("BABattleMechNIU");
+            MiscType dniMod = (MiscType) EquipmentType.get("DNICockpitModification");
             assertEquals(0.0, dniMod.getTonnage(null), 0.001,
                   "DNI Cockpit Mod should have zero tonnage");
         }
@@ -249,7 +249,7 @@ public class DNICockpitModTest {
         @Test
         @DisplayName("DNI Cockpit Mod is available for Meks")
         void dniCockpitModAvailableForMeks() {
-            MiscType dniMod = (MiscType) EquipmentType.get("BABattleMechNIU");
+            MiscType dniMod = (MiscType) EquipmentType.get("DNICockpitModification");
             assertTrue(dniMod.hasFlag(MiscType.F_MEK_EQUIPMENT),
                   "DNI Cockpit Mod should be available for Meks");
         }
@@ -257,7 +257,7 @@ public class DNICockpitModTest {
         @Test
         @DisplayName("DNI Cockpit Mod is available for Tanks")
         void dniCockpitModAvailableForTanks() {
-            MiscType dniMod = (MiscType) EquipmentType.get("BABattleMechNIU");
+            MiscType dniMod = (MiscType) EquipmentType.get("DNICockpitModification");
             assertTrue(dniMod.hasFlag(MiscType.F_TANK_EQUIPMENT),
                   "DNI Cockpit Mod should be available for Tanks");
         }
@@ -265,7 +265,7 @@ public class DNICockpitModTest {
         @Test
         @DisplayName("DNI Cockpit Mod is available for Fighters")
         void dniCockpitModAvailableForFighters() {
-            MiscType dniMod = (MiscType) EquipmentType.get("BABattleMechNIU");
+            MiscType dniMod = (MiscType) EquipmentType.get("DNICockpitModification");
             assertTrue(dniMod.hasFlag(MiscType.F_FIGHTER_EQUIPMENT),
                   "DNI Cockpit Mod should be available for Fighters");
         }

@@ -2985,7 +2985,7 @@ public class ClientGUI extends AbstractClientGUI
                         // Due to the "None" option, reduce all selected index values by 1.
                         // This makes "None" a -1 value.
                         for (int i = 0; i < selectedItems.length; i++) {
-                            selectedItems[i] = selectedItems[i]--;
+                            selectedItems[i] = selectedItems[i]-1;
                         }
                         client.sendAMSAssignCFRResponse(selectedItems);
                     } else {

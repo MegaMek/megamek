@@ -19684,6 +19684,16 @@ public class TWGameManager extends AbstractGameManager {
                 }
 
                 break;
+            case Mek.SYSTEM_LIFE_SUPPORT:
+                // Damage Interrupt Circuit (IO p.39) is disabled by life support critical hit
+                if ((en instanceof Mek mek) && (mek.hasDamageInterruptCircuit()) && (!mek.isDICDisabled())) {
+                    mek.setDICDisabled(true);
+                    r = new Report(6267);
+                    r.subject = en.getId();
+                    r.indent(3);
+                    reports.addElement(r);
+                }
+                break;
             case Mek.SYSTEM_ENGINE:
                 // if the slot is missing, the location was previously
                 // destroyed and the engine hit was then counted already
@@ -23493,6 +23503,14 @@ public class TWGameManager extends AbstractGameManager {
         int pilotDamage = 2;
         if (en instanceof Aero) {
             pilotDamage = 1;
+        }
+        // Damage Interrupt Circuit (IO p.39) reduces internal explosion pilot damage to 1
+        if ((en instanceof Mek mek) && (mek.hasWorkingDIC())) {
+            pilotDamage = 1;
+            Report damageInterruptCircuitReport = new Report(6269);
+            damageInterruptCircuitReport.subject = en.getId();
+            damageInterruptCircuitReport.indent(2);
+            vDesc.addElement(damageInterruptCircuitReport);
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_CASE_PILOT_DAMAGE) &&
               (en.locationHasCase(hit.getLocation()) || en.hasCASEII(hit.getLocation()))) {

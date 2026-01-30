@@ -263,6 +263,7 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_BICYCLE = MiscTypeFlag.F_BICYCLE;
     public static final MiscTypeFlag F_CONVERTIBLE = MiscTypeFlag.F_CONVERTIBLE;
     public static final MiscTypeFlag F_BATTLEMEK_NIU = MiscTypeFlag.F_BATTLEMEK_NIU;
+    public static final MiscTypeFlag F_DAMAGE_INTERRUPT_CIRCUIT = MiscTypeFlag.F_DAMAGE_INTERRUPT_CIRCUIT;
     public static final MiscTypeFlag F_SNOWMOBILE = MiscTypeFlag.F_SNOWMOBILE;
     public static final MiscTypeFlag F_LADDER = MiscTypeFlag.F_LADDER;
     public static final MiscTypeFlag F_LIFEBOAT = MiscTypeFlag.F_LIFEBOAT;
@@ -1667,6 +1668,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISSingleHexECM());
         EquipmentType.addType(MiscType.createCLSingleHexECM());
         EquipmentType.addType(MiscType.createBattleMekNeuralInterfaceUnit());
+        EquipmentType.addType(MiscType.createDamageInterruptCircuit());
         EquipmentType.addType(MiscType.createBAISAngelECM());
         EquipmentType.addType(MiscType.createBACLAngelECM());
         EquipmentType.addType(MiscType.createSimpleCamo());
@@ -4690,7 +4692,34 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // TODO - Damage Interupt Circuit - IO pg 39
+    /**
+     * Creates the Damage Interrupt Circuit cockpit modification (IO p.39). When working, reduces internal explosion
+     * pilot damage from 2 to 1. Disabled by Life Support critical hit or any hit rolling "2" on the hit location table.
+     * When disabled, adds +1 to all PSR until repaired.
+     */
+    public static MiscType createDamageInterruptCircuit() {
+        MiscType misc = new MiscType();
+        misc.name = "Damage Interrupt Circuit";
+        misc.setInternalName("DamageInterruptCircuit");
+
+        misc.tonnage = 0;
+        misc.criticalSlots = 0;
+        misc.cost = 150; // 150 C-bills per pilot seat (handled in cost calculator)
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_DAMAGE_INTERRUPT_CIRCUIT);
+
+        misc.rulesRefs = "39, IO";
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setIntroLevel(false)
+              .setUnofficial(false)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
+              .setISAdvancement(3055, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setISApproximate(true, false, false, false, false)
+              .setPrototypeFactions(Faction.LC);
+        return misc;
+    }
+
     // Maybe the helmets should be quirks?
     // TODO - SLDF Advanced Neurohelmet (MekWarrior) - IO pg 40
     // TODO - SLDF Advanced Neurohelmet (Fighter Pilot) - IO pg 40

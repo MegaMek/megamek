@@ -1362,9 +1362,6 @@ public class TestBattleArmor extends TestEntity {
         if (equipmentCount.getOrDefault(EquipmentTypeLookup.BA_PARAFOIL, 0) > 1) {
             currentErrors.add("Cannot mount multiple parafoils");
         }
-        if (equipmentCount.getOrDefault(EquipmentTypeLookup.BA_MISSION_EQUIPMENT, 0) > 1) {
-            currentErrors.add("Cannot mount multiple mission equipment items");
-        }
         if (equipmentCount.containsKey(EquipmentTypeLookup.BA_DWP)) {
             if ((battleArmor.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT)
                   || (battleArmor.getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT)) {

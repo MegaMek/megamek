@@ -10108,6 +10108,8 @@ public class TWGameManager extends AbstractGameManager {
 
             if (ams.curMode().equals("Automatic")) {
                 targetedWAA = Compute.getHighestExpectedDamage(game, vAttacksInArc, true);
+                targetedWAA.addCounterEquipment(ams);
+                amsTargets.add(targetedWAA);
             } else {
                 // Send a client feedback request
                 sendAMSAssignCFR(e, ams, vAttacksInArc);
@@ -10126,17 +10128,21 @@ public class TWGameManager extends AbstractGameManager {
                             LOGGER.error("Expected a CFR_AMS_ASSIGN CFR packet, received: {}", cfrType);
                             throw new IllegalStateException();
                         }
-                        Integer waaIndex = (Integer) rp.getPacket().data()[1];
+                        int[] waaIndex = (int[]) rp.getPacket().data()[1];
                         if (waaIndex != null) {
-                            targetedWAA = vAttacksInArc.get(waaIndex);
+                            for (int waaNum : waaIndex) {
+                                // -1 in the waaNum indicates that None was selected in addition to others, and can be 
+                                // ignored
+                                if (waaNum == -1) {
+                                    continue;
+                                }
+                                targetedWAA = vAttacksInArc.get(waaNum);
+                                targetedWAA.addCounterEquipment(ams);
+                                amsTargets.add(targetedWAA);
+                            }
                         }
                     }
                 }
-            }
-
-            if (targetedWAA != null) {
-                targetedWAA.addCounterEquipment(ams);
-                amsTargets.add(targetedWAA);
             }
         }
     }

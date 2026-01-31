@@ -43,7 +43,6 @@ import megamek.common.TargetRollModifier;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
-import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.NarcPod;
 import megamek.common.equipment.Sensor;
@@ -116,7 +115,28 @@ public class SerializationHelper {
 
             @Override
             public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-                return readCoords(reader);
+                int x = 0;
+                int y = 0;
+                boolean foundX = false;
+                boolean foundY = false;
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    switch (reader.getNodeName()) {
+                        case "x":
+                            x = Integer.parseInt(reader.getValue());
+                            foundX = true;
+                            break;
+                        case "y":
+                            y = Integer.parseInt(reader.getValue());
+                            foundY = true;
+                            break;
+                        default:
+                            // Unknown node, or <hash>
+                            break;
+                    }
+                    reader.moveUp();
+                }
+                return (foundX && foundY) ? new Coords(x, y) : null;
             }
 
             @Override
@@ -377,37 +397,30 @@ public class SerializationHelper {
 
             @Override
             public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-                /**
-                 *          <megamek.common.board.BoardLocation id="10">
-                 *             <coords id="11">
-                 *               <x>22</x>
-                 *               <y>19</y>
-                 *               <hash>1662</hash>
-                 *             </coords>
-                 *             <boardId>0</boardId>
-                 *             <isNoLocation>false</isNoLocation>
-                 *           </megamek.common.board.BoardLocation>
-                 */
                 Coords coords = null;
                 int boardId = -1;
                 boolean isNoLocation = false;
-                while (reader.hasMoreChildren()) {
-                    reader.moveDown();
-                    switch (reader.getNodeName()) {
-                        case "coords":
-                            coords = (Coords) context.convertAnother(null, Coords.class);
-                            break;
-                        case "boardId":
-                            boardId = Integer.parseInt(reader.getValue());
-                            break;
-                        case "isNoLocation":
-                            isNoLocation = Boolean.parseBoolean(reader.getValue());
-                            break;
-                        default:
-                            // Unknown node, or <hash>
-                            break;
+                try {
+                    while (reader.hasMoreChildren()) {
+                        reader.moveDown();
+                        switch (reader.getNodeName()) {
+                            case "coords":
+                                coords = (Coords) context.convertAnother(null, Coords.class);
+                                break;
+                            case "boardId":
+                                boardId = Integer.parseInt(reader.getValue());
+                                break;
+                            case "isNoLocation":
+                                isNoLocation = Boolean.parseBoolean(reader.getValue());
+                                break;
+                            default:
+                                // Unknown node, or <hash>
+                                break;
+                        }
+                        reader.moveUp();
                     }
-                    reader.moveUp();
+                } catch (NumberFormatException e) {
+                    return null;
                 }
                 if (coords != null && boardId != -1) {
                     return new BoardLocation(coords, boardId, isNoLocation);
@@ -423,30 +436,5 @@ public class SerializationHelper {
         });
 
         return xStream;
-    }
-
-    private static Coords readCoords(HierarchicalStreamReader reader) {
-        int x = 0;
-        int y = 0;
-        boolean foundX = false;
-        boolean foundY = false;
-        while (reader.hasMoreChildren()) {
-            reader.moveDown();
-            switch (reader.getNodeName()) {
-                case "x":
-                    x = Integer.parseInt(reader.getValue());
-                    foundX = true;
-                    break;
-                case "y":
-                    y = Integer.parseInt(reader.getValue());
-                    foundY = true;
-                    break;
-                default:
-                    // Unknown node, or <hash>
-                    break;
-            }
-            reader.moveUp();
-        }
-        return (foundX && foundY) ? new Coords(x, y) : null;
     }
 }

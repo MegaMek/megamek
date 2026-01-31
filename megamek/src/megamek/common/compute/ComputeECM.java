@@ -405,6 +405,14 @@ public class ComputeECM {
             }
         }
 
+        // Add ECMInfo for temporary ECM fields (from EMP mines, etc.)
+        for (megamek.common.TemporaryECMField tempECM : game.getTemporaryECMFields()) {
+            ECMInfo ecmInfo = tempECM.toECMInfo();
+            if (ecmInfo != null) {
+                allEcmInfo.add(ecmInfo);
+            }
+        }
+
         // Sort the ECM, as we need to take care of the stronger ECM/ECCM first
         // ie; Angel ECCM can counter any number of ECM, however if an angel
         //  ECM counters it first...

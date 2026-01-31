@@ -39,6 +39,7 @@ import java.util.Vector;
 
 import megamek.MMConstants;
 import megamek.common.CriticalSlot;
+import megamek.common.EMPEffectFormatter;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -236,11 +237,11 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         r.subject = entityTarget.getId();
         String tsempEffect;
 
-        // Determine the effect
+        // Determine the effect - use shared formatter for consistent display
         Report baShutdownReport = null;
         if (rollValue >= shutdownTarget) {
             entityTarget.setTsempEffect(MMConstants.TSEMP_EFFECT_SHUTDOWN);
-            tsempEffect = "<font color='C00000'><b>Shutdown!</b></font>";
+            tsempEffect = EMPEffectFormatter.formatEffect(MMConstants.TSEMP_EFFECT_SHUTDOWN);
             if (entityTarget instanceof BattleArmor) {
                 baShutdownReport = new Report(3706);
                 baShutdownReport.addDesc(entityTarget);
@@ -261,10 +262,10 @@ public class TSEMPHandler extends EnergyWeaponHandler {
             if (targetEffect != MMConstants.TSEMP_EFFECT_SHUTDOWN) {
                 entityTarget.setTsempEffect(MMConstants.TSEMP_EFFECT_INTERFERENCE);
             }
-            tsempEffect = "<b>Interference!</b>";
+            tsempEffect = EMPEffectFormatter.formatEffect(MMConstants.TSEMP_EFFECT_INTERFERENCE);
         } else {
             // No effect roll
-            tsempEffect = "No Effect!";
+            tsempEffect = EMPEffectFormatter.formatEffect(MMConstants.TSEMP_EFFECT_NONE);
         }
         r.add(tsempEffect);
         vPhaseReport.add(r);

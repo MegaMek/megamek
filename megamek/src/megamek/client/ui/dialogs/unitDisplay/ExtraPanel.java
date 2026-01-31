@@ -475,6 +475,20 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                       .addElement(Messages.getString("MekDisplay.TSEMPInterference"));
             }
 
+            // suffering from EMP Mine Interference?
+            if (en.getEMPInterferenceRounds() > 0) {
+                ((DefaultListModel<String>) narcList.getModel())
+                      .addElement(Messages.getString("MekDisplay.EMPInterference",
+                            en.getEMPInterferenceRounds()));
+            }
+
+            // suffering from EMP Mine Shutdown?
+            if (en.getEMPShutdownRounds() > 0) {
+                ((DefaultListModel<String>) narcList.getModel())
+                      .addElement(Messages.getString("MekDisplay.EMPShutdown",
+                            en.getEMPShutdownRounds()));
+            }
+
             if (en.hasDamagedRHS()) {
                 ((DefaultListModel<String>) narcList.getModel())
                       .addElement(Messages.getString("MekDisplay.RHSDamaged"));

@@ -198,7 +198,13 @@ public enum PacketCommand {
     ACTIONS,
 
     /** A packet containing other packets to be processed in the order they are stored. */
-    MULTI_PACKET;
+    MULTI_PACKET,
+
+    /** A packet adding a temporary ECM field (e.g., from EMP mines). */
+    ADD_TEMPORARY_ECM_FIELD,
+
+    /** A packet syncing all temporary ECM fields to clients (replaces existing list). */
+    SYNC_TEMPORARY_ECM_FIELDS;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

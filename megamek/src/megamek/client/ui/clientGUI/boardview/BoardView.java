@@ -573,6 +573,8 @@ public final class BoardView extends AbstractBoardView
             public void gameBoardChanged(GameBoardChangeEvent gameBoardChangeEvent) {
                 clearHexImageCache();
                 boardChanged();
+                // Update ECM list for temporary ECM fields (from EMP mines, etc.)
+                updateEcmList();
             }
 
             @Override
@@ -4792,9 +4794,18 @@ public final class BoardView extends AbstractBoardView
         // Keep track of allied ECCM and enemy ECM
         Map<Coords, ECMEffects> eccmAffectedCoords = new HashMap<>();
         for (ECMInfo ecmInfo : allEcmInfo) {
-            // only units on this board
-            if (!isOnThisBord(ecmInfo.getEntity())) {
-                continue;
+            // Check if ECM source is on this board
+            // Entity-based ECM: check if entity is on this board
+            // Entity-less ECM (e.g., EMP mines): check if position is valid on this board
+            if (ecmInfo.getEntity() != null) {
+                if (!isOnThisBord(ecmInfo.getEntity())) {
+                    continue;
+                }
+            } else {
+                // Entity-less ECM field (from EMP mines, etc.) - check position is on board
+                if (ecmInfo.getPos() == null || !game.getBoard(boardId).contains(ecmInfo.getPos())) {
+                    continue;
+                }
             }
 
             // Can't see ECM field of unspotted unit

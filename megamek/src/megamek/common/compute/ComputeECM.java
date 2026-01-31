@@ -407,7 +407,7 @@ public class ComputeECM {
 
         // Add ECMInfo for temporary ECM fields (from EMP mines, etc.)
         for (megamek.common.TemporaryECMField tempECM : game.getTemporaryECMFields()) {
-            ECMInfo ecmInfo = tempECM.toECMInfo(game);
+            ECMInfo ecmInfo = tempECM.toECMInfo();
             if (ecmInfo != null) {
                 allEcmInfo.add(ecmInfo);
             }

@@ -38,7 +38,6 @@ import java.util.Objects;
 
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
-import megamek.common.game.Game;
 
 /**
  * Represents a temporary ECM field that expires after a set duration.
@@ -194,11 +193,9 @@ public class TemporaryECMField implements Serializable {
      * similar to Chaff. This is achieved by passing null as the owner.
      * </p>
      *
-     * @param game The game (unused, kept for API compatibility)
-     *
      * @return An ECMInfo representing this temporary field, hostile to all players
      */
-    public ECMInfo toECMInfo(Game game) {
+    public ECMInfo toECMInfo() {
         // Pass null owner to make ECM hostile to everyone (like Chaff)
         // Per ECMInfo: "ECM without an owner is always considered an enemy"
         return new ECMInfo(range, position, null, 1.0, 0);

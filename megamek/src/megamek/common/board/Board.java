@@ -43,6 +43,8 @@ import static megamek.common.SpecialHexDisplay.Type.BOMB_MISS;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.Configuration;
@@ -107,6 +109,36 @@ public class Board implements Serializable {
     // Min and Max elevation values for when they are undefined (since you can't set an int to null).
     private static final int UNDEFINED_MIN_ELEV = 10000;
     private static final int UNDEFINED_MAX_ELEV = -10000;
+
+    /**
+     * License header for board files, compatible with Creative Commons BY-NC-SA 4.0. The year is dynamically set to the
+     * current year when saving.
+     */
+    public static final String LICENSE_HEADER = """
+          # MegaMek Data (C) %s by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+          # To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+          #
+          # NOTICE: The MegaMek organization is a non-profit group of volunteers
+          # creating free software for the BattleTech community.
+          #
+          # MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+          # of The Topps Company, Inc. All Rights Reserved.
+          #
+          # Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+          # InMediaRes Productions, LLC.
+          #
+          # MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+          # Microsoft's "Game Content Usage Rules"
+          # <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+          # affiliated with Microsoft.
+          """;
+
+    /** Regex pattern to extract the copyright year(s) from board file headers. */
+    private static final Pattern COPYRIGHT_YEAR_PATTERN = Pattern.compile(
+          "#\\s*MegaMek Data \\(C\\)\\s*(\\d{4})(?:-(\\d{4}))?");
+
+    /** The original copyright year from the loaded board file, or -1 if none found. */
+    private int originalCopyrightYear = -1;
 
     // The min and max elevation values for this board.
     // set when getMinElevation/getMax is called for the first time.
@@ -1002,7 +1034,28 @@ public class Board implements Serializable {
         Hex[] nd = new Hex[0];
         int index = 0;
         resetStoredElevation();
-        try (InputStreamReader isr = new InputStreamReader(is);
+        originalCopyrightYear = -1;
+
+        // Read the entire content first to extract copyright year from header
+        String content;
+        try {
+            content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            logger.error(e, "Error reading board file content");
+            return;
+        }
+
+        // Extract original copyright year from header if present
+        Matcher matcher = COPYRIGHT_YEAR_PATTERN.matcher(content);
+        if (matcher.find()) {
+            try {
+                originalCopyrightYear = Integer.parseInt(matcher.group(1));
+            } catch (NumberFormatException ignored) {
+                // Keep default -1
+            }
+        }
+
+        try (InputStreamReader isr = new InputStreamReader(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
               BufferedReader br = new BufferedReader(isr)) {
             StreamTokenizer st = new StreamTokenizer(br);
             st.eolIsSignificant(true);
@@ -1179,10 +1232,35 @@ public class Board implements Serializable {
     }
 
     /**
-     * Writes data for the board, as text to the OutputStream
+     * Writes data for the board, as text to the OutputStream.
+     * Uses the GUI preference to determine whether to include the license header.
+     *
+     * @param os the OutputStream to write to
      */
     public void save(OutputStream os) {
+        boolean includeLicense = GUIPreferences.getInstance().getBoardSaveIncludeLicense();
+        save(os, includeLicense);
+    }
+
+    /**
+     * Writes data for the board, as text to the OutputStream.
+     *
+     * @param os             the OutputStream to write to
+     * @param includeLicense if true, writes the CC BY-NC-SA 4.0 license header at the start of the file
+     */
+    public void save(OutputStream os, boolean includeLicense) {
         try (Writer w = new OutputStreamWriter(os)) {
+            if (includeLicense) {
+                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+                String yearString;
+                if ((originalCopyrightYear > 0) && (originalCopyrightYear < currentYear)) {
+                    yearString = originalCopyrightYear + "-" + currentYear;
+                } else {
+                    yearString = String.valueOf(currentYear);
+                }
+                w.write(LICENSE_HEADER.formatted(yearString));
+                w.write("\r\n");
+            }
             w.write("size " + width + ' ' + height + "\r\n");
             if (!roadsAutoExit) {
                 w.write("option exit_roads_to_pavement false\r\n");

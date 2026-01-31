@@ -395,8 +395,7 @@ public class SerializationHelper {
                     reader.moveDown();
                     switch (reader.getNodeName()) {
                         case "coords":
-                            //coords = readCoords(reader);
-                            coords = (Coords) context.convertAnother(new Coords(0, 0), Coords.class);
+                            coords = (Coords) context.convertAnother(null, Coords.class);
                             break;
                         case "boardId":
                             boardId = Integer.parseInt(reader.getValue());

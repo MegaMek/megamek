@@ -175,6 +175,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
         }
         t.setArmorTonnage(t.getArmorWeight());
         loadQuirks(t);
+        loadSlotlessEquipment(t);
         return t;
     }
 

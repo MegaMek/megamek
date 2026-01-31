@@ -171,6 +171,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
         }
 
         loadQuirks(a);
+        loadSlotlessEquipment(a);
         return a;
     }
 

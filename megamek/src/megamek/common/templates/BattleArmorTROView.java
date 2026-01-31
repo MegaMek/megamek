@@ -167,8 +167,16 @@ public class BattleArmorTROView extends TROView {
         int nameWidth = 30;
         for (final Mounted<?> m : ba.getEquipment()) {
             if (m.isAPMMounted() || (m.getType() instanceof InfantryAttack)
-                  || (m.getType() == armor) || (m.getLocation() == BattleArmor.LOC_NONE)) {
+                  || (m.getType() == armor)) {
                 continue;
+            }
+            // Skip LOC_NONE equipment except for cockpit modifications like DNI and EI
+            if (m.getLocation() == BattleArmor.LOC_NONE) {
+                if (!(m.getType() instanceof MiscType) ||
+                      (!m.getType().hasFlag(MiscType.F_DNI_COCKPIT_MOD) &&
+                       !m.getType().hasFlag(MiscType.F_EI_INTERFACE))) {
+                    continue;
+                }
             }
             if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
                 continue;

@@ -197,6 +197,7 @@ public class BLKSupportVTOLFile extends BLKFile implements IMekLoader {
             t.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
         }
         loadQuirks(t);
+        loadSlotlessEquipment(t);
         return t;
     }
 

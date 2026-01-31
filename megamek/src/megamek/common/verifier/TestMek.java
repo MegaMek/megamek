@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -1087,7 +1088,7 @@ public class TestMek extends TestEntity {
         }
 
         if (mek.getCockpitType() == Mek.COCKPIT_INTERFACE) {
-            if (mek.getCockpit().stream().anyMatch(CriticalSlot::isArmored)) {
+            if (mek.getCockpit().stream().filter(Objects::nonNull).anyMatch(CriticalSlot::isArmored)) {
                 buff.append("Interface cockpits may not use component armoring.\n");
                 illegal = true;
             }

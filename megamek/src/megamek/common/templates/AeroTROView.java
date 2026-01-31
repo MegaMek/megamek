@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 import megamek.common.Messages;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
@@ -325,6 +326,17 @@ public class AeroTROView extends TROView {
         } else {
             crew.add(String.format(Messages.getString("TROView." + stringKey), count));
         }
+    }
+
+    @Override
+    protected boolean skipMount(Mounted<?> mount, boolean includeAmmo) {
+        if (mount.getLocation() == Entity.LOC_NONE) {
+            // Skip armor, structure, and CASE. Show cockpit modifications like DNI.
+            return mount.getType().hasFlag(MiscType.F_CASE)
+                  || EquipmentType.isArmorType(mount.getType())
+                  || EquipmentType.isStructureType(mount.getType());
+        }
+        return super.skipMount(mount, includeAmmo);
     }
 
 }

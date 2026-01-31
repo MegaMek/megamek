@@ -268,4 +268,15 @@ public class SupportVeeTROView extends TROView {
         return nameWidth;
     }
 
+    @Override
+    protected boolean skipMount(Mounted<?> mount, boolean includeAmmo) {
+        if (mount.getLocation() == Entity.LOC_NONE) {
+            // Skip armor, structure, and CASE. Show cockpit modifications like DNI.
+            return mount.getType().hasFlag(MiscType.F_CASE)
+                  || EquipmentType.isArmorType(mount.getType())
+                  || EquipmentType.isStructureType(mount.getType());
+        }
+        return super.skipMount(mount, includeAmmo);
+    }
+
 }

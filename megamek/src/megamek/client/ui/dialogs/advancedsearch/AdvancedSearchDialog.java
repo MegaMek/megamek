@@ -35,11 +35,14 @@ package megamek.client.ui.dialogs.advancedsearch;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.io.File;
+import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
@@ -80,6 +83,7 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
     @Override
     protected void okAction() {
         super.okAction();
+        saveLastSearchState();
         totalWarTab.prepareFilter();
     }
 
@@ -91,6 +95,15 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
 
     @Override
     protected JPanel createButtonPanel() {
+        JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(e -> saveSearchState(new File("mmconf/newsearch.json")));
+
+        JButton loadButton = new JButton("Load");
+        loadButton.addActionListener(e -> loadSearchState(new File("mmconf/newsearch.json")));
+
+        JButton loadLastButton = new JButton("Last Search");
+        loadLastButton.addActionListener(e -> loadLastSearchState());
+
         JButton cancelButton = new ButtonEsc(new CloseAction(this));
         JButton okButton = new DialogButton(Messages.getString("Ok.text"));
         okButton.addActionListener(this::okButtonActionPerformed);
@@ -103,6 +116,9 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         notePanel.add(noteLabel);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 0));
+        buttonPanel.add(saveButton);
+        buttonPanel.add(loadButton);
+        buttonPanel.add(loadLastButton);
         buttonPanel.add(okButton);
         buttonPanel.add(cancelButton);
 
@@ -114,6 +130,37 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         outerPanel.add(buttonPanel);
 
         return outerPanel;
+    }
+
+    private void saveLastSearchState() {
+        saveSearchState(new File("mmconf/lastadvsearch.json"));
+    }
+
+    private void saveSearchState(File file) {
+        var state = new AdvSearchState();
+        state.twState = totalWarTab.getState();
+        state.asState = alphaStrikeTab.getState();
+        try {
+            AdvSearchState.save(file, state);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error saving search state",
+                  "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void loadLastSearchState() {
+        loadSearchState(new File("mmconf/lastadvsearch.json"));
+    }
+
+    private void loadSearchState(File file) {
+        try {
+            var state = AdvSearchState.fromJson(file);
+            totalWarTab.applyState(state.twState);
+            alphaStrikeTab.applyState(state.asState);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error loading search state",
+                  "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     @Override

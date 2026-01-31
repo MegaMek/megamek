@@ -34,7 +34,6 @@
 package megamek.client.ui.dialogs.advancedsearch;
 
 import java.awt.Component;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -87,7 +86,8 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         // The weapon panel must manage its own scroll pane!
         addTab(msg_weaponEq, weaponEqPanel);
         addTab(msg_transports, new StandardScrollPane(transportsPanel));
-        addTab(msg_quirkType, new StandardScrollPane(quirkPanel));
+        addTab(msg_quirkType, quirkPanel);
+//        addTab(msg_quirkType, new StandardScrollPane(quirkPanel));
     }
 
     /**
@@ -270,12 +270,12 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         mekFilter.quirkInclude = quirkPanel.cQuirkInclude.getSelectedIndex();
         mekFilter.quirkExclude = quirkPanel.cQuirkExclude.getSelectedIndex();
 
-        quirkPanel.listQuirkType.toStringResultLists(mekFilter.quirkType, mekFilter.quirkTypeExclude);
+        quirkPanel.chassisQuirks.toStringResultLists(mekFilter.quirkType, mekFilter.quirkTypeExclude);
 
         mekFilter.weaponQuirkInclude = quirkPanel.cWeaponQuirkInclude.getSelectedIndex();
         mekFilter.weaponQuirkExclude = quirkPanel.cWeaponQuirkExclude.getSelectedIndex();
 
-        quirkPanel.listWeaponQuirkType.toStringResultLists(mekFilter.weaponQuirkType, mekFilter.weaponQuirkTypeExclude);
+        quirkPanel.weaponQuirks.toStringResultLists(mekFilter.weaponQuirkType, mekFilter.weaponQuirkTypeExclude);
     }
 
     private void updateUnitTypes() {
@@ -329,15 +329,6 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         updateUnitTypes();
     }
 
-    public int getValue(JButton b) {
-        return switch (b.getText()) {
-            case "\u2610" -> 0;
-            case "\u2611" -> 1;
-            case "\u2612" -> 2;
-            default -> -1;
-        };
-    }
-
     public int getValue(FlatTriStateCheckBox b) {
         return switch (b.getState()) {
             case INDETERMINATE -> 2;
@@ -354,5 +345,19 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
             getHorizontalScrollBar().setUnitIncrement(16);
             setBorder(null);
         }
+    }
+
+    void applyState(AdvSearchState.TwState state) {
+        unitTypePanel.applyState(state.unitTypeState);
+        transportsPanel.applyState(state.transportsState);
+        quirkPanel.applyState(state.quirksState);
+    }
+
+    AdvSearchState.TwState getState() {
+        var state = new AdvSearchState.TwState();
+        state.unitTypeState = unitTypePanel.getState();
+        state.transportsState = transportsPanel.getState();
+        state.quirksState = quirkPanel.getState();
+        return state;
     }
 }

@@ -423,9 +423,6 @@ public class SerializationHelper {
             }
         });
 
-        // Handle mismatch between versions of AmmoType
-        xStream.omitField(AmmoType.class, "subType");
-
         return xStream;
     }
 

@@ -47,6 +47,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.LosEffects;
@@ -513,7 +514,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     @Serial
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
+        try {
+            in.defaultReadObject();
+        } catch (AbstractReflectionConverter.UnknownFieldException e) {
+            if (e.getCause().toString().contains("subType")) {
+                // pass
+            }
+        }
 
         gameManager = (TWGameManager) Server.getServerInstance().getGameManager();
     }

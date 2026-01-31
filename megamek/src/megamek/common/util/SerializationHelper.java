@@ -43,6 +43,7 @@ import megamek.common.TargetRollModifier;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.NarcPod;
 import megamek.common.equipment.Sensor;
@@ -394,7 +395,8 @@ public class SerializationHelper {
                     reader.moveDown();
                     switch (reader.getNodeName()) {
                         case "coords":
-                            coords = readCoords(reader);
+                            //coords = readCoords(reader);
+                            coords = (Coords) context.convertAnother(new Coords(0, 0), Coords.class);
                             break;
                         case "boardId":
                             boardId = Integer.parseInt(reader.getValue());
@@ -420,6 +422,9 @@ public class SerializationHelper {
                 // Unused here
             }
         });
+
+        // Handle mismatch between versions of AmmoType
+        xStream.omitField(AmmoType.class, "subType");
 
         return xStream;
     }

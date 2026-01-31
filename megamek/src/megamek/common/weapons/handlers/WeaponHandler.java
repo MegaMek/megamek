@@ -514,13 +514,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     @Serial
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        try {
-            in.defaultReadObject();
-        } catch (AbstractReflectionConverter.UnknownFieldException e) {
-            if (e.getCause().toString().contains("subType")) {
-                // pass
-            }
-        }
+        in.defaultReadObject();
 
         gameManager = (TWGameManager) Server.getServerInstance().getGameManager();
     }

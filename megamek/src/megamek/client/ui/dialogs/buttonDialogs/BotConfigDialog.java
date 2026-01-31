@@ -128,6 +128,8 @@ public class BotConfigDialog extends AbstractButtonDialog
           new TipMMToggleButton(Messages.getString("BotConfigDialog.exclusiveHerdingCheck"));
     private final MMToggleButton experimentalCheck =
           new TipMMToggleButton(Messages.getString("BotConfigDialog.experimentalCheck"));
+    private final MMToggleButton useCasparProtocolCheck =
+          new TipMMToggleButton(Messages.getString("BotConfigDialog.useCasparProtocolCheck"));
 
     private final JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
     private final MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
@@ -421,6 +423,10 @@ public class BotConfigDialog extends AbstractButtonDialog
             panContent.add(experimentalCheck);
         }
 
+        useCasparProtocolCheck.setToolTipText(Messages.getString("BotConfigDialog.useCasparProtocolCheckToolTip"));
+        useCasparProtocolCheck.addActionListener(this);
+        panContent.add(useCasparProtocolCheck);
+
         var buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         buttonPanel.setAlignmentX(SwingConstants.CENTER);
         result.add(buttonPanel);
@@ -540,6 +546,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         exclusiveHerdingCheck.setSelected(princessBehavior.isExclusiveHerding());
         iAmAPirateCheck.setSelected(princessBehavior.iAmAPirate());
         experimentalCheck.setSelected(princessBehavior.isExperimental());
+        useCasparProtocolCheck.setSelected(princessBehavior.isUseCasparProtocol());
         numberOfEnemiesToConsiderFacingSlidebar.setValue(princessBehavior.getNumberOfEnemiesToConsiderFacing());
         allowFacingToleranceSlidebar.setValue(princessBehavior.getAllowFacingTolerance());
         ignoreDamageOutputCheck.setSelected(princessBehavior.isIgnoreDamageOutput());
@@ -601,7 +608,8 @@ public class BotConfigDialog extends AbstractButtonDialog
                           != numberOfEnemiesToConsiderFacingSlidebar.getValue() ||
                     chosenPreset.getAllowFacingTolerance() != allowFacingToleranceSlidebar.getValue() ||
                     chosenPreset.isIgnoreDamageOutput() != ignoreDamageOutputCheck.isSelected() ||
-                    chosenPreset.isExperimental() != experimentalCheck.isSelected());
+                    chosenPreset.isExperimental() != experimentalCheck.isSelected() ||
+                    chosenPreset.isUseCasparProtocol() != useCasparProtocolCheck.isSelected());
     }
 
     /**
@@ -787,6 +795,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         newBehavior.setExclusiveHerding(exclusiveHerdingCheck.isSelected());
         newBehavior.setExperimental(experimentalCheck.isSelected());
         newBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
+        newBehavior.setUseCasparProtocol(useCasparProtocolCheck.isSelected());
 
         behaviorSettingsFactory.addBehavior(newBehavior);
         behaviorSettingsFactory.saveBehaviorSettings(false);
@@ -836,6 +845,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         tempBehavior.setExclusiveHerding(exclusiveHerdingCheck.isSelected());
         tempBehavior.setExperimental(experimentalCheck.isSelected());
         tempBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
+        tempBehavior.setUseCasparProtocol(useCasparProtocolCheck.isSelected());
 
         for (int i = 0; i < targetsListModel.getSize(); i++) {
             if (targetsListModel.get(i) instanceof Coords) {

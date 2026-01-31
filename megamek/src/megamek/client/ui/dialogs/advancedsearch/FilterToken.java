@@ -32,11 +32,47 @@
  */
 package megamek.client.ui.dialogs.advancedsearch;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import megamek.common.equipment.EquipmentType;
+
+import java.util.List;
+
 /**
  * Marker interface for different tokens that can be in a filter expression.
  *
  * @author Arlith
  */
 interface FilterToken {
+
+    @JsonCreator
+    static FilterToken parse(String expression) {
+        FilterToken token = switch (expression) {
+            case "(" -> new LeftParensFilterToken();
+            case ")" -> new RightParensFilterToken();
+            case "or" -> new OrFilterToken();
+            case "and" -> new AndFilterToken();
+            default -> null;
+        };
+        if (token == null) {
+            String[] tokens = expression.split(" ");
+            boolean atLeast = tokens[2].equals("at");
+            int count = Integer.parseInt(tokens[1]);
+
+            try {
+                var equipmentClass = AdvancedSearchEquipmentClass.valueOf(tokens[0]);
+                return new WeaponClassFT(equipmentClass, count, atLeast);
+            } catch (IllegalArgumentException e) {
+                // apparently not an equipment class
+                String internalName = tokens[0];
+                EquipmentType type = EquipmentType.get(internalName);
+                return new EquipmentTypeFT(internalName, type.getName(), count, atLeast);
+            }
+        }
+        return token;
+    }
+
+    @JsonValue
+    String toJson();
 
 }

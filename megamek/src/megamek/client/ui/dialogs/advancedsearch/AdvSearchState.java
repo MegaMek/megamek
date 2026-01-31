@@ -2,21 +2,37 @@ package megamek.client.ui.dialogs.advancedsearch;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import megamek.client.ui.Messages;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.units.UnitRole;
 
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JSpinner;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.table.TableRowSorter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static com.formdev.flatlaf.extras.components.FlatTriStateCheckBox.State;
 
@@ -57,8 +73,8 @@ class AdvSearchState {
         public UnitTypeState unitTypeState;
         public TransportsState transportsState;
         public QuirksState quirksState;
-//        public MiscState miscState;
-//        public EquipmentState equipmentState;
+        public MiscState miscState;
+        public EquipmentState equipmentState;
     }
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -261,4 +277,119 @@ class AdvSearchState {
         public TriStateItemListState chassisQuirks = new TriStateItemListState();
         public TriStateItemListState weaponQuirks = new TriStateItemListState();
     }
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    static class MiscState {
+
+        @JsonInclude(JsonInclude.Include.ALWAYS)
+        public int schemaVersion = 1;
+
+        public String tStartWalk = "";
+        public String tEndWalk = "";
+        public String tStartJump = "";
+        public String tEndJump = "";
+        public int cArmor = 0;
+        public int cOfficial = 0;
+        public int cCanon = 0;
+        public int cPatchwork = 0;
+        public int cInvalid = 0;
+        public int cFailedToLoadEquipment = 0;
+        public int cClanEngine = 0;
+        public String tStartTankTurrets = "";
+        public String tEndTankTurrets = "";
+        public String tStartLowerArms = "";
+        public String tEndLowerArms = "";
+        public String tStartHands = "";
+        public String tEndHands = "";
+        public String tStartYear = "";
+        public String tEndYear = "";
+        public String tStartTons = "";
+        public String tEndTons = "";
+        public String tStartBV = "";
+        public String tEndBV = "";
+        public String tSource = "";
+        public String tMULId = "";
+
+        public TriStateItemListState listCockpitType = new TriStateItemListState();
+        public TriStateItemListState listArmorType = new TriStateItemListState();
+        public TriStateItemListState listInternalsType = new TriStateItemListState();
+        public TriStateItemListState listEngineType = new TriStateItemListState();
+        public TriStateItemListState listGyroType = new TriStateItemListState();
+        public TriStateItemListState listTechLevel = new TriStateItemListState();
+        public TriStateItemListState listTechBase = new TriStateItemListState();
+        public TriStateItemListState listMoveMode = new TriStateItemListState();
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    static class EquipmentState {
+
+        @JsonInclude(JsonInclude.Include.ALWAYS)
+        public int schemaVersion = 1;
+
+        public List<FilterToken> filterTokens = new ArrayList<>();
+
+    }
+
+    public final class JsonPopupFactory {
+
+        /**
+         * Creates a popup menu containing up to 10 most recently modified JSON files in the given folder. Each menu
+         * item uses the JSON field "name" as its label and calls the provided handler with the corresponding file when
+         * clicked.
+         */
+        public static JPopupMenu createPopupMenu(Path folder, Consumer<Path> onFileSelected) {
+            JPopupMenu popup = new JPopupMenu();
+
+            if (!Files.isDirectory(folder)) {
+                return popup;
+            }
+
+            List<Path> recentJsonFiles;
+            try (Stream<Path> stream = Files.list(folder)) {
+                recentJsonFiles = stream
+                      .filter(Files::isRegularFile)
+                      .filter(p -> p.toString().toLowerCase().endsWith(".json"))
+                      .sorted(Comparator.comparingLong(JsonPopupFactory::lastModified).reversed())
+                      .limit(10)
+                      .toList();
+            } catch (IOException e) {
+                // optionally log
+                return popup;
+            }
+
+            for (Path file : recentJsonFiles) {
+                String name = readNameField(file);
+                if (name == null || name.isBlank()) {
+                    continue;
+                }
+
+                JMenuItem item = new JMenuItem(name);
+                item.addActionListener(e -> onFileSelected.accept(file));
+                popup.add(item);
+            }
+
+            return popup;
+        }
+
+        private static long lastModified(Path p) {
+            try {
+                return Files.getLastModifiedTime(p).toMillis();
+            } catch (IOException e) {
+                return 0L;
+            }
+        }
+
+        private static String readNameField(Path file) {
+            try {
+                JsonNode root = MAPPER.readTree(file.toFile());
+                JsonNode nameNode = root.get("name");
+                return nameNode != null && nameNode.isTextual()
+                      ? nameNode.asText()
+                      : null;
+            } catch (IOException e) {
+                return null;
+            }
+        }
+    }
+
 }

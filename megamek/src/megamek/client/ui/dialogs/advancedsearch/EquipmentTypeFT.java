@@ -57,4 +57,9 @@ class EquipmentTypeFT extends EquipmentFilterToken {
     public String toString() {
         return (atLeast ? "" : "less than ") + qty + " " + fullName + ((qty != 1) ? "s" : "");
     }
+
+    @Override
+    public String toJson() {
+        return internalName + " " + qty + " " + (atLeast ? "at least" : "less than");
+    }
 }

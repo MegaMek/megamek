@@ -32,11 +32,15 @@
  */
 package megamek.client.ui.dialogs.advancedsearch;
 
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -61,6 +65,8 @@ import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
  * one tab and the AlphaStrike search in another tab. Both searches can be used simultaneously.
  */
 public class AdvancedSearchDialog extends AbstractButtonDialog {
+
+    private final static String SEARCH_FOLDER = "mmconf/searches/adv/";
 
     private final TWAdvancedSearchPanel totalWarTab;
     private final ASAdvancedSearchPanel alphaStrikeTab = new ASAdvancedSearchPanel();
@@ -96,10 +102,10 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
     @Override
     protected JPanel createButtonPanel() {
         JButton saveButton = new JButton("Save");
-        saveButton.addActionListener(e -> saveSearchState(new File("mmconf/newsearch.json")));
+        saveButton.addActionListener(e -> saveSearchStateAs());
 
         JButton loadButton = new JButton("Load");
-        loadButton.addActionListener(e -> loadSearchState(new File("mmconf/newsearch.json")));
+        loadButton.addActionListener(e -> loadSearchState(e));
 
         JButton loadLastButton = new JButton("Last Search");
         loadLastButton.addActionListener(e -> loadLastSearchState());
@@ -132,33 +138,81 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         return outerPanel;
     }
 
-    private void saveLastSearchState() {
-        saveSearchState(new File("mmconf/lastadvsearch.json"));
+    private void saveSearchStateAs() {
+        String name = JOptionPane.showInputDialog(this, "Choose a name for the search");
+        if ((name == null) || name.isBlank()) {
+            return;
+        }
+
+        String fileName = sanitizeFileName(name);
+        if (fileName == null) {
+            JOptionPane.showMessageDialog(this,
+                  "Could not create a valid file name", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        File directory = new File(SEARCH_FOLDER);
+        if (!directory.exists() && !directory.mkdir()) {
+            JOptionPane.showMessageDialog(this,
+                  "Could not create directory " + SEARCH_FOLDER,
+                  "Error",
+                  JOptionPane.ERROR_MESSAGE);
+        }
+
+        saveSearchState(new File(SEARCH_FOLDER, fileName + ".json"), name);
     }
 
-    private void saveSearchState(File file) {
+    private static String sanitizeFileName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Cannot create a filename from a null or empty name");
+        }
+        String sanitized = name;
+        sanitized = sanitized.replaceAll("[\\<>:\"/\\\\|?*\\p{Cntrl}]", "");
+        sanitized = sanitized.replaceAll("[. ]+$", "");
+        sanitized = sanitized.replaceAll("^_|_$", "");
+        if (sanitized.isEmpty()) {
+            return null;
+        }
+        return sanitized;
+    }
+
+    private void saveLastSearchState() {
+        saveSearchState(new File(SEARCH_FOLDER,"lastadvsearch.json"), "Last Search");
+    }
+
+    private void saveSearchState(File file, String name) {
         var state = new AdvSearchState();
+        state.name = name;
         state.twState = totalWarTab.getState();
         state.asState = alphaStrikeTab.getState();
         try {
             AdvSearchState.save(file, state);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error saving search state",
-                  "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                  "Error saving search state: " + e.getMessage(),
+                  "Error",
+                  JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void loadLastSearchState() {
-        loadSearchState(new File("mmconf/lastadvsearch.json"));
+        loadSearchState(new File(SEARCH_FOLDER, "lastadvsearch.json"));
+    }
+
+    private void loadSearchState(ActionEvent e) {
+        var popup = AdvSearchState.JsonPopupFactory
+              .createPopupMenu(Path.of(SEARCH_FOLDER), path -> loadSearchState(path.toFile()));
+        popup.show((Component) e.getSource(), 0, 0);
     }
 
     private void loadSearchState(File file) {
         try {
             var state = AdvSearchState.fromJson(file);
+            clearSearches();
             totalWarTab.applyState(state.twState);
             alphaStrikeTab.applyState(state.asState);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error loading search state",
+            JOptionPane.showMessageDialog(this, "Error loading search state: "+e.getMessage(),
                   "Error", JOptionPane.ERROR_MESSAGE);
         }
     }

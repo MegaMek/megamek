@@ -374,4 +374,80 @@ class MiscSearchTab extends JPanel {
         listTechBase.clear();
         listMoveMode.clear();
     }
+
+    AdvSearchState.MiscState getState() {
+        var state = new AdvSearchState.MiscState();
+        state.tStartWalk = tStartWalk.getText();
+        state.tEndWalk = tEndWalk.getText();
+        state.tStartJump = tStartJump.getText();
+        state.tEndJump = tEndJump.getText();
+        state.cArmor = cArmor.getSelectedIndex();
+        state.cOfficial = cOfficial.getSelectedIndex();
+        state.cCanon = cCanon.getSelectedIndex();
+        state.cPatchwork = cPatchwork.getSelectedIndex();
+        state.cInvalid = cInvalid.getSelectedIndex();
+        state.cFailedToLoadEquipment = cFailedToLoadEquipment.getSelectedIndex();
+        state.cClanEngine = cClanEngine.getSelectedIndex();
+        state.tStartTankTurrets = tStartTankTurrets.getText();
+        state.tEndTankTurrets = tEndTankTurrets.getText();
+        state.tStartLowerArms = tStartLowerArms.getText();
+        state.tEndLowerArms = tEndLowerArms.getText();
+        state.tStartHands = tStartHands.getText();
+        state.tEndHands = tEndHands.getText();
+        state.tStartYear = tStartYear.getText();
+        state.tEndYear = tEndYear.getText();
+        state.tStartTons = tStartTons.getText();
+        state.tEndTons = tEndTons.getText();
+        state.tStartBV = tStartBV.getText();
+        state.tEndBV = tEndBV.getText();
+        state.tSource = tSource.getText();
+        state.tMULId = tMULId.getText();
+
+        state.listCockpitType = listCockpitType.getState();
+        state.listArmorType = listArmorType.getState();
+        state.listInternalsType = listInternalsType.getState();
+        state.listEngineType = listEngineType.getState();
+        state.listGyroType = listGyroType.getState();
+        state.listTechLevel = listTechLevel.getState();
+        state.listTechBase = listTechBase.getState();
+        state.listMoveMode = listMoveMode.getState();
+        return state;
+    }
+
+    void applyState(AdvSearchState.MiscState state) {
+        tStartWalk.setText(state.tStartWalk);
+        tEndWalk.setText(state.tEndWalk);
+        tStartJump.setText(state.tStartJump);
+        tEndJump.setText(state.tEndJump);
+        cArmor.setSelectedIndex(state.cArmor);
+        cOfficial.setSelectedIndex(state.cOfficial);
+        cCanon.setSelectedIndex(state.cCanon);
+        cPatchwork.setSelectedIndex(state.cPatchwork);
+        cInvalid.setSelectedIndex(state.cInvalid);
+        cFailedToLoadEquipment.setSelectedIndex(state.cFailedToLoadEquipment);
+        cClanEngine.setSelectedIndex(state.cClanEngine);
+        tStartTankTurrets.setText(state.tStartTankTurrets);
+        tEndTankTurrets.setText(state.tEndTankTurrets);
+        tStartLowerArms.setText(state.tStartLowerArms);
+        tEndLowerArms.setText(state.tEndLowerArms);
+        tStartHands.setText(state.tStartHands);
+        tEndHands.setText(state.tEndHands);
+        tStartYear.setText(state.tStartYear);
+        tEndYear.setText(state.tEndYear);
+        tStartTons.setText(state.tStartTons);
+        tEndTons.setText(state.tEndTons);
+        tStartBV.setText(state.tStartBV);
+        tEndBV.setText(state.tEndBV);
+        tSource.setText(state.tSource);
+        tMULId.setText(state.tMULId);
+
+        listCockpitType.applyState(state.listCockpitType);
+        listArmorType.applyState(state.listArmorType);
+        listInternalsType.applyState(state.listInternalsType);
+        listEngineType.applyState(state.listEngineType);
+        listGyroType.applyState(state.listGyroType);
+        listTechLevel.applyState(state.listTechLevel);
+        listTechBase.applyState(state.listTechBase);
+        listMoveMode.applyState(state.listMoveMode);
+    }
 }

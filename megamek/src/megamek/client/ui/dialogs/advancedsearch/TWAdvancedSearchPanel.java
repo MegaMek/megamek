@@ -351,6 +351,8 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         unitTypePanel.applyState(state.unitTypeState);
         transportsPanel.applyState(state.transportsState);
         quirkPanel.applyState(state.quirksState);
+        basePanel.applyState(state.miscState);
+        weaponEqPanel.applyState(state.equipmentState);
     }
 
     AdvSearchState.TwState getState() {
@@ -358,6 +360,8 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         state.unitTypeState = unitTypePanel.getState();
         state.transportsState = transportsPanel.getState();
         state.quirksState = quirkPanel.getState();
+        state.miscState = basePanel.getState();
+        state.equipmentState = weaponEqPanel.getState();
         return state;
     }
 }

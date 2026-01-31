@@ -49,4 +49,9 @@ class WeaponClassFT extends EquipmentFilterToken {
     public String toString() {
         return (atLeast ? "" : "less than ") + qty + " " + equipmentClass.toString() + ((qty != 1) ? "s" : "");
     }
+
+    @Override
+    public String toJson() {
+        return equipmentClass.name() + " " + qty + " " + (atLeast ? "at least" : "less than");
+    }
 }

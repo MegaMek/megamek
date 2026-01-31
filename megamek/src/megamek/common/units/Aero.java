@@ -1538,15 +1538,19 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             prd.addModifier(1, "Modular Armor");
         }
         // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
-        if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
-            prd.addModifier(-1, "VDNI");
-        } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
-            prd.addModifier(0, "BVDNI (no piloting bonus)");
+        // When tracking neural interface hardware, require DNI cockpit mod for benefits
+        if (hasActiveDNI()) {
+            if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                prd.addModifier(-1, "VDNI");
+            } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                prd.addModifier(0, "BVDNI (no piloting bonus)");
+            }
         }
 
         // Small/torso-mounted cockpit penalty?
+        // BVDNI negates small cockpit penalty, requires active DNI when tracking
         if (getCockpitType() == Aero.COCKPIT_SMALL) {
-            if (hasAbility(OptionsConstants.MD_BVDNI)) {
+            if (hasActiveDNI() && hasAbility(OptionsConstants.MD_BVDNI)) {
                 prd.addModifier(0, "Small Cockpit (negated by BVDNI)");
             } else if (!hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
                 prd.addModifier(1, "Small Cockpit");
@@ -2558,10 +2562,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean isDmgHeavy() {
-        if (getArmorRemainingPercent() <= 0.33) {
+        double armorPercent = getArmorRemainingPercent();
+        if ((armorPercent <= 0.33) && (armorPercent != IArmorState.ARMOR_NA)) {
             LOGGER.debug("{} Heavily Damaged: Armour Remaining percent of {} is less than or equal to 0.33.",
                   getDisplayName(),
-                  getArmorRemainingPercent());
+                  armorPercent);
             return true;
         } else if (getInternalRemainingPercent() < 0.67) {
             LOGGER.debug("{} Heavily Damaged: Internal Structure Remaining percent of {} is less than 0.67.",
@@ -2591,10 +2596,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean isDmgModerate() {
-        if (getArmorRemainingPercent() <= 0.5) {
+        double armorPercent = getArmorRemainingPercent();
+        if ((armorPercent <= 0.5) && (armorPercent != IArmorState.ARMOR_NA)) {
             LOGGER.debug("{} Moderately Damaged: Armour Remaining percent of {} is less than or equal to 0.50.",
                   getDisplayName(),
-                  getArmorRemainingPercent());
+                  armorPercent);
             return true;
         } else if (getInternalRemainingPercent() < 0.75) {
             LOGGER.debug("{} Moderately Damaged: Internal Structure Remaining percent of {} is less than 0.75.",
@@ -2623,10 +2629,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean isDmgLight() {
-        if (getArmorRemainingPercent() <= 0.75) {
+        double armorPercent = getArmorRemainingPercent();
+        if ((armorPercent <= 0.75) && (armorPercent != IArmorState.ARMOR_NA)) {
             LOGGER.debug("{} Lightly Damaged: Armour Remaining percent of {} is less than or equal to 0.75.",
                   getDisplayName(),
-                  getArmorRemainingPercent());
+                  armorPercent);
             return true;
         } else if (getInternalRemainingPercent() < 0.9) {
             LOGGER.debug("{} Lightly Damaged: Internal Structure Remaining percent of {} is less than 0.9.",

@@ -1301,7 +1301,7 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_DOMINO_EFFECT, mp));
     }
 
-    public void sendAMSAssignCFRResponse(Integer waaIndex) {
+    public void sendAMSAssignCFRResponse(int[] waaIndex) {
         send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_AMS_ASSIGN, waaIndex));
     }
 

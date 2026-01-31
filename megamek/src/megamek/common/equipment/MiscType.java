@@ -263,6 +263,8 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_BICYCLE = MiscTypeFlag.F_BICYCLE;
     public static final MiscTypeFlag F_CONVERTIBLE = MiscTypeFlag.F_CONVERTIBLE;
     public static final MiscTypeFlag F_BATTLEMEK_NIU = MiscTypeFlag.F_BATTLEMEK_NIU;
+    public static final MiscTypeFlag F_DNI_COCKPIT_MOD = MiscTypeFlag.F_DNI_COCKPIT_MOD;
+    public static final MiscTypeFlag F_DAMAGE_INTERRUPT_CIRCUIT = MiscTypeFlag.F_DAMAGE_INTERRUPT_CIRCUIT;
     public static final MiscTypeFlag F_SNOWMOBILE = MiscTypeFlag.F_SNOWMOBILE;
     public static final MiscTypeFlag F_LADDER = MiscTypeFlag.F_LADDER;
     public static final MiscTypeFlag F_LIFEBOAT = MiscTypeFlag.F_LIFEBOAT;
@@ -1667,6 +1669,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISSingleHexECM());
         EquipmentType.addType(MiscType.createCLSingleHexECM());
         EquipmentType.addType(MiscType.createBattleMekNeuralInterfaceUnit());
+        EquipmentType.addType(MiscType.createDNICockpitModification());
+        EquipmentType.addType(MiscType.createDamageInterruptCircuit());
         EquipmentType.addType(MiscType.createBAISAngelECM());
         EquipmentType.addType(MiscType.createBACLAngelECM());
         EquipmentType.addType(MiscType.createSimpleCamo());
@@ -4663,26 +4667,30 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 5 LINES
+    /**
+     * BattleMech Neural Interface Unit (NIU) for PA(L) suits. IO p.110: The BattleMech NIU can only be mounted in the
+     * interface suit, which must be constructed as a PA(L)-type battlesuit (as larger battlesuits cannot fit in the
+     * interface cockpit). The BattleMech NIU weighs 100 kilograms and occupies 2 slots in the suit's torso.
+     */
     public static MiscType createBattleMekNeuralInterfaceUnit() {
         MiscType misc = new MiscType();
-        // TODO - not sure how we capturing this in code, Maybe a quirk would be
-        // better.
         // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
-        misc.name = "Direct Neural Interface Cockpit Modification";
+        misc.name = "BattleMech Neural Interface Unit";
         misc.setInternalName("BABattleMechNIU");
 
-        misc.tonnage = 0;
-        misc.criticalSlots = 0;
+        misc.tonnage = 0.1; // 100kg
+        misc.criticalSlots = 2; // 2 slots in torso
         misc.cost = 250000;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_BATTLEMEK_NIU, F_BA_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BATTLEMEK_NIU, F_BA_EQUIPMENT);
 
-        misc.rulesRefs = "62, IO:AE";
+        misc.rulesRefs = "110, IO:AE";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
               .setTechRating(TechRating.E)
-              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.F)
               .setISAdvancement(3052, 3055, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.FS)
@@ -4690,7 +4698,66 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // TODO - Damage Interupt Circuit - IO pg 39
+    /**
+     * Direct Neural Interface (DNI) Cockpit Modification (IO p.83). Required to enable a unit to be piloted by a
+     * warrior with DNI implant. Available for BattleMeks, IndustrialMeks, BattleArmor, Combat Vehicles, Support
+     * Vehicles, Aerospace Fighters, and Conventional Fighters. Adds no weight or critical space, but costs 250,000
+     * C-bills.
+     */
+    public static MiscType createDNICockpitModification() {
+        MiscType misc = new MiscType();
+        misc.name = "Direct Neural Interface Cockpit Modification";
+        misc.setInternalName("DNICockpitModification");
+
+        misc.tonnage = 0;
+        misc.criticalSlots = 0;
+        misc.cost = 250000;
+        misc.hittable = false;
+        // Available for BM, IM, BA, CV, SV, AF, CF per IO p.83
+        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_DNI_COCKPIT_MOD, F_BA_EQUIPMENT,
+              F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT, F_FIGHTER_EQUIPMENT);
+
+        misc.rulesRefs = "83, IO";
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setIntroLevel(false)
+              .setUnofficial(false)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.F)
+              .setISAdvancement(3052, 3055, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, false, false, false)
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.WB);
+        return misc;
+    }
+
+    /**
+     * Creates the Damage Interrupt Circuit cockpit modification (IO p.39). When working, reduces internal explosion
+     * pilot damage from 2 to 1. Disabled by Life Support critical hit or any hit rolling "2" on the hit location table.
+     * When disabled, adds +1 to all PSR until repaired.
+     */
+    public static MiscType createDamageInterruptCircuit() {
+        MiscType misc = new MiscType();
+        misc.name = "Damage Interrupt Circuit";
+        misc.setInternalName("DamageInterruptCircuit");
+
+        misc.tonnage = 0;
+        misc.criticalSlots = 0;
+        misc.cost = 150; // 150 C-bills per pilot seat (handled in cost calculator)
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_DAMAGE_INTERRUPT_CIRCUIT);
+
+        misc.rulesRefs = "39, IO";
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setIntroLevel(false)
+              .setUnofficial(false)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
+              .setISAdvancement(3055, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setISApproximate(true, false, false, false, false)
+              .setPrototypeFactions(Faction.LC);
+        return misc;
+    }
+
     // Maybe the helmets should be quirks?
     // TODO - SLDF Advanced Neurohelmet (MekWarrior) - IO pg 40
     // TODO - SLDF Advanced Neurohelmet (Fighter Pilot) - IO pg 40

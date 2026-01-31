@@ -89,7 +89,8 @@ class HeatResolver extends AbstractTWRuleHandler {
             if (entity.getTaserInterferenceHeat()) {
                 entity.heatBuildup += 5;
             }
-            if (entity.hasEMPInterferenceHeat()) {
+            boolean hasEMPInterferenceHeat = entity.hasEMPInterferenceHeat();
+            if (hasEMPInterferenceHeat) {
                 entity.heatBuildup += 5;
             }
             if (entity.hasDamagedRHS() && entity.weaponFired()) {
@@ -102,6 +103,24 @@ class HeatResolver extends AbstractTWRuleHandler {
             int radicalHSBonus = 0;
             Vector<Report> rhsReports = new Vector<>();
             Vector<Report> heatEffectsReports = new Vector<>();
+
+            // Report EMP interference heat and duration (must be after heatEffectsReports is created)
+            // Only for Meks/Aero - non-Meks handle this separately before their continue
+            if (hasEMPInterferenceHeat) {
+                report = new Report(2574);
+                report.subject = entity.getId();
+                heatEffectsReports.add(report);
+
+                // Also report interference duration (only when heat applies, i.e., Meks/Aero)
+                if (entity.getEMPInterferenceRounds() > 0) {
+                    report = new Report(2575);
+                    report.subject = entity.getId();
+                    report.add(entity.getShortName(), true);
+                    report.add(entity.getEMPInterferenceRounds());
+                    heatEffectsReports.add(report);
+                }
+            }
+
             if (entity.hasActivatedRadicalHS()) {
                 if (entity instanceof Mek) {
                     radicalHSBonus = ((Mek) entity).getActiveSinks();
@@ -256,6 +275,27 @@ class HeatResolver extends AbstractTWRuleHandler {
                         entity.setBATaserShutdown(false);
                     }
                 }
+
+                // Report remaining EMP shutdown turns (from EMP mine effect)
+                if (entity.isShutDown() && (entity.getEMPShutdownRounds() > 0)) {
+                    report = new Report(2573);
+                    report.subject = entity.getId();
+                    report.add(entity.getShortName(), true);
+                    report.add(entity.getEMPShutdownRounds());
+                    heatEffectsReports.add(report);
+                }
+
+                // Report remaining EMP interference turns (from EMP mine effect)
+                if (entity.getEMPInterferenceRounds() > 0) {
+                    report = new Report(2575);
+                    report.subject = entity.getId();
+                    report.add(entity.getShortName(), true);
+                    report.add(entity.getEMPInterferenceRounds());
+                    heatEffectsReports.add(report);
+                }
+
+                // Add any heat effects reports for non-Meks before continuing
+                gameManager.getMainPhaseReport().addAll(heatEffectsReports);
 
                 continue;
             }
@@ -592,6 +632,16 @@ class HeatResolver extends AbstractTWRuleHandler {
                             entity.setBATaserShutdown(false);
                         }
                     }
+
+                    // Report remaining EMP shutdown turns (from EMP mine effect)
+                    if (entity.isShutDown() && (entity.getEMPShutdownRounds() > 0)) {
+                        report = new Report(2573);
+                        report.subject = entity.getId();
+                        report.add(entity.getShortName(), true);
+                        report.add(entity.getEMPShutdownRounds());
+                        addReport(report);
+                    }
+                    // Note: EMP interference duration is reported earlier with heat effects
                 }
             }
 
@@ -978,6 +1028,13 @@ class HeatResolver extends AbstractTWRuleHandler {
             vPhaseReport.add(report);
         }
 
+        // Report EMP interference heat (heat was already added in main loop)
+        if (entity.hasEMPInterferenceHeat()) {
+            report = new Report(2574);
+            report.subject = entity.getId();
+            vPhaseReport.add(report);
+        }
+
         // Add or subtract heat due to extreme temperatures TO:AR p60
         adjustHeatExtremeTemp(entity, vPhaseReport);
 
@@ -1157,6 +1214,24 @@ class HeatResolver extends AbstractTWRuleHandler {
                         }
                         entity.setBATaserShutdown(false);
                     }
+                }
+
+                // Report remaining EMP shutdown turns (from EMP mine effect)
+                if (entity.isShutDown() && (entity.getEMPShutdownRounds() > 0)) {
+                    report = new Report(2573);
+                    report.subject = entity.getId();
+                    report.add(entity.getShortName(), true);
+                    report.add(entity.getEMPShutdownRounds());
+                    vPhaseReport.add(report);
+                }
+
+                // Report remaining EMP interference turns (from EMP mine effect)
+                if (entity.getEMPInterferenceRounds() > 0) {
+                    report = new Report(2575);
+                    report.subject = entity.getId();
+                    report.add(entity.getShortName(), true);
+                    report.add(entity.getEMPInterferenceRounds());
+                    vPhaseReport.add(report);
                 }
             }
         }

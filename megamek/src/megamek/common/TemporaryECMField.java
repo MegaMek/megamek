@@ -189,14 +189,19 @@ public class TemporaryECMField implements Serializable {
 
     /**
      * Converts this temporary field to an ECMInfo object for use in ECM calculations.
+     * <p>
+     * EMP mine ECM is hostile to everyone (including the player who placed the mine),
+     * similar to Chaff. This is achieved by passing null as the owner.
+     * </p>
      *
-     * @param game The game to look up player information
+     * @param game The game (unused, kept for API compatibility)
      *
-     * @return An ECMInfo representing this temporary field
+     * @return An ECMInfo representing this temporary field, hostile to all players
      */
     public ECMInfo toECMInfo(Game game) {
-        Player owner = (playerId != Player.PLAYER_NONE) ? game.getPlayer(playerId) : null;
-        return new ECMInfo(range, position, owner, 1.0, 0);
+        // Pass null owner to make ECM hostile to everyone (like Chaff)
+        // Per ECMInfo: "ECM without an owner is always considered an enemy"
+        return new ECMInfo(range, position, null, 1.0, 0);
     }
 
     @Override

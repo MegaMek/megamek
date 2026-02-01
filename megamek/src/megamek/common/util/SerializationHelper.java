@@ -40,6 +40,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import megamek.common.TargetRollModifier;
+import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
@@ -398,7 +399,7 @@ public class SerializationHelper {
             @Override
             public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
                 Coords coords = null;
-                int boardId = -1;
+                int boardId = Board.BOARD_NONE - 1; // -1 is a valid board ID now.
                 boolean isNoLocation = false;
                 try {
                     while (reader.hasMoreChildren()) {
@@ -422,7 +423,7 @@ public class SerializationHelper {
                 } catch (NumberFormatException e) {
                     return null;
                 }
-                if (coords != null && boardId != -1) {
+                if (coords != null && boardId >= Board.BOARD_NONE) {
                     return new BoardLocation(coords, boardId, isNoLocation);
                 } else {
                     return null;

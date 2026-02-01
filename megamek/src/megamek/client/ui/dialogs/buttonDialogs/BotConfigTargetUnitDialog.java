@@ -112,6 +112,17 @@ public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
         Set<Integer> result = new HashSet<>();
         String[] tokens = unitIDField.getText().split(",");
         for (String token : tokens) {
+            // This allows for Priority targets to be specified with ranges, as well as comma separated
+            String[] inclusive = token.split("-");
+            if (inclusive.length == 2) {
+                try {
+                    for (int i = Integer.parseInt(inclusive[0]); i <= Integer.parseInt(inclusive[1]); i++) {
+                        result.add(i);
+                    }
+                } catch (NumberFormatException e) {
+                    // Unit ID could not be parsed
+                }
+            }
             try {
                 result.add(Integer.parseInt(token));
             } catch (NumberFormatException e) {

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -50,22 +49,27 @@ import megamek.client.ui.Messages;
 import megamek.codeUtilities.StringUtility;
 
 /**
- * Ask for the setting for a vibrabomb.
+ * Dialog to set the weight threshold for an EMP mine.
+ * <p>
+ * EMP mines trigger when a unit of sufficient weight enters the hex. The setting determines the minimum weight (in
+ * tons) that can trigger the mine. Units must weigh more than (setting - 10) tons to trigger the mine.
+ * </p>
  */
-public class VibrabombSettingDialog extends JDialog implements ActionListener {
+public class EMPMineSettingDialog extends JDialog implements ActionListener {
     @Serial
-    private static final long serialVersionUID = -7642956136536119067L;
+    private static final long serialVersionUID = 1L;
+
     private final JButton butOk = new JButton(Messages.getString("Okay"));
     private final JTextField fldSetting = new JTextField("10", 3);
     private int setting;
     private final JFrame frame;
 
-    public VibrabombSettingDialog(JFrame p) {
-        super(p, Messages.getString("VibrabombSettingDialog.title"), true);
+    public EMPMineSettingDialog(JFrame p) {
+        super(p, Messages.getString("EMPMineSettingDialog.title"), true);
         super.setResizable(false);
         frame = p;
         butOk.addActionListener(this);
-        JLabel labMessage = new JLabel(Messages.getString("VibrabombSettingDialog.selectSetting"));
+        JLabel labMessage = new JLabel(Messages.getString("EMPMineSettingDialog.selectSetting"));
         GridBagLayout gridBagLayout = new GridBagLayout();
         getContentPane().setLayout(gridBagLayout);
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
@@ -108,15 +112,15 @@ public class VibrabombSettingDialog extends JDialog implements ActionListener {
                 }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(frame,
-                      Messages.getString("VibrabombSettingDialog.alert.Message"),
-                      Messages.getString("VibrabombSettingDialog.alert.Title"),
+                      Messages.getString("EMPMineSettingDialog.alert.Message"),
+                      Messages.getString("EMPMineSettingDialog.alert.Title"),
                       JOptionPane.WARNING_MESSAGE);
                 return;
             }
             if ((setting < 10) || (setting > 200)) {
                 JOptionPane.showMessageDialog(frame,
-                      Messages.getString("VibrabombSettingDialog.alert.Message"),
-                      Messages.getString("VibrabombSettingDialog.alert.Title"),
+                      Messages.getString("EMPMineSettingDialog.alert.Message"),
+                      Messages.getString("EMPMineSettingDialog.alert.Title"),
                       JOptionPane.WARNING_MESSAGE);
                 return;
             }

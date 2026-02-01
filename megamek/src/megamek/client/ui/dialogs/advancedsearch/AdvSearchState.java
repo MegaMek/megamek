@@ -1,62 +1,66 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
 package megamek.client.ui.dialogs.advancedsearch;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import megamek.client.ui.Messages;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.units.UnitRole;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.table.TableRowSorter;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 import static com.formdev.flatlaf.extras.components.FlatTriStateCheckBox.State;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 class AdvSearchState {
 
-    public static final ObjectMapper MAPPER = JsonMapper.builder()
-          .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
-          .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-          .serializationInclusion(JsonInclude.Include.NON_DEFAULT)
-          .enable(SerializationFeature.INDENT_OUTPUT)
-          .build();
-
-    public static AdvSearchState fromJson(File file) throws IOException {
-        return MAPPER.readValue(file, AdvSearchState.class);
-    }
-
-    public static void save(File file, AdvSearchState state) throws IOException {
-        MAPPER.writeValue(file, state);
-    }
+    static final String CONTENT = "ADVANCED_SEARCH_STATE";
 
     // === The search state ===
 
-    public int schemaVersion = 1;
+    // === DO NOT EDIT CARELESSLY ===
+    // Note that any changes in any of the states will likely break saved searches which would be very annoying for
+    // everyone using them. The only exception is adding a new data field with a default value (public
+    // isSuperHeavy = false;) - the saved searches only contain non-default data and missing fields use their default
+    // value when a search is loaded. Don't rename fields. If a field becomes obsolete, consider
+    // leaving it here (instead of removing it) and ignoring it in the UI code (applyState() methods).
+
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    public String content = CONTENT;
 
     public String name = "Unnamed";
     public TwState twState;
@@ -64,11 +68,10 @@ class AdvSearchState {
 
     // === END ===
 
+    // === Substates ===
+
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     static class TwState {
-
-        @JsonInclude(JsonInclude.Include.ALWAYS)
-        public int schemaVersion = 1;
 
         public UnitTypeState unitTypeState;
         public TransportsState transportsState;
@@ -79,9 +82,6 @@ class AdvSearchState {
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     static class UnitTypeState {
-
-        @JsonInclude(JsonInclude.Include.ALWAYS)
-        public int schemaVersion = 1;
 
         public State ProtoMek = State.UNSELECTED;
         public State Mek = State.UNSELECTED;
@@ -123,9 +123,6 @@ class AdvSearchState {
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     static class AsState {
-
-        @JsonInclude(JsonInclude.Include.ALWAYS)
-        public int schemaVersion = 1;
 
         public boolean unitTypeUse = false;
         public boolean unitRoleUse = false;
@@ -187,9 +184,6 @@ class AdvSearchState {
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     static class TransportsState {
-
-        @JsonInclude(JsonInclude.Include.ALWAYS)
-        public int schemaVersion = 1;
 
         public String tStartTroopSpace = "";
         public String tEndTroopSpace = "";
@@ -281,9 +275,6 @@ class AdvSearchState {
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     static class MiscState {
 
-        @JsonInclude(JsonInclude.Include.ALWAYS)
-        public int schemaVersion = 1;
-
         public String tStartWalk = "";
         public String tEndWalk = "";
         public String tStartJump = "";
@@ -323,73 +314,6 @@ class AdvSearchState {
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     static class EquipmentState {
 
-        @JsonInclude(JsonInclude.Include.ALWAYS)
-        public int schemaVersion = 1;
-
         public List<FilterToken> filterTokens = new ArrayList<>();
-
     }
-
-    public final class JsonPopupFactory {
-
-        /**
-         * Creates a popup menu containing up to 10 most recently modified JSON files in the given folder. Each menu
-         * item uses the JSON field "name" as its label and calls the provided handler with the corresponding file when
-         * clicked.
-         */
-        public static JPopupMenu createPopupMenu(Path folder, Consumer<Path> onFileSelected) {
-            JPopupMenu popup = new JPopupMenu();
-
-            if (!Files.isDirectory(folder)) {
-                return popup;
-            }
-
-            List<Path> recentJsonFiles;
-            try (Stream<Path> stream = Files.list(folder)) {
-                recentJsonFiles = stream
-                      .filter(Files::isRegularFile)
-                      .filter(p -> p.toString().toLowerCase().endsWith(".json"))
-                      .sorted(Comparator.comparingLong(JsonPopupFactory::lastModified).reversed())
-                      .limit(10)
-                      .toList();
-            } catch (IOException e) {
-                // optionally log
-                return popup;
-            }
-
-            for (Path file : recentJsonFiles) {
-                String name = readNameField(file);
-                if (name == null || name.isBlank()) {
-                    continue;
-                }
-
-                JMenuItem item = new JMenuItem(name);
-                item.addActionListener(e -> onFileSelected.accept(file));
-                popup.add(item);
-            }
-
-            return popup;
-        }
-
-        private static long lastModified(Path p) {
-            try {
-                return Files.getLastModifiedTime(p).toMillis();
-            } catch (IOException e) {
-                return 0L;
-            }
-        }
-
-        private static String readNameField(Path file) {
-            try {
-                JsonNode root = MAPPER.readTree(file.toFile());
-                JsonNode nameNode = root.get("name");
-                return nameNode != null && nameNode.isTextual()
-                      ? nameNode.asText()
-                      : null;
-            } catch (IOException e) {
-                return null;
-            }
-        }
-    }
-
 }

@@ -40,7 +40,6 @@ import javax.swing.JTabbedPane;
 
 import com.formdev.flatlaf.extras.components.FlatTriStateCheckBox;
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.advancedsearch.exceptions.FilterParsingException;
 import megamek.common.equipment.EquipmentType;
 
 /**
@@ -353,6 +352,7 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         quirkPanel.applyState(state.quirksState);
         basePanel.applyState(state.miscState);
         weaponEqPanel.applyState(state.equipmentState);
+        prepareFilter();
     }
 
     AdvSearchState.TwState getState() {

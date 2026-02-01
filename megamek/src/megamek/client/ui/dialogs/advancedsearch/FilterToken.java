@@ -36,14 +36,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import megamek.common.equipment.EquipmentType;
 
-import java.util.List;
-
 /**
  * Marker interface for different tokens that can be in a filter expression.
  *
  * @author Arlith
  */
 interface FilterToken {
+
+    String TOKEN_SEPARATOR = "__";
+    String TOKEN_ATLEAST = ">=";
 
     @JsonCreator
     static FilterToken parse(String expression) {
@@ -55,8 +56,8 @@ interface FilterToken {
             default -> null;
         };
         if (token == null) {
-            String[] tokens = expression.split(" ");
-            boolean atLeast = tokens[2].equals("at");
+            String[] tokens = expression.split(TOKEN_SEPARATOR);
+            boolean atLeast = tokens[2].equals(TOKEN_ATLEAST);
             int count = Integer.parseInt(tokens[1]);
 
             try {
@@ -74,5 +75,4 @@ interface FilterToken {
 
     @JsonValue
     String toJson();
-
 }

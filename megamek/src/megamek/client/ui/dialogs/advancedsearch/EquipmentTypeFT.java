@@ -42,10 +42,6 @@ class EquipmentTypeFT extends EquipmentFilterToken {
     String internalName;
     String fullName;
 
-    EquipmentTypeFT(String internalName, String fullName, int quantity) {
-        this(internalName, fullName, quantity, true);
-    }
-
     EquipmentTypeFT(String internalName, String fullName, int quantity, boolean atLeast) {
         this.internalName = internalName;
         this.fullName = fullName;
@@ -60,6 +56,6 @@ class EquipmentTypeFT extends EquipmentFilterToken {
 
     @Override
     public String toJson() {
-        return internalName + " " + qty + " " + (atLeast ? "at least" : "less than");
+        return internalName + TOKEN_SEPARATOR + qty + TOKEN_SEPARATOR + (atLeast ? TOKEN_ATLEAST : "<");
     }
 }

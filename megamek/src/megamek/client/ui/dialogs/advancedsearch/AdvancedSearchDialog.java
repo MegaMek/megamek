@@ -34,6 +34,7 @@ package megamek.client.ui.dialogs.advancedsearch;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -41,18 +42,21 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.formdev.flatlaf.FlatClientProperties;
 import megamek.client.ui.Messages;
 import megamek.client.ui.buttons.ButtonEsc;
@@ -66,7 +70,13 @@ import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
  */
 public class AdvancedSearchDialog extends AbstractButtonDialog {
 
-    private final static String SEARCH_FOLDER = "mmconf/searches/adv/";
+    private static final String SEARCH_FOLDER = "mmconf/searches";
+
+    private static final ObjectMapper MAPPER = JsonMapper.builder()
+          .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
+          .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+          .enable(SerializationFeature.INDENT_OUTPUT)
+          .build();
 
     private final TWAdvancedSearchPanel totalWarTab;
     private final ASAdvancedSearchPanel alphaStrikeTab = new ASAdvancedSearchPanel();
@@ -89,7 +99,6 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
     @Override
     protected void okAction() {
         super.okAction();
-        saveLastSearchState();
         totalWarTab.prepareFilter();
     }
 
@@ -105,10 +114,7 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         saveButton.addActionListener(e -> saveSearchStateAs());
 
         JButton loadButton = new JButton("Load");
-        loadButton.addActionListener(e -> loadSearchState(e));
-
-        JButton loadLastButton = new JButton("Last Search");
-        loadLastButton.addActionListener(e -> loadLastSearchState());
+        loadButton.addActionListener(this::load);
 
         JButton cancelButton = new ButtonEsc(new CloseAction(this));
         JButton okButton = new DialogButton(Messages.getString("Ok.text"));
@@ -124,7 +130,6 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 0));
         buttonPanel.add(saveButton);
         buttonPanel.add(loadButton);
-        buttonPanel.add(loadLastButton);
         buttonPanel.add(okButton);
         buttonPanel.add(cancelButton);
 
@@ -176,17 +181,13 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         return sanitized;
     }
 
-    private void saveLastSearchState() {
-        saveSearchState(new File(SEARCH_FOLDER,"lastadvsearch.json"), "Last Search");
-    }
-
     private void saveSearchState(File file, String name) {
         var state = new AdvSearchState();
         state.name = name;
         state.twState = totalWarTab.getState();
         state.asState = alphaStrikeTab.getState();
         try {
-            AdvSearchState.save(file, state);
+            save(file, state);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this,
                   "Error saving search state: " + e.getMessage(),
@@ -195,19 +196,31 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         }
     }
 
-    private void loadLastSearchState() {
-        loadSearchState(new File(SEARCH_FOLDER, "lastadvsearch.json"));
+    private void load(ActionEvent e) {
+        var popup = createPopupMenu(Path.of(SEARCH_FOLDER), path -> loadSearchState(path.toFile()));
+        popup.addSeparator();
+        JMenuItem fileItem = new JMenuItem("from File...");
+        fileItem.addActionListener(ev -> loadFile());
+        popup.add(fileItem);
+        Dimension popupSize = popup.getPreferredSize();
+        Dimension sourceSize = ((JComponent) e.getSource()).getPreferredSize();
+        popup.show((Component) e.getSource(), (sourceSize.width - popupSize.width) / 2, -popupSize.height - 15);
     }
 
-    private void loadSearchState(ActionEvent e) {
-        var popup = AdvSearchState.JsonPopupFactory
-              .createPopupMenu(Path.of(SEARCH_FOLDER), path -> loadSearchState(path.toFile()));
-        popup.show((Component) e.getSource(), 0, 0);
+    private void loadFile() {
+        JFileChooser fc = new JFileChooser(SEARCH_FOLDER);
+        fc.setDialogTitle(Messages.getString("BoardEditor.loadBoard"));
+        fc.setFileFilter(new FileNameExtensionFilter("Search Files (.json)", "json"));
+        int returnVal = fc.showOpenDialog(this);
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
+            return;
+        }
+        loadSearchState(fc.getSelectedFile());
     }
 
     private void loadSearchState(File file) {
         try {
-            var state = AdvSearchState.fromJson(file);
+            var state = load(file);
             clearSearches();
             totalWarTab.applyState(state.twState);
             alphaStrikeTab.applyState(state.asState);
@@ -235,4 +248,70 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
     public TWAdvancedSearchPanel getTWAdvancedSearch() {
         return totalWarTab;
     }
+
+    /**
+     * Creates a popup menu containing up to 10 most recently modified JSON files in the given folder. Each menu
+     * item uses the JSON field "name" as its label and calls the provided handler with the corresponding file when
+     * clicked.
+     */
+    public JPopupMenu createPopupMenu(Path folder, Consumer<Path> onFileSelected) {
+        JPopupMenu popup = new JPopupMenu();
+
+        if (!Files.isDirectory(folder)) {
+            return popup;
+        }
+
+        List<Path> recentJsonFiles;
+        try (Stream<Path> stream = Files.list(folder)) {
+            recentJsonFiles = stream
+                  .filter(Files::isRegularFile)
+                  .filter(p -> p.toString().toLowerCase().endsWith(".json"))
+                  .sorted(Comparator.comparingLong(AdvancedSearchDialog::lastModified).reversed())
+                  .limit(10)
+                  .toList();
+        } catch (IOException e) {
+            // optionally log
+            return popup;
+        }
+
+        for (Path file : recentJsonFiles) {
+            String name = readNameField(file);
+            if (name == null || name.isBlank()) {
+                continue;
+            }
+
+            JMenuItem item = new JMenuItem(name);
+            item.addActionListener(e -> onFileSelected.accept(file));
+            popup.add(item);
+        }
+
+        return popup;
+    }
+
+    private static long lastModified(Path p) {
+        try {
+            return Files.getLastModifiedTime(p).toMillis();
+        } catch (IOException e) {
+            return 0L;
+        }
+    }
+
+    private String readNameField(Path file) {
+        try {
+            JsonNode root = MAPPER.readTree(file.toFile());
+            JsonNode nameNode = root.get("name");
+            return nameNode != null && nameNode.isTextual() ? nameNode.asText() : null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private AdvSearchState load(File file) throws IOException {
+        return MAPPER.readValue(file, AdvSearchState.class);
+    }
+
+    private void save(File file, AdvSearchState state) throws IOException {
+        MAPPER.writeValue(file, state);
+    }
+
 }

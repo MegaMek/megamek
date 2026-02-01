@@ -83,7 +83,7 @@ class TriStateItemList {
             checkBoxes.add(checkBox);
             codes.put(checkBox, nameAndCode.getKey());
         }
-        initializeList(namesAndCodes.values());
+        checkBoxes.forEach(listPanel::add);
     }
 
     public TriStateItemList(int visibleRows) {

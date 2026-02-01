@@ -40,6 +40,8 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import megamek.common.TargetRollModifier;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.equipment.Mounted;
@@ -380,6 +382,52 @@ public class SerializationHelper {
                 }
                 return new InitiativeBonusBreakdown(hq, quirk, quirkName, console, crewCommand,
                       tcp, constant, compensation, crew);
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == BoardLocation.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                Coords coords = null;
+                int boardId = Board.BOARD_NONE - 1; // -1 is a valid board ID now.
+                boolean isNoLocation = false;
+                try {
+                    while (reader.hasMoreChildren()) {
+                        reader.moveDown();
+                        switch (reader.getNodeName()) {
+                            case "coords":
+                                coords = (Coords) context.convertAnother(null, Coords.class);
+                                break;
+                            case "boardId":
+                                boardId = Integer.parseInt(reader.getValue());
+                                break;
+                            case "isNoLocation":
+                                isNoLocation = Boolean.parseBoolean(reader.getValue());
+                                break;
+                            default:
+                                // Unknown node, or <hash>
+                                break;
+                        }
+                        reader.moveUp();
+                    }
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+                if (coords != null && boardId >= Board.BOARD_NONE) {
+                    return new BoardLocation(coords, boardId, isNoLocation);
+                } else {
+                    return null;
+                }
             }
 
             @Override

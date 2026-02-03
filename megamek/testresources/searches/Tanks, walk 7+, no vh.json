@@ -1,0 +1,41 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "name" : "Tanks, walk 7+, no v/h",
+  "twState" : {
+    "schemaVersion" : 1,
+    "unitTypeState" : {
+      "schemaVersion" : 1,
+      "Tank" : "SELECTED",
+      "VTOL" : "INDETERMINATE"
+    },
+    "transportsState" : {
+      "schemaVersion" : 1
+    },
+    "quirksState" : {
+      "chassisQuirks" : { },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "schemaVersion" : 1,
+      "tStartWalk" : "7",
+      "listCockpitType" : { },
+      "listArmorType" : { },
+      "listInternalsType" : { },
+      "listEngineType" : { },
+      "listGyroType" : { },
+      "listTechLevel" : { },
+      "listTechBase" : { },
+      "listMoveMode" : {
+        "items" : {
+          "Hover" : "INDETERMINATE"
+        }
+      }
+    },
+    "equipmentState" : {
+      "schemaVersion" : 1
+    }
+  },
+  "asState" : {
+    "schemaVersion" : 1
+  }
+}

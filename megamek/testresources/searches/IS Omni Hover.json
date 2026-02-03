@@ -1,0 +1,34 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "name" : "IS Omni Hover",
+  "twState" : {
+    "unitTypeState" : {
+      "Omni" : "SELECTED"
+    },
+    "transportsState" : { },
+    "quirksState" : {
+      "chassisQuirks" : { },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "listCockpitType" : { },
+      "listArmorType" : { },
+      "listInternalsType" : { },
+      "listEngineType" : { },
+      "listGyroType" : { },
+      "listTechLevel" : { },
+      "listTechBase" : {
+        "items" : {
+          "Inner Sphere" : "SELECTED"
+        }
+      },
+      "listMoveMode" : {
+        "items" : {
+          "Hover" : "SELECTED"
+        }
+      }
+    },
+    "equipmentState" : { }
+  },
+  "asState" : { }
+}

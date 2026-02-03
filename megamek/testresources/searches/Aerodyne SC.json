@@ -1,0 +1,30 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "schemaVersion" : 1,
+  "name" : "Aerodyne SC",
+  "twState" : {
+    "unitTypeState" : {
+      "SmallCraft" : "SELECTED"
+    },
+    "transportsState" : { },
+    "quirksState" : {
+      "chassisQuirks" : { },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "listCockpitType" : { },
+      "listArmorType" : { },
+      "listInternalsType" : { },
+      "listEngineType" : { },
+      "listGyroType" : { },
+      "listTechLevel" : { },
+      "listTechBase" : { },
+      "listMoveMode" : { }
+    },
+    "equipmentState" : { }
+  },
+  "asState" : {
+    "mvUse" : true,
+    "mvModeText" : "a"
+  }
+}

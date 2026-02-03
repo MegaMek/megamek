@@ -1,0 +1,43 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "name" : "Any Mixed Tech",
+  "twState" : {
+    "schemaVersion" : 1,
+    "unitTypeState" : {
+      "schemaVersion" : 1
+    },
+    "transportsState" : {
+      "schemaVersion" : 1
+    },
+    "quirksState" : {
+      "chassisQuirks" : { },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "schemaVersion" : 1,
+      "listCockpitType" : { },
+      "listArmorType" : { },
+      "listInternalsType" : { },
+      "listEngineType" : { },
+      "listGyroType" : { },
+      "listTechLevel" : {
+        "items" : {
+          "Unofficial" : "INDETERMINATE"
+        }
+      },
+      "listTechBase" : {
+        "items" : {
+          "Mixed Clan" : "SELECTED",
+          "Mixed Inner Sphere" : "SELECTED"
+        }
+      },
+      "listMoveMode" : { }
+    },
+    "equipmentState" : {
+      "schemaVersion" : 1
+    }
+  },
+  "asState" : {
+    "schemaVersion" : 1
+  }
+}

@@ -53,9 +53,9 @@ class AdvSearchState {
     // === The search state ===
 
     // === DO NOT EDIT CARELESSLY ===
-    // Note that any changes in any of the states will likely break saved searches which would be very annoying for
-    // everyone using them. The only exception is adding a new data field with a default value (public
-    // isSuperHeavy = false;) - the saved searches only contain non-default data and missing fields use their default
+    // Note that any changes in any of the states may easily break saved searches which would be very annoying for
+    // everyone using them. The only exception is adding a new data field with a default value ("public
+    // isSuperHeavy = false;") - the saved searches only contain non-default data and missing fields use their default
     // value when a search is loaded. Don't rename fields. If a field becomes obsolete, consider
     // leaving it here (instead of removing it) and ignoring it in the UI code (applyState() methods).
 
@@ -63,8 +63,8 @@ class AdvSearchState {
     public String content = CONTENT;
 
     public String name = "Unnamed";
-    public TwState twState;
-    public AsState asState;
+    public TwState twState = new TwState();
+    public AsState asState = new AsState();
 
     // === END ===
 
@@ -73,11 +73,11 @@ class AdvSearchState {
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     static class TwState {
 
-        public UnitTypeState unitTypeState;
-        public TransportsState transportsState;
-        public QuirksState quirksState;
-        public MiscState miscState;
-        public EquipmentState equipmentState;
+        public UnitTypeState unitTypeState = new UnitTypeState();
+        public TransportsState transportsState = new TransportsState();
+        public QuirksState quirksState = new QuirksState();
+        public MiscState miscState = new MiscState();
+        public EquipmentState equipmentState = new EquipmentState();
     }
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)

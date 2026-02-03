@@ -1,0 +1,32 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "name" : "Non-Mixed IS 2750-3000 TRO 3039",
+  "twState" : {
+    "unitTypeState" : { },
+    "transportsState" : { },
+    "quirksState" : {
+      "chassisQuirks" : { },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "tStartYear" : "2750",
+      "tEndYear" : "3000",
+      "tSource" : "TR:3039",
+      "listCockpitType" : { },
+      "listArmorType" : { },
+      "listInternalsType" : { },
+      "listEngineType" : { },
+      "listGyroType" : { },
+      "listTechLevel" : { },
+      "listTechBase" : {
+        "items" : {
+          "Inner Sphere" : "SELECTED",
+          "Mixed Inner Sphere" : "INDETERMINATE"
+        }
+      },
+      "listMoveMode" : { }
+    },
+    "equipmentState" : { }
+  },
+  "asState" : { }
+}

@@ -1,0 +1,26 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "name" : "Any combo of 2 diff SRMs",
+  "twState" : {
+    "unitTypeState" : { },
+    "transportsState" : { },
+    "quirksState" : {
+      "chassisQuirks" : { },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "listCockpitType" : { },
+      "listArmorType" : { },
+      "listInternalsType" : { },
+      "listEngineType" : { },
+      "listGyroType" : { },
+      "listTechLevel" : { },
+      "listTechBase" : { },
+      "listMoveMode" : { }
+    },
+    "equipmentState" : {
+      "filterTokens" : [ "(", "SRM 2__1__>=", "and", "SRM 4__1__>=", ")", "or", "(", "SRM 4__1__>=", "and", "SRM 6__1__>=", ")", "or", "(", "SRM 2__1__>=", "and", "SRM 6__1__>=", ")" ]
+    }
+  },
+  "asState" : { }
+}

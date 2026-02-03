@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,12 +40,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
@@ -71,6 +68,7 @@ import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 public class AdvancedSearchDialog extends AbstractButtonDialog {
 
     private static final String SEARCH_FOLDER = "mmconf/searches";
+    private static final String RECENT_SEARCH_STORE = "mmconf/recent-advanced-searches.json";
 
     private static final ObjectMapper MAPPER = JsonMapper.builder()
           .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
@@ -114,7 +112,7 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         saveButton.addActionListener(e -> saveSearchStateAs());
 
         JButton loadButton = new JButton("Load");
-        loadButton.addActionListener(this::load);
+        loadButton.addActionListener(this::showLoadPopup);
 
         JButton cancelButton = new ButtonEsc(new CloseAction(this));
         JButton okButton = new DialogButton(Messages.getString("Ok.text"));
@@ -188,6 +186,7 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         state.asState = alphaStrikeTab.getState();
         try {
             save(file, state);
+            new RecentFilesStore(Path.of(RECENT_SEARCH_STORE)).touch(file.toPath());
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this,
                   "Error saving search state: " + e.getMessage(),
@@ -196,8 +195,8 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         }
     }
 
-    private void load(ActionEvent e) {
-        var popup = createPopupMenu(Path.of(SEARCH_FOLDER), path -> loadSearchState(path.toFile()));
+    private void showLoadPopup(ActionEvent e) {
+        var popup = createPopupMenu(path -> loadSearchState(path.toFile()));
         popup.addSeparator();
         JMenuItem fileItem = new JMenuItem("from File...");
         fileItem.addActionListener(ev -> loadFile());
@@ -224,8 +223,9 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
             clearSearches();
             totalWarTab.applyState(state.twState);
             alphaStrikeTab.applyState(state.asState);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error loading search state: "+e.getMessage(),
+            new RecentFilesStore(Path.of(RECENT_SEARCH_STORE)).touch(file.toPath());
+        } catch (IOException|IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, "Error loading search state: " + e.getMessage(),
                   "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -250,50 +250,38 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Creates a popup menu containing up to 10 most recently modified JSON files in the given folder. Each menu
-     * item uses the JSON field "name" as its label and calls the provided handler with the corresponding file when
-     * clicked.
+     * Creates a popup menu containing up to 10 most recently modified JSON files in the given folder. Each menu item
+     * uses the JSON field "name" as its label and calls the provided handler with the corresponding file when clicked.
      */
-    public JPopupMenu createPopupMenu(Path folder, Consumer<Path> onFileSelected) {
+    private JPopupMenu createPopupMenu(Consumer<Path> onFileSelected) {
         JPopupMenu popup = new JPopupMenu();
 
-        if (!Files.isDirectory(folder)) {
-            return popup;
-        }
+        try {
+            var store = new RecentFilesStore(Path.of(RECENT_SEARCH_STORE));
+            List<Path> menuEntries = store.getRecentFiles();
+            for (Path file : menuEntries) {
+                String name = readNameField(file);
+                if (name == null || name.isBlank()) {
+                    continue;
+                }
 
-        List<Path> recentJsonFiles;
-        try (Stream<Path> stream = Files.list(folder)) {
-            recentJsonFiles = stream
-                  .filter(Files::isRegularFile)
-                  .filter(p -> p.toString().toLowerCase().endsWith(".json"))
-                  .sorted(Comparator.comparingLong(AdvancedSearchDialog::lastModified).reversed())
-                  .limit(10)
-                  .toList();
-        } catch (IOException e) {
-            // optionally log
-            return popup;
-        }
-
-        for (Path file : recentJsonFiles) {
-            String name = readNameField(file);
-            if (name == null || name.isBlank()) {
-                continue;
+                JMenuItem item = new JMenuItem(name);
+                item.addActionListener(e -> onFileSelected.accept(file));
+                popup.add(item);
             }
+        } catch (IOException ignored) {
+            JMenuItem errorItem = new JMenuItem("Error retrieving recent files");
+            errorItem.setEnabled(false);
+            popup.add(errorItem);
+        }
 
-            JMenuItem item = new JMenuItem(name);
-            item.addActionListener(e -> onFileSelected.accept(file));
-            popup.add(item);
+        if (popup.getComponentCount() == 0) {
+            JMenuItem noRecentItem = new JMenuItem("No recent files");
+            noRecentItem.setEnabled(false);
+            popup.add(noRecentItem);
         }
 
         return popup;
-    }
-
-    private static long lastModified(Path p) {
-        try {
-            return Files.getLastModifiedTime(p).toMillis();
-        } catch (IOException e) {
-            return 0L;
-        }
     }
 
     private String readNameField(Path file) {
@@ -306,12 +294,24 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         }
     }
 
-    private AdvSearchState load(File file) throws IOException {
+    static boolean isAdvancedSearchFile(File file) {
+        try {
+            JsonNode root = MAPPER.readTree(file);
+            JsonNode contentNode = root.get("content");
+            return contentNode != null && contentNode.asText().equals(AdvSearchState.CONTENT);
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    static AdvSearchState load(File file) throws IOException, IllegalArgumentException {
+        if (!isAdvancedSearchFile(file)) {
+            throw new IllegalArgumentException("The specified file is not an advanced search file.");
+        }
         return MAPPER.readValue(file, AdvSearchState.class);
     }
 
     private void save(File file, AdvSearchState state) throws IOException {
         MAPPER.writeValue(file, state);
     }
-
 }

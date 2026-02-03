@@ -1,10 +1,10 @@
 {
   "content" : "ADVANCED_SEARCH_STATE",
-  "name" : "Civilian Space Stations",
+  "name" : "Water Vee w/ LRT",
   "twState" : {
     "unitTypeState" : {
-      "spaceStation" : "SELECTED",
-      "military" : "INDETERMINATE"
+      "tank" : "SELECTED",
+      "waterOnly" : "SELECTED"
     },
     "transportsState" : { },
     "quirksState" : {
@@ -21,7 +21,9 @@
       "techBase" : { },
       "moveMode" : { }
     },
-    "equipmentState" : { }
+    "equipmentState" : {
+      "filterTokens" : [ "(", "LRT 10__1__>=", "or", "LRT 15__1__>=", "or", "LRT 20__1__>=", "or", "LRT 5__1__>=", ")" ]
+    }
   },
   "asState" : { }
 }

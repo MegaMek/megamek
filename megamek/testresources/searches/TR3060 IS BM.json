@@ -1,9 +1,10 @@
 {
   "content" : "ADVANCED_SEARCH_STATE",
-  "name" : "IS Omni Hover",
+  "name" : "TR:3060 IS BM",
   "twState" : {
     "unitTypeState" : {
-      "Omni" : "SELECTED"
+      "mek" : "SELECTED",
+      "industrial" : "INDETERMINATE"
     },
     "transportsState" : { },
     "quirksState" : {
@@ -11,22 +12,19 @@
       "weaponQuirks" : { }
     },
     "miscState" : {
-      "listCockpitType" : { },
-      "listArmorType" : { },
-      "listInternalsType" : { },
-      "listEngineType" : { },
-      "listGyroType" : { },
-      "listTechLevel" : { },
-      "listTechBase" : {
+      "source" : "TR:3060",
+      "cockpitType" : { },
+      "armorType" : { },
+      "internalsType" : { },
+      "engineType" : { },
+      "gyroType" : { },
+      "techLevel" : { },
+      "techBase" : {
         "items" : {
           "Inner Sphere" : "SELECTED"
         }
       },
-      "listMoveMode" : {
-        "items" : {
-          "Hover" : "SELECTED"
-        }
-      }
+      "moveMode" : { }
     },
     "equipmentState" : { }
   },

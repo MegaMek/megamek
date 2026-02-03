@@ -1,11 +1,8 @@
 {
   "content" : "ADVANCED_SEARCH_STATE",
-  "name" : "Civilian Space Stations",
+  "name" : "Any w/ IS Mek ECM gear",
   "twState" : {
-    "unitTypeState" : {
-      "spaceStation" : "SELECTED",
-      "military" : "INDETERMINATE"
-    },
+    "unitTypeState" : { },
     "transportsState" : { },
     "quirksState" : {
       "chassisQuirks" : { },
@@ -21,7 +18,9 @@
       "techBase" : { },
       "moveMode" : { }
     },
-    "equipmentState" : { }
+    "equipmentState" : {
+      "filterTokens" : [ "(", "ISAngelECMSuite__1__>=", "or", "ISGuardianECMSuite__1__>=", "or", "ISGuardianECMSuitePrototype__1__>=", ")" ]
+    }
   },
   "asState" : { }
 }

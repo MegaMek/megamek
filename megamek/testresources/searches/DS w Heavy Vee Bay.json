@@ -1,12 +1,13 @@
 {
   "content" : "ADVANCED_SEARCH_STATE",
-  "name" : "Civilian Space Stations",
+  "name" : "DS w/ Heavy Vee Bay",
   "twState" : {
     "unitTypeState" : {
-      "spaceStation" : "SELECTED",
-      "military" : "INDETERMINATE"
+      "dropship" : "SELECTED"
     },
-    "transportsState" : { },
+    "transportsState" : {
+      "startHeavyVehicleBays" : "1"
+    },
     "quirksState" : {
       "chassisQuirks" : { },
       "weaponQuirks" : { }

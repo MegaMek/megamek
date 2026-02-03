@@ -1,6 +1,6 @@
 {
   "content" : "ADVANCED_SEARCH_STATE",
-  "name" : "IS units PV=50",
+  "name" : "Any PV=50",
   "twState" : {
     "unitTypeState" : { },
     "transportsState" : { },
@@ -9,18 +9,14 @@
       "weaponQuirks" : { }
     },
     "miscState" : {
-      "listCockpitType" : { },
-      "listArmorType" : { },
-      "listInternalsType" : { },
-      "listEngineType" : { },
-      "listGyroType" : { },
-      "listTechLevel" : { },
-      "listTechBase" : {
-        "items" : {
-          "Inner Sphere" : "SELECTED"
-        }
-      },
-      "listMoveMode" : { }
+      "cockpitType" : { },
+      "armorType" : { },
+      "internalsType" : { },
+      "engineType" : { },
+      "gyroType" : { },
+      "techLevel" : { },
+      "techBase" : { },
+      "moveMode" : { }
     },
     "equipmentState" : { }
   },

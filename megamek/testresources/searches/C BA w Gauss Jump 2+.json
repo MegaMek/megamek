@@ -1,10 +1,9 @@
 {
   "content" : "ADVANCED_SEARCH_STATE",
-  "name" : "Civilian Space Stations",
+  "name" : "C BA w/ Gauss Jump 2+",
   "twState" : {
     "unitTypeState" : {
-      "spaceStation" : "SELECTED",
-      "military" : "INDETERMINATE"
+      "battleArmor" : "SELECTED"
     },
     "transportsState" : { },
     "quirksState" : {
@@ -12,16 +11,23 @@
       "weaponQuirks" : { }
     },
     "miscState" : {
+      "startJump" : "2",
       "cockpitType" : { },
       "armorType" : { },
       "internalsType" : { },
       "engineType" : { },
       "gyroType" : { },
       "techLevel" : { },
-      "techBase" : { },
+      "techBase" : {
+        "items" : {
+          "Clan" : "SELECTED"
+        }
+      },
       "moveMode" : { }
     },
-    "equipmentState" : { }
+    "equipmentState" : {
+      "filterTokens" : [ "GAUSS__1__>=" ]
+    }
   },
   "asState" : { }
 }

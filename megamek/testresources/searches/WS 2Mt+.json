@@ -1,10 +1,9 @@
 {
   "content" : "ADVANCED_SEARCH_STATE",
-  "name" : "Civilian Space Stations",
+  "name" : "WS 2Mt+",
   "twState" : {
     "unitTypeState" : {
-      "spaceStation" : "SELECTED",
-      "military" : "INDETERMINATE"
+      "warship" : "SELECTED"
     },
     "transportsState" : { },
     "quirksState" : {
@@ -12,6 +11,7 @@
       "weaponQuirks" : { }
     },
     "miscState" : {
+      "startTons" : "2000000",
       "cockpitType" : { },
       "armorType" : { },
       "internalsType" : { },

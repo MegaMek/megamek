@@ -1,10 +1,9 @@
 {
   "content" : "ADVANCED_SEARCH_STATE",
-  "name" : "Civilian Space Stations",
+  "name" : "Mounted Inf Design 3000+",
   "twState" : {
     "unitTypeState" : {
-      "spaceStation" : "SELECTED",
-      "military" : "INDETERMINATE"
+      "mountedInfantry" : "SELECTED"
     },
     "transportsState" : { },
     "quirksState" : {
@@ -12,6 +11,7 @@
       "weaponQuirks" : { }
     },
     "miscState" : {
+      "startYear" : "3000",
       "cockpitType" : { },
       "armorType" : { },
       "internalsType" : { },

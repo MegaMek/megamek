@@ -114,6 +114,8 @@ class LobbyMekPopup {
     static final String LMP_HOT_LOAD_ON = "HOTLOAD_ON";
     static final String LMP_VRT_LONG = "VRT_LONG";
     static final String LMP_VRT_SHORT = "VRT_SHORT";
+    static final String LMP_EI_ON = "EI_ON";
+    static final String LMP_EI_OFF = "EI_OFF";
     static final String LMP_SWAP = "SWAP";
     static final String LMP_ASSIGN = "ASSIGN";
     static final String LMP_C3CONNECT = "C3CONNECT";
@@ -203,6 +205,9 @@ class LobbyMekPopup {
         boolean anyVRTLong = joinedEntities.stream().anyMatch(LobbyMekPopup::hasVRTLong);
         boolean anyVRTShort = joinedEntities.stream().anyMatch(LobbyMekPopup::hasVRTShort);
         boolean anyVRT = joinedEntities.stream().anyMatch(LobbyMekPopup::hasVRT);
+        boolean anyEIOn = joinedEntities.stream().anyMatch(LobbyMekPopup::hasEIOn);
+        boolean anyEIOff = joinedEntities.stream().anyMatch(LobbyMekPopup::hasEIOff);
+        boolean anyEI = joinedEntities.stream().anyMatch(LobbyMekPopup::hasEI);
 
         boolean oneSelected = entities.size() == 1;
         boolean hasJoinedEntities = !joinedEntities.isEmpty();
@@ -250,9 +255,9 @@ class LobbyMekPopup {
         popup.add(swapPilotMenu(hasJoinedEntities, joinedEntities, clientGui, listener));
         popup.add(priorityTargetMenu(clientGui, hasJoinedEntities, listener, joinedEntities));
 
-        if (optBurstMG || optLRMHotLoad || anyVRT) {
+        if (optBurstMG || optLRMHotLoad || anyVRT || anyEI) {
             popup.add(equipMenu(anyRFMGOn, anyRFMGOff, anyHLOn, anyHLOff, anyVRTLong, anyVRTShort, anyVRT,
-                  optLRMHotLoad, optBurstMG, listener, seIds));
+                  anyEIOn, anyEIOff, anyEI, optLRMHotLoad, optBurstMG, listener, seIds));
         }
 
         popup.add(ScalingPopup.spacer());
@@ -399,7 +404,7 @@ class LobbyMekPopup {
                 Entity transportedUnit = entities.iterator().next();
                 // Standard loading, not ProtoMeks, not DropShip -> JumpShip
                 game.getEntitiesVector().stream()
-                      .filter(e -> !e.isCapitalFighter(true))
+                      .filter(e -> !e.isCapitalFighter())
                       .filter(e -> !entities.contains(e))
                       .filter(e -> canLoadAll(e, entities))
                       .forEach(e -> {
@@ -421,7 +426,7 @@ class LobbyMekPopup {
             } else if (entities.stream().noneMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMEK))) {
                 // Standard loading, not ProtoMeks, not DropShip -> JumpShip
                 game.getEntitiesVector().stream()
-                      .filter(e -> !e.isCapitalFighter(true))
+                      .filter(e -> !e.isCapitalFighter())
                       .filter(e -> !entities.contains(e))
                       .filter(e -> canLoadAll(e, entities))
                       .forEach(e -> menu.add(menuItem(
@@ -513,7 +518,7 @@ class LobbyMekPopup {
 
         // Handle all other valid loaders, such as Dropships
         loaders.stream()
-              .filter(e -> !e.isCapitalFighter(true))
+              .filter(e -> !e.isCapitalFighter())
               .filter(e -> !entities.contains(e))
               .filter(e -> canLoadAll(e, entities))
               .forEach(e -> menu.add(menuItem(
@@ -823,13 +828,14 @@ class LobbyMekPopup {
 
     /**
      * @return the "Equipment" submenu, allowing hot loading LRMs, setting MGs to rapid fire mode,
-     *         and Variable Range Targeting mode selection
+     *         Variable Range Targeting mode selection, and Enhanced Imaging mode selection
      */
     private static JMenu equipMenu(boolean anyRFOn, boolean anyRFOff, boolean anyHLOn,
           boolean anyHLOff, boolean anyVRTLong, boolean anyVRTShort, boolean anyVRT,
+          boolean anyEIOn, boolean anyEIOff, boolean anyEI,
           boolean optHL, boolean optRF, ActionListener listener, String eIds) {
         JMenu menu = new JMenu(Messages.getString("ChatLounge.Equipment"));
-        menu.setEnabled(anyRFOff || anyRFOn || anyHLOff || anyHLOn || anyVRT);
+        menu.setEnabled(anyRFOff || anyRFOn || anyHLOff || anyHLOn || anyVRT || anyEI);
         if (optRF) {
             menu.add(menuItem(Messages.getString("ChatLounge.RapidFireToggleOn"), LMP_RAPID_FIRE_MG_ON + NO_INFO + eIds,
                   anyRFOff, listener));
@@ -849,6 +855,12 @@ class LobbyMekPopup {
                   anyVRTShort, listener));
             menu.add(menuItem(Messages.getString("ChatLounge.VRTSetShort"), LMP_VRT_SHORT + NO_INFO + eIds,
                   anyVRTLong, listener));
+        }
+        if (anyEI) {
+            menu.add(menuItem(Messages.getString("ChatLounge.EIToggleOn"), LMP_EI_ON + NO_INFO + eIds,
+                  anyEIOff, listener));
+            menu.add(menuItem(Messages.getString("ChatLounge.EIToggleOff"), LMP_EI_OFF + NO_INFO + eIds,
+                  anyEIOn, listener));
         }
         return menu;
     }
@@ -1101,5 +1113,26 @@ class LobbyMekPopup {
      */
     private static boolean hasVRT(Entity entity) {
         return entity.hasVariableRangeTargeting();
+    }
+
+    /**
+     * Returns true when the entity has EI Interface and it's currently active (On mode).
+     */
+    private static boolean hasEIOn(Entity entity) {
+        return entity.hasEiCockpit() && !entity.isEiShutdown();
+    }
+
+    /**
+     * Returns true when the entity has EI Interface and it's currently shut down (Off mode).
+     */
+    private static boolean hasEIOff(Entity entity) {
+        return entity.hasEiCockpit() && entity.isEiShutdown();
+    }
+
+    /**
+     * Returns true when the entity has EI Interface equipment.
+     */
+    private static boolean hasEI(Entity entity) {
+        return entity.hasEiCockpit();
     }
 }

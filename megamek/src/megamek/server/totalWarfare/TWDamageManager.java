@@ -244,6 +244,15 @@ public class TWDamageManager implements IDamageManager {
         int crits;
         if ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) {
             crits = 1;
+            // Damage Interrupt Circuit (IO p.39) is disabled by any hit that rolls "2" on
+            // the hit location table (TAC), regardless of whether a critical actually occurs
+            if ((entity instanceof Mek mek) && (mek.hasDamageInterruptCircuit()) && (!mek.isDICDisabled())) {
+                mek.setDICDisabled(true);
+                Report damageInterruptCircuitReport = new Report(6268);
+                damageInterruptCircuitReport.subject = entity.getId();
+                damageInterruptCircuitReport.indent(2);
+                reportVec.addElement(damageInterruptCircuitReport);
+            }
         } else {
             crits = 0;
         }
@@ -400,7 +409,9 @@ public class TWDamageManager implements IDamageManager {
         }
 
         // if using VDNI (but not buffered), check for damage on an internal hit
+        // When tracking neural interface hardware, require DNI cockpit mod for feedback
         if (tookInternalDamage &&
+              entity.hasActiveDNI() &&
               entity.hasAbility(OptionsConstants.MD_VDNI) &&
               !entity.hasAbility(OptionsConstants.MD_BVDNI) &&
               !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {

@@ -640,6 +640,27 @@ public class LobbyActions {
         sendUpdates(updateCandidates);
     }
 
+    /**
+     * Toggles Enhanced Imaging (EI) mode for the given entities. Only affects entities that have an EI Interface.
+     *
+     * @param entities the entities to update
+     * @param enableEI true to turn EI ON, false to turn EI OFF (shutdown)
+     */
+    void toggleEI(Collection<Entity> entities, boolean enableEI) {
+        if (!validateUpdate(entities)) {
+            return;
+        }
+        Set<Entity> updateCandidates = new HashSet<>();
+        for (Entity entity : entities) {
+            if (entity.hasEiCockpit()) {
+                // setEiShutdown(true) = OFF, setEiShutdown(false) = ON
+                entity.setEiShutdown(!enableEI);
+                updateCandidates.add(entity);
+            }
+        }
+        sendUpdates(updateCandidates);
+    }
+
     public void load(Collection<Entity> selEntities, String info) {
         StringTokenizer stLoad = new StringTokenizer(info, ":");
         int loaderId = Integer.parseInt(stLoad.nextToken());

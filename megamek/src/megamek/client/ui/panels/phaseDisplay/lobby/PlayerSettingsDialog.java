@@ -207,6 +207,11 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         return parseField(fldVibrabomb);
     }
 
+    /** Returns the chosen EMP mines. */
+    public int getEmpMines() {
+        return parseField(fldEMP);
+    }
+
     /** Returns the start location offset */
     public int getStartOffset() {
         return parseField(txtOffset);
@@ -269,10 +274,12 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
           SwingConstants.RIGHT);
     private final JLabel labActive = new JLabel(getString("PlayerSettingsDialog.labActive"), SwingConstants.RIGHT);
     private final JLabel labInferno = new JLabel(getString("PlayerSettingsDialog.labInferno"), SwingConstants.RIGHT);
+    private final JLabel labEMP = new JLabel(getString("PlayerSettingsDialog.labEMP"), SwingConstants.RIGHT);
     private final JTextField fldConventional = new JTextField(3);
     private final JTextField fldVibrabomb = new JTextField(3);
     private final JTextField fldActive = new JTextField(3);
     private final JTextField fldInferno = new JTextField(3);
+    private final JTextField fldEMP = new JTextField(3);
 
     // Skills Section
     private SkillGenerationOptionsPanel skillGenerationOptionsPanel;
@@ -605,6 +612,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         player.setNbrMFVibra(getVibMines());
         player.setNbrMFActive(getActMines());
         player.setNbrMFInferno(getInfMines());
+        player.setNbrMFEMP(getEmpMines());
         getSkillGenerationOptionsPanel().updateClient();
         player.setEmail(getEmail());
 
@@ -664,7 +672,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     private JPanel mineSection() {
         JPanel result = new OptionPanel("PlayerSettingsDialog.header.minefields");
-        Content panContent = new Content(new GridLayout(4, 2, 10, 5));
+        Content panContent = new Content(new GridLayout(5, 2, 10, 5));
         result.add(panContent);
         panContent.add(labConventional);
         panContent.add(fldConventional);
@@ -674,6 +682,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         panContent.add(fldActive);
         panContent.add(labInferno);
         panContent.add(fldInferno);
+        panContent.add(labEMP);
+        panContent.add(fldEMP);
         return result;
     }
 
@@ -713,6 +723,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         fldVibrabomb.setText(Integer.toString(player.getNbrMFVibra()));
         fldActive.setText(Integer.toString(player.getNbrMFActive()));
         fldInferno.setText(Integer.toString(player.getNbrMFInferno()));
+        fldEMP.setText(Integer.toString(player.getNbrMFEMP()));
         fldEmail.setText(player.getEmail());
         txtWidth.setText(Integer.toString(player.getStartWidth()));
         txtOffset.setText(Integer.toString(player.getStartOffset()));

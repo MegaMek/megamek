@@ -273,8 +273,24 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mekTypeL0.setVisible(true);
         }
 
-        statusR.setString(en.isProne() ? Messages.getString("GeneralInfoMapSet.prone")
-              : Messages.getString("GeneralInfoMapSet.normal"));
+        // Build status string with all applicable conditions
+        StringBuilder statusBuilder = new StringBuilder();
+        if (en.isProne()) {
+            statusBuilder.append(Messages.getString("GeneralInfoMapSet.prone"));
+        } else {
+            statusBuilder.append(Messages.getString("GeneralInfoMapSet.normal"));
+        }
+        if (en.isShutDown()) {
+            statusBuilder.append(", ").append(Messages.getString("GeneralInfoMapSet.shutdown"));
+            if (en.getEMPShutdownRounds() > 0) {
+                statusBuilder.append(" (EMP: ").append(en.getEMPShutdownRounds()).append(" turns)");
+            }
+        }
+        if (en.getEMPInterferenceRounds() > 0) {
+            statusBuilder.append(", ").append(Messages.getString("GeneralInfoMapSet.empInterference",
+                  en.getEMPInterferenceRounds()));
+        }
+        statusR.setString(statusBuilder.toString());
         if (en.getOwner() != null) {
             playerR.setString(en.getOwner().getName());
             if (en.getOwner().getTeam() == 0) {

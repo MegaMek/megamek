@@ -1649,6 +1649,14 @@ public class EntityListFile {
                     output.write("\" " + MULParser.ATTR_COND_EJECT_HEAD_SHOT + "=\"false");
                 }
             }
+            // Save Damage Interrupt Circuit disabled state
+            if (((Mek) entity).hasDamageInterruptCircuit()) {
+                if (((Mek) entity).isDICDisabled()) {
+                    output.write("\" " + MULParser.ATTR_DIC_DISABLED + "=\"true");
+                } else {
+                    output.write("\" " + MULParser.ATTR_DIC_DISABLED + "=\"false");
+                }
+            }
         }
     }
 

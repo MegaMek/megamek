@@ -566,6 +566,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         result.add(lblWidth, GBC.std());
         result.add(txtWidth, GBC.eol());
 
+        result.add(new JLabel(" "),GBC.eol());
+        result.add(new JLabel(Messages.getString("CustomMekDialog.labDeploymentCustomBox")), GBC.eol());
         result.add(new JLabel(Messages.getString("CustomMekDialog.labDeploymentAnyNW")), GBC.std());
         result.add(spinStartingAnyNWx, GBC.std());
         result.add(spinStartingAnyNWy, GBC.eol());
@@ -843,6 +845,19 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         butText.get(currentPlayerStartPos).append(UIUtil.fontHTML(GUIPreferences.getInstance().getMyUnitColor()));
         butText.get(currentPlayerStartPos).append("\u2B24</FONT>");
+        
+        // Turn off custom deployment if start is not Any
+        if (currentPlayerStartPos == 0) {
+            spinStartingAnyNWx.setEnabled(true);
+            spinStartingAnyNWy.setEnabled(true);
+            spinStartingAnySEx.setEnabled(true);
+            spinStartingAnySEy.setEnabled(true);
+        } else {
+            spinStartingAnyNWx.setEnabled(false);
+            spinStartingAnyNWy.setEnabled(false);
+            spinStartingAnySEx.setEnabled(false);
+            spinStartingAnySEy.setEnabled(false);
+        }
 
         for (int i : butStartPos.keySet()) {
             butStartPos.get(i).setText(butText.get(i).toString());

@@ -160,6 +160,7 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
                   "Could not create directory " + SEARCH_FOLDER,
                   "Error",
                   JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         saveSearchState(new File(SEARCH_FOLDER, fileName + ".json"), name);
@@ -186,19 +187,19 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         state.asState = alphaStrikeTab.getState();
         try {
             save(file, state);
-            new RecentFilesStore(Path.of(RECENT_SEARCH_STORE)).touch(file.toPath());
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this,
                   "Error saving search state: " + e.getMessage(),
                   "Error",
                   JOptionPane.ERROR_MESSAGE);
         }
+        touchSearchFile(file);
     }
 
     private void showLoadPopup(ActionEvent e) {
         var popup = createPopupMenu(path -> loadSearchState(path.toFile()));
         popup.addSeparator();
-        JMenuItem fileItem = new JMenuItem("from File...");
+        JMenuItem fileItem = new JMenuItem(Messages.getString("ASD.fromFile"));
         fileItem.addActionListener(ev -> loadFile());
         popup.add(fileItem);
         Dimension popupSize = popup.getPreferredSize();
@@ -208,7 +209,7 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
 
     private void loadFile() {
         JFileChooser fc = new JFileChooser(SEARCH_FOLDER);
-        fc.setDialogTitle(Messages.getString("BoardEditor.loadBoard"));
+        fc.setDialogTitle(Messages.getString("ASD.load"));
         fc.setFileFilter(new FileNameExtensionFilter("Search Files (.json)", "json"));
         int returnVal = fc.showOpenDialog(this);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
@@ -223,9 +224,23 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
             clearSearches();
             totalWarTab.applyState(state.twState);
             alphaStrikeTab.applyState(state.asState);
-            new RecentFilesStore(Path.of(RECENT_SEARCH_STORE)).touch(file.toPath());
-        } catch (IOException|IllegalArgumentException e) {
+        } catch (IOException | IllegalArgumentException e) {
             JOptionPane.showMessageDialog(this, "Error loading search state: " + e.getMessage(),
+                  "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        touchSearchFile(file);
+    }
+
+    /**
+     * "Touches" the given search save file, adding/moving it up the recent searches list.
+     *
+     * @param file The search json file
+     */
+    private void touchSearchFile(File file) {
+        try {
+            new RecentFilesStore(Path.of(RECENT_SEARCH_STORE)).touch(file.toPath());
+        } catch (IOException | IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, "Failed to update the recent searches list. " + e.getMessage(),
                   "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -250,8 +265,11 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Creates a popup menu containing up to 10 most recently modified JSON files in the given folder. Each menu item
-     * uses the JSON field "name" as its label and calls the provided handler with the corresponding file when clicked.
+     * Creates a popup menu containing up to 10 most recently touched searches in the searches folder. Each menu item
+     * uses the JSON field "name" (in the search json file) as its label and calls the provided handler with the
+     * corresponding file when clicked.
+     *
+     * @see RecentFilesStore
      */
     private JPopupMenu createPopupMenu(Consumer<Path> onFileSelected) {
         JPopupMenu popup = new JPopupMenu();
@@ -270,13 +288,13 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
                 popup.add(item);
             }
         } catch (IOException ignored) {
-            JMenuItem errorItem = new JMenuItem("Error retrieving recent files");
+            JMenuItem errorItem = new JMenuItem("Error retrieving recent searches");
             errorItem.setEnabled(false);
             popup.add(errorItem);
         }
 
         if (popup.getComponentCount() == 0) {
-            JMenuItem noRecentItem = new JMenuItem("No recent files");
+            JMenuItem noRecentItem = new JMenuItem(Messages.getString("ASD.noRecent"));
             noRecentItem.setEnabled(false);
             popup.add(noRecentItem);
         }

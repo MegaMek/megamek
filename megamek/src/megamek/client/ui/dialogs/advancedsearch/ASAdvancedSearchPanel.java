@@ -1021,7 +1021,7 @@ public class ASAdvancedSearchPanel extends JPanel {
         damageMFrom.setSelectedItem(state.damageMFromValue);
         damageMTo.setSelectedItem(state.damageMToValue);
 
-        useDamageL.setSelected(state.damageSUse);
+        useDamageL.setSelected(state.damageLUse);
         damageLFrom.setSelectedItem(state.damageLFromValue);
         damageLTo.setSelectedItem(state.damageLToValue);
 

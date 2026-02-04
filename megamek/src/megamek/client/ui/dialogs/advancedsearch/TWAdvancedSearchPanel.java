@@ -86,7 +86,6 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         addTab(msg_weaponEq, weaponEqPanel);
         addTab(msg_transports, new StandardScrollPane(transportsPanel));
         addTab(msg_quirkType, quirkPanel);
-//        addTab(msg_quirkType, new StandardScrollPane(quirkPanel));
     }
 
     /**

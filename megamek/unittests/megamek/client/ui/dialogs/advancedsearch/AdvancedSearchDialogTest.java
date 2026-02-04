@@ -55,6 +55,7 @@ class AdvancedSearchDialogTest {
         try (Stream<Path> files = Files.walk(resourceDir)) {
             files.filter(Files::isRegularFile)
                   .filter(p -> p.getFileName().toString().endsWith(".json"))
+                  .filter(p -> AdvancedSearchDialog.isAdvancedSearchFile(p.toFile()))
                   .forEach(p ->
                         assertDoesNotThrow(
                               () -> AdvancedSearchDialog.load(p.toFile()),

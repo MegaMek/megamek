@@ -58,6 +58,9 @@ public final class RecentFilesStore {
     private final LinkedList<String> recentFiles = new LinkedList<>();
 
     public RecentFilesStore(Path jsonFile) throws IOException {
+        if (jsonFile == null) {
+            throw new IllegalArgumentException("jsonFile cannot be null");
+        }
         this.jsonFile = jsonFile;
         load();
     }

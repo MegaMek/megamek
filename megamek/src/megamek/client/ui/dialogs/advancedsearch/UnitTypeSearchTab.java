@@ -265,16 +265,6 @@ class UnitTypeSearchTab extends JPanel {
         applyState(new AdvSearchState.UnitTypeState());
     }
 
-    /**
-     * Adapts FlatLaf's tri state checkbox to start as empty and go from there to checked and then "-" = INDETERMINATE
-     */
-    static class SearchTriStateCheckBox extends FlatTriStateCheckBox {
-        public SearchTriStateCheckBox(String text) {
-            super(text, State.UNSELECTED);
-            setAltStateCycleOrder(true);
-        }
-    }
-
     void applyState(AdvSearchState.UnitTypeState state) {
         btnFilterProtoMek.setState(state.protoMek);
         btnFilterMek.setState(state.mek);

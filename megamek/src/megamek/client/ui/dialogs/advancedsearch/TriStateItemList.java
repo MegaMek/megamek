@@ -79,7 +79,7 @@ class TriStateItemList {
     TriStateItemList(Map<Integer, String> namesAndCodes, int visibleRows) {
         this(visibleRows);
         for (Map.Entry<Integer, String> nameAndCode : namesAndCodes.entrySet()) {
-            var checkBox = new UnitTypeSearchTab.SearchTriStateCheckBox(nameAndCode.getValue());
+            var checkBox = new SearchTriStateCheckBox(nameAndCode.getValue());
             checkBoxes.add(checkBox);
             codes.put(checkBox, nameAndCode.getKey());
         }
@@ -91,7 +91,7 @@ class TriStateItemList {
     }
 
     private void initializeList(Collection<String> content) {
-        content.stream().map(UnitTypeSearchTab.SearchTriStateCheckBox::new).forEach(checkBoxes::add);
+        content.stream().map(SearchTriStateCheckBox::new).forEach(checkBoxes::add);
         checkBoxes.forEach(listPanel::add);
     }
 

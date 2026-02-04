@@ -1058,6 +1058,13 @@ public class MiscType extends EquipmentType {
                 costValue = size * 10000;
             } else if (hasFlag(F_RAM_PLATE)) {
                 costValue = getTonnage(entity, loc) * 10000;
+            } else if (hasFlag(F_DAMAGE_INTERRUPT_CIRCUIT)) {
+                // DIC costs 150 C-bills per pilot seat (IO p.39)
+                if (entity.getCrew() != null) {
+                    costValue = 150 * entity.getCrew().getCrewType().getCrewSlots();
+                } else {
+                    costValue = 150; // Default to 1 seat if no crew assigned
+                }
             }
 
             if (isArmored) {
@@ -4726,7 +4733,8 @@ public class MiscType extends EquipmentType {
               .setISAdvancement(3052, 3055, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.FS)
-              .setProductionFactions(Faction.WB);
+              .setProductionFactions(Faction.WB)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
 
@@ -4742,7 +4750,7 @@ public class MiscType extends EquipmentType {
 
         misc.tonnage = 0;
         misc.criticalSlots = 0;
-        misc.cost = 150; // 150 C-bills per pilot seat (handled in cost calculator)
+        misc.cost = EquipmentType.COST_VARIABLE; // 150 C-bills per pilot seat (IO p.39)
         misc.hittable = false;
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_DAMAGE_INTERRUPT_CIRCUIT);
 
@@ -4754,7 +4762,8 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(3055, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.LC);
+              .setPrototypeFactions(Faction.LC)
+              .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
 

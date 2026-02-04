@@ -291,6 +291,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private JSpinner spinStartingAnyNWy;
     private JSpinner spinStartingAnySEx;
     private JSpinner spinStartingAnySEy;
+    private JButton btnUseRuler = new JButton(Messages.getString("CustomMekDialog.BtnDeploymentUseRuler"));
+    private JButton btnApply = new JButton(Messages.getString("CustomMekDialog.BtnDeploymentApply"));
 
     // ground object config section
     private Content groundSectionContent = new Content(new GridLayout(2, 3));
@@ -566,7 +568,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         result.add(lblWidth, GBC.std());
         result.add(txtWidth, GBC.eol());
 
-        result.add(new JLabel(" "),GBC.eol());
+        result.add(new JLabel(" "), GBC.eol());
         result.add(new JLabel(Messages.getString("CustomMekDialog.labDeploymentCustomBox")), GBC.eol());
         result.add(new JLabel(Messages.getString("CustomMekDialog.labDeploymentAnyNW")), GBC.std());
         result.add(spinStartingAnyNWx, GBC.std());
@@ -574,12 +576,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         result.add(new JLabel(Messages.getString("CustomMekDialog.labDeploymentAnySE")), GBC.std());
         result.add(spinStartingAnySEx, GBC.std());
         result.add(spinStartingAnySEy, GBC.eol());
-
-        JButton btnUseRuler = new JButton(Messages.getString("CustomMekDialog.BtnDeploymentUseRuler"));
+        
         btnUseRuler.setToolTipText(Messages.getString("CustomMekDialog.BtnDeploymentUseRulerTip"));
         btnUseRuler.addActionListener(e -> useRuler());
-        result.add(btnUseRuler, GBC.std());
-        JButton btnApply = new JButton(Messages.getString("CustomMekDialog.BtnDeploymentApply"));
+        result.add(btnUseRuler, GBC.std());;
         btnApply.setToolTipText(Messages.getString("CustomMekDialog.BtnDeploymentApplyTip"));
         btnApply.addActionListener(e -> apply());
         result.add(btnApply, GBC.eol());
@@ -797,6 +797,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             butStartPos.put(internalZoneID, buttonCustomZone);
             panStartButtons.add(buttonCustomZone);
         }
+        
+        
 
         updateStartGrid();
     }
@@ -847,16 +849,20 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         butText.get(currentPlayerStartPos).append("\u2B24</FONT>");
         
         // Turn off custom deployment if start is not Any
-        if (currentPlayerStartPos == 0) {
+        if (currentPlayerStartPos == Board.START_ANY) {
             spinStartingAnyNWx.setEnabled(true);
             spinStartingAnyNWy.setEnabled(true);
             spinStartingAnySEx.setEnabled(true);
             spinStartingAnySEy.setEnabled(true);
+            btnUseRuler.setEnabled(true);
+            btnApply.setEnabled(true);
         } else {
             spinStartingAnyNWx.setEnabled(false);
             spinStartingAnyNWy.setEnabled(false);
             spinStartingAnySEx.setEnabled(false);
             spinStartingAnySEy.setEnabled(false);
+            btnUseRuler.setEnabled(false);
+            btnApply.setEnabled(false);
         }
 
         for (int i : butStartPos.keySet()) {

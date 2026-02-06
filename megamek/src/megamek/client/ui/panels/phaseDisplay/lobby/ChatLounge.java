@@ -469,12 +469,12 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         fldMapWidth.addActionListener(lobbyListener);
         fldMapHeight.addActionListener(lobbyListener);
-        fldMapWidth.addFocusListener(focusListener);
-        fldMapHeight.addFocusListener(focusListener);
+        fldMapWidth.addFocusListener(lobbyFocusListener);
+        fldMapHeight.addFocusListener(lobbyFocusListener);
         fldSpaceBoardWidth.addActionListener(lobbyListener);
         fldSpaceBoardHeight.addActionListener(lobbyListener);
-        fldSpaceBoardWidth.addFocusListener(focusListener);
-        fldSpaceBoardHeight.addFocusListener(focusListener);
+        fldSpaceBoardWidth.addFocusListener(lobbyFocusListener);
+        fldSpaceBoardHeight.addFocusListener(lobbyFocusListener);
 
         comboTeam.addActionListener(lobbyListener);
 
@@ -483,7 +483,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /** Applies changes to the board and map size when the text fields lose focus. */
-    FocusListener focusListener = new FocusAdapter() {
+    FocusListener lobbyFocusListener = new FocusAdapter() {
 
         @Override
         public void focusLost(FocusEvent e) {

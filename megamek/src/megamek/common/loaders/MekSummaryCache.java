@@ -491,13 +491,6 @@ public class MekSummaryCache {
             ms.setSuitWeight(((BattleArmor) e).getTrooperWeight());
         }
 
-        if (ms.isSupport()) {
-            ms.setWeightClass(EntityWeightClass.getSupportWeightClass(ms.getTons(), ms.getUnitSubType()));
-        } else {
-            double weightClassWeight = ms.isBattleArmor() ? ms.getSuitWeight() : ms.getTons();
-            ms.setWeightClass(EntityWeightClass.getWeightClass(weightClassWeight, ms.getUnitType()));
-        }
-
         ms.setBV(e.calculateBattleValue(true, true));
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setAdvancedYear(e.getProductionDate(e.isClan()));
@@ -526,6 +519,13 @@ public class MekSummaryCache {
         } else {
             ms.setUnitSubType(e.getMovementModeAsString());
         }
+        if (ms.isSupport()) {
+            ms.setWeightClass(EntityWeightClass.getSupportWeightClass(ms.getTons(), ms.getUnitSubType()));
+        } else {
+            double weightClassWeight = ms.isBattleArmor() ? ms.getSuitWeight() : ms.getTons();
+            ms.setWeightClass(EntityWeightClass.getWeightClass(weightClassWeight, ms.getUnitType()));
+        }
+
         ms.setEquipment(e.getEquipment());
         ms.setQuirkNames(e.getQuirks());
         ms.setWeaponQuirkNames(e);

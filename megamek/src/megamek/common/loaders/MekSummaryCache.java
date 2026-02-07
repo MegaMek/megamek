@@ -58,6 +58,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.units.Aero;
 import megamek.common.units.DropShuttleBay;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.NavalRepairFacility;
@@ -489,6 +490,14 @@ public class MekSummaryCache {
             ms.setTWWeight(e.getWeight());
             ms.setSuitWeight(((BattleArmor) e).getTrooperWeight());
         }
+
+        if (ms.isSupport()) {
+            ms.setWeightClass(EntityWeightClass.getSupportWeightClass(ms.getTons(), ms.getUnitSubType()));
+        } else {
+            double weightClassWeight = ms.isBattleArmor() ? ms.getSuitWeight() : ms.getTons();
+            ms.setWeightClass(EntityWeightClass.getWeightClass(weightClassWeight, ms.getUnitType()));
+        }
+
         ms.setBV(e.calculateBattleValue(true, true));
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setAdvancedYear(e.getProductionDate(e.isClan()));

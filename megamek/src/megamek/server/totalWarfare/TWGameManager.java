@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -5687,15 +5687,14 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Aerospace that fly off to return in a later round must be handled
-        // at the end of the round, but set some state here for simplicity
-        if ((aeroUnit != null) && flewOff) {
-            // Record direction
+        // at the end of the round, but set some state here for simplicity.
+        // Non-returning aero (returnable == -1) should fall through to the
+        // normal flee logic below, which properly removes them from the game
+        // with REMOVE_IN_RETREAT status.
+        if ((aeroUnit != null) && flewOff && (returnable > -1)) {
+            // Record direction for returning unit
             aeroUnit.setFlyingOff(fleeDirection);
-
-            // Currently only Aerospace can fly off and return.
-            if (returnable > -1) {
-                entity.setDeployRound(1 + game.getRoundCount() + returnable);
-            }
+            entity.setDeployRound(1 + game.getRoundCount() + returnable);
 
             // End activation but don't remove from the map yet.
             entity.setDone(true);

@@ -88,8 +88,8 @@ class TurnStep implements PhasePass {
 
         // tripods with all their legs only pay for their first facing change
         if ((entity instanceof TripodMek mek) &&
-              mek.atLeastOneBadLeg() &&
-              getTypesOfInterest().contains(prev.getType())) {
+              !mek.atLeastOneBadLeg() &&
+              (prev.getType() == MoveStepType.TURN_LEFT || prev.getType() == MoveStepType.TURN_RIGHT)) {
             moveStep.setMp(0);
         }
         if (entity.isDropping()) {

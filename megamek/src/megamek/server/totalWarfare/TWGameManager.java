@@ -11504,7 +11504,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean throughFront = true;
 
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
 
         final String armName = (paa.getArm() == PunchAttackAction.LEFT) ? "Left Arm" : "Right Arm";
@@ -11802,7 +11802,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
         String legName = (kaa.getLeg() == KickAttackAction.LEFT) || (kaa.getLeg() == KickAttackAction.LEFT_MULE) ?
               "Left " :
@@ -12059,7 +12059,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
         String legName = switch (kaa.getLeg()) {
             case JumpJetAttackAction.LEFT -> "Left leg";
@@ -12280,7 +12280,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions()
@@ -13453,7 +13453,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions()
@@ -14518,7 +14518,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean throughFront = true;
 
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
 
         final boolean glancing = game.getOptions()
@@ -14716,7 +14716,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
         final boolean glancing = game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
@@ -14883,7 +14883,7 @@ public class TWGameManager extends AbstractGameManager {
 
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
 
         Report r;
@@ -15039,7 +15039,7 @@ public class TWGameManager extends AbstractGameManager {
 
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
 
         Report r;
@@ -15701,7 +15701,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
         boolean throughFront = Optional.ofNullable(targetEntity)
-              .map(te -> Compute.isThroughFrontHex(game, ae.getPosition(), te))
+              .map(te -> Compute.isThroughFrontHex(ae.getPosition(), te))
               .orElse(true);
 
         final boolean glancing = game.getOptions()

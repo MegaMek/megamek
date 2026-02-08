@@ -41,6 +41,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -77,9 +80,9 @@ public final class MekCacheCSVTool {
 
     private static final String NOT_APPLICABLE = "Not Applicable";
 
-    private static final List<String> HEADERS = List.of("Chassis", "Model", "MUL ID", "Combined", "Clan",
-          "Source", "File Location", "Weight", "Intro Date", "Experimental year", "Advanced year",
-          "Standard year", "Extinct Year", "Unit Type", "Role", "BV", "Cost", "Rules", "Engine Name",
+    private static final List<String> HEADERS = List.of("Chassis", "Model", "MUL ID", "Combined", "Source",
+          "Tech Base", "File Location", "File Modified", "Weight", "Intro Date", "Experimental year", "Advanced year",
+          "Standard year", "Extinct Year", "Unit Type", "Omni", "Role", "BV", "Cost", "Rules", "Engine Name",
           "Internal Structure", "Myomer", "Cockpit Type", "Gyro Type", "Armor Types", "Equipment", "Tech Rating",
           "Unit Quirks", "Weapon Quirks", "Manufacturer", "Factory", "Targeting", "Comms", "Armor", "JJ", "Engine",
           "Chassis", "Capabilities", "Overview", "History", "Deployment", "Notes");
@@ -108,9 +111,14 @@ public final class MekCacheCSVTool {
                 csvLine.append(unit.getModel()).append(DELIM);
                 csvLine.append(unit.getMulId()).append(DELIM);
                 csvLine.append(unit.getFullChassis()).append(" ").append(unit.getModel()).append(DELIM);
-                csvLine.append(unit.isClan()).append(DELIM);
                 csvLine.append(unit.getSource()).append(DELIM);
+                csvLine.append(unit.getTechBase()).append(DELIM);
                 csvLine.append(unit.getSourceFile()).append(DELIM);
+                long lastModified = unit.getSourceFile().lastModified();
+                LocalDate fileDate = Instant.ofEpochMilli(lastModified)
+                      .atZone(ZoneId.systemDefault())
+                      .toLocalDate();
+                csvLine.append(fileDate).append(DELIM);
                 csvLine.append(unit.getTons()).append(DELIM);
                 csvLine.append(unit.getYear()).append(DELIM);
 
@@ -136,6 +144,8 @@ public final class MekCacheCSVTool {
                 csvLine.append(unit.getExtinctRange()).append(DELIM);
                 // Unit Type.
                 csvLine.append(unit.getFullAccurateUnitType()).append(DELIM);
+                // Omni
+                csvLine.append(unit.getOmni()).append(DELIM);
                 // Unit Role
                 csvLine.append(unit.getRole()).append(DELIM);
                 // Unit BV

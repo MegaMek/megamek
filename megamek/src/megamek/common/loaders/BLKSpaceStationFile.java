@@ -267,7 +267,6 @@ public class BLKSpaceStationFile extends BLKFile implements IMekLoader {
             prefix = "IS ";
         }
 
-        boolean rearMount;
         int nAmmo;
         // set up a new weapons bay mount
         WeaponMounted bayMount = null;
@@ -276,7 +275,6 @@ public class BLKSpaceStationFile extends BLKFile implements IMekLoader {
         double bayDamage = 0;
         if (saEquip[0] != null) {
             for (String element : saEquip) {
-                rearMount = false;
                 nAmmo = 1;
                 newBay = false;
                 String equipName = element.trim();

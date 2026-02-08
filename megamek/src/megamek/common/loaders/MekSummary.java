@@ -63,7 +63,6 @@ import megamek.common.options.IOptionInfo;
 import megamek.common.options.Quirks;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.units.EntityWeightClass;
 import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
 
@@ -101,6 +100,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
                                          TechConstants.T_IS_EXPERIMENTAL }; // tech level constant at standard, advanced, and experimental rules
     // levels
     private double tons;
+    private int weightClass;
     private int bv;
 
     /** The full cost of the unit (including ammo). */
@@ -996,17 +996,12 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         unitSubType = subType;
     }
 
+    public void setWeightClass(int weightClass) {
+        this.weightClass = weightClass;
+    }
+
     public int getWeightClass() {
-        double tons;
-        if (getUnitType().equals("BattleArmor")) {
-            tons = getSuitWeight();
-        } else {
-            tons = getTons();
-        }
-        if (isSupport()) {
-            return EntityWeightClass.getSupportWeightClass(this.tons, unitSubType);
-        }
-        return EntityWeightClass.getWeightClass(tons, getUnitType());
+        return weightClass;
     }
 
     public int getWalkMp() {

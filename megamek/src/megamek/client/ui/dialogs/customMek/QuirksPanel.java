@@ -88,10 +88,6 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
     private final boolean editable;
     private final DialogOptionListener parent;
 
-    private JPanel positiveQuirksPanel;
-    private JPanel negativeQuirksPanel;
-    private JPanel weaponQuirksPanel;
-
     // Responsive layout tracking
     private final Map<JPanel, List<DialogOptionComponentYPanel>> panelQuirksMap = new LinkedHashMap<>();
     private final Map<DialogOptionComponentYPanel, Dimension> originalPreferredSizes = new HashMap<>();
@@ -136,9 +132,9 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
         List<DialogOptionComponentYPanel> negativeQuirksList = new ArrayList<>();
 
         // Create positive and negative quirks panels
-        positiveQuirksPanel = createTopAlignedPanel();
+        JPanel positiveQuirksPanel = createTopAlignedPanel();
         positiveQuirksPanel.setBorder(BorderFactory.createTitledBorder("Chassis Quirks (Positive)"));
-        negativeQuirksPanel = createTopAlignedPanel();
+        JPanel negativeQuirksPanel = createTopAlignedPanel();
         negativeQuirksPanel.setBorder(BorderFactory.createTitledBorder("Chassis Quirks (Negative)"));
 
         // Collect chassis quirks and separate into positive/negative
@@ -157,7 +153,7 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
                         continue;
                     }
 
-                    addQuirk(option, editable, isPositive ? positiveQuirksPanel : negativeQuirksPanel, targetList);
+                    addQuirk(option, editable, targetList);
                     allQuirks.add(targetList.get(targetList.size() - 1));
                 }
             }
@@ -300,7 +296,7 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
     /**
      * Adds a quirk to the specified panel and tracks it for responsive layout.
      */
-    private void addQuirk(IOption option, boolean editable, JPanel targetPanel, List<DialogOptionComponentYPanel> quirksList) {
+    private void addQuirk(IOption option, boolean editable, List<DialogOptionComponentYPanel> quirksList) {
         DialogOptionComponentYPanel optionComp = new DialogOptionComponentYPanel(this, option, editable);
         originalPreferredSizes.put(optionComp, optionComp.getPreferredSize());
         updateQuirkFontStyle(optionComp, option.booleanValue());
@@ -352,24 +348,11 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
     }
 
     /**
-     * Gets the width of the visible area (viewport or panel itself).
-     */
-    private int getVisibleContainerWidth() {
-        Container parent = getParent();
-        if (parent instanceof JViewport) {
-            return parent.getWidth();
-        } else {
-            return getWidth();
-        }
-    }
-
-    /**
      * Calculates the usable width inside a panel's content area.
      */
     private int calculateAvailableWidthInPanel(JPanel panel) {
         Container scrollPaneParent = panel.getParent();
-        if (scrollPaneParent instanceof JViewport) {
-            JViewport viewport = (JViewport) scrollPaneParent;
+        if (scrollPaneParent instanceof JViewport viewport) {
             int viewportWidth = viewport.getWidth();
             Insets panelInsets = panel.getInsets();
             return viewportWidth - panelInsets.left - panelInsets.right;

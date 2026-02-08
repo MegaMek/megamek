@@ -1855,7 +1855,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         subjectId = getAttackerId();
         nRange = Compute.effectiveDistance(this.game, attackingEntity, target);
         if (target instanceof Mek) {
-            throughFront = Compute.isThroughFrontHex(this.game, attackingEntity.getPosition(), (Entity) target);
+            throughFront = Compute.isThroughFrontHex(attackingEntity.getPosition(), (Entity) target);
         } else {
             throughFront = true;
         }

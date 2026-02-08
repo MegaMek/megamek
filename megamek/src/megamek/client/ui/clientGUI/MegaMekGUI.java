@@ -37,6 +37,7 @@ package megamek.client.ui.clientGUI;
 import static megamek.common.compute.Compute.d6;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -372,12 +373,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // Use the current monitor, so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
         Dimension scaledMonitorSize = UIUtil.getScaledScreenSize(frame);
-        Image splashImage = getImage(FILENAME_MEGAMEK_SPLASH, scaledMonitorSize.width, scaledMonitorSize.height);
-        logoImage = new ManagedVolatileImage(getImage(FILENAME_LOGO, scaledMonitorSize.width, scaledMonitorSize.height),
-              Transparency.TRANSLUCENT);
-        medalImage = new ManagedVolatileImage(getImage(FILENAME_MEDAL,
-              scaledMonitorSize.width,
-              scaledMonitorSize.height), Transparency.TRANSLUCENT);
+        Image splashImage = getImage(FILENAME_MEGAMEK_SPLASH);
+        logoImage = new ManagedVolatileImage(getImage(FILENAME_LOGO), Transparency.TRANSLUCENT);
+        medalImage = new ManagedVolatileImage(getImage(FILENAME_MEDAL), Transparency.TRANSLUCENT);
         Dimension splashPanelPreferredSize = calculateSplashPanelPreferredSize(scaledMonitorSize, splashImage);
         // This is an empty panel that will contain the splash image
         // Draw background, border, and children first
@@ -1040,7 +1038,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             }
 
             HostDialog hd = new HostDialog(frame);
-            if (!("".equals(sd.localName))) {
+            if (!sd.localName.isEmpty()) {
                 hasSlot = true;
             }
             hd.setPlayerName(sd.localName);
@@ -1290,7 +1288,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 host();
                 break;
             case ClientGUI.FILE_GAME_SCENARIO:
-                if ((ev.getModifiers() & Event.CTRL_MASK) != 0) {
+                if ((ev.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
                     // As a dev convenience, start the last scenario again when clicked with CTRL
                     scenario(PreferenceManager.getClientPreferences().getLastScenario());
                 } else {
@@ -1361,7 +1359,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
     }
 
-    private @Nullable Image getImage(final String filename, final int screenWidth, final int screenHeight) {
+    private @Nullable Image getImage(final String filename) {
         File file = new MegaMekFile(Configuration.widgetsDir(), filename).getFile();
         if (!file.exists()) {
             LOGGER.error("MainMenu Error: Image doesn't exist: {}", file.getAbsolutePath());

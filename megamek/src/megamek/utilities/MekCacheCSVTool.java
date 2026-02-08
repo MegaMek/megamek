@@ -263,6 +263,8 @@ public final class MekCacheCSVTool {
                 Entity entity = loadEntity(unit.getSourceFile(), unit.getEntryName());
                 if (entity != null) {
                     csvLine.append(entity.getFullRatingName()).append(DELIM);
+                } else {
+                    csvLine.append("--").append(DELIM);
                 }
 
                 // Unit Quirks, Weapon Quirks
@@ -309,17 +311,29 @@ public final class MekCacheCSVTool {
                     // Notes
                     String notes = entity.getFluff().getNotes();
                     if (!StringUtility.isNullOrBlank(notes)) {
-                        csvLine.append(notes);
+                        csvLine.append(notes.replace(DELIM, ";")
+                              .replace("\r\n", " // ")
+                              .replace("\r", " // ")
+                              .replace("\n", " // "));
                     } else {
                         csvLine.append("--");
                     }
                     csvLine.append(DELIM);
+                } else {
+                    // Entity failed to load - emit placeholders for all entity-derived columns
+                    // Manufacturer, Factory, Targeting, Comms, Armor, JJ, Engine, Chassis_1,
+                    // Capabilities, Overview, History, Deployment, Notes
+                    for (int i = 0; i < 13; i++) {
+                        csvLine.append("--").append(DELIM);
+                    }
+                }
 
-                    // File Location, File Modified
-                    csvLine.append(unit.getSourceFile()).append(DELIM);
-                    csvLine.append(getFileModifiedDate(unit.getSourceFile(), unit.getEntryName())).append(DELIM);
+                // File Location, File Modified (not entity-dependent)
+                csvLine.append(unit.getSourceFile()).append(DELIM);
+                csvLine.append(getFileModifiedDate(unit.getSourceFile(), unit.getEntryName())).append(DELIM);
 
-                    // Valid, Verification Errors
+                // Valid, Verification Errors
+                if (entity != null) {
                     TestEntity testEntity = TestEntity.getEntityVerifier(entity);
                     if (testEntity != null) {
                         StringBuffer errors = new StringBuffer();
@@ -330,11 +344,15 @@ public final class MekCacheCSVTool {
                             csvLine.append("--");
                         } else {
                             csvLine.append(errorText.replace(DELIM, ";")
+                                  .replace("\r\n", " // ")
+                                  .replace("\r", " // ")
                                   .replace("\n", " // "));
                         }
                     } else {
                         csvLine.append("--").append(DELIM).append("--");
                     }
+                } else {
+                    csvLine.append("--").append(DELIM).append("--");
                 }
 
                 csvLine.append("\n");

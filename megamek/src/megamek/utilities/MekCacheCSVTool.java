@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import megamek.codeUtilities.StringUtility;
+import megamek.common.Configuration;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
@@ -63,6 +64,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.System;
+import megamek.common.verifier.TestEntity;
 import megamek.logging.MMLogger;
 
 /**
@@ -79,18 +81,45 @@ public final class MekCacheCSVTool {
     private static final String DELIM = "|";
     private static boolean includeGunEmplacement = false; // Variable to control inclusion of Gun Emplacement units
 
+    // Set to true to read unit files from the mm-data sibling directory instead of the megamek zip.
+    // This picks up whatever branch mm-data is currently on.
+    private static final boolean USE_MM_DATA = true;
+
     private static final String NOT_APPLICABLE = "Not Applicable";
 
-    private static final List<String> HEADERS = List.of("Chassis", "Model", "MUL ID", "Combined", "Source",
-          "Tech Base", "File Location", "File Modified", "Weight", "Intro Date", "Experimental year", "Advanced year",
-          "Standard year", "Extinct Year", "Unit Type", "Omni", "Role", "BV", "Cost", "Rules", "Engine Name",
+    private static final List<String> HEADERS = List.of("MUL ID", "Chassis", "Model", "Combined", "Unit Type",
+          "Weight", "Tech Base", "Omni", "Source", "Intro Date", "Experimental year", "Advanced year",
+          "Standard year", "Extinct Year", "Role", "BV", "Cost", "Rules", "Engine Name",
           "Internal Structure", "Myomer", "Cockpit Type", "Gyro Type", "Armor Types", "Equipment", "Tech Rating",
           "Unit Quirks", "Weapon Quirks", "Manufacturer", "Factory", "Targeting", "Comms", "Armor", "JJ", "Engine",
-          "Chassis", "Capabilities", "Overview", "History", "Deployment", "Notes");
+          "Chassis_1", "Capabilities", "Overview", "History", "Deployment", "Notes",
+          "File Location", "File Modified", "Valid", "Verification Errors");
 
     public static void main(String... args) {
         if (args.length > 0) {
             includeGunEmplacement = Boolean.parseBoolean(args[0]);
+        }
+
+        if (USE_MM_DATA) {
+            // Walk up from the working directory to find the mm-data sibling repo
+            Path current = Path.of("").toAbsolutePath();
+            Path mmDataUnits = null;
+            while (current != null) {
+                Path candidate = current.resolveSibling("mm-data")
+                      .resolve("data").resolve("mekfiles");
+                if (candidate.toFile().isDirectory()) {
+                    mmDataUnits = candidate;
+                    break;
+                }
+                current = current.getParent();
+            }
+
+            if (mmDataUnits != null) {
+                Configuration.setUnitsDir(mmDataUnits.toFile());
+                logger.info("Using mm-data units directory: " + mmDataUnits);
+            } else {
+                logger.warn("mm-data units directory not found -- falling back to default");
+            }
         }
 
         try (PrintWriter pw = new PrintWriter(FILE_NAME);
@@ -108,15 +137,21 @@ public final class MekCacheCSVTool {
                 }
 
                 csvLine = new StringBuilder();
+
+                // MUL ID, Chassis, Model, Combined
+                csvLine.append(unit.getMulId()).append(DELIM);
                 csvLine.append(unit.getFullChassis()).append(DELIM);
                 csvLine.append(unit.getModel()).append(DELIM);
-                csvLine.append(unit.getMulId()).append(DELIM);
                 csvLine.append(unit.getFullChassis()).append(" ").append(unit.getModel()).append(DELIM);
-                csvLine.append(unit.getSource()).append(DELIM);
-                csvLine.append(unit.getTechBase()).append(DELIM);
-                csvLine.append(unit.getSourceFile()).append(DELIM);
-                csvLine.append(getFileModifiedDate(unit.getSourceFile(), unit.getEntryName())).append(DELIM);
+
+                // Unit Type, Weight, Tech Base, Omni, Source
+                csvLine.append(unit.getFullAccurateUnitType()).append(DELIM);
                 csvLine.append(unit.getTons()).append(DELIM);
+                csvLine.append(unit.getTechBase()).append(DELIM);
+                csvLine.append(unit.getOmni()).append(DELIM);
+                csvLine.append(unit.getSource()).append(DELIM);
+
+                // Intro Date
                 csvLine.append(unit.getYear()).append(DELIM);
 
                 // Experimental Tech Year
@@ -139,22 +174,17 @@ public final class MekCacheCSVTool {
 
                 // Extinct Tech Year
                 csvLine.append(unit.getExtinctRange()).append(DELIM);
-                // Unit Type.
-                csvLine.append(unit.getFullAccurateUnitType()).append(DELIM);
-                // Omni
-                csvLine.append(unit.getOmni()).append(DELIM);
-                // Unit Role
+
+                // Role, BV, Cost, Rules
                 csvLine.append(unit.getRole()).append(DELIM);
-                // Unit BV
                 csvLine.append(unit.getBV()).append(DELIM);
-                // Unit Dry Cost
                 csvLine.append(unit.getDryCost()).append(DELIM);
-                // Unit Tech Level
                 csvLine.append(unit.getLevel()).append(DELIM);
-                // Engine Type
+
+                // Engine Name
                 csvLine.append(unit.getEngineName()).append(DELIM);
 
-                // Internals Type
+                // Internal Structure
                 if (unit.getInternalsType() >= 0) {
                     String isString = unit.isClan() ? "Clan " : "IS ";
                     isString += EquipmentType.structureNames[unit.getInternalsType()] + DELIM;
@@ -163,7 +193,7 @@ public final class MekCacheCSVTool {
                     csvLine.append(NOT_APPLICABLE).append(DELIM);
                 }
 
-                // Myomer type
+                // Myomer
                 csvLine.append(unit.getMyomerName()).append(DELIM);
 
                 // Cockpit Type
@@ -184,14 +214,11 @@ public final class MekCacheCSVTool {
                     csvLine.append(NOT_APPLICABLE).append(DELIM);
                 }
 
-                // Armor type - prints different armor types on the unit
+                // Armor Types
                 ArrayList<Integer> armorType = new ArrayList<>();
                 ArrayList<Integer> armorTech = new ArrayList<>();
-                int[] at;
-                int[] att;
-
-                at = unit.getArmorTypes();
-                att = unit.getArmorTechTypes();
+                int[] at = unit.getArmorTypes();
+                int[] att = unit.getArmorTechTypes();
                 for (int i = 0; i < at.length; i++) {
                     boolean contains = false;
                     for (int j = 0; j < armorType.size(); j++) {
@@ -212,15 +239,13 @@ public final class MekCacheCSVTool {
                 }
                 csvLine.append(DELIM);
 
-                // Equipment Names
+                // Equipment
                 List<String> equipmentNames = new ArrayList<>();
                 for (String name : unit.getEquipmentNames()) {
-                    // Ignore armor critical
                     if (ArmorType.allArmorNames().contains(name)) {
                         continue;
                     }
 
-                    // Ignore internal structure critical
                     if (Stream.of(EquipmentType.structureNames).anyMatch(name::contains)) {
                         continue;
                     }
@@ -234,15 +259,18 @@ public final class MekCacheCSVTool {
                 }
                 csvLine.append(String.join(",", equipmentNames)).append(DELIM);
 
+                // Tech Rating
                 Entity entity = loadEntity(unit.getSourceFile(), unit.getEntryName());
                 if (entity != null) {
                     csvLine.append(entity.getFullRatingName()).append(DELIM);
                 }
 
+                // Unit Quirks, Weapon Quirks
                 csvLine.append(unit.getQuirkNames()).append(DELIM);
                 csvLine.append(unit.getWeaponQuirkNames()).append(DELIM);
 
                 if (entity != null) {
+                    // Manufacturer
                     if (!entity.getFluff().getManufacturer().isBlank()) {
                         csvLine.append(entity.getFluff().getManufacturer());
                     } else {
@@ -250,6 +278,7 @@ public final class MekCacheCSVTool {
                     }
                     csvLine.append(DELIM);
 
+                    // Factory
                     if (!entity.getFluff().getPrimaryFactory().isBlank()) {
                         csvLine.append(entity.getFluff().getPrimaryFactory());
                     } else {
@@ -257,6 +286,7 @@ public final class MekCacheCSVTool {
                     }
                     csvLine.append(DELIM);
 
+                    // System Manufacturers: Targeting, Comms, Armor, JJ, Engine, Chassis_1
                     csvLine.append(TROView.formatSystemFluff(System.TARGETING, entity.getFluff(),
                           () -> "--")).append(DELIM);
                     csvLine.append(TROView.formatSystemFluff(System.COMMUNICATIONS, entity.getFluff(),
@@ -270,16 +300,40 @@ public final class MekCacheCSVTool {
                     csvLine.append(TROView.formatSystemFluff(System.CHASSIS, entity.getFluff(),
                           () -> "--")).append(DELIM);
 
+                    // Capabilities, Overview, History, Deployment
                     csvLine.append(entity.getFluff().getCapabilities().isBlank() ? "no" : "yes").append(DELIM);
                     csvLine.append(entity.getFluff().getOverview().isBlank() ? "no" : "yes").append(DELIM);
-                    csvLine.append(entity.getFluff().getDeployment().isBlank() ? "no" : "yes").append(DELIM);
                     csvLine.append(entity.getFluff().getHistory().isBlank() ? "no" : "yes").append(DELIM);
+                    csvLine.append(entity.getFluff().getDeployment().isBlank() ? "no" : "yes").append(DELIM);
 
+                    // Notes
                     String notes = entity.getFluff().getNotes();
                     if (!StringUtility.isNullOrBlank(notes)) {
                         csvLine.append(notes);
                     } else {
                         csvLine.append("--");
+                    }
+                    csvLine.append(DELIM);
+
+                    // File Location, File Modified
+                    csvLine.append(unit.getSourceFile()).append(DELIM);
+                    csvLine.append(getFileModifiedDate(unit.getSourceFile(), unit.getEntryName())).append(DELIM);
+
+                    // Valid, Verification Errors
+                    TestEntity testEntity = TestEntity.getEntityVerifier(entity);
+                    if (testEntity != null) {
+                        StringBuffer errors = new StringBuffer();
+                        boolean valid = testEntity.correctEntity(errors);
+                        csvLine.append(valid ? "yes" : "no").append(DELIM);
+                        String errorText = errors.toString().trim();
+                        if (errorText.isEmpty()) {
+                            csvLine.append("--");
+                        } else {
+                            csvLine.append(errorText.replace(DELIM, ";")
+                                  .replace("\n", " // "));
+                        }
+                    } else {
+                        csvLine.append("--").append(DELIM).append("--");
                     }
                 }
 

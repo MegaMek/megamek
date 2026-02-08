@@ -1,0 +1,33 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "name" : "C BA w/ Gauss Jump 2+",
+  "twState" : {
+    "unitTypeState" : {
+      "battleArmor" : "SELECTED"
+    },
+    "transportsState" : { },
+    "quirksState" : {
+      "chassisQuirks" : { },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "startJump" : "2",
+      "cockpitType" : { },
+      "armorType" : { },
+      "internalsType" : { },
+      "engineType" : { },
+      "gyroType" : { },
+      "techLevel" : { },
+      "techBase" : {
+        "items" : {
+          "Clan" : "SELECTED"
+        }
+      },
+      "moveMode" : { }
+    },
+    "equipmentState" : {
+      "filterTokens" : [ "GAUSS__1__>=" ]
+    }
+  },
+  "asState" : { }
+}

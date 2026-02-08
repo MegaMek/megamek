@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -75,13 +75,16 @@ public abstract class LaserWeapon extends EnergyWeapon {
     public void adaptToGameOptions(IGameOptions gameOptions) {
         super.adaptToGameOptions(gameOptions);
 
-        // Add Dazzle mode first (before Pulse modes) for Gothic BattleTech
-        // This ensures Pulse modes remain last for proper filtering
+        // Add or remove Dazzle mode for Gothic BattleTech
+        // Dazzle must be added before Pulse modes to ensure proper filtering
         if (gameOptions.booleanOption(megamek.common.options.OptionsConstants.ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE)) {
             if (!hasModes()) {
                 addMode("");
             }
             addMode("Dazzle");
+        } else {
+            removeMode("Dazzle");
+            removeMode("Pulse Dazzle");
         }
 
         // Add Pulse modes last so they can be filtered by getModesCount()

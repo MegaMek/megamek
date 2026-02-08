@@ -47,7 +47,7 @@ public class HTMLCalculationReport implements CalculationReport {
 
     }
 
-    private final static String HTML_START = "<HTML><BODY>";
+    public final static String HTML_START = "<HTML><BODY>";
     private final static String HTML_END = "</BODY></HTML>";
     private final static String TABLE_START = "<TABLE CELLPADDING=0 CELLSPACING=0 BORDER=0>";
     private final static String TABLE_END = "</TABLE>";

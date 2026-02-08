@@ -322,11 +322,16 @@ public final class MekCacheCSVTool {
             if (zipParent != null) {
                 // Walk up from data/mekfiles/ to the project root (megamek/megamek/data/mekfiles -> megamek)
                 Path projectRoot = zipParent.getParent().getParent().getParent();
-                Path mmDataFile = projectRoot.resolveSibling("mm-data")
-                      .resolve("data").resolve("mekfiles").resolve(entryName);
-                File standaloneFile = mmDataFile.toFile();
-                if (standaloneFile.exists()) {
-                    fileToCheck = standaloneFile;
+                Path mmDataDir = projectRoot.resolveSibling("mm-data")
+                      .resolve("data").resolve("mekfiles");
+                Path mmDataFile = mmDataDir.resolve(entryName).normalize();
+
+                // Guard against path traversal (Zip Slip) in entry names
+                if (mmDataFile.startsWith(mmDataDir)) {
+                    File standaloneFile = mmDataFile.toFile();
+                    if (standaloneFile.exists()) {
+                        fileToCheck = standaloneFile;
+                    }
                 }
             }
         }

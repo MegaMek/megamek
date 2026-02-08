@@ -30,9 +30,9 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.dialogs.advancedsearch.exceptions;
+package megamek.client.ui.dialogs.advancedsearch;
 
-public class FilterParsingException extends Exception {
+class FilterParsingException extends Exception {
     public String msg;
 
     FilterParsingException(String m) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,26 +32,39 @@
  */
 package megamek.client.ui.dialogs.advancedsearch;
 
-/**
- * FilterTokens subclass that represents parenthesis.
- *
- * @author Arlith
- */
-abstract class ParensFT implements FilterToken {
+import org.junit.jupiter.api.Test;
 
-    String parens;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Stream;
 
-    ParensFT(String p) {
-        parens = p;
-    }
+import static org.junit.jupiter.api.Assertions.*;
 
-    @Override
-    public String toString() {
-        return parens;
-    }
+class AdvancedSearchDialogTest {
 
-    @Override
-    public String toJson() {
-        return parens;
+    @Test
+    void testSearchesShouldParseWithoutException() throws IOException, URISyntaxException {
+        // Tests the searches in the testresources/searches folder
+
+        Path resourceDir = Path.of(getClass().getClassLoader().getResource("searches").toURI());
+
+        // When this test fails, any searches of players will also become useless. Consider providing migration code
+        // for old searches!
+        try (Stream<Path> files = Files.walk(resourceDir)) {
+            files.filter(Files::isRegularFile)
+                  .filter(p -> p.getFileName().toString().endsWith(".json"))
+                  .filter(p -> AdvancedSearchDialog.isAdvancedSearchFile(p.toFile()))
+                  .forEach(p ->
+                        assertDoesNotThrow(
+                              () -> AdvancedSearchDialog.load(p.toFile()),
+                              () -> "Failed for JSON file: " + p
+                        )
+                  );
+        }
     }
 }
+
+
+

@@ -41,9 +41,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import megamek.client.ui.dialogs.advancedsearch.exceptions.FilterParsingException;
-import megamek.client.ui.dialogs.advancedsearch.expressions.ExpNode;
-import megamek.client.ui.dialogs.advancedsearch.expressions.ExpressionTree;
 import megamek.common.Messages;
 import megamek.common.annotations.Nullable;
 import megamek.common.loaders.MekSummary;

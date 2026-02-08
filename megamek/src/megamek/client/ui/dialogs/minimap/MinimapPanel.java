@@ -435,11 +435,11 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     private void initializeDialog() {
         if (dialog != null) {
             if (dialog.getMouseListeners().length == 0) {
-                dialog.addMouseListener(mouseListener);
-                dialog.addMouseMotionListener(mouseMotionListener);
-                dialog.addMouseWheelListener(mouseWheelListener);
-                dialog.addComponentListener(componentListener);
-                dialog.addComponentListener(componentListener);
+                dialog.addMouseListener(minimapMouseListener);
+                dialog.addMouseMotionListener(minimapMouseMotionListener);
+                dialog.addMouseWheelListener(minimapMouseWheelListener);
+                dialog.addComponentListener(minimapComponentListener);
+                dialog.addComponentListener(minimapComponentListener);
             }
         }
     }
@@ -2029,7 +2029,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         }
     };
 
-    MouseListener mouseListener = new MouseAdapter() {
+    MouseListener minimapMouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent me) {
             if (me.getButton() == MouseEvent.BUTTON1) {
@@ -2060,7 +2060,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
     };
 
-    MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
+    MouseMotionListener minimapMouseMotionListener = new MouseMotionAdapter() {
 
         @Override
         public void mouseDragged(MouseEvent me) {
@@ -2075,7 +2075,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         }
     };
 
-    MouseWheelListener mouseWheelListener = new MouseWheelListener() {
+    MouseWheelListener minimapMouseWheelListener = new MouseWheelListener() {
         @Override
         public void mouseWheelMoved(MouseWheelEvent we) {
             Point mapPoint = SwingUtilities.convertPoint(dialog, we.getX(), we.getY(), MinimapPanel.this);
@@ -2089,7 +2089,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         }
     };
 
-    ComponentListener componentListener = new ComponentAdapter() {
+    ComponentListener minimapComponentListener = new ComponentAdapter() {
         @Override
         public void componentShown(ComponentEvent ce) {
             refreshMap();

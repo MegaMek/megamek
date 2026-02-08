@@ -404,7 +404,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
 
     BorderElement topEdge, bottomEdge, leftEdge, rightEdge;
 
-    BackgroundElement background;
+    BackgroundElement backgroundElement;
 
     JCheckBox showScrollBars = new JCheckBox(Messages.getString("SkinEditor.ShowScrollBars"));
 
@@ -504,12 +504,12 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
 
         // Background
         skinSpec.backgrounds.clear();
-        for (int i = 0; i < background.path.size(); i++) {
-            skinSpec.backgrounds.add(background.path.get(i).getText());
+        for (int i = 0; i < backgroundElement.path.size(); i++) {
+            skinSpec.backgrounds.add(backgroundElement.path.get(i).getText());
         }
         skinSpec.tileBackground = false;
-        if (!background.tiled.isEmpty()) {
-            skinSpec.tileBackground = background.tiled.get(0).isSelected();
+        if (!backgroundElement.tiled.isEmpty()) {
+            skinSpec.tileBackground = backgroundElement.tiled.get(0).isSelected();
         }
 
         // Font Color
@@ -610,12 +610,12 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
         gbc.gridy = 0;
         add(borderPanel, gbc);
 
-        background = new BackgroundElement(this, skinSpec.backgrounds,
+        backgroundElement = new BackgroundElement(this, skinSpec.backgrounds,
               Collections.nCopies(skinSpec.backgrounds.size(), skinSpec.tileBackground));
 
         gbc.gridy++;
 
-        add(background, gbc);
+        add(backgroundElement, gbc);
 
         JPanel misc = new JPanel(new GridBagLayout());
         gbc.gridy++;

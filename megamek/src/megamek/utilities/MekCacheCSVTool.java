@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -114,11 +115,7 @@ public final class MekCacheCSVTool {
                 csvLine.append(unit.getSource()).append(DELIM);
                 csvLine.append(unit.getTechBase()).append(DELIM);
                 csvLine.append(unit.getSourceFile()).append(DELIM);
-                long lastModified = unit.getSourceFile().lastModified();
-                LocalDate fileDate = Instant.ofEpochMilli(lastModified)
-                      .atZone(ZoneId.systemDefault())
-                      .toLocalDate();
-                csvLine.append(fileDate).append(DELIM);
+                csvLine.append(getFileModifiedDate(unit.getSourceFile(), unit.getEntryName())).append(DELIM);
                 csvLine.append(unit.getTons()).append(DELIM);
                 csvLine.append(unit.getYear()).append(DELIM);
 
@@ -302,6 +299,46 @@ public final class MekCacheCSVTool {
         } catch (megamek.common.loaders.EntityLoadingException e) {
             return null;
         }
+    }
+
+    /**
+     * Returns the last modified date for a unit file. For files inside zip archives, attempts to resolve the standalone
+     * file in the mm-data repository (a sibling of the megamek project directory) to get the accurate filesystem
+     * modification date, since zip entry timestamps are often unreliable.
+     *
+     * @param sourceFile the source file (may be a zip archive)
+     * @param entryName  the entry name within a zip, or {@code null} for standalone files
+     *
+     * @return the last modified date as a {@link LocalDate} in YYYY-MM-DD format, or "--" if it cannot be determined
+     */
+    private static String getFileModifiedDate(File sourceFile, @Nullable String entryName) {
+        File fileToCheck = sourceFile;
+
+        if (entryName != null && sourceFile.getName().toLowerCase().endsWith(".zip")) {
+            // The zip lives under <project>/megamek/data/mekfiles/. The mm-data repo
+            // is a sibling of the megamek project and mirrors the same data/mekfiles/ structure.
+            // Use absolute path to ensure getParent() calls don't return null on relative paths.
+            Path zipParent = sourceFile.toPath().toAbsolutePath().getParent();
+            if (zipParent != null) {
+                // Walk up from data/mekfiles/ to the project root (megamek/megamek/data/mekfiles -> megamek)
+                Path projectRoot = zipParent.getParent().getParent().getParent();
+                Path mmDataFile = projectRoot.resolveSibling("mm-data")
+                      .resolve("data").resolve("mekfiles").resolve(entryName);
+                File standaloneFile = mmDataFile.toFile();
+                if (standaloneFile.exists()) {
+                    fileToCheck = standaloneFile;
+                }
+            }
+        }
+
+        long lastModified = fileToCheck.lastModified();
+        if (lastModified > 0) {
+            return LocalDate.ofInstant(
+                  Instant.ofEpochMilli(lastModified),
+                  ZoneId.systemDefault()).toString();
+        }
+
+        return "--";
     }
 
     private MekCacheCSVTool() {

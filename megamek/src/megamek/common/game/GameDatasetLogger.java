@@ -39,8 +39,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import megamek.ai.dataset.*;
+import megamek.common.Configuration;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.board.Board;
@@ -48,7 +50,6 @@ import megamek.common.loaders.MapSettings;
 import megamek.common.moves.MovePath;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
 /**
@@ -59,7 +60,9 @@ import megamek.logging.MMLogger;
  */
 public class GameDatasetLogger {
     private static final MMLogger logger = MMLogger.create(GameDatasetLogger.class);
-    public static final String LOG_DIR = PreferenceManager.getClientPreferences().getLogDirectory();
+    // TSV files are written to the same directory as GIF minimap summaries
+    public static final String LOG_DIR = Configuration.gameSummaryImagesMMDir().getAbsolutePath();
+    private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
     private final UnitActionSerializer unitActionSerializer = new UnitActionSerializer();
     private final UnitAttackSerializer unitAttackSerializer = new UnitAttackSerializer();
@@ -71,7 +74,7 @@ public class GameDatasetLogger {
     private final String prefix;
     private BufferedWriter writer;
     private boolean createNewFile = true;
-    private int counter = 0;
+    private String nextTimestamp = null;
 
     /**
      * Creates Game Dataset Log named
@@ -80,7 +83,7 @@ public class GameDatasetLogger {
         this.prefix = prefix;
         File logDir = new File(LOG_DIR);
         if (!logDir.exists()) {
-            if (!logDir.mkdir()) {
+            if (!logDir.mkdirs()) {
                 logger.error("Failed to create log directory, GameDatasetLogger wont log anything");
             }
         }
@@ -91,26 +94,28 @@ public class GameDatasetLogger {
      */
     public void requestNewLogFile() {
         createNewFile = true;
-        counter++;
+        nextTimestamp = null;
     }
 
     /**
-     * Creates a new log file. If there is already a logfile with the same name, it will delete it and create a new
-     * one.
+     * Sets the timestamp to use for the next log file.
+     * This allows the TSV file to use the same timestamp as the game's GIF summary.
+     *
+     * @param timestamp the timestamp string (format: yyyyMMdd_HHmmss)
+     */
+    public void setNextTimestamp(String timestamp) {
+        this.nextTimestamp = timestamp;
+    }
+
+    /**
+     * Creates a new log file with a unique timestamp-based filename.
+     * Each game will get its own unique TSV file.
      */
     private void newLogFile() {
         try {
-            boolean timestampFilenames = PreferenceManager.getClientPreferences().stampFilenames();
-            String filename = timestampFilenames ? StringUtil.addDateTimeStamp(prefix) : prefix + "_" + counter;
+            String timestamp = (nextTimestamp != null) ? nextTimestamp : LocalDateTime.now().format(TIMESTAMP_FORMAT);
+            String filename = prefix + "_" + timestamp;
             File logfile = new File(LOG_DIR + File.separator + filename + ".tsv");
-            // if a file with the same name already exists, delete it.
-            if (logfile.exists()) {
-                if (!logfile.delete()) {
-                    logger.error("Failed to delete existing log file, GameDatasetLogger wont log anything");
-                    writer = null;
-                    return;
-                }
-            }
             writer = new BufferedWriter(new FileWriter(logfile));
             initialize();
         } catch (Exception ex) {

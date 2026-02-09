@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  pr_build:
+  checkstyle:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -16,14 +16,23 @@ jobs:
       fail-fast: false
 
     steps:
+      - name: Checkout Data Repo
+        uses: actions/checkout@v6
+        with:
+          repository: megamek/mm-data
+          path: mm-data
+
       - name: "Check out MegaMek"
         uses: actions/checkout@v6
+        with:
+          path: megamek
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
       - name: Checkstyle
-        run: ./gradlew checkstyleMain
+        working-directory: megamek
+        run: ./gradlew checkstyleMain checkstyleTest
 
       - name: Upload Test Logs on Failure
         uses: actions/upload-artifact@v6

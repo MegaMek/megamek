@@ -32,6 +32,11 @@
  */
 package megamek.client.ui.dialogs.advancedsearch;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.core.JsonParseException;
+import megamek.common.equipment.EquipmentType;
+
 /**
  * Marker interface for different tokens that can be in a filter expression.
  *
@@ -39,4 +44,38 @@ package megamek.client.ui.dialogs.advancedsearch;
  */
 interface FilterToken {
 
+    String TOKEN_SEPARATOR = "__";
+    String TOKEN_ATLEAST = ">=";
+
+    @JsonCreator
+    static FilterToken parse(String expression) throws JsonParseException {
+        return switch (expression) {
+            case "(" -> new LeftParensFilterToken();
+            case ")" -> new RightParensFilterToken();
+            case "or" -> new OrFilterToken();
+            case "and" -> new AndFilterToken();
+            default -> {
+                try {
+                    String[] tokens = expression.split(TOKEN_SEPARATOR);
+                    boolean atLeast = tokens[2].equals(TOKEN_ATLEAST);
+                    int count = Integer.parseInt(tokens[1]);
+
+                    try {
+                        var equipmentClass = AdvancedSearchEquipmentClass.valueOf(tokens[0]);
+                        yield new WeaponClassFT(equipmentClass, count, atLeast);
+                    } catch (IllegalArgumentException e) {
+                        // apparently not an equipment class
+                        String internalName = tokens[0];
+                        EquipmentType type = EquipmentType.get(internalName);
+                        yield new EquipmentTypeFT(internalName, type.getName(), count, atLeast);
+                    }
+                } catch (Exception e) {
+                    throw new JsonParseException("Invalid filter token expression: " + expression);
+                }
+            }
+        };
+    }
+
+    @JsonValue
+    String toJson();
 }

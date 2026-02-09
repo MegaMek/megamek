@@ -172,6 +172,7 @@ import megamek.common.loaders.MULParser;
 import megamek.common.loaders.MekSummaryCache;
 import megamek.common.moves.MovePath;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
@@ -2960,20 +2961,37 @@ public class ClientGUI extends AbstractClientGUI
                         }
                         amsOptions.add(waaMsg);
                     }
-
-                    result = JOptionPane.showInputDialog(frame,
-                          Messages.getString("CFRAMSAssign.Message", entity.getDisplayName()),
-                          Messages.getString("CFRAMSAssign.Title", entity.getDisplayName()),
-                          JOptionPane.QUESTION_MESSAGE,
-                          null,
-                          amsOptions.toArray(),
-                          null);
-                    // If they closed it, assume no action
-                    if ((result == null) || result.equals(Messages.getString("NONE"))) {
-                        client.sendAMSAssignCFRResponse(null);
+                    
+                    // Updated AMS selection code for dealing with Multi_AMS, Playtest3 and standard selection
+                    JList amsList = new JList(amsOptions.toArray());
+                    JScrollPane amsScrollPane = new JScrollPane(amsList);
+                    if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS)) {
+                        amsList.setSelectionModel(new AmsAssignGUI(amsList, amsOptions.size()));
+                    } else if (entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                        amsList.setSelectionModel(new AmsAssignGUI(amsList, 2));
                     } else {
-                        client.sendAMSAssignCFRResponse(amsOptions.indexOf(result) - 1);
+                        amsList.setSelectionModel(new AmsAssignGUI(amsList, 1));
                     }
+
+                    int amsResult = JOptionPane.showConfirmDialog(frame, 
+                          amsScrollPane,
+                          Messages.getString("CFRAMSAssign.Message", entity.getDisplayName()),
+                          JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE
+                    );
+
+                    int[] selectedItems = amsList.getSelectedIndices();
+                    if (amsResult == JOptionPane.OK_OPTION && !(selectedItems.length == 1
+                          && amsList.getSelectedValue() == "NONE") ) {
+                        // Due to the "None" option, reduce all selected index values by 1.
+                        // This makes "None" a -1 value.
+                        for (int i = 0; i < selectedItems.length; i++) {
+                            selectedItems[i] = selectedItems[i]-1;
+                        }
+                        client.sendAMSAssignCFRResponse(selectedItems);
+                    } else {
+                        client.sendAMSAssignCFRResponse(null);
+                    }
+                    
                     break;
                 case CFR_APDS_ASSIGN:
                     if (entity == null) {

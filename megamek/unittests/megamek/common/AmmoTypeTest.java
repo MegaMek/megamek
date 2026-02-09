@@ -47,6 +47,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.options.OptionsConstants;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -152,5 +153,47 @@ class AmmoTypeTest {
         assertTrue(AmmoType.canSwitchToAmmo(mockWeapon, mockInferno4AmmoType));
 
         assertFalse(AmmoType.canSwitchToAmmo(mockWeapon, mockSRM6AmmoType));
+    }
+
+    /**
+     * Tests that weapons with Static Ammo Feed quirk can only switch to ammo with matching munition type. Per CamOps
+     * p.235/BMM p.89, Static Ammo Feed locks a weapon to a specific ammo bin.
+     */
+    @Test
+    void testCanSwitchToAmmoWithStaticFeed() {
+        // Create a weapon with Static Ammo Feed quirk, linked to standard SRM4 ammo
+        WeaponMounted mockStaticFeedWeapon = mock(WeaponMounted.class);
+        when(mockStaticFeedWeapon.getLinkedAmmo()).thenReturn(mockAmmoSrm4);
+        when(mockStaticFeedWeapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_STATIC_FEED)).thenReturn(true);
+
+        // Create a second standard SRM4 ammo type (same munition type as linked ammo)
+        AmmoType mockSRM4StandardAmmoType2 = mock(AmmoType.class);
+        when(mockSRM4StandardAmmoType2.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.SRM);
+        when(mockSRM4StandardAmmoType2.getRackSize()).thenReturn(4);
+        when(mockSRM4StandardAmmoType2.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
+        doReturn(true).when(mockSRM4AmmoType).equalsAmmoTypeOnly(eq(mockSRM4StandardAmmoType2));
+
+        // Static Ammo Feed weapon CAN switch to ammo with same munition type (M_STANDARD)
+        assertTrue(AmmoType.canSwitchToAmmo(mockStaticFeedWeapon, mockSRM4StandardAmmoType2),
+              "Static Ammo Feed should allow switching to ammo with same munition type");
+
+        // Static Ammo Feed weapon CANNOT switch to ammo with different munition type (M_INFERNO)
+        assertFalse(AmmoType.canSwitchToAmmo(mockStaticFeedWeapon, mockInferno4AmmoType),
+              "Static Ammo Feed should prevent switching to ammo with different munition type");
+    }
+
+    /**
+     * Tests that weapons without Static Ammo Feed can switch between different munition types.
+     */
+    @Test
+    void testCanSwitchToAmmoWithoutStaticFeed() {
+        // Create a normal weapon (no Static Ammo Feed), linked to standard SRM4 ammo
+        WeaponMounted mockNormalWeapon = mock(WeaponMounted.class);
+        when(mockNormalWeapon.getLinkedAmmo()).thenReturn(mockAmmoSrm4);
+        when(mockNormalWeapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_STATIC_FEED)).thenReturn(false);
+
+        // Normal weapon CAN switch to ammo with different munition type (M_INFERNO)
+        assertTrue(AmmoType.canSwitchToAmmo(mockNormalWeapon, mockInferno4AmmoType),
+              "Normal weapon should allow switching to ammo with different munition type");
     }
 }

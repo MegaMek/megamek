@@ -39,4 +39,4 @@ jobs:
         if: failure()
         with:
           name: cd-failure-logs
-          path: ./megamek/megamek/build/reports/
+          path: megamek/megamek/build/reports/

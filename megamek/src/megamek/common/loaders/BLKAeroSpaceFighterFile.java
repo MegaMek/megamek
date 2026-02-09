@@ -208,6 +208,7 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
 
         a.setArmorTonnage(a.getArmorWeight());
         loadQuirks(a);
+        loadSlotlessEquipment(a);
         return a;
     }
 

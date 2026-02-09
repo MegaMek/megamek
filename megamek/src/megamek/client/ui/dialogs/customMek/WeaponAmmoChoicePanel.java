@@ -40,11 +40,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import megamek.client.ui.GBC;
-import megamek.common.equipment.AmmoType;
-import megamek.common.units.Entity;
-import megamek.common.equipment.Mounted;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -84,6 +85,12 @@ public class WeaponAmmoChoicePanel extends JPanel {
                         (((AmmoType) weaponMounted.getLinked().getLinked().getType()).getMunitionType()))) {
                 matchingAmmoBins.add((AmmoMounted) weaponMounted.getLinked().getLinked());
             }
+        } else if (weaponMounted.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_STATIC_FEED)
+              && (weaponMounted.getLinkedAmmo() != null)) {
+            // Static Ammo Feed weapons are locked to their specific ammo bin (CamOps p.235/BMM p.89)
+            // Only use this path if the weapon already has linked ammo; otherwise fall through to
+            // the regular logic which uses canSwitchToAmmo() to find compatible bins
+            matchingAmmoBins.add(weaponMounted.getLinkedAmmo());
         } else {
             for (AmmoMounted ammoBin : weapon.getEntity().getAmmo()) {
                 if ((ammoBin.getLocation() != Entity.LOC_NONE) && AmmoType.canSwitchToAmmo(weapon, ammoBin.getType())) {

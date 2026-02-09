@@ -2740,7 +2740,7 @@ public class Princess extends BotClient {
                             }
 
                             if (isEnemyBuildingEntity(entity, coords)) {
-                                fireControlState.getAdditionalTargets().add(bt);
+                                fireControlState.addAdditionalTarget(bt);
                                 sendChat("Building in Hex " +
                                       coords.toFriendlyString() +
                                       " designated target due to Building Entity.", Level.INFO);

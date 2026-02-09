@@ -119,6 +119,8 @@ public class InfantryArmorPanel extends JPanel {
         
         int year = entity.getGame().getOptions().intOption("year");
 
+        // If the rules level isn't at least Advanced, these won't be displayed, but it will iterate them still to 
+        // avoid potential issues.
         for (EquipmentType et : MiscType.allTypes()) {
             if (et.hasFlag(MiscType.F_ARMOR_KIT) &&
                   et.isLegal(year,

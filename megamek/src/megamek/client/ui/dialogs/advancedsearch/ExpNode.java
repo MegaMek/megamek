@@ -30,16 +30,13 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.dialogs.advancedsearch.expressions;
+package megamek.client.ui.dialogs.advancedsearch;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import megamek.client.ui.dialogs.advancedsearch.AdvancedSearchEquipmentClass;
-import megamek.client.ui.dialogs.advancedsearch.MekSearchFilter;
-
-public class ExpNode {
+class ExpNode {
 
     public ExpNode parent;
     public MekSearchFilter.BoolOp operation;

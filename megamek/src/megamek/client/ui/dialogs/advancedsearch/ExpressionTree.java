@@ -30,7 +30,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.dialogs.advancedsearch.expressions;
+package megamek.client.ui.dialogs.advancedsearch;
 
 /**
  * This class allows to create a tree where the leaf nodes contain names and quantities of pieces of equipment while the
@@ -38,7 +38,7 @@ package megamek.client.ui.dialogs.advancedsearch.expressions;
  *
  * @author Arlith
  */
-public class ExpressionTree {
+class ExpressionTree {
     private final ExpNode root;
 
     public ExpressionTree() {

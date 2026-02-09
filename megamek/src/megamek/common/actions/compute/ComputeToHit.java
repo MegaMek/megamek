@@ -46,7 +46,6 @@ import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscType;
@@ -801,6 +800,9 @@ public class ComputeToHit {
               isAradAttack,
               isECMAffected,
               isINarcGuided);
+
+        // Add the combined EI terrain reduction as a single modifier (if any was accumulated)
+        toHit.finalizeEiModifier();
 
         // okay!
         return toHit;

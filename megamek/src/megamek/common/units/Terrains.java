@@ -379,7 +379,7 @@ public class Terrains implements Serializable {
             case BLACK_ICE:
                 return "Black Ice";
             case FORTIFIED:
-                return "Improved position";
+                return "Fortified";
             case GEYSER:
                 if (level == 1) {
                     return "Dormant";
@@ -620,7 +620,6 @@ public class Terrains implements Serializable {
 
     /**
      * Returns true if the terrain is a base terrain type, excluding "Clear"
-     *
      */
     public static boolean isBaseTerrain(int terrainType) {
         return terrainType == WOODS || terrainType == WATER || terrainType == ROUGH

@@ -772,4 +772,16 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         }
         filterTables();
     };
+
+    AdvSearchState.EquipmentState getState() {
+        var state = new AdvSearchState.EquipmentState();
+        state.filterTokens.addAll(filterTokens);
+        return state;
+    }
+
+    void applyState(AdvSearchState.EquipmentState state) {
+        filterTokens.addAll(state.filterTokens);
+        txtWEEqExp.setText(filterExpressionString());
+        adaptTokenButtons();
+    }
 }

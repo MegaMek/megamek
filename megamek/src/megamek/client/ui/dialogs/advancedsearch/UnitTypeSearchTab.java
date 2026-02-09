@@ -34,7 +34,6 @@ package megamek.client.ui.dialogs.advancedsearch;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -124,43 +123,6 @@ class UnitTypeSearchTab extends JPanel {
     final FlatTriStateCheckBox btnFilterDoomedInVacuum = new SearchTriStateCheckBox(Messages.getString(
           "MekSelectorDialog.Search.DoomedInVacuum"));
 
-    final List<FlatTriStateCheckBox> checkBoxes = List.of(btnFilterProtoMek,
-          btnFilterMek,
-          btnFilterBipedMek,
-          btnFilterLAM,
-          btnFilterTripod,
-          btnFilterQuad,
-          btnFilterQuadVee,
-          btnFilterAero,
-          btnFilterFixedWingSupport,
-          btnFilterConvFighter,
-          btnFilterSmallCraft,
-          btnFilterDropship,
-          btnFilterJumpship,
-          btnFilterWarship,
-          btnFilterSpaceStation,
-          btnFilterInfantry,
-          btnFilterAerospaceFighter,
-          btnFilterBattleArmor,
-          btnFilterBattleArmor,
-          btnFilterTank,
-          btnFilterVTOL,
-          btnFilterGunEmplacement,
-          btnFilterSupportTank,
-          btnFilterLargeSupportTank,
-          btnFilterSuperHeavyTank,
-          btnFilterOmni,
-          btnFilterMilitary,
-          btnFilterIndustrial,
-          btnFilterMountedInfantry,
-          btnFilterWaterOnly,
-          btnFilterSupportVehicle,
-          btnFilterDoomedOnGround,
-          btnFilterDoomedInAtmosphere,
-          btnFilterDoomedInSpace,
-          btnFilterDoomedInExtremeTemp,
-          btnFilterDoomedInVacuum);
-
     UnitTypeSearchTab() {
         clearButton.addActionListener(e -> clear());
 
@@ -198,7 +160,7 @@ class UnitTypeSearchTab extends JPanel {
         gbc.gridy++;
         add(Box.createVerticalStrut(10), gbc);
 
-        gbc.gridx = -1;
+        gbc.gridx = GridBagConstraints.RELATIVE;
         gbc.gridy++;
         add(btnFilterAero, gbc);
         add(btnFilterAerospaceFighter, gbc);
@@ -224,7 +186,7 @@ class UnitTypeSearchTab extends JPanel {
         gbc.gridy++;
         add(Box.createVerticalStrut(10), gbc);
 
-        gbc.gridx = -1;
+        gbc.gridx = GridBagConstraints.RELATIVE;
         gbc.gridy++;
         add(btnFilterInfantry, gbc);
         add(btnFilterBattleArmor, gbc);
@@ -232,7 +194,7 @@ class UnitTypeSearchTab extends JPanel {
         gbc.gridy++;
         add(Box.createVerticalStrut(10), gbc);
 
-        gbc.gridx = -1;
+        gbc.gridx = GridBagConstraints.RELATIVE;
         gbc.gridy++;
         add(btnFilterTank, gbc);
         add(btnFilterVTOL, gbc);
@@ -266,7 +228,7 @@ class UnitTypeSearchTab extends JPanel {
         gbc.gridy++;
         add(Box.createVerticalStrut(10), gbc);
 
-        gbc.gridx = -1;
+        gbc.gridx = GridBagConstraints.RELATIVE;
         gbc.gridy++;
         gbc.fill = GridBagConstraints.NONE;
         gbc.gridwidth = 5;
@@ -300,16 +262,86 @@ class UnitTypeSearchTab extends JPanel {
     }
 
     void clear() {
-        checkBoxes.forEach(checkBox -> checkBox.setSelected(false));
+        applyState(new AdvSearchState.UnitTypeState());
     }
 
-    /**
-     * Adapts FlatLaf's tri state checkbox to start as empty and go from there to checked and then "-" = UNDETERMINATE
-     */
-    static class SearchTriStateCheckBox extends FlatTriStateCheckBox {
-        public SearchTriStateCheckBox(String text) {
-            super(text, State.UNSELECTED);
-            setAltStateCycleOrder(true);
-        }
+    void applyState(AdvSearchState.UnitTypeState state) {
+        btnFilterProtoMek.setState(state.protoMek);
+        btnFilterMek.setState(state.mek);
+        btnFilterBipedMek.setState(state.bipedMek);
+        btnFilterLAM.setState(state.lam);
+        btnFilterTripod.setState(state.tripod);
+        btnFilterQuad.setState(state.quad);
+        btnFilterQuadVee.setState(state.quadVee);
+        btnFilterAero.setState(state.aero);
+        btnFilterFixedWingSupport.setState(state.fixedWingSupport);
+        btnFilterConvFighter.setState(state.convFighter);
+        btnFilterSmallCraft.setState(state.smallCraft);
+        btnFilterDropship.setState(state.dropship);
+        btnFilterJumpship.setState(state.jumpship);
+        btnFilterWarship.setState(state.warship);
+        btnFilterSpaceStation.setState(state.spaceStation);
+        btnFilterInfantry.setState(state.infantry);
+        btnFilterAerospaceFighter.setState(state.aerospaceFighter);
+        btnFilterBattleArmor.setState(state.battleArmor);
+        btnFilterTank.setState(state.tank);
+        btnFilterVTOL.setState(state.vtol);
+        btnFilterSupportVTOL.setState(state.supportVTOL);
+        btnFilterGunEmplacement.setState(state.gunEmplacement);
+        btnFilterSupportTank.setState(state.supportTank);
+        btnFilterLargeSupportTank.setState(state.largeSupportTank);
+        btnFilterSuperHeavyTank.setState(state.superHeavyTank);
+        btnFilterOmni.setState(state.omni);
+        btnFilterMilitary.setState(state.military);
+        btnFilterIndustrial.setState(state.industrial);
+        btnFilterMountedInfantry.setState(state.mountedInfantry);
+        btnFilterWaterOnly.setState(state.waterOnly);
+        btnFilterSupportVehicle.setState(state.supportVehicle);
+        btnFilterDoomedOnGround.setState(state.doomedOnGround);
+        btnFilterDoomedInAtmosphere.setState(state.doomedInAtmosphere);
+        btnFilterDoomedInSpace.setState(state.doomedInSpace);
+        btnFilterDoomedInExtremeTemp.setState(state.doomedInExtremeTemp);
+        btnFilterDoomedInVacuum.setState(state.doomedInVacuum);
+    }
+
+    AdvSearchState.UnitTypeState getState() {
+        var state = new AdvSearchState.UnitTypeState();
+        state.protoMek = btnFilterProtoMek.getState();
+        state.mek = btnFilterMek.getState();
+        state.bipedMek = btnFilterBipedMek.getState();
+        state.lam = btnFilterLAM.getState();
+        state.tripod = btnFilterTripod.getState();
+        state.quad = btnFilterQuad.getState();
+        state.quadVee = btnFilterQuadVee.getState();
+        state.aero = btnFilterAero.getState();
+        state.fixedWingSupport = btnFilterFixedWingSupport.getState();
+        state.convFighter = btnFilterConvFighter.getState();
+        state.smallCraft = btnFilterSmallCraft.getState();
+        state.dropship = btnFilterDropship.getState();
+        state.jumpship = btnFilterJumpship.getState();
+        state.warship = btnFilterWarship.getState();
+        state.spaceStation = btnFilterSpaceStation.getState();
+        state.infantry = btnFilterInfantry.getState();
+        state.aerospaceFighter = btnFilterAerospaceFighter.getState();
+        state.battleArmor = btnFilterBattleArmor.getState();
+        state.tank = btnFilterTank.getState();
+        state.vtol = btnFilterVTOL.getState();
+        state.supportVTOL = btnFilterSupportVTOL.getState();
+        state.gunEmplacement = btnFilterGunEmplacement.getState();
+        state.supportTank = btnFilterSupportTank.getState();
+        state.largeSupportTank = btnFilterLargeSupportTank.getState();
+        state.superHeavyTank = btnFilterSuperHeavyTank.getState();
+        state.omni = btnFilterOmni.getState();
+        state.military = btnFilterMilitary.getState();
+        state.industrial = btnFilterIndustrial.getState();
+        state.mountedInfantry = btnFilterMountedInfantry.getState();
+        state.waterOnly = btnFilterWaterOnly.getState();
+        state.supportVehicle = btnFilterSupportVehicle.getState();
+        state.doomedOnGround = btnFilterDoomedOnGround.getState();
+        state.doomedInAtmosphere = btnFilterDoomedInAtmosphere.getState();
+        state.doomedInSpace = btnFilterDoomedInSpace.getState();
+        state.doomedInExtremeTemp = btnFilterDoomedInExtremeTemp.getState();
+        state.doomedInVacuum = btnFilterDoomedInVacuum.getState();
+        return state;
     }
 }

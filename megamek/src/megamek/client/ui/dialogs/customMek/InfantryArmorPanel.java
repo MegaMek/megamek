@@ -115,50 +115,49 @@ public class InfantryArmorPanel extends JPanel {
             add(chSneakIR, GBC.eol());
             add(labSneakECM, GBC.std());
             add(chSneakECM, GBC.eol());
-            add(Box.createVerticalStrut(10), GBC.eol());
-            add(labSpec, GBC.eol());
-
-            int year = entity.getGame().getOptions().intOption("year");
-
-            for (EquipmentType et : MiscType.allTypes()) {
-                if (et.hasFlag(MiscType.F_ARMOR_KIT) &&
-                      et.isLegal(year,
-                            gameTechLevel,
-                            entity.isClan(),
-                            entity.isMixedTech(),
-                            entity.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
-                    armorKits.add(et);
-                }
-            }
-
-            armorKits.sort(Comparator.comparing(EquipmentType::getName));
-
-            cbArmorKit.addItem(Messages.getString("CustomMekDialog.Custom"));
-            armorKits.forEach(k -> cbArmorKit.addItem(k.getName()));
-            EquipmentType kit = infantry.getArmorKit();
-
-            if (kit == null) {
-                cbArmorKit.setSelectedIndex(0);
-            } else {
-                cbArmorKit.setSelectedIndex(armorKits.indexOf(kit) + 1);
-            }
-
-            fldDivisor.setText(Double.toString(infantry.calcDamageDivisor()));
-            chEncumber.setSelected(infantry.isArmorEncumbering());
-            chSpaceSuit.setSelected(infantry.hasSpaceSuit());
-            chDEST.setSelected(infantry.hasDEST());
-            chSneakCamo.setSelected(infantry.hasSneakCamo());
-            chSneakIR.setSelected(infantry.hasSneakIR());
-            chSneakECM.setSelected(infantry.hasSneakECM());
-            armorStateChanged();
-
-            cbArmorKit.addActionListener(e -> {
-                armorStateChanged();
-                updateArmorValues();
-            });
-
-            chDEST.addItemListener(e -> armorStateChanged());
         }
+        
+        int year = entity.getGame().getOptions().intOption("year");
+
+        for (EquipmentType et : MiscType.allTypes()) {
+            if (et.hasFlag(MiscType.F_ARMOR_KIT) &&
+                  et.isLegal(year,
+                        gameTechLevel,
+                        entity.isClan(),
+                        entity.isMixedTech(),
+                        entity.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
+                armorKits.add(et);
+            }
+        }
+
+        armorKits.sort(Comparator.comparing(EquipmentType::getName));
+
+        cbArmorKit.addItem(Messages.getString("CustomMekDialog.Custom"));
+        armorKits.forEach(k -> cbArmorKit.addItem(k.getName()));
+        EquipmentType kit = infantry.getArmorKit();
+
+        if (kit == null) {
+            cbArmorKit.setSelectedIndex(0);
+        } else {
+            cbArmorKit.setSelectedIndex(armorKits.indexOf(kit) + 1);
+        }
+
+        fldDivisor.setText(Double.toString(infantry.calcDamageDivisor()));
+        chEncumber.setSelected(infantry.isArmorEncumbering());
+        chSpaceSuit.setSelected(infantry.hasSpaceSuit());
+        chDEST.setSelected(infantry.hasDEST());
+        chSneakCamo.setSelected(infantry.hasSneakCamo());
+        chSneakIR.setSelected(infantry.hasSneakIR());
+        chSneakECM.setSelected(infantry.hasSneakECM());
+        armorStateChanged();
+
+        cbArmorKit.addActionListener(e -> {
+            armorStateChanged();
+            updateArmorValues();
+        });
+        add(Box.createVerticalStrut(10), GBC.eol());
+        add(labSpec, GBC.eol());
+        chDEST.addItemListener(e -> armorStateChanged());
         for (JCheckBox spec : chSpecs) {
             add(spec, GBC.eol());
         }

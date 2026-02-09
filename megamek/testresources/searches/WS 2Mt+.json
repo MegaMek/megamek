@@ -1,0 +1,27 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "name" : "WS 2Mt+",
+  "twState" : {
+    "unitTypeState" : {
+      "warship" : "SELECTED"
+    },
+    "transportsState" : { },
+    "quirksState" : {
+      "chassisQuirks" : { },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "startTons" : "2000000",
+      "cockpitType" : { },
+      "armorType" : { },
+      "internalsType" : { },
+      "engineType" : { },
+      "gyroType" : { },
+      "techLevel" : { },
+      "techBase" : { },
+      "moveMode" : { }
+    },
+    "equipmentState" : { }
+  },
+  "asState" : { }
+}

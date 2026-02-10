@@ -34,6 +34,7 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
+import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.advancedsearch.ASAdvancedSearchPanel;
@@ -48,15 +49,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.util.RandomArmyCreator;
 import megamek.common.util.SimpleRandomLanceCreator;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -67,6 +60,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -281,21 +275,27 @@ class RandomArmyBvTab extends JPanel implements RandomArmyTab {
 
     @Override
     public List<MekSummary> generateMekSummaries() {
-        RandomArmyCreator.Parameters parameters = new RandomArmyCreator.Parameters();
-        parameters.advancedSearchFilter = twSearchFilter;
-        parameters.asPanel = asSearchFilter;
-        parameters.meks = Integer.parseInt(mekCount.getText());
-        parameters.tanks = Integer.parseInt(veeCount.getText());
-        parameters.ba = Integer.parseInt(baCount.getText());
-        parameters.infantry = Integer.parseInt(infCount.getText());
-        parameters.canon = onlyCanon.isSelected();
-        parameters.maxBV = Integer.parseInt(bvMax.getText());
-        parameters.minBV = Integer.parseInt(bvMin.getText());
-        parameters.padWithInfantry = padWithInf.isSelected();
-        parameters.tech = TechConstants.T_ALL;
-        parameters.minYear = yearMin();
-        parameters.maxYear = yearMax();
-        return RandomArmyCreator.generateArmy(parameters);
+        try {
+            RandomArmyCreator.Parameters parameters = new RandomArmyCreator.Parameters();
+            parameters.advancedSearchFilter = twSearchFilter;
+            parameters.asPanel = asSearchFilter;
+            parameters.meks = Integer.parseInt(mekCount.getText());
+            parameters.tanks = Integer.parseInt(veeCount.getText());
+            parameters.ba = Integer.parseInt(baCount.getText());
+            parameters.infantry = Integer.parseInt(infCount.getText());
+            parameters.canon = onlyCanon.isSelected();
+            parameters.maxBV = Integer.parseInt(bvMax.getText());
+            parameters.minBV = Integer.parseInt(bvMin.getText());
+            parameters.padWithInfantry = padWithInf.isSelected();
+            parameters.tech = TechConstants.T_ALL;
+            parameters.minYear = yearMin();
+            parameters.maxYear = yearMax();
+            return RandomArmyCreator.generateArmy(parameters);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Couldn't parse the given numbers.", "Error",
+                  JOptionPane.ERROR_MESSAGE);
+            return Collections.emptyList();
+        }
     }
 
     @Override

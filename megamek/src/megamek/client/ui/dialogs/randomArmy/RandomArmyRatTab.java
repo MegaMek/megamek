@@ -41,6 +41,7 @@ import megamek.common.loaders.MekSummary;
 
 import javax.swing.Box;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -54,6 +55,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -98,8 +100,13 @@ class RandomArmyRatTab extends JPanel implements RandomArmyTab, TreeSelectionLis
 
     @Override
     public List<MekSummary> generateMekSummaries() {
-        int units = Integer.parseInt(unitCount.getText());
-        return RandomUnitGenerator.getInstance().generate(units);
+        try {
+            int units = Integer.parseInt(unitCount.getText());
+            return RandomUnitGenerator.getInstance().generate(units);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Couldn't parse unit count.", "Error", JOptionPane.ERROR_MESSAGE);
+            return Collections.emptyList();
+        }
     }
 
     @Override

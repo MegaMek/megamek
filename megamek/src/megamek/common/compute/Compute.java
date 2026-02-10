@@ -570,7 +570,6 @@ public class Compute {
               || (entering instanceof Dropship)
               || ((entering instanceof Mek) && entering.isSuperHeavy());
 
-        boolean isTrain = !entering.getAllTowedUnits().isEmpty();
         boolean isDropship = entering instanceof Dropship;
         boolean isInfantry = entering instanceof Infantry;
         Entity firstEntity = transport;
@@ -1681,13 +1680,13 @@ public class Compute {
                     rangeModifier = attackingEntity.getExtremeRangeModifier();
                 }
                 if ((c3ecmRange == RangeType.RANGE_SHORT) || (c3ecmRange == RangeType.RANGE_MINIMUM)) {
-                    rangeModifier = (int) (rangeModifier + attackingEntity.getShortRangeModifier()) / 2;
+                    rangeModifier = (rangeModifier + attackingEntity.getShortRangeModifier()) / 2;
                     mods.addModifier(rangeModifier, "short range due to C3 spotter under ECM");
                 } else if (c3ecmRange == RangeType.RANGE_MEDIUM) {
-                    rangeModifier = (int) (rangeModifier + attackingEntity.getMediumRangeModifier()) / 2;
+                    rangeModifier = (rangeModifier + attackingEntity.getMediumRangeModifier()) / 2;
                     mods.addModifier(rangeModifier, "medium range due to C3 spotter under ECM");
                 } else if (c3ecmRange == RangeType.RANGE_LONG) {
-                    rangeModifier = (int) (rangeModifier + attackingEntity.getLongRangeModifier()) / 2;
+                    rangeModifier = (rangeModifier + attackingEntity.getLongRangeModifier()) / 2;
                     mods.addModifier(rangeModifier, "long range due to C3 spotter under ECM");
                 }
             } else {
@@ -1906,12 +1905,6 @@ public class Compute {
         return mods;
     }
 
-    /**
-     * Finds the effective distance between an attacker and a target. Includes the distance bonus if the attacker and
-     * target are in the same building and on different levels. Also takes account of altitude differences
-     *
-     * @return the effective distance
-     */
     /**
      * Calculates effective distance from a weapon's firing position to a target, accounting for altitude differences
      * and same-building elevation modifiers. This is used for entities with multiple firing positions like
@@ -3391,8 +3384,8 @@ public class Compute {
      */
     public static WeaponAttackAction getSecondHighestExpectedDamage(Game g,
           List<WeaponAttackAction> vAttacks, boolean assumeHit) {
-        WeaponAttackAction waaHighest = null;
-        WeaponAttackAction waaSecondHighest = null;
+        WeaponAttackAction waaHighest;
+        WeaponAttackAction waaSecondHighest;
         
         // Copy the list to a new list
         List<WeaponAttackAction> attacksClone = new ArrayList<>(vAttacks);
@@ -4326,7 +4319,7 @@ public class Compute {
     /**
      * Returns true if the line between source Coords and target goes through the hex in front of the attacker
      */
-    public static boolean isThroughFrontHex(Game game, Coords src, Entity t) {
+    public static boolean isThroughFrontHex(Coords src, Entity t) {
         Coords dest = t.getPosition();
         int fa = dest.degree(src) - (t.getFacing() * 60);
         if (fa < 0) {
@@ -4511,11 +4504,10 @@ public class Compute {
     /**
      * Calculates the ECM effects in play between a detector and target pair
      *
-     * @param game            The current {@link Game}
      * @param attackingEntity - the entity making a sensor scan
      * @param target          - the entity we're trying to spot
      */
-    private static int calcSpaceECM(Game game, Entity attackingEntity, Targetable target) {
+    private static int calcSpaceECM(Entity attackingEntity, Targetable target) {
         int mod = 0;
         int ecm = ComputeECM.getLargeCraftECM(attackingEntity, attackingEntity.getPosition(), target.getPosition());
         if (!attackingEntity.isLargeCraft()) {
@@ -4748,7 +4740,7 @@ public class Compute {
 
         // Apply ECM/ECCM effects
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
-            tn += calcSpaceECM(game, ae, target);
+            tn += calcSpaceECM(ae, target);
         }
 
         // Apply large craft sensor shadows
@@ -4850,7 +4842,7 @@ public class Compute {
 
         // Apply ECM/ECCM effects
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
-            tn += calcSpaceECM(game, attacker, target);
+            tn += calcSpaceECM(attacker, target);
         }
 
         // Apply large craft sensor shadows
@@ -4959,7 +4951,7 @@ public class Compute {
 
         // Apply ECM/ECCM effects
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
-            tn += calcSpaceECM(game, ae, target);
+            tn += calcSpaceECM(ae, target);
         }
 
         // Apply large craft sensor shadows
@@ -7918,7 +7910,7 @@ public class Compute {
      * @return ArrayList of Coords that the carrier entity can legally load units from
      */
     public static ArrayList<Coords> getLoadableCoords(Entity carrier, Coords position, int boardId) {
-        ArrayList<Coords> list = new ArrayList<Coords>();
+        ArrayList<Coords> list = new ArrayList<>();
         // No coords for no carrier
         if (carrier == null) {
             return list;

@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  pr_build:
+  checkstyle:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -27,12 +27,18 @@ jobs:
         with:
           path: megamek
 
+      - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v5
+        with:
+          distribution: ${{ matrix.java-distribution }}
+          java-version: ${{ matrix.java-version }}
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
       - name: Checkstyle
         working-directory: megamek
-        run: ./gradlew checkstyleMain
+        run: ./gradlew checkstyleMain checkstyleTest
 
       - name: Upload Test Logs on Failure
         uses: actions/upload-artifact@v6

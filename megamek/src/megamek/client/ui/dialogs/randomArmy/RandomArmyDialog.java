@@ -222,7 +222,7 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
             @Override
             public void gameSettingsChange(GameSettingsChangeEvent evt) {
                 if (!evt.isMapSettingsOnlyChange()) {
-                    updateRATYear();
+                    setGameOptions(client.getGame().getOptions());
                 }
             }
         };

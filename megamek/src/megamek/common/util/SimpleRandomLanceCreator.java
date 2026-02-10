@@ -138,7 +138,7 @@ public class SimpleRandomLanceCreator<T> {
      */
     public List<T> buildForce(List<? extends T> available, int unitCount, int targetStrength, int strengthMargin) {
 
-        if (available.isEmpty()) {
+        if (available.isEmpty() || unitCount < 1) {
             return Collections.emptyList();
         }
 

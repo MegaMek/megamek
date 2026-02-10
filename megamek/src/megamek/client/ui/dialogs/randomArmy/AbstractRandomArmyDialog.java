@@ -70,6 +70,9 @@ public abstract class AbstractRandomArmyDialog extends JDialog {
     protected final ForceGeneratorViewUi forceGeneratorPanel;
     protected ForceGenerationOptionsPanel formationPanel;
 
+    private final RandomArmyBvTab bvTab;
+    private final RandomArmyRatGenTab ratGenTab;
+
     private final JComponent previewPanel = Box.createVerticalBox();
 
     private final CardLayout previewPaneCardLayout = new CardLayout();
@@ -103,10 +106,10 @@ public abstract class AbstractRandomArmyDialog extends JDialog {
         createPreviewPanel();
         forceGeneratorPanel = new ForceGeneratorViewUi(parentFrame, gameOptions);
 
-        var bvTab = new RandomArmyBvTab(parentFrame, gameOptions);
+        bvTab = new RandomArmyBvTab(parentFrame, gameOptions);
         var simpleTab = new SimpleRandomLancePanel(this);
         var ratTab = new RandomArmyRatTab();
-        var ratGenTab = new RandomArmyRatGenTab(this, gameOptions);
+        ratGenTab = new RandomArmyRatGenTab(this, gameOptions);
 
         addTab(Messages.getString("RandomArmyDialog.BVtab"), new BorderlessScrollPane(bvTab), bvTab);
         addTab(Messages.getString("RandomArmyDialog.SimpleTab"), new BorderlessScrollPane(simpleTab), simpleTab);
@@ -166,7 +169,9 @@ public abstract class AbstractRandomArmyDialog extends JDialog {
 
     public void setGameOptions(GameOptions newOptions) {
         gameOptions = newOptions;
-        updateRATYear();
+        bvTab.setGameOptions(newOptions);
+        ratGenTab.setGameOptions(newOptions);
+        updateYear();
     }
 
     /**
@@ -242,9 +247,6 @@ public abstract class AbstractRandomArmyDialog extends JDialog {
                 rolledUnitsModel.setData(randomArmyTab.generateMekSummaries());
                 updateBvTotals();
             }
-        } catch (NumberFormatException ignored) {
-            JOptionPane.showMessageDialog(this,
-                  "Some numbers could not be parsed. Please check the input fields.");
         } finally {
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
@@ -265,7 +267,7 @@ public abstract class AbstractRandomArmyDialog extends JDialog {
         }
     };
 
-    protected void updateRATYear() {
+    protected void updateYear() {
         int gameYear = gameOptions.intOption("year");
         formationPanel.setYear(gameYear);
         forceGeneratorPanel.setYear(gameYear);

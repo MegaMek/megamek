@@ -215,9 +215,8 @@ class SimpleRandomLancePanel extends JPanel implements RandomArmyTab {
         List<MekSummary> result = creator.buildForce(roster, unitCount, targetValue, tolerancePV());
         double achievedValue = result.stream().mapToDouble(strengthMapper).sum();
         resultLabel.putClientProperty(FlatClientProperties.STYLE_CLASS, "small");
-        resultLabel.setText("Created units: " + formatResult(achievedValue) + " " + balanceBy.displayName());
         resultLabel.setText(Messages.getString("RandomArmyDialog.Simple.Created",
-              achievedValue,
+              formatResult(achievedValue),
               balanceBy.displayName()));
         return result;
     }
@@ -301,13 +300,13 @@ class SimpleRandomLancePanel extends JPanel implements RandomArmyTab {
         private final Consumer<Integer> writeToField;
 
         ManualValueAction(Consumer<Integer> writeToField) {
-            super("Other...");
+            super(Messages.getString("RandomArmyDialog.Simple.Other"));
             this.writeToField = writeToField;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Object result = JOptionPane.showInputDialog("Enter value");
+            Object result = JOptionPane.showInputDialog(Messages.getString("RandomArmyDialog.Simple.EnterValue"));
             if (result != null) {
                 try {
                     int value = Integer.parseInt(result.toString());

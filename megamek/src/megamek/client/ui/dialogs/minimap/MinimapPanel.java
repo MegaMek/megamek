@@ -439,7 +439,6 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                 dialog.addMouseMotionListener(minimapMouseMotionListener);
                 dialog.addMouseWheelListener(minimapMouseWheelListener);
                 dialog.addComponentListener(minimapComponentListener);
-                dialog.addComponentListener(minimapComponentListener);
             }
         }
     }

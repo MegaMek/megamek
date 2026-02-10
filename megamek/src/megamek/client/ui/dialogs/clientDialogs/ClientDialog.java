@@ -51,7 +51,7 @@ public class ClientDialog extends JDialog {
     /**
      * Creates a ClientDialog with modality as given by modal.
      *
-     * @see JDialog#JDialog(java.awt.Frame, String, boolean)
+     * @see JDialog#JDialog(Window, String, ModalityType) 
      */
     public ClientDialog(Window owner, String title, boolean modal) {
         super(owner, title, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);

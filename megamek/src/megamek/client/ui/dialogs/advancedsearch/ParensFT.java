@@ -49,4 +49,9 @@ abstract class ParensFT implements FilterToken {
     public String toString() {
         return parens;
     }
+
+    @Override
+    public String toJson() {
+        return parens;
+    }
 }

@@ -212,6 +212,7 @@ public class MULParser {
     public static final String ATTR_COND_EJECT_ENGINE = "condejectengine";
     public static final String ATTR_COND_EJECT_CT_DEST = "condejectctdest";
     public static final String ATTR_COND_EJECT_HEAD_SHOT = "condejectheadshot";
+    public static final String ATTR_DIC_DISABLED = "dicdisabled";
     public static final String ATTR_EJECTED = "ejected";
     public static final String ATTR_INDEX = "index";
     public static final String ATTR_IS_DESTROYED = "isDestroyed";
@@ -1277,6 +1278,10 @@ public class MULParser {
                 if (attributes.containsKey(ATTR_COND_EJECT_HEAD_SHOT) && !attributes.get(ATTR_COND_EJECT_HEAD_SHOT)
                       .isBlank()) {
                     mek.setCondEjectHeadshot(Boolean.parseBoolean(attributes.get(ATTR_COND_EJECT_HEAD_SHOT)));
+                }
+
+                if (attributes.containsKey(ATTR_DIC_DISABLED) && !attributes.get(ATTR_DIC_DISABLED).isBlank()) {
+                    mek.setDICDisabled(Boolean.parseBoolean(attributes.get(ATTR_DIC_DISABLED)));
                 }
             }
 

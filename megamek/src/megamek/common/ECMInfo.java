@@ -189,7 +189,8 @@ public class ECMInfo {
      */
     public void addOpposingECMEffects(ECMInfo other) {
         // Enemy ECM (ECM without an owner is always considered an enemy)
-        if (((other.owner == null) || owner.isEnemyOf(other.owner))) {
+        // If this.owner is null, treat all others as enemies (hostile-to-everyone ECM like chaff or EMP mines)
+        if ((owner == null) || (other.owner == null) || owner.isEnemyOf(other.owner)) {
             strength += other.strength;
             angelStrength += other.angelStrength;
             isECMNova |= other.isECMNova;
@@ -208,7 +209,8 @@ public class ECMInfo {
      */
     public void addAlliedECMEffects(ECMInfo other) {
         // Enemy ECCM (ECCM without an owner is always considered an enemy)
-        if (((other.owner == null) || owner.isEnemyOf(other.owner))) {
+        // If this.owner is null, treat all others as enemies (hostile-to-everyone ECM like chaff or EMP mines)
+        if ((owner == null) || (other.owner == null) || owner.isEnemyOf(other.owner)) {
             eccmStrength += other.eccmStrength;
             angelECCMStrength += other.angelECCMStrength;
             // Allied ECM

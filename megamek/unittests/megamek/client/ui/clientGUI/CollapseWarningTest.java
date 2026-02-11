@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
+import megamek.common.Hex;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
@@ -447,6 +448,9 @@ class CollapseWarningTest {
     private Board createMockBoardWith(Coords pos, IBuilding bld) {
         Board b = mock(Board.class);
         when(b.getBuildingAt(pos)).thenReturn(bld);
+        Hex hex = mock(Hex.class);
+        when(hex.hasBridge()).thenReturn(false);
+//        when(b.getHex(pos)).thenReturn(new Hex())
         return b;
     }
 }

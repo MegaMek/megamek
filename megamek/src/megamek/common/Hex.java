@@ -557,6 +557,14 @@ public class Hex implements Serializable {
     }
 
     /**
+     * @return True if there is a bridge in this hex (thereby excluding any other type of building and requiring
+     * Terrains.BRIDGE_ELEV and Terrains.BRIDGE_CF to be present in this hex).
+     */
+    public boolean hasBridge() {
+        return containsTerrain(Terrains.BRIDGE);
+    }
+
+    /**
      * @return the level of the terrain specified, or Terrain.LEVEL_NONE if the terrain is not present in the hex
      */
     public int terrainLevel(int type) {

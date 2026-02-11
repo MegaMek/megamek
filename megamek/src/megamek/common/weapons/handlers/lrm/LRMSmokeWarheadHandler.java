@@ -64,7 +64,6 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
         Coords coords = target.getPosition();
-        Coords center = coords;
 
         AmmoType ammoType = ammo.getType();
 
@@ -99,10 +98,10 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
             if (damage > 5) {
                 smokeType = SmokeCloud.SMOKE_HEAVY;
             }
-
-            gameManager.deliverMissileSmoke(center, smokeType, vPhaseReport);
+            // fixing #7869 smoke LRMs were always hitting the target hex.
+            gameManager.deliverMissileSmoke(coords, smokeType, vPhaseReport);
         } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ANTI_TSM)) {
-            gameManager.deliverMissileSmoke(center, SmokeCloud.SMOKE_GREEN, vPhaseReport);
+            gameManager.deliverMissileSmoke(coords, SmokeCloud.SMOKE_GREEN, vPhaseReport);
             return false;
         }
         return true;

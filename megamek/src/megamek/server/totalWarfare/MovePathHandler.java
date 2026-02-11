@@ -137,6 +137,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private boolean continueTurnFromFishtail = false;
     private boolean continueTurnFromLevelDrop = false;
     private boolean continueTurnFromCliffAscent = false;
+    // Track if we already sent a special report popup for EMP mines during this move
+    private boolean sentEMPPopupThisMove = false;
 
     // get a list of coordinates that the unit passed through this turn
     // so that I can later recover potential bombing targets
@@ -1101,7 +1103,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
             gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
 
             // let everyone know about what just happened
-            if (gameManager.getMainPhaseReport().size() > 1) {
+            // Skip if we already sent an EMP popup this move (avoid duplicate popups)
+            if ((gameManager.getMainPhaseReport().size() > 1) && !sentEMPPopupThisMove) {
                 gameManager.send(entity.getOwner().getId(), gameManager.createSpecialReportPacket());
             }
         } else {
@@ -2901,6 +2904,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (isOnGround) {
                     boom = gameManager.checkVibraBombs(entity, curPos, false, lastPos, curPos,
                           gameManager.getMainPhaseReport());
+                    // Collect EMP reports separately for popup, then add to main report
+                    Vector<Report> empReports = new Vector<>();
+                    boolean empBoom = gameManager.checkEMPMines(entity, curPos, empReports);
+                    // Send popup FIRST with only EMP reports, before adding to mainPhaseReport
+                    if (empBoom && !empReports.isEmpty()) {
+                        gameManager.send(entity.getOwner().getId(),
+                              gameManager.createSpecialReportPacket(empReports));
+                        sentEMPPopupThisMove = true;
+                    }
+                    // Now add to main phase report for end-of-phase display
+                    gameManager.getMainPhaseReport().addAll(empReports);
+                    boom = empBoom || boom;
                 }
                 if (getGame().containsMinefield(curPos)) {
                     // set the new position temporarily, because

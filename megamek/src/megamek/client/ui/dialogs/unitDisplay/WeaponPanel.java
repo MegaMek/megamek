@@ -1923,6 +1923,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 m_chAmmo.addItem(formatAmmo(mountedAmmo));
             }
 
+        } else if (mounted.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_STATIC_FEED)) {
+            // Static Ammo Feed weapons are locked to their specific ammo bin (CamOps p.235/BMM p.89)
+            m_chAmmo.setEnabled(false);
+            Mounted<?> mountedAmmo = mounted.getLinked();
+            if (mountedAmmo != null) {
+                m_chAmmo.addItem(formatAmmo(mountedAmmo));
+            }
+
         } else {
 
             vAmmo = new ArrayList<>();

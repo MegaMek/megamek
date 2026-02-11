@@ -97,6 +97,7 @@ public class BLKFile {
     private static final int TECH_CLAN_BASE = 1 << 1;
 
     static final String BLK_EXTRA_SEATS = "extra_seats";
+    static final String BLK_SLOTLESS_EQUIPMENT = "slotless_equipment";
 
     /**
      * If a vehicular grenade launcher does not have a facing provided, assign a default facing. The vehicle location
@@ -342,6 +343,44 @@ public class BLKFile {
                 } else if (!equipName.isBlank()) {
                     t.addFailedEquipment(equipName);
                 }
+            }
+        }
+    }
+
+    /**
+     * Loads slotless equipment (equipment at LOC_NONE) such as cockpit modifications.
+     * This equipment has no location but still needs to be saved and loaded.
+     *
+     * @param t the entity to load equipment into
+     * @throws EntityLoadingException if the equipment cannot be loaded
+     */
+    protected void loadSlotlessEquipment(Entity t) throws EntityLoadingException {
+        String[] saEquip = dataFile.getDataAsString(BLK_SLOTLESS_EQUIPMENT);
+        if (saEquip == null) {
+            return;
+        }
+
+        String prefix = t.isClan() ? "Clan " : "IS ";
+
+        for (String s : saEquip) {
+            if (s == null || s.isBlank()) {
+                continue;
+            }
+            String equipName = s.trim();
+
+            EquipmentType etype = EquipmentType.get(equipName);
+            if (etype == null) {
+                etype = EquipmentType.get(prefix + equipName);
+            }
+
+            if (etype != null) {
+                try {
+                    t.addEquipment(etype, Entity.LOC_NONE);
+                } catch (LocationFullException ex) {
+                    throw new EntityLoadingException(ex.getMessage());
+                }
+            } else if (!equipName.isBlank()) {
+                t.addFailedEquipment(equipName);
             }
         }
     }
@@ -874,6 +913,19 @@ public class BLKFile {
         }
         for (int i = 0; i < numLocs; i++) {
             blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
+        }
+
+        // Write slotless equipment (LOC_NONE) - e.g., cockpit modifications like DNI
+        Vector<String> slotlessEquipment = new Vector<>();
+        for (Mounted<?> m : t.getEquipment()) {
+            if (m.getLocation() == Entity.LOC_NONE && !m.isWeaponGroup() && !m.isAPMMounted()
+                  && !(m.getType() instanceof InfantryAttack)
+                  && !(m.getType() instanceof BayWeapon)) {
+                slotlessEquipment.add(encodeEquipmentLine(m));
+            }
+        }
+        if (!slotlessEquipment.isEmpty()) {
+            blk.writeBlockData(BLK_SLOTLESS_EQUIPMENT, slotlessEquipment);
         }
         if (!t.hasPatchworkArmor() && ArmorType.forEntity(t).hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
             blk.writeBlockData("barrating", t.getBARRating(1));

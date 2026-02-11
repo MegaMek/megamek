@@ -110,18 +110,22 @@ public interface ITechManager {
         Faction faction = getTechFaction();
         boolean clanTech = useClanTechBase();
 
+        // Use getGameYear() for availability checks - this respects the "Use Game Year" setting
+        // which allows equipment available by the configured game year, not just the unit's intro year
+        int yearForAvailability = getGameYear();
+
         int isIntroDate = tech.getIntroductionDate(false);
         int clanIntroDate = tech.getIntroductionDate(true);
-        boolean introducedIS = (isIntroDate != ITechnology.DATE_NONE) && (isIntroDate <= getTechIntroYear());
-        boolean introducedClan = (clanIntroDate != ITechnology.DATE_NONE) && (clanIntroDate <= getTechIntroYear());
-        boolean extinctIS = tech.isExtinct(getTechIntroYear(), false);
-        boolean extinctClan = tech.isExtinct(getTechIntroYear(), true);
+        boolean introducedIS = (isIntroDate != ITechnology.DATE_NONE) && (isIntroDate <= yearForAvailability);
+        boolean introducedClan = (clanIntroDate != ITechnology.DATE_NONE) && (clanIntroDate <= yearForAvailability);
+        boolean extinctIS = tech.isExtinct(yearForAvailability, false);
+        boolean extinctClan = tech.isExtinct(yearForAvailability, true);
         // A little bit of hard-coded universe detail
         if ((faction == Faction.CS)
               && extinctIS && (isIntroDate != ITechnology.DATE_NONE)
-              && (tech.getBaseAvailability(ITechnology.getTechEra(getTechIntroYear())).getIndex()
+              && (tech.getBaseAvailability(ITechnology.getTechEra(yearForAvailability)).getIndex()
               < AvailabilityValue.X.getIndex())
-              && isIntroDate <= getTechIntroYear()) {
+              && isIntroDate <= yearForAvailability) {
             // ComStar has access to Star League tech that is otherwise extinct in the Inner Sphere as if TH,
             // unless it has an availability of X (which is SLDF Royal equipment).
             extinctIS = false;
@@ -138,7 +142,7 @@ public interface ITechManager {
         if (useMixedTech()) {
             if ((!introducedIS && !introducedClan)
                   || (!showExtinct()
-                  && (tech.isExtinct(getTechIntroYear())))) {
+                  && (tech.isExtinct(yearForAvailability)))) {
                 return false;
             } else if (useVariableTechLevel()) {
                 // If using tech progression with mixed tech, we pass if either IS or Clan meets the required level

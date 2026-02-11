@@ -469,6 +469,15 @@ tasks.register('boardsTagger', JavaExec) {
     mainClass = 'megamek.utilities.BoardsTagger'
 }
 
+tasks.register('boardsCopyrightUpdater', JavaExec) {
+    dependsOn jar
+    description = 'Updates copyright headers on all boards'
+    group = 'boards'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.BoardsTagger'
+    args '--update-headers'
+}
+
 tasks.register('boardsValidator', JavaExec) {
     dependsOn jar
     description = 'Validates all boards'

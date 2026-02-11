@@ -111,6 +111,7 @@ public final class Player extends TurnOrdered {
     private int numMfVibra = 0;
     private int numMfActive = 0;
     private int numMfInferno = 0;
+    private int numMfEMP = 0;
 
     // hexes that are automatically hit by artillery
     private List<BoardLocation> artyAutoHitHexes = new ArrayList<>();
@@ -183,6 +184,7 @@ public final class Player extends TurnOrdered {
               (numMfVibra > 0) ||
               (numMfActive > 0) ||
               (numMfInferno > 0) ||
+              (numMfEMP > 0) ||
               !getGroundObjectsToPlace().isEmpty();
     }
 
@@ -224,6 +226,14 @@ public final class Player extends TurnOrdered {
 
     public int getNbrMFInferno() {
         return numMfInferno;
+    }
+
+    public void setNbrMFEMP(int nbrMF) {
+        numMfEMP = nbrMF;
+    }
+
+    public int getNbrMFEMP() {
+        return numMfEMP;
     }
 
     public Camouflage getCamouflage() {

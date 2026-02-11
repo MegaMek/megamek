@@ -497,7 +497,6 @@ class SystemPanel extends PicMap
             if (ev.getSource().equals(m_chMode)
                   && (ev.getStateChange() == ItemEvent.SELECTED)) {
                 Mounted<?> m = getSelectedEquipment();
-                CriticalSlot cs = getSelectedCritical();
                 if ((m != null) && m.hasModes()) {
                     int nMode = m_chMode.getSelectedIndex();
                     if (nMode >= 0) {

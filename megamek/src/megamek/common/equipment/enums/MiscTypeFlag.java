@@ -89,6 +89,8 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_ARTEMIS_V,
 
     F_BATTLEMEK_NIU,
+    F_DNI_COCKPIT_MOD,
+    F_DAMAGE_INTERRUPT_CIRCUIT,
 
     F_SEARCHLIGHT,
     F_BA_SEARCHLIGHT,

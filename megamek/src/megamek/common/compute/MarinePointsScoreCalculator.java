@@ -204,7 +204,7 @@ public class MarinePointsScoreCalculator {
         // Bay personnel: 0.5 each (non-combat unit crew)
         // Civilians: 0.15 each
 
-        mps += marines * 1;           // Marines
+        mps += marines * 1.0;           // Marines
         mps += crew * 0.5;             // Crew (officers, enlisted)
         mps += bayPersonnel * 0.5;     // Bay personnel (technicians, bay crew)
         // Passengers assumed to be civilians

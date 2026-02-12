@@ -15820,12 +15820,12 @@ public class TWGameManager extends AbstractGameManager {
         // Check if either side is eliminated before combat
         if (attackerMPS <= 0) {
             reportCombatHeader(building);
-            reportSideEliminated(combat, tracker, building, true);  // Attackers eliminated
+            reportSideEliminated(combat, tracker, true);  // Attackers eliminated
             return;
         }
         if (defenderMPS <= 0) {
             reportCombatHeader(building);
-            reportSideEliminated(combat, tracker, building, false);  // Defenders eliminated
+            reportSideEliminated(combat, tracker, false);  // Defenders eliminated
             return;
         }
 
@@ -15859,9 +15859,9 @@ public class TWGameManager extends AbstractGameManager {
 
         // Check for combat end conditions
         if (result.isDefenderEliminated()) {
-            reportSideEliminated(combat, tracker, building, false);
+            reportSideEliminated(combat, tracker, false);
         } else if (result.isAttackerRepulsed()) {
-            reportSideRepulsed(combat, tracker, building);
+            reportSideRepulsed(combat, tracker);
         } else {
             // Check if one side was eliminated during casualties
             // Must recalculate MPS to account for entities killed by external sources
@@ -15870,9 +15870,9 @@ public class TWGameManager extends AbstractGameManager {
             int finalDefenderMPS = calculateTotalMPS(combat.defenderIds, building);
 
             if (finalAttackerMPS <= 0 ) {
-                reportSideEliminated(combat, tracker, building, true);
+                reportSideEliminated(combat, tracker, true);
             } else if (finalDefenderMPS <= 0) {
-                reportSideEliminated(combat, tracker, building, false);
+                reportSideEliminated(combat, tracker, false);
             }
         }
     }
@@ -15941,7 +15941,6 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         List<Integer> entityIds = isAttacker ? combat.attackerIds : combat.defenderIds;
-        String sideName = isAttacker ? "Attackers" : "Defenders";
 
         int totalCasualties = 0;
         for (int entityId : new ArrayList<>(entityIds)) {
@@ -16102,7 +16101,6 @@ public class TWGameManager extends AbstractGameManager {
      */
     private void reportSideEliminated(InfantryActionTracker.InfantryAction combat,
                                        InfantryActionTracker tracker,
-                                       megamek.common.units.AbstractBuildingEntity building,
                                        boolean attackersEliminated) {
         Report r = new Report(attackersEliminated ? 5636 : 5638);  // "Side eliminated"
         addReport(r);
@@ -16114,8 +16112,7 @@ public class TWGameManager extends AbstractGameManager {
      * Report and handle attackers being repulsed.
      */
     private void reportSideRepulsed(InfantryActionTracker.InfantryAction combat,
-                                     InfantryActionTracker tracker,
-                                     megamek.common.units.AbstractBuildingEntity building) {
+                                     InfantryActionTracker tracker) {
         Report r = new Report(5637);  // "Attacking forces repulsed"
         addReport(r);
 

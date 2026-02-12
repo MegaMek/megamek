@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,8 +33,6 @@
 
 package megamek.common.actions;
 
-import java.io.Serial;
-
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
@@ -42,8 +40,6 @@ import megamek.common.units.Entity;
  * Action to WITHDRAW from infantry vs. infantry combat (attackers only).
  */
 public class WithdrawInfantryCombatAction extends InfantryCombatAction {
-    @Serial
-    private static final long serialVersionUID = -1234567890123456792L;
 
     /**
      * Creates a new withdraw from infantry combat action.

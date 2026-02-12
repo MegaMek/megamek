@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,8 +33,6 @@
 
 package megamek.common.actions;
 
-import java.io.Serial;
-
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
@@ -50,8 +48,6 @@ import megamek.common.units.Entity;
  * <p>Uses TOAR Infantry vs. Infantry rules with Marine Points Score calculations.</p>
  */
 public class InfantryCombatAction extends AbstractEntityAction {
-    @Serial
-    private static final long serialVersionUID = -1234567890123456789L;
 
     /**
      * The target entity ID (AbstractBuildingEntity or vessel).

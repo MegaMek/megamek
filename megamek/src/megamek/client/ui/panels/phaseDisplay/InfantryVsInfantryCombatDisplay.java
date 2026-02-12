@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,6 @@ package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,8 +54,6 @@ import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 
 public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
-    @Serial
-    private static final long serialVersionUID = -1234567890123456794L;
 
     public enum InfantryCombatCommand implements PhaseCommand {
         INFANTRY_REINFORCE_COMBAT("reinforceInfantryCombat"),
@@ -166,11 +163,9 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
         }
 
         Entity ce = game.getEntity(currentEntity);
-        if (ce == null || !(ce instanceof Infantry)) {
+        if (!(ce instanceof Infantry inf)) {
             return;
         }
-
-        Infantry inf = (Infantry) ce;
 
         // Check if already in combat
         if (inf.getInfantryCombatTargetId() != Entity.NONE) {
@@ -181,7 +176,7 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
 
         // Check if target is a building
         Entity targetEntity = game.getEntity(target.getId());
-        if (targetEntity == null || !(targetEntity instanceof AbstractBuildingEntity)) {
+        if (!(targetEntity instanceof AbstractBuildingEntity)) {
             clientgui.doAlertDialog("Impossible",
                   "Target must be a building");
             return;
@@ -220,11 +215,9 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
 
     private void withdrawInfantryCombat() {
         Entity ce = game.getEntity(currentEntity);
-        if (ce == null || !(ce instanceof Infantry)) {
+        if (!(ce instanceof Infantry inf)) {
             return;
         }
-
-        Infantry inf = (Infantry) ce;
 
         if (inf.getInfantryCombatTargetId() == Entity.NONE) {
             return;
@@ -398,13 +391,11 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
     protected void updateButtons() {
         Entity ce = game.getEntity(currentEntity);
 
-        if (ce == null || !(ce instanceof Infantry)) {
+        if (!(ce instanceof Infantry inf)) {
             setReinforceInfantryCombatEnabled(false);
             setWithdrawInfantryCombatEnabled(false);
             return;
         }
-
-        Infantry inf = (Infantry) ce;
 
         // Can reinforce if:
         // - Not already in combat
@@ -432,7 +423,7 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
      */
     private boolean isValidBuildingTargetWithCombat(Entity entity, Targetable target) {
         Entity targetEntity = game.getEntity(target.getId());
-        if (targetEntity == null || !(targetEntity instanceof AbstractBuildingEntity)) {
+        if (!(targetEntity instanceof AbstractBuildingEntity)) {
             return false;
         }
 
@@ -441,13 +432,12 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
         }
 
         // Check if combat exists in this building
-        boolean combatExists = game.getEntitiesVector().stream()
+
+        return game.getEntitiesVector().stream()
               .filter(e -> e instanceof Infantry)
               .filter(e -> targetEntity.getSecondaryPositions().containsValue(e.getPosition()))
               .map(e -> (Infantry) e)
               .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
-
-        return combatExists;
     }
 
     /**

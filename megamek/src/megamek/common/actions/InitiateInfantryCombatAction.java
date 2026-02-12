@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,7 +32,6 @@
  */
 package megamek.common.actions;
 
-import java.io.Serial;
 
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
@@ -42,8 +41,6 @@ import megamek.common.units.Entity;
  * Only valid when NO combat currently exists in the target building.
  */
 public class InitiateInfantryCombatAction extends InfantryCombatAction {
-    @Serial
-    private static final long serialVersionUID = -1234567890123456790L;
 
     /**
      * Creates a new initiate infantry combat action.

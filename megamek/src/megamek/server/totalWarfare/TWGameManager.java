@@ -357,6 +357,8 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         this.game.getForces().setGame(this.game);
+
+        rebuildCombatTrackerFromEntityStates(infantryActionTracker);
     }
 
     /**
@@ -15761,7 +15763,6 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Rebuild combat tracker from entity states.
-     * This is temporary until tracker becomes a persistent field.
      */
     private void rebuildCombatTrackerFromEntityStates(InfantryActionTracker tracker) {
         for (Entity entity : game.getEntitiesVector()) {

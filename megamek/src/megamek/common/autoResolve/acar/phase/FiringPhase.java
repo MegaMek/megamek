@@ -155,6 +155,8 @@ public class FiringPhase extends PhaseHandler {
                                 .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
                                 .filter(Formation::isWithdrawing)
                                 .forEach(canBeTargets::add);
+
+                    default -> { } // intentionally no action
                 }
             }
         }

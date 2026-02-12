@@ -424,6 +424,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean illuminated = false;
     protected boolean searchlightIsActive = false;
     protected boolean usedSearchlight = false;
+    protected boolean eiShutdown = false;
     protected boolean stuckInSwamp = false;
     protected boolean canUnstickByJumping = false;
     protected int taggedBy = -1;
@@ -886,6 +887,11 @@ public abstract class Entity extends TurnOrdered
     protected int taserInterference = 0;
     protected int taserInterferenceRounds = 0;
     protected boolean taserInterferenceHeat = false;
+
+    // EMP mine effects (Tactical Operations: Advanced Rules)
+    protected int empInterferenceRounds = 0;
+    protected boolean empInterferenceHeat = false;
+    protected int empShutdownRounds = 0;
 
     // for how many rounds has blue shield been active?
     private int blueShieldRounds = 0;
@@ -1631,8 +1637,9 @@ public abstract class Entity extends TurnOrdered
             return;
         }
         setManualShutdown(false);
-        // Can't start up if a taser shutdown or a TSEMP shutdown
-        if ((getTaserShutdownRounds() == 0) && (getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
+        // Can't start up if a taser shutdown, TSEMP shutdown, or EMP mine shutdown
+        if ((getTaserShutdownRounds() == 0) && (getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)
+              && (getEMPShutdownRounds() == 0)) {
             setShutDown(false);
             setStartupThisPhase(true);
         }
@@ -2707,8 +2714,8 @@ public abstract class Entity extends TurnOrdered
             // only Meks can move underwater
             if (hex.containsTerrain(Terrains.WATER) &&
                   (assumedAlt < hex.getLevel()) &&
-                  !(this instanceof Mek) &&
-                  !(this instanceof ProtoMek)) {
+                  !((this instanceof Mek) || (this instanceof ProtoMek)) &&
+                  !(hasEnvironmentalSealing())) {
                 return false;
             }
             // can move on the ground unless its underwater
@@ -3743,14 +3750,26 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if the given board is prohibited to this unit.
+     * @return True if the given board is prohibited to this unit according to the type of unit and type of board or if
+     *       the unit cannot survive on this board; e.g., JumpShips are prohibited from entering ground maps while BA
+     *       are not allowed on an atmospheric map. This refers to the various doomed... methods.
+     *
+     * @see #doomedOnGround()
+     * @see #doomedInAtmosphere()
+     * @see #doomedInSpace()
      */
     public boolean isBoardProhibited(Board board) {
         return isBoardProhibited(board.getBoardType());
     }
 
     /**
-     * @return True if the given board is prohibited to this unit.
+     * @return True if the given board type is prohibited to this unit according to the type of unit or if the unit
+     *       cannot survive on this board; e.g., JumpShips are prohibited from entering ground maps while BA are not
+     *       allowed on an atmospheric map. This refers to the various doomed... methods.
+     *
+     * @see #doomedOnGround()
+     * @see #doomedInAtmosphere()
+     * @see #doomedInSpace()
      */
     public boolean isBoardProhibited(BoardType boardType) {
         return (boardType.isGround() && doomedOnGround()) ||
@@ -6080,6 +6099,12 @@ public abstract class Entity extends TurnOrdered
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
 
+        // EI Interface provides 1-hex active probe per IO p.69
+        // This works even without the pilot implant (just the hardware)
+        if (hasEiCockpit()) {
+            return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
+        }
+
         return false;
     }
 
@@ -6176,6 +6201,12 @@ public abstract class Entity extends TurnOrdered
             return cyberBaseProbe + quirkBonus + spaBonus;
         }
 
+        // EI Interface provides 1-hex active probe per IO p.69
+        // This works even without the pilot implant (just the hardware)
+        if (hasEiCockpit()) {
+            return 1;
+        }
+
         return Entity.NONE;
     }
 
@@ -6200,24 +6231,25 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns whether this entity has a Targeting Computer that is in aimed shot mode.
+     * Returns whether this entity has a Targeting Computer or EI Interface that is in aimed shot mode.
      * This also returns true for Triple-Core Processor + VDNI/BVDNI combinations,
      * which grant aimed shot capability as if equipped with a Targeting Computer.
      */
     public boolean hasAimModeTargComp() {
+        // Active EI Interface grants aimed shot capability (IO p.69)
+        // hasActiveEiCockpit() verifies EI is not in "Off" mode
         if (hasActiveEiCockpit()) {
-            if (this instanceof Mek) {
-                if (((Mek) this).getCockpitStatus() == Mek.COCKPIT_AIMED_SHOT) {
+            for (MiscMounted m : getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_EI_INTERFACE) && !m.isInoperable()) {
                     return true;
                 }
-            } else {
-                return true;
             }
         }
         // TCP + VDNI/BVDNI grants aimed shot capability for Meks, vehicles, and aerospace
         if (hasTCPAimedShotCapability()) {
             return true;
         }
+        // Check Targeting Computer in "Aimed shot" mode
         for (MiscMounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_TARGETING_COMPUTER) && m.curMode().equals("Aimed shot")) {
                 return !m.isInoperable();
@@ -6801,6 +6833,7 @@ public abstract class Entity extends TurnOrdered
     public Entity getC3Top() {
         Entity m = this;
         Entity master = m.getC3Master();
+        // Except if there's ECM, we can't _reach_ the master.
         while ((master != null) &&
               !master.equals(m) &&
               master.hasC3()) {
@@ -6808,14 +6841,28 @@ public abstract class Entity extends TurnOrdered
             if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                 m = master;
                 master = m.getC3Master();
-            } else if (((m.hasBoostedC3() &&
+            } else if ((m.hasBoostedC3() &&
                   !ComputeECM.isAffectedByAngelECM(m, m.getPosition(), master.getPosition())) ||
-                  !(ComputeECM.isAffectedByECM(m, m.getPosition(), master.getPosition()))) &&
-                  ((master.hasBoostedC3() &&
-                        !ComputeECM.isAffectedByAngelECM(master, master.getPosition(), master.getPosition())) ||
-                        !(ComputeECM.isAffectedByECM(master, master.getPosition(), master.getPosition())))) {
-                m = master;
-                master = m.getC3Master();
+                  !(ComputeECM.isAffectedByECM(m, m.getPosition(), master.getPosition())))
+            {
+                if ((master.hasBoostedC3() &&
+                      !ComputeECM.isAffectedByAngelECM(master, master.getPosition(), master.getPosition())) ||
+                      !(ComputeECM.isAffectedByECM(master, master.getPosition(), master.getPosition()))) {
+                    // punched through
+                    m = master;
+                    master = m.getC3Master();
+                } else {
+                    // Somehow still failed; this should not be possible!
+                    throw new IllegalStateException(
+                          "C3 slave/master connection not affected by ECM/AECM but master is!" +
+                          String.format(
+                            "\nSlave: %s @ %s\nMaster: %s @ %s", m, master, m.getPosition(), master.getPosition()
+                          )
+                    );
+                }
+            } else {
+                // Can no longer contact master
+                master = null;
             }
         }
         return m;
@@ -7246,6 +7293,15 @@ public abstract class Entity extends TurnOrdered
                 taserInterferenceHeat = false;
             }
         }
+        if (empInterferenceRounds > 0) {
+            empInterferenceRounds--;
+            if (empInterferenceRounds == 0) {
+                empInterferenceHeat = false;
+            }
+        }
+        if (empShutdownRounds > 0) {
+            empShutdownRounds--;
+        }
         if (taserFeedBackRounds > 0) {
             taserFeedBackRounds--;
         }
@@ -7496,6 +7552,16 @@ public abstract class Entity extends TurnOrdered
                 // Point defense bays are assigned to the attack with the greatest threat Unlike single AMS, PD bays
                 // can gang up on 1 attack
                 Compute.getHighestExpectedDamage(getGame(), attacksInArc, true).addCounterEquipment(ams);
+            } else if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                // PLAYTEST3 AMS shoots twice handling
+                // Assuming AMS has not been used at all yet, so both shots are available.
+                final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), attacksInArc, true);
+                waa.addCounterEquipment(ams);
+                targets.add(waa);
+                final WeaponAttackAction secondWaa = Compute.getSecondHighestExpectedDamage(getGame(), attacksInArc,
+                      true);
+                secondWaa.addCounterEquipment(ams);
+                targets.add(secondWaa);
             } else {
                 // Otherwise, find the most dangerous salvo by expected damage and target it this ensures that only 1
                 // AMS targets the strike. Use for non-bays.
@@ -7881,7 +7947,13 @@ public abstract class Entity extends TurnOrdered
             roll.addModifier(-2, "careful stand");
         }
 
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_HARD_PILOT)) {
+        // Augmented pilots with DNI cockpit ignore Hard to Pilot quirk entirely (IO p.83)
+        // hasQuirk() now includes DNI-induced Hard to Pilot via hasDNIInducedHardToPilot()
+        boolean activeDNI = hasActiveDNI();
+        boolean hasHTP = hasQuirk(OptionsConstants.QUIRK_NEG_HARD_PILOT);
+        LOGGER.trace("[PSR] {} - hasActiveDNI: {}, hasQuirk(HTP): {}", getDisplayName(), activeDNI, hasHTP);
+        if (!activeDNI && hasHTP) {
+            LOGGER.trace("[PSR] {} - Adding +1 Hard to Pilot modifier", getDisplayName());
             roll.addModifier(+1, "hard to pilot");
         }
 
@@ -10244,6 +10316,7 @@ public abstract class Entity extends TurnOrdered
      *
      * @return an int
      */
+    @Override
     public int getDeployRound() {
         return deployRound;
     }
@@ -10261,6 +10334,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Checks to see if an entity has been deployed
      */
+    @Override
     public boolean isDeployed() {
         return deployed;
     }
@@ -11805,12 +11879,151 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
+    /**
+     * Returns whether this entity has an Enhanced Imaging (EI) Interface. This is determined by having the EI Interface
+     * equipment installed. ProtoMeks always have EI built-in.
+     *
+     * <p>Note: This checks for equipment presence, not whether it's functional. Use {@link #hasActiveEiCockpit()}
+     * to check if EI is currently providing benefits (includes damage checks, shutdown state, etc.).</p>
+     *
+     * @return true if this entity has an EI Interface
+     */
     public boolean hasEiCockpit() {
-        return ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT));
+        return hasMisc(MiscType.F_EI_INTERFACE);
     }
 
+    /**
+     * Checks if a neural interface system is active based on implant and hardware requirements.
+     * When tracking neural interface hardware, requires both implant and hardware.
+     * When not tracking, implant alone is sufficient.
+     *
+     * <p>This is a shared helper for DNI and EI systems which follow the same pattern.</p>
+     *
+     * @param hasImplant whether the pilot has the required implant
+     * @param hasHardware whether the unit has the required hardware
+     * @return true if the neural interface is considered active
+     */
+    private boolean isNeuralInterfaceActive(boolean hasImplant, boolean hasHardware) {
+        if (!hasImplant) {
+            return false;
+        }
+        // When not tracking hardware, implant alone provides benefits
+        if ((game == null) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            return true;
+        }
+        // When tracking hardware, require the interface equipment
+        return hasHardware;
+    }
+
+    /**
+     * Returns whether this unit has an active Enhanced Imaging (EI) cockpit system. EI cockpit is always required (it's
+     * built into the unit at construction). When the "Track Neural Interface Hardware" option is enabled, the pilot
+     * must also have the EI implant. When tracking is disabled, only the cockpit is required (original behavior).
+     *
+     * <p>Note: EI has inverted requirements compared to DNI:</p>
+     * <ul>
+     *   <li>DNI: Implant always required, hardware conditional on tracking</li>
+     *   <li>EI: Hardware (cockpit) always required, implant conditional on tracking</li>
+     * </ul>
+     *
+     * @return true if the unit has an active EI cockpit system
+     */
     public boolean hasActiveEiCockpit() {
-        return (hasEiCockpit() && hasAbility(OptionsConstants.UNOFFICIAL_EI_IMPLANT));
+        // EI cockpit is always required (it's built into the unit)
+        if (!hasEiCockpit()) {
+            return false;
+        }
+
+        // When tracking hardware, also require EI implant on pilot
+        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            if (!hasAbility(OptionsConstants.MD_EI_IMPLANT)) {
+                return false;
+            }
+        }
+
+        // EI-specific: check if interface is in "Off" mode
+        return !isEiShutdown();
+    }
+
+    /**
+     * Returns whether the EI Interface is currently shut down (in "Off" mode).
+     */
+    public boolean isEiShutdown() {
+        for (MiscMounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                return m.curMode().getName().equals("Off");
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Sets the EI shutdown state by changing the EI Interface equipment mode. ProtoMeks and units with MDI cannot
+     * shut down EI. Per IO p.69, EI can be voluntarily shut down during the End Phase.
+     *
+     * @param shutdown true to shut down EI (set to "Off" mode), false to activate it (set to "On" mode)
+     */
+    public void setEiShutdown(boolean shutdown) {
+        if (!canShutdownEi()) {
+            return;
+        }
+        for (MiscMounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                int targetMode = shutdown ? 0 : 1; // 0 = "Off", 1 = "On"
+                m.setMode(targetMode);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Returns whether this unit can shut down its EI Interface. ProtoMeks cannot shut down EI (it's integral to their
+     * design). Units with MDI (Machine/Direct Interface) cannot shut down EI. Per IO p.69.
+     */
+    public boolean canShutdownEi() {
+        if (!hasEiCockpit()) {
+            return false;
+        }
+        // ProtoMeks cannot shut down EI - it's integral to their design
+        if (this.isProtoMek()) {
+            return false;
+        }
+        // Units with MDI cannot shut down EI per IO
+        if (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns whether this unit has the DNI Cockpit Modification equipment installed.
+     *
+     * @return true if the unit has DNI cockpit modification equipment
+     */
+    public boolean hasDNICockpitMod() {
+        return hasMisc(MiscType.F_DNI_COCKPIT_MOD);
+    }
+
+    /**
+     * Returns whether the pilot has any DNI-compatible implant (VDNI, BVDNI, or Proto DNI).
+     *
+     * @return true if the pilot has a DNI-compatible implant
+     */
+    public boolean hasDNIImplant() {
+        return hasAbility(OptionsConstants.MD_VDNI)
+              || hasAbility(OptionsConstants.MD_BVDNI)
+              || hasAbility(OptionsConstants.MD_PROTO_DNI);
+    }
+
+    /**
+     * Returns whether this unit has an active DNI system providing bonuses. When the "Track Neural Interface Hardware"
+     * option is enabled, this requires both the DNI cockpit modification equipment and a pilot with a compatible
+     * implant. When tracking is disabled, only the implant is required.
+     *
+     * @return true if the unit has an active DNI system
+     */
+    public boolean hasActiveDNI() {
+        return isNeuralInterfaceActive(hasDNIImplant(), hasDNICockpitMod());
     }
 
     public boolean isLayingMines() {
@@ -13351,6 +13564,47 @@ public abstract class Entity extends TurnOrdered
         return taserInterferenceRounds;
     }
 
+    /**
+     * Sets EMP mine interference effect on this entity.
+     *
+     * @param rounds Number of rounds the interference lasts
+     * @param heat   true if the entity suffers +5 heat per turn (Meks/Aero)
+     */
+    public void setEMPInterference(int rounds, boolean heat) {
+        empInterferenceRounds = rounds;
+        empInterferenceHeat = heat;
+    }
+
+    /**
+     * @return Number of rounds remaining for EMP interference effect
+     */
+    public int getEMPInterferenceRounds() {
+        return empInterferenceRounds;
+    }
+
+    /**
+     * @return true if this entity suffers +5 heat per turn from EMP interference
+     */
+    public boolean hasEMPInterferenceHeat() {
+        return empInterferenceHeat;
+    }
+
+    /**
+     * Sets EMP shutdown duration from EMP mine effect.
+     *
+     * @param rounds Number of turns the unit is shutdown
+     */
+    public void setEMPShutdownRounds(int rounds) {
+        empShutdownRounds = rounds;
+    }
+
+    /**
+     * @return Number of rounds remaining for EMP shutdown effect
+     */
+    public int getEMPShutdownRounds() {
+        return empShutdownRounds;
+    }
+
     public void addIMPHits(int missiles) {
         // effects last for only one turn.
         impThisTurn += missiles;
@@ -13551,7 +13805,43 @@ public abstract class Entity extends TurnOrdered
         if ((game != null) && !gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return false;
         }
+        // DNI Cockpit Mod induces Hard to Pilot quirk for pilots without compatible implants (IO p.83)
+        if (name.equals(OptionsConstants.QUIRK_NEG_HARD_PILOT)) {
+            boolean dniInduced = hasDNIInducedHardToPilot();
+            if (dniInduced) {
+                LOGGER.trace("[Quirk] {} - Hard to Pilot induced by DNI cockpit mod", getDisplayName());
+                return true;
+            }
+        }
         return quirks.booleanOption(name);
+    }
+
+    /**
+     * Returns whether this unit has DNI-induced Hard to Pilot quirk. Per IO p.83, units with DNI Cockpit Modification
+     * gain the Hard to Pilot quirk when piloted by someone without a compatible DNI implant (VDNI, BVDNI, or Proto
+     * DNI). This only applies when the Track Neural Interface Hardware game option is enabled.
+     *
+     * @return true if DNI cockpit induces Hard to Pilot quirk
+     */
+    public boolean hasDNIInducedHardToPilot() {
+        // Only applies when tracking neural interface hardware
+        if ((game == null) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+            LOGGER.trace("[DNI-HTP] {} - Tracking option OFF or no game, returning false", getDisplayName());
+            return false;
+        }
+        // Unit must have DNI Cockpit Mod
+        if (!hasDNICockpitMod()) {
+            LOGGER.trace("[DNI-HTP] {} - No DNI cockpit mod, returning false", getDisplayName());
+            return false;
+        }
+        // Pilot must lack compatible DNI implant
+        boolean hasActive = hasActiveDNI();
+        boolean result = !hasActive;
+        LOGGER.trace("[DNI-HTP] {} - DNI mod: true, hasActiveDNI: {}, induces HTP: {}",
+              getDisplayName(),
+              hasActive,
+              result);
+        return result;
     }
 
     /**

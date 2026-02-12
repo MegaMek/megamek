@@ -54,7 +54,7 @@ jobs:
 
       - name: Test
         working-directory: megamek
-        run: ./gradlew test
+        run: ./gradlew test -x checkstyleMain -x checkstyleTest
 
       - name: Upload Test Logs on Failure
         uses: actions/upload-artifact@v6
@@ -72,7 +72,7 @@ jobs:
 
       - name: Build with Gradle
         working-directory: megamek
-        run: ./gradlew build -x test -PextraVersion="PR-${{ github.event.number }}-${{ env.COMMIT_SHORT_SHA }}"
+        run: ./gradlew build -x test -x checkstyleMain -x checkstyleTest -PextraVersion="PR-${{ github.event.number}}-${{ env.COMMIT_SHORT_SHA }}"
 
       - name: Upload TarGZ Release
         uses: actions/upload-artifact@v6

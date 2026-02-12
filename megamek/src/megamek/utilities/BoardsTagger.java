@@ -53,6 +53,7 @@ import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import megamek.common.Configuration;
@@ -356,6 +357,14 @@ public class BoardsTagger {
     }
 
     public static void main(String... args) {
+        if (args.length > 0 && args[0].equals("--update-headers")) {
+            runCopyrightHeaderUpdater();
+        } else {
+            runBoardTagger();
+        }
+    }
+
+    public static void runBoardTagger() {
         try {
             Map<String, List<String>> boardCheckSum = new HashMap<>();
 
@@ -370,33 +379,39 @@ public class BoardsTagger {
             });
         } catch (Exception ex) {
             logger.error(ex, "Board tagger cannot scan boards");
-            System.exit(64);
         }
 
         logger.info("Finished.");
     }
 
     /**
-     * Recursively scans the supplied file/directory for any boards and auto-tags them.
+     * Recursively scans the supplied file/directory and applies the given processor to each file found.
+     *
+     * @param file          the file or directory to scan
+     * @param fileProcessor the action to perform on each file
      */
-    private static void scanForBoards(File file, Map<String, List<String>> boardCheckSum) {
+    private static void scanBoardFiles(File file, Consumer<File> fileProcessor) {
         if (file.isDirectory()) {
             String[] fileList = file.list();
             if (fileList != null) {
                 for (String filename : fileList) {
                     File filepath = new File(file, filename);
-                    if (filepath.isDirectory()) {
-                        scanForBoards(new File(file, filename), boardCheckSum);
-                    } else {
-                        tagBoard(filepath);
-                        checkSum(boardCheckSum, filepath);
-                    }
+                    scanBoardFiles(filepath, fileProcessor);
                 }
             }
         } else {
-            tagBoard(file);
-            checkSum(boardCheckSum, file);
+            fileProcessor.accept(file);
         }
+    }
+
+    /**
+     * Recursively scans the supplied file/directory for any boards and auto-tags them.
+     */
+    private static void scanForBoards(File file, Map<String, List<String>> boardCheckSum) {
+        scanBoardFiles(file, boardFile -> {
+            tagBoard(boardFile);
+            checkSum(boardCheckSum, boardFile);
+        });
     }
 
     /**
@@ -489,6 +504,67 @@ public class BoardsTagger {
             boardCheckSum.get(cs).add(boardFile.getPath());
         } catch (NoSuchAlgorithmException e) {
             logger.error(e, "SHA-256 Algorithm Can't be Found");
+        }
+    }
+
+    /**
+     * Runs the copyright header updater on all boards in the default boards directory. Adds or updates the MegaMek Data
+     * copyright header to all valid board files.
+     */
+    public static void runCopyrightHeaderUpdater() {
+        try {
+            File boardDir = Configuration.boardsDir();
+            scanForBoardsAndUpdateHeaders(boardDir);
+        } catch (Exception ex) {
+            logger.error(ex, "Copyright header updater cannot scan boards");
+        }
+
+        logger.info("Copyright header update finished.");
+    }
+
+    /**
+     * Recursively scans the supplied file/directory for any boards and updates their copyright headers.
+     *
+     * @param file the file or directory to scan
+     */
+    private static void scanForBoardsAndUpdateHeaders(File file) {
+        scanBoardFiles(file, BoardsTagger::updateCopyrightHeader);
+    }
+
+    /**
+     * Updates the copyright header on a single board file. If the board already has a copyright header (lines starting
+     * with #), it is replaced. If not, a new header is added at the beginning of the file.
+     *
+     * @param boardFile the board file to update
+     */
+    private static void updateCopyrightHeader(File boardFile) {
+        // If this isn't a board, ignore it
+        if (!boardFile.toString().endsWith(".board")) {
+            return;
+        }
+
+        // Load the board
+        Board board = new Board();
+        try (InputStream is = new FileInputStream(boardFile)) {
+            List<String> errors = new ArrayList<>();
+            board.load(is, errors, true);
+            if (!errors.isEmpty()) {
+                logger.debug("Board has errors, skipping: {}", boardFile);
+                return;
+            }
+        } catch (Exception e) {
+            logger.error(e, "Could not load board: {}", boardFile);
+            return;
+        }
+
+        // Re-save the board with the license header
+        try (OutputStream os = new FileOutputStream(boardFile)) {
+            board.save(os, true);
+            if (DEBUG) {
+                logger.debug("Updated copyright header: {}", boardFile);
+            }
+        } catch (Exception ex) {
+            logger.error(ex, "Could not save board: {}", boardFile);
         }
     }
 }

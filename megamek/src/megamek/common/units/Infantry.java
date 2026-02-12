@@ -959,6 +959,12 @@ public class Infantry extends Entity {
 
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
+        // EI bonus for anti-Mek attacks per IO p.69
+        // "All Piloting Skill rolls required for the EI-equipped unit receives a -1 target number modifier.
+        // This includes checks made for physical attacks, as well as anti-Mek attacks by EI-equipped battle armor."
+        if (hasActiveEiCockpit()) {
+            prd.addModifier(-1, "Enhanced Imaging");
+        }
         return prd;
     }
 

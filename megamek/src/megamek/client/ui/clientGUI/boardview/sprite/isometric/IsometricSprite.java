@@ -42,7 +42,6 @@ import megamek.client.ui.clientGUI.boardview.sprite.HexSprite;
 import megamek.client.ui.util.EntityWreckHelper;
 import megamek.common.Player;
 import megamek.common.board.Coords;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -71,10 +70,10 @@ public class IsometricSprite extends HexSprite {
               bv.getPanel().getFontMetrics(font).getAscent());
 
         int altAdjust = 0;
-        if (bv.useIsometric() && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
+        if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
             altAdjust = (int) (bv.DROP_SHADOW_DISTANCE * bv.getScale());
-        } else if (bv.useIsometric() && (entity.getElevation() != 0) && !(entity.isBuildingEntityOrGunEmplacement())) {
-            altAdjust = (int) (entity.getElevation() * BoardView.HEX_ELEV * bv.getScale());
+        } else if ((entity.getElevation() != 0) && !(entity.isBuildingEntityOrGunEmplacement())) {
+            altAdjust = (int) (entity.getElevation() * bv.getVerticalOffset() * bv.getScale());
         }
 
         Dimension dim = new Dimension(bv.getHexSize().width, bv.getHexSize().height + altAdjust);
@@ -96,6 +95,7 @@ public class IsometricSprite extends HexSprite {
         return entity;
     }
 
+    @Override
     public Coords getPosition() {
         if (secondaryPos == -1) {
             return entity.getPosition();
@@ -146,7 +146,7 @@ public class IsometricSprite extends HexSprite {
             shadow = bv.getScaledImage(shadow, true);
 
             // Entities on a bridge hex or submerged in water.
-            int altAdjust = (int) (entity.getElevation() * BoardView.HEX_ELEV * bv.getScale());
+            int altAdjust = (int) (entity.getElevation() * bv.getVerticalOffset() * bv.getScale());
             if (makeTranslucent) {
                 if (entity.relHeight() < 0) {
                     g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f));

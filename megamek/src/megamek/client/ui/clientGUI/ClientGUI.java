@@ -172,6 +172,7 @@ import megamek.common.loaders.MULParser;
 import megamek.common.loaders.MekSummaryCache;
 import megamek.common.moves.MovePath;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
@@ -184,6 +185,7 @@ import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.handlers.WeaponOrderHandler;
 import megamek.logging.MMLogger;
+import megamek.utilities.BoardsTagger;
 
 public class ClientGUI extends AbstractClientGUI
       implements BoardViewListener, ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots,
@@ -218,6 +220,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String BOARD_SAVE_AS = "fileBoardSaveAs";
     public static final String BOARD_SAVE_AS_IMAGE = "fileBoardSaveAsImage";
     public static final String BOARD_SAVE_AS_IMAGE_UNITS = "fileBoardSaveAsImageUnits";
+    public static final String BOARD_RUN_BOARD_TAGGER = "boardRunBoardTagger";
     public static final String BOARD_RESIZE = "boardResize";
     public static final String BOARD_VALIDATE = "boardValidate";
     public static final String BOARD_SOURCE_FILE = "boardSourcefile";
@@ -748,7 +751,7 @@ public class ClientGUI extends AbstractClientGUI
             unitLoadingDialog.setVisible(true);
         }
         mekSelectorDialog = new MegaMekUnitSelectorDialog(this, unitLoadingDialog);
-        randomArmyDialog = new RandomArmyDialog(this);
+        randomArmyDialog = new RandomArmyDialog(frame, this);
         new Thread(mekSelectorDialog, Messages.getString("ClientGUI.mekSelectorDialog")).start();
         frame.setVisible(true);
         GUIP.addPreferenceChangeListener(this);
@@ -1252,6 +1255,7 @@ public class ClientGUI extends AbstractClientGUI
     /**
      * Saves the current settings to the cfg file.
      */
+    @Override
     void saveSettings() {
         super.saveSettings();
 
@@ -2981,20 +2985,37 @@ public class ClientGUI extends AbstractClientGUI
                         }
                         amsOptions.add(waaMsg);
                     }
-
-                    result = JOptionPane.showInputDialog(frame,
-                          Messages.getString("CFRAMSAssign.Message", entity.getDisplayName()),
-                          Messages.getString("CFRAMSAssign.Title", entity.getDisplayName()),
-                          JOptionPane.QUESTION_MESSAGE,
-                          null,
-                          amsOptions.toArray(),
-                          null);
-                    // If they closed it, assume no action
-                    if ((result == null) || result.equals(Messages.getString("NONE"))) {
-                        client.sendAMSAssignCFRResponse(null);
+                    
+                    // Updated AMS selection code for dealing with Multi_AMS, Playtest3 and standard selection
+                    JList amsList = new JList(amsOptions.toArray());
+                    JScrollPane amsScrollPane = new JScrollPane(amsList);
+                    if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS)) {
+                        amsList.setSelectionModel(new AmsAssignGUI(amsList, amsOptions.size()));
+                    } else if (entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                        amsList.setSelectionModel(new AmsAssignGUI(amsList, 2));
                     } else {
-                        client.sendAMSAssignCFRResponse(amsOptions.indexOf(result) - 1);
+                        amsList.setSelectionModel(new AmsAssignGUI(amsList, 1));
                     }
+
+                    int amsResult = JOptionPane.showConfirmDialog(frame, 
+                          amsScrollPane,
+                          Messages.getString("CFRAMSAssign.Message", entity.getDisplayName()),
+                          JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE
+                    );
+
+                    int[] selectedItems = amsList.getSelectedIndices();
+                    if (amsResult == JOptionPane.OK_OPTION && !(selectedItems.length == 1
+                          && amsList.getSelectedValue() == "NONE") ) {
+                        // Due to the "None" option, reduce all selected index values by 1.
+                        // This makes "None" a -1 value.
+                        for (int i = 0; i < selectedItems.length; i++) {
+                            selectedItems[i] = selectedItems[i]-1;
+                        }
+                        client.sendAMSAssignCFRResponse(selectedItems);
+                    } else {
+                        client.sendAMSAssignCFRResponse(null);
+                    }
+                    
                     break;
                 case CFR_APDS_ASSIGN:
                     if (entity == null) {
@@ -3179,6 +3200,7 @@ public class ClientGUI extends AbstractClientGUI
         }
     };
 
+    @Override
     public Client getClient() {
         return client;
     }
@@ -3560,7 +3582,7 @@ public class ClientGUI extends AbstractClientGUI
      * @param entity The attacking entity
      */
     public void showFiringSolutions(Entity entity) {
-        firingSolutionSpriteHandler.showFiringSolutions(entity);
+        firingSolutionSpriteHandler.showFiringSolutions(entity, getDisplayedWeapon(), getDisplayedAmmo());
     }
 
     public JPanel getMainPanel() {

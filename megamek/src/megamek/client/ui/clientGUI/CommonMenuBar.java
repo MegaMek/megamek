@@ -72,13 +72,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     /** True when this menu is attached to the board editor. */
-    private boolean isBoardEditor = false;
+    private final boolean isBoardEditor;
 
     /** True when this menu is attached to the game's main menu. */
-    private boolean isMainMenu = false;
+    private final boolean isMainMenu;
 
     /** True when this menu is attached to a client (lobby or in game). */
-    private boolean isGame = false;
+    private final boolean isGame;
 
     /** The current phase of the game, if any. */
     private GamePhase phase = GamePhase.UNKNOWN;
@@ -100,6 +100,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     // The Units menu
     private final JMenuItem fileUnitsReinforce = new JMenuItem(getString("CommonMenuBar.fileUnitsReinforce"));
     private final JMenuItem fileUnitsReinforceRAT = new JMenuItem(getString("CommonMenuBar.fileUnitsReinforceRAT"));
+    private final JMenuItem fileCreateRandom = new JMenuItem("Create Random Army");
     private final JMenuItem fileUnitsPaste = new JMenuItem(getString("CommonMenuBar.fileUnitsPaste"));
     private final JMenuItem fileUnitsCopy = new JMenuItem(getString("CommonMenuBar.fileUnitsCopy"));
     private final JMenuItem fileUnitsSave = new JMenuItem(getString("CommonMenuBar.fileUnitsSave"));
@@ -113,10 +114,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JMenuItem boardSaveAs = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAs"));
     private final JMenuItem boardSaveAsImage = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAsImage"));
     private final JMenuItem boardSaveAsImageUnits = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAsImageUnits"));
-    private final JCheckBoxMenuItem boardTraceOverlay = new JCheckBoxMenuItem(getString(
-          "CommonMenuBar.boardTraceOverlay"));
+    private final JCheckBoxMenuItem boardTraceOverlay = new JCheckBoxMenuItem(getString("CommonMenuBar.boardTraceOverlay"));
     private final JMenuItem boardResize = new JMenuItem(getString("CommonMenuBar.boardResize"));
     private final JMenuItem boardValidate = new JMenuItem(getString("CommonMenuBar.boardValidate"));
+    private final JMenuItem boardRunBoardTagger = new JMenuItem(getString("CommonMenuBar.boardRunBoardTagger"));
     private final JMenuItem boardSourceFile = new JMenuItem(getString("CommonMenuBar.boardSourceFile"));
     private final JMenuItem boardUndo = new JMenuItem(getString("CommonMenuBar.boardUndo"));
     private final JMenuItem boardRedo = new JMenuItem(getString("CommonMenuBar.boardRedo"));
@@ -188,28 +189,28 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final Map<String, JMenuItem> itemMap = new HashMap<>();
 
     public static CommonMenuBar getMenuBarForGame() {
-        var menuBar = new CommonMenuBar();
-        menuBar.isGame = true;
+        var menuBar = new CommonMenuBar(false, true, false);
         menuBar.updateEnabledStates();
         return menuBar;
     }
 
     public static CommonMenuBar getMenuBarForBoardEditor() {
-        var menuBar = new CommonMenuBar();
-        menuBar.isBoardEditor = true;
+        var menuBar = new CommonMenuBar(false, false, true);
         menuBar.updateEnabledStates();
         return menuBar;
     }
 
     public static CommonMenuBar getMenuBarForMainMenu() {
-        var menuBar = new CommonMenuBar();
-        menuBar.isMainMenu = true;
+        var menuBar = new CommonMenuBar(true, false, false);
         menuBar.updateEnabledStates();
         return menuBar;
     }
 
     /** Creates the common MegaMek menu bar. */
-    public CommonMenuBar() {
+    private CommonMenuBar(boolean isMainMenu, boolean isGame, boolean isBoardEditor) {
+        this.isMainMenu = isMainMenu;
+        this.isGame = isGame;
+        this.isBoardEditor = isBoardEditor;
         // Create the Game menu
         JMenu menu = new JMenu(Messages.getString("CommonMenuBar.FileMenu"));
         menu.setMnemonic(VK_F);
@@ -237,7 +238,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(fileUnitsPaste, menu, FILE_UNITS_PASTE);
         fileUnitsPaste.setAccelerator(KeyStroke.getKeyStroke(VK_V, CTRL_DOWN_MASK));
         initMenuItem(fileUnitsReinforce, menu, FILE_UNITS_REINFORCE);
-        initMenuItem(fileUnitsReinforceRAT, menu, FILE_UNITS_REINFORCE_RAT);
+        initMenuItem(isMainMenu ? fileCreateRandom : fileUnitsReinforceRAT, menu, FILE_UNITS_REINFORCE_RAT);
         initMenuItem(fileUnitsSave, menu, FILE_UNITS_SAVE);
         menu.addSeparator();
 
@@ -260,8 +261,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initializeRecentBoardsMenu();
         initMenuItem(boardSave, menu, BOARD_SAVE);
         initMenuItem(boardSaveAs, menu, BOARD_SAVE_AS);
+        menu.addSeparator();
+
         initMenuItem(boardValidate, menu, BOARD_VALIDATE);
         initMenuItem(boardSourceFile, menu, BOARD_SOURCE_FILE);
+        initMenuItem(boardRunBoardTagger, menu, BOARD_RUN_BOARD_TAGGER);
         menu.addSeparator();
 
         initMenuItem(boardSaveAsImage, menu, BOARD_SAVE_AS_IMAGE);
@@ -504,6 +508,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardRemoveForests.setEnabled(isBoardEditor);
         boardFlatten.setEnabled(isBoardEditor);
         boardValidate.setEnabled(isBoardEditor);
+        boardRunBoardTagger.setEnabled(isBoardEditor);
         boardResize.setEnabled(isBoardEditor);
         boardSourceFile.setEnabled(isBoardEditor);
         gameQLoad.setEnabled(isMainMenu || isLobby);
@@ -525,7 +530,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         fileUnitsPaste.setEnabled(isLobby);
         fileUnitsCopy.setEnabled(isLobby);
         fileUnitsReinforce.setEnabled((isInGame) && isNotVictory);
-        fileUnitsReinforceRAT.setEnabled((isLobby || isInGame) && isNotVictory);
+        fileUnitsReinforceRAT.setEnabled((isMainMenu || isLobby || isInGame) && isNotVictory);
         fileUnitsSave.setEnabled(isLobby || (isInGame && canSave));
         fileUnitsBrowse.setEnabled(isMainMenu);
         boardSaveAsImageUnits.setEnabled(isInGame);

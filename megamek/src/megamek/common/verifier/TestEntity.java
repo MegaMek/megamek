@@ -81,6 +81,15 @@ public abstract class TestEntity implements TestEntityOption {
     protected Structure structure;
     private final TestEntityOption options;
 
+    /**
+     * Optional game year to use for intro date validation instead of the unit's intro year.
+     * When set to a value > 0, {@link #hasIncorrectIntroYear(StringBuffer)} will compare equipment
+     * intro dates against this year instead of the entity's year. This supports the "Use Game Year"
+     * setting in MegaMekLab where equipment availability is determined by the configured game year
+     * rather than the unit's intro year.
+     */
+    private int gameYear = -1;
+
     public abstract Entity getEntity();
 
     public abstract boolean isTank();
@@ -282,6 +291,28 @@ public abstract class TestEntity implements TestEntityOption {
     @Override
     public int getIntroYearMargin() {
         return options.getIntroYearMargin();
+    }
+
+    /**
+     * Gets the game year to use for intro date validation. When > 0, equipment intro dates are
+     * compared against this year instead of the entity's intro year.
+     *
+     * @return The game year, or -1 if not set (use entity year)
+     */
+    public int getGameYear() {
+        return gameYear;
+    }
+
+    /**
+     * Sets the game year to use for intro date validation. When set to a value > 0, equipment intro
+     * dates will be compared against this year instead of the entity's intro year. This supports
+     * scenarios where equipment availability is determined by a campaign's current year rather than
+     * the unit's original intro year.
+     *
+     * @param gameYear The game year to use, or -1 to use entity year
+     */
+    public void setGameYear(int gameYear) {
+        this.gameYear = gameYear;
     }
 
     @Override
@@ -1381,7 +1412,14 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     /**
-     * Compares intro dates of all components to the unit intro year.
+     * Compares intro dates of all components to the unit intro year (or game year if available).
+     * The year used for comparison is determined in order of priority:
+     * <ol>
+     *   <li>If {@link #setGameYear(int)} was called with a value > 0, use that year</li>
+     *   <li>Otherwise, use {@link Entity#getTechLevelYear()} which returns the game's ALLOWED_YEAR
+     *       if the entity is part of a game, or the entity's intro year if not</li>
+     * </ol>
+     * This supports both MegaMek gameplay (using game options) and MegaMekLab (using config settings).
      *
      * @param buff Descriptions of problems will be added to the buffer.
      *
@@ -1389,10 +1427,13 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public boolean hasIncorrectIntroYear(StringBuffer buff) {
         boolean retVal = false;
-        if (getEntity().getEarliestTechDate() <= getEntity().getYear() + getIntroYearMargin()) {
+        // Use explicitly set game year if available, otherwise use entity's tech level year
+        // (which checks game options first, then falls back to entity year)
+        int baseYear = (gameYear > 0) ? gameYear : getEntity().getTechLevelYear();
+        if (getEntity().getEarliestTechDate() <= baseYear + getIntroYearMargin()) {
             return false;
         }
-        int useIntroYear = getEntity().getYear() + getIntroYearMargin();
+        int useIntroYear = baseYear + getIntroYearMargin();
         if (getEntity().isOmni()) {
             int introDate = Entity.getOmniAdvancement(getEntity()).getIntroductionDate(
                   getEntity().isClan() || getEntity().isMixedTech());
@@ -1407,6 +1448,12 @@ public abstract class TestEntity implements TestEntityOption {
         for (Mounted<?> mounted : getEntity().getEquipment()) {
             final EquipmentType nextE = mounted.getType();
             if (checked.contains(nextE) || (nextE instanceof AmmoType)) {
+                continue;
+            }
+            // Skip EI Interface and DNI - they're retrofittable equipment (IO p.69)
+            // Their intro year should not be compared against unit intro year
+            if ((nextE instanceof MiscType) && (nextE.hasFlag(MiscType.F_EI_INTERFACE)
+                  || nextE.hasFlag(MiscType.F_DNI_COCKPIT_MOD))) {
                 continue;
             }
             checked.add(nextE);

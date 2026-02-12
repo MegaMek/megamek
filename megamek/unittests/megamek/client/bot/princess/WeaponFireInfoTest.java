@@ -33,7 +33,9 @@
 package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -44,20 +46,28 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import megamek.client.bot.princess.FireControl.FireControlType;
+import megamek.common.Hex;
+import megamek.common.HexTarget;
+import megamek.common.Player;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
+import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -361,5 +371,73 @@ class WeaponFireInfoTest {
         assertEquals(expectedTHD.getValue(), processed.getValue());
         assertEquals(expectedTHD.getDesc(), processed.getDesc());
         assertNotEquals(originalTHD, processed);
+    }
+
+    @Test
+    void computeExpectedBombDamageDoesNotShowHidden() throws LocationFullException {
+        // Confirm that computeExpectedBombDamage does *not* consider hidden units
+        AeroSpaceFighter aeroSpaceFighter = new AeroSpaceFighter();
+        aeroSpaceFighter.setId(1);
+        aeroSpaceFighter.setDeployed(true);
+        BombMounted heBomb = (BombMounted) aeroSpaceFighter.addBomb(EquipmentType.get("HEBomb"),
+              AeroSpaceFighter.LOC_NOSE);
+        WeaponMounted diveBomb = (WeaponMounted) aeroSpaceFighter.addEquipment(EquipmentType.get(
+              "DiveBombAttack"), AeroSpaceFighter.LOC_NOSE);
+        assertNotNull(aeroSpaceFighter.getBombs());
+        EntityState asfState = new EntityState(aeroSpaceFighter);
+
+        // Target is an immobile biped mek
+        Mek target = new BipedMek();
+        target.setId(2);
+        target.setDeployed(true);
+
+        // Set up coords, hexes, board, and game
+        Coords targetCoords = new Coords(8, 8);
+        target.setPosition(targetCoords);
+        target.setElevation(0);
+        target.setAltitude(0);
+        assertFalse(target.isAirborne());
+
+        Hex targetHex = new Hex();
+        targetHex.setCoords(targetCoords);
+        targetHex.setLevel(1);
+        HexTarget hexTarget = new HexTarget(targetCoords, Targetable.TYPE_HEX_AERO_BOMB);
+        hexTarget.setTargetLevel(1);
+        EntityState hexTargetState = new EntityState(hexTarget);
+
+        Game game = new Game();
+        Board board = new Board(16, 17);
+        board.setHex(targetCoords, targetHex);
+        game.setBoard(board);
+
+        // Set up game players, teams, and unit ownership
+        game.addPlayer(1, new Player(1, "Test"));
+        game.getPlayer(1).setTeam(1);
+        game.addPlayer(2, new Player(2, "Baka"));
+        game.getPlayer(2).setTeam(2);
+
+        aeroSpaceFighter.setOwner(game.getPlayer(1));
+        target.setOwner(game.getPlayer(2));
+        game.addEntity(aeroSpaceFighter);
+        game.addEntity(target);
+
+        // Set up WFI
+        WeaponFireInfo testWeaponFireInfo = setupWFI();
+        testWeaponFireInfo.setShooter(aeroSpaceFighter);
+        testWeaponFireInfo.setShooterState(asfState);
+        testWeaponFireInfo.setTarget(hexTarget);
+        testWeaponFireInfo.setTargetState(hexTargetState);
+        testWeaponFireInfo.setWeapon(diveBomb);
+        testWeaponFireInfo.setGame(game);
+
+        // Confirm expected bomb damage computation works correctly for non-hidden target
+        // Damage[] is (damage, friendlyDamage, buildingDamage)
+        double[] damage = testWeaponFireInfo.computeExpectedBombDamage(aeroSpaceFighter, diveBomb, hexTarget);
+        assertEquals(10.0, damage[0]);
+
+        // Set target to "hidden" and re-check; the hidden unit should now be excluded from expected bomb damage calcs
+        target.setHidden(true);
+        damage = testWeaponFireInfo.computeExpectedBombDamage(aeroSpaceFighter, diveBomb, hexTarget);
+        assertEquals(0.0, damage[0]);
     }
 }

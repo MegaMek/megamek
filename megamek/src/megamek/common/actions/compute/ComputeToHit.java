@@ -46,7 +46,6 @@ import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscType;
@@ -354,7 +353,8 @@ public class ComputeToHit {
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM)) &&
-                  (munition.contains(AmmoType.Munitions.M_NARC_CAPABLE))) {
+                  (munition.contains(AmmoType.Munitions.M_NARC_CAPABLE) ||
+                        munition.contains(AmmoType.Munitions.M_ARAD))) {
                 isINarcGuided = true;
             }
         }
@@ -371,7 +371,7 @@ public class ComputeToHit {
                   (te != null) &&
                   (ammoType != null) &&
                   usesAmmo &&
-                  (munition.contains(AmmoType.Munitions.M_NARC_CAPABLE) &&
+                  ((munition.contains(AmmoType.Munitions.M_NARC_CAPABLE) || munition.contains(AmmoType.Munitions.M_ARAD) )&&
                         (te.isNarcedBy(ae.getOwner().getTeam()) || te.isINarcedBy(ae.getOwner().getTeam())))) {
                 spotter = te;
                 narcSpotter = true;
@@ -801,6 +801,9 @@ public class ComputeToHit {
               isECMAffected,
               isINarcGuided);
 
+        // Add the combined EI terrain reduction as a single modifier (if any was accumulated)
+        toHit.finalizeEiModifier();
+
         // okay!
         return toHit;
     }
@@ -1005,11 +1008,11 @@ public class ComputeToHit {
               (targetType == Targetable.TYPE_FUEL_TANK) ||
               (targetType == Targetable.TYPE_FUEL_TANK_IGNITE) ||
               (target.isBuildingEntityOrGunEmplacement());
-
-        if ((distance == 1) && isBuilding) {
+        
+        if ((distance == 1) && isBuilding && (ae.moved != EntityMovementType.MOVE_SPRINT && ae.moved != EntityMovementType.MOVE_VTOL_SPRINT)) {
             return Messages.getString("WeaponAttackAction.AdjBuilding");
         }
-
+        
         // Attacks against buildings from inside automatically hit.
         if ((null != los.getThruBldg()) && isBuilding) {
             return Messages.getString("WeaponAttackAction.InsideBuilding");

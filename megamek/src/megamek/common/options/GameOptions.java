@@ -160,6 +160,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT, 5);
         addOption(advancedRules, OptionsConstants.ADVANCED_NO_IGNITE_CLEAR, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_EXTREME_TEMPERATURE_SURVIVAL, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_ARMED_MEKWARRIORS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_VISUAL_RANGE_ONE, false);
@@ -212,6 +213,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BA_VS_BA, false);
+        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_NO_TAC, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_VTOL_STRAFING, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_VEHICLES_SAFE_FROM_INFERNOS, false);
@@ -231,7 +233,6 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_HOT_LOAD_IN_GAME, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS, false);
-        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS, false);
 
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement");
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_SPRINT, false);
@@ -332,10 +333,12 @@ public class GameOptions extends BasicGameOptions {
         addOption(rpg, OptionsConstants.RPG_BEGIN_SHUTDOWN, false);
     }
 
+    @Override
     public Vector<IOption> loadOptions() {
         return loadOptions(new File(GAME_OPTIONS_FILE_NAME), true);
     }
 
+    @Override
     public synchronized Vector<IOption> loadOptions(File file, boolean print) {
         Vector<IOption> changedOptions = new Vector<>(1, 1);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,24 +32,15 @@
  */
 package megamek.client.ui.dialogs.advancedsearch;
 
-class TriStateItem {
-    public String state;
-    public String text;
-    public int code;
+import com.formdev.flatlaf.extras.components.FlatTriStateCheckBox;
 
-    public TriStateItem(String state, String text) {
-        this.state = state;
-        this.text = text;
-    }
-
-    public TriStateItem(String state, int code, String text) {
-        this.state = state;
-        this.code = code;
-        this.text = text;
-    }
-
-    @Override
-    public String toString() {
-        return state + " " + text;
+/**
+ * This adapts FlatLaf's tri state checkbox to start as empty and go from there to checked and then "-" =
+ * INDETERMINATE.
+ */
+class SearchTriStateCheckBox extends FlatTriStateCheckBox {
+    public SearchTriStateCheckBox(String text) {
+        super(text, State.UNSELECTED);
+        setAltStateCycleOrder(true);
     }
 }

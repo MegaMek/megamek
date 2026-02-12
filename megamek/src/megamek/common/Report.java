@@ -627,6 +627,7 @@ public class Report implements ReportEntry {
      *
      * @return a String with the final report
      */
+    @Override
     public String text() {
         // The raw text of the message, with tags.
         String raw = ReportMessages.getString(String.valueOf(messageId));

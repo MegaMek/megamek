@@ -88,7 +88,7 @@ class ComputeToHitIsImpossible {
      * TODO: replace 40-ish parameters with an attack info record of some kind.
      *
      * @param game                  The current {@link Game}
-     * @param attacker              The Entity making this attack
+     * @param weaponEntity              The Entity making this attack
      * @param attackerId            The ID number of the attacking entity
      * @param target                The Targetable object being attacked
      * @param targetType            The targetable object type

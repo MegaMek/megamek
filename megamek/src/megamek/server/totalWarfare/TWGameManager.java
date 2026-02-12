@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -240,12 +240,8 @@ public class TWGameManager extends AbstractGameManager {
         terrainProcessors.add(new WeatherProcessor(this));
         terrainProcessors.add(new QuicksandProcessor(this));
 
-        // add damage manager
-        TWDamageManager newDamageManager = (game.getOptions().booleanOption("new_damage_manager")) ?
-              new TWDamageManagerModular() :
-              new TWDamageManager();
-
-        setDamageManager(newDamageManager);
+        // Set damage manager
+        setDamageManager(new TWDamageManager());
     }
 
     public TWGameManager(@Nullable TWDamageManager damageManager) {
@@ -5696,17 +5692,14 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Aerospace that fly off to return in a later round must be handled
-        // at the end of the round, but set some state here for simplicity
-        if (entity.isAero() && flewOff) {
-            Aero aero = (Aero) entity;
-
-            // Record direction
-            aero.setFlyingOff(fleeDirection);
-
-            // Currently only Aerospace can fly off and return.
-            if (returnable > -1) {
-                entity.setDeployRound(1 + game.getRoundCount() + returnable);
-            }
+        // at the end of the round, but set some state here for simplicity.
+        // Non-returning aero (returnable == -1) should fall through to the
+        // normal flee logic below, which properly removes them from the game
+        // with REMOVE_IN_RETREAT status.
+        if ((aeroUnit != null) && flewOff && (returnable > -1)) {
+            // Record direction for returning unit
+            aeroUnit.setFlyingOff(fleeDirection);
+            entity.setDeployRound(1 + game.getRoundCount() + returnable);
 
             // End activation but don't remove from the map yet.
             entity.setDone(true);
@@ -5812,9 +5805,10 @@ public class TWGameManager extends AbstractGameManager {
             // Handle Aerospace units that flew off the board this round but lingered through the
             // various phases for full attack opportunities.
             // TODO: use off-board state with flown-off aerospace units
-            if (entity instanceof Aero aero) {
+            if (entity.isAero()) {
+                IAero aero = (IAero) entity;
                 if (aero.isFlyingOff()) {
-                    reports.add(processFlyingOff(aero));
+                    reports.add(processFlyingOff(entity));
                 }
             }
         }
@@ -5825,21 +5819,22 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Compile report for Aerospace unit flying off the map at the end of the round, and finalize the unit's state.
      *
-     * @param aero Unit leaving the map using Thrust MPs
+     * @param entity Unit leaving the map using Thrust MPs (must implement IAero)
      *
-     * @return Vector of reports
+     * @return Report describing the unit flying off the map
      */
-    protected Report processFlyingOff(Aero aero) {
-        String retreatEdge = setRetreatEdge(aero, aero.getFlyingOffDirection());
+    protected Report processFlyingOff(Entity entity) {
+        IAero aero = (IAero) entity;
+        String retreatEdge = setRetreatEdge(entity, aero.getFlyingOffDirection());
 
         // Report aerospace flying off at the end of the round
         Report r = new Report(9370, Report.PUBLIC);
-        r.addDesc(aero);
+        r.addDesc(entity);
         r.add(retreatEdge);
 
         // Set un-deployed state
-        aero.setDeployed(false);
-        aero.setPosition(null);
+        entity.setDeployed(false);
+        entity.setPosition(null);
         aero.setFlyingOff(OffBoardDirection.NONE);
 
         // If we're flying off because we're OOC, when we come back we
@@ -7418,8 +7413,8 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Minefield> fieldsToRemove = new Vector<>();
         // loop through mines in this hex
         for (Minefield mf : game.getMinefields(c)) {
-            // VibraBombs are handled differently
-            if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
+            // VibraBombs and EMP mines are handled differently (proximity-based detection)
+            if ((mf.getType() == Minefield.TYPE_VIBRABOMB) || (mf.getType() == Minefield.TYPE_EMP)) {
                 continue;
             }
 
@@ -7975,6 +7970,72 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Checks to see if an entity sets off any EMP mines.
+     * <p>
+     * EMP mines trigger when a unit enters the same hex and meets the weight threshold. Unlike Vibrobombs, EMP mines
+     * have no distance-based detection - only same-hex triggering. Per TO:AR, EMP mines may make only one attack per
+     * scenario (one-use).
+     * </p>
+     *
+     * @param entity       The entity to check for triggering EMP mines
+     * @param coords       The coordinates to check for EMP mines
+     * @param vMineReport  Vector to collect reports from mine detonation
+     *
+     * @return true if any EMP mines were triggered
+     */
+    boolean checkEMPMines(Entity entity, Coords coords, Vector<Report> vMineReport) {
+        boolean boom = false;
+
+        Vector<Minefield> fieldsToRemove = new Vector<>();
+
+        for (Minefield mf : game.getEMPMines()) {
+            // Only trigger if unit is in the same hex as the mine
+            if (!coords.equals(mf.getCoords())) {
+                continue;
+            }
+
+            try {
+                // EMP mines cannot be placed in water and don't work underwater
+                if (game.getBoard().getHex(mf.getCoords()) != null &&
+                      game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER) &&
+                      !game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.PAVEMENT) &&
+                      !game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.ICE)) {
+                    continue;
+                }
+
+                // Check weight threshold - unit must weigh more than (setting - 10) tons to trigger
+                // Per TO:AR, EMP mines use same weight threshold mechanic as Vibromines
+                double mass = entity.getWeight();
+                if (mass <= (mf.getSetting() - 10)) {
+                    continue;
+                }
+
+            } catch (NullPointerException _ignored) {
+                LOGGER.warn("EMP mine not found on board: {}", mf.toString());
+                continue;
+            }
+
+            // EMP mine triggered - resolve effects
+            EMPMineEffectResolver empResolver = new EMPMineEffectResolver(this);
+            vMineReport.addAll(empResolver.resolveEMPMineDetonation(mf, entity, mf.getCoords()));
+
+            // EMP mines are one-use - mark for removal
+            fieldsToRemove.add(mf);
+            boom = true;
+
+            // Reveal the minefield
+            revealMinefield(mf);
+        }
+
+        // Remove detonated EMP mines (one-use)
+        for (Minefield mf : fieldsToRemove) {
+            removeMinefield(mf);
+        }
+
+        return boom;
+    }
+
+    /**
      * Removes the minefield from the game.
      *
      * @param mf The <code>Minefield</code> to remove
@@ -7982,6 +8043,9 @@ public class TWGameManager extends AbstractGameManager {
     public void removeMinefield(Minefield mf) {
         if (game.containsVibrabomb(mf)) {
             game.removeVibrabomb(mf);
+        }
+        if (game.containsEMPMine(mf)) {
+            game.removeEMPMine(mf);
         }
         game.removeMinefield(mf);
 
@@ -9395,6 +9459,7 @@ public class TWGameManager extends AbstractGameManager {
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity, Coords src, Coords dest, int elev) {
         Vector<Report> vPhaseReport = new Vector<>();
         boolean boom = checkVibraBombs(entity, dest, true, vPhaseReport);
+        boom = checkEMPMines(entity, dest, vPhaseReport) || boom;
         if (game.containsMinefield(dest)) {
             boom = enterMinefield(entity, dest, elev, true, vPhaseReport) || boom;
         }
@@ -9504,6 +9569,8 @@ public class TWGameManager extends AbstractGameManager {
             game.addMinefield(mf);
             if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
                 game.addVibrabomb(mf);
+            } else if (mf.getType() == Minefield.TYPE_EMP) {
+                game.addEMPMine(mf);
             }
         }
 
@@ -10123,6 +10190,8 @@ public class TWGameManager extends AbstractGameManager {
 
             if (ams.curMode().equals("Automatic")) {
                 targetedWAA = Compute.getHighestExpectedDamage(game, vAttacksInArc, true);
+                targetedWAA.addCounterEquipment(ams);
+                amsTargets.add(targetedWAA);
             } else {
                 // Send a client feedback request
                 sendAMSAssignCFR(e, ams, vAttacksInArc);
@@ -10141,17 +10210,21 @@ public class TWGameManager extends AbstractGameManager {
                             LOGGER.error("Expected a CFR_AMS_ASSIGN CFR packet, received: {}", cfrType);
                             throw new IllegalStateException();
                         }
-                        Integer waaIndex = (Integer) rp.getPacket().data()[1];
+                        int[] waaIndex = (int[]) rp.getPacket().data()[1];
                         if (waaIndex != null) {
-                            targetedWAA = vAttacksInArc.get(waaIndex);
+                            for (int waaNum : waaIndex) {
+                                // -1 in the waaNum indicates that None was selected in addition to others, and can be 
+                                // ignored
+                                if (waaNum == -1) {
+                                    continue;
+                                }
+                                targetedWAA = vAttacksInArc.get(waaNum);
+                                targetedWAA.addCounterEquipment(ams);
+                                amsTargets.add(targetedWAA);
+                            }
                         }
                     }
                 }
-            }
-
-            if (targetedWAA != null) {
-                targetedWAA.addCounterEquipment(ams);
-                amsTargets.add(targetedWAA);
             }
         }
     }
@@ -11441,7 +11514,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean throughFront = true;
 
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
 
         final String armName = (paa.getArm() == PunchAttackAction.LEFT) ? "Left Arm" : "Right Arm";
@@ -11739,7 +11812,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
         String legName = (kaa.getLeg() == KickAttackAction.LEFT) || (kaa.getLeg() == KickAttackAction.LEFT_MULE) ?
               "Left " :
@@ -11996,7 +12069,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
         String legName = switch (kaa.getLeg()) {
             case JumpJetAttackAction.LEFT -> "Left leg";
@@ -12217,7 +12290,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions()
@@ -13390,7 +13463,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions()
@@ -14455,7 +14528,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean throughFront = true;
 
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
 
         final boolean glancing = game.getOptions()
@@ -14653,7 +14726,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
         final boolean glancing = game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
@@ -14820,7 +14893,7 @@ public class TWGameManager extends AbstractGameManager {
 
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
 
         Report r;
@@ -14976,7 +15049,7 @@ public class TWGameManager extends AbstractGameManager {
 
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
 
         Report r;
@@ -16144,7 +16217,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
         boolean throughFront = Optional.ofNullable(targetEntity)
-              .map(te -> Compute.isThroughFrontHex(game, ae.getPosition(), te))
+              .map(te -> Compute.isThroughFrontHex(ae.getPosition(), te))
               .orElse(true);
 
         final boolean glancing = game.getOptions()
@@ -19990,7 +20063,9 @@ public class TWGameManager extends AbstractGameManager {
         // BVDNI critical hit feedback - Meks and Vehicles only (IO pg 71)
         // Per BVDNI rules: "Fighters and battle armor operated via buffered VDNI do not have
         // to check for feedback damage at all."
-        if (en.hasAbility(OptionsConstants.MD_BVDNI) &&
+        // When tracking neural interface hardware, require DNI cockpit mod for feedback
+        if (en.hasActiveDNI() &&
+              en.hasAbility(OptionsConstants.MD_BVDNI) &&
               !en.hasAbility(OptionsConstants.MD_PAIN_SHUNT) &&
               !(en instanceof Aero) &&
               !(en instanceof BattleArmor)) {
@@ -20007,7 +20082,8 @@ public class TWGameManager extends AbstractGameManager {
             if (diceRoll.getIntValue() >= 8) {
                 vDesc.addAll(damageCrew(en, 1));
             }
-        } else if (en.hasAbility(OptionsConstants.MD_BVDNI) &&
+        } else if (en.hasActiveDNI() &&
+              en.hasAbility(OptionsConstants.MD_BVDNI) &&
               en.hasAbility(OptionsConstants.MD_PAIN_SHUNT) &&
               !(en instanceof Aero) &&
               !(en instanceof BattleArmor)) {
@@ -20195,6 +20271,16 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
 
+                break;
+            case Mek.SYSTEM_LIFE_SUPPORT:
+                // Damage Interrupt Circuit (IO p.39) is disabled by life support critical hit
+                if ((en instanceof Mek mek) && (mek.hasDamageInterruptCircuit()) && (!mek.isDICDisabled())) {
+                    mek.setDICDisabled(true);
+                    r = new Report(6267);
+                    r.subject = en.getId();
+                    r.indent(3);
+                    reports.addElement(r);
+                }
                 break;
             case Mek.SYSTEM_ENGINE:
                 // if the slot is missing, the location was previously
@@ -21231,8 +21317,10 @@ public class TWGameManager extends AbstractGameManager {
         // BVDNI fighters get NO feedback at all per rules.
         // Important: Only trigger on actual critical hits, not when threshold/SI damage rolls
         // resulted in no effect (CRIT_NONE).
+        // When tracking neural interface hardware, require DNI cockpit mod for feedback
         if (cs.getIndex() != Aero.CRIT_NONE &&
               aero.isFighter() &&
+              aero.hasActiveDNI() &&
               aero.hasAbility(OptionsConstants.MD_VDNI) &&
               !aero.hasAbility(OptionsConstants.MD_BVDNI) &&
               !aero.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
@@ -21251,6 +21339,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         } else if (cs.getIndex() != Aero.CRIT_NONE &&
               aero.isFighter() &&
+              aero.hasActiveDNI() &&
               aero.hasAbility(OptionsConstants.MD_VDNI) &&
               !aero.hasAbility(OptionsConstants.MD_BVDNI) &&
               aero.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
@@ -21263,6 +21352,7 @@ public class TWGameManager extends AbstractGameManager {
             reports.add(r);
         } else if (cs.getIndex() != Aero.CRIT_NONE &&
               aero.isFighter() &&
+              aero.hasActiveDNI() &&
               aero.hasAbility(OptionsConstants.MD_BVDNI)) {
             // BVDNI fighters are immune to critical hit feedback - show message for clarity
             Report.addNewline(reports);
@@ -21633,7 +21723,9 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case Tank.CRIT_COMMANDER:
                 // VDNI vehicles get 1 damage on Commander critical (IO pg 71)
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                // When tracking neural interface hardware, require DNI cockpit mod for feedback
+                if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     r = new Report(3587);
@@ -21641,7 +21733,8 @@ public class TWGameManager extends AbstractGameManager {
                     r.addDesc(tank);
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
-                } else if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                } else if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     // Pain Shunt blocks VDNI feedback, falls through to crew stunned
@@ -21673,7 +21766,9 @@ public class TWGameManager extends AbstractGameManager {
                 // apply
             case Tank.CRIT_CREW_STUNNED:
                 // VDNI vehicles get 1 damage on Crew Stunned critical (IO pg 71)
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                // When tracking neural interface hardware, require DNI cockpit mod for feedback
+                if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     r = new Report(3587);
@@ -21681,7 +21776,8 @@ public class TWGameManager extends AbstractGameManager {
                     r.addDesc(tank);
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
-                } else if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                } else if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     // Pain Shunt blocks VDNI feedback (no message - may have been shown by Commander fall-through)
@@ -21704,7 +21800,9 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case Tank.CRIT_DRIVER:
                 // VDNI vehicles get 1 damage on Driver critical (IO pg 71)
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                // When tracking neural interface hardware, require DNI cockpit mod for feedback
+                if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     r = new Report(3587);
@@ -21712,7 +21810,8 @@ public class TWGameManager extends AbstractGameManager {
                     r.addDesc(tank);
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
-                } else if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                } else if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     // Pain Shunt blocks VDNI feedback
@@ -21738,7 +21837,9 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case Tank.CRIT_CREW_KILLED:
                 // VDNI Crew Killed kills the pilot outright (IO pg 71)
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                // When tracking neural interface hardware, require DNI cockpit mod for feedback
+                if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     r = new Report(3588);
@@ -21749,7 +21850,8 @@ public class TWGameManager extends AbstractGameManager {
                     if (tank.isAirborneVTOLorWIGE()) {
                         reports.addAll(crashVTOLorWiGE(tank));
                     }
-                } else if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                } else if (tank.hasActiveDNI() &&
+                      tank.hasAbility(OptionsConstants.MD_VDNI) &&
                       !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
                       tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     // Pain Shunt blocks VDNI feedback
@@ -23990,6 +24092,14 @@ public class TWGameManager extends AbstractGameManager {
         if (en instanceof Aero) {
             pilotDamage = 1;
         }
+        // Damage Interrupt Circuit (IO p.39) reduces internal explosion pilot damage to 1
+        if ((en instanceof Mek mek) && (mek.hasWorkingDIC())) {
+            pilotDamage = 1;
+            Report damageInterruptCircuitReport = new Report(6269);
+            damageInterruptCircuitReport.subject = en.getId();
+            damageInterruptCircuitReport.indent(2);
+            vDesc.addElement(damageInterruptCircuitReport);
+        }
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_CASE_PILOT_DAMAGE) &&
               (en.locationHasCase(hit.getLocation()) || en.hasCASEII(hit.getLocation()))) {
             pilotDamage = 1;
@@ -23997,9 +24107,10 @@ public class TWGameManager extends AbstractGameManager {
         if (en.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE) || en.hasAbility(OptionsConstants.MISC_IRON_MAN)) {
             pilotDamage -= 1;
         }
-        // tanks only take pilot damage when using BVDNI or VDNI
+        // tanks only take pilot damage when using BVDNI or VDNI (with active DNI when tracking hardware)
         if ((en instanceof Tank) &&
-              !(en.hasAbility(OptionsConstants.MD_VDNI) || en.hasAbility(OptionsConstants.MD_BVDNI))) {
+              !(en.hasActiveDNI() && (en.hasAbility(OptionsConstants.MD_VDNI)
+                    || en.hasAbility(OptionsConstants.MD_BVDNI)))) {
             pilotDamage = 0;
         }
         if (!en.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
@@ -26647,6 +26758,17 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Creates a packet containing a specific Vector of Reports which needs to be sent during a phase that is not a
+     * report phase. Use this when you want to send only specific reports (e.g., EMP mine detonation) rather than all
+     * accumulated reports.
+     *
+     * @param reports The specific reports to include in the packet
+     */
+    public Packet createSpecialReportPacket(Vector<Report> reports) {
+        return new Packet(PacketCommand.SENDING_REPORTS_SPECIAL, reports.clone());
+    }
+
+    /**
      * Creates a packet containing a Vector of Reports that represent a Tactical Genius re-roll request which needs to
      * update a current phase's report.
      */
@@ -26804,6 +26926,19 @@ public class TWGameManager extends AbstractGameManager {
 
     public void sendSmokeCloudAdded(SmokeCloud cloud) {
         send(new Packet(PacketCommand.ADD_SMOKE_CLOUD, cloud));
+    }
+
+    public void sendTemporaryECMFieldAdded(TemporaryECMField field) {
+        send(new Packet(PacketCommand.ADD_TEMPORARY_ECM_FIELD, field));
+    }
+
+    /**
+     * Sends all temporary ECM fields to clients, replacing their existing list. Called after expired fields are removed
+     * to sync client state.
+     */
+    public void sendSyncTemporaryECMFields() {
+        send(new Packet(PacketCommand.SYNC_TEMPORARY_ECM_FIELDS,
+              new ArrayList<>(game.getTemporaryECMFields())));
     }
 
     /**
@@ -30116,6 +30251,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Add a single report to the report queue of all players and the master vPhaseReport queue
      */
+    @Override
     public void addReport(ReportEntry report) {
         mainPhaseReport.addElement((Report) report);
     }

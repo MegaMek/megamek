@@ -37,6 +37,7 @@ package megamek.client.ui.clientGUI;
 import static megamek.common.compute.Compute.d6;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -90,6 +91,8 @@ import megamek.client.ui.dialogs.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.dialogs.gameConnectionDialogs.HostDialog;
 import megamek.client.ui.dialogs.helpDialogs.HelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
+import megamek.client.ui.dialogs.randomArmy.AbstractRandomArmyDialog;
+import megamek.client.ui.dialogs.randomArmy.MMMainMenuRandomArmyDialog;
 import megamek.client.ui.dialogs.scenario.ScenarioChooserDialog;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MainMenuUnitBrowserDialog;
 import megamek.client.ui.enums.DialogResult;
@@ -158,6 +161,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private ManagedVolatileImage logoImage;
     private ManagedVolatileImage medalImage;
     private TipOfTheDay tipOfTheDay;
+    private AbstractRandomArmyDialog randomArmyDialog;
 
     private static MegaMekController controller;
 
@@ -369,12 +373,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // Use the current monitor, so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
         Dimension scaledMonitorSize = UIUtil.getScaledScreenSize(frame);
-        Image splashImage = getImage(FILENAME_MEGAMEK_SPLASH, scaledMonitorSize.width, scaledMonitorSize.height);
-        logoImage = new ManagedVolatileImage(getImage(FILENAME_LOGO, scaledMonitorSize.width, scaledMonitorSize.height),
-              Transparency.TRANSLUCENT);
-        medalImage = new ManagedVolatileImage(getImage(FILENAME_MEDAL,
-              scaledMonitorSize.width,
-              scaledMonitorSize.height), Transparency.TRANSLUCENT);
+        Image splashImage = getImage(FILENAME_MEGAMEK_SPLASH);
+        logoImage = new ManagedVolatileImage(getImage(FILENAME_LOGO), Transparency.TRANSLUCENT);
+        medalImage = new ManagedVolatileImage(getImage(FILENAME_MEDAL), Transparency.TRANSLUCENT);
         Dimension splashPanelPreferredSize = calculateSplashPanelPreferredSize(scaledMonitorSize, splashImage);
         // This is an empty panel that will contain the splash image
         // Draw background, border, and children first
@@ -1037,7 +1038,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             }
 
             HostDialog hd = new HostDialog(frame);
-            if (!("".equals(sd.localName))) {
+            if (!sd.localName.isEmpty()) {
                 hasSlot = true;
             }
             hd.setPlayerName(sd.localName);
@@ -1224,6 +1225,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (tipOfTheDay != null) {
             tipOfTheDay.stopCycling();
         }
+        // clean up disposable things
+        if (randomArmyDialog != null) {
+            randomArmyDialog.dispose();
+            randomArmyDialog = null;
+        }
         // listen to new frame
         launched.addWindowListener(new WindowAdapter() {
             @Override
@@ -1282,7 +1288,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 host();
                 break;
             case ClientGUI.FILE_GAME_SCENARIO:
-                if ((ev.getModifiers() & Event.CTRL_MASK) != 0) {
+                if ((ev.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
                     // As a dev convenience, start the last scenario again when clicked with CTRL
                     scenario(PreferenceManager.getClientPreferences().getLastScenario());
                 } else {
@@ -1328,6 +1334,12 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 new Thread(unitSelectorDialog, "Mek Selector Dialog").start();
                 unitSelectorDialog.setVisible(true);
                 break;
+            case ClientGUI.FILE_UNITS_REINFORCE_RAT:
+                if (randomArmyDialog == null) {
+                    randomArmyDialog = new MMMainMenuRandomArmyDialog(frame);
+                }
+                randomArmyDialog.setVisible(true);
+                break;
         }
     };
 
@@ -1347,7 +1359,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
     }
 
-    private @Nullable Image getImage(final String filename, final int screenWidth, final int screenHeight) {
+    private @Nullable Image getImage(final String filename) {
         File file = new MegaMekFile(Configuration.widgetsDir(), filename).getFile();
         if (!file.exists()) {
             LOGGER.error("MainMenu Error: Image doesn't exist: {}", file.getAbsolutePath());

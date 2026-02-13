@@ -105,6 +105,7 @@ import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.EditBotsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.GameOptionsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.LOSDialog;
+import megamek.client.ui.dialogs.buttonDialogs.NetworkInformationDialog;
 import megamek.client.ui.dialogs.forceDisplay.ForceDisplayDialog;
 import megamek.client.ui.dialogs.forceDisplay.ForceDisplayPanel;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
@@ -278,6 +279,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_CHANGE_THEME = "viewChangeTheme";
     public static final String VIEW_ROUND_REPORT = "viewRoundReport";
     public static final String VIEW_GAME_OPTIONS = "viewGameOptions";
+    public static final String VIEW_NETWORK_INFORMATION = "viewNetworkInformation";
     public static final String VIEW_CLIENT_SETTINGS = "viewClientSettings";
     public static final String VIEW_LOS_SETTING = "viewLOSSetting";
     public static final String VIEW_PLAYER_SETTINGS = "viewPlayerSettings";
@@ -374,6 +376,7 @@ public class ClientGUI extends AbstractClientGUI
 
     // some dialogs...
     private GameOptionsDialog gameOptionsDialog;
+    private NetworkInformationDialog networkInformationDialog;
     private MegaMekUnitSelectorDialog mekSelectorDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
@@ -884,6 +887,14 @@ public class ClientGUI extends AbstractClientGUI
         getGameOptionsDialog().setVisible(true);
     }
 
+    private void showNetworkInformation() {
+        // Display the network information screen
+        getNetworkInformationDialog().refresh();
+        getNetworkInformationDialog().pack();
+        getNetworkInformationDialog().setVisible(true);
+    }
+
+
     public void customizePlayer() {
         PlayerSettingsDialog psd = new PlayerSettingsDialog(this, client, (BoardView) boardViews.get(0));
         psd.setVisible(true);
@@ -960,6 +971,9 @@ public class ClientGUI extends AbstractClientGUI
         }
         if (gameOptionsDialog != null) {
             gameOptionsDialog.setBounds(0, 0, gameOptionsDialog.getWidth(), gameOptionsDialog.getHeight());
+        }
+        if (networkInformationDialog != null) {
+            networkInformationDialog.setBounds(0, 0, networkInformationDialog.getWidth(), networkInformationDialog.getHeight());
         }
         if (commonSettingsDialog != null) {
             commonSettingsDialog.setBounds(0, 0, commonSettingsDialog.getWidth(), commonSettingsDialog.getHeight());
@@ -1071,6 +1085,9 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case VIEW_GAME_OPTIONS:
                 showOptions();
+                break;
+            case VIEW_NETWORK_INFORMATION:
+                showNetworkInformation();
                 break;
             case VIEW_PLAYER_SETTINGS:
                 customizePlayer();
@@ -1351,6 +1368,13 @@ public class ClientGUI extends AbstractClientGUI
             gameOptionsDialog = new GameOptionsDialog(this);
         }
         return gameOptionsDialog;
+    }
+    
+    public NetworkInformationDialog getNetworkInformationDialog() {
+        if (networkInformationDialog == null) {
+            networkInformationDialog = new NetworkInformationDialog(this);
+        }
+        return networkInformationDialog;
     }
 
     public MegaMekUnitSelectorDialog getMekSelectorDialog() {

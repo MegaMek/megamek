@@ -50,7 +50,7 @@ import java.io.InputStreamReader;
 import static megamek.client.ui.util.UIUtil.fontHTML;
 
 /**
- * A JPanel that holds the networking information about the current session
+ * A JPanel that holds the networking information about the network information of the current session.
  */
 public class NetworkInformationDialog extends AbstractButtonDialog implements ActionListener {
 
@@ -91,6 +91,7 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
         initialize();
     }
     
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == butShowLocalIPs) {
             if (localIP.isVisible()) {
@@ -115,6 +116,7 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
         }
     }
     
+    @Override
     protected Container createCenterPane() {
         var mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -172,10 +174,10 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
         if (localIP) {
             try {
                 InetAddress thisIp = InetAddress.getLocalHost();
-                thisIpAddress = thisIp.getHostAddress().toString();
+                thisIpAddress = thisIp.getHostAddress();
             } catch (Exception e) {
             }
-            if (thisIpAddress == "" || thisIpAddress == null) {
+            if (thisIpAddress.equals("") || thisIpAddress == null) {
                 thisIpAddress = "Could not obtain local IP address";
             }
         } else {
@@ -183,9 +185,10 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
                 URL whatismyip = new URL("http://checkip.amazonaws.com");
                 BufferedReader in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
                 thisIpAddress = in.readLine();
+                in.close();
             } catch (Exception e) {
             }
-            if (thisIpAddress =="" || thisIpAddress == null) {
+            if (thisIpAddress.equals("") || thisIpAddress == null) {
                 thisIpAddress = "Could not obtain public IP address";
             }
         }

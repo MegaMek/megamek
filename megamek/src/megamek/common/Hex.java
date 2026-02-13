@@ -557,8 +557,8 @@ public class Hex implements Serializable {
     }
 
     /**
-     * @return True if there is a bridge in this hex (thereby excluding any other type of building and requiring
-     * Terrains.BRIDGE_ELEV and Terrains.BRIDGE_CF to be present in this hex).
+     * @return True if there is a bridge in this hex. Tests if the hex has Terrains.BRIDGE. When true, the hex will also
+     *       have Terrains.BRIDGE_ELEV and Terrains.BRIDGE_CF.
      */
     public boolean hasBridge() {
         return containsTerrain(Terrains.BRIDGE);

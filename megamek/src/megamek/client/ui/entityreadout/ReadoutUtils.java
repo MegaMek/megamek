@@ -248,9 +248,15 @@ final class ReadoutUtils {
 
     static boolean hideMisc(MiscMounted mounted, Entity entity) {
         String name = mounted.getName();
+        // Check if this is a cockpit modification that should always be shown (e.g., DNI, EI Interface)
+        boolean isCockpitModification = mounted.getType().hasFlag(MiscType.F_DNI_COCKPIT_MOD)
+              || mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)
+              || mounted.getType().hasFlag(MiscType.F_DAMAGE_INTERRUPT_CIRCUIT);
         return (((mounted.getLocation() == Entity.LOC_NONE)
               // Meks can have zero-slot equipment in LOC_NONE that needs to be shown.
-              && (!(entity instanceof Mek) || mounted.getNumCriticalSlots() > 0)))
+              // Also show cockpit modifications for all unit types.
+              && (!(entity instanceof Mek) || mounted.getNumCriticalSlots() > 0)
+              && !isCockpitModification))
               || name.contains("Jump Jet")
               || (name.contains("CASE") && !name.contains("II") && entity.isClan())
               || (name.contains("Heat Sink") && !name.contains("Radical"))

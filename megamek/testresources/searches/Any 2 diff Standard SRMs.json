@@ -1,0 +1,26 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "name" : "Any 2 diff Standard SRMs",
+  "twState" : {
+    "unitTypeState" : { },
+    "transportsState" : { },
+    "quirksState" : {
+      "chassisQuirks" : { },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "cockpitType" : { },
+      "armorType" : { },
+      "internalsType" : { },
+      "engineType" : { },
+      "gyroType" : { },
+      "techLevel" : { },
+      "techBase" : { },
+      "moveMode" : { }
+    },
+    "equipmentState" : {
+      "filterTokens" : [ "(", "SRM 2__1__>=", "and", "SRM 4__1__>=", ")", "or", "(", "SRM 4__1__>=", "and", "SRM 6__1__>=", ")", "or", "(", "SRM 2__1__>=", "and", "SRM 6__1__>=", ")" ]
+    }
+  },
+  "asState" : { }
+}

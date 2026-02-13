@@ -39,7 +39,9 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.Messages;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.Transporter;
 import megamek.common.units.Entity;
@@ -210,5 +212,16 @@ public class VehicleTROView extends TROView {
             list.add(seatEntry);
         }
         return retVal;
+    }
+
+    @Override
+    protected boolean skipMount(Mounted<?> mount, boolean includeAmmo) {
+        if (mount.getLocation() == Entity.LOC_NONE) {
+            // Skip armor, structure, and CASE. Show cockpit modifications like DNI.
+            return mount.getType().hasFlag(MiscType.F_CASE)
+                  || EquipmentType.isArmorType(mount.getType())
+                  || EquipmentType.isStructureType(mount.getType());
+        }
+        return super.skipMount(mount, includeAmmo);
     }
 }

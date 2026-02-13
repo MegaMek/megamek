@@ -619,6 +619,7 @@ public class Server implements Runnable {
             gamePlayer.setNbrMFVibra(player.getNbrMFVibra());
             gamePlayer.setNbrMFActive(player.getNbrMFActive());
             gamePlayer.setNbrMFInferno(player.getNbrMFInferno());
+            gamePlayer.setNbrMFEMP(player.getNbrMFEMP());
             if (gamePlayer.getConstantInitBonus() != player.getConstantInitBonus()) {
                 sendServerChat("Player " +
                       gamePlayer.getName() +

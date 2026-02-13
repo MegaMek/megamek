@@ -56,7 +56,7 @@ public class VibrabombSettingDialog extends JDialog implements ActionListener {
     @Serial
     private static final long serialVersionUID = -7642956136536119067L;
     private final JButton butOk = new JButton(Messages.getString("Okay"));
-    private final JTextField fldSetting = new JTextField("20", 2);
+    private final JTextField fldSetting = new JTextField("10", 3);
     private int setting;
     private final JFrame frame;
 
@@ -113,7 +113,7 @@ public class VibrabombSettingDialog extends JDialog implements ActionListener {
                       JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            if ((setting < 20) || (setting > 100)) {
+            if ((setting < 10) || (setting > 200)) {
                 JOptionPane.showMessageDialog(frame,
                       Messages.getString("VibrabombSettingDialog.alert.Message"),
                       Messages.getString("VibrabombSettingDialog.alert.Title"),

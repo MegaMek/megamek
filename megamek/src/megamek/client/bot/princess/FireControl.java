@@ -1984,12 +1984,13 @@ public class FireControl {
         // 1. Target is flying Aerospace unit
         // 2. Target is VTOL not above blast-causing terrain
         // 3. Target is Submarine too far below surface level
+        // 4. Target is hidden
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity entity = (Entity) target;
             Hex hex = game.getHexOf(entity);
             hexToBomb.setTargetLevel((hex != null) ? hex.getLevel() : 0);
 
-            if (entity.isAirborne()) {
+            if (entity.isAirborne() || entity.isHidden()) {
                 return diveBombPlan;
             }
             if (entity.isAirborneVTOLorWIGE()) {

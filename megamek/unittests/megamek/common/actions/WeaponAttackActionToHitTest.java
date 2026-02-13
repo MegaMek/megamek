@@ -57,8 +57,10 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.Gender;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
@@ -74,14 +76,17 @@ import megamek.common.options.PilotOptions;
 import megamek.common.planetaryConditions.Light;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.units.Aero;
+import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.common.units.MekWithArms;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalWarfare.TWGameManager;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
@@ -111,6 +116,11 @@ public class WeaponAttackActionToHitTest {
     PilotOptions mockPilotOptions;
 
     Crew mockCrew;
+
+    @BeforeAll
+    static void setup() {
+        EquipmentType.initializeTypes();
+    }
 
     @BeforeEach
     void initialize() {
@@ -802,5 +812,77 @@ public class WeaponAttackActionToHitTest {
             assertFalse(shouldApplyCapitalPenalty(true, 501.0),
                   "501-ton dropship should NOT receive penalty");
         }
+    }
+
+    @Test
+    void testWAAMemoization() {
+        WeaponAttackAction waa = new WeaponAttackAction(1, 2, 1);
+
+        // set the expected damage, assuming a hit
+        float expected = 10.0f;
+        waa.setAssumedHit(true);
+        waa.setExpectedDamage(expected);
+
+        // Confirm Compute.getExpectedDamage returns the saved value immediately without further calculations
+        float returnValue = Compute.getExpectedDamage(mockGame, waa, true);
+        assertEquals(expected, returnValue);
+    }
+
+    @Test
+    void testWAAMemoizationOfGeneratedValues() throws Exception {
+        // Config attacker
+        Mek attacker = new BipedMek();
+        WeaponMounted lazor = (WeaponMounted) WeaponMounted.createMounted(
+              attacker,
+              EquipmentType.get("ISMediumLaser")
+        );
+        attacker.addEquipment(lazor, Mek.LOC_CENTER_TORSO, false);
+        attacker.setCrew(new Crew(CrewType.SINGLE, "Simon B. Tosspot", 1, 4, 5, Gender.MALE, false, null));
+        attacker.setId(1);
+        attacker.setOwner(mockPlayer);
+
+
+        // Config target
+        Tank target = new Tank();
+        target.setId(2);
+        target.setOwner(mockEnemy);
+
+        // Config game
+        Game game = new Game();
+        game.addPlayer(1, mockPlayer);
+        game.addPlayer(2, mockEnemy);
+        game.addEntity(attacker, false);
+        game.addEntity(target, false);
+
+        // Set up board.
+        Hex[] hexes = new Hex[17 * 16];
+        for (int i = 0; i < hexes.length; i++) {
+            hexes[i] = new Hex();
+        }
+        Board board =  new Board(17, 16, hexes);
+        Coords attackerCoords = new Coords(7, 6);
+        Coords targetCoords = new Coords(7, 5);
+        game.setBoard(board);
+
+        attacker.setPosition(attackerCoords);
+        target.setPosition(targetCoords);
+
+        // Create WAA instance
+        WeaponAttackAction waa = new WeaponAttackAction(attacker.getId(), target.getId(),
+              attacker.getEquipmentNum(lazor));
+
+        // Generate
+        float returnValue = Compute.getExpectedDamage(game, waa, true);
+
+        // Confirm cached settings with assuming a hit
+        assertTrue(waa.getAssumedHit());
+        assertEquals(5.0f, returnValue);
+        assertEquals(5.0f, waa.getExpectedDamage());
+
+        // Generate again _without_ assuming hit, confirm cached settings updated
+        returnValue = Compute.getExpectedDamage(game, waa, false);
+        assertFalse(waa.getAssumedHit());
+        assertEquals(4.58f, returnValue, 0.1f);
+        assertEquals(4.58f, waa.getExpectedDamage(), 0.1f);
     }
 }

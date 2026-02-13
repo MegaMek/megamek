@@ -84,6 +84,13 @@ public class ToHitData extends TargetRoll {
     private int range;
 
     /**
+     * Tracks Enhanced Imaging (EI) terrain reduction. EI reduces woods/smoke modifiers by 1 per hex (minimum +1 per
+     * hex). This accumulates the total reduction to be added as a single modifier at the end via
+     * {@link #finalizeEiModifier()}.
+     */
+    private int eiReduction = 0;
+
+    /**
      * Indicates if the primary cover is damagable.
      */
     int damagableCoverTypePrimary = LosEffects.DAMAGABLE_COVER_NONE;
@@ -346,6 +353,53 @@ public class ToHitData extends TargetRoll {
 
     public void setThruBldg(IBuilding b) {
         thruBldg = b;
+    }
+
+    /**
+     * Adds to the accumulated Enhanced Imaging (EI) terrain reduction. Call this instead of directly adding an EI
+     * modifier. Use {@link #finalizeEiModifier()} to add the combined EI modifier after all terrain calculations are
+     * complete.
+     *
+     * @param amount the EI reduction amount to add (should be positive)
+     */
+    public void addEiReduction(int amount) {
+        eiReduction += amount;
+    }
+
+    /**
+     * Returns the accumulated EI terrain reduction.
+     *
+     * @return the total EI reduction accumulated
+     */
+    public int getEiReduction() {
+        return eiReduction;
+    }
+
+    /**
+     * Adds the accumulated EI terrain reduction as a single modifier, if any reduction has been accumulated. Call this
+     * after all terrain modifiers have been added. This method clears the accumulated reduction after adding the
+     * modifier.
+     */
+    public void finalizeEiModifier() {
+        if (eiReduction > 0) {
+            addModifier(-eiReduction, "EI");
+            eiReduction = 0;
+        }
+    }
+
+    /**
+     * Appends another TargetRoll's modifiers to this one. If the other is a ToHitData, also combines the EI
+     * reductions.
+     *
+     * @param other               the TargetRoll to append (may be null)
+     * @param appendNonCumulative True to append all modifiers, false to append only cumulative
+     */
+    @Override
+    public void append(TargetRoll other, boolean appendNonCumulative) {
+        super.append(other, appendNonCumulative);
+        if (other instanceof ToHitData toHitOther) {
+            this.eiReduction += toHitOther.eiReduction;
+        }
     }
 
     /**

@@ -1338,17 +1338,24 @@ public class TestBattleArmor extends TestEntity {
                     }
                 }
 
-                if (misc.hasFlag(MiscType.F_PARTIAL_WING) && ba.hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
+                if (misc.hasFlag(MiscType.F_PARTIAL_WING) && battleArmor.hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
                     currentErrors.add("BattleArmor may not mount a jump booster and partial wings!");
                 }
 
-                if (misc.hasFlag(MiscType.F_MECHANICAL_JUMP_BOOSTER) && ba.hasMyomerBooster()) {
+                if (misc.hasFlag(MiscType.F_MECHANICAL_JUMP_BOOSTER) && battleArmor.hasMyomerBooster()) {
                     currentErrors.add("BattleArmor may not mount a mechanical jump booster and a myomer booster!");
                 }
 
                 if (misc.hasFlag(MiscType.F_MODULAR_WEAPON_MOUNT)
-                      && ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
+                      && battleArmor.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
                     currentErrors.add("Quad BattleArmor cannot use a Standard Modular Weapon Mount");
+                }
+
+                // CHECKSTYLE IGNORE ForbiddenWords FOR 4 LINES
+                // IO p.110: BattleMech NIU can only be mounted in PA(L)-type battlesuit
+                if (misc.hasFlag(MiscType.F_BATTLEMEK_NIU)
+                      && battleArmor.getWeightClass() != EntityWeightClass.WEIGHT_ULTRA_LIGHT) {
+                    currentErrors.add("BattleMech Neural Interface Unit can only be mounted in PA(L) battlesuits");
                 }
             }
         }
@@ -1361,9 +1368,6 @@ public class TestBattleArmor extends TestEntity {
         }
         if (equipmentCount.getOrDefault(EquipmentTypeLookup.BA_PARAFOIL, 0) > 1) {
             currentErrors.add("Cannot mount multiple parafoils");
-        }
-        if (equipmentCount.getOrDefault(EquipmentTypeLookup.BA_MISSION_EQUIPMENT, 0) > 1) {
-            currentErrors.add("Cannot mount multiple mission equipment items");
         }
         if (equipmentCount.containsKey(EquipmentTypeLookup.BA_DWP)) {
             if ((battleArmor.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT)

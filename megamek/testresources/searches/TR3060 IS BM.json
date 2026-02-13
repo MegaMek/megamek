@@ -1,0 +1,32 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "name" : "TR:3060 IS BM",
+  "twState" : {
+    "unitTypeState" : {
+      "mek" : "SELECTED",
+      "industrial" : "INDETERMINATE"
+    },
+    "transportsState" : { },
+    "quirksState" : {
+      "chassisQuirks" : { },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "source" : "TR:3060",
+      "cockpitType" : { },
+      "armorType" : { },
+      "internalsType" : { },
+      "engineType" : { },
+      "gyroType" : { },
+      "techLevel" : { },
+      "techBase" : {
+        "items" : {
+          "Inner Sphere" : "SELECTED"
+        }
+      },
+      "moveMode" : { }
+    },
+    "equipmentState" : { }
+  },
+  "asState" : { }
+}

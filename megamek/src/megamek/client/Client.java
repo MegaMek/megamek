@@ -72,6 +72,7 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
+import megamek.common.TemporaryECMField;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -1033,6 +1034,24 @@ public class Client extends AbstractClient {
                     }
 
                     break;
+                case ADD_TEMPORARY_ECM_FIELD:
+                    TemporaryECMField ecmField = packet.getTemporaryECMField(0);
+
+                    if (ecmField != null) {
+                        game.addTemporaryECMField(ecmField);
+                        // Trigger ECM list update in BoardView
+                        game.processGameEvent(new GameBoardChangeEvent(this));
+                    }
+
+                    break;
+                case SYNC_TEMPORARY_ECM_FIELDS:
+                    @SuppressWarnings("unchecked")
+                    List<TemporaryECMField> ecmFields = (List<TemporaryECMField>) packet.getObject(0);
+                    game.setTemporaryECMFields(ecmFields);
+                    // Trigger ECM list update in BoardView
+                    game.processGameEvent(new GameBoardChangeEvent(this));
+
+                    break;
                 case CHANGE_HEX:
                     Coords hexCoords = packet.getCoords(0);
                     int boardID = packet.getIntValue(1);
@@ -1282,7 +1301,7 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_DOMINO_EFFECT, mp));
     }
 
-    public void sendAMSAssignCFRResponse(Integer waaIndex) {
+    public void sendAMSAssignCFRResponse(int[] waaIndex) {
         send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_AMS_ASSIGN, waaIndex));
     }
 

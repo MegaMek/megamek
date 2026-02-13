@@ -1,0 +1,28 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "name" : "DS w/ Heavy Vee Bay",
+  "twState" : {
+    "unitTypeState" : {
+      "dropship" : "SELECTED"
+    },
+    "transportsState" : {
+      "startHeavyVehicleBays" : "1"
+    },
+    "quirksState" : {
+      "chassisQuirks" : { },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "cockpitType" : { },
+      "armorType" : { },
+      "internalsType" : { },
+      "engineType" : { },
+      "gyroType" : { },
+      "techLevel" : { },
+      "techBase" : { },
+      "moveMode" : { }
+    },
+    "equipmentState" : { }
+  },
+  "asState" : { }
+}

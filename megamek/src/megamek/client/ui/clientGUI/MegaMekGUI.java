@@ -85,6 +85,7 @@ import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.client.ui.dialogs.buttonDialogs.BotConfigDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.GameOptionsDialog;
+import megamek.client.ui.dialogs.buttonDialogs.NetworkInformationDialog;
 import megamek.client.ui.dialogs.clientDialogs.PlanetaryConditionsDialog;
 import megamek.client.ui.dialogs.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.dialogs.gameConnectionDialogs.HostDialog;
@@ -161,6 +162,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private ManagedVolatileImage medalImage;
     private TipOfTheDay tipOfTheDay;
     private AbstractRandomArmyDialog randomArmyDialog;
+    private NetworkInformationDialog networkInformationDialog;
 
     private static MegaMekController controller;
 
@@ -1014,7 +1016,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 orig.setValue(opt.getValue());
             }
         }
-
+        
         // popup planetary conditions dialog
         if ((game instanceof PlanetaryConditionsUsing plGame) && !scenario.hasFixedPlanetaryConditions()) {
             PlanetaryConditionsDialog pcd = new PlanetaryConditionsDialog(frame, plGame.getPlanetaryConditions());
@@ -1312,6 +1314,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             case ClientGUI.FILE_GAME_QUICK_LOAD:
                 quickLoadGame();
                 break;
+            case ClientGUI.VIEW_NETWORK_INFORMATION:
+                showNetworkInformation();
+                break;
             case ClientGUI.HELP_ABOUT:
                 new CommonAboutDialog(frame).setVisible(true);
                 break;
@@ -1345,6 +1350,19 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
     };
 
+    private void showNetworkInformation() {
+        // Display the network information screen
+        getNetworkInformationDialog().refresh();
+        getNetworkInformationDialog().pack();
+        getNetworkInformationDialog().setVisible(true);
+    }
+
+    public NetworkInformationDialog getNetworkInformationDialog() {
+        if (networkInformationDialog == null) {
+            networkInformationDialog = new NetworkInformationDialog(this.frame);
+        }
+        return networkInformationDialog;
+    }
     @Override
     public void preferenceChange(PreferenceChangeEvent evt) {
         switch (evt.getName()) {

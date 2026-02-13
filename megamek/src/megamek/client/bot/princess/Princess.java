@@ -2235,7 +2235,7 @@ public class Princess extends BotClient {
     protected void calculatePreEndDeclarationsTurn() {
         try {
             initialize();
-            Entity entity = game.getFirstEntity(getMyTurn());
+            Entity entity = getGame().getFirstEntity(getMyTurn());
 
             // Only infantry can initiate combat
             if (!(entity instanceof Infantry)) {
@@ -2268,7 +2268,7 @@ public class Princess extends BotClient {
 
             for (Entity target : potentialTargets) {
                 if (InfantryCombatHelper.shouldInitiateCombat(
-                      entity, target, game, getBehaviorSettings())) {
+                      entity, target, getGame(), getBehaviorSettings())) {
                     double ratio = calculateCombatRatio(entity, target);
                     if (ratio > bestRatio) {
                         bestRatio = ratio;
@@ -2295,7 +2295,7 @@ public class Princess extends BotClient {
 
         } catch (Exception e) {
             LOGGER.error(e, "Error in calculatePreEndDeclarationsTurn");
-            Entity entity = game.getFirstEntity(getMyTurn());
+            Entity entity = getGame().getFirstEntity(getMyTurn());
             if (entity != null) {
                 sendAttackData(entity.getId(), new Vector<>(0));
             }
@@ -2307,7 +2307,7 @@ public class Princess extends BotClient {
     protected void calculateInfantryVsInfantryCombatTurn() {
         try {
             initialize();
-            Entity entity = game.getFirstEntity(getMyTurn());
+            Entity entity = getGame().getFirstEntity(getMyTurn());
 
             if (!(entity instanceof Infantry)) {
                 sendAttackData(entity.getId(), new Vector<>(0));
@@ -2324,9 +2324,9 @@ public class Princess extends BotClient {
                 // Already in combat - check if should withdraw (attackers only)
                 if (entity.isInfantryCombatAttacker()) {
                     if (InfantryCombatHelper.shouldWithdraw(
-                          entity, targetId, game, getBehaviorSettings())) {
+                          entity, targetId, getGame(), getBehaviorSettings())) {
 
-                        Entity target = game.getEntity(targetId);
+                        Entity target = getGame().getEntity(targetId);
                         LOGGER.info("{} withdrawing from infantry combat at {}",
                               entity.getDisplayName(),
                               target != null ? target.getDisplayName() : "unknown");
@@ -2341,9 +2341,9 @@ public class Princess extends BotClient {
 
                 for (int combatTargetId : activeCombatTargets) {
                     if (InfantryCombatHelper.shouldReinforce(
-                          entity, combatTargetId, game, getBehaviorSettings())) {
+                          entity, combatTargetId, getGame(), getBehaviorSettings())) {
 
-                        Entity target = game.getEntity(combatTargetId);
+                        Entity target = getGame().getEntity(combatTargetId);
                         LOGGER.info("{} reinforcing infantry combat at {}",
                               entity.getDisplayName(),
                               target != null ? target.getDisplayName() : "unknown");
@@ -2365,7 +2365,7 @@ public class Princess extends BotClient {
 
         } catch (Exception e) {
             LOGGER.error(e, "Error in calculateInfantryVsInfantryCombatTurn");
-            Entity entity = game.getFirstEntity(getMyTurn());
+            Entity entity = getGame().getFirstEntity(getMyTurn());
             if (entity != null) {
                 sendAttackData(entity.getId(), new Vector<>(0));
             }
@@ -2383,7 +2383,7 @@ public class Princess extends BotClient {
         List<Entity> targets = new ArrayList<>();
         Coords position = infantry.getPosition();
 
-        for (Entity e : game.getEntitiesVector(position)) {
+        for (Entity e : getGame().getEntitiesVector(position)) {
             if (e.isBoardable() && e.getOwner().isEnemyOf(infantry.getOwner())) {
                 targets.add(e);
             }
@@ -2399,7 +2399,7 @@ public class Princess extends BotClient {
      * @return The building entity at this position, or null if none
      */
     private Entity getBuildingAtPosition(Coords position) {
-        for (Entity e : game.getEntitiesVector(position)) {
+        for (Entity e : getGame().getEntitiesVector(position)) {
             if (e instanceof AbstractBuildingEntity) {
                 return e;
             }
@@ -2425,10 +2425,10 @@ public class Princess extends BotClient {
         }
 
         // Find all unique target IDs where combat is happening IN THE SAME BUILDING
-        for (Entity e : game.getEntitiesVector()) {
+        for (Entity e : getGame().getEntitiesVector()) {
             int targetId = e.getInfantryCombatTargetId();
             if (targetId != Entity.NONE && !nearbyCombatTargets.contains(targetId)) {
-                Entity target = game.getEntity(targetId);
+                Entity target = getGame().getEntity(targetId);
                 // Check if target IS the same building the entity is in
                 if (target != null && target.getId() == entityBuilding.getId()) {
                     nearbyCombatTargets.add(targetId);
@@ -2448,7 +2448,7 @@ public class Princess extends BotClient {
      */
     private double calculateCombatRatio(Entity attacker, Entity target) {
         int attackerMPS = InfantryCombatHelper.calculateAttackerMPS(attacker, target);
-        int defenderMPS = InfantryCombatHelper.calculateEnemyMPS(game, target, attacker);
+        int defenderMPS = InfantryCombatHelper.calculateEnemyMPS(getGame(), target, attacker);
         return InfantryCombatHelper.calculateMPSRatio(attackerMPS, defenderMPS);
     }
 

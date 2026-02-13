@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -978,7 +978,6 @@ class PrincessTest {
         class GetBuildingAtPositionTests {
 
             @Test
-            @Disabled
             void testReturnsBuilding_WhenBuildingAtPosition() {
                 // Arrange
                 Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
@@ -1045,7 +1044,6 @@ class PrincessTest {
         class FindEligibleInfantryCombatsToReinforceTests {
 
             @Test
-            @Disabled
             void testFindsCombat_WhenInSameBuilding() {
                 // Arrange
                 Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
@@ -1062,6 +1060,8 @@ class PrincessTest {
                 List<Entity> entitiesAtInfantryPos = new ArrayList<>();
                 entitiesAtInfantryPos.add(mockBuilding);
                 when(mockGame.getEntitiesVector(infantryPos)).thenReturn(entitiesAtInfantryPos);
+                //doReturn(entitiesAtInfantryPos).when(mockGame).getEntitiesVector(infantryPos);
+                //when(mockGame.getEntitiesVector(infantryPos, false)).thenReturn(entitiesAtInfantryPos);
 
                 Infantry combatInfantry = mock(Infantry.class);
                 when(combatInfantry.getInfantryCombatTargetId()).thenReturn(100);

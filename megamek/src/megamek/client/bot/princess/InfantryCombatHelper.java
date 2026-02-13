@@ -378,11 +378,9 @@ public class InfantryCombatHelper {
      *
      * @param candidates List of candidate units
      * @param target     The target building/vessel
-     * @param game       The current game
      * @return Best reinforcement unit, or null if none suitable
      */
-    public static Entity findBestReinforcement(List<Entity> candidates,
-                                                 Entity target, Game game) {
+    public static Entity findBestReinforcement(List<Entity> candidates, Entity target) {
         Entity best = null;
         double bestScore = Double.NEGATIVE_INFINITY;
 

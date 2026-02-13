@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,22 +32,24 @@
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
-import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.client.ui.clientGUI.DialogOptionListener;
-import megamek.common.options.GameOptions;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.Serial;
 import java.net.InetAddress;
 import java.net.URL;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-import static megamek.client.ui.util.UIUtil.fontHTML;
+import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.ClientGUI;
 
 /**
  * A JPanel that holds the networking information about the network information of the current session.
@@ -62,14 +64,16 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
     private final JLabel lblLocalIP = new JLabel(Messages.getString("NetworkInformation.localIP"));
     private JLabel localIP = new JLabel(Messages.getString("NetworkInformation.blankIP"));
     private final JLabel lblRemoteIP = new JLabel(Messages.getString("NetworkInformation.remoteIP"));
-    private JLabel remoteIP = new JLabel(Messages.getString("NetworkInformation.blankIP"));;
+    private JLabel remoteIP = new JLabel(Messages.getString("NetworkInformation.blankIP"));
+    ;
     private final JLabel lblConnectedIP = new JLabel(Messages.getString("NetworkInformation.connectedIP"));
-    private JLabel connectedIP = new JLabel(Messages.getString("NetworkInformation.blankIP"));;
+    private JLabel connectedIP = new JLabel(Messages.getString("NetworkInformation.blankIP"));
+    ;
     private final JButton butShowLocalIPs = new JButton(" " + Messages.getString("NetworkInformation.buttonShowIPs"));
     private final JButton butShowRemoteIPs = new JButton(" " + Messages.getString("NetworkInformation.buttonShowIPs"));
     private final JButton butShowHostIPs = new JButton(" " + Messages.getString("NetworkInformation.buttonShowIPs"));
     private final JLabel lblBlank = new JLabel("");
-    private ClientGUI clientGui;    
+    private ClientGUI clientGui;
 
     /**
      * Constructs the network overview panel; the given ClientGUI is used to access the game data.
@@ -90,7 +94,7 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
         refresh();
         initialize();
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == butShowLocalIPs) {
@@ -115,7 +119,7 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
             }
         }
     }
-    
+
     @Override
     protected Container createCenterPane() {
         var mainPanel = new JPanel();
@@ -132,7 +136,7 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
         row1.add(localIP);
         row1.add(Box.createHorizontalGlue());
         row1.add(butShowLocalIPs);
-        
+
         JPanel row2 = new JPanel();
         row2.setLayout(new BoxLayout(row2, BoxLayout.X_AXIS));
         row2.add(lblRemoteIP);
@@ -148,18 +152,18 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
         row3.add(connectedIP);
         row3.add(Box.createHorizontalGlue());
         row3.add(butShowHostIPs);
-        
+
         mainPanel.add(row1);
         mainPanel.add(row2);
         mainPanel.add(row3);
-        
+
         butShowLocalIPs.addActionListener(this);
         butShowHostIPs.addActionListener(this);
         butShowRemoteIPs.addActionListener(this);
         mainPanel.setPreferredSize(new Dimension(400, 300));
         return mainPanel;
     }
-    
+
     public void refresh() {
         localIP.setText(" " + getIPaddress(true));
         remoteIP.setText(" " + getIPaddress(false));
@@ -167,17 +171,17 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
             connectedIP.setText(" " + clientGui.getClient().getHost());
         }
     }
-    
+
     private String getIPaddress(boolean localIP) {
         String thisIpAddress = "";
-        
+
         if (localIP) {
             try {
                 InetAddress thisIp = InetAddress.getLocalHost();
                 thisIpAddress = thisIp.getHostAddress();
             } catch (Exception e) {
             }
-            if (thisIpAddress.equals("") || thisIpAddress == null) {
+            if (thisIpAddress.length() == 0 || thisIpAddress == null) {
                 thisIpAddress = "Could not obtain local IP address";
             }
         } else {
@@ -188,7 +192,7 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
                 in.close();
             } catch (Exception e) {
             }
-            if (thisIpAddress.equals("") || thisIpAddress == null) {
+            if (thisIpAddress.length() == 0 || thisIpAddress == null) {
                 thisIpAddress = "Could not obtain public IP address";
             }
         }

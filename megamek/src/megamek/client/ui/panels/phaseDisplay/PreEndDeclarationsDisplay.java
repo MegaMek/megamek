@@ -245,7 +245,8 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         // Always send attack data to advance turn, even if empty
         clientgui.getClient().sendAttackData(currentEntity, attacks.toVector());
         removeAllAttacks();
-        sendDone();
+
+        endMyTurn();
     }
 
     @Override

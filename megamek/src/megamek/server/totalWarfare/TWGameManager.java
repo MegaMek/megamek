@@ -15770,7 +15770,7 @@ public class TWGameManager extends AbstractGameManager {
                 InfantryActionTracker.InfantryAction combat = tracker.getCombat(entity.getInfantryCombatTargetId());
                 if (combat == null) {
                     combat = new InfantryActionTracker.InfantryAction(entity.getInfantryCombatTargetId());
-                    tracker.getAllCombats().put(entity.getInfantryCombatTargetId(), combat);
+                    tracker.restoreCombat(combat);
                 }
 
                 if (entity.isInfantryCombatAttacker()) {

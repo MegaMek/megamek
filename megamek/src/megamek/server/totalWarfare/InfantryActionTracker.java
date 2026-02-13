@@ -154,6 +154,16 @@ public class InfantryActionTracker {
     }
 
     /**
+     * Manually add an action to the Infantry Action Tracker. Used during reinitialization.
+     * @param action Manually created action to add
+     */
+    public void restoreCombat(InfantryAction action) {
+        if (action != null && !activeActions.containsKey(action.targetId)) {
+            activeActions.put(action.targetId, action);
+        }
+    }
+
+    /**
      * Start a new action or add to existing action.
      *
      * @param targetId the target entity ID (building, ship, or aerospace unit)

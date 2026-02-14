@@ -33,7 +33,9 @@
 package megamek.client.ui.entityreadout;
 
 import megamek.client.ui.util.ViewFormatting;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.loaders.MekSummaryCache;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -67,6 +69,11 @@ class EntityReadoutExportTest {
           "Assault Shredder Gun Emplacement (3057) (External)",
           "Heavy LRM Weapon",
           "Foot Platoon (MG)");
+
+    @BeforeAll
+    static void setup() {
+        EquipmentType.initializeTypes();
+    }
 
     @Test
     void testExportToTextDoesNotThrow() {

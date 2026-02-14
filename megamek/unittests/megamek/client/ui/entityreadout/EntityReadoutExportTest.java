@@ -1,0 +1,122 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.client.ui.entityreadout;
+
+import megamek.client.ui.util.ViewFormatting;
+import megamek.common.loaders.MekSummaryCache;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Tests a selected few units of every general type of unit if the Entity Readout works without throwing an exception
+ * and returns a non-empty string.
+ */
+class EntityReadoutExportTest {
+
+    List<String> units = List.of(
+          "Intruder (3056)",
+          "Ares Assault Craft Mk.III",
+          "Phoenix Hawk LAM PHX-HK2M",
+          "Locust LCT-1M",
+          "Vedette Medium Tank",
+          "Mauna Kea Command Vessel",
+          "Moray Heavy Attack Submarine",
+          "Cavalry Attack Helicopter",
+          "Ahab AHB-443",
+          "Cephalus U",
+          "Undine Battle Armor (Sqd5)",
+          "Frogmen Blue Water Marine Response Teams (Frogmen)",
+          "Silverback Coastal Cutter",
+          "Enhanced PPC Turret (Single)",
+          "Bandit Hovercraft G",
+          "Invader Jumpship (2631) (LF)",
+          "Fensalir Combat WiGE",
+          "Assault Shredder Gun Emplacement (3057) (External)",
+          "Heavy LRM Weapon",
+          "Foot Platoon (MG)");
+
+    @Test
+    void testExportToTextDoesNotThrow() {
+        MekSummaryCache cache = MekSummaryCache.getInstance();
+        for (String unit : units) {
+            assertDoesNotThrow(() -> {
+                var ms = cache.getMek(unit);
+                var entity = ms.loadEntity();
+                EntityReadout readout = EntityReadout.createReadout(entity, true);
+                readout.getFullReadout(ViewFormatting.NONE);
+            }, "Export to Text fails for " + unit);
+        }
+    }
+
+    @Test
+    void testExportToHTMLDoesNotThrow() {
+        MekSummaryCache cache = MekSummaryCache.getInstance();
+        for (String unit : units) {
+            assertDoesNotThrow(() -> {
+                var ms = cache.getMek(unit);
+                var entity = ms.loadEntity();
+                EntityReadout readout = EntityReadout.createReadout(entity, true);
+                readout.getFullReadout(ViewFormatting.HTML);
+            }, "Export to HTML fails for " + unit);
+        }
+    }
+
+    @Test
+    void testExportToDiscordDoesNotThrow() {
+        MekSummaryCache cache = MekSummaryCache.getInstance();
+        for (String unit : units) {
+            assertDoesNotThrow(() -> {
+                var ms = cache.getMek(unit);
+                var entity = ms.loadEntity();
+                EntityReadout readout = EntityReadout.createReadout(entity, true);
+                readout.getFullReadout(ViewFormatting.DISCORD);
+            }, "Export to Discord fails for " + unit);
+        }
+    }
+
+    @Test
+    void testExportNotEmpty() {
+        MekSummaryCache cache = MekSummaryCache.getInstance();
+        for (String unit : units) {
+            var ms = cache.getMek(unit);
+            var entity = ms.loadEntity();
+            EntityReadout readout = EntityReadout.createReadout(entity, true);
+            assertFalse(readout.getFullReadout(ViewFormatting.NONE).isBlank());
+            assertFalse(readout.getFullReadout(ViewFormatting.DISCORD).isBlank());
+            assertFalse(readout.getFullReadout(ViewFormatting.HTML).isBlank());
+        }
+    }
+}

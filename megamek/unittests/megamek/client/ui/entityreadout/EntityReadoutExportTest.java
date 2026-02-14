@@ -72,6 +72,8 @@ class EntityReadoutExportTest {
 
     @BeforeAll
     static void setup() {
+        MekSummaryCache.getInstance();
+        MekSummaryCache.refreshUnitData(true);
         EquipmentType.initializeTypes();
     }
 

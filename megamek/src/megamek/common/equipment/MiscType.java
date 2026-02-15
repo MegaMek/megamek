@@ -2469,7 +2469,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Clan Modular Armor");
         misc.tonnage = 1;
         misc.criticalSlots = 1;
-        misc.cost = 100000;
+        misc.cost = 10000;
         misc.flags = misc.flags.or(F_MODULAR_ARMOR,
               F_MEK_EQUIPMENT,
               F_TANK_EQUIPMENT,
@@ -8401,6 +8401,7 @@ public class MiscType extends EquipmentType {
                     F_JS_EQUIPMENT,
                     F_WS_EQUIPMENT,
                     F_SS_EQUIPMENT,
+                    F_SC_EQUIPMENT,
                     F_MASH)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.industrial = true;

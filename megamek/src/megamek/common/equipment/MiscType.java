@@ -8401,6 +8401,7 @@ public class MiscType extends EquipmentType {
                     F_JS_EQUIPMENT,
                     F_WS_EQUIPMENT,
                     F_SS_EQUIPMENT,
+                    F_SC_EQUIPMENT,
                     F_MASH)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.industrial = true;

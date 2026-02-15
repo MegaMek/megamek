@@ -33,7 +33,9 @@
 
 package megamek.common.loaders;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedWriter;
@@ -46,6 +48,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
 
+import megamek.client.ui.entityreadout.EntityReadout;
+import megamek.client.ui.util.ViewFormatting;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.ArmorType;
@@ -117,6 +121,18 @@ public class BulkUnitFileTest {
                         + reValidation.report());
             assertEquals(reValidation.state(), validation.state());
         }
+
+        assertDoesNotThrow(() -> {
+            EntityReadout readout = EntityReadout.createReadout(entity, true);
+            readout.getFullReadout(ViewFormatting.NONE);
+            readout.getFullReadout(ViewFormatting.HTML);
+            readout.getFullReadout(ViewFormatting.DISCORD);
+        }, "Exception when creating EntityReadout for " + entity.getShortNameRaw());
+
+        EntityReadout readout = EntityReadout.createReadout(entity, true);
+        assertFalse(readout.getFullReadout(ViewFormatting.NONE).isBlank());
+        assertFalse(readout.getFullReadout(ViewFormatting.HTML).isBlank());
+        assertFalse(readout.getFullReadout(ViewFormatting.DISCORD).isBlank());
     }
 
     @Test

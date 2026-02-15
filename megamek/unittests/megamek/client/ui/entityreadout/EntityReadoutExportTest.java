@@ -33,12 +33,14 @@
 package megamek.client.ui.entityreadout;
 
 import megamek.client.ui.util.ViewFormatting;
+import megamek.common.Configuration;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,30 +50,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class EntityReadoutExportTest {
 
-    List<String> units = List.of(
-          "Intruder (3056)",
-          "Ares Assault Craft Mk.III",
-          "Phoenix Hawk LAM PHX-HK2M",
-          "Locust LCT-1M",
-          "Vedette Medium Tank",
-          "Mauna Kea Command Vessel",
-          "Moray Heavy Attack Submarine",
-          "Cavalry Attack Helicopter",
-          "Ahab AHB-443",
-          "Cephalus U",
-          "Undine Battle Armor (Sqd5)",
-          "Frogmen Blue Water Marine Response Teams (Frogmen)",
-          "Silverback Coastal Cutter",
-          "Enhanced PPC Turret (Single)",
-          "Bandit Hovercraft G",
-          "Invader Jumpship (2631) (LF)",
-          "Fensalir Combat WiGE",
-          "Assault Shredder Gun Emplacement (3057) (External)",
-          "Heavy LRM Weapon",
-          "Foot Platoon (MG)");
-
     @BeforeAll
     static void setup() {
+        Configuration.setDataDir(new File("testresources/data"));
         MekSummaryCache.getInstance();
         MekSummaryCache.refreshUnitData(true);
         EquipmentType.initializeTypes();
@@ -79,48 +60,40 @@ class EntityReadoutExportTest {
 
     @Test
     void testExportToTextDoesNotThrow() {
-        MekSummaryCache cache = MekSummaryCache.getInstance();
-        for (String unit : units) {
+        for (MekSummary ms : MekSummaryCache.getInstance().getAllMeks()) {
             assertDoesNotThrow(() -> {
-                var ms = cache.getMek(unit);
                 var entity = ms.loadEntity();
                 EntityReadout readout = EntityReadout.createReadout(entity, true);
                 readout.getFullReadout(ViewFormatting.NONE);
-            }, "Export to Text fails for " + unit);
+            }, "Export to Text fails for " + ms.getName());
         }
     }
 
     @Test
     void testExportToHTMLDoesNotThrow() {
-        MekSummaryCache cache = MekSummaryCache.getInstance();
-        for (String unit : units) {
+        for (MekSummary ms : MekSummaryCache.getInstance().getAllMeks()) {
             assertDoesNotThrow(() -> {
-                var ms = cache.getMek(unit);
                 var entity = ms.loadEntity();
                 EntityReadout readout = EntityReadout.createReadout(entity, true);
                 readout.getFullReadout(ViewFormatting.HTML);
-            }, "Export to HTML fails for " + unit);
+            }, "Export to HTML fails for " + ms.getName());
         }
     }
 
     @Test
     void testExportToDiscordDoesNotThrow() {
-        MekSummaryCache cache = MekSummaryCache.getInstance();
-        for (String unit : units) {
+        for (MekSummary ms : MekSummaryCache.getInstance().getAllMeks()) {
             assertDoesNotThrow(() -> {
-                var ms = cache.getMek(unit);
                 var entity = ms.loadEntity();
                 EntityReadout readout = EntityReadout.createReadout(entity, true);
                 readout.getFullReadout(ViewFormatting.DISCORD);
-            }, "Export to Discord fails for " + unit);
+            }, "Export to Discord fails for " + ms.getName());
         }
     }
 
     @Test
     void testExportNotEmpty() {
-        MekSummaryCache cache = MekSummaryCache.getInstance();
-        for (String unit : units) {
-            var ms = cache.getMek(unit);
+        for (MekSummary ms : MekSummaryCache.getInstance().getAllMeks()) {
             var entity = ms.loadEntity();
             EntityReadout readout = EntityReadout.createReadout(entity, true);
             assertFalse(readout.getFullReadout(ViewFormatting.NONE).isBlank());

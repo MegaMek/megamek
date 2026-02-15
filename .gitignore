@@ -45,6 +45,8 @@ build/
 !/megamek/mmconf/shared.properties
 /megamek/mmconf/*.properties.bak
 /megamek/mmconf/*.preferences
+/megamek/mmconf/searches/*.json
+/megamek/mmconf/recent-advanced-searches.json
 
 # UserData
 megamek/userdata/**

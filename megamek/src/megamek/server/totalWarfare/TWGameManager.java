@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -5687,15 +5687,14 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Aerospace that fly off to return in a later round must be handled
-        // at the end of the round, but set some state here for simplicity
-        if ((aeroUnit != null) && flewOff) {
-            // Record direction
+        // at the end of the round, but set some state here for simplicity.
+        // Non-returning aero (returnable == -1) should fall through to the
+        // normal flee logic below, which properly removes them from the game
+        // with REMOVE_IN_RETREAT status.
+        if ((aeroUnit != null) && flewOff && (returnable > -1)) {
+            // Record direction for returning unit
             aeroUnit.setFlyingOff(fleeDirection);
-
-            // Currently only Aerospace can fly off and return.
-            if (returnable > -1) {
-                entity.setDeployRound(1 + game.getRoundCount() + returnable);
-            }
+            entity.setDeployRound(1 + game.getRoundCount() + returnable);
 
             // End activation but don't remove from the map yet.
             entity.setDone(true);
@@ -11504,7 +11503,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean throughFront = true;
 
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
 
         final String armName = (paa.getArm() == PunchAttackAction.LEFT) ? "Left Arm" : "Right Arm";
@@ -11802,7 +11801,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
         String legName = (kaa.getLeg() == KickAttackAction.LEFT) || (kaa.getLeg() == KickAttackAction.LEFT_MULE) ?
               "Left " :
@@ -12059,7 +12058,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
         String legName = switch (kaa.getLeg()) {
             case JumpJetAttackAction.LEFT -> "Left leg";
@@ -12280,7 +12279,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions()
@@ -13453,7 +13452,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions()
@@ -14518,7 +14517,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean throughFront = true;
 
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
 
         final boolean glancing = game.getOptions()
@@ -14716,7 +14715,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
         final boolean glancing = game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
@@ -14883,7 +14882,7 @@ public class TWGameManager extends AbstractGameManager {
 
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
 
         Report r;
@@ -15039,7 +15038,7 @@ public class TWGameManager extends AbstractGameManager {
 
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
         }
 
         Report r;
@@ -15701,7 +15700,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
         boolean throughFront = Optional.ofNullable(targetEntity)
-              .map(te -> Compute.isThroughFrontHex(game, ae.getPosition(), te))
+              .map(te -> Compute.isThroughFrontHex(ae.getPosition(), te))
               .orElse(true);
 
         final boolean glancing = game.getOptions()

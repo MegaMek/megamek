@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -178,10 +178,6 @@ public class RandomArmyCreator {
     }
 
     public static void main(String[] args) {
-        StringBuilder sbMek = new StringBuilder();
-        StringBuilder sbVehicle = new StringBuilder();
-        StringBuilder sbBattleArmor = new StringBuilder();
-        StringBuilder sbInfantry = new StringBuilder();
         Parameters p = new Parameters();
         p.meks = 4;
         p.tanks = 4;
@@ -194,7 +190,7 @@ public class RandomArmyCreator {
         p.tech = TechConstants.T_IS_TW_NON_BOX;
         p.canon = true;
         p.padWithInfantry = true;
-        List<MekSummary> units = generateArmy(p, sbMek, sbVehicle, sbBattleArmor, sbInfantry);
+        List<MekSummary> units = generateArmy(p);
 
         int totalBV = 0;
         for (MekSummary m : units) {
@@ -209,8 +205,7 @@ public class RandomArmyCreator {
         System.out.println(totalBV);
     }
 
-    public static List<MekSummary> generateArmy(Parameters p, StringBuilder sbMek, StringBuilder sbVehicle,
-          StringBuilder sbBattleArmor, StringBuilder sbInfantry) {
+    public static List<MekSummary> generateArmy(Parameters p) {
         int allowedVariance = java.lang.Math.abs(p.maxBV - p.minBV);
         MekSummary[] all = MekSummaryCache.getInstance().getAllMeks();
         List<MekSummary> allMeks = new ArrayList<>();
@@ -283,7 +278,7 @@ public class RandomArmyCreator {
             if (!m.getUnitType().equals(UnitType.getTypeName(UnitType.INFANTRY))
                   && !m.getUnitType().equals(UnitType.getTypeName(UnitType.PROTOMEK))
                   && !m.getUnitType().equals(UnitType.getTypeName(UnitType.BATTLE_ARMOR))
-                  && !p.asPanel.matches(m)) {
+                  && (p.asPanel != null && !p.asPanel.matches(m))) {
                 continue;
             }
 
@@ -356,10 +351,6 @@ public class RandomArmyCreator {
                   - countBV(units), allowedVariance));
         }
 
-        sbMek.append(allMeks.size());
-        sbVehicle.append(allTanks.size());
-        sbBattleArmor.append(allBA.size());
-        sbInfantry.append(allInfantry.size());
         return units;
     }
 }

@@ -165,6 +165,8 @@ public abstract class Mek extends Entity {
     public static final int COCKPIT_TRIPOD_INDUSTRIAL = 17;
     public static final int COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL = 18;
 
+    private static final String ADV_FCS_MTF = " (Adv. FCS)";
+
     public static final String[] COCKPIT_STRING = { "Standard Cockpit", "Small Cockpit", "Command Console",
                                                     "Torso-Mounted Cockpit", "Dual Cockpit", "Industrial Cockpit",
                                                     "Primitive Cockpit", "Primitive Industrial Cockpit",
@@ -4018,15 +4020,15 @@ public abstract class Mek extends Entity {
         if (industrial) {
             switch (cockpitType) {
                 case COCKPIT_STANDARD:
-                    return Mek.getCockpitTypeString(COCKPIT_INDUSTRIAL) + " (Adv. FCS)";
+                    return Mek.getCockpitTypeString(COCKPIT_INDUSTRIAL) + ADV_FCS_MTF;
                 case COCKPIT_PRIMITIVE:
-                    return Mek.getCockpitTypeString(COCKPIT_PRIMITIVE_INDUSTRIAL) + " (Adv. FCS)";
+                    return Mek.getCockpitTypeString(COCKPIT_PRIMITIVE_INDUSTRIAL) + ADV_FCS_MTF;
                 case COCKPIT_SUPERHEAVY:
-                    return Mek.getCockpitTypeString(COCKPIT_SUPERHEAVY_INDUSTRIAL) + " (Adv. FCS)";
+                    return Mek.getCockpitTypeString(COCKPIT_SUPERHEAVY_INDUSTRIAL) + ADV_FCS_MTF;
                 case COCKPIT_TRIPOD:
-                    return Mek.getCockpitTypeString(COCKPIT_TRIPOD_INDUSTRIAL) + " (Adv. FCS)";
+                    return Mek.getCockpitTypeString(COCKPIT_TRIPOD_INDUSTRIAL) + ADV_FCS_MTF;
                 case COCKPIT_SUPERHEAVY_TRIPOD:
-                    return Mek.getCockpitTypeString(COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL) + " (Adv. FCS)";
+                    return Mek.getCockpitTypeString(COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL) + ADV_FCS_MTF;
             }
         }
         return Mek.getCockpitTypeString(cockpitType);
@@ -4075,8 +4077,13 @@ public abstract class Mek extends Entity {
             return COCKPIT_UNKNOWN;
         }
         for (int x = 0; x < COCKPIT_STRING.length; x++) {
-            if ((inType.equals(COCKPIT_STRING[x]))
-                  || (inType.equals(COCKPIT_SHORT_STRING[x]))) {
+            if ((inType.equals(COCKPIT_STRING[x])) || (inType.equals(COCKPIT_SHORT_STRING[x]))) {
+                return x;
+            }
+        }
+        for (int x = 0; x < COCKPIT_STRING.length; x++) {
+            // "(Adv. FCS)" may be appended for industrial meks
+            if ((inType.startsWith(COCKPIT_STRING[x])) || (inType.startsWith(COCKPIT_SHORT_STRING[x]))) {
                 return x;
             }
         }

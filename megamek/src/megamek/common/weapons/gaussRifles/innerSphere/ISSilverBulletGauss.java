@@ -84,6 +84,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
         extremeRange = 33;
         tonnage = 15.0;
         criticalSlots = 7;
+        toHitModifier = -1;
         bv = 198;
         cost = 350000;
         shortAV = getBaseAeroDamage();

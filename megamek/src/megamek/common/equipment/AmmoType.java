@@ -6284,7 +6284,6 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 25;
         ammo.cost = 25000;
-        ammo.toHitModifier = -1;
         ammo.rulesRefs = "127, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TechBase.IS)

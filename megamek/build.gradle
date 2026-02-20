@@ -207,6 +207,8 @@ tasks.register('copyFiles', Copy) {
     exclude "mmconf/mhq.preferences"
     exclude "mmconf/mm.preferences"
     exclude "mmconf/mml.preferences"
+    exclude "mmconf/recent-advanced-searches.json"
+    exclude "mmconf/searches/*.json"
 
     include "userdata/"
 

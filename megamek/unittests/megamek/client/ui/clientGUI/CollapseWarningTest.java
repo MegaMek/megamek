@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
+import megamek.common.Hex;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
@@ -118,6 +120,7 @@ class CollapseWarningTest {
         IBuilding bld = createMockBuildingWith(buildingPosition, 20);
 
         Board b = createMockBoardWith(buildingPosition, bld);
+        when(g.getBoard()).thenReturn(b);
 
         List<Coords> warnList = CollapseWarning.findCFWarningsMovement(g, e, b);
 
@@ -216,6 +219,7 @@ class CollapseWarningTest {
         when(b.isLegalDeployment(expectedHex, e)).thenReturn(true);
 
         Game g = mock(Game.class);
+        when(g.getBoard()).thenReturn(b);
 
         List<Coords> warnList = CollapseWarning.findCFWarningsDeployment(g, e, b);
 
@@ -347,6 +351,8 @@ class CollapseWarningTest {
         entities.add(onBuilding);
 
         when(g.getEntitiesVector(new Coords(3, 7), true)).thenReturn(entities);
+        Board b = createSimpleMockBoard();
+        when(g.getBoard()).thenReturn(b);
 
         double totalWeight = CollapseWarning.calculateTotalTonnage(g, e, new Coords(3, 7));
 
@@ -368,6 +374,8 @@ class CollapseWarningTest {
         entities.add(e);
 
         when(g.getEntitiesVector(new Coords(3, 3), true)).thenReturn(entities);
+        Board b = createSimpleMockBoard();
+        when(g.getBoard()).thenReturn(b);
 
         double totalWeight = CollapseWarning.calculateTotalTonnage(g, e, new Coords(3, 3));
 
@@ -391,6 +399,8 @@ class CollapseWarningTest {
         entities.add(vtol);
 
         when(g.getEntitiesVector(new Coords(3, 7), true)).thenReturn(entities);
+        Board b = createSimpleMockBoard();
+        when(g.getBoard()).thenReturn(b);
 
         double totalWeight = CollapseWarning.calculateTotalTonnage(g, e, new Coords(3, 7));
 
@@ -413,6 +423,8 @@ class CollapseWarningTest {
         entities.add(aero);
 
         when(g.getEntitiesVector(new Coords(3, 7), true)).thenReturn(entities);
+        Board b = createSimpleMockBoard();
+        when(g.getBoard()).thenReturn(b);
 
         double totalWeight = CollapseWarning.calculateTotalTonnage(g, e, new Coords(3, 7));
 
@@ -447,6 +459,16 @@ class CollapseWarningTest {
     private Board createMockBoardWith(Coords pos, IBuilding bld) {
         Board b = mock(Board.class);
         when(b.getBuildingAt(pos)).thenReturn(bld);
+        Hex hex = mock(Hex.class);
+        when(hex.hasBridge()).thenReturn(false);
+        return b;
+    }
+
+    private Board createSimpleMockBoard() {
+        Board b = mock(Board.class);
+        Hex hex = mock(Hex.class);
+        when(hex.hasBridge()).thenReturn(false);
+        when(b.getHex(any())).thenReturn(hex);
         return b;
     }
 }

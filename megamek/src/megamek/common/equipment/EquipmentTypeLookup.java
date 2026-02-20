@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2019-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -360,6 +360,8 @@ public class EquipmentTypeLookup {
     public static final String CL_BA_MORTAR_LIGHT = "CLBALightMortar";
     @EquipmentName
     public static final String IS_BA_TUBE_ARTY = "ISBATubeArtillery";
+    @EquipmentName
+    public static final String CL_BA_BOMB_RACK = "CLBAMicroBomb";
     @EquipmentName
     public static final String THUMPER_ARTY = "ISThumper";
     @EquipmentName

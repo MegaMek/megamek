@@ -96,32 +96,31 @@ public class InfantryArmorPanel extends JPanel {
 
         GridBagLayout gridBagLayout = new GridBagLayout();
         setLayout(gridBagLayout);
-        add(labArmor, GBC.std());
-        add(cbArmorKit, GBC.eol());
-        add(labDivisor, GBC.std());
-        add(fldDivisor, GBC.eol());
-        add(labEncumber, GBC.std());
-        add(chEncumber, GBC.eol());
-        add(labSpaceSuit, GBC.std());
-        add(chSpaceSuit, GBC.eol());
-        add(labDEST, GBC.std());
-        add(chDEST, GBC.eol());
-        add(labSneakCamo, GBC.std());
-        add(chSneakCamo, GBC.eol());
-        add(labSneakIR, GBC.std());
-        add(chSneakIR, GBC.eol());
-        add(labSneakECM, GBC.std());
-        add(chSneakECM, GBC.eol());
-        add(Box.createVerticalStrut(10), GBC.eol());
-        add(labSpec, GBC.eol());
-
-        for (JCheckBox spec : chSpecs) {
-            add(spec, GBC.eol());
-        }
-
         SimpleTechLevel gameTechLevel = SimpleTechLevel.getGameTechLevel(entity.getGame());
+        if (gameTechLevel != SimpleTechLevel.STANDARD &&
+              gameTechLevel != SimpleTechLevel.INTRO) {
+            add(labArmor, GBC.std());
+            add(cbArmorKit, GBC.eol());
+            add(labDivisor, GBC.std());
+            add(fldDivisor, GBC.eol());
+            add(labEncumber, GBC.std());
+            add(chEncumber, GBC.eol());
+            add(labSpaceSuit, GBC.std());
+            add(chSpaceSuit, GBC.eol());
+            add(labDEST, GBC.std());
+            add(chDEST, GBC.eol());
+            add(labSneakCamo, GBC.std());
+            add(chSneakCamo, GBC.eol());
+            add(labSneakIR, GBC.std());
+            add(chSneakIR, GBC.eol());
+            add(labSneakECM, GBC.std());
+            add(chSneakECM, GBC.eol());
+        }
+        
         int year = entity.getGame().getOptions().intOption("year");
 
+        // If the rules level isn't at least Advanced, these won't be displayed, but it will iterate them still to 
+        // avoid potential issues.
         for (EquipmentType et : MiscType.allTypes()) {
             if (et.hasFlag(MiscType.F_ARMOR_KIT) &&
                   et.isLegal(year,
@@ -158,9 +157,12 @@ public class InfantryArmorPanel extends JPanel {
             armorStateChanged();
             updateArmorValues();
         });
-
+        add(Box.createVerticalStrut(10), GBC.eol());
+        add(labSpec, GBC.eol());
         chDEST.addItemListener(e -> armorStateChanged());
-
+        for (JCheckBox spec : chSpecs) {
+            add(spec, GBC.eol());
+        }
         for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
             int spec = 1 << i;
             chSpecs.get(i).setSelected(infantry.hasSpecialization(spec));

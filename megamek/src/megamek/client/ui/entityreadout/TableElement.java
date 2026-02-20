@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -141,11 +141,16 @@ class TableElement implements MultiRowViewElement {
         return data.isEmpty();
     }
 
+    private int colWidth(int col) {
+        // the colWidth map does not always have values for each column of colNames, therefore use a safe getter:
+        return colWidth.getOrDefault(col, 0);
+    }
+
     @Override
     public String toPlainText() {
         StringBuilder sb = new StringBuilder();
         for (int col = 0; col < colNames.length; col++) {
-            sb.append(justify(justification[col], colNames[col], colWidth.get(col)));
+            sb.append(justify(justification[col], colNames[col], colWidth(col)));
             sb.append(PLAIN_COL_PADDING);
         }
         sb.append("\n");
@@ -155,7 +160,7 @@ class TableElement implements MultiRowViewElement {
         }
         for (ViewElement[] row : data) {
             for (int col = 0; col < row.length; col++) {
-                sb.append(justify(justification[col], row[col].toPlainText(), colWidth.get(col)));
+                sb.append(justify(justification[col], row[col].toPlainText(), colWidth(col)));
                 sb.append(PLAIN_COL_PADDING);
             }
             sb.append("\n");
@@ -199,7 +204,7 @@ class TableElement implements MultiRowViewElement {
         StringBuilder sb = new StringBuilder();
         sb.append(DiscordFormat.UNDERLINE).append(DiscordFormat.ROW_SHADING);
         for (int col = 0; col < colNames.length; col++) {
-            sb.append(justify(justification[col], colNames[col], colWidth.get(col)));
+            sb.append(justify(justification[col], colNames[col], colWidth(col)));
             if (col < colNames.length - 1) {
                 sb.append(PLAIN_COL_PADDING);
             }
@@ -212,7 +217,7 @@ class TableElement implements MultiRowViewElement {
             }
             for (int col = 0; col < row.length; col++) {
                 sb.append(DiscordFormat.highlightNumbersForDiscord(justify(justification[col],
-                      row[col].toPlainText(), colWidth.get(col))));
+                      row[col].toPlainText(), colWidth(col))));
                 if (col < row.length - 1) {
                     sb.append(PLAIN_COL_PADDING);
                 }

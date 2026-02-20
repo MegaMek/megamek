@@ -2703,7 +2703,10 @@ public abstract class Entity extends TurnOrdered
                     int bridgeElev = hex.terrainLevel(Terrains.BRIDGE_ELEV);
                     // Entity fits under if: elevation + height + 1 <= bridge elevation
                     // (matches VTOL check logic at lines 2599-2602)
-                    if (assumedElevation + height() + 1 > bridgeElev) {
+                    // don't check this for units that are not actually below the bridge, including units on a height
+                    // 0 bridge on dry ground (essentially, the bridge being a road)
+                    // but: don't forget that a height 0 bridge can be over water where this is relevant
+                    if (assumedElevation < bridgeElev && assumedElevation + height() + 1 > bridgeElev) {
                         return false;  // Can't fit under bridge, floor is invalid
                     }
                 }

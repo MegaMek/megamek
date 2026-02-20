@@ -34,7 +34,6 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
-import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.advancedsearch.ASAdvancedSearchPanel;

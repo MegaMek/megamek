@@ -324,7 +324,6 @@ public class TestMek extends TestEntity {
         MiscType mt = (MiscType) mounted.getType();
         if (mt.hasFlag(MiscType.F_STEALTH) && !mek.hasPatchworkArmor()) {
             int stealthCritsPerLocation = mek.isSuperHeavy() ? 1 : 2;
-            // stealth needs to have 2 crits in legs arm and side torso
             if (countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_LEFT_ARM) != stealthCritsPerLocation) {
                 buff.append("incorrect number of stealth crits in left arm\n");
                 return false;

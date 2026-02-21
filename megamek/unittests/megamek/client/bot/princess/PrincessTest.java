@@ -143,6 +143,11 @@ class PrincessTest {
         when(mockPrincess.calculateMoveIndex(any(Entity.class), any(StringBuilder.class))).thenCallRealMethod();
         when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(false);
 
+        // Mock BehaviorSettings - disable CASPAR Protocol for this basic test
+        BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
+        when(mockBehavior.isUseCasparProtocol()).thenReturn(false);
+        when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
+
         when(mockPathRanker.distanceToClosestEnemy(any(Entity.class),
               nullable(Coords.class),
               nullable(Game.class))).thenReturn(10.0);

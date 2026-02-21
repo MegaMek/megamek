@@ -38,13 +38,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import megamek.ai.utility.EntityFeatureUtils;
+import megamek.client.bot.princess.PathRankerState;
 import megamek.client.ui.SharedUtility;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.UnitRole;
-import megamek.common.moves.MovePath;
-import megamek.common.moves.MoveStep;
 
 /**
  * Flexible container for unit action data using a map-based approach with enum keys.
@@ -73,6 +80,8 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
         MAX_MP,
         MP_P,
         HEAT_P,
+        GUNNERY,
+        PILOTING,
         ARMOR_P,
         INTERNAL_P,
         JUMPING,
@@ -92,6 +101,15 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
         ARMOR_RIGHT_P,
         ARMOR_BACK_P,
         ROLE,
+        OPTIMAL_RANGE,
+        THREAT_WEIGHT,
+        MOVE_ORDER_MULT,
+        DIST_TO_CLOSEST_ENEMY,
+        AS_SIZE,
+        AS_DMG_S,
+        AS_DMG_M,
+        AS_DMG_L,
+        HAS_MEL,
         WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE
     }
 
@@ -122,6 +140,35 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
               .put(Field.FACING, movePath.getFinalFacing())
               .put(Field.ROLE, firstNonNull(entity.getRole(), UnitRole.NONE));
 
+        // Role-aware positioning data
+        map.put(Field.OPTIMAL_RANGE, PathRankerState.calculateOptimalRangeForEntity(entity))
+              .put(Field.THREAT_WEIGHT, PathRankerState.calculateThreatWeightForEntity(entity))
+              .put(Field.MOVE_ORDER_MULT, PathRankerState.calculateMoveOrderMultiplierForEntity(entity));
+
+        // Distance to closest enemy (after move)
+        int distToEnemy = calculateDistanceToClosestEnemy(movePath.getGame(), entity, movePath.getFinalCoords());
+        map.put(Field.DIST_TO_CLOSEST_ENEMY, distToEnemy);
+
+        // Alpha Strike damage values (reflects current weapon/ammo state)
+        try {
+            AlphaStrikeElement asElement = ASConverter.convert(entity);
+            map.put(Field.AS_SIZE, asElement.getSize());
+            map.put(Field.HAS_MEL, asElement.hasSUA(BattleForceSUA.MEL));
+            ASDamageVector damage = asElement.getStandardDamage();
+            if (damage != null) {
+                // Include minimal damage indicator in the value (e.g., 2 or 0 with minimal flag)
+                map.put(Field.AS_DMG_S, damage.S().damage + (damage.S().minimal ? 0.5 : 0));
+                map.put(Field.AS_DMG_M, damage.M().damage + (damage.M().minimal ? 0.5 : 0));
+                map.put(Field.AS_DMG_L, damage.L().damage + (damage.L().minimal ? 0.5 : 0));
+            } else {
+                map.put(Field.AS_DMG_S, 0).put(Field.AS_DMG_M, 0).put(Field.AS_DMG_L, 0);
+            }
+        } catch (Exception e) {
+            // AS conversion failed - use defaults
+            map.put(Field.AS_SIZE, 0).put(Field.AS_DMG_S, 0).put(Field.AS_DMG_M, 0).put(Field.AS_DMG_L, 0);
+            map.put(Field.HAS_MEL, false);
+        }
+
         // Position information
         if (movePath.getStartCoords() != null) {
             map.put(Field.FROM_X, movePath.getStartCoords().getX()).put(Field.FROM_Y, movePath.getStartCoords().getY());
@@ -143,6 +190,15 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
               .put(Field.MP_P, movePath.getMaxMP() > 0 ? (double) movePath.getMpUsed() / movePath.getMaxMP() : 0.0)
               .put(Field.HEAT_P,
                     entity.getHeatCapacity() > 0 ? entity.getHeat() / (double) entity.getHeatCapacity() : 0.0);
+
+        // Crew skills (for analyzing gunnery-based range adjustments)
+        if (entity.getCrew() != null) {
+            map.put(Field.GUNNERY, entity.getCrew().getGunnery())
+                  .put(Field.PILOTING, entity.getCrew().getPiloting());
+        } else {
+            map.put(Field.GUNNERY, 4)
+                  .put(Field.PILOTING, 5);
+        }
 
         // Status information
         map.put(Field.ARMOR_P, entity.getArmorRemainingPercent())
@@ -190,5 +246,43 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
         map.put(Field.WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE, weaponData);
 
         return map;
+    }
+
+    /**
+     * Calculate the distance to the closest enemy unit from a given position.
+     *
+     * @param game The game reference
+     * @param movingEntity The entity that is moving (to determine enemies)
+     * @param position The position to measure from
+     * @return Distance in hexes to closest enemy, or -1 if no enemies found
+     */
+    private static int calculateDistanceToClosestEnemy(Game game, Entity movingEntity, Coords position) {
+        if (game == null || position == null || movingEntity == null) {
+            return -1;
+        }
+
+        int closestDistance = Integer.MAX_VALUE;
+        boolean foundEnemy = false;
+
+        for (Entity entity : game.getEntitiesVector()) {
+            // Skip self, allies, destroyed units, and off-board units
+            if (entity.getId() == movingEntity.getId() ||
+                entity.isDestroyed() ||
+                entity.isOffBoard() ||
+                entity.getPosition() == null) {
+                continue;
+            }
+
+            // Check if this is an enemy
+            if (entity.getOwner().isEnemyOf(movingEntity.getOwner())) {
+                int distance = position.distance(entity.getPosition());
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    foundEnemy = true;
+                }
+            }
+        }
+
+        return foundEnemy ? closestDistance : -1;
     }
 }

@@ -37,9 +37,14 @@ import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import java.util.List;
 
 import megamek.ai.utility.EntityFeatureUtils;
+import megamek.client.bot.princess.PathRankerState;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.compute.Compute;
-import megamek.common.units.Entity;
 import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.UnitRole;
 
@@ -63,11 +68,16 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         MODEL,
         TYPE,
         ROLE,
+        OPTIMAL_RANGE,
+        THREAT_WEIGHT,
+        MOVE_ORDER_MULT,
         X,
         Y,
         FACING,
         MP,
         HEAT,
+        GUNNERY,
+        PILOTING,
         PRONE,
         AIRBORNE,
         OFF_BOARD,
@@ -87,6 +97,11 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         ARMOR_LEFT_P,
         ARMOR_RIGHT_P,
         ARMOR_BACK_P,
+        AS_SIZE,
+        AS_DMG_S,
+        AS_DMG_M,
+        AS_DMG_L,
+        HAS_MEL,
         WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE
     }
 
@@ -119,6 +134,11 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
               .put(Field.TYPE, entity.getClass().getSimpleName())
               .put(Field.ROLE, firstNonNull(entity.getRole(), UnitRole.NONE));
 
+        // Role-aware positioning data
+        map.put(Field.OPTIMAL_RANGE, PathRankerState.calculateOptimalRangeForEntity(entity))
+              .put(Field.THREAT_WEIGHT, PathRankerState.calculateThreatWeightForEntity(entity))
+              .put(Field.MOVE_ORDER_MULT, PathRankerState.calculateMoveOrderMultiplierForEntity(entity));
+
         // Position and movement
         if (entity.getPosition() != null) {
             map.put(Field.X, entity.getPosition().getX())
@@ -131,6 +151,15 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         map.put(Field.FACING, entity.getFacing())
               .put(Field.MP, entity.getMpUsedLastRound())
               .put(Field.HEAT, entity.getHeat());
+
+        // Crew skills (for analyzing gunnery-based range adjustments)
+        if (entity.getCrew() != null) {
+            map.put(Field.GUNNERY, entity.getCrew().getGunnery())
+                  .put(Field.PILOTING, entity.getCrew().getPiloting());
+        } else {
+            map.put(Field.GUNNERY, 4)
+                  .put(Field.PILOTING, 5);
+        }
 
         // Status flags
         map.put(Field.PRONE, entity.isProne())
@@ -161,6 +190,26 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
               .put(Field.ARMOR_LEFT_P, EntityFeatureUtils.getTargetLeftSideHealthStats(entity))
               .put(Field.ARMOR_RIGHT_P, EntityFeatureUtils.getTargetRightSideHealthStats(entity))
               .put(Field.ARMOR_BACK_P, EntityFeatureUtils.getTargetBackHealthStats(entity));
+
+        // Alpha Strike damage values (reflects current weapon/ammo state)
+        try {
+            AlphaStrikeElement asElement = ASConverter.convert(entity);
+            map.put(Field.AS_SIZE, asElement.getSize());
+            map.put(Field.HAS_MEL, asElement.hasSUA(BattleForceSUA.MEL));
+            ASDamageVector damage = asElement.getStandardDamage();
+            if (damage != null) {
+                // Include minimal damage indicator in the value (e.g., 2 or 0 with minimal flag)
+                map.put(Field.AS_DMG_S, damage.S().damage + (damage.S().minimal ? 0.5 : 0));
+                map.put(Field.AS_DMG_M, damage.M().damage + (damage.M().minimal ? 0.5 : 0));
+                map.put(Field.AS_DMG_L, damage.L().damage + (damage.L().minimal ? 0.5 : 0));
+            } else {
+                map.put(Field.AS_DMG_S, 0).put(Field.AS_DMG_M, 0).put(Field.AS_DMG_L, 0);
+            }
+        } catch (Exception e) {
+            // AS conversion failed - use defaults
+            map.put(Field.AS_SIZE, 0).put(Field.AS_DMG_S, 0).put(Field.AS_DMG_M, 0).put(Field.AS_DMG_L, 0);
+            map.put(Field.HAS_MEL, false);
+        }
 
         // Equipment and capabilities
         map.put(Field.IS_BOT, entity.getOwner().isBot())

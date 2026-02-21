@@ -1,0 +1,281 @@
+CASPAR PROTOCOL - Princess AI Enhancement
+==========================================
+Combined Advanced Situational Positioning And Response
+
+Version: Alpha (0.50.11)
+Status: EXPERIMENTAL - Needs Community Testing
+
+Related Pull Requests:
+- PR #7721: Allied Damage Consideration & Damage Source Pool
+- PR #7723: Role-Aware Positioning System
+
+
+OVERVIEW
+--------
+CASPAR Protocol is an enhanced AI system for Princess that combines three
+advanced features to create more tactically aware bot behavior. Named after
+the Star League automated defense systems, CASPAR aims to make Princess
+fight more like a coordinated military force.
+
+
+THE THREE PILLARS OF CASPAR
+---------------------------
+
+1. ALLIED THREAT ASSESSMENT
+   Problem: Vanilla Princess sums ALL enemy damage against each unit while
+   only considering her own damage to ONE enemy. This makes her overly
+   cautious, even with numerical superiority.
+
+   Solution: Divide perceived enemy threat by the number of allies who can
+   engage that enemy.
+
+   Formula: Perceived Threat = Enemy Damage / (Allies Engaging + 1)
+
+   Example:
+   - Enemy Atlas can deal 50 damage per turn
+   - Your lance has 4 Hunchbacks that can all shoot the Atlas
+   - Vanilla: Each Hunchback thinks "I might take 50 damage!" (cautious)
+   - CASPAR: Each Hunchback thinks "My share is 50/5 = 10 damage" (confident)
+
+2. DAMAGE SOURCE POOL TRACKING
+   As units move, CASPAR tracks which enemies are being engaged. The first
+   unit to engage an enemy "claims" some of that threat. Later-moving units
+   see reduced danger from already-engaged enemies.
+
+   Example:
+   - Your lance faces 2 enemy Marauders (60 damage each = 120 total threat)
+   - Unit 1 moves first, sees full 120 threat, engages Marauder A
+   - Unit 2 moves, sees Marauder A partially "handled", reduced threat
+   - Unit 3 moves, sees even less threat from Marauder A
+   - Unit 4 moves boldly - most threats already covered by allies
+
+3. ROLE-AWARE POSITIONING
+   Units position based on their weapon loadouts using Alpha Strike damage
+   conversion. Long-range units stay back, brawlers close in, scouts screen.
+
+   Optimal Range is calculated from AS damage at Short/Medium/Long brackets:
+   - If Long damage is highest: Stay at 21 hexes
+   - If Medium damage is highest: Stay at 12 hexes
+   - If Short damage is highest: Close to 3 hexes
+   - If unit has MEL (melee): Close to 1 hex
+
+
+WHAT TO EXPECT vs VANILLA PRINCESS
+----------------------------------
+
++---------------------------+--------------------------------+--------------------------------+
+| Situation                 | Vanilla Princess               | CASPAR Princess                |
++---------------------------+--------------------------------+--------------------------------+
+| 4v1 advantage             | All units hesitate,            | All units advance confidently, |
+|                           | afraid of focused fire         | sharing the threat equally     |
++---------------------------+--------------------------------+--------------------------------+
+| LRM Carrier positioning   | Rushes to close range,         | Maintains 15-21 hex standoff,  |
+|                           | negating its weapons           | uses BACKWARDS movement        |
++---------------------------+--------------------------------+--------------------------------+
+| Mixed lance coordination  | All units converge on enemy,   | Brawlers close, LRMs stay back |
+|                           | LRM boats get stuck in melee   | providing overwatch            |
++---------------------------+--------------------------------+--------------------------------+
+| Scout behavior            | Moves with main force          | Screens ahead, moves first     |
++---------------------------+--------------------------------+--------------------------------+
+| Juggernaut behavior       | Normal movement order          | Anchors line, moves last,      |
+|                           |                                | absorbs focused fire           |
++---------------------------+--------------------------------+--------------------------------+
+
+
+ROLE POSITIONING TABLE
+----------------------
+
+Role            Optimal Range   Threat Weight   Move Order   Behavior
+--------------- --------------- --------------- ------------ ---------------------------
+SNIPER          21 hexes        0.3 (low)       3.0 (early)  Max range, backs away
+MISSILE_BOAT    21 hexes        0.3 (low)       3.0 (early)  Max range, backs away
+SKIRMISHER      12 hexes        0.8 (med)       2.0          Flanks at medium range
+STRIKER         12 hexes        0.7 (med)       1.5          Medium range mobile attacks
+AMBUSHER        3 hexes         0.6 (med)       1.5          Close range surprise
+BRAWLER         3 hexes         1.0 (high)      1.0          In-your-face combat
+JUGGERNAUT      3 hexes         1.5 (highest)   0.5 (last)   Closes in, absorbs damage
+SCOUT           (based on weps) 0.5 (low)       4.0 (first)  Screens, spots enemies
+
+Threat Weight: Higher = draws more enemy fire (Juggernauts tank for the team)
+Move Order: Higher = moves earlier in phase (Scouts screen first)
+
+
+MOVEMENT ORDER EXPLAINED
+------------------------
+Units move in tactical order based on their role:
+
+1. SCOUTS (4.0)         - Screen and spot, first to contact
+2. SNIPERS (3.0)        - Establish firing positions early
+3. MISSILE_BOATS (3.0)  - Set up at standoff range
+4. SKIRMISHERS (2.0)    - Flank and harass
+5. STRIKERS (1.5)       - Mobile attacks
+6. AMBUSHERS (1.5)      - Position for surprise
+7. BRAWLERS (1.0)       - Main line engagement
+8. JUGGERNAUTS (0.5)    - Anchor the line, move last
+
+
+OVERWATCH HERDING
+-----------------
+Long-range units (SNIPER, MISSILE_BOAT) use "overwatch herding" - they move
+with the friendly force but stay offset BEHIND the main group, away from
+enemies. This prevents them from being pulled into close combat.
+
+Example:
+- Friendly center is at hex (10, 10)
+- Enemy median is to the south at (10, 15)
+- Normal herding would pull LRM Carrier toward (10, 10)
+- Overwatch herding pulls it to (10, 5) - BEHIND friends, away from enemies
+
+
+GUNNERY SKILL ADJUSTMENT
+------------------------
+The optimal range is adjusted based on pilot gunnery skill:
+
+Gunnery 2-3 (Elite):   Can afford longer range, extends optimal by one bracket
+Gunnery 4 (Standard):  Uses calculated optimal range
+Gunnery 5+ (Green):    Needs to close in, reduces optimal by one bracket
+
+Example: Catapult with LRMs
+- Base optimal range: 21 hexes (Long)
+- With Gunnery 2 (elite): Still 21 hexes (already at max)
+- With Gunnery 6 (green): 12 hexes (reduced to compensate for poor aim)
+
+
+MELEE UNIT HANDLING
+-------------------
+Units with the MEL (Melee) special ability in Alpha Strike get special treatment:
+
+1. MEL damage (Size + 1) is added to Short range damage calculation
+2. If MEL unit's optimal is Short range, it's pushed to MELEE range (1 hex)
+3. Units without MEL don't factor physical attacks (prevents racing to melee)
+
+Example:
+- Hatchetman with MEL: Optimal becomes 1 hex (wants to use hatchet)
+- Atlas without MEL: Optimal stays at 3 hexes (has punches but not MEL)
+
+
+TESTING EXAMPLES FROM DEVELOPMENT
+---------------------------------
+
+Test 1: Vehicle Lance (LRM Carriers + Pikes vs Strikers)
+Before CASPAR: Pike (SNIPER) and LRM Carrier closed from 17 hexes to melee
+After CASPAR: LRM Carrier maintained 17-21 hex range, used BACKWARDS movement
+
+Test 2: Mixed Mech Lance
+Before CASPAR: Catapult (LRMs) rushed to 3 hexes with Atlas
+After CASPAR: Catapult stayed at 12-18 hexes, Atlas closed to 3 hexes
+
+Test 3: Elementals vs Vehicles
+Elementals (AMBUSHER role, 3 hex optimal) correctly closed from 11 to 4-5 hexes
+This is CORRECT behavior - Elementals should close to engagement range
+
+Test 4: 4v1 Scenario
+Before CASPAR: All 4 units hesitated against single enemy
+After CASPAR: Each unit saw 1/5 of the threat, advanced confidently together
+
+
+KNOWN LIMITATIONS
+-----------------
+
+ALPHA STATUS WARNING:
+This feature has been tested primarily with the DEFAULT behavior preset.
+Using CASPAR with other presets (Escape, Cowardly, Berserk, etc.) may
+produce unexpected or suboptimal behavior.
+
+Current Known Issues:
+- Herding behavior may conflict with overwatch positioning in edge cases
+- Map edges can force long-range units closer than desired
+- Physical attack considerations limited to MEL ability only
+- Flat damage profiles (S=M=L) default to medium range
+
+Please report issues to: https://github.com/MegaMek/megamek/issues
+Tag issues with "Princess" and "CASPAR"
+
+
+TESTING CHECKLIST FOR PLAYERS
+-----------------------------
+When testing CASPAR, please watch for and report:
+
+[ ] Long-range units (LRM Carriers, Snipers) maintaining 15+ hex range
+[ ] Long-range units using BACKWARDS movement to maintain distance
+[ ] Short-range units (Brawlers, Melee) closing to 1-6 hexes
+[ ] Units not "dancing" (excessive turning in place)
+[ ] Proper movement order (scouts first, juggernauts last)
+[ ] Coordinated lance movement (not scattering)
+[ ] Appropriate aggression (advancing when outnumbering enemies)
+[ ] Overwatch positioning (LRMs behind main force)
+
+Please include in bug reports:
+- Behavior preset used
+- Unit types and roles involved
+- Map size and terrain type
+- Screenshot or description of unexpected behavior
+
+
+CONFIGURATION
+-------------
+CASPAR Protocol is enabled by default in 0.50.11+.
+
+To toggle:
+1. Open Bot Configuration dialog (when setting up Princess)
+2. Find "CASPAR Protocol (Alpha)" checkbox
+3. Check to enable, uncheck to disable
+
+
+TECHNICAL REFERENCE
+-------------------
+For developers and advanced users, key constants:
+
+Optimal Ranges:
+  MELEE  = 1 hex   (for MEL units)
+  SHORT  = 3 hexes (0-6 AS bracket)
+  MEDIUM = 12 hexes (7-24 AS bracket)
+  LONG   = 21 hexes (25-42 AS bracket)
+
+Threat Weights (higher = absorbs more fire):
+  JUGGERNAUT   = 1.5    BRAWLER     = 1.0
+  SKIRMISHER   = 0.8    STRIKER     = 0.7
+  AMBUSHER     = 0.6    SCOUT       = 0.5
+  SNIPER       = 0.3    MISSILE_BOAT = 0.3
+  CIVILIAN     = 0.0 (protected by combat units)
+
+Move Order Multipliers (higher = moves earlier):
+  SCOUT        = 4.0    SNIPER      = 3.0
+  MISSILE_BOAT = 3.0    SKIRMISHER  = 2.0
+  STRIKER      = 1.5    AMBUSHER    = 1.5
+  BRAWLER      = 1.0    JUGGERNAUT  = 0.5
+  CIVILIAN     = 0.1 (moves last, protected)
+
+Asymmetric Range Penalty:
+  Long-range units too close: 2.0x penalty (strongly prefer backing away)
+
+Melee Threat Penalties (at 1 hex range):
+  BRAWLER/JUGGERNAUT: 100% of 50-point base penalty
+  STRIKER/SKIRMISHER: 50% of base penalty
+  SNIPER/MISSILE_BOAT: 20% of base penalty
+  MEL ability: +50 additional penalty
+
+
+FEEDBACK
+--------
+We need YOUR help to improve CASPAR! Please test and report:
+- GitHub Issues: https://github.com/MegaMek/megamek/issues
+- Tag issues with "Princess" and "CASPAR"
+
+Thank you for helping make Princess smarter!
+
+
+CHANGELOG
+---------
+Alpha 0.50.11:
+- Initial CASPAR implementation (combines PR #7721 and PR #7723)
+- Allied damage consideration: threat divided by allies engaging
+- Damage source pool tracking: dynamic threat allocation as units move
+- Role-aware positioning: units fight at optimal range for their weapons
+- Role-based movement order: scouts first, juggernauts last
+- Role-based threat weights: juggernauts tank, snipers stay safe
+- Overwatch herding for long-range units (stay behind friendlies)
+- Asymmetric close-range penalty (2.0x) for long-range units
+- Gunnery skill adjustment for optimal range
+- MEL handling for dedicated melee units
+- Combined three settings into single "CASPAR Protocol" toggle

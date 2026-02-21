@@ -124,6 +124,19 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public UUID uuid = UUID.randomUUID();
 
     /**
+     * Timestamp string for consistent file naming across TSV logs and GIF summaries.
+     * Format: yyyyMMdd_HHmmss (e.g., "20251207_160952")
+     */
+    private String timestampString = generateTimestampString();
+
+    private static final java.time.format.DateTimeFormatter TIMESTAMP_FORMAT =
+          java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+
+    private static String generateTimestampString() {
+        return java.time.LocalDateTime.now().format(TIMESTAMP_FORMAT);
+    }
+
+    /**
      * Stores the version of MM, so that it can be serialized in saved games.
      */
     public final Version version = MMConstants.VERSION;
@@ -1456,6 +1469,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public synchronized void reset() {
         super.reset();
         uuid = UUID.randomUUID();
+        timestampString = generateTimestampString();
 
         entityPosLookup.clear();
         vOutOfGame.removeAllElements();
@@ -3678,7 +3692,17 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             uuid = UUID.randomUUID();
         }
         return uuid.toString();
+    }
 
+    /**
+     * Returns the timestamp string for this game instance.
+     * Format: yyyyMMdd_HHmmss (e.g., "20251207_160952")
+     * Used for consistent file naming across TSV logs and GIF summaries.
+     *
+     * @return the timestamp string
+     */
+    public String getTimestampString() {
+        return timestampString;
     }
 
     public Map<String, BehaviorSettings> getBotSettings() {

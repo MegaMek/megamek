@@ -61,6 +61,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.RoundWeight;
+import megamek.common.verifier.TestEntity;
 
 /**
  * @author Jay Lawson
@@ -758,20 +759,9 @@ public class SmallCraft extends Aero {
 
     @Override
     public double getArmorWeight() {
-        // first I need to subtract SI bonus from total armor. We need to retain the
-        // fractional part
-        // for primitive craft because the primitive multiplier is applied to both
-        // before rounding.
-        double armorPoints = getTotalOArmor();
-        int freeSI = getSI() * (locations() - 1); // no armor in hull location
-        if (isPrimitive()) {
-            armorPoints -= freeSI * 0.66;
-        } else {
-            armorPoints -= freeSI;
-        }
-        ArmorType armor = ArmorType.forEntity(this);
-        double armorPerTon = armor.getPointsPerTon(this);
-
+        // calculate back from total armor by subtracting free SI armor
+        double armorPoints = getTotalOArmor() - TestEntity.getSIBonusArmorPoints(this);
+        double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
         return RoundWeight.nextHalfTon(armorPoints / armorPerTon);
     }
 

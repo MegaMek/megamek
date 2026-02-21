@@ -54,6 +54,7 @@ import megamek.common.interfaces.ITechManager;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
 import megamek.common.units.SmallCraft;
 import megamek.common.util.StringUtil;
 
@@ -91,10 +92,36 @@ public class TestSmallCraft extends TestAero {
               .collect(Collectors.toList());
     }
 
-    public static int maxArmorPoints(SmallCraft sc) {
-        ArmorType a = ArmorType.forEntity(sc);
-        return (int) Math.floor(a.getPointsPerTon(sc) * maxArmorWeight(sc) +
-              sc.getOSI() * (sc.isPrimitive() ? 2.64 : 4));
+    /**
+     * Returns the maximum number of total (all locations summed) armor points that the given vessel (DS/SC) can
+     * have, including free armor points it receives from its SI. See SO:AA p.140, IO:AE p.119-122.
+     *
+     * @param smallCraft The SmallCraft or DropShip to compute bonus armor for
+     *
+     * @return The total number of armor points allowed to the vessel
+     */
+    public static int maxArmorPoints(SmallCraft smallCraft) {
+        ArmorType armorType = ArmorType.forEntity(smallCraft);
+        return (int) Math.floor(armorType.getPointsPerTon(smallCraft) * maxArmorWeight(smallCraft)
+              + getSIBonusArmorPoints(smallCraft));
+    }
+
+    /**
+     * Returns the number of free additional armor points provided for SmallCraft and DropShips based on their SI. It is
+     * the total number, which is usually divided evenly among armor facings. See TM p.191, SO:AA p.140, IO:AE
+     * p.119-125.
+     *
+     * @param smallCraft The SmallCraft to compute free armor for
+     *
+     * @return The total number of extra armor points received for SI
+     */
+    public static int getSIBonusArmorPoints(SmallCraft smallCraft) {
+        int armoredLocations = smallCraft.locations() - 1;
+        if (smallCraft.isPrimitive()) {
+            return armoredLocations * (int) (smallCraft.getOSI() * 0.66);
+        } else {
+            return armoredLocations * smallCraft.getOSI();
+        }
     }
 
     /**

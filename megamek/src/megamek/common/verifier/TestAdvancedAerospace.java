@@ -91,16 +91,39 @@ public class TestAdvancedAerospace extends TestAero {
         }
     }
 
+    /**
+     * Returns the maximum number of total (all locations summed) armor points that the given vessel (JS/WS/SS) can
+     * have, including free armor points it receives from its SI. See SO:AA p.140, IO:AE p.122-125.
+     *
+     * @param vessel The JumpShip or WarShip to compute bonus armor for
+     *
+     * @return The total number of armor points allowed to the vessel
+     */
     public static int maxArmorPoints(Jumpship vessel) {
-        // The ship gets a number of armor points equal to 10% of the SI, rounded normally, per facing.
-        double freeSI = Math.round(vessel.getOSI() / 10.0) * 6;
-        // Primitive jump ships multiply the armor by a factor of 0.66. Per errata, the armor is calculated based on
-        // standard armor then rounded down, and the free SI armor is rounded down separately.
-        if (vessel.isPrimitive()) {
-            return (int) (Math.floor(ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false).getPointsPerTon(vessel) *
-                  maxArmorWeight(vessel)) + Math.floor(freeSI * 0.66));
+        ArmorType armorType = ArmorType.forEntity(vessel);
+        return (int) Math.floor(armorType.getPointsPerTon(vessel) * maxArmorWeight(vessel)
+              + getSIBonusArmorPoints(vessel));
+    }
+
+    /**
+     * Returns the number of free additional armor points provided for a capital craft based on their SI. This is
+     * usually a whole number but may be a fractional amount for primitive JumpShips. It is the total number, which is
+     * usually divided evenly among armor facings. TM p.191, SO:AA p.140, IO:AE p.119-125.
+     *
+     * @param jumpship The Jumpship to compute bonus armor for
+     *
+     * @return The total number of extra armor points received for SI
+     */
+    public static double getSIBonusArmorPoints(Jumpship jumpship) {
+        int armoredLocations = jumpship.locations() - 1;
+        double siFreeArmor = Math.round(jumpship.getOSI() / 10.0) * armoredLocations;
+        if (!jumpship.isPrimitive()) {
+            return siFreeArmor;
+        } else {
+            // The value should presumably be equal for each location; therefore, for primitive units, each
+            // location's value must be individually rounded down after dividing up the total bonus
+            return ((int) (siFreeArmor / armoredLocations * 0.66)) * armoredLocations;
         }
-        return (int) Math.floor(ArmorType.forEntity(vessel).getPointsPerTon(vessel) * maxArmorWeight(vessel) + freeSI);
     }
 
     /**

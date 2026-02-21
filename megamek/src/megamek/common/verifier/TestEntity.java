@@ -1173,23 +1173,19 @@ public abstract class TestEntity implements TestEntityOption {
      * Returns the number of free additional armor points provided for aerospace vessels based on their SI. This is
      * usually a whole number but may be a fractional amount for primitive JumpShips. It is the total number, which is
      * usually divided evenly among armor facings. For units other than SC/DS and capital craft, this is 0. See TM
-     * p.191, SO:AA p.140, IO:AE p.119-125
+     * p.191, SO:AA p.140, IO:AE p.119-125.
      *
      * @param entity The unit to compute bonus armor for
      *
      * @return The total number of extra armor points received for SI
      */
     public static double getSIBonusArmorPoints(Entity entity) {
-        double points = 0;
         if (entity instanceof SmallCraft smallCraft) {
-            points = smallCraft.getSI() * (entity.locations() - 1);
+            return TestSmallCraft.getSIBonusArmorPoints(smallCraft);
         } else if (entity instanceof Jumpship jumpship) {
-            points = Math.round(jumpship.getSI() / 10.0) * 6;
-        }
-        if (entity.isPrimitive()) {
-            return points * ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false).getArmorPointsMultiplier();
+            return TestAdvancedAerospace.getSIBonusArmorPoints(jumpship);
         } else {
-            return points;
+            return 0;
         }
     }
 

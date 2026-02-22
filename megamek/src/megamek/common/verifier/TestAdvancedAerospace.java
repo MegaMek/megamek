@@ -106,24 +106,28 @@ public class TestAdvancedAerospace extends TestAero {
     }
 
     /**
-     * Returns the number of free additional armor points provided for a capital craft based on their SI. This is
-     * usually a whole number but may be a fractional amount for primitive JumpShips. It is the total number, which is
-     * usually divided evenly among armor facings. TM p.191, SO:AA p.140, IO:AE p.119-125.
+     * Returns the number of free additional armor points provided for a capital craft based on their SI. It is the
+     * total number, which is divided evenly among armor facings. TM p.191, SO:AA p.140, IO:AE p.119-125.
      *
-     * @param jumpship The Jumpship to compute bonus armor for
+     * @param jumpship The JS/WS/SS to compute bonus armor for
      *
      * @return The total number of extra armor points received for SI
      */
-    public static double getSIBonusArmorPoints(Jumpship jumpship) {
-        int armoredLocations = jumpship.locations() - 1;
-        double siFreeArmor = Math.round(jumpship.getOSI() / 10.0) * armoredLocations;
-        if (!jumpship.isPrimitive()) {
-            return siFreeArmor;
-        } else {
-            // The value should presumably be equal for each location; therefore, for primitive units, each
-            // location's value must be individually rounded down after dividing up the total bonus
-            return ((int) (siFreeArmor / armoredLocations * 0.66)) * armoredLocations;
-        }
+    public static int getSIBonusArmorPoints(Jumpship jumpship) {
+        return getSIBonusArmorPointsPerLocation(jumpship) * 6; // 6 armor locations
+    }
+
+    /**
+     * Returns the number of free additional armor points per location provided for a capital craft based on their SI.
+     * TM p.191, SO:AA p.140, IO:AE p.119-125.
+     *
+     * @param jumpship The JS/WS/SS to compute bonus armor for
+     *
+     * @return The number of extra armor points received for SI per location
+     */
+    public static int getSIBonusArmorPointsPerLocation(Jumpship jumpship) {
+        int baseSiFreeArmor = (int) Math.round(jumpship.getOSI() / 10.0);
+        return jumpship.isPrimitive() ? (int) (baseSiFreeArmor * 0.66) : baseSiFreeArmor;
     }
 
     /**

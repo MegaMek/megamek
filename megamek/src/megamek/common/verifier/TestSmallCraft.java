@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -54,7 +54,6 @@ import megamek.common.interfaces.ITechManager;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
-import megamek.common.units.Jumpship;
 import megamek.common.units.SmallCraft;
 import megamek.common.util.StringUtil;
 
@@ -116,12 +115,7 @@ public class TestSmallCraft extends TestAero {
      * @return The total number of extra armor points received for SI
      */
     public static int getSIBonusArmorPoints(SmallCraft smallCraft) {
-        int armoredLocations = smallCraft.locations() - 1;
-        if (smallCraft.isPrimitive()) {
-            return armoredLocations * (int) (smallCraft.getOSI() * 0.66);
-        } else {
-            return armoredLocations * smallCraft.getOSI();
-        }
+        return (smallCraft.locations() - 1) * smallCraft.getOSI();
     }
 
     /**

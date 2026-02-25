@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -1081,18 +1081,19 @@ public abstract class TestEntity implements TestEntityOption {
      * @return the number of armor points available for the armor tonnage
      */
     public static double getRawArmorPoints(Entity unit, double armorTons) {
-        if (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
+        if (unit.isProtoMek()) {
             return Math.round(armorTons / ArmorType.forEntity(unit).getWeightPerPoint());
         } else if (unit.isSupportVehicle()) {
             return Math.floor(armorTons / TestSupportVehicle.armorWeightPerPoint(unit));
-        } else if ((unit instanceof Jumpship)
-              && unit.getArmorType(unit.firstArmorIndex()) == EquipmentType.T_ARMOR_PRIMITIVE_AERO) {
+//        } else if ((unit instanceof Jumpship)
+//              && unit.getArmorType(unit.firstArmorIndex()) == EquipmentType.T_ARMOR_PRIMITIVE_AERO) {
             // Because primitive JumpShip armor has an extra step of rounding we have to give it special treatment.
             // Standard armor value is computed first, rounded down, then the primitive armor mod is applied.
-            return Math.floor(Math.floor(armorTons * TestAdvancedAerospace.armorPointsPerTon((Jumpship) unit,
-                  EquipmentType.T_ARMOR_AEROSPACE, false)) * 0.66);
+//            return Math.floor(Math.floor(armorTons * TestAdvancedAerospace.armorPointsPerTon((Jumpship) unit,
+//                  EquipmentType.T_ARMOR_AEROSPACE, false)) * 0.66);
+        } else {
+            return armorTons * getArmorPointsPerTon(unit);
         }
-        return armorTons * getArmorPointsPerTon(unit);
     }
 
     /**
@@ -1170,10 +1171,9 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     /**
-     * Returns the number of free additional armor points provided for aerospace vessels based on their SI. This is
-     * usually a whole number but may be a fractional amount for primitive JumpShips. It is the total number, which is
-     * usually divided evenly among armor facings. For units other than SC/DS and capital craft, this is 0. See TM
-     * p.191, SO:AA p.140, IO:AE p.119-125.
+     * Returns the number of free additional armor points provided for aerospace vessels based on their structural
+     * integrity (for primitive capital craft, *without* the 0.66 primitive adjustment factor). For units other than
+     * SC/DS and capital craft, this is 0. See TM p.191, SO:AA p.140, IO:AE p.119-125.
      *
      * @param entity The unit to compute bonus armor for
      *

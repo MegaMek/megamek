@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Jay Lawson
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -59,7 +59,6 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.DockingCollar;
-import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
@@ -1065,21 +1064,17 @@ public class Jumpship extends Aero {
 
     @Override
     public double getArmorWeight(int locCount) {
-        double armorPoints = getTotalOArmor() - TestAdvancedAerospace.getSIBonusArmorPoints(this);
+        double rawArmor;
         if (isPrimitive()) {
-            // unfortunately, the double rounding process of determining the final armor value must be reversed, which
-            // does not work by simply using the points per ton value; e.g. the Conestoga Transport JumpShip requires
-            // 240 t of primitve aerospace armor to get 63 points of armor (the source gives it 64 with 6 SI free,
-            // which I don't see how it could get (240*0,66*0,4 = 63,36 -> 63, even without double rounding)
-            // simply using points per ton for primitive armor would arrive at only 239 t of armor here
-            double primitiveFactorRemoved = Math.ceil(armorPoints / 0.66);
-            double standardArmorPointsPerTon = TestAdvancedAerospace.armorPointsPerTon(this,
-                  EquipmentType.T_ARMOR_AEROSPACE, false);
-            return RoundWeight.standard(primitiveFactorRemoved / standardArmorPointsPerTon, this);
+            // reverse the double rounding process of determining the final armor value, see IO:AE 3rd p.125
+            // (Aquilla example calculation)
+            rawArmor = Math.ceil(getTotalOArmor() / 0.66);
         } else {
-            double pointsPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
-            return RoundWeight.standard(armorPoints / pointsPerTon, this);
+            rawArmor = getTotalOArmor();
         }
+        double weightedArmor = rawArmor - TestAdvancedAerospace.getSIBonusArmorPoints(this);
+        double pointsPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
+        return RoundWeight.standard(weightedArmor / pointsPerTon, this);
     }
 
     @Override

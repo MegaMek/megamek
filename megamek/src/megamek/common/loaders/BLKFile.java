@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -1198,9 +1198,17 @@ public class BLKFile {
         if (t.getFluff().hasEmbeddedFluffImage()) {
             blk.writeBlockData("fluffimage", t.getFluff().getBase64FluffImage().getBase64String());
         }
+
         if (t.canonUnitWithInvalidBuild()) {
             blk.writeBlockData("invalidSourceBuildReasons",
                   t.getInvalidSourceBuildReasons().stream().map(Enum::name).toList());
+        }
+
+        // some units, mostly capital scale, esp. primitive, may have redundant armor tonnage (meaning, half a ton
+        // less armor would provide the same amount of armor points); in that case, store the armor weight explicitly
+        // so the correct value can be set when loading the unit
+        if ((t instanceof Jumpship || t instanceof SmallCraft) && t.getArmorWeight() != t.getLabArmorTonnage()) {
+            blk.writeBlockData("armorWeight", t.getLabArmorTonnage());
         }
         return blk;
     }
@@ -1305,27 +1313,16 @@ public class BLKFile {
         String name = m.getType().getInternalName();
         if (m.getEntity() instanceof AbstractBuildingEntity) {
             // Append the facing for VGLs or if mounted on an AbstractBuildingEntity
-                switch (m.getFacing()) {
-                    case 0:
-                        name = name + (" (F)");
-                        break;
-                    case 1:
-                        name = name + " (FR)";
-                        break;
-                    case 2:
-                        name = name + " (RR)";
-                        break;
-                    case 3:
-                        name = name + " (R)";
-                        break;
-                    case 4:
-                        name = name + " (RL)";
-                        break;
-                    case 5:
-                        name = name + " (FL)";
-                        break;
-                }
-            }
+            name += switch (m.getFacing()) {
+                case 0 -> " (F)";
+                case 1 -> " (FR)";
+                case 2 -> " (RR)";
+                case 3 -> " (R)";
+                case 4 -> " (RL)";
+                case 5 -> " (FL)";
+                default -> "";
+            };
+        }
         if (m.isRearMounted()) {
             name = "(R) " + name;
         }

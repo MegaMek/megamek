@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -126,8 +126,7 @@ public class TestAdvancedAerospace extends TestAero {
      * @return The number of extra armor points received for SI per location
      */
     public static int getSIBonusArmorPointsPerLocation(Jumpship jumpship) {
-        int baseSiFreeArmor = (int) Math.round(jumpship.getOSI() / 10.0);
-        return jumpship.isPrimitive() ? (int) (baseSiFreeArmor * 0.66) : baseSiFreeArmor;
+        return (int) Math.round(jumpship.getOSI() / 10.0);
     }
 
     /**

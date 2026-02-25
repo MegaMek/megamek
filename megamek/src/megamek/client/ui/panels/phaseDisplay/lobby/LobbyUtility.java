@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,7 +46,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 import javax.swing.JFrame;
@@ -59,7 +58,7 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.dialogs.abstractDialogs.BVDisplayDialog;
 import megamek.client.ui.dialogs.abstractDialogs.CostDisplayDialog;
 import megamek.client.ui.dialogs.randomArmy.ForceGeneratorViewUi;
-import megamek.client.ui.dialogs.randomArmy.RandomArmyDialog;
+import megamek.client.ui.dialogs.randomArmy.RatTableModel;
 import megamek.client.ui.dialogs.unitSelectorDialogs.EntityReadoutDialog;
 import megamek.client.ui.entityreadout.LiveReadoutDialog;
 import megamek.client.ui.models.UnitTableModel;
@@ -546,8 +545,8 @@ public class LobbyUtility {
 
             if (utm instanceof UnitTableModel) {
                 mekSummary = ((UnitTableModel) utm).getUnitAt(id);
-            } else if (utm instanceof RandomArmyDialog.RATTableModel) {
-                mekSummary = ((RandomArmyDialog.RATTableModel) utm).getUnitAt(id);
+            } else if (utm instanceof RatTableModel) {
+                mekSummary = ((RatTableModel) utm).getUnitAt(id);
             } else if (utm instanceof ForceGeneratorViewUi.ChosenEntityModel) {
                 mekSummary = ((ForceGeneratorViewUi.ChosenEntityModel) utm).getUnitAt(id);
             }
@@ -570,17 +569,11 @@ public class LobbyUtility {
     }
 
     /**
-     * Returns a list of the selected entities in the Mek table. The list may be empty but not null.
+     * Returns a list of the selected model row indices in the given table, taking care of row sorting, if a row sorter
+     * is applied. The list may be empty but not null.
      */
-    public static List<Integer> getSelectedEntities(JTable sTable) {
-        ArrayList<Integer> result = new ArrayList<>();
-        int[] rows = sTable.getSelectedRows();
-
-        for (int row : rows) {
-            result.add(sTable.convertRowIndexToModel(row));
-        }
-
-        return result;
+    public static List<Integer> getSelectedEntities(JTable table) {
+        return Arrays.stream(table.getSelectedRows()).map(table::convertRowIndexToModel).boxed().toList();
     }
 
     /**
@@ -640,7 +633,7 @@ public class LobbyUtility {
      *
      * @param entities The units to the bv report for
      */
-    public static void mekBVAction(final Set<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
+    public static void mekBVAction(final Collection<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
         if (entities.size() > 10) {
             LobbyErrors.showTenUnits(frame);
         } else if (!canSeeAll) {
@@ -658,7 +651,7 @@ public class LobbyUtility {
      *
      * @param entities The units to the cost report for
      */
-    public static void mekCostAction(final Set<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
+    public static void mekCostAction(final Collection<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
         if (entities.size() > 10) {
             LobbyErrors.showTenUnits(frame);
         } else if (!canSeeAll) {

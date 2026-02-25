@@ -114,9 +114,9 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
 
     private void okAction() {
         if (tabbedPane.getSelectedIndex() == TAB_FORCE_GENERATOR) {
-            m_pForceGen.addChosenUnits((String) playerChooser.getSelectedItem(), clientGui);
+            forceGeneratorPanel.addChosenUnits((String) playerChooser.getSelectedItem(), clientGui);
         } else {
-            ArrayList<Entity> entities = new ArrayList<>(armyModel.getAllUnits().size());
+            ArrayList<Entity> entities = new ArrayList<>(chosenUnitsModel.getAllUnits().size());
             Client selectedClient = null;
             if (playerChooser.getSelectedIndex() > 0) {
                 String name = (String) playerChooser.getSelectedItem();
@@ -125,14 +125,14 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
             if (selectedClient == null) {
                 selectedClient = this.client;
             }
-            if (m_pFormationOptions.getFaction() != null) {
+            if (formationPanel.getFaction() != null) {
                 // Set faction based on generated RAT faction
-                String faction = m_pFormationOptions.getFaction().getKey();
+                String faction = formationPanel.getFaction().getKey();
                 clientGui.getClient().getGame().getTeamForPlayer(selectedClient.getLocalPlayer()).setFaction(faction);
                 String msg = clientGui.getClient().getLocalPlayer() + " set team Faction to: " + faction;
                 clientGui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
             }
-            for (MekSummary ms : armyModel.getAllUnits()) {
+            for (MekSummary ms : chosenUnitsModel.getAllUnits()) {
                 try {
                     Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
 
@@ -222,7 +222,7 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
             @Override
             public void gameSettingsChange(GameSettingsChangeEvent evt) {
                 if (!evt.isMapSettingsOnlyChange()) {
-                    updateRATYear();
+                    setGameOptions(client.getGame().getOptions());
                 }
             }
         };

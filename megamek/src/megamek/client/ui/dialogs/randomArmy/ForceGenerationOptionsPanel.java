@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -48,29 +48,35 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.swing.*;
 
+import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.FormationType;
 import megamek.client.ratgenerator.MissionRole;
 import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.Parameters;
 import megamek.client.ratgenerator.RATGenerator;
+import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.AnalyzeFormationDialog;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.loaders.MekSummary;
+import megamek.common.options.GameOptions;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.UnitType;
+import megamek.logging.MMLogger;
 
 /**
  * Panel that allows choice of year, faction, rating, unit type
  *
  * @author Neoancient
  */
-public class ForceGenerationOptionsPanel extends JPanel implements ActionListener, FocusListener {
+public class ForceGenerationOptionsPanel extends JPanel implements ActionListener, FocusListener, RandomArmyTab {
     // region Variable Declarations
     @Serial
     private static final long serialVersionUID = -3462304612643343012L;
+
+    private static final MMLogger LOGGER = MMLogger.create(ForceGenerationOptionsPanel.class);
 
     public enum Use {
         RAT_GENERATOR, FORMATION_BUILDER // , FORCE_GENERATOR
@@ -1277,5 +1283,120 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
             generatedUnits = list;
             txtNoFormation.setVisible(list == null || list.isEmpty());
         }
+    }
+
+    @Override
+    public List<MekSummary> generateMekSummaries() {
+        ArrayList<MekSummary> unitList = new ArrayList<>();
+        FactionRecord fRec = getFaction();
+        FormationType ft = FormationType.getFormationType(getStringOption(
+              "formationType"));
+        List<Parameters> params = new ArrayList<>();
+        params.add(new Parameters(fRec,
+              getUnitType(),
+              getYear(),
+              getRating(),
+              null,
+              ModelRecord.NETWORK_NONE,
+              EnumSet.noneOf(EntityMovementMode.class),
+              EnumSet.noneOf(MissionRole.class),
+              0,
+              fRec));
+        List<Integer> numUnits = new ArrayList<>();
+        numUnits.add(getNumUnits());
+
+        if (getIntegerOption("numOtherUnits") > 0) {
+            if (getIntegerOption("otherUnitType") >= 0) {
+                params.add(new Parameters(fRec,
+                      getIntegerOption("otherUnitType"),
+                      getYear(),
+                      getRating(),
+                      null,
+                      ModelRecord.NETWORK_NONE,
+                      EnumSet.noneOf(EntityMovementMode.class),
+                      EnumSet.noneOf(MissionRole.class),
+                      0,
+                      fRec));
+                numUnits.add(getIntegerOption("numOtherUnits"));
+            } else if (getBooleanOption("mekBA")) {
+                // Make sure at least a number of units equals to the number of BA points/squads
+                // are omni
+                numUnits.set(0,
+                      Math.min(getIntegerOption("numOtherUnits"),
+                            getNumUnits()));
+                if (getNumUnits() >
+                      getIntegerOption("numOtherUnits")) {
+                    params.add(params.get(0).copy());
+                    numUnits.add(getNumUnits() -
+                          getIntegerOption("numOtherUnits"));
+                }
+                params.get(0).getRoles().add(MissionRole.MECHANIZED_BA);
+                // BA do not count for formation rules; add as a separate formation
+            }
+        }
+
+        if (ft != null) {
+            unitList.addAll(ft.generateFormation(params,
+                  numUnits,
+                  getIntegerOption("network"),
+                  false));
+            if (!unitList.isEmpty() && (getIntegerOption("numOtherUnits") > 0)) {
+                if (getBooleanOption("mekBA")) {
+                    // Try to generate the BA portion using the same formation type as
+                    // the parent, otherwise generate randomly.
+                    Parameters p = new Parameters(fRec,
+                          UnitType.BATTLE_ARMOR,
+                          getYear(),
+                          getRating(),
+                          null,
+                          ModelRecord.NETWORK_NONE,
+                          EnumSet.noneOf(EntityMovementMode.class),
+                          EnumSet.of(MissionRole.MECHANIZED_BA),
+                          0,
+                          fRec);
+                    List<MekSummary> ba = ft.generateFormation(p,
+                          getIntegerOption("numOtherUnits"),
+                          ModelRecord.NETWORK_NONE,
+                          true);
+                    if (ba.isEmpty()) {
+                        ba = UnitTable.findTable(p)
+                              .generateUnits(getIntegerOption("numOtherUnits"));
+                    }
+                    unitList.addAll(ba);
+                } else if (getBooleanOption("airLance")) {
+                    UnitTable t = UnitTable.findTable(fRec,
+                          UnitType.AEROSPACE_FIGHTER,
+                          getYear(),
+                          getRating(),
+                          null,
+                          ModelRecord.NETWORK_NONE,
+                          EnumSet.noneOf(EntityMovementMode.class),
+                          EnumSet.noneOf(MissionRole.class),
+                          0,
+                          fRec);
+                    MekSummary unit = t.generateUnit();
+                    if (unit != null) {
+                        unitList.add(unit);
+                        MekSummary unit2 = t.generateUnit(ms -> ms.getChassis()
+                              .equals(unit.getChassis()));
+                        unitList.add(Objects.requireNonNullElse(unit2, unit));
+                    }
+                }
+            }
+        } else {
+            LOGGER.error("Could not find formation type {}", getStringOption("formationType"));
+        }
+        updateGeneratedUnits(unitList);
+        return unitList;
+    }
+
+    @Override
+    public void setGameOptions(GameOptions gameOptions) {
+        RandomArmyTab.super.setGameOptions(gameOptions);
+    }
+
+    @Override
+    public void setSkillGenerator(AbstractSkillGenerator skillGenerator) {
+        RandomArmyTab.super.setSkillGenerator(skillGenerator);
     }
 }

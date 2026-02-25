@@ -1072,9 +1072,10 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     /**
-     * Returns the total number of armor points available to the unit for a given tonnage of armor. This does not round
-     * down the calculation or take into account any maximum number of armor points or tonnage allowed to the unit. It
-     * also does not include any free armor points due to SI on aerospace units.
+     * Returns the total number of armor points available to the unit for a given tonnage of armor -- NOT including the
+     * downgrade of primitive aerospace armor which cannot be factored into this number correctly (see IO:AE p .125).
+     * This does not round down the calculation or take into account any maximum number of armor points or tonnage
+     * allowed to the unit. It also does not include any free armor points due to SI on aerospace units.
      * <p>
      * NOTE: only use for non-patchwork armor
      *
@@ -1085,12 +1086,6 @@ public abstract class TestEntity implements TestEntityOption {
             return Math.round(armorTons / ArmorType.forEntity(unit).getWeightPerPoint());
         } else if (unit.isSupportVehicle()) {
             return Math.floor(armorTons / TestSupportVehicle.armorWeightPerPoint(unit));
-//        } else if ((unit instanceof Jumpship)
-//              && unit.getArmorType(unit.firstArmorIndex()) == EquipmentType.T_ARMOR_PRIMITIVE_AERO) {
-            // Because primitive JumpShip armor has an extra step of rounding we have to give it special treatment.
-            // Standard armor value is computed first, rounded down, then the primitive armor mod is applied.
-//            return Math.floor(Math.floor(armorTons * TestAdvancedAerospace.armorPointsPerTon((Jumpship) unit,
-//                  EquipmentType.T_ARMOR_AEROSPACE, false)) * 0.66);
         } else {
             return armorTons * getArmorPointsPerTon(unit);
         }
@@ -1109,6 +1104,9 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public static int getArmorPoints(Entity unit, double armorTons) {
         int raw = (int) Math.floor(getRawArmorPoints(unit, armorTons) + TestEntity.getSIBonusArmorPoints(unit));
+        if (unit.isPrimitive()) {
+            raw = (int) (raw * 0.66);
+        }
         return Math.min(raw, getMaximumArmorPoints(unit));
     }
 
@@ -1179,7 +1177,7 @@ public abstract class TestEntity implements TestEntityOption {
      *
      * @return The total number of extra armor points received for SI
      */
-    public static double getSIBonusArmorPoints(Entity entity) {
+    public static int getSIBonusArmorPoints(Entity entity) {
         if (entity instanceof SmallCraft smallCraft) {
             return TestSmallCraft.getSIBonusArmorPoints(smallCraft);
         } else if (entity instanceof Jumpship jumpship) {

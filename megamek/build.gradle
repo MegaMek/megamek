@@ -569,6 +569,17 @@ tasks.register('unitFileMigrationTool', JavaExec) {
     mainClass = 'megamek.utilities.UnitFileMigrationTool'
 }
 
+tasks.register('resaveUnits', JavaExec) {
+    dependsOn jar
+    mustRunAfter(stageDataFiles)
+    description = 'Loads all units and resaves them with license headers to an output folder.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.UnitFileResaver'
+    args(project.hasProperty("resaveOutputDir") ? [project.property("resaveOutputDir")] : [])
+    jvmArgs = mmJvmOptions
+}
+
 tasks.register('testAi', JavaExec) {
     dependsOn jar
     description = 'Test AI'

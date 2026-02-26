@@ -34,6 +34,7 @@ package megamek.common.loaders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -355,5 +356,35 @@ class MtfFileTest {
         }
         assertEquals(7, gaussCount, "All 7 Gauss Rifle crits should be preserved");
         assertEquals(2, srm6Count, "All 2 SRM 6 crits should be preserved");
+    }
+
+    /**
+     * Test that a GYRO_NONE unit places all 6 engine crits contiguously (0-5) in CT,
+     * rather than splitting them around a nonexistent gyro.
+     */
+    @Test
+    void testGyroNoneEngineIsContiguous() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(45.0);
+        mek.setEngine(new Engine(315, Engine.XL_ENGINE, 0));
+        mek.setGyroType(Mek.GYRO_NONE);
+        mek.setCockpitType(Mek.COCKPIT_INTERFACE);
+        mek.addCockpit();
+        mek.addEngineCrits();
+
+        MtfFile loader = toMtfFile(mek);
+        Entity loaded = loader.getEntity();
+
+        // CT slots 0-5 should all be engine
+        for (int i = 0; i <= 5; i++) {
+            CriticalSlot slot = loaded.getCritical(Mek.LOC_CENTER_TORSO, i);
+            assertNotNull(slot, "CT slot " + i + " should not be null");
+            assertEquals(CriticalSlot.TYPE_SYSTEM, slot.getType(), "CT slot " + i + " should be system");
+            assertEquals(Mek.SYSTEM_ENGINE, slot.getIndex(), "CT slot " + i + " should be Engine");
+        }
+        // CT slot 6 should NOT be engine
+        CriticalSlot slot6 = loaded.getCritical(Mek.LOC_CENTER_TORSO, 6);
+        assertTrue(slot6 == null || slot6.getIndex() != Mek.SYSTEM_ENGINE,
+              "CT slot 6 should not be engine (gyro is None, engine should be contiguous 0-5)");
     }
 }

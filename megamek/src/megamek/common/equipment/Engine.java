@@ -583,8 +583,8 @@ public class Engine implements Serializable, ITechnology {
             return slots;
         } else if (hasFlag(LARGE_ENGINE)) {
             if (hasFlag(SUPERHEAVY_ENGINE)) {
-                if (gyroType == Mek.GYRO_COMPACT || gyroType == Mek.GYRO_NONE) {
-                    return new int[] { 0, 1, 2, 5 };
+                if (gyroType == Mek.GYRO_NONE) {
+                    return new int[] { 0, 1, 2, 3 };
                 }
                 return new int[] { 0, 1, 2, 5 };
             }

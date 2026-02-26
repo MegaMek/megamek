@@ -170,8 +170,10 @@ public abstract class ExternalCargo implements Transporter {
         }
         List<Entity> retList = new ArrayList<>();
         for (ICarryable carriedObject : getCarryables()) {
-            if (carriedObject instanceof Entity) {
-                retList.add((Entity) carriedObject);
+            // Always try to get the entity from the game itself
+            if (carriedObject instanceof Entity e) {
+                Entity carriedEntity = (game != null) ? game.getEntity(e.getId()) : null;
+                retList.add(carriedEntity != null ? carriedEntity : e);
             }
         }
 

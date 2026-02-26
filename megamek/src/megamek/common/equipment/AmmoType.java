@@ -12368,6 +12368,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoTypeEnum.KRAKENM;
         ammo.shots = 1;
         ammo.bv = 288;
+        ammo.tonnage = 100.0;  //Unofficial Weapon so basing weight on official weight
         ammo.cost = 55000;
         ammo.capital = true;
         ammo.flags = ammo.flags.or(F_CAP_MISSILE);

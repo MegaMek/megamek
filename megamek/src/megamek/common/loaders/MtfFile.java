@@ -460,8 +460,16 @@ public class MtfFile implements IMekLoader {
                       rearLocationOrder[x]);
             }
 
-            // oog, crits.
-            compactCriticalSlots(mek);
+            // Place system crits (engine, gyro, cockpit) programmatically to ensure
+            // correct slot positions regardless of what the MTF file may contain
+            placeSystemCriticals(mek);
+
+            // Remap critData so equipment entries align with the available (non-system)
+            // mek slots. This also compacts empty slots. This is necessary because the
+            // MTF file may have system crits at different positions than where
+            // placeSystemCriticals put them, which would cause equipment to be lost.
+            remapCritDataAroundSystemSlots(mek);
+
             // we do these in reverse order to get the outermost
             // locations first, which is necessary for split crits to work
             for (int i = mek.locations() - 1; i >= 0; i--) {
@@ -788,24 +796,33 @@ public class MtfFile implements IMekLoader {
                 critNameUpper = critName.toUpperCase();
             }
 
+            // System crits (engine, gyro, cockpit components) are placed programmatically
+            // by placeSystemCriticals() before parseCrits is called, so we skip placing them
+            // from the file. We only preserve the armored flag if present.
             if (critName.equalsIgnoreCase("Fusion Engine") || critName.equalsIgnoreCase("Engine")) {
-                mek.setCritical(loc, i,
-                      new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, true, isArmored));
+                if (isArmored) {
+                    setSystemCriticalArmored(mek, loc, Mek.SYSTEM_ENGINE);
+                }
                 continue;
             } else if (critName.equalsIgnoreCase("Life Support")) {
-                mek.setCritical(loc, i,
-                      new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, true, isArmored));
+                if (isArmored) {
+                    setSystemCriticalArmored(mek, loc, Mek.SYSTEM_LIFE_SUPPORT);
+                }
                 continue;
             } else if (critName.equalsIgnoreCase("Sensors")) {
-                mek.setCritical(loc, i,
-                      new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, true, isArmored));
+                if (isArmored) {
+                    setSystemCriticalArmored(mek, loc, Mek.SYSTEM_SENSORS);
+                }
                 continue;
             } else if (critName.equalsIgnoreCase("Cockpit")) {
-                mek.setCritical(loc, i,
-                      new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, true, isArmored));
+                if (isArmored) {
+                    setSystemCriticalArmored(mek, loc, Mek.SYSTEM_COCKPIT);
+                }
                 continue;
             } else if (critName.equalsIgnoreCase("Gyro")) {
-                mek.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, true, isArmored));
+                if (isArmored) {
+                    setSystemCriticalArmored(mek, loc, Mek.SYSTEM_GYRO);
+                }
                 continue;
             } else if ((critName.contains("Actuator")) || critName.equalsIgnoreCase("Shoulder")
                   || critName.equalsIgnoreCase("Hip")) {
@@ -1053,6 +1070,218 @@ public class MtfFile implements IMekLoader {
         } else {
             mek.addFailedEquipment(name);
         }
+    }
+
+    /**
+     * Places system critical slots (gyro, engine, cockpit) on the mek programmatically based on its properties, rather
+     * than reading positions from the MTF file. This ensures correct slot positions for units where the MTF file may
+     * contain incorrect system slot ordering (e.g. swapped cockpit/sensors or incorrectly split gyro slots).
+     */
+    private void placeSystemCriticals(Mek mek) {
+        // Clear existing system crits so they can be re-placed in correct positions.
+        mek.clearCockpitCrits();
+        mek.clearGyroCrits();
+        mek.clearEngineCrits();
+
+        // 1. Place gyro crits (XL gyro also handles engine crits internally)
+        switch (mek.getGyroType()) {
+            case Mek.GYRO_XL:
+                mek.addXLGyro();
+                break;
+            case Mek.GYRO_COMPACT:
+                mek.addCompactGyro();
+                break;
+            case Mek.GYRO_HEAVY_DUTY:
+                mek.addHeavyDutyGyro();
+                break;
+            case Mek.GYRO_SUPERHEAVY:
+                mek.addSuperheavyGyro();
+                break;
+            case Mek.GYRO_NONE:
+                break;
+            default:
+                mek.addGyro();
+                break;
+        }
+
+        // 2. Place engine crits (unless XL gyro already handled them)
+        if (mek.getGyroType() != Mek.GYRO_XL) {
+            mek.addEngineCrits();
+        }
+
+        // 3. Place cockpit/sensors/life support crits
+        int savedCockpitType = mek.getCockpitType();
+        switch (mek.getCockpitType()) {
+            case Mek.COCKPIT_SMALL:
+                mek.addSmallCockpit();
+                break;
+            case Mek.COCKPIT_INTERFACE:
+                mek.addInterfaceCockpit();
+                break;
+            case Mek.COCKPIT_COMMAND_CONSOLE:
+                mek.addCommandConsole();
+                break;
+            case Mek.COCKPIT_DUAL:
+                mek.addDualCockpit();
+                break;
+            case Mek.COCKPIT_QUADVEE:
+                mek.addQuadVeeCockpit();
+                break;
+            case Mek.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
+                mek.addSuperheavyCommandConsole();
+                break;
+            case Mek.COCKPIT_SMALL_COMMAND_CONSOLE:
+                mek.addSmallCommandConsole();
+                break;
+            case Mek.COCKPIT_TORSO_MOUNTED:
+                mek.addTorsoMountedCockpit(false);
+                break;
+            case Mek.COCKPIT_VRRP:
+                mek.addTorsoMountedCockpit(true);
+                break;
+            case Mek.COCKPIT_PRIMITIVE:
+                mek.addPrimitiveCockpit();
+                break;
+            case Mek.COCKPIT_PRIMITIVE_INDUSTRIAL:
+                mek.addIndustrialPrimitiveCockpit();
+                break;
+            case Mek.COCKPIT_INDUSTRIAL:
+                mek.addIndustrialCockpit();
+                break;
+            case Mek.COCKPIT_SUPERHEAVY_INDUSTRIAL:
+                mek.addSuperheavyIndustrialCockpit();
+                break;
+            default:
+                // Standard, Superheavy, Tripod, and their industrial/tripod variants
+                mek.addCockpit();
+                break;
+        }
+        // Restore cockpit type in case the add method changed it (e.g. addCockpit() recalculates)
+        mek.setCockpitType(savedCockpitType);
+    }
+
+    /**
+     * Marks all critical slots of the given system type in the given location as armored. This is used when the MTF
+     * file indicates armored system components, since the actual slot positions are regenerated rather than read from
+     * the file.
+     */
+    private void setSystemCriticalArmored(Mek mek, int loc, int systemIndex) {
+        for (int s = 0; s < mek.getNumberOfCriticalSlots(loc); s++) {
+            CriticalSlot slot = mek.getCritical(loc, s);
+            if (slot != null && slot.getType() == CriticalSlot.TYPE_SYSTEM && slot.getIndex() == systemIndex) {
+                slot.setArmored(true);
+            }
+        }
+    }
+
+    /**
+     * Remaps the critData array so that equipment entries from the file are aligned with available (non-system) mek
+     * slots. System critical slots placed by {@link #placeSystemCriticals(Mek)} (engine, gyro, cockpit, sensors, life
+     * support) may be at different positions than in the original MTF file. This method strips those system entries from
+     * critData and shifts the remaining entries (equipment, actuators, etc.) to fill non-system slots in order,
+     * preserving their relative sequence. This also implicitly compacts empty slots.
+     *
+     * <p>Armored flags on system entries are preserved by applying them directly to the mek's critical slots during
+     * remapping.</p>
+     */
+    private void remapCritDataAroundSystemSlots(Mek mek) {
+        for (int loc = 0; loc < mek.locations(); loc++) {
+            int numSlots = mek.getNumberOfCriticalSlots(loc);
+
+            // Pass 1: Collect non-system, non-empty entries from critData in file order.
+            // For relocated system entries, apply any armored flag directly to the mek.
+            List<String> nonSystemEntries = new ArrayList<>();
+            for (int i = 0; i < numSlots; i++) {
+                String entry = critData[loc][i];
+                if (entry == null || entry.equals(EMPTY)) {
+                    continue;
+                }
+                if (isRelocatedSystemCritEntry(entry)) {
+                    // Apply armored flag if present
+                    String trimmed = entry.trim();
+                    if (trimmed.toUpperCase().endsWith(ARMORED)) {
+                        String name = trimmed.substring(0, trimmed.length() - ARMORED.length()).trim();
+                        int systemIndex = systemNameToIndex(name);
+                        if (systemIndex >= 0) {
+                            setSystemCriticalArmored(mek, loc, systemIndex);
+                        }
+                    }
+                } else {
+                    nonSystemEntries.add(entry);
+                }
+            }
+
+            // Pass 2: Rebuild critData array.
+            // - Slots with regenerated system crits get EMPTY (parseCrits will skip them via "slot full" check).
+            // - Other slots (equipment, actuators) get entries from nonSystemEntries in order.
+            int entryIdx = 0;
+            for (int i = 0; i < numSlots; i++) {
+                CriticalSlot slot = mek.getCritical(loc, i);
+                if (slot != null && isRelocatedSystemSlot(slot)) {
+                    critData[loc][i] = EMPTY;
+                } else if (entryIdx < nonSystemEntries.size()) {
+                    critData[loc][i] = nonSystemEntries.get(entryIdx++);
+                } else {
+                    critData[loc][i] = EMPTY;
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns true if the given critData entry name represents a system component that is placed programmatically by
+     * {@link #placeSystemCriticals(Mek)} and should be stripped from the file's critical data during remapping.
+     */
+    private boolean isRelocatedSystemCritEntry(String critName) {
+        if (critName == null || critName.equals(EMPTY)) {
+            return false;
+        }
+        String name = critName.trim();
+        if (name.toUpperCase().endsWith(ARMORED)) {
+            name = name.substring(0, name.length() - ARMORED.length()).trim();
+        }
+        return name.equalsIgnoreCase("Fusion Engine")
+              || name.equalsIgnoreCase("Engine")
+              || name.equalsIgnoreCase("Life Support")
+              || name.equalsIgnoreCase("Sensors")
+              || name.equalsIgnoreCase("Cockpit")
+              || name.equalsIgnoreCase("Gyro");
+    }
+
+    /**
+     * Returns true if the given mek critical slot was placed by {@link #placeSystemCriticals(Mek)} (engine, gyro,
+     * cockpit components). These slots are NOT read from the file and should be skipped during critData remapping.
+     */
+    private boolean isRelocatedSystemSlot(CriticalSlot slot) {
+        if (slot == null || slot.getType() != CriticalSlot.TYPE_SYSTEM) {
+            return false;
+        }
+        int idx = slot.getIndex();
+        return idx == Mek.SYSTEM_ENGINE
+              || idx == Mek.SYSTEM_GYRO
+              || idx == Mek.SYSTEM_COCKPIT
+              || idx == Mek.SYSTEM_SENSORS
+              || idx == Mek.SYSTEM_LIFE_SUPPORT;
+    }
+
+    /**
+     * Maps a system critical name from an MTF file entry to its corresponding system index.
+     *
+     * @return The system index, or -1 if not recognized.
+     */
+    private int systemNameToIndex(String name) {
+        if (name.equalsIgnoreCase("Fusion Engine") || name.equalsIgnoreCase("Engine")) {
+            return Mek.SYSTEM_ENGINE;
+        } else if (name.equalsIgnoreCase("Life Support")) {
+            return Mek.SYSTEM_LIFE_SUPPORT;
+        } else if (name.equalsIgnoreCase("Sensors")) {
+            return Mek.SYSTEM_SENSORS;
+        } else if (name.equalsIgnoreCase("Cockpit")) {
+            return Mek.SYSTEM_COCKPIT;
+        } else if (name.equalsIgnoreCase("Gyro")) {
+            return Mek.SYSTEM_GYRO;
+        }
+        return -1;
     }
 
     /**

@@ -171,4 +171,189 @@ class MtfFileTest {
               e.getMessage());
 
     }
+
+    private MtfFile toMtfFile(String mtf) throws EntityLoadingException {
+        byte[] bytes = mtf.getBytes();
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        return new MtfFile(inputStream);
+    }
+
+    /**
+     * Test that inverted Cockpit/Sensors in the head are corrected on load.
+     * Some MTF files have the head layout: LS, Cockpit, Sensors (wrong)
+     * instead of the correct: LS, Sensors, Cockpit.
+     */
+    @Test
+    void testInvertedCockpitSensorsInHead() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(20.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        mek.addCockpit();
+        mek.addGyro();
+        mek.addEngineCrits();
+        String mtf = mek.getMtf();
+        // Swap Cockpit and Sensors in the Head section to simulate a broken file
+        // Correct order: Life Support / Sensors / Cockpit / ... / Sensors / Life Support
+        // Broken order: Life Support / Cockpit / Sensors / ... / Sensors / Life Support
+        String correctHead = "Life Support\nSensors\nCockpit\n-Empty-\nSensors\nLife Support";
+        assertTrue(mtf.contains(correctHead),
+              "Expected correct head layout in generated MTF to set up the test");
+        mtf = mtf.replace(correctHead,
+              "Life Support\nCockpit\nSensors\n-Empty-\nSensors\nLife Support");
+
+        MtfFile loader = toMtfFile(mtf);
+        Entity loaded = loader.getEntity();
+
+        // Verify the correct positions despite the file having them swapped
+        assertEquals(Mek.SYSTEM_LIFE_SUPPORT, loaded.getCritical(Mek.LOC_HEAD, 0).getIndex());
+        assertEquals(Mek.SYSTEM_SENSORS, loaded.getCritical(Mek.LOC_HEAD, 1).getIndex());
+        assertEquals(Mek.SYSTEM_COCKPIT, loaded.getCritical(Mek.LOC_HEAD, 2).getIndex());
+        assertEquals(Mek.SYSTEM_SENSORS, loaded.getCritical(Mek.LOC_HEAD, 4).getIndex());
+        assertEquals(Mek.SYSTEM_LIFE_SUPPORT, loaded.getCritical(Mek.LOC_HEAD, 5).getIndex());
+    }
+
+    /**
+     * Test that incorrectly split XL gyro slots in CT are corrected on load.
+     * Some files have Gyro at slots 3-6 + 10-11 with Engine at 7-9 (split gyro),
+     * but the correct XL gyro layout is Gyro at slots 3-8 with Engine at 0-2 and 9-11.
+     */
+    @Test
+    void testSplitXLGyroIsCorrected() throws Exception {
+        Mek mek = new BipedMek(Mek.GYRO_XL, Mek.COCKPIT_STANDARD);
+        mek.setWeight(50.0);
+        mek.setEngine(new Engine(200, Engine.NORMAL_ENGINE, 0));
+        mek.addCockpit();
+        mek.setCockpitType(Mek.COCKPIT_STANDARD);
+        mek.addXLGyro();
+        String mtf = mek.getMtf();
+
+        // Correct XL Gyro CT: Engine(0-2), Gyro(3-8), Engine(9-11)
+        String correctCT = "Fusion Engine\nFusion Engine\nFusion Engine\n"
+              + "Gyro\nGyro\nGyro\nGyro\nGyro\nGyro\n"
+              + "Fusion Engine\nFusion Engine\nFusion Engine";
+        assertTrue(mtf.contains(correctCT),
+              "Expected correct XL Gyro CT layout in generated MTF to set up the test");
+
+        // Broken: Engine(0-2), Gyro(3-6), Engine(7-9), Gyro(10-11) - split gyro
+        String brokenCT = "Fusion Engine\nFusion Engine\nFusion Engine\n"
+              + "Gyro\nGyro\nGyro\nGyro\n"
+              + "Fusion Engine\nFusion Engine\nFusion Engine\n"
+              + "Gyro\nGyro";
+
+        mtf = mtf.replace(correctCT, brokenCT);
+
+        MtfFile loader = toMtfFile(mtf);
+        Entity loaded = loader.getEntity();
+
+        // Verify ALL CT slots are in the correct XL gyro layout
+        for (int i = 0; i <= 2; i++) {
+            CriticalSlot slot = loaded.getCritical(Mek.LOC_CENTER_TORSO, i);
+            assertEquals(CriticalSlot.TYPE_SYSTEM, slot.getType(), "CT slot " + i + " should be system");
+            assertEquals(Mek.SYSTEM_ENGINE, slot.getIndex(), "CT slot " + i + " should be Engine");
+        }
+        for (int i = 3; i <= 8; i++) {
+            CriticalSlot slot = loaded.getCritical(Mek.LOC_CENTER_TORSO, i);
+            assertEquals(CriticalSlot.TYPE_SYSTEM, slot.getType(), "CT slot " + i + " should be system");
+            assertEquals(Mek.SYSTEM_GYRO, slot.getIndex(), "CT slot " + i + " should be Gyro");
+        }
+        for (int i = 9; i <= 11; i++) {
+            CriticalSlot slot = loaded.getCritical(Mek.LOC_CENTER_TORSO, i);
+            assertEquals(CriticalSlot.TYPE_SYSTEM, slot.getType(), "CT slot " + i + " should be system");
+            assertEquals(Mek.SYSTEM_ENGINE, slot.getIndex(), "CT slot " + i + " should be Engine");
+        }
+    }
+
+    /**
+     * Test that armored system components preserve their armored status even though
+     * system slots are regenerated and not read from file positions.
+     */
+    @Test
+    void testArmoredSystemCritsPreserved() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(20.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        mek.addCockpit();
+        mek.addGyro();
+        mek.addEngineCrits();
+        // Armor all head system crits
+        for (int i = 0; i < mek.getNumberOfCriticalSlots(Mek.LOC_HEAD); i++) {
+            CriticalSlot slot = mek.getCritical(Mek.LOC_HEAD, i);
+            if (slot != null && slot.getType() == CriticalSlot.TYPE_SYSTEM) {
+                slot.setArmored(true);
+            }
+        }
+
+        MtfFile loader = toMtfFile(mek);
+        Entity loaded = loader.getEntity();
+
+        // All head system crits should be armored
+        for (int i = 0; i < loaded.getNumberOfCriticalSlots(Mek.LOC_HEAD); i++) {
+            CriticalSlot slot = loaded.getCritical(Mek.LOC_HEAD, i);
+            if (slot != null && slot.getType() == CriticalSlot.TYPE_SYSTEM) {
+                assertTrue(slot.isArmored(), "Head slot " + i + " should be armored");
+            }
+        }
+    }
+
+    /**
+     * Test that equipment is preserved when the file has XL engine crits at the END of
+     * a side torso instead of the beginning. The remapping should shift equipment to
+     * fill the available slots after the correctly-placed engine crits.
+     */
+    @Test
+    void testSideTorsoEngineAtEndPreservesEquipment() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(100.0);
+        mek.setEngine(new Engine(300, Engine.XL_ENGINE, 0));
+        mek.addCockpit();
+        mek.addGyro();
+        mek.addEngineCrits();
+        // Add 7 crits of Gauss Rifle + 2 crits of SRM6 to LT
+        EquipmentType gauss = EquipmentType.get("ISGaussRifle");
+        EquipmentType srm6 = EquipmentType.get("SRM 6");
+        mek.addEquipment(gauss, Mek.LOC_LEFT_TORSO, false);
+        mek.addEquipment(srm6, Mek.LOC_LEFT_TORSO, false);
+        String mtf = mek.getMtf();
+
+        // Correct layout: Engine at front (slots 0-2), then equipment
+        String correctLT = "Fusion Engine\nFusion Engine\nFusion Engine\n"
+              + "ISGaussRifle\nISGaussRifle\nISGaussRifle\nISGaussRifle\n"
+              + "ISGaussRifle\nISGaussRifle\nISGaussRifle\n"
+              + "SRM 6\nSRM 6";
+        assertTrue(mtf.contains(correctLT),
+              "Expected correct LT layout in generated MTF to set up the test");
+
+        // Broken: equipment first, engine at end (as the user's original file had)
+        String brokenLT = "ISGaussRifle\nISGaussRifle\nISGaussRifle\nISGaussRifle\n"
+              + "ISGaussRifle\nISGaussRifle\nISGaussRifle\n"
+              + "SRM 6\nSRM 6\n"
+              + "Fusion Engine\nFusion Engine\nFusion Engine";
+        mtf = mtf.replace(correctLT, brokenLT);
+
+        MtfFile loader = toMtfFile(mtf);
+        Entity loaded = loader.getEntity();
+
+        // Engine should be at slots 0-2 (correct position)
+        for (int i = 0; i <= 2; i++) {
+            CriticalSlot slot = loaded.getCritical(Mek.LOC_LEFT_TORSO, i);
+            assertEquals(CriticalSlot.TYPE_SYSTEM, slot.getType(), "LT slot " + i + " should be system");
+            assertEquals(Mek.SYSTEM_ENGINE, slot.getIndex(), "LT slot " + i + " should be Engine");
+        }
+
+        // Equipment should fill slots 3-11 with all 7 Gauss + 2 SRM6 crits preserved
+        int gaussCount = 0;
+        int srm6Count = 0;
+        for (int i = 3; i < loaded.getNumberOfCriticalSlots(Mek.LOC_LEFT_TORSO); i++) {
+            CriticalSlot slot = loaded.getCritical(Mek.LOC_LEFT_TORSO, i);
+            if (slot != null && slot.getType() == CriticalSlot.TYPE_EQUIPMENT) {
+                if (slot.getMount().getType().equals(gauss)) {
+                    gaussCount++;
+                } else if (slot.getMount().getType().equals(srm6)) {
+                    srm6Count++;
+                }
+            }
+        }
+        assertEquals(7, gaussCount, "All 7 Gauss Rifle crits should be preserved");
+        assertEquals(2, srm6Count, "All 2 SRM 6 crits should be preserved");
+    }
 }

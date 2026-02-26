@@ -738,16 +738,23 @@ public class BLKFile {
         if (!t.getTransports().isEmpty()) {
             // We should only write the transporters block for units that can and do
             // have transporter bays. Empty Transporters blocks cause issues.
-            String[] transporter_array = new String[t.getTransports().size()];
-            int index = 0;
-            for (Transporter transporter : t.getTransports()) {
-                transporter_array[index] = transporter.toString();
-                if (t.isPodMountedTransport(transporter)) {
-                    transporter_array[index] += ":omni";
+            // ExternalCargo (LiftHoist, for example) transporters are reconstructed from
+            // equipment on load and must not be written to the transporters block.
+            List<Transporter> serializableTransports = t.getTransports().stream()
+                  .filter(tr -> !(tr instanceof ExternalCargo))
+                  .toList();
+            if (!serializableTransports.isEmpty()) {
+                String[] transporter_array = new String[serializableTransports.size()];
+                int index = 0;
+                for (Transporter transporter : serializableTransports) {
+                    transporter_array[index] = transporter.toString();
+                    if (t.isPodMountedTransport(transporter)) {
+                        transporter_array[index] += ":omni";
+                    }
+                    index++;
                 }
-                index++;
+                blk.writeBlockData("transporters", transporter_array);
             }
-            blk.writeBlockData("transporters", transporter_array);
         }
 
         if (!(t.isConventionalInfantry() || t.isHandheldWeapon() || t instanceof GunEmplacement)) {

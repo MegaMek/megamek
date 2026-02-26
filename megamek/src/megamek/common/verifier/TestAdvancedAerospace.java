@@ -93,25 +93,31 @@ public class TestAdvancedAerospace extends TestAero {
 
     /**
      * Returns the maximum number of total (all locations summed) armor points that the given vessel (JS/WS/SS) can
-     * have, including free armor points it receives from its SI. See SO:AA p.140, IO:AE p.122-125.
+     * have, including free armor points it receives from its SI and modified for primitive armor, if appropriate. See
+     * SO:AA p.140, IO:AE p.122-125.
      *
-     * @param vessel The JumpShip or WarShip to compute bonus armor for
+     * @param vessel The JS/WS/SS to compute armor for
      *
      * @return The total number of armor points allowed to the vessel
      */
     public static int maxArmorPoints(Jumpship vessel) {
-        ArmorType armorType = ArmorType.forEntity(vessel);
-        return (int) Math.floor(armorType.getPointsPerTon(vessel) * maxArmorWeight(vessel)
-              + getSIBonusArmorPoints(vessel));
+        double pointsPerTon = ArmorType.forEntity(vessel).getPointsPerTon();
+        int baseArmor = (int) (pointsPerTon * maxArmorWeight(vessel) + getSIBonusArmorPoints(vessel));
+        if (vessel.isPrimitive()) {
+            return (int) (baseArmor * 0.66);
+        } else {
+            return baseArmor;
+        }
     }
 
     /**
-     * Returns the number of free additional armor points provided for a capital craft based on their SI. It is the
-     * total number, which is divided evenly among armor facings. TM p.191, SO:AA p.140, IO:AE p.119-125.
+     * Returns the number of free additional armor points provided for a capital craft based on their structural
+     * integrity (for primitive craft, *without* the 0.66 primitive adjustment factor). See TM p.191, SO:AA p.140, IO:AE
+     * p.119-125.
      *
      * @param jumpship The JS/WS/SS to compute bonus armor for
      *
-     * @return The total number of extra armor points received for SI
+     * @return The total number of extra armor points received for SI (disregarding primitive adjustment)
      */
     public static int getSIBonusArmorPoints(Jumpship jumpship) {
         return getSIBonusArmorPointsPerLocation(jumpship) * 6; // 6 armor locations

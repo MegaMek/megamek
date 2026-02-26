@@ -1073,7 +1073,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     /**
      * Returns the total number of armor points available to the unit for a given tonnage of armor -- NOT including the
-     * downgrade of primitive aerospace armor which cannot be factored into this number correctly (see IO:AE p .125).
+     * downgrade of primitive aerospace armor which cannot be factored into this number correctly (see IO:AE p.125).
      * This does not round down the calculation or take into account any maximum number of armor points or tonnage
      * allowed to the unit. It also does not include any free armor points due to SI on aerospace units.
      * <p>

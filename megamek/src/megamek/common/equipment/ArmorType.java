@@ -31,7 +31,6 @@
  * affiliated with Microsoft.
  */
 
-
 package megamek.common.equipment;
 
 import java.util.ArrayList;
@@ -1294,9 +1293,9 @@ public class ArmorType extends MiscType {
               .setProductionFactions(Faction.TH).setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         armor.armorType = T_ARMOR_PRIMITIVE_AERO;
-        // the primitive factor 0,66 cannot be multiplied into the ppt values as the total armor is calculated by
+        // the primitive factor 0.66 cannot be multiplied into the ppt values as the total armor is calculated by
         // taking the armor tonnage times the points per ton, rounding down, then adding the SI free armor and THEN,
-        // multiplying by 0,66; see the example on IO:AE p.125 (3rd printing) which gives the precise process
+        // multiplying by 0.66; see the example on IO:AE p.125 (3rd printing) which gives the precise process
         armor.pptDropship = new double[] { 16.0, 14.0, 12.0, 10.0, 8.0, 6.0 };
         armor.pptCapital = new double[] { 0.8, 0.6, 0.4 };
 

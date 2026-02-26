@@ -61,7 +61,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.RoundWeight;
-import megamek.common.verifier.TestEntity;
+import megamek.common.verifier.TestAdvancedAerospace;
 
 /**
  * @author Jay Lawson
@@ -759,10 +759,18 @@ public class SmallCraft extends Aero {
 
     @Override
     public double getArmorWeight() {
-        // calculate back from total armor by subtracting free SI armor
-        double armorPoints = getTotalOArmor() - TestEntity.getSIBonusArmorPoints(this);
-        double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
-        return RoundWeight.nextHalfTon(armorPoints / armorPerTon);
+        double rawArmor;
+        if (isPrimitive()) {
+            // reverse the double rounding process of determining the final armor value, see IO:AE 3rd p.125
+            // (Aquilla example calculation, which is a JS but the calculation process for JS and DS seems to be
+            // exactly the same)
+            rawArmor = Math.ceil(getTotalOArmor() / 0.66);
+        } else {
+            rawArmor = getTotalOArmor();
+        }
+        double weightedArmor = rawArmor - TestAdvancedAerospace.getSIBonusArmorPoints(this);
+        double pointsPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
+        return RoundWeight.standard(weightedArmor / pointsPerTon, this);
     }
 
     @Override

@@ -92,27 +92,32 @@ public class TestSmallCraft extends TestAero {
     }
 
     /**
-     * Returns the maximum number of total (all locations summed) armor points that the given vessel (DS/SC) can
-     * have, including free armor points it receives from its SI. See SO:AA p.140, IO:AE p.119-122.
+     * Returns the maximum number of total (all locations summed) armor points that the given vessel (DS/SC) can have,
+     * including free armor points it receives from its SI and modified for primitive armor, if appropriate. See TM
+     * p.191, IO:AE p.119-122.
      *
-     * @param smallCraft The SmallCraft or DropShip to compute bonus armor for
+     * @param vessel The SC/DS to compute bonus armor for
      *
      * @return The total number of armor points allowed to the vessel
      */
-    public static int maxArmorPoints(SmallCraft smallCraft) {
-        ArmorType armorType = ArmorType.forEntity(smallCraft);
-        return (int) Math.floor(armorType.getPointsPerTon(smallCraft) * maxArmorWeight(smallCraft)
-              + getSIBonusArmorPoints(smallCraft));
+    public static int maxArmorPoints(SmallCraft vessel) {
+        double pointsPerTon = ArmorType.forEntity(vessel).getPointsPerTon();
+        int baseArmor = (int) (pointsPerTon * maxArmorWeight(vessel) + getSIBonusArmorPoints(vessel));
+        if (vessel.isPrimitive()) {
+            return (int) (baseArmor * 0.66);
+        } else {
+            return baseArmor;
+        }
     }
 
     /**
-     * Returns the number of free additional armor points provided for SmallCraft and DropShips based on their SI. It is
-     * the total number, which is usually divided evenly among armor facings. See TM p.191, SO:AA p.140, IO:AE
-     * p.119-125.
+     * Returns the number of free additional armor points provided for SmallCraft and DropShips based on their
+     * structural integrity (for primitive craft, *without* the 0.66 primitive adjustment factor). See TM p.191,
+     * IO:AE p.119-125.
      *
-     * @param smallCraft The SmallCraft to compute free armor for
+     * @param smallCraft The SC/DS to compute free armor for
      *
-     * @return The total number of extra armor points received for SI
+     * @return The total number of extra armor points received for SI (disregarding primitive adjustment)
      */
     public static int getSIBonusArmorPoints(SmallCraft smallCraft) {
         return (smallCraft.locations() - 1) * smallCraft.getOSI();

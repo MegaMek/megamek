@@ -41,7 +41,7 @@ jobs:
         run: ./gradlew checkstyleMain checkstyleTest
 
       - name: Upload Test Logs on Failure
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: cd-failure-logs

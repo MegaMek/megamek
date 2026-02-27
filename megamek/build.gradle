@@ -590,3 +590,13 @@ tasks.register('testAi', JavaExec) {
 
     jvmArgs = mmJvmOptions
 }
+
+tasks.register('roundTripSaveUnitsTest', Test) {
+    useJUnitPlatform()
+    jvmArgs = mmJvmOptions
+    group = 'verification'
+    description = 'Roundtrip save/load test for all units: detects data loss in save/load cycle.'
+    filter {
+        includeTestsMatching 'megamek.common.loaders.BulkRoundTripTest'
+    }
+}

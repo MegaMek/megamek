@@ -46,6 +46,7 @@ import java.util.stream.Stream;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -59,8 +60,9 @@ import org.junit.jupiter.params.provider.MethodSource;
  *   - Compare A and B byte-for-byte, they must be identical (no data loss across the cycle)
  *
  * Run with:
- *   ./gradlew :megamek:test --tests "megamek.common.loaders.BulkRoundTripTest"
+ *   ./gradlew :megamek:roundTripSaveUnitsTest
  */
+@Tag("on-demand")
 public class BulkRoundTripTest {
 
     @BeforeAll

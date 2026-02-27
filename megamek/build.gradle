@@ -359,7 +359,9 @@ assembleDist {
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags 'on-demand'
+    }
     dependsOn(checkstyleMain)
 
     minHeapSize = "1024m"

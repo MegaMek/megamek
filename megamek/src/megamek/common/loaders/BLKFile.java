@@ -39,8 +39,10 @@ import static megamek.common.bays.Bay.UNSET_BAY;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
@@ -360,6 +362,19 @@ public class BLKFile {
             return;
         }
 
+        // Build a count of ammo at LOC_NONE already auto-created by addOneShotAmmo().
+        // These are linked to their parent weapon, so linkedBy != null. When loading
+        // slotless equipment we skip ammo entries that match already-present auto-created
+        // ammo to avoid duplication on roundtrip save/load.
+        Map<String, Integer> autoCreatedAmmoBudget = new HashMap<>();
+        for (Mounted<?> m : t.getEquipment()) {
+            if (m.getLocation() == Entity.LOC_NONE
+                  && m.getType() instanceof AmmoType
+                  && m.getLinkedBy() != null) {
+                autoCreatedAmmoBudget.merge(m.getType().getInternalName(), 1, Integer::sum);
+            }
+        }
+
         String prefix = t.isClan() ? "Clan " : "IS ";
 
         for (String s : saEquip) {
@@ -374,6 +389,15 @@ public class BLKFile {
             }
 
             if (etype != null) {
+                // Skip ammo that was already auto-created by a weapon's addOneShotAmmo()
+                if (etype instanceof AmmoType) {
+                    String key = etype.getInternalName();
+                    int remaining = autoCreatedAmmoBudget.getOrDefault(key, 0);
+                    if (remaining > 0) {
+                        autoCreatedAmmoBudget.put(key, remaining - 1);
+                        continue;
+                    }
+                }
                 try {
                     t.addEquipment(etype, Entity.LOC_NONE);
                 } catch (LocationFullException ex) {

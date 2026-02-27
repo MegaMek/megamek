@@ -63,10 +63,10 @@ public final class ProtoMekBay extends UnitBay {
      * Create a space for the given tonnage of troops. For this class, only the weight of the troops (and their
      * equipment) are considered; if you'd like to think that they are stacked like lumber, be my guest.
      *
-     * @param space The number of ProtoMeks that can fit in this bay.
+     * @param space The number of ProtoMek points (5 PM) that can fit in this bay.
      */
     public ProtoMekBay(double space, int doors, int bayNumber) {
-        totalSpace = Math.ceil(space / 5);
+        totalSpace = space;
         currentSpace = totalSpace;
         this.doors = doors;
         doorsNext = doors;
@@ -104,9 +104,10 @@ public final class ProtoMekBay extends UnitBay {
 
     @Override
     public String getUnusedString(boolean showRecovery) {
+        double units = getUnused() * 5;
         return "ProtoMek " + numDoorsString() + " - "
-              + String.format("%1$,.0f", getUnusedSlots())
-              + (getUnusedSlots() > 1 ? " units" : " unit");
+              + String.format("%1$,.0f", units)
+              + (units > 1 ? " units" : " unit");
     }
 
     @Override
@@ -156,11 +157,6 @@ public final class ProtoMekBay extends UnitBay {
     @Override
     public double spaceForUnit(Entity unit) {
         return 0.2;
-    }
-
-    @Override
-    public double getUnusedSlots() {
-        return getUnused() * 5;
     }
 
     @Override

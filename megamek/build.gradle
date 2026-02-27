@@ -594,7 +594,11 @@ tasks.register('testAi', JavaExec) {
 }
 
 tasks.register('roundTripSaveUnitsTest', Test) {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        includeTags 'on-demand'
+    }
+    testClassesDirs = testing.suites.test.targets.first().testTask.get().testClassesDirs
+    classpath = testing.suites.test.targets.first().testTask.get().classpath
     jvmArgs = mmJvmOptions
     group = 'verification'
     description = 'Roundtrip save/load test for all units: detects data loss in save/load cycle.'

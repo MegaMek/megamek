@@ -96,25 +96,8 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         t.setMovementMode(EntityMovementMode.parseFromString(sMotion));
-        // Add equipment to calculate unit tech advancement correctly
-        try {
-            switch (t.getMovementMode()) {
-                case INF_JUMP:
-                    t.addEquipment(EquipmentType.get(EquipmentTypeLookup.BA_JUMP_JET), Entity.LOC_NONE);
-                    break;
-                case VTOL:
-                    t.addEquipment(EquipmentType.get(EquipmentTypeLookup.BA_VTOL), Entity.LOC_NONE);
-                    break;
-                case INF_UMU:
-                    t.addEquipment(EquipmentType.get(EquipmentTypeLookup.BA_UMU), Entity.LOC_NONE);
-                    break;
-                case NONE:
-                    throw new EntityLoadingException("Invalid movement type: " + sMotion);
-                default:
-                    break;
-            }
-        } catch (LocationFullException ignore) {
-            // Adding to LOC_NONE
+        if (t.getMovementMode() == EntityMovementMode.NONE) {
+            throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }
 
         if (!dataFile.exists("cruiseMP")) {
@@ -176,6 +159,29 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
         t.setArmorTonnage(t.getArmorWeight());
         loadQuirks(t);
         loadSlotlessEquipment(t);
+
+        // Backward compatibility: add movement equipment if not already loaded from
+        // the slotless_equipment block (old files may not include it).
+        // This must happen after loadSlotlessEquipment so new files don't get duplicates.
+        String movementEquipName = switch (t.getMovementMode()) {
+            case INF_JUMP -> EquipmentTypeLookup.BA_JUMP_JET;
+            case VTOL -> EquipmentTypeLookup.BA_VTOL;
+            case INF_UMU -> EquipmentTypeLookup.BA_UMU;
+            default -> null;
+        };
+        if (movementEquipName != null) {
+            boolean alreadyPresent = t.getEquipment().stream()
+                  .anyMatch(m -> movementEquipName.equals(m.getType().getInternalName()));
+            if (!alreadyPresent) {
+                try {
+                    t.addEquipment(EquipmentType.get(movementEquipName), Entity.LOC_NONE);
+                } catch (LocationFullException ignore) {
+                    // Adding to LOC_NONE
+                }
+            }
+        }
+
+        t.recalculateTechAdvancement();
         return t;
     }
 

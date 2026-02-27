@@ -56,7 +56,7 @@ import org.junit.jupiter.params.provider.MethodSource;
  *   - Load the original unit from cache
  *   - Save it to a temp file (A)
  *   - Load file A, save it again to file (B)
- *   - Compare A and B byte-for-byte — they must be identical (no data loss across the cycle)
+ *   - Compare A and B byte-for-byte, they must be identical (no data loss across the cycle)
  *
  * Run with:
  *   ./gradlew :megamek:test --tests "megamek.common.loaders.BulkRoundTripTest"

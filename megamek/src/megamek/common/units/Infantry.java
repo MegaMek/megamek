@@ -1698,12 +1698,17 @@ public class Infantry extends Entity {
     public void setSpecializations(int spec) {
         // Equipment for Trench/Fieldwork's Engineers
         if ((spec & TRENCH_ENGINEERS) > 0 && (infSpecs & TRENCH_ENGINEERS) == 0) {
-            // Add vibro shovels
-            try {
-                EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.VIBRO_SHOVEL);
-                addEquipment(shovels, Infantry.LOC_INFANTRY);
-            } catch (Exception e) {
-                logger.error("", e);
+            // Add vibro shovels if not already present (may already be loaded from file)
+            boolean hasShovels = getEquipment().stream()
+                  .anyMatch(m -> m.getType().hasFlag(MiscType.F_TOOLS)
+                        && m.getType().hasFlag(MiscTypeFlag.S_VIBRO_SHOVEL));
+            if (!hasShovels) {
+                try {
+                    EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.VIBRO_SHOVEL);
+                    addEquipment(shovels, Infantry.LOC_INFANTRY);
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
             }
         } else if ((spec & TRENCH_ENGINEERS) == 0 && (infSpecs & TRENCH_ENGINEERS) > 0) {
             // Need to remove vibro shovels
@@ -1724,12 +1729,17 @@ public class Infantry extends Entity {
 
         // Equipment for Demolition Engineers
         if ((spec & DEMO_ENGINEERS) > 0 && (infSpecs & DEMO_ENGINEERS) == 0) {
-            // Add demolition charge
-            try {
-                EquipmentType charge = EquipmentType.get(EquipmentTypeLookup.DEMOLITION_CHARGE);
-                addEquipment(charge, Infantry.LOC_INFANTRY);
-            } catch (Exception e) {
-                logger.error("", e);
+            // Add demolition charge if not already present (may already be loaded from file)
+            boolean hasCharge = getEquipment().stream()
+                  .anyMatch(m -> m.getType().hasFlag(MiscType.F_TOOLS)
+                        && m.getType().hasFlag(MiscTypeFlag.S_DEMOLITION_CHARGE));
+            if (!hasCharge) {
+                try {
+                    EquipmentType charge = EquipmentType.get(EquipmentTypeLookup.DEMOLITION_CHARGE);
+                    addEquipment(charge, Infantry.LOC_INFANTRY);
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
             }
         } else if ((spec & DEMO_ENGINEERS) == 0 && (infSpecs & DEMO_ENGINEERS) > 0) {
             // Need to remove vibro shovels

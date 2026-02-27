@@ -1553,6 +1553,14 @@ public class Infantry extends Entity {
     }
 
     public void setArmorKit(EquipmentType armorKit) {
+        // If the desired kit is already equipped, just apply flags without
+        // removing and re-adding (which would reorder the equipment list).
+        EquipmentType currentKit = getArmorKit();
+        if (armorKit != null && armorKit.equals(currentKit)) {
+            applyArmorKitFlags(armorKit);
+            return;
+        }
+
         removeArmorKits();
         if ((armorKit != null) && armorKit.hasFlag(MiscType.F_ARMOR_KIT)) {
             try {
@@ -1560,6 +1568,16 @@ public class Infantry extends Entity {
             } catch (LocationFullException ex) {
                 logger.error("", ex);
             }
+        }
+        applyArmorKitFlags(armorKit);
+    }
+
+    /**
+     * Applies the armor kit's flags (encumbering, space suit, DEST, sneak properties)
+     * and recalculates the damage divisor, without modifying the equipment list.
+     */
+    private void applyArmorKitFlags(EquipmentType armorKit) {
+        if ((armorKit != null) && armorKit.hasFlag(MiscType.F_ARMOR_KIT)) {
             encumbering = armorKit.hasFlag(MiscTypeFlag.S_ENCUMBERING);
             spaceSuit = armorKit.hasFlag(MiscTypeFlag.S_SPACE_SUIT);
             dest = armorKit.hasFlag(MiscTypeFlag.S_DEST);

@@ -71,7 +71,7 @@ jobs:
           fi
 
       - name: Upload TarGZ Release
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: mm-qa-test-build
           path: ./megamek/megamek/build/distributions/*.tar.gz

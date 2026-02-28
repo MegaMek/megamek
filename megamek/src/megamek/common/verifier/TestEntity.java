@@ -1104,7 +1104,7 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public static int getArmorPoints(Entity unit, double armorTons) {
         int raw = (int) Math.floor(getRawArmorPoints(unit, armorTons) + TestEntity.getSIBonusArmorPoints(unit));
-        if (unit.isPrimitive()) {
+        if (unit.isPrimitive() && (unit instanceof Jumpship || unit instanceof SmallCraft)) {
             raw = (int) (raw * 0.66);
         }
         return Math.min(raw, getMaximumArmorPoints(unit));
@@ -1179,9 +1179,9 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public static int getSIBonusArmorPoints(Entity entity) {
         if (entity instanceof SmallCraft smallCraft) {
-            return TestSmallCraft.getSIBonusArmorPoints(smallCraft);
+            return TestSmallCraft.getSIBonusArmorPointsForSC(smallCraft);
         } else if (entity instanceof Jumpship jumpship) {
-            return TestAdvancedAerospace.getSIBonusArmorPoints(jumpship);
+            return TestAdvancedAerospace.getSIBonusArmorPointsForJS(jumpship);
         } else {
             return 0;
         }

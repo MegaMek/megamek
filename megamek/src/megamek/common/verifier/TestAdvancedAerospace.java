@@ -119,7 +119,7 @@ public class TestAdvancedAerospace extends TestAero {
      *
      * @return The total number of extra armor points received for SI (disregarding primitive adjustment)
      */
-    public static int getSIBonusArmorPoints(Jumpship jumpship) {
+    static int getSIBonusArmorPointsForJS(Jumpship jumpship) {
         return getSIBonusArmorPointsPerLocation(jumpship) * 6; // 6 armor locations
     }
 

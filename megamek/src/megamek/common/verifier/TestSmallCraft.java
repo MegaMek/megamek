@@ -119,7 +119,7 @@ public class TestSmallCraft extends TestAero {
      *
      * @return The total number of extra armor points received for SI (disregarding primitive adjustment)
      */
-    public static int getSIBonusArmorPoints(SmallCraft smallCraft) {
+    static int getSIBonusArmorPointsForSC(SmallCraft smallCraft) {
         return (smallCraft.locations() - 1) * smallCraft.getOSI();
     }
 

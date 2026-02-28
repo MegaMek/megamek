@@ -62,6 +62,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.RoundWeight;
 import megamek.common.verifier.TestAdvancedAerospace;
+import megamek.common.verifier.TestEntity;
 
 /**
  * @author Jay Lawson
@@ -768,7 +769,7 @@ public class SmallCraft extends Aero {
         } else {
             rawArmor = getTotalOArmor();
         }
-        double weightedArmor = rawArmor - TestAdvancedAerospace.getSIBonusArmorPoints(this);
+        double weightedArmor = rawArmor - TestEntity.getSIBonusArmorPoints(this);
         double pointsPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
         return RoundWeight.standard(weightedArmor / pointsPerTon, this);
     }

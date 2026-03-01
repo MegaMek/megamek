@@ -31,30 +31,32 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.weapons.missiles.thuunderbolt;
+package megamek.common.weapons.missiles.thunderbolt;
 
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 
-public abstract class Thunderbolt10Weapon extends ThunderboltWeapon {
+public abstract class Thunderbolt20Weapon extends ThunderboltWeapon {
 
-    public Thunderbolt10Weapon() {
+    public Thunderbolt20Weapon() {
         super();
-        ammoType = AmmoType.AmmoTypeEnum.TBOLT_10;
-        heat = 5;
-        shortAV = 10;
-        medAV = 10;
-        criticalSlots = 2;
-        missileArmor = 10;
+        ammoType = AmmoType.AmmoTypeEnum.TBOLT_20;
+        heat = 8;
+        shortAV = 20;
+        medAV = 20;
+        criticalSlots = 5;
+        missileArmor = 20;
     }
 
     @Override
     public double getBattleForceDamage(int range, Mounted<?> fcs) {
         if (range == AlphaStrikeElement.SHORT_RANGE) {
-            return 0.58;
-        } else if (range <= AlphaStrikeElement.LONG_RANGE) {
-            return 1;
+            return 1.16;
+        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
+            return 2;
+        } else if (range == AlphaStrikeElement.LONG_RANGE) {
+            return 2;
         } else {
             return 0;
         }
@@ -66,6 +68,6 @@ public abstract class Thunderbolt10Weapon extends ThunderboltWeapon {
         if (name.contains("I-OS")) {
             oneShotTag = "XIOS";
         }
-        return "Thunderbolt-" + oneShotTag + "10";
+        return "Thunderbolt-" + oneShotTag + "20";
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,8 +34,15 @@
 
 package megamek.utilities;
 
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 
 import megamek.common.SimpleTechLevel;
@@ -62,9 +69,14 @@ import megamek.logging.MMLogger;
 public class TechLevelCompareTool {
     private static final MMLogger logger = MMLogger.create(TechLevelCompareTool.class);
 
+    private static final String CSV_FILE_NAME = "TechLevelMismatches.txt";
+    private static final String DELIM = "|";
+
     static Set<EquipmentType> weaponSet = new TreeSet<>(Comparator.comparing(EquipmentType::getName));
     static Set<EquipmentType> ammoSet = new TreeSet<>(Comparator.comparing(EquipmentType::getName));
     static Set<EquipmentType> miscSet = new TreeSet<>(Comparator.comparing(EquipmentType::getName));
+
+    private static final List<String> csvRows = new ArrayList<>();
 
     private static final String EQUIPMENT_TYPE_FORMATTED_STRING = "\t%s (%s)";
     private static int badMeks = 0;
@@ -92,26 +104,31 @@ public class TechLevelCompareTool {
                 continue;
             }
 
-            handleBadEntity(en);
-
+            handleBadEntity(en, ms);
         }
 
         printDetails();
+        writeCsvReport();
     }
 
-    private static void handleBadEntity(Entity entity) {
-
+    private static void handleBadEntity(Entity entity, MekSummary ms) {
+        int mulId = ms.getMulId();
         SimpleTechLevel fixed = SimpleTechLevel.convertCompoundToSimple(entity.getTechLevel());
         SimpleTechLevel calc = entity.getStaticTechLevel();
 
         if (fixed.compareTo(calc) < 0) {
-            String message = String.format("%s: %s/%s", entity.getShortName(), fixed, calc);
+            String message = String.format("%s (MUL ID: %d): %s/%s", entity.getShortName(), mulId, fixed, calc);
             logger.info(message);
+
+            List<String> offendingEquipment = new ArrayList<>();
 
             for (Mounted<?> m : entity.getEquipment()) {
                 EquipmentType mountedEquipmentType = m.getType();
 
                 if (fixed.compareTo(mountedEquipmentType.getStaticTechLevel()) < 0) {
+                    offendingEquipment.add(mountedEquipmentType.getName()
+                          + " (" + mountedEquipmentType.getStaticTechLevel() + ")");
+
                     if (mountedEquipmentType instanceof WeaponType weaponType) {
                         weaponSet.add(weaponType);
                     } else if (mountedEquipmentType instanceof AmmoType ammoType) {
@@ -121,6 +138,17 @@ public class TechLevelCompareTool {
                     }
                 }
             }
+
+            StringJoiner row = new StringJoiner(DELIM);
+            row.add(String.valueOf(mulId));
+            row.add(ms.getFullChassis());
+            row.add(ms.getModel());
+            row.add(fixed.toString());
+            row.add(calc.toString());
+            row.add(String.valueOf(ms.getSourceFile()));
+            row.add(ms.getEntryName() != null ? ms.getEntryName() : "");
+            row.add(String.join(", ", offendingEquipment));
+            csvRows.add(row.toString());
 
             badMeks++;
         }
@@ -149,6 +177,25 @@ public class TechLevelCompareTool {
 
         message = String.format("Failed: %d/%d", badMeks, MekSummaryCache.getInstance().getAllMeks().length);
         logger.info(message);
+    }
 
+    private static void writeCsvReport() {
+        try (PrintWriter pw = new PrintWriter(CSV_FILE_NAME);
+              BufferedWriter bw = new BufferedWriter(pw)) {
+            bw.write(String.join(DELIM, "MUL ID", "Chassis", "Model", "Declared Level",
+                  "Computed Level", "Source File", "Entry Name", "Offending Equipment"));
+            bw.newLine();
+
+            for (String row : csvRows) {
+                bw.write(row);
+                bw.newLine();
+            }
+
+            logger.info("CSV report written to " + CSV_FILE_NAME + " (" + csvRows.size() + " mismatches)");
+        } catch (FileNotFoundException e) {
+            logger.error(e, "Could not open CSV file for output!");
+        } catch (IOException e) {
+            logger.error(e, "IO Exception writing CSV report");
+        }
     }
 }

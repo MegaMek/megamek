@@ -92,8 +92,8 @@ public class CLAAAMissileWeapon extends ThunderboltWeapon {
               .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
-              .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
-              .setISApproximate(true, false, false, false, false)
+              .setClanAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.CWX);
     }
 }

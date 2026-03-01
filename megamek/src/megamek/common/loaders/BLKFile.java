@@ -548,6 +548,10 @@ public class BLKFile {
             e.getFluff().setNotes(dataFile.getDataAsString("notes")[0]);
         }
 
+        if (dataFile.exists("fluffDate")) {
+            e.getFluff().setFluffDate(dataFile.getDataAsString("fluffDate")[0]);
+        }
+
         if (dataFile.exists("use")) {
             e.getFluff().setUse(dataFile.getDataAsString("use")[0]);
         }
@@ -1008,6 +1012,10 @@ public class BLKFile {
 
         if (!t.getFluff().getNotes().isBlank()) {
             blk.writeBlockData("notes", t.getFluff().getNotes());
+        }
+
+        if (!t.getFluff().getFluffDate().isBlank()) {
+            blk.writeBlockData("fluffDate", t.getFluff().getFluffDate());
         }
 
         if (!t.getFluff().getUse().isBlank()) {

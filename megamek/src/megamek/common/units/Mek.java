@@ -289,6 +289,13 @@ public abstract class Mek extends Entity {
     private boolean riscHeatSinkKit = false;
 
     /**
+     * Tracks locations where the user has explicitly opted out of automatic Clan CASE.
+     * Only relevant for Clan and Clan Mixed units. When a Clan unit's user removes Clan CASE
+     * from a location, that location is recorded here so it won't be auto-added back.
+     */
+    private final Set<Integer> clanCaseOptOutLocations = new HashSet<>();
+
+    /**
      * Tracks whether the Damage Interrupt Circuit is disabled. DIC is disabled by Life Support critical hit or any hit
      * rolling "2" on hit location table.
      */
@@ -2613,6 +2620,48 @@ public abstract class Mek extends Entity {
               .anyMatch(m -> m.getType().is(EquipmentTypeLookup.CLAN_CASE));
     }
 
+    /**
+     * Returns true if the given location has been opted out of automatic Clan CASE.
+     */
+    public boolean isClanCaseOptedOut(int location) {
+        return clanCaseOptOutLocations.contains(location);
+    }
+
+    /**
+     * Opts out of automatic Clan CASE for the given location.
+     */
+    public void addClanCaseOptOut(int location) {
+        clanCaseOptOutLocations.add(location);
+    }
+
+    /**
+     * Removes the Clan CASE opt-out for the given location.
+     */
+    public void removeClanCaseOptOut(int location) {
+        clanCaseOptOutLocations.remove(location);
+    }
+
+    /**
+     * Clears all Clan CASE opt-out locations.
+     */
+    public void clearClanCaseOptOut() {
+        clanCaseOptOutLocations.clear();
+    }
+
+    /**
+     * Returns true if any location is opted out of automatic Clan CASE.
+     */
+    public boolean hasAnyClanCaseOptOut() {
+        return !clanCaseOptOutLocations.isEmpty();
+    }
+
+    /**
+     * Returns the set of locations opted out of automatic Clan CASE.
+     */
+    public Set<Integer> getClanCaseOptOutLocations() {
+        return clanCaseOptOutLocations;
+    }
+
     @Override
     public void addClanCase() {
         if (!isClan() && !hasClanCaseEquipped()) {
@@ -2623,6 +2672,10 @@ public abstract class Mek extends Entity {
         for (int i = 0; i < locations(); i++) {
             // Skip location if it already contains CASE
             if (locationHasCase(i) || hasCASEII(i)) {
+                continue;
+            }
+            // Skip location if user has opted out of auto Clan CASE
+            if (isClanCaseOptedOut(i)) {
                 continue;
             }
 
@@ -4424,6 +4477,13 @@ public abstract class Mek extends Entity {
         if (hasRiscHeatSinkOverrideKit()) {
             sb.append(MtfFile.HEAT_SINK_KIT);
             sb.append(Mek.RISC_HEAT_SINK_OVERRIDE_KIT);
+            sb.append(newLine);
+        }
+        if (hasAnyClanCaseOptOut()) {
+            sb.append(MtfFile.CLAN_CASE_OPT_OUT);
+            sb.append(clanCaseOptOutLocations.stream()
+                  .map(this::getLocationAbbr)
+                  .collect(Collectors.joining(",")));
             sb.append(newLine);
         }
         sb.append(newLine);

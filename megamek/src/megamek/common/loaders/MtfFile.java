@@ -103,6 +103,7 @@ public class MtfFile implements IMekLoader {
     private String motiveType;
     private String ejectionType;
     private String heatSinkKit;
+    private String clanCaseOptOut;
 
     private String heatSinks;
     private String jumpMP;
@@ -194,6 +195,7 @@ public class MtfFile implements IMekLoader {
     public static final String WEAPON_QUIRK = "weaponquirk:";
     public static final String ROLE = "role:";
     public static final String FACTION = "faction:";
+    public static final String CLAN_CASE_OPT_OUT = "clancaseoptedoutlocs:";
     public static final String FLUFF_IMAGE = "fluffimage:";
     public static final String ICON = "icon:";
 
@@ -301,6 +303,17 @@ public class MtfFile implements IMekLoader {
             }
             mek.setFullHeadEject(fullHead);
             mek.setRiscHeatSinkOverrideKit(riscHeatSinkKit);
+            if (!StringUtility.isNullOrBlank(clanCaseOptOut)) {
+                for (String locAbbr : clanCaseOptOut.split(",")) {
+                    String trimmed = locAbbr.trim();
+                    if (!trimmed.isEmpty()) {
+                        int loc = mek.getLocationFromAbbr(trimmed);
+                        if (loc >= 0) {
+                            mek.addClanCaseOptOut(loc);
+                        }
+                    }
+                }
+            }
             mek.setChassis(chassis.trim());
             mek.setClanChassisName(clanChassisName);
             mek.setModel(model.trim());
@@ -1631,6 +1644,11 @@ public class MtfFile implements IMekLoader {
 
         if (lineLower.startsWith(FACTION)) {
             faction = line.substring(FACTION.length()).trim();
+            return true;
+        }
+
+        if (lineLower.startsWith(CLAN_CASE_OPT_OUT)) {
+            clanCaseOptOut = line.substring(CLAN_CASE_OPT_OUT.length()).trim();
             return true;
         }
 

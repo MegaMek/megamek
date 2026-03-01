@@ -76,7 +76,7 @@ public class InfantryPistolMauserAutoPistolWeapon extends InfantryWeapon {
         ammoCost = 3;
         shots = 8;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2490, 2495, 2550, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2490, 2495, 2550, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.LC)
               .setProductionFactions(Faction.LC).setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B);

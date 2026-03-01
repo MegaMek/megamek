@@ -9864,7 +9864,7 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "122, TM";
 
         misc.techAdvancement.setTechBase(TechBase.ALL);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
+        misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.B);
         misc.techAdvancement.setAvailability(AvailabilityValue.B,
               AvailabilityValue.C,
@@ -10373,8 +10373,8 @@ public class MiscType extends EquipmentType {
               .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
-              .setISAdvancement(3059, DATE_NONE, 3089, DATE_NONE, DATE_NONE)
-              .setISApproximate(false, false, true, false, false)
+              .setClanAdvancement(3059, DATE_NONE, 3089, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, true, false, false)
               .setPrototypeFactions(Faction.CNC)
               .setProductionFactions(Faction.CNC)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
@@ -11734,7 +11734,7 @@ public class MiscType extends EquipmentType {
         // Going to assume this is something with building Bridges
         // Also the equipment used by infantry bridge builders.
         misc.techAdvancement.setTechBase(TechBase.ALL);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, 2720, DATE_NONE);
+        misc.techAdvancement.setAdvancement(DATE_NONE, 2720, DATE_NONE);
         misc.techAdvancement.setTechRating(TechRating.D);
         misc.techAdvancement.setAvailability(AvailabilityValue.D,
               AvailabilityValue.D,

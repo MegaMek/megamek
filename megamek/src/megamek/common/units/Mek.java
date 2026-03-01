@@ -2605,9 +2605,17 @@ public abstract class Mek extends Entity {
         }
     }
 
+    /**
+     * Returns true if this Mek has any Clan CASE equipment mounted.
+     */
+    public boolean hasClanCaseEquipped() {
+        return getMisc().stream()
+              .anyMatch(m -> m.getType().is(EquipmentTypeLookup.CLAN_CASE));
+    }
+
     @Override
     public void addClanCase() {
-        if (!isClan()) {
+        if (!isClan() && !hasClanCaseEquipped()) {
             return;
         }
         boolean explosiveFound;
@@ -3256,7 +3264,7 @@ public abstract class Mek extends Entity {
 
     @Override
     public int implicitClanCASE() {
-        if (!isClan()) {
+        if (!isClan() && !hasClanCaseEquipped()) {
             return 0;
         }
         int explicit = 0;
@@ -4327,6 +4335,10 @@ public abstract class Mek extends Entity {
             sb.append(MtfFile.ROLE).append(getRole().toString());
             sb.append(newLine);
         }
+        if (techFaction != null && techFaction != Faction.NONE) {
+            sb.append(MtfFile.FACTION).append(techFaction.getCode());
+            sb.append(newLine);
+        }
         sb.append(newLine);
 
         for (IOption quirk : getQuirks().getOptionsList()) {
@@ -4447,7 +4459,7 @@ public abstract class Mek extends Entity {
         }
         for (Mounted<?> mounted : getMisc()) {
             if ((mounted.getNumCriticalSlots() == 0)
-                  && !mounted.getType().hasFlag(MiscType.F_CASE)
+                  && !(isClan() && mounted.getType().hasFlag(MiscType.F_CASE))
                   && !EquipmentType.isArmorType(mounted.getType())
                   && !EquipmentType.isStructureType(mounted.getType())) {
                 sb.append(MtfFile.NO_CRIT).append(mounted.getType().getInternalName())

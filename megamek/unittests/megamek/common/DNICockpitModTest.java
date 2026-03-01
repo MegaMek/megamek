@@ -434,28 +434,28 @@ public class DNICockpitModTest {
     class HasActiveEiCockpitTests {
 
         @Test
-        @DisplayName("Tracking OFF: EI cockpit alone is sufficient")
-        void trackingOff_eiCockpitAloneSufficient() {
+        @DisplayName("Tracking OFF: EI implant alone is sufficient")
+        void trackingOff_eiImplantAloneSufficient() {
+            setTrackingOption(false);
+
+            // Mek with EI implant but no EI cockpit
+            Mek mek = createMek(false, "EI");
+
+            assertTrue(mek.hasActiveEiCockpit(),
+                  "EI implant alone should provide benefits when tracking is OFF");
+        }
+
+        @Test
+        @DisplayName("Tracking OFF: No EI implant means no benefits")
+        void trackingOff_noEiImplantNoBenefits() {
             setTrackingOption(false);
 
             // Mek with EI cockpit but no EI implant
             Mek mek = createMek(false, null);
             addEiCockpit(mek);
 
-            assertTrue(mek.hasActiveEiCockpit(),
-                  "EI cockpit alone should provide benefits when tracking is OFF");
-        }
-
-        @Test
-        @DisplayName("Tracking OFF: No EI cockpit means no benefits")
-        void trackingOff_noEiCockpitNoBenefits() {
-            setTrackingOption(false);
-
-            // Mek with EI implant but no EI cockpit
-            Mek mek = createMek(false, "EI");
-
             assertFalse(mek.hasActiveEiCockpit(),
-                  "Without EI cockpit, should NOT have active EI even with implant");
+                  "Without EI implant, should NOT have active EI even with cockpit");
         }
 
         @Test
@@ -940,14 +940,13 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking OFF: EI cockpit alone gives active EI (no implant needed)")
-        void trackingOff_eiCockpitAloneGivesActiveEi() {
+        @DisplayName("Tracking OFF: EI implant alone gives active EI (no cockpit needed)")
+        void trackingOff_eiImplantAloneGivesActiveEi() {
             setTrackingOption(false);
-            Mek mek = createMek(false, null);
-            addEiCockpit(mek);
+            Mek mek = createMek(false, "EI");
 
-            // No implant, but tracking is off so cockpit alone should work
-            assertTrue(mek.hasActiveEiCockpit(), "Should have active EI with just cockpit when tracking OFF");
+            // No cockpit, but tracking is off so implant alone should work
+            assertTrue(mek.hasActiveEiCockpit(), "Should have active EI with just implant when tracking OFF");
         }
     }
 }

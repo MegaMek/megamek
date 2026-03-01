@@ -240,11 +240,11 @@ public class EiImplantTest {
         }
 
         @Test
-        @DisplayName("ProtoMek has no EI cockpit when tracking disabled")
-        void protoMekHasNoEiCockpitWhenTrackingOff() {
+        @DisplayName("ProtoMek always has EI cockpit regardless of tracking")
+        void protoMekAlwaysHasEiCockpit() {
             ProtoMek proto = createProtoMek();
-            assertFalse(proto.hasEiCockpit(),
-                  "ProtoMeks should not have EI cockpit when tracking is OFF (TW standard)");
+            assertTrue(proto.hasEiCockpit(),
+                  "ProtoMeks should always have EI cockpit per IO p.77, regardless of tracking");
         }
 
         @Test
@@ -280,11 +280,11 @@ public class EiImplantTest {
         }
 
         @Test
-        @DisplayName("ProtoMek has no active EI when tracking disabled")
-        void protoMekHasNoActiveEiWhenTrackingOff() {
+        @DisplayName("ProtoMek always has active EI regardless of tracking")
+        void protoMekAlwaysHasActiveEi() {
             ProtoMek proto = createProtoMek();
-            assertFalse(proto.hasActiveEiCockpit(),
-                  "ProtoMek should not have active EI when tracking is OFF (TW standard)");
+            assertTrue(proto.hasActiveEiCockpit(),
+                  "ProtoMek should always have active EI per IO p.77, regardless of tracking");
         }
 
         @Test

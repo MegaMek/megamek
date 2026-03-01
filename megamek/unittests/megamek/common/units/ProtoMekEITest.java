@@ -54,8 +54,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for ProtoMek Enhanced Imaging (EI) implementation per IO p.77. ProtoMek EI is gated on the
- * {@code track_neural_interface_hardware} game option: OFF = no EI (TW standard), ON = EI active (IO rules).
+ * Tests for ProtoMek Enhanced Imaging (EI) implementation per IO p.77. ProtoMeks always have EI
+ * built-in. The {@code track_neural_interface_hardware} game option only affects whether the EI
+ * equipment counts toward tech level (making ProtoMeks Experimental when enabled).
  */
 @DisplayName("ProtoMek EI Tests")
 class ProtoMekEITest extends GameBoardTestCase {
@@ -243,19 +244,21 @@ class ProtoMekEITest extends GameBoardTestCase {
     class TrackingOffTests {
 
         @Test
-        @DisplayName("ProtoMek has no EI cockpit when tracking is OFF")
-        void protoMekHasNoEiCockpitWhenTrackingOff() {
+        @DisplayName("ProtoMek always has EI cockpit regardless of tracking")
+        void protoMekAlwaysHasEiCockpit() {
             // Tracking is OFF by default (all mock options return false)
-            assertFalse(protoMek.hasEiCockpit(),
-                  "ProtoMek should not have EI cockpit when tracking is OFF (TW standard)");
+            // ProtoMeks always have EI built-in per IO p.77
+            assertTrue(protoMek.hasEiCockpit(),
+                  "ProtoMek should always have EI cockpit per IO p.77, regardless of tracking");
         }
 
         @Test
-        @DisplayName("ProtoMek has no active EI when tracking is OFF")
-        void protoMekHasNoActiveEiWhenTrackingOff() {
+        @DisplayName("ProtoMek always has active EI regardless of tracking")
+        void protoMekAlwaysHasActiveEi() {
             // Tracking is OFF by default (all mock options return false)
-            assertFalse(protoMek.hasActiveEiCockpit(),
-                  "ProtoMek should not have active EI when tracking is OFF (TW standard)");
+            // ProtoMeks always have active EI when head is undamaged
+            assertTrue(protoMek.hasActiveEiCockpit(),
+                  "ProtoMek should always have active EI per IO p.77, regardless of tracking");
         }
     }
 }

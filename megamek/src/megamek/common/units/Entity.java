@@ -1453,6 +1453,16 @@ public abstract class Entity extends TurnOrdered
     public void recalculateTechAdvancement() {
         initTechAdvancement();
         for (Mounted<?> m : getEquipment()) {
+            // ProtoMek EI is built-in per IO p.77 -- only count toward tech level
+            // when tracking neural interface hardware
+            if (isProtoMek()
+                  && (m.getType() instanceof MiscType)
+                  && m.getType().hasFlag(MiscType.F_EI_INTERFACE)
+                  && ((game == null) || !gameOptions().booleanOption(
+                  OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE))) {
+                continue;
+            }
+
             compositeTechLevel.addComponent(m.getType());
             if (m.isArmored()) {
                 compositeTechLevel.addComponent(TA_ARMORED_COMPONENT);
@@ -11754,33 +11764,18 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns whether this unit has an active Enhanced Imaging (EI) cockpit system. EI cockpit is always required (it's
-     * built into the unit at construction). When the "Track Neural Interface Hardware" option is enabled, the pilot
-     * must also have the EI implant. When tracking is disabled, only the cockpit is required (original behavior).
-     *
-     * <p>Note: EI has inverted requirements compared to DNI:</p>
-     * <ul>
-     *   <li>DNI: Implant always required, hardware conditional on tracking</li>
-     *   <li>EI: Hardware (cockpit) always required, implant conditional on tracking</li>
-     * </ul>
+     * Returns whether this unit has an active Enhanced Imaging (EI) cockpit system. The EI implant is the primary
+     * requirement (same pattern as DNI via {@link #isNeuralInterfaceActive}). When tracking hardware is disabled
+     * (default), the implant alone provides EI benefits. When tracking is enabled, the unit must also have EI cockpit
+     * equipment that is not shut down.
      *
      * @return true if the unit has an active EI cockpit system
      */
     public boolean hasActiveEiCockpit() {
-        // EI cockpit is always required (it's built into the unit)
-        if (!hasEiCockpit()) {
-            return false;
-        }
-
-        // When tracking hardware, also require EI implant on pilot
-        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
-            if (!hasAbility(OptionsConstants.MD_EI_IMPLANT)) {
-                return false;
-            }
-        }
-
-        // EI-specific: check if interface is in "Off" mode
-        return !isEiShutdown();
+        return isNeuralInterfaceActive(
+              hasAbility(OptionsConstants.MD_EI_IMPLANT),
+              hasEiCockpit() && !isEiShutdown()
+        );
     }
 
     /**

@@ -1040,37 +1040,25 @@ public class ProtoMek extends Entity {
     }
 
     /**
-     * ProtoMeks have Enhanced Imaging (EI) built-in per IO p.77. The EI Interface is integral to ProtoMek design,
-     * but since EI is an Experimental-level IO feature, it is only active when the
-     * {@code track_neural_interface_hardware} game option is enabled.
+     * ProtoMeks always have EI built-in per IO p.77. The tracking option only affects whether
+     * EI equipment counts toward tech level (handled in {@code recalculateTechAdvancement}).
      *
-     * <p>When tracking is OFF (default), ProtoMeks behave as standard TW units with no EI benefits.
-     * When tracking is ON, ProtoMeks get EI automatically (no implant needed).</p>
-     *
-     * @return true if neural interface tracking is enabled, false otherwise
+     * @return always true for ProtoMeks
      */
     @Override
     public boolean hasEiCockpit() {
-        if ((game == null) || !gameOptions().booleanOption(
-              OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
-            return false;
-        }
         return true;
     }
 
     /**
-     * ProtoMeks have EI built-in and always active (unless head is damaged). Unlike other units, ProtoMek pilots don't
-     * need the EI Implant option - they are neurally connected by default per IO p.77.
+     * ProtoMeks have EI built-in and always active unless the head is damaged. Unlike other units,
+     * ProtoMek pilots don't need the EI Implant option - they are neurally connected by default
+     * per IO p.77.
      *
-     * <p>Returns false if {@link #hasEiCockpit()} is false (tracking disabled or no game context).</p>
-     *
-     * @return true if EI is enabled and head is undamaged, false otherwise
+     * @return true if head is undamaged, false otherwise
      */
     @Override
     public boolean hasActiveEiCockpit() {
-        if (!hasEiCockpit()) {
-            return false;
-        }
         return (getCritsHit(LOC_HEAD) == 0);
     }
 

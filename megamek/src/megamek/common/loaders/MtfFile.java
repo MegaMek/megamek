@@ -124,6 +124,7 @@ public class MtfFile implements IMekLoader {
     private final Map<System, String> systemManufacturers = new EnumMap<>(System.class);
     private final Map<System, String> systemModels = new EnumMap<>(System.class);
     private String notes = "";
+    private String fluffDate = "";
 
     private String fluffImageEncoded = "";
     private String iconEncoded = "";
@@ -183,6 +184,7 @@ public class MtfFile implements IMekLoader {
     public static final String SYSTEM_MANUFACTURER = "systemmanufacturer:";
     public static final String SYSTEM_MODEL = "systemmode:";
     public static final String NOTES = "notes:";
+    public static final String FLUFF_DATE = "fluffdate:";
     public static final String BV = "bv:";
     public static final String WEAPONS = "weapons:";
     public static final String EMPTY = "-Empty-";
@@ -198,6 +200,8 @@ public class MtfFile implements IMekLoader {
     public static final String CLAN_CASE_OPT_OUT = "clancaseoptedoutlocs:";
     public static final String FLUFF_IMAGE = "fluffimage:";
     public static final String ICON = "icon:";
+
+    private static final String LEGACY_FLUFF_DATE_PREFIX = "# Fluff Date: ";
 
     private static final Pattern LEGACY_SIZE_PATTERN = Pattern.compile("\\((\\d+(?:\\.\\d+)?)\\s*(?:ton|tons|m|kg)\\)",
           Pattern.CASE_INSENSITIVE);
@@ -553,6 +557,7 @@ public class MtfFile implements IMekLoader {
             mek.getFluff().setManufacturer(manufacturer);
             mek.getFluff().setPrimaryFactory(primaryFactory);
             mek.getFluff().setNotes(notes);
+            mek.getFluff().setFluffDate(fluffDate);
             mek.getFluff().setFluffImage(fluffImageEncoded);
             mek.setIcon(iconEncoded);
             systemManufacturers.forEach((k, v) -> mek.getFluff().setSystemManufacturer(k, v));
@@ -623,6 +628,11 @@ public class MtfFile implements IMekLoader {
         int armorLocation;
         while (r.ready()) {
             String line = r.readLine().trim();
+
+            if (line.startsWith(LEGACY_FLUFF_DATE_PREFIX)) {
+                fluffDate = line.substring(LEGACY_FLUFF_DATE_PREFIX.length()).trim();
+                continue;
+            }
 
             if (line.isBlank() || line.startsWith(COMMENT) || line.startsWith(GENERATOR)) {
                 continue;
@@ -1609,6 +1619,11 @@ public class MtfFile implements IMekLoader {
 
         if (lineLower.startsWith(NOTES)) {
             notes = line.substring(NOTES.length());
+            return true;
+        }
+
+        if (lineLower.startsWith(FLUFF_DATE)) {
+            fluffDate = line.substring(FLUFF_DATE.length());
             return true;
         }
 

@@ -64,6 +64,7 @@ public class EntityFluff implements Serializable {
     private final Map<System, String> systemManufacturers = new EnumMap<>(System.class);
     private final Map<System, String> systemModels = new EnumMap<>(System.class);
     private String notes = "";
+    private String fluffDate = "";
 
     private Base64Image fluffImage = new Base64Image();
 
@@ -177,6 +178,14 @@ public class EntityFluff implements Serializable {
 
     public void setNotes(String notes) {
         this.notes = Objects.requireNonNullElse(notes, "");
+    }
+
+    public String getFluffDate() {
+        return fluffDate;
+    }
+
+    public void setFluffDate(String fluffDate) {
+        this.fluffDate = Objects.requireNonNullElse(fluffDate, "");
     }
 
     public String getUse() {

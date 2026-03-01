@@ -2615,7 +2615,7 @@ public abstract class Mek extends Entity {
 
     @Override
     public void addClanCase() {
-        if (!isClan() && !hasClanCaseEquipped()) {
+        if (!isClan()) {
             return;
         }
         boolean explosiveFound;

@@ -178,14 +178,6 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             infantry.setDEST(true);
         }
 
-        if (dataFile.exists("specialization")) {
-            try {
-                infantry.setSpecializations(Integer.parseInt(dataFile.getDataAsString("specialization")[0]));
-            } catch (NumberFormatException ex) {
-                throw new EntityLoadingException("Could not read specialization");
-            }
-        }
-
         if (dataFile.exists("encumberingarmor")) {
             infantry.setArmorEncumbering(true);
         }
@@ -217,7 +209,17 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         loadEquipment(infantry, "Field Guns", Infantry.LOC_FIELD_GUNS);
         loadEquipment(infantry, "Troopers", Infantry.LOC_INFANTRY);
 
-        // Update some internals if there's an armor kit
+        // Set specializations after loading equipment so that setSpecializations()
+        // can detect equipment already loaded from the file and avoid duplicates.
+        if (dataFile.exists("specialization")) {
+            try {
+                infantry.setSpecializations(Integer.parseInt(dataFile.getDataAsString("specialization")[0]));
+            } catch (NumberFormatException ex) {
+                throw new EntityLoadingException("Could not read specialization");
+            }
+        }
+
+        // Apply armor kit flags. setArmorKit detects the kit is already equipped
         infantry.getMisc().stream()
               .filter(misc -> misc.getType().hasFlag(MiscType.F_ARMOR_KIT))
               .findFirst()

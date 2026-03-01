@@ -190,20 +190,52 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         lamType = inLAMType;
 
         setTechLevel(TechConstants.T_IS_ADVANCED);
+        // Head avionics never conflicts with engine/gyro, safe to place here.
         setCritical(Mek.LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
-        setCritical(Mek.LOC_LEFT_TORSO, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
-        setCritical(Mek.LOC_RIGHT_TORSO, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
-        setCritical(Mek.LOC_LEFT_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
-        setCritical(Mek.LOC_RIGHT_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
-        for (int i = 0; i < getNumberOfCriticalSlots(Mek.LOC_CENTER_TORSO); i++) {
-            if (null == getCritical(Mek.LOC_CENTER_TORSO, i)) {
-                setCritical(Mek.LOC_CENTER_TORSO, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
-                break;
-            }
-        }
+        // LT/RT/CT landing gear and avionics are placed by addEngineCrits() after
+        // engine crits exist, so their positions adapt to the engine type.
 
         previousMovementMode = movementMode;
         setCrew(new LAMPilot(this));
+    }
+
+    @Override
+    public void clearEngineCrits() {
+        // Clear LAM crits whose positions depend on the engine layout
+        for (int loc : new int[] { LOC_LEFT_TORSO, LOC_RIGHT_TORSO, LOC_CENTER_TORSO }) {
+            removeCriticalSlots(loc, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+            removeCriticalSlots(loc, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
+        }
+        super.clearEngineCrits();
+    }
+
+    @Override
+    public void addEngineCrits() {
+        super.addEngineCrits();
+        // Place LAM crits after engine crits so they don't conflict
+        for (int loc : new int[] { LOC_LEFT_TORSO, LOC_RIGHT_TORSO }) {
+            boolean lgPlaced = false;
+            boolean avPlaced = false;
+            for (int i = 0; i < getNumberOfCriticalSlots(loc); i++) {
+                if (getCritical(loc, i) == null) {
+                    if (!lgPlaced) {
+                        setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+                        lgPlaced = true;
+                    } else if (!avPlaced) {
+                        setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
+                        avPlaced = true;
+                        break;
+                    }
+                }
+            }
+        }
+        // CT: Landing Gear in first available slot (after engine/gyro)
+        for (int i = 0; i < getNumberOfCriticalSlots(LOC_CENTER_TORSO); i++) {
+            if (getCritical(LOC_CENTER_TORSO, i) == null) {
+                setCritical(LOC_CENTER_TORSO, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+                break;
+            }
+        }
     }
 
     @Override

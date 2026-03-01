@@ -4880,8 +4880,17 @@ public abstract class Mek extends Entity {
         if ((getEmptyCriticalSlots(LOC_LEFT_TORSO) < 1) || (getEmptyCriticalSlots(LOC_RIGHT_TORSO) < 1) || !success) {
             success = false;
         } else {
-            addCritical(LOC_LEFT_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-            addCritical(LOC_RIGHT_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            // Life Support must be at slot 0 in each side torso. If engine crits
+            // were placed first (e.g. XL engine at slots 0-2), shift them down by 1
+            // to make room. Using addCritical would silently skip the occupied slot.
+            for (int loc : new int[] { LOC_LEFT_TORSO, LOC_RIGHT_TORSO }) {
+                if (getCritical(loc, 0) != null) {
+                    for (int i = getNumberOfCriticalSlots(loc) - 2; i >= 0; i--) {
+                        setCritical(loc, i + 1, getCritical(loc, i));
+                    }
+                }
+                setCritical(loc, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            }
         }
 
         if (success) {

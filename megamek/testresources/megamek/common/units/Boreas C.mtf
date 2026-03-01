@@ -149,7 +149,7 @@ primaryfactory:Csesztreg
 systemmanufacturer:CHASSIS:Unknown
 systemmanufacturer:ENGINE:240 Standard Fusion
 systemmanufacturer:ARMOR:Unknown
-systemmanufacturer:JUMPJET:Unknown
+systemmanufacturer:JUMP_JET:Unknown
 systemmanufacturer:COMMUNICATIONS:Unknown
 systemmanufacturer:TARGETING:Unknown
 

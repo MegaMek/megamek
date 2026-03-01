@@ -87,13 +87,16 @@ public class CLAAAMissileWeapon extends ThunderboltWeapon {
         this.missileArmor = 20;
         cost = 9000;
         rulesRefs = "169, TO:AUE";
-        techAdvancement.setTechBase(TechBase.CLAN)
+        techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
-              .setClanAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
-              .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.CWX);
+              .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setISApproximate(true, false, false, false, false)
+              .setClanAdvancement(DATE_NONE, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, false, false, false)
+              .setPrototypeFactions(Faction.LC, Faction.CWX)
+              .setProductionFactions(Faction.LC);
     }
 }

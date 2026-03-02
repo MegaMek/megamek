@@ -547,11 +547,6 @@ public abstract class Entity extends TurnOrdered
     protected String source = "";
 
     /**
-     * The tech faction associated with this Entity, used to filter available tech by faction.
-     */
-    protected Faction techFaction = Faction.NONE;
-
-    /**
      * Keeps track of whether this Entity was hit by a TSEMP this turn.
      */
     private int tsempHitsThisTurn = 0;
@@ -13626,22 +13621,6 @@ public abstract class Entity extends TurnOrdered
 
     public String getSource() {
         return (source != null) ? source : "";
-    }
-
-    /**
-     * Sets the tech faction for this entity.
-     *
-     * @param faction The faction to set, or Faction.NONE for no faction
-     */
-    public void setTechFaction(Faction faction) {
-        this.techFaction = (faction != null) ? faction : Faction.NONE;
-    }
-
-    /**
-     * @return The tech faction for this entity, or Faction.NONE if not set.
-     */
-    public Faction getTechFaction() {
-        return techFaction;
     }
 
     public synchronized void setQuirks(Quirks quirks) {

@@ -40,6 +40,7 @@ import java.io.PrintWriter;
 import java.io.Serial;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -2656,10 +2657,10 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Returns the set of locations opted out of automatic Clan CASE.
+     * Returns an unmodifiable view of the set of locations opted out of automatic Clan CASE.
      */
     public Set<Integer> getClanCaseOptOutLocations() {
-        return clanCaseOptOutLocations;
+        return Collections.unmodifiableSet(clanCaseOptOutLocations);
     }
 
     @Override
@@ -3326,9 +3327,13 @@ public abstract class Mek extends Entity {
             if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(MiscType.F_CASE))) {
                 explicit++;
             } else if (m.getType().isExplosive(m)) {
-                caseLocations.add(m.getLocation());
-                if (m.getSecondLocation() >= 0) {
-                    caseLocations.add(m.getSecondLocation());
+                int loc = m.getLocation();
+                if (loc >= 0 && !isClanCaseOptedOut(loc)) {
+                    caseLocations.add(loc);
+                }
+                int secLoc = m.getSecondLocation();
+                if (secLoc >= 0 && !isClanCaseOptedOut(secLoc)) {
+                    caseLocations.add(secLoc);
                 }
             }
         }
@@ -4482,6 +4487,7 @@ public abstract class Mek extends Entity {
         if (hasAnyClanCaseOptOut()) {
             sb.append(MtfFile.CLAN_CASE_OPT_OUT);
             sb.append(clanCaseOptOutLocations.stream()
+                  .sorted()
                   .map(this::getLocationAbbr)
                   .collect(Collectors.joining(",")));
             sb.append(newLine);

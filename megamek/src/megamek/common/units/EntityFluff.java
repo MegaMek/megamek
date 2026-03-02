@@ -180,8 +180,11 @@ public class EntityFluff implements Serializable {
         this.notes = Objects.requireNonNullElse(notes, "");
     }
 
+    /**
+     * @return The fluff date string, never null. Handles null from deserialization of older objects.
+     */
     public String getFluffDate() {
-        return fluffDate;
+        return fluffDate == null ? "" : fluffDate;
     }
 
     public void setFluffDate(String fluffDate) {

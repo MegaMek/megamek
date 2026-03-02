@@ -387,4 +387,74 @@ class MtfFileTest {
         assertTrue(slot6 == null || slot6.getIndex() != Mek.SYSTEM_ENGINE,
               "CT slot 6 should not be engine (gyro is None, engine should be contiguous 0-5)");
     }
+
+    @Test
+    void testFluffDateRoundTrip() throws Exception {
+        Mek mek = new BipedMek();
+        String expectedDate = "2026-03-01 14:30:00";
+        mek.getFluff().setFluffDate(expectedDate);
+
+        MtfFile loader = toMtfFile(mek);
+        Entity loaded = loader.getEntity();
+
+        assertEquals(expectedDate, loaded.getFluff().getFluffDate());
+    }
+
+    @Test
+    void testFluffDateEmittedWhenSet() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(20.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+
+        mek.getFluff().setFluffDate("2026-03-01 14:30:00");
+        String mtf = mek.getMtf();
+        assertTrue(mtf.contains("fluffdate:2026-03-01 14:30:00"),
+              "MTF output should contain fluffdate field");
+    }
+
+    @Test
+    void testFluffDateNotEmittedWhenEmpty() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(20.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+
+        String mtf = mek.getMtf();
+        assertFalse(mtf.contains("fluffdate:"),
+              "MTF output should not contain fluffdate field when empty");
+    }
+
+    @Test
+    void testLegacyFluffDateCommentParsed() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(20.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        String mtf = mek.getMtf();
+
+        // Insert a legacy # Fluff Date: comment line before the first non-empty line
+        mtf = "# Fluff Date: 2026-02-26 19:50:04\n" + mtf;
+
+        MtfFile loader = toMtfFile(mtf);
+        Entity loaded = loader.getEntity();
+
+        assertEquals("2026-02-26 19:50:04", loaded.getFluff().getFluffDate());
+    }
+
+    @Test
+    void testFluffDateFieldOverridesLegacyComment() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(20.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+
+        mek.getFluff().setFluffDate("2026-03-01 10:00:00");
+        String mtf = mek.getMtf();
+
+        // Prepend a legacy comment with a different date
+        mtf = "# Fluff Date: 2025-01-01 00:00:00\n" + mtf;
+
+        MtfFile loader = toMtfFile(mtf);
+        Entity loaded = loader.getEntity();
+
+        // The fluffdate: field should win over the legacy comment
+        assertEquals("2026-03-01 10:00:00", loaded.getFluff().getFluffDate());
+    }
 }

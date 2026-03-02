@@ -213,25 +213,36 @@ class GeneralEntityReadout implements EntityReadout {
         Game game = entity.getGame();
 
         if ((game == null) || game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            List<String> activeUnitQuirksNames = entity.getQuirks().activeQuirks().stream()
-                  .map(IOption::getDisplayableNameWithValue)
+            List<ToolTippedElement> activeUnitQuirkElements = entity.getQuirks().activeQuirks().stream()
+                  .map(quirk -> new ToolTippedElement(
+                        quirk.getDisplayableNameWithValue(),
+                        quirk.getDescription())
+                  )
                   .toList();
 
-            if (!activeUnitQuirksNames.isEmpty()) {
+            if (!activeUnitQuirkElements.isEmpty()) {
                 result.add(new PlainLine());
                 var list = new ItemList(Messages.getString("MekView.Quirks"));
-                activeUnitQuirksNames.forEach(list::addItem);
+                activeUnitQuirkElements.forEach(list::addItem);
                 result.add(list);
             }
 
-            List<String> wpQuirksList = new ArrayList<>();
+            List<ViewElement> wpQuirksList = new ArrayList<>();
             for (Mounted<?> weapon : entity.getWeaponList()) {
-                List<String> activeWeaponQuirksNames = weapon.getQuirks().activeQuirks().stream()
-                      .map(IOption::getDisplayableNameWithValue)
-                      .collect(Collectors.toList());
-                if (!activeWeaponQuirksNames.isEmpty()) {
-                    String wq = weapon.getDesc() + " (" + entity.getLocationAbbr(weapon.getLocation()) + "): ";
-                    wq += String.join(", ", activeWeaponQuirksNames);
+                List<ToolTippedElement> activeWeaponQuirkElements = weapon.getQuirks().activeQuirks().stream()
+                      .map(quirk -> new ToolTippedElement(
+                            quirk.getDisplayableNameWithValue(),
+                            quirk.getDescription()
+                      ))
+                      .toList();
+                if (!activeWeaponQuirkElements.isEmpty()) {
+                    JoinedViewElement wq = new JoinedViewElement();
+                    wq.add(weapon.getDesc() + " (" + entity.getLocationAbbr(weapon.getLocation()) + "): ");
+                    wq.add(activeWeaponQuirkElements.get(0));
+                    for (int i=1; i<activeWeaponQuirkElements.size(); i++) {
+                        wq.add(", ");
+                        wq.add(activeWeaponQuirkElements.get(i));
+                    }
                     wpQuirksList.add(wq);
                 }
             }

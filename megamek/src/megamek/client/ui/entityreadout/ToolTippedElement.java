@@ -41,7 +41,7 @@ record ToolTippedElement(String text, String tooltip) implements ViewElement {
 
     @Override
     public String toHTML() {
-        return "<span title=\"" + tooltip + "\">" + text + "*</span>";
+        return ViewElement.asHtmlTooltip(text, tooltip);
     }
 
     @Override

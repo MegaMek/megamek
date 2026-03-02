@@ -32,11 +32,14 @@
  */
 package megamek.client.ui.entityreadout;
 
+import megamek.utilities.StringUtils;
+
 /**
  * A common interface for the various elements of the unit readout. ways to present data that can be formatted either as
  * HTML or as plain text.
  */
 interface ViewElement {
+    int TOOLTIP_MAX_SIZE = 85;
 
     /**
      * @return The contents of this view element, rendered to plain text. The text contains no tags or other control
@@ -57,6 +60,7 @@ interface ViewElement {
     String toDiscord();
 
     static String asHtmlTooltip(String text, String tooltip) {
+        tooltip = StringUtils.wrapLines(tooltip, TOOLTIP_MAX_SIZE).replaceAll("\"","&quot;");
         return "<span title=\"" + tooltip + "\">" + text + "*</span>";
     }
 }

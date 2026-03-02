@@ -3328,7 +3328,7 @@ public abstract class Mek extends Entity {
                 explicit++;
             } else if (m.getType().isExplosive(m)) {
                 int loc = m.getLocation();
-                if (!isClanCaseOptedOut(loc)) {
+                if (loc >= 0 && !isClanCaseOptedOut(loc)) {
                     caseLocations.add(loc);
                 }
                 int secLoc = m.getSecondLocation();

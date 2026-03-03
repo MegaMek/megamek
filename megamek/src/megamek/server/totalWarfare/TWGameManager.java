@@ -23868,7 +23868,6 @@ public class TWGameManager extends AbstractGameManager {
         boolean cargoDropped = false;
 
         for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
-            entity.dropCarriedObject(cargo, false);
             // if the cargo was dropped but not destroyed.
             if (!damageCargo(false, entity, cargo)) {
                 Report r = new Report(6722);
@@ -23877,9 +23876,21 @@ public class TWGameManager extends AbstractGameManager {
                 r.add(cargo.generalName());
                 vPhaseReport.add(r);
 
-                if (game.getBoard().contains(coords)) {
-                    game.placeGroundObject(coords, cargo);
-                    cargoDropped = true;
+                if (cargo instanceof Entity carriedEntity) {
+                    unloadUnit(entity, carriedEntity, coords, entity.getFacing(), entity.getElevation());
+                } else {
+                    entity.dropCarriedObject(cargo, false);
+                    if (game.getBoard().contains(coords)) {
+                        game.placeGroundObject(coords, cargo);
+                        cargoDropped = true;
+                    }
+                }
+            } else {
+                // cargo was destroyed by the fall
+                if (cargo instanceof Entity carriedEntity) {
+                    vPhaseReport.addAll(destroyEntity(carriedEntity, "dropped in fall"));
+                } else {
+                    entity.dropCarriedObject(cargo, false);
                 }
             }
         }

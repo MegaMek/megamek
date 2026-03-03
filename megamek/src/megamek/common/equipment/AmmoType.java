@@ -412,6 +412,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.FS)
                 .setReintroductionFactions(Faction.FS)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "184, TO:AUE");
 
@@ -441,6 +442,7 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(false, false, false, true, false)
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "230, TM");
 
@@ -465,6 +467,7 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.FS)
                 .setProductionFactions(Faction.FS)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "230, TM");
 
@@ -506,6 +509,7 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(true, false, false, true, false)
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "142, TW");
 
@@ -787,6 +791,7 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(true, false, false, true, false)
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setReintroductionFactions(Faction.LC, Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "185, TO:AUE");
@@ -863,6 +868,7 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.FS)
                 .setProductionFactions(Faction.FS)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setReintroductionFactions(Faction.FW)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "230, TM");
@@ -1344,6 +1350,7 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setReintroductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "166, TO:AUE");
@@ -1359,6 +1366,7 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setReintroductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "166, TO:AUE");
@@ -1374,6 +1382,7 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setReintroductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "167, TO:AUE");
@@ -1418,6 +1427,7 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "168, TO:AUE");
 
@@ -1434,6 +1444,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.CHH)
                 .setReintroductionFactions(Faction.CC)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "169, TO:AUE");
 
@@ -1458,6 +1469,7 @@ public class AmmoType extends EquipmentType {
           new TechAdvancement(TechBase.IS).setTechRating(TechRating.D)
                 .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
                 .setISAdvancement(2412, DATE_NONE, DATE_NONE, 2830, 3044)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "168, IO:AE");
 
@@ -1931,6 +1943,7 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setReintroductionFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "187, TO:AUE");
@@ -1960,6 +1973,7 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setReintroductionFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "186, TO:AUE");
@@ -1975,6 +1989,7 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setReintroductionFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "186, TO:AUE");
@@ -1990,6 +2005,7 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH)
+                .setExtinctionFactionExceptions(Faction.CS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "185, TO:AUE");
 

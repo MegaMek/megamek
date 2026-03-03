@@ -1403,6 +1403,7 @@ public class EquipmentType implements ITechnology {
         addFactionList(factions, "prototype", techAdvancement.getPrototypeFactions());
         addFactionList(factions, "production", techAdvancement.getProductionFactions());
         addFactionList(factions, "extinction", techAdvancement.getExtinctionFactions());
+        addFactionList(factions, "extinctionExclusion", techAdvancement.getExtinctionFactionExceptions());
         addFactionList(factions, "reintroduction", techAdvancement.getReintroductionFactions());
 
         if (!factions.isEmpty()) {

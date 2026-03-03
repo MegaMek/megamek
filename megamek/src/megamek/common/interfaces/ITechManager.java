@@ -34,7 +34,6 @@
 package megamek.common.interfaces;
 
 import megamek.common.SimpleTechLevel;
-import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 
@@ -118,19 +117,10 @@ public interface ITechManager {
         int clanIntroDate = tech.getIntroductionDate(true);
         boolean introducedIS = (isIntroDate != ITechnology.DATE_NONE) && (isIntroDate <= yearForAvailability);
         boolean introducedClan = (clanIntroDate != ITechnology.DATE_NONE) && (clanIntroDate <= yearForAvailability);
-        boolean extinctIS = tech.isExtinct(yearForAvailability, false);
-        boolean extinctClan = tech.isExtinct(yearForAvailability, true);
+        boolean extinctIS = tech.isExtinct(yearForAvailability, false, faction);
+        boolean extinctClan = tech.isExtinct(yearForAvailability, true, faction);
         // A little bit of hard-coded universe detail
-        if ((faction == Faction.CS)
-              && extinctIS && (isIntroDate != ITechnology.DATE_NONE)
-              && (tech.getBaseAvailability(ITechnology.getTechEra(yearForAvailability)).getIndex()
-              < AvailabilityValue.X.getIndex())
-              && isIntroDate <= yearForAvailability) {
-            // ComStar has access to Star League tech that is otherwise extinct in the Inner Sphere as if TH,
-            // unless it has an availability of X (which is SLDF Royal equipment).
-            extinctIS = false;
-            faction = Faction.TH;
-        } else if (useClanTechBase() && !introducedClan
+        if (useClanTechBase() && !introducedClan
               && tech.isAvailableIn(2787, false, Faction.TH)
               && !extinctClan && (tech.getExtinctionDate(false) > getGameYear())
               && (tech.getExtinctionDate(false) != ITechnology.DATE_NONE)) {
@@ -139,6 +129,10 @@ public interface ITechManager {
             faction = Faction.TH;
             clanTech = false;
         }
+
+        // ComStar inherited Star League tech knowledge, so use TH faction dates for tech level progression
+        Faction techLevelFaction = (faction == Faction.CS) ? Faction.TH : faction;
+
         if (useMixedTech()) {
             if ((!introducedIS && !introducedClan)
                   || (!showExtinct()
@@ -146,8 +140,8 @@ public interface ITechManager {
                 return false;
             } else if (useVariableTechLevel()) {
                 // If using tech progression with mixed tech, we pass if either IS or Clan meets the required level
-                return tech.getSimpleLevel(getGameYear(), true, faction).compareTo(getTechLevel()) <= 0
-                      || tech.getSimpleLevel(getGameYear(), false, faction).compareTo(getTechLevel()) <= 0;
+                return tech.getSimpleLevel(getGameYear(), true, techLevelFaction).compareTo(getTechLevel()) <= 0
+                      || tech.getSimpleLevel(getGameYear(), false, techLevelFaction).compareTo(getTechLevel()) <= 0;
             }
         } else {
             if (tech.getTechBase() != TechBase.ALL
@@ -158,7 +152,7 @@ public interface ITechManager {
             } else if (!clanTech && (!introducedIS || (!showExtinct() && extinctIS))) {
                 return false;
             } else if (useVariableTechLevel()) {
-                return tech.getSimpleLevel(getGameYear(), clanTech, faction).compareTo(getTechLevel()) <= 0;
+                return tech.getSimpleLevel(getGameYear(), clanTech, techLevelFaction).compareTo(getTechLevel()) <= 0;
             }
         }
         // It's available in the year, and we're not using tech progression, so just check the tech level.

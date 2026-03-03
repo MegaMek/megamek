@@ -108,6 +108,7 @@ public class TechAdvancement implements ITechnology {
     private Set<Faction> prototypeFactions = EnumSet.noneOf(Faction.class);
     private Set<Faction> productionFactions = EnumSet.noneOf(Faction.class);
     private Set<Faction> extinctionFactions = EnumSet.noneOf(Faction.class);
+    private Set<Faction> extinctionFactionExceptions = EnumSet.noneOf(Faction.class);
     private Set<Faction> reintroductionFactions = EnumSet.noneOf(Faction.class);
     private SimpleTechLevel staticTechLevel = SimpleTechLevel.STANDARD;
     private TechRating techRating = TechRating.C;
@@ -142,6 +143,7 @@ public class TechAdvancement implements ITechnology {
         prototypeFactions = EnumSet.copyOf(ta.prototypeFactions);
         productionFactions = EnumSet.copyOf(ta.productionFactions);
         extinctionFactions = EnumSet.copyOf(ta.extinctionFactions);
+        extinctionFactionExceptions = EnumSet.copyOf(ta.extinctionFactionExceptions);
         reintroductionFactions = EnumSet.copyOf(ta.reintroductionFactions);
         this.staticTechLevel = ta.staticTechLevel;
         this.techRating = ta.techRating;
@@ -436,7 +438,7 @@ public class TechAdvancement implements ITechnology {
     }
 
     private TechAdvancement setFactionsAdvancement(Set<Faction> factionAdvancement, Faction... factions) {
-        factionAdvancement = EnumSet.noneOf(Faction.class);
+        factionAdvancement.clear();
         Collections.addAll(factionAdvancement, factions);
         return this;
     }
@@ -493,6 +495,24 @@ public class TechAdvancement implements ITechnology {
      */
     public Set<Faction> getExtinctionFactions() {
         return extinctionFactions;
+    }
+
+    /**
+     * Sets the factions for which the technology became extinct.
+     *
+     * @param factions A list of Faction enums
+     *
+     * @return A reference to this object.
+     */
+    public TechAdvancement setExtinctionFactionExceptions(Faction... factions) {
+        return setFactionsAdvancement(extinctionFactionExceptions, factions);
+    }
+
+    /**
+     * @return A set of Faction enums that indicate the factions for which the technology became extinct.
+     */
+    public Set<Faction> getExtinctionFactionExceptions() {
+        return extinctionFactionExceptions;
     }
 
     /**
@@ -627,13 +647,22 @@ public class TechAdvancement implements ITechnology {
         if (extinctionDate == DATE_NONE) {
             return DATE_NONE;
         }
-        if (!extinctionFactions.isEmpty() && faction != null && faction != Faction.NONE) {
-            if (extinctionFactions.contains(faction)
-                  || (extinctionFactions.contains(Faction.IS) && !clan)
-                  || (extinctionFactions.contains(Faction.CLAN) && clan)) {
-                return extinctionDate;
+        if (faction != null && faction != Faction.NONE) {
+            if (!extinctionFactionExceptions.isEmpty()) {
+                if (extinctionFactionExceptions.contains(faction)
+                      || (extinctionFactionExceptions.contains(Faction.IS) && !clan)
+                      || (extinctionFactionExceptions.contains(Faction.CLAN) && clan)) {
+                    return DATE_NONE;
+                }
             }
-            return DATE_NONE;
+            if (!extinctionFactions.isEmpty()) {
+                if (extinctionFactions.contains(faction)
+                      || (extinctionFactions.contains(Faction.IS) && !clan)
+                      || (extinctionFactions.contains(Faction.CLAN) && clan)) {
+                    return extinctionDate;
+                }
+                return DATE_NONE;
+            }
         }
         return getDate(AdvancementPhase.EXTINCT, clan);
     }

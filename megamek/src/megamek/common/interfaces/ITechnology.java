@@ -216,26 +216,25 @@ public interface ITechnology {
     }
 
     default boolean isExtinct(int year, boolean clan) {
-        return getExtinctionDate(clan) != DATE_NONE
-              && getExtinctionDate(clan) < year
+        final int extinctDate = getExtinctionDate(clan);
+        return extinctDate != DATE_NONE
+              && extinctDate < year
               && (getReintroductionDate(clan) == DATE_NONE
               || year < getReintroductionDate(clan));
     }
 
     default boolean isExtinct(int year, boolean clan, Faction faction) {
-        // Tech that is lost but later recovered in the IS is not lost to ComStar.
-        if ((Faction.CS == faction) && (getReintroductionDate(false) != DATE_NONE)) {
-            return false;
-        }
-        return getExtinctionDate(clan) != DATE_NONE
-              && getExtinctionDate(clan) < year
-              && (getReintroductionDate(clan) == DATE_NONE
-              || year < getReintroductionDate(clan, faction));
+        final int extinctDate = getExtinctionDate(clan, faction);
+        return extinctDate != DATE_NONE
+            && extinctDate < year
+            && (getReintroductionDate(clan, faction) == DATE_NONE
+            || year < getReintroductionDate(clan, faction));
     }
 
     default boolean isExtinct(int year) {
-        return getExtinctionDate() != DATE_NONE
-              && getExtinctionDate() < year
+        final int extinctDate = getExtinctionDate();
+        return extinctDate != DATE_NONE
+              && extinctDate < year
               && (getReintroductionDate() == DATE_NONE
               || year < getReintroductionDate());
     }

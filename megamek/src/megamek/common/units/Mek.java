@@ -39,16 +39,7 @@ import static megamek.common.bays.Bay.UNSET_BAY;
 import java.io.PrintWriter;
 import java.io.Serial;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import megamek.SuiteConstants;
@@ -4593,11 +4584,13 @@ public abstract class Mek extends Entity {
             sb.append(MtfFile.OVERVIEW);
             sb.append(getFluff().getOverview());
             sb.append(newLine);
+            sb.append(newLine);
         }
 
         if (!getFluff().getCapabilities().isBlank()) {
             sb.append(MtfFile.CAPABILITIES);
             sb.append(getFluff().getCapabilities());
+            sb.append(newLine);
             sb.append(newLine);
         }
 
@@ -4605,11 +4598,13 @@ public abstract class Mek extends Entity {
             sb.append(MtfFile.DEPLOYMENT);
             sb.append(getFluff().getDeployment());
             sb.append(newLine);
+            sb.append(newLine);
         }
 
         if (!getFluff().getHistory().isBlank()) {
             sb.append(MtfFile.HISTORY);
             sb.append(getFluff().getHistory());
+            sb.append(newLine);
             sb.append(newLine);
         }
 
@@ -4617,11 +4612,13 @@ public abstract class Mek extends Entity {
             sb.append(MtfFile.MANUFACTURER);
             sb.append(getFluff().getManufacturer());
             sb.append(newLine);
+            sb.append(newLine);
         }
 
         if (!getFluff().getPrimaryFactory().isBlank()) {
             sb.append(MtfFile.PRIMARY_FACTORY);
             sb.append(getFluff().getPrimaryFactory());
+            sb.append(newLine);
             sb.append(newLine);
         }
 
@@ -4629,11 +4626,13 @@ public abstract class Mek extends Entity {
             sb.append(MtfFile.NOTES);
             sb.append(getFluff().getNotes());
             sb.append(newLine);
+            sb.append(newLine);
         }
 
         if (!getFluff().getFluffDate().isBlank()) {
             sb.append(MtfFile.FLUFF_DATE);
             sb.append(getFluff().getFluffDate());
+            sb.append(newLine);
             sb.append(newLine);
         }
 

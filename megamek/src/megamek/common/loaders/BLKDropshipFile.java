@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -217,7 +217,11 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
         // how many bombs can it carry; depends on transport bays
         a.autoSetMaxBombPoints();
 
-        a.setArmorTonnage(a.getArmorWeight());
+        if (dataFile.exists("armorWeight")) {
+            a.setArmorTonnage(dataFile.getDataAsDouble("armorWeight")[0]);
+        } else {
+            a.setArmorTonnage(a.getArmorWeight());
+        }
         loadQuirks(a);
         return a;
     }

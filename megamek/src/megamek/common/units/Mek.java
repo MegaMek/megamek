@@ -4631,6 +4631,12 @@ public abstract class Mek extends Entity {
             sb.append(newLine);
         }
 
+        if (!getFluff().getFluffDate().isBlank()) {
+            sb.append(MtfFile.FLUFF_DATE);
+            sb.append(getFluff().getFluffDate());
+            sb.append(newLine);
+        }
+
         for (System system : System.values()) {
             if (!getFluff().getSystemManufacturer(system).isBlank()) {
                 sb.append(MtfFile.SYSTEM_MANUFACTURER);

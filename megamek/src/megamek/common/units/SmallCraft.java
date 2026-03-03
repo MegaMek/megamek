@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Jay Lawson
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -61,6 +61,8 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.RoundWeight;
+import megamek.common.verifier.TestAdvancedAerospace;
+import megamek.common.verifier.TestEntity;
 
 /**
  * @author Jay Lawson
@@ -758,21 +760,18 @@ public class SmallCraft extends Aero {
 
     @Override
     public double getArmorWeight() {
-        // first I need to subtract SI bonus from total armor. We need to retain the
-        // fractional part
-        // for primitive craft because the primitive multiplier is applied to both
-        // before rounding.
-        double armorPoints = getTotalOArmor();
-        int freeSI = getSI() * (locations() - 1); // no armor in hull location
+        double rawArmor;
         if (isPrimitive()) {
-            armorPoints -= freeSI * 0.66;
+            // reverse the double rounding process of determining the final armor value, see IO:AE 3rd p.125
+            // (Aquilla example calculation, which is a JS but the calculation process for JS and DS seems to be
+            // exactly the same)
+            rawArmor = Math.ceil(getTotalOArmor() / 0.66);
         } else {
-            armorPoints -= freeSI;
+            rawArmor = getTotalOArmor();
         }
-        ArmorType armor = ArmorType.forEntity(this);
-        double armorPerTon = armor.getPointsPerTon(this);
-
-        return RoundWeight.nextHalfTon(armorPoints / armorPerTon);
+        double weightedArmor = rawArmor - TestEntity.getSIBonusArmorPoints(this);
+        double pointsPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
+        return RoundWeight.standard(weightedArmor / pointsPerTon, this);
     }
 
     @Override

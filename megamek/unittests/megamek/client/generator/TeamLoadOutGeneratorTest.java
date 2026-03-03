@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -554,8 +554,8 @@ class TeamLoadOutGeneratorTest {
         Assertions.assertFalse(tlg.checkLegality(mType, "CC", "IS", false));
         Assertions.assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
         Assertions.assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
-        Assertions.assertFalse(tlg.checkLegality(mType, "CLAN", "CL", false));
-        Assertions.assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
+        Assertions.assertFalse(tlg.checkLegality(mType, "Clan", "CL", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "Clan", "CL", true));
 
         // Should be available to everyone
         when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL)).thenReturn("Advanced");
@@ -563,8 +563,8 @@ class TeamLoadOutGeneratorTest {
         Assertions.assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
         Assertions.assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
         Assertions.assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
-        Assertions.assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
-        Assertions.assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
+        Assertions.assertTrue(tlg.checkLegality(mType, "Clan", "CL", true));
+        Assertions.assertTrue(tlg.checkLegality(mType, "Clan", "CL", true));
     }
 
     @Test
@@ -581,8 +581,8 @@ class TeamLoadOutGeneratorTest {
         Assertions.assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
         Assertions.assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
         // Check mixed-tech and regular Clan tech, which should match IS at this point
-        Assertions.assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
-        Assertions.assertFalse(tlg.checkLegality(mType, "CLAN", "CL", false));
+        Assertions.assertTrue(tlg.checkLegality(mType, "Clan", "CL", true));
+        Assertions.assertFalse(tlg.checkLegality(mType, "Clan", "CL", false));
 
         // Set year back to 3025
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3025);
@@ -590,17 +590,26 @@ class TeamLoadOutGeneratorTest {
         Assertions.assertFalse(tlg.checkLegality(mType, "CC", "IS", false));
         Assertions.assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
         Assertions.assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
-        Assertions.assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
+        Assertions.assertFalse(tlg.checkLegality(mType, "Clan", "CL", true));
 
-        // Move up to 3070. Because of game settings and lack of "Common" year, ADA
-        // becomes available
-        // everywhere (at least in the IS) immediately after its inception.
+        // Move up to 3070. ADA has prototype factions CC, so only CC has access at
+        // the prototype date (3068). Other IS factions get access after the prototype
+        // offset (3068 + 8 = 3076), so they should NOT have access in 3070.
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3070);
+        tlg.updateOptionValues();
+        Assertions.assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "Clan", "CL", true));
+
+        // Move up to 3076. Because of game settings and lack of "Common" year, ADA
+        // becomes available everywhere (at least in the IS) immediately after its inception.
+        when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3076);
         tlg.updateOptionValues();
         Assertions.assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
         Assertions.assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
         Assertions.assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
-        Assertions.assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
+        Assertions.assertTrue(tlg.checkLegality(mType, "Clan", "CL", true));
     }
 
     @Test

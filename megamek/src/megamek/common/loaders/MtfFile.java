@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,6 +51,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.QuirkEntry;
 import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Engine;
@@ -102,6 +103,7 @@ public class MtfFile implements IMekLoader {
     private String motiveType;
     private String ejectionType;
     private String heatSinkKit;
+    private String clanCaseOptOut;
 
     private String heatSinks;
     private String jumpMP;
@@ -129,6 +131,7 @@ public class MtfFile implements IMekLoader {
 
     private int bv = 0;
     private String role;
+    private String faction;
 
     private final Map<EquipmentType, Mounted<?>> hSharedEquip = new HashMap<>();
     private final List<Mounted<?>> vSplitWeapons = new ArrayList<>();
@@ -193,6 +196,8 @@ public class MtfFile implements IMekLoader {
     public static final String QUIRK = "quirk:";
     public static final String WEAPON_QUIRK = "weaponquirk:";
     public static final String ROLE = "role:";
+    public static final String FACTION = "faction:";
+    public static final String CLAN_CASE_OPT_OUT = "clancaseoptedoutlocs:";
     public static final String FLUFF_IMAGE = "fluffimage:";
     public static final String ICON = "icon:";
 
@@ -302,6 +307,17 @@ public class MtfFile implements IMekLoader {
             }
             mek.setFullHeadEject(fullHead);
             mek.setRiscHeatSinkOverrideKit(riscHeatSinkKit);
+            if (!StringUtility.isNullOrBlank(clanCaseOptOut)) {
+                for (String locAbbr : clanCaseOptOut.split(",")) {
+                    String trimmed = locAbbr.trim();
+                    if (!trimmed.isEmpty()) {
+                        int loc = mek.getLocationFromAbbr(trimmed);
+                        if (loc >= 0) {
+                            mek.addClanCaseOptOut(loc);
+                        }
+                    }
+                }
+            }
             mek.setChassis(chassis.trim());
             mek.setClanChassisName(clanChassisName);
             mek.setModel(model.trim());
@@ -312,6 +328,9 @@ public class MtfFile implements IMekLoader {
                 mek.setUnitRole(UnitRole.UNDETERMINED);
             } else {
                 mek.setUnitRole(UnitRole.parseRole(role));
+            }
+            if (!StringUtility.isNullOrBlank(faction)) {
+                mek.setTechFaction(Faction.fromAbbr(faction));
             }
 
             if (chassisConfig.contains("Omni")) {
@@ -1635,6 +1654,16 @@ public class MtfFile implements IMekLoader {
 
         if (lineLower.startsWith(ROLE)) {
             role = line.substring(ROLE.length());
+            return true;
+        }
+
+        if (lineLower.startsWith(FACTION)) {
+            faction = line.substring(FACTION.length()).trim();
+            return true;
+        }
+
+        if (lineLower.startsWith(CLAN_CASE_OPT_OUT)) {
+            clanCaseOptOut = line.substring(CLAN_CASE_OPT_OUT.length()).trim();
             return true;
         }
 

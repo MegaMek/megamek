@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,6 +53,7 @@ import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.*;
 import megamek.common.board.CubeCoords;
+import megamek.common.enums.Faction;
 import megamek.common.equipment.*;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.options.IOption;
@@ -138,6 +139,10 @@ public class BLKFile {
 
         if (dataFile.exists("source")) {
             entity.setSource(dataFile.getDataAsString("source")[0]);
+        }
+
+        if (dataFile.exists("faction")) {
+            entity.setTechFaction(Faction.fromAbbr(dataFile.getDataAsString("faction")[0]));
         }
 
         if (dataFile.exists("fluffimage")) {
@@ -1036,6 +1041,10 @@ public class BLKFile {
 
         if (!t.getSource().isBlank()) {
             blk.writeBlockData("source", t.getSource());
+        }
+
+        if (t.getTechFaction() != Faction.NONE) {
+            blk.writeBlockData("faction", t.getTechFaction().getCode());
         }
 
         if (t instanceof BattleArmor ba) {

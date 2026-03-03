@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,6 +42,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import megamek.common.CriticalSlot;
+import megamek.common.enums.Faction;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
@@ -386,6 +387,116 @@ class MtfFileTest {
         CriticalSlot slot6 = loaded.getCritical(Mek.LOC_CENTER_TORSO, 6);
         assertTrue(slot6 == null || slot6.getIndex() != Mek.SYSTEM_ENGINE,
               "CT slot 6 should not be engine (gyro is None, engine should be contiguous 0-5)");
+    }
+
+    /**
+     * Test that the techFaction field round-trips through MTF save/load.
+     */
+    @Test
+    void testFactionRoundTrip() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setTechFaction(Faction.DC);
+
+        MtfFile loader = toMtfFile(mek);
+        Entity loaded = loader.getEntity();
+
+        assertEquals(Faction.DC, loaded.getTechFaction(),
+              "Tech faction should survive MTF round-trip");
+    }
+
+    /**
+     * Test that Faction.NONE is not written and loads back as NONE.
+     */
+    @Test
+    void testFactionNoneNotWritten() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setTechFaction(Faction.NONE);
+
+        String mtf = mek.getMtf();
+        assertFalse(mtf.contains(MtfFile.FACTION),
+              "NONE faction should not produce a faction: line in MTF output");
+
+        MtfFile loader = toMtfFile(mek);
+        Entity loaded = loader.getEntity();
+
+        assertEquals(Faction.NONE, loaded.getTechFaction(),
+              "Missing faction line should load as NONE");
+    }
+
+    /**
+     * Test that the Clan CASE opt-out locations round-trip through MTF save/load
+     * with multiple locations.
+     */
+    @Test
+    void testClanCaseOptOutRoundTrip() throws Exception {
+        Mek mek = new BipedMek();
+        mek.addClanCaseOptOut(Mek.LOC_LEFT_TORSO);
+        mek.addClanCaseOptOut(Mek.LOC_RIGHT_TORSO);
+        mek.addClanCaseOptOut(Mek.LOC_CENTER_TORSO);
+
+        MtfFile loader = toMtfFile(mek);
+        Entity loaded = loader.getEntity();
+        Mek loadedMek = (Mek) loaded;
+
+        assertTrue(loadedMek.isClanCaseOptedOut(Mek.LOC_LEFT_TORSO),
+              "LT should be opted out of Clan CASE");
+        assertTrue(loadedMek.isClanCaseOptedOut(Mek.LOC_RIGHT_TORSO),
+              "RT should be opted out of Clan CASE");
+        assertTrue(loadedMek.isClanCaseOptedOut(Mek.LOC_CENTER_TORSO),
+              "CT should be opted out of Clan CASE");
+        assertFalse(loadedMek.isClanCaseOptedOut(Mek.LOC_HEAD),
+              "HD should not be opted out of Clan CASE");
+        assertFalse(loadedMek.isClanCaseOptedOut(Mek.LOC_LEFT_ARM),
+              "LA should not be opted out of Clan CASE");
+        assertEquals(3, loadedMek.getClanCaseOptOutLocations().size(),
+              "Exactly 3 locations should be opted out");
+    }
+
+    /**
+     * Test that an empty Clan CASE opt-out set is not written and loads correctly.
+     */
+    @Test
+    void testClanCaseOptOutEmptyNotWritten() throws Exception {
+        Mek mek = new BipedMek();
+        // No opt-outs added
+
+        String mtf = mek.getMtf();
+        assertFalse(mtf.contains(MtfFile.CLAN_CASE_OPT_OUT),
+              "Empty opt-out set should not produce a clancaseoptedoutlocs: line");
+
+        MtfFile loader = toMtfFile(mek);
+        Mek loadedMek = (Mek) loader.getEntity();
+
+        assertFalse(loadedMek.hasAnyClanCaseOptOut(),
+              "Loaded mek should have no Clan CASE opt-outs");
+    }
+
+    /**
+     * Test that the Clan CASE opt-out line is written in deterministic (sorted) order.
+     */
+    @Test
+    void testClanCaseOptOutSortedOutput() throws Exception {
+        Mek mek = new BipedMek();
+        // Add in reverse order to exercise sorting
+        mek.addClanCaseOptOut(Mek.LOC_RIGHT_LEG);   // index 6
+        mek.addClanCaseOptOut(Mek.LOC_LEFT_TORSO);   // index 3
+        mek.addClanCaseOptOut(Mek.LOC_CENTER_TORSO);  // index 1
+
+        String mtf = mek.getMtf();
+
+        // Extract the clancaseoptedoutlocs line
+        String marker = MtfFile.CLAN_CASE_OPT_OUT;
+        int start = mtf.indexOf(marker);
+        assertTrue(start >= 0, "MTF should contain " + marker);
+        String afterMarker = mtf.substring(start + marker.length());
+        String locationLine = afterMarker.split("\\R")[0];
+        String[] abbrs = locationLine.split(",");
+
+        // The abbreviations should be sorted by location index: CT(1), LT(3), RL(6)
+        assertEquals(3, abbrs.length);
+        assertEquals(mek.getLocationAbbr(Mek.LOC_CENTER_TORSO), abbrs[0]);
+        assertEquals(mek.getLocationAbbr(Mek.LOC_LEFT_TORSO), abbrs[1]);
+        assertEquals(mek.getLocationAbbr(Mek.LOC_RIGHT_LEG), abbrs[2]);
     }
 
     @Test

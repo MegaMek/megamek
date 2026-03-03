@@ -37,6 +37,7 @@ package megamek.common.loaders;
 import megamek.common.TechConstants;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
@@ -232,6 +233,11 @@ public class BLKConvFighterFile extends BLKFile implements IMekLoader {
                 if (etype == null) {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
+                }
+
+                // The stealth armor mount is added when the armor type is set
+                if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_STEALTH)) {
+                    continue;
                 }
 
                 if (etype != null) {

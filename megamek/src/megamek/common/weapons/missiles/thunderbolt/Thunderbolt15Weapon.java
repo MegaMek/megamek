@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.weapons.missiles.thuunderbolt;
+package megamek.common.weapons.missiles.thunderbolt;
 
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.AmmoType;

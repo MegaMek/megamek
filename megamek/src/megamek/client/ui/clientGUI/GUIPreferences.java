@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -2630,88 +2630,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(RAT_TECH_LEVEL);
     }
 
-    public void setRATTechLevel(int v) {
-        store.setValue(RAT_TECH_LEVEL, v);
-    }
-
-    public String getRATBVMin() {
-        return store.getString(RAT_BV_MIN);
-    }
-
-    public void setRATBVMin(String v) {
-        store.setValue(RAT_BV_MIN, v);
-    }
-
-    public String getRATBVMax() {
-        return store.getString(RAT_BV_MAX);
-    }
-
-    public void setRATBVMax(String v) {
-        store.setValue(RAT_BV_MAX, v);
-    }
-
-    public String getRATNumMeks() {
-        return store.getString(RAT_NUM_MEKS);
-    }
-
-    public void setRATNumMeks(String v) {
-        store.setValue(RAT_NUM_MEKS, v);
-    }
-
-    public String getRATNumVees() {
-        return store.getString(RAT_NUM_VEES);
-    }
-
-    public void setRATNumVees(String v) {
-        store.setValue(RAT_NUM_VEES, v);
-    }
-
-    public String getRATNumBA() {
-        return store.getString(RAT_NUM_BA);
-    }
-
-    public void setRATNumBA(String v) {
-        store.setValue(RAT_NUM_BA, v);
-    }
-
-    public String getRATNumInf() {
-        return store.getString(RAT_NUM_INF);
-    }
-
-    public void setRATNumInf(String v) {
-        store.setValue(RAT_NUM_INF, v);
-    }
-
-    public String getRATYearMin() {
-        return store.getString(RAT_YEAR_MIN);
-    }
-
-    public void setRATYearMin(String v) {
-        store.setValue(RAT_YEAR_MIN, v);
-    }
-
-    public String getRATYearMax() {
-        return store.getString(RAT_YEAR_MAX);
-    }
-
-    public void setRATYearMax(String v) {
-        store.setValue(RAT_YEAR_MAX, v);
-    }
-
-    public boolean getRATPadBV() {
-        return store.getBoolean(RAT_PAD_BV);
-    }
-
-    public void setRATPadBV(boolean v) {
-        store.setValue(RAT_PAD_BV, v);
-    }
-
     public String getRATSelectedRAT() {
         return store.getString(RAT_SELECTED_RAT);
-    }
-
-    public void setRATSelectedRAT(String v) {
-        store.setValue(RAT_SELECTED_RAT, v);
     }
 
     public void setBoardEdRndStart(boolean b) {

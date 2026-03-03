@@ -40,18 +40,31 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashSet;
 
+import megamek.common.TechConstants;
 import megamek.common.bays.BattleArmorBay;
 import megamek.common.bays.Bay;
 import megamek.common.bays.InfantryBay;
 import megamek.common.bays.MekBay;
+import megamek.common.enums.Faction;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.loaders.BLKFile.ParsedBayInfo;
 import megamek.common.units.DropShuttleBay;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Jumpship;
 import megamek.common.units.NavalRepairFacility;
 import megamek.common.units.PlatoonType;
+import megamek.common.units.Tank;
+import megamek.common.util.BuildingBlock;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class BLKFileTest {
+
+    @BeforeAll
+    static void beforeAll() {
+        EquipmentType.initializeTypes();
+    }
 
     /**
      * Strips the bay type identifier from the bay string.
@@ -303,6 +316,57 @@ class BLKFileTest {
 
         }
 
+    }
+
+    /**
+     * Creates a minimal Tank entity for roundtrip testing.
+     */
+    private Tank createMinimalTank() {
+        Tank tank = new Tank();
+        tank.setChassis("Test");
+        tank.setModel("Tank");
+        tank.setWeight(20.0);
+        tank.setYear(3025);
+        tank.setTechLevel(TechConstants.T_INTRO_BOX_SET);
+        tank.setMovementMode(EntityMovementMode.TRACKED);
+        tank.setEngine(new Engine(100, Engine.NORMAL_ENGINE, Engine.TANK_ENGINE));
+        tank.setOriginalWalkMP(5);
+        tank.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+        tank.setArmorTechLevel(TechConstants.T_INTRO_BOX_SET);
+        tank.autoSetInternal();
+        tank.initializeArmor(10, Tank.LOC_FRONT);
+        tank.initializeArmor(10, Tank.LOC_RIGHT);
+        tank.initializeArmor(10, Tank.LOC_LEFT);
+        tank.initializeArmor(10, Tank.LOC_REAR);
+        return tank;
+    }
+
+    @Test
+    void techFactionRoundtripsThroughBLK() throws Exception {
+        Tank tank = createMinimalTank();
+        tank.setTechFaction(Faction.DC);
+
+        // Save to BuildingBlock and reload
+        BuildingBlock blk = BLKFile.getBlock(tank);
+        BLKTankFile loader = new BLKTankFile(blk);
+        Tank loaded = (Tank) loader.getEntity();
+
+        assertEquals(Faction.DC, loaded.getTechFaction(),
+              "Tech faction should survive BLK roundtrip");
+    }
+
+    @Test
+    void noneFactionIsNotWrittenToBLK() throws Exception {
+        Tank tank = createMinimalTank();
+        // Faction.NONE is the default; make sure it is not written
+        assertEquals(Faction.NONE, tank.getTechFaction());
+
+        BuildingBlock blk = BLKFile.getBlock(tank);
+        BLKTankFile loader = new BLKTankFile(blk);
+        Tank loaded = (Tank) loader.getEntity();
+
+        assertEquals(Faction.NONE, loaded.getTechFaction(),
+              "NONE faction should remain NONE after roundtrip");
     }
 
 }

@@ -2136,7 +2136,6 @@ public class FormationType {
         int groupSize = 2;
         int numGroups = 1;
         BiFunction<MekSummary, MekSummary, Boolean> groupConstraint;
-        String description;
 
         public GroupingConstraint(Predicate<MekSummary> generalConstraint,
               BiFunction<MekSummary, MekSummary, Boolean> groupConstraint, String description) {

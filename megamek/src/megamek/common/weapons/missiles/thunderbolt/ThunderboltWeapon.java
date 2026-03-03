@@ -32,7 +32,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.weapons.missiles.thuunderbolt;
+package megamek.common.weapons.missiles.thunderbolt;
 
 import static megamek.common.game.IGame.LOGGER;
 

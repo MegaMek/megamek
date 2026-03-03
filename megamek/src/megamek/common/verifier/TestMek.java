@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -320,36 +320,31 @@ public class TestMek extends TestEntity {
         return count;
     }
 
-    public boolean checkMiscSpreadAllocation(Entity entity, Mounted<?> mounted,
-          StringBuffer buff) {
+    public boolean checkMiscSpreadAllocation(Mek mek, Mounted<?> mounted, StringBuffer buff) {
         MiscType mt = (MiscType) mounted.getType();
-        if (mt.hasFlag(MiscType.F_STEALTH) && !entity.hasPatchworkArmor()) {
-            // stealth needs to have 2 crits in legs arm and side torso
-            if (countCriticalSlotsFromEquipInLocation(entity, mounted,
-                  Mek.LOC_LEFT_ARM) != 2) {
+        if (mt.hasFlag(MiscType.F_STEALTH) && !mek.hasPatchworkArmor()) {
+            int stealthCritsPerLocation = mek.isSuperHeavy() ? 1 : 2;
+            if (countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_LEFT_ARM) != stealthCritsPerLocation) {
                 buff.append("incorrect number of stealth crits in left arm\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, mounted,
-                  Mek.LOC_RIGHT_ARM) != 2) {
+            if (countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_RIGHT_ARM) != stealthCritsPerLocation) {
                 buff.append("incorrect number of stealth crits in right arm\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, mounted,
-                  Mek.LOC_LEFT_LEG) != 2) {
+            if (countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_LEFT_LEG) != stealthCritsPerLocation) {
                 buff.append("incorrect number of stealth crits in left leg\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, mounted,
-                  Mek.LOC_RIGHT_LEG) != 2) {
+            if (countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_RIGHT_LEG) != stealthCritsPerLocation) {
                 buff.append("incorrect number of stealth crits in right leg\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mek.LOC_LEFT_TORSO) != 2) {
+            if (countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_LEFT_TORSO) != stealthCritsPerLocation) {
                 buff.append("incorrect number of stealth crits in left torso\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mek.LOC_RIGHT_TORSO) != 2) {
+            if (countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_RIGHT_TORSO) != stealthCritsPerLocation) {
                 buff.append("incorrect number of stealth crits in right torso\n");
                 return false;
             }
@@ -361,24 +356,18 @@ public class TestMek extends TestEntity {
             }
         }
         if (mt.hasFlag(MiscType.F_MOBILE_HPG)) {
-            if ((countCriticalSlotsFromEquipInLocation(entity, mounted,
-                  Mek.LOC_LEFT_ARM) > 0)
-                  || (countCriticalSlotsFromEquipInLocation(entity, mounted,
-                  Mek.LOC_RIGHT_ARM) > 0)
-                  || (countCriticalSlotsFromEquipInLocation(entity, mounted,
-                  Mek.LOC_HEAD) > 0)
-                  || (countCriticalSlotsFromEquipInLocation(entity, mounted,
-                  Mek.LOC_LEFT_LEG) > 0)
-                  || (countCriticalSlotsFromEquipInLocation(entity, mounted,
-                  Mek.LOC_RIGHT_LEG) > 0)) {
+            if ((countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_LEFT_ARM) > 0)
+                  || (countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_RIGHT_ARM) > 0)
+                  || (countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_HEAD) > 0)
+                  || (countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_LEFT_LEG) > 0)
+                  || (countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_RIGHT_LEG) > 0)) {
                 buff.append("ground mobile HPG must be mounted in torso locations\n");
             }
         }
         if (mt.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
             // environmental sealing needs to have 1 crit per location
-            for (int locations = 0; locations < entity.locations(); locations++) {
-                if (countCriticalSlotsFromEquipInLocation(entity, mounted,
-                      locations) != 1) {
+            for (int locations = 0; locations < mek.locations(); locations++) {
+                if (countCriticalSlotsFromEquipInLocation(mek, mounted, locations) != 1) {
                     buff.append("not an environmental sealing crit in each location\n");
                     return false;
                 }
@@ -386,10 +375,9 @@ public class TestMek extends TestEntity {
         }
         if (mt.hasFlag(MiscType.F_BLUE_SHIELD)) {
             // blue shield needs to have 1 crit per location, except head
-            for (int locations = 0; locations < entity.locations(); locations++) {
+            for (int locations = 0; locations < mek.locations(); locations++) {
                 if (locations != Mek.LOC_HEAD) {
-                    if (countCriticalSlotsFromEquipInLocation(entity, mounted,
-                          locations) != 1) {
+                    if (countCriticalSlotsFromEquipInLocation(mek, mounted, locations) != 1) {
                         buff.append("not a blue shield crit in each location except the head\n");
                         return false;
                     }
@@ -399,25 +387,23 @@ public class TestMek extends TestEntity {
         }
         if (mt.hasFlag(MiscType.F_PARTIAL_WING)) {
             // partial wing needs 3/4 crits in the side torsos
-            if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mek.LOC_LEFT_TORSO) != ((TechConstants.isClan(mt
-                  .getTechLevel(entity.getTechLevelYear()))) ? 3
-                  : 4)) {
+            if (countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_LEFT_TORSO)
+                  != ((TechConstants.isClan(mt.getTechLevel(mek.getTechLevelYear()))) ? 3 : 4)) {
                 buff.append("incorrect number of partial wing crits in left torso\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mek.LOC_RIGHT_TORSO) != ((TechConstants.isClan(mt
-                  .getTechLevel(entity.getTechLevelYear()))) ? 3
-                  : 4)) {
+            if (countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_RIGHT_TORSO)
+                  != ((TechConstants.isClan(mt.getTechLevel(mek.getTechLevelYear()))) ? 3 : 4)) {
                 buff.append("incorrect number of partial wing crits in right torso\n");
                 return false;
             }
         }
         if (mt.hasFlag(MiscType.F_CHAIN_DRAPE)) {
-            if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mek.LOC_LEFT_TORSO) != 3) {
+            if (countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_LEFT_TORSO) != 3) {
                 buff.append("incorrect number of chain drape crits in left torso\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mek.LOC_RIGHT_TORSO) != 3) {
+            if (countCriticalSlotsFromEquipInLocation(mek, mounted, Mek.LOC_RIGHT_TORSO) != 3) {
                 buff.append("incorrect number of chain drape crits in right torso\n");
                 return false;
             }

@@ -76,9 +76,7 @@ public class InfantryRifleMakeshiftWeapon extends InfantryWeapon {
         shots = 1;
         rulesRefs = " 273, TM";
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-              .setISApproximate(false, false, false, false, false)
-              .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-              .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.B)
+              .setISApproximate(false, false, false, false, false).setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
 
     }

@@ -190,7 +190,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         // Check if combat already exists in this building
         boolean combatExists = game.getEntitiesVector().stream()
               .filter(e -> e instanceof Infantry)
-              .filter(e -> e.getPosition().equals(targetEntity.getPosition()))
+              .filter(e -> e.getPosition() != null && e.getPosition().equals(targetEntity.getPosition()))
               .map(e -> (Infantry) e)
               .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
 
@@ -385,7 +385,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         // Check if combat already exists in this building
         boolean combatExists = game.getEntitiesVector().stream()
               .filter(e -> e instanceof Infantry)
-              .filter(e -> e.getPosition().equals(targetEntity.getPosition()))
+              .filter(e -> e.getPosition() != null && e.getPosition().equals(targetEntity.getPosition()))
               .map(e -> (Infantry) e)
               .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
 

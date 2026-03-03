@@ -10242,6 +10242,7 @@ public class AmmoType extends EquipmentType {
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
+              .setExtinctionFactionExceptions(Faction.CS)
               .setReintroductionFactions(Faction.FS, Faction.LC);
         return ammo;
     }

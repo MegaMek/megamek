@@ -75,6 +75,7 @@ public class AMSBayWeapon extends AmmoBayWeapon {
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.TH, Faction.CSA)
               .setProductionFactions(Faction.TH, Faction.CSA)
+              .setExtinctionFactionExceptions(Faction.CS)
               .setReintroductionFactions(Faction.CC)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }

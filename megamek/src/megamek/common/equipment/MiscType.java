@@ -4453,6 +4453,7 @@ public class MiscType extends EquipmentType {
               .setISApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
+              .setExtinctionFactionExceptions(Faction.CS)
               .setReintroductionFactions(Faction.DC);
         return misc;
     }
@@ -4639,6 +4640,7 @@ public class MiscType extends EquipmentType {
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
+              .setExtinctionFactionExceptions(Faction.CS)
               .setReintroductionFactions(Faction.FS)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
@@ -5406,6 +5408,7 @@ public class MiscType extends EquipmentType {
               .setISApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
+              .setExtinctionFactionExceptions(Faction.CS)
               .setReintroductionFactions(Faction.CC);
         return misc;
     }
@@ -5634,6 +5637,7 @@ public class MiscType extends EquipmentType {
               .setISApproximate(false, false, false, false, true)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
+              .setExtinctionFactionExceptions(Faction.CS)
               .setReintroductionFactions(Faction.CC);
         return misc;
     }
@@ -6702,6 +6706,7 @@ public class MiscType extends EquipmentType {
               .setISAdvancement(2559, 2567, 3045, 2865, 3040)
               .setISApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
+              .setExtinctionFactionExceptions(Faction.CS)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -9104,6 +9109,7 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
+              .setExtinctionFactionExceptions(Faction.CS)
               .setReintroductionFactions(Faction.DC);
         return misc;
     }

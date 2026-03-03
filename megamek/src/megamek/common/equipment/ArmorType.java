@@ -399,6 +399,7 @@ public class ArmorType extends MiscType {
               .setClanApproximate(false, false, true, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
+              .setExtinctionFactionExceptions(Faction.CS)
               .setReintroductionFactions(Faction.DC);
 
         armor.armorType = T_ARMOR_FERRO_FIBROUS;
@@ -507,6 +508,7 @@ public class ArmorType extends MiscType {
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2557, DATE_NONE, DATE_NONE, 2571, 3034)
               .setISApproximate(true, false, false, true, true).setPrototypeFactions(Faction.TH)
+              .setExtinctionFactionExceptions(Faction.CS)
               .setReintroductionFactions(Faction.LC, Faction.DC);
 
         armor.armorType = T_ARMOR_FERRO_FIBROUS_PROTO;
@@ -533,6 +535,7 @@ public class ArmorType extends MiscType {
               .setISApproximate(false, false, false, true, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
+              .setExtinctionFactionExceptions(Faction.CS)
               .setReintroductionFactions(Faction.DC);
 
         armor.armorType = T_ARMOR_ALUM;

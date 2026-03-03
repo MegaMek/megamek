@@ -80,6 +80,7 @@ public class ISNarcOS extends NarcWeapon {
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
+              .setExtinctionFactionExceptions(Faction.CS)
               .setReintroductionFactions(Faction.FS, Faction.LC);
     }
 }

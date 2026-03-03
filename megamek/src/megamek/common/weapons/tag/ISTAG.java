@@ -77,6 +77,7 @@ public class ISTAG extends TAGWeapon {
               .setISApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
+              .setExtinctionFactionExceptions(Faction.CS)
               .setReintroductionFactions(Faction.FS, Faction.LC);
     }
 }

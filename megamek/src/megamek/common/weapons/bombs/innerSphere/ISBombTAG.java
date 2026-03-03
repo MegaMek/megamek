@@ -80,6 +80,7 @@ public class ISBombTAG extends TAGWeapon {
               .setClanAdvancement(2600, 2605, 2645, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setProductionFactions(Faction.TH)
+              .setExtinctionFactionExceptions(Faction.CS);
     }
 }

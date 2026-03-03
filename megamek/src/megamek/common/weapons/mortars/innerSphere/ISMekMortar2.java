@@ -80,6 +80,7 @@ public class ISMekMortar2 extends MekMortarWeapon {
               .setClanApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
+              .setExtinctionFactionExceptions(Faction.CS)
               .setReintroductionFactions(Faction.FS, Faction.LC);
     }
 }

@@ -65,6 +65,28 @@ public class SmallFontHelpTextLabel extends FlatLabel {
         initialize();
     }
 
+    /**
+     * Constructs an empty help text label with the given alignment, e.g. SwingConstants.CENTER. The label uses a small
+     * font and is disabled, meaning its text is greyed out. By default, the label uses an EmptyBorder with 4 thickness
+     * on the bottom and 0 elsewhere (the border can be replaced). The default * horizontal alignment is (as with
+     * JLabel) SwingConstants.LEADING.
+     */
+    public SmallFontHelpTextLabel(int horizontalAlignment) {
+        initialize();
+        setHorizontalAlignment(horizontalAlignment);
+    }
+
+    /**
+     * Constructs an empty help text label with the given text and the given alignment, e.g. SwingConstants.CENTER. The
+     * label uses a small font and is disabled, meaning its text is greyed out. By default, the label uses an
+     * EmptyBorder with 4 thickness on the bottom and 0 elsewhere (the border can be replaced). The default horizontal
+     * alignment is (as with JLabel) SwingConstants.LEADING.
+     */
+    public SmallFontHelpTextLabel(String text, int horizontalAlignment) {
+        this(text);
+        setHorizontalAlignment(horizontalAlignment);
+    }
+
     private void initialize() {
         setLabelType(LabelType.mini);
         setEnabled(false);

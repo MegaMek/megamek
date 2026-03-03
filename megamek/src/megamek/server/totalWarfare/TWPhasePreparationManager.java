@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -155,6 +155,8 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
             case PHYSICAL:
             case TARGETING:
             case OFFBOARD:
+            case PREEND_DECLARATIONS:
+            case INFANTRY_VS_INFANTRY_COMBAT:
                 gameManager.deployOffBoardEntities();
 
                 // Check for activating hidden units
@@ -191,6 +193,7 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.addReport(new Report(5005, Report.PUBLIC));
                 gameManager.addReport(gameManager.resolveInternalBombHits());
                 gameManager.checkLayExplosives();
+                gameManager.resolveInfantryActions();
                 gameManager.resolveHarJelRepairs();
                 gameManager.resolveEmergencyCoolantSystem();
                 gameManager.checkForSuffocation();

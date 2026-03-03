@@ -592,10 +592,19 @@ class TeamLoadOutGeneratorTest {
         Assertions.assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
         Assertions.assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
 
-        // Move up to 3070. Because of game settings and lack of "Common" year, ADA
-        // becomes available
-        // everywhere (at least in the IS) immediately after its inception.
+        // Move up to 3070. ADA has prototype factions CC, so only CC has access at
+        // the prototype date (3068). Other IS factions get access after the prototype
+        // offset (3068 + 8 = 3076), so they should NOT have access in 3070.
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3070);
+        tlg.updateOptionValues();
+        Assertions.assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
+        Assertions.assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
+
+        // Move up to 3076. Because of game settings and lack of "Common" year, ADA
+        // becomes available everywhere (at least in the IS) immediately after its inception.
+        when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3076);
         tlg.updateOptionValues();
         Assertions.assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
         Assertions.assertTrue(tlg.checkLegality(mType, "FS", "IS", false));

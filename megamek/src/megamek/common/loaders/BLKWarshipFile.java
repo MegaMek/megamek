@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -291,7 +291,11 @@ public class BLKWarshipFile extends BLKFile implements IMekLoader {
             a.addTransporter(new DockingCollar(a.getTransports().size() + 1));
             docks--;
         }
-        a.setArmorTonnage(a.getArmorWeight());
+        if (dataFile.exists("armorWeight")) {
+            a.setArmorTonnage(dataFile.getDataAsDouble("armorWeight")[0]);
+        } else {
+            a.setArmorTonnage(a.getArmorWeight());
+        }
         loadQuirks(a);
         return a;
     }

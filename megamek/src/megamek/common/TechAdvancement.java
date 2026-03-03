@@ -436,7 +436,7 @@ public class TechAdvancement implements ITechnology {
     }
 
     private TechAdvancement setFactionsAdvancement(Set<Faction> factionAdvancement, Faction... factions) {
-        factionAdvancement = EnumSet.noneOf(Faction.class);
+        factionAdvancement.clear();
         Collections.addAll(factionAdvancement, factions);
         return this;
     }

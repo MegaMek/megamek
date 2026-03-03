@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -436,6 +436,15 @@ public class ComputeAttackerToHitMods {
                 } else {
                     toHit.addModifier(+1, Messages.getString("WeaponAttackAction.CmdrHit"));
                 }
+            }
+        }
+
+        // Building and Vessel crew hits from infantry combat (TOAR p. 174)
+        if (attacker.getCrew().getCrewType() == CrewType.BUILDING
+              || attacker.getCrew().getCrewType() == CrewType.VESSEL) {
+            int crewHits = attacker.getCrew().getHits();
+            if (crewHits > 0) {
+                toHit.addModifier(crewHits, "crew hits from infantry combat");
             }
         }
 

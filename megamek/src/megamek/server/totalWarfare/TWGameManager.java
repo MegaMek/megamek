@@ -15846,8 +15846,12 @@ public class TWGameManager extends AbstractGameManager {
         reportCombatRoll(building, roll, result);
 
         // Check for Partial control (TOAR p. 172)
-        // Once attackers achieve Partial control, defenders lose half-damage bonus
-        if (result.getType() == megamek.common.InfantryCombatResult.ResultType.PARTIAL) {
+        // Once attackers achieve Partial control, defenders lose half-damage bonus.
+        // ELIMINATED results also bypass the half-damage rule — the table already
+        // decided the defenders are wiped out, so the sustained-combat protection
+        // should not reduce that to 50%.
+        if (result.getType() == megamek.common.InfantryCombatResult.ResultType.PARTIAL ||
+                  result.getType() == megamek.common.InfantryCombatResult.ResultType.ELIMINATED) {
             combat.hasPartialControl = true;
         }
 
@@ -16026,6 +16030,18 @@ public class TWGameManager extends AbstractGameManager {
                     r.add(building.getDisplayName());
                     r.add(newHits - oldHits);
                     addReport(r);
+                }
+
+                // Check if crew is fully eliminated — mark doomed so newPhase() sets
+                // the carcass flag, which the victory report uses to record a crew kill
+                if (crew.getCurrentSize() <= 0) {
+                    crew.setDoomed(true);
+                    entity.clearInfantryCombatState();
+                    if (isAttacker) {
+                        combat.attackerIds.remove(Integer.valueOf(entityId));
+                    } else {
+                        combat.defenderIds.remove(Integer.valueOf(entityId));
+                    }
                 }
             }
         }

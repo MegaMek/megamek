@@ -36,6 +36,7 @@ package megamek.server.commands;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import megamek.common.compute.Compute;
 import megamek.common.units.Entity;
@@ -256,8 +257,9 @@ public class AssignNovaNetServerCommand extends ServerCommand {
         retValue += strUnlinkID(ent2.getOwnerId(), id2);
         retValue += strUnlinkID(ent3.getOwnerId(), id3);
 
-        setNewNetworkID(connID, ent2, ent1.getNewRoundNovaNetworkString());
-        setNewNetworkID(connID, ent3, ent1.getNewRoundNovaNetworkString());
+        String networkId = getEffectiveNovaNetworkId(ent1);
+        setNewNetworkID(connID, ent2, networkId);
+        setNewNetworkID(connID, ent3, networkId);
 
         return retValue + "New Network! Linked Units: " + id1 + ", " + id2 + ", "
               + id3 + "\n";
@@ -287,7 +289,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
 
         retVal += strUnlinkID(ent1.getOwnerId(), id1);
         retVal += strUnlinkID(ent2.getOwnerId(), id2);
-        setNewNetworkID(connID, ent2, ent1.getNewRoundNovaNetworkString());
+        setNewNetworkID(connID, ent2, getEffectiveNovaNetworkId(ent1));
 
         return retVal + "New Network! Linked Units: " + id1 + ", " + id2 + "\n";
     }
@@ -410,17 +412,26 @@ public class AssignNovaNetServerCommand extends ServerCommand {
 
         for (Entity novaUnit : novaUnits) {
             if (planned) {
-                if (novaUnit.getNewRoundNovaNetworkString().equals(entity
-                      .getNewRoundNovaNetworkString())) {
+                if (Objects.equals(getEffectiveNovaNetworkId(novaUnit),
+                      getEffectiveNovaNetworkId(entity))) {
                     novaNetworkMembers.add(novaUnit);
                 }
             } else {
-                if (novaUnit.getC3NetId().equals(entity.getC3NetId())) {
+                if (Objects.equals(novaUnit.getC3NetId(), entity.getC3NetId())) {
                     novaNetworkMembers.add(novaUnit);
                 }
             }
         }
         return novaNetworkMembers;
+    }
+
+    /**
+     * Returns the effective Nova network ID for the entity. If a pending change exists, returns that; otherwise falls
+     * back to the entity's original Nova C3 network ID.
+     */
+    private String getEffectiveNovaNetworkId(Entity entity) {
+        String pendingId = entity.getNewRoundNovaNetworkString();
+        return pendingId != null ? pendingId : entity.getOriginalNovaC3NetId();
     }
 
     /**

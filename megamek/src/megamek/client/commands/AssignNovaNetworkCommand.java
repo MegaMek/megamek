@@ -156,8 +156,9 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         returnValue += strUnlinkID(id2);
         returnValue += strUnlinkID(id3);
 
-        setNewNetworkID(ent2, ent1.getNewRoundNovaNetworkString());
-        setNewNetworkID(ent3, ent1.getNewRoundNovaNetworkString());
+        String networkId = getEffectiveNovaNetworkId(ent1);
+        setNewNetworkID(ent2, networkId);
+        setNewNetworkID(ent3, networkId);
 
         return returnValue + "New Network! Linked Units: " + id1 + ", " + id2 + ", " + id3 + "\n";
     }
@@ -172,7 +173,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         }
         returnValue += strUnlinkID(id1);
         returnValue += strUnlinkID(id2);
-        setNewNetworkID(ent2, ent1.getNewRoundNovaNetworkString());
+        setNewNetworkID(ent2, getEffectiveNovaNetworkId(ent1));
 
         return returnValue + "New Network! Linked Units: " + id1 + ", " + id2 + "\n";
     }
@@ -285,7 +286,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
 
         for (Entity ent : novaUnits) {
             if (planned) {
-                if (Objects.equals(ent.getNewRoundNovaNetworkString(), e.getNewRoundNovaNetworkString())) {
+                if (Objects.equals(getEffectiveNovaNetworkId(ent), getEffectiveNovaNetworkId(e))) {
                     novaNetworkMembers.add(ent);
                 }
             } else {
@@ -295,6 +296,15 @@ public class AssignNovaNetworkCommand extends ClientCommand {
             }
         }
         return novaNetworkMembers;
+    }
+
+    /**
+     * Returns the effective Nova network ID for the entity. If a pending change exists, returns that; otherwise falls
+     * back to the entity's original Nova C3 network ID.
+     */
+    private String getEffectiveNovaNetworkId(Entity entity) {
+        String pendingId = entity.getNewRoundNovaNetworkString();
+        return pendingId != null ? pendingId : entity.getOriginalNovaC3NetId();
     }
 
     /**

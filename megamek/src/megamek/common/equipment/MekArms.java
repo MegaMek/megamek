@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -101,6 +101,15 @@ public class MekArms extends ExternalCargo {
             //  logic to just be disabling additional loading
             entity.pickupCarryableObject(carryable, location);
         }
+    }
+
+    @Override
+    public boolean unloadCarryable(ICarryable carryable) {
+        boolean result = super.unloadCarryable(carryable);
+        if (result && entity != null) {
+            entity.dropCarriedObject(carryable, false);
+        }
+        return result;
     }
 
     /**

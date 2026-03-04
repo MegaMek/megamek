@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,6 +43,7 @@ import megamek.common.Report;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
+import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.cost.HandheldWeaponCostCalculator;
 import megamek.common.enums.AimingMode;
@@ -312,6 +313,30 @@ public class HandheldWeapon extends Entity {
     @Override
     public boolean isCarryableObject() {
         return true;
+    }
+
+    /**
+     * What {@link Coords} is this weapon physically firing from?
+     *
+     * @param weapon {@link WeaponMounted}
+     *
+     * @return {@link Coords}
+     */
+    @Override
+    public Coords getWeaponFiringPosition(WeaponMounted weapon) {
+        return getAttackingEntity() != null ? getAttackingEntity().getPosition() : getPosition();
+    }
+
+    /**
+     * What height is this weapon physically firing from?
+     *
+     * @param weapon {@link WeaponMounted}
+     *
+     * @return int
+     */
+    @Override
+    public int getWeaponFiringHeight(WeaponMounted weapon) {
+        return getAttackingEntity() != null ? getAttackingEntity().getHeight() : getHeight();
     }
 
     /**

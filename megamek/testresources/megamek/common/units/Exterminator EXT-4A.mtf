@@ -185,7 +185,7 @@ primaryfactory:Thermopolis
 systemmanufacturer:CHASSIS:SL Special
 systemmanufacturer:ENGINE:Magna 390 XL
 systemmanufacturer:ARMOR:Fibrolyte Armorscale
-systemmanufacturer:JUMPJET:Chevron II
+systemmanufacturer:JUMP_JET:Chevron II
 systemmanufacturer:COMMUNICATIONS:Tek BattleCom
 systemmanufacturer:TARGETING:Tek LOR T13d
 

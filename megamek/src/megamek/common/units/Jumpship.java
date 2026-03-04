@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Jay Lawson
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -65,6 +65,8 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.RoundWeight;
+import megamek.common.verifier.TestAdvancedAerospace;
+import megamek.common.verifier.TestEntity;
 
 /**
  * @author Jay Lawson
@@ -1063,16 +1065,17 @@ public class Jumpship extends Aero {
 
     @Override
     public double getArmorWeight(int locCount) {
-        double armorPoints = getTotalOArmor();
-
-        if (!isPrimitive()) {
-            armorPoints -= Math.round(getOSI() / 10.0) * locCount;
+        double rawArmor;
+        if (isPrimitive()) {
+            // reverse the double rounding process of determining the final armor value, see IO:AE 3rd p.125
+            // (Aquilla example calculation)
+            rawArmor = Math.ceil(getTotalOArmor() / 0.66);
         } else {
-            armorPoints -= Math.floor(Math.round(getOSI() / 10.0) * locCount * 0.66);
+            rawArmor = getTotalOArmor();
         }
-
-        double baseArmor = ArmorType.forEntity(this).getPointsPerTon(this);
-        return RoundWeight.standard(armorPoints / baseArmor, this);
+        double weightedArmor = rawArmor - TestEntity.getSIBonusArmorPoints(this);
+        double pointsPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
+        return RoundWeight.standard(weightedArmor / pointsPerTon, this);
     }
 
     @Override

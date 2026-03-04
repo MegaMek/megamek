@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -1553,6 +1553,14 @@ public class Infantry extends Entity {
     }
 
     public void setArmorKit(EquipmentType armorKit) {
+        // If the desired kit is already equipped, just apply flags without
+        // removing and re-adding (which would reorder the equipment list).
+        EquipmentType currentKit = getArmorKit();
+        if (armorKit != null && armorKit.equals(currentKit)) {
+            applyArmorKitFlags(armorKit);
+            return;
+        }
+
         removeArmorKits();
         if ((armorKit != null) && armorKit.hasFlag(MiscType.F_ARMOR_KIT)) {
             try {
@@ -1560,6 +1568,16 @@ public class Infantry extends Entity {
             } catch (LocationFullException ex) {
                 logger.error("", ex);
             }
+        }
+        applyArmorKitFlags(armorKit);
+    }
+
+    /**
+     * Applies the armor kit's flags (encumbering, space suit, DEST, sneak properties)
+     * and recalculates the damage divisor, without modifying the equipment list.
+     */
+    private void applyArmorKitFlags(EquipmentType armorKit) {
+        if ((armorKit != null) && armorKit.hasFlag(MiscType.F_ARMOR_KIT)) {
             encumbering = armorKit.hasFlag(MiscTypeFlag.S_ENCUMBERING);
             spaceSuit = armorKit.hasFlag(MiscTypeFlag.S_SPACE_SUIT);
             dest = armorKit.hasFlag(MiscTypeFlag.S_DEST);
@@ -1680,12 +1698,17 @@ public class Infantry extends Entity {
     public void setSpecializations(int spec) {
         // Equipment for Trench/Fieldwork's Engineers
         if ((spec & TRENCH_ENGINEERS) > 0 && (infSpecs & TRENCH_ENGINEERS) == 0) {
-            // Add vibro shovels
-            try {
-                EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.VIBRO_SHOVEL);
-                addEquipment(shovels, Infantry.LOC_INFANTRY);
-            } catch (Exception e) {
-                logger.error("", e);
+            // Add vibro shovels if not already present (may already be loaded from file)
+            boolean hasShovels = getEquipment().stream()
+                  .anyMatch(m -> m.getType().hasFlag(MiscType.F_TOOLS)
+                        && m.getType().hasFlag(MiscTypeFlag.S_VIBRO_SHOVEL));
+            if (!hasShovels) {
+                try {
+                    EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.VIBRO_SHOVEL);
+                    addEquipment(shovels, Infantry.LOC_INFANTRY);
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
             }
         } else if ((spec & TRENCH_ENGINEERS) == 0 && (infSpecs & TRENCH_ENGINEERS) > 0) {
             // Need to remove vibro shovels
@@ -1706,12 +1729,17 @@ public class Infantry extends Entity {
 
         // Equipment for Demolition Engineers
         if ((spec & DEMO_ENGINEERS) > 0 && (infSpecs & DEMO_ENGINEERS) == 0) {
-            // Add demolition charge
-            try {
-                EquipmentType charge = EquipmentType.get(EquipmentTypeLookup.DEMOLITION_CHARGE);
-                addEquipment(charge, Infantry.LOC_INFANTRY);
-            } catch (Exception e) {
-                logger.error("", e);
+            // Add demolition charge if not already present (may already be loaded from file)
+            boolean hasCharge = getEquipment().stream()
+                  .anyMatch(m -> m.getType().hasFlag(MiscType.F_TOOLS)
+                        && m.getType().hasFlag(MiscTypeFlag.S_DEMOLITION_CHARGE));
+            if (!hasCharge) {
+                try {
+                    EquipmentType charge = EquipmentType.get(EquipmentTypeLookup.DEMOLITION_CHARGE);
+                    addEquipment(charge, Infantry.LOC_INFANTRY);
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
             }
         } else if ((spec & DEMO_ENGINEERS) == 0 && (infSpecs & DEMO_ENGINEERS) > 0) {
             // Need to remove vibro shovels
@@ -2780,5 +2808,71 @@ public class Infantry extends Entity {
     public int getRecoveryTime() {
         // Conventional infantry units have no listed recovery time in CamOps, so we're copying from Battle Armor
         return 10;
+    }
+
+    @Override
+    public boolean canInitiateInfantryVsInfantryCombat() {
+        if (!game.hasBoardLocationOf(this)) {
+            return false; // not on board?
+        }
+
+        // Must be inside the building to initiate combat (TO:AR p. 169)
+        if (!isInBuilding()) {
+            return false;
+        }
+
+        Hex hex = game.getHex(getPosition(), getBoardId());
+        if (hex == null) {
+            return false;
+        }
+
+        // Look for enemy boardable entities at this location
+        Entity enemyBoardableEntity = null;
+        for (Entity e : game.getEntitiesVector(getBoardLocation())) {
+            if (e.isBoardable() && e.getOwner().isEnemyOf(getOwner())) {
+                enemyBoardableEntity = e;
+                break;
+            }
+        }
+
+        if (enemyBoardableEntity != null) {
+            // Check if combat DOES NOT already exist (this is for INITIATING new combat only)
+            boolean combatExists = getGame().getEntitiesVector(getBoardLocation()).stream()
+                  .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
+
+            return !combatExists; // Can only initiate if no combat exists yet
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean canReinforceInfantryVsInfantry() {
+        if (!game.hasBoardLocationOf(this)) {
+            return false; // not on board?
+        }
+
+        Hex hex = game.getHex(getPosition(), getBoardId());
+        if (hex == null) {
+            return false;
+        }
+
+        // Check if already in combat and can withdraw
+        if (getInfantryCombatTargetId() != Entity.NONE && isInfantryCombatAttacker()) {
+            return true;  // Can withdraw
+        }
+
+        // Check if can reinforce EXISTING infantry vs. infantry combat
+        // Simply check if there's ongoing combat in this hex
+        boolean combatExists = getGame().getEntitiesVector(getBoardLocation()).stream()
+              .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
+
+        if (combatExists && getInfantryCombatTargetId() == Entity.NONE) {
+            // Combat exists and we're not in it yet - can reinforce
+            return getGame().getEntitiesVector(getBoardLocation()).stream()
+                  .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
+        }
+
+        return false;
     }
 }

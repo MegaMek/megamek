@@ -76,8 +76,7 @@ public class InfantryGrenadeRAGWeapon extends InfantryWeapon {
         rulesRefs = " 273, TM";
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3062, 3065, 3085, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setClanAdvancement(3062, 3065, 3085, DATE_NONE, DATE_NONE)
-              .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FS)
+              .setPrototypeFactions(Faction.FS)
               .setProductionFactions(Faction.FS).setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -64,6 +64,7 @@ public class EntityFluff implements Serializable {
     private final Map<System, String> systemManufacturers = new EnumMap<>(System.class);
     private final Map<System, String> systemModels = new EnumMap<>(System.class);
     private String notes = "";
+    private String fluffDate = "";
 
     private Base64Image fluffImage = new Base64Image();
 
@@ -177,6 +178,17 @@ public class EntityFluff implements Serializable {
 
     public void setNotes(String notes) {
         this.notes = Objects.requireNonNullElse(notes, "");
+    }
+
+    /**
+     * @return The fluff date string, never null. Handles null from deserialization of older objects.
+     */
+    public String getFluffDate() {
+        return fluffDate == null ? "" : fluffDate;
+    }
+
+    public void setFluffDate(String fluffDate) {
+        this.fluffDate = Objects.requireNonNullElse(fluffDate, "");
     }
 
     public String getUse() {

@@ -1093,8 +1093,12 @@ public abstract class BVCalculator {
         // Only a couple of units even has weight relevant for its BV
     }
 
+    public double getOffensiveSpeedFactorMultiplier() {
+        return offensiveSpeedFactor(offensiveSpeedFactorMP());
+    }
+
     protected void processSpeedFactor() {
-        double speedFactor = offensiveSpeedFactor(offensiveSpeedFactorMP());
+        double speedFactor = getOffensiveSpeedFactorMultiplier();
         bvReport.addLine("Speed Factor:",
               formatForReport(offensiveValue) + " x " + speedFactor,
               "= " + formatForReport(offensiveValue * speedFactor));

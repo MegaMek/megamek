@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,8 +39,10 @@ import static megamek.common.bays.Bay.UNSET_BAY;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
@@ -51,6 +53,7 @@ import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.*;
 import megamek.common.board.CubeCoords;
+import megamek.common.enums.Faction;
 import megamek.common.equipment.*;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.options.IOption;
@@ -136,6 +139,10 @@ public class BLKFile {
 
         if (dataFile.exists("source")) {
             entity.setSource(dataFile.getDataAsString("source")[0]);
+        }
+
+        if (dataFile.exists("faction")) {
+            entity.setTechFaction(Faction.fromAbbr(dataFile.getDataAsString("faction")[0]));
         }
 
         if (dataFile.exists("fluffimage")) {
@@ -360,6 +367,19 @@ public class BLKFile {
             return;
         }
 
+        // Build a count of ammo at LOC_NONE already auto-created by addOneShotAmmo().
+        // These are linked to their parent weapon, so linkedBy != null. When loading
+        // slotless equipment we skip ammo entries that match already-present auto-created
+        // ammo to avoid duplication on roundtrip save/load.
+        Map<String, Integer> autoCreatedAmmoBudget = new HashMap<>();
+        for (Mounted<?> m : t.getEquipment()) {
+            if (m.getLocation() == Entity.LOC_NONE
+                  && m.getType() instanceof AmmoType
+                  && m.getLinkedBy() != null) {
+                autoCreatedAmmoBudget.merge(m.getType().getInternalName(), 1, Integer::sum);
+            }
+        }
+
         String prefix = t.isClan() ? "Clan " : "IS ";
 
         for (String s : saEquip) {
@@ -374,6 +394,15 @@ public class BLKFile {
             }
 
             if (etype != null) {
+                // Skip ammo that was already auto-created by a weapon's addOneShotAmmo()
+                if (etype instanceof AmmoType) {
+                    String key = etype.getInternalName();
+                    int remaining = autoCreatedAmmoBudget.getOrDefault(key, 0);
+                    if (remaining > 0) {
+                        autoCreatedAmmoBudget.put(key, remaining - 1);
+                        continue;
+                    }
+                }
                 try {
                     t.addEquipment(etype, Entity.LOC_NONE);
                 } catch (LocationFullException ex) {
@@ -522,6 +551,10 @@ public class BLKFile {
 
         if (dataFile.exists("notes")) {
             e.getFluff().setNotes(dataFile.getDataAsString("notes")[0]);
+        }
+
+        if (dataFile.exists("fluffDate")) {
+            e.getFluff().setFluffDate(dataFile.getDataAsString("fluffDate")[0]);
         }
 
         if (dataFile.exists("use")) {
@@ -738,16 +771,23 @@ public class BLKFile {
         if (!t.getTransports().isEmpty()) {
             // We should only write the transporters block for units that can and do
             // have transporter bays. Empty Transporters blocks cause issues.
-            String[] transporter_array = new String[t.getTransports().size()];
-            int index = 0;
-            for (Transporter transporter : t.getTransports()) {
-                transporter_array[index] = transporter.toString();
-                if (t.isPodMountedTransport(transporter)) {
-                    transporter_array[index] += ":omni";
+            // ExternalCargo (LiftHoist, for example) transporters are reconstructed from
+            // equipment on load and must not be written to the transporters block.
+            List<Transporter> serializableTransports = t.getTransports().stream()
+                  .filter(tr -> !(tr instanceof ExternalCargo))
+                  .toList();
+            if (!serializableTransports.isEmpty()) {
+                String[] transporter_array = new String[serializableTransports.size()];
+                int index = 0;
+                for (Transporter transporter : serializableTransports) {
+                    transporter_array[index] = transporter.toString();
+                    if (t.isPodMountedTransport(transporter)) {
+                        transporter_array[index] += ":omni";
+                    }
+                    index++;
                 }
-                index++;
+                blk.writeBlockData("transporters", transporter_array);
             }
-            blk.writeBlockData("transporters", transporter_array);
         }
 
         if (!(t.isConventionalInfantry() || t.isHandheldWeapon() || t instanceof GunEmplacement)) {
@@ -979,6 +1019,10 @@ public class BLKFile {
             blk.writeBlockData("notes", t.getFluff().getNotes());
         }
 
+        if (!t.getFluff().getFluffDate().isBlank()) {
+            blk.writeBlockData("fluffDate", t.getFluff().getFluffDate());
+        }
+
         if (!t.getFluff().getUse().isBlank()) {
             blk.writeBlockData("use", t.getFluff().getUse());
         }
@@ -997,6 +1041,10 @@ public class BLKFile {
 
         if (!t.getSource().isBlank()) {
             blk.writeBlockData("source", t.getSource());
+        }
+
+        if (t.getTechFaction() != Faction.NONE) {
+            blk.writeBlockData("faction", t.getTechFaction().getCode());
         }
 
         if (t instanceof BattleArmor ba) {
@@ -1198,9 +1246,17 @@ public class BLKFile {
         if (t.getFluff().hasEmbeddedFluffImage()) {
             blk.writeBlockData("fluffimage", t.getFluff().getBase64FluffImage().getBase64String());
         }
+
         if (t.canonUnitWithInvalidBuild()) {
             blk.writeBlockData("invalidSourceBuildReasons",
                   t.getInvalidSourceBuildReasons().stream().map(Enum::name).toList());
+        }
+
+        // some units, mostly capital scale, esp. primitive, may have redundant armor tonnage (meaning, half a ton
+        // less armor would provide the same amount of armor points); in that case, store the armor weight explicitly
+        // so the correct value can be set when loading the unit
+        if ((t instanceof Jumpship || t instanceof SmallCraft) && t.getArmorWeight() != t.getLabArmorTonnage()) {
+            blk.writeBlockData("armorWeight", t.getLabArmorTonnage());
         }
         return blk;
     }
@@ -1305,27 +1361,16 @@ public class BLKFile {
         String name = m.getType().getInternalName();
         if (m.getEntity() instanceof AbstractBuildingEntity) {
             // Append the facing for VGLs or if mounted on an AbstractBuildingEntity
-                switch (m.getFacing()) {
-                    case 0:
-                        name = name + (" (F)");
-                        break;
-                    case 1:
-                        name = name + " (FR)";
-                        break;
-                    case 2:
-                        name = name + " (RR)";
-                        break;
-                    case 3:
-                        name = name + " (R)";
-                        break;
-                    case 4:
-                        name = name + " (RL)";
-                        break;
-                    case 5:
-                        name = name + " (FL)";
-                        break;
-                }
-            }
+            name += switch (m.getFacing()) {
+                case 0 -> " (F)";
+                case 1 -> " (FR)";
+                case 2 -> " (RR)";
+                case 3 -> " (R)";
+                case 4 -> " (RL)";
+                case 5 -> " (FL)";
+                default -> "";
+            };
+        }
         if (m.isRearMounted()) {
             name = "(R) " + name;
         }

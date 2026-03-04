@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -1113,7 +1113,7 @@ public class TestAero extends TestEntity {
     public static int getMaxTonnage(Aero aero, Faction faction) {
         if (aero.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             return 2500000;
-        } else if (aero.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+        } else if (aero.hasETypeFlag(Entity.ETYPE_WARSHIP) && !aero.isPrimitive()) {
             if (((Jumpship) aero).getDriveCoreType() == Jumpship.DRIVE_CORE_SUBCOMPACT) {
                 return 25000;
             }

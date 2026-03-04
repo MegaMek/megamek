@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -91,16 +91,48 @@ public class TestAdvancedAerospace extends TestAero {
         }
     }
 
+    /**
+     * Returns the maximum number of total (all locations summed) armor points that the given vessel (JS/WS/SS) can
+     * have, including free armor points it receives from its SI and modified for primitive armor, if appropriate. See
+     * SO:AA p.140, IO:AE p.122-125.
+     *
+     * @param vessel The JS/WS/SS to compute armor for
+     *
+     * @return The total number of armor points allowed to the vessel
+     */
     public static int maxArmorPoints(Jumpship vessel) {
-        // The ship gets a number of armor points equal to 10% of the SI, rounded normally, per facing.
-        double freeSI = Math.round(vessel.getOSI() / 10.0) * 6;
-        // Primitive jump ships multiply the armor by a factor of 0.66. Per errata, the armor is calculated based on
-        // standard armor then rounded down, and the free SI armor is rounded down separately.
+        double pointsPerTon = ArmorType.forEntity(vessel).getPointsPerTon();
+        int baseArmor = (int) (pointsPerTon * maxArmorWeight(vessel) + getSIBonusArmorPoints(vessel));
         if (vessel.isPrimitive()) {
-            return (int) (Math.floor(ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false).getPointsPerTon(vessel) *
-                  maxArmorWeight(vessel)) + Math.floor(freeSI * 0.66));
+            return (int) (baseArmor * 0.66);
+        } else {
+            return baseArmor;
         }
-        return (int) Math.floor(ArmorType.forEntity(vessel).getPointsPerTon(vessel) * maxArmorWeight(vessel) + freeSI);
+    }
+
+    /**
+     * Returns the number of free additional armor points provided for a capital craft based on their structural
+     * integrity (for primitive craft, *without* the 0.66 primitive adjustment factor). See TM p.191, SO:AA p.140, IO:AE
+     * p.119-125.
+     *
+     * @param jumpship The JS/WS/SS to compute bonus armor for
+     *
+     * @return The total number of extra armor points received for SI (disregarding primitive adjustment)
+     */
+    static int getSIBonusArmorPointsForJS(Jumpship jumpship) {
+        return getSIBonusArmorPointsPerLocation(jumpship) * 6; // 6 armor locations
+    }
+
+    /**
+     * Returns the number of free additional armor points per location provided for a capital craft based on their SI.
+     * TM p.191, SO:AA p.140, IO:AE p.119-125.
+     *
+     * @param jumpship The JS/WS/SS to compute bonus armor for
+     *
+     * @return The number of extra armor points received for SI per location
+     */
+    public static int getSIBonusArmorPointsPerLocation(Jumpship jumpship) {
+        return (int) Math.round(jumpship.getOSI() / 10.0);
     }
 
     /**

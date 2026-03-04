@@ -41,7 +41,7 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.20.1'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.21.1'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.20.1'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1'
 
@@ -359,7 +359,9 @@ assembleDist {
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags 'on-demand'
+    }
     dependsOn(checkstyleMain)
 
     minHeapSize = "1024m"
@@ -569,6 +571,17 @@ tasks.register('unitFileMigrationTool', JavaExec) {
     mainClass = 'megamek.utilities.UnitFileMigrationTool'
 }
 
+tasks.register('resaveUnits', JavaExec) {
+    dependsOn jar
+    mustRunAfter(stageDataFiles)
+    description = 'Loads all units and resaves them with license headers to an output folder.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.UnitFileResaver'
+    args(project.hasProperty("resaveOutputDir") ? [project.property("resaveOutputDir")] : [])
+    jvmArgs = mmJvmOptions
+}
+
 tasks.register('testAi', JavaExec) {
     dependsOn jar
     description = 'Test AI'
@@ -578,4 +591,18 @@ tasks.register('testAi', JavaExec) {
     args(project.hasProperty("testAiArgs") ? project.property("testAiArgs").split(' ') : "")
 
     jvmArgs = mmJvmOptions
+}
+
+tasks.register('roundTripSaveUnitsTest', Test) {
+    useJUnitPlatform {
+        includeTags 'on-demand'
+    }
+    testClassesDirs = testing.suites.test.targets.first().testTask.get().testClassesDirs
+    classpath = testing.suites.test.targets.first().testTask.get().classpath
+    jvmArgs = mmJvmOptions
+    group = 'verification'
+    description = 'Roundtrip save/load test for all units: detects data loss in save/load cycle.'
+    filter {
+        includeTestsMatching 'megamek.common.loaders.BulkRoundTripTest'
+    }
 }

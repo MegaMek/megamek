@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -167,7 +167,7 @@ public class RACHandler extends UltraWeaponHandler {
         }
 
         // Reduce number of allowed shots to number of remaining rounds of ammo if applicable
-        int total = attackingEntity.getTotalAmmoOfType(ammo.getType());
+        int total = weaponEntity.getTotalAmmoOfType(ammo.getType());
         if (total < 0) {
             throw new RuntimeException("Invalid total ammo value < 0!");
         } else {

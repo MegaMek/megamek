@@ -299,12 +299,27 @@ public class AssignNovaNetworkCommand extends ClientCommand {
     }
 
     /**
-     * Returns the effective Nova network ID for the entity. If a pending change exists, returns that; otherwise falls
-     * back to the entity's original Nova C3 network ID.
+     * Returns the effective Nova network ID for the entity.
+     * <p>
+     * Precedence:
+     * <ol>
+     *     <li>Pending next-round network ID, if set.</li>
+     *     <li>Current C3 network ID (shared by linked units).</li>
+     *     <li>Original per-unit Nova C3 network ID as a last resort.</li>
+     * </ol>
      */
     private String getEffectiveNovaNetworkId(Entity entity) {
         String pendingId = entity.getNewRoundNovaNetworkString();
-        return pendingId != null ? pendingId : entity.getOriginalNovaC3NetId();
+        if (pendingId != null) {
+            return pendingId;
+        }
+
+        String currentId = entity.getC3NetId();
+        if (currentId != null) {
+            return currentId;
+        }
+
+        return entity.getOriginalNovaC3NetId();
     }
 
     /**

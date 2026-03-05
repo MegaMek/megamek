@@ -669,7 +669,9 @@ public class ArmorType extends MiscType {
         armor.name = "Industrial "; // extra space at the end on purpose
         armor.setInternalName(armor.name);
         armor.addLookupName("IS Industrial");
+        armor.addLookupName("IS Industrial ");
         armor.addLookupName("Clan Industrial");
+        armor.addLookupName("Clan Industrial ");
         armor.addLookupName("Clan Industrial Armor");
         armor.cost = 5000.0;
         armor.industrial = true;

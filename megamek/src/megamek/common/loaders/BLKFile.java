@@ -591,6 +591,10 @@ public class BLKFile {
         }
         e.setYear(dataFile.getDataAsInt("year")[0]);
 
+        if (dataFile.exists("originalBuildYear")) {
+            e.setOriginalBuildYear(dataFile.getDataAsInt("originalBuildYear")[0]);
+        }
+
         if (!dataFile.exists("type")) {
             throw new EntityLoadingException("Could not find type block.");
         }
@@ -725,7 +729,7 @@ public class BLKFile {
             blk.writeBlockData(MtfFile.MUL_ID, t.getMulId());
         }
         blk.writeBlockData("year", t.getYear());
-        if (t.getOriginalBuildYear() >= 0) {
+        if (t.getOriginalBuildYear() > 0 && t.getOriginalBuildYear() != t.getYear()) {
             blk.writeBlockData("originalBuildYear", t.getOriginalBuildYear());
         }
         String type = getType(t);

@@ -83,7 +83,8 @@ public class CLImprovedAC2 extends ACWeapon {
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(DATE_NONE, 2815, 2818, 2833, 3080)
               .setClanApproximate(false, true, false, false, false)
-              .setProductionFactions(Faction.CLAN).setReintroductionFactions(Faction.EI)
+              .setProductionFactions(Faction.CLAN)
+              .setReintroductionFactions(Faction.EI)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

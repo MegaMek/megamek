@@ -606,3 +606,17 @@ tasks.register('roundTripSaveUnitsTest', Test) {
         includeTestsMatching 'megamek.common.loaders.BulkRoundTripTest'
     }
 }
+
+tasks.register('validateAllUnits', Test) {
+    useJUnitPlatform {
+        includeTags 'on-demand'
+    }
+    testClassesDirs = testing.suites.test.targets.first().testTask.get().testClassesDirs
+    classpath = testing.suites.test.targets.first().testTask.get().classpath
+    jvmArgs = mmJvmOptions
+    group = 'verification'
+    description = 'Validate all units using TestEntity verifiers and output a report to build/reports/validateAllUnits.txt.'
+    filter {
+        includeTestsMatching 'megamek.common.loaders.BulkValidationTest'
+    }
+}

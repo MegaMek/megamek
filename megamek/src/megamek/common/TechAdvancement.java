@@ -89,6 +89,15 @@ public class TechAdvancement implements ITechnology {
             return phase;
         }
     }
+        
+    /**
+     * Holds a faction-specific date along with whether that date is approximate.
+     */
+    public record FactionDate(int date, boolean approximate) {
+        public FactionDate(int date) {
+            this(date, false);
+        }
+    }
 
     //Dates that are approximate can be pushed this many years earlier (or later for extinctions).
     public static final int APPROXIMATE_MARGIN = 5;
@@ -108,8 +117,11 @@ public class TechAdvancement implements ITechnology {
     private Set<Faction> prototypeFactions = EnumSet.noneOf(Faction.class);
     private Set<Faction> productionFactions = EnumSet.noneOf(Faction.class);
     private Set<Faction> extinctionFactions = EnumSet.noneOf(Faction.class);
-    private Set<Faction> extinctionFactionExceptions = EnumSet.noneOf(Faction.class);
     private Set<Faction> reintroductionFactions = EnumSet.noneOf(Faction.class);
+    private EnumMap<Faction, FactionDate> prototypeFactionsOverride = new EnumMap<>(Faction.class);
+    private EnumMap<Faction, FactionDate> productionFactionsOverride = new EnumMap<>(Faction.class);
+    private EnumMap<Faction, FactionDate> extinctionFactionsOverride = new EnumMap<>(Faction.class);
+    private EnumMap<Faction, FactionDate> reintroductionFactionsOverride = new EnumMap<>(Faction.class);
     private SimpleTechLevel staticTechLevel = SimpleTechLevel.STANDARD;
     private TechRating techRating = TechRating.C;
     private EnumMap<Era, AvailabilityValue> availability = new EnumMap<>(Era.class);
@@ -143,8 +155,12 @@ public class TechAdvancement implements ITechnology {
         prototypeFactions = EnumSet.copyOf(ta.prototypeFactions);
         productionFactions = EnumSet.copyOf(ta.productionFactions);
         extinctionFactions = EnumSet.copyOf(ta.extinctionFactions);
-        extinctionFactionExceptions = EnumSet.copyOf(ta.extinctionFactionExceptions);
         reintroductionFactions = EnumSet.copyOf(ta.reintroductionFactions);
+        // Custom advancement dates for factions that don't follow the normal pattern
+        prototypeFactionsOverride = new EnumMap<>(ta.prototypeFactionsOverride);
+        productionFactionsOverride = new EnumMap<>(ta.productionFactionsOverride);
+        extinctionFactionsOverride = new EnumMap<>(ta.extinctionFactionsOverride);
+        reintroductionFactionsOverride = new EnumMap<>(ta.reintroductionFactionsOverride);
         this.staticTechLevel = ta.staticTechLevel;
         this.techRating = ta.techRating;
         availability = new EnumMap<>(ta.availability);
@@ -159,6 +175,19 @@ public class TechAdvancement implements ITechnology {
     public TechBase getTechBase() {
         return techBase;
     }
+
+    /**
+     * Returns the faction map for the given advancement phase.
+     */
+    private Map<Faction, FactionDate> getFactionAdvancementMap(AdvancementPhase phase) {
+        return switch (phase) {
+            case PROTOTYPE -> prototypeFactionsOverride;
+            case PRODUCTION -> productionFactionsOverride;
+            case EXTINCT -> extinctionFactionsOverride;
+            case REINTRODUCED -> reintroductionFactionsOverride;
+        };
+    }
+
 
     /**
      * Provide years for prototype, production, common, extinction, and reintroduction for IS factions.
@@ -437,7 +466,7 @@ public class TechAdvancement implements ITechnology {
         return this;
     }
 
-    private TechAdvancement setFactionsAdvancement(Set<Faction> factionAdvancement, Faction... factions) {
+    private TechAdvancement setFactions(Set<Faction> factionAdvancement, Faction... factions) {
         factionAdvancement.clear();
         Collections.addAll(factionAdvancement, factions);
         return this;
@@ -450,7 +479,7 @@ public class TechAdvancement implements ITechnology {
      *
      */
     public TechAdvancement setPrototypeFactions(Faction... factions) {
-        return setFactionsAdvancement(prototypeFactions, factions);
+        return setFactions(prototypeFactions, factions);
     }
 
     /**
@@ -468,7 +497,7 @@ public class TechAdvancement implements ITechnology {
      * @return A reference to this object.
      */
     public TechAdvancement setProductionFactions(Faction... factions) {
-        return setFactionsAdvancement(productionFactions, factions);
+        return setFactions(productionFactions, factions);
     }
 
     /**
@@ -487,7 +516,7 @@ public class TechAdvancement implements ITechnology {
      * @return A reference to this object.
      */
     public TechAdvancement setExtinctionFactions(Faction... factions) {
-        return setFactionsAdvancement(extinctionFactions, factions);
+        return setFactions(extinctionFactions, factions);
     }
 
     /**
@@ -496,24 +525,7 @@ public class TechAdvancement implements ITechnology {
     public Set<Faction> getExtinctionFactions() {
         return extinctionFactions;
     }
-
-    /**
-     * Sets the factions for which the technology became extinct.
-     *
-     * @param factions A list of Faction enums
-     *
-     * @return A reference to this object.
-     */
-    public TechAdvancement setExtinctionFactionExceptions(Faction... factions) {
-        return setFactionsAdvancement(extinctionFactionExceptions, factions);
-    }
-
-    /**
-     * @return A set of Faction enums that indicate the factions for which the technology became extinct.
-     */
-    public Set<Faction> getExtinctionFactionExceptions() {
-        return extinctionFactionExceptions;
-    }
+    
 
     /**
      * Sets the factions which reintroduced technology that had been extinct.
@@ -523,7 +535,7 @@ public class TechAdvancement implements ITechnology {
      * @return A reference to this object.
      */
     public TechAdvancement setReintroductionFactions(Faction... factions) {
-        return setFactionsAdvancement(reintroductionFactions, factions);
+        return setFactions(reintroductionFactions, factions);
     }
 
     /**
@@ -532,6 +544,72 @@ public class TechAdvancement implements ITechnology {
     public Set<Faction> getReintroductionFactions() {
         return reintroductionFactions;
     }
+
+    // ---- FACTION OVERRIDE GETTERS ----
+
+    /**
+     * @return The faction-specific prototype advancement overrides.
+     */
+    public Map<Faction, FactionDate> getPrototypeFactionsOverride() {
+        return prototypeFactionsOverride;
+    }
+
+    /**
+     * @return The faction-specific production advancement overrides.
+     */
+    public Map<Faction, FactionDate> getProductionFactionsOverride() {
+        return productionFactionsOverride;
+    }
+
+    /**
+     * @return The faction-specific extinction advancement overrides.
+     */
+    public Map<Faction, FactionDate> getExtinctionFactionsOverride() {
+        return extinctionFactionsOverride;
+    }
+
+    /**
+     * @return The faction-specific reintroduction advancement overrides.
+     */
+    public Map<Faction, FactionDate> getReintroductionFactionsOverride() {
+        return reintroductionFactionsOverride;
+    }
+
+    // ---- FACTION OVERRIDE ADVANCEMENTS ----
+
+    /**
+     * Adds a single prototype faction with a faction-specific date.
+     */
+    public TechAdvancement addPrototypeFactionOverride(Faction faction, int date, boolean approximate) {
+        getFactionAdvancementMap(AdvancementPhase.PROTOTYPE).put(faction, new FactionDate(date, approximate));
+        return this;
+    }
+
+    /**
+     * Adds a single production faction with a faction-specific date and approximate flag.
+     */
+    public TechAdvancement addProductionFactionOverride(Faction faction, int date, boolean approximate) {
+        getFactionAdvancementMap(AdvancementPhase.PRODUCTION).put(faction, new FactionDate(date, approximate));
+        return this;
+    }
+
+    /**
+     * Adds a single extinction faction with a faction-specific date and approximate flag.
+     */
+    public TechAdvancement addExtinctionFactionOverride(Faction faction, int date, boolean approximate) {
+        getFactionAdvancementMap(AdvancementPhase.EXTINCT).put(faction, new FactionDate(date, approximate));
+        return this;
+    }
+
+    /**
+     * Adds a single reintroduction faction with a faction-specific date and approximate flag.
+     */
+    public TechAdvancement addReintroductionFactionOverride(Faction faction, int date, boolean approximate) {
+        getFactionAdvancementMap(AdvancementPhase.REINTRODUCED).put(faction, new FactionDate(date, approximate));
+        return this;
+    }
+
+    // ---- RETRIEVAL ----
 
     /**
      * The prototype date for either Clan or IS factions. If the date is flagged as approximate, the date returned will
@@ -551,6 +629,10 @@ public class TechAdvancement implements ITechnology {
      */
     @Override
     public int getPrototypeDate(boolean clan, Faction faction) {
+        Integer overrideDate = resolveFactionOverrideDate(AdvancementPhase.PROTOTYPE, faction);
+        if (overrideDate != null) {
+            return overrideDate;
+        }
         int protoDate = getDate(AdvancementPhase.PROTOTYPE, clan);
         if (protoDate == DATE_NONE) {
             return DATE_NONE;
@@ -574,7 +656,7 @@ public class TechAdvancement implements ITechnology {
             }
             return date;
         }
-        return getDate(AdvancementPhase.PROTOTYPE, clan);
+        return protoDate;
     }
 
     /**
@@ -595,6 +677,10 @@ public class TechAdvancement implements ITechnology {
      */
     @Override
     public int getProductionDate(boolean clan, Faction faction) {
+        Integer overrideDate = resolveFactionOverrideDate(AdvancementPhase.PRODUCTION, faction);
+        if (overrideDate != null) {
+            return overrideDate;
+        }
         int prodDate = getDate(AdvancementPhase.PRODUCTION, clan);
         if (prodDate == DATE_NONE) {
             return DATE_NONE;
@@ -613,7 +699,7 @@ public class TechAdvancement implements ITechnology {
             }
             return date;
         }
-        return getDate(AdvancementPhase.PRODUCTION, clan);
+        return prodDate;
     }
 
     /**
@@ -643,6 +729,10 @@ public class TechAdvancement implements ITechnology {
      */
     @Override
     public int getExtinctionDate(boolean clan, Faction faction) {
+        Integer overrideDate = resolveFactionOverrideDate(AdvancementPhase.EXTINCT, faction);
+        if (overrideDate != null) {
+            return overrideDate;
+        }
         int extinctionDate = getDate(AdvancementPhase.EXTINCT, clan);
         if (extinctionDate == DATE_NONE) {
             return DATE_NONE;
@@ -664,7 +754,7 @@ public class TechAdvancement implements ITechnology {
                 return DATE_NONE;
             }
         }
-        return getDate(AdvancementPhase.EXTINCT, clan);
+        return extinctionDate;
     }
 
     /**
@@ -685,6 +775,10 @@ public class TechAdvancement implements ITechnology {
      */
     @Override
     public int getReintroductionDate(boolean clan, Faction faction) {
+        Integer overrideDate = resolveFactionOverrideDate(AdvancementPhase.REINTRODUCED, faction);
+        if (overrideDate != null) {
+            return overrideDate;
+        }
         int reIntroDate = getDate(AdvancementPhase.REINTRODUCED, clan);
         if (reIntroDate == DATE_NONE) {
             return DATE_NONE;
@@ -708,7 +802,7 @@ public class TechAdvancement implements ITechnology {
                 return reIntroDate + REINTRODUCTION_DATE_OFFSET;
             }
         }
-        return getDate(AdvancementPhase.REINTRODUCED, clan);
+        return reIntroDate;
     }
 
     /**
@@ -1076,4 +1170,37 @@ public class TechAdvancement implements ITechnology {
     public boolean isMixedTech() {
         return techBase == TechBase.ALL;
     }
+    
+    /**
+     * Resolves a faction-specific date from a faction map. Checks the specific faction first,
+     * then Faction.IS/Faction.CLAN wildcards. Applies approximate margin adjustment.
+     *
+     * @param faction    The specific faction to look for
+     * @param phase      The advancement phase (for approximate margin direction)
+     * @return The faction-specific date with approximate adjustment, or DATE_NONE if not found
+     */
+    private @Nullable Integer resolveFactionOverrideDate(AdvancementPhase phase, Faction faction) {
+        Map<Faction, FactionDate> factionMap = getFactionAdvancementMap(phase);
+        FactionDate fd = factionMap.get(faction);
+        if (fd != null) {
+            return adjustForApproximate(phase, fd);
+        }
+        return null;
+    }
+
+    /**
+     * Adjusts a FactionDate for the approximate margin. Extinction dates are pushed later;
+     * all other phases are pushed earlier.
+     */
+    private int adjustForApproximate(AdvancementPhase phase, FactionDate fd) {
+        int date = fd.date();
+        if (date == DATE_NONE) {
+            return DATE_NONE;
+        }
+        if (fd.approximate() && date > 0) {
+            return date + ((phase == AdvancementPhase.EXTINCT) ? APPROXIMATE_MARGIN : -APPROXIMATE_MARGIN);
+        }
+        return date;
+    }
+
 }

@@ -64,10 +64,6 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
         Dropship a = new Dropship();
         setBasicEntityData(a);
 
-        if (dataFile.exists("originalBuildYear")) {
-            a.setOriginalBuildYear(dataFile.getDataAsInt("originalBuildYear")[0]);
-        }
-
         if (!dataFile.exists("crew")) {
             throw new EntityLoadingException("Could not find crew block.");
         }

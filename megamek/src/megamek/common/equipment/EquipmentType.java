@@ -1403,11 +1403,39 @@ public class EquipmentType implements ITechnology {
         addFactionList(factions, "prototype", techAdvancement.getPrototypeFactions());
         addFactionList(factions, "production", techAdvancement.getProductionFactions());
         addFactionList(factions, "extinction", techAdvancement.getExtinctionFactions());
-        addFactionList(factions, "extinctionExclusion", techAdvancement.getExtinctionFactionExceptions());
         addFactionList(factions, "reintroduction", techAdvancement.getReintroductionFactions());
+
+        Map<String, Object> overrides = new LinkedHashMap<>();
+        addFactionOverrides(overrides, "prototype", techAdvancement.getPrototypeFactionsOverride());
+        addFactionOverrides(overrides, "production", techAdvancement.getProductionFactionsOverride());
+        addFactionOverrides(overrides, "extinct", techAdvancement.getExtinctionFactionsOverride());
+        addFactionOverrides(overrides, "reintroduced", techAdvancement.getReintroductionFactionsOverride());
+        if (!overrides.isEmpty()) {
+            factions.put("overrides", overrides);
+        }
 
         if (!factions.isEmpty()) {
             techData.put("factions", factions);
+        }
+    }
+
+    /**
+     * Adds faction override advancement data for a given phase to the overrides map.
+     */
+    private void addFactionOverrides(Map<String, Object> overrides, String phaseKey,
+          Map<Faction, TechAdvancement.FactionDate> factionMap) {
+        if (factionMap == null || factionMap.isEmpty()) {
+            return;
+        }
+        Map<String, String> phaseOverrides = new LinkedHashMap<>();
+        for (Map.Entry<Faction, TechAdvancement.FactionDate> entry : factionMap.entrySet()) {
+            String code = entry.getKey().getCodeMM();
+            TechAdvancement.FactionDate fd = entry.getValue();
+            String dateStr = (fd.approximate() ? "~" : "") + fd.date();
+            phaseOverrides.put(code, dateStr);
+        }
+        if (!phaseOverrides.isEmpty()) {
+            overrides.put(phaseKey, phaseOverrides);
         }
     }
 

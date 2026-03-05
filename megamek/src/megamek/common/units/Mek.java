@@ -4383,6 +4383,9 @@ public abstract class Mek extends Entity {
         }
         sb.append(newLine);
         sb.append(MtfFile.ERA).append(year).append(newLine);
+        if ((originalYear > 0) && (originalBuildYear != year)) {
+            sb.append(MtfFile.ORIGINAL_ERA).append(originalYear).append(newLine);
+        }
         if ((source != null) && !source.isBlank()) {
             sb.append(MtfFile.SOURCE).append(source).append(newLine);
         }

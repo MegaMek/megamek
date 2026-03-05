@@ -65,10 +65,6 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
         SmallCraft a = new SmallCraft();
         setBasicEntityData(a);
 
-        if (dataFile.exists("originalBuildYear")) {
-            a.setOriginalBuildYear(dataFile.getDataAsInt("originalBuildYear")[0]);
-        }
-
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find tonnage block.");
         }

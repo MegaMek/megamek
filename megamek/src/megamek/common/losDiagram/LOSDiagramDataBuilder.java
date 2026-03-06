@@ -59,12 +59,21 @@ public final class LOSDiagramDataBuilder {
     /**
      * Builds the diagram data for a LOS path between attacker and target.
      *
-     * @param game       the current game state
-     * @param attackInfo the attack information containing positions and heights
+     * @param game               the current game state
+     * @param attackInfo         the attack information containing positions and heights
+     * @param attackerIsHullDown whether the attacker is hull-down (TW p.100)
+     * @param targetIsHullDown   whether the target is hull-down (TW p.100)
+     * @param attackerUnitType   the attacker's unit type for silhouette rendering
+     * @param targetUnitType     the target's unit type for silhouette rendering
+     * @param attackerName       display name of the attacker entity, or empty if none
+     * @param targetName         display name of the target entity, or empty if none
      *
      * @return the diagram data ready for rendering
      */
-    public static LOSDiagramData build(Game game, LosEffects.AttackInfo attackInfo) {
+    public static LOSDiagramData build(Game game, LosEffects.AttackInfo attackInfo,
+          boolean attackerIsHullDown, boolean targetIsHullDown,
+          DiagramUnitType attackerUnitType, DiagramUnitType targetUnitType,
+          String attackerName, String targetName) {
         Board board = game.getBoard();
         Coords attackPos = attackInfo.attackPos;
         Coords targetPos = attackInfo.targetPos;
@@ -113,10 +122,11 @@ public final class LOSDiagramDataBuilder {
             double losLineElevation = calculateLosLineElevation(
                   attackInfo, coords, attackPos, targetPos);
 
-            // Determine if this hex blocks LOS
-            int totalTerrainHeight = groundElevation + Math.max(buildingHeight,
-                  Math.max(woodsHeight, industrialHeight));
-            boolean blocksLos = totalTerrainHeight >= losLineElevation
+            // Determine if this hex's solid terrain (ground + building) blocks LOS.
+            // Woods, smoke, and other soft terrain add modifiers but don't block
+            // by elevation alone - only accumulated intervening counts block.
+            int solidTerrainHeight = groundElevation + buildingHeight;
+            boolean blocksLos = solidTerrainHeight >= losLineElevation
                   && !coords.equals(attackPos)
                   && !coords.equals(targetPos);
 
@@ -163,8 +173,12 @@ public final class LOSDiagramDataBuilder {
               attackPos,
               targetPos,
               losBlocked,
-              attackInfo.attackerIsMek,
-              attackInfo.targetIsMek
+              attackerUnitType,
+              targetUnitType,
+              attackerIsHullDown,
+              targetIsHullDown,
+              attackerName,
+              targetName
         );
     }
 

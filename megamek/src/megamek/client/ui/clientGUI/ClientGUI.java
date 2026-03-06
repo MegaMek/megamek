@@ -186,7 +186,6 @@ import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.handlers.WeaponOrderHandler;
 import megamek.logging.MMLogger;
-import megamek.utilities.BoardsTagger;
 
 public class ClientGUI extends AbstractClientGUI
       implements BoardViewListener, ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots,
@@ -2715,9 +2714,6 @@ public class ClientGUI extends AbstractClientGUI
                     boardView.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), ClientGUI.this, boardView));
                     boardViewsContainer.updateMapTabs();
                     ruler = new RulerDialog(frame, client, boardView, client.getGame());
-                    ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
-                    ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
-                    UIUtil.updateWindowBounds(ruler);
                     boardView.addBoardViewListener(ClientGUI.this);
                 } catch (IOException ex) {
                     // this is likely fatal anyway

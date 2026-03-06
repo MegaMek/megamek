@@ -959,9 +959,6 @@ public class ChatLounge extends AbstractPhaseDisplay
             RulerDialog.color1 = GUIP.getRulerColor1();
             RulerDialog.color2 = GUIP.getRulerColor2();
             RulerDialog ruler = new RulerDialog(clientgui.getFrame(), client(), previewBV, boardPreviewGame);
-            ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
-            ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
-            UIUtil.updateWindowBounds(ruler);
 
             // Most boards will be far too large on the standard zoom
             previewBV.zoomOut();

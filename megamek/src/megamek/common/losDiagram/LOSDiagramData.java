@@ -47,8 +47,12 @@ import megamek.common.board.Coords;
  * @param attackPos         the attacker's hex coordinates
  * @param targetPos         the target's hex coordinates
  * @param losBlocked        whether LOS is completely blocked along this path
- * @param attackerIsMek     whether the attacker is a Mek (affects height display)
- * @param targetIsMek       whether the target is a Mek (affects height display)
+ * @param attackerUnitType    the attacker's unit type for silhouette rendering
+ * @param targetUnitType      the target's unit type for silhouette rendering
+ * @param attackerIsHullDown  whether the attacker is hull-down (reduces LOS profile by 1 TW level)
+ * @param targetIsHullDown    whether the target is hull-down (reduces LOS profile by 1 TW level)
+ * @param attackerName        display name of the attacker entity, or empty if none
+ * @param targetName          display name of the target entity, or empty if none
  */
 public record LOSDiagramData(
       List<HexRow> hexPath,
@@ -57,9 +61,31 @@ public record LOSDiagramData(
       Coords attackPos,
       Coords targetPos,
       boolean losBlocked,
-      boolean attackerIsMek,
-      boolean targetIsMek
+      DiagramUnitType attackerUnitType,
+      DiagramUnitType targetUnitType,
+      boolean attackerIsHullDown,
+      boolean targetIsHullDown,
+      String attackerName,
+      String targetName
 ) {
+
+    /**
+     * Returns whether the attacker is a Mek.
+     *
+     * @return true if the attacker unit type is a Mek
+     */
+    public boolean attackerIsMek() {
+        return attackerUnitType.isMek();
+    }
+
+    /**
+     * Returns whether the target is a Mek.
+     *
+     * @return true if the target unit type is a Mek
+     */
+    public boolean targetIsMek() {
+        return targetUnitType.isMek();
+    }
 
     /**
      * Data for a single hex along the LOS path.

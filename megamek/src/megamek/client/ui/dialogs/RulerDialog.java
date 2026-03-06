@@ -39,6 +39,8 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -131,7 +133,18 @@ public class RulerDialog extends JDialog implements BoardViewListener {
 
         try {
             jbInit();
-            pack();
+            restoreSavedBounds();
+            addComponentListener(new ComponentAdapter() {
+                @Override
+                public void componentResized(ComponentEvent e) {
+                    saveBounds();
+                }
+
+                @Override
+                public void componentMoved(ComponentEvent e) {
+                    saveBounds();
+                }
+            });
         } catch (Exception ex) {
             logger.error(ex, "");
         }
@@ -151,11 +164,11 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         JLabel jLabel3 = new JLabel(Messages.getString("Ruler.Distance"), SwingConstants.RIGHT);
         tf_distance.setEditable(false);
         tf_distance.setColumns(5);
-        JLabel jLabel4 = new JLabel(Messages.getString("Ruler.POV") + ":", SwingConstants.RIGHT);
+        JLabel jLabel4 = new JLabel(Messages.getString("Ruler.attackerPOV") + ":", SwingConstants.RIGHT);
         jLabel4.setForeground(startColor);
         tf_los1.setEditable(false);
         tf_los1.setColumns(30);
-        JLabel jLabel5 = new JLabel(Messages.getString("Ruler.POV") + ":", SwingConstants.RIGHT);
+        JLabel jLabel5 = new JLabel(Messages.getString("Ruler.targetPOV") + ":", SwingConstants.RIGHT);
         jLabel5.setForeground(endColor);
         tf_los2.setEditable(false);
         tf_los2.setColumns(30);
@@ -486,14 +499,44 @@ public class RulerDialog extends JDialog implements BoardViewListener {
             updateDiagram();
         }
 
-        pack();
         revalidate();
+        repaint();
     }
 
     private void updateDiagramButtonText() {
         butDiagram.setText(diagramExpanded
               ? Messages.getString("Ruler.hideDiagram")
               : Messages.getString("Ruler.showDiagram"));
+    }
+
+    private void restoreSavedBounds() {
+        GUIPreferences guiPreferences = GUIPreferences.getInstance();
+        int savedWidth = guiPreferences.getRulerSizeWidth();
+        int savedHeight = guiPreferences.getRulerSizeHeight();
+        int savedX = guiPreferences.getRulerPosX();
+        int savedY = guiPreferences.getRulerPosY();
+
+        if ((savedWidth > 0) && (savedHeight > 0)) {
+            setSize(savedWidth, savedHeight);
+        } else {
+            setSize(UIUtil.scaleForGUI(600, 350));
+        }
+        if ((savedX >= 0) && (savedY >= 0)) {
+            setLocation(savedX, savedY);
+        } else {
+            setLocationRelativeTo(getOwner());
+        }
+    }
+
+    private void saveBounds() {
+        if (!isVisible()) {
+            return;
+        }
+        GUIPreferences guiPreferences = GUIPreferences.getInstance();
+        guiPreferences.setRulerSizeWidth(getWidth());
+        guiPreferences.setRulerSizeHeight(getHeight());
+        guiPreferences.setRulerPosX(getX());
+        guiPreferences.setRulerPosY(getY());
     }
 
     /**

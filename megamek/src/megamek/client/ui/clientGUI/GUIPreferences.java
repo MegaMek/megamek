@@ -841,10 +841,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         setDefault(RULER_COLOR_1, DEFAULT_CYAN);
         setDefault(RULER_COLOR_2, DEFAULT_MAGENTA);
-        store.setDefault(RULER_POS_X, 0);
-        store.setDefault(RULER_POS_Y, 0);
-        store.setDefault(RULER_SIZE_HEIGHT, 300);
-        store.setDefault(RULER_SIZE_WIDTH, 500);
+        store.setDefault(RULER_POS_X, -1);
+        store.setDefault(RULER_POS_Y, -1);
+        store.setDefault(RULER_SIZE_HEIGHT, 350);
+        store.setDefault(RULER_SIZE_WIDTH, 600);
 
         store.setDefault(SCROLL_SENSITIVITY, 3);
         store.setDefault(SHOW_FIELD_OF_FIRE, true);

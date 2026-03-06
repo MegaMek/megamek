@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -57,14 +58,20 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
+import megamek.client.ui.panels.LOSElevationDiagramPanel;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.LosEffects;
-import megamek.common.units.Mek;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
+import megamek.common.losDiagram.LOSDiagramData;
+import megamek.common.losDiagram.LOSDiagramDataBuilder;
+import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.logging.MMLogger;
 
 /**
@@ -103,8 +110,13 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     private final JCheckBox cboIsMek1 = new JCheckBox(Messages.getString("Ruler.isMek"));
     private final JCheckBox cboIsMek2 = new JCheckBox(Messages.getString("Ruler.isMek"));
 
+    private final JButton butDiagram = new JButton();
+    private final LOSElevationDiagramPanel diagramPanel = new LOSElevationDiagramPanel();
+    private final JScrollPane diagramScrollPane = new JScrollPane(diagramPanel);
+    private boolean diagramExpanded;
+
     public RulerDialog(JFrame frame, Client client, BoardView boardView, Game game) {
-        super(frame, Messages.getString("Ruler.title"), false);
+        super(frame, getRulerTitle(game), false);
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 
         start = null;
@@ -159,6 +171,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
             }
         });
         height1.setColumns(5);
+        cboIsMek1.setToolTipText(Messages.getString("Ruler.isMekTooltip"));
         cboIsMek1.addItemListener(e -> checkBoxSelectionChanged());
 
         heightLabel2 = new JLabel(Messages.getString("Ruler.Height2"), SwingConstants.RIGHT);
@@ -171,6 +184,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
             }
         });
         height2.setColumns(5);
+        cboIsMek2.setToolTipText(Messages.getString("Ruler.isMekTooltip"));
         cboIsMek2.addItemListener(e -> checkBoxSelectionChanged());
 
         GridBagConstraints c = new GridBagConstraints();
@@ -267,16 +281,45 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         buttonPanel.add(butClose);
         c.gridx = 0;
         c.gridy = 7;
-        c.gridwidth = 2;
+        c.gridwidth = 3;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.CENTER;
         gridBagLayout1.setConstraints(buttonPanel, c);
         panelMain.add(buttonPanel);
 
+        // Diagram toggle button
+        diagramExpanded = GUIPreferences.getInstance().getRulerDiagramExpanded();
+        updateDiagramButtonText();
+        butDiagram.addActionListener(e -> toggleDiagram());
+        c.gridx = 0;
+        c.gridy = 8;
+        c.gridwidth = 3;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.CENTER;
+        c.insets = new Insets(4, 0, 4, 0);
+        gridBagLayout1.setConstraints(butDiagram, c);
+        panelMain.add(butDiagram);
+
+        // Diagram panel (collapsible)
+        diagramScrollPane.setVisible(diagramExpanded);
+        diagramScrollPane.setMinimumSize(UIUtil.scaleForGUI(200, 150));
+        diagramScrollPane.setPreferredSize(UIUtil.scaleForGUI(500, 200));
+        c.gridx = 0;
+        c.gridy = 9;
+        c.gridwidth = 3;
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.insets = new Insets(0, 0, 0, 0);
+        gridBagLayout1.setConstraints(diagramScrollPane, c);
+        panelMain.add(diagramScrollPane);
+
         JScrollPane sp = new JScrollPane(panelMain);
         setLayout(new BorderLayout());
         add(sp);
 
+        setResizable(true);
+        setMinimumSize(UIUtil.scaleForGUI(350, 250));
         validate();
         setVisible(false);
     }
@@ -391,6 +434,79 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         // tf_los1.setCaretPosition(0);
         tf_los2.setText(toHit2);
         // tf_los2.setCaretPosition(0);
+
+        updateDiagram();
+    }
+
+    /**
+     * Updates the elevation diagram panel with current LOS data.
+     */
+    private void updateDiagram() {
+        if (!diagramExpanded || start == null || end == null) {
+            return;
+        }
+
+        int h1 = 1;
+        int h2 = 1;
+        try {
+            h1 = Integer.parseInt(height1.getText());
+        } catch (NumberFormatException e) {
+            // leave at default value
+        }
+        try {
+            h2 = Integer.parseInt(height2.getText());
+        } catch (NumberFormatException e) {
+            // leave at default value
+        }
+
+        if (!game.getBoard().contains(start) || !game.getBoard().contains(end)) {
+            return;
+        }
+
+        LosEffects.AttackInfo attackInfo;
+        if (flip) {
+            attackInfo = buildAttackInfo(start, end, h1, h2,
+                  cboIsMek1.isSelected(), cboIsMek2.isSelected());
+        } else {
+            attackInfo = buildAttackInfo(end, start, h2, h1,
+                  cboIsMek2.isSelected(), cboIsMek1.isSelected());
+        }
+
+        LOSDiagramData diagramData = LOSDiagramDataBuilder.build(game, attackInfo);
+        diagramPanel.setData(diagramData);
+    }
+
+    private void toggleDiagram() {
+        diagramExpanded = !diagramExpanded;
+        updateDiagramButtonText();
+        diagramScrollPane.setVisible(diagramExpanded);
+        GUIPreferences.getInstance().setRulerDiagramExpanded(diagramExpanded);
+
+        if (diagramExpanded) {
+            updateDiagram();
+        }
+
+        pack();
+        revalidate();
+    }
+
+    private void updateDiagramButtonText() {
+        butDiagram.setText(diagramExpanded
+              ? Messages.getString("Ruler.hideDiagram")
+              : Messages.getString("Ruler.showDiagram"));
+    }
+
+    /**
+     * Returns the ruler dialog title based on which optional LOS rules are active.
+     */
+    private static String getRulerTitle(Game game) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS1)) {
+            return Messages.getString("Ruler.titleDiagrammedLOS");
+        }
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DEAD_ZONES)) {
+            return Messages.getString("Ruler.titleDeadZone");
+        }
+        return Messages.getString("Ruler.title");
     }
 
     /**

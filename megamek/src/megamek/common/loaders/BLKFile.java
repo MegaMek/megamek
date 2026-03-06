@@ -836,9 +836,7 @@ public class BLKFile {
                 blk.writeBlockData("armor_tech_level", t.getArmorTechLevel(0));
             } else if (t.hasPatchworkArmor()) {
                 blk.writeBlockData("armor_type", EquipmentType.T_ARMOR_PATCHWORK);
-                for (int i = 1;
-                      i < t.locations();
-                      i++) {
+                for (int i = 0; i < t.locations(); i++) {
                     ArmorType armor = ArmorType.forEntity(t, i);
                     blk.writeBlockData(t.getLocationName(i) + "_armor_type", armor.getArmorType());
                     blk.writeBlockData(t.getLocationName(i) + "_armor_tech",

@@ -64,6 +64,7 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.panels.LOSElevationDiagramPanel;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.ToHitData;
 import megamek.common.board.Coords;
@@ -74,6 +75,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
 /**
@@ -570,20 +572,58 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     }
 
     /**
-     * Ignores determining if the attack is on land or underwater.
+     * Builds an AttackInfo for the Ruler tool, matching the calculation in
+     * {@link LosEffects#calculateLOS(Game, Entity, Targetable, Coords, Coords, int, int, boolean)}.
      *
+     * <p>The height parameters (h1, h2) are the user-entered values from the height text fields,
+     * which are auto-populated from {@code Entity.relHeight()} (= elevation + height).
+     * The entity-based formula computes absHeight as:
+     * {@code attackHeight + entity.getElevation() + hex.getLevel()}</p>
+     *
+     * <p>Since the Ruler only has relHeight (elevation + height combined), we reconstruct the
+     * same result: {@code relHeight + hex.getLevel()} which equals
+     * {@code height + elevation + hexLevel}.</p>
      */
     private LosEffects.AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1, int h2, boolean attackerIsMek,
           boolean targetIsMek) {
         LosEffects.AttackInfo attackInfo = new LosEffects.AttackInfo();
         attackInfo.attackPos = c1;
         attackInfo.targetPos = c2;
-        attackInfo.attackHeight = h1;
-        attackInfo.targetHeight = h2;
         attackInfo.attackerIsMek = attackerIsMek;
         attackInfo.targetIsMek = targetIsMek;
-        attackInfo.attackAbsHeight = game.getBoard().getHex(c1).floor() + h1;
-        attackInfo.targetAbsHeight = game.getBoard().getHex(c2).floor() + h2;
+
+        // attackHeight/targetHeight = intrinsic unit height (how tall, not position)
+        // Mek.height() = 1 (code 0-indexed; TW = 2 levels), non-Mek = 0 (TW = 1 level)
+        attackInfo.attackHeight = attackerIsMek ? 1 : 0;
+        attackInfo.targetHeight = targetIsMek ? 1 : 0;
+
+        Hex attackerHex = game.getBoard().getHex(c1);
+        Hex targetHex = game.getBoard().getHex(c2);
+
+        // absHeight = relHeight + hexLevel, matching entity-based formula:
+        // attackHeight + entity.getElevation() + hex.getLevel()
+        // where relHeight = entity.getElevation() + entity.height() = h1/h2
+        attackInfo.attackAbsHeight = h1 + attackerHex.getLevel();
+        attackInfo.targetAbsHeight = h2 + targetHex.getLevel();
+
+        // Set water state flags (matching LosEffects.calculateLOS entity-based logic)
+        boolean attackerHasWater = attackerHex.containsTerrain(Terrains.WATER)
+              && (attackerHex.depth() > 0);
+        boolean targetHasWater = targetHex.containsTerrain(Terrains.WATER)
+              && (targetHex.depth() > 0);
+
+        attackInfo.attUnderWater = attackerHasWater
+              && (attackInfo.attackAbsHeight < attackerHex.getLevel());
+        attackInfo.attInWater = attackerHasWater
+              && (attackInfo.attackAbsHeight == attackerHex.getLevel());
+        attackInfo.attOnLand = !(attackInfo.attUnderWater || attackInfo.attInWater);
+
+        attackInfo.targetUnderWater = targetHasWater
+              && (attackInfo.targetAbsHeight < targetHex.getLevel());
+        attackInfo.targetInWater = targetHasWater
+              && (attackInfo.targetAbsHeight == targetHex.getLevel());
+        attackInfo.targetOnLand = !(attackInfo.targetUnderWater || attackInfo.targetInWater);
+
         return attackInfo;
     }
 

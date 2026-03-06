@@ -231,9 +231,20 @@ public class LOSElevationDiagramPanel extends JPanel {
             maxLevel = Math.max(maxLevel, hex.topElevation());
         }
 
-        // Include unit heights in the range (absHeight already includes +1 TW correction)
-        minLevel = Math.min(minLevel, Math.min(diagramData.attackerAbsHeight(),
-              diagramData.targetAbsHeight()));
+        // Include unit physical positions in the range
+        // Unit stands on hex floor, extends up by TW height (Mek=2, non-Mek=1)
+        HexRow attackerHex = hexPath.get(0);
+        HexRow targetHex = hexPath.get(hexPath.size() - 1);
+        int attackerFloor = attackerHex.groundElevation() - attackerHex.waterDepth();
+        int targetFloor = targetHex.groundElevation() - targetHex.waterDepth();
+        int attackerTwHeight = diagramData.attackerIsMek() ? 2 : 1;
+        int targetTwHeight = diagramData.targetIsMek() ? 2 : 1;
+
+        minLevel = Math.min(minLevel, Math.min(attackerFloor, targetFloor));
+        maxLevel = Math.max(maxLevel, Math.max(
+              attackerFloor + attackerTwHeight,
+              targetFloor + targetTwHeight));
+        // Also include LOS eye-level (absHeight) which may differ from physical top
         maxLevel = Math.max(maxLevel, Math.max(diagramData.attackerAbsHeight(),
               diagramData.targetAbsHeight()));
 
@@ -297,20 +308,31 @@ public class LOSElevationDiagramPanel extends JPanel {
             int yGround = metrics.levelToY(hex.groundElevation());
             int yBottom = metrics.levelToY(metrics.minLevel);
 
-            // Draw water depth below ground level
+            // For water hexes, ground (seabed) starts at the water floor
             if (hex.waterDepth() > 0) {
                 int waterFloor = hex.groundElevation() - hex.waterDepth();
                 int yWaterFloor = metrics.levelToY(waterFloor);
+
+                // Draw seabed (ground below water)
+                g2d.setColor(COLOR_GROUND);
+                g2d.fillRect(xLeft, yWaterFloor, columnWidth, yBottom - yWaterFloor);
+                g2d.setColor(COLOR_GROUND_OUTLINE);
+                g2d.setStroke(STROKE_DEFAULT);
+                g2d.drawRect(xLeft, yWaterFloor, columnWidth, yBottom - yWaterFloor);
+
+                // Draw water from surface down to seabed
                 g2d.setColor(COLOR_WATER);
                 g2d.fillRect(xLeft, yGround, columnWidth, yWaterFloor - yGround);
+                g2d.setColor(COLOR_WATER.darker());
+                g2d.drawRect(xLeft, yGround, columnWidth, yWaterFloor - yGround);
+            } else {
+                // Draw ground elevation (no water)
+                g2d.setColor(COLOR_GROUND);
+                g2d.fillRect(xLeft, yGround, columnWidth, yBottom - yGround);
+                g2d.setColor(COLOR_GROUND_OUTLINE);
+                g2d.setStroke(STROKE_DEFAULT);
+                g2d.drawRect(xLeft, yGround, columnWidth, yBottom - yGround);
             }
-
-            // Draw ground elevation
-            g2d.setColor(COLOR_GROUND);
-            g2d.fillRect(xLeft, yGround, columnWidth, yBottom - yGround);
-            g2d.setColor(COLOR_GROUND_OUTLINE);
-            g2d.setStroke(STROKE_DEFAULT);
-            g2d.drawRect(xLeft, yGround, columnWidth, yBottom - yGround);
 
             // Draw building height
             if (hex.buildingHeight() > 0) {
@@ -485,6 +507,15 @@ public class LOSElevationDiagramPanel extends JPanel {
                 drawCenteredLabel(g2d, fontMetrics, label, xCenter, barMidY, COLOR_LABEL);
             }
 
+            // Water depth label
+            if (hex.waterDepth() > 0) {
+                int yWaterFloor = metrics.levelToY(
+                      hex.groundElevation() - hex.waterDepth());
+                int barMidY = (yGround + yWaterFloor) / 2 + fontHeight / 2;
+                drawCenteredLabel(g2d, fontMetrics, "D" + hex.waterDepth(),
+                      xCenter, barMidY, Color.WHITE);
+            }
+
             // Fire label (when showing all terrain)
             if (showAllTerrain && hex.hasFire()) {
                 int yFireTop = metrics.levelToY(hex.groundElevation() + 1);
@@ -513,16 +544,23 @@ public class LOSElevationDiagramPanel extends JPanel {
 
         int scaledBarWidth = UIUtil.scaleForGUI(UNIT_BAR_WIDTH);
 
-        // Attacker bar (first hex)
+        // Unit stands on the hex floor (seabed for water hexes, ground for dry hexes)
+        // Physical bar: from hex floor to hex floor + TW unit height (Mek=2, non-Mek=1)
+        // LOS eye-level (absHeight) may differ from physical top when in water
         HexRow attackerHex = hexPath.get(0);
-        drawUnitBar(g2d, metrics, 0, attackerHex.groundElevation(),
-              diagramData.attackerAbsHeight(), diagramData.attackerAbsHeight(), scaledBarWidth,
+        int attackerFloor = attackerHex.groundElevation() - attackerHex.waterDepth();
+        int attackerTwHeight = diagramData.attackerIsMek() ? 2 : 1;
+        int attackerPhysicalTop = attackerFloor + attackerTwHeight;
+        drawUnitBar(g2d, metrics, 0, attackerFloor,
+              attackerPhysicalTop, diagramData.attackerAbsHeight(), scaledBarWidth,
               megamek.client.ui.dialogs.RulerDialog.color1);
 
-        // Target bar (last hex)
         HexRow targetHex = hexPath.get(hexPath.size() - 1);
-        drawUnitBar(g2d, metrics, hexPath.size() - 1, targetHex.groundElevation(),
-              diagramData.targetAbsHeight(), diagramData.targetAbsHeight(), scaledBarWidth,
+        int targetFloor = targetHex.groundElevation() - targetHex.waterDepth();
+        int targetTwHeight = diagramData.targetIsMek() ? 2 : 1;
+        int targetPhysicalTop = targetFloor + targetTwHeight;
+        drawUnitBar(g2d, metrics, hexPath.size() - 1, targetFloor,
+              targetPhysicalTop, diagramData.targetAbsHeight(), scaledBarWidth,
               megamek.client.ui.dialogs.RulerDialog.color2);
     }
 

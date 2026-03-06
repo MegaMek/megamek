@@ -113,6 +113,8 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     private final JCheckBox cboIsMek2 = new JCheckBox(Messages.getString("Ruler.isMek"));
 
     private final JButton butDiagram = new JButton();
+    private final JCheckBox cboAllTerrain = new JCheckBox(
+          Messages.getString("Ruler.allTerrain"));
     private final LOSElevationDiagramPanel diagramPanel = new LOSElevationDiagramPanel();
     private final JScrollPane diagramScrollPane = new JScrollPane(diagramPanel);
     private boolean diagramExpanded;
@@ -300,18 +302,33 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         gridBagLayout1.setConstraints(buttonPanel, c);
         panelMain.add(buttonPanel);
 
-        // Diagram toggle button
-        diagramExpanded = GUIPreferences.getInstance().getRulerDiagramExpanded();
+        // Diagram controls panel (toggle button + all terrain checkbox)
+        GUIPreferences guiPreferences = GUIPreferences.getInstance();
+        diagramExpanded = guiPreferences.getRulerDiagramExpanded();
         updateDiagramButtonText();
         butDiagram.addActionListener(e -> toggleDiagram());
+
+        boolean allTerrain = guiPreferences.getRulerDiagramAllTerrain();
+        cboAllTerrain.setSelected(allTerrain);
+        cboAllTerrain.setToolTipText(Messages.getString("Ruler.allTerrainTooltip"));
+        cboAllTerrain.addItemListener(e -> {
+            boolean selected = cboAllTerrain.isSelected();
+            diagramPanel.setShowAllTerrain(selected);
+            GUIPreferences.getInstance().setRulerDiagramAllTerrain(selected);
+        });
+        diagramPanel.setShowAllTerrain(allTerrain);
+
+        JPanel diagramControlsPanel = new JPanel();
+        diagramControlsPanel.add(butDiagram);
+        diagramControlsPanel.add(cboAllTerrain);
         c.gridx = 0;
         c.gridy = 8;
         c.gridwidth = 3;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.CENTER;
         c.insets = new Insets(4, 0, 4, 0);
-        gridBagLayout1.setConstraints(butDiagram, c);
-        panelMain.add(butDiagram);
+        gridBagLayout1.setConstraints(diagramControlsPanel, c);
+        panelMain.add(diagramControlsPanel);
 
         // Diagram panel (collapsible)
         diagramScrollPane.setVisible(diagramExpanded);

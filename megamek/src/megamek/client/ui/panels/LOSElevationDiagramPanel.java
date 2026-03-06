@@ -87,8 +87,9 @@ public class LOSElevationDiagramPanel extends JPanel {
     private static final Color COLOR_BUILDING_OUTLINE = new Color(120, 120, 120);
     private static final Color COLOR_INDUSTRIAL = new Color(180, 160, 120);
     private static final Color COLOR_INDUSTRIAL_OUTLINE = new Color(140, 120, 80);
-    private static final Color COLOR_SMOKE_LIGHT = new Color(200, 200, 200, 100);
-    private static final Color COLOR_SMOKE_HEAVY = new Color(140, 140, 140, 140);
+    private static final Color COLOR_SMOKE_LIGHT = new Color(160, 160, 160, 140);
+    private static final Color COLOR_SMOKE_HEAVY = new Color(100, 100, 100, 180);
+    private static final Color COLOR_SMOKE_HATCH = new Color(120, 120, 120, 100);
     private static final Color COLOR_FIRE = new Color(255, 80, 0, 150);
     private static final Color COLOR_SCREEN = new Color(180, 180, 255, 120);
     private static final Color COLOR_FIELDS = new Color(200, 180, 50, 100);
@@ -179,6 +180,7 @@ public class LOSElevationDiagramPanel extends JPanel {
 
             drawGrid(g2d, metrics);
             drawTerrain(g2d, metrics, hexPath);
+            drawTerrainLabels(g2d, metrics, hexPath);
             drawUnitBars(g2d, metrics, hexPath);
             drawLosLine(g2d, metrics, hexPath);
             drawLabels(g2d, metrics, hexPath);
@@ -381,34 +383,122 @@ public class LOSElevationDiagramPanel extends JPanel {
         if (hex.smokeLevel() > 0) {
             int smokeTop = hex.groundElevation() + 2;
             int ySmokeTop = metrics.levelToY(smokeTop);
+            int smokeHeight = yGround - ySmokeTop;
+
+            // Fill with smoke color
             g2d.setColor(hex.smokeLevel() >= 2 ? COLOR_SMOKE_HEAVY : COLOR_SMOKE_LIGHT);
-            g2d.fillRect(xLeft, ySmokeTop, columnWidth, yGround - ySmokeTop);
+            g2d.fillRect(xLeft, ySmokeTop, columnWidth, smokeHeight);
+
+            // Add diagonal hatching for visual distinction
+            g2d.setColor(COLOR_SMOKE_HATCH);
+            g2d.setStroke(STROKE_DEFAULT);
+            java.awt.Shape oldClip = g2d.getClip();
+            g2d.clipRect(xLeft, ySmokeTop, columnWidth, smokeHeight);
+            int hatchSpacing = UIUtil.scaleForGUI(6);
+            for (int offset = -smokeHeight; offset < columnWidth + smokeHeight; offset += hatchSpacing) {
+                g2d.drawLine(xLeft + offset, ySmokeTop, xLeft + offset + smokeHeight,
+                      ySmokeTop + smokeHeight);
+            }
+            g2d.setClip(oldClip);
+
+            // Draw border
+            g2d.setColor(hex.smokeLevel() >= 2 ? COLOR_SMOKE_HEAVY.darker() : COLOR_SMOKE_LIGHT.darker());
+            g2d.drawRect(xLeft, ySmokeTop, columnWidth, smokeHeight);
         }
 
         if (!showAllTerrain) {
             return;
         }
 
-        // Fire indicator (hatched bar at ground level)
+        // Fire indicator
         if (hex.hasFire()) {
             int yFireTop = metrics.levelToY(hex.groundElevation() + 1);
             g2d.setColor(COLOR_FIRE);
             g2d.fillRect(xLeft + 1, yFireTop, columnWidth - 2, yGround - yFireTop);
+            g2d.setColor(COLOR_FIRE.darker());
+            g2d.drawRect(xLeft + 1, yFireTop, columnWidth - 2, yGround - yFireTop);
         }
 
-        // Screen indicator (translucent column)
+        // Screen indicator
         if (hex.hasScreen()) {
             int yScreenTop = metrics.levelToY(hex.groundElevation() + 2);
             g2d.setColor(COLOR_SCREEN);
             g2d.fillRect(xLeft, yScreenTop, columnWidth, yGround - yScreenTop);
+            g2d.setColor(COLOR_SCREEN.darker());
+            g2d.drawRect(xLeft, yScreenTop, columnWidth, yGround - yScreenTop);
         }
 
-        // Fields indicator (translucent band at ground level)
+        // Fields indicator
         if (hex.hasFields()) {
             int yFieldsTop = metrics.levelToY(hex.groundElevation() + 1);
             g2d.setColor(COLOR_FIELDS);
             g2d.fillRect(xLeft, yFieldsTop, columnWidth, yGround - yFieldsTop);
+            g2d.setColor(COLOR_FIELDS.darker());
+            g2d.drawRect(xLeft, yFieldsTop, columnWidth, yGround - yFieldsTop);
         }
+    }
+
+    /**
+     * Draws compact text labels inside terrain bars when columns are wide enough.
+     */
+    private void drawTerrainLabels(Graphics2D g2d, DiagramMetrics metrics, List<HexRow> hexPath) {
+        Font labelFont = g2d.getFont().deriveFont(Font.PLAIN, UIUtil.scaleForGUI(8.0f));
+        g2d.setFont(labelFont);
+        FontMetrics fontMetrics = g2d.getFontMetrics();
+        int fontHeight = fontMetrics.getAscent();
+
+        for (int i = 0; i < hexPath.size(); i++) {
+            HexRow hex = hexPath.get(i);
+            int xLeft = metrics.leftMargin + (i * metrics.hexColumnWidth);
+            int columnWidth = metrics.hexColumnWidth;
+            int xCenter = xLeft + columnWidth / 2;
+            int yGround = metrics.levelToY(hex.groundElevation());
+
+            // Only draw labels if column is wide enough
+            if (columnWidth < UIUtil.scaleForGUI(20)) {
+                continue;
+            }
+
+            // Woods/jungle label
+            if (hex.woodsHeight() > 0) {
+                int yCanopyTop = metrics.levelToY(hex.groundElevation() + hex.woodsHeight());
+                int barMidY = (yCanopyTop + yGround) / 2 + fontHeight / 2;
+                String label = hex.jungleLevel() > 0 ? "J" : "W";
+                int density = Math.max(hex.woodsLevel(), hex.jungleLevel());
+                label += density;
+                drawCenteredLabel(g2d, fontMetrics, label, xCenter, barMidY, Color.WHITE);
+            }
+
+            // Building label
+            if (hex.buildingHeight() > 0) {
+                int yTop = metrics.levelToY(hex.groundElevation() + hex.buildingHeight());
+                int barMidY = (yTop + yGround) / 2 + fontHeight / 2;
+                drawCenteredLabel(g2d, fontMetrics, "B" + hex.buildingHeight(),
+                      xCenter, barMidY, Color.WHITE);
+            }
+
+            // Smoke label
+            if (hex.smokeLevel() > 0) {
+                int ySmokeTop = metrics.levelToY(hex.groundElevation() + 2);
+                int barMidY = (ySmokeTop + yGround) / 2 + fontHeight / 2;
+                String label = hex.smokeLevel() >= 2 ? "S2" : "S1";
+                drawCenteredLabel(g2d, fontMetrics, label, xCenter, barMidY, COLOR_LABEL);
+            }
+
+            // Fire label (when showing all terrain)
+            if (showAllTerrain && hex.hasFire()) {
+                int yFireTop = metrics.levelToY(hex.groundElevation() + 1);
+                int barMidY = (yFireTop + yGround) / 2 + fontHeight / 2;
+                drawCenteredLabel(g2d, fontMetrics, "F", xCenter, barMidY, Color.WHITE);
+            }
+        }
+    }
+
+    private void drawCenteredLabel(Graphics2D g2d, FontMetrics fontMetrics, String label,
+          int xCenter, int y, Color color) {
+        int labelWidth = fontMetrics.stringWidth(label);
+        g2d.setColor(color);
+        g2d.drawString(label, xCenter - labelWidth / 2, y);
     }
 
     /**

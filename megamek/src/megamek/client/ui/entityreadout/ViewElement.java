@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,7 +37,6 @@ package megamek.client.ui.entityreadout;
  * HTML or as plain text.
  */
 interface ViewElement {
-
     /**
      * @return The contents of this view element, rendered to plain text. The text contains no tags or other control
      *       characters other than '\n' line breaks.
@@ -57,6 +56,6 @@ interface ViewElement {
     String toDiscord();
 
     static String asHtmlTooltip(String text, String tooltip) {
-        return "<span title=\"" + tooltip + "\">" + text + "*</span>";
+        return "<span title=\"" + tooltip.replaceAll("\"", "&quot;") + "\">" + text + "*</span>";
     }
 }

@@ -15710,6 +15710,7 @@ public class TWGameManager extends AbstractGameManager {
             // Find enemy infantry in the building (additional defenders)
             for (Entity e : game.getEntitiesVector()) {
                 if (e instanceof Infantry &&
+                    e.getPosition() != null &&
                     e.getPosition().equals(building.getPosition()) &&
                     e.getOwner().isEnemyOf(entity.getOwner())) {
                     defenders.add(e);

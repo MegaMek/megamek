@@ -289,7 +289,16 @@ public abstract class Entity extends TurnOrdered
      */
     protected int mulId = -1;
 
+    /**
+     * Introduction Year
+     */
     protected int year = 3071;
+    /**
+     * Year to use calculating engine and control system weight and fuel efficiency for primitive support vehicles and
+     * aerospace units. This needs to be tracked separately from intro year to account for refits that change the intro
+     * year but don't affect the structural components
+     */
+    protected int originalBuildYear = -1;
     protected int techLevel;
     private CompositeTechLevel compositeTechLevel;
 
@@ -315,13 +324,6 @@ public abstract class Entity extends TurnOrdered
      * Used by omni support vehicles to track the weight of optional fire control systems.
      */
     private double baseChassisFireConWeight = 0.0;
-
-    /**
-     * Year to use calculating engine and control system weight and fuel efficiency for primitive support vehicles and
-     * aerospace units. This needs to be tracked separately from intro year to account for refits that change the intro
-     * year but don't affect the structural components
-     */
-    private int originalBuildYear = -1;
 
     private Engine engine;
     protected boolean mixedTech = false;

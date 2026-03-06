@@ -85,8 +85,8 @@ public class ISAMS extends AmmoWeapon {
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2613, 2617, 3048, 2835, 3045)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.CC);
     }
 

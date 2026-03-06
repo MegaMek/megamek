@@ -97,8 +97,8 @@ public class ISPulseLaserSmallPrototype extends PulseLaserWeapon {
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, DATE_NONE)
               .setISApproximate(false, false, false, true, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

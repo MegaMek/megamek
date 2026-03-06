@@ -1091,8 +1091,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     private static final TechAdvancement[] TA_LAM = {
           new TechAdvancement(TechBase.IS).setISAdvancement(2683, 2688, ITechnology.DATE_NONE, 3085)
                 .setClanAdvancement(ITechnology.DATE_NONE, 2688, ITechnology.DATE_NONE, 2825)
-                .setPrototypeFactions(Faction.TH)
-                .setProductionFactions(Faction.TH)
+                .setPrototypeFactions(Faction.TH, Faction.CS)
+                .setProductionFactions(Faction.TH, Faction.CS)
                 .setTechRating(TechRating.D)
                 .setAvailability(AvailabilityValue.D,
                       AvailabilityValue.E,
@@ -1100,8 +1100,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                       AvailabilityValue.F).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // standard
           new TechAdvancement(TechBase.IS).setISAdvancement(2680, 2684, ITechnology.DATE_NONE, 2781)
                 .setClanAdvancement(ITechnology.DATE_NONE, 2684, ITechnology.DATE_NONE, 2801)
-                .setPrototypeFactions(Faction.TH)
-                .setProductionFactions(Faction.TH)
+                .setPrototypeFactions(Faction.TH, Faction.CS)
+                .setProductionFactions(Faction.TH, Faction.CS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E,
                       AvailabilityValue.F,

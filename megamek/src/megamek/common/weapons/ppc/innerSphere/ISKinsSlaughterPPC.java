@@ -83,7 +83,7 @@ public class ISKinsSlaughterPPC extends PPCWeapon {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2740, 2751, DATE_NONE, 2831, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
     }
 }

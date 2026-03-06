@@ -77,7 +77,7 @@ public class ISLRT20 extends LRTWeapon {
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2370, 2380, 2400, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
     }
 }

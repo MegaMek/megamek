@@ -130,9 +130,6 @@ public interface ITechManager {
             clanTech = false;
         }
 
-        // ComStar inherited Star League tech knowledge, so use TH faction dates for tech level progression
-        Faction techLevelFaction = (faction == Faction.CS) ? Faction.TH : faction;
-
         if (useMixedTech()) {
             if ((!introducedIS && !introducedClan)
                   || (!showExtinct()
@@ -140,8 +137,8 @@ public interface ITechManager {
                 return false;
             } else if (useVariableTechLevel()) {
                 // If using tech progression with mixed tech, we pass if either IS or Clan meets the required level
-                return tech.getSimpleLevel(getGameYear(), true, techLevelFaction).compareTo(getTechLevel()) <= 0
-                      || tech.getSimpleLevel(getGameYear(), false, techLevelFaction).compareTo(getTechLevel()) <= 0;
+                return tech.getSimpleLevel(getGameYear(), true, faction).compareTo(getTechLevel()) <= 0
+                      || tech.getSimpleLevel(getGameYear(), false, faction).compareTo(getTechLevel()) <= 0;
             }
         } else {
             if (tech.getTechBase() != TechBase.ALL
@@ -152,7 +149,7 @@ public interface ITechManager {
             } else if (!clanTech && (!introducedIS || (!showExtinct() && extinctIS))) {
                 return false;
             } else if (useVariableTechLevel()) {
-                return tech.getSimpleLevel(getGameYear(), clanTech, techLevelFaction).compareTo(getTechLevel()) <= 0;
+                return tech.getSimpleLevel(getGameYear(), clanTech, faction).compareTo(getTechLevel()) <= 0;
             }
         }
         // It's available in the year, and we're not using tech progression, so just check the tech level.

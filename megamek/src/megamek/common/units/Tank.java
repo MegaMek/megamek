@@ -316,7 +316,7 @@ public class Tank extends Entity {
     private static final TechAdvancement TA_COMBAT_VEHICLE = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE,
                 2470,
                 2490)
-          .setProductionFactions(Faction.TH)
+          .setProductionFactions(Faction.TH, Faction.CS)
           .setTechRating(TechRating.D)
           .setAvailability(AvailabilityValue.C,
                 AvailabilityValue.C,

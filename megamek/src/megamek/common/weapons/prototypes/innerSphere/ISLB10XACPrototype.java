@@ -96,8 +96,8 @@ public class ISLB10XACPrototype extends LBXACWeapon {
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2590, DATE_NONE, DATE_NONE, 2595, 3035)
               .setISApproximate(false, false, false, true, true)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.FS, Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }

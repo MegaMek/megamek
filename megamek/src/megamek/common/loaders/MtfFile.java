@@ -329,7 +329,7 @@ public class MtfFile implements IMekLoader {
             if (!originalYearStr.isBlank()) {            
                 int originalYear = Integer.parseInt(originalYearStr);
                 if (originalYear>0) {
-                    mek.setOriginalTechYear(originalYear);
+                    mek.setOriginalBuildYear(originalYear);
                 }
             }
 

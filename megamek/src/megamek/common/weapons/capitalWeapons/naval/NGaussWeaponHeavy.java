@@ -84,8 +84,8 @@ public class NGaussWeaponHeavy extends NGaussWeapon {
               .setISApproximate(true, true, false, true, false)
               .setClanAdvancement(2440, 2448, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, true, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.DC);
     }
 }

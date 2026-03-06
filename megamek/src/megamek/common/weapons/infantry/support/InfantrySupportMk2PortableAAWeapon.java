@@ -86,9 +86,9 @@ public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2498, 2510, 2590, 2790, 3056)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2498, 2510, 2590, DATE_NONE, 3056)
-              .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.FW).setTechRating(TechRating.D)
-              .setExtinctionFactionExceptions(Faction.CS)
+              .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS).setReintroductionFactions(Faction.FW).setTechRating(TechRating.D)
+              .addExtinctionFactionOverride(Faction.CS, DATE_NONE, false)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D);
 
     }

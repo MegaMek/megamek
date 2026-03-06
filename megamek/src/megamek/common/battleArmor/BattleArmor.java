@@ -407,7 +407,7 @@ public class BattleArmor extends Infantry {
 
     protected static final TechAdvancement[] TA_BATTLEARMOR = {
           new TechAdvancement(TechBase.ALL).setISAdvancement(2710, DATE_NONE, 3058, 2766, 2905)
-                .setClanAdvancement(2710, DATE_NONE, 3058).setPrototypeFactions(Faction.TH)
+                .setClanAdvancement(2710, DATE_NONE, 3058).setPrototypeFactions(Faction.TH, Faction.CS)
                 .setReintroductionFactions(Faction.CS).setTechRating(TechRating.D)
                 .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD), // PA(L)

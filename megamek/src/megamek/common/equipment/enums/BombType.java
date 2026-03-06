@@ -449,8 +449,8 @@ public class BombType extends AmmoType {
               .setISApproximate(true, false, false, true, false)
               .setClanAdvancement(2595, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.CC);
 
         return bomb;
@@ -484,8 +484,8 @@ public class BombType extends AmmoType {
               .setISApproximate(true, false, false, true, false)
               .setClanAdvancement(2622, 2623, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.CC);
 
         return bomb;
@@ -773,8 +773,8 @@ public class BombType extends AmmoType {
               .setISApproximate(false, false, false, true, false)
               .setClanAdvancement(2600, 2605, 2645, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.FW);
 
         return bomb;
@@ -803,8 +803,8 @@ public class BombType extends AmmoType {
               .setISAdvancement(2600, 2623, DATE_NONE, 2850, 3052)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2600, 2623, DATE_NONE, DATE_NONE, DATE_NONE)
-              .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
 
         return bomb;
     }

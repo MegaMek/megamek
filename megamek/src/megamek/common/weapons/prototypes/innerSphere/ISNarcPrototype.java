@@ -76,8 +76,8 @@ public class ISNarcPrototype extends NarcWeapon {
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2580, DATE_NONE, DATE_NONE, 2587, DATE_NONE)
               .setISApproximate(false, false, false, true, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

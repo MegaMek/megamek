@@ -89,7 +89,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X)
               .setISAdvancement(2762, DATE_NONE, DATE_NONE, 2770, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(Faction.TH).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+              .setPrototypeFactions(Faction.TH, Faction.CS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     /*

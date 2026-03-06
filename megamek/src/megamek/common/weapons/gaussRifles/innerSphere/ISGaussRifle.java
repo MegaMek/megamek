@@ -95,9 +95,9 @@ public class ISGaussRifle extends GaussWeapon {
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2587, 2590, 3045, 2865, 3040)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
-              .setExtinctionFactionExceptions(Faction.CS)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
+              .addExtinctionFactionOverride(Faction.CS, DATE_NONE, false)
               .setReintroductionFactions(Faction.FC, Faction.FW, Faction.DC);
     }
 

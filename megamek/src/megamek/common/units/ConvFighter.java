@@ -113,7 +113,7 @@ public class ConvFighter extends AeroSpaceFighter {
 
     protected static final TechAdvancement TA_CONV_FIGHTER = new TechAdvancement(TechBase.ALL)
           .setAdvancement(ITechnology.DATE_NONE, 2470, 2490)
-          .setProductionFactions(Faction.TH)
+          .setProductionFactions(Faction.TH, Faction.CS)
           .setTechRating(TechRating.D)
           .setAvailability(AvailabilityValue.C,
                 AvailabilityValue.D,

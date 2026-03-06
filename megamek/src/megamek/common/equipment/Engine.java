@@ -781,7 +781,7 @@ public class Engine implements Serializable, ITechnology {
     private static final TechAdvancement LARGE_FUSION_TA = new TechAdvancement(TechBase.ALL)
           .setAdvancement(2630, 3085, 3120)
           .setApproximate(false, true, true)
-          .setPrototypeFactions(Faction.TH)
+          .setPrototypeFactions(Faction.TH, Faction.CS)
           .setProductionFactions(Faction.LC)
           .setTechRating(TechRating.D)
           .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
@@ -797,7 +797,7 @@ public class Engine implements Serializable, ITechnology {
     private static final TechAdvancement LARGE_ICE_TA = new TechAdvancement(TechBase.ALL)
           .setAdvancement(DATE_NONE, 2630, 3120, DATE_NONE, DATE_NONE)
           .setApproximate(false, false, true, false, false)
-          .setPrototypeFactions(Faction.TH)
+          .setPrototypeFactions(Faction.TH, Faction.CS)
           .setProductionFactions(Faction.LC).setTechRating(TechRating.C)
           .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
           .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
@@ -827,8 +827,8 @@ public class Engine implements Serializable, ITechnology {
 
     private static final TechAdvancement IS_XL_TA = new TechAdvancement(TechBase.IS)
           .setISAdvancement(2556, 2579, 3045, 2865, 3035)
-          .setPrototypeFactions(Faction.TH)
-          .setProductionFactions(Faction.TH)
+          .setPrototypeFactions(Faction.TH, Faction.CS)
+          .setProductionFactions(Faction.TH, Faction.CS)
           .setReintroductionFactions(Faction.LC)
           .setTechRating(TechRating.E)
           .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
@@ -846,8 +846,8 @@ public class Engine implements Serializable, ITechnology {
     private static final TechAdvancement LARGE_IS_XL_TA = new TechAdvancement(TechBase.IS)
           .setISAdvancement(2635, 3085, DATE_NONE, 2822, 3054)
           .setISApproximate(true, true)
-          .setPrototypeFactions(Faction.TH)
-          .setProductionFactions(Faction.TH)
+          .setPrototypeFactions(Faction.TH, Faction.CS)
+          .setProductionFactions(Faction.TH, Faction.CS)
           .setReintroductionFactions(Faction.LC, Faction.FS)
           .setTechRating(TechRating.E)
           .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
@@ -898,13 +898,13 @@ public class Engine implements Serializable, ITechnology {
 
     private static final TechAdvancement FISSION_TA = new TechAdvancement(TechBase.ALL)
           .setAdvancement(2470, 2882, 3079).setTechRating(TechRating.D)
-          .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TC)
+          .setPrototypeFactions(Faction.TH, Faction.CS).setProductionFactions(Faction.TC)
           .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
           .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement FUEL_CELL_TA = new TechAdvancement(TechBase.ALL)
           .setAdvancement(2300, 2470, 3078).setApproximate(true).setTechRating(TechRating.D)
-          .setPrototypeFactions(Faction.TA).setProductionFactions(Faction.TH)
+          .setPrototypeFactions(Faction.TA).setProductionFactions(Faction.TH, Faction.CS)
           .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
           .setStaticTechLevel(SimpleTechLevel.STANDARD);
 

@@ -1886,8 +1886,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2464, 2471, 2500, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setStaticTechLevel(SimpleTechLevel.INTRO);
@@ -1988,7 +1988,7 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(2650, 3083, DATE_NONE, 2840, 3083)
               .setApproximate(false, true, false, false, true)
-              .setPrototypeFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
               .setProductionFactions(Faction.CHH)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
@@ -2109,8 +2109,8 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(2730, 2740, 3040, 2795, 3035)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.CC)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D);
@@ -2534,8 +2534,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2390, 2400, 2410, 2820, DATE_NONE)
               .setClanApproximate(true, false, false, true, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
 
         return misc;
     }
@@ -2582,8 +2582,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2390, 2300, 2305, 2825, DATE_NONE)
               .setClanApproximate(true, false, false, true, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -2851,8 +2851,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2350, 2355, 2358, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
 
         return misc;
     }
@@ -2875,7 +2875,7 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2690, 2790, 2820, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
               .setProductionFactions(Faction.DC);
         return misc;
     }
@@ -2898,7 +2898,7 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, true, false)
               .setClanAdvancement(2480, 2800, 3065, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
               .setProductionFactions(Faction.CS);
         return misc;
     }
@@ -2921,8 +2921,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, true, false)
               .setClanAdvancement(2440, 2460, 2461, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -3382,8 +3382,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2570, 2575, 2580, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, true, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -3527,8 +3527,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -3549,8 +3549,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -3571,8 +3571,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -3595,8 +3595,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -3617,8 +3617,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -3639,8 +3639,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -3665,8 +3665,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2465, 2475, 2510, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -3899,8 +3899,8 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2400, 2420, 3075, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -4451,9 +4451,9 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.C, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2452, 2476, 3045, 2840, 3036)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
-              .setExtinctionFactionExceptions(Faction.CS)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
+              .addExtinctionFactionOverride(Faction.CS, DATE_NONE, false)
               .setReintroductionFactions(Faction.DC);
         return misc;
     }
@@ -4485,8 +4485,8 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2452, DATE_NONE, DATE_NONE, 2476, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -4638,9 +4638,9 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, true, true)
               .setClanAdvancement(2625, 2631, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
-              .setExtinctionFactionExceptions(Faction.CS)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
+              .addExtinctionFactionOverride(Faction.CS, DATE_NONE, false)
               .setReintroductionFactions(Faction.FS)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
@@ -5034,7 +5034,7 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2695, DATE_NONE, DATE_NONE, 2780)
               .setClanAdvancement(2695)
-              .setPrototypeFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return misc;
@@ -5060,7 +5060,7 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2695, DATE_NONE, DATE_NONE, 2780)
               .setClanAdvancement(2695)
-              .setPrototypeFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return misc;
@@ -5138,7 +5138,7 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2705, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS);
 
         return misc;
     }
@@ -5186,7 +5186,7 @@ public class MiscType extends EquipmentType {
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2695, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS);
 
         return misc;
     }
@@ -5210,7 +5210,7 @@ public class MiscType extends EquipmentType {
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2776, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS);
 
         return misc;
     }
@@ -5262,8 +5262,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2430, 2445, 2490, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -5406,9 +5406,9 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2560, 2576, 3048, 2835, 3045)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
-              .setExtinctionFactionExceptions(Faction.CS)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
+              .addExtinctionFactionOverride(Faction.CS, DATE_NONE, false)
               .setReintroductionFactions(Faction.CC);
         return misc;
     }
@@ -5444,8 +5444,8 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2560, DATE_NONE, DATE_NONE, 2576, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.CC);
         return misc;
     }
@@ -5635,9 +5635,9 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2595, 2597, 3050, 2845, 3045)
               .setISApproximate(false, false, false, false, true)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
-              .setExtinctionFactionExceptions(Faction.CS)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
+              .addExtinctionFactionOverride(Faction.CS, DATE_NONE, false)
               .setReintroductionFactions(Faction.CC);
         return misc;
     }
@@ -5675,7 +5675,7 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2597, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -6024,8 +6024,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2586, 2590, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -6059,8 +6059,8 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2586, DATE_NONE, DATE_NONE, 2590, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -6284,8 +6284,8 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2592, 2598, 3045, 2855, 3035)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.FW);
         return misc;
     }
@@ -6321,8 +6321,8 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2592, DATE_NONE, DATE_NONE, 2612, 3035)
               .setISApproximate(true, false, false, true, true)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.FW)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
@@ -6659,7 +6659,7 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(2559, DATE_NONE, DATE_NONE, 2567, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
@@ -6705,8 +6705,8 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2559, 2567, 3045, 2865, 3040)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setExtinctionFactionExceptions(Faction.CS)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .addExtinctionFactionOverride(Faction.CS, DATE_NONE, false)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -7353,7 +7353,7 @@ public class MiscType extends EquipmentType {
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.TA)
-              .setProductionFactions(Faction.TH);
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -7737,7 +7737,7 @@ public class MiscType extends EquipmentType {
               // Best we can tell this is an oversight.
               .setAdvancement(2575, DATE_NONE, DATE_NONE, 2820, 3073)
               .setApproximate(false, false, false, false, true)
-              .setPrototypeFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -8080,7 +8080,7 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
               .setISAdvancement(2630, DATE_NONE, DATE_NONE, 2790, 3099)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.FS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
@@ -8384,7 +8384,7 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2540, 3059, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
               .setProductionFactions(Faction.FS, Faction.LC);
         return misc;
     }
@@ -8444,8 +8444,8 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
               .setISAdvancement(2615, 2630, DATE_NONE, 2790, 3110)
               .setISApproximate(true, false, false, false, true)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.CS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
@@ -8567,8 +8567,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2348, 2351, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -8595,8 +8595,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2348, 2353, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -8623,8 +8623,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2348, 2355, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -8651,8 +8651,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2348, 2353, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -8825,8 +8825,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2645, 2655, DATE_PS, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -8862,8 +8862,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2740, 2751, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -9107,9 +9107,9 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2480, 2487, 3040, 2850, 3035)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
-              .setExtinctionFactionExceptions(Faction.CS)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
+              .addExtinctionFactionOverride(Faction.CS, DATE_NONE, false)
               .setReintroductionFactions(Faction.DC);
         return misc;
     }
@@ -9138,7 +9138,7 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2471, DATE_NONE, DATE_NONE, 2487, 3035)
               .setISApproximate(true, false, false, true, true)
-              .setPrototypeFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.DC);
         return misc;
     }
@@ -9300,7 +9300,7 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
               .setPrototypeFactions(Faction.TA)
-              .setProductionFactions(Faction.TH);
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -9457,7 +9457,7 @@ public class MiscType extends EquipmentType {
               .setAdvancement(2300, 2350, 2495)
               .setApproximate(true, false, false)
               .setPrototypeFactions(Faction.TA)
-              .setProductionFactions(Faction.TH)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
         return misc;
@@ -9495,9 +9495,9 @@ public class MiscType extends EquipmentType {
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2470, 2472, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
-              .setReintroductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
+              .setReintroductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -9525,9 +9525,9 @@ public class MiscType extends EquipmentType {
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2470, 2472, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
-              .setReintroductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
+              .setReintroductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -9555,9 +9555,9 @@ public class MiscType extends EquipmentType {
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2470, 2474, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
-              .setReintroductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
+              .setReintroductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -9585,9 +9585,9 @@ public class MiscType extends EquipmentType {
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2470, 2471, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
-              .setReintroductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
+              .setReintroductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -9616,7 +9616,7 @@ public class MiscType extends EquipmentType {
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_NONE, 2475, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setProductionFactions(Faction.TH);
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -9751,9 +9751,9 @@ public class MiscType extends EquipmentType {
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2470, 2471, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
-              .setReintroductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
+              .setReintroductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -10467,8 +10467,8 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(2718, 2720, 3060, 2766, 3057)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.FW, Faction.WB);
         return misc;
     }
@@ -10499,8 +10499,8 @@ public class MiscType extends EquipmentType {
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(2718, 2720, 3060, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -10529,8 +10529,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, true, false, false, false)
               .setClanAdvancement(2712, 2715, 2720, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, true, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -10558,8 +10558,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2740, 2744, 3053, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -10745,7 +10745,7 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2700, 3050, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
               .setProductionFactions(Faction.FS);
         return misc;
     }
@@ -11020,8 +11020,8 @@ public class MiscType extends EquipmentType {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2410, 2415, 2420, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
         return misc;
     }
 
@@ -11813,8 +11813,8 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2680, 2684)
               .setClanAdvancement(DATE_NONE, 2684)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);

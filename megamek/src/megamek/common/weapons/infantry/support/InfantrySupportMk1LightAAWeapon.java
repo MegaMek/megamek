@@ -79,9 +79,9 @@ public class InfantrySupportMk1LightAAWeapon extends InfantryWeapon {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2490, 2500, 2590, DATE_NONE, 3056)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
-              .setExtinctionFactionExceptions(Faction.CS)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
+              .addExtinctionFactionOverride(Faction.CS, DATE_NONE, false)
               .setReintroductionFactions(Faction.FS, Faction.LC)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D);

@@ -81,7 +81,7 @@ public class ISAC10 extends ACWeapon {
               .setISAdvancement(2443, 2460, 2465, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2443, 2460, 2465, 2850, DATE_NONE)
-              .setClanApproximate(false, false, false, true, false).setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setClanApproximate(false, false, false, true, false).setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
     }
 }

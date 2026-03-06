@@ -99,7 +99,7 @@ public class SmallCraft extends Aero {
                 2350,
                 2400)
           .setISApproximate(false, true, false)
-          .setProductionFactions(Faction.TH)
+          .setProductionFactions(Faction.TH, Faction.CS)
           .setTechRating(TechRating.D)
           .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
           .setStaticTechLevel(SimpleTechLevel.STANDARD);

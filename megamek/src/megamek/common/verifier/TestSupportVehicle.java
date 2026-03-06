@@ -513,7 +513,7 @@ public class TestSupportVehicle extends TestEntity {
 
           new TechAdvancement(TechBase.ALL).setTechRating(TechRating.D)
                 .setAdvancement(2420, 2430, 2435).setApproximate(true, true, false)
-                .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
+                .setPrototypeFactions(Faction.TH, Faction.CS).setProductionFactions(Faction.TH, Faction.CS)
                 .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C,
                 AvailabilityValue.B),
 

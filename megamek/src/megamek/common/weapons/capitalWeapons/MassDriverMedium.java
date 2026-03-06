@@ -77,7 +77,7 @@ public class MassDriverMedium extends MassDriverWeapon {
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(2715, DATE_NONE, DATE_NONE, 2855, 3066)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(Faction.TH).setReintroductionFactions(Faction.WB)
+              .setPrototypeFactions(Faction.TH, Faction.CS).setReintroductionFactions(Faction.WB)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

@@ -287,7 +287,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 ITechnology.DATE_NONE,
                 2470,
                 2490)
-          .setProductionFactions(Faction.TH)
+          .setProductionFactions(Faction.TH, Faction.CS)
           .setTechRating(TechRating.D)
           .setAvailability(AvailabilityValue.C,
                 AvailabilityValue.E,
@@ -330,8 +330,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                       AdvancementPhase.COMMON, 2491
                 ))
                 .setApproximate(AdvancementPhase.PROTOTYPE)
-                .setPrototypeFactions(Faction.TH)
-                .setProductionFactions(Faction.TH)
+                .setPrototypeFactions(Faction.TH, Faction.CS)
+                .setProductionFactions(Faction.TH, Faction.CS)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.C,
                       AvailabilityValue.C,
@@ -371,8 +371,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                       AdvancementPhase.PRODUCTION, 2631
                 ))
                 .setClanApproximate(AdvancementPhase.PROTOTYPE)
-                .setPrototypeFactions(Faction.TH)
-                .setProductionFactions(Faction.TH)
+                .setPrototypeFactions(Faction.TH, Faction.CS)
+                .setProductionFactions(Faction.TH, Faction.CS)
                 .setReintroductionFactions(Faction.FS)
                 .setTechRating(TechRating.D)
                 .setAvailability(AvailabilityValue.C,

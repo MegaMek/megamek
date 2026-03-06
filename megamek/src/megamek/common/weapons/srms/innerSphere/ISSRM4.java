@@ -86,7 +86,7 @@ public class ISSRM4 extends SRMWeapon {
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2365, 2370, 2400, 2836, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
     }
 }

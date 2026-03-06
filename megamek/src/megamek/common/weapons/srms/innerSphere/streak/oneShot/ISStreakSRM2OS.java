@@ -78,8 +78,8 @@ public class ISStreakSRM2OS extends StreakSRMWeapon {
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2665, 2676, 3045, 2800, 3035)
               .setISApproximate(true, false, true, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.FW);
     }
 }

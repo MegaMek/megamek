@@ -80,8 +80,8 @@ public class InfantrySupportTAGWeapon extends InfantryWeapon {
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2598, 2610, DATE_NONE, 2770, 3051)
               .setISApproximate(true, true, false, false, false)
               .setClanAdvancement(2598, 2610, DATE_NONE, DATE_NONE, 3051)
-              .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.DC).setTechRating(TechRating.E)
+              .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS).setReintroductionFactions(Faction.DC).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E);
     }
 

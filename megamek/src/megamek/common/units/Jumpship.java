@@ -259,8 +259,8 @@ public class Jumpship extends Aero {
                     2819,
                     3043)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.FS)
               .setClanAdvancement(2520, 2529)
               .setTechRating(TechRating.E)

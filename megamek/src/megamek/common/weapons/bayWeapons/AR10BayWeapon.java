@@ -96,8 +96,8 @@ public class AR10BayWeapon extends AmmoBayWeapon {
               .setISApproximate(true, false, false, true, false)
               .setClanAdvancement(2540, 2550, 3055, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.FS, Faction.LC);
     }
 

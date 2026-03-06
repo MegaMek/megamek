@@ -81,7 +81,7 @@ public class NPPCWeaponHeavy extends NPPCWeapon {
               .setISApproximate(true, true, false, true, false)
               .setClanAdvancement(2350, 2356, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, true, false, false, false)
-              .setProductionFactions(Faction.TH)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.DC);
     }
 }

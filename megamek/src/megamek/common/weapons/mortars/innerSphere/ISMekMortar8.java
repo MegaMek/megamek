@@ -78,9 +78,9 @@ public class ISMekMortar8 extends MekMortarWeapon {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2526, 2531, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
-              .setExtinctionFactionExceptions(Faction.CS)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
+              .addExtinctionFactionOverride(Faction.CS, DATE_NONE, false)
               .setReintroductionFactions(Faction.FS, Faction.LC);
     }
 }

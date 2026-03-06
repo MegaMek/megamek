@@ -85,6 +85,6 @@ public class ISLaserLarge extends LaserWeapon {
               .setClanAdvancement(2306, 2316, 2320, 2850, DATE_NONE)
               .setClanApproximate(false, false, false, true, false)
               .setPrototypeFactions(Faction.TA)
-              .setProductionFactions(Faction.TH);
+              .setProductionFactions(Faction.TH, Faction.CS);
     }
 }

@@ -78,8 +78,8 @@ public class PrototypeArrowIV extends ArtilleryWeapon {
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2593, DATE_NONE, DATE_NONE, 2613, 3044)
               .setISApproximate(false, false, false, true, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.CC)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }

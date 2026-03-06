@@ -80,6 +80,6 @@ public class InfantrySniperRifleFNFJ12SLDF extends InfantryWeapon {
               .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_NONE, DATE_NONE, 2765, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
-              .setProductionFactions(Faction.TH);
+              .setProductionFactions(Faction.TH, Faction.CS);
     }
 }

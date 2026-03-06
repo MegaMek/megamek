@@ -80,6 +80,6 @@ public class InfantrySniperRifleFNFJ12DarkCaste extends InfantryWeapon {
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
               .setClanAdvancement(DATE_NONE, DATE_NONE, 2835, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, true, false, false)
-              .setProductionFactions(Faction.TH);
+              .setProductionFactions(Faction.TH, Faction.CS);
     }
 }

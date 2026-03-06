@@ -80,8 +80,8 @@ public class InfantrySMGRuganWeapon extends InfantryWeapon {
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2718, 2720, 2750, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2718, 2720, 2750, DATE_NONE, DATE_NONE)
-              .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH).setTechRating(TechRating.C)
+              .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS).setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.D);
 
     }

@@ -80,7 +80,7 @@ public class ISStreakSRM2 extends StreakSRMWeapon {
               .setISApproximate(false, false, true, false, false)
               .setClanAdvancement(2645, 2647, 2650, 2845, DATE_NONE)
               .setClanApproximate(false, false, true, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
     }
 }

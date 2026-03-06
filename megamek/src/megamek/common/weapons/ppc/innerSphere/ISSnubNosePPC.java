@@ -90,8 +90,8 @@ public class ISSnubNosePPC extends PPCWeapon {
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(2695, 2784, 3068, 2790, 3067)
               .setISApproximate(false, true, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.DC, Faction.FW);
     }
 

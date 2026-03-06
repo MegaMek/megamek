@@ -431,8 +431,8 @@ public class Infantry extends Entity {
               .setClanAdvancement(2585, 2600)
               .setApproximate(true, false, false, false, false)
               .setTechRating(TechRating.E)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.FS)
               .setAvailability(AvailabilityValue.F,
                     AvailabilityValue.X,

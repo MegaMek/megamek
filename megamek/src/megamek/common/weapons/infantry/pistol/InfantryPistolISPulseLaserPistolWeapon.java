@@ -71,8 +71,8 @@ public class InfantryPistolISPulseLaserPistolWeapon extends InfantryWeapon {
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechBase.ALL).setAdvancement(2615, 2620, 2700, DATE_NONE, DATE_NONE)
               .setApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS).setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.F, AvailabilityValue.C, AvailabilityValue.C);
     }
 }

@@ -86,8 +86,8 @@ public class ISSRM4OS extends SRMWeapon {
               //Succession Wars as fall into general disuse"
               .setISAdvancement(2665, 2676, 3045, DATE_NONE, 3030)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS)
               .setReintroductionFactions(Faction.FW);
     }
 }

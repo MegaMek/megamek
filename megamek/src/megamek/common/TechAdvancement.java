@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Era;
 import megamek.common.enums.Faction;
@@ -183,6 +184,7 @@ public class TechAdvancement implements ITechnology {
         return switch (phase) {
             case PROTOTYPE -> prototypeFactionsOverride;
             case PRODUCTION -> productionFactionsOverride;
+            case COMMON -> null;
             case EXTINCT -> extinctionFactionsOverride;
             case REINTRODUCED -> reintroductionFactionsOverride;
         };
@@ -733,26 +735,18 @@ public class TechAdvancement implements ITechnology {
         if (overrideDate != null) {
             return overrideDate;
         }
+
         int extinctionDate = getDate(AdvancementPhase.EXTINCT, clan);
         if (extinctionDate == DATE_NONE) {
             return DATE_NONE;
         }
-        if (faction != null && faction != Faction.NONE) {
-            if (!extinctionFactionExceptions.isEmpty()) {
-                if (extinctionFactionExceptions.contains(faction)
-                      || (extinctionFactionExceptions.contains(Faction.IS) && !clan)
-                      || (extinctionFactionExceptions.contains(Faction.CLAN) && clan)) {
-                    return DATE_NONE;
-                }
+        if (!extinctionFactions.isEmpty() && faction != null && faction != Faction.NONE) {
+            if (extinctionFactions.contains(faction)
+                  || (extinctionFactions.contains(Faction.IS) && !clan)
+                  || (extinctionFactions.contains(Faction.CLAN) && clan)) {
+                return extinctionDate;
             }
-            if (!extinctionFactions.isEmpty()) {
-                if (extinctionFactions.contains(faction)
-                      || (extinctionFactions.contains(Faction.IS) && !clan)
-                      || (extinctionFactions.contains(Faction.CLAN) && clan)) {
-                    return extinctionDate;
-                }
-                return DATE_NONE;
-            }
+            return DATE_NONE;
         }
         return extinctionDate;
     }

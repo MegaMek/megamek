@@ -88,7 +88,7 @@ public class ISPPC extends PPCWeapon {
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2440, 2460, 2500, 2825, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH);
+              .setPrototypeFactions(Faction.TH, Faction.CS)
+              .setProductionFactions(Faction.TH, Faction.CS);
     }
 }

@@ -76,7 +76,7 @@ public class LongTom extends ArtilleryWeapon {
         techAdvancement.setTechBase(TechBase.ALL).setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setAdvancement(2445, 2500, DATE_NONE, DATE_NONE, DATE_NONE)
-              .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH, Faction.CS).setProductionFactions(Faction.TH, Faction.CS)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2009-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,7 +53,8 @@ import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.text.AttributeSet;
+import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 
@@ -67,12 +68,14 @@ import megamek.common.Report;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
 import megamek.common.units.Entity;
+import megamek.utilities.StringUtils;
 
 /**
  * @author Jay Lawson
  * @since November 2, 2009
  */
 public class EntityReadoutPanel extends JPanel {
+    private final int TOOLTIP_MAX_SIZE = 85;
 
     private final JTextPane readoutTextComponent = new JTextPane();
     private final JLabel fluffImageComponent = new JLabel();
@@ -116,18 +119,21 @@ public class EntityReadoutPanel extends JPanel {
             public void mouseMoved(MouseEvent e) {
                 int pos = readoutTextComponent.viewToModel2D(e.getPoint());
                 if (pos >= 0 && readoutTextComponent.getDocument() instanceof HTMLDocument doc) {
-                    var elem = doc.getCharacterElement(pos);
-                    if (elem != null) {
-                        // The Element’s attributes may point us to a <SPAN> tag
-                        var attrs = elem.getAttributes();
-                        Object attrsAttribute = attrs.getAttribute(HTML.Tag.SPAN);
-
-                        if (attrsAttribute instanceof AttributeSet attributeSet) {
-                            String title = (String) attributeSet.getAttribute(HTML.getAttributeKey("title"));
-                            readoutTextComponent.setToolTipText(title);
+                    Element element = doc.getCharacterElement(pos);
+                    while (element != null) {
+                        Object spanAttr = element.getAttributes().getAttribute(HTML.Tag.SPAN);
+                        if (spanAttr instanceof SimpleAttributeSet attrs) {
+                            String title = (String)attrs.getAttribute(HTML.Attribute.TITLE);
+                            // Found a tooltip, line-wrap it
+                            readoutTextComponent.setToolTipText(StringUtils.wrapLines(title, TOOLTIP_MAX_SIZE));
+                            return;
                         }
+                        // Try to recurse up the tree for an element with a title
+                        element = element.getParentElement();
                     }
                 }
+                // No tooltip found, clear.
+                readoutTextComponent.setToolTipText(null);
             }
         });
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);

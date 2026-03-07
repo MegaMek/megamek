@@ -44,7 +44,7 @@ public enum DiagramUnitType {
     BATTLE_MEK,
     /** BattleMek quad - four-legged mek, 2 levels tall. */
     QUAD_MEK,
-    /** SuperHeavy Mek - massive mek, 2 levels tall. */
+    /** SuperHeavy Mek - massive mek, 3 levels tall. */
     SUPERHEAVY_MEK,
     /** IndustrialMek - blockier humanoid shape, 2 levels tall. */
     INDUSTRIAL_MEK,

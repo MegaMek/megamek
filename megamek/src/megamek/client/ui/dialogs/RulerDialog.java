@@ -505,7 +505,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         // Target hex terrain modifiers (matching Compute.getTargetTerrainModifier)
         Hex targetHex = game.getBoard().getHex(targetPos);
         if (targetHex != null) {
-            addTargetTerrainModifiers(thd, targetHex, targetHeight, targetIsMek);
+            addTargetTerrainModifiers(thd, targetHex, targetHeight);
         }
 
         // Water partial cover (matching ComputeTerrainMods lines 167-180)
@@ -543,10 +543,9 @@ public class RulerDialog extends JDialog implements BoardViewListener {
      * @param thd             the to-hit data to append modifiers to
      * @param targetHex       the target's hex
      * @param targetRelHeight the target's relative height (elevation + unit height)
-     * @param targetIsMek     whether the target is a Mek
      */
     private void addTargetTerrainModifiers(ToHitData thd, Hex targetHex,
-          int targetRelHeight, boolean targetIsMek) {
+          int targetRelHeight) {
         // Woods/Jungle in target hex
         boolean hasWoods = targetHex.containsTerrain(Terrains.WOODS)
               || targetHex.containsTerrain(Terrains.JUNGLE);

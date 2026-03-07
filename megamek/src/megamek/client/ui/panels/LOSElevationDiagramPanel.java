@@ -418,7 +418,6 @@ public class LOSElevationDiagramPanel extends JPanel {
         int canopyHeight = height - trunkHeight;
         int canopyTop = y;
         int canopyBottom = y + canopyHeight;
-        int trunkBottom = y + height;
 
         // Draw more trees for higher density
         int treeCount = Math.min(density, 3);
@@ -660,7 +659,7 @@ public class LOSElevationDiagramPanel extends JPanel {
             int puffsInLayer = Math.max(2, layerWidth / (puffSize * 2 / 3));
             for (int puff = 0; puff < puffsInLayer; puff++) {
                 // Spread puffs across the layer width
-                double puffProgress = (puffsInLayer == 1) ? 0.5 : (double) puff / (puffsInLayer - 1);
+                double puffProgress = (double) puff / (puffsInLayer - 1);
                 int px = layerX + (int) (puffProgress * (layerWidth - puffSize));
 
                 // Pseudo-random variation using deterministic hash
@@ -826,10 +825,10 @@ public class LOSElevationDiagramPanel extends JPanel {
             return;
         }
 
-        // Attacker silhouette
+        // Attacker silhouette - hull-down reduces height by 1 level
         int attackerTwHeight = diagramData.attackerUnitType().twHeight();
         if (diagramData.attackerIsHullDown()) {
-            attackerTwHeight = 1;
+            attackerTwHeight = Math.max(1, attackerTwHeight - 1);
         }
         int attackerTop = diagramData.attackerAbsHeight();
         int attackerBottom = attackerTop - attackerTwHeight;
@@ -837,10 +836,10 @@ public class LOSElevationDiagramPanel extends JPanel {
               megamek.client.ui.dialogs.RulerDialog.color1,
               diagramData.attackerUnitType(), true);
 
-        // Target silhouette
+        // Target silhouette - hull-down reduces height by 1 level
         int targetTwHeight = diagramData.targetUnitType().twHeight();
         if (diagramData.targetIsHullDown()) {
-            targetTwHeight = 1;
+            targetTwHeight = Math.max(1, targetTwHeight - 1);
         }
         int targetTop = diagramData.targetAbsHeight();
         int targetBottom = targetTop - targetTwHeight;
@@ -1636,10 +1635,6 @@ public class LOSElevationDiagramPanel extends JPanel {
 
         BufferedImage image = null;
         File imageFile = new File(Configuration.imagesDir(), LOS_SILHOUETTE_DIR + filename);
-        System.err.println("[LOS] Loading silhouette: "
-              + imageFile.getAbsolutePath()
-              + " exists="
-              + imageFile.exists());
         if (imageFile.exists()) {
             try {
                 image = ImageIO.read(imageFile);
@@ -1783,6 +1778,13 @@ public class LOSElevationDiagramPanel extends JPanel {
     }
 
     /**
+     * Escapes HTML special characters in a string for safe use in tooltips.
+     */
+    private static String escapeHtml(String text) {
+        return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+    }
+
+    /**
      * Draws the LOS line from attacker to target.
      */
     private void drawLosLine(Graphics2D g2d, DiagramMetrics metrics, List<HexRow> hexPath) {
@@ -1872,14 +1874,14 @@ public class LOSElevationDiagramPanel extends JPanel {
 
         // Show unit info for attacker/target hexes
         if (hexIndex == 0 && !diagramData.attackerName().isEmpty()) {
-            tooltip.append("<br><b>Attacker: ").append(diagramData.attackerName()).append("</b>");
+            tooltip.append("<br><b>Attacker: ").append(escapeHtml(diagramData.attackerName())).append("</b>");
             tooltip.append(" (height ").append(diagramData.attackerAbsHeight()).append(")");
             if (diagramData.attackerIsHullDown()) {
                 tooltip.append(" [Hull Down]");
             }
         }
         if (hexIndex == hexPath.size() - 1 && !diagramData.targetName().isEmpty()) {
-            tooltip.append("<br><b>Target: ").append(diagramData.targetName()).append("</b>");
+            tooltip.append("<br><b>Target: ").append(escapeHtml(diagramData.targetName())).append("</b>");
             tooltip.append(" (height ").append(diagramData.targetAbsHeight()).append(")");
             if (diagramData.targetIsHullDown()) {
                 tooltip.append(" [Hull Down]");

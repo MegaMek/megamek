@@ -15889,7 +15889,7 @@ public class TWGameManager extends AbstractGameManager {
         int total = 0;
         for (int entityId : entityIds) {
             Entity entity = game.getEntity(entityId);
-            if (entity != null && !entity.isDestroyed() && !entity.isDoomed()) {
+            if (entity != null && !entity.isDestroyed() && !entity.isDoomed() && !entity.isCarcass()) {
                 int entityMPS = megamek.common.compute.MarinePointsScoreCalculator.calculateMPS(entity, building);
                 LOGGER.debug("Entity {} ({}) MPS: {}", entityId, entity.getDisplayName(), entityMPS);
                 total += entityMPS;
@@ -15950,7 +15950,7 @@ public class TWGameManager extends AbstractGameManager {
         int totalCasualties = 0;
         for (int entityId : new ArrayList<>(entityIds)) {
             Entity entity = game.getEntity(entityId);
-            if (entity == null || entity.isDestroyed()) {
+            if (entity == null || entity.isDestroyed() || entity.isCarcass()) {
                 continue;
             }
 

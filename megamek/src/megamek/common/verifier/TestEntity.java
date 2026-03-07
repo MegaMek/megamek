@@ -1027,24 +1027,32 @@ public abstract class TestEntity implements TestEntityOption {
               + printMiscEquip() + printWeapon() + printAmmo();
     }
 
-    public boolean correctWeight(StringBuffer buff) {
-        return correctWeight(buff, showOverweightedEntity(),
-              showUnderweightEntity());
+    public final boolean correctWeight(StringBuffer buff) {
+        return correctWeight(buff, !showOverweightedEntity(), !showUnderweightEntity());
     }
 
-    public boolean correctWeight(StringBuffer buff, boolean showO, boolean showU) {
+    /**
+     * Tests the calculated weight of the unit (the sum of the weights of all its components) against the assumed weight
+     * (the fixed tonnage it is constructed with). Returns false if the calculated weight exceeds the assumed weight or
+     * if the calculated weight is lower than the assumed weight; in both cases a margin can be set by the test options.
+     * This method should be overridden for unit types that require other tests.
+     *
+     * @param buff              The Stringbuffer to append error messages to
+     * @param ignoreOverweight  When true, ignore overweight
+     * @param ignoreUnderweight When true, ignore underweight
+     *
+     * @return true if the unit is considered of allowed weight, false if over or underweight in an unallowed fashion
+     */
+    public boolean correctWeight(StringBuffer buff, boolean ignoreOverweight, boolean ignoreUnderweight) {
         double weightSum = calculateWeight();
         double weight = getWeight();
 
-        if (showO && ((weight + getMaxOverweight()) < weightSum)) {
-            buff.append("Weight: ").append(calculateWeight())
-                  .append(" is greater than ").append(getWeight())
-                  .append("\n");
+        if (!ignoreOverweight && ((weight + getMaxOverweight()) < weightSum)) {
+            buff.append("Weight: %f is greater than %f\n".formatted(weightSum, weight));
             return false;
         }
-        if (showU && ((weight - getMinUnderweight()) > weightSum)) {
-            buff.append("Weight: ").append(calculateWeight())
-                  .append(" is less than ").append(getWeight()).append("\n");
+        if (!ignoreUnderweight && ((weight - getMinUnderweight()) > weightSum)) {
+            buff.append("Weight: %f is less than %f\n".formatted(weightSum, weight));
             return false;
         }
         return true;

@@ -548,9 +548,9 @@ public class TestTank extends TestEntity {
     }
 
     @Override
-    public boolean correctWeight(StringBuffer buff, boolean showO, boolean showU) {
+    public boolean correctWeight(StringBuffer buff, boolean ignoreOverweight, boolean ignoreUnderweight) {
         if (!(getEntity() instanceof GunEmplacement)) {
-            boolean correct = super.correctWeight(buff, showO, showU);
+            boolean correct = super.correctWeight(buff, ignoreOverweight, ignoreUnderweight);
             double max = maxTonnage(getEntity().getMovementMode(), getEntity().isSuperHeavy());
             if (getEntity().getWeight() > max) {
                 correct = false;

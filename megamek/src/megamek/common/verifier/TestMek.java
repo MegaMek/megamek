@@ -664,8 +664,6 @@ public class TestMek extends TestEntity {
         }
 
         if (!allowOverweightConstruction() && !correctWeight(stringBuffer)) {
-            stringBuffer.insert(0, printTechLevel() + printShortMovement());
-            stringBuffer.append(printWeightCalculation());
             correct = false;
         }
         if (!engine.engineValid) {
@@ -1680,5 +1678,15 @@ public class TestMek extends TestEntity {
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean correctWeight(StringBuffer buff, boolean ignoreOverweight, boolean ignoreUnderweight) {
+        boolean otherErrors = super.correctWeight(buff, ignoreOverweight, ignoreUnderweight);
+        if (getWeight() % 5 != 0) {
+            buff.append("Mek weight must be a multiple of 5 tons\n"); // TM p.45, TO:AUE p.190, IO:AE p.154
+            return false;
+        }
+        return otherErrors;
     }
 }

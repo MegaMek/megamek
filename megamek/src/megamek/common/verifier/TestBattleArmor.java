@@ -1018,18 +1018,18 @@ public class TestBattleArmor extends TestEntity {
     }
 
     @Override
-    public boolean correctWeight(StringBuffer buff, boolean showO, boolean showU) {
+    public boolean correctWeight(StringBuffer buff, boolean ignoreOverweight, boolean ignoreUnderweight) {
         double weightSum = calculateWeight();
         double weight = getWeight();
         boolean correct = true;
         String baDesignation = ba.getLocationAbbr(BattleArmor.LOC_SQUAD);
-        if (showO && ((weight + getMaxOverweight()) < weightSum)) {
+        if (!ignoreOverweight && ((weight + getMaxOverweight()) < weightSum)) {
             buff.append(baDesignation).append("Weight: ").append(calculateWeight())
                   .append(" is greater than ").append(getWeight())
                   .append("\n");
             correct = false;
         }
-        if (showU && ((weight - getMinUnderweight()) > weightSum)) {
+        if (!ignoreUnderweight && ((weight - getMinUnderweight()) > weightSum)) {
             buff.append("Weight: ").append(calculateWeight())
                   .append(" is less than ").append(getWeight()).append("\n");
             correct = false;

@@ -93,10 +93,8 @@ import megamek.common.Configuration;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
 import megamek.common.KeyBindParser;
-import megamek.common.LosEffects;
 import megamek.common.Player;
 import megamek.common.SpecialHexDisplay;
-import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
@@ -4081,72 +4079,9 @@ public final class BoardView extends AbstractBoardView
 
     private void secondLOSHex(Coords targetCoords, Coords attackerCoords) {
         if (useLOSTool) {
-            Entity attackingEntity = chooseEntity(attackerCoords);
-            Entity targetEntity = chooseEntity(targetCoords);
-
-            StringBuilder message = new StringBuilder();
-            LosEffects losEffects;
-            if ((attackingEntity == null) || (targetEntity == null)) {
-                boolean mekInFirst = GUIP.getMekInFirst();
-                boolean mekInSecond = GUIP.getMekInSecond();
-
-                LosEffects.AttackInfo attackInfo = LosEffects.prepLosAttackInfo(game,
-                      attackingEntity,
-                      targetEntity,
-                      attackerCoords,
-                      targetCoords,
-                      boardId,
-                      mekInFirst,
-                      mekInSecond);
-
-                losEffects = LosEffects.calculateLos(game, attackInfo);
-                message.append(Messages.getString("BoardView1.Attacker",
-                      mekInFirst ? Messages.getString("BoardView1.Mek") : Messages.getString("BoardView1.NonMek"),
-                      attackerCoords.getBoardNum()));
-                message.append(Messages.getString("BoardView1.Target",
-                      mekInSecond ? Messages.getString("BoardView1.Mek") : Messages.getString("BoardView1.NonMek"),
-                      targetCoords.getBoardNum()));
-            } else {
-                losEffects = LosEffects.calculateLOS(game, attackingEntity, targetEntity);
-                message.append(Messages.getString("BoardView1.Attacker",
-                      attackingEntity.getDisplayName(),
-                      attackerCoords.getBoardNum()));
-                message.append(Messages.getString("BoardView1.Target",
-                      targetEntity.getDisplayName(),
-                      targetCoords.getBoardNum()));
-            }
-            // Check to see if LoS is blocked
-            if (!losEffects.canSee()) {
-                message.append(Messages.getString("BoardView1.LOSBlocked", attackerCoords.distance(targetCoords)));
-                ToHitData toHitData = losEffects.losModifiers(game);
-                message.append("\t").append(toHitData.getDesc()).append("\n");
-            } else {
-                message.append(Messages.getString("BoardView1.LOSNotBlocked", attackerCoords.distance(targetCoords)));
-                if (losEffects.getHeavyWoods() > 0) {
-                    message.append(Messages.getString("BoardView1.HeavyWoods", losEffects.getHeavyWoods()));
-                }
-                if (losEffects.getLightWoods() > 0) {
-                    message.append(Messages.getString("BoardView1.LightWoods", losEffects.getLightWoods()));
-                }
-                if (losEffects.getLightSmoke() > 0) {
-                    message.append(Messages.getString("BoardView1.LightSmoke", losEffects.getLightSmoke()));
-                }
-                if (losEffects.getHeavySmoke() > 0) {
-                    message.append(Messages.getString("BoardView1.HeavySmoke", losEffects.getHeavySmoke()));
-                }
-                if (losEffects.isTargetCover() && losEffects.canSee()) {
-                    message.append(Messages.getString("BoardView1.TargetPartialCover",
-                          LosEffects.getCoverName(losEffects.getTargetCover(), true)));
-                }
-                if (losEffects.isAttackerCover() && losEffects.canSee()) {
-                    message.append(Messages.getString("BoardView1.AttackerPartialCover",
-                          LosEffects.getCoverName(losEffects.getAttackerCover(), false)));
-                }
-            }
-            JOptionPane.showMessageDialog(boardPanel.getRootPane(),
-                  message.toString(),
-                  Messages.getString("BoardView1.LOSTitle"),
-                  JOptionPane.INFORMATION_MESSAGE);
+            moveCursor(secondLOSSprite, targetCoords);
+            // LOS calculation and display is handled by RulerDialog via the
+            // BOARD_SECOND_LOS_HEX event fired by checkLOS()
         }
     }
 

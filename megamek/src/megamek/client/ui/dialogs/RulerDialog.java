@@ -38,6 +38,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -121,6 +122,8 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     private String entityName2 = "";
     private DiagramUnitType unitType1 = DiagramUnitType.OTHER;
     private DiagramUnitType unitType2 = DiagramUnitType.OTHER;
+    private Entity entity1;
+    private Entity entity2;
 
     private final JButton butDiagram = new JButton();
     private final LOSElevationDiagramPanel diagramPanel = new LOSElevationDiagramPanel();
@@ -371,6 +374,8 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         entityName2 = "";
         unitType1 = DiagramUnitType.OTHER;
         unitType2 = DiagramUnitType.OTHER;
+        entity1 = null;
+        entity2 = null;
     }
 
     private void addPoint(Coords c) {
@@ -379,6 +384,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         boolean entFound = false;
         String entityName = "";
         DiagramUnitType unitType = DiagramUnitType.OTHER;
+        Entity tallestEntity = null;
         for (Entity ent : game.getEntitiesVector(c)) {
             // Convert to TW height: relHeight + 1 (code 0-indexed -> TW 1-indexed)
             // Hull-down Mek: 1 TW level instead of 2
@@ -391,6 +397,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
                 isMek = ent instanceof Mek;
                 entityName = ent.getDisplayName();
                 unitType = DiagramUnitType.fromEntity(ent);
+                tallestEntity = ent;
                 entFound = true;
             }
         }
@@ -401,6 +408,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
                 cboIsMek1.setSelected(isMek);
                 entityName1 = entityName;
                 unitType1 = unitType;
+                entity1 = tallestEntity;
             }
         } else if (start.equals(c)) {
             clear();
@@ -413,6 +421,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
                 cboIsMek2.setSelected(isMek);
                 entityName2 = entityName;
                 unitType2 = unitType;
+                entity2 = tallestEntity;
             }
             setText();
             setVisible(true);
@@ -703,8 +712,6 @@ public class RulerDialog extends JDialog implements BoardViewListener {
 
         // Hull Down: +2 for Meks with partial cover
         if (targetEntity.isHullDown() && (targetEntity instanceof Mek)) {
-            logger.info("Hull-down check: targetCover={}, COVER_NONE={}",
-                  losEffects.getTargetCover(), LosEffects.COVER_NONE);
             if (losEffects.getTargetCover() > LosEffects.COVER_NONE) {
                 thd.addModifier(2, "target hull down");
             }
@@ -754,15 +761,6 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         Coords targetPos = flip ? end : start;
         boolean attackerHullDown = isMekHullDownAt(attackerPos);
         boolean targetHullDown = isMekHullDownAt(targetPos);
-        logger.info(
-              "updateDiagram: flip={}, attackerPos={}, targetPos={}, attackerHullDown={}, targetHullDown={}, h1={}, h2={}",
-              flip,
-              attackerPos,
-              targetPos,
-              attackerHullDown,
-              targetHullDown,
-              h1,
-              h2);
 
         String attackerName = flip ? entityName1 : entityName2;
         String targetName = flip ? entityName2 : entityName1;
@@ -771,13 +769,22 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         LOSDiagramData diagramData = LOSDiagramDataBuilder.build(game, attackInfo,
               attackerHullDown, targetHullDown, attackerType, targetType,
               attackerName, targetName);
-        logger.info(
-              "updateDiagram: data.attackerAbsHeight={}, data.targetAbsHeight={}, data.attackerIsHullDown={}, data.targetIsHullDown={}",
-              diagramData.attackerAbsHeight(),
-              diagramData.targetAbsHeight(),
-              diagramData.attackerIsHullDown(),
-              diagramData.targetIsHullDown());
-        diagramPanel.setData(diagramData);
+
+        Entity attackerEntity = flip ? entity1 : entity2;
+        Entity targetEntity = flip ? entity2 : entity1;
+        Image attackerSprite = getEntitySprite(attackerEntity);
+        Image targetSprite = getEntitySprite(targetEntity);
+        diagramPanel.setData(diagramData, attackerSprite, targetSprite);
+    }
+
+    /**
+     * Gets the sprite image for an entity from the tileset manager, or null if unavailable.
+     */
+    private Image getEntitySprite(Entity entity) {
+        if (entity == null) {
+            return null;
+        }
+        return bv.getTilesetManager().imageFor(entity);
     }
 
     private void toggleDiagram() {
@@ -897,6 +904,9 @@ public class RulerDialog extends JDialog implements BoardViewListener {
 
     @Override
     public void hexMoused(BoardViewEvent b) {
+        // ALT+click triggers the ruler/LOS tool via BOARD_HEX_CLICKED.
+        // CTRL+click is intercepted by BoardView.checkLOS() and arrives
+        // via firstLOSHex()/secondLOSHex() events instead.
         if ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0) {
             if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
                 addPoint(b.getCoords());
@@ -923,12 +933,14 @@ public class RulerDialog extends JDialog implements BoardViewListener {
 
     @Override
     public void firstLOSHex(BoardViewEvent b) {
-        // ignored
+        addPoint(b.getCoords());
+        bv.drawRuler(start, end, startColor, endColor);
     }
 
     @Override
     public void secondLOSHex(BoardViewEvent b) {
-        // ignored
+        addPoint(b.getCoords());
+        bv.drawRuler(start, end, startColor, endColor);
     }
 
     void butFlip_actionPerformed() {

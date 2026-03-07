@@ -104,7 +104,6 @@ import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.EditBotsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.GameOptionsDialog;
-import megamek.client.ui.dialogs.buttonDialogs.LOSDialog;
 import megamek.client.ui.dialogs.buttonDialogs.NetworkInformationDialog;
 import megamek.client.ui.dialogs.forceDisplay.ForceDisplayDialog;
 import megamek.client.ui.dialogs.forceDisplay.ForceDisplayPanel;
@@ -2610,16 +2609,14 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Shows a dialog where the player can select the entity types used in the LOS tool.
+     * Shows the Ruler/LOS dialog. This consolidates the old LOSDialog functionality into the RulerDialog which
+     * provides distance, to-hit modifiers, and an elevation cross-section diagram.
      */
     private void showLOSSettingDialog() {
-        LOSDialog ld = new LOSDialog(frame, GUIP.getMekInFirst(), GUIP.getMekInSecond());
-        ignoreHotKeys = true;
-        if (ld.showDialog().isConfirmed()) {
-            GUIP.setMekInFirst(ld.getMekInFirst());
-            GUIP.setMekInSecond(ld.getMekInSecond());
+        if (ruler != null) {
+            ruler.setVisible(true);
+            ruler.toFront();
         }
-        ignoreHotKeys = false;
     }
 
     /**

@@ -32,15 +32,7 @@
  */
 package megamek.client.ui.panels;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Stroke;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.GeneralPath;
@@ -110,6 +102,8 @@ public class LOSElevationDiagramPanel extends JPanel {
           1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, DASH_PATTERN, 0.0f);
 
     private LOSDiagramData diagramData;
+    private Image attackerImage;
+    private Image targetImage;
 
     public LOSElevationDiagramPanel() {
         setBackground(COLOR_BACKGROUND);
@@ -130,7 +124,21 @@ public class LOSElevationDiagramPanel extends JPanel {
      * @param data the LOS diagram data, or null to clear the diagram
      */
     public void setData(LOSDiagramData data) {
+        setData(data, null, null);
+    }
+
+    /**
+     * Sets the diagram data with optional unit sprite images and triggers a repaint. When sprite images are provided,
+     * they are drawn in place of the generic silhouettes.
+     *
+     * @param data           the LOS diagram data, or null to clear the diagram
+     * @param attackerSprite the attacker's unit sprite image, or null to use the generic silhouette
+     * @param targetSprite   the target's unit sprite image, or null to use the generic silhouette
+     */
+    public void setData(LOSDiagramData data, Image attackerSprite, Image targetSprite) {
         this.diagramData = data;
+        this.attackerImage = attackerSprite;
+        this.targetImage = targetSprite;
         updatePreferredWidth();
         revalidate();
         repaint();
@@ -826,7 +834,7 @@ public class LOSElevationDiagramPanel extends JPanel {
         int attackerBottom = attackerTop - attackerTwHeight;
         drawUnitSilhouette(g2d, metrics, 0, attackerBottom, attackerTop,
               scaledBarWidth, megamek.client.ui.dialogs.RulerDialog.color1,
-              diagramData.attackerUnitType());
+              diagramData.attackerUnitType(), attackerImage);
 
         // Target silhouette
         int targetTwHeight = diagramData.targetUnitType().twHeight();
@@ -837,29 +845,34 @@ public class LOSElevationDiagramPanel extends JPanel {
         int targetBottom = targetTop - targetTwHeight;
         drawUnitSilhouette(g2d, metrics, hexPath.size() - 1, targetBottom, targetTop,
               scaledBarWidth, megamek.client.ui.dialogs.RulerDialog.color2,
-              diagramData.targetUnitType());
+              diagramData.targetUnitType(), targetImage);
     }
 
     private void drawUnitSilhouette(Graphics2D g2d, DiagramMetrics metrics,
           int hexIndex, int bottomLevel, int topLevel, int barWidth,
-          Color barColor, DiagramUnitType unitType) {
+          Color barColor, DiagramUnitType unitType, Image spriteImage) {
         int xCenter = metrics.leftMargin + (hexIndex * metrics.hexColumnWidth)
               + (metrics.hexColumnWidth / 2);
         int yTop = metrics.levelToY(topLevel);
         int yBottom = metrics.levelToY(bottomLevel);
         int silhouetteHeight = Math.max(yBottom - yTop, 2);
 
-        switch (unitType) {
-            case MEK -> drawMekSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-            case VEHICLE -> drawVehicleSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-            case VTOL_TYPE -> drawVtolSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-            case NAVAL -> drawNavalSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-            case SUBMARINE -> drawSubmarineSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-            case INFANTRY -> drawInfantrySilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-            case BATTLE_ARMOR -> drawBattleArmorSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-            case PROTO_MEK -> drawProtoMekSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-            case AERO -> drawAeroSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-            default -> drawDefaultBar(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
+        if (spriteImage != null) {
+            drawSpriteImage(g2d, spriteImage, xCenter, yTop, metrics.hexColumnWidth, silhouetteHeight);
+        } else {
+            switch (unitType) {
+                case MEK -> drawMekSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
+                case VEHICLE -> drawVehicleSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
+                case VTOL_TYPE -> drawVtolSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
+                case NAVAL -> drawNavalSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
+                case SUBMARINE -> drawSubmarineSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
+                case INFANTRY -> drawInfantrySilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
+                case BATTLE_ARMOR ->
+                      drawBattleArmorSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
+                case PROTO_MEK -> drawProtoMekSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
+                case AERO -> drawAeroSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
+                default -> drawDefaultBar(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
+            }
         }
 
         // Draw height label above the silhouette
@@ -870,6 +883,34 @@ public class LOSElevationDiagramPanel extends JPanel {
         FontMetrics fontMetrics = g2d.getFontMetrics();
         int labelWidth = fontMetrics.stringWidth(heightStr);
         g2d.drawString(heightStr, xCenter - labelWidth / 2, yTop - 3);
+    }
+
+    /**
+     * Draws a unit's sprite image scaled to fit the available column space. The image is scaled uniformly to fit within
+     * the column width while maintaining aspect ratio, then centered in the silhouette area.
+     */
+    private void drawSpriteImage(Graphics2D g2d, Image sprite, int xCenter, int yTop,
+          int columnWidth, int silhouetteHeight) {
+        int spriteWidth = sprite.getWidth(null);
+        int spriteHeight = sprite.getHeight(null);
+        if (spriteWidth <= 0 || spriteHeight <= 0) {
+            return;
+        }
+
+        int maxWidth = (int) (columnWidth * 0.85f);
+        int maxHeight = silhouetteHeight * 2;
+
+        double scaleX = (double) maxWidth / spriteWidth;
+        double scaleY = (double) maxHeight / spriteHeight;
+        double scale = Math.min(scaleX, scaleY);
+
+        int drawWidth = (int) (spriteWidth * scale);
+        int drawHeight = (int) (spriteHeight * scale);
+
+        int drawX = xCenter - drawWidth / 2;
+        int drawY = yTop + silhouetteHeight - drawHeight;
+
+        g2d.drawImage(sprite, drawX, drawY, drawWidth, drawHeight, null);
     }
 
     /**

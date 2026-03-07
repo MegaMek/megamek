@@ -525,7 +525,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(BOARD_EDIT_RANDOM_DIALOG_START, false);
         store.setDefault(BOARD_SAVE_INCLUDE_LICENSE, true);
-        store.setDefault(RULER_DIAGRAM_EXPANDED, false);
+        store.setDefault(RULER_DIAGRAM_EXPANDED, true);
         store.setDefault(RULER_DIAGRAM_ALL_TERRAIN, false);
         store.setDefault(RULER_DIAGRAM_CHART_STYLE, "crossSection");
         setDefault(ADVANCED_NO_SAVE_NAG, false);

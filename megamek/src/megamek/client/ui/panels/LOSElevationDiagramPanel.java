@@ -32,17 +32,31 @@
  */
 package megamek.client.ui.panels;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.Serial;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.Configuration;
 import megamek.common.losDiagram.DiagramUnitType;
 import megamek.common.losDiagram.LOSDiagramData;
 import megamek.common.losDiagram.LOSDiagramData.HexRow;
@@ -66,7 +80,7 @@ public class LOSElevationDiagramPanel extends JPanel {
     private static final int TOP_MARGIN = 20;
     private static final int BOTTOM_MARGIN = 30;
     private static final int LEVEL_PADDING = 2;
-    private static final int UNIT_BAR_WIDTH = 8;
+
 
     private static final Color COLOR_GROUND = new Color(139, 119, 101);
     private static final Color COLOR_GROUND_OUTLINE = new Color(100, 80, 60);
@@ -101,9 +115,12 @@ public class LOSElevationDiagramPanel extends JPanel {
     private static final Stroke STROKE_SPLIT = new BasicStroke(
           1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, DASH_PATTERN, 0.0f);
 
+    private static final String LOS_SILHOUETTE_DIR = "units" + File.separator + "LOS" + File.separator;
+
+    /** Cache of loaded silhouette images keyed by filename. Null values mean load was attempted but failed. */
+    private static final Map<String, BufferedImage> silhouetteCache = new HashMap<>();
+
     private LOSDiagramData diagramData;
-    private Image attackerImage;
-    private Image targetImage;
 
     public LOSElevationDiagramPanel() {
         setBackground(COLOR_BACKGROUND);
@@ -124,21 +141,7 @@ public class LOSElevationDiagramPanel extends JPanel {
      * @param data the LOS diagram data, or null to clear the diagram
      */
     public void setData(LOSDiagramData data) {
-        setData(data, null, null);
-    }
-
-    /**
-     * Sets the diagram data with optional unit sprite images and triggers a repaint. When sprite images are provided,
-     * they are drawn in place of the generic silhouettes.
-     *
-     * @param data           the LOS diagram data, or null to clear the diagram
-     * @param attackerSprite the attacker's unit sprite image, or null to use the generic silhouette
-     * @param targetSprite   the target's unit sprite image, or null to use the generic silhouette
-     */
-    public void setData(LOSDiagramData data, Image attackerSprite, Image targetSprite) {
         this.diagramData = data;
-        this.attackerImage = attackerSprite;
-        this.targetImage = targetSprite;
         updatePreferredWidth();
         revalidate();
         repaint();
@@ -823,8 +826,6 @@ public class LOSElevationDiagramPanel extends JPanel {
             return;
         }
 
-        int scaledBarWidth = UIUtil.scaleForGUI(UNIT_BAR_WIDTH);
-
         // Attacker silhouette
         int attackerTwHeight = diagramData.attackerUnitType().twHeight();
         if (diagramData.attackerIsHullDown()) {
@@ -833,8 +834,8 @@ public class LOSElevationDiagramPanel extends JPanel {
         int attackerTop = diagramData.attackerAbsHeight();
         int attackerBottom = attackerTop - attackerTwHeight;
         drawUnitSilhouette(g2d, metrics, 0, attackerBottom, attackerTop,
-              scaledBarWidth, megamek.client.ui.dialogs.RulerDialog.color1,
-              diagramData.attackerUnitType(), attackerImage);
+              megamek.client.ui.dialogs.RulerDialog.color1,
+              diagramData.attackerUnitType(), true);
 
         // Target silhouette
         int targetTwHeight = diagramData.targetUnitType().twHeight();
@@ -844,35 +845,124 @@ public class LOSElevationDiagramPanel extends JPanel {
         int targetTop = diagramData.targetAbsHeight();
         int targetBottom = targetTop - targetTwHeight;
         drawUnitSilhouette(g2d, metrics, hexPath.size() - 1, targetBottom, targetTop,
-              scaledBarWidth, megamek.client.ui.dialogs.RulerDialog.color2,
-              diagramData.targetUnitType(), targetImage);
+              megamek.client.ui.dialogs.RulerDialog.color2,
+              diagramData.targetUnitType(), false);
     }
 
     private void drawUnitSilhouette(Graphics2D g2d, DiagramMetrics metrics,
-          int hexIndex, int bottomLevel, int topLevel, int barWidth,
-          Color barColor, DiagramUnitType unitType, Image spriteImage) {
+          int hexIndex, int bottomLevel, int topLevel,
+          Color barColor, DiagramUnitType unitType, boolean facingRight) {
         int xCenter = metrics.leftMargin + (hexIndex * metrics.hexColumnWidth)
               + (metrics.hexColumnWidth / 2);
-        int yTop = metrics.levelToY(topLevel);
         int yBottom = metrics.levelToY(bottomLevel);
-        int silhouetteHeight = Math.max(yBottom - yTop, 2);
 
-        if (spriteImage != null) {
-            drawSpriteImage(g2d, spriteImage, xCenter, yTop, metrics.hexColumnWidth, silhouetteHeight);
-        } else {
-            switch (unitType) {
-                case MEK -> drawMekSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-                case VEHICLE -> drawVehicleSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-                case VTOL_TYPE -> drawVtolSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-                case NAVAL -> drawNavalSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-                case SUBMARINE -> drawSubmarineSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-                case INFANTRY -> drawInfantrySilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-                case BATTLE_ARMOR ->
-                      drawBattleArmorSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-                case PROTO_MEK -> drawProtoMekSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-                case AERO -> drawAeroSilhouette(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-                default -> drawDefaultBar(g2d, xCenter, yTop, barWidth, silhouetteHeight, barColor);
-            }
+        // Use column width as the silhouette width basis instead of the tiny barWidth
+        int silhouetteWidth = (int) (metrics.hexColumnWidth * 0.7f);
+
+        // The silhouette must fit within its TW level height (e.g. 2 levels for Meks, 1 for vehicles).
+        // It anchors at the bottom (feet on ground) and extends upward.
+        int levelBasedHeight = Math.max(yBottom - metrics.levelToY(topLevel), 2);
+        int silhouetteHeight = levelBasedHeight;
+        int yTop = yBottom - silhouetteHeight;
+
+        switch (unitType) {
+            case BATTLE_MEK ->
+                  drawMekSilhouette(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor, facingRight);
+            case QUAD_MEK ->
+                  drawQuadMekSilhouette(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor, facingRight);
+            case SUPERHEAVY_MEK -> drawSuperHeavyMekSilhouette(g2d,
+                  xCenter,
+                  yTop,
+                  silhouetteWidth,
+                  silhouetteHeight,
+                  barColor,
+                  facingRight);
+            case INDUSTRIAL_MEK -> drawIndustrialMekSilhouette(g2d,
+                  xCenter,
+                  yTop,
+                  silhouetteWidth,
+                  silhouetteHeight,
+                  barColor,
+                  facingRight);
+            case TRACKED_VEHICLE -> drawTrackedVehicleSilhouette(g2d,
+                  xCenter,
+                  yTop,
+                  silhouetteWidth,
+                  silhouetteHeight,
+                  barColor,
+                  facingRight);
+            case HOVER_VEHICLE -> drawHoverVehicleSilhouette(g2d,
+                  xCenter,
+                  yTop,
+                  silhouetteWidth,
+                  silhouetteHeight,
+                  barColor,
+                  facingRight);
+            case WHEELED_VEHICLE -> drawWheeledVehicleSilhouette(g2d,
+                  xCenter,
+                  yTop,
+                  silhouetteWidth,
+                  silhouetteHeight,
+                  barColor,
+                  facingRight);
+            case WIGE_VEHICLE ->
+                  drawWigeSilhouette(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor, facingRight);
+            case SUPPORT_VEHICLE ->
+                  drawSupportVehicleSilhouette(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor);
+            case VTOL_TYPE ->
+                  drawVtolSilhouette(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor, facingRight);
+            case NAVAL -> drawNavalSilhouette(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor);
+            case SUBMARINE ->
+                  drawSubmarineSilhouette(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor, facingRight);
+            case INFANTRY ->
+                  drawInfantrySilhouette(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor, facingRight);
+            case JUMP_INFANTRY -> drawJumpInfantrySilhouette(g2d,
+                  xCenter,
+                  yTop,
+                  silhouetteWidth,
+                  silhouetteHeight,
+                  barColor,
+                  facingRight);
+            case MOTORIZED_INFANTRY -> drawMotorizedInfantrySilhouette(g2d,
+                  xCenter,
+                  yTop,
+                  silhouetteWidth,
+                  silhouetteHeight,
+                  barColor,
+                  facingRight);
+            case MECHANIZED_INFANTRY -> drawMechanizedInfantrySilhouette(g2d,
+                  xCenter,
+                  yTop,
+                  silhouetteWidth,
+                  silhouetteHeight,
+                  barColor,
+                  facingRight);
+            case BATTLE_ARMOR -> drawBattleArmorSilhouette(g2d,
+                  xCenter,
+                  yTop,
+                  silhouetteWidth,
+                  silhouetteHeight,
+                  barColor,
+                  facingRight);
+            case PROTO_MEK ->
+                  drawProtoMekSilhouette(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor, facingRight);
+            case AEROSPACE_FIGHTER -> drawAeroFighterSilhouette(g2d,
+                  xCenter,
+                  yTop,
+                  silhouetteWidth,
+                  silhouetteHeight,
+                  barColor,
+                  facingRight);
+            case CONVENTIONAL_FIGHTER ->
+                  drawConvFighterSilhouette(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor);
+            case DROPSHIP -> drawDropShipSilhouette(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor);
+            case SMALL_CRAFT ->
+                  drawSmallCraftSilhouette(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor);
+            case JUMPSHIP -> drawJumpShipSilhouette(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor);
+            case WARSHIP -> drawWarShipSilhouette(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor);
+            case SPACE_STATION ->
+                  drawSpaceStationSilhouette(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor);
+            default -> drawDefaultBar(g2d, xCenter, yTop, silhouetteWidth, silhouetteHeight, barColor);
         }
 
         // Draw height label above the silhouette
@@ -886,169 +976,145 @@ public class LOSElevationDiagramPanel extends JPanel {
     }
 
     /**
-     * Draws a unit's sprite image scaled to fit the available column space. The image is scaled uniformly to fit within
-     * the column width while maintaining aspect ratio, then centered in the silhouette area.
+     * Draws a BattleMek silhouette using a PNG image, with GeneralPath fallback.
      */
-    private void drawSpriteImage(Graphics2D g2d, Image sprite, int xCenter, int yTop,
-          int columnWidth, int silhouetteHeight) {
-        int spriteWidth = sprite.getWidth(null);
-        int spriteHeight = sprite.getHeight(null);
-        if (spriteWidth <= 0 || spriteHeight <= 0) {
+    private void drawMekSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color, boolean facingRight) {
+        BufferedImage image = loadSilhouetteImage("BattleMech_Silhouette.png");
+        if (image != null) {
+            drawSilhouetteImage(g2d, image, xCenter, yTop, width, height, color, facingRight);
             return;
         }
 
-        int maxWidth = (int) (columnWidth * 0.85f);
-        int maxHeight = silhouetteHeight * 2;
-
-        double scaleX = (double) maxWidth / spriteWidth;
-        double scaleY = (double) maxHeight / spriteHeight;
-        double scale = Math.min(scaleX, scaleY);
-
-        int drawWidth = (int) (spriteWidth * scale);
-        int drawHeight = (int) (spriteHeight * scale);
-
-        int drawX = xCenter - drawWidth / 2;
-        int drawY = yTop + silhouetteHeight - drawHeight;
-
-        g2d.drawImage(sprite, drawX, drawY, drawWidth, drawHeight, null);
-    }
-
-    /**
-     * Draws a Mek silhouette: humanoid shape with legs, torso, arms, and head.
-     */
-    private void drawMekSilhouette(Graphics2D g2d, int xCenter, int yTop,
-          int width, int height, Color color) {
+        // Fallback: simple humanoid shape
         float w = width;
         float h = height;
         float left = xCenter - w / 2;
-
-        GeneralPath path = new GeneralPath();
-        // Left foot
-        path.moveTo(left, yTop + h);
-        path.lineTo(left, yTop + h * 0.55f);
-        // Left leg to hip
-        path.lineTo(left + w * 0.2f, yTop + h * 0.55f);
-        path.lineTo(left + w * 0.25f, yTop + h * 0.45f);
-        // Left arm
-        path.lineTo(left, yTop + h * 0.35f);
-        path.lineTo(left, yTop + h * 0.2f);
-        path.lineTo(left + w * 0.2f, yTop + h * 0.25f);
-        // Left shoulder to head
-        path.lineTo(left + w * 0.25f, yTop + h * 0.15f);
-        path.lineTo(left + w * 0.35f, yTop);
-        // Head top
-        path.lineTo(left + w * 0.65f, yTop);
-        // Right shoulder
-        path.lineTo(left + w * 0.75f, yTop + h * 0.15f);
-        path.lineTo(left + w * 0.8f, yTop + h * 0.25f);
-        // Right arm
-        path.lineTo(left + w, yTop + h * 0.2f);
-        path.lineTo(left + w, yTop + h * 0.35f);
-        path.lineTo(left + w * 0.75f, yTop + h * 0.45f);
-        // Right hip to leg
-        path.lineTo(left + w * 0.8f, yTop + h * 0.55f);
-        path.lineTo(left + w, yTop + h * 0.55f);
-        // Right foot
-        path.lineTo(left + w, yTop + h);
-        // Crotch gap
-        path.lineTo(left + w * 0.6f, yTop + h);
-        path.lineTo(left + w * 0.55f, yTop + h * 0.65f);
-        path.lineTo(left + w * 0.45f, yTop + h * 0.65f);
-        path.lineTo(left + w * 0.4f, yTop + h);
-        path.closePath();
-
         g2d.setColor(color);
-        g2d.fill(path);
-        g2d.setColor(color.darker());
-        g2d.draw(path);
+        g2d.fillRect((int) (left + w * 0.3f), (int) yTop, (int) (w * 0.4f), (int) (h * 0.5f));
+        g2d.fillRect((int) left, (int) (yTop + h * 0.5f), (int) (w * 0.35f), (int) (h * 0.5f));
+        g2d.fillRect((int) (left + w * 0.65f), (int) (yTop + h * 0.5f), (int) (w * 0.35f), (int) (h * 0.5f));
     }
 
     /**
-     * Draws a vehicle silhouette: low hull with a turret bump on top.
+     * Draws a QuadMek silhouette: four-legged mek shape.
      */
-    private void drawVehicleSilhouette(Graphics2D g2d, int xCenter, int yTop,
-          int width, int height, Color color) {
-        float w = width * 1.4f;
+    private void drawQuadMekSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color, boolean facingRight) {
+        BufferedImage image = loadSilhouetteImage("Quad_Mek.png");
+        if (image != null) {
+            drawSilhouetteImage(g2d, image, xCenter, yTop, width, height, color, facingRight);
+            return;
+        }
+
+        // Fallback: low wide shape
+        float w = width;
         float h = height;
         float left = xCenter - w / 2;
-
-        GeneralPath path = new GeneralPath();
-        // Hull bottom-left with angled front
-        path.moveTo(left, yTop + h);
-        path.lineTo(left, yTop + h * 0.5f);
-        // Sloped front armor
-        path.lineTo(left + w * 0.15f, yTop + h * 0.35f);
-        // Hull top to turret base
-        path.lineTo(left + w * 0.3f, yTop + h * 0.35f);
-        // Turret
-        path.lineTo(left + w * 0.3f, yTop + h * 0.1f);
-        path.lineTo(left + w * 0.7f, yTop);
-        path.lineTo(left + w * 0.7f, yTop + h * 0.35f);
-        // Hull top rear
-        path.lineTo(left + w * 0.85f, yTop + h * 0.35f);
-        // Rear
-        path.lineTo(left + w, yTop + h * 0.5f);
-        path.lineTo(left + w, yTop + h);
-        path.closePath();
-
         g2d.setColor(color);
-        g2d.fill(path);
-        g2d.setColor(color.darker());
-        g2d.draw(path);
+        g2d.fillRect((int) (left + w * 0.1f), (int) (yTop + h * 0.2f), (int) (w * 0.8f), (int) (h * 0.4f));
+        g2d.fillRect((int) left, (int) (yTop + h * 0.6f), (int) (w * 0.25f), (int) (h * 0.4f));
+        g2d.fillRect((int) (left + w * 0.75f), (int) (yTop + h * 0.6f), (int) (w * 0.25f), (int) (h * 0.4f));
+    }
 
-        // Track detail - a line along the lower hull
-        g2d.setColor(color.darker());
-        int trackY = (int) (yTop + h * 0.75f);
-        g2d.drawLine((int) (left + 2), trackY, (int) (left + w - 2), trackY);
+    /**
+     * Draws a SuperHeavy Mek silhouette.
+     */
+    private void drawSuperHeavyMekSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color, boolean facingRight) {
+        BufferedImage image = loadSilhouetteImage("SuperHeavy_Mek.png");
+        if (image != null) {
+            drawSilhouetteImage(g2d, image, xCenter, yTop, width, height, color, facingRight);
+            return;
+        }
+
+        // Fallback: use regular mek
+        drawMekSilhouette(g2d, xCenter, yTop, width, height, color, facingRight);
+    }
+
+    /**
+     * Draws a tracked vehicle silhouette: low hull with a turret bump on top.
+     */
+    private void drawTrackedVehicleSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color, boolean facingRight) {
+        BufferedImage image = loadSilhouetteImage("Tracked.png");
+        if (image != null) {
+            drawSilhouetteImage(g2d, image, xCenter, yTop, width, height, color, facingRight);
+            return;
+        }
+
+        // Fallback: simple box with turret bump
+        float w = width;
+        float h = height;
+        float left = xCenter - w / 2;
+        g2d.setColor(color);
+        g2d.fillRect((int) left, (int) (yTop + h * 0.4f), (int) w, (int) (h * 0.6f));
+        g2d.fillRect((int) (left + w * 0.3f), (int) (yTop + h * 0.1f), (int) (w * 0.4f), (int) (h * 0.3f));
+    }
+
+    /**
+     * Draws a hover vehicle silhouette.
+     */
+    private void drawHoverVehicleSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color, boolean facingRight) {
+        BufferedImage image = loadSilhouetteImage("Hovercraft.png");
+        if (image != null) {
+            drawSilhouetteImage(g2d, image, xCenter, yTop, width, height, color, facingRight);
+            return;
+        }
+
+        // Fallback: use tracked vehicle fallback
+        drawTrackedVehicleSilhouette(g2d, xCenter, yTop, width, height, color, facingRight);
+    }
+
+    /**
+     * Draws a wheeled vehicle silhouette.
+     */
+    private void drawWheeledVehicleSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color, boolean facingRight) {
+        BufferedImage image = loadSilhouetteImage("Wheeled.png");
+        if (image != null) {
+            drawSilhouetteImage(g2d, image, xCenter, yTop, width, height, color, facingRight);
+            return;
+        }
+
+        // Fallback: use tracked vehicle fallback
+        drawTrackedVehicleSilhouette(g2d, xCenter, yTop, width, height, color, facingRight);
+    }
+
+    /**
+     * Draws a WiGE (Wing-in-Ground-Effect) vehicle silhouette.
+     */
+    private void drawWigeSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color, boolean facingRight) {
+        BufferedImage image = loadSilhouetteImage("WIGE.png");
+        if (image != null) {
+            drawSilhouetteImage(g2d, image, xCenter, yTop, width, height, color, facingRight);
+            return;
+        }
+
+        // Fallback: use tracked vehicle fallback
+        drawTrackedVehicleSilhouette(g2d, xCenter, yTop, width, height, color, facingRight);
     }
 
     /**
      * Draws a VTOL silhouette: small body with rotor disc above.
      */
     private void drawVtolSilhouette(Graphics2D g2d, int xCenter, int yTop,
-          int width, int height, Color color) {
-        float w = width * 1.2f;
+          int width, int height, Color color, boolean facingRight) {
+        BufferedImage image = loadSilhouetteImage("VTOL.png");
+        if (image != null) {
+            drawSilhouetteImage(g2d, image, xCenter, yTop, width, height, color, facingRight);
+            return;
+        }
+
+        // Fallback: simple helicopter shape
+        float w = width;
         float h = height;
         float left = xCenter - w / 2;
-
-        // Rotor disc at top
-        int rotorY = (int) (yTop + h * 0.1f);
-        int rotorWidth = (int) (w * 1.3f);
-        g2d.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 120));
-        g2d.fillOval(xCenter - rotorWidth / 2, rotorY - 2, rotorWidth, 4);
-        g2d.setColor(color.darker());
-        g2d.drawOval(xCenter - rotorWidth / 2, rotorY - 2, rotorWidth, 4);
-
-        // Rotor mast
-        g2d.drawLine(xCenter, rotorY + 2, xCenter, (int) (yTop + h * 0.25f));
-
-        // Body - tapered fuselage
-        GeneralPath body = new GeneralPath();
-        body.moveTo(left + w * 0.2f, yTop + h * 0.25f);
-        body.lineTo(left + w * 0.8f, yTop + h * 0.25f);
-        body.lineTo(left + w * 0.9f, yTop + h * 0.5f);
-        // Tail boom
-        body.lineTo(left + w, yTop + h * 0.45f);
-        body.lineTo(left + w, yTop + h * 0.55f);
-        body.lineTo(left + w * 0.85f, yTop + h * 0.6f);
-        // Belly
-        body.lineTo(left + w * 0.7f, yTop + h * 0.75f);
-        // Skids
-        body.lineTo(left + w * 0.75f, yTop + h);
-        body.lineTo(left + w * 0.65f, yTop + h);
-        body.lineTo(left + w * 0.6f, yTop + h * 0.8f);
-        body.lineTo(left + w * 0.4f, yTop + h * 0.8f);
-        body.lineTo(left + w * 0.35f, yTop + h);
-        body.lineTo(left + w * 0.25f, yTop + h);
-        body.lineTo(left + w * 0.3f, yTop + h * 0.75f);
-        // Front
-        body.lineTo(left + w * 0.1f, yTop + h * 0.5f);
-        body.closePath();
-
         g2d.setColor(color);
-        g2d.fill(body);
-        g2d.setColor(color.darker());
-        g2d.draw(body);
+        g2d.fillOval(xCenter - (int) (w * 0.45f), (int) (yTop + h * 0.05f), (int) (w * 0.9f), 4);
+        g2d.fillOval((int) (left + w * 0.15f), (int) (yTop + h * 0.25f), (int) (w * 0.7f), (int) (h * 0.5f));
     }
 
     /**
@@ -1056,205 +1122,158 @@ public class LOSElevationDiagramPanel extends JPanel {
      */
     private void drawNavalSilhouette(Graphics2D g2d, int xCenter, int yTop,
           int width, int height, Color color) {
-        float w = width * 1.6f;
+        BufferedImage image = loadSilhouetteImage("Surface_Naval.png");
+        if (image != null) {
+            drawSilhouetteImage(g2d, image, xCenter, yTop, width, height, color, true);
+            return;
+        }
+
+        // Fallback: simple hull shape
+        float w = width;
         float h = height;
         float left = xCenter - w / 2;
-        float waterlineY = yTop + h * 0.45f;
-
-        // Hull - curved bottom
-        GeneralPath hull = new GeneralPath();
-        hull.moveTo(left, waterlineY);
-        // Bow (pointed front)
-        hull.lineTo(left - w * 0.1f, waterlineY + h * 0.15f);
-        hull.lineTo(left + w * 0.05f, yTop + h);
-        // Hull bottom curve
-        hull.lineTo(left + w * 0.3f, yTop + h * 0.95f);
-        hull.lineTo(left + w * 0.7f, yTop + h * 0.95f);
-        // Stern
-        hull.lineTo(left + w * 0.95f, yTop + h);
-        hull.lineTo(left + w + w * 0.05f, waterlineY + h * 0.15f);
-        hull.lineTo(left + w, waterlineY);
-        hull.closePath();
-
-        g2d.setColor(color.darker());
-        g2d.fill(hull);
-        g2d.setColor(color.darker().darker());
-        g2d.draw(hull);
-
-        // Superstructure - stepped blocks above waterline
-        GeneralPath superstructure = new GeneralPath();
-        // Main deck level
-        superstructure.moveTo(left + w * 0.1f, waterlineY);
-        superstructure.lineTo(left + w * 0.9f, waterlineY);
-        // Rear superstructure
-        superstructure.lineTo(left + w * 0.85f, waterlineY - h * 0.15f);
-        superstructure.lineTo(left + w * 0.65f, waterlineY - h * 0.15f);
-        // Bridge tower
-        superstructure.lineTo(left + w * 0.6f, yTop);
-        superstructure.lineTo(left + w * 0.35f, yTop);
-        superstructure.lineTo(left + w * 0.3f, waterlineY - h * 0.15f);
-        // Forward deck
-        superstructure.lineTo(left + w * 0.15f, waterlineY - h * 0.15f);
-        superstructure.closePath();
-
         g2d.setColor(color);
-        g2d.fill(superstructure);
-        g2d.setColor(color.darker());
-        g2d.draw(superstructure);
+        g2d.fillRect((int) (left + w * 0.05f), (int) (yTop + h * 0.3f), (int) (w * 0.9f), (int) (h * 0.7f));
+        g2d.fillRect((int) (left + w * 0.3f), (int) yTop, (int) (w * 0.4f), (int) (h * 0.3f));
     }
 
     /**
-     * Draws a submarine silhouette: elongated oval hull with conning tower.
+     * Draws a submarine silhouette using a PNG image from data/images/units/LOS/. Falls back to a simple shape if the
+     * image cannot be loaded.
      */
     private void drawSubmarineSilhouette(Graphics2D g2d, int xCenter, int yTop,
-          int width, int height, Color color) {
-        float w = width * 1.6f;
+          int width, int height, Color color, boolean facingRight) {
+        BufferedImage submarineImage = loadSilhouetteImage("Submarine.png");
+        if (submarineImage != null) {
+            drawSilhouetteImage(g2d, submarineImage, xCenter, yTop, width, height, color, facingRight);
+            return;
+        }
+
+        // Fallback: simple oval hull with conning tower
+        float w = width;
         float h = height;
         float left = xCenter - w / 2;
 
-        // Main hull - elongated oval shape
-        GeneralPath hull = new GeneralPath();
-        float hullTop = yTop + h * 0.3f;
-        float hullBottom = yTop + h * 0.85f;
-        float hullMidY = (hullTop + hullBottom) / 2;
-        float hullHeight = hullBottom - hullTop;
-
-        // Bow (rounded front)
-        hull.moveTo(left + w * 0.05f, hullMidY);
-        hull.curveTo(left + w * 0.05f, hullTop,
-              left + w * 0.2f, hullTop,
-              left + w * 0.3f, hullTop);
-        // Top of hull
-        hull.lineTo(left + w * 0.7f, hullTop);
-        // Stern (tapered)
-        hull.curveTo(left + w * 0.85f, hullTop,
-              left + w * 0.95f, hullTop,
-              left + w * 0.98f, hullMidY);
-        // Stern bottom to propeller area
-        hull.lineTo(left + w, hullMidY);
-        hull.lineTo(left + w * 0.98f, hullMidY + hullHeight * 0.1f);
-        hull.curveTo(left + w * 0.95f, hullBottom,
-              left + w * 0.85f, hullBottom,
-              left + w * 0.7f, hullBottom);
-        // Bottom of hull
-        hull.lineTo(left + w * 0.3f, hullBottom);
-        // Bow bottom
-        hull.curveTo(left + w * 0.2f, hullBottom,
-              left + w * 0.05f, hullBottom,
-              left + w * 0.05f, hullMidY);
-        hull.closePath();
-
-        g2d.setColor(color.darker());
-        g2d.fill(hull);
-        g2d.setColor(color.darker().darker());
-        g2d.draw(hull);
-
-        // Conning tower / sail
-        GeneralPath sail = new GeneralPath();
-        float sailLeft = left + w * 0.38f;
-        float sailRight = left + w * 0.55f;
-        float sailTop = yTop;
-        sail.moveTo(sailLeft, hullTop);
-        sail.lineTo(sailLeft + (sailRight - sailLeft) * 0.15f, sailTop);
-        sail.lineTo(sailRight - (sailRight - sailLeft) * 0.1f, sailTop);
-        sail.lineTo(sailRight, hullTop);
-        sail.closePath();
-
         g2d.setColor(color);
-        g2d.fill(sail);
+        g2d.fillOval((int) left, (int) (yTop + h * 0.3f), (int) w, (int) (h * 0.6f));
         g2d.setColor(color.darker());
-        g2d.draw(sail);
-
-        // Periscope detail
-        float periX = sailLeft + (sailRight - sailLeft) * 0.5f;
-        g2d.drawLine((int) periX, (int) (sailTop - h * 0.05f), (int) periX, (int) sailTop);
+        g2d.drawOval((int) left, (int) (yTop + h * 0.3f), (int) w, (int) (h * 0.6f));
+        g2d.setColor(color);
+        g2d.fillRect((int) (left + w * 0.4f), (int) yTop, (int) (w * 0.15f), (int) (h * 0.35f));
+        g2d.setColor(color.darker());
+        g2d.drawRect((int) (left + w * 0.4f), (int) yTop, (int) (w * 0.15f), (int) (h * 0.35f));
     }
 
     /**
-     * Draws infantry silhouette: 2-3 small standing figures side by side.
+     * Draws infantry silhouette: 3 small humanoid mek-like figures side by side.
      */
     private void drawInfantrySilhouette(Graphics2D g2d, int xCenter, int yTop,
-          int width, int height, Color color) {
-        int figureCount = 3;
-        float figureWidth = width * 0.8f / figureCount;
-        float totalWidth = figureWidth * figureCount + figureWidth * 0.3f * (figureCount - 1);
+          int width, int height, Color color, boolean facingRight) {
+        drawMultiFigureSilhouette(g2d, "Infantry.png", xCenter, yTop, width, height, color, facingRight, 3);
+    }
+
+    /**
+     * Draws a jump infantry silhouette: soldiers with jump packs.
+     */
+    private void drawJumpInfantrySilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color, boolean facingRight) {
+        drawMultiFigureSilhouette(g2d, "Jump_Infantry.png", xCenter, yTop, width, height, color, facingRight, 3);
+    }
+
+    /**
+     * Draws a motorized infantry silhouette: soldiers on motorcycles/ATVs.
+     */
+    private void drawMotorizedInfantrySilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color, boolean facingRight) {
+        drawMultiFigureSilhouette(g2d, "Motorized_Infantry.png", xCenter, yTop, width, height, color, facingRight, 2);
+    }
+
+    /**
+     * Draws a mechanized infantry silhouette: APC/IFV transported soldiers.
+     */
+    private void drawMechanizedInfantrySilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color, boolean facingRight) {
+        drawMultiFigureSilhouette(g2d, "Mech_Infantry.png", xCenter, yTop, width, height, color, facingRight, 2);
+    }
+
+    /**
+     * Helper to draw multiple copies of a silhouette image side by side, used for infantry types.
+     */
+    private void drawMultiFigureSilhouette(Graphics2D g2d, String filename, int xCenter, int yTop,
+          int width, int height, Color color, boolean facingRight, int figureCount) {
+        BufferedImage image = loadSilhouetteImage(filename);
+        if (image != null) {
+            float gap = width * 0.04f;
+            float figureWidth = (width - gap * (figureCount - 1)) / figureCount;
+            float totalWidth = figureWidth * figureCount + gap * (figureCount - 1);
+            float startX = xCenter - totalWidth / 2;
+
+            for (int i = 0; i < figureCount; i++) {
+                int figCenterX = (int) (startX + i * (figureWidth + gap) + figureWidth / 2);
+                drawSilhouetteImage(g2d, image, figCenterX, yTop, (int) figureWidth, height, color, facingRight);
+            }
+            return;
+        }
+
+        // Fallback: simple humanoid figures
+        float gap = width * 0.04f;
+        float figureWidth = (width - gap * (figureCount - 1)) / figureCount;
+        float totalWidth = figureWidth * figureCount + gap * (figureCount - 1);
         float startX = xCenter - totalWidth / 2;
 
         for (int i = 0; i < figureCount; i++) {
-            float fx = startX + i * (figureWidth + figureWidth * 0.3f);
-            drawStickFigure(g2d, fx, yTop, figureWidth, height, color);
+            float fx = startX + i * (figureWidth + gap);
+            float figureCenterX = fx + figureWidth / 2;
+            drawSmallHumanoid(g2d, figureCenterX, yTop, figureWidth, height, color, false);
         }
     }
 
     /**
-     * Draws a single stick figure for infantry.
+     * Draws a Battle Armor silhouette: 2 stocky armored humanoid figures side by side.
      */
-    private void drawStickFigure(Graphics2D g2d, float x, float yTop,
-          float width, float height, Color color) {
-        float cx = x + width / 2;
-        float headR = Math.max(width * 0.3f, 2);
-
-        // Head
-        g2d.setColor(color);
-        g2d.fillOval((int) (cx - headR), (int) yTop, (int) (headR * 2), (int) (headR * 2));
-
-        // Body
-        float shoulderY = yTop + headR * 2;
-        float hipY = yTop + height * 0.55f;
-        g2d.setColor(color.darker());
-        Stroke oldStroke = g2d.getStroke();
-        g2d.setStroke(new BasicStroke(Math.max(1.5f, width * 0.15f)));
-        g2d.drawLine((int) cx, (int) shoulderY, (int) cx, (int) hipY);
-
-        // Arms
-        float armSpread = width * 0.5f;
-        float armY = shoulderY + height * 0.08f;
-        g2d.drawLine((int) (cx - armSpread), (int) (armY + height * 0.1f),
-              (int) cx, (int) armY);
-        g2d.drawLine((int) cx, (int) armY,
-              (int) (cx + armSpread), (int) (armY + height * 0.1f));
-
-        // Legs
-        float footSpread = width * 0.4f;
-        float footY = yTop + height;
-        g2d.drawLine((int) cx, (int) hipY, (int) (cx - footSpread), (int) footY);
-        g2d.drawLine((int) cx, (int) hipY, (int) (cx + footSpread), (int) footY);
-        g2d.setStroke(oldStroke);
+    private void drawBattleArmorSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color, boolean facingRight) {
+        drawMultiFigureSilhouette(g2d, "Battle_Armor.png", xCenter, yTop, width, height, color, facingRight, 2);
     }
 
     /**
-     * Draws a Battle Armor silhouette: stocky armored figure, wider than infantry.
+     * Draws a single small humanoid mek-like figure. Used by infantry and battle armor silhouettes.
+     *
+     * @param armored if true, draws a stockier figure with wider shoulders (battle armor style)
      */
-    private void drawBattleArmorSilhouette(Graphics2D g2d, int xCenter, int yTop,
-          int width, int height, Color color) {
-        float w = width * 1.1f;
+    private void drawSmallHumanoid(Graphics2D g2d, float xCenter, float yTop,
+          float width, float height, Color color, boolean armored) {
+        float w = width;
         float h = height;
         float left = xCenter - w / 2;
 
+        // Armored figures are stockier with wider shoulders
+        float shoulderWidth = armored ? 0.95f : 0.8f;
+        float armWidth = armored ? 0.0f : 0.05f;
+        float legWidth = armored ? 0.15f : 0.1f;
+
         GeneralPath path = new GeneralPath();
         // Left foot
-        path.moveTo(left + w * 0.1f, yTop + h);
-        path.lineTo(left + w * 0.15f, yTop + h * 0.6f);
-        // Left side up
-        path.lineTo(left, yTop + h * 0.5f);
-        path.lineTo(left, yTop + h * 0.25f);
-        // Left shoulder
-        path.lineTo(left + w * 0.15f, yTop + h * 0.15f);
-        // Head/helmet
-        path.lineTo(left + w * 0.3f, yTop + h * 0.1f);
-        path.lineTo(left + w * 0.35f, yTop);
-        path.lineTo(left + w * 0.65f, yTop);
-        path.lineTo(left + w * 0.7f, yTop + h * 0.1f);
-        // Right shoulder
-        path.lineTo(left + w * 0.85f, yTop + h * 0.15f);
-        path.lineTo(left + w, yTop + h * 0.25f);
-        path.lineTo(left + w, yTop + h * 0.5f);
-        // Right leg
-        path.lineTo(left + w * 0.85f, yTop + h * 0.6f);
-        path.lineTo(left + w * 0.9f, yTop + h);
-        // Crotch
+        path.moveTo(left + w * legWidth, yTop + h);
+        path.lineTo(left + w * (legWidth + 0.05f), yTop + h * 0.55f);
+        // Left side up to shoulder
+        path.lineTo(left + w * armWidth, yTop + h * 0.45f);
+        path.lineTo(left + w * armWidth, yTop + h * 0.2f);
+        // Head
+        float headInset = (1.0f - shoulderWidth) / 2 + 0.1f;
+        path.lineTo(left + w * headInset, yTop + h * 0.12f);
+        path.lineTo(left + w * (headInset + 0.05f), yTop);
+        path.lineTo(left + w * (1.0f - headInset - 0.05f), yTop);
+        path.lineTo(left + w * (1.0f - headInset), yTop + h * 0.12f);
+        // Right side down
+        path.lineTo(left + w * (1.0f - armWidth), yTop + h * 0.2f);
+        path.lineTo(left + w * (1.0f - armWidth), yTop + h * 0.45f);
+        path.lineTo(left + w * (1.0f - legWidth - 0.05f), yTop + h * 0.55f);
+        // Right foot
+        path.lineTo(left + w * (1.0f - legWidth), yTop + h);
+        // Crotch gap
         path.lineTo(left + w * 0.6f, yTop + h);
-        path.lineTo(left + w * 0.5f, yTop + h * 0.7f);
+        path.lineTo(left + w * 0.5f, yTop + h * 0.68f);
         path.lineTo(left + w * 0.4f, yTop + h);
         path.closePath();
 
@@ -1263,43 +1282,136 @@ public class LOSElevationDiagramPanel extends JPanel {
         g2d.setColor(color.darker());
         g2d.draw(path);
 
-        // Visor slit
-        g2d.setColor(color.darker().darker());
-        int visorY = (int) (yTop + h * 0.05f);
-        g2d.drawLine((int) (left + w * 0.4f), visorY, (int) (left + w * 0.6f), visorY);
+        // Visor slit for armored figures
+        if (armored) {
+            g2d.setColor(color.darker().darker());
+            int visorY = (int) (yTop + h * 0.07f);
+            g2d.drawLine((int) (left + w * 0.4f), visorY, (int) (left + w * 0.6f), visorY);
+        }
     }
 
     /**
      * Draws a ProtoMek silhouette: smaller, hunched mek-like shape.
      */
     private void drawProtoMekSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color, boolean facingRight) {
+        BufferedImage image = loadSilhouetteImage("ProtoMek.png");
+        if (image != null) {
+            drawSilhouetteImage(g2d, image, xCenter, yTop, width, height, color, facingRight);
+            return;
+        }
+
+        // Fallback: small hunched humanoid
+        float w = width;
+        float h = height;
+        float left = xCenter - w / 2;
+        g2d.setColor(color);
+        g2d.fillRect((int) (left + w * 0.2f), (int) yTop, (int) (w * 0.6f), (int) (h * 0.5f));
+        g2d.fillRect((int) (left + w * 0.1f), (int) (yTop + h * 0.5f), (int) (w * 0.35f), (int) (h * 0.5f));
+        g2d.fillRect((int) (left + w * 0.55f), (int) (yTop + h * 0.5f), (int) (w * 0.35f), (int) (h * 0.5f));
+    }
+
+    /**
+     * Draws an aerospace fighter silhouette: side-view delta wing shape.
+     */
+    private void drawAeroFighterSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color, boolean facingRight) {
+        BufferedImage image = loadSilhouetteImage("Aerospace_Fighter_Silhouette.png");
+        if (image != null) {
+            drawSilhouetteImage(g2d, image, xCenter, yTop, width, height, color, facingRight);
+            return;
+        }
+
+        // Fallback: simple swept-wing shape
+        float w = width;
+        float h = height;
+        float left = xCenter - w / 2;
+        GeneralPath path = new GeneralPath();
+        path.moveTo(left, yTop + h * 0.45f);
+        path.lineTo(left + w * 0.5f, yTop);
+        path.lineTo(left + w, yTop + h * 0.3f);
+        path.lineTo(left + w, yTop + h * 0.7f);
+        path.lineTo(left + w * 0.5f, yTop + h);
+        path.closePath();
+        g2d.setColor(color);
+        g2d.fill(path);
+        g2d.setColor(color.darker());
+        g2d.draw(path);
+    }
+
+    /**
+     * Draws an IndustrialMek silhouette: blockier, boxier humanoid than a BattleMek. Side view.
+     */
+    private void drawIndustrialMekSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color, boolean facingRight) {
+        BufferedImage image = loadSilhouetteImage("Industrial_Mek.png");
+        if (image != null) {
+            drawSilhouetteImage(g2d, image, xCenter, yTop, width, height, color, facingRight);
+            return;
+        }
+
+        // Fallback: boxy humanoid shape
+        float w = width;
+        float h = height;
+        float left = xCenter - w / 2;
+        g2d.setColor(color);
+        g2d.fillRect((int) (left + w * 0.25f), (int) yTop, (int) (w * 0.5f), (int) (h * 0.55f));
+        g2d.fillRect((int) left, (int) (yTop + h * 0.55f), (int) (w * 0.4f), (int) (h * 0.45f));
+        g2d.fillRect((int) (left + w * 0.6f), (int) (yTop + h * 0.55f), (int) (w * 0.4f), (int) (h * 0.45f));
+    }
+
+    /**
+     * Draws a support vehicle silhouette: truck/utility profile without turret. Side view.
+     */
+    private void drawSupportVehicleSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color) {
+        BufferedImage image = loadSilhouetteImage("Support_Vehicle.png");
+        if (image != null) {
+            drawSilhouetteImage(g2d, image, xCenter, yTop, width, height, color, true);
+            return;
+        }
+
+        // Fallback: simple truck shape
+        float w = width;
+        float h = height;
+        float left = xCenter - w / 2;
+        g2d.setColor(color);
+        g2d.fillRect((int) left, (int) (yTop + h * 0.3f), (int) w, (int) (h * 0.7f));
+        g2d.fillRect((int) left, (int) yTop, (int) (w * 0.35f), (int) (h * 0.3f));
+    }
+
+    /**
+     * Draws a conventional fighter silhouette: straight-wing propeller/jet aircraft. Side view.
+     */
+    private void drawConvFighterSilhouette(Graphics2D g2d, int xCenter, int yTop,
           int width, int height, Color color) {
         float w = width;
         float h = height;
         float left = xCenter - w / 2;
 
         GeneralPath path = new GeneralPath();
-        // Left foot
-        path.moveTo(left + w * 0.1f, yTop + h);
-        path.lineTo(left + w * 0.15f, yTop + h * 0.6f);
-        // Hunched torso
-        path.lineTo(left, yTop + h * 0.45f);
-        path.lineTo(left + w * 0.1f, yTop + h * 0.2f);
-        // Small head, slightly forward
-        path.lineTo(left + w * 0.25f, yTop + h * 0.1f);
-        path.lineTo(left + w * 0.35f, yTop);
-        path.lineTo(left + w * 0.6f, yTop);
-        path.lineTo(left + w * 0.7f, yTop + h * 0.1f);
-        // Right shoulder
-        path.lineTo(left + w * 0.9f, yTop + h * 0.2f);
-        path.lineTo(left + w, yTop + h * 0.45f);
-        // Right leg
-        path.lineTo(left + w * 0.85f, yTop + h * 0.6f);
-        path.lineTo(left + w * 0.9f, yTop + h);
-        // Crotch
-        path.lineTo(left + w * 0.6f, yTop + h);
-        path.lineTo(left + w * 0.5f, yTop + h * 0.7f);
+        // Nose pointing left, rounder than ASF
+        path.moveTo(left, yTop + h * 0.45f);
+        // Top fuselage - gentler curve
+        path.lineTo(left + w * 0.15f, yTop + h * 0.3f);
+        path.lineTo(left + w * 0.3f, yTop + h * 0.25f);
+        // Straight wing top
+        path.lineTo(left + w * 0.4f, yTop);
+        path.lineTo(left + w * 0.6f, yTop + h * 0.2f);
+        // Fuselage to tail
+        path.lineTo(left + w * 0.75f, yTop + h * 0.25f);
+        // Tail fin
+        path.lineTo(left + w * 0.9f, yTop + h * 0.05f);
+        path.lineTo(left + w, yTop + h * 0.2f);
+        path.lineTo(left + w, yTop + h * 0.5f);
+        // Bottom fuselage
+        path.lineTo(left + w * 0.75f, yTop + h * 0.65f);
+        // Straight wing bottom
+        path.lineTo(left + w * 0.6f, yTop + h * 0.7f);
         path.lineTo(left + w * 0.4f, yTop + h);
+        path.lineTo(left + w * 0.3f, yTop + h * 0.65f);
+        // Belly to nose
+        path.lineTo(left + w * 0.15f, yTop + h * 0.6f);
         path.closePath();
 
         g2d.setColor(color);
@@ -1309,35 +1421,71 @@ public class LOSElevationDiagramPanel extends JPanel {
     }
 
     /**
-     * Draws an aerospace fighter silhouette: side-view delta wing shape.
+     * Draws a DropShip silhouette: large egg/teardrop shape, pointed nose up. Side view.
      */
-    private void drawAeroSilhouette(Graphics2D g2d, int xCenter, int yTop,
+    private void drawDropShipSilhouette(Graphics2D g2d, int xCenter, int yTop,
           int width, int height, Color color) {
-        float w = width * 1.4f;
+        float w = width;
+        float h = height;
+        float left = xCenter - w / 2;
+
+        GeneralPath path = new GeneralPath();
+        // Nose at top center
+        path.moveTo(left + w * 0.5f, yTop);
+        // Right side - curves outward
+        path.curveTo(left + w * 0.75f, yTop + h * 0.15f,
+              left + w, yTop + h * 0.35f,
+              left + w, yTop + h * 0.55f);
+        // Right engine area - widens at base
+        path.lineTo(left + w * 0.95f, yTop + h * 0.75f);
+        path.lineTo(left + w * 0.95f, yTop + h * 0.95f);
+        // Engine nozzles at bottom
+        path.lineTo(left + w * 0.85f, yTop + h);
+        path.lineTo(left + w * 0.15f, yTop + h);
+        // Left engine area
+        path.lineTo(left + w * 0.05f, yTop + h * 0.95f);
+        path.lineTo(left + w * 0.05f, yTop + h * 0.75f);
+        // Left side - curves outward
+        path.lineTo(left, yTop + h * 0.55f);
+        path.curveTo(left, yTop + h * 0.35f,
+              left + w * 0.25f, yTop + h * 0.15f,
+              left + w * 0.5f, yTop);
+        path.closePath();
+
+        g2d.setColor(color);
+        g2d.fill(path);
+        g2d.setColor(color.darker());
+        g2d.draw(path);
+
+        // Engine glow line at bottom
+        g2d.setColor(new Color(255, 200, 50, 150));
+        g2d.drawLine((int) (left + w * 0.25f), (int) (yTop + h * 0.98f),
+              (int) (left + w * 0.75f), (int) (yTop + h * 0.98f));
+    }
+
+    /**
+     * Draws a SmallCraft silhouette: compact shuttle, smaller and rounder than a DropShip. Side view.
+     */
+    private void drawSmallCraftSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color) {
+        float w = width;
         float h = height;
         float left = xCenter - w / 2;
 
         GeneralPath path = new GeneralPath();
         // Nose pointing left
         path.moveTo(left, yTop + h * 0.45f);
-        // Top fuselage
-        path.lineTo(left + w * 0.3f, yTop + h * 0.3f);
-        // Wing top
-        path.lineTo(left + w * 0.5f, yTop);
-        path.lineTo(left + w * 0.7f, yTop + h * 0.15f);
-        // Tail top
-        path.lineTo(left + w, yTop);
-        path.lineTo(left + w, yTop + h * 0.35f);
-        // Engine
-        path.lineTo(left + w * 0.85f, yTop + h * 0.5f);
-        // Tail bottom
-        path.lineTo(left + w, yTop + h * 0.65f);
-        path.lineTo(left + w, yTop + h);
-        path.lineTo(left + w * 0.7f, yTop + h * 0.85f);
-        // Wing bottom
-        path.lineTo(left + w * 0.5f, yTop + h);
-        path.lineTo(left + w * 0.3f, yTop + h * 0.7f);
-        // Bottom fuselage to nose
+        // Top fuselage - rounded
+        path.curveTo(left + w * 0.15f, yTop + h * 0.1f,
+              left + w * 0.4f, yTop,
+              left + w * 0.7f, yTop + h * 0.15f);
+        // Tail
+        path.lineTo(left + w, yTop + h * 0.2f);
+        path.lineTo(left + w, yTop + h * 0.7f);
+        // Bottom fuselage - rounded
+        path.curveTo(left + w * 0.7f, yTop + h * 0.85f,
+              left + w * 0.4f, yTop + h,
+              left + w * 0.15f, yTop + h * 0.8f);
         path.closePath();
 
         g2d.setColor(color);
@@ -1347,14 +1495,291 @@ public class LOSElevationDiagramPanel extends JPanel {
     }
 
     /**
-     * Draws a default unit bar for unknown/other unit types.
+     * Draws a JumpShip silhouette: long thin vessel with a large solar sail. Side view.
+     */
+    private void drawJumpShipSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color) {
+        float w = width;
+        float h = height;
+        float left = xCenter - w / 2;
+
+        // Solar sail - large translucent rectangle at front
+        g2d.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 60));
+        int sailWidth = (int) (w * 0.15f);
+        g2d.fillRect((int) (left + w * 0.08f), (int) yTop, sailWidth, (int) h);
+        g2d.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 120));
+        g2d.drawRect((int) (left + w * 0.08f), (int) yTop, sailWidth, (int) h);
+
+        // Main hull - long thin cylinder
+        GeneralPath hull = new GeneralPath();
+        float hullTop = yTop + h * 0.35f;
+        float hullBottom = yTop + h * 0.65f;
+        hull.moveTo(left + w * 0.2f, yTop + h * 0.45f);
+        hull.lineTo(left + w * 0.25f, hullTop);
+        hull.lineTo(left + w * 0.9f, hullTop);
+        hull.lineTo(left + w, yTop + h * 0.45f);
+        hull.lineTo(left + w, yTop + h * 0.55f);
+        hull.lineTo(left + w * 0.9f, hullBottom);
+        hull.lineTo(left + w * 0.25f, hullBottom);
+        hull.lineTo(left + w * 0.2f, yTop + h * 0.55f);
+        hull.closePath();
+
+        g2d.setColor(color);
+        g2d.fill(hull);
+        g2d.setColor(color.darker());
+        g2d.draw(hull);
+
+        // Sail mast connecting hull to sail
+        g2d.setColor(color.darker());
+        g2d.drawLine((int) (left + w * 0.22f), (int) (yTop + h * 0.5f),
+              (int) (left + w * 0.15f), (int) (yTop + h * 0.5f));
+    }
+
+    /**
+     * Draws a WarShip silhouette: large armed capital ship, broader than a JumpShip. Side view.
+     */
+    private void drawWarShipSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color) {
+        float w = width;
+        float h = height;
+        float left = xCenter - w / 2;
+
+        GeneralPath hull = new GeneralPath();
+        // Pointed bow left
+        hull.moveTo(left, yTop + h * 0.5f);
+        hull.lineTo(left + w * 0.15f, yTop + h * 0.3f);
+        // Upper hull with weapon blisters
+        hull.lineTo(left + w * 0.3f, yTop + h * 0.2f);
+        hull.lineTo(left + w * 0.35f, yTop + h * 0.1f);
+        hull.lineTo(left + w * 0.45f, yTop);
+        hull.lineTo(left + w * 0.55f, yTop);
+        hull.lineTo(left + w * 0.65f, yTop + h * 0.1f);
+        hull.lineTo(left + w * 0.7f, yTop + h * 0.2f);
+        // Stern upper
+        hull.lineTo(left + w * 0.85f, yTop + h * 0.25f);
+        hull.lineTo(left + w, yTop + h * 0.35f);
+        // Engine block
+        hull.lineTo(left + w * 0.98f, yTop + h * 0.45f);
+        hull.lineTo(left + w * 0.98f, yTop + h * 0.55f);
+        hull.lineTo(left + w, yTop + h * 0.65f);
+        // Stern lower
+        hull.lineTo(left + w * 0.85f, yTop + h * 0.75f);
+        hull.lineTo(left + w * 0.7f, yTop + h * 0.8f);
+        hull.lineTo(left + w * 0.65f, yTop + h * 0.9f);
+        hull.lineTo(left + w * 0.55f, yTop + h);
+        hull.lineTo(left + w * 0.45f, yTop + h);
+        hull.lineTo(left + w * 0.35f, yTop + h * 0.9f);
+        hull.lineTo(left + w * 0.3f, yTop + h * 0.8f);
+        hull.lineTo(left + w * 0.15f, yTop + h * 0.7f);
+        hull.closePath();
+
+        g2d.setColor(color);
+        g2d.fill(hull);
+        g2d.setColor(color.darker());
+        g2d.draw(hull);
+
+        // Engine glow
+        g2d.setColor(new Color(255, 200, 50, 150));
+        g2d.drawLine((int) (left + w * 0.98f), (int) (yTop + h * 0.47f),
+              (int) (left + w * 0.98f), (int) (yTop + h * 0.53f));
+    }
+
+    /**
+     * Draws a SpaceStation silhouette: cylindrical/modular structure with docking rings. Side view.
+     */
+    private void drawSpaceStationSilhouette(Graphics2D g2d, int xCenter, int yTop,
+          int width, int height, Color color) {
+        float w = width;
+        float h = height;
+        float left = xCenter - w / 2;
+
+        // Central cylinder
+        float cylTop = yTop + h * 0.25f;
+        float cylBottom = yTop + h * 0.75f;
+        g2d.setColor(color);
+        g2d.fillRect((int) (left + w * 0.2f), (int) cylTop,
+              (int) (w * 0.6f), (int) (cylBottom - cylTop));
+        g2d.setColor(color.darker());
+        g2d.drawRect((int) (left + w * 0.2f), (int) cylTop,
+              (int) (w * 0.6f), (int) (cylBottom - cylTop));
+
+        // Habitat ring - left
+        g2d.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 140));
+        g2d.fillOval((int) left, (int) yTop, (int) (w * 0.25f), (int) h);
+        g2d.setColor(color.darker());
+        g2d.drawOval((int) left, (int) yTop, (int) (w * 0.25f), (int) h);
+
+        // Habitat ring - right
+        g2d.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 140));
+        g2d.fillOval((int) (left + w * 0.75f), (int) yTop, (int) (w * 0.25f), (int) h);
+        g2d.setColor(color.darker());
+        g2d.drawOval((int) (left + w * 0.75f), (int) yTop, (int) (w * 0.25f), (int) h);
+
+        // Docking spars connecting rings to cylinder
+        g2d.setColor(color.darker());
+        float midY = yTop + h * 0.5f;
+        g2d.drawLine((int) (left + w * 0.12f), (int) midY, (int) (left + w * 0.2f), (int) midY);
+        g2d.drawLine((int) (left + w * 0.8f), (int) midY, (int) (left + w * 0.88f), (int) midY);
+    }
+
+    /**
+     * Loads a silhouette PNG from the LOS silhouette directory, caching the result.
+     *
+     * @param filename the image filename (e.g., "Submarine.png")
+     *
+     * @return the loaded image, or null if the file could not be loaded
+     */
+    private static BufferedImage loadSilhouetteImage(String filename) {
+        if (silhouetteCache.containsKey(filename)) {
+            return silhouetteCache.get(filename);
+        }
+
+        BufferedImage image = null;
+        File imageFile = new File(Configuration.imagesDir(), LOS_SILHOUETTE_DIR + filename);
+        System.err.println("[LOS] Loading silhouette: "
+              + imageFile.getAbsolutePath()
+              + " exists="
+              + imageFile.exists());
+        if (imageFile.exists()) {
+            try {
+                image = ImageIO.read(imageFile);
+            } catch (Exception ignored) {
+                // Failed to load - will cache null
+            }
+        }
+        silhouetteCache.put(filename, image);
+        return image;
+    }
+
+    /**
+     * Creates a tinted copy of a silhouette image. Dark pixels (near black) are recolored to the target color, and
+     * light pixels (near white) become transparent. This allows black-on-white silhouette PNGs to be drawn in any unit
+     * color.
+     *
+     * @param source the source silhouette image (black on white)
+     * @param color  the target tint color
+     *
+     * @return a new BufferedImage with tinted pixels
+     */
+    private static BufferedImage tintSilhouette(BufferedImage source, Color color) {
+        int width = source.getWidth();
+        int height = source.getHeight();
+        BufferedImage tinted = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        int targetRgb = color.getRGB() & 0x00FFFFFF;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pixel = source.getRGB(x, y);
+                int sourceAlpha = (pixel >> 24) & 0xFF;
+
+                // Skip fully transparent pixels
+                if (sourceAlpha == 0) {
+                    tinted.setRGB(x, y, 0x00000000);
+                    continue;
+                }
+
+                int red = (pixel >> 16) & 0xFF;
+                int green = (pixel >> 8) & 0xFF;
+                int blue = pixel & 0xFF;
+
+                // Luminance: how bright is this pixel (0 = black, 255 = white)
+                int luminance = (red + green + blue) / 3;
+
+                if (luminance < 180) {
+                    // Dark pixel - tint to unit color, alpha based on darkness and source alpha
+                    int alpha = Math.min(sourceAlpha, 255 - luminance);
+                    tinted.setRGB(x, y, (alpha << 24) | targetRgb);
+                } else {
+                    // Light pixel - transparent
+                    tinted.setRGB(x, y, 0x00000000);
+                }
+            }
+        }
+        return tinted;
+    }
+
+    /**
+     * Draws a silhouette image scaled to fit the given bounds, maintaining aspect ratio and centered horizontally. The
+     * image is anchored at the bottom (feet/keel on ground level).
+     *
+     * <p>The source image is assumed to face right (bow/nose pointing right). When {@code facingRight} is false,
+     * the image is flipped horizontally so the unit faces left (toward the attacker).</p>
+     *
+     * @param facingRight true if the unit faces right (attacker), false to flip horizontally (target)
+     */
+    private void drawSilhouetteImage(Graphics2D g2d, BufferedImage image, int xCenter, int yTop,
+          int maxWidth, int maxHeight, Color color, boolean facingRight) {
+        BufferedImage tinted = tintSilhouette(image, color);
+
+        // Scale to fill the full height (TW levels), but cap width to avoid spilling
+        // far beyond the column. Uses the larger of maxWidth or 1.5x maxWidth as the cap.
+        int imgWidth = tinted.getWidth();
+        int imgHeight = tinted.getHeight();
+        double scaleByHeight = (double) maxHeight / imgHeight;
+        int widthIfFullHeight = (int) (imgWidth * scaleByHeight);
+
+        // If width would exceed 1.5x the column width, constrain by width instead
+        int maxAllowedWidth = (int) (maxWidth * 1.5);
+        double scale;
+        if (widthIfFullHeight > maxAllowedWidth) {
+            scale = (double) maxAllowedWidth / imgWidth;
+        } else {
+            scale = scaleByHeight;
+        }
+
+        int drawWidth = (int) (imgWidth * scale);
+        int drawHeight = (int) (imgHeight * scale);
+        int drawX = xCenter - drawWidth / 2;
+        // Anchor at bottom (feet on ground level)
+        int drawY = yTop + maxHeight - drawHeight;
+
+        if (facingRight) {
+            g2d.drawImage(tinted, drawX, drawY, drawWidth, drawHeight, null);
+        } else {
+            // Flip horizontally: draw from right edge to left edge
+            g2d.drawImage(tinted, drawX + drawWidth, drawY, -drawWidth, drawHeight, null);
+        }
+    }
+
+    /**
+     * Draws a crosshair marker for empty hex selections (no unit present).
      */
     private void drawDefaultBar(Graphics2D g2d, int xCenter, int yTop,
           int width, int height, Color color) {
+        BufferedImage image = loadCrosshairImage();
+        if (image != null) {
+            int size = Math.min(width, height);
+            int drawX = xCenter - size / 2;
+            int drawY = yTop + (height - size) / 2;
+            g2d.drawImage(image, drawX, drawY, size, size, null);
+            return;
+        }
+
+        // Fallback: simple colored rectangle
         g2d.setColor(color);
         g2d.fillRect(xCenter - width / 2, yTop, width, height);
         g2d.setColor(color.darker());
         g2d.drawRect(xCenter - width / 2, yTop, width, height);
+    }
+
+    /** Cached crosshair image for empty hex targets. */
+    private static BufferedImage crosshairImage;
+    private static boolean crosshairLoaded = false;
+
+    private static BufferedImage loadCrosshairImage() {
+        if (crosshairLoaded) {
+            return crosshairImage;
+        }
+        crosshairLoaded = true;
+        File imageFile = new File(Configuration.imagesDir(), "hexes" + File.separator + "nukeinc.gif");
+        if (imageFile.exists()) {
+            try {
+                crosshairImage = ImageIO.read(imageFile);
+            } catch (Exception ignored) {
+                // Failed to load
+            }
+        }
+        return crosshairImage;
     }
 
     /**

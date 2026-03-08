@@ -1445,7 +1445,7 @@ public class TestSupportVehicle extends TestEntity {
               .append(printSource())
               .append(printShortMovement());
 
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             if (!usesKgStandard()) {
                 buff.append("Weight: ")
                       .append(getWeight())

@@ -1037,7 +1037,7 @@ public abstract class TestEntity implements TestEntityOption {
      * if the calculated weight is lower than the assumed weight; in both cases a margin can be set by the test options.
      * This method should be overridden for unit types that require other tests.
      *
-     * @param buff              The Stringbuffer to append error messages to
+     * @param buff              The StringBuffer to append error messages to
      * @param ignoreOverweight  When true, ignore overweight
      * @param ignoreUnderweight When true, ignore underweight
      *
@@ -1046,13 +1046,16 @@ public abstract class TestEntity implements TestEntityOption {
     public boolean correctWeight(StringBuffer buff, boolean ignoreOverweight, boolean ignoreUnderweight) {
         double weightSum = calculateWeight();
         double weight = getWeight();
+        boolean useKg = usesKgStandard();
 
         if (!ignoreOverweight && ((weight + getMaxOverweight()) < weightSum)) {
-            buff.append("Weight: %f is greater than %f\n".formatted(weightSum, weight));
+            buff.append("Weight: %s is greater than %s\n"
+                  .formatted(makeWeightString(weightSum, useKg), makeWeightString(weight, useKg)));
             return false;
         }
         if (!ignoreUnderweight && ((weight - getMinUnderweight()) > weightSum)) {
-            buff.append("Weight: %f is less than %f\n".formatted(weightSum, weight));
+            buff.append("Weight: %s is less than %s\n"
+                  .formatted(makeWeightString(weightSum, useKg), makeWeightString(weight, useKg)));
             return false;
         }
         return true;

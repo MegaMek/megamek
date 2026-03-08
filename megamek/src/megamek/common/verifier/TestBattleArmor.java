@@ -1119,7 +1119,7 @@ public class TestBattleArmor extends TestEntity {
         buff.append("Intro year: ").append(ba.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             buff.append("Weight: ").append(getWeight() * 1000).append(" kg (")
                   .append(calculateWeight() * 1000).append(" kg)\n");
         }

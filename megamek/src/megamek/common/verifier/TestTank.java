@@ -607,7 +607,7 @@ public class TestTank extends TestEntity {
         buff.append("Intro year: ").append(tank.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             buff.append("Weight: ").append(getWeight()).append(" (").append(
                   calculateWeight()).append(")\n");
         }

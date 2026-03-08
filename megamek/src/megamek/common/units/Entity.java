@@ -15544,6 +15544,8 @@ public abstract class Entity extends TurnOrdered
             if (this instanceof Tank) {
                 setCarcass(true);
                 ((Tank) this).immobilize();
+            } else if (this instanceof AbstractBuildingEntity) {
+                setCarcass(true);
             } else {
                 setDestroyed(true);
             }

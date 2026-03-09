@@ -62,9 +62,9 @@ public class InfantryCombatResultTest {
         InfantryCombatResult result = InfantryCombatResult.repulsed(30);
 
         assertEquals(InfantryCombatResult.ResultType.REPULSED, result.getType());
-        // Repulsed takes half damage
-        assertEquals(15, result.getAttackerCasualties());
-        assertEquals(0, result.getDefenderCasualties());
+        // E/30% — attacker eliminated (100%), defender takes 30%
+        assertEquals(100, result.getAttackerCasualties());
+        assertEquals(30, result.getDefenderCasualties());
         assertFalse(result.isDefenderEliminated());
         assertTrue(result.isAttackerRepulsed());
         assertFalse(result.isPartialControl());
@@ -72,7 +72,7 @@ public class InfantryCombatResultTest {
 
     @Test
     void testPartial_DefenderEliminated() {
-        InfantryCombatResult result = InfantryCombatResult.partial(25, true);
+        InfantryCombatResult result = InfantryCombatResult.partial(25, 100);
 
         assertEquals(InfantryCombatResult.ResultType.PARTIAL, result.getType());
         assertEquals(25, result.getAttackerCasualties());
@@ -83,13 +83,12 @@ public class InfantryCombatResultTest {
     }
 
     @Test
-    void testPartial_DefenderHalfDamage() {
-        InfantryCombatResult result = InfantryCombatResult.partial(40, false);
+    void testPartial_BothTakeCasualties() {
+        InfantryCombatResult result = InfantryCombatResult.partial(30, 55);
 
         assertEquals(InfantryCombatResult.ResultType.PARTIAL, result.getType());
-        assertEquals(40, result.getAttackerCasualties());
-        // Defender takes half of attacker's casualties
-        assertEquals(20, result.getDefenderCasualties());
+        assertEquals(30, result.getAttackerCasualties());
+        assertEquals(55, result.getDefenderCasualties());
         assertFalse(result.isDefenderEliminated());
         assertFalse(result.isAttackerRepulsed());
         assertTrue(result.isPartialControl());
@@ -134,7 +133,7 @@ public class InfantryCombatResultTest {
 
     @Test
     void testToString_Partial() {
-        InfantryCombatResult result = InfantryCombatResult.partial(25, false);
+        InfantryCombatResult result = InfantryCombatResult.partial(25, 0);
         String str = result.toString();
 
         assertTrue(str.contains("Partial") || str.contains("P"));

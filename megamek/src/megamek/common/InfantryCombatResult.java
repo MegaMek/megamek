@@ -37,8 +37,8 @@ package megamek.common;
  * Represents the result of an infantry vs. infantry combat action based on TOAR Infantry vs. Infantry Action Table.
  * <p>
  * Results can be: - ELIMINATED ('E'): Defender is eliminated - REPULSED ('R'): Attacker is repulsed and takes half
- * damage - PARTIAL ('P'): Partial control, defenders eliminated or take half damage - CASUALTIES: Numeric percentage of
- * casualties (stored as value)
+ * damage - PARTIAL ('P'): Partial control, defenders eliminated or will no longer take half damage - CASUALTIES:
+ * Numeric percentage of casualties (stored as value)
  */
 public class InfantryCombatResult {
 

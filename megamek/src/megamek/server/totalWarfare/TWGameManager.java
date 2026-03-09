@@ -6333,8 +6333,7 @@ public class TWGameManager extends AbstractGameManager {
                 // Check packet came from right ID
                 if (rp.getConnectionId() != playerId) {
                     // Re-queue packet for other handlers - don't discard it
-                    LOGGER.trace("processTeleguidedMissileCFR: re-queuing packet from wrong player {}",
-                          rp.getConnectionId());
+                    LOGGER.trace("processTeleguidedMissileCFR: re-queuing packet from wrong player {}", rp.getConnectionId());
                     cfrPacketQueue.add(rp);
                     continue;
                 }
@@ -7980,9 +7979,9 @@ public class TWGameManager extends AbstractGameManager {
      * scenario (one-use).
      * </p>
      *
-     * @param entity      The entity to check for triggering EMP mines
-     * @param coords      The coordinates to check for EMP mines
-     * @param vMineReport Vector to collect reports from mine detonation
+     * @param entity       The entity to check for triggering EMP mines
+     * @param coords       The coordinates to check for EMP mines
+     * @param vMineReport  Vector to collect reports from mine detonation
      *
      * @return true if any EMP mines were triggered
      */
@@ -15641,8 +15640,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Process an infantry combat action declaration (joining or initiating combat). Called when a player declares
-     * InfantryCombatAction during END phase.
+     * Process an infantry combat action declaration (joining or initiating combat).
+     * Called when a player declares InfantryCombatAction during END phase.
      *
      * @param action the infantry combat action
      */
@@ -15711,9 +15710,9 @@ public class TWGameManager extends AbstractGameManager {
             // Find enemy infantry in the building (additional defenders)
             for (Entity e : game.getEntitiesVector()) {
                 if (e instanceof Infantry &&
-                      e.getPosition() != null &&
-                      e.getPosition().equals(building.getPosition()) &&
-                      e.getOwner().isEnemyOf(entity.getOwner())) {
+                    e.getPosition() != null &&
+                    e.getPosition().equals(building.getPosition()) &&
+                    e.getOwner().isEnemyOf(entity.getOwner())) {
                     defenders.add(e);
                 }
             }
@@ -15741,8 +15740,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Resolve infantry vs. infantry actions (TOAR p. 167-174). Called during End Phase to process all active infantry
-     * actions.
+     * Resolve infantry vs. infantry actions (TOAR p. 167-174).
+     * Called during End Phase to process all active infantry actions.
      *
      * <p>Supports actions in buildings, Large Naval Vessels, and aerospace units.</p>
      */
@@ -15785,10 +15784,11 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Resolve one infantry vs. infantry action. Supports buildings, Large Naval Vessels, and aerospace units.
+     * Resolve one infantry vs. infantry action.
+     * Supports buildings, Large Naval Vessels, and aerospace units.
      */
     private void resolveOneInfantryAction(InfantryActionTracker.InfantryAction combat,
-          InfantryActionTracker tracker) {
+                                           InfantryActionTracker tracker) {
         // Get target entity (building, ship, or aerospace unit)
         Entity buildingEntity = game.getEntity(combat.targetId);
         if (!(buildingEntity instanceof megamek.common.units.AbstractBuildingEntity building)) {
@@ -15838,7 +15838,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Resolve combat on table
         megamek.common.InfantryCombatResult result =
-              megamek.common.compute.InfantryCombatTables.resolveAction(ratio, roll);
+            megamek.common.compute.InfantryCombatTables.resolveAction(ratio, roll);
 
         // Report combat header
         reportCombatHeader(building);
@@ -15850,10 +15850,9 @@ public class TWGameManager extends AbstractGameManager {
         // ELIMINATED results also bypass the half-damage rule — the table already
         // decided the defenders are wiped out, so the sustained-combat protection
         // should not reduce that to 50%.
-        if (result.getType() == megamek.common.InfantryCombatResult.ResultType.PARTIAL
-              ||
-              result.getType() == megamek.common.InfantryCombatResult.ResultType.ELIMINATED
-              || result.isDefenderEliminated()) {
+        if (result.getType() == megamek.common.InfantryCombatResult.ResultType.PARTIAL ||
+                  result.getType() == megamek.common.InfantryCombatResult.ResultType.ELIMINATED ||
+                  result.isDefenderEliminated()) {
             combat.hasPartialControl = true;
         }
 
@@ -15876,7 +15875,7 @@ public class TWGameManager extends AbstractGameManager {
             int finalAttackerMPS = calculateTotalMPS(combat.attackerIds, building);
             int finalDefenderMPS = calculateTotalMPS(combat.defenderIds, building);
 
-            if (finalAttackerMPS <= 0) {
+            if (finalAttackerMPS <= 0 ) {
                 reportSideEliminated(combat, tracker, true);
             } else if (finalDefenderMPS <= 0) {
                 reportSideEliminated(combat, tracker, false);
@@ -15896,9 +15895,7 @@ public class TWGameManager extends AbstractGameManager {
                 LOGGER.debug("Entity {} ({}) MPS: {}", entityId, entity.getDisplayName(), entityMPS);
                 total += entityMPS;
             } else if (entity != null) {
-                LOGGER.debug("Entity {} ({}) is destroyed/doomed, contributes 0 MPS",
-                      entityId,
-                      entity.getDisplayName());
+                LOGGER.debug("Entity {} ({}) is destroyed/doomed, contributes 0 MPS", entityId, entity.getDisplayName());
             }
         }
         LOGGER.debug("Total MPS: {}", total);
@@ -15909,8 +15906,8 @@ public class TWGameManager extends AbstractGameManager {
      * Process attacker withdrawal.
      */
     private void processWithdrawal(InfantryActionTracker.InfantryAction combat,
-          InfantryActionTracker tracker,
-          megamek.common.units.AbstractBuildingEntity building) {
+                                    InfantryActionTracker tracker,
+                                    megamek.common.units.AbstractBuildingEntity building) {
         Report r = new Report(5639);  // "Attacking forces withdraw from {0}"
         r.add(building.getDisplayName());
         addReport(r);
@@ -15938,7 +15935,7 @@ public class TWGameManager extends AbstractGameManager {
      * Apply casualties to one side.
      */
     private void applyCasualties(InfantryActionTracker.InfantryAction combat,
-          int percentCasualties, boolean isAttacker) {
+                                  int percentCasualties, boolean isAttacker) {
         if (percentCasualties <= 0) {
             return;
         }
@@ -16098,7 +16095,7 @@ public class TWGameManager extends AbstractGameManager {
      * Report combat ratio.
      */
     private void reportCombatRatio(megamek.common.units.AbstractBuildingEntity building,
-          int attackerMPS, int defenderMPS, String ratio) {
+                                    int attackerMPS, int defenderMPS, String ratio) {
         Report r = new Report(5631);  // "Attackers: {0} MPS, Defenders: {1} MPS (ratio {2})"
         r.add(attackerMPS);
         r.add(defenderMPS);
@@ -16110,7 +16107,7 @@ public class TWGameManager extends AbstractGameManager {
      * Report combat roll and result.
      */
     private void reportCombatRoll(megamek.common.units.AbstractBuildingEntity building,
-          int roll, megamek.common.InfantryCombatResult result) {
+                                   int roll, megamek.common.InfantryCombatResult result) {
         Report r = new Report(5632);  // "Combat roll: {0}, Result: {1}"
         r.add(roll);
         r.add(result.toString());
@@ -16121,8 +16118,8 @@ public class TWGameManager extends AbstractGameManager {
      * Report and handle one side being eliminated.
      */
     private void reportSideEliminated(InfantryActionTracker.InfantryAction combat,
-          InfantryActionTracker tracker,
-          boolean attackersEliminated) {
+                                       InfantryActionTracker tracker,
+                                       boolean attackersEliminated) {
         Report r = new Report(attackersEliminated ? 5636 : 5638);  // "Side eliminated"
         addReport(r);
 
@@ -16133,7 +16130,7 @@ public class TWGameManager extends AbstractGameManager {
      * Report and handle attackers being repulsed.
      */
     private void reportSideRepulsed(InfantryActionTracker.InfantryAction combat,
-          InfantryActionTracker tracker) {
+                                     InfantryActionTracker tracker) {
         Report r = new Report(5637);  // "Attacking forces repulsed"
         addReport(r);
 
@@ -16144,7 +16141,7 @@ public class TWGameManager extends AbstractGameManager {
      * Clean up combat and clear entity states.
      */
     private void cleanupCombat(InfantryActionTracker.InfantryAction combat,
-          InfantryActionTracker tracker) {
+                                InfantryActionTracker tracker) {
         // Clear all entity states
         for (int entityId : combat.attackerIds) {
             Entity entity = game.getEntity(entityId);
@@ -29450,13 +29447,15 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Launches a Combat Vehicle Escape Pod per TO:AUE p.121.
      * <p>
-     * The crew attempts to escape via the CVEP: 1. Piloting Skill Roll +2 for launch 2. Pod travels up to 4 hexes
-     * directly behind the vehicle 3. Landing roll (MekWarrior Ejection roll) +2 4. Each failed roll results in one
-     * crewman taking a hit 5. Surviving crew become conventional foot infantry 6. Vehicle is destroyed (Crew Killed
-     * result)
+     * The crew attempts to escape via the CVEP:
+     * 1. Piloting Skill Roll +2 for launch
+     * 2. Pod travels up to 4 hexes directly behind the vehicle
+     * 3. Landing roll (MekWarrior Ejection roll) +2
+     * 4. Each failed roll results in one crewman taking a hit
+     * 5. Surviving crew become conventional foot infantry
+     * 6. Vehicle is destroyed (Crew Killed result)
      *
      * @param tank The Tank launching the escape pod
-     *
      * @return Vector of Reports for the game log
      */
     public Vector<Report> launchCombatVehicleEscapePod(Tank tank, Coords chosenLandingHex) {
@@ -29681,9 +29680,10 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Processes pending Mek abandonments per TacOps:AR p.165. Called during End Phase to: 1. Execute abandonments that
-     * were announced in the previous End Phase 2. Cancel abandonments if the Mek is no longer prone and shutdown (Meks
-     * only)
+     * Processes pending Mek abandonments per TacOps:AR p.165.
+     * Called during End Phase to:
+     * 1. Execute abandonments that were announced in the previous End Phase
+     * 2. Cancel abandonments if the Mek is no longer prone and shutdown (Meks only)
      */
     void processUnitAbandonments() {
         int currentRound = game.getRoundCount();

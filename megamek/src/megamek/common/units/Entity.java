@@ -14508,7 +14508,9 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if this unit has patchwork armor.
+     * @return True if this unit has patchwork armor. Note that this is checked by comparing actual armor types (and
+     *       tech level) across the locations - in other words, it is *not* a simple boolean flag; instead, the result
+     *       will always correspond to the unit's armoring.
      */
     public boolean hasPatchworkArmor() {
         int type = armorType[0];
@@ -15542,6 +15544,8 @@ public abstract class Entity extends TurnOrdered
             if (this instanceof Tank) {
                 setCarcass(true);
                 ((Tank) this).immobilize();
+            } else if (this instanceof AbstractBuildingEntity) {
+                setCarcass(true);
             } else {
                 setDestroyed(true);
             }

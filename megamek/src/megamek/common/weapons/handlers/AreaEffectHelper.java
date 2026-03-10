@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -479,10 +479,9 @@ public class AreaEffectHelper {
                 } else if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)
                       && attackSource.equals(coords)) {
                     if (entity instanceof Mek) {
-                        toHit.setHitTable(ToHitData.HIT_ABOVE);
+                        toHit.setHitTable(ToHitData.HIT_NORMAL);
                     } else if (entity instanceof Tank) {
-                        toHit.setSideTable(ToHitData.SIDE_FRONT);
-                        toHit.addModifier(2, "cluster artillery hitting a Tank");
+                        toHit.setHitTable(ToHitData.HIT_NORMAL);
                     }
                 }
 
@@ -506,7 +505,9 @@ public class AreaEffectHelper {
         // Entity/ammo specific damage modifiers
         if (ammo != null) {
             if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
-                if (hex != null && hex.containsTerrain(Terrains.FORTIFIED) && entity.isConventionalInfantry()) {
+                if (hex != null &&
+                      (hex.containsTerrain(Terrains.FORTIFIED) || hex.containsTerrain(Terrains.WOODS)) &&
+                      entity.isConventionalInfantry()) {
                     hits *= 2;
                 }
             }

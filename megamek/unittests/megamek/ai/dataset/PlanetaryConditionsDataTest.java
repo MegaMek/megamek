@@ -35,6 +35,7 @@ package megamek.ai.dataset;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.Fog;
@@ -84,11 +85,5 @@ class PlanetaryConditionsDataTest {
         assertNotNull(serialized);
         assertTrue(serialized.contains("20"));
         assertTrue(serialized.contains("0.90")); // format handler for float
-    }
-
-    private void assertTrue(boolean condition) {
-        if (!condition) {
-            throw new AssertionError();
-        }
     }
 }

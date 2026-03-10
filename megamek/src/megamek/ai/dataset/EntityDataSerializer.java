@@ -59,11 +59,11 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
 
     protected static final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
 
-    // Shared format handlers for special types that need custom serialization
     protected final Map<Class<?>, Function<Object, String>> formatHandlers = new HashMap<>();
     public static final String TAB = "\t";
     public static final String VERSION = "VERSION";
 
+    // Shared format handlers for special types that need custom serialization
     private static final Map<Class<?>, Function<Object, String>> DEFAULT_FORMAT_HANDLERS = new HashMap<>();
 
     // Initialize default formatters for common types
@@ -110,7 +110,7 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
         this.fieldOrder = Arrays.asList(fieldEnumClass.getEnumConstants());
         this.formatHandlers.putAll(DEFAULT_FORMAT_HANDLERS);
     }
-    
+
     public String serialize(T entityData) {
         List<String> values = new ArrayList<>(fieldOrder.size() + 1); // +1 for version column
 

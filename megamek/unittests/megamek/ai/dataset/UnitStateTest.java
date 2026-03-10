@@ -35,6 +35,7 @@ package megamek.ai.dataset;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 
@@ -108,11 +109,5 @@ class UnitStateTest {
         assertNotNull(serialized);
         assertTrue(serialized.contains("Locust"));
         assertTrue(serialized.contains("1")); // for ID or DONE (as 1)
-    }
-
-    private void assertTrue(boolean condition) {
-        if (!condition) {
-            throw new AssertionError();
-        }
     }
 }

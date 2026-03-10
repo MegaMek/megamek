@@ -40,11 +40,11 @@ import java.util.stream.Collectors;
 import megamek.ai.utility.EntityFeatureUtils;
 import megamek.client.ui.SharedUtility;
 import megamek.common.compute.Compute;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.UnitRole;
-import megamek.common.moves.MovePath;
-import megamek.common.moves.MoveStep;
 
 /**
  * Flexible container for unit action data using a map-based approach with enum keys.

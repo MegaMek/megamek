@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -242,9 +242,9 @@ public class ComputeToHit {
 
         // Break weapon type checks into logical groups
         boolean isLrmType = (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
-                (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP);
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP);
         boolean isSrmType = (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM) ||
-                (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP);
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP);
         boolean isMmlType = (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML);
 
         // Combine into weapon compatibility check
@@ -371,7 +371,8 @@ public class ComputeToHit {
                   (te != null) &&
                   (ammoType != null) &&
                   usesAmmo &&
-                  ((munition.contains(AmmoType.Munitions.M_NARC_CAPABLE) || munition.contains(AmmoType.Munitions.M_ARAD) )&&
+                  ((munition.contains(AmmoType.Munitions.M_NARC_CAPABLE)
+                        || munition.contains(AmmoType.Munitions.M_ARAD)) &&
                         (te.isNarcedBy(ae.getOwner().getTeam()) || te.isINarcedBy(ae.getOwner().getTeam())))) {
                 spotter = te;
                 narcSpotter = true;
@@ -1008,11 +1009,12 @@ public class ComputeToHit {
               (targetType == Targetable.TYPE_FUEL_TANK) ||
               (targetType == Targetable.TYPE_FUEL_TANK_IGNITE) ||
               (target.isBuildingEntityOrGunEmplacement());
-        
-        if ((distance == 1) && isBuilding && (ae.moved != EntityMovementType.MOVE_SPRINT && ae.moved != EntityMovementType.MOVE_VTOL_SPRINT)) {
+
+        if ((distance == 1) && isBuilding && (ae.moved != EntityMovementType.MOVE_SPRINT
+              && ae.moved != EntityMovementType.MOVE_VTOL_SPRINT)) {
             return Messages.getString("WeaponAttackAction.AdjBuilding");
         }
-        
+
         // Attacks against buildings from inside automatically hit.
         if ((null != los.getThruBldg()) && isBuilding) {
             return Messages.getString("WeaponAttackAction.InsideBuilding");
@@ -1540,11 +1542,12 @@ public class ComputeToHit {
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
-                  (munition.contains(AmmoType.Munitions.M_SEMIGUIDED))) {
+                  (munition.contains(AmmoType.Munitions.M_SEMIGUIDED)) &&
+                  (Compute.isTargetTagged(target, game))) {
 
-                if (Compute.isTargetTagged(target, game)) {
-                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SemiGuidedIndirect"));
-                }
+
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SemiGuidedIndirect"));
+
             } else if (!narcSpotter && (spotter != null)) {
                 // Unless the target has been tagged, or the spotter has an active command
                 // console

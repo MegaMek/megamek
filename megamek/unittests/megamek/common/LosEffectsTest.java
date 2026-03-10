@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -58,7 +58,6 @@ import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -77,6 +76,27 @@ public class LosEffectsTest extends GameBoardTestCase {
               hex 0103 0 "" ""
               hex 0104 0 "" ""
               hex 0105 0 "" ""
+              end"""
+        );
+
+        initializeBoard("02_BY_08_FIELDS", """
+              size 2 8
+              hex 0101 0 "planted_fields:1" ""
+              hex 0201 0 "planted_fields:1" ""
+              hex 0102 0 "planted_fields:1" ""
+              hex 0202 0 "planted_fields:1" ""
+              hex 0103 0 "planted_fields:1" ""
+              hex 0203 0 "planted_fields:1" ""
+              hex 0104 0 "planted_fields:1" ""
+              hex 0204 1 "planted_fields:1" ""
+              hex 0105 0 "planted_fields:1" ""
+              hex 0205 0 "planted_fields:1" ""
+              hex 0106 0 "planted_fields:1" ""
+              hex 0206 0 "planted_fields:1" ""
+              hex 0107 0 "planted_fields:1" ""
+              hex 0207 0 "planted_fields:1" ""
+              hex 0108 0 "planted_fields:1" ""
+              hex 0208 0 "planted_fields:1" ""
               end"""
         );
 
@@ -140,6 +160,236 @@ public class LosEffectsTest extends GameBoardTestCase {
             assertNotNull(result, "LosEffects should not be null");
             assertTrue(result.hasLoS, "Should have line of sight on flat unobstructed terrain");
             assertFalse(result.blocked, "LOS should not be blocked on flat unobstructed terrain");
+        }
+    }
+
+    /**
+     * Tests for {@link LosEffects#calculateLos(Game, LosEffects.AttackInfo)} with Standard LOS Rules
+     */
+    @Nested
+    @DisplayName(value = "calculateLos with Standard LOS Tests")
+    class CalculateLosTestsWithStandardLOS {
+        private static GameOptions mockGameOptions;
+
+        @BeforeEach
+        void setUp() {
+            setBoard("02_BY_08_FIELDS");
+            mockGameOptions = mock(GameOptions.class);
+            game.setOptions(mockGameOptions);
+            when(mockGameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS1)).thenReturn(false);
+        }
+
+        @Test
+        @DisplayName(value = "should have clear LOS over planted fields")
+        void shouldHaveClearLos_OverPlantedFields() {
+            // Arrange
+            LosEffects.AttackInfo attackInfo = new LosEffects.AttackInfo();
+            attackInfo.attackPos = new Coords(0, 0);
+            attackInfo.targetPos = new Coords(0, 7);
+            attackInfo.attackAbsHeight = 1;
+            attackInfo.targetAbsHeight = 1;
+            attackInfo.attOnLand = true;
+            attackInfo.targetOnLand = true;
+            attackInfo.targetEntity = true;
+
+            // Act
+            LosEffects result = LosEffects.calculateLos(game, attackInfo);
+
+            // Assert
+            assertNotNull(result, "LosEffects should not be null");
+            assertFalse(result.blocked, "Should not have line of sight blocked by terrain");
+            assertEquals(0, result.plantedFields, """
+                  Should have exactly 0 intervening planted fields""");
+            assertTrue(result.hasLoS, "Should have line of sight over planted fields");
+        }
+
+        @Test
+        @DisplayName(value = "should have blocked LOS with 6 planted fields")
+        void shouldBlockLos_OverPlantedFields() {
+            // Arrange
+            LosEffects.AttackInfo attackInfo = new LosEffects.AttackInfo();
+            attackInfo.attackPos = new Coords(0, 0);
+            attackInfo.targetPos = new Coords(0, 7);
+            attackInfo.attackAbsHeight = 0;
+            attackInfo.targetAbsHeight = 0;
+            attackInfo.attOnLand = true;
+            attackInfo.targetOnLand = true;
+            attackInfo.targetEntity = true;
+
+            // Act
+            LosEffects result = LosEffects.calculateLos(game, attackInfo);
+
+            // Assert
+            assertNotNull(result, "LosEffects should not be null");
+            assertFalse(result.blocked, "Should not have line of sight blocked by terrain");
+            assertEquals(6, result.plantedFields, """
+                  Should have exactly 6 intervening planted fields""");
+            assertFalse(result.hasLoS, "Should not have line of sight because of 6 intervening planted fields");
+
+        }
+
+        @Test
+        @DisplayName(value = "should have intervening LOS over planted fields")
+        void shouldHaveInterveningLos_OverPlantedFields() {
+            // Arrange
+            LosEffects.AttackInfo attackInfo = new LosEffects.AttackInfo();
+            attackInfo.attackPos = new Coords(0, 0);
+            attackInfo.targetPos = new Coords(0, 7);
+            attackInfo.attackAbsHeight = 2;
+            attackInfo.targetAbsHeight = 0;
+            attackInfo.attOnLand = true;
+            attackInfo.targetOnLand = true;
+            attackInfo.targetEntity = true;
+
+            // Act
+            LosEffects result = LosEffects.calculateLos(game, attackInfo);
+
+            // Assert
+            assertNotNull(result, "LosEffects should not be null");
+            assertFalse(result.blocked, "Should not have line of sight blocked by terrain");
+            assertEquals(1, result.plantedFields, """
+                  Should have exactly 1 intervening planted field""");
+            assertTrue(result.hasLoS, "Should have line of sight thru 1 planted field");
+        }
+
+
+        @Test
+        @DisplayName(value = "should have intervening LOS over raised planted fields")
+        void shouldHaveInterveningLos_OverRaisedPlantedFields() {
+            // Arrange
+            LosEffects.AttackInfo attackInfo = new LosEffects.AttackInfo();
+            attackInfo.attackPos = new Coords(1, 0);
+            attackInfo.targetPos = new Coords(1, 7);
+            attackInfo.attackAbsHeight = 1;
+            attackInfo.targetAbsHeight = 1;
+            attackInfo.attOnLand = true;
+            attackInfo.targetOnLand = true;
+            attackInfo.targetEntity = true;
+
+            // Act
+            LosEffects result = LosEffects.calculateLos(game, attackInfo);
+
+            // Assert
+            assertNotNull(result, "LosEffects should not be null");
+            assertFalse(result.blocked, "Should not have line of sight blocked by terrain");
+            assertEquals(1, result.plantedFields, """
+                  Should have exactly 1 intervening planted field""");
+            assertTrue(result.hasLoS, "Should have line of sight thru 1 raised planted field");
+        }
+
+    }
+
+    /**
+     * Tests for {@link LosEffects#calculateLos(Game, LosEffects.AttackInfo)} with Diagramming LOS
+     */
+    @Nested
+    @DisplayName(value = "calculateLos with Diagramming LOS Tests")
+    class CalculateLosTestsWithDigramLOS {
+        private static GameOptions mockGameOptions;
+
+        @BeforeEach
+        void setUp() {
+            setBoard("02_BY_08_FIELDS");
+            mockGameOptions = mock(GameOptions.class);
+            game.setOptions(mockGameOptions);
+            when(mockGameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS1)).thenReturn(true);
+        }
+
+        @Test
+        @DisplayName(value = "should have clear LOS over planted fields")
+        void shouldHaveClearLos_OverPlantedFields() {
+            // Arrange
+            LosEffects.AttackInfo attackInfo = new LosEffects.AttackInfo();
+            attackInfo.attackPos = new Coords(0, 0);
+            attackInfo.targetPos = new Coords(0, 7);
+            attackInfo.attackAbsHeight = 1;
+            attackInfo.targetAbsHeight = 1;
+            attackInfo.attOnLand = true;
+            attackInfo.targetOnLand = true;
+            attackInfo.targetEntity = true;
+
+            // Act
+            LosEffects result = LosEffects.calculateLos(game, attackInfo);
+
+            // Assert
+            assertNotNull(result, "LosEffects should not be null");
+            assertFalse(result.blocked, "Should not have line of sight blocked by terrain");
+            assertEquals(0, result.plantedFields, """
+                  Should have exactly 0 intervening planted fields""");
+            assertTrue(result.hasLoS, "Should have line of sight over planted fields");
+        }
+
+        @Test
+        @DisplayName(value = "should have blocked LOS with 6 planted fields")
+        void shouldBlockLos_OverPlantedFields() {
+            // Arrange
+            LosEffects.AttackInfo attackInfo = new LosEffects.AttackInfo();
+            attackInfo.attackPos = new Coords(0, 0);
+            attackInfo.targetPos = new Coords(0, 7);
+            attackInfo.attackAbsHeight = 0;
+            attackInfo.targetAbsHeight = 0;
+            attackInfo.attOnLand = true;
+            attackInfo.targetOnLand = true;
+            attackInfo.targetEntity = true;
+
+            // Act
+            LosEffects result = LosEffects.calculateLos(game, attackInfo);
+
+            // Assert
+            assertNotNull(result, "LosEffects should not be null");
+            assertFalse(result.blocked, "Should not have line of sight blocked by terrain");
+            assertEquals(6, result.plantedFields, """
+                  Should have exactly 6 intervening planted fields""");
+            assertFalse(result.hasLoS, "Should not have line of sight because of 6 intervening planted fields");
+
+        }
+
+        @Test
+        @DisplayName(value = "should not have intervening LOS over planted fields")
+        void shouldNotHaveInterveningLos_OverPlantedFields() {
+            // Arrange
+            LosEffects.AttackInfo attackInfo = new LosEffects.AttackInfo();
+            attackInfo.attackPos = new Coords(0, 0);
+            attackInfo.targetPos = new Coords(0, 7);
+            attackInfo.attackAbsHeight = 1;
+            attackInfo.targetAbsHeight = 0;
+            attackInfo.attOnLand = true;
+            attackInfo.targetOnLand = true;
+            attackInfo.targetEntity = true;
+
+            // Act
+            LosEffects result = LosEffects.calculateLos(game, attackInfo);
+
+            // Assert
+            assertNotNull(result, "LosEffects should not be null");
+            assertFalse(result.blocked, "Should not have line of sight blocked by terrain");
+            assertEquals(0, result.plantedFields, """
+                  Should have exactly 0 intervening planted field""");
+            assertTrue(result.hasLoS, "Should have line of sight over planted fields");
+        }
+
+        @Test
+        @DisplayName(value = "should have intervening LOS over raised planted fields")
+        void shouldHaveInterveningLos_OverRaisedPlantedFields() {
+            // Arrange
+            LosEffects.AttackInfo attackInfo = new LosEffects.AttackInfo();
+            attackInfo.attackPos = new Coords(1, 0);
+            attackInfo.targetPos = new Coords(1, 7);
+            attackInfo.attackAbsHeight = 1;
+            attackInfo.targetAbsHeight = 1;
+            attackInfo.attOnLand = true;
+            attackInfo.targetOnLand = true;
+            attackInfo.targetEntity = true;
+
+            // Act
+            LosEffects result = LosEffects.calculateLos(game, attackInfo);
+
+            // Assert
+            assertNotNull(result, "LosEffects should not be null");
+            assertFalse(result.blocked, "Should not have line of sight blocked by terrain");
+            assertEquals(1, result.plantedFields, """
+                  Should have exactly 1 intervening planted field""");
+            assertTrue(result.hasLoS, "Should have line of sight thru 1 raised planted field");
         }
     }
 

@@ -38,9 +38,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mockStatic;
 
+import megamek.common.InfantryCombatResult;
 import megamek.common.compute.Compute;
+import megamek.common.compute.InfantryCombatTables;
+import megamek.common.compute.MarinePointsScoreCalculator;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -335,6 +340,47 @@ public class InfantryActionResolutionTest {
             assertNotEquals(Entity.NONE, defender.getInfantryCombatTargetId(),
                 "Infantry defender should still be in combat");
         }
+    }
+
+    /**
+     * Test that an ELIMINATED combat result applies full (not halved) defender casualties.
+     * Without the ELIMINATED check setting hasPartialControl=true, the defender half-damage
+     * rule (TOAR p. 172) would incorrectly reduce 100% casualties to 50%.
+     */
+    @Test
+    void testEliminatedResult_AppliesFullDefenderCasualties_WithoutHalfDamageReduction() {
+        AbstractBuildingEntity building = createBuildingWithCrew(player2, new Coords(5, 5), 10);
+        Infantry attacker = createInfantry(player1, new Coords(5, 5), 28);
+
+        building.refreshLocations();
+        building.refreshAdditionalLocations();
+        building.setId(0);
+        game.addEntity(building);
+        game.addEntity(attacker);
+
+        InfantryActionTracker tracker = gameManager.getInfantryCombatTracker();
+        tracker.addCombat(building.getId(), attacker, building);
+
+        // Force an ELIMINATED result regardless of MPS ratio or dice roll.
+        // Also give the building non-zero MPS so combat doesn't end early (building's
+        // getNCrew() returns 0 for equipment-less entities, which would otherwise
+        // cause defenderMPS=0 and trigger an early-exit before casualties apply).
+        try (MockedStatic<MarinePointsScoreCalculator> mockedMps =
+                 mockStatic(MarinePointsScoreCalculator.class, org.mockito.Answers.CALLS_REAL_METHODS);
+             MockedStatic<InfantryCombatTables> mockedTables =
+                 mockStatic(InfantryCombatTables.class, org.mockito.Answers.CALLS_REAL_METHODS)) {
+            mockedMps.when(() -> MarinePointsScoreCalculator.calculateMPS(any(), any()))
+                     .thenReturn(10); // Give both sides positive MPS so combat proceeds
+            mockedTables.when(() -> InfantryCombatTables.resolveAction(any(String.class), anyInt()))
+                        .thenReturn(InfantryCombatResult.eliminated()); // 0% attacker, 100% defender
+
+            gameManager.resolveInfantryActions();
+        }
+
+        // ELIMINATED sets hasPartialControl=true, so effectivePercent stays 100 (not /2=50).
+        // Building crew of 10 must be fully eliminated, not reduced to only 5.
+        assertEquals(0, building.getCrew().getCurrentSize(),
+            "ELIMINATED result must apply full defender casualties (not halved by half-damage rule)");
     }
 
     // ==================== Helper Methods ====================

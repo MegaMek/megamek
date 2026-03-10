@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,6 +46,7 @@ import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
@@ -444,5 +445,19 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
     @MethodSource("buildingProvider")
     void testGetEntityType(AbstractBuildingEntity building) {
         assertEquals(BuildingEntity.ETYPE_BUILDING_ENTITY, building.getEntityType());
+    }
+
+    @ParameterizedTest
+    @MethodSource("buildingProvider")
+    void testNewPhase_DoomedCrew_TransitionsToCarcass(AbstractBuildingEntity building) {
+        building.getCrew().setDoomed(true);
+        assertFalse(building.isCarcass(), "Building should not be carcass before newPhase");
+
+        building.newPhase(GamePhase.END);
+
+        assertTrue(building.isCarcass(), "Building with doomed crew should become carcass after newPhase");
+        assertTrue(building.getCrew().isDead(), "Building crew should be marked dead after newPhase");
+        assertFalse(building.isDestroyed(),
+            "Carcass building must not be pre-marked destroyed; prepareVictoryReport() calls destroyEntity with 'crew death' reason");
     }
 }

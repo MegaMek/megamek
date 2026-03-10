@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -1389,11 +1389,16 @@ public class LosEffects {
             }
             // planted fields only rise one level above the terrain
             if (hex.containsTerrain(Terrains.FIELDS)) {
-                if (((hexEl + 1 > ai.attackAbsHeight) && (hexEl + 2 > ai.targetAbsHeight)) ||
-                      ((hexEl + 1 > ai.attackAbsHeight) && attackerAdjacent) ||
-                      ((hexEl + 1 > ai.targetAbsHeight) && targetAdjacent)) {
+                int terrainEl = hexEl + 1;
+                if (diagramLoS) {
+                    affectsLos = terrainEl >= losElevation;
+                } else {
+                    affectsLos = (terrainEl > maxUnitHeight) ||
+                          ((terrainEl > ai.attackAbsHeight) && attackerAdjacent) ||
+                          ((terrainEl > ai.targetAbsHeight) && targetAdjacent);
+                }
+                if (affectsLos) {
                     los.plantedFields++;
-
                 }
             }
 

@@ -30,7 +30,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.common.losDiagram;
+package megamek.client.ui.clientGUI.boardview;
 
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.units.*;
@@ -39,7 +39,7 @@ import megamek.common.units.*;
  * Unit type classification for the LOS elevation diagram. Controls which side-view silhouette shape is drawn for
  * attacker and target units in the cross-section diagram.
  */
-public enum DiagramUnitType {
+enum DiagramUnitType {
     /** BattleMek biped - humanoid shape, 2 levels tall. */
     BATTLE_MEK,
     /** BattleMek quad - four-legged mek, 2 levels tall. */

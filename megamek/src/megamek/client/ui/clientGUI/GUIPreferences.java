@@ -431,9 +431,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_PLANETARY_CONDITIONS_OVERLAY = "ShowPlanetaryConditionsOverlay";
     public static final String SHOW_TRACE_OVERLAY = "ShowTraceOverlay";
     public static final String UNIT_LABEL_STYLE = "UnitLabelStyle";
-    public static final String RULER_DIAGRAM_EXPANDED = "RulerDiagramExpanded";
-    public static final String RULER_DIAGRAM_ALL_TERRAIN = "RulerDiagramAllTerrain";
-    public static final String RULER_DIAGRAM_CHART_STYLE = "RulerDiagramChartStyle";
+    public static final String RULER_DIAGRAM_VISIBLE = "RulerDiagramVisible";
 
     public static final String AS_CARD_FONT = "AsCardFont";
     public static final String AS_CARD_SIZE = "AsCardSize";
@@ -525,9 +523,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(BOARD_EDIT_RANDOM_DIALOG_START, false);
         store.setDefault(BOARD_SAVE_INCLUDE_LICENSE, true);
-        store.setDefault(RULER_DIAGRAM_EXPANDED, true);
-        store.setDefault(RULER_DIAGRAM_ALL_TERRAIN, false);
-        store.setDefault(RULER_DIAGRAM_CHART_STYLE, "crossSection");
+        store.setDefault(RULER_DIAGRAM_VISIBLE, true);
         setDefault(ADVANCED_NO_SAVE_NAG, false);
         store.setDefault(ADVANCED_SAVE_LOBBY_ON_START, false);
         store.setDefault(ADVANCED_MOVE_STEP_DELAY, 50);
@@ -3754,28 +3750,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getForceDisplayBtnMisc() {return getBoolean(FORCE_DISPLAY_BTN_MISC);}
 
     // region Ruler Diagram
-    public boolean getRulerDiagramExpanded() {
-        return store.getBoolean(RULER_DIAGRAM_EXPANDED);
+    public boolean getRulerDiagramVisible() {
+        return store.getBoolean(RULER_DIAGRAM_VISIBLE);
     }
 
-    public void setRulerDiagramExpanded(boolean expanded) {
-        store.setValue(RULER_DIAGRAM_EXPANDED, expanded);
-    }
-
-    public boolean getRulerDiagramAllTerrain() {
-        return store.getBoolean(RULER_DIAGRAM_ALL_TERRAIN);
-    }
-
-    public void setRulerDiagramAllTerrain(boolean allTerrain) {
-        store.setValue(RULER_DIAGRAM_ALL_TERRAIN, allTerrain);
-    }
-
-    public String getRulerDiagramChartStyle() {
-        return store.getString(RULER_DIAGRAM_CHART_STYLE);
-    }
-
-    public void setRulerDiagramChartStyle(String style) {
-        store.setValue(RULER_DIAGRAM_CHART_STYLE, style);
+    public void setRulerDiagramVisible(boolean visible) {
+        store.setValue(RULER_DIAGRAM_VISIBLE, visible);
     }
     // endregion Ruler Diagram
 }

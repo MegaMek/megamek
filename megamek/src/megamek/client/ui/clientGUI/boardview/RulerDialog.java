@@ -31,7 +31,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.dialogs;
+package megamek.client.ui.clientGUI.boardview;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
@@ -47,32 +47,19 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.Serial;
 import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.client.ui.panels.LOSElevationDiagramPanel;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
-import megamek.common.losDiagram.DiagramUnitType;
-import megamek.common.losDiagram.LOSDiagramData;
-import megamek.common.losDiagram.LOSDiagramDataBuilder;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
@@ -117,10 +104,14 @@ public class RulerDialog extends JDialog implements BoardViewListener {
 
     private final JCheckBox cboIsMek1 = new JCheckBox(Messages.getString("Ruler.isMek"));
     private final JCheckBox cboIsMek2 = new JCheckBox(Messages.getString("Ruler.isMek"));
+    private final JComboBox<EntityItem> cboEntity1 = new JComboBox<>();
+    private final JComboBox<EntityItem> cboEntity2 = new JComboBox<>();
     private String entityName1 = "";
     private String entityName2 = "";
     private DiagramUnitType unitType1 = DiagramUnitType.OTHER;
     private DiagramUnitType unitType2 = DiagramUnitType.OTHER;
+    /** Suppresses combo box listener events during programmatic updates. */
+    private boolean updatingCombo = false;
 
     private final JButton butDiagram = new JButton();
     private final LOSElevationDiagramPanel diagramPanel = new LOSElevationDiagramPanel();
@@ -210,6 +201,11 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         cboIsMek2.setToolTipText(Messages.getString("Ruler.isMekTooltip"));
         cboIsMek2.addItemListener(e -> checkBoxSelectionChanged());
 
+        cboEntity1.setVisible(false);
+        cboEntity1.addActionListener(e -> entityComboChanged(cboEntity1, height1, cboIsMek1, true));
+        cboEntity2.setVisible(false);
+        cboEntity2.addActionListener(e -> entityComboChanged(cboEntity2, height2, cboIsMek2, false));
+
         GridBagConstraints c = new GridBagConstraints();
 
         c.anchor = GridBagConstraints.EAST;
@@ -226,8 +222,18 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         gridBagLayout1.setConstraints(cboIsMek1, c);
         panelMain.add(cboIsMek1);
 
-        c.gridx = 0;
+        // Entity selector for point 1 (hidden until hex has multiple entities)
+        c.gridx = 1;
         c.gridy = 1;
+        c.gridwidth = 2;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        gridBagLayout1.setConstraints(cboEntity1, c);
+        panelMain.add(cboEntity1);
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+
+        c.gridx = 0;
+        c.gridy = 2;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(heightLabel2, c);
         panelMain.add(heightLabel2);
@@ -239,8 +245,18 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         gridBagLayout1.setConstraints(cboIsMek2, c);
         panelMain.add(cboIsMek2);
 
+        // Entity selector for point 2 (hidden until hex has multiple entities)
+        c.gridx = 1;
+        c.gridy = 3;
+        c.gridwidth = 2;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        gridBagLayout1.setConstraints(cboEntity2, c);
+        panelMain.add(cboEntity2);
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+
         c.gridx = 0;
-        c.gridy = 2;
+        c.gridy = 4;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel1, c);
         panelMain.add(jLabel1);
@@ -252,7 +268,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         panelMain.add(tf_start);
 
         c.gridx = 0;
-        c.gridy = 3;
+        c.gridy = 5;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel2, c);
         panelMain.add(jLabel2);
@@ -264,7 +280,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         panelMain.add(tf_end);
 
         c.gridx = 0;
-        c.gridy = 4;
+        c.gridy = 6;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel3, c);
         panelMain.add(jLabel3);
@@ -274,7 +290,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         panelMain.add(tf_distance);
 
         c.gridx = 0;
-        c.gridy = 5;
+        c.gridy = 7;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel4, c);
         panelMain.add(jLabel4);
@@ -287,7 +303,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         panelMain.add(tf_los1);
 
         c.gridx = 0;
-        c.gridy = 6;
+        c.gridy = 8;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel5, c);
@@ -303,7 +319,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         buttonPanel.add(butFlip);
         buttonPanel.add(butClose);
         c.gridx = 0;
-        c.gridy = 7;
+        c.gridy = 9;
         c.gridwidth = 3;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.CENTER;
@@ -312,14 +328,14 @@ public class RulerDialog extends JDialog implements BoardViewListener {
 
         // Diagram controls panel (toggle button + all terrain checkbox)
         GUIPreferences guiPreferences = GUIPreferences.getInstance();
-        diagramExpanded = guiPreferences.getRulerDiagramExpanded();
+        diagramExpanded = guiPreferences.getRulerDiagramVisible();
         updateDiagramButtonText();
         butDiagram.addActionListener(e -> toggleDiagram());
 
         JPanel diagramControlsPanel = new JPanel();
         diagramControlsPanel.add(butDiagram);
         c.gridx = 0;
-        c.gridy = 8;
+        c.gridy = 10;
         c.gridwidth = 3;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.CENTER;
@@ -332,7 +348,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         diagramScrollPane.setMinimumSize(UIUtil.scaleForGUI(200, 150));
         diagramScrollPane.setPreferredSize(UIUtil.scaleForGUI(500, 200));
         c.gridx = 0;
-        c.gridy = 9;
+        c.gridy = 11;
         c.gridwidth = 3;
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
@@ -371,36 +387,30 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         entityName2 = "";
         unitType1 = DiagramUnitType.OTHER;
         unitType2 = DiagramUnitType.OTHER;
+        updatingCombo = true;
+        try {
+            cboEntity1.setModel(new DefaultComboBoxModel<>());
+            cboEntity2.setModel(new DefaultComboBoxModel<>());
+            cboEntity1.setVisible(false);
+            cboEntity2.setVisible(false);
+        } finally {
+            updatingCombo = false;
+        }
     }
 
     private void addPoint(Coords c) {
-        int absHeight = Integer.MIN_VALUE;
-        boolean isMek = false;
-        boolean entFound = false;
-        String entityName = "";
-        DiagramUnitType unitType = DiagramUnitType.OTHER;
-        for (Entity ent : game.getEntitiesVector(c)) {
-            // Convert to TW height: relHeight + 1 (code 0-indexed -> TW 1-indexed)
-            // Hull-down Mek: 1 TW level instead of 2
-            int twHeight = ent.relHeight() + 1;
-            if ((ent instanceof Mek) && ent.isHullDown()) {
-                twHeight -= 1;
-            }
-            if (twHeight > absHeight) {
-                absHeight = twHeight;
-                isMek = ent instanceof Mek;
-                entityName = ent.getDisplayName();
-                unitType = DiagramUnitType.fromEntity(ent);
-                entFound = true;
-            }
-        }
         if (start == null) {
             start = c;
-            if (entFound) {
-                height1.setText(absHeight + "");
-                cboIsMek1.setSelected(isMek);
-                entityName1 = entityName;
-                unitType1 = unitType;
+            Entity tallest = populateEntityCombo(c, cboEntity1);
+            if (tallest != null) {
+                int twHeight = tallest.relHeight() + 1;
+                if ((tallest instanceof Mek) && tallest.isHullDown()) {
+                    twHeight -= 1;
+                }
+                height1.setText(String.valueOf(twHeight));
+                cboIsMek1.setSelected(tallest instanceof Mek);
+                entityName1 = tallest.getDisplayName();
+                unitType1 = DiagramUnitType.fromEntity(tallest);
             }
         } else if (start.equals(c)) {
             clear();
@@ -408,11 +418,16 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         } else {
             end = c;
             distance = start.distance(end);
-            if (entFound) {
-                height2.setText(absHeight + "");
-                cboIsMek2.setSelected(isMek);
-                entityName2 = entityName;
-                unitType2 = unitType;
+            Entity tallest = populateEntityCombo(c, cboEntity2);
+            if (tallest != null) {
+                int twHeight = tallest.relHeight() + 1;
+                if ((tallest instanceof Mek) && tallest.isHullDown()) {
+                    twHeight -= 1;
+                }
+                height2.setText(String.valueOf(twHeight));
+                cboIsMek2.setSelected(tallest instanceof Mek);
+                entityName2 = tallest.getDisplayName();
+                unitType2 = DiagramUnitType.fromEntity(tallest);
             }
             setText();
             setVisible(true);
@@ -767,7 +782,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         diagramExpanded = !diagramExpanded;
         updateDiagramButtonText();
         diagramScrollPane.setVisible(diagramExpanded);
-        GUIPreferences.getInstance().setRulerDiagramExpanded(diagramExpanded);
+        GUIPreferences.getInstance().setRulerDiagramVisible(diagramExpanded);
 
         if (diagramExpanded) {
             updateDiagram();
@@ -961,6 +976,97 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         setVisible(true);
     }
 
+    /**
+     * Handles entity combo box selection changes. Updates the height, isMek checkbox, entity name, and unit type from
+     * the selected entity, then recalculates LOS.
+     */
+    private void entityComboChanged(JComboBox<EntityItem> combo, JTextField heightField,
+          JCheckBox isMekCheckBox, boolean isFirstPoint) {
+        if (updatingCombo) {
+            return;
+        }
+        EntityItem selected = (EntityItem) combo.getSelectedItem();
+        if (selected == null) {
+            return;
+        }
+
+        Entity entity = selected.entity();
+        if (entity != null) {
+            int twHeight = entity.relHeight() + 1;
+            if ((entity instanceof Mek) && entity.isHullDown()) {
+                twHeight -= 1;
+            }
+            heightField.setText(String.valueOf(twHeight));
+            isMekCheckBox.setSelected(entity instanceof Mek);
+            if (isFirstPoint) {
+                entityName1 = entity.getDisplayName();
+                unitType1 = DiagramUnitType.fromEntity(entity);
+            } else {
+                entityName2 = entity.getDisplayName();
+                unitType2 = DiagramUnitType.fromEntity(entity);
+            }
+        } else {
+            // "None" selected - reset to manual defaults
+            heightField.setText("1");
+            isMekCheckBox.setSelected(false);
+            if (isFirstPoint) {
+                entityName1 = "";
+                unitType1 = DiagramUnitType.OTHER;
+            } else {
+                entityName2 = "";
+                unitType2 = DiagramUnitType.OTHER;
+            }
+        }
+
+        if (start != null && end != null) {
+            setText();
+        }
+    }
+
+    /**
+     * Populates an entity combo box with all entities at the given coordinates. Selects the tallest entity by default.
+     * Returns the selected entity's data.
+     *
+     * @param coords the hex coordinates
+     * @param combo  the combo box to populate
+     *
+     * @return the tallest entity found, or null if no entities present
+     */
+    private Entity populateEntityCombo(Coords coords, JComboBox<EntityItem> combo) {
+        updatingCombo = true;
+        try {
+            DefaultComboBoxModel<EntityItem> model = new DefaultComboBoxModel<>();
+            model.addElement(new EntityItem(null));
+
+            List<Entity> entities = game.getEntitiesVector(coords);
+            Entity tallestEntity = null;
+            int tallestHeight = Integer.MIN_VALUE;
+            int tallestIndex = 0;
+
+            for (Entity entity : entities) {
+                model.addElement(new EntityItem(entity));
+                int twHeight = entity.relHeight() + 1;
+                if ((entity instanceof Mek) && entity.isHullDown()) {
+                    twHeight -= 1;
+                }
+                if (twHeight > tallestHeight) {
+                    tallestHeight = twHeight;
+                    tallestEntity = entity;
+                    tallestIndex = model.getSize() - 1;
+                }
+            }
+
+            combo.setModel(model);
+            if (tallestEntity != null) {
+                combo.setSelectedIndex(tallestIndex);
+            }
+            combo.setVisible(model.getSize() > 2);
+            return tallestEntity;
+        } finally {
+            updatingCombo = false;
+        }
+    }
+
     @Override
     public void finishedMovingUnits(BoardViewEvent b) {
         // ignored
@@ -969,5 +1075,20 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     @Override
     public void unitSelected(BoardViewEvent b) {
         // ignored
+    }
+
+    /**
+     * Wrapper for displaying an Entity in a JComboBox. A null entity represents "None (manual)".
+     *
+     * @param entity the entity, or null for the manual/empty selection
+     */
+    record EntityItem(Entity entity) {
+        @Override
+        public String toString() {
+            if (entity == null) {
+                return Messages.getString("Ruler.noEntity");
+            }
+            return entity.getDisplayName();
+        }
     }
 }

@@ -30,7 +30,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.panels;
+package megamek.client.ui.clientGUI.boardview;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -41,6 +41,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.GeneralPath;
@@ -52,14 +53,15 @@ import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.boardview.LOSDiagramData.HexRow;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
-import megamek.common.losDiagram.DiagramUnitType;
-import megamek.common.losDiagram.LOSDiagramData;
-import megamek.common.losDiagram.LOSDiagramData.HexRow;
 
 /**
  * A panel that renders a 2D elevation cross-section diagram for a LOS path. Shows ground elevation, terrain features,
@@ -69,7 +71,7 @@ import megamek.common.losDiagram.LOSDiagramData.HexRow;
  * collapsible section. It takes a {@link LOSDiagramData} record as input and renders the diagram independently of game
  * state.</p>
  */
-public class LOSElevationDiagramPanel extends JPanel {
+class LOSElevationDiagramPanel extends JPanel {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -101,12 +103,9 @@ public class LOSElevationDiagramPanel extends JPanel {
     private static final Color COLOR_FIRE = new Color(255, 50, 0, 210);
     private static final Color COLOR_SCREEN = new Color(180, 180, 255, 120);
     private static final Color COLOR_FIELDS = new Color(200, 180, 50, 100);
-    private static final Color COLOR_GRID = new Color(210, 210, 210);
-    private static final Color COLOR_LOS_CLEAR = new Color(0, 180, 0);
-    private static final Color COLOR_LOS_BLOCKED = new Color(220, 0, 0);
-    private static final Color COLOR_BACKGROUND = new Color(245, 245, 240);
+    private static final Color COLOR_LOS_CLEAR = new Color(60, 220, 60);
+    private static final Color COLOR_LOS_BLOCKED = new Color(240, 50, 50);
     private static final Color COLOR_SPLIT_MARKER = new Color(255, 165, 0, 120);
-    private static final Color COLOR_LABEL = new Color(60, 60, 60);
 
     private static final Stroke STROKE_LOS = new BasicStroke(2.0f);
     private static final Stroke STROKE_GRID = new BasicStroke(0.5f);
@@ -121,9 +120,10 @@ public class LOSElevationDiagramPanel extends JPanel {
     private static final Map<String, BufferedImage> silhouetteCache = new HashMap<>();
 
     private LOSDiagramData diagramData;
+    private int dragStartX;
 
     public LOSElevationDiagramPanel() {
-        setBackground(COLOR_BACKGROUND);
+        setBackground(UIManager.getColor("Panel.background"));
         int preferredHeight = UIUtil.scaleForGUI(200);
         setPreferredSize(new Dimension(0, preferredHeight));
         ToolTipManager.sharedInstance().registerComponent(this);
@@ -132,7 +132,61 @@ public class LOSElevationDiagramPanel extends JPanel {
             public void mouseMoved(MouseEvent e) {
                 setToolTipText(getHexTooltip(e.getX(), e.getY()));
             }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    JViewport viewport = (JViewport) SwingUtilities.getAncestorOfClass(
+                          JViewport.class, LOSElevationDiagramPanel.this);
+                    if (viewport != null) {
+                        int deltaX = dragStartX - e.getX();
+                        java.awt.Point viewPos = viewport.getViewPosition();
+                        int newX = Math.max(0, Math.min(viewPos.x + deltaX,
+                              getWidth() - viewport.getWidth()));
+                        viewport.setViewPosition(new java.awt.Point(newX, viewPos.y));
+                        dragStartX = e.getX();
+                    }
+                }
+            }
         });
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    dragStartX = e.getX();
+                }
+            }
+        });
+    }
+
+    /**
+     * Returns the grid line color, adapting to the current L&amp;F theme.
+     */
+    private Color getGridColor() {
+        Color background = getBackground();
+        if (isBackgroundDark(background)) {
+            return new Color(80, 80, 85);
+        }
+        return new Color(210, 210, 210);
+    }
+
+    /**
+     * Returns the text label color, adapting to the current L&amp;F theme.
+     */
+    private Color getLabelColor() {
+        Color background = getBackground();
+        if (isBackgroundDark(background)) {
+            return new Color(200, 200, 195);
+        }
+        return new Color(60, 60, 60);
+    }
+
+    /**
+     * Returns whether the given background color is dark (luminance below midpoint).
+     */
+    private static boolean isBackgroundDark(Color color) {
+        int luminance = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
+        return luminance < 128;
     }
 
     /**
@@ -195,7 +249,7 @@ public class LOSElevationDiagramPanel extends JPanel {
         Graphics2D g2d = (Graphics2D) graphics.create();
         try {
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            g2d.setColor(COLOR_LABEL);
+            g2d.setColor(getLabelColor());
             g2d.setFont(g2d.getFont().deriveFont(Font.ITALIC));
             String message = Messages.getString("Ruler.diagramEmpty");
             FontMetrics fontMetrics = g2d.getFontMetrics();
@@ -266,28 +320,45 @@ public class LOSElevationDiagramPanel extends JPanel {
      */
     private void drawGrid(Graphics2D g2d, DiagramMetrics metrics) {
         g2d.setStroke(STROKE_GRID);
-        g2d.setColor(COLOR_GRID);
+        g2d.setColor(getGridColor());
         Font labelFont = g2d.getFont().deriveFont(UIUtil.scaleForGUI(10.0f));
         g2d.setFont(labelFont);
         FontMetrics fontMetrics = g2d.getFontMetrics();
 
         // Horizontal grid lines (elevation levels)
-        for (int level = metrics.minLevel + LEVEL_PADDING;
-              level <= metrics.maxLevel - LEVEL_PADDING; level++) {
+        // Skip levels when range is large so grid stays readable
+        int levelRange = metrics.maxLevel - metrics.minLevel;
+        int levelStep = 1;
+        if (levelRange > 40) {
+            levelStep = 10;
+        } else if (levelRange > 20) {
+            levelStep = 5;
+        } else if (levelRange > 10) {
+            levelStep = 2;
+        }
+
+        int firstLevel = metrics.minLevel + LEVEL_PADDING;
+        if (levelStep > 1) {
+            // Align to multiples of levelStep
+            firstLevel = ((firstLevel + levelStep - 1) / levelStep) * levelStep;
+        }
+
+        for (int level = firstLevel;
+              level <= metrics.maxLevel - LEVEL_PADDING; level += levelStep) {
             int yPos = metrics.levelToY(level);
-            g2d.setColor(COLOR_GRID);
+            g2d.setColor(getGridColor());
             g2d.drawLine(metrics.leftMargin, yPos,
                   metrics.leftMargin + metrics.hexCount * metrics.hexColumnWidth, yPos);
 
             // Level labels on left axis
-            g2d.setColor(COLOR_LABEL);
+            g2d.setColor(getLabelColor());
             String levelStr = String.valueOf(level);
             int labelWidth = fontMetrics.stringWidth(levelStr);
             g2d.drawString(levelStr, metrics.leftMargin - labelWidth - 4, yPos + 4);
         }
 
         // Vertical grid lines (hex boundaries)
-        g2d.setColor(COLOR_GRID);
+        g2d.setColor(getGridColor());
         for (int i = 0; i <= metrics.hexCount; i++) {
             int xPos = metrics.leftMargin + (i * metrics.hexColumnWidth);
             g2d.drawLine(xPos, metrics.topMargin, xPos,
@@ -788,7 +859,7 @@ public class LOSElevationDiagramPanel extends JPanel {
                 int ySmokeTop = metrics.levelToY(hex.groundElevation() + 2);
                 int barMidY = (ySmokeTop + yGround) / 2 + fontHeight / 2;
                 String label = hex.smokeLevel() >= 2 ? "S2" : "S1";
-                drawCenteredLabel(g2d, fontMetrics, label, xCenter, barMidY, COLOR_LABEL);
+                drawCenteredLabel(g2d, fontMetrics, label, xCenter, barMidY, getLabelColor());
             }
 
             // Water depth label
@@ -833,7 +904,7 @@ public class LOSElevationDiagramPanel extends JPanel {
         int attackerTop = diagramData.attackerAbsHeight();
         int attackerBottom = attackerTop - attackerTwHeight;
         drawUnitSilhouette(g2d, metrics, 0, attackerBottom, attackerTop,
-              megamek.client.ui.dialogs.RulerDialog.color1,
+              RulerDialog.color1,
               diagramData.attackerUnitType(), true);
 
         // Target silhouette - hull-down reduces height by 1 level
@@ -844,7 +915,7 @@ public class LOSElevationDiagramPanel extends JPanel {
         int targetTop = diagramData.targetAbsHeight();
         int targetBottom = targetTop - targetTwHeight;
         drawUnitSilhouette(g2d, metrics, hexPath.size() - 1, targetBottom, targetTop,
-              megamek.client.ui.dialogs.RulerDialog.color2,
+              RulerDialog.color2,
               diagramData.targetUnitType(), false);
     }
 
@@ -967,7 +1038,7 @@ public class LOSElevationDiagramPanel extends JPanel {
         // Draw height label above the silhouette
         Font labelFont = g2d.getFont().deriveFont(UIUtil.scaleForGUI(9.0f));
         g2d.setFont(labelFont);
-        g2d.setColor(COLOR_LABEL);
+        g2d.setColor(getLabelColor());
         String heightStr = String.valueOf(topLevel);
         FontMetrics fontMetrics = g2d.getFontMetrics();
         int labelWidth = fontMetrics.stringWidth(heightStr);
@@ -1811,7 +1882,7 @@ public class LOSElevationDiagramPanel extends JPanel {
     private void drawLabels(Graphics2D g2d, DiagramMetrics metrics, List<HexRow> hexPath) {
         Font labelFont = g2d.getFont().deriveFont(UIUtil.scaleForGUI(9.0f));
         g2d.setFont(labelFont);
-        g2d.setColor(COLOR_LABEL);
+        g2d.setColor(getLabelColor());
         FontMetrics fontMetrics = g2d.getFontMetrics();
 
         int yLabel = metrics.topMargin + metrics.drawAreaHeight + fontMetrics.getHeight() + 2;
@@ -1894,7 +1965,7 @@ public class LOSElevationDiagramPanel extends JPanel {
         if (hex.industrialHeight() > 0) {
             tooltip.append("<br>Industrial: ").append(hex.industrialHeight()).append(" levels");
         }
-        if (hex.hasFoliage()) {
+        if (hex.hasWoodsOrJungle()) {
             String foliageType = hex.jungleLevel() > 0 ? "Jungle" : "Woods";
             int density = Math.max(hex.woodsLevel(), hex.jungleLevel());
             String densityStr = switch (density) {
@@ -1907,7 +1978,7 @@ public class LOSElevationDiagramPanel extends JPanel {
             tooltip.append("<br>").append(densityStr).append(" ").append(foliageType);
             tooltip.append(" (top elev ").append(foliageTopElevation).append(")");
             if (!foliageAffectsLos) {
-                tooltip.append(" - <i>LOS line above foliage</i>");
+                tooltip.append(" - <i>LOS line above woods</i>");
             }
         }
         if (hex.waterDepth() > 0) {
@@ -1944,7 +2015,7 @@ public class LOSElevationDiagramPanel extends JPanel {
             if (hex.smokeLevel() > 0) {
                 anyTerrainReachesLos |= (hex.groundElevation() + 2) >= hex.losLineElevation();
             }
-            if (hex.hasFoliage()) {
+            if (hex.hasWoodsOrJungle()) {
                 anyTerrainReachesLos |= (hex.groundElevation() + hex.woodsHeight()) >= hex.losLineElevation();
             }
             if (hex.industrialHeight() > 0) {

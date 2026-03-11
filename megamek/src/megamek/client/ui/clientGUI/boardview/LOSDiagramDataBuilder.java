@@ -30,19 +30,19 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.common.losDiagram;
+package megamek.client.ui.clientGUI.boardview;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import megamek.client.ui.clientGUI.boardview.LOSDiagramData.HexRow;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
-import megamek.common.losDiagram.LOSDiagramData.HexRow;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 
@@ -50,7 +50,7 @@ import megamek.common.units.Terrains;
  * Builds {@link LOSDiagramData} from game state and attack information. Extracts the intervening hex path and terrain
  * data needed for the elevation diagram.
  */
-public final class LOSDiagramDataBuilder {
+final class LOSDiagramDataBuilder {
 
     private LOSDiagramDataBuilder() {
         // utility class
@@ -79,11 +79,11 @@ public final class LOSDiagramDataBuilder {
         Coords targetPos = attackInfo.targetPos;
 
         // Get the non-split path to identify which hexes are "normal"
-        ArrayList<Coords> normalPath = Coords.intervening(attackPos, targetPos);
+        List<Coords> normalPath = Coords.intervening(attackPos, targetPos);
         Set<Coords> normalPathSet = new HashSet<>(normalPath);
 
         // Get the split-aware path to detect hex-edge LOS
-        ArrayList<Coords> splitPath = Coords.intervening(attackPos, targetPos, true);
+        List<Coords> splitPath = Coords.intervening(attackPos, targetPos, true);
 
         // Identify split hex pairs: hexes in the split path not in the normal path
         Set<Coords> splitHexCoords = new HashSet<>();

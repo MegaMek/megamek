@@ -30,7 +30,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.common.losDiagram;
+package megamek.client.ui.clientGUI.boardview;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ import megamek.common.board.Coords;
  * @param attackerName        display name of the attacker entity, or empty if none
  * @param targetName          display name of the target entity, or empty if none
  */
-public record LOSDiagramData(
+record LOSDiagramData(
       List<HexRow> hexPath,
       int attackerAbsHeight,
       int targetAbsHeight,
@@ -137,11 +137,11 @@ public record LOSDiagramData(
         }
 
         /**
-         * Returns true if this hex has any foliage (woods or jungle).
+         * Returns true if this hex has woods or jungle terrain.
          *
          * @return true if woods or jungle is present
          */
-        public boolean hasFoliage() {
+        public boolean hasWoodsOrJungle() {
             return woodsLevel > 0 || jungleLevel > 0;
         }
 
@@ -151,7 +151,7 @@ public record LOSDiagramData(
          * @return true if the hex contains any LOS-modifying terrain
          */
         public boolean hasLosModifiers() {
-            return hasFoliage() || smokeLevel > 0 || hasScreen || hasFields
+            return hasWoodsOrJungle() || smokeLevel > 0 || hasScreen || hasFields
                   || hasFire || industrialHeight > 0;
         }
     }

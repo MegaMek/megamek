@@ -843,23 +843,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         return "";
     }
 
-    /**
-     * Returns TRUE if the entity meets the requirements for crippling damage as detailed in TW pg 258.
-     *
-     * @return boolean
-     */
-    /**
-     * Buildings are destroyed if their crew is dead, like Meks and Tanks.
-     */
-    @Override
-    public boolean isDestroyed() {
-        // Check crew death first (like Meks/Tanks)
-        if (getCrew() != null && !getCrew().isActive()) {
-            return true;
-        }
-        // Otherwise use standard destroyed flag
-        return super.isDestroyed();
-    }
 
     /**
      * Buildings are salvageable unless they have completely collapsed. A building has completely collapsed when all
@@ -887,7 +870,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     @Override
     public boolean isCrippled(boolean checkCrew) {
         // Building is crippled if it's military and all weapons are disabled
-        // (crew death is handled by isDestroyed(), not isCrippled())
         return isMilitary() && !hasViableWeapons();
     }
 

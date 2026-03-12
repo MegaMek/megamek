@@ -1495,6 +1495,8 @@ public class BLKFile {
                                   hasARTS), isPod);
                             break;
                         case "mekbay":
+                            // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
+                        case "mechbay": // for compatibility with older custom units
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                             e.addTransporter(new MekBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                             break;

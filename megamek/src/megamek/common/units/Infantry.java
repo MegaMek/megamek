@@ -2827,9 +2827,12 @@ public class Infantry extends Entity {
         }
 
         // Look for enemy boardable entities at this location
+        // TODO: Once buildings can be captured & change owner, allow this for building carcass
         Entity enemyBoardableEntity = null;
         for (Entity e : game.getEntitiesVector(getBoardLocation())) {
-            if (e.isBoardable() && e.getOwner().isEnemyOf(getOwner())) {
+            if (e.isBoardable()
+                  && (e.getOwner().isEnemyOf(getOwner())
+                  && (e.getCrew() != null && !e.getCrew().isDead()))) {
                 enemyBoardableEntity = e;
                 break;
             }

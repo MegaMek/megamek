@@ -2858,7 +2858,7 @@ public class Infantry extends Entity {
         }
 
         // Check if already in combat
-        if (getInfantryCombatTargetId() != Entity.NONE && isInfantryCombatAttacker()) {
+        if (getInfantryCombatTargetId() != Entity.NONE) {
             return false;  // Can't reinforce if already in combat
         }
 

@@ -2857,9 +2857,9 @@ public class Infantry extends Entity {
             return false;
         }
 
-        // Check if already in combat and can withdraw
+        // Check if already in combat
         if (getInfantryCombatTargetId() != Entity.NONE && isInfantryCombatAttacker()) {
-            return true;  // Can withdraw
+            return false;  // Can't reinforce if already in combat
         }
 
         // Check if can reinforce EXISTING infantry vs. infantry combat

@@ -643,7 +643,7 @@ class EntityTest {
 
             @ParameterizedTest
             @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
-            void returnsFalseWhenAlreadyInCombat(Infantry infantry) {
+            void returnsFalseWhenAlreadyInCombatAsAttacker(Infantry infantry) {
                 // Arrange
                 Game game = createGameWithBoard();
                 Player player = new Player(1, "Player 1");
@@ -653,7 +653,29 @@ class EntityTest {
                 infantry.setPosition(new Coords(1, 1));
                 infantry.setBoardId(1);
                 infantry.setInfantryCombatTargetId(99);
+                infantry.setInfantryCombatAttacker(true);
+                game.addEntity(infantry);
 
+                // Act
+                boolean result = infantry.canReinforceInfantryVsInfantry();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenAlreadyInCombatAsDefender(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player = new Player(1, "Player 1");
+                game.addPlayer(1, player);
+                infantry.setId(1);
+                infantry.setOwner(player);
+                infantry.setPosition(new Coords(1, 1));
+                infantry.setBoardId(1);
+                infantry.setInfantryCombatTargetId(99);
+                infantry.setInfantryCombatAttacker(false);
                 game.addEntity(infantry);
 
                 // Act

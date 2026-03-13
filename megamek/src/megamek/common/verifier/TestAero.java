@@ -959,7 +959,7 @@ public class TestAero extends TestEntity {
         buff.append("Intro year: ").append(aero.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             buff.append("Weight: ").append(getWeight()).append(" (")
                   .append(calculateWeight()).append(")\n");
         }

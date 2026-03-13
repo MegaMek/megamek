@@ -45,13 +45,13 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.widget.MegaMekButton;
-import megamek.common.board.Coords;
-import megamek.common.units.Targetable;
 import megamek.common.actions.ReinforceInfantryCombatAction;
 import megamek.common.actions.WithdrawInfantryCombatAction;
+import megamek.common.board.Coords;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
+import megamek.common.units.Targetable;
 
 public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
 
@@ -428,7 +428,7 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
             return false;
         }
 
-        if (targetEntity.getSecondaryPositions().containsValue(entity.getPosition())) {
+        if (!targetEntity.getSecondaryPositions().containsValue(entity.getPosition())) {
             return false;
         }
 

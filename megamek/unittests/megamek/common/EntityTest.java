@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,29 +45,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Stream;
 
 import megamek.common.actions.DfaAttackAction;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.options.OptionsConstants;
-import megamek.common.units.BipedMek;
-import megamek.common.units.Crew;
-import megamek.common.units.Entity;
-import megamek.common.units.Mek;
-import megamek.common.units.Tank;
-import megamek.common.units.Terrain;
-import megamek.common.units.Terrains;
-import megamek.common.units.VTOL;
+import megamek.common.units.*;
 import megamek.common.util.C3Util;
 import megamek.utils.EntityLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -558,4 +556,330 @@ class EntityTest {
 
     }
     // endregion ECM Checks
+
+    @Nested
+    class InfantryVsInfantryTests {
+
+        private Game createGameWithBoard() {
+            Game game = new Game();
+            int width = 4, height = 4;
+            Hex[] hexes = new Hex[width * height];
+            for (int i = 0; i < hexes.length; i++) {
+                hexes[i] = new Hex(0);
+            }
+            game.setBoard(1, new Board(width, height, hexes));
+            return game;
+        }
+
+        static Stream<Named<Infantry>> eligibleEntities() {
+            return Stream.of(
+                  Named.of("Infantry", new Infantry()),
+                  Named.of("BattleArmor", new BattleArmor())
+            );
+        }
+
+        static Stream<Named<Entity>> ineligibleEntities() {
+            return Stream.of(
+                  Named.of("BipedMek", new BipedMek()),
+                  Named.of("Tank", new Tank()),
+                  Named.of("VTOL", new VTOL()),
+                  Named.of("ProtoMek", new ProtoMek()),
+                  Named.of("AeroSpaceFighter", new AeroSpaceFighter())
+            );
+        }
+
+        /**
+         * Tests for {@link Infantry#canReinforceInfantryVsInfantry()}
+         */
+        @Nested
+        class CanReinforceInfantryVsInfantryTests {
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsTrueWhenCombatExistsInHex(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player = new Player(1, "Player 1");
+                game.addPlayer(1, player);
+                infantry.setId(1);
+                infantry.setOwner(player);
+                infantry.setPosition(new Coords(1, 1));
+                infantry.setBoardId(1);
+                game.addEntity(infantry);
+
+                Infantry combatInfantry = new Infantry();
+                combatInfantry.setId(2);
+                combatInfantry.setOwner(player);
+                combatInfantry.setPosition(new Coords(1, 1));
+                combatInfantry.setBoardId(1);
+                combatInfantry.setInfantryCombatTargetId(99);
+                game.addEntity(combatInfantry);
+
+                // Act
+                boolean result = infantry.canReinforceInfantryVsInfantry();
+
+                // Assert
+                assertTrue(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenNotOnBoard(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player = new Player(1, "Player 1");
+                game.addPlayer(1, player);
+                infantry.setId(1);
+                infantry.setOwner(player);
+                // position intentionally NOT set — entity is in game but not at a valid board location
+                game.addEntity(infantry);
+
+                // Act
+                boolean result = infantry.canReinforceInfantryVsInfantry();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenAlreadyInCombatAsAttacker(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player = new Player(1, "Player 1");
+                game.addPlayer(1, player);
+                infantry.setId(1);
+                infantry.setOwner(player);
+                infantry.setPosition(new Coords(1, 1));
+                infantry.setBoardId(1);
+                infantry.setInfantryCombatTargetId(99);
+                infantry.setInfantryCombatAttacker(true);
+                game.addEntity(infantry);
+
+                // Act
+                boolean result = infantry.canReinforceInfantryVsInfantry();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenAlreadyInCombatAsDefender(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player = new Player(1, "Player 1");
+                game.addPlayer(1, player);
+                infantry.setId(1);
+                infantry.setOwner(player);
+                infantry.setPosition(new Coords(1, 1));
+                infantry.setBoardId(1);
+                infantry.setInfantryCombatTargetId(99);
+                infantry.setInfantryCombatAttacker(false);
+                game.addEntity(infantry);
+
+                // Act
+                boolean result = infantry.canReinforceInfantryVsInfantry();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenNoCombatExistsInHex(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player = new Player(1, "Player 1");
+                game.addPlayer(1, player);
+                infantry.setId(1);
+                infantry.setOwner(player);
+                infantry.setPosition(new Coords(1, 1));
+                infantry.setBoardId(1);
+                game.addEntity(infantry);
+                // no other infantry in hex with an active combat target
+
+                // Act
+                boolean result = infantry.canReinforceInfantryVsInfantry();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#ineligibleEntities")
+            void returnsFalseForNonInfantryEntity(Entity entity) {
+                // Arrange - (none; base Entity always returns false)
+
+                // Act
+                boolean result = entity.canReinforceInfantryVsInfantry();
+
+                // Assert
+                assertFalse(result);
+            }
+        }
+
+        /**
+         * Tests for {@link Infantry#canInitiateInfantryVsInfantryCombat()}
+         */
+        @Nested
+        class CanInitiateInfantryVsInfantryCombatTests {
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsTrueWhenInsideBuildingWithEnemyBoardableEntityAndNoCombat(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player1 = new Player(1, "Player 1");
+                Player player2 = new Player(2, "Player 2");
+                game.addPlayer(1, player1);
+                game.addPlayer(2, player2);
+
+                Infantry entity = spy(infantry);
+                doReturn(true).when(entity).isInBuilding();
+                entity.setId(1);
+                entity.setOwner(player1);
+                entity.setPosition(new Coords(1, 1));
+                entity.setBoardId(1);
+                game.addEntity(entity);
+
+                BuildingEntity enemyBuilding = new BuildingEntity(BuildingType.LIGHT, 1);
+                enemyBuilding.setId(2);
+                enemyBuilding.setOwner(player2);
+                enemyBuilding.setPosition(new Coords(1, 1));
+                enemyBuilding.setBoardId(1);
+                game.addEntity(enemyBuilding);
+
+                // Act
+                boolean result = entity.canInitiateInfantryVsInfantryCombat();
+
+                // Assert
+                assertTrue(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenNotOnBoard(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player = new Player(1, "Player 1");
+                game.addPlayer(1, player);
+                infantry.setId(1);
+                infantry.setOwner(player);
+                // position intentionally NOT set — entity is in game but not at a valid board location
+                game.addEntity(infantry);
+
+                // Act
+                boolean result = infantry.canInitiateInfantryVsInfantryCombat();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenNotInBuilding(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player = new Player(1, "Player 1");
+                game.addPlayer(1, player);
+                infantry.setId(1);
+                infantry.setOwner(player);
+                infantry.setPosition(new Coords(1, 1));
+                infantry.setBoardId(1);
+                game.addEntity(infantry);
+                // plain hex has no building terrain, so isInBuilding() returns false naturally
+
+                // Act
+                boolean result = infantry.canInitiateInfantryVsInfantryCombat();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenNoEnemyBoardableEntityInHex(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player1 = new Player(1, "Player 1");
+                Player player2 = new Player(2, "Player 2");
+                game.addPlayer(1, player1);
+                game.addPlayer(2, player2);
+
+                Infantry entity = spy(infantry);
+                doReturn(true).when(entity).isInBuilding();
+                entity.setId(1);
+                entity.setOwner(player1);
+                entity.setPosition(new Coords(1, 1));
+                entity.setBoardId(1);
+                game.addEntity(entity);
+
+                BipedMek enemyMek = new BipedMek(); // isBoardable() returns false by default
+                enemyMek.setId(2);
+                enemyMek.setOwner(player2);
+                enemyMek.setPosition(new Coords(1, 1));
+                enemyMek.setBoardId(1);
+                game.addEntity(enemyMek);
+
+                // Act
+                boolean result = entity.canInitiateInfantryVsInfantryCombat();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenCombatAlreadyExistsInHex(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player1 = new Player(1, "Player 1");
+                Player player2 = new Player(2, "Player 2");
+                game.addPlayer(1, player1);
+                game.addPlayer(2, player2);
+
+                Infantry entity = spy(infantry);
+                doReturn(true).when(entity).isInBuilding();
+                entity.setId(1);
+                entity.setOwner(player1);
+                entity.setPosition(new Coords(1, 1));
+                entity.setBoardId(1);
+                game.addEntity(entity);
+
+                BuildingEntity enemyBuilding = new BuildingEntity(BuildingType.LIGHT, 1);
+                enemyBuilding.setId(2);
+                enemyBuilding.setOwner(player2);
+                enemyBuilding.setPosition(new Coords(1, 1));
+                enemyBuilding.setBoardId(1);
+                game.addEntity(enemyBuilding);
+
+                Infantry existingCombatant = new Infantry();
+                existingCombatant.setId(3);
+                existingCombatant.setOwner(player1);
+                existingCombatant.setPosition(new Coords(1, 1));
+                existingCombatant.setBoardId(1);
+                existingCombatant.setInfantryCombatTargetId(99);
+                game.addEntity(existingCombatant);
+
+                // Act
+                boolean result = entity.canInitiateInfantryVsInfantryCombat();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#ineligibleEntities")
+            void returnsFalseForNonInfantryEntity(Entity entity) {
+                // Arrange - (none; base Entity always returns false)
+
+                // Act
+                boolean result = entity.canInitiateInfantryVsInfantryCombat();
+
+                // Assert
+                assertFalse(result);
+            }
+        }
+    }
 }

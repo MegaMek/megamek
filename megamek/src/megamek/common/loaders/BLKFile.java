@@ -457,9 +457,7 @@ public class BLKFile {
                 }
             }
 
-            if (dataFile.exists("armor_tech")) {
-                sv.setArmorTechRating(dataFile.getDataAsInt("armor_tech")[0]);
-            } else if (dataFile.exists("armor_tech_rating")) {
+            if (dataFile.exists("armor_tech_rating")) {
                 sv.setArmorTechRating(dataFile.getDataAsInt("armor_tech_rating")[0]);
             }
         }

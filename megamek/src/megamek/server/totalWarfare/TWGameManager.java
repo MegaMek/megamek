@@ -5015,6 +5015,9 @@ public class TWGameManager extends AbstractGameManager {
             addReport(vehicleMotiveDamage((Tank) entity, motiveDamageMod));
         }
         if (skid && !entity.isDoomed()) {
+            // Preserve pre-skid movement distance for TMM and charge damage calculations
+            entity.delta_distance = distance - 1;
+
             if (!flip && isGroundVehicle) {
                 addReport(vehicleMotiveDamage((Tank) entity, 0));
             }

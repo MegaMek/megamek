@@ -15851,7 +15851,8 @@ public class TWGameManager extends AbstractGameManager {
         // decided the defenders are wiped out, so the sustained-combat protection
         // should not reduce that to 50%.
         if (result.getType() == megamek.common.InfantryCombatResult.ResultType.PARTIAL ||
-                  result.getType() == megamek.common.InfantryCombatResult.ResultType.ELIMINATED) {
+                  result.getType() == megamek.common.InfantryCombatResult.ResultType.ELIMINATED ||
+                  result.isDefenderEliminated()) {
             combat.hasPartialControl = true;
         }
 

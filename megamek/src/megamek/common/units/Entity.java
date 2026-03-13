@@ -16024,7 +16024,13 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void setStructuralTechRating(int structuralTechRating) {
-        this.structuralTechRating = TechRating.fromIndex(structuralTechRating);
+        if (TechRating.isValidIndex(structuralTechRating)) {
+            this.structuralTechRating = TechRating.fromIndex(structuralTechRating);
+        } else {
+            LOGGER.warn("Invalid structural TechRating index {} for {} {}, defaulting to C",
+                  structuralTechRating, getChassis(), getModel());
+            this.structuralTechRating = TechRating.C;
+        }
     }
 
     /**
@@ -16053,7 +16059,13 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void setArmorTechRating(int armorTechRating) {
-        this.armorTechRating = TechRating.fromIndex(armorTechRating);
+        if (TechRating.isValidIndex(armorTechRating)) {
+            this.armorTechRating = TechRating.fromIndex(armorTechRating);
+        } else {
+            LOGGER.warn("Invalid armor TechRating index {} for {} {}, defaulting to C",
+                  armorTechRating, getChassis(), getModel());
+            this.armorTechRating = TechRating.C;
+        }
     }
 
     public TechRating getEngineTechRating() {
@@ -16068,7 +16080,13 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void setEngineTechRating(int engineTechRating) {
-        this.engineTechRating = TechRating.fromIndex(engineTechRating);
+        if (TechRating.isValidIndex(engineTechRating)) {
+            this.engineTechRating = TechRating.fromIndex(engineTechRating);
+        } else {
+            LOGGER.warn("Invalid engine TechRating index {} for {} {}, defaulting to C",
+                  engineTechRating, getChassis(), getModel());
+            this.engineTechRating = TechRating.C;
+        }
     }
 
     /**

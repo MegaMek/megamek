@@ -43,9 +43,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import megamek.common.units.UnitRole;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
+import megamek.common.units.UnitRole;
 
 /**
  * Abstract base class for serializers that convert entity data maps to TSV format.
@@ -59,30 +59,32 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
 
     protected static final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
 
-    // Shared format handlers for special types that need custom serialization
-    protected static final Map<Class<?>, Function<Object, String>> FORMAT_HANDLERS = new HashMap<>();
+    protected final Map<Class<?>, Function<Object, String>> formatHandlers = new HashMap<>();
     public static final String TAB = "\t";
     public static final String VERSION = "VERSION";
+
+    // Shared format handlers for special types that need custom serialization
+    private static final Map<Class<?>, Function<Object, String>> DEFAULT_FORMAT_HANDLERS = new HashMap<>();
 
     // Initialize default formatters for common types
     static {
         // Boolean values
-        FORMAT_HANDLERS.put(Boolean.class, value -> (Boolean) value ? "1" : "0");
-        FORMAT_HANDLERS.put(boolean.class, value -> (Boolean) value ? "1" : "0");
+        DEFAULT_FORMAT_HANDLERS.put(Boolean.class, value -> (Boolean) value ? "1" : "0");
+        DEFAULT_FORMAT_HANDLERS.put(boolean.class, value -> (Boolean) value ? "1" : "0");
 
         // Numeric values with decimal formatting
-        FORMAT_HANDLERS.put(Double.class, LOG_DECIMAL::format);
-        FORMAT_HANDLERS.put(double.class, LOG_DECIMAL::format);
-        FORMAT_HANDLERS.put(Float.class, LOG_DECIMAL::format);
-        FORMAT_HANDLERS.put(float.class, LOG_DECIMAL::format);
+        DEFAULT_FORMAT_HANDLERS.put(Double.class, LOG_DECIMAL::format);
+        DEFAULT_FORMAT_HANDLERS.put(double.class, LOG_DECIMAL::format);
+        DEFAULT_FORMAT_HANDLERS.put(Float.class, LOG_DECIMAL::format);
+        DEFAULT_FORMAT_HANDLERS.put(float.class, LOG_DECIMAL::format);
 
         // Common enum types
-        FORMAT_HANDLERS.put(UnitRole.class, value -> ((UnitRole) value).name());
-        FORMAT_HANDLERS.put(GamePhase.class, value -> ((GamePhase) value).name());
-        FORMAT_HANDLERS.put(AimingMode.class, value -> ((AimingMode) value).name());
+        DEFAULT_FORMAT_HANDLERS.put(UnitRole.class, value -> ((UnitRole) value).name());
+        DEFAULT_FORMAT_HANDLERS.put(GamePhase.class, value -> ((GamePhase) value).name());
+        DEFAULT_FORMAT_HANDLERS.put(AimingMode.class, value -> ((AimingMode) value).name());
 
         // Lists with space-separated values
-        FORMAT_HANDLERS.put(List.class, value -> {
+        DEFAULT_FORMAT_HANDLERS.put(List.class, value -> {
             // Special handling for lists of enums
             if (!((List<?>) value).isEmpty() && ((List<?>) value).get(0) instanceof Enum) {
                 return ((List<?>) value).stream()
@@ -106,15 +108,7 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
      */
     protected EntityDataSerializer(Class<F> fieldEnumClass) {
         this.fieldOrder = Arrays.asList(fieldEnumClass.getEnumConstants());
-    }
-
-    /**
-     * Creates a serializer with custom field order.
-     *
-     * @param fieldOrder The desired order of fields for serialization
-     */
-    protected EntityDataSerializer(List<F> fieldOrder) {
-        this.fieldOrder = new ArrayList<>(fieldOrder);
+        this.formatHandlers.putAll(DEFAULT_FORMAT_HANDLERS);
     }
 
     public String serialize(T entityData) {
@@ -139,12 +133,12 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
             Class<?> type = value.getClass();
 
             // Use format handler if available for this type
-            if (FORMAT_HANDLERS.containsKey(type)) {
-                values.add(FORMAT_HANDLERS.get(type).apply(value));
+            if (formatHandlers.containsKey(type)) {
+                values.add(formatHandlers.get(type).apply(value));
             } else if (type.isEnum()) {
                 values.add(((Enum<?>) value).name());
             } else if (List.class.isAssignableFrom(type)) {
-                values.add(FORMAT_HANDLERS.get(List.class).apply(value));
+                values.add(formatHandlers.get(List.class).apply(value));
             } else {
                 values.add(String.valueOf(value));
             }
@@ -166,7 +160,7 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
      * @param formatter The formatting function
      */
     public void addFormatHandler(Class<?> type, Function<Object, String> formatter) {
-        FORMAT_HANDLERS.put(type, formatter);
+        formatHandlers.put(type, formatter);
     }
 
     /**

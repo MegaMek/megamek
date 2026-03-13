@@ -36,8 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.compute.Compute;
-import megamek.common.units.Entity;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
@@ -49,8 +49,8 @@ public class WeaponDataEncoder {
     private static final MMLogger logger = MMLogger.create(WeaponDataEncoder.class);
 
     /**
-     * Encodes the weapons of an entity into a List of Integers, each weapon is encoded as a sequence of 5 integers
-     * which represents the max damage it causes, its arc, short range, medium range and long range.
+     * Encodes the weapons of an entity into a List of Integers; each weapon is encoded as a sequence of 5 integers
+     * which represents the max damage it causes, its arc, short range, medium range, and long range.
      *
      * @param entity The entity from which to encode the weapon data
      *

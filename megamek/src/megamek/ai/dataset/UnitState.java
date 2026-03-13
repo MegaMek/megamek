@@ -38,8 +38,8 @@ import java.util.List;
 
 import megamek.ai.utility.EntityFeatureUtils;
 import megamek.common.compute.Compute;
-import megamek.common.units.Entity;
 import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.UnitRole;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,22 +30,31 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
+
 package megamek.ai.dataset;
 
-import megamek.ai.dataset.UnitEnrichment.Field;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 /**
- * <p>Serializer for UnitEnrichment to TSV format.</p>
- * <p>Uses a flexible map-based approach with enum fields.</p>
- *
- * @author Luana Coppio
+ * Unit tests for UnitAction class and its serializer.
  */
-public class UnitEnrichmentSerializer extends EntityDataSerializer<Field, UnitEnrichment> {
+class UnitActionTest {
 
-    /**
-     * Creates a serializer with the default field order.
-     */
-    public UnitEnrichmentSerializer() {
-        super(Field.class);
+    @Test
+    void testSerializer() {
+        UnitAction action = new UnitAction();
+        action.put(UnitAction.Field.ID, 1)
+              .put(UnitAction.Field.CHASSIS, "Locust")
+              .put(UnitAction.Field.MP_USED, 5);
+
+        UnitActionSerializer serializer = new UnitActionSerializer();
+        String serialized = serializer.serialize(action);
+
+        assertNotNull(serialized);
+        assertTrue(serialized.contains("Locust"));
+        assertTrue(serialized.contains("5"));
     }
 }

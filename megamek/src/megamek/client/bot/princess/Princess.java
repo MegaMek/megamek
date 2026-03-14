@@ -113,7 +113,6 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.logging.MMLogger;
-import megamek.server.totalWarfare.InfantryActionTracker;
 import org.apache.logging.log4j.Level;
 
 public class Princess extends BotClient {
@@ -858,6 +857,27 @@ public class Princess extends BotClient {
         }
 
 
+        // Filter to coords where AllowedDeploymentHelper confirms at least one valid deployment elevation.
+        // This catches prohibited terrain, level-uniformity rules, etc. (e.g. grounded DropShips needing
+        // 7-hex clearance) that BotClient.getFirstValidCoords() does not check.
+        Board deployBoard = game.getBoard(deployedUnit);
+        if (!deployBoard.isSpace()) {
+            boolean groundedAero = deployedUnit.isAero() && !deployedUnit.isAirborne();
+            possibleDeployCoords = possibleDeployCoords.stream()
+                  .filter(c -> {
+                      Hex h = deployBoard.getHex(c);
+                      if (h == null) {
+                          return false;
+                      }
+                      List<ElevationOption> elevations = new AllowedDeploymentHelper(deployedUnit, c, deployBoard, h, game)
+                            .findAllowedElevations();
+                      return groundedAero
+                            ? elevations.stream().anyMatch(o -> o.elevation() == 0)
+                            : !elevations.isEmpty();
+                  })
+                  .toList();
+        }
+
         // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
         int LIMIT = 20;
         int RADIUS = 3;
@@ -873,7 +893,7 @@ public class Princess extends BotClient {
         HashMap<Double, ArrayList<Coords>> rankedCoords = new HashMap<>();
 
         // Units that deploy airborne don't need to worry about all this
-        if (!(deployedUnit.isAero() ||
+        if (!(deployedUnit.isAirborne() ||
               ((deployedUnit.getMovementMode().isVTOL() || deployedUnit.getMovementMode().isWiGE()) &&
                     deployedUnit.getElevation() > 0))) {
             double hazard;

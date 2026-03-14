@@ -95,6 +95,8 @@ public interface IAero {
 
     void setRolled(boolean roll);
 
+    int height();
+
     boolean isOutControlTotal();
 
     boolean isOutControl();
@@ -983,7 +985,8 @@ public interface IAero {
               hex.containsTerrain(Terrains.MAGMA) ||
               hex.containsTerrain(Terrains.JUNGLE) ||
               (hex.terrainLevel(Terrains.SNOW) > 1) ||
-              (hex.terrainLevel(Terrains.GEYSER) == 2);
+              (hex.terrainLevel(Terrains.GEYSER) == 2) ||
+              (hex.containsTerrain(Terrains.BUILDING) && hex.terrainLevel(Terrains.BLDG_ELEV) <= height());
     }
 
 }

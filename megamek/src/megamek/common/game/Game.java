@@ -193,6 +193,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     // internal integer value for an external game id link
     private int externalGameId = 0;
 
+    // Store if UPnP has been set
+    private boolean upnp = false;
+
     // victory condition related stuff
     private VictoryHelper victoryHelper = null;
 
@@ -285,6 +288,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             addMinefieldHelper(mf);
         }
         processGameEvent(new GameBoardChangeEvent(this));
+    }
+
+    public void setUPnP(boolean enable) {
+        upnp = enable;
+    }
+
+    public boolean getUPnP() {
+        return upnp;
     }
 
     public void resetMinefieldDensity(Vector<Minefield> newMinefields) {
@@ -1548,9 +1559,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Returns an Iterator for all entities in _all_ of the coordinates provided.
-     * Coords must not be null.
-     * @param coordList     ArrayList of coordinates to check.
+     * Returns an Iterator for all entities in _all_ of the coordinates provided. Coords must not be null.
+     *
+     * @param coordList ArrayList of coordinates to check.
+     *
      * @return Iterator over the vector of entities.  The vector must exist to get the iterator.
      */
     public Iterator<Entity> getEntities(ArrayList<Coords> coordList) {
@@ -2200,7 +2212,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * Removes the first turn found that the specified entity can move in. Used when a turn is played out of order.
      *
      * @param entity the entity to remove a turn for
+     *
      * @return the removed GameTurn, or null if not found
+     *
      * @throws Exception if called during the movement phase
      */
     public @Nullable GameTurn removeFirstTurnFor(final Entity entity) throws Exception {

@@ -708,7 +708,7 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
     }
 
     public boolean shouldDeployForRound(int round) {
-        return deploymentTable.containsKey(round);
+        return deploymentTable.keySet().stream().anyMatch(k -> k <= round);
     }
 
     /**

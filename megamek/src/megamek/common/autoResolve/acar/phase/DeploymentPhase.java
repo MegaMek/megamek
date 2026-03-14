@@ -68,7 +68,7 @@ public class DeploymentPhase extends PhaseHandler {
         // Automatically deploy all formations that are set to deploy this round
         getSimulationManager().getGame().getActiveFormations().stream()
               .filter(f -> !f.isDeployed())
-              .filter(f -> f.getDeployRound() == getSimulationManager().getGame().getCurrentRound())
+              .filter(f -> f.getDeployRound() <= getSimulationManager().getGame().getCurrentRound())
               .forEach(this::deployUnit);
     }
 

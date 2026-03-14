@@ -65,7 +65,7 @@ public class DeploymentPhase extends PhaseHandler {
     @Override
     protected void executePhase() {
         headerLatch.set(false);
-        // Automatically deploy all formations that are set to deploy this round
+        // Automatically deploy all formations that are set to deploy this round or earlier
         getSimulationManager().getGame().getActiveFormations().stream()
               .filter(f -> !f.isDeployed())
               .filter(f -> f.getDeployRound() <= getSimulationManager().getGame().getCurrentRound())

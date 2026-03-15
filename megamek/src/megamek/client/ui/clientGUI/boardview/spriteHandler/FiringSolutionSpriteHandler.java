@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -82,7 +82,10 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
             return;
         }
         currentEntity = entity;
-        if ((entity == null) || (entity.getId() == Entity.NONE) || !GUIP.getShowFiringSolutions()) {
+        if ((entity == null)
+              || (entity.getId() == Entity.NONE)
+              || (!GUIP.getShowFiringSolutions())
+              || (entity.getPosition() == null)) {
             return;
         }
         boolean narcCapableAmmo =

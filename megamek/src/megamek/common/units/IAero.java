@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -94,6 +94,8 @@ public interface IAero {
     boolean isRolled();
 
     void setRolled(boolean roll);
+
+    int height();
 
     boolean isOutControlTotal();
 
@@ -983,7 +985,8 @@ public interface IAero {
               hex.containsTerrain(Terrains.MAGMA) ||
               hex.containsTerrain(Terrains.JUNGLE) ||
               (hex.terrainLevel(Terrains.SNOW) > 1) ||
-              (hex.terrainLevel(Terrains.GEYSER) == 2);
+              (hex.terrainLevel(Terrains.GEYSER) == 2) ||
+              (hex.containsTerrain(Terrains.BUILDING) && hex.terrainLevel(Terrains.BLDG_ELEV) <= height());
     }
 
 }

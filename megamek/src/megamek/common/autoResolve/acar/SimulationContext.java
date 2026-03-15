@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -708,7 +708,7 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
     }
 
     public boolean shouldDeployForRound(int round) {
-        return deploymentTable.containsKey(round);
+        return !deploymentTable.isEmpty() && Collections.min(deploymentTable.keySet()) <= round;
     }
 
     /**

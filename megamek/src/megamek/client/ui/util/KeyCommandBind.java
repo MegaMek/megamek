@@ -133,7 +133,7 @@ public enum KeyCommandBind {
     DRAW_LABELS(true, "toggleDrawLabels", VK_B, CTRL_DOWN_MASK),
     HEX_COORDS(true, "toggleHexCoords", VK_G, CTRL_DOWN_MASK),
     MINIMAP(true, "toggleMinimap", VK_M, CTRL_DOWN_MASK),
-    LOS_SETTING(true, "viewLosSetting", VK_L, CTRL_DOWN_MASK | ALT_DOWN_MASK),
+    LOS_SETTING(true, "viewLosSetting", VK_L),
     UNIT_DISPLAY(true, "toggleUnitDisplay", VK_D, CTRL_DOWN_MASK),
     UNIT_OVERVIEW(true, "toggleUnitOverview", VK_U, CTRL_DOWN_MASK),
     KEY_BINDS(true, "toggleKeybinds", VK_K, CTRL_DOWN_MASK),

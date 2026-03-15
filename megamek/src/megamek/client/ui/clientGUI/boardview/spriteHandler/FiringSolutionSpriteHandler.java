@@ -82,7 +82,10 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
             return;
         }
         currentEntity = entity;
-        if ((entity == null) || (entity.getId() == Entity.NONE) || !GUIP.getShowFiringSolutions()) {
+        if ((entity == null)
+              || (entity.getId() == Entity.NONE)
+              || (!GUIP.getShowFiringSolutions())
+              || (entity.getPosition() == null)) {
             return;
         }
         boolean narcCapableAmmo =

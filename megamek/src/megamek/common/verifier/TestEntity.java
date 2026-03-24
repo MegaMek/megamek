@@ -1027,24 +1027,53 @@ public abstract class TestEntity implements TestEntityOption {
               + printMiscEquip() + printWeapon() + printAmmo();
     }
 
-    public boolean correctWeight(StringBuffer buff) {
-        return correctWeight(buff, showOverweightedEntity(),
-              showUnderweightEntity());
+    /**
+     * Tests the calculated weight of the unit (the sum of the weights of all its components) and the assumed weight
+     * (the fixed tonnage it is constructed with). Returns false if there are errors with the values (e.g. overweight,
+     * underweight if the unit type does not allow it, mek weight must be a multiple of 5t).
+     *
+     * @return true if there are no problems with the unit's assumed and calculated weight values
+     */
+    public final boolean isWeightCorrect() {
+        return correctWeight(new StringBuffer());
     }
 
-    public boolean correctWeight(StringBuffer buff, boolean showO, boolean showU) {
+    /**
+     * Tests the calculated weight of the unit (the sum of the weights of all its components) and the assumed weight
+     * (the fixed tonnage it is constructed with). Returns false if there are errors with the values (e.g. overweight,
+     * underweight if the unit type does not allow it, mek weight must be a multiple of 5t). Any error reports are
+     * appended to the given StringBuffer.
+     *
+     * @return true if there are no problems with the unit's assumed and calculated weight values
+     */
+    public final boolean correctWeight(StringBuffer buff) {
+        return correctWeight(buff, !showOverweightedEntity(), !showUnderweightEntity());
+    }
+
+    /**
+     * Tests the calculated weight of the unit (the sum of the weights of all its components) and the assumed weight
+     * (the fixed tonnage it is constructed with). Returns false if there are errors with the values (e.g. overweight,
+     * underweight if the unit type does not allow it, mek weight must be a multiple of 5t).
+     *
+     * @param buff              The StringBuffer to append error messages to
+     * @param ignoreOverweight  When true, ignore overweight
+     * @param ignoreUnderweight When true, ignore underweight
+     *
+     * @return true if there are no problems with the unit's assumed and calculated weight values
+     */
+    public boolean correctWeight(StringBuffer buff, boolean ignoreOverweight, boolean ignoreUnderweight) {
         double weightSum = calculateWeight();
         double weight = getWeight();
+        boolean useKg = usesKgStandard();
 
-        if (showO && ((weight + getMaxOverweight()) < weightSum)) {
-            buff.append("Weight: ").append(calculateWeight())
-                  .append(" is greater than ").append(getWeight())
-                  .append("\n");
+        if (!ignoreOverweight && ((weight + getMaxOverweight()) < weightSum)) {
+            buff.append("Weight: %s is greater than %s\n"
+                  .formatted(makeWeightString(weightSum, useKg), makeWeightString(weight, useKg)));
             return false;
         }
-        if (showU && ((weight - getMinUnderweight()) > weightSum)) {
-            buff.append("Weight: ").append(calculateWeight())
-                  .append(" is less than ").append(getWeight()).append("\n");
+        if (!ignoreUnderweight && ((weight - getMinUnderweight()) > weightSum)) {
+            buff.append("Weight: %s is less than %s\n"
+                  .formatted(makeWeightString(weightSum, useKg), makeWeightString(weight, useKg)));
             return false;
         }
         return true;

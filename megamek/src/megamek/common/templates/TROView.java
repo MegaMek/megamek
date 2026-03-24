@@ -219,12 +219,33 @@ public class TROView {
             model.put("fluffHistory", entity.getFluff().getHistory());
         }
 
-        if (!entity.getFluff().getManufacturer().isBlank()) {
-            model.put("manufacturerDesc", entity.getFluff().getManufacturer());
+        String manufacturerRaw = entity.getFluff().getManufacturer();
+        String factoryRaw = entity.getFluff().getPrimaryFactory();
+
+        if (!manufacturerRaw.isBlank()) {
+            String[] manufacturers = manufacturerRaw.split("\\|");
+            String[] factories = factoryRaw.isBlank() ? new String[0] : factoryRaw.split("\\|");
+
+            if ((manufacturers.length > 1) || (factories.length > 1)) {
+                List<Map<String, String>> manufacturerList = new ArrayList<>();
+                int maxEntries = Math.max(manufacturers.length, factories.length);
+                for (int i = 0; i < maxEntries; i++) {
+                    Map<String, String> entry = new HashMap<>();
+                    entry.put("manufacturer", (i < manufacturers.length) ? manufacturers[i].trim() : "Unknown");
+                    entry.put("factory", (i < factories.length) ? factories[i].trim() : "Unknown");
+                    manufacturerList.add(entry);
+                }
+                model.put("manufacturerList", manufacturerList);
+            } else {
+                model.put("manufacturerDesc", manufacturerRaw.trim());
+                if (!factoryRaw.isBlank()) {
+                    model.put("factoryDesc", factoryRaw.trim());
+                }
+            }
         }
 
-        if (!entity.getFluff().getPrimaryFactory().isBlank()) {
-            model.put("factoryDesc", entity.getFluff().getPrimaryFactory());
+        if (manufacturerRaw.isBlank() && !factoryRaw.isBlank()) {
+            model.put("factoryDesc", factoryRaw.trim());
         }
     }
 

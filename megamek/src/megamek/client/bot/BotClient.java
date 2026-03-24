@@ -328,14 +328,14 @@ public abstract class BotClient extends Client {
     protected abstract PhysicalOption calculatePhysicalTurn();
 
     /**
-     * Calculate what to do during the PRE_END_DECLARATIONS phase.
-     * This phase allows infantry to initiate building/vessel combat.
+     * Calculate what to do during the PRE_END_DECLARATIONS phase. This phase allows infantry to initiate
+     * building/vessel combat.
      */
     protected abstract void calculatePreEndDeclarationsTurn();
 
     /**
-     * Calculate what to do during the INFANTRY_VS_INFANTRY_COMBAT phase.
-     * This phase allows infantry to reinforce or withdraw from building/vessel combat.
+     * Calculate what to do during the INFANTRY_VS_INFANTRY_COMBAT phase. This phase allows infantry to reinforce or
+     * withdraw from building/vessel combat.
      */
     protected abstract void calculateInfantryVsInfantryCombatTurn();
 

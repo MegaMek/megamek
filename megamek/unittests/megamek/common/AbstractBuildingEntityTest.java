@@ -52,8 +52,8 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
 import megamek.common.rolls.PilotingRollData;
-import megamek.common.units.Building;
 import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.Building;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.MobileStructure;
 import megamek.common.weapons.lasers.innerSphere.medium.ISLaserMedium;
@@ -458,6 +458,6 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
         assertTrue(building.isCarcass(), "Building with doomed crew should become carcass after newPhase");
         assertTrue(building.getCrew().isDead(), "Building crew should be marked dead after newPhase");
         assertFalse(building.isDestroyed(),
-            "Carcass building must not be pre-marked destroyed; prepareVictoryReport() calls destroyEntity with 'crew death' reason");
+              "Carcass building must not be pre-marked destroyed; prepareVictoryReport() calls destroyEntity with 'crew death' reason");
     }
 }

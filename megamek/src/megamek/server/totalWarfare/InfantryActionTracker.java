@@ -33,22 +33,21 @@
 
 package megamek.server.totalWarfare;
 
-import megamek.common.units.AbstractBuildingEntity;
-import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+
 /**
  * Tracks active infantry vs. infantry actions per TOAR p. 167-174.
  *
  * <p>Infantry vs. infantry actions resolve large-scale infantry-only combat
- * inside buildings, Large Naval Vessels, and aerospace units (Small/Large Craft).
- * This tracker supports all target types using generic "infantry action" terminology
- * from TOAR.</p>
+ * inside buildings, Large Naval Vessels, and aerospace units (Small/Large Craft). This tracker supports all target
+ * types using generic "infantry action" terminology from TOAR.</p>
  *
  * <p><strong>Note:</strong> Mobile structure grappling is not yet implemented.</p>
  */
@@ -74,8 +73,8 @@ public class InfantryActionTracker {
         public int turnCount;
 
         /**
-         * True if attackers have achieved Partial control (P result).
-         * When true, defenders lose half-damage bonus (TOAR p. 172).
+         * True if attackers have achieved Partial control (P result). When true, defenders lose half-damage bonus (TOAR
+         * p. 172).
          */
         public boolean hasPartialControl = false;
 
@@ -155,6 +154,7 @@ public class InfantryActionTracker {
 
     /**
      * Manually add an action to the Infantry Action Tracker. Used during reinitialization.
+     *
      * @param action Manually created action to add
      */
     public void restoreCombat(InfantryAction action) {
@@ -199,9 +199,10 @@ public class InfantryActionTracker {
     /**
      * Add a reinforcement to an existing action.
      *
-     * @param targetId the target entity ID
-     * @param entity the reinforcing infantry entity
+     * @param targetId   the target entity ID
+     * @param entity     the reinforcing infantry entity
      * @param isAttacker true if reinforcing attackers, false for defenders
+     *
      * @return true if action exists and reinforcement was added
      */
     public boolean addReinforcement(int targetId, Entity entity, boolean isAttacker) {
@@ -228,6 +229,7 @@ public class InfantryActionTracker {
      * Remove an action from tracking.
      *
      * @param targetId the target entity ID
+     *
      * @return the removed action, or null if not found
      */
     public InfantryAction removeCombat(int targetId) {
@@ -238,6 +240,7 @@ public class InfantryActionTracker {
      * Get a specific action.
      *
      * @param targetId the target entity ID
+     *
      * @return the action, or null if not found
      */
     public InfantryAction getCombat(int targetId) {
@@ -257,6 +260,7 @@ public class InfantryActionTracker {
      * Check if there's an active action at a target.
      *
      * @param targetId the target entity ID
+     *
      * @return true if action exists
      */
     public boolean hasCombat(int targetId) {
@@ -267,6 +271,7 @@ public class InfantryActionTracker {
      * Remove all attackers from an action (withdrawal).
      *
      * @param targetId the target entity ID
+     *
      * @return list of attacker IDs that were removed
      */
     public List<Integer> withdrawAttackers(int targetId) {

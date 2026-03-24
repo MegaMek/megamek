@@ -38,6 +38,7 @@ import megamek.common.TechConstants;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
@@ -147,29 +148,12 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
 
         loadQuirks(t);
 
-        // ProtoMeks have EI Interface built-in per IO p.77
-        // Add it automatically so it shows in the Equipment tab, but only if not
-        // already loaded from the file (backward compatibility with old files).
-        // ProtoMeks cannot shut down EI, so it's always "On" (mode index 1)
-        boolean hasEI = t.getEquipment().stream()
-              .anyMatch(m -> "EIInterface".equals(m.getType().getInternalName()));
-        if (!hasEI) {
-            try {
-                EquipmentType eiInterface = EquipmentType.get("EIInterface");
-                if (eiInterface != null) {
-                    Mounted<?> eiMount = t.addEquipment(eiInterface, ProtoMek.LOC_BODY);
-                    eiMount.setMode(1); // "Initiate enhanced imaging" (always on for ProtoMeks)
-                }
-            } catch (LocationFullException e) {
-                // Should never happen for slotless equipment, but log if it does
-                throw new EntityLoadingException("Failed to add built-in EI Interface to ProtoMek", e);
+        // ProtoMeks cannot shut down EI per IO:AE p.69 -- set mode to "On" (index 1)
+        for (Mounted<?> m : t.getEquipment()) {
+            if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                m.setMode(1);
+                break;
             }
-        } else {
-            // Ensure the mode is set even when loaded from file
-            t.getEquipment().stream()
-                  .filter(m -> "EIInterface".equals(m.getType().getInternalName()))
-                  .findFirst()
-                  .ifPresent(m -> m.setMode(1));
         }
 
         return t;

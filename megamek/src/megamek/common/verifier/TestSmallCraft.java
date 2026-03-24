@@ -112,8 +112,8 @@ public class TestSmallCraft extends TestAero {
 
     /**
      * Returns the number of free additional armor points provided for SmallCraft and DropShips based on their
-     * structural integrity (for primitive craft, *without* the 0.66 primitive adjustment factor). See TM p.191,
-     * IO:AE p.119-125.
+     * structural integrity (for primitive craft, *without* the 0.66 primitive adjustment factor). See TM p.191, IO:AE
+     * p.119-125.
      *
      * @param smallCraft The SC/DS to compute free armor for
      *
@@ -769,7 +769,7 @@ public class TestSmallCraft extends TestAero {
         buff.append("Intro year: ").append(getEntity().getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             buff.append("Weight: ").append(getWeight()).append(" (").append(calculateWeight()).append(")\n");
         }
         buff.append(printWeightCalculation()).append("\n");

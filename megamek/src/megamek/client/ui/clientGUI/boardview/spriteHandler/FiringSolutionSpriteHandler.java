@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,7 @@ package megamek.client.ui.clientGUI.boardview.spriteHandler;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import megamek.client.Client;
@@ -44,18 +45,21 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.FiringSolutionSprite;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.AmmoType.Munitions;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityVisibilityUtils;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Coords;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType.Munitions;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.BuildingTarget;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityVisibilityUtils;
+import megamek.common.units.Targetable;
 import megamek.common.util.FiringSolution;
 
 public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implements IPreferenceChangeListener {
@@ -78,7 +82,10 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
             return;
         }
         currentEntity = entity;
-        if ((entity == null) || (entity.getId() == Entity.NONE) || !GUIP.getShowFiringSolutions()) {
+        if ((entity == null)
+              || (entity.getId() == Entity.NONE)
+              || (!GUIP.getShowFiringSolutions())
+              || (entity.getPosition() == null)) {
             return;
         }
         boolean narcCapableAmmo =
@@ -114,6 +121,20 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
                 thd.setLocation(target.getPosition());
                 thd.setRange(entity.getPosition().distance(target.getPosition()));
                 solutions.put(target.getId(), new FiringSolution(thd, spotter.isPresent()));
+            } else if (target instanceof AbstractBuildingEntity buildingEntity
+                  && game.onTheSameBoard(entity, buildingEntity)
+                  && (client.getGame().getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)
+                  || target.getOwner().isEnemyOf(entity.getOwner()))) {
+                for (Coords buildingHex : buildingEntity.getCoordsList()) {
+                    BuildingTarget buildingTarget = new BuildingTarget(buildingHex,
+                          game.getBoard(buildingEntity.getBoardId()), Targetable.TYPE_BUILDING);
+                    ToHitData thd = WeaponAttackAction.toHit(game, entity.getId(), weapon, ammo,
+                          Optional.empty(), buildingTarget);
+                    thd.setLocation(buildingHex);
+                    thd.setRange(entity.getPosition().distance(buildingHex));
+                    solutions.put(Objects.hash(buildingEntity.getId(), buildingHex),
+                          new FiringSolution(thd, false));
+                }
             }
         }
 

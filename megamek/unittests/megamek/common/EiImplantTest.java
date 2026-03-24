@@ -56,7 +56,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for Enhanced Imaging (EI) Interface and Implant functionality.
  * <p>
- * TableTop Rules (IO p.77):
+ * TableTop Rules (IO:AE p.69):
  * <ul>
  *     <li>EI Interface: Equipment that provides neural connection to unit</li>
  *     <li>EI Implant: Pilot augmentation that activates full EI benefits</li>
@@ -166,6 +166,14 @@ public class EiImplantTest {
     }
 
     /**
+     * Enables the {@code track_neural_interface_hardware} game option, which gates ProtoMek EI.
+     */
+    private void enableTracking() {
+        game.getOptions().getOption(
+              OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE).setValue(true);
+    }
+
+    /**
      * Creates a ProtoMek for testing.
      */
     private ProtoMek createProtoMek() {
@@ -223,11 +231,20 @@ public class EiImplantTest {
     class HasEiCockpitTests {
 
         @Test
-        @DisplayName("ProtoMek always has EI cockpit")
+        @DisplayName("ProtoMek has EI cockpit when tracking enabled")
+        void protoMekHasEiCockpitWhenTrackingOn() {
+            enableTracking();
+            ProtoMek proto = createProtoMek();
+            assertTrue(proto.hasEiCockpit(),
+                  "ProtoMeks should have EI cockpit when tracking is enabled (per IO:AE p.69)");
+        }
+
+        @Test
+        @DisplayName("ProtoMek always has EI cockpit regardless of tracking")
         void protoMekAlwaysHasEiCockpit() {
             ProtoMek proto = createProtoMek();
             assertTrue(proto.hasEiCockpit(),
-                  "ProtoMeks should always have EI cockpit (integral to design)");
+                  "ProtoMeks should always have EI cockpit per IO:AE p.69, regardless of tracking");
         }
 
         @Test
@@ -252,18 +269,28 @@ public class EiImplantTest {
     class HasActiveEiCockpitTests {
 
         @Test
-        @DisplayName("ProtoMek always has active EI cockpit (built-in per IO p.77)")
-        void protoMekAlwaysHasActiveEiCockpit() {
+        @DisplayName("ProtoMek has active EI cockpit when tracking enabled (built-in per IO:AE p.69)")
+        void protoMekHasActiveEiCockpitWhenTrackingOn() {
+            enableTracking();
             ProtoMek proto = createProtoMek();
             // ProtoMeks have built-in EI that doesn't require crew implant option
-            // per IO p.77 - they are neurally connected by design
+            // per IO:AE p.69 - they are neurally connected by design
             assertTrue(proto.hasActiveEiCockpit(),
-                  "ProtoMek should always have active EI cockpit (built-in, no crew option needed)");
+                  "ProtoMek should have active EI cockpit when tracking is enabled");
         }
 
         @Test
-        @DisplayName("ProtoMek EI active without MD_EI_IMPLANT option")
+        @DisplayName("ProtoMek always has active EI regardless of tracking")
+        void protoMekAlwaysHasActiveEi() {
+            ProtoMek proto = createProtoMek();
+            assertTrue(proto.hasActiveEiCockpit(),
+                  "ProtoMek should always have active EI per IO:AE p.69, regardless of tracking");
+        }
+
+        @Test
+        @DisplayName("ProtoMek EI active without MD_EI_IMPLANT option (tracking ON)")
         void protoMekEiActiveWithoutImplantOption() {
+            enableTracking();
             ProtoMek proto = createProtoMek();
             // Explicitly verify crew does NOT have MD_EI_IMPLANT set
             assertFalse(proto.getCrew().getOptions().booleanOption(OptionsConstants.MD_EI_IMPLANT),
@@ -292,6 +319,7 @@ public class EiImplantTest {
         @Test
         @DisplayName("ProtoMek cannot shut down EI")
         void protoMekCannotShutdownEi() {
+            enableTracking();
             ProtoMek proto = createProtoMek();
             assertFalse(proto.canShutdownEi(),
                   "ProtoMeks cannot shut down EI (integral to design)");
@@ -300,6 +328,7 @@ public class EiImplantTest {
         @Test
         @DisplayName("setEiShutdown does not affect ProtoMek")
         void setEiShutdownDoesNotAffectProtoMek() {
+            enableTracking();
             ProtoMek proto = createProtoMek();
             // ProtoMek EI is built-in - no crew option needed
 
@@ -314,6 +343,7 @@ public class EiImplantTest {
         @Test
         @DisplayName("isEiShutdown returns false by default")
         void isEiShutdownReturnsFalseByDefault() {
+            enableTracking();
             ProtoMek proto = createProtoMek();
             assertFalse(proto.isEiShutdown(),
                   "EI should not be shutdown by default");
@@ -344,24 +374,26 @@ public class EiImplantTest {
         void eiProbeHasOneHexRange() {
             Sensor eiProbe = new Sensor(Sensor.TYPE_EI_PROBE);
             assertEquals(1, eiProbe.getRangeByBracket(),
-                  "EI Probe should have 1-hex range per IO p.77");
+                  "EI Probe should have 1-hex range per IO:AE p.69");
         }
 
         @Test
-        @DisplayName("ProtoMek with EI has BAP capability")
+        @DisplayName("ProtoMek with EI has BAP capability (tracking ON)")
         void protoMekWithEiHasBapCapability() {
+            enableTracking();
             ProtoMek proto = createProtoMek();
-            // ProtoMeks always have EI, so they should report having BAP capability
+            // ProtoMeks have EI when tracking is ON, so they should report having BAP capability
             assertTrue(proto.hasBAP(),
-                  "ProtoMek should have BAP capability from EI Interface");
+                  "ProtoMek should have BAP capability from EI Interface when tracking is ON");
         }
 
         @Test
-        @DisplayName("ProtoMek EI provides 1-hex BAP range")
+        @DisplayName("ProtoMek EI provides 1-hex BAP range (tracking ON)")
         void protoMekEiProvidesOneHexBapRange() {
+            enableTracking();
             ProtoMek proto = createProtoMek();
             assertEquals(1, proto.getBAPRange(),
-                  "ProtoMek EI should provide 1-hex BAP range per IO p.77");
+                  "ProtoMek EI should provide 1-hex BAP range per IO:AE p.69 when tracking is ON");
         }
     }
 }

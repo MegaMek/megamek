@@ -43,7 +43,7 @@ import megamek.ai.dataset.UnitEnrichment.Field;
 public class UnitEnrichmentSerializer extends EntityDataSerializer<Field, UnitEnrichment> {
 
     /**
-     * Creates a serializer with default field order.
+     * Creates a serializer with the default field order.
      */
     public UnitEnrichmentSerializer() {
         super(Field.class);

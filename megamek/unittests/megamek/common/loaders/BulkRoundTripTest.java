@@ -52,15 +52,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Roundtrip save/load test for ALL units in the MekSummaryCache.
- *
- * The test for each unit is:
- *   - Load the original unit from cache
- *   - Save it to a temp file (A)
- *   - Load file A, save it again to file (B)
- *   - Compare A and B byte-for-byte, they must be identical (no data loss across the cycle)
- *
- * Run with:
- *   ./gradlew :megamek:roundTripSaveUnitsTest
+ * <p>
+ * The test for each unit is: - Load the original unit from cache - Save it to a temp file (A) - Load file A, save it
+ * again to file (B) - Compare A and B byte-for-byte, they must be identical (no data loss across the cycle)
+ * <p>
+ * Run with: ./gradlew :megamek:roundTripSaveUnitsTest
  */
 @Tag("on-demand")
 public class BulkRoundTripTest {

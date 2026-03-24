@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -417,6 +417,8 @@ public class ToHitData extends TargetRoll {
                     "target is assault dropping",
                     // Remove skidded
                     "target skidded",
+                    // Remove immobile modifier
+                    "target immobile",
                     // Remove possible Aerospace Side Mod (these all need to be localized)
                     megamek.client.ui.Messages.getString("WeaponAttackAction.AeroNoseAttack")
                           + "|"

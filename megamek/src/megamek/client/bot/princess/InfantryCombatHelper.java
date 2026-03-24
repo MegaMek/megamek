@@ -44,9 +44,8 @@ import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 
 /**
- * Helper class for Princess AI infantry vs infantry combat decisions.
- * Provides calculations and decision logic for initiating, reinforcing, and withdrawing from
- * building/vessel interior combat using the MarinePointsScore system.
+ * Helper class for Princess AI infantry vs infantry combat decisions. Provides calculations and decision logic for
+ * initiating, reinforcing, and withdrawing from building/vessel interior combat using the MarinePointsScore system.
  */
 public class InfantryCombatHelper {
 
@@ -63,6 +62,7 @@ public class InfantryCombatHelper {
      *
      * @param entity   The attacking entity (must be Infantry)
      * @param building The target building/vessel
+     *
      * @return MPS value for the attacker
      */
     public static int calculateAttackerMPS(Entity entity, Entity building) {
@@ -73,12 +73,12 @@ public class InfantryCombatHelper {
     }
 
     /**
-     * Calculate total enemy defender MPS in a hex.
-     * Includes all enemy infantry + 50% of crew as potential defenders.
+     * Calculate total enemy defender MPS in a hex. Includes all enemy infantry + 50% of crew as potential defenders.
      *
      * @param game     The current game
      * @param target   The building/vessel being defended
      * @param attacker The attacking entity
+     *
      * @return Total estimated defender MPS
      */
     public static int calculateEnemyMPS(Game game, Entity target, Entity attacker) {
@@ -86,7 +86,7 @@ public class InfantryCombatHelper {
 
         // Add all enemy infantry in the hex
         List<Entity> enemyInfantry = getEnemyInfantryInHex(
-                game, target.getPosition(), attacker.getOwnerId());
+              game, target.getPosition(), attacker.getOwnerId());
 
         for (Entity enemy : enemyInfantry) {
             if (target instanceof AbstractBuildingEntity) {
@@ -105,6 +105,7 @@ public class InfantryCombatHelper {
      *
      * @param attackerMPS Attacker's MPS
      * @param defenderMPS Defender's MPS
+     *
      * @return Ratio, or 0 if defender MPS is 0
      */
     public static double calculateMPSRatio(int attackerMPS, int defenderMPS) {
@@ -115,14 +116,13 @@ public class InfantryCombatHelper {
     }
 
     /**
-     * Calculate initiation threshold based on bravery.
-     * Formula: 2.0 - (bravery / 3.0) * 0.5
+     * Calculate initiation threshold based on bravery. Formula: 2.0 - (bravery / 3.0) * 0.5
      * <p>
-     * - Low bravery (0.1): ~2.0 (needs 2:1 odds)
-     * - Average bravery (1.5): ~1.75 (needs 7:4 odds)
-     * - High bravery (3.0): 1.5 (needs 3:2 odds)
+     * - Low bravery (0.1): ~2.0 (needs 2:1 odds) - Average bravery (1.5): ~1.75 (needs 7:4 odds) - High bravery (3.0):
+     * 1.5 (needs 3:2 odds)
      *
      * @param bravery Bravery value from BehaviorSettings (0.1 to 3.0)
+     *
      * @return MPS ratio threshold required to initiate
      */
     public static double calculateInitiationThreshold(double bravery) {
@@ -130,27 +130,28 @@ public class InfantryCombatHelper {
     }
 
     /**
-     * Calculate reinforcement target ratio based on aggression.
-     * Formula: initiationThreshold + (hyperAggression / 10.0)
+     * Calculate reinforcement target ratio based on aggression. Formula: initiationThreshold + (hyperAggression /
+     * 10.0)
      * <p>
      * Princess will reinforce to maintain ratio above this target.
      *
      * @param initiationThreshold The threshold used to initiate combat
      * @param hyperAggression     HyperAggression value from BehaviorSettings (0.25 to 500)
+     *
      * @return Target MPS ratio to maintain via reinforcement
      */
     public static double calculateReinforcementTargetRatio(double initiationThreshold,
-                                                             double hyperAggression) {
+          double hyperAggression) {
         return initiationThreshold + (hyperAggression * REINFORCEMENT_AGGRESSION_FACTOR);
     }
 
     /**
-     * Calculate withdrawal threshold.
-     * Formula: initiationThreshold * 0.75
+     * Calculate withdrawal threshold. Formula: initiationThreshold * 0.75
      * <p>
      * Provides hysteresis - won't withdraw until significantly worse than initiation threshold.
      *
      * @param initiationThreshold The threshold used to initiate combat
+     *
      * @return MPS ratio threshold below which to withdraw
      */
     public static double calculateWithdrawalThreshold(double initiationThreshold) {
@@ -164,10 +165,11 @@ public class InfantryCombatHelper {
      * @param target   The target building/vessel
      * @param game     The current game
      * @param behavior Princess's behavior settings
+     *
      * @return true if should initiate combat
      */
     public static boolean shouldInitiateCombat(Entity attacker, Entity target,
-                                                 Game game, BehaviorSettings behavior) {
+          Game game, BehaviorSettings behavior) {
         // Validate inputs
         if (!(attacker instanceof Infantry) || target == null) {
             return false;
@@ -205,10 +207,11 @@ public class InfantryCombatHelper {
      * @param targetId      The building/vessel ID where combat is happening
      * @param game          The current game
      * @param behavior      Princess's behavior settings
+     *
      * @return true if should send reinforcement
      */
     public static boolean shouldReinforce(Entity reinforcement, int targetId,
-                                           Game game, BehaviorSettings behavior) {
+          Game game, BehaviorSettings behavior) {
         // Validate inputs
         if (!(reinforcement instanceof Infantry)) {
             return false;
@@ -266,7 +269,7 @@ public class InfantryCombatHelper {
         double currentRatio = calculateMPSRatio(attackerMPS, defenderMPS);
         double initiationThreshold = calculateInitiationThreshold(behavior.getBraveryValue());
         double targetRatio = calculateReinforcementTargetRatio(
-                initiationThreshold, behavior.getHyperAggressionValue());
+              initiationThreshold, behavior.getHyperAggressionValue());
 
         // Reinforce if current ratio is below target
         return currentRatio < targetRatio;
@@ -279,10 +282,11 @@ public class InfantryCombatHelper {
      * @param targetId The building/vessel ID
      * @param game     The current game
      * @param behavior Princess's behavior settings
+     *
      * @return true if should withdraw
      */
     public static boolean shouldWithdraw(Entity entity, int targetId,
-                                          Game game, BehaviorSettings behavior) {
+          Game game, BehaviorSettings behavior) {
         // Only attackers can withdraw
         if (!entity.isInfantryCombatAttacker()) {
             return false;
@@ -340,6 +344,7 @@ public class InfantryCombatHelper {
      * @param game    The current game
      * @param coords  The coordinates to check
      * @param ownerId The owner ID of the attacking player
+     *
      * @return List of enemy infantry entities
      */
     public static List<Entity> getEnemyInfantryInHex(Game game, Coords coords, int ownerId) {
@@ -347,9 +352,9 @@ public class InfantryCombatHelper {
 
         for (Entity entity : game.getEntitiesVector(coords)) {
             if (entity instanceof Infantry &&
-                entity.getOwnerId() != ownerId &&
-                !(entity instanceof EjectedCrew) &&
-                entity.isInBuilding()) {
+                  entity.getOwnerId() != ownerId &&
+                  !(entity instanceof EjectedCrew) &&
+                  entity.isInBuilding()) {
                 enemyInfantry.add(entity);
             }
         }
@@ -358,10 +363,10 @@ public class InfantryCombatHelper {
     }
 
     /**
-     * Estimate crew defenders (50% of total crew).
-     * Uses 50% of the entity's crew size as potential defenders.
+     * Estimate crew defenders (50% of total crew). Uses 50% of the entity's crew size as potential defenders.
      *
      * @param target The target building/vessel
+     *
      * @return Estimated number of crew defenders
      */
     public static int estimateCrewDefenders(Entity target) {
@@ -373,11 +378,11 @@ public class InfantryCombatHelper {
     }
 
     /**
-     * Find the best infantry unit to send as reinforcement.
-     * Priority: MPS/mass ratio, proximity, availability.
+     * Find the best infantry unit to send as reinforcement. Priority: MPS/mass ratio, proximity, availability.
      *
      * @param candidates List of candidate units
      * @param target     The target building/vessel
+     *
      * @return Best reinforcement unit, or null if none suitable
      */
     public static Entity findBestReinforcement(List<Entity> candidates, Entity target) {
@@ -387,7 +392,7 @@ public class InfantryCombatHelper {
         for (Entity candidate : candidates) {
             // Skip if not infantry or already in combat
             if (!(candidate instanceof Infantry) ||
-                candidate.getInfantryCombatTargetId() != Entity.NONE) {
+                  candidate.getInfantryCombatTargetId() != Entity.NONE) {
                 continue;
             }
 

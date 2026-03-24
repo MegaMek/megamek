@@ -37,8 +37,8 @@ import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
 /**
- * Action to REINFORCE existing infantry vs. infantry combat in a building.
- * Only valid when combat ALREADY exists in the target building.
+ * Action to REINFORCE existing infantry vs. infantry combat in a building. Only valid when combat ALREADY exists in the
+ * target building.
  */
 public class ReinforceInfantryCombatAction extends InfantryCombatAction {
 

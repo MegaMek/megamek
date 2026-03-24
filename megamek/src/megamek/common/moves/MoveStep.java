@@ -2036,9 +2036,10 @@ public class MoveStep implements Serializable {
         }
 
         // check for valid walk/run mp; BRACE is a special case for ProtoMeks
+        // 0 MP infantry with fast movement have runMPMax > 0 even when tmpWalkMP is 0
         if (!isJumping() &&
               !entity.isStuck() &&
-              (tmpWalkMP > 0) &&
+              ((tmpWalkMP > 0) || (runMPMax > 0)) &&
               ((getMp() > 0) || (stepType == MoveStepType.BRACE))) {
             // Prone meks can only spend MP to turn or get up
             if ((stepType != MoveStepType.TURN_LEFT) &&

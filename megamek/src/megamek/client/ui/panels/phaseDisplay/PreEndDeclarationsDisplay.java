@@ -45,12 +45,12 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.widget.MegaMekButton;
-import megamek.common.board.Coords;
-import megamek.common.units.Targetable;
 import megamek.common.actions.InitiateInfantryCombatAction;
+import megamek.common.board.Coords;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
+import megamek.common.units.Targetable;
 
 public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
 
@@ -126,8 +126,10 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
 
     @Override
     protected void setButtons() {
-        buttons.put(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT, createButton(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT.getCmd(), "PreEndDeclarationsDisplay."));
-        buttons.put(PreEndCommand.PREEND_NEXT, createButton(PreEndCommand.PREEND_NEXT.getCmd(), "PreEndDeclarationsDisplay."));
+        buttons.put(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT,
+              createButton(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT.getCmd(), "PreEndDeclarationsDisplay."));
+        buttons.put(PreEndCommand.PREEND_NEXT,
+              createButton(PreEndCommand.PREEND_NEXT.getCmd(), "PreEndDeclarationsDisplay."));
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
     }
 
@@ -223,6 +225,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
 
     /**
      * Checks for nag conditions before ending turn.
+     *
      * @return true if the turn should be cancelled
      */
     private boolean checkNags() {
@@ -320,8 +323,8 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     }
 
     /**
-     * Chooses a target from the given hex coordinates.
-     * If multiple entities exist at the hex, shows a dialog for selection.
+     * Chooses a target from the given hex coordinates. If multiple entities exist at the hex, shows a dialog for
+     * selection.
      */
     private Targetable chooseTarget(Coords coords) {
         List<Targetable> targets = new ArrayList<>();
@@ -340,12 +343,12 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         } else {
             // Multiple targets - show choice dialog
             return TargetChoiceDialog.showSingleChoiceDialog(
-                clientgui.getFrame(),
-                "PreEndDeclarationsDisplay.ChooseTargetDialog.title",
-                Messages.getString("PreEndDeclarationsDisplay.ChooseTargetDialog.message"),
-                targets,
-                clientgui,
-                game.getEntity(currentEntity)
+                  clientgui.getFrame(),
+                  "PreEndDeclarationsDisplay.ChooseTargetDialog.title",
+                  Messages.getString("PreEndDeclarationsDisplay.ChooseTargetDialog.message"),
+                  targets,
+                  clientgui,
+                  game.getEntity(currentEntity)
             );
         }
     }

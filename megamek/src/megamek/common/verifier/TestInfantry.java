@@ -469,7 +469,7 @@ public class TestInfantry extends TestEntity {
         buff.append("Intro year: ").append(infantry.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             buff.append("Weight: ").append(getWeight()).append("\n");
         }
         buff.append(printWeightCalculation()).append("\n");

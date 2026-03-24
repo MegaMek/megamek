@@ -878,7 +878,7 @@ public class ProtoMek extends Entity {
         }
         super.addEquipment(mounted, loc, rearMounted);
 
-        // ProtoMeks have EI Interface built-in and cannot disable it (IO p.77)
+        // ProtoMeks have EI Interface built-in and cannot disable it (IO:AE p.69)
         // Lock the mode to prevent UI from allowing toggle
         if ((mounted.getType() instanceof MiscType) &&
               mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
@@ -1040,8 +1040,8 @@ public class ProtoMek extends Entity {
     }
 
     /**
-     * ProtoMeks always have Enhanced Imaging (EI) built-in per IO rules. The EI Interface is integral to ProtoMek
-     * design.
+     * ProtoMeks always have EI built-in per IO:AE p.69. The tracking option only affects whether
+     * EI equipment counts toward tech level (handled in {@code recalculateTechAdvancement}).
      *
      * @return always true for ProtoMeks
      */
@@ -1051,8 +1051,9 @@ public class ProtoMek extends Entity {
     }
 
     /**
-     * ProtoMeks have EI built-in and always active (unless head is damaged). Unlike other units, ProtoMek pilots don't
-     * need the EI Implant option - they are neurally connected by default per IO p.77.
+     * ProtoMeks have EI built-in and always active unless the head is damaged. Unlike other units,
+     * ProtoMek pilots don't need the EI Implant option - they are neurally connected by default
+     * per IO:AE p.69.
      *
      * @return true if head is undamaged, false otherwise
      */

@@ -1305,7 +1305,7 @@ public class MULParser {
                 }
             }
 
-            // Restore EI Interface equipment mode (skip for ProtoMeks - they're always on per IO p.77)
+            // Restore EI Interface equipment mode (skip for ProtoMeks - they're always on per IO:AE p.69)
             if (!entity.isProtoMek() && attributes.containsKey(ATTR_EI_MODE)
                   && !attributes.get(ATTR_EI_MODE).isBlank()) {
                 String eiModeName = attributes.get(ATTR_EI_MODE);

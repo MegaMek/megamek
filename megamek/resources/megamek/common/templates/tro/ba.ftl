@@ -1,8 +1,15 @@
 ${fullName}
 <#if includeFluff>
 Type: ${chassis}
+    <#if manufacturerList??>
+        Manufacturers:
+        <#list manufacturerList as entry>
+            ${entry.manufacturer}, ${entry.factory}
+        </#list>
+    <#else>
 Manufacturer: <#if manufacturerDesc??>${manufacturerDesc}<#else>Unknown</#if>
     Primary Factory: <#if factoryDesc??>${factoryDesc}<#else>Unknown</#if>
+    </#if>
 
 </#if>
 Tech Base: ${techBase}

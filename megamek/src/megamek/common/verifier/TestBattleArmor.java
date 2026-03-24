@@ -1018,18 +1018,18 @@ public class TestBattleArmor extends TestEntity {
     }
 
     @Override
-    public boolean correctWeight(StringBuffer buff, boolean showO, boolean showU) {
+    public boolean correctWeight(StringBuffer buff, boolean ignoreOverweight, boolean ignoreUnderweight) {
         double weightSum = calculateWeight();
         double weight = getWeight();
         boolean correct = true;
         String baDesignation = ba.getLocationAbbr(BattleArmor.LOC_SQUAD);
-        if (showO && ((weight + getMaxOverweight()) < weightSum)) {
+        if (!ignoreOverweight && ((weight + getMaxOverweight()) < weightSum)) {
             buff.append(baDesignation).append("Weight: ").append(calculateWeight())
                   .append(" is greater than ").append(getWeight())
                   .append("\n");
             correct = false;
         }
-        if (showU && ((weight - getMinUnderweight()) > weightSum)) {
+        if (!ignoreUnderweight && ((weight - getMinUnderweight()) > weightSum)) {
             buff.append("Weight: ").append(calculateWeight())
                   .append(" is less than ").append(getWeight()).append("\n");
             correct = false;
@@ -1119,7 +1119,7 @@ public class TestBattleArmor extends TestEntity {
         buff.append("Intro year: ").append(ba.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             buff.append("Weight: ").append(getWeight() * 1000).append(" kg (")
                   .append(calculateWeight() * 1000).append(" kg)\n");
         }

@@ -281,9 +281,9 @@ public abstract class Mek extends Entity {
     private boolean riscHeatSinkKit = false;
 
     /**
-     * Tracks locations where the user has explicitly opted out of automatic Clan CASE.
-     * Only relevant for Clan and Clan Mixed units. When a Clan unit's user removes Clan CASE
-     * from a location, that location is recorded here so it won't be auto-added back.
+     * Tracks locations where the user has explicitly opted out of automatic Clan CASE. Only relevant for Clan and Clan
+     * Mixed units. When a Clan unit's user removes Clan CASE from a location, that location is recorded here so it
+     * won't be auto-added back.
      */
     private final Set<Integer> clanCaseOptOutLocations = new HashSet<>();
 

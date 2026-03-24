@@ -41,8 +41,8 @@ import megamek.common.InfantryCombatResult;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link InfantryCombatTables} focusing on ratio calculation,
- * action resolution, and crew casualties conversion (TOAR p. 173-174).
+ * Tests for {@link InfantryCombatTables} focusing on ratio calculation, action resolution, and crew casualties
+ * conversion (TOAR p. 173-174).
  */
 public class InfantryCombatTablesTest {
 
@@ -140,14 +140,14 @@ public class InfantryCombatTablesTest {
 
     @Test
     void testResolveAction_EvenMatch_Boxcars() {
-        // 1:1 ratio, roll 12 (best outcome for attacker)
+        // 1:1 ratio, roll 12 (best outcome for attacker in even fight)
         InfantryCombatResult result = InfantryCombatTables.resolveAction("1:1", 12);
 
         assertNotNull(result);
-        // Should be 25%/75% casualties (best for attacker in even fight)
+        // Should be 25%/75% (P)
         assertEquals(25, result.getAttackerCasualties());
         assertEquals(75, result.getDefenderCasualties());
-        assertEquals(InfantryCombatResult.ResultType.CASUALTIES, result.getType());
+        assertEquals(InfantryCombatResult.ResultType.PARTIAL, result.getType());
     }
 
     @Test
@@ -156,9 +156,10 @@ public class InfantryCombatTablesTest {
         InfantryCombatResult result = InfantryCombatTables.resolveAction(">3:1", 12);
 
         assertNotNull(result);
-        // Should be 5%/55% casualties (minimal attacker losses)
+        // Should be 5%/E (P) — defender eliminated
         assertEquals(5, result.getAttackerCasualties());
-        assertEquals(55, result.getDefenderCasualties());
+        assertEquals(100, result.getDefenderCasualties());
+        assertEquals(InfantryCombatResult.ResultType.PARTIAL, result.getType());
     }
 
     @Test
@@ -168,9 +169,9 @@ public class InfantryCombatTablesTest {
 
         assertNotNull(result);
         assertEquals(InfantryCombatResult.ResultType.REPULSED, result.getType());
-        // Repulsed means attacker takes half damage, defender takes 0
-        assertEquals(0, result.getAttackerCasualties()); // 1% / 2 = 0
-        assertEquals(0, result.getDefenderCasualties());
+        // E/1% (R) — attacker eliminated (100%), defender takes 1%
+        assertEquals(100, result.getAttackerCasualties());
+        assertEquals(1, result.getDefenderCasualties());
     }
 
     @Test
@@ -195,7 +196,7 @@ public class InfantryCombatTablesTest {
     @Test
     void testResolveAction_AllRatios() {
         // Test that all ratio strings resolve without errors
-        String[] ratios = {"1:3<", "1:3", "1:2", "2:3", "1:1", "3:2", "2:1", "3:1", ">3:1"};
+        String[] ratios = { "1:3<", "1:3", "1:2", "2:3", "1:1", "3:2", "2:1", "3:1", ">3:1" };
 
         for (String ratio : ratios) {
             for (int roll = 2; roll <= 12; roll++) {

@@ -1459,12 +1459,36 @@ public class Infantry extends Entity {
     }
 
     @Override
+    public boolean isEligibleForMovement() {
+        if (isExhaustedFromFastMove()) {
+            return false;
+        }
+        return super.isEligibleForMovement();
+    }
+
+    @Override
     public boolean isEligibleForFiring() {
+        if (isExhaustedFromFastMove()) {
+            return false;
+        }
         if (gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE) &&
               (moved == EntityMovementType.MOVE_RUN)) {
             return false;
         }
         return super.isEligibleForFiring();
+    }
+
+    /**
+     * Per TO:AR p.25, 0 MP infantry that used fast movement (MOVE_RUN) in the previous turn cannot move or fire in the
+     * following turn.
+     *
+     * @return true if this unit is exhausted from using fast movement last round
+     */
+    public boolean isExhaustedFromFastMove() {
+        return gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE)
+              && isConventionalInfantry()
+              && (getWalkMP() == 0)
+              && (movedLastRound == EntityMovementType.MOVE_RUN);
     }
 
     @Override
@@ -1573,8 +1597,8 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Applies the armor kit's flags (encumbering, space suit, DEST, sneak properties)
-     * and recalculates the damage divisor, without modifying the equipment list.
+     * Applies the armor kit's flags (encumbering, space suit, DEST, sneak properties) and recalculates the damage
+     * divisor, without modifying the equipment list.
      */
     private void applyArmorKitFlags(EquipmentType armorKit) {
         if ((armorKit != null) && armorKit.hasFlag(MiscType.F_ARMOR_KIT)) {
@@ -1617,7 +1641,7 @@ public class Infantry extends Entity {
             divisor = getCustomArmorDamageDivisor();
         }
         // TSM implant reduces divisor to 0.5 if no other armor is worn
-        if ((divisor == 1.0) && hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+        if ((armorKit == null) && (divisor == 1.0) && hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             divisor = 0.5;
         }
         // Dermal camo armor provides divisor of 1.0 (prevents 0.5 from TSM alone)
@@ -2827,9 +2851,12 @@ public class Infantry extends Entity {
         }
 
         // Look for enemy boardable entities at this location
+        // TODO: Once buildings can be captured & change owner, allow this for building carcass
         Entity enemyBoardableEntity = null;
         for (Entity e : game.getEntitiesVector(getBoardLocation())) {
-            if (e.isBoardable() && e.getOwner().isEnemyOf(getOwner())) {
+            if (e.isBoardable()
+                  && (e.getOwner().isEnemyOf(getOwner())
+                  && (e.getCrew() != null && !e.getCrew().isDead()))) {
                 enemyBoardableEntity = e;
                 break;
             }
@@ -2857,9 +2884,9 @@ public class Infantry extends Entity {
             return false;
         }
 
-        // Check if already in combat and can withdraw
-        if (getInfantryCombatTargetId() != Entity.NONE && isInfantryCombatAttacker()) {
-            return true;  // Can withdraw
+        // Check if already in combat
+        if (getInfantryCombatTargetId() != Entity.NONE) {
+            return false;  // Can't reinforce if already in combat
         }
 
         // Check if can reinforce EXISTING infantry vs. infantry combat

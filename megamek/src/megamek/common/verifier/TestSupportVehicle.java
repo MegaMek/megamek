@@ -252,6 +252,7 @@ public class TestSupportVehicle extends TestEntity {
 
     /**
      * Additional construction data for chassis mods, used to determine whether they are legal for particular units.
+     * TM p.122
      */
     public enum ChassisModification implements ITechnologyDelegator {
         AMPHIBIOUS(1.75, EquipmentTypeLookup.AMPHIBIOUS_CHASSIS_MOD,
@@ -259,7 +260,7 @@ public class TestSupportVehicle extends TestEntity {
         ARMORED(1.5, EquipmentTypeLookup.ARMORED_CHASSIS_MOD,
               SVType.allBut(SVType.AIRSHIP)),
         BICYCLE(0.75, EquipmentTypeLookup.BICYCLE_CHASSIS_MOD,
-              EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED)),
+              EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED), true),
         CONVERTIBLE(1.1, EquipmentTypeLookup.CONVERTIBLE_CHASSIS_MOD,
               EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED, SVType.TRACKED)),
         DUNE_BUGGY(1.5, EquipmentTypeLookup.DUNE_BUGGY_CHASSIS_MOD,
@@ -1445,7 +1446,7 @@ public class TestSupportVehicle extends TestEntity {
               .append(printSource())
               .append(printShortMovement());
 
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             if (!usesKgStandard()) {
                 buff.append("Weight: ")
                       .append(getWeight())

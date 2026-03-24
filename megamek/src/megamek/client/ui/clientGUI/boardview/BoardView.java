@@ -93,10 +93,8 @@ import megamek.common.Configuration;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
 import megamek.common.KeyBindParser;
-import megamek.common.LosEffects;
 import megamek.common.Player;
 import megamek.common.SpecialHexDisplay;
-import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
@@ -1246,12 +1244,10 @@ public final class BoardView extends AbstractBoardView
                 graphics2D.setColor(Color.yellow);
                 graphics2D.drawLine(start.x, start.y, end.x, end.y);
 
-                graphics2D.setColor(rulerEndColor);
-                graphics2D.fillRect(end.x - 1, end.y - 1, 2, 2);
+                drawRulerCrosshair(graphics2D, end, rulerEndColor);
             }
 
-            graphics2D.setColor(rulerStartColor);
-            graphics2D.fillRect(start.x - 1, start.y - 1, 2, 2);
+            drawRulerCrosshair(graphics2D, start, rulerStartColor);
         }
 
         // Undo the previous translation
@@ -3012,6 +3008,32 @@ public final class BoardView extends AbstractBoardView
         return getCentreHexLocation(coords.getX(), coords.getY(), ignoreElevation);
     }
 
+    /**
+     * Draws a crosshair-with-circle (bullseye) marker at the given point for the ruler tool. The marker scales with the
+     * current board zoom level so it remains visible at all zoom levels.
+     */
+    private void drawRulerCrosshair(Graphics2D g2d, Point center, Color color) {
+        // Scale crosshair size to ~20% of hex width, with a minimum of 4px
+        int radius = Math.max(4, (int) (HEX_W * scale * 0.10f));
+        int crossLen = Math.max(6, (int) (HEX_W * scale * 0.15f));
+        Stroke oldStroke = g2d.getStroke();
+        g2d.setStroke(new BasicStroke(Math.max(1.5f, scale * 1.5f)));
+
+        // Outer circle
+        g2d.setColor(color);
+        g2d.drawOval(center.x - radius, center.y - radius, radius * 2, radius * 2);
+
+        // Crosshair lines extending beyond the circle
+        g2d.drawLine(center.x - crossLen, center.y, center.x + crossLen, center.y);
+        g2d.drawLine(center.x, center.y - crossLen, center.x, center.y + crossLen);
+
+        // Center dot
+        int dotRadius = Math.max(1, (int) (scale * 1.5f));
+        g2d.fillOval(center.x - dotRadius, center.y - dotRadius, dotRadius * 2, dotRadius * 2);
+
+        g2d.setStroke(oldStroke);
+    }
+
     public void drawRuler(Coords startCoords, Coords endCoords, Color startColor, Color endColor) {
         rulerStart = startCoords;
         rulerEnd = endCoords;
@@ -4081,72 +4103,9 @@ public final class BoardView extends AbstractBoardView
 
     private void secondLOSHex(Coords targetCoords, Coords attackerCoords) {
         if (useLOSTool) {
-            Entity attackingEntity = chooseEntity(attackerCoords);
-            Entity targetEntity = chooseEntity(targetCoords);
-
-            StringBuilder message = new StringBuilder();
-            LosEffects losEffects;
-            if ((attackingEntity == null) || (targetEntity == null)) {
-                boolean mekInFirst = GUIP.getMekInFirst();
-                boolean mekInSecond = GUIP.getMekInSecond();
-
-                LosEffects.AttackInfo attackInfo = LosEffects.prepLosAttackInfo(game,
-                      attackingEntity,
-                      targetEntity,
-                      attackerCoords,
-                      targetCoords,
-                      boardId,
-                      mekInFirst,
-                      mekInSecond);
-
-                losEffects = LosEffects.calculateLos(game, attackInfo);
-                message.append(Messages.getString("BoardView1.Attacker",
-                      mekInFirst ? Messages.getString("BoardView1.Mek") : Messages.getString("BoardView1.NonMek"),
-                      attackerCoords.getBoardNum()));
-                message.append(Messages.getString("BoardView1.Target",
-                      mekInSecond ? Messages.getString("BoardView1.Mek") : Messages.getString("BoardView1.NonMek"),
-                      targetCoords.getBoardNum()));
-            } else {
-                losEffects = LosEffects.calculateLOS(game, attackingEntity, targetEntity);
-                message.append(Messages.getString("BoardView1.Attacker",
-                      attackingEntity.getDisplayName(),
-                      attackerCoords.getBoardNum()));
-                message.append(Messages.getString("BoardView1.Target",
-                      targetEntity.getDisplayName(),
-                      targetCoords.getBoardNum()));
-            }
-            // Check to see if LoS is blocked
-            if (!losEffects.canSee()) {
-                message.append(Messages.getString("BoardView1.LOSBlocked", attackerCoords.distance(targetCoords)));
-                ToHitData toHitData = losEffects.losModifiers(game);
-                message.append("\t").append(toHitData.getDesc()).append("\n");
-            } else {
-                message.append(Messages.getString("BoardView1.LOSNotBlocked", attackerCoords.distance(targetCoords)));
-                if (losEffects.getHeavyWoods() > 0) {
-                    message.append(Messages.getString("BoardView1.HeavyWoods", losEffects.getHeavyWoods()));
-                }
-                if (losEffects.getLightWoods() > 0) {
-                    message.append(Messages.getString("BoardView1.LightWoods", losEffects.getLightWoods()));
-                }
-                if (losEffects.getLightSmoke() > 0) {
-                    message.append(Messages.getString("BoardView1.LightSmoke", losEffects.getLightSmoke()));
-                }
-                if (losEffects.getHeavySmoke() > 0) {
-                    message.append(Messages.getString("BoardView1.HeavySmoke", losEffects.getHeavySmoke()));
-                }
-                if (losEffects.isTargetCover() && losEffects.canSee()) {
-                    message.append(Messages.getString("BoardView1.TargetPartialCover",
-                          LosEffects.getCoverName(losEffects.getTargetCover(), true)));
-                }
-                if (losEffects.isAttackerCover() && losEffects.canSee()) {
-                    message.append(Messages.getString("BoardView1.AttackerPartialCover",
-                          LosEffects.getCoverName(losEffects.getAttackerCover(), false)));
-                }
-            }
-            JOptionPane.showMessageDialog(boardPanel.getRootPane(),
-                  message.toString(),
-                  Messages.getString("BoardView1.LOSTitle"),
-                  JOptionPane.INFORMATION_MESSAGE);
+            moveCursor(secondLOSSprite, targetCoords);
+            // LOS calculation and display is handled by RulerDialog via the
+            // BOARD_SECOND_LOS_HEX event fired by checkLOS()
         }
     }
 

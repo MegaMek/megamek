@@ -59,10 +59,10 @@ import megamek.common.units.Infantry;
 public class MarinePointsScoreCalculator {
 
     /**
-     * Calculate Marine Points Score for an entity.
-     * Generic version without building-specific modifiers.
+     * Calculate Marine Points Score for an entity. Generic version without building-specific modifiers.
      *
      * @param entity the entity (Infantry or BattleArmor)
+     *
      * @return Marine Points Score
      */
     public static int calculateMPS(Entity entity) {
@@ -70,11 +70,11 @@ public class MarinePointsScoreCalculator {
     }
 
     /**
-     * Calculate Marine Points Score for an entity inside a building.
-     * Includes building-specific modifiers.
+     * Calculate Marine Points Score for an entity inside a building. Includes building-specific modifiers.
      *
-     * @param entity the entity (Infantry or BattleArmor)
+     * @param entity   the entity (Infantry or BattleArmor)
      * @param building the building (for building modifier), can be null
+     *
      * @return Marine Points Score
      */
     public static int calculateMPS(Entity entity, AbstractBuildingEntity building) {
@@ -107,6 +107,7 @@ public class MarinePointsScoreCalculator {
      * Calculate MPS for Battle Armor squad.
      *
      * @param ba the battle armor entity
+     *
      * @return base MPS before building modifier
      */
     private static int calculateBattleArmorMPS(BattleArmor ba) {
@@ -161,6 +162,7 @@ public class MarinePointsScoreCalculator {
      * Calculate MPS for conventional infantry platoon.
      *
      * @param inf the infantry entity
+     *
      * @return base MPS before building modifier
      */
     private static int calculateInfantryMPS(Infantry inf) {
@@ -186,6 +188,7 @@ public class MarinePointsScoreCalculator {
      * Calculate MPS for crew-based entities (non-infantry/BA).
      *
      * @param entity the entity
+     *
      * @return base MPS before building modifier
      */
     private static int calculateCrewMPS(Entity entity) {
@@ -217,6 +220,7 @@ public class MarinePointsScoreCalculator {
      * Calculate equipment modifiers for mounted weapons and equipment.
      *
      * @param entity the entity
+     *
      * @return equipment modifier points
      */
     private static int calculateEquipmentModifiers(Entity entity) {
@@ -230,7 +234,7 @@ public class MarinePointsScoreCalculator {
                 }
                 // Flame-based weapons: +1
                 if (weapon.hasFlag(WeaponType.F_FLAMER) ||
-                    weapon.hasFlag(WeaponType.F_PLASMA)) {
+                      weapon.hasFlag(WeaponType.F_PLASMA)) {
                     modifier += 1;
                 }
                 // TODO: Add other weapon modifiers from Marine Points Table
@@ -244,10 +248,10 @@ public class MarinePointsScoreCalculator {
     }
 
     /**
-     * Calculate building modifier based on building size and height.
-     * Only applies to buildings with 60+ hexes.
+     * Calculate building modifier based on building size and height. Only applies to buildings with 60+ hexes.
      *
      * @param building the building entity
+     *
      * @return modifier multiplier (e.g., 0.1 per level = 10% bonus)
      */
     private static double calculateBuildingModifier(AbstractBuildingEntity building) {

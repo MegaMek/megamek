@@ -47,51 +47,48 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
-import megamek.common.units.Entity;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.loaders.BLKFile;
 import megamek.common.loaders.EntitySavingException;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
+import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.util.BuildingBlock;
 import megamek.logging.MMLogger;
 
 /**
  * Author: Drake
- *
- * Loads all canon units and resaves them to an output folder,
- * preserving relative paths. Injects a license header into each file.
- *
+ * <p>
+ * Loads all canon units and resaves them to an output folder, preserving relative paths. Injects a license header into
+ * each file.
+ * <p>
  * Usage from the command line (run from the megamek root directory):
- * 
- * Default output to data/mekfiles_resaved:
- * ./gradlew :megamek:resaveUnits
- *
- * Custom output folder:
- * ./gradlew :megamek:resaveUnits -PresaveOutputDir="C:/path/to/output"
+ * <p>
+ * Default output to data/mekfiles_resaved: ./gradlew :megamek:resaveUnits
+ * <p>
+ * Custom output folder: ./gradlew :megamek:resaveUnits -PresaveOutputDir="C:/path/to/output"
  */
 public class UnitFileResaver {
     private static final MMLogger logger = MMLogger.create(UnitFileResaver.class);
 
     private static final String LICENSE_HEADER = """
-            # MegaMek Data (C) %s by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
-            # To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
-            #
-            # NOTICE: The MegaMek organization is a non-profit group of volunteers
-            # creating free software for the BattleTech community.
-            #
-            # MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
-            # of The Topps Company, Inc. All Rights Reserved.
-            #
-            # Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
-            # InMediaRes Productions, LLC.
-            #
-            # MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
-            # Microsoft's "Game Content Usage Rules"
-            # <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
-            # affiliated with Microsoft.
-            """.formatted(Calendar.getInstance().get(Calendar.YEAR));
+          # MegaMek Data (C) %s by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+          # To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+          #
+          # NOTICE: The MegaMek organization is a non-profit group of volunteers
+          # creating free software for the BattleTech community.
+          #
+          # MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+          # of The Topps Company, Inc. All Rights Reserved.
+          #
+          # Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+          # InMediaRes Productions, LLC.
+          #
+          # MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+          # Microsoft's "Game Content Usage Rules"
+          # <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+          # affiliated with Microsoft.
+          """.formatted(Calendar.getInstance().get(Calendar.YEAR));
 
     public static void main(String... args) {
         Path outputDir;

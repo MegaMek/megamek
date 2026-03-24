@@ -47,7 +47,6 @@ import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
-import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.server.totalWarfare.InfantryActionTracker.InfantryAction;
 import org.junit.jupiter.api.BeforeAll;
@@ -55,8 +54,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link InfantryActionTracker} focusing on tracking
- * infantry vs. infantry actions in buildings, ships, and aerospace units (TOAR p. 167-174).
+ * Tests for {@link InfantryActionTracker} focusing on tracking infantry vs. infantry actions in buildings, ships, and
+ * aerospace units (TOAR p. 167-174).
  */
 public class InfantryActionTrackerTest {
 
@@ -362,9 +361,8 @@ public class InfantryActionTrackerTest {
     // ==================== Combat Ending Tests ====================
 
     /**
-     * Test combat ends when all defenders are eliminated.
-     * Verifies that when the last defender (including building crew) is removed,
-     * the combat is properly cleaned up and removed from tracking.
+     * Test combat ends when all defenders are eliminated. Verifies that when the last defender (including building
+     * crew) is removed, the combat is properly cleaned up and removed from tracking.
      */
     @Test
     void testCombatEnds_WhenAllDefendersEliminated() {
@@ -400,9 +398,8 @@ public class InfantryActionTrackerTest {
     }
 
     /**
-     * Test combat ends when building (as defender) crew is defeated.
-     * Verifies that when a building's crew is eliminated and there are no
-     * other defenders, the combat properly ends.
+     * Test combat ends when building (as defender) crew is defeated. Verifies that when a building's crew is eliminated
+     * and there are no other defenders, the combat properly ends.
      */
     @Test
     void testCombatEnds_WhenBuildingCrewDefeated() {
@@ -428,9 +425,8 @@ public class InfantryActionTrackerTest {
     }
 
     /**
-     * Test combat ends when all attackers are eliminated.
-     * Verifies that when the last attacker is removed (killed or withdrawn),
-     * the combat is properly cleaned up.
+     * Test combat ends when all attackers are eliminated. Verifies that when the last attacker is removed (killed or
+     * withdrawn), the combat is properly cleaned up.
      */
     @Test
     void testCombatEnds_WhenAllAttackersEliminated() {
@@ -465,8 +461,7 @@ public class InfantryActionTrackerTest {
     }
 
     /**
-     * Test combat ends when attackers withdraw.
-     * Verifies that withdrawing all attackers properly ends the combat.
+     * Test combat ends when attackers withdraw. Verifies that withdrawing all attackers properly ends the combat.
      */
     @Test
     void testCombatEnds_WhenAttackersWithdraw() {
@@ -492,8 +487,8 @@ public class InfantryActionTrackerTest {
     }
 
     /**
-     * Test multiple combats can end independently.
-     * Verifies that ending one combat doesn't affect other ongoing combats.
+     * Test multiple combats can end independently. Verifies that ending one combat doesn't affect other ongoing
+     * combats.
      */
     @Test
     void testMultipleCombats_EndIndependently() {
@@ -544,8 +539,8 @@ public class InfantryActionTrackerTest {
         building.setPosition(new Coords(5, 5));
         building.getInternalBuilding().setBuildingHeight(3);
         building.getInternalBuilding().addHex(
-            new CubeCoords(0, 0, 0),
-            50, 10, BasementType.UNKNOWN, false
+              new CubeCoords(0, 0, 0),
+              50, 10, BasementType.UNKNOWN, false
         );
         return building;
     }

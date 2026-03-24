@@ -34,16 +34,7 @@
 
 package megamek.common.units;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CriticalSlot;
@@ -1417,8 +1408,8 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Calculate building crew based on Advanced Building Minimum Crew Table (TO:AUE).
-     * Crew = Non-Gunners + Gunners + Officers
+     * Calculate building crew based on Advanced Building Minimum Crew Table (TO:AUE). Crew = Non-Gunners + Gunners +
+     * Officers
      *
      * @return total crew count
      */
@@ -1432,8 +1423,8 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Calculate non-gunner crew based on building equipment.
-     * Does NOT include bay personnel - those are counted separately via getBayPersonnel().
+     * Calculate non-gunner crew based on building equipment. Does NOT include bay personnel - those are counted
+     * separately via getBayPersonnel().
      *
      * @return non-gunner crew count
      */
@@ -1448,11 +1439,8 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Calculate gunner crew based on mounted weapons.
-     * - Light Weapon: 1 gunner
-     * - Medium Weapon: 1 gunner
-     * - Heavy Weapon: Weapon Tons ÷ 5 (round up)
-     * - Capital Weapon: 7 gunners
+     * Calculate gunner crew based on mounted weapons. - Light Weapon: 1 gunner - Medium Weapon: 1 gunner - Heavy
+     * Weapon: Weapon Tons ÷ 5 (round up) - Capital Weapon: 7 gunners
      *
      * @return gunner crew count
      */
@@ -1478,11 +1466,11 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Calculate officer crew based on total non-officer crew.
-     * - 1-9 crew: 1 officer
-     * - 10+ crew: Total Crew ÷ 10 (round up)
+     * Calculate officer crew based on total non-officer crew. - 1-9 crew: 1 officer - 10+ crew: Total Crew ÷ 10 (round
+     * up)
      *
      * @param nonOfficerCrew total non-officer crew
+     *
      * @return officer crew count
      */
     private int calculateOfficerCrew(int nonOfficerCrew) {

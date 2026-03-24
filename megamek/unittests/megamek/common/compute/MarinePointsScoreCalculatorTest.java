@@ -37,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.Player;
-import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
@@ -51,8 +50,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link MarinePointsScoreCalculator} focusing on MPS calculations
- * for infantry vs. infantry combat (TOAR p. 170).
+ * Tests for {@link MarinePointsScoreCalculator} focusing on MPS calculations for infantry vs. infantry combat (TOAR p.
+ * 170).
  */
 public class MarinePointsScoreCalculatorTest {
 
@@ -72,8 +71,8 @@ public class MarinePointsScoreCalculatorTest {
     }
 
     /**
-     * Test MPS calculation for conventional infantry platoon.
-     * A full-strength infantry platoon should have MPS = number of troopers.
+     * Test MPS calculation for conventional infantry platoon. A full-strength infantry platoon should have MPS = number
+     * of troopers.
      */
     @Test
     void testCalculateMPS_ConventionalInfantry() {
@@ -90,8 +89,7 @@ public class MarinePointsScoreCalculatorTest {
     }
 
     /**
-     * Test MPS calculation for damaged infantry platoon.
-     * MPS should scale with remaining trooper strength.
+     * Test MPS calculation for damaged infantry platoon. MPS should scale with remaining trooper strength.
      */
     @Test
     void testCalculateMPS_DamagedInfantry() {
@@ -107,8 +105,8 @@ public class MarinePointsScoreCalculatorTest {
     }
 
     /**
-     * Test MPS calculation for infantry with marine specialization.
-     * Marines should have the same base value as regular infantry (1 point per trooper).
+     * Test MPS calculation for infantry with marine specialization. Marines should have the same base value as regular
+     * infantry (1 point per trooper).
      */
     @Test
     void testCalculateMPS_Marines() {
@@ -125,9 +123,8 @@ public class MarinePointsScoreCalculatorTest {
     }
 
     /**
-     * Test MPS calculation with building modifier.
-     * Buildings with 60+ hexes provide a bonus based on height.
-     * Note: Building must be placed on board for modifier to apply.
+     * Test MPS calculation with building modifier. Buildings with 60+ hexes provide a bonus based on height. Note:
+     * Building must be placed on board for modifier to apply.
      */
     @Test
     void testCalculateMPS_WithBuildingModifier() {
@@ -148,8 +145,7 @@ public class MarinePointsScoreCalculatorTest {
     }
 
     /**
-     * Test MPS calculation with small building (< 60 hexes).
-     * Small buildings should NOT provide a bonus.
+     * Test MPS calculation with small building (< 60 hexes). Small buildings should NOT provide a bonus.
      */
     @Test
     void testCalculateMPS_WithSmallBuilding() {
@@ -170,8 +166,7 @@ public class MarinePointsScoreCalculatorTest {
     }
 
     /**
-     * Test MPS calculation for null entity.
-     * Should return 0.
+     * Test MPS calculation for null entity. Should return 0.
      */
     @Test
     void testCalculateMPS_NullEntity() {
@@ -180,8 +175,7 @@ public class MarinePointsScoreCalculatorTest {
     }
 
     /**
-     * Test MPS calculation for zero-strength infantry.
-     * Should return 0.
+     * Test MPS calculation for zero-strength infantry. Should return 0.
      */
     @Test
     void testCalculateMPS_ZeroStrengthInfantry() {
@@ -207,8 +201,8 @@ public class MarinePointsScoreCalculatorTest {
             int x = i % 10;
             int z = i / 10;
             building.getInternalBuilding().addHex(
-                new CubeCoords(x, -x - z, z),
-                50, 10, BasementType.UNKNOWN, false
+                  new CubeCoords(x, -x - z, z),
+                  50, 10, BasementType.UNKNOWN, false
             );
         }
 
@@ -227,8 +221,8 @@ public class MarinePointsScoreCalculatorTest {
             int x = i % 5;
             int z = i / 5;
             building.getInternalBuilding().addHex(
-                new CubeCoords(x, -x - z, z),
-                50, 10, BasementType.UNKNOWN, false
+                  new CubeCoords(x, -x - z, z),
+                  50, 10, BasementType.UNKNOWN, false
             );
         }
 

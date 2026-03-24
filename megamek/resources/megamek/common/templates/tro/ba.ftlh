@@ -8,8 +8,15 @@
 <#if includeFluff>
 	<p>
 	<b>Type: </b> ${chassis}<br/>
+        <#if manufacturerList??>
+            <b>Manufacturers:</b><br/>
+            <#list manufacturerList as entry>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${entry.manufacturer}, ${entry.factory}<br/>
+            </#list>
+        <#else>
 	<b>Manufacturer: </b> <#if manufacturerDesc??>${manufacturerDesc}<#else>Unknown</#if><br/>
 	<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Primary Factory: </b> <#if factoryDesc??>${factoryDesc}<#else>Unknown</#if><br/>
+        </#if>
 	</p>
 </#if>
 

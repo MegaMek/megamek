@@ -82,6 +82,7 @@ import megamek.client.ui.clientGUI.audio.SoundType;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
+import megamek.client.ui.clientGUI.boardview.RulerDialog;
 import megamek.client.ui.clientGUI.boardview.overlay.ChatterBoxOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.KeyBindingsOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.OffBoardTargetOverlay;
@@ -99,12 +100,10 @@ import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.InformDialog;
 import megamek.client.ui.dialogs.PlayerListDialog;
 import megamek.client.ui.dialogs.RandomNameDialog;
-import megamek.client.ui.dialogs.RulerDialog;
 import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.EditBotsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.GameOptionsDialog;
-import megamek.client.ui.dialogs.buttonDialogs.LOSDialog;
 import megamek.client.ui.dialogs.buttonDialogs.NetworkInformationDialog;
 import megamek.client.ui.dialogs.forceDisplay.ForceDisplayDialog;
 import megamek.client.ui.dialogs.forceDisplay.ForceDisplayPanel;
@@ -186,7 +185,6 @@ import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.handlers.WeaponOrderHandler;
 import megamek.logging.MMLogger;
-import megamek.utilities.BoardsTagger;
 
 public class ClientGUI extends AbstractClientGUI
       implements BoardViewListener, ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots,
@@ -2611,16 +2609,14 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Shows a dialog where the player can select the entity types used in the LOS tool.
+     * Shows the Ruler/LOS dialog. This consolidates the old LOSDialog functionality into the RulerDialog which
+     * provides distance, to-hit modifiers, and an elevation cross-section diagram.
      */
     private void showLOSSettingDialog() {
-        LOSDialog ld = new LOSDialog(frame, GUIP.getMekInFirst(), GUIP.getMekInSecond());
-        ignoreHotKeys = true;
-        if (ld.showDialog().isConfirmed()) {
-            GUIP.setMekInFirst(ld.getMekInFirst());
-            GUIP.setMekInSecond(ld.getMekInSecond());
+        if (ruler != null) {
+            ruler.setVisible(true);
+            ruler.toFront();
         }
-        ignoreHotKeys = false;
     }
 
     /**
@@ -2714,10 +2710,7 @@ public class ClientGUI extends AbstractClientGUI
                     boardView.addOverlay(new TurnDetailsOverlay(boardView));
                     boardView.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), ClientGUI.this, boardView));
                     boardViewsContainer.updateMapTabs();
-                    ruler = new RulerDialog(frame, client, boardView, client.getGame());
-                    ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
-                    ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
-                    UIUtil.updateWindowBounds(ruler);
+                    ruler = new RulerDialog(frame, boardView, client.getGame());
                     boardView.addBoardViewListener(ClientGUI.this);
                 } catch (IOException ex) {
                     // this is likely fatal anyway

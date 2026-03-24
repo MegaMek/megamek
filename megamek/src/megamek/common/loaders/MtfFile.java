@@ -1216,8 +1216,8 @@ public class MtfFile implements IMekLoader {
     /**
      * Remaps the critData array so that equipment entries from the file are aligned with available (non-system) mek
      * slots. System critical slots placed by {@link #placeSystemCriticals(Mek)} (engine, gyro, cockpit, sensors, life
-     * support) may be at different positions than in the original MTF file. This method strips those system entries from
-     * critData and shifts the remaining entries (equipment, actuators, etc.) to fill non-system slots in order,
+     * support) may be at different positions than in the original MTF file. This method strips those system entries
+     * from critData and shifts the remaining entries (equipment, actuators, etc.) to fill non-system slots in order,
      * preserving their relative sequence. This also implicitly compacts empty slots.
      *
      * <p>Armored flags on system entries are preserved by applying them directly to the mek's critical slots during

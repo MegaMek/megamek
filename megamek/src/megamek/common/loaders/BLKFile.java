@@ -457,9 +457,7 @@ public class BLKFile {
                 }
             }
 
-            if (dataFile.exists("armor_tech")) {
-                sv.setArmorTechRating(dataFile.getDataAsInt("armor_tech")[0]);
-            } else if (dataFile.exists("armor_tech_rating")) {
+            if (dataFile.exists("armor_tech_rating")) {
                 sv.setArmorTechRating(dataFile.getDataAsInt("armor_tech_rating")[0]);
             }
         }
@@ -1499,6 +1497,8 @@ public class BLKFile {
                                   hasARTS), isPod);
                             break;
                         case "mekbay":
+                            // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
+                        case "mechbay": // for compatibility with older custom units
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                             e.addTransporter(new MekBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                             break;

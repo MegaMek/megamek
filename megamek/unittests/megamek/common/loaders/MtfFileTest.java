@@ -181,9 +181,8 @@ class MtfFileTest {
     }
 
     /**
-     * Test that inverted Cockpit/Sensors in the head are corrected on load.
-     * Some MTF files have the head layout: LS, Cockpit, Sensors (wrong)
-     * instead of the correct: LS, Sensors, Cockpit.
+     * Test that inverted Cockpit/Sensors in the head are corrected on load. Some MTF files have the head layout: LS,
+     * Cockpit, Sensors (wrong) instead of the correct: LS, Sensors, Cockpit.
      */
     @Test
     void testInvertedCockpitSensorsInHead() throws Exception {
@@ -215,9 +214,9 @@ class MtfFileTest {
     }
 
     /**
-     * Test that incorrectly split XL gyro slots in CT are corrected on load.
-     * Some files have Gyro at slots 3-6 + 10-11 with Engine at 7-9 (split gyro),
-     * but the correct XL gyro layout is Gyro at slots 3-8 with Engine at 0-2 and 9-11.
+     * Test that incorrectly split XL gyro slots in CT are corrected on load. Some files have Gyro at slots 3-6 + 10-11
+     * with Engine at 7-9 (split gyro), but the correct XL gyro layout is Gyro at slots 3-8 with Engine at 0-2 and
+     * 9-11.
      */
     @Test
     void testSplitXLGyroIsCorrected() throws Exception {
@@ -266,8 +265,8 @@ class MtfFileTest {
     }
 
     /**
-     * Test that armored system components preserve their armored status even though
-     * system slots are regenerated and not read from file positions.
+     * Test that armored system components preserve their armored status even though system slots are regenerated and
+     * not read from file positions.
      */
     @Test
     void testArmoredSystemCritsPreserved() throws Exception {
@@ -298,9 +297,9 @@ class MtfFileTest {
     }
 
     /**
-     * Test that equipment is preserved when the file has XL engine crits at the END of
-     * a side torso instead of the beginning. The remapping should shift equipment to
-     * fill the available slots after the correctly-placed engine crits.
+     * Test that equipment is preserved when the file has XL engine crits at the END of a side torso instead of the
+     * beginning. The remapping should shift equipment to fill the available slots after the correctly-placed engine
+     * crits.
      */
     @Test
     void testSideTorsoEngineAtEndPreservesEquipment() throws Exception {
@@ -360,8 +359,8 @@ class MtfFileTest {
     }
 
     /**
-     * Test that a GYRO_NONE unit places all 6 engine crits contiguously (0-5) in CT,
-     * rather than splitting them around a nonexistent gyro.
+     * Test that a GYRO_NONE unit places all 6 engine crits contiguously (0-5) in CT, rather than splitting them around
+     * a nonexistent gyro.
      */
     @Test
     void testGyroNoneEngineIsContiguous() throws Exception {
@@ -424,8 +423,7 @@ class MtfFileTest {
     }
 
     /**
-     * Test that the Clan CASE opt-out locations round-trip through MTF save/load
-     * with multiple locations.
+     * Test that the Clan CASE opt-out locations round-trip through MTF save/load with multiple locations.
      */
     @Test
     void testClanCaseOptOutRoundTrip() throws Exception {

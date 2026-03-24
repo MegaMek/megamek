@@ -43,13 +43,13 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mockStatic;
 
 import megamek.common.InfantryCombatResult;
-import megamek.common.compute.Compute;
-import megamek.common.compute.InfantryCombatTables;
-import megamek.common.compute.MarinePointsScoreCalculator;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
+import megamek.common.compute.Compute;
+import megamek.common.compute.InfantryCombatTables;
+import megamek.common.compute.MarinePointsScoreCalculator;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
@@ -64,9 +64,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 /**
- * Integration tests for infantry vs. infantry action resolution (TOAR p. 167-174).
- * Tests the ACTUAL production code path through TWGameManager.resolveInfantryActions()
- * to verify actions properly end when entities are eliminated.
+ * Integration tests for infantry vs. infantry action resolution (TOAR p. 167-174). Tests the ACTUAL production code
+ * path through TWGameManager.resolveInfantryActions() to verify actions properly end when entities are eliminated.
  */
 public class InfantryActionResolutionTest {
 
@@ -100,8 +99,8 @@ public class InfantryActionResolutionTest {
     }
 
     /**
-     * Test combat ends when all defenders are eliminated by external means.
-     * This simulates ALL defenders (building crew + infantry) being killed by weapons fire.
+     * Test combat ends when all defenders are eliminated by external means. This simulates ALL defenders (building crew
+     * + infantry) being killed by weapons fire.
      * TODO: Update when player choice for crew participation is implemented
      */
     @Test
@@ -144,16 +143,16 @@ public class InfantryActionResolutionTest {
 
         // Verify combat ended
         assertFalse(tracker.hasCombat(building.getId()),
-            "Combat should end when all defenders (crew + infantry) are eliminated");
+              "Combat should end when all defenders (crew + infantry) are eliminated");
 
         // Verify entity states cleared
         assertEquals(Entity.NONE, attacker.getInfantryCombatTargetId(),
-            "Attacker combat state should be cleared");
+              "Attacker combat state should be cleared");
     }
 
     /**
-     * Test combat ends when all attackers are eliminated by external means.
-     * Building crew is always a defender per current implementation.
+     * Test combat ends when all attackers are eliminated by external means. Building crew is always a defender per
+     * current implementation.
      * TODO: Update when player choice for crew participation is implemented
      */
     @Test
@@ -191,11 +190,11 @@ public class InfantryActionResolutionTest {
 
         // Verify combat ended
         assertFalse(tracker.hasCombat(building.getId()),
-            "Combat should end when all attackers are destroyed");
+              "Combat should end when all attackers are destroyed");
         assertEquals(Entity.NONE, building.getInfantryCombatTargetId(),
-            "Building crew combat state should be cleared");
+              "Building crew combat state should be cleared");
         assertEquals(Entity.NONE, defender.getInfantryCombatTargetId(),
-            "Defender combat state should be cleared");
+              "Defender combat state should be cleared");
     }
 
     /**
@@ -229,14 +228,14 @@ public class InfantryActionResolutionTest {
 
         // Verify combat ended
         assertFalse(tracker.hasCombat(building.getId()),
-            "Combat should end when building crew is defeated");
+              "Combat should end when building crew is defeated");
     }
 
     /**
-     * Test combat continues if only some defenders eliminated.
-     * Per production code, building crew is ALWAYS a defender (compromise until player choice implemented).
+     * Test combat continues if only some defenders eliminated. Per production code, building crew is ALWAYS a defender
+     * (compromise until player choice implemented).
      * TODO: Update when player choice for crew participation is implemented
-     *
+     * <p>
      * NOTE: Uses high strength units (100+ troopers) so that casualties from dice rolls
      * won't eliminate remaining combatants, allowing us to test the "some defenders remain" logic.
      */
@@ -276,23 +275,23 @@ public class InfantryActionResolutionTest {
 
             // Verify combat still active
             assertTrue(tracker.hasCombat(building.getId()),
-                "Combat should continue when defenders remain (building crew + defender2)");
+                  "Combat should continue when defenders remain (building crew + defender2)");
 
             // Verify combat state still set
             assertNotEquals(Entity.NONE, attacker.getInfantryCombatTargetId(),
-                "Attacker should still be in combat");
+                  "Attacker should still be in combat");
             assertNotEquals(Entity.NONE, building.getInfantryCombatTargetId(),
-                "Building crew should still be defending");
+                  "Building crew should still be defending");
             assertNotEquals(Entity.NONE, defender2.getInfantryCombatTargetId(),
-                "Remaining defender should still be in combat");
+                  "Remaining defender should still be in combat");
         }
     }
 
     /**
-     * Test combat continues if only some attackers eliminated.
-     * Building crew is always a defender per current implementation.
+     * Test combat continues if only some attackers eliminated. Building crew is always a defender per current
+     * implementation.
      * TODO: Update when player choice for crew participation is implemented
-     *
+     * <p>
      * NOTE: Uses high strength units (100+ troopers) so that casualties from dice rolls
      * won't eliminate remaining combatants, allowing us to test the "some attackers remain" logic.
      */
@@ -332,20 +331,20 @@ public class InfantryActionResolutionTest {
 
             // Verify combat still active
             assertTrue(tracker.hasCombat(building.getId()),
-                "Combat should continue when attackers remain");
+                  "Combat should continue when attackers remain");
             assertNotEquals(Entity.NONE, attacker2.getInfantryCombatTargetId(),
-                "Remaining attacker should still be in combat");
+                  "Remaining attacker should still be in combat");
             assertNotEquals(Entity.NONE, building.getInfantryCombatTargetId(),
-                "Building crew should still be defending");
+                  "Building crew should still be defending");
             assertNotEquals(Entity.NONE, defender.getInfantryCombatTargetId(),
-                "Infantry defender should still be in combat");
+                  "Infantry defender should still be in combat");
         }
     }
 
     /**
-     * Test that an ELIMINATED combat result applies full (not halved) defender casualties.
-     * Without the ELIMINATED check setting hasPartialControl=true, the defender half-damage
-     * rule (TOAR p. 172) would incorrectly reduce 100% casualties to 50%.
+     * Test that an ELIMINATED combat result applies full (not halved) defender casualties. Without the ELIMINATED check
+     * setting hasPartialControl=true, the defender half-damage rule (TOAR p. 172) would incorrectly reduce 100%
+     * casualties to 50%.
      */
     @Test
     void testEliminatedResult_AppliesFullDefenderCasualties_WithoutHalfDamageReduction() {
@@ -366,13 +365,13 @@ public class InfantryActionResolutionTest {
         // getNCrew() returns 0 for equipment-less entities, which would otherwise
         // cause defenderMPS=0 and trigger an early-exit before casualties apply).
         try (MockedStatic<MarinePointsScoreCalculator> mockedMps =
-                 mockStatic(MarinePointsScoreCalculator.class, org.mockito.Answers.CALLS_REAL_METHODS);
-             MockedStatic<InfantryCombatTables> mockedTables =
-                 mockStatic(InfantryCombatTables.class, org.mockito.Answers.CALLS_REAL_METHODS)) {
+              mockStatic(MarinePointsScoreCalculator.class, org.mockito.Answers.CALLS_REAL_METHODS);
+              MockedStatic<InfantryCombatTables> mockedTables =
+                    mockStatic(InfantryCombatTables.class, org.mockito.Answers.CALLS_REAL_METHODS)) {
             mockedMps.when(() -> MarinePointsScoreCalculator.calculateMPS(any(), any()))
-                     .thenReturn(10); // Give both sides positive MPS so combat proceeds
+                  .thenReturn(10); // Give both sides positive MPS so combat proceeds
             mockedTables.when(() -> InfantryCombatTables.resolveAction(any(String.class), anyInt()))
-                        .thenReturn(InfantryCombatResult.eliminated()); // 0% attacker, 100% defender
+                  .thenReturn(InfantryCombatResult.eliminated()); // 0% attacker, 100% defender
 
             gameManager.resolveInfantryActions();
         }
@@ -380,7 +379,7 @@ public class InfantryActionResolutionTest {
         // ELIMINATED sets hasPartialControl=true, so effectivePercent stays 100 (not /2=50).
         // Building crew of 10 must be fully eliminated, not reduced to only 5.
         assertEquals(0, building.getCrew().getCurrentSize(),
-            "ELIMINATED result must apply full defender casualties (not halved by half-damage rule)");
+              "ELIMINATED result must apply full defender casualties (not halved by half-damage rule)");
     }
 
     // ==================== Helper Methods ====================
@@ -403,8 +402,8 @@ public class InfantryActionResolutionTest {
         building.setPosition(position);
         building.getInternalBuilding().setBuildingHeight(3);
         building.getInternalBuilding().addHex(
-            new CubeCoords(position.getX(), -position.getX() - position.getY(), position.getY()),
-            50, 10, BasementType.UNKNOWN, false
+              new CubeCoords(position.getX(), -position.getX() - position.getY(), position.getY()),
+              50, 10, BasementType.UNKNOWN, false
         );
         return building;
     }
@@ -416,8 +415,8 @@ public class InfantryActionResolutionTest {
     }
 
     /**
-     * Testable subclass of TWGameManager that exposes package-private methods for testing.
-     * Uses reflection to access the private infantryActionTracker field.
+     * Testable subclass of TWGameManager that exposes package-private methods for testing. Uses reflection to access
+     * the private infantryActionTracker field.
      */
     private static class TestableGameManager extends TWGameManager {
         public InfantryActionTracker getInfantryCombatTracker() {

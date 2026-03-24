@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -76,7 +76,13 @@ public enum BayType implements ITechnologyDelegator {
           BattleArmorBay.techAdvancement()),
     MEK(BayType.CATEGORY_NON_INFANTRY, 150.0, 1.0, 2, 20000,
           e -> e.hasETypeFlag(Entity.ETYPE_MEK), MekBay.techAdvancement()),
-    FIGHTER(BayType.CATEGORY_NON_INFANTRY, 150.0, 1.0, 2, 20000, Entity::isFighter, ASFBay.techAdvancement()),
+    // FixedWingSupport over 100 tons (e.g. Longhaul Cargo Aircraft FB-335 at 200t) are too large for
+    // fighter bays and must use small craft bays instead. Since FixedWingSupport extends ConvFighter,
+    // isFighter() returns true for all of them, so we explicitly exclude the heavy ones here to let
+    // them fall through to SMALL_CRAFT below.
+    FIGHTER(BayType.CATEGORY_NON_INFANTRY, 150.0, 1.0, 2, 20000,
+          e -> e.isFighter() && !(e.hasETypeFlag(Entity.ETYPE_FIXED_WING_SUPPORT) && e.getWeight() > 100),
+          ASFBay.techAdvancement()),
     PROTOMEK(BayType.CATEGORY_NON_INFANTRY, 50.0, 5.0, 6, 10000, e -> e.hasETypeFlag(Entity.ETYPE_PROTOMEK),
           ProtoMekBay.techAdvancement()),
     SMALL_CRAFT(BayType.CATEGORY_NON_INFANTRY, 200.0, 1.0, 5, 20000, e -> e.hasETypeFlag(Entity.ETYPE_AERO)
@@ -184,6 +190,36 @@ public enum BayType implements ITechnologyDelegator {
                 if (bt.toString().equalsIgnoreCase(name)) {
                     return bt;
                 }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Determines the most specific bay type required to transport the given entity. Returns the first matching
+     * non-cargo BayType based on the enum declaration order, which places more specific types before more general ones
+     * (e.g. {@link #VEHICLE_LIGHT} before {@link #VEHICLE_HEAVY}).
+     *
+     * <p>Returns {@code null} for entities that are not transported in bays, such as DropShips (which use docking
+     * collars), JumpShips, WarShips, SpaceStations, and GunEmplacements, or when {@code entity} is {@code null}.</p>
+     *
+     * @param entity The entity to find a bay type for
+     *
+     * @return The most specific BayType that can transport this entity, or {@code null} if no bay type applies
+     */
+    public static @Nullable BayType getTypeForEntity(@Nullable Entity entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        // GunEmplacements and BuildingEntities have ETYPE_TANK set but are not transportable units
+        if (entity.isBuildingEntityOrGunEmplacement()) {
+            return null;
+        }
+
+        for (BayType bayType : values()) {
+            if (bayType.getCategory() != CATEGORY_CARGO && bayType.canLoad(entity)) {
+                return bayType;
             }
         }
         return null;

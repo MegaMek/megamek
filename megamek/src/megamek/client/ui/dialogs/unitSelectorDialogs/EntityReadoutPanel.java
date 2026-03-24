@@ -123,7 +123,7 @@ public class EntityReadoutPanel extends JPanel {
                     while (element != null) {
                         Object spanAttr = element.getAttributes().getAttribute(HTML.Tag.SPAN);
                         if (spanAttr instanceof SimpleAttributeSet attrs) {
-                            String title = (String)attrs.getAttribute(HTML.Attribute.TITLE);
+                            String title = (String) attrs.getAttribute(HTML.Attribute.TITLE);
                             // Found a tooltip, line-wrap it
                             readoutTextComponent.setToolTipText(StringUtils.wrapLines(title, TOOLTIP_MAX_SIZE));
                             return;

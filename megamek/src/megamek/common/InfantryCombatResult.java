@@ -34,14 +34,11 @@
 package megamek.common;
 
 /**
- * Represents the result of an infantry vs. infantry combat action based on
- * TOAR Infantry vs. Infantry Action Table.
- *
- * Results can be:
- * - ELIMINATED ('E'): Defender is eliminated
- * - REPULSED ('R'): Attacker is repulsed and takes half damage
- * - PARTIAL ('P'): Partial control, defenders eliminated or take half damage
- * - CASUALTIES: Numeric percentage of casualties (stored as value)
+ * Represents the result of an infantry vs. infantry combat action based on TOAR Infantry vs. Infantry Action Table.
+ * <p>
+ * Results can be: - ELIMINATED ('E'): Defender is eliminated - REPULSED ('R'): Attacker is repulsed and takes half
+ * damage - PARTIAL ('P'): Partial control, defenders eliminated or will no longer take half damage - CASUALTIES:
+ * Numeric percentage of casualties (stored as value)
  */
 public class InfantryCombatResult {
 
@@ -72,25 +69,35 @@ public class InfantryCombatResult {
     }
 
     /**
-     * Creates a REPULSED result (attacker repulsed, takes half damage).
+     * Creates a REPULSED result for E/n% table entries. The attacker is eliminated (100% casualties) and the defender
+     * takes n% casualties.
      *
-     * @param attackerCasualties percentage of attacker casualties
+     * @param defenderCasualties percentage of defender casualties
      */
-    public static InfantryCombatResult repulsed(int attackerCasualties) {
-        return new InfantryCombatResult(ResultType.REPULSED, attackerCasualties / 2, 0);
+    public static InfantryCombatResult repulsed(int defenderCasualties) {
+        return new InfantryCombatResult(ResultType.REPULSED, 100, defenderCasualties);
     }
 
     /**
-     * Creates a PARTIAL result (partial control).
-     * Interpretation depends on table entry (either eliminates defenders or half damage).
+     * Creates a REPULSED result for X%/Y% (R) table entries where both sides take casualties.
      *
      * @param attackerCasualties percentage of attacker casualties
-     * @param defenderEliminated true if defenders eliminated, false if half damage
+     * @param defenderCasualties percentage of defender casualties
      */
-    public static InfantryCombatResult partial(int attackerCasualties, boolean defenderEliminated) {
-        int defenderCasualties = defenderEliminated ? 100 : attackerCasualties / 2;
+    public static InfantryCombatResult repulsed(int attackerCasualties, int defenderCasualties) {
+        return new InfantryCombatResult(ResultType.REPULSED, attackerCasualties, defenderCasualties);
+    }
+
+    /**
+     * Creates a PARTIAL result for X%/Y% (P) table entries where both sides take casualties.
+     *
+     * @param attackerCasualties percentage of attacker casualties
+     * @param defenderCasualties percentage of defender casualties
+     */
+    public static InfantryCombatResult partial(int attackerCasualties, int defenderCasualties) {
         return new InfantryCombatResult(ResultType.PARTIAL, attackerCasualties, defenderCasualties);
     }
+
 
     /**
      * Creates a CASUALTIES result (both sides take percentage casualties).
@@ -122,7 +129,7 @@ public class InfantryCombatResult {
 
     public boolean isDefenderEliminated() {
         return type == ResultType.ELIMINATED ||
-               (type == ResultType.PARTIAL && defenderCasualtiesPercent >= 100);
+              (type == ResultType.PARTIAL && defenderCasualtiesPercent >= 100);
     }
 
     public boolean isAttackerRepulsed() {
@@ -148,7 +155,7 @@ public class InfantryCombatResult {
             case ELIMINATED -> "E (Defender Eliminated)";
             case REPULSED -> "R (Attacker Repulsed, " + attackerCasualtiesPercent + "% casualties)";
             case PARTIAL -> "P (Partial, A:" + attackerCasualtiesPercent + "% D:" +
-                           (defenderCasualtiesPercent >= 100 ? "Eliminated" : defenderCasualtiesPercent + "%") + ")";
+                  (defenderCasualtiesPercent >= 100 ? "Eliminated" : defenderCasualtiesPercent + "%") + ")";
             case CASUALTIES -> attackerCasualtiesPercent + "%/" + defenderCasualtiesPercent + "%";
         };
     }

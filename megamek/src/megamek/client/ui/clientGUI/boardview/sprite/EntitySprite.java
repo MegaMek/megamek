@@ -567,6 +567,10 @@ public class EntitySprite extends Sprite {
                 stStr.add(new Status(GUIP.getWarningColor(), "IMMOBILE"));
             }
 
+            if ((entity instanceof Infantry infantry) && infantry.isExhaustedFromFastMove()) {
+                stStr.add(new Status(GUIP.getWarningColor(), "EXHAUSTED"));
+            }
+
             if (entity.isBracing()) {
                 stStr.add(new Status(GUIP.getPrecautionColor(), "BRACING"));
             }

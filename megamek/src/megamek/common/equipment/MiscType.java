@@ -5925,7 +5925,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates the Enhanced Imaging (EI) Interface equipment. This is the unit-side equipment that allows a pilot with
-     * an EI Implant to use Enhanced Imaging capabilities. ProtoMeks have this built-in. See IO p.77 for rules.
+     * an EI Implant to use Enhanced Imaging capabilities. ProtoMeks have this built-in. See IO:AE p.69 for rules.
      *
      * @return the EI Interface equipment
      */

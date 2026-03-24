@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,9 +40,11 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TreeSet;
 
@@ -530,8 +532,8 @@ public abstract class PathRanker implements IPathRanker {
      * @return True if there is a building in our path that might collapse.
      */
     private boolean willBuildingCollapse(MovePath path, Game game) {
-        // airborne aircraft cannot collapse buildings
-        if (path.getEntity().isAero() || path.getEntity().hasETypeFlag(Entity.ETYPE_VTOL)) {
+        // airborne aircraft cannot collapse buildings; landed dropships can, so check isAirborne() not isAero()
+        if (path.getEntity().isAirborne() || path.getEntity().hasETypeFlag(Entity.ETYPE_VTOL)) {
             return false;
         }
 
@@ -555,20 +557,41 @@ public abstract class PathRanker implements IPathRanker {
 
         // If we're not jumping, check each building to see if it will collapse if it
         // has a basement.
-        final double mass = path.getEntity().getWeight() + 10;
+        final Entity entity = path.getEntity();
+        final double mass = entity.getWeight() + 10;
+        // Secondary positions are absolute coords based on the entity's current position.
+        // For multi-hex units (e.g. Dropships), key 0 is the center and keys 1-N are the
+        // surrounding hexes. For single-hex units, this map is empty.
+        final Map<Integer, Coords> secondaryPositions = entity.getSecondaryPositions();
+        final Coords entityCenter = entity.getPosition();
         final ListIterator<MoveStep> steps = path.getSteps();
         while (steps.hasNext()) {
             final MoveStep step = steps.next();
-            final IBuilding building = game.getBoard(step.getBoardId()).getBuildingAt(step.getPosition());
-            if (building == null) {
-                continue;
+
+            // Determine which hexes this entity occupies at this step position.
+            // For multi-hex units, translate each secondary position by the step delta.
+            Collection<Coords> occupiedHexes;
+            if (secondaryPositions.isEmpty()) {
+                occupiedHexes = List.of(step.getPosition());
+            } else {
+                final Coords stepCenter = step.getPosition();
+                occupiedHexes = secondaryPositions.values().stream()
+                        .map(sec -> stepCenter.add(sec.subtract(entityCenter)))
+                        .toList();
             }
 
-            // Add the mass of anyone else standing in/on this building.
-            double fullMass = mass + owner.getMassOfAllInBuilding(game, step.getPosition(), step.getBoardId());
+            for (Coords pos : occupiedHexes) {
+                final IBuilding building = game.getBoard(step.getBoardId()).getBuildingAt(pos);
+                if (building == null) {
+                    continue;
+                }
 
-            if (fullMass > building.getCurrentCF(step.getPosition())) {
-                return true;
+                // Add the mass of anyone else standing in/on this building.
+                double fullMass = mass + owner.getMassOfAllInBuilding(game, pos, step.getBoardId());
+
+                if (fullMass > building.getCurrentCF(pos)) {
+                    return true;
+                }
             }
         }
         return false;

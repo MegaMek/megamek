@@ -62,7 +62,7 @@ public class InfantryCombatAction extends AbstractEntityAction {
     /**
      * Creates a new infantry boarding combat action.
      *
-     * @param entityId the attacking infantry entity ID
+     * @param entityId       the attacking infantry entity ID
      * @param targetEntityId the target entity ID (AbstractBuildingEntity or vessel)
      */
     public InfantryCombatAction(int entityId, int targetEntityId) {
@@ -72,9 +72,9 @@ public class InfantryCombatAction extends AbstractEntityAction {
     /**
      * Creates a new infantry boarding combat action with withdrawal option.
      *
-     * @param entityId the attacking infantry entity ID
+     * @param entityId       the attacking infantry entity ID
      * @param targetEntityId the target entity ID (AbstractBuildingEntity or vessel)
-     * @param isWithdrawing true if withdrawing from combat
+     * @param isWithdrawing  true if withdrawing from combat
      */
     public InfantryCombatAction(int entityId, int targetEntityId, boolean isWithdrawing) {
         super(entityId);

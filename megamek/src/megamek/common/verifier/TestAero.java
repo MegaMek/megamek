@@ -205,7 +205,7 @@ public class TestAero extends TestEntity {
      *       the Aero can have in that location. Returns null if the space cannot be determined due to illegal armor
      *       type value.
      */
-    public static @Nullable int[] availableSpace(Aero a) {
+    public static int[] availableSpace(Aero a) {
         // Keep track of the max space we have in each arc
         int slots = slotsPerArc(a);
         int[] availSpace = { slots, slots, slots, slots };
@@ -246,33 +246,117 @@ public class TestAero extends TestEntity {
         return availSpace;
     }
 
-    public static boolean usesWeaponSlot(Entity en, EquipmentType eq) {
-        if (eq instanceof WeaponType) {
-            return !(eq instanceof BayWeapon);
+    /**
+     * Returns true if the given aero unit has at least one free "weapon" slot; weapon slots denote slots for those
+     * types of equipment that require a slot; see TM p.341 ff, F column. Returns false for invalid locations
+     *
+     * @param aero     The aero unit
+     * @param location The location to check
+     *
+     * @return True when there is room left for equipment that requires a slot
+     */
+    public static boolean hasFreeWeaponSlot(Aero aero, int location) {
+        return freeWeaponSlots(aero, location) > 0;
+    }
+
+    /**
+     * Returns the number of free "weapon" slots of the given location; weapon slots denote slots for those types of
+     * equipment that require a slot; see TM p.341 ff, F column. Returns 0 for invalid locations and for the fuselage.
+     *
+     * @param aero     The aero unit
+     * @param location The location to check
+     *
+     * @return The number of remaining weapon slots
+     */
+    public static int freeWeaponSlots(Aero aero, int location) {
+        if (location < 0 || location >= aero.locations() - 2) {
+            return 0;
+        } else {
+            return freeWeaponSlots(aero)[location];
         }
-        if (eq instanceof MiscType) {
-            // Equipment that takes up a slot on fighters and small craft, but not large
-            // craft.
-            if (!en.hasETypeFlag(Entity.ETYPE_DROPSHIP) && !en.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
-                  && (eq.hasFlag(MiscType.F_BAP)
-                  || eq.hasFlag(MiscType.F_WATCHDOG)
-                  || eq.hasFlag(MiscType.F_ECM)
-                  || eq.hasFlag(MiscType.F_ANGEL_ECM)
-                  || eq.hasFlag(MiscType.F_EW_EQUIPMENT)
-                  || eq.hasFlag(MiscType.F_BOOBY_TRAP)
-                  || eq.hasFlag(MiscType.F_SENSOR_DISPENSER))) {
+    }
+
+    /**
+     * Returns the number of used (filled) "weapon" slots of the given location; weapon slots denote slots for those
+     * types of equipment that require a slot; see TM p.341 ff, F column. Returns 0 for invalid locations and for the
+     * fuselage.
+     *
+     * @param aero     The aero unit
+     * @param location The location to check
+     *
+     * @return The number of used weapon slots
+     */
+    public static int usedWeaponSlots(Aero aero, int location) {
+        if (location < 0 || location >= aero.locations() - 2) {
+            return 0;
+        } else {
+            return availableSpace(aero)[location] - freeWeaponSlots(aero)[location];
+        }
+    }
+
+    /**
+     * Returns the number of free "weapon" slots of the locations Nose, L/R Wing and Aft; weapon slots denote slots for
+     * those types of equipment that require a slot; see TM p.341 ff, F column.
+     *
+     * @param aero The aero unit
+     *
+     * @return The number of used weapon slots
+     */
+    public static int[] freeWeaponSlots(Aero aero) {
+        int locations = aero.locations() - 2;
+        int[] numWeapons = new int[locations];
+        for (Mounted<?> mounted : aero.getEquipment()) {
+            // equipment that uses weapon slots should only be in weapon locations; guarding against invalid locations
+            // so this method does not fail
+            if ((mounted.getLocation() >= 0)
+                  && (mounted.getLocation() < locations)
+                  && usesWeaponSlot(aero, mounted.getType())) {
+                numWeapons[mounted.getLocation()]++;
+            }
+        }
+
+        int[] freeSlots = availableSpace(aero);
+        for (int location = 0; location < freeSlots.length; location++) {
+            freeSlots[location] -= numWeapons[location];
+        }
+        return freeSlots;
+    }
+
+    /**
+     * Returns true when the given equipment type uses a weapon slot on the given Aero entity. See TM p.341 ff, F
+     * column.
+     *
+     * @param aero The unit
+     * @param equipmentType The type of equipment
+     *
+     * @return True when the equipment occupies a weapon slot, false otherwise
+     */
+    public static boolean usesWeaponSlot(Entity aero, EquipmentType equipmentType) {
+        if (equipmentType instanceof WeaponType) {
+            return !(equipmentType instanceof BayWeapon);
+        }
+        if (equipmentType instanceof MiscType) {
+            // Equipment that takes up a slot on fighters and small craft, but not large craft
+            if (!aero.hasETypeFlag(Entity.ETYPE_DROPSHIP) && !aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
+                  && (equipmentType.hasFlag(MiscType.F_BAP)
+                  || equipmentType.hasFlag(MiscType.F_WATCHDOG)
+                  || equipmentType.hasFlag(MiscType.F_ECM)
+                  || equipmentType.hasFlag(MiscType.F_ANGEL_ECM)
+                  || equipmentType.hasFlag(MiscType.F_EW_EQUIPMENT)
+                  || equipmentType.hasFlag(MiscType.F_BOOBY_TRAP)
+                  || equipmentType.hasFlag(MiscType.F_SENSOR_DISPENSER))) {
                 return true;
 
             }
             // Equipment that takes a slot on all aerospace units
-            return eq.hasFlag(MiscType.F_CHAFF_POD)
-                  || eq.hasFlag(MiscType.F_SPACE_MINE_DISPENSER)
-                  || eq.hasFlag(MiscType.F_MOBILE_HPG)
-                  || eq.hasFlag(MiscType.F_RECON_CAMERA)
-                  || eq.hasFlag(MiscType.F_HIRES_IMAGER)
-                  || eq.hasFlag(MiscType.F_HYPERSPECTRAL_IMAGER)
-                  || eq.hasFlag(MiscType.F_INFRARED_IMAGER)
-                  || eq.hasFlag(MiscType.F_LOOKDOWN_RADAR);
+            return equipmentType.hasFlag(MiscType.F_CHAFF_POD)
+                  || equipmentType.hasFlag(MiscType.F_SPACE_MINE_DISPENSER)
+                  || equipmentType.hasFlag(MiscType.F_MOBILE_HPG)
+                  || equipmentType.hasFlag(MiscType.F_RECON_CAMERA)
+                  || equipmentType.hasFlag(MiscType.F_HIRES_IMAGER)
+                  || equipmentType.hasFlag(MiscType.F_HYPERSPECTRAL_IMAGER)
+                  || equipmentType.hasFlag(MiscType.F_INFRARED_IMAGER)
+                  || equipmentType.hasFlag(MiscType.F_LOOKDOWN_RADAR);
         }
         return false;
     }
@@ -959,7 +1043,7 @@ public class TestAero extends TestEntity {
         buff.append("Intro year: ").append(aero.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             buff.append("Weight: ").append(getWeight()).append(" (")
                   .append(calculateWeight()).append(")\n");
         }

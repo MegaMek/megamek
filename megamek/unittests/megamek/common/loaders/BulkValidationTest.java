@@ -51,8 +51,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import megamek.logging.MMLogger;
 
 /**
  * Author: Drake
@@ -69,7 +68,7 @@ import org.slf4j.LoggerFactory;
 @Tag("on-demand")
 public class BulkValidationTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(BulkValidationTest.class);
+    private static final MMLogger logger = MMLogger.create(BulkValidationTest.class);
 
     private static final File REPORT_FILE = new File("build/reports/validateAllUnits.txt");
 

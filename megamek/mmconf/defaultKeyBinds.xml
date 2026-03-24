@@ -29,8 +29,8 @@
     </KeyBind>
 
     <KeyBind>
-        <command>toggleChat</command> <!-- Enter -->
-        <keyCode>10</keyCode>
+        <command>toggleChat</command> <!-- Backquote -->
+        <keyCode>192</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
@@ -99,85 +99,85 @@
     </KeyBind>
 
     <KeyBind>
-        <command>nextWeapon</command> <!-- Down -->
-        <keyCode>40</keyCode>
+        <command>nextWeapon</command> <!-- E -->
+        <keyCode>69</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>prevWeapon</command> <!-- Up -->
-        <keyCode>38</keyCode>
+        <command>prevWeapon</command> <!-- Q -->
+        <keyCode>81</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>nextUnit</command> <!-- Tab -->
-        <keyCode>9</keyCode>
-        <modifier>0</modifier>
-        <isRepeatable>false</isRepeatable>
-    </KeyBind>
-
-    <KeyBind>
-        <command>prevUnit</command> <!-- Shift+Tab -->
-        <keyCode>9</keyCode>
+        <command>nextUnit</command> <!-- Shift+E -->
+        <keyCode>69</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>nextTarget</command> <!-- Right -->
-        <keyCode>39</keyCode>
-        <modifier>0</modifier>
-        <isRepeatable>false</isRepeatable>
-    </KeyBind>
-
-    <KeyBind>
-        <command>prevTarget</command> <!-- Left -->
-        <keyCode>37</keyCode>
-        <modifier>0</modifier>
-        <isRepeatable>false</isRepeatable>
-    </KeyBind>
-
-    <KeyBind>
-        <command>nextTargetValid</command> <!-- Shift+Right -->
-        <keyCode>39</keyCode>
+        <command>prevUnit</command> <!-- Shift+Q -->
+        <keyCode>81</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>prevTargetValid</command> <!-- Shift+Left -->
-        <keyCode>37</keyCode>
+        <command>nextTarget</command> <!-- C -->
+        <keyCode>67</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+        <command>prevTarget</command> <!-- Z -->
+        <keyCode>90</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+        <command>nextTargetValid</command> <!-- Shift+C -->
+        <keyCode>67</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>nextTargetNoAllies</command> <!-- Ctrl+Right -->
-        <keyCode>39</keyCode>
+        <command>prevTargetValid</command> <!-- Shift+Z -->
+        <keyCode>90</keyCode>
+        <modifier>64</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+        <command>nextTargetNoAllies</command> <!-- Ctrl+C -->
+        <keyCode>67</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>prevTargetNoAllies</command> <!-- Ctrl+Left -->
-        <keyCode>37</keyCode>
+        <command>prevTargetNoAllies</command> <!-- Ctrl+Z -->
+        <keyCode>90</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>nextTargetValidNoAllies</command> <!-- Ctrl+Shift+Right -->
-        <keyCode>39</keyCode>
+        <command>nextTargetValidNoAllies</command> <!-- Ctrl+Shift+C -->
+        <keyCode>67</keyCode>
         <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>prevTargetValidNoAllies</command> <!-- Ctrl+Shift+Left -->
-        <keyCode>37</keyCode>
+        <command>prevTargetValidNoAllies</command> <!-- Ctrl+Shift+Z -->
+        <keyCode>90</keyCode>
         <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
@@ -239,8 +239,8 @@
     </KeyBind>
 
     <KeyBind>
-        <command>autoArtyDeployZone</command> <!-- Shift+Z -->
-        <keyCode>90</keyCode>
+        <command>autoArtyDeployZone</command> <!-- Shift+Space -->
+        <keyCode>32</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
@@ -288,15 +288,15 @@
     </KeyBind>
 
     <KeyBind>
-        <command>udWeapons</command> <!-- F4 -->
-        <keyCode>115</keyCode>
+        <command>udWeapons</command> <!-- F5 -->
+        <keyCode>116</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>udSystems</command> <!-- F5 -->
-        <keyCode>116</keyCode>
+        <command>udSystems</command> <!-- F4 -->
+        <keyCode>115</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
@@ -344,15 +344,15 @@
     </KeyBind>
 
     <KeyBind>
-        <command>prevMode</command> <!-- Down -->
-        <keyCode>225</keyCode>
-        <modifier>0</modifier>
+        <command>prevMode</command> <!-- Shift+Tab -->
+        <keyCode>9</keyCode>
+        <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>nextMode</command> <!-- Up -->
-        <keyCode>224</keyCode>
+        <command>nextMode</command> <!-- Tab -->
+        <keyCode>9</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
@@ -421,9 +421,9 @@
     </KeyBind>
 
     <KeyBind>
-        <command>movementEnvelope</command> <!-- Ctrl+Q -->
-        <keyCode>81</keyCode>
-        <modifier>128</modifier>
+        <command>movementEnvelope</command> <!-- R -->
+        <keyCode>82</keyCode>
+        <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -526,15 +526,15 @@
     </KeyBind>
 
     <KeyBind>
-        <command>zoomIn</command> <!-- NumPad + -->
-        <keyCode>107</keyCode>
+        <command>zoomIn</command> <!-- Plus -->
+        <keyCode>521</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>zoomOut</command> <!-- NumPad - -->
-        <keyCode>109</keyCode>
+        <command>zoomOut</command> <!-- Minus -->
+        <keyCode>45</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>

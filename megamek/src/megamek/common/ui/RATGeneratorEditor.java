@@ -191,6 +191,11 @@ public class RATGeneratorEditor extends JFrame {
         panButtons.add(button);
         button.addActionListener(ev -> RATDataCSVExporter.exportToCSV(rg));
 
+        button = new JButton("Export Calculated CSV");
+        button.setToolTipText("Export a generated RAT table using final calculated weights");
+        panButtons.add(button);
+        button.addActionListener(ev -> RATDataCSVExporter.exportCalculatedToCSV(rg));
+
         panMain.addTab("Edit", createUnitTab());
         panMain.addTab("Edit Factions", createFactionTab());
 

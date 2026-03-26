@@ -39,19 +39,22 @@ import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.ProgressMonitor;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
 import megamek.client.ui.Messages;
-import megamek.common.loaders.MekSummary;
 import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
 
@@ -62,8 +65,8 @@ public class RATDataCSVExporter {
     private static final MMLogger logger = MMLogger.create(RATDataCSVExporter.class);
 
     private static final String DELIMITER = ";";
-    private static final String NONE_OPTION = "(none)";
     private static final ArrayList<String> EMPTY = new ArrayList<>();
+    private static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("0.####");
 
     /**
      * Exports all RAT data to a selectable file as an excel-optimized CSV.
@@ -74,7 +77,7 @@ public class RATDataCSVExporter {
     }
 
     /**
-     * Exports a generated RAT table, including final weights and salvage, to a selectable CSV file.
+     * Exports calculated RAT percentages to a selectable CSV file.
      */
     public static void exportCalculatedToCSV() {
         exportCalculatedToCSV(initializeRatGenerator());
@@ -107,7 +110,7 @@ public class RATDataCSVExporter {
             for (ChassisRecord chassisRecord : ratGenerator.getChassisList()) {
                 HashMap<String, List<String>> ratings = getRatings(ratGenerator, chassisRecord);
                 for (String faction : chassisRecord.getIncludedFactions()) {
-                    String factionName = resolveFactionName(ratGenerator, eras, ratings, faction);
+                    String factionName = resolveFactionName(ratGenerator, eras, ratings.get(faction), faction);
                     var csvLine = new StringBuilder();
                     writeChassisBaseData(chassisRecord, csvLine, faction, factionName);
                     writeEraData2(ratings, csvLine, faction);
@@ -118,7 +121,7 @@ public class RATDataCSVExporter {
                 for (ModelRecord modelRecord : chassisRecord.getModels()) {
                     ratings = getRatings(ratGenerator, modelRecord);
                     for (String faction : modelRecord.getIncludedFactions()) {
-                        String factionName = resolveFactionName(ratGenerator, eras, ratings, faction);
+                        String factionName = resolveFactionName(ratGenerator, eras, ratings.get(faction), faction);
                         var csvLine = new StringBuilder();
                         writeModelBaseData(modelRecord, csvLine, faction, factionName);
                         writeEraData2(ratings, csvLine, faction);
@@ -133,111 +136,277 @@ public class RATDataCSVExporter {
     }
 
     /**
-     * Prompts for a parameter set and exports the generated RAT table for that selection.
+     * Exports calculated RAT percentages from the given RATGenerator to a CSV file.
      */
     public static void exportCalculatedToCSV(RATGenerator ratGenerator) {
-        RATGenerator initializedRatGenerator = initializeRatGenerator(ratGenerator);
-        Parameters params = promptForCalculatedExportParameters(initializedRatGenerator);
-        if (params == null) {
-            return;
-        }
-
-        exportCalculatedToCSV(initializedRatGenerator, params);
-    }
-
-    /**
-     * Exports a generated RAT table for the provided parameters.
-     */
-    public static void exportCalculatedToCSV(Parameters params) {
-        exportCalculatedToCSV(initializeRatGenerator(), params);
-    }
-
-    /**
-     * Exports a generated RAT table for the provided parameters using the supplied RAT generator state.
-     */
-    public static void exportCalculatedToCSV(RATGenerator ratGenerator, Parameters params) {
         File saveFile = getSaveTargetFile();
         if (saveFile == null) {
             return;
         }
 
+        if (!SwingUtilities.isEventDispatchThread()) {
+            try {
+                writeCalculatedCsv(saveFile, initializeRatGenerator(ratGenerator), ExportProgress.NO_OP);
+            } catch (Exception ex) {
+                logger.error(ex, "exportCalculatedToCSV");
+            }
+            return;
+        }
+
+        ProgressMonitor monitor = new ProgressMonitor(null,
+              "Exporting calculated RAT CSV",
+              "Preparing export...",
+              0,
+              100);
+        monitor.setMillisToDecideToPopup(0);
+        monitor.setMillisToPopup(0);
+        monitor.setProgress(0);
+
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            private String note = "Preparing export...";
+
+            @Override
+            protected Void doInBackground() throws Exception {
+                updateProgress(0, "Initializing RAT data...");
+                RATGenerator initializedRatGenerator = initializeRatGenerator(ratGenerator);
+                writeCalculatedCsv(saveFile, initializedRatGenerator, new ExportProgress() {
+                    @Override
+                    public void update(int percent, String nextNote) {
+                        updateProgress(percent, nextNote);
+                    }
+
+                    @Override
+                    public boolean isCanceled() {
+                        return isCancelled() || monitor.isCanceled();
+                    }
+                });
+                updateProgress(100, "Export complete.");
+                return null;
+            }
+
+            private void updateProgress(int percent, String nextNote) {
+                note = nextNote;
+                setProgress(Math.max(0, Math.min(100, percent)));
+                firePropertyChange("progressNote", null, nextNote);
+            }
+
+            @Override
+            protected void done() {
+                monitor.close();
+                try {
+                    get();
+                } catch (CancellationException ignored) {
+                    // User canceled the export.
+                } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
+                } catch (ExecutionException ex) {
+                    logger.error(ex.getCause() == null ? ex : ex.getCause(), "exportCalculatedToCSV");
+                }
+            }
+        };
+
+        worker.addPropertyChangeListener(event -> {
+            if ("progress".equals(event.getPropertyName())) {
+                monitor.setProgress((Integer) event.getNewValue());
+            } else if ("progressNote".equals(event.getPropertyName())) {
+                monitor.setNote(String.valueOf(event.getNewValue()));
+            }
+            if (monitor.isCanceled() && !worker.isCancelled()) {
+                worker.cancel(true);
+            }
+        });
+        worker.execute();
+    }
+
+    static String buildCalculatedCsv(RATGenerator ratGenerator) {
+        return buildCalculatedCsv(ratGenerator, ExportProgress.NO_OP);
+    }
+
+    private static void writeCalculatedCsv(File saveFile, RATGenerator ratGenerator, ExportProgress progress)
+          throws IOException {
+        String csv = buildCalculatedCsv(ratGenerator, progress);
+        if (progress.isCanceled()) {
+            throw new CancellationException();
+        }
         try (PrintWriter pw = new PrintWriter(saveFile); BufferedWriter bw = new BufferedWriter(pw)) {
-            bw.write(buildCalculatedCsv(UnitTable.findTable(params), params));
-        } catch (Exception ex) {
-            logger.error(ex, "exportCalculatedToCSV");
+            bw.write(csv);
         }
     }
 
-    static String buildCalculatedCsv(UnitTable unitTable, Parameters params) {
+    static String buildCalculatedCsv(RATGenerator ratGenerator, ExportProgress progress) {
+        Integer[] eras = ratGenerator.getEraSet().toArray(new Integer[0]);
+        List<ModelRecord> models = ratGenerator.getModelList().stream()
+              .sorted(Comparator.comparing(ModelRecord::getKey))
+              .toList();
+        List<String> eraYears = ratGenerator.getEraSet().stream().map(String::valueOf).collect(Collectors.toList());
+        Set<Integer> requestedUnitTypes = models.stream()
+              .map(ModelRecord::getUnitType)
+              .map(RATDataCSVExporter::normalizeCalculatedUnitType)
+              .collect(Collectors.toSet());
+          progress.update(1, "Collecting calculated RAT values...");
+        Map<String, HashMap<String, List<String>>> ratingsByFaction = buildCalculatedRatings(ratGenerator,
+              eras,
+              requestedUnitTypes,
+              progress);
+
         StringBuilder csv = new StringBuilder();
         csv.append(String.join(DELIMITER,
-              "Faction ID",
-              "Faction",
-              "Deploying Faction ID",
-              "Deploying Faction",
-              "Year",
-              "Rating",
-              "Requested Unit Type",
-              "Entry Type",
-              "Entry",
-              "Source Faction ID",
               "Chassis",
               "Model",
               "MUL ID",
-              "Tech Base",
-              "Role",
-              "Weight",
-              "Weight %"));
+              "Unit Type",
+              "Intro Date",
+              "Faction ID",
+              "Faction",
+              String.join(DELIMITER, eraYears)));
         csv.append("\n");
 
-        int totalWeight = unitTable.getTotalWeight();
-        for (UnitTable.TableEntry entry : unitTable.getEntries()) {
-            csv.append(buildCalculatedCsvRow(entry, params, totalWeight));
-            csv.append("\n");
+        int totalRows = 0;
+        for (ModelRecord modelRecord : models) {
+            for (String factionId : ratingsByFaction.keySet()) {
+                List<String> ratings = ratingsByFaction.get(factionId).get(modelRecord.getKey());
+                if (ratings != null && ratings.stream().anyMatch(java.util.Objects::nonNull)) {
+                    totalRows += 1;
+                }
+            }
+        }
+
+        int writtenRows = 0;
+        progress.update(90, "Writing export rows...");
+
+        for (ModelRecord modelRecord : models) {
+            for (String factionId : ratingsByFaction.keySet().stream().sorted().toList()) {
+                if (progress.isCanceled()) {
+                    throw new CancellationException();
+                }
+                List<String> ratings = ratingsByFaction.get(factionId).get(modelRecord.getKey());
+                if (ratings == null || ratings.stream().allMatch(java.util.Objects::isNull)) {
+                    continue;
+                }
+
+                String factionName = resolveFactionName(ratGenerator, eras, ratings, factionId);
+                var csvLine = new StringBuilder();
+                writeCalculatedModelBaseData(modelRecord, csvLine, factionId, factionName);
+                writeEraData2(ratings, csvLine);
+                csvLine.append("\n");
+                csv.append(csvLine);
+                writtenRows += 1;
+                progress.update(90 + (int) Math.round(10.0 * writtenRows / Math.max(1, totalRows)),
+                      "Writing export rows... " + writtenRows + "/" + totalRows);
+            }
         }
 
         return csv.toString();
     }
 
-    static String buildCalculatedCsvRow(UnitTable.TableEntry entry, Parameters params, int totalWeight) {
-        StringBuilder csvLine = new StringBuilder();
-        appendCsvValue(csvLine, params.getFaction().getKey());
-        appendCsvValue(csvLine, params.getFaction().getName(params.getYear()));
-        appendCsvValue(csvLine, params.getDeployingFaction().getKey());
-        appendCsvValue(csvLine, params.getDeployingFaction().getName(params.getYear()));
-        appendCsvValue(csvLine, params.getYear());
-        appendCsvValue(csvLine, params.getRating() == null ? "" : params.getRating());
-        appendCsvValue(csvLine, UnitType.getTypeName(params.getUnitType()));
+    private static Map<String, HashMap<String, List<String>>> buildCalculatedRatings(RATGenerator ratGenerator,
+          Integer[] eras,
+          Set<Integer> requestedUnitTypes,
+          ExportProgress progress) {
+        Map<String, HashMap<String, List<String>>> ratingsByFaction = new HashMap<>();
+        Map<Parameters, Map<String, Double>> tableCache = new HashMap<>();
+        List<FactionRecord> factions = ratGenerator.getFactionList().stream().toList();
+        int totalSteps = 0;
+        for (int era : eras) {
+            for (FactionRecord factionRecord : factions) {
+                if (factionRecord.isActiveInYear(era)) {
+                    totalSteps += requestedUnitTypes.size();
+                }
+            }
+        }
+        int processedSteps = 0;
 
-        if (entry.isUnit()) {
-            MekSummary unitEntry = entry.getUnitEntry();
-            appendCsvValue(csvLine, "Unit");
-            appendCsvValue(csvLine, unitEntry.getName());
-            appendCsvValue(csvLine, "");
-            appendCsvValue(csvLine, unitEntry.getChassis());
-            appendCsvValue(csvLine, unitEntry.getModel());
-            appendCsvValue(csvLine, unitEntry.getMulId());
-            appendCsvValue(csvLine, unitEntry.isClan() ? "Clan" : "IS");
-            appendCsvValue(csvLine, unitEntry.getRole().toString());
-        } else {
-            FactionRecord salvageFaction = entry.getSalvageFaction();
-            appendCsvValue(csvLine, "Salvage");
-            appendCsvValue(csvLine, salvageFaction.getName(params.getYear() - 5));
-            appendCsvValue(csvLine, salvageFaction.getKey());
-            appendCsvValue(csvLine, "");
-            appendCsvValue(csvLine, "");
-            appendCsvValue(csvLine, "");
-            appendCsvValue(csvLine, salvageFaction.isClan() ? "Clan" : "IS");
-            appendCsvValue(csvLine, "");
+        for (int eraIndex = 0; eraIndex < eras.length; eraIndex++) {
+            int era = eras[eraIndex];
+            for (FactionRecord factionRecord : factions) {
+                if (!factionRecord.isActiveInYear(era)) {
+                    continue;
+                }
+
+                Map<String, Double> tablePercentages = new HashMap<>();
+                for (int unitType : requestedUnitTypes) {
+                    if (progress.isCanceled()) {
+                        throw new CancellationException();
+                    }
+                    Parameters params = createCalculatedParameters(factionRecord, era, unitType);
+                    Map<String, Double> unitTypePercentages = calculateFinalModelPercentages(params,
+                          tableCache,
+                          new java.util.HashSet<>());
+                    for (Map.Entry<String, Double> entry : unitTypePercentages.entrySet()) {
+                        tablePercentages.merge(entry.getKey(), entry.getValue(), Double::sum);
+                    }
+                    processedSteps += 1;
+                    progress.update(5 + (int) Math.round(85.0 * processedSteps / Math.max(1, totalSteps)),
+                          "Calculating " + factionRecord.getKey() + " " + era + " " + UnitType.getTypeName(unitType)
+                                + "... " + processedSteps + "/" + totalSteps);
+                }
+
+                for (Map.Entry<String, Double> entry : tablePercentages.entrySet()) {
+                    ratingsByFaction
+                          .computeIfAbsent(factionRecord.getKey(), key -> new HashMap<>())
+                          .computeIfAbsent(entry.getKey(), key -> new ArrayList<>(Collections.nCopies(eras.length, null)))
+                          .set(eraIndex, formatCalculatedAvailability(entry.getValue()));
+                }
+            }
         }
 
-        appendCsvValue(csvLine, entry.getWeight());
-        appendCsvRaw(csvLine, formatWeightPercent(entry.getWeight(), totalWeight));
-        return csvLine.toString();
+        return ratingsByFaction;
     }
 
-    private static void writeEraData2(HashMap<String, List<String>> ratings, StringBuilder csvLine, String faction) {
-        ratings.get(faction).forEach(availabilityCode -> {
+    private static Map<String, Double> calculateFinalModelPercentages(Parameters params,
+          Map<Parameters, Map<String, Double>> tableCache,
+          Set<Parameters> visiting) {
+        Parameters cacheKey = params.copy();
+        Map<String, Double> cached = tableCache.get(cacheKey);
+        if (cached != null) {
+            return cached;
+        }
+        if (!visiting.add(cacheKey)) {
+            return Map.of();
+        }
+
+        UnitTable unitTable = UnitTable.findTable(params);
+        Map<String, Double> rawWeights = new HashMap<>();
+        for (UnitTable.TableEntry entry : unitTable.getEntries()) {
+            if (entry.isUnit()) {
+                rawWeights.merge(entry.getUnitEntry().getName(), (double) entry.getWeight(), Double::sum);
+            } else {
+                Parameters salvageParams = new Parameters(entry.getSalvageFaction(),
+                      params.getUnitType(),
+                      params.getYear() - 5,
+                      params.getRating(),
+                      params.getWeightClasses(),
+                      params.getNetworkMask(),
+                      params.getMovementModes(),
+                      params.getRoles(),
+                      params.getRoleStrictness(),
+                      params.getFaction());
+                Map<String, Double> salvagePercentages = calculateFinalModelPercentages(salvageParams,
+                      tableCache,
+                      visiting);
+                for (Map.Entry<String, Double> salvageEntry : salvagePercentages.entrySet()) {
+                    rawWeights.merge(salvageEntry.getKey(),
+                          entry.getWeight() * salvageEntry.getValue() / 100.0,
+                          Double::sum);
+                }
+            }
+        }
+
+        double totalWeight = rawWeights.values().stream().mapToDouble(Double::doubleValue).sum();
+        Map<String, Double> percentages = new HashMap<>();
+        if (totalWeight > 0) {
+            for (Map.Entry<String, Double> entry : rawWeights.entrySet()) {
+                percentages.put(entry.getKey(), 100.0 * entry.getValue() / totalWeight);
+            }
+        }
+
+        visiting.remove(cacheKey);
+        tableCache.put(cacheKey, percentages);
+        return percentages;
+    }
+
+    private static void writeEraData2(List<String> ratings, StringBuilder csvLine) {
+        ratings.forEach(availabilityCode -> {
             if (availabilityCode != null) {
                 csvLine.append("\"=\"\"");
                 csvLine.append(availabilityCode);
@@ -245,6 +414,10 @@ public class RATDataCSVExporter {
             }
             csvLine.append(DELIMITER);
         });
+    }
+
+    private static void writeEraData2(HashMap<String, List<String>> ratings, StringBuilder csvLine, String faction) {
+        writeEraData2(ratings.get(faction), csvLine);
     }
 
     private static HashMap<String, List<String>> getRatings(RATGenerator ratGenerator, AbstractUnitRecord record) {
@@ -298,23 +471,50 @@ public class RATDataCSVExporter {
         csvLine.append(factionName).append(DELIMITER);
     }
 
-    static String resolveFactionName(RATGenerator ratGenerator, Integer[] eras, HashMap<String, List<String>> ratings,
+    private static void writeCalculatedModelBaseData(ModelRecord record, StringBuilder csvLine, String factionId,
+          String factionName) {
+        csvLine.append("\"=\"\"").append(record.getChassis()).append("\"\"\"").append(DELIMITER);
+        csvLine.append("\"=\"\"").append(record.getModel()).append("\"\"\"").append(DELIMITER);
+        csvLine.append(record.getMekSummary().getMulId()).append(DELIMITER);
+        csvLine.append(UnitType.getTypeName(record.getUnitType())).append(DELIMITER);
+        csvLine.append(record.getMekSummary().getYear()).append(DELIMITER);
+        csvLine.append(factionId).append(DELIMITER);
+        csvLine.append(factionName).append(DELIMITER);
+    }
+
+    static String resolveFactionName(RATGenerator ratGenerator, Integer[] eras, List<String> ratings,
           String factionId) {
         FactionRecord factionRecord = ratGenerator.getFaction(factionId);
         if (factionRecord == null) {
             return factionId;
         }
 
-        List<String> factionRatings = ratings.get(factionId);
-        if (factionRatings != null) {
-            for (int i = 0; i < Math.min(eras.length, factionRatings.size()); i++) {
-                if (factionRatings.get(i) != null) {
+        if (ratings != null) {
+            for (int i = 0; i < Math.min(eras.length, ratings.size()); i++) {
+                if (ratings.get(i) != null) {
                     return factionRecord.getName(eras[i]);
                 }
             }
         }
 
         return factionRecord.getName();
+    }
+
+    private static Parameters createCalculatedParameters(FactionRecord factionRecord, int year, int unitType) {
+        return new Parameters(factionRecord,
+              unitType,
+              year,
+              null,
+              List.of(),
+              0,
+              List.of(),
+              List.of(),
+              0,
+              factionRecord);
+    }
+
+    private static int normalizeCalculatedUnitType(int unitType) {
+        return (unitType == UnitType.AERO) ? UnitType.AEROSPACE_FIGHTER : unitType;
     }
 
     private static RATGenerator initializeRatGenerator() {
@@ -334,133 +534,25 @@ public class RATDataCSVExporter {
         return ratGenerator;
     }
 
-    private static Parameters promptForCalculatedExportParameters(RATGenerator ratGenerator) {
-        List<FactionRecord> factions = ratGenerator.getFactionList().stream()
-              .sorted(Comparator.comparing(FactionRecord::getName, String.CASE_INSENSITIVE_ORDER))
-              .toList();
-        if (factions.isEmpty() || ratGenerator.getEraSet().isEmpty()) {
-            return null;
-        }
-
-        JComboBox<FactionRecord> factionChooser = new JComboBox<>(factions.toArray(new FactionRecord[0]));
-        JComboBox<FactionRecord> deployingFactionChooser = new JComboBox<>(factions.toArray(new FactionRecord[0]));
-        JComboBox<Integer> yearChooser = new JComboBox<>(ratGenerator.getEraSet().toArray(new Integer[0]));
-        JComboBox<Integer> unitTypeChooser = new JComboBox<>();
-        JComboBox<String> ratingChooser = new JComboBox<>();
-
-        for (int unitType = 0; unitType < UnitType.SIZE; unitType++) {
-            unitTypeChooser.addItem(unitType);
-        }
-
-        factionChooser.setRenderer((list, value, index, isSelected, cellHasFocus) ->
-              new JLabel((value == null) ? "" : value.getName() + " (" + value.getKey() + ")"));
-        deployingFactionChooser.setRenderer((list, value, index, isSelected, cellHasFocus) ->
-              new JLabel((value == null) ? "" : value.getName() + " (" + value.getKey() + ")"));
-        unitTypeChooser.setRenderer((list, value, index, isSelected, cellHasFocus) ->
-              new JLabel((value == null) ? "" : UnitType.getTypeName(value)));
-
-        FactionRecord defaultFaction = factions.get(0);
-        factionChooser.setSelectedItem(defaultFaction);
-        deployingFactionChooser.setSelectedItem(defaultFaction);
-        yearChooser.setSelectedItem(ratGenerator.getEraSet().last());
-        unitTypeChooser.setSelectedItem(UnitType.MEK);
-        updateRatingChooser(ratingChooser, defaultFaction);
-
-        factionChooser.addActionListener(ev -> updateRatingChooser(ratingChooser,
-              (FactionRecord) factionChooser.getSelectedItem()));
-
-        JPanel panel = new JPanel(new java.awt.GridLayout(0, 2, 5, 5));
-        panel.add(new JLabel("Faction"));
-        panel.add(factionChooser);
-        panel.add(new JLabel("Deploying Faction"));
-        panel.add(deployingFactionChooser);
-        panel.add(new JLabel("Year"));
-        panel.add(yearChooser);
-        panel.add(new JLabel("Unit Type"));
-        panel.add(unitTypeChooser);
-        panel.add(new JLabel("Rating"));
-        panel.add(ratingChooser);
-
-        int option = JOptionPane.showConfirmDialog(null,
-              panel,
-              "Export Calculated RAT CSV",
-              JOptionPane.OK_CANCEL_OPTION,
-              JOptionPane.PLAIN_MESSAGE);
-        if (option != JOptionPane.OK_OPTION) {
-            return null;
-        }
-
-        FactionRecord faction = (FactionRecord) factionChooser.getSelectedItem();
-        FactionRecord deployingFaction = (FactionRecord) deployingFactionChooser.getSelectedItem();
-        Integer year = (Integer) yearChooser.getSelectedItem();
-        Integer unitType = (Integer) unitTypeChooser.getSelectedItem();
-        if (faction == null || year == null || unitType == null) {
-            return null;
-        }
-
-        if (deployingFaction == null) {
-            deployingFaction = faction;
-        }
-
-        String rating = normalizeRatingSelection((String) ratingChooser.getSelectedItem());
-        return new Parameters(faction,
-              unitType,
-              year,
-              rating,
-              List.of(),
-              0,
-              List.of(),
-              List.of(),
-              0,
-              deployingFaction);
+    static String formatCalculatedAvailability(double value) {
+        return PERCENT_FORMAT.format(value) + "%";
     }
 
-    private static void updateRatingChooser(JComboBox<String> ratingChooser, FactionRecord faction) {
-        String previousSelection = (String) ratingChooser.getSelectedItem();
-        ratingChooser.removeAllItems();
-        ratingChooser.addItem(NONE_OPTION);
-        if (faction != null) {
-            faction.getRatingLevelSystem().forEach(ratingChooser::addItem);
-        }
+    private interface ExportProgress {
+        ExportProgress NO_OP = new ExportProgress() {
+            @Override
+            public void update(int percent, String note) {
+            }
 
-        if (previousSelection != null) {
-            ratingChooser.setSelectedItem(previousSelection);
-        }
-        if (ratingChooser.getSelectedItem() == null) {
-            ratingChooser.setSelectedIndex(0);
-        }
-    }
+            @Override
+            public boolean isCanceled() {
+                return false;
+            }
+        };
 
-    private static String normalizeRatingSelection(String rating) {
-        return (rating == null || NONE_OPTION.equals(rating)) ? null : rating;
-    }
+        void update(int percent, String note);
 
-    private static String formatWeightPercent(int weight, int totalWeight) {
-        if (totalWeight <= 0) {
-            return "0";
-        }
-
-        return new DecimalFormat("0.####").format(100.0 * weight / totalWeight);
-    }
-
-    private static void appendCsvValue(StringBuilder csvLine, Object value) {
-        if (csvLine.length() > 0) {
-            csvLine.append(DELIMITER);
-        }
-
-        if (value instanceof Number) {
-            csvLine.append(value);
-        } else {
-            String text = (value == null) ? "" : value.toString();
-            csvLine.append('"').append(text.replace("\"", "\"\"")).append('"');
-        }
-    }
-
-    private static void appendCsvRaw(StringBuilder csvLine, String value) {
-        if (csvLine.length() > 0) {
-            csvLine.append(DELIMITER);
-        }
-        csvLine.append(value);
+        boolean isCanceled();
     }
 
     private static File getSaveTargetFile() {

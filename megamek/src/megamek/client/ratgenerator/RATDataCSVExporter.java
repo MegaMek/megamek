@@ -398,7 +398,7 @@ public class RATDataCSVExporter {
             String factionName = resolveFactionName(ratGenerator, eras, ratings, factionRecord.getKey());
             var csvLine = new StringBuilder();
             writeCalculatedModelBaseData(modelRecord, csvLine, factionRecord.getKey(), factionName);
-            writeEraData2(ratings, csvLine);
+            writeCalculatedEraData(ratings, csvLine);
             csvLine.append("\n");
             csv.append(csvLine);
             writtenRows += 1;
@@ -576,13 +576,44 @@ public class RATDataCSVExporter {
 
     private static void writeCalculatedModelBaseData(ModelRecord record, StringBuilder csvLine, String factionId,
           String factionName) {
-        csvLine.append("\"=\"\"").append(record.getChassis()).append("\"\"\"").append(DELIMITER);
-        csvLine.append("\"=\"\"").append(record.getModel()).append("\"\"\"").append(DELIMITER);
-        csvLine.append(record.getMekSummary().getMulId()).append(DELIMITER);
-        csvLine.append(UnitType.getTypeName(record.getUnitType())).append(DELIMITER);
-        csvLine.append(record.getMekSummary().getYear()).append(DELIMITER);
-        csvLine.append(factionId).append(DELIMITER);
-        csvLine.append(factionName).append(DELIMITER);
+        appendCsvField(csvLine, record.getChassis());
+        csvLine.append(DELIMITER);
+        appendCsvField(csvLine, record.getModel());
+        csvLine.append(DELIMITER);
+        appendCsvField(csvLine, Integer.toString(record.getMekSummary().getMulId()));
+        csvLine.append(DELIMITER);
+        appendCsvField(csvLine, UnitType.getTypeName(record.getUnitType()));
+        csvLine.append(DELIMITER);
+        appendCsvField(csvLine, Integer.toString(record.getMekSummary().getYear()));
+        csvLine.append(DELIMITER);
+        appendCsvField(csvLine, factionId);
+        csvLine.append(DELIMITER);
+        appendCsvField(csvLine, factionName);
+        csvLine.append(DELIMITER);
+    }
+
+    private static void writeCalculatedEraData(List<String> ratings, StringBuilder csvLine) {
+        ratings.forEach(availabilityCode -> {
+            appendCsvField(csvLine, availabilityCode);
+            csvLine.append(DELIMITER);
+        });
+    }
+
+    private static void appendCsvField(StringBuilder csvLine, String value) {
+        if (value == null) {
+            return;
+        }
+        boolean needsQuotes = value.contains(DELIMITER)
+              || value.contains("\"")
+              || value.contains("\n")
+              || value.contains("\r");
+        if (needsQuotes) {
+            csvLine.append('"');
+            csvLine.append(value.replace("\"", "\"\""));
+            csvLine.append('"');
+        } else {
+            csvLine.append(value);
+        }
     }
 
     static String resolveFactionName(RATGenerator ratGenerator, Integer[] eras, List<String> ratings,

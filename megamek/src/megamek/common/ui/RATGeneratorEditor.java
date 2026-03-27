@@ -1532,7 +1532,7 @@ public class RATGeneratorEditor extends JFrame {
 
         @Override
         public int getRowCount() {
-            return (rows == null) ? 0 : rows.size();
+            return rows.size();
         }
 
         @Override

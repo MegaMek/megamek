@@ -320,7 +320,8 @@ public class RATDataCSVExporter {
                         factionIndex,
                         factions.size());
             } catch (RuntimeException ex) {
-                logger.warn(ex, "Skipping calculated row for {} {}", modelRecord.getKey(), factionRecord.getKey());
+                logger.warn(ex,
+                      "Skipping calculated row for " + modelRecord.getKey() + " " + factionRecord.getKey());
                 continue;
             }
             if (java.util.Arrays.stream(ratings).allMatch(value -> (value == null) || value.isBlank())) {
@@ -1156,10 +1157,7 @@ public class RATDataCSVExporter {
     private record TargetWeightTotals(double targetWeight, double totalWeight) {
         private static final TargetWeightTotals ZERO = new TargetWeightTotals(0.0, 0.0);
     }
-
-    private record CalculatedCsvRow(String factionId, String factionName, List<String> ratings) {
-    }
-
+    
     private record CalculatedCsvModelRow(String modelKey, String factionId, String factionName, List<String> ratings) {
     }
 

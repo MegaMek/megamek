@@ -262,10 +262,11 @@ public class RATDataCSVExporter {
               .map(RATDataCSVExporter::normalizeCalculatedUnitType)
               .collect(Collectors.toSet());
         progress.update(1, "Collecting calculated RAT values...");
-        Map<String, HashMap<String, List<String>>> ratingsByFaction = buildCalculatedRatings(ratGenerator,
-              eras,
-              requestedUnitTypes,
-              progress);
+          Map<Parameters, Map<String, Double>> tableCache = new HashMap<>();
+          List<FactionRecord> factions = ratGenerator.getFactionList().stream()
+              .filter(factionRecord -> java.util.Arrays.stream(eras).anyMatch(factionRecord::isActiveInYear))
+              .sorted(Comparator.comparing(FactionRecord::getKey))
+              .toList();
 
         csv.append(String.join(DELIMITER,
               "Chassis",
@@ -278,99 +279,130 @@ public class RATDataCSVExporter {
               String.join(DELIMITER, eraYears)));
         csv.append("\n");
 
-        int totalRows = 0;
-        for (ModelRecord modelRecord : models) {
-            for (String factionId : ratingsByFaction.keySet()) {
-                List<String> ratings = ratingsByFaction.get(factionId).get(modelRecord.getKey());
-                if (ratings != null && ratings.stream().anyMatch(Objects::nonNull)) {
-                    totalRows += 1;
-                }
+        for (int factionIndex = 0; factionIndex < factions.size(); factionIndex++) {
+            if (progress.isCanceled()) {
+                throw new CancellationException();
             }
-        }
-
-        int writtenRows = 0;
-        progress.update(90, "Writing export rows...");
-
-        for (ModelRecord modelRecord : models) {
-            for (String factionId : ratingsByFaction.keySet().stream().sorted().toList()) {
-                if (progress.isCanceled()) {
-                    throw new CancellationException();
-                }
-                List<String> ratings = ratingsByFaction.get(factionId).get(modelRecord.getKey());
-                if (ratings == null || ratings.stream().allMatch(Objects::isNull)) {
-                    continue;
-                }
-
-                String factionName = resolveFactionName(ratGenerator, eras, ratings, factionId);
-                var csvLine = new StringBuilder();
-                writeCalculatedModelBaseData(modelRecord, csvLine, factionId, factionName);
-                writeEraData2(ratings, csvLine);
-                csvLine.append("\n");
-                csv.append(csvLine);
-                writtenRows += 1;
-                progress.update(90 + (int) Math.round(9.0 * writtenRows / Math.max(1, totalRows)),
-                      "Writing export rows... " + writtenRows + "/" + totalRows);
-            }
+            FactionRecord factionRecord = factions.get(factionIndex);
+            Map<String, List<String>> ratingsByModel = buildCalculatedRatingsForFaction(ratGenerator,
+                  factionRecord,
+                  eras,
+                  requestedUnitTypes,
+                  tableCache,
+                  progress,
+                  factionIndex,
+                  factions.size());
+            writeCalculatedRowsForFaction(csv,
+                  ratGenerator,
+                  eras,
+                  models,
+                  factionRecord,
+                  ratingsByModel,
+                  progress,
+                  factionIndex,
+                  factions.size());
         }
     }
 
-    private static Map<String, HashMap<String, List<String>>> buildCalculatedRatings(RATGenerator ratGenerator,
+    private static Map<String, List<String>> buildCalculatedRatingsForFaction(RATGenerator ratGenerator,
+          FactionRecord factionRecord,
           Integer[] eras,
           Set<Integer> requestedUnitTypes,
-          ExportProgress progress) {
-        Map<String, HashMap<String, List<String>>> ratingsByFaction = new HashMap<>();
-        Map<Parameters, Map<String, Double>> tableCache = new HashMap<>();
-        List<FactionRecord> factions = ratGenerator.getFactionList().stream().toList();
+          Map<Parameters, Map<String, Double>> tableCache,
+          ExportProgress progress,
+          int factionIndex,
+          int totalFactions) {
+        Map<String, List<String>> ratingsByModel = new HashMap<>();
         int totalSteps = 0;
         for (int era : eras) {
-            for (FactionRecord factionRecord : factions) {
-                if (factionRecord.isActiveInYear(era)) {
-                    totalSteps += requestedUnitTypes.size();
-                }
+            if (factionRecord.isActiveInYear(era)) {
+                totalSteps += requestedUnitTypes.size();
             }
         }
         int processedSteps = 0;
+        double factionStart = 5.0 + (85.0 * factionIndex / Math.max(1, totalFactions));
+        double factionSpan = 85.0 / Math.max(1, totalFactions);
+        double calculateSpan = factionSpan * 0.75;
 
         for (int eraIndex = 0; eraIndex < eras.length; eraIndex++) {
             int era = eras[eraIndex];
-            for (FactionRecord factionRecord : factions) {
-                if (!factionRecord.isActiveInYear(era)) {
-                    continue;
-                }
+            if (!factionRecord.isActiveInYear(era)) {
+                continue;
+            }
 
-                Map<String, CalculatedAvailability> tablePercentages = new HashMap<>();
-                for (int unitType : requestedUnitTypes) {
-                    if (progress.isCanceled()) {
-                        throw new CancellationException();
-                    }
-                    Parameters params = createCalculatedParameters(factionRecord, era, unitType);
-                    Map<String, CalculatedAvailability> unitTypePercentages = calculateSeparatedModelPercentages(params,
-                          tableCache,
-                          new java.util.HashSet<>());
-                    for (Map.Entry<String, CalculatedAvailability> entry : unitTypePercentages.entrySet()) {
-                        tablePercentages.merge(entry.getKey(), entry.getValue(), CalculatedAvailability::merge);
-                    }
-                    processedSteps += 1;
-                    progress.update(5 + (int) Math.round(85.0 * processedSteps / Math.max(1, totalSteps)),
-                          "Calculating " + factionRecord.getKey() + " " + era + " " + UnitType.getTypeName(unitType)
-                                + "... " + processedSteps + "/" + totalSteps);
+            Map<String, CalculatedAvailability> tablePercentages = new HashMap<>();
+            for (int unitType : requestedUnitTypes) {
+                if (progress.isCanceled()) {
+                    throw new CancellationException();
                 }
+                Parameters params = createCalculatedParameters(factionRecord, era, unitType);
+                Map<String, CalculatedAvailability> unitTypePercentages = calculateSeparatedModelPercentages(params,
+                      tableCache,
+                      new java.util.HashSet<>());
+                for (Map.Entry<String, CalculatedAvailability> entry : unitTypePercentages.entrySet()) {
+                    tablePercentages.merge(entry.getKey(), entry.getValue(), CalculatedAvailability::merge);
+                }
+                processedSteps += 1;
+                progress.update((int) Math.round(factionStart + calculateSpan * processedSteps / Math.max(1, totalSteps)),
+                      "Calculating " + factionRecord.getKey() + " " + era + " " + UnitType.getTypeName(unitType)
+                            + "... " + processedSteps + "/" + totalSteps);
+            }
 
-                for (Map.Entry<String, CalculatedAvailability> entry : tablePercentages.entrySet()) {
-                    List<String> ratings = ratingsByFaction
-                          .computeIfAbsent(factionRecord.getKey(), key -> new HashMap<>())
-                          .computeIfAbsent(entry.getKey(), key -> new ArrayList<>(Collections.nCopies(eras.length * 2, null)));
-                    if (entry.getValue().normal() > 0) {
-                        ratings.set(eraIndex * 2, formatCalculatedAvailability(entry.getValue().normal()));
-                    }
-                    if (entry.getValue().salvage() > 0) {
-                        ratings.set(eraIndex * 2 + 1, formatCalculatedAvailability(entry.getValue().salvage()));
-                    }
+            for (Map.Entry<String, CalculatedAvailability> entry : tablePercentages.entrySet()) {
+                List<String> ratings = ratingsByModel
+                      .computeIfAbsent(entry.getKey(), key -> new ArrayList<>(Collections.nCopies(eras.length * 2, null)));
+                if (entry.getValue().normal() > 0) {
+                    ratings.set(eraIndex * 2, formatCalculatedAvailability(entry.getValue().normal()));
+                }
+                if (entry.getValue().salvage() > 0) {
+                    ratings.set(eraIndex * 2 + 1, formatCalculatedAvailability(entry.getValue().salvage()));
                 }
             }
         }
 
-        return ratingsByFaction;
+        return ratingsByModel;
+    }
+
+    private static void writeCalculatedRowsForFaction(Appendable csv,
+          RATGenerator ratGenerator,
+          Integer[] eras,
+          List<ModelRecord> models,
+          FactionRecord factionRecord,
+          Map<String, List<String>> ratingsByModel,
+          ExportProgress progress,
+          int factionIndex,
+          int totalFactions) throws IOException {
+        int totalRows = (int) models.stream()
+              .map(ModelRecord::getKey)
+              .map(ratingsByModel::get)
+              .filter(Objects::nonNull)
+              .filter(ratings -> ratings.stream().anyMatch(Objects::nonNull))
+              .count();
+        int writtenRows = 0;
+        double factionStart = 5.0 + (85.0 * factionIndex / Math.max(1, totalFactions));
+        double factionSpan = 85.0 / Math.max(1, totalFactions);
+        double writeStart = factionStart + factionSpan * 0.75;
+        double writeSpan = factionSpan * 0.25;
+
+        for (ModelRecord modelRecord : models) {
+            if (progress.isCanceled()) {
+                throw new CancellationException();
+            }
+            List<String> ratings = ratingsByModel.get(modelRecord.getKey());
+            if (ratings == null || ratings.stream().allMatch(Objects::isNull)) {
+                continue;
+            }
+
+            String factionName = resolveFactionName(ratGenerator, eras, ratings, factionRecord.getKey());
+            var csvLine = new StringBuilder();
+            writeCalculatedModelBaseData(modelRecord, csvLine, factionRecord.getKey(), factionName);
+            writeEraData2(ratings, csvLine);
+            csvLine.append("\n");
+            csv.append(csvLine);
+            writtenRows += 1;
+            progress.update((int) Math.round(writeStart + writeSpan * writtenRows / Math.max(1, totalRows)),
+                  "Writing " + factionRecord.getKey() + " rows... " + writtenRows + "/" + totalRows);
+        }
     }
 
     private static Map<String, CalculatedAvailability> calculateSeparatedModelPercentages(Parameters params,

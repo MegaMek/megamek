@@ -554,10 +554,17 @@ public class RATGeneratorEditor extends JFrame {
     private void applyCalculatedPercentTableLayout() {
         rebuildCalculatedPercentTables();
         if (tblCalculatedPercentagesFrozen.getColumnModel().getColumnCount() > 0) {
-            tblCalculatedPercentagesFrozen.getColumnModel().getColumn(0).setPreferredWidth(90);
+            int frozenWidth = getHeaderPreferredWidth(tblCalculatedPercentagesFrozen, 0);
+            tblCalculatedPercentagesFrozen.getColumnModel().getColumn(0).setPreferredWidth(frozenWidth);
+            tblCalculatedPercentagesFrozen.setPreferredScrollableViewportSize(
+                  new Dimension(frozenWidth, tblCalculatedPercentagesFrozen.getPreferredSize().height));
+            if (calculatedPercentScrollPane != null) {
+                calculatedPercentScrollPane.getRowHeader().setPreferredSize(new Dimension(frozenWidth, 0));
+            }
         }
         for (int column = 0; column < tblCalculatedPercentages.getColumnModel().getColumnCount(); column++) {
-            tblCalculatedPercentages.getColumnModel().getColumn(column).setPreferredWidth(130);
+            tblCalculatedPercentages.getColumnModel().getColumn(column)
+                  .setPreferredWidth(getHeaderPreferredWidth(tblCalculatedPercentages, column));
         }
         updateCalculatedPercentRowHeights();
     }
@@ -585,6 +592,21 @@ public class RATGeneratorEditor extends JFrame {
                 table.removeColumn(columnModel.getColumn(column));
             }
         }
+    }
+
+    private int getHeaderPreferredWidth(JTable table, int columnIndex) {
+        TableColumn column = table.getColumnModel().getColumn(columnIndex);
+        TableCellRenderer headerRenderer = column.getHeaderRenderer();
+        if (headerRenderer == null) {
+            headerRenderer = table.getTableHeader().getDefaultRenderer();
+        }
+        Component headerComponent = headerRenderer.getTableCellRendererComponent(table,
+              column.getHeaderValue(),
+              false,
+              false,
+              -1,
+              columnIndex);
+        return headerComponent.getPreferredSize().width + 16;
     }
 
     private void updateCalculatedPercentRowHeights() {

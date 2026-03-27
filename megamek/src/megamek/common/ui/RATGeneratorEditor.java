@@ -59,6 +59,7 @@ import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -1527,7 +1528,7 @@ public class RATGeneratorEditor extends JFrame {
         }
     }
 
-    private static class CalculatedPercentTableModel extends DefaultTableModel {
+    private static class CalculatedPercentTableModel extends AbstractTableModel {
         private final List<RATDataCSVExporter.CalculatedModelRow> rows = new ArrayList<>();
 
         public void setRows(List<RATDataCSVExporter.CalculatedModelRow> newRows) {

@@ -947,7 +947,7 @@ public class RATDataCSVExporter {
 
     private static void writeRawEraData(List<String> ratings, StringBuilder csvLine) {
         ratings.forEach(availabilityCode -> {
-            appendCsvField(csvLine, availabilityCode);
+            appendRawAvailabilityField(csvLine, availabilityCode);
             csvLine.append(DELIMITER);
         });
     }
@@ -1044,11 +1044,24 @@ public class RATDataCSVExporter {
         });
     }
 
+    private static void appendRawAvailabilityField(StringBuilder csvLine, String value) {
+        appendCsvField(csvLine, value, shouldQuoteRawAvailability(value));
+    }
+
+    private static boolean shouldQuoteRawAvailability(String value) {
+        return (value != null) && !value.isBlank() && !value.matches("\\d+(?:\\.\\d+)?");
+    }
+
     private static void appendCsvField(StringBuilder csvLine, String value) {
+        appendCsvField(csvLine, value, false);
+    }
+
+    private static void appendCsvField(StringBuilder csvLine, String value, boolean forceQuotes) {
         if (value == null) {
             return;
         }
-        boolean needsQuotes = value.contains(DELIMITER)
+        boolean needsQuotes = forceQuotes
+              || value.contains(DELIMITER)
               || value.contains("\"")
               || value.contains("\n")
               || value.contains("\r");

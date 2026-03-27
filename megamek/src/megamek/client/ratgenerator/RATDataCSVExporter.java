@@ -44,6 +44,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -92,47 +93,54 @@ public class RATDataCSVExporter {
             return;
         }
 
+        try (PrintWriter pw = new PrintWriter(saveFile); BufferedWriter bw = new BufferedWriter(pw)) {
+            bw.write(buildRawCsv(ratGenerator));
+        } catch (Exception ex) {
+            logger.error(ex, "exportToCSV");
+        }
+    }
+
+    static String buildRawCsv(RATGenerator ratGenerator) {
         Integer[] eras = ratGenerator.getEraSet().toArray(new Integer[0]);
-        List<String> eraYears = ratGenerator.getEraSet().stream().map(era -> era + "").collect(Collectors.toList());
+        List<String> eraYears = ratGenerator.getEraSet().stream().map(String::valueOf).collect(Collectors.toList());
         while (EMPTY.size() < ratGenerator.getEraSet().size()) {
             EMPTY.add("");
         }
 
-        try (PrintWriter pw = new PrintWriter(saveFile); BufferedWriter bw = new BufferedWriter(pw)) {
-            String columnNames = "Chassis" + DELIMITER + "Model" + DELIMITER + "Model/Chassis Data" + DELIMITER
-                  + "MUL ID"
-                  + DELIMITER + "Unit Type" + DELIMITER + "Intro Date" + DELIMITER + "Faction ID" + DELIMITER +
-                  "Faction" + DELIMITER;
-            columnNames += String.join(DELIMITER, eraYears) + "\n";
+        StringBuilder csv = new StringBuilder();
+        String columnNames = "Chassis" + DELIMITER + "Model" + DELIMITER + "Model/Chassis Data" + DELIMITER
+              + "MUL ID"
+              + DELIMITER + "Unit Type" + DELIMITER + "Intro Date" + DELIMITER + "Faction ID" + DELIMITER
+              + "Faction" + DELIMITER;
+        csv.append(columnNames).append(String.join(DELIMITER, eraYears)).append("\n");
 
-            bw.write(columnNames);
-
-            for (ChassisRecord chassisRecord : ratGenerator.getChassisList()) {
-                HashMap<String, List<String>> ratings = getRatings(ratGenerator, chassisRecord);
-                for (String faction : chassisRecord.getIncludedFactions()) {
-                    String factionName = resolveFactionName(ratGenerator, eras, ratings.get(faction), faction);
-                    var csvLine = new StringBuilder();
-                    writeChassisBaseData(chassisRecord, csvLine, faction, factionName);
-                    writeEraData2(ratings, csvLine, faction);
-                    csvLine.append("\n");
-                    bw.write(csvLine.toString());
-                }
-
-                for (ModelRecord modelRecord : chassisRecord.getModels()) {
-                    ratings = getRatings(ratGenerator, modelRecord);
-                    for (String faction : modelRecord.getIncludedFactions()) {
-                        String factionName = resolveFactionName(ratGenerator, eras, ratings.get(faction), faction);
-                        var csvLine = new StringBuilder();
-                        writeModelBaseData(modelRecord, csvLine, faction, factionName);
-                        writeEraData2(ratings, csvLine, faction);
-                        csvLine.append("\n");
-                        bw.write(csvLine.toString());
-                    }
-                }
+        for (ChassisRecord chassisRecord : ratGenerator.getChassisList()) {
+            HashMap<String, List<String>> ratings = getRatings(ratGenerator, chassisRecord);
+            for (String faction : ratings.keySet().stream().sorted().toList()) {
+                String factionName = resolveFactionName(ratGenerator, eras, ratings.get(faction), faction);
+                var csvLine = new StringBuilder();
+                writeChassisBaseData(chassisRecord, csvLine, faction, factionName);
+                writeEraData2(ratings, csvLine, faction);
+                csvLine.append("\n");
+                csv.append(csvLine);
             }
-        } catch (Exception ex) {
-            logger.error(ex, "exportToCSV");
         }
+
+        for (ModelRecord modelRecord : ratGenerator.getModelList().stream()
+              .sorted(Comparator.comparing(ModelRecord::getKey))
+              .toList()) {
+            HashMap<String, List<String>> ratings = getRatings(ratGenerator, modelRecord);
+            for (String faction : ratings.keySet().stream().sorted().toList()) {
+                String factionName = resolveFactionName(ratGenerator, eras, ratings.get(faction), faction);
+                var csvLine = new StringBuilder();
+                writeModelBaseData(modelRecord, csvLine, faction, factionName);
+                writeEraData2(ratings, csvLine, faction);
+                csvLine.append("\n");
+                csv.append(csvLine);
+            }
+        }
+
+        return csv.toString();
     }
 
     /**
@@ -224,32 +232,41 @@ public class RATDataCSVExporter {
 
     private static void writeCalculatedCsv(File saveFile, RATGenerator ratGenerator, ExportProgress progress)
           throws IOException {
-        String csv = buildCalculatedCsv(ratGenerator, progress);
-        if (progress.isCanceled()) {
-            throw new CancellationException();
-        }
         try (PrintWriter pw = new PrintWriter(saveFile); BufferedWriter bw = new BufferedWriter(pw)) {
-            bw.write(csv);
+            writeCalculatedCsvContents(bw, ratGenerator, progress);
         }
     }
 
     static String buildCalculatedCsv(RATGenerator ratGenerator, ExportProgress progress) {
+        StringBuilder csv = new StringBuilder();
+        try {
+            writeCalculatedCsvContents(csv, ratGenerator, progress);
+        } catch (IOException ex) {
+            throw new IllegalStateException("Unable to build calculated CSV", ex);
+        }
+        return csv.toString();
+    }
+
+    private static void writeCalculatedCsvContents(Appendable csv, RATGenerator ratGenerator, ExportProgress progress)
+          throws IOException {
         Integer[] eras = ratGenerator.getEraSet().toArray(new Integer[0]);
         List<ModelRecord> models = ratGenerator.getModelList().stream()
               .sorted(Comparator.comparing(ModelRecord::getKey))
               .toList();
-        List<String> eraYears = ratGenerator.getEraSet().stream().map(String::valueOf).collect(Collectors.toList());
+        List<String> eraYears = ratGenerator.getEraSet().stream()
+              .map(String::valueOf)
+              .flatMap(year -> java.util.stream.Stream.of(year, year + ":S"))
+              .collect(Collectors.toList());
         Set<Integer> requestedUnitTypes = models.stream()
               .map(ModelRecord::getUnitType)
               .map(RATDataCSVExporter::normalizeCalculatedUnitType)
               .collect(Collectors.toSet());
-          progress.update(1, "Collecting calculated RAT values...");
+        progress.update(1, "Collecting calculated RAT values...");
         Map<String, HashMap<String, List<String>>> ratingsByFaction = buildCalculatedRatings(ratGenerator,
               eras,
               requestedUnitTypes,
               progress);
 
-        StringBuilder csv = new StringBuilder();
         csv.append(String.join(DELIMITER,
               "Chassis",
               "Model",
@@ -265,7 +282,7 @@ public class RATDataCSVExporter {
         for (ModelRecord modelRecord : models) {
             for (String factionId : ratingsByFaction.keySet()) {
                 List<String> ratings = ratingsByFaction.get(factionId).get(modelRecord.getKey());
-                if (ratings != null && ratings.stream().anyMatch(java.util.Objects::nonNull)) {
+                if (ratings != null && ratings.stream().anyMatch(Objects::nonNull)) {
                     totalRows += 1;
                 }
             }
@@ -280,7 +297,7 @@ public class RATDataCSVExporter {
                     throw new CancellationException();
                 }
                 List<String> ratings = ratingsByFaction.get(factionId).get(modelRecord.getKey());
-                if (ratings == null || ratings.stream().allMatch(java.util.Objects::isNull)) {
+                if (ratings == null || ratings.stream().allMatch(Objects::isNull)) {
                     continue;
                 }
 
@@ -291,12 +308,10 @@ public class RATDataCSVExporter {
                 csvLine.append("\n");
                 csv.append(csvLine);
                 writtenRows += 1;
-                progress.update(90 + (int) Math.round(10.0 * writtenRows / Math.max(1, totalRows)),
+                progress.update(90 + (int) Math.round(9.0 * writtenRows / Math.max(1, totalRows)),
                       "Writing export rows... " + writtenRows + "/" + totalRows);
             }
         }
-
-        return csv.toString();
     }
 
     private static Map<String, HashMap<String, List<String>>> buildCalculatedRatings(RATGenerator ratGenerator,
@@ -323,17 +338,17 @@ public class RATDataCSVExporter {
                     continue;
                 }
 
-                Map<String, Double> tablePercentages = new HashMap<>();
+                Map<String, CalculatedAvailability> tablePercentages = new HashMap<>();
                 for (int unitType : requestedUnitTypes) {
                     if (progress.isCanceled()) {
                         throw new CancellationException();
                     }
                     Parameters params = createCalculatedParameters(factionRecord, era, unitType);
-                    Map<String, Double> unitTypePercentages = calculateFinalModelPercentages(params,
+                    Map<String, CalculatedAvailability> unitTypePercentages = calculateSeparatedModelPercentages(params,
                           tableCache,
                           new java.util.HashSet<>());
-                    for (Map.Entry<String, Double> entry : unitTypePercentages.entrySet()) {
-                        tablePercentages.merge(entry.getKey(), entry.getValue(), Double::sum);
+                    for (Map.Entry<String, CalculatedAvailability> entry : unitTypePercentages.entrySet()) {
+                        tablePercentages.merge(entry.getKey(), entry.getValue(), CalculatedAvailability::merge);
                     }
                     processedSteps += 1;
                     progress.update(5 + (int) Math.round(85.0 * processedSteps / Math.max(1, totalSteps)),
@@ -341,16 +356,70 @@ public class RATDataCSVExporter {
                                 + "... " + processedSteps + "/" + totalSteps);
                 }
 
-                for (Map.Entry<String, Double> entry : tablePercentages.entrySet()) {
-                    ratingsByFaction
+                for (Map.Entry<String, CalculatedAvailability> entry : tablePercentages.entrySet()) {
+                    List<String> ratings = ratingsByFaction
                           .computeIfAbsent(factionRecord.getKey(), key -> new HashMap<>())
-                          .computeIfAbsent(entry.getKey(), key -> new ArrayList<>(Collections.nCopies(eras.length, null)))
-                          .set(eraIndex, formatCalculatedAvailability(entry.getValue()));
+                          .computeIfAbsent(entry.getKey(), key -> new ArrayList<>(Collections.nCopies(eras.length * 2, null)));
+                    if (entry.getValue().normal() > 0) {
+                        ratings.set(eraIndex * 2, formatCalculatedAvailability(entry.getValue().normal()));
+                    }
+                    if (entry.getValue().salvage() > 0) {
+                        ratings.set(eraIndex * 2 + 1, formatCalculatedAvailability(entry.getValue().salvage()));
+                    }
                 }
             }
         }
 
         return ratingsByFaction;
+    }
+
+    private static Map<String, CalculatedAvailability> calculateSeparatedModelPercentages(Parameters params,
+          Map<Parameters, Map<String, Double>> tableCache,
+          Set<Parameters> visiting) {
+        UnitTable unitTable = UnitTable.findTable(params);
+        Map<String, Double> normalWeights = new HashMap<>();
+        Map<String, Double> salvageWeights = new HashMap<>();
+        for (UnitTable.TableEntry entry : unitTable.getEntries()) {
+            if (entry.isUnit()) {
+                normalWeights.merge(entry.getUnitEntry().getName(), (double) entry.getWeight(), Double::sum);
+            } else {
+                Parameters salvageParams = new Parameters(entry.getSalvageFaction(),
+                      params.getUnitType(),
+                      params.getYear() - 5,
+                      params.getRating(),
+                      params.getWeightClasses(),
+                      params.getNetworkMask(),
+                      params.getMovementModes(),
+                      params.getRoles(),
+                      params.getRoleStrictness(),
+                      params.getFaction());
+                Map<String, Double> salvagePercentages = calculateFinalModelPercentages(salvageParams,
+                      tableCache,
+                      visiting);
+                for (Map.Entry<String, Double> salvageEntry : salvagePercentages.entrySet()) {
+                    salvageWeights.merge(salvageEntry.getKey(),
+                          entry.getWeight() * salvageEntry.getValue() / 100.0,
+                          Double::sum);
+                }
+            }
+        }
+
+        double totalWeight = normalWeights.values().stream().mapToDouble(Double::doubleValue).sum()
+              + salvageWeights.values().stream().mapToDouble(Double::doubleValue).sum();
+        Map<String, CalculatedAvailability> percentages = new HashMap<>();
+        if (totalWeight > 0) {
+            for (Map.Entry<String, Double> entry : normalWeights.entrySet()) {
+                percentages.put(entry.getKey(),
+                      new CalculatedAvailability(100.0 * entry.getValue() / totalWeight, 0.0));
+            }
+            for (Map.Entry<String, Double> entry : salvageWeights.entrySet()) {
+                CalculatedAvailability existing = percentages.getOrDefault(entry.getKey(), CalculatedAvailability.ZERO);
+                percentages.put(entry.getKey(),
+                      new CalculatedAvailability(existing.normal(), 100.0 * entry.getValue() / totalWeight));
+            }
+        }
+
+        return percentages;
     }
 
     private static Map<String, Double> calculateFinalModelPercentages(Parameters params,
@@ -490,8 +559,13 @@ public class RATDataCSVExporter {
         }
 
         if (ratings != null) {
-            for (int i = 0; i < Math.min(eras.length, ratings.size()); i++) {
-                if (ratings.get(i) != null) {
+            boolean hasSalvageColumns = ratings.size() == eras.length * 2;
+            for (int i = 0; i < eras.length; i++) {
+                int baseIndex = hasSalvageColumns ? i * 2 : i;
+                if ((baseIndex < ratings.size()) && (ratings.get(baseIndex) != null)) {
+                    return factionRecord.getName(eras[i]);
+                }
+                if (hasSalvageColumns && ((baseIndex + 1) < ratings.size()) && (ratings.get(baseIndex + 1) != null)) {
                     return factionRecord.getName(eras[i]);
                 }
             }
@@ -536,6 +610,14 @@ public class RATDataCSVExporter {
 
     static String formatCalculatedAvailability(double value) {
         return PERCENT_FORMAT.format(value) + "%";
+    }
+
+    private record CalculatedAvailability(double normal, double salvage) {
+        private static final CalculatedAvailability ZERO = new CalculatedAvailability(0.0, 0.0);
+
+        private static CalculatedAvailability merge(CalculatedAvailability left, CalculatedAvailability right) {
+            return new CalculatedAvailability(left.normal + right.normal, left.salvage + right.salvage);
+        }
     }
 
     private interface ExportProgress {

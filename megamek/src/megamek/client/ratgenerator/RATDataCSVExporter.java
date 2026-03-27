@@ -67,7 +67,7 @@ public class RATDataCSVExporter {
 
     private static final String DELIMITER = ";";
     private static final ArrayList<String> EMPTY = new ArrayList<>();
-    private static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("0.00");
+    private static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("0.000");
 
     /**
      * Exports all RAT data to a selectable file as an excel-optimized CSV.
@@ -120,7 +120,7 @@ public class RATDataCSVExporter {
                 String factionName = resolveFactionName(ratGenerator, eras, ratings.get(faction), faction);
                 var csvLine = new StringBuilder();
                 writeChassisBaseData(chassisRecord, csvLine, faction, factionName);
-                writeEraData2(ratings, csvLine, faction);
+                writeRawEraData(ratings, csvLine, faction);
                 csvLine.append("\n");
                 csv.append(csvLine);
             }
@@ -134,7 +134,7 @@ public class RATDataCSVExporter {
                 String factionName = resolveFactionName(ratGenerator, eras, ratings.get(faction), faction);
                 var csvLine = new StringBuilder();
                 writeModelBaseData(modelRecord, csvLine, faction, factionName);
-                writeEraData2(ratings, csvLine, faction);
+                writeRawEraData(ratings, csvLine, faction);
                 csvLine.append("\n");
                 csv.append(csvLine);
             }
@@ -251,10 +251,8 @@ public class RATDataCSVExporter {
           throws IOException {
         Integer[] eras = ratGenerator.getEraSet().toArray(new Integer[0]);
         List<ModelRecord> models = ratGenerator.getModelList().stream()
-              .sorted(Comparator.comparing(ModelRecord::getKey))
+              .sorted(calculatedModelExportOrder())
               .toList();
-          Map<String, ModelRecord> modelsByKey = models.stream()
-              .collect(Collectors.toMap(ModelRecord::getKey, model -> model, (left, right) -> left));
         List<String> eraYears = ratGenerator.getEraSet().stream()
               .map(String::valueOf)
               .flatMap(year -> java.util.stream.Stream.of(year, year + ":S"))
@@ -267,8 +265,10 @@ public class RATDataCSVExporter {
           Map<Parameters, Map<String, Double>> tableCache = new HashMap<>();
           List<FactionRecord> factions = ratGenerator.getFactionList().stream()
               .filter(factionRecord -> java.util.Arrays.stream(eras).anyMatch(factionRecord::isActiveInYear))
-              .sorted(Comparator.comparing(FactionRecord::getKey))
+              .sorted(Comparator.comparing(FactionRecord::getName, String.CASE_INSENSITIVE_ORDER)
+                  .thenComparing(FactionRecord::getKey, String.CASE_INSENSITIVE_ORDER))
               .toList();
+          Map<String, List<CalculatedCsvRow>> rowsByModel = new HashMap<>();
 
         csv.append(String.join(DELIMITER,
               "Chassis",
@@ -294,15 +294,36 @@ public class RATDataCSVExporter {
                   progress,
                   factionIndex,
                   factions.size());
-            writeCalculatedRowsForFaction(csv,
+            collectCalculatedRowsForFaction(rowsByModel,
                   ratGenerator,
                   eras,
-                modelsByKey,
                   factionRecord,
-                  ratingsByModel,
-                  progress,
-                  factionIndex,
-                  factions.size());
+                  ratingsByModel);
+        }
+
+        int totalRows = rowsByModel.values().stream().mapToInt(List::size).sum();
+        int writtenRows = 0;
+        progress.update(90, "Writing export rows...");
+        for (ModelRecord modelRecord : models) {
+            List<CalculatedCsvRow> rows = rowsByModel.get(modelRecord.getKey());
+            if (rows == null) {
+                continue;
+            }
+            rows.sort(Comparator.comparing(CalculatedCsvRow::factionName, String.CASE_INSENSITIVE_ORDER)
+                  .thenComparing(CalculatedCsvRow::factionId, String.CASE_INSENSITIVE_ORDER));
+            for (CalculatedCsvRow row : rows) {
+                if (progress.isCanceled()) {
+                    throw new CancellationException();
+                }
+                var csvLine = new StringBuilder();
+                writeCalculatedModelBaseData(modelRecord, csvLine, row.factionId(), row.factionName());
+                writeCalculatedEraData(row.ratings(), csvLine);
+                csvLine.append("\n");
+                csv.append(csvLine);
+                writtenRows += 1;
+                progress.update(90 + (int) Math.round(9.0 * writtenRows / Math.max(1, totalRows)),
+                      "Writing export rows... " + writtenRows + "/" + totalRows);
+            }
         }
     }
 
@@ -365,45 +386,18 @@ public class RATDataCSVExporter {
         return ratingsByModel;
     }
 
-    private static void writeCalculatedRowsForFaction(Appendable csv,
+    private static void collectCalculatedRowsForFaction(Map<String, List<CalculatedCsvRow>> rowsByModel,
           RATGenerator ratGenerator,
           Integer[] eras,
-          Map<String, ModelRecord> modelsByKey,
           FactionRecord factionRecord,
-          Map<String, List<String>> ratingsByModel,
-          ExportProgress progress,
-          int factionIndex,
-          int totalFactions) throws IOException {
-        List<Map.Entry<String, List<String>>> rows = ratingsByModel.entrySet().stream()
-              .filter(entry -> entry.getValue().stream().anyMatch(Objects::nonNull))
-              .sorted(Map.Entry.comparingByKey())
-              .toList();
-        int totalRows = rows.size();
-        int writtenRows = 0;
-        double factionStart = 5.0 + (85.0 * factionIndex / Math.max(1, totalFactions));
-        double factionSpan = 85.0 / Math.max(1, totalFactions);
-        double writeStart = factionStart + factionSpan * 0.75;
-        double writeSpan = factionSpan * 0.25;
-
-        for (Map.Entry<String, List<String>> row : rows) {
-            if (progress.isCanceled()) {
-                throw new CancellationException();
-            }
-            ModelRecord modelRecord = modelsByKey.get(row.getKey());
-            if (modelRecord == null) {
+          Map<String, List<String>> ratingsByModel) {
+        for (Map.Entry<String, List<String>> row : ratingsByModel.entrySet()) {
+            if (row.getValue().stream().noneMatch(Objects::nonNull)) {
                 continue;
             }
-            List<String> ratings = row.getValue();
-
-            String factionName = resolveFactionName(ratGenerator, eras, ratings, factionRecord.getKey());
-            var csvLine = new StringBuilder();
-            writeCalculatedModelBaseData(modelRecord, csvLine, factionRecord.getKey(), factionName);
-            writeCalculatedEraData(ratings, csvLine);
-            csvLine.append("\n");
-            csv.append(csvLine);
-            writtenRows += 1;
-            progress.update((int) Math.round(writeStart + writeSpan * writtenRows / Math.max(1, totalRows)),
-                  "Writing " + factionRecord.getKey() + " rows... " + writtenRows + "/" + totalRows);
+            String factionName = resolveFactionName(ratGenerator, eras, row.getValue(), factionRecord.getKey());
+            rowsByModel.computeIfAbsent(row.getKey(), key -> new ArrayList<>())
+                  .add(new CalculatedCsvRow(factionRecord.getKey(), factionName, row.getValue()));
         }
     }
 
@@ -508,19 +502,15 @@ public class RATDataCSVExporter {
         return percentages;
     }
 
-    private static void writeEraData2(List<String> ratings, StringBuilder csvLine) {
+    private static void writeRawEraData(List<String> ratings, StringBuilder csvLine) {
         ratings.forEach(availabilityCode -> {
-            if (availabilityCode != null) {
-                csvLine.append("\"=\"\"");
-                csvLine.append(availabilityCode);
-                csvLine.append("\"\"\"");
-            }
+            appendCsvField(csvLine, availabilityCode);
             csvLine.append(DELIMITER);
         });
     }
 
-    private static void writeEraData2(HashMap<String, List<String>> ratings, StringBuilder csvLine, String faction) {
-        writeEraData2(ratings.get(faction), csvLine);
+    private static void writeRawEraData(HashMap<String, List<String>> ratings, StringBuilder csvLine, String faction) {
+        writeRawEraData(ratings.get(faction), csvLine);
     }
 
     private static HashMap<String, List<String>> getRatings(RATGenerator ratGenerator, AbstractUnitRecord record) {
@@ -552,26 +542,38 @@ public class RATDataCSVExporter {
 
     private static void writeModelBaseData(ModelRecord record, StringBuilder csvLine, String factionId,
           String factionName) {
-        csvLine.append("\"=\"\"").append(record.getChassis()).append("\"\"\"").append(DELIMITER);
-        csvLine.append("\"=\"\"").append(record.getModel()).append("\"\"\"").append(DELIMITER);
-        csvLine.append("Model Data").append(DELIMITER);
-        csvLine.append(record.getMekSummary().getMulId()).append(DELIMITER);
-        csvLine.append(UnitType.getTypeName(record.getUnitType())).append(DELIMITER);
-        csvLine.append(record.getMekSummary().getYear()).append(DELIMITER);
-        csvLine.append(factionId).append(DELIMITER);
-        csvLine.append(factionName).append(DELIMITER);
+                appendCsvField(csvLine, record.getChassis());
+                csvLine.append(DELIMITER);
+                appendCsvField(csvLine, record.getModel());
+                csvLine.append(DELIMITER);
+                appendCsvField(csvLine, "Model Data");
+                csvLine.append(DELIMITER);
+                appendCsvField(csvLine, Integer.toString(record.getMekSummary().getMulId()));
+                csvLine.append(DELIMITER);
+                appendCsvField(csvLine, UnitType.getTypeName(record.getUnitType()));
+                csvLine.append(DELIMITER);
+                appendCsvField(csvLine, Integer.toString(record.getMekSummary().getYear()));
+                csvLine.append(DELIMITER);
+                appendCsvField(csvLine, factionId);
+                csvLine.append(DELIMITER);
+                appendCsvField(csvLine, factionName);
+                csvLine.append(DELIMITER);
     }
 
     private static void writeChassisBaseData(ChassisRecord record, StringBuilder csvLine, String factionId,
           String factionName) {
-        csvLine.append("\"=\"\"").append(record.getChassis()).append("\"\"\"").append(DELIMITER);
+                appendCsvField(csvLine, record.getChassis());
         csvLine.append(DELIMITER);
-        csvLine.append("Chassis Data").append(DELIMITER);
+                appendCsvField(csvLine, "Chassis Data");
+                csvLine.append(DELIMITER);
         csvLine.append(DELIMITER);
-        csvLine.append(UnitType.getTypeName(record.getUnitType())).append(DELIMITER);
+                appendCsvField(csvLine, UnitType.getTypeName(record.getUnitType()));
+                csvLine.append(DELIMITER);
         csvLine.append(DELIMITER);
-        csvLine.append(factionId).append(DELIMITER);
-        csvLine.append(factionName).append(DELIMITER);
+                appendCsvField(csvLine, factionId);
+                csvLine.append(DELIMITER);
+                appendCsvField(csvLine, factionName);
+                csvLine.append(DELIMITER);
     }
 
     private static void writeCalculatedModelBaseData(ModelRecord record, StringBuilder csvLine, String factionId,
@@ -656,6 +658,12 @@ public class RATDataCSVExporter {
         return (unitType == UnitType.AERO) ? UnitType.AEROSPACE_FIGHTER : unitType;
     }
 
+    static Comparator<ModelRecord> calculatedModelExportOrder() {
+        return Comparator.comparing(ModelRecord::getChassis, String.CASE_INSENSITIVE_ORDER)
+              .thenComparing(ModelRecord::getModel, String.CASE_INSENSITIVE_ORDER)
+              .thenComparing(ModelRecord::getKey, String.CASE_INSENSITIVE_ORDER);
+    }
+
     private static RATGenerator initializeRatGenerator() {
         return initializeRatGenerator(RATGenerator.getInstance());
     }
@@ -674,7 +682,7 @@ public class RATDataCSVExporter {
     }
 
     static String formatCalculatedAvailability(double value) {
-        return PERCENT_FORMAT.format(value) + "%";
+        return PERCENT_FORMAT.format(value / 100.0);
     }
 
     private record CalculatedAvailability(double normal, double salvage) {
@@ -683,6 +691,9 @@ public class RATDataCSVExporter {
         private static CalculatedAvailability merge(CalculatedAvailability left, CalculatedAvailability right) {
             return new CalculatedAvailability(left.normal + right.normal, left.salvage + right.salvage);
         }
+    }
+
+    private record CalculatedCsvRow(String factionId, String factionName, List<String> ratings) {
     }
 
     private interface ExportProgress {

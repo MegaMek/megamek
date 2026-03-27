@@ -2689,4 +2689,9 @@ public class WeaponType extends EquipmentType {
         }
         return java.util.Arrays.copyOf(arr, lastNonZero + 1);
     }
+
+    @Override
+    public boolean canBeMountedOnBaDwp() {
+        return true;
+    }
 }

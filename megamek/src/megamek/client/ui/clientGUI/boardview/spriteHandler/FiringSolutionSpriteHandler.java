@@ -45,9 +45,13 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.FiringSolutionSprite;
+import megamek.common.HexTarget;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.WeaponMounted;
@@ -128,13 +132,39 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
                 for (Coords buildingHex : buildingEntity.getCoordsList()) {
                     BuildingTarget buildingTarget = new BuildingTarget(buildingHex,
                           game.getBoard(buildingEntity.getBoardId()), Targetable.TYPE_BUILDING);
+                    Optional<Entity> spotter = game.getEntitiesVector().stream()
+                          .filter(s -> !s.isEnemyOf(entity) && s.isSpotting()
+                                && s.getSpotTargetId() == buildingTarget.getId())
+                          .findFirst();
                     ToHitData thd = WeaponAttackAction.toHit(game, entity.getId(), weapon, ammo,
-                          Optional.empty(), buildingTarget);
+                          spotter, buildingTarget);
                     thd.setLocation(buildingHex);
                     thd.setRange(entity.getPosition().distance(buildingHex));
                     solutions.put(Objects.hash(buildingEntity.getId(), buildingHex),
-                          new FiringSolution(thd, false));
+                          new FiringSolution(thd, spotter.isPresent()));
                 }
+            }
+        }
+
+        // Spotted hexes
+        for (Entity spotter : game.getEntitiesVector()) {
+            if (!spotter.isEnemyOf(entity) && spotter.isSpotting()
+                  && game.getEntityFromAllSources(spotter.getSpotTargetId()) == null) {
+                BoardLocation spotLocation = HexTarget.idToLocation(spotter.getSpotTargetId());
+                Board board = game.getBoard(spotLocation.boardId());
+                if (board == null || !board.contains(spotLocation.coords())
+                      || board.getBuildingAt(spotLocation.coords()) != null) {
+                    continue;
+                }
+                HexTarget hexTarget = new HexTarget(spotLocation, Targetable.TYPE_HEX_TAG);
+                if (!game.onTheSameBoard(entity, hexTarget)) {
+                    continue;
+                }
+                ToHitData thd = WeaponAttackAction.toHit(game, entity.getId(), weapon, ammo,
+                      Optional.of(spotter), hexTarget);
+                thd.setLocation(spotLocation.coords());
+                thd.setRange(entity.getPosition().distance(spotLocation.coords()));
+                solutions.put(hexTarget.getId(), new FiringSolution(thd, true));
             }
         }
 

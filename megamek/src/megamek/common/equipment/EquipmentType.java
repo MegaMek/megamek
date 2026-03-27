@@ -2086,4 +2086,11 @@ public class EquipmentType implements ITechnology {
     public boolean isC3Equipment() {
         return false;
     }
+
+    /**
+     * @return True if this equipment type can be mounted on a BattleArmor Detachable Weapon Pack, TO:AUE p.99
+     */
+    public boolean canBeMountedOnBaDwp() {
+        return false;
+    }
 }

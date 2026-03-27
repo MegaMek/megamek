@@ -11524,10 +11524,9 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Anti-Personnel Weapon Mount";
-        misc.setInternalName("BAAPMount");
+        misc.setInternalName(EquipmentTypeLookup.BA_APM);
         misc.tonnage = 0.005;
         misc.criticalSlots = 1;
-        misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_AP_MOUNT);
         misc.bv = 0;
         misc.rulesRefs = "271, TM";
@@ -11575,8 +11574,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // TODO - IO pg 52 - Battle Armor Detachable Missile Pack should really be a
-    // piece of equipment.
+    // TODO - IO pg 52 - Battle Armor Detachable Missile Pack should really be a piece of equipment.
 
     public static MiscType createISDetachableWeaponPack() {
         MiscType misc = new MiscType();
@@ -11584,13 +11582,10 @@ public class MiscType extends EquipmentType {
         misc.name = "Detachable Weapon Pack";
         misc.setInternalName(EquipmentTypeLookup.BA_DWP);
         misc.addLookupName("CLDetachableWeaponPack");
-        misc.tonnage = 0;
+        misc.shortName = "DWP";
         misc.criticalSlots = 1;
         misc.cost = 18000;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_DETACHABLE_WEAPON_PACK)
-              .andNot(F_MEK_EQUIPMENT)
-              .andNot(F_TANK_EQUIPMENT)
-              .andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_DETACHABLE_WEAPON_PACK);
         misc.rulesRefs = "99, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
@@ -11608,8 +11603,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // TODO - IO pg 52 - Squad Support Weapon Mod (SSW) should be a piece of
-    // equipment
+    // TODO - IO pg 52 - Squad Support Weapon Mod (SSW) should be a piece of equipment
 
     public static MiscType createISBAMineDispenser() {
         MiscType misc = new MiscType();

@@ -360,7 +360,7 @@ public class MekFileParser {
                 if (m.getLinked() == null) {
                     LOGGER.error("Unable to match {} to laser for {}", m.getName(), ent.getShortName());
                 }
-            } else if ((m.getType().hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))) {
+            } else if (m.is(EquipmentTypeLookup.BA_DWP)) {
                 for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
                     if (!mWeapon.isDWPMounted()) {
                         continue;
@@ -369,16 +369,12 @@ public class MekFileParser {
                     if (mWeapon.getLinkedBy() != null) {
                         continue;
                     }
-
-                    // check location
+                    // check squad/trooper location (arm/body is not stored in the BLK file)
                     if (mWeapon.getLocation() == m.getLocation()) {
                         m.setLinked(mWeapon);
                         break;
                     }
-                }
-                if (m.getLinked() == null) {
-                    // huh. this shouldn't happen
-                    throw new EntityLoadingException("Unable to match DWP to weapon for " + ent.getShortName());
+                    // A DWP without a weapon is invalid (they're not modular mounts, TO:AUE p.99), but they may load
                 }
             } else if ((m.getType().hasFlag(MiscType.F_AP_MOUNT))) {
                 for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {

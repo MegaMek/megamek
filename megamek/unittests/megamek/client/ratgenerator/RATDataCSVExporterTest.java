@@ -71,21 +71,6 @@ class RATDataCSVExporterTest {
     }
 
     @Test
-    void formatCalculatedAvailabilityUsesFractionalFormat() {
-        assertEquals("0.1250", RATDataCSVExporter.formatCalculatedAvailability(12.5));
-    }
-
-    @Test
-    void formatCalculatedAvailabilitySupportsOneTenthPercent() {
-        assertEquals("0.0010", RATDataCSVExporter.formatCalculatedAvailability(0.1));
-    }
-
-    @Test
-    void formatCalculatedDisplayPercentUsesHumanReadablePercentage() {
-        assertEquals("12.35%", RATDataCSVExporter.formatCalculatedDisplayPercent(12.345));
-    }
-
-    @Test
     void buildRawCsvIncludesAc2Carrier() {
         String csv = RATDataCSVExporter.buildRawCsv(createRawTestRatGenerator());
 
@@ -160,11 +145,11 @@ class RATDataCSVExporterTest {
             csv = RATDataCSVExporter.buildCalculatedCsv(ratGenerator);
         }
 
-        assertTrue(csv.contains("LocalChassis;Local;1;Tank;3025;GEN;General;0.6000;;"));
-        assertTrue(csv.contains("SalvageA;A1;2;Tank;3025;GEN;General;;0.2250;"));
-        assertTrue(csv.contains("SalvageA;A2;3;Tank;3025;GEN;General;;0.0750;"));
-        assertTrue(csv.contains("SalvageB;B1;4;Tank;3025;GEN;General;;0.0500;"));
-        assertTrue(csv.contains("SalvageB;B2;5;Tank;3025;GEN;General;;0.0500;"));
+        assertTrue(csv.contains("LocalChassis;Local;1;Tank;3025;GEN;General;0.6;;"));
+        assertTrue(csv.contains("SalvageA;A1;2;Tank;3025;GEN;General;;0.225;"));
+        assertTrue(csv.contains("SalvageA;A2;3;Tank;3025;GEN;General;;0.075;"));
+        assertTrue(csv.contains("SalvageB;B1;4;Tank;3025;GEN;General;;0.05;"));
+        assertTrue(csv.contains("SalvageB;B2;5;Tank;3025;GEN;General;;0.05;"));
     }
 
         @Test

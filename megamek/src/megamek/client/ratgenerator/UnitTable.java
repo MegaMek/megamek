@@ -270,6 +270,14 @@ public class UnitTable {
         return Collections.unmodifiableList(entries);
     }
 
+    public List<TableEntry> getUnitEntries() {
+        return Collections.unmodifiableList(unitTable);
+    }
+
+    public List<TableEntry> getSalvageEntries() {
+        return Collections.unmodifiableList(salvageTable);
+    }
+
     public int getTotalWeight() {
         return salvageTotal + unitTotal;
     }

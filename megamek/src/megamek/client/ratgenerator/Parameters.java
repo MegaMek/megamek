@@ -317,6 +317,10 @@ public final class Parameters implements Cloneable {
         return deployingFaction;
     }
 
+    public void setDeployingFaction(FactionRecord deployingFaction) {
+        this.deployingFaction = (deployingFaction == null) ? faction : deployingFaction;
+    }
+
     public Parameters copy() {
         return new Parameters(faction,
               unitType,

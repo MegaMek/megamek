@@ -163,6 +163,47 @@ class RATDataCSVExporterTest {
     }
 
     @Test
+    void buildCalculatedCsvUsesImmediateParentAsNestedSalvageDeployingFaction() {
+        FactionRecord generatingFaction = createAlwaysActiveFaction("GEN", "General");
+        FactionRecord salvageFactionOne = createAlwaysActiveFaction("SALV1", "Salvage One");
+        FactionRecord salvageFactionTwo = createAlwaysActiveFaction("SALV2", "Salvage Two");
+        ModelRecord deepModel = createModelRecord("Deep", "Model", "Deep Model", UnitType.TANK, 6, 3025);
+        ModelRecord wrongModel = createModelRecord("Wrong", "Model", "Wrong Model", UnitType.TANK, 7, 3025);
+
+        RATGenerator ratGenerator = mock(RATGenerator.class);
+        when(ratGenerator.getEraSet()).thenReturn(new TreeSet<>(List.of(3025)));
+        when(ratGenerator.getModelList()).thenReturn(List.of(deepModel, wrongModel));
+        when(ratGenerator.getFactionList()).thenReturn(List.of(generatingFaction));
+        when(ratGenerator.getFaction("GEN")).thenReturn(generatingFaction);
+
+        try (MockedStatic<UnitTable> unitTable = mockStatic(UnitTable.class)) {
+            unitTable.when(() -> UnitTable.findTable(any(Parameters.class)))
+                  .thenAnswer(invocation -> {
+                      Parameters params = invocation.getArgument(0);
+                      if ("GEN".equals(params.getFaction().getKey())) {
+                          return createUnitTableWithEntries(List.of(createSalvageEntry(100, salvageFactionOne)));
+                      }
+                      if ("SALV1".equals(params.getFaction().getKey())) {
+                          return createUnitTableWithEntries(List.of(createSalvageEntry(100, salvageFactionTwo)));
+                      }
+                      if ("SALV2".equals(params.getFaction().getKey())) {
+                          String deployingFaction = params.getDeployingFaction().getKey();
+                          if ("SALV1".equals(deployingFaction)) {
+                              return createUnitTableWithEntries(List.of(createUnitEntry(100, "Deep Model")));
+                          }
+                          return createUnitTableWithEntries(List.of(createUnitEntry(100, "Wrong Model")));
+                      }
+                      throw new IllegalStateException("Unexpected parameters for calculated export test");
+                  });
+
+            String csv = RATDataCSVExporter.buildCalculatedCsv(ratGenerator);
+
+            assertTrue(csv.contains("Deep;Model;6;Tank;3025;GEN;General;;1.000;"));
+            assertFalse(csv.contains("Wrong;Model;7;Tank;3025;GEN;General;;1.000;"));
+        }
+    }
+
+    @Test
     void calculatedModelExportOrderSortsEmptyModelBeforeNamedModels() {
         ModelRecord emptyModel = createModelRecord("AC/2 Carrier", "", UnitType.TANK, 1, 3025);
         when(emptyModel.getKey()).thenReturn("AC/2 Carrier");
@@ -297,7 +338,11 @@ class RATDataCSVExporterTest {
 
     private static UnitTable createUnitTableWithEntries(List<UnitTable.TableEntry> entries) {
         UnitTable unitTable = mock(UnitTable.class);
+        List<UnitTable.TableEntry> unitEntries = entries.stream().filter(UnitTable.TableEntry::isUnit).toList();
+        List<UnitTable.TableEntry> salvageEntries = entries.stream().filter(entry -> !entry.isUnit()).toList();
         when(unitTable.getEntries()).thenReturn(entries);
+        when(unitTable.getUnitEntries()).thenReturn(unitEntries);
+        when(unitTable.getSalvageEntries()).thenReturn(salvageEntries);
         return unitTable;
     }
 

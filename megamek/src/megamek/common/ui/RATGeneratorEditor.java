@@ -38,6 +38,10 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -46,7 +50,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
@@ -55,6 +62,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 
 import megamek.client.ratgenerator.AbstractUnitRecord;
@@ -121,6 +130,9 @@ public class RATGeneratorEditor extends JFrame {
     private final JComboBox<FactionRecord> factionChooserForChassis = new JComboBox<>();
     private final JTable tblUnitChassisEditor = new JTable();
     private final UnitEditorTableModel unitChassisEditorModel = new UnitEditorTableModel();
+    private final JTable tblCalculatedPercentages = new JTable();
+    private final CalculatedPercentTableModel calculatedPercentTableModel = new CalculatedPercentTableModel();
+    private final JLabel lblCalculatedPercentagesStatus = new JLabel("Select a unit to view calculated %.");
 
     private final JTextField txtNewFaction = new JTextField(20);
     private final JCheckBox chkShowSubfactions = new JCheckBox();
@@ -141,6 +153,10 @@ public class RATGeneratorEditor extends JFrame {
     private SalvageEditorTableModel salvageEditorModel;
 
     private File lastDir = Configuration.forceGeneratorDir();
+    private JSplitPane unitSplitPane;
+    private JSplitPane unitDetailSplitPane;
+    private SwingWorker<List<RATDataCSVExporter.CalculatedModelRow>, Void> calculatedPercentWorker;
+    private String calculatedPercentModelKey;
 
     public RATGeneratorEditor() {
         rg = RATGenerator.getInstance();
@@ -171,7 +187,9 @@ public class RATGeneratorEditor extends JFrame {
     private void initUI() {
         setTitle("Unit Selector Editor");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(new Dimension(1200, 700));
+        setMinimumSize(new Dimension(1400, 900));
+        setSize(new Dimension(1600, 1000));
+        setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
         masterUnitListModel = new MasterUnitListTableModel(rg.getModelList());
 
@@ -198,10 +216,22 @@ public class RATGeneratorEditor extends JFrame {
 
         panMain.addTab("Edit", createUnitTab());
         panMain.addTab("Edit Factions", createFactionTab());
+        installCalculatedPercentRefreshListeners();
+        installHeaderDividerAutoResize();
 
         add(panMain, BorderLayout.CENTER);
         add(buildOptionPanel(), BorderLayout.PAGE_START);
         add(panButtons, BorderLayout.PAGE_END);
+
+        SwingUtilities.invokeLater(() -> {
+            if (unitSplitPane != null) {
+                unitSplitPane.setDividerLocation(0.38);
+            }
+            if (unitDetailSplitPane != null) {
+                unitDetailSplitPane.setDividerLocation(0.68);
+            }
+            applyCalculatedPercentTableLayout();
+        });
     }
 
     private void loadAltDir() {
@@ -335,6 +365,9 @@ public class RATGeneratorEditor extends JFrame {
         tblMasterUnitList.setRowSorter(masterUnitListSorter);
         tblMasterUnitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tblMasterUnitList.getSelectionModel().addListSelectionListener(evt -> {
+            if (evt.getValueIsAdjusting()) {
+                return;
+            }
             setCurrentUnitFactions();
             if (tblMasterUnitList.getSelectedRow() >= 0) {
                 ModelRecord rec = masterUnitListModel
@@ -342,26 +375,256 @@ public class RATGeneratorEditor extends JFrame {
                 currentMulId = rec.getMekSummary().getMulId();
                 unitModelEditorModel.setData(rec, UnitEditorTableModel.MODE_MODEL);
                 unitChassisEditorModel.setData(rec, UnitEditorTableModel.MODE_CHASSIS);
+                refreshCalculatedPercentages();
             } else {
                 currentMulId = -1;
                 unitModelEditorModel.clearData();
                 unitChassisEditorModel.clearData();
+                clearCalculatedPercentages("Select a unit to view calculated %.");
             }
         });
 
         JScrollPane scroll = new JScrollPane(tblMasterUnitList);
         JPanel unitContainer = new FixedXPanel();
         unitContainer.setLayout(new BorderLayout());
+        unitContainer.setPreferredSize(new Dimension(560, 700));
         unitSelectorSide.add(scroll);
         unitContainer.add(unitSelectorSide, BorderLayout.CENTER);
 
-        Box factionEditSide = Box.createVerticalBox();
+        JPanel factionEditSide = new JPanel();
+        factionEditSide.setLayout(new BoxLayout(factionEditSide, BoxLayout.Y_AXIS));
         factionEditSide.add(createUnitModelEditor());
         factionEditSide.add(Box.createVerticalStrut(5));
         factionEditSide.add(createCopyBetweenButtonPanel());
         factionEditSide.add(Box.createVerticalStrut(5));
         factionEditSide.add(createUnitChassisEditor());
-        return new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, unitContainer, factionEditSide);
+
+        unitDetailSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+              factionEditSide,
+              createCalculatedPercentPanel());
+        unitDetailSplitPane.setContinuousLayout(true);
+        unitDetailSplitPane.setResizeWeight(0.68);
+
+        unitSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, unitContainer, unitDetailSplitPane);
+        unitSplitPane.setContinuousLayout(true);
+        unitSplitPane.setResizeWeight(0.38);
+        return unitSplitPane;
+    }
+
+    private JComponent createCalculatedPercentPanel() {
+        JPanel panel = new JPanel(new BorderLayout(0, 4));
+        panel.setBorder(BorderFactory.createTitledBorder("Calculated %"));
+
+        lblCalculatedPercentagesStatus.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
+        panel.add(lblCalculatedPercentagesStatus, BorderLayout.PAGE_START);
+
+        tblCalculatedPercentages.setModel(calculatedPercentTableModel);
+        tblCalculatedPercentages.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        tblCalculatedPercentages.setDefaultRenderer(String.class, new MultiLineTableCellRenderer());
+        tblCalculatedPercentages.setRowSelectionAllowed(false);
+        tblCalculatedPercentages.setCellSelectionEnabled(false);
+        tblCalculatedPercentages.setFillsViewportHeight(true);
+        tblCalculatedPercentages.getTableHeader().setReorderingAllowed(false);
+        tblCalculatedPercentages.getTableHeader().setPreferredSize(new Dimension(0, 52));
+
+        JScrollPane scrollPane = new JScrollPane(tblCalculatedPercentages,
+              JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+              JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        panel.add(scrollPane, BorderLayout.CENTER);
+        return panel;
+    }
+
+    private void installCalculatedPercentRefreshListeners() {
+        unitModelEditorModel.addTableModelListener(event -> refreshCalculatedPercentages());
+        unitChassisEditorModel.addTableModelListener(event -> refreshCalculatedPercentages());
+        factionEditorModel.addTableModelListener(event -> refreshCalculatedPercentages());
+        salvageEditorModel.addTableModelListener(event -> refreshCalculatedPercentages());
+    }
+
+    private void refreshCalculatedPercentages() {
+        ModelRecord selectedModel = getSelectedModel();
+        if (selectedModel == null) {
+            clearCalculatedPercentages("Select a unit to view calculated %.");
+            return;
+        }
+
+        calculatedPercentModelKey = selectedModel.getKey();
+        if ((calculatedPercentWorker != null) && !calculatedPercentWorker.isDone()) {
+            calculatedPercentWorker.cancel(true);
+        }
+
+        calculatedPercentTableModel.setRows(List.of());
+        lblCalculatedPercentagesStatus.setText("Calculating % for " + selectedModel.getKey() + "...");
+
+        calculatedPercentWorker = new SwingWorker<>() {
+            @Override
+            protected List<RATDataCSVExporter.CalculatedModelRow> doInBackground() {
+                return RATDataCSVExporter.buildCalculatedRowsForModel(rg,
+                      selectedModel,
+                      new RATDataCSVExporter.CalculationProgress() {
+                          @Override
+                          public void update(int percent, String note) {
+                              SwingUtilities.invokeLater(() -> {
+                                  if (!isCancelled()
+                                        && Objects.equals(calculatedPercentModelKey, selectedModel.getKey())) {
+                                      lblCalculatedPercentagesStatus.setText(
+                                            "Calculating % for " + selectedModel.getKey() + "... "
+                                                  + Math.max(0, Math.min(100, percent)) + "% - " + note);
+                                  }
+                              });
+                          }
+
+                          @Override
+                          public boolean isCanceled() {
+                              return isCancelled() || !Objects.equals(calculatedPercentModelKey, selectedModel.getKey());
+                          }
+                      });
+            }
+
+            @Override
+            protected void done() {
+                if (isCancelled() || !Objects.equals(calculatedPercentModelKey, selectedModel.getKey())) {
+                    return;
+                }
+
+                try {
+                    List<RATDataCSVExporter.CalculatedModelRow> rows = get();
+                    calculatedPercentTableModel.setRows(rows);
+                    if (rows.isEmpty()) {
+                        lblCalculatedPercentagesStatus.setText(
+                              "No calculated % found for " + selectedModel.getKey() + ".");
+                    } else {
+                        lblCalculatedPercentagesStatus.setText(
+                              "Calculated % for " + selectedModel.getKey() + ".");
+                    }
+                    applyCalculatedPercentTableLayout();
+                } catch (CancellationException ignored) {
+                    // Selection changed while recalculating.
+                } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
+                } catch (ExecutionException ex) {
+                    logger.error(ex.getCause() == null ? ex : ex.getCause(), "refreshCalculatedPercentages");
+                    clearCalculatedPercentages("Unable to calculate % for " + selectedModel.getKey() + ".");
+                }
+            }
+        };
+        calculatedPercentWorker.execute();
+    }
+
+    private void clearCalculatedPercentages(String statusText) {
+        calculatedPercentModelKey = null;
+        if ((calculatedPercentWorker != null) && !calculatedPercentWorker.isDone()) {
+            calculatedPercentWorker.cancel(true);
+        }
+        calculatedPercentTableModel.setRows(List.of());
+        lblCalculatedPercentagesStatus.setText(statusText);
+        applyCalculatedPercentTableLayout();
+    }
+
+    private ModelRecord getSelectedModel() {
+        if (tblMasterUnitList.getSelectedRow() < 0) {
+            return null;
+        }
+        return masterUnitListModel.getUnitRecord(tblMasterUnitList.convertRowIndexToModel(tblMasterUnitList
+              .getSelectedRow()));
+    }
+
+    private void applyCalculatedPercentTableLayout() {
+        if (tblCalculatedPercentages.getColumnModel().getColumnCount() == 0) {
+            return;
+        }
+        tblCalculatedPercentages.getColumnModel().getColumn(0).setPreferredWidth(220);
+        for (int column = 1; column < tblCalculatedPercentages.getColumnModel().getColumnCount(); column++) {
+            tblCalculatedPercentages.getColumnModel().getColumn(column).setPreferredWidth(130);
+        }
+        updateCalculatedPercentRowHeights();
+    }
+
+    private void updateCalculatedPercentRowHeights() {
+        int defaultRowHeight = tblCalculatedPercentages.getRowHeight();
+        int fontHeight = tblCalculatedPercentages.getFontMetrics(tblCalculatedPercentages.getFont()).getHeight();
+        for (int row = 0; row < tblCalculatedPercentages.getRowCount(); row++) {
+            int maxLines = 1;
+            for (int column = 0; column < tblCalculatedPercentages.getColumnCount(); column++) {
+                Object value = tblCalculatedPercentages.getValueAt(row, column);
+                String text = (value == null) ? "" : value.toString();
+                int lineCount = text.isBlank() ? 1 : text.split("\\R", -1).length;
+                maxLines = Math.max(maxLines, lineCount);
+            }
+            tblCalculatedPercentages.setRowHeight(row, Math.max(defaultRowHeight, maxLines * fontHeight + 8));
+        }
+    }
+
+    private void installHeaderDividerAutoResize() {
+        installHeaderDividerAutoResize(tblMasterUnitList);
+        installHeaderDividerAutoResize(tblUnitModelEditor);
+        installHeaderDividerAutoResize(tblUnitChassisEditor);
+        installHeaderDividerAutoResize(tblCalculatedPercentages);
+        installHeaderDividerAutoResize(tblMasterFactionList);
+        installHeaderDividerAutoResize(tblFactionEditor);
+        installHeaderDividerAutoResize(tblSalvageEditor);
+    }
+
+    private void installHeaderDividerAutoResize(JTable table) {
+        JTableHeader header = table.getTableHeader();
+        if (header == null) {
+            return;
+        }
+        header.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                if ((event.getClickCount() != 2) || !SwingUtilities.isLeftMouseButton(event)) {
+                    return;
+                }
+                int column = getResizingColumn(header, event.getPoint());
+                if (column >= 0) {
+                    autoResizeColumn(table, column);
+                }
+            }
+        });
+    }
+
+    private int getResizingColumn(JTableHeader header, Point point) {
+        int column = header.columnAtPoint(point);
+        if (column < 0) {
+            return -1;
+        }
+        Rectangle headerRect = header.getHeaderRect(column);
+        headerRect.grow(-3, 0);
+        if (point.x < headerRect.x) {
+            return column - 1;
+        }
+        if (point.x > (headerRect.x + headerRect.width)) {
+            return column;
+        }
+        return -1;
+    }
+
+    private void autoResizeColumn(JTable table, int columnIndex) {
+        if ((columnIndex < 0) || (columnIndex >= table.getColumnCount())) {
+            return;
+        }
+        TableColumn column = table.getColumnModel().getColumn(columnIndex);
+        int preferredWidth = 16;
+        TableCellRenderer headerRenderer = column.getHeaderRenderer();
+        if (headerRenderer == null) {
+            headerRenderer = table.getTableHeader().getDefaultRenderer();
+        }
+        Component headerComponent = headerRenderer.getTableCellRendererComponent(table,
+              column.getHeaderValue(),
+              false,
+              false,
+              -1,
+              columnIndex);
+        preferredWidth = Math.max(preferredWidth, headerComponent.getPreferredSize().width + 16);
+
+        for (int row = 0; row < table.getRowCount(); row++) {
+            TableCellRenderer cellRenderer = table.getCellRenderer(row, columnIndex);
+            Component cellComponent = table.prepareRenderer(cellRenderer, row, columnIndex);
+            preferredWidth = Math.max(preferredWidth, cellComponent.getPreferredSize().width + 16);
+        }
+
+        column.setPreferredWidth(preferredWidth);
     }
 
     private JComponent createCopyBetweenButtonPanel() {
@@ -1082,6 +1345,29 @@ public class RATGeneratorEditor extends JFrame {
         }
     }
 
+    private static final class MultiLineTableCellRenderer extends JTextArea implements TableCellRenderer {
+        @Serial
+        private static final long serialVersionUID = 2539784048653147029L;
+
+        private MultiLineTableCellRenderer() {
+            setEditable(false);
+            setLineWrap(false);
+            setWrapStyleWord(false);
+            setOpaque(true);
+            setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+              boolean hasFocus, int row, int column) {
+            setFont(table.getFont());
+            setText((value == null) ? "" : value.toString());
+            setForeground(table.getForeground());
+            setBackground(table.getBackground());
+            return this;
+        }
+    }
+
     TableCellRenderer unitListRenderer = new DefaultTableCellRenderer() {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
@@ -1142,6 +1428,57 @@ public class RATGeneratorEditor extends JFrame {
             return keys.get(arg0) - keys.get(arg1);
         }
 
+    }
+
+    private static class CalculatedPercentTableModel extends DefaultTableModel {
+        private final List<RATDataCSVExporter.CalculatedModelRow> rows = new ArrayList<>();
+
+        public void setRows(List<RATDataCSVExporter.CalculatedModelRow> newRows) {
+            rows.clear();
+            rows.addAll(newRows);
+            fireTableStructureChanged();
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            if (column == 0) {
+                return "Faction";
+            }
+            int eraIndex = (column - 1) / 2;
+            boolean salvageColumn = ((column - 1) % 2) == 1;
+            return "<HTML><CENTER>" + ERAS[eraIndex] + "<BR>" + getEra(ERAS[eraIndex]) + "<BR>"
+                  + (salvageColumn ? "Salvage" : "Normal") + "</CENTER></HTML>";
+        }
+
+        @Override
+        public int getColumnCount() {
+            return (ERAS == null) ? 1 : (ERAS.length * 2) + 1;
+        }
+
+        @Override
+        public int getRowCount() {
+            return (rows == null) ? 0 : rows.size();
+        }
+
+        @Override
+        public Object getValueAt(int row, int column) {
+            RATDataCSVExporter.CalculatedModelRow calculatedRow = rows.get(row);
+            if (column == 0) {
+                return calculatedRow.factionName() + " (" + calculatedRow.factionId() + ")";
+            }
+            String value = calculatedRow.ratings()[column - 1];
+            return (value == null) ? "" : value;
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            return String.class;
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
     }
 
     private class FactionListTableModel extends DefaultTableModel {

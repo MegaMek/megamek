@@ -81,6 +81,11 @@ class RATDataCSVExporterTest {
     }
 
     @Test
+    void formatCalculatedDisplayPercentUsesHumanReadablePercentage() {
+        assertEquals("12.35%", RATDataCSVExporter.formatCalculatedDisplayPercent(12.345));
+    }
+
+    @Test
     void buildRawCsvIncludesAc2Carrier() {
         String csv = RATDataCSVExporter.buildRawCsv(createRawTestRatGenerator());
 
@@ -161,6 +166,58 @@ class RATDataCSVExporterTest {
         assertTrue(csv.contains("SalvageB;B1;4;Tank;3025;GEN;General;;0.050;"));
         assertTrue(csv.contains("SalvageB;B2;5;Tank;3025;GEN;General;;0.050;"));
     }
+
+        @Test
+        void buildCalculatedRowsForModelSeparatesNormalizedRatingLevels() {
+          FactionRecord faction = createAlwaysActiveFaction("GEN", "General");
+          faction.setRatings("Green,Regular,Veteran,Elite,Legendary");
+          ModelRecord model = createModelRecord("TargetChassis", "Prime", "TargetChassis Prime", UnitType.TANK, 1, 3025);
+            AvailabilityRating modelAvailability = new AvailabilityRating("TargetChassis Prime",
+                  3025,
+                  "GEN!Green:1!Regular:2!Veteran:3!Elite:4!Legendary:5");
+            AvailabilityRating chassisAvailability = new AvailabilityRating("TargetChassis", 3025, "GEN:6");
+
+          RATGenerator ratGenerator = mock(RATGenerator.class);
+          when(ratGenerator.getEraSet()).thenReturn(new TreeSet<>(List.of(3025)));
+          when(ratGenerator.getFactionList()).thenReturn(List.of(faction));
+          when(ratGenerator.getFaction("GEN")).thenReturn(faction);
+            when(ratGenerator.findModelAvailabilityRecord(3025, "TargetChassis Prime", faction)).thenReturn(modelAvailability);
+            when(ratGenerator.findChassisAvailabilityRecord(3025, model.getChassisKey(), faction, 3025)).thenReturn(chassisAvailability);
+
+          try (MockedStatic<UnitTable> unitTable = mockStatic(UnitTable.class)) {
+            unitTable.when(() -> UnitTable.findTable(any(Parameters.class)))
+                .thenAnswer(invocation -> {
+                    Parameters params = invocation.getArgument(0);
+                    return switch (params.getRating()) {
+                      case "Green" -> createUnitTableWithEntries(List.of(
+                          createUnitEntry(10, "TargetChassis Prime"),
+                          createUnitEntry(90, "Other Model")));
+                      case "Regular" -> createUnitTableWithEntries(List.of(
+                          createUnitEntry(30, "TargetChassis Prime"),
+                          createUnitEntry(70, "Other Model")));
+                      case "Veteran" -> createUnitTableWithEntries(List.of(
+                          createUnitEntry(50, "TargetChassis Prime"),
+                          createUnitEntry(50, "Other Model")));
+                      case "Elite" -> createUnitTableWithEntries(List.of(
+                          createUnitEntry(70, "TargetChassis Prime"),
+                          createUnitEntry(30, "Other Model")));
+                      case "Legendary" -> createUnitTableWithEntries(List.of(
+                          createUnitEntry(90, "TargetChassis Prime"),
+                          createUnitEntry(10, "Other Model")));
+                      default -> throw new AssertionError("Unexpected rating: " + params.getRating());
+                    };
+                });
+
+            List<RATDataCSVExporter.CalculatedModelRow> rows = RATDataCSVExporter.buildCalculatedRowsForModel(
+                ratGenerator,
+                model);
+
+            assertEquals(1, rows.size());
+            assertEquals("GEN", rows.get(0).factionId());
+            assertEquals("F: 10%\nD: 30%\nC: 50%\nB: 70%\nA: 90%", rows.get(0).ratings()[0]);
+            assertEquals(null, rows.get(0).ratings()[1]);
+          }
+        }
 
     @Test
     void calculatedModelExportOrderSortsEmptyModelBeforeNamedModels() {

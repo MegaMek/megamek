@@ -42,6 +42,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -67,7 +70,9 @@ public class RATDataCSVExporter {
 
     private static final String DELIMITER = ";";
     private static final ArrayList<String> EMPTY = new ArrayList<>();
-    private static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("0.000");
+    private static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("0.0000");
+    private static final DecimalFormat DISPLAY_PERCENT_FORMAT = new DecimalFormat("0.####");
+    private static final List<String> NORMALIZED_RATING_LEVELS = List.of("F", "D", "C", "B", "A");
 
     /**
      * Exports all RAT data to a selectable file as an excel-optimized CSV.
@@ -247,12 +252,76 @@ public class RATDataCSVExporter {
         return csv.toString();
     }
 
+    public static List<CalculatedModelRow> buildCalculatedRowsForModel(RATGenerator ratGenerator,
+          ModelRecord modelRecord) {
+                return buildCalculatedRowsForModel(ratGenerator, modelRecord, CalculationProgress.NO_OP);
+        }
+
+        public static List<CalculatedModelRow> buildCalculatedRowsForModel(RATGenerator ratGenerator,
+                    ModelRecord modelRecord,
+                    CalculationProgress progress) {
+        Integer[] eras = ratGenerator.getEraSet().toArray(new Integer[0]);
+        int unitType = normalizeCalculatedUnitType(modelRecord.getUnitType());
+        Map<Parameters, Map<String, Double>> tableCache = new HashMap<>();
+                Map<Parameters, Map<String, CalculatedAvailability>> separatedTableCache = new HashMap<>();
+        List<FactionRecord> factions = ratGenerator.getFactionList().stream()
+              .filter(factionRecord -> java.util.Arrays.stream(eras).anyMatch(factionRecord::isActiveInYear))
+              .sorted(Comparator.comparing((FactionRecord factionRecord) -> factionRecord.getName(),
+                    String.CASE_INSENSITIVE_ORDER)
+                    .thenComparing(factionRecord -> factionRecord.getKey(), String.CASE_INSENSITIVE_ORDER))
+              .toList();
+        List<CalculatedModelRow> rows = new ArrayList<>();
+                progress.update(0, "Preparing faction calculations...");
+
+                for (int factionIndex = 0; factionIndex < factions.size(); factionIndex++) {
+                        if (progress.isCanceled()) {
+                                throw new CancellationException();
+                        }
+                        FactionRecord factionRecord = factions.get(factionIndex);
+            String[] ratings;
+            try {
+                ratings = buildCalculatedDisplayRatingsForFaction(ratGenerator,
+                      modelRecord,
+                      factionRecord,
+                      eras,
+                      unitType,
+                      tableCache,
+                                            separatedTableCache,
+                                            progress,
+                                            factionIndex,
+                                            factions.size());
+            } catch (RuntimeException ex) {
+                logger.warn(ex, "Skipping calculated row for {} {}", modelRecord.getKey(), factionRecord.getKey());
+                continue;
+            }
+            if (java.util.Arrays.stream(ratings).allMatch(value -> (value == null) || value.isBlank())) {
+                continue;
+            }
+            String factionName = resolveFactionName(ratGenerator,
+                  eras,
+                  new ArrayList<>(java.util.Arrays.asList(ratings)),
+                  factionRecord.getKey());
+            rows.add(new CalculatedModelRow(factionRecord.getKey(), factionName, ratings));
+        }
+
+        progress.update(100, "Calculated rows ready.");
+
+        return rows;
+    }
+
     private static void writeCalculatedCsvContents(Appendable csv, RATGenerator ratGenerator, ExportProgress progress)
           throws IOException {
         Integer[] eras = ratGenerator.getEraSet().toArray(new Integer[0]);
         List<ModelRecord> models = ratGenerator.getModelList().stream()
               .sorted(calculatedModelExportOrder())
               .toList();
+                Map<String, ModelRecord> modelsByKey = models.stream()
+              .collect(Collectors.toMap(ModelRecord::getKey, modelRecord -> modelRecord, (left, right) -> left,
+                                        LinkedHashMap::new));
+                Map<String, Integer> modelOrder = new HashMap<>();
+                for (int index = 0; index < models.size(); index++) {
+            modelOrder.put(models.get(index).getKey(), index);
+                }
         List<String> eraYears = ratGenerator.getEraSet().stream()
               .map(String::valueOf)
               .flatMap(year -> java.util.stream.Stream.of(year, year + ":S"))
@@ -262,14 +331,13 @@ public class RATDataCSVExporter {
               .map(RATDataCSVExporter::normalizeCalculatedUnitType)
               .collect(Collectors.toSet());
         progress.update(1, "Collecting calculated RAT values...");
-          Map<Parameters, Map<String, Double>> tableCache = new HashMap<>();
-          List<FactionRecord> factions = ratGenerator.getFactionList().stream()
+                Map<Parameters, Map<String, Double>> tableCache = new HashMap<>();
+                List<FactionRecord> factions = ratGenerator.getFactionList().stream()
               .filter(factionRecord -> java.util.Arrays.stream(eras).anyMatch(factionRecord::isActiveInYear))
               .sorted(Comparator.comparing((FactionRecord factionRecord) -> factionRecord.getName(),
-                  String.CASE_INSENSITIVE_ORDER)
+                                        String.CASE_INSENSITIVE_ORDER)
                   .thenComparing(factionRecord -> factionRecord.getKey(), String.CASE_INSENSITIVE_ORDER))
               .toList();
-          Map<String, List<CalculatedCsvRow>> rowsByModel = new HashMap<>();
 
         csv.append(String.join(DELIMITER,
               "Chassis",
@@ -295,37 +363,34 @@ public class RATDataCSVExporter {
                   progress,
                   factionIndex,
                   factions.size());
-            collectCalculatedRowsForFaction(rowsByModel,
+            List<CalculatedCsvModelRow> rows = collectCalculatedRowsForFaction(
                   ratGenerator,
                   eras,
                   factionRecord,
                   ratingsByModel);
-        }
-
-        int totalRows = rowsByModel.values().stream().mapToInt(List::size).sum();
-        int writtenRows = 0;
-        progress.update(90, "Writing export rows...");
-        for (ModelRecord modelRecord : models) {
-            List<CalculatedCsvRow> rows = rowsByModel.get(modelRecord.getKey());
-            if (rows == null) {
-                continue;
-            }
-            rows.sort(Comparator.comparing(CalculatedCsvRow::factionName, String.CASE_INSENSITIVE_ORDER)
-                  .thenComparing(CalculatedCsvRow::factionId, String.CASE_INSENSITIVE_ORDER));
-            for (CalculatedCsvRow row : rows) {
+            rows.sort(Comparator.comparingInt((CalculatedCsvModelRow row) -> modelOrder.getOrDefault(row.modelKey(),
+                        Integer.MAX_VALUE))
+                  .thenComparing(CalculatedCsvModelRow::factionName, String.CASE_INSENSITIVE_ORDER)
+                  .thenComparing(CalculatedCsvModelRow::factionId, String.CASE_INSENSITIVE_ORDER));
+            int factionProgressBase = 90 + (int) Math.round(9.0 * factionIndex / Math.max(1, factions.size()));
+            for (CalculatedCsvModelRow row : rows) {
                 if (progress.isCanceled()) {
                     throw new CancellationException();
+                }
+                ModelRecord modelRecord = modelsByKey.get(row.modelKey());
+                if (modelRecord == null) {
+                    continue;
                 }
                 var csvLine = new StringBuilder();
                 writeCalculatedModelBaseData(modelRecord, csvLine, row.factionId(), row.factionName());
                 writeCalculatedEraData(row.ratings(), csvLine);
                 csvLine.append("\n");
                 csv.append(csvLine);
-                writtenRows += 1;
-                progress.update(90 + (int) Math.round(9.0 * writtenRows / Math.max(1, totalRows)),
-                      "Writing export rows... " + writtenRows + "/" + totalRows);
             }
+            progress.update(Math.min(99, factionProgressBase + 1),
+                  "Wrote " + factionRecord.getKey() + " rows (" + rows.size() + ")");
         }
+        progress.update(100, "Export complete.");
     }
 
     private static Map<String, List<String>> buildCalculatedRatingsForFaction(RATGenerator ratGenerator,
@@ -387,19 +452,158 @@ public class RATDataCSVExporter {
         return ratingsByModel;
     }
 
-    private static void collectCalculatedRowsForFaction(Map<String, List<CalculatedCsvRow>> rowsByModel,
+    private static List<CalculatedCsvModelRow> collectCalculatedRowsForFaction(
           RATGenerator ratGenerator,
           Integer[] eras,
           FactionRecord factionRecord,
           Map<String, List<String>> ratingsByModel) {
+        List<CalculatedCsvModelRow> rows = new ArrayList<>();
         for (Map.Entry<String, List<String>> row : ratingsByModel.entrySet()) {
             if (row.getValue().stream().noneMatch(Objects::nonNull)) {
                 continue;
             }
             String factionName = resolveFactionName(ratGenerator, eras, row.getValue(), factionRecord.getKey());
-            rowsByModel.computeIfAbsent(row.getKey(), key -> new ArrayList<>())
-                  .add(new CalculatedCsvRow(factionRecord.getKey(), factionName, row.getValue()));
+            rows.add(new CalculatedCsvModelRow(row.getKey(), factionRecord.getKey(), factionName, row.getValue()));
         }
+        return rows;
+    }
+
+    private static String[] buildCalculatedDisplayRatingsForFaction(RATGenerator ratGenerator,
+          ModelRecord modelRecord,
+          FactionRecord factionRecord,
+          Integer[] eras,
+          int unitType,
+          Map<Parameters, Map<String, Double>> tableCache,
+          Map<Parameters, Map<String, CalculatedAvailability>> separatedTableCache,
+          CalculationProgress progress,
+          int factionIndex,
+          int totalFactions) {
+        String[] ratings = new String[eras.length * 2];
+        int activeEraCount = (int) java.util.Arrays.stream(eras)
+              .filter(factionRecord::isActiveInYear)
+              .count();
+        int processedEras = 0;
+
+        for (int eraIndex = 0; eraIndex < eras.length; eraIndex++) {
+            if (progress.isCanceled()) {
+                throw new CancellationException();
+            }
+            int era = eras[eraIndex];
+            AvailabilityRating modelAvailability = ratGenerator.findModelAvailabilityRecord(era,
+                  modelRecord.getKey(),
+                  factionRecord);
+            AvailabilityRating chassisAvailability = ratGenerator.findChassisAvailabilityRecord(era,
+                  modelRecord.getChassisKey(),
+                  factionRecord,
+                  era);
+            if ((modelAvailability == null) || (chassisAvailability == null)) {
+                continue;
+            }
+            processedEras += 1;
+            progress.update(calculateDisplayProgress(factionIndex, totalFactions, processedEras, activeEraCount),
+                "Checking " + factionRecord.getKey() + " " + era + " (" + processedEras + "/"
+                    + Math.max(1, activeEraCount) + " eras)");
+
+            boolean splitRatings = shouldSplitCalculatedRatings(factionRecord, modelAvailability, chassisAvailability);
+            List<String> ratingLevels = splitRatings ? factionRecord.getRatingLevelSystem() : List.of();
+            List<String> normalizedLevels = splitRatings ? normalizeRatingLevels(ratingLevels.size()) : List.of();
+
+            if (splitRatings) {
+                List<String> normalValues = new ArrayList<>();
+                List<String> normalDisplay = new ArrayList<>();
+                List<String> salvageValues = new ArrayList<>();
+                List<String> salvageDisplay = new ArrayList<>();
+                for (int ratingIndex = 0; ratingIndex < ratingLevels.size(); ratingIndex++) {
+                    Parameters params = createCalculatedParameters(factionRecord, era, unitType);
+                    params.setRating(ratingLevels.get(ratingIndex));
+                  CalculatedAvailability availability = getSeparatedModelPercentages(params,
+                      tableCache,
+                      separatedTableCache).get(modelRecord.getKey());
+                    if (availability == null) {
+                        continue;
+                    }
+                    collectDisplayValue(normalizedLevels.get(ratingIndex),
+                          availability.normal(),
+                          normalValues,
+                          normalDisplay);
+                    collectDisplayValue(normalizedLevels.get(ratingIndex),
+                          availability.salvage(),
+                          salvageValues,
+                          salvageDisplay);
+                }
+                ratings[eraIndex * 2] = joinCalculatedDisplayValues(normalValues, normalDisplay);
+                ratings[eraIndex * 2 + 1] = joinCalculatedDisplayValues(salvageValues, salvageDisplay);
+            } else {
+                CalculatedAvailability availability = getSeparatedModelPercentages(
+                      createCalculatedParameters(factionRecord, era, unitType),
+                      tableCache,
+                      separatedTableCache).get(modelRecord.getKey());
+                if (availability == null) {
+                    continue;
+                }
+                if (availability.normal() > 0) {
+                    ratings[eraIndex * 2] = formatCalculatedDisplayPercent(availability.normal());
+                }
+                if (availability.salvage() > 0) {
+                    ratings[eraIndex * 2 + 1] = formatCalculatedDisplayPercent(availability.salvage());
+                }
+            }
+        }
+
+        return ratings;
+    }
+
+    private static int calculateDisplayProgress(int factionIndex,
+          int totalFactions,
+          int processedEras,
+          int activeEraCount) {
+        double factionProgress = (double) factionIndex / Math.max(1, totalFactions);
+        double eraProgress = (double) processedEras / Math.max(1, activeEraCount);
+        return Math.min(99, (int) Math.round((factionProgress + (eraProgress / Math.max(1, totalFactions))) * 100.0));
+    }
+
+    private static boolean shouldSplitCalculatedRatings(FactionRecord factionRecord,
+          AvailabilityRating modelAvailability,
+          AvailabilityRating chassisAvailability) {
+        if ((factionRecord.getRatingLevelSystem().size() <= 1) || (factionRecord.getRatingLevels().size() == 1)) {
+            return false;
+        }
+        return modelAvailability.hasMultipleRatings()
+              || (modelAvailability.getRatingAdjustment() != 0)
+              || chassisAvailability.hasMultipleRatings()
+              || (chassisAvailability.getRatingAdjustment() != 0);
+    }
+
+    private static List<String> normalizeRatingLevels(int ratingCount) {
+        List<String> normalizedLevels = new ArrayList<>(ratingCount);
+        for (int index = 0; index < ratingCount; index++) {
+            int normalizedIndex = (int) Math.round((double) index * (NORMALIZED_RATING_LEVELS.size() - 1)
+                  / Math.max(1, ratingCount - 1));
+            normalizedLevels.add(NORMALIZED_RATING_LEVELS.get(normalizedIndex));
+        }
+        return normalizedLevels;
+    }
+
+    private static void collectDisplayValue(String ratingLabel,
+          double value,
+          List<String> rawValues,
+          List<String> displayValues) {
+        if (value <= 0) {
+            return;
+        }
+        String formattedValue = formatCalculatedDisplayPercent(value);
+        rawValues.add(formattedValue);
+        displayValues.add(ratingLabel + ": " + formattedValue);
+    }
+
+    private static String joinCalculatedDisplayValues(List<String> rawValues, List<String> displayValues) {
+        if (rawValues.isEmpty()) {
+            return null;
+        }
+        if (new LinkedHashSet<>(rawValues).size() == 1) {
+            return rawValues.get(0);
+        }
+        return String.join("\n", displayValues);
     }
 
     private static Map<String, CalculatedAvailability> calculateSeparatedModelPercentages(Parameters params,
@@ -449,6 +653,21 @@ public class RATDataCSVExporter {
         }
 
         return percentages;
+    }
+
+    private static Map<String, CalculatedAvailability> getSeparatedModelPercentages(Parameters params,
+          Map<Parameters, Map<String, Double>> tableCache,
+          Map<Parameters, Map<String, CalculatedAvailability>> separatedTableCache) {
+        Parameters cacheKey = params.copy();
+        Map<String, CalculatedAvailability> cached = separatedTableCache.get(cacheKey);
+        if (cached != null) {
+            return cached;
+        }
+        Map<String, CalculatedAvailability> calculated = calculateSeparatedModelPercentages(params,
+              tableCache,
+              new HashSet<>());
+        separatedTableCache.put(cacheKey, calculated);
+        return calculated;
     }
 
     private static Map<String, Double> calculateFinalModelPercentages(Parameters params,
@@ -686,6 +905,10 @@ public class RATDataCSVExporter {
         return PERCENT_FORMAT.format(value / 100.0);
     }
 
+    static String formatCalculatedDisplayPercent(double value) {
+        return DISPLAY_PERCENT_FORMAT.format(value) + "%";
+    }
+
     private record CalculatedAvailability(double normal, double salvage) {
         private static final CalculatedAvailability ZERO = new CalculatedAvailability(0.0, 0.0);
 
@@ -695,6 +918,29 @@ public class RATDataCSVExporter {
     }
 
     private record CalculatedCsvRow(String factionId, String factionName, List<String> ratings) {
+    }
+
+    private record CalculatedCsvModelRow(String modelKey, String factionId, String factionName, List<String> ratings) {
+    }
+
+    public record CalculatedModelRow(String factionId, String factionName, String[] ratings) {
+    }
+
+    public interface CalculationProgress {
+        CalculationProgress NO_OP = new CalculationProgress() {
+            @Override
+            public void update(int percent, String note) {
+            }
+
+            @Override
+            public boolean isCanceled() {
+                return false;
+            }
+        };
+
+        void update(int percent, String note);
+
+        boolean isCanceled();
     }
 
     private interface ExportProgress {

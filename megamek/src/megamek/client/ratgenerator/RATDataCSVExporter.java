@@ -265,8 +265,9 @@ public class RATDataCSVExporter {
           Map<Parameters, Map<String, Double>> tableCache = new HashMap<>();
           List<FactionRecord> factions = ratGenerator.getFactionList().stream()
               .filter(factionRecord -> java.util.Arrays.stream(eras).anyMatch(factionRecord::isActiveInYear))
-              .sorted(Comparator.comparing(FactionRecord::getName, String.CASE_INSENSITIVE_ORDER)
-                  .thenComparing(FactionRecord::getKey, String.CASE_INSENSITIVE_ORDER))
+              .sorted(Comparator.comparing((FactionRecord factionRecord) -> factionRecord.getName(),
+                  String.CASE_INSENSITIVE_ORDER)
+                  .thenComparing(factionRecord -> factionRecord.getKey(), String.CASE_INSENSITIVE_ORDER))
               .toList();
           Map<String, List<CalculatedCsvRow>> rowsByModel = new HashMap<>();
 

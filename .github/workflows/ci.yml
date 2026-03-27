@@ -50,7 +50,7 @@ jobs:
           java-version: ${{ matrix.java-version }}
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Test
         working-directory: megamek
@@ -64,7 +64,7 @@ jobs:
           path: ./megamek/megamek/build/reports/
 
       - name: CodeCov.io Coverage Report
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           directory: ./megamek/megamek/build/reports/jacoco/test
           fail_ci_if_error: false

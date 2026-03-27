@@ -111,6 +111,8 @@ public class EquipmentTypeLookup {
     public static final String BA_MISSION_EQUIPMENT = "Mission Equipment Storage";
     @EquipmentName
     public static final String BA_DWP = "ISDetachableWeaponPack";
+    @EquipmentName
+    public static final String BA_APM = "BAAPMount";
 
     @EquipmentName
     public static final String SINGLE_HS = "Heat Sink";

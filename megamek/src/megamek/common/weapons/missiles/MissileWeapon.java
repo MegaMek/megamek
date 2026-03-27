@@ -127,4 +127,8 @@ public abstract class MissileWeapon extends AmmoWeapon {
         return damage / 10.0;
     }
 
+    @Override
+    public boolean canBeMountedOnBaDwp() {
+        return false;
+    }
 }

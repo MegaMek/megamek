@@ -72,12 +72,12 @@ class RATDataCSVExporterTest {
 
     @Test
     void formatCalculatedAvailabilityUsesFractionalFormat() {
-        assertEquals("0.125", RATDataCSVExporter.formatCalculatedAvailability(12.5));
+        assertEquals("0.1250", RATDataCSVExporter.formatCalculatedAvailability(12.5));
     }
 
     @Test
     void formatCalculatedAvailabilitySupportsOneTenthPercent() {
-        assertEquals("0.001", RATDataCSVExporter.formatCalculatedAvailability(0.1));
+        assertEquals("0.0010", RATDataCSVExporter.formatCalculatedAvailability(0.1));
     }
 
     @Test
@@ -160,12 +160,54 @@ class RATDataCSVExporterTest {
             csv = RATDataCSVExporter.buildCalculatedCsv(ratGenerator);
         }
 
-        assertTrue(csv.contains("LocalChassis;Local;1;Tank;3025;GEN;General;0.600;;"));
-        assertTrue(csv.contains("SalvageA;A1;2;Tank;3025;GEN;General;;0.225;"));
-        assertTrue(csv.contains("SalvageA;A2;3;Tank;3025;GEN;General;;0.075;"));
-        assertTrue(csv.contains("SalvageB;B1;4;Tank;3025;GEN;General;;0.050;"));
-        assertTrue(csv.contains("SalvageB;B2;5;Tank;3025;GEN;General;;0.050;"));
+        assertTrue(csv.contains("LocalChassis;Local;1;Tank;3025;GEN;General;0.6000;;"));
+        assertTrue(csv.contains("SalvageA;A1;2;Tank;3025;GEN;General;;0.2250;"));
+        assertTrue(csv.contains("SalvageA;A2;3;Tank;3025;GEN;General;;0.0750;"));
+        assertTrue(csv.contains("SalvageB;B1;4;Tank;3025;GEN;General;;0.0500;"));
+        assertTrue(csv.contains("SalvageB;B2;5;Tank;3025;GEN;General;;0.0500;"));
     }
+
+        @Test
+        void buildCalculatedRowsForModelUsesTargetedSalvagePercentages() {
+          FactionRecord generatingFaction = createAlwaysActiveFaction("GEN", "General");
+          FactionRecord salvageFaction = createAlwaysActiveFaction("SALV", "Salvage");
+          ModelRecord targetModel = createModelRecord("TargetChassis", "Prime", "TargetChassis Prime", UnitType.TANK, 1,
+              3025);
+          AvailabilityRating modelAvailability = new AvailabilityRating("TargetChassis Prime", 3025, "GEN:6");
+          AvailabilityRating chassisAvailability = new AvailabilityRating(targetModel.getChassisKey(), 3025, "GEN:6");
+
+          RATGenerator ratGenerator = mock(RATGenerator.class);
+          when(ratGenerator.getEraSet()).thenReturn(new TreeSet<>(List.of(3025)));
+          when(ratGenerator.getFactionList()).thenReturn(List.of(generatingFaction));
+          when(ratGenerator.getFaction("GEN")).thenReturn(generatingFaction);
+          when(ratGenerator.findModelAvailabilityRecord(3025, targetModel.getKey(), generatingFaction))
+              .thenReturn(modelAvailability);
+          when(ratGenerator.findChassisAvailabilityRecord(3025, targetModel.getChassisKey(), generatingFaction, 3025))
+              .thenReturn(chassisAvailability);
+
+          try (MockedStatic<UnitTable> unitTable = mockStatic(UnitTable.class)) {
+            unitTable.when(() -> UnitTable.findTable(any(Parameters.class)))
+                .thenAnswer(invocation -> {
+                    Parameters params = invocation.getArgument(0);
+                    return switch (params.getFaction().getKey()) {
+                      case "GEN" -> createUnitTableWithEntries(List.of(
+                          createUnitEntry(75, "Other Model"),
+                          createSalvageEntry(25, salvageFaction)));
+                      case "SALV" -> createUnitTableWithEntries(List.of(
+                          createUnitEntry(100, "TargetChassis Prime")));
+                      default -> throw new AssertionError("Unexpected faction: " + params.getFaction().getKey());
+                    };
+                });
+
+            List<RATDataCSVExporter.CalculatedModelRow> rows = RATDataCSVExporter.buildCalculatedRowsForModel(
+                ratGenerator,
+                targetModel,
+                true);
+
+            assertEquals(1, rows.size());
+            assertEquals("25%", rows.get(0).ratings()[1]);
+          }
+        }
 
         @Test
         void buildCalculatedRowsForModelSeparatesNormalizedRatingLevels() {

@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,6 +48,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
@@ -67,11 +69,12 @@ import megamek.logging.MMLogger;
  */
 public class RATDataCSVExporter {
     private static final MMLogger logger = MMLogger.create(RATDataCSVExporter.class);
+    private static final DecimalFormatSymbols ROOT_DECIMAL_SYMBOLS = DecimalFormatSymbols.getInstance(Locale.ROOT);
 
     private static final String DELIMITER = ";";
     private static final ArrayList<String> EMPTY = new ArrayList<>();
-    private static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("0.0000");
-    private static final DecimalFormat DISPLAY_PERCENT_FORMAT = new DecimalFormat("0.####");
+    private static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("0.####", ROOT_DECIMAL_SYMBOLS);
+    private static final DecimalFormat DISPLAY_PERCENT_FORMAT = new DecimalFormat("0.##", ROOT_DECIMAL_SYMBOLS);
     private static final List<String> NORMALIZED_RATING_LEVELS = List.of("F", "D", "C", "B", "A");
 
     /**
@@ -254,16 +257,31 @@ public class RATDataCSVExporter {
 
     public static List<CalculatedModelRow> buildCalculatedRowsForModel(RATGenerator ratGenerator,
           ModelRecord modelRecord) {
-                return buildCalculatedRowsForModel(ratGenerator, modelRecord, CalculationProgress.NO_OP);
+                return buildCalculatedRowsForModel(ratGenerator, modelRecord, false, CalculationProgress.NO_OP);
+        }
+
+        public static List<CalculatedModelRow> buildCalculatedRowsForModel(RATGenerator ratGenerator,
+                    ModelRecord modelRecord,
+                    boolean useTargetedPreview) {
+                return buildCalculatedRowsForModel(ratGenerator, modelRecord, useTargetedPreview, CalculationProgress.NO_OP);
         }
 
         public static List<CalculatedModelRow> buildCalculatedRowsForModel(RATGenerator ratGenerator,
                     ModelRecord modelRecord,
                     CalculationProgress progress) {
+                return buildCalculatedRowsForModel(ratGenerator, modelRecord, false, progress);
+        }
+
+        public static List<CalculatedModelRow> buildCalculatedRowsForModel(RATGenerator ratGenerator,
+                    ModelRecord modelRecord,
+                    boolean useTargetedPreview,
+                    CalculationProgress progress) {
         Integer[] eras = ratGenerator.getEraSet().toArray(new Integer[0]);
         int unitType = normalizeCalculatedUnitType(modelRecord.getUnitType());
         Map<Parameters, Map<String, Double>> tableCache = new HashMap<>();
                 Map<Parameters, Map<String, CalculatedAvailability>> separatedTableCache = new HashMap<>();
+                Map<Parameters, CalculatedAvailability> targetedSeparatedCache = new HashMap<>();
+                Map<Parameters, TargetWeightTotals> targetedFinalCache = new HashMap<>();
         List<FactionRecord> factions = ratGenerator.getFactionList().stream()
               .filter(factionRecord -> java.util.Arrays.stream(eras).anyMatch(factionRecord::isActiveInYear))
               .sorted(Comparator.comparing((FactionRecord factionRecord) -> factionRecord.getName(),
@@ -274,22 +292,33 @@ public class RATDataCSVExporter {
                 progress.update(0, "Preparing faction calculations...");
 
                 for (int factionIndex = 0; factionIndex < factions.size(); factionIndex++) {
-                        if (progress.isCanceled()) {
-                                throw new CancellationException();
-                        }
-                        FactionRecord factionRecord = factions.get(factionIndex);
+            if (progress.isCanceled()) {
+                throw new CancellationException();
+            }
+            FactionRecord factionRecord = factions.get(factionIndex);
             String[] ratings;
             try {
-                ratings = buildCalculatedDisplayRatingsForFaction(ratGenerator,
-                      modelRecord,
-                      factionRecord,
-                      eras,
-                      unitType,
-                      tableCache,
-                                            separatedTableCache,
-                                            progress,
-                                            factionIndex,
-                                            factions.size());
+                                ratings = useTargetedPreview
+                    ? buildCalculatedTargetedDisplayRatingsForFaction(ratGenerator,
+                        modelRecord,
+                        factionRecord,
+                        eras,
+                        unitType,
+                        progress,
+                        factionIndex,
+                        factions.size(),
+                        targetedSeparatedCache,
+                        targetedFinalCache)
+                    : buildCalculatedDisplayRatingsForFaction(ratGenerator,
+                        modelRecord,
+                        factionRecord,
+                        eras,
+                        unitType,
+                        tableCache,
+                        separatedTableCache,
+                        progress,
+                        factionIndex,
+                        factions.size());
             } catch (RuntimeException ex) {
                 logger.warn(ex, "Skipping calculated row for {} {}", modelRecord.getKey(), factionRecord.getKey());
                 continue;
@@ -574,6 +603,87 @@ public class RATDataCSVExporter {
               || (chassisAvailability.getRatingAdjustment() != 0);
     }
 
+    private static String[] buildCalculatedTargetedDisplayRatingsForFaction(RATGenerator ratGenerator,
+          ModelRecord modelRecord,
+          FactionRecord factionRecord,
+          Integer[] eras,
+          int unitType,
+          CalculationProgress progress,
+          int factionIndex,
+          int totalFactions,
+          Map<Parameters, CalculatedAvailability> targetedSeparatedCache,
+          Map<Parameters, TargetWeightTotals> targetedFinalCache) {
+        String[] ratings = new String[eras.length * 2];
+        int activeEraCount = (int) java.util.Arrays.stream(eras)
+              .filter(factionRecord::isActiveInYear)
+              .count();
+        int processedEras = 0;
+
+        for (int eraIndex = 0; eraIndex < eras.length; eraIndex++) {
+            if (progress.isCanceled()) {
+                throw new CancellationException();
+            }
+            int era = eras[eraIndex];
+            AvailabilityRating modelAvailability = ratGenerator.findModelAvailabilityRecord(era,
+                  modelRecord.getKey(),
+                  factionRecord);
+            AvailabilityRating chassisAvailability = ratGenerator.findChassisAvailabilityRecord(era,
+                  modelRecord.getChassisKey(),
+                  factionRecord,
+                  era);
+            if ((modelAvailability == null) || (chassisAvailability == null)) {
+                continue;
+            }
+            processedEras += 1;
+            progress.update(calculateDisplayProgress(factionIndex, totalFactions, processedEras, activeEraCount),
+                  "Checking " + factionRecord.getKey() + " " + era + " (" + processedEras + "/"
+                        + Math.max(1, activeEraCount) + " eras)");
+
+            boolean splitRatings = shouldSplitCalculatedRatings(factionRecord, modelAvailability, chassisAvailability);
+            List<String> ratingLevels = splitRatings ? factionRecord.getRatingLevelSystem() : List.of();
+            List<String> normalizedLevels = splitRatings ? normalizeRatingLevels(ratingLevels.size()) : List.of();
+
+            if (splitRatings) {
+                List<String> normalValues = new ArrayList<>();
+                List<String> normalDisplay = new ArrayList<>();
+                List<String> salvageValues = new ArrayList<>();
+                List<String> salvageDisplay = new ArrayList<>();
+                for (int ratingIndex = 0; ratingIndex < ratingLevels.size(); ratingIndex++) {
+                    Parameters params = createCalculatedParameters(factionRecord, era, unitType);
+                    params.setRating(ratingLevels.get(ratingIndex));
+                    CalculatedAvailability availability = getTargetedSeparatedModelPercentages(params,
+                          modelRecord.getKey(),
+                          targetedSeparatedCache,
+                          targetedFinalCache);
+                    collectDisplayValue(normalizedLevels.get(ratingIndex),
+                          availability.normal(),
+                          normalValues,
+                          normalDisplay);
+                    collectDisplayValue(normalizedLevels.get(ratingIndex),
+                          availability.salvage(),
+                          salvageValues,
+                          salvageDisplay);
+                }
+                ratings[eraIndex * 2] = joinCalculatedDisplayValues(normalValues, normalDisplay);
+                ratings[eraIndex * 2 + 1] = joinCalculatedDisplayValues(salvageValues, salvageDisplay);
+            } else {
+                CalculatedAvailability availability = getTargetedSeparatedModelPercentages(
+                      createCalculatedParameters(factionRecord, era, unitType),
+                      modelRecord.getKey(),
+                      targetedSeparatedCache,
+                      targetedFinalCache);
+                if (availability.normal() > 0) {
+                    ratings[eraIndex * 2] = formatCalculatedDisplayPercent(availability.normal());
+                }
+                if (availability.salvage() > 0) {
+                    ratings[eraIndex * 2 + 1] = formatCalculatedDisplayPercent(availability.salvage());
+                }
+            }
+        }
+
+        return ratings;
+    }
+
     private static List<String> normalizeRatingLevels(int ratingCount) {
         List<String> normalizedLevels = new ArrayList<>(ratingCount);
         for (int index = 0; index < ratingCount; index++) {
@@ -670,6 +780,69 @@ public class RATDataCSVExporter {
         return calculated;
     }
 
+    private static CalculatedAvailability getTargetedSeparatedModelPercentages(Parameters params,
+          String modelKey,
+          Map<Parameters, CalculatedAvailability> targetedSeparatedCache,
+          Map<Parameters, TargetWeightTotals> targetedFinalCache) {
+        Parameters cacheKey = params.copy();
+        CalculatedAvailability cached = targetedSeparatedCache.get(cacheKey);
+        if (cached != null) {
+            return cached;
+        }
+        CalculatedAvailability calculated = calculateTargetedSeparatedModelPercentages(params,
+              modelKey,
+              targetedFinalCache,
+              new HashSet<>());
+        targetedSeparatedCache.put(cacheKey, calculated);
+        return calculated;
+    }
+
+    private static CalculatedAvailability calculateTargetedSeparatedModelPercentages(Parameters params,
+          String modelKey,
+          Map<Parameters, TargetWeightTotals> targetedFinalCache,
+          Set<Parameters> visiting) {
+        UnitTable unitTable = UnitTable.findTable(params);
+        double targetNormalWeight = 0.0;
+        double targetSalvageWeight = 0.0;
+        double totalWeight = 0.0;
+
+        for (UnitTable.TableEntry entry : unitTable.getEntries()) {
+            if (entry.isUnit()) {
+                totalWeight += entry.getWeight();
+                if (modelKey.equals(entry.getUnitEntry().getName())) {
+                    targetNormalWeight += entry.getWeight();
+                }
+            } else {
+                Parameters salvageParams = new Parameters(entry.getSalvageFaction(),
+                      params.getUnitType(),
+                      params.getYear() - 5,
+                      params.getRating(),
+                      params.getWeightClasses(),
+                      params.getNetworkMask(),
+                      params.getMovementModes(),
+                      params.getRoles(),
+                      params.getRoleStrictness(),
+                      params.getFaction());
+                TargetWeightTotals salvageWeights = calculateTargetedFinalModelWeights(salvageParams,
+                      modelKey,
+                      targetedFinalCache,
+                      visiting);
+                if (salvageWeights.totalWeight() > 0) {
+                    totalWeight += entry.getWeight();
+                    targetSalvageWeight += entry.getWeight() * salvageWeights.targetWeight()
+                          / salvageWeights.totalWeight();
+                }
+            }
+        }
+
+        if (totalWeight <= 0) {
+            return CalculatedAvailability.ZERO;
+        }
+
+        return new CalculatedAvailability(100.0 * targetNormalWeight / totalWeight,
+              100.0 * targetSalvageWeight / totalWeight);
+    }
+
     private static Map<String, Double> calculateFinalModelPercentages(Parameters params,
           Map<Parameters, Map<String, Double>> tableCache,
           Set<Parameters> visiting) {
@@ -720,6 +893,56 @@ public class RATDataCSVExporter {
         visiting.remove(cacheKey);
         tableCache.put(cacheKey, percentages);
         return percentages;
+    }
+
+    private static TargetWeightTotals calculateTargetedFinalModelWeights(Parameters params,
+          String modelKey,
+          Map<Parameters, TargetWeightTotals> targetedFinalCache,
+          Set<Parameters> visiting) {
+        Parameters cacheKey = params.copy();
+        TargetWeightTotals cached = targetedFinalCache.get(cacheKey);
+        if (cached != null) {
+            return cached;
+        }
+        if (!visiting.add(cacheKey)) {
+            return TargetWeightTotals.ZERO;
+        }
+
+        UnitTable unitTable = UnitTable.findTable(params);
+        double targetWeight = 0.0;
+        double totalWeight = 0.0;
+        for (UnitTable.TableEntry entry : unitTable.getEntries()) {
+            if (entry.isUnit()) {
+                totalWeight += entry.getWeight();
+                if (modelKey.equals(entry.getUnitEntry().getName())) {
+                    targetWeight += entry.getWeight();
+                }
+            } else {
+                Parameters salvageParams = new Parameters(entry.getSalvageFaction(),
+                      params.getUnitType(),
+                      params.getYear() - 5,
+                      params.getRating(),
+                      params.getWeightClasses(),
+                      params.getNetworkMask(),
+                      params.getMovementModes(),
+                      params.getRoles(),
+                      params.getRoleStrictness(),
+                      params.getFaction());
+                TargetWeightTotals salvageWeights = calculateTargetedFinalModelWeights(salvageParams,
+                      modelKey,
+                      targetedFinalCache,
+                      visiting);
+                if (salvageWeights.totalWeight() > 0) {
+                    totalWeight += entry.getWeight();
+                    targetWeight += entry.getWeight() * salvageWeights.targetWeight() / salvageWeights.totalWeight();
+                }
+            }
+        }
+
+        visiting.remove(cacheKey);
+        TargetWeightTotals calculated = new TargetWeightTotals(targetWeight, totalWeight);
+        targetedFinalCache.put(cacheKey, calculated);
+        return calculated;
     }
 
     private static void writeRawEraData(List<String> ratings, StringBuilder csvLine) {
@@ -915,6 +1138,10 @@ public class RATDataCSVExporter {
         private static CalculatedAvailability merge(CalculatedAvailability left, CalculatedAvailability right) {
             return new CalculatedAvailability(left.normal + right.normal, left.salvage + right.salvage);
         }
+    }
+
+    private record TargetWeightTotals(double targetWeight, double totalWeight) {
+        private static final TargetWeightTotals ZERO = new TargetWeightTotals(0.0, 0.0);
     }
 
     private record CalculatedCsvRow(String factionId, String factionName, List<String> ratings) {

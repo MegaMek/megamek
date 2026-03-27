@@ -67,7 +67,7 @@ public class RATDataCSVExporter {
 
     private static final String DELIMITER = ";";
     private static final ArrayList<String> EMPTY = new ArrayList<>();
-    private static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("0.####");
+    private static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("0.00");
 
     /**
      * Exports all RAT data to a selectable file as an excel-optimized CSV.
@@ -253,6 +253,8 @@ public class RATDataCSVExporter {
         List<ModelRecord> models = ratGenerator.getModelList().stream()
               .sorted(Comparator.comparing(ModelRecord::getKey))
               .toList();
+          Map<String, ModelRecord> modelsByKey = models.stream()
+              .collect(Collectors.toMap(ModelRecord::getKey, model -> model, (left, right) -> left));
         List<String> eraYears = ratGenerator.getEraSet().stream()
               .map(String::valueOf)
               .flatMap(year -> java.util.stream.Stream.of(year, year + ":S"))
@@ -295,7 +297,7 @@ public class RATDataCSVExporter {
             writeCalculatedRowsForFaction(csv,
                   ratGenerator,
                   eras,
-                  models,
+                modelsByKey,
                   factionRecord,
                   ratingsByModel,
                   progress,
@@ -366,32 +368,32 @@ public class RATDataCSVExporter {
     private static void writeCalculatedRowsForFaction(Appendable csv,
           RATGenerator ratGenerator,
           Integer[] eras,
-          List<ModelRecord> models,
+          Map<String, ModelRecord> modelsByKey,
           FactionRecord factionRecord,
           Map<String, List<String>> ratingsByModel,
           ExportProgress progress,
           int factionIndex,
           int totalFactions) throws IOException {
-        int totalRows = (int) models.stream()
-              .map(ModelRecord::getKey)
-              .map(ratingsByModel::get)
-              .filter(Objects::nonNull)
-              .filter(ratings -> ratings.stream().anyMatch(Objects::nonNull))
-              .count();
+        List<Map.Entry<String, List<String>>> rows = ratingsByModel.entrySet().stream()
+              .filter(entry -> entry.getValue().stream().anyMatch(Objects::nonNull))
+              .sorted(Map.Entry.comparingByKey())
+              .toList();
+        int totalRows = rows.size();
         int writtenRows = 0;
         double factionStart = 5.0 + (85.0 * factionIndex / Math.max(1, totalFactions));
         double factionSpan = 85.0 / Math.max(1, totalFactions);
         double writeStart = factionStart + factionSpan * 0.75;
         double writeSpan = factionSpan * 0.25;
 
-        for (ModelRecord modelRecord : models) {
+        for (Map.Entry<String, List<String>> row : rows) {
             if (progress.isCanceled()) {
                 throw new CancellationException();
             }
-            List<String> ratings = ratingsByModel.get(modelRecord.getKey());
-            if (ratings == null || ratings.stream().allMatch(Objects::isNull)) {
+            ModelRecord modelRecord = modelsByKey.get(row.getKey());
+            if (modelRecord == null) {
                 continue;
             }
+            List<String> ratings = row.getValue();
 
             String factionName = resolveFactionName(ratGenerator, eras, ratings, factionRecord.getKey());
             var csvLine = new StringBuilder();

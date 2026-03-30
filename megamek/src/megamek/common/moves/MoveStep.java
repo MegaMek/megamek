@@ -624,15 +624,19 @@ public class MoveStep implements Serializable {
                         return;
                     }
                 } else {
+                    // When a climbing entity enters a new hex, reset to ground level
+                    int calcElev = isClimbing ? 0 : elevation;
                     setElevation(entity.calcElevation(game.getBoard(boardId).getHex(prev.getPosition()),
                           game.getBoard(boardId).getHex(getPosition()),
-                          elevation,
+                          calcElev,
                           climbMode()));
                 }
             } else {
+                // When a climbing entity enters a new hex, reset to ground level
+                int calcElev = isClimbing ? 0 : elevation;
                 setElevation(entity.calcElevation(game.getBoard(boardId).getHex(prev.getPosition()),
                       game.getBoard(boardId).getHex(getPosition()),
-                      elevation,
+                      calcElev,
                       climbMode()));
             }
         }
@@ -952,6 +956,10 @@ public class MoveStep implements Serializable {
         altitude = entity.getAltitude();
         movementType = entity.moved;
         movementMode = entity.getMovementMode();
+        if (isClimbing) {
+            LOGGER.info("setFromEntity: climbing entity {} at elevation={}, position={}, isClimbing={}",
+                  entity.getDisplayName(), elevation, position, isClimbing);
+        }
 
         isRolled = false;
         freeTurn = false;
@@ -1785,12 +1793,10 @@ public class MoveStep implements Serializable {
             }
         }
 
-        // A climbing unit can only continue climbing or forfeit movement (TO:AR p.20)
+        // A climbing unit inherits the climbing state from the previous step.
+        // Movement is handled via FORWARDS steps with climbing cost calculation.
         if (prev.isClimbing) {
             isClimbing = true;
-            if (type != MoveStepType.CLIMB) {
-                return; // can't do other movement while climbing
-            }
         }
 
         if (prev.isDiggingIn) {
@@ -2105,7 +2111,8 @@ public class MoveStep implements Serializable {
                 return;
             }
 
-            // Climbing uses walking movement regardless of total MP spent (TO:AR p.20)
+            // Climbing uses walking movement only (TO:AR p.20)
+            // Multi-turn climbs are allowed - the server will handle partial execution
             if (isClimbing) {
                 movementType = EntityMovementType.MOVE_WALK;
             } else if (getMpUsed() <= tmpWalkMP) {
@@ -2779,7 +2786,11 @@ public class MoveStep implements Serializable {
               .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
               .equals(Crew.ENVIRONMENT_SPECIALIST_LIGHT);
         int nSrcEl = srcHex.getLevel() + prevEl;
-        int nDestEl = destHex.getLevel() + elevation;
+        // When a climbing entity moves into the destination hex, it arrives at
+        // ground level (elevation 0), not at the climbing elevation.
+        int destElevation = (prevStep.isClimbing() && (elevation > 0)
+              && (destHex.getLevel() > srcHex.getLevel())) ? 0 : elevation;
+        int nDestEl = destHex.getLevel() + destElevation;
         PlanetaryConditions conditions = game.getPlanetaryConditions();
 
         mp = 1;
@@ -2957,6 +2968,12 @@ public class MoveStep implements Serializable {
         // non-WIGEs pay for elevation differences
         if ((nSrcEl != nDestEl) && (moveMode != EntityMovementMode.WIGE)) {
             int deltaElevation = Math.abs(nSrcEl - nDestEl);
+            if (isMek && (deltaElevation > 2)) {
+                LOGGER.info("calcMovementCostFor elevation: prevEl={}, elevation={}, " +
+                      "srcHex.level={}, destHex.level={}, nSrcEl={}, nDestEl={}, deltaElevation={}",
+                      prevEl, elevation, srcHex.getLevel(), destHex.getLevel(),
+                      nSrcEl, nDestEl, deltaElevation);
+            }
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING) &&
                   isMek &&
                   (deltaElevation > 2) &&
@@ -2968,21 +2985,25 @@ public class MoveStep implements Serializable {
             }
             // TacOps Climbing (TO:AR p.20): Meks climbing pay 2 MP/level (2 hands)
             // or 3 MP/level (1 hand) instead of normal elevation costs.
+            // Also applies when continuing a multi-turn climb (entity already climbing)
+            // even if remaining elevation is within normal movement limits.
+            boolean isNewClimb = (deltaElevation > entity.getMaxElevationChange())
+                  && (nDestEl > nSrcEl);
+            boolean isContinuedClimb = isClimbing && (nDestEl > nSrcEl);
             boolean isClimbingMove = isMek
-                  && (delta_e > entity.getMaxElevationChange())
-                  && (nDestEl > nSrcEl)
+                  && (isNewClimb || isContinuedClimb)
                   && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
                   && ClimbingHelper.canClimb(entity);
             if (isClimbingMove) {
                 int climbCostPerLevel = ClimbingHelper.getClimbingMPCostPerLevel((Mek) entity);
-                mp += delta_e * climbCostPerLevel;
+                mp += deltaElevation * climbCostPerLevel;
                 isClimbing = true;
                 // Climbing requires walking only (TO:AR p.20)
                 isRunProhibited = true;
                 movementType = EntityMovementType.MOVE_WALK;
                 LOGGER.info("calcMovementCostFor: climbing {} levels at {} MP/level = {} MP total, " +
                       "movementType forced to MOVE_WALK",
-                      delta_e, climbCostPerLevel, delta_e * climbCostPerLevel);
+                      deltaElevation, climbCostPerLevel, deltaElevation * climbCostPerLevel);
                 return;
             }
             // Mountain Troops only expend 1 MP per 2 levels moved up or down (TO:AUE p.153).

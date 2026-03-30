@@ -68,6 +68,7 @@ import megamek.common.equipment.*;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
+import megamek.common.moves.ClimbingHelper;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.net.packets.InvalidPacketDataException;
@@ -466,6 +467,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         // set entity parameters
+        logger.info("End of movement: entity={}, curPos={}, climbing={}, elevation={}, curVTOLElevation={}",
+              entity.getDisplayName(), curPos, entity.isClimbing(), entity.getElevation(), curVTOLElevation);
         entity.setPosition(curPos);
         entity.setFacing(curFacing);
         entity.setSecondaryFacing(curFacing);
@@ -3645,6 +3648,102 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     mpUsed = step.getMpUsed();
                     continueTurnFromCliffAscent = true;
                     break;
+                }
+            }
+
+            // TacOps Climbing PSR checks (TO:AR p.20)
+            // Each level climbed requires a Piloting Skill Roll with +1 modifier.
+            // Additional +2 modifier if only one functional arm.
+            // On failure, the Mek falls from the last level successfully reached.
+            // Multi-turn: if the climb costs more MP than available, only climb
+            // affordable levels this turn and persist climbing state for next turn.
+            if (step.isClimbing() && (entity instanceof Mek climbingMek)) {
+                int totalLevelsToClimb = Math.abs(stepHeight);
+                int climbableArms = ClimbingHelper.countClimbableArms(climbingMek);
+                int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(climbingMek);
+                int walkMP = climbingMek.getWalkMP();
+
+                // Calculate how many levels we can afford this turn
+                // step.getMpUsed() includes the full climbing cost already.
+                // Subtract the climbing portion to get MP spent on non-climbing movement,
+                // then calculate how many levels fit in the remaining walk MP.
+                int totalClimbCost = totalLevelsToClimb * costPerLevel;
+                int nonClimbMpUsed = step.getMpUsed() - totalClimbCost;
+                int availableMP = walkMP - nonClimbMpUsed;
+                int affordableLevels = availableMP / costPerLevel;
+                int levelsThisTurn = Math.min(totalLevelsToClimb, Math.max(1, affordableLevels));
+
+                boolean fellWhileClimbing = false;
+                // Track the climbing elevation - starts at the entity's elevation
+                // in the lower hex and increments by 1 for each successful level
+                int climbingElevation = lastElevation;
+                // Total climb height includes levels already climbed in prior turns
+                int levelsAlreadyClimbed = climbingElevation;
+                int overallClimbHeight = levelsAlreadyClimbed + totalLevelsToClimb;
+
+                logger.info("Climbing: totalLevels={}, affordableLevels={}, levelsThisTurn={}, " +
+                      "walkMP={}, availableMP={}, costPerLevel={}, nonClimbMpUsed={}, " +
+                      "levelsAlreadyClimbed={}, overallClimbHeight={}",
+                      totalLevelsToClimb, affordableLevels, levelsThisTurn,
+                      walkMP, availableMP, costPerLevel, nonClimbMpUsed,
+                      levelsAlreadyClimbed, overallClimbHeight);
+
+                for (int levelClimbed = 1; levelClimbed <= levelsThisTurn; levelClimbed++) {
+                    int overallLevel = levelsAlreadyClimbed + levelClimbed;
+                    rollTarget = entity.getBasePilotingRoll(moveType);
+                    rollTarget.append(new PilotingRollData(entity.getId(),
+                          ClimbingHelper.CLIMBING_PSR_MODIFIER,
+                          "climbing (level " + overallLevel + " of " + overallClimbHeight + ")"));
+                    if (climbableArms == 1) {
+                        rollTarget.append(new PilotingRollData(entity.getId(),
+                              ClimbingHelper.ONE_ARM_PSR_MODIFIER,
+                              "climbing with one arm"));
+                    }
+
+                    // Pass the current climbing elevation so fall height is calculated
+                    // from the last level successfully reached, not the full height
+                    if (gameManager.doSkillCheckWhileMoving(entity, climbingElevation,
+                          lastPos, lastPos, rollTarget, true) > 0) {
+                        // Mek falls from the last level successfully reached
+                        entity.setPosition(lastPos);
+                        entity.setElevation(0);
+                        entity.setClimbing(false);
+                        curPos = lastPos;
+                        curVTOLElevation = 0;
+                        fellWhileClimbing = true;
+                        fellDuringMovement = true;
+                        turnOver = true;
+                        break;
+                    }
+                    // Successfully climbed one more level
+                    climbingElevation++;
+                }
+
+                if (fellWhileClimbing) {
+                    break;
+                }
+
+                // Did we complete the full climb or just a partial?
+                if (levelsThisTurn < totalLevelsToClimb) {
+                    // Partial climb - Mek clings to cliff face at intermediate elevation
+                    // Stay in the lower hex, facing the higher hex, at climbing elevation
+                    entity.setPosition(lastPos);
+                    entity.setFacing(curFacing);
+                    entity.setElevation(climbingElevation);
+                    entity.setClimbing(true);
+                    curPos = lastPos;
+                    curVTOLElevation = climbingElevation;
+                    mpUsed = walkMP;
+                    logger.info("Climbing: partial climb, {} of {} levels. " +
+                          "Clinging at elevation {} in hex {}",
+                          levelsThisTurn, totalLevelsToClimb, climbingElevation, lastPos);
+                    // End movement - spent all MP climbing
+                    turnOver = true;
+                    break;
+                } else {
+                    // Completed the climb - Mek enters the upper hex
+                    entity.setClimbing(false);
+                    logger.info("Climbing: completed full climb of {} levels", totalLevelsToClimb);
                 }
             }
 

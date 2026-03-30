@@ -98,7 +98,7 @@ public class Faction2 {
     private String nameGenerator;
     private int[] eraMods;
     private final List<String> ratingLevels = new ArrayList<>();
-    private final Set<String> fallBackFactions = new HashSet<>();
+    private final Set<String> fallBackFactions = new LinkedHashSet<>();
     private final HonorRating preInvasionHonorRating = HonorRating.NONE;
     private final HonorRating postInvasionHonorRating = HonorRating.NONE;
     // Do not final the variables

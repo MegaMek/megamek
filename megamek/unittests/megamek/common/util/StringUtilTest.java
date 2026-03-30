@@ -31,24 +31,23 @@
  * affiliated with Microsoft.
  */
 
-package megamek.utils;
+package megamek.common.util;
 
-import megamek.utilities.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StringUtilsTest {
+public class StringUtilTest {
     @Test
     void testWrapLinesShort() {
         String in = "-1 to-hit when making punches with hands.";
-        String out = StringUtils.wrapLines(in, 85);
+        String out = StringUtil.wrapLines(in, 85);
         assertEquals(in, out);
     }
 
     @Test
     void testWrapLinesOneSplit() {
-        String s = StringUtils.wrapLines(
+        String s = StringUtil.wrapLines(
               "The unit is so common in the Clans that parts are easily available. -2 TN to locate replacement parts.",
               85);
         assertEquals("The unit is so common in the Clans that parts are easily available. -2 TN to locate\n" +
@@ -57,24 +56,26 @@ public class StringUtilsTest {
 
     @Test
     void testWrapLinesLongWord() {
-        String s = StringUtils.wrapLines(
+        String s = StringUtil.wrapLines(
               "This tooltip has a very long word. hippopotomonstrosesquippedaliophobia.",
               20);
-        assertEquals("This tooltip has a\n"
-              + "very long word.\n"
-              + "hippopotomonstrosesq\n"
-              + "ippedaliophobia.", s);
+        assertEquals("""
+              This tooltip has a
+              very long word.
+              hippopotomonstrosesq
+              uippedaliophobia.""", s);
     }
 
     @Test
     void testWrapLinesPreservesNewlines() {
-        String s = StringUtils.wrapLines(
+        String s = StringUtil.wrapLines(
               "This tooltip has\nextra\nhippopotomonstrosesquippedaliophobia\nnewlines.",
               20);
-        assertEquals("This tooltip has\n"
-              + "extra\n"
-              + "hippopotomonstrosesq\n"
-              + "ippedaliophobia\n"
-              + "newlines.", s);
+        assertEquals("""
+              This tooltip has
+              extra
+              hippopotomonstrosesq
+              uippedaliophobia
+              newlines.""", s);
     }
 }

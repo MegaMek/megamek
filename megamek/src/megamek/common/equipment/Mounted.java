@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 
 import megamek.common.CalledShot;
 import megamek.common.CriticalSlot;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.enums.BombType;
@@ -1092,7 +1093,16 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return crossLinkedBy;
     }
 
-    public void setLinked(Mounted<?> linked) {
+    /**
+     * Link this Mounted equipment to the given other equipment (or remove the link, if that other is null). When the
+     * other is not null, that equipment's linkedBy is set to the present Mounted. Typically, weapons link to their
+     * ammo; mounts (turrets, DWP etc) link to attached weapons. The other direction uses linkedBy.
+     *
+     * @param linked The equipment to link to
+     *
+     * @see #setLinkedBy(Mounted)
+     */
+    public void setLinked(@Nullable Mounted<?> linked) {
         this.linked = linked;
         if (linked != null) {
             linked.setLinkedBy(this);
@@ -1310,10 +1320,23 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return (baMountLoc == BattleArmor.MOUNT_LOC_BODY) || (baMountLoc == BattleArmor.MOUNT_LOC_TURRET);
     }
 
+    /**
+     * @return True if this equipment is mounted on a BA Detachable Weapon Pack, TO:AUE p.99. Note that when it is, the
+     *       BA mount location (arm, body etc) is set to LOC_NONE. The location must be found via the DWP. The DWP can
+     *       be obtained using getLinkedBy.
+     */
     public boolean isDWPMounted() {
         return isDWPMounted;
     }
 
+    /**
+     * Sets this mounted to be attached to a BA Detachable Weapon Pack, TO:AUE p.99. Note that when it is, the BA mount
+     * location (arm, body etc) must not be set or this equipment will also register as being normally allocated in that
+     * location (visible in MML). The location must be found via the DWP. The DWP should be set as linkedBy for this
+     * Mounted, and the DWP itself should have this mounted set as linked.
+     *
+     * @param dwpMounted True if this equipment is mounted in a DWP
+     */
     public void setDWPMounted(boolean dwpMounted) {
         isDWPMounted = dwpMounted;
     }

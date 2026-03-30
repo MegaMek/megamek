@@ -160,7 +160,7 @@ Infantry
 ProtoMek
 VTOL
 Naval
-ConventionalFighter
+Conventional Fighter
 AeroSpaceFighter
 Small Craft
 Dropship

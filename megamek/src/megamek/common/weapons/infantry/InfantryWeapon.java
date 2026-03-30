@@ -365,4 +365,9 @@ public abstract class InfantryWeapon extends Weapon {
         data.put("infantry", infantry);
         return data;
     }
+
+    @Override
+    public boolean canBeMountedOnBaDwp() {
+        return false;
+    }
 }

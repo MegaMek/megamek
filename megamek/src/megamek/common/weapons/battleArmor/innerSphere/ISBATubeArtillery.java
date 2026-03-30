@@ -63,13 +63,13 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
         shortRange = 2;
         mediumRange = 2;
         longRange = 2;
-        extremeRange = 2; // No extreme range.
+        extremeRange = 2; // No extreme range
         tonnage = 0.5;
         criticalSlots = 4;
         bv = 27;
         cost = 200000;
         rulesRefs = "96, TO:AUE";
-        flags = flags.or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).or(F_MEK_MORTAR).or(F_MISSILE);
+        flags = flags.or(F_BA_WEAPON, F_MEK_MORTAR, F_MISSILE).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         damage = DAMAGE_BY_CLUSTER_TABLE;
         atClass = CLASS_ARTILLERY;
         infDamageClass = WEAPON_CLUSTER_MISSILE;
@@ -82,11 +82,6 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
               .setISApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.CS)
               .setProductionFactions(Faction.CS);
-    }
-
-    @Override
-    public boolean hasIndirectFire() {
-        return true;
     }
 
     @Override

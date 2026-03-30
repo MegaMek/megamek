@@ -68,7 +68,7 @@ import megamek.common.Report;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
 import megamek.common.units.Entity;
-import megamek.utilities.StringUtils;
+import megamek.common.util.StringUtil;
 
 /**
  * @author Jay Lawson
@@ -125,7 +125,7 @@ public class EntityReadoutPanel extends JPanel {
                         if (spanAttr instanceof SimpleAttributeSet attrs) {
                             String title = (String) attrs.getAttribute(HTML.Attribute.TITLE);
                             // Found a tooltip, line-wrap it
-                            readoutTextComponent.setToolTipText(StringUtils.wrapLines(title, TOOLTIP_MAX_SIZE));
+                            readoutTextComponent.setToolTipText(StringUtil.wrapLines(title, TOOLTIP_MAX_SIZE));
                             return;
                         }
                         // Try to recurse up the tree for an element with a title

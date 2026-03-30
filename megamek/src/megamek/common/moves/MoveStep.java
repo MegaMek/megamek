@@ -2956,10 +2956,10 @@ public class MoveStep implements Serializable {
 
         // non-WIGEs pay for elevation differences
         if ((nSrcEl != nDestEl) && (moveMode != EntityMovementMode.WIGE)) {
-            int delta_e = Math.abs(nSrcEl - nDestEl);
+            int deltaElevation = Math.abs(nSrcEl - nDestEl);
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING) &&
                   isMek &&
-                  (delta_e > 2) &&
+                  (deltaElevation > 2) &&
                   (nDestEl < nSrcEl)) {
                 // leaping (moving down more than 2 hexes) always costs 4 mp
                 // regardless of anything else
@@ -2991,7 +2991,7 @@ public class MoveStep implements Serializable {
             boolean isMountainTroop = isInfantry
                   && ((Infantry) entity).hasSpecialization(Infantry.MOUNTAIN_TROOPS);
             if (isMountainTroop) {
-                delta_e = (int) Math.ceil(delta_e / 2.0);
+                deltaElevation = (int) Math.ceil(deltaElevation / 2.0);
             } else if ((isInfantry &&
                   !((getMovementType(false) == EntityMovementType.MOVE_VTOL_WALK) ||
                         (getMovementType(false) == EntityMovementType.MOVE_VTOL_RUN))) ||
@@ -2999,12 +2999,12 @@ public class MoveStep implements Serializable {
                         (moveMode == EntityMovementMode.WHEELED) ||
                         (moveMode == EntityMovementMode.HOVER))) {
                 // non-flying Infantry and ground vehicles are charged double.
-                delta_e *= 2;
+                deltaElevation *= 2;
             }
             if (entity.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
-                mp += delta_e - 1;
+                mp += deltaElevation - 1;
             } else {
-                mp += delta_e;
+                mp += deltaElevation;
             }
         }
 

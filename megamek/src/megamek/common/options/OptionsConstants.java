@@ -451,6 +451,7 @@ public class OptionsConstants {
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_EVADE = "tacops_evade";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_SKILLED_EVASION = "tacops_skilled_evasion";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING = "tacops_leaping";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING = "tacops_climbing";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_PSR = "tacops_physical_psr";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_ATTACK_PSR = "tacops_attack_physical_psr";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_TAKING_DAMAGE = "tacops_taking_damage";

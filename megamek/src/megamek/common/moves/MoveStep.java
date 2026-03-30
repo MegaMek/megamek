@@ -149,6 +149,7 @@ public class MoveStep implements Serializable {
     private boolean isRunProhibited = false;
     private boolean isStackingViolation = false;
     private boolean isDiggingIn = false;
+    private boolean isClimbing = false;
     private boolean isTakingCover = false;
     private int wigeBonus = 0;
     private int nWigeDescent = 0;
@@ -759,7 +760,15 @@ public class MoveStep implements Serializable {
         prev = evaluateFirstStep(game, entity, prev);
 
         PhasePass phasePass = PhasePassSelector.getPhasePass(getType());
+        if (type == MoveStepType.CLIMB) {
+            LOGGER.info("CLIMB compile: before PhasePass - mp={}, mpUsed={}, elevation={}, position={}",
+                  mp, mpUsed, elevation, position);
+        }
         phasePass.execute(this, game, entity, prev, cachedEntityState);
+        if (type == MoveStepType.CLIMB) {
+            LOGGER.info("CLIMB compile: after PhasePass - mp={}, mpUsed={}, elevation={}, position={}",
+                  mp, mpUsed, elevation, position);
+        }
 
         if (noCost) {
             setMp(0);
@@ -779,6 +788,10 @@ public class MoveStep implements Serializable {
 
         // Update the entity's total MP used.
         addMpUsed(getMp());
+        if (type == MoveStepType.CLIMB) {
+            LOGGER.info("CLIMB compile: after addMpUsed - mp={}, mpUsed={}, elevation={}",
+                  mp, mpUsed, elevation);
+        }
 
         // Check for a stacking violation.
         final Entity violation = Compute.stackingViolation(game,
@@ -861,7 +874,15 @@ public class MoveStep implements Serializable {
     public void copy(final Game game, MoveStep prev) {
         if (prev == null) {
             setFromEntity(getEntity(), game);
+            if (type == MoveStepType.CLIMB) {
+                LOGGER.info("CLIMB copy: prev is null, setFromEntity - elevation={}, isClimbing={}",
+                      elevation, isClimbing);
+            }
             return;
+        }
+        if (type == MoveStepType.CLIMB) {
+            LOGGER.info("CLIMB copy: from prev type={}, prev.elevation={}, prev.isClimbing={}, prev.mpUsed={}",
+                  prev.type, prev.elevation, prev.isClimbing, prev.mpUsed);
         }
         hasJustStood = prev.hasJustStood;
         facing = prev.getFacing();
@@ -880,6 +901,7 @@ public class MoveStep implements Serializable {
         isHullDown = prev.isHullDown;
         climbMode = prev.climbMode;
         isRunProhibited = prev.isRunProhibited;
+        isClimbing = prev.isClimbing;
         hasEverUnloaded = prev.hasEverUnloaded;
         elevation = prev.elevation;
         altitude = prev.altitude;
@@ -918,6 +940,7 @@ public class MoveStep implements Serializable {
         isFlying = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
         isHullDown = entity.isHullDown();
         climbMode = entity.climbMode();
+        isClimbing = entity.isClimbing();
         thisStepBackwards = entity.inReverse;
 
         // Moving in reverse prohibits running
@@ -1097,6 +1120,14 @@ public class MoveStep implements Serializable {
 
     public boolean climbMode() {
         return climbMode;
+    }
+
+    public boolean isClimbing() {
+        return isClimbing;
+    }
+
+    public void setIsClimbing(boolean climbing) {
+        this.isClimbing = climbing;
     }
 
     public boolean isTurning() {
@@ -1754,6 +1785,14 @@ public class MoveStep implements Serializable {
             }
         }
 
+        // A climbing unit can only continue climbing or forfeit movement (TO:AR p.20)
+        if (prev.isClimbing) {
+            isClimbing = true;
+            if (type != MoveStepType.CLIMB) {
+                return; // can't do other movement while climbing
+            }
+        }
+
         if (prev.isDiggingIn) {
             isDiggingIn = true;
             if ((type != MoveStepType.TURN_LEFT) && (type != MoveStepType.TURN_RIGHT)) {
@@ -2066,7 +2105,10 @@ public class MoveStep implements Serializable {
                 return;
             }
 
-            if (getMpUsed() <= tmpWalkMP) {
+            // Climbing uses walking movement regardless of total MP spent (TO:AR p.20)
+            if (isClimbing) {
+                movementType = EntityMovementType.MOVE_WALK;
+            } else if (getMpUsed() <= tmpWalkMP) {
                 // VTOL includes powered flight infantry whose getMovementMode() returns VTOL
                 boolean isVTOLMovement = (getEntity().getMovementMode() == EntityMovementMode.VTOL ||
                       getEntity().getMovementMode() == EntityMovementMode.WIGE) && getClearance() > 0;
@@ -2102,6 +2144,11 @@ public class MoveStep implements Serializable {
             } else if (getMpUsed() <= runMPMax && isRunAllowed()) {
                 // RUN - If we got this far, entity is moving farther than a walk
                 // but within run and running is legal
+                if (isClimbing) {
+                    LOGGER.info("compileIllegal: climbing step classified as RUN! " +
+                          "mpUsed={}, walkMP={}, runMPMax={}, isRunProhibited={}, isRunAllowed={}",
+                          getMpUsed(), tmpWalkMP, runMPMax, isRunProhibited, isRunAllowed());
+                }
 
                 if (getMpUsed() > runMPNoBoost) {
                     // must be using MP booster to go this fast
@@ -2919,6 +2966,25 @@ public class MoveStep implements Serializable {
                 mp = 4;
                 return;
             }
+            // TacOps Climbing (TO:AR p.20): Meks climbing pay 2 MP/level (2 hands)
+            // or 3 MP/level (1 hand) instead of normal elevation costs.
+            boolean isClimbingMove = isMek
+                  && (delta_e > entity.getMaxElevationChange())
+                  && (nDestEl > nSrcEl)
+                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
+                  && ClimbingHelper.canClimb(entity);
+            if (isClimbingMove) {
+                int climbCostPerLevel = ClimbingHelper.getClimbingMPCostPerLevel((Mek) entity);
+                mp += delta_e * climbCostPerLevel;
+                isClimbing = true;
+                // Climbing requires walking only (TO:AR p.20)
+                isRunProhibited = true;
+                movementType = EntityMovementType.MOVE_WALK;
+                LOGGER.info("calcMovementCostFor: climbing {} levels at {} MP/level = {} MP total, " +
+                      "movementType forced to MOVE_WALK",
+                      delta_e, climbCostPerLevel, delta_e * climbCostPerLevel);
+                return;
+            }
             // Mountain Troops only expend 1 MP per 2 levels moved up or down (TO:AUE p.153).
             // This stacks with the Mountaineer ability (PILOT_TM_MOUNTAINEER) which reduces
             // elevation cost by 1 MP. Combined, a 1-level change can cost 0 MP elevation.
@@ -3265,9 +3331,22 @@ public class MoveStep implements Serializable {
                               (srcHex.terrainLevel(Terrains.BLDG_ELEV) >= srcEl)))) {
                 maxDown = entity.getMaxElevationChange();
             }
-            if ((((srcAlt - destAlt) > 0) && ((srcAlt - destAlt) > maxDown)) ||
-                  (((destAlt - srcAlt) > 0) && ((destAlt - srcAlt) > entity.getMaxElevationChange()))) {
-                return false;
+            // TacOps Climbing (TO:AR p.20): Meks with functional arms can climb
+            // elevation changes greater than their normal max
+            boolean climbingEnabled = game.getOptions()
+                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
+            boolean canUseClimbing = climbingEnabled && ClimbingHelper.canClimb(entity);
+            int elevationUp = (destAlt - srcAlt);
+            int elevationDown = (srcAlt - destAlt);
+
+            if (((elevationDown > 0) && (elevationDown > maxDown)) ||
+                  ((elevationUp > 0) && (elevationUp > entity.getMaxElevationChange()))) {
+                // Allow climbing if the option is enabled and entity can climb
+                if (!canUseClimbing || (elevationUp <= 0)) {
+                    return false;
+                }
+                LOGGER.info("isValidStep: allowing climbing for {} levels up (TacOps Climbing)",
+                      elevationUp);
             }
         }
 

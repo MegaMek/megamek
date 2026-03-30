@@ -396,6 +396,7 @@ public abstract class Entity extends TurnOrdered
 
     protected boolean prone = false;
     protected boolean hullDown = false;
+    protected boolean climbing = false;
     protected boolean findingClub = false;
     protected boolean armsFlipped = false;
     protected boolean unjammingRAC = false;
@@ -2069,6 +2070,23 @@ public abstract class Entity extends TurnOrdered
         if (hullDown) {
             prone = false;
         }
+    }
+
+    /**
+     * Returns true if this entity is currently climbing a cliff face (TO:AR p.20).
+     * The entity's intermediate climbing level is tracked via the existing elevation field.
+     */
+    public boolean isClimbing() {
+        return climbing;
+    }
+
+    /**
+     * Sets the climbing state (TO:AR p.20).
+     *
+     * @param climbing true if the entity is climbing
+     */
+    public void setClimbing(boolean climbing) {
+        this.climbing = climbing;
     }
 
     /**

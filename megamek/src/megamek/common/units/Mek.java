@@ -3796,7 +3796,6 @@ public abstract class Mek extends Entity {
               && (loc_is != IArmorState.ARMOR_DESTROYED);
     }
 
-    @Override
     public boolean canCharge() {
         // Meks can charge, unless they are Clan and the "no clan physicals" option is
         // set

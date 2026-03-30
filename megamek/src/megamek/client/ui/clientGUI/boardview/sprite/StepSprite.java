@@ -446,6 +446,16 @@ public class StepSprite extends Sprite {
             costStringBuf.append(')');
         }
 
+        // Show climbing turn count when climb takes multiple turns (TO:AR p.20)
+        if (step.isClimbing() && (e != null)) {
+            int walkMP = e.getWalkMP();
+            if (walkMP > 0) {
+                int totalClimbCost = step.getMp();
+                int turnsToClimb = (int) Math.ceil((double) totalClimbCost / walkMP);
+                costStringBuf.append('[').append(turnsToClimb).append("T]");
+            }
+        }
+
         EntityMovementType moveType = step.getMovementType(isLastStep);
         if ((moveType == EntityMovementType.MOVE_VTOL_WALK)
               || (moveType == EntityMovementType.MOVE_VTOL_RUN)

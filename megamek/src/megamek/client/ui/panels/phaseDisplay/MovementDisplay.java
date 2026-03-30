@@ -114,6 +114,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
+import megamek.common.moves.ClimbingHelper;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
@@ -714,6 +715,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateConvertModeButton();
         updateRecklessButton();
         updateBraceButton();
+        updateClimbButton();
         updateHoverButton();
         updateManeuverButton();
         updateStrafeButton();
@@ -1168,6 +1170,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setClearEnabled(false);
         setHullDownEnabled(false);
         setBraceEnabled(false);
+        setClimbEnabled(false);
         setSwimEnabled(false);
         setModeConvertEnabled(false);
         setAccEnabled(false);
@@ -1276,6 +1279,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateConvertModeButton();
         updateRecklessButton();
         updateBraceButton();
+        updateClimbButton();
         updateHoverButton();
         updateManeuverButton();
         updateAeroButtons();
@@ -2919,6 +2923,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setBraceEnabled(!movePath.contains(MoveStepType.BRACE) &&
               movePath.isValidPositionForBrace(movePath.getFinalCoords(), finalBoardId(),
                     movePath.getFinalFacing()));
+    }
+
+    private void updateClimbButton() {
+        Entity selectedUnit = currentEntity();
+        if (selectedUnit == null) {
+            setClimbEnabled(false);
+            return;
+        }
+
+        boolean climbingOptionEnabled = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
+        boolean canClimb = ClimbingHelper.canClimb(selectedUnit);
+        setClimbEnabled(climbingOptionEnabled && canClimb);
     }
 
     private void updateManeuverButton() {
@@ -5226,6 +5243,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     updateDonePanel();
                 }
             }
+        } else if (actionCmd.equals(MoveCommand.MOVE_CLIMB.getCmd())) {
+            addStepToMovePath(MoveStepType.CLIMB);
         } else if (actionCmd.equals(MoveCommand.MOVE_FLEE.getCmd()) &&
               clientgui.doYesNoDialog(Messages.getString("MovementDisplay.EscapeDialog.title"),
                     Messages.getString("MovementDisplay.EscapeDialog.message"))) {
@@ -6254,6 +6273,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void setBraceEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_BRACE).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_BRACE.getCmd(), enabled);
+    }
+
+    private void setClimbEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_CLIMB).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_CLIMB.getCmd(), enabled);
     }
 
     private void setClearEnabled(boolean enabled) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,6 +32,10 @@
  */
 
 package megamek.common.planetaryConditions;
+
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import megamek.common.Messages;
 
@@ -120,5 +124,52 @@ public enum Atmosphere {
             }
         }
         return Atmosphere.STANDARD;
+    }
+
+    /**
+     * Legacy aliases used in older planetary system YAML data files.
+     */
+    private static final Map<String, Atmosphere> LEGACY_ALIASES = Map.of(
+          "Low", THIN
+    );
+
+    /**
+     * Deserializes an Atmosphere from a string value, supporting both canonical
+     * enum names (case-insensitive) and legacy aliases from older data files.
+     *
+     * @param value the string to parse
+     * @return the matching Atmosphere, never null
+     * @throws IllegalArgumentException if the value cannot be mapped
+     */
+    @JsonCreator
+    public static Atmosphere fromString(String value) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("Atmosphere value must not be null or blank");
+        }
+
+        String trimmed = value.strip();
+
+        // Try exact enum name first
+        for (Atmosphere atmo : values()) {
+            if (atmo.name().equals(trimmed)) {
+                return atmo;
+            }
+        }
+
+        // Try case-insensitive enum name match
+        for (Atmosphere atmo : values()) {
+            if (atmo.name().equalsIgnoreCase(trimmed)) {
+                return atmo;
+            }
+        }
+
+        // Try legacy aliases (case-insensitive)
+        for (var entry : LEGACY_ALIASES.entrySet()) {
+            if (entry.getKey().equalsIgnoreCase(trimmed)) {
+                return entry.getValue();
+            }
+        }
+
+        throw new IllegalArgumentException("Unknown Atmosphere value: '" + value + "'");
     }
 }

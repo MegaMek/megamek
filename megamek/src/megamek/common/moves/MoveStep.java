@@ -1822,9 +1822,18 @@ public class MoveStep implements Serializable {
             if ((stepType != MoveStepType.FORWARDS)
                   && (stepType != MoveStepType.CLIMB_MODE_ON)
                   && (stepType != MoveStepType.CLIMB_MODE_OFF)) {
+                LOGGER.info("[CLIMB-TRACE] Blocked step type {} while climbing - set MOVE_ILLEGAL", stepType);
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
             }
+            LOGGER.info("[CLIMB-TRACE] Allowed step type {} while climbing", stepType);
+        }
+
+        // Log all facing changes for debugging
+        if ((stepType == MoveStepType.TURN_LEFT) || (stepType == MoveStepType.TURN_RIGHT)) {
+            LOGGER.info("[FACING-TRACE] Facing change: type={}, prev.isClimbing={}, " +
+                        "entity.isClimbing={}, position={}, elevation={}, prev.facing={}",
+                  stepType, prev.isClimbing, entity.isClimbing(), curPos, elevation, prev.getFacing());
         }
 
         if (prev.isDiggingIn) {

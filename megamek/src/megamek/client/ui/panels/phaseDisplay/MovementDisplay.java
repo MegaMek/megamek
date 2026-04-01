@@ -558,6 +558,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateButtonsLater();
 
         // If the entity is mid-climb, prompt to continue or cling (TO:AR p.20)
+        LOGGER.info("[CLIMB-TRACE] selectEntity: {} isClimbing={}, elevation={}, position={}, facing={}",
+              selectedEntity.getDisplayName(), selectedEntity.isClimbing(),
+              selectedEntity.getElevation(), selectedEntity.getPosition(), selectedEntity.getFacing());
         if (selectedEntity.isClimbing()) {
             String title = Messages.getString("MovementDisplay.ClimbingDialog.title");
             boolean isBuilding = game.getBoard(selectedEntity).getHex(selectedEntity.getPosition())

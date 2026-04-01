@@ -2936,6 +2936,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
               .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
         boolean canClimb = ClimbingHelper.canClimb(selectedUnit);
         setClimbEnabled(climbingOptionEnabled && canClimb);
+        updateClimbModeButtonText();
+    }
+
+    private void updateClimbModeButtonText() {
+        boolean climbModeOn = (cmd != null) ? cmd.getFinalClimbMode()
+              : (currentEntity() != null && currentEntity().climbMode());
+        if (climbModeOn) {
+            getBtn(MoveCommand.MOVE_CLIMB_MODE).setText(
+                  Messages.getString("MovementDisplay.moveClimbModeOn"));
+        } else {
+            getBtn(MoveCommand.MOVE_CLIMB_MODE).setText(
+                  Messages.getString("MovementDisplay.moveClimbModeOff"));
+        }
     }
 
     private void updateManeuverButton() {
@@ -5448,6 +5461,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             } else {
                 addStepToMovePath(MoveStepType.CLIMB_MODE_ON);
             }
+            updateClimbModeButtonText();
             computeMovementEnvelope(entity);
         } else if (actionCmd.equals(MoveCommand.MOVE_LAY_MINE.getCmd())) {
             int i = chooseMineToLay();

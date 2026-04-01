@@ -811,6 +811,14 @@ public class MoveStep implements Serializable {
 
         // set moveType, illegal, trouble flags
         compileIllegal(game, entity, prev, cachedEntityState);
+
+        if (isClimbing) {
+            LOGGER.info("[CLIMB-TRACE] compile FINAL: type={}, movementType={}, mp={}, mpUsed={}, " +
+                  "elevation={}, position={}, isClimbing={}, isStackingViolation={}, terrainInvalid={}, " +
+                  "isLegalEndPos={}",
+                  type, movementType, mp, mpUsed, elevation, position,
+                  isClimbing, isStackingViolation, terrainInvalid, isLegalEndPos());
+        }
     }
 
     /**
@@ -1206,6 +1214,13 @@ public class MoveStep implements Serializable {
         // If this step's position is the end of the path, and it is not a valid end position, then the movement type
         // is "illegal".
         if (isLastStep && !isLegalEndPos()) {
+            if (isClimbing) {
+                LOGGER.info("[CLIMB-TRACE] getMovementType: isLastStep={}, isLegalEndPos=false, " +
+                      "overriding {} to MOVE_ILLEGAL, isStackingViolation={}, terrainInvalid={}, " +
+                      "isJumping={}, distance={}, hasEverUnloaded={}, position={}, elevation={}",
+                      isLastStep, movementType, isStackingViolation, terrainInvalid,
+                      isJumping(), distance, hasEverUnloaded, position, elevation);
+            }
             moveType = EntityMovementType.MOVE_ILLEGAL;
         }
         return moveType;
@@ -1233,9 +1248,15 @@ public class MoveStep implements Serializable {
         // Can't be a stacking violation.
         boolean legal = true;
         if (isStackingViolation) {
+            if (isClimbing) {
+                LOGGER.info("[CLIMB-TRACE] isLegalEndPos: BLOCKED by stacking violation, pos={}", position);
+            }
             legal = false;
         } else if (terrainInvalid) {
             // Can't be into invalid terrain.
+            if (isClimbing) {
+                LOGGER.info("[CLIMB-TRACE] isLegalEndPos: BLOCKED by terrainInvalid, pos={}, elevation={}", position, elevation);
+            }
             legal = false;
         } else if (isJumping() && (distance == 0)) {
             // Can't jump zero hexes.
@@ -2115,6 +2136,9 @@ public class MoveStep implements Serializable {
             // Multi-turn climbs are allowed - the server will handle partial execution
             if (isClimbing) {
                 movementType = EntityMovementType.MOVE_WALK;
+                LOGGER.info("[CLIMB-TRACE] compileIllegal: isClimbing=true, set MOVE_WALK, mpUsed={}", getMpUsed());
+                // Skip all remaining movement type checks - climbing overrides everything
+                return;
             } else if (getMpUsed() <= tmpWalkMP) {
                 // VTOL includes powered flight infantry whose getMovementMode() returns VTOL
                 boolean isVTOLMovement = (getEntity().getMovementMode() == EntityMovementMode.VTOL ||
@@ -2637,9 +2661,15 @@ public class MoveStep implements Serializable {
 
         // check if this movement is illegal for reasons other than points
         // Only a CHAFF step or another unloading step can follow an existing unloading step
-        if (!isMovementPossible(game, lastPos, prev.getElevation(), cachedEntityState) ||
+        boolean movementPossible = isMovementPossible(game, lastPos, prev.getElevation(), cachedEntityState);
+        if (!movementPossible ||
               (isUnloaded && !(type == MoveStepType.CHAFF || type == MoveStepType.UNLOAD))
         ) {
+            if (isClimbing) {
+                LOGGER.info("compileIllegal: climbing step overridden to MOVE_ILLEGAL! " +
+                      "movementPossible={}, movementType was={}, prevEl={}",
+                      movementPossible, movementType, prev.getElevation());
+            }
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
@@ -2991,6 +3021,7 @@ public class MoveStep implements Serializable {
                   && (nDestEl > nSrcEl);
             boolean isContinuedClimb = isClimbing && (nDestEl > nSrcEl);
             boolean isClimbingMove = isMek
+                  && climbMode
                   && (isNewClimb || isContinuedClimb)
                   && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
                   && ClimbingHelper.canClimb(entity);
@@ -3186,8 +3217,14 @@ public class MoveStep implements Serializable {
         final int destAlt;
         // For buildings (but NOT bridges), when entering from ground level in climbMode,
         // use floor elevation. Bridges should use the bridge elevation instead.
+        // Exception: TacOps Climbing allows climbing the outside of a building to the roof,
+        // so use the full building elevation when climbing is enabled.
+        boolean tacOpsClimbingAvailable = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
+              && ClimbingHelper.canClimb(entity);
         if (bld != null && getEntity().getElevation() == 0 && climbMode
-              && !destHex.containsTerrain(Terrains.BRIDGE)) {
+              && !destHex.containsTerrain(Terrains.BRIDGE)
+              && !tacOpsClimbingAvailable) {
             destAlt = destHex.floor();
         } else {
             destAlt = elevation + destHex.getLevel();
@@ -3726,6 +3763,11 @@ public class MoveStep implements Serializable {
 
         // check the elevation is valid for the type of entity and hex
         if ((type != MoveStepType.DFA) && !entity.isElevationValid(elevation, destHex)) {
+            LOGGER.info("[CLIMB-TRACE] isMovementPossible: elevation NOT valid! elevation={}, " +
+                  "destHex={}, destHex.level={}, destHex.ceiling={}, destHex.floor={}, " +
+                  "isClimbing={}, entity={}",
+                  elevation, dest, destHex.getLevel(), destHex.ceiling(), destHex.floor(),
+                  isClimbing, entity.getDisplayName());
             if (isJumping()) {
                 terrainInvalid = true;
             } else {

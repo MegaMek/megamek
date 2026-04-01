@@ -55,10 +55,12 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.MiscType;
 import megamek.common.game.Game;
+import megamek.common.moves.ClimbingHelper;
 import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.Mek;
 
 /**
  * Sprite for a step in a movement path. Only one sprite should exist for any hex in a path. Contains a colored number,
@@ -422,10 +424,16 @@ public class StepSprite extends Sprite {
 
     private void drawMovementCost(MoveStep step, boolean isLastStep,
           Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
-        StringBuilder costStringBuf = new StringBuilder();
-        costStringBuf.append(step.getMpUsed());
-
         Entity e = step.getEntity();
+
+        StringBuilder costStringBuf = new StringBuilder();
+        // For climbing steps, show the per-turn MP cost capped to walk MP
+        if (step.isClimbing() && (e != null)) {
+            int walkMP = e.getWalkMP();
+            costStringBuf.append(Math.min(step.getMpUsed(), walkMP));
+        } else {
+            costStringBuf.append(step.getMpUsed());
+        }
 
         // If the step is using a road bonus, mark it.
         if (step.isOnlyPavementOrRoad() && e.isEligibleForPavementOrRoadBonus()) {
@@ -447,12 +455,19 @@ public class StepSprite extends Sprite {
         }
 
         // Show climbing turn count when climb takes multiple turns (TO:AR p.20)
-        if (step.isClimbing() && (e != null)) {
+        if (step.isClimbing() && (e != null) && (e instanceof Mek climbingMek)) {
             int walkMP = e.getWalkMP();
-            if (walkMP > 0) {
-                int totalClimbCost = step.getMp();
-                int turnsToClimb = (int) Math.ceil((double) totalClimbCost / walkMP);
-                costStringBuf.append('[').append(turnsToClimb).append("T]");
+            int totalLevels = step.getClimbingTotalLevels();
+            if ((walkMP > 0) && (totalLevels > 0)) {
+                int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(climbingMek);
+                // Account for base hex cost (1 MP) reducing available climbing MP
+                int nonClimbCost = step.getMpUsed() - (totalLevels * costPerLevel);
+                int availablePerTurn = walkMP - Math.max(0, nonClimbCost);
+                int levelsPerTurn = Math.max(1, availablePerTurn / costPerLevel);
+                int turnsToClimb = (int) Math.ceil((double) totalLevels / levelsPerTurn);
+                if (turnsToClimb > 1) {
+                    costStringBuf.append('[').append(turnsToClimb).append("T]");
+                }
             }
         }
 

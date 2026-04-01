@@ -572,8 +572,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                   selectedEntity.getDisplayName(), selectedEntity.getElevation());
             if (clientgui.doYesNoDialog(title, message)) {
                 // Player chose to continue climbing - enable climb mode
-                // so the player can click the target hex
+                // and auto-queue movement toward the facing hex (the climbing target)
                 cmd.addStep(MoveStepType.CLIMB_MODE_ON);
+                cmd.addStep(MoveStepType.FORWARDS);
             } else {
                 // Player chose to cling in place - forfeit movement
                 ready();
@@ -997,6 +998,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                   null);
         } else {
             int mp = possible.countMp(possible.isJumping());
+            // For climbing moves, cap displayed MP to walk MP (server handles multi-turn)
+            if (possible.getLastStep() != null && possible.getLastStep().isClimbing()) {
+                Entity climbingEntity = possible.getEntity();
+                if (climbingEntity != null) {
+                    mp = Math.min(mp, climbingEntity.getWalkMP());
+                }
+            }
             boolean psrCheck = (!SharedUtility.doPSRCheck(cmd.clone()).isBlank())
                   || (!SharedUtility.doThrustCheck(cmd.clone(), clientgui.getClient()).isBlank());
             boolean damageCheck = cmd.shouldMechanicalJumpCauseFallDamage() || cmd.hasActiveMASC()

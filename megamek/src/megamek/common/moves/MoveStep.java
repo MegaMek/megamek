@@ -150,6 +150,7 @@ public class MoveStep implements Serializable {
     private boolean isStackingViolation = false;
     private boolean isDiggingIn = false;
     private boolean isClimbing = false;
+    private int climbingTotalLevels = 0;
     private boolean isTakingCover = false;
     private int wigeBonus = 0;
     private int nWigeDescent = 0;
@@ -1144,6 +1145,13 @@ public class MoveStep implements Serializable {
 
     public void setIsClimbing(boolean climbing) {
         this.isClimbing = climbing;
+    }
+
+    /**
+     * Returns the total remaining levels for this climbing step, used for turn count display.
+     */
+    public int getClimbingTotalLevels() {
+        return climbingTotalLevels;
     }
 
     public boolean isTurning() {
@@ -3045,6 +3053,7 @@ public class MoveStep implements Serializable {
                 int climbCostPerLevel = ClimbingHelper.getClimbingMPCostPerLevel((Mek) entity);
                 mp += deltaElevation * climbCostPerLevel;
                 isClimbing = true;
+                climbingTotalLevels = deltaElevation;
                 // Climbing requires walking only (TO:AR p.20)
                 isRunProhibited = true;
                 movementType = EntityMovementType.MOVE_WALK;

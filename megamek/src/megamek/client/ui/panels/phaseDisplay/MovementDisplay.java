@@ -557,6 +557,27 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clear();
         updateButtonsLater();
 
+        // If the entity is mid-climb, prompt to continue or cling (TO:AR p.20)
+        if (selectedEntity.isClimbing()) {
+            String title = Messages.getString("MovementDisplay.ClimbingDialog.title");
+            boolean isBuilding = game.getBoard(selectedEntity).getHex(selectedEntity.getPosition())
+                  .containsTerrain(Terrains.BUILDING);
+            String messageKey = isBuilding
+                  ? "MovementDisplay.ClimbingDialog.buildingMessage"
+                  : "MovementDisplay.ClimbingDialog.cliffMessage";
+            String message = Messages.getString(messageKey,
+                  selectedEntity.getDisplayName(), selectedEntity.getElevation());
+            if (clientgui.doYesNoDialog(title, message)) {
+                // Player chose to continue climbing - enable climb mode
+                // so the player can click the target hex
+                cmd.addStep(MoveStepType.CLIMB_MODE_ON);
+            } else {
+                // Player chose to cling in place - forfeit movement
+                ready();
+                return;
+            }
+        }
+
         clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
         clientgui.getBoardView(selectedEntity).highlight(selectedEntity.getPosition());
         if (!clientgui.isCurrentBoardViewShowingAnimation()) {

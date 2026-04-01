@@ -1815,9 +1815,16 @@ public class MoveStep implements Serializable {
         }
 
         // A climbing unit inherits the climbing state from the previous step.
-        // Movement is handled via FORWARDS steps with climbing cost calculation.
+        // A climbing unit cannot turn - it must face the cliff/building (TO:AR p.20).
+        // Only FORWARDS (to continue climbing) and CLIMB_MODE_ON/OFF are allowed.
         if (prev.isClimbing) {
             isClimbing = true;
+            if ((stepType != MoveStepType.FORWARDS)
+                  && (stepType != MoveStepType.CLIMB_MODE_ON)
+                  && (stepType != MoveStepType.CLIMB_MODE_OFF)) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+                return;
+            }
         }
 
         if (prev.isDiggingIn) {

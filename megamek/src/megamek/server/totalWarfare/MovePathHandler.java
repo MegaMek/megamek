@@ -3740,10 +3740,22 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // End movement - spent all MP climbing
                     turnOver = true;
                     break;
-                } else {
+                } else if (totalLevelsToClimb > 0) {
                     // Completed the climb - Mek enters the upper hex
                     entity.setClimbing(false);
                     logger.info("Climbing: completed full climb of {} levels", totalLevelsToClimb);
+                } else {
+                    // No levels to climb (e.g. moved to same-level hex while climbing)
+                    // Keep climbing state if still at intermediate elevation
+                    if (climbingElevation > 0) {
+                        entity.setClimbing(true);
+                        entity.setElevation(climbingElevation);
+                        logger.info("Climbing: no levels to climb but still at elevation {}, keeping climbing state",
+                              climbingElevation);
+                    } else {
+                        entity.setClimbing(false);
+                        logger.info("Climbing: at ground level, clearing climbing state");
+                    }
                 }
             }
 

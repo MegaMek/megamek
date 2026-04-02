@@ -919,6 +919,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
         }
 
+        // Check if the path ends with an illegal step that could have been a climb
+        // Show feedback to the player about why climbing is not possible
+        if ((currentEntity instanceof Mek)
+              && (cmd != null)
+              && (cmd.getLastStep() != null)
+              && (cmd.getLastStep().getMovementType(true) == EntityMovementType.MOVE_ILLEGAL)
+              && cmd.getLastStep().climbMode()
+              && !ClimbingHelper.canClimb(currentEntity)
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)) {
+            String reason = ClimbingHelper.getClimbingImpossibleReason(currentEntity);
+            if (reason != null) {
+                JOptionPane.showMessageDialog(clientgui.getFrame(), reason,
+                      Messages.getString("MovementDisplay.ClimbingDialog.title"),
+                      JOptionPane.WARNING_MESSAGE);
+            }
+        }
+
         // If the path includes climbing and no level choice has been made, show the dialog
         boolean hasCmd = (cmd != null);
         boolean hasLastStep = hasCmd && (cmd.getLastStep() != null);
@@ -5617,7 +5634,24 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
             addStepToMovePath(MoveStepType.DOWN);
         } else if (actionCmd.equals(MoveCommand.MOVE_CLIMB_MODE.getCmd())) {
+            // When toggling climb mode ON, check if the Mek can actually climb
+            boolean turningOn = !cmd.getFinalClimbMode();
             MoveStep ms = cmd.getLastStep();
+            if ((ms != null) &&
+                  ((ms.getType() == MoveStepType.CLIMB_MODE_ON) || (ms.getType() == MoveStepType.CLIMB_MODE_OFF))) {
+                turningOn = (ms.getType() == MoveStepType.CLIMB_MODE_OFF);
+            }
+            if (turningOn && game.getOptions()
+                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)) {
+                String reason = ClimbingHelper.getClimbingImpossibleReason(entity);
+                if (reason != null) {
+                    JOptionPane.showMessageDialog(clientgui.getFrame(), reason,
+                          Messages.getString("MovementDisplay.ClimbingDialog.title"),
+                          JOptionPane.WARNING_MESSAGE);
+                }
+            }
+
+            ms = cmd.getLastStep();
             if ((ms != null) &&
                   ((ms.getType() == MoveStepType.CLIMB_MODE_ON) || (ms.getType() == MoveStepType.CLIMB_MODE_OFF))) {
                 MoveStep lastStep = cmd.getLastStep();

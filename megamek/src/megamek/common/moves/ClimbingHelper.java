@@ -134,6 +134,36 @@ public final class ClimbingHelper {
     }
 
     /**
+     * Returns a human-readable reason why the entity cannot climb, or null if climbing is possible.
+     *
+     * @param entity the entity to check
+     * @return the reason climbing is impossible, or null if climbing is allowed
+     */
+    public static String getClimbingImpossibleReason(Entity entity) {
+        if (!(entity instanceof Mek mek)) {
+            return "Only Meks can use climbing rules.";
+        }
+        if (mek.isProne()) {
+            return mek.getDisplayName() + " is prone and cannot climb.";
+        }
+        if (mek.isShutDown()) {
+            return mek.getDisplayName() + " is shut down and cannot climb.";
+        }
+        int climbableArms = countClimbableArms(mek);
+        if (climbableArms == 0) {
+            // Determine the specific reason
+            boolean leftArmOk = isArmClimbCapable(mek, Mek.LOC_LEFT_ARM);
+            boolean rightArmOk = isArmClimbCapable(mek, Mek.LOC_RIGHT_ARM);
+            if (!leftArmOk && !rightArmOk) {
+                return mek.getDisplayName() + " cannot climb. Climbing requires at least one arm "
+                      + "with all four actuators (shoulder, upper arm, lower arm, hand) functional "
+                      + "and the hand free of physical weapons or carried objects.";
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns the MP cost per level climbed for the given Mek (TO:AR p.20).
      * 2 MP per level with two functional hands, 3 MP per level with one.
      *

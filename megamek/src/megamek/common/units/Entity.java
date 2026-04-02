@@ -397,6 +397,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean prone = false;
     protected boolean hullDown = false;
     protected boolean climbing = false;
+    protected int climbingLevelsChosen = 0;
     protected boolean findingClub = false;
     protected boolean armsFlipped = false;
     protected boolean unjammingRAC = false;
@@ -2087,6 +2088,23 @@ public abstract class Entity extends TurnOrdered
      */
     public void setClimbing(boolean climbing) {
         this.climbing = climbing;
+    }
+
+    /**
+     * Returns the number of levels the player chose to climb this turn. -1 means no choice has been made yet (use max
+     * affordable).
+     */
+    public int getClimbingLevelsChosen() {
+        return climbingLevelsChosen;
+    }
+
+    /**
+     * Sets the number of levels to climb this turn.
+     *
+     * @param levels the number of levels to climb, or -1 for no choice
+     */
+    public void setClimbingLevelsChosen(int levels) {
+        this.climbingLevelsChosen = levels;
     }
 
     /**
@@ -7227,6 +7245,7 @@ public abstract class Entity extends TurnOrdered
         loadedThisTurn = false;
         done = false;
         delta_distance = 0;
+        climbingLevelsChosen = 0;
         mpUsedLastRound = mpUsed;
         mpUsed = 0;
         isJumpingNow = false;

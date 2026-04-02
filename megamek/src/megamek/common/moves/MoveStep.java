@@ -3051,15 +3051,21 @@ public class MoveStep implements Serializable {
                   && ClimbingHelper.canClimb(entity);
             if (isClimbingMove) {
                 int climbCostPerLevel = ClimbingHelper.getClimbingMPCostPerLevel((Mek) entity);
-                mp += deltaElevation * climbCostPerLevel;
+                // Use player-chosen levels if set, otherwise full elevation delta
+                int chosenLevels = entity.getClimbingLevelsChosen();
+                int levelsToCharge = (chosenLevels > 0)
+                      ? Math.min(chosenLevels, deltaElevation)
+                      : deltaElevation;
+                mp += levelsToCharge * climbCostPerLevel;
                 isClimbing = true;
                 climbingTotalLevels = deltaElevation;
                 // Climbing requires walking only (TO:AR p.20)
                 isRunProhibited = true;
                 movementType = EntityMovementType.MOVE_WALK;
-                LOGGER.info("calcMovementCostFor: climbing {} levels at {} MP/level = {} MP total, " +
-                      "movementType forced to MOVE_WALK",
-                      deltaElevation, climbCostPerLevel, deltaElevation * climbCostPerLevel);
+                LOGGER.info("calcMovementCostFor: climbing {} of {} levels at {} MP/level = {} MP, " +
+                            "chosenLevels={}, movementType forced to MOVE_WALK",
+                      levelsToCharge, deltaElevation, climbCostPerLevel, levelsToCharge * climbCostPerLevel,
+                      chosenLevels);
                 return;
             }
             // Mountain Troops only expend 1 MP per 2 levels moved up or down (TO:AUE p.153).

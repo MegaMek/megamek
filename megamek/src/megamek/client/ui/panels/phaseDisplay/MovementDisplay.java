@@ -561,25 +561,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
         LOGGER.info("[CLIMB-TRACE] selectEntity: {} isClimbing={}, elevation={}, position={}, facing={}",
               selectedEntity.getDisplayName(), selectedEntity.isClimbing(),
               selectedEntity.getElevation(), selectedEntity.getPosition(), selectedEntity.getFacing());
-        if (selectedEntity.isClimbing()) {
-            String title = Messages.getString("MovementDisplay.ClimbingDialog.title");
-            boolean isBuilding = game.getBoard(selectedEntity).getHex(selectedEntity.getPosition())
-                  .containsTerrain(Terrains.BUILDING);
-            String messageKey = isBuilding
-                  ? "MovementDisplay.ClimbingDialog.buildingMessage"
-                  : "MovementDisplay.ClimbingDialog.cliffMessage";
-            String message = Messages.getString(messageKey,
-                  selectedEntity.getDisplayName(), selectedEntity.getElevation());
-            if (clientgui.doYesNoDialog(title, message)) {
-                // Player chose to continue climbing - enable climb mode
-                // and auto-queue movement toward the facing hex (the climbing target)
-                cmd.addStep(MoveStepType.CLIMB_MODE_ON);
-                cmd.addStep(MoveStepType.FORWARDS);
-            } else {
+        if (selectedEntity.isClimbing() && (selectedEntity instanceof Mek climbingMek)) {
+            int chosenLevels = showContinueClimbingDialog(climbingMek);
+            if (chosenLevels == 0) {
                 // Player chose to cling in place - forfeit movement
                 ready();
                 return;
             }
+            // Store the choice and auto-queue climbing movement
+            selectedEntity.setClimbingLevelsChosen(chosenLevels);
+            cmd.addStep(MoveStepType.CLIMB_MODE_ON);
+            cmd.addStep(MoveStepType.FORWARDS);
         }
 
         clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
@@ -923,6 +915,42 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Entity currentEntity = currentEntity();
         if (redrawMovement && (currentEntity != null)) {
             clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
+        }
+
+        // If the path includes climbing and no level choice has been made, show the dialog
+        boolean hasCmd = (cmd != null);
+        boolean hasLastStep = hasCmd && (cmd.getLastStep() != null);
+        boolean lastStepClimbing = hasLastStep && cmd.getLastStep().isClimbing();
+        boolean entityNotYetClimbing = (currentEntity != null) && !currentEntity.isClimbing();
+        boolean noChoiceMade = (currentEntity != null) && (currentEntity.getClimbingLevelsChosen() <= 0);
+        if (lastStepClimbing) {
+            LOGGER.info("[CLIMB-TRACE] updateMove dialog check: lastStepClimbing={}, entityNotYetClimbing={}, " +
+                        "noChoiceMade={}, isMek={}, climbingLevelsChosen={}",
+                  lastStepClimbing, entityNotYetClimbing, noChoiceMade,
+                  currentEntity instanceof Mek,
+                  currentEntity != null ? currentEntity.getClimbingLevelsChosen() : "null");
+        }
+        if ((currentEntity instanceof Mek climbingMek)
+              && lastStepClimbing
+              && entityNotYetClimbing
+              && noChoiceMade) {
+            LOGGER.info("[CLIMB-TRACE] updateMove: showing START climbing dialog for {}",
+                  currentEntity.getDisplayName());
+            int chosenLevels = showStartClimbingDialog(climbingMek);
+            if (chosenLevels > 0) {
+                currentEntity.setClimbingLevelsChosen(chosenLevels);
+                // Recompile the path with the chosen level count
+                cmd.compile(game, currentEntity);
+                if (redrawMovement) {
+                    clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
+                }
+            } else {
+                // Cancelled - remove the climbing step
+                cmd.removeLastStep();
+                if (redrawMovement) {
+                    clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
+                }
+            }
         }
 
         updateFleeButton();
@@ -2969,6 +2997,139 @@ public class MovementDisplay extends ActionPhaseDisplay {
         boolean canClimb = ClimbingHelper.canClimb(selectedUnit);
         setClimbEnabled(climbingOptionEnabled && canClimb);
         updateClimbModeButtonText();
+    }
+
+    /**
+     * Shows a dialog for a mid-climb entity to choose how many levels to climb this turn. Returns 0 if the player
+     * chooses to cling in place, or the number of levels chosen.
+     */
+    private int showContinueClimbingDialog(Mek mek) {
+        return showClimbingLevelDialog(mek, true);
+    }
+
+    /**
+     * Shows a dialog for an entity starting a new climb to choose how many levels to climb. Returns 0 if cancelled, or
+     * the number of levels chosen.
+     */
+    private int showStartClimbingDialog(Mek mek) {
+        return showClimbingLevelDialog(mek, false);
+    }
+
+    /**
+     * Shows a climbing level chooser dialog (TO:AR p.20).
+     *
+     * @param mek            the climbing Mek
+     * @param isContinuation true if continuing a multi-turn climb, false if starting fresh
+     *
+     * @return the number of levels chosen (0 = cling in place / cancel)
+     */
+    private int showClimbingLevelDialog(Mek mek, boolean isContinuation) {
+        LOGGER.info("[CLIMB-TRACE] showClimbingLevelDialog: entity={}, isContinuation={}, " +
+                    "position={}, elevation={}, facing={}",
+              mek.getDisplayName(), isContinuation, mek.getPosition(), mek.getElevation(), mek.getFacing());
+        int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(mek);
+        int walkMP = mek.getWalkMP();
+        int currentElevation = mek.getElevation();
+
+        // Determine the target hex and total levels
+        Coords targetCoords = mek.getPosition().translated(mek.getFacing());
+        Hex targetHex = game.getBoard(mek).getHex(targetCoords);
+        Hex currentHex = game.getBoard(mek).getHex(mek.getPosition());
+
+        if ((targetHex == null) || (currentHex == null)) {
+            return 0;
+        }
+
+        int targetLevel = targetHex.getLevel();
+        if (targetHex.containsTerrain(Terrains.BUILDING)) {
+            targetLevel = currentHex.getLevel() + targetHex.terrainLevel(Terrains.BLDG_ELEV);
+        }
+        int currentAbsolute = currentHex.getLevel() + currentElevation;
+        int totalLevelsRemaining = targetLevel - currentAbsolute;
+
+        LOGGER.info("[CLIMB-TRACE] showClimbingLevelDialog: targetLevel={}, currentAbsolute={}, " +
+                    "totalLevelsRemaining={}, targetHex={}, isBuilding={}",
+              targetLevel, currentAbsolute, totalLevelsRemaining,
+              targetCoords, targetHex.containsTerrain(Terrains.BUILDING));
+
+        if (totalLevelsRemaining <= 0) {
+            LOGGER.info("[CLIMB-TRACE] showClimbingLevelDialog: no levels remaining, returning 0");
+            return 0;
+        }
+
+        boolean isBuilding = targetHex.containsTerrain(Terrains.BUILDING);
+
+        // Calculate available MP for climbing (walk MP minus base hex cost of 1)
+        int availableMP = walkMP - 1;
+        int maxAffordableLevels = Math.max(1, availableMP / costPerLevel);
+        int maxLevels = Math.min(totalLevelsRemaining, maxAffordableLevels);
+
+        // Build the dialog message
+        String title = Messages.getString("MovementDisplay.ClimbingDialog.title");
+        String messageKey;
+        String message;
+        if (isContinuation) {
+            messageKey = isBuilding
+                  ? "MovementDisplay.ClimbingDialog.continueBuilding"
+                  : "MovementDisplay.ClimbingDialog.continueCliff";
+            message = Messages.getString(messageKey,
+                  mek.getDisplayName(), currentElevation, totalLevelsRemaining,
+                  costPerLevel, availableMP);
+        } else {
+            messageKey = isBuilding
+                  ? "MovementDisplay.ClimbingDialog.startBuilding"
+                  : "MovementDisplay.ClimbingDialog.startCliff";
+            message = Messages.getString(messageKey,
+                  mek.getDisplayName(), totalLevelsRemaining,
+                  costPerLevel, availableMP);
+        }
+
+        // Build option list
+        String[] options = new String[maxLevels + (isContinuation ? 1 : 0)];
+        for (int i = 0; i < maxLevels; i++) {
+            int levels = i + 1;
+            int cost = levels * costPerLevel;
+            String optionKey = (levels == 1)
+                  ? "MovementDisplay.ClimbingDialog.levelOption"
+                  : "MovementDisplay.ClimbingDialog.levelsOption";
+            options[i] = Messages.getString(optionKey, levels, cost);
+        }
+        if (isContinuation) {
+            options[maxLevels] = Messages.getString("MovementDisplay.ClimbingDialog.clingOption");
+        }
+
+        String chosen = (String) JOptionPane.showInputDialog(
+              clientgui.getFrame(),
+              message,
+              title,
+              JOptionPane.QUESTION_MESSAGE,
+              null,
+              options,
+              options[maxLevels > 0 ? maxLevels - 1 : 0]);
+
+        if (chosen == null) {
+            // Dialog cancelled
+            return isContinuation ? 0 : -1;
+        }
+
+        // Check if cling was chosen
+        if (isContinuation && chosen.equals(Messages.getString("MovementDisplay.ClimbingDialog.clingOption"))) {
+            return 0;
+        }
+
+        // Find which level count was chosen
+        for (int i = 0; i < maxLevels; i++) {
+            int levels = i + 1;
+            int cost = levels * costPerLevel;
+            String optionKey = (levels == 1)
+                  ? "MovementDisplay.ClimbingDialog.levelOption"
+                  : "MovementDisplay.ClimbingDialog.levelsOption";
+            if (chosen.equals(Messages.getString(optionKey, levels, cost))) {
+                return levels;
+            }
+        }
+
+        return 0;
     }
 
     private void updateClimbModeButtonText() {

@@ -3749,6 +3749,51 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     }
                     // Successfully climbed one more level
                     climbingElevation++;
+
+                    // Building CF check during climbing (TO:AR p.20)
+                    // "If the weight of the unit exceeds the Construction Factor of the
+                    // hex — whether that occurs when the unit starts the climb, or during
+                    // the climb — the hex collapses."
+                    // The building being climbed is at the destination hex (curPos)
+                    Hex climbHex = getGame().getBoard(entity.getBoardId()).getHex(curPos);
+                    logger.info("[FALL-TRACE] Building check: curPos={}, lastPos={}, " +
+                          "containsBuilding={}", curPos, lastPos,
+                          climbHex.containsTerrain(Terrains.BUILDING));
+                    if (climbHex.containsTerrain(Terrains.BUILDING)) {
+                        IBuilding climbBldg = getGame().getBoard(entity.getBoardId()).getBuildingAt(curPos);
+                        if (climbBldg != null) {
+                            // On the first level, damage the building (entering the hex)
+                            if (levelClimbed == 1) {
+                                int buildingDamage = (int) Math.ceil(entity.getWeight() / 10.0);
+                                logger.info("[FALL-TRACE] Building climbing damage: {} points to {} at {}",
+                                      buildingDamage, climbBldg.getName(), curPos);
+                                addReport(gameManager.damageBuilding(climbBldg, buildingDamage,
+                                      "climbing", curPos));
+                            }
+
+                            // Check if unit weight exceeds current CF (may have changed
+                            // due to damage from other sources)
+                            int currentCF = climbBldg.getCurrentCF(curPos);
+                            logger.info("[FALL-TRACE] Building CF check: weight={}, CF={}", entity.getWeight(), currentCF);
+                            if (entity.getWeight() > currentCF) {
+                                gameManager.sendServerChat(entity.getDisplayName()
+                                      + " is too heavy for the weakened building!");
+                                gameManager.checkForCollapse(climbBldg, curPos, true,
+                                      gameManager.getMainPhaseReport());
+                                entity.setClimbing(false);
+                                curPos = entity.getPosition();
+                                curVTOLElevation = entity.getElevation();
+                                fellWhileClimbing = true;
+                                fellDuringMovement = true;
+                                turnOver = true;
+                                logger.info("[FALL-TRACE] Building collapsed during climbing at {}, " +
+                                      "unit weight {} > CF {}, climbingElevation={}",
+                                      lastPos, entity.getWeight(), climbBldg.getCurrentCF(lastPos),
+                                      climbingElevation);
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 if (fellWhileClimbing) {

@@ -564,6 +564,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
               selectedEntity.getDisplayName(), selectedEntity.isClimbing(),
               selectedEntity.getElevation(), selectedEntity.getPosition(), selectedEntity.getFacing());
         if (selectedEntity.isClimbing() && (selectedEntity instanceof Mek climbingMek)) {
+            // Check if the Mek can still climb after taking damage
+            if (!ClimbingHelper.canClimb(selectedEntity)) {
+                String fallMessage = selectedEntity.getDisplayName()
+                      + " can no longer hold on and will fall!";
+                JOptionPane.showMessageDialog(clientgui.getFrame(), fallMessage,
+                      Messages.getString("MovementDisplay.ClimbingDialog.title"),
+                      JOptionPane.WARNING_MESSAGE);
+                // Submit empty movement - server will handle the auto-fall
+                ready();
+                return;
+            }
             int chosenLevels = showContinueClimbingDialog(climbingMek);
             if (chosenLevels == 0) {
                 // Player chose to cling in place - forfeit movement

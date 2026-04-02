@@ -151,14 +151,10 @@ public final class ClimbingHelper {
         }
         int climbableArms = countClimbableArms(mek);
         if (climbableArms == 0) {
-            // Determine the specific reason
-            boolean leftArmOk = isArmClimbCapable(mek, Mek.LOC_LEFT_ARM);
-            boolean rightArmOk = isArmClimbCapable(mek, Mek.LOC_RIGHT_ARM);
-            if (!leftArmOk && !rightArmOk) {
-                return mek.getDisplayName() + " cannot climb. Climbing requires at least one arm "
-                      + "with all four actuators (shoulder, upper arm, lower arm, hand) functional "
-                      + "and the hand free of physical weapons or carried objects.";
-            }
+            return mek.getDisplayName() + " does not have a functional arm to climb with."
+                  + "\n\nClimbing requires at least one arm with all four actuators"
+                  + " (shoulder, upper arm, lower arm, hand) intact and the hand"
+                  + " free of weapons or carried objects.";
         }
         return null;
     }

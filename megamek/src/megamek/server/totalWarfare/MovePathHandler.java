@@ -169,6 +169,26 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     void processMovement() {
+        // TacOps Climbing: check if a climbing entity lost its climbing ability
+        // due to actuator damage since last turn (TO:AR p.20)
+        if (entity.isClimbing() && (entity instanceof Mek climbingMek)) {
+            int climbableArms = ClimbingHelper.countClimbableArms(climbingMek);
+            if (climbableArms == 0) {
+                // No functional climbing arms - Mek auto-falls (TO:AR p.20)
+                logger.info("[FALL-TRACE] Climbing Mek {} lost all climbing arms, auto-falling " +
+                      "from elevation {} in hex {}",
+                      entity.getDisplayName(), entity.getElevation(), entity.getPosition());
+                gameManager.sendServerChat(entity.getDisplayName()
+                      + " can no longer hold on and falls!");
+                PilotingRollData autoFallRoll = new PilotingRollData(entity.getId(),
+                      TargetRoll.AUTOMATIC_FAIL, "climbing arms destroyed");
+                addReport(gameManager.doEntityFallsInto(entity, entity.getElevation(),
+                      entity.getPosition(), entity.getPosition(), autoFallRoll, true, 0));
+                entity.setClimbing(false);
+                addNewLines();
+            }
+        }
+
         if (md.getMpUsed() > 0) {
             // All auto-hit hexes for this unit (not including preset targets) are cleared
             // if any MP are expended.

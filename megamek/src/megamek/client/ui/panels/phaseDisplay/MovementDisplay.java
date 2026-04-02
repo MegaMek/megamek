@@ -48,6 +48,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.JOptionPane;
+
+import megamek.client.ui.dialogs.phaseDisplay.ClimbingChoiceDialog;
 import javax.swing.SwingUtilities;
 
 import megamek.client.event.BoardViewEvent;
@@ -3064,72 +3066,51 @@ public class MovementDisplay extends ActionPhaseDisplay {
         int maxAffordableLevels = Math.max(1, availableMP / costPerLevel);
         int maxLevels = Math.min(totalLevelsRemaining, maxAffordableLevels);
 
-        // Build the dialog message
-        String title = Messages.getString("MovementDisplay.ClimbingDialog.title");
+        // Build the dialog header message
         String messageKey;
-        String message;
+        String headerMessage;
         if (isContinuation) {
             messageKey = isBuilding
                   ? "MovementDisplay.ClimbingDialog.continueBuilding"
                   : "MovementDisplay.ClimbingDialog.continueCliff";
-            message = Messages.getString(messageKey,
+            headerMessage = Messages.getString(messageKey,
                   mek.getDisplayName(), currentElevation, totalLevelsRemaining,
                   costPerLevel, availableMP);
         } else {
             messageKey = isBuilding
                   ? "MovementDisplay.ClimbingDialog.startBuilding"
                   : "MovementDisplay.ClimbingDialog.startCliff";
-            message = Messages.getString(messageKey,
+            headerMessage = Messages.getString(messageKey,
                   mek.getDisplayName(), totalLevelsRemaining,
                   costPerLevel, availableMP);
         }
 
-        // Build option list
-        String[] options = new String[maxLevels + (isContinuation ? 1 : 0)];
-        for (int i = 0; i < maxLevels; i++) {
-            int levels = i + 1;
-            int cost = levels * costPerLevel;
-            String optionKey = (levels == 1)
-                  ? "MovementDisplay.ClimbingDialog.levelOption"
-                  : "MovementDisplay.ClimbingDialog.levelsOption";
-            options[i] = Messages.getString(optionKey, levels, cost);
+        // Build climbing options
+        List<ClimbingChoiceDialog.ClimbingOption> climbingOptions = new java.util.ArrayList<>();
+        for (int i = 1; i <= maxLevels; i++) {
+            int cost = i * costPerLevel;
+            String label = (i == 1)
+                  ? Messages.getString("MovementDisplay.ClimbingDialog.levelOption", i, cost)
+                  : Messages.getString("MovementDisplay.ClimbingDialog.levelsOption", i, cost);
+            climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(i, cost, label));
         }
         if (isContinuation) {
-            options[maxLevels] = Messages.getString("MovementDisplay.ClimbingDialog.clingOption");
+            climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(0, 0,
+                  Messages.getString("MovementDisplay.ClimbingDialog.clingOption")));
         }
 
-        String chosen = (String) JOptionPane.showInputDialog(
-              clientgui.getFrame(),
-              message,
-              title,
-              JOptionPane.QUESTION_MESSAGE,
-              null,
-              options,
-              options[maxLevels > 0 ? maxLevels - 1 : 0]);
+        // Show the dialog
+        ClimbingChoiceDialog dialog = new ClimbingChoiceDialog(
+              clientgui.getFrame(), headerMessage, climbingOptions);
+        dialog.setVisible(true);
 
+        ClimbingChoiceDialog.ClimbingOption chosen = dialog.getFirstChoice();
         if (chosen == null) {
-            // Dialog cancelled
+            // Dialog cancelled (Esc)
             return isContinuation ? 0 : -1;
         }
 
-        // Check if cling was chosen
-        if (isContinuation && chosen.equals(Messages.getString("MovementDisplay.ClimbingDialog.clingOption"))) {
-            return 0;
-        }
-
-        // Find which level count was chosen
-        for (int i = 0; i < maxLevels; i++) {
-            int levels = i + 1;
-            int cost = levels * costPerLevel;
-            String optionKey = (levels == 1)
-                  ? "MovementDisplay.ClimbingDialog.levelOption"
-                  : "MovementDisplay.ClimbingDialog.levelsOption";
-            if (chosen.equals(Messages.getString(optionKey, levels, cost))) {
-                return levels;
-            }
-        }
-
-        return 0;
+        return chosen.levels();
     }
 
     private void updateClimbModeButtonText() {

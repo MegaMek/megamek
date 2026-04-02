@@ -41,6 +41,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
+import megamek.common.moves.ClimbingHelper;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoType;
@@ -110,6 +111,12 @@ public class ComputeTargetToHitMods {
             if (entityTarget.getPosition().direction(attacker.getPosition()) == entityTarget.getFacing()) {
                 toHit.addModifier(+3, Messages.getString("WeaponAttackAction.FireThruCover"));
             }
+        }
+
+        // target climbing - easier to hit (TO:AR p.20)
+        if ((entityTarget != null) && entityTarget.isClimbing()) {
+            toHit.addModifier(ClimbingHelper.TARGET_CLIMBING_MODIFIER,
+                  Messages.getString("WeaponAttackAction.TargetClimbing"));
         }
 
         // target prone

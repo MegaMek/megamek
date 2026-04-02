@@ -3705,11 +3705,23 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     if (gameManager.doSkillCheckWhileMoving(entity, climbingElevation,
                           lastPos, lastPos, rollTarget, true) > 0) {
                         // Mek falls from the last level successfully reached
-                        entity.setPosition(lastPos);
-                        entity.setElevation(0);
+                        // doEntityFallsInto handles positioning and elevation for the terrain
                         entity.setClimbing(false);
-                        curPos = lastPos;
-                        curVTOLElevation = 0;
+                        curPos = entity.getPosition();
+                        curVTOLElevation = entity.getElevation();
+                        logger.info("[FALL-TRACE] After doSkillCheckWhileMoving fall: " +
+                              "entity.position={}, entity.elevation={}, entity.isProne={}, " +
+                              "climbingElevation={}, lastPos={}, curPos={}, curVTOLElevation={}",
+                              entity.getPosition(), entity.getElevation(), entity.isProne(),
+                              climbingElevation, lastPos, curPos, curVTOLElevation);
+                        Hex fallHex = getGame().getBoard(entity.getBoardId()).getHex(entity.getPosition());
+                        if (fallHex != null) {
+                            logger.info("[FALL-TRACE] Fall hex: level={}, ceiling={}, floor={}, depth={}, " +
+                                  "containsWater={}, isElevationValid={}",
+                                  fallHex.getLevel(), fallHex.ceiling(), fallHex.floor(), fallHex.depth(),
+                                  fallHex.containsTerrain(Terrains.WATER),
+                                  entity.isElevationValid(entity.getElevation(), fallHex));
+                        }
                         fellWhileClimbing = true;
                         fellDuringMovement = true;
                         turnOver = true;

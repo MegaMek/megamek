@@ -2160,7 +2160,7 @@ public class MoveStep implements Serializable {
             // Multi-turn climbs are allowed - the server will handle partial execution
             if (isClimbing) {
                 movementType = EntityMovementType.MOVE_WALK;
-                LOGGER.info("[CLIMB-TRACE] compileIllegal: isClimbing=true, set MOVE_WALK, mpUsed={}", getMpUsed());
+                LOGGER.info("[CLIMB-TRACE] compileIllegal: isClimbing=true, set MOVE_WALK, mpUsed={}, stepType={}", getMpUsed(), stepType);
                 // Skip all remaining movement type checks - climbing overrides everything
                 return;
             } else if (getMpUsed() <= tmpWalkMP) {
@@ -2357,6 +2357,7 @@ public class MoveStep implements Serializable {
               entity.isLocationBad(Mek.LOC_LEFT_ARM) &&
               entity.isLocationBad(Mek.LOC_RIGHT_ARM) &&
               (entity.isLocationBad(Mek.LOC_RIGHT_LEG) || entity.isLocationBad(Mek.LOC_LEFT_LEG))) {
+            LOGGER.info("[STAND-TRACE] {} blocked: no arms + missing leg", stepType);
             movementType = EntityMovementType.MOVE_ILLEGAL;
             return;
         }
@@ -2367,11 +2368,21 @@ public class MoveStep implements Serializable {
               (1 == cachedEntityState.getRunMP()) &&
               (entity.mpUsed < 1) &&
               !entity.isStuck()) {
+            LOGGER.info("[STAND-TRACE] GET_UP with 1 MP, set MOVE_RUN");
             movementType = EntityMovementType.MOVE_RUN;
         }
 
         if ((MoveStepType.CAREFUL_STAND == stepType) && (entity.mpUsed > 1)) {
+            LOGGER.info("[STAND-TRACE] CAREFUL_STAND blocked: entity.mpUsed={}", entity.mpUsed);
             movementType = EntityMovementType.MOVE_ILLEGAL;
+        }
+
+        if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
+            LOGGER.info("[STAND-TRACE] {} after checks: movementType={}, isProne={}, " +
+                  "isClimbing={}, entity.isClimbing={}, climbMode={}, elevation={}, " +
+                  "entity.elevation={}, entity.position={}, entity.mpUsed={}",
+                  stepType, movementType, isProne(), isClimbing, entity.isClimbing(),
+                  climbMode, elevation, entity.getElevation(), entity.getPosition(), entity.mpUsed);
         }
 
         if (isFirstStep() && ((stepType == MoveStepType.TAKEOFF) || (stepType == MoveStepType.VERTICAL_TAKE_OFF))) {
@@ -2685,7 +2696,14 @@ public class MoveStep implements Serializable {
 
         // check if this movement is illegal for reasons other than points
         // Only a CHAFF step or another unloading step can follow an existing unloading step
-        boolean movementPossible = isMovementPossible(game, lastPos, prev.getElevation(), cachedEntityState);
+        // In-place actions (GET_UP, CAREFUL_STAND, etc.) should not be blocked by
+        // isMovementPossible - the entity is already at this position
+        boolean isInPlaceAction = (stepType == MoveStepType.GET_UP)
+              || (stepType == MoveStepType.CAREFUL_STAND)
+              || (stepType == MoveStepType.GO_PRONE)
+              || (stepType == MoveStepType.HULL_DOWN);
+        boolean movementPossible = isInPlaceAction
+              || isMovementPossible(game, lastPos, prev.getElevation(), cachedEntityState);
         if (!movementPossible ||
               (isUnloaded && !(type == MoveStepType.CHAFF || type == MoveStepType.UNLOAD))
         ) {
@@ -2694,11 +2712,20 @@ public class MoveStep implements Serializable {
                       "movementPossible={}, movementType was={}, prevEl={}",
                       movementPossible, movementType, prev.getElevation());
             }
+            if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
+                LOGGER.info("[STAND-TRACE] {} overridden to MOVE_ILLEGAL by isMovementPossible! " +
+                      "movementPossible={}, prevEl={}, lastPos={}, prev.movementType={}",
+                      stepType, movementPossible, prev.getElevation(), lastPos, prev.movementType);
+            }
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
         // If the previous step is always illegal, then so is this one
         if (EntityMovementType.MOVE_ILLEGAL == prev.movementType) {
+            if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
+                LOGGER.info("[STAND-TRACE] {} overridden to MOVE_ILLEGAL because prev step was ILLEGAL! " +
+                      "prev.type={}", stepType, prev.type);
+            }
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 

@@ -919,11 +919,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
         }
 
-        // Check if the path ends with an illegal step that could have been a climb
+        // Check if the path ends with an illegal FORWARDS step that could have been a climb
         // Show feedback to the player about why climbing is not possible
         if ((currentEntity instanceof Mek)
               && (cmd != null)
               && (cmd.getLastStep() != null)
+              && (cmd.getLastStep().getType() == MoveStepType.FORWARDS)
               && (cmd.getLastStep().getMovementType(true) == EntityMovementType.MOVE_ILLEGAL)
               && cmd.getLastStep().climbMode()
               && !ClimbingHelper.canClimb(currentEntity)
@@ -942,6 +943,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
         boolean lastStepClimbing = hasLastStep && cmd.getLastStep().isClimbing();
         boolean entityNotYetClimbing = (currentEntity != null) && !currentEntity.isClimbing();
         boolean noChoiceMade = (currentEntity != null) && (currentEntity.getClimbingLevelsChosen() <= 0);
+
+        // Log all step updates when entity is prone (debug get-up issues)
+        if (hasLastStep && (currentEntity != null) && currentEntity.isProne()) {
+            MoveStep lastStep = cmd.getLastStep();
+            LOGGER.info("[CLIMB-TRACE] updateMove prone entity: type={}, movementType={}, " +
+                  "isClimbing={}, climbMode={}, isProne={}, entity.isClimbing={}, elevation={}",
+                  lastStep.getType(), lastStep.getMovementType(true),
+                  lastStep.isClimbing(), lastStep.climbMode(),
+                  currentEntity.isProne(), currentEntity.isClimbing(), lastStep.getElevation());
+        }
+
         if (lastStepClimbing) {
             LOGGER.info("[CLIMB-TRACE] updateMove dialog check: lastStepClimbing={}, entityNotYetClimbing={}, " +
                         "noChoiceMade={}, isMek={}, climbingLevelsChosen={}",

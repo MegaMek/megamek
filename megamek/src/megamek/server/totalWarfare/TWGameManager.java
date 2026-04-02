@@ -27563,7 +27563,42 @@ public class TWGameManager extends AbstractGameManager {
      */
     public boolean checkForCollapse(IBuilding bldg, Coords coords, boolean checkBecauseOfDamage,
           Vector<Report> vPhaseReport) {
-        return buildingCollapseHandler.checkForCollapse(bldg, coords, checkBecauseOfDamage, vPhaseReport);
+        boolean collapsed = buildingCollapseHandler.checkForCollapse(bldg, coords, checkBecauseOfDamage, vPhaseReport);
+
+        // TacOps Climbing (TO:AR p.20): check if any climbing entity on an adjacent hex
+        // can no longer be supported by this building after damage
+        if (!collapsed && (bldg != null) && (coords != null)) {
+            checkClimbingEntitiesOnBuilding(bldg, coords, vPhaseReport);
+        }
+
+        return collapsed;
+    }
+
+    /**
+     * Check if any entity climbing this building hex can no longer be supported because the building's CF dropped below
+     * the entity's weight (TO:AR p.20).
+     */
+    private void checkClimbingEntitiesOnBuilding(IBuilding bldg, Coords buildingCoords,
+          Vector<Report> vPhaseReport) {
+        int currentCF = bldg.getCurrentCF(buildingCoords);
+        for (Entity entity : game.getEntitiesVector()) {
+            if (!entity.isClimbing() || entity.isDestroyed() || entity.isDoomed()) {
+                continue;
+            }
+            // Check if this entity is climbing toward the building hex
+            Coords facingCoords = entity.getPosition().translated(entity.getFacing());
+            if (facingCoords.equals(buildingCoords) && (entity.getWeight() > currentCF)) {
+                // Entity is too heavy for the damaged building - falls from climbing position
+                Report climbFallReport = new Report(6461, Report.PUBLIC);
+                climbFallReport.add(entity.getDisplayName());
+                vPhaseReport.add(climbFallReport);
+                PilotingRollData autoFallRoll = new PilotingRollData(entity.getId(),
+                      TargetRoll.AUTOMATIC_FAIL, "building too damaged to support climbing unit");
+                vPhaseReport.addAll(doEntityFallsInto(entity, entity.getElevation(),
+                      entity.getPosition(), entity.getPosition(), autoFallRoll, true, 0));
+                entity.setClimbing(false);
+            }
+        }
     }
 
     /**
@@ -27663,6 +27698,9 @@ public class TWGameManager extends AbstractGameManager {
                     if (buildingCollapseHandler.checkForCollapse(bldg, positionMap, coords, false, mainPhaseReport)) {
                         coordsToRemove.add(coords);
                     }
+                    // TacOps Climbing (TO:AR p.20): check if any climbing entity
+                    // can no longer be supported after CF reduction
+                    checkClimbingEntitiesOnBuilding(bldg, coords, mainPhaseReport);
                 }
                 updateCoords.removeAll(coordsToRemove);
                 update.put(bldg, updateCoords);

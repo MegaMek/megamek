@@ -3768,7 +3768,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                 logger.info("[FALL-TRACE] Building climbing damage: {} points to {} at {}",
                                       buildingDamage, climbBldg.getName(), curPos);
                                 addReport(gameManager.damageBuilding(climbBldg, buildingDamage,
-                                      "climbing", curPos));
+                                      " absorbs ", curPos));
                             }
 
                             // Check if unit weight exceeds current CF (may have changed

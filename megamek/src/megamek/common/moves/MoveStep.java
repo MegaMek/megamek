@@ -765,15 +765,7 @@ public class MoveStep implements Serializable {
         prev = evaluateFirstStep(game, entity, prev);
 
         PhasePass phasePass = PhasePassSelector.getPhasePass(getType());
-        if (type == MoveStepType.CLIMB) {
-            LOGGER.info("CLIMB compile: before PhasePass - mp={}, mpUsed={}, elevation={}, position={}",
-                  mp, mpUsed, elevation, position);
-        }
         phasePass.execute(this, game, entity, prev, cachedEntityState);
-        if (type == MoveStepType.CLIMB) {
-            LOGGER.info("CLIMB compile: after PhasePass - mp={}, mpUsed={}, elevation={}, position={}",
-                  mp, mpUsed, elevation, position);
-        }
 
         if (noCost) {
             setMp(0);
@@ -793,10 +785,6 @@ public class MoveStep implements Serializable {
 
         // Update the entity's total MP used.
         addMpUsed(getMp());
-        if (type == MoveStepType.CLIMB) {
-            LOGGER.info("CLIMB compile: after addMpUsed - mp={}, mpUsed={}, elevation={}",
-                  mp, mpUsed, elevation);
-        }
 
         // Check for a stacking violation.
         final Entity violation = Compute.stackingViolation(game,
@@ -887,15 +875,7 @@ public class MoveStep implements Serializable {
     public void copy(final Game game, MoveStep prev) {
         if (prev == null) {
             setFromEntity(getEntity(), game);
-            if (type == MoveStepType.CLIMB) {
-                LOGGER.info("CLIMB copy: prev is null, setFromEntity - elevation={}, isClimbing={}",
-                      elevation, isClimbing);
-            }
             return;
-        }
-        if (type == MoveStepType.CLIMB) {
-            LOGGER.info("CLIMB copy: from prev type={}, prev.elevation={}, prev.isClimbing={}, prev.mpUsed={}",
-                  prev.type, prev.elevation, prev.isClimbing, prev.mpUsed);
         }
         hasJustStood = prev.hasJustStood;
         facing = prev.getFacing();

@@ -76,7 +76,6 @@ class PhasePassSelector {
     private static final PhasePass CONVERT_MODE_STEP = new ConvertModeStep();
     private static final PhasePass BOOTLEGGER_STEP = new BootleggerStep();
     private static final PhasePass BRACE_STEP = new BraceStep();
-    private static final PhasePass CLIMB_STEP = new ClimbStep();
     private static final PhasePass DEFAULT_STEP = new DefaultStep();
 
     /**
@@ -121,7 +120,6 @@ class PhasePassSelector {
             case CONVERT_MODE -> CONVERT_MODE_STEP;
             case BOOTLEGGER -> BOOTLEGGER_STEP;
             case BRACE -> BRACE_STEP;
-            case CLIMB -> CLIMB_STEP;
             default -> DEFAULT_STEP;
         };
     }

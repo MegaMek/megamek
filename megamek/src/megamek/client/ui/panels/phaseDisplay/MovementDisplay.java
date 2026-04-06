@@ -1272,7 +1272,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setClearEnabled(false);
         setHullDownEnabled(false);
         setBraceEnabled(false);
-        setClimbEnabled(false);
         setSwimEnabled(false);
         setModeConvertEnabled(false);
         setAccEnabled(false);
@@ -3028,16 +3027,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void updateClimbButton() {
-        Entity selectedUnit = currentEntity();
-        if (selectedUnit == null) {
-            setClimbEnabled(false);
-            return;
-        }
-
-        boolean climbingOptionEnabled = game.getOptions()
-              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
-        boolean canClimb = ClimbingHelper.canClimb(selectedUnit);
-        setClimbEnabled(climbingOptionEnabled && canClimb);
         updateClimbModeButtonText();
     }
 
@@ -5470,8 +5459,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     updateDonePanel();
                 }
             }
-        } else if (actionCmd.equals(MoveCommand.MOVE_CLIMB.getCmd())) {
-            addStepToMovePath(MoveStepType.CLIMB);
         } else if (actionCmd.equals(MoveCommand.MOVE_FLEE.getCmd()) &&
               clientgui.doYesNoDialog(Messages.getString("MovementDisplay.EscapeDialog.title"),
                     Messages.getString("MovementDisplay.EscapeDialog.message"))) {
@@ -6518,11 +6505,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void setBraceEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_BRACE).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_BRACE.getCmd(), enabled);
-    }
-
-    private void setClimbEnabled(boolean enabled) {
-        getBtn(MoveCommand.MOVE_CLIMB).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_CLIMB.getCmd(), enabled);
     }
 
     private void setClearEnabled(boolean enabled) {

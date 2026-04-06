@@ -109,8 +109,7 @@ public enum MoveStepType {
     CHAFF(false, "Chaff"),
     PICKUP_CARGO(false, "Pickup Cargo"),
     DROP_CARGO(false, "Drop Cargo"),
-    CHANGE_BOARD(true, "Change Board"),
-    CLIMB(false, "Climb");
+    CHANGE_BOARD(true, "Change Board");
 
     private final boolean entersNewHex;
     private final String humanReadableLabel;

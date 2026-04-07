@@ -51,6 +51,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import megamek.client.event.BoardViewEvent;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -568,6 +569,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (!ClimbingHelper.canClimb(selectedEntity)) {
                 String fallMessage = selectedEntity.getDisplayName()
                       + " can no longer hold on and will fall!";
+                clientgui.addToast(ToastLevel.ERROR, fallMessage, selectedEntity);
                 JOptionPane.showMessageDialog(clientgui.getFrame(), fallMessage,
                       Messages.getString("MovementDisplay.ClimbingDialog.title"),
                       JOptionPane.WARNING_MESSAGE);
@@ -583,9 +585,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
             if (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN) {
                 // Dangle-and-Drop: add a DOWN step to signal dangle to server
-                // Server detects DOWN step on climbing entity = dangle action
                 LOGGER.info("[DANGLE-TRACE] Dangle down chosen: entity={}, currentElevation={}, dangleLevels={}",
                       selectedEntity.getDisplayName(), selectedEntity.getElevation(), chosen.levels());
+                clientgui.addToast(ToastLevel.INFO,
+                      selectedEntity.getDisplayName() + " dangles down " + chosen.levels() + " levels",
+                      selectedEntity);
                 cmd.addStep(MoveStepType.DOWN);
                 ready();
                 return;

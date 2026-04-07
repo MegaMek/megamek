@@ -71,6 +71,7 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.util.RoundWeight;
 import megamek.logging.MMLogger;
+import megamek.common.units.PilotSPAHelper;
 
 /**
  * ProtoMeks. Level 2 Clan equipment.
@@ -1162,10 +1163,18 @@ public class ProtoMek extends Entity {
             return new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, "Landing with destroyed legs.");
         } else if (!getCrew().isActive()) {
             return new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, "Landing incapacitated pilot.");
-        } else if (getRunMP() < 4) {
-            return new PilotingRollData(getId(), 8, "Forced landing with insufficient thrust.");
         } else {
-            return new PilotingRollData(getId(), 4, "Attempting to land");
+            PilotingRollData roll;
+            if (getRunMP() < 4) {
+                roll = new PilotingRollData(getId(), 8, "Forced landing with insufficient thrust.");
+            } else {
+                roll = new PilotingRollData(getId(), 4, "Attempting to land");
+            }
+
+            if ((hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PilotSPAHelper.isWindWalkerValid(this)) {
+                roll.addModifier(-1, "Wind Walker ProtoMek Glider Landing");
+            }
+            return roll;
         }
     }
 

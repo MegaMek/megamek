@@ -1,0 +1,3 @@
+[submodule "mm-data"]
+	path = mm-data
+	url = https://github.com/MegaMek/mm-data

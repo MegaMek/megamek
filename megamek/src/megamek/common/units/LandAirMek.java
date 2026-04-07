@@ -60,6 +60,7 @@ import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.logging.MMLogger;
+import megamek.common.units.PilotSPAHelper;
 
 public class LandAirMek extends BipedMek implements IAero, IBomber {
     private static final MMLogger LOGGER = MMLogger.create(LandAirMek.class);
@@ -816,6 +817,10 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             boolean spaceOrVacuum = isSpaceborne() || conditions.getAtmosphere().isVacuum();
             if (!spaceOrVacuum && isAirborne()) {
                 roll.addModifier(+1, "Atmospheric operations");
+                
+                if ((hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PilotSPAHelper.isWindWalkerValid(this)) {
+                    roll.addModifier(-1, "Wind Walker Space/Atmo Interface passthrough");
+                }
             }
 
             if (hasQuirk(OptionsConstants.QUIRK_POS_ATMOSPHERE_FLYER) && !isSpaceborne()) {

@@ -60,6 +60,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.logging.MMLogger;
+import megamek.common.units.PilotSPAHelper;
 
 /**
  * Methods shared by Aero and LandAirMek
@@ -629,7 +630,9 @@ public interface IAero {
             }
             roll.addModifier(mod, Terrains.getDisplayName(terrain.get(0), terrain.get(1)) + " in landing path");
         }
-
+        if ((((Entity) this).hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PilotSPAHelper.isWindWalkerValid((Entity) this)) {
+            roll.addModifier(-1, "Wind Walker landing modifier");
+        }
         return roll;
     }
 

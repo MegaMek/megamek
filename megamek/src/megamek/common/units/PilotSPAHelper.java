@@ -158,6 +158,36 @@ public final class PilotSPAHelper {
               .filter(mounted -> isSandblasterValid(mounted, options))
               .collect(Collectors.toList());
     }
+    
+    /**
+    * Returns true when the given enttity is a valid unit type for the Wind Walker SPA.
+    * Wind Walker applies to: (most) aerospace,aircraft, WiGE, Land-Air-Mechs, and Glider ProtoMechs.
+    * @param entity The entity to check
+    * @return True when the given entity is a valid unit type for the Wind Walker SPA.
+    **/
+    public static boolean isWindWalkerValid(Entity entity) {
+        if (entity instanceof IAero) {
+            return true;
+        }
+        
+        if (entity instanceof LandAirMek) {
+            return true;
+        }
+
+        if (entity.getMovementMode().isWiGE()) {
+            return true;
+        }
+
+        if (entity instanceof ProtoMek && ((ProtoMek) entity).isGlider()) {
+            return true;
+        }
+
+        if (entity.getMovementMode().isVTOL()) {
+            return true;
+        }
+
+        return false;
+    }
 
     private PilotSPAHelper() {
     }

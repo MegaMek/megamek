@@ -78,6 +78,8 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.PILOT_ZWEIHANDER, false);
         addOption(adv, OptionsConstants.PILOT_ATOW_G_TOLERANCE, false);
 
+        // Airborne Only Skills
+        addOption(adv, OptionsConstants.PILOT_WIND_WALKER, false);
         // Gunnery Abilities
         addOption(adv, OptionsConstants.GUNNERY_BLOOD_STALKER, false);
         addOption(adv, OptionsConstants.GUNNERY_CLUSTER_HITTER, false);

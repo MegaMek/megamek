@@ -61,6 +61,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.logging.MMLogger;
+import megamek.common.units.PilotSPAHelper;
 
 /**
  * Fighter squadrons are basically "containers" for a bunch of fighters.
@@ -244,6 +245,11 @@ public class FighterSquadron extends AeroSpaceFighter {
               || conditions.getAtmosphere().isVacuum())) {
             prd.addModifier(+2, "Atmospheric operations");
             prd.addModifier(-1, "fighter/ small craft");
+
+            //wind walker spa bonus
+            if ((hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PilotSPAHelper.isWindWalkerValid(this)) {
+                prd.addModifier(-1, "Wind Walker Space/Atmo Interface passthrough");
+            }
         }
 
         // according to personal communication with Welshman, the normal crit

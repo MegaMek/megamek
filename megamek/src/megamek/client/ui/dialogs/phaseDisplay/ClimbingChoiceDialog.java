@@ -43,7 +43,6 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 
-import megamek.client.ui.Messages;
 import megamek.client.ui.buttons.ButtonEsc;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.util.UIUtil;
@@ -61,13 +60,24 @@ public class ClimbingChoiceDialog extends AbstractChoiceDialog<ClimbingChoiceDia
     private static final int BASE_PADDING = 10;
 
     /**
-     * Represents a climbing level choice.
-     *
-     * @param levels the number of levels to climb (0 = cling in place)
-     * @param mpCost the MP cost for climbing this many levels
-     * @param label the display label
+     * The type of climbing action the player is choosing.
      */
-    public record ClimbingOption(int levels, int mpCost, String label) {
+    public enum ClimbingActionType {
+        CLIMB_UP,
+        CLING,
+        DANGLE_DOWN,
+        DROP
+    }
+
+    /**
+     * Represents a climbing action choice.
+     *
+     * @param levels the number of levels for this action (0 = cling/drop)
+     * @param mpCost the MP cost for this action
+     * @param label the display label
+     * @param type the type of climbing action
+     */
+    public record ClimbingOption(int levels, int mpCost, String label, ClimbingActionType type) {
     }
 
     /**

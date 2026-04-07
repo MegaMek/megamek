@@ -397,6 +397,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean prone = false;
     protected boolean hullDown = false;
     protected boolean climbing = false;
+    protected boolean dangling = false;
     protected int climbingLevelsChosen = 0;
     protected boolean findingClub = false;
     protected boolean armsFlipped = false;
@@ -2074,11 +2075,12 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true if this entity is currently climbing a cliff face (TO:AR p.20).
-     * The entity's intermediate climbing level is tracked via the existing elevation field.
+     * Returns true if this entity is currently climbing or dangling from a cliff face (TO:AR p.20).
+     * Both climbing and dangling entities have the same combat restrictions
+     * (rear weapons only, no physical attacks, -2 to-hit target modifier).
      */
     public boolean isClimbing() {
-        return climbing;
+        return climbing || dangling;
     }
 
     /**
@@ -2088,6 +2090,23 @@ public abstract class Entity extends TurnOrdered
      */
     public void setClimbing(boolean climbing) {
         this.climbing = climbing;
+    }
+
+    /**
+     * Returns true if this entity is currently dangling from a cliff face as part of a Dangle-and-Drop maneuver (TO:AR
+     * p.20).
+     */
+    public boolean isDangling() {
+        return dangling;
+    }
+
+    /**
+     * Sets the dangling state for the Dangle-and-Drop maneuver (TO:AR p.20).
+     *
+     * @param dangling true if the entity is dangling
+     */
+    public void setDangling(boolean dangling) {
+        this.dangling = dangling;
     }
 
     /**

@@ -48,8 +48,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.JOptionPane;
-
-import megamek.client.ui.dialogs.phaseDisplay.ClimbingChoiceDialog;
 import javax.swing.SwingUtilities;
 
 import megamek.client.event.BoardViewEvent;
@@ -64,6 +62,7 @@ import megamek.client.ui.clientGUI.boardview.sprite.FlyOverSprite;
 import megamek.client.ui.dialogs.ChoiceDialog;
 import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.phaseDisplay.BombPayloadDialog;
+import megamek.client.ui.dialogs.phaseDisplay.ClimbingChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.FlightPathNotice;
 import megamek.client.ui.dialogs.phaseDisplay.LandingConfirmation;
 import megamek.client.ui.dialogs.phaseDisplay.LandingHexNotice;
@@ -575,14 +574,37 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 ready();
                 return;
             }
-            int chosenLevels = showContinueClimbingDialog(climbingMek);
-            if (chosenLevels == 0) {
-                // Player chose to cling in place - forfeit movement
+            ClimbingChoiceDialog.ClimbingOption chosen = showContinueClimbingDialog(climbingMek);
+            if ((chosen == null) || (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.CLING)) {
+                // Player chose to cling in place or cancelled - forfeit movement
                 ready();
                 return;
             }
-            // Store the choice and auto-queue climbing movement
-            selectedEntity.setClimbingLevelsChosen(chosenLevels);
+            if (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN) {
+                // Dangle-and-Drop: lower by 2 levels, spends full turn
+                int dangleLevels = chosen.levels();
+                int newElevation = Math.max(0, selectedEntity.getElevation() - dangleLevels);
+                selectedEntity.setElevation(newElevation);
+                selectedEntity.setDangling(true);
+                selectedEntity.setClimbing(false);
+                if (newElevation == 0) {
+                    selectedEntity.setDangling(false);
+                }
+                ready();
+                return;
+            }
+            if (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DROP) {
+                // Drop from dangle: 4 MP, leaping PSRs with reduced modifier
+                // Server will handle the PSRs during movement resolution
+                selectedEntity.setClimbingLevelsChosen(-1);
+                selectedEntity.setDangling(false);
+                selectedEntity.setClimbing(false);
+                // Queue movement to drop - use FORWARDS which will trigger the drop
+                cmd.addStep(MoveStepType.CLIMB_MODE_ON);
+                cmd.addStep(MoveStepType.FORWARDS);
+            }
+            // Standard climb continuation
+            selectedEntity.setClimbingLevelsChosen(chosen.levels());
             cmd.addStep(MoveStepType.CLIMB_MODE_ON);
             cmd.addStep(MoveStepType.FORWARDS);
         }
@@ -978,9 +1000,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
               && noChoiceMade) {
             LOGGER.info("[CLIMB-TRACE] updateMove: showing START climbing dialog for {}",
                   currentEntity.getDisplayName());
-            int chosenLevels = showStartClimbingDialog(climbingMek);
-            if (chosenLevels > 0) {
-                currentEntity.setClimbingLevelsChosen(chosenLevels);
+            ClimbingChoiceDialog.ClimbingOption chosen = showStartClimbingDialog(climbingMek);
+            if ((chosen != null) && (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.CLIMB_UP)
+                  && (chosen.levels() > 0)) {
+                currentEntity.setClimbingLevelsChosen(chosen.levels());
                 // Recompile the path with the chosen level count
                 cmd.compile(game, currentEntity);
                 if (redrawMovement) {
@@ -3031,18 +3054,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     /**
-     * Shows a dialog for a mid-climb entity to choose how many levels to climb this turn. Returns 0 if the player
-     * chooses to cling in place, or the number of levels chosen.
+     * Shows a dialog for a mid-climb entity to choose climbing action this turn.
      */
-    private int showContinueClimbingDialog(Mek mek) {
+    private ClimbingChoiceDialog.ClimbingOption showContinueClimbingDialog(Mek mek) {
         return showClimbingLevelDialog(mek, true);
     }
 
     /**
-     * Shows a dialog for an entity starting a new climb to choose how many levels to climb. Returns 0 if cancelled, or
-     * the number of levels chosen.
+     * Shows a dialog for an entity starting a new climb to choose climbing action.
      */
-    private int showStartClimbingDialog(Mek mek) {
+    private ClimbingChoiceDialog.ClimbingOption showStartClimbingDialog(Mek mek) {
         return showClimbingLevelDialog(mek, false);
     }
 
@@ -3054,7 +3075,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
      *
      * @return the number of levels chosen (0 = cling in place / cancel)
      */
-    private int showClimbingLevelDialog(Mek mek, boolean isContinuation) {
+    private ClimbingChoiceDialog.ClimbingOption showClimbingLevelDialog(Mek mek, boolean isContinuation) {
         LOGGER.info("[CLIMB-TRACE] showClimbingLevelDialog: entity={}, isContinuation={}, " +
                     "position={}, elevation={}, facing={}",
               mek.getDisplayName(), isContinuation, mek.getPosition(), mek.getElevation(), mek.getFacing());
@@ -3068,7 +3089,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Hex currentHex = game.getBoard(mek).getHex(mek.getPosition());
 
         if ((targetHex == null) || (currentHex == null)) {
-            return 0;
+            return null;
         }
 
         int targetLevel = targetHex.getLevel();
@@ -3084,8 +3105,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
               targetCoords, targetHex.containsTerrain(Terrains.BUILDING));
 
         if (totalLevelsRemaining <= 0) {
-            LOGGER.info("[CLIMB-TRACE] showClimbingLevelDialog: no levels remaining, returning 0");
-            return 0;
+            LOGGER.info("[CLIMB-TRACE] showClimbingLevelDialog: no levels remaining, returning null");
+            return null;
         }
 
         boolean isBuilding = targetHex.containsTerrain(Terrains.BUILDING);
@@ -3121,11 +3142,30 @@ public class MovementDisplay extends ActionPhaseDisplay {
             String label = (i == 1)
                   ? Messages.getString("MovementDisplay.ClimbingDialog.levelOption", i, cost)
                   : Messages.getString("MovementDisplay.ClimbingDialog.levelsOption", i, cost);
-            climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(i, cost, label));
+            climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(i, cost, label,
+                  ClimbingChoiceDialog.ClimbingActionType.CLIMB_UP));
+        }
+        // Dangle-and-Drop option: available when continuing a climb with 2 functional arms
+        if (isContinuation && ClimbingHelper.canDangle(mek) && (currentElevation > 0)) {
+            int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN, currentElevation);
+            climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(dangleLevels, 0,
+                  Messages.getString("MovementDisplay.ClimbingDialog.dangleOption",
+                        dangleLevels),
+                  ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN));
+        }
+        // Drop option: available when dangling and have MP for the drop
+        if (isContinuation && mek.isDangling() && (currentElevation > 0)
+              && (walkMP >= ClimbingHelper.DROP_MP_COST)) {
+            climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(currentElevation,
+                  ClimbingHelper.DROP_MP_COST,
+                  Messages.getString("MovementDisplay.ClimbingDialog.dropOption",
+                        ClimbingHelper.DROP_MP_COST),
+                  ClimbingChoiceDialog.ClimbingActionType.DROP));
         }
         if (isContinuation) {
             climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(0, 0,
-                  Messages.getString("MovementDisplay.ClimbingDialog.clingOption")));
+                  Messages.getString("MovementDisplay.ClimbingDialog.clingOption"),
+                  ClimbingChoiceDialog.ClimbingActionType.CLING));
         }
 
         // Show the dialog
@@ -3136,10 +3176,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         ClimbingChoiceDialog.ClimbingOption chosen = dialog.getFirstChoice();
         if (chosen == null) {
             // Dialog cancelled (Esc)
-            return isContinuation ? 0 : -1;
+            return null;
         }
 
-        return chosen.levels();
+        return chosen;
     }
 
     private void updateClimbModeButtonText() {

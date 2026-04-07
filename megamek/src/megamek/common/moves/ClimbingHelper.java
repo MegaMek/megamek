@@ -60,6 +60,12 @@ public final class ClimbingHelper {
     /** To-hit modifier applied against a climbing target (easier to hit). */
     public static final int TARGET_CLIMBING_MODIFIER = -2;
 
+    /** Number of levels lowered per Dangle-and-Drop turn. */
+    public static final int DANGLE_LEVELS_PER_TURN = 2;
+
+    /** MP cost for dropping from a dangle position. */
+    public static final int DROP_MP_COST = 4;
+
     private ClimbingHelper() {
         // Utility class - no instantiation
     }
@@ -154,6 +160,48 @@ public final class ClimbingHelper {
             return mek.getDisplayName() + " does not have a functional arm to climb with."
                   + "\n\nClimbing requires at least one arm with all four actuators"
                   + " (shoulder, upper arm, lower arm, hand) intact and the hand"
+                  + " free of weapons or carried objects.";
+        }
+        return null;
+    }
+
+    /**
+     * Returns true if the given entity can perform a Dangle-and-Drop maneuver (TO:AR p.20). Requires two arms with all
+     * four actuators functional and hands free.
+     *
+     * @param entity the entity to check
+     *
+     * @return true if this entity can dangle
+     */
+    public static boolean canDangle(Entity entity) {
+        if (!(entity instanceof Mek mek)) {
+            return false;
+        }
+        return (countClimbableArms(mek) >= 2) && !mek.isProne() && !mek.isShutDown();
+    }
+
+    /**
+     * Returns a human-readable reason why the entity cannot dangle, or null if dangling is possible.
+     *
+     * @param entity the entity to check
+     *
+     * @return the reason dangling is impossible, or null if dangling is allowed
+     */
+    public static String getDangleImpossibleReason(Entity entity) {
+        if (!(entity instanceof Mek mek)) {
+            return "Only Meks can use dangle-and-drop rules.";
+        }
+        if (mek.isProne()) {
+            return mek.getDisplayName() + " is prone and cannot dangle.";
+        }
+        if (mek.isShutDown()) {
+            return mek.getDisplayName() + " is shut down and cannot dangle.";
+        }
+        int climbableArms = countClimbableArms(mek);
+        if (climbableArms < 2) {
+            return mek.getDisplayName() + " needs two functional arms to dangle."
+                  + "\n\nDangle-and-Drop requires both arms with all four actuators"
+                  + " (shoulder, upper arm, lower arm, hand) intact and hands"
                   + " free of weapons or carried objects.";
         }
         return null;

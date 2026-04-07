@@ -169,13 +169,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     void processMovement() {
-        // TacOps Climbing: check if a climbing entity lost its climbing ability
+        // TacOps Climbing: check if a climbing/dangling entity lost its climbing ability
         // due to actuator damage since last turn (TO:AR p.20)
+        // Climbing requires 1+ arms; dangling requires 2 arms
         if (entity.isClimbing() && (entity instanceof Mek climbingMek)) {
             int climbableArms = ClimbingHelper.countClimbableArms(climbingMek);
-            if (climbableArms == 0) {
-                // No functional climbing arms - Mek auto-falls (TO:AR p.20)
-                logger.info("[FALL-TRACE] Climbing Mek {} lost all climbing arms, auto-falling " +
+            boolean cannotHoldOn = (climbableArms == 0)
+                  || (entity.isDangling() && (climbableArms < 2));
+            if (cannotHoldOn) {
+                logger.info("[FALL-TRACE] Climbing/dangling Mek {} lost required arms, auto-falling " +
                       "from elevation {} in hex {}",
                       entity.getDisplayName(), entity.getElevation(), entity.getPosition());
                 gameManager.sendServerChat(entity.getDisplayName()
@@ -185,6 +187,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 addReport(gameManager.doEntityFallsInto(entity, entity.getElevation(),
                       entity.getPosition(), entity.getPosition(), autoFallRoll, true, 0));
                 entity.setClimbing(false);
+                entity.setDangling(false);
                 addNewLines();
             }
         }

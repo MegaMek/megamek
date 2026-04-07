@@ -513,9 +513,8 @@ public abstract class TurnOrdered implements ITurnOrdered {
             }
 
             if (ties.size() > 1) {
-                // We want to ignore initiative compensation here, because it will
-                // get dealt with once we're done resolving ties
-                rollInitAndResolveTies(ties, null, false, initiativeAptitude);
+                // Initiative compensation is retained here, as it should persist in the reroll, like all other bonuses
+                rollInitAndResolveTies(ties, null, bInitCompBonus, initiativeAptitude);
             }
         }
     }

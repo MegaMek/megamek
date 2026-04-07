@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -91,8 +91,6 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.bayWeapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
 import megamek.server.ServerBoardHelper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * A dialog that a player can use to customize his mek before battle. Currently, changing pilots, setting up C3
@@ -104,8 +102,6 @@ import org.apache.logging.log4j.Logger;
  */
 public class CustomMekDialog extends AbstractButtonDialog
       implements ActionListener, DialogOptionListener, ItemListener {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     public static final int DONE = 0;
     public static final int NEXT = 1;
@@ -195,8 +191,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     private final JButton butCancel = new JButton(Messages.getString("Cancel"));
     private final JButton butNext = new JButton(Messages.getString("Next"));
     private final JButton butPrev = new JButton(Messages.getString("Previous"));
-    private EquipChoicePanel m_equip;
-    private final JPanel panEquip = new JPanel();
+    private EquipChoicePanel equipChoicePanel;
     private final List<Entity> entities;
     private boolean okay;
     private int status = CustomMekDialog.DONE;
@@ -1060,8 +1055,8 @@ public class CustomMekDialog extends AbstractButtonDialog
                 }
             }
             // Also update the Equipment tab checkbox directly
-            if (m_equip != null) {
-                m_equip.setEICockpitSelected(state);
+            if (equipChoicePanel != null) {
+                equipChoicePanel.setEICockpitSelected(state);
             }
         }
 
@@ -1076,14 +1071,14 @@ public class CustomMekDialog extends AbstractButtonDialog
                 e.getCrew().getOptions().getOption(option.getName()).setValue(state);
             }
             // Also update Equipment tab checkbox if it exists
-            if (m_equip != null) {
+            if (equipChoicePanel != null) {
                 boolean anyDniSelected = isOptionSelected(OptionsConstants.MD_VDNI)
                       || isOptionSelected(OptionsConstants.MD_BVDNI)
                       || isOptionSelected(OptionsConstants.MD_PROTO_DNI);
                 if (state) {
                     anyDniSelected = true;
                 }
-                m_equip.setDNICockpitModSelected(anyDniSelected);
+                equipChoicePanel.setDNICockpitModSelected(anyDniSelected);
             }
         }
     }
@@ -1725,7 +1720,7 @@ public class CustomMekDialog extends AbstractButtonDialog
             setOptions();
             setQuirks();
             setPartReps();
-            m_equip.applyChoices();
+            equipChoicePanel.applyChoices();
 
             // Apply prosthetic enhancement and extraneous limbs for conventional infantry
             if (entity.isConventionalInfantry()) {
@@ -1947,11 +1942,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     private void setupEquip() {
-        Entity entity = entities.get(0);
-        GridBagLayout gbl = new GridBagLayout();
-        panEquip.setLayout(gbl);
-        m_equip = new EquipChoicePanel(entity, clientGUI, client);
-        panEquip.add(m_equip, GBC.eol());
+        equipChoicePanel = new EquipChoicePanel(entities.get(0), clientGUI, client);
         // EI Interface is automatically added/removed based on pilot EI Implant option
         // No checkbox needed - the pilot option drives it (IO p.69)
     }
@@ -2117,7 +2108,7 @@ public class CustomMekDialog extends AbstractButtonDialog
         mainPanel.add(tabAll, GBC.eol().fill(GridBagConstraints.BOTH).insets(5, 5, 5, 5));
         mainPanel.add(panButtons, GBC.eol().anchor(GridBagConstraints.CENTER));
 
-        JScrollPane scrEquip = new JScrollPane(panEquip);
+        JScrollPane scrEquip = new JScrollPane(equipChoicePanel);
         // Don't show the crew panel if there's multiple entities or no crew to show
         if (!multipleEntities && panCrewMember.length > 0) {
             if (panCrewMember.length > 1) {
@@ -2156,8 +2147,8 @@ public class CustomMekDialog extends AbstractButtonDialog
         // Refresh neural interface checkboxes when switching to Equipment tab
         // This picks up changes made in the Pilot tab (e.g., adding EI/DNI implant)
         tabAll.addChangeListener(e -> {
-            if (m_equip != null) {
-                m_equip.refreshNeuralInterfaceCheckboxes();
+            if (equipChoicePanel != null) {
+                equipChoicePanel.refreshNeuralInterfaceCheckboxes();
             }
         });
 
@@ -2356,7 +2347,7 @@ public class CustomMekDialog extends AbstractButtonDialog
             fldCurrentFuel.setEnabled(false);
             fldStartHeight.setEnabled(false);
             chDeployAirborne.setEnabled(false);
-            m_equip.initialize();
+            equipChoicePanel.initialize();
         }
 
         setResizable(true);

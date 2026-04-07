@@ -49,6 +49,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.MegaMekButton;
@@ -251,17 +252,13 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     }
 
     private void showTooManyTargetsMessage() {
-        JOptionPane.showMessageDialog(clientgui.getFrame(),
-              Messages.getString("SelectArtyAutoHitHexDisplay.TooManyTargets.message"),
-              Messages.getString("SelectArtyAutoHitHexDisplay.TooManyTargets.title"),
-              JOptionPane.INFORMATION_MESSAGE);
+        clientgui.addToast(ToastLevel.WARNING,
+              Messages.getString("SelectArtyAutoHitHexDisplay.TooManyTargets.message"));
     }
 
     private void showInvalidLocationMessage() {
-        JOptionPane.showMessageDialog(clientgui.getFrame(),
-              Messages.getString("SelectArtyAutoHitHexDisplay.NotAllowed.message"),
-              Messages.getString("SelectArtyAutoHitHexDisplay.NotAllowed.title"),
-              JOptionPane.INFORMATION_MESSAGE);
+        clientgui.addToast(ToastLevel.ERROR,
+              Messages.getString("SelectArtyAutoHitHexDisplay.NotAllowed.message"));
     }
 
     //

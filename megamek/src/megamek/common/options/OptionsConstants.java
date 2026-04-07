@@ -353,7 +353,12 @@ public class OptionsConstants {
     public static final String ADVANCED_TAC_OPS_BAP = "tacops_bap";
     public static final String ADVANCED_TAC_OPS_ECCM = "tacops_eccm";
     public static final String ADVANCED_TAC_OPS_GHOST_TARGET = "tacops_ghost_target";
+    public static final String ADVANCED_GHOST_TARGET_MODE = "ghost_target_mode";
     public static final String ADVANCED_GHOST_TARGET_MAX = "ghost_target_max";
+
+    // Ghost Target mode values
+    public static final String GHOST_TARGET_MODE_LEGACY = "Legacy (Area Effect)";
+    public static final String GHOST_TARGET_MODE_STANDARD = "Standard (Targeted)";
     public static final String ADVANCED_TAC_OPS_DIG_IN = "tacops_dig_in";
     public static final String ADVANCED_TAC_OPS_BA_WEIGHT = "tacops_ba_weight";
     public static final String ADVANCED_TAC_OPS_TAKE_COVER = "tacops_take_cover";
@@ -542,6 +547,7 @@ public class OptionsConstants {
     public static final String PLAYTEST_1 = "playtest_1";
     public static final String PLAYTEST_2 = "playtest_2";
     public static final String PLAYTEST_3 = "playtest_3";
+    public static final String SEARCHLIGHTS_ON = "searchlights_on";
     public static final String TWRULES = "twrules";
 
     private OptionsConstants() {

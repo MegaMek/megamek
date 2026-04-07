@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -430,7 +430,7 @@ public class MiscType extends EquipmentType {
                 return String.format(" (%d kg)", (int) size);
             } else if (shortName) {
                 // Don't show decimal when not required
-                return String.format(":%st", NumberFormat.getInstance().format(size));
+                return String.format(": %st", NumberFormat.getInstance().format(size));
             } else {
                 return String.format(" (%s %s)",
                       NumberFormat.getInstance().format(size),
@@ -4714,8 +4714,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createDNICockpitModification() {
         MiscType misc = new MiscType();
         misc.name = "Direct Neural Interface Cockpit Modification";
-        misc.setInternalName("DNICockpitModification");
-
+        misc.setInternalName(EquipmentTypeLookup.DNI_COCKPIT_MOD);
         misc.tonnage = 0;
         misc.criticalSlots = 0;
         misc.cost = 250000;
@@ -5929,7 +5928,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Enhanced Imaging (EI) Interface";
-        misc.setInternalName("EIInterface");
+        misc.setInternalName(EquipmentTypeLookup.EI_INTERFACE);
         misc.addLookupName("EI Interface");
         misc.addLookupName("Enhanced Imaging Interface");
         misc.tonnage = 0;
@@ -11176,7 +11175,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "BA Manipulator Adaptation [Modular Equipment Adaptor]";
-        misc.setInternalName("BAMEA");
+        misc.setInternalName(EquipmentTypeLookup.BA_MODULAR_EQUIPMENT_ADAPTOR);
         misc.shortName = "Modular Equipment Adaptor";
         misc.tonnage = 0.01;
         misc.criticalSlots = 2;

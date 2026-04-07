@@ -100,8 +100,8 @@ public class ServerHelper {
                   && !te_hex.containsTerrain(Terrains.BUILDING)
                   && !te_hex.containsTerrain(Terrains.FUEL_TANK)
                   && !te_hex.containsTerrain(Terrains.FORTIFIED)
-                  && (!te.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA))
-                  && (!te_hex.containsTerrain(Terrains.PAVEMENT) || !te_hex.containsTerrain(Terrains.ROAD))
+                  && !(te.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA)
+                  && (te_hex.containsTerrain(Terrains.PAVEMENT) || te_hex.containsTerrain(Terrains.ROAD)))
                   && !ammoExplosion;
         }
 

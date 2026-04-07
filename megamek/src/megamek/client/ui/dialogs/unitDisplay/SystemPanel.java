@@ -54,6 +54,7 @@ import javax.swing.event.ListSelectionListener;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.ChoiceDialog;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
@@ -515,7 +516,7 @@ class SystemPanel extends PicMap
                                     }
                                 }
                             } else {
-                                clientgui.doAlertDialog(Messages.getString("MekDisplay.BoobyTrapMode"),
+                                clientgui.addToast(ToastLevel.WARNING,
                                       Messages.getString("MekDisplay.BoobyTrapMode"));
                                 return;
                             }

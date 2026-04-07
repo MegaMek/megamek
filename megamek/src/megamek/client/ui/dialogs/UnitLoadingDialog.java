@@ -39,11 +39,15 @@
 
 package megamek.client.ui.dialogs;
 
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.Serial;
+import java.util.Objects;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
@@ -55,19 +59,35 @@ public class UnitLoadingDialog extends JDialog {
     private final JLabel lCacheCount = new JLabel();
     private final JLabel lFileCount = new JLabel();
     private final JLabel lZipCount = new JLabel();
+    private final JProgressBar progressBar = new JProgressBar();
+    private final MekSummaryCache mekSummaryCache;
+    private MekSummaryCache.Listener mekSummaryCacheListener;
 
     // Determines how often to update the loading dialog.
     // Setting this too low causes noticeable loading delays.
     private static final long UPDATE_FREQUENCY = 50;
 
-    boolean loadingDone = false;
+    private volatile boolean loadingDone = false;
 
     public UnitLoadingDialog(JFrame frame) {
+        this(frame, MekSummaryCache.getInstance());
+    }
+
+    public UnitLoadingDialog(JFrame frame, MekSummaryCache mekSummaryCache) {
+        this(frame, mekSummaryCache, Messages.getString("UnitLoadingDialog.LoadingUnits"), false);
+    }
+
+    public UnitLoadingDialog(JFrame frame, MekSummaryCache mekSummaryCache, String loadingMessage,
+          boolean waitForUpcomingLoad) {
         super(frame, Messages.getString("UnitLoadingDialog.pleaseWait"));
+        this.mekSummaryCache = Objects.requireNonNull(mekSummaryCache);
 
         getContentPane().setLayout(new GridBagLayout());
-        JLabel lLoading = new JLabel(Messages.getString("UnitLoadingDialog.LoadingUnits"));
+        JLabel lLoading = new JLabel(loadingMessage);
         getContentPane().add(lLoading, GBC.eol());
+
+        progressBar.setIndeterminate(true);
+        getContentPane().add(progressBar, GBC.eop().fill(GridBagConstraints.HORIZONTAL));
 
         JLabel lCacheText = new JLabel(Messages.getString("UnitLoadingDialog.fromCache"));
         getContentPane().add(lCacheText, GBC.std());
@@ -81,32 +101,71 @@ public class UnitLoadingDialog extends JDialog {
         getContentPane().add(lZipText, GBC.std());
         getContentPane().add(lZipCount, GBC.eol());
 
-        setSize(250, 130);
+        pack();
+        setResizable(false);
         // move to middle of screen
         setLocationRelativeTo(frame);
 
+        if (!waitForUpcomingLoad && mekSummaryCache.isInitialized()) {
+            loadingDone = true;
+            updateCounts();
+            return;
+        }
+
+        startMonitoring();
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        if (visible && loadingDone) {
+            return;
+        }
+        super.setVisible(visible);
+    }
+
+    @Override
+    public void dispose() {
+        loadingDone = true;
+        unregisterListener();
+        super.dispose();
+    }
+
+    private void startMonitoring() {
+        updateCounts();
+
+        mekSummaryCacheListener = () -> {
+            loadingDone = true;
+            unregisterListener();
+            SwingUtilities.invokeLater(() -> setVisible(false));
+        };
+        mekSummaryCache.addListener(mekSummaryCacheListener);
+
         Runnable r = () -> {
-            while (!loadingDone && !MekSummaryCache.getInstance().isInitialized()) {
-                updateCounts();
+            while (!loadingDone) {
+                SwingUtilities.invokeLater(this::updateCounts);
                 try {
                     Thread.sleep(UPDATE_FREQUENCY);
                 } catch (InterruptedException e) {
-                    // not supposed to come here
+                    Thread.currentThread().interrupt();
+                    return;
                 }
             }
         };
-        MekSummaryCache.Listener mekSummaryCacheListener = () -> {
-            loadingDone = true;
-            setVisible(false);
-        };
-        MekSummaryCache.getInstance().addListener(mekSummaryCacheListener);
         Thread t = new Thread(r, "Unit Loader Dialog");
+        t.setDaemon(true);
         t.start();
     }
 
-    void updateCounts() {
-        lCacheCount.setText(String.valueOf(MekSummaryCache.getInstance().getCacheCount()));
-        lFileCount.setText(String.valueOf(MekSummaryCache.getInstance().getFileCount()));
-        lZipCount.setText(String.valueOf(MekSummaryCache.getInstance().getZipCount()));
+    private void unregisterListener() {
+        if (mekSummaryCacheListener != null) {
+            mekSummaryCache.removeListener(mekSummaryCacheListener);
+            mekSummaryCacheListener = null;
+        }
+    }
+
+    private void updateCounts() {
+        lCacheCount.setText(String.valueOf(mekSummaryCache.getCacheCount()));
+        lFileCount.setText(String.valueOf(mekSummaryCache.getFileCount()));
+        lZipCount.setText(String.valueOf(mekSummaryCache.getZipCount()));
     }
 }

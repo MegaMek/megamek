@@ -72,14 +72,19 @@ public class TechLevelCompareTool {
     private static final String CSV_FILE_NAME = "TechLevelMismatches.txt";
     private static final String DELIM = "|";
 
-    static Set<EquipmentType> weaponSet = new TreeSet<>(Comparator.comparing(EquipmentType::getName));
-    static Set<EquipmentType> ammoSet = new TreeSet<>(Comparator.comparing(EquipmentType::getName));
-    static Set<EquipmentType> miscSet = new TreeSet<>(Comparator.comparing(EquipmentType::getName));
+    static Set<EquipmentType> staticWeaponSet = new TreeSet<>(Comparator.comparing(EquipmentType::getName));
+    static Set<EquipmentType> staticAmmoSet = new TreeSet<>(Comparator.comparing(EquipmentType::getName));
+    static Set<EquipmentType> staticMiscSet = new TreeSet<>(Comparator.comparing(EquipmentType::getName));
+
+    static Set<EquipmentType> variableWeaponSet = new TreeSet<>(Comparator.comparing(EquipmentType::getName));
+    static Set<EquipmentType> variableAmmoSet = new TreeSet<>(Comparator.comparing(EquipmentType::getName));
+    static Set<EquipmentType> variableMiscSet = new TreeSet<>(Comparator.comparing(EquipmentType::getName));
 
     private static final List<String> csvRows = new ArrayList<>();
 
     private static final String EQUIPMENT_TYPE_FORMATTED_STRING = "\t%s (%s)";
-    private static int badMeks = 0;
+    private static int staticBadMeks = 0;
+    private static int variableBadMeks = 0;
 
     public static void main(String[] args) {
         MekSummaryCache msc = MekSummaryCache.getInstance();
@@ -113,28 +118,61 @@ public class TechLevelCompareTool {
 
     private static void handleBadEntity(Entity entity, MekSummary ms) {
         int mulId = ms.getMulId();
-        SimpleTechLevel fixed = SimpleTechLevel.convertCompoundToSimple(entity.getTechLevel());
-        SimpleTechLevel calc = entity.getStaticTechLevel();
+        int introYear = entity.getYear();
+        SimpleTechLevel declared = SimpleTechLevel.convertCompoundToSimple(entity.getTechLevel());
+        SimpleTechLevel staticCalc = entity.getStaticTechLevel();
+        SimpleTechLevel variableCalc = entity.getSimpleLevel(introYear);
 
-        if (fixed.compareTo(calc) < 0) {
-            String message = String.format("%s (MUL ID: %d): %s/%s", entity.getShortName(), mulId, fixed, calc);
-            logger.info(message);
+        boolean staticMismatch = declared.compareTo(staticCalc) < 0;
+        boolean variableMismatch = declared.compareTo(variableCalc) < 0;
 
-            List<String> offendingEquipment = new ArrayList<>();
+        if (staticMismatch || variableMismatch) {
+            List<String> staticOffending = new ArrayList<>();
+            List<String> variableOffending = new ArrayList<>();
+
+            if (staticMismatch) {
+                String message = String.format("[Static] %s (MUL ID: %d): %s/%s",
+                      entity.getShortName(), mulId, declared, staticCalc);
+                logger.info(message);
+                staticBadMeks++;
+            }
+
+            if (variableMismatch) {
+                String message = String.format("[Variable] %s (MUL ID: %d, Year: %d): %s/%s",
+                      entity.getShortName(), mulId, introYear, declared, variableCalc);
+                logger.info(message);
+                variableBadMeks++;
+            }
 
             for (Mounted<?> m : entity.getEquipment()) {
                 EquipmentType mountedEquipmentType = m.getType();
 
-                if (fixed.compareTo(mountedEquipmentType.getStaticTechLevel()) < 0) {
-                    offendingEquipment.add(mountedEquipmentType.getName()
+                if (staticMismatch && declared.compareTo(mountedEquipmentType.getStaticTechLevel()) < 0) {
+                    staticOffending.add(mountedEquipmentType.getName()
                           + " (" + mountedEquipmentType.getStaticTechLevel() + ")");
 
                     if (mountedEquipmentType instanceof WeaponType weaponType) {
-                        weaponSet.add(weaponType);
+                        staticWeaponSet.add(weaponType);
                     } else if (mountedEquipmentType instanceof AmmoType ammoType) {
-                        ammoSet.add(ammoType);
+                        staticAmmoSet.add(ammoType);
                     } else {
-                        miscSet.add(mountedEquipmentType);
+                        staticMiscSet.add(mountedEquipmentType);
+                    }
+                }
+
+                if (variableMismatch) {
+                    SimpleTechLevel equipmentVariableLevel = mountedEquipmentType.getSimpleLevel(introYear);
+                    if (declared.compareTo(equipmentVariableLevel) < 0) {
+                        variableOffending.add(mountedEquipmentType.getName()
+                              + " (" + equipmentVariableLevel + ")");
+
+                        if (mountedEquipmentType instanceof WeaponType weaponType) {
+                            variableWeaponSet.add(weaponType);
+                        } else if (mountedEquipmentType instanceof AmmoType ammoType) {
+                            variableAmmoSet.add(ammoType);
+                        } else {
+                            variableMiscSet.add(mountedEquipmentType);
+                        }
                     }
                 }
             }
@@ -143,47 +181,79 @@ public class TechLevelCompareTool {
             row.add(String.valueOf(mulId));
             row.add(ms.getFullChassis());
             row.add(ms.getModel());
-            row.add(fixed.toString());
-            row.add(calc.toString());
+            row.add(String.valueOf(introYear));
+            row.add(declared.toString());
+            row.add(staticCalc.toString());
+            row.add(variableCalc.toString());
+            row.add(staticMismatch ? "YES" : "NO");
+            row.add(variableMismatch ? "YES" : "NO");
             row.add(String.valueOf(ms.getSourceFile()));
             row.add(ms.getEntryName() != null ? ms.getEntryName() : "");
-            row.add(String.join(", ", offendingEquipment));
+            row.add(String.join(", ", staticOffending));
+            row.add(String.join(", ", variableOffending));
             csvRows.add(row.toString());
-
-            badMeks++;
         }
     }
 
     private static void printDetails() {
         String message;
+        int totalMeks = MekSummaryCache.getInstance().getAllMeks().length;
+
+        logger.info("--- Static Tech Level Mismatches ---");
 
         logger.info("Weapons:");
-        for (EquipmentType et : weaponSet) {
+        for (EquipmentType et : staticWeaponSet) {
             message = String.format(EQUIPMENT_TYPE_FORMATTED_STRING, et.getName(), et.getStaticTechLevel());
             logger.info(message);
         }
 
         logger.info("Ammo:");
-        for (EquipmentType et : ammoSet) {
+        for (EquipmentType et : staticAmmoSet) {
             message = String.format(EQUIPMENT_TYPE_FORMATTED_STRING, et.getName(), et.getStaticTechLevel());
             logger.info(message);
         }
 
         logger.info("MiscType:");
-        for (EquipmentType et : miscSet) {
+        for (EquipmentType et : staticMiscSet) {
             message = String.format(EQUIPMENT_TYPE_FORMATTED_STRING, et.getName(), et.getStaticTechLevel());
             logger.info(message);
         }
 
-        message = String.format("Failed: %d/%d", badMeks, MekSummaryCache.getInstance().getAllMeks().length);
+        message = String.format("Static Failed: %d/%d", staticBadMeks, totalMeks);
+        logger.info(message);
+
+        logger.info("--- Variable Tech Level Mismatches (by intro year) ---");
+
+        logger.info("Weapons:");
+        for (EquipmentType et : variableWeaponSet) {
+            message = String.format(EQUIPMENT_TYPE_FORMATTED_STRING, et.getName(), et.getStaticTechLevel());
+            logger.info(message);
+        }
+
+        logger.info("Ammo:");
+        for (EquipmentType et : variableAmmoSet) {
+            message = String.format(EQUIPMENT_TYPE_FORMATTED_STRING, et.getName(), et.getStaticTechLevel());
+            logger.info(message);
+        }
+
+        logger.info("MiscType:");
+        for (EquipmentType et : variableMiscSet) {
+            message = String.format(EQUIPMENT_TYPE_FORMATTED_STRING, et.getName(), et.getStaticTechLevel());
+            logger.info(message);
+        }
+
+        message = String.format("Variable Failed: %d/%d", variableBadMeks, totalMeks);
         logger.info(message);
     }
 
     private static void writeCsvReport() {
         try (PrintWriter pw = new PrintWriter(CSV_FILE_NAME);
               BufferedWriter bw = new BufferedWriter(pw)) {
-            bw.write(String.join(DELIM, "MUL ID", "Chassis", "Model", "Declared Level",
-                  "Computed Level", "Source File", "Entry Name", "Offending Equipment"));
+            bw.write(String.join(DELIM, "MUL ID", "Chassis", "Model", "Intro Year",
+                  "Declared Level", "Static Level", "Variable Level",
+                  "Static Mismatch", "Variable Mismatch",
+                  "Source File", "Entry Name",
+                  "Static Offending Equipment", "Variable Offending Equipment"));
             bw.newLine();
 
             for (String row : csvRows) {

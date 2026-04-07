@@ -1994,6 +1994,9 @@ public abstract class Mek extends Entity {
         }
 
         boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
+        boolean toAdvHitLoc =
+              gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS);
+
 
         if ((table == ToHitData.HIT_NORMAL) || (table == ToHitData.HIT_PARTIAL_COVER)) {
             roll = Compute.d6(2);
@@ -2010,7 +2013,7 @@ public abstract class Mek extends Entity {
                 LOGGER.error("", t);
             }
 
-            if (playtestLocations
+            if (playtestLocations && !toAdvHitLoc
                   && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
                   && roll != 2 // clarified on forum, TACs don't go to the CT in this case
                 // https://battletech.com/playtest-battletech/feedback-discussion/topic/through-armor-critical-hits-on-side-arc/
@@ -2055,14 +2058,12 @@ public abstract class Mek extends Entity {
                     case 7:
                         return new HitData(Mek.LOC_LEFT_TORSO);
                     case 8:
-                        if (gameOptions().booleanOption(
-                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_CENTER_TORSO, true);
                         }
                         return new HitData(Mek.LOC_CENTER_TORSO);
                     case 9:
-                        if (gameOptions().booleanOption(
-                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_RIGHT_TORSO, true);
                         }
                         return new HitData(Mek.LOC_RIGHT_TORSO);
@@ -2086,14 +2087,12 @@ public abstract class Mek extends Entity {
                     case 7:
                         return new HitData(Mek.LOC_RIGHT_TORSO);
                     case 8:
-                        if (gameOptions().booleanOption(
-                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_CENTER_TORSO, true);
                         }
                         return new HitData(Mek.LOC_CENTER_TORSO);
                     case 9:
-                        if (gameOptions().booleanOption(
-                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_LEFT_TORSO, true);
                         }
                         return new HitData(Mek.LOC_LEFT_TORSO);
@@ -2106,8 +2105,7 @@ public abstract class Mek extends Entity {
                 }
             } else if (side == ToHitData.SIDE_REAR) {
                 // normal rear hits
-                if (gameOptions().booleanOption(
-                      OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)
+                if (toAdvHitLoc
                       && isProne()) {
                     switch (roll) {
                         case 2:
@@ -5054,6 +5052,20 @@ public abstract class Mek extends Entity {
               && (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRE_CONTROL));
     }
 
+    @Override
+    public boolean hasGhostTargetEquipment() {
+        // Mek Cockpit Command Console (cockpit type, not misc equipment).
+        // Simpler check than hasCommandConsoleBonus() which is designed for initiative
+        // and has phase-dependent conditions that don't apply to ghost targets.
+        boolean isCCC = (getCockpitType() == COCKPIT_COMMAND_CONSOLE)
+              || (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE)
+              || (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE);
+        if (isCCC && !getCrew().isDead() && !getCrew().isUnconscious()) {
+            return true;
+        }
+        return super.hasGhostTargetEquipment();
+    }
+
     /**
      * Add the critical slots necessary for a standard gyro. Also set the gyro type variable. Note: This is part of the
      * mek creation public API, and might not be referenced by any MegaMek code.
@@ -6007,7 +6019,7 @@ public abstract class Mek extends Entity {
 
         }
 
-        if ((getEngineHits() == 1) && (getGyroHits() == 1)) {
+        if ((getEngineHits() >= 1) && (getGyroHits() >= 1)) {
             LOGGER.debug("{} CRIPPLED: Engine + Gyro hit.", getDisplayName());
             return true;
         }

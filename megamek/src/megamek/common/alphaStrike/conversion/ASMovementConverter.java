@@ -54,6 +54,10 @@ import megamek.common.units.Warship;
 
 final class ASMovementConverter {
 
+    static int minimumConvertedMovement(int movementValue) {
+        return (movementValue > 0) ? Math.max(movementValue, 2) : movementValue;
+    }
+
     /**
      * Movement conversion, AlphaStrike Companion, p.92
      */
@@ -158,25 +162,29 @@ final class ASMovementConverter {
     }
 
     private static Map<String, Integer> convertMovementForInfantry(ASConverter.ConversionData conversionData) {
-        Entity entity = conversionData.entity();
+        Infantry infantry = (Infantry) conversionData.entity();
         AlphaStrikeElement element = conversionData.element();
         CalculationReport report = conversionData.conversionReport();
 
         var result = new HashMap<String, Integer>();
-        int walkingMP = entity.getWalkMP(MPCalculationSetting.AS_CONVERSION);
-        int jumpingMP = entity.getJumpMP(MPCalculationSetting.AS_CONVERSION);
+        int walkingMP = infantry.getWalkMP(MPCalculationSetting.AS_CONVERSION);
+        int jumpingMP = infantry.getJumpMP(MPCalculationSetting.AS_CONVERSION);
+        boolean minimalGroundMovement = infantry.hasMinimalGroundMP(MPCalculationSetting.AS_CONVERSION);
+        int walkingMove = minimalGroundMovement ? 2 : minimumConvertedMovement(walkingMP * 2);
+        int jumpingMove = minimumConvertedMovement(jumpingMP * 2);
 
-        report.addLine("Walking MP:", Integer.toString(walkingMP));
+        report.addLine("Walking MP:", minimalGroundMovement ? "0*" : Integer.toString(walkingMP));
         report.addLine("Jumping MP:", Integer.toString(jumpingMP));
         String movementCode = getMovementCode(conversionData);
         element.setPrimaryMovementMode(movementCode);
 
         if ((walkingMP > jumpingMP) || (jumpingMP == 0)) {
-            result.put(movementCode, walkingMP * 2);
-            report.addLine("Walking MP > Jumping MP", walkingMP + " x 2", walkingMP * 2 + "\"" + movementCode);
+            result.put(movementCode, walkingMove);
+            String walkingCalculation = minimalGroundMovement ? "0* minimum" : walkingMP + " x 2";
+            report.addLine("Walking MP > Jumping MP", walkingCalculation, walkingMove + "\"" + movementCode);
         } else {
-            result.put(movementCode.equals("v") ? movementCode : "j", jumpingMP * 2);
-            report.addLine("Walking MP <= Jumping MP", jumpingMP + " x 2", jumpingMP * 2 + "\"j");
+            result.put(movementCode.equals("v") ? movementCode : "j", jumpingMove);
+            report.addLine("Walking MP <= Jumping MP", jumpingMP + " x 2", jumpingMove + "\"j");
         }
 
         addUMUMovement(result, conversionData);

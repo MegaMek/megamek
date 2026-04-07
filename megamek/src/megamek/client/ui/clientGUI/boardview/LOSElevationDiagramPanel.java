@@ -1522,7 +1522,7 @@ class LOSElevationDiagramPanel extends JPanel {
      */
     private void drawAeroFighterSilhouette(Graphics2D g2d, int xCenter, int yTop,
           int width, int height, Color color, boolean facingRight) {
-        BufferedImage image = loadSilhouetteImage("Aerospace_Fighter_Silhouette.png");
+        BufferedImage image = loadSilhouetteImage("Aerospace_Fighter.png");
         if (image != null) {
             drawSilhouetteImage(g2d, image, xCenter, yTop, height, color, facingRight);
             return;

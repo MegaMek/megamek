@@ -46,6 +46,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.phaseDisplay.BombPayloadDialog;
 import megamek.client.ui.dialogs.phaseDisplay.SuicideImplantsDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
@@ -1422,9 +1423,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
 
         if (currentEntity().isINarcedWith(INarcPod.HAYWIRE)) {
-            String title = Messages.getString("FiringDisplay.CantSpotDialog.title");
-            String body = Messages.getString("FiringDisplay.CantSpotDialog.message");
-            clientgui.doAlertDialog(title, body);
+            clientgui.addToast(ToastLevel.WARNING,
+                  Messages.getString("FiringDisplay.CantSpotDialog.message"), currentEntity());
             return;
         }
         // confirm this action

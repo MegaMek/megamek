@@ -588,6 +588,22 @@ public class Infantry extends Entity {
         }
     }
 
+    /**
+     * @return True when this conventional infantry unit has ground movement of 0*, meaning it may still move a single
+     *       hex despite having 0 walking MP.
+     */
+    public boolean hasMinimalGroundMP(MPCalculationSetting mpCalculationSetting) {
+        return isConventionalInfantry() && (getWalkMP(mpCalculationSetting) == 0);
+    }
+
+    /**
+     * @return True when this conventional infantry unit has ground movement of 0*, meaning it may still move a single
+     *       hex despite having 0 walking MP.
+     */
+    public boolean hasMinimalGroundMP() {
+        return hasMinimalGroundMP(MPCalculationSetting.STANDARD);
+    }
+
     @Override
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
         int mp = hasUMU() ? 0 : getOriginalJumpMP();
@@ -1723,7 +1739,7 @@ public class Infantry extends Entity {
         // Equipment for Trench/Fieldwork's Engineers
         if ((spec & TRENCH_ENGINEERS) > 0 && (infSpecs & TRENCH_ENGINEERS) == 0) {
             // Add vibro shovels if not already present (may already be loaded from file)
-            boolean hasShovels = getEquipment().stream()
+            boolean hasShovels = getMisc().stream()
                   .anyMatch(m -> m.getType().hasFlag(MiscType.F_TOOLS)
                         && m.getType().hasFlag(MiscTypeFlag.S_VIBRO_SHOVEL));
             if (!hasShovels) {
@@ -1737,7 +1753,7 @@ public class Infantry extends Entity {
         } else if ((spec & TRENCH_ENGINEERS) == 0 && (infSpecs & TRENCH_ENGINEERS) > 0) {
             // Need to remove vibro shovels
             List<Mounted<?>> eqToRemove = new ArrayList<>();
-            for (Mounted<?> eq : getEquipment()) {
+            for (Mounted<?> eq : getMisc()) {
                 if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasFlag(MiscTypeFlag.S_VIBRO_SHOVEL)) {
                     eqToRemove.add(eq);
                 }

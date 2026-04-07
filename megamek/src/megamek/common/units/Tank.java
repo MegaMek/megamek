@@ -435,6 +435,12 @@ public class Tank extends Entity {
               movementMode == EntityMovementMode.HOVER;
     }
 
+    @Override
+    public boolean hasFrontMountedSaw() {
+        return hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_CHAINSAW, Tank.LOC_FRONT)
+              || hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_DUAL_SAW, Tank.LOC_FRONT);
+    }
+
     public boolean isTurretLocked(int turret) {
         if (turret == getLocTurret()) {
             return m_bTurretLocked || m_bTurretJammed;

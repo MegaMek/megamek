@@ -51,6 +51,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.BipedMek;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Crew;
@@ -97,6 +98,59 @@ public class LosEffectsTest extends GameBoardTestCase {
               hex 0207 0 "planted_fields:1" ""
               hex 0108 0 "planted_fields:1" ""
               hex 0208 0 "planted_fields:1" ""
+              end"""
+        );
+
+        // Board with 1 light woods + 2 light smoke intervening (bug #8167 scenario)
+        initializeBoard("01_BY_05_WOODS_SMOKE_COMBINED", """
+              size 1 5
+              hex 0101 0 "" ""
+              hex 0102 0 "woods:1;foliage_elev:2" ""
+              hex 0103 0 "smoke:1" ""
+              hex 0104 0 "smoke:1" ""
+              hex 0105 0 "" ""
+              end"""
+        );
+
+        // Board with 3 light woods intervening
+        initializeBoard("01_BY_05_THREE_LIGHT_WOODS", """
+              size 1 5
+              hex 0101 0 "" ""
+              hex 0102 0 "woods:1;foliage_elev:2" ""
+              hex 0103 0 "woods:1;foliage_elev:2" ""
+              hex 0104 0 "woods:1;foliage_elev:2" ""
+              hex 0105 0 "" ""
+              end"""
+        );
+
+        // Board with 3 light smoke intervening
+        initializeBoard("01_BY_05_THREE_LIGHT_SMOKE", """
+              size 1 5
+              hex 0101 0 "" ""
+              hex 0102 0 "smoke:1" ""
+              hex 0103 0 "smoke:1" ""
+              hex 0104 0 "smoke:1" ""
+              hex 0105 0 "" ""
+              end"""
+        );
+
+        // Board with 1 light woods + 1 light smoke (should NOT block)
+        initializeBoard("01_BY_04_WOODS_SMOKE_PARTIAL", """
+              size 1 4
+              hex 0101 0 "" ""
+              hex 0102 0 "woods:1;foliage_elev:2" ""
+              hex 0103 0 "smoke:1" ""
+              hex 0104 0 "" ""
+              end"""
+        );
+
+        // Board with 1 heavy woods + 1 light smoke (combined = 3, should block)
+        initializeBoard("01_BY_04_HEAVY_WOODS_LIGHT_SMOKE", """
+              size 1 4
+              hex 0101 0 "" ""
+              hex 0102 0 "woods:2;foliage_elev:2" ""
+              hex 0103 0 "smoke:1" ""
+              hex 0104 0 "" ""
               end"""
         );
 
@@ -390,6 +444,144 @@ public class LosEffectsTest extends GameBoardTestCase {
             assertEquals(1, result.plantedFields, """
                   Should have exactly 1 intervening planted field""");
             assertTrue(result.hasLoS, "Should have line of sight thru 1 raised planted field");
+        }
+    }
+
+    /**
+     * Tests for woods and smoke combined LOS blocking (issue #8167). TW rules: woods and smoke modifiers are combined
+     * for the blocking threshold. LOS is blocked when (lightWoods + lightSmoke) + ((heavyWoods + heavySmoke) * 2) +
+     * (ultraWoods * 3) >= 3.
+     */
+    @Nested
+    @DisplayName("Woods and Smoke Combined LOS Blocking Tests (Issue #8167)")
+    class WoodsSmokeBlockingTests {
+
+        @BeforeEach
+        void setUp() {
+        }
+
+        private LosEffects.AttackInfo buildGroundAttackInfo(Coords attackPos, Coords targetPos) {
+            LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
+            ai.attackPos = attackPos;
+            ai.targetPos = targetPos;
+            ai.attackAbsHeight = 0;
+            ai.targetAbsHeight = 0;
+            ai.attOnLand = true;
+            ai.targetOnLand = true;
+            ai.targetEntity = true;
+            return ai;
+        }
+
+        @Test
+        @DisplayName("1 light wood + 2 light smoke should block LOS (combined = 3)")
+        void shouldBlockLos_WoodsAndSmokeCombined() {
+            // This is the exact scenario from bug #8167
+            setBoard("01_BY_05_WOODS_SMOKE_COMBINED");
+            LosEffects.AttackInfo ai = buildGroundAttackInfo(new Coords(0, 0), new Coords(0, 4));
+
+            LosEffects result = LosEffects.calculateLos(game, ai);
+
+            assertNotNull(result);
+            assertEquals(1, result.lightWoods, "Should count 1 light woods");
+            assertEquals(2, result.lightSmoke, "Should count 2 light smoke");
+            assertFalse(result.hasLoS, "hasLoS should be false (combined woods+smoke = 3)");
+
+            // The critical check: losModifiers must also return IMPOSSIBLE
+            ToHitData thd = result.losModifiers(game);
+            assertEquals(TargetRoll.IMPOSSIBLE, thd.getValue(),
+                  "losModifiers should return IMPOSSIBLE when combined woods+smoke >= 3");
+        }
+
+        @Test
+        @DisplayName("3 light woods should block LOS (woods alone = 3)")
+        void shouldBlockLos_ThreeLightWoods() {
+            setBoard("01_BY_05_THREE_LIGHT_WOODS");
+            LosEffects.AttackInfo ai = buildGroundAttackInfo(new Coords(0, 0), new Coords(0, 4));
+
+            LosEffects result = LosEffects.calculateLos(game, ai);
+
+            assertNotNull(result);
+            assertEquals(3, result.lightWoods, "Should count 3 light woods");
+            assertFalse(result.hasLoS, "hasLoS should be false (3 light woods)");
+
+            ToHitData thd = result.losModifiers(game);
+            assertEquals(TargetRoll.IMPOSSIBLE, thd.getValue(),
+                  "losModifiers should return IMPOSSIBLE for 3 light woods");
+        }
+
+        @Test
+        @DisplayName("3 light smoke should block LOS (smoke alone = 3)")
+        void shouldBlockLos_ThreeLightSmoke() {
+            setBoard("01_BY_05_THREE_LIGHT_SMOKE");
+            LosEffects.AttackInfo ai = buildGroundAttackInfo(new Coords(0, 0), new Coords(0, 4));
+
+            LosEffects result = LosEffects.calculateLos(game, ai);
+
+            assertNotNull(result);
+            assertEquals(3, result.lightSmoke, "Should count 3 light smoke");
+            assertFalse(result.hasLoS, "hasLoS should be false (3 light smoke)");
+
+            ToHitData thd = result.losModifiers(game);
+            assertEquals(TargetRoll.IMPOSSIBLE, thd.getValue(),
+                  "losModifiers should return IMPOSSIBLE for 3 light smoke");
+        }
+
+        @Test
+        @DisplayName("1 light wood + 1 light smoke should NOT block LOS (combined = 2)")
+        void shouldNotBlockLos_WoodsAndSmokePartial() {
+            setBoard("01_BY_04_WOODS_SMOKE_PARTIAL");
+            LosEffects.AttackInfo ai = buildGroundAttackInfo(new Coords(0, 0), new Coords(0, 3));
+
+            LosEffects result = LosEffects.calculateLos(game, ai);
+
+            assertNotNull(result);
+            assertEquals(1, result.lightWoods, "Should count 1 light woods");
+            assertEquals(1, result.lightSmoke, "Should count 1 light smoke");
+            assertTrue(result.hasLoS, "hasLoS should be true (combined woods+smoke = 2)");
+
+            ToHitData thd = result.losModifiers(game);
+            assertFalse(thd.getValue() == TargetRoll.IMPOSSIBLE,
+                  "losModifiers should NOT return IMPOSSIBLE when combined < 3");
+        }
+
+        @Test
+        @DisplayName("1 heavy wood + 1 light smoke should block LOS (combined = 3)")
+        void shouldBlockLos_HeavyWoodsAndLightSmoke() {
+            setBoard("01_BY_04_HEAVY_WOODS_LIGHT_SMOKE");
+            LosEffects.AttackInfo ai = buildGroundAttackInfo(new Coords(0, 0), new Coords(0, 3));
+
+            LosEffects result = LosEffects.calculateLos(game, ai);
+
+            assertNotNull(result);
+            assertEquals(1, result.heavyWoods, "Should count 1 heavy woods");
+            assertEquals(1, result.lightSmoke, "Should count 1 light smoke");
+            assertFalse(result.hasLoS,
+                  "hasLoS should be false (1 heavy woods * 2 + 1 light smoke = 3)");
+
+            ToHitData thd = result.losModifiers(game);
+            assertEquals(TargetRoll.IMPOSSIBLE, thd.getValue(),
+                  "losModifiers should return IMPOSSIBLE when combined >= 3");
+        }
+
+        @Test
+        @DisplayName("hasLoS and losModifiers should agree on blocking decision")
+        void hasLoSAndLosModifiersShouldAgree() {
+            // Test the exact bug: hasLoS says blocked but losModifiers says not blocked
+            setBoard("01_BY_05_WOODS_SMOKE_COMBINED");
+            LosEffects.AttackInfo ai = buildGroundAttackInfo(new Coords(0, 0), new Coords(0, 4));
+
+            LosEffects result = LosEffects.calculateLos(game, ai);
+            ToHitData thd = result.losModifiers(game);
+
+            // These MUST agree - this is the core of bug #8167
+            if (!result.hasLoS) {
+                assertEquals(TargetRoll.IMPOSSIBLE, thd.getValue(),
+                      "When hasLoS is false, losModifiers must return IMPOSSIBLE. "
+                            + "Combined woods+smoke: lightWoods=" + result.lightWoods
+                            + " heavyWoods=" + result.heavyWoods
+                            + " lightSmoke=" + result.lightSmoke
+                            + " heavySmoke=" + result.heavySmoke);
+            }
         }
     }
 

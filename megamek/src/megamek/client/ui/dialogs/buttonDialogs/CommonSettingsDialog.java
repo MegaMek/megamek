@@ -270,8 +270,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private JComboBox<String> displayLocale;
     private final JCheckBox showIPAddressesInChat = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.showIPAddressesInChat"));
-    private final JCheckBox startSearchlightsOn = new JCheckBox(Messages.getString(
-          "CommonSettingsDialog.startSearchlightsOn"));
     private final JCheckBox spritesOnly = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.spritesOnly"));
     private final JCheckBox showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel"));
@@ -2188,8 +2186,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         comps.add(checkboxEntry(showIPAddressesInChat,
               Messages.getString("CommonSettingsDialog.showIPAddressesInChat.tooltip")));
-        comps.add(checkboxEntry(startSearchlightsOn,
-              Messages.getString("CommonSettingsDialog.startSearchlightsOn.tooltip")));
         comps.add(checkboxEntry(spritesOnly,
               Messages.getString("CommonSettingsDialog.spritesOnly.tooltip")));
         return createSettingsPanel(comps);
@@ -2299,7 +2295,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             reportKeywordsTextPane.setText(CLIENT_PREFERENCES.getReportKeywords());
             reportFilterKeywordsTextPane.setText(CLIENT_PREFERENCES.getReportFilterKeywords());
             showIPAddressesInChat.setSelected(CLIENT_PREFERENCES.getShowIPAddressesInChat());
-            startSearchlightsOn.setSelected(CLIENT_PREFERENCES.getStartSearchlightsOn());
             spritesOnly.setSelected(CLIENT_PREFERENCES.getSpritesOnly());
 
             defaultAutoEjectDisabled.setSelected(CLIENT_PREFERENCES.defaultAutoEjectDisabled());
@@ -2794,7 +2789,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         CLIENT_PREFERENCES.setReportKeywords(reportKeywordsTextPane.getText());
         CLIENT_PREFERENCES.setReportFilterKeywords(reportFilterKeywordsTextPane.getText());
         CLIENT_PREFERENCES.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
-        CLIENT_PREFERENCES.setStartSearchlightsOn(startSearchlightsOn.isSelected());
         CLIENT_PREFERENCES.setSpritesOnly(spritesOnly.isSelected());
         CLIENT_PREFERENCES.setEnableExperimentalBotFeatures(enableExperimentalBotFeatures.isSelected());
         CLIENT_PREFERENCES.setDefaultAutoEjectDisabled(defaultAutoEjectDisabled.isSelected());

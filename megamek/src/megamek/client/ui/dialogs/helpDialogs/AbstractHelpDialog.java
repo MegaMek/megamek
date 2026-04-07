@@ -47,6 +47,7 @@ import javax.swing.text.html.HTMLDocument;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.abstractDialogs.AbstractDialog;
+import megamek.client.ui.util.UIUtil;
 import megamek.logging.MMLogger;
 
 /**
@@ -77,6 +78,19 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
         this.helpFilePath = helpFilePath;
     }
     // endregion Getters/Setters
+
+    @Override
+    protected void finalizeInitialization() throws Exception {
+        super.finalizeInitialization();
+        setMinimumSize(UIUtil.scaleForGUI(800, 600));
+
+        // If stored preferences restored a tiny size (from before this fix),
+        // reset to the minimum
+        if (getWidth() < UIUtil.scaleForGUI(800) || getHeight() < UIUtil.scaleForGUI(600)) {
+            setSize(UIUtil.scaleForGUI(800, 600));
+            setLocationRelativeTo(getParent());
+        }
+    }
 
     @Override
     protected Container createCenterPane() {
@@ -126,6 +140,7 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
             }
         });
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.setPreferredSize(UIUtil.scaleForGUI(800, 600));
 
         final File helpFile = new File(getHelpFilePath());
 

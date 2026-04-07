@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -80,7 +80,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.boardeditor.BoardEditorPanel;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.dialogs.CommonAboutDialog;
-import megamek.client.ui.dialogs.ConfirmDialog;
+import megamek.client.ui.dialogs.LicensingDialog;
 import megamek.client.ui.dialogs.ScenarioDialog;
 import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.client.ui.dialogs.buttonDialogs.BotConfigDialog;
@@ -225,19 +225,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // Show the window.
         frame.setVisible(show);
 
-        // tell the user about the readme...
-        if (show && GUIPreferences.getInstance().getNagForReadme()) {
-            ConfirmDialog confirm = new ConfirmDialog(frame,
-                  Messages.getString("MegaMek.welcome.title") + MMConstants.VERSION,
-                  Messages.getString("MegaMek.welcome.message"),
-                  true);
-            confirm.setVisible(true);
-            if (!confirm.getShowAgain()) {
-                GUIPreferences.getInstance().setNagForReadme(false);
-            }
-            if (confirm.getAnswer()) {
-                new MMReadMeHelpDialog(frame).setVisible(true);
-            }
+        // Show licensing/welcome dialog
+        if (show) {
+            LicensingDialog.showIfNeeded(frame);
         }
     }
 

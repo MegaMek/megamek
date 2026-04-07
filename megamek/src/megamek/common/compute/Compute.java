@@ -2824,6 +2824,12 @@ public class Compute {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "attacker sprinted");
         }
 
+        // While clearing woods with a saw, weapon attacks are penalized as running/flank speed
+        // (TM pp.241-243). Apply minimum +2 modifier if not already at or above that level.
+        if (entity.isClearingWoods() && (toHit.getValue() < (2 / dedicatedGunnerMod))) {
+            toHit = new ToHitData(2 / dedicatedGunnerMod, "clearing woods with saw");
+        }
+
         return toHit;
     }
 
@@ -6670,7 +6676,7 @@ public class Compute {
      */
     public static int computeTotalDamage(WeaponMounted weapon) {
         int totalDmg = 0;
-        if (weapon.isBombMounted() || !weapon.isCrippled()) {
+        if (!weapon.isCrippled()) {
             WeaponType type = weapon.getType();
             if (type.getDamage() == WeaponType.DAMAGE_VARIABLE) {
                 // Estimate rather than compute exact bay / trooper damage sum.

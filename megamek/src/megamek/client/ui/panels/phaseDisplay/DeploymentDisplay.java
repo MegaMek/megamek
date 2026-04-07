@@ -54,6 +54,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DeployElevationChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DeployFacingChoiceDialog;
@@ -405,9 +406,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             boolean crushesBuildingHex = allPositions.stream()
                   .anyMatch(c -> game.getBoard(entity.getBoardId()).getBuildingAt(c) != null);
             if (crushesBuildingHex) {
-                String title = Messages.getString("DeploymentDisplay.alertDialog.title");
-                String body = Messages.getString("DeploymentDisplay.dropshipBuildingDeploy");
-                clientgui.doAlertDialog(title, body);
+                clientgui.addToast(ToastLevel.ERROR,
+                      Messages.getString("DeploymentDisplay.dropshipBuildingDeploy"), entity);
                 return true;
             }
         }
@@ -808,19 +808,17 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             case GROUND -> "Ground";
         };
         String msg = Messages.getString("DeploymentDisplay.wrongMapType", currentEntity().getShortName(), boardType);
-        JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.INFORMATION_MESSAGE);
+        clientgui.addToast(ToastLevel.ERROR, msg, currentEntity());
     }
 
     private void showOutsideDeployAreaMessage() {
         String msg = Messages.getString("DeploymentDisplay.outsideDeployArea");
-        String title = Messages.getString("DeploymentDisplay.alertDialog.title");
-        JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.INFORMATION_MESSAGE);
+        clientgui.addToast(ToastLevel.ERROR, msg);
     }
 
     private void showCannotDeployHereMessage(Coords coords) {
         String msg = Messages.getString("DeploymentDisplay.cantDeployInto", currentEntity().getShortName(), coords.getBoardNum());
-        String title = Messages.getString("DeploymentDisplay.alertDialog.title");
-        JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.INFORMATION_MESSAGE);
+        clientgui.addToast(ToastLevel.ERROR, msg, currentEntity());
     }
 
     private void processTurn(Entity entity, Coords coords) {
@@ -969,10 +967,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 clientgui.getUnitDisplay().displayEntity(currentEntity());
                 setUnloadEnabled(true);
             } else {
-                JOptionPane.showMessageDialog(clientgui.getFrame(),
-                      Messages.getString("DeploymentDisplay.alertDialog1.message", currentEntity().getShortName()),
-                      Messages.getString("DeploymentDisplay.alertDialog1.title"),
-                      JOptionPane.ERROR_MESSAGE);
+                clientgui.addToast(ToastLevel.ERROR,
+                      Messages.getString("DeploymentDisplay.alertDialog1.message",
+                            currentEntity().getShortName()), currentEntity());
             }
         } else if (actionCmd.equals(DeployCommand.DEPLOY_UNLOAD.getCmd())) {
             // Do we have anyone to unload?
@@ -1007,10 +1004,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(clientgui.getFrame(),
-                      Messages.getString("DeploymentDisplay.alertDialog2.message", currentEntity().getShortName()),
-                      Messages.getString("DeploymentDisplay.alertDialog2.title"),
-                      JOptionPane.ERROR_MESSAGE);
+                clientgui.addToast(ToastLevel.WARNING,
+                      Messages.getString("DeploymentDisplay.alertDialog2.message",
+                            currentEntity().getShortName()), currentEntity());
             }
         } else if (actionCmd.equals(DeployCommand.DEPLOY_REMOVE.getCmd())) {
             if (JOptionPane.showConfirmDialog(clientgui.getFrame(),

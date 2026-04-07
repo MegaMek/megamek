@@ -1949,7 +1949,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     attackingEntity.setArcFired(loc, rearMount);
                 }
             } else {
-                attackingEntity.heatBuildup += (weapon.getHeatByBay());
+                weaponEntity.heatBuildup += (weapon.getHeatByBay());
             }
         }
     }

@@ -497,6 +497,21 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
             optionComp.setSelected(option.stringValue());
             optionComp.setEditable(editable);
+        } else if (option.getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MODE)) {
+            optionComp.addValue(OptionsConstants.GHOST_TARGET_MODE_LEGACY);
+            optionComp.addValue(OptionsConstants.GHOST_TARGET_MODE_STANDARD);
+            optionComp.setSelected(option.stringValue());
+            // Mode dropdown only editable when TacOps Ghost Targets is enabled
+            boolean ghostTargetsEnabled = options.getOption(
+                  OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET).booleanValue();
+            optionComp.setEditable(editable && ghostTargetsEnabled);
+        } else if (option.getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MAX)) {
+            // Ghost target max only applies to Legacy mode
+            boolean isLegacyMode = OptionsConstants.GHOST_TARGET_MODE_LEGACY.equals(
+                  options.getOption(OptionsConstants.ADVANCED_GHOST_TARGET_MODE).stringValue());
+            boolean ghostTargetsEnabled = options.getOption(
+                  OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET).booleanValue();
+            optionComp.setEditable(editable && isLegacyMode && ghostTargetsEnabled);
         } else if (option.getName().equals(OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT)) {
             // Disable if individual init is on
             if (!options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE).booleanValue()) {
@@ -745,7 +760,15 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
     @Override
     public void optionSwitched(DialogOptionComponentYPanel clickedComp, IOption option, int i) {
-        // tracks changes to a combobox option - nothing implemented yet
+        if (option.getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MODE)) {
+            boolean isLegacyMode = OptionsConstants.GHOST_TARGET_MODE_LEGACY.equals(clickedComp.getValue());
+            List<DialogOptionComponentYPanel> maxComps = optionComps.get(OptionsConstants.ADVANCED_GHOST_TARGET_MAX);
+            if (maxComps != null) {
+                for (DialogOptionComponentYPanel maxComp : maxComps) {
+                    maxComp.setEditable(editable && isLegacyMode);
+                }
+            }
+        }
     }
 
     @Override

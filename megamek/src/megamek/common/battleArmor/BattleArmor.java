@@ -1830,33 +1830,35 @@ public class BattleArmor extends Infantry {
     }
 
     /**
+     * Returns the Mounted for the manipulator in the given location of this BattleArmor squad or null if there is none.
+     * Note that the location should be MOUNT_LOC_LEFT_ARM or MOUNT_LOC_RIGHT_ARM.
+     *
+     * @throws IllegalArgumentException for locations that are not one of the arms
+     */
+    public MiscMounted getManipulator(int mountLocation) {
+        if (mountLocation != MOUNT_LOC_RIGHT_ARM && mountLocation != MOUNT_LOC_LEFT_ARM) {
+            throw new IllegalArgumentException("Invalid mount location");
+        }
+        return getMisc().stream()
+              .filter(m -> m.getType().hasFlag(MiscType.F_BA_MANIPULATOR))
+              .filter(m -> m.getBaMountLoc() == mountLocation)
+              .findFirst().orElse(null);
+    }
+
+    /**
      * Returns the <code>Mounted</code> for the manipulator mounted in the left arm of this <code>BattleArmor</code>
      * squad.
-     *
      */
     public Mounted<?> getLeftManipulator() {
-        for (Mounted<?> m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)
-                  && (m.getBaMountLoc() == MOUNT_LOC_LEFT_ARM)) {
-                return m;
-            }
-        }
-        return null;
+        return getManipulator(MOUNT_LOC_LEFT_ARM);
     }
 
     /**
      * Returns the <code>Mounted</code> for the manipulator mounted in the right arm of this <code>BattleArmor</code>
      * squad.
-     *
      */
     public Mounted<?> getRightManipulator() {
-        for (Mounted<?> m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)
-                  && (m.getBaMountLoc() == MOUNT_LOC_RIGHT_ARM)) {
-                return m;
-            }
-        }
-        return null;
+        return getManipulator(MOUNT_LOC_RIGHT_ARM);
     }
 
     public boolean isClanExoWithoutHarjel() {
@@ -1932,8 +1934,23 @@ public class BattleArmor extends Infantry {
         return 5;
     }
 
-    @Override
-    public int getRecoveryTime() {
-        return 10;
+    /**
+     * Returns true when the entity has a MiscType equipment of the given internalName, regardless of its state, in the
+     * given mount location (arm/body...). When available, use EquipmentTypeLookup internal names (or add one when it is
+     * not yet used for a MiscType). Note that any internal name, even of weapons, can be given but this method only
+     * searches misc equipment and will not find weapons.
+     *
+     * @param internalName The internal name of the misc, e.g. EquipmentTypeLookup.BA_MYOMER_BOOSTER
+     * @param location     The location, e.g. BattleArmor.MOUNT_LOC_LEFT_ARM
+     *
+     * @return True when the entity has a MiscType equipment of the given internalName in the given location
+     *
+     * @see MiscType
+     * @see EquipmentTypeLookup
+     */
+    public boolean hasMiscInMountLocation(String internalName, int location) {
+        return miscList.stream()
+              .filter(misc -> misc.getBaMountLoc() == location)
+              .anyMatch(misc -> misc.is(internalName));
     }
 }

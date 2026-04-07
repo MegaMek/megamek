@@ -246,6 +246,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
         JMenuItem fileRefreshCache = new JMenuItem(getString("CommonMenuBar.fileUnitsRefreshUnitCache"));
         initMenuItem(fileRefreshCache, menu, FILE_REFRESH_CACHE);
+        JMenuItem fileRebuildCache = new JMenuItem(getString("CommonMenuBar.fileUnitsRebuildUnitCache"));
+        initMenuItem(fileRebuildCache, menu, FILE_REBUILD_CACHE);
         initMenuItem(fileUnitsBrowse, menu, FILE_UNITS_BROWSE);
         // The accelerator overlaps with that for changing label style, but they are never active at the same time
         fileUnitsBrowse.setAccelerator(KeyStroke.getKeyStroke(VK_B, CTRL_DOWN_MASK));

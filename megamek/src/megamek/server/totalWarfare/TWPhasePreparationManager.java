@@ -78,6 +78,9 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.sendTagInfoReset();
                 gameManager.clearReports();
                 gameManager.resetEntityRound();
+                // Set clearingWoods flag on entities that declared clearing last round
+                // (for firing penalty this round). Must be set before firing phase.
+                gameManager.applyClearingWoodsFlags();
                 gameManager.resetEntityPhase(phase);
                 gameManager.checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
@@ -191,6 +194,7 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.addReport(gameManager.checkForTraitors());
                 // write End Phase header
                 gameManager.addReport(new Report(5005, Report.PUBLIC));
+                gameManager.reportGhostTargetModeChanges();
                 gameManager.addReport(gameManager.resolveInternalBombHits());
                 gameManager.checkLayExplosives();
                 gameManager.resolveInfantryActions();

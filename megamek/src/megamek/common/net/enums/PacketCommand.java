@@ -77,6 +77,7 @@ public enum PacketCommand {
     ENTITY_ATTACK,
 
     ENTITY_PREPHASE,
+    ENTITY_GHOST_TARGET,
     ENTITY_GTA_HEX_SELECT,
 
     /** A packet informing the receiver of an unspecified change to a unit. */
@@ -204,7 +205,10 @@ public enum PacketCommand {
     ADD_TEMPORARY_ECM_FIELD,
 
     /** A packet syncing all temporary ECM fields to clients (replaces existing list). */
-    SYNC_TEMPORARY_ECM_FIELDS;
+    SYNC_TEMPORARY_ECM_FIELDS,
+
+    /** A packet updating hex locations being cleared by saws (for board view rendering). */
+    UPDATE_CUT_HEXES;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

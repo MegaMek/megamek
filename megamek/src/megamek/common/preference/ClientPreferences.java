@@ -95,7 +95,6 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String REPORT_FILTER_KEYWORDS = "ReportFilterKeywords";
     private static final String REPORT_FILTER_KEYWORDS_DEFAULTS = "Fire Hit Damage\nHit Damage";
     public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
-    public static final String START_SEARCHLIGHTS_ON = "StartSearchlightsOn";
     public static final String SPRITES_ONLY = "SpritesOnly";
     public static final String ENABLE_EXPERIMENTAL_BOT_FEATURES = "EnableExperimentalBotFeatures";
     public static final String NAG_ASK_FOR_VICTORY_LIST = "AskForVictoryList";
@@ -145,7 +144,6 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(REPORT_KEYWORDS, REPORT_KEYWORDS_DEFAULTS);
         store.setDefault(REPORT_FILTER_KEYWORDS, REPORT_FILTER_KEYWORDS_DEFAULTS);
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
-        store.setDefault(START_SEARCHLIGHTS_ON, true);
         store.setDefault(SPRITES_ONLY, false);
         store.setDefault(ENABLE_EXPERIMENTAL_BOT_FEATURES, false);
         store.setDefault(USER_DIR, "");
@@ -399,14 +397,6 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public void setShowIPAddressesInChat(boolean value) {
         store.setValue(IP_ADDRESSES_IN_CHAT, value);
-    }
-
-    public boolean getStartSearchlightsOn() {
-        return store.getBoolean(START_SEARCHLIGHTS_ON);
-    }
-
-    public void setStartSearchlightsOn(boolean value) {
-        store.setValue(START_SEARCHLIGHTS_ON, value);
     }
 
     public boolean getSpritesOnly() {

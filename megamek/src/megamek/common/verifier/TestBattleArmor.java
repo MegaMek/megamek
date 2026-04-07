@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -117,6 +117,7 @@ public class TestBattleArmor extends TestEntity {
 
     /**
      * An enumeration that keeps track of the legal manipulators for BattleArmor.
+     * TM p.166
      *
      * @author arlith
      */
@@ -149,15 +150,15 @@ public class TestBattleArmor extends TestEntity {
         public final String displayName;
 
         /**
-         * Denotes whether this armor is Clan or not.
+         * When true, this manipulator type needs to be mounted in both arms to be valid.
          */
         public final boolean pairMounted;
 
-        BAManipulator(int t, boolean p) {
-            type = t;
-            internalName = BattleArmor.MANIPULATOR_TYPE_STRINGS[t];
-            displayName = BattleArmor.MANIPULATOR_NAME_STRINGS[t];
-            pairMounted = p;
+        BAManipulator(int type, boolean pairMounted) {
+            this.type = type;
+            internalName = BattleArmor.MANIPULATOR_TYPE_STRINGS[type];
+            displayName = BattleArmor.MANIPULATOR_NAME_STRINGS[type];
+            this.pairMounted = pairMounted;
         }
 
         /**
@@ -177,6 +178,10 @@ public class TestBattleArmor extends TestEntity {
                 }
             }
             return null;
+        }
+
+        public MiscType miscType() {
+            return (MiscType) EquipmentType.get(internalName);
         }
     }
 
@@ -1007,14 +1012,19 @@ public class TestBattleArmor extends TestEntity {
 
         if (laManipType != null && raManipType != null) {
             if ((laManipType.pairMounted || raManipType.pairMounted) && (laManipType.type != raManipType.type)) {
-                if (laManipType.pairMounted) {
-                    buff.append(
-                          "Left Arm manipulator must be mounted as a pair, but the right arm manipulator doesn't match! ");
-                } else {
-                    buff.append(
-                          "Right Arm manipulator must be mounted as a pair, but the left arm manipulator doesn't match! ");
-                }
+                buff.append("Mismatch of pair-mounted manipulators!");
+                correct = false;
+            }
+        }
 
+        if ((laManipType != null && laManipType.pairMounted) || (raManipType != null && raManipType.pairMounted)) {
+            boolean laModularAdaptor = ba.hasMiscInMountLocation(EquipmentTypeLookup.BA_MODULAR_EQUIPMENT_ADAPTOR,
+                  BattleArmor.MOUNT_LOC_LEFT_ARM);
+            boolean raModularAdaptor = ba.hasMiscInMountLocation(EquipmentTypeLookup.BA_MODULAR_EQUIPMENT_ADAPTOR,
+                  BattleArmor.MOUNT_LOC_RIGHT_ARM);
+            // XOR = exactly one of them present
+            if (laModularAdaptor ^ raModularAdaptor) {
+                buff.append("Cannot combine a single Modular Equipment Adaptor with a pair-mounted manipulator!");
                 correct = false;
             }
         }

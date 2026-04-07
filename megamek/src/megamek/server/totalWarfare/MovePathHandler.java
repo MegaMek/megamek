@@ -192,6 +192,37 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
         }
 
+        // TacOps Dangle-and-Drop: a climbing entity with a DOWN step dangles (TO:AR p.20)
+        if (entity.isClimbing() && md.contains(MoveStepType.DOWN)
+              && ClimbingHelper.canDangle(entity)) {
+            int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN,
+                  entity.getElevation());
+            int newElevation = Math.max(0, entity.getElevation() - dangleLevels);
+            logger.info("[DANGLE-TRACE] Server processing dangle: entity={}, " +
+                  "currentElevation={}, dangleLevels={}, newElevation={}",
+                  entity.getDisplayName(), entity.getElevation(), dangleLevels, newElevation);
+            // Report the dangle action in the movement phase log
+            Report dangleReport = new Report(6462, Report.PUBLIC);
+            dangleReport.add(entity.getDisplayName());
+            dangleReport.add(dangleLevels);
+            addReport(dangleReport);
+            entity.setElevation(newElevation);
+            entity.setClimbing(false);
+            entity.setDangling(true);
+            entity.setClimbingLevelsChosen(0);
+            if (newElevation == 0) {
+                entity.setDangling(false);
+                Report groundReport = new Report(6463, Report.PUBLIC);
+                groundReport.add(entity.getDisplayName());
+                addReport(groundReport);
+            }
+            // Dangle spends the entire movement phase
+            entity.setDone(true);
+            entity.moved = EntityMovementType.MOVE_WALK;
+            gameManager.entityUpdate(entity.getId());
+            return;
+        }
+
         if (md.getMpUsed() > 0) {
             // All auto-hit hexes for this unit (not including preset targets) are cleared
             // if any MP are expended.
@@ -2514,7 +2545,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 int leapDistance = (lastElevation
                       + getGame().getBoard(curBoardId).getHex(lastPos).getLevel())
                       - (curElevation + curHex.getLevel());
+                logger.info("[LEAP-TRACE] Leap check: lastPos={}, curPos={}, lastElevation={}, " +
+                      "curElevation={}, leapDistance={}, isClimbing={}, isDangling={}",
+                      lastPos, curPos, lastElevation, curElevation, leapDistance,
+                      entity.isClimbing(), entity.isDangling());
                 if (leapDistance > 2) {
+                    logger.info("[LEAP-TRACE] Leaping {} levels from {} to {}",
+                          leapDistance, lastPos, curPos);
                     // skill check for leg damage
                     rollTarget = entity.getBasePilotingRoll(stepMoveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getBoardId());
@@ -3680,7 +3717,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // On failure, the Mek falls from the last level successfully reached.
             // Multi-turn: if the climb costs more MP than available, only climb
             // affordable levels this turn and persist climbing state for next turn.
-            if (step.isClimbing() && (entity instanceof Mek climbingMek)) {
+            if (step.isClimbing() && (entity instanceof Mek climbingMek)
+                  && (stepHeight > 0)) {
+                // Only process climbing PSRs for upward movement (stepHeight > 0)
+                // Downward movement is handled by leaping rules
                 int totalLevelsToClimb = Math.abs(stepHeight);
                 int climbableArms = ClimbingHelper.countClimbableArms(climbingMek);
                 int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(climbingMek);
@@ -3779,20 +3819,24 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             int currentCF = climbBldg.getCurrentCF(curPos);
                             logger.info("[FALL-TRACE] Building CF check: weight={}, CF={}", entity.getWeight(), currentCF);
                             if (entity.getWeight() > currentCF) {
-                                gameManager.sendServerChat(entity.getDisplayName()
-                                      + " is too heavy for the weakened building!");
-                                gameManager.checkForCollapse(climbBldg, curPos, true,
-                                      gameManager.getMainPhaseReport());
+                                logger.info("[FALL-TRACE] Building too weak for climbing entity: " +
+                                      "weight={}, CF={}, climbingElevation={}, curPos={}, lastPos={}",
+                                      entity.getWeight(), currentCF, climbingElevation, curPos, lastPos);
+                                // Entity falls from climbing elevation before collapse
                                 entity.setClimbing(false);
+                                entity.setDangling(false);
+                                entity.setElevation(climbingElevation);
+                                entity.setPosition(lastPos);
+                                // Process the fall from climbing elevation
+                                PilotingRollData climbFallRoll = new PilotingRollData(entity.getId(),
+                                      TargetRoll.AUTOMATIC_FAIL, "building too weak");
+                                addReport(gameManager.doEntityFallsInto(entity, climbingElevation,
+                                      lastPos, lastPos, climbFallRoll, true, 0));
                                 curPos = entity.getPosition();
                                 curVTOLElevation = entity.getElevation();
                                 fellWhileClimbing = true;
                                 fellDuringMovement = true;
                                 turnOver = true;
-                                logger.info("[FALL-TRACE] Building collapsed during climbing at {}, " +
-                                      "unit weight {} > CF {}, climbingElevation={}",
-                                      lastPos, entity.getWeight(), climbBldg.getCurrentCF(lastPos),
-                                      climbingElevation);
                                 break;
                             }
                         }

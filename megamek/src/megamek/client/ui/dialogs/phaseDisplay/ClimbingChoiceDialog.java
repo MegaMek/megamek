@@ -58,6 +58,8 @@ import megamek.client.ui.util.UIUtil;
 public class ClimbingChoiceDialog extends AbstractChoiceDialog<ClimbingChoiceDialog.ClimbingOption> {
 
     private static final int BASE_PADDING = 10;
+    private static final int BASE_BUTTON_HEIGHT = 50;
+    private static final int BASE_HEADER_HEIGHT = 120;
 
     /**
      * The type of climbing action the player is choosing.
@@ -93,6 +95,12 @@ public class ClimbingChoiceDialog extends AbstractChoiceDialog<ClimbingChoiceDia
         initialize();
         setUseDetailed(false);
         setAlwaysOnTop(true);
+        // Ensure dialog is tall enough for all buttons plus header
+        pack();
+        int minHeight = UIUtil.scaleForGUI(BASE_BUTTON_HEIGHT * options.size() + BASE_HEADER_HEIGHT);
+        if (getHeight() < minHeight) {
+            setSize(getWidth(), minHeight);
+        }
     }
 
     private static String formatHeader(String message) {

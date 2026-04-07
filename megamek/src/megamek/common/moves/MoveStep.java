@@ -1809,7 +1809,8 @@ public class MoveStep implements Serializable {
             isClimbing = true;
             if ((stepType != MoveStepType.FORWARDS)
                   && (stepType != MoveStepType.CLIMB_MODE_ON)
-                  && (stepType != MoveStepType.CLIMB_MODE_OFF)) {
+                  && (stepType != MoveStepType.CLIMB_MODE_OFF)
+                  && (stepType != MoveStepType.DOWN)) {
                 LOGGER.info("[CLIMB-TRACE] Blocked step type {} while climbing - set MOVE_ILLEGAL", stepType);
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;

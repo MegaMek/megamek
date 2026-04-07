@@ -581,15 +581,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 return;
             }
             if (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN) {
-                // Dangle-and-Drop: lower by 2 levels, spends full turn
-                int dangleLevels = chosen.levels();
-                int newElevation = Math.max(0, selectedEntity.getElevation() - dangleLevels);
-                selectedEntity.setElevation(newElevation);
-                selectedEntity.setDangling(true);
-                selectedEntity.setClimbing(false);
-                if (newElevation == 0) {
-                    selectedEntity.setDangling(false);
-                }
+                // Dangle-and-Drop: add a DOWN step to signal dangle to server
+                // Server detects DOWN step on climbing entity = dangle action
+                LOGGER.info("[DANGLE-TRACE] Dangle down chosen: entity={}, currentElevation={}, dangleLevels={}",
+                      selectedEntity.getDisplayName(), selectedEntity.getElevation(), chosen.levels());
+                cmd.addStep(MoveStepType.DOWN);
                 ready();
                 return;
             }
@@ -1014,6 +1010,47 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 cmd.removeLastStep();
                 if (redrawMovement) {
                     clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
+                }
+            }
+        }
+
+        // Check for Dangle-and-Drop initiation: Mek with climb mode on stepping down
+        // 3+ levels with 2 functional arms (TO:AR p.20)
+        if (hasLastStep && (currentEntity instanceof Mek dangleMek)
+              && !currentEntity.isClimbing()
+              && cmd.getLastStep().climbMode()
+              && cmd.getLastStep().getType() == MoveStepType.FORWARDS
+              && ClimbingHelper.canDangle(currentEntity)
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)) {
+            // Check if this is a downward step of 3+ levels
+            Coords stepPos = cmd.getLastStep().getPosition();
+            Hex stepHex = game.getBoard(currentEntity).getHex(stepPos);
+            Hex entityHex = game.getBoard(currentEntity).getHex(currentEntity.getPosition());
+            if ((stepHex != null) && (entityHex != null)) {
+                int levelDiff = (entityHex.getLevel() + currentEntity.getElevation())
+                      - stepHex.getLevel();
+                if (levelDiff > 2) {
+                    // Offer dangle-and-drop instead of normal movement
+                    int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN, levelDiff);
+                    String message = dangleMek.getDisplayName()
+                          + " can dangle down " + dangleLevels
+                          + " levels (spends full turn). Dangle down?";
+                    if (clientgui.doYesNoDialog(
+                          Messages.getString("MovementDisplay.ClimbingDialog.title"), message)) {
+                        // Initiate dangle
+                        cmd.removeLastStep();
+                        int newElevation = Math.max(0, currentEntity.getElevation() - dangleLevels);
+                        currentEntity.setElevation(newElevation);
+                        currentEntity.setDangling(true);
+                        currentEntity.setFacing(currentEntity.getPosition().direction(stepPos));
+                        if (newElevation == 0) {
+                            currentEntity.setDangling(false);
+                        }
+                        ready();
+                        return;
+                    } else {
+                        // Player declined dangle - keep the leaping movement
+                    }
                 }
             }
         }
@@ -3145,15 +3182,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
             climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(i, cost, label,
                   ClimbingChoiceDialog.ClimbingActionType.CLIMB_UP));
         }
-        // Dangle-and-Drop option: available when continuing a climb with 2 functional arms
-        if (isContinuation && ClimbingHelper.canDangle(mek) && (currentElevation > 0)) {
+        // Dangle-and-Drop: available mid-climb or mid-dangle with 2 functional arms
+        // (TO:AR p.20). Allows controlled descent from any climbing/dangling position.
+        if (isContinuation && (currentElevation > 0) && ClimbingHelper.canDangle(mek)) {
             int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN, currentElevation);
             climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(dangleLevels, 0,
                   Messages.getString("MovementDisplay.ClimbingDialog.dangleOption",
                         dangleLevels),
                   ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN));
         }
-        // Drop option: available when dangling and have MP for the drop
+        // Drop option: available when dangling (already lowered by dangling)
         if (isContinuation && mek.isDangling() && (currentElevation > 0)
               && (walkMP >= ClimbingHelper.DROP_MP_COST)) {
             climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(currentElevation,

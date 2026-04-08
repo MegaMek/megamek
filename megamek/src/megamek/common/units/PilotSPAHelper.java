@@ -36,6 +36,7 @@ package megamek.common.units;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import megamek.common.units.VTOL;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;

@@ -36,8 +36,25 @@ package megamek.common.units;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.beans.Transient;
+
 import megamek.common.units.Crew;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.units.Aero;
+import megamek.common.units.AeroSpaceFighter;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Tank;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.BipedMek;
+import megamek.common.units.VTOL;
+import megamek.common.units.SmallCraft;
+import megamek.common.units.FixedWingSupport;
+import megamek.common.units.ConvFighter;
+import megamek.common.units.Dropship;
+import megamek.common.units.Warship;
+import megamek.common.units.SpaceStation;
+import megamek.common.units.Aero;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -162,4 +179,47 @@ class PilotSPAHelperTest {
 
         assertTrue(PilotSPAHelper.isWindWalkerValid(convFighter), "Wind Walker should be valid for Conventional Fighters");
     }
+
+    @Test
+    void testWindWalkerValidForFixedWingSupport() {
+        FixedWingSupport fixedWing = new FixedWingSupport();
+        fixedWing.setCrew(new Crew(CrewType.SINGLE));
+
+        assertTrue(PilotSPAHelper.isWindWalkerValid(fixedWing), "Wind Walker should be valid for Fixed Wing Support");
+    }
+
+    @Test
+    void testWindWalkerValidForDropship() {
+        Dropship dropship = new Dropship();
+        dropship.setCrew(new Crew(CrewType.SINGLE));
+
+        assertTrue(PilotSPAHelper.isWindWalkerValid(dropship), "Wind Walker should be valid for Dropships");
+    }
+
+    @Test
+    void testWindWalkerInvalidForJumpship() {
+        Jumpship jumpship = new Jumpship();
+        jumpship.setCrew(new Crew(CrewType.SINGLE));
+        
+        assertTrue(PilotSPAHelper.isWindWalkerValid(jumpship), "Wind Walker should be valid for Jumpships");
+    }
+
+    @Test
+    void testWindWalkerInvalidForWarship() {
+        Warship warship = new Warship();
+        warship.setCrew(new Crew(CrewType.SINGLE));
+
+        assertTrue(PilotSPAHelper.isWindWalkerValid(warship), "Wind Walker should be valid for Warships");
+    }
+
+    @Test
+    void testWindWalkerInvalidForSpaceStation() {
+        SpaceStation spaceStation = new SpaceStation();
+        spaceStation.setCrew(new Crew(CrewType.SINGLE));
+
+        assertTrue(PilotSPAHelper.isWindWalkerValid(spaceStation), "Wind Walker should be valid for Space Stations");
+    }
+
+    //TODO: PilotSPAHelper checsk for WindWalker validity in atmo, and WindWalker invalidity in vacuum.
+
 }

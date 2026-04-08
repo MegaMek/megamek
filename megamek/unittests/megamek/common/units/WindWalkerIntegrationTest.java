@@ -35,6 +35,7 @@ package megamek.common.units;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import megamek.common.units.Crew;
 import megamek.common.board.Coords;
@@ -43,6 +44,24 @@ import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.rolls.PilotingRollData;
+
+import megamek.common.units.Crew;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.units.Aero;
+import megamek.common.units.AeroSpaceFighter;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Tank;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.BipedMek;
+import megamek.common.units.VTOL;
+import megamek.common.units.SmallCraft;
+import megamek.common.units.FixedWingSupport;
+import megamek.common.units.ConvFighter;
+import megamek.common.units.Dropship;
+import megamek.common.units.Warship;
+import megamek.common.units.SpaceStation;
+import megamek.common.units.Aero;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -138,4 +157,213 @@ class WindWalkerIntegrationTest {
 
         assertTrue(!PilotSPAHelper.isWindWalkerValid(mek), "Wind Walker should not be valid for standard BipedMeks");
     }
+
+    @Test
+    void testWindWalkerLandingModifierForConvFighter() {
+        ConvFighter convFighter = new ConvFighter();
+        Crew crew = new Crew(CrewType.SINGLE);
+        PilotOptions options = new PilotOptions();
+        options.getOption(OptionsConstants.PILOT_WIND_WALKER).setValue(true);
+        crew.setOptions(options);
+        convFighter.setCrew(crew);
+        convFighter.setGame(game);
+
+        PilotingRollData roll = convFighter.getLandingControlRoll(5, new Coords(0,0),0,false);
+
+        boolean hasWindWalkerMod = roll.getDesc().contains("Wind Walker");
+        assertTrue(hasWindWalkerMod, "Landing roll should include Wind Walker modifier for ConvFighter");
+
+        int windWalkerMod = roll.getModifiers().stream()
+            .filter(mod -> mod.getDesc().contains("Wind Walker"))
+            .mapToInt(mod -> mod.value())
+            .findFirst()
+            .orElse(0);
+        
+        assertEquals(-1, windWalkerMod, "Wind Walker landing modifier should be -1 for ConvFighter");
+    }
+
+    @Test
+    void testWindWalkerLandingModifierForFixedWingSupport() {
+        FixedWingSupport fixedWingSupport = new FixedWingSupport();
+        Crew crew = new Crew(CrewType.SINGLE);
+        PilotOptions options = new PilotOptions();
+        options.getOption(OptionsConstants.PILOT_WIND_WALKER).setValue(true);
+        crew.setOptions(options);
+        fixedWingSupport.setCrew(crew);
+        fixedWingSupport.setGame(game);
+
+        PilotingRollData roll = fixedWingSupport.getLandingControlRoll(5, new Coords(0,0),0,false);
+
+        boolean hasWindWalkerMod = roll.getDesc().contains("Wind Walker");
+        assertTrue(hasWindWalkerMod, "Landing roll should include Wind Walker modifier for FixedWingSupport");
+
+        int windWalkerMod = roll.getModifiers().stream()
+            .filter(mod -> mod.getDesc().contains("Wind Walker"))
+            .mapToInt(mod -> mod.value())
+            .findFirst()
+            .orElse(0);
+        
+        assertEquals(-1, windWalkerMod, "Wind Walker landing modifier should be -1 for FixedWingSupport");
+    }
+
+    @Test
+    void testWindWalkerLandingModifierForSmallCraft() {
+        SmallCraft smallCraft = new SmallCraft();
+        Crew crew = new Crew(CrewType.SINGLE);
+        PilotOptions options = new PilotOptions();
+        options.getOption(OptionsConstants.PILOT_WIND_WALKER).setValue(true);
+        crew.setOptions(options);
+        smallCraft.setCrew(crew);
+        smallCraft.setGame(game);
+
+        PilotingRollData roll = smallCraft.getLandingControlRoll(5, new Coords(0,0),0,false);
+
+        boolean hasWindWalkerMod = roll.getDesc().contains("Wind Walker");
+        assertTrue(hasWindWalkerMod, "Landing roll should include Wind Walker modifier for SmallCraft");
+
+        int windWalkerMod = roll.getModifiers().stream()
+            .filter(mod -> mod.getDesc().contains("Wind Walker"))
+            .mapToInt(mod -> mod.value())
+            .findFirst()
+            .orElse(0);
+        
+        assertEquals(-1, windWalkerMod, "Wind Walker landing modifier should be -1 for SmallCraft");
+    }
+
+    @Test
+    void testWindWalkerLandingModifierForDropShip() {
+        Dropship dropShip = new Dropship();
+        Crew crew = new Crew(CrewType.SINGLE);
+        PilotOptions options = new PilotOptions();
+        options.getOption(OptionsConstants.PILOT_WIND_WALKER).setValue(true);
+        crew.setOptions(options);
+        dropShip.setCrew(crew);
+        dropShip.setGame(game);
+
+        PilotingRollData roll = dropShip.getLandingControlRoll(5, new Coords(0,0),0,false);
+
+        boolean hasWindWalkerMod = roll.getDesc().contains("Wind Walker");
+        assertTrue(hasWindWalkerMod, "Landing roll should include Wind Walker modifier for DropShip");
+
+        int windWalkerMod = roll.getModifiers().stream()
+            .filter(mod -> mod.getDesc().contains("Wind Walker"))
+            .mapToInt(mod -> mod.value())
+            .findFirst()
+            .orElse(0);
+        
+        assertEquals(-1, windWalkerMod, "Wind Walker landing modifier should be -1 for DropShip");
+    }
+
+    @Test
+    void testWindWalkerLandingModifierForJumpShip() {
+        Jumpship jumpShip = new Jumpship();
+        Crew crew = new Crew(CrewType.SINGLE);
+        PilotOptions options = new PilotOptions();
+        options.getOption(OptionsConstants.PILOT_WIND_WALKER).setValue(true);
+        crew.setOptions(options);
+        jumpShip.setCrew(crew);
+        jumpShip.setGame(game);
+
+        PilotingRollData roll = jumpShip.getLandingControlRoll(5, new Coords(0,0),0,false);
+
+        boolean hasWindWalkerMod = roll.getDesc().contains("Wind Walker");
+        assertTrue(hasWindWalkerMod, "Landing roll should include Wind Walker modifier for JumpShip");
+
+        int windWalkerMod = roll.getModifiers().stream()
+            .filter(mod -> mod.getDesc().contains("Wind Walker"))
+            .mapToInt(mod -> mod.value())
+            .findFirst()
+            .orElse(0);
+        
+        assertEquals(-1, windWalkerMod, "Wind Walker landing modifier should be -1 for JumpShip");
+    }
+
+    @Test
+    void testWindWalkerLandingModifierForWarship() {
+        Warship warship = new Warship();
+        Crew crew = new Crew(CrewType.SINGLE);
+        PilotOptions options = new PilotOptions();
+        options.getOption(OptionsConstants.PILOT_WIND_WALKER).setValue(true);
+        crew.setOptions(options);
+        warship.setCrew(crew);
+        warship.setGame(game);
+
+        PilotingRollData roll = warship.getLandingControlRoll(5, new Coords(0,0),0,false);
+
+        boolean hasWindWalkerMod = roll.getDesc().contains("Wind Walker");
+        assertTrue(hasWindWalkerMod, "Landing roll should include Wind Walker modifier for Warship");
+
+        int windWalkerMod = roll.getModifiers().stream()
+            .filter(mod -> mod.getDesc().contains("Wind Walker"))
+            .mapToInt(mod -> mod.value())
+            .findFirst()
+            .orElse(0);
+        
+        assertEquals(-1, windWalkerMod, "Wind Walker landing modifier should be -1 for Warship");
+    }
+
+    @Test
+    void testWindWalkerLandingModifierForSpaceStation() {
+        SpaceStation spaceStation = new SpaceStation();
+        Crew crew = new Crew(CrewType.SINGLE);
+        PilotOptions options = new PilotOptions();
+        options.getOption(OptionsConstants.PILOT_WIND_WALKER).setValue(true);
+        crew.setOptions(options);
+        spaceStation.setCrew(crew);
+        spaceStation.setGame(game);
+
+        PilotingRollData roll = spaceStation.getLandingControlRoll(5, new Coords(0,0),0,false);
+
+        boolean hasWindWalkerMod = roll.getDesc().contains("Wind Walker");
+        assertTrue(hasWindWalkerMod, "Landing roll should include Wind Walker modifier for SpaceStation");
+
+        int windWalkerMod = roll.getModifiers().stream()
+            .filter(mod -> mod.getDesc().contains("Wind Walker"))
+            .mapToInt(mod -> mod.value())
+            .findFirst()
+            .orElse(0);
+        
+        assertEquals(-1, windWalkerMod, "Wind Walker landing modifier should be -1 for SpaceStation");
+    }
+
+    @Test
+    void testWindWalkerLandingModifierForLandAirMek() {
+        LandAirMek landAirMek = new LandAirMek(Mek.GYRO_STANDARD, Mek.COCKPIT_STANDARD, LandAirMek.LAM_STANDARD);
+        Crew crew = new Crew(CrewType.SINGLE);
+        PilotOptions options = new PilotOptions();
+        options.getOption(OptionsConstants.PILOT_WIND_WALKER).setValue(true);
+        crew.setOptions(options);
+        landAirMek.setCrew(crew);
+        landAirMek.setGame(game);
+
+        PilotingRollData roll = landAirMek.getLandingControlRoll(5, new Coords(0,0),0,false);
+
+        boolean hasWindWalkerMod = roll.getDesc().contains("Wind Walker");
+        assertTrue(hasWindWalkerMod, "Landing roll should include Wind Walker modifier for LandAirMek");
+
+        int windWalkerMod = roll.getModifiers().stream()
+            .filter(mod -> mod.getDesc().contains("Wind Walker"))
+            .mapToInt(mod -> mod.value())
+            .findFirst()
+            .orElse(0);
+        
+        assertEquals(-1, windWalkerMod, "Wind Walker landing modifier should be -1 for LandAirMek");
+    }
+
+    @Test
+    void testWindWalkerLandingModifierForConvFighterWithoutSPA() {
+        ConvFighter convFighter = new ConvFighter();
+        Crew crew = new Crew(CrewType.SINGLE);
+        PilotOptions options = new PilotOptions();
+        crew.setOptions(options);
+        convFighter.setCrew(crew);
+        convFighter.setGame(game);
+
+        PilotingRollData roll = convFighter.getLandingControlRoll(5, new Coords(0,0),0,false);
+
+        boolean hasWindWalkerMod = roll.getDesc().contains("Wind Walker");
+        assertFalse(hasWindWalkerMod, "Landing roll should not include Wind Walker modifier for ConvFighter without the SPA option");
+    }
+
+    
 }

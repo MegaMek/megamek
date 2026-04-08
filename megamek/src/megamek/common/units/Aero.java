@@ -65,7 +65,7 @@ import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.util.ConditionalStringJoiner;
-import megamek.logging.MMLoggPilotingRollDataer;
+import megamek.logging.MMLogger;
 import megamek.common.units.PilotSPAHelper;
 
 /**

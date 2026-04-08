@@ -65,7 +65,7 @@ class WindWalkerIntegrationTest {
     }
 
     @Test
-    void TestWindWalkerLandingModifierForAero() {
+    void testWindWalkerLandingModifierForAero() {
         AeroSpaceFighter aero = new AeroSpaceFighter();
         Crew crew = new Crew(CrewType.SINGLE);
         PilotOptions options = new PilotOptions();

@@ -126,10 +126,10 @@ class PilotSPAHelperTest {
         vtol.setMovementMode(EntityMovementMode.VTOL);
         vtol.setCrew(new Crew(CrewType.SINGLE));
         
-        //VTOLs are valid for WindWalker effects only if they are counted as airborne,
+        // VTOLs are valid for WindWalker effects only if they are counted as airborne,
         // which only occurs when a VTOL using VTOL movement, as per 
         // total warfare 2023 pg 20. VTOL are considered ground units when not using VTOL movement mode.
-        // Therefore, Wind Walker, which requires airborne untis would only be applicable when VTOL is using VTOL movement mode.
+        // Therefore, Wind Walker, which requires airborne units would only be applicable when VTOL is using VTOL movement mode.
 
         assertTrue(PilotSPAHelper.isWindWalkerValid(vtol), "Wind Walker should be valid for VTOL vehicles when in VTOL movement,");
     }
@@ -139,10 +139,10 @@ class PilotSPAHelperTest {
         VTOL vtol = new VTOL();
         vtol.setCrew(new Crew(CrewType.SINGLE));
 
-        //VTOLs are valid for WindWalker effects only if they are counted as airborne,
+        // VTOLs are valid for WindWalker effects only if they are counted as airborne,
         // which only occurs when a VTOL using VTOL movement, as per 
         // total warfare 2023 pg 20. VTOL are considered ground units when not using VTOL movement mode.
-        // Therefore, Wind Walker, which requires airborne untis would only be applicable when VTOL is using VTOL movement mode.
+        // Therefore, Wind Walker, which requires airborne units would only be applicable when VTOL is using VTOL movement mode.
 
         assertFalse(PilotSPAHelper.isWindWalkerValid(vtol), "Wind Walker should NOT be valid for VTOL vehicles when NOT in VTOL movement");
     }

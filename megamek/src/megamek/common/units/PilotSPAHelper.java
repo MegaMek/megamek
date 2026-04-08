@@ -160,8 +160,9 @@ public final class PilotSPAHelper {
     }
     
     /**
-    * Returns true when the given enttity is a valid unit type for the Wind Walker SPA.
-    * Wind Walker applies to: (most) aerospace,aircraft, WiGE, Land-Air-Mechs, and Glider ProtoMechs.
+    * Returns true when the given entity is a valid unit type for the Wind Walker SPA.
+    * Wind Walker applies to: (most) aerospace,aircraft, WiGE, Land-Air-Mechs, Glider ProtoMechs, and VTOL aircraft
+    * when they are in VTOL mode.
     * @param entity The entity to check
     * @return True when the given entity is a valid unit type for the Wind Walker SPA.
     **/
@@ -174,7 +175,7 @@ public final class PilotSPAHelper {
             return true;
         }
        
-        if(entity.getMovementMode().isVTOL()) {
+        if(entity.getMovementMode().isVTOL() && entity instanceof VTOL) {
             return true;
         }
 

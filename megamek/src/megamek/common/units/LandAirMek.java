@@ -839,7 +839,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         // Base piloting skill
         PilotingRollData roll = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
 
-        if ((hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PlotSPAHelper.isWindWalkerValid(this)){
+        if ((hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PilotSPAHelper.isWindWalkerValid(this)){
             roll.addModifier(-1, "Wind Walker landing bonus");
         }
         addEntityBonuses(roll);

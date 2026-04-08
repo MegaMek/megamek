@@ -170,15 +170,11 @@ public final class PilotSPAHelper {
             return false;
         }
 
-        if (entity instanceof IAero) {
-            return true;
-        }
-        
-        if (entity instanceof LandAirMek) {
-            return true;
-        }
-
         if (entity.getMovementMode().isWiGE()) {
+            return true;
+        }
+       
+        if(entity.getMovementMode().isVTOL()) {
             return true;
         }
 
@@ -186,9 +182,10 @@ public final class PilotSPAHelper {
             return true;
         }
 
-        if (entity.getMovementMode().isVTOL()) {
+        if (entity instanceof IAero) {
             return true;
         }
+        
 
         return false;
     }

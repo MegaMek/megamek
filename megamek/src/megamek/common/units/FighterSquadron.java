@@ -245,11 +245,6 @@ public class FighterSquadron extends AeroSpaceFighter {
               || conditions.getAtmosphere().isVacuum())) {
             prd.addModifier(+2, "Atmospheric operations");
             prd.addModifier(-1, "fighter/ small craft");
-
-            //wind walker spa bonus
-            if ((hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PilotSPAHelper.isWindWalkerValid(this)) {
-                prd.addModifier(-1, "Wind Walker Space/Atmo Interface passthrough");
-            }
         }
 
         // according to personal communication with Welshman, the normal crit

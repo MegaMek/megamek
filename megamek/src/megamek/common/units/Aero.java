@@ -65,7 +65,7 @@ import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.util.ConditionalStringJoiner;
-import megamek.logging.MMLogger;
+import megamek.logging.MMLoggPilotingRollDataer;
 import megamek.common.units.PilotSPAHelper;
 
 /**
@@ -1527,11 +1527,6 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 }
             } else {
                 prd.addModifier(-1, "fighter/small craft");
-            }
-
-            // Wind Walker SPA bonus
-            if ((hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PilotSPAHelper.isWindWalkerValid(this)) {
-                prd.addModifier(-1, "Wind Walker Space/Atmo interface passthrough");
             }
         }
 

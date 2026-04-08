@@ -817,10 +817,6 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             boolean spaceOrVacuum = isSpaceborne() || conditions.getAtmosphere().isVacuum();
             if (!spaceOrVacuum && isAirborne()) {
                 roll.addModifier(+1, "Atmospheric operations");
-                
-                if ((hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PilotSPAHelper.isWindWalkerValid(this)) {
-                    roll.addModifier(-1, "Wind Walker Space/Atmo Interface passthrough");
-                }
             }
 
             if (hasQuirk(OptionsConstants.QUIRK_POS_ATMOSPHERE_FLYER) && !isSpaceborne()) {
@@ -841,7 +837,13 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      */
     public PilotingRollData checkAirMekLanding() {
         // Base piloting skill
-        PilotingRollData roll = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
+        PilotingRollData roll;
+        if((hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PilotSPAHelper.isWindWalkerValid(this)) {
+            roll = new PilotingRollData(getId(), getCrew().getPiloting() - 1, "Wind Walker Landing Bonus");
+        }
+        else {
+            roll = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
+        }
 
         addEntityBonuses(roll);
 

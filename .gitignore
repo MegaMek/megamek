@@ -48,6 +48,7 @@ build/
 /megamek/mmconf/searches/*.json
 /megamek/mmconf/recent-advanced-searches.json
 /mm-data/*
+/mm-data
 
 # UserData
 megamek/userdata/**
@@ -81,6 +82,9 @@ equipment.txt
 .github/copilot-instructions.md
 .github/workflows
 *.iml
+.gitignore
+.settings.gradle
+.gitmodules
 
 # Testing Temp Folder
 /megamek/testresources/tmp/*

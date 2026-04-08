@@ -166,6 +166,10 @@ public final class PilotSPAHelper {
     * @return True when the given entity is a valid unit type for the Wind Walker SPA.
     **/
     public static boolean isWindWalkerValid(Entity entity) {
+        if (entity == null) {
+            return false;
+        }
+
         if (entity instanceof IAero) {
             return true;
         }

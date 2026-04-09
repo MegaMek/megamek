@@ -51,7 +51,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import megamek.client.event.BoardViewEvent;
-import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -595,14 +594,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 return;
             }
             if (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DROP) {
-                // Drop from dangle: 4 MP, leaping PSRs with reduced modifier
-                // Server will handle the PSRs during movement resolution
-                selectedEntity.setClimbingLevelsChosen(-1);
-                selectedEntity.setDangling(false);
-                selectedEntity.setClimbing(false);
-                // Queue movement to drop - use FORWARDS which will trigger the drop
-                cmd.addStep(MoveStepType.CLIMB_MODE_ON);
-                cmd.addStep(MoveStepType.FORWARDS);
+                // Drop from dangle: signal with TWO DOWN steps (dangle uses one)
+                LOGGER.info("[DANGLE-TRACE] Drop chosen: entity={}, currentElevation={}",
+                      selectedEntity.getDisplayName(), selectedEntity.getElevation());
+                clientgui.addToast(ToastLevel.WARNING,
+                      selectedEntity.getDisplayName() + " drops from dangle position!",
+                      selectedEntity);
+                cmd.addStep(MoveStepType.DOWN);
+                cmd.addStep(MoveStepType.DOWN);
+                ready();
+                return;
             }
             // Standard climb continuation
             selectedEntity.setClimbingLevelsChosen(chosen.levels());
@@ -1019,42 +1020,72 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
 
-        // Check for Dangle-and-Drop initiation: Mek with climb mode on stepping down
-        // 3+ levels with 2 functional arms (TO:AR p.20)
-        if (hasLastStep && (currentEntity instanceof Mek dangleMek)
+        // Check for Dangle-and-Drop initiation from cliff/building edge (TO:AR p.20)
+        // When a Mek with climb mode on steps down 3+ levels with 2 functional arms,
+        // offer dangle-and-drop as an alternative to leaping
+        if (hasLastStep && (currentEntity instanceof Mek edgeMek)
               && !currentEntity.isClimbing()
-              && cmd.getLastStep().climbMode()
               && cmd.getLastStep().getType() == MoveStepType.FORWARDS
               && ClimbingHelper.canDangle(currentEntity)
               && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)) {
-            // Check if this is a downward step of 3+ levels
             Coords stepPos = cmd.getLastStep().getPosition();
             Hex stepHex = game.getBoard(currentEntity).getHex(stepPos);
             Hex entityHex = game.getBoard(currentEntity).getHex(currentEntity.getPosition());
             if ((stepHex != null) && (entityHex != null)) {
                 int levelDiff = (entityHex.getLevel() + currentEntity.getElevation())
                       - stepHex.getLevel();
-                if (levelDiff > 2) {
-                    // Offer dangle-and-drop instead of normal movement
+                if ((levelDiff > 2) && ClimbingHelper.canDangle(currentEntity)) {
+                    // Build descent options dialog
                     int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN, levelDiff);
-                    String message = dangleMek.getDisplayName()
-                          + " can dangle down " + dangleLevels
-                          + " levels (spends full turn). Dangle down?";
-                    if (clientgui.doYesNoDialog(
-                          Messages.getString("MovementDisplay.ClimbingDialog.title"), message)) {
-                        // Initiate dangle
+                    List<ClimbingChoiceDialog.ClimbingOption> descentOptions = new java.util.ArrayList<>();
+
+                    // Dangle down option
+                    descentOptions.add(new ClimbingChoiceDialog.ClimbingOption(dangleLevels, 0,
+                          Messages.getString("MovementDisplay.ClimbingDialog.dangleOption", dangleLevels),
+                          ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN));
+
+                    // Leap/drop option
+                    if (game.getOptions().booleanOption(
+                          OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING)) {
+                        descentOptions.add(new ClimbingChoiceDialog.ClimbingOption(levelDiff,
+                              ClimbingHelper.DROP_MP_COST,
+                              Messages.getString("MovementDisplay.ClimbingDialog.dropOption",
+                                    ClimbingHelper.DROP_MP_COST),
+                              ClimbingChoiceDialog.ClimbingActionType.DROP));
+                    }
+
+                    // Cancel
+                    descentOptions.add(new ClimbingChoiceDialog.ClimbingOption(0, 0,
+                          Messages.getString("MovementDisplay.ClimbingDialog.clingOption"),
+                          ClimbingChoiceDialog.ClimbingActionType.CLING));
+
+                    String headerMessage = edgeMek.getDisplayName()
+                          + " is at the edge of a " + levelDiff + " level drop.\n"
+                          + "How would you like to descend?";
+                    ClimbingChoiceDialog dialog = new ClimbingChoiceDialog(
+                          clientgui.getFrame(), headerMessage, descentOptions);
+                    dialog.setVisible(true);
+                    ClimbingChoiceDialog.ClimbingOption chosen = dialog.getFirstChoice();
+
+                    if (chosen != null && chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN) {
+                        // Initiate dangle: CLIMB_MODE_ON signals dangle intent from edge
+                        // Server detects: entity at elevation > 0, climb mode on, no movement = dangle
                         cmd.removeLastStep();
-                        int newElevation = Math.max(0, currentEntity.getElevation() - dangleLevels);
-                        currentEntity.setElevation(newElevation);
-                        currentEntity.setDangling(true);
-                        currentEntity.setFacing(currentEntity.getPosition().direction(stepPos));
-                        if (newElevation == 0) {
-                            currentEntity.setDangling(false);
-                        }
+                        clientgui.addToast(ToastLevel.INFO,
+                              edgeMek.getDisplayName() + " begins dangling down", edgeMek);
+                        cmd.addStep(MoveStepType.CLIMB_MODE_ON);
+                        LOGGER.info("[DANGLE-TRACE] Edge dangle: added CLIMB_MODE_ON, cmd.length={}",
+                              cmd.length());
                         ready();
                         return;
+                    } else if (chosen != null && chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DROP) {
+                        // Keep the leaping movement as-is (standard leaping handles it)
                     } else {
-                        // Player declined dangle - keep the leaping movement
+                        // Cancelled or cling - remove the step
+                        cmd.removeLastStep();
+                        if (redrawMovement) {
+                            clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
+                        }
                     }
                 }
             }
@@ -3207,8 +3238,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         dangleLevels),
                   ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN));
         }
-        // Drop option: available when dangling (already lowered by dangling)
-        if (isContinuation && mek.isDangling() && (currentElevation > 0)
+        // Drop option: available from any climbing or dangling position (TO:AR p.20)
+        // From dangling: PSR modifiers reduced by 2. From climbing: standard leaping modifiers.
+        if (isContinuation && (currentElevation > 0)
               && (walkMP >= ClimbingHelper.DROP_MP_COST)) {
             climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(currentElevation,
                   ClimbingHelper.DROP_MP_COST,

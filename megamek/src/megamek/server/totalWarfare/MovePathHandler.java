@@ -192,22 +192,35 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
         }
 
-        // TacOps Dangle-and-Drop: a climbing entity with a DOWN step dangles (TO:AR p.20)
-        if (entity.isClimbing() && md.contains(MoveStepType.DOWN)
-              && ClimbingHelper.canDangle(entity)) {
+        // TacOps Dangle-and-Drop (TO:AR p.20)
+        // Detect dangle/drop intent:
+        // - Climbing/dangling entity with DOWN step(s): 1 DOWN = dangle, 2 DOWN = drop
+        // - Entity at elevated position with CLIMB_MODE_ON and no movement = edge dangle initiation
+        boolean hasDownStep = md.contains(MoveStepType.DOWN);
+        boolean isEdgeDangle = !entity.isClimbing() && !entity.isDangling()
+              && (entity instanceof Mek) && (entity.getElevation() > 0)
+              && ClimbingHelper.canDangle(entity)
+              && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
+              && md.getFinalClimbMode()
+              && !md.contains(MoveStepType.FORWARDS);
+        boolean canProcessDangle = (entity.isClimbing() || entity.isDangling()) && hasDownStep;
+        logger.info("[DANGLE-TRACE] processMovement check: canProcessDangle={}, isEdgeDangle={}, " +
+                    "hasDownStep={}, isClimbing={}, isDangling={}, elevation={}, climbMode={}, stepCount={}",
+              canProcessDangle, isEdgeDangle, hasDownStep, entity.isClimbing(), entity.isDangling(),
+              entity.getElevation(), md.getFinalClimbMode(), md.length());
+        if (isEdgeDangle) {
+            // Edge initiation: entity on building roof / cliff edge starts dangling
             int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN,
                   entity.getElevation());
             int newElevation = Math.max(0, entity.getElevation() - dangleLevels);
-            logger.info("[DANGLE-TRACE] Server processing dangle: entity={}, " +
-                  "currentElevation={}, dangleLevels={}, newElevation={}",
+            logger.info("[DANGLE-TRACE] Server processing EDGE dangle: entity={}, " +
+                        "currentElevation={}, dangleLevels={}, newElevation={}",
                   entity.getDisplayName(), entity.getElevation(), dangleLevels, newElevation);
-            // Report the dangle action in the movement phase log
             Report dangleReport = new Report(6462, Report.PUBLIC);
             dangleReport.add(entity.getDisplayName());
             dangleReport.add(dangleLevels);
             addReport(dangleReport);
             entity.setElevation(newElevation);
-            entity.setClimbing(false);
             entity.setDangling(true);
             entity.setClimbingLevelsChosen(0);
             if (newElevation == 0) {
@@ -216,11 +229,114 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 groundReport.add(entity.getDisplayName());
                 addReport(groundReport);
             }
-            // Dangle spends the entire movement phase
             entity.setDone(true);
             entity.moved = EntityMovementType.MOVE_WALK;
             gameManager.entityUpdate(entity.getId());
             return;
+        }
+        if (canProcessDangle) {
+            int downStepCount = 0;
+            for (java.util.Iterator<MoveStep> iter = md.getSteps(); iter.hasNext(); ) {
+                if (iter.next().getType() == MoveStepType.DOWN) {
+                    downStepCount++;
+                }
+            }
+            boolean isDrop = (downStepCount >= 2);
+
+            if (isDrop) {
+                // DROP from climbing/dangling position: 4 MP, leaping PSRs
+                // From dangling: reduce modifiers by 2 (TO:AR p.20)
+                // From climbing (not dangling): standard leaping modifiers
+                int dropDistance = entity.getElevation();
+                int modifierReduction = entity.isDangling() ? ClimbingHelper.DANGLE_LEVELS_PER_TURN : 0;
+                int effectiveDistance = Math.max(0, dropDistance - modifierReduction);
+                logger.info("[DANGLE-TRACE] Server processing DROP: entity={}, " +
+                            "dropDistance={}, effectiveDistance={}, isDangling={}, modifierReduction={}",
+                      entity.getDisplayName(), dropDistance, effectiveDistance,
+                      entity.isDangling(), modifierReduction);
+
+                // PSR 1: Leg damage check (modifier = 2 * effectiveDistance)
+                String dropType = entity.isDangling() ? "dropping from dangle" : "dropping from climb";
+                if (effectiveDistance > 0) {
+                    rollTarget = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
+                    entity.addPilotingModifierForTerrain(rollTarget, entity.getPosition(),
+                          entity.getBoardId());
+                    rollTarget.append(new PilotingRollData(entity.getId(),
+                          2 * effectiveDistance, dropType + " (leg damage)"));
+                    if (0 < gameManager.doSkillCheckWhileMoving(entity, entity.getElevation(),
+                          entity.getPosition(), entity.getPosition(), rollTarget, false)) {
+                        // Leg damage equal to effective distance
+                        addReport(gameManager.damageEntity(entity,
+                              new HitData(Mek.LOC_LEFT_LEG), effectiveDistance));
+                        addReport(gameManager.damageEntity(entity,
+                              new HitData(Mek.LOC_RIGHT_LEG), effectiveDistance));
+                        addNewLines();
+                        addReport(gameManager.criticalEntity(entity,
+                              Mek.LOC_LEFT_LEG, false, 0, 0));
+                        addNewLines();
+                        addReport(gameManager.criticalEntity(entity,
+                              Mek.LOC_RIGHT_LEG, false, 0, 0));
+                    }
+
+                    // PSR 2: Fall check (modifier = effectiveDistance)
+                    rollTarget = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
+                    entity.addPilotingModifierForTerrain(rollTarget, entity.getPosition(),
+                          entity.getBoardId());
+                    rollTarget.append(new PilotingRollData(entity.getId(),
+                          effectiveDistance, dropType + " (fall)"));
+                    if (0 < gameManager.doSkillCheckWhileMoving(entity, entity.getElevation(),
+                          entity.getPosition(), entity.getPosition(), rollTarget, true)) {
+                        // Fall from elevation
+                        entity.setDangling(false);
+                        entity.setClimbing(false);
+                        entity.setClimbingLevelsChosen(0);
+                        entity.setDone(true);
+                        entity.moved = EntityMovementType.MOVE_WALK;
+                        gameManager.entityUpdate(entity.getId());
+                        return;
+                    }
+                }
+
+                // Both PSRs passed (or reducedDistance was 0) - safe landing
+                entity.setElevation(0);
+                entity.setDangling(false);
+                entity.setClimbing(false);
+                entity.setClimbingLevelsChosen(0);
+                Report landReport = new Report(6463, Report.PUBLIC);
+                landReport.add(entity.getDisplayName());
+                addReport(landReport);
+                entity.setDone(true);
+                entity.moved = EntityMovementType.MOVE_WALK;
+                gameManager.entityUpdate(entity.getId());
+                return;
+
+            } else if (!isDrop && ClimbingHelper.canDangle(entity)) {
+                // DANGLE: lower by 2 levels, spend full turn
+                int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN,
+                      entity.getElevation());
+                int newElevation = Math.max(0, entity.getElevation() - dangleLevels);
+                logger.info("[DANGLE-TRACE] Server processing dangle: entity={}, " +
+                            "currentElevation={}, dangleLevels={}, newElevation={}",
+                      entity.getDisplayName(), entity.getElevation(), dangleLevels, newElevation);
+                Report dangleReport = new Report(6462, Report.PUBLIC);
+                dangleReport.add(entity.getDisplayName());
+                dangleReport.add(dangleLevels);
+                addReport(dangleReport);
+                entity.setElevation(newElevation);
+                entity.setClimbing(false);
+                entity.setDangling(true);
+                entity.setClimbingLevelsChosen(0);
+                if (newElevation == 0) {
+                    entity.setDangling(false);
+                    Report groundReport = new Report(6463, Report.PUBLIC);
+                    groundReport.add(entity.getDisplayName());
+                    addReport(groundReport);
+                }
+                entity.setDone(true);
+                entity.moved = EntityMovementType.MOVE_WALK;
+                gameManager.entityUpdate(entity.getId());
+                return;
+            }
         }
 
         if (md.getMpUsed() > 0) {

@@ -586,7 +586,7 @@ public class TestSmallCraft extends TestAero {
             }
 
             for (AmmoMounted a : bay.getBayAmmo()) {
-                ammoTypeCount.merge(a.getType().getAmmoType(), a.getUsableShotsLeft(), Integer::sum);
+                ammoTypeCount.merge(a.getType().getAmmoType(), a.getOriginalShots(), Integer::sum);
             }
 
             for (AmmoTypeEnum at : ammoWeaponCount.keySet()) {

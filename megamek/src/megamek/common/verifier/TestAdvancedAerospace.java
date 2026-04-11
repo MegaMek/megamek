@@ -724,7 +724,7 @@ public class TestAdvancedAerospace extends TestAero {
                 ammoWeaponCount.merge(w.getType().getAmmoType(), 1, Integer::sum);
             }
             for (AmmoMounted a : bay.getBayAmmo()) {
-                ammoTypeCount.merge(a.getType().getAmmoType(), a.getUsableShotsLeft(), Integer::sum);
+                ammoTypeCount.merge(a.getType().getAmmoType(), a.getOriginalShots(), Integer::sum);
             }
             for (AmmoTypeEnum at : ammoWeaponCount.keySet()) {
                 if (at != AmmoType.AmmoTypeEnum.NA) {

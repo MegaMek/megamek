@@ -388,6 +388,28 @@ public class BLKFile {
             }
             String equipName = s.trim();
 
+            // Backward compatibility: strip suffixes that older versions of
+            // encodeEquipmentLine() wrote into the slotless_equipment block.
+            int numShots = 0;
+            int shotsIndex = equipName.indexOf(":Shots");
+            if (shotsIndex > 0) {
+                int shotsEndIndex = equipName.indexOf("#", shotsIndex);
+                if (shotsEndIndex <= 0) {
+                    throw new EntityLoadingException(
+                          "Improperly formatted ammo count for equipment: " + equipName);
+                }
+                try {
+                    numShots = Integer.parseInt(
+                          equipName.substring(shotsIndex + ":Shots".length(), shotsEndIndex));
+                } catch (NumberFormatException ex) {
+                    throw new EntityLoadingException(
+                          "Improperly formatted ammo count for equipment: " + equipName, ex);
+                }
+                equipName = equipName.substring(0, shotsIndex);
+            }
+            equipName = equipName.replace(":Body", "").replace(":LA", "")
+                  .replace(":RA", "").replace(":TU", "").replace(":OMNI", "");
+
             EquipmentType etype = EquipmentType.get(equipName);
             if (etype == null) {
                 etype = EquipmentType.get(prefix + equipName);
@@ -404,7 +426,12 @@ public class BLKFile {
                     }
                 }
                 try {
-                    t.addEquipment(etype, Entity.LOC_NONE);
+                    Mounted<?> mount = t.addEquipment(etype, Entity.LOC_NONE);
+                    if (numShots > 0 && (mount.getType() instanceof AmmoType)) {
+                        mount.setShotsLeft(numShots);
+                        mount.setOriginalShots(numShots);
+                        mount.setSize(numShots * ((AmmoType) mount.getType()).getKgPerShot() / 1000.0);
+                    }
                 } catch (LocationFullException ex) {
                     throw new EntityLoadingException(ex.getMessage());
                 }
@@ -951,13 +978,18 @@ public class BLKFile {
             blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
         }
 
-        // Write slotless equipment (LOC_NONE) - e.g., cockpit modifications like DNI
+        // Write slotless equipment (LOC_NONE) - e.g., cockpit modifications like DNI.
+        // Use the internal name only; positional suffixes like :Shots#, :Body, :LA
+        // are not meaningful for LOC_NONE and loadSlotlessEquipment() does not expect them.
+        // Skip auto-created one-shot ammo (linkedBy != null) since it is recreated by
+        // addOneShotAmmo() when the parent weapon loads.
         Vector<String> slotlessEquipment = new Vector<>();
         for (Mounted<?> m : t.getEquipment()) {
             if (m.getLocation() == Entity.LOC_NONE && !m.isWeaponGroup() && !m.isAPMMounted()
                   && !(m.getType() instanceof InfantryAttack)
-                  && !(m.getType() instanceof BayWeapon)) {
-                slotlessEquipment.add(encodeEquipmentLine(m));
+                  && !(m.getType() instanceof BayWeapon)
+                  && !(m.getType() instanceof AmmoType && m.getLinkedBy() != null)) {
+                slotlessEquipment.add(m.getType().getInternalName());
             }
         }
         if (!slotlessEquipment.isEmpty()) {

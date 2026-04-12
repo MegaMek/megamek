@@ -201,7 +201,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         boolean isEdgeDangle = false;
         Coords edgeDangleTargetPos = null;
         if (!entity.isClimbing() && !entity.isDangling()
-              && (entity instanceof Mek) && (entity.getElevation() > 0)
+              && (entity instanceof Mek)
               && ClimbingHelper.canDangle(entity)
               && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
               && md.getFinalClimbMode()
@@ -3888,7 +3888,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 int nonClimbMpUsed = step.getMpUsed() - totalClimbCost;
                 int availableMP = walkMP - nonClimbMpUsed;
                 int affordableLevels = availableMP / costPerLevel;
-                int levelsThisTurn = Math.min(totalLevelsToClimb, Math.max(1, affordableLevels));
+                int levelsThisTurn = Math.min(totalLevelsToClimb, Math.max(0, affordableLevels));
 
                 boolean fellWhileClimbing = false;
                 // Track the climbing elevation - starts at the entity's elevation

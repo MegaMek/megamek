@@ -137,6 +137,7 @@ public class ClimbingChoiceDialog extends AbstractChoiceDialog<ClimbingChoiceDia
         int padding = UIUtil.scaleForGUI(BASE_PADDING);
         return "<style> "
               + ".description { font-family:Noto Sans; font-size:" + descriptionSize + ";  }"
-              + ".frame { padding:" + padding + " " + 2 * padding + " 0 0;  }";
+              + ".frame { padding:" + padding + " " + 2 * padding + " 0 0;  }"
+              + "</style>";
     }
 }

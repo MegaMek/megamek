@@ -3231,7 +3231,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         int targetLevel = targetHex.getLevel();
         if (targetHex.containsTerrain(Terrains.BUILDING)) {
-            targetLevel = currentHex.getLevel() + targetHex.terrainLevel(Terrains.BLDG_ELEV);
+            targetLevel = targetHex.getLevel() + targetHex.terrainLevel(Terrains.BLDG_ELEV);
         }
         int currentAbsolute = currentHex.getLevel() + currentElevation;
         int totalLevelsRemaining = targetLevel - currentAbsolute;

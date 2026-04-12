@@ -27861,6 +27861,8 @@ public class TWGameManager extends AbstractGameManager {
                 vPhaseReport.addAll(doEntityFallsInto(entity, entity.getElevation(),
                       entity.getPosition(), entity.getPosition(), autoFallRoll, true, 0));
                 entity.setClimbing(false);
+                entity.setDangling(false);
+                entity.setClimbingLevelsChosen(0);
             }
         }
     }

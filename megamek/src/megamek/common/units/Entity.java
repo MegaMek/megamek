@@ -2136,8 +2136,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns the number of levels the player chose to climb this turn. -1 means no choice has been made yet (use max
-     * affordable).
+     * Returns the number of levels the player chose to climb this turn. 0 means no choice has been made yet (use max
+     * affordable). Uses 0 as sentinel to survive XStream deserialization (which defaults unset ints to 0).
      */
     public int getClimbingLevelsChosen() {
         return climbingLevelsChosen;
@@ -2146,7 +2146,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Sets the number of levels to climb this turn.
      *
-     * @param levels the number of levels to climb, or -1 for no choice
+     * @param levels the number of levels to climb, or 0 for no choice
      */
     public void setClimbingLevelsChosen(int levels) {
         this.climbingLevelsChosen = levels;

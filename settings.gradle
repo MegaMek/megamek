@@ -1,4 +1,10 @@
 rootProject.name = 'MegaMekRoot'
-includeBuild('../mm-data')
+
+// Optional composite build: clone https://github.com/MegaMek/mm-data next to this repo (sibling of megamek).
+def mmDataDir = file('../mm-data').canonicalFile
+def mmDataSettings = new File(mmDataDir, 'settings.gradle')
+if (mmDataDir.isDirectory() && mmDataSettings.exists()) {
+    includeBuild(mmDataDir)
+}
 
 include 'megamek'

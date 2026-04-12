@@ -3959,13 +3959,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     if (climbHex.containsTerrain(Terrains.BUILDING)) {
                         IBuilding climbBldg = getGame().getBoard(entity.getBoardId()).getBuildingAt(curPos);
                         if (climbBldg != null) {
-                            // On the first level, damage the building (entering the hex)
-                            if (levelClimbed == 1) {
+                            // On the first level of a NEW climb, damage the building (entering the hex)
+                            // Don't damage again on continued climbs (entity was already climbing)
+                            if ((levelClimbed == 1) && (levelsAlreadyClimbed == 0)) {
                                 int buildingDamage = (int) Math.ceil(entity.getWeight() / 10.0);
                                 logger.info("[FALL-TRACE] Building climbing damage: {} points to {} at {}",
                                       buildingDamage, climbBldg.getName(), curPos);
-                                addReport(gameManager.damageBuilding(climbBldg, buildingDamage,
-                                      " absorbs ", curPos));
+                                addReport(gameManager.damageBuilding(climbBldg, buildingDamage, curPos));
                             }
 
                             // Check if unit weight exceeds current CF (may have changed

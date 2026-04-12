@@ -137,6 +137,9 @@ import megamek.logging.MMLogger;
 import megamek.server.*;
 import megamek.server.commands.*;
 import megamek.server.props.OrbitalBombardment;
+import megamek.server.rating.MatchResult;
+import megamek.server.rating.RatingService;
+import megamek.server.rating.SimpleEloRatingFormula;
 import megamek.server.victory.VictoryResult;
 
 /**
@@ -178,6 +181,8 @@ public class TWGameManager extends AbstractGameManager {
     private final List<DemolitionCharge> explodingCharges = new ArrayList<>();
 
     private final GhostTargetHelper ghostTargetHelper = new GhostTargetHelper(this);
+
+    private final RatingService ratingService = new RatingService(new SimpleEloRatingFormula());
 
     /**
      * Keeps track of what team a player requested to join.
@@ -2338,6 +2343,30 @@ public class TWGameManager extends AbstractGameManager {
         }
         return victoryResult.isVictory();
     }// end victory
+
+    /**
+     * Updates in-memory competitive ratings after a terminal victory or draw. Delegates pairing logic to
+     * {@link RatingService}; uses {@link Game#isPlayerVictor(Player)} and victory ids set during {@link #victory()}.
+     */
+    public void updateRatingsAfterVictory() {
+        Game g = getGame();
+        List<Player> participants = g.getPlayersList()
+              .stream()
+              .filter(player -> !player.isObserver())
+              .collect(Collectors.toCollection(ArrayList::new));
+        if (participants.size() < 2) {
+            return;
+        }
+        boolean draw = (g.getVictoryPlayerId() == Player.PLAYER_NONE) && (g.getVictoryTeam() == Player.TEAM_NONE);
+        List<Player> winners = draw ?
+              List.of() :
+              participants.stream().filter(g::isPlayerVictor).collect(Collectors.toList());
+        ratingService.updateRatings(new MatchResult(participants, winners, draw));
+    }
+
+    public RatingService getRatingService() {
+        return ratingService;
+    }
 
     private boolean isPlayerForcedVictory() {
         // check game options

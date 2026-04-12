@@ -331,6 +331,8 @@ record TWPhaseEndManager(TWGameManager gameManager) {
 
                 gameManager.transmitGameVictoryEventToAll();
 
+                gameManager.updateRatingsAfterVictory();
+
                 // FIXME: Why force-reset the game? Just let it stand
                 gameManager.resetGame();
                 break;

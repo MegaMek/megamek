@@ -45,7 +45,6 @@ import java.util.HashMap;
 
 import megamek.common.CriticalSlot;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.MiscMounted;
 import megamek.common.game.Game;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
@@ -393,6 +392,201 @@ class ClimbingHelperTest {
                   "Two hands MP cost should be 2");
             assertEquals(3, ClimbingHelper.MP_COST_ONE_HAND,
                   "One hand MP cost should be 3");
+        }
+
+        @Test
+        @DisplayName("Dangle constants are correct per TO:AR p.20")
+        void dangleConstantsCorrect() {
+            assertEquals(2, ClimbingHelper.DANGLE_LEVELS_PER_TURN,
+                  "Dangle levels per turn should be 2");
+            assertEquals(4, ClimbingHelper.DROP_MP_COST,
+                  "Drop MP cost should be 4");
+            assertEquals(3, ClimbingHelper.MIN_CLIMBING_LEVELS,
+                  "Minimum climbing levels should be 3");
+        }
+    }
+
+    @Nested
+    @DisplayName("Can Dangle Tests")
+    class CanDangleTests {
+
+        @Test
+        @DisplayName("Mek with two functional arms can dangle")
+        void twoArmsMekCanDangle() {
+            Mek mek = createFullyFunctionalMek(50);
+
+            assertTrue(ClimbingHelper.canDangle(mek),
+                  "Mek with two functional arms should be able to dangle");
+        }
+
+        @Test
+        @DisplayName("Mek with one arm cannot dangle")
+        void oneArmMekCannotDangle() {
+            Mek mek = createFullyFunctionalMek(50);
+            destroyActuator(mek, Mek.LOC_RIGHT_ARM, Mek.ACTUATOR_HAND);
+
+            assertFalse(ClimbingHelper.canDangle(mek),
+                  "Mek with one arm should not be able to dangle");
+        }
+
+        @Test
+        @DisplayName("Prone Mek cannot dangle")
+        void proneMekCannotDangle() {
+            Mek mek = createFullyFunctionalMek(50);
+            mek.setProne(true);
+
+            assertFalse(ClimbingHelper.canDangle(mek),
+                  "Prone Mek should not be able to dangle");
+        }
+
+        @Test
+        @DisplayName("Shut down Mek cannot dangle")
+        void shutDownMekCannotDangle() {
+            Mek mek = createFullyFunctionalMek(50);
+            mek.setShutDown(true);
+
+            assertFalse(ClimbingHelper.canDangle(mek),
+                  "Shut down Mek should not be able to dangle");
+        }
+
+        @Test
+        @DisplayName("Infantry cannot dangle")
+        void infantryCannotDangle() {
+            Infantry infantry = new Infantry();
+            infantry.setGame(game);
+
+            assertFalse(ClimbingHelper.canDangle(infantry),
+                  "Infantry should not be able to dangle");
+        }
+    }
+
+    @Nested
+    @DisplayName("Superheavy Mek Restriction Tests")
+    class SuperheavyTests {
+
+        @Test
+        @DisplayName("Superheavy Mek cannot climb")
+        void superheavyCannotClimb() {
+            Mek mek = createFullyFunctionalMek(150);
+            when(mek.isSuperHeavy()).thenReturn(true);
+
+            assertFalse(ClimbingHelper.canClimb(mek),
+                  "Superheavy Mek should not be able to climb");
+        }
+
+        @Test
+        @DisplayName("Superheavy Mek cannot dangle")
+        void superheavyCannotDangle() {
+            Mek mek = createFullyFunctionalMek(150);
+            when(mek.isSuperHeavy()).thenReturn(true);
+
+            assertFalse(ClimbingHelper.canDangle(mek),
+                  "Superheavy Mek should not be able to dangle");
+        }
+
+        @Test
+        @DisplayName("Superheavy climb impossible reason mentions superheavy")
+        void superheavyClimbReason() {
+            Mek mek = createFullyFunctionalMek(150);
+            when(mek.isSuperHeavy()).thenReturn(true);
+
+            String reason = ClimbingHelper.getClimbingImpossibleReason(mek);
+            assertNotNull(reason, "Superheavy should have a reason");
+            assertTrue(reason.toLowerCase().contains("superheavy"),
+                  "Reason should mention superheavy");
+        }
+
+        @Test
+        @DisplayName("Superheavy dangle impossible reason mentions superheavy")
+        void superheavyDangleReason() {
+            Mek mek = createFullyFunctionalMek(150);
+            when(mek.isSuperHeavy()).thenReturn(true);
+
+            String reason = ClimbingHelper.getDangleImpossibleReason(mek);
+            assertNotNull(reason, "Superheavy should have a reason");
+            assertTrue(reason.toLowerCase().contains("superheavy"),
+                  "Reason should mention superheavy");
+        }
+    }
+
+    @Nested
+    @DisplayName("Entity Climbing State Tests")
+    class EntityStateTests {
+
+        @Test
+        @DisplayName("isClimbing returns true when climbing")
+        void isClimbingWhenClimbing() {
+            Mek mek = createFullyFunctionalMek(50);
+            mek.setClimbing(true);
+
+            assertTrue(mek.isClimbing(),
+                  "isClimbing should return true when climbing");
+        }
+
+        @Test
+        @DisplayName("isClimbing returns true when dangling")
+        void isClimbingWhenDangling() {
+            Mek mek = createFullyFunctionalMek(50);
+            mek.setDangling(true);
+
+            assertTrue(mek.isClimbing(),
+                  "isClimbing should return true when dangling (same combat restrictions)");
+        }
+
+        @Test
+        @DisplayName("isDangling returns false when only climbing")
+        void isDanglingFalseWhenClimbing() {
+            Mek mek = createFullyFunctionalMek(50);
+            mek.setClimbing(true);
+
+            assertFalse(mek.isDangling(),
+                  "isDangling should return false when climbing (not dangling)");
+        }
+
+        @Test
+        @DisplayName("isDangling returns true when dangling")
+        void isDanglingTrueWhenDangling() {
+            Mek mek = createFullyFunctionalMek(50);
+            mek.setDangling(true);
+
+            assertTrue(mek.isDangling(),
+                  "isDangling should return true when dangling");
+        }
+    }
+
+    @Nested
+    @DisplayName("Dangle Impossible Reason Tests")
+    class DangleImpossibleReasonTests {
+
+        @Test
+        @DisplayName("Mek with two arms has no dangle impossible reason")
+        void twoArmsNoReason() {
+            Mek mek = createFullyFunctionalMek(50);
+
+            assertNull(ClimbingHelper.getDangleImpossibleReason(mek),
+                  "Mek with two functional arms should have no dangle impossible reason");
+        }
+
+        @Test
+        @DisplayName("Mek with one arm returns arm reason")
+        void oneArmReturnsReason() {
+            Mek mek = createFullyFunctionalMek(50);
+            destroyActuator(mek, Mek.LOC_LEFT_ARM, Mek.ACTUATOR_HAND);
+
+            String reason = ClimbingHelper.getDangleImpossibleReason(mek);
+            assertNotNull(reason, "Mek with one arm should have a dangle reason");
+            assertTrue(reason.contains("arm"),
+                  "Reason should mention arm requirements");
+        }
+
+        @Test
+        @DisplayName("Infantry returns non-Mek reason")
+        void infantryReturnsReason() {
+            Infantry infantry = new Infantry();
+            infantry.setGame(game);
+
+            String reason = ClimbingHelper.getDangleImpossibleReason(infantry);
+            assertNotNull(reason, "Infantry should have a dangle reason");
         }
     }
 }

@@ -3272,13 +3272,21 @@ public class MovementDisplay extends ActionPhaseDisplay {
                   costPerLevel, availableMP);
         }
 
+        // Calculate PSR info for climbing
+        int basePiloting = mek.getCrew().getPiloting();
+        int climbableArms = ClimbingHelper.countClimbableArms(mek);
+        int climbPsrMod = ClimbingHelper.CLIMBING_PSR_MODIFIER
+              + ((climbableArms == 1) ? ClimbingHelper.ONE_ARM_PSR_MODIFIER : 0);
+        int climbPsrTarget = basePiloting + climbPsrMod;
+
         // Build climbing options
         List<ClimbingChoiceDialog.ClimbingOption> climbingOptions = new java.util.ArrayList<>();
         for (int i = 1; i <= maxLevels; i++) {
             int cost = i * costPerLevel;
-            String label = (i == 1)
+            String baseLabel = (i == 1)
                   ? Messages.getString("MovementDisplay.ClimbingDialog.levelOption", i, cost)
                   : Messages.getString("MovementDisplay.ClimbingDialog.levelsOption", i, cost);
+            String label = baseLabel + " - PSR " + climbPsrTarget + "+ per level";
             climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(i, cost, label,
                   ClimbingChoiceDialog.ClimbingActionType.CLIMB_UP));
         }
@@ -3288,17 +3296,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
             int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN, currentElevation);
             climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(dangleLevels, 0,
                   Messages.getString("MovementDisplay.ClimbingDialog.dangleOption",
-                        dangleLevels),
+                        dangleLevels) + " - no PSR",
                   ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN));
         }
         // Drop option: available from any climbing or dangling position (TO:AR p.20)
         // From dangling: PSR modifiers reduced by 2. From climbing: standard leaping modifiers.
         if (isContinuation && (currentElevation > 0)
               && (walkMP >= ClimbingHelper.DROP_MP_COST)) {
+            int dropDistance = currentElevation;
+            int modReduction = mek.isDangling() ? ClimbingHelper.DANGLE_LEVELS_PER_TURN : 0;
+            int effectiveDrop = Math.max(0, dropDistance - modReduction);
+            int legTarget = basePiloting + (2 * effectiveDrop);
+            int fallTarget = basePiloting + effectiveDrop;
+            String dropLabel = Messages.getString("MovementDisplay.ClimbingDialog.dropOption",
+                  ClimbingHelper.DROP_MP_COST)
+                  + " - Leg PSR " + legTarget + "+, Fall PSR " + fallTarget + "+";
             climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(currentElevation,
-                  ClimbingHelper.DROP_MP_COST,
-                  Messages.getString("MovementDisplay.ClimbingDialog.dropOption",
-                        ClimbingHelper.DROP_MP_COST),
+                  ClimbingHelper.DROP_MP_COST, dropLabel,
                   ClimbingChoiceDialog.ClimbingActionType.DROP));
         }
         if (isContinuation) {

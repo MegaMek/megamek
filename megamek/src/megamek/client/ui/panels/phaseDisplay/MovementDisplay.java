@@ -1023,18 +1023,22 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // Check for Dangle-and-Drop initiation from cliff/building edge (TO:AR p.20)
         // When a Mek with climb mode on steps down 3+ levels with 2 functional arms,
         // offer dangle-and-drop as an alternative to leaping
-        if (hasLastStep && (currentEntity instanceof Mek edgeMek)
-              && !currentEntity.isClimbing()
+        // Edge dangle: only if the Mek starts its turn at the edge (TO:AR p.20)
+        // "The Mek must start its turn in the hex where it will dangle-and-drop"
+        // Only allowed if this is the first FORWARDS step (entity hasn't walked anywhere)
+        // Dangle only if entity hasn't moved (first step directly from starting position)
+        boolean entityHasNotMoved = (currentEntity != null) && hasLastStep
               && cmd.getLastStep().getType() == MoveStepType.FORWARDS
+              && (currentEntity.getPosition().distance(cmd.getLastStep().getPosition()) == 1);
+        long forwardStepCount = hasCmd ? cmd.getStepVector().stream()
+                                         .filter(s -> s.getType() == MoveStepType.FORWARDS).count() : 0;
+        if (entityHasNotMoved && (forwardStepCount == 1) && (currentEntity instanceof Mek edgeMek)
+              && !currentEntity.isClimbing()
               && ClimbingHelper.canDangle(currentEntity)
               && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)) {
             Coords stepPos = cmd.getLastStep().getPosition();
-            Hex stepHex = game.getBoard(currentEntity).getHex(stepPos);
-            Hex entityHex = game.getBoard(currentEntity).getHex(currentEntity.getPosition());
-            if ((stepHex != null) && (entityHex != null)) {
-                int levelDiff = (entityHex.getLevel() + currentEntity.getElevation())
-                      - stepHex.getLevel();
-                if ((levelDiff > 2) && ClimbingHelper.canDangle(currentEntity)) {
+            int levelDiff = ClimbingHelper.getEdgeDropHeight(currentEntity, stepPos, game);
+            if (ClimbingHelper.isAtEdge(currentEntity, stepPos, game)) {
                     // Build descent options dialog
                     int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN, levelDiff);
                     List<ClimbingChoiceDialog.ClimbingOption> descentOptions = new java.util.ArrayList<>();
@@ -1068,20 +1072,69 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     ClimbingChoiceDialog.ClimbingOption chosen = dialog.getFirstChoice();
 
                     if (chosen != null && chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN) {
-                        // Initiate dangle: CLIMB_MODE_ON signals dangle intent from edge
-                        // Server detects: entity at elevation > 0, climb mode on, no movement = dangle
-                        cmd.removeLastStep();
+                        // Initiate dangle: move to lower hex, face the cliff/building
+                        // Keep the FORWARDS step to move into the lower hex, add CLIMB_MODE_ON
+                        // Server detects: entity moved to lower hex with climb mode on = edge dangle
                         clientgui.addToast(ToastLevel.INFO,
                               edgeMek.getDisplayName() + " begins dangling down", edgeMek);
+                        // Remove the FORWARDS step and re-add with CLIMB_MODE_ON first
+                        cmd.removeLastStep();
                         cmd.addStep(MoveStepType.CLIMB_MODE_ON);
-                        LOGGER.info("[DANGLE-TRACE] Edge dangle: added CLIMB_MODE_ON, cmd.length={}",
-                              cmd.length());
+                        cmd.addStep(MoveStepType.FORWARDS);
+                        LOGGER.info("[DANGLE-TRACE] Edge dangle: CLIMB_MODE_ON + FORWARDS to {}, cmd.length={}",
+                              stepPos, cmd.length());
                         ready();
                         return;
                     } else if (chosen != null && chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DROP) {
                         // Keep the leaping movement as-is (standard leaping handles it)
                     } else {
                         // Cancelled or cling - remove the step
+                        cmd.removeLastStep();
+                        if (redrawMovement) {
+                            clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
+                        }
+                    }
+            }
+        }
+
+        // Warn player when stepping off a 3+ level edge (leaping/falling)
+        // This catches both first-step and walked-to-edge scenarios
+        if (hasLastStep && (currentEntity instanceof Mek)
+              && cmd.getLastStep().getType() == MoveStepType.FORWARDS
+              && !cmd.getLastStep().isClimbing()
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING)) {
+            Coords lastStepPos = cmd.getLastStep().getPosition();
+            // Check the step BEFORE the last one to get the origin hex
+            MoveStep prevStep = (cmd.getStepVector().size() >= 2)
+                  ? cmd.getStepVector().get(cmd.getStepVector().size() - 2) : null;
+            Coords originPos = (prevStep != null) ? prevStep.getPosition() : currentEntity.getPosition();
+            int originElev = (prevStep != null) ? prevStep.getElevation() : currentEntity.getElevation();
+            Hex originHex = game.getBoard(currentEntity).getHex(originPos);
+            Hex destHex = game.getBoard(currentEntity).getHex(lastStepPos);
+            if ((originHex != null) && (destHex != null)) {
+                int originAlt = originHex.getLevel() + originElev;
+                int destAlt = destHex.getLevel() + cmd.getLastStep().getElevation();
+                int dropHeight = originAlt - destAlt;
+                if (dropHeight > 2) {
+                    // Calculate PSR targets so the player knows the risk
+                    int basePiloting = currentEntity.getCrew().getPiloting();
+                    int legDamageMod = 2 * dropHeight;
+                    int fallMod = dropHeight;
+                    int legDamageTarget = basePiloting + legDamageMod;
+                    int fallTarget = basePiloting + fallMod;
+                    int legDamagePerLeg = dropHeight;
+
+                    String warning = currentEntity.getDisplayName()
+                          + " is about to leap down " + dropHeight + " levels!\n\n"
+                          + "Leg Damage PSR: needs " + legDamageTarget
+                          + " [" + basePiloting + " + " + legDamageMod + "]"
+                          + " - failure deals " + legDamagePerLeg + " damage per leg\n"
+                          + "Fall PSR: needs " + fallTarget
+                          + " [" + basePiloting + " + " + fallMod + "]"
+                          + " - failure causes full fall damage\n\n"
+                          + "Continue?";
+                    if (!clientgui.doYesNoDialog(
+                          Messages.getString("MovementDisplay.ClimbingDialog.title"), warning)) {
                         cmd.removeLastStep();
                         if (redrawMovement) {
                             clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);

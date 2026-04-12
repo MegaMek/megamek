@@ -50,10 +50,6 @@ import megamek.client.ui.util.UIUtil;
 /**
  * Dialog for choosing how many levels to climb during TacOps Climbing (TO:AR p.20).
  * Presents options as buttons, each showing the number of levels and MP cost.
- *
- * @param levels the number of levels this option represents (0 = cling in place)
- * @param mpCost the MP cost for this option
- * @param label the display label for the button
  */
 public class ClimbingChoiceDialog extends AbstractChoiceDialog<ClimbingChoiceDialog.ClimbingOption> {
 
@@ -95,6 +91,7 @@ public class ClimbingChoiceDialog extends AbstractChoiceDialog<ClimbingChoiceDia
         initialize();
         setUseDetailed(false);
         setAlwaysOnTop(true);
+        setModalityType(ModalityType.APPLICATION_MODAL);
         // Ensure dialog is tall enough for all buttons plus header
         pack();
         int minHeight = UIUtil.scaleForGUI(BASE_BUTTON_HEIGHT * options.size() + BASE_HEADER_HEIGHT);

@@ -32,9 +32,14 @@
  */
 package megamek.common.moves;
 
+import megamek.common.Hex;
+import megamek.common.Messages;
+import megamek.common.board.Coords;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
+import megamek.common.units.Terrains;
 
 /**
  * Utility class for Mek climbing rules (TO:AR p.20).
@@ -66,8 +71,73 @@ public final class ClimbingHelper {
     /** MP cost for dropping from a dangle position. */
     public static final int DROP_MP_COST = 4;
 
+    /** Minimum level difference that requires climbing or dangle-and-drop. */
+    public static final int MIN_CLIMBING_LEVELS = 3;
+
     private ClimbingHelper() {
         // Utility class - no instantiation
+    }
+
+    /**
+     * Checks if an entity is at the edge of a cliff or building roof, with an adjacent hex that is 3+ levels lower.
+     * Returns the level difference to the lowest adjacent hex in the given direction, or 0 if not at an edge.
+     *
+     * @param entity       the entity to check
+     * @param targetCoords the adjacent hex to check (the potential lower hex)
+     * @param game         the current game
+     *
+     * @return the level difference (positive = entity is higher), or 0 if not an edge
+     */
+    public static int getEdgeDropHeight(Entity entity, Coords targetCoords, Game game) {
+        if ((entity == null) || (targetCoords == null) || (game == null)) {
+            return 0;
+        }
+        Hex entityHex = game.getBoard(entity).getHex(entity.getPosition());
+        Hex targetHex = game.getBoard(entity).getHex(targetCoords);
+        if ((entityHex == null) || (targetHex == null)) {
+            return 0;
+        }
+        int entityAlt = entityHex.getLevel() + entity.getElevation();
+        int targetAlt = targetHex.getLevel();
+        // Account for building elevation at destination
+        if (targetHex.containsTerrain(Terrains.BUILDING)) {
+            targetAlt += targetHex.terrainLevel(Terrains.BLDG_ELEV);
+        }
+        int levelDiff = entityAlt - targetAlt;
+        return Math.max(0, levelDiff);
+    }
+
+    /**
+     * Returns true if the entity is at the edge of a cliff or building roof, with the target hex being 3+ levels
+     * lower.
+     *
+     * @param entity       the entity to check
+     * @param targetCoords the adjacent hex to check
+     * @param game         the current game
+     *
+     * @return true if the entity is at a climbable/dangleable edge
+     */
+    public static boolean isAtEdge(Entity entity, Coords targetCoords, Game game) {
+        return getEdgeDropHeight(entity, targetCoords, game) >= MIN_CLIMBING_LEVELS;
+    }
+
+    /**
+     * Returns true if the entity is standing on a building roof.
+     *
+     * @param entity the entity to check
+     * @param game   the current game
+     *
+     * @return true if the entity is on a building roof
+     */
+    public static boolean isOnBuildingRoof(Entity entity, Game game) {
+        if ((entity == null) || (game == null)) {
+            return false;
+        }
+        Hex hex = game.getBoard(entity).getHex(entity.getPosition());
+        if ((hex == null) || !hex.containsTerrain(Terrains.BUILDING)) {
+            return false;
+        }
+        return entity.getElevation() >= hex.terrainLevel(Terrains.BLDG_ELEV);
     }
 
     /**
@@ -136,6 +206,9 @@ public final class ClimbingHelper {
         if (!(entity instanceof Mek mek)) {
             return false;
         }
+        if (mek.isSuperHeavy()) {
+            return false;
+        }
         return (countClimbableArms(mek) >= 1) && !mek.isProne() && !mek.isShutDown();
     }
 
@@ -147,20 +220,20 @@ public final class ClimbingHelper {
      */
     public static String getClimbingImpossibleReason(Entity entity) {
         if (!(entity instanceof Mek mek)) {
-            return "Only Meks can use climbing rules.";
+            return Messages.getString("ClimbingHelper.onlyMeksClimb");
+        }
+        if (mek.isSuperHeavy()) {
+            return Messages.getString("ClimbingHelper.superheavyNoClimb", mek.getDisplayName());
         }
         if (mek.isProne()) {
-            return mek.getDisplayName() + " is prone and cannot climb.";
+            return Messages.getString("ClimbingHelper.proneNoClimb", mek.getDisplayName());
         }
         if (mek.isShutDown()) {
-            return mek.getDisplayName() + " is shut down and cannot climb.";
+            return Messages.getString("ClimbingHelper.shutdownNoClimb", mek.getDisplayName());
         }
         int climbableArms = countClimbableArms(mek);
         if (climbableArms == 0) {
-            return mek.getDisplayName() + " does not have a functional arm to climb with."
-                  + "\n\nClimbing requires at least one arm with all four actuators"
-                  + " (shoulder, upper arm, lower arm, hand) intact and the hand"
-                  + " free of weapons or carried objects.";
+            return Messages.getString("ClimbingHelper.noArmsClimb", mek.getDisplayName());
         }
         return null;
     }
@@ -177,6 +250,9 @@ public final class ClimbingHelper {
         if (!(entity instanceof Mek mek)) {
             return false;
         }
+        if (mek.isSuperHeavy()) {
+            return false;
+        }
         return (countClimbableArms(mek) >= 2) && !mek.isProne() && !mek.isShutDown();
     }
 
@@ -189,20 +265,20 @@ public final class ClimbingHelper {
      */
     public static String getDangleImpossibleReason(Entity entity) {
         if (!(entity instanceof Mek mek)) {
-            return "Only Meks can use dangle-and-drop rules.";
+            return Messages.getString("ClimbingHelper.onlyMeksDangle");
+        }
+        if (mek.isSuperHeavy()) {
+            return Messages.getString("ClimbingHelper.superheavyNoDangle", mek.getDisplayName());
         }
         if (mek.isProne()) {
-            return mek.getDisplayName() + " is prone and cannot dangle.";
+            return Messages.getString("ClimbingHelper.proneNoDangle", mek.getDisplayName());
         }
         if (mek.isShutDown()) {
-            return mek.getDisplayName() + " is shut down and cannot dangle.";
+            return Messages.getString("ClimbingHelper.shutdownNoDangle", mek.getDisplayName());
         }
         int climbableArms = countClimbableArms(mek);
         if (climbableArms < 2) {
-            return mek.getDisplayName() + " needs two functional arms to dangle."
-                  + "\n\nDangle-and-Drop requires both arms with all four actuators"
-                  + " (shoulder, upper arm, lower arm, hand) intact and hands"
-                  + " free of weapons or carried objects.";
+            return Messages.getString("ClimbingHelper.noArmsDangle", mek.getDisplayName());
         }
         return null;
     }

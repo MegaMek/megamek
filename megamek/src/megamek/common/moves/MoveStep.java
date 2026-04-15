@@ -3052,8 +3052,14 @@ public class MoveStep implements Serializable {
             boolean isNewClimb = (deltaElevation > entity.getMaxElevationChange())
                   && (nDestEl > nSrcEl);
             boolean isContinuedClimb = isClimbing && (nDestEl > nSrcEl);
+            // Climbing only applies to walking movement, not jumping or VTOL
+            boolean isWalkingMovement = (movementType != EntityMovementType.MOVE_JUMP)
+                  && (movementType != EntityMovementType.MOVE_VTOL_WALK)
+                  && (movementType != EntityMovementType.MOVE_VTOL_RUN)
+                  && (movementType != EntityMovementType.MOVE_VTOL_SPRINT);
             boolean isClimbingMove = isMek
                   && climbMode
+                  && isWalkingMovement
                   && (isNewClimb || isContinuedClimb)
                   && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
                   && ClimbingHelper.canClimb(entity);
@@ -3260,6 +3266,7 @@ public class MoveStep implements Serializable {
         // so use the full building elevation when climbing is enabled.
         boolean tacOpsClimbingAvailable = game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
+              && climbMode
               && ClimbingHelper.canClimb(entity);
         if (bld != null && getEntity().getElevation() == 0 && climbMode
               && !destHex.containsTerrain(Terrains.BRIDGE)
@@ -3429,10 +3436,12 @@ public class MoveStep implements Serializable {
                 maxDown = entity.getMaxElevationChange();
             }
             // TacOps Climbing (TO:AR p.20): Meks with functional arms can climb
-            // elevation changes greater than their normal max
+            // elevation changes greater than their normal max, but only when climb
+            // mode is enabled. Climb mode OFF ("Move Thru") means normal movement
+            // restrictions apply — cannot scale cliffs without climb mode.
             boolean climbingEnabled = game.getOptions()
                   .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
-            boolean canUseClimbing = climbingEnabled && ClimbingHelper.canClimb(entity);
+            boolean canUseClimbing = climbingEnabled && climbMode && ClimbingHelper.canClimb(entity);
             int elevationUp = (destAlt - srcAlt);
             int elevationDown = (srcAlt - destAlt);
 

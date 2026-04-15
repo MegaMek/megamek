@@ -559,57 +559,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clear();
         updateButtonsLater();
 
-        // If the entity is mid-climb, prompt to continue or cling (TO:AR p.20)
         LOGGER.info("[CLIMB-TRACE] selectEntity: {} isClimbing={}, elevation={}, position={}, facing={}",
               selectedEntity.getDisplayName(), selectedEntity.isClimbing(),
               selectedEntity.getElevation(), selectedEntity.getPosition(), selectedEntity.getFacing());
-        if (selectedEntity.isClimbing() && (selectedEntity instanceof Mek climbingMek)) {
-            // Check if the Mek can still climb after taking damage
-            if (!ClimbingHelper.canClimb(selectedEntity)) {
-                String fallMessage = selectedEntity.getDisplayName()
-                      + " can no longer hold on and will fall!";
-                clientgui.addToast(ToastLevel.ERROR, fallMessage, selectedEntity);
-                JOptionPane.showMessageDialog(clientgui.getFrame(), fallMessage,
-                      Messages.getString("MovementDisplay.ClimbingDialog.title"),
-                      JOptionPane.WARNING_MESSAGE);
-                // Submit empty movement - server will handle the auto-fall
-                ready();
-                return;
-            }
-            ClimbingChoiceDialog.ClimbingOption chosen = showContinueClimbingDialog(climbingMek);
-            if ((chosen == null) || (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.CLING)) {
-                // Player chose to cling in place or cancelled - forfeit movement
-                ready();
-                return;
-            }
-            if (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN) {
-                // Dangle-and-Drop: add a DOWN step to signal dangle to server
-                LOGGER.info("[DANGLE-TRACE] Dangle down chosen: entity={}, currentElevation={}, dangleLevels={}",
-                      selectedEntity.getDisplayName(), selectedEntity.getElevation(), chosen.levels());
-                clientgui.addToast(ToastLevel.INFO,
-                      selectedEntity.getDisplayName() + " dangles down " + chosen.levels() + " levels",
-                      selectedEntity);
-                cmd.addStep(MoveStepType.DOWN);
-                ready();
-                return;
-            }
-            if (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DROP) {
-                // Drop from dangle: signal with TWO DOWN steps (dangle uses one)
-                LOGGER.info("[DANGLE-TRACE] Drop chosen: entity={}, currentElevation={}",
-                      selectedEntity.getDisplayName(), selectedEntity.getElevation());
-                clientgui.addToast(ToastLevel.WARNING,
-                      selectedEntity.getDisplayName() + " drops from dangle position!",
-                      selectedEntity);
-                cmd.addStep(MoveStepType.DOWN);
-                cmd.addStep(MoveStepType.DOWN);
-                ready();
-                return;
-            }
-            // Standard climb continuation
-            selectedEntity.setClimbingLevelsChosen(chosen.levels());
-            cmd.addStep(MoveStepType.CLIMB_MODE_ON);
-            cmd.addStep(MoveStepType.FORWARDS);
-        }
 
         clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
         clientgui.getBoardView(selectedEntity).highlight(selectedEntity.getPosition());
@@ -623,6 +575,64 @@ public class MovementDisplay extends ActionPhaseDisplay {
         computeMovementEnvelope(selectedEntity);
         updateMove();
         computeCFWarningHexes(selectedEntity);
+
+        // If the entity is mid-climb, prompt to continue or cling (TO:AR p.20).
+        // Defer the dialog until after the board has rendered so the player can
+        // see the unit's position and surrounding hexes before being prompted.
+        if (selectedEntity.isClimbing() && (selectedEntity instanceof Mek climbingMek)) {
+            SwingUtilities.invokeLater(() -> promptContinueClimbing(climbingMek));
+        }
+    }
+
+    /**
+     * Prompts the player for a climbing/dangle action on a mid-climb Mek (TO:AR p.20). Handles the auto-fall case (lost
+     * arm actuators), the cling-in-place default, and the dangle-down / drop / continue-climb branches.
+     */
+    private void promptContinueClimbing(Mek climbingMek) {
+        // Check if the Mek can still climb after taking damage
+        if (!ClimbingHelper.canClimb(climbingMek)) {
+            String fallMessage = climbingMek.getDisplayName()
+                  + " can no longer hold on and will fall!";
+            clientgui.addToast(ToastLevel.ERROR, fallMessage, climbingMek);
+            JOptionPane.showMessageDialog(clientgui.getFrame(), fallMessage,
+                  Messages.getString("MovementDisplay.ClimbingDialog.title"),
+                  JOptionPane.WARNING_MESSAGE);
+            // Submit empty movement - server will handle the auto-fall
+            ready();
+            return;
+        }
+        ClimbingChoiceDialog.ClimbingOption chosen = showContinueClimbingDialog(climbingMek);
+        if ((chosen == null) || (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.CLING)) {
+            // Player chose to cling in place or cancelled - forfeit movement
+            ready();
+            return;
+        }
+        if (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN) {
+            LOGGER.info("[DANGLE-TRACE] Dangle down chosen: entity={}, currentElevation={}, dangleLevels={}",
+                  climbingMek.getDisplayName(), climbingMek.getElevation(), chosen.levels());
+            clientgui.addToast(ToastLevel.INFO,
+                  climbingMek.getDisplayName() + " dangles down " + chosen.levels() + " levels",
+                  climbingMek);
+            cmd.addStep(MoveStepType.DOWN);
+            ready();
+            return;
+        }
+        if (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DROP) {
+            LOGGER.info("[DANGLE-TRACE] Drop chosen: entity={}, currentElevation={}",
+                  climbingMek.getDisplayName(), climbingMek.getElevation());
+            clientgui.addToast(ToastLevel.WARNING,
+                  climbingMek.getDisplayName() + " drops from dangle position!",
+                  climbingMek);
+            cmd.addStep(MoveStepType.DOWN);
+            cmd.addStep(MoveStepType.DOWN);
+            ready();
+            return;
+        }
+        // Standard climb continuation
+        climbingMek.setClimbingLevelsChosen(chosen.levels());
+        cmd.addStep(MoveStepType.CLIMB_MODE_ON);
+        cmd.addStep(MoveStepType.FORWARDS);
+        updateMove();
     }
 
     private void initializeStatusBarText(Entity selectedEntity) {
@@ -1032,7 +1042,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
               && (currentEntity.getPosition().distance(cmd.getLastStep().getPosition()) == 1);
         long forwardStepCount = hasCmd ? cmd.getStepVector().stream()
                                          .filter(s -> s.getType() == MoveStepType.FORWARDS).count() : 0;
-        if (entityHasNotMoved && (forwardStepCount == 1) && (currentEntity instanceof Mek edgeMek)
+        // Edge dangle requires climb mode ON and walking movement — jumping or climb-mode-off
+        // descents use normal/leaping rules without the dangle dialog.
+        boolean isWalkingWithClimbMode = hasLastStep
+              && cmd.getLastStep().climbMode()
+              && (cmd.getLastStep().getMovementType(true) != EntityMovementType.MOVE_JUMP);
+        if (entityHasNotMoved && (forwardStepCount == 1) && isWalkingWithClimbMode
+              && (currentEntity instanceof Mek edgeMek)
               && !currentEntity.isClimbing()
               && ClimbingHelper.canDangle(currentEntity)
               && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)) {
@@ -1098,12 +1114,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // Warn player when stepping off a 3+ level edge (leaping/falling)
-        // This catches both first-step and walked-to-edge scenarios
-        if (hasLastStep && (currentEntity instanceof Mek)
-              && cmd.getLastStep().getType() == MoveStepType.FORWARDS
-              && !cmd.getLastStep().isClimbing()
+        // This catches both first-step and walked-to-edge scenarios.
+        // Re-check hasLastStep since cling/cancel above may have removed the step.
+        // Jumping uses jump jets to clear the drop safely — no leap warning needed.
+        MoveStep currentLastStep = (cmd != null) ? cmd.getLastStep() : null;
+        boolean isJumpStep = (currentLastStep != null)
+              && (currentLastStep.getMovementType(true) == EntityMovementType.MOVE_JUMP);
+        if ((currentLastStep != null) && (currentEntity instanceof Mek)
+              && currentLastStep.getType() == MoveStepType.FORWARDS
+              && !currentLastStep.isClimbing()
+              && !isJumpStep
               && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING)) {
-            Coords lastStepPos = cmd.getLastStep().getPosition();
+            Coords lastStepPos = currentLastStep.getPosition();
             // Check the step BEFORE the last one to get the origin hex
             MoveStep prevStep = (cmd.getStepVector().size() >= 2)
                   ? cmd.getStepVector().get(cmd.getStepVector().size() - 2) : null;
@@ -1113,7 +1135,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             Hex destHex = game.getBoard(currentEntity).getHex(lastStepPos);
             if ((originHex != null) && (destHex != null)) {
                 int originAlt = originHex.getLevel() + originElev;
-                int destAlt = destHex.getLevel() + cmd.getLastStep().getElevation();
+                int destAlt = destHex.getLevel() + currentLastStep.getElevation();
                 int dropHeight = originAlt - destAlt;
                 if (dropHeight > 2) {
                     // Calculate PSR targets so the player knows the risk

@@ -138,10 +138,10 @@ public class DNICockpitModTest {
     }
 
     /**
-     * Sets the game option for tracking neural interface hardware.
+     * Sets the neural interface mode game option.
      */
-    private void setTrackingOption(boolean enabled) {
-        game.getOptions().getOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE).setValue(enabled);
+    private void setNeuralInterfaceMode(String mode) {
+        game.getOptions().getOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE).setValue(mode);
     }
 
     /**
@@ -338,32 +338,32 @@ public class DNICockpitModTest {
     }
 
     @Nested
-    @DisplayName("hasActiveDNI() - Tracking OFF (Default)")
-    class HasActiveDNITrackingOffTests {
+    @DisplayName("hasActiveDNI() - Pilot Only Mode")
+    class HasActiveDNIPilotOnlyTests {
 
         @BeforeEach
         void disableTracking() {
-            setTrackingOption(false);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
         }
 
         @Test
-        @DisplayName("VDNI pilot without equipment gets benefits (tracking OFF)")
+        @DisplayName("VDNI pilot without equipment gets benefits (Pilot Only mode)")
         void vdniPilotWithoutEquipmentGetsBenefits() {
             Mek mek = createMek(false, "VDNI");
             assertTrue(mek.hasActiveDNI(),
-                  "VDNI pilot should get DNI benefits without equipment when tracking is OFF");
+                  "VDNI pilot should get DNI benefits without equipment when in Pilot Only mode");
         }
 
         @Test
-        @DisplayName("VDNI pilot with equipment gets benefits (tracking OFF)")
+        @DisplayName("VDNI pilot with equipment gets benefits (Pilot Only mode)")
         void vdniPilotWithEquipmentGetsBenefits() {
             Mek mek = createMek(true, "VDNI");
             assertTrue(mek.hasActiveDNI(),
-                  "VDNI pilot should get DNI benefits with equipment when tracking is OFF");
+                  "VDNI pilot should get DNI benefits with equipment when in Pilot Only mode");
         }
 
         @Test
-        @DisplayName("Pilot without implant has no active DNI (tracking OFF)")
+        @DisplayName("Pilot without implant has no active DNI (Pilot Only mode)")
         void pilotWithoutImplantNoActiveDni() {
             Mek mek = createMek(true, null);
             assertFalse(mek.hasActiveDNI(),
@@ -372,32 +372,32 @@ public class DNICockpitModTest {
     }
 
     @Nested
-    @DisplayName("hasActiveDNI() - Tracking ON")
+    @DisplayName("hasActiveDNI() - Full Tracking Mode")
     class HasActiveDNITrackingOnTests {
 
         @BeforeEach
         void enableTracking() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
         }
 
         @Test
-        @DisplayName("VDNI pilot with equipment gets benefits (tracking ON)")
+        @DisplayName("VDNI pilot with equipment gets benefits (Full Tracking mode)")
         void vdniPilotWithEquipmentGetsBenefits() {
             Mek mek = createMek(true, "VDNI");
             assertTrue(mek.hasActiveDNI(),
-                  "VDNI pilot with equipment should get DNI benefits when tracking is ON");
+                  "VDNI pilot with equipment should get DNI benefits when in Full Tracking mode");
         }
 
         @Test
-        @DisplayName("VDNI pilot without equipment does NOT get benefits (tracking ON)")
+        @DisplayName("VDNI pilot without equipment does NOT get benefits (Full Tracking mode)")
         void vdniPilotWithoutEquipmentNoBenefits() {
             Mek mek = createMek(false, "VDNI");
             assertFalse(mek.hasActiveDNI(),
-                  "VDNI pilot without equipment should NOT get DNI benefits when tracking is ON");
+                  "VDNI pilot without equipment should NOT get DNI benefits when in Full Tracking mode");
         }
 
         @Test
-        @DisplayName("Equipment without implant does NOT provide benefits (tracking ON)")
+        @DisplayName("Equipment without implant does NOT provide benefits (Full Tracking mode)")
         void equipmentWithoutImplantNoBenefits() {
             Mek mek = createMek(true, null);
             assertFalse(mek.hasActiveDNI(),
@@ -405,27 +405,27 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("BVDNI pilot with equipment gets benefits (tracking ON)")
+        @DisplayName("BVDNI pilot with equipment gets benefits (Full Tracking mode)")
         void bvdniPilotWithEquipmentGetsBenefits() {
             Mek mek = createMek(true, "BVDNI");
             assertTrue(mek.hasActiveDNI(),
-                  "BVDNI pilot with equipment should get DNI benefits when tracking is ON");
+                  "BVDNI pilot with equipment should get DNI benefits when in Full Tracking mode");
         }
 
         @Test
-        @DisplayName("Proto DNI pilot with equipment gets benefits (tracking ON)")
+        @DisplayName("Proto DNI pilot with equipment gets benefits (Full Tracking mode)")
         void protoDniPilotWithEquipmentGetsBenefits() {
             Mek mek = createMek(true, "PROTO_DNI");
             assertTrue(mek.hasActiveDNI(),
-                  "Proto DNI pilot with equipment should get DNI benefits when tracking is ON");
+                  "Proto DNI pilot with equipment should get DNI benefits when in Full Tracking mode");
         }
 
         @Test
-        @DisplayName("BVDNI pilot without equipment does NOT get benefits (tracking ON)")
+        @DisplayName("BVDNI pilot without equipment does NOT get benefits (Full Tracking mode)")
         void bvdniPilotWithoutEquipmentNoBenefits() {
             Mek mek = createMek(false, "BVDNI");
             assertFalse(mek.hasActiveDNI(),
-                  "BVDNI pilot without equipment should NOT get DNI benefits when tracking is ON");
+                  "BVDNI pilot without equipment should NOT get DNI benefits when in Full Tracking mode");
         }
     }
 
@@ -434,21 +434,21 @@ public class DNICockpitModTest {
     class HasActiveEiCockpitTests {
 
         @Test
-        @DisplayName("Tracking OFF: EI implant alone is sufficient")
+        @DisplayName("Pilot Only Mode: EI implant alone is sufficient")
         void trackingOff_eiImplantAloneSufficient() {
-            setTrackingOption(false);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
 
             // Mek with EI implant but no EI cockpit
             Mek mek = createMek(false, "EI");
 
             assertTrue(mek.hasActiveEiCockpit(),
-                  "EI implant alone should provide benefits when tracking is OFF");
+                  "EI implant alone should provide benefits when in Pilot Only mode");
         }
 
         @Test
-        @DisplayName("Tracking OFF: No EI implant means no benefits")
+        @DisplayName("Pilot Only Mode: No EI implant means no benefits")
         void trackingOff_noEiImplantNoBenefits() {
-            setTrackingOption(false);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
 
             // Mek with EI cockpit but no EI implant
             Mek mek = createMek(false, null);
@@ -459,41 +459,41 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking ON: EI cockpit + implant required")
+        @DisplayName("Full Tracking Mode: EI cockpit + implant required")
         void trackingOn_eiCockpitAndImplantRequired() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
 
             // Mek with both EI cockpit and EI implant
             Mek mek = createMek(false, "EI");
             addEiCockpit(mek);
 
             assertTrue(mek.hasActiveEiCockpit(),
-                  "EI cockpit + implant should provide benefits when tracking is ON");
+                  "EI cockpit + implant should provide benefits when in Full Tracking mode");
         }
 
         @Test
-        @DisplayName("Tracking ON: EI cockpit without implant fails")
+        @DisplayName("Full Tracking Mode: EI cockpit without implant fails")
         void trackingOn_eiCockpitWithoutImplantFails() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
 
             // Mek with EI cockpit but no EI implant
             Mek mek = createMek(false, null);
             addEiCockpit(mek);
 
             assertFalse(mek.hasActiveEiCockpit(),
-                  "EI cockpit without implant should NOT have active EI when tracking is ON");
+                  "EI cockpit without implant should NOT have active EI when in Full Tracking mode");
         }
 
         @Test
-        @DisplayName("Tracking ON: EI implant without cockpit fails")
+        @DisplayName("Full Tracking Mode: EI implant without cockpit fails")
         void trackingOn_eiImplantWithoutCockpitFails() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
 
             // Mek with EI implant but no EI cockpit
             Mek mek = createMek(false, "EI");
 
             assertFalse(mek.hasActiveEiCockpit(),
-                  "EI implant without cockpit should NOT have active EI when tracking is ON");
+                  "EI implant without cockpit should NOT have active EI when in Full Tracking mode");
         }
     }
 
@@ -502,28 +502,29 @@ public class DNICockpitModTest {
     class GameOptionTests {
 
         @Test
-        @DisplayName("Track Neural Interface Hardware option exists")
-        void trackNeuralInterfaceHardwareOptionExists() {
-            assertNotNull(game.getOptions().getOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE),
-                  "Track Neural Interface Hardware game option should exist");
+        @DisplayName("Neural Interface Mode option exists")
+        void neuralInterfaceModeOptionExists() {
+            assertNotNull(game.getOptions().getOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE),
+                  "Neural Interface Mode game option should exist");
         }
 
         @Test
-        @DisplayName("Track Neural Interface Hardware option defaults to false")
-        void trackNeuralInterfaceHardwareDefaultsFalse() {
+        @DisplayName("Neural Interface Mode option defaults to Off")
+        void neuralInterfaceModeDefaultsOff() {
             Game freshGame = new Game();
-            assertFalse(freshGame.getOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE),
-                  "Track Neural Interface Hardware option should default to false");
+            assertEquals(OptionsConstants.NEURAL_INTERFACE_MODE_OFF,
+                  freshGame.getOptions().stringOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE),
+                  "Neural Interface Mode option should default to Off");
         }
     }
 
     @Nested
-    @DisplayName("Hard to Pilot Quirk - Tracking OFF")
+    @DisplayName("Hard to Pilot Quirk - Pilot Only Mode")
     class HardToPilotTrackingOffTests {
 
         @BeforeEach
         void disableTracking() {
-            setTrackingOption(false);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
         }
 
         @Test
@@ -547,17 +548,17 @@ public class DNICockpitModTest {
             PilotingRollData roll = mek.getBasePilotingRoll();
 
             assertFalse(hasModifier(roll, "hard to pilot"),
-                  "With VDNI implant (tracking OFF), Hard to Pilot quirk should be ignored");
+                  "With VDNI implant (Pilot Only mode), Hard to Pilot quirk should be ignored");
         }
     }
 
     @Nested
-    @DisplayName("Hard to Pilot Quirk - Tracking ON")
+    @DisplayName("Hard to Pilot Quirk - Full Tracking Mode")
     class HardToPilotTrackingOnTests {
 
         @BeforeEach
         void enableTracking() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
         }
 
         @Test
@@ -666,7 +667,7 @@ public class DNICockpitModTest {
         @Test
         @DisplayName("No implant returns false regardless of hardware")
         void noImplant_returnsFalse() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             Mek mekWithHardware = createMek(true, null);
             Mek mekWithoutHardware = createMek(false, null);
 
@@ -677,33 +678,33 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking OFF - implant alone returns true")
+        @DisplayName("Pilot Only Mode - implant alone returns true")
         void trackingOff_implantAlone_returnsTrue() {
-            setTrackingOption(false);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
             Mek mek = createMek(false, "VDNI");
 
             assertTrue(mek.hasActiveDNI(),
-                  "With tracking OFF, implant alone should return true");
+                  "With Pilot Only mode, implant alone should return true");
         }
 
         @Test
-        @DisplayName("Tracking ON - implant without hardware returns false")
+        @DisplayName("Full Tracking Mode - implant without hardware returns false")
         void trackingOn_implantWithoutHardware_returnsFalse() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             Mek mek = createMek(false, "VDNI");
 
             assertFalse(mek.hasActiveDNI(),
-                  "With tracking ON, implant without hardware should return false");
+                  "With Full Tracking mode, implant without hardware should return false");
         }
 
         @Test
-        @DisplayName("Tracking ON - implant with hardware returns true")
+        @DisplayName("Full Tracking Mode - implant with hardware returns true")
         void trackingOn_implantWithHardware_returnsTrue() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             Mek mek = createMek(true, "VDNI");
 
             assertTrue(mek.hasActiveDNI(),
-                  "With tracking ON, implant with hardware should return true");
+                  "With Full Tracking mode, implant with hardware should return true");
         }
     }
 
@@ -712,20 +713,20 @@ public class DNICockpitModTest {
     class HasDNIInducedHardToPilotTests {
 
         @Test
-        @DisplayName("Tracking OFF - never induces quirk")
+        @DisplayName("Pilot Only Mode - never induces quirk")
         void trackingOff_neverInducesQuirk() {
-            setTrackingOption(false);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
             game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
             Mek mek = createMek(true, null); // DNI hardware, no implant
 
             assertFalse(mek.hasDNIInducedHardToPilot(),
-                  "Should not induce HTP quirk when tracking is OFF");
+                  "Should not induce HTP quirk when in Pilot Only mode");
         }
 
         @Test
-        @DisplayName("Tracking ON, no DNI hardware - no quirk")
+        @DisplayName("Full Tracking Mode, no DNI hardware - no quirk")
         void trackingOn_noDniHardware_noQuirk() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
             Mek mek = createMek(false, null); // No DNI hardware
 
@@ -734,9 +735,9 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking ON, DNI hardware, no implant - induces quirk")
+        @DisplayName("Full Tracking Mode, DNI hardware, no implant - induces quirk")
         void trackingOn_dniHardware_noImplant_inducesQuirk() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
             Mek mek = createMek(true, null); // DNI hardware, no implant
 
@@ -745,9 +746,9 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking ON, DNI hardware, with VDNI - no quirk")
+        @DisplayName("Full Tracking Mode, DNI hardware, with VDNI - no quirk")
         void trackingOn_dniHardware_withVdni_noQuirk() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
             Mek mek = createMek(true, "VDNI"); // DNI hardware + VDNI implant
 
@@ -756,9 +757,9 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking ON, DNI hardware, with BVDNI - no quirk")
+        @DisplayName("Full Tracking Mode, DNI hardware, with BVDNI - no quirk")
         void trackingOn_dniHardware_withBvdni_noQuirk() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
             Mek mek = createMek(true, "BVDNI"); // DNI hardware + BVDNI implant
 
@@ -767,9 +768,9 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking ON, DNI hardware, with Proto DNI - no quirk")
+        @DisplayName("Full Tracking Mode, DNI hardware, with Proto DNI - no quirk")
         void trackingOn_dniHardware_withProtoDni_noQuirk() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
             Mek mek = createMek(true, "PROTO_DNI"); // DNI hardware + Proto DNI implant
 
@@ -778,9 +779,9 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking ON, DNI hardware, with EI implant (wrong type) - induces quirk")
+        @DisplayName("Full Tracking Mode, DNI hardware, with EI implant (wrong type) - induces quirk")
         void trackingOn_dniHardware_withEiImplant_inducesQuirk() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
             Mek mek = createMek(true, "EI"); // DNI hardware + EI implant (not compatible)
 
@@ -802,9 +803,9 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking ON: Setting VDNI option updates hasDNIImplant()")
+        @DisplayName("Full Tracking Mode: Setting VDNI option updates hasDNIImplant()")
         void trackingOn_settingVdniUpdatesHasDniImplant() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             Mek mek = createMek(false, null);
 
             // Initially no implant
@@ -818,9 +819,9 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking ON: Setting BVDNI option updates hasDNIImplant()")
+        @DisplayName("Full Tracking Mode: Setting BVDNI option updates hasDNIImplant()")
         void trackingOn_settingBvdniUpdatesHasDniImplant() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             Mek mek = createMek(false, null);
 
             assertFalse(mek.hasDNIImplant(), "Should not have DNI implant initially");
@@ -833,9 +834,9 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking ON: Setting Proto DNI option updates hasDNIImplant()")
+        @DisplayName("Full Tracking Mode: Setting Proto DNI option updates hasDNIImplant()")
         void trackingOn_settingProtoDniUpdatesHasDniImplant() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             Mek mek = createMek(false, null);
 
             assertFalse(mek.hasDNIImplant(), "Should not have DNI implant initially");
@@ -846,9 +847,9 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking OFF: Setting VDNI option updates hasDNIImplant()")
+        @DisplayName("Pilot Only Mode: Setting VDNI option updates hasDNIImplant()")
         void trackingOff_settingVdniUpdatesHasDniImplant() {
-            setTrackingOption(false);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
             Mek mek = createMek(false, null);
 
             assertFalse(mek.hasDNIImplant(), "Should not have DNI implant initially");
@@ -859,9 +860,9 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking ON: VDNI set then hasActiveDNI requires hardware")
+        @DisplayName("Full Tracking Mode: VDNI set then hasActiveDNI requires hardware")
         void trackingOn_vdniSetThenHasActiveDniRequiresHardware() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             Mek mek = createMek(false, null);
 
             setCrewOption(mek, OptionsConstants.MD_VDNI, true);
@@ -873,9 +874,9 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking ON: VDNI set with hardware then hasActiveDNI is true")
+        @DisplayName("Full Tracking Mode: VDNI set with hardware then hasActiveDNI is true")
         void trackingOn_vdniSetWithHardwareThenHasActiveDniTrue() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             Mek mek = createMek(true, null); // Has DNI hardware
 
             setCrewOption(mek, OptionsConstants.MD_VDNI, true);
@@ -886,22 +887,22 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking OFF: VDNI set then hasActiveDNI is true (no hardware needed)")
+        @DisplayName("Pilot Only Mode: VDNI set then hasActiveDNI is true (no hardware needed)")
         void trackingOff_vdniSetThenHasActiveDniTrue() {
-            setTrackingOption(false);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
             Mek mek = createMek(false, null); // No DNI hardware
 
             setCrewOption(mek, OptionsConstants.MD_VDNI, true);
 
             assertTrue(mek.hasDNIImplant(), "Should have DNI implant");
             assertFalse(mek.hasDNICockpitMod(), "Should not have DNI hardware");
-            assertTrue(mek.hasActiveDNI(), "Should have active DNI with just implant when tracking OFF");
+            assertTrue(mek.hasActiveDNI(), "Should have active DNI with just implant when Pilot Only mode");
         }
 
         @Test
         @DisplayName("Unsetting VDNI removes implant detection")
         void unsettingVdniRemovesImplantDetection() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             Mek mek = createMek(false, "VDNI");
 
             assertTrue(mek.hasDNIImplant(), "Should have DNI implant initially");
@@ -913,9 +914,9 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking ON: EI implant set updates hasAbility correctly")
+        @DisplayName("Full Tracking Mode: EI implant set updates hasAbility correctly")
         void trackingOn_eiImplantSetUpdatesHasAbility() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             Mek mek = createMek(false, null);
 
             assertFalse(mek.hasAbility(OptionsConstants.MD_EI_IMPLANT), "Should not have EI implant initially");
@@ -926,9 +927,9 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking ON: EI implant with EI cockpit gives active EI")
+        @DisplayName("Full Tracking Mode: EI implant with EI cockpit gives active EI")
         void trackingOn_eiImplantWithCockpitGivesActiveEi() {
-            setTrackingOption(true);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             Mek mek = createMek(false, null);
             addEiCockpit(mek);
 
@@ -940,13 +941,13 @@ public class DNICockpitModTest {
         }
 
         @Test
-        @DisplayName("Tracking OFF: EI implant alone gives active EI (no cockpit needed)")
+        @DisplayName("Pilot Only Mode: EI implant alone gives active EI (no cockpit needed)")
         void trackingOff_eiImplantAloneGivesActiveEi() {
-            setTrackingOption(false);
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
             Mek mek = createMek(false, "EI");
 
             // No cockpit, but tracking is off so implant alone should work
-            assertTrue(mek.hasActiveEiCockpit(), "Should have active EI with just implant when tracking OFF");
+            assertTrue(mek.hasActiveEiCockpit(), "Should have active EI with just implant when Pilot Only mode");
         }
     }
 }

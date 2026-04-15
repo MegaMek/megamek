@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -54,9 +54,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for ProtoMek Enhanced Imaging (EI) implementation per IO:AE p.69. ProtoMeks always have EI
- * built-in. The {@code track_neural_interface_hardware} game option only affects whether the EI
- * equipment counts toward tech level (making ProtoMeks Experimental when enabled).
+ * Tests for ProtoMek Enhanced Imaging (EI) implementation per IO:AE p.69. ProtoMeks have EI
+ * built-in. The {@code neural_interface_mode} game option controls whether EI is active and
+ * how it affects tech level.
+ *
+ * <p>Off: No EI bonuses, Standard tech. Pilot Only: EI active, Standard tech.
+ * Full Tracking: EI active, Experimental tech.</p>
  */
 @DisplayName("ProtoMek EI Tests")
 class ProtoMekEITest extends GameBoardTestCase {
@@ -97,7 +100,11 @@ class ProtoMekEITest extends GameBoardTestCase {
 
         IOption mockOption = mock(IOption.class);
         when(mockOption.booleanValue()).thenReturn(false);
+        when(mockOption.stringValue()).thenReturn("");
         when(mockGameOptions.getOption(org.mockito.ArgumentMatchers.anyString())).thenReturn(mockOption);
+        // Default: neural interface mode OFF
+        when(mockGameOptions.stringOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE))
+              .thenReturn(OptionsConstants.NEURAL_INTERFACE_MODE_OFF);
 
         game.addPlayer(0, player);
         setBoard("FLAT_3X3");
@@ -132,43 +139,92 @@ class ProtoMekEITest extends GameBoardTestCase {
         return proto;
     }
 
-    /**
-     * Enables the {@code track_neural_interface_hardware} game option, which gates ProtoMek EI.
-     */
-    private void enableTracking() {
-        when(mockGameOptions.booleanOption(
-              OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE))
-              .thenReturn(true);
+    private void setNeuralInterfaceMode(String mode) {
+        when(mockGameOptions.stringOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE))
+              .thenReturn(mode);
     }
 
     @Nested
-    @DisplayName("ProtoMek Built-in EI Tests (Tracking ON)")
-    class BuiltInEITests {
+    @DisplayName("Off Mode - No EI Bonuses")
+    class OffModeTests {
 
         @Test
-        @DisplayName("ProtoMek has EI cockpit when tracking enabled (per IO:AE p.69)")
-        void protoMekHasEiCockpitWhenTrackingOn() {
-            enableTracking();
+        @DisplayName("ProtoMek does NOT have EI cockpit when mode is Off")
+        void protoMekNoEiCockpitWhenOff() {
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_OFF);
+            assertFalse(protoMek.hasEiCockpit(),
+                  "ProtoMeks should NOT have EI cockpit when neural interface mode is Off");
+        }
+
+        @Test
+        @DisplayName("ProtoMek does NOT have active EI when mode is Off")
+        void protoMekNoActiveEiWhenOff() {
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_OFF);
+            assertFalse(protoMek.hasActiveEiCockpit(),
+                  "ProtoMeks should NOT have active EI when neural interface mode is Off");
+        }
+    }
+
+    @Nested
+    @DisplayName("Pilot Only Mode - EI Active, Standard Tech")
+    class PilotOnlyModeTests {
+
+        @BeforeEach
+        void setMode() {
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
+        }
+
+        @Test
+        @DisplayName("ProtoMek has EI cockpit in Pilot Only mode")
+        void protoMekHasEiCockpit() {
             assertTrue(protoMek.hasEiCockpit(),
-                  "ProtoMeks should have EI cockpit when tracking is enabled per IO:AE p.69");
+                  "ProtoMeks should have EI cockpit in Pilot Only mode per IO:AE p.69");
         }
 
         @Test
         @DisplayName("ProtoMek EI is active when head undamaged - no crew implant required")
         void protoMekEiActiveWhenHeadUndamaged() {
-            enableTracking();
-            // ProtoMeks don't need crew EI implant option - they're neurally connected by default
-            // This differs from regular Meks which require the pilot to have EI implants
             assertTrue(protoMek.hasActiveEiCockpit(),
                   "ProtoMek EI should be active when head is undamaged, without crew implant option");
         }
 
         @Test
         @DisplayName("ProtoMek EI is disabled when head has critical damage")
-        void protoMekEiDisabledWhenHeadHasCriticalDamage() {
-            enableTracking();
-            // ProtoMek head has 2 critical slots (SYSTEM_HEAD_CRIT)
-            // Damage one of them to simulate sensor damage that disables EI
+        void protoMekEiDisabledWhenHeadDamaged() {
+            CriticalSlot headCrit = protoMek.getCritical(ProtoMek.LOC_HEAD, 0);
+            headCrit.setHit(true);
+
+            assertFalse(protoMek.hasActiveEiCockpit(),
+                  "ProtoMek EI should be disabled when head has critical damage");
+        }
+    }
+
+    @Nested
+    @DisplayName("Full Tracking Mode - EI Active, Experimental Tech")
+    class FullTrackingModeTests {
+
+        @BeforeEach
+        void setMode() {
+            setNeuralInterfaceMode(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
+        }
+
+        @Test
+        @DisplayName("ProtoMek has EI cockpit in Full Tracking mode")
+        void protoMekHasEiCockpit() {
+            assertTrue(protoMek.hasEiCockpit(),
+                  "ProtoMeks should have EI cockpit in Full Tracking mode per IO:AE p.69");
+        }
+
+        @Test
+        @DisplayName("ProtoMek EI is active when head undamaged - no crew implant required")
+        void protoMekEiActiveWhenHeadUndamaged() {
+            assertTrue(protoMek.hasActiveEiCockpit(),
+                  "ProtoMek EI should be active when head is undamaged, without crew implant option");
+        }
+
+        @Test
+        @DisplayName("ProtoMek EI is disabled when head has critical damage")
+        void protoMekEiDisabledWhenHeadDamaged() {
             CriticalSlot headCrit = protoMek.getCritical(ProtoMek.LOC_HEAD, 0);
             headCrit.setHit(true);
 
@@ -177,47 +233,19 @@ class ProtoMekEITest extends GameBoardTestCase {
         }
 
         @Test
-        @DisplayName("ProtoMek EI remains active when head crits are undamaged")
-        void protoMekEiActiveWhenHeadCritsUndamaged() {
-            enableTracking();
-            // Verify the head critical slots exist and are undamaged
-            CriticalSlot headCrit0 = protoMek.getCritical(ProtoMek.LOC_HEAD, 0);
-            CriticalSlot headCrit1 = protoMek.getCritical(ProtoMek.LOC_HEAD, 1);
-
-            // Both crits should be undamaged initially
-            assertFalse(headCrit0.isDamaged(), "Head crit 0 should be undamaged initially");
-            assertFalse(headCrit1.isDamaged(), "Head crit 1 should be undamaged initially");
-
-            // EI should be active with undamaged head
-            assertTrue(protoMek.hasActiveEiCockpit(),
-                  "ProtoMek EI should remain active with undamaged head crits");
-        }
-    }
-
-    @Nested
-    @DisplayName("ProtoMek EI Independence from Crew Options (Tracking ON)")
-    class CrewIndependenceTests {
-
-        @Test
         @DisplayName("ProtoMek EI works without MD_EI_IMPLANT pilot option")
         void protoMekEiWorksWithoutCrewOption() {
-            enableTracking();
-            // Create a ProtoMek with crew that explicitly does NOT have EI implant option
             ProtoMek protoWithoutImplant = createProtoMek("Test", "NoImplant", "Pilot");
             protoWithoutImplant.setId(2);
             game.addEntity(protoWithoutImplant);
 
-            // The crew's PilotOptions is empty (no MD_EI_IMPLANT set)
-            // But ProtoMek EI should still work because it's built-in
             assertTrue(protoWithoutImplant.hasActiveEiCockpit(),
                   "ProtoMek EI should work even without crew having EI implant option");
         }
 
         @Test
-        @DisplayName("Regular Mek requires crew EI implant option - ProtoMek does not")
+        @DisplayName("Regular Mek requires crew EI implant - ProtoMek does not")
         void regularMekRequiresCrewOptionProtoMekDoesNot() {
-            enableTracking();
-            // Create a regular Mek with crew that does NOT have EI implant option
             Mek mek = new BipedMek();
             mek.setGame(game);
             mek.setChassis("Atlas");
@@ -225,40 +253,14 @@ class ProtoMekEITest extends GameBoardTestCase {
 
             Crew mockCrew = mock(Crew.class);
             PilotOptions pilotOptions = new PilotOptions();
-            // Not setting MD_EI_IMPLANT - crew doesn't have implant
             when(mockCrew.getOptions()).thenReturn(pilotOptions);
             mek.setCrew(mockCrew);
 
-            // Regular Mek should NOT have active EI without crew implant
             assertFalse(mek.hasActiveEiCockpit(),
                   "Regular Mek should NOT have active EI without crew implant option");
 
-            // But ProtoMek should still have active EI (tracking is ON)
             assertTrue(protoMek.hasActiveEiCockpit(),
                   "ProtoMek should have active EI regardless of crew options");
-        }
-    }
-
-    @Nested
-    @DisplayName("ProtoMek EI Tracking OFF Tests")
-    class TrackingOffTests {
-
-        @Test
-        @DisplayName("ProtoMek always has EI cockpit regardless of tracking")
-        void protoMekAlwaysHasEiCockpit() {
-            // Tracking is OFF by default (all mock options return false)
-            // ProtoMeks always have EI built-in per IO:AE p.69
-            assertTrue(protoMek.hasEiCockpit(),
-                  "ProtoMek should always have EI cockpit per IO:AE p.69, regardless of tracking");
-        }
-
-        @Test
-        @DisplayName("ProtoMek always has active EI regardless of tracking")
-        void protoMekAlwaysHasActiveEi() {
-            // Tracking is OFF by default (all mock options return false)
-            // ProtoMeks always have active EI when head is undamaged
-            assertTrue(protoMek.hasActiveEiCockpit(),
-                  "ProtoMek should always have active EI per IO:AE p.69, regardless of tracking");
         }
     }
 }

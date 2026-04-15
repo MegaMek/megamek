@@ -323,10 +323,8 @@ class LOSElevationDiagramPanel extends JPanel {
         // Include unit positions in the range. absHeight is the unit top (TW height).
         // Unit bottom = absHeight - TW height (accounts for elevation, e.g., VTOLs).
         // Airborne aero (altitude) units are excluded - they are drawn above the break line.
-        boolean attackerIsAltitude = diagramData.attackerUnitType().isAltitudeUnit()
-              && (diagramData.attackerAbsHeight() > maxLevel);
-        boolean targetIsAltitude = diagramData.targetUnitType().isAltitudeUnit()
-              && (diagramData.targetAbsHeight() > maxLevel);
+        boolean attackerIsAltitude = diagramData.attackerAtAltitude();
+        boolean targetIsAltitude = diagramData.targetAtAltitude();
 
         int attackerTwHeight = diagramData.attackerUnitType().twHeight()
               - (diagramData.attackerIsHullDown() ? 1 : 0);
@@ -1028,12 +1026,10 @@ class LOSElevationDiagramPanel extends JPanel {
             drawAltitudeUnitAboveBreak(g2d, metrics, 0, RulerDialog.color1,
                   diagramData.attackerUnitType(), diagramData.attackerAbsHeight(), true);
         } else {
-            int attackerTwHeight = diagramData.attackerUnitType().twHeight();
-            if (diagramData.attackerIsHullDown()) {
-                attackerTwHeight = Math.max(1, attackerTwHeight - 1);
-            }
             int attackerTop = diagramData.attackerAbsHeight();
-            int attackerBottom = attackerTop - attackerTwHeight;
+            int attackerBottom = computeUnitBottom(diagramData.attackerUnitType(),
+                  diagramData.attackerIsHullDown(), attackerTop,
+                  hexPath.get(0).groundElevation());
             drawUnitSilhouette(g2d, metrics, 0, attackerBottom, attackerTop,
                   RulerDialog.color1,
                   diagramData.attackerUnitType(), true);
@@ -1044,12 +1040,10 @@ class LOSElevationDiagramPanel extends JPanel {
             drawAltitudeUnitAboveBreak(g2d, metrics, hexPath.size() - 1, RulerDialog.color2,
                   diagramData.targetUnitType(), diagramData.targetAbsHeight(), false);
         } else {
-            int targetTwHeight = diagramData.targetUnitType().twHeight();
-            if (diagramData.targetIsHullDown()) {
-                targetTwHeight = Math.max(1, targetTwHeight - 1);
-            }
             int targetTop = diagramData.targetAbsHeight();
-            int targetBottom = targetTop - targetTwHeight;
+            int targetBottom = computeUnitBottom(diagramData.targetUnitType(),
+                  diagramData.targetIsHullDown(), targetTop,
+                  hexPath.get(hexPath.size() - 1).groundElevation());
             drawUnitSilhouette(g2d, metrics, hexPath.size() - 1, targetBottom, targetTop,
                   RulerDialog.color2,
                   diagramData.targetUnitType(), false);
@@ -1085,6 +1079,24 @@ class LOSElevationDiagramPanel extends JPanel {
         g2d.drawString(altLabel, xCenter - labelWidth / 2, yBottom + fontMetrics.getHeight());
     }
 
+    /**
+     * Computes the bottom level for a unit's silhouette. Most units use their TW height (e.g., Mek spans 2 levels from
+     * bottom to top). Grounded altitude units (landed dropships) extend from the hex ground level to their full height,
+     * since their physical height is much taller than the standard TW height of 1.
+     */
+    private int computeUnitBottom(DiagramUnitType unitType, boolean isHullDown,
+          int topLevel, int groundElevation) {
+        if (unitType.isAltitudeUnit()) {
+            // Grounded dropship/small craft: extends from ground level to full height
+            return groundElevation;
+        }
+        int twHeight = unitType.twHeight();
+        if (isHullDown) {
+            twHeight = Math.max(1, twHeight - 1);
+        }
+        return topLevel - twHeight;
+    }
+
     private void drawUnitSilhouette(Graphics2D g2d, DiagramMetrics metrics,
           int hexIndex, int bottomLevel, int topLevel,
           Color barColor, DiagramUnitType unitType, boolean facingRight) {
@@ -1101,13 +1113,23 @@ class LOSElevationDiagramPanel extends JPanel {
         int silhouetteHeight = levelBasedHeight;
         int yTop = yBottom - silhouetteHeight;
 
-        if (unitType == DiagramUnitType.SUPERHEAVY_MEK) {
-            // Draw the silhouette at 2 levels (bottom 2/3 of the 3-level span),
-            // with a T-bar turret marker extending up to the actual top level
-            int bodyHeight = Math.max(yBottom - metrics.levelToY(bottomLevel + 2), 2);
+        // Tall units (superheavy Meks, grounded dropships) draw the silhouette at the base
+        // with a T-bar extending up to the actual top height, so they don't appear airborne.
+        int twLevels = topLevel - bottomLevel;
+        boolean isTallUnit = (unitType == DiagramUnitType.SUPERHEAVY_MEK)
+              || (unitType.isAltitudeUnit() && (twLevels > 2));
+        if (isTallUnit) {
+            // Draw silhouette at the bottom 2 levels, T-bar extends to actual top
+            int bodyLevels = Math.min(2, twLevels);
+            int bodyHeight = Math.max(yBottom - metrics.levelToY(bottomLevel + bodyLevels), 2);
             int yBodyTop = yBottom - bodyHeight;
-            drawSuperHeavyMekSilhouette(g2d, xCenter, yBodyTop, silhouetteWidth, bodyHeight,
-                  barColor, facingRight);
+            if (unitType == DiagramUnitType.SUPERHEAVY_MEK) {
+                drawSuperHeavyMekSilhouette(g2d, xCenter, yBodyTop, silhouetteWidth, bodyHeight,
+                      barColor, facingRight);
+            } else {
+                drawUnitShape(g2d, unitType, xCenter, yBodyTop, silhouetteWidth, bodyHeight,
+                      barColor, facingRight);
+            }
             drawTurretMarker(g2d, xCenter, yBodyTop, yTop, barColor);
         } else {
             drawUnitShape(g2d, unitType, xCenter, yTop, silhouetteWidth, silhouetteHeight,

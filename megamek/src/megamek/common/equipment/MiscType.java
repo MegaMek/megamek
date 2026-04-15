@@ -8135,7 +8135,9 @@ public class MiscType extends EquipmentType {
               F_JS_EQUIPMENT,
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT);
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        // Modes are set dynamically in Entity.setGameOptions() based on total comms tonnage
+        // Ghost Targets requires 7+ tons per TO:AR p.100; ECCM requires game option
+        String[] modes = { "Default" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
         misc.industrial = true;

@@ -36,12 +36,17 @@ package megamek.common.units;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.weapons.autoCannons.ACWeapon;
+import megamek.common.weapons.autoCannons.LBXACWeapon;
+import megamek.common.weapons.autoCannons.UACWeapon;
+import megamek.common.weapons.gaussRifles.GaussWeapon;
+import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.logging.MMLogger;
 
 /**
- * Helper methods for constructing/changing Mek units. This happens mostly in MML but some units have modular
- * equipment which MM must be able to switch out and the code for this is involved and should be unified as much as
- * possible.
+ * Helper methods for constructing/changing Mek units. This happens mostly in MML but some units have modular equipment
+ * which MM must be able to switch out and the code for this is involved and should be unified as much as possible.
  * <p>
  * This is the MM extension of MekUtil.
  */
@@ -110,4 +115,17 @@ public class MekConstructionUtil {
         }
     }
 
+    /**
+     * @param equipmentType The equipment type to check
+     *
+     * @return True when given type of equipment is one that forbids lower arm and hand actuators on an omni mek, see TM
+     *       p.57
+     */
+    public static boolean removesHandAndLowerArmSlotsOnOmni(EquipmentType equipmentType) {
+        return (equipmentType instanceof GaussWeapon)
+              || (equipmentType instanceof ACWeapon)
+              || (equipmentType instanceof UACWeapon)
+              || (equipmentType instanceof LBXACWeapon)
+              || (equipmentType instanceof PPCWeapon);
+    }
 }

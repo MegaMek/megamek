@@ -497,6 +497,12 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
             optionComp.setSelected(option.stringValue());
             optionComp.setEditable(editable);
+        } else if (option.getName().equals(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE)) {
+            optionComp.addValue(OptionsConstants.NEURAL_INTERFACE_MODE_OFF);
+            optionComp.addValue(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
+            optionComp.addValue(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
+            optionComp.setSelected(option.stringValue());
+            optionComp.setEditable(editable);
         } else if (option.getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MODE)) {
             optionComp.addValue(OptionsConstants.GHOST_TARGET_MODE_LEGACY);
             optionComp.addValue(OptionsConstants.GHOST_TARGET_MODE_STANDARD);
@@ -507,8 +513,9 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             optionComp.setEditable(editable && ghostTargetsEnabled);
         } else if (option.getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MAX)) {
             // Ghost target max only applies to Legacy mode
-            boolean isLegacyMode = OptionsConstants.GHOST_TARGET_MODE_LEGACY.equals(
-                  options.getOption(OptionsConstants.ADVANCED_GHOST_TARGET_MODE).stringValue());
+            IOption advancedOption = options.getOption(OptionsConstants.ADVANCED_GHOST_TARGET_MODE);
+            boolean isLegacyMode = advancedOption != null && OptionsConstants.GHOST_TARGET_MODE_LEGACY.equals(
+                  advancedOption.stringValue());
             boolean ghostTargetsEnabled = options.getOption(
                   OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET).booleanValue();
             optionComp.setEditable(editable && isLegacyMode && ghostTargetsEnabled);

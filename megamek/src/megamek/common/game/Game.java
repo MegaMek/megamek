@@ -447,6 +447,15 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             logger.error("Can't set the game options to null!");
         } else {
             this.options = options;
+            // Re-apply game options to ProtoMeks so option-dependent state (EI equipment mode,
+            // tech advancement) is recalculated with the new values. Limited to ProtoMeks
+            // because Entity.setGameOptions() has other side effects (ECM equipment adjustments,
+            // weapon mode lists) that should not run unnecessarily on every option change.
+            for (Entity entity : inGameTWEntities()) {
+                if (entity.isProtoMek()) {
+                    entity.setGameOptions();
+                }
+            }
             processGameEvent(new GameSettingsChangeEvent(this));
         }
     }

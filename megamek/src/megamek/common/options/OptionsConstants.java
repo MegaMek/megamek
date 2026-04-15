@@ -380,6 +380,15 @@ public class OptionsConstants {
     public static final String ADVANCED_WOODS_BURN_DOWN = "woods_burn_down";
     public static final String ADVANCED_WOODS_BURN_DOWN_AMOUNT = "woods_burn_down_amount";
     public static final String ADVANCED_NO_IGNITE_CLEAR = "no_ignite_clear";
+    public static final String ADVANCED_NEURAL_INTERFACE_MODE = "neural_interface_mode";
+
+    // Neural Interface mode values
+    public static final String NEURAL_INTERFACE_MODE_OFF = "Off";
+    public static final String NEURAL_INTERFACE_MODE_PILOT_ONLY = "Pilot Abilities Only";
+    public static final String NEURAL_INTERFACE_MODE_FULL_TRACKING = "Full Tracking";
+
+    /** @deprecated Use {@link #ADVANCED_NEURAL_INTERFACE_MODE} instead. */
+    @Deprecated(since = "0.50.14")
     public static final String ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE = "track_neural_interface_hardware";
     public static final String ADVANCED_EXTREME_TEMPERATURE_SURVIVAL = "extreme_temperature_survival";
     public static final String ADVANCED_ARMED_MEKWARRIORS = "armed_mekwarriors";

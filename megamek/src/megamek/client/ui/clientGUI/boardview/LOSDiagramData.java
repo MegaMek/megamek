@@ -65,6 +65,8 @@ record LOSDiagramData(
       DiagramUnitType targetUnitType,
       boolean attackerIsHullDown,
       boolean targetIsHullDown,
+      boolean attackerAtAltitude,
+      boolean targetAtAltitude,
       String attackerName,
       String targetName
 ) {

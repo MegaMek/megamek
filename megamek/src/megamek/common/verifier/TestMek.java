@@ -55,20 +55,15 @@ import megamek.common.equipment.*;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.interfaces.ITechManager;
 import megamek.common.options.OptionsConstants;
-import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;
+import megamek.common.units.MekConstructionUtil;
 import megamek.common.units.QuadMek;
 import megamek.common.units.QuadVee;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
-import megamek.common.weapons.autoCannons.ACWeapon;
-import megamek.common.weapons.autoCannons.LBXACWeapon;
-import megamek.common.weapons.autoCannons.UACWeapon;
-import megamek.common.weapons.gaussRifles.GaussWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
-import megamek.common.weapons.ppc.PPCWeapon;
 
 /**
  * @author Reinhard Vicinus
@@ -472,8 +467,7 @@ public class TestMek extends TestEntity {
         for (Mounted<?> m : mek.getEquipment()) {
             int loc = m.getLocation();
             if (loc == Entity.LOC_NONE) {
-                if ((m.getType() instanceof AmmoType)
-                      && (m.getUsableShotsLeft() <= 1)) {
+                if ((m.getType() instanceof AmmoType) && (m.getUsableShotsLeft() <= 1)) {
                     continue;
                 }
                 if (m.getNumCriticalSlots() == 0) {
@@ -492,33 +486,17 @@ public class TestMek extends TestEntity {
                     continue;
                 }
             }
-            // Check for illegal allocations
-            if (mek.isOmni()
-                  && (mek instanceof BipedMek)
-                  && ((loc == Mek.LOC_LEFT_ARM) || (loc == Mek.LOC_RIGHT_ARM))
-                  && ((m.getType() instanceof GaussWeapon)
-                  || (m.getType() instanceof ACWeapon)
-                  || (m.getType() instanceof UACWeapon)
-                  || (m.getType() instanceof LBXACWeapon)
-                  || (m.getType() instanceof PPCWeapon))) {
-                String weapon = "";
-                if (m.getType() instanceof GaussWeapon) {
-                    weapon = "gauss rifles";
-                } else if ((m.getType() instanceof ACWeapon)
-                      || (m.getType() instanceof UACWeapon)
-                      || (m.getType() instanceof LBXACWeapon)) {
-                    weapon = "autocannons";
-                } else if (m.getType() instanceof PPCWeapon) {
-                    weapon = "PPCs";
-                }
-                if (mek.hasSystem(Mek.ACTUATOR_LOWER_ARM, loc)
-                      || mek.hasSystem(Mek.ACTUATOR_HAND, loc)) {
-                    buff.append("Omni meks with arm mounted ").append(weapon)
-                          .append(" cannot have lower armor or hand actuators!\n");
+
+            // TM p.57
+            if (mek.isOmni() && mek.isArm(loc) && MekConstructionUtil.removesHandAndLowerArmSlotsOnOmni(m.getType())) {
+                if (mek.hasSystem(Mek.ACTUATOR_LOWER_ARM, loc) || mek.hasSystem(Mek.ACTUATOR_HAND, loc)) {
+                    buff.append("Omni meks with arm mounted gauss weapons, PPCs or "
+                          + "ACs cannot have lower armor or hand actuators!\n");
                     legal = false;
                 }
             }
         }
+
         if ((countInternalHeatSinks > engine.integralHeatSinkCapacity(this.mek.hasCompactHeatSinks()))
               || ((countInternalHeatSinks < engine.integralHeatSinkCapacity(this.mek.hasCompactHeatSinks()))
               && (countInternalHeatSinks != mek.heatSinks(false))

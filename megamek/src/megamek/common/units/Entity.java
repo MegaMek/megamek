@@ -1511,12 +1511,11 @@ public abstract class Entity extends TurnOrdered
         initTechAdvancement();
         for (Mounted<?> m : getEquipment()) {
             // ProtoMek EI is built-in per IO:AE p.69 -- only count toward tech level
-            // when tracking neural interface hardware
+            // in Full Tracking mode (Off and Pilot Only = Standard tech)
             if (isProtoMek()
                   && (m.getType() instanceof MiscType)
                   && m.getType().hasFlag(MiscType.F_EI_INTERFACE)
-                  && ((game == null) || !gameOptions().booleanOption(
-                  OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE))) {
+                  && !isNeuralInterfaceFullTracking()) {
                 continue;
             }
 
@@ -12137,8 +12136,53 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Checks if a neural interface system is active based on implant and hardware requirements. When tracking neural
-     * interface hardware, requires both implant and hardware. When not tracking, implant alone is sufficient.
+     * Returns the current neural interface mode from game options. Returns Off for null, blank, or unrecognized values
+     * to ensure safe defaults.
+     *
+     * @return the neural interface mode string, or {@link OptionsConstants#NEURAL_INTERFACE_MODE_OFF} if no game context
+     *       or invalid value
+     */
+    protected String getNeuralInterfaceMode() {
+        if (game == null) {
+            return OptionsConstants.NEURAL_INTERFACE_MODE_OFF;
+        }
+        String mode = gameOptions().stringOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE);
+        if ((mode == null) || mode.isBlank()) {
+            return OptionsConstants.NEURAL_INTERFACE_MODE_OFF;
+        }
+        mode = mode.trim();
+        if (OptionsConstants.NEURAL_INTERFACE_MODE_OFF.equals(mode)
+              || OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY.equals(mode)
+              || OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING.equals(mode)) {
+            return mode;
+        }
+        LOGGER.warn("Unknown neural interface mode '{}'; defaulting to Off.", mode);
+        return OptionsConstants.NEURAL_INTERFACE_MODE_OFF;
+    }
+
+    /**
+     * Returns whether neural interface rules are enabled (either Pilot Only or Full Tracking mode).
+     *
+     * @return true if neural interface mode is not Off
+     */
+    protected boolean isNeuralInterfaceEnabled() {
+        return !OptionsConstants.NEURAL_INTERFACE_MODE_OFF.equals(getNeuralInterfaceMode());
+    }
+
+    /**
+     * Returns whether neural interface rules are in Full Tracking mode (hardware + pilot required).
+     *
+     * @return true if neural interface mode is Full Tracking
+     */
+    protected boolean isNeuralInterfaceFullTracking() {
+        return OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING.equals(getNeuralInterfaceMode());
+    }
+
+    /**
+     * Checks if a neural interface system is active based on implant and hardware requirements.
+     *
+     * <p>Off: always returns false (no bonuses). Pilot Abilities Only: implant alone is sufficient.
+     * Full Tracking: requires both implant and hardware.</p>
      *
      * <p>This is a shared helper for DNI and EI systems which follow the same pattern.</p>
      *
@@ -12148,14 +12192,18 @@ public abstract class Entity extends TurnOrdered
      * @return true if the neural interface is considered active
      */
     private boolean isNeuralInterfaceActive(boolean hasImplant, boolean hasHardware) {
+        String mode = getNeuralInterfaceMode();
+        if (OptionsConstants.NEURAL_INTERFACE_MODE_OFF.equals(mode)) {
+            return false;
+        }
         if (!hasImplant) {
             return false;
         }
-        // When not tracking hardware, implant alone provides benefits
-        if ((game == null) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+        // Pilot Abilities Only: implant alone provides benefits
+        if (OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY.equals(mode)) {
             return true;
         }
-        // When tracking hardware, require the interface equipment
+        // Full Tracking: require the interface equipment
         return hasHardware;
     }
 
@@ -13360,6 +13408,22 @@ public abstract class Entity extends TurnOrdered
                 misc.getType().setModes(modes.toArray(new String[0]));
                 misc.getType().setInstantModeSwitch(false);
             }
+
+            // Communications Equipment: modes depend on game options. Ghost Targets mode is
+            // included when the option is on; the 7-ton requirement is enforced at usage time
+            // in isGhostTargetCapable() since EquipmentType is globally shared across all entities.
+            if (misc.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                List<String> modes = new ArrayList<>();
+                modes.add("Default");
+                if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM)) {
+                    modes.add("ECCM");
+                }
+                if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET)) {
+                    modes.add("Ghost Targets");
+                }
+                misc.getType().setModes(modes.toArray(new String[0]));
+                misc.getType().setInstantModeSwitch(false);
+            }
         }
     }
 
@@ -14108,14 +14172,14 @@ public abstract class Entity extends TurnOrdered
     /**
      * Returns whether this unit has DNI-induced Hard to Pilot quirk. Per IO p.83, units with DNI Cockpit Modification
      * gain the Hard to Pilot quirk when piloted by someone without a compatible DNI implant (VDNI, BVDNI, or Proto
-     * DNI). This only applies when the Track Neural Interface Hardware game option is enabled.
+     * DNI). This only applies in Full Tracking mode.
      *
      * @return true if DNI cockpit induces Hard to Pilot quirk
      */
     public boolean hasDNIInducedHardToPilot() {
-        // Only applies when tracking neural interface hardware
-        if ((game == null) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
-            LOGGER.trace("[DNI-HTP] {} - Tracking option OFF or no game, returning false", getDisplayName());
+        // Only applies in Full Tracking mode
+        if (!isNeuralInterfaceFullTracking()) {
+            LOGGER.trace("[DNI-HTP] {} - Not in Full Tracking mode, returning false", getDisplayName());
             return false;
         }
         // Unit must have DNI Cockpit Mod

@@ -1137,10 +1137,13 @@ public class Princess extends BotClient {
                     Vector<EntityAction> actions = new Vector<>();
 
                     // if using search light, it needs to go before the other actions so we can light up what we're shooting at
-                    SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter,
-                          plan);
-                    if (searchLightAction != null) {
-                        actions.add(searchLightAction);
+                    // Respect the "Searchlights On by Default" option - disabled means Princess won't use searchlights offensively either.
+                    if (getGame().getOptions().booleanOption(OptionsConstants.SEARCHLIGHTS_ON)) {
+                        SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter,
+                              plan);
+                        if (searchLightAction != null) {
+                            actions.add(searchLightAction);
+                        }
                     }
 
                     actions.addAll(plan.getEntityActionVector());
@@ -1193,9 +1196,13 @@ public class Princess extends BotClient {
                     miscPlan.add(spotAction);
                 }
 
-                SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter, null);
-                if (searchLightAction != null) {
-                    miscPlan.add(searchLightAction);
+                // Respect the "Searchlights On by Default" option
+                if (getGame().getOptions().booleanOption(OptionsConstants.SEARCHLIGHTS_ON)) {
+                    SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter,
+                          null);
+                    if (searchLightAction != null) {
+                        miscPlan.add(searchLightAction);
+                    }
                 }
             }
 
@@ -3524,10 +3531,21 @@ public class Princess extends BotClient {
      */
     private void turnOnSearchLight(MovePath path, boolean possibleToInflictDamage) {
         Entity pathEntity = path.getEntity();
+        boolean option = path.getGame().getOptions().booleanOption(OptionsConstants.SEARCHLIGHTS_ON);
+        LOGGER.debug("Princess.turnOnSearchLight: entity={} SEARCHLIGHTS_ON={} damage={} hasSL={} usingSL={} isDark={}",
+              pathEntity.getDisplayName(), option, possibleToInflictDamage,
+              pathEntity.hasSearchlight(), pathEntity.isUsingSearchlight(),
+              path.getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack());
+        // Respect the "Searchlights On by Default" game option - if disabled, Princess won't
+        // auto-enable searchlights either (they give away position under double-blind).
+        if (!option) {
+            return;
+        }
         if (possibleToInflictDamage &&
               pathEntity.hasSearchlight() &&
               !pathEntity.isUsingSearchlight() &&
               path.getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
+            LOGGER.debug("Princess adding SEARCHLIGHT step for {}", pathEntity.getDisplayName());
             path.addStep(MoveStepType.SEARCHLIGHT);
         }
     }

@@ -60,8 +60,12 @@ final class LOSHeightCalculation {
      * @return the TW height in levels (ground units) or altitude (airborne aero)
      */
     static int twHeightFromEntity(Entity entity) {
-        // Airborne aero units use altitude (1-10), not elevation-derived height
-        if (entity.isAirborne() && DiagramUnitType.fromEntity(entity).isAltitudeUnit()) {
+        DiagramUnitType unitType = DiagramUnitType.fromEntity(entity);
+
+        // Airborne aero units use altitude (1-10), not elevation-derived height.
+        // Check getAltitude() > 0 directly rather than isAirborne(), because isAirborne()
+        // returns true for grounded dropships (AERODYNE/SPHEROID movement mode at altitude 0).
+        if ((entity.getAltitude() > 0) && unitType.isAltitudeUnit()) {
             return Math.max(1, entity.getAltitude());
         }
 

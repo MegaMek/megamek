@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,12 +30,8 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JLabel;
@@ -43,6 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
 import megamek.common.units.Entity;
 import megamek.common.equipment.EquipmentType;
@@ -55,27 +52,20 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * Panel that allows splitting ammo between standard and inferno for light and medium weapons that have inferno
  * variants.
  */
-public class SmallSVMunitionsChoicePanel extends JPanel {
-    private final Entity entity;
-    private final List<AmmoRowPanel> rows = new ArrayList<>();
+class SmallSVMunitionsChoice {
 
-    public SmallSVMunitionsChoicePanel(Entity entity) {
-        this.entity = entity;
+    private final List<AmmoRow> rows = new ArrayList<>();
 
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(10, 0, 10, 0);
-
+    public SmallSVMunitionsChoice(Entity entity, JPanel parentPanel, GBC2 gbc) {
         for (Mounted<?> weapon : entity.getWeaponList()) {
-            if ((weapon.getType() instanceof InfantryWeapon)
-                  && ((InfantryWeapon) weapon.getType()).hasInfernoAmmo()) {
-                AmmoRowPanel row = new AmmoRowPanel(weapon);
-                gbc.gridy++;
-                add(row, gbc);
-                rows.add(row);
+            if ((weapon.getType() instanceof InfantryWeapon infantryWeapon) && (infantryWeapon.hasInfernoAmmo())) {
+                rows.add(new AmmoRow(entity, weapon, parentPanel, gbc));
             }
         }
+    }
+
+    boolean isEmpty() {
+        return rows.isEmpty();
     }
 
     /**
@@ -83,7 +73,7 @@ public class SmallSVMunitionsChoicePanel extends JPanel {
      * of shots rounded up to full clips. Any completely empty clips will be assigned to the standard bin.
      */
     public void apply() {
-        for (AmmoRowPanel row : rows) {
+        for (AmmoRow row : rows) {
             row.stdAmmo.setShotsLeft((Integer) row.spnStandard.getValue());
             row.infernoAmmo.setShotsLeft((Integer) row.spnInferno.getValue());
             int infernoClips = (int) Math.ceil((double) row.infernoAmmo.getBaseShotsLeft() / row.shotsPerClip);
@@ -93,7 +83,8 @@ public class SmallSVMunitionsChoicePanel extends JPanel {
         }
     }
 
-    class AmmoRowPanel extends JPanel {
+    private static class AmmoRow {
+
         private final Mounted<?> weapon;
         private final Mounted<?> stdAmmo;
         private final Mounted<?> infernoAmmo;
@@ -103,10 +94,12 @@ public class SmallSVMunitionsChoicePanel extends JPanel {
         private final JSpinner spnStandard;
         private final JSpinner spnInferno;
 
-        AmmoRowPanel(Mounted<?> weapon) {
+        AmmoRow(Entity entity, Mounted<?> weapon, JPanel parentPanel, GBC2 gbc) {
             this.weapon = weapon;
-            shotsPerClip = ((InfantryWeapon) weapon.getType()).getShots();
-            maxShots = (int) weapon.getSize() * ((InfantryWeapon) weapon.getType()).getShots();
+            InfantryWeapon weaponType = (InfantryWeapon) weapon.getType();
+            shotsPerClip = weaponType.getShots();
+            int clips = (int) weapon.getSize();
+            maxShots = clips * shotsPerClip;
             if (weapon.getLinked() == null) {
                 Mounted<?> ammo = addAmmoMount(EquipmentType.get(EquipmentTypeLookup.INFANTRY_AMMO), maxShots);
                 weapon.setLinked(ammo);
@@ -120,32 +113,17 @@ public class SmallSVMunitionsChoicePanel extends JPanel {
             spnStandard = new JSpinner(new SpinnerNumberModel(stdAmmo.getBaseShotsLeft(), 0, maxShots, 1));
             spnInferno = new JSpinner(new SpinnerNumberModel(infernoAmmo.getBaseShotsLeft(), 0, maxShots, 1));
 
-            setLayout(new GridBagLayout());
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.anchor = GridBagConstraints.WEST;
-            gbc.insets = new Insets(0, 5, 0, 5);
-            gbc.gridwidth = 5;
-            add(new JLabel(String.format("(%s) %s", entity.getLocationAbbr(weapon.getLocation()),
-                  weapon.getName())), gbc);
-            gbc.gridx = 5;
-            gbc.gridwidth = 1;
-            gbc.weightx = 1.0;
-            add(new JLabel(String.format(Messages.getString("CustomMekDialog.formatSmSVAmmoShots"),
-                  shotsPerClip, (int) weapon.getSize())), gbc);
+            parentPanel.add(new JLabel("(%s) %s:".formatted(
+                  entity.getLocationAbbr(weapon.getLocation()),
+                  weapon.getShortName())), gbc.forLabel());
+            parentPanel.add(new JLabel(Messages.getString("CustomMekDialog.formatSmSVAmmoShots",
+                  shotsPerClip, clips)), gbc.eol());
 
-            gbc.gridx = 0;
-            gbc.gridy = 1;
-            gbc.gridwidth = 1;
-            gbc.weightx = 0.0;
-            add(new JLabel("Standard"), gbc);
-            gbc.gridx++;
-            add(spnStandard, gbc);
-            gbc.gridx++;
-            add(new JLabel("Inferno"), gbc);
-            gbc.gridx++;
-            add(spnInferno, gbc);
+            parentPanel.add(new JLabel("Standard"), gbc.forLabel());
+            parentPanel.add(spnStandard, gbc.oneColumn());
+            parentPanel.add(new JLabel("Inferno"), gbc.oneColumn());
+            parentPanel.add(spnInferno, gbc.eol());
+
             spnStandard.addChangeListener(ev -> recalcMaxValues());
             spnInferno.addChangeListener(ev -> recalcMaxValues());
             recalcMaxValues();

@@ -34,13 +34,16 @@
 package megamek.client.ui.dialogs.customMek;
 
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -48,9 +51,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 
+import com.formdev.flatlaf.extras.components.FlatTabbedPane;
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
@@ -114,7 +119,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     private JPanel panOptions;
     // private JScrollPane scrOptions;
 
-    private JTabbedPane tabAll;
+    private final FlatTabbedPane tabAll = new FlatTabbedPane();
 
     private final JTextField fldInit = new JTextField(3);
     private final JTextField fldCommandInit = new JTextField(3);
@@ -253,6 +258,7 @@ public class CustomMekDialog extends AbstractButtonDialog
             throw new IllegalStateException("Must pass at least one Entity!");
         }
 
+        bindArrowKeys();
         initialize();
     }
 
@@ -271,7 +277,41 @@ public class CustomMekDialog extends AbstractButtonDialog
             throw new IllegalStateException("Must pass at least one Entity!");
         }
 
+        bindArrowKeys();
         initialize();
+    }
+
+    /**
+     * Binds Alt+Left Arrow and Alt+Right Arrow keys to the Next and Previous buttons to allow keyboard navigation
+     */
+    private void bindArrowKeys() {
+        JRootPane rootPane = getRootPane();
+
+        // Actions
+        Action nextAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                butNext.doClick();
+            }
+        };
+
+        Action prevAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                butPrev.doClick();
+            }
+        };
+
+        // InputMap & ActionMap
+        InputMap inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = rootPane.getActionMap();
+
+        // Bind keys
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_DOWN_MASK), "next");
+        actionMap.put("next", nextAction);
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_DOWN_MASK), "previous");
+        actionMap.put("previous", prevAction);
     }
 
     public String getSelectedTab() {
@@ -340,6 +380,13 @@ public class CustomMekDialog extends AbstractButtonDialog
 
             if (group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES) &&
                   !gameOptions().booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) {
+                continue;
+            }
+
+            // Hide EI Implant group when neural interface rules are Off
+            if (group.getKey().equalsIgnoreCase(PilotOptions.EI_ADVANTAGES) &&
+                  OptionsConstants.NEURAL_INTERFACE_MODE_OFF.equals(
+                        gameOptions().stringOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE))) {
                 continue;
             }
 
@@ -2092,7 +2139,11 @@ public class CustomMekDialog extends AbstractButtonDialog
         }
         // set up the panels
         JPanel mainPanel = new JPanel(new GridBagLayout());
-        tabAll = new JTabbedPane();
+        tabAll.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        tabAll.setTabPlacement(JTabbedPane.LEFT);
+        tabAll.setTabType(FlatTabbedPane.TabType.card);
+        tabAll.setTabAlignment(FlatTabbedPane.TabAlignment.leading);
+        tabAll.setMinimumTabWidth(new JLabel("X".repeat(15)).getPreferredSize().width);
 
         JPanel panCrew = new JPanel(new GridBagLayout());
         panCrewMember = new CustomPilotViewPanel[entity.getCrew().getSlotCount()];
@@ -2108,7 +2159,13 @@ public class CustomMekDialog extends AbstractButtonDialog
         mainPanel.add(tabAll, GBC.eol().fill(GridBagConstraints.BOTH).insets(5, 5, 5, 5));
         mainPanel.add(panButtons, GBC.eol().anchor(GridBagConstraints.CENTER));
 
-        JScrollPane scrEquip = new JScrollPane(equipChoicePanel);
+        // Wrap the equipment choice panel to make it top-left-aligned
+        JPanel equipmentWrapPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        equipmentWrapPanel.add(equipChoicePanel);
+        JScrollPane scrEquip = new JScrollPane(equipmentWrapPanel);
+        scrEquip.getVerticalScrollBar().setUnitIncrement(16);
+        scrEquip.setBorder(new EmptyBorder(10, 25, 0, 0));
+
         // Don't show the crew panel if there's multiple entities or no crew to show
         if (!multipleEntities && panCrewMember.length > 0) {
             if (panCrewMember.length > 1) {
@@ -2126,8 +2183,8 @@ public class CustomMekDialog extends AbstractButtonDialog
                 memberScrollPane.getVerticalScrollBar().setUnitIncrement(16);
                 tabAll.addTab(Messages.getString("CustomMekDialog.tabPilot"), memberScrollPane);
             }
-            tabAll.addTab(Messages.getString("CustomMekDialog.tabEquipment"), scrEquip);
         }
+        tabAll.addTab(Messages.getString("CustomMekDialog.tabEquipment"), scrEquip);
 
         if (this.clientGUI != null) {
             tabAll.addTab(Messages.getString(editableDeployment ?
@@ -2136,7 +2193,6 @@ public class CustomMekDialog extends AbstractButtonDialog
             if (quirksEnabled && !multipleEntities) {
                 JScrollPane scrQuirks = new JScrollPane(panQuirks);
                 scrQuirks.getVerticalScrollBar().setUnitIncrement(16);
-                scrQuirks.setPreferredSize(scrEquip.getPreferredSize());
                 tabAll.addTab("Quirks", scrQuirks);
             }
             if (partialRepairsEnabled && !multipleEntities) {

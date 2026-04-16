@@ -32,7 +32,6 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.GridBagLayout;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
@@ -41,7 +40,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import megamek.client.ui.GBC;
+import megamek.client.ui.GBC2;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
@@ -57,14 +56,15 @@ import megamek.common.units.Entity;
  *
  * @author arlith
  */
-class APWeaponChoicePanel extends JPanel {
+class APWeaponChoice {
 
     private final Entity entity;
     private final List<WeaponType> weaponTypes;
     private final JComboBox<String> comboChoices = new JComboBox<>();
     private final Mounted<?> apMount;
 
-    APWeaponChoicePanel(Entity entity, Mounted<?> apMount, List<WeaponType> suitableWeapons) {
+    APWeaponChoice(Entity entity, Mounted<?> apMount, List<WeaponType> suitableWeapons, JPanel parentPanel,
+                   GBC2 gbc) {
         Objects.requireNonNull(apMount);
         this.entity = entity;
         weaponTypes = suitableWeapons;
@@ -83,10 +83,9 @@ class APWeaponChoicePanel extends JPanel {
             comboChoices.setSelectedItem(equipmentType.getName());
         }
 
-        String labelDescription = BattleArmor.MOUNT_LOC_NAMES[apMount.getBaMountLoc()] + ": ";
-        setLayout(new GridBagLayout());
-        add(new JLabel(labelDescription), GBC.std());
-        add(comboChoices, GBC.std());
+        String location = BattleArmor.MOUNT_LOC_NAMES[apMount.getBaMountLoc()] + ":";
+        parentPanel.add(new JLabel(location), gbc.forLabel());
+        parentPanel.add(comboChoices, gbc.eol());
     }
 
     void applyChoice() {
@@ -113,7 +112,7 @@ class APWeaponChoicePanel extends JPanel {
         }
     }
 
-    @Override
+//    @Override
     public void setEnabled(boolean enabled) {
         comboChoices.setEnabled(enabled);
     }

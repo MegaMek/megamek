@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,48 +32,36 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.GridBagLayout;
-import java.io.Serial;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import megamek.client.ui.GBC;
+import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
 import megamek.common.units.Entity;
 import megamek.common.equipment.MiscMounted;
 
-public class MineChoicePanel extends JPanel {
-    @Serial
-    private static final long serialVersionUID = -1868675102440527538L;
+public class MineChoice {
 
     private final JComboBox<String> comboChoices;
 
     private final MiscMounted miscMounted;
 
-    public MineChoicePanel(MiscMounted miscMounted, Entity entity) {
+    public MineChoice(MiscMounted miscMounted, Entity entity, JPanel parentPanel, GBC2 gbc) {
         this.miscMounted = miscMounted;
         comboChoices = new JComboBox<>();
         comboChoices.addItem(Messages.getString("CustomMekDialog.Conventional"));
         comboChoices.addItem(Messages.getString("CustomMekDialog.Vibrabomb"));
-
-        int miscMountedLocation = miscMounted.getLocation();
-        String labelDescription = '(' + entity.getLocationAbbr(miscMountedLocation) + ')';
-        JLabel labelLocation = new JLabel(labelDescription);
-
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        setLayout(gridBagLayout);
-        add(labelLocation, GBC.std());
-
         comboChoices.setSelectedIndex(miscMounted.getMineType());
-        add(comboChoices, GBC.eol());
+
+        parentPanel.add(new JLabel(entity.getLocationName(miscMounted.getLocation()) + ":"), gbc.forLabel());
+        parentPanel.add(comboChoices, gbc.eol());
     }
 
     public void applyChoice() {
         miscMounted.setMineType(comboChoices.getSelectedIndex());
     }
 
-    @Override
     public void setEnabled(boolean enabled) {
         comboChoices.setEnabled(enabled);
     }

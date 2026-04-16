@@ -148,13 +148,19 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
 
         loadQuirks(t);
 
-        // ProtoMeks cannot shut down EI per IO:AE p.69 -- set mode to "On" (index 1)
+        // ProtoMeks have EI built-in per IO:AE p.69. At BLK load time, game context is not
+        // available so default to Off (mode 0). The mode will be set correctly when the unit
+        // joins a game via setGameOptions().
         for (Mounted<?> m : t.getEquipment()) {
             if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
-                m.setMode(1);
+                m.setMode(0);
                 break;
             }
         }
+
+        // Recalculate tech advancement after all equipment is loaded so that ProtoMek EI
+        // is properly skipped when no game context is present (defaults to non-Full Tracking)
+        t.recalculateTechAdvancement();
 
         return t;
     }

@@ -32,12 +32,12 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.FlowLayout;
-import java.io.Serial;
 import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
 import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.units.Entity;
@@ -47,18 +47,14 @@ import megamek.common.units.Entity;
  * selects Long or Short mode. - LONG mode: -1 TN at long range, +1 TN at short range - SHORT mode: -1 TN at short
  * range, +1 TN at long range
  */
-public class VRTChoicePanel extends JPanel {
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class VRTChoice {
 
     private final Entity entity;
     private final JRadioButton rbLong;
     private final JRadioButton rbShort;
 
-    public VRTChoicePanel(Entity entity) {
+    public VRTChoice(Entity entity, JPanel parentPanel, GBC2 gbc) {
         this.entity = entity;
-
-        setLayout(new FlowLayout(FlowLayout.LEFT));
 
         rbLong = new JRadioButton(Messages.getString("CustomMekDialog.VRTModeLong"));
         rbShort = new JRadioButton(Messages.getString("CustomMekDialog.VRTModeShort"));
@@ -78,8 +74,12 @@ public class VRTChoicePanel extends JPanel {
             rbShort.setSelected(true);
         }
 
-        add(rbLong);
-        add(rbShort);
+
+        parentPanel.add(new JLabel(), gbc.oneColumn());
+        parentPanel.add(rbLong, gbc.eol());
+
+        parentPanel.add(new JLabel(), gbc.oneColumn());
+        parentPanel.add(rbShort, gbc.eol());
     }
 
     /**
@@ -92,9 +92,7 @@ public class VRTChoicePanel extends JPanel {
         entity.setVariableRangeTargetingMode(mode);
     }
 
-    @Override
     public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
         rbLong.setEnabled(enabled);
         rbShort.setEnabled(enabled);
     }

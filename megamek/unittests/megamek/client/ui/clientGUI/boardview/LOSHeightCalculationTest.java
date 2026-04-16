@@ -38,6 +38,7 @@ import static org.mockito.Mockito.when;
 
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
+import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Tank;
@@ -73,6 +74,7 @@ class LOSHeightCalculationTest {
         Tank tank = mock(Tank.class);
         when(tank.relHeight()).thenReturn(0);
         when(tank.isHullDown()).thenReturn(false);
+        when(tank.getMovementMode()).thenReturn(EntityMovementMode.TRACKED);
 
         assertEquals(1, LOSHeightCalculation.twHeightFromEntity(tank));
     }
@@ -140,7 +142,6 @@ class LOSHeightCalculationTest {
     @DisplayName("Airborne aero should use altitude, not elevation-derived height")
     void airborneAeroUsesAltitude() {
         AeroSpaceFighter aero = mock(AeroSpaceFighter.class);
-        when(aero.isAirborne()).thenReturn(true);
         when(aero.getAltitude()).thenReturn(10);
         when(aero.relHeight()).thenReturn(999);
         when(aero.getMovementMode()).thenReturn(EntityMovementMode.AERODYNE);
@@ -152,12 +153,25 @@ class LOSHeightCalculationTest {
     @DisplayName("Landed aero should use normal height calculation")
     void landedAeroUsesHeight() {
         AeroSpaceFighter aero = mock(AeroSpaceFighter.class);
-        when(aero.isAirborne()).thenReturn(false);
         when(aero.getAltitude()).thenReturn(0);
         when(aero.relHeight()).thenReturn(0);
         when(aero.getMovementMode()).thenReturn(EntityMovementMode.AERODYNE);
 
         assertEquals(1, LOSHeightCalculation.twHeightFromEntity(aero));
+    }
+
+    @Test
+    @DisplayName("Grounded dropship should use physical height, not altitude")
+    void groundedDropshipUsesHeight() {
+        // A landed spheroid dropship is 10 levels tall (relHeight=9, TW height=10).
+        // It should show as Height: 10, NOT Altitude: 10.
+        Dropship dropship = mock(Dropship.class);
+        when(dropship.getAltitude()).thenReturn(0);
+        when(dropship.relHeight()).thenReturn(9);
+        when(dropship.isAirborne()).thenReturn(true);
+        when(dropship.getMovementMode()).thenReturn(EntityMovementMode.SPHEROID);
+
+        assertEquals(10, LOSHeightCalculation.twHeightFromEntity(dropship));
     }
 
     @Test

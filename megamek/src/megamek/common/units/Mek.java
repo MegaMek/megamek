@@ -70,10 +70,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.weapons.autoCannons.ACWeapon;
-import megamek.common.weapons.autoCannons.LBXACWeapon;
-import megamek.common.weapons.autoCannons.UACWeapon;
-import megamek.common.weapons.gaussRifles.GaussWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.logging.MMLogger;
 
@@ -2755,16 +2751,9 @@ public abstract class Mek extends Entity {
         if (isSuperHeavy()) {
             reqSlots = (int) Math.ceil(((double) reqSlots / 2.0f));
         }
-        // gauss and AC weapons on omni arms means no arm actuators, so we
-        // remove them
-        if (isOmni()
-              && (this instanceof BipedMek)
-              && ((loc == LOC_LEFT_ARM) || (loc == LOC_RIGHT_ARM))
-              && ((mounted.getType() instanceof GaussWeapon)
-              || (mounted.getType() instanceof ACWeapon)
-              || (mounted.getType() instanceof UACWeapon)
-              || (mounted.getType() instanceof LBXACWeapon) || (mounted
-              .getType() instanceof PPCWeapon))) {
+
+        // various weapons on omni arms forbid lower arm+hand actuators, so remove them, TM p.57
+        if (isOmni() && isArm(loc) && MekConstructionUtil.removesHandAndLowerArmSlotsOnOmni(mounted.getType())) {
             if (hasSystem(Mek.ACTUATOR_LOWER_ARM, loc)) {
                 setCritical(loc, 2, null);
             }
@@ -5680,7 +5669,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Is the passed in location an arm?
+     * @return True if the given location is an arm; always returns false for QuadMeks
      */
     public boolean isArm(int loc) {
         return (loc == Mek.LOC_LEFT_ARM) || (loc == Mek.LOC_RIGHT_ARM);

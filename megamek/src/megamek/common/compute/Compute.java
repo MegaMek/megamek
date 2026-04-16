@@ -4370,18 +4370,28 @@ public class Compute {
             return hasAnyFiringSolution(game, te.getId());
         }
         boolean teIlluminated = false;
+        boolean teEntityIlluminated = false;
+        boolean teUsingSearchlight = false;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity te = (Entity) target;
-            teIlluminated = te.isIlluminated();
+            teEntityIlluminated = te.isIlluminated();
+            teUsingSearchlight = te.isUsingSearchlight();
+            teIlluminated = teEntityIlluminated;
             if (te.isOffBoard()) {
                 return false;
             }
         }
 
         // Target may be in an illuminated hex
+        boolean hexIlluminated = false;
         if (!teIlluminated) {
-            teIlluminated = !IlluminationLevel.determineIlluminationLevel(game, target.getBoardId(),
+            hexIlluminated = !IlluminationLevel.determineIlluminationLevel(game, target.getBoardId(),
                   target.getPosition()).isNone();
+            teIlluminated = hexIlluminated;
+        }
+        if (teIlluminated) {
+            LOGGER.debug("  illumination source for {}: entityIlluminated={} usingSearchlight={} hexIlluminated={}",
+                  target.getDisplayName(), teEntityIlluminated, teUsingSearchlight, hexIlluminated);
         }
 
         // if either does not have a position then return false
@@ -4447,7 +4457,14 @@ public class Compute {
         int distance = attackingPos.distance(targetPos);
         // Need to track difference in altitude, not just add altitude to the range
         distance += Math.abs(2 * target.getAltitude() - 2 * attackingEntity.getAltitude());
-        return distance <= visualRange;
+        boolean inRange = distance <= visualRange;
+        LOGGER.debug("inVisualRange: {} -> {} | distance={} visualRange={} illuminated={} light={} inRange={}",
+              attackingEntity.getDisplayName(),
+              target.getDisplayName(),
+              distance, visualRange, teIlluminated,
+              game.getPlanetaryConditions().getLight(),
+              inRange);
+        return inRange;
 
     }
 
@@ -5093,7 +5110,17 @@ public class Compute {
         if (isAirToAir(game, ae, target) && game.getBoard(ae).isGround()) {
             distance = (int) Math.ceil(distance / 16.0);
         }
-        return (distance > minSensorRange) && (distance <= maxSensorRange);
+        boolean inRange = (distance > minSensorRange) && (distance <= maxSensorRange);
+        LOGGER.debug("inSensorRange: {} -> {} | sensor={} bracket={} rangePerBracket={} "
+                    + "minRange={} maxRange={} distance={} inclusive={} inRange={}",
+              ae.getDisplayName(),
+              target.getDisplayName(),
+              (ae.getActiveSensor() != null ? ae.getActiveSensor().getDisplayName() : "none"),
+              bracket, range,
+              minSensorRange, maxSensorRange, distance,
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE),
+              inRange);
+        return inRange;
     }
 
     /**
@@ -5119,11 +5146,13 @@ public class Compute {
         if (los == null) {
             los = LosEffects.calculateLOS(game, ae, target);
         }
-        boolean isVisible = los.canSee() && Compute.inVisualRange(game, los, ae, target);
-        if (useSensors) {
-            isVisible = isVisible
-                  || Compute.inSensorRange(game, los, ae, target, allECMInfo);
-        }
+        boolean hasLos = los.canSee();
+        boolean visual = hasLos && Compute.inVisualRange(game, los, ae, target);
+        boolean viaSensors = useSensors && Compute.inSensorRange(game, los, ae, target, allECMInfo);
+        boolean isVisible = visual || viaSensors;
+        LOGGER.debug("canSee: {} -> {} | useSensors={} hasLOS={} visual={} viaSensors={} result={}",
+              ae.getDisplayName(), target.getDisplayName(),
+              useSensors, hasLos, visual, viaSensors, isVisible);
         return isVisible;
     }
 

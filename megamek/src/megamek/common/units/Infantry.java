@@ -1770,7 +1770,7 @@ public class Infantry extends Entity {
         // Equipment for Demolition Engineers
         if ((spec & DEMO_ENGINEERS) > 0 && (infSpecs & DEMO_ENGINEERS) == 0) {
             // Add demolition charge if not already present (may already be loaded from file)
-            boolean hasCharge = getEquipment().stream()
+            boolean hasCharge = getMisc().stream()
                   .anyMatch(m -> m.getType().hasFlag(MiscType.F_TOOLS)
                         && m.getType().hasFlag(MiscTypeFlag.S_DEMOLITION_CHARGE));
             if (!hasCharge) {
@@ -1782,9 +1782,9 @@ public class Infantry extends Entity {
                 }
             }
         } else if ((spec & DEMO_ENGINEERS) == 0 && (infSpecs & DEMO_ENGINEERS) > 0) {
-            // Need to remove vibro shovels
+            // Need to remove demolition charges
             List<Mounted<?>> eqToRemove = new ArrayList<>();
-            for (Mounted<?> eq : getEquipment()) {
+            for (Mounted<?> eq : getMisc()) {
                 if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasFlag(MiscTypeFlag.S_DEMOLITION_CHARGE)) {
                     eqToRemove.add(eq);
                 }

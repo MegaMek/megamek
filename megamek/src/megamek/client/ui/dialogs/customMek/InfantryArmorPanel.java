@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,19 +32,18 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.GridBagLayout;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import megamek.client.ui.GBC;
+import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.SimpleTechLevel;
@@ -55,74 +54,57 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 
-public class InfantryArmorPanel extends JPanel {
-    @Serial
-    private static final long serialVersionUID = -909995917737642853L;
+public class InfantryArmorPanel {
 
     final private Infantry infantry;
     private final JComboBox<String> cbArmorKit = new JComboBox<>();
     private final JTextField fldDivisor = new JTextField(3);
 
-    JLabel labArmor = new JLabel(Messages.getString("CustomMekDialog.labInfantryArmor"));
-    JLabel labDivisor = new JLabel(Messages.getString("CustomMekDialog.labDamageDivisor"));
-    JLabel labEncumber = new JLabel(Messages.getString("CustomMekDialog.labEncumber"));
-    JLabel labSpaceSuit = new JLabel(Messages.getString("CustomMekDialog.labSpaceSuit"));
-    JLabel labDEST = new JLabel(Messages.getString("CustomMekDialog.labDEST"));
-    JLabel labSneakCamo = new JLabel(Messages.getString("CustomMekDialog.labSneakCamo"));
-    JLabel labSneakIR = new JLabel(Messages.getString("CustomMekDialog.labSneakIR"));
-    JLabel labSneakECM = new JLabel(Messages.getString("CustomMekDialog.labSneakECM"));
-    JLabel labSpec = new JLabel(Messages.getString("CustomMekDialog.labInfSpec"));
+    private final JCheckBox chEncumber = new JCheckBox(Messages.getString("CustomMekDialog.labEncumber"));
+    private final JCheckBox chSpaceSuit = new JCheckBox(Messages.getString("CustomMekDialog.labSpaceSuit"));
+    private final JCheckBox chDEST = new JCheckBox(Messages.getString("CustomMekDialog.labDEST"));
+    private final JCheckBox chSneakCamo = new JCheckBox(Messages.getString("CustomMekDialog.labSneakCamo"));
+    private final JCheckBox chSneakIR = new JCheckBox(Messages.getString("CustomMekDialog.labSneakIR"));
+    private final JCheckBox chSneakECM = new JCheckBox(Messages.getString("CustomMekDialog.labSneakECM"));
+    private final List<JCheckBox> chSpecs = new ArrayList<>(Infantry.NUM_SPECIALIZATIONS);
 
-    JCheckBox chEncumber = new JCheckBox();
-    JCheckBox chSpaceSuit = new JCheckBox();
-    JCheckBox chDEST = new JCheckBox();
-    JCheckBox chSneakCamo = new JCheckBox();
-    JCheckBox chSneakIR = new JCheckBox();
-    JCheckBox chSneakECM = new JCheckBox();
-    List<JCheckBox> chSpecs = new ArrayList<>(Infantry.NUM_SPECIALIZATIONS);
+    private final List<EquipmentType> armorKits = new ArrayList<>();
 
-    List<EquipmentType> armorKits = new ArrayList<>();
+    public InfantryArmorPanel(Entity entity, JPanel parentPanel, GBC2 gbc) {
+        infantry = (Infantry) entity;
 
-    public InfantryArmorPanel(Entity entity) {
-        this.infantry = (Infantry) entity;
+        JComponent armorTitle = new EquipChoicePanel.SectionTitleLabel(Messages.getString("CustomMekDialog.infArmorSection"));
+        parentPanel.add(armorTitle, gbc.fullLine());
 
-        for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
-            int spec = 1 << i;
-            JCheckBox newSpec = new JCheckBox();
-            newSpec.setText(Infantry.getSpecializationName(spec));
-            newSpec.setToolTipText(Infantry.getSpecializationTooltip(spec));
-            chSpecs.add(newSpec);
-        }
-
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        setLayout(gridBagLayout);
         SimpleTechLevel gameTechLevel = SimpleTechLevel.getGameTechLevel(entity.getGame());
         if (gameTechLevel != SimpleTechLevel.STANDARD &&
               gameTechLevel != SimpleTechLevel.INTRO) {
-            add(labArmor, GBC.std());
-            add(cbArmorKit, GBC.eol());
-            add(labDivisor, GBC.std());
-            add(fldDivisor, GBC.eol());
-            add(labEncumber, GBC.std());
-            add(chEncumber, GBC.eol());
-            add(labSpaceSuit, GBC.std());
-            add(chSpaceSuit, GBC.eol());
-            add(labDEST, GBC.std());
-            add(chDEST, GBC.eol());
-            add(labSneakCamo, GBC.std());
-            add(chSneakCamo, GBC.eol());
-            add(labSneakIR, GBC.std());
-            add(chSneakIR, GBC.eol());
-            add(labSneakECM, GBC.std());
-            add(chSneakECM, GBC.eol());
+            JLabel labArmor = new JLabel(Messages.getString("CustomMekDialog.labInfantryArmor"));
+            JLabel labDivisor = new JLabel(Messages.getString("CustomMekDialog.labDamageDivisor"));
+            parentPanel.add(labArmor, gbc.forLabel());
+            parentPanel.add(cbArmorKit, gbc.eol());
+            parentPanel.add(labDivisor, gbc.forLabel());
+            parentPanel.add(fldDivisor, gbc.eol());
+
+            parentPanel.add(Box.createVerticalStrut(5), gbc.fullLine());
+
+            parentPanel.add(new JLabel(), gbc.forLabel());
+            parentPanel.add(chEncumber, gbc.oneColumn());
+            parentPanel.add(chSneakCamo, gbc.eol());
+            parentPanel.add(new JLabel(), gbc.forLabel());
+            parentPanel.add(chSpaceSuit, gbc.oneColumn());
+            parentPanel.add(chSneakIR, gbc.eol());
+            parentPanel.add(new JLabel(), gbc.forLabel());
+            parentPanel.add(chDEST, gbc.oneColumn());
+            parentPanel.add(chSneakECM, gbc.eol());
         }
-        
+
         int year = entity.getGame().getOptions().intOption("year");
 
         // If the rules level isn't at least Advanced, these won't be displayed, but it will iterate them still to 
         // avoid potential issues.
         for (EquipmentType et : MiscType.allTypes()) {
-            if (et.hasFlag(MiscType.F_ARMOR_KIT) &&
+            if (et instanceof MiscType miscType && miscType.hasFlag(MiscType.F_ARMOR_KIT) &&
                   et.isLegal(year,
                         gameTechLevel,
                         entity.isClan(),
@@ -157,12 +139,20 @@ public class InfantryArmorPanel extends JPanel {
             armorStateChanged();
             updateArmorValues();
         });
-        add(Box.createVerticalStrut(10), GBC.eol());
-        add(labSpec, GBC.eol());
         chDEST.addItemListener(e -> armorStateChanged());
-        for (JCheckBox spec : chSpecs) {
-            add(spec, GBC.eol());
+
+        JComponent specTitle = new EquipChoicePanel.SectionTitleLabel(Messages.getString("CustomMekDialog.infSpecSection"));
+        parentPanel.add(specTitle, gbc.fullLine());
+
+        for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+            int spec = 1 << i;
+            JCheckBox newSpec = new JCheckBox(Infantry.getSpecializationName(spec));
+            newSpec.setToolTipText(Infantry.getSpecializationTooltip(spec));
+            chSpecs.add(newSpec);
+            parentPanel.add(new JLabel(), gbc.oneColumn());
+            parentPanel.add(newSpec, gbc.eol());
         }
+
         for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
             int spec = 1 << i;
             chSpecs.get(i).setSelected(infantry.hasSpecialization(spec));
@@ -216,7 +206,6 @@ public class InfantryArmorPanel extends JPanel {
         infantry.setSpecializations(spec);
     }
 
-    @Override
     public void setEnabled(boolean enabled) {
         cbArmorKit.setEnabled(enabled);
         if (enabled) {

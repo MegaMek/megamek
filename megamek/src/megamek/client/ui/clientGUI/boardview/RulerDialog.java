@@ -45,6 +45,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.WindowEvent;
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -57,10 +58,12 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
+import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityVisibilityUtils;
 import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
@@ -95,7 +98,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     private final JButton butFlip = new JButton();
     private final JTextField tf_start = new JTextField();
     private final JTextField tf_end = new JTextField();
-    private final JTextField tf_distance = new JTextField();
+    private final JLabel rangeLabel = new JLabel();
     private final JTextField tf_los1 = new JTextField();
     private final JTextField tf_los2 = new JTextField();
     private final JButton butClose = new JButton();
@@ -123,6 +126,14 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     private String entityName2 = "";
     private DiagramUnitType unitType1 = DiagramUnitType.OTHER;
     private DiagramUnitType unitType2 = DiagramUnitType.OTHER;
+    /** True if point 1 entity is actually at altitude (airborne aero with altitude > 0). */
+    private boolean atAltitude1 = false;
+    /** True if point 2 entity is actually at altitude (airborne aero with altitude > 0). */
+    private boolean atAltitude2 = false;
+    /** Expected TW height for the entity at point 1, or -1 if no entity. Used to detect spinner overrides. */
+    private int entityExpectedHeight1 = -1;
+    /** Expected TW height for the entity at point 2, or -1 if no entity. Used to detect spinner overrides. */
+    private int entityExpectedHeight2 = -1;
     /** Suppresses combo box listener events during programmatic updates. */
     private boolean updatingCombo = false;
 
@@ -211,16 +222,39 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         unitPanel2 = buildUnitPanel(heightLabel2, height2, effectiveHeight2,
               heightInfo2, cboEntity2, color2);
 
+        // Range display between unit panels: "Range" header + "<- NUMBER ->" value
+        rangeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        rangeLabel.setFont(rangeLabel.getFont().deriveFont(Font.BOLD, UIUtil.scaleForGUI(18.0f)));
+
+        JLabel rangeHeader = new JLabel(Messages.getString("Ruler.Distance"), SwingConstants.CENTER);
+        rangeHeader.setFont(rangeHeader.getFont().deriveFont(Font.PLAIN, UIUtil.scaleForGUI(10.0f)));
+
+        JPanel rangePanel = new JPanel(new GridBagLayout());
+        GridBagConstraints rc = new GridBagConstraints();
+        rc.gridx = 0;
+        rc.gridy = 0;
+        rc.anchor = GridBagConstraints.CENTER;
+        rangePanel.add(rangeHeader, rc);
+        rc.gridy = 1;
+        rangePanel.add(rangeLabel, rc);
+
         JPanel unitsRow = new JPanel(new GridBagLayout());
         GridBagConstraints uc = new GridBagConstraints();
         uc.gridx = 0;
         uc.gridy = 0;
         uc.weightx = 1.0;
         uc.fill = GridBagConstraints.BOTH;
-        uc.insets = new Insets(0, 0, 0, 2);
+        uc.insets = new Insets(0, 0, 0, 0);
         unitsRow.add(unitPanel1, uc);
         uc.gridx = 1;
-        uc.insets = new Insets(0, 2, 0, 0);
+        uc.weightx = 0;
+        uc.fill = GridBagConstraints.VERTICAL;
+        uc.insets = new Insets(0, UIUtil.scaleForGUI(4), 0, UIUtil.scaleForGUI(4));
+        unitsRow.add(rangePanel, uc);
+        uc.gridx = 2;
+        uc.weightx = 1.0;
+        uc.fill = GridBagConstraints.BOTH;
+        uc.insets = new Insets(0, 0, 0, 0);
         unitsRow.add(unitPanel2, uc);
 
         // --- Details panel (Start/End/Distance/LOS) ---
@@ -230,11 +264,10 @@ public class RulerDialog extends JDialog implements BoardViewListener {
 
         tf_start.setEditable(false);
         tf_end.setEditable(false);
-        tf_distance.setEditable(false);
         tf_los1.setEditable(false);
         tf_los2.setEditable(false);
 
-        // Start / End / Distance on one row
+        // Start / End on one row
         dc.gridy = detailRow;
         dc.anchor = GridBagConstraints.EAST;
         dc.fill = GridBagConstraints.NONE;
@@ -244,7 +277,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         dc.gridx = 1;
         dc.anchor = GridBagConstraints.WEST;
         dc.fill = GridBagConstraints.HORIZONTAL;
-        dc.weightx = 0.4;
+        dc.weightx = 0.5;
         detailsPanel.add(tf_start, dc);
         dc.gridx = 2;
         dc.anchor = GridBagConstraints.EAST;
@@ -254,16 +287,8 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         dc.gridx = 3;
         dc.anchor = GridBagConstraints.WEST;
         dc.fill = GridBagConstraints.HORIZONTAL;
-        dc.weightx = 0.4;
+        dc.weightx = 0.5;
         detailsPanel.add(tf_end, dc);
-        dc.gridx = 4;
-        dc.anchor = GridBagConstraints.EAST;
-        dc.fill = GridBagConstraints.NONE;
-        dc.weightx = 0;
-        detailsPanel.add(new JLabel(Messages.getString("Ruler.Distance"), SwingConstants.RIGHT), dc);
-        dc.gridx = 5;
-        dc.anchor = GridBagConstraints.WEST;
-        detailsPanel.add(tf_distance, dc);
         detailRow++;
 
         // Attacker POV
@@ -276,7 +301,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         dc.weightx = 0;
         detailsPanel.add(attackerPovLabel, dc);
         dc.gridx = 1;
-        dc.gridwidth = 5;
+        dc.gridwidth = 3;
         dc.anchor = GridBagConstraints.WEST;
         dc.fill = GridBagConstraints.HORIZONTAL;
         dc.weightx = 1.0;
@@ -294,7 +319,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         dc.fill = GridBagConstraints.NONE;
         detailsPanel.add(targetPovLabel, dc);
         dc.gridx = 1;
-        dc.gridwidth = 5;
+        dc.gridwidth = 3;
         dc.anchor = GridBagConstraints.WEST;
         dc.fill = GridBagConstraints.HORIZONTAL;
         dc.weightx = 1.0;
@@ -320,7 +345,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         buttonPanel.add(butClose);
         dc.gridy = detailRow;
         dc.gridx = 0;
-        dc.gridwidth = 6;
+        dc.gridwidth = 4;
         dc.anchor = GridBagConstraints.CENTER;
         dc.fill = GridBagConstraints.NONE;
         dc.insets = new Insets(4, 0, 0, 0);
@@ -467,6 +492,10 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         entityName2 = "";
         unitType1 = DiagramUnitType.OTHER;
         unitType2 = DiagramUnitType.OTHER;
+        atAltitude1 = false;
+        atAltitude2 = false;
+        entityExpectedHeight1 = -1;
+        entityExpectedHeight2 = -1;
         heightLabel1.setText(Messages.getString("Ruler.Height"));
         heightLabel2.setText(Messages.getString("Ruler.Height"));
         effectiveHeight1.setText("");
@@ -565,21 +594,55 @@ public class RulerDialog extends JDialog implements BoardViewListener {
      * @param isFirstPoint true for attacker (point 1), false for target (point 2)
      */
     private void applyEntitySelection(Entity entity, boolean isFirstPoint) {
-        int twHeight = LOSHeightCalculation.twHeightFromEntity(entity);
-        DiagramUnitType unitType = DiagramUnitType.fromEntity(entity);
-        String heightTerm = getHeightLabelSuffix(entity, unitType);
-        String label = entity.getShortName() + " " + heightTerm;
+        boolean sensorReturn = isSensorReturn(entity);
+        // For sensor returns: hide identity and use generic height/type so state isn't revealed.
+        // The player knows *something* is there and can still compute LOS/range using its position.
+        int twHeight = sensorReturn ? 1 : LOSHeightCalculation.twHeightFromEntity(entity);
+        DiagramUnitType unitType = sensorReturn ? DiagramUnitType.OTHER : DiagramUnitType.fromEntity(entity);
+        boolean isAtAltitude = !sensorReturn && (entity.getAltitude() > 0) && unitType.isAltitudeUnit();
+        String heightTerm = sensorReturn
+              ? Messages.getString("Ruler.Height")
+              : getHeightLabelSuffix(isAtAltitude, entity, unitType);
+        String label = sensorReturn
+              ? Messages.getString("BoardView1.sensorReturn") + " " + heightTerm
+              : entity.getShortName() + " " + heightTerm;
         JSpinner heightSpinner = isFirstPoint ? height1 : height2;
         heightSpinner.setValue(twHeight);
         if (isFirstPoint) {
-            entityName1 = entity.getDisplayName();
+            entityName1 = sensorReturn ? Messages.getString("BoardView1.sensorReturn") : entity.getDisplayName();
             unitType1 = unitType;
+            atAltitude1 = isAtAltitude;
+            entityExpectedHeight1 = twHeight;
             heightLabel1.setText(label);
         } else {
-            entityName2 = entity.getDisplayName();
+            entityName2 = sensorReturn ? Messages.getString("BoardView1.sensorReturn") : entity.getDisplayName();
             unitType2 = unitType;
+            atAltitude2 = isAtAltitude;
+            entityExpectedHeight2 = twHeight;
             heightLabel2.setText(label);
         }
+    }
+
+    /**
+     * Returns the currently selected entity for the given point, or null if "None" is selected.
+     */
+    private Entity getSelectedEntity(boolean isFirstPoint) {
+        JComboBox<EntityItem> combo = isFirstPoint ? cboEntity1 : cboEntity2;
+        EntityItem item = (EntityItem) combo.getSelectedItem();
+        return (item != null) ? item.entity() : null;
+    }
+
+    /**
+     * Returns true if the spinner value matches the entity's expected height, meaning the user hasn't manually
+     * overridden it and we can use the entity-based LOS path.
+     */
+    private boolean isSpinnerAtEntityHeight(boolean isFirstPoint) {
+        int expectedHeight = isFirstPoint ? entityExpectedHeight1 : entityExpectedHeight2;
+        if (expectedHeight < 0) {
+            return false;
+        }
+        int spinnerValue = (int) (isFirstPoint ? height1 : height2).getValue();
+        return spinnerValue == expectedHeight;
     }
 
     /**
@@ -590,8 +653,8 @@ public class RulerDialog extends JDialog implements BoardViewListener {
      *   <li>"Height:" for ground units (levels above hex terrain)</li>
      * </ul>
      */
-    private static String getHeightLabelSuffix(Entity entity, DiagramUnitType unitType) {
-        if (entity.isAirborne() && unitType.isAltitudeUnit()) {
+    private static String getHeightLabelSuffix(boolean isAtAltitude, Entity entity, DiagramUnitType unitType) {
+        if (isAtAltitude) {
             return Messages.getString("Ruler.Altitude");
         }
         if (unitType.isElevationUnit() && entity.getElevation() > 0) {
@@ -608,38 +671,58 @@ public class RulerDialog extends JDialog implements BoardViewListener {
             return;
         }
 
-        boolean isMek1 = unitType1.isMek();
-        boolean isMek2 = unitType2.isMek();
-        boolean isAlt1 = unitType1.isAltitudeUnit();
-        boolean isAlt2 = unitType2.isAltitudeUnit();
+        // Determine if we can use entity-based LOS (same as fire phase)
+        boolean attackerIsFirst = flip;
+        Entity attackerEntity = getSelectedEntity(attackerIsFirst);
+        Entity targetEntity = getSelectedEntity(!attackerIsFirst);
+        boolean spinnerMatch1 = isSpinnerAtEntityHeight(true);
+        boolean spinnerMatch2 = isSpinnerAtEntityHeight(false);
+        boolean useEntityPath = (attackerEntity != null) && (targetEntity != null)
+              && spinnerMatch1 && spinnerMatch2;
 
-        // Attacker POV: attacker shoots at target
-        Coords attackerPos = flip ? start : end;
-        Coords targetPos = flip ? end : start;
-        int attackerHeight = flip ? h1 : h2;
-        int targetHeight = flip ? h2 : h1;
-        boolean attackerIsMek = flip ? isMek1 : isMek2;
-        boolean targetIsMek = flip ? isMek2 : isMek1;
-        boolean attackerIsAlt = flip ? isAlt1 : isAlt2;
-        boolean targetIsAlt = flip ? isAlt2 : isAlt1;
+        String toHit1;
+        String toHit2;
+        if (useEntityPath) {
+            // Entity-based path: identical to fire phase LOS calculation
+            toHit1 = LOSModifierCalculator.computeEntityBasedModifiers(game, attackerEntity, targetEntity);
+            toHit2 = LOSModifierCalculator.computeEntityBasedModifiers(game, targetEntity, attackerEntity);
+        } else {
+            // Manual path: scenario testing with spinner overrides or no entities
+            boolean isMek1 = unitType1.isMek();
+            boolean isMek2 = unitType2.isMek();
+            Coords attackerPos = flip ? start : end;
+            Coords targetPos = flip ? end : start;
+            int attackerHeight = flip ? h1 : h2;
+            int targetHeight = flip ? h2 : h1;
+            boolean attackerIsMek = flip ? isMek1 : isMek2;
+            boolean targetIsMek = flip ? isMek2 : isMek1;
+            boolean attackerIsAlt = flip ? atAltitude1 : atAltitude2;
+            boolean targetIsAlt = flip ? atAltitude2 : atAltitude1;
 
-        String toHit1 = LOSModifierCalculator.computeFullModifiers(game, attackerPos, targetPos,
-              attackerHeight, targetHeight, attackerIsMek, targetIsMek,
-              attackerIsAlt, targetIsAlt);
-
-        // Target POV: target shoots back at attacker (swap roles)
-        String toHit2 = LOSModifierCalculator.computeFullModifiers(game, targetPos, attackerPos,
-              targetHeight, attackerHeight, targetIsMek, attackerIsMek,
-              targetIsAlt, attackerIsAlt);
+            Player localPlayer = bv.getLocalPlayer();
+            toHit1 = LOSModifierCalculator.computeFullModifiers(game, attackerPos, targetPos,
+                  attackerHeight, targetHeight, attackerIsMek, targetIsMek,
+                  attackerIsAlt, targetIsAlt, localPlayer);
+            toHit2 = LOSModifierCalculator.computeFullModifiers(game, targetPos, attackerPos,
+                  targetHeight, attackerHeight, targetIsMek, attackerIsMek,
+                  targetIsAlt, attackerIsAlt, localPlayer);
+        }
 
         tf_start.setText(start.toString());
         tf_end.setText(end.toString());
-        tf_distance.setText("" + distance);
+        rangeLabel.setText("<- " + distance + " ->");
         tf_los1.setText(toHit1);
         tf_los2.setText(toHit2);
 
+        // When using entity-based path, compute the authoritative LOS result for the diagram
+        Boolean entityLosBlocked = null;
+        if (useEntityPath) {
+            LosEffects entityLos = LosEffects.calculateLOS(game, attackerEntity, targetEntity);
+            entityLosBlocked = !entityLos.canSee();
+        }
+
         updateHeightInfo();
-        updateDiagram();
+        updateDiagram(entityLosBlocked);
         if (compareExpanded) {
             updateCompareTable();
         }
@@ -651,13 +734,13 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     private void updateHeightInfo() {
         if (start != null && game.getBoard().contains(start)) {
             int twHeight = (int) height1.getValue();
-            heightInfo1.setText(buildHeightInfoText(start, twHeight, unitType1));
-            effectiveHeight1.setText(buildEffectiveHeightText(start, twHeight, unitType1));
+            heightInfo1.setText(buildHeightInfoText(start, twHeight, unitType1, atAltitude1));
+            effectiveHeight1.setText(buildEffectiveHeightText(start, twHeight, atAltitude1));
         }
         if (end != null && game.getBoard().contains(end)) {
             int twHeight = (int) height2.getValue();
-            heightInfo2.setText(buildHeightInfoText(end, twHeight, unitType2));
-            effectiveHeight2.setText(buildEffectiveHeightText(end, twHeight, unitType2));
+            heightInfo2.setText(buildHeightInfoText(end, twHeight, unitType2, atAltitude2));
+            effectiveHeight2.setText(buildEffectiveHeightText(end, twHeight, atAltitude2));
         }
     }
 
@@ -665,30 +748,30 @@ public class RulerDialog extends JDialog implements BoardViewListener {
      * Builds the "(Effective Height: X)" text shown next to the spinner. This is the absolute LOS height that matters
      * for line-of-sight calculations.
      */
-    private String buildEffectiveHeightText(Coords coords, int twHeight, DiagramUnitType unitType) {
+    private String buildEffectiveHeightText(Coords coords, int twHeight, boolean isAtAltitude) {
         Hex hex = game.getBoard().getHex(coords);
         if (hex == null) {
             return "";
         }
-        if (unitType.isAltitudeUnit()) {
+        if (isAtAltitude) {
             return "(Eff. Alt. for LOS: " + twHeight + ")";
         }
         int effectiveHeight = hex.getLevel() + twHeight;
         return "(Eff. Height for LOS: " + effectiveHeight + ")";
     }
 
-    private String buildHeightInfoText(Coords coords, int twHeight, DiagramUnitType unitType) {
+    private String buildHeightInfoText(Coords coords, int twHeight, DiagramUnitType unitType,
+          boolean isAtAltitude) {
         Hex hex = game.getBoard().getHex(coords);
         if (hex == null) {
             return "";
         }
 
         int groundLevel = hex.getLevel();
-        boolean isAltitude = unitType.isAltitudeUnit();
-        boolean isElevation = unitType.isElevationUnit() && twHeight > 1;
+        boolean isElevation = !isAtAltitude && unitType.isElevationUnit() && twHeight > 1;
 
         StringBuilder info = new StringBuilder();
-        if (isAltitude) {
+        if (isAtAltitude) {
             // Altitude: fixed value independent of hex level (TW p.43)
             info.append("Effective Altitude for LOS: ").append(twHeight);
         } else if (isElevation) {
@@ -705,12 +788,12 @@ public class RulerDialog extends JDialog implements BoardViewListener {
             info.append(" = Effective Height for LOS: ").append(effectiveHeight);
         }
 
-        // Status flags
-        if (unitType.isMek() && LOSModifierCalculator.isMekHullDownAt(game, coords)) {
+        // Status flags (respect double-blind visibility - don't reveal hidden enemy Mek hull-down state)
+        if (unitType.isMek() && LOSModifierCalculator.isMekHullDownAt(game, coords, bv.getLocalPlayer())) {
             info.append(" | Hull Down");
         }
 
-        int absTop = LOSHeightCalculation.toAbsoluteHeight(twHeight, groundLevel, isAltitude);
+        int absTop = LOSHeightCalculation.toAbsoluteHeight(twHeight, groundLevel, isAtAltitude);
         if (hex.containsTerrain(Terrains.WATER) && hex.depth() > 0) {
             if (absTop < groundLevel) {
                 info.append(" | Underwater");
@@ -724,8 +807,12 @@ public class RulerDialog extends JDialog implements BoardViewListener {
 
     /**
      * Updates the elevation diagram panel with current LOS data.
+     *
+     * @param entityLosBlocked if non-null, overrides the diagram's own LOS calculation with the entity-based result
+     *                         (from the fire phase code path). Null means use the diagram's manual AttackInfo-based
+     *                         calculation.
      */
-    private void updateDiagram() {
+    private void updateDiagram(Boolean entityLosBlocked) {
         if (!diagramExpanded || start == null || end == null) {
             return;
         }
@@ -741,25 +828,39 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         if (flip) {
             attackInfo = LOSModifierCalculator.buildAttackInfo(game, start, end, h1, h2,
                   unitType1.isMek(), unitType2.isMek(),
-                  unitType1.isAltitudeUnit(), unitType2.isAltitudeUnit());
+                  atAltitude1, atAltitude2);
         } else {
             attackInfo = LOSModifierCalculator.buildAttackInfo(game, end, start, h2, h1,
                   unitType2.isMek(), unitType1.isMek(),
-                  unitType2.isAltitudeUnit(), unitType1.isAltitudeUnit());
+                  atAltitude2, atAltitude1);
         }
 
         Coords attackerPos = flip ? start : end;
         Coords targetPos = flip ? end : start;
-        boolean attackerHullDown = LOSModifierCalculator.isMekHullDownAt(game, attackerPos);
-        boolean targetHullDown = LOSModifierCalculator.isMekHullDownAt(game, targetPos);
+        boolean attackerHullDown = LOSModifierCalculator.isMekHullDownAt(game, attackerPos, bv.getLocalPlayer());
+        boolean targetHullDown = LOSModifierCalculator.isMekHullDownAt(game, targetPos, bv.getLocalPlayer());
 
         String attackerName = flip ? entityName1 : entityName2;
         String targetName = flip ? entityName2 : entityName1;
         DiagramUnitType attackerType = flip ? unitType1 : unitType2;
         DiagramUnitType targetType = flip ? unitType2 : unitType1;
-        LOSDiagramData diagramData = LOSDiagramDataBuilder.build(game, attackInfo,
-              attackerHullDown, targetHullDown, attackerType, targetType,
-              attackerName, targetName);
+        boolean attackerIsAlt = flip ? atAltitude1 : atAltitude2;
+        boolean targetIsAlt = flip ? atAltitude2 : atAltitude1;
+
+        LOSDiagramData diagramData;
+        if (entityLosBlocked != null) {
+            // Use pre-computed entity-based LOS result (matches fire phase)
+            diagramData = LOSDiagramDataBuilder.buildWithLosResult(game, attackInfo,
+                  entityLosBlocked, attackerHullDown, targetHullDown,
+                  attackerType, targetType, attackerIsAlt, targetIsAlt,
+                  attackerName, targetName);
+        } else {
+            // Use manual AttackInfo-based LOS (scenario testing)
+            diagramData = LOSDiagramDataBuilder.build(game, attackInfo,
+                  attackerHullDown, targetHullDown, attackerType, targetType,
+                  attackerIsAlt, targetIsAlt,
+                  attackerName, targetName);
+        }
 
         diagramPanel.setData(diagramData);
     }
@@ -770,8 +871,8 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         diagramScrollPane.setVisible(diagramExpanded);
         GUIPreferences.getInstance().setRulerDiagramVisible(diagramExpanded);
 
-        if (diagramExpanded) {
-            updateDiagram();
+        if (diagramExpanded && start != null && end != null) {
+            setText();
         }
 
         revalidate();
@@ -820,22 +921,19 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         int h2 = (int) height2.getValue();
         boolean isMek1 = unitType1.isMek();
         boolean isMek2 = unitType2.isMek();
-        boolean isAlt1 = unitType1.isAltitudeUnit();
-        boolean isAlt2 = unitType2.isAltitudeUnit();
-
         Coords attackerPos = flip ? start : end;
         Coords targetPos = flip ? end : start;
         int attackerHeight = flip ? h1 : h2;
         int targetHeight = flip ? h2 : h1;
         boolean attackerIsMek = flip ? isMek1 : isMek2;
         boolean targetIsMek = flip ? isMek2 : isMek1;
-        boolean attackerIsAlt = flip ? isAlt1 : isAlt2;
-        boolean targetIsAlt = flip ? isAlt2 : isAlt1;
+        boolean attackerIsAlt = flip ? atAltitude1 : atAltitude2;
+        boolean targetIsAlt = flip ? atAltitude2 : atAltitude1;
 
         LOSModifierCalculator.LOSComparison comparison = LOSModifierCalculator.computeAllModes(
               game, attackerPos, targetPos,
               attackerHeight, targetHeight, attackerIsMek, targetIsMek,
-              attackerIsAlt, targetIsAlt);
+              attackerIsAlt, targetIsAlt, bv.getLocalPlayer());
 
         compareTableModel.setRowCount(0);
         compareTableModel.addRow(new Object[] {
@@ -1053,10 +1151,14 @@ public class RulerDialog extends JDialog implements BoardViewListener {
             if (isFirstPoint) {
                 entityName1 = "";
                 unitType1 = DiagramUnitType.OTHER;
+                atAltitude1 = false;
+                entityExpectedHeight1 = -1;
                 heightLabel1.setText(Messages.getString("Ruler.Height"));
             } else {
                 entityName2 = "";
                 unitType2 = DiagramUnitType.OTHER;
+                atAltitude2 = false;
+                entityExpectedHeight2 = -1;
                 heightLabel2.setText(Messages.getString("Ruler.Height"));
             }
         }
@@ -1081,14 +1183,16 @@ public class RulerDialog extends JDialog implements BoardViewListener {
             DefaultComboBoxModel<EntityItem> model = new DefaultComboBoxModel<>();
             model.addElement(new EntityItem(null));
 
-            List<Entity> entities = game.getEntitiesVector(coords);
+            List<Entity> entities = getVisibleEntitiesAt(coords);
             Entity tallestEntity = null;
             int tallestHeight = Integer.MIN_VALUE;
             int tallestIndex = 0;
 
             for (Entity entity : entities) {
-                model.addElement(new EntityItem(entity));
-                int twHeight = LOSHeightCalculation.twHeightFromEntity(entity);
+                boolean sensorReturn = isSensorReturn(entity);
+                model.addElement(new EntityItem(entity, sensorReturn));
+                // For sensor returns, don't use real height for tallest comparison - we don't know it
+                int twHeight = sensorReturn ? 1 : LOSHeightCalculation.twHeightFromEntity(entity);
                 if (twHeight > tallestHeight) {
                     tallestHeight = twHeight;
                     tallestEntity = entity;
@@ -1107,6 +1211,36 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         }
     }
 
+    /**
+     * Returns the entities at the given hex that are visible OR detected by the local player. Excludes enemy units the
+     * player has neither seen nor detected. Sensor-return-only entities ARE included so the player can check LOS/range
+     * to them, but their identity and state should be hidden in the UI (see {@link #isSensorReturn(Entity)}).
+     */
+    private List<Entity> getVisibleEntitiesAt(Coords coords) {
+        List<Entity> all = game.getEntitiesVector(coords);
+        if (bv.getLocalPlayer() == null) {
+            return all;
+        }
+        List<Entity> visible = new ArrayList<>();
+        for (Entity entity : all) {
+            if (!EntityVisibilityUtils.detectedOrHasVisual(bv.getLocalPlayer(), game, entity)) {
+                // Player can't see or detect this entity at all
+                continue;
+            }
+            visible.add(entity);
+        }
+        return visible;
+    }
+
+    /**
+     * Returns true if the given entity is a sensor return only (detected but not visually identified). Sensor returns
+     * should display with a generic "Sensor Return" label and have their state hidden.
+     */
+    private boolean isSensorReturn(Entity entity) {
+        return (bv.getLocalPlayer() != null)
+              && EntityVisibilityUtils.onlyDetectedBySensors(bv.getLocalPlayer(), entity);
+    }
+
     @Override
     public void finishedMovingUnits(BoardViewEvent b) {
         // ignored
@@ -1117,11 +1251,22 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         // ignored
     }
 
-    record EntityItem(Entity entity) {
+    /**
+     * Combo box entry for an entity at a hex. When {@code sensorReturn} is true, the display hides
+     * the entity's identity and state to avoid leaking double-blind information.
+     */
+    record EntityItem(Entity entity, boolean sensorReturn) {
+        EntityItem(Entity entity) {
+            this(entity, false);
+        }
+
         @Override
         public String toString() {
             if (entity == null) {
                 return Messages.getString("Ruler.noEntity");
+            }
+            if (sensorReturn) {
+                return Messages.getString("BoardView1.sensorReturn");
             }
             int elevation = entity.getElevation();
             int effectiveElevation = entity.relHeight() + 1;

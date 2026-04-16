@@ -218,7 +218,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
         }
-        boolean canProcessDangle = (entity.isClimbing() || entity.isDangling()) && hasDownStep;
+        // Server-side validation: dangle/drop only valid when TacOps Climbing is enabled.
+        // The entity's climbing/dangling state is server-controlled, so this also implicitly
+        // validates that the prior dangle initiation was approved.
+        boolean tacOpsClimbingEnabled = getGame().getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
+        boolean canProcessDangle = tacOpsClimbingEnabled
+              && (entity.isClimbing() || entity.isDangling()) && hasDownStep;
         logger.info("[DANGLE-TRACE] processMovement check: canProcessDangle={}, isEdgeDangle={}, " +
                     "hasDownStep={}, isClimbing={}, isDangling={}, elevation={}, climbMode={}, stepCount={}",
               canProcessDangle, isEdgeDangle, hasDownStep, entity.isClimbing(), entity.isDangling(),
@@ -272,7 +278,21 @@ class MovePathHandler extends AbstractTWRuleHandler {
             boolean isDrop = (downStepCount >= 2);
 
             if (isDrop) {
-                // DROP from climbing/dangling position: 4 MP, leaping PSRs
+                // DROP from climbing/dangling position: 4 MP required, leaping PSRs (TO:AR p.20).
+                // Reject if the unit lacks the MP to drop — prevents a malformed client path
+                // from triggering a free drop.
+                int availableMP = entity.getWalkMP();
+                if (availableMP < ClimbingHelper.DROP_MP_COST) {
+                    logger.warn("[DANGLE-TRACE] Server rejecting DROP: entity={} has {} walk MP, "
+                                + "needs {} for drop. Treating as cling.",
+                          entity.getDisplayName(), availableMP, ClimbingHelper.DROP_MP_COST);
+                    entity.setDone(true);
+                    entity.moved = EntityMovementType.MOVE_NONE;
+                    entity.mpUsed = 0;
+                    entity.delta_distance = 0;
+                    gameManager.entityUpdate(entity.getId());
+                    return;
+                }
                 // From dangling: reduce modifiers by 2 (TO:AR p.20)
                 // From climbing (not dangling): standard leaping modifiers
                 int dropDistance = entity.getElevation();

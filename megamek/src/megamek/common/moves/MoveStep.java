@@ -2137,13 +2137,15 @@ public class MoveStep implements Serializable {
                 return;
             }
 
-            // Climbing uses walking movement only (TO:AR p.20)
-            // Multi-turn climbs are allowed - the server will handle partial execution
+            // Climbing uses walking movement only (TO:AR p.20).
+            // Multi-turn climbs are allowed - the server handles partial execution.
+            // Force MOVE_WALK and skip the run/sprint cascade (climbing's mpUsed can
+            // exceed walkMP for multi-turn climbs), but let the legality checks below
+            // (isMovementPossible, prev-step-illegal, etc.) still run.
             if (isClimbing) {
                 movementType = EntityMovementType.MOVE_WALK;
-                LOGGER.info("[CLIMB-TRACE] compileIllegal: isClimbing=true, set MOVE_WALK, mpUsed={}, stepType={}", getMpUsed(), stepType);
-                // Skip all remaining movement type checks - climbing overrides everything
-                return;
+                LOGGER.info("[CLIMB-TRACE] compileIllegal: isClimbing=true, set MOVE_WALK, mpUsed={}, stepType={}",
+                      getMpUsed(), stepType);
             } else if (getMpUsed() <= tmpWalkMP) {
                 // VTOL includes powered flight infantry whose getMovementMode() returns VTOL
                 boolean isVTOLMovement = (getEntity().getMovementMode() == EntityMovementMode.VTOL ||

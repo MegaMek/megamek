@@ -46,10 +46,12 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.common.net.upnp.UPnP;
 
 /**
  * A JPanel that holds the networking information about the network information of the current session.
@@ -65,13 +67,15 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
     private JLabel localIP = new JLabel(Messages.getString("NetworkInformation.blankIP"));
     private final JLabel lblRemoteIP = new JLabel(Messages.getString("NetworkInformation.remoteIP"));
     private JLabel remoteIP = new JLabel(Messages.getString("NetworkInformation.blankIP"));
-    ;
     private final JLabel lblConnectedIP = new JLabel(Messages.getString("NetworkInformation.connectedIP"));
     private JLabel connectedIP = new JLabel(Messages.getString("NetworkInformation.blankIP"));
-    ;
+    private JLabel lblUPnP = new JLabel(Messages.getString("NetworkInformation.upnp"));
     private final JButton butShowLocalIPs = new JButton(" " + Messages.getString("NetworkInformation.buttonShowIPs"));
     private final JButton butShowRemoteIPs = new JButton(" " + Messages.getString("NetworkInformation.buttonShowIPs"));
     private final JButton butShowHostIPs = new JButton(" " + Messages.getString("NetworkInformation.buttonShowIPs"));
+    private final JButton butEnableUPnP = new JButton(" " + Messages.getString("NetworkInformation.butEnableUpnp") +
+          " ");
+
     private final JLabel lblBlank = new JLabel("");
     private ClientGUI clientGui;
 
@@ -118,6 +122,34 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
                 connectedIP.setVisible(true);
             }
         }
+        if (e.getSource() == butEnableUPnP) {
+            if (clientGui != null) {
+                // Enable UPnP if it is not set, disable if it is
+                if (!clientGui.getClient().getGame().getUPnP()) {
+                    boolean successful = UPnP.openPortTCP(clientGui.getClient().getPort());
+                    if (successful) {
+                        JOptionPane.showMessageDialog(this,
+                              Messages.getString("NetworkInformation.upnpSuccess") + " " + clientGui.getClient()
+                                    .getPort());
+                        clientGui.getClient().getGame().setUPnP(true);
+                    } else {
+                        JOptionPane.showMessageDialog(this, Messages.getString("NetworkInformation.upnpFailure"));
+                    }
+                } else {
+                    boolean successful = UPnP.closePortTCP(clientGui.getClient().getPort());
+                    if (successful) {
+                        JOptionPane.showMessageDialog(this,
+                              Messages.getString("NetworkInformation.upnpDisableSuccess") + " " + clientGui.getClient()
+                                    .getPort());
+                        clientGui.getClient().getGame().setUPnP(true);
+                    } else {
+                        JOptionPane.showMessageDialog(this, Messages.getString("NetworkInformation"
+                              + ".upnpDisableFailure"));
+                    }
+                }
+                refresh();
+            }
+        }
     }
 
     @Override
@@ -153,10 +185,18 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
         row3.add(Box.createHorizontalGlue());
         row3.add(butShowHostIPs);
 
+        JPanel row4 = new JPanel();
+        row4.setLayout(new BoxLayout(row4, BoxLayout.X_AXIS));
+        row4.add(lblUPnP);
+        row4.add(Box.createHorizontalGlue());
+        row4.add(butEnableUPnP);
+
         mainPanel.add(row1);
         mainPanel.add(row2);
         mainPanel.add(row3);
+        mainPanel.add(row4);
 
+        butEnableUPnP.addActionListener(this);
         butShowLocalIPs.addActionListener(this);
         butShowHostIPs.addActionListener(this);
         butShowRemoteIPs.addActionListener(this);
@@ -169,6 +209,18 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
         remoteIP.setText(" " + getIPaddress(false));
         if (clientGui != null) {
             connectedIP.setText(" " + clientGui.getClient().getHost());
+            butEnableUPnP.setEnabled(true);
+        } else {
+            butEnableUPnP.setEnabled(false);
+        }
+        if (clientGui != null) {
+            if (clientGui.getClient().getGame().getUPnP()) {
+                lblUPnP.setText(Messages.getString("NetworkInformation.upnp") + " enabled");
+            } else {
+                lblUPnP.setText(Messages.getString("NetworkInformation.upnp") + " not configured");
+            }
+        } else {
+            lblUPnP.setText(Messages.getString("NetworkInformation.upnp") + " Must be set in game");
         }
     }
 

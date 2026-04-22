@@ -3449,8 +3449,25 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     // a shortcut function for determining whether vectored movement is
     // applicable
     public boolean useVectorMove() {
+        // Legacy single-board semantics: true when the StratOps advanced-movement option is on AND the
+        // default (main) board is a space map. In a multi-board game the main board is typically ground;
+        // callers with an entity in scope should prefer {@link #useVectorMove(Entity)} so the check is
+        // performed against the unit's actual board.
         return getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_ADVANCED_MOVEMENT)
               && getBoard().isSpace();
+    }
+
+    /**
+     * Multi-board aware variant of {@link #useVectorMove()}. Returns true when the StratOps advanced-movement
+     * option is on and the given entity currently sits on a space map, regardless of what the default board
+     * type is.
+     */
+    public boolean useVectorMove(Entity entity) {
+        if (!getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_ADVANCED_MOVEMENT)) {
+            return false;
+        }
+        Board entityBoard = (entity != null) ? getBoard(entity) : getBoard();
+        return entityBoard != null && entityBoard.isSpace();
     }
 
     /**

@@ -503,7 +503,6 @@ public class OptionsConstants {
     public static final String ADVANCED_AERO_RULES_ADVANCED_MOVEMENT = "advanced_movement";
     public static final String ADVANCED_AERO_RULES_HEAT_BY_BAY = "heat_by_bay";
     public static final String ADVANCED_AERO_RULES_ATMOSPHERIC_CONTROL = "atmospheric_control";
-    public static final String ADVANCED_AERO_RULES_NEWTONIAN_MOVEMENT = "newtonian_aerospace";
     public static final String ADVANCED_AERO_RULES_REENTRY_DAMAGE = "atmospheric_reentry_damage";
     public static final String ADVANCED_AERO_RULES_STRATOPS_AMMO_EXPLOSIONS = "ammo_explosions";
     public static final String ADVANCED_AERO_RULES_STRATOPS_AA_FIRE = "stratops_aa_fire";

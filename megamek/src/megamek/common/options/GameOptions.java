@@ -281,6 +281,8 @@ public class GameOptions extends BasicGameOptions {
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_ADVANCED_MOVEMENT, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_ATMOSPHERIC_CONTROL, false);
+        addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_NEWTONIAN_MOVEMENT, false);
+        addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_REENTRY_DAMAGE, true);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_AMMO_EXPLOSIONS, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_AAA_LASER, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE, false);

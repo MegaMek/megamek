@@ -57,6 +57,7 @@ import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
+import megamek.common.board.BoardType;
 import megamek.common.board.Coords;
 import megamek.common.comparators.WeaponComparatorBV;
 import megamek.common.compute.Compute;
@@ -2424,7 +2425,47 @@ public class TWGameManager extends AbstractGameManager {
                   game.getPlanetaryConditions().getWeather(),
                   game.getPlanetaryConditions().getWind());
         }
+        newBoard.setBoardId(0);
         game.setBoard(newBoard);
+
+        if (mapSettings.isMultiBoard()) {
+            applyMultiBoardLayers(newBoard, mapSettings.getAdditionalBoards());
+        }
+    }
+
+    /**
+     * Builds the aerospace board stack above the primary ground board. Each layer is assigned a fresh board id
+     * (starting from 1), linked to the layer directly below it via {@link Board#setEnclosingBoard(int)} and
+     * {@link Board#setEmbeddedBoard(int, Coords)}, and registered on the {@link Game} so cross-board helpers
+     * can find it. Invalid embed coords are silently clamped to the layer's dimensions.
+     *
+     * @param primary The already-built primary board (board id 0, bottom of the stack).
+     * @param layers  The ordered stack above the primary, bottom-up.
+     */
+    private void applyMultiBoardLayers(Board primary, List<MapSettings.BoardLayer> layers) {
+        Board below = primary;
+        int nextBoardId = 1;
+        for (MapSettings.BoardLayer layer : layers) {
+            MapSettings layerSettings = layer.getSettings();
+            if (layerSettings == null) {
+                continue;
+            }
+            Board layerBoard = BoardUtilities.generateRandom(layerSettings);
+            BoardType boardType = (layer.getBoardType() != null) ? layer.getBoardType() : BoardType.SKY;
+            layerBoard.setBoardType(boardType);
+            layerBoard.setBoardId(nextBoardId);
+
+            int embedX = Math.max(0, Math.min(layer.getEmbedX(), layerBoard.getWidth() - 1));
+            int embedY = Math.max(0, Math.min(layer.getEmbedY(), layerBoard.getHeight() - 1));
+            Coords embed = new Coords(embedX, embedY);
+
+            below.setEnclosingBoard(nextBoardId);
+            layerBoard.setEmbeddedBoard(below.getBoardId(), embed);
+
+            game.setBoard(nextBoardId, layerBoard);
+            below = layerBoard;
+            nextBoardId++;
+        }
     }
 
     /**

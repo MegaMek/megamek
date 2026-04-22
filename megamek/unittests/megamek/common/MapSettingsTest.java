@@ -34,6 +34,8 @@
 package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -44,8 +46,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
+import megamek.common.board.BoardType;
 import megamek.common.loaders.MapSettings;
+import megamek.common.loaders.MapSettings.BoardLayer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -158,5 +163,47 @@ class MapSettingsTest {
         assertEquals(5, testMe.getMountainHeightMin());
         assertEquals(8, testMe.getMountainHeightMax());
         assertEquals(0, testMe.getMountainStyle());
+    }
+
+    @Test
+    void defaultMapSettingsIsNotMultiBoard() {
+        MapSettings ms = MapSettings.getInstance();
+        assertFalse(ms.isMultiBoard());
+        assertTrue(ms.getAdditionalBoards().isEmpty());
+    }
+
+    @Test
+    void multiBoardStackSurvivesCopy() {
+        MapSettings original = MapSettings.getInstance();
+        MapSettings skySettings = MapSettings.getInstance();
+        skySettings.setBoardSize(60, 60);
+        MapSettings nearSpaceSettings = MapSettings.getInstance();
+        nearSpaceSettings.setBoardSize(60, 60);
+
+        original.setAdditionalBoards(List.of(
+              new BoardLayer(BoardType.SKY_WITH_TERRAIN, skySettings, 30, 30),
+              new BoardLayer(BoardType.NEAR_SPACE, nearSpaceSettings, 30, 30)));
+
+        MapSettings copy = MapSettings.getInstance(original);
+
+        assertTrue(copy.isMultiBoard());
+        assertEquals(2, copy.getAdditionalBoards().size());
+
+        BoardLayer skyCopy = copy.getAdditionalBoards().get(0);
+        assertEquals(BoardType.SKY_WITH_TERRAIN, skyCopy.getBoardType());
+        assertEquals(30, skyCopy.getEmbedX());
+        assertEquals(30, skyCopy.getEmbedY());
+        assertEquals(60, skyCopy.getSettings().getBoardWidth());
+        // Deep copy: mutating the copy must not touch the original.
+        assertNotSame(original.getAdditionalBoards().get(0).getSettings(), skyCopy.getSettings());
+    }
+
+    @Test
+    void embedCoordClampAllowsOutOfBoundsInput() {
+        // BoardLayer itself does not enforce bounds; that is the server's responsibility.
+        // This test pins the contract: out-of-bounds values round-trip unchanged through the layer.
+        BoardLayer layer = new BoardLayer(BoardType.FAR_SPACE, MapSettings.getInstance(), 999, 999);
+        assertEquals(999, layer.getEmbedX());
+        assertEquals(999, layer.getEmbedY());
     }
 }

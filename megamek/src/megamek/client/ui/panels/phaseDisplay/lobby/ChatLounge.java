@@ -113,6 +113,7 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.RulerDialog;
 import megamek.client.ui.clientGUI.boardview.toolTip.TWBoardViewTooltip;
 import megamek.client.ui.dialogs.InformDialog;
+import megamek.client.ui.dialogs.MultiBoardSetupDialog;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.dialogs.abstractDialogs.AutoResolveChanceDialog;
 import megamek.client.ui.dialogs.abstractDialogs.AutoResolveProgressDialog;
@@ -288,6 +289,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     private final JButton butConditions = new JButton(Messages.getString("ChatLounge.butConditions"));
     private final JButton butRandomMap = new JButton(Messages.getString("BoardSelectionDialog.GeneratedMapSettings"));
+    private final JButton butMultiBoard = new JButton(Messages.getString("ChatLounge.butMultiBoard"));
     ArrayList<MapPreviewButton> mapButtons = new ArrayList<>(20);
     MapSettings mapSettings;
     private JPanel panGroundMap;
@@ -438,6 +440,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butNames.addActionListener(lobbyListener);
         butOptions.addActionListener(lobbyListener);
         butRandomMap.addActionListener(lobbyListener);
+        butMultiBoard.addActionListener(lobbyListener);
         butRemoveBot.addActionListener(lobbyListener);
         butSaveList.addActionListener(lobbyListener);
         butPrintList.addActionListener(lobbyListener);
@@ -814,6 +817,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         panSettings.setAlignmentX(Component.CENTER_ALIGNMENT);
         panSettings.add(butConditions);
         panSettings.add(butRandomMap);
+        panSettings.add(butMultiBoard);
 
         FixedYPanel panTopRows = new FixedYPanel();
         panTopRows.setLayout(new BoxLayout(panTopRows, BoxLayout.PAGE_AXIS));
@@ -2010,6 +2014,13 @@ public class ChatLounge extends AbstractPhaseDisplay
                 mapSettings.setMedium(MapSettings.MEDIUM_ATMOSPHERE);
                 refreshMapUI();
                 clientgui.getClient().sendMapSettings(mapSettings);
+
+            } else if (ev.getSource() == butMultiBoard) {
+                MultiBoardSetupDialog dialog = new MultiBoardSetupDialog(clientgui.getFrame(), mapSettings);
+                dialog.setVisible(true);
+                if (dialog.isAccepted()) {
+                    clientgui.getClient().sendMapSettings(mapSettings);
+                }
 
             } else if ((ev.getSource() == butAddX) || (ev.getSource() == butMapGrowW)) {
                 int newMapWidth = mapSettings.getMapWidth() + 1;

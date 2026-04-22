@@ -35,7 +35,9 @@
 package megamek.common.loaders;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.Serial;
 import java.io.Serializable;
@@ -52,10 +54,12 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
 import megamek.common.Configuration;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
+import megamek.common.board.BoardType;
 import megamek.common.compute.Compute;
 import megamek.common.util.BuildingTemplate;
 import megamek.logging.MMLogger;
@@ -103,6 +107,14 @@ public class MapSettings implements Serializable {
     private ArrayList<String> boardsSelected = new ArrayList<>();
     private ArrayList<String> boardsAvailable = new ArrayList<>();
     private ArrayList<BuildingTemplate> boardBuildings = new ArrayList<>();
+
+    /**
+     * Layers above the primary (this) board in a multi-board Total Warfare stack. Empty for legacy single-board
+     * games. The primary board is the bottom of the stack; layer i is strictly above layer i-1 (or above the primary
+     * if i == 0) and contains an embedded hex that points down to the layer below.
+     */
+    @XmlTransient
+    private ArrayList<BoardLayer> additionalBoards = new ArrayList<>();
 
     /*
      * Parameters for the Map Generator Parameters refer to a default map siz 16
@@ -588,6 +600,15 @@ public class MapSettings implements Serializable {
         cityDensity = other.getCityDensity();
         boardBuildings = other.getBoardBuildings();
         townSize = other.getTownSize();
+
+        // Deep-copy multi-board layers so the clone is independent.
+        additionalBoards = new ArrayList<>();
+        for (BoardLayer layer : other.getAdditionalBoards()) {
+            MapSettings layerSettings = (layer.getSettings() == null)
+                  ? null
+                  : MapSettings.getInstance(layer.getSettings());
+            additionalBoards.add(new BoardLayer(layer.getBoardType(), layerSettings, layer.getEmbedX(), layer.getEmbedY()));
+        }
     }
 
     public int getBoardWidth() {
@@ -1919,6 +1940,116 @@ public class MapSettings implements Serializable {
             marshaller.marshal(element, os);
         } catch (Exception ex) {
             LOGGER.error("Failed to write map settings xml", ex);
+        }
+    }
+
+    /**
+     * @return The additional board layers stacked above the primary board (index 0 is just above the primary).
+     *       The returned list is the live backing list; modify through {@link #setAdditionalBoards} or the layer
+     *       mutators on each {@link BoardLayer}.
+     */
+    public List<BoardLayer> getAdditionalBoards() {
+        if (additionalBoards == null) {
+            additionalBoards = new ArrayList<>();
+        }
+        return additionalBoards;
+    }
+
+    public void setAdditionalBoards(List<BoardLayer> layers) {
+        additionalBoards = (layers == null) ? new ArrayList<>() : new ArrayList<>(layers);
+    }
+
+    public boolean isMultiBoard() {
+        return additionalBoards != null && !additionalBoards.isEmpty();
+    }
+
+    /**
+     * Deserialization hook that fills in fields added after the original class was written. Old instances
+     * serialized before the multi-board feature existed deserialize with {@code additionalBoards == null},
+     * which would NPE first use; we normalise to an empty list.
+     */
+    @Serial
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (additionalBoards == null) {
+            additionalBoards = new ArrayList<>();
+        }
+    }
+
+    /**
+     * Describes one board layer sitting above the primary {@link MapSettings} in a Total Warfare stack.
+     * Each layer carries its own generator settings and an embed coordinate — the hex on this layer where the
+     * layer immediately below it sits. The topmost layer has {@code embedX == -1 && embedY == -1}; it does not
+     * embed into anything else.
+     */
+    public static class BoardLayer implements Serializable {
+
+        @Serial
+        private static final long serialVersionUID = 1L;
+
+        private BoardType boardType;
+        private MapSettings settings;
+        private int embedX;
+        private int embedY;
+
+        /** Required by Serializable. */
+        public BoardLayer() {
+            this(BoardType.GROUND, MapSettings.getInstance(), -1, -1);
+        }
+
+        public BoardLayer(BoardType boardType, MapSettings settings, int embedX, int embedY) {
+            this.boardType = boardType;
+            this.settings = settings;
+            this.embedX = embedX;
+            this.embedY = embedY;
+        }
+
+        public BoardType getBoardType() {
+            return boardType;
+        }
+
+        public void setBoardType(BoardType boardType) {
+            this.boardType = boardType;
+        }
+
+        public MapSettings getSettings() {
+            return settings;
+        }
+
+        public void setSettings(MapSettings settings) {
+            this.settings = settings;
+        }
+
+        public int getEmbedX() {
+            return embedX;
+        }
+
+        public int getEmbedY() {
+            return embedY;
+        }
+
+        public void setEmbed(int x, int y) {
+            embedX = x;
+            embedY = y;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof BoardLayer other)) {
+                return false;
+            }
+            return embedX == other.embedX
+                  && embedY == other.embedY
+                  && boardType == other.boardType
+                  && java.util.Objects.equals(settings, other.settings);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(boardType, settings, embedX, embedY);
         }
     }
 }

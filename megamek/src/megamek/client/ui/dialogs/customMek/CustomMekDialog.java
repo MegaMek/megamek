@@ -339,7 +339,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     private void setOptions() {
-        Entity entity = entities.get(0);
+        Entity entity = entities.getFirst();
         IOption option;
         for (final DialogOptionComponentYPanel newVar : optionComps) {
             option = newVar.getOption();
@@ -384,15 +384,17 @@ public class CustomMekDialog extends AbstractButtonDialog
             }
 
             // Hide EI Implant group when neural interface rules are Off
-            if (group.getKey().equalsIgnoreCase(PilotOptions.EI_ADVANTAGES) &&
-                  OptionsConstants.NEURAL_INTERFACE_MODE_OFF.equals(
-                        gameOptions().stringOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE))) {
-                continue;
+            if (group.getKey().equalsIgnoreCase(PilotOptions.EI_ADVANTAGES)) {
+                IOption aniOption = gameOptions().getOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE);
+                String aniMode = (aniOption == null) ? OptionsConstants.NEURAL_INTERFACE_MODE_OFF : aniOption.stringValue();
+                if (OptionsConstants.NEURAL_INTERFACE_MODE_OFF.equals(aniMode)) {
+                    continue;
+                }
             }
 
             addGroup(group, gridBagLayout, c);
 
-            Entity entity = entities.get(0);
+            Entity entity = entities.getFirst();
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
@@ -436,7 +438,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     private void setPartReps() {
-        Entity entity = entities.get(0);
+        Entity entity = entities.getFirst();
         IOption option;
         for (final DialogOptionComponentYPanel newVar : partRepsComps) {
             option = newVar.getOption();
@@ -453,7 +455,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     public void refreshPartReps() {
-        Entity entity = entities.get(0);
+        Entity entity = entities.getFirst();
         panPartReps.removeAll();
         partRepsComps = new ArrayList<>();
         for (Enumeration<IOptionGroup> i = partReps.getGroups(); i.hasMoreElements(); ) {
@@ -485,7 +487,7 @@ public class CustomMekDialog extends AbstractButtonDialog
 
     private void addOption(IOption option, GridBagLayout gridBagLayout, GridBagConstraints gridBagConstraints,
           boolean editable) {
-        Entity entity = entities.get(0);
+        Entity entity = entities.getFirst();
         DialogOptionComponentYPanel optionComp = new DialogOptionComponentYPanel(this, option, editable);
 
         if ((OptionsConstants.GUNNERY_WEAPON_SPECIALIST).equals(option.getName())) {
@@ -561,12 +563,11 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     /**
-     * Adds inline prosthetic enhancement controls (dropdown + spinner) to the option component panel.
-     * For Standard Enhanced: adds slot 1 controls only.
-     * For Improved Enhanced: adds slot 1 and slot 2 controls.
+     * Adds inline prosthetic enhancement controls (dropdown + spinner) to the option component panel. For Standard
+     * Enhanced: adds slot 1 controls only. For Improved Enhanced: adds slot 1 and slot 2 controls.
      *
-     * @param optionComp The DialogOptionComponentYPanel to add controls to
-     * @param entity The entity being configured
+     * @param optionComp         The DialogOptionComponentYPanel to add controls to
+     * @param entity             The entity being configured
      * @param isStandardEnhanced True for MD_PL_ENHANCED (slot 1 only), false for MD_PL_I_ENHANCED (both slots)
      */
     private void addInlineProstheticControls(DialogOptionComponentYPanel optionComp, Entity entity,
@@ -807,7 +808,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      * Updates the visibility of inline prosthetic enhancement controls when checkbox state changes.
      *
      * @param optionName The option that was toggled (MD_PL_ENHANCED, MD_PL_I_ENHANCED, or MD_PL_EXTRA_LIMBS)
-     * @param isChecked Whether the checkbox is now checked
+     * @param isChecked  Whether the checkbox is now checked
      */
     private void updateInlineProstheticVisibility(String optionName, boolean isChecked) {
         if (OptionsConstants.MD_PL_ENHANCED.equals(optionName)) {
@@ -844,8 +845,8 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     /**
-     * Applies prosthetic enhancement settings from the UI to the entity.
-     * Reads from the controls of whichever prosthetic option (Standard or Improved) is currently selected.
+     * Applies prosthetic enhancement settings from the UI to the entity. Reads from the controls of whichever
+     * prosthetic option (Standard or Improved) is currently selected.
      */
     private void applyProstheticEnhancement(Entity entity) {
         if (!(entity instanceof Infantry infantry)) {
@@ -981,7 +982,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     public void optionClicked(DialogOptionComponentYPanel comp, IOption option, boolean state) {
         // Enforce max 2 sensory implants rule for infantry
         // Defensive check for isConventionalInfantry in case options are set through other means
-        Entity entity = entities.get(0);
+        Entity entity = entities.getFirst();
         if (state && entity.isConventionalInfantry() && isSensoryImplant(option.getName())) {
             int count = countSelectedSensoryImplants(comp);
             if (count >= 2) {
@@ -1310,7 +1311,7 @@ public class CustomMekDialog extends AbstractButtonDialog
         if (this.clientGUI == null) {
             return;
         }
-        Entity entity = entities.get(0);
+        Entity entity = entities.getFirst();
 
         if (entity instanceof QuadVee) {
             choStartingMode.removeItemListener(this);
@@ -1481,7 +1482,7 @@ public class CustomMekDialog extends AbstractButtonDialog
             SliderDialog sl = new SliderDialog(clientGUI.getFrame(),
                   Messages.getString("CustomMekDialog.offboardDistanceTitle"),
                   Messages.getString("CustomMekDialog.offboardDistanceQuestion"),
-                  Math.min(Math.max(entities.get(0).getOffBoardDistance(), 17), maxDistance),
+                  Math.clamp(entities.getFirst().getOffBoardDistance(), 17, maxDistance),
                   17,
                   maxDistance);
             if (!sl.showDialog()) {
@@ -1577,7 +1578,7 @@ public class CustomMekDialog extends AbstractButtonDialog
         }
 
         if (isAero || isShip) {
-            if ((velocity > (2 * entities.get(0).getWalkMP())) || (velocity < 0)) {
+            if ((velocity > (2 * entities.getFirst().getWalkMP())) || (velocity < 0)) {
                 msg = Messages.getString("CustomMekDialog.EnterCorrectVelocity");
                 title = Messages.getString("CustomMekDialog.NumberFormatError");
                 JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.getFrame(),
@@ -1615,15 +1616,15 @@ public class CustomMekDialog extends AbstractButtonDialog
         }
         // Apply single-entity settings
         if (entities.size() == 1) {
-            Entity entity = entities.get(0);
+            Entity entity = entities.getFirst();
 
-            for (int i = 0; i < entities.get(0).getCrew().getSlotCount(); i++) {
+            for (int i = 0; i < entities.getFirst().getCrew().getSlotCount(); i++) {
                 String name = panCrewMember[i].getPilotName();
                 String nick = panCrewMember[i].getNickname();
                 String hits = panCrewMember[i].getHits();
                 Gender gender = panCrewMember[i].getGender();
                 if (gender == Gender.RANDOMIZE) {
-                    gender = entities.get(0).getCrew().getGender(i);
+                    gender = entities.getFirst().getCrew().getGender(i);
                 }
                 boolean missing = panCrewMember[i].getMissing();
                 int gunnery;
@@ -1938,12 +1939,12 @@ public class CustomMekDialog extends AbstractButtonDialog
 
     private void updateStartingModeOptions() {
         final int index = choStartingMode.getSelectedIndex();
-        if (entities.get(0) instanceof QuadVee) {
+        if (entities.getFirst() instanceof QuadVee) {
             labDeployProne.setEnabled(index == 0);
             chDeployProne.setEnabled(index == 0);
-        } else if (entities.get(0) instanceof LandAirMek) {
+        } else if (entities.getFirst() instanceof LandAirMek) {
             int mode = index;
-            if (((LandAirMek) entities.get(0)).getLAMType() == LandAirMek.LAM_BIMODAL &&
+            if (((LandAirMek) entities.getFirst()).getLAMType() == LandAirMek.LAM_BIMODAL &&
                   mode == LandAirMek.CONV_MODE_AIR_MEK) {
                 mode = LandAirMek.CONV_MODE_FIGHTER;
             }
@@ -1969,10 +1970,10 @@ public class CustomMekDialog extends AbstractButtonDialog
         Entity nextOne;
         Entity entity;
         if (forward) {
-            entity = entities.get(entities.size() - 1);
+            entity = entities.getLast();
             nextOne = game.getNextEntityFromList(entity);
         } else {
-            entity = entities.get(0);
+            entity = entities.getFirst();
             nextOne = game.getPreviousEntityFromList(entity);
         }
         while ((nextOne != null) && !entities.contains(nextOne)) {
@@ -1989,7 +1990,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     private void setupEquip() {
-        equipChoicePanel = new EquipChoicePanel(entities.get(0), clientGUI, client);
+        equipChoicePanel = new EquipChoicePanel(entities.getFirst(), clientGUI, client);
         // EI Interface is automatically added/removed based on pilot EI Implant option
         // No checkbox needed - the pilot option drives it (IO p.69)
     }
@@ -2076,7 +2077,7 @@ public class CustomMekDialog extends AbstractButtonDialog
 
     @Override
     protected Container createCenterPane() {
-        final Entity entity = entities.get(0);
+        final Entity entity = entities.getFirst();
         boolean multipleEntities = (entities.size() > 1) || (entity instanceof FighterSquadron);
         boolean quirksEnabled = gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
         boolean partialRepairsEnabled = gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIAL_REPAIRS);
@@ -2252,7 +2253,7 @@ public class CustomMekDialog extends AbstractButtonDialog
             refreshDeployment();
             // Disable conversions for loaded units so we don't get fighter LAMs in mek bays
             // and vice versa
-            choStartingMode.setEnabled(entities.get(0).getTransportId() == Entity.NONE);
+            choStartingMode.setEnabled(entities.getFirst().getTransportId() == Entity.NONE);
         }
         if (isVTOL || isLAM || isGlider) {
             panDeploy.add(labStartHeight, GBC.std());

@@ -112,6 +112,7 @@ public enum GamePhase {
         return this == TARGETING;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isTargetingReport() {
         return this == TARGETING_REPORT;
     }
@@ -132,6 +133,7 @@ public enum GamePhase {
         return this == OFFBOARD;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isOffboardReport() {
         return this == OFFBOARD_REPORT;
     }

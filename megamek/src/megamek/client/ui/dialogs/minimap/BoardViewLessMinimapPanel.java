@@ -244,6 +244,7 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
         updateUI();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     static public void drawArrowHead(Graphics g, int x0, int y0, int x1,
           int y1, int headLength, int headAngle) {
         double offs = headAngle * Math.PI / 180.0;

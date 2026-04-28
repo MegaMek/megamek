@@ -2,9 +2,9 @@ import java.time.LocalDateTime
 
 plugins {
     id 'application'
-    id 'com.palantir.git-version' version '4.2.0'
+    id 'com.palantir.git-version' version '5.0.0'
     id 'edu.sc.seis.launch4j' version '4.0.0'
-    id "io.sentry.jvm.gradle" version '5.12.2'
+    id "io.sentry.jvm.gradle" version '6.4.0'
     id 'jacoco'
     id 'java'
     id 'checkstyle'
@@ -17,7 +17,7 @@ tasks.withType(AbstractArchiveTask).configureEach {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -41,12 +41,12 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.21.1'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.20.1'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.21.2'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.2'
 
-    implementation 'com.formdev:flatlaf:3.7'
-    implementation 'com.formdev:flatlaf-extras:3.7'
+    implementation 'com.formdev:flatlaf:3.7.1'
+    implementation 'com.formdev:flatlaf-extras:3.7.1'
 
     implementation 'com.sun.mail:jakarta.mail:2.0.2'
 
@@ -54,7 +54,7 @@ dependencies {
 
     implementation 'commons-io:commons-io:2.21.0'
 
-    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.4'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.5'
     implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
 
     implementation 'org.apache.commons:commons-collections4:4.5.0'
@@ -64,22 +64,22 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-api:2.25.4'
     implementation 'org.apache.logging.log4j:log4j-core:2.25.4'
 
-    implementation 'org.apache.pdfbox:pdfbox:3.0.6'
+    implementation 'org.apache.pdfbox:pdfbox:3.0.7'
 
     implementation 'org.freemarker:freemarker:2.3.34'
 
-    implementation 'org.commonmark:commonmark:0.27.1'
+    implementation 'org.commonmark:commonmark:0.28.0'
 
     implementation 'com.squareup:gifencoder:0.10.1'
 
-    implementation 'com.ibm.icu:icu4j:78.2'
+    implementation 'com.ibm.icu:icu4j:78.3'
 
-    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.6'
+    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.7'
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.14.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.3'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.14.2'
-    testImplementation 'org.mockito:mockito-core:5.21.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:6.0.3'
+    testImplementation 'org.mockito:mockito-core:5.23.0'
 }
 
 application {
@@ -121,7 +121,7 @@ jar {
 }
 
 checkstyle {
-    toolVersion = '12.3.1'
+    toolVersion = '13.4.0'
     configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
     configProperties = [
             'suppressionFile': file("${rootDir}/config/checkstyle/checkstyle-suppressions.xml")
@@ -310,12 +310,13 @@ launch4j {
     internalName = 'MegaMek'
     downloadUrl = 'https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
     supportUrl = 'https://megamek.org'
-    copyright = '2025 MegaMek Development Team.'
+    copyright = '2026 MegaMek Development Team.'
     trademarks = 'MechWarrior, BattleMech, `Mech and AeroTech - The The Topps Company, Inc. Catalyst Game Labs - InMediaRes Productions, LLC.'
     companyName = "MegaMek Development Team"
-    jreMinVersion = '17'
+    jreMinVersion = '21'
     dontWrapJar = true
-    messagesJreVersionError = 'We require a Java Runtime of version 17 or higher installed. https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
+    messagesJreVersionError = 'We require a Java Runtime of version 21 or higher installed. https://github.' +
+            'com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
     messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
 }
 
@@ -601,7 +602,7 @@ tasks.register('roundTripSaveUnitsTest', Test) {
     classpath = testing.suites.test.targets.first().testTask.get().classpath
     jvmArgs = mmJvmOptions
     group = 'verification'
-    description = 'Roundtrip save/load test for all units: detects data loss in save/load cycle.'
+    description = 'Round trip save/load test for all units: detects data loss in save/load cycle.'
     filter {
         includeTestsMatching 'megamek.common.loaders.BulkRoundTripTest'
     }

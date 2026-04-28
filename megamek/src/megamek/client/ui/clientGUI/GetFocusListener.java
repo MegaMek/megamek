@@ -36,11 +36,13 @@ import javax.swing.JComponent;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
+@Deprecated(since = "0.51.0", forRemoval = true)
 public record GetFocusListener(boolean removeListener) implements AncestorListener {
     /*
      * Convenience constructor. The listener is only used once, and then it is
      * removed from the component.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public GetFocusListener() {
         this(true);
     }

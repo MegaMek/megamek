@@ -167,7 +167,7 @@ public class Bay implements Transporter, ITechnology {
 
     public int getCurrentDoors() {
         // defense against invalid values
-        return Math.min(doors, Math.max(currentDoors, 0));
+        return Math.clamp(currentDoors, 0, doors);
     }
 
     public void setCurrentDoors(int d) {
@@ -367,6 +367,7 @@ public class Bay implements Transporter, ITechnology {
     }
 
     // restore a door
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void restoreDoor() {
         if (getCurrentDoors() < getDoors()) {
             setCurrentDoors(getCurrentDoors() + 1);
@@ -374,6 +375,7 @@ public class Bay implements Transporter, ITechnology {
     }
 
     // restore all doors
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void restoreAllDoors() {
         setCurrentDoors(getDoors());
     }
@@ -384,6 +386,7 @@ public class Bay implements Transporter, ITechnology {
     }
 
     @Override
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getNumberLoadedThisTurn() {
         return loadedThisTurn;
     }

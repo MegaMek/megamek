@@ -588,6 +588,7 @@ public class Server implements Runnable {
     /**
      * Returns a free entity id. Perhaps this should be in Game instead.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getFreeEntityId() {
         return getGame().getNextEntityId();
     }

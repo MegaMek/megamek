@@ -61,7 +61,6 @@ import megamek.common.util.RoundWeight;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.bayWeapons.AmmoBayWeapon;
-import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.logging.MMLogger;
 
 /**
@@ -218,19 +217,13 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public static Mounted<?> createMounted(Entity entity, EquipmentType type) {
-        if (type instanceof BayWeapon bayWeapon) {
-            return new WeaponMounted(entity, bayWeapon);
-        } else if (type instanceof WeaponType weaponType) {
-            return new WeaponMounted(entity, weaponType);
-        } else if (type instanceof BombType bombType) {
-            return new BombMounted(entity, bombType);
-        } else if (type instanceof AmmoType ammoType) {
-            return new AmmoMounted(entity, ammoType);
-        } else if (type instanceof MiscType miscType) {
-            return new MiscMounted(entity, miscType);
-        } else {
-            return new Mounted<>(entity, type);
-        }
+        return switch (type) {
+            case WeaponType weaponType -> new WeaponMounted(entity, weaponType);
+            case BombType bombType -> new BombMounted(entity, bombType);
+            case AmmoType ammoType -> new AmmoMounted(entity, ammoType);
+            case MiscType miscType -> new MiscMounted(entity, miscType);
+            case null, default -> new Mounted<>(entity, type);
+        };
     }
 
     /**

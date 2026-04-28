@@ -679,6 +679,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         whoFirst = Compute.randomInt(500);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getWhoFirst() {
         return whoFirst;
     }
@@ -1458,6 +1459,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      *
      * @return BV Type Modifier.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public double getBVTypeModifier() {
         return 1.2;
     }
@@ -2341,6 +2343,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * @return is the crew of this vessel protected from gravitational effects, see StratOps, pg. 36
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isCrewProtected() {
         return true;
     }
@@ -2794,6 +2797,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * @return number of marines assigned to a unit Used for abandoning a unit
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getMarineCount() {
         return 0;
     }

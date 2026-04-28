@@ -511,6 +511,7 @@ public class Crew implements Serializable {
     /**
      * @return a String showing the skills for a particular slot in the format gunnery/piloting
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getSkillsAsString(int pos, boolean rpgSkills) {
         return getSkillsAsString(pos, true, rpgSkills);
     }

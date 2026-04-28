@@ -932,7 +932,7 @@ public class BotConfigDialog extends AbstractButtonDialog
 
         // Add the Configuration from a save game, if any to the top of the list
         if (saveGameBehavior != null) {
-            presets.add(0, Messages.getString("BotConfigDialog.previousConfig"));
+            presets.addFirst(Messages.getString("BotConfigDialog.previousConfig"));
         }
 
         // Other local bot Configurations

@@ -143,6 +143,7 @@ public final class Eras {
     /**
      * @return The era directly following the given Era, if any, null if the given Era is the last era (or null).
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static @Nullable Era nextEra(@Nullable Era era) {
         if (era == null) {
             return null;
@@ -341,6 +342,7 @@ public final class Eras {
      *
      * @return All eras, possibly also invalid ones.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     static List<Era> getAllEras() {
         return getInstance().eraList;
     }

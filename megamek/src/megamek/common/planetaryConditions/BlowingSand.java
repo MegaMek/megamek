@@ -61,6 +61,7 @@ public enum BlowingSand {
         return Messages.getString(name);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isBlowingSandNone() {
         return this == BLOWING_SAND_NONE;
     }

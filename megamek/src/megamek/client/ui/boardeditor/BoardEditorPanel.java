@@ -697,7 +697,7 @@ public class BoardEditorPanel extends JPanel
                 curHex.addTerrain(new Terrain(Terrains.BLDG_CF, newLevel));
             } else if (e.isControlDown()) {
                 int oldLevel = curHex.getTerrain(Terrains.BUILDING).getLevel();
-                int newLevel = Math.max(1, Math.min(4, oldLevel + wheelDir)); // keep between 1 and 4
+                int newLevel = Math.clamp(oldLevel + wheelDir, 1, 4); // keep between 1 and 4
 
                 if (newLevel != oldLevel) {
                     Terrain curTerr = curHex.getTerrain(Terrains.BUILDING);

@@ -75,6 +75,7 @@ public final class InfantryCompartment implements Transporter, InfantryTransport
     /**
      * The default constructor is only for serialization.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private InfantryCompartment() {
         totalSpace = 0;
         currentSpace = 0;

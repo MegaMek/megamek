@@ -33,6 +33,19 @@
 
 package megamek.server.totalWarfare;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.lang.reflect.Method;
+import java.util.Vector;
+import java.util.stream.Stream;
+
 import megamek.common.GameBoardTestCase;
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -52,19 +65,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.lang.reflect.Method;
-import java.util.Vector;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 /**
  * Tests for {@link DeploymentProcessor}
  */
@@ -83,17 +83,17 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
         // Create a fresh board for each test (boards are reused from static cache, so we need a fresh copy)
         // Re-initialize the board each time to avoid terrain contamination between tests
         initializeBoard("EMPTY_3x3", """
-            size 3 3
-            hex 0101 0 "" ""
-            hex 0201 0 "" ""
-            hex 0301 0 "" ""
-            hex 0102 0 "" ""
-            hex 0202 0 "" ""
-            hex 0302 0 "" ""
-            hex 0103 0 "" ""
-            hex 0203 0 "" ""
-            hex 0303 0 "" ""
-            end"""
+              size 3 3
+              hex 0101 0 "" ""
+              hex 0201 0 "" ""
+              hex 0301 0 "" ""
+              hex 0102 0 "" ""
+              hex 0202 0 "" ""
+              hex 0302 0 "" ""
+              hex 0103 0 "" ""
+              hex 0203 0 "" ""
+              hex 0303 0 "" ""
+              end"""
         );
         board = getBoard("EMPTY_3x3");
         game.setBoard(0, board);
@@ -118,8 +118,14 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
      */
     private void callProcessDeployment(megamek.common.units.Entity entity, Coords coords) throws Exception {
         Method processDeployment = DeploymentProcessor.class.getDeclaredMethod(
-            "processDeployment",
-            megamek.common.units.Entity.class, Coords.class, int.class, int.class, int.class, Vector.class, boolean.class
+              "processDeployment",
+              megamek.common.units.Entity.class,
+              Coords.class,
+              int.class,
+              int.class,
+              int.class,
+              Vector.class,
+              boolean.class
         );
         processDeployment.setAccessible(true);
         processDeployment.invoke(deploymentProcessor, entity, coords, 0, 0, 0, new Vector<>(), false);
@@ -128,17 +134,17 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
     static {
         // Empty 3x3 board for BuildingEntity deployment tests
         initializeBoard("EMPTY_3x3", """
-            size 3 3
-            hex 0101 0 "" ""
-            hex 0201 0 "" ""
-            hex 0301 0 "" ""
-            hex 0102 0 "" ""
-            hex 0202 0 "" ""
-            hex 0302 0 "" ""
-            hex 0103 0 "" ""
-            hex 0203 0 "" ""
-            hex 0303 0 "" ""
-            end"""
+              size 3 3
+              hex 0101 0 "" ""
+              hex 0201 0 "" ""
+              hex 0301 0 "" ""
+              hex 0102 0 "" ""
+              hex 0202 0 "" ""
+              hex 0302 0 "" ""
+              hex 0103 0 "" ""
+              hex 0203 0 "" ""
+              hex 0303 0 "" ""
+              end"""
         );
     }
 
@@ -146,10 +152,10 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
 
     static Stream<Arguments> buildingTypeAndClass() {
         return Stream.of(
-            Arguments.of(BuildingType.LIGHT, IBuilding.STANDARD, 1),
-            Arguments.of(BuildingType.MEDIUM, IBuilding.HANGAR, 2),
-            Arguments.of(BuildingType.HEAVY, IBuilding.FORTRESS, 3),
-            Arguments.of(BuildingType.HARDENED, IBuilding.GUN_EMPLACEMENT, 4)
+              Arguments.of(BuildingType.LIGHT, IBuilding.STANDARD, 1),
+              Arguments.of(BuildingType.MEDIUM, IBuilding.HANGAR, 2),
+              Arguments.of(BuildingType.HEAVY, IBuilding.FORTRESS, 3),
+              Arguments.of(BuildingType.HARDENED, IBuilding.GUN_EMPLACEMENT, 4)
         );
     }
 
@@ -157,7 +163,8 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
 
     @ParameterizedTest(name = "BuildingType={0}, Class={1}")
     @MethodSource("buildingTypeAndClass")
-    void testDeployBuildingEntity_AddsTerrainToHex(BuildingType buildingType, int buildingClass, int expectedTypeValue) throws Exception {
+    void testDeployBuildingEntity_AddsTerrainToHex(BuildingType buildingType, int buildingClass, int expectedTypeValue)
+          throws Exception {
         // Create BuildingEntity with specific properties
         BuildingEntity buildingEntity = new BuildingEntity(buildingType, buildingClass);
         buildingEntity.setOwner(game.getPlayer(0));
@@ -172,39 +179,39 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
 
         // Verify hex starts empty
         assertFalse(targetHex.containsTerrain(Terrains.BUILDING),
-            String.format("Hex should not contain BUILDING terrain before deployment"));
+              "Hex should not contain BUILDING terrain before deployment");
 
         // Call processDeployment
         callProcessDeployment(buildingEntity, new Coords(0, 0));
 
         // Verify BUILDING terrain was added with correct type value
         assertTrue(targetHex.containsTerrain(Terrains.BUILDING),
-            String.format("Hex should contain BUILDING terrain after deployment"));
+              "Hex should contain BUILDING terrain after deployment");
         assertEquals(expectedTypeValue, targetHex.terrainLevel(Terrains.BUILDING),
-            String.format("BUILDING terrain level: expected %d, got %d",
-                expectedTypeValue, targetHex.terrainLevel(Terrains.BUILDING)));
+              String.format("BUILDING terrain level: expected %d, got %d",
+                    expectedTypeValue, targetHex.terrainLevel(Terrains.BUILDING)));
 
         // Verify BLDG_CLASS terrain
         assertEquals(buildingClass, targetHex.terrainLevel(Terrains.BLDG_CLASS),
-            String.format("BLDG_CLASS: expected %d, got %d",
-                buildingClass, targetHex.terrainLevel(Terrains.BLDG_CLASS)));
+              String.format("BLDG_CLASS: expected %d, got %d",
+                    buildingClass, targetHex.terrainLevel(Terrains.BLDG_CLASS)));
 
         // Verify BLDG_CF terrain
         assertEquals(50, targetHex.terrainLevel(Terrains.BLDG_CF),
-            String.format("BLDG_CF: expected 50, got %d", targetHex.terrainLevel(Terrains.BLDG_CF)));
+              String.format("BLDG_CF: expected 50, got %d", targetHex.terrainLevel(Terrains.BLDG_CF)));
 
         // Verify BLDG_ARMOR terrain
         assertEquals(10, targetHex.terrainLevel(Terrains.BLDG_ARMOR),
-            String.format("BLDG_ARMOR: expected 10, got %d", targetHex.terrainLevel(Terrains.BLDG_ARMOR)));
+              String.format("BLDG_ARMOR: expected 10, got %d", targetHex.terrainLevel(Terrains.BLDG_ARMOR)));
 
         // Verify BLDG_ELEV terrain
         assertEquals(4, targetHex.terrainLevel(Terrains.BLDG_ELEV),
-            String.format("BLDG_ELEV: expected 4, got %d", targetHex.terrainLevel(Terrains.BLDG_ELEV)));
+              String.format("BLDG_ELEV: expected 4, got %d", targetHex.terrainLevel(Terrains.BLDG_ELEV)));
 
         // Verify BLDG_BASEMENT_TYPE terrain
         assertEquals(BasementType.ONE_DEEP_FEET.ordinal(), targetHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE),
-            String.format("BLDG_BASEMENT_TYPE: expected %d, got %d",
-                BasementType.ONE_DEEP_FEET.ordinal(), targetHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
+              String.format("BLDG_BASEMENT_TYPE: expected %d, got %d",
+                    BasementType.ONE_DEEP_FEET.ordinal(), targetHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
     }
 
     @Test
@@ -226,13 +233,13 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
 
         // Verify armor terrain was NOT added (armor = 0)
         assertFalse(targetHex.containsTerrain(Terrains.BLDG_ARMOR),
-            String.format("Hex should NOT contain BLDG_ARMOR terrain when armor is 0"));
+              "Hex should NOT contain BLDG_ARMOR terrain when armor is 0");
 
         // Verify other terrains were still added
         assertTrue(targetHex.containsTerrain(Terrains.BUILDING),
-            String.format("Hex should contain BUILDING terrain"));
+              "Hex should contain BUILDING terrain");
         assertTrue(targetHex.containsTerrain(Terrains.BLDG_CF),
-            String.format("Hex should contain BLDG_CF terrain"));
+              "Hex should contain BLDG_CF terrain");
     }
 
     @Test
@@ -254,13 +261,13 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
 
         // Verify basement terrain was NOT added (basement = null)
         assertFalse(targetHex.containsTerrain(Terrains.BLDG_BASEMENT_TYPE),
-            String.format("Hex should NOT contain BLDG_BASEMENT_TYPE terrain when basement is null"));
+              "Hex should NOT contain BLDG_BASEMENT_TYPE terrain when basement is null");
 
         // Verify other terrains were still added
         assertTrue(targetHex.containsTerrain(Terrains.BUILDING),
-            String.format("Hex should contain BUILDING terrain"));
+              "Hex should contain BUILDING terrain");
         assertTrue(targetHex.containsTerrain(Terrains.BLDG_ELEV),
-            String.format("Hex should contain BLDG_ELEV terrain"));
+              "Hex should contain BLDG_ELEV terrain");
     }
 
     @Test
@@ -282,18 +289,18 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
 
         // Verify all 3 hexes have building terrain
         assertEquals(3, buildingEntity.getCoordsList().size(),
-            String.format("Building should occupy 3 hexes"));
+              "Building should occupy 3 hexes");
 
         for (Coords buildingCoords : buildingEntity.getCoordsList()) {
             Hex hex = board.getHex(buildingCoords);
             assertTrue(hex.containsTerrain(Terrains.BUILDING),
-                String.format("Hex %s should contain BUILDING terrain", buildingCoords));
+                  String.format("Hex %s should contain BUILDING terrain", buildingCoords));
             assertEquals(BuildingType.MEDIUM.getTypeValue(), hex.terrainLevel(Terrains.BUILDING),
-                String.format("Hex %s BUILDING type: expected %d, got %d",
-                    buildingCoords, BuildingType.MEDIUM.getTypeValue(), hex.terrainLevel(Terrains.BUILDING)));
+                  String.format("Hex %s BUILDING type: expected %d, got %d",
+                        buildingCoords, BuildingType.MEDIUM.getTypeValue(), hex.terrainLevel(Terrains.BUILDING)));
             assertEquals(IBuilding.HANGAR, hex.terrainLevel(Terrains.BLDG_CLASS),
-                String.format("Hex %s BLDG_CLASS: expected %d, got %d",
-                    buildingCoords, IBuilding.HANGAR, hex.terrainLevel(Terrains.BLDG_CLASS)));
+                  String.format("Hex %s BLDG_CLASS: expected %d, got %d",
+                        buildingCoords, IBuilding.HANGAR, hex.terrainLevel(Terrains.BLDG_CLASS)));
         }
     }
 

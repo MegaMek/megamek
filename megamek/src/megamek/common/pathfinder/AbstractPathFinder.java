@@ -137,6 +137,7 @@ public class AbstractPathFinder<N, C, E> {
         filters.add(Objects.requireNonNull(edgeFilter));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeAllFilters() {
         filters.clear();
     }
@@ -229,10 +230,12 @@ public class AbstractPathFinder<N, C, E> {
     /**
      * @see AdjacencyMap
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setAdjacencyMap(AdjacencyMap<E> edgeNeighborsFactory) {
         this.adjacencyMap = Objects.requireNonNull(edgeNeighborsFactory);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public AdjacencyMap<E> getAdjacencyMap() {
         return adjacencyMap;
     }
@@ -251,10 +254,12 @@ public class AbstractPathFinder<N, C, E> {
     /**
      * @see DestinationMap
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setDestinationMap(DestinationMap<N, E> nodeFactory) {
         this.destinationMap = Objects.requireNonNull(nodeFactory);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected DestinationMap<N, E> getDestinationMap() {
         return destinationMap;
     }
@@ -262,6 +267,7 @@ public class AbstractPathFinder<N, C, E> {
     /**
      * @see EdgeRelaxer
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEdgeRelaxer(EdgeRelaxer<C, E> costRelaxer) {
         this.edgeRelaxer = Objects.requireNonNull(costRelaxer);
     }

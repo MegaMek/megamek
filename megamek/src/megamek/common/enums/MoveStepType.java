@@ -154,6 +154,7 @@ public enum MoveStepType {
      *
      * @throws IllegalArgumentException if no matching type is found
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static MoveStepType fromLabel(String label) {
         MoveStepType type = LABEL_TO_ENUM.get(label);
         if (type == null) {

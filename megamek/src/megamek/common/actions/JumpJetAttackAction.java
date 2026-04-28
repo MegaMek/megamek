@@ -39,7 +39,6 @@ import java.io.Serial;
 import megamek.common.Hex;
 import megamek.common.ToHitData;
 import megamek.common.compute.ComputeSideTable;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;

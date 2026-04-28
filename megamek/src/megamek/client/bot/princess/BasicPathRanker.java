@@ -155,23 +155,6 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
-     * Trying to use a Static Class and Method when we should call it directly.
-     *
-     * @param fireControl     {@link FireControl} Static Instance???
-     * @param shooter         {@link Entity} that is shooting
-     * @param range           Range to target
-     * @param useExtremeRange Whether to use Extreme Range
-     * @param useLOSRange     Line Of Sight Range
-     *
-     * @return Max damage at range.
-     */
-    @Deprecated(since = "0.50.07", forRemoval = true)
-    double getMaxDamageAtRange(FireControl fireControl, Entity shooter, int range, boolean useExtremeRange,
-          boolean useLOSRange) {
-        return getMaxDamageAtRange(shooter, range, useExtremeRange, useLOSRange);
-    }
-
-    /**
      * Determine max damage at range
      *
      * @param shooter         {@link Entity} that is shooting

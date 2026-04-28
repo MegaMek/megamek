@@ -36,7 +36,6 @@ package megamek.client.ui.dialogs.phaseDisplay;
 import static megamek.client.ui.util.UIUtil.spanCSS;
 
 import java.util.ArrayList;
-import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;

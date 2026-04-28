@@ -213,7 +213,7 @@ class InfantryReadout extends GeneralEntityReadout {
             details.append(type1.getDisplayName()).append(" x").append(infantry.getProstheticEnhancement1Count());
         }
         if (infantry.hasProstheticEnhancement2()) {
-            if (details.length() > 0) {
+            if (!details.isEmpty()) {
                 details.append(", ");
             }
             ProstheticEnhancementType type2 = infantry.getProstheticEnhancement2();
@@ -235,7 +235,7 @@ class InfantryReadout extends GeneralEntityReadout {
             details.append(pair1Type.getDisplayName()).append(" x2");
         }
         if (infantry.hasExtraneousPair2()) {
-            if (details.length() > 0) {
+            if (!details.isEmpty()) {
                 details.append(", ");
             }
             ProstheticEnhancementType pair2Type = infantry.getExtraneousPair2();
@@ -258,7 +258,7 @@ class InfantryReadout extends GeneralEntityReadout {
             result.add(new PlainLine());
             List<Mounted<?>> allFieldGuns = infantry.originalFieldWeapons();
             List<Mounted<?>> activeFieldGuns = infantry.activeFieldWeapons();
-            EquipmentType fieldGunType = allFieldGuns.get(0).getType();
+            EquipmentType fieldGunType = allFieldGuns.getFirst().getType();
             String typeName = TestInfantry.isFieldArtilleryType(fieldGunType)
                   ? Messages.getString("MekView.FieldArty")
                   : Messages.getString("MekView.FieldGun");

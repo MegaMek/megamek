@@ -36,6 +36,7 @@ package megamek.client.ui.clientGUI.boardview;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -43,14 +44,17 @@ import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
 import java.awt.event.WindowEvent;
 import java.io.Serial;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import jakarta.annotation.Nonnull;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
@@ -86,6 +90,15 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     public static Color color1 = DARK_COLOR_1;
     public static Color color2 = DARK_COLOR_2;
 
+    // Range panel font sizing. Base sizes scale with the user's GUI scale (UIUtil.scaleForGUI).
+    // Fraction sizes kick in when the rendered panel is taller than the base sizes alone would
+    // fill, so the range display stays proportional whether the unit panels are short (combo
+    // hidden) or tall (combo shown, dialog resized, lock row added, etc.).
+    private static final float RANGE_HEADER_BASE_PT = 14.0f;
+    private static final float RANGE_VALUE_BASE_PT = 32.0f;
+    private static final float RANGE_HEADER_FRACTION = 0.18f;
+    private static final float RANGE_VALUE_FRACTION = 0.45f;
+
     private Coords start;
     private Coords end;
     private Color startColor;
@@ -99,6 +112,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     private final JTextField tf_start = new JTextField();
     private final JTextField tf_end = new JTextField();
     private final JLabel rangeLabel = new JLabel();
+    private final JLabel rangeHeader = new JLabel();
     private final JTextField tf_los1 = new JTextField();
     private final JTextField tf_los2 = new JTextField();
     private final JButton butClose = new JButton();
@@ -122,8 +136,16 @@ public class RulerDialog extends JDialog implements BoardViewListener {
           + "<b>Altitude</b> (aerospace): fixed value (1-10)</html>";
     private final JComboBox<EntityItem> cboEntity1 = new JComboBox<>();
     private final JComboBox<EntityItem> cboEntity2 = new JComboBox<>();
+    /** When selected, clicks update only the END point; the START hex stays put. Mutually exclusive with {@link #lockEnd}. */
+    private final JCheckBox lockStart = new JCheckBox();
+    /** When selected, clicks update only the START point; the END hex stays put. Mutually exclusive with {@link #lockStart}. */
+    private final JCheckBox lockEnd = new JCheckBox();
     private String entityName1 = "";
     private String entityName2 = "";
+    /** Short name (chassis + model) for the point 1 entity, or null if no entity / sensor return / "None" selected. */
+    private String shortName1;
+    /** Short name (chassis + model) for the point 2 entity, or null if no entity / sensor return / "None" selected. */
+    private String shortName2;
     private DiagramUnitType unitType1 = DiagramUnitType.OTHER;
     private DiagramUnitType unitType2 = DiagramUnitType.OTHER;
     /** True if point 1 entity is actually at altitude (airborne aero with altitude > 0). */
@@ -216,18 +238,41 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         cboEntity2.setVisible(false);
         cboEntity2.addActionListener(e -> entityComboChanged(cboEntity2, false));
 
+        // --- Endpoint locks ---
+        // Both start disabled initially; each lock is enabled once its corresponding point is set.
+        // The locks are mutually exclusive, so selecting one clears the other.
+        lockStart.setText(Messages.getString("Ruler.lock"));
+        lockEnd.setText(Messages.getString("Ruler.lock"));
+        lockStart.setToolTipText(Messages.getString("Ruler.lockTooltip"));
+        lockEnd.setToolTipText(Messages.getString("Ruler.lockTooltip"));
+        lockStart.setEnabled(false);
+        lockEnd.setEnabled(false);
+        lockStart.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                lockEnd.setSelected(false);
+            }
+        });
+        lockEnd.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                lockStart.setSelected(false);
+            }
+        });
+
         // --- Side-by-side unit panels ---
         unitPanel1 = buildUnitPanel(heightLabel1, height1, effectiveHeight1,
-              heightInfo1, cboEntity1, color1);
+              heightInfo1, cboEntity1, lockStart, color1);
         unitPanel2 = buildUnitPanel(heightLabel2, height2, effectiveHeight2,
-              heightInfo2, cboEntity2, color2);
+              heightInfo2, cboEntity2, lockEnd, color2);
 
-        // Range display between unit panels: "Range" header + "<- NUMBER ->" value
+        // Range display between unit panels: "Range" header + "<- NUMBER ->" value.
+        // Base sizes are the floor; the ComponentListener below bumps them up proportionally
+        // when the actual rendered panel is taller (so we fill the available area).
         rangeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        rangeLabel.setFont(rangeLabel.getFont().deriveFont(Font.BOLD, UIUtil.scaleForGUI(18.0f)));
+        rangeLabel.setFont(rangeLabel.getFont().deriveFont(Font.BOLD, UIUtil.scaleForGUI(RANGE_VALUE_BASE_PT)));
 
-        JLabel rangeHeader = new JLabel(Messages.getString("Ruler.Distance"), SwingConstants.CENTER);
-        rangeHeader.setFont(rangeHeader.getFont().deriveFont(Font.PLAIN, UIUtil.scaleForGUI(10.0f)));
+        rangeHeader.setText(Messages.getString("Ruler.Distance"));
+        rangeHeader.setHorizontalAlignment(SwingConstants.CENTER);
+        rangeHeader.setFont(rangeHeader.getFont().deriveFont(Font.PLAIN, UIUtil.scaleForGUI(RANGE_HEADER_BASE_PT)));
 
         JPanel rangePanel = new JPanel(new GridBagLayout());
         GridBagConstraints rc = new GridBagConstraints();
@@ -237,6 +282,16 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         rangePanel.add(rangeHeader, rc);
         rc.gridy = 1;
         rangePanel.add(rangeLabel, rc);
+
+        // Responsive font sizing: re-derive header/value fonts whenever the panel resizes.
+        // Triggers on initial layout, dialog resize, GUI scale change, and any future event
+        // that changes the unit panels' height (e.g., entity combo becoming visible).
+        rangePanel.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                adjustRangeFonts(e.getComponent().getHeight());
+            }
+        });
 
         JPanel unitsRow = new JPanel(new GridBagLayout());
         GridBagConstraints uc = new GridBagConstraints();
@@ -404,7 +459,8 @@ public class RulerDialog extends JDialog implements BoardViewListener {
      * entity combo.
      */
     private JPanel buildUnitPanel(JLabel heightLabel, JSpinner heightSpinner,
-          JLabel effectiveLabel, JLabel infoLabel, JComboBox<EntityItem> entityCombo, Color color) {
+          JLabel effectiveLabel, JLabel infoLabel, JComboBox<EntityItem> entityCombo,
+          JCheckBox lockBox, Color color) {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createLineBorder(color.darker(), 1));
 
@@ -417,7 +473,17 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         gc.insets = new Insets(2, 4, 0, 4);
         int row = 0;
 
-        // Row 0: Height label + spinner + effective height
+        // Row 0: Lock checkbox (always visible at top of panel)
+        gc.gridy = row;
+        gc.gridx = 0;
+        gc.gridwidth = 3;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.fill = GridBagConstraints.NONE;
+        panel.add(lockBox, gc);
+        gc.gridwidth = 1;
+        row++;
+
+        // Row 1: Height label + spinner + effective height
         gc.gridy = row;
         gc.gridx = 0;
         gc.anchor = GridBagConstraints.EAST;
@@ -490,6 +556,8 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         end = null;
         entityName1 = "";
         entityName2 = "";
+        shortName1 = null;
+        shortName2 = null;
         unitType1 = DiagramUnitType.OTHER;
         unitType2 = DiagramUnitType.OTHER;
         atAltitude1 = false;
@@ -511,6 +579,11 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         } finally {
             updatingCombo = false;
         }
+        // Endpoint locks always reset to unlocked when the ruler clears.
+        lockStart.setSelected(false);
+        lockEnd.setSelected(false);
+        lockStart.setEnabled(false);
+        lockEnd.setEnabled(false);
     }
 
     /**
@@ -556,9 +629,161 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         if (targetPovLabel != null) {
             targetPovLabel.setForeground(endColor);
         }
+
+        updateUnitLabels();
+    }
+
+    /**
+     * Refreshes the POV row labels and the Compare table column headers to reflect the currently selected entities and
+     * flip state. The label source falls back through: entity short name (chassis + model) -> sensor return label ->
+     * dominant terrain at the hex -> generic "Attacker"/"Target" string.
+     */
+    private void updateUnitLabels() {
+        // attackerIsFirst mirrors setText(): when flip is true, point 1 is the attacker
+        boolean attackerIsFirst = flip;
+        String attackerName = unitOrTerrainNameFor(attackerIsFirst);
+        String targetName = unitOrTerrainNameFor(!attackerIsFirst);
+
+        if (attackerPovLabel != null) {
+            attackerPovLabel.setText(formatPovLabel(attackerName, true) + ":");
+        }
+        if (targetPovLabel != null) {
+            targetPovLabel.setText(formatPovLabel(targetName, false) + ":");
+        }
+
+        String attackerHeader = (attackerName != null)
+              ? attackerName
+              : Messages.getString("Ruler.compareAttacker");
+        String targetHeader = (targetName != null)
+              ? targetName
+              : Messages.getString("Ruler.compareTarget");
+        if (compareTable.getColumnModel().getColumnCount() >= 3) {
+            compareTable.getColumnModel().getColumn(1).setHeaderValue(attackerHeader);
+            compareTable.getColumnModel().getColumn(2).setHeaderValue(targetHeader);
+            compareTable.getTableHeader().repaint();
+        }
+    }
+
+    /**
+     * Returns a display name for the unit or terrain at the given point. Priority: visible entity short name -> sensor
+     * return label (when entity is detected but identity hidden) -> dominant terrain at the hex. Returns null only when
+     * nothing meaningful can be derived (e.g., point not yet selected).
+     */
+    private String unitOrTerrainNameFor(boolean isFirstPoint) {
+        String shortName = isFirstPoint ? shortName1 : shortName2;
+        if (shortName != null) {
+            return shortName;
+        }
+        String entityName = isFirstPoint ? entityName1 : entityName2;
+        if (entityName != null && !entityName.isEmpty()) {
+            // Sensor return: identity hidden, but a unit is present
+            return entityName;
+        }
+        // Distinguish "user explicitly selected None in manual mode" from "no entity at this hex".
+        // When the combo has real entity options but None is the selected item, the user wants the
+        // generic Attacker/Target fallback strings, not a terrain label. Returning null here lets
+        // formatPovLabel() and updateUnitLabels() fall back to Ruler.attackerPOV / Ruler.targetPOV /
+        // Ruler.compareAttacker / Ruler.compareTarget. Terrain labels still apply when the combo has
+        // no real entity options (model size 1 = just the "None" sentinel).
+        JComboBox<EntityItem> combo = isFirstPoint ? cboEntity1 : cboEntity2;
+        EntityItem selected = (EntityItem) combo.getSelectedItem();
+        boolean comboHasEntityOptions = (combo.getModel().getSize() > 1);
+        boolean noneSelected = (selected != null) && (selected.entity() == null);
+        if (comboHasEntityOptions && noneSelected) {
+            return null;
+        }
+        Coords coords = isFirstPoint ? start : end;
+        return describeHexTerrain(coords);
+    }
+
+    /**
+     * Returns the dominant terrain feature name at the given hex (e.g. "Light woods", "Water (depth 2)") or "Clear" if
+     * none. Returns null if the coords are not on the board.
+     */
+    private String describeHexTerrain(Coords coords) {
+        if (coords == null || !game.getBoard().contains(coords)) {
+            return null;
+        }
+        Hex hex = game.getBoard().getHex(coords);
+        if (hex == null) {
+            return null;
+        }
+        // Priority order: terrain features that most affect LOS / cover
+        int[] priority = {
+              Terrains.BUILDING, Terrains.WOODS, Terrains.JUNGLE, Terrains.FUEL_TANK,
+              Terrains.BRIDGE, Terrains.RUBBLE, Terrains.ROUGH, Terrains.WATER,
+              Terrains.SWAMP, Terrains.MAGMA, Terrains.MUD, Terrains.SAND
+        };
+        for (int type : priority) {
+            if (hex.containsTerrain(type)) {
+                String name = Terrains.getDisplayName(type, hex.terrainLevel(type));
+                // getDisplayName() returns null for terrain types without an explicit case
+                // (e.g. BRIDGE, FUEL_TANK). Fall back to the editor name so those still
+                // produce a meaningful label instead of slipping through to "Clear".
+                if ((name == null) || name.isEmpty()) {
+                    name = Terrains.getEditorName(type);
+                }
+                if ((name != null) && !name.isEmpty()) {
+                    return name;
+                }
+            }
+        }
+        return Messages.getString("Ruler.terrainClear");
+    }
+
+    /**
+     * Wraps a name in the POV format string (e.g. "Marauder MAD-3R POV"). Falls back to the generic "Attacker
+     * POV"/"Target POV" string only when no name is available (early init / off-board coords).
+     */
+    private static String formatPovLabel(String name, boolean isAttacker) {
+        if (name == null) {
+            return Messages.getString(isAttacker ? "Ruler.attackerPOV" : "Ruler.targetPOV");
+        }
+        return MessageFormat.format(Messages.getString("Ruler.povFormat"), name);
     }
 
     private void addPoint(Coords c) {
+        // Lock-start active: only the END point updates. Suppresses the auto-restart
+        // that the default branch triggers when both points are already set.
+        if (lockStart.isSelected() && (start != null)) {
+            if (c.equals(start) || c.equals(end)) {
+                return;
+            }
+            end = c;
+            distance = start.distance(end);
+            Entity tallest = populateEntityCombo(c, cboEntity2);
+            if (tallest != null) {
+                applyEntitySelection(tallest, false);
+            } else {
+                // No unit at the new hex - clear stale entity state from the previous endpoint
+                // so the unit panel reflects "no unit here" rather than the prior occupant.
+                resetUnitPanelState(false);
+            }
+            setText();
+            showWithoutFocus();
+            updateLockEnableStates();
+            return;
+        }
+
+        // Lock-end active: only the START point updates.
+        if (lockEnd.isSelected() && (end != null)) {
+            if (c.equals(end) || c.equals(start)) {
+                return;
+            }
+            start = c;
+            distance = start.distance(end);
+            Entity tallest = populateEntityCombo(c, cboEntity1);
+            if (tallest != null) {
+                applyEntitySelection(tallest, true);
+            } else {
+                resetUnitPanelState(true);
+            }
+            setText();
+            showWithoutFocus();
+            updateLockEnableStates();
+            return;
+        }
+
         if (end != null) {
             // Both points already set - start a new measurement
             clear();
@@ -583,6 +808,70 @@ public class RulerDialog extends JDialog implements BoardViewListener {
             }
             setText();
             showWithoutFocus();
+        }
+        updateLockEnableStates();
+    }
+
+    /**
+     * Recomputes the Range header and value font sizes based on the current rendered height of the range panel. The base
+     * sizes (scaled with the user's GUI scale) act as a floor; if the rendered height is large enough that the
+     * fractional sizes exceed the floor, those win — keeping the display proportionally filled. Called from a
+     * {@link ComponentAdapter#componentResized} listener on the range panel.
+     *
+     * @param panelHeight the current height of the range panel in pixels; values &le; 0 are ignored
+     */
+    private void adjustRangeFonts(int panelHeight) {
+        if (panelHeight <= 0) {
+            return;
+        }
+        float headerPt = Math.max(UIUtil.scaleForGUI(RANGE_HEADER_BASE_PT), panelHeight * RANGE_HEADER_FRACTION);
+        float valuePt = Math.max(UIUtil.scaleForGUI(RANGE_VALUE_BASE_PT), panelHeight * RANGE_VALUE_FRACTION);
+        rangeHeader.setFont(rangeHeader.getFont().deriveFont(Font.PLAIN, headerPt));
+        rangeLabel.setFont(rangeLabel.getFont().deriveFont(Font.BOLD, valuePt));
+    }
+
+    /**
+     * Enables each lock checkbox only when its endpoint is set, and silently clears any selection on a checkbox whose
+     * endpoint has just become null (defensive guard against stale state).
+     */
+    private void updateLockEnableStates() {
+        lockStart.setEnabled(start != null);
+        lockEnd.setEnabled(end != null);
+        if ((start == null) && lockStart.isSelected()) {
+            lockStart.setSelected(false);
+        }
+        if ((end == null) && lockEnd.isSelected()) {
+            lockEnd.setSelected(false);
+        }
+    }
+
+    /**
+     * Resets the entity-related unit-panel state for one point (name, short name, unit type, altitude flag, expected
+     * height, height labels). Called from the lock branches when a click lands on a hex with no unit, so the unit
+     * panel doesn't keep displaying the previous endpoint's occupant. The combo box itself is reset by
+     * {@link #populateEntityCombo} on the same click; this method handles everything else.
+     *
+     * @param isFirstPoint true to reset point 1 (start side), false to reset point 2 (end side)
+     */
+    private void resetUnitPanelState(boolean isFirstPoint) {
+        if (isFirstPoint) {
+            entityName1 = "";
+            shortName1 = null;
+            unitType1 = DiagramUnitType.OTHER;
+            atAltitude1 = false;
+            entityExpectedHeight1 = -1;
+            heightLabel1.setText(Messages.getString("Ruler.Height"));
+            effectiveHeight1.setText("");
+            heightInfo1.setText("");
+        } else {
+            entityName2 = "";
+            shortName2 = null;
+            unitType2 = DiagramUnitType.OTHER;
+            atAltitude2 = false;
+            entityExpectedHeight2 = -1;
+            heightLabel2.setText(Messages.getString("Ruler.Height"));
+            effectiveHeight2.setText("");
+            heightInfo2.setText("");
         }
     }
 
@@ -610,17 +899,20 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         heightSpinner.setValue(twHeight);
         if (isFirstPoint) {
             entityName1 = sensorReturn ? Messages.getString("BoardView1.sensorReturn") : entity.getDisplayName();
+            shortName1 = sensorReturn ? null : entity.getShortName();
             unitType1 = unitType;
             atAltitude1 = isAtAltitude;
             entityExpectedHeight1 = twHeight;
             heightLabel1.setText(label);
         } else {
             entityName2 = sensorReturn ? Messages.getString("BoardView1.sensorReturn") : entity.getDisplayName();
+            shortName2 = sensorReturn ? null : entity.getShortName();
             unitType2 = unitType;
             atAltitude2 = isAtAltitude;
             entityExpectedHeight2 = twHeight;
             heightLabel2.setText(label);
         }
+        updateUnitLabels();
     }
 
     /**
@@ -722,6 +1014,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         }
 
         updateHeightInfo();
+        updateUnitLabels();
         updateDiagram(entityLosBlocked);
         if (compareExpanded) {
             updateCompareTable();
@@ -973,13 +1266,11 @@ public class RulerDialog extends JDialog implements BoardViewListener {
      * differ from the active mode with a subtle background.
      */
     private class CompareTableRenderer extends DefaultTableCellRenderer {
-        @Serial
-        private static final long serialVersionUID = 1L;
 
         @Override
-        public java.awt.Component getTableCellRendererComponent(JTable table, Object value,
+        public Component getTableCellRendererComponent(JTable table, Object value,
               boolean isSelected, boolean hasFocus, int row, int column) {
-            java.awt.Component component = super.getTableCellRendererComponent(
+            Component component = super.getTableCellRendererComponent(
                   table, value, isSelected, hasFocus, row, column);
 
             int activeModeRow = getActiveModeRow();
@@ -1150,17 +1441,20 @@ public class RulerDialog extends JDialog implements BoardViewListener {
             heightSpinner.setValue(1);
             if (isFirstPoint) {
                 entityName1 = "";
+                shortName1 = null;
                 unitType1 = DiagramUnitType.OTHER;
                 atAltitude1 = false;
                 entityExpectedHeight1 = -1;
                 heightLabel1.setText(Messages.getString("Ruler.Height"));
             } else {
                 entityName2 = "";
+                shortName2 = null;
                 unitType2 = DiagramUnitType.OTHER;
                 atAltitude2 = false;
                 entityExpectedHeight2 = -1;
                 heightLabel2.setText(Messages.getString("Ruler.Height"));
             }
+            updateUnitLabels();
         }
 
         if (start != null && end != null) {
@@ -1252,8 +1546,8 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     }
 
     /**
-     * Combo box entry for an entity at a hex. When {@code sensorReturn} is true, the display hides
-     * the entity's identity and state to avoid leaking double-blind information.
+     * Combo box entry for an entity at a hex. When {@code sensorReturn} is true, the display hides the entity's
+     * identity and state to avoid leaking double-blind information.
      */
     record EntityItem(Entity entity, boolean sensorReturn) {
         EntityItem(Entity entity) {
@@ -1261,6 +1555,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         }
 
         @Override
+        @Nonnull
         public String toString() {
             if (entity == null) {
                 return Messages.getString("Ruler.noEntity");

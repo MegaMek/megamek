@@ -36,7 +36,6 @@ package megamek.common.units;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.autoCannons.ACWeapon;
 import megamek.common.weapons.autoCannons.LBXACWeapon;
 import megamek.common.weapons.autoCannons.UACWeapon;

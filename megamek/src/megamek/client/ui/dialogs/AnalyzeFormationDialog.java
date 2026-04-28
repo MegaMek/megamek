@@ -54,8 +54,8 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.units.EntityWeightClass;
 import megamek.common.loaders.MekSummary;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.units.UnitRole;
 
 /**
@@ -167,7 +167,7 @@ public class AnalyzeFormationDialog extends JDialog {
             panAvailable.add(new JLabel(String.valueOf(units.stream().filter(c::matches).count())), gbc);
         });
 
-        if (ft.getGroupingCriteria() != null && ft.getGroupingCriteria().appliesTo(params.get(0).getUnitType())) {
+        if (ft.getGroupingCriteria() != null && ft.getGroupingCriteria().appliesTo(params.getFirst().getUnitType())) {
             gbc.gridy++;
             gbc.gridx = 0;
             gbc.anchor = GridBagConstraints.CENTER;
@@ -248,7 +248,7 @@ public class AnalyzeFormationDialog extends JDialog {
             }
         }
         if (otherCriteriaChecks.size() > allConstraints.size() &&
-              otherCriteriaChecks.get(otherCriteriaChecks.size() - 1).isSelected()) {
+              otherCriteriaChecks.getLast().isSelected()) {
             filters.add(new UnitTableRowFilter(formationType.getGroupingCriteria()));
         }
         tableSorter.setRowFilter(RowFilter.andFilter(filters));

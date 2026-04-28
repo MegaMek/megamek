@@ -128,7 +128,7 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
 
     /** Limit the value to be between the two supplied ones, inclusive */
     private static double clamp(double min, double max, double val) {
-        return Math.max(min, Math.min(max, val));
+        return Math.clamp(val, min, max);
     }
 
     public static double noiseOctaves(double xin, double yin, int octaves, double scale) {

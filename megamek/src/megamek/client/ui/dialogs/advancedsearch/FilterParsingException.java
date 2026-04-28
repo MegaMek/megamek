@@ -32,7 +32,7 @@
  */
 package megamek.client.ui.dialogs.advancedsearch;
 
-class FilterParsingException extends Exception {
+public class FilterParsingException extends Exception {
     public String msg;
 
     FilterParsingException(String m) {

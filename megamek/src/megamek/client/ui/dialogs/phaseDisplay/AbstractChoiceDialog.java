@@ -218,7 +218,7 @@ public abstract class AbstractChoiceDialog<T> extends AbstractButtonDialog {
      * @return first chosen item, or null if nothing chosen
      */
     public @Nullable T getFirstChoice() {
-        return (chosen.isEmpty()) ? null : chosen.get(0);
+        return (chosen.isEmpty()) ? null : chosen.getFirst();
     }
 
     /**

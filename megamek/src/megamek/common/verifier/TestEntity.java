@@ -82,11 +82,10 @@ public abstract class TestEntity implements TestEntityOption {
     private final TestEntityOption options;
 
     /**
-     * Optional game year to use for intro date validation instead of the unit's intro year.
-     * When set to a value > 0, {@link #hasIncorrectIntroYear(StringBuffer)} will compare equipment
-     * intro dates against this year instead of the entity's year. This supports the "Use Game Year"
-     * setting in MegaMekLab where equipment availability is determined by the configured game year
-     * rather than the unit's intro year.
+     * Optional game year to use for intro date validation instead of the unit's intro year. When set to a value > 0,
+     * {@link #hasIncorrectIntroYear(StringBuffer)} will compare equipment intro dates against this year instead of the
+     * entity's year. This supports the "Use Game Year" setting in MegaMekLab where equipment availability is determined
+     * by the configured game year rather than the unit's intro year.
      */
     private int gameYear = -1;
 
@@ -294,8 +293,8 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     /**
-     * Gets the game year to use for intro date validation. When > 0, equipment intro dates are
-     * compared against this year instead of the entity's intro year.
+     * Gets the game year to use for intro date validation. When > 0, equipment intro dates are compared against this
+     * year instead of the entity's intro year.
      *
      * @return The game year, or -1 if not set (use entity year)
      */
@@ -304,10 +303,9 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     /**
-     * Sets the game year to use for intro date validation. When set to a value > 0, equipment intro
-     * dates will be compared against this year instead of the entity's intro year. This supports
-     * scenarios where equipment availability is determined by a campaign's current year rather than
-     * the unit's original intro year.
+     * Sets the game year to use for intro date validation. When set to a value > 0, equipment intro dates will be
+     * compared against this year instead of the entity's intro year. This supports scenarios where equipment
+     * availability is determined by a campaign's current year rather than the unit's original intro year.
      *
      * @param gameYear The game year to use, or -1 to use entity year
      */
@@ -382,6 +380,7 @@ public abstract class TestEntity implements TestEntityOption {
      *
      * @return The input value truncated to the number of decimal places supplied
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static double setPrecision(double value, int precision) {
         return Math.round(value * Math.pow(10, precision)) / Math.pow(10, precision);
     }
@@ -1034,6 +1033,7 @@ public abstract class TestEntity implements TestEntityOption {
      *
      * @return true if there are no problems with the unit's assumed and calculated weight values
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public final boolean isWeightCorrect() {
         return correctWeight(new StringBuffer());
     }
@@ -1216,6 +1216,7 @@ public abstract class TestEntity implements TestEntityOption {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean hasIllegalTechLevels(StringBuffer buff) {
         return hasIllegalTechLevels(buff, getEntity().getTechLevel());
     }
@@ -1435,8 +1436,8 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     /**
-     * Compares intro dates of all components to the unit intro year (or game year if available).
-     * The year used for comparison is determined in order of priority:
+     * Compares intro dates of all components to the unit intro year (or game year if available). The year used for
+     * comparison is determined in order of priority:
      * <ol>
      *   <li>If {@link #setGameYear(int)} was called with a value > 0, use that year</li>
      *   <li>Otherwise, use {@link Entity#getTechLevelYear()} which returns the game's ALLOWED_YEAR
@@ -1866,7 +1867,9 @@ public abstract class TestEntity implements TestEntityOption {
         for (var loc : modArmorByLocation.keySet()) {
             if (modArmorByLocation.get(loc) > 1) {
                 buff.append("Only one modular armor slot may be mounted in a single location (")
-                      .append(getEntity().getLocationName(loc.getLeft())).append(loc.getRight() ? " (R))" : ")").append('\n');
+                      .append(getEntity().getLocationName(loc.getLeft()))
+                      .append(loc.getRight() ? " (R))" : ")")
+                      .append('\n');
                 illegal = true;
             }
         }

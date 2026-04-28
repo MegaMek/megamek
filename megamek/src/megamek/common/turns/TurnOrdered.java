@@ -363,7 +363,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     }
 
     private static ITurnOrdered getWinningElement(List<? extends ITurnOrdered> v) {
-        final ITurnOrdered comparisonElement = v.get(0);
+        final ITurnOrdered comparisonElement = v.getFirst();
         int difference = 0;
         ITurnOrdered winningElement = comparisonElement;
 

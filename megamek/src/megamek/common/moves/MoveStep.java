@@ -372,6 +372,7 @@ public class MoveStep implements Serializable {
         this.mf = mf;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static MoveStep createChangeBoardMoveStep(MovePath path, Coords finalPosition, int finalBoardId) {
         MoveStep newStep = new MoveStep(path, MoveStepType.CHANGE_BOARD);
         newStep.boardId = finalBoardId;
@@ -577,7 +578,7 @@ public class MoveStep implements Serializable {
             if ((entity instanceof Infantry) && !grdDropship) {
                 // infantry can jump into a building
                 // Maybe this line is a bit too much, but it seems to work by coincidence
-                setElevation(Math.max(depth, Math.min(building, maxElevation)));
+                setElevation(Math.clamp(building, depth, maxElevation));
             } else {
                 int subDepth = Math.max(depth, building);
 
@@ -2608,7 +2609,7 @@ public class MoveStep implements Serializable {
                 Hex prevHex = game.getBoard(boardId).getHex(lastPos);
                 // Check if we're climbing from outside/below onto the building top
                 if (!prevHex.containsTerrain(Terrains.BUILDING) ||
-                    prevHex.terrainLevel(Terrains.BLDG_ELEV) < curHex.terrainLevel(Terrains.BLDG_ELEV)) {
+                      prevHex.terrainLevel(Terrains.BLDG_ELEV) < curHex.terrainLevel(Terrains.BLDG_ELEV)) {
                     int prevAbsoluteElev = prevHex.getLevel() + prev.getElevation();
                     int curAbsoluteElev = curHex.getLevel() + getElevation();
                     int elevChange = curAbsoluteElev - prevAbsoluteElev;

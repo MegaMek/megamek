@@ -39,11 +39,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import megamek.common.compute.Compute;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.units.Infantry;
 import megamek.common.Player;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 import megamek.common.units.ProtoMek;
 import megamek.logging.MMLogger;
 
@@ -70,6 +70,7 @@ public class MoraleUtil {
      *
      * @return TRUE if the unit is broken.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isUnitBroken(int unitId) {
         return BROKEN_UNITS.contains(unitId);
     }

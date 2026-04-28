@@ -61,7 +61,6 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.RoundWeight;
-import megamek.common.verifier.TestAdvancedAerospace;
 import megamek.common.verifier.TestEntity;
 
 /**

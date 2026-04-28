@@ -65,10 +65,10 @@ import megamek.server.SmokeCloud;
  * Keeps track of the cumulative effects of intervening terrain on LOS.
  *
  * <p><b>Diagnostic logging:</b> This class has extensive DEBUG-level logging for LOS calculations.
- * To enable it, set the log level for {@code megamek.common.LosEffects} to DEBUG in the logging
- * configuration. This will log: the LOS rule set in use, attacker/target positions and heights,
- * per-hex terrain accumulation (woods, smoke, buildings), and the final blocking decision with
- * all accumulated modifier totals. Useful for diagnosing LOS discrepancies in bug reports.</p>
+ * To enable it, set the log level for {@code megamek.common.LosEffects} to DEBUG in the logging configuration. This
+ * will log: the LOS rule set in use, attacker/target positions and heights, per-hex terrain accumulation (woods, smoke,
+ * buildings), and the final blocking decision with all accumulated modifier totals. Useful for diagnosing LOS
+ * discrepancies in bug reports.</p>
  *
  * @author Ben
  * @since October 14, 2002, 11:19 PM
@@ -257,10 +257,12 @@ public class LosEffects {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getPlantedFields() {
         return plantedFields;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getHeavyIndustrial() {
         return heavyIndustrial;
     }
@@ -318,6 +320,7 @@ public class LosEffects {
      *
      * @return Value of property targetCover.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isTargetCover() {
         return targetCover >= COVER_LOW_LEFT;
     }
@@ -344,6 +347,7 @@ public class LosEffects {
         return attackerCover >= COVER_LOW_LEFT;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getAttackerCover() {
         return attackerCover;
     }
@@ -1038,7 +1042,7 @@ public class LosEffects {
               Compute.isInBuilding(game,
                     ai.attackAbsHeight - game.getHex(ai.attackPos, ai.boardId).getLevel(),
                     ai.attackPos, ai.boardId)) {
-            los.setThruBldg(game.getBoard(ai.boardId).getBuildingAt(in.get(0)));
+            los.setThruBldg(game.getBoard(ai.boardId).getBuildingAt(in.getFirst()));
             // elevation differences count as building hexes passed through
             los.buildingLevelsOrHexes += (Math.abs((ai.attackAbsHeight - ai.attackHeight) -
                   (ai.targetAbsHeight - ai.targetHeight)));
@@ -1092,7 +1096,7 @@ public class LosEffects {
               Compute.isInBuilding(game,
                     ai.attackAbsHeight - game.getHex(ai.attackPos, ai.boardId).getLevel(),
                     ai.attackPos, ai.boardId)) {
-            los.setThruBldg(game.getBoard(ai.boardId).getBuildingAt(in.get(0)));
+            los.setThruBldg(game.getBoard(ai.boardId).getBuildingAt(in.getFirst()));
             // elevation differences count as building hexes passed through
             los.buildingLevelsOrHexes += (Math.abs((ai.attackAbsHeight - ai.attackHeight) -
                   (ai.targetAbsHeight - ai.targetHeight)));

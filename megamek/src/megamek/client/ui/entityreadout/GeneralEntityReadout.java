@@ -237,7 +237,7 @@ class GeneralEntityReadout implements EntityReadout {
                 if (!activeWeaponQuirkElements.isEmpty()) {
                     JoinedViewElement wq = new JoinedViewElement();
                     wq.add(weapon.getDesc() + " (" + entity.getLocationAbbr(weapon.getLocation()) + "): ");
-                    wq.add(activeWeaponQuirkElements.get(0));
+                    wq.add(activeWeaponQuirkElements.getFirst());
                     for (int i = 1; i < activeWeaponQuirkElements.size(); i++) {
                         wq.add(", ");
                         wq.add(activeWeaponQuirkElements.get(i));
@@ -334,23 +334,35 @@ class GeneralEntityReadout implements EntityReadout {
     protected ViewElement createSourceElement() {
         String source = entity.getSource();
         String sourceLabel = Messages.getString("MekView.Source");
-        var sourcebooks = new SourceBooks();
-        var book = sourcebooks.loadSourceBook(source);
-        if (book.isPresent()) {
-            if (book.get().getMul_url() != null) {
-                return new HyperLinkLine(sourceLabel, book.get().getMul_url(), book.get().getTitle());
-            } else if (book.get().getTitle() != null) {
-                source = Objects.requireNonNullElse(book.get().getTitle(), "");
-            }
+        List<String> sources = entity.getSources();
+        if (sources.isEmpty()) {
+            return new LabeledLine(sourceLabel, Messages.getString("MekView.Unknown"));
         }
 
-        if (source.isBlank()) {
-            return new LabeledLine(sourceLabel, Messages.getString("MekView.Unknown"));
-        } else if (source.contains(MMConstants.SOURCE_TEXT_SHRAPNEL)) {
-            return new HyperLinkLine(sourceLabel, MMConstants.BT_URL_SHRAPNEL, source);
-        } else {
+        var sourcebooks = new SourceBooks();
+        if (sources.size() == 1) {
+            var book = sourcebooks.loadSourceBook(source);
+            if (book.isPresent()) {
+                if (book.get().getMul_url() != null) {
+                    return new HyperLinkLine(sourceLabel, book.get().getMul_url(), book.get().getTitle());
+                } else if (book.get().getTitle() != null) {
+                    source = Objects.requireNonNullElse(book.get().getTitle(), "");
+                }
+            }
+
+            if (source.contains(MMConstants.SOURCE_TEXT_SHRAPNEL)) {
+                return new HyperLinkLine(sourceLabel, MMConstants.BT_URL_SHRAPNEL, source);
+            }
+
             return new LabeledLine(sourceLabel, source);
         }
+
+        String displaySources = sources.stream()
+              .map(sourceName -> sourcebooks.loadSourceBook(sourceName)
+                    .map(book -> Objects.requireNonNullElse(book.getTitle(), sourceName))
+                    .orElse(sourceName))
+              .collect(Collectors.joining(", "));
+        return new LabeledLine(sourceLabel, displaySources);
     }
 
     protected ViewElement createWeightElement() {

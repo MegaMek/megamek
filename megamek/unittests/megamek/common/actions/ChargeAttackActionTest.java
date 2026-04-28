@@ -57,6 +57,7 @@ class ChargeAttackActionTest {
     /**
      * Creates a mock Entity with the specified weight and wet status.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private Entity createMockEntity(double weight, boolean isWet) {
         Entity entity = mock(Entity.class);
         when(entity.getWeight()).thenReturn(weight);

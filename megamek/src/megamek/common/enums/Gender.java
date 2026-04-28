@@ -126,6 +126,7 @@ public enum Gender {
     /**
      * @return the external form of the internal gender
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Gender getExternalVariant() {
         return (this == OTHER_MALE) ? MALE : FEMALE;
     }
@@ -133,6 +134,7 @@ public enum Gender {
     /**
      * @return the internal form of the external gender
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Gender getInternalVariant() {
         return (this == MALE) ? OTHER_MALE : OTHER_FEMALE;
     }

@@ -210,6 +210,7 @@ public final class Force implements Serializable {
      * Returns true if the provided unit is among the force's direct members. Does NOT check if the unit is part of any
      * sub force.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean containsEntity(ForceAssignable unit) {
         return containsEntity(unit.getId());
     }

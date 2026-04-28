@@ -228,6 +228,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
      *
      * @param weapon The weapon to remove.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeWeaponFromBay(WeaponMounted weapon) {
         removeWeaponFromBay(weapon.getEquipmentNum());
     }
@@ -286,6 +287,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
      *
      * @see Entity#getEquipmentNum(Mounted)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeAmmoFromBay(int equipmentNum) {
         bayAmmo.remove(Integer.valueOf(equipmentNum));
     }
@@ -354,6 +356,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
      *
      * @return Whether the bay contains the equipment.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean bayContains(Mounted<?> mounted) {
         return bayContains(mounted.getEquipmentNum());
     }

@@ -527,6 +527,7 @@ class ForceDisplayMekCellFormatter {
         current.append(";>");
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     static void formatSpan(StringBuilder current, String hexColor) {
         current.append("<SPAN style=color:");
         current.append(hexColor);

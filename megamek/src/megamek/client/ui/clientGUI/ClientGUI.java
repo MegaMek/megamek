@@ -539,13 +539,14 @@ public class ClientGUI extends AbstractClientGUI
         return (BoardView) boardViews.get(0);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public BoardToastOverlay getToastOverlay() {
         return toastOverlay;
     }
 
     /**
-     * Shows a toast notification on the board view. Safe to call even when the toast overlay
-     * has not been initialized yet (e.g., during the lobby phase).
+     * Shows a toast notification on the board view. Safe to call even when the toast overlay has not been initialized
+     * yet (e.g., during the lobby phase).
      *
      * @param level the severity level determining color and default duration
      * @param text  the message text to display
@@ -1025,7 +1026,10 @@ public class ClientGUI extends AbstractClientGUI
             gameOptionsDialog.setBounds(0, 0, gameOptionsDialog.getWidth(), gameOptionsDialog.getHeight());
         }
         if (networkInformationDialog != null) {
-            networkInformationDialog.setBounds(0, 0, networkInformationDialog.getWidth(), networkInformationDialog.getHeight());
+            networkInformationDialog.setBounds(0,
+                  0,
+                  networkInformationDialog.getWidth(),
+                  networkInformationDialog.getHeight());
         }
         if (commonSettingsDialog != null) {
             commonSettingsDialog.setBounds(0, 0, commonSettingsDialog.getWidth(), commonSettingsDialog.getHeight());
@@ -1424,7 +1428,7 @@ public class ClientGUI extends AbstractClientGUI
         }
         return gameOptionsDialog;
     }
-    
+
     public NetworkInformationDialog getNetworkInformationDialog() {
         if (networkInformationDialog == null) {
             networkInformationDialog = new NetworkInformationDialog(this);
@@ -1965,7 +1969,7 @@ public class ClientGUI extends AbstractClientGUI
               != null)) {
             List<Entity> es = getClient().getGame().getEntitiesVector();
             if (!es.isEmpty()) {
-                getUnitDisplay().displayEntity(es.get(0));
+                getUnitDisplay().displayEntity(es.getFirst());
             }
         }
 
@@ -2278,6 +2282,7 @@ public class ClientGUI extends AbstractClientGUI
      *       to the player, and is only being returned so the calling function can see the answer to the question and
      *       the state of the "Show again?" question.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ConfirmDialog doWarnNoBotherDialog(String title, String question) {
         ConfirmDialog confirm = new ConfirmDialog(frame, title, question, true);
         confirm.setVisible(true);
@@ -2665,8 +2670,8 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Shows the Ruler/LOS dialog. This consolidates the old LOSDialog functionality into the RulerDialog which
-     * provides distance, to-hit modifiers, and an elevation cross-section diagram.
+     * Shows the Ruler/LOS dialog. This consolidates the old LOSDialog functionality into the RulerDialog which provides
+     * distance, to-hit modifiers, and an elevation cross-section diagram.
      */
     private void showLOSSettingDialog() {
         if (ruler != null) {
@@ -3062,7 +3067,7 @@ public class ClientGUI extends AbstractClientGUI
                         }
                         amsOptions.add(waaMsg);
                     }
-                    
+
                     // Updated AMS selection code for dealing with Multi_AMS, Playtest3 and standard selection
                     JList amsList = new JList(amsOptions.toArray());
                     JScrollPane amsScrollPane = new JScrollPane(amsList);
@@ -3074,7 +3079,7 @@ public class ClientGUI extends AbstractClientGUI
                         amsList.setSelectionModel(new AmsAssignGUI(amsList, 1));
                     }
 
-                    int amsResult = JOptionPane.showConfirmDialog(frame, 
+                    int amsResult = JOptionPane.showConfirmDialog(frame,
                           amsScrollPane,
                           Messages.getString("CFRAMSAssign.Message", entity.getDisplayName()),
                           JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE
@@ -3082,17 +3087,17 @@ public class ClientGUI extends AbstractClientGUI
 
                     int[] selectedItems = amsList.getSelectedIndices();
                     if (amsResult == JOptionPane.OK_OPTION && !(selectedItems.length == 1
-                          && amsList.getSelectedValue() == "NONE") ) {
+                          && amsList.getSelectedValue() == "NONE")) {
                         // Due to the "None" option, reduce all selected index values by 1.
                         // This makes "None" a -1 value.
                         for (int i = 0; i < selectedItems.length; i++) {
-                            selectedItems[i] = selectedItems[i]-1;
+                            selectedItems[i] = selectedItems[i] - 1;
                         }
                         client.sendAMSAssignCFRResponse(selectedItems);
                     } else {
                         client.sendAMSAssignCFRResponse(null);
                     }
-                    
+
                     break;
                 case CFR_APDS_ASSIGN:
                     if (entity == null) {
@@ -3216,7 +3221,7 @@ public class ClientGUI extends AbstractClientGUI
                           JOptionPane.QUESTION_MESSAGE,
                           null,
                           targetDescriptions.toArray(),
-                          targetDescriptions.get(0));
+                          targetDescriptions.getFirst());
                     if (input != null) {
                         for (int i = 0; i < targetDescriptions.size(); i++) {
                             if (input.equals(targetDescriptions.get(i))) {
@@ -3254,7 +3259,7 @@ public class ClientGUI extends AbstractClientGUI
                           JOptionPane.QUESTION_MESSAGE,
                           null,
                           TAGTargetDescriptions.toArray(),
-                          TAGTargetDescriptions.get(0));
+                          TAGTargetDescriptions.getFirst());
                     if (input != null) {
                         for (int i = 0; i < TAGTargetDescriptions.size(); i++) {
                             if (input.equals(TAGTargetDescriptions.get(i))) {
@@ -3649,6 +3654,7 @@ public class ClientGUI extends AbstractClientGUI
      *
      * @param cutHexes a map of board locations to turns remaining for saw clearing
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void showSawClearingHexes(Map<BoardLocation, Integer> cutHexes) {
         sawClearingSpriteHandler.setSawClearingSprites(cutHexes);
     }
@@ -3764,13 +3770,13 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Updates the Nova Networks menu enablement based on whether the local player
-     * has any Nova CEWS units in their force.
+     * Updates the Nova Networks menu enablement based on whether the local player has any Nova CEWS units in their
+     * force.
      */
     private void updateNovaNetworksMenu() {
         boolean hasNovaUnits = client.getGame().getEntitiesVector().stream()
-            .filter(entity -> entity.getOwner().equals(client.getLocalPlayer()))
-            .anyMatch(Entity::hasNovaCEWS);
+              .filter(entity -> entity.getOwner().equals(client.getLocalPlayer()))
+              .anyMatch(Entity::hasNovaCEWS);
         menuBar.setEnabled(VIEW_NOVA_NETWORKS, hasNovaUnits);
     }
 

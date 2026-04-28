@@ -57,12 +57,12 @@ import megamek.client.ui.clientGUI.boardview.spriteHandler.BoardViewSpriteHandle
 import megamek.client.ui.dialogs.MMDialogs.MMNarrativeStoryDialog;
 import megamek.client.ui.dialogs.minimap.MinimapDialog;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.board.BoardLocation;
 import megamek.common.Configuration;
-import megamek.common.units.Targetable;
+import megamek.common.board.BoardLocation;
 import megamek.common.event.GameScriptedMessageEvent;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Targetable;
 
 public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHandler {
 
@@ -242,7 +242,7 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
     private void showDialogs() {
         if (!UIUtil.isModalDialogDisplayed()) {
             while (!queuedStoryDialogs.isEmpty()) {
-                JDialog dialog = queuedStoryDialogs.remove(0);
+                JDialog dialog = queuedStoryDialogs.removeFirst();
                 dialog.setVisible(true);
             }
         }

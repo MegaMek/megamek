@@ -623,11 +623,11 @@ public interface IAero {
             roll.addModifier(isVertical ? 1 : 2, "Clear terrain in landing path");
         }
         for (List<Integer> terrain : terrains) {
-            int mod = Terrains.landingModifier(terrain.get(0), terrain.get(1));
+            int mod = Terrains.landingModifier(terrain.getFirst(), terrain.get(1));
             if (isVertical) {
                 mod = mod / 2 + mod % 2;
             }
-            roll.addModifier(mod, Terrains.getDisplayName(terrain.get(0), terrain.get(1)) + " in landing path");
+            roll.addModifier(mod, Terrains.getDisplayName(terrain.getFirst(), terrain.get(1)) + " in landing path");
         }
 
         return roll;

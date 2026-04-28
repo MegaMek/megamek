@@ -126,7 +126,7 @@ class MiscSearchTab extends JPanel {
         JButton chooseSourceButton = new JButton(new BooksIcon());
         chooseSourceButton.setToolTipText(Messages.getString("MekSelectorDialog.Search.Source.selectSource"));
         chooseSourceButton.addActionListener(e -> {
-            String result = SourceChooserDialog.showChoiceDialog(this, false);
+            String result = SourceChooserDialog.showChoiceDialog(this);
             if (result != null) {
                 tSource.setText(result);
             }

@@ -42,7 +42,7 @@ import megamek.common.equipment.EquipmentType;
  *
  * @author Arlith
  */
-interface FilterToken {
+public interface FilterToken {
 
     String TOKEN_SEPARATOR = "__";
     String TOKEN_ATLEAST = ">=";

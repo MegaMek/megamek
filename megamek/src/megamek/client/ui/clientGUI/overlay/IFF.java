@@ -35,8 +35,8 @@ package megamek.client.ui.clientGUI.overlay;
 
 import java.awt.Color;
 
-import megamek.common.units.Entity;
 import megamek.common.Player;
+import megamek.common.units.Entity;
 
 public enum IFF {
     PLAYER(Color.GREEN, new Color(0x005f00)),
@@ -69,6 +69,7 @@ public enum IFF {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static IFF getPlayerIff(Player localPlayer, Player player) {
         if (player.isEnemyOf(localPlayer)) {
             return ENEMY;

@@ -125,6 +125,7 @@ public enum FacingArc {
         this.function = function;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getArcCode() {
         return arcCode;
     }
@@ -141,6 +142,7 @@ public enum FacingArc {
         return this.function.apply(new ArcTarget(startAngle, endAngle, angle));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isInsideArc(Coords source, int facing, Targetable target) {
         if (source == null || target == null) {
             return true;

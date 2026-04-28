@@ -158,10 +158,12 @@ public class Ruleset {
         return new Ruleset();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getCustomRankBase() {
         return customRankBase;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public HashMap<Integer, String> getCustomRanks() {
         return customRanks;
     }
@@ -539,7 +541,7 @@ public class Ruleset {
                               f.getName(),
                               (wn.getAttributes().getNamedItem("eschName") == null) ? ""
                                     : " "
-                                    + wn.getAttributes().getNamedItem("eschName"),
+                                      + wn.getAttributes().getNamedItem("eschName"),
                               ex.getMessage());
                     }
                     if (fn != null) {

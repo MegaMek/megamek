@@ -93,7 +93,7 @@ public final class Revision {
 
     private String loadRevision(File revisionFile) {
         try {
-            return Files.readAllLines(revisionFile.toPath()).get(0);
+            return Files.readAllLines(revisionFile.toPath()).getFirst();
         } catch (IOException e) {
             return UNKNOWN;
         }

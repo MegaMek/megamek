@@ -34,7 +34,6 @@ package megamek.client.ui.dialogs.customMek;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,13 +43,13 @@ import java.util.Map.Entry;
 import javax.swing.JPanel;
 
 import megamek.client.ui.GBC2;
-import megamek.common.equipment.AmmoType.AmmoTypeEnum;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.exceptions.LocationFullException;
-import megamek.common.equipment.Mounted;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
@@ -161,7 +160,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             // to first mount
             // and adjust original shots.
             if (remainingWeight > 0) {
-                AmmoMounted m = row.ammoMounts.get(0);
+                AmmoMounted m = row.ammoMounts.getFirst();
                 m.setSize(m.getSize() + remainingWeight);
                 m.setOriginalShots((int) Math.floor(m.getSize() / (m.getType().getShots() * m.getTonnage())));
             }

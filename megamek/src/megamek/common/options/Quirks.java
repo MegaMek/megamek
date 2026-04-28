@@ -150,8 +150,8 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, QUIRK_NEG_NO_TWIST, false);
         addOption(negQuirk, QUIRK_NEG_NON_STANDARD, false);
         addOption(negQuirk,
-                QUIRK_NEG_OBSOLETE,
-                ""); // Comma-separated years: "obsoleteYear,reintroYear,obsoleteYear2,..."
+              QUIRK_NEG_OBSOLETE,
+              ""); // Comma-separated years: "obsoleteYear,reintroYear,obsoleteYear2,..."
         addOption(negQuirk, QUIRK_NEG_POOR_LIFE_SUPPORT, false);
         addOption(negQuirk, QUIRK_NEG_POOR_PERFORMANCE, false);
         addOption(negQuirk, QUIRK_NEG_POOR_SEALING, false);
@@ -321,23 +321,21 @@ public class Quirks extends AbstractOptions {
                 return true;
             }
 
-            if (en instanceof Warship) {
-                return quirk.is(QUIRK_NEG_POOR_PERFORMANCE);
-            } else if (en instanceof Jumpship) {
-                return quirk.is(QUIRK_POS_DOCKING_ARMS);
-            } else if (en instanceof Dropship) {
-                return quirk.isAnyOf(
+            return switch (en) {
+                case Warship ignored -> quirk.is(QUIRK_NEG_POOR_PERFORMANCE);
+                case Jumpship ignored -> quirk.is(QUIRK_POS_DOCKING_ARMS);
+                case Dropship ignored -> quirk.isAnyOf(
                       QUIRK_NEG_ATMOSPHERE_INSTABILITY, QUIRK_NEG_EM_INTERFERENCE_WHOLE,
                       QUIRK_NEG_LARGE_DROPPER, QUIRK_NEG_UNSTREAMLINED, QUIRK_NEG_WEAK_UNDERCARRIAGE,
                       QUIRK_POS_ATMOSPHERE_FLYER, QUIRK_POS_INTERNAL_BOMB, QUIRK_NEG_POOR_PERFORMANCE);
-            } else { // Fighter/SmallCraft
-                return quirk.isAnyOf(
-                      QUIRK_NEG_ATMOSPHERE_INSTABILITY, QUIRK_NEG_CRAMPED_COCKPIT, QUIRK_NEG_DIFFICULT_EJECT,
-                      QUIRK_NEG_EM_INTERFERENCE_WHOLE, QUIRK_NEG_POOR_LIFE_SUPPORT,
-                      QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_UNSTREAMLINED, QUIRK_NEG_WEAK_UNDERCARRIAGE,
-                      QUIRK_POS_ATMOSPHERE_FLYER, QUIRK_POS_COMBAT_COMPUTER, QUIRK_POS_FAST_RELOAD,
-                      QUIRK_POS_IMP_LIFE_SUPPORT, QUIRK_POS_INTERNAL_BOMB, QUIRK_NEG_NO_EJECT);
-            }
+                default ->  // Fighter/SmallCraft
+                      quirk.isAnyOf(
+                            QUIRK_NEG_ATMOSPHERE_INSTABILITY, QUIRK_NEG_CRAMPED_COCKPIT, QUIRK_NEG_DIFFICULT_EJECT,
+                            QUIRK_NEG_EM_INTERFERENCE_WHOLE, QUIRK_NEG_POOR_LIFE_SUPPORT,
+                            QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_UNSTREAMLINED, QUIRK_NEG_WEAK_UNDERCARRIAGE,
+                            QUIRK_POS_ATMOSPHERE_FLYER, QUIRK_POS_COMBAT_COMPUTER, QUIRK_POS_FAST_RELOAD,
+                            QUIRK_POS_IMP_LIFE_SUPPORT, QUIRK_POS_INTERNAL_BOMB, QUIRK_NEG_NO_EJECT);
+            };
         }
 
         if (en instanceof ProtoMek) {

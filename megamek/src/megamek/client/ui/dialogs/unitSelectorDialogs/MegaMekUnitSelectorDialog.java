@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -219,6 +219,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         return entity;
     }
 
+    @Override
     protected Entity refreshUnitView() {
         Entity selectedEntity = super.refreshUnitView();
         if (selectedEntity != null) {

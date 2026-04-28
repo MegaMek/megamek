@@ -326,9 +326,10 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     /**
      * Have the panel register itself as a listener wherever it's needed.
      * <p>
-     * According to http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a major bad no-no to perform
-     * these registrations before the constructor finishes, so this function has to be called after the panel is
-     * created. Please note, this restriction only applies to listeners for objects that aren't on the panel itself.
+     * According to <a href="http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html">IBM</a> it is a major
+     * bad no-no to perform these registrations before the constructor finishes, so this function has to be called after
+     * the panel is created. Please note, this restriction only applies to listeners for objects that aren't on the
+     * panel itself.
      */
     public void initializeListeners() {
         game.addGameListener(this);
@@ -533,7 +534,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         // DropShip Artillery cannot be switched to "Direct" Fire
-        final WeaponType weaponType = (WeaponType) weaponMounted.getType();
+        final WeaponType weaponType = weaponMounted.getType();
         if ((currentEntity() instanceof Dropship) && (weaponType instanceof ArtilleryWeapon)) {
             return;
         }
@@ -1171,7 +1172,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         // Do we have a single choice?
         if (targets.size() == 1) {
             // Return that choice.
-            choice = targets.get(0);
+            choice = targets.getFirst();
         } else if (targets.size() > 1) {
             // If we have multiple choices, display a selection dialog.
             choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),

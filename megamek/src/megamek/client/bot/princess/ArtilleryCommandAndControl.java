@@ -76,6 +76,7 @@ public class ArtilleryCommandAndControl {
         return artilleryTargets.contains(position);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeArtilleryTarget(Coords coords) {
         artilleryTargets.remove(coords);
     }
@@ -92,6 +93,7 @@ public class ArtilleryCommandAndControl {
         return artilleryOrder == ArtilleryOrder.HALT;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isArtilleryAuto() {
         return artilleryOrder == ArtilleryOrder.AUTO;
     }
@@ -130,6 +132,7 @@ public class ArtilleryCommandAndControl {
         return ammo == SpecialAmmo.MINE;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isSpecialAmmo() {
         return ammo != SpecialAmmo.NONE;
     }

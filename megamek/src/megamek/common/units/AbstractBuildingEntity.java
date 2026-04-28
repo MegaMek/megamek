@@ -61,12 +61,12 @@ import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
- * AbstractBuildingEntity represents a non-terrain building (e.g., a moving fortress).
- * This is the common implementation of the Mobile Structure rules from TO:AUE and Advanced Building rules from TO:AUE.
+ * AbstractBuildingEntity represents a non-terrain building (e.g., a moving fortress). This is the common implementation
+ * of the Mobile Structure rules from TO:AUE and Advanced Building rules from TO:AUE.
  * <br>
- * It contains a {@link Building} (which stores data in relative coordinates) and handles
- * translation between board coordinates and the Building's relative coordinate space.
- * Unlike BuildingTerrain, the translation is dynamic based on Entity's current position/facing.
+ * It contains a {@link Building} (which stores data in relative coordinates) and handles translation between board
+ * coordinates and the Building's relative coordinate space. Unlike BuildingTerrain, the translation is dynamic based on
+ * Entity's current position/facing.
  */
 public abstract class AbstractBuildingEntity extends Entity implements IBuilding {
 
@@ -126,10 +126,10 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         }
         // Find which relative CubeCoord maps to this board coordinate
         return relativeLayout.entrySet().stream()
-            .filter(e -> e.getValue().equals(boardCoords))
-            .map(Map.Entry::getKey)
-            .findFirst()
-            .orElse(boardCoords.toCube());
+              .filter(e -> e.getValue().equals(boardCoords))
+              .map(Map.Entry::getKey)
+              .findFirst()
+              .orElse(boardCoords.toCube());
     }
 
     @Override
@@ -187,14 +187,12 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         int location = weapon.getLocation();
         // Extract the level from the location number (location % building height)
         // Level 0 = ground floor, level 1 = first floor above ground, etc.
-        int level = location % getInternalBuilding().getBuildingHeight();
-        return level;
+        return location % getInternalBuilding().getBuildingHeight();
     }
 
     /**
-     * Override setPosition to populate the relativeLayout map when the entity is placed.
-     * This establishes the mapping between the building's internal relative coordinates
-     * and their actual board coordinates.
+     * Override setPosition to populate the relativeLayout map when the entity is placed. This establishes the mapping
+     * between the building's internal relative coordinates and their actual board coordinates.
      */
     @Override
     public void setPosition(Coords position) {
@@ -259,6 +257,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      *
      * @return Map of relative CubeCoords to their board Coords at the given position/facing
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Map<CubeCoords, Coords> computeLayoutForPositionAndFacing(Coords testPosition, int testFacing) {
         Map<CubeCoords, Coords> hypotheticalLayout = new HashMap<>();
 
@@ -415,7 +414,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         }
 
         Board board = game.getBoard(testBoardId);
-        Hex firstHex = board.getHex(coords.get(0));
+        Hex firstHex = board.getHex(coords.getFirst());
         if (firstHex == null) {
             return false;
         }
@@ -487,8 +486,8 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Updates the relativeLayout map to reflect the current building configuration.
-     * Maps each relative CubeCoord in the building to its actual board position.
+     * Updates the relativeLayout map to reflect the current building configuration. Maps each relative CubeCoord in the
+     * building to its actual board position.
      */
     private void updateRelativeLayout() {
         relativeLayout.clear();
@@ -543,7 +542,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     /**
      * Sets the primary facing.
      *
-     * @param facing
      */
     @Override
     public void setFacing(int facing) {
@@ -562,7 +560,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     /**
      * Can this entity torso/turret twist the given direction?
      *
-     * @param dir
      */
     @Override
     public boolean isValidSecondaryFacing(int dir) {
@@ -571,8 +568,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     /**
      * Returns the closest valid secondary facing to the given direction.
-     *
-     * @param dir
      *
      * @return the closest valid secondary facing.
      */
@@ -592,7 +587,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     private String[] getLocationStrings(String locationPrefix) {
-        ArrayList<String> locationAbbrvNames = new ArrayList<String>();
+        ArrayList<String> locationAbbrvNames = new ArrayList<>();
         if (getInternalBuilding() == null || getInternalBuilding().getOriginalCoordsList() == null) {
             return new String[] { locationPrefix + ' ' + LOC_BASE };
         }
@@ -621,11 +616,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     /**
      * Rolls the to-hit number
      *
-     * @param table
-     * @param side
-     * @param aimedLocation
-     * @param aimingMode
-     * @param cover
      */
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover) {
@@ -635,8 +625,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     /**
      * Rolls up a hit location
      *
-     * @param table
-     * @param side
      */
     @Override
     public HitData rollHitLocation(int table, int side) {
@@ -646,7 +634,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     /**
      * Gets the location that excess damage transfers to. That is, one location inwards.
      *
-     * @param hit
      */
     @Override
     public HitData getTransferLocation(HitData hit) {
@@ -676,7 +663,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     /**
      * Returns true if this weapon fires into the secondary facing arc. If false, assume it fires into the primary.
      *
-     * @param weaponId
      */
     @Override
     public boolean isSecondaryArcWeapon(int weaponId) {
@@ -748,7 +734,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     /**
      * Add in any piloting skill mods
      *
-     * @param roll
      */
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
@@ -811,11 +796,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         return false;
     }
 
-    @Override
-    public boolean doomedInVacuum() {
-        return false;
-    }
-
     /**
      * @return the total tonnage of communications gear in this entity
      */
@@ -853,8 +833,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     /**
      * Returns TRUE if the entity meets the requirements for crippling damage as detailed in TW pg 258. Excepting dead
      * or non-existing crew issues
-     *
-     * @param checkCrew
      *
      * @return boolean
      */
@@ -972,11 +950,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         return Entity.ETYPE_BUILDING_ENTITY;
     }
 
-
-    private void setInternalFromHex() {
-
-    }
-
     @Override
     public int getInternalForReal(int loc) {
         if (locationToRelativeCoordsMap.containsKey(loc)) {
@@ -989,8 +962,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     /**
      * Returns the amount of armor in the location specified, or IArmorState.ARMOR_NA, or IArmorState.ARMOR_DESTROYED.
      *
-     * @param loc
-     * @param rear
      */
     @Override
     public int getArmor(int loc, boolean rear) {
@@ -1226,8 +1197,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     /**
      * Once a building entity has set its position, we need to update the board itself and share that with the clients
      *
-     * @param boardId
-     * @param gameManager
      */
     public void updateBuildingEntityHexes(int boardId, TWGameManager gameManager) {
         Board board = getGame().getBoard(boardId);
@@ -1284,7 +1253,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
             gameManager.sendRemovedBuildings(removedBuildings);
         }
 
-        gameManager.sendNewBuildings(new Vector<IBuilding>(List.of(this)));
+        gameManager.sendNewBuildings(new Vector<>(List.of(this)));
 
         // Do this as a separate loop - All building terrains need added before we can initialize building exits
         for (Coords buildingCoords : getCoordsList()) {
@@ -1331,11 +1300,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
                 // Gun emplacements never connect (single hex buildings)
                 boolean isGunEmplacement = (hex.terrainLevel(Terrains.BLDG_CLASS) == IBuilding.GUN_EMPLACEMENT);
 
-                if (sameType && sameClass && !isGunEmplacement) {
-                    buildingTerrain.setExit(direction, true);
-                } else {
-                    buildingTerrain.setExit(direction, false);
-                }
+                buildingTerrain.setExit(direction, sameType && sameClass && !isGunEmplacement);
             } else {
                 // No building adjacent in this direction
                 buildingTerrain.setExit(direction, false);
@@ -1385,6 +1350,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         updateRelativeLayout();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private void applyCollapsedHexLocationDamage(Coords coords) {
         for (int floor = 0; floor < getInternalBuilding().getBuildingHeight(); floor++) {
             applyCollapseFloorLocationDamage(coords, floor);
@@ -1393,8 +1359,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     /**
      *
-     * @param coords
-     * @param floor
      */
     private void applyCollapseFloorLocationDamage(Coords coords, int floor) {
         for (int location : locationToRelativeCoordsMap.keySet()) {

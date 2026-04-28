@@ -33,6 +33,8 @@
  */
 package megamek.client.ui.panels.phaseDisplay;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
@@ -86,8 +88,6 @@ import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.Infantry;
 import megamek.logging.MMLogger;
-
-import static megamek.common.bays.Bay.UNSET_BAY;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private final static MMLogger logger = MMLogger.create(DeploymentDisplay.class);
@@ -658,8 +658,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             showCannotDeployHereMessage(coords);
             return null;
         } else if (elevationOptions.size() == 1) {
-            finalElevation = elevationOptions.get(0).elevation();
-            updateDeploymentCache(elevationOptions, elevationOptions.get(0));
+            finalElevation = elevationOptions.getFirst().elevation();
+            updateDeploymentCache(elevationOptions, elevationOptions.getFirst());
             finalFacing = promptForFacingIfNeeded(facingOptions, finalFacing);
         } else if (useLastDeployElevation(elevationOptions) && !coords.equals(entity.getPosition())) {
             // When the player clicks the same hex again, always ask for the elevation
@@ -817,7 +817,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     private void showCannotDeployHereMessage(Coords coords) {
-        String msg = Messages.getString("DeploymentDisplay.cantDeployInto", currentEntity().getShortName(), coords.getBoardNum());
+        String msg = Messages.getString("DeploymentDisplay.cantDeployInto",
+              currentEntity().getShortName(),
+              coords.getBoardNum());
         clientgui.addToast(ToastLevel.ERROR, msg, currentEntity());
     }
 
@@ -1000,7 +1002,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         }
                         setLoadEnabled(!getLoadableEntities().isEmpty());
                     } else {
-                        logger.error("Could not unload {} from {}", loaded.getShortName(), currentEntity().getShortName());
+                        logger.error("Could not unload {} from {}",
+                              loaded.getShortName(),
+                              currentEntity().getShortName());
                     }
                 }
             } else {

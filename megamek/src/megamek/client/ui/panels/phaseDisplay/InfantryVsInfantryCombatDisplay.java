@@ -272,9 +272,7 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
         if (attacks.isEmpty() && currentEntity() != null) {
             String title = "Skip Turn?";
             String body = "You haven't taken any combat actions. Skip turn anyway?";
-            if (!clientgui.doYesNoDialog(title, body)) {
-                return true;  // User cancelled
-            }
+            return !clientgui.doYesNoDialog(title, body);  // User canceled
         }
         return false;
     }
@@ -381,7 +379,7 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
         if (targets.isEmpty()) {
             return null;
         } else if (targets.size() == 1) {
-            return targets.get(0);
+            return targets.getFirst();
         } else {
             // Multiple targets - show choice dialog
             return TargetChoiceDialog.showSingleChoiceDialog(

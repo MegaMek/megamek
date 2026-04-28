@@ -157,6 +157,7 @@ public final class LobbyErrors {
         JOptionPane.showMessageDialog(owner, ENTITY_OR_FORCE);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static void showOnlyEmptyForce(JFrame owner) {
         JOptionPane.showMessageDialog(owner, FORCE_EMPTY);
     }
@@ -171,6 +172,10 @@ public final class LobbyErrors {
 
     public static void showCannotDisconnectMasterUnit(JFrame owner) {
         JOptionPane.showMessageDialog(owner, Messages.getString("LobbyErrors.cannotDisconnectMaster"));
+    }
+
+    public static void showADFReadError(JFrame owner, String message) {
+        JOptionPane.showMessageDialog(owner, message);
     }
 
     private LobbyErrors() {}

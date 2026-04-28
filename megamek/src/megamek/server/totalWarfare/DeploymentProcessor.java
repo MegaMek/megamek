@@ -33,11 +33,9 @@
 
 package megamek.server.totalWarfare;
 
-import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Hex;
-import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
@@ -52,7 +50,6 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.IAero;
 import megamek.common.units.IBuilding;
-import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.common.units.VTOL;
 import megamek.logging.MMLogger;

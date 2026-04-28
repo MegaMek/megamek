@@ -214,11 +214,7 @@ public class EMPMineEffectResolver {
         }
 
         // Airborne aerospace units are immune (grounded aerospace can be affected)
-        if (entity.isAero() && entity.isAirborne()) {
-            return true;
-        }
-
-        return false;
+        return entity.isAero() && entity.isAirborne();
     }
 
     /**

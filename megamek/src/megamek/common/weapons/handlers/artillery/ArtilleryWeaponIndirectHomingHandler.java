@@ -128,7 +128,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         try {
             convertHomingShotToEntityTarget();
             entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
-                  .getTarget(game) : null;
+                                                                                      .getTarget(game) : null;
         } catch (InvalidPacketDataException e) {
             LOGGER.error("Invalid packet data:", e);
             return false;
@@ -437,7 +437,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         } else if (allowed.size() == 1) {
             // Just use target 0...
             LOGGER.debug("convertHomingShotToEntityTarget: single target, auto-selecting");
-            newTarget = allowed.get(0).target;
+            newTarget = allowed.getFirst().target;
             target = newTarget;
             aaa.setTargetId(target.getId());
             aaa.setTargetType(target.getTargetType());

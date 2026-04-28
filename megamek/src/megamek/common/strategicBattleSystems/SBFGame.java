@@ -444,6 +444,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     /**
      * @return the preceding formation in the list of formations that is alive and eligible for the current game phase.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Optional<SBFFormation> getPreviousEligibleFormation() {
         return getPreviousEligibleFormation(BTObject.NONE);
     }
@@ -562,6 +563,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeActionHandler(SBFActionHandler handler) {
         if (!actionHandlers.remove(handler)) {
             logger.error("Tried to remove non-existent action handler {}!", handler);

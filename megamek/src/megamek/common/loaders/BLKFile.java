@@ -49,6 +49,7 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import megamek.common.QuirkEntry;
+import megamek.common.SourceBooks;
 import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.*;
@@ -138,7 +139,7 @@ public class BLKFile {
         }
 
         if (dataFile.exists("source")) {
-            entity.setSource(dataFile.getDataAsString("source")[0]);
+            entity.setSource(SourceBooks.formatSourceList(List.of(dataFile.getDataAsString("source"))));
         }
 
         if (dataFile.exists("faction")) {

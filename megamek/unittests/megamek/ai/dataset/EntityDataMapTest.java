@@ -112,7 +112,7 @@ class EntityDataMapTest {
 
         List<TestField> fieldOrder = map.getFieldOrder();
         assertEquals(2, fieldOrder.size());
-        assertEquals(TestField.FIELD_B, fieldOrder.get(0));
+        assertEquals(TestField.FIELD_B, fieldOrder.getFirst());
         assertEquals(TestField.FIELD_A, fieldOrder.get(1));
     }
 

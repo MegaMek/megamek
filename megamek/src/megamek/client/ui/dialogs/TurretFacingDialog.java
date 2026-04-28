@@ -130,7 +130,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         JPanel panWest = new JPanel(new BorderLayout());
         JPanel panEast = new JPanel(new BorderLayout());
         JPanel panSouth = new JPanel(new GridBagLayout());
-        panNorth.add(facings.get(0));
+        panNorth.add(facings.getFirst());
         panSouth.add(facings.get(3));
         panWest.add(facings.get(5), BorderLayout.NORTH);
         panWest.add(facings.get(4), BorderLayout.SOUTH);
@@ -208,7 +208,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         JPanel panWest = new JPanel(new BorderLayout());
         JPanel panEast = new JPanel(new BorderLayout());
         JPanel panSouth = new JPanel(new GridBagLayout());
-        panNorth.add(facings.get(0));
+        panNorth.add(facings.getFirst());
         panSouth.add(facings.get(3));
         panWest.add(facings.get(5), BorderLayout.NORTH);
         panWest.add(facings.get(4), BorderLayout.SOUTH);

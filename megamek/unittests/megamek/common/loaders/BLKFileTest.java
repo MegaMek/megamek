@@ -35,6 +35,7 @@ package megamek.common.loaders;
 import static megamek.common.bays.Bay.UNSET_BAY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -376,6 +377,36 @@ class BLKFileTest {
               "NONE faction should remain NONE after roundtrip");
     }
 
+    @Test
+    void multipleSourcesRoundtripThroughBLK() throws Exception {
+        Tank tank = createMinimalTank();
+        tank.setSource("TR:3039, RG29,, Custom Source");
+
+        BuildingBlock blk = BLKFile.getBlock(tank);
+        BLKTankFile loader = new BLKTankFile(blk);
+        Tank loaded = (Tank) loader.getEntity();
+
+        assertEquals("TR:3039,RG29,Custom Source", loaded.getSource(),
+              "Multiple sources should survive BLK roundtrip");
+    }
+
+    @Test
+    void multipleSourceBlockLinesLoadThroughBLK() throws Exception {
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData("Name", "Test");
+        blk.writeBlockData("year", 3025);
+        blk.writeBlockData("type", "IS");
+        blk.writeBlockData("source", new String[] { "TR:3039", "RG29", "Custom Source" });
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+        Tank tank = new Tank();
+
+        loader.setBasicEntityData(tank);
+
+        assertEquals("TR:3039,RG29,Custom Source", tank.getSource(),
+              "Multiple source lines should load as a source list");
+    }
+
     /**
      * Loads a BattleArmor entity from the test resources directory.
      */
@@ -384,7 +415,7 @@ class BLKFileTest {
         MekFileParser parser = new MekFileParser(file);
         Entity entity = parser.getEntity();
         assertNotNull(entity, "Failed to load entity from " + filename);
-        assertTrue(entity instanceof BattleArmor, "Entity should be BattleArmor");
+        assertInstanceOf(BattleArmor.class, entity, "Entity should be BattleArmor");
         return (BattleArmor) entity;
     }
 

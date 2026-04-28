@@ -68,6 +68,7 @@ public class WeightedDoubleMap<T> extends AbstractWeightedMap<Double, T> {
     /**
      * @return an optional random item from the weighted map, or Optional empty if it is empty
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Optional<T> randomOptionalItem(T[] except) {
         double randomKey = getRandomKey();
         double cumulativeWeight = 0.0;

@@ -3844,9 +3844,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     @Override
     public void stateChanged(ChangeEvent evt) {
         if (evt.getSource().equals(fovHighlightAlpha)) {
-            GUIP.setFovHighlightAlpha(Math.max(0, Math.min(255, fovHighlightAlpha.getValue())));
+            GUIP.setFovHighlightAlpha(Math.clamp(fovHighlightAlpha.getValue(), 0, 255));
         } else if (evt.getSource().equals(fovDarkenAlpha)) {
-            GUIP.setFovDarkenAlpha(Math.max(0, Math.min(255, fovDarkenAlpha.getValue())));
+            GUIP.setFovDarkenAlpha(Math.clamp(fovDarkenAlpha.getValue(), 0, 255));
         } else if (evt.getSource().equals(numStripesSlider)) {
             GUIP.setFovStripes(numStripesSlider.getValue());
         } else if (evt.getSource().equals(traceOverlayTransparencySlider)) {

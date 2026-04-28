@@ -307,6 +307,7 @@ final class LOSModifierCalculator {
      *
      * @return a record containing all six result strings (attacker/target for each mode)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     static LOSComparison computeAllModes(Game game, Coords attackerPos, Coords targetPos,
           int attackerHeight, int targetHeight, boolean attackerIsMek, boolean targetIsMek,
           boolean attackerIsAltitude, boolean targetIsAltitude) {
@@ -576,15 +577,16 @@ final class LOSModifierCalculator {
      * Adds target entity state modifiers from the first entity found at the target hex. Used by the manual path where
      * no specific target entity is known.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private static void addTargetEntityStateModifiers(ToHitData thd, LosEffects losEffects,
           Game game, Coords targetPos, int distance) {
         addTargetEntityStateModifiers(thd, losEffects, game, targetPos, distance, null);
     }
 
     /**
-     * Adds target entity state modifiers, respecting the local player's visibility under double-blind rules.
-     * Entities the player cannot see (or only detects as sensor returns) are skipped to avoid revealing their
-     * state (prone, immobile, hull-down, stuck) through the ruler's modifier text.
+     * Adds target entity state modifiers, respecting the local player's visibility under double-blind rules. Entities
+     * the player cannot see (or only detects as sensor returns) are skipped to avoid revealing their state (prone,
+     * immobile, hull-down, stuck) through the ruler's modifier text.
      *
      * @param localPlayer the local player for visibility filtering, or null for no filtering
      */

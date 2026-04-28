@@ -182,7 +182,7 @@ public class MegaMekButton extends JButton implements MouseListener {
         isBGTiled = skinSpec.tileBackground;
 
         if (!skinSpec.fontColors.isEmpty()) {
-            buttonColor = skinSpec.fontColors.get(0);
+            buttonColor = skinSpec.fontColors.getFirst();
         } else {
             buttonColor = defaultColor;
         }
@@ -225,7 +225,7 @@ public class MegaMekButton extends JButton implements MouseListener {
                 iconsLoaded = false;
             }
             java.net.URI imgURL = new MegaMekFile(Configuration.widgetsDir(),
-                  spec.backgrounds.get(0)).getFile().toURI();
+                  spec.backgrounds.getFirst()).getFile().toURI();
             backgroundIcon = new ImageIcon(imgURL.toURL());
             imgURL = new MegaMekFile(Configuration.widgetsDir(),
                   spec.backgrounds.get(1)).getFile().toURI();
@@ -330,6 +330,7 @@ public class MegaMekButton extends JButton implements MouseListener {
         return getActionCommand();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isIconsLoaded() {
         return iconsLoaded;
     }

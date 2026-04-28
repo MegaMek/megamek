@@ -32,6 +32,12 @@
  */
 package megamek.common.units;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import megamek.common.CriticalSlot;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
@@ -43,12 +49,6 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.loaders.MekFileParser;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Helper methods for constructing/changing units, including adding, moving and removing equipment. This happens mostly
@@ -100,13 +100,15 @@ public class ConstructionUtil {
 
         unit.getEquipment().remove(mount);
 
-        if (mount instanceof MiscMounted) {
-            unit.getMisc().remove(mount);
-        } else if (mount instanceof AmmoMounted) {
-            unit.getAmmo().remove(mount);
-        } else if (mount instanceof WeaponMounted) {
-            unit.getWeaponList().remove(mount);
-            unit.getTotalWeaponList().remove(mount);
+        switch (mount) {
+            case MiscMounted ignored -> unit.getMisc().remove(mount);
+            case AmmoMounted ignored -> unit.getAmmo().remove(mount);
+            case WeaponMounted ignored -> {
+                unit.getWeaponList().remove(mount);
+                unit.getTotalWeaponList().remove(mount);
+            }
+            default -> {
+            }
         }
 
         if (mount instanceof WeaponMounted && bayWeapons.containsKey(mount)) {

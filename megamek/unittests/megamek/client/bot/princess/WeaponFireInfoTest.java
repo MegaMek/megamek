@@ -56,7 +56,6 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
@@ -379,8 +378,7 @@ class WeaponFireInfoTest {
         AeroSpaceFighter aeroSpaceFighter = new AeroSpaceFighter();
         aeroSpaceFighter.setId(1);
         aeroSpaceFighter.setDeployed(true);
-        BombMounted heBomb = (BombMounted) aeroSpaceFighter.addBomb(EquipmentType.get("HEBomb"),
-              AeroSpaceFighter.LOC_NOSE);
+        aeroSpaceFighter.addBomb(EquipmentType.get("HEBomb"), AeroSpaceFighter.LOC_NOSE);
         WeaponMounted diveBomb = (WeaponMounted) aeroSpaceFighter.addEquipment(EquipmentType.get(
               "DiveBombAttack"), AeroSpaceFighter.LOC_NOSE);
         assertNotNull(aeroSpaceFighter.getBombs());

@@ -111,7 +111,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
      * Replace the previous init roll with a new one, and make a note that it was replaced. Used for Tactical Genius
      * special pilot ability (lvl 3).
      *
-     * @param breakdown The breakdown of all bonus components
+     * @param breakdown             The breakdown of all bonus components
      * @param initiativeAptitudeSPA The initiative aptitude SPA (Combat Sense or Combat Paralysis), or empty string
      */
     public void replaceRoll(InitiativeBonusBreakdown breakdown, String initiativeAptitudeSPA) {
@@ -128,6 +128,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
      * @param bonus                 The total bonus value
      * @param initiativeAptitudeSPA The initiative aptitude SPA (Combat Sense or Combat Paralysis), or empty string
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void replaceRoll(int bonus, String initiativeAptitudeSPA) {
         replaceRoll(InitiativeBonusBreakdown.fromTotal(bonus), initiativeAptitudeSPA);
     }
@@ -145,7 +146,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
                 rolls.sort(Comparator.naturalOrder());
             }
 
-            return rolls.get(0) + rolls.get(1);
+            return rolls.getFirst() + rolls.get(1);
         }
 
         return roll;

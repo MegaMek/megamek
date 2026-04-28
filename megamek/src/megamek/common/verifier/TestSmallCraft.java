@@ -53,7 +53,9 @@ import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.interfaces.ITechManager;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Aero;
+import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
 import megamek.common.units.SmallCraft;
 import megamek.common.util.StringUtil;
 
@@ -565,15 +567,28 @@ public class TestSmallCraft extends TestAero {
         return correct;
     }
 
-    @Override
-    public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
-        boolean illegal = false;
+    /**
+     * Returns true and adds error messages to the buffer when a weapon bay has no weapon or ammo for a weapon that is
+     * not in this bay, or when the minimum ammo per weapon requirement is not fulfilled (TM p.194). Returns false for
+     * units that don't use weapon bays.
+     *
+     * @param vessel The JS/WS/SS/DS to test
+     * @param buff   The error buffer to add messages to
+     *
+     * @return True when illegal
+     */
+    public static boolean hasIllegalBayAmmo(Entity vessel, StringBuffer buff) {
+        if (!(vessel instanceof Jumpship || vessel instanceof Dropship)) {
+            return false;
+        }
 
-        // For DropShips, make sure all bays have at least one weapon and that there are at least ten shots of ammo
-        // for each ammo-using weapon in the bay.
-        for (WeaponMounted bay : smallCraft.getWeaponBayList()) {
+        boolean illegal = false;
+        // Make sure all bays have at least one weapon and that there are at least
+        // ten shots of ammo for each ammo-using weapon in the bay.
+        for (WeaponMounted bay : vessel.getWeaponBayList()) {
             if (bay.getBayWeapons().isEmpty()) {
-                buff.append("Bay ").append(bay.getName()).append(" has no weapons\n");
+                buff.append("%s (%s) has no weapons\n"
+                      .formatted(bay.getName(), bay.getEntity().getLocationAbbr(bay.getLocation())));
                 illegal = true;
             }
             Map<AmmoTypeEnum, Integer> ammoWeaponCount = new HashMap<>();
@@ -584,11 +599,14 @@ public class TestSmallCraft extends TestAero {
                 }
                 ammoWeaponCount.merge(w.getType().getAmmoType(), 1, Integer::sum);
             }
-
-            for (AmmoMounted a : bay.getBayAmmo()) {
-                ammoTypeCount.merge(a.getType().getAmmoType(), a.getOriginalShots(), Integer::sum);
+            for (AmmoMounted ammo : bay.getBayAmmo()) {
+                AmmoType ammoType = ammo.getType();
+                // Must use the design spec number of shots, as the in-game remaining shots must be allowed to fall
+                // below 10 without making this unit illegal; the "originalShots" value cannot be used as it is
+                // meaningless during construction and could be any starting value depending on scenario
+                int ammoBins = (int) Math.round(ammo.getSize() / ammoType.getTonnage(vessel));
+                ammoTypeCount.merge(ammoType.getAmmoType(), ammoType.getShots() * ammoBins, Integer::sum);
             }
-
             for (AmmoTypeEnum at : ammoWeaponCount.keySet()) {
                 if (at != AmmoType.AmmoTypeEnum.NA) {
                     int needed = ammoWeaponCount.get(at) * 10;
@@ -597,17 +615,14 @@ public class TestSmallCraft extends TestAero {
                     } else if ((at == AmmoType.AmmoTypeEnum.AC_ROTARY)) {
                         needed *= 6;
                     }
-
                     if (!ammoTypeCount.containsKey(at) || ammoTypeCount.get(at) < needed) {
-                        buff.append("Bay ")
-                              .append(bay.getName())
-                              .append(" does not have the minimum 10 shots of ammo for each weapon\n");
+                        buff.append("%s (%s) does not have the minimum amount of ammo for each weapon\n"
+                              .formatted(bay.getName(), bay.getEntity().getLocationAbbr(bay.getLocation())));
                         illegal = true;
                         break;
                     }
                 }
             }
-
             for (AmmoTypeEnum at : ammoTypeCount.keySet()) {
                 if (!ammoWeaponCount.containsKey(at)) {
                     buff.append("Bay ").append(bay.getName()).append(" has ammo for a weapon not in the bay\n");
@@ -616,6 +631,12 @@ public class TestSmallCraft extends TestAero {
                 }
             }
         }
+        return illegal;
+    }
+
+    @Override
+    public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
+        boolean illegal = hasIllegalBayAmmo(smallCraft, buff);
 
         // Count lateral weapons to make sure both sides match
         Map<EquipmentType, Integer> leftFwd = new HashMap<>();

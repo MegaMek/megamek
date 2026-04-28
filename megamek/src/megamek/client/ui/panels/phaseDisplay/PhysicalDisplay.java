@@ -171,8 +171,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         public String getHotKeyDesc() {
             return switch (this) {
                 case PHYSICAL_NEXT ->
-                    "<BR>&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT)
-                    + "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+                      "<BR>&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT)
+                            + "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
                 case PHYSICAL_PUNCH -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUNCH);
                 case PHYSICAL_KICK -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_KICK);
                 case PHYSICAL_PUSH -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUSH);
@@ -705,7 +705,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             if ((en instanceof Mek)
                   && (target instanceof Entity)
                   && (game.getOptions()
-                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES) || game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))
+                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES) || game.getOptions()
+                  .booleanOption(OptionsConstants.PLAYTEST_3))
                   && (leftArm.getValue() != TargetRoll.IMPOSSIBLE)
                   && ((Mek) currentEntity()).hasRetractedBlade(Mek.LOC_LEFT_ARM)) {
                 leftBladeExtend = clientgui.doYesNoDialog(
@@ -717,7 +718,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                   && (target instanceof Entity)
                   && (rightArm.getValue() != TargetRoll.IMPOSSIBLE)
                   && (game.getOptions()
-                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES) || game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))
+                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES) || game.getOptions()
+                  .booleanOption(OptionsConstants.PLAYTEST_3))
                   && ((Mek) en).hasRetractedBlade(Mek.LOC_RIGHT_ARM)) {
                 rightBladeExtend = clientgui.doYesNoDialog(
                       Messages.getString("PhysicalDisplay.ExtendBladeDialog" + ".title"),
@@ -1006,7 +1008,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             message = Messages.getString("PhysicalDisplay.CounterGrappleDialog.message",
                   target.getDisplayName(),
                   toHit.getValueAsString(),
-                  Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+                  Compute.oddsAbove(toHit.getValue(),
+                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
                   toHit.getDesc());
         }
 
@@ -1136,7 +1139,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             int d_left = JumpJetAttackAction.getDamageFor(currentEntity(), JumpJetAttackAction.LEFT);
             int d_right = JumpJetAttackAction.getDamageFor(currentEntity(), JumpJetAttackAction.RIGHT);
             if ((d_left *
-                  Compute.oddsAbove(left.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))) >
+                  Compute.oddsAbove(left.getValue(),
+                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))) >
                   (d_right *
                         Compute.oddsAbove(right.getValue(),
                               currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)))) {
@@ -1171,7 +1175,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     private MiscMounted chooseClub() {
         java.util.List<MiscMounted> clubs = currentEntity().getClubs();
         if (clubs.size() == 1) {
-            return clubs.get(0);
+            return clubs.getFirst();
         } else if (clubs.size() > 1) {
             String[] names = new String[clubs.size()];
             for (int loop = 0; loop < names.length; loop++) {
@@ -1452,7 +1456,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             damageLeft = BrushOffAttackAction.getDamageFor(currentEntity(), BrushOffAttackAction.LEFT);
             left = Messages.getString("PhysicalDisplay.LAHit",
                   toHitLeft.getValueAsString(),
-                  Compute.oddsAbove(toHitLeft.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+                  Compute.oddsAbove(toHitLeft.getValue(),
+                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
                   damageLeft);
         }
 
@@ -1462,7 +1467,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             damageRight = BrushOffAttackAction.getDamageFor(currentEntity(), BrushOffAttackAction.RIGHT);
             right = Messages.getString("PhysicalDisplay.RAHit",
                   toHitRight.getValueAsString(),
-                  Compute.oddsAbove(toHitRight.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+                  Compute.oddsAbove(toHitRight.getValue(),
+                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
                   damageRight);
         }
 
@@ -1889,7 +1895,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
         if (targets.size() == 1) {
             // Return the single choice
-            return targets.get(0);
+            return targets.getFirst();
 
         } else if (targets.size() > 1) {
             // If we have multiple choices, display a selection dialog.
@@ -2192,10 +2198,12 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             }
 
             if (canAim) {
-                final int attackerElevation = currentEntity().getElevation() + game.getHexOf(currentEntity()).getLevel();
+                final int attackerElevation = currentEntity().getElevation() + game.getHexOf(currentEntity())
+                      .getLevel();
                 final int targetElevation = target.getElevation() + game.getHexOf(target).getLevel();
 
-                if ((target instanceof Mek) && (currentEntity() instanceof Mek) && (attackerElevation == targetElevation)) {
+                if ((target instanceof Mek) && (currentEntity() instanceof Mek) && (attackerElevation
+                      == targetElevation)) {
                     String[] options = { "punch", "kick" };
                     boolean[] enabled = { true, true };
 

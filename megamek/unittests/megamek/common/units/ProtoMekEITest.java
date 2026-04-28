@@ -45,6 +45,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
+import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -140,8 +141,11 @@ class ProtoMekEITest extends GameBoardTestCase {
     }
 
     private void setNeuralInterfaceMode(String mode) {
+        IOption option = new Option(null, OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE, IOption.STRING, mode);
         when(mockGameOptions.stringOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE))
               .thenReturn(mode);
+        when(mockGameOptions.getOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE))
+              .thenReturn(option);
     }
 
     @Nested

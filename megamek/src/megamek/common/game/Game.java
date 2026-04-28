@@ -228,6 +228,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     // Added public accessors for external game id
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getExternalGameId() {
         return externalGameId;
     }
@@ -288,8 +289,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Returns the map of hex locations being cleared by saws to turns remaining.
-     * Used by the board view to render cut indicators and tooltips.
+     * Returns the map of hex locations being cleared by saws to turns remaining. Used by the board view to render cut
+     * indicators and tooltips.
      */
     public Map<BoardLocation, Integer> getHexesBeingCut() {
         if (hexesBeingCut == null) {
@@ -637,6 +638,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * Returns the number of entities owned by the player, regardless of their status.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getAllEntitiesOwnedBy(Player player) {
         int count = 0;
         for (Entity entity : inGameTWEntities()) {
@@ -655,6 +657,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * @return the number of non-destroyed entities owned by the player
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getLiveEntitiesOwnedBy(Player player) {
         int count = 0;
         for (Entity entity : inGameTWEntities()) {
@@ -1611,9 +1614,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Returns an Iterator for all entities in _all_ of the coordinates provided.
-     * Coords must not be null.
-     * @param coordList     ArrayList of coordinates to check.
+     * Returns an Iterator for all entities in _all_ of the coordinates provided. Coords must not be null.
+     *
+     * @param coordList ArrayList of coordinates to check.
+     *
      * @return Iterator over the vector of entities.  The vector must exist to get the iterator.
      */
     public Iterator<Entity> getEntities(ArrayList<Coords> coordList) {
@@ -2064,6 +2068,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return the number of the first hidden entity that is valid for the specified turn
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getFirstHiddenEntityNum(final @Nullable GameTurn turn) {
         // Reviewers: Not sure if this is where to add filtering (this is hoe deployment does it) or if the right way
         // is to create a subclass of GameTurn.EntityClassTurn that overrides isValidEntity the latter seems more
@@ -2085,6 +2090,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * @return the number of the next hidden entity that is valid for the specified turn
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getNextHiddenEntityNum(GameTurn turn, int start) {
         if (start >= 0) {
             for (int i = start; i < inGameTWEntities().size(); i++) {
@@ -2126,6 +2132,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ArrayList<Integer> getPlayerEntityIds(Player player, boolean hide) {
         ArrayList<Integer> output = new ArrayList<>();
         for (Entity entity : inGameTWEntities()) {
@@ -2263,7 +2270,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * Removes the first turn found that the specified entity can move in. Used when a turn is played out of order.
      *
      * @param entity the entity to remove a turn for
+     *
      * @return the removed GameTurn, or null if not found
+     *
      * @throws Exception if called during the movement phase
      */
     public @Nullable GameTurn removeFirstTurnFor(final Entity entity) throws Exception {
@@ -2461,6 +2470,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return offboardArtilleryAttacks.elements();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getArtillerySize() {
         return offboardArtilleryAttacks.size();
     }
@@ -2740,22 +2750,22 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                         highTarget = rollTarget.elementAt(i);
                     }
                 }
-                if (entrySaved == true) {
+                if (entrySaved) {
                     saveRolls.addElement(rollsToRemove.elementAt(saveEntry));
                 }
             }
-            logger.debug("Playtest: Removing PSR rolls for " + entity.getDisplayName());
+            logger.debug("Playtest: Removing PSR rolls for {}", entity.getDisplayName());
             // Remove the saved element from our removal list
             for (int i = saveRolls.size() - 1; i > -1; i--) {
                 roll = pilotRolls.elementAt(saveRolls.elementAt(i));
-                logger.debug("Saving PSR roll: " + roll.getDesc());
+                logger.debug("Saving PSR roll: {}", roll.getDesc());
                 rollsToRemove.removeElementAt(saveRolls.elementAt(i));
             }
 
             // now, clear out remaining rolls from the PSRs
             for (int i = rollsToRemove.size() - 1; i > -1; i--) {
                 roll = pilotRolls.elementAt(rollsToRemove.elementAt(i));
-                logger.debug("Removing PSR roll: " + roll.getDesc());
+                logger.debug("Removing PSR roll: {}", roll.getDesc());
                 pilotRolls.removeElementAt(rollsToRemove.elementAt(i));
             }
             logger.debug("Done removing PSR rolls");
@@ -2812,6 +2822,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @param ah - The <code>AttackHandler</code> to remove
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeAttack(AttackHandler ah) {
         attacks.removeElement(ah);
     }
@@ -2871,6 +2882,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return forceVictory;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isIgnorePlayerDefeatVotes() {
         return ignorePlayerDefeatVotes;
     }
@@ -3001,6 +3013,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @return true if the specified player is either the victor, or is on the winning team. Best to call during
      *       GamePhase.VICTORY.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isPlayerVictor(Player player) {
         if (player.getTeam() == Player.TEAM_NONE) {
             return player.getId() == victoryPlayerId;
@@ -3486,6 +3499,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * A set of checks for aero units to make sure that the movement order is maintained
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean checkForValidSpaceStations(int playerId) {
         for (Entity entity : getPlayerEntities(getPlayer(playerId), false)) {
             if ((entity instanceof SpaceStation) && Objects.requireNonNull(getTurn()).isValidEntity(entity, this)) {
@@ -3495,6 +3509,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return false;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean checkForValidDropShips(int playerId) {
         for (Entity entity : getPlayerEntities(getPlayer(playerId), false)) {
             if ((entity instanceof Dropship) && Objects.requireNonNull(getTurn()).isValidEntity(entity, this)) {
@@ -3504,6 +3519,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return false;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean checkForValidSmallCraft(int playerId) {
         return getPlayerEntities(getPlayer(playerId), false).stream()
               .anyMatch(e -> (e instanceof SmallCraft) &&
@@ -3533,6 +3549,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return smokeCloudList;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeSmokeClouds(List<SmokeCloud> cloudsToRemove) {
         for (SmokeCloud cloud : cloudsToRemove) {
             smokeCloudList.remove(cloud);
@@ -3674,6 +3691,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * A check to ensure that the position cache is properly updated. This is only used for debugging purposes, and will
      * cause a number of things to slow down.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private void checkPositionCacheConsistency() {
         // Sanity check on the position cache This could be removed once we are confident the cache is working
         List<Integer> entitiesInCache = new ArrayList<>();

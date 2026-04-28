@@ -316,7 +316,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
         network.removeIf(e -> e.getId() == id);
 
         // now set the network ID of the remaining units to something different.
-        String newID = network.get(0).getOriginalNovaC3NetId(); // this resets
+        String newID = network.getFirst().getOriginalNovaC3NetId(); // this resets
         // the C3i network name to the default 'Nova.ID'
         for (Entity e : network) {
             setNewNetworkID(connID, e, newID);

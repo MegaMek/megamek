@@ -196,6 +196,7 @@ public class ASCard {
      *
      * @return The unit card image
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public BufferedImage getCardImage() {
         return getCardImage(WIDTH);
     }

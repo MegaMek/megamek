@@ -132,6 +132,7 @@ public record WeatherRestriction(Integer minAtmosphereLevel, Integer maxTemp) {
      * Given a set of planetary conditions, determine if they are valid for their current atmosphere/temperature
      * Currently validates fog, weather (precipitation) and wind strength
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static boolean IsRestricted(PlanetaryConditions conditions) {
         return IsFogRestricted(conditions.getFog().ordinal(),
               conditions.getAtmosphere().ordinal(),

@@ -78,8 +78,10 @@ public interface ICarryable extends InGameObject {
 
     /**
      * Returns true if the carryable object is able to be picked up.
-     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up
-     *                          ground-level objects
+     *
+     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up ground-level
+     *                          objects
+     *
      * @return true if the object can be picked up, false if it cannot
      */
     boolean canBePickedUp(boolean isCarrierHullDown);
@@ -93,12 +95,10 @@ public interface ICarryable extends InGameObject {
 
     /**
      * Despite being carried by a unit in the same manner, the type of object impacts when it should be damaged if a
-     * carried object's carrier is attacked.
-     *  - Cargo (TW 261) always has a chance to get damaged when the carrier is hit
-     *  - Handheld Weapons (TO:AUE 128) and Battle Armor (TO:AR 96) have a chance to be hit when the carrier is hit in
-     *  the arms
-     *  - Vehicles (TO:AR 95) follow the Grappling rules (TO:AR 88): If the attack misses, make another attack
-     *  against the other unit (NOT IMPLEMENTED)
+     * carried object's carrier is attacked. - Cargo (TW 261) always has a chance to get damaged when the carrier is hit
+     * - Handheld Weapons (TO:AUE 128) and Battle Armor (TO:AR 96) have a chance to be hit when the carrier is hit in
+     * the arms - Vehicles (TO:AR 95) follow the Grappling rules (TO:AR 88): If the attack misses, make another attack
+     * against the other unit (NOT IMPLEMENTED)
      */
     enum CarriedObjectDamageAllocation {
         ANY_HIT,
@@ -114,6 +114,7 @@ public interface ICarryable extends InGameObject {
             return this == ARM_HIT;
         }
 
+        @Deprecated(since = "0.51.0", forRemoval = true)
         public boolean isCarryableAttackedOnMiss() {
             return this == ON_MISS;
         }

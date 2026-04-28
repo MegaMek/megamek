@@ -475,6 +475,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_RED = new Color(225, 51, 51);
     private static final Color DEFAULT_GREEN = new Color(0, 212, 0);
     private static final Color DEFAULT_BLUE = new Color(64, 96, 228);
+    private static final Color DEFAULT_GOLD = new Color(200, 160, 30);
     private static final Color DEFAULT_MEDIUM_DARK_RED = new Color(150, 80, 80); // medium dark red
     private static final Color DEFAULT_MEDIUM_YELLOW = new Color(180, 180, 100);
     private static final Color DEFAULT_ORANGE = new Color(248, 140, 0);
@@ -594,7 +595,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(BOARD_MOVE_SPRINT_COLOR, DEFAULT_PINK);
         setDefault(BOARD_FIRE_SOLUTION_CAN_SEE_COLOR, DEFAULT_CYAN);
         setDefault(BOARD_FIRE_SOLUTION_NO_SEE_COLOR, DEFAULT_RED);
-        setDefault(BOARD_BUILDING_TEXT_COLOR, DEFAULT_BLUE);
+        setDefault(BOARD_BUILDING_TEXT_COLOR, DEFAULT_GOLD);
         setDefault(BOARD_LOW_FOLIAGE_COLOR, DEFAULT_MAP_BRIGHT_GREEN);
         setDefault(BOARD_TEXT_COLOR, DEFAULT_BLACK);
         setDefault(BOARD_SPACE_TEXT_COLOR, DEFAULT_LIGHT_GRAY);
@@ -1188,6 +1189,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getEntityOwnerLabelColor() {
         return store.getBoolean(ENTITY_OWNER_LABEL_COLOR);
     }
@@ -1252,38 +1254,47 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(FOV_SPOTTING_MODE);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getMapZoomIndex() {
         return store.getInt(MAP_ZOOM_INDEX);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorIncludeModel() {
         return store.getBoolean(MEK_SELECTOR_INCLUDE_MODEL);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorIncludeName() {
         return store.getBoolean(MEK_SELECTOR_INCLUDE_NAME);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorIncludeTons() {
         return store.getBoolean(MEK_SELECTOR_INCLUDE_TONS);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorIncludeBV() {
         return store.getBoolean(MEK_SELECTOR_INCLUDE_BV);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorIncludeYear() {
         return store.getBoolean(MEK_SELECTOR_INCLUDE_YEAR);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorIncludeLevel() {
         return store.getBoolean(MEK_SELECTOR_INCLUDE_LEVEL);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorIncludeCost() {
         return store.getBoolean(MEK_SELECTOR_INCLUDE_COST);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorShowAdvanced() {
         return store.getBoolean(MEK_SELECTOR_SHOW_ADVANCED);
     }
@@ -1356,6 +1367,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(RND_ARMY_SPLIT_POS);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getMinimapColours() {
         return store.getString(MINI_MAP_COLOURS);
     }
@@ -1576,6 +1588,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(RULER_SIZE_WIDTH);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getScrollSensitivity() {
         return store.getInt(SCROLL_SENSITIVITY);
     }
@@ -1760,6 +1773,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(ADVANCED_SAVE_LOBBY_ON_START);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setSaveLobbyOnStart(boolean value) {
         store.setValue(ADVANCED_SAVE_LOBBY_ON_START, value);
     }
@@ -1960,6 +1974,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(UNIT_DISPLAY_LOCATION, ((getInt(UNIT_DISPLAY_LOCATION) + 1) % 2));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setUnitDisplayLocation(int i) {
         store.setValue(UNIT_DISPLAY_LOCATION, i);
     }
@@ -2056,6 +2071,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SHOW_COORDS, !getBoolean(SHOW_COORDS));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setCoordsEnabled(boolean b) {
         store.setValue(SHOW_COORDS, b);
     }
@@ -2076,6 +2092,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP, state);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEntityOwnerLabelColor(boolean i) {
         store.setValue(ENTITY_OWNER_LABEL_COLOR, i);
     }
@@ -2144,34 +2161,42 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MAP_ZOOM_INDEX, zoomIndex);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorIncludeModel(boolean includeModel) {
         store.setValue(MEK_SELECTOR_INCLUDE_MODEL, includeModel);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorIncludeName(boolean includeName) {
         store.setValue(MEK_SELECTOR_INCLUDE_NAME, includeName);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorIncludeTons(boolean includeTons) {
         store.setValue(MEK_SELECTOR_INCLUDE_TONS, includeTons);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorIncludeBV(boolean includeBV) {
         store.setValue(MEK_SELECTOR_INCLUDE_BV, includeBV);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorIncludeYear(boolean includeYear) {
         store.setValue(MEK_SELECTOR_INCLUDE_YEAR, includeYear);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorIncludeLevel(boolean includeLevel) {
         store.setValue(MEK_SELECTOR_INCLUDE_LEVEL, includeLevel);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorIncludeCost(boolean includeCost) {
         store.setValue(MEK_SELECTOR_INCLUDE_COST, includeCost);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorShowAdvanced(boolean showAdvanced) {
         store.setValue(MEK_SELECTOR_SHOW_ADVANCED, showAdvanced);
     }
@@ -2321,6 +2346,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MINI_REPORT_LOCATION, ((getInt(MINI_REPORT_LOCATION) + 1) % 2));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMiniReportLocation(int i) {
         store.setValue(MINI_REPORT_LOCATION, i);
     }
@@ -2465,6 +2491,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(RULER_SIZE_WIDTH, i);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setScrollSensitivity(int i) {
         store.setValue(SCROLL_SENSITIVITY, i);
     }
@@ -2477,6 +2504,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SHOW_SENSOR_RANGE, state);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setShowMapHexPopup(boolean state) {
         store.setValue(SHOW_MAP_HEX_POPUP, state);
     }
@@ -2566,10 +2594,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(WINDOW_SIZE_WIDTH, i);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekInFirst(boolean b) {
         store.setValue(LOS_MEK_IN_FIRST, b);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekInSecond(boolean b) {
         store.setValue(LOS_MEK_IN_SECOND, b);
     }
@@ -2630,6 +2660,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SBF_SHEET_VALUE_FONT, font);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getRATTechLevel() {
         return store.getInt(RAT_TECH_LEVEL);
     }
@@ -2642,6 +2673,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(BOARD_EDIT_RANDOM_DIALOG_START, b);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setBoardSaveIncludeLicense(boolean includeLicense) {
         store.setValue(BOARD_SAVE_INCLUDE_LICENSE, includeLicense);
     }
@@ -3423,18 +3455,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getInt(BOT_COMMANDS_POS_Y);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setBotCommandsHeight(int i) {
         store.setValue(BOT_COMMANDS_HEIGHT, i);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getBotCommandsHeight() {
         return getInt(BOT_COMMANDS_HEIGHT);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setBotCommandsWidth(int i) {
         store.setValue(BOT_COMMANDS_WIDTH, i);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getBotCommandsWidth() {
         return getInt(BOT_COMMANDS_WIDTH);
     }
@@ -3466,6 +3502,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(SHOW_TRACE_OVERLAY);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setShowPlanetaryConditionsOverlay(boolean b) {
         store.setValue(SHOW_PLANETARY_CONDITIONS_OVERLAY, b);
     }

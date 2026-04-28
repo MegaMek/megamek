@@ -78,6 +78,7 @@ public enum SkillGeneratorMethod {
         return this == TOTAL_WARFARE;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isModifiedTotalWarfare() {
         return this == MODIFIED_TOTAL_WARFARE;
     }
@@ -90,6 +91,7 @@ public enum SkillGeneratorMethod {
         return this == CONSTANT;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isModifiedConstant() {
         return this == MODIFIED_CONSTANT;
     }

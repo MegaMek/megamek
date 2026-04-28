@@ -34,6 +34,8 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.battleArmor.BattleArmor;
@@ -212,15 +214,14 @@ public class EiImplantTest {
         @DisplayName("EI Interface equipment exists in equipment database")
         void eiInterfaceEquipmentExists() {
             EquipmentType eiInterface = EquipmentType.get("EIInterface");
-            assertTrue(eiInterface != null, "EI Interface should exist in equipment database");
+            assertNotNull(eiInterface, "EI Interface should exist in equipment database");
         }
 
         @Test
         @DisplayName("EI Interface has correct flag")
         void eiInterfaceHasCorrectFlag() {
             EquipmentType eiInterface = EquipmentType.get("EIInterface");
-            assertTrue(eiInterface != null && eiInterface instanceof MiscType,
-                  "EI Interface should be a MiscType");
+            assertInstanceOf(MiscType.class, eiInterface, "EI Interface should be a MiscType");
             MiscType miscType = (MiscType) eiInterface;
             assertTrue(miscType.hasFlag(MiscType.F_EI_INTERFACE),
                   "EI Interface should have F_EI_INTERFACE flag");
@@ -230,7 +231,7 @@ public class EiImplantTest {
         @DisplayName("EI Interface is zero weight")
         void eiInterfaceIsZeroWeight() {
             EquipmentType eiInterface = EquipmentType.get("EIInterface");
-            assertTrue(eiInterface != null, "EI Interface should exist");
+            assertNotNull(eiInterface, "EI Interface should exist");
             assertEquals(0, eiInterface.getTonnage(null), 0.001,
                   "EI Interface should be zero weight");
         }

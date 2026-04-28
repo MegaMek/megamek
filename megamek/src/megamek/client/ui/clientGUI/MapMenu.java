@@ -242,18 +242,13 @@ public class MapMenu extends JPopupMenu {
     }
 
     private static String getTargetCode(Targetable t) {
-        String targetCode;
-
-        if (t instanceof Entity) {
-            targetCode = "E|" + t.getId();
-        } else if (t instanceof BuildingTarget) {
-            targetCode = "B|" + t.getPosition().getX() + "|" + t.getPosition().getY() + "|" + t.getTargetType();
-        } else if (t instanceof MinefieldTarget) {
-            targetCode = "M|" + t.getPosition().getX() + "|" + t.getPosition().getY();
-        } else {
-            targetCode = "H|" + t.getPosition().getX() + "|" + t.getPosition().getY() + "|" + t.getTargetType();
-        }
-        return targetCode;
+        return switch (t) {
+            case Entity ignored -> "E|" + t.getId();
+            case BuildingTarget ignored ->
+                  "B|" + t.getPosition().getX() + "|" + t.getPosition().getY() + "|" + t.getTargetType();
+            case MinefieldTarget ignored -> "M|" + t.getPosition().getX() + "|" + t.getPosition().getY();
+            default -> "H|" + t.getPosition().getX() + "|" + t.getPosition().getY() + "|" + t.getTargetType();
+        };
     }
 
     private @Nullable JMenuItem createChargeMenuItem() {

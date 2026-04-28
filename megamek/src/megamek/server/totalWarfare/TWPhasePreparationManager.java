@@ -253,6 +253,8 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 break;
             case VICTORY:
                 gameManager.resetPlayersDone();
+                //finalize all ammo dumps now so they don't carry back into MHQ and get acted out in the next scenario
+                gameManager.resolveAmmoDumps();
                 gameManager.clearReports();
                 gameManager.send(gameManager.createAllReportsPacket());
                 gameManager.prepareVictoryReport();

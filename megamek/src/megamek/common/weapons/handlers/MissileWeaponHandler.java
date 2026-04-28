@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers;
 
+import static megamek.common.equipment.AmmoType.INCENDIARY_MOD;
+
 import java.io.Serial;
 import java.util.Enumeration;
 import java.util.List;
@@ -70,8 +72,6 @@ import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalWarfare.TWGameManager;
-
-import static megamek.common.equipment.AmmoType.INCENDIARY_MOD;
 
 /**
  * @author Sebastian Brocks
@@ -977,7 +977,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         if (bMissed && (id != vPhaseReport.size())) {
             vPhaseReport.get(id - 1).newlines--;
             vPhaseReport.get(id).indent(2);
-            vPhaseReport.get(vPhaseReport.size() - 1).newlines++;
+            vPhaseReport.getLast().newlines++;
         }
 
         if (!bMissed) {

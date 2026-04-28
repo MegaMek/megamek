@@ -429,6 +429,7 @@ public interface IGame {
         return getBoards().containsKey(boardId);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default void connectBoards(int lowerBoardId, int higherBoardId, Coords coords) {
         if (!boardExists(lowerBoardId) || !boardExists(higherBoardId)) {
             LOGGER.error("Can't set an enclosing board for non-existent boards.");
@@ -663,6 +664,7 @@ public interface IGame {
         return isOnSpaceMap(targetable.getBoardLocation());
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default boolean hasConnectedBoard(Board board) {
         return hasEnclosingBoard(board.getBoardId()) || !board.embeddedBoardCoords().isEmpty();
     }
@@ -809,7 +811,7 @@ public interface IGame {
                 return Optional.empty();
             } else {
                 hierarchy1.sort(Comparator.comparingInt(id -> getBoard(id).getBoardType().orderValue()));
-                return Optional.of(getBoard(hierarchy1.get(0)));
+                return Optional.of(getBoard(hierarchy1.getFirst()));
             }
         }
     }
@@ -844,6 +846,7 @@ public interface IGame {
 
     // endregion
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default Map<Integer, Integer> getTeamByPlayer() {
         Map<Integer, Integer> teamByPlayer = new HashMap<>();
         for (var player : getPlayersList()) {

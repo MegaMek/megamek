@@ -121,6 +121,7 @@ public final class Era {
     }
 
     /** @return True when this Era is part of the Succession Wars. */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isSuccessionWars() {
         return hasAnyFlagOf(EARLY_SUCCESSION_WARS, LATE_SUCCESSION_WARS_LOSTECH, LATE_SUCCESSION_WARS_RENAISSANCE);
     }
@@ -131,6 +132,7 @@ public final class Era {
     }
 
     /** @return True when the given date is part of this era. */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isThisEra(LocalDate date) {
         return Eras.isThisEra(date, this);
     }
@@ -145,6 +147,7 @@ public final class Era {
     /**
      * @return True when this is the last Era (it has no end date in the xml file).
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isFirstEra() {
         return Eras.isFirstEra(this);
     }

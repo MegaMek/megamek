@@ -839,9 +839,6 @@ class BasicPathRankerTest {
 
         // TEST CASE 12: Set friends to null (no friends) - we'll check this in test case 14
 
-        // Reset friends coordinates
-        friendsCoords = new Coords(10, 10);
-
         // TEST CASE 13: Set friends to null (no friends)
         expected = new RankedPath(-36.25,
               mockPath,

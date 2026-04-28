@@ -84,7 +84,8 @@ public class Building implements Serializable {
     private final int bldgClass;
 
     /**
-     * The height of the building (BLDG_ELEV). Individual hexes start with this height and can be set to 0 when destroyed.
+     * The height of the building (BLDG_ELEV). Individual hexes start with this height and can be set to 0 when
+     * destroyed.
      */
     private int buildingHeight;
 
@@ -161,19 +162,20 @@ public class Building implements Serializable {
     }
 
     /**
-     * Add a hex to this building at the given RELATIVE coordinates.
-     * All coordinates are relative to the building's origin (0,0,0).
-     *
-     * Building stores everything in its own local coordinate space using CubeCoords.
-     * BuildingTerrain and AbstractBuildingEntity handle translation between board Coords and relative CubeCoords.
+     * Add a hex to this building at the given RELATIVE coordinates. All coordinates are relative to the building's
+     * origin (0,0,0).
+     * <p>
+     * Building stores everything in its own local coordinate space using CubeCoords. BuildingTerrain and
+     * AbstractBuildingEntity handle translation between board Coords and relative CubeCoords.
      *
      * @param relativeCoords the relative <code>CubeCoords</code> of the hex within the building
-     * @param cf the construction factor for this hex
-     * @param armorValue the armor value for this hex
-     * @param basementType the basement type for this hex
-     * @param collapsed whether the basement is collapsed
+     * @param cf             the construction factor for this hex
+     * @param armorValue     the armor value for this hex
+     * @param basementType   the basement type for this hex
+     * @param collapsed      whether the basement is collapsed
      */
-    public void addHex(CubeCoords relativeCoords, int cf, int armorValue, BasementType basementType, boolean collapsed) {
+    public void addHex(CubeCoords relativeCoords, int cf, int armorValue, BasementType basementType,
+          boolean collapsed) {
         if (isIn(relativeCoords)) {
             return; // Already added
         }
@@ -260,7 +262,7 @@ public class Building implements Serializable {
      *
      * @return the <code>int</code> code of the building's construction type.
      */
-    
+
     public BuildingType getBuildingType() {
         return type;
     }
@@ -270,7 +272,7 @@ public class Building implements Serializable {
      *
      * @return the <code>int</code> code of the building's classification.
      */
-    
+
     public int getBldgClass() {
         return bldgClass;
     }
@@ -304,8 +306,8 @@ public class Building implements Serializable {
     }
 
     /**
-     * Roll what kind of basement this building has at the given RELATIVE coordinates.
-     * Building works in relative CubeCoords - BuildingTerrain/BuildingEntity handle board coord translation.
+     * Roll what kind of basement this building has at the given RELATIVE coordinates. Building works in relative
+     * CubeCoords - BuildingTerrain/BuildingEntity handle board coord translation.
      *
      * @param coords       the RELATIVE <code>CubeCoords</code> of the building hex to roll for
      * @param vPhaseReport the {@link Report} <code>Vector</code> containing the phase report
@@ -435,8 +437,8 @@ public class Building implements Serializable {
      * Set the height of a specific building hex. Call this method when a hex is destroyed (set to 0).
      *
      * @param coords the <code>CubeCoords</code> of the hex in question
-     * @param h      the <code>int</code> value of the building hex's height. This value must be greater than or equal to
-     *               zero.
+     * @param h      the <code>int</code> value of the building hex's height. This value must be greater than or equal
+     *               to zero.
      *
      * @throws IllegalArgumentException if the passed value is less than zero
      */
@@ -471,7 +473,7 @@ public class Building implements Serializable {
      *
      * @return the <code>String</code> name of this building.
      */
-    
+
     public String getName() {
         return name;
     }
@@ -533,17 +535,17 @@ public class Building implements Serializable {
         demolitionCharges.add(charge);
     }
 
-    
+
     public void removeDemolitionCharge(DemolitionCharge charge) {
         demolitionCharges.remove(charge);
     }
 
-    
+
     public List<DemolitionCharge> getDemolitionCharges() {
         return demolitionCharges;
     }
 
-    
+
     public void setDemolitionCharges(List<DemolitionCharge> charges) {
         demolitionCharges = charges;
     }
@@ -580,7 +582,7 @@ public class Building implements Serializable {
         basementCollapsed.put(coords, collapsed);
     }
 
-    
+
     public int getBoardId() {
         return boardId;
     }

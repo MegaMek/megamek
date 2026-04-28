@@ -321,7 +321,7 @@ public class AeroPathUtil {
         }
         if (!enemies.isEmpty()) {
             // Calc center of allies _of the enemy_, if possible
-            centroid = PathRanker.calcAllyCenter(enemies.get(0).getId(), enemies, game);
+            centroid = PathRanker.calcAllyCenter(enemies.getFirst().getId(), enemies, game);
             enemyDir = mover.getPosition().direction((centroid != null) ? centroid : game.getBoard().getCenter());
             LOGGER.debug("Enemies are over in {}", ClientCommand.getDirection(enemyDir));
         }
@@ -343,22 +343,22 @@ public class AeroPathUtil {
 
             if (leastLoc != Dropship.LOC_NONE) {
                 // Turn away, turn away, turn away, from enemy!
-                switch (leastLoc) {
-                    case Dropship.LOC_NOSE:
+                dir = switch (leastLoc) {
+                    case Dropship.LOC_NOSE ->
                         // Turn 180, face away from enemy.
-                        dir = (enemyDir + 3) % 6;
-                    case Dropship.LOC_LEFT_WING:
+                          (enemyDir + 3) % 6;
+                    case Dropship.LOC_LEFT_WING ->
                         // Turn left two hex sides.
-                        dir = (enemyDir + 4) % 6;
-                    case Dropship.LOC_RIGHT_WING:
+                          (enemyDir + 4) % 6;
+                    case Dropship.LOC_RIGHT_WING ->
                         // Turn right two hex sides.
-                        dir = (enemyDir + 2) % 6;
-                    case Dropship.LOC_AFT:
-                    case Dropship.LOC_WINGS:
-                    case Dropship.LOC_FUSELAGE:
+                          (enemyDir + 2) % 6;
+                    case Dropship.LOC_AFT, Dropship.LOC_WINGS, Dropship.LOC_FUSELAGE ->
                         // Default is nose to enemy. If this should be different, suggest using NOSE case.
-                        dir = enemyDir;
-                }
+                          enemyDir;
+                    default -> dir;
+                };
+
                 LOGGER.debug("We've taken a lot of damage to our {}", mover.getLocationAbbr(leastLoc));
                 LOGGER.debug("nTurning to the {} to protect ourselves!", ClientCommand.getDirection(dir));
             }

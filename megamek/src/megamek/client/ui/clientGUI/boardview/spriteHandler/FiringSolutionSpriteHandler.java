@@ -51,7 +51,6 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
-import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.WeaponMounted;
@@ -98,7 +97,7 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
                           ammo.get().getType().getMunitionType())));
 
         // Determine which entities are spotted / Narc'ed
-        HashMap<Entity, Entity> spottedEntities = new HashMap<Entity, Entity>();
+        HashMap<Entity, Entity> spottedEntities = new HashMap<>();
         for (Entity spotter : game.getEntitiesVector()) {
             // Targets spotted by other entities should be "visible" in this view
             if (!spotter.isEnemyOf(entity) && spotter.isSpotting()) {
@@ -109,8 +108,8 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
             // They should also be "visible" as viable targets, if the attacker has compatible ammo.
             if (spotter.hasAnyTypeNarcPodsAttached() && narcCapableAmmo) {
                 int teamId = currentEntity.getOwner().getTeam();
-                if (spotter.isNarcedBy(teamId) || spotter.isINarcedBy(teamId) ) {
-                   spottedEntities.put(spotter, spotter);
+                if (spotter.isNarcedBy(teamId) || spotter.isINarcedBy(teamId)) {
+                    spottedEntities.put(spotter, spotter);
                 }
             }
         }

@@ -44,6 +44,7 @@ public class ActivateBloodStalkerAction extends AbstractEntityAction {
         return targetID;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setTargetID(int value) {
         targetID = value;
     }

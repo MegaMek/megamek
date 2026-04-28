@@ -87,7 +87,7 @@ public record InitiativeBonusBreakdown(
     /**
      * Returns the total initiative bonus applying proper stacking rules.
      * <p>
-     * Per Xotl ruling (https://battletech.com/forums/index.php?topic=85848.0):
+     * Per Xotl ruling (<a href="https://battletech.com/forums/index.php?topic=85848.0">BT Forums</a>):
      * <ul>
      *   <li>Negative modifiers stack cumulatively (no floor limit)</li>
      *   <li>Positive modifiers do NOT stack (only the highest one applies)</li>

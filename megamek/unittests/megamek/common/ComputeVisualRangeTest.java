@@ -46,7 +46,6 @@ import java.util.Vector;
 import java.util.stream.Stream;
 
 import megamek.common.board.Board;
-import megamek.common.board.BoardType;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
@@ -246,8 +245,8 @@ public class ComputeVisualRangeTest {
     }
 
     /**
-     * Nested test class for visual range testing at different altitudes on a low altitude board.
-     * Tests altitudes 1 through 10 to verify visibility of targets at different elevations.
+     * Nested test class for visual range testing at different altitudes on a low altitude board. Tests altitudes 1
+     * through 10 to verify visibility of targets at different elevations.
      */
     @Nested
     public class LowAltitudeVisibilityTests {
@@ -296,8 +295,8 @@ public class ComputeVisualRangeTest {
         }
 
         /**
-         * Tests air-to-air visibility at different altitudes on a low altitude board.
-         * Verifies that an airborne entity at a specific altitude can see other airborne targets at different altitudes.
+         * Tests air-to-air visibility at different altitudes on a low altitude board. Verifies that an airborne entity
+         * at a specific altitude can see other airborne targets at different altitudes.
          *
          * @param altitude the altitude of the attacking entity (1-10)
          */
@@ -330,8 +329,8 @@ public class ComputeVisualRangeTest {
 
                 // Act & Assert - Close range should be visible
                 assertTrue(Compute.inVisualRange(mockGame, mockLos, mockAttackingEntity, mockTarget),
-                    String.format("Entity at altitude %d should see airborne target at altitude %d, range 10",
-                        altitude, targetAltitude));
+                      String.format("Entity at altitude %d should see airborne target at altitude %d, range 10",
+                            altitude, targetAltitude));
             }
         }
 
@@ -364,7 +363,7 @@ public class ComputeVisualRangeTest {
 
             // Act & Assert - Target should be out of visual range
             assertFalse(Compute.inVisualRange(mockGame, mockLos, mockAttackingEntity, mockTarget),
-                String.format("Entity at altitude %d should NOT see airborne target at range 150", altitude));
+                  String.format("Entity at altitude %d should NOT see airborne target at range 150", altitude));
         }
 
         /**
@@ -396,13 +395,13 @@ public class ComputeVisualRangeTest {
 
             // Act & Assert - Should see target at same altitude
             assertTrue(Compute.inVisualRange(mockGame, mockLos, mockAttackingEntity, mockTarget),
-                String.format("Entities at same altitude %d should see each other at range 20", altitude));
+                  String.format("Entities at same altitude %d should see each other at range 20", altitude));
         }
     }
 
     /**
-     * Nested test class for air-to-air visual range testing on ground maps.
-     * Tests altitudes 1 through 10 to verify visibility of airborne targets at 30 hexes distance.
+     * Nested test class for air-to-air visual range testing on ground maps. Tests altitudes 1 through 10 to verify
+     * visibility of airborne targets at 30 hexes distance.
      */
     @Nested
     public class AirToAirOnGroundMapTests {
@@ -452,8 +451,8 @@ public class ComputeVisualRangeTest {
         }
 
         /**
-         * Tests that an airborne attacker at various altitudes can see another aircraft 30 hexes away.
-         * Verifies air-to-air visibility on ground maps.
+         * Tests that an airborne attacker at various altitudes can see another aircraft 30 hexes away. Verifies
+         * air-to-air visibility on ground maps.
          *
          * @param altitude the altitude of the attacking entity (1-10)
          */
@@ -480,7 +479,7 @@ public class ComputeVisualRangeTest {
 
             // Act & Assert - Attacker should see target at 30 hexes
             assertTrue(Compute.inVisualRange(mockGame, mockLos, mockAttackingEntity, mockTarget),
-                String.format("Aero at altitude %d should see another aero at 30 hexes on ground map", altitude));
+                  String.format("Aero at altitude %d should see another aero at 30 hexes on ground map", altitude));
         }
 
         /**
@@ -514,8 +513,8 @@ public class ComputeVisualRangeTest {
 
                 // Act & Assert - Should see target at different altitudes
                 assertTrue(Compute.inVisualRange(mockGame, mockLos, mockAttackingEntity, mockTarget),
-                    String.format("Aero at altitude %d should see aero at altitude %d, 30 hexes away",
-                        attackerAltitude, targetAltitude));
+                      String.format("Aero at altitude %d should see aero at altitude %d, 30 hexes away",
+                            attackerAltitude, targetAltitude));
             }
         }
     }

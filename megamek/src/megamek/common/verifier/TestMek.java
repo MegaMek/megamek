@@ -297,6 +297,7 @@ public class TestMek extends TestEntity {
         return location == Mek.LOC_HEAD;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isEngineLocation(int location) {
         return mek.hasSystem(Mek.SYSTEM_ENGINE, location);
     }
@@ -406,6 +407,7 @@ public class TestMek extends TestEntity {
         return true;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean criticalSlotsAllocated(Entity entity, Mounted<?> mounted, Vector<Serializable> allocation,
           StringBuffer buff) {
         int location = mounted.getLocation();
@@ -595,7 +597,8 @@ public class TestMek extends TestEntity {
                 }
 
             } else if ((mek.getOArmor(loc) + (mek.hasRearArmor(loc) ? mek
-                  .getOArmor(loc, true) : 0)) > (2 * mek.getOInternal(loc))) {
+                                                                      .getOArmor(loc, true) : 0)) > (2
+                  * mek.getOInternal(loc))) {
                 buff.append(printArmorLocation(loc))
                       .append(printArmorLocProp(loc,
                             2 * mek.getOInternal(loc)))

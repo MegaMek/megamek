@@ -67,7 +67,7 @@ import org.mockito.Mockito;
 /**
  * Tests for {@link AbstractBuildingEntity} that aren't tested by {@link IBuildingTests}. If the method is from the
  * {@link Building} interface, the test should probably be in {@code IBuildingTests}.
- *
+ * <p>
  * Many of these tests do not have their final values - this class is not yet fully implemented. Many of these
  * method's'll be removed from this class as they're overriden.
  */
@@ -101,10 +101,10 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
      */
     static Stream<AbstractBuildingEntity> buildingProvider() {
         return Stream.of(
-            createBuildingEntity(BuildingType.LIGHT),
-            createBuildingEntity(BuildingType.MEDIUM),
-            createBuildingEntity(BuildingType.HEAVY),
-            createBuildingEntity(BuildingType.HARDENED)/*,
+              createBuildingEntity(BuildingType.LIGHT),
+              createBuildingEntity(BuildingType.MEDIUM),
+              createBuildingEntity(BuildingType.HEAVY),
+              createBuildingEntity(BuildingType.HARDENED)/*,
             createMobileStructure(BuildingType.LIGHT),
             createMobileStructure(BuildingType.MEDIUM),
             createMobileStructure(BuildingType.HEAVY),
@@ -121,6 +121,7 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
     /**
      * Not yet implemented
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private static AbstractBuildingEntity createMobileStructure(BuildingType type) {
         AbstractBuildingEntity building = new MobileStructure(type, 1);
         return setupBuilding(building);

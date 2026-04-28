@@ -424,6 +424,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      *
      * @return a list of all computed shortest paths.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public List<MovePath> getAllComputedPathsUnordered() {
         Collection<Deque<MovePath>> queues = getPathCostMap().values();
         List<MovePath> l = new ArrayList<>();

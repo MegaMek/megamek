@@ -145,6 +145,7 @@ class GhostTargetHelper extends AbstractTWRuleHandler {
      * Clears all pending ghost target actions and reports. Called at the start of PRE_FIRING to prevent accumulation
      * across rounds.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     void clearPending() {
         LOGGER.info("[GhostTarget] clearPending: clearing {} actions, {} reports",
               pendingActions.size(), pendingReports.size());

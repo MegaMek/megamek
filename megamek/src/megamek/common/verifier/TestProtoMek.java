@@ -36,7 +36,6 @@ package megamek.common.verifier;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.codeUtilities.MathUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.ArmorType;
@@ -514,6 +513,7 @@ public class TestProtoMek extends TestEntity {
      *
      * @return The minimum walk MP
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getMinimumWalkMP(ProtoMek proto) {
         if (proto.isGlider()) {
             return 4;
@@ -551,7 +551,7 @@ public class TestProtoMek extends TestEntity {
         if (quadOrGlider) {
             moveFactor -= 2;
         }
-        int rating = MathUtility.clamp((int) (moveFactor * tonnage), 1, 400);
+        int rating = Math.clamp((int) (moveFactor * tonnage), 1, 400);
         if (rating > 40) {
             int modFive = rating % 5;
             if (modFive > 0) {

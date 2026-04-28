@@ -145,6 +145,7 @@ public class CombatVehicleEscapePod extends EjectedCrew {
     /**
      * @return true if the crew is still inside the pod
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isCrewInside() {
         return crewInside;
     }
@@ -240,9 +241,7 @@ public class CombatVehicleEscapePod extends EjectedCrew {
         var hex = getGame().getBoard().getHex(getPosition());
         if (hex != null && hex.containsTerrain(Terrains.WATER)) {
             int depth = hex.terrainLevel(Terrains.WATER);
-            if (depth > 0) {
-                return false; // Can't exit into water
-            }
+            return depth <= 0; // Can't exit into water
         }
 
         return true;

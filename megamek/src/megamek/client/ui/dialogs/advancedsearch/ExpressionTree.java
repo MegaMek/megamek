@@ -38,7 +38,7 @@ package megamek.client.ui.dialogs.advancedsearch;
  *
  * @author Arlith
  */
-class ExpressionTree {
+public class ExpressionTree {
     private final ExpNode root;
 
     public ExpressionTree() {

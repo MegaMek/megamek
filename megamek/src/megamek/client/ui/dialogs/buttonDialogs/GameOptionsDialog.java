@@ -197,7 +197,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         for (List<DialogOptionComponentYPanel> comps : optionComps.values()) {
             // Each option in the list should have the same value, so picking the first is fine
             if (!comps.isEmpty()) {
-                DialogOptionComponentYPanel comp = comps.get(0);
+                DialogOptionComponentYPanel comp = comps.getFirst();
                 if (comp.hasChanged()) {
                     changed.addElement(comp.changedOption());
                     comp.setOptionChanged(false);
@@ -221,7 +221,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             // Each option in the list should have the same value, so picking
             // the first is fine
             if (!comps.isEmpty()) {
-                IBasicOption option = comps.get(0).changedOption();
+                IBasicOption option = comps.getFirst().changedOption();
                 output.addElement(option);
             }
         }
@@ -264,7 +264,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         for (List<DialogOptionComponentYPanel> comps : optionComps.values()) {
             // Each option in the list should have the same value, so picking the first is fine
             if (!comps.isEmpty()) {
-                DialogOptionComponentYPanel comp = comps.get(0);
+                DialogOptionComponentYPanel comp = comps.getFirst();
                 if (isUnofficialOption(comp)) {
                     comp.setVisible(shouldShow(comp));
                     if (!shouldShow(comp)) {
@@ -804,7 +804,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 for (List<DialogOptionComponentYPanel> comps : optionComps.values()) {
                     // Each option in the list should have the same value, so picking the first is fine
                     if (!comps.isEmpty()) {
-                        DialogOptionComponentYPanel comp = comps.get(0);
+                        DialogOptionComponentYPanel comp = comps.getFirst();
                         if (comp.hasChanged()) {
                             changed.add(comp.getOption());
                         }
@@ -816,7 +816,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 for (IOption opt : changed) {
                     List<DialogOptionComponentYPanel> comps = optionComps.get(opt.getName());
                     if (!comps.isEmpty()) {
-                        comps.get(0).setOptionChanged(true);
+                        comps.getFirst().setOptionChanged(true);
                     }
                 }
             }
@@ -831,7 +831,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                     return;
                 }
             }
-            optionComps.get(OptionsConstants.BASE_HIDE_UNOFFICIAL).get(0).setSelected(!butUnofficial.isSelected());
+            optionComps.get(OptionsConstants.BASE_HIDE_UNOFFICIAL).getFirst().setSelected(!butUnofficial.isSelected());
             toggleOptions();
             refreshSearchPanel();
 

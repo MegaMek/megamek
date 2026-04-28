@@ -86,6 +86,7 @@ public class WoodsClearingAttackAction extends AbstractAttackAction {
         this.targetBoardId = targetBoardId;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getSawEquipmentId() {
         return sawEquipmentId;
     }

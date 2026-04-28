@@ -377,4 +377,13 @@ public class EquipmentTypeLookup {
 
     @EquipmentName
     public static final String SV_EXTERNAL_HARDPOINT = "External Stores Hardpoint";
+
+    @EquipmentName
+    public static final String NLRT5 = "ISNLRT05";
+    @EquipmentName
+    public static final String NLRT10 = "ISNLRT10";
+    @EquipmentName
+    public static final String NLRT15 = "ISNLRT15";
+    @EquipmentName
+    public static final String NLRT20 = "ISNLRT20";
 }

@@ -32,25 +32,24 @@
  */
 package megamek.common.verifier;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static megamek.testUtilities.MMTestUtilities.getEntityForUnitTesting;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import megamek.common.units.Jumpship;
-import megamek.common.units.SmallCraft;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
+import megamek.common.units.SmallCraft;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * Regression tests for bay ammo validation in {@link TestSmallCraft} and
- * {@link TestAdvancedAerospace}. Verifies that design validity is based on
- * design-spec ammo counts ({@code getOriginalShots()}) rather than current
- * remaining shots ({@code getUsableShotsLeft()}), preventing campaign units
- * with partially expended ammo from being flagged as illegal.
+ * Regression tests for bay ammo validation in {@link TestSmallCraft} and {@link TestAdvancedAerospace}. Verifies that
+ * design validity is based on design-spec ammo counts ({@code getOriginalShots()}) rather than current remaining shots
+ * ({@code getUsableShotsLeft()}), preventing campaign units with partially expended ammo from being flagged as
+ * illegal.
  *
  * @see <a href="https://github.com/MegaMek/mekhq/issues/6606">MekHQ #6606</a>
  */
@@ -68,7 +67,7 @@ class BayAmmoValidationTest {
     void leopardWithFullAmmoPassesValidation() {
         Entity entity = getEntityForUnitTesting("Leopard (2537)", true);
         assertNotNull(entity, "Failed to load Leopard test entity");
-        assertTrue(entity instanceof SmallCraft, "Leopard should be a SmallCraft");
+        assertInstanceOf(SmallCraft.class, entity, "Leopard should be a SmallCraft");
 
         TestSmallCraft verifier = new TestSmallCraft((SmallCraft) entity,
               EntityVerifier.getInstance(null).aeroOption, null);
@@ -79,16 +78,15 @@ class BayAmmoValidationTest {
     }
 
     /**
-     * A Leopard DropShip with partially expended ammo (simulating a campaign battle)
-     * should still pass bay validation. This is the regression test for MekHQ #6606:
-     * the validator was using current shots instead of design-spec shots, causing
-     * campaign units to be rejected as illegal after firing some ammo.
+     * A Leopard DropShip with partially expended ammo (simulating a campaign battle) should still pass bay validation.
+     * This is the regression test for MekHQ #6606: the validator was using current shots instead of design-spec shots,
+     * causing campaign units to be rejected as illegal after firing some ammo.
      */
     @Test
     void leopardWithDepletedAmmoStillPassesValidation() {
         Entity entity = getEntityForUnitTesting("Leopard (2537)", true);
         assertNotNull(entity, "Failed to load Leopard test entity");
-        assertTrue(entity instanceof SmallCraft, "Leopard should be a SmallCraft");
+        assertInstanceOf(SmallCraft.class, entity, "Leopard should be a SmallCraft");
 
         // Simulate ammo expenditure from a campaign battle
         for (AmmoMounted ammo : entity.getAmmo()) {
@@ -114,7 +112,7 @@ class BayAmmoValidationTest {
     void explorerJumpShipWithFullAmmoPassesValidation() {
         Entity entity = getEntityForUnitTesting("Explorer JumpShip", true);
         assertNotNull(entity, "Failed to load Explorer JumpShip test entity");
-        assertTrue(entity instanceof Jumpship, "Explorer should be a Jumpship");
+        assertInstanceOf(Jumpship.class, entity, "Explorer should be a Jumpship");
 
         TestAdvancedAerospace verifier = new TestAdvancedAerospace((Jumpship) entity,
               EntityVerifier.getInstance(null).aeroOption, null);
@@ -125,14 +123,14 @@ class BayAmmoValidationTest {
     }
 
     /**
-     * An Explorer JumpShip with partially expended ammo should still pass bay validation.
-     * Same regression scenario as the Leopard test but for {@link TestAdvancedAerospace}.
+     * An Explorer JumpShip with partially expended ammo should still pass bay validation. Same regression scenario as
+     * the Leopard test but for {@link TestAdvancedAerospace}.
      */
     @Test
     void explorerJumpShipWithDepletedAmmoStillPassesValidation() {
         Entity entity = getEntityForUnitTesting("Explorer JumpShip", true);
         assertNotNull(entity, "Failed to load Explorer JumpShip test entity");
-        assertTrue(entity instanceof Jumpship, "Explorer should be a Jumpship");
+        assertInstanceOf(Jumpship.class, entity, "Explorer should be a Jumpship");
 
         // Simulate ammo expenditure from a campaign battle
         for (AmmoMounted ammo : entity.getAmmo()) {

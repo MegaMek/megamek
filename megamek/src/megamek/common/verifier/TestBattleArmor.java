@@ -116,8 +116,7 @@ public class TestBattleArmor extends TestEntity {
     }
 
     /**
-     * An enumeration that keeps track of the legal manipulators for BattleArmor.
-     * TM p.166
+     * An enumeration that keeps track of the legal manipulators for BattleArmor. TM p.166
      *
      * @author arlith
      */
@@ -1113,6 +1112,7 @@ public class TestBattleArmor extends TestEntity {
      *
      * @return Whether the equipment can be mounted in the BattleArmor suit
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static boolean isValidBALocation(EquipmentType eq, @Nullable StringBuffer buffer) {
         // Infantry weapons can only be mounted in armored gloves/APMs
         if ((eq instanceof WeaponType) && eq.hasFlag(WeaponType.F_INFANTRY)) {

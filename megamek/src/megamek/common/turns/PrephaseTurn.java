@@ -58,12 +58,8 @@ public class PrephaseTurn extends GameTurn {
         }
 
         // Standard ghost target mode: entities with ghost target equipment are valid during PRE_FIRING
-        if (game.getPhase().isPreFiring()
+        return game.getPhase().isPreFiring()
               && entity.hasGhostTargetEquipment()
-              && game.usesStandardGhostTargetMode()) {
-            return true;
-        }
-
-        return false;
+              && game.usesStandardGhostTargetMode();
     }
 }

@@ -44,6 +44,7 @@ public class FlexibleCalculationReport implements CalculationReport {
         return htmlReport;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public CalculationReport getSwingReport() {
         return swingReport;
     }

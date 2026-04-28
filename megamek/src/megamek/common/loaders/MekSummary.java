@@ -561,10 +561,12 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return level;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getAdvancedTechYear() {
         return advTechYear;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getStandardTechYear() {
         return stdTechYear;
     }

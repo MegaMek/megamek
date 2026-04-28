@@ -125,7 +125,7 @@ public class FiringPhase extends PhaseHandler {
 
         var ret = new ArrayList<AttackRecord>();
 
-        ret.add(new AttackRecord(actingFormation, target.get(0), unitIds));
+        ret.add(new AttackRecord(actingFormation, target.getFirst(), unitIds));
         return ret;
     }
 
@@ -156,7 +156,7 @@ public class FiringPhase extends PhaseHandler {
                                 .filter(Formation::isWithdrawing)
                                 .forEach(canBeTargets::add);
 
-                    default -> { } // intentionally no action
+                    default -> {} // intentionally no action
                 }
             }
         }
@@ -214,7 +214,7 @@ public class FiringPhase extends PhaseHandler {
         }
 
         Collections.shuffle(pickTarget);
-        priorityTarget.ifPresent(formation -> pickTarget.add(0, formation));
+        priorityTarget.ifPresent(pickTarget::addFirst);
 
         var iterator = pickTarget.iterator();
         while (iterator.hasNext()) {

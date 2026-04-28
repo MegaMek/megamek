@@ -154,7 +154,7 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
                     }
 
                     addQuirk(option, editable, targetList);
-                    allQuirks.add(targetList.get(targetList.size() - 1));
+                    allQuirks.add(targetList.getLast());
                 }
             }
         }
@@ -250,11 +250,11 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
 
         // Create nested split panes for three-way horizontal split
         JSplitPane leftSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-            positiveScrollPane, negativeScrollPane);
+              positiveScrollPane, negativeScrollPane);
         leftSplitPane.setResizeWeight(0.5);
 
         JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-            leftSplitPane, weaponScrollPane);
+              leftSplitPane, weaponScrollPane);
         mainSplitPane.setResizeWeight(0.67);
 
         // Add the split pane to the main panel
@@ -305,8 +305,8 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
     }
 
     /**
-     * Updates the font style and color of a quirk component based on its selection state.
-     * Selected quirks are highlighted in yellow.
+     * Updates the font style and color of a quirk component based on its selection state. Selected quirks are
+     * highlighted in yellow.
      */
     private void updateQuirkFontStyle(DialogOptionComponentYPanel comp, boolean selected) {
         for (Component child : comp.getComponents()) {
@@ -330,7 +330,7 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
         for (DialogOptionComponentYPanel comp : allQuirks) {
             Dimension originalSize = originalPreferredSizes.get(comp);
             globalMaxItemWidth = Math.max(globalMaxItemWidth,
-                (originalSize != null) ? originalSize.width : comp.getPreferredSize().width);
+                  (originalSize != null) ? originalSize.width : comp.getPreferredSize().width);
         }
         if (globalMaxItemWidth <= 0) {
             globalMaxItemWidth = 150; // Fallback width

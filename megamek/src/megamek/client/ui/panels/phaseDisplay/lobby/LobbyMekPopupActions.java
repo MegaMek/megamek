@@ -38,11 +38,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.MMConstants;
@@ -442,8 +444,8 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
         MunitionTree munitionTree = new MunitionTree();
         ArrayList<Entity> entityArrayList = new ArrayList<>(entities);
         ClientGUI clientGUI = lobby.getClientGUI();
-        // Team team = lobby.game().getTeamForPlayer(entityArrayList.get(0).getOwner());
-        Team team = clientGUI.getClient().getGame().getTeamForPlayer(entityArrayList.get(0).getOwner());
+        // Team team = lobby.game().getTeamForPlayer(entityArrayList.getFirst().getOwner());
+        Team team = clientGUI.getClient().getGame().getTeamForPlayer(entityArrayList.getFirst().getOwner());
         String faction = (team != null) ? team.getFaction() : FactionRecord.IS_GENERAL_KEY;
 
         // Parameters are generated _from_ the teams' information, _for_ the selected entities
@@ -482,9 +484,12 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
             case LMP_APPLY_CONFIG:
                 munitionTree = loadLoadout();
                 if (null != munitionTree) {
-                    // Apply to entities
+                    // Apply existing loadout to selected entities.
+                    // Use the unlimited availability map (all munitions allowed in any amount)
                     resetBombChoices(clientGUI, lobby.game(), entityArrayList);
-                    tlg.reconfigureEntities(entityArrayList, faction, munitionTree, reconfigurationParameters, null);
+                    HashMap<String, Object> availMap = TeamLoadOutGenerator.createUnlimitedAllMunitionsMap();
+                    tlg.reconfigureEntities(entityArrayList, faction, munitionTree, reconfigurationParameters,
+                          availMap);
                     reconfigured = true;
                 }
                 break;
@@ -492,7 +497,7 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
         if (reconfigured) {
             // Have to send reconfig as controlling player
             clientGUI.chatlounge.sendProxyUpdates(entityArrayList,
-                  lobby.game().getPlayer(entityArrayList.get(0).getOwnerId()));
+                  lobby.game().getPlayer(entityArrayList.getFirst().getOwnerId()));
         }
     }
 
@@ -508,7 +513,7 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
             }
         }
         if (!resetBombers.isEmpty()) {
-            clientgui.chatlounge.sendProxyUpdates(resetBombers, game.getPlayer(el.get(0).getOwnerId()));
+            clientgui.chatlounge.sendProxyUpdates(resetBombers, game.getPlayer(el.getFirst().getOwnerId()));
         }
     }
 
@@ -552,8 +557,14 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
             return null;
         }
 
-        String file = jFileChooser.getSelectedFile().getAbsolutePath();
-        munitionTree = new MunitionTree(file);
+        try {
+            String file = jFileChooser.getSelectedFile().getAbsolutePath();
+            munitionTree = new MunitionTree(file);
+        } catch (IllegalArgumentException e) {
+            LobbyErrors.showADFReadError(frame(), e.getMessage());
+
+            return null;
+        }
         return munitionTree;
     }
 
@@ -568,5 +579,9 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
                 lobby.lobbyActions.tow(entity, info);
                 break;
         }
+    }
+
+    private JFrame frame() {
+        return lobby.getClientGUI().getFrame();
     }
 }

@@ -38,7 +38,6 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.Engine;
 import megamek.common.units.AbstractBuildingEntity;
-import megamek.common.units.Building;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.util.BuildingBlock;
@@ -97,7 +96,6 @@ public class BLKStructureFile extends BLKFile implements IMekLoader {
         for (CubeCoords coords : dataFile.getDataAsCubeCoords("coords")) {
             be.getInternalBuilding().addHex(coords, cf, armor, BasementType.NONE, false);
         }
-
 
 
         if (!dataFile.exists("year")) {

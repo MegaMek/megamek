@@ -370,12 +370,12 @@ class LOSElevationDiagramPanel extends JPanel {
                   attackerIsAltitude ? Integer.MAX_VALUE : attackerBottom,
                   targetIsAltitude ? Integer.MAX_VALUE : targetBottom);
 
-            if ((highestUnit != Integer.MIN_VALUE) && (highestUnit > cappedMax - LEVEL_PADDING)) {
+            if ((highestUnit > cappedMax - LEVEL_PADDING)) {
                 int shift = highestUnit - (cappedMax - LEVEL_PADDING);
                 cappedMax += shift;
                 cappedMin += shift;
             }
-            if ((lowestUnit != Integer.MAX_VALUE) && (lowestUnit < cappedMin + LEVEL_PADDING)) {
+            if ((lowestUnit < cappedMin + LEVEL_PADDING)) {
                 int shift = (cappedMin + LEVEL_PADDING) - lowestUnit;
                 cappedMin -= shift;
                 cappedMax -= shift;
@@ -587,17 +587,17 @@ class LOSElevationDiagramPanel extends JPanel {
     }
 
     /**
-     * Draws a tree silhouette profile. Woods get conical (evergreen) shapes, jungle gets
-     * rounded (broadleaf) shapes. Higher density draws more trees side by side.
+     * Draws a tree silhouette profile. Woods get conical (evergreen) shapes, jungle gets rounded (broadleaf) shapes.
+     * Higher density draws more trees side by side.
      *
-     * @param g2d       the graphics context
-     * @param color     the foliage color
-     * @param x         left edge of the drawing area
-     * @param y         top edge of the drawing area
-     * @param width     width of the drawing area
-     * @param height    height of the drawing area
-     * @param density   foliage density (1=light, 2=heavy, 3=ultra)
-     * @param isJungle  true for jungle (rounded canopy), false for woods (conical canopy)
+     * @param g2d      the graphics context
+     * @param color    the foliage color
+     * @param x        left edge of the drawing area
+     * @param y        top edge of the drawing area
+     * @param width    width of the drawing area
+     * @param height   height of the drawing area
+     * @param density  foliage density (1=light, 2=heavy, 3=ultra)
+     * @param isJungle true for jungle (rounded canopy), false for woods (conical canopy)
      */
     private void drawTreeSilhouette(Graphics2D g2d, Color color, int x, int y,
           int width, int height, int density, boolean isJungle) {
@@ -607,7 +607,6 @@ class LOSElevationDiagramPanel extends JPanel {
 
         int trunkHeight = Math.max(height / 5, 2);
         int canopyHeight = height - trunkHeight;
-        int canopyTop = y;
         int canopyBottom = y + canopyHeight;
 
         // Draw more trees for higher density
@@ -629,11 +628,11 @@ class LOSElevationDiagramPanel extends JPanel {
             g2d.setColor(color);
             if (isJungle) {
                 // Rounded canopy for jungle
-                g2d.fillOval(treeX + 1, canopyTop, treeWidth - 2, canopyHeight);
+                g2d.fillOval(treeX + 1, y, treeWidth - 2, canopyHeight);
             } else {
                 // Conical (triangular) canopy for woods/evergreen
                 int[] xPoints = { treeCenterX, treeX + 1, treeX + treeWidth - 1 };
-                int[] yPoints = { canopyTop, canopyBottom, canopyBottom };
+                int[] yPoints = { y, canopyBottom, canopyBottom };
                 g2d.fillPolygon(xPoints, yPoints, 3);
             }
         }
@@ -870,12 +869,12 @@ class LOSElevationDiagramPanel extends JPanel {
                 double edgeFade = 1.0 - 0.4 * Math.abs(puffProgress - 0.5) * 2;
                 double topFade = progress > 0.85 ? 1.0 - (progress - 0.85) / 0.15 : 1.0;
                 int alpha = (int) (baseAlpha * edgeFade * topFade);
-                alpha = Math.max(15, Math.min(200, alpha));
+                alpha = Math.clamp(alpha, 15, 200);
 
                 // Color variation: lighter at top (rising smoke), darker at base
                 int grayShift = (int) (40 * progress);
                 int grayVar = ((hash + puff) % 3 - 1) * 12;
-                int gray = Math.max(0, Math.min(235, baseGray + grayShift + grayVar));
+                int gray = Math.clamp(baseGray + grayShift + grayVar, 0, 235);
 
                 g2d.setColor(new Color(gray, gray, gray, alpha));
                 g2d.fillOval(px, py, puffW, puffH);
@@ -1029,7 +1028,7 @@ class LOSElevationDiagramPanel extends JPanel {
             int attackerTop = diagramData.attackerAbsHeight();
             int attackerBottom = computeUnitBottom(diagramData.attackerUnitType(),
                   diagramData.attackerIsHullDown(), attackerTop,
-                  hexPath.get(0).groundElevation());
+                  hexPath.getFirst().groundElevation());
             drawUnitSilhouette(g2d, metrics, 0, attackerBottom, attackerTop,
                   RulerDialog.color1,
                   diagramData.attackerUnitType(), true);
@@ -1043,7 +1042,7 @@ class LOSElevationDiagramPanel extends JPanel {
             int targetTop = diagramData.targetAbsHeight();
             int targetBottom = computeUnitBottom(diagramData.targetUnitType(),
                   diagramData.targetIsHullDown(), targetTop,
-                  hexPath.get(hexPath.size() - 1).groundElevation());
+                  hexPath.getLast().groundElevation());
             drawUnitSilhouette(g2d, metrics, hexPath.size() - 1, targetBottom, targetTop,
                   RulerDialog.color2,
                   diagramData.targetUnitType(), false);

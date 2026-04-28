@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.ObjectInputFilter;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -107,8 +106,7 @@ public class BasicGameTest {
         gameManager = null;
     }
 
-    private CountDownLatch startGame(File saveFile, GameListenerAdapter gameListenerAdapter, int rounds)
-          throws IOException {
+    private CountDownLatch startGame(File saveFile, GameListenerAdapter gameListenerAdapter, int rounds) {
         assert rounds > 0;
         assertTrue(saveFile.exists() && saveFile.canRead());
 

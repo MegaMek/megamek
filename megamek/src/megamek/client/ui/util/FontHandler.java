@@ -108,6 +108,7 @@ public final class FontHandler {
     /**
      * @return The Noto Symbols 2 font. This font has icons that mesh well in inline text with the Noto Sans font.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static Font notoSymbol2Font() {
         ensureInitialization();
         return new Font("Noto Sans Symbols 2", Font.PLAIN, 12);

@@ -51,10 +51,10 @@ import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.units.Entity;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
+import megamek.common.units.Entity;
 
 public class ASConversionInfoDialog extends AbstractDialog {
 
@@ -67,6 +67,7 @@ public class ASConversionInfoDialog extends AbstractDialog {
         this(frame, report, element.getChassis() + " " + element.getModel(), false);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ASConversionInfoDialog(final JFrame frame, CalculationReport report, @Nullable AlphaStrikeElement element) {
         this(frame, report, element.getName(), false);
     }
@@ -80,10 +81,12 @@ public class ASConversionInfoDialog extends AbstractDialog {
         this(frame, report, "", false);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ASConversionInfoDialog(final JFrame frame, CalculationReport report, @Nullable Entity entity) {
         this(frame, report, entity.getShortName(), false);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ASConversionInfoDialog(final JFrame frame, CalculationReport report, @Nullable Entity entity,
           boolean modal) {
         this(frame, report, entity.getShortName(), modal);

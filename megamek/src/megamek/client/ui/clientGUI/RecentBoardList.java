@@ -117,7 +117,7 @@ public final class RecentBoardList {
         recentBoards.remove(board);
         recentBoards.add(board);
         while (recentBoards.size() > MAX_RECENT_BOARDS) {
-            recentBoards.remove(0);
+            recentBoards.removeFirst();
         }
         saveRecentBoards();
         LISTENERS.forEach(l -> l.preferenceChange(

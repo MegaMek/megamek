@@ -704,6 +704,7 @@ public abstract class Mek extends Entity {
      *
      * @return false if the system is damaged.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isSystemIntact(int system) {
         for (int loc = 0; loc < locations(); loc++) {
             int numCrits = getNumberOfCriticalSlots(loc);
@@ -768,6 +769,7 @@ public abstract class Mek extends Entity {
     /**
      * does this Mek have working jump boosters?
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean hasJumpBoosters() {
         boolean jumpBoosters = false;
         for (Mounted<?> mEquip : getMisc()) {
@@ -1022,9 +1024,11 @@ public abstract class Mek extends Entity {
                 MPBoosters armed = getArmedMPBoosters();
 
                 str += (mpBoosters.hasMASC() ? " MASC:" + getMASCTurns()
-                      + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
+                                               + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
                       + (mpBoosters.hasSupercharger() ? " Supercharger:" + getSuperchargerTurns()
-                      + (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") : "");
+                                                        + (armed.hasSupercharger() ?
+                                                           "(" + getSuperchargerTarget() + "+)" :
+                                                           "(NA)") : "");
             }
             return str;
         }
@@ -1909,12 +1913,6 @@ public abstract class Mek extends Entity {
     /**
      * Wrapper that handles applying Edge (if allowed).
      *
-     * @param table
-     * @param side
-     * @param aimedLocation
-     * @param aimingMode
-     * @param cover
-     *
      * @return HitData, possibly re-rolled once (once!) with Edge.
      */
     @Override
@@ -1929,7 +1927,6 @@ public abstract class Mek extends Entity {
      *
      * @param originalHit the hit to consider using Edge on.
      *
-     * @return
      */
     public HitData applyEdgeToHitLocation(HitData originalHit, int table, int side, int aimedLocation,
           AimingMode aimingMode,
@@ -1957,16 +1954,15 @@ public abstract class Mek extends Entity {
 
         }
 
-        switch (originalHit.getLocation()) {
-            case LOC_HEAD:
-                if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
-                    getCrew().decreaseEdge();
-                    HitData result = innerRollHitLocation(table, side,
-                          aimedLocation, aimingMode, cover);
-                    result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
-                    result.setUsedEdge();
-                    return result;
-                }
+        if (originalHit.getLocation() == LOC_HEAD) {
+            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
+                getCrew().decreaseEdge();
+                HitData result = innerRollHitLocation(table, side,
+                      aimedLocation, aimingMode, cover);
+                result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
+                result.setUsedEdge();
+                return result;
+            }
         }
 
         return originalHit;
@@ -4023,10 +4019,12 @@ public abstract class Mek extends Entity {
         return super.hasActiveEiCockpit();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getCockpitStatus() {
         return cockpitStatus;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getCockpitStatusNextRound() {
         return cockpitStatusNextRound;
     }
@@ -4332,16 +4330,14 @@ public abstract class Mek extends Entity {
         sb.append(newLine);
 
         sb.append("Config:");
-        if (this instanceof LandAirMek) {
-            sb.append("LAM");
-        } else if (this instanceof BipedMek) {
-            sb.append("Biped");
-        } else if (this instanceof QuadVee) {
-            sb.append("QuadVee");
-        } else if (this instanceof QuadMek) {
-            sb.append("Quad");
-        } else if (this instanceof TripodMek) {
-            sb.append("Tripod");
+        switch (this) {
+            case LandAirMek ignored -> sb.append("LAM");
+            case BipedMek ignored -> sb.append("Biped");
+            case QuadVee ignored -> sb.append("QuadVee");
+            case QuadMek ignored -> sb.append("Quad");
+            case TripodMek ignored -> sb.append("Tripod");
+            default -> {
+            }
         }
 
         if (isOmni()) {

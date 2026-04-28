@@ -45,7 +45,6 @@ import java.util.function.Predicate;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.MPCalculationSetting;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
@@ -100,31 +99,21 @@ public abstract class BVCalculator {
     }
 
     public static BVCalculator getBVCalculator(Entity entity) {
-        if (entity instanceof Mek) {
-            return new MekBVCalculator(entity);
-        } else if (entity instanceof ProtoMek) {
-            return new ProtoMekBVCalculator(entity);
-        } else if (entity instanceof BattleArmor) {
-            return new BattleArmorBVCalculator(entity);
-        } else if (entity instanceof Infantry) {
-            return new InfantryBVCalculator(entity);
-        } else if (entity instanceof Warship) {
-            return new WarShipBVCalculator(entity);
-        } else if (entity instanceof Jumpship) {
-            return new JumpShipBVCalculator(entity);
-        } else if (entity instanceof Dropship) {
-            return new DropShipBVCalculator(entity);
-        } else if (entity instanceof Aero) {
-            return new AeroBVCalculator(entity);
-        } else if (entity instanceof GunEmplacement) {
-            return new GunEmplacementBVCalculator(entity);
-        } else if (entity instanceof HandheldWeapon) {
-            return new HandheldWeaponBVCalculator(entity);
-        } else if (entity instanceof AbstractBuildingEntity) {
-            return new AbstractBuildingEntityBVCalculator(entity);
-        } else { // Tank
-            return new CombatVehicleBVCalculator(entity);
-        }
+        return switch (entity) {
+            case Mek ignored -> new MekBVCalculator(entity);
+            case ProtoMek ignored -> new ProtoMekBVCalculator(entity);
+            case BattleArmor ignored -> new BattleArmorBVCalculator(entity);
+            case Infantry ignored -> new InfantryBVCalculator(entity);
+            case Warship ignored -> new WarShipBVCalculator(entity);
+            case Jumpship ignored -> new JumpShipBVCalculator(entity);
+            case Dropship ignored -> new DropShipBVCalculator(entity);
+            case Aero ignored -> new AeroBVCalculator(entity);
+            case GunEmplacement ignored -> new GunEmplacementBVCalculator(entity);
+            case HandheldWeapon ignored -> new HandheldWeaponBVCalculator(entity);
+            case AbstractBuildingEntity ignored -> new AbstractBuildingEntityBVCalculator(entity);
+            case null, default ->  // Tank
+                  new CombatVehicleBVCalculator(entity);
+        };
     }
 
     /**
@@ -164,6 +153,7 @@ public abstract class BVCalculator {
      *
      * @return The newly calculated base unit battle value.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int calculateBaseBV() {
         return calculateBaseBV(new DummyCalculationReport());
     }
@@ -190,6 +180,7 @@ public abstract class BVCalculator {
      *
      * @return The stored base unit battle value.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int retrieveBaseBV() {
         return (int) Math.round(baseBV);
     }
@@ -201,6 +192,7 @@ public abstract class BVCalculator {
      *
      * @return The stored unit battle value including Tag bonus.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int retrieveBVWithTag() {
         return (int) Math.round(tagBV);
     }
@@ -433,9 +425,9 @@ public abstract class BVCalculator {
             calculation += (armorMultiplier != 1) ?
                   " x " +
                         formatForReport(armorMultiplier) +
-                        " (" +
+                  " (" +
                         ArmorType.forEntity(entity).getName() +
-                        ")" :
+                  ")" :
                   "";
             calculation += (barRating != 1) ? " x " + formatForReport(barRating) + " (BAR)" : "";
             defensiveValue += totalArmorBV * armorFactor();
@@ -1394,13 +1386,13 @@ public abstract class BVCalculator {
      * @return a multiplier to the BV of whatever unit the pilot is piloting.
      */
     public static double bvSkillMultiplier(int gunnery, int piloting) {
-        return bvMultipliers[MathUtility.clamp(gunnery, 0, 8)][MathUtility.clamp(piloting, 0, 8)];
+        return bvMultipliers[Math.clamp(gunnery, 0, 8)][Math.clamp(piloting, 0, 8)];
     }
 
     /**
      * Processes the BV bonus that a unit with TAG, LTAG or C3M gets for friendly units that have semi-guided or Arrow
      * IV homing ammunition (TO:AUE p.198,
-     * https://bg.battletech.com/forums/tactical-operations/tagguided-munitions-and-bv/)
+     * <a href="https://bg.battletech.com/forums/tactical-operations/tagguided-munitions-and-bv/">BT Forum</a>)
      */
     public void processTagBonus() {
         long tagCount = workingTAGCount(entity);

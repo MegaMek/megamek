@@ -93,9 +93,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * Creates a <code>Packet</code> with a command and an array of objects
      */
-    public Packet(PacketCommand command, Object... data) {
-        this.command = command;
-        this.data = data;
+    public Packet {
     }
 
     /**
@@ -404,7 +402,6 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
      *
      * @return a HashMap of {@link BoardLocation} to Integer at the specified index
      */
-    @SuppressWarnings("unchecked")
     public HashMap<BoardLocation, Integer> getBoardLocationIntegerMap(int index) throws InvalidPacketDataException {
         Object object = getObject(index);
 

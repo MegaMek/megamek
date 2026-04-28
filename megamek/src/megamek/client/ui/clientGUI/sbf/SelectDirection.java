@@ -42,6 +42,7 @@ public enum SelectDirection {
         return this == NEXT_UNIT;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isPreviousUnit() {
         return this == PREVIOUS_UNIT;
     }

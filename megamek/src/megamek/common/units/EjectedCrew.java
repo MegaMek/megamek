@@ -195,10 +195,12 @@ public class EjectedCrew extends Infantry {
     /**
      * @return the <code>int</code> external id of this MW's original ride
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getOriginalRideExternalId() {
         return Integer.parseInt(originalRideExternalId);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getOriginalRideExternalIdAsString() {
         return originalRideExternalId;
     }
@@ -210,6 +212,7 @@ public class EjectedCrew extends Infantry {
         this.originalRideExternalId = originalRideExternalId;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setOriginalRideExternalId(int originalRideExternalId) {
         this.originalRideExternalId = Integer.toString(originalRideExternalId);
     }
@@ -226,6 +229,7 @@ public class EjectedCrew extends Infantry {
      * Convenience method to return all crew from other craft aboard from the above Map
      *
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getTotalOtherCrew() {
         int toReturn = 0;
         for (String name : getNOtherCrew().keySet()) {
@@ -260,6 +264,7 @@ public class EjectedCrew extends Infantry {
      * Convenience method to return all passengers aboard from the above Map
      *
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getTotalPassengers() {
         int toReturn = 0;
         for (String name : getPassengers().keySet()) {

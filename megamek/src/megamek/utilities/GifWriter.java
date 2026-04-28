@@ -197,7 +197,7 @@ public class GifWriter {
         });
 
         // grab the output image type from the first image in the sequence
-        BufferedImage firstImage = ImageIO.read(files.get(0));
+        BufferedImage firstImage = ImageIO.read(files.getFirst());
 
         OutputStream outputStream = new FileOutputStream(outputFile);
 

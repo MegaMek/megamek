@@ -171,7 +171,7 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
             throw new IllegalArgumentException("Cannot create a filename from a null or empty name");
         }
         String sanitized = name;
-        sanitized = sanitized.replaceAll("[\\<>:\"/\\\\|?*\\p{Cntrl}]", "");
+        sanitized = sanitized.replaceAll("[<>:\"/\\\\|?*\\p{Cntrl}]", "");
         sanitized = sanitized.replaceAll("[. ]+$", "");
         sanitized = sanitized.replaceAll("^_|_$", "");
         if (sanitized.isEmpty()) {

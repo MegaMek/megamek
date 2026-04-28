@@ -328,7 +328,6 @@ class EntityTest {
 
                 // Assert
                 assertFalse(isUnderwater);
-                ;
             }
 
             @Test
@@ -398,7 +397,7 @@ class EntityTest {
                 fail("Failed to add Boosted C3 equipment: " + e.getMessage());
             }
 
-            C3Util.connect(game, new ArrayList<Entity>(List.of(e1, e2)), e1.getId(), false);
+            C3Util.connect(game, new ArrayList<>(List.of(e1, e2)), e1.getId(), false);
 
         }
 

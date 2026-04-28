@@ -121,12 +121,11 @@ public class MekSummaryCache {
     }
 
     public static synchronized MekSummaryCache getInstance(boolean ignoreUnofficial) {
-        final boolean ignoringUnofficial = ignoreUnofficial;
         if (instance == null) {
             instance = new MekSummaryCache();
         }
 
-        instance.ensureInitialized(ignoringUnofficial);
+        instance.ensureInitialized(ignoreUnofficial);
         return instance;
     }
 
@@ -224,15 +223,11 @@ public class MekSummaryCache {
     }
 
     private String getThreadName(LoadOperation loadOperation) {
-        switch (loadOperation) {
-            case REBUILD:
-                return "Mek Cache Rebuilder";
-            case REFRESH:
-                return "Mek Cache Refresher";
-            case INITIAL_LOAD:
-            default:
-                return "Mek Cache Loader";
-        }
+        return switch (loadOperation) {
+            case REBUILD -> "Mek Cache Rebuilder";
+            case REFRESH -> "Mek Cache Refresher";
+            default -> "Mek Cache Loader";
+        };
     }
 
     private boolean shouldStopLoading() {

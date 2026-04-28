@@ -1022,6 +1022,7 @@ public class BattleArmor extends Infantry {
      *
      * @return True if this BA can use a detachable weapon pack
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean canMountDWP() {
         return (getOriginalWalkMP() >= 2)
               && (getWeightClass() >= EntityWeightClass.WEIGHT_MEDIUM);
@@ -1036,6 +1037,7 @@ public class BattleArmor extends Infantry {
         return stealthName;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getCamoName() {
         return camoName;
     }
@@ -1045,6 +1047,7 @@ public class BattleArmor extends Infantry {
      *
      * @return shortStealthMod
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getShortStealthMod() {
         return shortStealthMod;
     }
@@ -1054,6 +1057,7 @@ public class BattleArmor extends Infantry {
      *
      * @return mediumStealthMod
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getMediumStealthMod() {
         return mediumStealthMod;
     }
@@ -1063,6 +1067,7 @@ public class BattleArmor extends Infantry {
      *
      * @return longStealthMod
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getLongStealthMod() {
         return longStealthMod;
     }
@@ -1716,6 +1721,7 @@ public class BattleArmor extends Infantry {
         modularTurret = modular;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getTotalCrits() {
         return (getArmCrits() * 2) + getBodyCrits() + getTurretCapacity();
     }

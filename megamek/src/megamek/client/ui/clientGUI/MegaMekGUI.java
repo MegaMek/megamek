@@ -316,7 +316,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MMConstants.VERSION, JLabel.CENTER);
         labVersion.setPreferredSize(new Dimension(250, 15));
         if (!skinSpec.fontColors.isEmpty()) {
-            labVersion.setForeground(skinSpec.fontColors.get(0));
+            labVersion.setForeground(skinSpec.fontColors.getFirst());
         }
         MegaMekButton hostB = new MegaMekButton(Messages.getString("MegaMek.hostNewGame.label"),
               UIComponents.MainMenuButton.getComp(),
@@ -1004,7 +1004,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 orig.setValue(opt.getValue());
             }
         }
-        
+
         // popup planetary conditions dialog
         if ((game instanceof PlanetaryConditionsUsing plGame) && !scenario.hasFixedPlanetaryConditions()) {
             PlanetaryConditionsDialog pcd = new PlanetaryConditionsDialog(frame, plGame.getPlanetaryConditions());
@@ -1078,8 +1078,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     Princess c = new Princess(pa[x].getName(), MMConstants.LOCALHOST, port);
                     c.startPrecognition();
                     if (scenario.hasBotInfo(pa[x].getName()) &&
-                          scenario.getBotInfo(pa[x].getName()) instanceof BotParser.PrincessRecord princessRecord) {
-                        c.setBehaviorSettings(princessRecord.behaviorSettings());
+                          scenario.getBotInfo(pa[x].getName()) instanceof BotParser.PrincessRecord(
+                                megamek.client.bot.princess.BehaviorSettings behaviorSettings
+                          )) {
+                        c.setBehaviorSettings(behaviorSettings);
                     }
                     c.getGame().addGameListener(new BotGUI(frame, c));
                     c.connect();
@@ -1351,6 +1353,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
         return networkInformationDialog;
     }
+
     @Override
     public void preferenceChange(PreferenceChangeEvent evt) {
         switch (evt.getName()) {

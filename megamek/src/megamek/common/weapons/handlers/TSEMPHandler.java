@@ -193,32 +193,42 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         // Ugly code to set the target rolls
         int shutdownTarget = 13;
         int interferenceTarget = 13;
-        if (entityTarget instanceof Mek) {
-            if (((Mek) entityTarget).isIndustrial()) {
+        switch (entityTarget) {
+            case Mek mek -> {
+                if (mek.isIndustrial()) {
+                    interferenceTarget = 6;
+                    shutdownTarget = 8;
+                } else {
+                    interferenceTarget = 7;
+                    shutdownTarget = 9;
+                }
+            }
+            case SupportTank ignored -> {
+                interferenceTarget = 5;
+                shutdownTarget = 7;
+            }
+            case Tank ignored -> {
                 interferenceTarget = 6;
                 shutdownTarget = 8;
-            } else {
+            }
+            case BattleArmor ignored -> {
+                interferenceTarget = 6;
+                shutdownTarget = 8;
+            }
+            case ProtoMek ignored -> {
+                interferenceTarget = 6;
+                shutdownTarget = 9;
+            }
+            case ConvFighter ignored -> {
+                interferenceTarget = 6;
+                shutdownTarget = 8;
+            }
+            case Aero ignored -> {
                 interferenceTarget = 7;
                 shutdownTarget = 9;
             }
-        } else if (entityTarget instanceof SupportTank) {
-            interferenceTarget = 5;
-            shutdownTarget = 7;
-        } else if (entityTarget instanceof Tank) {
-            interferenceTarget = 6;
-            shutdownTarget = 8;
-        } else if (entityTarget instanceof BattleArmor) {
-            interferenceTarget = 6;
-            shutdownTarget = 8;
-        } else if (entityTarget instanceof ProtoMek) {
-            interferenceTarget = 6;
-            shutdownTarget = 9;
-        } else if (entityTarget instanceof ConvFighter) {
-            interferenceTarget = 6;
-            shutdownTarget = 8;
-        } else if (entityTarget instanceof Aero) {
-            interferenceTarget = 7;
-            shutdownTarget = 9;
+            default -> {
+            }
         }
 
         // Create the effect report

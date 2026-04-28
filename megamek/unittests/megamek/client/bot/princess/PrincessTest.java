@@ -35,6 +35,7 @@ package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -77,7 +78,6 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -970,10 +970,6 @@ class PrincessTest {
      */
     @Nested
     class InfantryCombatTests {
-
-        /**
-         * Tests for {@link Princess#getBuildingAtPosition(Coords)}.
-         */
         @Nested
         class GetBuildingAtPositionTests {
 
@@ -993,7 +989,7 @@ class PrincessTest {
                 when(mockGame.getEntitiesVector(position)).thenReturn(entitiesAtPosition);
 
                 // Act
-                Entity result = null;
+                Entity result;
                 try {
                     java.lang.reflect.Method method = Princess.class.getDeclaredMethod(
                           "getBuildingAtPosition", Coords.class);
@@ -1022,7 +1018,7 @@ class PrincessTest {
                 when(mockGame.getEntitiesVector(position)).thenReturn(entitiesAtPosition);
 
                 // Act
-                Entity result = null;
+                Entity result;
                 try {
                     java.lang.reflect.Method method = Princess.class.getDeclaredMethod(
                           "getBuildingAtPosition", Coords.class);
@@ -1033,13 +1029,10 @@ class PrincessTest {
                 }
 
                 // Assert
-                assertEquals(null, result);
+                assertNull(result);
             }
         }
 
-        /**
-         * Tests for {@link Princess#findEligibleInfantryCombatsToReinforce(Entity)}.
-         */
         @Nested
         class FindEligibleInfantryCombatsToReinforceTests {
 
@@ -1060,8 +1053,6 @@ class PrincessTest {
                 List<Entity> entitiesAtInfantryPos = new ArrayList<>();
                 entitiesAtInfantryPos.add(mockBuilding);
                 when(mockGame.getEntitiesVector(infantryPos)).thenReturn(entitiesAtInfantryPos);
-                //doReturn(entitiesAtInfantryPos).when(mockGame).getEntitiesVector(infantryPos);
-                //when(mockGame.getEntitiesVector(infantryPos, false)).thenReturn(entitiesAtInfantryPos);
 
                 Infantry combatInfantry = mock(Infantry.class);
                 when(combatInfantry.getInfantryCombatTargetId()).thenReturn(100);
@@ -1073,7 +1064,7 @@ class PrincessTest {
                 when(mockGame.getEntity(100)).thenReturn(mockBuilding);
 
                 // Act
-                List<Integer> result = null;
+                List<Integer> result;
                 try {
                     java.lang.reflect.Method method = Princess.class.getDeclaredMethod(
                           "findEligibleInfantryCombatsToReinforce", Entity.class);
@@ -1121,7 +1112,7 @@ class PrincessTest {
                 when(mockGame.getEntity(200)).thenReturn(building2);
 
                 // Act
-                List<Integer> result = null;
+                List<Integer> result;
                 try {
                     java.lang.reflect.Method method = Princess.class.getDeclaredMethod(
                           "findEligibleInfantryCombatsToReinforce", Entity.class);
@@ -1153,7 +1144,7 @@ class PrincessTest {
                 when(mockGame.getEntitiesVector(infantryPos)).thenReturn(entitiesAtInfantryPos);
 
                 // Act
-                List<Integer> result = null;
+                List<Integer> result;
                 try {
                     java.lang.reflect.Method method = Princess.class.getDeclaredMethod(
                           "findEligibleInfantryCombatsToReinforce", Entity.class);

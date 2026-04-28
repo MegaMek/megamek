@@ -176,7 +176,7 @@ public class MDAugmentationCostTest {
 
             for (String optionName : optionNames) {
                 MDAugmentationType aug = MDAugmentationType.getByOptionName(optionName);
-                assertTrue(aug != null, "Should find augmentation for " + optionName);
+                assertNotNull(aug, "Should find augmentation for " + optionName);
                 assertTrue(aug.getCost() >= 0, "Cost should be non-negative for " + optionName);
             }
         }

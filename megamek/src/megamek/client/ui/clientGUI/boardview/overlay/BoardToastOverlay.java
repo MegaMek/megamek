@@ -123,8 +123,8 @@ public class BoardToastOverlay implements IDisplayable {
     }
 
     /**
-     * Shows a toast notification, optionally displaying the given entity's sprite icon,
-     * using the level's default duration.
+     * Shows a toast notification, optionally displaying the given entity's sprite icon, using the level's default
+     * duration.
      *
      * @param level  the severity level determining color and default duration
      * @param text   the message text to display
@@ -285,8 +285,7 @@ public class BoardToastOverlay implements IDisplayable {
             }
 
             // Draw text
-            int textY = contentCenterY;
-            new StringDrawer(toast.text).at(contentX, textY).centerY()
+            new StringDrawer(toast.text).at(contentX, contentCenterY).centerY()
                   .font(scaledFont).color(Color.WHITE).outline(Color.BLACK, 1.0f)
                   .draw(g2d);
 

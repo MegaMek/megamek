@@ -37,6 +37,7 @@ package megamek.common.autoResolve.acar.order;
 import java.util.Collection;
 import java.util.Iterator;
 
+import jakarta.annotation.Nonnull;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
@@ -78,17 +79,20 @@ public class Orders implements Collection<Order> {
     }
 
     @Override
+    @Nonnull
     public Iterator<Order> iterator() {
         return ordersPerPlayer.values().iterator();
     }
 
     @Override
+    @Nonnull
     public Object[] toArray() {
         return ordersPerPlayer.values().toArray();
     }
 
     @Override
-    public <T> T[] toArray(T[] a) {
+    @Nonnull
+    public <T> T[] toArray(@Nonnull T[] a) {
         return ordersPerPlayer.values().toArray(a);
     }
 
@@ -106,7 +110,7 @@ public class Orders implements Collection<Order> {
     }
 
     @Override
-    public boolean containsAll(Collection<?> c) {
+    public boolean containsAll(@Nonnull Collection<?> c) {
         return ordersPerPlayer.values().containsAll(c);
     }
 
@@ -134,7 +138,7 @@ public class Orders implements Collection<Order> {
     }
 
     @Override
-    public boolean retainAll(Collection<?> collection) {
+    public boolean retainAll(@Nonnull Collection<?> collection) {
         var changed = false;
         for (Order order : ordersPerPlayer.values()) {
             if (!collection.contains(order)) {

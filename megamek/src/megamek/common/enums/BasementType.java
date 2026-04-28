@@ -79,14 +79,17 @@ public enum BasementType {
         return this == NONE;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isTwoDeepFeet() {
         return this == TWO_DEEP_FEET;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isOneDeepFeet() {
         return this == ONE_DEEP_FEET;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isOneDeepNormal() {
         return this == ONE_DEEP_NORMAL;
     }
@@ -95,10 +98,12 @@ public enum BasementType {
         return this == ONE_DEEP_NORMAL_INFANTRY_ONLY;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isOneDeepHead() {
         return this == ONE_DEEP_HEAD;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isTwoDeepHead() {
         return this == TWO_DEEP_HEAD;
     }

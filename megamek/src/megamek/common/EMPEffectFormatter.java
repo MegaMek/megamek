@@ -84,6 +84,7 @@ public final class EMPEffectFormatter {
      *
      * @return Plain text effect name
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static String getEffectName(int effect) {
         // EMP_EFFECT_* and TSEMP_EFFECT_* have identical values (0, 1, 2)
         return switch (effect) {
@@ -126,6 +127,7 @@ public final class EMPEffectFormatter {
      *
      * @return Formatted roll string
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static String formatRoll(int rollValue) {
         return formatRoll(rollValue, 0, null);
     }

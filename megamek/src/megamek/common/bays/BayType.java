@@ -233,51 +233,64 @@ public enum BayType implements ITechnologyDelegator {
      * @return The BayType for the bay.
      */
     public static BayType getTypeForBay(Bay bay) {
-        if (bay instanceof CargoBay) {
-            return STANDARD_CARGO;
-        } else if (bay instanceof LiquidCargoBay) {
-            return LIQUID_CARGO;
-        } else if (bay instanceof RefrigeratedCargoBay) {
-            return REFRIGERATED_CARGO;
-        } else if (bay instanceof InsulatedCargoBay) {
-            return INSULATED_CARGO;
-        } else if (bay instanceof LivestockCargoBay) {
-            return LIVESTOCK_CARGO;
-        } else if (bay instanceof InfantryBay infantryBay) {
-            PlatoonType platoonType = infantryBay.getPlatoonType();
-            if (platoonType == PlatoonType.JUMP) {
-                return INFANTRY_JUMP;
-            } else if (platoonType == PlatoonType.MOTORIZED) {
-                return INFANTRY_MOTORIZED;
-            } else if (platoonType == PlatoonType.MECHANIZED) {
-                return INFANTRY_MECHANIZED;
-            } else {
-                return INFANTRY_FOOT;
+        switch (bay) {
+            case LiquidCargoBay ignored -> {
+                return LIQUID_CARGO;
             }
-        } else if (bay instanceof BattleArmorBay) {
-            if (bay.isClan()) {
-                return BATTLEARMOR_CLAN;
-            } else if (bay.toString().contains("C*")) {
-                return BATTLEARMOR_CS;
-            } else {
-                return BATTLEARMOR_IS;
+            case RefrigeratedCargoBay ignored -> {
+                return REFRIGERATED_CARGO;
             }
-        } else if (bay instanceof MekBay) {
-            return MEK;
-        } else if (bay instanceof ASFBay) {
-            return FIGHTER;
-        } else if (bay instanceof ProtoMekBay) {
-            return PROTOMEK;
-        } else if (bay instanceof SmallCraftBay) {
-            return SMALL_CRAFT;
-        } else if (bay instanceof LightVehicleBay) {
-            return VEHICLE_LIGHT;
-        } else if (bay instanceof HeavyVehicleBay) {
-            return VEHICLE_HEAVY;
-        } else if (bay instanceof SuperHeavyVehicleBay) {
-            return VEHICLE_SH;
-        } else {
-            return STANDARD_CARGO;
+            case InsulatedCargoBay ignored -> {
+                return INSULATED_CARGO;
+            }
+            case LivestockCargoBay ignored -> {
+                return LIVESTOCK_CARGO;
+            }
+            case InfantryBay infantryBay -> {
+                PlatoonType platoonType = infantryBay.getPlatoonType();
+                if (platoonType == PlatoonType.JUMP) {
+                    return INFANTRY_JUMP;
+                } else if (platoonType == PlatoonType.MOTORIZED) {
+                    return INFANTRY_MOTORIZED;
+                } else if (platoonType == PlatoonType.MECHANIZED) {
+                    return INFANTRY_MECHANIZED;
+                } else {
+                    return INFANTRY_FOOT;
+                }
+            }
+            case BattleArmorBay ignored -> {
+                if (bay.isClan()) {
+                    return BATTLEARMOR_CLAN;
+                } else if (bay.toString().contains("C*")) {
+                    return BATTLEARMOR_CS;
+                } else {
+                    return BATTLEARMOR_IS;
+                }
+            }
+            case MekBay ignored -> {
+                return MEK;
+            }
+            case ASFBay ignored -> {
+                return FIGHTER;
+            }
+            case ProtoMekBay ignored -> {
+                return PROTOMEK;
+            }
+            case SmallCraftBay ignored -> {
+                return SMALL_CRAFT;
+            }
+            case LightVehicleBay ignored -> {
+                return VEHICLE_LIGHT;
+            }
+            case HeavyVehicleBay ignored -> {
+                return VEHICLE_HEAVY;
+            }
+            case SuperHeavyVehicleBay ignored -> {
+                return VEHICLE_SH;
+            }
+            case null, default -> {
+                return STANDARD_CARGO;
+            }
         }
     }
 }

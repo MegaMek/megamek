@@ -241,6 +241,7 @@ public enum PacketCommand {
         return this == CFR_TAG_TARGET;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isGameVictoryEvent() {
         return this == GAME_VICTORY_EVENT;
     }

@@ -60,6 +60,7 @@ public class RATDataCSVExporter {
     /**
      * Exports all RAT data to a selectable file as an excel-optimized CSV.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static void exportToCSV() {
         RATGenerator ratGenerator = initializeRatGenerator();
         exportToCSV(ratGenerator);

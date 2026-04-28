@@ -131,13 +131,14 @@ public class AbandonUnitDialog extends JDialog implements ActionListener {
             }
 
             // Check if this unit can be abandoned or has crew that can exit
-            if (entity instanceof Mek mek && mek.canAbandon()) {
-                abandonableUnits.add(mek);
-            } else if (entity instanceof CombatVehicleEscapePod pod && pod.canCrewExit()) {
-                // Escape pods: crew can exit to become infantry
-                abandonableUnits.add(pod);
-            } else if (entity instanceof Tank tank && tank.canAbandon()) {
-                abandonableUnits.add(tank);
+            switch (entity) {
+                case Mek mek when mek.canAbandon() -> abandonableUnits.add(mek);
+                case CombatVehicleEscapePod pod when pod.canCrewExit() ->
+                    // Escape pods: crew can exit to become infantry
+                      abandonableUnits.add(pod);
+                case Tank tank when tank.canAbandon() -> abandonableUnits.add(tank);
+                default -> {
+                }
             }
         }
     }
@@ -217,7 +218,7 @@ public class AbandonUnitDialog extends JDialog implements ActionListener {
         // Clamp between min and max
         int minHeight = UIUtil.scaleForGUI(95);
         int maxHeight = UIUtil.scaleForGUI(335);
-        int scrollHeight = Math.max(minHeight, Math.min(contentHeight, maxHeight));
+        int scrollHeight = Math.clamp(contentHeight, minHeight, maxHeight);
 
         scrollPane.setPreferredSize(UIUtil.scaleForGUI(500, scrollHeight));
         mainPanel.add(scrollPane, BorderLayout.CENTER);

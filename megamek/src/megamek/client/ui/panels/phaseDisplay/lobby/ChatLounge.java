@@ -579,7 +579,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         bvSorters.add(new PlayerBVSorter(clientgui, Sorting.DESCENDING));
         bvSorters.add(new BVSorter(Sorting.ASCENDING));
         bvSorters.add(new BVSorter(Sorting.DESCENDING));
-        activeSorter = unitSorters.get(0);
+        activeSorter = unitSorters.getFirst();
     }
 
     /** Enables buttons to allow adding units when the MSC has finished loading. */
@@ -1269,7 +1269,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                         String boardForImage = boardName;
                         // For a surprise board, just use the first board as example
                         if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
-                            boardForImage = extractSurpriseMaps(boardName).get(0);
+                            boardForImage = extractSurpriseMaps(boardName).getFirst();
                         }
 
                         boolean rotateBoard = false;
@@ -1729,6 +1729,7 @@ public class ChatLounge extends AbstractPhaseDisplay
      *
      * @see #isEditable(Entity)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     boolean isNotEditable(Entity entity) {
         return !isEditable(entity);
     }
@@ -2830,7 +2831,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             } else if (code == KeyEvent.VK_ENTER) {
                 evt.consume();
                 if (entities.size() == 1) {
-                    lobbyActions.customizeMek(entities.get(0));
+                    lobbyActions.customizeMek(entities.getFirst());
                 } else if (canConfigureMultipleDeployment(entities)) {
                     lobbyActions.customizeMeks(entities);
                 }
@@ -2978,7 +2979,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
             } else if (code == KeyEvent.VK_ENTER && onlyOneEntity) {
                 e.consume();
-                lobbyActions.customizeMek(selEntities.get(0));
+                lobbyActions.customizeMek(selEntities.getFirst());
 
             } else if (code == KeyEvent.VK_UP && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
                 e.consume();
@@ -3471,7 +3472,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         // the first sorter otherwise
         int index = sorters.indexOf(activeSorter);
         if (index == -1) {
-            activeSorter = sorters.get(0);
+            activeSorter = sorters.getFirst();
         } else {
             index = (index + 1) % sorters.size();
             activeSorter = sorters.get(index);

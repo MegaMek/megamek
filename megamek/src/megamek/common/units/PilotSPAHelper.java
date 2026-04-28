@@ -96,6 +96,7 @@ public final class PilotSPAHelper {
      *
      * @return A list of weapons from the given Entity that are valid choices for the Weapon Specialist SPA
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static List<Mounted<?>> weaponSpecialistValidWeapons(Entity entity, @Nullable GameOptions options) {
         return entity.getTotalWeaponList().stream()
               .filter(mounted -> isWeaponSpecialistValid(mounted, options))
@@ -153,6 +154,7 @@ public final class PilotSPAHelper {
      *
      * @return A list of weapons from the given Entity that are valid choices for the Sandblaster SPA
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static List<Mounted<?>> sandblasterValidWeapons(Entity entity, @Nullable GameOptions options) {
         return entity.getTotalWeaponList().stream()
               .filter(mounted -> isSandblasterValid(mounted, options))

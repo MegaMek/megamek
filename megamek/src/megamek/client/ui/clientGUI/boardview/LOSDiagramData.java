@@ -41,18 +41,18 @@ import megamek.common.board.Coords;
  * Immutable data model for rendering a LOS elevation diagram between two hexes. Decoupled from the game state so the
  * rendering panel does not depend on game logic.
  *
- * @param hexPath           the ordered list of hex data along the LOS path (attacker to target)
- * @param attackerAbsHeight the attacker's absolute height (hex floor + unit height)
- * @param targetAbsHeight   the target's absolute height (hex floor + unit height)
- * @param attackPos         the attacker's hex coordinates
- * @param targetPos         the target's hex coordinates
- * @param losBlocked        whether LOS is completely blocked along this path
- * @param attackerUnitType    the attacker's unit type for silhouette rendering
- * @param targetUnitType      the target's unit type for silhouette rendering
- * @param attackerIsHullDown  whether the attacker is hull-down (reduces LOS profile by 1 TW level)
- * @param targetIsHullDown    whether the target is hull-down (reduces LOS profile by 1 TW level)
- * @param attackerName        display name of the attacker entity, or empty if none
- * @param targetName          display name of the target entity, or empty if none
+ * @param hexPath            the ordered list of hex data along the LOS path (attacker to target)
+ * @param attackerAbsHeight  the attacker's absolute height (hex floor + unit height)
+ * @param targetAbsHeight    the target's absolute height (hex floor + unit height)
+ * @param attackPos          the attacker's hex coordinates
+ * @param targetPos          the target's hex coordinates
+ * @param losBlocked         whether LOS is completely blocked along this path
+ * @param attackerUnitType   the attacker's unit type for silhouette rendering
+ * @param targetUnitType     the target's unit type for silhouette rendering
+ * @param attackerIsHullDown whether the attacker is hull-down (reduces LOS profile by 1 TW level)
+ * @param targetIsHullDown   whether the target is hull-down (reduces LOS profile by 1 TW level)
+ * @param attackerName       display name of the attacker entity, or empty if none
+ * @param targetName         display name of the target entity, or empty if none
  */
 record LOSDiagramData(
       List<HexRow> hexPath,
@@ -76,6 +76,7 @@ record LOSDiagramData(
      *
      * @return true if the attacker unit type is a Mek
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean attackerIsMek() {
         return attackerUnitType.isMek();
     }
@@ -85,6 +86,7 @@ record LOSDiagramData(
      *
      * @return true if the target unit type is a Mek
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean targetIsMek() {
         return targetUnitType.isMek();
     }

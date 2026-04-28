@@ -295,8 +295,8 @@ public class TWDamageManager implements IDamageManager {
         // Allocate the damage
         // Use different damageX methods to deal damage here
         // Don't pass reportVec back and forth, that's wasteful.
-        if (entity instanceof ProtoMek teCast) {
-            damageProtoMek(reportVec,
+        switch (entity) {
+            case ProtoMek teCast -> damageProtoMek(reportVec,
                   teCast,
                   hit,
                   damage,
@@ -307,8 +307,7 @@ public class TWDamageManager implements IDamageManager {
                   underWater,
                   nukeS2S,
                   mods);
-        } else if (entity instanceof Mek teCast) {
-            damageMek(reportVec,
+            case Mek teCast -> damageMek(reportVec,
                   teCast,
                   hit,
                   damage,
@@ -319,8 +318,7 @@ public class TWDamageManager implements IDamageManager {
                   underWater,
                   nukeS2S,
                   mods);
-        } else if (entity instanceof Aero teCast) {
-            damageAeroSpace(reportVec,
+            case Aero teCast -> damageAeroSpace(reportVec,
                   teCast,
                   hit,
                   damage,
@@ -331,8 +329,7 @@ public class TWDamageManager implements IDamageManager {
                   underWater,
                   nukeS2S,
                   mods);
-        } else if (entity instanceof Tank teCast) {
-            damageTank(reportVec,
+            case Tank teCast -> damageTank(reportVec,
                   teCast,
                   hit,
                   damage,
@@ -343,8 +340,7 @@ public class TWDamageManager implements IDamageManager {
                   underWater,
                   nukeS2S,
                   mods);
-        } else if (entity instanceof BattleArmor teCast) {
-            damageBA(reportVec,
+            case BattleArmor teCast -> damageBA(reportVec,
                   teCast,
                   hit,
                   damage,
@@ -355,11 +351,12 @@ public class TWDamageManager implements IDamageManager {
                   underWater,
                   nukeS2S,
                   mods);
-        } else if (entity instanceof CombatVehicleEscapePod cvep) {
-            // CVEP uses parent's specialized handler (2-damage threshold breach model per TO:AUE p.121)
-            return handleCombatVehicleEscapePodDamage(cvep, damage, reportVec);
-        } else if (entity instanceof Infantry teCast && teCast.isConventionalInfantry()) {
-            damageInfantry(reportVec,
+            case CombatVehicleEscapePod cvep -> {
+                // CVEP uses parent's specialized handler (2-damage threshold breach model per TO:AUE p.121)
+                return handleCombatVehicleEscapePodDamage(cvep, damage, reportVec);
+                // CVEP uses parent's specialized handler (2-damage threshold breach model per TO:AUE p.121)
+            }
+            case Infantry teCast when teCast.isConventionalInfantry() -> damageInfantry(reportVec,
                   teCast,
                   hit,
                   damage,
@@ -370,8 +367,7 @@ public class TWDamageManager implements IDamageManager {
                   underWater,
                   nukeS2S,
                   mods);
-        } else if (entity instanceof HandheldWeapon teCast) {
-            damageHandheldWeapon(reportVec,
+            case HandheldWeapon teCast -> damageHandheldWeapon(reportVec,
                   teCast,
                   hit,
                   damage,
@@ -382,8 +378,7 @@ public class TWDamageManager implements IDamageManager {
                   underWater,
                   nukeS2S,
                   mods);
-        } else {
-            logger.error(new UnknownEntityTypeException(entity.toString()));
+            default -> logger.error(new UnknownEntityTypeException(entity.toString()));
         }
 
         boolean tookInternalDamage = mods.tookInternalDamage;
@@ -1227,11 +1222,11 @@ public class TWDamageManager implements IDamageManager {
     }
 
     /**
-     * @param reportVec     Vector of Reports containing prior reports; usually modded and returned
-     * @param entity        Entity carrying the cargo
-     * @param cargo         ICarryable being damaged
-     * @param damage        Actual amount of incoming damage
-     * @param entityId      ID of entity (above)
+     * @param reportVec Vector of Reports containing prior reports; usually modded and returned
+     * @param entity    Entity carrying the cargo
+     * @param cargo     ICarryable being damaged
+     * @param damage    Actual amount of incoming damage
+     * @param entityId  ID of entity (above)
      */
     private void damageCargo(Vector<Report> reportVec, Entity entity, ICarryable cargo, int damage, int entityId) {
         Report report;
@@ -2634,8 +2629,10 @@ public class TWDamageManager implements IDamageManager {
 
     /**
      * Checks if spotlight is hittable on a tank-type entity; mek check is a simpler inline check.
-     * @param tank  Vehicle that we are damaging
-     * @param hit   HitData recording aspects of the incoming damage
+     *
+     * @param tank Vehicle that we are damaging
+     * @param hit  HitData recording aspects of the incoming damage
+     *
      * @return boolean true if is hittable, false if not
      */
     private static boolean isSpotlightHittable(Tank tank, HitData hit) {
@@ -2720,11 +2717,13 @@ public class TWDamageManager implements IDamageManager {
 
     /**
      * Determines what, if any, additional critical damage will be applied by this damage instance
-     * @param attacker          Entity attacking the target (needed for ability checks)
-     * @param entity            Entity being attacked
-     * @param damageOriginal    Original damage amount
-     * @param areaSatArty       Whether damage is being dealt by area saturation artillery
-     * @return  int             number of bonus crits to deal to entity
+     *
+     * @param attacker       Entity attacking the target (needed for ability checks)
+     * @param entity         Entity being attacked
+     * @param damageOriginal Original damage amount
+     * @param areaSatArty    Whether damage is being dealt by area saturation artillery
+     *
+     * @return int             number of bonus crits to deal to entity
      */
     public int calcCritBonus(Entity attacker, Entity entity, int damageOriginal, boolean areaSatArty) {
         // the bonus to the crit roll if using the
@@ -2756,8 +2755,10 @@ public class TWDamageManager implements IDamageManager {
 
     /**
      * Determines if the entity being damaged has Ferro-Fibrous armor of any kind.
-     * @param entity        entity that we are damaging
-     * @param hit           HitData recording aspects of the incoming damage
+     *
+     * @param entity entity that we are damaging
+     * @param hit    HitData recording aspects of the incoming damage
+     *
      * @return boolean      true if FF armor found, otherwise false
      */
     public boolean checkFerroFibrous(Entity entity, HitData hit) {
@@ -2784,11 +2785,13 @@ public class TWDamageManager implements IDamageManager {
 
     /**
      * Determine how much damage will be reduced by tank CASE equipment
+     *
      * @param tank          Tank entity that we are damaging
      * @param hit           HitData recording aspects of the incoming damage
      * @param damage        Actual amount of incoming damage
      * @param ammoExplosion Whether damage was caused by an ammo explosion
      * @param reportVec     Vector of Reports containing prior reports; usually modded and returned
+     *
      * @return int          total of damage remaining after reduction by CASE
      */
     public int applyTankCASEDamageReduction(Tank tank, HitData hit, int damage, boolean ammoExplosion,
@@ -2838,11 +2841,13 @@ public class TWDamageManager implements IDamageManager {
 
     /**
      * Determine how much damage will be reduced by Playtest rules update to internal explosion.
+     *
      * @param mek           Mek entity that we are damaging
      * @param hit           HitData recording aspects of the incoming damage
      * @param damage        Actual amount of incoming damage
      * @param ammoExplosion Whether damage was caused by an ammo explosion
      * @param reportVec     Vector of Reports containing prior reports; usually modded and returned
+     *
      * @return int          total of damage remaining after reduction by Playtest rules
      */
     public int applyPlaytestExplosionReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion,
@@ -2912,11 +2917,13 @@ public class TWDamageManager implements IDamageManager {
 
     /**
      * Determine how much damage will be reduced by CASE II equipment
+     *
      * @param entity        Entity that we are damaging
      * @param hit           HitData recording aspects of the incoming damage
      * @param damage        Actual amount of incoming damage
      * @param ammoExplosion Whether damage was caused by an ammo explosion
      * @param reportVec     Vector of Reports containing prior reports; usually modded and returned
+     *
      * @return int          total of damage remaining after reduction by CASE II
      */
     public int applyCASEIIDamageReduction(Entity entity, HitData hit, int damage, boolean ammoExplosion,
@@ -3052,11 +3059,12 @@ public class TWDamageManager implements IDamageManager {
 
     /**
      *
-     * @param entity        Entity we are damaging
-     * @param hit           HitData recording aspects of the incoming damage
-     * @param damageIS      Whether damage is going straight to the internal structure
-     * @param damageOriginal    Original damage value being applied to the entity, before mods and armor
-     * @param crits         "Baked in" crits; this is modified as damage is applied.
+     * @param entity         Entity we are damaging
+     * @param hit            HitData recording aspects of the incoming damage
+     * @param damageIS       Whether damage is going straight to the internal structure
+     * @param damageOriginal Original damage value being applied to the entity, before mods and armor
+     * @param crits          "Baked in" crits; this is modified as damage is applied.
+     *
      * @return ModsInfo     object storing various values for other code to use and modify
      */
     protected ModsInfo createDamageModifiers(Entity entity, HitData hit, boolean damageIS, int damageOriginal,
@@ -3075,9 +3083,9 @@ public class TWDamageManager implements IDamageManager {
     /**
      * Modifies various armor-tracking fields in mods depending on damaged entity and location
      *
-     * @param mods          damage modifiers and state tracking
-     * @param entity        Entity we are damaging
-     * @param hit           HitData recording aspects of the incoming damage
+     * @param mods   damage modifiers and state tracking
+     * @param entity Entity we are damaging
+     * @param hit    HitData recording aspects of the incoming damage
      */
     protected void updateArmorTypeMap(ModsInfo mods, Entity entity, HitData hit) {
         boolean isBattleArmor = (entity instanceof BattleArmor);
@@ -3114,16 +3122,17 @@ public class TWDamageManager implements IDamageManager {
     }
 
     /**
-     * Reports on special damage-modifying effects and returns any remaining damage that should be
-     * applied to the entity in question.
+     * Reports on special damage-modifying effects and returns any remaining damage that should be applied to the entity
+     * in question.
      *
-     * @param entity        Entity we are damaging
-     * @param reportVec     Vector of Reports containing prior reports; usually modded and returned
-     * @param damage        Actual amount of incoming damage
-     * @param damageType    Type of damage, mainly used for specialized armor
-     * @param hit           HitData recording aspects of the incoming damage
-     * @param isPlatoon     Whether the entity being damaged is an infantry group
-     * @param mods          damage modifiers and state tracking
+     * @param entity     Entity we are damaging
+     * @param reportVec  Vector of Reports containing prior reports; usually modded and returned
+     * @param damage     Actual amount of incoming damage
+     * @param damageType Type of damage, mainly used for specialized armor
+     * @param hit        HitData recording aspects of the incoming damage
+     * @param isPlatoon  Whether the entity being damaged is an infantry group
+     * @param mods       damage modifiers and state tracking
+     *
      * @return int          Any remaining damage that must be processed further
      */
     public int manageDamageTypeReports(Entity entity, Vector<Report> reportVec, int damage, DamageType damageType,
@@ -3229,6 +3238,7 @@ public class TWDamageManager implements IDamageManager {
      * @param ammoExplosion Whether damage was caused by an ammo explosion
      * @param damageType    Special damage type info that determines how passengers may be affected
      * @param reportVec     Vector of Reports containing prior reports; usually modded and returned
+     *
      * @return int          total of damage remaining after pasengers absorb damage
      */
     public int handleExternalPassengerDamage(Entity entity, HitData hit, int damage, boolean ammoExplosion,

@@ -38,15 +38,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -320,8 +312,8 @@ public abstract class BotClient extends Client {
     }
 
     /**
-     * Calculates the pre phase turn. In Standard ghost target mode during PRE_FIRING,
-     * assigns ghost targets for any qualifying equipment. Otherwise just ends the turn.
+     * Calculates the pre phase turn. In Standard ghost target mode during PRE_FIRING, assigns ghost targets for any
+     * qualifying equipment. Otherwise just ends the turn.
      */
     protected void calculatePrePhaseTurn() {
         int entityId = game.getFirstEntityNum(getMyTurn());
@@ -384,11 +376,7 @@ public abstract class BotClient extends Client {
             }
         }
 
-        if (bestTarget != null) {
-            sendGhostTargetAction(source.getId(), equipId, bestTarget.getId());
-        } else {
-            sendGhostTargetAction(source.getId(), equipId, source.getId());
-        }
+        sendGhostTargetAction(source.getId(), equipId, Objects.requireNonNullElse(bestTarget, source).getId());
     }
 
     @Nullable

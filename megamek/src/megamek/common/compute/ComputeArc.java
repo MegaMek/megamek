@@ -33,9 +33,7 @@
 
 package megamek.common.compute;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import megamek.common.board.Board;
 import megamek.common.board.Coords;

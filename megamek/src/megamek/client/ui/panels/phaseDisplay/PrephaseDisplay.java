@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -207,9 +208,10 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
     /**
      * Have the panel register itself as a listener wherever it's needed.
      * <p>
-     * According to http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a major bad no-no to perform
-     * these registrations before the constructor finishes, so this function has to be called after the panel is
-     * created. Please note, this restriction only applies to listeners for objects that aren't on the panel itself.
+     * According to <a href="http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html">IBM</a> it is a major
+     * bad no-no to perform these registrations before the constructor finishes, so this function has to be called after
+     * the panel is created. Please note, this restriction only applies to listeners for objects that aren't on the
+     * panel itself.
      */
     public void initializeListeners() {
         game().addGameListener(this);
@@ -292,11 +294,11 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
 
         if (ghostTargetMode) {
             setStatusBarText(Messages.getString("PrephaseDisplay.ghostTargetMode"));
-        } else if (ghostTargetConfirmation != null) {
-            setStatusBarText(ghostTargetConfirmation);
         } else {
-            setStatusBarText(
-                  Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString(), ce.getDisplayName()));
+            setStatusBarText(Objects.requireNonNullElseGet(ghostTargetConfirmation,
+                  () -> Messages.getFormattedString("PrephaseDisplay.its_your_turn",
+                        phase.toString(),
+                        ce.getDisplayName())));
         }
 
         boolean isRevealing = !ce.getHiddenActivationPhase().isUnknown();

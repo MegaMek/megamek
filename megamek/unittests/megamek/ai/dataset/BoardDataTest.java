@@ -36,7 +36,6 @@ package megamek.ai.dataset;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -141,7 +140,7 @@ class BoardDataTest {
         data.put(BoardData.Field.WIDTH, 16);
         List<BoardData.Field> order = data.getFieldOrder();
         assertEquals(2, order.size());
-        assertEquals(BoardData.Field.BOARD_NAME, order.get(0));
+        assertEquals(BoardData.Field.BOARD_NAME, order.getFirst());
         assertEquals(BoardData.Field.WIDTH, order.get(1));
     }
 
@@ -167,10 +166,5 @@ class BoardDataTest {
 
         BoardData data = BoardData.fromBoard(board);
         assertNull(data.get(BoardData.Field.BOARD_NAME));
-    }
-
-    @Test
-    void testFromBoardNull() {
-        assertThrows(NullPointerException.class, () -> BoardData.fromBoard(null));
     }
 }

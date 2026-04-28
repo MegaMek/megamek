@@ -1232,8 +1232,8 @@ public class Board implements Serializable {
     }
 
     /**
-     * Writes data for the board, as text to the OutputStream.
-     * Uses the GUI preference to determine whether to include the license header.
+     * Writes data for the board, as text to the OutputStream. Uses the GUI preference to determine whether to include
+     * the license header.
      *
      * @param os the OutputStream to write to
      */
@@ -1400,6 +1400,7 @@ public class Board implements Serializable {
      *
      * @return an <code>Enumeration</code> of <code>Coords</code> that have infernos still burning.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Enumeration<Coords> getInfernoBurningCoords() {
         // Only include *burning* inferno trackers.
         Vector<Coords> burning = new Vector<>();
@@ -2086,6 +2087,7 @@ public class Board implements Serializable {
     /**
      * Resets the "intermediate" deployment zones associated with this board, in case the deployment zones change
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void resetDeploymentZones() {
         deploymentZones = null;
     }
@@ -2240,7 +2242,9 @@ public class Board implements Serializable {
 
     /**
      * Add a building and all of its coordinates to the board. {@link BuildingTerrain} should be added when
-     * initializing, this method is public so {@link AbstractBuildingEntity} can register buildings when deploying buildings.
+     * initializing, this method is public so {@link AbstractBuildingEntity} can register buildings when deploying
+     * buildings.
+     *
      * @param bldg {@link IBuilding} to add to the board
      */
     public void addBuildingToBoard(IBuilding bldg) {

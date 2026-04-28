@@ -52,8 +52,8 @@ import org.junit.jupiter.api.Test;
  * Tests for {@link WoodsClearingTracker}.
  *
  * <p>Per TM pp.241-243, a chainsaw or dual saw takes 2 turns to reduce a wooded hex
- * one level. Two units clearing the same hex reduce this to 1 turn. Work accumulates per hex and persists across
- * rounds (even if no entity clears in a given round) until a woods level is completely cleared.</p>
+ * one level. Two units clearing the same hex reduce this to 1 turn. Work accumulates per hex and persists across rounds
+ * (even if no entity clears in a given round) until a woods level is completely cleared.</p>
  */
 class WoodsClearingTrackerTest {
 
@@ -84,7 +84,7 @@ class WoodsClearingTrackerTest {
             tracker.declareClearing(1, hexA);
             completed = tracker.processNewRound();
             assertEquals(1, completed.size(), "Should complete after 2 turns with single saw");
-            assertEquals(hexA, completed.get(0));
+            assertEquals(hexA, completed.getFirst());
         }
 
         @Test
@@ -108,7 +108,7 @@ class WoodsClearingTrackerTest {
             tracker.declareClearing(2, hexA);
             List<BoardLocation> completed = tracker.processNewRound();
             assertEquals(1, completed.size(), "Two saws on same hex should complete in 1 turn");
-            assertEquals(hexA, completed.get(0));
+            assertEquals(hexA, completed.getFirst());
         }
 
         @Test

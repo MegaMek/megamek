@@ -44,7 +44,6 @@ import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
-import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Building;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.BuildingTerrain;
@@ -57,17 +56,17 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 /**
- * Parameterized tests for {@link IBuilding} interface.
- * Tests implementations: {@link BuildingTerrain}, {@link BuildingEntity}, and eventually {@link MobileStructure}.
+ * Parameterized tests for {@link IBuilding} interface. Tests implementations: {@link BuildingTerrain},
+ * {@link BuildingEntity}, and eventually {@link MobileStructure}.
  */
 public class IBuildingTests extends GameBoardTestCase {
 
     static {
         // Initialize a board with a MEDIUM building (type 2) with HANGAR class (1)
         initializeBoard("TEST_BUILDING", """
-            size 1 1
-            hex 0101 0 "bldg_elev:3;building:2;bldg_class:1;bldg_cf:50;bldg_armor:10" ""
-            end"""
+              size 1 1
+              hex 0101 0 "bldg_elev:3;building:2;bldg_class:1;bldg_cf:50;bldg_armor:10" ""
+              end"""
         );
     }
 
@@ -83,17 +82,9 @@ public class IBuildingTests extends GameBoardTestCase {
         // IMPORTANT: Set position to populate the relativeLayout map for coordinate translation
         buildingEntity.setPosition(new Coords(0, 0));
 
-        /*
-        MobileStructure mobileStructure = new MobileStructure(BuildingType.MEDIUM, 1);
-        buildingEntity.getInternalBuilding().setBuildingHeight(3);
-        buildingEntity.getInternalBuilding().addHex(new CubeCoords(0, 0, 0), 50, 10, BasementType.UNKNOWN, false);
-        // IMPORTANT: Set position to populate the relativeLayout map for coordinate translation
-        buildingEntity.setPosition(new Coords(0, 0));
-        */
-
         return Stream.of(
-            Arguments.of("BuildingTerrain", terrain),
-            Arguments.of("BuildingEntity", buildingEntity)/*,
+              Arguments.of("BuildingTerrain", terrain),
+              Arguments.of("BuildingEntity", buildingEntity)/*,
             Arguments.of(MobileStructure, mobileStructure)
             */
         );
@@ -103,110 +94,110 @@ public class IBuildingTests extends GameBoardTestCase {
     @MethodSource("buildingImplementations")
     void testCurrentCF(String implName, IBuilding building) {
         // Use existing hex from initialization
-        Coords testCoords = building.getCoordsList().get(0);
+        Coords testCoords = building.getCoordsList().getFirst();
 
         // Test initial CF (should be 50 from board initialization)
         assertEquals(50, building.getCurrentCF(testCoords),
-            String.format("%s: getCurrentCF should return initial CF", implName));
+              String.format("%s: getCurrentCF should return initial CF", implName));
 
         building.setCurrentCF(30, testCoords);
         assertEquals(30, building.getCurrentCF(testCoords),
-            String.format("%s: getCurrentCF should return updated CF after setCurrentCF", implName));
+              String.format("%s: getCurrentCF should return updated CF after setCurrentCF", implName));
     }
 
     @ParameterizedTest(name = "{0} - Phase CF getter/setter")
     @MethodSource("buildingImplementations")
     void testPhaseCF(String implName, IBuilding building) {
         // Use existing hex from initialization
-        Coords testCoords = building.getCoordsList().get(0);
+        Coords testCoords = building.getCoordsList().getFirst();
 
         // Test initial phase CF (should be 50 from board initialization)
         assertEquals(50, building.getPhaseCF(testCoords),
-            String.format("%s: getPhaseCF should return initial CF", implName));
+              String.format("%s: getPhaseCF should return initial CF", implName));
 
         building.setPhaseCF(25, testCoords);
         assertEquals(25, building.getPhaseCF(testCoords),
-            String.format("%s: getPhaseCF should return updated CF after setPhaseCF", implName));
+              String.format("%s: getPhaseCF should return updated CF after setPhaseCF", implName));
     }
 
     @ParameterizedTest(name = "{0} - Armor getter/setter")
     @MethodSource("buildingImplementations")
     void testArmor(String implName, IBuilding building) {
         // Use existing hex from initialization
-        Coords testCoords = building.getCoordsList().get(0);
+        Coords testCoords = building.getCoordsList().getFirst();
 
         // Test initial armor (should be 10 from board initialization)
         assertEquals(10, building.getArmor(testCoords),
-            String.format("%s: getArmor should return initial armor", implName));
+              String.format("%s: getArmor should return initial armor", implName));
 
         building.setArmor(5, testCoords);
         assertEquals(5, building.getArmor(testCoords),
-            String.format("%s: getArmor should return updated armor after setArmor", implName));
+              String.format("%s: getArmor should return updated armor after setArmor", implName));
     }
 
     @ParameterizedTest(name = "{0} - Height getter/setter")
     @MethodSource("buildingImplementations")
     void testHeight(String implName, IBuilding building) {
         // Use existing hex from initialization
-        Coords testCoords = building.getCoordsList().get(0);
+        Coords testCoords = building.getCoordsList().getFirst();
 
         // Test initial height (should be 3 from board initialization)
         assertEquals(3, building.getHeight(testCoords),
-            String.format("%s: getHeight should return building height", implName));
+              String.format("%s: getHeight should return building height", implName));
 
         building.setHeight(0, testCoords);
         assertEquals(0, building.getHeight(testCoords),
-            String.format("%s: getHeight should return 0 after hex destroyed", implName));
+              String.format("%s: getHeight should return 0 after hex destroyed", implName));
     }
 
     @ParameterizedTest(name = "{0} - Building type")
     @MethodSource("buildingImplementations")
     void testBuildingType(String implName, IBuilding building) {
         assertEquals(BuildingType.MEDIUM, building.getBuildingType(),
-            String.format("%s: getBuildingType should return MEDIUM", implName));
+              String.format("%s: getBuildingType should return MEDIUM", implName));
     }
 
     @ParameterizedTest(name = "{0} - Building class")
     @MethodSource("buildingImplementations")
     void testBuildingClass(String implName, IBuilding building) {
         assertEquals(1, building.getBldgClass(),
-            String.format("%s: getBldgClass should return 1 (HANGAR)", implName));
+              String.format("%s: getBldgClass should return 1 (HANGAR)", implName));
     }
 
     @ParameterizedTest(name = "{0} - isIn / hasCFIn")
     @MethodSource("buildingImplementations")
     void testCoordinateChecks(String implName, IBuilding building) {
         // Building already has hexes from initialization, get the first one
-        Coords testCoords = building.getCoordsList().get(0);
+        Coords testCoords = building.getCoordsList().getFirst();
         Coords otherCoords = new Coords(10, 10);  // Guaranteed not in building
 
         assertTrue(building.isIn(testCoords),
-            String.format("%s: isIn should return true for existing hex", implName));
+              String.format("%s: isIn should return true for existing hex", implName));
         assertFalse(building.isIn(otherCoords),
-            String.format("%s: isIn should return false for non-added hex", implName));
+              String.format("%s: isIn should return false for non-added hex", implName));
 
         assertTrue(building.hasCFIn(testCoords),
-            String.format("%s: hasCFIn should return true for hex with CF", implName));
+              String.format("%s: hasCFIn should return true for hex with CF", implName));
         assertFalse(building.hasCFIn(otherCoords),
-            String.format("%s: hasCFIn should return false for hex without CF", implName));
+              String.format("%s: hasCFIn should return false for hex without CF", implName));
     }
 
     @ParameterizedTest(name = "{0} - Burning flag")
     @MethodSource("buildingImplementations")
     void testBurning(String implName, IBuilding building) {
         // Use existing hex from initialization
-        Coords testCoords = building.getCoordsList().get(0);
+        Coords testCoords = building.getCoordsList().getFirst();
 
         assertFalse(building.isBurning(testCoords),
-            String.format("%s: isBurning should return false initially", implName));
+              String.format("%s: isBurning should return false initially", implName));
 
         building.setBurning(true, testCoords);
         assertTrue(building.isBurning(testCoords),
-            String.format("%s: isBurning should return true after setBurning(true)", implName));
+              String.format("%s: isBurning should return true after setBurning(true)", implName));
 
         building.setBurning(false, testCoords);
         assertFalse(building.isBurning(testCoords),
-            String.format("%s: isBurning should return false after setBurning(false)", implName));
+              String.format("%s: isBurning should return false after setBurning(false)", implName));
     }
 
     @ParameterizedTest(name = "{0} - Damage scales")
@@ -214,21 +205,21 @@ public class IBuildingTests extends GameBoardTestCase {
     void testDamageScales(String implName, IBuilding building) {
         // Building class 1 is HANGAR
         assertEquals(0.5, building.getDamageFromScale(),
-            String.format("%s: getDamageFromScale for HANGAR should be 0.5", implName));
+              String.format("%s: getDamageFromScale for HANGAR should be 0.5", implName));
         assertEquals(1.0, building.getDamageToScale(),
-            String.format("%s: getDamageToScale for HANGAR should be 1.0", implName));
+              String.format("%s: getDamageToScale for HANGAR should be 1.0", implName));
     }
 
     @ParameterizedTest(name = "{0} - Absorption")
     @MethodSource("buildingImplementations")
     void testAbsorption(String implName, IBuilding building) {
         // Use existing hex from initialization
-        Coords testCoords = building.getCoordsList().get(0);
+        Coords testCoords = building.getCoordsList().getFirst();
 
         // CF is 50 from initialization
         int expectedAbsorption = (int) Math.ceil(50 / 10.0);
         assertEquals(expectedAbsorption, building.getAbsorption(testCoords),
-            String.format("%s: getAbsorption should return ceil(CF/10)", implName));
+              String.format("%s: getAbsorption should return ceil(CF/10)", implName));
     }
 
     @ParameterizedTest(name = "{0} - Damage reduction from outside")
@@ -236,7 +227,7 @@ public class IBuildingTests extends GameBoardTestCase {
     void testDamageReductionFromOutside(String implName, IBuilding building) {
         // MEDIUM building type
         assertEquals(0.5f, building.getDamageReductionFromOutside(),
-            String.format("%s: getDamageReductionFromOutside for MEDIUM should be 0.5", implName));
+              String.format("%s: getDamageReductionFromOutside for MEDIUM should be 0.5", implName));
     }
 
     @ParameterizedTest(name = "{0} - Infantry damage from inside")
@@ -244,7 +235,7 @@ public class IBuildingTests extends GameBoardTestCase {
     void testInfDmgFromInside(String implName, IBuilding building) {
         // MEDIUM building type
         assertEquals(0.0, building.getInfDmgFromInside(),
-            String.format("%s: getInfDmgFromInside for MEDIUM should be 0.0", implName));
+              String.format("%s: getInfDmgFromInside for MEDIUM should be 0.0", implName));
     }
 
     @ParameterizedTest(name = "{0} - Coordinates list")
@@ -252,31 +243,31 @@ public class IBuildingTests extends GameBoardTestCase {
     void testCoordsList(String implName, IBuilding building) {
         // Building already has 1 hex from initialization
         assertEquals(1, building.getCoordsList().size(),
-            String.format("%s: getCoordsList should return 1 coordinate from initialization", implName));
+              String.format("%s: getCoordsList should return 1 coordinate from initialization", implName));
 
         // Get the existing coordinate
-        Coords existingCoord = building.getCoordsList().get(0);
+        Coords existingCoord = building.getCoordsList().getFirst();
         assertTrue(building.getCoordsList().contains(existingCoord),
-            String.format("%s: getCoordsList should contain the initialized hex", implName));
+              String.format("%s: getCoordsList should contain the initialized hex", implName));
     }
 
     @ParameterizedTest(name = "{0} - Building name")
     @MethodSource("buildingImplementations")
     void testGetName(String implName, IBuilding building) {
         assertNotNull(building.getName(),
-            String.format("%s: getName should not return null", implName));
+              String.format("%s: getName should not return null", implName));
         assertFalse(building.getName().isEmpty(),
-            String.format("%s: getName should not return empty string", implName));
+              String.format("%s: getName should not return empty string", implName));
     }
 
     @ParameterizedTest(name = "{0} - Basement type getter/setter")
     @MethodSource("buildingImplementations")
     void testBasement(String implName, IBuilding building) {
-        Coords testCoords = building.getCoordsList().get(0);
+        Coords testCoords = building.getCoordsList().getFirst();
 
         // Default should be UNKNOWN
         assertEquals(BasementType.UNKNOWN, building.getBasement(testCoords),
-            String.format("%s: getBasement should return UNKNOWN initially", implName));
+              String.format("%s: getBasement should return UNKNOWN initially", implName));
 
 
         // Set to NONE
@@ -287,58 +278,58 @@ public class IBuildingTests extends GameBoardTestCase {
         // Set to STANDARD
         building.setBasement(testCoords, BasementType.ONE_DEEP_FEET);
         assertEquals(BasementType.ONE_DEEP_FEET, building.getBasement(testCoords),
-            String.format("%s: getBasement should return ONE_DEEP_FEET after setting", implName));
+              String.format("%s: getBasement should return ONE_DEEP_FEET after setting", implName));
 
         // Set to HARDENED
         building.setBasement(testCoords, BasementType.TWO_DEEP_HEAD);
         assertEquals(BasementType.TWO_DEEP_HEAD, building.getBasement(testCoords),
-            String.format("%s: getBasement should return TWO_DEEP_HEAD after setting", implName));
+              String.format("%s: getBasement should return TWO_DEEP_HEAD after setting", implName));
     }
 
     @ParameterizedTest(name = "{0} - Basement collapsed flag")
     @MethodSource("buildingImplementations")
     void testBasementCollapsed(String implName, IBuilding building) {
-        Coords testCoords = building.getCoordsList().get(0);
+        Coords testCoords = building.getCoordsList().getFirst();
 
         // Initially not collapsed
         assertFalse(building.getBasementCollapsed(testCoords),
-            String.format("%s: getBasementCollapsed should return false initially", implName));
+              String.format("%s: getBasementCollapsed should return false initially", implName));
 
         // Set collapsed
         building.setBasementCollapsed(testCoords, true);
         assertTrue(building.getBasementCollapsed(testCoords),
-            String.format("%s: getBasementCollapsed should return true after setting", implName));
+              String.format("%s: getBasementCollapsed should return true after setting", implName));
 
         // Unset collapsed
         building.setBasementCollapsed(testCoords, false);
         assertFalse(building.getBasementCollapsed(testCoords),
-            String.format("%s: getBasementCollapsed should return false after unsetting", implName));
+              String.format("%s: getBasementCollapsed should return false after unsetting", implName));
     }
 
     @ParameterizedTest(name = "{0} - Demolition charges")
     @MethodSource("buildingImplementations")
     void testDemolitionCharges(String implName, IBuilding building) {
-        Coords testCoords = building.getCoordsList().get(0);
+        Coords testCoords = building.getCoordsList().getFirst();
 
         // Initially empty
         assertTrue(building.getDemolitionCharges().isEmpty(),
-            String.format("%s: getDemolitionCharges should be empty initially", implName));
+              String.format("%s: getDemolitionCharges should be empty initially", implName));
 
         // Add a charge
         building.addDemolitionCharge(1, 10, testCoords);
         assertEquals(1, building.getDemolitionCharges().size(),
-            String.format("%s: should have 1 demolition charge after adding", implName));
+              String.format("%s: should have 1 demolition charge after adding", implName));
 
         // Add another charge
         building.addDemolitionCharge(2, 20, testCoords);
         assertEquals(2, building.getDemolitionCharges().size(),
-            String.format("%s: should have 2 demolition charges after adding another", implName));
+              String.format("%s: should have 2 demolition charges after adding another", implName));
 
         // Remove a charge
-        DemolitionCharge charge = building.getDemolitionCharges().get(0);
+        DemolitionCharge charge = building.getDemolitionCharges().getFirst();
         building.removeDemolitionCharge(charge);
         assertEquals(1, building.getDemolitionCharges().size(),
-            String.format("%s: should have 1 demolition charge after removing", implName));
+              String.format("%s: should have 1 demolition charge after removing", implName));
     }
 
     @ParameterizedTest(name = "{0} - Hex counts")
@@ -346,19 +337,19 @@ public class IBuildingTests extends GameBoardTestCase {
     void testHexCounts(String implName, IBuilding building) {
         // Initial counts (1 hex from initialization)
         assertEquals(1, building.getOriginalHexCount(),
-            String.format("%s: getOriginalHexCount should be 1 initially", implName));
+              String.format("%s: getOriginalHexCount should be 1 initially", implName));
         assertEquals(0, building.getCollapsedHexCount(),
-            String.format("%s: getCollapsedHexCount should be 0 initially", implName));
+              String.format("%s: getCollapsedHexCount should be 0 initially", implName));
 
         // Remove a hex
-        Coords testCoords = building.getCoordsList().get(0);
+        Coords testCoords = building.getCoordsList().getFirst();
         building.removeHex(testCoords);
 
         // Original count stays same, collapsed increases
         assertEquals(1, building.getOriginalHexCount(),
-            String.format("%s: getOriginalHexCount should still be 1 after removing hex", implName));
+              String.format("%s: getOriginalHexCount should still be 1 after removing hex", implName));
         assertEquals(1, building.getCollapsedHexCount(),
-            String.format("%s: getCollapsedHexCount should be 1 after removing hex", implName));
+              String.format("%s: getCollapsedHexCount should be 1 after removing hex", implName));
     }
 
     @ParameterizedTest(name = "{0} - Coordinate translation")
@@ -371,11 +362,11 @@ public class IBuildingTests extends GameBoardTestCase {
             // Test board <-> relative conversion
             CubeCoords relativeCoords = building.boardToRelative(origin);
             assertNotNull(relativeCoords,
-                String.format("%s: boardToRelative should not return null", implName));
+                  String.format("%s: boardToRelative should not return null", implName));
 
             Coords backToBoard = building.relativeToBoard(relativeCoords);
             assertEquals(origin, backToBoard,
-                String.format("%s: round-trip conversion should return to original coords", implName));
+                  String.format("%s: round-trip conversion should return to original coords", implName));
         }
     }
 
@@ -384,7 +375,7 @@ public class IBuildingTests extends GameBoardTestCase {
     void testBoardFacing(String implName, IBuilding building) {
         int facing = building.getBoardFacing();
         assertTrue(facing >= 0 && facing <= 5,
-            String.format("%s: getBoardFacing should return value 0-5, got %d", implName, facing));
+              String.format("%s: getBoardFacing should return value 0-5, got %d", implName, facing));
     }
 
     @ParameterizedTest(name = "{0} - Internal building")
@@ -392,8 +383,8 @@ public class IBuildingTests extends GameBoardTestCase {
     void testInternalBuilding(String implName, IBuilding building) {
         Building internalBuilding = building.getInternalBuilding();
         assertNotNull(internalBuilding,
-            String.format("%s: getInternalBuilding should not return null", implName));
+              String.format("%s: getInternalBuilding should not return null", implName));
         assertEquals(building.getBuildingType(), internalBuilding.getBuildingType(),
-            String.format("%s: internal building should have same type", implName));
+              String.format("%s: internal building should have same type", implName));
     }
 }

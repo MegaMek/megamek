@@ -205,8 +205,8 @@ public class BoardDeserializer extends StdDeserializer<Board> {
             }
 
             List<Board> boardsList = parseMultipleBoards(boardsNode, basePath);
-            mapWidth = boardsList.get(0).getWidth();
-            mapHeight = boardsList.get(0).getHeight();
+            mapWidth = boardsList.getFirst().getWidth();
+            mapHeight = boardsList.getFirst().getHeight();
             int rows = boardsList.size() / columns;
             if (boardsList.size() != columns * rows) {
                 throw new IllegalArgumentException("The number of given boards must give full rows!");
@@ -301,7 +301,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
 
     @Override
     public Board deserialize(JsonParser p, DeserializationContext context) throws IOException {
-        return parse(p.getCodec().readTree(p), new File("")).get(0);
+        return parse(p.getCodec().readTree(p), new File("")).getFirst();
     }
 
     private static void testBoardNodeFields(JsonNode mapNode) {

@@ -232,9 +232,10 @@ public final class ImageUtil {
     /**
      * Add a new image loader to the first position of the list, if it isn't there already
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static void addImageLoader(ImageLoader loader) {
         if (null != loader && !IMAGE_LOADERS.contains(loader)) {
-            IMAGE_LOADERS.add(0, loader);
+            IMAGE_LOADERS.addFirst(loader);
         }
     }
 

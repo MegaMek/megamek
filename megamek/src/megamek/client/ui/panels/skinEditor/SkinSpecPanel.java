@@ -468,10 +468,10 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
     public void updateSkinSpec(SkinSpecification skinSpec, boolean enableBorders, boolean enablePlain) {
         skinSpec.plain = enablePlain;
         skinSpec.noBorder = !enableBorders;
-        skinSpec.tl_corner = tlCorner.path.get(0).getText();
-        skinSpec.tr_corner = trCorner.path.get(0).getText();
-        skinSpec.bl_corner = blCorner.path.get(0).getText();
-        skinSpec.br_corner = brCorner.path.get(0).getText();
+        skinSpec.tl_corner = tlCorner.path.getFirst().getText();
+        skinSpec.tr_corner = trCorner.path.getFirst().getText();
+        skinSpec.bl_corner = blCorner.path.getFirst().getText();
+        skinSpec.br_corner = brCorner.path.getFirst().getText();
 
         // Top Edge
         skinSpec.topEdge.clear();
@@ -509,7 +509,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
         }
         skinSpec.tileBackground = false;
         if (!backgroundElement.tiled.isEmpty()) {
-            skinSpec.tileBackground = backgroundElement.tiled.get(0).isSelected();
+            skinSpec.tileBackground = backgroundElement.tiled.getFirst().isSelected();
         }
 
         // Font Color
@@ -662,7 +662,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
                 }
             } else if (removeColor.equals(actionEvent.getSource())) {
                 if (colorButtons.size() > 1) {
-                    colorButtons.remove(colorButtons.size() - 1);
+                    colorButtons.removeLast();
                     notify = true;
                 }
             } else if (colorButtons.contains(button)) {

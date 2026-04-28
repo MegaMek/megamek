@@ -2780,7 +2780,7 @@ public class MiscType extends EquipmentType {
               MiscTypeFlag.S_XCT_VACUUM,
               MiscTypeFlag.S_COLD_WEATHER,
               MiscTypeFlag.S_HOT_WEATHER);
-        ;
+
         misc.rulesRefs = "129, TO:AUE";
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
@@ -3065,7 +3065,7 @@ public class MiscType extends EquipmentType {
               MiscTypeFlag.S_SPACE_SUIT,
               MiscTypeFlag.S_XCT_VACUUM,
               MiscTypeFlag.S_COLD_WEATHER);
-        ;
+
         misc.rulesRefs = "130, TO:AUE";
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
@@ -3448,6 +3448,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static MiscType createVintageBulletProofVest() {
         MiscType misc = new MiscType();
 
@@ -3468,6 +3469,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static MiscType createVintageBombSuit() {
         MiscType misc = new MiscType();
 
@@ -4675,6 +4677,7 @@ public class MiscType extends EquipmentType {
     }
 
     // CHECKSTYLE IGNORE ForbiddenWords FOR 5 LINES
+
     /**
      * BattleMech Neural Interface Unit (NIU) for PA(L) suits. IO p.110: The BattleMech NIU can only be mounted in the
      * interface suit, which must be constructed as a PA(L)-type battlesuit (as larger battlesuits cannot fit in the
@@ -5936,9 +5939,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 1500000;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_EI_INTERFACE,
-                F_MEK_EQUIPMENT,
-                F_BA_EQUIPMENT,
-                F_PROTOMEK_EQUIPMENT);
+              F_MEK_EQUIPMENT,
+              F_BA_EQUIPMENT,
+              F_PROTOMEK_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "69, IO";
         // EI modes: Off disables EI completely, On enables all EI benefits including aimed shots
@@ -5948,12 +5951,12 @@ public class MiscType extends EquipmentType {
         // EI Interface introduced 3040 by Clan Smoke Jaguar, per IO p.69
         // Can be installed in any Clan-tech BattleMek or BA (no weight/space cost, but has C-Bill cost)
         misc.techAdvancement.setTechBase(TechBase.CLAN)
-                .setIntroLevel(false)
-                .setUnofficial(false)
-                .setTechRating(TechRating.F)
-                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
-                .setClanAdvancement(3040, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false)
+              .setIntroLevel(false)
+              .setUnofficial(false)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
+              .setClanAdvancement(3040, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.CSJ)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
@@ -11488,6 +11491,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static MiscType createISBADropChuteReuse() {
         MiscType misc = new MiscType();
         // TODO: game rules

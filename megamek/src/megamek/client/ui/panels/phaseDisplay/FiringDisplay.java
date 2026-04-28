@@ -628,7 +628,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
               && (weaponMounted.getType() instanceof WeaponType)
               && weaponMounted.getType().hasFlag(WeaponType.F_BA_INDIVIDUAL)
               && (weaponMounted.curMode().getName().contains("-shot"))
-              && (Integer.parseInt(weaponMounted.curMode().getName().replace("-shot", "")) > currentEntity().getTotalInternal())) {
+              && (Integer.parseInt(weaponMounted.curMode().getName().replace("-shot", ""))
+              > currentEntity().getTotalInternal())) {
             weaponMounted.setMode(0);
         }
         clientgui.getClient().sendModeChange(weaponMounted.getEntity().getId(), weaponMounted.getEquipmentNum(), nMode);
@@ -2395,7 +2396,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // Do we have a single choice?
         if (targets.size() == 1) {
             // Return that choice.
-            choice = targets.get(0);
+            choice = targets.getFirst();
         } else if (targets.size() > 1) {
             // If we have multiple choices, display a selection dialog.
             choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
@@ -2454,14 +2455,14 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             return Collections.emptyList();
 
         } else if (centerCandidates.size() == 1) {
-            centerIndex = centerCandidates.get(0);
+            centerIndex = centerCandidates.getFirst();
 
         } else {
             // incomplete: choose one of the candidates
             centerIndex = (int) JOptionPane.showInputDialog(clientgui.getFrame(),
                   "Choose the hex to center the strafing path on",
                   "Strafing - Choose Hex", JOptionPane.QUESTION_MESSAGE, null,
-                  centerCandidates.toArray(), centerCandidates.get(0));
+                  centerCandidates.toArray(), centerCandidates.getFirst());
         }
 
         // When the flight path is shorter than 5 hexes, only that many can be strafed (may happen for aeros that are

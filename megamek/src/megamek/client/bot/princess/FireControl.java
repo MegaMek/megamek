@@ -422,12 +422,12 @@ public class FireControl {
 
         final boolean isShooterInfantry = (shooter instanceof Infantry);
         if (!isShooterInfantry) {
-            if (target instanceof BattleArmor) {
-                toHitData.addModifier(TH_TAR_BA);
-            } else if (target instanceof EjectedCrew) {
-                toHitData.addModifier(TH_TAR_MW);
-            } else if (target instanceof Infantry) {
-                toHitData.addModifier(TH_TAR_INF);
+            switch (target) {
+                case BattleArmor ignored -> toHitData.addModifier(TH_TAR_BA);
+                case EjectedCrew ignored -> toHitData.addModifier(TH_TAR_MW);
+                case Infantry ignored -> toHitData.addModifier(TH_TAR_INF);
+                default -> {
+                }
             }
         }
 
@@ -803,7 +803,7 @@ public class FireControl {
         }
         // Bays compute arc differently
         final boolean inArc = (bayWeapon)
-              ? ComputeArc.isInArc(game, shooter.getId(), weapon.getBayWeapons().get(0).getEquipmentNum(), target)
+              ? ComputeArc.isInArc(game, shooter.getId(), weapon.getBayWeapons().getFirst().getEquipmentNum(), target)
               : isInArc(shooterState.getPosition(), shooterFacing, targetState.getPosition(),
               shooter.getWeaponArc(shooter.getEquipmentNum(weapon)));
         if (!inArc) {
@@ -2025,7 +2025,7 @@ public class FireControl {
         if (groundBombs.isEmpty()) {
             return diveBombPlan;
         } else {
-            exampleBomb = groundBombs.get(0);
+            exampleBomb = groundBombs.getFirst();
         }
 
         while (weaponIter.hasNext()) {
@@ -3032,7 +3032,7 @@ public class FireControl {
 
             // AMS only uses 1 type of ammo.
             if (weaponType.hasFlag(WeaponType.F_AMS)) {
-                return validAmmo.get(0);
+                return validAmmo.getFirst();
             }
 
             // Target is a building.
@@ -3117,7 +3117,7 @@ public class FireControl {
             } else {
                 msg.append("\n\tLoading first available ammo.");
                 // Don't set switched reason if we didn't set it already.
-                preferredAmmo = validAmmo.get(0);
+                preferredAmmo = validAmmo.getFirst();
             }
             return preferredAmmo;
         } finally {

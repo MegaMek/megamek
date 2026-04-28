@@ -226,7 +226,7 @@ public class FactionRecord {
                 if (fr != null) {
                     ArrayList<String> retVal = fr.getRatingLevelSystem();
                     if (retVal.size() > 1 &&
-                          (ratingLevels.isEmpty() || retVal.contains(ratingLevels.get(0)))) {
+                          (ratingLevels.isEmpty() || retVal.contains(ratingLevels.getFirst()))) {
                         return retVal;
                     }
                 }

@@ -201,11 +201,14 @@ public class InfantryTROView extends TROView {
         final int shots = inf.getAmmo().stream().filter(m -> m.getLocation() == Infantry.LOC_FIELD_GUNS)
               .mapToInt(Mounted::getBaseShotsLeft).sum();
         if (fieldGuns.size() > 1) {
-            notes.add(String.format(Messages.getString("TROView.InfantryNote.FieldGuns"), fieldGuns.size(),
-                  fieldGuns.get(0).getName(), shots / fieldGuns.size(), (int) fieldGuns.get(0).getTonnage(inf)));
+            notes.add(String.format(Messages.getString("TROView.InfantryNote.FieldGuns"),
+                  fieldGuns.size(),
+                  fieldGuns.getFirst().getName(),
+                  shots / fieldGuns.size(),
+                  (int) fieldGuns.getFirst().getTonnage(inf)));
         } else if (!fieldGuns.isEmpty()) {
             notes.add(String.format(Messages.getString("TROView.InfantryNote.SingleFieldGun"),
-                  fieldGuns.get(0).getName(), shots, (int) fieldGuns.get(0).getTonnage(inf)));
+                  fieldGuns.getFirst().getName(), shots, (int) fieldGuns.getFirst().getTonnage(inf)));
         }
         if ((inf.getSecondaryWeaponsPerSquad() > 1) && (inf.getSecondaryWeapon() != null)) {
             if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_INF_BURST)) {

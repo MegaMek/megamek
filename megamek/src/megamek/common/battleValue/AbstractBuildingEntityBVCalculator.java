@@ -78,7 +78,7 @@ public class AbstractBuildingEntityBVCalculator extends BVCalculator {
         AbstractBuildingEntity building = (AbstractBuildingEntity) entity;
 
         if (!building.getCoordsList().isEmpty()) {
-            Coords firstHex = building.getCoordsList().get(0);
+            Coords firstHex = building.getCoordsList().getFirst();
             int cf = building.getCurrentCF(firstHex);
             double cfBV = cf * 1.5;
 

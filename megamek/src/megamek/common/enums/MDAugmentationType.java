@@ -463,6 +463,7 @@ public enum MDAugmentationType {
      *
      * @return Total cost in C-bills
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static long calculateTotalCost(Iterable<String> optionNames) {
         long total = 0;
         for (String name : optionNames) {

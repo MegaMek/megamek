@@ -56,6 +56,6 @@ interface ViewElement {
     String toDiscord();
 
     static String asHtmlTooltip(String text, String tooltip) {
-        return "<span title=\"" + tooltip.replaceAll("\"", "&quot;") + "\">" + text + "*</span>";
+        return "<span title=\"" + tooltip.replace("\"", "&quot;") + "\">" + text + "*</span>";
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,7 +37,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.VolatileImage;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,6 +47,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -57,7 +57,6 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import javax.swing.text.View;
 
 import megamek.client.ratgenerator.AvailabilityRating;
 import megamek.client.ratgenerator.FactionRecord;
@@ -66,12 +65,14 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.eras.Era;
 import megamek.common.eras.Eras;
-import megamek.common.util.ManagedVolatileImage;
+import megamek.common.util.ImageUtil;
 import megamek.logging.MMLogger;
 
 public class AvailabilityPanel {
+
     private static final MMLogger logger = MMLogger.create(AvailabilityPanel.class);
 
+    private static final int ICON_SIZE = UIUtil.scaleForGUI(32);
 
     private static class FixedColumnGrid extends JPanel {
         private final JTable fixedTable;
@@ -79,7 +80,7 @@ public class AvailabilityPanel {
         private final JScrollPane fixedScrollPane;
         private final JScrollPane scrollableScrollPane;
         private final DefaultTableModel model;
-        private static final int FIXED_COLUMN_WIDTH = 200;
+        private static final int FIXED_COLUMN_WIDTH = UIUtil.scaleForGUI(210);
 
         public static class FactionCellData {
             ImageIcon icon;
@@ -98,110 +99,24 @@ public class AvailabilityPanel {
             }
         }
 
-        private static class FactionCellRenderer extends JPanel implements TableCellRenderer {
-            private ManagedVolatileImage factionImage;
-            private final JLabel textLabel = new JLabel();
-            private boolean showIcon = false;
-            private int textContentWidth = 0;
-            private static final int ICON_SIZE = 32; // Fixed height for icon
-            private static final int ICON_MARGIN = 5;
+        private static class FactionCellRenderer extends DefaultTableCellRenderer {
 
-            public FactionCellRenderer() {
-                setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-                setOpaque(true);
-                setBorder(new EmptyBorder(2, 5, 2, 5)); // Padding for the whole cell
-                textLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
-                textLabel.setVerticalAlignment(SwingConstants.CENTER);
-                add(textLabel, BorderLayout.CENTER);
-            }
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-
-                if (showIcon && factionImage != null) {
-                    Graphics2D g2d = (Graphics2D) g.create();
-                    UIUtil.setHighQualityRendering(g2d);
-
-                    // Draw the icon on the left side, vertically centered
-                    VolatileImage img = factionImage.getImage();
-                    int iconY = (getHeight() - ICON_SIZE) / 2;
-                    g2d.drawImage(img, ICON_MARGIN, iconY, null);
-
-                    g2d.dispose();
-                }
-            }
+            private static final EmptyBorder CELL_PADDING = new EmptyBorder(4, 10, 4, 2);
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                   boolean hasFocus, int row, int column) {
+
+                String text = "?";
                 if (value instanceof FactionCellData data) {
-                    this.textContentWidth = FIXED_COLUMN_WIDTH -
-                          getInsets().left - getInsets().right - // Panel border
-                          ICON_SIZE -
-                          ICON_MARGIN -
-                          30;
-                    // Create ManagedVolatileImage for the icon
-                    if (data.icon != null) {
-                        factionImage = new ManagedVolatileImage(data.icon.getImage(),
-                              Transparency.TRANSLUCENT, ICON_SIZE, ICON_SIZE);
-                        showIcon = true;
-                    } else {
-                        factionImage = null;
-                        showIcon = false;
-                    }
-                    textLabel.setBorder(new EmptyBorder(0, ICON_SIZE + ICON_MARGIN, 0, 0));
-                    textLabel.setText("<html><body style='width: " + textContentWidth + "px'>" +
-                          (data.factionName != null ? data.factionName : "Unknown") +
-                          "</body></html>");
-                }
-
-                if (isSelected) {
-                    setBackground(table.getSelectionBackground());
-                    setForeground(table.getSelectionForeground());
-                    textLabel.setForeground(table.getSelectionForeground()); // Ensure text color changes
+                    setIcon(data.icon);
+                    text = data.factionName != null ? data.factionName : "Unknown";
                 } else {
-                    setBackground(row % 2 == 0 ? table.getBackground() : slightlyDarker(table.getBackground()));
-                    setForeground(table.getForeground());
-                    textLabel.setForeground(table.getForeground());
+                    setIcon(null);
                 }
+                super.getTableCellRendererComponent(table, text, isSelected, hasFocus, row, column);
+                setBorder(new CompoundBorder(getBorder(), CELL_PADDING));
                 return this;
-            }
-
-            @Override
-            public Dimension getPreferredSize() {
-                Dimension size = super.getPreferredSize();
-                int minHeight = showIcon ? ICON_SIZE : 0;
-                String text = textLabel.getText();
-                int textHeight = 0;
-                if (text != null && text.contains("<html>")) {
-                    if (this.textContentWidth > 0) {
-                        try {
-                            JLabel tempLabel = new JLabel(text);
-                            tempLabel.setFont(textLabel.getFont());
-                            tempLabel.setSize(this.textContentWidth, Integer.MAX_VALUE);
-                            View view = (View) tempLabel.getClientProperty("html");
-                            if (view == null) {
-                                tempLabel.getPreferredSize();
-                                view = (View) tempLabel.getClientProperty("html");
-                            }
-                            if (view != null) {
-                                view.setSize(this.textContentWidth, 0);
-                                textHeight = (int) view.getPreferredSpan(View.Y_AXIS);
-                            }
-                        } catch (NumberFormatException ignored) {
-                            // Fallback
-                            textHeight = textLabel.getPreferredSize().height;
-                        }
-                    }
-                } else {
-                    textHeight = textLabel.getPreferredSize().height;
-                }
-                int contentHeight = Math.max(minHeight, textHeight);
-                Insets insets = getInsets();
-                int totalHeight = contentHeight + insets.top + insets.bottom;
-                size.height = Math.max(size.height, totalHeight);
-                return size;
             }
         }
 
@@ -382,30 +297,10 @@ public class AvailabilityPanel {
                 col.setHeaderValue(model.getColumnName(col.getModelIndex()));
                 DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
                 renderer.setHorizontalAlignment(SwingConstants.CENTER);
-                col.setCellRenderer(new DefaultTableCellRenderer() {
-                    @Override
-                    public Component getTableCellRendererComponent(JTable table, Object value,
-                          boolean isSelected, boolean hasFocus,
-                          int row, int column) {
-                        Component c = super.getTableCellRendererComponent(table, value,
-                              isSelected, hasFocus, row, column);
-                        if (!isSelected) {
-                            c.setBackground(row % 2 == 0 ?
-                                  table.getBackground() :
-                                  slightlyDarker(table.getBackground()));
-                        }
-                        setHorizontalAlignment(SwingConstants.CENTER);
-                        return c;
-                    }
-                });
+                col.setCellRenderer(renderer);
             }
             scrollableTable.getTableHeader().revalidate();
             scrollableTable.getTableHeader().repaint();
-        }
-
-        private static Color slightlyDarker(Color color) {
-            if (color == null) {return Color.LIGHT_GRAY;}
-            return color.darker();
         }
 
         /**
@@ -651,6 +546,9 @@ public class AvailabilityPanel {
                 List<Object> rowData = new ArrayList<>();
                 String baseAbbr = factionCode.split("\\.")[0];
                 ImageIcon factionIcon = RAT_GENERATOR.getFactionLogo(0, baseAbbr, Color.WHITE);
+                if (factionIcon != null) {
+                    factionIcon = new ImageIcon(ImageUtil.getScaledImage(factionIcon.getImage(), ICON_SIZE, ICON_SIZE));
+                }
                 rowData.add(new FixedColumnGrid.FactionCellData(factionIcon, factionCode));
 
                 for (Era era : erasToDisplay) {

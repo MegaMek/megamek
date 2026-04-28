@@ -352,10 +352,12 @@ public interface ITechnology {
         return calcEraAvailability(era, clanUse).getName();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getTechRatingName() {
         return getRatingName(getTechRating());
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getEraAvailabilityName(Era era) {
         return getEraAvailabilityName(era, isClan());
     }
@@ -419,14 +421,17 @@ public interface ITechnology {
         return Faction.fromMMAbbr(abbr);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getExperimentalRange(boolean clan) {
         return getDateRange(getPrototypeDate(clan), getProductionDate(clan));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getAdvancedRange(boolean clan) {
         return getDateRange(getProductionDate(clan), getCommonDate(clan));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getStandardRange(boolean clan) {
         return getDateRange(getCommonDate(clan), DATE_NONE);
     }
@@ -435,14 +440,17 @@ public interface ITechnology {
         return getDateRange(getExtinctionDate(clan), getReintroductionDate(clan));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getExperimentalRange() {
         return getDateRange(getPrototypeDate(), getProductionDate());
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getAdvancedRange() {
         return getDateRange(getProductionDate(), getCommonDate());
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getStandardRange() {
         return getDateRange(getCommonDate(), DATE_NONE);
     }

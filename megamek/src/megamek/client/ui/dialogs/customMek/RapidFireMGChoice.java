@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,44 +32,34 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.io.Serial;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import megamek.client.ui.GBC;
+import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
 import megamek.common.equipment.Mounted;
 import megamek.common.units.Entity;
 
-public class RapidFireMGPanel extends JPanel {
-    @Serial
-    private static final long serialVersionUID = 5261919826318225201L;
+public class RapidFireMGChoice {
 
     private final Mounted<?> mounted;
 
-    JCheckBox chRapid = new JCheckBox();
+    private final JCheckBox chRapid = new JCheckBox(Messages.getString("CustomMekDialog.burstFireMachineGun"));
 
-    public RapidFireMGPanel(Mounted<?> mounted, Entity entity) {
+    public RapidFireMGChoice(Mounted<?> mounted, Entity entity, JPanel parentPanel, GBC2 gbc) {
         this.mounted = mounted;
-        int mountedLocation = mounted.getLocation();
-        String stringDescription = Messages.getString("CustomMekDialog.burstFireMachineGun",
-              entity.getLocationAbbr(mountedLocation));
-        JLabel labelLocation = new JLabel(stringDescription);
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        setLayout(gridBagLayout);
-        add(labelLocation, GBC.std().anchor(GridBagConstraints.EAST));
+        String weaponName = "(%s) %s:".formatted(entity.getLocationAbbr(mounted.getLocation()), mounted.getName());
+        JLabel weaponLabel = new JLabel(weaponName);
         chRapid.setSelected(mounted.isRapidFire());
-        add(chRapid, GBC.eol());
+        parentPanel.add(weaponLabel, gbc.forLabel());
+        parentPanel.add(chRapid, gbc.eol());
     }
 
     public void applyChoice() {
         mounted.setRapidFire(chRapid.isSelected());
     }
 
-    @Override
     public void setEnabled(boolean enabled) {
         chRapid.setEnabled(enabled);
     }

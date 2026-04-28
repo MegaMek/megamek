@@ -1,29 +1,55 @@
 name: "CodeQL"
 
+permissions:
+  security-events: write
+  contents: read
+  actions: read
+
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-    paths-ignore:
-      - "**/*.pdf"
 
 jobs:
   analyze:
     name: Analyze
     strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        java-distribution: [ temurin ]
+        java-version: [ 21 ]
       fail-fast: false
-    runs-on: [ ubuntu-latest ]
+    runs-on: ${{ matrix.os }}
 
     steps:
+      - name: Checkout Data Repo
+        uses: actions/checkout@v6
+        with:
+          repository: megamek/mm-data
+          path: mm-data
+
       - name: "Check out MegaMek"
         uses: actions/checkout@v6
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          path: megamek
+
+      - name: "Show Ref and SHA"
+        run: |
+          echo "Ref: ${{ github.ref }}"
+          echo "SHA: ${{ github.sha }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Event Action: ${{ github.event.action }}"
+          echo "Event Pull Request: ${{ github.event.pull_request }}"
+          echo "Event Pull Request Head: ${{ github.event.pull_request.head }}"
+          echo "Event Pull Request Head SHA: ${{ github.event.pull_request.head.sha }}"
+          echo "Event Pull Request Head Ref: ${{ github.event.pull_request.head.ref }}"
+
+      - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v5
+        with:
+          distribution: ${{ matrix.java-distribution }}
+          java-version: ${{ matrix.java-version }}
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
@@ -31,6 +57,12 @@ jobs:
           languages: java-kotlin
           build-mode: none
           queries: security-and-quality
+          source-root: megamek
+          dependency-caching: true
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
+        with:
+          checkout_path: megamek
+          sha: ${{ github.event.pull_request.head.sha || github.sha}}
+          ref: ${{ github.ref }}

@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2005, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,7 @@
 
 package megamek;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputFilter;
@@ -82,6 +83,7 @@ public class MegaMek {
 
     private static final MMLogger LOGGER = MMLogger.create(MegaMek.class);
     private static final SanityInputFilter sanityInputFilter = new SanityInputFilter();
+    private static final Color TABLE_ALTERNATE_ROW_COLOR = new Color(125, 125, 125, 50);
 
     public static void main(String... args) {
         ObjectInputFilter.Config.setSerialFilter(sanityInputFilter);
@@ -418,5 +420,8 @@ public class MegaMek {
 
         // Setup Button Order Preferences
         ButtonOrderPreferences.getInstance().setButtonPriorities();
+
+        // Set an alternate table row color; it uses alpha and is valid for both dark and light UIs
+        UIManager.put("Table.alternateRowColor", TABLE_ALTERNATE_ROW_COLOR);
     }
 }

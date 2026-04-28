@@ -113,6 +113,8 @@ public class EquipmentTypeLookup {
     public static final String BA_DWP = "ISDetachableWeaponPack";
     @EquipmentName
     public static final String BA_APM = "BAAPMount";
+    @EquipmentName
+    public static final String BA_MODULAR_EQUIPMENT_ADAPTOR = "BAMEA";
 
     @EquipmentName
     public static final String SINGLE_HS = "Heat Sink";
@@ -166,6 +168,10 @@ public class EquipmentTypeLookup {
     public static final String PINTLE_TURRET = "PintleTurret";
     @EquipmentName
     public static final String MAST_MOUNT = "ISMastMount";
+    @EquipmentName
+    public static final String DNI_COCKPIT_MOD = "DNICockpitModification";
+    @EquipmentName
+    public static final String EI_INTERFACE = "EIInterface";
 
     @EquipmentName
     public static final String AMPHIBIOUS_CHASSIS_MOD = "AmphibiousChassisMod";
@@ -371,4 +377,13 @@ public class EquipmentTypeLookup {
 
     @EquipmentName
     public static final String SV_EXTERNAL_HARDPOINT = "External Stores Hardpoint";
+
+    @EquipmentName
+    public static final String NLRT5 = "ISNLRT05";
+    @EquipmentName
+    public static final String NLRT10 = "ISNLRT10";
+    @EquipmentName
+    public static final String NLRT15 = "ISNLRT15";
+    @EquipmentName
+    public static final String NLRT20 = "ISNLRT20";
 }

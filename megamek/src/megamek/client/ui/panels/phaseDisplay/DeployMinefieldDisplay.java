@@ -48,6 +48,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.phaseDisplay.EMPMineSettingDialog;
 import megamek.client.ui.dialogs.phaseDisplay.MineDensityDialog;
 import megamek.client.ui.dialogs.phaseDisplay.SeaMineDepthDialog;
@@ -100,7 +101,9 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         /**
          * Given a string, figure out the command value
-         * @param command                   String name of the requested command
+         *
+         * @param command String name of the requested command
+         *
          * @return DeployMinefieldCommand   found command or COMMAND_NONE
          */
         public static DeployMinefieldCommand fromString(String command) {
@@ -324,14 +327,14 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         } else if (currentCommand == DeployMinefieldCommand.DEPLOY_CARRYABLE) {
             List<ICarryable> groundObjects = p.getGroundObjectsToPlace();
 
-            ICarryable toDeploy = groundObjects.get(0);
+            ICarryable toDeploy = groundObjects.getFirst();
 
             if (groundObjects.size() > 1) {
                 String title = "Choose Cargo to Place";
                 String body = "Choose the cargo to place:";
                 toDeploy = (ICarryable) JOptionPane.showInputDialog(clientgui.getFrame(),
                       body, title, JOptionPane.QUESTION_MESSAGE, null,
-                      groundObjects.toArray(), groundObjects.get(0));
+                      groundObjects.toArray(), groundObjects.getFirst());
             }
 
             game.placeGroundObject(coords, toDeploy);
@@ -354,7 +357,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                       || (deployingActiveMinefields() && (mf.getType() == Minefield.TYPE_ACTIVE))
                       || (deployingInfernoMinefields() && (mf.getType() == Minefield.TYPE_INFERNO))
                       || (deployingEMPMinefields() && (mf.getType() == Minefield.TYPE_EMP))) {
-                    clientgui.doAlertDialog(Messages.getString("DeployMinefieldDisplay.IllegalPlacement"),
+                    clientgui.addToast(ToastLevel.ERROR,
                           Messages.getString("DeployMinefieldDisplay.DuplicateMinefield"));
                     return;
                 }
@@ -362,7 +365,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
             Minefield mf = null;
             if (sea && !(deployingConventionalMinefields() || deployingInfernoMinefields())) {
-                clientgui.doAlertDialog(Messages.getString("DeployMinefieldDisplay.IllegalPlacement"),
+                clientgui.addToast(ToastLevel.ERROR,
                       Messages.getString("DeployMinefieldDisplay.WaterPlacement"));
                 return;
             }
@@ -450,7 +453,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             } else if (deployingEMPMinefields()) {
                 // EMP mines cannot be placed in water
                 if (sea) {
-                    clientgui.doAlertDialog(Messages.getString("DeployMinefieldDisplay.IllegalPlacement"),
+                    clientgui.addToast(ToastLevel.ERROR,
                           Messages.getString("DeployMinefieldDisplay.WaterPlacement"));
                     return;
                 }

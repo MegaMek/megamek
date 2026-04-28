@@ -583,10 +583,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         result.add(new JLabel(Messages.getString("CustomMekDialog.labDeploymentAnySE")), GBC.std());
         result.add(spinStartingAnySEx, GBC.std());
         result.add(spinStartingAnySEy, GBC.eol());
-        
+
         btnUseRuler.setToolTipText(Messages.getString("CustomMekDialog.BtnDeploymentUseRulerTip"));
         btnUseRuler.addActionListener(e -> useRuler());
-        result.add(btnUseRuler, GBC.std());;
+        result.add(btnUseRuler, GBC.std());
         btnApply.setToolTipText(Messages.getString("CustomMekDialog.BtnDeploymentApplyTip"));
         btnApply.addActionListener(e -> apply());
         result.add(btnApply, GBC.eol());
@@ -808,8 +808,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             butStartPos.put(internalZoneID, buttonCustomZone);
             panStartButtons.add(buttonCustomZone);
         }
-        
-        
+
 
         updateStartGrid();
     }
@@ -858,7 +857,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         butText.get(currentPlayerStartPos).append(UIUtil.fontHTML(GUIPreferences.getInstance().getMyUnitColor()));
         butText.get(currentPlayerStartPos).append("\u2B24</FONT>");
-        
+
         // Turn off custom deployment if start is not Any
         if (currentPlayerStartPos == Board.START_ANY) {
             spinStartingAnyNWx.setEnabled(true);

@@ -70,10 +70,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.weapons.autoCannons.ACWeapon;
-import megamek.common.weapons.autoCannons.LBXACWeapon;
-import megamek.common.weapons.autoCannons.UACWeapon;
-import megamek.common.weapons.gaussRifles.GaussWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.logging.MMLogger;
 
@@ -708,6 +704,7 @@ public abstract class Mek extends Entity {
      *
      * @return false if the system is damaged.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isSystemIntact(int system) {
         for (int loc = 0; loc < locations(); loc++) {
             int numCrits = getNumberOfCriticalSlots(loc);
@@ -772,6 +769,7 @@ public abstract class Mek extends Entity {
     /**
      * does this Mek have working jump boosters?
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean hasJumpBoosters() {
         boolean jumpBoosters = false;
         for (Mounted<?> mEquip : getMisc()) {
@@ -1026,9 +1024,11 @@ public abstract class Mek extends Entity {
                 MPBoosters armed = getArmedMPBoosters();
 
                 str += (mpBoosters.hasMASC() ? " MASC:" + getMASCTurns()
-                      + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
+                                               + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
                       + (mpBoosters.hasSupercharger() ? " Supercharger:" + getSuperchargerTurns()
-                      + (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") : "");
+                                                        + (armed.hasSupercharger() ?
+                                                           "(" + getSuperchargerTarget() + "+)" :
+                                                           "(NA)") : "");
             }
             return str;
         }
@@ -1913,12 +1913,6 @@ public abstract class Mek extends Entity {
     /**
      * Wrapper that handles applying Edge (if allowed).
      *
-     * @param table
-     * @param side
-     * @param aimedLocation
-     * @param aimingMode
-     * @param cover
-     *
      * @return HitData, possibly re-rolled once (once!) with Edge.
      */
     @Override
@@ -1933,7 +1927,6 @@ public abstract class Mek extends Entity {
      *
      * @param originalHit the hit to consider using Edge on.
      *
-     * @return
      */
     public HitData applyEdgeToHitLocation(HitData originalHit, int table, int side, int aimedLocation,
           AimingMode aimingMode,
@@ -1961,16 +1954,15 @@ public abstract class Mek extends Entity {
 
         }
 
-        switch (originalHit.getLocation()) {
-            case LOC_HEAD:
-                if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
-                    getCrew().decreaseEdge();
-                    HitData result = innerRollHitLocation(table, side,
-                          aimedLocation, aimingMode, cover);
-                    result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
-                    result.setUsedEdge();
-                    return result;
-                }
+        if (originalHit.getLocation() == LOC_HEAD) {
+            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
+                getCrew().decreaseEdge();
+                HitData result = innerRollHitLocation(table, side,
+                      aimedLocation, aimingMode, cover);
+                result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
+                result.setUsedEdge();
+                return result;
+            }
         }
 
         return originalHit;
@@ -1994,6 +1986,9 @@ public abstract class Mek extends Entity {
         }
 
         boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
+        boolean toAdvHitLoc =
+              gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS);
+
 
         if ((table == ToHitData.HIT_NORMAL) || (table == ToHitData.HIT_PARTIAL_COVER)) {
             roll = Compute.d6(2);
@@ -2010,7 +2005,7 @@ public abstract class Mek extends Entity {
                 LOGGER.error("", t);
             }
 
-            if (playtestLocations
+            if (playtestLocations && !toAdvHitLoc
                   && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
                   && roll != 2 // clarified on forum, TACs don't go to the CT in this case
                 // https://battletech.com/playtest-battletech/feedback-discussion/topic/through-armor-critical-hits-on-side-arc/
@@ -2055,14 +2050,12 @@ public abstract class Mek extends Entity {
                     case 7:
                         return new HitData(Mek.LOC_LEFT_TORSO);
                     case 8:
-                        if (gameOptions().booleanOption(
-                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_CENTER_TORSO, true);
                         }
                         return new HitData(Mek.LOC_CENTER_TORSO);
                     case 9:
-                        if (gameOptions().booleanOption(
-                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_RIGHT_TORSO, true);
                         }
                         return new HitData(Mek.LOC_RIGHT_TORSO);
@@ -2086,14 +2079,12 @@ public abstract class Mek extends Entity {
                     case 7:
                         return new HitData(Mek.LOC_RIGHT_TORSO);
                     case 8:
-                        if (gameOptions().booleanOption(
-                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_CENTER_TORSO, true);
                         }
                         return new HitData(Mek.LOC_CENTER_TORSO);
                     case 9:
-                        if (gameOptions().booleanOption(
-                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_LEFT_TORSO, true);
                         }
                         return new HitData(Mek.LOC_LEFT_TORSO);
@@ -2106,8 +2097,7 @@ public abstract class Mek extends Entity {
                 }
             } else if (side == ToHitData.SIDE_REAR) {
                 // normal rear hits
-                if (gameOptions().booleanOption(
-                      OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)
+                if (toAdvHitLoc
                       && isProne()) {
                     switch (roll) {
                         case 2:
@@ -2757,16 +2747,9 @@ public abstract class Mek extends Entity {
         if (isSuperHeavy()) {
             reqSlots = (int) Math.ceil(((double) reqSlots / 2.0f));
         }
-        // gauss and AC weapons on omni arms means no arm actuators, so we
-        // remove them
-        if (isOmni()
-              && (this instanceof BipedMek)
-              && ((loc == LOC_LEFT_ARM) || (loc == LOC_RIGHT_ARM))
-              && ((mounted.getType() instanceof GaussWeapon)
-              || (mounted.getType() instanceof ACWeapon)
-              || (mounted.getType() instanceof UACWeapon)
-              || (mounted.getType() instanceof LBXACWeapon) || (mounted
-              .getType() instanceof PPCWeapon))) {
+
+        // various weapons on omni arms forbid lower arm+hand actuators, so remove them, TM p.57
+        if (isOmni() && isArm(loc) && MekConstructionUtil.removesHandAndLowerArmSlotsOnOmni(mounted.getType())) {
             if (hasSystem(Mek.ACTUATOR_LOWER_ARM, loc)) {
                 setCritical(loc, 2, null);
             }
@@ -4036,10 +4019,12 @@ public abstract class Mek extends Entity {
         return super.hasActiveEiCockpit();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getCockpitStatus() {
         return cockpitStatus;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getCockpitStatusNextRound() {
         return cockpitStatusNextRound;
     }
@@ -4345,16 +4330,14 @@ public abstract class Mek extends Entity {
         sb.append(newLine);
 
         sb.append("Config:");
-        if (this instanceof LandAirMek) {
-            sb.append("LAM");
-        } else if (this instanceof BipedMek) {
-            sb.append("Biped");
-        } else if (this instanceof QuadVee) {
-            sb.append("QuadVee");
-        } else if (this instanceof QuadMek) {
-            sb.append("Quad");
-        } else if (this instanceof TripodMek) {
-            sb.append("Tripod");
+        switch (this) {
+            case LandAirMek ignored -> sb.append("LAM");
+            case BipedMek ignored -> sb.append("Biped");
+            case QuadVee ignored -> sb.append("QuadVee");
+            case QuadMek ignored -> sb.append("Quad");
+            case TripodMek ignored -> sb.append("Tripod");
+            default -> {
+            }
         }
 
         if (isOmni()) {
@@ -5055,6 +5038,20 @@ public abstract class Mek extends Entity {
               && (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRE_CONTROL));
     }
 
+    @Override
+    public boolean hasGhostTargetEquipment() {
+        // Mek Cockpit Command Console (cockpit type, not misc equipment).
+        // Simpler check than hasCommandConsoleBonus() which is designed for initiative
+        // and has phase-dependent conditions that don't apply to ghost targets.
+        boolean isCCC = (getCockpitType() == COCKPIT_COMMAND_CONSOLE)
+              || (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE)
+              || (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE);
+        if (isCCC && !getCrew().isDead() && !getCrew().isUnconscious()) {
+            return true;
+        }
+        return super.hasGhostTargetEquipment();
+    }
+
     /**
      * Add the critical slots necessary for a standard gyro. Also set the gyro type variable. Note: This is part of the
      * mek creation public API, and might not be referenced by any MegaMek code.
@@ -5668,7 +5665,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Is the passed in location an arm?
+     * @return True if the given location is an arm; always returns false for QuadMeks
      */
     public boolean isArm(int loc) {
         return (loc == Mek.LOC_LEFT_ARM) || (loc == Mek.LOC_RIGHT_ARM);
@@ -6008,7 +6005,7 @@ public abstract class Mek extends Entity {
 
         }
 
-        if ((getEngineHits() == 1) && (getGyroHits() == 1)) {
+        if ((getEngineHits() >= 1) && (getGyroHits() >= 1)) {
             LOGGER.debug("{} CRIPPLED: Engine + Gyro hit.", getDisplayName());
             return true;
         }

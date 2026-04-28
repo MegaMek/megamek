@@ -36,7 +36,6 @@ package megamek.common.equipment;
 import java.util.List;
 
 import megamek.common.battleArmor.BattleArmor;
-import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.MekWithArms;
 import megamek.logging.MMLogger;
@@ -69,20 +68,6 @@ public class MekArms extends ExternalCargo {
             }
         }
         return false;
-    }
-
-    /**
-     * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
-     * no room for the unit.
-     *
-     * @param unit - the <code>Entity</code> to be loaded.
-     *
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *       otherwise.
-     */
-    @Override
-    public boolean canLoad(Entity unit) {
-        return canLoadCarryable(unit);
     }
 
     /**
@@ -157,12 +142,12 @@ public class MekArms extends ExternalCargo {
             return 0;
         }
 
-        switch (entity.getWeightClass()) {
-            case EntityWeightClass.WEIGHT_LIGHT: return 2;
-            case EntityWeightClass.WEIGHT_MEDIUM: return 3;
-            case EntityWeightClass.WEIGHT_HEAVY: return 4;
-            case EntityWeightClass.WEIGHT_ASSAULT, EntityWeightClass.WEIGHT_SUPER_HEAVY: return 6;
-            default: return 0;
-        }
+        return switch (entity.getWeightClass()) {
+            case EntityWeightClass.WEIGHT_LIGHT -> 2;
+            case EntityWeightClass.WEIGHT_MEDIUM -> 3;
+            case EntityWeightClass.WEIGHT_HEAVY -> 4;
+            case EntityWeightClass.WEIGHT_ASSAULT, EntityWeightClass.WEIGHT_SUPER_HEAVY -> 6;
+            default -> 0;
+        };
     }
 }

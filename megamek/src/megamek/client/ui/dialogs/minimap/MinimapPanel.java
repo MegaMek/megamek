@@ -614,7 +614,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
               + HEX_SIDE_BY_SIN30[zoom] + (2 * margin);
         int requiredHeight = minimized ? BUTTON_HEIGHT
               : (((2 * board.getHeight()) + 1)
-              * HEX_SIDE_BY_COS30[zoom]) + (2 * margin) + buttonHeight;
+                 * HEX_SIDE_BY_COS30[zoom]) + (2 * margin) + buttonHeight;
 
         if (dialog != null) {
             setSize(new Dimension(requiredWidth, requiredHeight));
@@ -923,7 +923,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         double[] relSize = bv.getVisibleArea();
         for (int i = 0; i < 4; i++) {
             // keep between 0 and 1 to not fall outside the minimap
-            relSize[i] = Math.min(1, Math.max(0, relSize[i]));
+            relSize[i] = Math.clamp(relSize[i], 0, 1);
         }
 
         int x1 = (int) (relSize[0] * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) * board.getWidth()) + leftMargin;

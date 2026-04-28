@@ -184,7 +184,7 @@ public class ChassisRecord extends AbstractUnitRecord {
                 nextAvRating = ratGen.findModelAvailabilityRecord(nextEra,
                       curModel.getKey(), fRec);
 
-                int interpolationStart = Math.max(currentEra, Math.min(exactYear, curModel.introYear));
+                int interpolationStart = Math.clamp(curModel.introYear, currentEra, exactYear);
 
                 adjRating = curModel.calcAvailability(avRating,
                       equipRating, numRatingLevels, interpolationStart);

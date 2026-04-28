@@ -108,10 +108,10 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             if (entityTarget != null) {
                 if ((weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
                       && (weapon.getLinked() != null)
-                      && (weapon.getLinked().getType() instanceof AmmoType ammoType)) {
-                    if (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
+                      && (weapon.getLinked().getType() instanceof AmmoType linkedAmmoType)) {
+                    if (!linkedAmmoType.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
                         report.messageId = 3116;
-                        report.add(ammoType.getSubMunitionName());
+                        report.add(linkedAmmoType.getSubMunitionName());
                     }
                 }
                 report.addDesc(entityTarget);
@@ -292,7 +292,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             if (bMissed && id != vPhaseReport.size()) {
                 vPhaseReport.get(id - 1).newlines--;
                 vPhaseReport.get(id).indent(2);
-                vPhaseReport.get(vPhaseReport.size() - 1).newlines++;
+                vPhaseReport.getLast().newlines++;
             }
 
             // Make sure the player knows when his attack causes no damage.

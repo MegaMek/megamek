@@ -322,6 +322,7 @@ public class ForceNode extends RulesetNode {
         return xoNodes;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Integer getCoRank(ForceDescriptor fd) {
         for (CommanderNode n : coNodes) {
             if (n.matches(fd)) {
@@ -331,6 +332,7 @@ public class ForceNode extends RulesetNode {
         return null;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEchelon(Integer echelon) {
         this.echelon = echelon;
     }
@@ -388,7 +390,7 @@ public class ForceNode extends RulesetNode {
                         currentRuleGroup = new ArrayList<>();
                         ruleGroups.add(currentRuleGroup);
                     }
-                    ruleGroups.get(0).add(OptionGroupNode.createFromXml(wn));
+                    ruleGroups.getFirst().add(OptionGroupNode.createFromXml(wn));
                     break;
                 case "ruleGroup":
                     currentRuleGroup = new ArrayList<>();

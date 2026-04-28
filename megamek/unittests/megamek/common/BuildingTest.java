@@ -59,18 +59,18 @@ public class BuildingTest {
 
     static Stream<Arguments> buildingTypeAndClass() {
         return Stream.of(
-            Arguments.of(BuildingType.LIGHT, IBuilding.STANDARD),
-            Arguments.of(BuildingType.MEDIUM, IBuilding.HANGAR),
-            Arguments.of(BuildingType.HEAVY, IBuilding.FORTRESS),
-            Arguments.of(BuildingType.HARDENED, IBuilding.GUN_EMPLACEMENT)
+              Arguments.of(BuildingType.LIGHT, IBuilding.STANDARD),
+              Arguments.of(BuildingType.MEDIUM, IBuilding.HANGAR),
+              Arguments.of(BuildingType.HEAVY, IBuilding.FORTRESS),
+              Arguments.of(BuildingType.HARDENED, IBuilding.GUN_EMPLACEMENT)
         );
     }
 
     static Stream<Arguments> structureTypes() {
         return Stream.of(
-            Arguments.of(Terrains.BUILDING, "Building #"),
-            Arguments.of(Terrains.FUEL_TANK, "Fuel Tank #"),
-            Arguments.of(Terrains.BRIDGE, "Bridge #")
+              Arguments.of(Terrains.BUILDING, "Building #"),
+              Arguments.of(Terrains.FUEL_TANK, "Fuel Tank #"),
+              Arguments.of(Terrains.BRIDGE, "Bridge #")
         );
     }
 
@@ -82,9 +82,9 @@ public class BuildingTest {
         Building building = new Building(type, bldgClass, 1, Terrains.BUILDING);
 
         assertEquals(type, building.getBuildingType(),
-            String.format("Building type: expected %s, got %s", type, building.getBuildingType()));
+              String.format("Building type: expected %s, got %s", type, building.getBuildingType()));
         assertEquals(bldgClass, building.getBldgClass(),
-            String.format("Building class: expected %d, got %d", bldgClass, building.getBldgClass()));
+              String.format("Building class: expected %d, got %d", bldgClass, building.getBldgClass()));
     }
 
     @ParameterizedTest(name = "StructureType={0}, ExpectedName={1}")
@@ -93,9 +93,9 @@ public class BuildingTest {
         Building building = new Building(BuildingType.MEDIUM, IBuilding.STANDARD, 12345, structureType);
 
         assertTrue(building.getName().startsWith(expectedNamePrefix),
-            String.format("Name: expected to start with '%s', got '%s'", expectedNamePrefix, building.getName()));
+              String.format("Name: expected to start with '%s', got '%s'", expectedNamePrefix, building.getName()));
         assertTrue(building.getName().contains("12345"),
-            String.format("Name: expected to contain ID '12345', got '%s'", building.getName()));
+              String.format("Name: expected to contain ID '12345', got '%s'", building.getName()));
     }
 
     // ========== Hex Management Tests ==========
@@ -109,9 +109,9 @@ public class BuildingTest {
         building.addHex(coords, 50, 10, BasementType.NONE, false);
 
         assertTrue(building.isIn(coords),
-            String.format("isIn: expected true for added hex, got false"));
+              "isIn: expected true for added hex, got false");
         assertEquals(1, building.getCoordsList().size(),
-            String.format("Coords list size: expected 1, got %d", building.getCoordsList().size()));
+              String.format("Coords list size: expected 1, got %d", building.getCoordsList().size()));
     }
 
     @ParameterizedTest(name = "BuildingType={0}, Class={1}")
@@ -127,13 +127,13 @@ public class BuildingTest {
         building.addHex(coords3, 50, 10, BasementType.NONE, false);
 
         assertEquals(3, building.getCoordsList().size(),
-            String.format("Coords list size: expected 3, got %d", building.getCoordsList().size()));
+              String.format("Coords list size: expected 3, got %d", building.getCoordsList().size()));
         assertTrue(building.isIn(coords1),
-            String.format("isIn: expected true for coords1, got false"));
+              "isIn: expected true for coords1, got false");
         assertTrue(building.isIn(coords2),
-            String.format("isIn: expected true for coords2, got false"));
+              "isIn: expected true for coords2, got false");
         assertTrue(building.isIn(coords3),
-            String.format("isIn: expected true for coords3, got false"));
+              "isIn: expected true for coords3, got false");
     }
 
     // ========== CF Tests ==========
@@ -146,11 +146,11 @@ public class BuildingTest {
 
         building.addHex(coords, 75, 0, BasementType.NONE, false);
         assertEquals(75, building.getCurrentCF(coords),
-            String.format("Current CF: expected 75, got %d", building.getCurrentCF(coords)));
+              String.format("Current CF: expected 75, got %d", building.getCurrentCF(coords)));
 
         building.setCurrentCF(50, coords);
         assertEquals(50, building.getCurrentCF(coords),
-            String.format("Current CF after update: expected 50, got %d", building.getCurrentCF(coords)));
+              String.format("Current CF after update: expected 50, got %d", building.getCurrentCF(coords)));
     }
 
     @ParameterizedTest(name = "BuildingType={0}, Class={1}")
@@ -161,11 +161,11 @@ public class BuildingTest {
 
         building.addHex(coords, 75, 0, BasementType.NONE, false);
         assertEquals(75, building.getPhaseCF(coords),
-            String.format("Phase CF: expected 75, got %d", building.getPhaseCF(coords)));
+              String.format("Phase CF: expected 75, got %d", building.getPhaseCF(coords)));
 
         building.setPhaseCF(40, coords);
         assertEquals(40, building.getPhaseCF(coords),
-            String.format("Phase CF after update: expected 40, got %d", building.getPhaseCF(coords)));
+              String.format("Phase CF after update: expected 40, got %d", building.getPhaseCF(coords)));
     }
 
     @ParameterizedTest(name = "BuildingType={0}")
@@ -178,9 +178,9 @@ public class BuildingTest {
         building.addHex(withCF, 50, 0, BasementType.NONE, false);
 
         assertTrue(building.hasCFIn(withCF),
-            String.format("hasCFIn: expected true for hex with CF, got false"));
+              "hasCFIn: expected true for hex with CF, got false");
         assertFalse(building.hasCFIn(withoutCF),
-            String.format("hasCFIn: expected false for hex without CF, got true"));
+              "hasCFIn: expected false for hex without CF, got true");
     }
 
     // ========== Armor Tests ==========
@@ -193,11 +193,11 @@ public class BuildingTest {
 
         building.addHex(coords, 50, 20, BasementType.NONE, false);
         assertEquals(20, building.getArmor(coords),
-            String.format("Armor: expected 20, got %d", building.getArmor(coords)));
+              String.format("Armor: expected 20, got %d", building.getArmor(coords)));
 
         building.setArmor(15, coords);
         assertEquals(15, building.getArmor(coords),
-            String.format("Armor after update: expected 15, got %d", building.getArmor(coords)));
+              String.format("Armor after update: expected 15, got %d", building.getArmor(coords)));
     }
 
     // ========== Height Tests ==========
@@ -212,9 +212,9 @@ public class BuildingTest {
         building.addHex(coords, 50, 0, BasementType.NONE, false);
 
         assertEquals(5, building.getBuildingHeight(),
-            String.format("Building height: expected 5, got %d", building.getBuildingHeight()));
+              String.format("Building height: expected 5, got %d", building.getBuildingHeight()));
         assertEquals(5, building.getHeight(coords),
-            String.format("Hex height: expected 5, got %d", building.getHeight(coords)));
+              String.format("Hex height: expected 5, got %d", building.getHeight(coords)));
     }
 
     @ParameterizedTest(name = "BuildingType={0}")
@@ -228,7 +228,7 @@ public class BuildingTest {
 
         building.setHeight(0, coords);
         assertEquals(0, building.getHeight(coords),
-            String.format("Hex height after destroy: expected 0, got %d", building.getHeight(coords)));
+              String.format("Hex height after destroy: expected 0, got %d", building.getHeight(coords)));
     }
 
     // ========== Burning Tests ==========
@@ -242,15 +242,15 @@ public class BuildingTest {
         building.addHex(coords, 50, 0, BasementType.NONE, false);
 
         assertFalse(building.isBurning(coords),
-            String.format("isBurning: expected false initially, got true"));
+              "isBurning: expected false initially, got true");
 
         building.setBurning(true, coords);
         assertTrue(building.isBurning(coords),
-            String.format("isBurning after setBurning(true): expected true, got false"));
+              "isBurning after setBurning(true): expected true, got false");
 
         building.setBurning(false, coords);
         assertFalse(building.isBurning(coords),
-            String.format("isBurning after setBurning(false): expected false, got true"));
+              "isBurning after setBurning(false): expected false, got true");
     }
 
     // ========== Basement Tests ==========
@@ -264,7 +264,7 @@ public class BuildingTest {
         building.addHex(coords, 50, 0, basementType, false);
 
         assertEquals(basementType, building.getBasement(coords),
-            String.format("Basement type: expected %s, got %s", basementType, building.getBasement(coords)));
+              String.format("Basement type: expected %s, got %s", basementType, building.getBasement(coords)));
     }
 
     @ParameterizedTest(name = "BuildingType={0}, Class={1}")
@@ -275,11 +275,11 @@ public class BuildingTest {
 
         building.addHex(coords, 50, 0, BasementType.ONE_DEEP_FEET, false);
         assertFalse(building.getBasementCollapsed(coords),
-            String.format("Basement collapsed: expected false initially, got true"));
+              "Basement collapsed: expected false initially, got true");
 
         building.setBasementCollapsed(coords, true);
         assertTrue(building.getBasementCollapsed(coords),
-            String.format("Basement collapsed after setBasementCollapsed(true): expected true, got false"));
+              "Basement collapsed after setBasementCollapsed(true): expected true, got false");
     }
 
     // ========== Hex Count Tests ==========
@@ -294,7 +294,7 @@ public class BuildingTest {
         building.addHex(new CubeCoords(1, 0, -1), 50, 0, BasementType.NONE, false);
 
         assertEquals(3, building.getOriginalHexCount(),
-            String.format("Original hex count: expected 3, got %d", building.getOriginalHexCount()));
+              String.format("Original hex count: expected 3, got %d", building.getOriginalHexCount()));
     }
 
     @ParameterizedTest(name = "BuildingType={0}")
@@ -308,16 +308,16 @@ public class BuildingTest {
         building.addHex(coords2, 50, 0, BasementType.NONE, false);
 
         assertEquals(2, building.getCoordsList().size(),
-            String.format("Coords list size before remove: expected 2, got %d", building.getCoordsList().size()));
+              String.format("Coords list size before remove: expected 2, got %d", building.getCoordsList().size()));
 
         building.removeHex(coords1);
 
         assertEquals(1, building.getCoordsList().size(),
-            String.format("Coords list size after remove: expected 1, got %d", building.getCoordsList().size()));
+              String.format("Coords list size after remove: expected 1, got %d", building.getCoordsList().size()));
         assertFalse(building.isIn(coords1),
-            String.format("isIn after remove: expected false, got true"));
+              "isIn after remove: expected false, got true");
         assertTrue(building.isIn(coords2),
-            String.format("isIn for remaining hex: expected true, got false"));
+              "isIn for remaining hex: expected true, got false");
     }
 
     // ========== Board ID Tests ==========
@@ -329,7 +329,7 @@ public class BuildingTest {
 
         building.setBoardId(42);
         assertEquals(42, building.getBoardId(),
-            String.format("Board ID: expected 42, got %d", building.getBoardId()));
+              String.format("Board ID: expected 42, got %d", building.getBoardId()));
     }
 
     // ========== Demolition Charge Tests ==========
@@ -343,10 +343,12 @@ public class BuildingTest {
         building.addHex(coords, 50, 0, BasementType.NONE, false);
 
         assertEquals(0, building.getDemolitionCharges().size(),
-            String.format("Demolition charges initially: expected 0, got %d", building.getDemolitionCharges().size()));
+              String.format("Demolition charges initially: expected 0, got %d",
+                    building.getDemolitionCharges().size()));
 
         building.addDemolitionCharge(1, 50, coords);
         assertEquals(1, building.getDemolitionCharges().size(),
-            String.format("Demolition charges after add: expected 1, got %d", building.getDemolitionCharges().size()));
+              String.format("Demolition charges after add: expected 1, got %d",
+                    building.getDemolitionCharges().size()));
     }
 }

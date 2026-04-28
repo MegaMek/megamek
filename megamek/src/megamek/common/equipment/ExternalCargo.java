@@ -127,7 +127,7 @@ public abstract class ExternalCargo implements Transporter {
         if (validPickupLocations.isEmpty()) {
             throw new IllegalArgumentException("No valid locations for " + carryable.specificName());
         }
-        loadCarryable(carryable, validPickupLocations.get(0));
+        loadCarryable(carryable, validPickupLocations.getFirst());
     }
 
     /**
@@ -143,7 +143,7 @@ public abstract class ExternalCargo implements Transporter {
             throw new IllegalArgumentException("Invalid location for " + carryable.specificName());
         }
         if (maxObjects(location)) {
-            throw new IllegalArgumentException("Location already occupied by " + carriedObjects.get(location).get(0)
+            throw new IllegalArgumentException("Location already occupied by " + carriedObjects.get(location).getFirst()
                   .specificName());
         }
         if (!allowedCarryable(carryable)) {
@@ -317,8 +317,6 @@ public abstract class ExternalCargo implements Transporter {
     }
 
     /**
-     * @param carrier
-     *
      * @return the MP reduction due to cargo carried by this transporter
      */
     @Override

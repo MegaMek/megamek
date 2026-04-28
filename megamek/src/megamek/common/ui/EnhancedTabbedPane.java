@@ -214,7 +214,6 @@ public class EnhancedTabbedPane extends JTabbedPane {
                             if (e.getY() <= tabArea.height) {
                                 reattachAllTabs();
                                 e.consume();
-                                return;
                             }
                         }
                         // Case 2: Content area was clicked when no tabs are present
@@ -253,6 +252,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
      *
      * @param enabled true to enable tab detaching, false to disable
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setTabDetachingEnabled(boolean enabled) {
         tabDetachingEnabled = enabled;
         setupDragEventsListeners();
@@ -263,6 +263,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
      *
      * @param enabled true to enable tab reordering, false to disable
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setTabReorderingEnabled(boolean enabled) {
         tabReorderingEnabled = enabled;
         setupDragEventsListeners();
@@ -273,6 +274,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
      *
      * @param alignAfterTabs true to align after tabs, false to align on the right side
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setActionButtonsAlignAfterTabs(boolean alignAfterTabs) {
         actionButtonsAlignAfterTabs = alignAfterTabs;
         deferredPositionActionButtons();
@@ -283,6 +285,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
      *
      * @param minimumTabsCount The minimum number of tabs that can't be detached
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMinimumTabsCount(int minimumTabsCount) {
         this.minimumTabsCount = minimumTabsCount;
     }
@@ -302,6 +305,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
      *
      * @return The ID of the dock group for this tabbed pane, or null if not set
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getDockGroupId() {
         return dockGroupId;
     }
@@ -320,6 +324,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
      *
      * @return The current detached window factory or null if none is set
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public DetachedWindowFactory getDetachedWindowFactory() {
         return detachedWindowFactory;
     }
@@ -329,6 +334,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
      *
      * @param handler The handler to call when a tab is being detached
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setTabDetachmentHandler(TabDetachmentHandler handler) {
         this.tabDetachmentHandler = handler;
     }
@@ -336,6 +342,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
     /**
      * Removes all action buttons from the tabbed pane
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeActionButtons() {
         actionButtonsPanel.removeAll();
         setupActionButtons();
@@ -345,6 +352,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
      * Set buttons to the action buttons panel
      *
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setActionButtons(JButton... actionButtons) {
         actionButtonsPanel.removeAll();
         for (JButton button : actionButtons) {
@@ -370,6 +378,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
      * Removes a button from the action buttons panel
      *
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeActionButton(JButton button) {
         actionButtonsPanel.remove(button);
         setupActionButtons();
@@ -584,6 +593,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
      *
      * @return true if the listener was found and removed
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean removeTabStateListener(TabStateListener listener) {
         return tabStateListeners.remove(listener);
     }
@@ -1203,6 +1213,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
      *
      * @return true if a detached window was found and updated, false otherwise
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean setDetachedTabTitle(JFrame frame, String title) {
         for (Component component : detachedTabs.keySet()) {
             if (component instanceof JFrame detachedFrame) {
@@ -1382,6 +1393,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
      * @param tab      An CloseableTab instance representing the tab to detach
      * @param location The screen location where to position the new window
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void detachTab(CloseableTab tab, Point location) {
         int tabIndex = tab.findTabIndex();
         if (tabIndex < 0) {
@@ -1760,6 +1772,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
      * @param component The component to check
      *
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isTabSelected(Component component) {
         int selectedIndex = getSelectedIndex();
         if (selectedIndex >= 0) {

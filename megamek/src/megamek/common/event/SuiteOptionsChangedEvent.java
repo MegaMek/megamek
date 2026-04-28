@@ -36,6 +36,7 @@ package megamek.common.event;
 /**
  * An event triggered after the SuiteOptions are changed. The event handlers cannot modify these options.
  */
+@Deprecated(since = "0.51.0", forRemoval = true)
 public class SuiteOptionsChangedEvent extends MMEvent {
     // region Constructors
     public SuiteOptionsChangedEvent() {

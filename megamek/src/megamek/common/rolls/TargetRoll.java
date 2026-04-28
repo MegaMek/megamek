@@ -166,7 +166,7 @@ public class TargetRoll implements Serializable {
      * Returns the first description found
      */
     public String getPlainDesc() {
-        return modifiers.get(0).getDesc();
+        return modifiers.getFirst().getDesc();
     }
 
     /**
@@ -185,7 +185,7 @@ public class TargetRoll implements Serializable {
      * Returns the last description found
      */
     public String getLastPlainDesc() {
-        TargetRollModifier last = modifiers.get(modifiers.size() - 1);
+        TargetRollModifier last = modifiers.getLast();
         return last.getDesc();
     }
 
@@ -228,6 +228,7 @@ public class TargetRoll implements Serializable {
      * Base removal method
      *
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeModifier(TargetRollModifier modifier) {
         modifiers.remove(modifier);
         recalculate();
@@ -241,7 +242,7 @@ public class TargetRoll implements Serializable {
      */
     public TargetRollModifier removeModifier(String fragment) {
         List<TargetRollModifier> mods = removeModifiers(List.of(fragment));
-        return (mods.isEmpty()) ? null : mods.get(0);
+        return (mods.isEmpty()) ? null : mods.getFirst();
     }
 
     /**

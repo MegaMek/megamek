@@ -43,6 +43,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.common.actions.ReinforceInfantryCombatAction;
@@ -174,23 +175,23 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
 
         // Check if already in combat
         if (inf.getInfantryCombatTargetId() != Entity.NONE) {
-            clientgui.doAlertDialog("Impossible",
-                  "Already engaged in combat");
+            clientgui.addToast(ToastLevel.ERROR,
+                  Messages.getString("InfantryVsInfantryCombatDisplay.alreadyEngaged"));
             return;
         }
 
         // Check if target is a building
         Entity targetEntity = game.getEntity(target.getId());
         if (!(targetEntity instanceof AbstractBuildingEntity)) {
-            clientgui.doAlertDialog("Impossible",
-                  "Target must be a building");
+            clientgui.addToast(ToastLevel.ERROR,
+                  Messages.getString("InfantryVsInfantryCombatDisplay.targetMustBeBuilding"));
             return;
         }
 
         // Check if same hex
         if (!ce.getPosition().equals(targetEntity.getPosition())) {
-            clientgui.doAlertDialog("Impossible",
-                  "Must be in same hex as target");
+            clientgui.addToast(ToastLevel.ERROR,
+                  Messages.getString("InfantryVsInfantryCombatDisplay.mustBeSameHex"));
             return;
         }
 
@@ -202,8 +203,8 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
               .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
 
         if (!combatExists) {
-            clientgui.doAlertDialog("Impossible",
-                  "No combat exists - use initiate action instead");
+            clientgui.addToast(ToastLevel.WARNING,
+                  Messages.getString("InfantryVsInfantryCombatDisplay.noCombatExists"));
             return;
         }
 
@@ -236,8 +237,8 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
 
         // Only attackers can withdraw
         if (!inf.isInfantryCombatAttacker()) {
-            clientgui.doAlertDialog("Impossible",
-                  "Only attackers can withdraw from combat");
+            clientgui.addToast(ToastLevel.ERROR,
+                  Messages.getString("InfantryVsInfantryCombatDisplay.onlyAttackersWithdraw"));
             return;
         }
 
@@ -271,9 +272,7 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
         if (attacks.isEmpty() && currentEntity() != null) {
             String title = "Skip Turn?";
             String body = "You haven't taken any combat actions. Skip turn anyway?";
-            if (!clientgui.doYesNoDialog(title, body)) {
-                return true;  // User cancelled
-            }
+            return !clientgui.doYesNoDialog(title, body);  // User canceled
         }
         return false;
     }
@@ -380,7 +379,7 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
         if (targets.isEmpty()) {
             return null;
         } else if (targets.size() == 1) {
-            return targets.get(0);
+            return targets.getFirst();
         } else {
             // Multiple targets - show choice dialog
             return TargetChoiceDialog.showSingleChoiceDialog(

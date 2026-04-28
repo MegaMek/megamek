@@ -192,8 +192,8 @@ public class SerializationHelper {
                 while (reader.hasMoreChildren()) {
                     reader.moveDown();
                     try {
-                        switch (reader.getNodeName()) {
-                            case "type" -> type = Integer.parseInt(reader.getValue());
+                        if (reader.getNodeName().equals("type")) {
+                            type = Integer.parseInt(reader.getValue());
                         }
                         reader.moveUp();
                     } catch (NumberFormatException e) {
@@ -333,7 +333,7 @@ public class SerializationHelper {
                     }
                 }
                 return (!Double.isNaN(q) && !Double.isNaN(r) && !Double.isNaN(s))
-                    ? new CubeCoords(q, r, s) : null;
+                      ? new CubeCoords(q, r, s) : null;
             }
 
             @Override

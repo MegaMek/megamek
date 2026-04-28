@@ -433,7 +433,7 @@ public class StepSprite extends Sprite {
         }
 
         // Show WiGE descent bonus
-        costStringBuf.append("+".repeat(Math.max(0, step.getWiGEBonus())));
+        costStringBuf.repeat("+", Math.max(0, step.getWiGEBonus()));
 
         // If the step is dangerous, mark it.
         if (step.isDanger()) {

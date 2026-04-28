@@ -204,6 +204,7 @@ public class Hex implements Serializable {
      *
      * @see Hex#setExits(Hex, int, boolean)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setExits(Hex other, int direction) {
         this.setExits(other, direction, true);
     }

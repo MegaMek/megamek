@@ -42,12 +42,11 @@ import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
 import megamek.common.board.Coords;
-import megamek.common.units.EjectedCrew;
-import megamek.common.units.Entity;
 import megamek.common.game.Game;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
+import megamek.common.units.EjectedCrew;
+import megamek.common.units.Entity;
 
 /**
  * Tracks activity of units on the map. Board positions that are frequently occupied by units get higher values, while
@@ -144,6 +143,7 @@ public class HeatMap {
      *
      * @return true if individual unit movement is being tracked
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean canTrackIndividuals() {
         return trackIndividualUnits;
     }
@@ -153,6 +153,7 @@ public class HeatMap {
      *
      * @param newSetting true, to track individual movement of all units
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setTrackIndividuals(boolean newSetting) {
         trackIndividualUnits = newSetting;
     }
@@ -162,6 +163,7 @@ public class HeatMap {
      *
      * @return false if decay rate is disabled
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isDecayEnabled() {
         return enableDecay;
     }
@@ -171,6 +173,7 @@ public class HeatMap {
      *
      * @param newSetting false, to disable decay
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void changeDecayEnabled(boolean newSetting) {
         enableDecay = newSetting;
     }
@@ -180,6 +183,7 @@ public class HeatMap {
      *
      * @return a negative number
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getActivityDecay() {
         return activityDecayModifier;
     }
@@ -199,6 +203,7 @@ public class HeatMap {
      *
      * @return a negative number
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getMovementDecay() {
         return movementDecayModifier;
     }
@@ -208,6 +213,7 @@ public class HeatMap {
      *
      * @param newSetting a negative number
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMovementDecay(int newSetting) {
         movementDecayModifier = Math.min(newSetting, MIN_DECAY_MODIFIER);
     }
@@ -217,6 +223,7 @@ public class HeatMap {
      *
      * @return positive, non-zero number, typically between 0.1 and 5.0 with default of 1.0
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public double getWeightScaling() {
         return weightScaling;
     }
@@ -228,6 +235,7 @@ public class HeatMap {
      *
      * @param newSetting positive, non-zero number
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setWeightScaling(double newSetting) {
         if (newSetting > 0) {
             weightScaling = newSetting;
@@ -238,6 +246,7 @@ public class HeatMap {
      * The weight at which an entry is removed from the trackers when trimmed for size constraints. Normally 0 (zero)
      * but may be higher for more aggressive trimming.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getRemovalWeight() {
         return removalWeight;
     }
@@ -248,6 +257,7 @@ public class HeatMap {
      *
      * @param newSetting positive number, may be 0 (zero)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setRemovalWeight(int newSetting) {
         removalWeight = Math.max(newSetting, 0);
     }
@@ -257,6 +267,7 @@ public class HeatMap {
      *
      * @return number between {@code MIN_TRACKER_TOLERANCE} and 0.9
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public double getMapTrimThreshold() {
         return mapTrimThreshold;
     }
@@ -268,12 +279,13 @@ public class HeatMap {
      * @param newSetting positive value between {@code MIN_TRACKER_TOLERANCE} and {@code MAX_TRACKER_TOLERANCE}
      */
     public void setMapTrimThreshold(double newSetting) {
-        mapTrimThreshold = Math.min(Math.max(newSetting, MIN_TRACKER_TOLERANCE), MAX_TRACKER_TOLERANCE);
+        mapTrimThreshold = Math.clamp(newSetting, MIN_TRACKER_TOLERANCE, MAX_TRACKER_TOLERANCE);
     }
 
     /**
      * Identifies if this is tracking a friendly team, so visibility and detection status don't apply
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getIsTrackingFriendlyTeam() {
         return isFriendlyTeam;
     }
@@ -391,7 +403,7 @@ public class HeatMap {
     public Coords getHotSpot() {
         List<Coords> rankedPositions = getHotSpots();
         if (rankedPositions != null && !rankedPositions.isEmpty()) {
-            return rankedPositions.get(0);
+            return rankedPositions.getFirst();
         } else {
             return null;
         }
@@ -840,6 +852,7 @@ public class HeatMap {
      *
      * @return list of positions, sorted from highest weight to lowest
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private Collection<Coords> getTopRatedPositions(Map<Coords, Integer> trackingMap, int maxRange, Coords basePoint) {
         Collection<Coords> topSet = new HashSet<>();
         List<Coords> mapCoords = new ArrayList<>();
@@ -847,7 +860,7 @@ public class HeatMap {
 
         splitAndSort(trackingMap, mapCoords, mapWeights);
 
-        int maxWeight = mapWeights.get(0);
+        int maxWeight = mapWeights.getFirst();
         for (int i = 0; i < mapCoords.size() && mapWeights.get(i) == maxWeight; i++) {
             if (basePoint == null || basePoint.distance(mapCoords.get(i)) <= maxRange) {
                 topSet.add(mapCoords.get(i));

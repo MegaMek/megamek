@@ -85,6 +85,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
     /**
      * This constructor can only be used for deserialization.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected ArtilleryBayWeaponIndirectFireHandler() {
         super();
     }
@@ -599,7 +600,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             // Here we're doing damage for each hit with more standard artillery shells
             while (numWeaponsHit > 0) {
                 gameManager.artilleryDamageArea(targetPos, ammoType,
-                      subjectId, attackingEntity, isFlak, heights.get(0), mineClear, vPhaseReport,
+                      subjectId, attackingEntity, isFlak, heights.getFirst(), mineClear, vPhaseReport,
                       asfFlak);
                 numWeaponsHit--;
             }

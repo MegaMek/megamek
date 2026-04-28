@@ -156,7 +156,7 @@ class TableElement implements MultiRowViewElement {
         sb.append("\n");
         if (colNames.length > 0) {
             int w = sb.length() - 1 - PLAIN_COL_PADDING.length();
-            sb.append("-".repeat(Math.max(0, w))).append("\n");
+            sb.repeat("-", Math.max(0, w)).append("\n");
         }
         for (ViewElement[] row : data) {
             for (int col = 0; col < row.length; col++) {

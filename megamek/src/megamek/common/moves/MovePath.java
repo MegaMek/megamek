@@ -282,6 +282,7 @@ public class MovePath implements Cloneable, Serializable {
               this.contains(MoveStepType.LATERAL_RIGHT_BACKWARDS);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean containsVTOLBomb() {
         for (MoveStep step : steps) {
             if (step.isVTOLBombingStep()) {
@@ -383,7 +384,7 @@ public class MovePath implements Cloneable, Serializable {
         if (entity.usesTurnMode() && (getMpUsed() > 5)) {
             int turnMode = getMpUsed() / 5;
             int nStraight = 0;
-            MoveStep prevStep = steps.get(0);
+            MoveStep prevStep = steps.getFirst();
             for (MoveStep s : steps) {
                 if (s.isTurning() && (nStraight < turnMode)) {
                     prevStep.setDanger(true);
@@ -397,8 +398,8 @@ public class MovePath implements Cloneable, Serializable {
         // before expending
         // enough MP to require running movement.
         if (steps.size() > 1) {
-            MoveStep lastStep = steps.get(steps.size() - 1);
-            MoveStep prevStep = steps.get(0);
+            MoveStep lastStep = steps.getLast();
+            MoveStep prevStep = steps.getFirst();
             for (MoveStep s : steps) {
                 if (s.getType() == MoveStepType.CHANGE_BOARD) {
                     // these steps never require rolls
@@ -752,7 +753,7 @@ public class MovePath implements Cloneable, Serializable {
 
             // Treat multiple convert steps as a single command
             if (step1.getType() == MoveStepType.CONVERT_MODE) {
-                while (!steps.isEmpty() && steps.get(steps.size() - 1).getType() == MoveStepType.CONVERT_MODE) {
+                while (!steps.isEmpty() && steps.getLast().getType() == MoveStepType.CONVERT_MODE) {
                     steps.removeElementAt(steps.size() - 1);
                 }
             }
@@ -832,7 +833,7 @@ public class MovePath implements Cloneable, Serializable {
 
     public ListIterator<MoveStep> getSteps() {
         // Create shallow copy for iterator thread safety.
-        return new Vector<MoveStep>(steps).listIterator();
+        return new Vector<>(steps).listIterator();
     }
 
     public @Nullable MoveStep getStep(final int index) {
@@ -1117,6 +1118,7 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /* Debug method */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void printAllSteps() {
         LOGGER.debug("*Steps*");
         for (int i = 0; i < steps.size(); i++) {
@@ -1274,6 +1276,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * @return true if the entity is a QuadVee or LAM changing movement mode
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isChangingMode() {
         return contains(MoveStepType.CONVERT_MODE);
     }

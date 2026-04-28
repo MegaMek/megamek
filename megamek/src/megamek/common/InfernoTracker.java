@@ -167,6 +167,7 @@ public class InfernoTracker implements Serializable, RoundUpdated {
      *       <code>isStillBurning()</code> method returns <code>true</code>.
      *       It will not be negative.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getArrowIVTurnsLeftToBurn() {
         // Add the number of standard burn turns to Inferno IV turns.
         return turnsIVLeftToBurn;
@@ -192,6 +193,7 @@ public class InfernoTracker implements Serializable, RoundUpdated {
         return result;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setTurnsLeftToBurn(int turnsLeftToBurn) {
         this.turnsLeftToBurn = turnsLeftToBurn;
     }

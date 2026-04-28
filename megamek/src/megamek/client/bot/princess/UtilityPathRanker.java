@@ -197,7 +197,7 @@ public class UtilityPathRanker extends BasicPathRanker {
         double strategicMod = calculateStrategicGoalMod(pathCopy);
         double formationMod = calculateFormationModifier(path, maxRange);
         double exposurePenalty = calculateExposurePenalty(movingUnit, pathCopy, enemies);
-        double fallBack = shouldFallBack(pathCopy, movingUnit, enemies.get(0)) ? 0.5 : 1.0;
+        double fallBack = shouldFallBack(pathCopy, movingUnit, enemies.getFirst()) ? 0.5 : 1.0;
 
         double utility = clamp01(braveryMod * fallMod * formationMod * aggressionMod * movementMod *
               selfPreservationMod * strategicMod * exposurePenalty * fallBack * facingMod);

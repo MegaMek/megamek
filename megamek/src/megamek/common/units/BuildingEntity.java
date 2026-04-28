@@ -111,7 +111,6 @@ public class BuildingEntity extends AbstractBuildingEntity {
     /**
      * Returns the name of the type of movement used.
      *
-     * @param movementType
      */
     @Override
     public String getMovementString(EntityMovementType movementType) {
@@ -121,7 +120,6 @@ public class BuildingEntity extends AbstractBuildingEntity {
     /**
      * Returns the abbreviation of the name of the type of movement used.
      *
-     * @param movementType
      */
     @Override
     public String getMovementAbbr(EntityMovementType movementType) {
@@ -141,22 +139,15 @@ public class BuildingEntity extends AbstractBuildingEntity {
         if (weapon.isTurret()) {
             return 0;
         }
-        switch (weapon.getFacing()) {
-            case 0:
-                return 1;
-            case 1:
-                return 50;
-            case 2:
-                return 51;
-            case 3:
-                return 52;
-            case 4:
-                return 53;
-            case 5:
-                return 54;
-            default:
-                return 0;
-        }
+        return switch (weapon.getFacing()) {
+            case 0 -> 1;
+            case 1 -> 50;
+            case 2 -> 51;
+            case 3 -> 52;
+            case 4 -> 53;
+            case 5 -> 54;
+            default -> 0;
+        };
     }
 
     /**
@@ -230,7 +221,8 @@ public class BuildingEntity extends AbstractBuildingEntity {
         double effectivePower = 0.0;
 
         for (MiscMounted miscMountedPowerGenerator : getMiscEquipment(MiscTypeFlag.F_POWER_GENERATOR)) {
-            if (miscMountedPowerGenerator.getType() instanceof PowerGeneratorType powerGeneratorType && miscMountedPowerGenerator.isOperable()) {
+            if (miscMountedPowerGenerator.getType() instanceof PowerGeneratorType powerGeneratorType
+                  && miscMountedPowerGenerator.isOperable()) {
                 StructureEngine engineType = powerGeneratorType.getStructureEngine();
                 effectivePower += miscMountedPowerGenerator.getSize() / engineType.getBuildingWeightMultiplier();
             }

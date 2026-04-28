@@ -156,6 +156,7 @@ public class GameCFREvent extends GameEvent {
         eId = id;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getAmsEquipNum() {
         return amsEquipNum;
     }

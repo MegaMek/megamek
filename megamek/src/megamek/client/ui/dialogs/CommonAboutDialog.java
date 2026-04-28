@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,11 +44,13 @@ import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
 
 import megamek.MMConstants;
 import megamek.MegaMek;
@@ -62,7 +64,7 @@ import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
- * This is MegaMek's Help -> About dialog
+ * This is MegaMek's Help -&gt; About dialog
  */
 public class CommonAboutDialog extends JDialog {
 
@@ -82,7 +84,7 @@ public class CommonAboutDialog extends JDialog {
     }
 
     /**
-     * Creates the Help -> About dialog for MegaMek.
+     * Creates the Help -&gt; About dialog for MegaMek.
      *
      * @param parentFrame the parent JFrame for this dialog.
      */
@@ -97,10 +99,14 @@ public class CommonAboutDialog extends JDialog {
 
         JTextArea lblVersion = new JTextArea(MegaMek.getUnderlyingInformation(MMConstants.PROJECT_NAME));
         lblVersion.setEditable(false);
-        JTextArea lblCopyright = new JTextArea(Messages.getString("CommonAboutDialog.copyright"));
-        lblCopyright.setEditable(false);
-        JTextArea lblAbout = new JTextArea(Messages.getString("CommonAboutDialog.about"));
-        lblAbout.setEditable(false);
+
+        JEditorPane aboutPane = new JEditorPane();
+        aboutPane.setContentType("text/html");
+        aboutPane.setEditable(false);
+        aboutPane.setOpaque(false);
+        aboutPane.setText(buildAboutHtml());
+        aboutPane.setCaretPosition(0);
+        aboutPane.addHyperlinkListener(this::handleHyperlink);
 
         JButton closeButton = new ButtonEsc(new CloseAction(this));
         JButton copyButton = new DialogButton(Messages.getString("CommonAboutDialog.copy"));
@@ -118,9 +124,7 @@ public class CommonAboutDialog extends JDialog {
         contentPanel.add(Box.createVerticalStrut(35));
         contentPanel.add(lblVersion);
         contentPanel.add(Box.createVerticalStrut(15));
-        contentPanel.add(lblCopyright);
-        contentPanel.add(Box.createVerticalStrut(15));
-        contentPanel.add(lblAbout);
+        contentPanel.add(aboutPane);
 
         add(contentPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.PAGE_END);
@@ -130,6 +134,18 @@ public class CommonAboutDialog extends JDialog {
         pack();
         setLocationRelativeTo(parentFrame);
         setResizable(false);
+    }
+
+    private String buildAboutHtml() {
+        return "<html><body width='" + UIUtil.scaleForGUI(500) + "'>"
+              + LicensingDialog.buildLegalHtml()
+              + "</body></html>";
+    }
+
+    private void handleHyperlink(HyperlinkEvent event) {
+        if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            UIUtil.browse(event.getURL().toString(), this);
+        }
     }
 
     private void copySystemData() {

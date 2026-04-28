@@ -66,6 +66,7 @@ public class SBFFormationSerializer extends StdSerializer<SBFFormation> {
     static final String TACTICS = "tactics";
     static final String MORALE = "morale";
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SBFFormationSerializer() {
         this(null);
     }

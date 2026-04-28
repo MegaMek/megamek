@@ -54,6 +54,7 @@ import javax.swing.event.ListSelectionListener;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.ChoiceDialog;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
@@ -515,7 +516,7 @@ class SystemPanel extends PicMap
                                     }
                                 }
                             } else {
-                                clientgui.doAlertDialog(Messages.getString("MekDisplay.BoobyTrapMode"),
+                                clientgui.addToast(ToastLevel.WARNING,
                                       Messages.getString("MekDisplay.BoobyTrapMode"));
                                 return;
                             }
@@ -560,17 +561,22 @@ class SystemPanel extends PicMap
                         if (m.canInstantSwitch(nMode)) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.switched",
                                   m.getName(), m.curMode().getDisplayableName()));
+                            clientgui.addToast(ToastLevel.INFO,
+                                  m.getName() + ": " + m.curMode().getDisplayableName(), en);
                             int weapon = this.unitDisplayPanel.wPan.getSelectedWeaponNum();
                             this.unitDisplayPanel.wPan.displayMek(en);
                             this.unitDisplayPanel.wPan.selectWeapon(weapon);
                         } else {
+                            String pendingModeName = m.pendingMode().getDisplayableName();
                             if (clientgui.getClient().getGame().getPhase().isDeployment()) {
                                 clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtStart",
-                                      m.getName(), m.pendingMode().getDisplayableName()));
+                                      m.getName(), pendingModeName));
                             } else {
                                 clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtEnd",
-                                      m.getName(), m.pendingMode().getDisplayableName()));
+                                      m.getName(), pendingModeName));
                             }
+                            clientgui.addToast(ToastLevel.INFO,
+                                  m.getName() + " -> " + pendingModeName, en);
                         }
                         int loc = slotList.getSelectedIndex();
                         displaySlots();
@@ -888,4 +894,5 @@ class SystemPanel extends PicMap
         m_chMode.removeItemListener(this);
         m_bDumpAmmo.removeActionListener(this);
     }
+
 }

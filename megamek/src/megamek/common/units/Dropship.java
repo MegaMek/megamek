@@ -165,10 +165,12 @@ public class Dropship extends SmallCraft {
         this.collarType = collarType;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getCollarName() {
         return COLLAR_NAMES[collarType];
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static String getCollarName(int type) {
         return COLLAR_NAMES[type];
     }
@@ -193,6 +195,7 @@ public class Dropship extends SmallCraft {
         return boomType;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setBoomType(int boomType) {
         this.boomType = boomType;
     }

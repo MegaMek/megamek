@@ -38,6 +38,7 @@ import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.server.sbf.SBFActionHandler;
 import megamek.server.sbf.SBFGameManager;
 
+@Deprecated(since = "0.51.0", forRemoval = true)
 public class SBFDirectArtilleryAttack extends SBFArtilleryAttack {
 
     public SBFDirectArtilleryAttack(int entityId, int targetId, BattleForceSUA artilleryType) {

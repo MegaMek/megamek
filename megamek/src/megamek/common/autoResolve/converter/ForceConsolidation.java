@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -65,6 +66,7 @@ public abstract class ForceConsolidation {
         }
 
         @Override
+        @Nonnull
         public String toString() {
             return new StringJoiner(", ", Container.class.getSimpleName() + "[", "]")
                   .add("uid=" + uid)
@@ -181,6 +183,7 @@ public abstract class ForceConsolidation {
 
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected static void clearAllForces(Forces forces) {
         // Remove all empty forces and sub forces after consolidation
         forces.deleteForces(forces.getAllForces());
@@ -196,6 +199,7 @@ public abstract class ForceConsolidation {
      *
      * @return A list of ForceRepresentations
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected List<ForceRepresentation> translateForcesToForceRepresentation(Forces forces,
           Map<Integer, Integer> teamByPlayer) {
         List<ForceRepresentation> forceRepresentations = new ArrayList<>();

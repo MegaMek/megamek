@@ -43,7 +43,6 @@ import java.util.Map;
 import java.util.Set;
 
 import megamek.client.bot.princess.CardinalEdge;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.Hex;
 import megamek.common.OffBoardDirection;
 import megamek.common.board.Board;
@@ -1464,7 +1463,7 @@ public class BoardUtilities {
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height; h++) {
                 elevationMap[w][h] = (int) Math.round(elevationMap[w][h] * scale) + inc;
-                elevationCount[MathUtility.clamp(elevationMap[w][h], 0, range)]++;
+                elevationCount[Math.clamp(elevationMap[w][h], 0, range)]++;
             }
         }
 

@@ -86,7 +86,7 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
         // Lists with space-separated values
         DEFAULT_FORMAT_HANDLERS.put(List.class, value -> {
             // Special handling for lists of enums
-            if (!((List<?>) value).isEmpty() && ((List<?>) value).get(0) instanceof Enum) {
+            if (!((List<?>) value).isEmpty() && ((List<?>) value).getFirst() instanceof Enum) {
                 return ((List<?>) value).stream()
                       .map(step -> ((Enum<?>) step).name())
                       .collect(Collectors.joining(" "));

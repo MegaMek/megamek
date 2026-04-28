@@ -141,6 +141,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
      * @return - the experimental tech date range, formatted as a string
      */
     @Override
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getExperimentalRange() {
         if (experimental == null) {
             return "-";
@@ -158,6 +159,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
      * @return - the advanced tech date range, formatted as a string
      */
     @Override
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getAdvancedRange() {
         if (advanced == null) {
             return "-";
@@ -173,6 +175,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
      * @return - the standard tech date range, formatted as a string
      */
     @Override
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getStandardRange() {
         if (standard == null) {
             return "-";
@@ -660,7 +663,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         if (extinct.isEmpty()) {
             return DATE_NONE;
         } else {
-            return extinct.get(0).start;
+            return extinct.getFirst().start;
         }
     }
 
@@ -669,7 +672,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         if (extinct.isEmpty()) {
             return DATE_NONE;
         } else {
-            return extinct.get(0).end == null ? DATE_NONE : extinct.get(0).end;
+            return extinct.getFirst().end == null ? DATE_NONE : extinct.getFirst().end;
         }
     }
 

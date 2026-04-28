@@ -75,6 +75,7 @@ class LoadNode {
     /**
      * Testing version of LoadNode, for imperative lookups
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     LoadNode(HashMap<String, String> imperatives) {
         this.imperatives = imperatives;
     }
@@ -259,7 +260,7 @@ class LoadNode {
         if (mapping.isEmpty()) {
             return new HashMap<>();
         }
-        String realImp = mapping.get(0);
+        String realImp = mapping.getFirst();
         if (!dirty && counts.containsKey(realImp)) {
             // Return pre-calculated value
             return counts.get(realImp);
@@ -291,13 +292,17 @@ class LoadNode {
      * the line. Print one line starting with the three keys in "chassis:model:pilot::" format. Each line contains all
      * imperatives in "ammoType:munition1[:munition2[...]]::ammoType2..." format. 2. This is a node. 1~2 keys have been
      * passed in; pass these to leaves. 3. This is the root. Iterate over all child keys and pass them to the children.
-     *
+     * <p>
+     * If case 1 but a key value is blank, replace with "any". Always use "any" for pilot when dumping imperatives.
      */
     public StringBuilder dumpTextFormat(String... keys) {
         StringBuilder sb = new StringBuilder();
         if (keys.length == 3) {
             // Create prefix of 3 keys
-            sb.append(keys[0]).append(":").append(keys[1]).append(":").append(keys[2]);
+            String chassis = (keys[0] == null || keys[0].isEmpty()) ? "any" : keys[0];
+            String variant = (keys[1] == null || keys[1].isEmpty()) ? "any" : keys[1];
+            String pilot = "any";
+            sb.append(chassis).append(":").append(variant).append(":").append(pilot);
             // Combine all imperatives in one line.
             for (Map.Entry<String, String> entry : imperatives.entrySet()) {
                 sb.append("::").append(entry.getKey()).append(":").append(entry.getValue());

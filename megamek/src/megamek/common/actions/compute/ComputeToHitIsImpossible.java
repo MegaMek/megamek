@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -88,7 +88,7 @@ class ComputeToHitIsImpossible {
      * TODO: replace 40-ish parameters with an attack info record of some kind.
      *
      * @param game                  The current {@link Game}
-     * @param weaponEntity              The Entity making this attack
+     * @param weaponEntity          The Entity making this attack
      * @param attackerId            The ID number of the attacking entity
      * @param target                The Targetable object being attacked
      * @param targetType            The targetable object type
@@ -541,17 +541,16 @@ class ComputeToHitIsImpossible {
         }
 
         // Torpedoes must remain in the water over their whole path to the target
-        if ((ammoType != null) &&
-              ((ammoType.getAmmoType() == LRM_TORPEDO) ||
-                    (ammoType.getAmmoType() == SRM_TORPEDO) ||
-                    (((ammoType.getAmmoType() == SRM) ||
-                          (ammoType.getAmmoType() == SRM_IMP) ||
-                          (ammoType.getAmmoType() == MRM) ||
-                          (ammoType.getAmmoType() == LRM) ||
-                          (ammoType.getAmmoType() == LRM_IMP) ||
-                          (ammoType.getAmmoType() == MML)) &&
-                          (ammoType.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)))) &&
-              (los.getMinimumWaterDepth() < 1)) {
+        if ((ammoType != null) && (ammoType.getAmmoType() != null && ammoType.getAmmoType().isTorpedo()
+              || (((ammoType.getAmmoType() == SRM)
+              || (ammoType.getAmmoType() == SRM_IMP)
+              || (ammoType.getAmmoType() == MRM)
+              || (ammoType.getAmmoType() == LRM)
+              || (ammoType.getAmmoType() == LRM_IMP)
+              || (ammoType.getAmmoType() == MML))
+              && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO))))
+              && (los.getMinimumWaterDepth() < 1)) {
+
             return Messages.getString("WeaponAttackAction.TorpOutOfWater");
         }
 
@@ -907,7 +906,7 @@ class ComputeToHitIsImpossible {
                 // Additional Nap-of-Earth restrictions for strafing
                 if ((attacker.isNOE()) && isStrafing) {
                     Vector<Coords> passedThrough = attacker.getPassedThrough();
-                    if (passedThrough.isEmpty() || passedThrough.get(0).equals(target.getPosition())) {
+                    if (passedThrough.isEmpty() || passedThrough.getFirst().equals(target.getPosition())) {
                         // TW pg 243 says units flying at NOE have a harder time establishing LoS while strafing and
                         // hence have to consider the adjacent hex along the flight place in the direction of the
                         // attack. What if there is no adjacent hex? The rules don't address this. We could

@@ -103,6 +103,7 @@ public enum Facing {
     /**
      * @return the next facing in clockwise direction
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Facing getNextClockwise() {
         return cw.get(this);
     }
@@ -110,6 +111,7 @@ public enum Facing {
     /**
      * @return the next facing in counterclockwise direction
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Facing getNextCounterClockwise() {
         return ccw.get(this);
     }

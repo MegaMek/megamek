@@ -37,6 +37,7 @@ import static megamek.client.ui.util.UIUtil.uiWhite;
 
 import java.awt.Point;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -53,6 +54,7 @@ import megamek.common.Player;
 import megamek.common.ReportMessages;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
 import megamek.common.equipment.FuelTank;
@@ -227,6 +229,26 @@ public final class HexTooltip {
                 groundObj = UIUtil.tag("FONT", attr, groundObj);
                 result.append(groundObj);
                 result.append("<BR/>");
+            }
+        }
+
+        // Woods clearing indicator
+        if (game != null) {
+            Map<BoardLocation, Integer> cutHexes = game.getHexesBeingCut();
+            BoardLocation thisLoc = BoardLocation.of(mcoords, boardId);
+            Integer turnsRemaining = cutHexes.get(thisLoc);
+            if (turnsRemaining != null) {
+                String cutInfo;
+                if (turnsRemaining <= 0) {
+                    cutInfo = Messages.getString("BoardView1.Tooltip.WoodsClearingComplete");
+                } else {
+                    cutInfo = Messages.getString("BoardView1.Tooltip.WoodsClearing", turnsRemaining);
+                }
+                String attr = String.format("FACE=Dialog COLOR=%s",
+                      UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
+                cutInfo = UIUtil.tag("FONT", attr, cutInfo);
+                result.append(cutInfo);
+                result.append("<BR>");
             }
         }
 

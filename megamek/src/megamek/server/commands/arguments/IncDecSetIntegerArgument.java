@@ -102,6 +102,7 @@ public class IncDecSetIntegerArgument extends Argument<Integer> {
         return minValue;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getMaxValue() {
         return maxValue;
     }

@@ -182,7 +182,7 @@ public class UnitAttack extends EntityDataMap<UnitAttack.Field> {
         // Attack-specific information
         if (attackAction instanceof ArtilleryAttackAction artilleryAttackAction) {
             if (!artilleryAttackAction.getSpotterIds().isEmpty()) {
-                map.put(Field.SPOTTER_ID, artilleryAttackAction.getSpotterIds().get(0));
+                map.put(Field.SPOTTER_ID, artilleryAttackAction.getSpotterIds().getFirst());
             }
             map.put(Field.TURNS_TO_HIT, artilleryAttackAction.getTurnsTilHit())
                   .put(Field.TO_HIT, artilleryAttackAction.toHit(game).getValue())

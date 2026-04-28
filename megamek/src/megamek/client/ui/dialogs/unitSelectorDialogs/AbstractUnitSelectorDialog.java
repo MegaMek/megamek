@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002, 2004 Josh Yockey
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -753,7 +753,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         if (summaries.size() != 1) {
             return null;
         }
-        return summaries.get(0);
+        return summaries.getFirst();
     }
 
     public List<MekSummary> getSelectedMekSummaries() {
@@ -806,8 +806,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             GUIP.setMekSelectorUnitType(comboUnitType.getSelectedIndex());
             GUIP.setMekSelectorWeightClass(comboWeight.getSelectedIndex());
             GUIP.setMekSelectorRulesLevels(Arrays.toString(listTechLevel.getSelectedIndices()));
-            GUIP.setMekSelectorSortColumn(tableUnits.getRowSorter().getSortKeys().get(0).getColumn());
-            GUIP.setMekSelectorSortOrder(tableUnits.getRowSorter().getSortKeys().get(0).getSortOrder().name());
+            GUIP.setMekSelectorSortColumn(tableUnits.getRowSorter().getSortKeys().getFirst().getColumn());
+            GUIP.setMekSelectorSortOrder(tableUnits.getRowSorter().getSortKeys().getFirst().getSortOrder().name());
             GUIP.setMekSelectorSizeHeight(getSize().height);
             GUIP.setMekSelectorSizeWidth(getSize().width);
             GUIP.setMekSelectorPosX(getLocation().x);
@@ -1093,42 +1093,44 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     /** A specialized renderer for the mek table (formats the unit tonnage). */
     public static class TonnageRenderer extends DefaultTableCellRenderer {
 
+        public TonnageRenderer() {
+            setHorizontalAlignment(JLabel.RIGHT);
+        }
+
         @Override
         public Component getTableCellRendererComponent(final JTable table, final @Nullable Object value,
               final boolean isSelected, final boolean hasFocus, final int row, final int column) {
-            if (value instanceof Double) {
-                setHorizontalAlignment(JLabel.RIGHT);
-                double weight = (Double) value;
-                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            String text = "?";
+            if (value instanceof Double weight) {
                 if (weight < 2) {
-                    setText(String.format(MegaMek.getMMOptions().getLocale(), "%,d kg ", (int) (weight * 1000)));
+                    text = String.format(MegaMek.getMMOptions().getLocale(), "%,d kg ", (int) (weight * 1000));
                 } else if (Math.round(weight) == weight) {
-                    setText(String.format(MegaMek.getMMOptions().getLocale(), "%,d t ", Math.round(weight)));
+                    text = String.format(MegaMek.getMMOptions().getLocale(), "%,d t ", Math.round(weight));
                 } else {
-                    setText(String.format(MegaMek.getMMOptions().getLocale(), "%.1f t ", weight));
+                    text = String.format(MegaMek.getMMOptions().getLocale(), "%.1f t ", weight);
                 }
-                return this;
-            } else {
-                return null;
             }
+            return super.getTableCellRendererComponent(table, text, isSelected, hasFocus, row, column);
         }
     }
 
     /** A specialized renderer for the mek table (formats the unit price). */
     public static class PriceRenderer extends DefaultTableCellRenderer {
 
+        public PriceRenderer() {
+            setHorizontalAlignment(JLabel.RIGHT);
+        }
+
         @Override
-        public Component getTableCellRendererComponent(final JTable table, final @Nullable Object value,
-              final boolean isSelected, final boolean hasFocus,
-              final int row, final int column) {
-            if (value instanceof Long) {
-                setHorizontalAlignment(JLabel.RIGHT);
-                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                setText(String.format(MegaMek.getMMOptions().getLocale(), "%,d ", (Long) value));
-                return this;
-            } else {
-                return null;
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+              int row, int column) {
+
+            String text = "?";
+            if (value instanceof Long price) {
+                text = String.format(MegaMek.getMMOptions().getLocale(), "%,d ", price);
             }
+            return super.getTableCellRendererComponent(table, text, isSelected, hasFocus, row, column);
         }
     }
 }

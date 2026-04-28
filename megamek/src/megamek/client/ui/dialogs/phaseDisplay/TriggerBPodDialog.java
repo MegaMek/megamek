@@ -298,7 +298,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         // Do we have a single choice?
         if (targets.size() == 1) {
             // Return that choice.
-            choice = targets.get(0);
+            choice = targets.getFirst();
 
         }
 

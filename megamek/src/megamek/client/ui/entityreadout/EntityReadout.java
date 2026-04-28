@@ -115,26 +115,22 @@ public interface EntityReadout {
     static EntityReadout createReadout(Entity entity, boolean showDetail, boolean useAlternateCost,
           boolean ignorePilotBV) {
 
-        if (entity instanceof BattleArmor battleArmor) {
-            return new BattleArmorReadout(battleArmor, showDetail, useAlternateCost, ignorePilotBV);
-        } else if (entity instanceof Infantry infantry) {
-            return new InfantryReadout(infantry, showDetail, useAlternateCost, ignorePilotBV);
-        } else if (entity instanceof ProtoMek protoMek) {
-            return new ProtoMekReadout(protoMek, showDetail, useAlternateCost, ignorePilotBV);
-        } else if (entity instanceof GunEmplacement gunEmplacement) {
-            return new GunEmplacementReadout(gunEmplacement, showDetail, useAlternateCost, ignorePilotBV);
-        } else if (entity instanceof FighterSquadron squadron) {
-            return new FighterSquadronReadout(squadron, showDetail, useAlternateCost, ignorePilotBV);
-        } else if (entity instanceof Mek mek) {
-            return new MekReadout(mek, showDetail, useAlternateCost, ignorePilotBV);
-        } else if (entity instanceof Aero aero) {
-            return new AeroReadout(aero, showDetail, useAlternateCost, ignorePilotBV);
-        } else if (entity instanceof Tank tank) {
-            return new TankReadout(tank, showDetail, useAlternateCost, ignorePilotBV);
-        } else {
-            // the selection above should be exhaustive, but to be safe:
-            return new GeneralEntityReadout(entity, showDetail, useAlternateCost, ignorePilotBV);
-        }
+        return switch (entity) {
+            case BattleArmor battleArmor ->
+                  new BattleArmorReadout(battleArmor, showDetail, useAlternateCost, ignorePilotBV);
+            case Infantry infantry -> new InfantryReadout(infantry, showDetail, useAlternateCost, ignorePilotBV);
+            case ProtoMek protoMek -> new ProtoMekReadout(protoMek, showDetail, useAlternateCost, ignorePilotBV);
+            case GunEmplacement gunEmplacement ->
+                  new GunEmplacementReadout(gunEmplacement, showDetail, useAlternateCost, ignorePilotBV);
+            case FighterSquadron squadron ->
+                  new FighterSquadronReadout(squadron, showDetail, useAlternateCost, ignorePilotBV);
+            case Mek mek -> new MekReadout(mek, showDetail, useAlternateCost, ignorePilotBV);
+            case Aero aero -> new AeroReadout(aero, showDetail, useAlternateCost, ignorePilotBV);
+            case Tank tank -> new TankReadout(tank, showDetail, useAlternateCost, ignorePilotBV);
+            case null, default ->
+                // the selection above should be exhaustive, but to be safe:
+                  new GeneralEntityReadout(entity, showDetail, useAlternateCost, ignorePilotBV);
+        };
     }
 
     /**

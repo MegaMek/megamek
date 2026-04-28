@@ -56,6 +56,7 @@ public class SubForcesNode extends RulesetNode {
         optionSubForces = new ArrayList<>();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ArrayList<ForceDescriptor> generateSubForces(ForceDescriptor forceDescriptor) {
         return generateSubForces(forceDescriptor, false);
     }

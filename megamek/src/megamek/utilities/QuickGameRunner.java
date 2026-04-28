@@ -37,7 +37,6 @@ package megamek.utilities;
 import static megamek.MMConstants.LOCALHOST_IP;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.ObjectInputFilter;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -142,8 +141,7 @@ public class QuickGameRunner {
         PreferenceManager.getClientPreferences().setAskForVictoryList(true);
     }
 
-    private CountDownLatch startGame(File saveFile, GameListenerAdapter gameListenerAdapter, int rounds)
-          throws IOException {
+    private CountDownLatch startGame(File saveFile, GameListenerAdapter gameListenerAdapter, int rounds) {
         assert rounds > 0;
         switch (guiType) {
             case COMMANDER, NONE:

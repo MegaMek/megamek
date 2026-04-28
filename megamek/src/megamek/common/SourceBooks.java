@@ -39,9 +39,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This class manages sourcebook information, usually loaded from the data/sourcebooks folder. Sourcebooks are not
@@ -84,7 +88,7 @@ public class SourceBooks {
      *
      * SourceBooks sourceBooks = new SourceBooks();
      * List<String> allBooks = sourceBooks.availableSourcebooks();
-     * String firstBook = allBooks.get(0) // assuming there are sourcebooks
+     * String firstBook = allBooks.getFirst() // assuming there are sourcebooks
      * Optional<SourceBook> book = sourceBooks.loadSourceBook(firstBook);
      *
      * }</pre>
@@ -116,12 +120,53 @@ public class SourceBooks {
      * @return The book, if it can be loaded.
      */
     public Optional<SourceBook> loadSourceBook(String fileName) {
+        if ((fileName == null) || fileName.isBlank()) {
+            return Optional.empty();
+        }
         try {
             File yamlFile = new File(baseDirectory, prepareFilename(fileName));
             return Optional.of(yamlMapper.readValue(yamlFile, SourceBook.class));
         } catch (IOException e) {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Loads any sourcebooks listed in a comma-separated source field.
+     *
+     * @param sourceList A comma-separated source list, such as "TR:3039,RG29"
+     *
+     * @return The sourcebooks that could be loaded, in source-list order
+     */
+    public List<SourceBook> loadSourceBooks(String sourceList) {
+        return splitSourceList(sourceList).stream()
+              .map(this::loadSourceBook)
+              .flatMap(Optional::stream)
+              .toList();
+    }
+
+    public static List<String> splitSourceList(String sourceList) {
+        if ((sourceList == null) || sourceList.isBlank()) {
+            return Collections.emptyList();
+        }
+        return Arrays.stream(sourceList.split(","))
+              .map(String::trim)
+              .filter(source -> !source.isEmpty())
+              .toList();
+    }
+
+    public static String normalizeSourceList(String sourceList) {
+        return formatSourceList(splitSourceList(sourceList));
+    }
+
+    public static String formatSourceList(Collection<String> sources) {
+        if (sources == null) {
+            return "";
+        }
+        return sources.stream()
+              .filter(Objects::nonNull)
+              .flatMap(source -> splitSourceList(source).stream())
+              .collect(Collectors.joining(","));
     }
 
     private String prepareFilename(String input) {

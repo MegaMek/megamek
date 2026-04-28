@@ -1143,7 +1143,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         report.addDesc(entity);
                         report.subject = entity.getId();
                         addReport(report);
-                        addReport(gameManager.crashVTOLorWiGE((Tank) entity));
+
+                        if (entity instanceof Tank tankEntity) {
+                            addReport(gameManager.crashVTOLorWiGE(tankEntity));
+                        }
                     } else {
                         entity.setElevation(0);
                     }
@@ -1822,21 +1825,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                 if (ce.equals(a)) {
                                     continue;
                                 }
-                                if (ce instanceof SpaceStation) {
-                                    potentialSpaceStation.addElement(id);
-                                } else if (ce instanceof Warship) {
-                                    potentialWarShip.addElement(id);
-                                } else if (ce instanceof Jumpship) {
-                                    potentialJumpShip.addElement(id);
-                                } else if (ce instanceof Dropship) {
-                                    potentialDropShip.addElement(id);
-                                } else if (ce instanceof SmallCraft) {
-                                    potentialSmallCraft.addElement(id);
-                                } else {
-                                    // ASF can actually include anything,
-                                    // because we might
-                                    // have combat dropping troops
-                                    potentialASF.addElement(id);
+                                switch (ce) {
+                                    case SpaceStation ignored -> potentialSpaceStation.addElement(id);
+                                    case Warship ignored -> potentialWarShip.addElement(id);
+                                    case Jumpship ignored -> potentialJumpShip.addElement(id);
+                                    case Dropship ignored -> potentialDropShip.addElement(id);
+                                    case SmallCraft ignored -> potentialSmallCraft.addElement(id);
+                                    case null, default ->
+                                        // ASF can actually include anything,
+                                        // because we might
+                                        // have combat dropping troops
+                                          potentialASF.addElement(id);
                                 }
                             }
 
@@ -2147,8 +2146,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (cachedGravityLimit < 0) {
                 cachedGravityLimit = EntityMovementType.MOVE_JUMP == moveType
                       ? (step.isUsingMekJumpBooster()
-                      ? entity.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
-                      : entity.getJumpMP(MPCalculationSetting.NO_GRAVITY))
+                         ? entity.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
+                         : entity.getJumpMP(MPCalculationSetting.NO_GRAVITY))
                       : entity.getRunningGravityLimit();
             }
             // check for charge
@@ -2753,7 +2752,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                       .stream().filter(Mounted::isReady)
                       .collect(Collectors.toList());
                 if (!chaffDispensers.isEmpty()) {
-                    chaffDispensers.get(0).setFired(true);
+                    chaffDispensers.getFirst().setFired(true);
                     gameManager.createSmoke(curPos, getGame().getBoard(step.getBoardId()),
                           SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
                     Hex hex = getGame().getBoard(curBoardId).getHex(curPos);
@@ -3247,7 +3246,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // if we're not supplied a specific location, then the assumption is we only have one piece of cargo,
                 // and we're going to just drop that one
                 if (cargoLocation == null) {
-                    cargo = entity.getDistinctCarriedObjects().get(0);
+                    cargo = entity.getDistinctCarriedObjects().getFirst();
                 } else if (entity.getCarriedObject(cargoLocation) != null) {
                     cargo = entity.getCarriedObject(cargoLocation);
                 } else if ((cargoLocation >= 0) && (Integer.MAX_VALUE - cargoLocation < entity.getTransports()
@@ -3294,7 +3293,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // list.
                     if (cargo instanceof GroundObject) {
                         gameManager.sendGroundObjectUpdate();
-                    } else if (cargo instanceof Entity carriedEntity) {
+                    } else if (cargo instanceof Entity) {
                         gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
                     }
                 }

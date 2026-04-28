@@ -34,6 +34,7 @@ package megamek.server.totalWarfare;
 
 import static megamek.common.CargoBayTest.createInfantry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -150,8 +151,8 @@ class TWGameManagerTest {
     }
 
     /**
-     * Test that standard gyro first hit triggers PSR with +3 modifier.
-     * Per TotalWarfare rules (BMM pg 48), first gyro hit on standard gyro requires PSR at +3.
+     * Test that standard gyro first hit triggers PSR with +3 modifier. Per TotalWarfare rules (BMM pg 48), first gyro
+     * hit on standard gyro requires PSR at +3.
      */
     @Test
     void testStandardGyroFirstHitTriggersPSR() {
@@ -171,14 +172,13 @@ class TWGameManagerTest {
         // Verify PSR was added by game logic
         List<PilotingRollData> psrs = Collections.list(game.getPSRs());
         assertEquals(1, psrs.size(), "Standard gyro first hit should trigger PSR");
-        assertEquals(3, psrs.get(0).getValue(), "PSR modifier should be +3");
-        assertTrue(psrs.get(0).getDesc().contains("gyro hit"), "PSR description should mention gyro");
+        assertEquals(3, psrs.getFirst().getValue(), "PSR modifier should be +3");
+        assertTrue(psrs.getFirst().getDesc().contains("gyro hit"), "PSR description should mention gyro");
     }
 
     /**
-     * Test that heavy-duty gyro first hit does NOT trigger PSR.
-     * Per errata: First hit to HD gyro does not require PSR, but applies +1 modifier to all future PSRs.
-     * This tests the fix for Issue #3651.
+     * Test that heavy-duty gyro first hit does NOT trigger PSR. Per errata: First hit to HD gyro does not require PSR,
+     * but applies +1 modifier to all future PSRs. This tests the fix for Issue #3651.
      */
     @Test
     void testHeavyDutyGyroFirstHitNoPSR() {
@@ -204,8 +204,8 @@ class TWGameManagerTest {
     }
 
     /**
-     * Test that heavy-duty gyro second hit triggers PSR with +3 modifier.
-     * Per errata: Second hit to HD gyro has same effect as first hit to standard gyro.
+     * Test that heavy-duty gyro second hit triggers PSR with +3 modifier. Per errata: Second hit to HD gyro has same
+     * effect as first hit to standard gyro.
      */
     @Test
     void testHeavyDutyGyroSecondHitTriggersPSR() {
@@ -231,12 +231,12 @@ class TWGameManagerTest {
         // Verify PSR was added by game logic for second hit
         List<PilotingRollData> psrs = Collections.list(game.getPSRs());
         assertEquals(1, psrs.size(), "HD gyro second hit should trigger PSR");
-        assertEquals(3, psrs.get(0).getValue(), "PSR modifier should be +3");
+        assertEquals(3, psrs.getFirst().getValue(), "PSR modifier should be +3");
     }
 
     /**
-     * Test that heavy-duty gyro third hit causes automatic fall (gyro destroyed).
-     * Per errata: Third hit to HD gyro destroys it with all usual effects.
+     * Test that heavy-duty gyro third hit causes automatic fall (gyro destroyed). Per errata: Third hit to HD gyro
+     * destroys it with all usual effects.
      */
     @Test
     void testHeavyDutyGyroThirdHitAutoFail() {
@@ -268,8 +268,9 @@ class TWGameManagerTest {
         // Verify automatic fail PSR was added by game logic
         List<PilotingRollData> psrs = Collections.list(game.getPSRs());
         assertEquals(1, psrs.size(), "HD gyro third hit should trigger auto-fail PSR");
-        assertEquals(PilotingRollData.AUTOMATIC_FAIL, psrs.get(0).getValue(), "PSR should be automatic fail");
-        assertTrue(psrs.get(0).getDesc().contains("gyro destroyed"), "PSR description should mention gyro destroyed");
+        assertEquals(PilotingRollData.AUTOMATIC_FAIL, psrs.getFirst().getValue(), "PSR should be automatic fail");
+        assertTrue(psrs.getFirst().getDesc().contains("gyro destroyed"),
+              "PSR description should mention gyro destroyed");
     }
 
     void initializeBoard(Board board) {
@@ -281,14 +282,12 @@ class TWGameManagerTest {
     }
 
     /**
-     *  Tests for unloading in specific states
-     *  We want to make positively sure that these _specific_ unloading ops work.
-     *  However, other unloading ops are only disallowed via the UI, because we call the same
-     *  code for both "unloading", e.g., infantry dismounting mid-air, and for "dropping", that is,
-     *  combat drops from DropShips and SmallCraft.
+     * Tests for unloading in specific states We want to make positively sure that these _specific_ unloading ops work.
+     * However, other unloading ops are only disallowed via the UI, because we call the same code for both "unloading",
+     * e.g., infantry dismounting mid-air, and for "dropping", that is, combat drops from DropShips and SmallCraft.
      */
     @ParameterizedTest()
-    @EnumSource(names = { "INF_JUMP", "VTOL"})
+    @EnumSource(names = { "INF_JUMP", "VTOL" })
     void testLargeSVVTOLCargoBayCanUnLoadValidInfantry(EntityMovementMode mode) {
         // Only Jump and VTOL infantry should be allowed to unload (not drop, that's for SC and DropShips)
         Player player = new Player(1, "Griffin Mill");
@@ -323,7 +322,7 @@ class TWGameManagerTest {
         handler.processMovement();
 
         assertTrue(unit.isDeployed());
-        assertTrue(unit.getPosition().equals(position));
+        assertEquals(unit.getPosition(), position);
     }
 
     @Nested
@@ -344,13 +343,13 @@ class TWGameManagerTest {
             // Initialize a board with a building (3 levels high, CF 50)
             // Need to do this each time because we'll be smashing it up
             initializeBoard("BUILDING_BOARD", """
-                size 2 2
-                hex 0101 0 "" ""
-                hex 0201 0 "" ""
-                  hex 0102 0 "" ""
-                hex 0202 0 "bldg_elev:3;building:1;bldg_cf:50" ""
-                end
-                """);
+                  size 2 2
+                  hex 0101 0 "" ""
+                  hex 0201 0 "" ""
+                    hex 0102 0 "" ""
+                  hex 0202 0 "bldg_elev:3;building:1;bldg_cf:50" ""
+                  end
+                  """);
 
             setBoard("BUILDING_BOARD");
             getGame().setBoard(getBoard("BUILDING_BOARD"));
@@ -423,8 +422,8 @@ class TWGameManagerTest {
             Vector<Report> reports = gameManager.damageInfantryIn(building, 0, buildingHex);
 
             // Assert
-            assertTrue(reports.size() > 0, "Should have report for zero damage");
-            assertEquals(6445, reports.get(0).messageId, "Should report no damage received");
+            assertFalse(reports.isEmpty(), "Should have report for zero damage");
+            assertEquals(6445, reports.getFirst().messageId, "Should report no damage received");
         }
 
         @Test
@@ -444,9 +443,9 @@ class TWGameManagerTest {
             Vector<Report> reports = gameManager.damageInfantryIn(building, 20, buildingHex);
 
             // Assert
-            assertTrue(!reports.isEmpty(), "Should have damage reports");
+            assertFalse(reports.isEmpty(), "Should have damage reports");
             boolean hasDamageReport = reports.stream()
-                .anyMatch(r -> r.messageId == 6450);
+                  .anyMatch(r -> r.messageId == 6450);
             assertTrue(hasDamageReport, "Should report damage to infantry");
         }
 
@@ -467,9 +466,9 @@ class TWGameManagerTest {
             Vector<Report> reports = gameManager.damageInfantryIn(building, 20, buildingHex);
 
             // Assert
-            assertTrue(reports.size() > 0, "Should have damage reports for Battle Armor");
+            assertFalse(reports.isEmpty(), "Should have damage reports for Battle Armor");
             boolean hasDamageReport = reports.stream()
-                .anyMatch(r -> r.messageId == 6450);
+                  .anyMatch(r -> r.messageId == 6450);
             assertTrue(hasDamageReport, "Should report damage to Battle Armor");
         }
 
@@ -499,8 +498,8 @@ class TWGameManagerTest {
 
             // Assert
             long damageReportCount = reports.stream()
-                .filter(r -> r.messageId == 6450)
-                .count();
+                  .filter(r -> r.messageId == 6450)
+                  .count();
             assertEquals(2, damageReportCount, "Both infantry units should receive damage");
         }
 
@@ -546,18 +545,18 @@ class TWGameManagerTest {
 
             // Initialize a simple board
             initializeBoard("COMBAT_BOARD", """
-                size 3 3
-                hex 0101 0 "" ""
-                  hex 0201 0 "" ""
-                  hex 0301 0 "" ""
-                hex 0102 0 "" ""
-                hex 0202 0 "" ""
-                hex 0302 0 "" ""
-                  hex 0103 0 "" ""
-                  hex 0203 0 "" ""
-                hex 0303 0 "" ""
-                end
-                """);
+                  size 3 3
+                  hex 0101 0 "" ""
+                    hex 0201 0 "" ""
+                    hex 0301 0 "" ""
+                  hex 0102 0 "" ""
+                  hex 0202 0 "" ""
+                  hex 0302 0 "" ""
+                    hex 0103 0 "" ""
+                    hex 0203 0 "" ""
+                  hex 0303 0 "" ""
+                  end
+                  """);
 
             setBoard("COMBAT_BOARD");
             getGame().setBoard(getBoard("COMBAT_BOARD"));
@@ -611,18 +610,18 @@ class TWGameManagerTest {
 
             // Assert
             Vector<Report> reports = gameManager.getMainPhaseReport();
-            assertTrue(reports.size() >= 1, "Should have at least the header report");
-            assertEquals(4000, reports.get(0).messageId, "First report should be physical phase header");
+            assertFalse(reports.isEmpty(), "Should have at least the header report");
+            assertEquals(4000, reports.getFirst().messageId, "First report should be physical phase header");
         }
 
         @Test
         void testSinglePunchAttack_ProcessedSuccessfully() {
             // Arrange
             megamek.common.actions.PunchAttackAction paa = new megamek.common.actions.PunchAttackAction(
-                attacker.getId(),
-                target.getTargetType(),
-                target.getId(),
-                megamek.common.actions.PunchAttackAction.BOTH
+                  attacker.getId(),
+                  target.getTargetType(),
+                  target.getId(),
+                  megamek.common.actions.PunchAttackAction.BOTH
             );
             getGame().addAction(paa);
 
@@ -635,7 +634,7 @@ class TWGameManagerTest {
 
             // Verify attacker is mentioned in reports
             boolean attackerMentioned = reports.stream()
-                .anyMatch(r -> r.subject == attacker.getId());
+                  .anyMatch(r -> r.subject == attacker.getId());
             assertTrue(attackerMentioned, "Reports should mention the attacking entity");
         }
 
@@ -643,16 +642,16 @@ class TWGameManagerTest {
         void testDuplicateAttacks_OnlyFirstProcessed() {
             // Arrange
             megamek.common.actions.PunchAttackAction paa1 = new megamek.common.actions.PunchAttackAction(
-                attacker.getId(),
-                target.getTargetType(),
-                target.getId(),
-                megamek.common.actions.PunchAttackAction.BOTH
+                  attacker.getId(),
+                  target.getTargetType(),
+                  target.getId(),
+                  megamek.common.actions.PunchAttackAction.BOTH
             );
             megamek.common.actions.KickAttackAction kaa = new megamek.common.actions.KickAttackAction(
-                attacker.getId(),
-                target.getTargetType(),
-                target.getId(),
-                megamek.common.actions.KickAttackAction.BOTH
+                  attacker.getId(),
+                  target.getTargetType(),
+                  target.getId(),
+                  megamek.common.actions.KickAttackAction.BOTH
             );
 
             getGame().addAction(paa1);
@@ -665,7 +664,7 @@ class TWGameManagerTest {
             // After cleanup, only one attack should be processed
             // This is verified by checking that duplicate cleanup ran
             Vector<Report> reports = gameManager.getMainPhaseReport();
-            assertTrue(reports.size() > 0, "Should have processed attacks");
+            assertFalse(reports.isEmpty(), "Should have processed attacks");
         }
 
         @Test
@@ -674,10 +673,10 @@ class TWGameManagerTest {
             attacker.setDestroyed(true);
 
             megamek.common.actions.PunchAttackAction paa = new megamek.common.actions.PunchAttackAction(
-                attacker.getId(),
-                target.getTargetType(),
-                target.getId(),
-                megamek.common.actions.PunchAttackAction.BOTH
+                  attacker.getId(),
+                  target.getTargetType(),
+                  target.getId(),
+                  megamek.common.actions.PunchAttackAction.BOTH
             );
             getGame().addAction(paa);
 
@@ -688,18 +687,18 @@ class TWGameManagerTest {
             Vector<Report> reports = gameManager.getMainPhaseReport();
             // Should only have header report, no attack resolution
             boolean attackProcessed = reports.stream()
-                .anyMatch(r -> r.subject == attacker.getId() && r.messageId != 4000);
-            assertTrue(!attackProcessed, "Destroyed entity's attack should not be processed");
+                  .anyMatch(r -> r.subject == attacker.getId() && r.messageId != 4000);
+            assertFalse(attackProcessed, "Destroyed entity's attack should not be processed");
         }
 
         @Test
         void testChargeAttack_AddedAndProcessed() {
             // Arrange
             megamek.common.actions.ChargeAttackAction caa = new megamek.common.actions.ChargeAttackAction(
-                attacker.getId(),
-                target.getTargetType(),
-                target.getId(),
-                target.getPosition()
+                  attacker.getId(),
+                  target.getTargetType(),
+                  target.getId(),
+                  target.getPosition()
             );
             getGame().addCharge(caa);
 
@@ -711,7 +710,7 @@ class TWGameManagerTest {
             assertTrue(reports.size() > 1, "Should have reports for charge attack");
 
             boolean attackerMentioned = reports.stream()
-                .anyMatch(r -> r.subject == attacker.getId());
+                  .anyMatch(r -> r.subject == attacker.getId());
             assertTrue(attackerMentioned, "Charge attack should be processed");
         }
 
@@ -719,8 +718,8 @@ class TWGameManagerTest {
         void testSearchlightAttack_ResolvedImmediately() {
             // Arrange
             megamek.common.actions.SearchlightAttackAction saa = new megamek.common.actions.SearchlightAttackAction(
-                attacker.getId(),
-                target.getId()
+                  attacker.getId(),
+                  target.getId()
             );
             getGame().addAction(saa);
 
@@ -729,7 +728,7 @@ class TWGameManagerTest {
 
             // Assert
             Vector<Report> reports = gameManager.getMainPhaseReport();
-            assertTrue(reports.size() >= 1, "Should have processed searchlight action");
+            assertFalse(reports.isEmpty(), "Should have processed searchlight action");
         }
 
         @Test
@@ -754,16 +753,16 @@ class TWGameManagerTest {
 
             // Add attacks from both entities
             megamek.common.actions.PunchAttackAction paa1 = new megamek.common.actions.PunchAttackAction(
-                attacker.getId(),
-                target.getTargetType(),
-                target.getId(),
-                megamek.common.actions.PunchAttackAction.BOTH
+                  attacker.getId(),
+                  target.getTargetType(),
+                  target.getId(),
+                  megamek.common.actions.PunchAttackAction.BOTH
             );
             megamek.common.actions.PunchAttackAction paa2 = new megamek.common.actions.PunchAttackAction(
-                attacker2.getId(),
-                target.getTargetType(),
-                target.getId(),
-                megamek.common.actions.PunchAttackAction.BOTH
+                  attacker2.getId(),
+                  target.getTargetType(),
+                  target.getId(),
+                  megamek.common.actions.PunchAttackAction.BOTH
             );
 
             getGame().addAction(paa1);
@@ -776,9 +775,9 @@ class TWGameManagerTest {
             Vector<Report> reports = gameManager.getMainPhaseReport();
 
             boolean attacker1Mentioned = reports.stream()
-                .anyMatch(r -> r.subject == attacker.getId());
+                  .anyMatch(r -> r.subject == attacker.getId());
             boolean attacker2Mentioned = reports.stream()
-                .anyMatch(r -> r.subject == attacker2.getId());
+                  .anyMatch(r -> r.subject == attacker2.getId());
 
             assertTrue(attacker1Mentioned, "First attacker should be in reports");
             assertTrue(attacker2Mentioned, "Second attacker should be in reports");
@@ -789,18 +788,18 @@ class TWGameManagerTest {
             // Arrange
             // Create a new board with a building
             initializeBoard("BUILDING_COMBAT_BOARD", """
-                size 3 3
-                hex 0101 0 "" ""
-                  hex 0201 0 "" ""
-                  hex 0301 0 "" ""
-                hex 0102 0 "" ""
-                  hex 0202 0 "bldg_elev:2;building:1;bldg_cf:40" ""
-                  hex 0302 0 "" ""
-                hex 0103 0 "" ""
-                hex 0203 0 "" ""
-                hex 0303 0 "" ""
-                end
-                """);
+                  size 3 3
+                  hex 0101 0 "" ""
+                    hex 0201 0 "" ""
+                    hex 0301 0 "" ""
+                  hex 0102 0 "" ""
+                    hex 0202 0 "bldg_elev:2;building:1;bldg_cf:40" ""
+                    hex 0302 0 "" ""
+                  hex 0103 0 "" ""
+                  hex 0203 0 "" ""
+                  hex 0303 0 "" ""
+                  end
+                  """);
 
             setBoard("BUILDING_COMBAT_BOARD");
             getGame().setBoard(getBoard("BUILDING_COMBAT_BOARD"));
@@ -808,7 +807,7 @@ class TWGameManagerTest {
             // Create building
             Coords buildingHex = new Coords(1, 1); // hex 0202
             BuildingTerrain building = new BuildingTerrain(buildingHex, getGame().getBoard(),
-                Terrains.BUILDING, BasementType.UNKNOWN);
+                  Terrains.BUILDING, BasementType.UNKNOWN);
             getGame().getBoard().addBuildingToBoard(building);
 
             // Reposition attacker adjacent to building
@@ -830,10 +829,10 @@ class TWGameManagerTest {
             // Use BuildingTarget to properly wrap the building for targeting
             BuildingTarget buildingTarget = new BuildingTarget(buildingHex, getGame().getBoard(), false);
             megamek.common.actions.KickAttackAction kaa = new megamek.common.actions.KickAttackAction(
-                attacker.getId(),
-                buildingTarget.getTargetType(),
-                buildingTarget.getId(),
-                megamek.common.actions.KickAttackAction.LEFT
+                  attacker.getId(),
+                  buildingTarget.getTargetType(),
+                  buildingTarget.getId(),
+                  megamek.common.actions.KickAttackAction.LEFT
             );
             getGame().addAction(kaa);
 
@@ -846,17 +845,17 @@ class TWGameManagerTest {
 
             // Verify attacker is mentioned
             boolean attackerMentioned = reports.stream()
-                .anyMatch(r -> r.subject == attacker.getId());
+                  .anyMatch(r -> r.subject == attacker.getId());
             assertTrue(attackerMentioned, "Attacker should be in reports");
 
             // Building damage should be reported
             boolean buildingDamageReported = reports.stream()
-                .anyMatch(r -> r.messageId == 3434 || r.messageId == 6436); // Building damage reports
+                  .anyMatch(r -> r.messageId == 3434 || r.messageId == 6436); // Building damage reports
             assertTrue(buildingDamageReported, "Building damage should be reported");
 
             // Infantry damage should also be reported (from damageInfantryIn)
             boolean infantryDamageReported = reports.stream()
-                .anyMatch(r -> r.subject == infantryInBuilding.getId());
+                  .anyMatch(r -> r.subject == infantryInBuilding.getId());
             assertTrue(infantryDamageReported, "Infantry inside building should also take damage");
         }
     }

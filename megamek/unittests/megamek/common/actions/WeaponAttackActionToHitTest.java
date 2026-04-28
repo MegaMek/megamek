@@ -53,6 +53,7 @@ import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.Player;
 import megamek.common.ToHitData;
+import megamek.common.WoodsClearingTracker;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -682,6 +683,8 @@ public class WeaponAttackActionToHitTest {
             GamePhase mockGamePhase = mock(GamePhase.class);
             when(mockGame.getPhase()).thenReturn(mockGamePhase);
             when(mockGamePhase.isLounge()).thenReturn(true);
+            WoodsClearingTracker mockWoodsClearingTracker = new WoodsClearingTracker();
+            when(mockGame.getWoodsClearingTracker()).thenReturn(mockWoodsClearingTracker);
 
             TWGameManager gameManager = new TWGameManager();
             gameManager.setGame(mockGame);

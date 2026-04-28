@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,18 +32,18 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.GridBagLayout;
+import java.awt.Component;
 import java.awt.event.ItemListener;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 
-import megamek.client.ui.GBC;
+import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.battleArmor.BattleArmor;
@@ -56,48 +56,31 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.ProtoMek;
 
-public class MunitionChoicePanel extends JPanel {
-    @Serial
-    private static final long serialVersionUID = 3401106035583965326L;
+public class MunitionChoice {
 
     private final List<AmmoType> ammoTypes;
-
     private final JComboBox<AmmoType> comboAmmoTypes;
-
-    private final JComboBox<String> comboNumberOfShots;
+    private final JComboBox<String> comboNumberOfShots = new JComboBox<>();
     private final ItemListener numShotsListener;
     private final GameOptions gameOptions;
     private final AmmoMounted ammoMounted;
-    boolean numShotsChanged = false;
+    private final JCheckBox chDump = new JCheckBox(Messages.getString("CustomMekDialog.labDump"));
+    private final JCheckBox chHotLoad = new JCheckBox(Messages.getString("CustomMekDialog.switchToHotLoading"));
 
-    JLabel labDump = new JLabel(Messages.getString("CustomMekDialog.labDump"));
+    private boolean numShotsChanged = false;
 
-    JCheckBox chDump = new JCheckBox();
+    public MunitionChoice(AmmoMounted ammoMounted, Vector<AmmoType> ammoTypes,
+                          List<WeaponAmmoChoice> weaponAmmoChoices, Entity entity, Game game, JPanel parentPanel, GBC2 gbc) {
 
-    JLabel labHotLoad = new JLabel(Messages.getString("CustomMekDialog.switchToHotLoading"));
-
-    JCheckBox chHotLoad = new JCheckBox();
-
-    public MunitionChoicePanel(AmmoMounted ammoMounted, ArrayList<AmmoType> vTypes,
-          List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels, Entity entity, Game game) {
-        ammoTypes = vTypes;
+        this.ammoTypes = ammoTypes;
         this.ammoMounted = ammoMounted;
         gameOptions = game.getOptions();
-
         AmmoType ammoType = ammoMounted.getType();
-        comboAmmoTypes = new JComboBox<>();
-
-        Iterator<AmmoType> e = ammoTypes.iterator();
-        for (int x = 0; e.hasNext(); x++) {
-            AmmoType at = e.next();
-            comboAmmoTypes.addItem(at);
-            if (at.equals(ammoType)) {
-                comboAmmoTypes.setSelectedIndex(x);
-            }
-        }
+        comboAmmoTypes = new JComboBox<>(ammoTypes);
+        comboAmmoTypes.setRenderer(new AmmoComboRenderer());
+        comboAmmoTypes.setSelectedItem(ammoType);
 
         numShotsListener = evt -> numShotsChanged = true;
-        comboNumberOfShots = new JComboBox<>();
 
         int shotsPerTon = ammoType.getShots();
         // BattleArmor always have a certain number of shots per slot
@@ -115,7 +98,7 @@ public class MunitionChoicePanel extends JPanel {
             comboNumberOfShots.addItem(String.valueOf(i));
         }
 
-        comboNumberOfShots.setSelectedItem(String.valueOf(this.ammoMounted.getBaseShotsLeft()));
+        comboNumberOfShots.setSelectedItem(String.valueOf(ammoMounted.getBaseShotsLeft()));
         comboNumberOfShots.addItemListener(numShotsListener);
 
         comboAmmoTypes.addItemListener(evt -> {
@@ -128,7 +111,7 @@ public class MunitionChoicePanel extends JPanel {
             }
 
             comboNumberOfShots.removeAllItems();
-            int numberOfShotsPerTon = ammoTypes.get(comboAmmoTypes.getSelectedIndex()).getShots();
+            int numberOfShotsPerTon = this.ammoTypes.get(comboAmmoTypes.getSelectedIndex()).getShots();
 
             // ProtoMeks are limited to number of shots added during construction
             if ((entity instanceof BattleArmor) || (entity instanceof ProtoMek)) {
@@ -146,9 +129,9 @@ public class MunitionChoicePanel extends JPanel {
                 comboNumberOfShots.setSelectedItem(String.valueOf(numberOfShotsPerTon));
             }
 
-            for (WeaponAmmoChoicePanel weaponAmmoChoicePanel : weaponAmmoChoicePanels) {
-                weaponAmmoChoicePanel.refreshAmmoBinName(this.ammoMounted,
-                      ammoTypes.get(comboAmmoTypes.getSelectedIndex()));
+            for (WeaponAmmoChoice weaponAmmoChoice : weaponAmmoChoices) {
+                weaponAmmoChoice.refreshAmmoBinName(this.ammoMounted,
+                      this.ammoTypes.get(comboAmmoTypes.getSelectedIndex()));
             }
 
             comboNumberOfShots.addItemListener(numShotsListener);
@@ -158,7 +141,7 @@ public class MunitionChoicePanel extends JPanel {
         boolean isOneShot = false;
 
         if (ammoMountedLocation == Entity.LOC_NONE) {
-            // one shot weapons don't have a location of their own some weapons (e.gridBagLayout. fusillade) use the one-shot
+            // one shot weapons don't have a location of their own some weapons (e.g. fusillade) use the one-shot
             // mechanic but have an extra reload which is chained to the first
             Mounted<?> linkedBy = ammoMounted.getLinkedBy();
 
@@ -168,29 +151,26 @@ public class MunitionChoicePanel extends JPanel {
 
             ammoMountedLocation = linkedBy.getLocation();
             isOneShot = linkedBy.isOneShot();
-        } else {
-            ammoMountedLocation = ammoMounted.getLocation();
         }
 
-        comboNumberOfShots.setVisible(!isOneShot);
-        String stringDescription = '(' + entity.getLocationAbbr(ammoMountedLocation) + ')';
+        String stringDescription = entity.getLocationName(ammoMountedLocation) + ":";
         JLabel labelLocation = new JLabel(stringDescription);
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        setLayout(gridBagLayout);
-        add(labelLocation, GBC.std());
-        add(comboAmmoTypes, GBC.std());
-        add(comboNumberOfShots, GBC.eol());
-        chHotLoad.setSelected(this.ammoMounted.isHotLoaded());
+        boolean gameUsesHotLoad = gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD);
+        boolean ammoAllowsHotLoad = ammoType.hasFlag(AmmoType.F_HOTLOAD);
+        chHotLoad.setSelected(ammoMounted.isHotLoaded());
+        comboAmmoTypes.setEnabled(ammoTypes.size() > 1);
 
-        if (gameOptions.booleanOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP)) {
-            add(labDump, GBC.std());
-            add(chDump, GBC.eol());
+        parentPanel.add(labelLocation, gbc.forLabel());
+        parentPanel.add(comboAmmoTypes, gbc.oneColumn());
+
+        if (!isOneShot) {
+            parentPanel.add(comboNumberOfShots, gameUsesHotLoad ? gbc.oneColumn() : gbc.eol());
         }
 
-        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD) &&
-              ammoType.hasFlag(AmmoType.F_HOTLOAD)) {
-            add(labHotLoad, GBC.std());
-            add(chHotLoad, GBC.eol());
+        if (ammoAllowsHotLoad) {
+            parentPanel.add(chHotLoad, gbc.eol());
+        } else {
+            parentPanel.add(new JLabel(), gbc.eol()); // make sure to end the line
         }
     }
 
@@ -206,8 +186,8 @@ public class MunitionChoicePanel extends JPanel {
         ammoMounted.changeAmmoType(ammoType);
 
         // set # shots only for non-one shot weapons
-        if (ammoMounted.getLocation() != Entity.LOC_NONE &&
-              comboNumberOfShots.getSelectedItem() instanceof String value) {
+        if (ammoMounted.getLocation() != Entity.LOC_NONE
+              && comboNumberOfShots.getSelectedItem() instanceof String value) {
             ammoMounted.setShotsLeft(MathUtility.parseInt(value, 0));
         }
 
@@ -228,8 +208,21 @@ public class MunitionChoicePanel extends JPanel {
         }
     }
 
-    @Override
     public void setEnabled(boolean enabled) {
         comboAmmoTypes.setEnabled(enabled);
+    }
+
+    private static class AmmoComboRenderer extends DefaultListCellRenderer {
+
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+              boolean cellHasFocus) {
+
+            if (value instanceof AmmoType ammoType) {
+                value = ammoType.getName().replace(" Ammo", "");
+
+            }
+            return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        }
     }
 }

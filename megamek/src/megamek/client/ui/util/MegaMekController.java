@@ -279,7 +279,7 @@ public class MegaMekController implements KeyEventDispatcher {
         // Make sure the delay is positive
         long delay = Math.max(0, guip.getInt(GUIPreferences.ADVANCED_KEY_REPEAT_DELAY));
         // Make sure the rate is positive and that it is below a maximum
-        int rate = Math.max(0, Math.min(MAX_REPEAT_RATE, guip.getInt(GUIPreferences.ADVANCED_KEY_REPEAT_RATE)));
+        int rate = Math.clamp(guip.getInt(GUIPreferences.ADVANCED_KEY_REPEAT_RATE), 0, MAX_REPEAT_RATE);
         long period = (long) (1000.0 / rate);
 
         // If we're already repeating, don't add a new task
@@ -326,6 +326,7 @@ public class MegaMekController implements KeyEventDispatcher {
     }
 
     /** Set whether key presses should be ignored or not. */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setIgnoreKeyPresses(boolean ignoreKeyPresses) {
         this.ignoreKeyPresses = ignoreKeyPresses;
     }

@@ -556,7 +556,7 @@ public class ForceDescriptor {
          * one of the sub forces rather than the current.
          */
 
-        Integer ut = subs.get(0).getUnitType();
+        Integer ut = subs.getFirst().getUnitType();
 
         boolean useWeights = useWeightClass(ut);
         ArrayList<Integer> weights = new ArrayList<>();
@@ -596,7 +596,7 @@ public class ForceDescriptor {
         /* Generate base model using weight class of entire formation */
         if (ut != null) {
             if (!(ut == UnitType.MEK || (ut == UnitType.AEROSPACE_FIGHTER && subs.size() > 3))) {
-                baseModel = subs.get(0).generate();
+                baseModel = subs.getFirst().generate();
             }
             if (ut == UnitType.AEROSPACE_FIGHTER || ut == UnitType.CONV_FIGHTER || ut == UnitType.AERO) {
                 target -= 3;
@@ -735,7 +735,7 @@ public class ForceDescriptor {
             }
             if (!foundUnit) {
                 if (!weights.contains(sub.getWeightClass())) {
-                    sub.setWeightClass(weights.get(0));
+                    sub.setWeightClass(weights.getFirst());
                 }
                 unit = sub.generate();
                 if (unit == null) {
@@ -971,7 +971,7 @@ public class ForceDescriptor {
                     }
                     setCo(coFound.getCo());
                     subForces.remove(coFound);
-                    subForces.add(0, coFound);
+                    subForces.addFirst(coFound);
                 }
                 if (xoPos != 0) {
                     /*
@@ -1067,7 +1067,7 @@ public class ForceDescriptor {
         ForceDescriptor xoFound = null;
         ArrayList<ForceDescriptor> subForces = this.subForces;
         if (coPos == xoPos) {
-            subForces = this.subForces.get(0).getSubForces();
+            subForces = this.subForces.getFirst().getSubForces();
         }
         if (subForces.size() > coPos) {
             if (xoNode.getUnitType() != null) {
@@ -1340,7 +1340,7 @@ public class ForceDescriptor {
                     retVal = retVal.replace("{formation}",
                           formationType.getCategory()
                                 .replace("Striker/Cavalry", "Striker")
-                                .replaceAll(" Squadron", ""));
+                                .replace(" Squadron", ""));
                 } else {
                     retVal = retVal.replace("{formation} ", "");
                 }
@@ -1669,6 +1669,7 @@ public class ForceDescriptor {
         return jumpshipPct;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setJumpshipPct(double jumpshipPct) {
         this.jumpshipPct = jumpshipPct;
     }

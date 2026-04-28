@@ -64,11 +64,13 @@ public class PMPicPolygonalArea extends PMGenericHotArea {
         highlight = false;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public PMPicPolygonalArea(Polygon p, Image im, boolean highlight) {
         this(p, im, null);
         this.highlight = highlight;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setIdleImage(Image im) {
         this.idleImage = im;
     }
@@ -77,10 +79,12 @@ public class PMPicPolygonalArea extends PMGenericHotArea {
         return idleImage;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Image getActiveImage() {
         return activeImage;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setActiveImage(Image im) {
         this.activeImage = im;
         highlight = activeImage != null;

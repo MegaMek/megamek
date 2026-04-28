@@ -588,6 +588,22 @@ public class Infantry extends Entity {
         }
     }
 
+    /**
+     * @return True when this conventional infantry unit has ground movement of 0*, meaning it may still move a single
+     *       hex despite having 0 walking MP.
+     */
+    public boolean hasMinimalGroundMP(MPCalculationSetting mpCalculationSetting) {
+        return isConventionalInfantry() && (getWalkMP(mpCalculationSetting) == 0);
+    }
+
+    /**
+     * @return True when this conventional infantry unit has ground movement of 0*, meaning it may still move a single
+     *       hex despite having 0 walking MP.
+     */
+    public boolean hasMinimalGroundMP() {
+        return hasMinimalGroundMP(MPCalculationSetting.STANDARD);
+    }
+
     @Override
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
         int mp = hasUMU() ? 0 : getOriginalJumpMP();
@@ -1269,8 +1285,8 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Returns true if this infantry unit can use glider wings in the current conditions.
-     * Glider wings cannot be used in vacuum or trace (very thin) atmospheres (IO p.85).
+     * Returns true if this infantry unit can use glider wings in the current conditions. Glider wings cannot be used in
+     * vacuum or trace (very thin) atmospheres (IO p.85).
      *
      * @return true if glider wings are usable
      */
@@ -1350,11 +1366,9 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Returns true if this infantry unit is protected from fall damage.
-     * Glider wings and powered flight wings protect against damage from falls,
-     * whether from walking off terrain 2+ levels high (including buildings)
-     * or by displacement (IO p.85).
-     * Only conventional infantry can use these prosthetic wings.
+     * Returns true if this infantry unit is protected from fall damage. Glider wings and powered flight wings protect
+     * against damage from falls, whether from walking off terrain 2+ levels high (including buildings) or by
+     * displacement (IO p.85). Only conventional infantry can use these prosthetic wings.
      *
      * @return true if protected from fall damage
      */
@@ -1380,8 +1394,8 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Returns true if both glider wings and powered flight wings are enabled.
-     * Per IO p.85, these are mutually exclusive - a trooper cannot have both.
+     * Returns true if both glider wings and powered flight wings are enabled. Per IO p.85, these are mutually exclusive
+     * - a trooper cannot have both.
      *
      * @return true if invalid configuration (both wing types enabled)
      */
@@ -1405,9 +1419,8 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Returns true if powered flight wings are installed on non-foot infantry.
-     * Per IO p.85, powered flight wings can only be used by foot infantry -
-     * motorized, mechanized, and beast-mounted infantry cannot use them.
+     * Returns true if powered flight wings are installed on non-foot infantry. Per IO p.85, powered flight wings can
+     * only be used by foot infantry - motorized, mechanized, and beast-mounted infantry cannot use them.
      *
      * @return true if invalid configuration (powered flight wings on non-foot infantry)
      */
@@ -1419,9 +1432,8 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Returns the maximum number of extraneous limb pairs allowed.
-     * Per IO p.85, if glider wings or powered flight wings are installed,
-     * only one pair of extraneous limbs is allowed (instead of the normal two pairs).
+     * Returns the maximum number of extraneous limb pairs allowed. Per IO p.85, if glider wings or powered flight wings
+     * are installed, only one pair of extraneous limbs is allowed (instead of the normal two pairs).
      *
      * @return 1 if any wing type is installed, 2 otherwise
      */
@@ -1433,8 +1445,8 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Returns true if the current extraneous limb configuration exceeds the allowed maximum.
-     * Per IO p.85, if any wing prosthetics are installed, only one pair of extraneous limbs is allowed.
+     * Returns true if the current extraneous limb configuration exceeds the allowed maximum. Per IO p.85, if any wing
+     * prosthetics are installed, only one pair of extraneous limbs is allowed.
      *
      * @return true if invalid configuration (too many extraneous limb pairs)
      */
@@ -1542,6 +1554,7 @@ public class Infantry extends Entity {
      *
      * @return The Anti-Mek skill
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getAntiMekSkill() {
         return (getCrew() == null) ? (hasAntiMekGear() ? 5 : ANTI_MEK_SKILL_NO_GEAR) : getCrew().getPiloting();
     }
@@ -1687,6 +1700,7 @@ public class Infantry extends Entity {
         encumbering = b;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setCanCallSupport(boolean b) {
         canCallSupport = b;
     }
@@ -1723,7 +1737,7 @@ public class Infantry extends Entity {
         // Equipment for Trench/Fieldwork's Engineers
         if ((spec & TRENCH_ENGINEERS) > 0 && (infSpecs & TRENCH_ENGINEERS) == 0) {
             // Add vibro shovels if not already present (may already be loaded from file)
-            boolean hasShovels = getEquipment().stream()
+            boolean hasShovels = getMisc().stream()
                   .anyMatch(m -> m.getType().hasFlag(MiscType.F_TOOLS)
                         && m.getType().hasFlag(MiscTypeFlag.S_VIBRO_SHOVEL));
             if (!hasShovels) {
@@ -1737,7 +1751,7 @@ public class Infantry extends Entity {
         } else if ((spec & TRENCH_ENGINEERS) == 0 && (infSpecs & TRENCH_ENGINEERS) > 0) {
             // Need to remove vibro shovels
             List<Mounted<?>> eqToRemove = new ArrayList<>();
-            for (Mounted<?> eq : getEquipment()) {
+            for (Mounted<?> eq : getMisc()) {
                 if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasFlag(MiscTypeFlag.S_VIBRO_SHOVEL)) {
                     eqToRemove.add(eq);
                 }
@@ -1754,7 +1768,7 @@ public class Infantry extends Entity {
         // Equipment for Demolition Engineers
         if ((spec & DEMO_ENGINEERS) > 0 && (infSpecs & DEMO_ENGINEERS) == 0) {
             // Add demolition charge if not already present (may already be loaded from file)
-            boolean hasCharge = getEquipment().stream()
+            boolean hasCharge = getMisc().stream()
                   .anyMatch(m -> m.getType().hasFlag(MiscType.F_TOOLS)
                         && m.getType().hasFlag(MiscTypeFlag.S_DEMOLITION_CHARGE));
             if (!hasCharge) {
@@ -1766,9 +1780,9 @@ public class Infantry extends Entity {
                 }
             }
         } else if ((spec & DEMO_ENGINEERS) == 0 && (infSpecs & DEMO_ENGINEERS) > 0) {
-            // Need to remove vibro shovels
+            // Need to remove demolition charges
             List<Mounted<?>> eqToRemove = new ArrayList<>();
-            for (Mounted<?> eq : getEquipment()) {
+            for (Mounted<?> eq : getMisc()) {
                 if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasFlag(MiscTypeFlag.S_DEMOLITION_CHARGE)) {
                     eqToRemove.add(eq);
                 }
@@ -1905,8 +1919,8 @@ public class Infantry extends Entity {
     }
 
     /**
-     * @return True if this infantry has Dermal Camo Armor and can benefit from its mimetic
-     *         stealth properties (leg or jump infantry only, not wearing other armor).
+     * @return True if this infantry has Dermal Camo Armor and can benefit from its mimetic stealth properties (leg or
+     *       jump infantry only, not wearing other armor).
      */
     public boolean hasDermalCamoStealth() {
         return hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)
@@ -1976,7 +1990,7 @@ public class Infantry extends Entity {
      * @param count The enhancement count (0, 1, or 2)
      */
     public void setProstheticEnhancement1Count(int count) {
-        this.prostheticEnhancement1Count = Math.max(0, Math.min(2, count));
+        this.prostheticEnhancement1Count = Math.clamp(count, 0, 2);
     }
 
     // --- Slot 2 (Improved Enhanced only) ---
@@ -2013,7 +2027,7 @@ public class Infantry extends Entity {
      * @param count The enhancement count (0, 1, or 2)
      */
     public void setProstheticEnhancement2Count(int count) {
-        this.prostheticEnhancement2Count = Math.max(0, Math.min(2, count));
+        this.prostheticEnhancement2Count = Math.clamp(count, 0, 2);
     }
 
     // --- Combined helpers ---
@@ -2283,6 +2297,7 @@ public class Infantry extends Entity {
      *
      * @return Total damage bonus from extraneous limb enhancements
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public double getExtraneousDamageBonus() {
         double bonus = 0;
         if (hasExtraneousPair1() && extraneousPair1.hasDamageBonus()) {
@@ -2300,6 +2315,7 @@ public class Infantry extends Entity {
      *
      * @return Best anti-Mek modifier from extraneous limbs (negative values are better), or 0 if none
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getExtraneousAntiMekModifier() {
         int best = 0;
         if (hasExtraneousPair1() && extraneousPair1.hasAntiMekBonus()) {
@@ -2316,6 +2332,7 @@ public class Infantry extends Entity {
      *
      * @return Name of the enhancement with best anti-Mek modifier, or null if none
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public @Nullable String getExtraneousAntiMekEnhancementName() {
         int best = 0;
         String name = null;
@@ -2337,6 +2354,7 @@ public class Infantry extends Entity {
     /**
      * @return True if any extraneous limb enhancement is a melee weapon
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean hasExtraneousMeleeEnhancement() {
         return (hasExtraneousPair1() && extraneousPair1.isMelee())
               || (hasExtraneousPair2() && extraneousPair2.isMelee());
@@ -2348,6 +2366,7 @@ public class Infantry extends Entity {
      *
      * @return The melee to-hit modifier from extraneous limbs (capped at +2)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getExtraneousMeleeToHitModifier() {
         int modifier = 0;
         if (hasExtraneousPair1() && extraneousPair1.isMelee()) {
@@ -2457,11 +2476,10 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Returns the movement mode for this infantry unit.
-     * For powered flight infantry (IO p.85), this returns VTOL when the wings are usable,
-     * allowing them to use existing VTOL movement infrastructure.
-     * Note: During construction, crew is null so hasPoweredFlightWings() returns false,
-     * ensuring this override doesn't interfere with setMovementMode() initialization.
+     * Returns the movement mode for this infantry unit. For powered flight infantry (IO p.85), this returns VTOL when
+     * the wings are usable, allowing them to use existing VTOL movement infrastructure. Note: During construction, crew
+     * is null so hasPoweredFlightWings() returns false, ensuring this override doesn't interfere with setMovementMode()
+     * initialization.
      */
     @Override
     public EntityMovementMode getMovementMode() {
@@ -2781,7 +2799,8 @@ public class Infantry extends Entity {
 
     /**
      * Checks if this infantry unit is protected from gas attacks (including pheromone and toxin gas attacks).
-     * Protection comes from MD_FILTRATION implant or hostile environment gear (space suit, XCT vacuum, or toxic atmosphere armor kits).
+     * Protection comes from MD_FILTRATION implant or hostile environment gear (space suit, XCT vacuum, or toxic
+     * atmosphere armor kits).
      *
      * @return true if protected from gas attacks
      */

@@ -47,6 +47,7 @@ public final class BoardHelper {
         return game.getBoard(boardLocation).getEnclosingBoardId();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static @Nullable Board enclosingBoard(Game game, BoardLocation boardLocation) {
         return game.getBoard(enclosingBoardId(game, boardLocation));
     }
@@ -59,6 +60,7 @@ public final class BoardHelper {
         return game.getBoard(board.getEnclosingBoardId());
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static @Nullable Coords positionOnEnclosingBoard(Game game, Board board) {
         Board enclosingBoard = enclosingBoard(game, board);
         if (enclosingBoard != null) {
@@ -81,23 +83,28 @@ public final class BoardHelper {
         return game.isOnGroundMap(attacker) && game.isOnGroundMap(target) && !game.onTheSameBoard(attacker, target);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static boolean isBoardEdge(Board board, Coords coords) {
         return (coords != null) && ((coords.getX() == 0) || (coords.getX() == board.getWidth() - 1) || (coords.getY()
               == 0) || (coords.getY() == board.getHeight() - 1));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static List<Coords> topEdge(Board board) {
         return coordsRow(board, 0);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static List<Coords> bottomEdge(Board board) {
         return coordsRow(board, board.getHeight() - 1);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static List<Coords> leftEdge(Board board) {
         return coordsColumn(board, 0);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static List<Coords> rightEdge(Board board) {
         return coordsColumn(board, board.getWidth() - 1);
     }
@@ -213,6 +220,7 @@ public final class BoardHelper {
      *
      * @return The number of the atmospheric row on a high-altitude map
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static int atmosphericRowNumber(Game game, Board board, Coords coords) {
         return isAtmosphericRow(game, board, coords) ? coords.getX() : -1;
     }

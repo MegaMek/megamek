@@ -32,12 +32,6 @@
  */
 package megamek.client.ui.dialogs.advancedsearch;
 
-import com.formdev.flatlaf.extras.components.FlatTriStateCheckBox;
-import megamek.common.options.IGameOptions;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-
-import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -46,6 +40,15 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.Scrollable;
+
+import com.formdev.flatlaf.extras.components.FlatTriStateCheckBox;
+import megamek.common.options.IGameOptions;
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
 
 class TriStateItemList {
 
@@ -133,7 +136,7 @@ class TriStateItemList {
         public Dimension getPreferredScrollableViewportSize() {
             var originalSize = getPreferredSize();
             if (!checkBoxes.isEmpty() && visibleRows > 0) {
-                var checkBox = checkBoxes.get(0);
+                var checkBox = checkBoxes.getFirst();
                 return new Dimension(originalSize.width,
                       Math.min(visibleRows, checkBoxes.size()) * checkBox.getPreferredSize().height);
             } else {
@@ -144,7 +147,7 @@ class TriStateItemList {
         @Override
         public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
             if (!checkBoxes.isEmpty()) {
-                var checkBox = checkBoxes.get(0);
+                var checkBox = checkBoxes.getFirst();
                 return checkBox.getPreferredSize().height;
             } else {
                 return 0;

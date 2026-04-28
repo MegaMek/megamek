@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,7 +32,6 @@
  */
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
-import static megamek.client.ui.util.UIUtil.alternateTableBGColor;
 import static megamek.client.ui.util.UIUtil.fontHTML;
 import static megamek.client.ui.util.UIUtil.uiGreen;
 
@@ -59,7 +58,6 @@ import megamek.common.units.Entity;
 import megamek.common.game.InGameObject;
 import megamek.common.loaders.MapSettings;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.Portrait;
 import megamek.common.options.OptionsConstants;
@@ -304,36 +302,22 @@ public class MekTableModel extends AbstractTableModel {
     public class Renderer extends DefaultTableCellRenderer {
 
         @Override
-        public Component getTableCellRendererComponent(final JTable table,
-              final @Nullable Object value,
-              final boolean isSelected,
-              final boolean hasFocus,
-              final int row, final int column) {
-            final InGameObject entity = getEntityAt(row);
-            if ((entity == null) || (value == null)) {
-                return null;
+        public Component getTableCellRendererComponent(final JTable table, Object value, boolean isSelected,
+              boolean hasFocus, int row, final int column) {
+
+            final InGameObject unit = getEntityAt(row);
+            if ((unit == null) || (value == null)) {
+                return super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
             }
 
             setIconTextGap(UIUtil.scaleForGUI(10));
-            setText("<HTML>" + value);
+            super.getTableCellRendererComponent(table, "<HTML>" + value, isSelected, hasFocus, row, column);
             boolean compact = chatLounge.isCompact();
             if (compact) {
                 setIcon(null);
             }
 
-            if (isSelected) {
-                setForeground(table.getSelectionForeground());
-                setBackground(table.getSelectionBackground());
-            } else {
-                setForeground(table.getForeground());
-                Color background = table.getBackground();
-                if (row % 2 != 0) {
-                    background = alternateTableBGColor();
-                }
-                setBackground(background);
-            }
-
-            Player owner = ownerOf(entity);
+            Player owner = ownerOf(unit);
             boolean localGM = clientGui.getClient().getLocalPlayer().isGameMaster();
             boolean showAsUnknown = !localGM && clientGui.getClient().getLocalPlayer().isEnemyOf(owner)
                   && clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
@@ -353,10 +337,10 @@ public class MekTableModel extends AbstractTableModel {
             } else {
                 if (column == COLS.UNIT.ordinal()) {
                     setToolTipText(unitTooltips.get(row));
-                    if (entity instanceof Entity) {
-                        final Camouflage camouflage = ((Entity) entity).getCamouflageOrElseOwners();
-                        final Image base = MMStaticDirectoryManager.getMekTileset().imageFor((Entity) entity);
-                        final Image icon = new EntityImage(base, camouflage, this, (Entity) entity).loadPreviewImage(
+                    if (unit instanceof Entity entity) {
+                        final Camouflage camouflage = entity.getCamouflageOrElseOwners();
+                        final Image base = MMStaticDirectoryManager.getMekTileset().imageFor(entity);
+                        final Image icon = new EntityImage(base, camouflage, this, entity).loadPreviewImage(
                               true);
                         if (!compact) {
                             setIcon(icon, size);
@@ -368,19 +352,15 @@ public class MekTableModel extends AbstractTableModel {
                     }
                 } else if (column == COLS.PILOT.ordinal()) {
                     setToolTipText(pilotTooltips.get(row));
-                    if (!compact && (entity instanceof Entity)) {
-                        setIcon(new ImageIcon(((Entity) entity).getCrew().getPortrait(0).getImage(size)));
+                    if (!compact && (unit instanceof Entity entity)) {
+                        setIcon(new ImageIcon(entity.getCrew().getPortrait(0).getImage(size)));
                     }
                 } else {
                     setToolTipText(null);
                 }
             }
 
-            if (column == COLS.BV.ordinal()) {
-                setHorizontalAlignment(JLabel.CENTER);
-            } else {
-                setHorizontalAlignment(JLabel.LEFT);
-            }
+            setHorizontalAlignment(column == COLS.BV.ordinal() ? JLabel.CENTER : JLabel.LEFT);
 
             return this;
         }

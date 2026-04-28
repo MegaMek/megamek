@@ -42,6 +42,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import java.util.HashMap;
 import java.awt.*;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Vector;
@@ -52,16 +53,7 @@ public class SourceChooserDialog {
     private static final SourceBooks SOURCE_BOOKS = new SourceBooks();
     private static final Map<String, String> BOOKS = new HashMap<>();
 
-    /**
-     * Shows a dialog where the user can select a sourcebook from a combobox. When showManualTextfield is true, the user
-     * can also enter a manual value in a text field.
-     *
-     * @param parent              a parent frame for this dialog
-     * @param showManualTextfield When true, shows the option to enter the source manually
-     *
-     * @return the chosen value (either from combobox or text field), or null if canceled
-     */
-    public static String showChoiceDialog(@Nullable Component parent, boolean showManualTextfield) {
+    private static void loadBooks() {
         if (BOOKS.isEmpty()) {
             BOOKS.putAll(SOURCE_BOOKS.availableSourcebooks()
                   .stream()
@@ -70,68 +62,44 @@ public class SourceChooserDialog {
                   .map(Optional::get)
                   .collect(Collectors.toMap(SourceBook::getAbbrev, SourceBook::getTitle)));
         }
+    }
+
+    /**
+     * Shows a dialog where the user can select a sourcebook from a combo box.
+     *
+     * @param parent a parent component for this dialog
+     *
+     * @return the selected sourcebook abbreviation from the list, or {@code null} if canceled
+     */
+    public static String showChoiceDialog(@Nullable Component parent) {
+        loadBooks();
 
         Vector<String> sortedBookList = BOOKS.keySet().stream().sorted().collect(Collectors.toCollection(Vector::new));
         JComboBox<String> comboBox = new JComboBox<>(sortedBookList);
         comboBox.setRenderer(titleRenderer);
 
-        JTextField manualField = new JTextField(15);
-        JRadioButton rbCombo = new JRadioButton(Messages.getString("SourceChooser.list"), true);
-        JRadioButton rbManual = new JRadioButton(Messages.getString("SourceChooser.manual"));
-
-        ButtonGroup group = new ButtonGroup();
-        group.add(rbCombo);
-        group.add(rbManual);
-
         JPanel mainPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        if (showManualTextfield) {
-            mainPanel.add(rbCombo, gbc);
-        }
 
         gbc.insets = new Insets(0, 20, 0, 0); // indent combo box
         mainPanel.add(comboBox, gbc);
 
-        if (showManualTextfield) {
-            gbc.insets = new Insets(20, 0, 0, 0);
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            var orLabel = new JLabel("- %s -".formatted(Messages.getString("SourceChooser.or")), SwingConstants.CENTER);
-            mainPanel.add(orLabel, gbc);
-            gbc.fill = GridBagConstraints.NONE;
-            mainPanel.add(rbManual, gbc);
-            gbc.insets = new Insets(0, 20, 0, 0); // indent text field
-            mainPanel.add(manualField, gbc);
-        }
-
         comboBox.setEnabled(true);
-        manualField.setEnabled(false);
-
-        rbCombo.addActionListener(e -> {
-            comboBox.setEnabled(true);
-            manualField.setEnabled(false);
-        });
-        rbManual.addActionListener(e -> {
-            comboBox.setEnabled(false);
-            manualField.setEnabled(true);
-            manualField.requestFocusInWindow();
-        });
 
         JOptionPane optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
         JDialog dialog = optionPane.createDialog(parent, Messages.getString("SourceChooser.title"));
 
-        // Close dialog immediately when selecting from comboBox (if "Choose from list" is selected)
+        // Close dialog immediately when selecting from comboBox.
         comboBox.addPopupMenuListener(new PopupMenuListener() {
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
 
             @Override
             public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                if (rbCombo.isSelected()) {
-                    optionPane.setValue(JOptionPane.OK_OPTION);
-                    dialog.setVisible(false);
-                }
+                optionPane.setValue(JOptionPane.OK_OPTION);
+                dialog.setVisible(false);
             }
 
             @Override
@@ -142,10 +110,97 @@ public class SourceChooserDialog {
 
         Object value = optionPane.getValue();
         if (value != null && (int) value == JOptionPane.OK_OPTION) {
-            if (rbCombo.isSelected()) {
-                return (String) comboBox.getSelectedItem();
+            return (String) comboBox.getSelectedItem();
+        }
+        return null;
+    }
+
+    /**
+     * Shows a dialog where the user can select multiple sourcebooks. The returned value is a comma-separated source
+     * list suitable for writing to unit files.
+     *
+     * @param parent              a parent frame for this dialog
+     * @param showManualTextfield When true, shows the option to enter the source list manually
+     * @param selectedSources     a comma-separated source list to preselect
+     *
+     * @return the chosen source list, or null if canceled
+     */
+    public static String showMultiChoiceDialog(@Nullable Component parent, boolean showManualTextfield,
+          String selectedSources) {
+        loadBooks();
+
+        Vector<String> sortedBookList = BOOKS.keySet().stream().sorted().collect(Collectors.toCollection(Vector::new));
+        JList<String> bookList = new JList<>(sortedBookList);
+        bookList.setCellRenderer(titleRenderer);
+        bookList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        bookList.setVisibleRowCount(12);
+        JScrollPane bookScrollPane = new JScrollPane(bookList);
+        bookScrollPane.setPreferredSize(new Dimension(360, 240));
+
+        List<String> selectedSourceList = SourceBooks.splitSourceList(selectedSources);
+        int[] selectedIndices = selectedSourceList.stream()
+              .mapToInt(sortedBookList::indexOf)
+              .filter(index -> index >= 0)
+              .toArray();
+        bookList.setSelectedIndices(selectedIndices);
+        boolean hasUnknownSource = selectedSourceList.stream().anyMatch(source -> !BOOKS.containsKey(source));
+
+        JTextField manualField = new JTextField(SourceBooks.normalizeSourceList(selectedSources), 24);
+        boolean useManual = showManualTextfield && hasUnknownSource;
+        JRadioButton rbList = new JRadioButton(Messages.getString("SourceChooser.list"), !useManual);
+        JRadioButton rbManual = new JRadioButton(Messages.getString("SourceChooser.manual"), useManual);
+
+        ButtonGroup group = new ButtonGroup();
+        group.add(rbList);
+        group.add(rbManual);
+
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        if (showManualTextfield) {
+            mainPanel.add(rbList, gbc);
+        }
+
+        gbc.insets = new Insets(0, showManualTextfield ? 20 : 0, 0, 0);
+        gbc.fill = GridBagConstraints.BOTH;
+        mainPanel.add(bookScrollPane, gbc);
+
+        if (showManualTextfield) {
+            gbc.insets = new Insets(20, 0, 0, 0);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            var orLabel = new JLabel("- %s -".formatted(Messages.getString("SourceChooser.or")), SwingConstants.CENTER);
+            mainPanel.add(orLabel, gbc);
+            gbc.fill = GridBagConstraints.NONE;
+            mainPanel.add(rbManual, gbc);
+            gbc.insets = new Insets(0, 20, 0, 0);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            mainPanel.add(manualField, gbc);
+        }
+
+        bookList.setEnabled(!useManual);
+        manualField.setEnabled(useManual);
+
+        rbList.addActionListener(e -> {
+            bookList.setEnabled(true);
+            manualField.setEnabled(false);
+        });
+        rbManual.addActionListener(e -> {
+            bookList.setEnabled(false);
+            manualField.setEnabled(true);
+            manualField.requestFocusInWindow();
+        });
+
+        JOptionPane optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+        JDialog dialog = optionPane.createDialog(parent, Messages.getString("SourceChooser.title"));
+        dialog.setVisible(true);
+
+        Object value = optionPane.getValue();
+        if (value instanceof Integer selectedValue && selectedValue == JOptionPane.OK_OPTION) {
+            if (!showManualTextfield || rbList.isSelected()) {
+                return SourceBooks.formatSourceList(bookList.getSelectedValuesList());
             } else {
-                return manualField.getText().trim();
+                return SourceBooks.normalizeSourceList(manualField.getText());
             }
         }
         return null;

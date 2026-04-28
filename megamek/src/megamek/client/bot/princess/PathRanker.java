@@ -119,9 +119,9 @@ public abstract class PathRanker implements IPathRanker {
         // If the heat map of friendly activity has sufficient data, use the nearest hot
         // spot as
         // the anchor point
-        Coords allyCenter = owner.getFriendlyHotSpot(movePaths.get(0).getEntity().getPosition());
+        Coords allyCenter = owner.getFriendlyHotSpot(movePaths.getFirst().getEntity().getPosition());
         if (allyCenter == null) {
-            allyCenter = this.calculateAlliesCenter(movePaths.get(0).getEntity().getId(), friends, game);
+            allyCenter = this.calculateAlliesCenter(movePaths.getFirst().getEntity().getId(), friends, game);
         }
 
         TreeSet<RankedPath> returnPaths = new TreeSet<>(Collections.reverseOrder());
@@ -155,7 +155,7 @@ public abstract class PathRanker implements IPathRanker {
                     logger.error(e, "{} while processing {}", e.getMessage(), path);
                 }
             }
-            Entity mover = movePaths.get(0).getEntity();
+            Entity mover = movePaths.getFirst().getEntity();
             UnitBehavior behaviorTracker = getOwner().getUnitBehaviorTracker();
             boolean noDamageButCanDoDamage = !pathsHaveExpectedDamage
                   && (FireControl.getMaxDamageAtRange(mover, 1, false, false) > 0);
@@ -196,7 +196,7 @@ public abstract class PathRanker implements IPathRanker {
             return startingPathList;
         }
 
-        Entity mover = startingPathList.get(0).getEntity();
+        Entity mover = startingPathList.getFirst().getEntity();
 
         Targetable closestTarget = findClosestEnemy(mover, mover.getPosition(), game);
         int startingTargetDistance = (closestTarget == null) ? Integer.MAX_VALUE
@@ -576,8 +576,8 @@ public abstract class PathRanker implements IPathRanker {
             } else {
                 final Coords stepCenter = step.getPosition();
                 occupiedHexes = secondaryPositions.values().stream()
-                        .map(sec -> stepCenter.add(sec.subtract(entityCenter)))
-                        .toList();
+                      .map(sec -> stepCenter.add(sec.subtract(entityCenter)))
+                      .toList();
             }
 
             for (Coords pos : occupiedHexes) {

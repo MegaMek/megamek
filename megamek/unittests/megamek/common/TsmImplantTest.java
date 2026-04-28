@@ -33,6 +33,7 @@
 package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.battleArmor.BattleArmor;
@@ -154,7 +155,7 @@ public class TsmImplantTest {
         void infantryWithoutTsmReturnsFalse() {
             Infantry infantry = createInfantry(21, false);
 
-            assertTrue(!infantry.hasAbility(OptionsConstants.MD_TSM_IMPLANT),
+            assertFalse(infantry.hasAbility(OptionsConstants.MD_TSM_IMPLANT),
                   "Infantry without TSM implant should return false for hasAbility check");
         }
 

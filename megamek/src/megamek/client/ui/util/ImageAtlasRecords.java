@@ -64,6 +64,7 @@ public class ImageAtlasRecords {
      * Constructor that takes an existing list of @see ImageAtlasRecord objects.
      *
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ImageAtlasRecords(List<ImageAtlasRecord> records) {
         this.records = records;
     }

@@ -52,11 +52,11 @@ import org.apache.logging.log4j.Logger;
  * <p>
  * Key Forum Rulings:
  * <ul>
- *   <li>Stealth blocking: https://battletech.com/forums/index.php?topic=78845.msg1866412#msg1866412</li>
- *   <li>Powered-down equipment: https://battletech.com/forums/index.php?topic=31896.msg1369654#msg1369654</li>
- *   <li>Communications threshold: https://battletech.com/forums/index.php?topic=17456.msg396440#msg396440</li>
- *   <li>Narc/iNarc interaction: https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067</li>
- *   <li>General exclusions: https://battletech.com/forums/index.php?topic=63179.msg1452217#msg1452217</li>
+ *   <li><a href="https://battletech.com/forums/index.php?topic=78845.msg1866412#msg1866412">Stealth Blocking</a></li>
+ *   <li><a href="https://battletech.com/forums/index.php?topic=31896.msg1369654#msg1369654">Powered-down Equipment</a></li>
+ *   <li><a href="https://battletech.com/forums/index.php?topic=17456.msg396440#msg396440">Communications Threshold</a></li>
+ *   <li><a href="https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067">Narc/iNarc Interaction</a></li>
+ *   <li><a href="https://battletech.com/forums/index.php?topic=63179.msg1452217#msg1452217">General Exclusion</a></li>
  * </ul>
  *
  * @author Hammer - Built with Claude Code
@@ -112,8 +112,8 @@ public class ARADEquipmentDetector {
      * Narc pods are NOT blocked.
      * <p>
      * Reference: TO:AUE p.180, Xotl forum ruling:
-     * https://battletech.com/forums/index.php?topic=78845.msg1866412#msg1866412 Quote: "Active Stealth Armor makes a
-     * unit completely non-emitting"
+     * <a href="https://battletech.com/forums/index.php?topic=78845.msg1866412#msg1866412">BT Forums</a>
+     * Quote: "Active Stealth Armor makes a unit completely non-emitting"
      *
      * @param target The entity to check
      *
@@ -234,8 +234,8 @@ public class ARADEquipmentDetector {
      * equivalent) does NOT count.
      * <p>
      * Reference: Welshman (Catalyst Freelancer) forum ruling:
-     * https://battletech.com/forums/index.php?topic=17456.msg396440#msg396440 Quote: "Built-in 1-ton communications do
-     * not count, only dedicated equipment >= 3.5 tons"
+     * <a href="https://battletech.com/forums/index.php?topic=17456.msg396440#msg396440">BT Forums</a>
+     * Quote: "Built-in 1-ton communications do not count, only dedicated equipment >= 3.5 tons"
      *
      * @param target The entity to check
      *
@@ -335,7 +335,8 @@ public class ARADEquipmentDetector {
      * External Narc pods are NOT blocked by Stealth Armor.
      * <p>
      * Reference: TO:AUE p.180, Xotl forum ruling:
-     * https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067 Quote: "ARAD receives standard bonus when
+     * <a href="https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067">BT Forums</a>
+     * Quote: "ARAD receives standard bonus when
      * targeting Narc-tagged units, but does NOT receive additional Narc-specific bonuses (no stacking)"
      * <p>
      * Friendly vs enemy Nemesis distinction confirmed by same forum ruling.
@@ -378,7 +379,8 @@ public class ARADEquipmentDetector {
      * emit and will not trigger ARAD bonuses.
      * <p>
      * Reference: Xotl ruling (November 2017, Errata to TO p.99):
-     * https://battletech.com/forums/index.php?topic=31896.msg1369654#msg1369654 Quote: "Players may power down
+     * <a href="https://battletech.com/forums/index.php?topic=31896.msg1369654#msg1369654">BT Forums</a>
+     * Quote: "Players may power down
      * equipment during End Phase. Powered-down electronics do not function and are not valid targets for ARAD
      * bonuses."
      *

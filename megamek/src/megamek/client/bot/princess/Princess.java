@@ -688,7 +688,7 @@ public class Princess extends BotClient {
             final List<Coords> validCoords = calculateTurretDeploymentLocations((GunEmplacement) deployedUnit,
                   possibleDeployCoords);
             if (!validCoords.isEmpty()) {
-                return validCoords.get(0);
+                return validCoords.getFirst();
             }
 
             return null;
@@ -718,7 +718,7 @@ public class Princess extends BotClient {
         // if we can't find any good deployment coordinates, deploy anyway to the first available one
         // and maybe eventually we'll slow down enough that we can deploy without immediately flying off
         if (!possibleDeployCoords.isEmpty()) {
-            return possibleDeployCoords.get(0);
+            return possibleDeployCoords.getFirst();
         }
 
         return null;
@@ -869,7 +869,11 @@ public class Princess extends BotClient {
                       if (h == null) {
                           return false;
                       }
-                      List<ElevationOption> elevations = new AllowedDeploymentHelper(deployedUnit, c, deployBoard, h, game)
+                      List<ElevationOption> elevations = new AllowedDeploymentHelper(deployedUnit,
+                            c,
+                            deployBoard,
+                            h,
+                            game)
                             .findAllowedElevations();
                       return groundedAero
                             ? elevations.stream().anyMatch(o -> o.elevation() == 0)
@@ -1053,7 +1057,7 @@ public class Princess extends BotClient {
                     int aimLocation = Mek.LOC_NONE;
                     int calledShotDirection = CalledShot.CALLED_NONE;
 
-                    WeaponFireInfo primaryFire = plan.get(0);
+                    WeaponFireInfo primaryFire = plan.getFirst();
                     int targetID;
                     if (primaryFire != null) {
                         targetID = primaryFire.getTarget().getId();
@@ -1137,10 +1141,13 @@ public class Princess extends BotClient {
                     Vector<EntityAction> actions = new Vector<>();
 
                     // if using search light, it needs to go before the other actions so we can light up what we're shooting at
-                    SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter,
-                          plan);
-                    if (searchLightAction != null) {
-                        actions.add(searchLightAction);
+                    // Respect the "Searchlights On by Default" option - disabled means Princess won't use searchlights offensively either.
+                    if (getGame().getOptions().booleanOption(OptionsConstants.SEARCHLIGHTS_ON)) {
+                        SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter,
+                              plan);
+                        if (searchLightAction != null) {
+                            actions.add(searchLightAction);
+                        }
                     }
 
                     actions.addAll(plan.getEntityActionVector());
@@ -1193,9 +1200,13 @@ public class Princess extends BotClient {
                     miscPlan.add(spotAction);
                 }
 
-                SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter, null);
-                if (searchLightAction != null) {
-                    miscPlan.add(searchLightAction);
+                // Respect the "Searchlights On by Default" option
+                if (getGame().getOptions().booleanOption(OptionsConstants.SEARCHLIGHTS_ON)) {
+                    SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter,
+                          null);
+                    if (searchLightAction != null) {
+                        miscPlan.add(searchLightAction);
+                    }
                 }
             }
 
@@ -1387,15 +1398,21 @@ public class Princess extends BotClient {
             }
 
             // If all else is equal, Infantry before Battle Armor before Tanks before Meks.
-            if (entity instanceof BattleArmor) {
-                total *= PRIORITY_BA;
-                modifiers.append("\tx2.0 (is BA)");
-            } else if (entity instanceof Infantry) {
-                total *= PRIORITY_INF;
-                modifiers.append("\tx3.0 (is Inf)");
-            } else if (entity instanceof Tank) {
-                total *= PRIORITY_TANK;
-                modifiers.append("\tx1.5 (is Tank)");
+            switch (entity) {
+                case BattleArmor ignored -> {
+                    total *= PRIORITY_BA;
+                    modifiers.append("\tx2.0 (is BA)");
+                }
+                case Infantry ignored -> {
+                    total *= PRIORITY_INF;
+                    modifiers.append("\tx3.0 (is Inf)");
+                }
+                case Tank ignored -> {
+                    total *= PRIORITY_TANK;
+                    modifiers.append("\tx1.5 (is Tank)");
+                }
+                default -> {
+                }
             }
 
             // Fleeing entities should move before those not fleeing.
@@ -1432,10 +1449,12 @@ public class Princess extends BotClient {
 
     // Enhanced targeting controls
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getEnhancedTargetingControl() {
         return enableEnhancedTargeting;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEnableEnhancedTargeting(boolean newSetting) {
         enableEnhancedTargeting = newSetting;
     }
@@ -1475,6 +1494,7 @@ public class Princess extends BotClient {
      *
      * @param newTargetTypes List of {@link UnitType} constants, may be empty or null to clear
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEnhancedTargetingTargetTypes(List<Integer> newTargetTypes) {
         enhancedTargetingTargetTypes = Objects.requireNonNullElseGet(newTargetTypes, ArrayList::new);
         if (enhancedTargetingTargetTypes.contains(UnitType.INFANTRY)) {
@@ -1490,6 +1510,7 @@ public class Princess extends BotClient {
      *
      * @param newAttackerTypes List of {@link UnitType} constants, may be empty or null to clear
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEnhancedTargetingAttackerTypes(List<Integer> newAttackerTypes) {
         enhancedTargetingAttackerTypes = Objects.requireNonNullElseGet(newAttackerTypes, ArrayList::new);
     }
@@ -1499,6 +1520,7 @@ public class Princess extends BotClient {
      *
      * @return list of {@link UnitType} constants, or empty list
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public List<Integer> seeEnhancedTargetingTargetTypes() {
         return new ArrayList<>(enhancedTargetingTargetTypes);
     }
@@ -1508,6 +1530,7 @@ public class Princess extends BotClient {
      *
      * @return list of {@link UnitType} constants, or empty list
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public List<Integer> seeEnhancedTargetingAttackerTypes() {
         return new ArrayList<>(enhancedTargetingAttackerTypes);
     }
@@ -1542,14 +1565,17 @@ public class Princess extends BotClient {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getAllowCalledShotsOnImmobile() {
         return useCalledShotsOnImmobileTarget;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setAllowCalledShotsOnImmobile(boolean newSetting) {
         useCalledShotsOnImmobileTarget = newSetting;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getPartialCoverEnhancedTargeting() {
         return allowCoverEnhancedTargeting;
     }
@@ -1560,6 +1586,7 @@ public class Princess extends BotClient {
      *
      * @param newSetting true, to allow aimed/called shots against targets with partial cover
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setPartialCoverEnhancedTargeting(boolean newSetting) {
         allowCoverEnhancedTargeting = newSetting;
     }
@@ -1698,7 +1725,7 @@ public class Princess extends BotClient {
             return calledShotDirection;
         }
 
-        WeaponFireInfo primaryFire = planOfAttack.get(0);
+        WeaponFireInfo primaryFire = planOfAttack.getFirst();
         if (primaryFire == null) {
             return calledShotDirection;
         }
@@ -1743,7 +1770,7 @@ public class Princess extends BotClient {
             return aimLocation;
         }
 
-        WeaponFireInfo primaryFire = aimedShots.get(0);
+        WeaponFireInfo primaryFire = aimedShots.getFirst();
         int lowestArmor = Integer.MAX_VALUE;
         List<Integer> rankedLocations = new ArrayList<>();
 
@@ -1897,11 +1924,11 @@ public class Princess extends BotClient {
     protected int calculateCalledShotDirection(Mek target, int attackSide, List<WeaponFireInfo> calledShots) {
         int calledShotDirection = CalledShot.CALLED_NONE;
 
-        if (calledShots == null || calledShots.isEmpty() || calledShots.get(0) == null) {
+        if (calledShots == null || calledShots.isEmpty() || calledShots.getFirst() == null) {
             return calledShotDirection;
         }
 
-        WeaponFireInfo primaryFire = calledShots.get(0);
+        WeaponFireInfo primaryFire = calledShots.getFirst();
 
         // If the target is being shot in a side arc, set the call direction to hit the rear arc
         if (attackSide == ToHitData.SIDE_LEFT || attackSide == ToHitData.SIDE_REAR_LEFT) {
@@ -2810,8 +2837,8 @@ public class Princess extends BotClient {
                 // if the quickest route needs some terrain adjustments, let's get working on that
                 Targetable levelingTarget = null;
 
-                if (bulldozerPaths.get(0).needsLeveling()) {
-                    levelingTarget = getAppropriateTarget(bulldozerPaths.get(0).getCoordsToLevel().get(0),
+                if (bulldozerPaths.getFirst().needsLeveling()) {
+                    levelingTarget = getAppropriateTarget(bulldozerPaths.getFirst().getCoordsToLevel().getFirst(),
                           mover.getBoardId());
                     getFireControlState().addAdditionalTarget(levelingTarget);
                     sendChat("Hex " +
@@ -3341,12 +3368,13 @@ public class Princess extends BotClient {
      */
     public int getSpinUpThreshold() {
         if (spinUpThreshold == null) {
-            spinUpThreshold = Math.max(4, Math.min(11, 13 - getBehaviorSettings().getSelfPreservationIndex()));
+            spinUpThreshold = Math.clamp(13 - getBehaviorSettings().getSelfPreservationIndex(), 4, 11);
         }
 
         return spinUpThreshold;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void resetSpinUpThreshold() {
         spinUpThreshold = null;
     }
@@ -3524,10 +3552,21 @@ public class Princess extends BotClient {
      */
     private void turnOnSearchLight(MovePath path, boolean possibleToInflictDamage) {
         Entity pathEntity = path.getEntity();
+        boolean option = path.getGame().getOptions().booleanOption(OptionsConstants.SEARCHLIGHTS_ON);
+        LOGGER.debug("Princess.turnOnSearchLight: entity={} SEARCHLIGHTS_ON={} damage={} hasSL={} usingSL={} isDark={}",
+              pathEntity.getDisplayName(), option, possibleToInflictDamage,
+              pathEntity.hasSearchlight(), pathEntity.isUsingSearchlight(),
+              path.getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack());
+        // Respect the "Searchlights On by Default" game option - if disabled, Princess won't
+        // auto-enable searchlights either (they give away position under double-blind).
+        if (!option) {
+            return;
+        }
         if (possibleToInflictDamage &&
               pathEntity.hasSearchlight() &&
               !pathEntity.isUsingSearchlight() &&
               path.getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
+            LOGGER.debug("Princess adding SEARCHLIGHT step for {}", pathEntity.getDisplayName());
             path.addStep(MoveStepType.SEARCHLIGHT);
         }
     }
@@ -4007,6 +4046,7 @@ public class Princess extends BotClient {
      *
      * @return {@code Coords} with high friendly activity; may return null
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Coords getFriendlyHotSpot() {
         return friendlyHeatMap.getHotSpot();
     }
@@ -4112,6 +4152,7 @@ public class Princess extends BotClient {
         return coverageValidator;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SwarmCenterManager getSwarmCenterManager() {
         return swarmCenterManager;
     }

@@ -32,14 +32,12 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.GridBagLayout;
-import java.io.Serial;
 import java.util.ArrayList;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import megamek.client.ui.GBC;
+import megamek.client.ui.GBC2;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
@@ -53,14 +51,12 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  *
  * @author NickAragua
  */
-public class WeaponAmmoChoicePanel extends JPanel {
-    @Serial
-    private static final long serialVersionUID = 604670659251519188L;
+public class WeaponAmmoChoice {
+
     // the weapon being displayed in this row
-    private final WeaponMounted weaponMounted;
+    private final WeaponMounted weapon;
     private final ArrayList<AmmoMounted> matchingAmmoBins = new ArrayList<>();
     private final JComboBox<String> comboAmmoBins = new JComboBox<>();
-
     private final Entity entity;
 
     /**
@@ -68,35 +64,32 @@ public class WeaponAmmoChoicePanel extends JPanel {
      *
      * @param weapon The mounted weapon. Assumes that the weapon uses ammo.
      */
-    public WeaponAmmoChoicePanel(WeaponMounted weapon, Entity entity) {
+    public WeaponAmmoChoice(WeaponMounted weapon, Entity entity, JPanel parentPanel, GBC2 gbc) {
         this.entity = entity;
-        weaponMounted = weapon;
+        this.weapon = weapon;
 
-        this.setLayout(new GridBagLayout());
-
-        if (weaponMounted.isOneShot() ||
-              (entity.isSupportVehicle() && (weaponMounted.getType() instanceof InfantryWeapon))) {
+        if (weapon.isOneShot() ||
+              (entity.isSupportVehicle() && (weapon.getType() instanceof InfantryWeapon))) {
             // One-shot weapons can only access their own bin
-            matchingAmmoBins.add(weaponMounted.getLinkedAmmo());
+            matchingAmmoBins.add(weapon.getLinkedAmmo());
             // Fusillade and some small SV weapons are treated like one-shot weapons but may have a second munition
             // type available.
-            if ((weaponMounted.getLinked().getLinked() != null) &&
-                  (((AmmoType) weaponMounted.getLinked().getType()).getMunitionType() !=
-                        (((AmmoType) weaponMounted.getLinked().getLinked().getType()).getMunitionType()))) {
-                matchingAmmoBins.add((AmmoMounted) weaponMounted.getLinked().getLinked());
+            AmmoMounted firstBin = (AmmoMounted) weapon.getLinked();
+            if ((firstBin.getLinked() instanceof AmmoMounted secondBin) &&
+                  (firstBin.getType().getMunitionType() != secondBin.getType().getMunitionType())) {
+                matchingAmmoBins.add(secondBin);
             }
-        } else if (weaponMounted.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_STATIC_FEED)
-              && (weaponMounted.getLinkedAmmo() != null)) {
+        } else if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_STATIC_FEED)
+              && (weapon.getLinkedAmmo() != null)) {
             // Static Ammo Feed weapons are locked to their specific ammo bin (CamOps p.235/BMM p.89)
             // Only use this path if the weapon already has linked ammo; otherwise fall through to
             // the regular logic which uses canSwitchToAmmo() to find compatible bins
-            matchingAmmoBins.add(weaponMounted.getLinkedAmmo());
+            matchingAmmoBins.add(weapon.getLinkedAmmo());
         } else {
-            for (AmmoMounted ammoBin : weapon.getEntity().getAmmo()) {
-                if ((ammoBin.getLocation() != Entity.LOC_NONE) && AmmoType.canSwitchToAmmo(weapon, ammoBin.getType())) {
-                    matchingAmmoBins.add(ammoBin);
-                }
-            }
+            entity.getAmmo().stream()
+                  .filter(ammo -> ammo.getLocation() != Entity.LOC_NONE)
+                  .filter(ammo -> AmmoType.canSwitchToAmmo(weapon, ammo.getType()))
+                  .forEach(matchingAmmoBins::add);
         }
 
         // don't bother displaying the row if there's no ammo to be swapped
@@ -104,12 +97,16 @@ public class WeaponAmmoChoicePanel extends JPanel {
             return;
         }
 
-        JLabel weaponName = new JLabel();
-        weaponName.setText("(" + weapon.getEntity().getLocationAbbr(weapon.getLocation()) + ") " + weapon.getName());
-        add(weaponName, GBC.std());
-
-        add(comboAmmoBins, GBC.eol());
+        String weaponName = "(%s) %s:"
+              .formatted(weapon.getEntity().getLocationAbbr(weapon.getLocation()), weapon.getShortName());
+        parentPanel.add(new JLabel(weaponName), gbc.forLabel());
+        parentPanel.add(comboAmmoBins, gbc.eol());
         refreshAmmoBinNames();
+        comboAmmoBins.setEnabled(matchingAmmoBins.size() > 1);
+    }
+
+    boolean isEmpty() {
+        return matchingAmmoBins.isEmpty();
     }
 
     /**
@@ -127,7 +124,7 @@ public class WeaponAmmoChoicePanel extends JPanel {
             String ammoBinName = prefix + ammoBin.getName();
             comboAmmoBins.addItem(ammoBinName);
 
-            if (weaponMounted.getLinked() == ammoBin) {
+            if (weapon.getLinked() == ammoBin) {
                 selectedIndex = currentIndex;
             }
 
@@ -137,8 +134,6 @@ public class WeaponAmmoChoicePanel extends JPanel {
         if (selectedIndex >= 0) {
             comboAmmoBins.setSelectedIndex(selectedIndex);
         }
-
-        validate();
     }
 
     /**
@@ -171,8 +166,6 @@ public class WeaponAmmoChoicePanel extends JPanel {
             if (currentBinIndex == index) {
                 comboAmmoBins.setSelectedIndex(index);
             }
-
-            validate();
         }
     }
 
@@ -182,7 +175,7 @@ public class WeaponAmmoChoicePanel extends JPanel {
     public void applyChoice() {
         int selectedIndex = comboAmmoBins.getSelectedIndex();
         if ((selectedIndex >= 0) && (selectedIndex < matchingAmmoBins.size())) {
-            entity.loadWeapon(weaponMounted, matchingAmmoBins.get(selectedIndex));
+            entity.loadWeapon(weapon, matchingAmmoBins.get(selectedIndex));
         }
     }
 }

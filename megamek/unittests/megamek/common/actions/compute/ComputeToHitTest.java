@@ -33,7 +33,6 @@
 
 package megamek.common.actions.compute;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -81,8 +80,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import java.util.Vector;
 
 /**
  * Tests for
@@ -165,6 +162,7 @@ public class ComputeToHitTest extends GameBoardTestCase {
         return mockMek;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     Infantry createInfantry(String chassis, String model, String crewName) {
         // Create a real Infantry unit with some mocked fields
         Infantry mockInfantry = new Infantry();

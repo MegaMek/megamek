@@ -353,7 +353,12 @@ public class OptionsConstants {
     public static final String ADVANCED_TAC_OPS_BAP = "tacops_bap";
     public static final String ADVANCED_TAC_OPS_ECCM = "tacops_eccm";
     public static final String ADVANCED_TAC_OPS_GHOST_TARGET = "tacops_ghost_target";
+    public static final String ADVANCED_GHOST_TARGET_MODE = "ghost_target_mode";
     public static final String ADVANCED_GHOST_TARGET_MAX = "ghost_target_max";
+
+    // Ghost Target mode values
+    public static final String GHOST_TARGET_MODE_LEGACY = "Legacy (Area Effect)";
+    public static final String GHOST_TARGET_MODE_STANDARD = "Standard (Targeted)";
     public static final String ADVANCED_TAC_OPS_DIG_IN = "tacops_dig_in";
     public static final String ADVANCED_TAC_OPS_BA_WEIGHT = "tacops_ba_weight";
     public static final String ADVANCED_TAC_OPS_TAKE_COVER = "tacops_take_cover";
@@ -375,6 +380,15 @@ public class OptionsConstants {
     public static final String ADVANCED_WOODS_BURN_DOWN = "woods_burn_down";
     public static final String ADVANCED_WOODS_BURN_DOWN_AMOUNT = "woods_burn_down_amount";
     public static final String ADVANCED_NO_IGNITE_CLEAR = "no_ignite_clear";
+    public static final String ADVANCED_NEURAL_INTERFACE_MODE = "neural_interface_mode";
+
+    // Neural Interface mode values
+    public static final String NEURAL_INTERFACE_MODE_OFF = "Off";
+    public static final String NEURAL_INTERFACE_MODE_PILOT_ONLY = "Pilot Abilities Only";
+    public static final String NEURAL_INTERFACE_MODE_FULL_TRACKING = "Full Tracking";
+
+    /** @deprecated Use {@link #ADVANCED_NEURAL_INTERFACE_MODE} instead. */
+    @Deprecated(since = "0.50.14")
     public static final String ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE = "track_neural_interface_hardware";
     public static final String ADVANCED_EXTREME_TEMPERATURE_SURVIVAL = "extreme_temperature_survival";
     public static final String ADVANCED_ARMED_MEKWARRIORS = "armed_mekwarriors";
@@ -541,6 +555,7 @@ public class OptionsConstants {
     public static final String PLAYTEST_1 = "playtest_1";
     public static final String PLAYTEST_2 = "playtest_2";
     public static final String PLAYTEST_3 = "playtest_3";
+    public static final String SEARCHLIGHTS_ON = "searchlights_on";
     public static final String TWRULES = "twrules";
 
     private OptionsConstants() {

@@ -125,7 +125,7 @@ class CollapseWarningTest {
         List<Coords> warnList = CollapseWarning.findCFWarningsMovement(g, e, b);
 
         assertFalse(warnList.isEmpty());
-        assertEquals(buildingPosition, warnList.get(0));
+        assertEquals(buildingPosition, warnList.getFirst());
     }
 
     @Test
@@ -224,7 +224,7 @@ class CollapseWarningTest {
         List<Coords> warnList = CollapseWarning.findCFWarningsDeployment(g, e, b);
 
         assertNotNull(warnList);
-        assertEquals(expectedHex, warnList.get(0));
+        assertEquals(expectedHex, warnList.getFirst());
     }
 
     @Test

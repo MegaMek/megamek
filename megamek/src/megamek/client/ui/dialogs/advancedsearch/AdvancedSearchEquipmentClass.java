@@ -34,7 +34,7 @@ package megamek.client.ui.dialogs.advancedsearch;
 
 import java.util.Locale;
 
-enum AdvancedSearchEquipmentClass {
+public enum AdvancedSearchEquipmentClass {
     EMPTY,
     AUTOCANNON,
     RAC,

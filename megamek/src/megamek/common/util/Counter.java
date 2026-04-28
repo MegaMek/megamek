@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nonnull;
+
 /**
  * This class counts elements
  *
@@ -89,17 +91,20 @@ public class Counter<T> implements Collection<T> {
     }
 
     @Override
+    @Nonnull
     public Iterator<T> iterator() {
         return map.keySet().iterator();
     }
 
     @Override
+    @Nonnull
     public Object[] toArray() {
         return map.keySet().toArray();
     }
 
     @Override
-    public <T1> T1[] toArray(T1[] a) {
+    @Nonnull
+    public <T1> T1[] toArray(@Nonnull T1[] a) {
         return map.keySet().toArray(a);
     }
 
@@ -124,7 +129,7 @@ public class Counter<T> implements Collection<T> {
     }
 
     @Override
-    public boolean containsAll(Collection<?> c) {
+    public boolean containsAll(@Nonnull Collection<?> c) {
         return map.keySet().containsAll(c);
     }
 
@@ -145,7 +150,7 @@ public class Counter<T> implements Collection<T> {
     }
 
     @Override
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(@Nonnull Collection<?> c) {
         for (T t : map.keySet()) {
             if (!c.contains(t)) {
                 remove(t);

@@ -34,6 +34,8 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.battleArmor.BattleArmor;
@@ -166,11 +168,21 @@ public class EiImplantTest {
     }
 
     /**
-     * Enables the {@code track_neural_interface_hardware} game option, which gates ProtoMek EI.
+     * Sets neural interface mode to Full Tracking (hardware + pilot required).
      */
-    private void enableTracking() {
+    private void enableFullTracking() {
         game.getOptions().getOption(
-              OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE).setValue(true);
+                    OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE)
+              .setValue(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
+    }
+
+    /**
+     * Sets neural interface mode to Pilot Abilities Only.
+     */
+    private void enablePilotOnly() {
+        game.getOptions().getOption(
+                    OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE)
+              .setValue(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
     }
 
     /**
@@ -202,15 +214,14 @@ public class EiImplantTest {
         @DisplayName("EI Interface equipment exists in equipment database")
         void eiInterfaceEquipmentExists() {
             EquipmentType eiInterface = EquipmentType.get("EIInterface");
-            assertTrue(eiInterface != null, "EI Interface should exist in equipment database");
+            assertNotNull(eiInterface, "EI Interface should exist in equipment database");
         }
 
         @Test
         @DisplayName("EI Interface has correct flag")
         void eiInterfaceHasCorrectFlag() {
             EquipmentType eiInterface = EquipmentType.get("EIInterface");
-            assertTrue(eiInterface != null && eiInterface instanceof MiscType,
-                  "EI Interface should be a MiscType");
+            assertInstanceOf(MiscType.class, eiInterface, "EI Interface should be a MiscType");
             MiscType miscType = (MiscType) eiInterface;
             assertTrue(miscType.hasFlag(MiscType.F_EI_INTERFACE),
                   "EI Interface should have F_EI_INTERFACE flag");
@@ -220,7 +231,7 @@ public class EiImplantTest {
         @DisplayName("EI Interface is zero weight")
         void eiInterfaceIsZeroWeight() {
             EquipmentType eiInterface = EquipmentType.get("EIInterface");
-            assertTrue(eiInterface != null, "EI Interface should exist");
+            assertNotNull(eiInterface, "EI Interface should exist");
             assertEquals(0, eiInterface.getTonnage(null), 0.001,
                   "EI Interface should be zero weight");
         }
@@ -233,18 +244,27 @@ public class EiImplantTest {
         @Test
         @DisplayName("ProtoMek has EI cockpit when tracking enabled")
         void protoMekHasEiCockpitWhenTrackingOn() {
-            enableTracking();
+            enableFullTracking();
             ProtoMek proto = createProtoMek();
             assertTrue(proto.hasEiCockpit(),
                   "ProtoMeks should have EI cockpit when tracking is enabled (per IO:AE p.69)");
         }
 
         @Test
-        @DisplayName("ProtoMek always has EI cockpit regardless of tracking")
-        void protoMekAlwaysHasEiCockpit() {
+        @DisplayName("ProtoMek does NOT have EI cockpit when mode is Off")
+        void protoMekNoEiCockpitWhenOff() {
+            ProtoMek proto = createProtoMek();
+            assertFalse(proto.hasEiCockpit(),
+                  "ProtoMeks should NOT have EI cockpit when neural interface mode is Off");
+        }
+
+        @Test
+        @DisplayName("ProtoMek has EI cockpit in Pilot Only mode")
+        void protoMekHasEiCockpitPilotOnly() {
+            enablePilotOnly();
             ProtoMek proto = createProtoMek();
             assertTrue(proto.hasEiCockpit(),
-                  "ProtoMeks should always have EI cockpit per IO:AE p.69, regardless of tracking");
+                  "ProtoMeks should have EI cockpit in Pilot Only mode per IO:AE p.69");
         }
 
         @Test
@@ -271,7 +291,7 @@ public class EiImplantTest {
         @Test
         @DisplayName("ProtoMek has active EI cockpit when tracking enabled (built-in per IO:AE p.69)")
         void protoMekHasActiveEiCockpitWhenTrackingOn() {
-            enableTracking();
+            enableFullTracking();
             ProtoMek proto = createProtoMek();
             // ProtoMeks have built-in EI that doesn't require crew implant option
             // per IO:AE p.69 - they are neurally connected by design
@@ -280,17 +300,26 @@ public class EiImplantTest {
         }
 
         @Test
-        @DisplayName("ProtoMek always has active EI regardless of tracking")
-        void protoMekAlwaysHasActiveEi() {
+        @DisplayName("ProtoMek does NOT have active EI when mode is Off")
+        void protoMekNoActiveEiWhenOff() {
+            ProtoMek proto = createProtoMek();
+            assertFalse(proto.hasActiveEiCockpit(),
+                  "ProtoMek should NOT have active EI when neural interface mode is Off");
+        }
+
+        @Test
+        @DisplayName("ProtoMek has active EI in Pilot Only mode")
+        void protoMekHasActiveEiPilotOnly() {
+            enablePilotOnly();
             ProtoMek proto = createProtoMek();
             assertTrue(proto.hasActiveEiCockpit(),
-                  "ProtoMek should always have active EI per IO:AE p.69, regardless of tracking");
+                  "ProtoMek should have active EI in Pilot Only mode per IO:AE p.69");
         }
 
         @Test
         @DisplayName("ProtoMek EI active without MD_EI_IMPLANT option (tracking ON)")
         void protoMekEiActiveWithoutImplantOption() {
-            enableTracking();
+            enableFullTracking();
             ProtoMek proto = createProtoMek();
             // Explicitly verify crew does NOT have MD_EI_IMPLANT set
             assertFalse(proto.getCrew().getOptions().booleanOption(OptionsConstants.MD_EI_IMPLANT),
@@ -319,7 +348,7 @@ public class EiImplantTest {
         @Test
         @DisplayName("ProtoMek cannot shut down EI")
         void protoMekCannotShutdownEi() {
-            enableTracking();
+            enableFullTracking();
             ProtoMek proto = createProtoMek();
             assertFalse(proto.canShutdownEi(),
                   "ProtoMeks cannot shut down EI (integral to design)");
@@ -328,7 +357,7 @@ public class EiImplantTest {
         @Test
         @DisplayName("setEiShutdown does not affect ProtoMek")
         void setEiShutdownDoesNotAffectProtoMek() {
-            enableTracking();
+            enableFullTracking();
             ProtoMek proto = createProtoMek();
             // ProtoMek EI is built-in - no crew option needed
 
@@ -343,7 +372,7 @@ public class EiImplantTest {
         @Test
         @DisplayName("isEiShutdown returns false by default")
         void isEiShutdownReturnsFalseByDefault() {
-            enableTracking();
+            enableFullTracking();
             ProtoMek proto = createProtoMek();
             assertFalse(proto.isEiShutdown(),
                   "EI should not be shutdown by default");
@@ -380,7 +409,7 @@ public class EiImplantTest {
         @Test
         @DisplayName("ProtoMek with EI has BAP capability (tracking ON)")
         void protoMekWithEiHasBapCapability() {
-            enableTracking();
+            enableFullTracking();
             ProtoMek proto = createProtoMek();
             // ProtoMeks have EI when tracking is ON, so they should report having BAP capability
             assertTrue(proto.hasBAP(),
@@ -390,10 +419,72 @@ public class EiImplantTest {
         @Test
         @DisplayName("ProtoMek EI provides 1-hex BAP range (tracking ON)")
         void protoMekEiProvidesOneHexBapRange() {
-            enableTracking();
+            enableFullTracking();
             ProtoMek proto = createProtoMek();
             assertEquals(1, proto.getBAPRange(),
                   "ProtoMek EI should provide 1-hex BAP range per IO:AE p.69 when tracking is ON");
+        }
+    }
+
+    @Nested
+    @DisplayName("ProtoMek Tech Level Tests")
+    class ProtoMekTechLevelTests {
+
+        @Test
+        @DisplayName("ProtoMek is Standard tech when mode is Off")
+        void protoMekStandardWhenOff() {
+            ProtoMek proto = createProtoMek();
+            assertEquals(SimpleTechLevel.STANDARD, proto.getStaticTechLevel(),
+                  "ProtoMek should be Standard tech when neural interface mode is Off");
+        }
+
+        @Test
+        @DisplayName("ProtoMek is Standard tech in Pilot Only mode")
+        void protoMekStandardWhenPilotOnly() {
+            enablePilotOnly();
+            ProtoMek proto = createProtoMek();
+            assertEquals(SimpleTechLevel.STANDARD, proto.getStaticTechLevel(),
+                  "ProtoMek should be Standard tech in Pilot Only mode");
+        }
+
+        @Test
+        @DisplayName("ProtoMek is Experimental tech in Full Tracking mode")
+        void protoMekExperimentalWhenFullTracking() {
+            enableFullTracking();
+            ProtoMek proto = createProtoMek();
+            assertEquals(SimpleTechLevel.EXPERIMENTAL, proto.getStaticTechLevel(),
+                  "ProtoMek should be Experimental tech in Full Tracking mode per IO:AE p.69");
+        }
+
+        @Test
+        @DisplayName("ProtoMek tech level changes when switching to Full Tracking")
+        void protoMekTechLevelChangesOnOptionSwitch() {
+            ProtoMek proto = createProtoMek();
+            assertEquals(SimpleTechLevel.STANDARD, proto.getStaticTechLevel(),
+                  "ProtoMek should start as Standard tech");
+
+            // Switch to Full Tracking
+            enableFullTracking();
+            proto.setGameOptions();
+            assertEquals(SimpleTechLevel.EXPERIMENTAL, proto.getStaticTechLevel(),
+                  "ProtoMek should become Experimental after switching to Full Tracking");
+        }
+
+        @Test
+        @DisplayName("ProtoMek tech level reverts when switching from Full Tracking to Off")
+        void protoMekTechLevelRevertsOnOptionSwitch() {
+            enableFullTracking();
+            ProtoMek proto = createProtoMek();
+            assertEquals(SimpleTechLevel.EXPERIMENTAL, proto.getStaticTechLevel(),
+                  "ProtoMek should be Experimental in Full Tracking mode");
+
+            // Switch to Off
+            game.getOptions().getOption(
+                        OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE)
+                  .setValue(OptionsConstants.NEURAL_INTERFACE_MODE_OFF);
+            proto.setGameOptions();
+            assertEquals(SimpleTechLevel.STANDARD, proto.getStaticTechLevel(),
+                  "ProtoMek should revert to Standard after switching to Off");
         }
     }
 }

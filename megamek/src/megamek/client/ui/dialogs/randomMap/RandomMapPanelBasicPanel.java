@@ -807,8 +807,9 @@ public class RandomMapPanelBasicPanel extends JPanel {
     }
 
     /**
-     * From
-     * https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/SpringGridProject/src/layout/SpringUtilities.java
+     * From <a
+     * href="https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/SpringGridProject/src/layout/SpringUtilities.java">Spring
+     * Utilities</a>
      * <p>
      * Aligns the first <code>rows</code> * <code>cols</code> components of <code>parent</code> in a grid. Each
      * component in a column is as wide as the maximum preferred width of the components in that column; height is

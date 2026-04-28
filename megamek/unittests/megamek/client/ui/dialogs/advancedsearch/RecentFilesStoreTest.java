@@ -33,7 +33,11 @@
 
 package megamek.client.ui.dialogs.advancedsearch;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -41,7 +45,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 class RecentFilesStoreTest {
 
@@ -85,10 +89,10 @@ class RecentFilesStoreTest {
         RecentFilesStore store = new RecentFilesStore(wellformedFile);
         assertEquals(8, store.getRecentFiles().size(), "should have 8 results");
         // Not testing MAXENTRIES, value is arbitrary and unimportant
-        store.touch(store.getRecentFiles().get(0));
+        store.touch(store.getRecentFiles().getFirst());
         assertEquals(8, store.getRecentFiles().size(), "should still have 8 results");
-        Path last =  store.getRecentFiles().get(store.getRecentFiles().size() - 1);
+        Path last = store.getRecentFiles().getLast();
         store.touch(last); // will change the tested file, but it doesn't matter
-        assertEquals(last, store.getRecentFiles().get(0), "last entry should have moved up to first");
+        assertEquals(last, store.getRecentFiles().getFirst(), "last entry should have moved up to first");
     }
 }

@@ -252,6 +252,7 @@ public class MMStaticDirectoryManager {
      *
      * @see #getMekTileset()
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static MekTileset refreshMekTileset() {
         parseMekTileset = true;
         return getMekTileset();

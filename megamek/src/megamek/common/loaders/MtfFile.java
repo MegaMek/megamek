@@ -1246,7 +1246,7 @@ public class MtfFile implements IMekLoader {
             int entryIdx = 0;
             for (int i = 0; i < numSlots; i++) {
                 CriticalSlot slot = mek.getCritical(loc, i);
-                if (slot != null && isRelocatedSystemSlot(slot)) {
+                if (isRelocatedSystemSlot(slot)) {
                     critData[loc][i] = EMPTY;
                 } else if (entryIdx < nonSystemEntries.size()) {
                     critData[loc][i] = nonSystemEntries.get(entryIdx++);
@@ -1318,6 +1318,7 @@ public class MtfFile implements IMekLoader {
      * first empty slot available in a location. This means that any "holes" (empty slots not at the end of a location),
      * will cause the file crits and MegaMek's crits to become out of sync.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private void compactCriticalSlots(Mek mek) {
         for (int loc = 0; loc < mek.locations(); loc++) {
             compactCriticalSlots(mek, loc);

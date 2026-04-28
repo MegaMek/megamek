@@ -71,6 +71,7 @@ public class MMRoll extends Roll {
      *
      * @param rng - the <code>MMRandom</code> that produces random numbers.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public MMRoll(MMRandom rng) {
         super(6, 1);
         this.total = rng.randomInt(this.faces) + this.min;

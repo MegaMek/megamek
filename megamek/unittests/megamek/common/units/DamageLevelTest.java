@@ -126,7 +126,7 @@ class DamageLevelTest {
          */
         private void initializeAeroWithZeroArmor(Aero aero) {
             // Set up internal structure first (required for valid entity)
-            aero.initializeSI(10);
+            aero.setOSI(10);
 
             // Set zero armor for all locations
             for (int loc = 0; loc < aero.locations(); loc++) {
@@ -139,7 +139,7 @@ class DamageLevelTest {
          */
         private void initializeFixedWingSupportWithZeroArmor(FixedWingSupport fixedWing) {
             // Set up internal structure first
-            fixedWing.initializeSI(5);
+            fixedWing.setOSI(5);
 
             // Set zero armor for all locations
             for (int loc = 0; loc < fixedWing.locations(); loc++) {
@@ -175,7 +175,7 @@ class DamageLevelTest {
         void aeroWithArmorDamageShouldShowDamage() {
             // Arrange - create an AeroSpaceFighter with normal armor
             AeroSpaceFighter aero = new AeroSpaceFighter();
-            aero.initializeSI(10);
+            aero.setOSI(10);
 
             // Give it some armor
             for (int loc = 0; loc < aero.locations(); loc++) {

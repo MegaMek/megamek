@@ -181,6 +181,7 @@ public class InfantryPoweredFlightMovementTest extends GameBoardTestCase {
     /**
      * Creates native VTOL infantry (microlite - can traverse cliffs).
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private Infantry createNativeVTOLInfantry() {
         Infantry infantry = new Infantry();
         infantry.setId(4);

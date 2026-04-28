@@ -421,7 +421,7 @@ public class Faction2 {
         SimpleModule module = new SimpleModule();
         module.addSerializer(Color.class, new ColorSerializer());
         yamlMapper.registerModule(module);
-        yamlMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        yamlMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY);
         yamlMapper.writeValue(file, this);
     }
 

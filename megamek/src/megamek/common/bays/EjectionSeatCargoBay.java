@@ -50,6 +50,7 @@ public final class EjectionSeatCargoBay extends StandardSeatCargoBay {
     /**
      * The default constructor is only for serialization.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private EjectionSeatCargoBay() {
         totalSpace = 0;
         currentSpace = 0;

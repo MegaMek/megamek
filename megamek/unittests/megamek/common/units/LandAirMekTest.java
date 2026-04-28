@@ -195,7 +195,7 @@ class LandAirMekTest {
             assertTrue(lam.isAero(), "Fighter mode LAM should pass isAero() check");
 
             // LAM should be castable to IAero (pattern used in processFlyingOff)
-            IAero aero = (IAero) lam;
+            IAero aero = lam;
 
             // IAero fly off methods should work
             aero.setFlyingOff(OffBoardDirection.EAST);

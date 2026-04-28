@@ -40,6 +40,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.Serial;
 import java.util.Hashtable;
+import java.util.Optional;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -171,6 +172,11 @@ public class Report implements ReportEntry {
     public int messageId = Report.MESSAGE_NONE;
 
     /**
+     * Additional sections to add to raw message prior to inserting tags
+     */
+    public Vector<Integer> extensions = new Vector<>();
+
+    /**
      * The number of spaces this report should be indented.
      */
     private int indentation = 0;
@@ -272,6 +278,7 @@ public class Report implements ReportEntry {
     @SuppressWarnings("unchecked")
     public Report(Report r) {
         messageId = r.messageId;
+        extensions = (Vector<Integer>) r.getExtensions().clone();
         indentation = r.indentation;
         newlines = r.newlines;
         tagData = (Vector<String>) r.tagData.clone();
@@ -336,6 +343,25 @@ public class Report implements ReportEntry {
      */
     public Report noNL() {
         return newLines(0);
+    }
+
+    /**
+     * Add an additional message id that will extend the base message
+     */
+    public void extend(int id) {
+        getExtensions().add(id);
+    }
+
+    /**
+     * Safety accessor for extensions
+     *
+     * @return extensions Vector of integer values of report messages
+     */
+    public Vector<Integer> getExtensions() {
+        if (this.extensions == null) {
+            this.extensions = new Vector<>();
+        }
+        return this.extensions;
     }
 
     /**
@@ -531,6 +557,7 @@ public class Report implements ReportEntry {
     /**
      * Manually Toggle if the report should show an image of the entity
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setShowImage(boolean showImage) {
         this.showImage = showImage;
     }
@@ -629,74 +656,81 @@ public class Report implements ReportEntry {
      */
     @Override
     public String text() {
-        // The raw text of the message, with tags.
-        String raw = ReportMessages.getString(String.valueOf(messageId));
-
-        // This will be the finished product, with data substituted for tags.
+        String primary = ReportMessages.getString(String.valueOf(messageId));
+        if (primary == null) {
+            logger.error("No message found for ID {}", messageId);
+            return "[Reporting Error for message ID " + messageId + "]";
+        }
+        StringBuilder rawBuilder = new StringBuilder(primary);
+        for (int extension : getExtensions()) {
+            String extText = ReportMessages.getString(String.valueOf(extension));
+            if (extText != null) {
+                rawBuilder.append(extText);
+            }
+        }
+        
+        // `raw` may be empty; this is intentional (e.g., 1210 = blank-line spacer)
+        // - process zero chars, render nothing.
+        String raw = rawBuilder.toString();
         StringBuffer text = new StringBuffer();
 
-        if (raw == null) {
-            // Should we handle this better? Check alternate language files?
-            logger.error("No message found for ID {}", messageId);
-            text.append("[Reporting Error for message ID ").append(messageId).append("]");
-        } else {
-            int i = 0;
-            int mark = 0;
-            while (i < raw.length()) {
-                if (raw.charAt(i) == '<') {
-                    // find end of tag
-                    int endTagIdx = raw.indexOf('>', i);
-                    if ((raw.indexOf('<', i + 1) != -1) && (raw.indexOf('<', i + 1) < endTagIdx)) {
-                        // hmm...this must be a literal '<' character
-                        i++;
-                        continue;
+        int i = 0;
+        int mark = 0;
+        while (i < raw.length()) {
+            if (raw.charAt(i) == '<') {
+                // find end of tag
+                int endTagIdx = raw.indexOf('>', i);
+                if ((raw.indexOf('<', i + 1) != -1) && (raw.indexOf('<', i + 1) < endTagIdx)) {
+                    // hmm...this must be a literal '<' character
+                    i++;
+                    continue;
+                }
+                // copy the preceding characters into the buffer
+                text.append(raw, mark, i);
+                if (raw.substring(i + 1, endTagIdx).equals("data")) {
+                    text.append(getTag());
+                    tagCounter++;
+                } else if (raw.substring(i + 1, endTagIdx).equals("list")) {
+                    for (int j = tagCounter; j < tagData.size(); j++) {
+                        text.append(getTag(j)).append(", ");
                     }
-                    // copy the preceding characters into the buffer
-                    text.append(raw, mark, i);
-                    if (raw.substring(i + 1, endTagIdx).equals("data")) {
-                        text.append(getTag());
-                        tagCounter++;
-                    } else if (raw.substring(i + 1, endTagIdx).equals("list")) {
-                        for (int j = tagCounter; j < tagData.size(); j++) {
-                            text.append(getTag(j)).append(", ");
-                        }
-                        text.setLength(text.length() - 2); // trim last comma
-                    } else if (raw.substring(i + 1, endTagIdx).startsWith("msg:")) {
-                        boolean selector = Boolean.parseBoolean(getTag());
-                        if (selector) {
-                            text.append(ReportMessages.getString(raw.substring(i + 5, raw.indexOf(',', i))));
-                        } else {
-                            text.append(ReportMessages.getString(raw.substring(raw.indexOf(',', i) + 1, endTagIdx)));
-                        }
-                        tagCounter++;
-                    } else if (raw.substring(i + 1, endTagIdx).equals("newline")) {
-                        text.append("<br>");
+                    text.setLength(text.length() - 2); // trim last comma
+                } else if (raw.substring(i + 1, endTagIdx).startsWith("msg:")) {
+                    boolean selector = Boolean.parseBoolean(getTag());
+                    if (selector) {
+                        text.append(ReportMessages.getString(raw.substring(i + 5, raw.indexOf(',', i))));
                     } else {
-                        // not a special tag, so treat as literal text
-                        text.append(raw, i, endTagIdx + 1);
+                        text.append(ReportMessages.getString(raw.substring(raw.indexOf(',', i) + 1, endTagIdx)));
                     }
-                    mark = endTagIdx + 1;
-                    i = endTagIdx;
-                }
-                i++;
-            }
-
-            if (indentation > MAX_INDENTATION) { // limit indentation for a cleaner look of the report
-                indentation = MAX_INDENTATION;
-            }
-
-            // add the sprite code at the beginning of the line
-            if (imageCode != null && !imageCode.isEmpty()) {
-                if (text.toString().startsWith("<br>")) {
-                    text.insert(4, imageCode);
+                    tagCounter++;
+                } else if (raw.substring(i + 1, endTagIdx).equals("newline")) {
+                    text.append("<br>");
                 } else {
-                    text.insert(0, imageCode);
+                    // not a special tag, so treat as literal text
+                    text.append(raw, i, endTagIdx + 1);
                 }
+                mark = endTagIdx + 1;
+                i = endTagIdx;
             }
-            text.append(raw.substring(mark));
-            handleIndentation(text);
-            text.append(getNewlines());
+            i++;
         }
+
+        if (indentation > MAX_INDENTATION) { // limit indentation for a cleaner look of the report
+            indentation = MAX_INDENTATION;
+        }
+
+        // add the sprite code at the beginning of the line
+        if (imageCode != null && !imageCode.isEmpty()) {
+            if (text.toString().startsWith("<br>")) {
+                text.insert(4, imageCode);
+            } else {
+                text.insert(0, imageCode);
+            }
+        }
+        text.append(raw.substring(mark));
+        handleIndentation(text);
+        text.append(getNewlines());
+
         tagCounter = 0;
         // debugReport
         if (type == Report.TESTING) {
@@ -810,6 +844,7 @@ public class Report implements ReportEntry {
      *
      * @param name The class name.
      * @param text The text to wrap.
+     *
      * @return The HTML string.
      */
     public String span(String name, String text) {
@@ -820,6 +855,7 @@ public class Report implements ReportEntry {
      * Wraps text in a warning span.
      *
      * @param text The text to wrap.
+     *
      * @return The HTML string.
      */
     public String warning(String text) {
@@ -830,6 +866,7 @@ public class Report implements ReportEntry {
      * Converts a Color object to a hex string.
      *
      * @param color The Color object.
+     *
      * @return The hex string (e.g., "#RRGGBB").
      */
     private static String hexColor(Color color) {
@@ -841,6 +878,7 @@ public class Report implements ReportEntry {
      *
      * @param color The color to use.
      * @param str   The text to wrap.
+     *
      * @return The HTML string.
      */
     public String fgColor(Color color, String str) {
@@ -852,6 +890,7 @@ public class Report implements ReportEntry {
      *
      * @param hexColor The hex color string (e.g., "#RRGGBB").
      * @param str      The text to wrap.
+     *
      * @return The HTML string.
      */
     public String fgColor(String hexColor, String str) {
@@ -863,8 +902,10 @@ public class Report implements ReportEntry {
      *
      * @param color The color to use.
      * @param str   The text to wrap.
+     *
      * @return The HTML string.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String bgColor(Color color, String str) {
         return bgColor(hexColor(color), str);
     }
@@ -874,6 +915,7 @@ public class Report implements ReportEntry {
      *
      * @param hexColor The hex color string (e.g., "#RRGGBB").
      * @param str      The text to wrap.
+     *
      * @return The HTML string.
      */
     public String bgColor(String hexColor, String str) {
@@ -884,6 +926,7 @@ public class Report implements ReportEntry {
      * Wraps text in a bold tag.
      *
      * @param str The text to wrap.
+     *
      * @return The HTML string.
      */
     public static String bold(String str) {
@@ -895,6 +938,7 @@ public class Report implements ReportEntry {
      *
      * @param href The URL.
      * @param str  The link text.
+     *
      * @return The HTML string.
      */
     public String href(String href, String str) {

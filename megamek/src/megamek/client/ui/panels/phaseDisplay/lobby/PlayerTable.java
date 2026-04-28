@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,7 +33,6 @@
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
 import static megamek.client.ui.util.UIUtil.WARNING_SIGN;
-import static megamek.client.ui.util.UIUtil.alternateTableBGColor;
 import static megamek.client.ui.util.UIUtil.scaleForGUI;
 import static megamek.client.ui.util.UIUtil.uiGreen;
 import static megamek.client.ui.util.UIUtil.uiYellow;
@@ -51,7 +50,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -141,7 +139,6 @@ class PlayerTable extends JTable {
 
     public static class PlayerTableModel extends AbstractTableModel {
 
-        static final int COL_PLAYER = 0;
         static final int N_COL = 1;
 
         private final ArrayList<Player> players;
@@ -191,6 +188,7 @@ class PlayerTable extends JTable {
         public PlayerRenderer() {
             setLayout(new GridLayout(1, 1, 5, 0));
             setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+            setIconTextGap(10);
         }
 
         private void setImage(Image img) {
@@ -202,7 +200,14 @@ class PlayerTable extends JTable {
               boolean hasFocus, int row, int column) {
 
             Player player = (Player) value;
+            super.getTableCellRendererComponent(table, getPlayerDescription(player), isSelected, hasFocus, row, column);
+            Image camo = player.getCamouflage().getImage();
+            int size = scaleForGUI(PLAYER_TABLE_ROW_HEIGHT) / 2;
+            setImage(camo.getScaledInstance(-1, size, Image.SCALE_SMOOTH));
+            return this;
+        }
 
+        private StringBuilder getPlayerDescription(Player player) {
             StringBuilder result = new StringBuilder("<HTML><NOBR>");
             // First Line - Player Name
             if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())
@@ -305,39 +310,7 @@ class PlayerTable extends JTable {
                 result.append("\uD83D\uDD2E  GM");
                 result.append("</FONT>");
             }
-
-            setText(result.toString());
-
-            setIconTextGap(10);
-            Image camo = player.getCamouflage().getImage();
-            int size = scaleForGUI(PLAYER_TABLE_ROW_HEIGHT) / 2;
-            setImage(camo.getScaledInstance(-1, size, Image.SCALE_SMOOTH));
-
-            if (isSelected) {
-                setForeground(table.getSelectionForeground());
-                setBackground(table.getSelectionBackground());
-            } else {
-                setForeground(table.getForeground());
-                Color background = table.getBackground();
-                if (row % 2 != 0) {
-                    background = alternateTableBGColor();
-                }
-                setBackground(background);
-            }
-
-            if (hasFocus) {
-                if (!isSelected) {
-                    Color col = UIManager.getColor("Table.focusCellForeground");
-                    if (col != null) {
-                        setForeground(col);
-                    }
-                    col = UIManager.getColor("Table.focusCellBackground");
-                    if (col != null) {
-                        setBackground(col);
-                    }
-                }
-            }
-            return this;
+            return result;
         }
     }
 }

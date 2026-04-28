@@ -39,8 +39,8 @@ import javax.swing.JToggleButton;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.units.Entity;
 import megamek.common.annotations.Nullable;
+import megamek.common.units.Entity;
 
 /**
  * A modal dialog for choosing one or more Entities. Can show stats in brief or in detail.
@@ -111,6 +111,7 @@ public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
      *
      * @return chosen entities or empty list if none chosen
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static @Nullable List<Entity> showMultiChoiceDialog(JFrame frame, String title, String message,
           @Nullable List<Entity> targets) {
         EntityChoiceDialog dialog = new EntityChoiceDialog(frame, title, message, targets, true);

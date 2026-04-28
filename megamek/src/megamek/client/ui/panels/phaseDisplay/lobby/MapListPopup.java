@@ -57,16 +57,16 @@ class MapListPopup {
 
         ScalingPopup popup = new ScalingPopup();
         if (numButtons == 1) {
-            String name = mapShortName(boards.get(0));
+            String name = mapShortName(boards.getFirst());
             JMenuItem mi = menuItem("Set \"" + name + "\" as Board 0",
-                  MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + false,
+                  MLP_BOARD + ":" + 0 + ":" + boards.getFirst() + ":" + false,
                   true,
                   listener);
             popup.add(mi);
             mi.setEnabled(oneSelected);
             if (enableRotation) {
                 mi = menuItem("Set Rotated \"" + name + "\" as Board 0",
-                      MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + true,
+                      MLP_BOARD + ":" + 0 + ":" + boards.getFirst() + ":" + true,
                       true,
                       listener);
                 popup.add(mi);
@@ -97,7 +97,7 @@ class MapListPopup {
      */
     private static JMenu singleBoardMenu(boolean enabled, boolean rotated, ActionListener listener,
           int numB, List<String> boards) {
-        String name = mapShortName(boards.get(0));
+        String name = mapShortName(boards.getFirst());
 
         JMenu menu = new JMenu(!rotated ?
               "Set \"" + name + "\" as Board..." :
@@ -106,7 +106,7 @@ class MapListPopup {
         if (enabled) {
             for (int i = 0; i < numB; i++) {
                 menu.add(menuItem("Board " + (i + 1),
-                      MLP_BOARD + ":" + i + ":" + boards.get(0) + ":" + rotated,
+                      MLP_BOARD + ":" + i + ":" + boards.getFirst() + ":" + rotated,
                       true,
                       listener));
             }

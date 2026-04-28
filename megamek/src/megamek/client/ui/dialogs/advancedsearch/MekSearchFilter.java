@@ -317,7 +317,7 @@ public class MekSearchFilter {
                 // take the last seen operand, then the results of further
                 // parsing becomes a child of the current node
                 if (ft.op == BoolOp.AND) {
-                    ExpNode leaf = currNode.children.remove(currNode.children.size() - 1);
+                    ExpNode leaf = currNode.children.removeLast();
                     newNode.operation = BoolOp.AND;
                     newNode.children.add(leaf);
                     ExpNode sibling = createFTFromTokensRecursively(tokenIterator, newNode);

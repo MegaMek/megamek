@@ -371,6 +371,7 @@ public class ToHitData extends TargetRoll {
      *
      * @return the total EI reduction accumulated
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getEiReduction() {
         return eiReduction;
     }

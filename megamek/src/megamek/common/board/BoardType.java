@@ -99,10 +99,12 @@ public enum BoardType implements Serializable {
         return this == NEAR_SPACE;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isRadarMap() {
         return this == RADAR;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isCapitalRadarMap() {
         return this == CAPITAL_RADAR;
     }
@@ -128,6 +130,7 @@ public enum BoardType implements Serializable {
      *
      * @throws IllegalArgumentException When the given code has no corresponding MapType
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static Optional<BoardType> boardTypeForCode(final String code) {
         return Arrays.stream(values()).filter(t -> t.code.equals(code)).findAny();
     }

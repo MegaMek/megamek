@@ -844,7 +844,7 @@ public class EntityListFile {
         int indentLvl = 2;
         for (String killed : kills.keySet()) {
             output.write(indentStr(indentLvl) + '<' + MULParser.ELE_KILL + ' ' + MULParser.ATTR_KILLED + "=\"");
-            output.write(killed.replaceAll("\"", "&quot;"));
+            output.write(killed.replace("\"", "&quot;"));
             output.write("\" " + MULParser.ATTR_KILLER + "=\"");
             output.write(kills.get(killed));
             output.write("\"/>\n");
@@ -862,11 +862,13 @@ public class EntityListFile {
 
             // Start writing this entity to the file.
             output.write(indentStr(indentLvl) + '<' + MULParser.ELE_ENTITY + ' ' + MULParser.ATTR_CHASSIS + "=\"");
-            output.write(entity.getFullChassis().replaceAll("\"", "&quot;"));
+            output.write(entity.getFullChassis().replace("\"", "&quot;"));
             output.write("\" " + MULParser.ATTR_MODEL + "=\"");
-            output.write(entity.getModel().replaceAll("\"", "&quot;"));
+            output.write(entity.getModel().replace("\"", "&quot;"));
             output.write("\" " + MULParser.ATTR_TYPE + "=\"");
-            output.write((entity instanceof FighterSquadron) ? MULParser.VALUE_SQUADRON : entity.getMovementModeAsString());
+            output.write((entity instanceof FighterSquadron) ?
+                  MULParser.VALUE_SQUADRON :
+                  entity.getMovementModeAsString());
             output.write("\" " + MULParser.ATTR_COMMANDER + "=\"");
             output.write(String.valueOf(entity.isCommander()));
             output.write("\" " + MULParser.ATTR_OFFBOARD + "=\"");
@@ -1251,13 +1253,13 @@ public class EntityListFile {
             // Write the NC3 Data if needed
             if (entity.hasNavalC3() || entity.hasNovaCEWS()) {
                 logger.debug("[EntityListFile] Saving NC3 for entity {} ({}), hasNavalC3={}, hasNovaCEWS={}",
-                    entity.getId(), entity.getShortName(), entity.hasNavalC3(), entity.hasNovaCEWS());
+                      entity.getId(), entity.getShortName(), entity.hasNavalC3(), entity.hasNovaCEWS());
                 output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_NC3 + ">\n");
                 int linkCount = 0;
                 for (Entity NC3Entity : list) {
                     if ((NC3Entity.getC3UUIDAsString() != null) && NC3Entity.onSameC3NetworkAs(entity, true)) {
                         logger.debug("[EntityListFile]   Writing NC3LINK for entity {} UUID: {}",
-                            NC3Entity.getId(), NC3Entity.getC3UUIDAsString());
+                              NC3Entity.getId(), NC3Entity.getC3UUIDAsString());
                         output.write(indentStr(indentLvl + 1) +
                               '<' +
                               MULParser.ELE_NC3LINK +
@@ -1480,9 +1482,9 @@ public class EntityListFile {
      */
     private static void writePilotAttributes(Writer output, final Entity entity, final Crew crew, int pos)
           throws IOException {
-        output.write("\" " + MULParser.ATTR_NAME + "=\"" + crew.getName(pos).replaceAll("\"", "&quot;"));
+        output.write("\" " + MULParser.ATTR_NAME + "=\"" + crew.getName(pos).replace("\"", "&quot;"));
         output.write("\" " + MULParser.ATTR_NICK + "=\"");
-        output.write(crew.getNickname(pos).replaceAll("\"", "&quot;"));
+        output.write(crew.getNickname(pos).replace("\"", "&quot;"));
         output.write("\" " + MULParser.ATTR_GENDER + "=\"" + crew.getGender(pos).name());
         output.write("\" " + MULParser.ATTR_CLAN_PILOT + "=\"" + crew.isClanPilot(pos));
 

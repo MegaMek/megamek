@@ -201,6 +201,7 @@ public enum KeyCommandBind {
         this(command, repeatable, keyCode, 0, false);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     KeyCommandBind(String command, boolean repeatable, int keyCode, int modifier) {
         this(command, repeatable, keyCode, modifier, false);
     }

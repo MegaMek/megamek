@@ -241,6 +241,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
         return (double) currentStructure / fullStructure;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public double getHealthPercentage() {
         return (getArmorPercentage() + getStructurePercentage()) / 2.0;
     }
@@ -535,6 +536,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     /**
      * Resets the AS element's conversion report to an empty DummyCalculationReport.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void clearConversionReport() {
         conversionReport = new DummyCalculationReport();
     }

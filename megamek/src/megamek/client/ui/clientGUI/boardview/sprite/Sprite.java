@@ -40,6 +40,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
 
+import jakarta.annotation.Nonnull;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 
 /**
@@ -156,7 +157,7 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
      * Compares two sprites for purposes of draw ordering.
      */
     @Override
-    public int compareTo(Sprite sprite) {
+    public int compareTo(@Nonnull Sprite sprite) {
         if (equals(sprite)) {
             return 0;
         } else if (getSpritePriority() == sprite.getSpritePriority()) {

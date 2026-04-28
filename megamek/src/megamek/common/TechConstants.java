@@ -398,6 +398,7 @@ public class TechConstants {
         };
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static int getOppositeTechLevel(int level) {
         return switch (level) {
             case T_INTRO_BOX_SET, T_IS_TW_NON_BOX -> T_CLAN_TW;
@@ -417,6 +418,7 @@ public class TechConstants {
      * MiscType entries.
      *
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static int getGyroTechLevel(int gyroType, boolean isClan, int year) {
         switch (gyroType) {
             case Mek.GYRO_STANDARD:
@@ -486,6 +488,7 @@ public class TechConstants {
      * MiscType entries.
      *
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static int getCockpitTechLevel(int cockpitType, long entityType, boolean isClan, int year) {
         if ((entityType & Entity.ETYPE_MEK) != 0) {
             switch (cockpitType) {

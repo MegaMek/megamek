@@ -54,6 +54,7 @@ public final class ProtoMekBay extends UnitBay {
     /**
      * The default constructor is only for serialization.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private ProtoMekBay() {
         totalSpace = 0;
         currentSpace = 0;

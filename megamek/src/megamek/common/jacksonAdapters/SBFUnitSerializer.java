@@ -57,6 +57,7 @@ public class SBFUnitSerializer extends StdSerializer<SBFUnit> {
     static final String PV = "pv";
     static final String TMM = "tmm";
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SBFUnitSerializer() {
         this(null);
     }

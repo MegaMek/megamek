@@ -57,6 +57,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.phaseDisplay.AimedShotDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.util.KeyCommandBind;
@@ -64,6 +65,8 @@ import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.IndexedRadioButton;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
+import megamek.common.Hex;
+import megamek.common.HexTarget;
 import megamek.common.ToHitData;
 import megamek.common.actions.*;
 import megamek.common.board.Board;
@@ -73,6 +76,7 @@ import megamek.common.compute.ComputeArc;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -88,6 +92,7 @@ import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
 import megamek.common.units.Targetable;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
 public class PhysicalDisplay extends AttackPhaseDisplay {
@@ -101,6 +106,9 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     protected Entity[] visibleTargets = null;
     protected int lastTargetID = -1;
     protected boolean isStrafing = false;
+
+    /** When true, the next hex click selects the target for a woods clearing action. */
+    private boolean selectingClearWoodsHex = false;
 
     /**
      * This enumeration lists all the possible ActionCommands that can be carried out during the physical phase. Each
@@ -126,6 +134,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         PHYSICAL_VIBRO("vibro"),
         PHYSICAL_PHEROMONE("pheromone"),
         PHYSICAL_TOXIN("toxin"),
+        PHYSICAL_CLEAR_WOODS("clearWoods"),
         PHYSICAL_MORE("more");
 
         final String cmd;
@@ -162,8 +171,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         public String getHotKeyDesc() {
             return switch (this) {
                 case PHYSICAL_NEXT ->
-                    "<BR>&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT)
-                    + "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+                      "<BR>&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT)
+                            + "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
                 case PHYSICAL_PUNCH -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUNCH);
                 case PHYSICAL_KICK -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_KICK);
                 case PHYSICAL_PUSH -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUSH);
@@ -478,6 +487,37 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if ((entity instanceof Mek) && !entity.isProne() && entity.hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER)) {
             setDodgeEnabled(true);
         }
+        // Enable clear woods button if entity has a working saw and is near woods in arc
+        boolean hasSaw = WoodsClearingAttackAction.hasWorkingSaw(entity);
+        logger.debug("Clear woods check for {}: hasSaw={}, prone={}, immobile={}, position={}",
+              entity.getDisplayName(), hasSaw, entity.isProne(), entity.isImmobile(), entity.getPosition());
+        if (hasSaw && !entity.isProne() && !entity.isImmobile()) {
+            boolean nearWoods = false;
+            // Own hex is always in arc
+            Hex ownHex = game.getBoard(entity.getBoardId()).getHex(entity.getPosition());
+            if (ownHex != null && (ownHex.containsTerrain(Terrains.WOODS) || ownHex.containsTerrain(Terrains.JUNGLE))) {
+                nearWoods = true;
+                logger.debug("  Entity's own hex has woods/jungle");
+            }
+            // Adjacent hexes must be in the saw's arc
+            if (!nearWoods) {
+                for (int dir = 0; dir < 6; dir++) {
+                    Coords adj = entity.getPosition().translated(dir);
+                    Hex adjHex = game.getBoard(entity.getBoardId()).getHex(adj);
+                    if (adjHex != null && (adjHex.containsTerrain(Terrains.WOODS)
+                          || adjHex.containsTerrain(Terrains.JUNGLE))
+                          && WoodsClearingAttackAction.isInSawArc(entity, adj)) {
+                        nearWoods = true;
+                        logger.debug("  Found woods/jungle in arc at direction {} coords {}", dir, adj);
+                        break;
+                    }
+                }
+            }
+            logger.debug("  nearWoods={}, enabling clear woods button: {}", nearWoods, nearWoods);
+            setClearWoodsEnabled(nearWoods);
+        } else if (hasSaw) {
+            logger.debug("  Has saw but prone or immobile, not enabling clear woods");
+        }
         updateDonePanel();
         cacheVisibleTargets();
     }
@@ -553,6 +593,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         setPheromoneEnabled(false);
         setToxinEnabled(false);
         setExplosivesEnabled(false);
+        setClearWoodsEnabled(false);
+        selectingClearWoodsHex = false;
         butDone.setEnabled(false);
         setNextEnabled(false);
     }
@@ -663,7 +705,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             if ((en instanceof Mek)
                   && (target instanceof Entity)
                   && (game.getOptions()
-                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES) || game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))
+                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES) || game.getOptions()
+                  .booleanOption(OptionsConstants.PLAYTEST_3))
                   && (leftArm.getValue() != TargetRoll.IMPOSSIBLE)
                   && ((Mek) currentEntity()).hasRetractedBlade(Mek.LOC_LEFT_ARM)) {
                 leftBladeExtend = clientgui.doYesNoDialog(
@@ -675,7 +718,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                   && (target instanceof Entity)
                   && (rightArm.getValue() != TargetRoll.IMPOSSIBLE)
                   && (game.getOptions()
-                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES) || game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))
+                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES) || game.getOptions()
+                  .booleanOption(OptionsConstants.PLAYTEST_3))
                   && ((Mek) en).hasRetractedBlade(Mek.LOC_RIGHT_ARM)) {
                 rightBladeExtend = clientgui.doYesNoDialog(
                       Messages.getString("PhysicalDisplay.ExtendBladeDialog" + ".title"),
@@ -964,7 +1008,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             message = Messages.getString("PhysicalDisplay.CounterGrappleDialog.message",
                   target.getDisplayName(),
                   toHit.getValueAsString(),
-                  Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+                  Compute.oddsAbove(toHit.getValue(),
+                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
                   toHit.getDesc());
         }
 
@@ -1094,7 +1139,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             int d_left = JumpJetAttackAction.getDamageFor(currentEntity(), JumpJetAttackAction.LEFT);
             int d_right = JumpJetAttackAction.getDamageFor(currentEntity(), JumpJetAttackAction.RIGHT);
             if ((d_left *
-                  Compute.oddsAbove(left.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))) >
+                  Compute.oddsAbove(left.getValue(),
+                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))) >
                   (d_right *
                         Compute.oddsAbove(right.getValue(),
                               currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)))) {
@@ -1129,7 +1175,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     private MiscMounted chooseClub() {
         java.util.List<MiscMounted> clubs = currentEntity().getClubs();
         if (clubs.size() == 1) {
-            return clubs.get(0);
+            return clubs.getFirst();
         } else if (clubs.size() > 1) {
             String[] names = new String[clubs.size()];
             for (int loop = 0; loop < names.length; loop++) {
@@ -1286,6 +1332,60 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
     }
 
+    /**
+     * Enters hex selection mode for woods clearing. The player must click a wooded hex on the map to select the
+     * clearing target.
+     */
+    private void clearWoods() {
+        if (currentEntity() == null || !WoodsClearingAttackAction.hasWorkingSaw(currentEntity())) {
+            return;
+        }
+        selectingClearWoodsHex = true;
+        setStatusBarText(Messages.getString("PhysicalDisplay.SelectClearWoodsHex"));
+    }
+
+    /**
+     * Completes the woods clearing action after the player has selected a target hex.
+     *
+     * @param targetCoords the hex to clear
+     * @param boardId      the board ID of the target hex
+     */
+    private void completeClearWoods(Coords targetCoords, int boardId) {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            return;
+        }
+
+        // Validate the selected hex
+        ToHitData validation = WoodsClearingAttackAction.canClearWoods(game, entity, targetCoords, entity.getBoardId());
+        if (validation != null) {
+            setStatusBarText(validation.getDesc());
+            return;
+        }
+
+        // Find the saw equipment ID
+        int sawId = -1;
+        for (MiscMounted misc : entity.getMisc()) {
+            if (misc.isReady() && misc.getType().hasFlag(MiscType.F_CLUB)
+                  && (misc.getType().hasFlag(MiscTypeFlag.S_CHAINSAW)
+                  || misc.getType().hasFlag(MiscTypeFlag.S_DUAL_SAW))) {
+                sawId = entity.getEquipmentNum(misc);
+                break;
+            }
+        }
+
+        if (sawId < 0) {
+            return;
+        }
+
+        HexTarget hexTarget = new HexTarget(targetCoords, boardId, Targetable.TYPE_HEX_CLEAR);
+
+        disableButtons();
+        addAttack(new WoodsClearingAttackAction(currentEntity, hexTarget.getTargetType(),
+              hexTarget.getId(), sawId, targetCoords, boardId));
+        ready();
+    }
+
     private void explosives() {
         ToHitData explosives = LayExplosivesAttackAction.toHit(game, currentEntity, target);
         String title = Messages.getString("PhysicalDisplay.LayExplosivesAttackDialog.title",
@@ -1326,8 +1426,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
         // If the entity can't brush off, display an error message and abort.
         if (!canHitLeft && !canHitRight) {
-            clientgui.doAlertDialog(Messages.getString("PhysicalDisplay.AlertDialog.title"),
-                  Messages.getString("PhysicalDisplay.AlertDialog.message"));
+            clientgui.addToast(ToastLevel.WARNING,
+                  Messages.getString("PhysicalDisplay.AlertDialog.message"), currentEntity());
             return;
         }
 
@@ -1356,7 +1456,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             damageLeft = BrushOffAttackAction.getDamageFor(currentEntity(), BrushOffAttackAction.LEFT);
             left = Messages.getString("PhysicalDisplay.LAHit",
                   toHitLeft.getValueAsString(),
-                  Compute.oddsAbove(toHitLeft.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+                  Compute.oddsAbove(toHitLeft.getValue(),
+                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
                   damageLeft);
         }
 
@@ -1366,7 +1467,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             damageRight = BrushOffAttackAction.getDamageFor(currentEntity(), BrushOffAttackAction.RIGHT);
             right = Messages.getString("PhysicalDisplay.RAHit",
                   toHitRight.getValueAsString(),
-                  Compute.oddsAbove(toHitRight.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+                  Compute.oddsAbove(toHitRight.getValue(),
+                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
                   damageRight);
         }
 
@@ -1737,6 +1839,13 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         if (isMyTurn() && (event.getCoords() != null) && (currentEntity() != null)) {
+            // If we're selecting a hex for woods clearing, handle that instead of normal targeting
+            if (selectingClearWoodsHex) {
+                selectingClearWoodsHex = false;
+                completeClearWoods(event.getCoords(), event.getBoardId());
+                return;
+            }
+
             Targetable target = chooseTarget(event);
             target(target);
         }
@@ -1786,7 +1895,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
         if (targets.size() == 1) {
             // Return the single choice
-            return targets.get(0);
+            return targets.getFirst();
 
         } else if (targets.size() > 1) {
             // If we have multiple choices, display a selection dialog.
@@ -1918,6 +2027,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             proto();
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_EXPLOSIVES.getCmd())) {
             explosives();
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_CLEAR_WOODS.getCmd())) {
+            clearWoods();
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_VIBRO.getCmd())) {
             vibroclawAttack();
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_PHEROMONE.getCmd())) {
@@ -2035,6 +2146,10 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         // clientGUI.getMenuBar().setExplosivesEnabled(enabled);
     }
 
+    public void setClearWoodsEnabled(boolean enabled) {
+        buttons.get(PhysicalCommand.PHYSICAL_CLEAR_WOODS).setEnabled(enabled);
+    }
+
     public void setNextEnabled(boolean enabled) {
         buttons.get(PhysicalCommand.PHYSICAL_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_NEXT.getCmd(), enabled);
@@ -2083,10 +2198,12 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             }
 
             if (canAim) {
-                final int attackerElevation = currentEntity().getElevation() + game.getHexOf(currentEntity()).getLevel();
+                final int attackerElevation = currentEntity().getElevation() + game.getHexOf(currentEntity())
+                      .getLevel();
                 final int targetElevation = target.getElevation() + game.getHexOf(target).getLevel();
 
-                if ((target instanceof Mek) && (currentEntity() instanceof Mek) && (attackerElevation == targetElevation)) {
+                if ((target instanceof Mek) && (currentEntity() instanceof Mek) && (attackerElevation
+                      == targetElevation)) {
                     String[] options = { "punch", "kick" };
                     boolean[] enabled = { true, true };
 

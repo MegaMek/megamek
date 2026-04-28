@@ -57,7 +57,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
@@ -811,7 +810,7 @@ public class SBFUnitConverter {
             calculation += "(" + String.join(", ", modifiers) + ")";
         }
         calculation += ", rn, [0, 7]";
-        skill = MathUtility.clamp(skill, 0, 7);
+        skill = Math.clamp(skill, 0, 7);
         report.addLine("Skill:", calculation, skill + "");
         unit.setSkill(skill);
     }

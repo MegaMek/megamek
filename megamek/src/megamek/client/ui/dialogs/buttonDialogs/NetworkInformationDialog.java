@@ -65,10 +65,10 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
     private JLabel localIP = new JLabel(Messages.getString("NetworkInformation.blankIP"));
     private final JLabel lblRemoteIP = new JLabel(Messages.getString("NetworkInformation.remoteIP"));
     private JLabel remoteIP = new JLabel(Messages.getString("NetworkInformation.blankIP"));
-    ;
+
     private final JLabel lblConnectedIP = new JLabel(Messages.getString("NetworkInformation.connectedIP"));
     private JLabel connectedIP = new JLabel(Messages.getString("NetworkInformation.blankIP"));
-    ;
+
     private final JButton butShowLocalIPs = new JButton(" " + Messages.getString("NetworkInformation.buttonShowIPs"));
     private final JButton butShowRemoteIPs = new JButton(" " + Messages.getString("NetworkInformation.buttonShowIPs"));
     private final JButton butShowHostIPs = new JButton(" " + Messages.getString("NetworkInformation.buttonShowIPs"));
@@ -98,25 +98,13 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == butShowLocalIPs) {
-            if (localIP.isVisible()) {
-                localIP.setVisible(false);
-            } else {
-                localIP.setVisible(true);
-            }
+            localIP.setVisible(!localIP.isVisible());
         }
         if (e.getSource() == butShowRemoteIPs) {
-            if (remoteIP.isVisible()) {
-                remoteIP.setVisible(false);
-            } else {
-                remoteIP.setVisible(true);
-            }
+            remoteIP.setVisible(!remoteIP.isVisible());
         }
         if (e.getSource() == butShowHostIPs) {
-            if (connectedIP.isVisible()) {
-                connectedIP.setVisible(false);
-            } else {
-                connectedIP.setVisible(true);
-            }
+            connectedIP.setVisible(!connectedIP.isVisible());
         }
     }
 
@@ -181,7 +169,7 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
                 thisIpAddress = thisIp.getHostAddress();
             } catch (Exception e) {
             }
-            if (thisIpAddress.length() == 0 || thisIpAddress == null) {
+            if (thisIpAddress.isEmpty()) {
                 thisIpAddress = "Could not obtain local IP address";
             }
         } else {
@@ -192,7 +180,7 @@ public class NetworkInformationDialog extends AbstractButtonDialog implements Ac
                 in.close();
             } catch (Exception e) {
             }
-            if (thisIpAddress.length() == 0 || thisIpAddress == null) {
+            if (thisIpAddress.isEmpty()) {
                 thisIpAddress = "Could not obtain public IP address";
             }
         }

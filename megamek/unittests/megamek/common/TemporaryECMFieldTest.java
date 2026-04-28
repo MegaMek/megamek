@@ -34,6 +34,7 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.board.Coords;
@@ -132,6 +133,6 @@ class TemporaryECMFieldTest {
         TemporaryECMField field3 = TemporaryECMField.fromEMPMine(new Coords(6, 6), 3, 1);
 
         assertEquals(field1, field2);
-        assertFalse(field1.equals(field3));
+        assertNotEquals(field1, field3);
     }
 }

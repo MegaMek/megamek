@@ -401,6 +401,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         txt.append(HexTooltip.getTerrainTip(mhex, boardId, game));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex) {
         // LEGACY replace with board ID version
         appendBuildingsTooltip(txt, mhex, 0);

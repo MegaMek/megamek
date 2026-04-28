@@ -1326,11 +1326,11 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
                             getNumUnits()));
                 if (getNumUnits() >
                       getIntegerOption("numOtherUnits")) {
-                    params.add(params.get(0).copy());
+                    params.add(params.getFirst().copy());
                     numUnits.add(getNumUnits() -
                           getIntegerOption("numOtherUnits"));
                 }
-                params.get(0).getRoles().add(MissionRole.MECHANIZED_BA);
+                params.getFirst().getRoles().add(MissionRole.MECHANIZED_BA);
                 // BA do not count for formation rules; add as a separate formation
             }
         }

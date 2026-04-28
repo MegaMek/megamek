@@ -246,7 +246,7 @@ public class InfantryCombatHelper {
         }
 
         // Check if on same team as attackers
-        Entity firstAttacker = attackers.get(0);
+        Entity firstAttacker = attackers.getFirst();
         if (!reinforcement.getOwner().isEnemyOf(firstAttacker.getOwner())) {
             return false;
         }
@@ -385,6 +385,7 @@ public class InfantryCombatHelper {
      *
      * @return Best reinforcement unit, or null if none suitable
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static Entity findBestReinforcement(List<Entity> candidates, Entity target) {
         Entity best = null;
         double bestScore = Double.NEGATIVE_INFINITY;

@@ -80,6 +80,7 @@ public class SBFRecordSheetBook implements Printable {
      *
      * @param formations The formations to print sheets for.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SBFRecordSheetBook(Collection<SBFFormation> formations) {
         this(formations, null, null);
     }

@@ -59,6 +59,7 @@ public class MessageDeserializer extends StdDeserializer<MessageTriggeredActiveE
     private static final String TRIGGER = "trigger";
     private static final String IMAGE = "image";
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public MessageDeserializer() {
         this(null);
     }

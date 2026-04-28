@@ -172,7 +172,7 @@ public class MarinePointsScoreCalculator {
         boolean areMarines = (inf.getSpecializations() & Infantry.MARINES) != 0;
 
         // Base trooper value
-        int baseTrooperValue = areMarines ? 1 : 1;  // Marines and non-marines both 1 in basic table
+        int baseTrooperValue = 1;  // Marines and non-marines both 1 in basic table
 
         // Get active strength
         int activeTroopers = inf.getShootingStrength();

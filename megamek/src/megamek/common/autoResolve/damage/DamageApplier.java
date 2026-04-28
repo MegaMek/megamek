@@ -181,7 +181,7 @@ public interface DamageApplier<E extends Entity> {
             }
         }
         Collections.shuffle(validLocations);
-        return validLocations.isEmpty() ? -1 : validLocations.get(0);
+        return validLocations.isEmpty() ? -1 : validLocations.getFirst();
     }
 
     /**

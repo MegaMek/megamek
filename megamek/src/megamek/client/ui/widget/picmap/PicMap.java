@@ -124,18 +124,19 @@ public abstract class PicMap extends JComponent {
      * bottom layer. Within same layer objects are drawing by order they added to components.
      */
     public void addElement(PMElement e) {
-        if (e instanceof PMLabel) {
-            labels.addArea(e);
-        } else if (e instanceof PMHotArea) {
-            hotAreas.addArea(e);
-            areasCount++;
-        } else if (e instanceof PMAreasGroup ag) {
-            Enumeration<PMElement> iter = ag.elements();
-            while (iter.hasMoreElements()) {
-                addElement(iter.nextElement());
+        switch (e) {
+            case PMLabel ignored -> labels.addArea(e);
+            case PMHotArea ignored -> {
+                hotAreas.addArea(e);
+                areasCount++;
             }
-        } else {
-            otherAreas.addArea(e);
+            case PMAreasGroup ag -> {
+                Enumeration<PMElement> iter = ag.elements();
+                while (iter.hasMoreElements()) {
+                    addElement(iter.nextElement());
+                }
+            }
+            case null, default -> otherAreas.addArea(e);
         }
 
     }
@@ -310,6 +311,7 @@ public abstract class PicMap extends JComponent {
      * Background opaque to "false" does not prevent draw of BackgroundDrawers in PicMap component. Notes: It is
      * required only for Java1.1. Under Java 1.3 and up offscreen will be transparent by default.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setBackgroundOpaque(boolean v) {
         bgIsOpaque = v;
     }

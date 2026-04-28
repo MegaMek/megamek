@@ -275,9 +275,9 @@ public final class UIUtil {
             result.add(currLine.toString());
         } else if (sepAtEnd) {
             // Remove the last unnecessary sep if there were no more Strings
-            String lastLine = result.get(result.size() - 1);
+            String lastLine = result.getLast();
             String newLine = lastLine.substring(0, lastLine.length() - sep.length());
-            result.remove(result.size() - 1);
+            result.removeLast();
             result.add(newLine);
         }
         return result;

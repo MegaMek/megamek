@@ -549,7 +549,7 @@ public class WeaponFireInfo {
                   .contains(weaponType.getAmmoType())) {
                 boolean artillery = (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY);
                 int rs = weaponType.getRackSize();
-                int damage = Compute.calculateClusterHitTableAmount(7, rs);
+                double damage = Compute.calculateClusterHitTableAmount(7, rs);
 
                 // Account for Incendiary-modded munitions when firing on infantry
                 if ((target != null && target.isInfantry()) &&
@@ -808,7 +808,9 @@ public class WeaponFireInfo {
                     // highest damage first.
                     for (final Entity currentVictim : game.getEntitiesVector(coords)) {
                         // Skip airborne, already-blasted, and hidden entities in calcs
-                        if (currentVictim.isAirborne() || hitVictims.contains(currentVictim) || currentVictim.isHidden()) {
+                        if (currentVictim.isAirborne()
+                              || hitVictims.contains(currentVictim)
+                              || currentVictim.isHidden()) {
                             continue;
                         }
 

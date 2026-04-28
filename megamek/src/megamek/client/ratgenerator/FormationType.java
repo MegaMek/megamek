@@ -444,10 +444,10 @@ public class FormationType {
               useGrouping == null &&
               networkMask == ModelRecord.NETWORK_NONE) {
             List<MekSummary> retVal = new ArrayList<>();
-            retVal.addAll(tables.get(0)
-                  .generateUnits(otherCriteria.get(0).getMinimum(numUnits.get(0)),
-                        ms -> mainCriteria.test(ms) && otherCriteria.get(0).criterion.test(ms)));
-            if (retVal.size() < otherCriteria.get(0).getMinimum(numUnits.get(0))) {
+            retVal.addAll(tables.getFirst()
+                  .generateUnits(otherCriteria.getFirst().getMinimum(numUnits.getFirst()),
+                        ms -> mainCriteria.test(ms) && otherCriteria.getFirst().criterion.test(ms)));
+            if (retVal.size() < otherCriteria.getFirst().getMinimum(numUnits.getFirst())) {
                 List<MekSummary> onRole = tryIdealRole(params, numUnits);
                 if (onRole != null) {
                     return onRole;
@@ -455,9 +455,9 @@ public class FormationType {
                     return new ArrayList<>();
                 }
             }
-            if (retVal.size() >= otherCriteria.get(0).getMinimum(numUnits.get(0)) || bestEffort) {
-                retVal.addAll(tables.get(0)
-                      .generateUnits(numUnits.get(0) - retVal.size(), ms -> mainCriteria.test(ms)));
+            if (retVal.size() >= otherCriteria.getFirst().getMinimum(numUnits.getFirst()) || bestEffort) {
+                retVal.addAll(tables.getFirst()
+                      .generateUnits(numUnits.getFirst() - retVal.size(), ms -> mainCriteria.test(ms)));
             }
             return retVal;
         }
@@ -1502,7 +1502,7 @@ public class FormationType {
                           eq instanceof SRMWeapon ||
                           eq instanceof LRMWeapon),
               "AC, SRM, or LRM"));
-        ft.reportMetrics.put("AC/SRM/LRM", ms -> ft.otherCriteria.get(0).criterion.test(ms));
+        ft.reportMetrics.put("AC/SRM/LRM", ms -> ft.otherCriteria.getFirst().criterion.test(ms));
         allFormationTypes.put(ft.name, ft);
     }
 
@@ -1726,7 +1726,7 @@ public class FormationType {
                     .map(EquipmentType::get)
                     .anyMatch(eq -> eq instanceof ArtilleryWeapon),
               "Artillery"));
-        ft.reportMetrics.put("Artillery", ms -> ft.otherCriteria.get(0).criterion.test(ms));
+        ft.reportMetrics.put("Artillery", ms -> ft.otherCriteria.getFirst().criterion.test(ms));
         allFormationTypes.put(ft.name, ft);
     }
 
@@ -1751,7 +1751,7 @@ public class FormationType {
                     .map(EquipmentType::get)
                     .anyMatch(eq -> (eq instanceof WeaponType) && ((WeaponType) eq).hasIndirectFire()),
               "Indirect fire weapon"));
-        ft.reportMetrics.put("Indirect", ms -> ft.otherCriteria.get(0).criterion.test(ms));
+        ft.reportMetrics.put("Indirect", ms -> ft.otherCriteria.getFirst().criterion.test(ms));
         allFormationTypes.put(ft.name, ft);
     }
 
@@ -1960,7 +1960,7 @@ public class FormationType {
               ms -> true,
               (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),
               "Same chassis");
-        ft.reportMetrics.put("Probe/ECM/TAG", ms -> ft.otherCriteria.get(0).criterion.test(ms));
+        ft.reportMetrics.put("Probe/ECM/TAG", ms -> ft.otherCriteria.getFirst().criterion.test(ms));
         allFormationTypes.put(ft.name, ft);
     }
 

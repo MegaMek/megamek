@@ -83,10 +83,12 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.RulerDialog;
+import megamek.client.ui.clientGUI.boardview.overlay.BoardToastOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.ChatterBoxOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.KeyBindingsOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.OffBoardTargetOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.PlanetaryConditionsOverlay;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.clientGUI.boardview.overlay.TurnDetailsOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.UnitOverviewOverlay;
 import megamek.client.ui.clientGUI.boardview.spriteHandler.*;
@@ -238,6 +240,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String FILE_UNITS_REINFORCE = "fileUnitsReinforce";
     public static final String FILE_UNITS_REINFORCE_RAT = "fileUnitsReinforceRAT";
     public static final String FILE_REFRESH_CACHE = "fileRefreshCache";
+    public static final String FILE_REBUILD_CACHE = "fileRebuildCache";
     public static final String FILE_UNITS_BROWSE = "fileUnitsBrowse";
     public static final String FILE_UNITS_OPEN = "fileUnitsOpen";
     public static final String FILE_UNITS_SAVE = "fileUnitsSave";
@@ -350,6 +353,7 @@ public class ClientGUI extends AbstractClientGUI
     private FleeZoneSpriteHandler fleeZoneSpriteHandler;
     private SensorRangeSpriteHandler sensorRangeSpriteHandler;
     private CollapseWarningSpriteHandler collapseWarningSpriteHandler;
+    private SawClearingSpriteHandler sawClearingSpriteHandler;
     private GroundObjectSpriteHandler groundObjectSpriteHandler;
     private FiringSolutionSpriteHandler firingSolutionSpriteHandler;
     private FiringArcSpriteHandler firingArcSpriteHandler;
@@ -371,6 +375,7 @@ public class ClientGUI extends AbstractClientGUI
     protected JComponent curPanel;
     public ChatLounge chatlounge;
     private OffBoardTargetOverlay offBoardOverlay;
+    private BoardToastOverlay toastOverlay;
 
     // some dialogs...
     private GameOptionsDialog gameOptionsDialog;
@@ -534,6 +539,37 @@ public class ClientGUI extends AbstractClientGUI
         return (BoardView) boardViews.get(0);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
+    public BoardToastOverlay getToastOverlay() {
+        return toastOverlay;
+    }
+
+    /**
+     * Shows a toast notification on the board view. Safe to call even when the toast overlay has not been initialized
+     * yet (e.g., during the lobby phase).
+     *
+     * @param level the severity level determining color and default duration
+     * @param text  the message text to display
+     */
+    public void addToast(ToastLevel level, String text) {
+        if (toastOverlay != null) {
+            toastOverlay.show(level, text);
+        }
+    }
+
+    /**
+     * Shows a toast notification with the given entity's sprite icon on the board view.
+     *
+     * @param level  the severity level determining color and default duration
+     * @param text   the message text to display
+     * @param entity the entity whose icon to show, or null for text-only
+     */
+    public void addToast(ToastLevel level, String text, @Nullable Entity entity) {
+        if (toastOverlay != null) {
+            toastOverlay.show(level, text, entity);
+        }
+    }
+
     @Override
     public UnitDisplayPanel getUnitDisplay() {
         return unitDisplayPanel;
@@ -664,6 +700,7 @@ public class ClientGUI extends AbstractClientGUI
         FlareSpritesHandler flareSpritesHandler = new FlareSpritesHandler(this, client.getGame());
         sensorRangeSpriteHandler = new SensorRangeSpriteHandler(this, client.getGame());
         collapseWarningSpriteHandler = new CollapseWarningSpriteHandler(this);
+        sawClearingSpriteHandler = new SawClearingSpriteHandler(this, client.getGame());
         groundObjectSpriteHandler = new GroundObjectSpriteHandler(this, client.getGame());
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(this, client);
         firingArcSpriteHandler = new FiringArcSpriteHandler(this);
@@ -674,6 +711,7 @@ public class ClientGUI extends AbstractClientGUI
               sensorRangeSpriteHandler,
               flareSpritesHandler,
               collapseWarningSpriteHandler,
+              sawClearingSpriteHandler,
               groundObjectSpriteHandler,
               firingSolutionSpriteHandler,
               firingArcSpriteHandler,
@@ -747,8 +785,9 @@ public class ClientGUI extends AbstractClientGUI
         getBotCommandsDialog().add(new BotCommandsPanel(getClient(), audioService, null));
 
         client.changePhase(GamePhase.UNKNOWN);
-        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
-        if (!MekSummaryCache.getInstance().isInitialized()) {
+        MekSummaryCache mekSummaryCache = MekSummaryCache.getInstance();
+        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame, mekSummaryCache);
+        if (!mekSummaryCache.isInitialized()) {
             unitLoadingDialog.setVisible(true);
         }
         mekSelectorDialog = new MegaMekUnitSelectorDialog(this, unitLoadingDialog);
@@ -768,6 +807,22 @@ public class ClientGUI extends AbstractClientGUI
      */
     private void showAbout() {
         new CommonAboutDialog(frame).setVisible(true);
+    }
+
+    private void refreshUnitCache() {
+        MekSummaryCache mekSummaryCache = MekSummaryCache.getInstance();
+        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame, mekSummaryCache,
+              Messages.getString("CommonMenuBar.fileUnitsRefreshUnitCache"), !mekSummaryCache.isLoading());
+        MekSummaryCache.refreshUnitData(false);
+        unitLoadingDialog.setVisible(true);
+    }
+
+    private void rebuildUnitCache() {
+        MekSummaryCache mekSummaryCache = MekSummaryCache.getInstance();
+        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame, mekSummaryCache,
+              Messages.getString("CommonMenuBar.fileUnitsRebuildUnitCache"), !mekSummaryCache.isLoading());
+        MekSummaryCache.rebuildUnitData(false);
+        unitLoadingDialog.setVisible(true);
     }
 
     /**
@@ -971,7 +1026,10 @@ public class ClientGUI extends AbstractClientGUI
             gameOptionsDialog.setBounds(0, 0, gameOptionsDialog.getWidth(), gameOptionsDialog.getHeight());
         }
         if (networkInformationDialog != null) {
-            networkInformationDialog.setBounds(0, 0, networkInformationDialog.getWidth(), networkInformationDialog.getHeight());
+            networkInformationDialog.setBounds(0,
+                  0,
+                  networkInformationDialog.getWidth(),
+                  networkInformationDialog.getHeight());
         }
         if (commonSettingsDialog != null) {
             commonSettingsDialog.setBounds(0, 0, commonSettingsDialog.getWidth(), commonSettingsDialog.getHeight());
@@ -1066,16 +1124,19 @@ public class ClientGUI extends AbstractClientGUI
             case FILE_UNITS_REINFORCE_RAT:
                 ignoreHotKeys = true;
                 if (client.getLocalPlayer().getTeam() == Player.TEAM_UNASSIGNED) {
-                    doAlertDialog(Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage"),
-                          Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceTitle"),
-                          JOptionPane.ERROR_MESSAGE);
+                    addToast(ToastLevel.ERROR,
+                          Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage"));
                     return;
                 }
                 getRandomArmyDialog().setVisible(true);
                 ignoreHotKeys = false;
                 break;
             case FILE_REFRESH_CACHE:
-                MekSummaryCache.refreshUnitData(false);
+                refreshUnitCache();
+                new Thread(mekSelectorDialog, Messages.getString("ClientGUI.mekSelectorDialog")).start();
+                break;
+            case FILE_REBUILD_CACHE:
+                rebuildUnitCache();
                 new Thread(mekSelectorDialog, Messages.getString("ClientGUI.mekSelectorDialog")).start();
                 break;
             case VIEW_CLIENT_SETTINGS:
@@ -1367,7 +1428,7 @@ public class ClientGUI extends AbstractClientGUI
         }
         return gameOptionsDialog;
     }
-    
+
     public NetworkInformationDialog getNetworkInformationDialog() {
         if (networkInformationDialog == null) {
             networkInformationDialog = new NetworkInformationDialog(this);
@@ -1908,7 +1969,7 @@ public class ClientGUI extends AbstractClientGUI
               != null)) {
             List<Entity> es = getClient().getGame().getEntitiesVector();
             if (!es.isEmpty()) {
-                getUnitDisplay().displayEntity(es.get(0));
+                getUnitDisplay().displayEntity(es.getFirst());
             }
         }
 
@@ -2221,6 +2282,7 @@ public class ClientGUI extends AbstractClientGUI
      *       to the player, and is only being returned so the calling function can see the answer to the question and
      *       the state of the "Show again?" question.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ConfirmDialog doWarnNoBotherDialog(String title, String question) {
         ConfirmDialog confirm = new ConfirmDialog(frame, title, question, true);
         confirm.setVisible(true);
@@ -2261,9 +2323,8 @@ public class ClientGUI extends AbstractClientGUI
             boolean addedUnits = false;
 
             if (reinforce && (player.getTeam() == Player.TEAM_UNASSIGNED)) {
-                doAlertDialog(Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage"),
-                      Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceTitle"),
-                      JOptionPane.ERROR_MESSAGE);
+                addToast(ToastLevel.ERROR,
+                      Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage"));
                 return;
             }
             // Build the "load unit" dialog, if necessary.
@@ -2609,8 +2670,8 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Shows the Ruler/LOS dialog. This consolidates the old LOSDialog functionality into the RulerDialog which
-     * provides distance, to-hit modifiers, and an elevation cross-section diagram.
+     * Shows the Ruler/LOS dialog. This consolidates the old LOSDialog functionality into the RulerDialog which provides
+     * distance, to-hit modifiers, and an elevation cross-section diagram.
      */
     private void showLOSSettingDialog() {
         if (ruler != null) {
@@ -2708,6 +2769,8 @@ public class ClientGUI extends AbstractClientGUI
                     boardView.addOverlay(new KeyBindingsOverlay(boardView));
                     boardView.addOverlay(new PlanetaryConditionsOverlay(boardView));
                     boardView.addOverlay(new TurnDetailsOverlay(boardView));
+                    toastOverlay = new BoardToastOverlay(boardView, ClientGUI.this);
+                    boardView.addOverlay(toastOverlay);
                     boardView.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), ClientGUI.this, boardView));
                     boardViewsContainer.updateMapTabs();
                     ruler = new RulerDialog(frame, boardView, client.getGame());
@@ -2827,12 +2890,14 @@ public class ClientGUI extends AbstractClientGUI
                 reportDisplayResetRerollInitiative();
 
                 if (!(getClient() instanceof BotClient)) {
-                    doAlertDialog(Messages.getString("ClientGUI.dialogTacticalGeniusReport"), e.getReport());
+                    addToast(ToastLevel.INFO,
+                          Messages.getString("ClientGUI.dialogTacticalGeniusReport") + ": " + e.getReport());
                 }
             } else {
                 // Continued movement after getting up
                 if (!(getClient() instanceof BotClient)) {
-                    doAlertDialog(Messages.getString("ClientGUI.dialogMovementReport"), e.getReport());
+                    addToast(ToastLevel.INFO,
+                          Messages.getString("ClientGUI.dialogMovementReport") + ": " + e.getReport());
                 }
             }
         }
@@ -3002,7 +3067,7 @@ public class ClientGUI extends AbstractClientGUI
                         }
                         amsOptions.add(waaMsg);
                     }
-                    
+
                     // Updated AMS selection code for dealing with Multi_AMS, Playtest3 and standard selection
                     JList amsList = new JList(amsOptions.toArray());
                     JScrollPane amsScrollPane = new JScrollPane(amsList);
@@ -3014,7 +3079,7 @@ public class ClientGUI extends AbstractClientGUI
                         amsList.setSelectionModel(new AmsAssignGUI(amsList, 1));
                     }
 
-                    int amsResult = JOptionPane.showConfirmDialog(frame, 
+                    int amsResult = JOptionPane.showConfirmDialog(frame,
                           amsScrollPane,
                           Messages.getString("CFRAMSAssign.Message", entity.getDisplayName()),
                           JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE
@@ -3022,17 +3087,17 @@ public class ClientGUI extends AbstractClientGUI
 
                     int[] selectedItems = amsList.getSelectedIndices();
                     if (amsResult == JOptionPane.OK_OPTION && !(selectedItems.length == 1
-                          && amsList.getSelectedValue() == "NONE") ) {
+                          && amsList.getSelectedValue() == "NONE")) {
                         // Due to the "None" option, reduce all selected index values by 1.
                         // This makes "None" a -1 value.
                         for (int i = 0; i < selectedItems.length; i++) {
-                            selectedItems[i] = selectedItems[i]-1;
+                            selectedItems[i] = selectedItems[i] - 1;
                         }
                         client.sendAMSAssignCFRResponse(selectedItems);
                     } else {
                         client.sendAMSAssignCFRResponse(null);
                     }
-                    
+
                     break;
                 case CFR_APDS_ASSIGN:
                     if (entity == null) {
@@ -3156,7 +3221,7 @@ public class ClientGUI extends AbstractClientGUI
                           JOptionPane.QUESTION_MESSAGE,
                           null,
                           targetDescriptions.toArray(),
-                          targetDescriptions.get(0));
+                          targetDescriptions.getFirst());
                     if (input != null) {
                         for (int i = 0; i < targetDescriptions.size(); i++) {
                             if (input.equals(targetDescriptions.get(i))) {
@@ -3194,7 +3259,7 @@ public class ClientGUI extends AbstractClientGUI
                           JOptionPane.QUESTION_MESSAGE,
                           null,
                           TAGTargetDescriptions.toArray(),
-                          TAGTargetDescriptions.get(0));
+                          TAGTargetDescriptions.getFirst());
                     if (input != null) {
                         for (int i = 0; i < TAGTargetDescriptions.size(); i++) {
                             if (input.equals(TAGTargetDescriptions.get(i))) {
@@ -3585,6 +3650,16 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
+     * Shows saw clearing indicators on the given hexes in the BoardView.
+     *
+     * @param cutHexes a map of board locations to turns remaining for saw clearing
+     */
+    @Deprecated(since = "0.51.0", forRemoval = true)
+    public void showSawClearingHexes(Map<BoardLocation, Integer> cutHexes) {
+        sawClearingSpriteHandler.setSawClearingSprites(cutHexes);
+    }
+
+    /**
      * Shows ground object icons in the given list of Coords in the BoardView
      *
      * @param groundObjectList The list of coordinates to show
@@ -3695,13 +3770,13 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Updates the Nova Networks menu enablement based on whether the local player
-     * has any Nova CEWS units in their force.
+     * Updates the Nova Networks menu enablement based on whether the local player has any Nova CEWS units in their
+     * force.
      */
     private void updateNovaNetworksMenu() {
         boolean hasNovaUnits = client.getGame().getEntitiesVector().stream()
-            .filter(entity -> entity.getOwner().equals(client.getLocalPlayer()))
-            .anyMatch(Entity::hasNovaCEWS);
+              .filter(entity -> entity.getOwner().equals(client.getLocalPlayer()))
+              .anyMatch(Entity::hasNovaCEWS);
         menuBar.setEnabled(VIEW_NOVA_NETWORKS, hasNovaUnits);
     }
 

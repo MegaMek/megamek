@@ -60,13 +60,13 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.util.FlatLafStyleBuilder;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.TechConstants;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.MiscType;
-import megamek.common.TechConstants;
 import megamek.common.equipment.WeaponType;
-import megamek.common.annotations.Nullable;
 
 class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, FocusListener {
 
@@ -704,7 +704,7 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
     }
 
     private @Nullable FilterToken lastToken() {
-        return filterTokens.isEmpty() ? null : filterTokens.get(filterTokens.size() - 1);
+        return filterTokens.isEmpty() ? null : filterTokens.getLast();
     }
 
     private boolean hasFocusedSelector() {
@@ -745,7 +745,7 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
 
     private void backOperation() {
         if (!filterTokens.isEmpty()) {
-            filterTokens.remove(filterTokens.size() - 1);
+            filterTokens.removeLast();
             txtWEEqExp.setText(filterExpressionString());
             adaptTokenButtons();
         }

@@ -37,6 +37,7 @@ import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 /**
  * Class containing static functions that perform visibility computations related to an entity without the need to be a
@@ -45,6 +46,8 @@ import megamek.common.options.OptionsConstants;
  * @author NickAragua
  */
 public class EntityVisibilityUtils {
+    private static final MMLogger LOGGER = MMLogger.create(EntityVisibilityUtils.class);
+
     /**
      * Logic lifted from BoardView1.redrawEntity() that checks whether the given player playing the given game can see
      * the given entity. Takes into account double-blind, hidden units, team vision, etc. Game Master is excluded.
@@ -56,17 +59,31 @@ public class EntityVisibilityUtils {
      * @return Whether the player can see the entity.
      */
     public static boolean detectedOrHasVisual(Player localPlayer, Game game, Entity entity) {
+        boolean doubleBlind = game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
+        boolean isEnemy = (localPlayer != null) && entity.getOwner().isEnemyOf(localPlayer);
+        boolean hasSeen = (localPlayer != null) && entity.hasSeenEntity(localPlayer);
+        boolean hasDetected = (localPlayer != null) && entity.hasDetectedEntity(localPlayer);
+
         boolean canSee = (localPlayer == null)
-              || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-              || !entity.getOwner().isEnemyOf(localPlayer)
-              || entity.hasSeenEntity(localPlayer)
-              || entity.hasDetectedEntity(localPlayer);
+              || !doubleBlind
+              || !isEnemy
+              || hasSeen
+              || hasDetected;
 
         canSee &= (localPlayer == null)
               || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)
-              || !entity.getOwner().isEnemyOf(localPlayer)
+              || !isEnemy
               || !entity.isHidden();
 
+        LOGGER.debug(
+              "detectedOrHasVisual: entity={} viewer={} doubleBlind={} isEnemy={} hasSeen={} hasDetected={} canSee={}",
+              entity.getDisplayName(),
+              (localPlayer != null ? localPlayer.getName() : "null"),
+              doubleBlind,
+              isEnemy,
+              hasSeen,
+              hasDetected,
+              canSee);
         return canSee;
     }
 
@@ -103,11 +120,18 @@ public class EntityVisibilityUtils {
         boolean doesNotTrackThisEntitiesVisibilityInfo = !EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(
               localPlayer,
               entity);
-        return usesSensors
+        boolean result = usesSensors
               && !sensorsDetectAll
               && doesNotTrackThisEntitiesVisibilityInfo
               && hasDetected
               && !hasVisual;
+        LOGGER.debug("onlyDetectedBySensors: entity={} viewer={} usesSensors={} sensorsDetectAll={} "
+                    + "doubleBlind={} hasVisual={} hasDetected={} doesNotTrackVis={} result={}",
+              entity.getDisplayName(),
+              localPlayer.getName(),
+              usesSensors, sensorsDetectAll, doubleBlind,
+              hasVisual, hasDetected, doesNotTrackThisEntitiesVisibilityInfo, result);
+        return result;
     }
 
     /**

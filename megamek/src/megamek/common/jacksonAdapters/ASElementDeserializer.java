@@ -80,6 +80,7 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
     private static final List<String> movementModes = List.of("qt", "qw", "t", "w",
           "h", "v", "n", "s", "m", "j", "f", "g", "a", "p", "k");
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ASElementDeserializer() {
         this(null);
     }
@@ -136,7 +137,7 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
 
             if (node.has(SPECIALS)) {
                 String specials = node.get(SPECIALS).textValue();
-                specials = specials.replaceAll(" ", ""); // remove empty spaces
+                specials = specials.replace(" ", ""); // remove empty spaces
                 // separate out a turret ability
                 String noTurret = specials.replaceAll("[, ]*TUR\\(.*\\)", "");
                 String turret = "";
@@ -235,7 +236,7 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
             return Collections.emptyMap();
         }
         Map<BattleForceSUA, Object> result = new HashMap<>();
-        specials = specials.replaceAll(" ", ""); // remove empty spaces
+        specials = specials.replace(" ", ""); // remove empty spaces
         String[] separatedSpecials = specials.split(",");
         for (String special : separatedSpecials) {
             result.putAll(BattleForceSUA.parseAlphaStrikeFull(special));

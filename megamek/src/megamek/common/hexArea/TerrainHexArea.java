@@ -74,6 +74,7 @@ public class TerrainHexArea extends AbstractHexArea {
      *
      * @param terrainType The terrain type, e.g. Terrains.WATER
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public TerrainHexArea(int terrainType) {
         this(terrainType, 0, Integer.MAX_VALUE, 0, 0);
     }
@@ -84,6 +85,7 @@ public class TerrainHexArea extends AbstractHexArea {
      * @param terrainType  The terrain type, e.g. Terrains.WATER
      * @param terrainLevel The terrain level
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public TerrainHexArea(int terrainType, int terrainLevel) {
         this(terrainType, terrainLevel, terrainLevel, 0, 0);
     }
@@ -96,6 +98,7 @@ public class TerrainHexArea extends AbstractHexArea {
      * @param minLevel    the minimum terrain level
      * @param maxLevel    the maximum terrain level
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public TerrainHexArea(int terrainType, int minLevel, int maxLevel) {
         this(terrainType, minLevel, maxLevel, 0, 0);
     }

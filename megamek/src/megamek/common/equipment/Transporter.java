@@ -162,6 +162,7 @@ public interface Transporter extends Serializable {
      *
      * @return the number of units loaded
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default int getNumberLoadedThisTurn() {
         return 0;
     }

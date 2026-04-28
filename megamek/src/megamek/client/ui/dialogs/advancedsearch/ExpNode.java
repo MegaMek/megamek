@@ -36,7 +36,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-class ExpNode {
+public class ExpNode {
 
     public ExpNode parent;
     public MekSearchFilter.BoolOp operation;

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -309,6 +309,10 @@ import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM20IOS;
 import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM20OS;
 import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM5IOS;
 import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM5OS;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT10;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT15;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT20;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT5;
 import megamek.common.weapons.lrms.innerSphere.torpedo.ISLRT10;
 import megamek.common.weapons.lrms.innerSphere.torpedo.ISLRT15;
 import megamek.common.weapons.lrms.innerSphere.torpedo.ISLRT20;
@@ -1548,6 +1552,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISLRM10Primitive());
         EquipmentType.addType(new ISLRM15Primitive());
         EquipmentType.addType(new ISLRM20Primitive());
+        EquipmentType.addType(new ISEnhancedLRT5());
+        EquipmentType.addType(new ISEnhancedLRT10());
+        EquipmentType.addType(new ISEnhancedLRT15());
+        EquipmentType.addType(new ISEnhancedLRT20());
 
         // LRTs
         EquipmentType.addType(new ISLRT5());

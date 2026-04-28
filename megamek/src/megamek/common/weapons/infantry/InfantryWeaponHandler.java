@@ -166,7 +166,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
                     if (damageApplies && enhancement2.hasDamageBonus()) {
                         prostheticBonusDamage += enhancement2.getDamagePerTrooper()
                               * infantry.getProstheticEnhancement2Count();
-                        if (prostheticEnhancementNames.length() > 0) {
+                        if (!prostheticEnhancementNames.isEmpty()) {
                             prostheticEnhancementNames.append(", ");
                         }
                         prostheticEnhancementNames.append(enhancement2.getDisplayName());
@@ -203,7 +203,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
                 boolean damageApplies = !enhancement2.isConventionalInfantryOnly() || targetIsConventionalInfantry;
                 if (damageApplies && enhancement2.hasDamageBonus()) {
                     extraneousBonusDamage += enhancement2.getDamagePerTrooper() * 2; // 2 items per pair
-                    if (extraneousEnhancementNames.length() > 0) {
+                    if (!extraneousEnhancementNames.isEmpty()) {
                         extraneousEnhancementNames.append(", ");
                     }
                     extraneousEnhancementNames.append(enhancement2.getDisplayName());
@@ -293,13 +293,13 @@ public class InfantryWeaponHandler extends WeaponHandler {
                 allEnhancementNames.append(prostheticEnhancementNames);
             }
             if (hasExtraneous) {
-                if (allEnhancementNames.length() > 0) {
+                if (!allEnhancementNames.isEmpty()) {
                     allEnhancementNames.append(", ");
                 }
                 allEnhancementNames.append(extraneousEnhancementNames);
             }
             if (hasTail) {
-                if (allEnhancementNames.length() > 0) {
+                if (!allEnhancementNames.isEmpty()) {
                     allEnhancementNames.append(", ");
                 }
                 allEnhancementNames.append(Messages.getString("Compute.ProstheticTail"));

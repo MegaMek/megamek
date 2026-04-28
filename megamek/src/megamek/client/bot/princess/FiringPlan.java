@@ -187,12 +187,12 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
         }
 
         if (getTwist() != 0) {
-            actionVector.add(new TorsoTwistAction(get(0).getShooter().getId(),
-                  FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
+            actionVector.add(new TorsoTwistAction(getFirst().getShooter().getId(),
+                  FireControl.correctFacing(getFirst().getShooter().getFacing() + getTwist())));
         }
 
         if (flipArms) {
-            actionVector.addElement(new FlipArmsAction(get(0).getShooter().getId(), flipArms));
+            actionVector.addElement(new FlipArmsAction(getFirst().getShooter().getId(), flipArms));
         }
 
         for (WeaponFireInfo weaponFireInfo : this) {
@@ -209,7 +209,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
             return "Empty FiringPlan!";
         }
 
-        StringBuilder description = new StringBuilder("Firing Plan for ").append(get(0).getShooter().getChassis())
+        StringBuilder description = new StringBuilder("Firing Plan for ").append(getFirst().getShooter().getChassis())
               .append(" at ");
         Set<Integer> targets = new HashSet<>();
         // loop through all the targets for this firing plan, only show each target once.

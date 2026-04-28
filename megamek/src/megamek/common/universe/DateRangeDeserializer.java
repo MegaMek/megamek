@@ -42,6 +42,7 @@ import megamek.client.ratgenerator.FactionRecord;
 
 public class DateRangeDeserializer extends StdDeserializer<FactionRecord.DateRange> {
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected DateRangeDeserializer() {
         this(null);
     }

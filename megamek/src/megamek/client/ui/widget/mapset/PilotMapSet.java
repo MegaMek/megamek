@@ -337,7 +337,7 @@ public class PilotMapSet implements DisplayMapSet {
             details.append(type1.getDisplayName()).append(" x").append(infantry.getProstheticEnhancement1Count());
         }
         if (infantry.hasProstheticEnhancement2()) {
-            if (details.length() > 0) {
+            if (!details.isEmpty()) {
                 details.append(", ");
             }
             ProstheticEnhancementType type2 = infantry.getProstheticEnhancement2();

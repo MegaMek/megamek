@@ -248,7 +248,7 @@ public abstract class AbstractIcon implements Serializable {
                 String category = MMXMLUtility.unEscape(workingNode.getTextContent().trim());
 
                 // <50.07 compatibility handlers
-                category = category.replaceAll("Mek Tech", "MekTech");
+                category = category.replace("Mek Tech", "MekTech");
                 // <50.10 compatibility handlers
                 category = category.replace("Vehicle Gunner", "Vehicle Crew Ground");
                 category = category.replace("Vehicle Driver", "Vehicle Crew Ground");
@@ -264,7 +264,7 @@ public abstract class AbstractIcon implements Serializable {
                 filename = MMXMLUtility.unEscape(workingNode.getTextContent().trim());
 
                 // <50.07 compatibility handlers
-                filename = filename.replaceAll("MekTek", "MekTech");
+                filename = filename.replace("MekTek", "MekTech");
 
                 setFilename(filename);
                 break;

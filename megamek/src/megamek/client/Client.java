@@ -355,6 +355,19 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Send a ghost target action to the server (Standard mode, TO:AR rules). The server performs the Piloting+3 roll
+     * and derives friendliness from entity ownership.
+     *
+     * @param sourceEntityId the entity generating the ghost target
+     * @param equipmentId    the equipment number on the source entity
+     * @param targetEntityId the entity being targeted
+     */
+    public void sendGhostTargetAction(int sourceEntityId, int equipmentId, int targetEntityId) {
+        send(new Packet(PacketCommand.ENTITY_GHOST_TARGET,
+              sourceEntityId, equipmentId, targetEntityId));
+    }
+
+    /**
      * Send the game options to the server
      */
     public void sendGameOptions(String password, Vector<IBasicOption> options) {
@@ -473,7 +486,7 @@ public class Client extends AbstractClient {
     /**
      * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
-    public void sendChangeOwner(Collection<Entity> entities, int newOwnerId) throws InvalidPacketDataException {
+    public void sendChangeOwner(Collection<Entity> entities, int newOwnerId) {
         send(new Packet(PacketCommand.ENTITY_ASSIGN, entities, newOwnerId));
     }
 
@@ -549,7 +562,7 @@ public class Client extends AbstractClient {
                         sb.append(entity.getNC3NextUUIDAsString(i)).append(", ");
                     }
                     LOGGER.debug("[CLIENT] receiveEntities: Entity {} ({}), c3NetIdString: {}, NC3UUIDs: [{}]",
-                        entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
+                          entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
                 }
             }
         }
@@ -684,6 +697,11 @@ public class Client extends AbstractClient {
 
     protected void receiveIlluminatedHexes(Packet packet) throws InvalidPacketDataException {
         game.setIlluminatedPositions(packet.getCoordsHashSet(0));
+    }
+
+    protected void receiveUpdateCutHexes(Packet packet) throws InvalidPacketDataException {
+        game.setHexesBeingCut(packet.getBoardLocationIntegerMap(0));
+        game.processGameEvent(new GameBoardChangeEvent(this));
     }
 
     protected void receiveRevealMinefield(Packet packet) throws InvalidPacketDataException {
@@ -1022,6 +1040,9 @@ public class Client extends AbstractClient {
                     break;
                 case REMOVE_MINEFIELD:
                     receiveRemoveMinefield(packet);
+                    break;
+                case UPDATE_CUT_HEXES:
+                    receiveUpdateCutHexes(packet);
                     break;
                 case UPDATE_GROUND_OBJECTS:
                     receiveUpdateGroundObjects(packet);
@@ -1411,6 +1432,7 @@ public class Client extends AbstractClient {
     /**
      * Sends an "update custom initiative" packet
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void sendCustomInit(Player player) {
         send(new Packet(PacketCommand.CUSTOM_INITIATIVE, player));
     }
@@ -1461,6 +1483,7 @@ public class Client extends AbstractClient {
     /**
      * Send system mode-change data to the server
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void sendSystemModeChange(int nEntity, int nSystem, int nMode) {
         send(new Packet(PacketCommand.ENTITY_SYSTEM_MODE_CHANGE, nEntity, nSystem, nMode));
     }

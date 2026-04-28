@@ -187,6 +187,7 @@ public class SpecialHexDisplay implements Serializable {
             return defaultImage;
         }
 
+        @Deprecated(since = "0.51.0", forRemoval = true)
         public void setDefaultImage(Image defaultImage) {
             this.defaultImage = defaultImage;
         }
@@ -270,6 +271,7 @@ public class SpecialHexDisplay implements Serializable {
      *
      * @return A SpecialHexDisplay Incoming marker
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static SpecialHexDisplay createIncomingArty(Player owner, int landingGameRound) {
         String artyMsg = "Artillery bay fire incoming, landing on round %d, fired by %s"
               .formatted(landingGameRound, owner.getName());
@@ -447,7 +449,7 @@ public class SpecialHexDisplay implements Serializable {
                 case ARTILLERY_DRIFT -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_ARTILLERY_DRIFTS);
                 case BOMB_MISS -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_MISSES);
                 case BOMB_DRIFT -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_DRIFTS);
-                default -> { } // intentionally ignored
+                default -> {} // intentionally ignored
             }
         }
 
@@ -484,6 +486,6 @@ public class SpecialHexDisplay implements Serializable {
     @Override
     public String toString() {
         return "SHD: " + type.name() + ", " + "round " + round + (owner != null ? ", by "
-              + owner.getName() : "");
+                                                                                  + owner.getName() : "");
     }
 }

@@ -44,20 +44,18 @@ import megamek.common.equipment.MiscType;
 import megamek.common.loaders.BLKFile;
 import megamek.common.loaders.BLKTankFile;
 import megamek.common.loaders.MtfFile;
-import megamek.common.TechConstants;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.util.BuildingBlock;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for cockpit modification equipment (DNI Cockpit Mod, EI Interface, Damage Interrupt Circuit)
- * to verify they are correctly saved and loaded from unit files.
+ * Tests for cockpit modification equipment (DNI Cockpit Mod, EI Interface, Damage Interrupt Circuit) to verify they are
+ * correctly saved and loaded from unit files.
  */
 class CockpitModificationTest {
 

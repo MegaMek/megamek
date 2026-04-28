@@ -153,42 +153,75 @@ public class ComputeTargetToHitMods {
         // Special Equipment and Quirks that the target possesses
 
         // ECM suite generating Ghost Targets
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET)
-              && !isIndirect
-              && !isArtilleryIndirect
-              && !isArtilleryDirect) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET)) {
 
-            int ghostTargetMod = Compute.getGhostTargetNumber(attacker, attacker.getPosition(), target.getPosition());
-            if ((ghostTargetMod > -1) && !attacker.isConventionalInfantry()) {
-                int bapMod = 0;
-                if (attacker.hasBAP()) {
-                    bapMod = 1;
-                }
-                int tcMod = 0;
-                boolean isLBX = (ammoType != null)
-                      && ammoType.getAmmoType().isAnyOf(AC_LBX, AC_LBX_THB)
-                      && munition.contains(AmmoType.Munitions.M_CLUSTER);
+            boolean isStandardMode = game.usesStandardGhostTargetMode();
 
-                if (attacker.hasTargComp()
-                      && (weaponType != null)
-                      && weaponType.hasFlag(WeaponType.F_DIRECT_FIRE)
-                      && !weaponType.hasAnyFlag(WeaponType.F_CWS, WeaponType.F_TASER)
+            if (isStandardMode) {
+                // Standard (TO:AR p.100-102) mode: per-unit targeted ghost targets
+                // Per errata: indirect fire pays the modifier (firing is firing), spotting does not
+                // Active probe grants full immunity unless jammed or has active stealth armor (TO:AR p.101)
+                boolean hasActiveProbeImmunity = attacker.hasBAP() && !attacker.isStealthActive();
+
+                // Per TO:AR p.102: TAG-designated targets with semi-guided ammo are immune to ghost target
+                // defensive modifiers (TAG resolves before ghost targets, so the lock bypasses ghosts)
+                boolean isSemiGuidedTagged = (entityTarget != null)
+                      && (entityTarget.getTaggedBy() != WeaponAttackAction.UNASSIGNED)
                       && (ammoType != null)
-                      && !(usesAmmo && isLBX)) {
-                    tcMod = 2;
-                }
-                int ghostTargetMoF = (attacker.getCrew().getSensorOps() + ghostTargetMod) -
-                      (attacker.getGhostTargetOverride() + bapMod + tcMod);
-                if (ghostTargetMoF > 1) {
-                    // according to this rules clarification the +4 max is on
-                    // the PSR not on the to-hit roll
-                    // http://www.classicbattletech.com/forums/index.php?topic=66036.0
-                    // unofficial rule to cap the ghost target to-hit penalty
-                    int mod = ghostTargetMoF / 2;
-                    if (game.getOptions().intOption(OptionsConstants.ADVANCED_GHOST_TARGET_MAX) > 0) {
-                        mod = Math.min(mod, game.getOptions().intOption(OptionsConstants.ADVANCED_GHOST_TARGET_MAX));
+                      && ammoType.getAmmoType().isAnyOf(AmmoType.AmmoTypeEnum.LRM, AmmoType.AmmoTypeEnum.LRM_IMP,
+                      AmmoType.AmmoTypeEnum.MML, AmmoType.AmmoTypeEnum.NLRM, AmmoType.AmmoTypeEnum.MEK_MORTAR)
+                      && munition.contains(AmmoType.Munitions.M_SEMIGUIDED);
+
+                if (!attacker.isConventionalInfantry() && !hasActiveProbeImmunity) {
+                    // Defensive bonus: +N to attacks AGAINST the target (from friendly ghost targets)
+                    if ((entityTarget != null) && (entityTarget.getGhostTargetDefensiveBonus() > 0)
+                          && !isSemiGuidedTagged) {
+                        toHit.addModifier(entityTarget.getGhostTargetDefensiveBonus(),
+                              Messages.getString("WeaponAttackAction.GhostTargetsDefensive"));
                     }
-                    toHit.addModifier(mod, Messages.getString("WeaponAttackAction.GhostTargets"));
+
+                    // Offensive bonus: +N to attacks BY the attacker (from enemy ghost targets)
+                    if (attacker.getGhostTargetOffensiveBonus() > 0) {
+                        toHit.addModifier(attacker.getGhostTargetOffensiveBonus(),
+                              Messages.getString("WeaponAttackAction.GhostTargetsOffensive"));
+                    }
+                }
+            } else if (!isIndirect && !isArtilleryIndirect && !isArtilleryDirect) {
+                // Legacy (Area Effect) mode: original MegaMek implementation (excludes indirect fire)
+                int ghostTargetMod = Compute.getGhostTargetNumber(attacker, attacker.getPosition(),
+                      target.getPosition());
+                if ((ghostTargetMod > -1) && !attacker.isConventionalInfantry()) {
+                    int bapMod = 0;
+                    if (attacker.hasBAP()) {
+                        bapMod = 1;
+                    }
+                    int tcMod = 0;
+                    boolean isLBX = (ammoType != null)
+                          && ammoType.getAmmoType().isAnyOf(AC_LBX, AC_LBX_THB)
+                          && munition.contains(AmmoType.Munitions.M_CLUSTER);
+
+                    if (attacker.hasTargComp()
+                          && (weaponType != null)
+                          && weaponType.hasFlag(WeaponType.F_DIRECT_FIRE)
+                          && !weaponType.hasAnyFlag(WeaponType.F_CWS, WeaponType.F_TASER)
+                          && (ammoType != null)
+                          && !(usesAmmo && isLBX)) {
+                        tcMod = 2;
+                    }
+                    int ghostTargetMoF = (attacker.getCrew().getSensorOps() + ghostTargetMod)
+                          - (attacker.getGhostTargetOverride() + bapMod + tcMod);
+                    if (ghostTargetMoF > 1) {
+                        // according to this rules clarification the +4 max is on
+                        // the PSR not on the to-hit roll
+                        // http://www.classicbattletech.com/forums/index.php?topic=66036.0
+                        // unofficial rule to cap the ghost target to-hit penalty
+                        int mod = ghostTargetMoF / 2;
+                        if (game.getOptions().intOption(OptionsConstants.ADVANCED_GHOST_TARGET_MAX) > 0) {
+                            mod = Math.min(mod,
+                                  game.getOptions().intOption(OptionsConstants.ADVANCED_GHOST_TARGET_MAX));
+                        }
+                        toHit.addModifier(mod, Messages.getString("WeaponAttackAction.GhostTargets"));
+                    }
                 }
             }
         }

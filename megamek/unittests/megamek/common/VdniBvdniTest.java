@@ -34,6 +34,7 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -285,7 +286,7 @@ public class VdniBvdniTest {
         @DisplayName("Mek entity type check passes for Mek")
         void mekEntityTypeCheckPasses() {
             Mek mockMek = mock(Mek.class);
-            assertTrue(mockMek instanceof Mek, "Mek should pass instanceof Mek check");
+            assertInstanceOf(Mek.class, mockMek, "Mek should pass instanceof Mek check");
         }
 
         @Test

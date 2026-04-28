@@ -67,7 +67,7 @@ public record UnitPosition(Coords position, Set<Coords> secondaryPositions, Faci
 
     public static UnitPosition of(List<Coords> coords) {
         return new UnitPosition(
-              coords.get(0),
+              coords.getFirst(),
               new HashSet<>(coords),
               Facing.NONE,
               0,
@@ -110,6 +110,7 @@ public record UnitPosition(Coords position, Set<Coords> secondaryPositions, Faci
         return facing.getAngle();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int relativeDotProduct(Coords target) {
         return relativeDotProduct(position, target);
     }

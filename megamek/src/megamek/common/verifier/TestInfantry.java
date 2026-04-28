@@ -262,7 +262,7 @@ public class TestInfantry extends TestEntity {
 
         if (infantry.hasFieldWeapon()) {
             // These tests include field artillery
-            Mounted<?> firstFieldGun = infantry.originalFieldWeapons().get(0);
+            Mounted<?> firstFieldGun = infantry.originalFieldWeapons().getFirst();
             EquipmentType fieldGunType = firstFieldGun.getType();
             int fieldGunCount = infantry.originalFieldWeapons().size();
 

@@ -370,6 +370,7 @@ public class MoveStep implements Serializable {
         this.mf = mf;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static MoveStep createChangeBoardMoveStep(MovePath path, Coords finalPosition, int finalBoardId) {
         MoveStep newStep = new MoveStep(path, MoveStepType.CHANGE_BOARD);
         newStep.boardId = finalBoardId;
@@ -575,7 +576,7 @@ public class MoveStep implements Serializable {
             if ((entity instanceof Infantry) && !grdDropship) {
                 // infantry can jump into a building
                 // Maybe this line is a bit too much, but it seems to work by coincidence
-                setElevation(Math.max(depth, Math.min(building, maxElevation)));
+                setElevation(Math.clamp(building, depth, maxElevation));
             } else {
                 int subDepth = Math.max(depth, building);
 
@@ -2512,7 +2513,7 @@ public class MoveStep implements Serializable {
                 Hex prevHex = game.getBoard(boardId).getHex(lastPos);
                 // Check if we're climbing from outside/below onto the building top
                 if (!prevHex.containsTerrain(Terrains.BUILDING) ||
-                    prevHex.terrainLevel(Terrains.BLDG_ELEV) < curHex.terrainLevel(Terrains.BLDG_ELEV)) {
+                      prevHex.terrainLevel(Terrains.BLDG_ELEV) < curHex.terrainLevel(Terrains.BLDG_ELEV)) {
                     int prevAbsoluteElev = prevHex.getLevel() + prev.getElevation();
                     int curAbsoluteElev = curHex.getLevel() + getElevation();
                     int elevChange = curAbsoluteElev - prevAbsoluteElev;
@@ -2909,29 +2910,36 @@ public class MoveStep implements Serializable {
 
         // non-WIGEs pay for elevation differences
         if ((nSrcEl != nDestEl) && (moveMode != EntityMovementMode.WIGE)) {
-            int delta_e = Math.abs(nSrcEl - nDestEl);
+            int deltaElevation = Math.abs(nSrcEl - nDestEl);
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING) &&
                   isMek &&
-                  (delta_e > 2) &&
+                  (deltaElevation > 2) &&
                   (nDestEl < nSrcEl)) {
                 // leaping (moving down more than 2 hexes) always costs 4 mp
                 // regardless of anything else
                 mp = 4;
                 return;
             }
-            // non-flying Infantry and ground vehicles are charged double.
-            if ((isInfantry &&
+            // Mountain Troops only expend 1 MP per 2 levels moved up or down (TO:AUE p.153).
+            // This stacks with the Mountaineer ability (PILOT_TM_MOUNTAINEER) which reduces
+            // elevation cost by 1 MP. Combined, a 1-level change can cost 0 MP elevation.
+            boolean isMountainTroop = isInfantry
+                  && ((Infantry) entity).hasSpecialization(Infantry.MOUNTAIN_TROOPS);
+            if (isMountainTroop) {
+                deltaElevation = (int) Math.ceil(deltaElevation / 2.0);
+            } else if ((isInfantry &&
                   !((getMovementType(false) == EntityMovementType.MOVE_VTOL_WALK) ||
                         (getMovementType(false) == EntityMovementType.MOVE_VTOL_RUN))) ||
                   ((moveMode == EntityMovementMode.TRACKED) ||
                         (moveMode == EntityMovementMode.WHEELED) ||
                         (moveMode == EntityMovementMode.HOVER))) {
-                delta_e *= 2;
+                // non-flying Infantry and ground vehicles are charged double.
+                deltaElevation *= 2;
             }
             if (entity.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
-                mp += delta_e - 1;
+                mp += deltaElevation - 1;
             } else {
-                mp += delta_e;
+                mp += deltaElevation;
             }
         }
 

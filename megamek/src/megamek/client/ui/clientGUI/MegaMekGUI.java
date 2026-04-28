@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -80,7 +80,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.boardeditor.BoardEditorPanel;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.dialogs.CommonAboutDialog;
-import megamek.client.ui.dialogs.ConfirmDialog;
+import megamek.client.ui.dialogs.LicensingDialog;
 import megamek.client.ui.dialogs.ScenarioDialog;
 import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.client.ui.dialogs.buttonDialogs.BotConfigDialog;
@@ -225,19 +225,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // Show the window.
         frame.setVisible(show);
 
-        // tell the user about the readme...
-        if (show && GUIPreferences.getInstance().getNagForReadme()) {
-            ConfirmDialog confirm = new ConfirmDialog(frame,
-                  Messages.getString("MegaMek.welcome.title") + MMConstants.VERSION,
-                  Messages.getString("MegaMek.welcome.message"),
-                  true);
-            confirm.setVisible(true);
-            if (!confirm.getShowAgain()) {
-                GUIPreferences.getInstance().setNagForReadme(false);
-            }
-            if (confirm.getAnswer()) {
-                new MMReadMeHelpDialog(frame).setVisible(true);
-            }
+        // Show licensing/welcome dialog
+        if (show) {
+            LicensingDialog.showIfNeeded(frame);
         }
     }
 
@@ -326,7 +316,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MMConstants.VERSION, JLabel.CENTER);
         labVersion.setPreferredSize(new Dimension(250, 15));
         if (!skinSpec.fontColors.isEmpty()) {
-            labVersion.setForeground(skinSpec.fontColors.get(0));
+            labVersion.setForeground(skinSpec.fontColors.getFirst());
         }
         MegaMekButton hostB = new MegaMekButton(Messages.getString("MegaMek.hostNewGame.label"),
               UIComponents.MainMenuButton.getComp(),
@@ -1014,7 +1004,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 orig.setValue(opt.getValue());
             }
         }
-        
+
         // popup planetary conditions dialog
         if ((game instanceof PlanetaryConditionsUsing plGame) && !scenario.hasFixedPlanetaryConditions()) {
             PlanetaryConditionsDialog pcd = new PlanetaryConditionsDialog(frame, plGame.getPlanetaryConditions());
@@ -1088,8 +1078,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     Princess c = new Princess(pa[x].getName(), MMConstants.LOCALHOST, port);
                     c.startPrecognition();
                     if (scenario.hasBotInfo(pa[x].getName()) &&
-                          scenario.getBotInfo(pa[x].getName()) instanceof BotParser.PrincessRecord princessRecord) {
-                        c.setBehaviorSettings(princessRecord.behaviorSettings());
+                          scenario.getBotInfo(pa[x].getName()) instanceof BotParser.PrincessRecord(
+                                megamek.client.bot.princess.BehaviorSettings behaviorSettings
+                          )) {
+                        c.setBehaviorSettings(behaviorSettings);
                     }
                     c.getGame().addGameListener(new BotGUI(frame, c));
                     c.connect();
@@ -1361,6 +1353,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
         return networkInformationDialog;
     }
+
     @Override
     public void preferenceChange(PreferenceChangeEvent evt) {
         switch (evt.getName()) {

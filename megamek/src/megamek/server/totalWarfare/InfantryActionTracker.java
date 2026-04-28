@@ -76,7 +76,7 @@ public class InfantryActionTracker {
          * True if attackers have achieved Partial control (P result). When true, defenders lose half-damage bonus (TOAR
          * p. 172).
          */
-        public boolean hasPartialControl = false;
+        public boolean hasPartialControl;
 
         /**
          * Creates a new infantry action.

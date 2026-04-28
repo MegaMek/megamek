@@ -36,7 +36,6 @@ package megamek.common.equipment;
 import megamek.common.CriticalSlot;
 import megamek.common.Messages;
 import megamek.common.equipment.enums.MiscTypeFlag;
-import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 

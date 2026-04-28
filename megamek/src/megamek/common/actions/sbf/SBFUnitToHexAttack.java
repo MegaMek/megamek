@@ -38,6 +38,7 @@ import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.server.sbf.SBFActionHandler;
 import megamek.server.sbf.SBFGameManager;
 
+@Deprecated(since = "0.51.0", forRemoval = true)
 public class SBFUnitToHexAttack extends AbstractSBFAttackAction {
 
     private final int unitNumber;

@@ -70,6 +70,7 @@ public final class StandardTextfileStreamTokenizer extends StreamTokenizer {
      *
      * @param is The InputStream to tokenize
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public StandardTextfileStreamTokenizer(InputStream is) {
         super(is);
         eolIsSignificant(true);
@@ -91,7 +92,7 @@ public final class StandardTextfileStreamTokenizer extends StreamTokenizer {
      * @see #INCLUDE_KEY
      */
     public static boolean isValidIncludeLine(List<String> lineTokens) {
-        return (lineTokens.size() == 2) && (lineTokens.get(0).equals(INCLUDE_KEY));
+        return (lineTokens.size() == 2) && (lineTokens.getFirst().equals(INCLUDE_KEY));
     }
 
     /**

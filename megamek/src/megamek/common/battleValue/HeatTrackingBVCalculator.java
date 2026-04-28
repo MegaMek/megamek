@@ -227,6 +227,7 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
         return weaponHeat;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected double totalWeaponHeat() {
         return entity.getTotalWeaponList().stream()
               .filter(this::countAsOffensiveWeapon)

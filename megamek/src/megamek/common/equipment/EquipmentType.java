@@ -36,23 +36,13 @@ package megamek.common.equipment;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import megamek.common.RangeType;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
+import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
@@ -65,7 +55,6 @@ import megamek.common.interfaces.ITechnology;
 import megamek.common.units.Entity;
 import megamek.common.util.RoundWeight;
 import megamek.common.util.YamlEncDec;
-import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.weapons.autoCannons.HVACWeapon;
 import megamek.common.weapons.defensivePods.BPodWeapon;
 import megamek.common.weapons.defensivePods.MPodWeapon;
@@ -767,10 +756,7 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Add a way to find if a given equipment type matches a particular string in _any_ of its names
-     * (Case sensitive)
-     * @param name
-     * @return
+     * Add a way to find if a given equipment type matches a particular string in _any_ of its names (Case sensitive)
      */
     public boolean matchesName(String name) {
         for (String s : namesVector) {
@@ -1036,6 +1022,7 @@ public class EquipmentType implements ITechnology {
         return techAdvancement.getTechBase();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static String getEquipDateAsString(int date) {
         if (date == DATE_NONE) {
             return "-";
@@ -1158,8 +1145,8 @@ public class EquipmentType implements ITechnology {
     public static final String VARIABLE = "variable";
 
     /**
-     * Constructs a map containing the YAML-serializable data for this equipment type.
-     * Subclasses should override this method to add type-specific data.
+     * Constructs a map containing the YAML-serializable data for this equipment type. Subclasses should override this
+     * method to add type-specific data.
      *
      * @return A map containing the YAML-serializable data for this equipment type.
      */
@@ -1187,8 +1174,8 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Returns the YAML type name for this equipment type.
-     * Subclasses should override this to return their specific type name.
+     * Returns the YAML type name for this equipment type. Subclasses should override this to return their specific type
+     * name.
      *
      * @return The YAML type name (e.g., "weapon", "ammo", "misc", "armor")
      */
@@ -1197,8 +1184,7 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Adds equipment flags to the YAML data map.
-     * Subclasses should override this to add type-specific flags.
+     * Adds equipment flags to the YAML data map. Subclasses should override this to add type-specific flags.
      *
      * @param data The YAML data map to add flags to
      */

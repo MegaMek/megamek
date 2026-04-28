@@ -65,6 +65,24 @@
         <Logger name="BotLogger" level="info" additivity="false">
             <AppenderRef ref="BotLog" />
         </Logger>
+        <!--
+          Sensor/visibility debug loggers. These are silent by default (parent "megamek"
+          logger at info). To trace sensor returns, double-blind, searchlights, and LOS
+          visibility decisions, uncomment the blocks below:
+
+          <Logger name="megamek.common.compute.Compute" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.common.units.EntityVisibilityUtils" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.server.totalWarfare.TWGameManager" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.client.bot.princess.Princess" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

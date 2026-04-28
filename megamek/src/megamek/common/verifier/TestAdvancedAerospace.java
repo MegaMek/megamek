@@ -152,6 +152,7 @@ public class TestAdvancedAerospace extends TestAero {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static double armorPointsPerTon(Jumpship vessel, int at, boolean clan) {
         ArmorType arm = ArmorType.of(at, clan);
         return arm.getPointsPerTon(vessel);
@@ -615,6 +616,7 @@ public class TestAdvancedAerospace extends TestAero {
         return vessel;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Jumpship getAdvancedAerospace() {
         return vessel;
     }
@@ -706,51 +708,7 @@ public class TestAdvancedAerospace extends TestAero {
 
     @Override
     public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
-        boolean illegal = false;
-
-        // Make sure all bays have at least one weapon and that there are at least
-        // ten shots of ammo for each ammo-using weapon in the bay.
-        for (WeaponMounted bay : vessel.getWeaponBayList()) {
-            if (bay.getBayWeapons().isEmpty()) {
-                buff.append("Bay ").append(bay.getName()).append(" has no weapons\n");
-                illegal = true;
-            }
-            Map<AmmoTypeEnum, Integer> ammoWeaponCount = new HashMap<>();
-            Map<AmmoTypeEnum, Integer> ammoTypeCount = new HashMap<>();
-            for (WeaponMounted w : bay.getBayWeapons()) {
-                if (w.isOneShot()) {
-                    continue;
-                }
-                ammoWeaponCount.merge(w.getType().getAmmoType(), 1, Integer::sum);
-            }
-            for (AmmoMounted a : bay.getBayAmmo()) {
-                ammoTypeCount.merge(a.getType().getAmmoType(), a.getUsableShotsLeft(), Integer::sum);
-            }
-            for (AmmoTypeEnum at : ammoWeaponCount.keySet()) {
-                if (at != AmmoType.AmmoTypeEnum.NA) {
-                    int needed = ammoWeaponCount.get(at) * 10;
-                    if ((at == AmmoType.AmmoTypeEnum.AC_ULTRA) || (at == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
-                        needed *= 2;
-                    } else if ((at == AmmoType.AmmoTypeEnum.AC_ROTARY)) {
-                        needed *= 6;
-                    }
-                    if (!ammoTypeCount.containsKey(at) || ammoTypeCount.get(at) < needed) {
-                        buff.append("Bay ")
-                              .append(bay.getName())
-                              .append(" does not have the minimum 10 shots of ammo for each weapon\n");
-                        illegal = true;
-                        break;
-                    }
-                }
-            }
-            for (AmmoTypeEnum at : ammoTypeCount.keySet()) {
-                if (!ammoWeaponCount.containsKey(at)) {
-                    buff.append("Bay ").append(bay.getName()).append(" has ammo for a weapon not in the bay\n");
-                    illegal = true;
-                    break;
-                }
-            }
-        }
+        boolean illegal = TestSmallCraft.hasIllegalBayAmmo(vessel, buff);
 
         // Count lateral weapons to make sure both sides match
         Map<EquipmentType, Integer> leftFwd = new HashMap<>();

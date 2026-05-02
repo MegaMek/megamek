@@ -54,14 +54,13 @@ public class SourceChooserDialog {
     private static final Map<String, String> BOOKS = new HashMap<>();
 
     private static void loadBooks() {
-        if (BOOKS.isEmpty()) {
-            BOOKS.putAll(SOURCE_BOOKS.availableSourcebooks()
-                  .stream()
-                  .map(SOURCE_BOOKS::loadSourceBook)
-                  .filter(Optional::isPresent)
-                  .map(Optional::get)
-                  .collect(Collectors.toMap(SourceBook::getAbbrev, SourceBook::getTitle)));
-        }
+        BOOKS.clear();
+        BOOKS.putAll(SOURCE_BOOKS.availableSourcebooks()
+              .stream()
+              .map(SOURCE_BOOKS::loadSourceBook)
+              .filter(Optional::isPresent)
+              .map(Optional::get)
+              .collect(Collectors.toMap(SourceBook::getAbbrev, SourceBook::getTitle)));
     }
 
     /**

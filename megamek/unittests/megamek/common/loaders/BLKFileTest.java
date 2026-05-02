@@ -381,7 +381,7 @@ class BLKFileTest {
     void multipleSourcesRoundtripThroughBLK() throws Exception {
         Tank tank = createMinimalTank();
         tank.setSource("TR:3039, RG29,, Custom Source");
-                tank.setPublished("RS:3050u, Custom Sheet,,");
+        tank.setPublished("RS:3050u, Custom Sheet,,");
 
         BuildingBlock blk = BLKFile.getBlock(tank);
         BLKTankFile loader = new BLKTankFile(blk);
@@ -409,7 +409,7 @@ class BLKFileTest {
 
         assertEquals("TR:3039,RG29,Custom Source", tank.getSource(),
               "Multiple source lines should load as a source list");
-          assertEquals("RS:3050u,Custom Sheet", tank.getPublished(),
+        assertEquals("RS:3050u,Custom Sheet", tank.getPublished(),
               "Multiple published lines should load as a source list");
     }
 

@@ -43,9 +43,13 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -55,9 +59,20 @@ import java.util.stream.Collectors;
 public class SourceBooks {
 
     private static final String SOURCEBOOKS_PATH = "data/sourcebooks";
+    private static final Map<String, Optional<SourceBook>> SOURCE_BOOK_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, Boolean> NON_CANON_BY_SOURCE_CACHE = new ConcurrentHashMap<>();
 
     private final ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
     private final File baseDirectory;
+    private final String cacheKeyPrefix;
+
+    private static class StandardSourceBooksHolder {
+        private static final SourceBooks INSTANCE = new SourceBooks();
+    }
+
+    public static SourceBooks getStandardSourceBooks() {
+        return StandardSourceBooksHolder.INSTANCE;
+    }
 
     /**
      * Creates a sourcebooks manager for any sourcebooks in the given directory. This constructor is for
@@ -70,6 +85,7 @@ public class SourceBooks {
         if (!baseDirectory.exists() || !baseDirectory.isDirectory()) {
             throw new IllegalArgumentException("Invalid directory: " + directoryPath);
         }
+        cacheKeyPrefix = baseDirectory.toPath().toAbsolutePath().normalize().toString();
         yamlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
@@ -125,6 +141,11 @@ public class SourceBooks {
         if ((fileName == null) || fileName.isBlank()) {
             return Optional.empty();
         }
+          return SOURCE_BOOK_CACHE.computeIfAbsent(cacheKey(sourceBookKey(fileName)),
+              ignored -> readSourceBook(fileName));
+    }
+
+    private Optional<SourceBook> readSourceBook(String fileName) {
         try {
             return Optional.of(yamlMapper.readValue(sourceBookFile(fileName), SourceBook.class));
         } catch (IOException e) {
@@ -142,6 +163,12 @@ public class SourceBooks {
      */
     public void saveSourceBook(String fileName, SourceBook sourceBook) throws IOException {
         yamlMapper.writeValue(sourceBookFile(fileName), sourceBook);
+        clearCaches();
+    }
+
+    public static void clearCaches() {
+        SOURCE_BOOK_CACHE.clear();
+        NON_CANON_BY_SOURCE_CACHE.clear();
     }
 
     public File sourceBookFile(String fileName) {
@@ -165,6 +192,34 @@ public class SourceBooks {
               .map(this::loadSourceBook)
               .flatMap(Optional::stream)
               .toList();
+    }
+
+    /**
+     * @return true when no sourcebook entries are present, any listed sourcebook is non-canon, or any listed
+     *       sourcebook cannot be loaded.
+     */
+    public boolean isNonCanonBySource(String source, String published) {
+        Set<String> sourceNames = new LinkedHashSet<>();
+        sourceNames.addAll(splitSourceList(source));
+        sourceNames.addAll(splitSourceList(published));
+        if (sourceNames.isEmpty()) {
+            return true;
+        }
+
+        String normalizedSourceList = formatSourceList(sourceNames);
+        return NON_CANON_BY_SOURCE_CACHE.computeIfAbsent(cacheKey(normalizedSourceList),
+              ignored -> isNonCanonBySourceList(normalizedSourceList));
+    }
+
+    private boolean isNonCanonBySourceList(String sourceList) {
+        return splitSourceList(sourceList).stream()
+              .anyMatch(this::isNonCanonSourceBook);
+    }
+
+    private boolean isNonCanonSourceBook(String sourceName) {
+        return loadSourceBook(sourceName)
+              .map(sourceBook -> !sourceBook.isCanon())
+              .orElse(true);
     }
 
     public static List<String> splitSourceList(String sourceList) {
@@ -197,6 +252,10 @@ public class SourceBooks {
             filename += ".yaml";
         }
         return filename;
+    }
+
+    private String cacheKey(String value) {
+        return cacheKeyPrefix + "|" + value;
     }
 
 }

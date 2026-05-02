@@ -14095,6 +14095,31 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * @return true when the unit has no sourcebook entries or any listed sourcebook is non-canon.
+     */
+    public boolean isNonCanonBySource() {
+        return isNonCanonBySource(getSource(), getPublished());
+    }
+
+    /**
+     * @return true when no sourcebook entries are present or any listed sourcebook is non-canon.
+     */
+    public static boolean isNonCanonBySource(String source, String published) {
+        List<String> sourceNames = new ArrayList<>();
+        sourceNames.addAll(SourceBooks.splitSourceList(source));
+        sourceNames.addAll(SourceBooks.splitSourceList(published));
+        if (sourceNames.isEmpty()) {
+            return true;
+        }
+
+        SourceBooks sourceBooks = new SourceBooks();
+        return sourceNames.stream()
+              .map(sourceBooks::loadSourceBook)
+              .flatMap(Optional::stream)
+              .anyMatch(sourceBook -> !sourceBook.isCanon());
+    }
+
+    /**
      * Sets the tech faction for this entity.
      *
      * @param faction The faction to set, or Faction.NONE for no faction

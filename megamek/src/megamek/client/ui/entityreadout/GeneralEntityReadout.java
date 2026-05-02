@@ -139,7 +139,7 @@ class GeneralEntityReadout implements EntityReadout {
 
     protected List<ViewElement> createHeaderSection() {
         List<ViewElement> result = new ArrayList<>();
-        result.add(new UnitName(entity.getShortNameRaw()));
+        result.add(new UnitName(entity.getShortNameRaw(), entity.isNonCanonBySource()));
         result.add(new PlainLine(EntityReadoutUnitType.unitTypeAsString(entity)));
         return result;
     }

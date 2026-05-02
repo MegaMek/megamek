@@ -82,11 +82,8 @@ public class SourceBooks {
      */
     public SourceBooks(String directoryPath) {
         baseDirectory = new File(directoryPath);
-        if (!baseDirectory.exists() || !baseDirectory.isDirectory()) {
-            throw new IllegalArgumentException("Invalid directory: " + directoryPath);
-        }
         cacheKeyPrefix = baseDirectory.toPath().toAbsolutePath().normalize().toString();
-        yamlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        yamlMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
     }
 
     /**
@@ -141,7 +138,7 @@ public class SourceBooks {
         if ((fileName == null) || fileName.isBlank()) {
             return Optional.empty();
         }
-          return SOURCE_BOOK_CACHE.computeIfAbsent(cacheKey(sourceBookKey(fileName)),
+        return SOURCE_BOOK_CACHE.computeIfAbsent(cacheKey(sourceBookKey(fileName)),
               ignored -> readSourceBook(fileName));
     }
 

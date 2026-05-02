@@ -184,15 +184,21 @@ class MtfFileTest {
     void multipleSourcesRoundTrip() throws Exception {
         Mek mek = new BipedMek();
         mek.setSource("TR:3039, RG29,, Custom Source");
+        mek.setPublished("RS:3050u, Custom Sheet,,");
 
         String mtf = mek.getMtf();
         assertEquals("TR:3039,RG29,Custom Source", mek.getSource());
+        assertEquals("RS:3050u,Custom Sheet", mek.getPublished());
         assertTrue(mtf.contains("source:TR:3039,RG29,Custom Source\n"));
+        assertTrue(mtf.contains("published:RS:3050u,Custom Sheet\n"));
+        assertTrue(mtf.indexOf("source:TR:3039,RG29,Custom Source\n")
+              < mtf.indexOf("published:RS:3050u,Custom Sheet\n"));
 
         MtfFile loader = toMtfFile(mek);
         Entity loaded = loader.getEntity();
 
         assertEquals("TR:3039,RG29,Custom Source", loaded.getSource());
+        assertEquals("RS:3050u,Custom Sheet", loaded.getPublished());
     }
 
     /**

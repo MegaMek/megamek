@@ -4360,6 +4360,9 @@ public abstract class Mek extends Entity {
         if ((source != null) && !source.isBlank()) {
             sb.append(MtfFile.SOURCE).append(source).append(newLine);
         }
+        if ((published != null) && !published.isBlank()) {
+            sb.append(MtfFile.PUBLISHED).append(published).append(newLine);
+        }
         sb.append(MtfFile.RULES_LEVEL).append(
               TechConstants.T_SIMPLE_LEVEL[techLevel]);
         sb.append(newLine);

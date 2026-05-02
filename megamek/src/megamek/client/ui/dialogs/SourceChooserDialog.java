@@ -130,20 +130,31 @@ public class SourceChooserDialog {
         loadBooks();
 
         Vector<String> sortedBookList = BOOKS.keySet().stream().sorted().collect(Collectors.toCollection(Vector::new));
-        JList<String> bookList = new JList<>(sortedBookList);
-        bookList.setCellRenderer(titleRenderer);
-        bookList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        bookList.setVisibleRowCount(12);
-        JScrollPane bookScrollPane = new JScrollPane(bookList);
-        bookScrollPane.setPreferredSize(new Dimension(360, 240));
+          List<String> selectedSourceList = SourceBooks.splitSourceList(selectedSources);
+          List<String> selectedBookKeys = selectedSourceList.stream()
+              .map(SourceChooserDialog::sourceListEntryToBookKey)
+              .flatMap(Optional::stream)
+              .toList();
+          boolean hasUnknownSource = selectedSourceList.stream()
+              .anyMatch(source -> sourceListEntryToBookKey(source).isEmpty());
 
-        List<String> selectedSourceList = SourceBooks.splitSourceList(selectedSources);
-        int[] selectedIndices = selectedSourceList.stream()
-              .mapToInt(sortedBookList::indexOf)
-              .filter(index -> index >= 0)
-              .toArray();
-        bookList.setSelectedIndices(selectedIndices);
-        boolean hasUnknownSource = selectedSourceList.stream().anyMatch(source -> !BOOKS.containsKey(source));
+          JPanel bookPanel = new JPanel();
+          bookPanel.setLayout(new BoxLayout(bookPanel, BoxLayout.Y_AXIS));
+          Map<String, JCheckBox> bookChecks = new HashMap<>();
+          JCheckBox firstSelectedCheckBox = null;
+          for (String sourceName : sortedBookList) {
+            JCheckBox checkBox = new JCheckBox(BOOKS.getOrDefault(sourceName, sourceName));
+            checkBox.setSelected(selectedBookKeys.contains(sourceName));
+            checkBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+            bookChecks.put(sourceName, checkBox);
+            bookPanel.add(checkBox);
+            if (firstSelectedCheckBox == null && checkBox.isSelected()) {
+                firstSelectedCheckBox = checkBox;
+            }
+          }
+
+          JScrollPane bookScrollPane = new JScrollPane(bookPanel);
+        bookScrollPane.setPreferredSize(new Dimension(360, 240));
 
         JTextField manualField = new JTextField(SourceBooks.normalizeSourceList(selectedSources), 24);
         boolean useManual = showManualTextfield && hasUnknownSource;
@@ -178,32 +189,57 @@ public class SourceChooserDialog {
             mainPanel.add(manualField, gbc);
         }
 
-        bookList.setEnabled(!useManual);
+        setBookChecksEnabled(bookChecks, !useManual);
         manualField.setEnabled(useManual);
 
         rbList.addActionListener(e -> {
-            bookList.setEnabled(true);
+            setBookChecksEnabled(bookChecks, true);
             manualField.setEnabled(false);
         });
         rbManual.addActionListener(e -> {
-            bookList.setEnabled(false);
+            setBookChecksEnabled(bookChecks, false);
             manualField.setEnabled(true);
             manualField.requestFocusInWindow();
         });
 
         JOptionPane optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
         JDialog dialog = optionPane.createDialog(parent, Messages.getString("SourceChooser.title"));
+        if (firstSelectedCheckBox != null) {
+            JCheckBox selectedCheckBox = firstSelectedCheckBox;
+            SwingUtilities.invokeLater(() -> bookScrollPane.getViewport().setViewPosition(selectedCheckBox.getLocation()));
+        }
         dialog.setVisible(true);
 
         Object value = optionPane.getValue();
         if (value instanceof Integer selectedValue && selectedValue == JOptionPane.OK_OPTION) {
             if (!showManualTextfield || rbList.isSelected()) {
-                return SourceBooks.formatSourceList(bookList.getSelectedValuesList());
+                return SourceBooks.formatSourceList(sortedBookList.stream()
+                      .filter(sourceName -> bookChecks.get(sourceName).isSelected())
+                      .toList());
             } else {
                 return SourceBooks.normalizeSourceList(manualField.getText());
             }
         }
         return null;
+    }
+
+    private static Optional<String> sourceListEntryToBookKey(String sourceName) {
+        if (BOOKS.containsKey(sourceName)) {
+            return Optional.of(sourceName);
+        }
+
+        String compactSourceName = sourceName.replaceAll(":\\s+", ":");
+        if (BOOKS.containsKey(compactSourceName)) {
+            return Optional.of(compactSourceName);
+        }
+
+        return SOURCE_BOOKS.loadSourceBook(sourceName)
+              .map(SourceBook::getAbbrev)
+              .filter(BOOKS::containsKey);
+    }
+
+    private static void setBookChecksEnabled(Map<String, JCheckBox> bookChecks, boolean enabled) {
+        bookChecks.values().forEach(checkBox -> checkBox.setEnabled(enabled));
     }
 
     private static final DefaultListCellRenderer titleRenderer = new DefaultListCellRenderer() {

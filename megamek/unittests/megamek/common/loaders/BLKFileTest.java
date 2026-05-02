@@ -381,6 +381,7 @@ class BLKFileTest {
     void multipleSourcesRoundtripThroughBLK() throws Exception {
         Tank tank = createMinimalTank();
         tank.setSource("TR:3039, RG29,, Custom Source");
+                tank.setPublished("RS:3050u, Custom Sheet,,");
 
         BuildingBlock blk = BLKFile.getBlock(tank);
         BLKTankFile loader = new BLKTankFile(blk);
@@ -388,6 +389,8 @@ class BLKFileTest {
 
         assertEquals("TR:3039,RG29,Custom Source", loaded.getSource(),
               "Multiple sources should survive BLK roundtrip");
+        assertEquals("RS:3050u,Custom Sheet", loaded.getPublished(),
+              "Published record sheet sources should survive BLK roundtrip");
     }
 
     @Test
@@ -397,6 +400,7 @@ class BLKFileTest {
         blk.writeBlockData("year", 3025);
         blk.writeBlockData("type", "IS");
         blk.writeBlockData("source", new String[] { "TR:3039", "RG29", "Custom Source" });
+        blk.writeBlockData("published", new String[] { "RS:3050u", "Custom Sheet" });
         BLKFile loader = new BLKFile();
         loader.dataFile = blk;
         Tank tank = new Tank();
@@ -405,6 +409,8 @@ class BLKFileTest {
 
         assertEquals("TR:3039,RG29,Custom Source", tank.getSource(),
               "Multiple source lines should load as a source list");
+          assertEquals("RS:3050u,Custom Sheet", tank.getPublished(),
+              "Multiple published lines should load as a source list");
     }
 
     /**

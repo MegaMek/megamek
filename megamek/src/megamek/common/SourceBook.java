@@ -45,6 +45,7 @@ public class SourceBook {
     private String image;
     private String url;
     private String ispublished;
+    private boolean canon = true;
     private String description;
     private String mul_url;
 
@@ -105,6 +106,17 @@ public class SourceBook {
     // some books are apparently unpublished or were at some point
     private void setIspublished(String ispublished) {
         this.ispublished = ispublished;
+    }
+
+    /**
+     * @return true if this sourcebook is canon
+     */
+    public boolean isCanon() {
+        return canon;
+    }
+
+    private void setCanon(boolean canon) {
+        this.canon = canon;
     }
 
     /**

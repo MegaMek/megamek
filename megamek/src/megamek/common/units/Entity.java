@@ -550,6 +550,7 @@ public abstract class Entity extends TurnOrdered
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
 
     protected String source = "";
+    protected String published = "";
 
     /**
      * The tech faction associated with this Entity, used to filter available tech by faction.
@@ -14068,6 +14069,29 @@ public abstract class Entity extends TurnOrdered
 
     public void setSources(Collection<String> sources) {
         source = SourceBooks.formatSourceList(sources);
+    }
+
+    /**
+     * Sets the sourcebook where this entity's record sheet was published.
+     *
+     * @param published The sourcebook name
+     */
+    public void setPublished(String published) {
+        if (published != null) {
+            this.published = SourceBooks.normalizeSourceList(published);
+        }
+    }
+
+    public String getPublished() {
+        return (published != null) ? published : "";
+    }
+
+    public List<String> getPublishedSources() {
+        return SourceBooks.splitSourceList(getPublished());
+    }
+
+    public void setPublishedSources(Collection<String> publishedSources) {
+        published = SourceBooks.formatSourceList(publishedSources);
     }
 
     /**

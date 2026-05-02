@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.ViewFormatting;
+import megamek.common.SourceBook;
 import megamek.common.SourceBooks;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.TechBase;
@@ -171,6 +172,7 @@ class GeneralEntityReadout implements EntityReadout {
         result.add(new PlainLine());
         result.add(createCostElement());
         result.add(createSourceElement());
+        result.add(createPublishedElement());
         return result;
     }
 
@@ -332,9 +334,17 @@ class GeneralEntityReadout implements EntityReadout {
     }
 
     protected ViewElement createSourceElement() {
-        String source = entity.getSource();
-        String sourceLabel = Messages.getString("MekView.Source");
-        List<String> sources = entity.getSources();
+        return createSourceBookElement(Messages.getString("MekView.Source"), entity.getSource(), entity.getSources());
+    }
+
+    protected ViewElement createPublishedElement() {
+        if (entity.getPublishedSources().isEmpty()) {
+            return new EmptyElement();
+        }
+        return createSourceBookElement("Published Record Sheet", entity.getPublished(), entity.getPublishedSources());
+    }
+
+    private ViewElement createSourceBookElement(String sourceLabel, String source, List<String> sources) {
         if (sources.isEmpty()) {
             return new LabeledLine(sourceLabel, Messages.getString("MekView.Unknown"));
         }
@@ -343,10 +353,12 @@ class GeneralEntityReadout implements EntityReadout {
         if (sources.size() == 1) {
             var book = sourcebooks.loadSourceBook(source);
             if (book.isPresent()) {
-                if (book.get().getMul_url() != null) {
-                    return new HyperLinkLine(sourceLabel, book.get().getMul_url(), book.get().getTitle());
-                } else if (book.get().getTitle() != null) {
-                    source = Objects.requireNonNullElse(book.get().getTitle(), "");
+                SourceBook sourceBook = book.get();
+                String displaySource = sourceBookDisplayText(source, sourceBook);
+                if ((sourceBook.getMul_url() != null) && !sourceBook.getMul_url().isBlank()) {
+                    return new HyperLinkLine(sourceLabel, sourceBook.getMul_url(), displaySource);
+                } else {
+                    source = displaySource;
                 }
             }
 
@@ -357,12 +369,48 @@ class GeneralEntityReadout implements EntityReadout {
             return new LabeledLine(sourceLabel, source);
         }
 
-        String displaySources = sources.stream()
-              .map(sourceName -> sourcebooks.loadSourceBook(sourceName)
-                    .map(book -> Objects.requireNonNullElse(book.getTitle(), sourceName))
-                    .orElse(sourceName))
-              .collect(Collectors.joining(", "));
+        JoinedViewElement displaySources = new JoinedViewElement();
+        for (String sourceName : sources) {
+            if (!displaySources.toPlainText().isEmpty()) {
+                displaySources.add(", ");
+            }
+            displaySources.add(sourcebooks.loadSourceBook(sourceName)
+                  .map(book -> sourceBookDisplayElement(sourceName, book))
+                  .orElse(new PlainElement(sourceName)));
+        }
         return new LabeledLine(sourceLabel, displaySources);
+    }
+
+    private ViewElement sourceBookDisplayElement(String sourceName, SourceBook sourceBook) {
+        String displaySource = sourceBookDisplayText(sourceName, sourceBook);
+        if ((sourceBook.getMul_url() == null) || sourceBook.getMul_url().isBlank()) {
+            return new PlainElement(displaySource);
+        }
+
+        return new ViewElement() {
+            @Override
+            public String toPlainText() {
+                return displaySource;
+            }
+
+            @Override
+            public String toHTML() {
+                return "<A HREF=" + sourceBook.getMul_url() + ">" + displaySource + "</A>";
+            }
+
+            @Override
+            public String toDiscord() {
+                return displaySource;
+            }
+        };
+    }
+
+    private String sourceBookDisplayText(String sourceName, SourceBook sourceBook) {
+        String displaySource = Objects.requireNonNullElse(sourceBook.getTitle(), sourceName);
+        if (!sourceBook.isCanon()) {
+            displaySource += " (non canon)";
+        }
+        return displaySource;
     }
 
     protected ViewElement createWeightElement() {

@@ -341,7 +341,8 @@ class GeneralEntityReadout implements EntityReadout {
         if (entity.getPublishedSources().isEmpty()) {
             return new EmptyElement();
         }
-        return createSourceBookElement("Published Record Sheet", entity.getPublished(), entity.getPublishedSources());
+        return createSourceBookElement(Messages.getString("MekView.PublishedRecordSheet"), entity.getPublished(),
+              entity.getPublishedSources());
     }
 
     private ViewElement createSourceBookElement(String sourceLabel, String source, List<String> sources) {

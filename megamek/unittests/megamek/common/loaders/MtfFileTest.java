@@ -201,6 +201,32 @@ class MtfFileTest {
         assertEquals("RS:3050u,Custom Sheet", loaded.getPublished());
     }
 
+    @Test
+    void originalBuildYearRoundTrip() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setYear(3050);
+        mek.setOriginalBuildYear(3000);
+
+        String mtf = mek.getMtf();
+        assertTrue(mtf.contains("era:3050\n"));
+        assertTrue(mtf.contains("original era:3000\n"));
+
+        MtfFile loader = toMtfFile(mek);
+        Entity loaded = loader.getEntity();
+
+        assertEquals(3050, loaded.getYear());
+        assertEquals(3000, loaded.getOriginalBuildYear());
+    }
+
+    @Test
+    void originalBuildYearIsNotWrittenWhenItMatchesYear() {
+        Mek mek = new BipedMek();
+        mek.setYear(3050);
+        mek.setOriginalBuildYear(3050);
+
+        assertFalse(mek.getMtf().contains("original era:"));
+    }
+
     /**
      * Test that inverted Cockpit/Sensors in the head are corrected on load. Some MTF files have the head layout: LS,
      * Cockpit, Sensors (wrong) instead of the correct: LS, Sensors, Cockpit.

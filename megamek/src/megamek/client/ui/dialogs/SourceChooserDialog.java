@@ -130,30 +130,30 @@ public class SourceChooserDialog {
         loadBooks();
 
         Vector<String> sortedBookList = BOOKS.keySet().stream().sorted().collect(Collectors.toCollection(Vector::new));
-          List<String> selectedSourceList = SourceBooks.splitSourceList(selectedSources);
-          List<String> selectedBookKeys = selectedSourceList.stream()
-              .map(SourceChooserDialog::sourceListEntryToBookKey)
-              .flatMap(Optional::stream)
-              .toList();
-          boolean hasUnknownSource = selectedSourceList.stream()
-              .anyMatch(source -> sourceListEntryToBookKey(source).isEmpty());
+        List<String> selectedSourceList = SourceBooks.splitSourceList(selectedSources);
+        List<String> selectedBookKeys = selectedSourceList.stream()
+            .map(SourceChooserDialog::sourceListEntryToBookKey)
+            .flatMap(Optional::stream)
+            .toList();
+        boolean hasUnknownSource = selectedSourceList.stream()
+            .anyMatch(source -> sourceListEntryToBookKey(source).isEmpty());
 
-          JPanel bookPanel = new JPanel();
-          bookPanel.setLayout(new BoxLayout(bookPanel, BoxLayout.Y_AXIS));
-          Map<String, JCheckBox> bookChecks = new HashMap<>();
-          JCheckBox firstSelectedCheckBox = null;
-          for (String sourceName : sortedBookList) {
-            JCheckBox checkBox = new JCheckBox(BOOKS.getOrDefault(sourceName, sourceName));
-            checkBox.setSelected(selectedBookKeys.contains(sourceName));
-            checkBox.setAlignmentX(Component.LEFT_ALIGNMENT);
-            bookChecks.put(sourceName, checkBox);
-            bookPanel.add(checkBox);
-            if (firstSelectedCheckBox == null && checkBox.isSelected()) {
-                firstSelectedCheckBox = checkBox;
-            }
-          }
+        JPanel bookPanel = new JPanel();
+        bookPanel.setLayout(new BoxLayout(bookPanel, BoxLayout.Y_AXIS));
+        Map<String, JCheckBox> bookChecks = new HashMap<>();
+        JCheckBox firstSelectedCheckBox = null;
+        for (String sourceName : sortedBookList) {
+        JCheckBox checkBox = new JCheckBox(BOOKS.getOrDefault(sourceName, sourceName));
+        checkBox.setSelected(selectedBookKeys.contains(sourceName));
+        checkBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        bookChecks.put(sourceName, checkBox);
+        bookPanel.add(checkBox);
+        if (firstSelectedCheckBox == null && checkBox.isSelected()) {
+            firstSelectedCheckBox = checkBox;
+        }
+        }
 
-          JScrollPane bookScrollPane = new JScrollPane(bookPanel);
+        JScrollPane bookScrollPane = new JScrollPane(bookPanel);
         bookScrollPane.setPreferredSize(new Dimension(360, 240));
 
         JTextField manualField = new JTextField(SourceBooks.normalizeSourceList(selectedSources), 24);

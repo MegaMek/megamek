@@ -661,6 +661,8 @@ public class MekSummaryCache {
         ms.setTankTurrets(tankTurrets);
         ms.setSourceFile(f);
         ms.setSource(e.getSource());
+        ms.setPublished(e.getPublished());
+        ms.setNonCanonBySource(e.isNonCanonBySource());
         ms.setEntryName(entry);
         ms.setYear(e.getYear());
         ms.setType(e.getTechLevel());

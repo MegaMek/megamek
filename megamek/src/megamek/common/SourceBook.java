@@ -32,10 +32,16 @@
  */
 package megamek.common;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 /**
  * This class is used to store information about an individual sourcebook such as TRO: 3039.
  */
 @SuppressWarnings("unused") // Methods used by Jackson during deserialization
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({ "id", "sku", "title", "abbrev", "image", "url", "ispublished", "canon", "description",
+                     "mul_url" })
 public class SourceBook {
 
     private String title;
@@ -44,8 +50,8 @@ public class SourceBook {
     private String abbrev;
     private String image;
     private String url;
-    private String ispublished;
-    private boolean canon = true;
+    private boolean ispublished = false;
+    private boolean canon = false;
     private String description;
     private String mul_url;
 
@@ -56,7 +62,7 @@ public class SourceBook {
         return title;
     }
 
-    private void setTitle(String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
@@ -67,7 +73,7 @@ public class SourceBook {
         return id;
     }
 
-    private void setId(int id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -78,7 +84,7 @@ public class SourceBook {
         return sku;
     }
 
-    private void setSku(String sku) {
+    public void setSku(String sku) {
         this.sku = sku;
     }
 
@@ -89,22 +95,34 @@ public class SourceBook {
         return abbrev;
     }
 
-    private void setAbbrev(String abbrev) {
+    public void setAbbrev(String abbrev) {
         this.abbrev = abbrev;
     }
 
     // image URLs, currently bad quality
-    private void setImage(String image) {
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
         this.image = image;
     }
 
     // shop page URls
-    private void setUrl(String url) {
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
         this.url = url;
     }
 
     // some books are apparently unpublished or were at some point
-    private void setIspublished(String ispublished) {
+    public boolean getIspublished() {
+        return ispublished;
+    }
+
+    public void setIspublished(boolean ispublished) {
         this.ispublished = ispublished;
     }
 
@@ -115,7 +133,7 @@ public class SourceBook {
         return canon;
     }
 
-    private void setCanon(boolean canon) {
+    public void setCanon(boolean canon) {
         this.canon = canon;
     }
 
@@ -126,7 +144,7 @@ public class SourceBook {
         return description;
     }
 
-    private void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -137,7 +155,7 @@ public class SourceBook {
         return mul_url;
     }
 
-    private void setMul_url(String mul_url) {
+    public void setMul_url(String mul_url) {
         this.mul_url = mul_url;
     }
 }

@@ -128,6 +128,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected JTextField textFilter;
     protected JTextField textGunnery;
     protected JTextField textPilot;
+    private final JCheckBox checkboxCanonOnly = new JCheckBox(Messages.getString("MekSelectorDialog.chkCanonOnly"));
+    private final JCheckBox checkboxHasPublishedRecordSheet = new JCheckBox(
+          Messages.getString("MekSelectorDialog.chkHasPublishedRecordSheet"));
     protected EntityViewPane panePreview;
     private JSplitPane splitPane;
 
@@ -214,6 +217,10 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         splitPane.setDividerLocation(GUIP.getMekSelectorSplitPos());
         setSize(GUIP.getMekSelectorSizeWidth(), GUIP.getMekSelectorSizeHeight());
         setLocation(GUIP.getMekSelectorPosX(), GUIP.getMekSelectorPosY());
+        if (canonOnly) {
+            checkboxCanonOnly.setSelected(true);
+        }
+        checkboxCanonOnly.setEnabled(!canonOnly);
         toggleVtl(isVTL());
     }
 
@@ -343,10 +350,29 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 0;
         panelFilterButtons.add(comboUnitType, gridBagConstraintsWest);
 
+        JPanel panelSourceFilters = new JPanel(new GridBagLayout());
+        checkboxCanonOnly.setName("checkboxCanonOnly");
+        checkboxCanonOnly.addActionListener(this);
+        checkboxHasPublishedRecordSheet.setName("checkboxHasPublishedRecordSheet");
+        checkboxHasPublishedRecordSheet.addActionListener(this);
+
+        GridBagConstraints checkboxConstraints = new GridBagConstraints();
+        checkboxConstraints.anchor = GridBagConstraints.WEST;
+        checkboxConstraints.gridx = 0;
+        checkboxConstraints.gridy = 0;
+        panelSourceFilters.add(checkboxCanonOnly, checkboxConstraints);
+        checkboxConstraints.gridx = 1;
+        checkboxConstraints.insets = new Insets(0, 10, 0, 0);
+        panelSourceFilters.add(checkboxHasPublishedRecordSheet, checkboxConstraints);
+
+        gridBagConstraintsWest.gridx = 1;
+        gridBagConstraintsWest.gridy = 3;
+        panelFilterButtons.add(panelSourceFilters, gridBagConstraintsWest);
+
         JLabel labelFilter = new JLabel(Messages.getString("MekSelectorDialog.m_labelFilter"));
         labelFilter.setName("labelFilter");
         gridBagConstraintsWest.gridx = 0;
-        gridBagConstraintsWest.gridy = 3;
+        gridBagConstraintsWest.gridy = 4;
         panelFilterButtons.add(labelFilter, gridBagConstraintsWest);
 
         textFilter = new JTextField("");
@@ -368,7 +394,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             }
         });
         gridBagConstraintsWest.gridx = 1;
-        gridBagConstraintsWest.gridy = 3;
+        gridBagConstraintsWest.gridy = 4;
         gridBagConstraintsWest.fill = GridBagConstraints.HORIZONTAL;
         panelFilterButtons.add(textFilter, gridBagConstraintsWest);
         gridBagConstraintsWest.fill = GridBagConstraints.NONE;
@@ -377,7 +403,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         JLabel lblGun = new JLabel(Messages.getString("MekSelectorDialog.m_labelGunnery"));
         lblGun.setName("lblGun");
         gridBagConstraintsWest.gridx = 0;
-        gridBagConstraintsWest.gridy = 4;
+        gridBagConstraintsWest.gridy = 5;
         if (CLIENT_PREFERENCES.useGPinUnitSelection()) {
             panelFilterButtons.add(lblGun, gridBagConstraintsWest);
         }
@@ -404,14 +430,14 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
             });
             gridBagConstraintsWest.gridx = 1;
-            gridBagConstraintsWest.gridy = 4;
+            gridBagConstraintsWest.gridy = 5;
             panelFilterButtons.add(textGunnery, gridBagConstraintsWest);
         }
 
         JLabel lblPilot = new JLabel(Messages.getString("MekSelectorDialog.m_labelPiloting"));
         lblGun.setName("lblPilot");
         gridBagConstraintsWest.gridx = 0;
-        gridBagConstraintsWest.gridy = 5;
+        gridBagConstraintsWest.gridy = 6;
         if (CLIENT_PREFERENCES.useGPinUnitSelection()) {
             panelFilterButtons.add(lblPilot, gridBagConstraintsWest);
         }
@@ -437,7 +463,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 }
             });
             gridBagConstraintsWest.gridx = 1;
-            gridBagConstraintsWest.gridy = 5;
+            gridBagConstraintsWest.gridy = 6;
             panelFilterButtons.add(textPilot, gridBagConstraintsWest);
         }
 
@@ -446,7 +472,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 4;
+        gridBagConstraints.gridheight = 5;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -662,7 +688,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                         /* Year Limits */
                           (!enableYearLimits || (mek.getYear() <= allowedYear))
                                 /* Canon */
-                                && (!canonOnly || mek.isCanon())
+                                && (!(canonOnly || checkboxCanonOnly.isSelected()) || !mek.isNonCanonBySource())
+                                /* Published Record Sheet */
+                                && (!checkboxHasPublishedRecordSheet.isSelected() || mek.hasPublishedRecordSheet())
                                 /* Invalid units */
                                 && (allowInvalid || !mek.getLevel().equals("F"))
                                 /* Weight */
@@ -874,7 +902,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      */
     @Override
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getSource().equals(comboWeight) || ev.getSource().equals(comboUnitType)) {
+        if (ev.getSource().equals(comboWeight) || ev.getSource().equals(comboUnitType)
+              || ev.getSource().equals(checkboxCanonOnly)
+              || ev.getSource().equals(checkboxHasPublishedRecordSheet)) {
             filterUnits();
         } else if (ev.getSource().equals(buttonSelect)) {
             select(false);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,6 +32,7 @@
  */
 package megamek.common;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
@@ -69,6 +70,7 @@ public class SourceBooks {
         if (!baseDirectory.exists() || !baseDirectory.isDirectory()) {
             throw new IllegalArgumentException("Invalid directory: " + directoryPath);
         }
+        yamlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
     /**
@@ -124,11 +126,31 @@ public class SourceBooks {
             return Optional.empty();
         }
         try {
-            File yamlFile = new File(baseDirectory, prepareFilename(fileName));
-            return Optional.of(yamlMapper.readValue(yamlFile, SourceBook.class));
+            return Optional.of(yamlMapper.readValue(sourceBookFile(fileName), SourceBook.class));
         } catch (IOException e) {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Saves a sourcebook as a YAML file in the sourcebook directory.
+     *
+     * @param fileName   The sourcebook filename or key. The .yaml extension is optional.
+     * @param sourceBook The sourcebook data to save.
+     *
+     * @throws IOException if the sourcebook cannot be written.
+     */
+    public void saveSourceBook(String fileName, SourceBook sourceBook) throws IOException {
+        yamlMapper.writeValue(sourceBookFile(fileName), sourceBook);
+    }
+
+    public File sourceBookFile(String fileName) {
+        return new File(baseDirectory, prepareFilename(fileName));
+    }
+
+    public String sourceBookKey(String fileName) {
+        String preparedFilename = prepareFilename(fileName);
+        return preparedFilename.substring(0, preparedFilename.length() - ".yaml".length());
     }
 
     /**

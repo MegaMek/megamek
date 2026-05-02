@@ -579,6 +579,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // If the entity is mid-climb, prompt to continue or cling (TO:AR p.20).
         // Defer the dialog until after the board has rendered so the player can
         // see the unit's position and surrounding hexes before being prompted.
+        // The Descend button (MOVE_DESCEND) provides a backup way to reopen the
+        // dialog if the player closes it without choosing.
         if (selectedEntity.isClimbing() && (selectedEntity instanceof Mek climbingMek)) {
             SwingUtilities.invokeLater(() -> promptContinueClimbing(climbingMek));
         }
@@ -602,8 +604,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
         ClimbingChoiceDialog.ClimbingOption chosen = showContinueClimbingDialog(climbingMek);
-        if ((chosen == null) || (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.CLING)) {
-            // Player chose to cling in place or cancelled - forfeit movement
+        if (chosen == null) {
+            // Dialog closed/cancelled (X / Esc) — do NOT forfeit. Player may want to
+            // move another unit first, or reopen the dialog later via the Descend button.
+            return;
+        }
+        if (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.CLING) {
+            // Explicit choice to cling in place — forfeits movement this turn.
             ready();
             return;
         }
@@ -625,6 +632,24 @@ public class MovementDisplay extends ActionPhaseDisplay {
                   climbingMek);
             cmd.addStep(MoveStepType.DOWN);
             cmd.addStep(MoveStepType.DOWN);
+            ready();
+            return;
+        }
+        if (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.CLIMB_DOWN) {
+            // Controlled descent (TO:AR p.20): same MP cost and PSRs as climbing up.
+            // The CLIMB_MODE_ON marker before the DOWN step(s) distinguishes a climb-down
+            // from a dangle (1 bare DOWN) or drop (2 bare DOWN) on the server side —
+            // entity.climbingLevelsChosen isn't transmitted, so we encode intent in the path.
+            LOGGER.info("[CLIMB-TRACE] Climb down chosen: entity={}, currentElevation={}, levels={}",
+                  climbingMek.getDisplayName(), climbingMek.getElevation(), chosen.levels());
+            clientgui.addToast(ToastLevel.INFO,
+                  climbingMek.getDisplayName() + " climbs down " + chosen.levels() + " levels",
+                  climbingMek);
+            climbingMek.setClimbingLevelsChosen(chosen.levels());
+            cmd.addStep(MoveStepType.CLIMB_MODE_ON);
+            for (int i = 0; i < chosen.levels(); i++) {
+                cmd.addStep(MoveStepType.DOWN);
+            }
             ready();
             return;
         }
@@ -747,6 +772,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     entityMovementMode));
 
         getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(entityNotAbleToClimb);
+        // Descend button: enabled only when the unit is mid-climb / dangling and has the
+        // arms to keep climbing. Replaces the old auto-prompt with on-demand access.
+        boolean canDescend = (selectedUnit instanceof Mek)
+              && selectedUnit.isClimbing()
+              && ClimbingHelper.canClimb(selectedUnit);
+        getBtn(MoveCommand.MOVE_DESCEND).setEnabled(canDescend);
+        getBtn(MoveCommand.MOVE_DESCEND).setToolTipText(
+              Messages.getString("MovementDisplay.moveDescendTip"));
         updateTurnButton();
 
         updateProneButtons();
@@ -1042,12 +1075,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
               && (currentEntity.getPosition().distance(cmd.getLastStep().getPosition()) == 1);
         long forwardStepCount = hasCmd ? cmd.getStepVector().stream()
                                          .filter(s -> s.getType() == MoveStepType.FORWARDS).count() : 0;
-        // Edge dangle requires climb mode ON and walking movement — jumping or climb-mode-off
-        // descents use normal/leaping rules without the dangle dialog.
-        boolean isWalkingWithClimbMode = hasLastStep
-              && cmd.getLastStep().climbMode()
+        // Edge dangle: walking movement only — jumping uses jump jets to clear the drop
+        // safely (no dangle needed). Climb mode is NOT required: per TO:AR p.20, dangle is
+        // initiated by stepping off a 3+ level edge with two functional arms, and players
+        // shouldn't have to know to toggle climb mode first to get the descent prompt.
+        boolean isWalkingNotJumping = hasLastStep
               && (cmd.getLastStep().getMovementType(true) != EntityMovementType.MOVE_JUMP);
-        if (entityHasNotMoved && (forwardStepCount == 1) && isWalkingWithClimbMode
+        if (entityHasNotMoved && (forwardStepCount == 1) && isWalkingNotJumping
               && (currentEntity instanceof Mek edgeMek)
               && !currentEntity.isClimbing()
               && ClimbingHelper.canDangle(currentEntity)
@@ -1074,9 +1108,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                               ClimbingChoiceDialog.ClimbingActionType.DROP));
                     }
 
-                    // Cancel
+                // Cancel - the unit is at the cliff top, not yet on the face,
+                // so "Cling" is the wrong mental model. This option just aborts the descent.
                     descentOptions.add(new ClimbingChoiceDialog.ClimbingOption(0, 0,
-                          Messages.getString("MovementDisplay.ClimbingDialog.clingOption"),
+                          Messages.getString("MovementDisplay.ClimbingDialog.cancelEdgeOption"),
                           ClimbingChoiceDialog.ClimbingActionType.CLING));
 
                     String headerMessage = edgeMek.getDisplayName()
@@ -3326,6 +3361,20 @@ public class MovementDisplay extends ActionPhaseDisplay {
             climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(i, cost, label,
                   ClimbingChoiceDialog.ClimbingActionType.CLIMB_UP));
         }
+        // Climb Down: controlled descent at the same MP cost and PSRs as climbing up
+        // (TO:AR p.20). Only meaningful mid-climb when there is elevation to descend.
+        if (isContinuation && (currentElevation > 0)) {
+            int maxDescend = Math.min(currentElevation, maxAffordableLevels);
+            for (int i = 1; i <= maxDescend; i++) {
+                int cost = i * costPerLevel;
+                String baseLabel = (i == 1)
+                      ? Messages.getString("MovementDisplay.ClimbingDialog.descendOption", i, cost)
+                      : Messages.getString("MovementDisplay.ClimbingDialog.descendOptions", i, cost);
+                String label = baseLabel + " - PSR " + climbPsrTarget + "+ per level";
+                climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(i, cost, label,
+                      ClimbingChoiceDialog.ClimbingActionType.CLIMB_DOWN));
+            }
+        }
         // Dangle-and-Drop: available mid-climb or mid-dangle with 2 functional arms
         // (TO:AR p.20). Allows controlled descent from any climbing/dangling position.
         if (isContinuation && (currentElevation > 0) && ClimbingHelper.canDangle(mek)) {
@@ -3374,13 +3423,88 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void updateClimbModeButtonText() {
         boolean climbModeOn = (cmd != null) ? cmd.getFinalClimbMode()
               : (currentEntity() != null && currentEntity().climbMode());
-        if (climbModeOn) {
-            getBtn(MoveCommand.MOVE_CLIMB_MODE).setText(
-                  Messages.getString("MovementDisplay.moveClimbModeOn"));
-        } else {
-            getBtn(MoveCommand.MOVE_CLIMB_MODE).setText(
-                  Messages.getString("MovementDisplay.moveClimbModeOff"));
+        String baseLabel = climbModeOn
+              ? Messages.getString("MovementDisplay.moveClimbModeOn")
+              : Messages.getString("MovementDisplay.moveClimbModeOff");
+        ClimbModeContext context = computeClimbModeContext();
+        String label = (context.suffix() != null)
+              ? baseLabel + " — " + context.suffix()
+              : baseLabel;
+        getBtn(MoveCommand.MOVE_CLIMB_MODE).setText(label);
+        getBtn(MoveCommand.MOVE_CLIMB_MODE).setToolTipText(context.tooltip());
+    }
+
+    /**
+     * Climb-mode button context, used to give the player at-a-glance feedback about what the Climbing / Move Thru
+     * toggle actually does in their current situation.
+     *
+     * @param suffix  short label appended to the button, or null if no climbable terrain
+     * @param tooltip HTML tooltip describing the toggle's current effect
+     */
+    private record ClimbModeContext(@megamek.common.annotations.Nullable String suffix, String tooltip) {}
+
+    /**
+     * Inspects the entity's current/pending position and facing to determine what the Climb Mode toggle currently
+     * controls. Used by {@link #updateClimbModeButtonText()} to produce a context-aware button label and tooltip.
+     */
+    private ClimbModeContext computeClimbModeContext() {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            return new ClimbModeContext(null, Messages.getString("MovementDisplay.climbModeTip.none"));
         }
+        // Use end-of-path position/facing if a path is being plotted, else the entity's current state.
+        Coords curPos = entity.getPosition();
+        int curFacing = entity.getFacing();
+        int curElevation = entity.getElevation();
+        if ((cmd != null) && (cmd.getLastStep() != null)) {
+            curPos = cmd.getLastStep().getPosition();
+            curFacing = cmd.getLastStep().getFacing();
+            curElevation = cmd.getLastStep().getElevation();
+        }
+        if (curPos == null) {
+            return new ClimbModeContext(null, Messages.getString("MovementDisplay.climbModeTip.none"));
+        }
+        Hex curHex = game.getBoard(entity).getHex(curPos);
+        Coords frontPos = curPos.translated(curFacing);
+        Hex frontHex = game.getBoard(entity).getHex(frontPos);
+        // Bridge in current or front hex: toggle controls on-top vs underneath.
+        boolean bridgeHere = (curHex != null) && curHex.containsTerrain(Terrains.BRIDGE);
+        boolean bridgeFront = (frontHex != null) && frontHex.containsTerrain(Terrains.BRIDGE);
+        if (bridgeHere || bridgeFront) {
+            return new ClimbModeContext(Messages.getString("MovementDisplay.climbModeCtx.bridge"),
+                  Messages.getString("MovementDisplay.climbModeTip.bridge"));
+        }
+        if (frontHex != null) {
+            int curAlt = ((curHex != null) ? curHex.getLevel() : 0) + curElevation;
+            int frontTopAlt = frontHex.getLevel();
+            if (frontHex.containsTerrain(Terrains.BUILDING)) {
+                frontTopAlt += frontHex.terrainLevel(Terrains.BLDG_ELEV);
+            }
+            int diff = frontTopAlt - curAlt;
+            // Climbing UP: front hex is 3+ levels higher (TacOps Climbing applies).
+            if (diff >= ClimbingHelper.MIN_CLIMBING_LEVELS) {
+                String key = frontHex.containsTerrain(Terrains.BUILDING)
+                      ? "MovementDisplay.climbModeCtx.upBuilding"
+                      : "MovementDisplay.climbModeCtx.upCliff";
+                String tipKey = frontHex.containsTerrain(Terrains.BUILDING)
+                      ? "MovementDisplay.climbModeTip.upBuilding"
+                      : "MovementDisplay.climbModeTip.upCliff";
+                return new ClimbModeContext(Messages.getString(key),
+                      Messages.getString(tipKey, diff));
+            }
+            // At edge of a 3+ level drop: toggle no longer matters for descent (post-fix).
+            if (-diff >= ClimbingHelper.MIN_CLIMBING_LEVELS) {
+                return new ClimbModeContext(Messages.getString("MovementDisplay.climbModeCtx.atEdge"),
+                      Messages.getString("MovementDisplay.climbModeTip.atEdge", -diff));
+            }
+            // Building adjacent (small one): toggle controls roof vs walk-through.
+            if (frontHex.containsTerrain(Terrains.BUILDING)
+                  || ((curHex != null) && curHex.containsTerrain(Terrains.BUILDING))) {
+                return new ClimbModeContext(Messages.getString("MovementDisplay.climbModeCtx.building"),
+                      Messages.getString("MovementDisplay.climbModeTip.building"));
+            }
+        }
+        return new ClimbModeContext(null, Messages.getString("MovementDisplay.climbModeTip.none"));
     }
 
     private void updateManeuverButton() {
@@ -5850,6 +5974,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         if (actionCmd.equals(MoveCommand.MOVE_RAISE_ELEVATION.getCmd())) {
             addStepToMovePath(MoveStepType.UP);
+        } else if (actionCmd.equals(MoveCommand.MOVE_DESCEND.getCmd())) {
+            // On-demand Descend dialog: only meaningful for a mid-climb / dangling Mek.
+            // Replaces the auto-prompt that fired at turn start.
+            if ((entity instanceof Mek climbingMek) && entity.isClimbing()
+                  && ClimbingHelper.canClimb(entity)) {
+                promptContinueClimbing(climbingMek);
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_LOWER_ELEVATION.getCmd())) {
             if (entity.isAero()) {
                 PlanetaryConditions conditions = game.getPlanetaryConditions();

@@ -62,6 +62,7 @@ public class ClimbingChoiceDialog extends AbstractChoiceDialog<ClimbingChoiceDia
      */
     public enum ClimbingActionType {
         CLIMB_UP,
+        CLIMB_DOWN,
         CLING,
         DANGLE_DOWN,
         DROP

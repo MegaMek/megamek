@@ -2681,11 +2681,14 @@ public class MoveStep implements Serializable {
         // check if this movement is illegal for reasons other than points
         // Only a CHAFF step or another unloading step can follow an existing unloading step
         // In-place actions (GET_UP, CAREFUL_STAND, etc.) should not be blocked by
-        // isMovementPossible - the entity is already at this position
+        // isMovementPossible - the entity is already at this position.
+        // A DOWN step on a climbing/dangling Mek (TO:AR p.20) likewise stays in the same hex,
+        // moving down the cliff face — isMovementPossible would reject the in-air elevation.
         boolean isInPlaceAction = (stepType == MoveStepType.GET_UP)
               || (stepType == MoveStepType.CAREFUL_STAND)
               || (stepType == MoveStepType.GO_PRONE)
-              || (stepType == MoveStepType.HULL_DOWN);
+              || (stepType == MoveStepType.HULL_DOWN)
+              || (isClimbing && (stepType == MoveStepType.DOWN));
         boolean movementPossible = isInPlaceAction
               || isMovementPossible(game, lastPos, prev.getElevation(), cachedEntityState);
         if (!movementPossible ||

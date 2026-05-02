@@ -275,6 +275,67 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     downStepCount++;
                 }
             }
+            // Controlled CLIMB DOWN (TO:AR p.20): same MP cost and PSRs as climbing up.
+            // Discriminated from DANGLE (1 bare DOWN) and DROP (2 bare DOWN) by the
+            // CLIMB_MODE_ON marker step the client adds before the DOWN steps.
+            // Edge dangle uses CLIMB_MODE_ON + FORWARDS (no DOWN), so no false positive.
+            // entity.climbingLevelsChosen isn't transmitted to the server — the path is.
+            boolean hasClimbModeOnMarker = md.contains(MoveStepType.CLIMB_MODE_ON);
+            if (hasClimbModeOnMarker && (downStepCount > 0) && (entity instanceof Mek descendingMek)
+                  && ClimbingHelper.canClimb(entity)) {
+                int levelsToDescend = Math.min(downStepCount, entity.getElevation());
+                int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(descendingMek);
+                int climbableArms = ClimbingHelper.countClimbableArms(descendingMek);
+                int currentElevation = entity.getElevation();
+                logger.info("[CLIMB-TRACE] Server processing CLIMB_DOWN: entity={}, " +
+                            "currentElevation={}, levelsToDescend={}, costPerLevel={}",
+                      entity.getDisplayName(), currentElevation, levelsToDescend, costPerLevel);
+                int levelsDescended = 0;
+                boolean fellWhileDescending = false;
+                for (int i = 1; i <= levelsToDescend; i++) {
+                    PilotingRollData psr = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
+                    psr.append(new PilotingRollData(entity.getId(),
+                          ClimbingHelper.CLIMBING_PSR_MODIFIER,
+                          "climbing down (level " + i + " of " + levelsToDescend + ")"));
+                    if (climbableArms == 1) {
+                        psr.append(new PilotingRollData(entity.getId(),
+                              ClimbingHelper.ONE_ARM_PSR_MODIFIER,
+                              "climbing with one arm"));
+                    }
+                    int psrElevation = currentElevation - levelsDescended;
+                    if (gameManager.doSkillCheckWhileMoving(entity, psrElevation,
+                          entity.getPosition(), entity.getPosition(), psr, true) > 0) {
+                        // PSR failed - fall from current climb-down elevation
+                        entity.setClimbing(false);
+                        entity.setDangling(false);
+                        entity.setClimbingLevelsChosen(0);
+                        fellWhileDescending = true;
+                        break;
+                    }
+                    levelsDescended++;
+                }
+                if (!fellWhileDescending) {
+                    int newElevation = Math.max(0, currentElevation - levelsDescended);
+                    entity.setElevation(newElevation);
+                    if (newElevation == 0) {
+                        entity.setClimbing(false);
+                        entity.setDangling(false);
+                        Report groundReport = new Report(6463, Report.PUBLIC);
+                        groundReport.add(entity.getDisplayName());
+                        addReport(groundReport);
+                    } else {
+                        entity.setClimbing(true);
+                        entity.setDangling(false);
+                    }
+                    entity.setClimbingLevelsChosen(0);
+                }
+                entity.mpUsed = levelsDescended * costPerLevel;
+                entity.delta_distance = 0;
+                entity.moved = EntityMovementType.MOVE_WALK;
+                entity.setDone(true);
+                gameManager.entityUpdate(entity.getId());
+                return;
+            }
             boolean isDrop = (downStepCount >= 2);
 
             if (isDrop) {
@@ -692,6 +753,25 @@ class MovePathHandler extends AbstractTWRuleHandler {
             report.subject = entity.getId();
             addReport(report);
             gameManager.doMagmaDamage(entity, false);
+        }
+
+        // Defensive: clear stale climbing/dangling flags when the entity ends its turn
+        // at ground level and is not standing on a building roof. Catches state leaks
+        // (e.g., dangling flag carried forward through a climb-up) that would otherwise
+        // re-trigger the continue-climbing dialog at the start of the next turn.
+        if ((entity.isClimbing() || entity.isDangling()) && (entity.getElevation() == 0)) {
+            Hex finalHex = getGame().getBoard(entity.getBoardId()).getHex(curPos);
+            boolean onBuildingRoof = (finalHex != null)
+                  && finalHex.containsTerrain(Terrains.BUILDING)
+                  && (entity.getElevation() >= finalHex.terrainLevel(Terrains.BLDG_ELEV));
+            if (!onBuildingRoof) {
+                logger.info("[CLIMB-TRACE] Clearing stale climbing flags at end of move: entity={}, "
+                            + "climbing={}, dangling={}, elevation=0 in hex {}",
+                      entity.getDisplayName(), entity.isClimbing(), entity.isDangling(), curPos);
+                entity.setClimbing(false);
+                entity.setDangling(false);
+                entity.setClimbingLevelsChosen(0);
+            }
         }
 
         // set entity parameters
@@ -4028,6 +4108,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     entity.setFacing(curFacing);
                     entity.setElevation(climbingElevation);
                     entity.setClimbing(true);
+                    // Climbing back up exits any prior dangle state
+                    entity.setDangling(false);
+                    // Reset chosen-levels so next turn's dialog starts fresh
+                    entity.setClimbingLevelsChosen(0);
                     curPos = lastPos;
                     curVTOLElevation = climbingElevation;
                     mpUsed = walkMP;
@@ -4040,6 +4124,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 } else if (totalLevelsToClimb > 0) {
                     // Completed the climb - Mek enters the upper hex
                     entity.setClimbing(false);
+                    // Climbing back up from a dangle terminates the dangle state
+                    entity.setDangling(false);
+                    entity.setClimbingLevelsChosen(0);
                     logger.info("Climbing: completed full climb of {} levels", totalLevelsToClimb);
                 } else {
                     // No levels to climb (e.g. moved to same-level hex while climbing)
@@ -4051,6 +4138,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                               climbingElevation);
                     } else {
                         entity.setClimbing(false);
+                        entity.setDangling(false);
+                        entity.setClimbingLevelsChosen(0);
                         logger.info("Climbing: at ground level, clearing climbing state");
                     }
                 }

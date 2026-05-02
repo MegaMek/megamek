@@ -33,6 +33,8 @@
 
 package megamek.common.interfaces;
 
+import java.util.List;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -55,6 +57,14 @@ public interface ITechManager {
      * @return The date to use in determining the current tech level if {@link #useVariableTechLevel()} is true.
      */
     int getGameYear();
+
+    /**
+     * @return Years to use when checking whether technology is available. This is usually the effective game year, but
+     *       refitted units may include their original build year as an additional valid year.
+     */
+    default List<Integer> getTechAvailabilityYears() {
+        return List.of(getGameYear());
+    }
 
     /**
      * Indicates which faction should be used in determining intro and tech level dates. Not all tech has
@@ -107,12 +117,17 @@ public interface ITechManager {
                   || (useClanTechBase() == tech.isClan());
         }
 
+        for (int yearForAvailability : getTechAvailabilityYears()) {
+            if ((yearForAvailability > 0) && isLegal(tech, yearForAvailability)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isLegal(ITechnology tech, int yearForAvailability) {
         Faction faction = getTechFaction();
         boolean clanTech = useClanTechBase();
-
-        // Use getGameYear() for availability checks - this respects the "Use Game Year" setting
-        // which allows equipment available by the configured game year, not just the unit's intro year
-        int yearForAvailability = getGameYear();
 
         int isIntroDate = tech.getIntroductionDate(false);
         int clanIntroDate = tech.getIntroductionDate(true);
@@ -132,7 +147,7 @@ public interface ITechManager {
             faction = Faction.TH;
         } else if (useClanTechBase() && !introducedClan
               && tech.isAvailableIn(2787, false, Faction.TH)
-              && !extinctClan && (tech.getExtinctionDate(false) > getGameYear())
+              && !extinctClan && (tech.getExtinctionDate(false) > yearForAvailability)
               && (tech.getExtinctionDate(false) != ITechnology.DATE_NONE)) {
             // Transitional period: Clans can treat IS tech as Clan if it was available to TH and
             // has an extinction date that it hasn't reached yet (using specific Clan date if given).
@@ -146,8 +161,8 @@ public interface ITechManager {
                 return false;
             } else if (useVariableTechLevel()) {
                 // If using tech progression with mixed tech, we pass if either IS or Clan meets the required level
-                return tech.getSimpleLevel(getGameYear(), true, faction).compareTo(getTechLevel()) <= 0
-                      || tech.getSimpleLevel(getGameYear(), false, faction).compareTo(getTechLevel()) <= 0;
+                return tech.getSimpleLevel(yearForAvailability, true, faction).compareTo(getTechLevel()) <= 0
+                      || tech.getSimpleLevel(yearForAvailability, false, faction).compareTo(getTechLevel()) <= 0;
             }
         } else {
             if (tech.getTechBase() != TechBase.ALL
@@ -158,7 +173,7 @@ public interface ITechManager {
             } else if (!clanTech && (!introducedIS || (!showExtinct() && extinctIS))) {
                 return false;
             } else if (useVariableTechLevel()) {
-                return tech.getSimpleLevel(getGameYear(), clanTech, faction).compareTo(getTechLevel()) <= 0;
+                return tech.getSimpleLevel(yearForAvailability, clanTech, faction).compareTo(getTechLevel()) <= 0;
             }
         }
         // It's available in the year, and we're not using tech progression, so just check the tech level.

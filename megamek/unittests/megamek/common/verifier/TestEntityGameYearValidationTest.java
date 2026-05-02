@@ -35,6 +35,8 @@ package megamek.common.verifier;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
+
 import megamek.common.TechConstants;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
@@ -205,6 +207,17 @@ class TestEntityGameYearValidationTest {
         // Can be reset to -1 (use entity year)
         testEntity.setGameYear(-1);
         assertEquals(-1, testEntity.getGameYear());
+    }
+
+    @Test
+    void testTechLevelYearsIncludeOriginalBuildYearWhenSet() {
+        Mek mek = createTestMek(3050);
+
+        assertEquals(List.of(3050), mek.getTechLevelYears());
+
+        mek.setOriginalBuildYear(3000);
+
+        assertEquals(List.of(3050, 3000), mek.getTechLevelYears());
     }
 
     @Test

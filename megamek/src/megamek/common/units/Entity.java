@@ -15912,6 +15912,17 @@ public abstract class Entity extends TurnOrdered
         return year;
     }
 
+    /**
+     * @return Years that can satisfy technology availability checks for this unit.
+     */
+    public List<Integer> getTechLevelYears() {
+        int techLevelYear = getTechLevelYear();
+        if (hasOriginalBuildYear() && (getOriginalBuildYear() != techLevelYear)) {
+            return List.of(techLevelYear, getOriginalBuildYear());
+        }
+        return List.of(techLevelYear);
+    }
+
     public int getTargetBay() {
         return targetBay;
     }
@@ -16449,6 +16460,10 @@ public abstract class Entity extends TurnOrdered
             return year;
         }
         return originalBuildYear;
+    }
+
+    public boolean hasOriginalBuildYear() {
+        return (originalBuildYear > 0) && (originalBuildYear != year);
     }
 
     public void setOriginalBuildYear(int year) {

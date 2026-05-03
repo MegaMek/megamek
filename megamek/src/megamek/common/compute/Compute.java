@@ -7948,7 +7948,7 @@ public class Compute {
         // Get radius, base damage
         DamageFalloff falloff = AreaEffectHelper.calculateDamageFallOff(
               ammoType,
-              attacker.isBattleArmor() ? ((BattleArmor) attacker).getTroopers() : 0,
+              attacker.isBattleArmor() ? ((BattleArmor) attacker).getSquadSize() : 0,
               false
         );
 

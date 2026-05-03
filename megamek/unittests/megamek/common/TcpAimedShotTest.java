@@ -134,7 +134,7 @@ public class TcpAimedShotTest {
         ba.setId(1);
         ba.setChassis("Test BA");
         ba.setModel("Standard");
-        ba.setTroopers(4);
+        ba.setSquadSize(4);
         ba.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
 
         Crew crew = new Crew(CrewType.INFANTRY_CREW);

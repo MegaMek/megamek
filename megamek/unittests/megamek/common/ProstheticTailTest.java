@@ -127,7 +127,7 @@ public class ProstheticTailTest {
         battleArmor.setId(1);
         battleArmor.setChassis("Test BA");
         battleArmor.setModel(withTail ? "Tail Enhanced" : "Standard");
-        battleArmor.setTroopers(troopers);
+        battleArmor.setSquadSize(troopers);
         battleArmor.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
 
         Crew crew = new Crew(CrewType.INFANTRY_CREW);

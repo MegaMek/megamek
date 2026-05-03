@@ -60,7 +60,7 @@ public record InfantryDamageApplier(Infantry entity, EntityFinalState entityFina
     public int devastateUnit() {
         int dmg = 0;
         if (entity() instanceof BattleArmor battleArmor) {
-            for (int i = 0; i < battleArmor.getTroopers(); i++) {
+            for (int i = 0; i < battleArmor.getSquadSize(); i++) {
                 dmg += battleArmor.getArmor(BattleArmor.LOC_SQUAD);
                 dmg += battleArmor.getInternal(BattleArmor.LOC_SQUAD);
                 battleArmor.setInternal(0, BattleArmor.LOC_TROOPER_1 + i);

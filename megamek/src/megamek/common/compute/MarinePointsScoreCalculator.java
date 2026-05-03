@@ -40,7 +40,6 @@ import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 
 /**
  * Calculates Marine Points Score (MPS) for infantry vs. infantry combat.
@@ -120,7 +119,7 @@ public class MarinePointsScoreCalculator {
 
         // Count active troopers
         int activeTroopers = 0;
-        for (int i = 0; i < ba.getTroopers(); i++) {
+        for (int i = 0; i < ba.getSquadSize(); i++) {
             if (ba.isTrooperActive(i)) {
                 activeTroopers++;
             }

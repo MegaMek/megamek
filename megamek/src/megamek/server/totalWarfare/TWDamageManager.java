@@ -1993,7 +1993,7 @@ public class TWDamageManager implements IDamageManager {
         report.subject = entity.getId();
         report.indent(2);
         reportVec.add(report);
-        for (int i = 0; i < (battleArmor).getTroopers(); i++) {
+        for (int i = 0; i < (battleArmor).getSquadSize(); i++) {
             hit.setLocation(BattleArmor.LOC_TROOPER_1 + i);
             if (battleArmor.getInternal(hit) > 0) {
                 // damageBA writes to reportVec on its own.

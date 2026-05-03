@@ -113,7 +113,7 @@ public class TsmImplantTest {
         ba.setId(1);
         ba.setChassis("Test BA");
         ba.setModel(withTsmImplant ? "TSM" : "Standard");
-        ba.setTroopers(troopers);
+        ba.setSquadSize(troopers);
         ba.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
 
         // Initialize crew
@@ -248,7 +248,7 @@ public class TsmImplantTest {
                   "BA should have TSM implant ability");
 
             // TSM bonus is +1 per trooper, applied in handler
-            int expectedTsmBonus = ba.getTroopers();
+            int expectedTsmBonus = ba.getSquadSize();
             assertEquals(4, expectedTsmBonus,
                   "TSM bonus should be +4 for 4 troopers (+1 each)");
         }

@@ -117,7 +117,7 @@ class AntiMekAttackTest {
         battleArmor.setId(game.getNextEntityId());
         battleArmor.setChassis("Test IS BA");
         battleArmor.setModel(burdened ? "With Missiles" : "Standard");
-        battleArmor.setTroopers(troopers);
+        battleArmor.setSquadSize(troopers);
         battleArmor.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
         battleArmor.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
 
@@ -150,7 +150,7 @@ class AntiMekAttackTest {
         battleArmor.setId(game.getNextEntityId());
         battleArmor.setChassis("Test Clan BA");
         battleArmor.setModel("Elemental");
-        battleArmor.setTroopers(troopers);
+        battleArmor.setSquadSize(troopers);
         battleArmor.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
         battleArmor.setTechLevel(TechConstants.T_CLAN_TW);
 

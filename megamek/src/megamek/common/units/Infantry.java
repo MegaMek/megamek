@@ -37,11 +37,9 @@ package megamek.common.units;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.cost.InfantryCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -121,7 +119,6 @@ public abstract class Infantry extends Entity {
     public CrewType defaultCrewType() {
         return CrewType.INFANTRY_CREW;
     }
-
 
     /**
      * Generates the {@link TechAdvancement} for the unit's motive type. A value of EntityMovementMode.NONE indicates
@@ -315,7 +312,6 @@ public abstract class Infantry extends Entity {
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
-
     @Override
     public boolean isValidSecondaryFacing(int dir) {
         return true;
@@ -341,7 +337,6 @@ public abstract class Infantry extends Entity {
     public boolean getIsCallingSupport() {
         return isCallingSupport;
     }
-
 
     @Override
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
@@ -371,7 +366,6 @@ public abstract class Infantry extends Entity {
         return hasMinimalGroundMP(MPCalculationSetting.STANDARD);
     }
 
-
     @Override
     public boolean hasUMU() {
         return getMovementMode().isUMUInfantry() || getMovementMode().isSubmarine();
@@ -386,9 +380,6 @@ public abstract class Infantry extends Entity {
     public int getAllUMUCount() {
         return hasUMU() ? jumpMP : 0;
     }
-
-
-
 
     @Override
     public String getMovementAbbr(EntityMovementType movementType) {
@@ -417,16 +408,12 @@ public abstract class Infantry extends Entity {
         return new HitData(Entity.LOC_DESTROYED);
     }
 
-
     /**
      * @return The full original strength (trooper count) of this infantry unit
      */
     public int getOriginalTrooperCount() {
         return originalTrooperCount;
     }
-
-
-
 
     @Override
     public Vector<Report> victoryReport() {
@@ -472,7 +459,6 @@ public abstract class Infantry extends Entity {
         }
         return prd;
     }
-
 
     /**
      * Returns the maximum downward elevation change this infantry can make. Infantry with glider wings can descend any
@@ -547,7 +533,6 @@ public abstract class Infantry extends Entity {
      */
     public abstract boolean isStealthy();
 
-
     /**
      * Returns true if this infantry unit can use glider wings in the current conditions. Glider wings cannot be used in
      * vacuum or trace (very thin) atmospheres (IO p.85).
@@ -562,7 +547,6 @@ public abstract class Infantry extends Entity {
         // Glider wings require at least THIN atmosphere (vacuum and trace are too thin)
         return !atmosphere.isLighterThan(Atmosphere.THIN);
     }
-
 
     /**
      * Returns true if this infantry unit can use powered flight wings in the current conditions. Powered flight wings
@@ -580,7 +564,6 @@ public abstract class Infantry extends Entity {
         // Powered flight wings require at least THIN atmosphere (vacuum and trace are too thin)
         return !atmosphere.isLighterThan(Atmosphere.THIN);
     }
-
 
     /**
      * Returns true if this infantry unit can exit a VTOL using glider wings. Per IO p.85, glider wings give a soldier
@@ -605,8 +588,6 @@ public abstract class Infantry extends Entity {
               && hasAbility(OptionsConstants.MD_PL_FLIGHT);
     }
 
-
-
     /**
      * Returns the maximum number of extraneous limb pairs allowed. Per IO p.85, if glider wings or powered flight wings
      * are installed, only one pair of extraneous limbs is allowed (instead of the normal two pairs).
@@ -619,7 +600,6 @@ public abstract class Infantry extends Entity {
         }
         return 2;
     }
-
 
     @Override
     public boolean isEligibleFor(GamePhase phase) {
@@ -710,7 +690,6 @@ public abstract class Infantry extends Entity {
         setDugIn(DUG_IN_NONE);
     }
 
-
     public boolean isMechanized() {
         return movementMode.isTrackedWheeledOrHover() || movementMode.isVTOL() || movementMode.isSubmarine();
     }
@@ -719,10 +698,6 @@ public abstract class Infantry extends Entity {
     public void setCanCallSupport(boolean b) {
         canCallSupport = b;
     }
-
-
-
-
 
     /**
      * Used to check for standard or motorized SCUBA infantry, which have a maximum depth of 2.
@@ -733,10 +708,22 @@ public abstract class Infantry extends Entity {
         return isConventionalInfantry() && getMovementMode().isUMUInfantry();
     }
 
+    /**
+     * Sets the squad size for this infantry unit. For Conventional Infantry, this is the size of a single squad and the
+     * CI unit can be composed of more than one squad. For Battle Armor, this is the entire size of the unit (usually 4,
+     * 5 or 6).
+     *
+     * @param size The new squad size
+     */
     public void setSquadSize(int size) {
         squadSize = size;
     }
 
+    /**
+     * @return The squad size of this infantry unit. For Conventional Infantry, this is the size of a single squad and
+     *       the CI unit can be composed of more than one squad. For Battle Armor, this is the entire size of the unit
+     *       (usually 4, 5 or 6).
+     */
     public int getSquadSize() {
         return squadSize;
     }
@@ -765,7 +752,6 @@ public abstract class Infantry extends Entity {
         }
     }
 
-
     /**
      * Returns the base (stored) movement mode for this infantry unit, ignoring any virtual VTOL mode from powered
      * flight wings. This should be used for validation and construction rules that need to know the actual infantry
@@ -777,7 +763,6 @@ public abstract class Infantry extends Entity {
         return movementMode;
     }
 
-
     /**
      * Standard and motorized SCUBA only differ in base movement, so they both use INF_UMU. If the motion_type contains
      * the string "motorized", the movement is set here instead.
@@ -787,7 +772,6 @@ public abstract class Infantry extends Entity {
         setOriginalJumpMP(2);
     }
 
-
     /**
      * @return True for all infantry that are allowed AM attacks. Mechanized infantry and infantry units with
      *       encumbering armor or field guns are not allowed to make AM attacks, while all other infantry are. Note that
@@ -795,7 +779,6 @@ public abstract class Infantry extends Entity {
      *       fixed 8 AM skill rating.
      */
     public abstract boolean canMakeAntiMekAttacks();
-
 
     @Override
     public boolean isUsingManAce() {
@@ -818,8 +801,6 @@ public abstract class Infantry extends Entity {
     public boolean hasEngine() {
         return false;
     }
-
-
 
     @Override
     public PilotingRollData checkLandingInHeavyWoods(EntityMovementType overallMoveType, Hex curHex) {
@@ -892,13 +873,10 @@ public abstract class Infantry extends Entity {
         this.pheromoneImpaired = impaired;
     }
 
-
-
     @Override
     protected boolean hasViableWeapons() {
         return !isCrippled();
     }
-
 
     @Override
     public boolean hasPatchworkArmor() {

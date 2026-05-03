@@ -136,7 +136,7 @@ public class SuicideImplantsTest {
         battleArmor.setId(game.getNextEntityId());
         battleArmor.setChassis("Test BA");
         battleArmor.setModel(withSuicideImplants ? "Suicide" : "Standard");
-        battleArmor.setTroopers(troopers);
+        battleArmor.setSquadSize(troopers);
         battleArmor.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
 
         // Initialize crew

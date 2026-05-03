@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -152,11 +152,6 @@ public class BattleArmor extends Infantry {
      * The number of men alive in this unit at the beginning of the phase, before it begins to take damage.
      */
     private int troopersShooting = 0;
-
-    /**
-     * the number of troopers of this squad, dead or alive
-     */
-    private int troopers = -1;
 
     /**
      * The cost of this unit. This value should be set when the unit's file is read.
@@ -350,7 +345,7 @@ public class BattleArmor extends Infantry {
      */
     @Override
     public int locations() {
-        int retVal = getTroopers();
+        int retVal = getSquadSize();
         if (retVal == 0) {
             // Return one more than the maximum number of men in the unit.
             if (!isInitialized) {
@@ -814,7 +809,7 @@ public class BattleArmor extends Infantry {
 
     @Override
     public int getOriginalTrooperCount() {
-        return troopers;
+        return squadSize;
     }
 
     @Override
@@ -867,7 +862,7 @@ public class BattleArmor extends Infantry {
         if (!isInitialized) {
             return CLAN_NUM_OF_SLOTS;
         }
-        return Arrays.copyOf(isClan() ? CLAN_NUM_OF_SLOTS : IS_NUM_OF_SLOTS, troopers + 1);
+        return Arrays.copyOf(isClan() ? CLAN_NUM_OF_SLOTS : IS_NUM_OF_SLOTS, squadSize + 1);
     }
 
     /**
@@ -1185,14 +1180,6 @@ public class BattleArmor extends Infantry {
         return weightClass;
     }
 
-    public int getTroopers() {
-        return troopers;
-    }
-
-    public void setTroopers(int troopers) {
-        this.troopers = troopers;
-    }
-
     public void setChassisType(int inCT) {
         chassisType = inCT;
     }
@@ -1383,7 +1370,7 @@ public class BattleArmor extends Infantry {
         if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_BA_WEIGHT)) {
             return getTrooperTon();
         } else {
-            return troopers;
+            return squadSize;
         }
     }
 
@@ -1393,12 +1380,12 @@ public class BattleArmor extends Infantry {
 
     private double getTrooperTon() {
         return switch (getWeightClass()) {
-            case EntityWeightClass.WEIGHT_ULTRA_LIGHT -> troopers * 0.25;
-            case EntityWeightClass.WEIGHT_LIGHT -> troopers * 0.5;
-            case EntityWeightClass.WEIGHT_MEDIUM -> troopers * 1.0;
-            case EntityWeightClass.WEIGHT_HEAVY -> troopers * 1.5;
-            case EntityWeightClass.WEIGHT_ASSAULT -> troopers * 2.0;
-            default -> troopers;
+            case EntityWeightClass.WEIGHT_ULTRA_LIGHT -> squadSize * 0.25;
+            case EntityWeightClass.WEIGHT_LIGHT -> squadSize * 0.5;
+            case EntityWeightClass.WEIGHT_MEDIUM -> squadSize * 1.0;
+            case EntityWeightClass.WEIGHT_HEAVY -> squadSize * 1.5;
+            case EntityWeightClass.WEIGHT_ASSAULT -> squadSize * 2.0;
+            default -> squadSize;
         };
     }
 
@@ -1422,7 +1409,7 @@ public class BattleArmor extends Infantry {
 
     @Override
     public boolean isCrippled() {
-        double activeTroopPercent = (double) getNumberActiveTroopers() / getTroopers();
+        double activeTroopPercent = (double) getNumberActiveTroopers() / getSquadSize();
         if (activeTroopPercent < 0.5) {
             logger.debug("{} CRIPPLED: Only {} troops remaining.",
                   getDisplayName(),
@@ -1435,17 +1422,17 @@ public class BattleArmor extends Infantry {
 
     @Override
     public boolean isDmgHeavy() {
-        return (((double) getNumberActiveTroopers() / getTroopers()) < 0.67);
+        return (((double) getNumberActiveTroopers() / getSquadSize()) < 0.67);
     }
 
     @Override
     public boolean isDmgModerate() {
-        return (((double) getNumberActiveTroopers() / getTroopers()) < 0.75);
+        return (((double) getNumberActiveTroopers() / getSquadSize()) < 0.75);
     }
 
     @Override
     public boolean isDmgLight() {
-        return (((double) getNumberActiveTroopers() / getTroopers()) < 0.9);
+        return (((double) getNumberActiveTroopers() / getSquadSize()) < 0.9);
     }
 
     public int calculateSwarmDamage() {
@@ -1478,7 +1465,7 @@ public class BattleArmor extends Infantry {
             }
         }
         if (hasMyomerBooster()) {
-            damage += getTroopers() * 2;
+            damage += getSquadSize() * 2;
         }
 
         // we only track vibro claws at the squad level, so we have either 0, 1 or 2.

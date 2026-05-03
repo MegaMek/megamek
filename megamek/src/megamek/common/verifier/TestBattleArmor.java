@@ -523,7 +523,7 @@ public class TestBattleArmor extends TestEntity {
 
     @Override
     public double getWeight() {
-        return ba.getTrooperWeight() * ba.getTroopers();
+        return ba.getTrooperWeight() * ba.getSquadSize();
     }
 
     @Override
@@ -674,9 +674,9 @@ public class TestBattleArmor extends TestEntity {
             correct = false;
         }
 
-        int[][] critsUsed = new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
-        int[][] numAPWeapons = new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
-        int[][] numAMWeapons = new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
+        int[][] critsUsed = new int[ba.getSquadSize() + 1][BattleArmor.MOUNT_NUM_LOCS];
+        int[][] numAPWeapons = new int[ba.getSquadSize() + 1][BattleArmor.MOUNT_NUM_LOCS];
+        int[][] numAMWeapons = new int[ba.getSquadSize() + 1][BattleArmor.MOUNT_NUM_LOCS];
         int numSSWMs = 0;
         int numGloveMountedAPWeapons = 0;
         Mounted<?> squadSupportWeapon = null;
@@ -825,7 +825,7 @@ public class TestBattleArmor extends TestEntity {
                     numAPWeapons[m.getLocation()][m.getBaMountLoc()]++;
                 }
             } else {
-                for (int t = 0; t <= ba.getTroopers(); t++) {
+                for (int t = 0; t <= ba.getSquadSize(); t++) {
                     critsUsed[t][m.getBaMountLoc()] += critSize;
                     if ((m.getType() instanceof WeaponType)
                           && !(m.getType() instanceof InfantryWeapon)) {
@@ -885,7 +885,7 @@ public class TestBattleArmor extends TestEntity {
         }
 
         // Now check to make sure the counts are valid
-        for (int t = 0; t <= ba.getTroopers(); t++) {
+        for (int t = 0; t <= ba.getSquadSize(); t++) {
             for (int loc = 0; loc < BattleArmor.MOUNT_NUM_LOCS; loc++) {
                 if (critsUsed[t][loc] > ba.getNumCrits(loc)) {
                     buff.append(BattleArmor.getBaMountLocName(loc))
@@ -1049,7 +1049,7 @@ public class TestBattleArmor extends TestEntity {
             correct = false;
         }
 
-        for (int t = 1; t < ba.getTroopers(); t++) {
+        for (int t = 1; t < ba.getSquadSize(); t++) {
             double trooperWeight = calculateWeight(t);
             if (trooperWeight > ba.getTrooperWeight()) {
                 buff.append("Trooper ")
@@ -1309,7 +1309,7 @@ public class TestBattleArmor extends TestEntity {
     @Override
     public double calculateWeightExact() {
         double totalWeight = 0.0;
-        for (int i = 0; i < ba.getTroopers(); i++) {
+        for (int i = 0; i < ba.getSquadSize(); i++) {
             totalWeight += calculateWeight(i);
         }
         return totalWeight;

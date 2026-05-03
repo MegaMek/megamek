@@ -63,6 +63,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import com.formdev.flatlaf.extras.components.FlatTriStateCheckBox;
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -128,8 +129,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected JTextField textFilter;
     protected JTextField textGunnery;
     protected JTextField textPilot;
-    private final JCheckBox checkboxCanonOnly = new JCheckBox(Messages.getString("MekSelectorDialog.chkCanonOnly"));
-    private final JCheckBox checkboxHasPublishedRecordSheet = new JCheckBox(
+    private final FlatTriStateCheckBox checkboxCanonOnly = createSourceFilterCheckbox(
+          Messages.getString("MekSelectorDialog.chkCanonOnly"));
+    private final FlatTriStateCheckBox checkboxHasPublishedRecordSheet = createSourceFilterCheckbox(
           Messages.getString("MekSelectorDialog.chkHasPublishedRecordSheet"));
     protected EntityViewPane panePreview;
     private JSplitPane splitPane;
@@ -185,6 +187,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         super.setVisible(false);
     }
 
+    private static FlatTriStateCheckBox createSourceFilterCheckbox(String text) {
+        FlatTriStateCheckBox checkbox = new FlatTriStateCheckBox(text, FlatTriStateCheckBox.State.UNSELECTED);
+        checkbox.setAltStateCycleOrder(true);
+        return checkbox;
+    }
+
     /**
      * This is used to update any values that are set based on individual options
      */
@@ -218,7 +226,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         setSize(GUIP.getMekSelectorSizeWidth(), GUIP.getMekSelectorSizeHeight());
         setLocation(GUIP.getMekSelectorPosX(), GUIP.getMekSelectorPosY());
         if (canonOnly) {
-            checkboxCanonOnly.setSelected(true);
+            checkboxCanonOnly.setState(FlatTriStateCheckBox.State.SELECTED);
         }
         checkboxCanonOnly.setEnabled(!canonOnly);
         toggleVtl(isVTL());
@@ -688,9 +696,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                         /* Year Limits */
                           (!enableYearLimits || (mek.getYear() <= allowedYear))
                                 /* Canon */
-                                && (!(canonOnly || checkboxCanonOnly.isSelected()) || !mek.isNonCanonBySource())
+                                                                && matchesCanonFilter(mek)
                                 /* Published Record Sheet */
-                                && (!checkboxHasPublishedRecordSheet.isSelected() || mek.hasPublishedRecordSheet())
+                                                                && matchesPublishedRecordSheetFilter(mek)
                                 /* Invalid units */
                                 && (allowInvalid || !mek.getLevel().equals("F"))
                                 /* Weight */
@@ -714,6 +722,26 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         sorter.setRowFilter(unitTypeFilter);
         String msgUnitCount = Messages.getString("MekSelectorDialog.UnitCount");
         lblCount.setText(String.format(" %s %d", msgUnitCount, sorter.getViewRowCount()));
+    }
+
+    private boolean matchesCanonFilter(MekSummary mek) {
+        if (canonOnly) {
+            return !mek.isNonCanonBySource();
+        }
+
+        return switch (checkboxCanonOnly.getState()) {
+            case SELECTED -> !mek.isNonCanonBySource();
+            case INDETERMINATE -> mek.isNonCanonBySource();
+            case UNSELECTED -> true;
+        };
+    }
+
+    private boolean matchesPublishedRecordSheetFilter(MekSummary mek) {
+        return switch (checkboxHasPublishedRecordSheet.getState()) {
+            case SELECTED -> mek.hasPublishedRecordSheet();
+            case INDETERMINATE -> !mek.hasPublishedRecordSheet();
+            case UNSELECTED -> true;
+        };
     }
 
     protected boolean matchesTextFilter(MekSummary unit) {

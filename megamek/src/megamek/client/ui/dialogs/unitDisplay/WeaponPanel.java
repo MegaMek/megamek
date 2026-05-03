@@ -1444,9 +1444,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if ((weaponType instanceof InfantryWeapon infantryType) && !weaponType.hasFlag(WeaponType.F_TAG)) {
             wDamageTrooperL.setVisible(true);
             wDamageTrooperR.setVisible(true);
-            if (entity.isConventionalInfantry()) {
+            if (entity instanceof ConvInfantry infantry) {
                 wDamageTrooperR.setText(Double.toString((double) Math.round(
-                      ((Infantry) entity).getDamagePerTrooper() * 1000) / 1000));
+                      infantry.getDamagePerTrooper() * 1000) / 1000));
             } else {
                 wDamageTrooperR.setText(Double.toString(infantryType.getInfantryDamage()));
             }

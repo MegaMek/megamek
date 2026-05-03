@@ -769,7 +769,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // Vehicles don't have ejection systems, so crews abandon, and must enter a valid hex. If they cannot,
             // they can't abandon as per TO pg 197.
             Coords position = currentEntity().getPosition();
-            Infantry infantry = new Infantry();
+            Infantry infantry = new ConvInfantry();
             infantry.setGame(game);
             boolean hasLegalHex = !infantry.isLocationProhibited(position);
             for (int i = 0; i < 6; i++) {
@@ -1601,8 +1601,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         if (needNagForOther()) {
             if (currentEntity() != null
-                  && (currentEntity() instanceof Infantry)
-                  && ((Infantry) currentEntity()).hasMicrolite()) {
+                  && (currentEntity() instanceof ConvInfantry infantry)
+                  && infantry.hasMicrolite()) {
                 boolean finalElevation = (currentEntity().getElevation() != cmd.getFinalElevation());
                 boolean airborneVTOLOrWIGEOrFinalElevation = currentEntity().isAirborneVTOLorWIGE()
                       || finalElevation;
@@ -1645,8 +1645,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (needNagForOther()) {
-            if (currentlySelectedEntity instanceof Infantry) {
-                InfantryMount mount = ((Infantry) currentlySelectedEntity).getMount();
+            if (currentlySelectedEntity instanceof ConvInfantry infantry) {
+                InfantryMount mount = infantry.getMount();
                 if ((mount != null) &&
                       currentlySelectedEntity.getMovementMode().isSubmarine() &&
                       (currentlySelectedEntity.underwaterRounds >= mount.getUWEndurance()) &&
@@ -5106,8 +5106,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             int clear = Minefield.CLEAR_NUMBER_INFANTRY;
             int boom = Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT;
             // Check for Minesweeping Engineers
-            if ((currentEntity() instanceof Infantry inf)) {
-                if (inf.hasSpecialization(Infantry.MINE_ENGINEERS)) {
+            if (currentEntity() instanceof ConvInfantry inf) {
+                if (inf.hasSpecialization(ConvInfantry.MINE_ENGINEERS)) {
                     clear = Minefield.CLEAR_NUMBER_INF_ENG;
                     boom = Minefield.CLEAR_NUMBER_INF_ENG_ACCIDENT;
                 }

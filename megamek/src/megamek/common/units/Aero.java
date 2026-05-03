@@ -2478,11 +2478,6 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         return (getCockpitType() == Aero.COCKPIT_PRIMITIVE);
     }
 
-    @Override
-    public String getLocationDamage(int loc) {
-        return "";
-    }
-
     public String getCritDamageString() {
         ConditionalStringJoiner conditionalStringJoiner = new ConditionalStringJoiner();
         conditionalStringJoiner.add(getEngineHits() > 0,

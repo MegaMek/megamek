@@ -949,11 +949,6 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public int getMaxElevationChange() {
-        return 1;
-    }
-
-    @Override
     public int getMaxElevationDown(int currElevation) {
         // Gliders have a maximum elevation of 12 over the surface terrain.
         if ((currElevation > 0) && (getMovementMode() == EntityMovementMode.WIGE)) {
@@ -1185,11 +1180,6 @@ public class ProtoMek extends Entity {
             return false;
         }
         return super.isEligibleForMovement();
-    }
-
-    @Override
-    public int getTotalCommGearTons() {
-        return 0;
     }
 
     @Override

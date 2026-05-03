@@ -439,7 +439,7 @@ public final class UnitToolTip {
         return ((entity.getOArmor(location) <= 0) &&
               (entity.getOInternal(location) <= 0) &&
               !entity.hasRearArmor(location)) ||
-              (entity.isConventionalInfantry() && (location != Infantry.LOC_INFANTRY));
+              (entity.isConventionalInfantry() && (location != ConvInfantry.LOC_INFANTRY));
     }
 
     private static String locationHeader(Entity entity, int location) {
@@ -1708,8 +1708,8 @@ public final class UnitToolTip {
             result += UIUtil.tag("FONT", attr, sMove);
         }
 
-        if (entity instanceof Infantry) {
-            InfantryMount mount = ((Infantry) entity).getMount();
+        if (entity instanceof ConvInfantry infantry) {
+            InfantryMount mount = infantry.getMount();
             if ((mount != null) && entity.getMovementMode().isSubmarine() && (entity.underwaterRounds > 0)) {
                 String uw = " " + addToTT("InfUWDuration", NOBR, mount.getUWEndurance() - entity.underwaterRounds);
                 if (entity.underwaterRounds >= mount.getUWEndurance()) {
@@ -2335,10 +2335,10 @@ public final class UnitToolTip {
             }
         }
         // Infantry specialization like SCUBA
-        if (entity instanceof Infantry infantry) {
+        if (entity instanceof ConvInfantry infantry) {
             int spec = infantry.getSpecializations();
             if (spec > 0) {
-                String sInfantrySpec = addToTT("InfSpec", NOBR, Infantry.getSpecializationName(spec)).toString();
+                String sInfantrySpec = addToTT("InfSpec", NOBR, ConvInfantry.getSpecializationName(spec)).toString();
                 sInfantrySpec = UIUtil.tag("span", fontSizeAttr, sInfantrySpec);
                 col = UIUtil.tag("TD", "", sInfantrySpec);
                 row = UIUtil.tag("TR", "", col);

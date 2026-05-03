@@ -38,6 +38,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 
@@ -87,7 +88,7 @@ public class MarinePointsScoreCalculator {
         // Calculate based on entity type
         if (entity instanceof BattleArmor ba) {
             mps = calculateBattleArmorMPS(ba);
-        } else if (entity instanceof Infantry inf) {
+        } else if (entity instanceof ConvInfantry inf) {
             mps = calculateInfantryMPS(inf);
         } else {
             // For other entities (potential naval vessels), use crew
@@ -165,11 +166,11 @@ public class MarinePointsScoreCalculator {
      *
      * @return base MPS before building modifier
      */
-    private static int calculateInfantryMPS(Infantry inf) {
+    private static int calculateInfantryMPS(ConvInfantry inf) {
         int mps = 0;
 
         // Check if marines (specialized infantry)
-        boolean areMarines = (inf.getSpecializations() & Infantry.MARINES) != 0;
+        boolean areMarines = (inf.getSpecializations() & ConvInfantry.MARINES) != 0;
 
         // Base trooper value
         int baseTrooperValue = 1;  // Marines and non-marines both 1 in basic table

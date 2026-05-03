@@ -474,9 +474,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
         entity.mpUsed = mpUsed;
         if (md.isAllUnderwater(getGame())) {
             entity.underwaterRounds++;
-            if ((entity instanceof Infantry) && (((Infantry) entity).getMount() != null)
+            if ((entity instanceof ConvInfantry infantry) && (infantry.getMount() != null)
                   && entity.getMovementMode().isSubmarine()
-                  && entity.underwaterRounds > ((Infantry) entity).getMount().getUWEndurance()) {
+                  && entity.underwaterRounds > infantry.getMount().getUWEndurance()) {
                 report = new Report(2412);
                 report.addDesc(entity);
                 addReport(report);

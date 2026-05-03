@@ -43,12 +43,13 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 
 public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter {
 
-    private final Infantry infantry = (Infantry) entity;
+    private final ConvInfantry infantry = (ConvInfantry) entity;
 
     /**
      * Do not call this directly. Use ASSpecialAbilityConverter.getConverter instead. Constructs a special ability
@@ -105,22 +106,22 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
             element.getSpecialAbilities().setSUA(UMU);
         }
 
-        if (infantry.hasSpecialization(Infantry.FIRE_ENGINEERS)) {
+        if (infantry.hasSpecialization(ConvInfantry.FIRE_ENGINEERS)) {
             assign("Fire Engineers", FF);
         }
-        if (infantry.hasSpecialization(Infantry.MINE_ENGINEERS)) {
+        if (infantry.hasSpecialization(ConvInfantry.MINE_ENGINEERS)) {
             assign("Mine Engineers", MSW);
         }
-        if (infantry.hasSpecialization(Infantry.MOUNTAIN_TROOPS)) {
+        if (infantry.hasSpecialization(ConvInfantry.MOUNTAIN_TROOPS)) {
             assign("Mountain Troops", MTN);
         }
-        if (infantry.hasSpecialization(Infantry.PARATROOPS)) {
+        if (infantry.hasSpecialization(ConvInfantry.PARATROOPS)) {
             assign("Paratroopers", PAR);
         }
-        if (infantry.hasSpecialization(Infantry.SCUBA)) {
+        if (infantry.hasSpecialization(ConvInfantry.SCUBA)) {
             assign("Scuba Gear", UMU);
         }
-        if (infantry.hasSpecialization(Infantry.TRENCH_ENGINEERS)) {
+        if (infantry.hasSpecialization(ConvInfantry.TRENCH_ENGINEERS)) {
             assign("Trench Engineers", TRN);
         }
 

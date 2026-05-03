@@ -441,10 +441,7 @@ public class QuadVee extends QuadMek {
 
     @Override
     public int getMaxElevationChange() {
-        if (getConversionMode() == CONV_MODE_VEHICLE) {
-            return 1;
-        }
-        return 2;
+        return (getConversionMode() == CONV_MODE_VEHICLE) ? 1 : 2;
     }
 
     @Override

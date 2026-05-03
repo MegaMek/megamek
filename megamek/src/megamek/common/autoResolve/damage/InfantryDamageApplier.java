@@ -37,6 +37,7 @@ import java.util.List;
 
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
 import megamek.common.units.Infantry;
 
@@ -52,7 +53,7 @@ public record InfantryDamageApplier(Infantry entity, EntityFinalState entityFina
         if (entity instanceof BattleArmor) {
             return BattleArmor.LOC_SQUAD;
         }
-        return Infantry.LOC_INFANTRY;
+        return ConvInfantry.LOC_INFANTRY;
     }
 
     @Override
@@ -65,8 +66,8 @@ public record InfantryDamageApplier(Infantry entity, EntityFinalState entityFina
                 battleArmor.setInternal(0, BattleArmor.LOC_TROOPER_1 + i);
             }
         } else {
-            dmg += entity().getInternal(Infantry.LOC_INFANTRY);
-            entity().setInternal(0, Infantry.LOC_INFANTRY);
+            dmg += entity().getInternal(ConvInfantry.LOC_INFANTRY);
+            entity().setInternal(0, ConvInfantry.LOC_INFANTRY);
         }
 
         if (crewMayDie()) {
@@ -131,9 +132,9 @@ public record InfantryDamageApplier(Infantry entity, EntityFinalState entityFina
             }
             te.setInternal(newArmorValue);
         } else {
-            var currentValue = entity().getInternal(Infantry.LOC_INFANTRY);
+            var currentValue = entity().getInternal(ConvInfantry.LOC_INFANTRY);
             var newValue = Math.max(currentValue - 1, 0);
-            entity().setInternal(newValue, Infantry.LOC_INFANTRY);
+            entity().setInternal(newValue, ConvInfantry.LOC_INFANTRY);
         }
         return hitDetails;
     }

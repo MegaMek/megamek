@@ -1434,11 +1434,6 @@ public class Tank extends Entity {
     }
 
     @Override
-    public int getMaxElevationChange() {
-        return 1;
-    }
-
-    @Override
     public int getMaxElevationDown(int currElevation) {
         // WIGEs can go down as far as they want
         // 50 is a pretty arbitrary max amount, but that's also the

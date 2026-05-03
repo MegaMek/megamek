@@ -6197,7 +6197,7 @@ public class TWGameManager extends AbstractGameManager {
                 reports.addAll(doEntityFall(rider, curPos, 2, prd));
                 if (rider.getEntityType() == Entity.ETYPE_INFANTRY) {
                     int extra = Compute.d6();
-                    reports.addAll(damageEntity(rider, new HitData(Infantry.LOC_INFANTRY), extra));
+                    reports.addAll(damageEntity(rider, new HitData(ConvInfantry.LOC_INFANTRY), extra));
                 }
             }
             if (carrierDamage) {
@@ -7378,7 +7378,7 @@ public class TWGameManager extends AbstractGameManager {
                         Report.addNewline(vPhaseReport);
                     }
                 } else if (te instanceof Infantry) {
-                    HitData hit = new HitData(Infantry.LOC_INFANTRY);
+                    HitData hit = new HitData(ConvInfantry.LOC_INFANTRY);
                     if (te.getInternal(hit) > (3 * missiles)) {
                         // internal structure absorbs all damage
                         te.setInternal(te.getInternal(hit) - (3 * missiles), hit);
@@ -10816,8 +10816,8 @@ public class TWGameManager extends AbstractGameManager {
                 boom = Minefield.CLEAR_NUMBER_BA_SWEEPER_ACCIDENT;
                 r = new Report(2246);
             }
-        } else if (ent instanceof Infantry inf) { // Check Minesweeping Engineers
-            if (inf.hasSpecialization(Infantry.MINE_ENGINEERS)) {
+        } else if (ent instanceof ConvInfantry inf) { // Check Minesweeping Engineers
+            if (inf.hasSpecialization(ConvInfantry.MINE_ENGINEERS)) {
                 clear = Minefield.CLEAR_NUMBER_INF_ENG;
                 boom = Minefield.CLEAR_NUMBER_INF_ENG_ACCIDENT;
                 r = new Report(2247);
@@ -10925,7 +10925,7 @@ public class TWGameManager extends AbstractGameManager {
                 final int damage = Math.max(1, Compute.d6() - 1);
 
                 // Damage the platoon.
-                addReport(damageEntity(target, new HitData(Infantry.LOC_INFANTRY), damage));
+                addReport(damageEntity(target, new HitData(ConvInfantry.LOC_INFANTRY), damage));
 
                 // Damage from AP Pods is applied immediately.
                 target.applyDamage();
@@ -10997,7 +10997,7 @@ public class TWGameManager extends AbstractGameManager {
             final int damage = Compute.d6();
 
             // Damage the platoon.
-            addReport(damageEntity(target, new HitData(Infantry.LOC_INFANTRY), damage));
+            addReport(damageEntity(target, new HitData(ConvInfantry.LOC_INFANTRY), damage));
 
             // Damage from AP Pods is applied immediately.
             target.applyDamage();
@@ -13406,7 +13406,7 @@ public class TWGameManager extends AbstractGameManager {
             addReport(destroyEntity(infantry, "suicide implant detonation", false, false));
         } else {
             // Reduce trooper count
-            infantryUnit.setInternal(remainingTroopers, Infantry.LOC_INFANTRY);
+            infantryUnit.setInternal(remainingTroopers, ConvInfantry.LOC_INFANTRY);
             infantryUnit.applyDamage();
         }
     }
@@ -16149,7 +16149,7 @@ public class TWGameManager extends AbstractGameManager {
                     int troopersLost = (int) Math.ceil(troopersBefore * effectivePercent / 100.0);
 
                     // Use existing damage system
-                    HitData hit = new HitData(Infantry.LOC_INFANTRY);
+                    HitData hit = new HitData(ConvInfantry.LOC_INFANTRY);
                     damageEntity(inf, hit, troopersLost);
 
                     totalCasualties += troopersLost;
@@ -20255,8 +20255,8 @@ public class TWGameManager extends AbstractGameManager {
                 // they're in a building.
                 if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BUILDING)) {
                     // 50% casualties, rounded up.
-                    int damage = (int) (Math.ceil((entity.getInternal(Infantry.LOC_INFANTRY)) / 2.0));
-                    vDesc.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), damage, true));
+                    int damage = (int) (Math.ceil((entity.getInternal(ConvInfantry.LOC_INFANTRY)) / 2.0));
+                    vDesc.addAll(damageEntity(entity, new HitData(ConvInfantry.LOC_INFANTRY), damage, true));
                 } else {
                     vDesc.addAll(destroyEntity(entity, "nuclear explosion secondary effects", false, false));
                     entity.getCrew().setDoomed(true);
@@ -20292,12 +20292,12 @@ public class TWGameManager extends AbstractGameManager {
             } else if (entity instanceof Infantry) {
                 if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BUILDING)) {
                     // 25% casualties, rounded up.
-                    int damage = (int) (Math.ceil((entity.getInternal(Infantry.LOC_INFANTRY)) / 4.0));
-                    vDesc.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), damage, true));
+                    int damage = (int) (Math.ceil((entity.getInternal(ConvInfantry.LOC_INFANTRY)) / 4.0));
+                    vDesc.addAll(damageEntity(entity, new HitData(ConvInfantry.LOC_INFANTRY), damage, true));
                 } else {
                     // 50% casualties, rounded up.
-                    int damage = (int) (Math.ceil((entity.getInternal(Infantry.LOC_INFANTRY)) / 2.0));
-                    vDesc.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), damage, true));
+                    int damage = (int) (Math.ceil((entity.getInternal(ConvInfantry.LOC_INFANTRY)) / 2.0));
+                    vDesc.addAll(damageEntity(entity, new HitData(ConvInfantry.LOC_INFANTRY), damage, true));
                 }
             } else if (entity instanceof Tank) {
                 // It takes one crit...
@@ -24702,19 +24702,19 @@ public class TWGameManager extends AbstractGameManager {
             // Prosthetic wings and VTOL protect conventional infantry from fall damage (IO p.85)
             // Track the flight capability used for the safe landing report
             String flightCapability = null;
-            if (!(entity instanceof BattleArmor)) {
-                if (infantry.isProtectedFromFallDamage()) {
+            if (entity instanceof ConvInfantry convInfantry) {
+                if (convInfantry.isProtectedFromFallDamage()) {
                     damage = 0;
                     // Determine what type of flight capability protected them
                     if (infantry.hasAbility(OptionsConstants.MD_PL_GLIDER)) {
                         flightCapability = ReportMessages.getString("2316");
-                    } else if (infantry.hasPoweredFlightWings()) {
+                    } else if (convInfantry.hasPoweredFlightWings()) {
                         flightCapability = ReportMessages.getString("2314");
                     }
                 } else if (infantry.getBaseMovementMode() == EntityMovementMode.VTOL) {
                     // Native VTOL infantry (microcopter/microlite) are also protected
                     damage = 0;
-                    flightCapability = infantry.hasMicrolite() ?
+                    flightCapability = convInfantry.hasMicrolite() ?
                           ReportMessages.getString("2312") :
                           ReportMessages.getString("2313");
                 }
@@ -24837,7 +24837,7 @@ public class TWGameManager extends AbstractGameManager {
                     addNewLines();
                 }
             } else {
-                HitData h = new HitData(Infantry.LOC_INFANTRY);
+                HitData h = new HitData(ConvInfantry.LOC_INFANTRY);
                 vPhaseReport.addAll(damageEntity(entity, h, damage));
             }
         } else {
@@ -27714,8 +27714,8 @@ public class TWGameManager extends AbstractGameManager {
             int toBldg;
             // Infantry and BA are damaged by buildings but do not damage them, except large
             // beast-mounted infantry
-            if (entity instanceof Infantry) {
-                InfantryMount mount = ((Infantry) entity).getMount();
+            if (entity instanceof ConvInfantry convInfantry) {
+                InfantryMount mount = convInfantry.getMount();
                 if ((mount != null) && (mount.size().buildingDamage() > 0)) {
                     toBldg = mount.size().buildingDamage();
                 } else {
@@ -29622,7 +29622,7 @@ public class TWGameManager extends AbstractGameManager {
             if ((e instanceof Infantry) && ((Infantry) e).getIsCallingSupport()) {
 
                 // Now let's create a new foot platoon
-                Infantry guerrilla = new Infantry();
+                var guerrilla = new ConvInfantry();
                 guerrilla.setChassis("Insurgents");
                 guerrilla.setModel("(Rifle)");
                 guerrilla.setSquadCount(4);
@@ -29631,7 +29631,7 @@ public class TWGameManager extends AbstractGameManager {
                 guerrilla.getCrew().setGunnery(5, 0);
                 try {
                     guerrilla.addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE),
-                          Infantry.LOC_INFANTRY);
+                          ConvInfantry.LOC_INFANTRY);
                     guerrilla.setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
                 } catch (Exception ex) {
                     LOGGER.error("", ex);
@@ -29953,7 +29953,7 @@ public class TWGameManager extends AbstractGameManager {
         if (survivingCrew > 0) {
             // Apply crew injuries from failed launch/landing rolls
             if (survivingCrew < crewSize) {
-                escapePod.setInternal(survivingCrew, Infantry.LOC_INFANTRY);
+                escapePod.setInternal(survivingCrew, ConvInfantry.LOC_INFANTRY);
             }
 
             entityUpdate(escapePod.getId());
@@ -30751,7 +30751,7 @@ public class TWGameManager extends AbstractGameManager {
             int bldgElev = hex.containsTerrain(Terrains.BLDG_ELEV) ? hex.terrainLevel(Terrains.BLDG_ELEV) : 0;
             entity.setElevation(fallHeight + bldgElev);
             if (entity.isConventionalInfantry()) {
-                HitData hit = new HitData(Infantry.LOC_INFANTRY);
+                HitData hit = new HitData(ConvInfantry.LOC_INFANTRY);
                 addReport(damageEntity(entity, hit, 1));
                 // LAMs that convert to fighter mode on the landing turn are processed as
                 // crashes regardless of roll
@@ -30911,7 +30911,7 @@ public class TWGameManager extends AbstractGameManager {
         r.addDesc(entity);
         reports.add(r);
         if (entity.isConventionalInfantry()) {
-            reports.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), Compute.d6()));
+            reports.addAll(damageEntity(entity, new HitData(ConvInfantry.LOC_INFANTRY), Compute.d6()));
         } else {
             for (int loc = 0; loc < entity.locations(); loc++) {
                 if ((entity.getArmor(loc) <= 0 || (entity.hasRearArmor(loc) && (entity.getArmor(loc, true) < 0))) &&

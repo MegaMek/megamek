@@ -788,8 +788,8 @@ public class BLKFile {
             blk.writeBlockData("weaponQuirks", String.join("\n", weaponQuirkList));
         }
 
-        if ((t instanceof Infantry) && ((Infantry) t).getMount() != null) {
-            blk.writeBlockData("motion_type", ((Infantry) t).getMount().toString());
+        if ((t instanceof ConvInfantry infantry) && infantry.isMounted()) {
+            blk.writeBlockData("motion_type", infantry.getMount().toString());
         } else if (!t.isHandheldWeapon() && !(t instanceof GunEmplacement)) {
             blk.writeBlockData("motion_type", t.getMovementModeAsString());
         }
@@ -1094,7 +1094,7 @@ public class BLKFile {
             blk.writeBlockData("armor", new int[] { ba.getArmor(1) });
             blk.writeBlockData("Trooper Count", (int) t.getWeight());
             blk.writeBlockData("weightclass", ba.getWeightClass());
-        } else if (t instanceof Infantry infantry) {
+        } else if (t instanceof ConvInfantry infantry) {
             blk.writeBlockData("squad_size", infantry.getSquadSize());
             blk.writeBlockData("squadn", infantry.getSquadCount());
             if (infantry.getSecondaryWeaponsPerSquad() > 0) {

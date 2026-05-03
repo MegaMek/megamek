@@ -817,8 +817,7 @@ public class MoveStep implements Serializable {
 
         } else if (prev.isFirstStep()
               && prev.isTurning
-              && entity instanceof Infantry infantry
-              && !entity.isBattleArmor()
+              && entity instanceof ConvInfantry infantry
               && !infantry.hasActiveFieldArtillery()) {
             // For CI, turning is only a graphical distinction unless they are field artillery
             setFirstStep();
@@ -2923,8 +2922,8 @@ public class MoveStep implements Serializable {
             // Mountain Troops only expend 1 MP per 2 levels moved up or down (TO:AUE p.153).
             // This stacks with the Mountaineer ability (PILOT_TM_MOUNTAINEER) which reduces
             // elevation cost by 1 MP. Combined, a 1-level change can cost 0 MP elevation.
-            boolean isMountainTroop = isInfantry
-                  && ((Infantry) entity).hasSpecialization(Infantry.MOUNTAIN_TROOPS);
+            boolean isMountainTroop = entity instanceof ConvInfantry convInfantry
+                  && convInfantry.hasSpecialization(ConvInfantry.MOUNTAIN_TROOPS);
             if (isMountainTroop) {
                 deltaElevation = (int) Math.ceil(deltaElevation / 2.0);
             } else if ((isInfantry &&
@@ -2986,8 +2985,8 @@ public class MoveStep implements Serializable {
             } else if (isMechanizedInfantry) {
                 // mechanized infantry pays 1 extra
                 mp += 1;
-            } else if (isInfantry && (((Infantry) entity).getMount() != null)) {
-                mp += ((Infantry) entity).getMount().size().buildingMP;
+            } else if (entity instanceof ConvInfantry convInfantry && (convInfantry.getMount() != null)) {
+                mp += convInfantry.getMount().size().buildingMP;
             }
         }
 
@@ -3251,7 +3250,7 @@ public class MoveStep implements Serializable {
         // Check if using VTOL-style flight (either VTOL mode or VTOL movement type)
         // Also explicitly check for powered flight infantry as a fallback in case getMovementMode()
         // doesn't return VTOL (e.g., if crew/abilities aren't accessible during validation)
-        boolean hasPoweredFlight = (entity instanceof Infantry infantry) && infantry.hasVTOLMovementCapability();
+        boolean hasPoweredFlight = (entity instanceof ConvInfantry infantry) && infantry.hasVTOLMovementCapability();
         boolean isVTOLFlight = (nMove == EntityMovementMode.VTOL) ||
               hasPoweredFlight ||
               (movementType == EntityMovementType.MOVE_VTOL_WALK) ||
@@ -3300,9 +3299,9 @@ public class MoveStep implements Serializable {
         // cross sheer cliffs at all except for Mountain Troops across a level 1 cliff.
         // Flying VTOL infantry (native VTOL, powered flight) can bypass cliffs.
         // Note: Glider infantry cannot traverse cliffs - they only get fall damage protection.
-        if (entity instanceof Infantry infantry && (isUpCliff || isDownCliff) && !isPavementStep && !isVTOLFlight) {
+        if (entity instanceof ConvInfantry infantry && (isUpCliff || isDownCliff) && !isPavementStep && !isVTOLFlight) {
 
-            boolean isMountainTroop = infantry.hasSpecialization(Infantry.MOUNTAIN_TROOPS);
+            boolean isMountainTroop = infantry.hasSpecialization(ConvInfantry.MOUNTAIN_TROOPS);
             if (!isMountainTroop || stepHeight == 2) {
                 return false;
             }

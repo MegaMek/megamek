@@ -256,18 +256,8 @@ public class HandheldWeapon extends Entity {
     }
 
     @Override
-    public int getTotalCommGearTons() {
-        return 0;
-    }
-
-    @Override
     public int getEngineHits() {
         return 0;
-    }
-
-    @Override
-    public String getLocationDamage(int loc) {
-        return "";
     }
 
     @Override

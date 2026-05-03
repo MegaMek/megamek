@@ -809,12 +809,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         return 0;
     }
 
-    @Override
-    public String getLocationDamage(int loc) {
-        return "";
-    }
-
-
     /**
      * Buildings are salvageable unless they have completely collapsed. A building has completely collapsed when all
      * hexes have 0 CF.

@@ -42,9 +42,9 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.units.Infantry;
 import megamek.common.units.InfantryMount;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -64,7 +64,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
     @Override
     public Entity getEntity() throws EntityLoadingException {
 
-        Infantry infantry = new Infantry();
+        ConvInfantry infantry = new ConvInfantry();
         setBasicEntityData(infantry);
 
         if (!dataFile.exists("squad_size")) {
@@ -148,16 +148,16 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             throw new EntityLoadingException(ex.getMessage());
         }
         try {
-            infantry.addEquipment(m, Infantry.LOC_INFANTRY, false);
+            infantry.addEquipment(m, ConvInfantry.LOC_INFANTRY, false);
         } catch (LocationFullException ex) {
             throw new EntityLoadingException(ex.getMessage());
         }
 
         // TAG infantry have separate attacks for primary and secondary weapons.
         if (null != secondaryWeaponType && secondaryWeaponType.hasFlag(WeaponType.F_TAG)) {
-            infantry.setSpecializations(infantry.getSpecializations() | Infantry.TAG_TROOPS);
+            infantry.setSpecializations(infantry.getSpecializations() | ConvInfantry.TAG_TROOPS);
             try {
-                infantry.addEquipment(primaryWeaponType, Infantry.LOC_INFANTRY);
+                infantry.addEquipment(primaryWeaponType, ConvInfantry.LOC_INFANTRY);
             } catch (LocationFullException ex) {
                 throw new EntityLoadingException(ex.getMessage());
             }
@@ -206,8 +206,8 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             }
         }
 
-        loadEquipment(infantry, "Field Guns", Infantry.LOC_FIELD_GUNS);
-        loadEquipment(infantry, "Troopers", Infantry.LOC_INFANTRY);
+        loadEquipment(infantry, "Field Guns", ConvInfantry.LOC_FIELD_GUNS);
+        loadEquipment(infantry, "Troopers", ConvInfantry.LOC_INFANTRY);
 
         // Set specializations after loading equipment so that setSpecializations()
         // can detect equipment already loaded from the file and avoid duplicates.
@@ -231,7 +231,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             int[] amSkill = dataFile.getDataAsInt("antimek");
             if (amSkill[0] != 8) {
                 try {
-                    infantry.addEquipment(EquipmentType.get(EquipmentTypeLookup.ANTI_MEK_GEAR), Infantry.LOC_INFANTRY);
+                    infantry.addEquipment(EquipmentType.get(EquipmentTypeLookup.ANTI_MEK_GEAR), ConvInfantry.LOC_INFANTRY);
                 } catch (LocationFullException ex) {
                     throw new EntityLoadingException(ex.getMessage());
                 }

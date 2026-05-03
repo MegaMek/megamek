@@ -55,15 +55,7 @@ import megamek.common.equipment.DockingCollar;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Transporter;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.units.Aero;
-import megamek.common.units.DropShuttleBay;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityWeightClass;
-import megamek.common.units.Infantry;
-import megamek.common.units.Mek;
-import megamek.common.units.NavalRepairFacility;
-import megamek.common.units.Tank;
-import megamek.common.units.UnitType;
+import megamek.common.units.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestEntity;
 import megamek.logging.MMLogger;
@@ -652,7 +644,7 @@ public class MekSummaryCache {
             ms.setFluffImage(e.getFluff().getBase64FluffImage().getBase64String());
         }
         ms.setMilitary(e.isMilitary());
-        ms.setMountedInfantry((e instanceof Infantry) && ((Infantry) e).getMount() != null);
+        ms.setMountedInfantry((e instanceof ConvInfantry infantry) && infantry.isMounted());
 
         int tankTurrets = 0;
         if (e instanceof Tank) {

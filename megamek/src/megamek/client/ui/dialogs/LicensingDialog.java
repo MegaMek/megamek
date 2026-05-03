@@ -172,7 +172,7 @@ public class LicensingDialog extends AbstractButtonDialog {
               + " <a href=\"" + gameContentRulesUrl + "\">" + gameContentRulesText + "</a>.</p>"
               + "<p>" + Messages.getString("LicensingDialog.wiki")
               + " <a href=\"" + wikiUrl + "\">" + wikiUrl + "</a></p>"
-              + "<p>" + Messages.getString("CommonAboutDialog.community")
+              + "<p>" + Messages.getString("LicensingDialog.community")
               + " <a href=\"" + discordUrl + "\">" + discordText + "</a>.</p>"
               + "<p><small><i>" + Messages.getString("LicensingDialog.trademark")
               + "</i></small></p>";

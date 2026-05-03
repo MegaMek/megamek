@@ -628,24 +628,9 @@ public class MiscType extends EquipmentType {
                 return defaultRounding.round(entity.getWeight() * 0.15, entity);
             }
         } else if (hasFlag(F_TARGETING_COMPUTER)) {
-            // based on tonnage of direct_fire weaponry
-            double fTons = 0.0;
-            for (Mounted<?> m : entity.getWeaponList()) {
-                WeaponType wt = (WeaponType) m.getType();
-                if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                    fTons += m.getTonnage();
-                }
-            }
-            for (Mounted<?> m : entity.getMisc()) {
-                MiscType mt = (MiscType) m.getType();
-                if (mt.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    fTons += m.getTonnage();
-                }
-            }
-            if (isClan()) {
-                return RoundWeight.nextTon(fTons / 5.0);
-            }
-            return RoundWeight.nextTon(fTons / 4.0);
+            double relevantEquipmentWeight = targetingComputerRelevantEquipmentWeight(entity);
+            return RoundWeight.nextTon(relevantEquipmentWeight / (isClan() ? 5.0 : 4.0));
+
         } else if (hasFlag(MiscType.F_FERRO_FIBROUS) || hasFlag(MiscType.F_FERRO_FIBROUS_PROTO)) {
             double tons = 0.0;
             if (!entity.hasPatchworkArmor()) {
@@ -953,26 +938,10 @@ public class MiscType extends EquipmentType {
                     costValue = (entity.hasEngine() ? entity.getEngine().getRating() : 0) * mascTonnage * 1000;
                 }
             } else if (hasFlag(MiscType.F_TARGETING_COMPUTER)) {
-                int tCompTons = 0;
-                double fTons = 0.0f;
-                for (Mounted<?> mo : entity.getWeaponList()) {
-                    WeaponType wt = (WeaponType) mo.getType();
-                    if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                        fTons += mo.getTonnage();
-                    }
-                }
-
-                for (MiscMounted mounted : entity.getMisc()) {
-                    if (mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                        fTons += mounted.getTonnage();
-                    }
-                }
-                if (getInternalName().equals("ISTargeting Computer")) {
-                    tCompTons = (int) Math.ceil(fTons / 4.0f);
-                } else if (getInternalName().equals("CLTargeting Computer")) {
-                    tCompTons = (int) Math.ceil(fTons / 5.0f);
-                }
-                costValue = tCompTons * 10000;
+                double relevantEquipmentWeight = targetingComputerRelevantEquipmentWeight(entity);
+                // FIXME: hooray, there's 3 different versions of determining if the TC is Clan here in MiscType
+                double divider = is("ISTargeting Computer") ? 4 : 5;
+                costValue = 10_000 * (int) Math.ceil(relevantEquipmentWeight / divider);
 
             } else if (hasFlag(MiscType.F_BADC)) {
                 int tDCCost = switch (getInternalName()) {
@@ -1107,23 +1076,11 @@ public class MiscType extends EquipmentType {
             // Aero armor doesn't take up criticalSlots
             return 0;
         } else if (hasFlag(F_TARGETING_COMPUTER)) {
-            // based on tonnage of direct_fire weaponry
-            double fTons = 0.0;
-            for (WeaponMounted m : entity.getWeaponList()) {
-                if (m.getType().hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                    fTons += m.getTonnage();
-                }
-            }
+            // based on tonnage of direct fire weaponry
+            double relevantEquipmentWeight = targetingComputerRelevantEquipmentWeight(entity);
+            double divider = TechConstants.isClan(getTechLevel(entity.getTechLevelYear())) ? 5 : 4;
+            return (int) Math.ceil(relevantEquipmentWeight / divider);
 
-            for (MiscMounted mounted : entity.getMisc()) {
-                if (mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    fTons += mounted.getTonnage();
-                }
-            }
-            if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
-                return (int) Math.ceil(fTons / 5.0f);
-            }
-            return (int) Math.ceil(fTons / 4.0f);
         } else if (hasFlag(MiscType.F_FERRO_FIBROUS) || hasFlag(MiscType.F_REACTIVE)) {
             if (entity.isClanArmor(1) && !entity.hasPatchworkArmor()) {
                 if ((entity instanceof Mek) && entity.isSuperHeavy()) {
@@ -11907,5 +11864,20 @@ public class MiscType extends EquipmentType {
             data.put("misc", miscDetails);
         }
         return data;
+    }
+
+    @Override
+    public boolean relevantToTargetingComputer() {
+        return hasFlag(F_RISC_LASER_PULSE_MODULE);
+    }
+
+    /**
+     * @return The total weight of all equipment that is counted into the weight of a targeting computer, TM p.238.
+     */
+    private double targetingComputerRelevantEquipmentWeight(Entity entity) {
+        return entity.getEquipment().stream()
+              .filter(Mounted::relevantToTargetingComputer)
+              .mapToDouble(Mounted::getTonnage)
+              .sum();
     }
 }

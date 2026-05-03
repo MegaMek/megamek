@@ -148,6 +148,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String TRACE_OVERLAY_ORIGIN_Y = "TraceOverlayOriginY";
     public static final String TRACE_OVERLAY_IMAGE_FILE = "TraceOverlayImageFile";
 
+    public static final String TOAST_DRIP_SECONDS = "ToastDripSeconds";
+
     public static final String PLAYERS_REMAINING_TO_SHOW = "PlayersRemainingToShow";
     public static final String BUTTONS_PER_ROW = "ButtonsPerRow";
     public static final String DOCK_ON_LEFT = "DockOnLeft";
@@ -554,6 +556,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(TRACE_OVERLAY_ORIGIN_X, 0);
         setDefault(TRACE_OVERLAY_ORIGIN_Y, 0);
         setDefault(TRACE_OVERLAY_IMAGE_FILE, "");
+
+        setDefault(TOAST_DRIP_SECONDS, 2);
 
         setDefault(WARNING_COLOR, DEFAULT_RED);
         setDefault(CAUTION_COLOR, Color.yellow);
@@ -3305,6 +3309,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setTraceOverlayScale(int i) {
         store.setValue(TRACE_OVERLAY_SCALE, i);
+    }
+
+    public int getToastDripSeconds() {
+        return getInt(TOAST_DRIP_SECONDS);
+    }
+
+    public void setToastDripSeconds(int i) {
+        store.setValue(TOAST_DRIP_SECONDS, i);
     }
 
     public int getTraceOverlayOriginX() {

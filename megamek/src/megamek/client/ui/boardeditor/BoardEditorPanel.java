@@ -78,9 +78,9 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.KeyBindingsOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.TraceOverlay;
 import megamek.client.ui.clientGUI.boardview.toolTip.BoardEditorTooltip;
-import megamek.client.ui.dialogs.CommonAboutDialog;
 import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.ExitsDialog;
+import megamek.client.ui.dialogs.MMAboutDialog;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.MultiIntSelectorDialog;
@@ -420,6 +420,16 @@ public class BoardEditorPanel extends JPanel
         setFrameTitle();
         frame.add(bvc, BorderLayout.CENTER);
         frame.add(this, BorderLayout.EAST);
+
+        // on Mac, override auto-added "Quit MM" behavior to work like other exit variants (ask for save etc)
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_QUIT_HANDLER)) {
+            Desktop.getDesktop().setQuitHandler((e, response) -> {
+                handleExit();
+                response.cancelQuit(); // MM does not really exit, it returns to the startup screen
+            });
+        }
+
+
         menuBar.addActionListener(this);
         frame.setJMenuBar(menuBar);
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
@@ -434,21 +444,25 @@ public class BoardEditorPanel extends JPanel
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
-                // When the board has changes, ask the user
-                if (hasChanges && (showSavePrompt() == DialogResult.CANCELLED)) {
-                    return;
-                }
-                // otherwise: exit the Map Editor
-                minimapW.setVisible(false);
-                if (controller != null) {
-                    controller.removeAllActions();
-                    controller.boardEditor = null;
-                }
-                bv.dispose();
-                frame.dispose();
+            public void windowClosing(WindowEvent event) {
+                handleExit();
             }
         });
+    }
+
+    private void handleExit() {
+        // When the board has changes, ask the user
+        if (hasChanges && (showSavePrompt() == DialogResult.CANCELLED)) {
+            return;
+        }
+        // otherwise: exit the Map Editor
+        minimapW.setVisible(false);
+        if (controller != null) {
+            controller.removeAllActions();
+            controller.boardEditor = null;
+        }
+        bv.dispose();
+        frame.dispose();
     }
 
     /**
@@ -1763,7 +1777,7 @@ public class BoardEditorPanel extends JPanel
 
     /** Called when the user selects the "Help->About" menu item. */
     private void showAbout() {
-        new CommonAboutDialog(frame).setVisible(true);
+        new MMAboutDialog(frame).show();
     }
 
     /** Called when the user selects the "Help->Contents" menu item. */

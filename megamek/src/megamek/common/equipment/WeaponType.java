@@ -2702,4 +2702,9 @@ public class WeaponType extends EquipmentType {
     public boolean canBeMountedOnBaDwp() {
         return true;
     }
+
+    @Override
+    public boolean relevantToTargetingComputer() {
+        return hasFlag(F_DIRECT_FIRE) && !hasFlag(F_TASER);
+    }
 }

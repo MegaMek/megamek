@@ -79,8 +79,8 @@ import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.boardeditor.BoardEditorPanel;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
-import megamek.client.ui.dialogs.CommonAboutDialog;
 import megamek.client.ui.dialogs.LicensingDialog;
+import megamek.client.ui.dialogs.MMAboutDialog;
 import megamek.client.ui.dialogs.ScenarioDialog;
 import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.client.ui.dialogs.buttonDialogs.BotConfigDialog;
@@ -313,7 +313,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         frame.setForeground(SystemColor.menuText);
         frame.setResizable(false);
 
-        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MMConstants.VERSION, JLabel.CENTER);
+        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version", MMConstants.VERSION), JLabel.CENTER);
         labVersion.setPreferredSize(new Dimension(250, 15));
         if (!skinSpec.fontColors.isEmpty()) {
             labVersion.setForeground(skinSpec.fontColors.getFirst());
@@ -1257,6 +1257,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             SwingUtilities.invokeLater(postAction);
         }
 
+        // on Mac, override auto-added "Quit MM" behavior; in the main menu, it can simply quit
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_QUIT_HANDLER)) {
+            Desktop.getDesktop().setQuitHandler(null);
+        }
+
         // just to free some memory
         client = null;
         System.gc();
@@ -1308,7 +1313,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 showNetworkInformation();
                 break;
             case ClientGUI.HELP_ABOUT:
-                new CommonAboutDialog(frame).setVisible(true);
+                new MMAboutDialog(frame).show();
                 break;
             case ClientGUI.HELP_CONTENTS:
                 new MMReadMeHelpDialog(frame).setVisible(true);

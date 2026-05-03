@@ -475,6 +475,11 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
         } else if (mek.getCockpitType() == Mek.COCKPIT_INTERFACE) {
             cockpitMod = 1.3;
             modifier = " (" + mek.getCockpitTypeString() + ")";
+        } else if (mek.getCockpitType() == Mek.COCKPIT_VRRP) {
+            // Virtual Reality Piloting Pod multiplies the unit's BV by 1.4 to reflect the MekWarrior's improved
+            // Piloting and Gunnery skills due to the system interface (IO:AE p.183).
+            cockpitMod = 1.4;
+            modifier = " (" + mek.getCockpitTypeString() + ")";
         }
 
         if (mek.hasRiscHeatSinkOverrideKit()) {

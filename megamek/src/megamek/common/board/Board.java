@@ -1479,7 +1479,12 @@ public class Board implements Serializable {
         // Remove the building from the building map.
         IBuilding bldg = bldgByCoords.get(coords);
         if (bldg == null) {
-            logger.error("No building found at {}", coords);
+            // Reaching this guard is expected when callers hand us coords that do not currently map to a building,
+            // such as a non-building hex, a duplicate collapse request for the same hex, or a coord that was already
+            // processed earlier in the collapse flow. Since bldgByCoords is maintained per hex, removing one coord
+            // below does not by itself clear the other hexes of a multi-hex building. Logging at debug avoids
+            // polluting megamek.log during normal play while preserving the trail for diagnostics.
+            logger.debug("No building found at {}", coords);
             return;
         }
         bldg.removeHex(coords);

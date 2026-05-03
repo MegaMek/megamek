@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -1635,7 +1635,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         if (isAirborne()) {
             return super.getRunMP(mpCalculationSetting);
         } else {
-            return super.getWalkMP(mpCalculationSetting);
+            // Grounded aero: no run multiplier; cap at the grounded walk MP. Use Aero.getWalkMP (not Entity's)
+            // so the spheroid-grounded -> 0 and aerodyne-grounded -> thrust/2 rule at line 497 is honored.
+            // See issue #8187: bypassing this gave grounded spheroid Dropships non-zero run MP.
+            return getWalkMP(mpCalculationSetting);
         }
     }
 

@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -51,6 +52,7 @@ import megamek.common.actions.DfaAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.ComputeECM;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
@@ -66,6 +68,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -551,6 +555,53 @@ class EntityTest {
             // slave entity returns self as "top" of network.
             setUpECMEntity(game, player2, vtol, new Coords(3, 9), true);
             assertEquals(tank, tank.getC3Top());
+        }
+
+        /**
+         * Regression test for #8226: a C3 master is jammed at its own hex by enemy ECM, but the slave's line to the
+         * master is clear because friendly Angel ECCM cancels the ECM along the line (without reaching the master's
+         * hex). Pre-fix this asymmetric ECM/ECCM geometry threw
+         * {@code IllegalStateException("C3 slave/master connection not affected by ECM/AECM but master is!")} from
+         * {@code getC3Top}, which spammed any UI path that recomputed BV (tooltips, panel updates, turn-change
+         * handlers) and effectively locked the affected units out of the game.
+         *
+         * <p>{@link ComputeECM} is statically mocked so the asymmetric outcome is reproduced deterministically without
+         * having to recreate the rule-engine geometry that produced it in the field-reported savegame.</p>
+         */
+        @Test
+        public void testGetC3TopMasterJammedAtOwnHexButSlaveLineClear()
+              throws C3Util.C3CapacityException, C3Util.MismatchingC3MException {
+
+            Mek mek = new BipedMek();    // master (C3M)
+            Tank tank = new Tank();      // slave (C3S)
+
+            Game game = setUpGame();
+            Player player = new Player(1, "C3 side");
+            game.addPlayer(player.getId(), player);
+
+            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
+
+            // Standard (non-boosted) C3 link, master at (1,1), slave at (3,3).
+            setUpC3Link(game, player, mek, new Coords(1, 1), tank, new Coords(3, 3), false);
+
+            // Sanity: the link is in place before we mock anything.
+            assertEquals(mek, tank.getC3Master());
+
+            try (MockedStatic<ComputeECM> ecm = Mockito.mockStatic(ComputeECM.class)) {
+                // Slave line to master: clear. Friendly ECCM along the slave->master line cancels enemy ECM.
+                ecm.when(() -> ComputeECM.isAffectedByECM(eq(tank), eq(tank.getPosition()), eq(mek.getPosition())))
+                      .thenReturn(false);
+                // Master self-check: jammed. The master sits in an enemy ECM bubble that the friendly ECCM doesn't
+                // reach (e.g., the ECCM unit is far enough away that its radius covers the line but not the master's
+                // hex). Unstubbed isAffectedByAngelECM calls return false by default, which short-circuits cleanly
+                // since neither unit has Boosted C3.
+                ecm.when(() -> ComputeECM.isAffectedByECM(eq(mek), eq(mek.getPosition()), eq(mek.getPosition())))
+                      .thenReturn(true);
+
+                // Pre-fix this threw IllegalStateException; post-fix the master is treated as unreachable and the
+                // slave returns itself as the effective top of network (same handling as a slave-side jammed line).
+                assertEquals(tank, tank.getC3Top());
+            }
         }
 
     }

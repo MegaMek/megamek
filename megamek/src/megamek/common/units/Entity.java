@@ -7024,17 +7024,11 @@ public abstract class Entity extends TurnOrdered
                     m = master;
                     master = m.getC3Master();
                 } else {
-                    // Somehow still failed; this should not be possible!
-                    throw new IllegalStateException(
-                          "C3 slave/master connection not affected by ECM/AECM but master is!" +
-                                String.format(
-                                      "\nSlave: %s @ %s\nMaster: %s @ %s",
-                                      m,
-                                      master,
-                                      m.getPosition(),
-                                      master.getPosition()
-                                )
-                    );
+                    // The slave's line to the master is clear (e.g. friendly Angel ECCM along the line cancels enemy
+                    // ECM), but the master's own hex is still inside an ECM bubble that the ECCM doesn't cover. The
+                    // master is unreachable - the network is severed at its end. Same handling as a jammed slave-side
+                    // line below: drop the master so the loop exits cleanly with `m` as the effective top.
+                    master = null;
                 }
             } else {
                 // Can no longer contact master
@@ -7733,27 +7727,36 @@ public abstract class Entity extends TurnOrdered
             } else if (ams.getType().hasFlag(WeaponType.F_PD_BAY)) {
                 // Point defense bays are assigned to the attack with the greatest threat Unlike single AMS, PD bays
                 // can gang up on 1 attack
-                Compute.getHighestExpectedDamage(getGame(), attacksInArc, true).addCounterEquipment(ams);
+                final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), attacksInArc, true);
+                if (waa != null) {
+                    waa.addCounterEquipment(ams);
+                }
             } else if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                 // PLAYTEST3 AMS shoots twice handling
                 // Assuming AMS has not been used at all yet, so both shots are available.
                 final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), attacksInArc, true);
-                waa.addCounterEquipment(ams);
-                targets.add(waa);
-                if (attacksInArc.size() > 1) {
-                    final WeaponAttackAction secondWaa = Compute.getSecondHighestExpectedDamage(getGame(), attacksInArc,
-                          true);
-                    if (secondWaa != null) {
-                        secondWaa.addCounterEquipment(ams);
-                        targets.add(secondWaa);
+                if (waa != null) {
+                    waa.addCounterEquipment(ams);
+                    targets.add(waa);
+                    if (attacksInArc.size() > 1) {
+                        final WeaponAttackAction secondWaa = Compute.getSecondHighestExpectedDamage(getGame(),
+                              attacksInArc,
+                              true);
+                        if (secondWaa != null) {
+                            secondWaa.addCounterEquipment(ams);
+                            targets.add(secondWaa);
+                        }
                     }
                 }
             } else {
                 // Otherwise, find the most dangerous salvo by expected damage and target it this ensures that only 1
                 // AMS targets the strike. Use for non-bays.
                 final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), attacksInArc, true);
-                waa.addCounterEquipment(ams);
-                targets.add(waa);
+                // Null waa indicates no threat detected, as in Copperhead munition with no tagged targets
+                if (waa != null) {
+                    waa.addCounterEquipment(ams);
+                    targets.add(waa);
+                }
             }
         });
     }

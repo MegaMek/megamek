@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.clientGUI;
 
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.WindowAdapter;
@@ -119,24 +120,37 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (!GUIP.getNoSaveNag()) {
-                    int savePrompt = JOptionPane.showConfirmDialog(null,
-                          Messages.getString("ClientGUI.gameSaveDialogMessage"),
-                          Messages.getString("ClientGUI.gameSaveFirst"),
-                          JOptionPane.YES_NO_CANCEL_OPTION,
-                          JOptionPane.WARNING_MESSAGE);
-                    if ((savePrompt == JOptionPane.CANCEL_OPTION)
-                          || ((savePrompt == JOptionPane.YES_OPTION) && !saveGame())) {
-                        // When the user clicked YES but did not actually save the game, don't close the game
-                        return;
-                    }
-                } // We should wait here until the save game packet arrives.
-                frame.setVisible(false);
-                saveSettings();
-                die();
+                handleExit();
             }
         });
+
+        // on Mac, override auto-added "Quit MM" behavior to work like other exit variants (ask for save etc)
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_QUIT_HANDLER)) {
+            Desktop.getDesktop().setQuitHandler((e, response) -> {
+                handleExit();
+                response.cancelQuit(); // MM does not really exit, it returns to the startup screen
+            });
+        }
+
         initializeFrame();
+    }
+
+    public void handleExit() {
+        if (!GUIP.getNoSaveNag()) {
+            int savePrompt = JOptionPane.showConfirmDialog(null,
+                  Messages.getString("ClientGUI.gameSaveDialogMessage"),
+                  Messages.getString("ClientGUI.gameSaveFirst"),
+                  JOptionPane.YES_NO_CANCEL_OPTION,
+                  JOptionPane.WARNING_MESSAGE);
+            if ((savePrompt == JOptionPane.CANCEL_OPTION)
+                  || ((savePrompt == JOptionPane.YES_OPTION) && !saveGame())) {
+                // When the user clicked YES but did not actually save the game, don't close the game
+                return;
+            }
+        } // We should wait here until the save game packet arrives.
+        frame.setVisible(false);
+        saveSettings();
+        die();
     }
 
     @Override

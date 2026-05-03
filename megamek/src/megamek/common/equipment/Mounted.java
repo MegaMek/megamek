@@ -1786,4 +1786,14 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
         return intro + " { " + String.join(", ", state) + " }";
     }
+
+    /**
+     * @return True if this equipment counts for the size and weight of a Targeting Computer, and benefits from it in
+     * case of weapons.
+     *
+     * @see EquipmentType#relevantToTargetingComputer()
+     */
+    public boolean relevantToTargetingComputer() {
+        return type.relevantToTargetingComputer();
+    }
 }

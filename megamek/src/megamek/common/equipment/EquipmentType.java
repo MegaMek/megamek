@@ -2079,4 +2079,12 @@ public class EquipmentType implements ITechnology {
     public boolean canBeMountedOnBaDwp() {
         return false;
     }
+
+    /**
+     * @return True if this equipment counts for the size and weight of a Targeting Computer, and benefits from it in
+     * case of weapons. TM p.238, TO:AUE p.157
+     */
+    public boolean relevantToTargetingComputer() {
+        return false;
+    }
 }

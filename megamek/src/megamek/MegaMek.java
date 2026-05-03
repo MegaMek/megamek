@@ -36,6 +36,7 @@
 package megamek;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputFilter;
@@ -56,6 +57,7 @@ import javax.swing.UIManager;
 import io.sentry.Sentry;
 import megamek.client.ui.clientGUI.ButtonOrderPreferences;
 import megamek.client.ui.clientGUI.MegaMekGUI;
+import megamek.client.ui.dialogs.MMAboutDialog;
 import megamek.client.ui.preferences.SuitePreferences;
 import megamek.client.ui.util.FontHandler;
 import megamek.common.annotations.Nullable;
@@ -85,7 +87,10 @@ public class MegaMek {
     private static final SanityInputFilter sanityInputFilter = new SanityInputFilter();
     private static final Color TABLE_ALTERNATE_ROW_COLOR = new Color(125, 125, 125, 50);
 
+    private static String originProject = "Unknown";
+
     public static void main(String... args) {
+        originProject = MMConstants.PROJECT_NAME;
         ObjectInputFilter.Config.setSerialFilter(sanityInputFilter);
 
         // Configure Sentry with defaults. Although the client defaults to enabled, the properties file is used to
@@ -163,6 +168,27 @@ public class MegaMek {
         } else {
             startGUI();
         }
+    }
+
+    /**
+     * Sets the origin project to the given String. The origin project is the one whose main() method has been executed
+     * to arrive here. Therefore, this method should only be called from any of the main() methods. Used for logging
+     * purposes.
+     *
+     * @param originProject The origin project name, e.g. MMLConstants.PROJECT_NAME
+     */
+    public static void setOriginProject(String originProject) {
+        MegaMek.originProject = originProject;
+    }
+
+    /**
+     * The origin project name, i.e. the project whose main() method was executed to arrive here. As this is only a
+     * project name and not necessarily set, it should be used only for logging purposes.
+     *
+     * @return The name of the origin project, typically either of (MM/MML/MHQ)Constants.PROJECT_NAME
+     */
+    public static String getOriginProject() {
+        return originProject;
     }
 
     public static void initializeLogging(final String originProject) {
@@ -403,6 +429,19 @@ public class MegaMek {
      * @param currentProject the currently described project
      */
     public static void initializeSuiteGraphicalSetups(final String currentProject) {
+        // on Mac, use the system setting to color the window top bar light or dark
+        // it's not possible to use dark/light based on the current FlatLaf
+        System.setProperty("apple.awt.application.appearance", "system");
+
+        // on Mac, override standard behavior of the added main menu, this is different for MML and MHQ
+        if (currentProject.equals(MMConstants.PROJECT_NAME) && Desktop.isDesktopSupported()) {
+            // The "About" dialog must be handled separately on MML and MHQ
+            Desktop desktop = Desktop.getDesktop();
+            if (desktop.isSupported(Desktop.Action.APP_ABOUT)) {
+                desktop.setAboutHandler(e -> new MMAboutDialog(null).show());
+            }
+        }
+
         // Setup Fonts
         FontHandler.initialize();
 

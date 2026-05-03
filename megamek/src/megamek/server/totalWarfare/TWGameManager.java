@@ -23406,7 +23406,7 @@ public class TWGameManager extends AbstractGameManager {
                             boolean allHittableCritsReactive = true;
                             for (int i = 0; i < en.getNumberOfCriticalSlots(loc); i++) {
                                 CriticalSlot crit = en.getCritical(loc, i);
-                                if (crit.isHittable()) {
+                                if (crit != null && crit.isHittable()) {
                                     allHittableCritsReactive = false;
                                     break;
                                 }

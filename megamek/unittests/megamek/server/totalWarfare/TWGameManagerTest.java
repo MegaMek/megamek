@@ -33,6 +33,7 @@
 package megamek.server.totalWarfare;
 
 import static megamek.common.CargoBayTest.createInfantry;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -52,11 +53,16 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.MountedHelper;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.*;
+import megamek.common.weapons.DamageType;
 import megamek.server.Server;
 import megamek.utils.ServerFactory;
 import org.junit.jupiter.api.BeforeAll;
@@ -859,7 +865,73 @@ class TWGameManagerTest {
             assertTrue(infantryDamageReported, "Infantry inside building should also take damage");
         }
     }
+
+    @Test
+    void testCriticalEntityAllReactiveSlots() throws LocationFullException {
+        // Verify that reactive armor crit handling in cases with full crit slots is safe.
+        BipedMek mek = new BipedMek();
+
+        // Configure Reactive armor
+        mek.setArmorType(EquipmentType.T_ARMOR_REACTIVE);
+        mek.setArmor(10, Mek.LOC_LEFT_TORSO);
+
+        ArmorType reactiveType = ArmorType.of(ArmorType.T_ARMOR_REACTIVE, false);
+
+        // Initialize armor critical slots (normally done by unit loader)
+        for (int i=1; i<=12; i++) {
+            Mounted reactiveMounted = Mounted.createMounted(mek, reactiveType);
+            mek.addEquipment(reactiveMounted, Mek.LOC_LEFT_TORSO, false);
+        }
+
+        game.addEntity(mek);
+
+        // Apply single armor crit
+        assertDoesNotThrow(() ->
+            gameManager.criticalEntity(
+                  mek,
+                  Mek.LOC_LEFT_TORSO,
+                  false,
+                  0,
+                  false,
+                  false,
+                  1,
+                  DamageType.NONE
+            )
+        );
+    }
+
+    @Test
+    void testCriticalEntityAllButOneReactiveSlots() throws LocationFullException {
+        // Verify that reactive armor crit handling in cases with one empty slot.
+        BipedMek mek = new BipedMek();
+
+        // Configure Reactive armor
+        mek.setArmorType(EquipmentType.T_ARMOR_REACTIVE);
+        mek.setArmor(10, Mek.LOC_LEFT_TORSO);
+
+        ArmorType reactiveType = ArmorType.of(ArmorType.T_ARMOR_REACTIVE, false);
+
+        // Initialize armor critical slots (normally done by unit loader)
+        // Note that we leave one slot empty in this case
+        for (int i=1; i<=11; i++) {
+            Mounted reactiveMounted = Mounted.createMounted(mek, reactiveType);
+            mek.addEquipment(reactiveMounted, Mek.LOC_LEFT_TORSO, false);
+        }
+
+        game.addEntity(mek);
+
+        // Apply single armor crit
+        assertDoesNotThrow(() ->
+              gameManager.criticalEntity(
+                    mek,
+                    Mek.LOC_LEFT_TORSO,
+                    false,
+                    0,
+                    false,
+                    false,
+                    1,
+                    DamageType.NONE
+              )
+        );
+    }
 }
-
-
-

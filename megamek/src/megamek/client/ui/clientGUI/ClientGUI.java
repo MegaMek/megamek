@@ -56,6 +56,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
 import javax.imageio.ImageIO;
@@ -97,9 +98,9 @@ import megamek.client.ui.dialogs.AccessibilityDialog;
 import megamek.client.ui.dialogs.BotCommands.BotCommandsDialog;
 import megamek.client.ui.dialogs.BotCommands.BotCommandsPanel;
 import megamek.client.ui.dialogs.ChoiceDialog;
-import megamek.client.ui.dialogs.CommonAboutDialog;
 import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.InformDialog;
+import megamek.client.ui.dialogs.MMAboutDialog;
 import megamek.client.ui.dialogs.PlayerListDialog;
 import megamek.client.ui.dialogs.RandomNameDialog;
 import megamek.client.ui.dialogs.UnitLoadingDialog;
@@ -377,6 +378,10 @@ public class ClientGUI extends AbstractClientGUI
     private OffBoardTargetOverlay offBoardOverlay;
     private BoardToastOverlay toastOverlay;
 
+    private final ConcurrentLinkedQueue<Runnable> toastDripQueue = new ConcurrentLinkedQueue<>();
+    private javax.swing.Timer toastDripTimer;
+
+
     // some dialogs...
     private GameOptionsDialog gameOptionsDialog;
     private NetworkInformationDialog networkInformationDialog;
@@ -553,7 +558,9 @@ public class ClientGUI extends AbstractClientGUI
      */
     public void addToast(ToastLevel level, String text) {
         if (toastOverlay != null) {
-            toastOverlay.show(level, text);
+            String normalized = ReportToastFormatter.normalizeToastText(text);
+            logger.debug("Toast [{}] (no entity): {}", level, normalized);
+            toastOverlay.show(level, normalized);
         }
     }
 
@@ -566,8 +573,57 @@ public class ClientGUI extends AbstractClientGUI
      */
     public void addToast(ToastLevel level, String text, @Nullable Entity entity) {
         if (toastOverlay != null) {
-            toastOverlay.show(level, text, entity);
+            String normalized = ReportToastFormatter.normalizeToastText(text);
+            String entityLabel = (entity != null) ?
+                  entity.getShortName() + " [" + entity.getId() + "]" :
+                  "no entity";
+            logger.debug("Toast [{}] ({}): {}", level, entityLabel, normalized);
+            toastOverlay.show(level, normalized, entity);
         }
+    }
+
+    /**
+     * Splits a server-side report HTML stream into per-event toasts via {@link ReportToastFormatter} and drip-feeds
+     * them to the overlay on the {@link GUIPreferences#TOAST_DRIP_SECONDS} cadence so each one has time to scroll past
+     * before the next appears.
+     */
+    private void showReportAsToasts(String defaultPrefix, String report) {
+        for (String body : ReportToastFormatter.formatReport(defaultPrefix, report)) {
+            toastDripQueue.offer(() -> addToast(ToastLevel.INFO, body));
+        }
+        startToastDripIfIdle();
+    }
+
+    /**
+     * Releases queued report toasts one at a time on the {@link GUIPreferences#TOAST_DRIP_SECONDS} cadence so the
+     * player can read each one before the next arrives. The first toast of a fresh burst fires immediately; subsequent
+     * toasts wait their turn. If a new burst arrives while the timer is already running, its entries are appended to
+     * the existing queue and picked up by the running timer (the cadence in effect when the timer was created continues
+     * to apply for the duration of that timer; preference changes take effect on the next fresh burst).
+     */
+    private void startToastDripIfIdle() {
+        if (toastDripTimer != null && toastDripTimer.isRunning()) {
+            return;
+        }
+        Runnable first = toastDripQueue.poll();
+        if (first != null) {
+            first.run();
+        }
+        if (toastDripQueue.isEmpty()) {
+            return;
+        }
+        int dripMs = Math.max(1, GUIPreferences.getInstance().getToastDripSeconds()) * 1000;
+        toastDripTimer = new javax.swing.Timer(dripMs, evt -> {
+            Runnable next = toastDripQueue.poll();
+            if (next != null) {
+                next.run();
+            }
+            if (toastDripQueue.isEmpty()) {
+                ((javax.swing.Timer) evt.getSource()).stop();
+                toastDripTimer = null;
+            }
+        });
+        toastDripTimer.start();
     }
 
     @Override
@@ -806,7 +862,7 @@ public class ClientGUI extends AbstractClientGUI
      * Called when the user selects the "Help->About" menu item.
      */
     private void showAbout() {
-        new CommonAboutDialog(frame).setVisible(true);
+        new MMAboutDialog(frame).show();
     }
 
     private void refreshUnitCache() {
@@ -2890,14 +2946,13 @@ public class ClientGUI extends AbstractClientGUI
                 reportDisplayResetRerollInitiative();
 
                 if (!(getClient() instanceof BotClient)) {
-                    addToast(ToastLevel.INFO,
-                          Messages.getString("ClientGUI.dialogTacticalGeniusReport") + ": " + e.getReport());
+                    showReportAsToasts(Messages.getString("ClientGUI.dialogTacticalGeniusReport"),
+                          e.getReport());
                 }
             } else {
                 // Continued movement after getting up
                 if (!(getClient() instanceof BotClient)) {
-                    addToast(ToastLevel.INFO,
-                          Messages.getString("ClientGUI.dialogMovementReport") + ": " + e.getReport());
+                    showReportAsToasts(Messages.getString("ClientGUI.dialogMovementReport"), e.getReport());
                 }
             }
         }

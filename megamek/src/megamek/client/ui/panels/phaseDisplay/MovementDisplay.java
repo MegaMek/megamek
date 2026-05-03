@@ -646,6 +646,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                   climbingMek.getDisplayName() + " climbs down " + chosen.levels() + " levels",
                   climbingMek);
             climbingMek.setClimbingLevelsChosen(chosen.levels());
+            // Push the chosen-level count to the server — the entity field isn't carried
+            // by the path, and the server uses 0 (= full climb) without this update.
+            clientgui.getClient().sendUpdateEntity(climbingMek);
             cmd.addStep(MoveStepType.CLIMB_MODE_ON);
             for (int i = 0; i < chosen.levels(); i++) {
                 cmd.addStep(MoveStepType.DOWN);
@@ -653,11 +656,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
             ready();
             return;
         }
-        // Standard climb continuation
+        // Standard climb continuation — auto-commit, matching DANGLE / DROP / CLIMB_DOWN.
+        // Previously this called updateMove() which left the path editable, but a stray
+        // Climb Mode toggle would invalidate and silently strip the climbing FORWARDS step.
         climbingMek.setClimbingLevelsChosen(chosen.levels());
+        // Push to server — without this, the server reads chosenLevels=0 and climbs the
+        // maximum affordable instead of the player's chosen count.
+        clientgui.getClient().sendUpdateEntity(climbingMek);
         cmd.addStep(MoveStepType.CLIMB_MODE_ON);
         cmd.addStep(MoveStepType.FORWARDS);
-        updateMove();
+        ready();
     }
 
     private void initializeStatusBarText(Entity selectedEntity) {
@@ -1049,6 +1057,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if ((chosen != null) && (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.CLIMB_UP)
                   && (chosen.levels() > 0)) {
                 currentEntity.setClimbingLevelsChosen(chosen.levels());
+                // Push to server — the path doesn't carry chosenLevels, and without this
+                // the server reads 0 (= full climb) and climbs to the maximum affordable
+                // instead of the player's chosen count.
+                clientgui.getClient().sendUpdateEntity(currentEntity);
                 // Recompile the path with the chosen level count
                 cmd.compile(game, currentEntity);
                 if (redrawMovement) {

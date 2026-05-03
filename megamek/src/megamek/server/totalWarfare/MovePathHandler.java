@@ -3988,6 +3988,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 int availableMP = walkMP - nonClimbMpUsed;
                 int affordableLevels = availableMP / costPerLevel;
                 int levelsThisTurn = Math.min(totalLevelsToClimb, Math.max(0, affordableLevels));
+                // Honor the player's choice from the climbing dialog (TO:AR p.20).
+                // Without this cap the server would climb the maximum affordable, ignoring
+                // a smaller player-chosen count. The client pushes this via sendUpdateEntity
+                // before committing the path. 0 means "no choice — use max affordable."
+                int chosenLevels = entity.getClimbingLevelsChosen();
+                if (chosenLevels > 0) {
+                    levelsThisTurn = Math.min(levelsThisTurn, chosenLevels);
+                }
 
                 boolean fellWhileClimbing = false;
                 // Track the climbing elevation - starts at the entity's elevation
@@ -4016,10 +4024,33 @@ class MovePathHandler extends AbstractTWRuleHandler {
                               "climbing with one arm"));
                     }
 
-                    // Pass the current climbing elevation so fall height is calculated
-                    // from the last level successfully reached, not the full height
+                    // When climbingElevation is 0 the Mek hasn't actually risen yet — failing
+                    // the very first PSR means it slipped before getting off the ground, so
+                    // skip the fall mechanic (no damage, no prone). Climbing aborts for the
+                    // turn but the Mek stays on the ground. Per pragmatic reading of TO:AR p.20:
+                    // "fall from the height it has currently reached" — height 0 = no fall.
+                    boolean canFallFromHere = climbingElevation > 0;
                     if (gameManager.doSkillCheckWhileMoving(entity, climbingElevation,
-                          lastPos, lastPos, rollTarget, true) > 0) {
+                          lastPos, lastPos, rollTarget, canFallFromHere) > 0) {
+                        if (!canFallFromHere) {
+                            // Failed first PSR from elevation 0 — abort climb without fall.
+                            logger.info("[CLIMB-TRACE] Failed first climbing PSR from elevation 0; "
+                                        + "no fall (entity stays on ground). entity={}, lastPos={}",
+                                  entity.getDisplayName(), lastPos);
+                            Report failReport = new Report(6464, Report.PUBLIC);
+                            failReport.add(entity.getDisplayName());
+                            addReport(failReport);
+                            entity.setClimbing(false);
+                            entity.setDangling(false);
+                            entity.setClimbingLevelsChosen(0);
+                            // Keep the entity in the source hex at ground level
+                            curPos = lastPos;
+                            curVTOLElevation = 0;
+                            mpUsed = step.getMpUsed();
+                            fellWhileClimbing = true;
+                            turnOver = true;
+                            break;
+                        }
                         // Mek falls from the last level successfully reached
                         // doEntityFallsInto handles positioning and elevation for the terrain
                         entity.setClimbing(false);

@@ -429,7 +429,7 @@ public class MekSearchFilter {
             return false;
         }
 
-        if (!f.source.isEmpty() && !f.findTokenized(mek.getSource(), f.source)) {
+        if (!f.source.isEmpty() && !matchesSourceFilter(mek, f.source)) {
             return false;
         }
 
@@ -1075,7 +1075,11 @@ public class MekSearchFilter {
      *
      * @return True if all search tokens are contained in the searchTarget
      */
-    private boolean findTokenized(@Nullable String searchTarget, @Nullable String searchTokens) {
+    static boolean matchesSourceFilter(MekSummary mek, String sourceFilter) {
+        return findTokenized(mek.getSource(), sourceFilter) || findTokenized(mek.getPublished(), sourceFilter);
+    }
+
+    private static boolean findTokenized(@Nullable String searchTarget, @Nullable String searchTokens) {
         if (searchTarget == null || searchTokens == null || searchTokens.isBlank()) {
             return false;
         } else {

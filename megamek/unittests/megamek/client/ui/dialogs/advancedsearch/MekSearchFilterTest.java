@@ -27,11 +27,30 @@ class MekSearchFilterTest {
     }
 
     @Test
+    void matchesSourceFilterMatchesAnySourceInList() {
+        MekSummary mek = new MekSummary();
+        mek.setSource("Technical Readout: 3039");
+        mek.setPublished("Record Sheets: 3050 Upgrade");
+
+        assertTrue(MekSearchFilter.matchesSourceFilter(mek, "Interstellar Operations, readout 3039"));
+        assertTrue(MekSearchFilter.matchesSourceFilter(mek, "Interstellar Operations, 3050 upgrade"));
+    }
+
+    @Test
     void matchesSourceFilterRejectsWhenNeitherFieldMatches() {
         MekSummary mek = new MekSummary();
         mek.setSource("Technical Readout: 3039");
         mek.setPublished("Record Sheets: 3050 Upgrade");
 
         assertFalse(MekSearchFilter.matchesSourceFilter(mek, "Interstellar Operations"));
+    }
+
+    @Test
+    void matchesSourceFilterRejectsWhenNoSourceInListMatches() {
+        MekSummary mek = new MekSummary();
+        mek.setSource("Technical Readout: 3039");
+        mek.setPublished("Record Sheets: 3050 Upgrade");
+
+        assertFalse(MekSearchFilter.matchesSourceFilter(mek, "Interstellar Operations, Tactical Operations"));
     }
 }

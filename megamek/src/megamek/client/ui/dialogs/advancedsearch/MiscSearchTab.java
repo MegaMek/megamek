@@ -33,11 +33,14 @@
 package megamek.client.ui.dialogs.advancedsearch;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -76,7 +79,7 @@ class MiscSearchTab extends JPanel {
     final JComboBox<String> cInvalid = new JComboBox<>();
     final JComboBox<String> cFailedToLoadEquipment = new JComboBox<>();
     final JComboBox<String> cClanEngine = new JComboBox<>();
-    final JTextField tSource = new JTextField(4);
+    final JTextField tSource = new JTextField(24);
     final JTextField tMULId = new JTextField(4);
     final JTextField tStartYear = new JTextField(4);
     final JTextField tEndYear = new JTextField(4);
@@ -100,117 +103,98 @@ class MiscSearchTab extends JPanel {
         loadYesNo(cFailedToLoadEquipment);
 
         JPanel baseAttributesPanel = new JPanel();
-        GridBagConstraints c = new GridBagConstraints();
-        baseAttributesPanel.setLayout(new GridBagLayout());
+        baseAttributesPanel.setLayout(new BoxLayout(baseAttributesPanel, BoxLayout.Y_AXIS));
 
-        c.weighty = 0;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.fill = GridBagConstraints.NONE;
-        c.gridwidth = 1;
-        c.insets = new Insets(20, 10, 0, 0);
-        c.gridy = 0;
+        baseAttributesPanel.add(createAttributeRow(20, createOfficialCanonPanel(),
+              createLabeledFieldPanel(Messages.getString("MekSelectorDialog.Search.MULId"), tMULId)));
+        baseAttributesPanel.add(createSourceRow());
+        baseAttributesPanel.add(createAttributeRow(5,
+              createRangePanel(Messages.getString("MekSelectorDialog.Search.Year"), tStartYear, tEndYear),
+              createLabeledComboPanel(Messages.getString("MekSelectorDialog.Search.FailedToLoadEquipment"),
+                    cFailedToLoadEquipment),
+              createLabeledComboPanel(Messages.getString("MekSelectorDialog.Search.Invalid"), cInvalid)));
+        baseAttributesPanel.add(createAttributeRow(5,
+              createRangePanel(Messages.getString("MekSelectorDialog.Search.BV"), tStartBV, tEndBV),
+              createRangePanel(Messages.getString("MekSelectorDialog.Search.Tons"), tStartTons, tEndTons)));
+        baseAttributesPanel.add(createAttributeRow(5,
+              createRangePanel(Messages.getString("MekSelectorDialog.Search.Walk"), tStartWalk, tEndWalk),
+              createRangePanel(Messages.getString("MekSelectorDialog.Search.Jump"), tStartJump, tEndJump)));
+        baseAttributesPanel.add(createAttributeRow(5,
+              createRangePanel(Messages.getString("MekSelectorDialog.Search.LowerArms"), tStartLowerArms,
+                    tEndLowerArms),
+              createRangePanel(Messages.getString("MekSelectorDialog.Search.Hands"), tStartHands, tEndHands)));
+        baseAttributesPanel.add(createAttributeRow(5,
+              createRangePanel(Messages.getString("MekSelectorDialog.Search.TankTurrets"), tStartTankTurrets,
+                    tEndTankTurrets),
+              createLabeledComboPanel(Messages.getString("MekSelectorDialog.Search.Armor"), cArmor)));
 
-        JPanel p0Panel = new JPanel();
-        p0Panel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Official")));
-        p0Panel.add(cOfficial);
-        p0Panel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Canon")));
-        p0Panel.add(cCanon);
-        baseAttributesPanel.add(p0Panel, c);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        JPanel sPanel = new JPanel(new BorderLayout());
+        return baseAttributesPanel;
+    }
+
+    private JPanel createAttributeRow(int topInset, JPanel... panels) {
+        JPanel rowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 30, 0));
+        rowPanel.setAlignmentX(LEFT_ALIGNMENT);
+        rowPanel.setBorder(BorderFactory.createEmptyBorder(topInset, 10, 0, 0));
+        for (JPanel panel : panels) {
+            rowPanel.add(panel);
+        }
+        return rowPanel;
+    }
+
+    private JPanel createOfficialCanonPanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        panel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Official")));
+        panel.add(cOfficial);
+        panel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Canon")));
+        panel.add(cCanon);
+        return panel;
+    }
+
+    private JPanel createSourceRow() {
+        JPanel sourceRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        sourceRow.setAlignmentX(LEFT_ALIGNMENT);
+        sourceRow.setBorder(BorderFactory.createEmptyBorder(5, 10, 0, 0));
+
         var sourceLabel = new JLabel(Messages.getString("MekSelectorDialog.Search.Source"));
         sourceLabel.setToolTipText(Messages.getString("MekSelectorDialog.Search.Source.TT"));
         tSource.setToolTipText(Messages.getString("MekSelectorDialog.Search.Source.TT"));
-        sPanel.add(sourceLabel, BorderLayout.WEST);
-        sPanel.add(tSource, BorderLayout.CENTER);
+
         JButton chooseSourceButton = new JButton(new BooksIcon());
         chooseSourceButton.setToolTipText(Messages.getString("MekSelectorDialog.Search.Source.selectSource"));
         chooseSourceButton.addActionListener(e -> {
-            String result = SourceChooserDialog.showChoiceDialog(this);
+            String result = SourceChooserDialog.showMultiChoiceDialog(this, true, tSource.getText());
             if (result != null) {
                 tSource.setText(result);
             }
         });
-        sPanel.add(chooseSourceButton, BorderLayout.EAST);
-        baseAttributesPanel.add(sPanel, c);
-        JPanel mPanel = new JPanel(new BorderLayout());
-        mPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.MULId")), BorderLayout.WEST);
-        mPanel.add(tMULId, BorderLayout.CENTER);
-        baseAttributesPanel.add(mPanel, c);
 
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(5, 10, 0, 0);
-        c.gridy++;
-        JPanel yearPanel = new JPanel();
-        yearPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Year")));
-        yearPanel.add(tStartYear);
-        yearPanel.add(new JLabel("-"));
-        yearPanel.add(tEndYear);
-        baseAttributesPanel.add(yearPanel, c);
-        JPanel p1bPanel = new JPanel();
-        p1bPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.FailedToLoadEquipment")));
-        p1bPanel.add(cFailedToLoadEquipment);
-        baseAttributesPanel.add(p1bPanel, c);
-        JPanel p1cPanel = new JPanel();
-        p1cPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Invalid")));
-        p1cPanel.add(cInvalid);
-        baseAttributesPanel.add(p1cPanel, c);
+        sourceRow.add(sourceLabel);
+        sourceRow.add(tSource);
+        sourceRow.add(chooseSourceButton);
+        return sourceRow;
+    }
 
-        c.gridy++;
-        JPanel bvPanel = new JPanel();
-        bvPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.BV")));
-        bvPanel.add(tStartBV);
-        bvPanel.add(new JLabel("-"));
-        bvPanel.add(tEndBV);
-        baseAttributesPanel.add(bvPanel, c);
-        JPanel tonsPanel = new JPanel();
-        tonsPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Tons")));
-        tonsPanel.add(tStartTons);
-        tonsPanel.add(new JLabel("-"));
-        tonsPanel.add(tEndTons);
-        baseAttributesPanel.add(tonsPanel, c);
+    private JPanel createRangePanel(String labelText, JTextField startField, JTextField endField) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        panel.add(new JLabel(labelText));
+        panel.add(startField);
+        panel.add(new JLabel("-"));
+        panel.add(endField);
+        return panel;
+    }
 
-        c.gridy++;
-        JPanel walkPanel = new JPanel();
-        walkPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Walk")));
-        walkPanel.add(tStartWalk);
-        walkPanel.add(new JLabel("-"));
-        walkPanel.add(tEndWalk);
-        baseAttributesPanel.add(walkPanel, c);
-        JPanel jumpPanel = new JPanel();
-        jumpPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Jump")));
-        jumpPanel.add(tStartJump);
-        jumpPanel.add(new JLabel("-"));
-        jumpPanel.add(tEndJump);
-        baseAttributesPanel.add(jumpPanel, c);
+    private JPanel createLabeledComboPanel(String labelText, JComboBox<String> comboBox) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        panel.add(new JLabel(labelText));
+        panel.add(comboBox);
+        return panel;
+    }
 
-        c.gridy++;
-        JPanel lowerArmsPanel = new JPanel();
-        lowerArmsPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.LowerArms")));
-        lowerArmsPanel.add(tStartLowerArms);
-        lowerArmsPanel.add(new JLabel("-"));
-        lowerArmsPanel.add(tEndLowerArms);
-        baseAttributesPanel.add(lowerArmsPanel, c);
-        JPanel handsPanel = new JPanel();
-        handsPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Hands")));
-        handsPanel.add(tStartHands);
-        handsPanel.add(new JLabel("-"));
-        handsPanel.add(tEndHands);
-        baseAttributesPanel.add(handsPanel, c);
-
-        c.gridy++;
-        JPanel p2Panel = new JPanel();
-        p2Panel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.TankTurrets")));
-        p2Panel.add(tStartTankTurrets);
-        p2Panel.add(new JLabel("-"));
-        p2Panel.add(tEndTankTurrets);
-        baseAttributesPanel.add(p2Panel, c);
-        JPanel armorPanel = new JPanel();
-        armorPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Armor")));
-        armorPanel.add(cArmor);
-        baseAttributesPanel.add(armorPanel, c);
-
-        return baseAttributesPanel;
+    private JPanel createLabeledFieldPanel(String labelText, JTextField textField) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        panel.add(new JLabel(labelText));
+        panel.add(textField);
+        return panel;
     }
 
     private void loadYesNo(JComboBox<String> cb) {

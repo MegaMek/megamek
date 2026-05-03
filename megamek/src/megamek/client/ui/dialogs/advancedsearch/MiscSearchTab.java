@@ -33,33 +33,36 @@
 package megamek.client.ui.dialogs.advancedsearch;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.BooksIcon;
 import megamek.client.ui.dialogs.SourceChooserDialog;
-import megamek.common.equipment.Engine;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityMovementMode;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.units.Mek;
 import megamek.common.SimpleTechLevel;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Mek;
 
 class MiscSearchTab extends JPanel {
+
+    private static final int LIST_COLUMN_WIDTH = 220;
 
     final JButton btnBaseClear = new JButton(Messages.getString("MekSelectorDialog.ClearTab"));
     final JTextField tStartWalk = new JTextField(4);
@@ -102,60 +105,47 @@ class MiscSearchTab extends JPanel {
         loadYesNo(cInvalid);
         loadYesNo(cFailedToLoadEquipment);
 
-        JPanel baseAttributesPanel = new JPanel();
-        baseAttributesPanel.setLayout(new BoxLayout(baseAttributesPanel, BoxLayout.Y_AXIS));
+        JPanel baseAttributesPanel = new JPanel(new GridBagLayout());
+        baseAttributesPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 0, 10));
 
-        baseAttributesPanel.add(createAttributeRow(20, createOfficialCanonPanel(),
-              createLabeledFieldPanel(Messages.getString("MekSelectorDialog.Search.MULId"), tMULId)));
-        baseAttributesPanel.add(createSourceRow());
-        baseAttributesPanel.add(createAttributeRow(5,
-              createRangePanel(Messages.getString("MekSelectorDialog.Search.Year"), tStartYear, tEndYear),
-              createLabeledComboPanel(Messages.getString("MekSelectorDialog.Search.FailedToLoadEquipment"),
-                    cFailedToLoadEquipment),
-              createLabeledComboPanel(Messages.getString("MekSelectorDialog.Search.Invalid"), cInvalid)));
-        baseAttributesPanel.add(createAttributeRow(5,
-              createRangePanel(Messages.getString("MekSelectorDialog.Search.BV"), tStartBV, tEndBV),
-              createRangePanel(Messages.getString("MekSelectorDialog.Search.Tons"), tStartTons, tEndTons)));
-        baseAttributesPanel.add(createAttributeRow(5,
-              createRangePanel(Messages.getString("MekSelectorDialog.Search.Walk"), tStartWalk, tEndWalk),
-              createRangePanel(Messages.getString("MekSelectorDialog.Search.Jump"), tStartJump, tEndJump)));
-        baseAttributesPanel.add(createAttributeRow(5,
-              createRangePanel(Messages.getString("MekSelectorDialog.Search.LowerArms"), tStartLowerArms,
-                    tEndLowerArms),
-              createRangePanel(Messages.getString("MekSelectorDialog.Search.Hands"), tStartHands, tEndHands)));
-        baseAttributesPanel.add(createAttributeRow(5,
-              createRangePanel(Messages.getString("MekSelectorDialog.Search.TankTurrets"), tStartTankTurrets,
-                    tEndTankTurrets),
-              createLabeledComboPanel(Messages.getString("MekSelectorDialog.Search.Armor"), cArmor)));
+        addLabeledControl(baseAttributesPanel, 0, 0, Messages.getString("MekSelectorDialog.Search.Official"),
+              cOfficial);
+        addLabeledControl(baseAttributesPanel, 0, 1, Messages.getString("MekSelectorDialog.Search.Canon"), cCanon);
+        addLabeledControl(baseAttributesPanel, 0, 2, Messages.getString("MekSelectorDialog.Search.MULId"), tMULId);
+
+        addSourceControl(baseAttributesPanel, 1);
+
+        addLabeledControl(baseAttributesPanel, 2, 0, Messages.getString("MekSelectorDialog.Search.Year"),
+              createRangeControl(tStartYear, tEndYear));
+        addLabeledControl(baseAttributesPanel, 2, 1,
+              Messages.getString("MekSelectorDialog.Search.FailedToLoadEquipment"), cFailedToLoadEquipment);
+        addLabeledControl(baseAttributesPanel, 2, 2, Messages.getString("MekSelectorDialog.Search.Invalid"),
+              cInvalid);
+
+        addLabeledControl(baseAttributesPanel, 3, 0, Messages.getString("MekSelectorDialog.Search.BV"),
+              createRangeControl(tStartBV, tEndBV));
+        addLabeledControl(baseAttributesPanel, 3, 1, Messages.getString("MekSelectorDialog.Search.Tons"),
+              createRangeControl(tStartTons, tEndTons));
+        addLabeledControl(baseAttributesPanel, 3, 2, Messages.getString("MekSelectorDialog.Search.Armor"), cArmor);
+
+        addLabeledControl(baseAttributesPanel, 4, 0, Messages.getString("MekSelectorDialog.Search.Walk"),
+              createRangeControl(tStartWalk, tEndWalk));
+        addLabeledControl(baseAttributesPanel, 4, 1, Messages.getString("MekSelectorDialog.Search.Jump"),
+              createRangeControl(tStartJump, tEndJump));
+        addLabeledControl(baseAttributesPanel, 4, 2, Messages.getString("MekSelectorDialog.Search.TankTurrets"),
+              createRangeControl(tStartTankTurrets, tEndTankTurrets));
+
+        addLabeledControl(baseAttributesPanel, 5, 0, Messages.getString("MekSelectorDialog.Search.LowerArms"),
+              createRangeControl(tStartLowerArms, tEndLowerArms));
+        addLabeledControl(baseAttributesPanel, 5, 1, Messages.getString("MekSelectorDialog.Search.Hands"),
+              createRangeControl(tStartHands, tEndHands));
 
         return baseAttributesPanel;
     }
 
-    private JPanel createAttributeRow(int topInset, JPanel... panels) {
-        JPanel rowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 30, 0));
-        rowPanel.setAlignmentX(LEFT_ALIGNMENT);
-        rowPanel.setBorder(BorderFactory.createEmptyBorder(topInset, 10, 0, 0));
-        for (JPanel panel : panels) {
-            rowPanel.add(panel);
-        }
-        return rowPanel;
-    }
-
-    private JPanel createOfficialCanonPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        panel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Official")));
-        panel.add(cOfficial);
-        panel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Canon")));
-        panel.add(cCanon);
-        return panel;
-    }
-
-    private JPanel createSourceRow() {
-        JPanel sourceRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        sourceRow.setAlignmentX(LEFT_ALIGNMENT);
-        sourceRow.setBorder(BorderFactory.createEmptyBorder(5, 10, 0, 0));
-
-        var sourceLabel = new JLabel(Messages.getString("MekSelectorDialog.Search.Source"));
+    private void addSourceControl(JPanel panel, int row) {
+        JLabel sourceLabel = addAttributeLabel(panel, row, 0,
+              Messages.getString("MekSelectorDialog.Search.Source"));
         sourceLabel.setToolTipText(Messages.getString("MekSelectorDialog.Search.Source.TT"));
         tSource.setToolTipText(Messages.getString("MekSelectorDialog.Search.Source.TT"));
 
@@ -168,32 +158,81 @@ class MiscSearchTab extends JPanel {
             }
         });
 
-        sourceRow.add(sourceLabel);
-        sourceRow.add(tSource);
-        sourceRow.add(chooseSourceButton);
-        return sourceRow;
+        JPanel sourceControl = new JPanel(new GridBagLayout());
+        GridBagConstraints sourceGbc = new GridBagConstraints();
+        sourceGbc.gridx = 0;
+        sourceGbc.gridy = 0;
+        sourceGbc.weightx = 1;
+        sourceGbc.fill = GridBagConstraints.HORIZONTAL;
+        sourceGbc.anchor = GridBagConstraints.WEST;
+        sourceControl.add(tSource, sourceGbc);
+
+        sourceGbc.gridx++;
+        sourceGbc.weightx = 0;
+        sourceGbc.fill = GridBagConstraints.NONE;
+        sourceGbc.insets = new Insets(0, 5, 0, 0);
+        sourceControl.add(chooseSourceButton, sourceGbc);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = row;
+        gbc.gridwidth = 5;
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = attributeControlInsets(row);
+        panel.add(sourceControl, gbc);
     }
 
-    private JPanel createRangePanel(String labelText, JTextField startField, JTextField endField) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        panel.add(new JLabel(labelText));
-        panel.add(startField);
-        panel.add(new JLabel("-"));
-        panel.add(endField);
-        return panel;
+    private void addLabeledControl(JPanel panel, int row, int group, String labelText, JComponent control) {
+        int labelColumn = group * 2;
+        addAttributeLabel(panel, row, labelColumn, labelText);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = labelColumn + 1;
+        gbc.gridy = row;
+        gbc.weightx = group == 2 ? 1 : 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = attributeControlInsets(row);
+        panel.add(control, gbc);
     }
 
-    private JPanel createLabeledComboPanel(String labelText, JComboBox<String> comboBox) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        panel.add(new JLabel(labelText));
-        panel.add(comboBox);
-        return panel;
+    private JLabel addAttributeLabel(JPanel panel, int row, int column, String labelText) {
+        JLabel label = new JLabel(labelText);
+        label.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = column;
+        gbc.gridy = row;
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = attributeLabelInsets(row, column);
+        panel.add(label, gbc);
+        return label;
     }
 
-    private JPanel createLabeledFieldPanel(String labelText, JTextField textField) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        panel.add(new JLabel(labelText));
-        panel.add(textField);
+    private Insets attributeLabelInsets(int row, int column) {
+        return new Insets(row == 0 ? 0 : 6, column == 0 ? 0 : 28, 0, 0);
+    }
+
+    private Insets attributeControlInsets(int row) {
+        return new Insets(row == 0 ? 0 : 6, 5, 0, 0);
+    }
+
+    private JPanel createRangeControl(JTextField startField, JTextField endField) {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel.add(startField, gbc);
+
+        gbc.gridx++;
+        gbc.insets = new Insets(0, 5, 0, 5);
+        panel.add(new JLabel("-"), gbc);
+
+        gbc.gridx++;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        panel.add(endField, gbc);
         return panel;
     }
 
@@ -227,99 +266,103 @@ class MiscSearchTab extends JPanel {
               .toList();
         listMoveMode = new TriStateItemList(moveModes, 13);
 
-        JPanel baseComboBoxesPanel = new JPanel();
-        GridBagConstraints c = new GridBagConstraints();
-        baseComboBoxesPanel.setLayout(new GridBagLayout());
+        JPanel baseComboBoxesPanel = new JPanel(new GridBagLayout());
+        baseComboBoxesPanel.setBorder(BorderFactory.createEmptyBorder(18, 10, 0, 10));
 
-        c.weighty = 0;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.fill = GridBagConstraints.NONE;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 10, 0, 0);
-        c.gridx = 0;
-        c.gridy = 0;
+        addListPanel(baseComboBoxesPanel, 0, 0,
+              createListPanel(Messages.getString("MekSelectorDialog.Search.CockpitType"), listCockpitType, null));
+        addListPanel(baseComboBoxesPanel, 0, 1,
+              createListPanel(Messages.getString("MekSelectorDialog.Search.Engine"), listEngineType,
+                  createComboFooter(Messages.getString("MekSelectorDialog.Search.ClanEngine"), cClanEngine)));
+        addListPanel(baseComboBoxesPanel, 0, 2,
+              createListPanel(Messages.getString("MekSelectorDialog.Search.Gyro"), listGyroType, null));
 
-        JPanel cockpitPanel = new JPanel(new BorderLayout());
-        cockpitPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.CockpitType")), BorderLayout.NORTH);
-        cockpitPanel.add(new JScrollPane(listCockpitType.getComponent()), BorderLayout.CENTER);
-        baseComboBoxesPanel.add(cockpitPanel, c);
-        c.gridx = 1;
-        JPanel enginePanel = new JPanel(new BorderLayout());
-        enginePanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Engine")), BorderLayout.NORTH);
-        enginePanel.add(new JScrollPane(listEngineType.getComponent()), BorderLayout.CENTER);
-        JPanel clanEnginePanel = new JPanel();
-        clanEnginePanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.ClanEngine")));
-        clanEnginePanel.add(cClanEngine);
-        enginePanel.add(clanEnginePanel, BorderLayout.SOUTH);
-        baseComboBoxesPanel.add(enginePanel, c);
-        c.gridx = 2;
-        JPanel gyroPanel = new JPanel(new BorderLayout());
-        gyroPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Gyro")), BorderLayout.NORTH);
-        gyroPanel.add(new JScrollPane(listGyroType.getComponent()), BorderLayout.CENTER);
-        baseComboBoxesPanel.add(gyroPanel, c);
+        addListPanel(baseComboBoxesPanel, 1, 0,
+              createListPanel(Messages.getString("MekSelectorDialog.Search.ArmorType"), listArmorType,
+                  createComboFooter(Messages.getString("MekSelectorDialog.Search.Patchwork"), cPatchwork)));
+        addListPanel(baseComboBoxesPanel, 1, 1,
+              createListPanel(Messages.getString("MekSelectorDialog.Search.InternalsType"), listInternalsType, null));
+        addListPanel(baseComboBoxesPanel, 1, 2,
+              createListPanel(Messages.getString("MekSelectorDialog.Search.MoveMode"), listMoveMode, null), 2);
 
-        c.gridx = 0;
-        c.gridy++;
-        JPanel armorTypePanel = new JPanel(new BorderLayout());
-        armorTypePanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.ArmorType")), BorderLayout.NORTH);
-        armorTypePanel.add(new JScrollPane(listArmorType.getComponent()), BorderLayout.CENTER);
-        JPanel patchworkPanel = new JPanel();
-        patchworkPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Patchwork")));
-        patchworkPanel.add(cPatchwork);
-        armorTypePanel.add(patchworkPanel, BorderLayout.SOUTH);
-        baseComboBoxesPanel.add(armorTypePanel, c);
-        c.gridx = 1;
-        JPanel internalsPanel = new JPanel(new BorderLayout());
-        internalsPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.InternalsType")),
-              BorderLayout.NORTH);
-        internalsPanel.add(new JScrollPane(listInternalsType.getComponent()), BorderLayout.CENTER);
-        baseComboBoxesPanel.add(internalsPanel, c);
-
-        c.gridx = 2;
-        c.gridheight = 2;
-        JPanel moveModePanel = new JPanel(new BorderLayout());
-        moveModePanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.MoveMode")), BorderLayout.NORTH);
-        moveModePanel.add(new JScrollPane(listMoveMode.getComponent()), BorderLayout.CENTER);
-        baseComboBoxesPanel.add(moveModePanel, c);
-
-        c.gridx = 0;
-        c.gridy++;
-        c.gridheight = 1;
-        JPanel techLevelPanel = new JPanel(new BorderLayout());
-        techLevelPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.TechLevel")), BorderLayout.NORTH);
-        techLevelPanel.add(new JScrollPane(listTechLevel.getComponent()), BorderLayout.CENTER);
-        baseComboBoxesPanel.add(techLevelPanel, c);
-        c.gridx = 1;
-        JPanel techBasePanel = new JPanel(new BorderLayout());
-        techBasePanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.TechBase")), BorderLayout.NORTH);
-        techBasePanel.add(new JScrollPane(listTechBase.getComponent()), BorderLayout.CENTER);
-        baseComboBoxesPanel.add(techBasePanel, c);
+        addListPanel(baseComboBoxesPanel, 2, 0,
+              createListPanel(Messages.getString("MekSelectorDialog.Search.TechLevel"), listTechLevel, null));
+        addListPanel(baseComboBoxesPanel, 2, 1,
+              createListPanel(Messages.getString("MekSelectorDialog.Search.TechBase"), listTechBase, null));
 
         return baseComboBoxesPanel;
+    }
+
+    private void addListPanel(JPanel panel, int row, int column, JComponent component) {
+        addListPanel(panel, row, column, component, 1);
+    }
+
+    private void addListPanel(JPanel panel, int row, int column, JComponent component, int rowSpan) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = column;
+        gbc.gridy = row;
+        gbc.gridheight = rowSpan;
+        gbc.weightx = 1;
+        gbc.weighty = rowSpan > 1 ? 1 : 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.insets = new Insets(0, column == 0 ? 0 : 12, 12, 0);
+        panel.add(component, gbc);
+    }
+
+    private JPanel createListPanel(String labelText, TriStateItemList itemList, JComponent footer) {
+        JPanel panel = new JPanel(new BorderLayout(0, 4));
+        panel.add(new JLabel(labelText), BorderLayout.NORTH);
+
+        JScrollPane scrollPane = new JScrollPane(itemList.getComponent());
+        Dimension preferredSize = scrollPane.getPreferredSize();
+        scrollPane.setPreferredSize(new Dimension(LIST_COLUMN_WIDTH, preferredSize.height));
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        if (footer != null) {
+            panel.add(footer, BorderLayout.SOUTH);
+        }
+        return panel;
+    }
+
+    private JPanel createComboFooter(String labelText, JComboBox<String> comboBox) {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(4, 0, 0, 5);
+        panel.add(new JLabel(labelText), gbc);
+
+        gbc.gridx++;
+        gbc.insets = new Insets(4, 0, 0, 0);
+        panel.add(comboBox, gbc);
+        return panel;
     }
 
     MiscSearchTab() {
         btnBaseClear.addActionListener(e -> clear());
 
-        GridBagConstraints c = new GridBagConstraints();
+        GridBagConstraints gbc = new GridBagConstraints();
         setLayout(new GridBagLayout());
 
-        c.weighty = 0;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.fill = GridBagConstraints.NONE;
-        c.gridwidth = 1;
-        c.insets = new Insets(20, 10, 0, 0);
-        c.gridy = 0;
-        add(createBaseAttributes(), c);
+        gbc.weightx = 1;
+        gbc.weighty = 0;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(createBaseAttributes(), gbc);
 
-        c.gridy++;
-        add(createBaseComboBoxes(), c);
+        gbc.gridy++;
+        add(createBaseComboBoxes(), gbc);
 
-        c.weighty = 1;
-        c.gridy++;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.gridy++;
         JPanel clearPanel = new JPanel();
-        clearPanel.add(btnBaseClear, c);
-        add(clearPanel, c);
+        clearPanel.add(btnBaseClear);
+        add(clearPanel, gbc);
     }
 
     void clear() {

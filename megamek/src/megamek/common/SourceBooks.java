@@ -192,8 +192,7 @@ public class SourceBooks {
     }
 
     /**
-     * @return true when no sourcebook entries are present, any listed sourcebook is non-canon, or any listed
-     *       sourcebook cannot be loaded.
+     * @return true when no sourcebook entries are present or all listed sourcebooks are non-canon or cannot be loaded.
      */
     public boolean isNonCanonBySource(String source, String published) {
         Set<String> sourceNames = new LinkedHashSet<>();
@@ -210,7 +209,7 @@ public class SourceBooks {
 
     private boolean isNonCanonBySourceList(String sourceList) {
         return splitSourceList(sourceList).stream()
-              .anyMatch(this::isNonCanonSourceBook);
+              .allMatch(this::isNonCanonSourceBook);
     }
 
     private boolean isNonCanonSourceBook(String sourceName) {

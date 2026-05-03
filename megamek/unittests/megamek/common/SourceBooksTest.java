@@ -52,6 +52,35 @@ class SourceBooksTest {
     }
 
     @Test
+    void emptySourcebookListsAreNonCanon(@TempDir Path sourcebookDirectory) {
+        SourceBooks sourceBooks = new SourceBooks(sourcebookDirectory.toString());
+
+        assertTrue(sourceBooks.isNonCanonBySource(null, null));
+        assertTrue(sourceBooks.isNonCanonBySource("", ""));
+        assertTrue(sourceBooks.isNonCanonBySource("  ", " , "));
+    }
+
+    @Test
+    void mixedCanonAndNonCanonSourcebooksAreCanon(@TempDir Path sourcebookDirectory) throws IOException {
+        SourceBooks sourceBooks = new SourceBooks(sourcebookDirectory.toString());
+        SourceBook canonSourceBook = new SourceBook();
+        canonSourceBook.setAbbrev("CANON");
+        canonSourceBook.setTitle("Canon Sourcebook");
+        canonSourceBook.setCanon(true);
+        sourceBooks.saveSourceBook("CANON", canonSourceBook);
+
+        SourceBook nonCanonSourceBook = new SourceBook();
+        nonCanonSourceBook.setAbbrev("NONCANON");
+        nonCanonSourceBook.setTitle("Non-Canon Sourcebook");
+        nonCanonSourceBook.setCanon(false);
+        sourceBooks.saveSourceBook("NONCANON", nonCanonSourceBook);
+
+        assertFalse(sourceBooks.isNonCanonBySource("CANON,NONCANON", ""));
+        assertFalse(sourceBooks.isNonCanonBySource("NONCANON", "CANON"));
+        assertTrue(sourceBooks.isNonCanonBySource("NONCANON", "Definitely Missing Sourcebook"));
+    }
+
+    @Test
     void saveSourceBookInvalidatesNonCanonCache(@TempDir Path sourcebookDirectory) throws IOException {
         SourceBooks sourceBooks = new SourceBooks(sourcebookDirectory.toString());
         SourceBook sourceBook = new SourceBook();

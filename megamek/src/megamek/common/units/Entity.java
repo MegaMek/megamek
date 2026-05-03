@@ -14095,16 +14095,14 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return true when the unit has no sourcebook entries, any listed sourcebook is non-canon, or any listed
-     *       sourcebook cannot be loaded.
+     * @return true when the unit has no sourcebook entries or all listed sourcebooks are non-canon or cannot be loaded.
      */
     public boolean isNonCanonBySource() {
         return isNonCanonBySource(getSource(), getPublished());
     }
 
     /**
-     * @return true when no sourcebook entries are present, any listed sourcebook is non-canon, or any listed
-     *       sourcebook cannot be loaded.
+     * @return true when no sourcebook entries are present or all listed sourcebooks are non-canon or cannot be loaded.
      */
     public static boolean isNonCanonBySource(String source, String published) {
         return SourceBooks.getStandardSourceBooks().isNonCanonBySource(source, published);

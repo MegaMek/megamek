@@ -200,12 +200,19 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // Edge dangle: entity starts at high elevation, moves FORWARDS to lower hex with climb mode
         boolean isEdgeDangle = false;
         Coords edgeDangleTargetPos = null;
+        // Edge dangle is a walking-only descent (TO:AR p.20). Jumps clear the drop with jump
+        // jets and use normal jump-landing mechanics, so a jump from a cliff-top hex must NOT
+        // false-trigger the dangle handler — that would put the unit into a climbing state at
+        // the destination, which it never was.
+        boolean isJumpPath = md.contains(MoveStepType.START_JUMP)
+              || (md.getLastStepMovementType() == EntityMovementType.MOVE_JUMP);
         if (!entity.isClimbing() && !entity.isDangling()
               && (entity instanceof Mek)
               && ClimbingHelper.canDangle(entity)
               && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
               && md.getFinalClimbMode()
-              && md.contains(MoveStepType.FORWARDS)) {
+              && md.contains(MoveStepType.FORWARDS)
+              && !isJumpPath) {
             // Check if the FORWARDS step goes to a lower hex (3+ levels down)
             // Entity must not have moved (target must be adjacent to starting position)
             MoveStep lastStep = md.getLastStep();
@@ -230,12 +237,78 @@ class MovePathHandler extends AbstractTWRuleHandler {
               canProcessDangle, isEdgeDangle, hasDownStep, entity.isClimbing(), entity.isDangling(),
               entity.getElevation(), md.getFinalClimbMode(), md.length());
         if (isEdgeDangle && (edgeDangleTargetPos != null)) {
-            // Edge initiation: move entity to lower hex, face the cliff/building
+            // Edge initiation: move entity to lower hex, face the cliff/building.
+            // Discriminator: entity.climbingLevelsChosen > 0 = controlled climb-down (PSR per
+            // level); 0 = standard dangle (no PSR, fixed 2 levels). The client picks one or the
+            // other from the cliff-top dialog and pushes via sendUpdateEntity.
             Coords originalPos = entity.getPosition();
             Hex srcHex = getGame().getBoard(entity.getBoardId()).getHex(originalPos);
             int cliffTopAlt = srcHex.getLevel() + entity.getElevation();
             Hex destHex = getGame().getBoard(entity.getBoardId()).getHex(edgeDangleTargetPos);
-            // Dangle elevation: cliff top altitude minus dangle levels, relative to dest hex
+            int facingToCliff = edgeDangleTargetPos.direction(originalPos);
+            int chosenEdgeDescent = entity.getClimbingLevelsChosen();
+            if ((chosenEdgeDescent > 0) && (entity instanceof Mek edgeMek)
+                  && ClimbingHelper.canClimb(entity)) {
+                // EDGE CLIMB-DOWN (TO:AR p.20): PSR per level. On failure, fall from current
+                // descended elevation. Mek ends in lower hex at (cliffTopAlt - levelsDescended).
+                int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(edgeMek);
+                int climbableArms = ClimbingHelper.countClimbableArms(edgeMek);
+                int totalDrop = cliffTopAlt - destHex.getLevel();
+                int levelsToDescend = Math.min(chosenEdgeDescent, totalDrop);
+                logger.info("[CLIMB-TRACE] Server processing EDGE climb-down: entity={}, "
+                            + "from={} (alt {}), to={} (level {}), levelsToDescend={}, costPerLevel={}",
+                      entity.getDisplayName(), originalPos, cliffTopAlt,
+                      edgeDangleTargetPos, destHex.getLevel(), levelsToDescend, costPerLevel);
+                // Move to lower hex first so the PSR rolls happen at the new position.
+                entity.setPosition(edgeDangleTargetPos);
+                entity.setFacing(facingToCliff);
+                entity.setSecondaryFacing(facingToCliff);
+                int levelsDescended = 0;
+                boolean fellWhileDescending = false;
+                for (int i = 1; i <= levelsToDescend; i++) {
+                    PilotingRollData psr = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
+                    psr.append(new PilotingRollData(entity.getId(),
+                          ClimbingHelper.CLIMBING_PSR_MODIFIER,
+                          "climbing down (level " + i + " of " + levelsToDescend + ")"));
+                    if (climbableArms == 1) {
+                        psr.append(new PilotingRollData(entity.getId(),
+                              ClimbingHelper.ONE_ARM_PSR_MODIFIER, "climbing with one arm"));
+                    }
+                    int psrElevation = (cliffTopAlt - destHex.getLevel()) - levelsDescended;
+                    if (gameManager.doSkillCheckWhileMoving(entity, psrElevation,
+                          edgeDangleTargetPos, edgeDangleTargetPos, psr, true) > 0) {
+                        // PSR failed - fall from current climb-down elevation
+                        entity.setClimbing(false);
+                        entity.setDangling(false);
+                        entity.setClimbingLevelsChosen(0);
+                        fellWhileDescending = true;
+                        break;
+                    }
+                    levelsDescended++;
+                }
+                if (!fellWhileDescending) {
+                    int finalElevation = Math.max(0, (cliffTopAlt - destHex.getLevel()) - levelsDescended);
+                    entity.setElevation(finalElevation);
+                    if (finalElevation == 0) {
+                        entity.setClimbing(false);
+                        entity.setDangling(false);
+                        Report groundReport = new Report(6463, Report.PUBLIC);
+                        groundReport.add(entity.getDisplayName());
+                        gameManager.getMainPhaseReport().add(groundReport);
+                    } else {
+                        entity.setClimbing(true);
+                        entity.setDangling(false);
+                    }
+                    entity.setClimbingLevelsChosen(0);
+                }
+                entity.setDone(true);
+                entity.moved = EntityMovementType.MOVE_WALK;
+                entity.mpUsed = levelsDescended * costPerLevel;
+                entity.delta_distance = 0;
+                gameManager.entityUpdate(entity.getId());
+                return;
+            }
+            // Standard EDGE DANGLE: 2 levels per turn, no PSR
             int dangleElevation = cliffTopAlt - ClimbingHelper.DANGLE_LEVELS_PER_TURN
                   - destHex.getLevel();
             dangleElevation = Math.max(0, dangleElevation);
@@ -249,7 +322,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
             gameManager.getMainPhaseReport().add(dangleReport);
             // Move to lower hex, face the cliff/building
             entity.setPosition(edgeDangleTargetPos);
-            int facingToCliff = edgeDangleTargetPos.direction(originalPos);
             entity.setFacing(facingToCliff);
             entity.setSecondaryFacing(facingToCliff);
             entity.setElevation(dangleElevation);

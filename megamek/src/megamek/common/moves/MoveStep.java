@@ -3843,9 +3843,21 @@ public class MoveStep implements Serializable {
     /**
      * In hexes with buildings, returns the elevation relative to the roof. Otherwise, returns the elevation relative to
      * the surface.
+     *
+     * <p>Defensive against a deserialized MoveStep whose transient entity reference exists but whose
+     * {@code Entity.getGame()} hasn't been re-bound on the server. Hit by GameDatasetLogger →
+     * SharedUtility.getPSRList while logging a freshly-received path. Falls back to raw elevation
+     * when game/hex aren't reachable; the dataset metric is best-effort, not authoritative.</p>
      */
     public int getClearance() {
-        Hex hex = entity.getGame().getBoard(boardId).getHex(getPosition());
+        Game game = (entity != null) ? entity.getGame() : null;
+        if (game == null) {
+            return elevation;
+        }
+        Hex hex = game.getBoard(boardId).getHex(getPosition());
+        if (hex == null) {
+            return elevation;
+        }
         if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
             return elevation - hex.terrainLevel(Terrains.BLDG_ELEV);
         }

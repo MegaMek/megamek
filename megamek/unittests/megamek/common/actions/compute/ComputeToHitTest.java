@@ -64,15 +64,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.AbstractBuildingEntity;
-import megamek.common.units.BipedMek;
-import megamek.common.units.BuildingEntity;
-import megamek.common.units.Crew;
-import megamek.common.units.CrewType;
-import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
-import megamek.common.units.Mek;
-import megamek.common.units.Targetable;
+import megamek.common.units.*;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -165,7 +157,7 @@ public class ComputeToHitTest extends GameBoardTestCase {
     @Deprecated(since = "0.51.0", forRemoval = true)
     Infantry createInfantry(String chassis, String model, String crewName) {
         // Create a real Infantry unit with some mocked fields
-        Infantry mockInfantry = new Infantry();
+        Infantry mockInfantry = new ConvInfantry();
         mockInfantry.setGame(game);
         mockInfantry.setChassis(chassis);
         mockInfantry.setModel(model);

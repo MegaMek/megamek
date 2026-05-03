@@ -45,8 +45,8 @@ import megamek.common.MPCalculationSetting;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponType;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.units.Infantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -68,7 +68,7 @@ class ASMovementConverterTest {
 
     @Test
     void convertMovementUsesTwoInchesForZeroStarConventionalInfantry() {
-        Infantry infantry = new Infantry();
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setMovementMode(EntityMovementMode.INF_LEG);
         infantry.setOriginalWalkMP(1);
         infantry.setArmorEncumbering(true);

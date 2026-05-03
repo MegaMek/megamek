@@ -44,6 +44,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.units.Aero;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Jumpship;
@@ -162,7 +163,7 @@ final class ASMovementConverter {
     }
 
     private static Map<String, Integer> convertMovementForInfantry(ASConverter.ConversionData conversionData) {
-        Infantry infantry = (Infantry) conversionData.entity();
+        ConvInfantry infantry = (ConvInfantry) conversionData.entity();
         AlphaStrikeElement element = conversionData.element();
         CalculationReport report = conversionData.conversionReport();
 

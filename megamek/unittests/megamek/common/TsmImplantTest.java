@@ -40,6 +40,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.EntityWeightClass;
@@ -79,8 +80,8 @@ public class TsmImplantTest {
     /**
      * Creates a conventional infantry unit with the specified trooper count.
      */
-    private Infantry createInfantry(int troopers, boolean withTsmImplant) {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createInfantry(int troopers, boolean withTsmImplant) {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setGame(game);
         infantry.setId(1);
         infantry.setChassis("Test Platoon");
@@ -99,7 +100,7 @@ public class TsmImplantTest {
 
         // Set up infantry structure
         infantry.autoSetInternal();
-        infantry.initializeInternal(troopers, Infantry.LOC_INFANTRY);
+        infantry.initializeInternal(troopers, ConvInfantry.LOC_INFANTRY);
 
         return infantry;
     }

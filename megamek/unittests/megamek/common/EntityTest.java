@@ -623,7 +623,7 @@ class EntityTest {
 
         static Stream<Named<Infantry>> eligibleEntities() {
             return Stream.of(
-                  Named.of("Infantry", new Infantry()),
+                  Named.of("Infantry", new ConvInfantry()),
                   Named.of("BattleArmor", new BattleArmor())
             );
         }
@@ -657,7 +657,7 @@ class EntityTest {
                 infantry.setBoardId(1);
                 game.addEntity(infantry);
 
-                Infantry combatInfantry = new Infantry();
+                ConvInfantry combatInfantry = new ConvInfantry();
                 combatInfantry.setId(2);
                 combatInfantry.setOwner(player);
                 combatInfantry.setPosition(new Coords(1, 1));
@@ -904,7 +904,7 @@ class EntityTest {
                 enemyBuilding.setBoardId(1);
                 game.addEntity(enemyBuilding);
 
-                Infantry existingCombatant = new Infantry();
+                Infantry existingCombatant = new ConvInfantry();
                 existingCombatant.setId(3);
                 existingCombatant.setOwner(player1);
                 existingCombatant.setPosition(new Coords(1, 1));

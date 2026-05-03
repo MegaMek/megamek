@@ -56,6 +56,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import org.junit.jupiter.api.BeforeAll;
@@ -384,14 +385,14 @@ public class InfantryActionResolutionTest {
 
     // ==================== Helper Methods ====================
 
-    private Infantry createInfantry(Player owner, Coords position, int strength) {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createInfantry(Player owner, Coords position, int strength) {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setOwner(owner);
         infantry.setGame(game);
         infantry.setPosition(position);
         infantry.setSquadSize(strength);
         infantry.setSquadCount(1);
-        infantry.initializeInternal(strength, Infantry.LOC_INFANTRY);
+        infantry.initializeInternal(strength, ConvInfantry.LOC_INFANTRY);
         return infantry;
     }
 

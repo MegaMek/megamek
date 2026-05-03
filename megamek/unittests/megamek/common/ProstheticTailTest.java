@@ -56,6 +56,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
@@ -97,8 +98,8 @@ public class ProstheticTailTest {
     /**
      * Creates a conventional infantry unit with the specified trooper count.
      */
-    private Infantry createInfantry(int troopers, boolean withTail) {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createInfantry(int troopers, boolean withTail) {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setGame(game);
         infantry.setId(1);
         infantry.setChassis("Test Platoon");
@@ -113,7 +114,7 @@ public class ProstheticTailTest {
 
         infantry.setOwner(game.getPlayer(0));
         infantry.autoSetInternal();
-        infantry.initializeInternal(troopers, Infantry.LOC_INFANTRY);
+        infantry.initializeInternal(troopers, ConvInfantry.LOC_INFANTRY);
 
         return infantry;
     }

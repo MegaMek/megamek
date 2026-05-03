@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.GameBoardTestCase;
 import megamek.common.enums.MoveStepType;
-import megamek.common.units.Infantry;
+import megamek.common.units.ConvInfantry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -52,17 +52,17 @@ import org.junit.jupiter.api.Test;
  */
 public class MountainInfantryMovementTest extends GameBoardTestCase {
 
-    private static Infantry createStandardInfantry() {
-        Infantry infantry = new Infantry();
+    private static ConvInfantry createStandardInfantry() {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setId(2);
         infantry.setWeight(2.0f);
-        infantry.initializeInternal(10, Infantry.LOC_INFANTRY);
+        infantry.initializeInternal(10, ConvInfantry.LOC_INFANTRY);
         return infantry;
     }
 
-    private static Infantry createMountainInfantry() {
-        Infantry infantry = createStandardInfantry();
-        infantry.setSpecializations(Infantry.MOUNTAIN_TROOPS);
+    private static ConvInfantry createMountainInfantry() {
+        ConvInfantry infantry = createStandardInfantry();
+        infantry.setSpecializations(ConvInfantry.MOUNTAIN_TROOPS);
         return infantry;
     }
 

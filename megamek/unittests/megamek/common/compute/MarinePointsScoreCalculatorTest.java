@@ -44,6 +44,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Infantry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,12 +77,12 @@ public class MarinePointsScoreCalculatorTest {
      */
     @Test
     void testCalculateMPS_ConventionalInfantry() {
-        Infantry infantry = new Infantry();
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setOwner(player);
         infantry.setGame(game);
         infantry.setSquadSize(28);
         infantry.setSquadCount(1);
-        infantry.initializeInternal(28, Infantry.LOC_INFANTRY);
+        infantry.initializeInternal(28, ConvInfantry.LOC_INFANTRY);
 
         // Full strength platoon: 28 troopers * 1 point = 28 MPS
         int mps = MarinePointsScoreCalculator.calculateMPS(infantry);
@@ -93,12 +94,12 @@ public class MarinePointsScoreCalculatorTest {
      */
     @Test
     void testCalculateMPS_DamagedInfantry() {
-        Infantry infantry = new Infantry();
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setOwner(player);
         infantry.setGame(game);
         infantry.setSquadSize(14);  // Half strength
         infantry.setSquadCount(1);
-        infantry.initializeInternal(14, Infantry.LOC_INFANTRY);
+        infantry.initializeInternal(14, ConvInfantry.LOC_INFANTRY);
 
         int mps = MarinePointsScoreCalculator.calculateMPS(infantry);
         assertEquals(14, mps, "Damaged infantry should have MPS equal to remaining troopers");
@@ -110,13 +111,13 @@ public class MarinePointsScoreCalculatorTest {
      */
     @Test
     void testCalculateMPS_Marines() {
-        Infantry infantry = new Infantry();
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setOwner(player);
         infantry.setGame(game);
         infantry.setSquadSize(28);
         infantry.setSquadCount(1);
-        infantry.initializeInternal(28, Infantry.LOC_INFANTRY);
-        infantry.setSpecializations(Infantry.MARINES);
+        infantry.initializeInternal(28, ConvInfantry.LOC_INFANTRY);
+        infantry.setSpecializations(ConvInfantry.MARINES);
 
         int mps = MarinePointsScoreCalculator.calculateMPS(infantry);
         assertEquals(28, mps, "Marines should have MPS equal to trooper count");
@@ -128,12 +129,12 @@ public class MarinePointsScoreCalculatorTest {
      */
     @Test
     void testCalculateMPS_WithBuildingModifier() {
-        Infantry infantry = new Infantry();
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setOwner(player);
         infantry.setGame(game);
         infantry.setSquadSize(28);
         infantry.setSquadCount(1);
-        infantry.initializeInternal(28, Infantry.LOC_INFANTRY);
+        infantry.initializeInternal(28, ConvInfantry.LOC_INFANTRY);
 
         // Create a large building with 60+ hexes and multiple levels
         AbstractBuildingEntity building = createLargeBuilding(60, 3);
@@ -149,12 +150,12 @@ public class MarinePointsScoreCalculatorTest {
      */
     @Test
     void testCalculateMPS_WithSmallBuilding() {
-        Infantry infantry = new Infantry();
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setOwner(player);
         infantry.setGame(game);
         infantry.setSquadSize(28);
         infantry.setSquadCount(1);
-        infantry.initializeInternal(28, Infantry.LOC_INFANTRY);
+        infantry.initializeInternal(28, ConvInfantry.LOC_INFANTRY);
 
         // Create a small building (< 60 hexes)
         AbstractBuildingEntity building = createSmallBuilding(10, 3);
@@ -179,7 +180,7 @@ public class MarinePointsScoreCalculatorTest {
      */
     @Test
     void testCalculateMPS_ZeroStrengthInfantry() {
-        Infantry infantry = new Infantry();
+        Infantry infantry = new ConvInfantry();
         infantry.setOwner(player);
         infantry.setGame(game);
         infantry.setSquadSize(0);  // Zero strength

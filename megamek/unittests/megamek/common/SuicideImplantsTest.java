@@ -52,6 +52,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.BipedMek;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
@@ -102,8 +103,8 @@ public class SuicideImplantsTest {
     /**
      * Creates a conventional infantry unit with the specified trooper count.
      */
-    private Infantry createInfantry(int troopers, boolean withSuicideImplants, int ownerId) {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createInfantry(int troopers, boolean withSuicideImplants, int ownerId) {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setGame(game);
         infantry.setId(game.getNextEntityId());
         infantry.setChassis("Test Platoon");
@@ -122,7 +123,7 @@ public class SuicideImplantsTest {
 
         // Set up infantry structure
         infantry.autoSetInternal();
-        infantry.initializeInternal(troopers, Infantry.LOC_INFANTRY);
+        infantry.initializeInternal(troopers, ConvInfantry.LOC_INFANTRY);
 
         return infantry;
     }

@@ -339,34 +339,6 @@ public abstract class Infantry extends Entity {
     }
 
     @Override
-    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
-        int walkMP = getWalkMP(mpCalculationSetting);
-        if (!mpCalculationSetting.ignoreOptionalRules() &&
-              (game != null) &&
-              gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE)) {
-            return (walkMP > 0) ? walkMP + 1 : walkMP + 2;
-        } else {
-            return walkMP;
-        }
-    }
-
-    /**
-     * @return True when this conventional infantry unit has ground movement of 0*, meaning it may still move a single
-     *       hex despite having 0 walking MP.
-     */
-    public boolean hasMinimalGroundMP(MPCalculationSetting mpCalculationSetting) {
-        return isConventionalInfantry() && (getWalkMP(mpCalculationSetting) == 0);
-    }
-
-    /**
-     * @return True when this conventional infantry unit has ground movement of 0*, meaning it may still move a single
-     *       hex despite having 0 walking MP.
-     */
-    public boolean hasMinimalGroundMP() {
-        return hasMinimalGroundMP(MPCalculationSetting.STANDARD);
-    }
-
-    @Override
     public boolean hasUMU() {
         return getMovementMode().isUMUInfantry() || getMovementMode().isSubmarine();
     }

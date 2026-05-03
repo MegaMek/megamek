@@ -62,8 +62,8 @@ class InfantryDermalArmorTest {
         EquipmentType.initializeTypes();
     }
 
-    private Infantry createInfantry(boolean hasDermalArmor, boolean hasTSM) {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createInfantry(boolean hasDermalArmor, boolean hasTSM) {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setId(1);
         infantry.setMovementMode(EntityMovementMode.INF_LEG);
         infantry.setSquadSize(7);
@@ -91,7 +91,7 @@ class InfantryDermalArmorTest {
     private void addArmorKit(Infantry infantry, String armorKitName) throws LocationFullException {
         EquipmentType armorKit = EquipmentType.get(armorKitName);
         if (armorKit != null) {
-            infantry.addEquipment(armorKit, Infantry.LOC_INFANTRY);
+            infantry.addEquipment(armorKit, ConvInfantry.LOC_INFANTRY);
         }
     }
 
@@ -100,21 +100,21 @@ class InfantryDermalArmorTest {
     @Test
     @DisplayName("Dermal Armor alone, no armor kit: divisor = 2.0 (base 1.0 + 1.0)")
     void dermalArmorAloneNoKit() {
-        Infantry infantry = createInfantry(true, false);
+        ConvInfantry infantry = createInfantry(true, false);
         assertEquals(2.0, infantry.calcDamageDivisor(), 0.001);
     }
 
     @Test
     @DisplayName("TSM alone, no armor kit: divisor = 0.5")
     void tsmAloneNoKit() {
-        Infantry infantry = createInfantry(false, true);
+        ConvInfantry infantry = createInfantry(false, true);
         assertEquals(0.5, infantry.calcDamageDivisor(), 0.001);
     }
 
     @Test
     @DisplayName("TSM + Dermal Armor, no armor kit: divisor = 1.5 (0.5 + 1.0)")
     void tsmAndDermalArmorNoKit() {
-        Infantry infantry = createInfantry(true, true);
+        ConvInfantry infantry = createInfantry(true, true);
         assertEquals(1.5, infantry.calcDamageDivisor(), 0.001);
     }
 
@@ -123,7 +123,7 @@ class InfantryDermalArmorTest {
     @Test
     @DisplayName("TSM + armor kit (div 1.0): divisor = 1.0 (TSM adds nothing when armor present)")
     void tsmWithArmorKitDivisorOne() throws LocationFullException {
-        Infantry infantry = createInfantry(false, true);
+        ConvInfantry infantry = createInfantry(false, true);
         addArmorKit(infantry, "Generic Infantry Kit");
         assertEquals(1.0, infantry.calcDamageDivisor(), 0.001);
     }
@@ -131,7 +131,7 @@ class InfantryDermalArmorTest {
     @Test
     @DisplayName("TSM + Dermal Armor + armor kit (div 1.0): divisor = 2.0 (kit 1.0 + dermal 1.0)")
     void tsmAndDermalArmorWithArmorKitDivisorOne() throws LocationFullException {
-        Infantry infantry = createInfantry(true, true);
+        ConvInfantry infantry = createInfantry(true, true);
         addArmorKit(infantry, "Generic Infantry Kit");
         assertEquals(2.0, infantry.calcDamageDivisor(), 0.001);
     }
@@ -139,7 +139,7 @@ class InfantryDermalArmorTest {
     @Test
     @DisplayName("Dermal Armor + armor kit (div 1.0): divisor = 2.0 (kit 1.0 + dermal 1.0)")
     void dermalArmorWithArmorKitDivisorOne() throws LocationFullException {
-        Infantry infantry = createInfantry(true, false);
+        ConvInfantry infantry = createInfantry(true, false);
         addArmorKit(infantry, "Generic Infantry Kit");
         assertEquals(2.0, infantry.calcDamageDivisor(), 0.001);
     }
@@ -149,7 +149,7 @@ class InfantryDermalArmorTest {
     @Test
     @DisplayName("TSM + armor kit (div 2.0): divisor = 2.0 (TSM adds nothing when armor present)")
     void tsmWithHighDivisorArmorKit() throws LocationFullException {
-        Infantry infantry = createInfantry(false, true);
+        ConvInfantry infantry = createInfantry(false, true);
         addArmorKit(infantry, "Ballistic Plate, Standard");
         assertEquals(2.0, infantry.calcDamageDivisor(), 0.001);
     }
@@ -157,7 +157,7 @@ class InfantryDermalArmorTest {
     @Test
     @DisplayName("TSM + Dermal Armor + armor kit (div 2.0): divisor = 3.0 (kit 2.0 + dermal 1.0)")
     void tsmAndDermalArmorWithHighDivisorArmorKit() throws LocationFullException {
-        Infantry infantry = createInfantry(true, true);
+        ConvInfantry infantry = createInfantry(true, true);
         addArmorKit(infantry, "Ballistic Plate, Standard");
         assertEquals(3.0, infantry.calcDamageDivisor(), 0.001);
     }

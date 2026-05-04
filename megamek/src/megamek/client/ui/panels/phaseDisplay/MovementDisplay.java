@@ -3416,10 +3416,36 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         boolean isBuilding = targetHex.containsTerrain(Terrains.BUILDING);
 
-        // Calculate available MP for climbing (walk MP minus base hex cost of 1)
-        int availableMP = walkMP - 1;
-        int maxAffordableLevels = Math.max(1, availableMP / costPerLevel);
+        // Calculate available MP for climbing. For a fresh start the path may walk and/or
+        // turn before the climbing step — those steps already consumed MP, and we can't
+        // assume the climb gets the full walk MP. The previous step's mpUsed captures
+        // everything spent up to and including entry into the climb hex (one base MP).
+        // For continuation (no climbingStep), the unit hasn't moved yet this turn so the
+        // legacy walkMP - 1 is correct.
+        int mpAlreadyUsed;
+        if (climbingStep != null) {
+            MoveStep prevForBudget = findPreviousStep(climbingStep);
+            mpAlreadyUsed = (prevForBudget != null) ? prevForBudget.getMpUsed() : 1;
+        } else {
+            mpAlreadyUsed = 1;
+        }
+        int availableMP = Math.max(0, walkMP - mpAlreadyUsed);
+        int maxAffordableLevels = availableMP / costPerLevel;
         int maxLevels = Math.min(totalLevelsRemaining, maxAffordableLevels);
+        if ((maxLevels <= 0) && !isContinuation) {
+            // Fresh climb but the path's walk/turn ate all the MP — no level is affordable.
+            // Skip the dialog rather than showing an empty list, but surface a toast so the
+            // player knows the click on the cliff hex had no effect (otherwise it looks
+            // like the path silently truncates).
+            LOGGER.info("[CLIMB-TRACE] showClimbingLevelDialog: no MP left for climbing "
+                        + "(walkMP={}, mpAlreadyUsed={}), returning null",
+                  walkMP, mpAlreadyUsed);
+            clientgui.addToast(ToastLevel.WARNING,
+                  Messages.getString("MovementDisplay.ClimbingDialog.noMpToast",
+                        mek.getDisplayName(), mpAlreadyUsed, walkMP, costPerLevel),
+                  mek);
+            return null;
+        }
 
         // Build the dialog header message
         String messageKey;

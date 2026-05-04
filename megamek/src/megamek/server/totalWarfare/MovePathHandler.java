@@ -4051,13 +4051,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(climbingMek);
                 int walkMP = climbingMek.getWalkMP();
 
-                // Calculate how many levels we can afford this turn
-                // step.getMpUsed() includes the full climbing cost already.
-                // Subtract the climbing portion to get MP spent on non-climbing movement,
-                // then calculate how many levels fit in the remaining walk MP.
-                int totalClimbCost = totalLevelsToClimb * costPerLevel;
-                int nonClimbMpUsed = step.getMpUsed() - totalClimbCost;
-                int availableMP = walkMP - nonClimbMpUsed;
+                // Calculate how many levels we can afford this turn.
+                // Take MP already spent before this climbing step from the previous step's
+                // mpUsed (includes any walk + 1 MP for entering the climb hex). The previous
+                // approach (step.getMpUsed() - totalLevelsToClimb * costPerLevel) was wrong
+                // when the client compiled with chosenLevels < totalLevelsToClimb — it
+                // back-calculated against the FULL climb cost and produced a negative
+                // nonClimbMpUsed, granting more MP than the unit had.
+                int nonClimbMpUsed = (previousStep != null) ? previousStep.getMpUsed() : 0;
+                int availableMP = Math.max(0, walkMP - nonClimbMpUsed);
                 int affordableLevels = availableMP / costPerLevel;
                 int levelsThisTurn = Math.min(totalLevelsToClimb, Math.max(0, affordableLevels));
                 // Honor the player's choice from the climbing dialog (TO:AR p.20).

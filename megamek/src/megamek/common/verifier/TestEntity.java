@@ -1234,7 +1234,7 @@ public abstract class TestEntity implements TestEntityOption {
         int eTechLevel = SimpleTechLevel.convertCompoundToSimple(getEntity().getTechLevel()).ordinal();
         int ammoRulesLevel = SimpleTechLevel.convertCompoundToSimple(ammoTechLvl).ordinal();
         int eRulesLevel = getEntity().findMinimumRulesLevel().ordinal();
-        if ((eTechLevel >= eRulesLevel) && (getEntity().getEarliestTechDate() <= getEntity().getYear())) {
+        if ((eTechLevel >= eRulesLevel) && isIntroducedByValidationYear(getEntity().getEarliestTechDate(), 0)) {
             return false;
         }
 
@@ -1436,8 +1436,9 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     /**
-     * Compares intro dates of all components to the unit intro year (or game year if available). The year used for
-     * comparison is determined in order of priority:
+      * Compares intro dates of all components to the unit intro year (or game year if available). If the unit has an
+      * explicit original build year, that year is also accepted for components retained from the original build. The
+      * current/refit year used for comparison is determined in order of priority:
      * <ol>
      *   <li>If {@link #setGameYear(int)} was called with a value > 0, use that year</li>
      *   <li>Otherwise, use {@link Entity#getTechLevelYear()} which returns the game's ALLOWED_YEAR
@@ -1451,17 +1452,14 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public boolean hasIncorrectIntroYear(StringBuffer buff) {
         boolean retVal = false;
-        // Use explicitly set game year if available, otherwise use entity's tech level year
-        // (which checks game options first, then falls back to entity year)
-        int baseYear = (gameYear > 0) ? gameYear : getEntity().getTechLevelYear();
-        if (getEntity().getEarliestTechDate() <= baseYear + getIntroYearMargin()) {
+        int introYearMargin = getIntroYearMargin();
+        if (isIntroducedByValidationYear(getEntity().getEarliestTechDate(), introYearMargin)) {
             return false;
         }
-        int useIntroYear = baseYear + getIntroYearMargin();
         if (getEntity().isOmni()) {
             int introDate = Entity.getOmniAdvancement(getEntity()).getIntroductionDate(
                   getEntity().isClan() || getEntity().isMixedTech());
-            if (useIntroYear < introDate) {
+            if (!isIntroducedByValidationYear(introDate, introYearMargin)) {
                 retVal = true;
                 buff.append("Omni technology has intro date of ");
                 buff.append(introDate);
@@ -1486,7 +1484,7 @@ public abstract class TestEntity implements TestEntityOption {
                 introDate = nextE.getIntroductionDate();
             }
 
-            if (introDate > useIntroYear) {
+            if (!isIntroducedByValidationYear(introDate, introYearMargin)) {
                 retVal = true;
                 buff.append(nextE.getName());
                 buff.append(" has intro date of ");
@@ -1502,7 +1500,7 @@ public abstract class TestEntity implements TestEntityOption {
             int intro = getEntity().isMixedTech()
                   ? Entity.getPatchworkArmorAdvancement().getIntroductionDate()
                   : Entity.getPatchworkArmorAdvancement().getIntroductionDate(getEntity().isClan());
-            if (useIntroYear < intro) {
+            if (!isIntroducedByValidationYear(intro, introYearMargin)) {
                 retVal = true;
                 buff.append("Patchwork armor has intro date of ");
                 buff.append(intro);
@@ -1528,7 +1526,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (getEntity().isMixedTech()) {
                 introDate = at.getIntroductionDate();
             }
-            if (introDate > useIntroYear) {
+            if (!isIntroducedByValidationYear(introDate, introYearMargin)) {
                 retVal = true;
                 buff.append(at.getName());
                 buff.append(" armor has intro date of ");
@@ -1551,7 +1549,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (getEntity().isMixedTech()) {
                 introDate = cockpit.getIntroductionDate();
             }
-            if (introDate > useIntroYear) {
+            if (!isIntroducedByValidationYear(introDate, introYearMargin)) {
                 retVal = true;
                 buff.append(cockpitName);
                 buff.append(" has intro date of ");
@@ -1566,7 +1564,7 @@ public abstract class TestEntity implements TestEntityOption {
                 if (getEntity().isMixedTech()) {
                     introDate = gyro.getIntroductionDate();
                 }
-                if (introDate > useIntroYear) {
+                if (!isIntroducedByValidationYear(introDate, introYearMargin)) {
                     retVal = true;
                     buff.append(((Mek) getEntity()).getGyroTypeString());
                     buff.append(" has intro date of ");
@@ -1581,7 +1579,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (getEntity().isMixedTech()) {
                 introDate = engine.getIntroductionDate();
             }
-            if (introDate > useIntroYear) {
+            if (!isIntroducedByValidationYear(introDate, introYearMargin)) {
                 retVal = true;
                 buff.append(getEntity().getEngine().getShortEngineName());
                 buff.append(" has intro date of ");
@@ -1591,6 +1589,18 @@ public abstract class TestEntity implements TestEntityOption {
         }
 
         return retVal;
+    }
+
+    private List<Integer> getIntroYearValidationYears() {
+        int baseYear = (gameYear > 0) ? gameYear : getEntity().getTechLevelYear();
+        if (getEntity().hasOriginalBuildYear() && (getEntity().getOriginalBuildYear() != baseYear)) {
+            return List.of(baseYear, getEntity().getOriginalBuildYear());
+        }
+        return List.of(baseYear);
+    }
+
+    private boolean isIntroducedByValidationYear(int introDate, int margin) {
+        return getIntroYearValidationYears().stream().anyMatch(year -> introDate <= year + margin);
     }
 
     public boolean hasFailedEquipment(StringBuffer buff) {

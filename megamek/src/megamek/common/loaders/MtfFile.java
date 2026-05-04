@@ -91,8 +91,10 @@ public class MtfFile implements IMekLoader {
     private String chassisConfig;
     private String techBase;
     private String techYear;
+    private String originalTechYear = ORIGINAL_ERA;
     private String rulesLevel;
-    private String source = "Source:";
+    private String source = SOURCE;
+    private String published = PUBLISHED;
 
     private String tonnage;
     private String engine;
@@ -162,7 +164,9 @@ public class MtfFile implements IMekLoader {
     public static final String CONFIG = "config:";
     public static final String TECH_BASE = "techbase:";
     public static final String ERA = "era:";
+    public static final String ORIGINAL_ERA = "original era:";
     public static final String SOURCE = "source:";
+    public static final String PUBLISHED = "published:";
     public static final String RULES_LEVEL = "rules level:";
     public static final String HEAT_SINKS = "heat sinks:";
     public static final String BASE_CHASSIS_HEAT_SINKS = "base chassis heat sinks:";
@@ -322,8 +326,16 @@ public class MtfFile implements IMekLoader {
             mek.setClanChassisName(clanChassisName);
             mek.setModel(model.trim());
             mek.setMulId(mulId);
-            mek.setYear(Integer.parseInt(techYear.substring(4).trim()));
-            mek.setSource(source.substring("Source:".length()).trim());
+            mek.setYear(Integer.parseInt(techYear.substring(ERA.length()).trim()));
+            String originalYearStr = originalTechYear.substring(ORIGINAL_ERA.length()).trim();
+            if (!originalYearStr.isBlank()) {            
+                int originalYear = Integer.parseInt(originalYearStr);
+                if (originalYear>0) {
+                    mek.setOriginalBuildYear(originalYear);
+                }
+            }
+            mek.setSource(source.substring(SOURCE.length()).trim());
+            mek.setPublished(published.substring(PUBLISHED.length()).trim());
             if (StringUtility.isNullOrBlank(role)) {
                 mek.setUnitRole(UnitRole.UNDETERMINED);
             } else {
@@ -1522,11 +1534,23 @@ public class MtfFile implements IMekLoader {
             techYear = line;
             return true;
         }
+        
+        if (lineLower.startsWith(ORIGINAL_ERA)) {
+            originalTechYear = line;
+            return true;
+        }
 
         if (lineLower.startsWith(SOURCE)) {
             source = line;
             return true;
         }
+
+        if (lineLower.startsWith(PUBLISHED)) {
+            published = line;
+            return true;
+        }
+        
+
 
         if (lineLower.startsWith(RULES_LEVEL)) {
             rulesLevel = line;

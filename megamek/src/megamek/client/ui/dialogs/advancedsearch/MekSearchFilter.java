@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 import megamek.common.Messages;
+import megamek.common.SourceBooks;
 import megamek.common.annotations.Nullable;
 import megamek.common.loaders.MekSummary;
 import megamek.common.units.Entity;
@@ -429,7 +430,7 @@ public class MekSearchFilter {
             return false;
         }
 
-        if (!f.source.isEmpty() && !f.findTokenized(mek.getSource(), f.source)) {
+        if (!f.source.isEmpty() && !matchesSourceFilter(mek, f.source)) {
             return false;
         }
 
@@ -1065,8 +1066,13 @@ public class MekSearchFilter {
         return retVal;
     }
 
+    static boolean matchesSourceFilter(MekSummary mek, String sourceFilter) {
+        return SourceBooks.splitSourceList(sourceFilter).stream()
+              .anyMatch(source -> findTokenized(mek.getSource(), source) || findTokenized(mek.getPublished(), source));
+    }
+
     /**
-     * Returns true if the given searchTarget contains all the tokens (separated by space) given in the searchTokens
+     * Returns true if the given searchTarget contains all the tokens (separated by spaces) given in the searchTokens
      * String. Comparisons are done ignoring case. Returns false when any of the strings is null or the search tokens
      * are empty.
      *
@@ -1075,12 +1081,12 @@ public class MekSearchFilter {
      *
      * @return True if all search tokens are contained in the searchTarget
      */
-    private boolean findTokenized(@Nullable String searchTarget, @Nullable String searchTokens) {
+    private static boolean findTokenized(@Nullable String searchTarget, @Nullable String searchTokens) {
         if (searchTarget == null || searchTokens == null || searchTokens.isBlank()) {
             return false;
         } else {
             String searchTargetLowerCase = searchTarget.toLowerCase(Locale.ROOT);
-            String[] tokens = searchTokens.toLowerCase(Locale.ROOT).split(" ");
+            String[] tokens = searchTokens.toLowerCase(Locale.ROOT).trim().split("\\s+");
             return Arrays.stream(tokens).allMatch(searchTargetLowerCase::contains);
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,6 +32,7 @@
  */
 package megamek.common;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
@@ -42,9 +43,13 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -54,9 +59,20 @@ import java.util.stream.Collectors;
 public class SourceBooks {
 
     private static final String SOURCEBOOKS_PATH = "data/sourcebooks";
+    private static final Map<String, Optional<SourceBook>> SOURCE_BOOK_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, Boolean> NON_CANON_BY_SOURCE_CACHE = new ConcurrentHashMap<>();
 
     private final ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
     private final File baseDirectory;
+    private final String cacheKeyPrefix;
+
+    private static class StandardSourceBooksHolder {
+        private static final SourceBooks INSTANCE = new SourceBooks();
+    }
+
+    public static SourceBooks getStandardSourceBooks() {
+        return StandardSourceBooksHolder.INSTANCE;
+    }
 
     /**
      * Creates a sourcebooks manager for any sourcebooks in the given directory. This constructor is for
@@ -66,9 +82,8 @@ public class SourceBooks {
      */
     public SourceBooks(String directoryPath) {
         baseDirectory = new File(directoryPath);
-        if (!baseDirectory.exists() || !baseDirectory.isDirectory()) {
-            throw new IllegalArgumentException("Invalid directory: " + directoryPath);
-        }
+        cacheKeyPrefix = baseDirectory.toPath().toAbsolutePath().normalize().toString();
+        yamlMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
     }
 
     /**
@@ -123,12 +138,43 @@ public class SourceBooks {
         if ((fileName == null) || fileName.isBlank()) {
             return Optional.empty();
         }
+        return SOURCE_BOOK_CACHE.computeIfAbsent(cacheKey(sourceBookKey(fileName)),
+              ignored -> readSourceBook(fileName));
+    }
+
+    private Optional<SourceBook> readSourceBook(String fileName) {
         try {
-            File yamlFile = new File(baseDirectory, prepareFilename(fileName));
-            return Optional.of(yamlMapper.readValue(yamlFile, SourceBook.class));
+            return Optional.of(yamlMapper.readValue(sourceBookFile(fileName), SourceBook.class));
         } catch (IOException e) {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Saves a sourcebook as a YAML file in the sourcebook directory.
+     *
+     * @param fileName   The sourcebook filename or key. The .yaml extension is optional.
+     * @param sourceBook The sourcebook data to save.
+     *
+     * @throws IOException if the sourcebook cannot be written.
+     */
+    public void saveSourceBook(String fileName, SourceBook sourceBook) throws IOException {
+        yamlMapper.writeValue(sourceBookFile(fileName), sourceBook);
+        clearCaches();
+    }
+
+    public static void clearCaches() {
+        SOURCE_BOOK_CACHE.clear();
+        NON_CANON_BY_SOURCE_CACHE.clear();
+    }
+
+    public File sourceBookFile(String fileName) {
+        return new File(baseDirectory, prepareFilename(fileName));
+    }
+
+    public String sourceBookKey(String fileName) {
+        String preparedFilename = prepareFilename(fileName);
+        return preparedFilename.substring(0, preparedFilename.length() - ".yaml".length());
     }
 
     /**
@@ -143,6 +189,33 @@ public class SourceBooks {
               .map(this::loadSourceBook)
               .flatMap(Optional::stream)
               .toList();
+    }
+
+    /**
+     * @return true when no sourcebook entries are present or all listed sourcebooks are non-canon or cannot be loaded.
+     */
+    public boolean isNonCanonBySource(String source, String published) {
+        Set<String> sourceNames = new LinkedHashSet<>();
+        sourceNames.addAll(splitSourceList(source));
+        sourceNames.addAll(splitSourceList(published));
+        if (sourceNames.isEmpty()) {
+            return true;
+        }
+
+        String normalizedSourceList = formatSourceList(sourceNames);
+        return NON_CANON_BY_SOURCE_CACHE.computeIfAbsent(cacheKey(normalizedSourceList),
+              ignored -> isNonCanonBySourceList(normalizedSourceList));
+    }
+
+    private boolean isNonCanonBySourceList(String sourceList) {
+        return splitSourceList(sourceList).stream()
+              .allMatch(this::isNonCanonSourceBook);
+    }
+
+    private boolean isNonCanonSourceBook(String sourceName) {
+        return loadSourceBook(sourceName)
+              .map(sourceBook -> !sourceBook.isCanon())
+              .orElse(true);
     }
 
     public static List<String> splitSourceList(String sourceList) {
@@ -175,6 +248,10 @@ public class SourceBooks {
             filename += ".yaml";
         }
         return filename;
+    }
+
+    private String cacheKey(String value) {
+        return cacheKeyPrefix + "|" + value;
     }
 
 }

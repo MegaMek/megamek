@@ -91,6 +91,9 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
     @Override
     public void setVisible(boolean b) {
         alphaStrikeTab.saveValues();
+        if (b) {
+            setLocationRelativeTo(getOwner());
+        }
         super.setVisible(b);
     }
 

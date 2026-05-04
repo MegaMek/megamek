@@ -553,6 +553,7 @@ public abstract class Entity extends TurnOrdered
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
 
     protected String source = "";
+    protected String published = "";
 
     /**
      * The tech faction associated with this Entity, used to filter available tech by faction.
@@ -14127,6 +14128,43 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Sets the sourcebook where this entity's record sheet was published.
+     *
+     * @param published The sourcebook name
+     */
+    public void setPublished(String published) {
+        if (published != null) {
+            this.published = SourceBooks.normalizeSourceList(published);
+        }
+    }
+
+    public String getPublished() {
+        return (published != null) ? published : "";
+    }
+
+    public List<String> getPublishedSources() {
+        return SourceBooks.splitSourceList(getPublished());
+    }
+
+    public void setPublishedSources(Collection<String> publishedSources) {
+        published = SourceBooks.formatSourceList(publishedSources);
+    }
+
+    /**
+     * @return true when the unit has no sourcebook entries or all listed sourcebooks are non-canon or cannot be loaded.
+     */
+    public boolean isNonCanonBySource() {
+        return isNonCanonBySource(getSource(), getPublished());
+    }
+
+    /**
+     * @return true when no sourcebook entries are present or all listed sourcebooks are non-canon or cannot be loaded.
+     */
+    public static boolean isNonCanonBySource(String source, String published) {
+        return SourceBooks.getStandardSourceBooks().isNonCanonBySource(source, published);
+    }
+
+    /**
      * Sets the tech faction for this entity.
      *
      * @param faction The faction to set, or Faction.NONE for no faction
@@ -15919,6 +15957,17 @@ public abstract class Entity extends TurnOrdered
         return year;
     }
 
+    /**
+     * @return Years that can satisfy technology availability checks for this unit.
+     */
+    public List<Integer> getTechLevelYears() {
+        int techLevelYear = getTechLevelYear();
+        if (hasOriginalBuildYear() && (getOriginalBuildYear() != techLevelYear)) {
+            return List.of(techLevelYear, getOriginalBuildYear());
+        }
+        return List.of(techLevelYear);
+    }
+
     public int getTargetBay() {
         return targetBay;
     }
@@ -16456,6 +16505,10 @@ public abstract class Entity extends TurnOrdered
             return year;
         }
         return originalBuildYear;
+    }
+
+    public boolean hasOriginalBuildYear() {
+        return (originalBuildYear > 0) && (originalBuildYear != year);
     }
 
     public void setOriginalBuildYear(int year) {

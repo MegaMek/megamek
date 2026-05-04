@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -290,9 +290,13 @@ public interface ITechnology {
      */
     default AvailabilityValue calcEraAvailability(Era era, boolean clanUse) {
         if (clanUse) {
+            int clanIntroductionDate = getIntroductionDate(true);
             if (!isClan()
                   && era.getIndex() < Era.CLAN.getIndex()
-                  && getPrototypeDate(false) >= 2780) {
+                  && getPrototypeDate(false) >= 2780
+                  && (getTechBase() != TechBase.ALL
+                            || clanIntroductionDate == DATE_NONE
+                            || getTechEra(clanIntroductionDate).getIndex() >= Era.CLAN.getIndex())) {
                 return AvailabilityValue.X;
             } else {
                 return getBaseAvailability(era);

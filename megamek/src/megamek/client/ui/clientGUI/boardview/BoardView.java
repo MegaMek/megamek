@@ -2082,21 +2082,15 @@ public final class BoardView extends AbstractBoardView
                     if (hex != null) {
                         drawHex(coords, graphics2D, saveBoardImage);
                         drawOrthograph(coords, graphics2D);
+                        // Wrecks must be drawn before behind-terrain sprites so that the iso entity sprite paints
+                        // on top of them; otherwise a unit standing on a wrecked hex appears beneath the wreck.
+                        if (!saveBoardImage && GUIP.getShowWrecks()) {
+                            drawIsometricWreckSpritesForHex(coords, graphics2D, isometricWreckSprites);
+                        }
                         drawHexSpritesForHex(coords, graphics2D, behindTerrainHexSprites);
                         drawDeployment(graphics2D, coords);
                         drawOrthograph(coords, graphics2D);
                         drawHexText(coords, hex, board, graphics2D);
-                    }
-                }
-            }
-
-            for (int x = 0; x < drawWidth; x++) {
-                Coords coords = new Coords(x + drawX, y + drawY);
-                if (board.getHex(coords) != null) {
-                    if (!saveBoardImage) {
-                        if (GUIP.getShowWrecks()) {
-                            drawIsometricWreckSpritesForHex(coords, graphics2D, isometricWreckSprites);
-                        }
                     }
                 }
             }

@@ -1084,9 +1084,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // Edge dangle: only if the Mek starts its turn at the edge (TO:AR p.20)
         // "The Mek must start its turn in the hex where it will dangle-and-drop"
         // Only allowed if this is the first FORWARDS step (entity hasn't walked anywhere)
-        // Dangle only if entity hasn't moved (first step directly from starting position)
-        boolean entityHasNotMoved = (currentEntity != null) && hasLastStep
-              && cmd.getLastStep().getType() == MoveStepType.FORWARDS
+        // Edge descent dialog gate. Two scenarios both need it:
+        //   1. Direct: path is a single FORWARDS into an adjacent edge hex (the original case
+        //      — climb mode toggled, leaping enabled, planner produced the direct step).
+        //   2. Routed-around: path's FINAL hex is adjacent to entity start AND a 3+ level
+        //      edge, but the planner couldn't make the direct step legal (e.g. leaping OFF,
+        //      no climb mode) and routed around. The player still clicked the cliff hex
+        //      intending to descend; we trigger the dialog and let them pick descent or cancel.
+        //
+        // distanceToFinalIsOne catches both: a single direct step has the same final-coord
+        // distance as a long routed loop that ends on an adjacent hex.
+        boolean distanceToFinalIsOne = (currentEntity != null) && hasLastStep
               && (currentEntity.getPosition().distance(cmd.getLastStep().getPosition()) == 1);
         long forwardStepCount = hasCmd ? cmd.getStepVector().stream()
                                          .filter(s -> s.getType() == MoveStepType.FORWARDS).count() : 0;
@@ -1096,10 +1104,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // shouldn't have to know to toggle climb mode first to get the descent prompt.
         boolean isWalkingNotJumping = hasLastStep
               && (cmd.getLastStep().getMovementType(true) != EntityMovementType.MOVE_JUMP);
-        if (entityHasNotMoved && (forwardStepCount == 1) && isWalkingNotJumping
+        // Routed-around case: planner used 2+ FORWARDS steps to reach an adjacent hex —
+        // a clear sign the direct step was illegal (no leap, etc.). On Cancel we keep the
+        // existing routed path; on a descent option we rebuild the path with proper facing.
+        boolean isRoutedAround = (forwardStepCount > 1);
+        // Use canClimb (1 arm) instead of canDangle (2 arms) for the gate — a one-armed
+        // Mek can still climb-down (with +2 PSR). Dangle/Drop options inside the dialog
+        // are still gated on canDangle separately.
+        if (distanceToFinalIsOne && isWalkingNotJumping
               && (currentEntity instanceof Mek edgeMek)
               && !currentEntity.isClimbing()
-              && ClimbingHelper.canDangle(currentEntity)
+              && ClimbingHelper.canClimb(currentEntity)
               && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)) {
             Coords stepPos = cmd.getLastStep().getPosition();
             int levelDiff = ClimbingHelper.getEdgeDropHeight(currentEntity, stepPos, game);
@@ -1108,16 +1123,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN, levelDiff);
                     List<ClimbingChoiceDialog.ClimbingOption> descentOptions = new java.util.ArrayList<>();
 
-                    // Dangle down option (TO:AR p.20): 2 levels per turn, no PSR, requires 2 arms
-                    descentOptions.add(new ClimbingChoiceDialog.ClimbingOption(dangleLevels, 0,
-                          Messages.getString("MovementDisplay.ClimbingDialog.dangleOption", dangleLevels),
-                          ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN));
+                    // Dangle down option (TO:AR p.20): 2 levels per turn, no PSR, requires 2 arms.
+                    // Omitted when one arm is damaged — climb-down is still available below.
+                    if (ClimbingHelper.canDangle(edgeMek)) {
+                        descentOptions.add(new ClimbingChoiceDialog.ClimbingOption(dangleLevels, 0,
+                              Messages.getString("MovementDisplay.ClimbingDialog.dangleOption", dangleLevels),
+                              ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN));
+                    }
 
                     // Climb Down options (TO:AR p.20): controlled descent at climbing rate with PSR per level.
                     // Player can choose 1..maxAffordable levels; useful when they want to clear MP for
                     // other actions next turn or stop at a specific intermediate elevation.
                     int edgeClimbCostPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(edgeMek);
-                    int edgeAvailableMP = Math.max(0, edgeMek.getWalkMP() - 1);
+                    // No - 1 hex-entry adjustment here: edge climb-down (like edge dangle)
+                    // doesn't charge an entry MP for the move into the lower hex; the server
+                    // bills only levelsDescended * costPerLevel. Subtracting 1 was making the
+                    // dialog hide legal options (e.g. Climb Down 3 with walkMP=6).
+                    int edgeAvailableMP = edgeMek.getWalkMP();
                     int edgeMaxAffordable = edgeAvailableMP / edgeClimbCostPerLevel;
                     int edgeMaxDescend = Math.min(levelDiff, edgeMaxAffordable);
                     int edgeBasePiloting = edgeMek.getCrew().getPiloting();
@@ -1159,39 +1181,50 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     ClimbingChoiceDialog.ClimbingOption chosen = dialog.getFirstChoice();
 
                     if (chosen != null && chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN) {
-                        // Initiate dangle: move to lower hex, face the cliff/building
-                        // Keep the FORWARDS step to move into the lower hex, add CLIMB_MODE_ON
-                        // Server detects: entity moved to lower hex with climb mode on = edge dangle
+                        // Initiate dangle: move to lower hex, face the cliff/building.
+                        // For routed-around paths the existing cmd is a long walk-around — we
+                        // need a fresh cmd containing only the turn-to-cliff + direct step.
                         clientgui.addToast(ToastLevel.INFO,
                               edgeMek.getDisplayName() + " begins dangling down", edgeMek);
-                        // Remove the FORWARDS step and re-add with CLIMB_MODE_ON first
-                        cmd.removeLastStep();
-                        cmd.addStep(MoveStepType.CLIMB_MODE_ON);
-                        cmd.addStep(MoveStepType.FORWARDS);
-                        LOGGER.info("[DANGLE-TRACE] Edge dangle: CLIMB_MODE_ON + FORWARDS to {}, cmd.length={}",
-                              stepPos, cmd.length());
+                        rebuildPathForEdgeDescent(edgeMek, stepPos, isRoutedAround);
+                        LOGGER.info("[DANGLE-TRACE] Edge dangle: CLIMB_MODE_ON + FORWARDS to {}, "
+                                    + "cmd.length={}, routed={}",
+                              stepPos, cmd.length(), isRoutedAround);
                         ready();
                         return;
                     } else if (chosen != null && chosen.type() == ClimbingChoiceDialog.ClimbingActionType.CLIMB_DOWN) {
                         // Edge climb-down: same path shape as edge dangle (CLIMB_MODE_ON + FORWARDS)
                         // but server reads entity.climbingLevelsChosen to switch from dangle (no PSR,
                         // 2 levels) to climb-down (PSR per level, chosen count).
-                        LOGGER.info("[CLIMB-TRACE] Edge climb-down chosen: levels={}", chosen.levels());
+                        LOGGER.info("[CLIMB-TRACE] Edge climb-down chosen: levels={}, routed={}",
+                              chosen.levels(), isRoutedAround);
                         clientgui.addToast(ToastLevel.INFO,
                               edgeMek.getDisplayName() + " begins climbing down " + chosen.levels()
                                     + " level(s)", edgeMek);
                         edgeMek.setClimbingLevelsChosen(chosen.levels());
                         clientgui.getClient().sendUpdateEntity(edgeMek);
-                        cmd.removeLastStep();
-                        cmd.addStep(MoveStepType.CLIMB_MODE_ON);
-                        cmd.addStep(MoveStepType.FORWARDS);
+                        rebuildPathForEdgeDescent(edgeMek, stepPos, isRoutedAround);
                         ready();
                         return;
                     } else if (chosen != null && chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DROP) {
-                        // Keep the leaping movement as-is (standard leaping handles it)
+                        // Keep the leaping movement as-is (standard leaping handles it).
+                        // Only valid for the direct-path case; the routed-around path was a walk
+                        // and shouldn't be reinterpreted as a leap, so guard against that.
+                        if (isRoutedAround) {
+                            LOGGER.info("[CLIMB-TRACE] Drop chosen on routed-around path; "
+                                        + "rebuilding cmd as direct leap");
+                            cmd = new megamek.common.moves.MovePath(game, edgeMek);
+                            cmd.rotatePathfinder(currentEntity.getPosition().direction(stepPos),
+                                  false, megamek.common.ManeuverType.MAN_NONE);
+                            cmd.addStep(MoveStepType.FORWARDS);
+                        }
                     } else {
-                        // Cancelled or cling - remove the step
-                        cmd.removeLastStep();
+                        // Cancelled (Cancel button or dialog closed). For the direct-path case,
+                        // strip the final FORWARDS so the player can re-pick. For the routed-
+                        // around case, leave the path intact — they may want to commit the walk.
+                        if (!isRoutedAround) {
+                            cmd.removeLastStep();
+                        }
                         if (redrawMovement) {
                             clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
                         }
@@ -3310,6 +3343,31 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void updateClimbButton() {
         updateClimbModeButtonText();
+    }
+
+    /**
+     * Rebuilds {@link #cmd} as a direct edge-descent path: turn-to-cliff + CLIMB_MODE_ON + FORWARDS.
+     * For the direct-path case (planner already produced a single FORWARDS) we just strip and re-add
+     * the climb-mode marker. For the routed-around case (planner walked around because the direct
+     * step was illegal) we throw out the routed path and build a fresh one with proper facing.
+     *
+     * @param edgeMek          the climbing Mek
+     * @param edgeTarget       the lower hex the player clicked (adjacent to entity start)
+     * @param isRoutedAround   true if {@link #cmd} contains 2+ FORWARDS steps from a planner detour
+     */
+    private void rebuildPathForEdgeDescent(Mek edgeMek, Coords edgeTarget, boolean isRoutedAround) {
+        if (isRoutedAround) {
+            cmd = new megamek.common.moves.MovePath(game, edgeMek);
+            cmd.rotatePathfinder(edgeMek.getPosition().direction(edgeTarget), false,
+                  megamek.common.ManeuverType.MAN_NONE);
+            cmd.addStep(MoveStepType.CLIMB_MODE_ON);
+            cmd.addStep(MoveStepType.FORWARDS);
+        } else {
+            // Direct path: existing FORWARDS is the right step, just inject CLIMB_MODE_ON before it.
+            cmd.removeLastStep();
+            cmd.addStep(MoveStepType.CLIMB_MODE_ON);
+            cmd.addStep(MoveStepType.FORWARDS);
+        }
     }
 
     /**

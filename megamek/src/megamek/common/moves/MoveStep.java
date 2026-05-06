@@ -3448,17 +3448,34 @@ public class MoveStep implements Serializable {
             boolean climbingEnabled = game.getOptions()
                   .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
             boolean canUseClimbing = climbingEnabled && climbMode && ClimbingHelper.canClimb(entity);
+            // Edge descent (TO:AR p.20): Meks with at least one functional climbing arm
+            // stepping off a 3+ level edge with climb mode on can climb-down (1 arm) or
+            // dangle / drop (2 arms). The server's edge dangle/climb-down handler reinterprets
+            // the FORWARDS step. Without this clause the step would be rejected as illegal
+            // (descent > maxDown) when leaping is OFF, and ready()'s clipToPossible() would
+            // strip it before the server saw the path. Use canClimb (1 arm) not canDangle
+            // (2 arms) so one-arm climb-down still works.
+            boolean canEdgeDescend = climbingEnabled && climbMode
+                  && ClimbingHelper.canClimb(entity);
             int elevationUp = (destAlt - srcAlt);
             int elevationDown = (srcAlt - destAlt);
 
             if (((elevationDown > 0) && (elevationDown > maxDown)) ||
                   ((elevationUp > 0) && (elevationUp > entity.getMaxElevationChange()))) {
-                // Allow climbing if the option is enabled and entity can climb
-                if (!canUseClimbing || (elevationUp <= 0)) {
+                // Allow climbing UP if the option is enabled and entity can climb;
+                // allow climbing DOWN (edge descent) if the entity can dangle.
+                boolean allowUp = canUseClimbing && (elevationUp > 0);
+                boolean allowDown = canEdgeDescend && (elevationDown > 0);
+                if (!allowUp && !allowDown) {
                     return false;
                 }
-                LOGGER.info("isValidStep: allowing climbing for {} levels up (TacOps Climbing)",
-                      elevationUp);
+                if (allowUp) {
+                    LOGGER.info("isValidStep: allowing climbing for {} levels up (TacOps Climbing)",
+                          elevationUp);
+                } else {
+                    LOGGER.info("isValidStep: allowing edge descent for {} levels down (TacOps Climbing)",
+                          elevationDown);
+                }
             }
         }
 

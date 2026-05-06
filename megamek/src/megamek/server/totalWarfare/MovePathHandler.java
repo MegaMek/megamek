@@ -206,9 +206,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // the destination, which it never was.
         boolean isJumpPath = md.contains(MoveStepType.START_JUMP)
               || (md.getLastStepMovementType() == EntityMovementType.MOVE_JUMP);
+        // canClimb (1 arm) — not canDangle (2 arms) — so a one-armed Mek can still
+        // initiate edge climb-down. Whether the chosen action is dangle vs climb-down
+        // is determined later by entity.climbingLevelsChosen; dangle requires 2 arms
+        // and the client dialog already filters that option.
         if (!entity.isClimbing() && !entity.isDangling()
               && (entity instanceof Mek)
-              && ClimbingHelper.canDangle(entity)
+              && ClimbingHelper.canClimb(entity)
               && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
               && md.getFinalClimbMode()
               && md.contains(MoveStepType.FORWARDS)
@@ -308,7 +312,22 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 gameManager.entityUpdate(entity.getId());
                 return;
             }
-            // Standard EDGE DANGLE: 2 levels per turn, no PSR
+            // Standard EDGE DANGLE: 2 levels per turn, no PSR. Requires 2 functional arms
+            // (canDangle). If a one-armed Mek's path somehow falls through to here (client
+            // dialog hides Dangle in that case, but defensively guard) the path is rejected
+            // — the unit ends turn at the cliff top with no movement, so the player can pick
+            // a different action.
+            if (!ClimbingHelper.canDangle(entity)) {
+                logger.warn("[DANGLE-TRACE] Server rejecting EDGE dangle: entity={} lacks two "
+                            + "functional climbing arms; chosenLevels was 0 (dangle path).",
+                      entity.getDisplayName());
+                entity.setDone(true);
+                entity.moved = EntityMovementType.MOVE_NONE;
+                entity.mpUsed = 0;
+                entity.delta_distance = 0;
+                gameManager.entityUpdate(entity.getId());
+                return;
+            }
             int dangleElevation = cliffTopAlt - ClimbingHelper.DANGLE_LEVELS_PER_TURN
                   - destHex.getLevel();
             dangleElevation = Math.max(0, dangleElevation);

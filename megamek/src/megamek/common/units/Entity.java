@@ -550,6 +550,7 @@ public abstract class Entity extends TurnOrdered
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
 
     protected String source = "";
+    protected String published = "";
 
     /**
      * The tech faction associated with this Entity, used to filter available tech by faction.
@@ -7671,27 +7672,36 @@ public abstract class Entity extends TurnOrdered
             } else if (ams.getType().hasFlag(WeaponType.F_PD_BAY)) {
                 // Point defense bays are assigned to the attack with the greatest threat Unlike single AMS, PD bays
                 // can gang up on 1 attack
-                Compute.getHighestExpectedDamage(getGame(), attacksInArc, true).addCounterEquipment(ams);
+                final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), attacksInArc, true);
+                if (waa != null) {
+                    waa.addCounterEquipment(ams);
+                }
             } else if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                 // PLAYTEST3 AMS shoots twice handling
                 // Assuming AMS has not been used at all yet, so both shots are available.
                 final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), attacksInArc, true);
-                waa.addCounterEquipment(ams);
-                targets.add(waa);
-                if (attacksInArc.size() > 1) {
-                    final WeaponAttackAction secondWaa = Compute.getSecondHighestExpectedDamage(getGame(), attacksInArc,
-                          true);
-                    if (secondWaa != null) {
-                        secondWaa.addCounterEquipment(ams);
-                        targets.add(secondWaa);
+                if (waa != null) {
+                    waa.addCounterEquipment(ams);
+                    targets.add(waa);
+                    if (attacksInArc.size() > 1) {
+                        final WeaponAttackAction secondWaa = Compute.getSecondHighestExpectedDamage(getGame(),
+                              attacksInArc,
+                              true);
+                        if (secondWaa != null) {
+                            secondWaa.addCounterEquipment(ams);
+                            targets.add(secondWaa);
+                        }
                     }
                 }
             } else {
                 // Otherwise, find the most dangerous salvo by expected damage and target it this ensures that only 1
                 // AMS targets the strike. Use for non-bays.
                 final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), attacksInArc, true);
-                waa.addCounterEquipment(ams);
-                targets.add(waa);
+                // Null waa indicates no threat detected, as in Copperhead munition with no tagged targets
+                if (waa != null) {
+                    waa.addCounterEquipment(ams);
+                    targets.add(waa);
+                }
             }
         });
     }
@@ -14068,6 +14078,43 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Sets the sourcebook where this entity's record sheet was published.
+     *
+     * @param published The sourcebook name
+     */
+    public void setPublished(String published) {
+        if (published != null) {
+            this.published = SourceBooks.normalizeSourceList(published);
+        }
+    }
+
+    public String getPublished() {
+        return (published != null) ? published : "";
+    }
+
+    public List<String> getPublishedSources() {
+        return SourceBooks.splitSourceList(getPublished());
+    }
+
+    public void setPublishedSources(Collection<String> publishedSources) {
+        published = SourceBooks.formatSourceList(publishedSources);
+    }
+
+    /**
+     * @return true when the unit has no sourcebook entries or all listed sourcebooks are non-canon or cannot be loaded.
+     */
+    public boolean isNonCanonBySource() {
+        return isNonCanonBySource(getSource(), getPublished());
+    }
+
+    /**
+     * @return true when no sourcebook entries are present or all listed sourcebooks are non-canon or cannot be loaded.
+     */
+    public static boolean isNonCanonBySource(String source, String published) {
+        return SourceBooks.getStandardSourceBooks().isNonCanonBySource(source, published);
+    }
+
+    /**
      * Sets the tech faction for this entity.
      *
      * @param faction The faction to set, or Faction.NONE for no faction
@@ -15862,6 +15909,17 @@ public abstract class Entity extends TurnOrdered
         return year;
     }
 
+    /**
+     * @return Years that can satisfy technology availability checks for this unit.
+     */
+    public List<Integer> getTechLevelYears() {
+        int techLevelYear = getTechLevelYear();
+        if (hasOriginalBuildYear() && (getOriginalBuildYear() != techLevelYear)) {
+            return List.of(techLevelYear, getOriginalBuildYear());
+        }
+        return List.of(techLevelYear);
+    }
+
     public int getTargetBay() {
         return targetBay;
     }
@@ -16399,6 +16457,10 @@ public abstract class Entity extends TurnOrdered
             return year;
         }
         return originalBuildYear;
+    }
+
+    public boolean hasOriginalBuildYear() {
+        return (originalBuildYear > 0) && (originalBuildYear != year);
     }
 
     public void setOriginalBuildYear(int year) {

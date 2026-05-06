@@ -285,30 +285,34 @@ public class BridgeTest extends GameBoardTestCase {
         return Arguments.of(tank, EntityMovementMode.TRACKED);
     }
 
-    // Grounded aeros are treated like wheeled tanks for movement
+    // Grounded aeros are treated like wheeled tanks for movement.
+    // Thrust 16 -> grounded taxi MP = thrust/2 = 8 (TW p.86), enough to cover the bridge climb paths.
+    private static final int GROUNDED_AERO_THRUST = 16;
+
     private static Arguments newGroundedAeroSpace() {
         AeroSpaceFighter aeroSpaceFighter = new AeroSpaceFighter();
         aeroSpaceFighter.setAltitude(0);
         aeroSpaceFighter.setMovementMode(EntityMovementMode.WHEELED);
         aeroSpaceFighter.setChassis("Grounded Aerospace Fighter");
+        aeroSpaceFighter.setOriginalWalkMP(GROUNDED_AERO_THRUST);
         return Arguments.of(aeroSpaceFighter, EntityMovementMode.WHEELED);
     }
 
-    // Grounded aeros are treated like wheeled tanks for movement
     private static Arguments newGroundedConvFighter() {
         ConvFighter convFighter = new ConvFighter();
         convFighter.setAltitude(0);
         convFighter.setMovementMode(EntityMovementMode.WHEELED);
         convFighter.setChassis("Grounded Conv Fighter");
+        convFighter.setOriginalWalkMP(GROUNDED_AERO_THRUST);
         return Arguments.of(convFighter, EntityMovementMode.WHEELED);
     }
 
-    // Grounded aeros are treated like wheeled tanks for movement
     private static Arguments newSmallCraft() {
         SmallCraft smallCraft = new SmallCraft();
         smallCraft.setAltitude(0);
         smallCraft.setMovementMode(EntityMovementMode.WHEELED);
         smallCraft.setChassis("Grounded Small Craft");
+        smallCraft.setOriginalWalkMP(GROUNDED_AERO_THRUST);
         return Arguments.of(smallCraft, EntityMovementMode.WHEELED);
     }
 

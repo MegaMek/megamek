@@ -121,6 +121,11 @@ class EntityTest {
         assertTrue(e.isCanon());
     }
 
+    @Test
+    void unknownSourcebookIsNonCanonBySource() {
+        assertTrue(Entity.isNonCanonBySource("Definitely Missing Sourcebook", ""));
+    }
+
     /**
      * Verify that if a unit's name does _not_ appear in the list of canon unit names, it is not canon
      */

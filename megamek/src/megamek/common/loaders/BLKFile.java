@@ -142,6 +142,10 @@ public class BLKFile {
             entity.setSource(SourceBooks.formatSourceList(List.of(dataFile.getDataAsString("source"))));
         }
 
+        if (dataFile.exists("published")) {
+            entity.setPublished(SourceBooks.formatSourceList(List.of(dataFile.getDataAsString("published"))));
+        }
+
         if (dataFile.exists("faction")) {
             entity.setTechFaction(Faction.fromAbbr(dataFile.getDataAsString("faction")[0]));
         }
@@ -617,6 +621,10 @@ public class BLKFile {
         }
         e.setYear(dataFile.getDataAsInt("year")[0]);
 
+        if (dataFile.exists("originalBuildYear")) {
+            e.setOriginalBuildYear(dataFile.getDataAsInt("originalBuildYear")[0]);
+        }
+        
         if (!dataFile.exists("type")) {
             throw new EntityLoadingException("Could not find type block.");
         }
@@ -751,7 +759,7 @@ public class BLKFile {
             blk.writeBlockData(MtfFile.MUL_ID, t.getMulId());
         }
         blk.writeBlockData("year", t.getYear());
-        if (t.getOriginalBuildYear() >= 0) {
+        if (t.getOriginalBuildYear() > 0 && t.getOriginalBuildYear() != t.getYear()) {
             blk.writeBlockData("originalBuildYear", t.getOriginalBuildYear());
         }
         String type = getType(t);
@@ -1070,6 +1078,10 @@ public class BLKFile {
 
         if (!t.getSource().isBlank()) {
             blk.writeBlockData("source", t.getSource());
+        }
+
+        if (!t.getPublished().isBlank()) {
+            blk.writeBlockData("published", t.getPublished());
         }
 
         if (t.getTechFaction() != Faction.NONE) {

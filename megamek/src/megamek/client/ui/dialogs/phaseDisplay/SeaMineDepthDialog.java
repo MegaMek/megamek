@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,6 +47,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.MathUtility;
 
 /**
@@ -57,7 +58,7 @@ public class SeaMineDepthDialog extends JDialog implements ActionListener {
     private static final long serialVersionUID = -7642956136536119067L;
     private final JButton butOk = new JButton(Messages.getString("Okay"));
     private final JComboBox<String> choDepth = new JComboBox<>();
-    private int depth;
+    private int depth = -1;
 
     public SeaMineDepthDialog(JFrame p, int totalDepth) {
         super(p, Messages.getString("MineDensityDialog.title"), true);
@@ -94,6 +95,10 @@ public class SeaMineDepthDialog extends JDialog implements ActionListener {
         gridBagLayout.setConstraints(butOk, gridBagConstraints);
         getContentPane().add(butOk);
         pack();
+        int minWidth = UIUtil.scaleForGUI(250);
+        if (getWidth() < minWidth) {
+            setSize(minWidth, getHeight());
+        }
         setLocation(p.getLocation().x + p.getSize().width / 2 - getSize().width / 2,
               p.getLocation().y + p.getSize().height / 2 - getSize().height / 2);
     }

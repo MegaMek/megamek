@@ -32,26 +32,47 @@
  */
 package megamek.client.ui.entityreadout;
 
+import java.awt.Color;
+
 import megamek.client.ui.util.DiscordFormat;
+import megamek.client.ui.util.UIUtil;
 
 /**
  * The unit name, i.e. the first line of the readout. Should not be used for anything else.
  */
-record UnitName(String unitName) implements ViewElement {
+record UnitName(String unitName, boolean notCanon) implements ViewElement {
+
+    private static final String NOT_CANON_MARKER = "(Non-canon)";
+
+    UnitName(String unitName) {
+        this(unitName, false);
+    }
 
     @Override
     public String toPlainText() {
-        return unitName + "\n";
+        return unitName + notCanonMarkerPlainText() + "\n";
     }
 
     @Override
     public String toHTML() {
-        return "<font size=+1><b>" + unitName + "</b></font><br/>\n";
+        return "<font size=+1><b>" + unitName + notCanonMarkerHTML() + "</b></font><br/>\n";
     }
 
     @Override
     public String toDiscord() {
         return DiscordFormat.BOLD.toString() + DiscordFormat.UNDERLINE + DiscordFormat.CYAN + unitName
-              + DiscordFormat.RESET + '\n';
+              + DiscordFormat.RESET + notCanonMarkerDiscord() + '\n';
+    }
+
+    private String notCanonMarkerPlainText() {
+        return notCanon ? " " + NOT_CANON_MARKER : "";
+    }
+
+    private String notCanonMarkerHTML() {
+        return notCanon ? " <FONT %s>%s</FONT>".formatted(UIUtil.colorString(Color.YELLOW), NOT_CANON_MARKER) : "";
+    }
+
+    private String notCanonMarkerDiscord() {
+        return notCanon ? " " + DiscordFormat.YELLOW + NOT_CANON_MARKER + DiscordFormat.RESET : "";
     }
 }

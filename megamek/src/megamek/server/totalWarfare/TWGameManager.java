@@ -13144,7 +13144,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Hit! Apply pheromone impairment
-        if ((targetEntity instanceof Infantry targetInfantry)) {
+        if ((targetEntity instanceof ConvInfantry targetInfantry)) {
             targetInfantry.setPheromoneImpaired(true);
 
             // Report hit with flavor text

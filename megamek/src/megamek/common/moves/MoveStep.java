@@ -2350,7 +2350,7 @@ public class MoveStep implements Serializable {
                         curPos = getTargetPosition();
                     }
                     // Infantry with jump capability or glider wings dismounting from VTOLs
-                    // land at ground level, not VTOL elevation (TW p.31, IO p.85)
+                    // land at ground level, not VTOL elevation (TW p.31, IO:AE p.79)
                     int unloadElevation = getElevation();
                     if (entity instanceof VTOL && other.isInfantry()) {
                         Infantry inf = (Infantry) other;

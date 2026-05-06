@@ -40,16 +40,8 @@ import java.util.Vector;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
-import megamek.common.Hex;
-import megamek.common.HitData;
-import megamek.common.LosEffects;
-import megamek.common.MPCalculationSetting;
-import megamek.common.RangeType;
-import megamek.common.SimpleTechLevel;
-import megamek.common.TechAdvancement;
+import megamek.common.*;
 import megamek.common.TechAdvancement.AdvancementPhase;
-import megamek.common.TechConstants;
-import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.cost.BattleArmorCostCalculator;
@@ -365,15 +357,9 @@ public class BattleArmor extends Infantry {
      * Generate a new, blank, battle armor unit. Hopefully, we'll be loaded from somewhere.
      */
     public BattleArmor() {
-        // Instantiate the superclass.
-        super();
-
         setArmorType(EquipmentType.T_ARMOR_BA_STANDARD);
-
         // All Battle Armor squads are Clan until specified otherwise.
         setTechLevel(TechConstants.T_CLAN_TW);
-
-        // Construction complete.
         isInitialized = true;
     }
 
@@ -845,6 +831,7 @@ public class BattleArmor extends Infantry {
           throws LocationFullException {
         // Implement parent's behavior.
         super.addEquipment(mounted, loc, rearMounted);
+        addCritical(loc, new CriticalSlot(mounted));
 
         // Is the item a camo system equipment?
         String name = mounted.getType().getInternalName();
@@ -898,11 +885,6 @@ public class BattleArmor extends Infantry {
         troopersShooting = troopersAlive;
     }
 
-    /**
-     * Get the number of men in the unit (before damage is applied).
-     *
-     * @see Infantry#getShootingStrength
-     */
     @Override
     public int getShootingStrength() {
         return troopersShooting;
@@ -1030,12 +1012,6 @@ public class BattleArmor extends Infantry {
     @Deprecated(since = "0.51.0", forRemoval = true)
     public int getLongStealthMod() {
         return longStealthMod;
-    }
-
-    // Only for ground vehicles and certain infantry
-    @Override
-    public boolean isEligibleForPavementOrRoadBonus() {
-        return false;
     }
 
     /**
@@ -1190,11 +1166,6 @@ public class BattleArmor extends Infantry {
 
     @Override
     public boolean canAssaultDrop() {
-        return true;
-    }
-
-    @Override
-    public boolean isNuclearHardened() {
         return true;
     }
 

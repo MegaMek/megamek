@@ -42,12 +42,18 @@ import megamek.common.HitData;
 import megamek.common.MPCalculationSetting;
 import megamek.common.Messages;
 import megamek.common.RangeType;
+import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.cost.InfantryCostCalculator;
+import megamek.common.enums.AimingMode;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
 import megamek.common.enums.ProstheticEnhancementType;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.IArmorState;
@@ -57,7 +63,9 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.interfaces.ITechnology;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
 import megamek.common.rolls.TargetRoll;
@@ -139,6 +147,8 @@ public class ConvInfantry extends Infantry {
      */
     private boolean isMicrolite = false;
 
+    private boolean pheromoneImpaired = false;
+
     public static final int ANTI_MEK_SKILL_NO_GEAR = 8;
 
     // Prosthetic Enhancement (Enhanced Limbs) - IO p.84
@@ -198,22 +208,22 @@ public class ConvInfantry extends Infantry {
         super.addSystemTechAdvancement(ctl);
         ctl.addComponent(getMotiveTechAdvancement());
         if (hasSpecialization(COMBAT_ENGINEERS)) {
-            ctl.addComponent(Infantry.getCombatEngineerTA());
+            ctl.addComponent(getCombatEngineerTA());
         }
         if (hasSpecialization(MARINES)) {
-            ctl.addComponent(Infantry.getMarineTA());
+            ctl.addComponent(getMarineTA());
         }
         if (hasSpecialization(MOUNTAIN_TROOPS)) {
-            ctl.addComponent(Infantry.getMountainTA());
+            ctl.addComponent(getMountainTA());
         }
         if (hasSpecialization(PARATROOPS)) {
-            ctl.addComponent(Infantry.getParatrooperTA());
+            ctl.addComponent(getParatrooperTA());
         }
         if (hasSpecialization(PARAMEDICS)) {
-            ctl.addComponent(Infantry.getParamedicTA());
+            ctl.addComponent(getParamedicTA());
         }
         if (hasSpecialization(TAG_TROOPS)) {
-            ctl.addComponent(Infantry.getTAGTroopsTA());
+            ctl.addComponent(getTAGTroopsTA());
         }
     }
 
@@ -2000,5 +2010,216 @@ public class ConvInfantry extends Infantry {
      */
     public boolean hasMinimalGroundMP() {
         return hasMinimalGroundMP(MPCalculationSetting.STANDARD);
+    }
+
+    /**
+     * Per TO:AR p.25, 0 MP infantry that used fast movement (MOVE_RUN) in the previous turn cannot move or fire in the
+     * following turn.
+     *
+     * @return true if this unit is exhausted from using fast movement last round
+     */
+    public boolean isExhaustedFromFastMove() {
+        return gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE)
+              && (getWalkMP() == 0)
+              && (movedLastRound == EntityMovementType.MOVE_RUN);
+    }
+
+    @Override
+    public boolean isEligibleForMovement() {
+        return !isExhaustedFromFastMove() && super.isEligibleForMovement();
+    }
+
+    public boolean usedFastMoveThisTurn() {
+        return gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE)
+              && (moved == EntityMovementType.MOVE_RUN);
+    }
+
+    @Override
+    public boolean isEligibleForFiring() {
+        return !isExhaustedFromFastMove() && !usedFastMoveThisTurn() && super.isEligibleForFiring();
+    }
+
+    /**
+     * @return true if this unit is impaired by pheromone gas attack (IO pg 79)
+     */
+    public boolean isPheromoneImpaired() {
+        return pheromoneImpaired;
+    }
+
+    /**
+     * Sets whether this unit is impaired by pheromone gas attack. Impaired units suffer +1 to-hit on all actions for
+     * remainder of scenario.
+     *
+     * @param impaired true to mark as pheromone impaired
+     */
+    public void setPheromoneImpaired(boolean impaired) {
+        this.pheromoneImpaired = impaired;
+    }
+
+    /**
+     * Standard and motorized SCUBA only differ in base movement, so they both use INF_UMU. If the motion_type contains
+     * the string "motorized", the movement is set here instead.
+     */
+    public void setMotorizedScuba() {
+        setMovementMode(EntityMovementMode.INF_UMU);
+        setOriginalJumpMP(2);
+    }
+
+    @Override
+    public boolean isEligibleForPavementOrRoadBonus() {
+        return gameOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_INF_PAVE_BONUS)
+              && (movementMode.isTrackedWheeledOrHover() || movementMode == EntityMovementMode.INF_MOTORIZED);
+    }
+
+    /**
+     * Used to check for standard or motorized SCUBA infantry, which have a maximum depth of 2.
+     *
+     * @return true if this is a conventional infantry unit with non-mechanized SCUBA specialization
+     */
+    public boolean isNonMechSCUBA() {
+        return getMovementMode().isUMUInfantry();
+    }
+
+    @Override
+    public boolean isNuclearHardened() {
+        return false;
+    }
+
+    /**
+     * Returns true if this infantry unit can use glider wings in the current conditions. Glider wings cannot be used in
+     * vacuum or trace (very thin) atmospheres (IO:AE 3rd p.79).
+     *
+     * @return true if glider wings are usable
+     */
+    public boolean canUseGliderWings() {
+        // Allow if no game context
+        return (game == null) || game.getPlanetaryConditions().getAtmosphere().isDenserThan(Atmosphere.TRACE);
+    }
+
+    /**
+     * Returns true if this infantry unit can use powered flight wings in the current conditions. Powered flight wings
+     * cannot be used in vacuum (IO:AE 3rd p.79). Note: Unlike glider wings, powered flight only mentions vacuum
+     * restriction, not trace atmosphere. However, for consistency and realism, we apply the same atmospheric
+     * restriction as glider wings.
+     *
+     * @return true if powered flight wings are usable
+     */
+    public boolean canUsePoweredFlightWings() {
+        // Allow if no game context
+        return canUseGliderWings();
+    }
+
+    /**
+     * Returns the maximum downward elevation change this infantry can make. Infantry with glider wings can descend any
+     * number of levels safely (IO p.85).
+     */
+    @Override
+    public int getMaxElevationDown(int currElevation) {
+        if (canUseGliderWings() && hasAbility(OptionsConstants.MD_PL_GLIDER)) {
+            return Integer.MAX_VALUE;
+        }
+        return getMaxElevationChange();
+    }
+
+    @Override
+    public HitData getTransferLocation(HitData hit) {
+        return new HitData(Entity.LOC_DESTROYED);
+    }
+
+    @Override
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover) {
+        return rollHitLocation(table, side);
+    }
+
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
+                    ITechnology.DATE_PS,
+                    ITechnology.DATE_PS)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    public static TechAdvancement getCombatEngineerTA() {
+        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
+                    ITechnology.DATE_PS,
+                    ITechnology.DATE_PS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.A,
+                    AvailabilityValue.B,
+                    AvailabilityValue.A,
+                    AvailabilityValue.A)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
+    public static TechAdvancement getMarineTA() {
+        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
+                    ITechnology.DATE_PS,
+                    ITechnology.DATE_PS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.A,
+                    AvailabilityValue.A,
+                    AvailabilityValue.A,
+                    AvailabilityValue.A)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
+    public static TechAdvancement getMountainTA() {
+        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
+                    ITechnology.DATE_PS,
+                    ITechnology.DATE_PS)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.A,
+                    AvailabilityValue.A,
+                    AvailabilityValue.A,
+                    AvailabilityValue.A)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
+    public static TechAdvancement getParatrooperTA() {
+        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
+                    ITechnology.DATE_PS,
+                    ITechnology.DATE_PS)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.A,
+                    AvailabilityValue.A,
+                    AvailabilityValue.A,
+                    AvailabilityValue.A)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
+    public static TechAdvancement getParamedicTA() {
+        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
+                    ITechnology.DATE_PS,
+                    ITechnology.DATE_PS)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.C,
+                    AvailabilityValue.C,
+                    AvailabilityValue.C,
+                    AvailabilityValue.C)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
+    public static TechAdvancement getTAGTroopsTA() {
+        return new TechAdvancement(TechBase.ALL).setISAdvancement(2585,
+                    2600,
+                    ITechnology.DATE_NONE,
+                    2535,
+                    3037)
+              .setClanAdvancement(2585, 2600)
+              .setApproximate(true, false, false, false, false)
+              .setTechRating(TechRating.E)
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.FS)
+              .setAvailability(AvailabilityValue.F,
+                    AvailabilityValue.X,
+                    AvailabilityValue.E,
+                    AvailabilityValue.E)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
+    @Override
+    public boolean canExitVTOLWithGliderWings() {
+        return hasAbility(OptionsConstants.MD_PL_GLIDER) && canUseGliderWings();
     }
 }

@@ -1833,11 +1833,6 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    public boolean isNuclearHardened() {
-        return true;
-    }
-
-    @Override
     public void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted) throws LocationFullException {
         if (getEquipmentNum(mounted) == -1) {
             super.addEquipment(mounted, loc, rearMounted);

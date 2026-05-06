@@ -154,7 +154,7 @@ public class ComputeAttackerToHitMods {
         }
 
         // Infantry impaired by pheromone gas suffer +1 to-hit (IO pg 79)
-        if ((attacker instanceof Infantry infantry) && infantry.isPheromoneImpaired()) {
+        if ((attacker instanceof ConvInfantry infantry) && infantry.isPheromoneImpaired()) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.PheromoneImpaired"));
         }
 

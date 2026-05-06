@@ -11169,8 +11169,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Determines if this entity can initiate infantry vs infantry combat. Default implementation returns false.
-     * Infantry units override this.
+     * Determines if this entity can initiate infantry vs infantry combat (TO:AR p.169). Default implementation returns
+     * false. Infantry units override this.
      *
      * @return true if this entity can initiate infantry vs infantry combat
      */
@@ -12590,7 +12590,9 @@ public abstract class Entity extends TurnOrdered
      *
      * @return true if this is a hardened unit.
      */
-    public abstract boolean isNuclearHardened();
+    public boolean isNuclearHardened() {
+        return true;
+    }
 
     /**
      * Set the hidden state of this entity (used for hidden units rules, TW pg 259).

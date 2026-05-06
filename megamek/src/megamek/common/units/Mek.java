@@ -5378,11 +5378,6 @@ public abstract class Mek extends Entity {
     }
 
     @Override
-    public boolean isNuclearHardened() {
-        return true;
-    }
-
-    @Override
     public void destroyLocation(int loc) {
         destroyLocation(loc, false);
     }

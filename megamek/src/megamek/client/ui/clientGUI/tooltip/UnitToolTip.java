@@ -1855,7 +1855,7 @@ public final class UnitToolTip {
         }
 
         // Pheromone impaired (IO pg 79)
-        if ((entity instanceof Infantry infantry) && infantry.isPheromoneImpaired()) {
+        if ((entity instanceof ConvInfantry infantry) && infantry.isPheromoneImpaired()) {
             String sPheromone = addToTT("PheromoneImpaired", NOBR) + " ";
             attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getWarningColor())));
             result += UIUtil.tag("FONT", attr, sPheromone);

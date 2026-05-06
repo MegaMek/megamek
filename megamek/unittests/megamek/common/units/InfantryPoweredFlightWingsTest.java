@@ -47,6 +47,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.verifier.TestInfantry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -324,7 +325,7 @@ class InfantryPoweredFlightWingsTest {
         void poweredFlightAndGliderWingsMutuallyExclusive() {
             ConvInfantry infantry = createInfantryWithBothWings();
 
-            assertTrue(infantry.hasInvalidWingsConfiguration());
+            assertTrue(TestInfantry.hasInvalidWingsConfiguration(infantry));
         }
 
         @Test
@@ -332,7 +333,7 @@ class InfantryPoweredFlightWingsTest {
         void poweredFlightAloneIsValid() {
             ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
 
-            assertFalse(infantry.hasInvalidWingsConfiguration());
+            assertFalse(TestInfantry.hasInvalidWingsConfiguration(infantry));
         }
 
         @Test

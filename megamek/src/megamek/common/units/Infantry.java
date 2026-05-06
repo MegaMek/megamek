@@ -40,9 +40,7 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.enums.AimingMode;
 import megamek.common.enums.AvailabilityValue;
-import megamek.common.enums.Faction;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -50,7 +48,6 @@ import megamek.common.game.Game;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 
@@ -77,8 +74,6 @@ public abstract class Infantry extends Entity {
      */
     protected int activeTroopers;
 
-
-
     public int turnsLayingExplosives = -1;
 
     public static final int DUG_IN_NONE = 0;
@@ -92,7 +87,6 @@ public abstract class Infantry extends Entity {
     private boolean isTakingCover = false;
     private boolean canCallSupport = true;
     private boolean isCallingSupport = false;
-    private boolean pheromoneImpaired = false;
 
     // Anti-Mek attacks
     public static final String LEG_ATTACK = "LegAttack";
@@ -106,7 +100,6 @@ public abstract class Infantry extends Entity {
      * Generate a new, blank, infantry platoon. Hopefully, we'll be loaded from somewhere.
      */
     protected Infantry() {
-        super();
         // Create a "dead" leg rifle platoon.
         originalTrooperCount = 0;
         troopersShooting = 0;
@@ -226,93 +219,6 @@ public abstract class Infantry extends Entity {
     }
 
     @Override
-    public TechAdvancement getConstructionTechAdvancement() {
-        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
-                    ITechnology.DATE_PS,
-                    ITechnology.DATE_PS)
-              .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    }
-
-    public static TechAdvancement getCombatEngineerTA() {
-        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
-                    ITechnology.DATE_PS,
-                    ITechnology.DATE_PS)
-              .setTechRating(TechRating.C)
-              .setAvailability(AvailabilityValue.A,
-                    AvailabilityValue.B,
-                    AvailabilityValue.A,
-                    AvailabilityValue.A)
-              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    }
-
-    public static TechAdvancement getMarineTA() {
-        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
-                    ITechnology.DATE_PS,
-                    ITechnology.DATE_PS)
-              .setTechRating(TechRating.C)
-              .setAvailability(AvailabilityValue.A,
-                    AvailabilityValue.A,
-                    AvailabilityValue.A,
-                    AvailabilityValue.A)
-              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    }
-
-    public static TechAdvancement getMountainTA() {
-        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
-                    ITechnology.DATE_PS,
-                    ITechnology.DATE_PS)
-              .setTechRating(TechRating.B)
-              .setAvailability(AvailabilityValue.A,
-                    AvailabilityValue.A,
-                    AvailabilityValue.A,
-                    AvailabilityValue.A)
-              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    }
-
-    public static TechAdvancement getParatrooperTA() {
-        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
-                    ITechnology.DATE_PS,
-                    ITechnology.DATE_PS)
-              .setTechRating(TechRating.B)
-              .setAvailability(AvailabilityValue.A,
-                    AvailabilityValue.A,
-                    AvailabilityValue.A,
-                    AvailabilityValue.A)
-              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    }
-
-    public static TechAdvancement getParamedicTA() {
-        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
-                    ITechnology.DATE_PS,
-                    ITechnology.DATE_PS)
-              .setTechRating(TechRating.B)
-              .setAvailability(AvailabilityValue.C,
-                    AvailabilityValue.C,
-                    AvailabilityValue.C,
-                    AvailabilityValue.C)
-              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    }
-
-    public static TechAdvancement getTAGTroopsTA() {
-        return new TechAdvancement(TechBase.ALL).setISAdvancement(2585,
-                    2600,
-                    ITechnology.DATE_NONE,
-                    2535,
-                    3037)
-              .setClanAdvancement(2585, 2600)
-              .setApproximate(true, false, false, false, false)
-              .setTechRating(TechRating.E)
-              .setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH)
-              .setReintroductionFactions(Faction.FS)
-              .setAvailability(AvailabilityValue.F,
-                    AvailabilityValue.X,
-                    AvailabilityValue.E,
-                    AvailabilityValue.E)
-              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    }
-
-    @Override
     public boolean isValidSecondaryFacing(int dir) {
         return true;
     }
@@ -322,7 +228,9 @@ public abstract class Infantry extends Entity {
         return dir;
     }
 
-    /** Creates a local platoon for Urban Guerrilla. */
+    /**
+     * Creates a local platoon (CO 4th p.82, Urban Guerilla)
+     */
     public void createLocalSupport() {
         if (Compute.isInUrbanEnvironment(game, getPosition())) {
             setIsCallingSupport(true);
@@ -367,17 +275,6 @@ public abstract class Infantry extends Entity {
             case MOVE_JUMP -> "J";
             default -> "?";
         };
-    }
-
-    @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover) {
-        return rollHitLocation(table, side);
-    }
-
-
-    @Override
-    public HitData getTransferLocation(HitData hit) {
-        return new HitData(Entity.LOC_DESTROYED);
     }
 
     /**
@@ -432,18 +329,6 @@ public abstract class Infantry extends Entity {
         return prd;
     }
 
-    /**
-     * Returns the maximum downward elevation change this infantry can make. Infantry with glider wings can descend any
-     * number of levels safely (IO p.85).
-     */
-    @Override
-    public int getMaxElevationDown(int currElevation) {
-        if (canUseGliderWings() && hasAbility(OptionsConstants.MD_PL_GLIDER)) {
-            return Integer.MAX_VALUE;
-        }
-        return getMaxElevationChange();
-    }
-
     @Override
     public void applyDamage() {
         super.applyDamage();
@@ -496,7 +381,12 @@ public abstract class Infantry extends Entity {
         return roll;
     }
 
-    public boolean getCanCallSupport() {
+    /**
+     * @return True when this infantry unit can still call upon local support (CO 4th p.82, Urban Guerilla); in other
+     *       words, if this ability has not been used yet. Note that this method does not check if it has the ability at
+     *       all.
+     */
+    public boolean canCallSupport() {
         return canCallSupport;
     }
 
@@ -506,71 +396,13 @@ public abstract class Infantry extends Entity {
     public abstract boolean isStealthy();
 
     /**
-     * Returns true if this infantry unit can use glider wings in the current conditions. Glider wings cannot be used in
-     * vacuum or trace (very thin) atmospheres (IO p.85).
-     *
-     * @return true if glider wings are usable
-     */
-    public boolean canUseGliderWings() {
-        if (game == null) {
-            return true; // Allow if no game context
-        }
-        Atmosphere atmosphere = game.getPlanetaryConditions().getAtmosphere();
-        // Glider wings require at least THIN atmosphere (vacuum and trace are too thin)
-        return !atmosphere.isLighterThan(Atmosphere.THIN);
-    }
-
-    /**
-     * Returns true if this infantry unit can use powered flight wings in the current conditions. Powered flight wings
-     * cannot be used in vacuum (IO p.85). Note: Unlike glider wings, powered flight only mentions vacuum restriction,
-     * not trace atmosphere. However, for consistency and realism, we apply the same atmospheric restriction as glider
-     * wings.
-     *
-     * @return true if powered flight wings are usable
-     */
-    public boolean canUsePoweredFlightWings() {
-        if (game == null) {
-            return true; // Allow if no game context
-        }
-        Atmosphere atmosphere = game.getPlanetaryConditions().getAtmosphere();
-        // Powered flight wings require at least THIN atmosphere (vacuum and trace are too thin)
-        return !atmosphere.isLighterThan(Atmosphere.THIN);
-    }
-
-    /**
-     * Returns true if this infantry unit can exit a VTOL using glider wings. Per IO p.85, glider wings give a soldier
-     * the ability to leave a VTOL during movement as if the soldier were jump infantry.
-     *
-     * @return true if this infantry can exit a VTOL using glider wings
-     */
-    public boolean canExitVTOLWithGliderWings() {
-        return isConventionalInfantry()
-              && hasAbility(OptionsConstants.MD_PL_GLIDER)
-              && canUseGliderWings();
-    }
-
-    /**
-     * Returns true if both glider wings and powered flight wings are enabled. Per IO p.85, these are mutually exclusive
-     * - a trooper cannot have both.
-     *
-     * @return true if invalid configuration (both wing types enabled)
-     */
-    public boolean hasInvalidWingsConfiguration() {
-        return hasAbility(OptionsConstants.MD_PL_GLIDER)
-              && hasAbility(OptionsConstants.MD_PL_FLIGHT);
-    }
-
-    /**
      * Returns the maximum number of extraneous limb pairs allowed. Per IO p.85, if glider wings or powered flight wings
      * are installed, only one pair of extraneous limbs is allowed (instead of the normal two pairs).
      *
      * @return 1 if any wing type is installed, 2 otherwise
      */
     public int getMaxExtraneousLimbPairs() {
-        if (hasAbility(OptionsConstants.MD_PL_GLIDER) || hasAbility(OptionsConstants.MD_PL_FLIGHT)) {
-            return 1;
-        }
-        return 2;
+        return (hasAbility(OptionsConstants.MD_PL_GLIDER) || hasAbility(OptionsConstants.MD_PL_FLIGHT)) ? 1 : 2;
     }
 
     @Override
@@ -582,39 +414,6 @@ public abstract class Infantry extends Entity {
         } else {
             return super.isEligibleFor(phase);
         }
-    }
-
-    @Override
-    public boolean isEligibleForMovement() {
-        if (isExhaustedFromFastMove()) {
-            return false;
-        }
-        return super.isEligibleForMovement();
-    }
-
-    @Override
-    public boolean isEligibleForFiring() {
-        if (isExhaustedFromFastMove()) {
-            return false;
-        }
-        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE) &&
-              (moved == EntityMovementType.MOVE_RUN)) {
-            return false;
-        }
-        return super.isEligibleForFiring();
-    }
-
-    /**
-     * Per TO:AR p.25, 0 MP infantry that used fast movement (MOVE_RUN) in the previous turn cannot move or fire in the
-     * following turn.
-     *
-     * @return true if this unit is exhausted from using fast movement last round
-     */
-    public boolean isExhaustedFromFastMove() {
-        return gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE)
-              && isConventionalInfantry()
-              && (getWalkMP() == 0)
-              && (movedLastRound == EntityMovementType.MOVE_RUN);
     }
 
     @Override
@@ -645,11 +444,6 @@ public abstract class Infantry extends Entity {
         return dugIn;
     }
 
-    @Override
-    public boolean isNuclearHardened() {
-        return false;
-    }
-
     /**
      * This function is called when loading a unit into transport. This is overridden to ensure infantry are no longer
      * considered dug in when they are being transported.
@@ -666,18 +460,10 @@ public abstract class Infantry extends Entity {
         return movementMode.isTrackedWheeledOrHover() || movementMode.isVTOL() || movementMode.isSubmarine();
     }
 
-    @Deprecated(since = "0.51.0", forRemoval = true)
+    //FIXME: This is currently unused, but MekHQ should probably reset this flag so the unit can call support again
+    // in a later scenario
     public void setCanCallSupport(boolean b) {
         canCallSupport = b;
-    }
-
-    /**
-     * Used to check for standard or motorized SCUBA infantry, which have a maximum depth of 2.
-     *
-     * @return true if this is a conventional infantry unit with non-mechanized SCUBA specialization
-     */
-    public boolean isNonMechSCUBA() {
-        return isConventionalInfantry() && getMovementMode().isUMUInfantry();
     }
 
     /**
@@ -712,18 +498,6 @@ public abstract class Infantry extends Entity {
         return squadCount == 1;
     }
 
-    @Override
-    public boolean isEligibleForPavementOrRoadBonus() {
-        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_INF_PAVE_BONUS)) {
-            return movementMode == EntityMovementMode.TRACKED ||
-                  movementMode == EntityMovementMode.WHEELED ||
-                  movementMode == EntityMovementMode.INF_MOTORIZED ||
-                  movementMode == EntityMovementMode.HOVER;
-        } else {
-            return false;
-        }
-    }
-
     /**
      * Returns the base (stored) movement mode for this infantry unit, ignoring any virtual VTOL mode from powered
      * flight wings. This should be used for validation and construction rules that need to know the actual infantry
@@ -733,15 +507,6 @@ public abstract class Infantry extends Entity {
      */
     public EntityMovementMode getBaseMovementMode() {
         return movementMode;
-    }
-
-    /**
-     * Standard and motorized SCUBA only differ in base movement, so they both use INF_UMU. If the motion_type contains
-     * the string "motorized", the movement is set here instead.
-     */
-    public void setMotorizedScuba() {
-        setMovementMode(EntityMovementMode.INF_UMU);
-        setOriginalJumpMP(2);
     }
 
     /**
@@ -782,8 +547,8 @@ public abstract class Infantry extends Entity {
     }
 
     /**
-     * Determines if there is valid cover for an infantry unit to utilize the Using Non-Infantry as Cover rules (TO pg
-     * 108).
+     * Determines if there is valid cover for an infantry unit to utilize the Using Non-Infantry as Cover rules (TO:AR
+     * p.106).
      *
      * @param game      The current {@link Game}
      * @param pos       The hex coords
@@ -826,23 +591,6 @@ public abstract class Infantry extends Entity {
 
     public void setTakingCover(boolean isTakingCover) {
         this.isTakingCover = isTakingCover;
-    }
-
-    /**
-     * @return true if this unit is impaired by pheromone gas attack (IO pg 79)
-     */
-    public boolean isPheromoneImpaired() {
-        return pheromoneImpaired;
-    }
-
-    /**
-     * Sets whether this unit is impaired by pheromone gas attack. Impaired units suffer +1 to-hit on all actions for
-     * remainder of scenario.
-     *
-     * @param impaired true to mark as pheromone impaired
-     */
-    public void setPheromoneImpaired(boolean impaired) {
-        this.pheromoneImpaired = impaired;
     }
 
     @Override
@@ -940,5 +688,15 @@ public abstract class Infantry extends Entity {
     @Override
     protected int[] getNoOfSlots() {
         return NUM_OF_SLOTS;
+    }
+
+    /**
+     * Returns true if this infantry unit can exit a VTOL using glider wings. Per IO:AE p.79, glider wings give a
+     * soldier the ability to leave a VTOL during movement as if the soldier were jump infantry.
+     *
+     * @return true if this infantry can exit a VTOL using glider wings
+     */
+    public boolean canExitVTOLWithGliderWings() {
+        return false;
     }
 }

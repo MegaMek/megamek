@@ -2527,7 +2527,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // Check for infantry gliding down terrain with glider wings (IO p.85)
-            if (!lastPos.equals(curPos) && (entity instanceof Infantry infantry)
+            if (!lastPos.equals(curPos) && (entity instanceof ConvInfantry infantry)
                   && infantry.hasAbility(OptionsConstants.MD_PL_GLIDER)
                   && infantry.canUseGliderWings()) {
                 int glideDistance = (lastElevation + getGame().getBoard(curBoardId).getHex(lastPos).getLevel())

@@ -567,7 +567,7 @@ public class EntitySprite extends Sprite {
                 stStr.add(new Status(GUIP.getWarningColor(), "IMMOBILE"));
             }
 
-            if ((entity instanceof Infantry infantry) && infantry.isExhaustedFromFastMove()) {
+            if ((entity instanceof ConvInfantry infantry) && infantry.isExhaustedFromFastMove()) {
                 stStr.add(new Status(GUIP.getWarningColor(), "EXHAUSTED"));
             }
 

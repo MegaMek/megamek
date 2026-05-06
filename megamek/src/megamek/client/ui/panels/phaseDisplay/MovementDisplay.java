@@ -756,7 +756,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // Infantry - Urban Guerrilla calling for support
         getBtn(MoveCommand.MOVE_CALL_SUPPORT).setEnabled(isInfantry &&
               selectedUnit.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA) &&
-              ((Infantry) selectedUnit).getCanCallSupport());
+              ((Infantry) selectedUnit).canCallSupport());
 
         getBtn(MoveCommand.MOVE_SHAKE_OFF).setEnabled((selectedUnit instanceof Tank) &&
               (selectedUnit.getSwarmAttackerId() !=

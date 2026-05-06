@@ -66,6 +66,18 @@ public class TestInfantry extends TestEntity {
         this.fileString = fileString;
     }
 
+    /**
+     * Returns true if both glider wings and powered flight wings are enabled. Per IO:AE 3rd p.79, these are mutually
+     * exclusive - a trooper cannot have both.
+     *
+     * @param infantry The conventional infantry to check
+     *
+     * @return true if invalid configuration (both wing types enabled)
+     */
+    public static boolean hasInvalidWingsConfiguration(ConvInfantry infantry) {
+        return infantry.hasAbility(OptionsConstants.MD_PL_GLIDER) && infantry.hasAbility(OptionsConstants.MD_PL_FLIGHT);
+    }
+
     @Override
     public Entity getEntity() {
         return infantry;
@@ -250,7 +262,7 @@ public class TestInfantry extends TestEntity {
         }
 
         // Glider wings and powered flight wings are mutually exclusive (IO p.85)
-        if (inf.hasInvalidWingsConfiguration()) {
+        if (hasInvalidWingsConfiguration(inf)) {
             buff.append("Glider wings and powered flight wings cannot both be installed!\n");
             correct = false;
         }

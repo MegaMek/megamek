@@ -31,7 +31,6 @@
  * affiliated with Microsoft.
  */
 
-
 package megamek.common.equipment;
 
 import java.io.Serial;

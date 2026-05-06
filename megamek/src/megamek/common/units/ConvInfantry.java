@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *

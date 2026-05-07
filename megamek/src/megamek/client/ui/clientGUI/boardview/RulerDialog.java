@@ -1038,8 +1038,9 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     }
 
     /**
-     * Builds the "(Effective Height: X)" text shown next to the spinner. This is the absolute LOS height that matters
-     * for line-of-sight calculations.
+     * Builds the "(Effective Height: X)" text shown next to the spinner. This is the absolute LOS height (TW p.38
+     * "highest level occupied") that the LOS engine actually uses for line-of-sight comparisons in
+     * {@link megamek.common.LosEffects}.
      */
     private String buildEffectiveHeightText(Coords coords, int twHeight, boolean isAtAltitude) {
         Hex hex = game.getBoard().getHex(coords);
@@ -1049,7 +1050,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         if (isAtAltitude) {
             return "(Eff. Alt. for LOS: " + twHeight + ")";
         }
-        int effectiveHeight = hex.getLevel() + twHeight;
+        int effectiveHeight = LOSHeightCalculation.toAbsoluteHeight(twHeight, hex.getLevel(), false);
         return "(Eff. Height for LOS: " + effectiveHeight + ")";
     }
 
@@ -1067,18 +1068,15 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         if (isAtAltitude) {
             // Altitude: fixed value independent of hex level (TW p.43)
             info.append("Effective Altitude for LOS: ").append(twHeight);
-        } else if (isElevation) {
-            // Elevation: airborne non-aero (VTOL/WiGE), relative to hex level (TW p.43)
-            int effectiveHeight = twHeight + groundLevel;
-            info.append("Hex: ").append(groundLevel);
-            info.append(" + Elev: ").append(twHeight);
-            info.append(" = Effective Height for LOS: ").append(effectiveHeight);
         } else {
-            // Level/Height: ground units (TW p.43)
-            int effectiveHeight = twHeight + groundLevel;
+            // Effective Height for LOS = highest level the unit occupies (TW p.38).
+            // For ground units this is hex.getLevel() + (twHeight - 1); see LOSHeightCalculation.toAbsoluteHeight
+            // and LosEffects.AttackInfo.attackAbsHeight, which use the same formula. The arithmetic isn't a simple
+            // sum, so we display the inputs and the resulting LOS level rather than a formula.
+            int effectiveHeight = LOSHeightCalculation.toAbsoluteHeight(twHeight, groundLevel, false);
             info.append("Hex: ").append(groundLevel);
-            info.append(" + Height: ").append(twHeight);
-            info.append(" = Effective Height for LOS: ").append(effectiveHeight);
+            info.append(" | ").append(isElevation ? "Elev: " : "Height: ").append(twHeight);
+            info.append(" | Effective Height for LOS: ").append(effectiveHeight);
         }
 
         // Status flags (respect double-blind visibility - don't reveal hidden enemy Mek hull-down state)

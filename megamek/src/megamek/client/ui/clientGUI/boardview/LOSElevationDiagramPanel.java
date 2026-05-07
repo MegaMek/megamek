@@ -2098,18 +2098,23 @@ class LOSElevationDiagramPanel extends JPanel {
         int xEnd = metrics.leftMargin + ((hexPath.size() - 1) * metrics.hexColumnWidth)
               + (metrics.hexColumnWidth / 2);
 
-        // For altitude units, the LOS line originates from above the break indicator
+        // The LOS line attaches at the unit's eye level (= the level the engine actually compares).
+        // For Diagrammed LOS the engine compares against (silhouette top), matching attackerAbsHeight as stored.
+        // For Standard LOS the engine compares against absHeight per TW p.38 ("highest occupied"), which is one
+        // level below the silhouette top - so the line attaches one level lower in Standard mode.
+        int losLineOffset = diagramData.useDiagramLos() ? 0 : 1;
+
         int yStart;
         if (metrics.attackerIsAltitude) {
             yStart = metrics.topMargin - UIUtil.scaleForGUI(ALTITUDE_SILHOUETTE_HEIGHT / 2);
         } else {
-            yStart = metrics.levelToY(diagramData.attackerAbsHeight());
+            yStart = metrics.levelToY(diagramData.attackerAbsHeight() - losLineOffset);
         }
         int yEnd;
         if (metrics.targetIsAltitude) {
             yEnd = metrics.topMargin - UIUtil.scaleForGUI(ALTITUDE_SILHOUETTE_HEIGHT / 2);
         } else {
-            yEnd = metrics.levelToY(diagramData.targetAbsHeight());
+            yEnd = metrics.levelToY(diagramData.targetAbsHeight() - losLineOffset);
         }
 
         // Clip the LOS line to the visible drawing area so it spans the full diagram width
@@ -2189,6 +2194,17 @@ class LOSElevationDiagramPanel extends JPanel {
     }
 
     /**
+     * Returns true if a terrain top "reaches" the LOS line at this hex per the active rule's inequality.
+     * Diagrammed LOS uses {@code >=} (terrain at the line's level blocks); Standard LOS uses strict {@code >}
+     * (terrain at the line's level passes).
+     */
+    private boolean terrainReachesLine(double terrainTop, double losLineElevation) {
+        return diagramData.useDiagramLos()
+              ? terrainTop >= losLineElevation
+              : terrainTop > losLineElevation;
+    }
+
+    /**
      * Generates a tooltip string for the hex column at the given pixel coordinates.
      *
      * @param mouseX the mouse X coordinate
@@ -2245,7 +2261,7 @@ class LOSElevationDiagramPanel extends JPanel {
                 default -> "Light";
             };
             int foliageTopElevation = hex.groundElevation() + hex.woodsHeight();
-            boolean foliageAffectsLos = foliageTopElevation >= hex.losLineElevation();
+            boolean foliageAffectsLos = terrainReachesLine(foliageTopElevation, hex.losLineElevation());
             tooltip.append("<br>").append(densityStr).append(" ").append(foliageType);
             tooltip.append(" (top elev ").append(foliageTopElevation).append(")");
             if (!foliageAffectsLos) {
@@ -2257,7 +2273,7 @@ class LOSElevationDiagramPanel extends JPanel {
         }
         if (hex.smokeLevel() > 0) {
             int smokeTopElevation = hex.groundElevation() + 2;
-            boolean smokeAffectsLos = smokeTopElevation >= hex.losLineElevation();
+            boolean smokeAffectsLos = terrainReachesLine(smokeTopElevation, hex.losLineElevation());
             tooltip.append("<br>Smoke: ").append(hex.smokeLevel() >= 2 ? "Heavy" : "Light");
             tooltip.append(" (top elev ").append(smokeTopElevation).append(")");
             if (!smokeAffectsLos) {
@@ -2284,13 +2300,16 @@ class LOSElevationDiagramPanel extends JPanel {
         if (hex.hasLosModifiers() && !hex.blocksLOS()) {
             boolean anyTerrainReachesLos = false;
             if (hex.smokeLevel() > 0) {
-                anyTerrainReachesLos |= (hex.groundElevation() + 2) >= hex.losLineElevation();
+                anyTerrainReachesLos |= terrainReachesLine(hex.groundElevation() + 2,
+                      hex.losLineElevation());
             }
             if (hex.hasWoodsOrJungle()) {
-                anyTerrainReachesLos |= (hex.groundElevation() + hex.woodsHeight()) >= hex.losLineElevation();
+                anyTerrainReachesLos |= terrainReachesLine(hex.groundElevation() + hex.woodsHeight(),
+                      hex.losLineElevation());
             }
             if (hex.industrialHeight() > 0) {
-                anyTerrainReachesLos |= (hex.groundElevation() + hex.industrialHeight()) >= hex.losLineElevation();
+                anyTerrainReachesLos |= terrainReachesLine(hex.groundElevation() + hex.industrialHeight(),
+                      hex.losLineElevation());
             }
             if (hex.hasScreen() || hex.hasFields() || hex.hasFire()) {
                 anyTerrainReachesLos = true;

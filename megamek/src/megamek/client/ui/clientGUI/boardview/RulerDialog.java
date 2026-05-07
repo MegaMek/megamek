@@ -63,6 +63,7 @@ import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.Player;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
@@ -959,6 +960,10 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         int h1 = (int) height1.getValue();
         int h2 = (int) height2.getValue();
 
+        // Refresh the title so the LOS mode and board name in the title bar stay current
+        // if the player toggles TacOps options or switches boards in a multi-board game.
+        setTitle(getRulerTitle(game));
+
         if (!game.getBoard().contains(start) || !game.getBoard().contains(end)) {
             return;
         }
@@ -1347,16 +1352,28 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     }
 
     /**
-     * Returns the ruler dialog title based on which optional LOS rules are active.
+     * Returns the ruler dialog title based on which optional LOS rules are active and the current board name.
+     * The board name is appended in brackets to help identify which map a screenshot was taken from when
+     * troubleshooting LOS questions.
      */
     private static String getRulerTitle(Game game) {
+        String modeTitle;
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS1)) {
-            return Messages.getString("Ruler.titleDiagrammedLOS");
+            modeTitle = Messages.getString("Ruler.titleDiagrammedLOS");
+        } else if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DEAD_ZONES)) {
+            modeTitle = Messages.getString("Ruler.titleDeadZone");
+        } else {
+            modeTitle = Messages.getString("Ruler.title");
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DEAD_ZONES)) {
-            return Messages.getString("Ruler.titleDeadZone");
+        Board board = game.getBoard();
+        if (board == null) {
+            return modeTitle;
         }
-        return Messages.getString("Ruler.title");
+        String boardName = board.getBoardName();
+        if (boardName == null || boardName.isBlank()) {
+            return modeTitle;
+        }
+        return modeTitle + " [" + boardName + "]";
     }
 
     @Override

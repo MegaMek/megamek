@@ -53,6 +53,10 @@ import megamek.common.board.Coords;
  * @param targetIsHullDown   whether the target is hull-down (reduces LOS profile by 1 TW level)
  * @param attackerName       display name of the attacker entity, or empty if none
  * @param targetName         display name of the target entity, or empty if none
+ * @param losRuleMode        the active LOS rule set; the panel uses this to pick the correct line shape
+ *                           (step-function for {@link LosRuleMode#STANDARD} and {@link LosRuleMode#DEAD_ZONE},
+ *                           smooth interp for {@link LosRuleMode#DIAGRAMMED}) and to overlay the dead-zone shadow
+ *                           when applicable
  */
 record LOSDiagramData(
       List<HexRow> hexPath,
@@ -68,7 +72,8 @@ record LOSDiagramData(
       boolean attackerAtAltitude,
       boolean targetAtAltitude,
       String attackerName,
-      String targetName
+      String targetName,
+      LosRuleMode losRuleMode
 ) {
 
     /**

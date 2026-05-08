@@ -63,6 +63,7 @@ import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.Player;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
@@ -959,6 +960,10 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         int h1 = (int) height1.getValue();
         int h2 = (int) height2.getValue();
 
+        // Refresh the title each turn so the LOS rule and board name in the title bar follow the
+        // current game state (TacOps option toggles, multi-board games).
+        setTitle(getRulerTitle(game));
+
         if (!game.getBoard().contains(start) || !game.getBoard().contains(end)) {
             return;
         }
@@ -1140,19 +1145,22 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         boolean attackerIsAlt = flip ? atAltitude1 : atAltitude2;
         boolean targetIsAlt = flip ? atAltitude2 : atAltitude1;
 
+        // Pass the active LOS rule through to the diagram so it can pick the matching line shape and overlays.
+        LosRuleMode losRuleMode = LosRuleMode.fromGameOptions(game);
+
         LOSDiagramData diagramData;
         if (entityLosBlocked != null) {
             // Use pre-computed entity-based LOS result (matches fire phase)
             diagramData = LOSDiagramDataBuilder.buildWithLosResult(game, attackInfo,
                   entityLosBlocked, attackerHullDown, targetHullDown,
                   attackerType, targetType, attackerIsAlt, targetIsAlt,
-                  attackerName, targetName);
+                  attackerName, targetName, losRuleMode);
         } else {
             // Use manual AttackInfo-based LOS (scenario testing)
             diagramData = LOSDiagramDataBuilder.build(game, attackInfo,
                   attackerHullDown, targetHullDown, attackerType, targetType,
                   attackerIsAlt, targetIsAlt,
-                  attackerName, targetName);
+                  attackerName, targetName, losRuleMode);
         }
 
         diagramPanel.setData(diagramData);
@@ -1342,16 +1350,26 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     }
 
     /**
-     * Returns the ruler dialog title based on which optional LOS rules are active.
+     * Returns the ruler dialog title with the active LOS rule set and the current board name. The board name
+     * is appended in brackets so screenshots include the map identity, which speeds up triage of player LOS
+     * questions.
      */
     private static String getRulerTitle(Game game) {
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS1)) {
-            return Messages.getString("Ruler.titleDiagrammedLOS");
+        String modeTitle;
+        switch (LosRuleMode.fromGameOptions(game)) {
+            case DIAGRAMMED -> modeTitle = Messages.getString("Ruler.titleDiagrammedLOS");
+            case DEAD_ZONE -> modeTitle = Messages.getString("Ruler.titleDeadZone");
+            default -> modeTitle = Messages.getString("Ruler.title");
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DEAD_ZONES)) {
-            return Messages.getString("Ruler.titleDeadZone");
+        Board board = game.getBoard();
+        if (board == null) {
+            return modeTitle;
         }
-        return Messages.getString("Ruler.title");
+        String boardName = board.getBoardName();
+        if (boardName == null || boardName.isBlank()) {
+            return modeTitle;
+        }
+        return modeTitle + " [" + boardName + "]";
     }
 
     @Override

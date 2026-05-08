@@ -115,6 +115,7 @@ class LOSElevationDiagramPanel extends JPanel {
           2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, LOS_DASH_PATTERN, 0.0f);
     private static final Stroke STROKE_GRID = new BasicStroke(0.5f);
     private static final Stroke STROKE_DEFAULT = new BasicStroke(1.0f);
+    private static final Stroke STROKE_BLOCKER_OUTLINE = new BasicStroke(2.5f);
     private static final float[] DASH_PATTERN = { 6.0f, 4.0f };
     private static final Stroke STROKE_SPLIT = new BasicStroke(
           1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, DASH_PATTERN, 0.0f);
@@ -563,6 +564,23 @@ class LOSElevationDiagramPanel extends JPanel {
                 g2d.setStroke(STROKE_SPLIT);
                 g2d.drawRect(xLeft + 1, metrics.topMargin + 1,
                       columnWidth - 2, metrics.drawAreaHeight - 2);
+                g2d.setStroke(STROKE_DEFAULT);
+            }
+
+            // Highlight the hex bar in red when this hex's solid terrain blocks LOS so the offender pops
+            // visually. Outline runs from the hex's effective top (ground + buildings) down to ground level.
+            if (hex.blocksLOS()) {
+                int blockerTopElevation = hex.groundElevation() + hex.buildingHeight();
+                int yBlockerTop = metrics.levelToY(blockerTopElevation);
+                int blockerHeight = yGround - yBlockerTop;
+                if (blockerHeight <= 0) {
+                    // No building above ground: outline the ground bar itself
+                    yBlockerTop = yGround;
+                    blockerHeight = Math.max(yBottom - yGround, 1);
+                }
+                g2d.setColor(COLOR_LOS_BLOCKED);
+                g2d.setStroke(STROKE_BLOCKER_OUTLINE);
+                g2d.drawRect(xLeft, yBlockerTop, columnWidth, blockerHeight);
                 g2d.setStroke(STROKE_DEFAULT);
             }
         }
@@ -2094,11 +2112,36 @@ class LOSElevationDiagramPanel extends JPanel {
             return;
         }
 
+        g2d.setStroke(STROKE_LOS);
+        g2d.setColor(diagramData.losBlocked() ? COLOR_LOS_BLOCKED : COLOR_LOS_CLEAR);
+
+        // Diagrammed LOS uses a smooth interpolation in the engine; draw a single straight line.
+        // Standard / Dead Zone use BMM's adjacency rule, which is a step function on per-hex comparison
+        // levels - draw horizontal segments at each hex with vertical risers between hexes whose levels
+        // change. Altitude endpoints fall back to the straight-line form (the per-hex levels aren't
+        // meaningful when one end is hundreds of levels above the diagram).
+        boolean useStep = diagramData.losRuleMode() != LosRuleMode.DIAGRAMMED
+              && !metrics.attackerIsAltitude
+              && !metrics.targetIsAltitude;
+        if (useStep) {
+            drawStepLosLine(g2d, metrics, hexPath);
+        } else {
+            drawSmoothLosLine(g2d, metrics, hexPath);
+        }
+
+        g2d.setStroke(STROKE_DEFAULT);
+    }
+
+    /**
+     * Draws the LOS line as a single straight segment from attacker silhouette top to target silhouette top.
+     * Used for Diagrammed LOS (smooth interp matches the engine's {@code losElevation = 1 + interp(absHeight)})
+     * and for any case with an altitude endpoint.
+     */
+    private void drawSmoothLosLine(Graphics2D g2d, DiagramMetrics metrics, List<HexRow> hexPath) {
         int xStart = metrics.leftMargin + (metrics.hexColumnWidth / 2);
         int xEnd = metrics.leftMargin + ((hexPath.size() - 1) * metrics.hexColumnWidth)
               + (metrics.hexColumnWidth / 2);
 
-        // For altitude units, the LOS line originates from above the break indicator
         int yStart;
         if (metrics.attackerIsAltitude) {
             yStart = metrics.topMargin - UIUtil.scaleForGUI(ALTITUDE_SILHOUETTE_HEIGHT / 2);
@@ -2114,7 +2157,6 @@ class LOSElevationDiagramPanel extends JPanel {
 
         // Clip the LOS line to the visible drawing area so it spans the full diagram width
         // even when endpoints are far outside the visible elevation range (e.g., aerospace at altitude 1000).
-        // Without clipping, the line would only be visible in the small region where it crosses the panel.
         int yMin = metrics.topMargin;
         int yMax = metrics.topMargin + metrics.drawAreaHeight;
 
@@ -2123,7 +2165,6 @@ class LOSElevationDiagramPanel extends JPanel {
         int clippedXEnd = xEnd;
         int clippedYEnd = yEnd;
 
-        // Cohen-Sutherland-style clipping against top and bottom edges
         if (yStart != yEnd) {
             if (yStart < yMin) {
                 clippedXStart = xStart + (int) ((long) (xEnd - xStart) * (yMin - yStart) / (yEnd - yStart));
@@ -2141,10 +2182,47 @@ class LOSElevationDiagramPanel extends JPanel {
             }
         }
 
-        g2d.setStroke(STROKE_LOS);
-        g2d.setColor(diagramData.losBlocked() ? COLOR_LOS_BLOCKED : COLOR_LOS_CLEAR);
         g2d.drawLine(clippedXStart, clippedYStart, clippedXEnd, clippedYEnd);
-        g2d.setStroke(STROKE_DEFAULT);
+    }
+
+    /**
+     * Draws the LOS line as a step function for Standard / Dead Zone modes. Each hex contributes a horizontal
+     * segment at its per-hex {@code losLineElevation} (BMM's "comparison level" given adjacency), and adjacent
+     * hexes whose levels differ get a vertical riser at their shared boundary. The resulting staircase makes the
+     * BMM rule visible: terrain reaching the segment over its hex is exactly what intervenes.
+     */
+    private void drawStepLosLine(Graphics2D g2d, DiagramMetrics metrics, List<HexRow> hexPath) {
+        int yMin = metrics.topMargin;
+        int yMax = metrics.topMargin + metrics.drawAreaHeight;
+        int prevY = -1;
+        int prevXRight = -1;
+        for (int i = 0; i < hexPath.size(); i++) {
+            HexRow hex = hexPath.get(i);
+            int xLeft = metrics.leftMargin + (i * metrics.hexColumnWidth);
+            int xRight = xLeft + metrics.hexColumnWidth;
+            int y = clampToPanel(metrics.levelToY(hex.losLineElevation()), yMin, yMax);
+
+            // Horizontal segment across this hex at its comparison level
+            g2d.drawLine(xLeft, y, xRight, y);
+
+            // Vertical riser at the boundary with the previous hex when the level changed
+            if (i > 0 && y != prevY) {
+                g2d.drawLine(prevXRight, prevY, prevXRight, y);
+            }
+
+            prevY = y;
+            prevXRight = xRight;
+        }
+    }
+
+    private static int clampToPanel(int y, int yMin, int yMax) {
+        if (y < yMin) {
+            return yMin;
+        }
+        if (y > yMax) {
+            return yMax;
+        }
+        return y;
     }
 
     /**

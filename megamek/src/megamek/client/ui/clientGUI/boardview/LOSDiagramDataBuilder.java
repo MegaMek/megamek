@@ -74,7 +74,8 @@ final class LOSDiagramDataBuilder {
           boolean attackerIsHullDown, boolean targetIsHullDown,
           DiagramUnitType attackerUnitType, DiagramUnitType targetUnitType,
           boolean attackerAtAltitude, boolean targetAtAltitude,
-          String attackerName, String targetName) {
+          String attackerName, String targetName,
+          LosRuleMode losRuleMode) {
         LosEffects losEffects = LosEffects.calculateLos(game, attackInfo);
         boolean losBlocked = !losEffects.canSee();
 
@@ -82,20 +83,24 @@ final class LOSDiagramDataBuilder {
               attackerIsHullDown, targetIsHullDown,
               attackerUnitType, targetUnitType,
               attackerAtAltitude, targetAtAltitude,
-              attackerName, targetName);
+              attackerName, targetName,
+              losRuleMode);
     }
 
     /**
      * Builds diagram data with a pre-computed LOS blocked result. Use this when the LOS calculation was already
      * performed via the entity-based path (fire phase code), so the diagram doesn't re-compute with the manual
-     * AttackInfo (which may produce different results).
+     * AttackInfo (which may produce different results). {@code losRuleMode} controls the per-hex comparison level
+     * the diagram uses to draw the line and flag blockers; pick it from the active game options via
+     * {@link LosRuleMode#fromGameOptions(Game)}.
      */
     public static LOSDiagramData buildWithLosResult(Game game, LosEffects.AttackInfo attackInfo,
           boolean losBlocked,
           boolean attackerIsHullDown, boolean targetIsHullDown,
           DiagramUnitType attackerUnitType, DiagramUnitType targetUnitType,
           boolean attackerAtAltitude, boolean targetAtAltitude,
-          String attackerName, String targetName) {
+          String attackerName, String targetName,
+          LosRuleMode losRuleMode) {
         Board board = game.getBoard();
         Coords attackPos = attackInfo.attackPos;
         Coords targetPos = attackInfo.targetPos;
@@ -136,13 +141,16 @@ final class LOSDiagramDataBuilder {
             boolean hasFields = hex.containsTerrain(Terrains.FIELDS);
             boolean hasFire = hex.containsTerrain(Terrains.FIRE);
 
-            // Calculate the interpolated LOS line elevation at this hex
+            // The LOS line elevation at this hex is the level the engine compares hex tops against,
+            // expressed in BMM LOS-level units (= silhouette top = hex + twHeight). Standard and Dead Zone
+            // use the BMM adjacency rule (step function); Diagrammed uses a smooth linear interpolation.
             double losLineElevation = calculateLosLineElevation(
-                  attackInfo, coords, attackPos, targetPos);
+                  attackInfo, coords, attackPos, targetPos, losRuleMode);
 
-            // Determine if this hex's solid terrain (ground + building) blocks LOS.
-            // Woods, smoke, and other soft terrain add modifiers but don't block
-            // by elevation alone - only accumulated intervening counts block.
+            // Solid terrain (ground + building) blocks LOS when its top reaches the line. The >=
+            // matches BMM ("equal to or higher than") for Standard/Dead Zone and the engine's >=
+            // against (1 + interp(absHeight)) for Diagrammed. Attacker and target hexes never count
+            // as intervening terrain.
             int solidTerrainHeight = groundElevation + buildingHeight;
             boolean blocksLos = solidTerrainHeight >= losLineElevation
                   && !coords.equals(attackPos)
@@ -182,8 +190,9 @@ final class LOSDiagramDataBuilder {
             ));
         }
 
-        // The + 1 converts from code's 0-indexed heights to TW unit heights,
-        // matching the LosEffects interpolation formula (LosEffects line 1332)
+        // attackerAbsHeight / targetAbsHeight stored on the data are the BMM LOS levels (= hex + twHeight),
+        // which is also the silhouette top in y-coords. The engine's internal absHeight is one less; the +1
+        // converts back to BMM units for the diagram.
         return new LOSDiagramData(
               List.copyOf(hexPath),
               attackInfo.attackAbsHeight + 1,
@@ -198,44 +207,63 @@ final class LOSDiagramDataBuilder {
               attackerAtAltitude,
               targetAtAltitude,
               attackerName,
-              targetName
+              targetName,
+              losRuleMode
         );
     }
 
     /**
-     * Calculates the interpolated LOS line elevation at a given hex position. Uses the same weighted average formula as
-     * {@link LosEffects}, including the {@code + 1} correction that converts from the code's 0-indexed unit heights to
-     * TW's unit heights (e.g., Mek = hex level + 2, Vehicle = hex level + 1).
-     *
-     * @param attackInfo the attack info with absolute heights
-     * @param coords     the hex to calculate for
-     * @param attackPos  the attacker position
-     * @param targetPos  the target position
-     *
-     * @return the interpolated LOS elevation at the given hex
+     * Returns the LOS line's reference level at a given hex, in BMM LOS-level units (= hex + twHeight). Standard
+     * and Dead Zone use the BMM adjacency rule, which is a step function: the comparison level is the
+     * attacker-adjacent unit's LOS for hexes adjacent to the attacker, the target-adjacent unit's LOS for hexes
+     * adjacent to the target, the lower of the two for hexes adjacent to both (only possible at distance 2), and
+     * the higher of the two for non-adjacent intermediate hexes. Diagrammed uses a smooth linear interpolation
+     * matching {@code LosEffects.losElevation = 1 + interp(absHeight)} at line 1404.
      */
     private static double calculateLosLineElevation(LosEffects.AttackInfo attackInfo,
-          Coords coords, Coords attackPos, Coords targetPos) {
+          Coords coords, Coords attackPos, Coords targetPos, LosRuleMode mode) {
+        double attLos = attackInfo.attackAbsHeight + 1;
+        double tgtLos = attackInfo.targetAbsHeight + 1;
+
         if (coords.equals(attackPos)) {
-            return attackInfo.attackAbsHeight + 1;
+            return attLos;
         }
         if (coords.equals(targetPos)) {
-            return attackInfo.targetAbsHeight + 1;
+            return tgtLos;
         }
 
-        double distanceFromAttacker = attackPos.distance(coords);
-        double distanceFromTarget = targetPos.distance(coords);
-        double totalDistance = distanceFromAttacker + distanceFromTarget;
+        int distFromAttacker = attackPos.distance(coords);
+        int distFromTarget = targetPos.distance(coords);
+        int totalDistance = distFromAttacker + distFromTarget;
 
         if (totalDistance == 0) {
-            return attackInfo.attackAbsHeight + 1;
+            return attLos;
         }
 
-        // Weighted height interpolation matching LosEffects formula (line 1332)
-        // The + 1 corrects from code's 0-indexed heights to TW unit heights
-        double weightedHeight = (attackInfo.targetAbsHeight * distanceFromAttacker)
-              + (attackInfo.attackAbsHeight * distanceFromTarget);
-        return 1 + weightedHeight / totalDistance;
+        if (mode == LosRuleMode.DIAGRAMMED) {
+            // TacOps Diagrammed LOS: linear interp between LOS levels at the unit positions.
+            // weightedHeight is the engine's (absHeight*distFromOpposite) form; +1 of total/totalDistance
+            // shifts the result into BMM LOS-level units to match attLos / tgtLos endpoints.
+            double weightedHeight = (attackInfo.targetAbsHeight * distFromAttacker)
+                  + (attackInfo.attackAbsHeight * distFromTarget);
+            return 1 + weightedHeight / totalDistance;
+        }
+
+        // STANDARD or DEAD_ZONE: BMM adjacency rule.
+        boolean adjAttacker = distFromAttacker == 1;
+        boolean adjTarget = distFromTarget == 1;
+        if (adjAttacker && adjTarget) {
+            // Distance-2 case: hex is adjacent to both ends. BMM says it intervenes if it reaches either
+            // unit's LOS level, so the lower level is the binding threshold.
+            return Math.min(attLos, tgtLos);
+        }
+        if (adjAttacker) {
+            return attLos;
+        }
+        if (adjTarget) {
+            return tgtLos;
+        }
+        return Math.max(attLos, tgtLos);
     }
 
     /**

@@ -2107,37 +2107,19 @@ class LOSElevationDiagramPanel extends JPanel {
         g2d.drawString(label, labelX, labelY);
     }
 
+    /**
+     * Draws the LOS line as a straight segment from the attacker's eye level to the target's eye level. The
+     * line is informational — it shows the path the units' eyes would trace toward each other. Whether terrain
+     * actually blocks LOS is conveyed by the red outline on the offending hex bar (drawn in {@link #drawTerrain})
+     * and by the colour of this line itself ({@link #COLOR_LOS_BLOCKED} vs {@link #COLOR_LOS_CLEAR}). Mode-aware
+     * blocking detection lives in {@link LOSDiagramDataBuilder}; the line stays the same shape in every mode so
+     * players read "blocked by this red hex" instead of trying to interpret a bent line.
+     */
     private void drawLosLine(Graphics2D g2d, DiagramMetrics metrics, List<HexRow> hexPath) {
         if (hexPath.size() < 2) {
             return;
         }
 
-        g2d.setStroke(STROKE_LOS);
-        g2d.setColor(diagramData.losBlocked() ? COLOR_LOS_BLOCKED : COLOR_LOS_CLEAR);
-
-        // Diagrammed LOS uses a smooth interpolation in the engine; draw a single straight line.
-        // Standard / Dead Zone use BMM's adjacency rule, which is a step function on per-hex comparison
-        // levels - draw horizontal segments at each hex with vertical risers between hexes whose levels
-        // change. Altitude endpoints fall back to the straight-line form (the per-hex levels aren't
-        // meaningful when one end is hundreds of levels above the diagram).
-        boolean useStep = diagramData.losRuleMode() != LosRuleMode.DIAGRAMMED
-              && !metrics.attackerIsAltitude
-              && !metrics.targetIsAltitude;
-        if (useStep) {
-            drawStepLosLine(g2d, metrics, hexPath);
-        } else {
-            drawSmoothLosLine(g2d, metrics, hexPath);
-        }
-
-        g2d.setStroke(STROKE_DEFAULT);
-    }
-
-    /**
-     * Draws the LOS line as a single straight segment from attacker silhouette top to target silhouette top.
-     * Used for Diagrammed LOS (smooth interp matches the engine's {@code losElevation = 1 + interp(absHeight)})
-     * and for any case with an altitude endpoint.
-     */
-    private void drawSmoothLosLine(Graphics2D g2d, DiagramMetrics metrics, List<HexRow> hexPath) {
         int xStart = metrics.leftMargin + (metrics.hexColumnWidth / 2);
         int xEnd = metrics.leftMargin + ((hexPath.size() - 1) * metrics.hexColumnWidth)
               + (metrics.hexColumnWidth / 2);
@@ -2182,47 +2164,10 @@ class LOSElevationDiagramPanel extends JPanel {
             }
         }
 
+        g2d.setStroke(STROKE_LOS);
+        g2d.setColor(diagramData.losBlocked() ? COLOR_LOS_BLOCKED : COLOR_LOS_CLEAR);
         g2d.drawLine(clippedXStart, clippedYStart, clippedXEnd, clippedYEnd);
-    }
-
-    /**
-     * Draws the LOS line as a step function for Standard / Dead Zone modes. Each hex contributes a horizontal
-     * segment at its per-hex {@code losLineElevation} (BMM's "comparison level" given adjacency), and adjacent
-     * hexes whose levels differ get a vertical riser at their shared boundary. The resulting staircase makes the
-     * BMM rule visible: terrain reaching the segment over its hex is exactly what intervenes.
-     */
-    private void drawStepLosLine(Graphics2D g2d, DiagramMetrics metrics, List<HexRow> hexPath) {
-        int yMin = metrics.topMargin;
-        int yMax = metrics.topMargin + metrics.drawAreaHeight;
-        int prevY = -1;
-        int prevXRight = -1;
-        for (int i = 0; i < hexPath.size(); i++) {
-            HexRow hex = hexPath.get(i);
-            int xLeft = metrics.leftMargin + (i * metrics.hexColumnWidth);
-            int xRight = xLeft + metrics.hexColumnWidth;
-            int y = clampToPanel(metrics.levelToY(hex.losLineElevation()), yMin, yMax);
-
-            // Horizontal segment across this hex at its comparison level
-            g2d.drawLine(xLeft, y, xRight, y);
-
-            // Vertical riser at the boundary with the previous hex when the level changed
-            if (i > 0 && y != prevY) {
-                g2d.drawLine(prevXRight, prevY, prevXRight, y);
-            }
-
-            prevY = y;
-            prevXRight = xRight;
-        }
-    }
-
-    private static int clampToPanel(int y, int yMin, int yMax) {
-        if (y < yMin) {
-            return yMin;
-        }
-        if (y > yMax) {
-            return yMax;
-        }
-        return y;
+        g2d.setStroke(STROKE_DEFAULT);
     }
 
     /**

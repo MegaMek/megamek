@@ -32,7 +32,10 @@
  */
 package megamek.client.ratgenerator;
 
+import static megamek.common.units.UnitRole.BRAWLER;
+import static megamek.common.units.UnitRole.JUGGERNAUT;
 import static megamek.common.units.UnitRole.SKIRMISHER;
+import static megamek.common.units.UnitRole.SNIPER;
 import static megamek.common.units.UnitRole.STRIKER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -41,9 +44,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
 import java.util.Iterator;
+import java.util.List;
 
 import megamek.common.loaders.MekSummary;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.UnitRole;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -130,5 +137,64 @@ class FormationTypeTest {
         assertEquals(2, grouping.getGroupSize(), "Vehicle Command pair size is 2");
         assertEquals(1, grouping.getNumGroups(),
               "CamOps requires only one pair of vehicles with the listed roles");
+    }
+
+    @Test
+    void qualifies_pairedConstraint_failsWhenNeitherAlternativeIsMet() throws Exception {
+        FormationType ft = createFormationWithPairedJuggernautOrSniper();
+
+        List<MekSummary> units = List.of(
+              mockTank(BRAWLER), mockTank(BRAWLER),
+              mockTank(BRAWLER), mockTank(BRAWLER));
+        assertFalse(ft.qualifies(units),
+              "qualifies() must reject a formation that has neither 1 Juggernaut nor 2 Snipers");
+    }
+
+    @Test
+    void qualifies_pairedConstraint_passesWhenJuggernautAlternativeIsMet() throws Exception {
+        FormationType ft = createFormationWithPairedJuggernautOrSniper();
+
+        List<MekSummary> units = List.of(
+              mockTank(JUGGERNAUT), mockTank(BRAWLER),
+              mockTank(BRAWLER), mockTank(BRAWLER));
+        assertTrue(ft.qualifies(units),
+              "qualifies() must accept a formation when the Juggernaut alternative is met");
+    }
+
+    @Test
+    void qualifies_pairedConstraint_passesWhenSniperAlternativeIsMet() throws Exception {
+        FormationType ft = createFormationWithPairedJuggernautOrSniper();
+
+        List<MekSummary> units = List.of(
+              mockTank(SNIPER), mockTank(SNIPER),
+              mockTank(BRAWLER), mockTank(BRAWLER));
+        assertTrue(ft.qualifies(units),
+              "qualifies() must accept a formation when the Sniper alternative is met");
+    }
+
+    private static FormationType createFormationWithPairedJuggernautOrSniper() throws Exception {
+        FormationType ft = new FormationType("PairedConstraintTest");
+        FormationType.Constraint juggernaut = new FormationType.CountConstraint(1,
+              ms -> ms.getRole() == JUGGERNAUT, "Juggernaut");
+        juggernaut.setPairedWithNext(true);
+        FormationType.Constraint sniper = new FormationType.CountConstraint(2,
+              ms -> ms.getRole() == SNIPER, "Sniper");
+        sniper.setPairedWithPrevious(true);
+        Field otherCriteriaField = FormationType.class.getDeclaredField("otherCriteria");
+        otherCriteriaField.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        List<FormationType.Constraint> otherCriteria =
+              (List<FormationType.Constraint>) otherCriteriaField.get(ft);
+        otherCriteria.add(juggernaut);
+        otherCriteria.add(sniper);
+        return ft;
+    }
+
+    private static MekSummary mockTank(UnitRole role) {
+        MekSummary ms = mock(MekSummary.class);
+        when(ms.getUnitType()).thenReturn("Tank");
+        when(ms.getRole()).thenReturn(role);
+        when(ms.getWeightClass()).thenReturn(EntityWeightClass.WEIGHT_MEDIUM);
+        return ms;
     }
 }

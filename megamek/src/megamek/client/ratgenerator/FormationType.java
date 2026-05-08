@@ -796,6 +796,7 @@ public class FormationType {
             if (units.size() < numUnits.get(i)) {
                 return null;
             }
+            retVal.addAll(units);
         }
         return retVal;
     }
@@ -1183,6 +1184,12 @@ public class FormationType {
             long matches = units.stream().filter(c::matches).count();
             if (matches < c.getMinimum(units.size())) {
                 if (c.isPairedWithNext() && i + 1 < otherCriteria.size()) {
+                    // The pair is satisfied only if the alternative also meets its minimum.
+                    final Constraint alternative = otherCriteria.get(i + 1);
+                    long altMatches = units.stream().filter(alternative::matches).count();
+                    if (altMatches < alternative.getMinimum(units.size())) {
+                        return false;
+                    }
                     i++;
                 } else {
                     return false;

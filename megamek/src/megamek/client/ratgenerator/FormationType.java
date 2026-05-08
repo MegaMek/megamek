@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -178,6 +178,10 @@ public class FormationType {
 
     public Set<MissionRole> getMissionRoles() {
         return missionRoles;
+    }
+
+    public UnitRole getIdealRole() {
+        return idealRole;
     }
 
     public Predicate<MekSummary> getMainCriteria() {
@@ -1490,8 +1494,8 @@ public class FormationType {
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
         ft.exclusiveFaction = "FWL";
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
-        ft.mainCriteria = ms -> ms.getTotalArmor() >= 40;
-        ft.mainDescription = "Armor 40+";
+        ft.mainCriteria = ms -> ms.getTotalArmor() >= 105;
+        ft.mainDescription = "Armor 105+";
         ft.otherCriteria.add(new PercentConstraint(0.5,
               ms -> ms.getEquipmentNames()
                     .stream()
@@ -1516,11 +1520,12 @@ public class FormationType {
         ft.otherCriteria.add(new CountConstraint(3,
               ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
               "Heavy+"));
-        // FIXME: The actual requirement is one juggernaut or two snipers; there needs to be a way to combine
-        //  constraints with.
-        ft.otherCriteria.add(new CountConstraint(2,
-              ms -> ms.getRole().isAnyOf(JUGGERNAUT, SNIPER),
-              "Juggernaut or Sniper"));
+        Constraint c = new CountConstraint(1, ms -> ms.getRole() == JUGGERNAUT, "Juggernaut");
+        c.setPairedWithNext(true);
+        ft.otherCriteria.add(c);
+        c = new CountConstraint(2, ms -> ms.getRole() == SNIPER, "Sniper");
+        c.setPairedWithPrevious(true);
+        ft.otherCriteria.add(c);
         ft.reportMetrics.put("Damage @ 7", ms -> getDamageAtRange(ms, 7));
         allFormationTypes.put(ft.name, ft);
     }
@@ -1670,14 +1675,10 @@ public class FormationType {
         ft.otherCriteria.add(new CountConstraint(1,
               ms -> ms.getRole().isAnyOf(BRAWLER, STRIKER, SCOUT),
               "Brawler, Striker, Scout"));
-        /*
-         * The description does not state how many pairs there need to be, but the
-         * reference to
-         * "one of the pairs" implies there need to be at least two.
-         */
+        // CamOps: only one pair of vehicles needs to have one of the listed roles.
         ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE,
               2,
-              2,
+              1,
               ms -> ms.getRole().isAnyOf(SNIPER, MISSILE_BOAT, SKIRMISHER, JUGGERNAUT),
               (ms0, ms1) -> ms0.getName().equals(ms1.getName()),
               "Same model");
@@ -1765,6 +1766,7 @@ public class FormationType {
     private static void createPursuitLance() {
         FormationType ft = new FormationType("Pursuit");
         ft.allowedUnitTypes = FLAG_GROUND;
+        ft.idealRole = STRIKER;
         ft.maxWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.otherCriteria.add(new PercentConstraint(0.75, ms -> ms.getWalkMp() >= 6, "Walk/Cruise 6+"));
         ft.otherCriteria.add(new CountConstraint(1,
@@ -1911,6 +1913,7 @@ public class FormationType {
     private static void createRangerLance() {
         FormationType ft = new FormationType("Ranger", "Striker/Cavalry");
         ft.allowedUnitTypes = FLAG_GROUND;
+        ft.idealRole = SKIRMISHER;
         ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
         allFormationTypes.put(ft.name, ft);
     }

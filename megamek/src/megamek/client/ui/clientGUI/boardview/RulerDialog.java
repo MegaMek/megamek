@@ -1359,7 +1359,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         switch (LosRuleMode.fromGameOptions(game)) {
             case DIAGRAMMED -> modeTitle = Messages.getString("Ruler.titleDiagrammedLOS");
             case DEAD_ZONE -> modeTitle = Messages.getString("Ruler.titleDeadZone");
-            default -> modeTitle = Messages.getString("Ruler.title");
+            default -> modeTitle = Messages.getString("Ruler.titleStandardLOS");
         }
         Board board = game.getBoard();
         if (board == null) {

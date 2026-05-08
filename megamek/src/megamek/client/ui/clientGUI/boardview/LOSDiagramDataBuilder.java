@@ -74,8 +74,7 @@ final class LOSDiagramDataBuilder {
           boolean attackerIsHullDown, boolean targetIsHullDown,
           DiagramUnitType attackerUnitType, DiagramUnitType targetUnitType,
           boolean attackerAtAltitude, boolean targetAtAltitude,
-          String attackerName, String targetName,
-          boolean useDiagramLos) {
+          String attackerName, String targetName) {
         LosEffects losEffects = LosEffects.calculateLos(game, attackInfo);
         boolean losBlocked = !losEffects.canSee();
 
@@ -83,24 +82,20 @@ final class LOSDiagramDataBuilder {
               attackerIsHullDown, targetIsHullDown,
               attackerUnitType, targetUnitType,
               attackerAtAltitude, targetAtAltitude,
-              attackerName, targetName,
-              useDiagramLos);
+              attackerName, targetName);
     }
 
     /**
      * Builds diagram data with a pre-computed LOS blocked result. Use this when the LOS calculation was already
      * performed via the entity-based path (fire phase code), so the diagram doesn't re-compute with the manual
-     * AttackInfo (which may produce different results). {@code useDiagramLos} selects between TacOps Diagrammed
-     * LOS (with the {@code 1 +} correction matching {@code LosEffects.losElevation}) and Standard LOS (raw
-     * {@code absHeight} per TW p.38).
+     * AttackInfo (which may produce different results).
      */
     public static LOSDiagramData buildWithLosResult(Game game, LosEffects.AttackInfo attackInfo,
           boolean losBlocked,
           boolean attackerIsHullDown, boolean targetIsHullDown,
           DiagramUnitType attackerUnitType, DiagramUnitType targetUnitType,
           boolean attackerAtAltitude, boolean targetAtAltitude,
-          String attackerName, String targetName,
-          boolean useDiagramLos) {
+          String attackerName, String targetName) {
         Board board = game.getBoard();
         Coords attackPos = attackInfo.attackPos;
         Coords targetPos = attackInfo.targetPos;
@@ -141,23 +136,15 @@ final class LOSDiagramDataBuilder {
             boolean hasFields = hex.containsTerrain(Terrains.FIELDS);
             boolean hasFire = hex.containsTerrain(Terrains.FIRE);
 
-            // Calculate the interpolated LOS line elevation at this hex.
-            // For Diagrammed LOS, the engine compares hex tops against (1 + interp(absHeight)) with >=,
-            // so we draw the line at that level. For Standard LOS, the engine uses raw absHeight with strict >,
-            // so we draw the line at interp(absHeight) and use a strict comparison below.
+            // Calculate the interpolated LOS line elevation at this hex
             double losLineElevation = calculateLosLineElevation(
-                  attackInfo, coords, attackPos, targetPos, useDiagramLos);
+                  attackInfo, coords, attackPos, targetPos);
 
             // Determine if this hex's solid terrain (ground + building) blocks LOS.
             // Woods, smoke, and other soft terrain add modifiers but don't block
             // by elevation alone - only accumulated intervening counts block.
-            // Comparison matches the engine: >= for Diagrammed (LosEffects line 1414),
-            // > for Standard (LosEffects line 1417).
             int solidTerrainHeight = groundElevation + buildingHeight;
-            boolean reachesLine = useDiagramLos
-                  ? solidTerrainHeight >= losLineElevation
-                  : solidTerrainHeight > losLineElevation;
-            boolean blocksLos = reachesLine
+            boolean blocksLos = solidTerrainHeight >= losLineElevation
                   && !coords.equals(attackPos)
                   && !coords.equals(targetPos);
 
@@ -195,9 +182,8 @@ final class LOSDiagramDataBuilder {
             ));
         }
 
-        // The attackerAbsHeight / targetAbsHeight values stored in the data are the unit's silhouette top
-        // (= hexLevel + twHeight). The panel uses these for silhouette geometry, then derives the actual
-        // LOS line endpoint from the active rule (silhouette top for Diagrammed, one level lower for Standard).
+        // The + 1 converts from code's 0-indexed heights to TW unit heights,
+        // matching the LosEffects interpolation formula (LosEffects line 1332)
         return new LOSDiagramData(
               List.copyOf(hexPath),
               attackInfo.attackAbsHeight + 1,
@@ -212,34 +198,29 @@ final class LOSDiagramDataBuilder {
               attackerAtAltitude,
               targetAtAltitude,
               attackerName,
-              targetName,
-              useDiagramLos
+              targetName
         );
     }
 
     /**
-     * Calculates the interpolated LOS line elevation at a given hex position, matching the engine's per-mode rules.
-     * For Diagrammed LOS the formula matches {@code LosEffects.losElevation = 1 + weightedHeight / totalDistance}
-     * (used with {@code >=}). For Standard LOS the engine uses raw {@code absHeight} with strict {@code >}, so the
-     * visual line is anchored one level lower; the {@code blocksLos} comparison in the caller picks the matching
-     * inequality.
+     * Calculates the interpolated LOS line elevation at a given hex position. Uses the same weighted average formula as
+     * {@link LosEffects}, including the {@code + 1} correction that converts from the code's 0-indexed unit heights to
+     * TW's unit heights (e.g., Mek = hex level + 2, Vehicle = hex level + 1).
      *
-     * @param attackInfo     the attack info with absolute heights
-     * @param coords         the hex to calculate for
-     * @param attackPos      the attacker position
-     * @param targetPos      the target position
-     * @param useDiagramLos  true if Diagrammed LOS (TacOps) is the active rule
+     * @param attackInfo the attack info with absolute heights
+     * @param coords     the hex to calculate for
+     * @param attackPos  the attacker position
+     * @param targetPos  the target position
      *
      * @return the interpolated LOS elevation at the given hex
      */
     private static double calculateLosLineElevation(LosEffects.AttackInfo attackInfo,
-          Coords coords, Coords attackPos, Coords targetPos, boolean useDiagramLos) {
-        double offset = useDiagramLos ? 1.0 : 0.0;
+          Coords coords, Coords attackPos, Coords targetPos) {
         if (coords.equals(attackPos)) {
-            return attackInfo.attackAbsHeight + offset;
+            return attackInfo.attackAbsHeight + 1;
         }
         if (coords.equals(targetPos)) {
-            return attackInfo.targetAbsHeight + offset;
+            return attackInfo.targetAbsHeight + 1;
         }
 
         double distanceFromAttacker = attackPos.distance(coords);
@@ -247,12 +228,14 @@ final class LOSDiagramDataBuilder {
         double totalDistance = distanceFromAttacker + distanceFromTarget;
 
         if (totalDistance == 0) {
-            return attackInfo.attackAbsHeight + offset;
+            return attackInfo.attackAbsHeight + 1;
         }
 
+        // Weighted height interpolation matching LosEffects formula (line 1332)
+        // The + 1 corrects from code's 0-indexed heights to TW unit heights
         double weightedHeight = (attackInfo.targetAbsHeight * distanceFromAttacker)
               + (attackInfo.attackAbsHeight * distanceFromTarget);
-        return offset + weightedHeight / totalDistance;
+        return 1 + weightedHeight / totalDistance;
     }
 
     /**

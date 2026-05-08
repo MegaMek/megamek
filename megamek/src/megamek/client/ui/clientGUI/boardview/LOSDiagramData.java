@@ -53,10 +53,6 @@ import megamek.common.board.Coords;
  * @param targetIsHullDown   whether the target is hull-down (reduces LOS profile by 1 TW level)
  * @param attackerName       display name of the attacker entity, or empty if none
  * @param targetName         display name of the target entity, or empty if none
- * @param useDiagramLos      true if Diagrammed LOS (TacOps) is the active rule. The Diagrammed engine compares
- *                           hex tops against {@code 1 + interp(absHeight)} with {@code >=}, while Standard LOS
- *                           uses {@code >} against raw absHeight. The diagram anchors the LOS line and per-hex
- *                           blocking comparisons differently for each mode.
  */
 record LOSDiagramData(
       List<HexRow> hexPath,
@@ -72,8 +68,7 @@ record LOSDiagramData(
       boolean attackerAtAltitude,
       boolean targetAtAltitude,
       String attackerName,
-      String targetName,
-      boolean useDiagramLos
+      String targetName
 ) {
 
     /**

@@ -1143,26 +1143,19 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         boolean attackerIsAlt = flip ? atAltitude1 : atAltitude2;
         boolean targetIsAlt = flip ? atAltitude2 : atAltitude1;
 
-        // Diagram visualization is mode-aware: Diagrammed LOS anchors the line at silhouette top
-        // and uses >= for blocking; Standard LOS anchors the line one level lower (TW p.38 "highest
-        // occupied") and uses strict >. The engine itself is unchanged - this just makes the picture
-        // match what LosEffects already computes for the active rule.
-        boolean useDiagramLos = game.getOptions()
-              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS1);
-
         LOSDiagramData diagramData;
         if (entityLosBlocked != null) {
             // Use pre-computed entity-based LOS result (matches fire phase)
             diagramData = LOSDiagramDataBuilder.buildWithLosResult(game, attackInfo,
                   entityLosBlocked, attackerHullDown, targetHullDown,
                   attackerType, targetType, attackerIsAlt, targetIsAlt,
-                  attackerName, targetName, useDiagramLos);
+                  attackerName, targetName);
         } else {
             // Use manual AttackInfo-based LOS (scenario testing)
             diagramData = LOSDiagramDataBuilder.build(game, attackInfo,
                   attackerHullDown, targetHullDown, attackerType, targetType,
                   attackerIsAlt, targetIsAlt,
-                  attackerName, targetName, useDiagramLos);
+                  attackerName, targetName);
         }
 
         diagramPanel.setData(diagramData);

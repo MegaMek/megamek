@@ -1013,14 +1013,16 @@ public class RulerDialog extends JDialog implements BoardViewListener {
 
         // When using entity-based path, compute the authoritative LOS result for the diagram
         Boolean entityLosBlocked = null;
+        boolean entityDeadZone = false;
         if (useEntityPath) {
             LosEffects entityLos = LosEffects.calculateLOS(game, attackerEntity, targetEntity);
             entityLosBlocked = !entityLos.canSee();
+            entityDeadZone = entityLos.isBlockedByDeadZone();
         }
 
         updateHeightInfo();
         updateUnitLabels();
-        updateDiagram(entityLosBlocked);
+        updateDiagram(entityLosBlocked, entityDeadZone);
         if (compareExpanded) {
             updateCompareTable();
         }
@@ -1109,8 +1111,10 @@ public class RulerDialog extends JDialog implements BoardViewListener {
      * @param entityLosBlocked if non-null, overrides the diagram's own LOS calculation with the entity-based result
      *                         (from the fire phase code path). Null means use the diagram's manual AttackInfo-based
      *                         calculation.
+     * @param entityDeadZone   true when the entity-based LOS result was blocked by a dead-zone shadow. Ignored when
+     *                         {@code entityLosBlocked} is null.
      */
-    private void updateDiagram(Boolean entityLosBlocked) {
+    private void updateDiagram(Boolean entityLosBlocked, boolean entityDeadZone) {
         if (!diagramExpanded || start == null || end == null) {
             return;
         }
@@ -1152,7 +1156,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         if (entityLosBlocked != null) {
             // Use pre-computed entity-based LOS result (matches fire phase)
             diagramData = LOSDiagramDataBuilder.buildWithLosResult(game, attackInfo,
-                  entityLosBlocked, attackerHullDown, targetHullDown,
+                  entityLosBlocked, entityDeadZone, attackerHullDown, targetHullDown,
                   attackerType, targetType, attackerIsAlt, targetIsAlt,
                   attackerName, targetName, losRuleMode);
         } else {
@@ -1414,13 +1418,71 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     }
 
     void butFlip_actionPerformed() {
-        flip = !flip;
-        applyColorsToUI();
+        // Move all per-point state from panel 1 to panel 2 (and vice versa) so the left box always
+        // tracks the attacker / point 1 and the right box always tracks the target / point 2. The
+        // diagram, POV labels, Start/End coords, and ruler colors all read from the same point
+        // fields, so swapping the underlying data flips every surface in one go.
+        swapPointData();
 
         setText();
         setVisible(true);
 
         bv.drawRuler(start, end, startColor, endColor);
+    }
+
+    /**
+     * Swaps every piece of point-1 / point-2 state in the dialog: the {@link Coords}, the height spinner
+     * values, the entity combo box selections, the lock checkbox states, the unit name / type / altitude
+     * flags, and the height labels. After the swap, point 1 holds what point 2 used to hold and vice versa,
+     * so any code that reads "point 1 = attacker" naturally renders the flipped view.
+     */
+    private void swapPointData() {
+        // Suppress combo-box listeners while we reseat selections; they'd otherwise re-trigger entity
+        // application logic mid-swap and clobber the values we're moving.
+        updatingCombo = true;
+        try {
+            Coords tmpCoords = start;
+            start = end;
+            end = tmpCoords;
+
+            Object tmpVal = height1.getValue();
+            height1.setValue(height2.getValue());
+            height2.setValue(tmpVal);
+
+            boolean tmpLock = lockStart.isSelected();
+            lockStart.setSelected(lockEnd.isSelected());
+            lockEnd.setSelected(tmpLock);
+
+            Object tmpEntity = cboEntity1.getSelectedItem();
+            cboEntity1.setSelectedItem(cboEntity2.getSelectedItem());
+            cboEntity2.setSelectedItem(tmpEntity);
+
+            String tmpName = entityName1;
+            entityName1 = entityName2;
+            entityName2 = tmpName;
+
+            String tmpShort = shortName1;
+            shortName1 = shortName2;
+            shortName2 = tmpShort;
+
+            DiagramUnitType tmpType = unitType1;
+            unitType1 = unitType2;
+            unitType2 = tmpType;
+
+            boolean tmpAlt = atAltitude1;
+            atAltitude1 = atAltitude2;
+            atAltitude2 = tmpAlt;
+
+            int tmpExpected = entityExpectedHeight1;
+            entityExpectedHeight1 = entityExpectedHeight2;
+            entityExpectedHeight2 = tmpExpected;
+
+            String tmpLabel = heightLabel1.getText();
+            heightLabel1.setText(heightLabel2.getText());
+            heightLabel2.setText(tmpLabel);
+        } finally {
+            updatingCombo = false;
+        }
     }
 
     void butClose_actionPerformed() {

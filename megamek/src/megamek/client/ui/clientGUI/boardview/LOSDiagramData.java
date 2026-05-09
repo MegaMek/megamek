@@ -57,6 +57,11 @@ import megamek.common.board.Coords;
  *                           (step-function for {@link LosRuleMode#STANDARD} and {@link LosRuleMode#DEAD_ZONE},
  *                           smooth interp for {@link LosRuleMode#DIAGRAMMED}) and to overlay the dead-zone shadow
  *                           when applicable
+ * @param deadZone           true if the engine flagged this LOS as blocked by a TacOps dead-zone shadow
+ *                           (see {@code LosEffects.isDeadZone}). The panel hatches the lower endpoint's
+ *                           hex column as a marker
+ * @param deadZoneVictimPos  the lower-elevation endpoint - the unit sitting inside the dead-zone shadow.
+ *                           {@code null} when {@code deadZone} is false
  */
 record LOSDiagramData(
       List<HexRow> hexPath,
@@ -73,7 +78,9 @@ record LOSDiagramData(
       boolean targetAtAltitude,
       String attackerName,
       String targetName,
-      LosRuleMode losRuleMode
+      LosRuleMode losRuleMode,
+      boolean deadZone,
+      @Nullable Coords deadZoneVictimPos
 ) {
 
     /**

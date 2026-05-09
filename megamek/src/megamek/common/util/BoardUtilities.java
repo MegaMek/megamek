@@ -205,7 +205,40 @@ public class BoardUtilities {
         // assuming that the map setting and board types match
         result.setType(medium);
 
+        // Propagate the source sheet name(s) onto the combined board so UI elements (Ruler title,
+        // save dialogs, scenario reports) can identify the map. Without this the combined board lands
+        // with Board.BOARD_NAME_UNNAMED regardless of what the underlying .board files were called.
+        String combinedName = deriveCombinedName(boards);
+        if (!Board.BOARD_NAME_UNNAMED.equals(combinedName)) {
+            result.setMapName(combinedName);
+        }
+
         return result;
+    }
+
+    /**
+     * Returns a display name for a combined board, derived from the names of its source sheets. A single
+     * non-default sheet name is used as-is; multiple distinct sheet names are joined with " + " in iteration
+     * order. If every sheet is unnamed (random generation, etc.) returns {@link Board#BOARD_NAME_UNNAMED}.
+     */
+    private static String deriveCombinedName(Board[] sheets) {
+        java.util.LinkedHashSet<String> names = new java.util.LinkedHashSet<>();
+        for (Board sheet : sheets) {
+            if (sheet == null) {
+                continue;
+            }
+            String n = sheet.getBoardName();
+            if (n != null && !n.isBlank() && !Board.BOARD_NAME_UNNAMED.equals(n)) {
+                names.add(n);
+            }
+        }
+        if (names.isEmpty()) {
+            return Board.BOARD_NAME_UNNAMED;
+        }
+        if (names.size() == 1) {
+            return names.iterator().next();
+        }
+        return String.join(" + ", names);
     }
 
     /**

@@ -79,7 +79,7 @@ final class LOSDiagramDataBuilder {
         LosEffects losEffects = LosEffects.calculateLos(game, attackInfo);
         boolean losBlocked = !losEffects.canSee();
 
-        return buildWithLosResult(game, attackInfo, losBlocked,
+        return buildWithLosResult(game, attackInfo, losBlocked, losEffects.isBlockedByDeadZone(),
               attackerIsHullDown, targetIsHullDown,
               attackerUnitType, targetUnitType,
               attackerAtAltitude, targetAtAltitude,
@@ -92,10 +92,11 @@ final class LOSDiagramDataBuilder {
      * performed via the entity-based path (fire phase code), so the diagram doesn't re-compute with the manual
      * AttackInfo (which may produce different results). {@code losRuleMode} controls the per-hex comparison level
      * the diagram uses to draw the line and flag blockers; pick it from the active game options via
-     * {@link LosRuleMode#fromGameOptions(Game)}.
+     * {@link LosRuleMode#fromGameOptions(Game)}. {@code deadZone} comes from the engine's
+     * {@link LosEffects#isDeadZone()} flag and drives the dead-zone overlay.
      */
     public static LOSDiagramData buildWithLosResult(Game game, LosEffects.AttackInfo attackInfo,
-          boolean losBlocked,
+          boolean losBlocked, boolean deadZone,
           boolean attackerIsHullDown, boolean targetIsHullDown,
           DiagramUnitType attackerUnitType, DiagramUnitType targetUnitType,
           boolean attackerAtAltitude, boolean targetAtAltitude,
@@ -190,6 +191,15 @@ final class LOSDiagramDataBuilder {
             ));
         }
 
+        // The dead-zone "victim" is whichever endpoint sits at the lower absHeight - that's the unit
+        // inside the shadow cast by the tallest intervening hill. Tied: pick the target arbitrarily.
+        Coords deadZoneVictimPos = null;
+        if (deadZone) {
+            deadZoneVictimPos = attackInfo.attackAbsHeight < attackInfo.targetAbsHeight
+                  ? attackPos
+                  : targetPos;
+        }
+
         // attackerAbsHeight / targetAbsHeight stored on the data are the BMM LOS levels (= hex + twHeight),
         // which is also the silhouette top in y-coords. The engine's internal absHeight is one less; the +1
         // converts back to BMM units for the diagram.
@@ -208,7 +218,9 @@ final class LOSDiagramDataBuilder {
               targetAtAltitude,
               attackerName,
               targetName,
-              losRuleMode
+              losRuleMode,
+              deadZone,
+              deadZoneVictimPos
         );
     }
 

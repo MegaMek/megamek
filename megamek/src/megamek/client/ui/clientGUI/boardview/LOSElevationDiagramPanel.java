@@ -40,6 +40,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -583,7 +584,66 @@ class LOSElevationDiagramPanel extends JPanel {
                 g2d.drawRect(xLeft, yBlockerTop, columnWidth, blockerHeight);
                 g2d.setStroke(STROKE_DEFAULT);
             }
+
+            // Mark the dead-zone victim hex with diagonal hatching across its ground bar so the player
+            // sees that the lower unit sits inside a TacOps dead-zone shadow. Only fires when the engine
+            // flagged the LOS as blocked by the dead-zone rule (Standard/BMM blocking uses the red outline
+            // above).
+            if (diagramData.deadZone() && hex.coords().equals(diagramData.deadZoneVictimPos())) {
+                drawDeadZoneHatch(g2d, xLeft, yGround, columnWidth, yBottom - yGround);
+            }
         }
+    }
+
+    /**
+     * Draws a {@code ///} pattern across the given rectangle in semi-opaque black, then a centered
+     * "Dead Zone" label on top so the marker is unambiguous. Used to mark a hex that sits inside a
+     * TacOps dead-zone shadow. Doesn't fill the air above the hex, so silhouettes and the LOS line
+     * stay readable.
+     */
+    private static void drawDeadZoneHatch(Graphics2D g2d, int x, int y, int width, int height) {
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+        Shape oldClip = g2d.getClip();
+        Color oldColor = g2d.getColor();
+        Stroke oldStroke = g2d.getStroke();
+        Font oldFont = g2d.getFont();
+        g2d.setClip(x, y, width, height);
+        g2d.setColor(new Color(0, 0, 0, 180));
+        g2d.setStroke(new BasicStroke(2.0f));
+        int spacing = UIUtil.scaleForGUI(8);
+        // Each line goes from (x + offset - height) at the bottom to (x + offset) at the top, creating
+        // a 45-degree slash that fully covers the rectangle when offsets march from -height to width.
+        for (int offset = -height; offset < width + height; offset += spacing) {
+            g2d.drawLine(x + offset, y + height, x + offset + height, y);
+        }
+
+        // Centered label. Falls back to "DZ" if the hex column is too narrow for the full text.
+        Font labelFont = oldFont.deriveFont(Font.BOLD, UIUtil.scaleForGUI(10.0f));
+        g2d.setFont(labelFont);
+        FontMetrics fm = g2d.getFontMetrics();
+        String label = "Dead Zone";
+        int labelWidth = fm.stringWidth(label);
+        if (labelWidth > width - 4) {
+            label = "DZ";
+            labelWidth = fm.stringWidth(label);
+        }
+        int textX = x + (width - labelWidth) / 2;
+        int textY = y + (height + fm.getAscent()) / 2 - fm.getDescent();
+        // White text with a thin black halo for contrast against the brown ground + black slashes.
+        g2d.setColor(Color.BLACK);
+        g2d.drawString(label, textX - 1, textY);
+        g2d.drawString(label, textX + 1, textY);
+        g2d.drawString(label, textX, textY - 1);
+        g2d.drawString(label, textX, textY + 1);
+        g2d.setColor(Color.WHITE);
+        g2d.drawString(label, textX, textY);
+
+        g2d.setFont(oldFont);
+        g2d.setStroke(oldStroke);
+        g2d.setColor(oldColor);
+        g2d.setClip(oldClip);
     }
 
     /**

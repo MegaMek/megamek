@@ -1092,18 +1092,24 @@ public class MovementDisplay extends ActionPhaseDisplay {
         //      no climb mode) and routed around. The player still clicked the cliff hex
         //      intending to descend; we trigger the dialog and let them pick descent or cancel.
         //
+        // Re-fetch the last step rather than reusing the cached hasLastStep / cmd.getLastStep()
+        // from above — the start-climbing dialog block can cancel and call cmd.removeLastStep(),
+        // making the cached state stale. Without this, dialog cancellation followed by an edge
+        // hex hover NPEs at distanceToFinalIsOne (cmd.getLastStep() now null).
+        MoveStep edgeLastStep = (cmd != null) ? cmd.getLastStep() : null;
+        boolean edgeHasLastStep = edgeLastStep != null;
         // distanceToFinalIsOne catches both: a single direct step has the same final-coord
         // distance as a long routed loop that ends on an adjacent hex.
-        boolean distanceToFinalIsOne = (currentEntity != null) && hasLastStep
-              && (currentEntity.getPosition().distance(cmd.getLastStep().getPosition()) == 1);
-        long forwardStepCount = hasCmd ? cmd.getStepVector().stream()
+        boolean distanceToFinalIsOne = (currentEntity != null) && edgeHasLastStep
+              && (currentEntity.getPosition().distance(edgeLastStep.getPosition()) == 1);
+        long forwardStepCount = (cmd != null) ? cmd.getStepVector().stream()
                                          .filter(s -> s.getType() == MoveStepType.FORWARDS).count() : 0;
         // Edge dangle: walking movement only — jumping uses jump jets to clear the drop
         // safely (no dangle needed). Climb mode is NOT required: per TO:AR p.20, dangle is
         // initiated by stepping off a 3+ level edge with two functional arms, and players
         // shouldn't have to know to toggle climb mode first to get the descent prompt.
-        boolean isWalkingNotJumping = hasLastStep
-              && (cmd.getLastStep().getMovementType(true) != EntityMovementType.MOVE_JUMP);
+        boolean isWalkingNotJumping = edgeHasLastStep
+              && (edgeLastStep.getMovementType(true) != EntityMovementType.MOVE_JUMP);
         // Routed-around case: planner used 2+ FORWARDS steps to reach an adjacent hex —
         // a clear sign the direct step was illegal (no leap, etc.). On Cancel we keep the
         // existing routed path; on a descent option we rebuild the path with proper facing.
@@ -1116,7 +1122,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
               && !currentEntity.isClimbing()
               && ClimbingHelper.canClimb(currentEntity)
               && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)) {
-            Coords stepPos = cmd.getLastStep().getPosition();
+            // Use the locally-fetched step (edgeLastStep is non-null inside this block since
+            // distanceToFinalIsOne required edgeHasLastStep). Don't refetch from cmd because
+            // a concurrent path-rebuild could race with the modal dialog.
+            Coords stepPos = edgeLastStep.getPosition();
             int levelDiff = ClimbingHelper.getEdgeDropHeight(currentEntity, stepPos, game);
             if (ClimbingHelper.isAtEdge(currentEntity, stepPos, game)) {
                     // Build descent options dialog
@@ -1236,13 +1245,27 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // This catches both first-step and walked-to-edge scenarios.
         // Re-check hasLastStep since cling/cancel above may have removed the step.
         // Jumping uses jump jets to clear the drop safely — no leap warning needed.
+        // An edge-descent path (CLIMB_MODE_ON + FORWARDS, the shape produced by Dangle/
+        // Climb-Down dialog choices) is also exempt: the descent is already governed by the
+        // dialog and isn't a leap. Drop paths intentionally lack the CLIMB_MODE_ON prefix
+        // so they still hit the warning (drop IS a leap).
         MoveStep currentLastStep = (cmd != null) ? cmd.getLastStep() : null;
         boolean isJumpStep = (currentLastStep != null)
               && (currentLastStep.getMovementType(true) == EntityMovementType.MOVE_JUMP);
+        boolean isEdgeDescentPath = false;
+        if ((cmd != null) && (currentLastStep != null)
+              && currentLastStep.getType() == MoveStepType.FORWARDS) {
+            List<MoveStep> stepVector = cmd.getStepVector();
+            if (stepVector.size() >= 2) {
+                MoveStep stepBeforeLast = stepVector.get(stepVector.size() - 2);
+                isEdgeDescentPath = stepBeforeLast.getType() == MoveStepType.CLIMB_MODE_ON;
+            }
+        }
         if ((currentLastStep != null) && (currentEntity instanceof Mek)
               && currentLastStep.getType() == MoveStepType.FORWARDS
               && !currentLastStep.isClimbing()
               && !isJumpStep
+              && !isEdgeDescentPath
               && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING)) {
             Coords lastStepPos = currentLastStep.getPosition();
             // Check the step BEFORE the last one to get the origin hex

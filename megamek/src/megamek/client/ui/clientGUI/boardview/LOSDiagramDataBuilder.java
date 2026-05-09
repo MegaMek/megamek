@@ -91,9 +91,9 @@ final class LOSDiagramDataBuilder {
      * Builds diagram data with a pre-computed LOS blocked result. Use this when the LOS calculation was already
      * performed via the entity-based path (fire phase code), so the diagram doesn't re-compute with the manual
      * AttackInfo (which may produce different results). {@code losRuleMode} controls the per-hex comparison level
-     * the diagram uses to draw the line and flag blockers; pick it from the active game options via
+     * the diagram uses to flag blockers; pick it from the active game options via
      * {@link LosRuleMode#fromGameOptions(Game)}. {@code deadZone} comes from the engine's
-     * {@link LosEffects#isDeadZone()} flag and drives the dead-zone overlay.
+     * {@link LosEffects#isBlockedByDeadZone()} flag and drives the dead-zone hatch overlay.
      */
     public static LOSDiagramData buildWithLosResult(Game game, LosEffects.AttackInfo attackInfo,
           boolean losBlocked, boolean deadZone,

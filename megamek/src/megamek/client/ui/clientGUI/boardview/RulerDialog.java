@@ -159,6 +159,8 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     private int entityExpectedHeight2 = -1;
     /** Suppresses combo box listener events during programmatic updates. */
     private boolean updatingCombo = false;
+    /** Suppresses height-spinner change listener events while {@link #swapPointData()} is reseating values. */
+    private boolean swappingPointData = false;
 
     private final JButton butDiagram = new JButton();
     private final LOSElevationDiagramPanel diagramPanel = new LOSElevationDiagramPanel();
@@ -1437,9 +1439,11 @@ public class RulerDialog extends JDialog implements BoardViewListener {
      * so any code that reads "point 1 = attacker" naturally renders the flipped view.
      */
     private void swapPointData() {
-        // Suppress combo-box listeners while we reseat selections; they'd otherwise re-trigger entity
-        // application logic mid-swap and clobber the values we're moving.
+        // Suppress combo-box listeners (would re-trigger entity application logic and clobber values)
+        // and height-spinner listeners (would call setText() mid-swap with half-swapped state).
+        // setText() runs once after this method returns from butFlip_actionPerformed.
         updatingCombo = true;
+        swappingPointData = true;
         try {
             Coords tmpCoords = start;
             start = end;
@@ -1482,6 +1486,7 @@ public class RulerDialog extends JDialog implements BoardViewListener {
             heightLabel2.setText(tmpLabel);
         } finally {
             updatingCombo = false;
+            swappingPointData = false;
         }
     }
 
@@ -1493,6 +1498,10 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     }
 
     void heightSpinnerChanged() {
+        // Skip the recalc while swapPointData is mid-flight; setText() runs once at the end of the swap.
+        if (swappingPointData) {
+            return;
+        }
         if (start != null && end != null) {
             setText();
         }

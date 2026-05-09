@@ -1014,7 +1014,9 @@ public class Board implements Serializable {
             // BOARD_NAME_UNNAMED placeholder.
             if (BOARD_NAME_UNNAMED.equals(mapName)) {
                 String fileName = filepath.getName();
-                if (fileName.toLowerCase().endsWith(".board")) {
+                // Locale.ROOT keeps the case fold deterministic - default locale could mishandle the
+                // dotless-i case (Turkish) and miss the .board suffix.
+                if (fileName.toLowerCase(Locale.ROOT).endsWith(".board")) {
                     fileName = fileName.substring(0, fileName.length() - ".board".length());
                 }
                 if (!fileName.isBlank()) {

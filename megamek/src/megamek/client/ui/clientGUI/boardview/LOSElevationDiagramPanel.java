@@ -619,14 +619,14 @@ class LOSElevationDiagramPanel extends JPanel {
             g2d.drawLine(x + offset, y + height, x + offset + height, y);
         }
 
-        // Centered label. Falls back to "DZ" if the hex column is too narrow for the full text.
+        // Centered label. Falls back to a short form if the hex column is too narrow for the full text.
         Font labelFont = oldFont.deriveFont(Font.BOLD, UIUtil.scaleForGUI(10.0f));
         g2d.setFont(labelFont);
         FontMetrics fm = g2d.getFontMetrics();
-        String label = "Dead Zone";
+        String label = Messages.getString("Ruler.deadZoneLabel");
         int labelWidth = fm.stringWidth(label);
         if (labelWidth > width - 4) {
-            label = "DZ";
+            label = Messages.getString("Ruler.deadZoneLabelShort");
             labelWidth = fm.stringWidth(label);
         }
         int textX = x + (width - labelWidth) / 2;

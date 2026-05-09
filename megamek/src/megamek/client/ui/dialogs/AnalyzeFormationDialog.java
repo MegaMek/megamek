@@ -111,7 +111,11 @@ public class AnalyzeFormationDialog extends JDialog {
         gbc.gridwidth = 3;
         gbc.weightx = 0;
         gbc.weighty = 0;
-        panAvailable.add(new JLabel(Messages.getString("AnalyzeFormationDialog.formation") + ft.getName()), gbc);
+        JLabel formationLabel = new JLabel(Messages.getString("AnalyzeFormationDialog.formation") + ft.getName());
+        if (Messages.keyExists(ft.getTooltipKey())) {
+            formationLabel.setToolTipText(Messages.getString(ft.getTooltipKey()));
+        }
+        panAvailable.add(formationLabel, gbc);
 
         gbc.gridy++;
         StringBuilder sb = new StringBuilder(Messages.getString("AnalyzeFormationDialog.weightClassRange"));

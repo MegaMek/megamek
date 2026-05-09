@@ -31,7 +31,6 @@
  * affiliated with Microsoft.
  */
 
-
 package megamek.common.equipment;
 
 import java.io.Serial;
@@ -60,6 +59,9 @@ import megamek.common.units.UnitType;
 import megamek.common.util.RoundWeight;
 import megamek.server.totalWarfare.TWGameManager;
 
+/**
+ * See TO:AUE p.126, 127; TRO: Irregulars, TRO: Prototypes
+ */
 public class HandheldWeapon extends Entity {
 
     @Serial

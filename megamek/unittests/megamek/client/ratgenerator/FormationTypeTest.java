@@ -129,6 +129,30 @@ class FormationTypeTest {
     }
 
     @Test
+    void lightFireLance_requires50PercentMissileBoatOrSniper_perCamOps() {
+        FormationType lightFire = FormationType.getFormationType("Light Fire");
+        assertNotNull(lightFire, "Light Fire formation should be registered");
+        assertEquals(EntityWeightClass.WEIGHT_MEDIUM, lightFire.getMaxWeightClass(),
+              "Light Fire excludes Heavy and Assault weight classes");
+
+        Iterator<FormationType.Constraint> iterator = lightFire.getOtherCriteria();
+        FormationType.Constraint roleConstraint = null;
+        while (iterator.hasNext()) {
+            FormationType.Constraint constraint = iterator.next();
+            if ("Sniper, Missile Boat".equals(constraint.getDescription())) {
+                roleConstraint = constraint;
+            }
+        }
+        assertNotNull(roleConstraint,
+              "Light Fire must declare a Missile Boat / Sniper role constraint per CamOps");
+        // 50% of 4 units = 2; verifies the constraint is a percent (not a flat count of 2).
+        assertEquals(2, roleConstraint.getMinimum(4),
+              "50% of 4 units rounds up to 2");
+        assertEquals(3, roleConstraint.getMinimum(5),
+              "50% of 5 units rounds up to 3 (PercentConstraint, not CountConstraint)");
+    }
+
+    @Test
     void vehicleCommandLance_requiresOnlyOnePair_perCamOps() {
         FormationType vehicleCommand = FormationType.getFormationType("Vehicle Command");
         assertNotNull(vehicleCommand, "Vehicle Command formation should be registered");
@@ -172,6 +196,76 @@ class FormationTypeTest {
               "qualifies() must accept a formation when the Sniper alternative is met");
     }
 
+    /**
+     * Exercises a synthetic FormationType combining an AND-style {@code CountConstraint} with a paired-OR pair,
+     * demonstrating that both constraint kinds compose correctly in {@link FormationType#qualifies(List)}. Independent
+     * of any specific real formation.
+     */
+    @Test
+    void qualifies_complexFormation_passesWhenBothAndAndPairedOrAreMet() throws Exception {
+        FormationType ft = createComplexFormation();
+
+        // 4 heavy units, 1 Juggernaut: AND (>=3 Heavy) and OR (1 Juggernaut) both satisfied.
+        List<MekSummary> units = List.of(
+              mockTank(JUGGERNAUT, EntityWeightClass.WEIGHT_HEAVY),
+              mockTank(BRAWLER, EntityWeightClass.WEIGHT_HEAVY),
+              mockTank(BRAWLER, EntityWeightClass.WEIGHT_HEAVY),
+              mockTank(BRAWLER, EntityWeightClass.WEIGHT_HEAVY));
+        assertTrue(ft.qualifies(units));
+    }
+
+    @Test
+    void qualifies_complexFormation_failsWhenAndConstraintFails_evenIfPairedOrIsMet() throws Exception {
+        FormationType ft = createComplexFormation();
+
+        // Only 1 Heavy unit: AND (>=3 Heavy) fails despite the Juggernaut alternative being met.
+        List<MekSummary> units = List.of(
+              mockTank(JUGGERNAUT, EntityWeightClass.WEIGHT_HEAVY),
+              mockTank(BRAWLER, EntityWeightClass.WEIGHT_MEDIUM),
+              mockTank(BRAWLER, EntityWeightClass.WEIGHT_MEDIUM),
+              mockTank(BRAWLER, EntityWeightClass.WEIGHT_MEDIUM));
+        assertFalse(ft.qualifies(units));
+    }
+
+    @Test
+    void qualifies_complexFormation_failsWhenPairedOrFails_evenIfAndConstraintIsMet() throws Exception {
+        FormationType ft = createComplexFormation();
+
+        // 4 Heavy units but neither a Juggernaut nor 2 Snipers: paired-OR fails.
+        List<MekSummary> units = List.of(
+              mockTank(BRAWLER, EntityWeightClass.WEIGHT_HEAVY),
+              mockTank(BRAWLER, EntityWeightClass.WEIGHT_HEAVY),
+              mockTank(BRAWLER, EntityWeightClass.WEIGHT_HEAVY),
+              mockTank(BRAWLER, EntityWeightClass.WEIGHT_HEAVY));
+        assertFalse(ft.qualifies(units));
+    }
+
+    @Test
+    void getTooltipKey_sanitizesSpacesAndSlashes() {
+        assertEquals("FormationType.Anvil.tooltip",
+              FormationType.getFormationType("Anvil").getTooltipKey());
+        assertEquals("FormationType.Fast_Assault.tooltip",
+              FormationType.getFormationType("Fast Assault").getTooltipKey());
+        assertEquals("FormationType.Berserker_Close.tooltip",
+              FormationType.getFormationType("Berserker/Close").getTooltipKey());
+        assertEquals("FormationType.Heavy_Striker_Cavalry.tooltip",
+              FormationType.getFormationType("Heavy Striker/Cavalry").getTooltipKey());
+    }
+
+    @Test
+    void everyRegisteredFormation_hasTooltipEntry_inMessagesBundle() {
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("megamek.client.messages",
+              java.util.Locale.ROOT);
+        java.util.List<String> missing = new java.util.ArrayList<>();
+        for (FormationType ft : FormationType.getAllFormations()) {
+            if (!bundle.containsKey(ft.getTooltipKey())) {
+                missing.add(ft.getName() + " -> " + ft.getTooltipKey());
+            }
+        }
+        assertTrue(missing.isEmpty(),
+              "Every formation should have a tooltip entry in messages.properties; missing: " + missing);
+    }
+
     private static FormationType createFormationWithPairedJuggernautOrSniper() throws Exception {
         FormationType ft = new FormationType("PairedConstraintTest");
         FormationType.Constraint juggernaut = new FormationType.CountConstraint(1,
@@ -180,21 +274,45 @@ class FormationTypeTest {
         FormationType.Constraint sniper = new FormationType.CountConstraint(2,
               ms -> ms.getRole() == SNIPER, "Sniper");
         sniper.setPairedWithPrevious(true);
+        addOtherCriteria(ft, juggernaut, sniper);
+        return ft;
+    }
+
+    private static FormationType createComplexFormation() throws Exception {
+        FormationType ft = new FormationType("ComplexConstraintTest");
+        FormationType.Constraint heavyAtLeastThree = new FormationType.CountConstraint(3,
+              ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY, "Heavy+");
+        FormationType.Constraint juggernaut = new FormationType.CountConstraint(1,
+              ms -> ms.getRole() == JUGGERNAUT, "Juggernaut");
+        juggernaut.setPairedWithNext(true);
+        FormationType.Constraint sniper = new FormationType.CountConstraint(2,
+              ms -> ms.getRole() == SNIPER, "Sniper");
+        sniper.setPairedWithPrevious(true);
+        addOtherCriteria(ft, heavyAtLeastThree, juggernaut, sniper);
+        return ft;
+    }
+
+    private static void addOtherCriteria(FormationType ft, FormationType.Constraint... constraints)
+          throws Exception {
         Field otherCriteriaField = FormationType.class.getDeclaredField("otherCriteria");
         otherCriteriaField.setAccessible(true);
         @SuppressWarnings("unchecked")
         List<FormationType.Constraint> otherCriteria =
               (List<FormationType.Constraint>) otherCriteriaField.get(ft);
-        otherCriteria.add(juggernaut);
-        otherCriteria.add(sniper);
-        return ft;
+        for (FormationType.Constraint c : constraints) {
+            otherCriteria.add(c);
+        }
     }
 
     private static MekSummary mockTank(UnitRole role) {
+        return mockTank(role, EntityWeightClass.WEIGHT_MEDIUM);
+    }
+
+    private static MekSummary mockTank(UnitRole role, int weightClass) {
         MekSummary ms = mock(MekSummary.class);
         when(ms.getUnitType()).thenReturn("Tank");
         when(ms.getRole()).thenReturn(role);
-        when(ms.getWeightClass()).thenReturn(EntityWeightClass.WEIGHT_MEDIUM);
+        when(ms.getWeightClass()).thenReturn(weightClass);
         return ms;
     }
 }

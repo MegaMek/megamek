@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -61,24 +61,52 @@ import megamek.common.weapons.srms.SRMWeapon;
 import megamek.common.weapons.tag.TAGWeapon;
 
 /**
- * Campaign Operations rules for force generation.
+ * Defines a Campaign Operations formation type (e.g., Battle Lance, Assault Lance, Aerospace Superiority Squadron),
+ * its composition rules, and the logic for generating or validating sets of units against those rules.
+ *
+ * <p>Each instance represents one named formation: its allowed unit types, weight class bounds, ideal role, main
+ * filter ({@link #getMainCriteria}), secondary {@link Constraint}s ({@link #getOtherCriteria}), and an optional
+ * {@link GroupingConstraint} for paired or matched-chassis subsets. Instances are registered in a static lookup
+ * table populated lazily on first access by {@link #createFormationTypes()}; client code retrieves a formation by
+ * name through {@link #getFormationType(String)} or iterates all of them with {@link #getAllFormations()}.
+ *
+ * <p>The two main entry points are:
+ * <ul>
+ *   <li>{@link #generateFormation(Parameters, int, int, boolean)} (and its overloads) — builds a list of
+ *       {@link MekSummary} units that satisfy the formation's rules, sampled from a {@link UnitTable}.</li>
+ *   <li>{@link #qualifies(List)} — tests whether an existing list of units already meets the formation's rules.</li>
+ * </ul>
  *
  * @author Neoancient
+ * @see Constraint
+ * @see GroupingConstraint
  */
 public class FormationType {
+    /** Bit flag identifying {@link UnitType#MEK} units. */
     public static final int FLAG_MEK = 1 << UnitType.MEK;
+    /** Bit flag identifying {@link UnitType#TANK} units. */
     public static final int FLAG_TANK = 1 << UnitType.TANK;
+    /** Bit flag identifying {@link UnitType#BATTLE_ARMOR} units. */
     public static final int FLAG_BATTLE_ARMOR = 1 << UnitType.BATTLE_ARMOR;
+    /** Bit flag identifying {@link UnitType#INFANTRY} units. */
     public static final int FLAG_INFANTRY = 1 << UnitType.INFANTRY;
+    /** Bit flag identifying {@link UnitType#PROTOMEK} units. */
     public static final int FLAG_PROTOMEK = 1 << UnitType.PROTOMEK;
+    /** Bit flag identifying {@link UnitType#VTOL} units. */
     public static final int FLAG_VTOL = 1 << UnitType.VTOL;
+    /** Bit flag identifying {@link UnitType#NAVAL} units. */
     public static final int FLAG_NAVAL = 1 << UnitType.NAVAL;
 
+    /** Bit flag identifying {@link UnitType#CONV_FIGHTER} units. */
     public static final int FLAG_CONV_FIGHTER = 1 << UnitType.CONV_FIGHTER;
+    /** Bit flag identifying {@link UnitType#AEROSPACE_FIGHTER} units. */
     public static final int FLAG_AERO = 1 << UnitType.AEROSPACE_FIGHTER;
+    /** Bit flag identifying {@link UnitType#SMALL_CRAFT} units. */
     public static final int FLAG_SMALL_CRAFT = 1 << UnitType.SMALL_CRAFT;
+    /** Bit flag identifying {@link UnitType#DROPSHIP} units. */
     public static final int FLAG_DROPSHIP = 1 << UnitType.DROPSHIP;
 
+    /** Composite flag covering all ground unit types (Mek, Tank, BA, Infantry, ProtoMek, VTOL, Naval). */
     public static final int FLAG_GROUND = FLAG_MEK |
           FLAG_TANK |
           FLAG_BATTLE_ARMOR |
@@ -87,19 +115,36 @@ public class FormationType {
           FLAG_VTOL |
           FLAG_NAVAL;
 
+    /**
+     * Composite flag covering ground unit types excluding Infantry and VTOL. Used by formations whose rules implicitly
+     * assume armored/heavy ground forces (e.g., Battle Lance variants). Note: the {@code _NO_LIGHT} suffix refers to
+     * omitting these unit-type categories, not weight class.
+     */
     public static final int FLAG_GROUND_NO_LIGHT = FLAG_MEK |
           FLAG_TANK |
           FLAG_BATTLE_ARMOR |
           FLAG_PROTOMEK |
           FLAG_NAVAL;
 
+    /** Composite flag covering aerospace and conventional fighters. */
     public static final int FLAG_FIGHTER = FLAG_CONV_FIGHTER | FLAG_AERO;
+    /** Composite flag covering all airborne categories (fighters, small craft, dropships). */
     public static final int FLAG_AIR = FLAG_CONV_FIGHTER | FLAG_AERO | FLAG_SMALL_CRAFT | FLAG_DROPSHIP;
+    /** Composite flag covering combat vehicles (Tank, Naval, VTOL). */
     public static final int FLAG_VEHICLE = FLAG_TANK | FLAG_NAVAL | FLAG_VTOL;
+    /** Composite flag covering every supported unit type. */
     public static final int FLAG_ALL = FLAG_GROUND | FLAG_AIR;
 
     private static HashMap<String, FormationType> allFormationTypes = null;
 
+    /**
+     * Returns the formation registered under the given name, lazily initializing the registry on first call.
+     *
+     * @param key the formation name (e.g., {@code "Assault"}, {@code "Recon"},
+     *            {@code "Aerospace Superiority Squadron"})
+     *
+     * @return the matching {@link FormationType}, or {@code null} if no formation is registered under that name
+     */
     public static FormationType getFormationType(String key) {
         if (allFormationTypes == null) {
             createFormationTypes();
@@ -107,6 +152,12 @@ public class FormationType {
         return allFormationTypes.get(key);
     }
 
+    /**
+     * Returns every registered formation, lazily initializing the registry on first call. The returned collection is
+     * backed by the registry; callers should treat it as read-only.
+     *
+     * @return all registered formation types
+     */
     public static Collection<FormationType> getAllFormations() {
         if (allFormationTypes == null) {
             createFormationTypes();
@@ -114,10 +165,23 @@ public class FormationType {
         return allFormationTypes.values();
     }
 
+    /**
+     * Constructs a formation whose category is the same as its name (used for top-level formations that are not a
+     * variant of another). Subclasses populate the remaining fields by direct access before registering.
+     *
+     * @param name the formation name; also used as the category
+     */
     protected FormationType(String name) {
         this(name, name);
     }
 
+    /**
+     * Constructs a formation with an explicit category. Used for variants (e.g., {@code "Heavy Battle"} in category
+     * {@code "Battle"}). Subclasses populate the remaining fields by direct access before registering.
+     *
+     * @param name     the formation name
+     * @param category the parent/grouping category for organizational purposes
+     */
     protected FormationType(String name, String category) {
         this.name = name;
         this.category = category;
@@ -148,58 +212,138 @@ public class FormationType {
     private String mainDescription = null;
     private final Map<String, Function<MekSummary, ?>> reportMetrics = new HashMap<>();
 
+    /** @return the formation's display name (e.g., {@code "Heavy Battle"}). */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return the formation's category, which groups variants (e.g., {@code "Battle"} for {@code "Heavy Battle"}).
+     *       Top-level formations have a category equal to their name.
+     */
     public String getCategory() {
         return category;
     }
 
+    /**
+     * Tests whether the given {@link UnitType} value is included in this formation's allowed unit types.
+     *
+     * @param ut a {@link UnitType} constant (the int value, not a {@code FLAG_*} mask)
+     *
+     * @return {@code true} if units of that type may participate in this formation
+     */
     public boolean isAllowedUnitType(int ut) {
         return (allowedUnitTypes & (1 << ut)) != 0;
     }
 
+    /**
+     * @return {@code true} if this formation does not allow aerospace fighters; that is, it is a ground formation.
+     *       Convenience for distinguishing ground lances from aerospace squadrons.
+     */
     public boolean isGround() {
         return (allowedUnitTypes & FLAG_AERO) == 0;
     }
 
+    /**
+     * @return the formation name, suffixed with the faction key in parentheses if the formation is exclusive to a
+     *       single faction (e.g., {@code "Anvil (FWL)"}). Returns just the name if not faction-exclusive.
+     */
     public String getNameWithFaction() {
         return exclusiveFaction == null ? name : name + " (" + exclusiveFaction + ")";
     }
 
+    /**
+     * Returns a stable resource-bundle key for this formation's tooltip text, suitable for lookup in
+     * {@code megamek.client.messages}. The key has the form {@code FormationType.<sanitizedName>.tooltip}, where spaces
+     * and forward slashes in the formation name are replaced with underscores so the key is a valid properties
+     * identifier.
+     *
+     * <p>UI code is expected to call {@code Messages.getString(ft.getTooltipKey())} (with a missing-key fallback)
+     * rather than constructing the key inline. This keeps {@link FormationType} ignorant of the UI Messages bundle
+     * while letting per-formation tooltip strings live in {@code messages.properties}.
+     *
+     * @return the resource-bundle key for this formation's tooltip
+     */
+    public String getTooltipKey() {
+        return "FormationType." + name.replace(' ', '_').replace('/', '_') + ".tooltip";
+    }
+
+    /**
+     * @return the minimum allowed {@link EntityWeightClass} for units in this formation; {@code 0} (no minimum) by
+     *       default
+     */
     public int getMinWeightClass() {
         return minWeightClass;
     }
 
+    /**
+     * @return the maximum allowed {@link EntityWeightClass} for units in this formation;
+     *       {@link EntityWeightClass#WEIGHT_COLOSSAL} (no maximum) by default
+     */
     public int getMaxWeightClass() {
         return maxWeightClass;
     }
 
+    /**
+     * @return mission roles applied to RAT generation for this formation. Some formations admit units in normally
+     *       non-combat roles (e.g., {@link MissionRole#MIXED_ARTILLERY} for Anti-Air and Artillery Fire Lances).
+     */
     public Set<MissionRole> getMissionRoles() {
         return missionRoles;
     }
 
+    /**
+     * @return the ideal {@link UnitRole} for this formation. If every unit in a candidate force has this role, the
+     *       formation's other constraints are bypassed (CamOps "ideal role" loophole). Returns
+     *       {@link UnitRole#UNDETERMINED} for formations without an ideal role.
+     */
+    public UnitRole getIdealRole() {
+        return idealRole;
+    }
+
+    /** @return the predicate every unit must satisfy to participate in this formation. */
     public Predicate<MekSummary> getMainCriteria() {
         return mainCriteria;
     }
 
+    /**
+     * @return a human-readable description of the main criteria (e.g., {@code "Armor 105+"}), suitable for UI display.
+     *       May be {@code null} if no main criteria are imposed.
+     */
     public String getMainDescription() {
         return mainDescription;
     }
 
+    /**
+     * @return an iterator over secondary {@link Constraint}s — count, percent, and paired-OR rules that a portion of
+     *       the force must satisfy
+     */
     public Iterator<Constraint> getOtherCriteria() {
         return otherCriteria.iterator();
     }
 
+    /**
+     * @return the optional {@link GroupingConstraint} for paired or matched-chassis subsets, or {@code null} if this
+     *       formation does not impose grouping
+     */
     public GroupingConstraint getGroupingCriteria() {
         return groupingCriteria;
     }
 
+    /**
+     * @return iterator over the keys of report-metric extractors registered for this formation. Used by UI to display
+     *       per-unit diagnostic columns alongside the formation's qualifications report.
+     */
     public Iterator<String> getReportMetricKeys() {
         return reportMetrics.keySet().iterator();
     }
 
+    /**
+     * @param key a report-metric key from {@link #getReportMetricKeys()}
+     *
+     * @return the function that extracts the metric value for a given unit, or {@code null} if no such metric is
+     *       registered
+     */
     public Function<MekSummary, ?> getReportMetric(String key) {
         return reportMetrics.get(key);
     }
@@ -257,6 +401,18 @@ public class FormationType {
         return mRec == null ? ModelRecord.NETWORK_NONE : mRec.getNetworkMask();
     }
 
+    /**
+     * Convenience overload of {@link #generateFormation(List, List, int, boolean, int, int)} for formations whose units
+     * all share a single set of {@link Parameters} (the common single-unit-type case).
+     *
+     * @param params      the RAT generation parameters
+     * @param numUnits    the number of units to generate
+     * @param networkMask C3/C3i/Nova network requirement (use {@link ModelRecord#NETWORK_NONE} for no requirement)
+     * @param bestEffort  if {@code true}, returns a partial result when not all constraints can be met
+     *
+     * @return the generated units, or an empty list if the formation could not be built and {@code bestEffort} is
+     *       {@code false}
+     */
     public List<MekSummary> generateFormation(Parameters params, int numUnits, int networkMask, boolean bestEffort) {
         List<Parameters> parametersArrayList = new ArrayList<>();
         parametersArrayList.add(params);
@@ -265,11 +421,48 @@ public class FormationType {
         return generateFormation(parametersArrayList, numUnitsIDList, networkMask, bestEffort, -1, -1);
     }
 
+    /**
+     * Overload of {@link #generateFormation(List, List, int, boolean, int, int)} that uses the formation's own grouping
+     * configuration without per-call overrides.
+     *
+     * @param params      one {@link Parameters} per unit-type group
+     * @param numUnits    one count per {@link Parameters}, parallel to {@code params}
+     * @param networkMask C3/C3i/Nova network requirement
+     * @param bestEffort  if {@code true}, returns a partial result when not all constraints can be met
+     *
+     * @return the generated units, or an empty list if the formation could not be built and {@code bestEffort} is
+     *       {@code false}
+     */
     public List<MekSummary> generateFormation(List<Parameters> params, List<Integer> numUnits, int networkMask,
           boolean bestEffort) {
         return generateFormation(params, numUnits, networkMask, bestEffort, -1, -1);
     }
 
+    /**
+     * Builds a list of units that satisfy this formation's rules, sampled from {@link UnitTable}s derived from the
+     * provided parameters. Handles paired-OR constraints, network role distribution (C3 master/slave, C3i, Nova), mixed
+     * unit types via parallel parameter sets, and movement-mode resolution for vehicles/infantry whose mode is left
+     * unspecified.
+     *
+     * <p>If the formation defines an {@link #getIdealRole() ideal role} and direct generation falls short of all
+     * constraints, falls back to attempting an all-ideal-role formation (CamOps loophole).
+     *
+     * @param params      one {@link Parameters} per unit-type group; size must match {@code numUnits}
+     * @param numUnits    the count of units to generate per parameter group
+     * @param networkMask the C3/C3i/Nova network requirement encoded as a {@link ModelRecord} {@code NETWORK_*}
+     *                    bitmask; pass {@link ModelRecord#NETWORK_NONE} to skip network requirements
+     * @param bestEffort  if {@code true}, returns whatever could be generated when constraints cannot be fully met; if
+     *                    {@code false}, returns an empty list on failure
+     * @param groupSize   override for the formation's grouping constraint group size; pass {@code -1} to use the
+     *                    formation's own value
+     * @param nGroups     override for the formation's grouping constraint group count; pass {@code -1} to use the
+     *                    formation's own value
+     *
+     * @return the generated units (concatenated across parameter groups, in input order), or an empty list on failure
+     *       when {@code bestEffort} is {@code false}
+     *
+     * @throws IllegalArgumentException if {@code params} and {@code numUnits} have different sizes or are empty
+     */
     public List<MekSummary> generateFormation(List<Parameters> params, List<Integer> numUnits, int networkMask,
           boolean bestEffort, int groupSize, int nGroups) {
         if (params.size() != numUnits.size() || params.isEmpty()) {
@@ -792,6 +985,7 @@ public class FormationType {
             if (units.size() < numUnits.get(i)) {
                 return null;
             }
+            retVal.addAll(units);
         }
         return retVal;
     }
@@ -1179,6 +1373,12 @@ public class FormationType {
             long matches = units.stream().filter(c::matches).count();
             if (matches < c.getMinimum(units.size())) {
                 if (c.isPairedWithNext() && i + 1 < otherCriteria.size()) {
+                    // The pair is satisfied only if the alternative also meets its minimum.
+                    final Constraint alternative = otherCriteria.get(i + 1);
+                    long altMatches = units.stream().filter(alternative::matches).count();
+                    if (altMatches < alternative.getMinimum(units.size())) {
+                        return false;
+                    }
                     i++;
                 } else {
                     return false;
@@ -1413,6 +1613,11 @@ public class FormationType {
         return sb.toString();
     }
 
+    /**
+     * Initializes (or reinitializes) the static registry of all known formation types, registering each formation
+     * defined by the {@code create*Lance()} / {@code create*Squadron()} factories below. Called lazily by
+     * {@link #getFormationType(String)} and {@link #getAllFormations()} on first access; rarely invoked directly.
+     */
     public static void createFormationTypes() {
         allFormationTypes = new HashMap<>();
         createAntiMekLance();
@@ -1448,6 +1653,7 @@ public class FormationType {
         createHordeLance();
         createLightStrikerCavalryLance();
         createRangerLance();
+        createSupportLance();
         createUrbanLance();
         createAerospaceSuperioritySquadron();
         createEWSquadron();
@@ -1455,14 +1661,41 @@ public class FormationType {
         createInterceptorSquadron();
         createStrikeSquadron();
         createTransportSquadron();
+
+        // Not registered above — meta-formations that current architecture cannot represent:
+        //
+        // Air Lance (CamOps p. 61): a ground lance of any non-infantry type plus a pair of
+        // identical aerospace or conventional fighters. The ground half must independently
+        // satisfy a chosen ground Formation Type (Battle, Recon, etc.); the two fighters
+        // must be identical units. Implementing this needs a "composite formation" concept
+        // that holds references to two sub-formations and delegates qualifies()/
+        // generateFormation() to them rather than evaluating its own constraint list. The
+        // attached fighters do not benefit from the ground formation's bonus ability and
+        // do not count toward its requirements.
+        //
+        // Nova (CamOps p. 64): a Clan-only combined formation made of a Star of OmniMeks
+        // (which also satisfies another Mek Formation Type, e.g., Battle Star) and a Star
+        // of mechanized battle armor. Vehicle Nova and Aerospace Nova variants exist.
+        // Needs the same composite-formation infrastructure as Air Lance, plus cross-Star
+        // equipment validation: all Meks must have OMNI; all BA must have MEC. Non-Clan
+        // equivalents substitute XMEC BA one-for-one for non-Omni Meks. Bonus abilities
+        // apply only to the Mek Star; the BA Star receives no formation bonus.
     }
 
+    /**
+     * Registers the Anti-Mek Lance (Campaign Operations p. 61): an infantry/battle armor formation trained to swarm and
+     * disrupt enemy Meks.
+     */
     private static void createAntiMekLance() {
         FormationType ft = new FormationType("Anti-Mek");
         ft.allowedUnitTypes = FLAG_INFANTRY | FLAG_BATTLE_ARMOR;
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Assault Lance (Campaign Operations p. 61): the powerhouse formation of any force, with reduced
+     * speed offset by massive firepower and armor. Ideal role: Juggernaut.
+     */
     private static void createAssaultLance() {
         FormationType ft = new FormationType("Assault");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
@@ -1485,13 +1718,18 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Anvil Lance (Campaign Operations p. 62): a House Marik Assault Lance variant trained to hold ground
+     * and absorb the enemy's advance while heavier units engage. Ideal role: Juggernaut.
+     */
     private static void createAnvilLance() {
         FormationType ft = new FormationType("Anvil", "Assault");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
         ft.exclusiveFaction = "FWL";
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
-        ft.mainCriteria = ms -> ms.getTotalArmor() >= 40;
-        ft.mainDescription = "Armor 40+";
+        // Campaign Operations (Anvil Lance): all units must possess at least 105 armor points.
+        ft.mainCriteria = ms -> ms.getTotalArmor() >= 105;
+        ft.mainDescription = "Armor 105+";
         ft.otherCriteria.add(new PercentConstraint(0.5,
               ms -> ms.getEquipmentNames()
                     .stream()
@@ -1506,6 +1744,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Fast Assault Lance (Campaign Operations p. 62): an Assault Lance variant requiring Walk/Cruise 5+
+     * or jump capability on every unit.
+     */
     private static void createFastAssaultLance() {
         FormationType ft = new FormationType("Fast Assault", "Assault");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
@@ -1516,15 +1758,22 @@ public class FormationType {
         ft.otherCriteria.add(new CountConstraint(3,
               ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
               "Heavy+"));
-        // FIXME: The actual requirement is one juggernaut or two snipers; there needs to be a way to combine
-        //  constraints with.
-        ft.otherCriteria.add(new CountConstraint(2,
-              ms -> ms.getRole().isAnyOf(JUGGERNAUT, SNIPER),
-              "Juggernaut or Sniper"));
+        // Campaign Operations (Assault Lance, inherited by Fast Assault): at least one Juggernaut OR
+        // two Snipers. Encoded as a paired-OR pair of CountConstraints.
+        Constraint c = new CountConstraint(1, ms -> ms.getRole() == JUGGERNAUT, "Juggernaut");
+        c.setPairedWithNext(true);
+        ft.otherCriteria.add(c);
+        c = new CountConstraint(2, ms -> ms.getRole() == SNIPER, "Sniper");
+        c.setPairedWithPrevious(true);
+        ft.otherCriteria.add(c);
         ft.reportMetrics.put("Damage @ 7", ms -> getDamageAtRange(ms, 7));
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Hunter Lance (Campaign Operations p. 62): an Assault Lance variant favoring heavy woods or urban
+     * terrain for ambush combat. Ideal role: Ambusher.
+     */
     private static void createHunterLance() {
         FormationType ft = new FormationType("Hunter", "Assault");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1535,6 +1784,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Battle Lance (Campaign Operations p. 62): the standard line formation, intended to close with the
+     * enemy on the strength of armor and firepower. Ideal role: Brawler.
+     */
     private static void createBattleLance() {
         FormationType ft = new FormationType("Battle");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
@@ -1554,6 +1807,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Light Battle Lance (Campaign Operations p. 63): a light-weight Battle Lance variant requiring at
+     * least one Scout.
+     */
     private static void createLightBattleLance() {
         FormationType ft = new FormationType("Light Battle", "Battle");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1571,6 +1828,7 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /** Registers the Medium Battle Lance (Campaign Operations p. 63): a medium-weight Battle Lance variant. */
     private static void createMediumBattleLance() {
         FormationType ft = new FormationType("Medium Battle", "Battle");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
@@ -1587,6 +1845,7 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /** Registers the Heavy Battle Lance (Campaign Operations p. 63): a heavy-weight Battle Lance variant; light-weight units are excluded. */
     private static void createHeavyBattleLance() {
         FormationType ft = new FormationType("Heavy Battle", "Battle");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
@@ -1603,6 +1862,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Rifle Lance (Campaign Operations p. 63): a House Davion Battle Lance variant built around
+     * autocannon-armed mobile units (medium and heavy weight, Walk/Cruise 4+).
+     */
     private static void createRifleLance() {
         FormationType ft = new FormationType("Rifle", "Battle");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
@@ -1626,6 +1889,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Berserker/Close Combat Lance (Campaign Operations p. 63): a Mek-only Battle Lance variant
+     * trained to close with and physically attack the enemy. Ideal role: Brawler.
+     */
     private static void createBerserkerLance() {
         FormationType ft = new FormationType("Berserker/Close", "Battle");
         ft.allowedUnitTypes = FLAG_MEK | FLAG_PROTOMEK;
@@ -1639,6 +1906,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Command Lance (Campaign Operations p. 63): a formation built around the force commander,
+     * with diverse capabilities to support and protect the leader on the battlefield.
+     */
     private static void createCommandLance() {
         FormationType ft = new FormationType("Command", "Command");
         ft.allowedUnitTypes = FLAG_MEK | FLAG_PROTOMEK;
@@ -1651,6 +1922,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Order Lance (Campaign Operations p. 63): a House Kurita Command Lance variant where every
+     * unit shares the same model and weight class.
+     */
     private static void createOrderLance() {
         FormationType ft = new FormationType("Order", "Command");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1664,26 +1939,31 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Vehicle Command Lance (Campaign Operations p. 63): a Command Lance variant for combat
+     * vehicles, with one matched pair fulfilling the role requirement.
+     */
     private static void createVehicleCommandLance() {
         FormationType ft = new FormationType("Vehicle Command", "Command");
         ft.allowedUnitTypes = FLAG_TANK | FLAG_VTOL | FLAG_NAVAL;
         ft.otherCriteria.add(new CountConstraint(1,
               ms -> ms.getRole().isAnyOf(BRAWLER, STRIKER, SCOUT),
               "Brawler, Striker, Scout"));
-        /*
-         * The description does not state how many pairs there need to be, but the
-         * reference to
-         * "one of the pairs" implies there need to be at least two.
-         */
+        // Campaign Operations (Vehicle Command Lance): only one pair of vehicles needs to have one
+        // of the Sniper, Missile Boat, Skirmisher, or Juggernaut roles.
         ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE,
               2,
-              2,
+              1,
               ms -> ms.getRole().isAnyOf(SNIPER, MISSILE_BOAT, SKIRMISHER, JUGGERNAUT),
               (ms0, ms1) -> ms0.getName().equals(ms1.getName()),
               "Same model");
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Fire Lance (Campaign Operations p. 64): a long-range fire formation that engages from a safe
+     * distance with powerful weaponry. Ideal role: Missile Boat.
+     */
     private static void createFireLance() {
         FormationType ft = new FormationType("Fire");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1694,6 +1974,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Anti-Air Lance (Campaign Operations p. 64): a Fire Lance variant emphasizing anti-aircraft
+     * autocannons, LBX, artillery, or units with the Anti-Aircraft Targeting Quirk.
+     */
     private static void createAntiAirLance() {
         FormationType ft = new FormationType("Anti-Air", "Fire");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1716,6 +2000,7 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /** Registers the Artillery Fire Lance (Campaign Operations p. 64): a Fire Lance variant requiring at least two artillery-armed units. */
     private static void createArtilleryFireLance() {
         FormationType ft = new FormationType("Artillery Fire", "Fire");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1730,6 +2015,7 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /** Registers the Direct Fire Lance (Campaign Operations p. 64): a Fire Lance variant requiring all units deliver at least 10 damage at range 18. */
     private static void createDirectFireLance() {
         FormationType ft = new FormationType("Direct Fire", "Fire");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
@@ -1742,6 +2028,7 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /** Registers the Fire Support Lance (Campaign Operations p. 64): a Fire Lance variant requiring at least three units with indirect-fire capability. */
     private static void createFireSupportLance() {
         FormationType ft = new FormationType("Fire Support", "Fire");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1755,16 +2042,31 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Light Fire Lance (Campaign Operations p. 64): a Fire Lance variant restricted to light and
+     * medium weight where at least 50% of the units have the Missile Boat or Sniper role; light Meks combine
+     * fire to bring down larger targets.
+     */
     private static void createLightFireLance() {
         FormationType ft = new FormationType("Light Fire", "Fire");
         ft.allowedUnitTypes = FLAG_GROUND;
         ft.maxWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
+        // Campaign Operations (Light Fire Lance): at least 50% must have the Missile Boat or Sniper role.
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+              ms -> ms.getRole().isAnyOf(SNIPER, MISSILE_BOAT),
+              "Sniper, Missile Boat"));
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Pursuit Lance (Campaign Operations p. 65): a high-speed scout-hunter formation built for
+     * mobility and selective firepower. Ideal role: Striker.
+     */
     private static void createPursuitLance() {
         FormationType ft = new FormationType("Pursuit");
         ft.allowedUnitTypes = FLAG_GROUND;
+        // Campaign Operations (Pursuit Lance): Ideal Role - Striker.
+        ft.idealRole = STRIKER;
         ft.maxWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.otherCriteria.add(new PercentConstraint(0.75, ms -> ms.getWalkMp() >= 6, "Walk/Cruise 6+"));
         ft.otherCriteria.add(new CountConstraint(1,
@@ -1774,6 +2076,7 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /** Registers the Probe Lance (Campaign Operations p. 65): a Pursuit Lance variant excluding assault weight, requiring all units deliver 10+ damage at range 9. */
     private static void createProbeLance() {
         FormationType ft = new FormationType("Probe", "Pursuit");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1785,6 +2088,7 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /** Registers the Sweep Lance (Campaign Operations p. 65): a Pursuit Lance variant emphasizing short-range damage at speed; all units must deliver 10+ damage at range 6. */
     private static void createSweepLance() {
         FormationType ft = new FormationType("Sweep", "Pursuit");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1795,6 +2099,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Recon Lance (Campaign Operations p. 65): a fast scouting formation that runs ahead of the
+     * main force to gather intelligence and harass enemies. Ideal role: Scout.
+     */
     private static void createReconLance() {
         FormationType ft = new FormationType("Recon");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1805,6 +2113,7 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /** Registers the Heavy Recon Lance (Campaign Operations p. 65): a Recon Lance variant including a heavy-weight backbone and excluding infantry/VTOL. */
     private static void createHeavyReconLance() {
         FormationType ft = new FormationType("Heavy Recon", "Recon");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
@@ -1818,6 +2127,7 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /** Registers the Light Recon Lance (Campaign Operations p. 65): a Recon Lance variant restricted to light weight and the Scout role. */
     private static void createLightReconLance() {
         FormationType ft = new FormationType("Light Recon", "Recon");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1827,6 +2137,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Security Lance (Campaign Operations p. 65): a defensive formation built for independent
+     * operations, blending scouts/strikers with snipers; at most one assault unit allowed.
+     */
     private static void createSecurityLance() {
         FormationType ft = new FormationType("Security");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1840,6 +2154,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Striker/Cavalry Lance (Campaign Operations p. 66): a fast-moving formation that brings
+     * firepower into combat quickly while remaining able to withdraw. Ideal role: Striker.
+     */
     private static void createStrikerCavalryLance() {
         FormationType ft = new FormationType("Striker/Cavalry");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1853,6 +2171,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Hammer Lance (Campaign Operations p. 66): a House Marik Striker/Cavalry variant trained to
+     * flank or rear-attack while the Anvil Lance holds the front. Ideal role: Striker.
+     */
     private static void createHammerLance() {
         FormationType ft = new FormationType("Hammer", "Striker/Cavalry");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1863,6 +2185,7 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /** Registers the Heavy Striker/Cavalry Lance (Campaign Operations p. 66): a heavy-weight Striker/Cavalry variant requiring long-range firepower. */
     private static void createHeavyStrikerCavalryLance() {
         FormationType ft = new FormationType("Heavy Striker/Cavalry", "Striker/Cavalry");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
@@ -1882,6 +2205,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Horde (Campaign Operations p. 66): a Striker/Cavalry variant of light Meks swarming larger
+     * opponents through numbers; CamOps requires 5–10 units (size enforced outside this class).
+     */
     private static void createHordeLance() {
         FormationType ft = new FormationType("Horde", "Striker/Cavalry");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1892,6 +2219,7 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /** Registers the Light Striker/Cavalry Lance (Campaign Operations p. 66): a light-weight Striker/Cavalry variant emphasizing long-range damage. */
     private static void createLightStrikerCavalryLance() {
         FormationType ft = new FormationType("Light Striker/Cavalry", "Striker/Cavalry");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1908,13 +2236,35 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Support Lance (Campaign Operations p. 66): a multi-role formation that backs up other formations
+     * rather than excelling on its own. CamOps states "Requirements: None; Ideal Role: None"; the bonus ability
+     * (mirroring the supported formation's SPAs) is a gameplay-time effect handled outside this class, so the
+     * registration here is intentionally constraint-free.
+     */
+    private static void createSupportLance() {
+        FormationType ft = new FormationType("Support");
+        ft.allowedUnitTypes = FLAG_GROUND;
+        allFormationTypes.put(ft.name, ft);
+    }
+
+    /**
+     * Registers the Ranger Lance (Campaign Operations p. 66): a Striker/Cavalry variant trained for combat in
+     * difficult terrain. Ideal role: Skirmisher.
+     */
     private static void createRangerLance() {
         FormationType ft = new FormationType("Ranger", "Striker/Cavalry");
         ft.allowedUnitTypes = FLAG_GROUND;
+        // Campaign Operations (Ranger Lance): Ideal Role - Skirmisher.
+        ft.idealRole = SKIRMISHER;
         ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Urban Combat Lance (Campaign Operations p. 67): a formation favoring jump movement and slow
+     * units for short-range city fighting. Ideal role: Ambusher.
+     */
     private static void createUrbanLance() {
         FormationType ft = new FormationType("Urban");
         ft.allowedUnitTypes = FLAG_GROUND;
@@ -1928,6 +2278,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Aerospace Superiority Squadron (Campaign Operations p. 67): the air-combat counterpart to
+     * the Battle Lance, built around Interceptor and Fast Dogfighter roles.
+     */
     private static void createAerospaceSuperioritySquadron() {
         FormationType ft = new FormationType("Aerospace Superiority Squadron");
         ft.allowedUnitTypes = FLAG_FIGHTER;
@@ -1943,6 +2297,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Electronic Warfare Squadron (Campaign Operations p. 67): a fighter formation dedicated to
+     * disrupting enemy communications and ECM via Probe, ECM suite, or TAG equipment.
+     */
     private static void createEWSquadron() {
         FormationType ft = new FormationType("Electronic Warfare Squadron");
         ft.allowedUnitTypes = FLAG_FIGHTER;
@@ -1964,6 +2322,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Fire Support Squadron (Campaign Operations p. 68): an aerospace formation suited to
+     * ground-attack and long-range engagement, blending Fire Support and Dogfighter roles.
+     */
     private static void createFireSupportSquadron() {
         FormationType ft = new FormationType("Fire Support Squadron");
         ft.allowedUnitTypes = FLAG_FIGHTER;
@@ -1979,6 +2341,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Interceptor Squadron (Campaign Operations p. 68): a fast aerospace formation built to deliver
+     * the first strike against opposing aerospace threats.
+     */
     private static void createInterceptorSquadron() {
         FormationType ft = new FormationType("Interceptor Squadron");
         ft.allowedUnitTypes = FLAG_FIGHTER;
@@ -1992,6 +2358,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Strike Squadron (Campaign Operations p. 68): an aerospace formation suited to close air
+     * support and ground-attack, balancing firepower with armor.
+     */
     private static void createStrikeSquadron() {
         FormationType ft = new FormationType("Strike Squadron");
         ft.allowedUnitTypes = FLAG_FIGHTER;
@@ -2007,6 +2377,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
+    /**
+     * Registers the Transport Squadron (Campaign Operations p. 68): an aerospace cargo/troop-movement formation
+     * that may include support aircraft, fighters, small craft, or DropShips.
+     */
     private static void createTransportSquadron() {
         FormationType ft = new FormationType("Transport Squadron");
         ft.allowedUnitTypes = FLAG_FIGHTER | FLAG_SMALL_CRAFT | FLAG_DROPSHIP;
@@ -2040,7 +2414,16 @@ public class FormationType {
     }
 
     /**
-     * base class for limitations on a formation type
+     * Abstract base class for a secondary requirement on a formation: a predicate that some number of units must
+     * satisfy.
+     *
+     * <p>Constraints support an OR-style "paired" mechanism for cases where the rule allows one of two
+     * alternatives (e.g., Assault Lance requires <em>1 Juggernaut OR 2 Snipers</em>). Mark the first alternative
+     * with {@link #setPairedWithNext(boolean)} and the second with {@link #setPairedWithPrevious(boolean)}; the
+     * pair must be added consecutively to {@link FormationType#getOtherCriteria()}.
+     *
+     * @see CountConstraint
+     * @see GroupingConstraint
      */
     public static abstract class Constraint {
         Predicate<MekSummary> criterion;
@@ -2048,46 +2431,76 @@ public class FormationType {
         boolean pairedWithNext;
         boolean pairedWithPrevious;
 
+        /**
+         * @param criterion   predicate identifying units that satisfy this constraint
+         * @param description human-readable rule description, used in the qualifications report
+         */
         protected Constraint(Predicate<MekSummary> criterion, String description) {
             this.criterion = criterion;
             this.description = description;
         }
 
+        /**
+         * @param unitSize the total number of units in the formation
+         *
+         * @return the minimum number of units that must satisfy {@link #matches(MekSummary)} for this constraint
+         *       to be considered met. May depend on {@code unitSize} (e.g., percent constraints).
+         */
         public abstract int getMinimum(int unitSize);
 
+        /** @return the human-readable description of this constraint */
         public String getDescription() {
             return description;
         }
 
+        /**
+         * @param ms the unit to test
+         *
+         * @return whether the unit satisfies this constraint's predicate
+         */
         public boolean matches(MekSummary ms) {
             return criterion.test(ms);
         }
 
-        /*
-         * In cases where a constraint has multiple possible fulfillment requiring different numbers of units (e.g.,
-         * Assault requires one juggernaut or two snipers), they must be assigned to separate Constraints
-         * consecutively in the list and marked with the appropriate flag.
+        /**
+         * @return {@code true} if this constraint represents the second alternative in an OR pair; the constraint
+         *       is then evaluated only if the preceding constraint's minimum is not met
          */
         public boolean isPairedWithPrevious() {
             return pairedWithPrevious;
         }
 
+        /** Marks this constraint as the second alternative in an OR pair. */
         public void setPairedWithPrevious(boolean paired) {
             pairedWithPrevious = paired;
         }
 
+        /**
+         * @return {@code true} if this constraint is the first alternative in an OR pair; the next constraint in
+         *       the list is evaluated when this one falls short
+         */
         public boolean isPairedWithNext() {
             return pairedWithNext;
         }
 
+        /** Marks this constraint as the first alternative in an OR pair. */
         public void setPairedWithNext(boolean paired) {
             pairedWithNext = paired;
         }
     }
 
+    /**
+     * A {@link Constraint} requiring a fixed minimum number of units to satisfy the criterion, regardless of
+     * formation size. Used for rules like "at least 3 units must be Heavy or larger".
+     */
     public static class CountConstraint extends Constraint {
         int count;
 
+        /**
+         * @param min         the minimum count of matching units
+         * @param criterion   predicate identifying units that satisfy this constraint
+         * @param description human-readable rule description
+         */
         public CountConstraint(int min, Predicate<MekSummary> criterion, String description) {
             super(criterion, description);
             count = min;
@@ -2125,11 +2538,20 @@ public class FormationType {
         }
     }
 
-    /*
-     * Permits additional constraints applied to a specific subset of the units.
-     * Used to force pairs (or larger groups) of units that are identical or have
-     * the same base
-     * chassis.
+    /**
+     * A {@link Constraint} that requires a subset of the formation to form one or more matched groups (typically
+     * pairs) of units sharing a chassis or model. Used for rules like "two matched pairs of heavy vehicles" or
+     * "fighters operate in identical pairs".
+     *
+     * <p>A grouping is described by:
+     * <ul>
+     *   <li>{@code unitTypes} — which {@code FLAG_*} categories the rule applies to (other unit types in the
+     *       formation are ignored by the grouping check);</li>
+     *   <li>{@code groupSize} — how many units make up one group (typically 2 for "pairs");</li>
+     *   <li>{@code numGroups} — how many such groups are required;</li>
+     *   <li>a per-unit {@code generalConstraint} (e.g., "must be Heavy") and a pairwise {@code groupConstraint}
+     *       (e.g., "same chassis").</li>
+     * </ul>
      */
     public static class GroupingConstraint extends Constraint {
         int unitTypes = FLAG_ALL;
@@ -2137,12 +2559,29 @@ public class FormationType {
         int numGroups = 1;
         BiFunction<MekSummary, MekSummary, Boolean> groupConstraint;
 
+        /**
+         * Constructs a grouping constraint that applies to all unit types ({@link #FLAG_ALL}), with the default
+         * {@code groupSize=2} and {@code numGroups=1}.
+         *
+         * @param generalConstraint per-unit predicate (which units the rule applies to)
+         * @param groupConstraint   pairwise predicate testing whether two units belong to the same group
+         * @param description       human-readable rule description
+         */
         public GroupingConstraint(Predicate<MekSummary> generalConstraint,
               BiFunction<MekSummary, MekSummary, Boolean> groupConstraint, String description) {
             super(generalConstraint, description);
             this.groupConstraint = groupConstraint;
         }
 
+        /**
+         * @param unitTypes         bitwise-OR of {@code FLAG_*} masks identifying which unit-type categories this
+         *                          grouping applies to (units of other types are exempt)
+         * @param groupSize         number of units per group (e.g., {@code 2} for pairs)
+         * @param numGroups         number of groups required
+         * @param generalConstraint per-unit predicate (which units the rule applies to)
+         * @param groupConstraint   pairwise predicate testing whether two units belong to the same group
+         * @param description       human-readable rule description
+         */
         public GroupingConstraint(int unitTypes, int groupSize, int numGroups, Predicate<MekSummary> generalConstraint,
               BiFunction<MekSummary, MekSummary, Boolean> groupConstraint, String description) {
             this(generalConstraint, groupConstraint, description);
@@ -2151,27 +2590,49 @@ public class FormationType {
             this.numGroups = numGroups;
         }
 
+        /**
+         * @param unitType a {@link UnitType} constant
+         *
+         * @return whether this grouping constraint applies to the given unit type
+         */
         public boolean appliesTo(int unitType) {
             return ((1 << unitType) & unitTypes) != 0;
         }
 
+        /** @return the required number of groups */
         public int getNumGroups() {
             return numGroups;
         }
 
+        /** @return the required number of units per group (e.g., {@code 2} for pairs) */
         public int getGroupSize() {
             return groupSize;
         }
 
+        /**
+         * Tests whether the unit satisfies the per-unit ("general") predicate. Unlike the base
+         * {@link Constraint#matches(MekSummary)}, returns {@code true} when no general predicate is set.
+         */
         @Override
         public boolean matches(MekSummary ms) {
             return criterion == null || criterion.test(ms);
         }
 
+        /**
+         * @param ms1 first unit
+         * @param ms2 second unit
+         *
+         * @return whether the two units belong to the same group under the pairwise predicate (e.g., same chassis)
+         */
         public boolean matches(MekSummary ms1, MekSummary ms2) {
             return groupConstraint.apply(ms1, ms2);
         }
 
+        /**
+         * @param unitSize the formation size
+         *
+         * @return {@code groupSize * numGroups}, clamped so the requirement does not exceed the formation size
+         */
         @Override
         public int getMinimum(int unitSize) {
             int gs = Math.min(groupSize, unitSize);
@@ -2182,10 +2643,12 @@ public class FormationType {
             return gs * ng;
         }
 
+        /** @return whether a per-unit ("general") predicate is set; if not, every unit is eligible for grouping */
         public boolean hasGeneralCriteria() {
             return criterion != null;
         }
 
+        /** @return an independent copy of this grouping constraint, used for per-call overrides during generation */
         public GroupingConstraint copy() {
             return new GroupingConstraint(this.unitTypes,
                   this.groupSize,

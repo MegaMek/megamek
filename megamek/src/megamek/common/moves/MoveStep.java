@@ -2309,6 +2309,10 @@ public class MoveStep implements Serializable {
             if (entity.isProne()) {
                 if (((stepType != MoveStepType.TURN_LEFT && stepType != MoveStepType.TURN_RIGHT) || getMpUsed() > 1) &&
                       stepType != MoveStepType.EJECT) {
+                    if (isClimbing) {
+                        LOGGER.info("[CLIMB-TRACE] gyro destroyed (prone): set MOVE_ILLEGAL, stepType={}",
+                              stepType);
+                    }
                     movementType = EntityMovementType.MOVE_ILLEGAL;
                 }
             } else {
@@ -2324,11 +2328,20 @@ public class MoveStep implements Serializable {
                         // We are in `Mek/non-tracked mode if the end mode is vee, and we are converting of the end
                         // mode is `Mek, and we are not converting.
                         if (isTracked == entity.isConvertingNow() && stepType != MoveStepType.CONVERT_MODE) {
+                            if (isClimbing) {
+                                LOGGER.info("[CLIMB-TRACE] gyro destroyed (QuadVee): set MOVE_ILLEGAL, stepType={}",
+                                      stepType);
+                            }
                             movementType = EntityMovementType.MOVE_ILLEGAL;
                         }
                     } else if (!isTracked) {
                         // Non QuadVee tracked 'Meks don't actually convert. They just go, so we only need to know
                         // the end mode.
+                        if (isClimbing) {
+                            LOGGER.info("[CLIMB-TRACE] gyro destroyed (non-tracked Mek): set MOVE_ILLEGAL, "
+                                        + "stepType={}, mp={}, mpUsed={}",
+                                  stepType, getMp(), getMpUsed());
+                        }
                         movementType = EntityMovementType.MOVE_ILLEGAL;
                     }
                 }
@@ -2602,7 +2615,12 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
-        // Check elevation change when climbing onto a building
+        // Check elevation change when climbing onto a building.
+        // TacOps Climbing (TO:AR p.20) bypass: a Mek with climb mode on and canClimb may
+        // exceed normal max elevation change to scale a building, the same way it does for
+        // cliffs. isMovementPossible already permits the step under those conditions; this
+        // check would otherwise re-reject it and flip MOVE_WALK back to MOVE_ILLEGAL,
+        // making any building climb >2 levels impossible despite the climbing option.
         if (climbMode && !isJumping()) {
             Hex curHex = game.getBoard(boardId).getHex(curPos);
             if (curHex.containsTerrain(Terrains.BUILDING)) {
@@ -2620,7 +2638,13 @@ public class MoveStep implements Serializable {
                         maxAllowed += 1;
                     }
 
-                    if (elevChange > maxAllowed) {
+                    boolean climbingEnabled = game.getOptions()
+                          .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
+                    boolean canTacOpsClimb = climbingEnabled
+                          && (entity instanceof Mek)
+                          && ClimbingHelper.canClimb(entity)
+                          && (elevChange > 0);
+                    if ((elevChange > maxAllowed) && !canTacOpsClimb) {
                         movementType = EntityMovementType.MOVE_ILLEGAL;
                     }
                 }

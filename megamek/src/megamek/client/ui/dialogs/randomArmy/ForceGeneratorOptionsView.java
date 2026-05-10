@@ -79,6 +79,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     private int currentYear;
     private final Consumer<ForceDescriptor> onGenerate;
+    /**
+     * Optional override for the Export-MUL button action. When set, replaces the built-in {@link #exportMUL}
+     * call so embedders can route the descriptor through their own export path. Null means use the default.
+     */
+    private Consumer<ForceDescriptor> onExportMUL;
 
     private ForceDescriptor forceDesc = new ForceDescriptor();
 
@@ -487,7 +492,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         return chk;
     }
 
-    private void generateForce() {
+    /**
+     * Builds a {@link ForceDescriptor} from the current state of this options view's controls. Public so embedders
+     * (e.g. MekHQ's company-generation dialog) can reuse the same input mapping without going through
+     * {@link #generateForce()}'s SwingWorker plumbing. Does not run {@link Ruleset#processRoot} or any IO.
+     */
+    public ForceDescriptor buildForceDescriptor() {
         ForceDescriptor fd = new ForceDescriptor();
         fd.setTopLevel(true);
         fd.setYear(forceDesc.getYear());
@@ -599,6 +609,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         double cargo = MathUtility.parseDouble(txtCargo.getText(), 0.0);
         fd.setCargo(cargo);
         txtCargo.setText(String.valueOf(cargo));
+
+        return fd;
+    }
+
+    private void generateForce() {
+        ForceDescriptor fd = buildForceDescriptor();
 
         ProgressMonitor monitor = new ProgressMonitor(this,
               Messages.getString("ForceGeneratorDialog.generateFormation"),
@@ -933,12 +949,47 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             btnExportMUL.setEnabled(true);
             btnClear.setEnabled(true);
         } else if (ev.getSource() == btnExportMUL) {
-            exportMUL(forceDesc);
+            if (onExportMUL != null) {
+                onExportMUL.accept(forceDesc);
+            } else {
+                exportMUL(forceDesc);
+            }
         } else if (ev.getSource() == btnClear) {
             clearForce();
             btnExportMUL.setEnabled(false);
             btnClear.setEnabled(false);
         }
+    }
+
+    /**
+     * Shows or hides the Generate button. Embedders that drive generation through their own controls
+     * (e.g. an OK button on a parent dialog) hide the built-in button.
+     */
+    public void setGenerateButtonVisible(boolean visible) {
+        btnGenerate.setVisible(visible);
+    }
+
+    /**
+     * Shows or hides the Export MUL button. Embedders that route the export through their own UI hide it.
+     */
+    public void setExportMULButtonVisible(boolean visible) {
+        btnExportMUL.setVisible(visible);
+    }
+
+    /**
+     * Shows or hides the Clear button.
+     */
+    public void setClearButtonVisible(boolean visible) {
+        btnClear.setVisible(visible);
+    }
+
+    /**
+     * Sets a custom handler for the Export-MUL button. When non-null, the built-in {@link #exportMUL} call is
+     * replaced by this consumer; the panel passes the live {@link ForceDescriptor} for the embedder to handle.
+     * Pass {@code null} to restore default behavior.
+     */
+    public void setOnExportMUL(Consumer<ForceDescriptor> handler) {
+        this.onExportMUL = handler;
     }
 
     public void exportMUL(ForceDescriptor fd) {

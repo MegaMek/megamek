@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
- * This file is part of Megahhw.
+ * This file is part of Megamek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
@@ -35,7 +35,6 @@ package megamek.client.ui.entityreadout;
 
 import megamek.client.ui.Messages;
 import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.HandheldWeapon;
 
 import java.util.ArrayList;
@@ -92,7 +91,7 @@ class HhwReadout extends GeneralEntityReadout {
 
             if (mounted.isDestroyed() || (mounted.getUsableShotsLeft() < 1)) {
                 row[1] = new DestroyedElement(mounted.getBaseShotsLeft());
-            } else if (mounted.getUsableShotsLeft() < mounted.getType().getShots() * mounted.getTonnage()) {
+            } else if (mounted.getUsableShotsLeft() < mounted.getOriginalShots()) {
                 row[1] = new DamagedElement(mounted.getBaseShotsLeft());
             } else {
                 row[1] = new PlainElement(mounted.getBaseShotsLeft());

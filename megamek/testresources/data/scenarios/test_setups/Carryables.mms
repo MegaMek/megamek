@@ -85,4 +85,3 @@ factions:
 
 transports:
   100: 1001
-# doesnt work yet

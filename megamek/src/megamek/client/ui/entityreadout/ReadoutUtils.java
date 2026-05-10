@@ -139,7 +139,7 @@ final class ReadoutUtils {
             }
 
             String name = equipmentNameText(mounted, entity);
-            ViewElement nameElement = new PlainElement(equipmentNameText(mounted, entity));
+            ViewElement nameElement = new PlainElement(name);
             if (mounted.isDestroyed() && mounted.isRepairable()) {
                 nameElement = new DamagedElement(name);
             } else if (mounted.isDestroyed()) {

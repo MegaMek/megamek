@@ -27898,17 +27898,21 @@ public class TWGameManager extends AbstractGameManager {
             // Check if this entity is climbing toward the building hex
             Coords facingCoords = entity.getPosition().translated(entity.getFacing());
             if (facingCoords.equals(buildingCoords) && (entity.getWeight() > currentCF)) {
-                // Entity is too heavy for the damaged building - falls from climbing position
+                // Entity is too heavy for the damaged building - falls from climbing position.
+                // Clear the climbing flags BEFORE doEntityFallsInto so the entity update sent
+                // during fall processing carries the cleared state to clients. Otherwise the
+                // client copy stays isClimbing=true and the next-turn selectEntity dialog
+                // wrongly fires "can no longer hold on and will fall!" while prone on ground.
                 Report climbFallReport = new Report(6461, Report.PUBLIC);
                 climbFallReport.add(entity.getDisplayName());
                 vPhaseReport.add(climbFallReport);
+                entity.setClimbing(false);
+                entity.setDangling(false);
+                entity.setClimbingLevelsChosen(0);
                 PilotingRollData autoFallRoll = new PilotingRollData(entity.getId(),
                       TargetRoll.AUTOMATIC_FAIL, "building too damaged to support climbing unit");
                 vPhaseReport.addAll(doEntityFallsInto(entity, entity.getElevation(),
                       entity.getPosition(), entity.getPosition(), autoFallRoll, true, 0));
-                entity.setClimbing(false);
-                entity.setDangling(false);
-                entity.setClimbingLevelsChosen(0);
             }
         }
     }

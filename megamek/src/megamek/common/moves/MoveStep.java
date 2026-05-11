@@ -2642,7 +2642,7 @@ public class MoveStep implements Serializable {
                           .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
                     boolean canTacOpsClimb = climbingEnabled
                           && (entity instanceof Mek)
-                          && ClimbingHelper.canClimb(entity)
+                          && ClimbingHelper.canClimb(entity, prev.isProne())
                           && (elevChange > 0);
                     if ((elevChange > maxAllowed) && !canTacOpsClimb) {
                         movementType = EntityMovementType.MOVE_ILLEGAL;
@@ -3092,7 +3092,7 @@ public class MoveStep implements Serializable {
                   && isWalkingMovement
                   && (isNewClimb || isContinuedClimb)
                   && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
-                  && ClimbingHelper.canClimb(entity);
+                  && ClimbingHelper.canClimb(entity, prevStep.isProne());
             if (isClimbingMove) {
                 int climbCostPerLevel = ClimbingHelper.getClimbingMPCostPerLevel((Mek) entity);
                 // Use player-chosen levels if set, otherwise full elevation delta
@@ -3297,7 +3297,7 @@ public class MoveStep implements Serializable {
         boolean tacOpsClimbingAvailable = game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
               && climbMode
-              && ClimbingHelper.canClimb(entity);
+              && ClimbingHelper.canClimb(entity, isProne());
         if (bld != null && getEntity().getElevation() == 0 && climbMode
               && !destHex.containsTerrain(Terrains.BRIDGE)
               && !tacOpsClimbingAvailable) {
@@ -3471,7 +3471,7 @@ public class MoveStep implements Serializable {
             // restrictions apply — cannot scale cliffs without climb mode.
             boolean climbingEnabled = game.getOptions()
                   .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
-            boolean canUseClimbing = climbingEnabled && climbMode && ClimbingHelper.canClimb(entity);
+            boolean canUseClimbing = climbingEnabled && climbMode && ClimbingHelper.canClimb(entity, isProne());
             // Edge descent (TO:AR p.20): Meks with at least one functional climbing arm
             // stepping off a 3+ level edge with climb mode on can climb-down (1 arm) or
             // dangle / drop (2 arms). The server's edge dangle/climb-down handler reinterprets
@@ -3480,7 +3480,7 @@ public class MoveStep implements Serializable {
             // strip it before the server saw the path. Use canClimb (1 arm) not canDangle
             // (2 arms) so one-arm climb-down still works.
             boolean canEdgeDescend = climbingEnabled && climbMode
-                  && ClimbingHelper.canClimb(entity);
+                  && ClimbingHelper.canClimb(entity, isProne());
             int elevationUp = (destAlt - srcAlt);
             int elevationDown = (srcAlt - destAlt);
 

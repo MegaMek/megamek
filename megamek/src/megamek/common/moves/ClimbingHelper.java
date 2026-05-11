@@ -206,10 +206,28 @@ public final class ClimbingHelper {
         if (!(entity instanceof Mek mek)) {
             return false;
         }
+        return canClimb(entity, mek.isProne());
+    }
+
+    /**
+     * Path-aware variant of {@link #canClimb(Entity)} that evaluates against the supplied prone state rather than the
+     * entity's live prone state. Used during MovePath compilation so a GET_UP step earlier in the path lets the
+     * subsequent climbing branch engage — even though the entity itself is still prone on the board until the turn
+     * commits.
+     *
+     * @param entity  the entity to check
+     * @param isProne the per-step prone state to evaluate against
+     *
+     * @return true if this entity can climb given the supplied prone state
+     */
+    public static boolean canClimb(Entity entity, boolean isProne) {
+        if (!(entity instanceof Mek mek)) {
+            return false;
+        }
         if (mek.isSuperHeavy()) {
             return false;
         }
-        return (countClimbableArms(mek) >= 1) && !mek.isProne() && !mek.isShutDown();
+        return (countClimbableArms(mek) >= 1) && !isProne && !mek.isShutDown();
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,10 +39,13 @@ import megamek.common.equipment.GunEmplacement;
 
 class GunEmplacementReadout extends TankReadout {
 
+    private final GunEmplacement gunEmplacement;
+
     protected GunEmplacementReadout(GunEmplacement gunEmplacement, boolean showDetail, boolean useAlternateCost,
           boolean ignorePilotBV) {
 
         super(gunEmplacement, showDetail, useAlternateCost, ignorePilotBV);
+        this.gunEmplacement = gunEmplacement;
     }
 
     @Override
@@ -68,5 +71,10 @@ class GunEmplacementReadout extends TankReadout {
     @Override
     protected ViewElement createCostElement() {
         return new EmptyElement();
+    }
+
+    @Override
+    protected List<ViewElement> getWeapons(boolean showDetail) {
+        return ReadoutUtils.getSimpleWeaponsList(gunEmplacement);
     }
 }

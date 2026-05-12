@@ -40,6 +40,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -115,6 +116,7 @@ class LOSElevationDiagramPanel extends JPanel {
           2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, LOS_DASH_PATTERN, 0.0f);
     private static final Stroke STROKE_GRID = new BasicStroke(0.5f);
     private static final Stroke STROKE_DEFAULT = new BasicStroke(1.0f);
+    private static final Stroke STROKE_BLOCKER_OUTLINE = new BasicStroke(2.5f);
     private static final float[] DASH_PATTERN = { 6.0f, 4.0f };
     private static final Stroke STROKE_SPLIT = new BasicStroke(
           1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, DASH_PATTERN, 0.0f);
@@ -565,7 +567,83 @@ class LOSElevationDiagramPanel extends JPanel {
                       columnWidth - 2, metrics.drawAreaHeight - 2);
                 g2d.setStroke(STROKE_DEFAULT);
             }
+
+            // Highlight the hex bar in red when this hex's solid terrain blocks LOS so the offender pops
+            // visually. Outline runs from the hex's effective top (ground + buildings) down to ground level.
+            if (hex.blocksLOS()) {
+                int blockerTopElevation = hex.groundElevation() + hex.buildingHeight();
+                int yBlockerTop = metrics.levelToY(blockerTopElevation);
+                int blockerHeight = yGround - yBlockerTop;
+                if (blockerHeight <= 0) {
+                    // No building above ground: outline the ground bar itself
+                    yBlockerTop = yGround;
+                    blockerHeight = Math.max(yBottom - yGround, 1);
+                }
+                g2d.setColor(COLOR_LOS_BLOCKED);
+                g2d.setStroke(STROKE_BLOCKER_OUTLINE);
+                g2d.drawRect(xLeft, yBlockerTop, columnWidth, blockerHeight);
+                g2d.setStroke(STROKE_DEFAULT);
+            }
+
+            // Mark the dead-zone victim hex with diagonal hatching across its ground bar so the player
+            // sees that the lower unit sits inside a TacOps dead-zone shadow. Only fires when the engine
+            // flagged the LOS as blocked by the dead-zone rule (Standard/BMM blocking uses the red outline
+            // above).
+            if (diagramData.deadZone() && hex.coords().equals(diagramData.deadZoneVictimPos())) {
+                drawDeadZoneHatch(g2d, xLeft, yGround, columnWidth, yBottom - yGround);
+            }
         }
+    }
+
+    /**
+     * Draws a {@code ///} pattern across the given rectangle in semi-opaque black, then a centered
+     * "Dead Zone" label on top so the marker is unambiguous. Used to mark a hex that sits inside a
+     * TacOps dead-zone shadow. Doesn't fill the air above the hex, so silhouettes and the LOS line
+     * stay readable.
+     */
+    private static void drawDeadZoneHatch(Graphics2D g2d, int x, int y, int width, int height) {
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+        Shape oldClip = g2d.getClip();
+        Color oldColor = g2d.getColor();
+        Stroke oldStroke = g2d.getStroke();
+        Font oldFont = g2d.getFont();
+        g2d.setClip(x, y, width, height);
+        g2d.setColor(new Color(0, 0, 0, 180));
+        g2d.setStroke(new BasicStroke(2.0f));
+        int spacing = UIUtil.scaleForGUI(8);
+        // Each line goes from (x + offset - height) at the bottom to (x + offset) at the top, creating
+        // a 45-degree slash that fully covers the rectangle when offsets march from -height to width.
+        for (int offset = -height; offset < width + height; offset += spacing) {
+            g2d.drawLine(x + offset, y + height, x + offset + height, y);
+        }
+
+        // Centered label. Falls back to a short form if the hex column is too narrow for the full text.
+        Font labelFont = oldFont.deriveFont(Font.BOLD, UIUtil.scaleForGUI(10.0f));
+        g2d.setFont(labelFont);
+        FontMetrics fm = g2d.getFontMetrics();
+        String label = Messages.getString("Ruler.deadZoneLabel");
+        int labelWidth = fm.stringWidth(label);
+        if (labelWidth > width - 4) {
+            label = Messages.getString("Ruler.deadZoneLabelShort");
+            labelWidth = fm.stringWidth(label);
+        }
+        int textX = x + (width - labelWidth) / 2;
+        int textY = y + (height + fm.getAscent()) / 2 - fm.getDescent();
+        // White text with a thin black halo for contrast against the brown ground + black slashes.
+        g2d.setColor(Color.BLACK);
+        g2d.drawString(label, textX - 1, textY);
+        g2d.drawString(label, textX + 1, textY);
+        g2d.drawString(label, textX, textY - 1);
+        g2d.drawString(label, textX, textY + 1);
+        g2d.setColor(Color.WHITE);
+        g2d.drawString(label, textX, textY);
+
+        g2d.setFont(oldFont);
+        g2d.setStroke(oldStroke);
+        g2d.setColor(oldColor);
+        g2d.setClip(oldClip);
     }
 
     /**
@@ -2089,6 +2167,14 @@ class LOSElevationDiagramPanel extends JPanel {
         g2d.drawString(label, labelX, labelY);
     }
 
+    /**
+     * Draws the LOS line as a straight segment from the attacker's eye level to the target's eye level. The
+     * line is informational — it shows the path the units' eyes would trace toward each other. Whether terrain
+     * actually blocks LOS is conveyed by the red outline on the offending hex bar (drawn in {@link #drawTerrain})
+     * and by the colour of this line itself ({@link #COLOR_LOS_BLOCKED} vs {@link #COLOR_LOS_CLEAR}). Mode-aware
+     * blocking detection lives in {@link LOSDiagramDataBuilder}; the line stays the same shape in every mode so
+     * players read "blocked by this red hex" instead of trying to interpret a bent line.
+     */
     private void drawLosLine(Graphics2D g2d, DiagramMetrics metrics, List<HexRow> hexPath) {
         if (hexPath.size() < 2) {
             return;
@@ -2098,7 +2184,6 @@ class LOSElevationDiagramPanel extends JPanel {
         int xEnd = metrics.leftMargin + ((hexPath.size() - 1) * metrics.hexColumnWidth)
               + (metrics.hexColumnWidth / 2);
 
-        // For altitude units, the LOS line originates from above the break indicator
         int yStart;
         if (metrics.attackerIsAltitude) {
             yStart = metrics.topMargin - UIUtil.scaleForGUI(ALTITUDE_SILHOUETTE_HEIGHT / 2);
@@ -2114,7 +2199,6 @@ class LOSElevationDiagramPanel extends JPanel {
 
         // Clip the LOS line to the visible drawing area so it spans the full diagram width
         // even when endpoints are far outside the visible elevation range (e.g., aerospace at altitude 1000).
-        // Without clipping, the line would only be visible in the small region where it crosses the panel.
         int yMin = metrics.topMargin;
         int yMax = metrics.topMargin + metrics.drawAreaHeight;
 
@@ -2123,7 +2207,6 @@ class LOSElevationDiagramPanel extends JPanel {
         int clippedXEnd = xEnd;
         int clippedYEnd = yEnd;
 
-        // Cohen-Sutherland-style clipping against top and bottom edges
         if (yStart != yEnd) {
             if (yStart < yMin) {
                 clippedXStart = xStart + (int) ((long) (xEnd - xStart) * (yMin - yStart) / (yEnd - yStart));

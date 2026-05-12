@@ -992,6 +992,14 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         this.onExportMUL = handler;
     }
 
+    /**
+     * Makes the year text field read-only. Use this when an embedder anchors the year to an external value
+     * (e.g. MekHQ's campaign year) and doesn't want the user editing it on this panel.
+     */
+    public void setYearFieldEditable(boolean editable) {
+        txtYear.setEditable(editable);
+    }
+
     public void exportMUL(ForceDescriptor fd) {
         ArrayList<Entity> list = new ArrayList<>();
         fd.addAllEntities(list);

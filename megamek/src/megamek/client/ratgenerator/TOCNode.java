@@ -34,6 +34,7 @@ package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 
+import megamek.logging.MMLogger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -43,6 +44,8 @@ import org.w3c.dom.NodeList;
  * @author Neoancient
  */
 public class TOCNode extends RulesetNode {
+    private static final MMLogger logger = MMLogger.create(TOCNode.class);
+
     protected ArrayList<ValueNode> unitTypeNodes;
     protected ArrayList<ValueNode> echelonNodes;
     protected ArrayList<ValueNode> ratingNodes;
@@ -61,6 +64,8 @@ public class TOCNode extends RulesetNode {
                 return n;
             }
         }
+        logger.debug("findUnitTypes: no match for faction={}, year={} ({} options scanned)",
+              fd.getFaction(), fd.getYear(), unitTypeNodes.size());
         return null;
     }
 
@@ -70,6 +75,8 @@ public class TOCNode extends RulesetNode {
                 return n;
             }
         }
+        logger.debug("findEchelons: no match for faction={}, unitType={} ({} options scanned)",
+              fd.getFaction(), fd.getUnitType(), echelonNodes.size());
         return null;
     }
 
@@ -79,6 +86,8 @@ public class TOCNode extends RulesetNode {
                 return n;
             }
         }
+        logger.debug("findRatings: no match for faction={}, echelon={}, unitType={} ({} options scanned)",
+              fd.getFaction(), fd.getEchelon(), fd.getUnitType(), ratingNodes.size());
         return null;
     }
 

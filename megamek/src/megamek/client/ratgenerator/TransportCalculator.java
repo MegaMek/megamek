@@ -192,6 +192,48 @@ public class TransportCalculator {
     }
 
     /**
+     * Generates WarShips to provide additional docking collars for transporting DropShips. WarShips also serve as
+     * combat vessels in Clan toumans and IS naval fleets; this method only sizes the fleet to the docking-collar
+     * requirement implied by the ratio. The ratio is independent of the jumpship ratio, so callers can request, for
+     * example, 50% WarShip coverage + 50% JumpShip coverage to split the fleet evenly.
+     *
+     * @param ratio            The fraction (0.0–1.0+) of total DropShip docking demand to fulfill via WarShips
+     * @param transportCollars The number of DropShips that need docking-collar capacity
+     *
+     * @return The list of generated WarShips. May be empty if no WarShip is available for the faction/year/rating.
+     */
+    public List<MekSummary> calcWarShips(double ratio, int transportCollars) {
+        if (ratio <= 0) {
+            return new ArrayList<>();
+        }
+        UnitTable table = UnitTable.findTable(fd.getFactionRec(),
+              UnitType.WARSHIP,
+              fd.getYear(),
+              fd.getRating(),
+              null,
+              ModelRecord.NETWORK_NONE,
+              EnumSet.noneOf(EntityMovementMode.class),
+              EnumSet.noneOf(MissionRole.class),
+              0);
+        List<MekSummary> retVal = new ArrayList<>();
+        int currentCapacity = 0;
+
+        if (unitCounts.containsKey(UnitType.DROPSHIP)) {
+            transportCollars += unitCounts.get(UnitType.DROPSHIP);
+        }
+
+        while (transportCollars * ratio > (double) currentCapacity) {
+            MekSummary warship = table.generateUnit(ms -> countHardpoints(ms) > 0);
+            if (null == warship) {
+                break; // No WarShips available for this faction/year/rating
+            }
+            currentCapacity += countHardpoints(warship);
+            retVal.add(warship);
+        }
+        return retVal;
+    }
+
+    /**
      * Determines whether potential transport has capacity for the type of unit.
      *
      * @param ms       A potential transporting unit

@@ -226,7 +226,13 @@ public class RATGenerator {
     public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit, String faction) {
         if (factions.containsKey(faction)) {
             return findModelAvailabilityRecord(era, unit, factions.get(faction));
-        } else if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
+        }
+        // Normalize the unit key to the canonical MekSummary name so name_changes aliases work.
+        ModelRecord modelRecord = models.get(unit);
+        if (modelRecord != null && !unit.equals(modelRecord.getKey())) {
+            unit = modelRecord.getKey();
+        }
+        if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
             return modelIndex.get(era).get(unit).get("General");
         } else {
             return null;
@@ -245,10 +251,18 @@ public class RATGenerator {
     public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit,
           @Nullable FactionRecord factionRecord) {
 
-        if (null == models.get(unit)) {
+        ModelRecord modelRecord = models.get(unit);
+        if (modelRecord == null) {
             LOGGER.error("Trying to find record for unknown model {}", unit);
             return null;
-        } else if ((factionRecord == null) || models.get(unit).factionIsExcluded(factionRecord)) {
+        }
+        // modelIndex is keyed by the canonical MekSummary name (ModelRecord.getKey()).
+        // If the caller passed a name_changes alias, normalize to the canonical key
+        // so the era/availability lookup below succeeds.
+        if (!unit.equals(modelRecord.getKey())) {
+            unit = modelRecord.getKey();
+        }
+        if ((factionRecord == null) || modelRecord.factionIsExcluded(factionRecord)) {
             return null;
         }
 
@@ -1615,7 +1629,15 @@ public class RATGenerator {
             if (mekSummary != null) {
                 modelRecord = new ModelRecord(mekSummary);
                 modelRecord.setOmni(chassisRecord.isOmni());
+                // Store under both the RAT-XML key and the MekSummary's canonical name.
+                // The canonical name is what ModelRecord.getKey() returns, so any caller
+                // that does a lookup via getKey() (e.g., ChassisRecord.totalModelWeight)
+                // needs that key in the map. Without this, name_changes aliases resolve
+                // the cache lookup but the resulting ModelRecord is unreachable by its own key.
                 models.put(modelKey, modelRecord);
+                if (!modelKey.equals(modelRecord.getKey())) {
+                    models.put(modelRecord.getKey(), modelRecord);
+                }
             }
 
             if (modelRecord == null) {

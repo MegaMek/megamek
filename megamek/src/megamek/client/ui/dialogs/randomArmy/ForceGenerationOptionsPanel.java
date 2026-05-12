@@ -1063,7 +1063,9 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
             for (String group : formationGroups.keySet()) {
                 c.insets = mainInsets;
                 if (formationGroups.get(group).contains(group)) {
-                    JRadioButton btn = new JRadioButton(FormationType.getFormationType(group).getNameWithFaction());
+                    FormationType groupFt = FormationType.getFormationType(group);
+                    JRadioButton btn = new JRadioButton(groupFt.getNameWithFaction());
+                    btn.setToolTipText(tooltipFor(groupFt));
                     if (formationBtnGroup.getButtonCount() == 0) {
                         btn.setSelected(true);
                     }
@@ -1072,14 +1074,17 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
                     formationBtnGroup.add(btn);
                     formationGroups.get(group).remove(group);
                 } else {
-                    JLabel lbl = new JLabel(FormationType.getFormationType(group).getNameWithFaction(),
-                          SwingConstants.LEFT);
+                    FormationType groupFt = FormationType.getFormationType(group);
+                    JLabel lbl = new JLabel(groupFt.getNameWithFaction(), SwingConstants.LEFT);
+                    lbl.setToolTipText(tooltipFor(groupFt));
                     panFormations.add(lbl, c);
                 }
                 c.gridy++;
                 c.insets = subInsets;
                 for (String form : formationGroups.get(group)) {
-                    JRadioButton btn = new JRadioButton(FormationType.getFormationType(form).getNameWithFaction());
+                    FormationType formFt = FormationType.getFormationType(form);
+                    JRadioButton btn = new JRadioButton(formFt.getNameWithFaction());
+                    btn.setToolTipText(tooltipFor(formFt));
                     if (formationBtnGroup.getButtonCount() == 0) {
                         btn.setSelected(true);
                     }
@@ -1282,6 +1287,16 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
         public void setGeneratedUnits(List<MekSummary> list) {
             generatedUnits = list;
             txtNoFormation.setVisible(list == null || list.isEmpty());
+        }
+
+        /**
+         * Returns the localized tooltip text for a formation, or {@code null} if no tooltip key is registered in the
+         * messages bundle. Returning {@code null} avoids showing the {@code !key!} placeholder text Swing would display
+         * if {@link Messages#getString(String)} were called for a missing key.
+         */
+        private static String tooltipFor(FormationType ft) {
+            String key = ft.getTooltipKey();
+            return Messages.keyExists(key) ? Messages.getString(key) : null;
         }
     }
 

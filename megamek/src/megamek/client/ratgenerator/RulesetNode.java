@@ -132,6 +132,10 @@ public class RulesetNode {
                         return false;
                     }
                     break;
+                case "ifYearBetween":
+                    logger.warn("Force generator ruleset uses deprecated predicate 'ifYearBetween' on <{}>; " +
+                          "use 'ifDateBetween' instead.", name);
+                    // fall through — historical alias for ifDateBetween
                 case "ifDateBetween":
                     if (!matchesDate(fd.getYear(), predicates.getProperty((String) key))) {
                         return false;
@@ -166,6 +170,14 @@ public class RulesetNode {
                     if (!matches(String.valueOf(fd.getIndex()), predicates.getProperty((String) key))) {
                         return false;
                     }
+                    break;
+                default:
+                    // Fail-safe: an unknown predicate is most likely a typo. Log it and treat
+                    // the node as non-matching so the malformed rule doesn't silently apply.
+                    logger.warn("Force generator ruleset uses unknown predicate {} on <{}>; " +
+                          "treating as non-match so the malformed rule does not silently apply.",
+                          key, name);
+                    return false;
             }
         }
         return true;

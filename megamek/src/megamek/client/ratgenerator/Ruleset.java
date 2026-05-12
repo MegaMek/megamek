@@ -133,6 +133,7 @@ public class Ruleset {
             faction = FactionRecord.IS_GENERAL_KEY;
         }
         if (rulesets.containsKey(faction)) {
+            logger.debug("findRuleset({}): direct match", faction);
             return rulesets.get(faction);
         }
         FactionRecord fRec = RATGenerator.getInstance().getFaction(faction);
@@ -143,18 +144,22 @@ public class Ruleset {
         if (fRec != null) {
             for (String parent : fRec.getParentFactions()) {
                 if (rulesets.containsKey(parent)) {
+                    logger.debug("findRuleset({}): parent match {}", faction, parent);
                     return findRuleset(parent);
                 }
             }
             for (String parent : fRec.getParentFactions()) {
                 Ruleset rs = findRuleset(parent);
                 if (rs != null) {
+                    logger.debug("findRuleset({}): recursive parent match via {} -> {}",
+                          faction, parent, rs.getFaction());
                     return rs;
                 }
             }
         }
         // This shouldn't happen unless the data is missing. Throw out a default ruleset
         // to prevent barfing.
+        logger.warn("findRuleset({}): no match in any parent — returning empty default ruleset", faction);
         return new Ruleset();
     }
 
@@ -225,6 +230,13 @@ public class Ruleset {
         // Find the first node matching node in the ruleset and apply the options to the
         // current force descriptor.
         // If no matching node is found in the ruleset, move to the parent ruleset.
+        // Cap the retry count: changeEschelon should only re-loop a finite number of times.
+        // A malformed ruleset (e.g., a changeEschelon option whose echelon equals the current
+        // one and whose assertions fail to clear its triggering predicate) could otherwise
+        // spin forever. After maxIterations failed applies on the same node we log an ERROR
+        // and bail out so the UI doesn't lock up.
+        int safetyCounter = 0;
+        final int maxIterations = 32;
         do {
             forceNode = ruleset.findForceNode(fd);
             if (forceNode == null) {
@@ -236,6 +248,13 @@ public class Ruleset {
             } else {
                 applied = forceNode.apply(fd);
                 logger.debug("Selecting force node {} from ruleset {}", forceNode.show(), ruleset.getFaction());
+                if (!applied && ++safetyCounter >= maxIterations) {
+                    logger.error("buildForceTree: aborting after {} iterations on force node {} " +
+                          "(ruleset {}, faction {}, echelon {}). Likely a changeEschelon loop in the ruleset.",
+                          maxIterations, forceNode.show(), ruleset.getFaction(),
+                          fd.getFaction(), fd.getEchelon());
+                    break;
+                }
             }
         } while (ruleset != null && (forceNode == null || !applied));
 

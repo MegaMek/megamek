@@ -187,6 +187,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
     // considering movement data
     private MovePath cmd;
 
+    // Gate for the "cannot climb" toast so updateMove() doesn't re-toast the same
+    // notice on every step add/redraw while the player plots a path. Reset whenever
+    // the path no longer matches the climb-impossible condition (different entity,
+    // different reason, or step is no longer an illegal climb attempt).
+    private int lastClimbImpossibleEntityId = -1;
+    private String lastClimbImpossibleReason = null;
+
     // what "gear" is our mek in?
     private int gear;
     private int jumpSubGear;
@@ -559,7 +566,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clear();
         updateButtonsLater();
 
-        LOGGER.info("[CLIMB-TRACE] selectEntity: {} isClimbing={}, elevation={}, position={}, facing={}",
+        LOGGER.debug("[CLIMB-TRACE] selectEntity: {} isClimbing={}, elevation={}, position={}, facing={}",
               selectedEntity.getDisplayName(), selectedEntity.isClimbing(),
               selectedEntity.getElevation(), selectedEntity.getPosition(), selectedEntity.getFacing());
 
@@ -615,7 +622,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
         if (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN) {
-            LOGGER.info("[DANGLE-TRACE] Dangle down chosen: entity={}, currentElevation={}, dangleLevels={}",
+            LOGGER.debug("[DANGLE-TRACE] Dangle down chosen: entity={}, currentElevation={}, dangleLevels={}",
                   climbingMek.getDisplayName(), climbingMek.getElevation(), chosen.levels());
             clientgui.addToast(ToastLevel.INFO,
                   climbingMek.getDisplayName() + " dangles down " + chosen.levels() + " levels",
@@ -625,7 +632,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
         if (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.DROP) {
-            LOGGER.info("[DANGLE-TRACE] Drop chosen: entity={}, currentElevation={}",
+            LOGGER.debug("[DANGLE-TRACE] Drop chosen: entity={}, currentElevation={}",
                   climbingMek.getDisplayName(), climbingMek.getElevation());
             clientgui.addToast(ToastLevel.WARNING,
                   climbingMek.getDisplayName() + " drops from dangle position!",
@@ -640,7 +647,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // The CLIMB_MODE_ON marker before the DOWN step(s) distinguishes a climb-down
             // from a dangle (1 bare DOWN) or drop (2 bare DOWN) on the server side —
             // entity.climbingLevelsChosen isn't transmitted, so we encode intent in the path.
-            LOGGER.info("[CLIMB-TRACE] Climb down chosen: entity={}, currentElevation={}, levels={}",
+            LOGGER.debug("[CLIMB-TRACE] Climb down chosen: entity={}, currentElevation={}, levels={}",
                   climbingMek.getDisplayName(), climbingMek.getElevation(), chosen.levels());
             clientgui.addToast(ToastLevel.INFO,
                   climbingMek.getDisplayName() + " climbs down " + chosen.levels() + " levels",
@@ -1016,11 +1023,22 @@ public class MovementDisplay extends ActionPhaseDisplay {
               && !ClimbingHelper.canClimb(currentEntity)
               && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)) {
             String reason = ClimbingHelper.getClimbingImpossibleReason(currentEntity);
-            if (reason != null) {
-                JOptionPane.showMessageDialog(clientgui.getFrame(), reason,
-                      Messages.getString("MovementDisplay.ClimbingDialog.title"),
-                      JOptionPane.WARNING_MESSAGE);
+            // updateMove() runs on every step add/redraw while plotting, so a modal
+            // JOptionPane here would re-fire and block UI on every keypress. Use a
+            // non-modal toast and gate by entity+reason so the same notice doesn't
+            // scroll past repeatedly during a single plotting session.
+            if ((reason != null)
+                  && ((lastClimbImpossibleEntityId != currentEntity.getId())
+                  || !reason.equals(lastClimbImpossibleReason))) {
+                clientgui.addToast(ToastLevel.WARNING, reason, currentEntity);
+                lastClimbImpossibleEntityId = currentEntity.getId();
+                lastClimbImpossibleReason = reason;
             }
+        } else {
+            // Path no longer matches the climb-impossible condition — reset the gate
+            // so a future failed attempt with the same reason will toast again.
+            lastClimbImpossibleEntityId = -1;
+            lastClimbImpossibleReason = null;
         }
 
         // If the path includes climbing and no level choice has been made, show the dialog
@@ -1033,7 +1051,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // Log all step updates when entity is prone (debug get-up issues)
         if (hasLastStep && (currentEntity != null) && currentEntity.isProne()) {
             MoveStep lastStep = cmd.getLastStep();
-            LOGGER.info("[CLIMB-TRACE] updateMove prone entity: type={}, movementType={}, " +
+            LOGGER.debug("[CLIMB-TRACE] updateMove prone entity: type={}, movementType={}, " +
                   "isClimbing={}, climbMode={}, isProne={}, entity.isClimbing={}, elevation={}",
                   lastStep.getType(), lastStep.getMovementType(true),
                   lastStep.isClimbing(), lastStep.climbMode(),
@@ -1041,7 +1059,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (lastStepClimbing) {
-            LOGGER.info("[CLIMB-TRACE] updateMove dialog check: lastStepClimbing={}, entityNotYetClimbing={}, " +
+            LOGGER.debug("[CLIMB-TRACE] updateMove dialog check: lastStepClimbing={}, entityNotYetClimbing={}, " +
                         "noChoiceMade={}, isMek={}, climbingLevelsChosen={}",
                   lastStepClimbing, entityNotYetClimbing, noChoiceMade,
                   currentEntity instanceof Mek,
@@ -1051,7 +1069,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
               && lastStepClimbing
               && entityNotYetClimbing
               && noChoiceMade) {
-            LOGGER.info("[CLIMB-TRACE] updateMove: showing START climbing dialog for {}",
+            LOGGER.debug("[CLIMB-TRACE] updateMove: showing START climbing dialog for {}",
                   currentEntity.getDisplayName());
             // Pass the climbing step so the dialog uses the path's source/target hexes,
             // not the entity's pre-path facing (which is wrong if the path walked or
@@ -1196,7 +1214,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         clientgui.addToast(ToastLevel.INFO,
                               edgeMek.getDisplayName() + " begins dangling down", edgeMek);
                         rebuildPathForEdgeDescent(edgeMek, stepPos, isRoutedAround);
-                        LOGGER.info("[DANGLE-TRACE] Edge dangle: CLIMB_MODE_ON + FORWARDS to {}, "
+                        LOGGER.debug("[DANGLE-TRACE] Edge dangle: CLIMB_MODE_ON + FORWARDS to {}, "
                                     + "cmd.length={}, routed={}",
                               stepPos, cmd.length(), isRoutedAround);
                         ready();
@@ -1205,7 +1223,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         // Edge climb-down: same path shape as edge dangle (CLIMB_MODE_ON + FORWARDS)
                         // but server reads entity.climbingLevelsChosen to switch from dangle (no PSR,
                         // 2 levels) to climb-down (PSR per level, chosen count).
-                        LOGGER.info("[CLIMB-TRACE] Edge climb-down chosen: levels={}, routed={}",
+                        LOGGER.debug("[CLIMB-TRACE] Edge climb-down chosen: levels={}, routed={}",
                               chosen.levels(), isRoutedAround);
                         clientgui.addToast(ToastLevel.INFO,
                               edgeMek.getDisplayName() + " begins climbing down " + chosen.levels()
@@ -1220,7 +1238,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         // Only valid for the direct-path case; the routed-around path was a walk
                         // and shouldn't be reinterpreted as a leap, so guard against that.
                         if (isRoutedAround) {
-                            LOGGER.info("[CLIMB-TRACE] Drop chosen on routed-around path; "
+                            LOGGER.debug("[CLIMB-TRACE] Drop chosen on routed-around path; "
                                         + "rebuilding cmd as direct leap");
                             cmd = new megamek.common.moves.MovePath(game, edgeMek);
                             cmd.rotatePathfinder(currentEntity.getPosition().direction(stepPos),
@@ -3444,7 +3462,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private ClimbingChoiceDialog.ClimbingOption showClimbingLevelDialog(Mek mek, boolean isContinuation,
           @megamek.common.annotations.Nullable MoveStep climbingStep) {
-        LOGGER.info("[CLIMB-TRACE] showClimbingLevelDialog: entity={}, isContinuation={}, " +
+        LOGGER.debug("[CLIMB-TRACE] showClimbingLevelDialog: entity={}, isContinuation={}, " +
                     "position={}, elevation={}, facing={}, climbingStep={}",
               mek.getDisplayName(), isContinuation, mek.getPosition(), mek.getElevation(), mek.getFacing(),
               (climbingStep != null) ? climbingStep.getPosition() : "null");
@@ -3485,13 +3503,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
         int currentAbsolute = currentHex.getLevel() + sourceElevation;
         int totalLevelsRemaining = targetLevel - currentAbsolute;
 
-        LOGGER.info("[CLIMB-TRACE] showClimbingLevelDialog: sourceCoords={}, sourceElevation={}, "
+        LOGGER.debug("[CLIMB-TRACE] showClimbingLevelDialog: sourceCoords={}, sourceElevation={}, "
                     + "targetLevel={}, currentAbsolute={}, totalLevelsRemaining={}, targetHex={}, isBuilding={}",
               sourceCoords, sourceElevation, targetLevel, currentAbsolute, totalLevelsRemaining,
               targetCoords, targetHex.containsTerrain(Terrains.BUILDING));
 
         if (totalLevelsRemaining <= 0) {
-            LOGGER.info("[CLIMB-TRACE] showClimbingLevelDialog: no levels remaining, returning null");
+            LOGGER.debug("[CLIMB-TRACE] showClimbingLevelDialog: no levels remaining, returning null");
             return null;
         }
 
@@ -3518,7 +3536,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // Skip the dialog rather than showing an empty list, but surface a toast so the
             // player knows the click on the cliff hex had no effect (otherwise it looks
             // like the path silently truncates).
-            LOGGER.info("[CLIMB-TRACE] showClimbingLevelDialog: no MP left for climbing "
+            LOGGER.debug("[CLIMB-TRACE] showClimbingLevelDialog: no MP left for climbing "
                         + "(walkMP={}, mpAlreadyUsed={}), returning null",
                   walkMP, mpAlreadyUsed);
             clientgui.addToast(ToastLevel.WARNING,

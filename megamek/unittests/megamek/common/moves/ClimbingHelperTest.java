@@ -47,6 +47,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.units.BipedMek;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Infantry;
@@ -267,7 +268,7 @@ class ClimbingHelperTest {
         @Test
         @DisplayName("Infantry cannot climb using Mek climbing rules")
         void infantryCannotClimb() {
-            Infantry infantry = new Infantry();
+            Infantry infantry = new ConvInfantry();
             infantry.setGame(game);
             infantry.setId(game.getNextEntityId());
 
@@ -355,7 +356,7 @@ class ClimbingHelperTest {
         @Test
         @DisplayName("Infantry returns non-Mek reason")
         void infantryReturnsReason() {
-            Infantry infantry = new Infantry();
+            Infantry infantry = new ConvInfantry();
             infantry.setGame(game);
 
             String reason = ClimbingHelper.getClimbingImpossibleReason(infantry);
@@ -452,7 +453,7 @@ class ClimbingHelperTest {
         @Test
         @DisplayName("Infantry cannot dangle")
         void infantryCannotDangle() {
-            Infantry infantry = new Infantry();
+            Infantry infantry = new ConvInfantry();
             infantry.setGame(game);
 
             assertFalse(ClimbingHelper.canDangle(infantry),
@@ -582,7 +583,7 @@ class ClimbingHelperTest {
         @Test
         @DisplayName("Infantry returns non-Mek reason")
         void infantryReturnsReason() {
-            Infantry infantry = new Infantry();
+            Infantry infantry = new ConvInfantry();
             infantry.setGame(game);
 
             String reason = ClimbingHelper.getDangleImpossibleReason(infantry);

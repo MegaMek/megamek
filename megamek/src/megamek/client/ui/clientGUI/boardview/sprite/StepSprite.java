@@ -460,8 +460,16 @@ public class StepSprite extends Sprite {
             int totalLevels = step.getClimbingTotalLevels();
             if ((walkMP > 0) && (totalLevels > 0)) {
                 int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(climbingMek);
-                // Account for base hex cost (1 MP) reducing available climbing MP
-                int nonClimbCost = step.getMpUsed() - (totalLevels * costPerLevel);
+                // Use the levels actually charged THIS turn (which equals chosen levels
+                // for partial climbs, full delta otherwise) instead of the full climb
+                // height. step.getMpUsed() only includes MP for the charged levels, so
+                // subtracting (totalLevels * costPerLevel) would go negative when the
+                // player picked fewer levels than the full climb and inflate
+                // levelsPerTurn. Falling back to totalLevels keeps prior behavior for
+                // older serialized paths where the field defaults to 0.
+                int chargedLevels = step.getClimbingChargedLevels();
+                int levelsForCostCalc = (chargedLevels > 0) ? chargedLevels : totalLevels;
+                int nonClimbCost = step.getMpUsed() - (levelsForCostCalc * costPerLevel);
                 int availablePerTurn = walkMP - Math.max(0, nonClimbCost);
                 int levelsPerTurn = Math.max(1, availablePerTurn / costPerLevel);
                 int turnsToClimb = (int) Math.ceil((double) totalLevels / levelsPerTurn);

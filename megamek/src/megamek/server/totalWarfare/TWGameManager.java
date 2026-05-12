@@ -27914,8 +27914,9 @@ public class TWGameManager extends AbstractGameManager {
                 Vector<Report> climbFallSpecial = new Vector<>();
                 climbFallSpecial.add(climbFallReport);
                 send(createSpecialReportPacket(climbFallSpecial));
-                sendServerChat(entity.getDisplayName()
-                      + " can no longer hold on as the building is too damaged to support the climb and plummets to the ground!");
+                sendServerChat(Messages.getString(
+                      "MovementDisplay.ClimbingDialog.buildingTooDamagedChat",
+                      entity.getDisplayName()));
                 entity.setClimbing(false);
                 entity.setDangling(false);
                 entity.setClimbingLevelsChosen(0);

@@ -151,6 +151,7 @@ public class MoveStep implements Serializable {
     private boolean isDiggingIn = false;
     private boolean isClimbing = false;
     private int climbingTotalLevels = 0;
+    private int climbingChargedLevels = 0;
     private boolean isTakingCover = false;
     private int wigeBonus = 0;
     private int nWigeDescent = 0;
@@ -803,7 +804,7 @@ public class MoveStep implements Serializable {
         compileIllegal(game, entity, prev, cachedEntityState);
 
         if (isClimbing) {
-            LOGGER.info("[CLIMB-TRACE] compile FINAL: type={}, movementType={}, mp={}, mpUsed={}, " +
+            LOGGER.debug("[CLIMB-TRACE] compile FINAL: type={}, movementType={}, mp={}, mpUsed={}, " +
                   "elevation={}, position={}, isClimbing={}, isStackingViolation={}, terrainInvalid={}, " +
                   "isLegalEndPos={}",
                   type, movementType, mp, mpUsed, elevation, position,
@@ -946,7 +947,7 @@ public class MoveStep implements Serializable {
         movementType = entity.moved;
         movementMode = entity.getMovementMode();
         if (isClimbing) {
-            LOGGER.info("setFromEntity: climbing entity {} at elevation={}, position={}, isClimbing={}",
+            LOGGER.debug("setFromEntity: climbing entity {} at elevation={}, position={}, isClimbing={}",
                   entity.getDisplayName(), elevation, position, isClimbing);
         }
 
@@ -1134,6 +1135,15 @@ public class MoveStep implements Serializable {
         return climbingTotalLevels;
     }
 
+    /**
+     * Returns the number of climbing levels actually charged this turn (the player's chosen count, capped at the full
+     * delta). Differs from {@link #getClimbingTotalLevels()} when the player picked a partial climb. Used by the
+     * turn-count display to compute non-climbing MP correctly without going negative.
+     */
+    public int getClimbingChargedLevels() {
+        return climbingChargedLevels;
+    }
+
     public boolean isTurning() {
         return isTurning;
     }
@@ -1203,8 +1213,8 @@ public class MoveStep implements Serializable {
         // is "illegal".
         if (isLastStep && !isLegalEndPos()) {
             if (isClimbing) {
-                LOGGER.info("[CLIMB-TRACE] getMovementType: isLastStep={}, isLegalEndPos=false, " +
-                      "overriding {} to MOVE_ILLEGAL, isStackingViolation={}, terrainInvalid={}, " +
+                LOGGER.debug("[CLIMB-TRACE] getMovementType: isLastStep={}, isLegalEndPos=false, " +
+                            "overriding {} to MOVE_ILLEGAL, isStackingViolation={}, terrainInvalid={}, " +
                       "isJumping={}, distance={}, hasEverUnloaded={}, position={}, elevation={}",
                       isLastStep, movementType, isStackingViolation, terrainInvalid,
                       isJumping(), distance, hasEverUnloaded, position, elevation);
@@ -1237,13 +1247,15 @@ public class MoveStep implements Serializable {
         boolean legal = true;
         if (isStackingViolation) {
             if (isClimbing) {
-                LOGGER.info("[CLIMB-TRACE] isLegalEndPos: BLOCKED by stacking violation, pos={}", position);
+                LOGGER.debug("[CLIMB-TRACE] isLegalEndPos: BLOCKED by stacking violation, pos={}", position);
             }
             legal = false;
         } else if (terrainInvalid) {
             // Can't be into invalid terrain.
             if (isClimbing) {
-                LOGGER.info("[CLIMB-TRACE] isLegalEndPos: BLOCKED by terrainInvalid, pos={}, elevation={}", position, elevation);
+                LOGGER.debug("[CLIMB-TRACE] isLegalEndPos: BLOCKED by terrainInvalid, pos={}, elevation={}",
+                      position,
+                      elevation);
             }
             legal = false;
         } else if (isJumping() && (distance == 0)) {
@@ -1811,16 +1823,16 @@ public class MoveStep implements Serializable {
                   && (stepType != MoveStepType.CLIMB_MODE_ON)
                   && (stepType != MoveStepType.CLIMB_MODE_OFF)
                   && (stepType != MoveStepType.DOWN)) {
-                LOGGER.info("[CLIMB-TRACE] Blocked step type {} while climbing - set MOVE_ILLEGAL", stepType);
+                LOGGER.debug("[CLIMB-TRACE] Blocked step type {} while climbing - set MOVE_ILLEGAL", stepType);
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
             }
-            LOGGER.info("[CLIMB-TRACE] Allowed step type {} while climbing", stepType);
+            LOGGER.debug("[CLIMB-TRACE] Allowed step type {} while climbing", stepType);
         }
 
         // Log all facing changes for debugging
         if ((stepType == MoveStepType.TURN_LEFT) || (stepType == MoveStepType.TURN_RIGHT)) {
-            LOGGER.info("[FACING-TRACE] Facing change: type={}, prev.isClimbing={}, " +
+            LOGGER.debug("[FACING-TRACE] Facing change: type={}, prev.isClimbing={}, " +
                         "entity.isClimbing={}, position={}, elevation={}, prev.facing={}",
                   stepType, prev.isClimbing, entity.isClimbing(), curPos, elevation, prev.getFacing());
         }
@@ -2144,7 +2156,7 @@ public class MoveStep implements Serializable {
             // (isMovementPossible, prev-step-illegal, etc.) still run.
             if (isClimbing) {
                 movementType = EntityMovementType.MOVE_WALK;
-                LOGGER.info("[CLIMB-TRACE] compileIllegal: isClimbing=true, set MOVE_WALK, mpUsed={}, stepType={}",
+                LOGGER.debug("[CLIMB-TRACE] compileIllegal: isClimbing=true, set MOVE_WALK, mpUsed={}, stepType={}",
                       getMpUsed(), stepType);
             } else if (getMpUsed() <= tmpWalkMP) {
                 // VTOL includes powered flight infantry whose getMovementMode() returns VTOL
@@ -2309,7 +2321,7 @@ public class MoveStep implements Serializable {
                 if (((stepType != MoveStepType.TURN_LEFT && stepType != MoveStepType.TURN_RIGHT) || getMpUsed() > 1) &&
                       stepType != MoveStepType.EJECT) {
                     if (isClimbing) {
-                        LOGGER.info("[CLIMB-TRACE] gyro destroyed (prone): set MOVE_ILLEGAL, stepType={}",
+                        LOGGER.debug("[CLIMB-TRACE] gyro destroyed (prone): set MOVE_ILLEGAL, stepType={}",
                               stepType);
                     }
                     movementType = EntityMovementType.MOVE_ILLEGAL;
@@ -2328,7 +2340,7 @@ public class MoveStep implements Serializable {
                         // mode is `Mek, and we are not converting.
                         if (isTracked == entity.isConvertingNow() && stepType != MoveStepType.CONVERT_MODE) {
                             if (isClimbing) {
-                                LOGGER.info("[CLIMB-TRACE] gyro destroyed (QuadVee): set MOVE_ILLEGAL, stepType={}",
+                                LOGGER.debug("[CLIMB-TRACE] gyro destroyed (QuadVee): set MOVE_ILLEGAL, stepType={}",
                                       stepType);
                             }
                             movementType = EntityMovementType.MOVE_ILLEGAL;
@@ -2337,7 +2349,7 @@ public class MoveStep implements Serializable {
                         // Non QuadVee tracked 'Meks don't actually convert. They just go, so we only need to know
                         // the end mode.
                         if (isClimbing) {
-                            LOGGER.info("[CLIMB-TRACE] gyro destroyed (non-tracked Mek): set MOVE_ILLEGAL, "
+                            LOGGER.debug("[CLIMB-TRACE] gyro destroyed (non-tracked Mek): set MOVE_ILLEGAL, "
                                         + "stepType={}, mp={}, mpUsed={}",
                                   stepType, getMp(), getMpUsed());
                         }
@@ -2353,7 +2365,7 @@ public class MoveStep implements Serializable {
               entity.isLocationBad(Mek.LOC_LEFT_ARM) &&
               entity.isLocationBad(Mek.LOC_RIGHT_ARM) &&
               (entity.isLocationBad(Mek.LOC_RIGHT_LEG) || entity.isLocationBad(Mek.LOC_LEFT_LEG))) {
-            LOGGER.info("[STAND-TRACE] {} blocked: no arms + missing leg", stepType);
+            LOGGER.debug("[STAND-TRACE] {} blocked: no arms + missing leg", stepType);
             movementType = EntityMovementType.MOVE_ILLEGAL;
             return;
         }
@@ -2364,18 +2376,18 @@ public class MoveStep implements Serializable {
               (1 == cachedEntityState.getRunMP()) &&
               (entity.mpUsed < 1) &&
               !entity.isStuck()) {
-            LOGGER.info("[STAND-TRACE] GET_UP with 1 MP, set MOVE_RUN");
+            LOGGER.debug("[STAND-TRACE] GET_UP with 1 MP, set MOVE_RUN");
             movementType = EntityMovementType.MOVE_RUN;
         }
 
         if ((MoveStepType.CAREFUL_STAND == stepType) && (entity.mpUsed > 1)) {
-            LOGGER.info("[STAND-TRACE] CAREFUL_STAND blocked: entity.mpUsed={}", entity.mpUsed);
+            LOGGER.debug("[STAND-TRACE] CAREFUL_STAND blocked: entity.mpUsed={}", entity.mpUsed);
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
         if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
-            LOGGER.info("[STAND-TRACE] {} after checks: movementType={}, isProne={}, " +
-                  "isClimbing={}, entity.isClimbing={}, climbMode={}, elevation={}, " +
+            LOGGER.debug("[STAND-TRACE] {} after checks: movementType={}, isProne={}, " +
+                        "isClimbing={}, entity.isClimbing={}, climbMode={}, elevation={}, " +
                   "entity.elevation={}, entity.position={}, entity.mpUsed={}",
                   stepType, movementType, isProne(), isClimbing, entity.isClimbing(),
                   climbMode, elevation, entity.getElevation(), entity.getPosition(), entity.mpUsed);
@@ -2723,8 +2735,8 @@ public class MoveStep implements Serializable {
                       movementPossible, movementType, prev.getElevation());
             }
             if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
-                LOGGER.info("[STAND-TRACE] {} overridden to MOVE_ILLEGAL by isMovementPossible! " +
-                      "movementPossible={}, prevEl={}, lastPos={}, prev.movementType={}",
+                LOGGER.debug("[STAND-TRACE] {} overridden to MOVE_ILLEGAL by isMovementPossible! " +
+                            "movementPossible={}, prevEl={}, lastPos={}, prev.movementType={}",
                       stepType, movementPossible, prev.getElevation(), lastPos, prev.movementType);
             }
             movementType = EntityMovementType.MOVE_ILLEGAL;
@@ -2733,7 +2745,7 @@ public class MoveStep implements Serializable {
         // If the previous step is always illegal, then so is this one
         if (EntityMovementType.MOVE_ILLEGAL == prev.movementType) {
             if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
-                LOGGER.info("[STAND-TRACE] {} overridden to MOVE_ILLEGAL because prev step was ILLEGAL! " +
+                LOGGER.debug("[STAND-TRACE] {} overridden to MOVE_ILLEGAL because prev step was ILLEGAL! " +
                       "prev.type={}", stepType, prev.type);
             }
             movementType = EntityMovementType.MOVE_ILLEGAL;
@@ -3060,8 +3072,8 @@ public class MoveStep implements Serializable {
         if ((nSrcEl != nDestEl) && (moveMode != EntityMovementMode.WIGE)) {
             int deltaElevation = Math.abs(nSrcEl - nDestEl);
             if (isMek && (deltaElevation > 2)) {
-                LOGGER.info("calcMovementCostFor elevation: prevEl={}, elevation={}, " +
-                      "srcHex.level={}, destHex.level={}, nSrcEl={}, nDestEl={}, deltaElevation={}",
+                LOGGER.debug("calcMovementCostFor elevation: prevEl={}, elevation={}, " +
+                            "srcHex.level={}, destHex.level={}, nSrcEl={}, nDestEl={}, deltaElevation={}",
                       prevEl, elevation, srcHex.getLevel(), destHex.getLevel(),
                       nSrcEl, nDestEl, deltaElevation);
             }
@@ -3102,10 +3114,11 @@ public class MoveStep implements Serializable {
                 mp += levelsToCharge * climbCostPerLevel;
                 isClimbing = true;
                 climbingTotalLevels = deltaElevation;
+                climbingChargedLevels = levelsToCharge;
                 // Climbing requires walking only (TO:AR p.20)
                 isRunProhibited = true;
                 movementType = EntityMovementType.MOVE_WALK;
-                LOGGER.info("calcMovementCostFor: climbing {} of {} levels at {} MP/level = {} MP, " +
+                LOGGER.debug("calcMovementCostFor: climbing {} of {} levels at {} MP/level = {} MP, " +
                             "chosenLevels={}, movementType forced to MOVE_WALK",
                       levelsToCharge, deltaElevation, climbCostPerLevel, levelsToCharge * climbCostPerLevel,
                       chosenLevels);
@@ -3493,10 +3506,10 @@ public class MoveStep implements Serializable {
                     return false;
                 }
                 if (allowUp) {
-                    LOGGER.info("isValidStep: allowing climbing for {} levels up (TacOps Climbing)",
+                    LOGGER.debug("isValidStep: allowing climbing for {} levels up (TacOps Climbing)",
                           elevationUp);
                 } else {
-                    LOGGER.info("isValidStep: allowing edge descent for {} levels down (TacOps Climbing)",
+                    LOGGER.debug("isValidStep: allowing edge descent for {} levels down (TacOps Climbing)",
                           elevationDown);
                 }
             }
@@ -3857,8 +3870,8 @@ public class MoveStep implements Serializable {
 
         // check the elevation is valid for the type of entity and hex
         if ((type != MoveStepType.DFA) && !entity.isElevationValid(elevation, destHex)) {
-            LOGGER.info("[CLIMB-TRACE] isMovementPossible: elevation NOT valid! elevation={}, " +
-                  "destHex={}, destHex.level={}, destHex.ceiling={}, destHex.floor={}, " +
+            LOGGER.debug("[CLIMB-TRACE] isMovementPossible: elevation NOT valid! elevation={}, " +
+                        "destHex={}, destHex.level={}, destHex.ceiling={}, destHex.floor={}, " +
                   "isClimbing={}, entity={}",
                   elevation, dest, destHex.getLevel(), destHex.ceiling(), destHex.floor(),
                   isClimbing, entity.getDisplayName());

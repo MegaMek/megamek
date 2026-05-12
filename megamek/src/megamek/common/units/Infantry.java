@@ -1007,6 +1007,10 @@ public class Infantry extends Entity {
         troopersShooting = activeTroopers;
     }
 
+    public int getActiveTroopers() {
+        return activeTroopers;
+    }
+
     /**
      * Marks field guns and artillery as hit according to their crew requirement when losing troopers. Having them
      * destroyed requires a later call of {@link #applyDamage()}. This method does not restore FG/FA when damage is

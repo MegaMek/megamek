@@ -27906,6 +27906,16 @@ public class TWGameManager extends AbstractGameManager {
                 Report climbFallReport = new Report(6461, Report.PUBLIC);
                 climbFallReport.add(entity.getDisplayName());
                 vPhaseReport.add(climbFallReport);
+                // Push the same report as a SENDING_REPORTS_SPECIAL packet so clients
+                // surface it immediately as a kill-feed toast at the moment of the fall,
+                // not just buried in the end-of-phase round report. Matches the EMP-mine
+                // popup pattern in MovePathHandler.processSteps. The chat mirror below
+                // gives the player a persistent record in chat as well.
+                Vector<Report> climbFallSpecial = new Vector<>();
+                climbFallSpecial.add(climbFallReport);
+                send(createSpecialReportPacket(climbFallSpecial));
+                sendServerChat(entity.getDisplayName()
+                      + " can no longer hold on as the building is too damaged to support the climb and plummets to the ground!");
                 entity.setClimbing(false);
                 entity.setDangling(false);
                 entity.setClimbingLevelsChosen(0);

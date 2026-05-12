@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -222,7 +223,7 @@ public class BoardUtilities {
      * order. If every sheet is unnamed (random generation, etc.) returns {@link Board#BOARD_NAME_UNNAMED}.
      */
     private static String deriveCombinedName(Board[] sheets) {
-        java.util.LinkedHashSet<String> names = new java.util.LinkedHashSet<>();
+        LinkedHashSet<String> names = new LinkedHashSet<>();
         for (Board sheet : sheets) {
             if (sheet == null) {
                 continue;

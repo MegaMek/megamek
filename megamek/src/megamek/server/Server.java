@@ -70,8 +70,8 @@ import megamek.common.board.Board;
 import megamek.common.commandLine.AbstractCommandLineParser.ParseException;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
-import megamek.common.loaders.MapSettings;
 import megamek.common.icons.Camouflage;
+import megamek.common.loaders.MapSettings;
 import megamek.common.net.connections.AbstractConnection;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.events.DisconnectedEvent;
@@ -985,11 +985,11 @@ public class Server implements Runnable {
         if (ms == null) {
             return;
         }
-        java.util.List<String> selected = ms.getBoardsSelectedVector();
+        List<String> selected = ms.getBoardsSelectedVector();
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        java.util.LinkedHashSet<String> names = new java.util.LinkedHashSet<>();
+        LinkedHashSet<String> names = new LinkedHashSet<>();
         for (String raw : selected) {
             if (raw == null) {
                 continue;

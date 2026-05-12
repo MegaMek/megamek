@@ -41,10 +41,10 @@ import megamek.common.options.OptionsConstants;
  * follows the rule the engine is actually applying.
  *
  * <ul>
- *   <li>{@link #STANDARD} — BattleMech Manual default. A hex's terrain intervenes if its top is at or above the
+ *   <li>{@link #STANDARD} — BMM default. A hex's terrain intervenes if its top is at or above the
  *       attacker's LOS level (when attacker-adjacent), the target's LOS level (when target-adjacent), or the higher
  *       of the two LOS levels (when non-adjacent). The hex flagged as the blocker gets a red outline.</li>
- *   <li>{@link #DIAGRAMMED} — TacOps p.20 (game option {@code TAC_OPS_LOS1}). The reference level is a linear
+ *   <li>{@link #DIAGRAMMED} — TO:AR p.77/78 (game option {@code TAC_OPS_LOS1}). The reference level is a linear
  *       interpolation between attacker and target LOS levels, evaluated at each hex's position along the path.</li>
  *   <li>{@link #DEAD_ZONE} — TacOps optional rule (game option {@code TAC_OPS_DEAD_ZONES}). Adds a geometric
  *       "shadow" check on top of Standard: if the tallest intervening hill projects a shadow that the lower unit

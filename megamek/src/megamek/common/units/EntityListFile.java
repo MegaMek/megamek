@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -241,10 +241,10 @@ public class EntityListFile {
                 isDestroyed = true;
             }
 
-            // exact zeroes for BA should not be treated as destroyed as MHQ uses this to
-            // signify
-            // suits without pilots
-            if (entity instanceof BattleArmor && entity.getInternalForReal(loc) >= 0) {
+            // exact zeroes for BA should not be treated as destroyed as MHQ uses this to signify suits without pilots
+            // HHW always have zero internal structure
+            if ((entity instanceof BattleArmor || entity instanceof HandheldWeapon)
+                  && entity.getInternalForReal(loc) >= 0) {
                 isDestroyed = false;
             }
 

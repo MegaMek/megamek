@@ -1839,7 +1839,6 @@ public class ForceDescriptor {
         return jumpshipPct;
     }
 
-    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setJumpshipPct(double jumpshipPct) {
         this.jumpshipPct = jumpshipPct;
     }

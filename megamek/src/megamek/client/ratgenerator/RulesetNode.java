@@ -172,8 +172,12 @@ public class RulesetNode {
                     }
                     break;
                 default:
-                    logger.warn("Force generator ruleset uses unknown predicate {} on <{}>; treating as no-op",
+                    // Fail-safe: an unknown predicate is most likely a typo. Log it and treat
+                    // the node as non-matching so the malformed rule doesn't silently apply.
+                    logger.warn("Force generator ruleset uses unknown predicate {} on <{}>; " +
+                          "treating as non-match so the malformed rule does not silently apply.",
                           key, name);
+                    return false;
             }
         }
         return true;

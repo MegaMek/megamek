@@ -304,7 +304,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridx = 0;
         gbc.gridy = y++;
 
-        JPanel panTransport = new JPanel(new GridLayout(3, 2));
+        JPanel panTransport = new JPanel(new GridLayout(4, 2));
         txtDropshipPct = new JTextField("0");
         txtDropshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.dropshipPercentage.tooltip"));
         txtJumpshipPct = new JTextField("0");
@@ -312,12 +312,15 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         txtWarshipPct = new JTextField("0");
         txtWarshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.warshipPercentage.tooltip"));
         txtCargo = new JTextField("0");
+        txtCargo.setToolTipText(Messages.getString("ForceGeneratorDialog.cargo.tooltip"));
         panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.dropshipPercentage")));
         panTransport.add(txtDropshipPct, gbc);
         panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.jumpshipPercentage")));
         panTransport.add(txtJumpshipPct, gbc);
         panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.warshipPercentage")));
         panTransport.add(txtWarshipPct, gbc);
+        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.cargo")));
+        panTransport.add(txtCargo, gbc);
         gbc.gridx = 0;
         gbc.gridy = y++;
         gbc.fill = GridBagConstraints.NONE;
@@ -594,6 +597,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         txtWarshipPct.setText(String.valueOf(warShipPct));
 
         double cargo = MathUtility.parseDouble(txtCargo.getText(), 0.0);
+        fd.setCargo(cargo);
         txtCargo.setText(String.valueOf(cargo));
 
         ProgressMonitor monitor = new ProgressMonitor(this,

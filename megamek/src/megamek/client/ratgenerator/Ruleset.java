@@ -233,7 +233,8 @@ public class Ruleset {
         // Cap the retry count: changeEschelon should only re-loop a finite number of times.
         // A malformed ruleset (e.g., a changeEschelon option whose echelon equals the current
         // one and whose assertions fail to clear its triggering predicate) could otherwise
-        // spin forever. Each Integer.MAX_VALUE iteration we bail out so the UI doesn't lock up.
+        // spin forever. After maxIterations failed applies on the same node we log an ERROR
+        // and bail out so the UI doesn't lock up.
         int safetyCounter = 0;
         final int maxIterations = 32;
         do {

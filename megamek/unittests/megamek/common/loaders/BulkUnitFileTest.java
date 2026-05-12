@@ -40,6 +40,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.System;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -53,15 +54,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.BombType;
-import megamek.common.units.AbstractBuildingEntity;
-import megamek.common.units.Aero;
-import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
-import megamek.common.units.Jumpship;
-import megamek.common.units.Mek;
-import megamek.common.units.ProtoMek;
-import megamek.common.units.SmallCraft;
-import megamek.common.units.Tank;
+import megamek.common.units.*;
 import megamek.common.verifier.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -187,7 +180,7 @@ public class BulkUnitFileTest {
         } else if (unit.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
             testEntity = new TestBattleArmor((BattleArmor) unit, entityVerifier.baOption, null);
         } else if (unit.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
-            testEntity = new TestInfantry((Infantry) unit, entityVerifier.infOption, null);
+            testEntity = new TestInfantry((ConvInfantry) unit, entityVerifier.infOption, null);
         } else if (unit.hasETypeFlag(Entity.ETYPE_BUILDING_ENTITY)) {
             testEntity = new TestBuilding((AbstractBuildingEntity) unit, entityVerifier.tankOption, null);
         }

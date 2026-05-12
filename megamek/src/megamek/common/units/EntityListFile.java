@@ -952,7 +952,7 @@ public class EntityListFile {
             }
 
             // Save some values for conventional infantry
-            if (entity.isConventionalInfantry() && entity instanceof Infantry infantry) {
+            if (entity instanceof ConvInfantry infantry) {
                 if (infantry.getCustomArmorDamageDivisor() != 1) {
                     output.write("\" " + MULParser.ATTR_ARMOR_DIVISOR + "=\"");
                     output.write(infantry.getCustomArmorDamageDivisor() + "");
@@ -1424,7 +1424,7 @@ public class EntityListFile {
                       ' ' +
                       MULParser.ATTR_NUMBER +
                       "=\"" +
-                      eCrew.getOInternal(Infantry.LOC_INFANTRY));
+                      eCrew.getOInternal(ConvInfantry.LOC_INFANTRY));
                 output.write("\"/>\n");
             }
 
@@ -1608,7 +1608,7 @@ public class EntityListFile {
             }
         }
         // Write prosthetic enhancement data for infantry (IO p.84)
-        if (entity instanceof Infantry infantry) {
+        if (entity instanceof ConvInfantry infantry) {
             if (infantry.getProstheticEnhancement1() != null) {
                 output.write("\" " + MULParser.ATTR_PROSTHETIC_ENHANCEMENT_1 + "=\"");
                 output.write(infantry.getProstheticEnhancement1().name());

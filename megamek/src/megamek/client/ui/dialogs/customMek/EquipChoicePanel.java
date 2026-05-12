@@ -75,15 +75,7 @@ import megamek.common.game.Game;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
-import megamek.common.units.Aero;
-import megamek.common.units.AeroSpaceFighter;
-import megamek.common.units.Dropship;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityWeightClass;
-import megamek.common.units.IBomber;
-import megamek.common.units.Infantry;
-import megamek.common.units.Mek;
-import megamek.common.units.ProtoMek;
+import megamek.common.units.*;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import org.apache.logging.log4j.Logger;
@@ -234,7 +226,7 @@ public class EquipChoicePanel extends JPanel {
             }
         }
 
-        if (entity.isBattleArmor() || !(entity instanceof Infantry infantry) || infantry.hasFieldWeapon()) {
+        if (entity.isBattleArmor() || (entity instanceof ConvInfantry infantry && infantry.hasFieldWeapon())) {
             setupMunitions(gbc);
             if (clientgui != null) {
                 setupWeaponAmmoChoice(gbc);
@@ -257,8 +249,8 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // set up infantry armor
-        if (entity.isConventionalInfantry()) {
-            panInfArmor = new InfantryArmorPanel(entity, this, gbc);
+        if (entity instanceof ConvInfantry convInfantry) {
+            panInfArmor = new InfantryArmorPanel(convInfantry, this, gbc);
         }
 
         // Set up mines

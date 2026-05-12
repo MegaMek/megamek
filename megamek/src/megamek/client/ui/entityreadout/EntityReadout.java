@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,7 +39,9 @@ import megamek.client.ui.util.ViewFormatting;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.units.Aero;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
 import megamek.common.units.Infantry;
@@ -118,7 +120,7 @@ public interface EntityReadout {
         return switch (entity) {
             case BattleArmor battleArmor ->
                   new BattleArmorReadout(battleArmor, showDetail, useAlternateCost, ignorePilotBV);
-            case Infantry infantry -> new InfantryReadout(infantry, showDetail, useAlternateCost, ignorePilotBV);
+            case ConvInfantry infantry -> new InfantryReadout(infantry, showDetail, useAlternateCost, ignorePilotBV);
             case ProtoMek protoMek -> new ProtoMekReadout(protoMek, showDetail, useAlternateCost, ignorePilotBV);
             case GunEmplacement gunEmplacement ->
                   new GunEmplacementReadout(gunEmplacement, showDetail, useAlternateCost, ignorePilotBV);
@@ -127,8 +129,8 @@ public interface EntityReadout {
             case Mek mek -> new MekReadout(mek, showDetail, useAlternateCost, ignorePilotBV);
             case Aero aero -> new AeroReadout(aero, showDetail, useAlternateCost, ignorePilotBV);
             case Tank tank -> new TankReadout(tank, showDetail, useAlternateCost, ignorePilotBV);
+            case HandheldWeapon hhw -> new HhwReadout(hhw, showDetail, useAlternateCost, ignorePilotBV);
             case null, default ->
-                // the selection above should be exhaustive, but to be safe:
                   new GeneralEntityReadout(entity, showDetail, useAlternateCost, ignorePilotBV);
         };
     }

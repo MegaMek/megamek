@@ -35,12 +35,13 @@ package megamek.common.moves;
 import java.util.EnumSet;
 import java.util.Set;
 
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 import megamek.common.units.TripodMek;
 
 /**
@@ -74,8 +75,8 @@ class TurnStep implements PhasePass {
 
         // Infantry can turn for free, except for field artillery
         moveStep.setMp((moveStep.isJumping() ||
-              moveStep.isHasJustStood() ||
-              (entity instanceof Infantry infantry && !infantry.hasActiveFieldArtillery())) ? 0 : 1);
+              moveStep.isHasJustStood() || (entity instanceof BattleArmor) ||
+              (entity instanceof ConvInfantry infantry && !infantry.hasActiveFieldArtillery())) ? 0 : 1);
         moveStep.setNStraight(0);
         if (entity.isAirborne() && (entity.isAero())) {
             moveStep.setMp(moveStep.asfTurnCost(game, moveStep.getType(), entity));

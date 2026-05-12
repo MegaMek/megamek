@@ -122,49 +122,6 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     private void initUi() {
-
-        rightPanel = new JPanel();
-        rightPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.insets = new Insets(5, 5, 5, 5);
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        rightPanel.add(new JLabel(Messages.getString("ForceGeneratorDialog.organization")), gbc);
-        lblOrganization = new JLabel();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        rightPanel.add(lblOrganization, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        rightPanel.add(new JLabel(Messages.getString("ForceGeneratorDialog.faction")), gbc);
-        lblFaction = new JLabel();
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        rightPanel.add(lblFaction, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        rightPanel.add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc);
-        lblRating = new JLabel();
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        rightPanel.add(lblRating, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 3;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        paneForceTree = new JScrollPane();
-        paneForceTree.setViewportView(forceTree);
-        paneForceTree.setPreferredSize(new Dimension(600, 800));
-        paneForceTree.setMinimumSize(new Dimension(600, 800));
-        rightPanel.add(paneForceTree, gbc);
-
         forceTree = new JTree(new ForceTreeModel(null));
         forceTree.setCellRenderer(new UnitRenderer());
         // JTree setRowHeight(0) the height for each row is determined by the renderer
@@ -190,7 +147,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         forceTree.addMouseListener(treeMouseListener);
 
         rightPanel = new JPanel(new GridBagLayout());
-        gbc = new GridBagConstraints();
+        GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -361,7 +318,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                   ? ""
                   : UnitType.getTypeName(fd.getUnitType())).get(fd.getEchelonCode()));
             lblFaction.setText(RATGenerator.getInstance().getFaction(fd.getFaction()).getName(fd.getYear()));
-            lblRating.setText(SkillLevel.values()[fd.getExperience()].toString()
+            lblRating.setText(SkillLevel.values()[fd.getExperience() + SkillLevel.GREEN.ordinal()].toString()
                   + ((fd.getRating() == null) ? "" : "/" + fd.getRating()));
         } else {
             lblOrganization.setText("");
@@ -605,7 +562,11 @@ public class ForceGeneratorViewUi implements ActionListener {
                 }
             } else {
                 StringBuilder desc = new StringBuilder("<html>");
-                desc.append(fd.parseName()).append("<br />").append(fd.getDescription());
+                desc.append(fd.parseName());
+                String description = fd.getDescription();
+                if (description != null && !description.isBlank()) {
+                    desc.append("<br />").append(description);
+                }
                 if (fd.getCo() != null) {
                     desc.append("<br />").append(fd.getCo().getTitle() == null ? "CO: " : fd.getCo().getTitle());
                     desc.append(fd.getCo().getName());

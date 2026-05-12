@@ -935,7 +935,7 @@ public class MULParser {
         }
 
         // Load some values for conventional infantry
-        if (entity.isConventionalInfantry() && entity instanceof Infantry inf) {
+        if (entity instanceof ConvInfantry inf) {
             String armorDiv = entityTag.getAttribute(ATTR_ARMOR_DIVISOR);
             if (!armorDiv.isBlank()) {
                 inf.setCustomArmorDamageDivisor(Double.parseDouble(armorDiv));
@@ -1324,7 +1324,7 @@ public class MULParser {
             }
 
             // Parse prosthetic enhancement data for infantry (IO p.84)
-            if (entity instanceof Infantry infantry) {
+            if (entity instanceof ConvInfantry infantry) {
                 if (attributes.containsKey(ATTR_PROSTHETIC_ENHANCEMENT_1)
                       && !attributes.get(ATTR_PROSTHETIC_ENHANCEMENT_1).isBlank()) {
                     ProstheticEnhancementType enhancement = ProstheticEnhancementType.parseFromString(
@@ -1702,8 +1702,8 @@ public class MULParser {
                           .append(loc).append(".\n");
                 } else {
                     entity.setInternal(pointsVal, loc);
-                    if (entity instanceof Infantry) {
-                        ((Infantry) entity).damageOrRestoreFieldWeapons();
+                    if (entity instanceof ConvInfantry infantry) {
+                        infantry.damageOrRestoreFieldWeapons();
                         entity.applyDamage();
                     }
                 }
@@ -2558,7 +2558,7 @@ public class MULParser {
         String value = OMenTag.getAttribute(ATTR_NUMBER);
         try {
             int newMen = Integer.parseInt(value);
-            entity.initializeInternal(newMen, Infantry.LOC_INFANTRY);
+            entity.initializeInternal(newMen, ConvInfantry.LOC_INFANTRY);
         } catch (Exception ignored) {
             warning.append("Invalid internal value in original number of men tag.\n");
         }
@@ -2875,8 +2875,8 @@ public class MULParser {
         // mark armor, internal as destroyed
         en.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
         en.setInternal(IArmorState.ARMOR_DESTROYED, loc);
-        if (en instanceof Infantry) {
-            ((Infantry) en).damageOrRestoreFieldWeapons();
+        if (en instanceof ConvInfantry infantry) {
+            infantry.damageOrRestoreFieldWeapons();
             en.applyDamage();
         }
         if (en.hasRearArmor(loc)) {

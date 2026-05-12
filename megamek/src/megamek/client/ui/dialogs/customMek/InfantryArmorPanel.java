@@ -51,12 +51,11 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.options.OptionsConstants;
-import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
+import megamek.common.units.ConvInfantry;
 
 public class InfantryArmorPanel {
 
-    final private Infantry infantry;
+    final private ConvInfantry infantry;
     private final JComboBox<String> cbArmorKit = new JComboBox<>();
     private final JTextField fldDivisor = new JTextField(3);
 
@@ -66,12 +65,12 @@ public class InfantryArmorPanel {
     private final JCheckBox chSneakCamo = new JCheckBox(Messages.getString("CustomMekDialog.labSneakCamo"));
     private final JCheckBox chSneakIR = new JCheckBox(Messages.getString("CustomMekDialog.labSneakIR"));
     private final JCheckBox chSneakECM = new JCheckBox(Messages.getString("CustomMekDialog.labSneakECM"));
-    private final List<JCheckBox> chSpecs = new ArrayList<>(Infantry.NUM_SPECIALIZATIONS);
+    private final List<JCheckBox> chSpecs = new ArrayList<>(ConvInfantry.NUM_SPECIALIZATIONS);
 
     private final List<EquipmentType> armorKits = new ArrayList<>();
 
-    public InfantryArmorPanel(Entity entity, JPanel parentPanel, GBC2 gbc) {
-        infantry = (Infantry) entity;
+    public InfantryArmorPanel(ConvInfantry entity, JPanel parentPanel, GBC2 gbc) {
+        infantry = entity;
 
         JComponent armorTitle = new EquipChoicePanel.SectionTitleLabel(Messages.getString("CustomMekDialog.infArmorSection"));
         parentPanel.add(armorTitle, gbc.fullLine());
@@ -144,16 +143,16 @@ public class InfantryArmorPanel {
         JComponent specTitle = new EquipChoicePanel.SectionTitleLabel(Messages.getString("CustomMekDialog.infSpecSection"));
         parentPanel.add(specTitle, gbc.fullLine());
 
-        for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+        for (int i = 0; i < ConvInfantry.NUM_SPECIALIZATIONS; i++) {
             int spec = 1 << i;
-            JCheckBox newSpec = new JCheckBox(Infantry.getSpecializationName(spec));
-            newSpec.setToolTipText(Infantry.getSpecializationTooltip(spec));
+            JCheckBox newSpec = new JCheckBox(ConvInfantry.getSpecializationName(spec));
+            newSpec.setToolTipText(ConvInfantry.getSpecializationTooltip(spec));
             chSpecs.add(newSpec);
             parentPanel.add(new JLabel(), gbc.oneColumn());
             parentPanel.add(newSpec, gbc.eol());
         }
 
-        for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+        for (int i = 0; i < ConvInfantry.NUM_SPECIALIZATIONS; i++) {
             int spec = 1 << i;
             chSpecs.get(i).setSelected(infantry.hasSpecialization(spec));
         }
@@ -198,7 +197,7 @@ public class InfantryArmorPanel {
             }
         }
         int spec = 0;
-        for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+        for (int i = 0; i < ConvInfantry.NUM_SPECIALIZATIONS; i++) {
             if (chSpecs.get(i).isSelected()) {
                 spec |= 1 << i;
             }

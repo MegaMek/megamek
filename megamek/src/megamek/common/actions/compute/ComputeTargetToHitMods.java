@@ -336,7 +336,7 @@ public class ComputeTargetToHitMods {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.BaTarget"));
         }
 
-        if ((entityTarget instanceof Infantry infantry) && entityTarget.isConventionalInfantry()) {
+        if (entityTarget instanceof ConvInfantry infantry) {
             // infantry squads are also hard to hit
             if (infantry.isSquad()) {
                 toHit.addModifier(1, Messages.getString("WeaponAttackAction.SquadTarget"));

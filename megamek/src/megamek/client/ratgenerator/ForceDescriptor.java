@@ -129,6 +129,7 @@ public class ForceDescriptor {
     private ArrayList<ForceDescriptor> attached;
     private double dropshipPct = 0.0;
     private double jumpshipPct = 0.0;
+    private double warshipPct = 0.0;
     private double cargo = 0.0;
 
     public ForceDescriptor() {
@@ -1179,32 +1180,201 @@ public class ForceDescriptor {
      * portion of the unit.
      */
     public ForceDescriptor assignTransport() {
-        if ((getDropshipPct() <= 0) && (getJumpshipPct() <= 0) && (getCargo() <= 0)) {
+        if ((getDropshipPct() <= 0) && (getJumpshipPct() <= 0)
+              && (getWarshipPct() <= 0) && (getCargo() <= 0)) {
             return null;
         }
         TransportCalculator tp = new TransportCalculator(this);
         List<MekSummary> dropships = tp.calcDropships(getDropshipPct());
+        List<MekSummary> warships = tp.calcWarShips(getWarshipPct(), dropships.size());
+        List<MekSummary> jumpships = tp.calcJumpShips(getJumpshipPct(), dropships.size());
+
+        FactionRecord factionRec = getFactionRec();
+        boolean isClan = (factionRec != null) && factionRec.isClan();
+
         ForceDescriptor transports = createChild(subForces.size() + attached.size());
         transports.setUnitType(null);
-        transports.setName("Transport");
-
+        // "Naval Units" is the top container in both Clan and IS trees. Under it, each ship type
+        // gets a category node (WarShip Stars / WarShips, etc.) holding the per-type hierarchy:
+        //   Clan: Stars of 5 vessels each
+        //   IS/Periphery/SLDF: Strategic Operations hierarchy — Flotilla (2) / Division (3 Flotillas) / Squadron (3 Divisions)
+        transports.setName("Naval Units");
         // TODO: put this in the faction files
-        transports.setEchelon(3);
+        transports.setEchelon(isClan ? 7 : 9);
         transports.setCoRank(35);
 
-        List<MekSummary> shipList = tp.calcJumpShips(getJumpshipPct(), dropships.size());
-        shipList.addAll(dropships);
-        for (MekSummary ms : shipList) {
-            ForceDescriptor sub = transports.createChild(transports.getSubForces().size());
-            sub.setUnit(RATGenerator.getInstance().getModelRecord(ms.getName()));
-            sub.setEchelon(1);
-            sub.setCoRank(34);
-            transports.addSubForce(sub);
+        // Always render the categories in the canonical order: WarShips first, then JumpShips, then DropShips.
+        if (isClan) {
+            addClanCategory(transports, warships, "WarShip Stars");
+            addClanCategory(transports, jumpships, "JumpShip Stars");
+            addClanCategory(transports, dropships, "DropShip Stars");
+        } else {
+            addISCategory(transports, warships, "WarShips");
+            addISCategory(transports, jumpships, "JumpShips");
+            addISCategory(transports, dropships, "DropShips");
         }
+
         transports.assignCommanders();
         transports.assignPositions();
 
         return transports;
+    }
+
+    /**
+     * Creates a Clan category wrapper node (e.g., "WarShip Stars") and populates it with Stars of 5 vessels each.
+     * If the ship list is empty the category is skipped entirely so the tree stays clean.
+     */
+    private void addClanCategory(ForceDescriptor parent, List<MekSummary> ships, String categoryName) {
+        if (ships.isEmpty()) {
+            return;
+        }
+        ForceDescriptor category = createGroupNode(parent, categoryName,
+              /* echelon = CLUSTER */ 6, /* coRank = STAR_COL */ 38);
+        addClanStars(category, ships);
+    }
+
+    /**
+     * Creates an IS category wrapper node (e.g., "WarShips") and populates it with the Strategic Operations naval
+     * hierarchy. If the ship list is empty the category is skipped entirely so the tree stays clean.
+     */
+    private void addISCategory(ForceDescriptor parent, List<MekSummary> ships, String categoryName) {
+        if (ships.isEmpty()) {
+            return;
+        }
+        ForceDescriptor category = createGroupNode(parent, categoryName,
+              /* echelon = DIVISION */ 8, /* coRank = MAJ_GENERAL */ 42);
+        addNavalHierarchy(category, ships);
+    }
+
+    /**
+     * Adds Clan-style Star groupings (5 vessels per Star) under the given parent category node. Stars are named
+     * "Alpha Star", "Bravo Star", … per Clan convention (phonetic identifier precedes the formation level). When
+     * only a single Star is generated, the phonetic is omitted and the node is simply named "Star".
+     *
+     * @param parent The category node that will receive the Star(s) as subforces
+     * @param ships  The ships to add to this category (must be non-empty; callers should pre-filter)
+     */
+    private void addClanStars(ForceDescriptor parent, List<MekSummary> ships) {
+        final int starSize = 5;
+        int totalStars = (ships.size() + starSize - 1) / starSize;
+        for (int g = 0; g < totalStars; g++) {
+            String groupName = (totalStars > 1)
+                  ? PHONETIC[Math.min(g, PHONETIC.length - 1)] + " Star"
+                  : "Star";
+            ForceDescriptor star = createGroupNode(parent, groupName, /* echelon = STAR */ 3,
+                  /* coRank = STAR_CMDR */ 32);
+            int start = g * starSize;
+            int end = Math.min(start + starSize, ships.size());
+            for (int i = start; i < end; i++) {
+                addShipElement(star, ships.get(i));
+            }
+        }
+    }
+
+    /**
+     * Adds Inner Sphere / SLDF naval hierarchy groupings per Strategic Operations under the given category node:
+     * <ul>
+     *   <li>Flotilla = 2 vessels</li>
+     *   <li>Division = 3 Flotillas (6 vessels)</li>
+     *   <li>Squadron = 3 Divisions (18 vessels)</li>
+     * </ul>
+     * Picks the minimum nesting depth that fits the ship count: 1-2 ships render as a single Flotilla,
+     * 3-6 as Flotillas under one Division, 7-18 as Divisions under one or more Squadrons, 19+ as multiple Squadrons.
+     * The ship type is conveyed by the parent category node, so inner-level names are unprefixed
+     * (e.g., "Flotilla Alpha" rather than "WarShip Flotilla Alpha").
+     *
+     * @param parent The category node ("WarShips" / "JumpShips" / "DropShips") that receives the hierarchy
+     * @param ships  The ships to add (must be non-empty; callers should pre-filter)
+     */
+    private void addNavalHierarchy(ForceDescriptor parent, List<MekSummary> ships) {
+        // Slice into Flotillas of 2.
+        List<List<MekSummary>> flotillas = new ArrayList<>();
+        for (int i = 0; i < ships.size(); i += 2) {
+            flotillas.add(ships.subList(i, Math.min(i + 2, ships.size())));
+        }
+
+        if (flotillas.size() <= 1) {
+            // 1-2 ships: one Flotilla directly under category
+            addFlotilla(parent, flotillas.get(0), null);
+        } else if (flotillas.size() <= 3) {
+            // 3-6 ships: one Division of Flotillas
+            ForceDescriptor division = createGroupNode(parent, "Division",
+                  /* echelon = BRIGADE */ 7, /* coRank = LT_COLONEL */ 37);
+            for (int f = 0; f < flotillas.size(); f++) {
+                addFlotilla(division, flotillas.get(f), PHONETIC[f]);
+            }
+        } else if (flotillas.size() <= 9) {
+            // 7-18 ships: multiple Divisions, no Squadron wrapper needed
+            int numDivisions = (flotillas.size() + 2) / 3;
+            for (int d = 0; d < numDivisions; d++) {
+                ForceDescriptor division = createGroupNode(parent, "Division " + PHONETIC[d],
+                      /* echelon = BRIGADE */ 7, /* coRank = LT_COLONEL */ 37);
+                int startF = d * 3;
+                int endF = Math.min(startF + 3, flotillas.size());
+                for (int f = startF; f < endF; f++) {
+                    addFlotilla(division, flotillas.get(f), PHONETIC[f - startF]);
+                }
+            }
+        } else {
+            // 19+ ships: full hierarchy with Squadrons of Divisions of Flotillas
+            int numSquadrons = (flotillas.size() + 8) / 9;
+            for (int s = 0; s < numSquadrons; s++) {
+                String squadronName = (numSquadrons > 1) ? "Squadron " + PHONETIC[s] : "Squadron";
+                ForceDescriptor squadron = createGroupNode(parent, squadronName,
+                      /* echelon = DIVISION */ 8, /* coRank = COLONEL */ 38);
+                int startF = s * 9;
+                int endF = Math.min(startF + 9, flotillas.size());
+                int divisionsInSquadron = (endF - startF + 2) / 3;
+                for (int d = 0; d < divisionsInSquadron; d++) {
+                    ForceDescriptor division = createGroupNode(squadron, "Division " + PHONETIC[d],
+                          /* echelon = BRIGADE */ 7, /* coRank = LT_COLONEL */ 37);
+                    int divStartF = startF + d * 3;
+                    int divEndF = Math.min(divStartF + 3, flotillas.size());
+                    for (int f = divStartF; f < divEndF; f++) {
+                        addFlotilla(division, flotillas.get(f), PHONETIC[f - divStartF]);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates an intermediate force-tree node for a transport sub-grouping (Star, Squadron, Division, Flotilla)
+     * and attaches it to the parent.
+     */
+    private ForceDescriptor createGroupNode(ForceDescriptor parent, String name, int echelon, int coRank) {
+        ForceDescriptor group = parent.createChild(parent.getSubForces().size());
+        group.setUnitType(null);
+        group.setName(name);
+        group.setEchelon(echelon);
+        group.setCoRank(coRank);
+        parent.addSubForce(group);
+        return group;
+    }
+
+    /**
+     * Adds a Flotilla node (2 vessels) under the given parent and appends its vessels as element children.
+     * Suffix is appended to the Flotilla name only when non-null (e.g., when there are multiple Flotillas at the
+     * same level under the same Division).
+     */
+    private void addFlotilla(ForceDescriptor parent, List<MekSummary> flotillaShips, @Nullable String suffix) {
+        String name = "Flotilla" + (suffix != null ? " " + suffix : "");
+        ForceDescriptor flotilla = createGroupNode(parent, name,
+              /* echelon = REGIMENT */ 6, /* coRank = MAJOR */ 35);
+        for (MekSummary ms : flotillaShips) {
+            addShipElement(flotilla, ms);
+        }
+    }
+
+    /**
+     * Adds an element-level (echelon 1) child for an individual vessel.
+     */
+    private void addShipElement(ForceDescriptor parent, MekSummary ms) {
+        ForceDescriptor sub = parent.createChild(parent.getSubForces().size());
+        sub.setUnit(RATGenerator.getInstance().getModelRecord(ms.getName()));
+        sub.setEchelon(1);
+        sub.setCoRank(33);
+        parent.addSubForce(sub);
     }
 
     public static int decodeWeightClass(String code) {
@@ -1669,9 +1839,16 @@ public class ForceDescriptor {
         return jumpshipPct;
     }
 
-    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setJumpshipPct(double jumpshipPct) {
         this.jumpshipPct = jumpshipPct;
+    }
+
+    public double getWarshipPct() {
+        return warshipPct;
+    }
+
+    public void setWarshipPct(double warshipPct) {
+        this.warshipPct = warshipPct;
     }
 
     public double getCargo() {

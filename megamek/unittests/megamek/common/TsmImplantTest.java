@@ -40,6 +40,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.EntityWeightClass;
@@ -79,8 +80,8 @@ public class TsmImplantTest {
     /**
      * Creates a conventional infantry unit with the specified trooper count.
      */
-    private Infantry createInfantry(int troopers, boolean withTsmImplant) {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createInfantry(int troopers, boolean withTsmImplant) {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setGame(game);
         infantry.setId(1);
         infantry.setChassis("Test Platoon");
@@ -99,7 +100,7 @@ public class TsmImplantTest {
 
         // Set up infantry structure
         infantry.autoSetInternal();
-        infantry.initializeInternal(troopers, Infantry.LOC_INFANTRY);
+        infantry.initializeInternal(troopers, ConvInfantry.LOC_INFANTRY);
 
         return infantry;
     }
@@ -113,7 +114,7 @@ public class TsmImplantTest {
         ba.setId(1);
         ba.setChassis("Test BA");
         ba.setModel(withTsmImplant ? "TSM" : "Standard");
-        ba.setTroopers(troopers);
+        ba.setSquadSize(troopers);
         ba.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
 
         // Initialize crew
@@ -248,7 +249,7 @@ public class TsmImplantTest {
                   "BA should have TSM implant ability");
 
             // TSM bonus is +1 per trooper, applied in handler
-            int expectedTsmBonus = ba.getTroopers();
+            int expectedTsmBonus = ba.getSquadSize();
             assertEquals(4, expectedTsmBonus,
                   "TSM bonus should be +4 for 4 troopers (+1 each)");
         }

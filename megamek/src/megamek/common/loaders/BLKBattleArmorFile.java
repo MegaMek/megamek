@@ -71,13 +71,13 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
         if (!dataFile.exists("trooper count")) {
             throw new EntityLoadingException("Could not find trooper count block.");
         }
-        t.setTroopers(dataFile.getDataAsInt("trooper count")[0]);
+        t.setSquadSize(dataFile.getDataAsInt("trooper count")[0]);
 
         if (!dataFile.exists("weightclass")) {
             throw new EntityLoadingException("Could not find weightclass block.");
         }
         t.setWeightClass(dataFile.getDataAsInt("weightclass")[0]);
-        t.setWeight(t.getTroopers());
+        t.setWeight(t.getSquadSize());
 
         if (!dataFile.exists("chassis")) {
             throw new EntityLoadingException("Could not find chassis block.");

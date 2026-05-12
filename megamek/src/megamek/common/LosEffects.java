@@ -387,6 +387,15 @@ public class LosEffects {
         return hasLoS;
     }
 
+    /**
+     * @return true if this LOS was blocked by the TacOps dead-zone rule. Set by the engine when a tall
+     *       intervening hill projects a geometric shadow that the lower unit sits inside (see the
+     *       private static dead-zone check called from {@link #calculateLos}).
+     */
+    public boolean isBlockedByDeadZone() {
+        return deadZone;
+    }
+
     public static AttackInfo prepLosAttackInfo(Game game, @Nullable Entity ae, @Nullable Entity te, Coords c1,
           Coords c2, int boardId, boolean mekInFirst, boolean mekInSecond) {
         AttackInfo ai = new AttackInfo();

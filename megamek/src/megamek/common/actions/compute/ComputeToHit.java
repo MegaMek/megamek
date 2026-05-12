@@ -56,6 +56,7 @@ import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.IBuilding;
@@ -130,7 +131,8 @@ public class ComputeToHit {
 
         boolean isWeaponInfantry = weaponType.hasFlag(WeaponType.F_INFANTRY) && !ae.isSupportVehicle();
 
-        boolean isWeaponFieldGuns = isAttackerInfantry && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS);
+        boolean isWeaponFieldGuns =
+              (ae instanceof ConvInfantry) && (weapon.getLocation() == ConvInfantry.LOC_FIELD_GUNS);
         // 2003-01-02 BattleArmor MG and Small Lasers have unlimited ammo.
         // 2002-09-16 Infantry weapons have unlimited ammo.
 

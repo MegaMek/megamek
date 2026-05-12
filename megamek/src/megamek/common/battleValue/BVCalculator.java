@@ -1283,8 +1283,8 @@ public abstract class BVCalculator {
      */
     public static double bvMultiplier(Entity entity, List<String> pilotModifiers) {
         if (entity.isUncrewed()) {
-            if (entity.isConventionalInfantry() && !((Infantry) entity).hasAntiMekGear()) {
-                return bvSkillMultiplier(4, Infantry.ANTI_MEK_SKILL_NO_GEAR);
+            if (entity instanceof ConvInfantry convInfantry && !convInfantry.hasAntiMekGear()) {
+                return bvSkillMultiplier(4, ConvInfantry.ANTI_MEK_SKILL_NO_GEAR);
             } else {
                 return bvSkillMultiplier(4, 5);
             }
@@ -1295,10 +1295,8 @@ public abstract class BVCalculator {
         if (((entity instanceof Infantry) && (!((Infantry) entity).canMakeAntiMekAttacks())) ||
               (entity instanceof ProtoMek)) {
             piloting = 5;
-        } else if (entity.isConventionalInfantry()
-              && (entity instanceof Infantry)
-              && !((Infantry) entity).hasAntiMekGear()) {
-            piloting = Infantry.ANTI_MEK_SKILL_NO_GEAR;
+        } else if ((entity instanceof ConvInfantry convInfantry) && !convInfantry.hasAntiMekGear()) {
+            piloting = ConvInfantry.ANTI_MEK_SKILL_NO_GEAR;
         } else if (entity.getCrew() instanceof LAMPilot lamPilot) {
             gunnery = (lamPilot.getGunneryMek() + lamPilot.getGunneryAero()) / 2;
             piloting = (lamPilot.getPilotingMek() + lamPilot.getPilotingAero()) / 2;

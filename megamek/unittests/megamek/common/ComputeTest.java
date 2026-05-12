@@ -141,9 +141,9 @@ class ComputeTest {
         return mockMek;
     }
 
-    Infantry createInfantry(String chassis, String model, String crewName) {
+    ConvInfantry createInfantry(String chassis, String model, String crewName) {
         // Create a real Infantry unit with some mocked fields
-        Infantry mockInfantry = new Infantry();
+        ConvInfantry mockInfantry = new ConvInfantry();
         mockInfantry.setGame(game);
         mockInfantry.setChassis(chassis);
         mockInfantry.setModel(model);
@@ -315,8 +315,8 @@ class ComputeTest {
         Coords attackerCoords = new Coords(0, 0);
         attacker.setPosition(attackerCoords);
         attacker.setHidden(true);
-        attacker.addEquipment(mockAC5AmmoType, Infantry.LOC_FIELD_GUNS);
-        attacker.addEquipment(mockAC5, Infantry.LOC_FIELD_GUNS);
+        attacker.addEquipment(mockAC5AmmoType, ConvInfantry.LOC_FIELD_GUNS);
+        attacker.addEquipment(mockAC5, ConvInfantry.LOC_FIELD_GUNS);
 
         target.setOwnerId(player2.getId());
         target.setId(2);

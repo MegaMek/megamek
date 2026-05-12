@@ -55,6 +55,7 @@ import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.BipedMek;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.EntityWeightClass;
@@ -117,7 +118,7 @@ class AntiMekAttackTest {
         battleArmor.setId(game.getNextEntityId());
         battleArmor.setChassis("Test IS BA");
         battleArmor.setModel(burdened ? "With Missiles" : "Standard");
-        battleArmor.setTroopers(troopers);
+        battleArmor.setSquadSize(troopers);
         battleArmor.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
         battleArmor.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
 
@@ -150,7 +151,7 @@ class AntiMekAttackTest {
         battleArmor.setId(game.getNextEntityId());
         battleArmor.setChassis("Test Clan BA");
         battleArmor.setModel("Elemental");
-        battleArmor.setTroopers(troopers);
+        battleArmor.setSquadSize(troopers);
         battleArmor.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
         battleArmor.setTechLevel(TechConstants.T_CLAN_TW);
 
@@ -197,8 +198,8 @@ class AntiMekAttackTest {
     /**
      * Creates conventional infantry.
      */
-    private Infantry createConventionalInfantry(int troopers) {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createConventionalInfantry(int troopers) {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setGame(game);
         infantry.setId(game.getNextEntityId());
         infantry.setChassis("Test Platoon");
@@ -211,7 +212,7 @@ class AntiMekAttackTest {
 
         infantry.setOwner(player1);
         infantry.autoSetInternal();
-        infantry.initializeInternal(troopers, Infantry.LOC_INFANTRY);
+        infantry.initializeInternal(troopers, ConvInfantry.LOC_INFANTRY);
 
         return infantry;
     }
@@ -219,9 +220,9 @@ class AntiMekAttackTest {
     /**
      * Creates mountain troops infantry with the MOUNTAIN_TROOPS specialization.
      */
-    private Infantry createMountainTroops(int troopers) {
-        Infantry infantry = createConventionalInfantry(troopers);
-        infantry.setSpecializations(Infantry.MOUNTAIN_TROOPS);
+    private ConvInfantry createMountainTroops(int troopers) {
+        ConvInfantry infantry = createConventionalInfantry(troopers);
+        infantry.setSpecializations(ConvInfantry.MOUNTAIN_TROOPS);
         return infantry;
     }
 
@@ -508,8 +509,8 @@ class AntiMekAttackTest {
         @Test
         @DisplayName("Mountain Troops get -2 anti-mek modifier on leg attacks (TO:AUE p.153)")
         void mountainTroopsGetMinusTwoOnLegAttack() {
-            Infantry mountainAttacker = createMountainTroops(22);
-            Infantry standardAttacker = createConventionalInfantry(22);
+            ConvInfantry mountainAttacker = createMountainTroops(22);
+            ConvInfantry standardAttacker = createConventionalInfantry(22);
             Mek defender = createTargetMek();
 
             mountainAttacker.setPosition(new Coords(5, 5));
@@ -520,7 +521,7 @@ class AntiMekAttackTest {
             game.addEntity(standardAttacker);
             game.addEntity(defender);
 
-            assertTrue(mountainAttacker.hasSpecialization(Infantry.MOUNTAIN_TROOPS),
+            assertTrue(mountainAttacker.hasSpecialization(ConvInfantry.MOUNTAIN_TROOPS),
                   "Test setup: infantry should have Mountain Troops specialization");
 
             ToHitData mountainToHit = Compute.getLegAttackBaseToHit(mountainAttacker, defender, game);
@@ -563,7 +564,7 @@ class AntiMekAttackTest {
         @Test
         @DisplayName("Standard infantry does NOT get -2 anti-mek modifier")
         void standardInfantryDoesNotGetMountainBonus() {
-            Infantry attacker = createConventionalInfantry(22);
+            ConvInfantry attacker = createConventionalInfantry(22);
             Mek defender = createTargetMek();
 
             attacker.setPosition(new Coords(5, 5));
@@ -572,7 +573,7 @@ class AntiMekAttackTest {
             game.addEntity(attacker);
             game.addEntity(defender);
 
-            assertFalse(attacker.hasSpecialization(Infantry.MOUNTAIN_TROOPS),
+            assertFalse(attacker.hasSpecialization(ConvInfantry.MOUNTAIN_TROOPS),
                   "Test setup: standard infantry should NOT have Mountain Troops specialization");
 
             ToHitData toHit = Compute.getLegAttackBaseToHit(attacker, defender, game);

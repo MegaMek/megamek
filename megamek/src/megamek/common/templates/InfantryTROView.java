@@ -46,8 +46,8 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.options.IOption;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.units.Infantry;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -58,9 +58,9 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  */
 public class InfantryTROView extends TROView {
 
-    private final Infantry inf;
+    private final ConvInfantry inf;
 
-    public InfantryTROView(Infantry infantry) {
+    public InfantryTROView(ConvInfantry infantry) {
         this.inf = infantry;
     }
 
@@ -123,9 +123,9 @@ public class InfantryTROView extends TROView {
             }
         }
         StringJoiner sj = new StringJoiner(", ");
-        for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+        for (int i = 0; i < ConvInfantry.NUM_SPECIALIZATIONS; i++) {
             if (inf.hasSpecialization(1 << i)) {
-                sj.add(Infantry.getSpecializationName(1 << i));
+                sj.add(ConvInfantry.getSpecializationName(1 << i));
             }
         }
         if (!sj.toString().isBlank()) {
@@ -196,9 +196,9 @@ public class InfantryTROView extends TROView {
             notes.add(Messages.getString("TROView.InfantryNote.SCUBA"));
         }
         final List<EquipmentType> fieldGuns = inf.getWeaponList().stream()
-              .filter(m -> m.getLocation() == Infantry.LOC_FIELD_GUNS).map(Mounted::getType)
+              .filter(m -> m.getLocation() == ConvInfantry.LOC_FIELD_GUNS).map(Mounted::getType)
               .collect(Collectors.toList());
-        final int shots = inf.getAmmo().stream().filter(m -> m.getLocation() == Infantry.LOC_FIELD_GUNS)
+        final int shots = inf.getAmmo().stream().filter(m -> m.getLocation() == ConvInfantry.LOC_FIELD_GUNS)
               .mapToInt(Mounted::getBaseShotsLeft).sum();
         if (fieldGuns.size() > 1) {
             notes.add(String.format(Messages.getString("TROView.InfantryNote.FieldGuns"),

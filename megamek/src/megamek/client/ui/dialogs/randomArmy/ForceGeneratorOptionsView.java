@@ -53,6 +53,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.Ruleset.ProgressListener;
@@ -74,7 +75,7 @@ import megamek.logging.MMLogger;
  * @author Neoancient
  */
 public class ForceGeneratorOptionsView extends JPanel implements FocusListener, ActionListener {
-    private final static MMLogger logger = MMLogger.create(ForceGeneratorViewUi.class);
+    private final static MMLogger logger = MMLogger.create(ForceGeneratorOptionsView.class);
 
     private int currentYear;
     private final Consumer<ForceDescriptor> onGenerate;
@@ -130,6 +131,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     private JTextField txtDropshipPct;
     private JTextField txtJumpshipPct;
+    private JTextField txtWarshipPct;
     private JTextField txtCargo;
 
     private JButton btnGenerate;
@@ -302,16 +304,23 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridx = 0;
         gbc.gridy = y++;
 
-        JPanel panTransport = new JPanel(new GridLayout(3, 2));
+        JPanel panTransport = new JPanel(new GridLayout(4, 2));
         txtDropshipPct = new JTextField("0");
         txtDropshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.dropshipPercentage.tooltip"));
         txtJumpshipPct = new JTextField("0");
         txtJumpshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.jumpshipPercentage.tooltip"));
+        txtWarshipPct = new JTextField("0");
+        txtWarshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.warshipPercentage.tooltip"));
         txtCargo = new JTextField("0");
+        txtCargo.setToolTipText(Messages.getString("ForceGeneratorDialog.cargo.tooltip"));
         panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.dropshipPercentage")));
         panTransport.add(txtDropshipPct, gbc);
         panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.jumpshipPercentage")));
         panTransport.add(txtJumpshipPct, gbc);
+        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.warshipPercentage")));
+        panTransport.add(txtWarshipPct, gbc);
+        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.cargo")));
+        panTransport.add(txtCargo, gbc);
         gbc.gridx = 0;
         gbc.gridy = y++;
         gbc.fill = GridBagConstraints.NONE;
@@ -573,14 +582,22 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
         }
 
-        double dropShipPCT = MathUtility.parseDouble(txtDropshipPct.getText(), 0.0) * 0.01;
-        fd.setDropshipPct(dropShipPCT);
-        txtDropshipPct.setText(String.valueOf(dropShipPCT));
+        // Internal storage uses fraction (0.0–N.0+); the textbox shows percentage (0–N00).
+        // Preserve the user's input form in the textbox so it doesn't reset to "1.0" after Generate.
+        double dropShipPct = MathUtility.parseDouble(txtDropshipPct.getText(), 0.0);
+        fd.setDropshipPct(dropShipPct * 0.01);
+        txtDropshipPct.setText(String.valueOf(dropShipPct));
 
-        double jumpShipPCT = MathUtility.parseDouble(txtJumpshipPct.getText(), 0.0) * 0.01;
-        txtJumpshipPct.setText(String.valueOf(jumpShipPCT));
+        double jumpShipPct = MathUtility.parseDouble(txtJumpshipPct.getText(), 0.0);
+        fd.setJumpshipPct(jumpShipPct * 0.01);
+        txtJumpshipPct.setText(String.valueOf(jumpShipPct));
+
+        double warShipPct = MathUtility.parseDouble(txtWarshipPct.getText(), 0.0);
+        fd.setWarshipPct(warShipPct * 0.01);
+        txtWarshipPct.setText(String.valueOf(warShipPct));
 
         double cargo = MathUtility.parseDouble(txtCargo.getText(), 0.0);
+        fd.setCargo(cargo);
         txtCargo.setText(String.valueOf(cargo));
 
         ProgressMonitor monitor = new ProgressMonitor(this,
@@ -627,6 +644,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void refreshSubFactions() {
+        logger.debug("refreshSubFactions: parentFaction={}, fdFaction={}",
+              cbFaction.getSelectedItem(), forceDesc.getFaction());
         FactionRecord oldFaction = (FactionRecord) cbSubFaction.getSelectedItem();
         cbSubFaction.removeActionListener(this);
         cbSubFaction.removeAllItems();
@@ -653,8 +672,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void refreshUnitTypes() {
+        logger.debug("refreshUnitTypes: fdFaction={}", forceDesc.getFaction());
         cbUnitType.removeActionListener(this);
         TOCNode tocNode = findTOCNode();
+        if (tocNode == null) {
+            logger.warn("refreshUnitTypes: no TOC node found for faction {}", forceDesc.getFaction());
+        }
         Integer currentType = forceDesc.getUnitType();
         boolean hasCurrent = false;
         cbUnitType.removeAllItems();
@@ -698,6 +721,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void refreshFormations() {
+        logger.debug("refreshFormations: fdFaction={}, unitType={}",
+              forceDesc.getFaction(), cbUnitType.getSelectedItem());
         cbFormation.removeActionListener(this);
         if (cbUnitType.getSelectedItem() != null) {
             Integer unitType = (Integer) cbUnitType.getSelectedItem();
@@ -770,6 +795,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void refreshRatings() {
+        logger.debug("refreshRatings: fdFaction={}, echelon={}",
+              forceDesc.getFaction(), forceDesc.getEchelon());
         cbRating.removeActionListener(this);
         TOCNode tocNode = findTOCNode();
         cbRating.removeAllItems();
@@ -857,11 +884,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     @Override
     public void actionPerformed(ActionEvent ev) {
         if (ev.getSource() == cbFaction) {
+            logger.debug("cbFaction action: selected={}, year={}", cbFaction.getSelectedItem(), currentYear);
             if (cbFaction.getSelectedItem() != null) {
                 forceDesc.setFaction(((FactionRecord) cbFaction.getSelectedItem()).getKey());
             }
             refreshSubFactions();
         } else if (ev.getSource() == cbSubFaction) {
+            logger.debug("cbSubFaction action: selected={}", cbSubFaction.getSelectedItem());
             if (cbSubFaction.getSelectedItem() != null) {
                 forceDesc.setFaction(((FactionRecord) cbSubFaction.getSelectedItem()).getKey());
             } else {
@@ -869,6 +898,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
             refreshUnitTypes();
         } else if (ev.getSource() == cbUnitType) {
+            logger.debug("cbUnitType action: selected={}", cbUnitType.getSelectedItem());
             forceDesc.setUnitType((Integer) cbUnitType.getSelectedItem());
             refreshFormations();
         } else if (ev.getSource() == cbFormation) {
@@ -914,6 +944,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     public void exportMUL(ForceDescriptor fd) {
         ArrayList<Entity> list = new ArrayList<>();
         fd.addAllEntities(list);
+        if (list.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                  Messages.getString("ForceGeneratorDialog.exportMUL.empty"),
+                  Messages.getString("ForceGeneratorDialog.exportMUL.title"),
+                  JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         // Create a fake game so we can write the entities to a file without adding them
         // to the real game.
         Game game = new Game();
@@ -930,10 +967,46 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             game.addEntity(en);
         });
         configureNetworks(fd);
+
+        JFileChooser chooser = new JFileChooser(".");
+        chooser.setDialogTitle(Messages.getString("ForceGeneratorDialog.exportMUL.title"));
+        chooser.setFileFilter(new FileNameExtensionFilter(
+              Messages.getString("ClientGUI.descriptionMULFiles"), "mul"));
+        // Sanitize the force name so it works as a filename on Windows and other OSes.
+        String sanitized = fd.parseName().replaceAll("[\\\\/:*?\"<>|]", "_").trim();
+        if (sanitized.isEmpty()) {
+            sanitized = "force";
+        }
+        chooser.setSelectedFile(new File(sanitized + ".mul"));
+
+        int result = chooser.showSaveDialog(this);
+        if (result != JFileChooser.APPROVE_OPTION || chooser.getSelectedFile() == null) {
+            return;
+        }
+        File unitFile = chooser.getSelectedFile();
+        String lowerName = unitFile.getName().toLowerCase();
+        if (!lowerName.endsWith(".mul") && !lowerName.endsWith(".xml")) {
+            try {
+                unitFile = new File(unitFile.getCanonicalPath() + ".mul");
+            } catch (IOException e) {
+                logger.error(e, "exportMUL: failed to canonicalize selected file");
+                JOptionPane.showMessageDialog(this,
+                      Messages.getString("ForceGeneratorDialog.exportMUL.error") + "\n" + e.getMessage(),
+                      Messages.getString("ForceGeneratorDialog.exportMUL.title"),
+                      JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+
         try {
-            EntityListFile.saveTo(new File(fd.parseName()), list);
+            EntityListFile.saveTo(unitFile, list);
+            logger.info("exportMUL: wrote {} entities to {}", list.size(), unitFile.getAbsolutePath());
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error while saving file!", "Error", JOptionPane.ERROR_MESSAGE);
+            logger.error(e, "exportMUL: save failed");
+            JOptionPane.showMessageDialog(this,
+                  Messages.getString("ForceGeneratorDialog.exportMUL.error") + "\n" + e.getMessage(),
+                  Messages.getString("ForceGeneratorDialog.exportMUL.title"),
+                  JOptionPane.ERROR_MESSAGE);
         }
     }
 

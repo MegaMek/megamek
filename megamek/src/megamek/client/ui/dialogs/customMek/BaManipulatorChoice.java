@@ -157,7 +157,7 @@ class BaManipulatorChoice {
     private static double getMaxTrooperWeight(BattleArmor battleArmor) {
         TestBattleArmor testBattleArmor = (TestBattleArmor) TestEntity.getEntityVerifier(battleArmor);
         double maxTrooperWeight = 0;
-        for (int i = 1; i <= battleArmor.getTroopers(); i++) {
+        for (int i = 1; i <= battleArmor.getSquadSize(); i++) {
             double trooperWeight = testBattleArmor.calculateWeight(i);
             if (trooperWeight > maxTrooperWeight) {
                 maxTrooperWeight = trooperWeight;

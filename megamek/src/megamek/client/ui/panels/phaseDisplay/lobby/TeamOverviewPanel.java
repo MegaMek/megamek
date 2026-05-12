@@ -65,14 +65,18 @@ import megamek.client.ui.clientGUI.TableColumnManager;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.Team;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.game.Game;
 import megamek.common.loaders.MapSettings;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
 
 /**
@@ -236,10 +240,10 @@ public class TeamOverviewPanel extends JPanel {
                 long cost = 0;
                 double ton = 0;
                 int bv = 0;
-                int[] unitCounts = { 0, 0, 0, 0, 0 };
+                int[] unitCounts = { 0, 0, 0, 0, 0, 0, 0, 0 };
                 int hiddenBv = 0;
-                boolean[] unitCritical = { false, false, false, false, false };
-                boolean[] unitWarnings = { false, false, false, false, false };
+                boolean[] unitCritical = { false, false, false, false, false, false, false, false };
+                boolean[] unitWarnings = { false, false, false, false, false, false, false, false };
                 for (Player teamMember : team.players()) {
                     // Get the "real" player object, as the team's may be wrong
                     Player player = game.getPlayer(teamMember.getId());
@@ -285,12 +289,16 @@ public class TeamOverviewPanel extends JPanel {
 
         private int classIndex(Entity entity) {
             return switch (entity) {
+                case GunEmplacement ignored -> 5;
+                case AbstractBuildingEntity ignored -> 5;
                 case Mek ignored -> 0;
                 case Tank ignored -> 1;
                 case Aero ignored -> 2;
                 case Infantry ignored -> 3;
-                case null, default ->  // ProtoMek
-                      4;
+                case HandheldWeapon ignored -> 6;
+                case ProtoMek ignored -> 4;
+                case null, default ->  // ?
+                      7;
             };
         }
 

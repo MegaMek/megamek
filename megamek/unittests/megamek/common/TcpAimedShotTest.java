@@ -40,6 +40,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.BipedMek;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.EntityWeightClass;
@@ -101,8 +102,8 @@ public class TcpAimedShotTest {
     /**
      * Creates a conventional infantry unit with optional TCP and VDNI implants.
      */
-    private Infantry createInfantry(boolean withTcp, boolean withVdni) {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createInfantry(boolean withTcp, boolean withVdni) {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setGame(game);
         infantry.setId(1);
         infantry.setChassis("Test Platoon");
@@ -120,7 +121,7 @@ public class TcpAimedShotTest {
 
         infantry.setOwner(game.getPlayer(0));
         infantry.autoSetInternal();
-        infantry.initializeInternal(21, Infantry.LOC_INFANTRY);
+        infantry.initializeInternal(21, ConvInfantry.LOC_INFANTRY);
 
         return infantry;
     }
@@ -134,7 +135,7 @@ public class TcpAimedShotTest {
         ba.setId(1);
         ba.setChassis("Test BA");
         ba.setModel("Standard");
-        ba.setTroopers(4);
+        ba.setSquadSize(4);
         ba.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
 
         Crew crew = new Crew(CrewType.INFANTRY_CREW);

@@ -65,15 +65,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import megamek.common.units.AeroSpaceFighter;
-import megamek.common.units.BipedMek;
-import megamek.common.units.Crew;
-import megamek.common.units.CrewType;
-import megamek.common.units.Entity;
-import megamek.common.units.IBomber;
-import megamek.common.units.IBuilding;
-import megamek.common.units.Infantry;
-import megamek.common.units.Mek;
+import megamek.common.units.*;
 import megamek.common.weapons.handlers.TAGHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -168,9 +160,9 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         return createInfantry(chassis, model, crewName, owner, 5, 8);
     }
 
-    Infantry createInfantry(String chassis, String model, String crewName, Player owner, int gSkill, int pSkill) {
+    ConvInfantry createInfantry(String chassis, String model, String crewName, Player owner, int gSkill, int pSkill) {
         // Create a real Infantry unit with some mocked fields
-        Infantry mockInfantry = new Infantry();
+        ConvInfantry mockInfantry = new ConvInfantry();
         mockInfantry.setGame(game);
         mockInfantry.setChassis(chassis);
         mockInfantry.setModel(model);
@@ -188,7 +180,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         mockInfantry.autoSetInternal();
         try {
             mockInfantry.addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE),
-                  Infantry.LOC_INFANTRY);
+                  ConvInfantry.LOC_INFANTRY);
             mockInfantry.setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
         } catch (LocationFullException ex) {
             // do nothing

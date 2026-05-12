@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -949,11 +949,6 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public int getMaxElevationChange() {
-        return 1;
-    }
-
-    @Override
     public int getMaxElevationDown(int currElevation) {
         // Gliders have a maximum elevation of 12 over the surface terrain.
         if ((currElevation > 0) && (getMovementMode() == EntityMovementMode.WIGE)) {
@@ -1147,11 +1142,6 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public boolean isNuclearHardened() {
-        return true;
-    }
-
-    @Override
     public void setGrappled(int id, boolean attacker) {
         grappled_id = id;
         isGrappleAttacker = attacker;
@@ -1185,11 +1175,6 @@ public class ProtoMek extends Entity {
             return false;
         }
         return super.isEligibleForMovement();
-    }
-
-    @Override
-    public int getTotalCommGearTons() {
-        return 0;
     }
 
     @Override

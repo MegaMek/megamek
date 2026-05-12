@@ -113,7 +113,7 @@ public class TROView {
         } else if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
             view = new BattleArmorTROView((BattleArmor) entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
-            view = new InfantryTROView((Infantry) entity);
+            view = new InfantryTROView((ConvInfantry) entity);
         } else {
             view = new TROView();
         }

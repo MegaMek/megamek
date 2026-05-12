@@ -47,6 +47,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.verifier.TestInfantry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -75,8 +76,8 @@ class InfantryGliderWingsTest {
     /**
      * Creates an Infantry unit with the specified movement mode and optional glider wings ability.
      */
-    private Infantry createInfantry(EntityMovementMode movementMode, boolean hasGliderWings) {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createInfantry(EntityMovementMode movementMode, boolean hasGliderWings) {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setId(1);
         infantry.setMovementMode(movementMode);
         infantry.setSquadSize(7);
@@ -122,7 +123,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Glider wings work in standard atmosphere")
         void gliderWingsWorkInStandardAtmosphere() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.canUseGliderWings());
@@ -131,7 +132,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Glider wings work in thin atmosphere")
         void gliderWingsWorkInThinAtmosphere() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.THIN));
 
             assertTrue(infantry.canUseGliderWings());
@@ -140,7 +141,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Glider wings work in high atmosphere")
         void gliderWingsWorkInHighAtmosphere() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.HIGH));
 
             assertTrue(infantry.canUseGliderWings());
@@ -149,7 +150,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Glider wings work in very high atmosphere")
         void gliderWingsWorkInVeryHighAtmosphere() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.VERY_HIGH));
 
             assertTrue(infantry.canUseGliderWings());
@@ -158,7 +159,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Glider wings do NOT work in trace atmosphere")
         void gliderWingsDoNotWorkInTraceAtmosphere() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.TRACE));
 
             assertFalse(infantry.canUseGliderWings());
@@ -167,7 +168,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Glider wings do NOT work in vacuum")
         void gliderWingsDoNotWorkInVacuum() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.VACUUM));
 
             assertFalse(infantry.canUseGliderWings());
@@ -176,7 +177,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Glider wings work when no game context (lobby/loading)")
         void gliderWingsWorkWithNoGameContext() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             // No game set
 
             assertTrue(infantry.canUseGliderWings());
@@ -190,7 +191,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Conventional infantry with glider wings in standard atmosphere is protected")
         void conventionalInfantryWithGliderWingsProtected() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.isProtectedFromFallDamage());
@@ -199,7 +200,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Conventional infantry without glider wings is NOT protected")
         void conventionalInfantryWithoutGliderWingsNotProtected() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertFalse(infantry.isProtectedFromFallDamage());
@@ -208,7 +209,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Infantry with glider wings in vacuum is NOT protected")
         void infantryWithGliderWingsInVacuumNotProtected() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.VACUUM));
 
             assertFalse(infantry.isProtectedFromFallDamage());
@@ -217,7 +218,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Infantry with glider wings in trace atmosphere is NOT protected")
         void infantryWithGliderWingsInTraceNotProtected() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.TRACE));
 
             assertFalse(infantry.isProtectedFromFallDamage());
@@ -226,7 +227,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Jump infantry with glider wings is protected")
         void jumpInfantryWithGliderWingsProtected() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_JUMP, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_JUMP, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.isProtectedFromFallDamage());
@@ -235,7 +236,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Motorized infantry with glider wings is protected")
         void motorizedInfantryWithGliderWingsProtected() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_MOTORIZED, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_MOTORIZED, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.isProtectedFromFallDamage());
@@ -249,7 +250,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Leg infantry with glider wings in standard atmosphere can assault drop")
         void legInfantryWithGliderWingsCanAssaultDrop() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.canAssaultDrop());
@@ -258,7 +259,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Leg infantry without glider wings cannot assault drop")
         void legInfantryWithoutGliderWingsCannotAssaultDrop() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertFalse(infantry.canAssaultDrop());
@@ -267,7 +268,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Jump infantry can assault drop (inherent ability)")
         void jumpInfantryCanAssaultDrop() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_JUMP, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_JUMP, false);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.canAssaultDrop());
@@ -276,7 +277,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Leg infantry with glider wings in vacuum cannot assault drop")
         void legInfantryWithGliderWingsInVacuumCannotAssaultDrop() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.VACUUM));
 
             assertFalse(infantry.canAssaultDrop());
@@ -285,7 +286,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Leg infantry with glider wings in trace atmosphere cannot assault drop")
         void legInfantryWithGliderWingsInTraceCannotAssaultDrop() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.TRACE));
 
             assertFalse(infantry.canAssaultDrop());
@@ -294,7 +295,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Motorized infantry with glider wings can assault drop")
         void motorizedInfantryWithGliderWingsCanAssaultDrop() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_MOTORIZED, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_MOTORIZED, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.canAssaultDrop());
@@ -303,7 +304,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("VTOL infantry can assault drop (inherent ability)")
         void vtolInfantryCanAssaultDrop() {
-            Infantry infantry = createInfantry(EntityMovementMode.VTOL, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.VTOL, false);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.canAssaultDrop());
@@ -312,7 +313,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Hover infantry can assault drop (inherent ability)")
         void hoverInfantryCanAssaultDrop() {
-            Infantry infantry = createInfantry(EntityMovementMode.HOVER, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.HOVER, false);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.canAssaultDrop());
@@ -326,8 +327,8 @@ class InfantryGliderWingsTest {
         /**
          * Creates infantry with both wing types enabled for testing mutual exclusivity.
          */
-        private Infantry createInfantryWithBothWings() {
-            Infantry infantry = new Infantry();
+        private ConvInfantry createInfantryWithBothWings() {
+            ConvInfantry infantry = new ConvInfantry();
             infantry.setId(1);
             infantry.setMovementMode(EntityMovementMode.INF_LEG);
             infantry.setSquadSize(7);
@@ -351,23 +352,23 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Glider wings and powered flight wings are mutually exclusive")
         void gliderAndFlightWingsMutuallyExclusive() {
-            Infantry infantry = createInfantryWithBothWings();
+            ConvInfantry infantry = createInfantryWithBothWings();
 
-            assertTrue(infantry.hasInvalidWingsConfiguration());
+            assertTrue(TestInfantry.hasInvalidWingsConfiguration(infantry));
         }
 
         @Test
         @DisplayName("Glider wings alone is valid configuration")
         void gliderWingsAloneIsValid() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
 
-            assertFalse(infantry.hasInvalidWingsConfiguration());
+            assertFalse(TestInfantry.hasInvalidWingsConfiguration(infantry));
         }
 
         @Test
         @DisplayName("Without glider wings, max extraneous limb pairs is 2")
         void withoutGliderWingsMaxPairsIsTwo() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
 
             assertEquals(2, infantry.getMaxExtraneousLimbPairs());
         }
@@ -375,7 +376,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("With glider wings, max extraneous limb pairs is 1")
         void withGliderWingsMaxPairsIsOne() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
 
             assertEquals(1, infantry.getMaxExtraneousLimbPairs());
         }
@@ -383,7 +384,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Glider wings with two extraneous pairs is invalid")
         void gliderWingsWithTwoExtraneousPairsInvalid() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setExtraneousPair1(ProstheticEnhancementType.CLIMBING_CLAWS);
             infantry.setExtraneousPair2(ProstheticEnhancementType.GRAPPLER);
 
@@ -393,7 +394,7 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Glider wings with one extraneous pair is valid")
         void gliderWingsWithOneExtraneousPairValid() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setExtraneousPair1(ProstheticEnhancementType.CLIMBING_CLAWS);
 
             assertFalse(infantry.hasExcessiveExtraneousLimbs());
@@ -402,70 +403,11 @@ class InfantryGliderWingsTest {
         @Test
         @DisplayName("Without glider wings, two extraneous pairs is valid")
         void withoutGliderWingsTwoExtraneousPairsValid() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
             infantry.setExtraneousPair1(ProstheticEnhancementType.CLIMBING_CLAWS);
             infantry.setExtraneousPair2(ProstheticEnhancementType.GRAPPLER);
 
             assertFalse(infantry.hasExcessiveExtraneousLimbs());
-        }
-
-        @Test
-        @DisplayName("Foot infantry with glider wings is valid configuration")
-        void footInfantryWithGliderWingsValid() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
-
-            assertFalse(infantry.hasGliderWingsOnInvalidInfantryType());
-        }
-
-        @Test
-        @DisplayName("Jump infantry with glider wings is valid configuration")
-        void jumpInfantryWithGliderWingsValid() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_JUMP, true);
-
-            assertFalse(infantry.hasGliderWingsOnInvalidInfantryType());
-        }
-
-        @Test
-        @DisplayName("Motorized infantry with glider wings is INVALID")
-        void motorizedInfantryWithGliderWingsInvalid() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_MOTORIZED, true);
-
-            assertTrue(infantry.hasGliderWingsOnInvalidInfantryType());
-        }
-
-        @Test
-        @DisplayName("Wheeled infantry with glider wings is INVALID (mechanized)")
-        void wheeledInfantryWithGliderWingsInvalid() {
-            Infantry infantry = createInfantry(EntityMovementMode.WHEELED, true);
-
-            assertTrue(infantry.hasGliderWingsOnInvalidInfantryType());
-        }
-
-        @Test
-        @DisplayName("Tracked infantry with glider wings is INVALID (mechanized)")
-        void trackedInfantryWithGliderWingsInvalid() {
-            Infantry infantry = createInfantry(EntityMovementMode.TRACKED, true);
-
-            assertTrue(infantry.hasGliderWingsOnInvalidInfantryType());
-        }
-
-        @Test
-        @DisplayName("Beast-mounted infantry with glider wings is INVALID")
-        void beastMountedInfantryWithGliderWingsInvalid() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
-            infantry.setMount(InfantryMount.HORSE);
-
-            assertTrue(infantry.hasGliderWingsOnInvalidInfantryType());
-        }
-
-        @Test
-        @DisplayName("Infantry without glider wings always passes infantry type check")
-        void infantryWithoutGliderWingsAlwaysValid() {
-            Infantry motorized = createInfantry(EntityMovementMode.INF_MOTORIZED, false);
-            Infantry tracked = createInfantry(EntityMovementMode.TRACKED, false);
-
-            assertFalse(motorized.hasGliderWingsOnInvalidInfantryType());
-            assertFalse(tracked.hasGliderWingsOnInvalidInfantryType());
         }
     }
 }

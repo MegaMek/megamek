@@ -44,8 +44,8 @@ import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 
 /** Provides static helper functions for creating entity and crew tooltips. */
 public final class TipUtil {
@@ -185,7 +185,7 @@ public final class TipUtil {
      * @return String like "Laser x2, Grappler x1" or empty string if not applicable
      */
     private static String getRegularProstheticDetails(Entity entity) {
-        if (!(entity instanceof Infantry infantry)) {
+        if (!(entity instanceof ConvInfantry infantry)) {
             return "";
         }
 
@@ -212,7 +212,7 @@ public final class TipUtil {
      * @return String like "Laser x2, Grappler x2" or empty string if not applicable
      */
     private static String getExtraneousLimbDetails(Entity entity) {
-        if (!(entity instanceof Infantry infantry)) {
+        if (!(entity instanceof ConvInfantry infantry)) {
             return "";
         }
 

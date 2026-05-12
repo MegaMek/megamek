@@ -786,19 +786,11 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         return 0;
     }
 
-    /**
-     * Checks if the unit is hardened against nuclear strikes.
-     *
-     * @return true if this is a hardened unit.
-     */
     @Override
     public boolean isNuclearHardened() {
         return false;
     }
 
-    /**
-     * @return the total tonnage of communications gear in this entity
-     */
     @Override
     public int getTotalCommGearTons() {
         return getExtraCommGearTons();
@@ -808,12 +800,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     public int getEngineHits() {
         return 0;
     }
-
-    @Override
-    public String getLocationDamage(int loc) {
-        return "";
-    }
-
 
     /**
      * Buildings are salvageable unless they have completely collapsed. A building has completely collapsed when all

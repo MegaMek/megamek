@@ -356,7 +356,7 @@ public class TWDamageManager implements IDamageManager {
                 return handleCombatVehicleEscapePodDamage(cvep, damage, reportVec);
                 // CVEP uses parent's specialized handler (2-damage threshold breach model per TO:AUE p.121)
             }
-            case Infantry teCast when teCast.isConventionalInfantry() -> damageInfantry(reportVec,
+            case ConvInfantry teCast  -> damageInfantry(reportVec,
                   teCast,
                   hit,
                   damage,
@@ -1993,7 +1993,7 @@ public class TWDamageManager implements IDamageManager {
         report.subject = entity.getId();
         report.indent(2);
         reportVec.add(report);
-        for (int i = 0; i < (battleArmor).getTroopers(); i++) {
+        for (int i = 0; i < (battleArmor).getSquadSize(); i++) {
             hit.setLocation(BattleArmor.LOC_TROOPER_1 + i);
             if (battleArmor.getInternal(hit) > 0) {
                 // damageBA writes to reportVec on its own.
@@ -2288,7 +2288,7 @@ public class TWDamageManager implements IDamageManager {
      * @param nukeS2S       Whether damage is from a nuclear weapon
      * @param mods          damage modifiers and state tracking
      */
-    public void damageInfantry(Vector<Report> reportVec, Infantry infantry, HitData hit, int damage,
+    public void damageInfantry(Vector<Report> reportVec, ConvInfantry infantry, HitData hit, int damage,
           boolean ammoExplosion, DamageType damageType, boolean areaSatArty, boolean throughFront, boolean underWater,
           boolean nukeS2S, ModsInfo mods) {
         boolean isPlatoon = true;
@@ -2303,7 +2303,7 @@ public class TWDamageManager implements IDamageManager {
         boolean checkSuicideImplantReaction = infantry.isConventionalInfantry()
               && hasSuicideImplants
               && !damageType.equals(DamageType.SUICIDE_IMPLANT_REACTION);
-        int initialTroopers = checkSuicideImplantReaction ? infantry.getInternal(Infantry.LOC_INFANTRY) : -1;
+        int initialTroopers = checkSuicideImplantReaction ? infantry.getInternal(ConvInfantry.LOC_INFANTRY) : -1;
 
         // Infantry with TSM implants get 2d6 burst damage from ATSM munitions
         if (damageType.equals(DamageType.ANTI_TSM) &&
@@ -2545,7 +2545,7 @@ public class TWDamageManager implements IDamageManager {
         // When conventional infantry with suicide implants loses troopers, they automatically
         // deal 0.57 damage per dead trooper to all opposing units in the hex
         if (checkSuicideImplantReaction && initialTroopers > 0) {
-            int currentTroopers = Math.max(0, infantry.getInternal(Infantry.LOC_INFANTRY));
+            int currentTroopers = Math.max(0, infantry.getInternal(ConvInfantry.LOC_INFANTRY));
             int deadTroopers = initialTroopers - currentTroopers;
             if (deadTroopers > 0) {
                 reportVec.addAll(applySuicideImplantReaction(infantry, deadTroopers));

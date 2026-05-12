@@ -41,6 +41,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.units.Aero;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
 import megamek.common.units.Infantry;
@@ -119,7 +120,7 @@ public interface EntityReadout {
         return switch (entity) {
             case BattleArmor battleArmor ->
                   new BattleArmorReadout(battleArmor, showDetail, useAlternateCost, ignorePilotBV);
-            case Infantry infantry -> new InfantryReadout(infantry, showDetail, useAlternateCost, ignorePilotBV);
+            case ConvInfantry infantry -> new InfantryReadout(infantry, showDetail, useAlternateCost, ignorePilotBV);
             case ProtoMek protoMek -> new ProtoMekReadout(protoMek, showDetail, useAlternateCost, ignorePilotBV);
             case GunEmplacement gunEmplacement ->
                   new GunEmplacementReadout(gunEmplacement, showDetail, useAlternateCost, ignorePilotBV);

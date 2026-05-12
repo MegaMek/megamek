@@ -3481,11 +3481,7 @@ public abstract class Mek extends Entity {
 
     @Override
     public int getMaxElevationChange() {
-        if (movementMode == EntityMovementMode.TRACKED
-              || movementMode == EntityMovementMode.WIGE) {
-            return 1;
-        }
-        return 2;
+        return (movementMode.isTracked() || movementMode.isWiGE()) ? 1 : 2;
     }
 
     @Override
@@ -5385,11 +5381,6 @@ public abstract class Mek extends Entity {
             return false;
         }
         return super.isEligibleForMovement();
-    }
-
-    @Override
-    public boolean isNuclearHardened() {
-        return true;
     }
 
     @Override

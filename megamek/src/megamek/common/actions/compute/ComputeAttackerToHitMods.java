@@ -154,14 +154,14 @@ public class ComputeAttackerToHitMods {
         }
 
         // Infantry impaired by pheromone gas suffer +1 to-hit (IO pg 79)
-        if ((attacker instanceof Infantry infantry) && infantry.isPheromoneImpaired()) {
+        if ((attacker instanceof ConvInfantry infantry) && infantry.isPheromoneImpaired()) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.PheromoneImpaired"));
         }
 
         // Prosthetic enhancement melee weapons have +2 to-hit penalty (IO p.84)
         // Per IO p.83, maximum modifier is +2 regardless of number of melee enhancements
         // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
-        if (attacker instanceof Infantry infantry) {
+        if (attacker instanceof ConvInfantry infantry) {
             boolean hasMeleeEnhancement = infantry.hasProstheticMeleeEnhancement();
             boolean hasEnhancedAbility = infantry.hasAbility(OptionsConstants.MD_PL_ENHANCED)
                   || infantry.hasAbility(OptionsConstants.MD_PL_I_ENHANCED);

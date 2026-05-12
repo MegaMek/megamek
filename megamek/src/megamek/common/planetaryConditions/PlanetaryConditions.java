@@ -42,6 +42,7 @@ import megamek.common.Messages;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
@@ -572,7 +573,7 @@ public class PlanetaryConditions implements Serializable {
         }
 
         // temperature difference
-        boolean InfantryNotXCT = (en instanceof Infantry) && !((Infantry) en).isXCT();
+        boolean InfantryNotXCT = en instanceof ConvInfantry infantry && !infantry.isXCT();
         if ((en instanceof Tank) || InfantryNotXCT || (en instanceof ProtoMek)) {
             mod -= Math.abs(getTemperatureDifference(50, -30));
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,8 +34,8 @@ package megamek.client.generator.skillGenerators;
 
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.client.generator.enums.SkillGeneratorType;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 import megamek.common.units.LAMPilot;
 import megamek.common.enums.SkillLevel;
 
@@ -177,8 +177,8 @@ public abstract class AbstractSkillGenerator {
         // For conventional infantry, piloting doubles as anti-mek skill, and this is set
         // based on whether the unit has anti-mek training, which gets set in the BLK file.
         // We therefore check if they are anti-mek trained before setting
-        if (entity.isConventionalInfantry() && !((Infantry) entity).hasAntiMekGear()) {
-            skills[1] = Infantry.ANTI_MEK_SKILL_NO_GEAR;
+        if (entity instanceof ConvInfantry convInfantry && !convInfantry.hasAntiMekGear()) {
+            skills[1] = ConvInfantry.ANTI_MEK_SKILL_NO_GEAR;
         } else if (isForceClose()) {
             skills[1] = skills[0] + 1;
         }

@@ -296,11 +296,14 @@ class InfantryReadout extends GeneralEntityReadout {
     protected List<ViewElement> createArmorElements() {
         List<ViewElement> result = new ArrayList<>();
 
-        ViewElement troopers = new PlainElement(infantry.getShootingStrength());
-        if (infantry.getShootingStrength() == 0) {
+        int activeTroopersCount = infantry.getActiveTroopers();
+        int originalTrooperCount = infantry.getOriginalTrooperCount();
+
+        ViewElement troopers = new PlainElement(activeTroopersCount);
+        if (activeTroopersCount == 0) {
             troopers = new DestroyedElement(0);
-        } else if (infantry.getShootingStrength() < infantry.getOriginalTrooperCount()) {
-            troopers = new DamagedElement(infantry.getShootingStrength());
+        } else if (activeTroopersCount < originalTrooperCount) {
+            troopers = new DamagedElement(activeTroopersCount);
         }
         result.add(new LabeledLine(Messages.getString("MekView.Men"), troopers));
 

@@ -216,7 +216,7 @@ public class BLKFile {
 
     protected void loadEquipment(Entity t, String sName, int nLoc) throws EntityLoadingException {
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
-        if (saEquip == null) {
+        if (saEquip == null || saEquip.length == 0 || saEquip[0].isEmpty()) {
             return;
         }
 

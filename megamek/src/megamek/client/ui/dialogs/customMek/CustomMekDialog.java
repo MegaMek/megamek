@@ -572,7 +572,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      */
     private void addInlineProstheticControls(DialogOptionComponentYPanel optionComp, Entity entity,
           boolean isStandardEnhanced) {
-        Infantry infantry = (entity instanceof Infantry) ? (Infantry) entity : null;
+        ConvInfantry infantry = (entity instanceof ConvInfantry) ? (ConvInfantry) entity : null;
         String typeTooltip = Messages.getString("CustomMekDialog.ProstheticTypeTooltip");
         String countTooltip = Messages.getString("CustomMekDialog.ProstheticCountTooltip");
 
@@ -719,7 +719,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      * @param entity     The entity being configured
      */
     private void addInlineExtraneousControls(DialogOptionComponentYPanel optionComp, Entity entity) {
-        Infantry infantry = (entity instanceof Infantry) ? (Infantry) entity : null;
+        ConvInfantry infantry = (entity instanceof ConvInfantry) ? (ConvInfantry) entity : null;
         String pair1Tooltip = Messages.getString("CustomMekDialog.ExtraneousPair1Tooltip");
         String pair2Tooltip = Messages.getString("CustomMekDialog.ExtraneousPair2Tooltip");
 
@@ -849,7 +849,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      * prosthetic option (Standard or Improved) is currently selected.
      */
     private void applyProstheticEnhancement(Entity entity) {
-        if (!(entity instanceof Infantry infantry)) {
+        if (!(entity instanceof ConvInfantry infantry)) {
             return;
         }
 
@@ -881,7 +881,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     /**
      * Applies a single prosthetic enhancement slot from UI to entity.
      */
-    private void applyProstheticSlot(Infantry infantry, JComboBox<String> typeDropdown,
+    private void applyProstheticSlot(ConvInfantry infantry, JComboBox<String> typeDropdown,
           JSpinner countSpinner, boolean isSlot1) {
         int selectedIndex = typeDropdown.getSelectedIndex();
         if (selectedIndex <= 0) {
@@ -923,7 +923,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      * needed.
      */
     private void applyExtraneousLimbs(Entity entity) {
-        if (!(entity instanceof Infantry infantry)) {
+        if (!(entity instanceof ConvInfantry infantry)) {
             return;
         }
 
@@ -946,7 +946,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     /**
      * Applies a single extraneous limb pair from UI to entity.
      */
-    private void applyExtraneousPair(Infantry infantry, JComboBox<String> typeDropdown, boolean isPair1) {
+    private void applyExtraneousPair(ConvInfantry infantry, JComboBox<String> typeDropdown, boolean isPair1) {
         int selectedIndex = typeDropdown.getSelectedIndex();
         if (selectedIndex <= 0) {
             // "None" selected - clear this pair

@@ -398,7 +398,7 @@ class TWGameManagerTest {
             IBuilding building = getGame().getBoard().getBuildingAt(buildingHex);
             int buildingHeight = getGame().getBoard().getHex(buildingHex).terrainLevel(Terrains.BLDG_ELEV);
 
-            Infantry infantry = new Infantry();
+            ConvInfantry infantry = new ConvInfantry();
             infantry.setOwner(player);
             infantry.setId(1);
             infantry.setPosition(buildingHex);
@@ -417,7 +417,7 @@ class TWGameManagerTest {
             // Arrange
             IBuilding building = getGame().getBoard().getBuildingAt(buildingHex);
 
-            Infantry infantry = new Infantry();
+            ConvInfantry infantry = new ConvInfantry();
             infantry.setOwner(player);
             infantry.setId(1);
             infantry.setPosition(buildingHex);
@@ -437,12 +437,12 @@ class TWGameManagerTest {
             // Arrange
             IBuilding building = getGame().getBoard().getBuildingAt(buildingHex);
 
-            Infantry infantry = new Infantry();
+            ConvInfantry infantry = new ConvInfantry();
             infantry.setOwner(player);
             infantry.setId(1);
             infantry.setPosition(buildingHex);
             infantry.setElevation(0); // Inside building
-            infantry.setInternal(10, Infantry.LOC_INFANTRY); // Set some troopers so it can take damage
+            infantry.setInternal(10, ConvInfantry.LOC_INFANTRY); // Set some troopers so it can take damage
             getGame().addEntity(infantry);
 
             // Act
@@ -483,20 +483,20 @@ class TWGameManagerTest {
             // Arrange
             IBuilding building = getGame().getBoard().getBuildingAt(buildingHex);
 
-            Infantry infantry1 = new Infantry();
+            ConvInfantry infantry1 = new ConvInfantry();
             infantry1.setOwner(player);
             infantry1.setId(1);
             infantry1.setPosition(buildingHex);
             infantry1.setElevation(0); // Inside building
-            infantry1.setInternal(10, Infantry.LOC_INFANTRY);
+            infantry1.setInternal(10, ConvInfantry.LOC_INFANTRY);
             getGame().addEntity(infantry1);
 
-            Infantry infantry2 = new Infantry();
+            Infantry infantry2 = new ConvInfantry();
             infantry2.setOwner(player);
             infantry2.setId(2);
             infantry2.setPosition(buildingHex);
             infantry2.setElevation(1); // Inside building, different floor
-            infantry2.setInternal(10, Infantry.LOC_INFANTRY);
+            infantry2.setInternal(10, ConvInfantry.LOC_INFANTRY);
             getGame().addEntity(infantry2);
 
             // Act
@@ -514,12 +514,12 @@ class TWGameManagerTest {
             // Arrange
             IBuilding building = getGame().getBoard().getBuildingAt(buildingHex);
 
-            Infantry infantry = new Infantry();
+            Infantry infantry = new ConvInfantry();
             infantry.setOwner(player);
             infantry.setId(1);
             infantry.setPosition(emptyHex); // Different hex
             infantry.setElevation(0);
-            infantry.setInternal(10, Infantry.LOC_INFANTRY);
+            infantry.setInternal(10, ConvInfantry.LOC_INFANTRY);
             getGame().addEntity(infantry);
 
             // Act
@@ -821,13 +821,13 @@ class TWGameManagerTest {
             attacker.setFacing(3); // Face south toward the building
 
             // Create infantry inside the building
-            Infantry infantryInBuilding = new Infantry();
+            Infantry infantryInBuilding = new ConvInfantry();
             infantryInBuilding.setOwner(player2);
             infantryInBuilding.setId(10);
             infantryInBuilding.setPosition(buildingHex);
             infantryInBuilding.setElevation(0); // Inside building
             infantryInBuilding.setDeployed(true);
-            infantryInBuilding.setInternal(10, Infantry.LOC_INFANTRY);
+            infantryInBuilding.setInternal(10, ConvInfantry.LOC_INFANTRY);
             infantryInBuilding.getCrew().setHits(0, 0);
             getGame().addEntity(infantryInBuilding);
 

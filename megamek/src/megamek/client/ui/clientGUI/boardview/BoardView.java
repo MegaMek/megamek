@@ -77,6 +77,7 @@ import megamek.client.ui.clientGUI.boardview.sprite.isometric.IsometricWreckSpri
 import megamek.client.ui.clientGUI.boardview.toolTip.BoardViewTooltipProvider;
 import megamek.client.ui.dialogs.phaseDisplay.EntityChoiceDialog;
 import megamek.client.ui.tileset.TilesetManager;
+import megamek.client.ui.util.EntityWreckHelper;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.ImageCache;
 import megamek.client.ui.util.KeyBindReceiver;
@@ -1442,20 +1443,22 @@ public final class BoardView extends AbstractBoardView
     }
 
     /**
-     * Draws the wreck sprites for the given hex. This function is used by the isometric rendering process so that
-     * sprites are drawn in the order that hills are rendered to create the appearance that the sprite is behind the
-     * hill.
+     * Draws the wreck sprites for the given hex, optionally filtered by whether the wrecked entity was on a bridge.
+     * Splitting the pass by bridge state lets callers draw under-bridge wrecks beneath the bridge orthograph and
+     * on-bridge wrecks above it.
      *
      * @param coords          The Coordinates of the hex that the sprites should be drawn for.
      * @param graphics2D      The Graphics object for this board.
-     * @param spriteArrayList The complete list of all IsometricSprite on the board.
+     * @param spriteArrayList The complete list of all IsometricWreckSprite on the board.
+     * @param onBridge        When true, only draw wrecks of entities on a bridge; when false, only draw the rest.
      */
     private synchronized void drawIsometricWreckSpritesForHex(Coords coords, Graphics2D graphics2D,
-          ArrayList<IsometricWreckSprite> spriteArrayList) {
+          ArrayList<IsometricWreckSprite> spriteArrayList, boolean onBridge) {
         Rectangle view = graphics2D.getClipBounds();
         for (IsometricWreckSprite sprite : spriteArrayList) {
             Coords spritePosition = sprite.getPosition();
-            if (spritePosition.equals(coords) && view.intersects(sprite.getBounds()) && !sprite.isHidden()) {
+            if (spritePosition.equals(coords) && view.intersects(sprite.getBounds()) && !sprite.isHidden()
+                  && EntityWreckHelper.entityOnBridge(sprite.getEntity()) == onBridge) {
                 if (!sprite.isReady()) {
                     sprite.prepare();
                 }
@@ -2082,21 +2085,19 @@ public final class BoardView extends AbstractBoardView
                     if (hex != null) {
                         drawHex(coords, graphics2D, saveBoardImage);
                         drawOrthograph(coords, graphics2D);
+                        // Under-bridge / no-bridge wrecks: drawn before the iso entity sprite (so a unit on the
+                        // wreck paints on top) and before the second drawOrthograph (so a bridge deck paints over).
+                        if (!saveBoardImage && GUIP.getShowWrecks()) {
+                            drawIsometricWreckSpritesForHex(coords, graphics2D, isometricWreckSprites, false);
+                        }
                         drawHexSpritesForHex(coords, graphics2D, behindTerrainHexSprites);
                         drawDeployment(graphics2D, coords);
                         drawOrthograph(coords, graphics2D);
-                        drawHexText(coords, hex, board, graphics2D);
-                    }
-                }
-            }
-
-            for (int x = 0; x < drawWidth; x++) {
-                Coords coords = new Coords(x + drawX, y + drawY);
-                if (board.getHex(coords) != null) {
-                    if (!saveBoardImage) {
-                        if (GUIP.getShowWrecks()) {
-                            drawIsometricWreckSpritesForHex(coords, graphics2D, isometricWreckSprites);
+                        // On-bridge wrecks: drawn after the bridge orthograph so they sit on the deck.
+                        if (!saveBoardImage && GUIP.getShowWrecks()) {
+                            drawIsometricWreckSpritesForHex(coords, graphics2D, isometricWreckSprites, true);
                         }
+                        drawHexText(coords, hex, board, graphics2D);
                     }
                 }
             }

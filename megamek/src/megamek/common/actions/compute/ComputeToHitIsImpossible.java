@@ -1525,7 +1525,7 @@ class ComputeToHitIsImpossible {
                     return Messages.getString("WeaponAttackAction.CantShootAndFastMove");
                 }
                 // check for trying to fire field gun after moving
-                if ((weapon.getLocation() == Infantry.LOC_FIELD_GUNS) && (attacker.moved
+                if ((weapon.getLocation() == ConvInfantry.LOC_FIELD_GUNS) && (attacker.moved
                       != EntityMovementType.MOVE_NONE)) {
                     return Messages.getString("WeaponAttackAction.CantMoveAndFieldGun");
                 }
@@ -1538,9 +1538,9 @@ class ComputeToHitIsImpossible {
                     if (prevAttack.getEntityId() == attackerId) {
                         Mounted<?> prevWeapon = attacker.getEquipment(prevAttack.getWeaponId());
                         if ((prevWeapon.getType().hasFlag(WeaponType.F_INFANTRY) &&
-                              (weapon.getLocation() == Infantry.LOC_FIELD_GUNS)) ||
+                              (weapon.getLocation() == ConvInfantry.LOC_FIELD_GUNS)) ||
                               (weapon.getType().hasFlag(WeaponType.F_INFANTRY) &&
-                                    (prevWeapon.getLocation() == Infantry.LOC_FIELD_GUNS))) {
+                                    (prevWeapon.getLocation() == ConvInfantry.LOC_FIELD_GUNS))) {
                             return Messages.getString("WeaponAttackAction.FieldGunOrSAOnly");
                         }
                     }
@@ -1603,7 +1603,7 @@ class ComputeToHitIsImpossible {
             // Infantry can't make ground-to-air attacks, unless using field guns,
             // specialized AA infantry weapons,
             // or direct-fire artillery flak attacks
-            boolean isWeaponFieldGuns = isAttackerInfantry && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS);
+            boolean isWeaponFieldGuns = isAttackerInfantry && (weapon.getLocation() == ConvInfantry.LOC_FIELD_GUNS);
             if ((attacker instanceof Infantry) &&
                   Compute.isGroundToAir(attacker, target) &&
                   !weaponType.hasFlag(WeaponType.F_INF_AA) &&

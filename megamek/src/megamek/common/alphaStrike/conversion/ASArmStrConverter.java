@@ -42,6 +42,7 @@ import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.units.Aero;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Jumpship;
@@ -82,8 +83,8 @@ final class ASArmStrConverter {
         report.addEmptyLine();
         report.addSubHeader("Armor:");
 
-        if ((entity instanceof Infantry) && !(entity instanceof BattleArmor)) {
-            double divisor = ((Infantry) entity).calcDamageDivisor();
+        if (entity instanceof ConvInfantry infantry) {
+            double divisor = infantry.calcDamageDivisor();
             report.addLine("Infantry Damage Divisor:", "", divisor);
             if (((Infantry) entity).isMechanized()) {
                 divisor /= 2.0;

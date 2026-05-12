@@ -66,8 +66,8 @@ class InfantryFastMovementTest {
         EquipmentType.initializeTypes();
     }
 
-    private Infantry createInfantry(int walkMP) {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createInfantry(int walkMP) {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setId(1);
         infantry.setMovementMode(EntityMovementMode.INF_LEG);
         infantry.setSquadSize(7);

@@ -355,7 +355,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                     hit.setAttackerId(getAttackerId());
                     // BA gets damage to all troopers
                     if (entity instanceof BattleArmor ba) {
-                        for (int loc = 1; loc <= ba.getTroopers(); loc++) {
+                        for (int loc = 1; loc <= ba.getSquadSize(); loc++) {
                             hit.setLocation(loc);
                             vPhaseReport.addAll(gameManager.damageEntity(entity, hit,
                                   ratedDamage, false, DamageType.NONE, false,

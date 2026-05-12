@@ -928,7 +928,7 @@ public class FireControl {
             }
         } else {
             toHit.append(getInfantryRangeMods(distance, (InfantryWeapon) weapon.getType(),
-                  isShooterInfantry ? ((Infantry) shooter).getSecondaryWeapon() : null,
+                  shooter instanceof ConvInfantry infantry ? infantry.getSecondaryWeapon() : null,
                   ILocationExposureStatus.WET == shooter.getLocationStatus(weapon.getLocation())));
         }
 
@@ -2271,7 +2271,7 @@ public class FireControl {
                     // target is likely to explode and ammo explosion splash damage is on, etc).
                     continue;
                 } else if (!(shooter instanceof BattleArmor)
-                      && (Infantry.LOC_FIELD_GUNS == weaponFireInfo.getWeapon().getLocation())) {
+                      && (ConvInfantry.LOC_FIELD_GUNS == weaponFireInfo.getWeapon().getLocation())) {
                     fieldGuns.add(weaponFireInfo);
                     continue;
                 }

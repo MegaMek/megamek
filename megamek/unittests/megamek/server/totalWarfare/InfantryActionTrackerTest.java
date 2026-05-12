@@ -47,6 +47,7 @@ import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Infantry;
 import megamek.server.totalWarfare.InfantryActionTracker.InfantryAction;
 import org.junit.jupiter.api.BeforeAll;
@@ -521,14 +522,14 @@ public class InfantryActionTrackerTest {
 
     // ==================== Helper Methods ====================
 
-    private Infantry createInfantry(Player owner, int id) {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createInfantry(Player owner, int id) {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setOwner(owner);
         infantry.setGame(game);
         infantry.setId(id);
         infantry.setSquadSize(28);
         infantry.setSquadCount(1);
-        infantry.initializeInternal(28, Infantry.LOC_INFANTRY);
+        infantry.initializeInternal(28, ConvInfantry.LOC_INFANTRY);
         return infantry;
     }
 

@@ -131,7 +131,7 @@ public class EiImplantTest {
         ba.setId(1);
         ba.setChassis("Test BA");
         ba.setModel(withEiInterface ? "EI" : "Standard");
-        ba.setTroopers(troopers);
+        ba.setSquadSize(troopers);
         ba.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
 
         // Initialize crew

@@ -75,7 +75,7 @@ public class SwarmWeaponAttackHandler extends WeaponHandler {
             damage = battleArmor.calculateSwarmDamage();
             // TSM Implant adds +1 damage per trooper for same-hex attacks
             if (attackingEntity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
-                tsmBonusDamage = battleArmor.getTroopers();
+                tsmBonusDamage = battleArmor.getSquadSize();
                 damage += tsmBonusDamage;
             }
         }
@@ -121,7 +121,7 @@ public class SwarmWeaponAttackHandler extends WeaponHandler {
         if (damageForPathDecision == 0 && attackingEntity instanceof BattleArmor battleArmor) {
             damageForPathDecision = battleArmor.calculateSwarmDamage();
             if (attackingEntity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
-                damageForPathDecision += battleArmor.getTroopers();
+                damageForPathDecision += battleArmor.getSquadSize();
             }
         }
 

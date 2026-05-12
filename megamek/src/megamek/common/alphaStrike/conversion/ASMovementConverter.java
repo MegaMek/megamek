@@ -44,6 +44,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.units.Aero;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Jumpship;
@@ -169,7 +170,9 @@ final class ASMovementConverter {
         var result = new HashMap<String, Integer>();
         int walkingMP = infantry.getWalkMP(MPCalculationSetting.AS_CONVERSION);
         int jumpingMP = infantry.getJumpMP(MPCalculationSetting.AS_CONVERSION);
-        boolean minimalGroundMovement = infantry.hasMinimalGroundMP(MPCalculationSetting.AS_CONVERSION);
+        boolean minimalGroundMovement =
+              infantry instanceof ConvInfantry convInfantry
+                    && convInfantry.hasMinimalGroundMP(MPCalculationSetting.AS_CONVERSION);
         int walkingMove = minimalGroundMovement ? 2 : minimumConvertedMovement(walkingMP * 2);
         int jumpingMove = minimumConvertedMovement(jumpingMP * 2);
 

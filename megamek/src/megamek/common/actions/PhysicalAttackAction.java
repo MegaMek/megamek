@@ -184,7 +184,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         // Infantry squads are also hard to hit -- including for other infantry,
         // it seems (the rule is "all attacks"). However, this only applies to
         // proper squads deployed as such.
-        if (target.isConventionalInfantry() && ((Infantry) target).isSquad()) {
+        if (target instanceof ConvInfantry infantry && infantry.isSquad()) {
             toHit.addModifier(1, "infantry squad target");
         }
 

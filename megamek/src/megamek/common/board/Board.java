@@ -1008,6 +1008,21 @@ public class Board implements Serializable {
     public void load(final File filepath) {
         try (InputStream is = new FileInputStream(filepath)) {
             load(is);
+            // Default the displayable map name to the filename (without .board) when loading a legacy
+            // .board file. The YAML deserializer sets it explicitly; the legacy loader has no in-file
+            // map-name field, so we use the filename so the UI shows something more useful than the
+            // BOARD_NAME_UNNAMED placeholder.
+            if (BOARD_NAME_UNNAMED.equals(mapName)) {
+                String fileName = filepath.getName();
+                // Locale.ROOT keeps the case fold deterministic - default locale could mishandle the
+                // dotless-i case (Turkish) and miss the .board suffix.
+                if (fileName.toLowerCase(Locale.ROOT).endsWith(".board")) {
+                    fileName = fileName.substring(0, fileName.length() - ".board".length());
+                }
+                if (!fileName.isBlank()) {
+                    mapName = fileName;
+                }
+            }
         } catch (IOException ex) {
             logger.error("IO Error opening file to load board! {}", String.valueOf(ex));
         }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,6 +46,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Infantry;
@@ -57,12 +58,24 @@ import megamek.common.weapons.artillery.ArtilleryWeapon;
  * @author Jay Lawson (Taharqa)
  */
 public class TestInfantry extends TestEntity {
-    private final Infantry infantry;
+    private final ConvInfantry infantry;
 
-    public TestInfantry(Infantry infantry, TestEntityOption option, String fileString) {
+    public TestInfantry(ConvInfantry infantry, TestEntityOption option, String fileString) {
         super(option, null, null);
         this.infantry = infantry;
         this.fileString = fileString;
+    }
+
+    /**
+     * Returns true if both glider wings and powered flight wings are enabled. Per IO:AE 3rd p.79, these are mutually
+     * exclusive - a trooper cannot have both.
+     *
+     * @param infantry The conventional infantry to check
+     *
+     * @return true if invalid configuration (both wing types enabled)
+     */
+    public static boolean hasInvalidWingsConfiguration(ConvInfantry infantry) {
+        return infantry.hasAbility(OptionsConstants.MD_PL_GLIDER) && infantry.hasAbility(OptionsConstants.MD_PL_FLIGHT);
     }
 
     @Override
@@ -162,7 +175,7 @@ public class TestInfantry extends TestEntity {
 
     @Override
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
-        Infantry inf = (Infantry) getEntity();
+        var inf = (ConvInfantry) getEntity();
         boolean correct = true;
         if (skip()) {
             return true;
@@ -212,7 +225,7 @@ public class TestInfantry extends TestEntity {
         }
 
         max = maxUnitSize(baseMode, inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
-              inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS), inf.getMount());
+              inf.hasSpecialization(ConvInfantry.COMBAT_ENGINEERS | ConvInfantry.MOUNTAIN_TROOPS), inf.getMount());
         if (inf.getShootingStrength() > max) {
             buff.append("Maximum platoon size is ").append(max).append("\n\n");
             correct = false;
@@ -236,20 +249,20 @@ public class TestInfantry extends TestEntity {
         }
 
         // Glider wings can only be used by foot infantry (IO p.85, confirmed by rules team)
-        if (inf.hasGliderWingsOnInvalidInfantryType()) {
+        if (hasGliderWingsOnInvalidInfantryType(inf)) {
             buff.append("Glider wings can only be used by foot infantry, not motorized, mechanized, or beast-mounted!\n");
             correct = false;
         }
 
         // Powered flight wings can only be used by foot infantry (IO p.85)
-        if (inf.hasPoweredFlightWingsOnInvalidInfantryType()) {
+        if (hasPoweredFlightWingsOnInvalidInfantryType(inf)) {
             buff.append(
                   "Powered flight wings can only be used by foot infantry, not motorized, mechanized, or beast-mounted!\n");
             correct = false;
         }
 
         // Glider wings and powered flight wings are mutually exclusive (IO p.85)
-        if (inf.hasInvalidWingsConfiguration()) {
+        if (hasInvalidWingsConfiguration(inf)) {
             buff.append("Glider wings and powered flight wings cannot both be installed!\n");
             correct = false;
         }
@@ -310,6 +323,33 @@ public class TestInfantry extends TestEntity {
     }
 
     /**
+     * Returns true if glider wings are installed on non-foot infantry. Per IO p.85 and confirmed by the rules team,
+     * glider wings can only be used by foot infantry - motorized, mechanized, and beast-mounted infantry cannot use
+     * them.
+     *
+     * @return true if invalid configuration (glider wings on non-foot infantry)
+     */
+    public static boolean hasGliderWingsOnInvalidInfantryType(ConvInfantry infantry) {
+        if (!infantry.hasAbility(OptionsConstants.MD_PL_GLIDER)) {
+            return false;
+        }
+        return infantry.isMechanized() || infantry.getMovementMode().isMotorizedInfantry() || (infantry.getMount() != null);
+    }
+
+    /**
+     * Returns true if powered flight wings are installed on non-foot infantry. Per IO p.85, powered flight wings can
+     * only be used by foot infantry - motorized, mechanized, and beast-mounted infantry cannot use them.
+     *
+     * @return true if invalid configuration (powered flight wings on non-foot infantry)
+     */
+    public boolean hasPoweredFlightWingsOnInvalidInfantryType(ConvInfantry infantry) {
+        if (!infantry.hasAbility(OptionsConstants.MD_PL_FLIGHT)) {
+            return false;
+        }
+        return infantry.isMechanized() || infantry.getBaseMovementMode().isMotorizedInfantry() || (infantry.getMount() != null);
+    }
+
+    /**
      * Returns the number of troopers of the given infantry required to operate each of the given field gun equipment.
      * Neither parameter is checked for correctness. The returned result is never 0.
      *
@@ -322,7 +362,7 @@ public class TestInfantry extends TestEntity {
         return Math.max(2, (int) Math.ceil(equip.getTonnage(infantry)));
     }
 
-    public static int maxSecondaryWeapons(Infantry inf) {
+    public static int maxSecondaryWeapons(ConvInfantry inf) {
         int max;
         // Use getBaseMovementMode() to get the actual infantry type, not the virtual VTOL from powered flight
         EntityMovementMode baseMode = inf.getBaseMovementMode();
@@ -336,10 +376,10 @@ public class TestInfantry extends TestEntity {
             max = 2;
         }
 
-        if (inf.hasSpecialization(Infantry.COMBAT_ENGINEERS)) {
+        if (inf.hasSpecialization(ConvInfantry.COMBAT_ENGINEERS)) {
             max = 0;
         }
-        if (inf.hasSpecialization(Infantry.MOUNTAIN_TROOPS | Infantry.PARAMEDICS)) {
+        if (inf.hasSpecialization(ConvInfantry.MOUNTAIN_TROOPS | ConvInfantry.PARAMEDICS)) {
             max = 1;
         }
         if (inf.getCrew() != null) {
@@ -399,15 +439,15 @@ public class TestInfantry extends TestEntity {
                 default -> 5;
             };
 
-            if ((specialization & (Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS)) > 0) {
+            if ((specialization & (ConvInfantry.COMBAT_ENGINEERS | ConvInfantry.MOUNTAIN_TROOPS)) > 0) {
                 squads = Math.min(squads, 2);
             }
 
-            if ((specialization & Infantry.PARATROOPS) > 0) {
+            if ((specialization & ConvInfantry.PARATROOPS) > 0) {
                 squads = Math.min(squads, 3);
             }
 
-            if ((specialization & Infantry.MARINES) > 0) {
+            if ((specialization & ConvInfantry.MARINES) > 0) {
                 squads = Math.min(squads, 4);
             }
 
@@ -507,7 +547,7 @@ public class TestInfantry extends TestEntity {
      *
      * @return The rounded weight in tons
      */
-    public static double getWeight(Infantry infantry) {
+    public static double getWeight(ConvInfantry infantry) {
         double weight = getWeightExact(infantry, new DummyCalculationReport());
         return ceil(weight, Ceil.HALF_TON);
     }
@@ -522,7 +562,7 @@ public class TestInfantry extends TestEntity {
      *
      * @return The exact weight in tons
      */
-    public static double getWeightExact(Infantry infantry, CalculationReport report) {
+    public static double getWeightExact(ConvInfantry infantry, CalculationReport report) {
         String header = "Weight Calculation for ";
         String fullName = infantry.getChassis() + " " + infantry.getModel();
         if (fullName.length() < 20) {
@@ -538,7 +578,7 @@ public class TestInfantry extends TestEntity {
         report.addEmptyLine();
 
         InfantryMount mount = infantry.getMount();
-        int activeTroopers = Math.max(0, infantry.getInternal(Infantry.LOC_INFANTRY));
+        int activeTroopers = Math.max(0, infantry.getInternal(ConvInfantry.LOC_INFANTRY));
         double weight;
 
         if (mount != null) {
@@ -589,18 +629,18 @@ public class TestInfantry extends TestEntity {
             }
             report.addLine("Base Weight: ", infantry.getMovementModeAsString(), formatForReport(multiplier) + " t");
 
-            if (infantry.hasSpecialization(Infantry.COMBAT_ENGINEERS)) {
+            if (infantry.hasSpecialization(ConvInfantry.COMBAT_ENGINEERS)) {
                 multiplier += 0.1;
                 report.addLine("", "Combat Engineers", "+ 0.1 t");
 
             }
 
-            if (infantry.hasSpecialization(Infantry.PARATROOPS)) {
+            if (infantry.hasSpecialization(ConvInfantry.PARATROOPS)) {
                 multiplier += 0.05;
                 report.addLine("", "Paratroopers", "+ 0.05 t");
             }
 
-            if (infantry.hasSpecialization(Infantry.PARAMEDICS)) {
+            if (infantry.hasSpecialization(ConvInfantry.PARAMEDICS)) {
                 multiplier += 0.05;
                 report.addLine("", "Paramedics", "+ 0.05 t");
             }
@@ -633,17 +673,17 @@ public class TestInfantry extends TestEntity {
         return weight;
     }
 
-    public static void adaptAntiMekAttacks(Infantry infantry) {
+    public static void adaptAntiMekAttacks(ConvInfantry infantry) {
         try {
             removeAntiMekAttacks(infantry);
             if (infantry.canMakeAntiMekAttacks()) {
                 InfantryMount mount = infantry.getMount();
                 if ((mount == null) || mount.size().canMakeSwarmAttacks) {
-                    infantry.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), Infantry.LOC_INFANTRY);
-                    infantry.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), Infantry.LOC_INFANTRY);
+                    infantry.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), ConvInfantry.LOC_INFANTRY);
+                    infantry.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), ConvInfantry.LOC_INFANTRY);
                 }
                 if ((mount == null) || mount.size().canMakeLegAttacks) {
-                    infantry.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), Infantry.LOC_INFANTRY);
+                    infantry.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), ConvInfantry.LOC_INFANTRY);
                 }
             }
         } catch (LocationFullException ignored) {

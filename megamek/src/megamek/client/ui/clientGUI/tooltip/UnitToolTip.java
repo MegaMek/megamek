@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -439,7 +439,7 @@ public final class UnitToolTip {
         return ((entity.getOArmor(location) <= 0) &&
               (entity.getOInternal(location) <= 0) &&
               !entity.hasRearArmor(location)) ||
-              (entity.isConventionalInfantry() && (location != Infantry.LOC_INFANTRY));
+              (entity.isConventionalInfantry() && (location != ConvInfantry.LOC_INFANTRY));
     }
 
     private static String locationHeader(Entity entity, int location) {
@@ -1708,8 +1708,8 @@ public final class UnitToolTip {
             result += UIUtil.tag("FONT", attr, sMove);
         }
 
-        if (entity instanceof Infantry) {
-            InfantryMount mount = ((Infantry) entity).getMount();
+        if (entity instanceof ConvInfantry infantry) {
+            InfantryMount mount = infantry.getMount();
             if ((mount != null) && entity.getMovementMode().isSubmarine() && (entity.underwaterRounds > 0)) {
                 String uw = " " + addToTT("InfUWDuration", NOBR, mount.getUWEndurance() - entity.underwaterRounds);
                 if (entity.underwaterRounds >= mount.getUWEndurance()) {
@@ -1855,7 +1855,7 @@ public final class UnitToolTip {
         }
 
         // Pheromone impaired (IO pg 79)
-        if ((entity instanceof Infantry infantry) && infantry.isPheromoneImpaired()) {
+        if ((entity instanceof ConvInfantry infantry) && infantry.isPheromoneImpaired()) {
             String sPheromone = addToTT("PheromoneImpaired", NOBR) + " ";
             attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getWarningColor())));
             result += UIUtil.tag("FONT", attr, sPheromone);
@@ -2335,10 +2335,10 @@ public final class UnitToolTip {
             }
         }
         // Infantry specialization like SCUBA
-        if (entity instanceof Infantry infantry) {
+        if (entity instanceof ConvInfantry infantry) {
             int spec = infantry.getSpecializations();
             if (spec > 0) {
-                String sInfantrySpec = addToTT("InfSpec", NOBR, Infantry.getSpecializationName(spec)).toString();
+                String sInfantrySpec = addToTT("InfSpec", NOBR, ConvInfantry.getSpecializationName(spec)).toString();
                 sInfantrySpec = UIUtil.tag("span", fontSizeAttr, sInfantrySpec);
                 col = UIUtil.tag("TD", "", sInfantrySpec);
                 row = UIUtil.tag("TR", "", col);

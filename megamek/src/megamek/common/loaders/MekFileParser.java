@@ -58,6 +58,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.Aero;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Infantry;
@@ -796,8 +797,8 @@ public class MekFileParser {
             }
         }
         // physical attacks for conventional infantry
-        else if (ent instanceof Infantry) {
-            TestInfantry.adaptAntiMekAttacks((Infantry) ent);
+        else if (ent instanceof ConvInfantry infantry) {
+            TestInfantry.adaptAntiMekAttacks(infantry);
         }
 
         // Check if it's canon; if it is, mark it as such.

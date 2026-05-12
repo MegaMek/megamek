@@ -567,7 +567,7 @@ public class EntitySprite extends Sprite {
                 stStr.add(new Status(GUIP.getWarningColor(), "IMMOBILE"));
             }
 
-            if ((entity instanceof Infantry infantry) && infantry.isExhaustedFromFastMove()) {
+            if ((entity instanceof ConvInfantry infantry) && infantry.isExhaustedFromFastMove()) {
                 stStr.add(new Status(GUIP.getWarningColor(), "EXHAUSTED"));
             }
 
@@ -766,12 +766,9 @@ public class EntitySprite extends Sprite {
 
             // draw facing
             graph.setColor(Color.white);
-            if ((entity.getFacing() != -1) && !((entity instanceof Infantry)
-                  && !((Infantry) entity).hasFieldWeapon()
-                  && !((Infantry) entity).isTakingCover()) && !(
-                  (entity instanceof IAero)
-                        && ((IAero) entity).isSpheroid()
-                        && !board.isSpace())) {
+            if ((entity.getFacing() != -1)
+                  && !((entity instanceof ConvInfantry infantry) && !infantry.hasFieldWeapon() && !infantry.isTakingCover())
+                  && !((entity instanceof IAero) && ((IAero) entity).isSpheroid() && !board.isSpace())) {
                 // Indicate a stacked unit with the same facing that can still move
                 if (shouldIndicateNotDone() && bv.game.getPhase().isMovement()) {
                     var tr = graph.getTransform();

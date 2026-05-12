@@ -166,7 +166,10 @@ public class BLKSupportTankFile extends BLKFile implements IMekLoader {
         loadEquipment(t, "Left", Tank.LOC_LEFT);
         loadEquipment(t, "Rear", Tank.LOC_REAR);
         if (!t.hasNoTurret()) {
+            // Try to load any and all turrets; missing turrets will be skipped
             loadEquipment(t, "Turret", Tank.LOC_TURRET);
+            loadEquipment(t, "Rear Turret", Tank.LOC_TURRET);
+            loadEquipment(t, "Front Turret", Tank.LOC_TURRET_2);
         }
         loadEquipment(t, "Body", Tank.LOC_BODY);
 

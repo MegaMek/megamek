@@ -45,17 +45,17 @@ import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 import megamek.common.weapons.attacks.InfantryAttack;
 
 public class ASConvInfantryDamageConverter extends ASDamageConverter {
 
-    private final Infantry infantry;
+    private final ConvInfantry infantry;
 
     protected ASConvInfantryDamageConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
         super(entity, element, report);
-        infantry = (Infantry) entity;
+        infantry = (ConvInfantry) entity;
     }
 
     @Override

@@ -349,6 +349,9 @@ public class MtfFile implements IMekLoader {
                 mek.setOmni(true);
             }
             setTechLevel(mek);
+            if (chassisConfig.contains("FrankenMek")) {
+                mek.setFrankenMek(true);
+            }
             mek.setWeight(Integer.parseInt(tonnage.substring(5)));
 
             int engineFlags = 0;

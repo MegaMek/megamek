@@ -274,6 +274,8 @@ public abstract class Mek extends Entity {
 
     private boolean fullHeadEject = false;
 
+    private boolean frankenMek = false;
+
     private boolean riscHeatSinkKit = false;
 
     /**
@@ -482,6 +484,26 @@ public abstract class Mek extends Entity {
         if (omni && !hasBattleArmorHandles()) {
             addTransporter(new BattleArmorHandles());
         }
+    }
+
+    @Override
+    public void setTechLevel(int techLevel) {
+        super.setTechLevel(techLevel);
+        if (!isFrankenMekTechLevel()) {
+            frankenMek = false;
+        }
+    }
+
+    public boolean isFrankenMek() {
+        return frankenMek && isFrankenMekTechLevel();
+    }
+
+    public void setFrankenMek(boolean frankenMek) {
+        this.frankenMek = frankenMek && isFrankenMekTechLevel();
+    }
+
+    private boolean isFrankenMekTechLevel() {
+        return SimpleTechLevel.convertCompoundToSimple(getTechLevel()) == SimpleTechLevel.EXPERIMENTAL;
     }
 
     // Set whether a non-omni should have BA Grab Bars.
@@ -4338,6 +4360,10 @@ public abstract class Mek extends Entity {
 
         if (isOmni()) {
             sb.append(" OmniMek");
+        }
+
+        if (isFrankenMek()) {
+            sb.append(" FrankenMek");
         }
 
         sb.append(newLine);

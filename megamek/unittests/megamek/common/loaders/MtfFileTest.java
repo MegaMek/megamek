@@ -42,6 +42,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import megamek.common.CriticalSlot;
+import megamek.common.TechConstants;
 import megamek.common.enums.Faction;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
@@ -225,6 +226,41 @@ class MtfFileTest {
         mek.setOriginalBuildYear(3050);
 
         assertFalse(mek.getMtf().contains("original era:"));
+    }
+
+    @Test
+    void frankenMekRoundTrip() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setWeight(20.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        mek.setFrankenMek(true);
+
+        String mtf = mek.getMtf();
+        assertTrue(mtf.contains("Config:Biped FrankenMek\n"));
+
+        MtfFile loader = toMtfFile(mek);
+        Entity loaded = loader.getEntity();
+
+        assertTrue(((Mek) loaded).isFrankenMek());
+    }
+
+    @Test
+    void frankenMekIsIgnoredBelowExperimental() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+        mek.setWeight(20.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        mek.setFrankenMek(true);
+
+        assertFalse(mek.isFrankenMek());
+        String mtf = mek.getMtf();
+        assertFalse(mtf.contains("FrankenMek"));
+
+        MtfFile loader = toMtfFile(mtf.replace("Config:Biped", "Config:Biped FrankenMek"));
+        Entity loaded = loader.getEntity();
+
+        assertFalse(((Mek) loaded).isFrankenMek());
     }
 
     /**

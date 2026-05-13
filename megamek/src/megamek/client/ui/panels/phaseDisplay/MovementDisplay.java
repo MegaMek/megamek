@@ -588,7 +588,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // see the unit's position and surrounding hexes before being prompted.
         // The Descend button (MOVE_DESCEND) provides a backup way to reopen the
         // dialog if the player closes it without choosing.
-        if (selectedEntity.isClimbing() && (selectedEntity instanceof Mek climbingMek)) {
+        if ((selectedEntity instanceof Mek climbingMek) && climbingMek.isClimbing()) {
             SwingUtilities.invokeLater(() -> promptContinueClimbing(climbingMek));
         }
     }
@@ -1240,9 +1240,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         if (isRoutedAround) {
                             LOGGER.debug("[CLIMB-TRACE] Drop chosen on routed-around path; "
                                         + "rebuilding cmd as direct leap");
-                            cmd = new megamek.common.moves.MovePath(game, edgeMek);
+                            cmd = new MovePath(game, edgeMek);
                             cmd.rotatePathfinder(currentEntity.getPosition().direction(stepPos),
-                                  false, megamek.common.ManeuverType.MAN_NONE);
+                                  false, ManeuverType.MAN_NONE);
                             cmd.addStep(MoveStepType.FORWARDS);
                         }
                     } else {
@@ -3398,9 +3398,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void rebuildPathForEdgeDescent(Mek edgeMek, Coords edgeTarget, boolean isRoutedAround) {
         if (isRoutedAround) {
-            cmd = new megamek.common.moves.MovePath(game, edgeMek);
+            cmd = new MovePath(game, edgeMek);
             cmd.rotatePathfinder(edgeMek.getPosition().direction(edgeTarget), false,
-                  megamek.common.ManeuverType.MAN_NONE);
+                  ManeuverType.MAN_NONE);
             cmd.addStep(MoveStepType.CLIMB_MODE_ON);
             cmd.addStep(MoveStepType.FORWARDS);
         } else {
@@ -3415,7 +3415,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * Returns the step immediately before {@code target} in {@link #cmd}, or null if {@code target} is the
      * first step (or not in the path).
      */
-    @megamek.common.annotations.Nullable
+    @Nullable
     private MoveStep findPreviousStep(MoveStep target) {
         if (cmd == null) {
             return null;
@@ -3445,7 +3445,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * position/facing, which can be wrong if the path walked or turned before reaching the cliff.
      */
     private ClimbingChoiceDialog.ClimbingOption showStartClimbingDialog(Mek mek,
-          @megamek.common.annotations.Nullable MoveStep climbingStep) {
+          @Nullable MoveStep climbingStep) {
         return showClimbingLevelDialog(mek, false, climbingStep);
     }
 

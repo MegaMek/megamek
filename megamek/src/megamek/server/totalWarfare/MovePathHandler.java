@@ -366,12 +366,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
             return;
         }
         if (canProcessDangle) {
-            int downStepCount = 0;
-            for (java.util.Iterator<MoveStep> iter = md.getSteps(); iter.hasNext(); ) {
-                if (iter.next().getType() == MoveStepType.DOWN) {
-                    downStepCount++;
-                }
-            }
+            int downStepCount = (int) md.getStepVector().stream()
+                  .filter(s -> s.getType() == MoveStepType.DOWN)
+                  .count();
             // Controlled CLIMB DOWN (TO:AR p.20): same MP cost and PSRs as climbing up.
             // Discriminated from DANGLE (1 bare DOWN) and DROP (2 bare DOWN) by the
             // CLIMB_MODE_ON marker step the client adds before the DOWN steps.
@@ -476,16 +473,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                 // PSR 1: Leg damage check (modifier = 2 * effectiveDistance)
                 String legDamageDesc = entity.isDangling()
-                      ?
-                      "hanging from level "
-                      + dropDistance
-                      + ", effective height for leg damage roll "
-                      + effectiveDistance
-                      :
-                      "dropping from level " + dropDistance + ", leg damage roll";
+                      ? String.format("hanging from level %d, effective height for leg damage roll %d",
+                      dropDistance, effectiveDistance)
+                      : String.format("dropping from level %d, leg damage roll", dropDistance);
                 String fallDesc = entity.isDangling()
-                      ? "hanging from level " + dropDistance + ", effective height for fall roll " + effectiveDistance
-                      : "dropping from level " + dropDistance + ", fall roll";
+                      ? String.format("hanging from level %d, effective height for fall roll %d",
+                      dropDistance, effectiveDistance)
+                      : String.format("dropping from level %d, fall roll", dropDistance);
                 if (effectiveDistance > 0) {
                     rollTarget = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
                     entity.addPilotingModifierForTerrain(rollTarget, entity.getPosition(),
@@ -4155,7 +4149,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             entity.setClimbing(false);
                             entity.setDangling(false);
                             entity.setClimbingLevelsChosen(0);
-                            // Keep the entity in the source hex at ground level
+                            // Step processing earlier in the loop already moved the entity to the
+                            // climb step's destination (the building roof / cliff top). Revert it
+                            // to the source hex at ground level so the failed handhold actually
+                            // leaves the unit on the ground — otherwise the entity stays at the
+                            // top with climbing=false, looking like a successful zero-MP climb.
+                            entity.setPosition(lastPos);
+                            entity.setElevation(0);
                             curPos = lastPos;
                             curVTOLElevation = 0;
                             mpUsed = step.getMpUsed();

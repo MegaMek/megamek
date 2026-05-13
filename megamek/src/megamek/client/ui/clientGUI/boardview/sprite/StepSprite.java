@@ -424,19 +424,20 @@ public class StepSprite extends Sprite {
 
     private void drawMovementCost(MoveStep step, boolean isLastStep,
           Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
-        Entity e = step.getEntity();
+        Entity stepEntity = step.getEntity();
 
         StringBuilder costStringBuf = new StringBuilder();
         // For climbing steps, show the per-turn MP cost capped to walk MP
-        if (step.isClimbing() && (e != null)) {
-            int walkMP = e.getWalkMP();
+        if (step.isClimbing() && (stepEntity != null)) {
+            int walkMP = stepEntity.getWalkMP();
             costStringBuf.append(Math.min(step.getMpUsed(), walkMP));
         } else {
             costStringBuf.append(step.getMpUsed());
         }
 
         // If the step is using a road bonus, mark it.
-        if (step.isOnlyPavementOrRoad() && e.isEligibleForPavementOrRoadBonus()) {
+        if (step.isOnlyPavementOrRoad()
+              && (stepEntity != null) && stepEntity.isEligibleForPavementOrRoadBonus()) {
             costStringBuf.append('+');
         }
 
@@ -455,8 +456,8 @@ public class StepSprite extends Sprite {
         }
 
         // Show climbing turn count when climb takes multiple turns (TO:AR p.20)
-        if (step.isClimbing() && (e != null) && (e instanceof Mek climbingMek)) {
-            int walkMP = e.getWalkMP();
+        if (step.isClimbing() && (stepEntity instanceof Mek climbingMek)) {
+            int walkMP = stepEntity.getWalkMP();
             int totalLevels = step.getClimbingTotalLevels();
             if ((walkMP > 0) && (totalLevels > 0)) {
                 int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(climbingMek);

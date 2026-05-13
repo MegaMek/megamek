@@ -335,6 +335,10 @@ public abstract class Infantry extends Entity {
         troopersShooting = activeTroopers;
     }
 
+    public int getActiveTroopers() {
+        return activeTroopers;
+    }
+
     /**
      * @return The number of troopers in the platoon before damage to the current phase is applied.
      */

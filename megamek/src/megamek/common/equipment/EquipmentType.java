@@ -144,6 +144,7 @@ public class EquipmentType implements ITechnology {
 
     public static final String[] structureNames = { "Standard", "Industrial", "Endo Steel", "Endo Steel Prototype",
                                                     "Reinforced", "Composite", "Endo-Composite" };
+    public static final String[] structureAbbreviations = { "STD", "IND", "ES", "ES-P", "REIN", "COMP", "EC" };
 
     // Assume for now that prototype is not more expensive
     public static final double[] structureCosts = { 400, 300, 1600, 4800, 6400, 1600, 3200 };
@@ -869,6 +870,13 @@ public class EquipmentType implements ITechnology {
             return "UNKNOWN";
         }
         return clan ? "Clan " + structureNames[structureType] : "IS " + structureNames[structureType];
+    }
+
+    public static String getStructureTypeAbbrev(int structureType) {
+        if ((structureType < 0) || (structureType >= structureAbbreviations.length)) {
+            return "UNK";
+        }
+        return structureAbbreviations[structureType];
     }
 
     /**

@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 
 import megamek.common.CriticalSlot;
@@ -52,6 +53,8 @@ import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.TripodMek;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestMek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -70,6 +73,32 @@ class MtfFileTest {
         byte[] bytes = mtf.getBytes();
         InputStream inputStream = new ByteArrayInputStream(bytes);
         return new MtfFile(inputStream);
+    }
+
+    private static void setAllFrankenMekStructures(Mek mek, EquipmentType structure) {
+        for (int location = 0; location < mek.locations(); location++) {
+            mek.setFrankenMekStructureType(location, structure);
+        }
+    }
+
+    private static void assertFrankenMekStructureCrits(Mek mek, int head, int centerTorso, int sideTorso, int arm,
+          int leg) {
+        assertEquals(head, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_HEAD));
+        assertEquals(centerTorso, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_CENTER_TORSO));
+        assertEquals(sideTorso, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_RIGHT_TORSO));
+        assertEquals(sideTorso, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_LEFT_TORSO));
+        assertEquals(arm, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_RIGHT_ARM));
+        assertEquals(arm, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_LEFT_ARM));
+        assertEquals(leg, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_RIGHT_LEG));
+        assertEquals(leg, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_LEFT_LEG));
+    }
+
+    private static String getMekVerifierReport(Mek mek) {
+        EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(
+              "testresources/data/mekfiles/UnitVerifierOptions.xml"));
+        StringBuffer report = new StringBuffer();
+        new TestMek(mek, entityVerifier.mekOption, null).correctEntity(report, mek.getTechLevel());
+        return report.toString();
     }
 
     @Test
@@ -261,6 +290,154 @@ class MtfFileTest {
         Entity loaded = loader.getEntity();
 
         assertFalse(((Mek) loaded).isFrankenMek());
+    }
+
+    @Test
+    void frankenMekUniformStructureRoundTrip() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setWeight(25.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        mek.setFrankenMek(true);
+        mek.setFrankenMekStructureTonnage(Mek.LOC_RIGHT_ARM, 20);
+        mek.setFrankenMekStructureTonnage(Mek.LOC_LEFT_LEG, 35);
+        mek.setFrankenMekStructureTonnage(Mek.LOC_RIGHT_LEG, 35);
+        mek.setMismatchedFrankenMekLegs(true);
+
+        String mtf = mek.getMtf();
+        assertTrue(mtf.contains("structure:Standard\n"));
+        assertTrue(mtf.contains("RA structure:20\n"));
+        assertTrue(mtf.contains("LL structure:35\n"));
+        assertTrue(mtf.contains("mismatched legs:true\n"));
+
+        MtfFile loader = toMtfFile(mtf);
+        Mek loaded = (Mek) loader.getEntity();
+
+        assertTrue(loaded.isFrankenMek());
+        assertFalse(loaded.hasHybridFrankenMekStructure());
+        assertEquals(20, loaded.getFrankenMekStructureTonnage(Mek.LOC_RIGHT_ARM));
+        assertEquals(35, loaded.getFrankenMekStructureTonnage(Mek.LOC_LEFT_LEG));
+        assertEquals(25, loaded.getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO));
+        assertTrue(loaded.hasMismatchedFrankenMekLegs());
+    }
+
+    @Test
+    void frankenMekStandardSelectionClearsHybridStructure() {
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setWeight(25.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        mek.setFrankenMek(true);
+
+        mek.setFrankenMekStructureType(Mek.LOC_HEAD,
+              EquipmentType.get(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL, false)));
+        assertTrue(mek.hasHybridFrankenMekStructure());
+
+        mek.setFrankenMekStructureType(Mek.LOC_HEAD,
+              EquipmentType.get(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_STANDARD)));
+
+        assertFalse(mek.hasHybridFrankenMekStructure());
+        assertEquals(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_STANDARD),
+              mek.getFrankenMekStructureDisplayName());
+    }
+
+    @Test
+    void frankenMekStructureCriticalSlotsUseLocationDistributionTable() {
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setWeight(25.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        mek.setFrankenMek(true);
+
+        setAllFrankenMekStructures(mek,
+              EquipmentType.get(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL, false)));
+        assertFrankenMekStructureCrits(mek, 1, 1, 3, 2, 1);
+
+        setAllFrankenMekStructures(mek,
+              EquipmentType.get(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL, true)));
+        assertFrankenMekStructureCrits(mek, 0, 1, 1, 1, 1);
+
+        setAllFrankenMekStructures(mek,
+              EquipmentType.get(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_COMPOSITE, false)));
+        assertFrankenMekStructureCrits(mek, 0, 1, 1, 1, 1);
+
+        setAllFrankenMekStructures(mek,
+              EquipmentType.get(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_COMPOSITE, true)));
+        assertFrankenMekStructureCrits(mek, 0, 1, 1, 1, 1);
+    }
+
+    @Test
+    void frankenMekStructureCritsLoadAsIsWhenAbsent() throws Exception {
+        EquipmentType endoSteel = EquipmentType.get(
+              EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL, false));
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setWeight(25.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        mek.setFrankenMek(true);
+        setAllFrankenMekStructures(mek, endoSteel);
+
+        MtfFile loader = toMtfFile(mek.getMtf());
+        Mek loaded = (Mek) loader.getEntity();
+
+        assertEquals(0, loaded.getNumberOfCriticalSlots(endoSteel, Mek.LOC_HEAD));
+        assertEquals(0, loaded.getNumberOfCriticalSlots(endoSteel, Mek.LOC_CENTER_TORSO));
+        assertEquals(0, loaded.getNumberOfCriticalSlots(endoSteel, Mek.LOC_RIGHT_TORSO));
+        assertEquals(0, loaded.getNumberOfCriticalSlots(endoSteel, Mek.LOC_RIGHT_ARM));
+        assertEquals(0, loaded.getNumberOfCriticalSlots(endoSteel, Mek.LOC_RIGHT_LEG));
+        assertFalse(getMekVerifierReport(loaded).contains("FrankenMek internal structure"));
+    }
+
+    @Test
+    void frankenMekStructureCritsRetainDonorDistributionFromMtf() throws Exception {
+        EquipmentType endoSteel = EquipmentType.get(
+              EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL, false));
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setWeight(25.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        mek.setFrankenMek(true);
+        setAllFrankenMekStructures(mek, endoSteel);
+
+        String rightLeg = "Right Leg:\nHip\nUpper Leg Actuator\nLower Leg Actuator\nFoot Actuator\n-Empty-\n-Empty-\n";
+        String rightLegWithEndoSteel = "Right Leg:\nHip\nUpper Leg Actuator\nLower Leg Actuator\nFoot Actuator\n"
+            + endoSteel.getInternalName() + "\n" + endoSteel.getInternalName() + "\n";
+        
+        // We replace the 2 empty slots with 2 endo steel (to simulate a "donor" leg layout)
+        String mtf = mek.getMtf().replace(rightLeg, rightLegWithEndoSteel);
+
+        MtfFile loader = toMtfFile(mtf);
+        Mek loaded = (Mek) loader.getEntity();
+
+        assertEquals(2, loaded.getNumberOfCriticalSlots(endoSteel, Mek.LOC_RIGHT_LEG));
+        assertFalse(getMekVerifierReport(loaded).contains("FrankenMek internal structure"));
+    }
+
+    @Test
+    void frankenMekHybridStructureRoundTrip() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setWeight(25.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        mek.setFrankenMek(true);
+        mek.setFrankenMekStructureTonnage(Mek.LOC_RIGHT_ARM, 20);
+        mek.setFrankenMekStructureType(Mek.LOC_CENTER_TORSO, EquipmentType.get("Clan Endo Steel"));
+        mek.setFrankenMekStructureType(Mek.LOC_HEAD, EquipmentType.get("Clan Endo Steel"));
+
+        String mtf = mek.getMtf();
+        assertTrue(mtf.contains("structure:Hybrid\n"));
+        assertTrue(mtf.contains("RA structure:Standard:20\n"));
+        assertTrue(mtf.contains("CT structure:Clan Endo Steel:25\n"));
+        assertFalse(mtf.contains("mismatched legs:true\n"));
+
+        MtfFile loader = toMtfFile(mtf);
+        Mek loaded = (Mek) loader.getEntity();
+
+        assertTrue(loaded.isFrankenMek());
+        assertTrue(loaded.hasHybridFrankenMekStructure());
+        assertEquals(EquipmentType.T_STRUCTURE_ENDO_STEEL, loaded.getFrankenMekStructureType(Mek.LOC_CENTER_TORSO));
+        assertEquals(20, loaded.getFrankenMekStructureTonnage(Mek.LOC_RIGHT_ARM));
+        assertFalse(loaded.hasMismatchedFrankenMekLegs());
     }
 
     /**

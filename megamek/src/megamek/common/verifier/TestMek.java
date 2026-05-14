@@ -113,6 +113,29 @@ public class TestMek extends TestEntity {
         return new Structure(type, mek.isSuperHeavy(), mek.getMovementMode());
     }
 
+    @Override
+    public double getWeightStructure() {
+        if (!mek.isFrankenMek()) {
+            return super.getWeightStructure();
+        }
+        double structureWeight = 0;
+        for (int loc = 0; loc < mek.locations(); loc++) {
+            double fraction = mek.getFrankenMekStructureWeightFraction(loc);
+            if (fraction <= 0) {
+                continue;
+            }
+            int donorTonnage = mek.getFrankenMekStructureTonnage(loc);
+            double fullMekStructureWeight = Structure.getWeightStructure(
+                  mek.getFrankenMekStructureType(loc),
+                  donorTonnage,
+                  Ceil.HALF_TON,
+                  donorTonnage > 100,
+                  mek.getMovementMode());
+            structureWeight += fullMekStructureWeight * fraction;
+        }
+        return TestEntity.ceil(structureWeight, Ceil.HALF_TON);
+    }
+
     public static Integer maxJumpMP(Mek mek) {
         if (mek.isSuperHeavy()) {
             return 0;
@@ -544,6 +567,42 @@ public class TestMek extends TestEntity {
             correct = false;
         }
         return correct;
+    }
+
+    private int countInternalStructureCriticalSlots(Mek mek, int location) {
+        int count = 0;
+        for (int slot = 0; slot < mek.getNumberOfCriticalSlots(location); slot++) {
+            CriticalSlot criticalSlot = mek.getCritical(location, slot);
+            if (criticalSlot == null) {
+                continue;
+            }
+            EquipmentType equipmentType = mek.getEquipmentType(criticalSlot);
+            if ((equipmentType != null) && EquipmentType.isStructureType(equipmentType)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private boolean correctFrankenMekInternalStructureCrits(StringBuffer buff) {
+        boolean illegal = false;
+        for (int location = 0; location < mek.locations(); location++) {
+            EquipmentType structure = mek.getFrankenMekStructureEquipment(location);
+            int fallbackStructureCrits = mek.getFrankenMekStructureCriticalSlots(location);
+            int actualStructureCrits = countInternalStructureCriticalSlots(mek, location);
+            int actualMatchingStructureCrits = structure == null ? 0 : mek.getNumberOfCriticalSlots(structure, location);
+            boolean hasOnlyMatchingStructureCrits = actualStructureCrits == actualMatchingStructureCrits;
+            boolean validStructureCrits = fallbackStructureCrits == 0
+                  ? actualStructureCrits == 0
+                  : hasOnlyMatchingStructureCrits;
+            if (!validStructureCrits) {
+                buff.append("The FrankenMek internal structure of ")
+                      .append(mek.getLocationName(location))
+                      .append(" has crit slots that do not match the configured structure type\n");
+                illegal = true;
+            }
+        }
+        return illegal;
     }
 
     private boolean checkSystemCriticalSlots(StringBuffer buff) {
@@ -1436,13 +1495,17 @@ public class TestMek extends TestEntity {
         // fully loaded unit in MML and
         // will make units appear invalid during loading (MML calls
         // UnitUtil.expandUnitMounts() after loading)
-        String structureName = EquipmentType.getStructureTypeName(mek.getStructureType(),
-              TechConstants.isClan(mek.getStructureTechLevel()));
-        EquipmentType structure = EquipmentType.get(structureName);
-        int requiredStructureCrits = structure.getNumCriticalSlots(mek);
-        if (mek.getNumberOfCriticalSlots(structure) != requiredStructureCrits) {
-            buff.append("The internal structure of this mek is not using the correct number of crit slots\n");
-            illegal = true;
+        if (mek.isFrankenMek()) {
+            illegal |= correctFrankenMekInternalStructureCrits(buff);
+        } else {
+            String structureName = EquipmentType.getStructureTypeName(mek.getStructureType(),
+                  TechConstants.isClan(mek.getStructureTechLevel()));
+            EquipmentType structure = EquipmentType.get(structureName);
+            int requiredStructureCrits = structure.getNumCriticalSlots(mek);
+            if (mek.getNumberOfCriticalSlots(structure) != requiredStructureCrits) {
+                buff.append("The internal structure of this mek is not using the correct number of crit slots\n");
+                illegal = true;
+            }
         }
 
         if (hasPartialWing && hasMekJumpBooster) {

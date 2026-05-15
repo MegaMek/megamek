@@ -1436,10 +1436,7 @@ public abstract class Mek extends Entity {
             return 0;
         }
 
-        int mp = (int) getMisc().stream()
-              .filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
-              .filter(Mounted::isOperable)
-              .count();
+        int mp = getJumpJetMovementPoints(false);
 
         if (!mpCalculationSetting.ignoreSubmergedJumpJets() && hasOccupiedHex() && getElevation() < 0) {
             int waterLevel = game.getHexOf(this).terrainLevel(Terrains.WATER);
@@ -1659,15 +1656,7 @@ public abstract class Mek extends Entity {
      * Returns the number of (working) jump jets mounted in the torsos.
      */
     public int torsoJumpJets() {
-        int jump = 0;
-
-        for (Mounted<?> mounted : getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)
-                  && !mounted.isDestroyed() && !mounted.isBreached()
-                  && locationIsTorso(mounted.getLocation())) {
-                jump++;
-            }
-        }
+        int jump = getJumpJetMovementPoints(true);
 
         // apply Partial Wing bonus if we have the ability to jump
         if (jump > 0) {
@@ -1680,6 +1669,57 @@ public abstract class Mek extends Entity {
         }
 
         return jump;
+    }
+
+    private int getJumpJetMovementPoints(boolean torsoOnly) {
+        if (!isFrankenMek()) {
+            return (int) getMisc().stream()
+                  .filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
+                  .filter(Mounted::isOperable)
+                  .filter(m -> !torsoOnly || locationIsTorso(m.getLocation()))
+                  .count();
+        }
+
+        /**
+         * CO:213
+         * Jump jet performance depends on the weight class of the FrankenMech. 
+         * Smaller jump jets can be retained on larger ’Mechs, but their performance is reduced and fractional
+         * Jumping MPs are dropped, meaning two half-ton jump jets are required to give the same performance 
+         * as a 1-ton jump jet while four half-ton jump jets would be required to match a 2-ton jump jet.
+         */
+        int centerTorsoTonnage = getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO);
+        if (centerTorsoTonnage <= 0) {
+            return 0;
+        }
+
+        double movement = 0.0;
+        for (Mounted<?> mounted : getMisc()) {
+            if (!mounted.getType().hasFlag(MiscType.F_JUMP_JET)
+                  || !mounted.isOperable()
+                  || (torsoOnly && !locationIsTorso(mounted.getLocation()))) {
+                continue;
+            }
+
+            MiscType jumpJetType = (MiscType) mounted.getType();
+            double centerTorsoJumpJetTonnage = jumpJetType.getTonnage(this, Mek.LOC_CENTER_TORSO, mounted.getSize());
+            if (centerTorsoJumpJetTonnage <= 0) {
+                continue;
+            }
+
+            double locationJumpJetTonnage = jumpJetType.getTonnage(this, mounted.getLocation(), mounted.getSize());
+            movement += locationJumpJetTonnage / centerTorsoJumpJetTonnage;
+        }
+
+        // A FrankenMek might have more jump jets than the standard limitation 
+        // (TM:51, Max Jump = Maximum Walking MP for Standard Jump Jets; Max Jump = Maximum Running MP for Improved Jump Jets) 
+        // so, we clamp it to that limitation. 
+        return Math.min((int) Math.floor(movement), getJumpJetMovementCap());
+    }
+
+    private int getJumpJetMovementCap() {
+        return ((getJumpType() == JUMP_IMPROVED) || (getJumpType() == JUMP_PROTOTYPE_IMPROVED))
+              ? getOriginalRunMP()
+              : getOriginalWalkMP();
     }
 
     @Override

@@ -562,7 +562,7 @@ class MtfFileTest {
         mek.linkFrankenMekLocationToSource(Mek.LOC_LEFT_TORSO, "Archer XYZ");
 
         String mtf = mek.getMtf();
-        assertTrue(mtf.contains("from: Archer XYZ\n"));
+        assertTrue(mtf.contains(MtfFile.LOCATION_DONOR + " Archer XYZ\n"));
 
         Mek loaded = (Mek) toMtfFile(mtf).getEntity();
 

@@ -99,7 +99,7 @@ public abstract class Mek extends Entity {
             return (displayName != null) && !displayName.isBlank();
         }
 
-                private void capture(String newDisplayName, int newStructureTonnage, int newStructureType,
+        private void capture(String newDisplayName, int newStructureTonnage, int newStructureType,
               int newStructureTechLevel) {
             displayName = newDisplayName;
             structureTonnage = newStructureTonnage;
@@ -107,10 +107,10 @@ public abstract class Mek extends Entity {
             structureTechLevel = newStructureTechLevel;
         }
 
-                private boolean matches(int currentStructureTonnage, int currentStructureType, int currentStructureTechLevel) {
+        private boolean matches(int currentStructureTonnage, int currentStructureType, int currentStructureTechLevel) {
             return (structureTonnage == currentStructureTonnage)
                   && (structureType == currentStructureType)
-                                    && (structureTechLevel == currentStructureTechLevel);
+                  && (structureTechLevel == currentStructureTechLevel);
         }
 
         private void clear() {

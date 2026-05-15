@@ -1455,8 +1455,46 @@ public abstract class Entity extends TurnOrdered
         return compositeTechLevel.getTechRating();
     }
 
+    private @Nullable SimpleTechLevel getRulesLevelOverride() {
+        if ((this instanceof Mek mek) && mek.isFrankenMek()) {
+            return SimpleTechLevel.EXPERIMENTAL;
+        }
+        return null;
+    }
+
+    @Override
+    public SimpleTechLevel getSimpleLevel(int year, boolean clan, Faction faction) {
+        SimpleTechLevel override = getRulesLevelOverride();
+        if (override != null) {
+            return override;
+        }
+        return ITechnology.super.getSimpleLevel(year, clan, faction);
+    }
+
+    @Override
+    public SimpleTechLevel findMinimumRulesLevel(boolean clan) {
+        SimpleTechLevel override = getRulesLevelOverride();
+        if (override != null) {
+            return override;
+        }
+        return ITechnology.super.findMinimumRulesLevel(clan);
+    }
+
+    @Override
+    public SimpleTechLevel findMinimumRulesLevel() {
+        SimpleTechLevel override = getRulesLevelOverride();
+        if (override != null) {
+            return override;
+        }
+        return ITechnology.super.findMinimumRulesLevel();
+    }
+
     @Override
     public SimpleTechLevel getStaticTechLevel() {
+        SimpleTechLevel override = getRulesLevelOverride();
+        if (override != null) {
+            return override;
+        }
         return compositeTechLevel.getStaticTechLevel();
     }
 

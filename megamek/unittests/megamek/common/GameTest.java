@@ -33,14 +33,43 @@
 package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.HashSet;
 
 import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.server.victory.VictoryResult;
 import org.junit.jupiter.api.Test;
 
 class GameTest {
+
+    @Test
+    void testAddEntityAssignsIdWhenEntityIdIsNone() {
+        Game game = new Game();
+        Entity entity = mock(Entity.class);
+        int[] entityId = { Entity.NONE };
+        when(entity.getId()).thenAnswer(invocation -> entityId[0]);
+        doAnswer(invocation -> {
+            entityId[0] = invocation.getArgument(0);
+            return null;
+        }).when(entity).setId(anyInt());
+        when(entity.getC3UUIDAsString()).thenReturn("test");
+        when(entity.getOccupiedCoords()).thenReturn(new HashSet<>());
+
+        game.addEntity(entity, false);
+
+        assertNotEquals(Entity.NONE, entity.getId());
+        assertSame(entity, game.getEntity(entity.getId()));
+        assertNull(game.getEntity(Entity.NONE));
+    }
 
     @Test
     void testCancelVictory() {

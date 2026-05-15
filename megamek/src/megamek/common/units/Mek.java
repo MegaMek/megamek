@@ -743,6 +743,9 @@ public abstract class Mek extends Entity {
     }
 
     public boolean hasHybridFrankenMekStructure() {
+        if (!isFrankenMek()) {
+            return false;
+        }
         initializeFrankenMekStructure();
         String structureName = getFrankenMekStructureName(Mek.LOC_CENTER_TORSO);
         for (int loc = 0; loc < locations(); loc++) {

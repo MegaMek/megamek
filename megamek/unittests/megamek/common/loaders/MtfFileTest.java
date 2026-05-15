@@ -94,6 +94,27 @@ class MtfFileTest {
         assertEquals(leg, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_LEFT_LEG));
     }
 
+    private static String[] rightArmCriticalData(String... equipmentNames) {
+        String[] criticalData = new String[12];
+        for (int slot = 0; slot < criticalData.length; slot++) {
+            criticalData[slot] = MtfFile.EMPTY;
+        }
+        criticalData[0] = "Shoulder";
+        criticalData[1] = "Upper Arm Actuator";
+        criticalData[2] = "Lower Arm Actuator";
+        criticalData[3] = "Hand Actuator";
+        for (int index = 0; index < equipmentNames.length; index++) {
+            criticalData[index + 4] = equipmentNames[index];
+        }
+        return criticalData;
+    }
+
+    private static long countEquipment(Mek mek, EquipmentType equipmentType, int location) {
+        return mek.getEquipment().stream()
+              .filter(mounted -> equipmentType.equals(mounted.getType()) && (mounted.getLocation() == location))
+              .count();
+    }
+
     private static String getMekVerifierReport(Mek mek) {
         EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(
               "testresources/data/mekfiles/UnitVerifierOptions.xml"));
@@ -462,6 +483,49 @@ class MtfFileTest {
     }
 
     @Test
+    void frankenMekDonorReplacementDeletesTargetLocationEquipmentAndAddsFallbackStructure() throws Exception {
+        EquipmentType endoSteel = EquipmentType.get(
+              EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL, false));
+        EquipmentType mediumLaser = EquipmentType.get("Medium Laser");
+        Mek target = new BipedMek();
+        target.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        target.setWeight(25.0);
+        target.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        target.setFrankenMek(true);
+        target.setFrankenMekStructureType(Mek.LOC_RIGHT_ARM, endoSteel);
+        Mounted<?> oldMount = target.addEquipment(mediumLaser, Mek.LOC_RIGHT_ARM);
+
+        MtfFile.replaceLocationCriticalData(target, Mek.LOC_RIGHT_ARM,
+              rightArmCriticalData(mediumLaser.getInternalName()));
+
+        assertFalse(target.getEquipment().contains(oldMount));
+        assertEquals(1, target.getNumberOfCriticalSlots(mediumLaser, Mek.LOC_RIGHT_ARM));
+        assertEquals(2, target.getNumberOfCriticalSlots(endoSteel, Mek.LOC_RIGHT_ARM));
+    }
+
+    @Test
+    void frankenMekDonorReplacementMovesFallbackStructureToUnallocatedWhenLocationIsFull() throws Exception {
+        EquipmentType endoSteel = EquipmentType.get(
+              EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL, false));
+        EquipmentType mediumLaser = EquipmentType.get("Medium Laser");
+        Mek target = new BipedMek();
+        target.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        target.setWeight(25.0);
+        target.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        target.setFrankenMek(true);
+        target.setFrankenMekStructureType(Mek.LOC_RIGHT_ARM, endoSteel);
+
+        MtfFile.replaceLocationCriticalData(target, Mek.LOC_RIGHT_ARM,
+              rightArmCriticalData(mediumLaser.getInternalName(), mediumLaser.getInternalName(),
+                    mediumLaser.getInternalName(), mediumLaser.getInternalName(), mediumLaser.getInternalName(),
+                    mediumLaser.getInternalName(), mediumLaser.getInternalName(), mediumLaser.getInternalName()));
+
+        assertEquals(8, target.getNumberOfCriticalSlots(mediumLaser, Mek.LOC_RIGHT_ARM));
+        assertEquals(0, target.getNumberOfCriticalSlots(endoSteel, Mek.LOC_RIGHT_ARM));
+        assertEquals(2, countEquipment(target, endoSteel, Entity.LOC_NONE));
+    }
+
+    @Test
     void frankenMekHybridStructureRoundTrip() throws Exception {
         Mek mek = new BipedMek();
         mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
@@ -486,6 +550,38 @@ class MtfFileTest {
         assertEquals(EquipmentType.T_STRUCTURE_ENDO_STEEL, loaded.getFrankenMekStructureType(Mek.LOC_CENTER_TORSO));
         assertEquals(20, loaded.getFrankenMekStructureTonnage(Mek.LOC_RIGHT_ARM));
         assertFalse(loaded.hasMismatchedFrankenMekLegs());
+    }
+
+    @Test
+    void frankenMekLocationSourceRoundTrip() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setWeight(60.0);
+        mek.setEngine(new Engine(240, Engine.NORMAL_ENGINE, 0));
+        mek.setFrankenMek(true);
+        mek.linkFrankenMekLocationToSource(Mek.LOC_LEFT_TORSO, "Archer XYZ");
+
+        String mtf = mek.getMtf();
+        assertTrue(mtf.contains("from: Archer XYZ\n"));
+
+        Mek loaded = (Mek) toMtfFile(mtf).getEntity();
+
+        assertEquals("Archer XYZ", loaded.getFrankenMekLocationSourceDisplayName(Mek.LOC_LEFT_TORSO));
+    }
+
+    @Test
+    void frankenMekLocationSourceSurvivesCriticalChanges() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setWeight(60.0);
+        mek.setEngine(new Engine(240, Engine.NORMAL_ENGINE, 0));
+        mek.setFrankenMek(true);
+        mek.linkFrankenMekLocationToSource(Mek.LOC_LEFT_TORSO, "Archer XYZ");
+
+        mek.addEquipment(EquipmentType.get("Medium Laser"), Mek.LOC_LEFT_TORSO);
+        mek.unlinkFrankenMekLocationSourceIfChanged(Mek.LOC_LEFT_TORSO);
+
+        assertEquals("Archer XYZ", mek.getFrankenMekLocationSourceDisplayName(Mek.LOC_LEFT_TORSO));
     }
 
     /**

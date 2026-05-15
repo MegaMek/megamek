@@ -91,6 +91,16 @@ class MekJumpMPTest {
         assertEquals(2, mek.getJumpMP(MPCalculationSetting.NO_GRAVITY));
     }
 
+    @Test
+    void linkedFrankenMekLocationSourceClearsWhenStructureChanges() {
+        Mek mek = createFrankenMek(60, 240);
+
+        mek.linkFrankenMekLocationToSource(Mek.LOC_RIGHT_TORSO, "Archer XYZ");
+        mek.setFrankenMekStructureTonnage(Mek.LOC_RIGHT_TORSO, 65);
+
+        assertEquals("", mek.getFrankenMekLocationSourceDisplayName(Mek.LOC_RIGHT_TORSO));
+    }
+
     private Mek createFrankenMek(int weight, int engineRating) {
         Mek mek = new BipedMek();
         mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);

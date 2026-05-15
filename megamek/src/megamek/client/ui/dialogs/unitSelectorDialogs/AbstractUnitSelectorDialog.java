@@ -708,6 +708,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                                 /* Support Vehicles */
                                 && ((nUnit == -1) || (checkSupportVee && mek.isSupport())
                                 || (!checkSupportVee && mek.getUnitType().equals(UnitType.getTypeName(nUnit))))
+                                /* Additional caller-specific restrictions */
+                                && matchesUnitSelectionScope(mek)
                                 /* Advanced Search */
                                 && ((searchFilter == null) || MekSearchFilter.isMatch(mek, searchFilter))
                                 && advancedSearchDialog.getASAdvancedSearch().matches(mek)) {
@@ -757,6 +759,16 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         }
         return true;
     }
+
+    protected boolean matchesUnitSelectionScope(MekSummary unit) {
+        return true;
+    }
+
+    /**
+     * Allows subclasses to keep filter controls in sync with {@link #matchesUnitSelectionScope(MekSummary)} after
+     * persisted user preferences have been restored.
+     */
+    protected void configureUnitSelectionScope() {}
 
     /**
      * @return the selected entity (required for MekHQ/MegaMek overrides)
@@ -840,6 +852,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     public void setVisible(boolean visible) {
         if (visible) {
             setUserPreferences();
+            configureUnitSelectionScope();
         }
         searchFilter = null;
         buttonResetSearch.setEnabled(false);
@@ -859,7 +872,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
         if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
-            GUIP.setMekSelectorUnitType(comboUnitType.getSelectedIndex());
+            if (comboUnitType.isEnabled()) {
+                GUIP.setMekSelectorUnitType(comboUnitType.getSelectedIndex());
+            }
             GUIP.setMekSelectorWeightClass(comboWeight.getSelectedIndex());
             GUIP.setMekSelectorRulesLevels(Arrays.toString(listTechLevel.getSelectedIndices()));
             GUIP.setMekSelectorSortColumn(tableUnits.getRowSorter().getSortKeys().getFirst().getColumn());

@@ -38,6 +38,7 @@ import static megamek.common.bays.Bay.UNSET_BAY;
 
 import java.io.PrintWriter;
 import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -80,6 +81,45 @@ public abstract class Mek extends Entity {
     @Serial
     private static final long serialVersionUID = -1929593228891136561L;
     private static final MMLogger LOGGER = MMLogger.create(Mek.class);
+
+    private static final class FrankenMekLocationSourceSnapshot implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 2955102329477149771L;
+
+        private String displayName;
+        private int structureTonnage;
+        private int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
+        private int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
+
+        private String getDisplayName() {
+            return Objects.toString(displayName, "");
+        }
+
+        private boolean isLinked() {
+            return (displayName != null) && !displayName.isBlank();
+        }
+
+                private void capture(String newDisplayName, int newStructureTonnage, int newStructureType,
+              int newStructureTechLevel) {
+            displayName = newDisplayName;
+            structureTonnage = newStructureTonnage;
+            structureType = newStructureType;
+            structureTechLevel = newStructureTechLevel;
+        }
+
+                private boolean matches(int currentStructureTonnage, int currentStructureType, int currentStructureTechLevel) {
+            return (structureTonnage == currentStructureTonnage)
+                  && (structureType == currentStructureType)
+                                    && (structureTechLevel == currentStructureTechLevel);
+        }
+
+        private void clear() {
+            displayName = null;
+            structureTonnage = 0;
+            structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
+            structureTechLevel = TechConstants.T_TECH_UNKNOWN;
+        }
+    }
 
     // system designators for critical hits
     public static final int SYSTEM_LIFE_SUPPORT = 0;
@@ -283,6 +323,8 @@ public abstract class Mek extends Entity {
     private int[] frankenMekStructureType = null;
 
     private int[] frankenMekStructureTechLevel = null;
+
+    private FrankenMekLocationSourceSnapshot[] frankenMekLocationSources = null;
 
     private boolean frankenMekMismatchedLegs = false;
 
@@ -519,6 +561,7 @@ public abstract class Mek extends Entity {
             updateFrankenMekUniformStructureType();
             applyFrankenMekInternalStructure();
         } else {
+            clearAllFrankenMekLocationSources();
             frankenMekMismatchedLegs = false;
             autoSetInternal();
         }
@@ -533,13 +576,30 @@ public abstract class Mek extends Entity {
         int locations = locations();
         boolean needsNewArrays = (frankenMekStructureTonnage == null)
               || (frankenMekStructureTonnage.length != locations);
+        boolean needsNewSourceSnapshots = needsNewArrays
+              || (frankenMekLocationSources == null)
+              || (frankenMekLocationSources.length != locations);
         int[] newTonnage = needsNewArrays ? new int[locations] : frankenMekStructureTonnage;
         int[] newStructureType = needsNewArrays ? new int[locations] : frankenMekStructureType;
         int[] newStructureTechLevel = needsNewArrays ? new int[locations] : frankenMekStructureTechLevel;
+        FrankenMekLocationSourceSnapshot[] newLocationSources = needsNewSourceSnapshots
+              ? new FrankenMekLocationSourceSnapshot[locations]
+              : frankenMekLocationSources;
         int defaultStructureType = getStructureType() == EquipmentType.T_STRUCTURE_UNKNOWN
               ? EquipmentType.T_STRUCTURE_STANDARD : getStructureType();
         int defaultStructureTechLevel = getStructureTechLevel() == TechConstants.T_TECH_UNKNOWN
               ? getTechLevel() : getStructureTechLevel();
+
+        if (needsNewArrays && (frankenMekStructureTonnage != null)) {
+            int copyLength = Math.min(frankenMekStructureTonnage.length, locations);
+            java.lang.System.arraycopy(frankenMekStructureTonnage, 0, newTonnage, 0, copyLength);
+            java.lang.System.arraycopy(frankenMekStructureType, 0, newStructureType, 0, copyLength);
+            java.lang.System.arraycopy(frankenMekStructureTechLevel, 0, newStructureTechLevel, 0, copyLength);
+        }
+        if (needsNewSourceSnapshots && (frankenMekLocationSources != null)) {
+            int copyLength = Math.min(frankenMekLocationSources.length, locations);
+            java.lang.System.arraycopy(frankenMekLocationSources, 0, newLocationSources, 0, copyLength);
+        }
 
         for (int loc = 0; loc < locations; loc++) {
             if (needsNewArrays || (newTonnage[loc] <= 0)) {
@@ -551,10 +611,14 @@ public abstract class Mek extends Entity {
             if (needsNewArrays || (newStructureTechLevel[loc] == TechConstants.T_TECH_UNKNOWN)) {
                 newStructureTechLevel[loc] = defaultStructureTechLevel;
             }
+            if (needsNewSourceSnapshots || (newLocationSources[loc] == null)) {
+                newLocationSources[loc] = new FrankenMekLocationSourceSnapshot();
+            }
         }
         frankenMekStructureTonnage = newTonnage;
         frankenMekStructureType = newStructureType;
         frankenMekStructureTechLevel = newStructureTechLevel;
+        frankenMekLocationSources = newLocationSources;
     }
 
     private int getDefaultFrankenMekStructureTonnage() {
@@ -583,6 +647,7 @@ public abstract class Mek extends Entity {
         if (isFrankenMek()) {
             applyFrankenMekInternalStructure();
         }
+        unlinkFrankenMekLocationSourceIfChanged(location);
     }
 
     public void setFrankenMekStructureTonnageForConstruction(int location, int tonnage) {
@@ -605,6 +670,7 @@ public abstract class Mek extends Entity {
             updateFrankenMekCenterTorsoStructureTonnage(centerTorsoTonnage);
         } else {
             applyFrankenMekInternalStructureIfNeeded();
+            unlinkFrankenMekLocationSourceIfChanged(location);
         }
     }
 
@@ -647,6 +713,7 @@ public abstract class Mek extends Entity {
         clampFrankenMekNonCenterTorsoStructureTonnage(centerTorsoTonnage);
         clampFrankenMekLegStructureTonnage(centerTorsoTonnage);
         applyFrankenMekInternalStructureIfNeeded();
+        unlinkChangedFrankenMekLocationSources();
     }
 
     private void applyFrankenMekInternalStructureIfNeeded() {
@@ -747,6 +814,95 @@ public abstract class Mek extends Entity {
         frankenMekStructureType[location] = structureType;
         frankenMekStructureTechLevel[location] = structureTechLevel;
         updateFrankenMekUniformStructureType();
+        unlinkFrankenMekLocationSourceIfChanged(location);
+    }
+
+    public String getFrankenMekLocationSourceDisplayName(int location) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return "";
+        }
+        return getFrankenMekLocationSourceSnapshot(location).getDisplayName();
+    }
+
+    public void linkFrankenMekLocationToSource(int location, String sourceDisplayName) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return;
+        }
+        if ((sourceDisplayName == null) || sourceDisplayName.isBlank()) {
+            clearFrankenMekLocationSource(location);
+            return;
+        }
+        captureFrankenMekLocationSourceSnapshot(location, sourceDisplayName);
+    }
+
+    public void clearFrankenMekLocationSource(int location) {
+        if (!hasFrankenMekStructureLocation(location) || (frankenMekLocationSources == null)) {
+            return;
+        }
+        FrankenMekLocationSourceSnapshot snapshot = frankenMekLocationSources[location];
+        if (snapshot != null) {
+            snapshot.clear();
+        }
+    }
+
+    public void unlinkFrankenMekLocationSourceIfChanged(int location) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return;
+        }
+        FrankenMekLocationSourceSnapshot snapshot = getFrankenMekLocationSourceSnapshot(location);
+        if (!snapshot.isLinked()) {
+            return;
+        }
+                if (!snapshot.matches(getFrankenMekStructureTonnage(location), getFrankenMekStructureType(location),
+              getFrankenMekStructureTechLevel(location))) {
+            clearFrankenMekLocationSource(location);
+        }
+    }
+
+    public String[] getCriticalDataForLocation(int location) {
+        String[] criticalData = new String[12];
+        for (int slot = 0; slot < criticalData.length; slot++) {
+            if ((location >= 0) && (location < locations()) && (slot < getNumberOfCriticalSlots(location))) {
+                criticalData[slot] = decodeCritical(getCritical(location, slot));
+            } else {
+                criticalData[slot] = MtfFile.EMPTY;
+            }
+        }
+        return criticalData;
+    }
+
+    private void captureFrankenMekLocationSourceSnapshot(int location, String sourceDisplayName) {
+        getFrankenMekLocationSourceSnapshot(location).capture(sourceDisplayName,
+              getFrankenMekStructureTonnage(location), getFrankenMekStructureType(location),
+              getFrankenMekStructureTechLevel(location));
+    }
+
+    private void clearAllFrankenMekLocationSources() {
+        if (frankenMekLocationSources == null) {
+            return;
+        }
+        for (int location = 0; location < frankenMekLocationSources.length; location++) {
+            clearFrankenMekLocationSource(location);
+        }
+    }
+
+    private void unlinkChangedFrankenMekLocationSources() {
+        if (frankenMekLocationSources == null) {
+            return;
+        }
+        for (int location = 0; location < frankenMekLocationSources.length; location++) {
+            unlinkFrankenMekLocationSourceIfChanged(location);
+        }
+    }
+
+    private FrankenMekLocationSourceSnapshot getFrankenMekLocationSourceSnapshot(int location) {
+        initializeFrankenMekStructure();
+        FrankenMekLocationSourceSnapshot snapshot = frankenMekLocationSources[location];
+        if (snapshot == null) {
+            snapshot = new FrankenMekLocationSourceSnapshot();
+            frankenMekLocationSources[location] = snapshot;
+        }
+        return snapshot;
     }
 
     public void setFrankenMekStructureType(int location, EquipmentType structure) {
@@ -5042,6 +5198,9 @@ public abstract class Mek extends Entity {
                 } else {
                     sb.append(MtfFile.EMPTY).append(newLine);
                 }
+            }
+            if (isFrankenMek() && !getFrankenMekLocationSourceDisplayName(l).isBlank()) {
+                sb.append(MtfFile.LOCATION_DONOR).append(" ").append(getFrankenMekLocationSourceDisplayName(l)).append(newLine);
             }
             sb.append(newLine);
         }

@@ -1000,6 +1000,33 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         txtYear.setEditable(editable);
     }
 
+    /**
+     * Programmatically picks a faction in the embedded picker. Embedders (e.g. MekHQ) call this to
+     * seed the picker with their campaign's faction so the dialog opens pre-aligned instead of
+     * defaulting to "IS". Looks up the FactionRecord from the loaded RATGenerator data; if the
+     * code doesn't match a known faction, the picker is left unchanged and {@code false} is
+     * returned.
+     *
+     * <p>The picker's existing {@link ActionListener} fires as a result of the
+     * {@code setSelectedItem} call, so the descriptor is updated as if the user had picked the
+     * faction by hand.</p>
+     *
+     * @param factionCode the short-name faction code (e.g. {@code "CHH"}, {@code "LC"},
+     *                    {@code "FS"})
+     * @return {@code true} if a matching faction was found and selected; {@code false} otherwise
+     */
+    public boolean setSelectedFaction(String factionCode) {
+        if (factionCode == null || factionCode.isBlank()) {
+            return false;
+        }
+        FactionRecord faction = RATGenerator.getInstance().getFaction(factionCode);
+        if (faction == null) {
+            return false;
+        }
+        cbFaction.setSelectedItem(faction);
+        return true;
+    }
+
     public void exportMUL(ForceDescriptor fd) {
         ArrayList<Entity> list = new ArrayList<>();
         fd.addAllEntities(list);

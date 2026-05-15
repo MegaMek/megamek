@@ -507,9 +507,6 @@ public abstract class Mek extends Entity {
     @Override
     public void setWeight(double weight) {
         super.setWeight(weight);
-        if (frankenMekStructureTonnage != null) {
-            syncFrankenMekStructureTonnage();
-        }
     }
 
     public boolean isFrankenMek() {
@@ -563,26 +560,10 @@ public abstract class Mek extends Entity {
         frankenMekStructureTonnage = newTonnage;
         frankenMekStructureType = newStructureType;
         frankenMekStructureTechLevel = newStructureTechLevel;
-        syncFrankenMekStructureTonnage();
     }
 
     private int getDefaultFrankenMekStructureTonnage() {
         return Math.max(10, (int) Math.ceil(getWeight()));
-    }
-
-    private void syncFrankenMekStructureTonnage() {
-        if (frankenMekStructureTonnage == null) {
-            return;
-        }
-        int chassisTonnage = getDefaultFrankenMekStructureTonnage();
-        if (Mek.LOC_CENTER_TORSO < frankenMekStructureTonnage.length) {
-            frankenMekStructureTonnage[Mek.LOC_CENTER_TORSO] = chassisTonnage;
-        }
-        for (int loc = 0; loc < frankenMekStructureTonnage.length; loc++) {
-            if (locationIsLeg(loc) && (frankenMekStructureTonnage[loc] < chassisTonnage)) {
-                frankenMekStructureTonnage[loc] = chassisTonnage;
-            }
-        }
     }
 
     private boolean hasFrankenMekStructureLocation(int location) {
@@ -603,14 +584,74 @@ public abstract class Mek extends Entity {
         }
         initializeFrankenMekStructure();
         int sanitizedTonnage = Math.max(10, tonnage);
-        int chassisTonnage = getDefaultFrankenMekStructureTonnage();
-        if ((location == Mek.LOC_CENTER_TORSO) || locationIsLeg(location)) {
-            sanitizedTonnage = Math.max(sanitizedTonnage, chassisTonnage);
-        }
         frankenMekStructureTonnage[location] = sanitizedTonnage;
-        syncFrankenMekStructureTonnage();
         if (isFrankenMek()) {
             applyFrankenMekInternalStructure();
+        }
+    }
+
+    public void setFrankenMekStructureTonnageForConstruction(int location, int tonnage) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return;
+        }
+        initializeFrankenMekStructure();
+        int sanitizedTonnage = Math.max(10, tonnage);
+        int centerTorsoTonnage = location == Mek.LOC_CENTER_TORSO
+              ? sanitizedTonnage
+              : getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO);
+        frankenMekStructureTonnage[location] = locationIsLeg(location)
+              ? Math.max(sanitizedTonnage, centerTorsoTonnage)
+              : sanitizedTonnage;
+        if (location == Mek.LOC_CENTER_TORSO) {
+            updateFrankenMekCenterTorsoStructureTonnage(centerTorsoTonnage);
+        } else {
+            applyFrankenMekInternalStructureIfNeeded();
+        }
+    }
+
+    public void syncFrankenMekStructureTonnageToChassis() {
+        syncMatchingFrankenMekStructureTonnageToChassis(getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO));
+    }
+
+    public void syncMatchingFrankenMekStructureTonnageToChassis(int matchingTonnage) {
+        if (!hasFrankenMekStructureLocation(Mek.LOC_CENTER_TORSO)) {
+            return;
+        }
+        initializeFrankenMekStructure();
+        int centerTorsoTonnage = getDefaultFrankenMekStructureTonnage();
+        for (int location = 0; location < frankenMekStructureTonnage.length; location++) {
+            if (frankenMekStructureTonnage[location] == matchingTonnage) {
+                frankenMekStructureTonnage[location] = centerTorsoTonnage;
+            }
+        }
+        updateFrankenMekCenterTorsoStructureTonnage(centerTorsoTonnage);
+    }
+
+    public void syncFrankenMekCenterTorsoTonnageToChassis() {
+        if (!hasFrankenMekStructureLocation(Mek.LOC_CENTER_TORSO)) {
+            return;
+        }
+        initializeFrankenMekStructure();
+        updateFrankenMekCenterTorsoStructureTonnage(getDefaultFrankenMekStructureTonnage());
+    }
+
+    private void updateFrankenMekCenterTorsoStructureTonnage(int centerTorsoTonnage) {
+        frankenMekStructureTonnage[Mek.LOC_CENTER_TORSO] = centerTorsoTonnage;
+        clampFrankenMekLegStructureTonnage(centerTorsoTonnage);
+        applyFrankenMekInternalStructureIfNeeded();
+    }
+
+    private void applyFrankenMekInternalStructureIfNeeded() {
+        if (isFrankenMek()) {
+            applyFrankenMekInternalStructure();
+        }
+    }
+
+    private void clampFrankenMekLegStructureTonnage(int centerTorsoTonnage) {
+        for (int location = 0; location < frankenMekStructureTonnage.length; location++) {
+            if (locationIsLeg(location) && (frankenMekStructureTonnage[location] < centerTorsoTonnage)) {
+                frankenMekStructureTonnage[location] = centerTorsoTonnage;
+            }
         }
     }
 

@@ -293,6 +293,34 @@ class MtfFileTest {
     }
 
     @Test
+    void frankenMekVerifierRejectsOmniMek() {
+        Mek mek = new BipedMek();
+        mek.setWeight(60.0);
+        mek.setEngine(new Engine(240, Engine.NORMAL_ENGINE, 0));
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setOmni(true);
+        mek.setFrankenMek(true);
+
+        assertTrue(getMekVerifierReport(mek).contains("FrankenMeks cannot be OmniMeks"));
+    }
+
+    @Test
+    void frankenMekVerifierRejectsLegStructureBelowCenterTorso() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(60.0);
+        mek.setEngine(new Engine(240, Engine.NORMAL_ENGINE, 0));
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setFrankenMek(true);
+
+        String mtf = mek.getMtf().replace("CT structure:60\n", "CT structure:100\n");
+        Mek loaded = (Mek) toMtfFile(mtf).getEntity();
+
+        assertEquals(100, loaded.getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO));
+        assertEquals(60, loaded.getFrankenMekStructureTonnage(Mek.LOC_RIGHT_LEG));
+        assertTrue(getMekVerifierReport(loaded).contains("Right Leg is lower than the center torso"));
+    }
+
+    @Test
     void frankenMekUniformStructureRoundTrip() throws Exception {
         Mek mek = new BipedMek();
         mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);

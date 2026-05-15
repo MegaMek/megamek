@@ -605,6 +605,25 @@ public class TestMek extends TestEntity {
         return illegal;
     }
 
+    private boolean correctFrankenMekConfiguration(StringBuffer buff) {
+        boolean illegal = false;
+        if (mek.isOmni()) {
+            buff.append("FrankenMeks cannot be OmniMeks\n");
+            illegal = true;
+        }
+        int centerTorsoTonnage = mek.getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO);
+        for (int location = 0; location < mek.locations(); location++) {
+            if (mek.locationIsLeg(location)
+                  && (mek.getFrankenMekStructureTonnage(location) < centerTorsoTonnage)) {
+                buff.append("The FrankenMek structure tonnage of ")
+                      .append(mek.getLocationName(location))
+                      .append(" is lower than the center torso\n");
+                illegal = true;
+            }
+        }
+        return illegal;
+    }
+
     private boolean checkSystemCriticalSlots(StringBuffer buff) {
         // Engine criticalSlots
         boolean engineCorrect = true;
@@ -1496,6 +1515,7 @@ public class TestMek extends TestEntity {
         // will make units appear invalid during loading (MML calls
         // UnitUtil.expandUnitMounts() after loading)
         if (mek.isFrankenMek()) {
+            illegal |= correctFrankenMekConfiguration(buff);
             illegal |= correctFrankenMekInternalStructureCrits(buff);
         } else {
             String structureName = EquipmentType.getStructureTypeName(mek.getStructureType(),

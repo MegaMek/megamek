@@ -504,11 +504,6 @@ public abstract class Mek extends Entity {
         }
     }
 
-    @Override
-    public void setWeight(double weight) {
-        super.setWeight(weight);
-    }
-
     public boolean isFrankenMek() {
         return frankenMek && isFrankenMekTechLevel();
     }
@@ -1721,13 +1716,13 @@ public abstract class Mek extends Entity {
                   .count();
         }
 
-        /**
-         * CO:213
-         * Jump jet performance depends on the weight class of the FrankenMech. 
-         * Smaller jump jets can be retained on larger ’Mechs, but their performance is reduced and fractional
-         * Jumping MPs are dropped, meaning two half-ton jump jets are required to give the same performance 
-         * as a 1-ton jump jet while four half-ton jump jets would be required to match a 2-ton jump jet.
-         */
+        /*
+         CO:213
+         Jump jet performance depends on the weight class of the FrankenMech. 
+         Smaller jump jets can be retained on larger ’Mechs, but their performance is reduced and fractional
+         Jumping MPs are dropped, meaning two half-ton jump jets are required to give the same performance 
+         as a 1-ton jump jet while four half-ton jump jets would be required to match a 2-ton jump jet.
+        */
         int centerTorsoTonnage = getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO);
         if (centerTorsoTonnage <= 0) {
             return 0;

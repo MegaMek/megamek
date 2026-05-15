@@ -649,13 +649,26 @@ public class MtfFile implements IMekLoader {
                 }
                 EquipmentType structure = getStructureEquipment(mek, structureValue.substring(0, splitIndex).trim());
                 mek.setFrankenMekStructureType(entry.getKey(), structure);
-                mek.setFrankenMekStructureTonnage(entry.getKey(), Integer.parseInt(
-                      structureValue.substring(splitIndex + 1).trim()));
+                mek.setFrankenMekStructureTonnage(entry.getKey(), parseFrankenMekStructureTonnage(
+                      mek, entry.getKey(), structureValue.substring(splitIndex + 1).trim()));
             } else {
-                mek.setFrankenMekStructureTonnage(entry.getKey(), Integer.parseInt(structureValue));
+                mek.setFrankenMekStructureTonnage(entry.getKey(),
+                      parseFrankenMekStructureTonnage(mek, entry.getKey(), structureValue));
             }
         }
         mek.setMismatchedFrankenMekLegs(mismatchedFrankenMekLegs);
+    }
+
+    private int parseFrankenMekStructureTonnage(Mek mek, int location, String tonnageValue)
+          throws EntityLoadingException {
+        try {
+            return Integer.parseInt(tonnageValue);
+        } catch (NumberFormatException ex) {
+            throw new EntityLoadingException(
+                  "Invalid FrankenMek structure tonnage for " + mek.getLocationAbbr(location) + ": "
+                        + tonnageValue,
+                  ex);
+        }
     }
 
     private EquipmentType getStructureEquipment(Mek mek, String structureName) throws EntityLoadingException {

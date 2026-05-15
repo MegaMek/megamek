@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.util.Objects;
 
 import megamek.common.CriticalSlot;
 import megamek.common.TechConstants;
@@ -195,9 +196,9 @@ class MtfFileTest {
         mount.setSize(varSize);
         MtfFile loader = toMtfFile(mek);
 
-        Exception e = assertThrowsExactly(
+          Exception e = Objects.requireNonNull(assertThrowsExactly(
               Exception.class,
-              () -> loader.getEntity().getCritical(Mek.LOC_LEFT_TORSO, 0));
+              () -> loader.getEntity().getCritical(Mek.LOC_LEFT_TORSO, 0)));
         assertEquals(
               "java.lang.ArrayIndexOutOfBoundsException: Index 12 out of bounds for length 12",
               e.getMessage());
@@ -347,6 +348,25 @@ class MtfFileTest {
         assertEquals(35, loaded.getFrankenMekStructureTonnage(Mek.LOC_LEFT_LEG));
         assertEquals(25, loaded.getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO));
         assertTrue(loaded.hasMismatchedFrankenMekLegs());
+    }
+
+    @Test
+    void frankenMekStructureRejectsInvalidTonnage() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setWeight(25.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        mek.setFrankenMek(true);
+        mek.setFrankenMekStructureTonnage(Mek.LOC_RIGHT_ARM, 20);
+
+        String mtf = mek.getMtf().replace("RA structure:20\n", "RA structure:not-a-number\n");
+        MtfFile loader = toMtfFile(mtf);
+
+        Exception exception = Objects.requireNonNull(assertThrowsExactly(Exception.class, loader::getEntity));
+
+        assertEquals(EntityLoadingException.class, exception.getCause().getClass());
+        assertTrue(exception.getCause().getMessage().contains("Invalid FrankenMek structure tonnage"));
+        assertTrue(exception.getCause().getMessage().contains("not-a-number"));
     }
 
     @Test

@@ -613,8 +613,18 @@ public class TestMek extends TestEntity {
         }
         int centerTorsoTonnage = mek.getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO);
         for (int location = 0; location < mek.locations(); location++) {
+            if (location == Mek.LOC_CENTER_TORSO) {
+                continue;
+            }
+            int locationTonnage = mek.getFrankenMekStructureTonnage(location);
+            if ((centerTorsoTonnage <= 100) && (locationTonnage > 100)) {
+                buff.append("The FrankenMek structure tonnage of ")
+                      .append(mek.getLocationName(location))
+                      .append(" exceeds 100 while the center torso is 100 tons or less\n");
+                illegal = true;
+            }
             if (mek.locationIsLeg(location)
-                  && (mek.getFrankenMekStructureTonnage(location) < centerTorsoTonnage)) {
+                  && (locationTonnage < centerTorsoTonnage)) {
                 buff.append("The FrankenMek structure tonnage of ")
                       .append(mek.getLocationName(location))
                       .append(" is lower than the center torso\n");

@@ -594,6 +594,10 @@ public abstract class Mek extends Entity {
         int centerTorsoTonnage = location == Mek.LOC_CENTER_TORSO
               ? sanitizedTonnage
               : getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO);
+        if (location != Mek.LOC_CENTER_TORSO) {
+            sanitizedTonnage = Math.min(sanitizedTonnage,
+                  getMaximumFrankenMekNonCenterTorsoStructureTonnage(centerTorsoTonnage));
+        }
         frankenMekStructureTonnage[location] = locationIsLeg(location)
               ? Math.max(sanitizedTonnage, centerTorsoTonnage)
               : sanitizedTonnage;
@@ -630,8 +634,17 @@ public abstract class Mek extends Entity {
         updateFrankenMekCenterTorsoStructureTonnage(getDefaultFrankenMekStructureTonnage());
     }
 
+    public int getMaximumFrankenMekStructureTonnageForConstruction(int location) {
+        if (!hasFrankenMekStructureLocation(location) || (location == Mek.LOC_CENTER_TORSO)) {
+            return 200;
+        }
+        return getMaximumFrankenMekNonCenterTorsoStructureTonnage(
+              getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO));
+    }
+
     private void updateFrankenMekCenterTorsoStructureTonnage(int centerTorsoTonnage) {
         frankenMekStructureTonnage[Mek.LOC_CENTER_TORSO] = centerTorsoTonnage;
+        clampFrankenMekNonCenterTorsoStructureTonnage(centerTorsoTonnage);
         clampFrankenMekLegStructureTonnage(centerTorsoTonnage);
         applyFrankenMekInternalStructureIfNeeded();
     }
@@ -639,6 +652,19 @@ public abstract class Mek extends Entity {
     private void applyFrankenMekInternalStructureIfNeeded() {
         if (isFrankenMek()) {
             applyFrankenMekInternalStructure();
+        }
+    }
+
+    private int getMaximumFrankenMekNonCenterTorsoStructureTonnage(int centerTorsoTonnage) {
+        return centerTorsoTonnage <= 100 ? 100 : 200;
+    }
+
+    private void clampFrankenMekNonCenterTorsoStructureTonnage(int centerTorsoTonnage) {
+        int maximumTonnage = getMaximumFrankenMekNonCenterTorsoStructureTonnage(centerTorsoTonnage);
+        for (int location = 0; location < frankenMekStructureTonnage.length; location++) {
+            if ((location != Mek.LOC_CENTER_TORSO) && (frankenMekStructureTonnage[location] > maximumTonnage)) {
+                frankenMekStructureTonnage[location] = maximumTonnage;
+            }
         }
     }
 

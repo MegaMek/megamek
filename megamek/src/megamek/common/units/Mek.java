@@ -853,22 +853,28 @@ public abstract class Mek extends Entity {
         if (!snapshot.isLinked()) {
             return;
         }
-                if (!snapshot.matches(getFrankenMekStructureTonnage(location), getFrankenMekStructureType(location),
+        if (!snapshot.matches(getFrankenMekStructureTonnage(location), getFrankenMekStructureType(location),
               getFrankenMekStructureTechLevel(location))) {
             clearFrankenMekLocationSource(location);
         }
     }
 
-    public String[] getCriticalDataForLocation(int location) {
-        String[] criticalData = new String[12];
-        for (int slot = 0; slot < criticalData.length; slot++) {
-            if ((location >= 0) && (location < locations()) && (slot < getNumberOfCriticalSlots(location))) {
-                criticalData[slot] = decodeCritical(getCritical(location, slot));
-            } else {
-                criticalData[slot] = MtfFile.EMPTY;
-            }
+    public void applyFrankenMekDonorLocationArmor(int location, Mek donor) {
+        if (!hasFrankenMekStructureLocation(location) || (donor == null) || (location >= donor.locations())) {
+            return;
         }
-        return criticalData;
+
+        initializeArmor(donor.getOArmor(location), location);
+        if (hasRearArmor(location)) {
+            initializeRearArmor(donor.hasRearArmor(location) ? donor.getOArmor(location, true) : 0, location);
+        }
+
+        int donorArmorType = donor.getArmorType(location);
+        int donorArmorTechLevel = donor.getArmorTechLevel(location);
+        if ((getArmorType(location) != donorArmorType) || (getArmorTechLevel(location) != donorArmorTechLevel)) {
+            setArmorType(donorArmorType, location);
+            setArmorTechLevel(donorArmorTechLevel, location);
+        }
     }
 
     private void captureFrankenMekLocationSourceSnapshot(int location, String sourceDisplayName) {

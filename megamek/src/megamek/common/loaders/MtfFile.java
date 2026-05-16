@@ -42,10 +42,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import megamek.codeUtilities.StringUtility;
@@ -65,7 +63,6 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.BipedMek;
-import megamek.common.units.ConstructionUtil;
 import megamek.common.units.Entity;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;
@@ -122,7 +119,6 @@ public class MtfFile implements IMekLoader {
 
     private final String[][] critData;
     private final List<String> noCritEquipment = new ArrayList<>();
-    private boolean unallocateOverflowCriticals = false;
 
     private String capabilities = "";
     private String deployment = "";
@@ -250,38 +246,6 @@ public class MtfFile implements IMekLoader {
         } catch (NumberFormatException ex) {
             logger.error("", ex);
             throw new EntityLoadingException("NumberFormatException reading file (format error)");
-        }
-    }
-
-    private MtfFile() {
-        critData = new String[9][12];
-    }
-
-    public static void applyLocationCriticalData(Mek mek, int location, String[] locationCriticalData)
-          throws EntityLoadingException {
-        if ((location < 0) || (location >= mek.locations())) {
-            return;
-        }
-        MtfFile helper = new MtfFile();
-        helper.setLocationCritData(location, locationCriticalData);
-        clearLocationEquipmentCriticals(mek, location);
-        helper.parseCrits(mek, location);
-    }
-
-    public static void replaceLocationCriticalData(Mek mek, int location, String[] locationCriticalData)
-          throws EntityLoadingException {
-        if ((location < 0) || (location >= mek.locations())) {
-            return;
-        }
-        MtfFile helper = new MtfFile();
-        helper.unallocateOverflowCriticals = true;
-        boolean hasDonorStructureCritical = helper.locationCriticalDataHasStructureCritical(
-              mek, location, locationCriticalData);
-        helper.setLocationCritData(location, locationCriticalData);
-        deleteLocationEquipment(mek, location);
-        helper.parseCrits(mek, location);
-        if (!hasDonorStructureCritical) {
-            helper.addFallbackFrankenMekStructureCriticalSlotsIfMissing(mek, location);
         }
     }
 
@@ -703,191 +667,6 @@ public class MtfFile implements IMekLoader {
         mek.setMismatchedFrankenMekLegs(mismatchedFrankenMekLegs);
     }
 
-    private void setLocationCritData(int location, String[] locationCriticalData) {
-        for (int slot = 0; slot < critData[location].length; slot++) {
-            critData[location][slot] = ((slot < locationCriticalData.length) && (locationCriticalData[slot] != null))
-                  ? locationCriticalData[slot] : EMPTY;
-        }
-    }
-
-    private static void clearLocationEquipmentCriticals(Mek mek, int location) {
-        Set<Mounted<?>> removedMounts = new LinkedHashSet<>();
-        for (int slot = 0; slot < mek.getNumberOfCriticalSlots(location); slot++) {
-            CriticalSlot criticalSlot = mek.getCritical(location, slot);
-            if ((criticalSlot == null) || (criticalSlot.getType() != CriticalSlot.TYPE_EQUIPMENT)) {
-                continue;
-            }
-            if (criticalSlot.getMount() != null) {
-                removedMounts.add(criticalSlot.getMount());
-            }
-            if (criticalSlot.getMount2() != null) {
-                removedMounts.add(criticalSlot.getMount2());
-            }
-            mek.setCritical(location, slot, null);
-        }
-        for (Mounted<?> mount : removedMounts) {
-            updateMountStatusAfterLocationClear(mek, mount);
-        }
-    }
-
-    private static void deleteLocationEquipment(Mek mek, int location) {
-        Set<Mounted<?>> removedMounts = new LinkedHashSet<>();
-        for (int slot = 0; slot < mek.getNumberOfCriticalSlots(location); slot++) {
-            CriticalSlot criticalSlot = mek.getCritical(location, slot);
-            if ((criticalSlot == null) || (criticalSlot.getType() != CriticalSlot.TYPE_EQUIPMENT)) {
-                continue;
-            }
-            if (criticalSlot.getMount() != null) {
-                removedMounts.add(criticalSlot.getMount());
-            }
-            if (criticalSlot.getMount2() != null) {
-                removedMounts.add(criticalSlot.getMount2());
-            }
-        }
-        for (Mounted<?> mount : new ArrayList<>(mek.getEquipment())) {
-            if ((mount.getLocation() == location) || (mount.getSecondLocation() == location)) {
-                removedMounts.add(mount);
-            }
-        }
-        for (Mounted<?> mount : removedMounts) {
-            ConstructionUtil.removeMounted(mek, mount);
-        }
-    }
-
-    private void addFallbackFrankenMekStructureCriticalSlotsIfMissing(Mek mek, int location)
-          throws EntityLoadingException {
-        if (!mek.isFrankenMek()) {
-            return;
-        }
-        EquipmentType structure = mek.getFrankenMekStructureEquipment(location);
-        int fallbackSlots = mek.getFrankenMekStructureCriticalSlots(location);
-        if ((structure == null) || (fallbackSlots <= 0) || hasStructureCriticalSlot(mek, location, structure)) {
-            return;
-        }
-        for (int slot = 0; slot < fallbackSlots; slot++) {
-            try {
-                addMountedEquipmentOrUnallocated(mek, Mounted.createMounted(mek, structure), location, false);
-            } catch (LocationFullException ex) {
-                throw new EntityLoadingException(ex.getMessage(), ex);
-            }
-        }
-    }
-
-    private static boolean hasStructureCriticalSlot(Mek mek, int location, EquipmentType structure) {
-        for (int slot = 0; slot < mek.getNumberOfCriticalSlots(location); slot++) {
-            CriticalSlot criticalSlot = mek.getCritical(location, slot);
-            if ((criticalSlot != null) && criticalSlotContainsEquipmentType(criticalSlot, structure)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean criticalSlotContainsEquipmentType(CriticalSlot criticalSlot, EquipmentType equipmentType) {
-        return (criticalSlot.getType() == CriticalSlot.TYPE_EQUIPMENT)
-              && (((criticalSlot.getMount() != null) && equipmentType.equals(criticalSlot.getMount().getType()))
-              || ((criticalSlot.getMount2() != null) && equipmentType.equals(criticalSlot.getMount2().getType())));
-    }
-
-    private boolean locationCriticalDataHasStructureCritical(Mek mek, int location, String[] locationCriticalData) {
-        if (!mek.isFrankenMek()) {
-            return false;
-        }
-        EquipmentType structure = mek.getFrankenMekStructureEquipment(location);
-        if (structure == null) {
-            return false;
-        }
-        for (String criticalName : locationCriticalData) {
-            if (criticalDataEntryMatchesEquipmentType(mek, criticalName, structure)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean criticalDataEntryMatchesEquipmentType(Mek mek, String criticalName, EquipmentType equipmentType) {
-        if ((criticalName == null) || criticalName.equals(EMPTY)) {
-            return false;
-        }
-        String normalizedName = stripCriticalDataDecorators(criticalName);
-        for (String equipmentName : normalizedName.split("\\|")) {
-            EquipmentType parsedType = EquipmentType.get(equipmentName.trim());
-            if (parsedType == null) {
-                parsedType = EquipmentType.get(mek.isClan() ? "Clan " + equipmentName.trim()
-                      : "IS " + equipmentName.trim());
-            }
-            if (equipmentType.equals(parsedType)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private String stripCriticalDataDecorators(String criticalName) {
-        String strippedName = criticalName.trim();
-        String upperName = strippedName.toUpperCase();
-        if (upperName.endsWith(ARMORED)) {
-            strippedName = strippedName.substring(0, strippedName.length() - ARMORED.length()).trim();
-            upperName = strippedName.toUpperCase();
-        }
-        int sizeIndex = upperName.indexOf(SIZE);
-        if (sizeIndex > 0) {
-            strippedName = strippedName.substring(0, sizeIndex).trim();
-            upperName = strippedName.toUpperCase();
-        }
-        String[] suffixes = { OMNI_POD, "(T)", "(R)", "(SPLIT)", "(FL)", "(FR)", "(RL)", "(RR)" };
-        boolean removedSuffix;
-        do {
-            removedSuffix = false;
-            for (String suffix : suffixes) {
-                if (upperName.endsWith(suffix)) {
-                    strippedName = strippedName.substring(0, strippedName.length() - suffix.length()).trim();
-                    upperName = strippedName.toUpperCase();
-                    removedSuffix = true;
-                    break;
-                }
-            }
-        } while (removedSuffix);
-        return strippedName;
-    }
-
-    private static void updateMountStatusAfterLocationClear(Mek mek, Mounted<?> mount) {
-        Set<Integer> mountedLocations = getMountedCriticalLocations(mek, mount);
-        if (mountedLocations.isEmpty()) {
-            ConstructionUtil.changeMountStatus(mek, mount, Entity.LOC_NONE, Entity.LOC_NONE, mount.isRearMounted());
-            return;
-        }
-
-        int primaryLocation = Entity.LOC_NONE;
-        int secondaryLocation = Entity.LOC_NONE;
-        for (int mountedLocation : mountedLocations) {
-            if (primaryLocation == Entity.LOC_NONE) {
-                primaryLocation = mountedLocation;
-            } else {
-                secondaryLocation = mountedLocation;
-                break;
-            }
-        }
-        ConstructionUtil.changeMountStatus(mek, mount, primaryLocation, secondaryLocation, mount.isRearMounted());
-    }
-
-    private static Set<Integer> getMountedCriticalLocations(Entity unit, Mounted<?> mount) {
-        Set<Integer> mountedLocations = new LinkedHashSet<>();
-        for (int location = 0; location < unit.locations(); location++) {
-            for (int slot = 0; slot < unit.getNumberOfCriticalSlots(location); slot++) {
-                CriticalSlot criticalSlot = unit.getCritical(location, slot);
-                if ((criticalSlot == null) || (criticalSlot.getType() != CriticalSlot.TYPE_EQUIPMENT)) {
-                    continue;
-                }
-                if ((mount.equals(criticalSlot.getMount())) || mount.equals(criticalSlot.getMount2())) {
-                    mountedLocations.add(location);
-                    break;
-                }
-            }
-        }
-        return mountedLocations;
-    }
-
     private int parseFrankenMekStructureTonnage(Mek mek, int location, String tonnageValue)
           throws EntityLoadingException {
         try {
@@ -1099,72 +878,6 @@ public class MtfFile implements IMekLoader {
         }
     }
 
-    private Mounted<?> addEquipmentOrUnallocated(Mek mek, EquipmentType equipmentType, int location,
-          boolean rearMounted, int baMountLoc, boolean armored, boolean turreted, boolean omniPod)
-          throws LocationFullException {
-        try {
-            return mek.addEquipment(equipmentType, location, rearMounted, baMountLoc, armored, turreted, false,
-                  false, omniPod);
-        } catch (LocationFullException ex) {
-            if (!unallocateOverflowCriticals) {
-                throw ex;
-            }
-            Mounted<?> mounted = Mounted.createMounted(mek, equipmentType);
-            mounted.setBaMountLoc(baMountLoc);
-            mounted.setArmored(armored);
-            mounted.setMekTurretMounted(turreted);
-            mounted.setOmniPodMounted(omniPod);
-            mek.addEquipment(mounted, Entity.LOC_NONE, rearMounted);
-            return mounted;
-        }
-    }
-
-    private Mounted<?> addCombinedEquipmentOrUnallocated(Mek mek, EquipmentType equipmentType,
-          EquipmentType equipmentType2, int location, boolean omniPod, boolean armored) throws LocationFullException {
-        try {
-            return mek.addEquipment(equipmentType, equipmentType2, location, omniPod, armored);
-        } catch (LocationFullException ex) {
-            if (!unallocateOverflowCriticals) {
-                throw ex;
-            }
-            Mounted<?> mounted = Mounted.createMounted(mek, equipmentType);
-            Mounted<?> mounted2 = Mounted.createMounted(mek, equipmentType2);
-            mounted.setOmniPodMounted(omniPod);
-            mounted2.setOmniPodMounted(omniPod);
-            mounted.setArmored(armored);
-            mounted2.setArmored(armored);
-            mek.addEquipment(mounted, Entity.LOC_NONE, false);
-            mek.addEquipment(mounted2, Entity.LOC_NONE, false);
-            return mounted;
-        }
-    }
-
-    private void addMountedEquipmentOrUnallocated(Mek mek, Mounted<?> mounted, int location, boolean rearMounted)
-          throws LocationFullException {
-        try {
-            mek.addEquipment(mounted, location, rearMounted);
-        } catch (LocationFullException ex) {
-            if (!unallocateOverflowCriticals) {
-                throw ex;
-            }
-            Mounted<?> unallocatedMount = mounted;
-            if (mek.getEquipmentNum(mounted) != -1) {
-                unallocatedMount = copyMountForUnallocated(mek, mounted);
-            }
-            mek.addEquipment(unallocatedMount, Entity.LOC_NONE, rearMounted);
-        }
-    }
-
-    private Mounted<?> copyMountForUnallocated(Mek mek, Mounted<?> mounted) {
-        Mounted<?> copy = Mounted.createMounted(mek, mounted.getType());
-        copy.setArmored(mounted.isArmored());
-        copy.setMekTurretMounted(mounted.isMekTurretMounted());
-        copy.setOmniPodMounted(mounted.isOmniPodMounted());
-        copy.setFacing(mounted.getFacing());
-        copy.setSize(mounted.getSize());
-        return copy;
-    }
-
     private void parseCrits(Mek mek, int loc) throws EntityLoadingException {
         // check for removed actuators
         if (!(mek instanceof QuadMek)) {
@@ -1254,8 +967,8 @@ public class MtfFile implements IMekLoader {
                       new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, true, isArmored));
                 continue;
             }
-            // If the slot's full already, skip it unless this parse is allowed to move overflow to unallocated.
-            if ((mek.getCritical(loc, i) != null) && !unallocateOverflowCriticals) {
+            // If the slot's full already, skip it.
+            if (mek.getCritical(loc, i) != null) {
                 continue;
             }
 
@@ -1319,18 +1032,14 @@ public class MtfFile implements IMekLoader {
                         Mounted<?> m = hSharedEquip.get(etype);
                         if (m != null) {
                             // use the existing one
-                            if (!mek.addCritical(loc, new CriticalSlot(m)) && unallocateOverflowCriticals) {
-                                addEquipmentOrUnallocated(mek, etype, Entity.LOC_NONE, rearMounted,
-                                      BattleArmor.MOUNT_LOC_NONE, isArmored, isTurreted, isOmniPod);
-                            }
+                            mek.addCritical(loc, new CriticalSlot(m));
                             continue;
                         }
-                        m = addEquipmentOrUnallocated(mek, etype, loc, rearMounted,
-                              BattleArmor.MOUNT_LOC_NONE, isArmored, isTurreted, isOmniPod);
+                        m = mek.addEquipment(etype, loc, rearMounted,
+                              BattleArmor.MOUNT_LOC_NONE, isArmored,
+                              isTurreted);
                         m.setOmniPodMounted(isOmniPod);
-                        if (m.getLocation() != Entity.LOC_NONE) {
-                            hSharedEquip.put(etype, m);
-                        }
+                        hSharedEquip.put(etype, m);
                         if (etype.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER)) {
                             if (size == 0) {
                                 // legacy MTF loading: MJB gave their MP as the jump MP
@@ -1344,20 +1053,11 @@ public class MtfFile implements IMekLoader {
                         // Targeting computers are special, they need to be loaded like spreadable
                         // equipment, but they aren't spreadable
                         Mounted<?> m = hSharedEquip.get(etype);
-                        boolean createdMount = false;
                         if (m == null) {
                             m = mek.addTargCompWithoutSlots((MiscType) etype, loc, isOmniPod, isArmored);
                             hSharedEquip.put(etype, m);
-                            createdMount = true;
                         }
-                        if (!mek.addCritical(loc, new CriticalSlot(m)) && unallocateOverflowCriticals) {
-                            if (createdMount) {
-                                ConstructionUtil.changeMountStatus(mek, m, Entity.LOC_NONE, Entity.LOC_NONE, false);
-                            } else {
-                                addEquipmentOrUnallocated(mek, etype, Entity.LOC_NONE, false,
-                                      BattleArmor.MOUNT_LOC_NONE, isArmored, isTurreted, isOmniPod);
-                            }
-                        }
+                        mek.addCritical(loc, new CriticalSlot(m));
 
                     } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplittableOverCriticalSlots())
                           || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
@@ -1401,13 +1101,13 @@ public class MtfFile implements IMekLoader {
                         m.setArmored(isArmored);
                         m.setMekTurretMounted(isTurreted);
                         m.setOmniPodMounted(isOmniPod);
-                        addMountedEquipmentOrUnallocated(mek, m, loc, rearMounted);
+                        mek.addEquipment(m, loc, rearMounted);
                     } else {
                         Mounted<?> mount;
                         if (etype2 == null) {
-                            mount = addEquipmentOrUnallocated(mek, etype, loc, rearMounted,
+                            mount = mek.addEquipment(etype, loc, rearMounted,
                                   BattleArmor.MOUNT_LOC_NONE, isArmored,
-                                  isTurreted, isOmniPod);
+                                  isTurreted, false, false, isOmniPod);
                         } else {
                             if (etype instanceof AmmoType) {
                                 if (!(etype2 instanceof AmmoType)
@@ -1422,7 +1122,7 @@ public class MtfFile implements IMekLoader {
                                     throw new EntityLoadingException("must combine ammo or heat sinks in one slot");
                                 }
                             }
-                            mount = addCombinedEquipmentOrUnallocated(mek, etype, etype2, loc, isOmniPod, isArmored);
+                            mount = mek.addEquipment(etype, etype2, loc, isOmniPod, isArmored);
                         }
                         if (etype.isVariableSize()) {
                             if (size == 0) {

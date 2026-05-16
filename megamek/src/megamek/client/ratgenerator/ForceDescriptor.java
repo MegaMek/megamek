@@ -565,6 +565,9 @@ public class ForceDescriptor {
             for (ForceDescriptor sub : subs) {
                 weights.add(sub.getWeightClass());
             }
+            LOGGER.info("[ForceGen][Weight] generateLance: unitType={} faction={} parentWeightClass={} " +
+                        "element target weights={}",
+                  UnitType.getTypeName(ut), faction, getWeightClassCode(), weights);
         } else {
             weights.add(-1);
             weights.add(0);

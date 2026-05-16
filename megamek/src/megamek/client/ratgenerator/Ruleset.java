@@ -185,6 +185,11 @@ public class Ruleset {
     }
 
     public void processRoot(ForceDescriptor fd, ProgressListener l) {
+        logger.info("[ForceGen][Weight] processRoot ENTER: faction={} echelon={} unitType={} rating={} " +
+                    "weightClass={} ({})",
+              fd.getFaction(), fd.getEchelon(), fd.getUnitType(), fd.getRating(),
+              fd.getWeightClass(),
+              fd.getWeightClassCode().isEmpty() ? "RANDOM - ruleset will roll one" : fd.getWeightClassCode());
         defaults.apply(fd);
         // save the setting so it can be restored after assigning names
         String rngFaction = RandomNameGenerator.getInstance().getChosenFaction();

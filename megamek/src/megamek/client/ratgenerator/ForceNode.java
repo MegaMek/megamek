@@ -88,10 +88,19 @@ public class ForceNode extends RulesetNode {
                     case "weightClass":
                         if (fd.getWeightClass() == null
                               || rule.predicates.containsKey("ifWeightClass")) {
+                            String priorWeightCode = fd.getWeightClassCode();
                             valueNode = rule.selectOption(fd, true);
                             if (valueNode != null) {
                                 fd.setWeightClass(ForceDescriptor.decodeWeightClass(valueNode.getContent()));
+                                logger.info("[ForceGen][Weight] {} (faction={}): random <weightClass> block applied" +
+                                            " '{}' -> {} (prior={})",
+                                      echelonName, fd.getFaction(), valueNode.getContent(),
+                                      fd.getWeightClassCode(), priorWeightCode.isEmpty() ? "unset" : priorWeightCode);
                             }
+                        } else {
+                            logger.info("[ForceGen][Weight] {} (faction={}): kept caller-supplied weightClass={}" +
+                                        " (random <weightClass> block skipped)",
+                                  echelonName, fd.getFaction(), fd.getWeightClassCode());
                         }
                         break;
                     case "unitType":

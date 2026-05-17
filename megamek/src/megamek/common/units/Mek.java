@@ -967,6 +967,13 @@ public abstract class Mek extends Entity {
         return isFrankenMek() && frankenMekMismatchedLegs;
     }
 
+    public boolean hasMismatchedTonnageFrankenMekLegs() {
+        if (!isFrankenMek()) {
+            return false;
+        }
+        return (getFrankenMekStructureTonnage(Mek.LOC_RIGHT_LEG) != getFrankenMekStructureTonnage(Mek.LOC_LEFT_LEG));
+    }
+
     public void setMismatchedFrankenMekLegs(boolean mismatchedLegs) {
         frankenMekMismatchedLegs = mismatchedLegs && isFrankenMek();
     }
@@ -3986,6 +3993,15 @@ public abstract class Mek extends Entity {
      */
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
+        if (this.isFrankenMek()) {
+            if (this.hasMismatchedTonnageFrankenMekLegs()) {
+                roll.addModifier(2, "Mismatched Legs with different tonnages");
+            } else
+            if (this.hasMismatchedFrankenMekLegs()) {
+                roll.addModifier(1, "Mismatched Legs from different Meks");
+            }
+        }
+
         // gyro hit?
         if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
               Mek.LOC_CENTER_TORSO) > 0) {

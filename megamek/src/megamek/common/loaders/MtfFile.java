@@ -379,7 +379,7 @@ public class MtfFile implements IMekLoader {
             int baseHeatSinks = Integer
                   .parseInt(baseChassisHeatSinks.substring("base chassis heat sinks:".length()).trim());
 
-            String thisStructureType = internalType.substring(internalType.indexOf(':') + 1);
+            String thisStructureType = internalType.substring(internalType.indexOf(':') + 1).trim();
             if (!thisStructureType.isBlank()
                   && !thisStructureType.equalsIgnoreCase(Mek.FRANKEN_MEK_STRUCTURE_HYBRID)) {
                 mek.setStructureType(thisStructureType);

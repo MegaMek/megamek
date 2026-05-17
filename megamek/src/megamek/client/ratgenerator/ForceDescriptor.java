@@ -349,13 +349,23 @@ public class ForceDescriptor {
      *       the given parameters.
      */
     private List<ModelRecord> generateFormation(List<ForceDescriptor> subs, int networkMask, int numGroups) {
+        // Collect the weight classes the force tree assigned to this formation's elements. Passing
+        // them to the formation builder keeps it within the lance's intended weight profile; left
+        // null it would pick any weight the FormationType itself allows (e.g. a light Mek in a
+        // Heavy/Assault Hunter lance).
+        Set<Integer> formationWeightClasses = new TreeSet<>();
+        for (ForceDescriptor sub : subs) {
+            if (sub.useWeightClass() && (null != sub.getWeightClass()) && (sub.getWeightClass() >= 0)) {
+                formationWeightClasses.add(sub.getWeightClass());
+            }
+        }
         Map<Parameters, Integer> paramCount = new HashMap<>();
         for (ForceDescriptor sub : subs) {
             paramCount.merge(new Parameters(sub.getFactionRec(),
                   sub.getUnitType(),
                   sub.getYear(),
                   sub.ratGeneratorRating(),
-                  null,
+                  formationWeightClasses.isEmpty() ? null : formationWeightClasses,
                   networkMask,
                   sub.getMovementModes(),
                   sub.getRoles(),
@@ -813,12 +823,56 @@ public class ForceDescriptor {
     }
 
     public ModelRecord generate() {
-        /*
-         * If the criteria cannot be matched, first try the next closest weight class,
-         * then ignore mission role, then the next weight class, then ignore motive
-         * types,
-         * then remaining weight classes.
-         */
+        // Equipment-rating fallback ladder: try the force's own rating first and, only when
+        // generation comes up empty, step down to progressively worse ratings (never better).
+        // A rating-C force may field C/D/F equipment when nothing matches at its own rating,
+        // but never the A/B grades reserved for better-equipped commands.
+        List<String> failureTrace = new ArrayList<>();
+        for (String ratGenRating : ratingFallbackList()) {
+            ModelRecord mr = generateAtRating(ratGenRating, failureTrace);
+            if (mr != null) {
+                return mr;
+            }
+        }
+
+        LOGGER.debug("Could not find unit for {}", UnitType.getTypeDisplayableName(unitType));
+        if (unitType != null && unitType == UnitType.MEK) {
+            LOGGER.info("[ForceGen][Weight] generate() FAILED requestedWeight={} -> no unit found."
+                        + " element: faction={} unitType={} year={} echelon={} roles={} movementModes={}"
+                        + " models={} chassis={}",
+                  weightClass, faction, unitType, year, echelon, roles, movementModes, models, chassis);
+            for (String line : failureTrace) {
+                LOGGER.info("[ForceGen][Weight]   attempt: {}", line);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Builds the equipment-rating fallback ladder for {@link #generate()}: the force's own resolved rating followed by
+     * each progressively worse rating in the faction's rating system. Generation tries each in order and stops at the
+     * first that yields a unit, so worse ratings act only as a safety net - the force never fields equipment better
+     * than its assigned rating.
+     */
+    private List<String> ratingFallbackList() {
+        String startRating = ratGeneratorRating();
+        Ruleset rs = Ruleset.findRuleset(this);
+        if (rs != null) {
+            List<String> ladder = rs.getRatingsAtOrWorseThan(startRating);
+            if (!ladder.isEmpty()) {
+                return ladder;
+            }
+        }
+        return Collections.singletonList(startRating);
+    }
+
+    /**
+     * Generates a single unit for this descriptor at a fixed equipment rating. If the criteria cannot be matched, first
+     * tries the next closest weight class, then ignores mission role, then the next weight class, then ignores motive
+     * types, then the remaining weight classes. Returns {@code null} if no unit could be generated at the given
+     * rating.
+     */
+    private ModelRecord generateAtRating(String ratGenRating, List<String> failureTrace) {
         final int[][] altWeights = { { 1, 2, 3, 4, 5 }, // UL
                                      { 2, 0, 3, 4, 5 }, // L
                                      { 3, 1, 4, 0, 5 }, // M
@@ -841,7 +895,6 @@ public class ForceDescriptor {
                 if (useWeightClass() && null != fd.getWeightClass() && fd.getWeightClass() >= 0) {
                     wcs.add(fd.getWeightClass());
                 }
-                String ratGenRating = ratGeneratorRating();
                 UnitTable table = UnitTable.findTable(fd.getFactionRec(),
                       fd.getUnitType(),
                       fd.getYear(),
@@ -859,7 +912,21 @@ public class ForceDescriptor {
                 } else {
                     ms = table.generateUnit();
                 }
+                if (unitType != null && unitType == UnitType.MEK) {
+                    failureTrace.add(String.format(
+                          "rating=%s wtIndex=%d weightClass=%s roleStrictness=%d roles=%s moves=%s"
+                                + " models=%s chassis=%s tableEntries=%d unit=%s",
+                          ratGenRating, wtIndex, fd.getWeightClass(), roleStrictness, fd.getRoles(),
+                          fd.getMovementModes(), fd.getModels(), fd.getChassis(),
+                          table.getNumEntries(), (ms == null) ? "null" : ms.getName()));
+                }
                 if (ms != null && RATGenerator.getInstance().getModelRecord(ms.getName()) != null) {
+                    if (unitType != null && unitType == UnitType.MEK) {
+                        LOGGER.info("[ForceGen][Weight] generate() requestedWeight={} wtIndex={}"
+                                    + " tableWeight={} rating={} -> {} (mekWeightClass={})",
+                              weightClass, wtIndex, fd.getWeightClass(), ratGenRating,
+                              ms.getName(), ms.getWeightClass());
+                    }
                     return RATGenerator.getInstance().getModelRecord(ms.getName());
                 }
 
@@ -879,8 +946,6 @@ public class ForceDescriptor {
                 }
             }
         }
-
-        LOGGER.debug("Could not find unit for {}", UnitType.getTypeDisplayableName(unitType));
         return null;
     }
 
@@ -1462,6 +1527,41 @@ public class ForceDescriptor {
         retVal.addAll(subForces);
         retVal.addAll(attached);
         return retVal;
+    }
+
+    /**
+     * Recursively counts the weight class of every BattleMek leaf element in this descriptor, its
+     * subforces, and its attachments. Diagnostic helper for verifying that a requested force
+     * weight (e.g. an Assault regiment) actually produced the expected unit mix — compare the
+     * returned counts against the per-faction subforce tables in the ruleset XML.
+     *
+     * <p>LandAirMeks are counted as Meks ({@code Entity.isMek()} is true for them). Non-Mek
+     * elements (vehicles, infantry, fighters) are ignored.</p>
+     *
+     * @return an int array indexed by {@link EntityWeightClass} constant
+     *       ({@code 0 = WEIGHT_ULTRA_LIGHT} … {@code 5 = WEIGHT_SUPER_HEAVY}); each slot holds the
+     *       number of Mek elements at that weight class
+     */
+    public int[] tallyMekWeightClasses() {
+        int[] counts = new int[EntityWeightClass.WEIGHT_SUPER_HEAVY + 1];
+        tallyMekWeightClasses(counts);
+        return counts;
+    }
+
+    private void tallyMekWeightClasses(int[] counts) {
+        Entity leafEntity = getEntity();
+        if (leafEntity != null && leafEntity.isMek()) {
+            int wc = leafEntity.getWeightClass();
+            if (wc >= 0 && wc < counts.length) {
+                counts[wc]++;
+            }
+        }
+        for (ForceDescriptor sub : subForces) {
+            sub.tallyMekWeightClasses(counts);
+        }
+        for (ForceDescriptor att : attached) {
+            att.tallyMekWeightClasses(counts);
+        }
     }
 
     public int getIndex() {

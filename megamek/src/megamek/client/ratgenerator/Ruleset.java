@@ -40,12 +40,14 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.annotations.Nullable;
+import megamek.common.units.EntityWeightClass;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 import org.w3c.dom.Document;
@@ -219,6 +221,26 @@ public class Ruleset {
             l.updateProgress(0, "Complete");
         }
 
+        // Diagnostic: tally the weight class of every generated BattleMek so a caller can verify
+        // that a requested force weight (e.g. an Assault regiment) produced the expected mix.
+        // Compare against the per-faction subforce tables in the ruleset XML.
+        int[] mekWeights = fd.tallyMekWeightClasses();
+        int totalMeks = 0;
+        for (int count : mekWeights) {
+            totalMeks += count;
+        }
+        if (totalMeks > 0) {
+            logger.info("[ForceGen][Weight] generated BattleMek weight distribution ({} total): " +
+                        "UltraLight={} Light={} Medium={} Heavy={} Assault={} SuperHeavy={}",
+                  totalMeks,
+                  mekWeights[EntityWeightClass.WEIGHT_ULTRA_LIGHT],
+                  mekWeights[EntityWeightClass.WEIGHT_LIGHT],
+                  mekWeights[EntityWeightClass.WEIGHT_MEDIUM],
+                  mekWeights[EntityWeightClass.WEIGHT_HEAVY],
+                  mekWeights[EntityWeightClass.WEIGHT_ASSAULT],
+                  mekWeights[EntityWeightClass.WEIGHT_SUPER_HEAVY]);
+        }
+
         RandomNameGenerator.getInstance().setChosenFaction(rngFaction);
     }
 
@@ -301,6 +323,32 @@ public class Ruleset {
 
     public int getRatingIndex(String key) {
         return ratingSystem.indexOf(key);
+    }
+
+    /**
+     * Returns the given equipment rating followed by every worse rating in this ruleset's rating system, ordered from
+     * the given rating down to the worst. Used as an equipment-rating fallback ladder during unit generation: a force
+     * tries its own rating first and only steps down to worse-equipped ratings when nothing can be generated, never to
+     * a better rating. If the rating is not part of this system, the list contains only the rating itself.
+     *
+     * @param rating the force's own equipment rating
+     *
+     * @return the rating and all worse ratings, closest first
+     */
+    public List<String> getRatingsAtOrWorseThan(String rating) {
+        List<String> result = new ArrayList<>();
+        int idx = ratingSystem.indexOf(rating);
+        if (idx < 0) {
+            if (rating != null) {
+                result.add(rating);
+            }
+            return result;
+        }
+        // RatingSystem values are ordered worst-to-best, so worse ratings are lower indices.
+        for (int i = idx; i >= 0; i--) {
+            result.add(ratingSystem.vals[i]);
+        }
+        return result;
     }
 
     public Integer getDefaultUnitType(ForceDescriptor fd) {

@@ -493,7 +493,20 @@ public class FormationType {
 
         params.forEach(p -> {
             p.addRoles(missionRoles);
-            p.setWeightClasses(p.getUnitType() < UnitType.CONV_FIGHTER ? weightClasses : airWcs);
+            List<Integer> formationRange = (p.getUnitType() < UnitType.CONV_FIGHTER) ? weightClasses : airWcs;
+            // If the caller supplied weight classes (the Force Generator passes the lance's
+            // element weights), keep only those that also fall within this FormationType's own
+            // min/max range. An empty intersection means the requested weights are incompatible
+            // with the formation, so fall back to the formation's range rather than fail.
+            Collection<Integer> requested = p.getWeightClasses();
+            if (requested.isEmpty()) {
+                p.setWeightClasses(formationRange);
+            } else {
+                List<Integer> intersection = requested.stream()
+                      .filter(formationRange::contains)
+                      .collect(Collectors.toList());
+                p.setWeightClasses(intersection.isEmpty() ? formationRange : intersection);
+            }
         });
 
         List<UnitTable> tables = params.stream().map(UnitTable::findTable).toList();
@@ -1725,6 +1738,7 @@ public class FormationType {
     private static void createAnvilLance() {
         FormationType ft = new FormationType("Anvil", "Assault");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
+        ft.idealRole = UnitRole.JUGGERNAUT;
         ft.exclusiveFaction = "FWL";
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         // Campaign Operations (Anvil Lance): all units must possess at least 105 armor points.
@@ -1751,6 +1765,7 @@ public class FormationType {
     private static void createFastAssaultLance() {
         FormationType ft = new FormationType("Fast Assault", "Assault");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
+        ft.idealRole = UnitRole.JUGGERNAUT;
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.mainCriteria = ms -> ms.getTotalArmor() >= 135 && (ms.getWalkMp() >= 5 || ms.getJumpMp() > 0);
         ft.mainDescription = "Walk 5+ or Jump 1+";
@@ -1772,15 +1787,36 @@ public class FormationType {
 
     /**
      * Registers the Hunter Lance (Campaign Operations p. 62): an Assault Lance variant favoring heavy woods or urban
-     * terrain for ambush combat. Ideal role: Ambusher.
+     * terrain for ambush combat. As an Assault variant it inherits the full Assault Lance base requirements (no light
+     * units, 135+ armor, 75% able to do 25 damage at range 7, three or more Heavy+, and one Juggernaut or two Snipers)
+     * and adds its own rule: at least half the units must be Ambushers or Juggernauts. Ideal role: Ambusher.
      */
     private static void createHunterLance() {
         FormationType ft = new FormationType("Hunter", "Assault");
-        ft.allowedUnitTypes = FLAG_GROUND;
+        ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
         ft.idealRole = UnitRole.AMBUSHER;
+        ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
+        // Campaign Operations (Assault Lance base, inherited by Hunter): 135+ armor.
+        ft.mainCriteria = ms -> ms.getTotalArmor() >= 135;
+        ft.mainDescription = "Armor 135+";
+        ft.otherCriteria.add(new PercentConstraint(0.75, ms -> getDamageAtRange(ms, 7) >= 25, "25 damage at range 7"));
+        ft.otherCriteria.add(new CountConstraint(3,
+              ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
+              "Heavy+"));
+        // Campaign Operations (Assault Lance base, inherited by Hunter): at least one Juggernaut OR
+        // two Snipers. Encoded as a paired-OR pair of CountConstraints.
+        Constraint c = new CountConstraint(1, ms -> ms.getRole() == JUGGERNAUT, "Juggernaut");
+        c.setPairedWithNext(true);
+        ft.otherCriteria.add(c);
+        c = new CountConstraint(2, ms -> ms.getRole() == SNIPER, "Sniper");
+        c.setPairedWithPrevious(true);
+        ft.otherCriteria.add(c);
+        // Hunter-specific rule: at least 50% of the units must be Ambushers or Juggernauts.
         ft.otherCriteria.add(new PercentConstraint(0.5,
               ms -> ms.getRole().isAnyOf(JUGGERNAUT, AMBUSHER),
               "Juggernaut or Ambusher"));
+        ft.reportMetrics.put("Armor", MekSummary::getTotalArmor);
+        ft.reportMetrics.put("Damage @ 7", ms -> getDamageAtRange(ms, 7));
         allFormationTypes.put(ft.name, ft);
     }
 

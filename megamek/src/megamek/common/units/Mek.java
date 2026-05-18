@@ -1332,17 +1332,31 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * does this Mek have composite internal structure?
+     * Returns the internal structure type used in this location.
      */
-    public boolean hasCompositeStructure() {
-        return (getStructureType() == EquipmentType.T_STRUCTURE_COMPOSITE);
+    public int getStructureType(int location) {
+        if (isFrankenMek() && hasFrankenMekStructureLocation(location)) {
+            return getFrankenMekStructureType(location);
+        }
+        return getStructureType();
     }
 
     /**
-     * does this Mek have reinforced internal structure?
+     * does this Mek have composite internal structure in this location?
      */
-    public boolean hasReinforcedStructure() {
-        return (getStructureType() == EquipmentType.T_STRUCTURE_REINFORCED);
+    public boolean hasCompositeStructure(int location) {
+        return hasStructureType(location, EquipmentType.T_STRUCTURE_COMPOSITE);
+    }
+
+    /**
+     * does this Mek have reinforced internal structure in this location?
+     */
+    public boolean hasReinforcedStructure(int location) {
+        return hasStructureType(location, EquipmentType.T_STRUCTURE_REINFORCED);
+    }
+
+    private boolean hasStructureType(int location, int structureType) {
+        return getStructureType(location) == structureType;
     }
 
     /**

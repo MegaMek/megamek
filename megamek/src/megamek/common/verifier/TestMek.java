@@ -1035,13 +1035,14 @@ public class TestMek extends TestEntity {
                     buff.append(misc.getName()).append(" can only be mounted on a quad mek.\n");
                     illegal = true;
                 }
-                if (!mek.hasReinforcedStructure()) {
-                    buff.append(misc.getName()).append(" requires reinforced structure.\n");
-                    illegal = true;
-                }
                 for (int loc = 0; loc < mek.locations(); loc++) {
-                    if (mek.locationIsTorso(loc)
-                          && countCriticalSlotsFromEquipInLocation(mek, m, loc) != 1) {
+                    if (!mek.locationIsTorso(loc)) continue;
+                    if (!mek.hasReinforcedStructure(loc)) {
+                        illegal = true;
+                        buff.append(misc.getName()).append(" requires reinforced structure in each torso location.\n");
+                        break;
+                    }
+                    if (countCriticalSlotsFromEquipInLocation(mek, m, loc) != 1) {
                         illegal = true;
                         buff.append(misc.getName()).append(" requires one critical slot in each torso location.\n");
                         break;

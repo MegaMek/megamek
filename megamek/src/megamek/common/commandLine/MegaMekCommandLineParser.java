@@ -66,6 +66,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
     private boolean client = false;
     private boolean quick = false;
     private boolean ratGenEditor = false;
+    private boolean rulesetViewer = false;
     private boolean writeGif = false;
     private String[] restArgs = new String[0];
 
@@ -100,6 +101,15 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
      */
     public boolean ratGenEditor() {
         return ratGenEditor;
+    }
+
+    /**
+     * Flag that indicates the option for the force generator ruleset viewer.
+     *
+     * @return Whether the ruleset viewer should be invoked
+     */
+    public boolean rulesetViewer() {
+        return rulesetViewer;
     }
 
     /**
@@ -180,6 +190,9 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         break;
                     case EDIT_RAT_GEN:
                         ratGenEditor = true;
+                        break;
+                    case VIEW_RULESETS:
+                        rulesetViewer = true;
                         break;
                 }
             } catch (ParseException ex) {

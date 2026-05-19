@@ -68,6 +68,7 @@ import megamek.common.commandLine.MegaMekCommandLineParser;
 import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.ui.RATGeneratorEditor;
+import megamek.common.ui.RulesetXmlViewer;
 import megamek.logging.MMLogger;
 import megamek.server.DedicatedServer;
 import megamek.utilities.GifWriter;
@@ -165,6 +166,8 @@ public class MegaMek {
         }
         if (parser.ratGenEditor()) {
             RATGeneratorEditor.main(restArgs);
+        } else if (parser.rulesetViewer()) {
+            RulesetXmlViewer.main(restArgs);
         } else {
             startGUI();
         }

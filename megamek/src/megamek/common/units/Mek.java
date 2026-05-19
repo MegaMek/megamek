@@ -276,6 +276,10 @@ public abstract class Mek extends Entity {
 
     public static final String FRANKEN_MEK_STRUCTURE_HYBRID = "Hybrid";
 
+    private static final TechAdvancement TA_FRANKENMEK = new TechAdvancement(TechBase.ALL)
+        .setAdvancement(ITechnology.DATE_PS)
+        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+
     private boolean frankenMek = false;
 
     private int[] frankenMekStructureTonnage = null;
@@ -522,6 +526,7 @@ public abstract class Mek extends Entity {
             frankenMekMismatchedLegs = false;
             autoSetInternal();
         }
+        recalculateTechAdvancement();
     }
 
     private boolean isFrankenMekTechLevel() {
@@ -3677,6 +3682,9 @@ public abstract class Mek extends Entity {
         // Meks with non-fusion engines are experimental
         if (hasEngine() && !isIndustrial() && !getEngine().isFusion()) {
             ctl.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL));
+        }
+        if (isFrankenMek()) {
+            ctl.addComponent(TA_FRANKENMEK);
         }
         if (getGyroTechAdvancement() != null) {
             ctl.addComponent(getGyroTechAdvancement());

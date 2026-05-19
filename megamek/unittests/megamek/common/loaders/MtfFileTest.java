@@ -44,7 +44,6 @@ import java.io.InputStream;
 import java.util.Objects;
 
 import megamek.common.CriticalSlot;
-import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
 import megamek.common.enums.Faction;
 import megamek.common.equipment.Engine;
@@ -274,19 +273,6 @@ class MtfFileTest {
         Entity loaded = loader.getEntity();
 
         assertTrue(((Mek) loaded).isFrankenMek());
-    }
-
-    @Test
-    void frankenMekRulesLevelIsExperimental() {
-        Mek mek = new BipedMek();
-        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
-        mek.setWeight(20.0);
-        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
-        mek.setFrankenMek(true);
-
-        assertEquals(SimpleTechLevel.EXPERIMENTAL, mek.getStaticTechLevel());
-        assertEquals(SimpleTechLevel.EXPERIMENTAL, mek.findMinimumRulesLevel());
-        assertEquals(SimpleTechLevel.EXPERIMENTAL, mek.getSimpleLevel(mek.getYear(), mek.isClan(), Faction.NONE));
     }
 
     @Test

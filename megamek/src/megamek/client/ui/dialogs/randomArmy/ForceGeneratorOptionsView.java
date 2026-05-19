@@ -201,6 +201,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbSubFaction.setToolTipText(Messages.getString("ForceGeneratorDialog.subfaction.tooltip"));
         cbSubFaction.addActionListener(this);
 
+        // TODO (future state) - Specific Unit picker (Option B). Add a combo here, after the
+        // subfaction, populated from the `units:` block of the selected command's universe data file
+        // (data/universe/commands/<KEY>.yml). Selecting a named regiment (e.g. "1st Sword of Light")
+        // would pin its era-appropriate composition - battalionWeights become a fixed
+        // <subforce weightClass="..."> distribution instead of the random <subforceOption> roll - plus
+        // skill and commander, with any unspecified field falling back to normal generic generation.
+        // The list should be year-filtered using each unit's yearsActive / history span (the Year
+        // field already set drives this; no era picker is needed). Only `name` is mandatory in the
+        // per-unit schema. See data/universe/commands/DC.SL.yml for the pilot data and schema notes.
+
         gbc.gridx = 0;
         gbc.gridy = y;
         add(new JLabel(Messages.getString("ForceGeneratorDialog.unitType")), gbc);

@@ -247,6 +247,9 @@ public class ForceGeneratorViewUi implements ActionListener {
                 e.setDone(true);
                 e.setUnloaded(true);
             }
+            logger.info("[ForceGen][ToE] add-to-game '{}' forceString='{}'{}",
+                  e.getShortName(), e.getForceString(),
+                  e.getForceString().isBlank() ? " (BLANK - ToE structure will be lost)" : "");
             entities.add(e);
         }
         c.sendAddEntity(entities);

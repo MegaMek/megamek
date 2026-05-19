@@ -90,6 +90,12 @@ public class ForceDescriptor {
                                            "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX" };
 
     private int index;
+    /**
+     * Unique id of this node within the generated force, assigned by {@link #assignForceIds(int)} and
+     * emitted by {@link #getForceString()}. Must be unique across the whole generated force so the
+     * server does not merge distinct forces that would otherwise share an id. -1 means unassigned.
+     */
+    private int forceStringId = -1;
     private String name;
     private String faction;
     private Integer year;
@@ -959,6 +965,12 @@ public class ForceDescriptor {
                     entity.setExternalIdAsString(UUID.randomUUID().toString());
                     String forceString = getForceString();
                     entity.setForceString(forceString);
+                    LOGGER.info("[ForceGen][ToE] leaf '{}' forceString='{}'{}",
+                          entity.getShortName(), forceString,
+                          forceString.isBlank()
+                                ? " (BLANK - this unit will lose its ToE position; parent="
+                                      + (parent == null ? "null" : "set") + ")"
+                                : "");
                 } catch (EntityLoadingException ex) {
                     LOGGER.error(ex, "Error loading {} from file {}", ms.getName(), ms.getSourceFile().getPath());
                 }
@@ -973,7 +985,15 @@ public class ForceDescriptor {
     }
 
     /**
-     * Generates a force string for exporting these units to MUL / adding to the game.
+     * Generates a force string for exporting these units to MUL / adding to the game. The string is the
+     * chain of ancestor forces, each as {@code name|id}, ordered from the top-level force down.
+     *
+     * <p>The id of each ancestor is its {@link #forceStringId}, a value made unique across the whole
+     * generated force by {@link #assignForceIds(int)}. A previous implementation derived the id from
+     * {@code 17 * id + index}, but {@code index} is not unique among siblings created by different
+     * {@code <subforce>} / {@code <attachedForces>} blocks, so distinct forces collided on the same id
+     * and the server merged them — armor / infantry / VTOL support detachments ended up inside the
+     * wrong battalion.</p>
      */
     private String getForceString() {
         var ancestors = new ArrayList<ForceDescriptor>();
@@ -984,13 +1004,35 @@ public class ForceDescriptor {
         }
 
         StringBuilder result = new StringBuilder();
-        int id = 0;
         for (int i = ancestors.size() - 1; i >= 0; i--) {
             ForceDescriptor ancestor = ancestors.get(i);
-            id = 17 * id + ancestor.index + 1;
-            result.append(ancestor.parseName()).append("|").append(id).append("||");
+            result.append(ancestor.parseName()).append('|').append(ancestor.forceStringId).append("||");
         }
         return result.toString();
+    }
+
+    /**
+     * Assigns a unique {@link #forceStringId} to every formation node in this subtree - that is, every
+     * node from the lance/star/point level up. Leaf element nodes (the individual units) are skipped:
+     * they become entities in the game, not forces, so they need no force id. Must be run after the
+     * force tree is fully built and before {@link #loadEntities} so the force strings stamped onto
+     * entities are collision-free.
+     *
+     * @param nextId the first id to assign
+     *
+     * @return the next unused id, so a caller can continue numbering a later subtree (e.g. transports)
+     */
+    public int assignForceIds(int nextId) {
+        if (!element) {
+            forceStringId = nextId++;
+        }
+        for (ForceDescriptor sub : subForces) {
+            nextId = sub.assignForceIds(nextId);
+        }
+        for (ForceDescriptor att : attached) {
+            nextId = att.assignForceIds(nextId);
+        }
+        return nextId;
     }
 
     public void assignCommanders() {
@@ -1928,6 +1970,10 @@ public class ForceDescriptor {
 
     public void addAttached(ForceDescriptor fd) {
         attached.add(fd);
+        // Set the back-reference so getForceString() walks an attached support force up through its
+        // parent force; without this the attached force restarts the force string at the top level
+        // and is rendered as a separate force instead of nesting under its parent.
+        fd.setParent(this);
     }
 
     public double getDropshipPct() {

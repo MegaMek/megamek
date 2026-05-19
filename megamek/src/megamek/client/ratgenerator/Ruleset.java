@@ -208,13 +208,19 @@ public class Ruleset {
         if (null != l) {
             l.updateProgress(0.05, "Finalizing formation");
         }
+        // Stamp every node with a unique force id before loading entities, so the force strings
+        // written onto the entities are collision-free and the server reconstructs the exact tree.
+        int nextForceId = fd.assignForceIds(1);
         fd.loadEntities(l, 0.4);
         // fd.assignBloodnames();
 
         ForceDescriptor transports = fd.assignTransport();
         if (null != transports) {
-            transports.loadEntities(l, 0);
+            // Attach first so the transports' parent is set, then number and load them; their force
+            // strings then correctly nest the transport force under the force it carries.
             fd.addAttached(transports);
+            transports.assignForceIds(nextForceId);
+            transports.loadEntities(l, 0);
         }
 
         if (null != l) {

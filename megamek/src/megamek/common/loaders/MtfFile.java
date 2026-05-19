@@ -114,6 +114,7 @@ public class MtfFile implements IMekLoader {
     private String armorType;
     private final String[] armorValues = new String[12];
     private final Map<Integer, String> frankenMekStructureValues = new HashMap<>();
+    private final Map<Integer, String> frankenMekLocationSources = new HashMap<>();
     private boolean mismatchedFrankenMekLegs = false;
 
     private final String[][] critData;
@@ -198,6 +199,7 @@ public class MtfFile implements IMekLoader {
     public static final String ARMORED = "(ARMORED)";
     public static final String OMNI_POD = "(OMNIPOD)";
     public static final String NO_CRIT = "nocrit:";
+    public static final String LOCATION_DONOR = "donor:";
     public static final String SIZE = ":SIZE:";
     public static final String MUL_ID = "mul id:";
     public static final String QUIRK = "quirk:";
@@ -377,7 +379,7 @@ public class MtfFile implements IMekLoader {
             int baseHeatSinks = Integer
                   .parseInt(baseChassisHeatSinks.substring("base chassis heat sinks:".length()).trim());
 
-            String thisStructureType = internalType.substring(internalType.indexOf(':') + 1);
+            String thisStructureType = internalType.substring(internalType.indexOf(':') + 1).trim();
             if (!thisStructureType.isBlank()
                   && !thisStructureType.equalsIgnoreCase(Mek.FRANKEN_MEK_STRUCTURE_HYBRID)) {
                 mek.setStructureType(thisStructureType);
@@ -525,6 +527,12 @@ public class MtfFile implements IMekLoader {
 
             for (String equipment : noCritEquipment) {
                 parseNoCritEquipment(mek, equipment);
+            }
+
+            if (mek.isFrankenMek()) {
+                for (Map.Entry<Integer, String> entry : frankenMekLocationSources.entrySet()) {
+                    mek.linkFrankenMekLocationToSource(entry.getKey(), entry.getValue());
+                }
             }
 
             if (mek instanceof LandAirMek) {
@@ -747,6 +755,11 @@ public class MtfFile implements IMekLoader {
                 continue;
             }
 
+            if ((loc >= 0) && (loc < critData.length) && line.toLowerCase().startsWith(LOCATION_DONOR)) {
+                frankenMekLocationSources.put(loc, line.substring(LOCATION_DONOR.length()).trim());
+                continue;
+            }
+
             int structureLocation = getStructureLocation(line);
             if (structureLocation >= 0) {
                 frankenMekStructureValues.put(structureLocation, line);
@@ -954,7 +967,7 @@ public class MtfFile implements IMekLoader {
                       new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, true, isArmored));
                 continue;
             }
-            // if the slot's full already, skip it.
+            // If the slot's full already, skip it.
             if (mek.getCritical(loc, i) != null) {
                 continue;
             }

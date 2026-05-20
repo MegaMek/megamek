@@ -5266,7 +5266,7 @@ public abstract class Mek extends Entity {
                 sb.append(MtfFile.LOCATION_DONOR).append(" ")
                       .append(getFrankenMekLocationSourceDisplayName(l)).append(newLine);
                 if (!getFrankenMekLocationSourceType(l).isBlank()) {
-                    sb.append(MtfFile.LOCATION_DONOR_METADATA).append(" ")
+                    sb.append(MtfFile.LOCATION_DONOR_TYPE).append(" ")
                           .append(getFrankenMekLocationSourceType(l)).append(newLine);
                 }
             }

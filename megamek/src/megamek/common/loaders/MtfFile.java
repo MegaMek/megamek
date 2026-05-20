@@ -201,7 +201,7 @@ public class MtfFile implements IMekLoader {
     public static final String OMNI_POD = "(OMNIPOD)";
     public static final String NO_CRIT = "nocrit:";
     public static final String LOCATION_DONOR = "donor:";
-    public static final String LOCATION_DONOR_METADATA = "donor metadata:";
+    public static final String LOCATION_DONOR_TYPE = "donor type:";
     public static final String SIZE = ":SIZE:";
     public static final String MUL_ID = "mul id:";
     public static final String QUIRK = "quirk:";

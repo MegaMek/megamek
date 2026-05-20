@@ -361,14 +361,14 @@ class MtfFileTest {
 
         String mtf = mek.getMtf();
         assertTrue(mtf.contains("donor: Atlas\n"));
-        assertTrue(mtf.contains("donor metadata: BattleMek\n"));
+        assertTrue(mtf.contains("donor type: BattleMek\n"));
         assertFalse(mtf.contains("donor: Atlas AS7-D\n"));
 
         MtfFile loader = toMtfFile(mtf);
         Mek loaded = (Mek) loader.getEntity();
 
         assertEquals("Atlas", loaded.getFrankenMekLocationSourceDisplayName(Mek.LOC_RIGHT_LEG));
-        assertEquals("BattleMek", loaded.getFrankenMekLocationSourceMetadata(Mek.LOC_RIGHT_LEG));
+        assertEquals("BattleMek", loaded.getFrankenMekLocationSourceType(Mek.LOC_RIGHT_LEG));
     }
 
     @Test

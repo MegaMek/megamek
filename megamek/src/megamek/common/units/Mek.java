@@ -87,7 +87,7 @@ public abstract class Mek extends Entity {
         private static final long serialVersionUID = 2955102329477149771L;
 
         private String displayName;
-        private String metadata;
+        private String type;
         private int structureTonnage;
         private int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
         private int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -96,18 +96,18 @@ public abstract class Mek extends Entity {
             return Objects.toString(displayName, "");
         }
 
-        private String getMetadata() {
-            return Objects.toString(metadata, "");
+        private String getType() {
+            return Objects.toString(type, "");
         }
 
         private boolean isLinked() {
             return (displayName != null) && !displayName.isBlank();
         }
 
-        private void capture(String newDisplayName, String newMetadata, int newStructureTonnage,
+        private void capture(String newDisplayName, String newType, int newStructureTonnage,
               int newStructureType, int newStructureTechLevel) {
             displayName = newDisplayName;
-            metadata = newMetadata;
+            type = newType;
             structureTonnage = newStructureTonnage;
             structureType = newStructureType;
             structureTechLevel = newStructureTechLevel;
@@ -121,7 +121,7 @@ public abstract class Mek extends Entity {
 
         private void clear() {
             displayName = null;
-            metadata = null;
+            type = null;
             structureTonnage = 0;
             structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
             structureTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -836,11 +836,11 @@ public abstract class Mek extends Entity {
         return getFrankenMekLocationSourceSnapshot(location).getDisplayName();
     }
 
-    public String getFrankenMekLocationSourceMetadata(int location) {
+    public String getFrankenMekLocationSourceType(int location) {
         if (!hasFrankenMekStructureLocation(location)) {
             return "";
         }
-        return getFrankenMekLocationSourceSnapshot(location).getMetadata();
+        return getFrankenMekLocationSourceSnapshot(location).getType();
     }
 
     public void linkFrankenMekLocationToSource(int location, String sourceDisplayName) {
@@ -5265,9 +5265,9 @@ public abstract class Mek extends Entity {
             if (isFrankenMek() && !getFrankenMekLocationSourceDisplayName(l).isBlank()) {
                 sb.append(MtfFile.LOCATION_DONOR).append(" ")
                       .append(getFrankenMekLocationSourceDisplayName(l)).append(newLine);
-                if (!getFrankenMekLocationSourceMetadata(l).isBlank()) {
+                if (!getFrankenMekLocationSourceType(l).isBlank()) {
                     sb.append(MtfFile.LOCATION_DONOR_METADATA).append(" ")
-                          .append(getFrankenMekLocationSourceMetadata(l)).append(newLine);
+                          .append(getFrankenMekLocationSourceType(l)).append(newLine);
                 }
             }
             sb.append(newLine);

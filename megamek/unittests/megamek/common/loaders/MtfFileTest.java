@@ -351,6 +351,27 @@ class MtfFileTest {
     }
 
     @Test
+    void frankenMekDonorMetadataRoundTrip() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setWeight(25.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        mek.setFrankenMek(true);
+        mek.linkFrankenMekLocationToSource(Mek.LOC_RIGHT_LEG, "Atlas", "BattleMek");
+
+        String mtf = mek.getMtf();
+        assertTrue(mtf.contains("donor: Atlas\n"));
+        assertTrue(mtf.contains("donor metadata: BattleMek\n"));
+        assertFalse(mtf.contains("donor: Atlas AS7-D\n"));
+
+        MtfFile loader = toMtfFile(mtf);
+        Mek loaded = (Mek) loader.getEntity();
+
+        assertEquals("Atlas", loaded.getFrankenMekLocationSourceDisplayName(Mek.LOC_RIGHT_LEG));
+        assertEquals("BattleMek", loaded.getFrankenMekLocationSourceMetadata(Mek.LOC_RIGHT_LEG));
+    }
+
+    @Test
     void frankenMekStructureRejectsInvalidTonnage() throws Exception {
         Mek mek = new BipedMek();
         mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);

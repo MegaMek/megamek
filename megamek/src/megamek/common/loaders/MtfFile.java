@@ -115,6 +115,7 @@ public class MtfFile implements IMekLoader {
     private final String[] armorValues = new String[12];
     private final Map<Integer, String> frankenMekStructureValues = new HashMap<>();
     private final Map<Integer, String> frankenMekLocationSources = new HashMap<>();
+    private final Map<Integer, String> frankenMekLocationSourceMetadata = new HashMap<>();
     private boolean mismatchedFrankenMekLegs = false;
 
     private final String[][] critData;
@@ -200,6 +201,7 @@ public class MtfFile implements IMekLoader {
     public static final String OMNI_POD = "(OMNIPOD)";
     public static final String NO_CRIT = "nocrit:";
     public static final String LOCATION_DONOR = "donor:";
+    public static final String LOCATION_DONOR_METADATA = "donor metadata:";
     public static final String SIZE = ":SIZE:";
     public static final String MUL_ID = "mul id:";
     public static final String QUIRK = "quirk:";
@@ -531,7 +533,8 @@ public class MtfFile implements IMekLoader {
 
             if (mek.isFrankenMek()) {
                 for (Map.Entry<Integer, String> entry : frankenMekLocationSources.entrySet()) {
-                    mek.linkFrankenMekLocationToSource(entry.getKey(), entry.getValue());
+                    mek.linkFrankenMekLocationToSource(entry.getKey(), entry.getValue(),
+                          frankenMekLocationSourceMetadata.get(entry.getKey()));
                 }
             }
 
@@ -757,6 +760,13 @@ public class MtfFile implements IMekLoader {
 
             if ((loc >= 0) && (loc < critData.length) && line.toLowerCase().startsWith(LOCATION_DONOR)) {
                 frankenMekLocationSources.put(loc, line.substring(LOCATION_DONOR.length()).trim());
+                continue;
+            }
+
+            if ((loc >= 0) && (loc < critData.length)
+                  && line.toLowerCase().startsWith(LOCATION_DONOR_METADATA)) {
+                frankenMekLocationSourceMetadata.put(loc,
+                      line.substring(LOCATION_DONOR_METADATA.length()).trim());
                 continue;
             }
 

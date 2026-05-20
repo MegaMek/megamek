@@ -87,6 +87,7 @@ public abstract class Mek extends Entity {
         private static final long serialVersionUID = 2955102329477149771L;
 
         private String displayName;
+        private String metadata;
         private int structureTonnage;
         private int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
         private int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -95,13 +96,18 @@ public abstract class Mek extends Entity {
             return Objects.toString(displayName, "");
         }
 
+        private String getMetadata() {
+            return Objects.toString(metadata, "");
+        }
+
         private boolean isLinked() {
             return (displayName != null) && !displayName.isBlank();
         }
 
-        private void capture(String newDisplayName, int newStructureTonnage, int newStructureType,
-              int newStructureTechLevel) {
+        private void capture(String newDisplayName, String newMetadata, int newStructureTonnage,
+              int newStructureType, int newStructureTechLevel) {
             displayName = newDisplayName;
+            metadata = newMetadata;
             structureTonnage = newStructureTonnage;
             structureType = newStructureType;
             structureTechLevel = newStructureTechLevel;
@@ -115,6 +121,7 @@ public abstract class Mek extends Entity {
 
         private void clear() {
             displayName = null;
+            metadata = null;
             structureTonnage = 0;
             structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
             structureTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -829,7 +836,18 @@ public abstract class Mek extends Entity {
         return getFrankenMekLocationSourceSnapshot(location).getDisplayName();
     }
 
+    public String getFrankenMekLocationSourceMetadata(int location) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return "";
+        }
+        return getFrankenMekLocationSourceSnapshot(location).getMetadata();
+    }
+
     public void linkFrankenMekLocationToSource(int location, String sourceDisplayName) {
+        linkFrankenMekLocationToSource(location, sourceDisplayName, "");
+    }
+
+    public void linkFrankenMekLocationToSource(int location, String sourceDisplayName, String sourceMetadata) {
         if (!hasFrankenMekStructureLocation(location)) {
             return;
         }
@@ -837,7 +855,7 @@ public abstract class Mek extends Entity {
             clearFrankenMekLocationSource(location);
             return;
         }
-        captureFrankenMekLocationSourceSnapshot(location, sourceDisplayName);
+        captureFrankenMekLocationSourceSnapshot(location, sourceDisplayName, sourceMetadata);
     }
 
     public void clearFrankenMekLocationSource(int location) {
@@ -882,8 +900,9 @@ public abstract class Mek extends Entity {
         }
     }
 
-    private void captureFrankenMekLocationSourceSnapshot(int location, String sourceDisplayName) {
-        getFrankenMekLocationSourceSnapshot(location).capture(sourceDisplayName,
+    private void captureFrankenMekLocationSourceSnapshot(int location, String sourceDisplayName,
+          String sourceMetadata) {
+        getFrankenMekLocationSourceSnapshot(location).capture(sourceDisplayName, Objects.toString(sourceMetadata, ""),
               getFrankenMekStructureTonnage(location), getFrankenMekStructureType(location),
               getFrankenMekStructureTechLevel(location));
     }
@@ -5244,7 +5263,12 @@ public abstract class Mek extends Entity {
                 }
             }
             if (isFrankenMek() && !getFrankenMekLocationSourceDisplayName(l).isBlank()) {
-                sb.append(MtfFile.LOCATION_DONOR).append(" ").append(getFrankenMekLocationSourceDisplayName(l)).append(newLine);
+                sb.append(MtfFile.LOCATION_DONOR).append(" ")
+                      .append(getFrankenMekLocationSourceDisplayName(l)).append(newLine);
+                if (!getFrankenMekLocationSourceMetadata(l).isBlank()) {
+                    sb.append(MtfFile.LOCATION_DONOR_METADATA).append(" ")
+                          .append(getFrankenMekLocationSourceMetadata(l)).append(newLine);
+                }
             }
             sb.append(newLine);
         }

@@ -115,7 +115,7 @@ public class MtfFile implements IMekLoader {
     private final String[] armorValues = new String[12];
     private final Map<Integer, String> frankenMekStructureValues = new HashMap<>();
     private final Map<Integer, String> frankenMekLocationSources = new HashMap<>();
-    private final Map<Integer, String> frankenMekLocationSourceMetadata = new HashMap<>();
+    private final Map<Integer, String> frankenMekLocationSourceTypes = new HashMap<>();
     private boolean mismatchedFrankenMekLegs = false;
 
     private final String[][] critData;
@@ -534,7 +534,7 @@ public class MtfFile implements IMekLoader {
             if (mek.isFrankenMek()) {
                 for (Map.Entry<Integer, String> entry : frankenMekLocationSources.entrySet()) {
                     mek.linkFrankenMekLocationToSource(entry.getKey(), entry.getValue(),
-                          frankenMekLocationSourceMetadata.get(entry.getKey()));
+                          frankenMekLocationSourceTypes.get(entry.getKey()));
                 }
             }
 
@@ -764,9 +764,9 @@ public class MtfFile implements IMekLoader {
             }
 
             if ((loc >= 0) && (loc < critData.length)
-                  && line.toLowerCase().startsWith(LOCATION_DONOR_METADATA)) {
-                frankenMekLocationSourceMetadata.put(loc,
-                      line.substring(LOCATION_DONOR_METADATA.length()).trim());
+                  && line.toLowerCase().startsWith(LOCATION_DONOR_TYPE)) {
+                frankenMekLocationSourceTypes.put(loc,
+                      line.substring(LOCATION_DONOR_TYPE.length()).trim());
                 continue;
             }
 

@@ -32,7 +32,9 @@
  */
 package megamek.client.ui.dialogs.randomArmy;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -48,12 +50,15 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.Ruleset.ProgressListener;
@@ -138,6 +143,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JTextField txtJumpshipPct;
     private JTextField txtWarshipPct;
     private JTextField txtCargo;
+
+    /** Post-generation summary: unit type rows, Light/Medium/Heavy/Assault columns. */
+    private JTable tblSummary;
+    private DefaultTableModel summaryModel;
 
     private JButton btnGenerate;
     private JButton btnExportMUL;
@@ -336,11 +345,28 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         panTransport.add(txtWarshipPct, gbc);
         panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.cargo")));
         panTransport.add(txtCargo, gbc);
+        panTransport.setBorder(BorderFactory.createTitledBorder(Messages.getString("ForceGeneratorDialog.transport")));
+
+        // Pair the Transport panel with the post-generation Composition Summary table inside a single
+        // BorderLayout container so the summary absorbs whatever horizontal slack the GridBag's
+        // column-driven layout would otherwise leave between them. Transport sits at its preferred
+        // width on the WEST; the summary fills the rest of the row in the CENTER. Spans gridwidth=4
+        // to occupy the full dialog row, matching how panGroundRole / panInfRole are laid out above.
+        JPanel transportAndSummary = new JPanel(new BorderLayout(10, 0));
+        transportAndSummary.add(panTransport, BorderLayout.WEST);
+        JScrollPane panSummary = createSummaryTable();
+        transportAndSummary.add(panSummary, BorderLayout.CENTER);
+
         gbc.gridx = 0;
         gbc.gridy = y++;
+        gbc.gridwidth = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weighty = 1.0;
+        add(transportAndSummary, gbc);
+        gbc.gridx = 0;
+        gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
-        panTransport.setBorder(BorderFactory.createTitledBorder(Messages.getString("ForceGeneratorDialog.transport")));
-        add(panTransport, gbc);
+        gbc.weighty = 0;
 
         btnGenerate = new JButton(Messages.getString("ForceGeneratorDialog.generate"));
         btnGenerate.setToolTipText(Messages.getString("ForceGeneratorDialog.generate.tooltip"));
@@ -646,6 +672,91 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private void clearForce() {
         if (null != onGenerate) {
             onGenerate.accept(null);
+        }
+        clearSummaryTable();
+    }
+
+    /**
+     * Builds the post-generation composition summary table (rows: unit types present in the force; columns: Light /
+     * Medium / Heavy / Assault counts). Empty until the first Generate.
+     */
+    private JScrollPane createSummaryTable() {
+        String[] columns = {
+              Messages.getString("ForceGeneratorDialog.summary.unitType"),
+              Messages.getString("ForceGeneratorDialog.summary.light"),
+              Messages.getString("ForceGeneratorDialog.summary.medium"),
+              Messages.getString("ForceGeneratorDialog.summary.heavy"),
+              Messages.getString("ForceGeneratorDialog.summary.assault")
+        };
+        summaryModel = new DefaultTableModel(columns, 0) {
+            @Serial
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tblSummary = new JTable(summaryModel);
+        tblSummary.setAutoCreateRowSorter(false);
+        tblSummary.getTableHeader().setReorderingAllowed(false);
+        // Unit Type column is wider to fit the longest name (AeroSpaceFighter); numeric columns
+        // are narrower since they only hold 1-3 digit counts. Total ~380px fits comfortably in
+        // the 480px scroll-pane viewport with the default AUTO_RESIZE_SUBSEQUENT_COLUMNS.
+        tblSummary.getColumnModel().getColumn(0).setPreferredWidth(140);
+        for (int col = 1; col <= 4; col++) {
+            tblSummary.getColumnModel().getColumn(col).setPreferredWidth(60);
+        }
+        JScrollPane scrollPane = new JScrollPane(tblSummary);
+        scrollPane.setBorder(BorderFactory.createTitledBorder(
+              Messages.getString("ForceGeneratorDialog.summary.title")));
+        // Preferred width sized so the BorderLayout wrapper extends most of the way to the right
+        // edge of the dialog (cols 0-3 grow to accommodate this preferred when it exceeds the
+        // natural column-sum width). Roughly Transport width + a combo-and-a-half on the right.
+        scrollPane.setPreferredSize(new Dimension(480, 140));
+        return scrollPane;
+    }
+
+    /**
+     * Walks the generated force tree, buckets each entity into (unit type, weight class), and rebuilds the summary
+     * table. Weight-class codes 0-1 collapse into Light and 4-5 into Assault to keep the table to a clean four
+     * columns.
+     */
+    private void updateSummaryTable(ForceDescriptor fd) {
+        summaryModel.setRowCount(0);
+        if (fd == null) {
+            return;
+        }
+        ArrayList<Entity> entities = new ArrayList<>();
+        fd.addAllEntities(entities);
+        Map<Integer, int[]> counts = new TreeMap<>();
+        for (Entity entity : entities) {
+            int unitType = entity.getUnitType();
+            int weightClass = entity.getWeightClass();
+            int column;
+            if (weightClass <= EntityWeightClass.WEIGHT_LIGHT) {
+                column = 0;
+            } else if (weightClass == EntityWeightClass.WEIGHT_MEDIUM) {
+                column = 1;
+            } else if (weightClass == EntityWeightClass.WEIGHT_HEAVY) {
+                column = 2;
+            } else {
+                column = 3;
+            }
+            counts.computeIfAbsent(unitType, k -> new int[4])[column]++;
+        }
+        for (Map.Entry<Integer, int[]> entry : counts.entrySet()) {
+            int[] row = entry.getValue();
+            summaryModel.addRow(new Object[] {
+                  UnitType.getTypeName(entry.getKey()),
+                  row[0], row[1], row[2], row[3]
+            });
+        }
+    }
+
+    private void clearSummaryTable() {
+        if (summaryModel != null) {
+            summaryModel.setRowCount(0);
         }
     }
 
@@ -1249,6 +1360,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         protected void done() {
             try {
                 forceDesc = get();
+                updateSummaryTable(forceDesc);
                 if (onGenerate != null) {
                     onGenerate.accept(forceDesc);
                 }

@@ -847,7 +847,7 @@ public abstract class Mek extends Entity {
         linkFrankenMekLocationToSource(location, sourceDisplayName, "");
     }
 
-    public void linkFrankenMekLocationToSource(int location, String sourceDisplayName, String sourceMetadata) {
+    public void linkFrankenMekLocationToSource(int location, String sourceDisplayName, String sourceType) {
         if (!hasFrankenMekStructureLocation(location)) {
             return;
         }
@@ -855,7 +855,7 @@ public abstract class Mek extends Entity {
             clearFrankenMekLocationSource(location);
             return;
         }
-        captureFrankenMekLocationSourceSnapshot(location, sourceDisplayName, sourceMetadata);
+        captureFrankenMekLocationSourceSnapshot(location, sourceDisplayName, sourceType);
     }
 
     public void clearFrankenMekLocationSource(int location) {
@@ -901,8 +901,8 @@ public abstract class Mek extends Entity {
     }
 
     private void captureFrankenMekLocationSourceSnapshot(int location, String sourceDisplayName,
-          String sourceMetadata) {
-        getFrankenMekLocationSourceSnapshot(location).capture(sourceDisplayName, Objects.toString(sourceMetadata, ""),
+          String sourceType) {
+        getFrankenMekLocationSourceSnapshot(location).capture(sourceDisplayName, Objects.toString(sourceType, ""),
               getFrankenMekStructureTonnage(location), getFrankenMekStructureType(location),
               getFrankenMekStructureTechLevel(location));
     }

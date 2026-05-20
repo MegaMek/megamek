@@ -351,7 +351,7 @@ class MtfFileTest {
     }
 
     @Test
-    void frankenMekDonorMetadataRoundTrip() throws Exception {
+    void frankenMekDonorRoundTrip() throws Exception {
         Mek mek = new BipedMek();
         mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
         mek.setWeight(25.0);

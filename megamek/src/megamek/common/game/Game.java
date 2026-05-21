@@ -1401,7 +1401,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
         // Add this Entity, ensuring that its id is unique
         int id = entity.getId();
-        if (isIdUsed(id)) {
+        if ((id == Entity.NONE) || isIdUsed(id)) {
             id = getNextEntityId();
             entity.setId(id);
         }

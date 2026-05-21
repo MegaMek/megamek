@@ -861,12 +861,23 @@ public class ForceDescriptor {
 
         LOGGER.debug("Could not find unit for {}", UnitType.getTypeDisplayableName(unitType));
         if (unitType != null && unitType == UnitType.MEK) {
-            LOGGER.info("[ForceGen][Weight] generate() FAILED requestedWeight={} -> no unit found."
-                        + " element: faction={} unitType={} year={} echelon={} roles={} movementModes={}"
-                        + " models={} chassis={}",
-                  weightClass, faction, unitType, year, echelon, roles, movementModes, models, chassis);
-            for (String line : failureTrace) {
-                LOGGER.info("[ForceGen][Weight]   attempt: {}", line);
+            if (models.isEmpty()) {
+                // Genuine failure: no pinned model to fall back on, so the caller's
+                // getModelRecord(getModelName()) rescue (generateUnits) cannot recover. Log the full trace.
+                LOGGER.info("[ForceGen][Weight] generate() FAILED requestedWeight={} -> no unit found."
+                            + " element: faction={} unitType={} year={} echelon={} roles={} movementModes={}"
+                            + " models={} chassis={}",
+                      weightClass, faction, unitType, year, echelon, roles, movementModes, models, chassis);
+                for (String line : failureTrace) {
+                    LOGGER.info("[ForceGen][Weight]   attempt: {}", line);
+                }
+            } else {
+                // Not a real failure: a formation already pinned this model (setUnit) but it is not in the
+                // element's own faction/year/role/weight table. The caller resolves it by name via the
+                // getModelRecord fallback, so emit one concise line instead of the full FAILED + attempt trace.
+                LOGGER.info("[ForceGen][Weight] generate() table-miss for pinned model(s) {} (faction={} year={}"
+                            + " weightClass={} roles={}); resolving by name via fallback",
+                      models, faction, year, weightClass, roles);
             }
         }
         return null;

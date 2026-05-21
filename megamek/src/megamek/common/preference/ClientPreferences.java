@@ -113,6 +113,17 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String LAST_SCENARIO = "LastScenario";
 
     /**
+     * Hidden Force Generator tuning knobs (no GUI; set by editing the client settings file).
+     * <p>Weight emphasis biases the Force Generator's weight-composition rolls toward a formation's
+     * named weight class for the extreme classes only (Light pulls lighter, Assault pulls heavier;
+     * Medium/Heavy are unaffected). Scope: 0 = off (pure Total Warfare p.265 distribution), 1 = leaf
+     * only (the lance/star -> element roll), 2 = full cascade (every echelon). Magnitude is the size
+     * of the +/- shift on the underlying 1D6 curve (1 or 2).</p>
+     */
+    public static final String FORCEGEN_WEIGHT_EMPHASIS_SCOPE = "ForceGenWeightEmphasisScope";
+    public static final String FORCEGEN_WEIGHT_EMPHASIS_MAGNITUDE = "ForceGenWeightEmphasisMagnitude";
+
+    /**
      * A user-specified directory, typically outside the MM directory, where content may be loaded from.
      */
     public static final String USER_DIR = "UserDir";
@@ -164,6 +175,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(STAMP_FILENAMES, false);
         store.setDefault(FAVORITE_PRINCESS_BEHAVIOR_SETTING, DEFAULT_BEHAVIOR_DESCRIPTION);
         store.setDefault(LAST_SCENARIO, "");
+        store.setDefault(FORCEGEN_WEIGHT_EMPHASIS_SCOPE, 0);
+        store.setDefault(FORCEGEN_WEIGHT_EMPHASIS_MAGNITUDE, 1);
 
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
@@ -193,6 +206,21 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public boolean generateNames() {
         return store.getBoolean(GENERATE_NAMES);
+    }
+
+    /**
+     * @return Force Generator weight-emphasis scope: 0 = off, 1 = leaf only, 2 = full cascade. Hidden setting.
+     */
+    public int getForceGenWeightEmphasisScope() {
+        return store.getInt(FORCEGEN_WEIGHT_EMPHASIS_SCOPE);
+    }
+
+    /**
+     * @return Force Generator weight-emphasis magnitude (the +/- shift on the 1D6 curve); clamped to at least 1.
+     *       Hidden setting.
+     */
+    public int getForceGenWeightEmphasisMagnitude() {
+        return Math.max(1, store.getInt(FORCEGEN_WEIGHT_EMPHASIS_MAGNITUDE));
     }
 
     public String getLastConnectAddr() {

@@ -57,26 +57,39 @@ public class OptionGroupNode extends RulesetNode {
     }
 
     public @Nullable ValueNode selectOption(ForceDescriptor fd, boolean apply) {
-        ArrayList<ValueNode> list = new ArrayList<>();
+        ArrayList<ValueNode> matching = new ArrayList<>();
         for (ValueNode o : options) {
             if (o.matches(fd)) {
+                matching.add(o);
+            }
+        }
+        if (matching.isEmpty()) {
+            return null;
+        }
+
+        // Optional hidden weight-emphasis bias (off by default). Returns null to use the default
+        // uniform weighted selection below.
+        ValueNode n = RatGenWeightEmphasis.select(matching, fd);
+        if (n == null) {
+            ArrayList<ValueNode> list = new ArrayList<>();
+            for (ValueNode o : matching) {
                 for (int i = 0; i < o.getWeight(); i++) {
                     list.add(o);
                 }
             }
-        }
-
-        if (!list.isEmpty()) {
-            ValueNode n = list.get(Compute.randomInt(list.size()));
-            if (apply) {
-                n.apply(fd);
-            }
-            if (n.getContent() == null) {
+            if (list.isEmpty()) {
                 return null;
             }
-            return n;
+            n = list.get(Compute.randomInt(list.size()));
         }
-        return null;
+
+        if (apply) {
+            n.apply(fd);
+        }
+        if (n.getContent() == null) {
+            return null;
+        }
+        return n;
     }
 
     public static OptionGroupNode createFromXml(Node node) {

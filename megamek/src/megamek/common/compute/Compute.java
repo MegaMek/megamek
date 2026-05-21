@@ -7691,7 +7691,10 @@ public class Compute {
         if (entity.getCrew().getCrewType() == CrewType.COMMAND_CONSOLE) {
             return 2;
         }
-        if (entity instanceof Mek || entity instanceof Tank || entity instanceof Aero || entity instanceof ProtoMek) {
+
+        boolean tankWithDriver =
+              entity instanceof Tank tank && !(tank.isTrailer() && (entity.getOriginalWalkMP() <= 0));
+        if (entity instanceof Mek || tankWithDriver || entity instanceof Aero || entity instanceof ProtoMek) {
             // only one driver please
             return 1;
         } else if (entity instanceof Infantry) {

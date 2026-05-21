@@ -59,6 +59,7 @@ import megamek.common.weapons.autoCannons.UACWeapon;
 import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.common.weapons.tag.TAGWeapon;
+import megamek.logging.MMLogger;
 
 /**
  * Defines a Campaign Operations formation type (e.g., Battle Lance, Assault Lance, Aerospace Superiority Squadron),
@@ -82,6 +83,8 @@ import megamek.common.weapons.tag.TAGWeapon;
  * @see GroupingConstraint
  */
 public class FormationType {
+    private static final MMLogger LOGGER = MMLogger.create(FormationType.class);
+
     /** Bit flag identifying {@link UnitType#MEK} units. */
     public static final int FLAG_MEK = 1 << UnitType.MEK;
     /** Bit flag identifying {@link UnitType#TANK} units. */
@@ -470,6 +473,16 @@ public class FormationType {
                   "Formation parameter list and numUnit list must have the same number of elements.");
         }
 
+        LOGGER.info("[ForceGen][Formation] ENTER formation='{}' minWC={} maxWC={} idealRole={} bestEffort={}"
+                    + " networkMask={} paramSets={} totalUnits={}",
+              name, minWeightClass, maxWeightClass, idealRole, bestEffort, networkMask, params.size(),
+              numUnits.stream().mapToInt(Integer::intValue).sum());
+        for (int pi = 0; pi < params.size(); pi++) {
+            Parameters p = params.get(pi);
+            LOGGER.info("[ForceGen][Formation]   param[{}] unitType={} requestedWC={} roles={} moves={} numUnits={}",
+                  pi, p.getUnitType(), p.getWeightClasses(), p.getRoles(), p.getMovementModes(), numUnits.get(pi));
+        }
+
         final GroupingConstraint useGrouping;
         if (null == groupingCriteria) {
             useGrouping = null;
@@ -501,11 +514,16 @@ public class FormationType {
             Collection<Integer> requested = p.getWeightClasses();
             if (requested.isEmpty()) {
                 p.setWeightClasses(formationRange);
+                LOGGER.info("[ForceGen][Formation]   weightIntersect: requested=[] formationRange={} -> final={}"
+                      + " (no caller weight; using formation range)", formationRange, p.getWeightClasses());
             } else {
                 List<Integer> intersection = requested.stream()
                       .filter(formationRange::contains)
                       .collect(Collectors.toList());
                 p.setWeightClasses(intersection.isEmpty() ? formationRange : intersection);
+                LOGGER.info("[ForceGen][Formation]   weightIntersect: requested={} formationRange={} -> final={}{}",
+                      requested, formationRange, p.getWeightClasses(),
+                      intersection.isEmpty() ? " (EMPTY intersection; fell back to formation range)" : "");
             }
         });
 
@@ -635,11 +653,17 @@ public class FormationType {
             for (int i = 0; i < params.size(); i++) {
                 retVal.addAll(tables.get(i).generateUnits(numUnits.get(i), ms -> mainCriteria.test(ms)));
             }
+            LOGGER.info("[ForceGen][Formation] path=simple-case(mainCriteria only) primaryResult={}/{} units={}",
+                  retVal.size(), cUnits, summarize(retVal));
             if (retVal.size() < cUnits) {
                 List<MekSummary> matchRole = tryIdealRole(params, numUnits);
                 if (matchRole != null) {
+                    LOGGER.info("[ForceGen][Formation] path=simple-case -> tryIdealRole SUCCESS units={}",
+                          summarize(matchRole));
                     return matchRole;
                 }
+                LOGGER.info("[ForceGen][Formation] path=simple-case -> tryIdealRole null; returning partial {}",
+                      summarize(retVal));
             }
             return retVal;
         }
@@ -650,23 +674,36 @@ public class FormationType {
               useGrouping == null &&
               networkMask == ModelRecord.NETWORK_NONE) {
             List<MekSummary> retVal = new ArrayList<>();
+            int criterionMin = otherCriteria.getFirst().getMinimum(numUnits.getFirst());
             retVal.addAll(tables.getFirst()
-                  .generateUnits(otherCriteria.getFirst().getMinimum(numUnits.getFirst()),
+                  .generateUnits(criterionMin,
                         ms -> mainCriteria.test(ms) && otherCriteria.getFirst().criterion.test(ms)));
-            if (retVal.size() < otherCriteria.getFirst().getMinimum(numUnits.getFirst())) {
+            LOGGER.info("[ForceGen][Formation] path=single-criterion('{}') constraintMin={} satisfied={}/{} units={}",
+                  otherCriteria.getFirst().description, criterionMin, retVal.size(), criterionMin, summarize(retVal));
+            if (retVal.size() < criterionMin) {
                 List<MekSummary> onRole = tryIdealRole(params, numUnits);
                 if (onRole != null) {
+                    LOGGER.info("[ForceGen][Formation] path=single-criterion -> tryIdealRole SUCCESS units={}",
+                          summarize(onRole));
                     return onRole;
                 } else if (!bestEffort) {
+                    LOGGER.info("[ForceGen][Formation] path=single-criterion -> tryIdealRole null, bestEffort=false;"
+                          + " returning EMPTY");
                     return new ArrayList<>();
                 }
+                LOGGER.info("[ForceGen][Formation] path=single-criterion -> tryIdealRole null, bestEffort=true;"
+                      + " filling remainder with mainCriteria");
             }
-            if (retVal.size() >= otherCriteria.getFirst().getMinimum(numUnits.getFirst()) || bestEffort) {
+            if (retVal.size() >= criterionMin || bestEffort) {
                 retVal.addAll(tables.getFirst()
                       .generateUnits(numUnits.getFirst() - retVal.size(), ms -> mainCriteria.test(ms)));
             }
+            LOGGER.info("[ForceGen][Formation] path=single-criterion FINAL units={}", summarize(retVal));
             return retVal;
         }
+
+        LOGGER.info("[ForceGen][Formation] path=complex (otherCriteria={} grouping={} network={})",
+              otherCriteria.size(), useGrouping != null, networkMask != ModelRecord.NETWORK_NONE);
 
         /*
          * If a network is indicated, we decide which units are part of the network (usually all, but not
@@ -987,20 +1024,43 @@ public class FormationType {
      */
     private @Nullable List<MekSummary> tryIdealRole(List<Parameters> params, List<Integer> numUnits) {
         if (idealRole.equals(UnitRole.UNDETERMINED)) {
+            LOGGER.info("[ForceGen][Formation] tryIdealRole skipped: idealRole=UNDETERMINED");
             return null;
         }
         List<Parameters> tmpParams = params.stream().map(Parameters::copy).toList();
-        tmpParams.forEach(Parameters::clearWeightClasses);
+        // NOTE: do NOT clear weight classes here. The caller (Force Generator) supplies the
+        // lance's tree-assigned weight class, and the Formation Builder supplies the formation
+        // type's own min/max weight range. Clearing them lets the ideal-role rescue search every
+        // weight class, which silently upweights a Light lance into Mediums/Heavies and lets a
+        // Light Battle Lance pick Assault units past its own maxWeightClass. Keep the constraint;
+        // return null if the ideal role can't be filled within it, and let the caller fall back.
         List<MekSummary> retVal = new ArrayList<>();
         for (int i = 0; i < tmpParams.size(); i++) {
             UnitTable t = UnitTable.findTable(tmpParams.get(i));
             List<MekSummary> units = t.generateUnits(numUnits.get(i), ms -> ms.getRole() == idealRole);
+            LOGGER.info("[ForceGen][Formation]   tryIdealRole role={} wc={} need={} found={} units={}",
+                  idealRole, tmpParams.get(i).getWeightClasses(), numUnits.get(i), units.size(), summarize(units));
             if (units.size() < numUnits.get(i)) {
+                LOGGER.info("[ForceGen][Formation]   tryIdealRole FAILED at param[{}] (insufficient {} units at"
+                      + " weight {}); returning null", i, idealRole, tmpParams.get(i).getWeightClasses());
                 return null;
             }
             retVal.addAll(units);
         }
         return retVal;
+    }
+
+    /**
+     * Compact one-line summary of a unit list for the [ForceGen][Formation] trace: each entry as "Name(weightClass)",
+     * e.g. "Locust LCT-1V(1), Stinger STG-3R(1)". Returns "[]" for an empty list.
+     */
+    private static String summarize(List<MekSummary> units) {
+        if (units == null || units.isEmpty()) {
+            return "[]";
+        }
+        return units.stream()
+              .map(ms -> ms.getName() + "(" + ms.getWeightClass() + ")")
+              .collect(Collectors.joining(", "));
     }
 
     /**

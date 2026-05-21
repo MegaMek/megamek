@@ -326,12 +326,21 @@ public class ForceDescriptor {
                                     eligibleSubs.get(true).get(i).getUnitType() == UnitType.INFANTRY)) {
                             continue;
                         }
-                        if (eligibleSubs.get(true).get(i).getSubForces().isEmpty()) {
-                            eligibleSubs.get(true).get(i).setUnit(list.get(i));
+                        ForceDescriptor target = eligibleSubs.get(true).get(i);
+                        ModelRecord picked = list.get(i);
+                        if (target.getSubForces().isEmpty()) {
+                            target.setUnit(picked);
+                            LOGGER.info("[ForceGen][Formation]   assign LEAF '{}' <- setUnit {}(wc={})",
+                                  target.parseName(), picked.getKey(), picked.getWeightClass());
                         } else if (chassis) {
-                            eligibleSubs.get(true).get(i).getChassis().add(list.get(i).getChassis());
+                            target.getChassis().add(picked.getChassis());
+                            LOGGER.info("[ForceGen][Formation]   assign NON-LEAF '{}' <- PIN chassis '{}' (children"
+                                  + " will regenerate against this)", target.parseName(), picked.getChassis());
                         } else {
-                            eligibleSubs.get(true).get(i).getModels().add(list.get(i).getKey());
+                            target.getModels().add(picked.getKey());
+                            LOGGER.info("[ForceGen][Formation]   assign NON-LEAF '{}' <- PIN model '{}' (children"
+                                        + " will regenerate against this; Task #2 failure point if unavailable)",
+                                  target.parseName(), picked.getKey());
                         }
                     }
                 }
@@ -389,6 +398,15 @@ public class ForceDescriptor {
         // regenerate the unit
         // with a valid network.
         List<MekSummary> unitList = formationType.generateFormation(params, numUnits, networkMask, false, 0, numGroups);
+        LOGGER.info(
+              "[ForceGen][Formation] CALLER name='{}' formation='{}' subWeightClasses={} requested={} -> got {} units: {}",
+              parseName(),
+              formationType.getName(),
+              formationWeightClasses,
+              subs.size(),
+              unitList.size(),
+              unitList.stream().map(ms -> ms.getName() + "(" + ms.getWeightClass() + ")")
+                    .collect(java.util.stream.Collectors.joining(", ")));
         if (networkMask == ModelRecord.NETWORK_NONE) {
             int c3m = 0;
             int c3s = 0;

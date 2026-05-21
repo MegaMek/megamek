@@ -549,7 +549,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         } else {
             fd.setExperience(CrewDescriptor.randomExperienceLevel());
         }
-        fd.setWeightClass(forceDesc.getWeightClass());
+        // Read directly from the dropdown rather than the cached forceDesc field.
+        // The SwingWorker's done() callback overwrites forceDesc with the engine-mutated
+        // tree-root descriptor after each Generate, so the cached weightClass can drift
+        // away from the user's UI selection across consecutive runs.
+        Object selectedWeight = cbWeightClass.getSelectedItem();
+        fd.setWeightClass(selectedWeight instanceof Integer ? (Integer) selectedWeight : null);
         fd.setAttachments(chkAttachments.isSelected());
         if (forceDesc.getUnitType() != null) {
             switch (forceDesc.getUnitType()) {
@@ -1060,11 +1065,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 forceDesc.getFlags().add((String) cbFlags.getSelectedItem());
             }
         } else if (ev.getSource() == cbWeightClass) {
-            if (cbWeightClass.getSelectedIndex() < 1) {
-                forceDesc.setWeightClass(null);
-            } else {
-                forceDesc.setWeightClass(cbWeightClass.getSelectedIndex());
-            }
+            // Use getSelectedItem() so the stored value is the actual EntityWeightClass
+            // constant rather than the dropdown index. Index-and-value match today (1..4)
+            // but only by coincidence — defensive against future re-ordering or insertion
+            // of new entries like Ultra Light.
+            Object item = cbWeightClass.getSelectedItem();
+            forceDesc.setWeightClass(item instanceof Integer ? (Integer) item : null);
         } else if (ev.getSource() == btnGenerate) {
             generateForce();
             btnExportMUL.setEnabled(true);

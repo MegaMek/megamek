@@ -1035,9 +1035,38 @@ public class ForceDescriptor {
         StringBuilder result = new StringBuilder();
         for (int i = ancestors.size() - 1; i >= 0; i--) {
             ForceDescriptor ancestor = ancestors.get(i);
-            result.append(ancestor.parseName()).append('|').append(ancestor.forceStringId).append("||");
+            result.append(ancestor.getCombinedDisplayName()).append('|').append(ancestor.forceStringId).append("||");
         }
         return result.toString();
+    }
+
+    /**
+     * Builds the display label for this force, combining the formal name (e.g. "A Company") with the weight + unit-type
+     * + formation-type descriptor (e.g. "Heavy Mek Company") into a single string.
+     *
+     * <p>Matches the layout the {@code ForceGeneratorViewUi} tree renderer shows for the same node, so
+     * what the user sees in the Force Generator preview matches what the lobby Force View shows after transfer. For
+     * lances that lack an explicit name this is the only label available — without it the lobby would render them with
+     * a blank name.</p>
+     *
+     * @return "Name (Descriptor)" when both sides are populated, otherwise whichever side is non-blank, or an empty
+     *       string if neither is set.
+     */
+    public String getCombinedDisplayName() {
+        String name = parseName();
+        String description = getDescription();
+        boolean hasName = name != null && !name.isBlank();
+        boolean hasDescription = description != null && !description.isBlank();
+        if (hasName && hasDescription) {
+            return name + " (" + description + ")";
+        }
+        if (hasName) {
+            return name;
+        }
+        if (hasDescription) {
+            return description;
+        }
+        return "";
     }
 
     /**

@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
@@ -62,6 +63,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import megamek.client.Client;
+import megamek.client.ratgenerator.CrewDescriptor;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
@@ -71,16 +73,17 @@ import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.options.GameOptions;
-import megamek.common.units.Entity;
-import megamek.common.loaders.MekSummary;
-import megamek.common.loaders.MekSummaryCache;
 import megamek.common.Player;
-import megamek.common.units.UnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.SkillLevel;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.options.GameOptions;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitType;
+import megamek.common.universe.Ranks;
 import megamek.logging.MMLogger;
 
 /**
@@ -522,8 +525,59 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     private static class UnitRenderer extends DefaultTreeCellRenderer {
+        // Fallback rank-int -> short title used when the ruleset XML did not set an explicit
+        // title= attribute on the <co>/<xo> element (the typical case — mm-data only sets title
+        // for special honorifics like "Aide" or "ovKhan"). Values match the integer constants in
+        // mm-data/data/forcegenerator/faction_rules/constants.txt. Where IS and Clan share the
+        // same int the IS officer title is preferred since rulesets that need Clan/CS variants
+        // already populate title= explicitly.
+        private static final Map<Integer, String> DEFAULT_RANK_TITLES = Map.ofEntries(
+              Map.entry(12, "Sergeant"),
+              Map.entry(32, "Lieutenant JG"),
+              Map.entry(33, "Lieutenant"),
+              Map.entry(34, "Captain"),
+              Map.entry(35, "Major"),
+              Map.entry(37, "Lt. Colonel"),
+              Map.entry(38, "Colonel"),
+              Map.entry(39, "Lt. General"),
+              Map.entry(42, "Maj. General"),
+              Map.entry(43, "General"),
+              Map.entry(46, "Loremaster"),
+              Map.entry(47, "saKhan"),
+              Map.entry(48, "Khan"));
+
         public UnitRenderer() {
 
+        }
+
+        /**
+         * Builds the "Captain " / "CO: " prefix that precedes a commander's name in the tree. Resolution order:
+         * <ol>
+         *   <li>An explicit {@code title=} attribute from the ruleset XML (honorifics like "Aide", "ovKhan").</li>
+         *   <li>The faction-specific rank from {@code data/universe/ranks.xml} (e.g. "Tai-i" for DCMS, "Star Captain"
+         *       for CLAN) — looked up using the ratgen rank-system integer the ruleset assigned to this force.</li>
+         *   <li>A generic IS-leaning rank-int → title map as a safety net if {@code ranks.xml} is unavailable.</li>
+         *   <li>The {@code "CO: "} / {@code "XO: "} role marker as a last resort.</li>
+         * </ol>
+         */
+        private static String commanderPrefix(CrewDescriptor crew, String roleFallback) {
+            String title = crew.getTitle();
+            if (title != null && !title.isBlank()) {
+                return title.endsWith(" ") ? title : title + " ";
+            }
+            Integer rankSystemIndex = (crew.getAssignment() == null)
+                  ? null : crew.getAssignment().getRankSystem();
+            String factionRankName = Ranks.getInstance()
+                  .resolveRankName(rankSystemIndex, crew.getRank())
+                  .orElse(null);
+            if (factionRankName != null && !factionRankName.isBlank()) {
+                return factionRankName + " ";
+            }
+            String rankName = DEFAULT_RANK_TITLES.get(crew.getRank());
+            if (rankName != null) {
+                return rankName + " ";
+            }
+            return roleFallback + ": ";
         }
 
         @Override
@@ -565,17 +619,29 @@ public class ForceGeneratorViewUi implements ActionListener {
                 }
             } else {
                 StringBuilder desc = new StringBuilder("<html>");
-                desc.append(fd.parseName());
+                String parsedName = fd.parseName();
                 String description = fd.getDescription();
-                if (description != null && !description.isBlank()) {
-                    desc.append("<br />").append(description);
+                boolean hasName = parsedName != null && !parsedName.isBlank();
+                boolean hasDescription = description != null && !description.isBlank();
+                // Collapse "A Company" + "Heavy Mek Company" onto one row as
+                // "<b>A Company</b> (Heavy Mek Company)". Formation name is bolded so it pops at
+                // a glance when scrolling a battalion-sized tree; the descriptor (weight + unit
+                // type + role) is italicized to read as a supplementary label. When only one
+                // side is populated, it is rendered bold as the row's primary identifier.
+                if (hasName && hasDescription) {
+                    desc.append("<b>").append(parsedName).append("</b>")
+                          .append(" <i>(").append(description).append(")</i>");
+                } else if (hasName) {
+                    desc.append("<b>").append(parsedName).append("</b>");
+                } else if (hasDescription) {
+                    desc.append("<b>").append(description).append("</b>");
                 }
                 if (fd.getCo() != null) {
-                    desc.append("<br />").append(fd.getCo().getTitle() == null ? "CO: " : fd.getCo().getTitle());
+                    desc.append("<br />").append(commanderPrefix(fd.getCo(), "CO"));
                     desc.append(fd.getCo().getName());
                 }
                 if (fd.getXo() != null) {
-                    desc.append("<br />").append(fd.getXo().getTitle() == null ? "XO: " : fd.getXo().getTitle());
+                    desc.append("<br />").append(commanderPrefix(fd.getXo(), "XO"));
                     desc.append(fd.getXo().getName());
                 }
                 setText(desc.append("</html>").toString());

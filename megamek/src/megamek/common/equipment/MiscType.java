@@ -482,30 +482,7 @@ public class MiscType extends EquipmentType {
         }
         // check for known formulas
         if (hasFlag(F_JUMP_JET) || hasFlag(F_UMU)) {
-            double multiplier = 1.0;
-            if (hasFlag(MiscTypeFlag.S_IMPROVED)) {
-                multiplier = 2.0;
-            }
-            if (hasFlag(MiscTypeFlag.S_PROTOTYPE) && (hasFlag(MiscTypeFlag.S_IMPROVED))) {
-                multiplier = 1.0;
-            }
-            if (hasFlag(F_PROTOMEK_EQUIPMENT)) {
-                if (entity.getWeight() < 6) {
-                    return 0.05 * multiplier;
-                } else if (entity.getWeight() < 10) {
-                    return 0.1 * multiplier;
-                } else {
-                    return 0.15 * multiplier;
-                }
-            } else {
-                if (entity.getWeight() <= 55.0) {
-                    return 0.5 * multiplier;
-                } else if (entity.getWeight() <= 85.0) {
-                    return multiplier;
-                } else {
-                    return 2.0 * multiplier;
-                }
-            }
+            return getJumpJetTonnage(entity, location);
         } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_MEK_EQUIPMENT)) {
             if (isClan()) {
                 return defaultRounding.round(entity.getWeight() * 0.05, entity);
@@ -867,6 +844,43 @@ public class MiscType extends EquipmentType {
         }
         // okay, I'm out of ideas
         return 1.0f;
+    }
+
+    private double getJumpJetTonnage(Entity entity, int location) {
+        double unitTonnage = entity.getWeight();
+        if ((entity instanceof Mek mek) && mek.isFrankenMek() && (location >= 0) && (location < mek.locations())) {
+            // The tonnage of jump jets on a FrankenMek is derived from the tonnage of the structure in the location they are mounted in,
+            // up to the tonnage of the center torso (can't mount JJ with tonnage higher than CT, rule on CO:213)
+            int centerTorsoTonnage = mek.getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO);
+            unitTonnage = Math.min(mek.getFrankenMekStructureTonnage(location), centerTorsoTonnage);
+        }
+        return getJumpJetTonnage(unitTonnage);
+    }
+
+    private double getJumpJetTonnage(double unitTonnage) {
+        double multiplier = 1.0;
+        if (hasFlag(MiscTypeFlag.S_IMPROVED)) {
+            multiplier = 2.0;
+        }
+        if (hasFlag(MiscTypeFlag.S_PROTOTYPE) && hasFlag(MiscTypeFlag.S_IMPROVED)) {
+            multiplier = 1.0;
+        }
+        if (hasFlag(F_PROTOMEK_EQUIPMENT)) {
+            if (unitTonnage < 6) {
+                return 0.05 * multiplier;
+            } else if (unitTonnage < 10) {
+                return 0.1 * multiplier;
+            } else {
+                return 0.15 * multiplier;
+            }
+        }
+        if (unitTonnage <= 55.0) {
+            return 0.5 * multiplier;
+        } else if (unitTonnage <= 85.0) {
+            return multiplier;
+        } else {
+            return 2.0 * multiplier;
+        }
     }
 
     /**

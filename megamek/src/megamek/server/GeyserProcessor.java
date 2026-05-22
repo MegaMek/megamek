@@ -84,15 +84,15 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
                 g.turnsToGo--;
             } else {
                 Hex hex = gameManager.getGame().getHex(g.position, g.boardId);
-                if (hex.terrainLevel(Terrains.GEYSER) == 2) {
+                if (hex.terrainLevel(Terrains.GEYSER) == Terrains.GEYSER_LVL_ACTIVE) {
                     r = new Report(5275, Report.PUBLIC);
                     r.add(g.position.getBoardNum());
                     vPhaseReport.add(r);
                     hex.removeTerrain(Terrains.GEYSER);
-                    hex.addTerrain(new Terrain(Terrains.GEYSER, 1));
+                    hex.addTerrain(new Terrain(Terrains.GEYSER, Terrains.GEYSER_LVL_DORMANT));
                     markHexUpdate(g.position, g.boardId);
                 } else if (Compute.d6() == 1) {
-                    if (hex.terrainLevel(Terrains.GEYSER) == 3) {
+                    if (hex.terrainLevel(Terrains.GEYSER) == Terrains.GEYSER_LVL_MAGMA_VENT) {
                         r = new Report(5285, Report.PUBLIC);
                         r.add(g.position.getBoardNum());
                         vPhaseReport.add(r);
@@ -110,7 +110,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
                         vPhaseReport.add(r);
                         eruptionReports.add(r);
                         hex.removeTerrain(Terrains.GEYSER);
-                        hex.addTerrain(new Terrain(Terrains.GEYSER, 2));
+                        hex.addTerrain(new Terrain(Terrains.GEYSER, Terrains.GEYSER_LVL_ACTIVE));
                         markHexUpdate(g.position, g.boardId);
                         g.turnsToGo = Compute.d6() - 1;
                     }

@@ -54,6 +54,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.LOSDiagramData.HexRow;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
+import megamek.common.LosEffects;
 
 /**
  * A panel that renders a 2D elevation cross-section diagram for a LOS path. Shows ground elevation, terrain features,
@@ -135,8 +136,11 @@ class LOSElevationDiagramPanel extends JPanel {
     /** Aspect ratio (height/width) for the larger crown puffs at the plume top. */
     private static final double SMOKE_CROWN_ASPECT_RATIO = 0.65;
 
-    /** Erupting-geyser plume height in TW levels; treated as ultra-heavy woods for LOS (TacOps). */
-    private static final int GEYSER_PLUME_LEVELS = 3;
+    /**
+     * Erupting-geyser plume height in TW levels; treated as ultra-heavy woods for LOS (TacOps). Derived from the LOS
+     * engine's {@link LosEffects#GEYSER_PLUME_HEIGHT} so the diagram cannot drift out of sync with the rule.
+     */
+    private static final int GEYSER_PLUME_LEVELS = LosEffects.GEYSER_PLUME_HEIGHT;
 
     /** Width of the geyser water jet as a fraction of the column width. */
     private static final double GEYSER_JET_WIDTH_FACTOR = 0.28;

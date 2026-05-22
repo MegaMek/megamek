@@ -140,13 +140,12 @@ public class LosEffects {
     public static final int DAMAGABLE_COVER_DROPSHIP = 0x1;
     public static final int DAMAGABLE_COVER_BUILDING = 0x2;
 
-    /** Terrain level of an erupting (active) geyser; see {@link Terrains#GEYSER}. */
-    private static final int GEYSER_ERUPTING = 2;
     /**
      * Height in levels that an erupting geyser's plume rises above its hex. Per TacOps, an erupting geyser blocks line
-     * of sight as ultra-heavy woods, which rises three levels above the hex.
+     * of sight as ultra-heavy woods, which rises three levels above the hex. Shared with the LOS Ruler/diagram so the
+     * UI cannot drift out of sync with the rule. The erupting terrain level itself is {@link Terrains#GEYSER_LVL_ACTIVE}.
      */
-    private static final int GEYSER_PLUME_HEIGHT = 3;
+    public static final int GEYSER_PLUME_HEIGHT = 3;
 
     boolean blocked = false;
     boolean deadZone = false;
@@ -925,7 +924,7 @@ public class LosEffects {
             return false;
         }
         Hex hex = game.getBoard(boardId).getHex(pos);
-        if (hex.terrainLevel(Terrains.GEYSER) != GEYSER_ERUPTING) {
+        if (hex.terrainLevel(Terrains.GEYSER) != Terrains.GEYSER_LVL_ACTIVE) {
             return false;
         }
         return (hex.getLevel() + GEYSER_PLUME_HEIGHT) > absHeight;
@@ -1642,7 +1641,7 @@ public class LosEffects {
 
             // TacOps: an erupting geyser blocks LOS through its hex, treated as ultra-heavy woods.
             // The plume rises three levels above the hex level.
-            if (hex.terrainLevel(Terrains.GEYSER) == GEYSER_ERUPTING) {
+            if (hex.terrainLevel(Terrains.GEYSER) == Terrains.GEYSER_LVL_ACTIVE) {
                 int geyserPlumeEl = hexEl + GEYSER_PLUME_HEIGHT;
                 if (diagramLoS) {
                     affectsLos = geyserPlumeEl >= losElevation;

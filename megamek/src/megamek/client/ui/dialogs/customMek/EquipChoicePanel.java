@@ -226,7 +226,7 @@ public class EquipChoicePanel extends JPanel {
             }
         }
 
-        if (entity.isBattleArmor() || (entity instanceof ConvInfantry infantry && infantry.hasFieldWeapon())) {
+        if (shouldSetupMunitions(entity)) {
             setupMunitions(gbc);
             if (clientgui != null) {
                 setupWeaponAmmoChoice(gbc);
@@ -537,6 +537,19 @@ public class EquipChoicePanel extends JPanel {
                 entityCorrespondence[listIndex++] = e.getId();
             }
         }
+    }
+
+    /**
+     * Determines whether the manual ammo/munitions configuration section applies to the given unit. Conventional
+     * infantry without a field weapon have no configurable ammo bins; every other unit type (BattleMeks, vehicles,
+     * aerospace, ProtoMeks, BattleArmor, and field-gun conventional infantry) does.
+     *
+     * @param entity the unit being configured
+     *
+     * @return true if the munitions section should be built for this unit
+     */
+    static boolean shouldSetupMunitions(Entity entity) {
+        return entity.isBattleArmor() || !(entity instanceof ConvInfantry infantry) || infantry.hasFieldWeapon();
     }
 
     private void setupMunitions(GBC2 gbc) {

@@ -74,6 +74,10 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
         }
 
         Report r;
+        // Eruptions are also pushed as a transient "special" report so clients show a toast
+        // notification the instant a geyser (or magma vent) erupts, in addition to the normal
+        // end-phase report entry shown in the report panel.
+        Vector<Report> eruptionReports = new Vector<>();
         for (Iterator<GeyserInfo> gs = geysers.iterator(); gs.hasNext(); ) {
             GeyserInfo g = gs.next();
             if (g.turnsToGo > 0) {
@@ -92,6 +96,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
                         r = new Report(5285, Report.PUBLIC);
                         r.add(g.position.getBoardNum());
                         vPhaseReport.add(r);
+                        eruptionReports.add(r);
                         hex.removeAllTerrains();
                         hex.addTerrain(new Terrain(Terrains.MAGMA, 2));
                         markHexUpdate(g.position, g.boardId);
@@ -103,6 +108,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
                         r = new Report(5280, Report.PUBLIC);
                         r.add(g.position.getBoardNum());
                         vPhaseReport.add(r);
+                        eruptionReports.add(r);
                         hex.removeTerrain(Terrains.GEYSER);
                         hex.addTerrain(new Terrain(Terrains.GEYSER, 2));
                         markHexUpdate(g.position, g.boardId);
@@ -110,6 +116,11 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
                     }
                 }
             }
+        }
+
+        // Broadcast eruption notifications as a transient special report so clients toast them.
+        if (!eruptionReports.isEmpty()) {
+            gameManager.send(gameManager.createSpecialReportPacket(eruptionReports));
         }
     }
 

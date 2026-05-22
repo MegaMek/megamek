@@ -141,6 +141,7 @@ final class LOSDiagramDataBuilder {
             boolean hasScreen = hex.containsTerrain(Terrains.SCREEN);
             boolean hasFields = hex.containsTerrain(Terrains.FIELDS);
             boolean hasFire = hex.containsTerrain(Terrains.FIRE);
+            boolean eruptingGeyser = getTerrainLevel(hex, Terrains.GEYSER) == 2;
 
             // The LOS line elevation at this hex is the level the engine compares hex tops against,
             // expressed in BMM LOS-level units (= silhouette top = hex + twHeight). Standard and Dead Zone
@@ -184,6 +185,7 @@ final class LOSDiagramDataBuilder {
                   hasScreen,
                   hasFields,
                   hasFire,
+                  eruptingGeyser,
                   isSplitHex,
                   splitAlternate,
                   blocksLos,

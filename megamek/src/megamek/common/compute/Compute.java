@@ -3220,6 +3220,9 @@ public class Compute {
             }
         }
         if (hex.terrainLevel(Terrains.GEYSER) == 2) {
+            // Per TacOps an erupting geyser also blocks LOS as ultra-heavy woods (see
+            // LosEffects), so a target engulfed by the plume is already unreachable; this
+            // modifier still applies to a target raised above the plume that remains visible.
             // Always add full geyser modifier
             toHit.addModifier(2, "target in erupting geyser");
             if (eiStatus > 0) {

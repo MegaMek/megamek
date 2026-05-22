@@ -32,16 +32,7 @@
  */
 package megamek.client.ui.clientGUI.boardview;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Stroke;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -105,6 +96,8 @@ class LOSElevationDiagramPanel extends JPanel {
     private static final Color COLOR_FIRE = new Color(255, 50, 0, 210);
     private static final Color COLOR_SCREEN = new Color(180, 180, 255, 120);
     private static final Color COLOR_FIELDS = new Color(200, 180, 50, 100);
+    private static final Color COLOR_GEYSER_JET = new Color(150, 200, 235, 175);
+    private static final Color COLOR_GEYSER_SPRAY = new Color(215, 238, 250, 160);
     private static final Color COLOR_LOS_CLEAR = new Color(60, 220, 60);
     private static final Color COLOR_LOS_BLOCKED = new Color(240, 50, 50);
     private static final Color COLOR_SPLIT_MARKER = new Color(255, 165, 0, 120);
@@ -141,6 +134,12 @@ class LOSElevationDiagramPanel extends JPanel {
 
     /** Aspect ratio (height/width) for the larger crown puffs at the plume top. */
     private static final double SMOKE_CROWN_ASPECT_RATIO = 0.65;
+
+    /** Erupting-geyser plume height in TW levels; treated as ultra-heavy woods for LOS (TacOps). */
+    private static final int GEYSER_PLUME_LEVELS = 3;
+
+    /** Width of the geyser water jet as a fraction of the column width. */
+    private static final double GEYSER_JET_WIDTH_FACTOR = 0.28;
 
     private static final String LOS_SILHOUETTE_DIR = "units" + File.separator + "LOS" + File.separator;
 
@@ -978,6 +977,61 @@ class LOSElevationDiagramPanel extends JPanel {
     }
 
     /**
+     * Draws an erupting geyser as a narrow vertical water jet topped by a fountain-like spray crown of droplets.
+     * Deliberately distinct from the wide billowing smoke plume: a thin, fast column of water shooting straight up with
+     * droplets arcing outward at the top.
+     *
+     * @param g2d    the graphics context
+     * @param x      the left edge of the hex column
+     * @param y      the top of the plume (three levels above ground)
+     * @param width  the hex column width
+     * @param height the pixel height of the three-level plume (ground to plume top)
+     */
+    private void drawGeyserJet(Graphics2D g2d, int x, int y, int width, int height) {
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+
+        int centerX = x + width / 2;
+        int jetWidth = Math.max((int) (width * GEYSER_JET_WIDTH_FACTOR), 3);
+
+        // Central rising water jet: a translucent column that tapers slightly toward the top.
+        int[] jetX = {
+              centerX - jetWidth / 2,
+              centerX + jetWidth / 2,
+              centerX + jetWidth / 4,
+              centerX - jetWidth / 4
+        };
+        int[] jetY = { y + height, y + height, y, y };
+        g2d.setColor(COLOR_GEYSER_JET);
+        g2d.fillPolygon(jetX, jetY, 4);
+
+        // Vertical streaks suggesting fast-moving water inside the jet.
+        g2d.setColor(COLOR_GEYSER_SPRAY);
+        g2d.setStroke(STROKE_DEFAULT);
+        for (int streak = 0; streak < 3; streak++) {
+            int streakX = centerX - jetWidth / 3 + streak * jetWidth / 3;
+            g2d.drawLine(streakX, y + height, streakX, y + height / 6);
+        }
+
+        // Spray crown: droplets arcing up and outward from the jet top like a fountain. The arc is a
+        // parabola - highest in the middle of the fan, tailing off toward the edges.
+        int dropSize = Math.max(jetWidth / 2, 3);
+        int fanWidth = width;
+        int drops = 9;
+        for (int drop = 0; drop < drops; drop++) {
+            double fan = (drop / (double) (drops - 1)) * 2.0 - 1.0; // -1.0 .. 1.0
+            int hash = (drop * 13 + 5) % 11;
+            int dropX = centerX + (int) (fan * fanWidth / 2.0);
+            int arc = (int) ((1.0 - fan * fan) * height * 0.5);
+            int dropY = y - arc + (hash % 3) * dropSize / 2;
+            int diameter = dropSize + (hash % 3);
+            g2d.setColor(COLOR_GEYSER_SPRAY);
+            g2d.fillOval(dropX - diameter / 2, dropY, diameter, diameter);
+        }
+    }
+
+    /**
      * Draws overlay indicators for terrain that modifies LOS (smoke, fire, screen, fields).
      */
     private void drawTerrainOverlays(Graphics2D g2d, DiagramMetrics metrics, HexRow hex,
@@ -1010,6 +1064,12 @@ class LOSElevationDiagramPanel extends JPanel {
         if (hex.hasFields()) {
             int yFieldsTop = metrics.levelToY(hex.groundElevation() + 1);
             drawFieldStalks(g2d, xLeft, yFieldsTop, columnWidth, yGround - yFieldsTop);
+        }
+
+        // Erupting geyser: a rising water/steam jet, three levels tall (ultra-heavy woods for LOS)
+        if (hex.eruptingGeyser()) {
+            int yGeyserTop = metrics.levelToY(hex.groundElevation() + GEYSER_PLUME_LEVELS);
+            drawGeyserJet(g2d, xLeft, yGeyserTop, columnWidth, yGround - yGeyserTop);
         }
     }
 
@@ -1058,6 +1118,13 @@ class LOSElevationDiagramPanel extends JPanel {
                 int barMidY = (ySmokeTop + yGround) / 2 + fontHeight / 2;
                 String label = hex.smokeLevel() >= 2 ? "S2" : "S1";
                 drawCenteredLabel(g2d, fontMetrics, label, xCenter, barMidY, getLabelColor());
+            }
+
+            // Erupting geyser label
+            if (hex.eruptingGeyser()) {
+                int yGeyserTop = metrics.levelToY(hex.groundElevation() + GEYSER_PLUME_LEVELS);
+                int barMidY = (yGeyserTop + yGround) / 2 + fontHeight / 2;
+                drawCenteredLabel(g2d, fontMetrics, "G", xCenter, barMidY, getLabelColor());
             }
 
             // Water depth label
@@ -2356,6 +2423,14 @@ class LOSElevationDiagramPanel extends JPanel {
         if (hex.hasFields()) {
             tooltip.append("<br>Planted Fields");
         }
+        if (hex.eruptingGeyser()) {
+            int geyserTopElevation = hex.groundElevation() + GEYSER_PLUME_LEVELS;
+            boolean geyserAffectsLos = geyserTopElevation >= hex.losLineElevation();
+            tooltip.append("<br>Erupting Geyser (top elev ").append(geyserTopElevation).append(")");
+            if (!geyserAffectsLos) {
+                tooltip.append(" - <i>LOS line above geyser</i>");
+            }
+        }
         if (hex.splitHex() && hex.splitAlternate() != null) {
             tooltip.append("<br><i>Split hex (alternate: ")
                   .append(hex.splitAlternate().toFriendlyString())
@@ -2377,6 +2452,9 @@ class LOSElevationDiagramPanel extends JPanel {
             }
             if (hex.hasScreen() || hex.hasFields() || hex.hasFire()) {
                 anyTerrainReachesLos = true;
+            }
+            if (hex.eruptingGeyser()) {
+                anyTerrainReachesLos |= (hex.groundElevation() + GEYSER_PLUME_LEVELS) >= hex.losLineElevation();
             }
             if (anyTerrainReachesLos) {
                 tooltip.append("<br><font color='orange'>Affects LOS (modifier)</font>");

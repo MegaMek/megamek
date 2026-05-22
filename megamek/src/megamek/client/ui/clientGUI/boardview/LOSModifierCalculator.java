@@ -480,8 +480,11 @@ final class LOSModifierCalculator {
             }
         }
 
-        // Erupting geyser
-        if (targetHex.terrainLevel(Terrains.GEYSER) == 2) {
+        // Erupting geyser. Per TacOps an erupting geyser blocks LOS as ultra-heavy woods (plume rises
+        // three levels); a target engulfed by the plume is already unreachable (handled by losModifiers).
+        // The +2 modifier only applies to a target raised above the plume that remains visible.
+        boolean isAbovePlume = targetRelHeight + 1 > 3;
+        if ((targetHex.terrainLevel(Terrains.GEYSER) == 2) && isAbovePlume) {
             thd.addModifier(2, "target in erupting geyser");
         }
 

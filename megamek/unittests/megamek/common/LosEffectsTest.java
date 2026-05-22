@@ -174,6 +174,39 @@ public class LosEffectsTest extends GameBoardTestCase {
               hex 0305 0 "" ""
               end"""
         );
+
+        // Board with an erupting geyser (level 2) in the intervening hex 0103
+        initializeBoard("01_BY_05_ERUPTING_GEYSER_INTERVENING", """
+              size 1 5
+              hex 0101 0 "" ""
+              hex 0102 0 "" ""
+              hex 0103 0 "geyser:2" ""
+              hex 0104 0 "" ""
+              hex 0105 0 "" ""
+              end"""
+        );
+
+        // Board with a dormant geyser (level 1) in the intervening hex 0103
+        initializeBoard("01_BY_05_DORMANT_GEYSER_INTERVENING", """
+              size 1 5
+              hex 0101 0 "" ""
+              hex 0102 0 "" ""
+              hex 0103 0 "geyser:1" ""
+              hex 0104 0 "" ""
+              hex 0105 0 "" ""
+              end"""
+        );
+
+        // Board with an erupting geyser (level 2) in the target's own hex 0105
+        initializeBoard("01_BY_05_ERUPTING_GEYSER_AT_TARGET", """
+              size 1 5
+              hex 0101 0 "" ""
+              hex 0102 0 "" ""
+              hex 0103 0 "" ""
+              hex 0104 0 "" ""
+              hex 0105 0 "geyser:2" ""
+              end"""
+        );
     }
 
     @BeforeEach
@@ -731,6 +764,93 @@ public class LosEffectsTest extends GameBoardTestCase {
             assertNotNull(result, "LosEffects should not be null");
             assertFalse(result.blocked, "LOS should not be blocked by level 3 terrain when firing from level 4");
             assertTrue(result.hasLoS, "Should have line of sight");
+        }
+    }
+
+    /**
+     * Tests for the TacOps erupting-geyser rule: an erupting geyser is treated as ultra-heavy woods for the purpose of
+     * determining line of sight into or through its hex.
+     */
+    @Nested
+    @DisplayName("Erupting Geyser LOS Blocking Tests")
+    class EruptingGeyserBlockingTests {
+
+        private LosEffects.AttackInfo buildGroundAttackInfo(Coords attackPos, Coords targetPos,
+              int attackAbsHeight, int targetAbsHeight) {
+            LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
+            ai.attackPos = attackPos;
+            ai.targetPos = targetPos;
+            ai.attackAbsHeight = attackAbsHeight;
+            ai.targetAbsHeight = targetAbsHeight;
+            ai.attOnLand = true;
+            ai.targetOnLand = true;
+            ai.targetEntity = true;
+            return ai;
+        }
+
+        @Test
+        @DisplayName("erupting geyser in an intervening hex blocks LOS (treated as ultra-heavy woods)")
+        void shouldBlockLos_EruptingGeyserIntervening() {
+            setBoard("01_BY_05_ERUPTING_GEYSER_INTERVENING");
+            LosEffects.AttackInfo ai = buildGroundAttackInfo(new Coords(0, 0), new Coords(0, 4), 0, 0);
+
+            LosEffects result = LosEffects.calculateLos(game, ai);
+
+            assertNotNull(result);
+            assertEquals(1, result.ultraWoods, "Erupting geyser should count as 1 ultra woods");
+            assertFalse(result.hasLoS, "hasLoS should be false through an erupting geyser");
+
+            ToHitData thd = result.losModifiers(game);
+            assertEquals(TargetRoll.IMPOSSIBLE, thd.getValue(),
+                  "losModifiers should return IMPOSSIBLE through an erupting geyser");
+        }
+
+        @Test
+        @DisplayName("dormant geyser in an intervening hex does NOT block LOS")
+        void shouldNotBlockLos_DormantGeyserIntervening() {
+            setBoard("01_BY_05_DORMANT_GEYSER_INTERVENING");
+            LosEffects.AttackInfo ai = buildGroundAttackInfo(new Coords(0, 0), new Coords(0, 4), 0, 0);
+
+            LosEffects result = LosEffects.calculateLos(game, ai);
+
+            assertNotNull(result);
+            assertEquals(0, result.ultraWoods, "Dormant geyser should not count as ultra woods");
+            assertTrue(result.hasLoS, "hasLoS should be true through a dormant geyser");
+
+            ToHitData thd = result.losModifiers(game);
+            assertNotEquals(TargetRoll.IMPOSSIBLE, thd.getValue(),
+                  "losModifiers should NOT return IMPOSSIBLE through a dormant geyser");
+        }
+
+        @Test
+        @DisplayName("target standing in an erupting geyser cannot be seen (LOS into the hex blocked)")
+        void shouldBlockLos_TargetInEruptingGeyser() {
+            setBoard("01_BY_05_ERUPTING_GEYSER_AT_TARGET");
+            LosEffects.AttackInfo ai = buildGroundAttackInfo(new Coords(0, 0), new Coords(0, 4), 0, 0);
+
+            LosEffects result = LosEffects.calculateLos(game, ai);
+
+            assertNotNull(result);
+            assertEquals(1, result.ultraWoods, "Target's own erupting geyser should count as 1 ultra woods");
+            assertFalse(result.hasLoS, "hasLoS should be false for a target engulfed by an erupting geyser");
+
+            ToHitData thd = result.losModifiers(game);
+            assertEquals(TargetRoll.IMPOSSIBLE, thd.getValue(),
+                  "losModifiers should return IMPOSSIBLE for a target engulfed by an erupting geyser");
+        }
+
+        @Test
+        @DisplayName("target raised above the geyser plume remains visible")
+        void shouldNotBlockLos_TargetAboveEruptingGeyserPlume() {
+            setBoard("01_BY_05_ERUPTING_GEYSER_AT_TARGET");
+            // Plume rises 3 levels above the hex (level 0), so a unit at absolute height 4 is above it.
+            LosEffects.AttackInfo ai = buildGroundAttackInfo(new Coords(0, 0), new Coords(0, 4), 4, 4);
+
+            LosEffects result = LosEffects.calculateLos(game, ai);
+
+            assertNotNull(result);
+            assertEquals(0, result.ultraWoods, "A target above the plume should not be engulfed");
+            assertTrue(result.hasLoS, "hasLoS should be true for a target raised above the geyser plume");
         }
     }
 }

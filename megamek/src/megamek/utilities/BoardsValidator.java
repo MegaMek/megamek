@@ -188,8 +188,12 @@ public class BoardsValidator {
 
         try {
             if (paths.isEmpty()) {
-                File boardDir = Configuration.boardsDir();
-                validator.scanForBoards(boardDir);
+                validator.scanForBoards(Configuration.boardsDir());
+                File mmDataBoards = mmDataBoardsDir();
+                if (mmDataBoards != null) {
+                    LOGGER.info("Also validating sibling mm-data boards at {}", mmDataBoards);
+                    validator.scanForBoards(mmDataBoards);
+                }
             } else {
                 for (String path : paths) {
                     validator.scanForBoards(new File(path));
@@ -203,6 +207,28 @@ public class BoardsValidator {
             LOGGER.error(ioException, "IO Exception Occurred {}", ioException.getMessage());
             java.lang.System.exit(64);
         }
+    }
+
+    /**
+     * Dev convenience: locates the boards directory of a sibling mm-data checkout, if present. MegaMek's board data is
+     * authored in the separate mm-data repository, which developers check out alongside the megamek repo (for example
+     * {@code .../workspace/megamek} and {@code .../workspace/mm-data}). This walks up from the configured data
+     * directory looking for a sibling {@code mm-data/data/boards}. Returns {@code null} when none is found - for
+     * example in an end-user install where mm-data content has already been merged into the normal boards directory -
+     * so callers can simply skip it.
+     *
+     * @return the sibling mm-data boards directory, or {@code null} if not present
+     */
+    public static File mmDataBoardsDir() {
+        File dir = Configuration.dataDir().getAbsoluteFile();
+        for (int level = 0; (level < 6) && (dir != null); level++) {
+            File candidate = new File(dir, "mm-data" + File.separator + "data" + File.separator + "boards");
+            if (candidate.isDirectory()) {
+                return candidate;
+            }
+            dir = dir.getParentFile();
+        }
+        return null;
     }
 
     private static class Args {

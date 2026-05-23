@@ -102,6 +102,7 @@ import megamek.common.interfaces.PhaseUpdated;
 import megamek.common.interfaces.RoundUpdated;
 import megamek.common.jacksonAdapters.EntityDeserializer;
 import megamek.common.loaders.MekFileParser;
+import megamek.common.moves.ClimbingHelper;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
@@ -2548,8 +2549,19 @@ public abstract class Entity extends TurnOrdered
                     bridgeElev = 0;
                 }
                 int elevDiff = Math.abs((next.getLevel() + bridgeElev) - (current.getLevel() + assumedElevation));
-                if (elevDiff <= getMaxElevationChange()) {
-                    // bridge is reachable at least
+                // TacOps Climbing (TO:AR p.20): a Mek with climb mode on and at least one
+                // functional climbing arm may scale the side of a bridge that sits more than
+                // getMaxElevationChange() levels above it, just as it climbs a building. Without
+                // this, calcElevation never places the Mek on a tall bridge, so the move compiles
+                // as a normal (non-climbing) step and the climb dialog never appears.
+                boolean climbingOntoTallBridge = climb
+                      && (this instanceof Mek)
+                      && next.containsTerrain(Terrains.BRIDGE)
+                      && ((next.getLevel() + bridgeElev) > (current.getLevel() + assumedElevation))
+                      && gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
+                      && ClimbingHelper.canClimb(this);
+                if ((elevDiff <= getMaxElevationChange()) || climbingOntoTallBridge) {
+                    // bridge is reachable, or a climbing Mek can scale up to it (TO:AR p.20)
                     if (climb || !isElevationValid(retVal, next)) {
                         // use bridge if you can't use the base terrain or if
                         // you prefer to by climb mode

@@ -119,6 +119,7 @@ record LOSDiagramData(
      * @param hasScreen        true if a smoke/ECM screen is present
      * @param hasFields        true if planted fields are present
      * @param hasFire          true if the hex is on fire
+     * @param eruptingGeyser   true if an erupting geyser is present (its plume blocks LOS as ultra-heavy woods)
      * @param splitHex         true if this hex was part of a split LOS path (line along hex edge)
      * @param splitAlternate   the alternate hex coordinates if this is a split hex, null otherwise
      * @param blocksLOS        true if this specific hex blocks the LOS line
@@ -137,6 +138,7 @@ record LOSDiagramData(
           boolean hasScreen,
           boolean hasFields,
           boolean hasFire,
+          boolean eruptingGeyser,
           boolean splitHex,
           @Nullable Coords splitAlternate,
           boolean blocksLOS,
@@ -169,7 +171,7 @@ record LOSDiagramData(
          */
         public boolean hasLosModifiers() {
             return hasWoodsOrJungle() || smokeLevel > 0 || hasScreen || hasFields
-                  || hasFire || industrialHeight > 0;
+                  || hasFire || industrialHeight > 0 || eruptingGeyser;
         }
     }
 }

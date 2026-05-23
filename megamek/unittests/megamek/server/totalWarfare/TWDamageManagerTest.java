@@ -48,6 +48,7 @@ import java.util.List;
 import megamek.common.DamageInfo;
 import megamek.common.HitData;
 import megamek.common.Player;
+import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
@@ -160,6 +161,26 @@ class TWDamageManagerTest {
         game.addEntity(asf);
         asf.setOwner(player);
         return asf;
+    }
+
+    BipedMek createFrankenMekForInternalDamage() {
+        BipedMek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setWeight(50);
+        mek.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
+        mek.setFrankenMek(true);
+        mek.setId(game.getNextEntityId());
+        game.addEntity(mek);
+        mek.setOwner(player);
+
+        for (int location = 0; location < mek.locations(); location++) {
+            mek.initializeArmor(0, location);
+            if (mek.hasRearArmor(location)) {
+                mek.initializeRearArmor(0, location);
+            }
+            mek.initializeInternal(10, location);
+        }
+        return mek;
     }
 
     @Test
@@ -359,6 +380,58 @@ class TWDamageManagerTest {
 
         // Don't check for exact remaining armor as AP may produce fatal crits, but PSRs will remain
         assertTrue(gameMan.checkForPSRFromDamage(mek));
+    }
+
+    @Test
+    void testDamageFrankenMekUsesLocationCompositeStructure() {
+        BipedMek mek = createFrankenMekForInternalDamage();
+        mek.setFrankenMekStructureType(Mek.LOC_LEFT_ARM,
+              EquipmentType.T_STRUCTURE_COMPOSITE,
+              TechConstants.T_IS_EXPERIMENTAL);
+        HitData hit = new HitData(Mek.LOC_LEFT_ARM, false, HitData.EFFECT_NO_CRITICAL_SLOTS);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 3, false, DamageType.NONE, true);
+
+        manager.damageEntity(damageInfo);
+
+        assertFalse(mek.hasCompositeStructure(Mek.LOC_CENTER_TORSO));
+        assertTrue(mek.hasCompositeStructure(Mek.LOC_LEFT_ARM));
+        assertEquals(4, mek.getInternal(Mek.LOC_LEFT_ARM));
+    }
+
+    @Test
+    void testDamageFrankenMekUsesLocationReinforcedStructure() {
+        BipedMek mek = createFrankenMekForInternalDamage();
+        mek.setFrankenMekStructureType(Mek.LOC_RIGHT_ARM,
+              EquipmentType.T_STRUCTURE_REINFORCED,
+              TechConstants.T_IS_EXPERIMENTAL);
+        HitData hit = new HitData(Mek.LOC_RIGHT_ARM, false, HitData.EFFECT_NO_CRITICAL_SLOTS);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 3, false, DamageType.NONE, true);
+
+        manager.damageEntity(damageInfo);
+
+        assertFalse(mek.hasReinforcedStructure(Mek.LOC_CENTER_TORSO));
+        assertTrue(mek.hasReinforcedStructure(Mek.LOC_RIGHT_ARM));
+        assertEquals(8, mek.getInternal(Mek.LOC_RIGHT_ARM));
+    }
+
+    @Test
+    void testDamageFrankenMekTransferUsesNewLocationStructure() {
+        BipedMek mek = createFrankenMekForInternalDamage();
+        mek.setFrankenMekStructureType(Mek.LOC_LEFT_ARM,
+              EquipmentType.T_STRUCTURE_COMPOSITE,
+              TechConstants.T_IS_EXPERIMENTAL);
+        mek.setFrankenMekStructureType(Mek.LOC_LEFT_TORSO,
+              EquipmentType.T_STRUCTURE_REINFORCED,
+              TechConstants.T_IS_EXPERIMENTAL);
+        mek.setInternal(2, Mek.LOC_LEFT_ARM);
+        HitData hit = new HitData(Mek.LOC_LEFT_ARM, false, HitData.EFFECT_NO_CRITICAL_SLOTS);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 6, false, DamageType.NONE, true);
+
+        manager.damageEntity(damageInfo);
+
+        assertTrue(mek.hasCompositeStructure(Mek.LOC_LEFT_ARM));
+        assertTrue(mek.hasReinforcedStructure(Mek.LOC_LEFT_TORSO));
+        assertEquals(7, mek.getInternal(Mek.LOC_LEFT_TORSO));
     }
 
     @Test

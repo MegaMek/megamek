@@ -899,7 +899,9 @@ public class TWDamageManager implements IDamageManager {
 
                     // Now we need to consider alternate structure types!
                     int tmpDamageHold = -1;
-                    if (mek.hasCompositeStructure()) {
+                    boolean hasCompositeStructure = mek.hasCompositeStructure(hit.getLocation());
+                    boolean hasReinforcedStructure = mek.hasReinforcedStructure(hit.getLocation());
+                    if (hasCompositeStructure) {
                         tmpDamageHold = damage;
                         damage *= 2;
                         report = new Report(6091);
@@ -907,7 +909,7 @@ public class TWDamageManager implements IDamageManager {
                         report.indent(3);
                         reportVec.add(report);
                     }
-                    if (mek.hasReinforcedStructure()) {
+                    if (hasReinforcedStructure) {
                         tmpDamageHold = damage;
                         damage /= 2;
                         damage += tmpDamageHold % 2;
@@ -1006,11 +1008,11 @@ public class TWDamageManager implements IDamageManager {
 
                         // Now we need to consider alternate structure types!
                         if (tmpDamageHold > 0) {
-                            if (mek.hasCompositeStructure()) {
+                            if (hasCompositeStructure) {
                                 // If there's a remainder, we can actually
                                 // ignore it.
                                 damage /= 2;
-                            } else if (mek.hasReinforcedStructure()) {
+                            } else if (hasReinforcedStructure) {
                                 damage *= 2;
                                 damage -= tmpDamageHold % 2;
                             }

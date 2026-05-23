@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 import javax.swing.*;
@@ -148,6 +149,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     private final MekTableModel unitModel = new MekTableModel();
     private final XTableColumnModel unitColumnModel = new XTableColumnModel();
+    private Predicate<MekSummary> unitSelectionScopeFilter = Objects::nonNull;
     private TableColumn pvColumn;
     private TableColumn bvColumn;
     private TableColumn rulesLevelColumn;
@@ -708,6 +710,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                                 /* Support Vehicles */
                                 && ((nUnit == -1) || (checkSupportVee && mek.isSupport())
                                 || (!checkSupportVee && mek.getUnitType().equals(UnitType.getTypeName(nUnit))))
+                                /* Additional caller-specific restrictions */
+                                && unitSelectionScopeFilter.test(mek)
                                 /* Advanced Search */
                                 && ((searchFilter == null) || MekSearchFilter.isMatch(mek, searchFilter))
                                 && advancedSearchDialog.getASAdvancedSearch().matches(mek)) {
@@ -757,6 +761,23 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         }
         return true;
     }
+
+    /**
+     * Sets additional unit-list restrictions beyond the shared selector controls. The base selector accepts every
+     * candidate that passed the built-in filters; callers can use this to constrain specialized pickers without
+     * duplicating the full filter pipeline.
+     *
+     * @param unitSelectionScopeFilter Predicate that returns true when a candidate should remain visible
+     */
+    protected void setUnitSelectionScopeFilter(Predicate<MekSummary> unitSelectionScopeFilter) {
+        this.unitSelectionScopeFilter = Objects.requireNonNull(unitSelectionScopeFilter, "unitSelectionScopeFilter");
+    }
+
+    /**
+     * Allows subclasses to keep filter controls in sync with additional unit-list restrictions after persisted user
+     * preferences have been restored.
+     */
+    protected void configureUnitSelectionScope() {}
 
     /**
      * @return the selected entity (required for MekHQ/MegaMek overrides)
@@ -840,6 +861,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     public void setVisible(boolean visible) {
         if (visible) {
             setUserPreferences();
+            configureUnitSelectionScope();
         }
         searchFilter = null;
         buttonResetSearch.setEnabled(false);
@@ -859,7 +881,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
         if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
-            GUIP.setMekSelectorUnitType(comboUnitType.getSelectedIndex());
+            if (comboUnitType.isEnabled()) {
+                GUIP.setMekSelectorUnitType(comboUnitType.getSelectedIndex());
+            }
             GUIP.setMekSelectorWeightClass(comboWeight.getSelectedIndex());
             GUIP.setMekSelectorRulesLevels(Arrays.toString(listTechLevel.getSelectedIndices()));
             GUIP.setMekSelectorSortColumn(tableUnits.getRowSorter().getSortKeys().getFirst().getColumn());

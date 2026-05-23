@@ -23133,7 +23133,7 @@ public class TWGameManager extends AbstractGameManager {
                 critMod += 2;
             }
             // reinforced structure gets a -1 mod
-            if ((en instanceof Mek) && ((Mek) en).hasReinforcedStructure()) {
+            if ((en instanceof Mek) && ((Mek) en).hasReinforcedStructure(loc)) {
                 critMod -= 1;
             }
             if (critMod != 0) {

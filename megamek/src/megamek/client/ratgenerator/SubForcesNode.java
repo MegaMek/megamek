@@ -34,6 +34,7 @@ package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 
+import megamek.logging.MMLogger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -44,6 +45,8 @@ import org.w3c.dom.NodeList;
  * @author Neoancient
  */
 public class SubForcesNode extends RulesetNode {
+    private static final MMLogger LOGGER = MMLogger.create(SubForcesNode.class);
+
     String altFaction;
     boolean parentFaction;
     ArrayList<ValueNode> subForces;
@@ -99,6 +102,15 @@ public class SubForcesNode extends RulesetNode {
             if (n.matches(forceDescriptor)) {
                 ValueNode vn = n.selectOption(forceDescriptor);
                 if (vn != null) {
+                    if (isAttached) {
+                        LOGGER.info("[ForceGen][Attached] subforceOption picked: parentEschelon={} " +
+                                    "parentUnitType={} parentName='{}' optionContent='{}' optionUnitType='{}' " +
+                                    "optionName='{}' optionNum={}",
+                              forceDescriptor.getEchelon(), forceDescriptor.getUnitType(),
+                              forceDescriptor.getName(), vn.getContent(),
+                              vn.assertions.getProperty("unitType"),
+                              vn.assertions.getProperty("name"), vn.getNum());
+                    }
                     ArrayList<ForceDescriptor> subs = new ArrayList<>();
                     for (int i = 0; i < vn.getNum(); i++) {
                         if (forceDescriptor.getSizeMod() == ForceDescriptor.UNDERSTRENGTH
@@ -118,6 +130,12 @@ public class SubForcesNode extends RulesetNode {
                         apply(sub, i);
                         n.apply(sub, i);
                         vn.apply(sub, i);
+                        if (isAttached) {
+                            LOGGER.info("[ForceGen][Attached]   created child[{}]: echelon={} " +
+                                        "unitType={} name='{}' weightClass={}",
+                                  i, sub.getEchelon(), sub.getUnitType(), sub.getName(),
+                                  sub.getWeightClass());
+                        }
                         subs.add(sub);
                     }
                     if (forceDescriptor.getSizeMod() == ForceDescriptor.REINFORCED) {

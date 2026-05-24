@@ -65,6 +65,7 @@ import megamek.client.ratgenerator.Ruleset.ProgressListener;
 import megamek.client.ui.Messages;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Player;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -726,6 +727,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      * Walks the generated force tree, buckets each entity into (unit type, weight class), and rebuilds the summary
      * table. Weight-class codes 0-1 collapse into Light and 4-5 into Assault to keep the table to a clean four
      * columns.
+     * <p>For Battle Armor each entity represents one Squad/Point (5 Clan Elementals, 4-5 IS), so cells show
+     * "N (M)" where N is the squad count and M is the total trooper count. Other unit types show plain N.</p>
      */
     private void updateSummaryTable(ForceDescriptor fd) {
         summaryModel.setRowCount(0);
@@ -734,7 +737,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
         ArrayList<Entity> entities = new ArrayList<>();
         fd.addAllEntities(entities);
-        Map<Integer, int[]> counts = new TreeMap<>();
+        // Per (unitType, weightClassColumn): [0]=squad/entity count, [1]=trooper count (BA only).
+        Map<Integer, int[][]> counts = new TreeMap<>();
         for (Entity entity : entities) {
             int unitType = entity.getUnitType();
             int weightClass = entity.getWeightClass();
@@ -748,15 +752,36 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             } else {
                 column = 3;
             }
-            counts.computeIfAbsent(unitType, k -> new int[4])[column]++;
+            int[][] row = counts.computeIfAbsent(unitType, k -> new int[4][2]);
+            row[column][0]++;
+            if (entity instanceof BattleArmor ba) {
+                row[column][1] += ba.getShootingStrength();
+            }
         }
-        for (Map.Entry<Integer, int[]> entry : counts.entrySet()) {
-            int[] row = entry.getValue();
+        for (Map.Entry<Integer, int[][]> entry : counts.entrySet()) {
+            int[][] row = entry.getValue();
+            boolean isBA = (entry.getKey() == UnitType.BATTLE_ARMOR);
             summaryModel.addRow(new Object[] {
                   UnitType.getTypeName(entry.getKey()),
-                  row[0], row[1], row[2], row[3]
+                  formatSummaryCell(row[0], isBA),
+                  formatSummaryCell(row[1], isBA),
+                  formatSummaryCell(row[2], isBA),
+                  formatSummaryCell(row[3], isBA)
             });
         }
+    }
+
+    /**
+     * Formats a summary-table cell. For Battle Armor with at least one squad, shows "N (M)" — squad count and total
+     * trooper count in parentheses. Other unit types and empty cells render as the plain integer.
+     */
+    private static String formatSummaryCell(int[] squadsAndTroopers, boolean isBattleArmor) {
+        int squads = squadsAndTroopers[0];
+        int troopers = squadsAndTroopers[1];
+        if (isBattleArmor && squads > 0) {
+            return squads + " (" + troopers + ")";
+        }
+        return String.valueOf(squads);
     }
 
     private void clearSummaryTable() {

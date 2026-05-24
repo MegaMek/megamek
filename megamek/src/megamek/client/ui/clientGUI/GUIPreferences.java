@@ -83,6 +83,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_SHOW_FPS = "AdvancedShowFPS";
     public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
     public static final String ADVANCED_SAVE_LOBBY_ON_START = "AdvancedSaveLobbyOnStart";
+    /**
+     * Force Generator weight emphasis. Biases the weight-composition rolls toward a formation's named weight class for
+     * the extreme classes only (Light pulls lighter, Assault pulls heavier; Medium/Heavy are unaffected). Scope: 0 =
+     * off (pure Total Warfare p.265 distribution), 1 = leaf only (the lance/star -> element roll), 2 = full cascade
+     * (every echelon). Magnitude is the size of the +/- shift on the underlying 1D6 curve (1 or 2).
+     */
+    public static final String ADVANCED_FORCE_GEN_WEIGHT_EMPHASIS_SCOPE = "AdvancedForceGenWeightEmphasisScope";
+    public static final String ADVANCED_FORCE_GEN_WEIGHT_EMPHASIS_MAGNITUDE = "AdvancedForceGenWeightEmphasisMagnitude";
 
     /* --End advanced settings-- */
     public static final String BOARD_MOVE_DEFAULT_CLIMB_MODE = "BoardMoveDefaultClimbMode";
@@ -537,6 +545,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_KEY_REPEAT_DELAY, 0);
         store.setDefault(ADVANCED_KEY_REPEAT_RATE, 20);
         store.setDefault(ADVANCED_SHOW_FPS, false);
+        store.setDefault(ADVANCED_FORCE_GEN_WEIGHT_EMPHASIS_SCOPE, 0);
+        store.setDefault(ADVANCED_FORCE_GEN_WEIGHT_EMPHASIS_MAGNITUDE, 1);
         store.setDefault(SHOW_COORDS, true);
 
         setDefault(PLANETARY_CONDITIONS_COLOR_TITLE, Color.WHITE);
@@ -1751,6 +1761,20 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getShowFPS() {
         return store.getBoolean(ADVANCED_SHOW_FPS);
+    }
+
+    /**
+     * @return Force Generator weight-emphasis scope: 0 = off, 1 = leaf only, 2 = full cascade.
+     */
+    public int getAdvancedForceGenWeightEmphasisScope() {
+        return store.getInt(ADVANCED_FORCE_GEN_WEIGHT_EMPHASIS_SCOPE);
+    }
+
+    /**
+     * @return Force Generator weight-emphasis magnitude (the +/- shift on the 1D6 curve); clamped to at least 1.
+     */
+    public int getAdvancedForceGenWeightEmphasisMagnitude() {
+        return Math.max(1, store.getInt(ADVANCED_FORCE_GEN_WEIGHT_EMPHASIS_MAGNITUDE));
     }
 
     public boolean getSoftCenter() {

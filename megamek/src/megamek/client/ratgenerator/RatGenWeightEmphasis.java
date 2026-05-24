@@ -35,9 +35,9 @@ package megamek.client.ratgenerator;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.units.EntityWeightClass;
 
 /**
@@ -45,7 +45,7 @@ import megamek.common.units.EntityWeightClass;
  * the extreme classes only. Light formations pull lighter; Assault formations pull heavier; Medium and Heavy are left
  * on the canon (Total Warfare p.265) distribution.
  *
- * <p>Controlled by two hidden client settings (see {@code ClientPreferences}):</p>
+ * <p>Controlled by two settings on the Advanced tab of Client Settings (stored in {@link GUIPreferences}):</p>
  * <ul>
  *   <li><b>scope</b>: 0 = off, 1 = leaf only (the lance/star -> element roll), 2 = full cascade (every echelon).</li>
  *   <li><b>magnitude</b>: the size of the +/- shift applied to the underlying 1D6 curve (1 or 2).</li>
@@ -65,7 +65,7 @@ final class RatGenWeightEmphasis {
 
     private static int scope() {
         try {
-            return PreferenceManager.getClientPreferences().getForceGenWeightEmphasisScope();
+            return GUIPreferences.getInstance().getAdvancedForceGenWeightEmphasisScope();
         } catch (Exception ignored) {
             return 0;
         }
@@ -73,7 +73,7 @@ final class RatGenWeightEmphasis {
 
     private static int magnitude() {
         try {
-            return PreferenceManager.getClientPreferences().getForceGenWeightEmphasisMagnitude();
+            return GUIPreferences.getInstance().getAdvancedForceGenWeightEmphasisMagnitude();
         } catch (Exception ignored) {
             return 1;
         }

@@ -310,7 +310,19 @@ public class Ruleset {
 
         // Any attached support units are then built.
         for (ForceDescriptor sub : fd.getAttached()) {
+            logger.info("[ForceGen][Attached] buildForceTree ENTER: parent='{}' (esch={} ut={}) " +
+                        "attached='{}' (esch={} ut={} wc={} faction={})",
+                  fd.getName(), fd.getEchelon(), fd.getUnitType(),
+                  sub.getName(), sub.getEchelon(), sub.getUnitType(),
+                  sub.getWeightClass(), sub.getFaction());
+            int subCountBefore = sub.getSubForces().size();
+            int attCountBefore = sub.getAttached().size();
             buildForceTree(sub, l, progress / count);
+            logger.info("[ForceGen][Attached] buildForceTree DONE:  attached='{}' (esch={}) " +
+                        "produced subForces={} (was {}) attached={} (was {})",
+                  sub.getName(), sub.getEchelon(),
+                  sub.getSubForces().size(), subCountBefore,
+                  sub.getAttached().size(), attCountBefore);
         }
         /*
          * // Each attached formation is essentially a new top-level node

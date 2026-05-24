@@ -140,6 +140,13 @@ public class LosEffects {
     public static final int DAMAGABLE_COVER_DROPSHIP = 0x1;
     public static final int DAMAGABLE_COVER_BUILDING = 0x2;
 
+    /**
+     * Height in levels that an erupting geyser's plume rises above its hex. Per TacOps, an erupting geyser blocks line
+     * of sight as ultra-heavy woods, which rises three levels above the hex. Shared with the LOS Ruler/diagram so the
+     * UI cannot drift out of sync with the rule. The erupting terrain level itself is {@link Terrains#GEYSER_LVL_ACTIVE}.
+     */
+    public static final int GEYSER_PLUME_HEIGHT = 3;
+
     boolean blocked = false;
     boolean deadZone = false;
     boolean infProtected = false;
@@ -846,6 +853,11 @@ public class LosEffects {
             finalLoS = LosEffects.losStraight(game, ai, diagramLos, partialCover);
         }
 
+        // TacOps: a unit standing in an erupting geyser cannot be seen into (or out of) its own
+        // hex, treated as ultra-heavy woods. losForCoords() ignores the attacker's and target's
+        // own hexes, so those endpoints are handled here.
+        addEruptingGeyserEndpointBlock(game, ai, finalLoS);
+
         finalLoS.hasLoS = !finalLoS.blocked &&
               (finalLoS.screen < 1) &&
               (finalLoS.plantedFields < 6) &&
@@ -872,6 +884,50 @@ public class LosEffects {
 
         finalLoS.targetLoc = ai.targetPos;
         return finalLoS;
+    }
+
+    /**
+     * Applies the TacOps erupting-geyser line-of-sight block to the attacker's and target's own hexes.
+     *
+     * <p>An erupting geyser is treated as ultra-heavy woods for the purpose of determining line of sight into or
+     * through its hex. {@link #losForCoords} ignores the attacker's and target's own hexes, so a unit standing in an
+     * erupting geyser is handled here: if its absolute height is below the top of the plume, it is engulfed and line of
+     * sight is blocked.</p>
+     *
+     * @param game the current game
+     * @param ai   the attack info describing attacker and target positions and heights
+     * @param los  the line-of-sight effects to update
+     */
+    private static void addEruptingGeyserEndpointBlock(Game game, AttackInfo ai, LosEffects los) {
+        if (ai.underWaterCombat) {
+            return;
+        }
+        if (isEngulfedByEruptingGeyser(game, ai.boardId, ai.attackPos, ai.attackAbsHeight) ||
+              isEngulfedByEruptingGeyser(game, ai.boardId, ai.targetPos, ai.targetAbsHeight)) {
+            los.ultraWoods++;
+        }
+    }
+
+    /**
+     * Determines whether a unit at the given position and absolute height is engulfed by an erupting geyser, treating
+     * the geyser plume as ultra-heavy woods rising {@link #GEYSER_PLUME_HEIGHT} levels above the hex.
+     *
+     * @param game      the current game
+     * @param boardId   the board the position is on
+     * @param pos       the hex to check, or null if the unit has no position
+     * @param absHeight the absolute height of the unit in that hex
+     *
+     * @return true if an erupting geyser occupies the hex and its plume rises above the unit
+     */
+    private static boolean isEngulfedByEruptingGeyser(Game game, int boardId, @Nullable Coords pos, int absHeight) {
+        if ((pos == null) || !game.getBoard(boardId).contains(pos)) {
+            return false;
+        }
+        Hex hex = game.getBoard(boardId).getHex(pos);
+        if (hex.terrainLevel(Terrains.GEYSER) != Terrains.GEYSER_LVL_ACTIVE) {
+            return false;
+        }
+        return (hex.getLevel() + GEYSER_PLUME_HEIGHT) > absHeight;
     }
 
     /**
@@ -1580,6 +1636,23 @@ public class LosEffects {
                     if ((woodsLevel == 3) || (jungleLevel == 3)) {
                         los.ultraWoods++;
                     }
+                }
+            }
+
+            // TacOps: an erupting geyser blocks LOS through its hex, treated as ultra-heavy woods.
+            // The plume rises three levels above the hex level.
+            if (hex.terrainLevel(Terrains.GEYSER) == Terrains.GEYSER_LVL_ACTIVE) {
+                int geyserPlumeEl = hexEl + GEYSER_PLUME_HEIGHT;
+                if (diagramLoS) {
+                    affectsLos = geyserPlumeEl >= losElevation;
+                } else {
+                    affectsLos = (geyserPlumeEl > maxUnitHeight) ||
+                          ((geyserPlumeEl > ai.attackAbsHeight) && attackerAdjacent) ||
+                          ((geyserPlumeEl > ai.targetAbsHeight) && targetAdjacent);
+                }
+                if (affectsLos) {
+                    los.ultraWoods++;
+                    logger.debug("    -> {} counted as ULTRA WOODS (erupting geyser)", coords);
                 }
             }
         }

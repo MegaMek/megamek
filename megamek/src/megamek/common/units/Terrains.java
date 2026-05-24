@@ -97,6 +97,10 @@ public class Terrains implements Serializable {
     public static final int FIRE_LVL_INFERNO_BOMB = 3;
     public static final int FIRE_LVL_INFERNO_IV = 4;
 
+    public static final int GEYSER_LVL_DORMANT = 1;
+    public static final int GEYSER_LVL_ACTIVE = 2;
+    public static final int GEYSER_LVL_MAGMA_VENT = 3;
+
     // Building stuff
     public static final int BUILDING = 22; // 1: light 2: medium 3: heavy 4:
     // hardened [5: wall not implemented]

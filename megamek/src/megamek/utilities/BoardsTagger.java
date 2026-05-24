@@ -370,6 +370,11 @@ public class BoardsTagger {
 
             File boardDir = Configuration.boardsDir();
             scanForBoards(boardDir, boardCheckSum);
+            File mmDataBoards = BoardsValidator.mmDataBoardsDir();
+            if (mmDataBoards != null) {
+                logger.info("Also tagging sibling mm-data boards at {}", mmDataBoards);
+                scanForBoards(mmDataBoards, boardCheckSum);
+            }
 
             boardCheckSum.forEach((key, value) -> {
                 if (value.size() > 1) {
@@ -515,6 +520,11 @@ public class BoardsTagger {
         try {
             File boardDir = Configuration.boardsDir();
             scanForBoardsAndUpdateHeaders(boardDir);
+            File mmDataBoards = BoardsValidator.mmDataBoardsDir();
+            if (mmDataBoards != null) {
+                logger.info("Also updating headers for sibling mm-data boards at {}", mmDataBoards);
+                scanForBoardsAndUpdateHeaders(mmDataBoards);
+            }
         } catch (Exception ex) {
             logger.error(ex, "Copyright header updater cannot scan boards");
         }

@@ -1206,6 +1206,70 @@ public class EnhancedTabbedPane extends JTabbedPane {
     }
 
     /**
+     * Checks if a component is currently hosted by this pane, including detached tab windows.
+     *
+     * @param component The component to find
+     * @return true if the component is attached or detached from this pane
+     */
+    public boolean containsTab(Component component) {
+        return (component != null) && ((indexOfComponent(component) >= 0) || (getDetachedTabWindow(component) != null));
+    }
+
+    /**
+     * Removes a component from this pane, closing its floating window if the tab is currently detached.
+     *
+     * @param component The component to remove
+     * @return true if the component was found and removed
+     */
+    public boolean removeTab(Component component) {
+        if (component == null) {
+            return false;
+        }
+        int tabIndex = indexOfComponent(component);
+        if (tabIndex >= 0) {
+            remove(tabIndex);
+            return true;
+        }
+
+        Component detachedWindow = getDetachedTabWindow(component);
+        if (detachedWindow == null) {
+            return false;
+        }
+        DetachedTabInfo tabInfo = detachedTabs.remove(detachedWindow);
+        removeDetachedTabWindow(detachedWindow, tabInfo);
+        return true;
+    }
+
+    private Component getDetachedTabWindow(Component component) {
+        for (Map.Entry<Component, DetachedTabInfo> detachedTab : detachedTabs.entrySet()) {
+            DetachedTabInfo tabInfo = detachedTab.getValue();
+            if ((tabInfo != null) && (tabInfo.component == component)) {
+                return detachedTab.getKey();
+            }
+        }
+        return null;
+    }
+
+    private void removeDetachedTabWindow(Component detachedWindow, DetachedTabInfo tabInfo) {
+        if (tabInfo == null) {
+            return;
+        }
+        if (detachedWindow instanceof JFrame frame) {
+            frame.getContentPane().remove(tabInfo.component);
+            frame.dispose();
+        } else if (detachedWindow instanceof JDialog dialog) {
+            dialog.getContentPane().remove(tabInfo.component);
+            dialog.dispose();
+        } else if (detachedWindow instanceof Window window) {
+            window.dispose();
+        }
+        tabInfo.sourcePane = null;
+        tabInfo.wrapperComponent = null;
+        updateNoTabsMessageVisibility();
+        fireTabRemoved(tabInfo.originalIndex, tabInfo.component);
+    }
+
+    /**
      * Updates the title of a detached tab window containing the given editor
      *
      * @param frame The editor to find in detached windows

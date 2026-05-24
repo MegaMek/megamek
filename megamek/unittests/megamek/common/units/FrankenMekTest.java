@@ -36,8 +36,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+
 import megamek.common.TechConstants;
+import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestMek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -45,6 +50,142 @@ class FrankenMekTest {
     @BeforeAll
     static void beforeAll() {
         EquipmentType.initializeTypes();
+    }
+
+    private static Mek newFrankenMek() {
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setWeight(25.0);
+        mek.setFrankenMek(true);
+        return mek;
+    }
+
+    private static void setAllFrankenMekStructures(Mek mek, EquipmentType structure) {
+        for (int location = 0; location < mek.locations(); location++) {
+            mek.setFrankenMekStructureType(location, structure);
+        }
+    }
+
+    private static void assertFrankenMekStructureCrits(Mek mek, int head, int centerTorso, int sideTorso, int arm,
+          int leg) {
+        assertEquals(head, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_HEAD));
+        assertEquals(centerTorso, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_CENTER_TORSO));
+        assertEquals(sideTorso, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_RIGHT_TORSO));
+        assertEquals(sideTorso, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_LEFT_TORSO));
+        assertEquals(arm, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_RIGHT_ARM));
+        assertEquals(arm, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_LEFT_ARM));
+        assertEquals(leg, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_RIGHT_LEG));
+        assertEquals(leg, mek.getFrankenMekStructureCriticalSlots(Mek.LOC_LEFT_LEG));
+    }
+
+    private static String getMekVerifierReport(Mek mek) {
+        EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(
+              "testresources/data/mekfiles/UnitVerifierOptions.xml"));
+        StringBuffer report = new StringBuffer();
+        new TestMek(mek, entityVerifier.mekOption, null).correctEntity(report, mek.getTechLevel());
+        return report.toString();
+    }
+
+    @Test
+    void verifierRejectsOmniMek() {
+        Mek mek = new BipedMek();
+        mek.setWeight(60.0);
+        mek.setEngine(new Engine(240, Engine.NORMAL_ENGINE, 0));
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setOmni(true);
+        mek.setFrankenMek(true);
+
+        assertTrue(getMekVerifierReport(mek).contains("FrankenMeks cannot be OmniMeks"));
+    }
+
+    @Test
+    void standardSelectionClearsHybridStructure() {
+        Mek mek = newFrankenMek();
+
+        mek.setFrankenMekStructureType(Mek.LOC_HEAD,
+              EquipmentType.get(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL, false)));
+        assertTrue(mek.hasHybridFrankenMekStructure());
+
+        mek.setFrankenMekStructureType(Mek.LOC_HEAD,
+              EquipmentType.get(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_STANDARD)));
+
+        assertFalse(mek.hasHybridFrankenMekStructure());
+        assertEquals(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_STANDARD),
+              mek.getFrankenMekStructureDisplayName());
+    }
+
+    @Test
+    void structureCriticalSlotsUseLocationDistributionTable() {
+        Mek mek = newFrankenMek();
+
+        setAllFrankenMekStructures(mek,
+              EquipmentType.get(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL, false)));
+        assertFrankenMekStructureCrits(mek, 1, 1, 3, 2, 1);
+
+        setAllFrankenMekStructures(mek,
+              EquipmentType.get(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL, true)));
+        assertFrankenMekStructureCrits(mek, 0, 1, 1, 1, 1);
+
+        setAllFrankenMekStructures(mek,
+              EquipmentType.get(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_COMPOSITE, false)));
+        assertFrankenMekStructureCrits(mek, 0, 1, 1, 1, 1);
+
+        setAllFrankenMekStructures(mek,
+              EquipmentType.get(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_COMPOSITE, true)));
+        assertFrankenMekStructureCrits(mek, 0, 1, 1, 1, 1);
+    }
+
+    @Test
+    void legMismatchDetectsStructureTonnage() {
+        Mek mek = newFrankenMek();
+
+        assertFalse(mek.hasMismatchedFrankenMekLegs());
+
+        mek.setFrankenMekStructureTonnage(Mek.LOC_LEFT_LEG, 30);
+
+        assertTrue(mek.hasMismatchedFrankenMekLegs());
+
+        mek.setFrankenMekStructureTonnage(Mek.LOC_RIGHT_LEG, 30);
+
+        assertFalse(mek.hasMismatchedFrankenMekLegs());
+    }
+
+    @Test
+    void legMismatchDetectsStructureType() {
+        Mek mek = newFrankenMek();
+        EquipmentType endoSteel = EquipmentType.get(
+              EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL, false));
+
+        assertFalse(mek.hasMismatchedFrankenMekLegs());
+
+        mek.setFrankenMekStructureType(Mek.LOC_LEFT_LEG, endoSteel);
+
+        assertTrue(mek.hasMismatchedFrankenMekLegs());
+
+        mek.setFrankenMekStructureType(Mek.LOC_RIGHT_LEG, endoSteel);
+
+        assertFalse(mek.hasMismatchedFrankenMekLegs());
+    }
+
+    @Test
+    void legMismatchDetectsDonor() {
+        Mek mek = newFrankenMek();
+        mek.linkFrankenMekLocationToSource(Mek.LOC_LEFT_LEG, "Atlas", "BattleMek");
+        mek.linkFrankenMekLocationToSource(Mek.LOC_RIGHT_LEG, "Atlas", "BattleMek");
+
+        assertFalse(mek.hasMismatchedFrankenMekLegs());
+
+        mek.linkFrankenMekLocationToSource(Mek.LOC_RIGHT_LEG, "Crab", "BattleMek");
+
+        assertTrue(mek.hasMismatchedFrankenMekLegs());
+
+        mek.linkFrankenMekLocationToSource(Mek.LOC_LEFT_LEG, "Crab", "BattleMek");
+
+        assertFalse(mek.hasMismatchedFrankenMekLegs());
+
+        mek.linkFrankenMekLocationToSource(Mek.LOC_RIGHT_LEG, "Crab", "OmniMek");
+
+        assertTrue(mek.hasMismatchedFrankenMekLegs());
     }
 
     @Test

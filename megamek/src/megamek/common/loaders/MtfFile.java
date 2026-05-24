@@ -116,7 +116,6 @@ public class MtfFile implements IMekLoader {
     private final Map<Integer, String> frankenMekStructureValues = new HashMap<>();
     private final Map<Integer, String> frankenMekLocationSources = new HashMap<>();
     private final Map<Integer, String> frankenMekLocationSourceTypes = new HashMap<>();
-    private boolean mismatchedFrankenMekLegs = false;
 
     private final String[][] critData;
     private final List<String> noCritEquipment = new ArrayList<>();
@@ -163,7 +162,6 @@ public class MtfFile implements IMekLoader {
     public static final String MASS = "mass:";
     public static final String ENGINE = "engine:";
     public static final String STRUCTURE = "structure:";
-    public static final String MISMATCHED_LEGS = "mismatched legs:";
     public static final String MYOMER = "myomer:";
     public static final String LAM = "lam:";
     public static final String CONFIG = "config:";
@@ -667,7 +665,6 @@ public class MtfFile implements IMekLoader {
                       parseFrankenMekStructureTonnage(mek, entry.getKey(), structureValue));
             }
         }
-        mek.setMismatchedFrankenMekLegs(mismatchedFrankenMekLegs);
     }
 
     private int parseFrankenMekStructureTonnage(Mek mek, int location, String tonnageValue)
@@ -1644,11 +1641,6 @@ public class MtfFile implements IMekLoader {
             return true;
         }
 
-        if (lineLower.startsWith(MISMATCHED_LEGS)) {
-            String value = line.substring(line.indexOf(':') + 1).trim();
-            mismatchedFrankenMekLegs = value.isBlank() || Boolean.parseBoolean(value);
-            return true;
-        }
 
         if (lineLower.startsWith(MYOMER)) {
             return true;

@@ -260,8 +260,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           "CommonSettingsDialog.defaultAutoejectDisabled"));
     private final JCheckBox useAverageSkills =
           new JCheckBox(Messages.getString("CommonSettingsDialog.useAverageSkills"));
-    private final JCheckBox useGPinUnitSelection = new JCheckBox(Messages.getString(
-          "CommonSettingsDialog.useGPinUnitSelection"));
     private final JCheckBox generateNames = new JCheckBox(Messages.getString("CommonSettingsDialog.generateNames"));
     private final JCheckBox showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId"));
     private final JCheckBox showAutoResolvePanel = new JCheckBox(Messages.getString(
@@ -2144,8 +2142,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         comps.add(checkboxEntry(defaultAutoEjectDisabled, null));
         comps.add(checkboxEntry(useAverageSkills, null));
-        comps.add(checkboxEntry(useGPinUnitSelection,
-              "This changes the BV/PV displayed in the unit selection list. It does not change the pilot/gunnery of the mek once selected. Request restart of Megamek."));
         comps.add(checkboxEntry(generateNames, null));
 
         addLineSpacer(comps);
@@ -2299,7 +2295,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
             defaultAutoEjectDisabled.setSelected(CLIENT_PREFERENCES.defaultAutoEjectDisabled());
             useAverageSkills.setSelected(CLIENT_PREFERENCES.useAverageSkills());
-            useGPinUnitSelection.setSelected(CLIENT_PREFERENCES.useGPinUnitSelection());
             generateNames.setSelected(CLIENT_PREFERENCES.generateNames());
             showUnitId.setSelected(CLIENT_PREFERENCES.getShowUnitId());
             showAutoResolvePanel.setSelected(CLIENT_PREFERENCES.getShowAutoResolvePanel());
@@ -2793,7 +2788,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         CLIENT_PREFERENCES.setEnableExperimentalBotFeatures(enableExperimentalBotFeatures.isSelected());
         CLIENT_PREFERENCES.setDefaultAutoEjectDisabled(defaultAutoEjectDisabled.isSelected());
         CLIENT_PREFERENCES.setUseAverageSkills(useAverageSkills.isSelected());
-        CLIENT_PREFERENCES.setUseGpInUnitSelection(useGPinUnitSelection.isSelected());
         CLIENT_PREFERENCES.setGenerateNames(generateNames.isSelected());
         CLIENT_PREFERENCES.setShowUnitId(showUnitId.isSelected());
         CLIENT_PREFERENCES.setShowAutoResolvePanel(showAutoResolvePanel.isSelected());

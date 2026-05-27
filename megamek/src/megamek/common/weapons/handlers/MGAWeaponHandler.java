@@ -231,11 +231,7 @@ public class MGAWeaponHandler extends MGHandler {
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
 
-        // some buildings scale remaining damage that is not absorbed
-        // TODO: this isn't quite right for castles brian
-        if ((null != bldg) && !targetStickingOutOfBuilding) {
-            nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
-        }
+        nDamage = getBuildingDamageAdjustment(entityTarget, bldg, targetStickingOutOfBuilding, nDamage);
 
         // A building may absorb the entire shot.
         if (nDamage == 0) {

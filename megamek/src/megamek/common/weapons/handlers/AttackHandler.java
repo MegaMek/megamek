@@ -40,6 +40,7 @@ import megamek.common.Report;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 
 /**
  * Describes a set of methods a class can use to represent an attack from some weapon.
@@ -99,4 +100,25 @@ public interface AttackHandler {
 
     void setStrafingFirstShot(boolean isFirstShotStrafing);
 
+
+    /**
+     * Scale the {@code nDamage} based on if the unit is inside a building, partially sticking out of it, or not.
+     *
+     * @param entityTarget
+     * @param bldg
+     * @param targetStickingOutOfBuilding
+     * @param nDamage
+     *
+     * @return adjusted {@code nDamage}
+     */
+    default int getBuildingDamageAdjustment(Entity entityTarget, IBuilding bldg,
+          boolean targetStickingOutOfBuilding,
+          int nDamage) {
+        // some buildings scale remaining damage that is not absorbed
+        // TODO: this isn't quite right for castles brian
+        if ((null != bldg) && !targetStickingOutOfBuilding && (entityTarget.isInBuilding())) {
+            nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
+        }
+        return nDamage;
+    }
 }

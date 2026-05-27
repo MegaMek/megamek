@@ -114,9 +114,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
                   vPhaseReport, bldg, targetStickingOutOfBuilding);
             nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
             nDamage = checkLI(nDamage, entityTarget, vPhaseReport);
-            if ((bldg != null) && !targetStickingOutOfBuilding) {
-                nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
-            }
+            nDamage = getBuildingDamageAdjustment(entityTarget, bldg, targetStickingOutOfBuilding, nDamage);
 
             // If using BMM heat option, do damage as well as heat
             if (game.getOptions().booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)) {

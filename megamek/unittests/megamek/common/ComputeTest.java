@@ -958,4 +958,76 @@ class ComputeTest {
         assertEquals(1, reports.size(), "Report size");
         assertTrue(reports.getFirst().text().contains("in building"));
     }
+
+    /**
+     * Tests for {@link Compute#isInBuilding(Game, Entity)}
+     */
+    @Nested
+    @DisplayName("isInBuilding Tests")
+    class ComputeTestIsInBuilding extends GameBoardTestCase {
+
+        static {
+            initializeBoard("01_BY_02_WITH_BUILDING", """
+                  size 1 2
+                  hex 0101 0 "" ""
+                  hex 0102 0 "bldg_elev:2;building:2:8;bldg_cf:100" ""
+                  end""");
+        }
+
+        @BeforeEach
+        void beforeEach() {
+            setBoard("01_BY_02_WITH_BUILDING");
+        }
+
+        @Test
+        @DisplayName("Mek at ground floor of a building is inside the building")
+        void mekAtGroundFloorIsInBuilding() {
+            Mek mek = createMek("Atlas", "AS7-D", "Alice");
+            mek.setPosition(new Coords(0, 1));
+            mek.setElevation(0);
+
+            assertTrue(Compute.isInBuilding(getGame(), mek));
+        }
+
+        @Test
+        @DisplayName("Mek at upper floor of a building is inside the building")
+        void mekAtUpperFloorIsInBuilding() {
+            Mek mek = createMek("Atlas", "AS7-D", "Alice");
+            mek.setPosition(new Coords(0, 1));
+            mek.setElevation(1);
+
+            assertTrue(Compute.isInBuilding(getGame(), mek));
+        }
+
+        @Test
+        @DisplayName("Mek standing on building roof is not inside the building")
+        void mekOnBuildingRoofIsNotInBuilding() {
+            Mek mek = createMek("Atlas", "AS7-D", "Alice");
+            mek.setPosition(new Coords(0, 1));
+            mek.setElevation(2);
+
+            assertFalse(Compute.isInBuilding(getGame(), mek));
+        }
+
+        @Test
+        @DisplayName("Prone Mek on building roof is not inside the building")
+        void proneMekOnBuildingRoofIsNotInBuilding() {
+            Mek mek = createMek("Atlas", "AS7-D", "Alice");
+            mek.setPosition(new Coords(0, 1));
+            mek.setElevation(2);
+            mek.setProne(true);
+
+            assertFalse(Compute.isInBuilding(getGame(), mek));
+        }
+
+        @Test
+        @DisplayName("Mek in a hex with no building is not inside a building")
+        void mekInNonBuildingHexIsNotInBuilding() {
+            Mek mek = createMek("Atlas", "AS7-D", "Alice");
+            mek.setPosition(new Coords(0, 0));
+            mek.setElevation(0);
+
+            assertFalse(Compute.isInBuilding(getGame(), mek));
+        }
+    }
 }

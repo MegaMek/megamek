@@ -39,6 +39,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
 import java.util.Vector;
@@ -144,7 +145,9 @@ class InfantryHeatWeaponHandlerTest {
         doReturn(mockWeapon).when(mockAttacker).getEquipment(0);
 
         doReturn(1).when(mockAction).getEntityId();
+        doReturn(mockAttacker).when(mockAction).getEntity(mockGame);
         doReturn(0).when(mockAction).getWeaponId();
+        when(mockAttacker.getWeapon(mockAction.getWeaponId())).thenReturn(mockWeapon);
         doReturn(Targetable.TYPE_ENTITY).when(mockAction).getTargetType();
         doReturn(2).when(mockAction).getTargetId();
         doReturn(Mek.LOC_NONE).when(mockAction).getAimedLocation();

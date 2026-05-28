@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2004-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -1606,11 +1606,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
         nDamage = checkLI(nDamage, entityTarget, vPhaseReport);
 
-        // some buildings scale remaining damage that is not absorbed
-        // TODO: this isn't quite right for castles brian
-        if ((null != bldg) && !targetStickingOutOfBuilding) {
-            nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
-        }
+        nDamage = getBuildingDamageAdjustment(entityTarget, bldg, targetStickingOutOfBuilding, nDamage);
 
         // A building may absorb the entire shot.
         if (nDamage == 0) {

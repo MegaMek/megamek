@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -1251,6 +1251,16 @@ public class MapMenu extends JPopupMenu {
                 }
             }
 
+            // Populate brush-off targets
+            // BAs / Infantry should be handled normally by selecting them as a target, we just
+            // don't have a good GUI way to do that for iNarc pods.
+            List<Targetable> inarcs = PhysicalDisplay.getINarcPods(myEntity, coords);
+            if (!inarcs.isEmpty()) {
+                for (Targetable brushTarget : inarcs) {
+                    menu.add(createBrushOffJMenuItem(brushTarget));
+                }
+            }
+
             ToHitData grappleAttackActionToHitData = GrappleAttackAction.toHit(client.getGame(),
                   myEntity.getId(),
                   myTarget);
@@ -1888,6 +1898,26 @@ public class MapMenu extends JPopupMenu {
         item.addActionListener(evt -> {
             try {
                 ((PhysicalDisplay) currentPanel).doGrapple();
+            } catch (Exception ex) {
+                logger.error(ex, "");
+            }
+        });
+        return item;
+    }
+
+    /**
+     * Create a menu entry for sweeping off a specific target (currently only supports iNarc pods)
+     * Each valid iNarc pod should get one entry with the target's name, which will create the
+     * BrushOffAttackAction to try to clear that target only.
+     * @param brushTarget   Targetable iNarc pod instance
+     * @return              JMenuItem that will launch the physical attack selection dialog
+     */
+    private JMenuItem createBrushOffJMenuItem(Targetable brushTarget) {
+        JMenuItem item = new JMenuItem(String.format("Brush Off [%s]", brushTarget.getDisplayName()));
+
+        item.addActionListener(evt -> {
+            try {
+                ((PhysicalDisplay) currentPanel).doBrush(brushTarget);
             } catch (Exception ex) {
                 logger.error(ex, "");
             }

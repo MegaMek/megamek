@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -508,6 +508,19 @@ public class MovePath implements Cloneable, Serializable {
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                     return;
                 }
+            }
+        }
+
+        // Check if jumping infantry exceeds their maximum reachable elevation
+        if (isJumping() && (entity instanceof Infantry)) {
+            Hex destHex = game.getBoard(step.getBoardId()).getHex(step.getPosition());
+            int maxElevation = (entity.getJumpMP() +
+                  entity.getElevation() +
+                  game.getBoard(entity.getBoardId()).getHex(entity.getPosition()).getLevel()) -
+                  destHex.getLevel();
+            if (step.getElevation() > maxElevation) {
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                return;
             }
         }
 

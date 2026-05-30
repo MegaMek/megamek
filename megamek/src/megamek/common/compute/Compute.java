@@ -7267,6 +7267,7 @@ public class Compute {
                          TBOLT_15,
                          TBOLT_20,
                          HAG,
+                         MEK_MORTAR,
                          ROCKET_LAUNCHER -> {
                         return false;
                     }

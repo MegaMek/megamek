@@ -48,13 +48,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Utility methods for exporting equipment from the command line.
+ * Utility methods for exporting the equipment database from the command line.
  */
-public class EquipmentExporter {
+class EquipmentExporter {
 
     private static final MMLogger LOGGER = MMLogger.create(EquipmentType.class);
 
-    public static void writeEquipmentDatabase(File f) {
+    static void writeEquipmentDatabase(File f) {
         try {
             BufferedWriter w = new BufferedWriter(new FileWriter(f));
             w.write("MegaMek Equipment Database");
@@ -94,7 +94,7 @@ public class EquipmentExporter {
         }
     }
 
-    public static void writeEquipmentExtendedDatabase(File f) {
+    static void writeEquipmentExtendedDatabase(File f) {
         try {
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
             bufferedWriter.write("MegaMek Equipment Extended Database");
@@ -212,7 +212,7 @@ public class EquipmentExporter {
         }
     }
 
-    public static void writeEquipmentWeaponDatabase(File f) {
+    static void writeEquipmentWeaponDatabase(File f) {
         try {
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
             bufferedWriter.write("MegaMek Equipment Weapon Database");
@@ -361,7 +361,7 @@ public class EquipmentExporter {
         }
     }
 
-    public static void writeEquipmentAmmoDatabase(File f) {
+    static void writeEquipmentAmmoDatabase(File f) {
         try {
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
             bufferedWriter.write("MegaMek Equipment Armor Database");
@@ -502,7 +502,7 @@ public class EquipmentExporter {
         }
     }
 
-    public static void writeEquipmentMiscDatabase(File f) {
+    static void writeEquipmentMiscDatabase(File f) {
         try {
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
             bufferedWriter.write("MegaMek Equipment Extended Database");

@@ -12755,11 +12755,12 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
-        if (te != null) {
-            // Different target types get different handling.
-            switch (target.getTargetType()) {
-                case Targetable.TYPE_ENTITY:
-                    // Handle Entity targets.
+        // Different target types get different handling.
+        switch (target.getTargetType()) {
+            // Only applicable to infantry/BAs and iNarc pods
+            case Targetable.TYPE_ENTITY:
+                // Handle Entity targets.
+                if (te != null) {
                     HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
                     hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                     r = new Report(4045);
@@ -12777,19 +12778,18 @@ public class TWGameManager extends AbstractGameManager {
                     r.subject = ae.getId();
                     r.add(te.getDisplayName());
                     addReport(r);
-                    break;
-                case Targetable.TYPE_I_NARC_POD:
-                    // Handle iNarc pod targets.
-                    // TODO : check the return code and handle false appropriately.
-                    ae.removeINarcPod((INarcPod) target);
-                    // TODO : confirm that we don't need to update the attacker.
-                    r = new Report(4105);
-                    r.subject = ae.getId();
-                    r.add(target.getDisplayName());
-                    addReport(r);
-                    break;
-                // TODO : add a default: case and handle it appropriately.
-            }
+                }
+                break;
+            case Targetable.TYPE_I_NARC_POD:
+                // Handle iNarc pod targets.
+                // We don't need to update the attacker here because we will update all entities soon-ish
+                // TODO : check the return code and handle false appropriately.
+                ae.removeINarcPod((INarcPod) target);
+                r = new Report(4105);
+                r.subject = ae.getId();
+                r.add(target.getDisplayName());
+                addReport(r);
+                break;
         }
     }
 

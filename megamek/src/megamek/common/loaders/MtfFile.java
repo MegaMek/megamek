@@ -115,7 +115,7 @@ public class MtfFile implements IMekLoader {
     private final String[] armorValues = new String[12];
     private final Map<Integer, String> frankenMekStructureValues = new HashMap<>();
     private final Map<Integer, String> frankenMekLocationSources = new HashMap<>();
-    private boolean mismatchedFrankenMekLegs = false;
+    private final Map<Integer, String> frankenMekLocationSourceTypes = new HashMap<>();
 
     private final String[][] critData;
     private final List<String> noCritEquipment = new ArrayList<>();
@@ -162,7 +162,6 @@ public class MtfFile implements IMekLoader {
     public static final String MASS = "mass:";
     public static final String ENGINE = "engine:";
     public static final String STRUCTURE = "structure:";
-    public static final String MISMATCHED_LEGS = "mismatched legs:";
     public static final String MYOMER = "myomer:";
     public static final String LAM = "lam:";
     public static final String CONFIG = "config:";
@@ -200,6 +199,7 @@ public class MtfFile implements IMekLoader {
     public static final String OMNI_POD = "(OMNIPOD)";
     public static final String NO_CRIT = "nocrit:";
     public static final String LOCATION_DONOR = "donor:";
+    public static final String LOCATION_DONOR_TYPE = "donor type:";
     public static final String SIZE = ":SIZE:";
     public static final String MUL_ID = "mul id:";
     public static final String QUIRK = "quirk:";
@@ -531,7 +531,8 @@ public class MtfFile implements IMekLoader {
 
             if (mek.isFrankenMek()) {
                 for (Map.Entry<Integer, String> entry : frankenMekLocationSources.entrySet()) {
-                    mek.linkFrankenMekLocationToSource(entry.getKey(), entry.getValue());
+                    mek.linkFrankenMekLocationToSource(entry.getKey(), entry.getValue(),
+                          frankenMekLocationSourceTypes.get(entry.getKey()));
                 }
             }
 
@@ -664,7 +665,6 @@ public class MtfFile implements IMekLoader {
                       parseFrankenMekStructureTonnage(mek, entry.getKey(), structureValue));
             }
         }
-        mek.setMismatchedFrankenMekLegs(mismatchedFrankenMekLegs);
     }
 
     private int parseFrankenMekStructureTonnage(Mek mek, int location, String tonnageValue)
@@ -757,6 +757,13 @@ public class MtfFile implements IMekLoader {
 
             if ((loc >= 0) && (loc < critData.length) && line.toLowerCase().startsWith(LOCATION_DONOR)) {
                 frankenMekLocationSources.put(loc, line.substring(LOCATION_DONOR.length()).trim());
+                continue;
+            }
+
+            if ((loc >= 0) && (loc < critData.length)
+                  && line.toLowerCase().startsWith(LOCATION_DONOR_TYPE)) {
+                frankenMekLocationSourceTypes.put(loc,
+                      line.substring(LOCATION_DONOR_TYPE.length()).trim());
                 continue;
             }
 
@@ -1634,11 +1641,6 @@ public class MtfFile implements IMekLoader {
             return true;
         }
 
-        if (lineLower.startsWith(MISMATCHED_LEGS)) {
-            String value = line.substring(line.indexOf(':') + 1).trim();
-            mismatchedFrankenMekLegs = value.isBlank() || Boolean.parseBoolean(value);
-            return true;
-        }
 
         if (lineLower.startsWith(MYOMER)) {
             return true;

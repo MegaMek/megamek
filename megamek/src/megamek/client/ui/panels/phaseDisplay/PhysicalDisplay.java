@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -1401,6 +1401,11 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
     }
 
+    public void doBrush(Targetable brushTarget) {
+        target(brushTarget);
+        brush();
+    }
+
     /**
      * Sweep off the target with the arms that the player selects.
      */
@@ -1885,13 +1890,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         // Add any iNarc pods attached to the entity if the attacker is targeting its own hex
-        if (attacker.getPosition().equals(pos)) {
-            Iterator<INarcPod> pods = attacker.getINarcPodsAttached();
-            while (pods.hasNext()) {
-                Targetable choice = pods.next();
-                targets.add(choice);
-            }
-        }
+        targets.addAll(getINarcPods(attacker, pos));
 
         if (targets.size() == 1) {
             // Return the single choice
@@ -2247,5 +2246,26 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             aimingAt = icb.getIndex();
             updateTarget();
         }
+    }
+
+    /**
+     * Helper method that allows us to get the list of iNarc pods in a given attacker's Coords,
+     * used by PhysicalDisplay and the MapMenu right-click menu.
+     *
+     * @param attacker  Should be the current entity for whom we're building attack data.
+     * @param pos       Coords of the hex to check; may not be the same as attacker.getPosition()
+     * @return          List of Targetables containing co-located iNarc pods
+     */
+    public static List<Targetable> getINarcPods(Entity attacker, Coords pos) {
+        List<Targetable> targets = new ArrayList<>();
+        // Add any iNarc pods attached to the entity if the attacker is targeting its own hex
+        if (attacker.getPosition().equals(pos)) {
+            Iterator<INarcPod> pods = attacker.getINarcPodsAttached();
+            while (pods.hasNext()) {
+                Targetable choice = pods.next();
+                targets.add(choice);
+            }
+        }
+        return targets;
     }
 }

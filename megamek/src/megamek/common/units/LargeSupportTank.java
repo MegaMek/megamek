@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2003 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -67,6 +67,7 @@ public class LargeSupportTank extends SupportTank {
     public static final int LOC_REAR_LEFT = 5;
     public static final int LOC_REAR = 6;
     public static final int LOC_TURRET = 7;
+    // for dual turrets, turret 2 is the front turret
     public static final int LOC_TURRET_2 = 8;
 
     private double fuelTonnage = 0;
@@ -79,11 +80,10 @@ public class LargeSupportTank extends SupportTank {
 
     private static final String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
                                                                  "Front Left", "Rear Right", "Rear Left", "Rear",
-                                                                 "Rear Turret",
-                                                                 "Front Turret" };
+                                                                 "Rear Turret", "Front Turret" };
 
     // tanks have no critical slot limitations
-    private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25, 25 };
+    private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25, 25, 25 };
 
     @Override
     public String[] getLocationAbbreviations() {

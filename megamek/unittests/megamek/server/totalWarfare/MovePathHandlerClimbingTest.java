@@ -40,6 +40,8 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import megamek.common.CriticalSlot;
 import megamek.common.GameBoardTestCase;
@@ -47,6 +49,7 @@ import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
@@ -72,6 +75,33 @@ public class MovePathHandlerClimbingTest extends GameBoardTestCase {
               hex 0101 0 "" ""
               hex 0102 0 "bldg_elev:5;building:2:80;bldg_cf:80" ""
               end""");
+
+        // Water under a bridge: Mek at water bottom (-2) starts a 4-level climb up onto the
+        // bridge surface (+2). A 2-level partial climb stops it at elevation 0 — water surface
+        // — while still clinging to the bridge side. Used by the partial-climb cleanup test.
+        initializeBoard("BOARD_BRIDGE_OVER_DEEP_WATER", """
+              size 1 2
+              hex 0101 0 "water:2" ""
+              hex 0102 0 "water:2;bridge:1;bridge_cf:100;bridge_elev:2" ""
+              end""");
+
+        // Cliff (level 3) above adjacent water:2 hex. Mek edge-climb-down 3 levels drops it
+        // from absolute alt +3 to absolute alt 0 — which is the destination hex's water
+        // SURFACE (elev 0 relative). Used by the edge-descent-into-water regression.
+        initializeBoard("BOARD_CLIFF_ABOVE_DEEP_WATER", """
+              size 1 2
+              hex 0101 3 "" ""
+              hex 0102 0 "water:2" ""
+              end""");
+
+        // Same cliff/water shape but with the water hex FIRST so a fresh Mek (placed at (0,0)
+        // by getMovePathFor) is already in the water hex. Used by the continuation
+        // climb-down-into-water regression where the Mek is mid-descent at water surface.
+        initializeBoard("BOARD_DEEP_WATER_BELOW_CLIFF", """
+              size 1 2
+              hex 0101 0 "water:2" ""
+              hex 0102 3 "" ""
+              end""");
     }
 
     private Mek createClimbableMek() {
@@ -82,6 +112,15 @@ public class MovePathHandlerClimbingTest extends GameBoardTestCase {
         mek.setOriginalWalkMP(8);
         mek.setOriginalJumpMP(0);
         mek.autoSetInternal();
+        // Initialize armor on every location so submerged-Mek tests don't auto-doom the unit
+        // (an unarmored cockpit/torso location takes critical-roll damage from water exposure
+        // and can flag the entity as doomed before the climb branch ever runs).
+        for (int loc = 0; loc < mek.locations(); loc++) {
+            mek.initializeArmor(10, loc);
+            if (mek.hasRearArmor(loc)) {
+                mek.initializeRearArmor(5, loc);
+            }
+        }
         mek.setCrew(new Crew(CrewType.SINGLE));
         setupArmActuators(mek, Mek.LOC_LEFT_ARM);
         setupArmActuators(mek, Mek.LOC_RIGHT_ARM);
@@ -169,5 +208,282 @@ public class MovePathHandlerClimbingTest extends GameBoardTestCase {
         assertEquals(0, mek.getClimbingLevelsChosen(),
               "Chosen-levels must reset when the climb aborts, so a subsequent attempt "
                     + "doesn't inherit a stale player choice.");
+    }
+
+    // -----------------------------------------------------------------------
+    // Partial-climb out of deep water: a Mek climbing a tall bridge from the
+    // water bottom (elevation -2) does so over multiple turns. A 2-level
+    // partial leaves it at elevation 0 — water surface — still clinging to
+    // the bridge side. The end-of-movement defensive cleanup used to wipe
+    // climbing/dangling whenever the entity ended at elevation 0 outside a
+    // building roof, which clobbered this legitimate mid-climb state and
+    // prevented the continue-climbing dialog from firing on the next turn.
+    // The fix preserves the flag when the entity is plausibly clinging to a
+    // climbable feature in its facing hex.
+    // -----------------------------------------------------------------------
+
+    @Test
+    void partialClimbAtWaterSurfacePreservesClimbingFlag() throws Exception {
+        setBoard("BOARD_BRIDGE_OVER_DEEP_WATER");
+        enableTacOpsClimbing();
+
+        TWGameManager gameManager = spy(new TWGameManager());
+        gameManager.setGame(getGame());
+        ServerFactory.createServer(gameManager);
+        Player player = new Player(0, "Test");
+        getGame().addPlayer(0, player);
+
+        Mek mek = createClimbableMek();
+        mek.setOwner(player);
+        Coords startingPos = new Coords(0, 0);
+        // Place the Mek at water bottom (-2) facing south toward the bridge hex (0,1).
+        MovePath movePath = getMovePathFor(mek, -2, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS);
+        assertTrue(movePath.isMoveLegal(),
+              "Climb of 4 levels (-2 → +2) onto the bridge should compile as a legal "
+                    + "multi-turn TacOps climb.");
+        // Pre-condition: the FORWARDS step must have placed the Mek on the bridge surface
+        // (elevation +2) and been marked as a climbing step. If this fails, the
+        // Entity.calcElevation bridge fix isn't firing and the rest of the test is moot.
+        assertEquals(2, movePath.getLastStep().getElevation(),
+              "FORWARDS step must resolve to the bridge surface (+2); Entity.calcElevation must "
+                    + "place the Mek on the tall bridge under TacOps Climbing.");
+        assertTrue(movePath.getLastStep().isClimbing(),
+              "FORWARDS step must be marked as a climbing step so processMovement runs the "
+                    + "climb branch.");
+
+        // Mimic the climbing dialog committing a 2-of-4 level partial climb. The dialog
+        // pushes this via sendUpdateEntity before the path commits; in this server-side
+        // test we set it directly on the entity.
+        mek.setClimbingLevelsChosen(2);
+        // All PSRs succeed.
+        doReturn(0).when(gameManager).doSkillCheckWhileMoving(any(Entity.class), anyInt(),
+              any(Coords.class), any(Coords.class), any(PilotingRollData.class), anyBoolean());
+
+        MovePathHandler handler = new MovePathHandler(gameManager, mek, movePath, null);
+        handler.processMovement();
+
+        // Sanity: the climbing branch in processSteps MUST have run (one PSR call per
+        // chosen level). If it didn't, the partial-climb logic never executed and the
+        // assertions below are diagnosing the wrong thing.
+        verify(gameManager, times(2)).doSkillCheckWhileMoving(any(Entity.class), anyInt(),
+              any(Coords.class), any(Coords.class), any(PilotingRollData.class), anyBoolean());
+
+        assertEquals(startingPos, mek.getPosition(),
+              "After a partial climb, the Mek clings to the SOURCE hex (the water hex) — "
+                    + "the bridge hex isn't entered until the climb completes.");
+        assertEquals(0, mek.getElevation(),
+              "A 2-level partial climb from -2 leaves the Mek at water-surface elevation 0, "
+                    + "clinging to the bridge side.");
+        assertTrue(mek.isClimbing(),
+              "The defensive end-of-movement cleanup MUST preserve climbing=true here — the "
+                    + "Mek is mid-multi-turn climb, not stale. The facing hex has a bridge "
+                    + "above the Mek; clearing the flag would prevent the continue-climbing "
+                    + "dialog from firing next turn.");
+    }
+
+    // -----------------------------------------------------------------------
+    // Bridge-over-water step cost: a Mek crossing onto a bridge surface (above
+    // the water) should NOT pay the water-entry MP for the hex. The water
+    // column ends at the hex surface; the Mek's destination elevation is the
+    // bridge top, well above that. The water-cost block in calcMovementCostFor
+    // used to apply even when the unit's destination was above the water,
+    // padding the climb-continuation step's cost by 2-3 MP (the in-game
+    // symptom was a continued bridge climb costing 7 MP instead of 5).
+    // -----------------------------------------------------------------------
+
+    // -----------------------------------------------------------------------
+    // Edge climb-down INTO water: Mek at the top of a 3-level cliff descends
+    // off the edge into an adjacent water:2 hex. The descent ends at elev 0
+    // (the water's surface) — that's NOT solid ground (floor is at -2), so
+    // the climbing flag MUST be preserved. Pre-fix, the edge-climb-down
+    // completion treated elev 0 as ground unconditionally and cleared the
+    // climbing flag; the continue-climbing dialog would then not fire on the
+    // next turn, leaving the player no way to drop the Mek the rest of the
+    // way into the water. This is the exact scenario the in-game tester hit
+    // while validating cliff-side dives.
+    // -----------------------------------------------------------------------
+
+    @Test
+    void edgeClimbDownIntoWaterPreservesClimbingFlagAtWaterSurface() throws Exception {
+        setBoard("BOARD_CLIFF_ABOVE_DEEP_WATER");
+        enableTacOpsClimbing();
+
+        TWGameManager gameManager = spy(new TWGameManager());
+        gameManager.setGame(getGame());
+        ServerFactory.createServer(gameManager);
+        Player player = new Player(0, "Test");
+        getGame().addPlayer(0, player);
+
+        Mek mek = createClimbableMek();
+        mek.setOwner(player);
+        // Mek starts at cliff top (0,0), elevation 0 (standing on the cliff hex floor at
+        // absolute alt +3). Facing south toward the adjacent water hex (0,1).
+        MovePath movePath = getMovePathFor(mek, 0, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS);
+        assertTrue(movePath.isMoveLegal(),
+              "Edge step from cliff top into the adjacent lower hex must compile (with leaping "
+                    + "on, the leap rules cover it; the test exercises the SERVER-side edge "
+                    + "climb-down handling once the path is committed).");
+        // Pre-condition: edge climb-down — the client's edge-descent dialog pushes the chosen
+        // level count via sendUpdateEntity before committing the path. The server distinguishes
+        // climb-down from dangle by climbingLevelsChosen > 0.
+        mek.setClimbingLevelsChosen(3);
+        doReturn(0).when(gameManager).doSkillCheckWhileMoving(any(Entity.class), anyInt(),
+              any(Coords.class), any(Coords.class), any(PilotingRollData.class), anyBoolean());
+
+        MovePathHandler handler = new MovePathHandler(gameManager, mek, movePath, null);
+        handler.processMovement();
+
+        Coords waterHex = new Coords(0, 1);
+        assertEquals(waterHex, mek.getPosition(),
+              "Edge climb-down moves the Mek into the lower (water) hex.");
+        assertEquals(0, mek.getElevation(),
+              "A 3-level edge climb-down from cliff (absolute +3) into water:2 (level 0) ends "
+                    + "at relative elevation 0 — the water surface.");
+        assertTrue(mek.isClimbing(),
+              "Climbing flag MUST stay set at water surface: floor=-2 is below hex level, so "
+                    + "elev 0 isn't ground — the Mek is clinging at the surface. Without this the "
+                    + "continue-climbing dialog won't fire next turn and the player can't pick Drop "
+                    + "to sink into the water.");
+        assertEquals(0, mek.getClimbingLevelsChosen(),
+              "Chosen-levels must reset after the descent commits so next turn's dialog starts "
+                    + "fresh.");
+    }
+
+    // -----------------------------------------------------------------------
+    // Continuation climb-down past water surface to floor. After an edge
+    // descent leaves the Mek clinging at water surface (elev 0 in water:2),
+    // the player can pick Climb Down on the next turn to keep descending the
+    // submerged cliff face. The descent extends to the actual hex floor
+    // (water bottom for water hexes), not the hardcoded elev-0 ground stop
+    // that used to wrongly clamp here.
+    // -----------------------------------------------------------------------
+
+    @Test
+    void edgeClimbDownIntoWaterDescendsAllTheWayToFloor() throws Exception {
+        // Regression for the in-game bridge-to-water scenario: Mek on a level-3 cliff steps
+        // off the edge into adjacent water:2 hex and picks the full 5-level descent in the
+        // edge-descent dialog. Server-side cap was previously `cliffTopAlt - destHex.getLevel()`
+        // = 3 - 0 = 3, clamping the descent at the water surface even when the dialog correctly
+        // reported a 5-level drop to the water floor and the player picked 5. The fix uses
+        // `destHex.floor()` so the cap matches the dialog.
+        setBoard("BOARD_CLIFF_ABOVE_DEEP_WATER");
+        enableTacOpsClimbing();
+
+        TWGameManager gameManager = spy(new TWGameManager());
+        gameManager.setGame(getGame());
+        ServerFactory.createServer(gameManager);
+        Player player = new Player(0, "Test");
+        getGame().addPlayer(0, player);
+
+        Mek mek = createClimbableMek();
+        mek.setOwner(player);
+        // Bump the test Mek's walk MP so the full 5-level descent fits in one turn
+        // (5 × 2 MP/arm = 10 MP). The default 8 walk MP wouldn't cover it; the goal here
+        // is to validate the server's drop cap, not the per-turn MP budget.
+        mek.setOriginalWalkMP(12);
+        MovePath movePath = getMovePathFor(mek, 0, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS);
+        assertTrue(movePath.isMoveLegal(),
+              "Edge step compiles legally so the test can exercise the server-side cap.");
+        // Cliff top (abs +3) to water bottom (abs -2) = 5-level descent. Pre-fix the server
+        // capped this at 3.
+        mek.setClimbingLevelsChosen(5);
+        doReturn(0).when(gameManager).doSkillCheckWhileMoving(any(Entity.class), anyInt(),
+              any(Coords.class), any(Coords.class), any(PilotingRollData.class), anyBoolean());
+
+        MovePathHandler handler = new MovePathHandler(gameManager, mek, movePath, null);
+        handler.processMovement();
+
+        Coords waterHex = new Coords(0, 1);
+        assertEquals(waterHex, mek.getPosition(),
+              "Edge climb-down moves the Mek into the lower (water) hex.");
+        assertEquals(-2, mek.getElevation(),
+              "Picking the full 5-level drop must descend all the way to the water FLOOR "
+                    + "(-2), not stop at the surface (0). Pre-fix the server's totalDrop used "
+                    + "destHex.getLevel() and clamped this to 3 levels.");
+        assertFalse(mek.isClimbing(),
+              "At the actual hex floor the descent is finished — climbing flag clears.");
+        // 5 PSRs should have been rolled (one per descended level).
+        verify(gameManager, times(5)).doSkillCheckWhileMoving(any(Entity.class), anyInt(),
+              any(Coords.class), any(Coords.class), any(PilotingRollData.class), anyBoolean());
+    }
+
+    @Test
+    void continuationClimbDownPastWaterSurfaceReachesFloor() throws Exception {
+        setBoard("BOARD_DEEP_WATER_BELOW_CLIFF");
+        enableTacOpsClimbing();
+
+        TWGameManager gameManager = spy(new TWGameManager());
+        gameManager.setGame(getGame());
+        ServerFactory.createServer(gameManager);
+        Player player = new Player(0, "Test");
+        getGame().addPlayer(0, player);
+
+        // Mek already mid-descent at water surface (elev 0 in the water:2 hex), facing the
+        // cliff. Simulates "turn 2" of an edge-descent flow: the previous turn descended off
+        // the cliff and stopped clinging at water surface with climbing=true preserved.
+        Mek mek = createClimbableMek();
+        mek.setOwner(player);
+        mek.setClimbing(true);
+        // Path: CLIMB_MODE_ON + 2 DOWN steps = controlled climb-down 2 levels.
+        // (Distinguished server-side from dangle/drop by the CLIMB_MODE_ON marker.)
+        // 2 levels at 2 MP/arm = 4 MP, well under the Mek's 8 walk MP.
+        mek.setClimbingLevelsChosen(2);
+        MovePath movePath = getMovePathFor(mek, 0, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.DOWN,
+              MoveStepType.DOWN);
+        doReturn(0).when(gameManager).doSkillCheckWhileMoving(any(Entity.class), anyInt(),
+              any(Coords.class), any(Coords.class), any(PilotingRollData.class), anyBoolean());
+
+        MovePathHandler handler = new MovePathHandler(gameManager, mek, movePath, null);
+        handler.processMovement();
+
+        // 2-level climb-down from water surface (elev 0) lands at water floor (elev -2).
+        assertEquals(-2, mek.getElevation(),
+              "Continuation climb-down must descend past elev 0 into the water column down to "
+                    + "the hex floor (water:2 → floor at -2). The pre-fix hardcoded floor of 0 "
+                    + "blocked this and clamped the Mek at the water surface.");
+        assertFalse(mek.isClimbing(),
+              "At the water floor the Mek has finished descending — climbing flag must clear "
+                    + "via the entityHasReachedFloor check.");
+        assertEquals(0, mek.getClimbingLevelsChosen(),
+              "Chosen-levels must reset after the descent commits.");
+    }
+
+    @Test
+    void continuationClimbOntoBridgeDoesNotChargeWaterEntryMP() {
+        setBoard("BOARD_BRIDGE_OVER_DEEP_WATER");
+        enableTacOpsClimbing();
+        Player player = new Player(0, "Test");
+        getGame().addPlayer(0, player);
+
+        // Mek that's already mid-climb at water-surface (elevation 0) in the SOURCE hex,
+        // facing the adjacent bridge hex. This is the state the partial-climb branch
+        // leaves the Mek in after turn 1 of a 4-level climb out of deep water.
+        Mek mek = createClimbableMek();
+        mek.setOwner(player);
+        mek.setClimbing(true);
+        MovePath movePath = getMovePathFor(mek, 0, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS);
+        assertTrue(movePath.isMoveLegal(),
+              "Continuing the climb onto the adjacent bridge hex must compile as a legal step.");
+        MoveStep climbStep = movePath.getLastStep();
+        assertTrue(climbStep.isClimbing(),
+              "Inheriting climbing=true from the prev step means this continuation FORWARDS is "
+                    + "a climb step.");
+        // Cost breakdown: 1 (base entry) + 4 (climb 2 levels × 2 MP/arm) = 5.
+        // No water-entry MP because the Mek ends on the bridge surface (elev +2), above the
+        // water column. Pre-fix the water cost was added (1 + 2 + 4 = 7 with PLAYTEST2,
+        // 1 + 3 + 4 = 8 without).
+        assertEquals(5, climbStep.getMp(),
+              "FORWARDS onto bridge surface must cost 5 MP (1 base + 4 climb), not 7 — the "
+                    + "Mek isn't wading through the water on this step.");
     }
 }

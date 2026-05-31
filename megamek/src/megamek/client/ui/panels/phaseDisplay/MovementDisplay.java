@@ -618,6 +618,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         if (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.CLING) {
             // Explicit choice to cling in place — forfeits movement this turn.
+            clientgui.addToast(ToastLevel.INFO,
+                  Messages.getString("MovementDisplay.ClimbingDialog.clingToast",
+                        climbingMek.getDisplayName()),
+                  climbingMek);
             ready();
             return;
         }
@@ -625,7 +629,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             LOGGER.debug("[DANGLE-TRACE] Dangle down chosen: entity={}, currentElevation={}, dangleLevels={}",
                   climbingMek.getDisplayName(), climbingMek.getElevation(), chosen.levels());
             clientgui.addToast(ToastLevel.INFO,
-                  climbingMek.getDisplayName() + " dangles down " + chosen.levels() + " levels",
+                  Messages.getString("MovementDisplay.ClimbingDialog.dangleToast",
+                        climbingMek.getDisplayName(), chosen.levels()),
                   climbingMek);
             cmd.addStep(MoveStepType.DOWN);
             ready();
@@ -635,7 +640,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             LOGGER.debug("[DANGLE-TRACE] Drop chosen: entity={}, currentElevation={}",
                   climbingMek.getDisplayName(), climbingMek.getElevation());
             clientgui.addToast(ToastLevel.WARNING,
-                  climbingMek.getDisplayName() + " drops from dangle position!",
+                  buildDropToastText(climbingMek),
                   climbingMek);
             cmd.addStep(MoveStepType.DOWN);
             cmd.addStep(MoveStepType.DOWN);
@@ -650,7 +655,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             LOGGER.debug("[CLIMB-TRACE] Climb down chosen: entity={}, currentElevation={}, levels={}",
                   climbingMek.getDisplayName(), climbingMek.getElevation(), chosen.levels());
             clientgui.addToast(ToastLevel.INFO,
-                  climbingMek.getDisplayName() + " climbs down " + chosen.levels() + " levels",
+                  Messages.getString("MovementDisplay.ClimbingDialog.climbDownToast",
+                        climbingMek.getDisplayName(), chosen.levels()),
                   climbingMek);
             climbingMek.setClimbingLevelsChosen(chosen.levels());
             // Push the chosen-level count to the server — the entity field isn't carried
@@ -666,6 +672,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // Standard climb continuation — auto-commit, matching DANGLE / DROP / CLIMB_DOWN.
         // Previously this called updateMove() which left the path editable, but a stray
         // Climb Mode toggle would invalidate and silently strip the climbing FORWARDS step.
+        clientgui.addToast(ToastLevel.INFO,
+              Messages.getString("MovementDisplay.ClimbingDialog.continueClimbToast",
+                    climbingMek.getDisplayName(), chosen.levels()),
+              climbingMek);
         climbingMek.setClimbingLevelsChosen(chosen.levels());
         // Push to server — without this, the server reads chosenLevels=0 and climbs the
         // maximum affordable instead of the player's chosen count.
@@ -673,6 +683,30 @@ public class MovementDisplay extends ActionPhaseDisplay {
         cmd.addStep(MoveStepType.CLIMB_MODE_ON);
         cmd.addStep(MoveStepType.FORWARDS);
         ready();
+    }
+
+    /**
+     * Picks the right toast text for the Drop action based on the Mek's current state.
+     * Dangling → standard dangle-drop wording. Mid-climb above the hex surface → standard
+     * climb-drop wording. Clinging at water surface (elev 0 in a hex with depth below) →
+     * "sinks to the floor" — calling it a "drop" misrepresents what's happening; the Mek
+     * is just letting go and sinking through water.
+     */
+    private String buildDropToastText(Mek mek) {
+        if (mek.isDangling()) {
+            return Messages.getString("MovementDisplay.ClimbingDialog.dropDangleToast",
+                  mek.getDisplayName());
+        }
+        Hex hex = game.getBoard(mek).getHex(mek.getPosition());
+        boolean atWaterSurface = (hex != null)
+              && (mek.getElevation() == 0)
+              && (hex.floor() < hex.getLevel());
+        if (atWaterSurface) {
+            return Messages.getString("MovementDisplay.ClimbingDialog.sinkToast",
+                  mek.getDisplayName());
+        }
+        return Messages.getString("MovementDisplay.ClimbingDialog.dropClimbToast",
+              mek.getDisplayName());
     }
 
     private void initializeStatusBarText(Entity selectedEntity) {
@@ -1077,6 +1111,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             ClimbingChoiceDialog.ClimbingOption chosen = showStartClimbingDialog(climbingMek, cmd.getLastStep());
             if ((chosen != null) && (chosen.type() == ClimbingChoiceDialog.ClimbingActionType.CLIMB_UP)
                   && (chosen.levels() > 0)) {
+                clientgui.addToast(ToastLevel.INFO,
+                      Messages.getString("MovementDisplay.ClimbingDialog.startClimbToast",
+                            climbingMek.getDisplayName(), chosen.levels()),
+                      climbingMek);
                 currentEntity.setClimbingLevelsChosen(chosen.levels());
                 // Push to server — the path doesn't carry chosenLevels, and without this
                 // the server reads 0 (= full climb) and climbs to the maximum affordable
@@ -1193,6 +1231,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
                               ClimbingChoiceDialog.ClimbingActionType.DROP));
                     }
 
+                    // Move as Calculated — commit whatever the path planner already drew (a
+                    // routed walk-around for the routed case, the direct leaping step for the
+                    // direct case). Lets the player accept the visible path without reading
+                    // it as a climb. Distinct from Cancel: this option auto-commits via ready();
+                    // Cancel leaves the dialog dismissed so the player can keep editing.
+                    descentOptions.add(new ClimbingChoiceDialog.ClimbingOption(0, 0,
+                          Messages.getString("MovementDisplay.ClimbingDialog.walkAsCalculatedOption"),
+                          ClimbingChoiceDialog.ClimbingActionType.WALK_AS_CALCULATED));
+
                 // Cancel - the unit is at the cliff top, not yet on the face,
                 // so "Cling" is the wrong mental model. This option just aborts the descent.
                     descentOptions.add(new ClimbingChoiceDialog.ClimbingOption(0, 0,
@@ -1212,7 +1259,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         // For routed-around paths the existing cmd is a long walk-around — we
                         // need a fresh cmd containing only the turn-to-cliff + direct step.
                         clientgui.addToast(ToastLevel.INFO,
-                              edgeMek.getDisplayName() + " begins dangling down", edgeMek);
+                              Messages.getString("MovementDisplay.ClimbingDialog.edgeDangleToast",
+                                    edgeMek.getDisplayName()),
+                              edgeMek);
                         rebuildPathForEdgeDescent(edgeMek, stepPos, isRoutedAround);
                         LOGGER.debug("[DANGLE-TRACE] Edge dangle: CLIMB_MODE_ON + FORWARDS to {}, "
                                     + "cmd.length={}, routed={}",
@@ -1226,8 +1275,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         LOGGER.debug("[CLIMB-TRACE] Edge climb-down chosen: levels={}, routed={}",
                               chosen.levels(), isRoutedAround);
                         clientgui.addToast(ToastLevel.INFO,
-                              edgeMek.getDisplayName() + " begins climbing down " + chosen.levels()
-                                    + " level(s)", edgeMek);
+                              Messages.getString("MovementDisplay.ClimbingDialog.edgeClimbDownToast",
+                                    edgeMek.getDisplayName(), chosen.levels()),
+                              edgeMek);
                         edgeMek.setClimbingLevelsChosen(chosen.levels());
                         clientgui.getClient().sendUpdateEntity(edgeMek);
                         rebuildPathForEdgeDescent(edgeMek, stepPos, isRoutedAround);
@@ -1237,6 +1287,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         // Keep the leaping movement as-is (standard leaping handles it).
                         // Only valid for the direct-path case; the routed-around path was a walk
                         // and shouldn't be reinterpreted as a leap, so guard against that.
+                        clientgui.addToast(ToastLevel.WARNING,
+                              Messages.getString("MovementDisplay.ClimbingDialog.edgeLeapToast",
+                                    edgeMek.getDisplayName(), levelDiff),
+                              edgeMek);
                         if (isRoutedAround) {
                             LOGGER.debug("[CLIMB-TRACE] Drop chosen on routed-around path; "
                                         + "rebuilding cmd as direct leap");
@@ -1245,6 +1299,20 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                   false, ManeuverType.MAN_NONE);
                             cmd.addStep(MoveStepType.FORWARDS);
                         }
+                    } else if (chosen != null
+                          && chosen.type() == ClimbingChoiceDialog.ClimbingActionType.WALK_AS_CALCULATED) {
+                        // Commit the existing plotted path as-is — the routed walk-around for
+                        // the routed case, the direct leaping step for the direct case. The
+                        // path is already attached to cmd; just commit it the same way the
+                        // other branches do.
+                        LOGGER.debug("[CLIMB-TRACE] Move as Calculated chosen: routed={}, "
+                                    + "cmd.length={}", isRoutedAround, cmd.length());
+                        clientgui.addToast(ToastLevel.INFO,
+                              Messages.getString("MovementDisplay.ClimbingDialog.walkAsCalculatedToast",
+                                    edgeMek.getDisplayName()),
+                              edgeMek);
+                        ready();
+                        return;
                     } else {
                         // Cancelled (Cancel button or dialog closed). For the direct-path case,
                         // strip the final FORWARDS so the player can re-pick. For the routed-
@@ -3496,10 +3564,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return null;
         }
 
-        int targetLevel = targetHex.getLevel();
-        if (targetHex.containsTerrain(Terrains.BUILDING)) {
-            targetLevel = targetHex.getLevel() + targetHex.terrainLevel(Terrains.BLDG_ELEV);
-        }
+        // Use the top of whatever climbable feature is in the target hex — building roof OR
+        // bridge surface — as the climb destination. Centralized in ClimbingHelper so both
+        // fresh-climb and continuation dialogs agree on what "destination level" means.
+        int targetLevel = ClimbingHelper.getClimbDestinationLevel(targetHex);
         int currentAbsolute = currentHex.getLevel() + sourceElevation;
         int totalLevelsRemaining = targetLevel - currentAbsolute;
 
@@ -3584,9 +3652,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                   ClimbingChoiceDialog.ClimbingActionType.CLIMB_UP));
         }
         // Climb Down: controlled descent at the same MP cost and PSRs as climbing up
-        // (TO:AR p.20). Only meaningful mid-climb when there is elevation to descend.
-        if (isContinuation && (currentElevation > 0)) {
-            int maxDescend = Math.min(currentElevation, maxAffordableLevels);
+        // (TO:AR p.20). Available whenever there's anywhere to descend — including the
+        // underwater portion of a cliff/bridge face in water hexes, capped at the hex floor
+        // (water bottom for water, basement floor for basement).
+        int currentHexFloorRelativeForDescent = currentHex.floor() - currentHex.getLevel();
+        int descendableLevels = currentElevation - currentHexFloorRelativeForDescent;
+        if (isContinuation && (descendableLevels > 0)) {
+            int maxDescend = Math.min(descendableLevels, maxAffordableLevels);
             for (int i = 1; i <= maxDescend; i++) {
                 int cost = i * costPerLevel;
                 String baseLabel = (i == 1)
@@ -3598,27 +3670,38 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
         // Dangle-and-Drop: available mid-climb or mid-dangle with 2 functional arms
-        // (TO:AR p.20). Allows controlled descent from any climbing/dangling position.
-        if (isContinuation && (currentElevation > 0) && ClimbingHelper.canDangle(mek)) {
-            int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN, currentElevation);
+        // (TO:AR p.20). Allows controlled descent from any climbing/dangling position,
+        // including the underwater portion of a cliff/bridge face when there's water below.
+        if (isContinuation && (descendableLevels > 0) && ClimbingHelper.canDangle(mek)) {
+            int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN, descendableLevels);
             climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(dangleLevels, 0,
                   Messages.getString("MovementDisplay.ClimbingDialog.dangleOption",
                         dangleLevels) + " - no PSR",
                   ClimbingChoiceDialog.ClimbingActionType.DANGLE_DOWN));
         }
-        // Drop option: available from any climbing or dangling position (TO:AR p.20)
+        // Drop option: available from any climbing or dangling position (TO:AR p.20).
         // From dangling: PSR modifiers reduced by 2. From climbing: standard leaping modifiers.
-        if (isContinuation && (currentElevation > 0)
-              && (walkMP >= ClimbingHelper.DROP_MP_COST)) {
-            int dropDistance = currentElevation;
+        // Also offered when clinging at water surface (elev 0 in a hex with water/basement
+        // below) — the Mek can't grip the underwater portion to "climb down" further, so the
+        // only way down is to let go and sink the rest of the way (no fall PSR since the
+        // water cushions the descent, just the in-water sink).
+        int currentHexFloorRelative = currentHex.floor() - currentHex.getLevel();
+        boolean canDrop = currentElevation > currentHexFloorRelative;
+        if (isContinuation && canDrop && (walkMP >= ClimbingHelper.DROP_MP_COST)) {
+            // Dry portion of the drop: only the levels above the hex surface incur PSRs.
+            // Levels below the surface are sinking through water/basement — no fall damage.
+            int dryDropDistance = Math.max(0, currentElevation);
+            int totalDropDistance = currentElevation - currentHexFloorRelative;
             int modReduction = mek.isDangling() ? ClimbingHelper.DANGLE_LEVELS_PER_TURN : 0;
-            int effectiveDrop = Math.max(0, dropDistance - modReduction);
+            int effectiveDrop = Math.max(0, dryDropDistance - modReduction);
             int legTarget = basePiloting + (2 * effectiveDrop);
             int fallTarget = basePiloting + effectiveDrop;
             String dropLabel = Messages.getString("MovementDisplay.ClimbingDialog.dropOption",
                   ClimbingHelper.DROP_MP_COST)
-                  + " - Leg PSR " + legTarget + "+, Fall PSR " + fallTarget + "+";
-            climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(currentElevation,
+                  + ((effectiveDrop > 0)
+                        ? " - Leg PSR " + legTarget + "+, Fall PSR " + fallTarget + "+"
+                        : " - sink to floor (no PSR)");
+            climbingOptions.add(new ClimbingChoiceDialog.ClimbingOption(totalDropDistance,
                   ClimbingHelper.DROP_MP_COST, dropLabel,
                   ClimbingChoiceDialog.ClimbingActionType.DROP));
         }

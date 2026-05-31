@@ -49,6 +49,7 @@ import megamek.common.MPCalculationSetting;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.annotations.Nullable;
 import megamek.common.actions.AirMekRamAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ChargeAttackAction;
@@ -180,6 +181,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 logger.debug("[FALL-TRACE] Climbing/dangling Mek {} lost required arms, auto-falling " +
                       "from elevation {} in hex {}",
                       entity.getDisplayName(), entity.getElevation(), entity.getPosition());
+                // Surface as a special-report toast (kill-feed style) AND mirror to chat so the
+                // player sees the auto-fall immediately, not just buried in the round report.
+                // Matches the building-too-damaged path in TWGameManager.checkClimbingEntitiesOnBuilding.
+                Report armsLostReport = new Report(6465, Report.PUBLIC);
+                armsLostReport.add(entity.getDisplayName());
+                addReport(armsLostReport);
+                Vector<Report> armsLostSpecial = new Vector<>();
+                armsLostSpecial.add(armsLostReport);
+                gameManager.send(gameManager.createSpecialReportPacket(armsLostSpecial));
                 gameManager.sendServerChat(Messages.getString(
                       "MovementDisplay.ClimbingDialog.armsLostChat",
                       entity.getDisplayName()));
@@ -261,9 +271,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                   && ClimbingHelper.canClimb(entity)) {
                 // EDGE CLIMB-DOWN (TO:AR p.20): PSR per level. On failure, fall from current
                 // descended elevation. Mek ends in lower hex at (cliffTopAlt - levelsDescended).
+                // Total drop measures to the destination hex's FLOOR — water bottom for water,
+                // basement for basements — so a Mek descending off a bridge into adjacent water
+                // can ride the cliff face all the way down, not stop at the water surface.
                 int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(edgeMek);
                 int climbableArms = ClimbingHelper.countClimbableArms(edgeMek);
-                int totalDrop = cliffTopAlt - destHex.getLevel();
+                int totalDrop = cliffTopAlt - destHex.floor();
                 int levelsToDescend = Math.min(chosenEdgeDescent, totalDrop);
                 logger.debug("[CLIMB-TRACE] Server processing EDGE climb-down: entity={}, "
                             + "from={} (alt {}), to={} (level {}), levelsToDescend={}, costPerLevel={}",
@@ -297,9 +310,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     levelsDescended++;
                 }
                 if (!fellWhileDescending) {
-                    int finalElevation = Math.max(0, (cliffTopAlt - destHex.getLevel()) - levelsDescended);
+                    int floorRelative = destHex.floor() - destHex.getLevel();
+                    int finalElevation = Math.max(floorRelative,
+                          (cliffTopAlt - destHex.getLevel()) - levelsDescended);
                     entity.setElevation(finalElevation);
-                    if (finalElevation == 0) {
+                    // Climbing flag clears only at the actual hex floor — for a water hex that
+                    // means the water bottom, not the surface. Anywhere above the floor the Mek
+                    // is still clinging to the (above- or below-water) cliff face and can
+                    // continue the descent next turn.
+                    if (entityHasReachedFloor(entity)) {
                         entity.setClimbing(false);
                         entity.setDangling(false);
                         Report groundReport = new Report(6463, Report.PUBLIC);
@@ -352,7 +371,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
             entity.setElevation(dangleElevation);
             entity.setDangling(true);
             entity.setClimbingLevelsChosen(0);
-            if (dangleElevation == 0) {
+            // Dangle only clears when the Mek has reached the actual hex floor — water bottom
+            // for a water hex, basement floor for a basement hex, plain elev 0 otherwise.
+            if (entityHasReachedFloor(entity)) {
                 entity.setDangling(false);
                 Report groundReport = new Report(6463, Report.PUBLIC);
                 groundReport.add(entity.getDisplayName());
@@ -380,10 +401,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(descendingMek);
                 int climbableArms = ClimbingHelper.countClimbableArms(descendingMek);
                 int currentElevation = entity.getElevation();
-                // Cap requested descent against available walking MP so a malformed
-                // client path can't trigger more PSRs (or descend more levels) than the
-                // unit could pay for. Same defense-in-depth as the DROP MP check below.
-                int requestedLevels = Math.min(downStepCount, currentElevation);
+                int floorRelativeForDescent = hexFloorRelative(entity);
+                // Cap requested descent at the hex floor (water bottom for water hexes, ground
+                // for dry hexes) and against available walking MP. The first cap previously read
+                // `currentElevation`, hardcoding ground-at-0 and blocking any descent below the
+                // water surface even though the underwater cliff face is climbable.
+                int descendableLevels = currentElevation - floorRelativeForDescent;
+                int requestedLevels = Math.min(downStepCount, descendableLevels);
                 int availableMP = entity.getWalkMP();
                 int affordableLevels = (costPerLevel > 0) ? (availableMP / costPerLevel) : 0;
                 int levelsToDescend = Math.min(requestedLevels, affordableLevels);
@@ -422,9 +446,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     levelsDescended++;
                 }
                 if (!fellWhileDescending) {
-                    int newElevation = Math.max(0, currentElevation - levelsDescended);
+                    int newElevation = Math.max(floorRelativeForDescent,
+                          currentElevation - levelsDescended);
                     entity.setElevation(newElevation);
-                    if (newElevation == 0) {
+                    // Climbing flag clears only when the Mek truly hits the hex floor — water
+                    // bottom counts, water surface doesn't. Above the floor the Mek is still
+                    // clinging and the next-turn dialog should reoffer Climb Down / Drop / Cling.
+                    if (entityHasReachedFloor(entity)) {
                         entity.setClimbing(false);
                         entity.setDangling(false);
                         Report groundReport = new Report(6463, Report.PUBLIC);
@@ -462,8 +490,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     return;
                 }
                 // From dangling: reduce modifiers by 2 (TO:AR p.20)
-                // From climbing (not dangling): standard leaping modifiers
-                int dropDistance = entity.getElevation();
+                // From climbing (not dangling): standard leaping modifiers.
+                // dropDistance is the DRY portion of the fall — only levels above the hex surface
+                // count for PSR/leg-damage purposes. Water/basement below the surface sinks the
+                // Mek the rest of the way with no additional damage (water cushions the landing).
+                int dropDistance = Math.max(0, entity.getElevation());
                 int modifierReduction = entity.isDangling() ? ClimbingHelper.DANGLE_LEVELS_PER_TURN : 0;
                 int effectiveDistance = Math.max(0, dropDistance - modifierReduction);
                 logger.debug("[DANGLE-TRACE] Server processing DROP: entity={}, " +
@@ -520,8 +551,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     }
                 }
 
-                // Both PSRs passed (or reducedDistance was 0) - safe landing
-                entity.setElevation(0);
+                // Both PSRs passed (or reducedDistance was 0) - safe landing. Land on the actual
+                // hex floor: for dry hexes that's elev 0, for water/basement hexes the Mek sinks
+                // through and settles on the floor below the surface.
+                Hex landingHex = getGame().getBoard(entity.getBoardId()).getHex(entity.getPosition());
+                int landingElevation = (landingHex != null)
+                      ? landingHex.floor() - landingHex.getLevel()
+                      : 0;
+                entity.setElevation(landingElevation);
                 entity.setDangling(false);
                 entity.setClimbing(false);
                 entity.setClimbingLevelsChosen(0);
@@ -534,10 +571,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 return;
 
             } else if (!isDrop && ClimbingHelper.canDangle(entity)) {
-                // DANGLE: lower by 2 levels, spend full turn
+                // DANGLE: lower by 2 levels, spend full turn. The descent extends into water /
+                // basement depth if present (dangle is just hanging-and-lowering — works on the
+                // underwater cliff face too, capped at the actual hex floor).
+                int dangleFloor = hexFloorRelative(entity);
+                int dangleableLevels = entity.getElevation() - dangleFloor;
                 int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN,
-                      entity.getElevation());
-                int newElevation = Math.max(0, entity.getElevation() - dangleLevels);
+                      dangleableLevels);
+                int newElevation = Math.max(dangleFloor, entity.getElevation() - dangleLevels);
                 logger.debug("[DANGLE-TRACE] Server processing dangle: entity={}, " +
                             "currentElevation={}, dangleLevels={}, newElevation={}",
                       entity.getDisplayName(), entity.getElevation(), dangleLevels, newElevation);
@@ -549,7 +590,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 entity.setClimbing(false);
                 entity.setDangling(true);
                 entity.setClimbingLevelsChosen(0);
-                if (newElevation == 0) {
+                // Dangling flag clears only at the actual hex floor (water bottom for water,
+                // ground for dry). Above the floor the Mek is still dangling and the next-turn
+                // dialog should reoffer descent options.
+                if (entityHasReachedFloor(entity)) {
                     entity.setDangling(false);
                     Report groundReport = new Report(6463, Report.PUBLIC);
                     groundReport.add(entity.getDisplayName());
@@ -863,12 +907,19 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // at ground level and is not standing on a building roof. Catches state leaks
         // (e.g., dangling flag carried forward through a climb-up) that would otherwise
         // re-trigger the continue-climbing dialog at the start of the next turn.
+        // Exception: a Mek partway up a multi-turn climb ends at the SOURCE hex of the
+        // climb (see processSteps partial-climb branch). When the start elevation was
+        // negative (water bottom, basement), that intermediate elevation can land at 0
+        // while the Mek is genuinely clinging to the adjacent bridge/building. Preserve
+        // climbing in that case so the continue-climbing dialog fires next turn.
         if ((entity.isClimbing() || entity.isDangling()) && (entity.getElevation() == 0)) {
             Hex finalHex = getGame().getBoard(entity.getBoardId()).getHex(curPos);
             boolean onBuildingRoof = (finalHex != null)
                   && finalHex.containsTerrain(Terrains.BUILDING)
                   && (entity.getElevation() >= finalHex.terrainLevel(Terrains.BLDG_ELEV));
-            if (!onBuildingRoof) {
+            boolean clingingToAdjacentClimbable = entity.isClimbing()
+                  && isClingingToAdjacentClimbable(entity, curPos, finalHex);
+            if (!onBuildingRoof && !clingingToAdjacentClimbable) {
                 logger.debug("[CLIMB-TRACE] Clearing stale climbing flags at end of move: entity={}, "
                             + "climbing={}, dangling={}, elevation=0 in hex {}",
                       entity.getDisplayName(), entity.isClimbing(), entity.isDangling(), curPos);
@@ -1769,6 +1820,69 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 addReport(report);
             }
         }
+    }
+
+    /**
+     * Returns the entity-relative elevation of its current hex's actual floor — 0 for dry hexes,
+     * negative for water/basement hexes. Multi-arity descents (climb-down, dangle, drop) treat
+     * this as the lower bound: descending past elev 0 in a water hex is fine as long as the Mek
+     * stays at or above this floor.
+     */
+    private int hexFloorRelative(Entity entity) {
+        Hex hex = getGame().getBoard(entity.getBoardId()).getHex(entity.getPosition());
+        return (hex == null) ? 0 : hex.floor() - hex.getLevel();
+    }
+
+    /**
+     * Returns true when the entity has reached the actual floor of its current hex — dry ground
+     * for a normal hex, water bottom for a water hex, basement floor for a basement hex. Used by
+     * every climb / dangle / drop completion path: only at the hex floor is the descent really
+     * "done"; anywhere above it (clinging on a cliff face, on a building wall, or on the
+     * underwater portion of either) the unit is still in the air/water column and the climbing
+     * or dangling flag must stay set so the next-turn dialog fires.
+     */
+    private boolean entityHasReachedFloor(Entity entity) {
+        return entity.getElevation() == hexFloorRelative(entity);
+    }
+
+    /**
+     * Returns true when the entity at {@code curPos} looks like it is clinging to a climbable
+     * feature (bridge or building) in its facing hex — i.e. that hex has a bridge or building roof
+     * higher than the entity's current absolute altitude. Used by the end-of-movement defensive
+     * cleanup to distinguish a legitimate mid-multi-turn climb (where the partial-climb branch in
+     * {@link #processSteps} intentionally leaves {@code climbing=true} in the SOURCE hex) from a
+     * stale flag that should be wiped. Without this gate, a Mek that climbed out of deep water onto
+     * a bridge stops mid-climb at water-surface (elevation 0), gets its climbing flag cleared, and
+     * never sees the continue-climbing dialog on the following turn.
+     *
+     * @param entity   the entity being checked
+     * @param curPos   the entity's current hex (source hex of an in-progress climb)
+     * @param curHex   the resolved hex for {@code curPos}, or null if the board doesn't have it
+     * @return true if the facing hex has a climbable feature above the entity
+     */
+    private boolean isClingingToAdjacentClimbable(Entity entity, Coords curPos, @Nullable Hex curHex) {
+        if (curHex == null) {
+            return false;
+        }
+        Coords adjacent = curPos.translated(entity.getFacing());
+        Hex adjacentHex = getGame().getBoard(entity.getBoardId()).getHex(adjacent);
+        if (adjacentHex == null) {
+            return false;
+        }
+        int entityAbsAlt = curHex.getLevel() + entity.getElevation();
+        int adjacentBase = adjacentHex.getLevel();
+        if (adjacentHex.containsTerrain(Terrains.BRIDGE)
+              && (adjacentBase + adjacentHex.terrainLevel(Terrains.BRIDGE_ELEV)) > entityAbsAlt) {
+            return true;
+        }
+        if (adjacentHex.containsTerrain(Terrains.BUILDING)
+              && (adjacentBase + adjacentHex.terrainLevel(Terrains.BLDG_ELEV)) > entityAbsAlt) {
+            return true;
+        }
+        // Cliff edges count too: the climbable feature may be a bare elevation difference
+        // (the adjacent hex's bedrock sits well above the entity). A Mek that climbed down a
+        // cliff face into deep water and now hangs at water surface (elev 0) is in this state.
+        return (adjacentBase - entityAbsAlt) > entity.getMaxElevationChange();
     }
 
     /**
@@ -4272,6 +4386,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // Climbing back up from a dangle terminates the dangle state
                     entity.setDangling(false);
                     entity.setClimbingLevelsChosen(0);
+                    // Push a "reached the top!" toast so the player gets explicit feedback that
+                    // the multi-turn climb finished. Without this they only know by spotting
+                    // the elevation indicator and the cleared climbing flag.
+                    Report topReport = new Report(6466, Report.PUBLIC);
+                    topReport.add(entity.getDisplayName());
+                    addReport(topReport);
+                    Vector<Report> topSpecial = new Vector<>();
+                    topSpecial.add(topReport);
+                    gameManager.send(gameManager.createSpecialReportPacket(topSpecial));
                     logger.debug("Climbing: completed full climb of {} levels", totalLevelsToClimb);
                 } else {
                     // No levels to climb (e.g. moved to same-level hex while climbing)

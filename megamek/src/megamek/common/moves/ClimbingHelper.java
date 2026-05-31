@@ -98,10 +98,19 @@ public final class ClimbingHelper {
             return 0;
         }
         int entityAlt = entityHex.getLevel() + entity.getElevation();
-        int targetAlt = targetHex.getLevel();
-        // Account for building elevation at destination
+        // The drop's destination is the highest surface the Mek would land on in the target
+        // hex — building roof if present, bridge surface if present, otherwise the hex floor
+        // (water bottom for water hexes, basement floor for basements, hex level for dry).
+        // Pre-fix this measured only to hex.getLevel(), so stepping off a bridge into adjacent
+        // water:2 reported drop=2 (below the 3-level edge threshold) instead of the actual
+        // drop=4 down to the water floor — and the edge-descent dialog never fired.
+        int targetAlt;
         if (targetHex.containsTerrain(Terrains.BUILDING)) {
-            targetAlt += targetHex.terrainLevel(Terrains.BLDG_ELEV);
+            targetAlt = targetHex.getLevel() + targetHex.terrainLevel(Terrains.BLDG_ELEV);
+        } else if (targetHex.containsTerrain(Terrains.BRIDGE)) {
+            targetAlt = targetHex.getLevel() + targetHex.terrainLevel(Terrains.BRIDGE_ELEV);
+        } else {
+            targetAlt = targetHex.floor();
         }
         int levelDiff = entityAlt - targetAlt;
         return Math.max(0, levelDiff);
@@ -310,5 +319,27 @@ public final class ClimbingHelper {
      */
     public static int getClimbingMPCostPerLevel(Mek mek) {
         return (countClimbableArms(mek) >= 2) ? MP_COST_TWO_HANDS : MP_COST_ONE_HAND;
+    }
+
+    /**
+     * Returns the absolute level of the top climbable surface in the given hex — the building roof,
+     * the bridge surface, or the bare hex level if neither is present. Used by the climbing dialog
+     * to compute remaining levels of an in-progress climb; without the bridge branch a continuation
+     * climb toward a bridge hex measures only to the bare hex level (the water/ground beneath the
+     * bridge), reports 0 levels remaining, and skips the dialog entirely.
+     *
+     * @param hex the hex whose climbable top to measure
+     *
+     * @return the absolute level of the building roof, bridge surface, or bare hex level
+     */
+    public static int getClimbDestinationLevel(Hex hex) {
+        int level = hex.getLevel();
+        if (hex.containsTerrain(Terrains.BUILDING)) {
+            return level + hex.terrainLevel(Terrains.BLDG_ELEV);
+        }
+        if (hex.containsTerrain(Terrains.BRIDGE)) {
+            return level + hex.terrainLevel(Terrains.BRIDGE_ELEV);
+        }
+        return level;
     }
 }

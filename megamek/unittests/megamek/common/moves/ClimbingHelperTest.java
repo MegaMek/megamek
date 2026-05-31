@@ -44,6 +44,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import megamek.common.CriticalSlot;
+import megamek.common.Hex;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.units.BipedMek;
@@ -588,6 +591,144 @@ class ClimbingHelperTest {
 
             String reason = ClimbingHelper.getDangleImpossibleReason(infantry);
             assertNotNull(reason, "Infantry should have a dangle reason");
+        }
+    }
+
+    @Nested
+    @DisplayName("getClimbDestinationLevel - top of climbable feature in target hex")
+    class GetClimbDestinationLevelTests {
+
+        @Test
+        @DisplayName("Bare hex returns the hex level")
+        void bareHex() {
+            Hex hex = new Hex(3, "", "");
+            assertEquals(3, ClimbingHelper.getClimbDestinationLevel(hex),
+                  "Plain terrain has no climbable feature; destination is the hex level itself.");
+        }
+
+        @Test
+        @DisplayName("Building hex returns roof absolute level")
+        void buildingHex() {
+            Hex hex = new Hex(0, "bldg_elev:5;building:2:80;bldg_cf:80", "");
+            assertEquals(5, ClimbingHelper.getClimbDestinationLevel(hex),
+                  "A building roof at floor 5 sits at absolute level 5; the dialog measures to it.");
+        }
+
+        @Test
+        @DisplayName("Building hex on elevated ground stacks bldg_elev on top of level")
+        void buildingHexElevated() {
+            Hex hex = new Hex(2, "bldg_elev:3;building:1:80;bldg_cf:80", "");
+            assertEquals(5, ClimbingHelper.getClimbDestinationLevel(hex),
+                  "Building sits on top of the hex level: 2 (ground) + 3 (3 floors) = 5.");
+        }
+
+        @Test
+        @DisplayName("Bridge hex returns bridge surface absolute level — regression for "
+              + "continuation-climb dialog skipping bridges")
+        void bridgeHexAddsBridgeElev() {
+            // This is the exact in-game scenario: bridge_elev:2 over water:2. Before the fix the
+            // dialog ignored the BRIDGE branch and computed destination = hex.getLevel() = 0, so
+            // a Mek clinging at water surface (elev 0) saw "0 levels remaining" and the
+            // continue-climbing dialog never appeared.
+            Hex hex = new Hex(0, "water:2;bridge:1;bridge_cf:100;bridge_elev:2", "");
+            assertEquals(2, ClimbingHelper.getClimbDestinationLevel(hex),
+                  "Bridge surface at bridge_elev 2 sits at absolute level 2; the continuation "
+                        + "dialog must measure to it, not to the bare water hex.");
+        }
+
+        @Test
+        @DisplayName("Building takes precedence when a hex has both BUILDING and BRIDGE")
+        void buildingTakesPrecedenceOverBridge() {
+            // Pathological hex with both terrains (rare but theoretically possible if a hex
+            // contains both a building footprint and a bridge fragment). We pick BUILDING to
+            // match the historical behavior of the dialog code that this helper replaces.
+            Hex hex = new Hex(0, "bldg_elev:5;building:2:80;bldg_cf:80;bridge:1;bridge_elev:2", "");
+            assertEquals(5, ClimbingHelper.getClimbDestinationLevel(hex),
+                  "When both BUILDING and BRIDGE are present, the building roof wins.");
+        }
+    }
+
+    @Nested
+    @DisplayName("getEdgeDropHeight - distance from edge to landing surface")
+    class GetEdgeDropHeightTests {
+
+        /**
+         * Builds a 1x2 board so a Mek at (0,0) is adjacent to a target hex at (0,1), places the
+         * Mek on the {@code entityHex}, and returns it ready for getEdgeDropHeight tests.
+         */
+        private Mek setupEdgeTest(Hex entityHex, int entityElevation, Hex targetHex) {
+            Board board = new Board(1, 2);
+            board.setHex(0, 0, entityHex);
+            board.setHex(0, 1, targetHex);
+            game.setBoard(board);
+            Mek mek = createFullyFunctionalMek(50);
+            mek.setPosition(new Coords(0, 0));
+            mek.setElevation(entityElevation);
+            return mek;
+        }
+
+        @Test
+        @DisplayName("Drop into adjacent water counts to the water FLOOR, not the surface — "
+              + "regression for bridge-top-to-water edge-descent dialog skipping")
+        void bridgeTopToAdjacentWaterCountsToWaterFloor() {
+            // Mek on top of a bridge over water:2 (entity hex at level 0, bridge_elev:2 →
+            // entity absolute alt +2). Adjacent target is a plain water:2 hex (level 0, floor
+            // -2). The "edge" the Mek is stepping off measures from +2 down to the water floor
+            // -2 = 4 levels — comfortably above the 3-level threshold that triggers the
+            // edge-descent dialog. Before the fix only hex.getLevel() was used, so the drop
+            // looked like 2 levels and the dialog never fired.
+            Hex bridgeHex = new Hex(0, "water:2;bridge:1;bridge_cf:100;bridge_elev:2", "");
+            Hex waterHex = new Hex(0, "water:2", "");
+            Mek mek = setupEdgeTest(bridgeHex, 2, waterHex);
+
+            int drop = ClimbingHelper.getEdgeDropHeight(mek, new Coords(0, 1), game);
+            assertEquals(4, drop,
+                  "Drop from bridge top (+2) into adjacent water:2 (floor at -2) must be 4 levels "
+                        + "so the edge-descent dialog fires.");
+            assertTrue(ClimbingHelper.isAtEdge(mek, new Coords(0, 1), game),
+                  "4-level drop is at or above the 3-level edge threshold — must be 'at edge'.");
+        }
+
+        @Test
+        @DisplayName("Adjacent BUILDING roof intercepts the drop")
+        void dropOntoBuildingRoof() {
+            // Mek at absolute +5 stepping onto an adjacent 2-floor building. The Mek lands on
+            // the roof (level 0 + 2 = 2), so the drop measures down to the roof, not past it.
+            Hex cliffHex = new Hex(5, "", "");
+            Hex buildingHex = new Hex(0, "bldg_elev:2;building:2:80;bldg_cf:80", "");
+            Mek mek = setupEdgeTest(cliffHex, 0, buildingHex);
+
+            int drop = ClimbingHelper.getEdgeDropHeight(mek, new Coords(0, 1), game);
+            assertEquals(3, drop,
+                  "Cliff top (+5) to building roof (+2) is a 3-level drop, not 5 — the Mek lands "
+                        + "on the roof, not at the building's base.");
+        }
+
+        @Test
+        @DisplayName("Adjacent BRIDGE surface intercepts the drop")
+        void dropOntoBridgeSurface() {
+            // Mek on a +5 cliff stepping onto an adjacent bridge over water (bridge_elev:2 →
+            // absolute +2). Lands on the bridge surface, drop = 5 - 2 = 3.
+            Hex cliffHex = new Hex(5, "", "");
+            Hex bridgeHex = new Hex(0, "water:2;bridge:1;bridge_cf:100;bridge_elev:2", "");
+            Mek mek = setupEdgeTest(cliffHex, 0, bridgeHex);
+
+            int drop = ClimbingHelper.getEdgeDropHeight(mek, new Coords(0, 1), game);
+            assertEquals(3, drop,
+                  "Drop into a bridge hex stops on the bridge surface — not down to the water "
+                        + "floor below. The Mek climb-mode-on lands on the bridge.");
+        }
+
+        @Test
+        @DisplayName("Dry-to-dry drop equals the simple level difference")
+        void dropOntoDryGround() {
+            Hex cliffHex = new Hex(5, "", "");
+            Hex groundHex = new Hex(0, "", "");
+            Mek mek = setupEdgeTest(cliffHex, 0, groundHex);
+
+            int drop = ClimbingHelper.getEdgeDropHeight(mek, new Coords(0, 1), game);
+            assertEquals(5, drop,
+                  "Dry hex → dry hex: drop is just absolute altitude difference.");
         }
     }
 }

@@ -3042,8 +3042,14 @@ public class MoveStep implements Serializable {
                   (moveMode != EntityMovementMode.BIPED_SWIM) &&
                   (moveMode != EntityMovementMode.QUAD_SWIM) &&
                   (moveMode != EntityMovementMode.WIGE)) {
+                // Water entry MP only applies when the unit is actually IN the water column at
+                // the destination — i.e., its destination elevation is at or below the hex
+                // surface. A Mek crossing a bridge over water (nDestEl above the hex level) is
+                // never wading through anything, so the water-depth MP shouldn't be charged.
+                boolean inWaterColumn = nDestEl <= destHex.getLevel();
                 // no additional cost when moving on surface of ice.
-                if (!destHex.containsTerrain(Terrains.ICE) || (nDestEl < destHex.getLevel())) {
+                if (inWaterColumn
+                      && (!destHex.containsTerrain(Terrains.ICE) || (nDestEl < destHex.getLevel()))) {
                     if ((destHex.terrainLevel(Terrains.WATER) == 1) && !isAmphibious) {
                         mp++;
                     } else if ((destHex.terrainLevel(Terrains.WATER) > 1) && !isAmphibious) {

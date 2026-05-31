@@ -65,7 +65,15 @@ public class ClimbingChoiceDialog extends AbstractChoiceDialog<ClimbingChoiceDia
         CLIMB_DOWN,
         CLING,
         DANGLE_DOWN,
-        DROP
+        DROP,
+        /**
+         * "Commit the path the planner already drew" — for the edge-descent dialog, this means
+         * walking the routed-around path or taking the leap that's already attached to the
+         * move command. Distinct from CLING (which holds the dialog open) because this option
+         * explicitly commits the existing path so the player doesn't have to dismiss the
+         * dialog and click Move separately.
+         */
+        WALK_AS_CALCULATED
     }
 
     /**

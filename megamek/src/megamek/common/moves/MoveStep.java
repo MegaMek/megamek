@@ -1737,7 +1737,7 @@ public class MoveStep implements Serializable {
 
         if (isInfantry && isJumping() && stepType == MoveStepType.DOWN) {
             Hex curHex = game.getBoard(boardId).getHex(curPos);
-            if (curHex != null && curHex.containsTerrain(Terrains.BUILDING)) {
+            if (curHex.containsTerrain(Terrains.BUILDING)) {
                 Coords startingPosition = entity.getPosition();
                 Coords adjacentCoords = curPos.translated(curPos.direction(startingPosition));
                 Hex adjacentHex = game.getHex(adjacentCoords, boardId);

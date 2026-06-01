@@ -104,6 +104,10 @@ public class ForceDescriptor {
     private boolean augmented;
     private Integer weightClass;
     private Integer unitType;
+    // Per-cluster-type weight budget parsed from <weightTarget> blocks, keyed by unit type. Set only on
+    // the cluster node (deliberately NOT copied to children in createChild) and consumed by
+    // WeightBudgetAllocator after the tree is built. Null means no budget for this node.
+    private Map<Integer, WeightTarget> weightTargets;
     private final HashSet<EntityMovementMode> movementModes;
     private final HashSet<MissionRole> roles;
     private String rating;
@@ -1664,6 +1668,40 @@ public class ForceDescriptor {
         }
     }
 
+    /**
+     * Tallies every generated element's weight class, grouped by unit type. Like {@link #tallyMekWeightClasses()} but
+     * for all of the weight-classed types the budget allocator governs (Mek, aerospace fighter, vehicle, battle armor),
+     * so each type's achieved mix can be measured and tuned independently.
+     *
+     * @return a map from {@link UnitType} constant to a per-weight-class count array, indexed by
+     *       {@link EntityWeightClass} ({@code 0 = WEIGHT_ULTRA_LIGHT} ... {@code 5 = WEIGHT_SUPER_HEAVY})
+     */
+    public Map<Integer, int[]> tallyWeightClassesByType() {
+        Map<Integer, int[]> byType = new HashMap<>();
+        tallyWeightClassesByType(byType);
+        return byType;
+    }
+
+    private void tallyWeightClassesByType(Map<Integer, int[]> byType) {
+        Entity leafEntity = getEntity();
+        if (leafEntity != null) {
+            int ut = leafEntity.getUnitType();
+            if ((ut == UnitType.MEK) || (ut == UnitType.AEROSPACE_FIGHTER)
+                  || (ut == UnitType.TANK) || (ut == UnitType.BATTLE_ARMOR)) {
+                int wc = leafEntity.getWeightClass();
+                if ((wc >= 0) && (wc <= EntityWeightClass.WEIGHT_SUPER_HEAVY)) {
+                    byType.computeIfAbsent(ut, k -> new int[EntityWeightClass.WEIGHT_SUPER_HEAVY + 1])[wc]++;
+                }
+            }
+        }
+        for (ForceDescriptor sub : subForces) {
+            sub.tallyWeightClassesByType(byType);
+        }
+        for (ForceDescriptor att : attached) {
+            att.tallyWeightClassesByType(byType);
+        }
+    }
+
     public int getIndex() {
         return index;
     }
@@ -1692,6 +1730,7 @@ public class ForceDescriptor {
             retVal = retVal.replace("{latin:parent}", LATIN[getParent().getNameIndex()]);
             retVal = retVal.replace("{roman:parent}", ROMAN[getParent().getNameIndex()]);
             retVal = retVal.replace("{cardinal:parent}", Integer.toString(getParent().getNameIndex() + 1));
+            retVal = retVal.replace("{cardinalOrdinal:parent}", cardinalOrdinal(getParent().getNameIndex() + 1));
             retVal = retVal.replace("{alpha:parent}", Character.toString((char) (getParent().getNameIndex() + 'A')));
         }
         if (getParent() != null && retVal.contains("{name:parent}")) {
@@ -1707,6 +1746,7 @@ public class ForceDescriptor {
             retVal = retVal.replace("{latin}", LATIN[getNameIndex()]);
             retVal = retVal.replace("{roman}", ROMAN[getNameIndex()]);
             retVal = retVal.replace("{cardinal}", Integer.toString(getNameIndex() + 1));
+            retVal = retVal.replace("{cardinalOrdinal}", cardinalOrdinal(getNameIndex() + 1));
             retVal = retVal.replace("{alpha}", Character.toString((char) (getNameIndex() + 'A')));
             if (retVal.contains("{formation}")) {
                 if (null != formationType && null != formationType.getCategory()) {
@@ -1722,6 +1762,29 @@ public class ForceDescriptor {
         retVal = retVal.replaceAll("\\{.*?}", "");
         retVal = retVal.replaceAll("[\\[\\]]", "").replaceAll("\\s+", " ");
         return retVal.trim();
+    }
+
+    /**
+     * Formats a positive integer as a numeric ordinal with the correct English suffix:
+     * 1 -> "1st", 2 -> "2nd", 3 -> "3rd", 4 -> "4th", 11/12/13 -> "th", 21 -> "21st", etc.
+     * Used by the {@code {cardinalOrdinal}} name token so cluster names read like the canon
+     * Touman ("38th Assault Cluster", "202nd Battle Cluster") with no upper bound, unlike the
+     * spelled {@code {ordinal}} token which stops at "Tenth".
+     */
+    public static String cardinalOrdinal(int n) {
+        int mod100 = n % 100;
+        String suffix;
+        if (mod100 >= 11 && mod100 <= 13) {
+            suffix = "th";
+        } else {
+            suffix = switch (n % 10) {
+                case 1 -> "st";
+                case 2 -> "nd";
+                case 3 -> "rd";
+                default -> "th";
+            };
+        }
+        return n + suffix;
     }
 
     public String getDescription() {
@@ -1837,6 +1900,15 @@ public class ForceDescriptor {
 
     public void setWeightClass(Integer weightClass) {
         this.weightClass = weightClass;
+    }
+
+    /** Per-cluster-type weight budget for this node, keyed by unit type, or {@code null} if none. */
+    public Map<Integer, WeightTarget> getWeightTargets() {
+        return weightTargets;
+    }
+
+    public void setWeightTargets(Map<Integer, WeightTarget> weightTargets) {
+        this.weightTargets = weightTargets;
     }
 
     public Integer getUnitType() {

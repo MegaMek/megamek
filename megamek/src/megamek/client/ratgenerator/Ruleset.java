@@ -197,6 +197,14 @@ public class Ruleset {
         String rngFaction = RandomNameGenerator.getInstance().getChosenFaction();
 
         buildForceTree(fd, l, 0.05);
+        // Capture the weight class the ruleset ROLLED for this force (the value that drove the
+        // <weightTarget> selection) before recalcWeightClass() below overwrites it with the
+        // weight implied by the units actually generated. This is the right label for tuning.
+        String rolledWeight = fd.getWeightClassCode().isEmpty() ? "RANDOM" : fd.getWeightClassCode();
+        // Per-cluster-type weight budget: reshape element weights to the faction's <weightTarget>
+        // blocks before units are picked. Data-gated -- a no-op for any cluster that declares no
+        // targets, so factions without <weightTarget> generate exactly as before.
+        WeightBudgetAllocator.allocate(fd);
         fd.generateUnits(l, 0.5);
         if (null != l) {
             l.updateProgress(0, "Finalizing formation");
@@ -245,6 +253,10 @@ public class Ruleset {
                   mekWeights[EntityWeightClass.WEIGHT_HEAVY],
                   mekWeights[EntityWeightClass.WEIGHT_ASSAULT],
                   mekWeights[EntityWeightClass.WEIGHT_SUPER_HEAVY]);
+            // Also append machine-readable rows for weight-mix tuning (logs/forcegen_weights.csv): one
+            // row per weight-classed unit type (Mek/Aero/Vehicle/BA). Use the ROLLED weight captured
+            // before recalc, so each row names the target that drove it.
+            ForceGenWeightCsv.append(fd.getFaction(), rolledWeight, fd.tallyWeightClassesByType());
         }
 
         RandomNameGenerator.getInstance().setChosenFaction(rngFaction);

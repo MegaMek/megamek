@@ -16113,11 +16113,12 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // Apply damage based on entity type
+            // Example on TOAR p. 174 has partial damage rounding down, not up.
             switch (entity) {
                 case BattleArmor ba -> {
                     // Battle Armor: use complex method (TOAR p. 6)
                     int troopersBefore = ba.getShootingStrength();
-                    int troopersLost = (int) Math.ceil(troopersBefore * effectivePercent / 100.0);
+                    int troopersLost = (int) Math.floor(troopersBefore * effectivePercent / 100.0);
 
                     // Convert troopers lost to damage points (10 points per trooper)
 
@@ -16146,7 +16147,7 @@ public class TWGameManager extends AbstractGameManager {
                 case Infantry inf -> {
                     // Regular infantry: simple percentage application
                     int troopersBefore = inf.getShootingStrength();
-                    int troopersLost = (int) Math.ceil(troopersBefore * effectivePercent / 100.0);
+                    int troopersLost = (int) Math.floor(troopersBefore * effectivePercent / 100.0);
 
                     // Use existing damage system
                     HitData hit = new HitData(ConvInfantry.LOC_INFANTRY);
@@ -16170,7 +16171,7 @@ public class TWGameManager extends AbstractGameManager {
                     int crewBefore = crew.getCurrentSize();
 
                     // Calculate crew lost based on percentage
-                    int crewLost = (int) Math.ceil(crewBefore * effectivePercent / 100.0);
+                    int crewLost = (int) Math.floor(crewBefore * effectivePercent / 100.0);
                     crew.setCurrentSize(Math.max(0, crewBefore - crewLost));
 
                     // Convert casualties to crew hits (TOAR Crew Casualties Table)

@@ -71,6 +71,7 @@ public class MekSearchFilter {
     public int iOmni;
     public int iMilitary;
     public int iIndustrial;
+    public int iFrankenMek;
     public int iMountedInfantry;
     public int iWaterOnly;
     public int iDoomedOnGround;
@@ -206,7 +207,6 @@ public class MekSearchFilter {
     public int filterTripod;
     public int filterQuad;
     public int filterQuadVee;
-    public int iFrankenMek;
     public int filterAero;
     public int filterFixedWingSupport;
     public int filterConvFighter;

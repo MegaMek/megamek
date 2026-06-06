@@ -1,5 +1,7 @@
 MEGAMEK VERSION HISTORY:
 ----------------
+0.51.01
+
 0.51.0 (2026-06-06 1600 UTC) - First version requiring Java 21
 ## What's Changed
 * Add @JsonCreator to Atmosphere enum for backwards-compatible deserialization by @HammerGS in https://github.com/MegaMek/megamek/pull/8138

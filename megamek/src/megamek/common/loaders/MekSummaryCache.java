@@ -55,7 +55,15 @@ import megamek.common.equipment.DockingCollar;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Transporter;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.units.*;
+import megamek.common.units.Aero;
+import megamek.common.units.ConvInfantry;
+import megamek.common.units.DropShuttleBay;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.Mek;
+import megamek.common.units.NavalRepairFacility;
+import megamek.common.units.Tank;
+import megamek.common.units.UnitType;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestEntity;
 import megamek.logging.MMLogger;
@@ -680,6 +688,7 @@ public class MekSummaryCache {
         }
 
         ms.setBV(e.calculateBattleValue(true, true));
+        ms.setGenericBattleValue(e.getGenericBattleValue());
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setAdvancedYear(e.getProductionDate(e.isClan()));
         ms.setStandardYear(e.getCommonDate(e.isClan()));

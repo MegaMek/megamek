@@ -216,9 +216,6 @@ public class OptionsConstants {
     /** @deprecated Use {@link #MD_EI_IMPLANT} instead. EI Implant is now an official Manei Domini augmentation. */
     @Deprecated(since = "0.50.07", forRemoval = true)
     public static final String UNOFFICIAL_EI_IMPLANT = "ei_implant";
-    public static final String UNOFFICIAL_GUNNERY_LASER = "gunnery_laser";
-    public static final String UNOFFICIAL_GUNNERY_MISSILE = "gunnery_missile";
-    public static final String UNOFFICIAL_GUNNERY_BALLISTIC = "gunnery_ballistic";
     public static final String UNOFFICIAL_CLAN_PILOT_TRAINING = "clan_pilot_training";
     public static final String UNOFFICIAL_SOME_LIKE_IT_HOT = "some_like_it_hot";
     public static final String UNOFFICIAL_WEATHERED = "weathered";

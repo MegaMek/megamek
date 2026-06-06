@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -61,6 +61,8 @@ import megamek.common.equipment.Mounted;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
+import megamek.common.planetaryConditions.EMI;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -107,6 +109,8 @@ class ComputeECMTest {
         when(mockGame.hasBoardLocation(any(BoardLocation.class))).thenReturn(true);
         when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
         when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
+        // No EMI by default; a real PlanetaryConditions defaults to EMI_NONE, leaving ECM ranges unchanged
+        when(mockGame.getPlanetaryConditions()).thenReturn(new PlanetaryConditions());
 
         Entity archer = getEntityForUnitTesting("Archer ARC-2R", false);
         assertNotNull(archer, "Archer ARC-2R not found");
@@ -211,6 +215,84 @@ class ComputeECMTest {
         assertEquals(testInfoECM, ecmInfo);
         eccmInfo = archer.getECCMInfo();
         assertEquals(testInfoECCM, eccmInfo);
+    }
+
+    /**
+     * Under EMI planetary conditions, a ground unit's ECM and ECCM bubbles double their effective range (TO:AR p.59).
+     * This verifies the doubling that the board view's ECM shading and the ECM effect resolution both rely on.
+     */
+    @Test
+    void testGetECMInfoDoublesRangeUnderEMI() {
+        // Mock Player
+        Player mockPlayer = mock(Player.class);
+
+        // Mock the board
+        Board mockBoard = mock(Board.class);
+        when(mockBoard.isSpace()).thenReturn(false);
+        when(mockBoard.contains(any(Coords.class))).thenReturn(true);
+        when(mockBoard.contains(anyInt(), anyInt())).thenReturn(true);
+
+        // Mock Options
+        GameOptions mockOptions = mock(GameOptions.class);
+        when(mockOptions.booleanOption(anyString())).thenReturn(false);
+        when(mockOptions.booleanOption("tacops_eccm")).thenReturn(true);
+
+        // EMI is active for this game
+        PlanetaryConditions emiConditions = new PlanetaryConditions();
+        emiConditions.setEMI(EMI.EMI);
+
+        // Mock the game
+        Game mockGame = mock(Game.class);
+        when(mockGame.getBoard()).thenReturn(mockBoard);
+        when(mockGame.getSmokeCloudList()).thenReturn(new ArrayList<>());
+        when(mockGame.getOptions()).thenReturn(mockOptions);
+        when(mockGame.getPlayer(anyInt())).thenReturn(mockPlayer);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(BoardLocation.class))).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
+        when(mockGame.getPlanetaryConditions()).thenReturn(emiConditions);
+
+        Entity archer = getEntityForUnitTesting("Archer ARC-2R", false);
+        assertNotNull(archer, "Archer ARC-2R not found");
+
+        MiscType.initializeTypes();
+
+        // Add a Guardian ECM Suite (base ground range of 6 hexes)
+        EquipmentType eType = EquipmentType.get("ISGuardianECMSuite");
+        try {
+            archer.addEquipment(eType, Mek.LOC_RIGHT_TORSO);
+        } catch (LocationFullException e) {
+            fail(e.getMessage());
+        }
+
+        Coords pos = new Coords(0, 0);
+        archer.setPosition(pos);
+        archer.setOwner(mockPlayer);
+        archer.setGame(mockGame);
+
+        // Under EMI, the ECM bubble doubles from 6 to 12 hexes
+        ECMInfo ecmInfo = archer.getECMInfo();
+        assertNotNull(ecmInfo);
+        assertEquals(12, ecmInfo.getRange());
+
+        // Switch the suite to ECCM; the ECCM bubble also doubles from 6 to 12 hexes
+        Mounted<?> ecm = null;
+        for (Mounted<?> m : archer.getMisc()) {
+            if (m.getType().equals(eType)) {
+                ecm = m;
+            }
+        }
+        assertNotNull(ecm);
+        assertEquals(1, ecm.setMode("ECCM"));
+        // Need to update the round to make the mode switch happen
+        archer.newRound(1);
+
+        ECMInfo eccmInfo = archer.getECCMInfo();
+        assertNotNull(eccmInfo);
+        assertEquals(12, eccmInfo.getRange());
     }
 
     /**

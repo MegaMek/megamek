@@ -1736,7 +1736,8 @@ public class MoveStep implements Serializable {
         } // end AERO stuff
 
         if (isInfantry && isJumping() && stepType == MoveStepType.DOWN) {
-            if (game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.BUILDING)) {
+            Hex curHex = game.getBoard(boardId).getHex(curPos);
+            if (curHex.containsTerrain(Terrains.BUILDING)) {
                 Coords startingPosition = entity.getPosition();
                 Coords adjacentCoords = curPos.translated(curPos.direction(startingPosition));
                 Hex adjacentHex = game.getHex(adjacentCoords, boardId);
@@ -1745,7 +1746,7 @@ public class MoveStep implements Serializable {
                       entity,
                       new FloorTarget(curPos, game.getBoard(boardId), getElevation())).canSee();
 
-                if (adjacentHex.ceiling() >= getElevation() || !hasLOS) {
+                if (adjacentHex.ceiling() >= getElevation() + curHex.getLevel() || !hasLOS) {
                     return; // can't enter the building from this direction
                 } else {
                     // we can enter the building, but we need to roll anti-mek skill

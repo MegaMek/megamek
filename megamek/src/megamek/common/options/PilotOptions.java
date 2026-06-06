@@ -109,9 +109,6 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.INFANTRY_URBAN_GUERRILLA, false);
 
         // Unofficial
-        addOption(adv, OptionsConstants.UNOFFICIAL_GUNNERY_LASER, false);
-        addOption(adv, OptionsConstants.UNOFFICIAL_GUNNERY_MISSILE, false);
-        addOption(adv, OptionsConstants.UNOFFICIAL_GUNNERY_BALLISTIC, false);
         addOption(adv, OptionsConstants.UNOFFICIAL_CLAN_PILOT_TRAINING, false);
         addOption(adv, OptionsConstants.UNOFFICIAL_SOME_LIKE_IT_HOT, false);
         addOption(adv, OptionsConstants.UNOFFICIAL_WEATHERED, false);

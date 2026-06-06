@@ -758,17 +758,47 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 row[column][1] += ba.getShootingStrength();
             }
         }
+        // At Galaxy echelon and above (constants.txt: GALAXY/BRIGADE=7, TOUMAN/DIVISION=8, ...) a force
+        // holds hundreds of units, so raw per-cell counts are unreadable. Show each weight class as a
+        // percentage of that unit type's total instead. Smaller forces keep the exact counts.
+        Integer echelon = fd.getEchelon();
+        boolean asPercent = (echelon != null) && (echelon >= LARGE_ECHELON_PERCENT_THRESHOLD);
         for (Map.Entry<Integer, int[][]> entry : counts.entrySet()) {
             int[][] row = entry.getValue();
             boolean isBA = (entry.getKey() == UnitType.BATTLE_ARMOR);
-            summaryModel.addRow(new Object[] {
-                  UnitType.getTypeName(entry.getKey()),
-                  formatSummaryCell(row[0], isBA),
-                  formatSummaryCell(row[1], isBA),
-                  formatSummaryCell(row[2], isBA),
-                  formatSummaryCell(row[3], isBA)
-            });
+            if (asPercent) {
+                int typeTotal = row[0][0] + row[1][0] + row[2][0] + row[3][0];
+                summaryModel.addRow(new Object[] {
+                      UnitType.getTypeName(entry.getKey()),
+                      formatSummaryPercent(row[0][0], typeTotal),
+                      formatSummaryPercent(row[1][0], typeTotal),
+                      formatSummaryPercent(row[2][0], typeTotal),
+                      formatSummaryPercent(row[3][0], typeTotal)
+                });
+            } else {
+                summaryModel.addRow(new Object[] {
+                      UnitType.getTypeName(entry.getKey()),
+                      formatSummaryCell(row[0], isBA),
+                      formatSummaryCell(row[1], isBA),
+                      formatSummaryCell(row[2], isBA),
+                      formatSummaryCell(row[3], isBA)
+                });
+            }
         }
+    }
+
+    /** Echelon level at or above which the composition summary switches from counts to percentages. */
+    private static final int LARGE_ECHELON_PERCENT_THRESHOLD = 7;
+
+    /**
+     * Formats a summary-table cell as a whole-number percentage of the unit type's total, e.g. "43%". An empty bucket
+     * renders as "0%"; a type with no units renders blank.
+     */
+    private static String formatSummaryPercent(int count, int total) {
+        if (total <= 0) {
+            return "";
+        }
+        return Math.round(100.0 * count / total) + "%";
     }
 
     /**

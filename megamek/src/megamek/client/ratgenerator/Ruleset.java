@@ -201,6 +201,9 @@ public class Ruleset {
         // <weightTarget> selection) before recalcWeightClass() below overwrites it with the
         // weight implied by the units actually generated. This is the right label for tuning.
         String rolledWeight = fd.getWeightClassCode().isEmpty() ? "RANDOM" : fd.getWeightClassCode();
+        // Cluster identity flags (e.g. CCC's battle/coil/fang named types). These let the CSV tune
+        // per named cluster type, since all of them roll the same H/M/L weight picker.
+        String clusterFlags = String.join(";", fd.getFlags());
         // Per-cluster-type weight budget: reshape element weights to the faction's <weightTarget>
         // blocks before units are picked. Data-gated -- a no-op for any cluster that declares no
         // targets, so factions without <weightTarget> generate exactly as before.
@@ -253,13 +256,50 @@ public class Ruleset {
                   mekWeights[EntityWeightClass.WEIGHT_HEAVY],
                   mekWeights[EntityWeightClass.WEIGHT_ASSAULT],
                   mekWeights[EntityWeightClass.WEIGHT_SUPER_HEAVY]);
-            // Also append machine-readable rows for weight-mix tuning (logs/forcegen_weights.csv): one
-            // row per weight-classed unit type (Mek/Aero/Vehicle/BA). Use the ROLLED weight captured
-            // before recalc, so each row names the target that drove it.
-            ForceGenWeightCsv.append(fd.getFaction(), rolledWeight, fd.tallyWeightClassesByType());
+        }
+        // Append machine-readable rows for weight-mix tuning (logs/forcegen_weights.csv): one row per
+        // weight-classed unit type (Mek/Aero/Vehicle/BA). Logged independently of the Mek-only summary
+        // above so Mek-less forces (solahma/infantry, pure-aero) still record. Per CLUSTER so factions
+        // whose identity lives on the cluster (e.g. CCC's flag-named types) are tagged individually; if
+        // the generated force is a single cluster or smaller, log it directly with its own flags.
+        List<ForceDescriptor> clusters = new ArrayList<>();
+        collectClusters(fd, clusters);
+        int year = (fd.getYear() != null) ? fd.getYear() : -1;
+        if (clusters.isEmpty()) {
+            ForceGenWeightCsv.append(fd.getFaction(), year, rolledWeight, clusterFlags,
+                  fd.tallyWeightClassesByType());
+        } else {
+            for (ForceDescriptor cluster : clusters) {
+                String cwc = cluster.getWeightClassCode().isEmpty() ? "RANDOM" : cluster.getWeightClassCode();
+                int cyear = (cluster.getYear() != null) ? cluster.getYear() : year;
+                ForceGenWeightCsv.append(cluster.getFaction(), cyear, cwc, String.join(";", cluster.getFlags()),
+                      cluster.tallyWeightClassesByType());
+            }
         }
 
         RandomNameGenerator.getInstance().setChosenFaction(rngFaction);
+    }
+
+    /** CLUSTER echelon level (see forcegenerator/faction_rules/constants.txt). */
+    private static final int CLUSTER_ECHELON = 6;
+
+    /**
+     * Collects every CLUSTER-echelon descriptor in the tree (not descending into a cluster's own subforces), so
+     * weight-mix logging can record one row-set per cluster tagged with that cluster's flags. Used for factions whose
+     * identity lives on the cluster, e.g. Cloud Cobra's named types.
+     *
+     * @param fd  the node to search from
+     * @param out accumulator for cluster nodes found
+     */
+    private static void collectClusters(ForceDescriptor fd, List<ForceDescriptor> out) {
+        Integer echelon = fd.getEchelon();
+        if ((echelon != null) && (echelon == CLUSTER_ECHELON)) {
+            out.add(fd);
+            return;
+        }
+        for (ForceDescriptor sub : fd.getSubForces()) {
+            collectClusters(sub, out);
+        }
     }
 
     /**

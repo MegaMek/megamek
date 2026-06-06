@@ -56,7 +56,7 @@ final class ForceGenWeightCsv {
     private static final MMLogger LOGGER = MMLogger.create(ForceGenWeightCsv.class);
     private static final Path FILE = Path.of("logs", "forcegen_weights.csv");
     private static final String HEADER =
-          "faction,rolledWeight,unitType,total,ultraLight,light,medium,heavy,assault,superHeavy";
+          "faction,year,rolledWeight,clusterFlags,unitType,total,ultraLight,light,medium,heavy,assault,superHeavy";
 
     private ForceGenWeightCsv() {}
 
@@ -65,11 +65,14 @@ final class ForceGenWeightCsv {
      * exist. Any I/O failure is logged and swallowed so diagnostics never break generation.
      *
      * @param faction      the generated faction key
+     * @param year         the generation year (era affects unit availability), or -1 if unknown
      * @param rolledWeight the weight class the ruleset rolled for this force (e.g. "A", "RANDOM"), never null
+     * @param clusterFlags semicolon-joined cluster identity flags (e.g. "battle"), for per-named-type tuning
      * @param byType       map of {@link UnitType} constant to per-weight-class counts (see
      *                     {@code ForceDescriptor.tallyWeightClassesByType})
      */
-    static void append(String faction, String rolledWeight, Map<Integer, int[]> byType) {
+    static void append(String faction, int year, String rolledWeight, String clusterFlags,
+          Map<Integer, int[]> byType) {
         if ((byType == null) || byType.isEmpty()) {
             return;
         }
@@ -85,7 +88,9 @@ final class ForceGenWeightCsv {
             }
             rows.append(String.join(",",
                   safe(faction),
+                  Integer.toString(year),
                   safe(rolledWeight),
+                  safe(clusterFlags),
                   safe(UnitType.getTypeName(entry.getKey())),
                   Integer.toString(total),
                   cell(w, EntityWeightClass.WEIGHT_ULTRA_LIGHT),

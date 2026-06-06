@@ -206,6 +206,7 @@ public class MekSearchFilter {
     public int filterTripod;
     public int filterQuad;
     public int filterQuadVee;
+    public int iFrankenMek;
     public int filterAero;
     public int filterFixedWingSupport;
     public int filterConvFighter;
@@ -455,6 +456,10 @@ public class MekSearchFilter {
         }
 
         if (!isMatch(f.iIndustrial, mek.isIndustrialMek())) {
+            return false;
+        }
+
+        if (!isMatch(f.iFrankenMek, mek.isFrankenMek())) {
             return false;
         }
 

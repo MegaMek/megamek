@@ -588,13 +588,16 @@ public class TestMek extends TestEntity {
         boolean illegal = false;
         for (int location = 0; location < mek.locations(); location++) {
             EquipmentType structure = mek.getFrankenMekStructureEquipment(location);
-            int fallbackStructureCrits = mek.getFrankenMekStructureCriticalSlots(location);
+            // does this structure type even take up slots in the first place
+            boolean structureUsesSlots = structure != null && structure.getNumCriticalSlots(mek) > 0;
+
             int actualStructureCrits = countInternalStructureCriticalSlots(mek, location);
             int actualMatchingStructureCrits = structure == null ? 0 : mek.getNumberOfCriticalSlots(structure, location);
             boolean hasOnlyMatchingStructureCrits = actualStructureCrits == actualMatchingStructureCrits;
-            boolean validStructureCrits = fallbackStructureCrits == 0
-                  ? actualStructureCrits == 0
-                  : hasOnlyMatchingStructureCrits;
+
+            boolean validStructureCrits = structureUsesSlots
+                  ? hasOnlyMatchingStructureCrits
+                  : actualStructureCrits == 0;
             if (!validStructureCrits) {
                 buff.append("The FrankenMek internal structure of ")
                       .append(mek.getLocationName(location))

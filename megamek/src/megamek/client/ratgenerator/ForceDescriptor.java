@@ -926,6 +926,13 @@ public class ForceDescriptor {
         fd.getRoles().clear();
         fd.getRoles().addAll(roles.stream().filter(r -> r.fitsUnitType(unitType)).toList());
 
+        // Without a unit type there is no table to draw from. This can happen when a subforce
+        // spawns child nodes without propagating a unit type (e.g. a Solahma star group). Treat it
+        // as a generation failure rather than letting UnitTable.findTable NPE on the unboxed int.
+        if (fd.getUnitType() == null) {
+            return null;
+        }
+
         int wtIndex = (useWeightClass() && weightClass != null && weightClass != -1) ? 0 : 4;
 
         while (wtIndex < 5) {

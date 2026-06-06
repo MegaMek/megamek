@@ -266,14 +266,14 @@ public class Ruleset {
         collectClusters(fd, clusters);
         int year = (fd.getYear() != null) ? fd.getYear() : -1;
         if (clusters.isEmpty()) {
-            ForceGenWeightCsv.append(fd.getFaction(), year, rolledWeight, clusterFlags,
+            ForceGenWeightCsv.append(fd.getFaction(), year, fd.getRating(), rolledWeight, clusterFlags,
                   fd.tallyWeightClassesByType());
         } else {
             for (ForceDescriptor cluster : clusters) {
                 String cwc = cluster.getWeightClassCode().isEmpty() ? "RANDOM" : cluster.getWeightClassCode();
                 int cyear = (cluster.getYear() != null) ? cluster.getYear() : year;
-                ForceGenWeightCsv.append(cluster.getFaction(), cyear, cwc, String.join(";", cluster.getFlags()),
-                      cluster.tallyWeightClassesByType());
+                ForceGenWeightCsv.append(cluster.getFaction(), cyear, cluster.getRating(), cwc,
+                      String.join(";", cluster.getFlags()), cluster.tallyWeightClassesByType());
             }
         }
 

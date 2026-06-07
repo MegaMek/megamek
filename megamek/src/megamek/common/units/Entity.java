@@ -17451,12 +17451,21 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void setUnitRole(UnitRole role) {
-        this.role = role;
+        this.role = (role == null) ? UnitRole.UNDETERMINED : role;
+    }
+
+    public UnitRole getRoleOverride() {
+        return (role == null) ? UnitRole.UNDETERMINED : role;
+    }
+
+    public boolean hasRoleOverride() {
+        return getRoleOverride() != UnitRole.UNDETERMINED;
     }
 
     @Override
     public UnitRole getRole() {
-        return (role == null) ? UnitRole.UNDETERMINED : role;
+        UnitRole roleOverride = getRoleOverride();
+        return roleOverride.hasRole() ? roleOverride : UnitRole.bestRoleFor(this);
     }
 
     /**

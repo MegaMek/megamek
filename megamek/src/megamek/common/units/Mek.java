@@ -5083,8 +5083,8 @@ public abstract class Mek extends Entity {
         sb.append(MtfFile.RULES_LEVEL).append(
               TechConstants.T_SIMPLE_LEVEL[techLevel]);
         sb.append(newLine);
-        if (hasRole()) {
-            sb.append(MtfFile.ROLE).append(getRole().toString());
+        if (hasRoleOverride()) {
+            sb.append(MtfFile.ROLE).append(getRoleOverride().toString());
             sb.append(newLine);
         }
         if (techFaction != null && techFaction != Faction.NONE) {

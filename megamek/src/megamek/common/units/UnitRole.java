@@ -77,6 +77,17 @@ public enum UnitRole {
     INTERCEPTOR(AERO),
     TRANSPORT(AERO);
 
+    private static final double NO_MATCH = -1_000_000;
+    private static final MMLogger LOGGER = MMLogger.create(UnitRole.class);
+
+    private static final UnitRole[] GROUND_ROLES = {
+          MISSILE_BOAT, SNIPER, JUGGERNAUT, SCOUT, SKIRMISHER, STRIKER, AMBUSHER, BRAWLER
+    };
+
+    private static final UnitRole[] AERO_ROLES = {
+          ATTACK_FIGHTER, DOGFIGHTER, FAST_DOGFIGHTER, FIRE_SUPPORT, INTERCEPTOR
+    };
+
     enum Availability {
         GROUND(BTObject::isGround),
         AERO(BTObject::isAerospace),
@@ -143,10 +154,54 @@ public enum UnitRole {
             case "transport" -> TRANSPORT;
             case "none" -> NONE;
             default -> {
-                MMLogger.create(UnitRole.class).warn("Could not parse role: {}", role);
+                LOGGER.warn("Could not parse role: {}", role);
                 yield UNDETERMINED;
             }
         };
+    }
+
+    /**
+     * Determines the best battlefield role for a unit using its converted Alpha Strike statistics. This does not read
+     * or replace the unit's persisted role.
+     *
+     * @param entity The unit to classify
+     *
+     * @return The best matching role, {@link #NONE} for support/non-combat units, or {@link #UNDETERMINED} when the
+     *       unit cannot be converted
+     */
+    public static UnitRole bestRoleFor(Entity entity) {
+        if (!ASConverter.canConvert(entity)) {
+            return UNDETERMINED;
+        }
+        AlphaStrikeElement element = ASConverter.convert(entity);
+        return (element == null) ? UNDETERMINED : bestRoleFor(element);
+    }
+
+    /**
+     * Determines the best battlefield role for an Alpha Strike element. Ground units use the eight ground roles;
+     * units that return true for {@link BTObject#isAero()} use the aerospace role set.
+     *
+     * @param unit The Alpha Strike element to classify
+     *
+     * @return The best matching role, or {@link #NONE} when the unit is not classified by the role system
+     */
+    public static UnitRole bestRoleFor(AlphaStrikeElement unit) {
+        if ((unit == null) || unit.isUnitGroup()) {
+            return UNDETERMINED;
+        }
+
+        if (unit.isAero()) {
+            if (hasSignificantTransportCapacity(unit)) {
+                return TRANSPORT;
+            } else if (!isAeroCombatRoleCandidate(unit) || !hasMeaningfulAttack(unit)) {
+                return NONE;
+            }
+            return bestScoringRole(unit, AERO_ROLES, NONE);
+        } else if (isGroundCombatRoleCandidate(unit) && hasMeaningfulAttack(unit)) {
+            return bestScoringRole(unit, GROUND_ROLES, NONE);
+        } else {
+            return NONE;
+        }
     }
 
     /**
@@ -211,8 +266,40 @@ public enum UnitRole {
      * @return Boolean value indicating whether the unit meets the qualifications for this role.
      */
     public boolean qualifiesForRole(AlphaStrikeElement unit, double tolerance) {
-        if (!isAvailableTo(unit)) {
-            return false;
+        if (this == NONE) {
+            return bestRoleFor(unit) == NONE;
+        }
+
+        double score = roleScore(unit);
+        return (score > NO_MATCH) && (score >= tolerance);
+    }
+
+    private static UnitRole bestScoringRole(AlphaStrikeElement unit, UnitRole[] candidateRoles, UnitRole fallback) {
+        UnitRole bestRole = fallback;
+        double bestScore = NO_MATCH;
+        for (UnitRole candidateRole : candidateRoles) {
+            double candidateScore = candidateRole.roleScore(unit);
+            if (candidateScore > bestScore) {
+                bestRole = candidateRole;
+                bestScore = candidateScore;
+            }
+        }
+        return bestRole;
+    }
+
+
+    public double roleScore(AlphaStrikeElement unit) {
+        if ((unit == null) || !isAvailableTo(unit)) {
+            return logRoleScore(unit, NO_MATCH);
+        }
+
+        if (isGroundRole(this) && (!isGroundCombatRoleCandidate(unit) || !hasMeaningfulAttack(unit))) {
+            return logRoleScore(unit, NO_MATCH);
+        }
+
+        if (isAeroRole(this) && (this != TRANSPORT)
+              && (!unit.isAero() || !isAeroCombatRoleCandidate(unit) || !hasMeaningfulAttack(unit))) {
+            return logRoleScore(unit, NO_MATCH);
         }
 
         double score = 0;
@@ -282,20 +369,24 @@ public enum UnitRole {
                 break;
             case MISSILE_BOAT:
                 /* Any artillery piece or can do damage by indirect fire at long range */
-                return (unit.getStandardDamage().L().damage > 0 && unit.hasSUA(BattleForceSUA.IF))
-                      || unit.hasSUA(BattleForceSUA.ARTAIS)
-                      || unit.hasSUA(BattleForceSUA.ARTAC)
-                      || unit.hasSUA(BattleForceSUA.ARTBA)
-                      || unit.hasSUA(BattleForceSUA.ARTCM5)
-                      || unit.hasSUA(BattleForceSUA.ARTCM7)
-                      || unit.hasSUA(BattleForceSUA.ARTCM9)
-                      || unit.hasSUA(BattleForceSUA.ARTCM12)
-                      || unit.hasSUA(BattleForceSUA.ARTT)
-                      || unit.hasSUA(BattleForceSUA.ARTS)
-                      || unit.hasSUA(BattleForceSUA.ARTLT)
-                      || unit.hasSUA(BattleForceSUA.ARTTC)
-                      || unit.hasSUA(BattleForceSUA.ARTSC)
-                      || unit.hasSUA(BattleForceSUA.ARTLTC);
+                if (unit.getStandardDamage().L().damage > 0 && unit.hasSUA(BattleForceSUA.IF)) {
+                    score++;
+                }
+                if (unit.hasSUA(BattleForceSUA.ARTAIS)
+                    || unit.hasSUA(BattleForceSUA.ARTAC)
+                    || unit.hasSUA(BattleForceSUA.ARTBA)
+                    || unit.hasSUA(BattleForceSUA.ARTCM5)
+                    || unit.hasSUA(BattleForceSUA.ARTCM7)
+                    || unit.hasSUA(BattleForceSUA.ARTCM9)
+                    || unit.hasSUA(BattleForceSUA.ARTCM12)
+                    || unit.hasSUA(BattleForceSUA.ARTT)
+                    || unit.hasSUA(BattleForceSUA.ARTS)
+                    || unit.hasSUA(BattleForceSUA.ARTLT)
+                    || unit.hasSUA(BattleForceSUA.ARTTC)
+                    || unit.hasSUA(BattleForceSUA.ARTSC)
+                    || unit.hasSUA(BattleForceSUA.ARTLTC)) {
+                    score++;
+                }
             case SCOUT:
                 /*
                  * Fast (jump, WiGE, or VTOL helpful but not required), lightly armored,
@@ -342,7 +433,9 @@ public enum UnitRole {
                 break;
             case SNIPER:
                 /* Can do damage at long range without LRMs */
-                return unit.getStandardDamage().L().damage - unit.getLRM().L().damage > 0;
+                double damageWithoutLRMs = unit.getStandardDamage().L().damage - unit.getLRM().L().damage;
+                score += (damageWithoutLRMs * 0.25);
+                break;
             case STRIKER:
                 /* Fast and light-medium armor, preference for short range */
                 score += Math.min(0, speed - 9) * 0.5;
@@ -385,7 +478,7 @@ public enum UnitRole {
             case FIRE_SUPPORT:
                 /* Not too slow and can do damage at long range */
                 if (unit.getStandardDamage().L().damage < 0.5) {
-                    return false;
+                    return logRoleScore(unit, NO_MATCH);
                 }
                 score += Math.min(0, speed - 5) + Math.min(0, 7 - speed);
                 break;
@@ -401,7 +494,7 @@ public enum UnitRole {
                 break;
             case TRANSPORT:
                 /* Has transport capacity */
-                return unit.hasSUA(BattleForceSUA.CK)
+                if (unit.hasSUA(BattleForceSUA.CK)
                       || unit.hasSUA(BattleForceSUA.IT)
                       || unit.hasSUA(BattleForceSUA.AT)
                       || unit.hasSUA(BattleForceSUA.PT)
@@ -410,11 +503,75 @@ public enum UnitRole {
                       || unit.hasSUA(BattleForceSUA.VTS)
                       || unit.hasSUA(BattleForceSUA.MT)
                       || unit.hasSUA(BattleForceSUA.CT)
-                      || unit.hasSUA(BattleForceSUA.ST);
+                      || unit.hasSUA(BattleForceSUA.ST)) {
+                    score++;
+                }
+                break;
             default:
                 break;
         }
-        return score >= tolerance;
+        return logRoleScore(unit, score);
+    }
+
+    private double logRoleScore(AlphaStrikeElement unit, double score) {
+        LOGGER.info("{} for {}: {}", this, unitName(unit), score);
+        return score;
+    }
+
+    private static String unitName(AlphaStrikeElement unit) {
+        return (unit == null) ? "null" : unit.getName();
+    }
+
+    private static boolean isGroundRole(UnitRole role) {
+        return role.isAnyOf(AMBUSHER, BRAWLER, JUGGERNAUT, MISSILE_BOAT, SCOUT, SKIRMISHER, SNIPER, STRIKER);
+    }
+
+    private static boolean isAeroRole(UnitRole role) {
+        return role.isAnyOf(ATTACK_FIGHTER, DOGFIGHTER, FAST_DOGFIGHTER, FIRE_SUPPORT, INTERCEPTOR, TRANSPORT);
+    }
+
+    private static boolean isGroundCombatRoleCandidate(AlphaStrikeElement unit) {
+        return !unit.isAero() && (unit.isBattleMek() || unit.isProtoMek() || unit.isCombatVehicle()
+              || unit.isSupportVehicle() || unit.isBattleArmor());
+    }
+
+    private static boolean isAeroCombatRoleCandidate(AlphaStrikeElement unit) {
+        return unit.isFighter() || unit.hasMovementMode("a");
+    }
+
+    private static boolean hasMeaningfulAttack(AlphaStrikeElement unit) {
+        return unit.getStandardDamage().hasDamage()
+              || unit.getIF().hasDamage()
+              || unit.getLRM().hasDamage()
+              || unit.getIATM().hasDamage()
+              || unit.getREAR().hasDamage()
+              || unit.getAC().hasDamage()
+              || unit.getSRM().hasDamage()
+              || unit.getTOR().hasDamage()
+              || unit.getHT().hasDamage()
+              || unit.getFLK().hasDamage()
+              || unit.getCAP().hasDamage()
+              || unit.getSCAP().hasDamage()
+              || unit.getMSL().hasDamage()
+              || hasArtillery(unit)
+              || unit.hasSUA(BattleForceSUA.BOMB);
+    }
+
+    private static boolean hasSignificantTransportCapacity(AlphaStrikeElement unit) {
+        return unit.hasSUA(BattleForceSUA.CK)
+              || unit.hasSUA(BattleForceSUA.IT)
+              || unit.hasSUA(BattleForceSUA.AT)
+              || unit.hasSUA(BattleForceSUA.PT)
+              || unit.hasSUA(BattleForceSUA.VTM)
+              || unit.hasSUA(BattleForceSUA.VTH)
+              || unit.hasSUA(BattleForceSUA.VTS)
+              || unit.hasSUA(BattleForceSUA.MT)
+              || unit.hasSUA(BattleForceSUA.ST)
+              || (unit.hasSUA(BattleForceSUA.CT) && (unit.getCT() >= 50));
+    }
+
+    private static boolean hasArtillery(AlphaStrikeElement unit) {
+        return Arrays.stream(BattleForceSUA.values()).anyMatch(sua -> sua.isArtillery() && unit.hasSUA(sua));
     }
 
     @Override

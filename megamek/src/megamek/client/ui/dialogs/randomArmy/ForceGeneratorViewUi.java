@@ -594,22 +594,32 @@ public class ForceGeneratorViewUi implements ActionListener {
 
             ForceDescriptor fd = (ForceDescriptor) value;
             if (fd.isElement()) {
-                StringBuilder name = new StringBuilder();
-                String uname;
+                String commander;
                 if (fd.getCo() == null) {
-                    name.append("<font color='red'>")
-                          .append(Messages.getString("ForceGeneratorDialog.noCrew"))
-                          .append("</font>");
+                    commander = "<font color='red'>"
+                          + Messages.getString("ForceGeneratorDialog.noCrew") + "</font>";
                 } else {
-                    name.append(fd.getCo().getName());
-                    name.append(" (").append(fd.getCo().getGunnery()).append("/").append(fd.getCo().getPiloting())
-                          .append(")");
+                    commander = fd.getCo().getName()
+                          + " (" + fd.getCo().getGunnery() + "/" + fd.getCo().getPiloting() + ")";
                 }
-                uname = "<i>" + fd.getModelName() + "</i>";
-                if (fd.getFluffName() != null) {
-                    uname += "<br /><i>" + fd.getFluffName() + "</i>";
+                Entity en = fd.getEntity();
+                if ((en != null) && en.isLargeCraft()) {
+                    // Large craft (WarShip, DropShip, JumpShip, Space Station) read better
+                    // ship-first, the way a fleet roster is listed: ship name and class on
+                    // the top line, commander (skill) beneath.
+                    String shipClass = "<i>" + en.getChassis() + "</i>";
+                    String shipName = fd.getFluffName();
+                    String topLine = ((shipName != null) && !shipName.isBlank())
+                          ? "<b>" + shipName + "</b>, " + shipClass
+                          : shipClass;
+                    setText("<html>" + topLine + "<br />" + commander + "</html>");
+                } else {
+                    String uname = "<i>" + fd.getModelName() + "</i>";
+                    if (fd.getFluffName() != null) {
+                        uname += "<br /><i>" + fd.getFluffName() + "</i>";
+                    }
+                    setText("<html>" + commander + ", " + uname + "</html>");
                 }
-                setText("<html>" + name + ", " + uname + "</html>");
                 if (fd.getEntity() != null) {
                     try {
                         setIcon(new ImageIcon(MMStaticDirectoryManager.getMekTileset().imageFor(fd.getEntity())));

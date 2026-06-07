@@ -141,6 +141,7 @@ public class ForceDescriptor {
     private double jumpshipPct = 0.0;
     private double warshipPct = 0.0;
     private double cargo = 0.0;
+    private boolean fighterComplement = false;
 
     public ForceDescriptor() {
         faction = FactionRecord.IS_GENERAL_KEY;
@@ -851,6 +852,12 @@ public class ForceDescriptor {
     }
 
     public ModelRecord generate() {
+        // A null unit type means there is no concrete element to generate here (e.g. a
+        // subforce that failed to inherit a unitType). Bail out gracefully instead of NPEing
+        // in the failure-logging path below, which would abort the entire force generation.
+        if (unitType == null) {
+            return null;
+        }
         // Equipment-rating fallback ladder: try the force's own rating first and, only when
         // generation comes up empty, step down to progressively worse ratings (never better).
         // A rating-C force may field C/D/F equipment when nothing matches at its own rating,
@@ -1314,6 +1321,19 @@ public class ForceDescriptor {
             int retVal = 0;
             if (fd.getWeightClass() != null) {
                 retVal += fd.getWeightClass();
+            }
+            // Large craft (WarShips/DropShips/JumpShips/Space Stations) have no L/M/H/A weight
+            // class, so rank them by tonnage: the heaviest vessel in a naval star becomes its
+            // command vessel (assignCommanders assigns the CO to forces[0]). The entity is not
+            // loaded yet when commanders are assigned, so read tonnage from the model record.
+            Integer largeCraftType = fd.getUnitType();
+            if ((largeCraftType != null) && ((largeCraftType == UnitType.WARSHIP)
+                  || (largeCraftType == UnitType.DROPSHIP) || (largeCraftType == UnitType.JUMPSHIP)
+                  || (largeCraftType == UnitType.SPACE_STATION))) {
+                ModelRecord mr = RATGenerator.getInstance().getModelRecord(fd.getModelName());
+                if ((mr != null) && (mr.getMekSummary() != null)) {
+                    retVal += (int) (mr.getMekSummary().getTons() / 1000);
+                }
             }
             if (fd.getUnitType() != null) {
                 switch (fd.getUnitType()) {
@@ -2111,6 +2131,106 @@ public class ForceDescriptor {
         // parent force; without this the attached force restarts the force string at the top level
         // and is rendered as a separate force instead of nesting under its parent.
         fd.setParent(this);
+    }
+
+    public boolean isFighterComplement() {
+        return fighterComplement;
+    }
+
+    public void setFighterComplement(boolean fighterComplement) {
+        this.fighterComplement = fighterComplement;
+    }
+
+    /**
+     * Generates the carried Aerospace Fighter complement of every large craft (WarShip, DropShip, JumpShip, Space
+     * Station) in this force and nests it under the carrying ship, so a generated force that includes a carrier also
+     * includes the fighters it carries. Each carrier is filled to its ASF bay capacity.
+     *
+     * <p>Run after unit generation but BEFORE commander/force-id/entity assignment, so the normal passes give the new
+     * fighters crews, ids, and entities. Fighters are added via {@link #addAttached(ForceDescriptor)} rather than as
+     * subforces so the carrier keeps its own crew (assignCommanders only reassigns from subforces), while the ToE still
+     * nests them under the ship.</p>
+     */
+    public void addFighterComplement() {
+        List<ForceDescriptor> carriers = new ArrayList<>();
+        collectCarriers(carriers);
+        for (ForceDescriptor carrier : carriers) {
+            MekSummary carrierSummary = MekSummaryCache.getInstance().getMek(carrier.getModelName());
+            if (carrierSummary == null) {
+                continue;
+            }
+            int capacity = TransportCalculator.fighterBayCapacity(carrierSummary);
+            if (capacity <= 0) {
+                continue;
+            }
+            UnitTable table = UnitTable.findTable(carrier.getFactionRec(),
+                  UnitType.AEROSPACE_FIGHTER,
+                  carrier.getYear(),
+                  carrier.getRating(),
+                  null,
+                  ModelRecord.NETWORK_NONE,
+                  EnumSet.noneOf(EntityMovementMode.class),
+                  EnumSet.noneOf(MissionRole.class),
+                  0);
+            List<MekSummary> fighters = new ArrayList<>();
+            for (int i = 0; i < capacity; i++) {
+                MekSummary fighterSummary = table.generateUnit();
+                if (fighterSummary == null) {
+                    break;
+                }
+                fighters.add(fighterSummary);
+            }
+            if (fighters.isEmpty()) {
+                continue;
+            }
+            // Organize the complement into Clan Stars / IS Squadrons rather than a flat list, each
+            // attached under the carrier so the ToE reads: Ship -> Star/Squadron -> fighters. A Clan
+            // aerospace Star is 5 Points of 2 fighters = 10; an IS aero Squadron is 3 Flights of 2 = 6.
+            boolean clan = (carrier.getFactionRec() != null) && carrier.getFactionRec().isClan();
+            int groupSize = clan ? 10 : 6;
+            String groupLabel = clan ? "Star" : "Squadron";
+            int groupEchelon = clan ? 3 : 2;
+            int totalGroups = (fighters.size() + groupSize - 1) / groupSize;
+            for (int g = 0; g < totalGroups; g++) {
+                String groupName = (totalGroups > 1)
+                      ? PHONETIC[Math.min(g, PHONETIC.length - 1)] + " " + groupLabel
+                      : groupLabel;
+                ForceDescriptor group = carrier.createChild(carrier.getAttached().size());
+                group.getModels().clear();
+                group.getChassis().clear();
+                group.setUnitType(UnitType.AEROSPACE_FIGHTER);
+                group.setName(groupName);
+                group.setEchelon(groupEchelon);
+                group.setCoRank(32);
+                carrier.addAttached(group);
+                int start = g * groupSize;
+                int end = Math.min(start + groupSize, fighters.size());
+                for (int i = start; i < end; i++) {
+                    ForceDescriptor fighter = group.createChild(group.getSubForces().size());
+                    fighter.setUnitType(UnitType.AEROSPACE_FIGHTER);
+                    fighter.setUnit(RATGenerator.getInstance().getModelRecord(fighters.get(i).getName()));
+                    fighter.setEchelon(1);
+                    fighter.setCoRank(31);
+                    group.addSubForce(fighter);
+                }
+            }
+        }
+    }
+
+    /** Recursively collects every large-craft element (carrier) in the tree. */
+    private void collectCarriers(List<ForceDescriptor> out) {
+        if (isElement() && (unitType != null) && ((unitType == UnitType.WARSHIP)
+              || (unitType == UnitType.DROPSHIP) || (unitType == UnitType.JUMPSHIP)
+              || (unitType == UnitType.SPACE_STATION))) {
+            out.add(this);
+            return;
+        }
+        for (ForceDescriptor sub : subForces) {
+            sub.collectCarriers(out);
+        }
+        for (ForceDescriptor att : attached) {
+            att.collectCarriers(out);
+        }
     }
 
     public double getDropshipPct() {

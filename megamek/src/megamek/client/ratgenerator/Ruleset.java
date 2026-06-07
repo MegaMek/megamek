@@ -213,6 +213,12 @@ public class Ruleset {
             l.updateProgress(0, "Finalizing formation");
         }
         fd.recalcWeightClass();
+        // Optional: fill each large craft's ASF bays with its carried fighter complement and nest the
+        // fighters under the ship. Run before commander/id/entity assignment so the normal passes handle
+        // the new fighters. Off unless the user ticks the option.
+        if (fd.isFighterComplement()) {
+            fd.addFighterComplement();
+        }
         fd.assignCommanders();
         fd.assignPositions();
 
@@ -277,6 +283,12 @@ public class Ruleset {
             }
         }
 
+        // Large craft (WarShips/DropShips/JumpShips/Space Stations) are absent from the weight CSV
+        // (no L/M/H/A class), so record them separately with their structural path for naval
+        // verification (logs/forcegen_warships.csv): correct galaxy/reserve nesting, no duplicates,
+        // and EMPTY-point detection.
+        ForceGenWarshipCsv.append(fd);
+
         RandomNameGenerator.getInstance().setChosenFaction(rngFaction);
     }
 
@@ -299,6 +311,12 @@ public class Ruleset {
         }
         for (ForceDescriptor sub : fd.getSubForces()) {
             collectClusters(sub, out);
+        }
+        // Also walk attached forces: a faction's aerospace and naval clusters are often attached to
+        // a galaxy/touman (e.g. Clan Blood Spirit puts all its ASF clusters on the Blood Galaxy),
+        // so without this they never reach the weight log.
+        for (ForceDescriptor att : fd.getAttached()) {
+            collectClusters(att, out);
         }
     }
 

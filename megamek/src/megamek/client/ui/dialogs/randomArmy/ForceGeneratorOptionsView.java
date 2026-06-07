@@ -144,6 +144,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JTextField txtJumpshipPct;
     private JTextField txtWarshipPct;
     private JTextField txtCargo;
+    private JCheckBox chkFighterComplement;
 
     /** Post-generation summary: unit type rows, Light/Medium/Heavy/Assault columns. */
     private JTable tblSummary;
@@ -329,7 +330,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridx = 0;
         gbc.gridy = y++;
 
-        JPanel panTransport = new JPanel(new GridLayout(4, 2));
+        JPanel panTransport = new JPanel(new GridLayout(5, 2));
         txtDropshipPct = new JTextField("0");
         txtDropshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.dropshipPercentage.tooltip"));
         txtJumpshipPct = new JTextField("0");
@@ -346,6 +347,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         panTransport.add(txtWarshipPct, gbc);
         panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.cargo")));
         panTransport.add(txtCargo, gbc);
+        chkFighterComplement = new JCheckBox(Messages.getString("ForceGeneratorDialog.fighterComplement"));
+        chkFighterComplement.setToolTipText(Messages.getString("ForceGeneratorDialog.fighterComplement.tooltip"));
+        panTransport.add(chkFighterComplement);
+        panTransport.add(new JLabel(""));
         panTransport.setBorder(BorderFactory.createTitledBorder(Messages.getString("ForceGeneratorDialog.transport")));
 
         // Pair the Transport panel with the post-generation Composition Summary table inside a single
@@ -651,6 +656,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         double cargo = MathUtility.parseDouble(txtCargo.getText(), 0.0);
         fd.setCargo(cargo);
         txtCargo.setText(String.valueOf(cargo));
+
+        fd.setFighterComplement(chkFighterComplement.isSelected());
 
         return fd;
     }

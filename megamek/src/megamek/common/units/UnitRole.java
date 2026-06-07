@@ -343,7 +343,7 @@ public enum UnitRole {
                  * number of smaller units with lower armor values that have an official role of
                  * juggernaut.
                  */
-                score += Math.min(0, unit.getFullArmor() - (unit.getSize() + 4));
+                score += Math.min(0, unit.getFullArmor() - (unit.getSize() + 3));
                 score += Math.max(0, unit.getFullArmor() - 7) * 0.2;
                 if (Math.max(unit.getStandardDamage().S().damage,
                       unit.getStandardDamage().M().damage) * 2 >= unit.getFullArmor()) {
@@ -381,6 +381,14 @@ public enum UnitRole {
                 score -= unit.getStandardDamage().S().damage * 0.1;
                 if (unit.getStandardDamage().L().damage > 0 && unit.hasSUA(BattleForceSUA.IF)) {
                     score += unit.getIF().damage;
+                    if (unit.getStandardDamage().L().damage > unit.getIF().damage) {
+                        score -= (unit.getStandardDamage().L().damage - unit.getIF().damage) * 0.5;
+                    }
+                } else {
+                    score--;
+                }
+                if (unit.hasSUA(BattleForceSUA.LRM)) {
+                    score += unit.getLRM().L().damage * 0.5;
                 }
                 /* Any artillery piece */
                 if (unit.hasSUA(BattleForceSUA.ARTAIS)

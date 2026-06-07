@@ -387,6 +387,7 @@ public enum UnitRole {
                     || unit.hasSUA(BattleForceSUA.ARTLTC)) {
                     score++;
                 }
+                break;
             case SCOUT:
                 /*
                  * Fast (jump, WiGE, or VTOL helpful but not required), lightly armored,

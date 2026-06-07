@@ -433,7 +433,8 @@ public enum UnitRole {
                 break;
             case SNIPER:
                 /* Can do damage at long range without LRMs */
-                double damageWithoutLRMs = unit.getStandardDamage().L().damage - unit.getLRM().L().damage;
+                double lrmDamage = unit.getLRM().L().damage;
+                double damageWithoutLRMs = unit.getStandardDamage().L().damage - (lrmDamage * 2);
                 score += (damageWithoutLRMs * 0.25);
                 break;
             case STRIKER:

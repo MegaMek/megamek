@@ -344,6 +344,7 @@ public enum UnitRole {
                  * juggernaut.
                  */
                 score += Math.min(0, unit.getFullArmor() - (unit.getSize() + 4));
+                score += Math.max(0, unit.getFullArmor() - 7) * 0.2;
                 if (Math.max(unit.getStandardDamage().S().damage,
                       unit.getStandardDamage().M().damage) * 2 >= unit.getFullArmor()) {
                     score++;
@@ -368,10 +369,20 @@ public enum UnitRole {
                 }
                 break;
             case MISSILE_BOAT:
-                /* Any artillery piece or can do damage by indirect fire at long range */
-                if (unit.getStandardDamage().L().damage > 0 && unit.hasSUA(BattleForceSUA.IF)) {
-                    score++;
+                if (unit.hasSUA(BattleForceSUA.ENE)) {
+                    score--;
                 }
+                if (unit.hasSUA(BattleForceSUA.AC)) {
+                    score -= unit.getAC().L().damage * 0.1;
+                    score -= unit.getAC().M().damage * 0.1;
+                    score -= unit.getAC().S().damage * 0.1;
+                }
+                /* Can do damage by indirect fire at long range */
+                score -= unit.getStandardDamage().S().damage * 0.1;
+                if (unit.getStandardDamage().L().damage > 0 && unit.hasSUA(BattleForceSUA.IF)) {
+                    score += unit.getIF().damage;
+                }
+                /* Any artillery piece */
                 if (unit.hasSUA(BattleForceSUA.ARTAIS)
                     || unit.hasSUA(BattleForceSUA.ARTAC)
                     || unit.hasSUA(BattleForceSUA.ARTBA)
@@ -412,10 +423,14 @@ public enum UnitRole {
                     score++;
                 }
                 if (unit.getStandardDamage().S().damage > unit.getStandardDamage().M().damage) {
-                    score++;
-                } else if (unit.getStandardDamage().S().damage > unit.getStandardDamage().L().damage) {
                     score += 0.5;
                 }
+                if (unit.getStandardDamage().S().damage > unit.getStandardDamage().L().damage) {
+                    score += 0.5;
+                }
+                score -= (unit.getStandardDamage().S().damage * 0.1);
+                score -= (unit.getStandardDamage().M().damage * 0.25);
+                score -= (unit.getStandardDamage().L().damage * 0.5);
                 break;
             case SKIRMISHER:
                 /* Fast, medium-heavy armor with preference for medium range */
@@ -434,9 +449,9 @@ public enum UnitRole {
                 break;
             case SNIPER:
                 /* Can do damage at long range without LRMs */
-                double lrmDamage = unit.getLRM().L().damage;
-                double damageWithoutLRMs = unit.getStandardDamage().L().damage - (lrmDamage * 2);
-                score += (damageWithoutLRMs * 0.25);
+                double indirectFireValue = unit.getIF().damage;
+                double damageWithoutIF = unit.getStandardDamage().L().damage - (indirectFireValue * 2);
+                score += (damageWithoutIF * 0.25);
                 break;
             case STRIKER:
                 /* Fast and light-medium armor, preference for short range */
@@ -444,8 +459,12 @@ public enum UnitRole {
                 score -= Math.max(0, unit.getFullArmor() - 5);
                 if (unit.getStandardDamage().S().damage > unit.getStandardDamage().M().damage) {
                     score++;
-                } else if (unit.getStandardDamage().S().damage > unit.getStandardDamage().L().damage) {
+                }
+                if (unit.getStandardDamage().S().damage > unit.getStandardDamage().L().damage) {
                     score += 0.5;
+                    if (unit.getStandardDamage().S().damage == unit.getStandardDamage().M().damage) {
+                        score += 0.5;
+                    }
                 }
                 break;
             case ATTACK_FIGHTER:

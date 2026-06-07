@@ -290,16 +290,16 @@ public enum UnitRole {
 
     public double roleScore(AlphaStrikeElement unit) {
         if ((unit == null) || !isAvailableTo(unit)) {
-            return logRoleScore(unit, NO_MATCH);
+            return NO_MATCH;
         }
 
         if (isGroundRole(this) && (!isGroundCombatRoleCandidate(unit) || !hasMeaningfulAttack(unit))) {
-            return logRoleScore(unit, NO_MATCH);
+            return NO_MATCH;
         }
 
         if (isAeroRole(this) && (this != TRANSPORT)
               && (!unit.isAero() || !isAeroCombatRoleCandidate(unit) || !hasMeaningfulAttack(unit))) {
-            return logRoleScore(unit, NO_MATCH);
+            return NO_MATCH;
         }
 
         double score = 0;
@@ -478,7 +478,7 @@ public enum UnitRole {
             case FIRE_SUPPORT:
                 /* Not too slow and can do damage at long range */
                 if (unit.getStandardDamage().L().damage < 0.5) {
-                    return logRoleScore(unit, NO_MATCH);
+                    return NO_MATCH;
                 }
                 score += Math.min(0, speed - 5) + Math.min(0, 7 - speed);
                 break;
@@ -510,16 +510,7 @@ public enum UnitRole {
             default:
                 break;
         }
-        return logRoleScore(unit, score);
-    }
-
-    private double logRoleScore(AlphaStrikeElement unit, double score) {
-        LOGGER.info("{} for {}: {}", this, unitName(unit), score);
         return score;
-    }
-
-    private static String unitName(AlphaStrikeElement unit) {
-        return (unit == null) ? "null" : unit.getName();
     }
 
     private static boolean isGroundRole(UnitRole role) {

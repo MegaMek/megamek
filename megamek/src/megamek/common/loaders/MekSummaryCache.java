@@ -748,6 +748,7 @@ public class MekSummaryCache {
         // Check to see if this entity has a cockpit, and if so, set its type
         if ((e instanceof Mek)) {
             ms.setCockpitType(((Mek) e).getCockpitType());
+            ms.setFrankenMek(((Mek) e).isFrankenMek());
         } else if ((e instanceof Aero)) {
             ms.setCockpitType(((Aero) e).getCockpitType());
         } else {

@@ -149,6 +149,7 @@ public class MoveStep implements Serializable {
     private boolean isRunProhibited = false;
     private boolean isStackingViolation = false;
     private boolean isDiggingIn = false;
+    private boolean isHittingDeck = false;
     private boolean isTakingCover = false;
     private int wigeBonus = 0;
     private int nWigeDescent = 0;
@@ -1755,10 +1756,11 @@ public class MoveStep implements Serializable {
             }
         }
 
-        if (prev.isDiggingIn) {
-            isDiggingIn = true;
+        if (prev.isDiggingIn || prev.isHittingDeck) {
+            isDiggingIn = prev.isDiggingIn;
+            isHittingDeck = prev.isHittingDeck;
             if ((type != MoveStepType.TURN_LEFT) && (type != MoveStepType.TURN_RIGHT)) {
-                return; // can't move when digging in
+                return; // can't move when digging in or hitting the deck
             }
             movementType = EntityMovementType.MOVE_NONE;
         } else if ((type == MoveStepType.DIG_IN) || (type == MoveStepType.FORTIFY)) {
@@ -1782,6 +1784,16 @@ public class MoveStep implements Serializable {
                 return;
             }
             isDiggingIn = true;
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.HIT_THE_DECK) {
+            // Hitting the deck (TO:AR p.106) may only be the unit's sole action and is allowed in any terrain.
+            if (!isInfantry || !isFirstStep()) {
+                return; // only infantry can hit the deck, and only as their first/only action
+            }
+            if (((Infantry) entity).isHitTheDeck()) {
+                return; // already on the deck
+            }
+            isHittingDeck = true;
             movementType = EntityMovementType.MOVE_NONE;
         }
 

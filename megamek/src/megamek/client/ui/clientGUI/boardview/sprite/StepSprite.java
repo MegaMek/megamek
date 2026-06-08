@@ -181,6 +181,7 @@ public class StepSprite extends Sprite {
             case HULL_DOWN:
             case DOWN:
             case DIG_IN:
+            case HIT_THE_DECK:
             case FORTIFY:
             case TAKE_COVER:
                 // draw arrow indicating dropping prone

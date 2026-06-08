@@ -629,6 +629,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     /**
+     * Returns whether the given unit is infantry that may perform a ground defensive posture (digging in or hitting the
+     * deck) this turn. Shared gate for the Dig In and Hit the Deck buttons. TO:AR p.106.
+     *
+     * @param unit        the currently selected unit
+     * @param gameOptions the active game options
+     *
+     * @return true if the unit is infantry on a ground map at ground level with the dig in / hit the deck option on
+     */
+    private boolean infantryGroundPostureAvailable(Entity unit, GameOptions gameOptions) {
+        return (unit instanceof Infantry)
+              && gameOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_DIG_IN)
+              && game.isOnGroundMap(unit)
+              && (unit.getAltitude() == 0)
+              && (unit.getElevation() == 0);
+    }
+
+    /**
      * Sets the buttons to their proper states
      */
     private void updateButtons() {
@@ -734,15 +751,20 @@ public class MovementDisplay extends ActionPhaseDisplay {
                   selectedUnit.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE));
         }
 
-        // Infantry - Digging in, TO:AR p.106; could add terrain checking and restrict to first action here
-        boolean canDigIn = (selectedUnit instanceof Infantry infantry)
-              && gameOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_DIG_IN)
-              && game.isOnGroundMap(selectedUnit)
-              && (selectedUnit.getAltitude() == 0)
-              && (selectedUnit.getElevation() == 0)
+        // Infantry - Digging in, TO:AR p.106; could add terrain checking and restrict to first action here.
+        // A unit that has hit the deck and stayed idle long enough may also convert directly to dug in.
+        boolean canDigIn = infantryGroundPostureAvailable(selectedUnit, gameOptions)
+              && (selectedUnit instanceof Infantry infantry)
               && !infantry.isMechanized()
-              && (infantry.getDugIn() == Infantry.DUG_IN_NONE);
+              && ((infantry.getDugIn() == Infantry.DUG_IN_NONE) || infantry.canDigInFromDeck());
         getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(canDigIn);
+
+        // Infantry - Hitting the deck, TO:AR p.106. Allowed for any infantry (including mechanized) that has not
+        // already hit the deck and has not yet moved this turn (enforced as a first/only action in MoveStep).
+        boolean canHitDeck = infantryGroundPostureAvailable(selectedUnit, gameOptions)
+              && (selectedUnit instanceof Infantry deckInfantry)
+              && !deckInfantry.isHitTheDeck();
+        getBtn(MoveCommand.MOVE_HIT_DECK).setEnabled(canHitDeck);
 
         // Infantry - Take Cover
         // Crews adrift in space or atmosphere can't do this
@@ -1211,6 +1233,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(false);
         getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
+        getBtn(MoveCommand.MOVE_HIT_DECK).setEnabled(false);
         getBtn(MoveCommand.MOVE_CALL_SUPPORT).setEnabled(false);
     }
 
@@ -5473,6 +5496,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getClient().sendUpdateEntity(currentEntity());
         } else if (actionCmd.equals(MoveCommand.MOVE_DIG_IN.getCmd())) {
             addStepToMovePath(MoveStepType.DIG_IN);
+        } else if (actionCmd.equals(MoveCommand.MOVE_HIT_DECK.getCmd())) {
+            addStepToMovePath(MoveStepType.HIT_THE_DECK);
+            // Field-weapon infantry may only fire in their front arc while on the deck (TO:AR p.106). There is no
+            // facing-selection dialog, so hint that turning in place (free) designates the facing.
+            if ((entity instanceof ConvInfantry convInfantry) && convInfantry.hasActiveFieldWeapon()) {
+                clientgui.addToast(ToastLevel.INFO,
+                      Messages.getString("MovementDisplay.hitDeckFacing.toast"), entity);
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_FORTIFY.getCmd())) {
             addStepToMovePath(MoveStepType.FORTIFY);
         } else if (actionCmd.equals(MoveCommand.MOVE_TAKE_COVER.getCmd())) {

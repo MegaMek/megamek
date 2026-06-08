@@ -642,6 +642,8 @@ public class EntitySprite extends Sprite {
                 } else if (dig != Infantry.DUG_IN_NONE) {
                     stStr.add(new Status(GUIP.getPrecautionColor(), "Working", DIRECT));
                     stStr.add(new Status(Color.PINK, "D", SMALL));
+                } else if (inf.isHitTheDeck()) {
+                    stStr.add(new Status(GUIP.getPrecautionColor(), "Deck", DIRECT));
                 } else if (inf.isTakingCover()) {
                     stStr.add(new Status(GUIP.getPrecautionColor(), "TakingCover"));
                 }

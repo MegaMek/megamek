@@ -129,6 +129,7 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_INF_ARCHAIC,
     F_INF_BURST,
     F_INF_CLIMBING_CLAWS, // TODO Add game rules IO pg 84
+    F_INF_DISPOSABLE, // One-shot Disposable Weapon ("(1-D)" ammo listing), TO:AR p.106
     F_INF_ENCUMBER,
     F_INF_NONPENETRATING,
     F_INF_POINT_BLANK,

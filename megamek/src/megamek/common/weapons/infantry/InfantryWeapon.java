@@ -297,6 +297,11 @@ public abstract class InfantryWeapon extends Weapon {
 
             if (entity != null) {
                 Mounted<?> mounted = entity.getEquipment(waa.getWeaponId());
+                // A Disposable Weapon attack (TO:AR p.106) uses the disposable damage formula regardless of the
+                // weapon's normal handler, so route it before the standard heat/inferno checks below.
+                if ((mounted instanceof WeaponMounted weaponMounted) && weaponMounted.isDisposableWeapon()) {
+                    return new InfantryDisposableWeaponHandler(toHit, waa, game, manager);
+                }
                 if (((null != mounted) && ((mounted.hasModes() && mounted.curMode().isHeat())
                       || (waa.getEntity(game).isSupportVehicle()
                       && mounted.getLinked() != null

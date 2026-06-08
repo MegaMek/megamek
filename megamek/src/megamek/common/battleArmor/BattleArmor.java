@@ -1705,6 +1705,22 @@ public class BattleArmor extends Infantry {
     }
 
     /**
+     * Determines whether this Battle Armor squad is permitted to carry Disposable Weapons (TO:AR p.106). A suit may
+     * only carry Disposable Weapons if it is also equipped with an anti-personnel weapon mount or two armored gloves.
+     * Note that armored gloves themselves carry the {@link MiscType#F_AP_MOUNT} flag, so a dedicated AP mount is
+     * identified as an {@code F_AP_MOUNT} item that is not an armored glove.
+     *
+     * @return true if this squad may carry Disposable Weapons
+     */
+    public boolean canCarryDisposableWeapons() {
+        boolean hasAntiPersonnelMount = getMisc().stream()
+              .map(Mounted::getType)
+              .anyMatch(type -> type.hasFlag(MiscType.F_AP_MOUNT) && !type.hasFlag(MiscType.F_ARMORED_GLOVE));
+        boolean hasTwoArmoredGloves = countWorkingMisc(MiscType.F_ARMORED_GLOVE) >= 2;
+        return hasAntiPersonnelMount || hasTwoArmoredGloves;
+    }
+
+    /**
      * Convenience method for determining if the BA has magnetic clamps.
      *
      * @return true if the unit has at least one magnetic clamp, else false

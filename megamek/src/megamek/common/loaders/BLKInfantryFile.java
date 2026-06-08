@@ -40,6 +40,7 @@ import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.InfantryWeaponMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.ConvInfantry;
@@ -152,6 +153,8 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         } catch (LocationFullException ex) {
             throw new EntityLoadingException(ex.getMessage());
         }
+
+        loadDisposableWeapon(infantry);
 
         // TAG infantry have separate attacks for primary and secondary weapons.
         if (null != secondaryWeaponType && secondaryWeaponType.hasFlag(WeaponType.F_TAG)) {
@@ -320,5 +323,37 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         infantry.recalculateTechAdvancement();
         loadQuirks(infantry);
         return infantry;
+    }
+
+    /**
+     * Loads the platoon's Disposable Weapon (TO:AR p.106), if present. A Disposable Weapon is a one-shot weapon carried
+     * by every trooper; it is added to {@code LOC_INFANTRY} as a separate fireable mount marked disposable so it
+     * resolves with the disposable damage formula instead of the standard infantry weapon attack.
+     *
+     * @param infantry the platoon being loaded
+     *
+     * @throws EntityLoadingException if the named weapon is missing, not an infantry weapon, or not a Disposable
+     *                                Weapon
+     */
+    private void loadDisposableWeapon(ConvInfantry infantry) throws EntityLoadingException {
+        if (!dataFile.exists("disposableWeapon")) {
+            return;
+        }
+        String disposableWeaponName = dataFile.getDataAsString("disposableWeapon")[0];
+        EquipmentType disposableWeaponType = EquipmentType.get(disposableWeaponName);
+        if (!(disposableWeaponType instanceof InfantryWeapon disposableWeapon)) {
+            throw new EntityLoadingException(disposableWeaponName + " is not an infantry weapon");
+        }
+        if (!disposableWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
+            throw new EntityLoadingException(disposableWeaponName + " is not a Disposable Weapon");
+        }
+        infantry.setDisposableWeapon(disposableWeapon);
+        try {
+            WeaponMounted disposableMount = (WeaponMounted) Mounted.createMounted(infantry, disposableWeapon);
+            disposableMount.setDisposableWeapon(true);
+            infantry.addEquipment(disposableMount, ConvInfantry.LOC_INFANTRY, false);
+        } catch (LocationFullException ex) {
+            throw new EntityLoadingException(ex.getMessage());
+        }
     }
 }

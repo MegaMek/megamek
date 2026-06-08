@@ -134,6 +134,8 @@ public class InfantryBVCalculator extends BVCalculator {
             processWeapon(secondaryWeaponMounted, true, true, secondaryShooterCount);
         }
 
+        processDisposableWeapon(originalTroopers);
+
         if (infantry.canMakeAntiMekAttacks()) {
             bvReport.addLine("Anti-Mek:", "", "");
             double preAntiMekBV = offensiveValue;
@@ -289,6 +291,22 @@ public class InfantryBVCalculator extends BVCalculator {
             baseBV *= typeModifier;
         }
         bvReport.addLine("--- Base Unit BV:", "" + (int) Math.round(baseBV));
+    }
+
+    /**
+     * Adds the platoon's Disposable Weapon (TO:AR p.106) to the offensive Battle Value, if present. It is counted as an
+     * additional offensive weapon carried by every trooper, at full per-trooper BV (consistent with how Battle Armor
+     * counts AP-mounted infantry weapons). The surviving-trooper ratio is applied with the rest of the offensive
+     * value.
+     *
+     * @param originalTroopers the platoon's full-strength trooper count
+     */
+    private void processDisposableWeapon(int originalTroopers) {
+        if (!infantry.hasDisposableWeapon()) {
+            return;
+        }
+        Mounted<?> disposableWeaponMounted = Mounted.createMounted(infantry, infantry.getDisposableWeapon());
+        processWeapon(disposableWeaponMounted, true, true, originalTroopers);
     }
 
     @Override

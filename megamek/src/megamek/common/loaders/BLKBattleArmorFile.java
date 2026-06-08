@@ -41,6 +41,8 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
@@ -259,6 +261,12 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
                             m.setShotsLeft(numShots);
                             m.setOriginalShots(numShots);
                             m.setSize(numShots * ((AmmoType) m.getType()).getKgPerShot() / 1000.0);
+                        }
+                        // Disposable Weapon (TO:AR p.106): a one-shot weapon mounted in an AP mount/armored glove,
+                        // used for a single once-per-scenario attack and resolved with the disposable damage formula.
+                        if ((m instanceof WeaponMounted weaponMounted)
+                              && etype.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
+                            weaponMounted.setDisposableWeapon(true);
                         }
                         if ((etype instanceof MiscType)
                               && (etype.hasFlag(MiscType.F_AP_MOUNT) || etype.hasFlag(MiscType.F_ARMORED_GLOVE))) {

@@ -34,6 +34,12 @@
 
 package megamek.common.units;
 
+import static java.util.stream.Collectors.toList;
+
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CompositeTechLevel;
@@ -73,12 +79,6 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
-
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * This class represents Conventional Infantry. The lowest of the low, the ground pounders, the city rats, the PBI (Poor
@@ -127,6 +127,12 @@ public class ConvInfantry extends Infantry {
     private InfantryWeapon secondaryWeapon;
     private String secondName;
     private int secondaryWeaponsPerSquad = 0;
+
+    // Disposable Weapon (TO:AR p.106): a one-shot weapon carried by every trooper, used for a single
+    // once-per-scenario attack instead of the platoon's standard weapon attack. Unlike primary/secondary,
+    // the disposable weapon IS added to the equipment array as a separate, fireable WeaponMounted.
+    private InfantryWeapon disposableWeapon;
+    private String disposableName;
 
     private InfantryMount mount = null;
 
@@ -791,6 +797,33 @@ public class ConvInfantry extends Infantry {
 
     public InfantryWeapon getSecondaryWeapon() {
         return secondaryWeapon;
+    }
+
+    /**
+     * Sets the platoon's one-shot Disposable Weapon (TO:AR p.106). All troopers carry the same Disposable Weapon. This
+     * only records the weapon type; the corresponding fireable {@link megamek.common.equipment.WeaponMounted} is added
+     * to {@code LOC_INFANTRY} by the loader/editor.
+     *
+     * @param weapon the Disposable Weapon, or null to clear it
+     */
+    public void setDisposableWeapon(@Nullable InfantryWeapon weapon) {
+        disposableWeapon = weapon;
+        disposableName = (weapon == null) ? null : weapon.getName();
+    }
+
+    /**
+     * @return the platoon's one-shot Disposable Weapon (TO:AR p.106), or null if it has none
+     */
+    @Nullable
+    public InfantryWeapon getDisposableWeapon() {
+        return disposableWeapon;
+    }
+
+    /**
+     * @return true if this platoon carries a one-shot Disposable Weapon (TO:AR p.106)
+     */
+    public boolean hasDisposableWeapon() {
+        return disposableWeapon != null;
     }
 
     public void setSecondaryWeaponsPerSquad(int n) {

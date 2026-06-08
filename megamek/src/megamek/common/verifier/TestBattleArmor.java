@@ -1330,6 +1330,13 @@ public class TestBattleArmor extends TestEntity {
                     currentErrors.add(mount.getName() + " is not a legal BattleArmor weapon");
                 }
 
+                // Disposable Weapons (TO:AR p.106) require an anti-personnel weapon mount or two armored gloves
+                if (mount.getType().hasFlag(WeaponType.F_INF_DISPOSABLE) && !battleArmor.canCarryDisposableWeapons()) {
+                    currentErrors.add(mount.getName()
+                          + " is a Disposable Weapon, which requires an anti-personnel weapon mount or two armored "
+                          + "gloves");
+                }
+
             } else if (mount.getType() instanceof MiscType misc) {
 
                 if (!misc.hasFlag(MiscType.F_BA_EQUIPMENT)) {

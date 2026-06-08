@@ -626,20 +626,28 @@ public class MoveStep implements Serializable {
                         // if the wall is taller than the unit then they cannot climb it or enter it
                         return;
                     }
+                } else if (isClimbing) {
+                    // Continuation climb into a hex with a building — Mek lands on the top
+                    // climbable surface (building roof / bridge / bare hex level). Goes through
+                    // ClimbingHelper rather than entity.calcElevation so the water-emergence
+                    // adjustment doesn't fire when the Mek is clinging on a cliff face above
+                    // the waterline (the dest hex's own water/no-water state is what matters).
+                    setElevation(ClimbingHelper.getClimbDestinationElevation(hex));
                 } else {
-                    // When a climbing entity enters a new hex, reset to ground level
-                    int calcElev = isClimbing ? 0 : elevation;
                     setElevation(entity.calcElevation(game.getBoard(boardId).getHex(prev.getPosition()),
                           game.getBoard(boardId).getHex(getPosition()),
-                          calcElev,
+                          elevation,
                           climbMode()));
                 }
+            } else if (isClimbing) {
+                // Same as above for the no-building case. A Mek climbing onto a plain higher
+                // hex (bare cliff top) lands at the destination's hex level — relative elev 0.
+                Hex curHex = game.getBoard(boardId).getHex(getPosition());
+                setElevation(ClimbingHelper.getClimbDestinationElevation(curHex));
             } else {
-                // When a climbing entity enters a new hex, reset to ground level
-                int calcElev = isClimbing ? 0 : elevation;
                 setElevation(entity.calcElevation(game.getBoard(boardId).getHex(prev.getPosition()),
                       game.getBoard(boardId).getHex(getPosition()),
-                      calcElev,
+                      elevation,
                       climbMode()));
             }
         }

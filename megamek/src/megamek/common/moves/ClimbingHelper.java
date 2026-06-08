@@ -342,4 +342,20 @@ public final class ClimbingHelper {
         }
         return level;
     }
+
+    /**
+     * Same as {@link #getClimbDestinationLevel(Hex)} but expressed as elevation relative to the hex's own level — so a
+     * building roof returns {@code BLDG_ELEV}, a bridge surface returns {@code BRIDGE_ELEV}, and a bare hex (cliff top,
+     * dry ground) returns 0. Used by {@link megamek.common.moves.MoveStep#compile} to place a continuation-climbing Mek
+     * on the destination hex's top surface, bypassing the water-emergence math in
+     * {@link megamek.common.units.Entity#calcElevation} that doesn't apply when the Mek is on a cliff face above the
+     * waterline.
+     *
+     * @param hex the destination hex
+     *
+     * @return the elevation of the climbable top surface, relative to the hex's own level
+     */
+    public static int getClimbDestinationElevation(Hex hex) {
+        return getClimbDestinationLevel(hex) - hex.getLevel();
+    }
 }

@@ -362,6 +362,77 @@ public class MovePathHandlerClimbingTest extends GameBoardTestCase {
     // that used to wrongly clamp here.
     // -----------------------------------------------------------------------
 
+    // -----------------------------------------------------------------------
+    // Continuation climb UP off a CLIFF FACE while clinging above water. This
+    // is the user-reported "Round 11/12 cliff climb" bug: Mek partial-climbed
+    // a cliff out of deep water, ended Round 11 clinging at elev 1 in the
+    // water hex (climbing=true). On Round 12 the continue-climbing dialog
+    // fires and the player picks the remaining levels — but the Mek doesn't
+    // move. Root cause: MoveStep.compile used Entity.calcElevation for
+    // continuation FORWARDS steps, and the water-emergence math in that
+    // method adds the source hex's water depth to the resolved elevation
+    // when the dest hex has no water. For a Mek clinging mid-cliff above
+    // water that produced step.elevation = 2 (instead of 0 = cliff top),
+    // which Entity.isElevationValid then rejected in a plain cliff hex (no
+    // BUILDING/BRIDGE to legitimize the mid-air elevation), and the step
+    // was stripped as MOVE_ILLEGAL. Fix: continuation FORWARDS climbs use
+    // ClimbingHelper.getClimbDestinationElevation directly so they land on
+    // the destination hex's top climbable surface (cliff top / bridge / roof)
+    // without the water adjustment.
+    // -----------------------------------------------------------------------
+
+    @Test
+    void continuationClimbUpCliffFromWaterSurfaceReachesTop() throws Exception {
+        setBoard("BOARD_DEEP_WATER_BELOW_CLIFF");
+        enableTacOpsClimbing();
+
+        TWGameManager gameManager = spy(new TWGameManager());
+        gameManager.setGame(getGame());
+        ServerFactory.createServer(gameManager);
+        Player player = new Player(0, "Test");
+        getGame().addPlayer(0, player);
+
+        // Mek mid-climb at elev 1 in the water hex (clinging to the adjacent cliff face above
+        // the water surface). 2 levels remaining to reach cliff top (cliff hex level 3,
+        // currentAbsolute = 0+1 = 1, so totalLevelsRemaining = 3 − 1 = 2).
+        Mek mek = createClimbableMek();
+        mek.setOwner(player);
+        mek.setClimbing(true);
+        mek.setClimbingLevelsChosen(2);
+        MovePath movePath = getMovePathFor(mek, 1, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS);
+        assertTrue(movePath.isMoveLegal(),
+              "Continuation FORWARDS step onto the adjacent cliff hex must compile legally. "
+                    + "Pre-fix MoveStep.compile passed the step through Entity.calcElevation "
+                    + "with calcElev=0, the water-emergence block added the source water depth "
+                    + "(+2), and isElevationValid rejected the resulting step.elevation of 2 in "
+                    + "a plain cliff destination hex.");
+        // Pre-condition: step ends at cliff top (relative elev 0 in cliff hex).
+        assertEquals(0, movePath.getLastStep().getElevation(),
+              "Continuation climb step must resolve to relative elev 0 in the cliff hex (cliff "
+                    + "top). The new ClimbingHelper.getClimbDestinationElevation path returns 0 "
+                    + "for a bare cliff hex with no BUILDING/BRIDGE.");
+        assertTrue(movePath.getLastStep().isClimbing(),
+              "Continuation step must be marked as climbing so the server runs the climb branch.");
+
+        doReturn(0).when(gameManager).doSkillCheckWhileMoving(any(Entity.class), anyInt(),
+              any(Coords.class), any(Coords.class), any(PilotingRollData.class), anyBoolean());
+
+        MovePathHandler handler = new MovePathHandler(gameManager, mek, movePath, null);
+        handler.processMovement();
+
+        Coords cliffHex = new Coords(0, 1);
+        assertEquals(cliffHex, mek.getPosition(),
+              "Completing the climb must move the Mek into the cliff hex (it was clinging at "
+                    + "the source water hex during the climb).");
+        assertEquals(0, mek.getElevation(),
+              "The Mek must arrive at cliff top (relative elev 0 in the cliff hex = absolute "
+                    + "altitude 3).");
+        assertFalse(mek.isClimbing(),
+              "Climb completed — climbing flag must clear.");
+    }
+
     @Test
     void edgeClimbDownIntoWaterDescendsAllTheWayToFloor() throws Exception {
         // Regression for the in-game bridge-to-water scenario: Mek on a level-3 cliff steps
@@ -454,6 +525,156 @@ public class MovePathHandlerClimbingTest extends GameBoardTestCase {
                     + "via the entityHasReachedFloor check.");
         assertEquals(0, mek.getClimbingLevelsChosen(),
               "Chosen-levels must reset after the descent commits.");
+    }
+
+    // -----------------------------------------------------------------------
+    // Matrix coverage: the climbing system supports CLIFFS, BRIDGES, and
+    // BUILDINGS. Each feature must work for the major actions — fresh climb
+    // up, continuation climb up, edge descent (climb-down / dangle / drop),
+    // and cling. The tests above cover most cliff and bridge scenarios; the
+    // three below fill the remaining gaps: fresh cliff climb up (basic
+    // sanity), building continuation climb up, and building roof edge
+    // dangle (verifies the server's edge-dangle branch handles building
+    // roofs the same way it handles cliff and bridge edges).
+    // -----------------------------------------------------------------------
+
+    @Test
+    void freshClimbUpCliffFromGroundReachesTop() throws Exception {
+        setBoard("BOARD_DEEP_WATER_BELOW_CLIFF");
+        enableTacOpsClimbing();
+
+        TWGameManager gameManager = spy(new TWGameManager());
+        gameManager.setGame(getGame());
+        ServerFactory.createServer(gameManager);
+        Player player = new Player(0, "Test");
+        getGame().addPlayer(0, player);
+
+        // Mek standing on the water hex bottom (elev -2), fresh climb up the adjacent cliff
+        // (level 3). Total climb = absolute -2 → +3 = 5 levels. Bumped walk MP so the full
+        // 5-level climb (10 MP) fits in one turn for the test.
+        Mek mek = createClimbableMek();
+        mek.setOwner(player);
+        mek.setOriginalWalkMP(12);
+        MovePath movePath = getMovePathFor(mek, -2, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS);
+        assertTrue(movePath.isMoveLegal(),
+              "Fresh climb up a cliff from water bottom must compile as a legal climbing step.");
+        assertTrue(movePath.getLastStep().isClimbing(),
+              "Step must be marked climbing (delta of 5 exceeds maxElevationChange and TacOps "
+                    + "climbing is enabled with a climbable Mek).");
+
+        doReturn(0).when(gameManager).doSkillCheckWhileMoving(any(Entity.class), anyInt(),
+              any(Coords.class), any(Coords.class), any(PilotingRollData.class), anyBoolean());
+
+        MovePathHandler handler = new MovePathHandler(gameManager, mek, movePath, null);
+        handler.processMovement();
+
+        Coords cliffHex = new Coords(0, 1);
+        assertEquals(cliffHex, mek.getPosition(),
+              "Full fresh climb lands the Mek on the cliff hex.");
+        assertEquals(0, mek.getElevation(),
+              "Mek lands at cliff top (relative elev 0 in the level-3 cliff hex).");
+        assertFalse(mek.isClimbing(),
+              "Full climb completes — climbing flag clears.");
+    }
+
+    @Test
+    void continuationClimbUpBuildingCompletes() throws Exception {
+        setBoard("BOARD_5_FLOOR_BUILDING");
+        enableTacOpsClimbing();
+
+        TWGameManager gameManager = spy(new TWGameManager());
+        gameManager.setGame(getGame());
+        ServerFactory.createServer(gameManager);
+        Player player = new Player(0, "Test");
+        getGame().addPlayer(0, player);
+
+        // Mek already mid-climb at elev 3 on the side of a 5-floor building (source hex (0,0)
+        // adjacent to the building hex (0,1)). 2 levels remaining to reach roof.
+        Mek mek = createClimbableMek();
+        mek.setOwner(player);
+        mek.setOriginalWalkMP(12);
+        mek.setClimbing(true);
+        mek.setClimbingLevelsChosen(2);
+        MovePath movePath = getMovePathFor(mek, 3, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS);
+        assertTrue(movePath.isMoveLegal(),
+              "Building continuation climb step must compile legally — the MoveStep continuation "
+                    + "branch lands the Mek on the building roof via ClimbingHelper.");
+        assertEquals(5, movePath.getLastStep().getElevation(),
+              "Continuation step lands on the building roof (BLDG_ELEV = 5 in the building hex).");
+
+        doReturn(0).when(gameManager).doSkillCheckWhileMoving(any(Entity.class), anyInt(),
+              any(Coords.class), any(Coords.class), any(PilotingRollData.class), anyBoolean());
+
+        MovePathHandler handler = new MovePathHandler(gameManager, mek, movePath, null);
+        handler.processMovement();
+
+        Coords buildingHex = new Coords(0, 1);
+        assertEquals(buildingHex, mek.getPosition(),
+              "Full continuation climb enters the building hex.");
+        assertEquals(5, mek.getElevation(),
+              "Mek arrives at building roof (BLDG_ELEV).");
+        assertFalse(mek.isClimbing(),
+              "Climb completes — flag clears.");
+    }
+
+    @Test
+    void edgeDangleOffBuildingRoofLandsAtDangleElevation() throws Exception {
+        setBoard("BOARD_5_FLOOR_BUILDING");
+        enableTacOpsClimbing();
+
+        TWGameManager gameManager = spy(new TWGameManager());
+        gameManager.setGame(getGame());
+        ServerFactory.createServer(gameManager);
+        Player player = new Player(0, "Test");
+        getGame().addPlayer(0, player);
+
+        // Mek on the roof of a 5-floor building. Edge dangle off the side into the adjacent
+        // empty ground hex. Drop height = 5 (roof to ground) which clears the 3-level edge
+        // threshold; dangle drops by DANGLE_LEVELS_PER_TURN (2) so Mek ends at elev 3 in the
+        // adjacent hex dangling on the building wall. Tests the edge-dangle server branch for
+        // a building edge (the matching cliff/bridge edges are covered above).
+        Mek mek = createClimbableMek();
+        mek.setOwner(player);
+        // Place on roof: getMovePathFor's initializeUnit puts the Mek at (0,0); we want it on
+        // the building hex (0,1) at elev 5. Easiest is to swap board orientation, but a simpler
+        // alternative: explicitly position before building the path. We need the dangle path
+        // (single FORWARDS from building hex (0,1) into adjacent (0,0)) so the Mek must start
+        // on the building side. Place it manually after initializeUnit by reusing the path
+        // entity but overriding position.
+        MovePath movePath = getMovePathFor(mek, 5, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS);
+        // initializeUnit placed the Mek at (0,0) facing 3 (south, toward the building (0,1)).
+        // For this test we need the opposite: Mek on the building (0,1) facing north toward the
+        // empty hex (0,0). Override position/facing and rebuild the path. The empty hex (0,0)
+        // is north of (0,1) (facing 0). Default facing is 3, so the FORWARDS step from (0,0)
+        // already goes south to (0,1) — we want it the other way. Rebuild around the entity.
+        mek.setPosition(new Coords(0, 1));
+        mek.setFacing(0);
+        mek.setElevation(5);
+        // Build a fresh path: CLIMB_MODE_ON + FORWARDS from (0,1) facing 0 → (0,0).
+        movePath = new MovePath(getGame(), mek);
+        movePath.addStep(MoveStepType.CLIMB_MODE_ON);
+        movePath.addStep(MoveStepType.FORWARDS);
+
+        MovePathHandler handler = new MovePathHandler(gameManager, mek, movePath, null);
+        handler.processMovement();
+
+        Coords groundHex = new Coords(0, 0);
+        assertEquals(groundHex, mek.getPosition(),
+              "Edge dangle moves the Mek into the lower adjacent hex.");
+        assertEquals(3, mek.getElevation(),
+              "Roof at +5 minus DANGLE_LEVELS_PER_TURN (2) puts the Mek at relative elev 3 in "
+                    + "the ground hex — dangling on the building wall.");
+        assertTrue(mek.isDangling(),
+              "Dangling flag must be set after an edge dangle that doesn't reach the floor.");
+        // Note: Entity.isClimbing() returns (climbing || dangling) by design, so it's true here
+        // even though the underlying climbing field is false. The dangling assertion above is
+        // the meaningful one — we're testing the dangle path, not climbing.
     }
 
     @Test

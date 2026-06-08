@@ -457,8 +457,20 @@ public enum UnitRole {
             case SNIPER:
                 /* Can do damage at long range without LRMs */
                 double indirectFireValue = unit.getIF().damage;
-                double damageWithoutIF = unit.getStandardDamage().L().damage - (indirectFireValue * 2);
-                score += (damageWithoutIF * 0.25);
+                double damageWithoutIF = unit.getStandardDamage().L().damage - indirectFireValue;
+                score += (damageWithoutIF * 0.5);
+                score -= unit.getLRM().L().damage * 0.25;
+                score += (unit.getStandardDamage().L().damage - Math.max(unit.getStandardDamage().S().damage,
+                  unit.getStandardDamage().M().damage)) * 0.25;
+                if (unit.hasSUA(BattleForceSUA.AMS)
+                      || unit.hasSUA(BattleForceSUA.ECM)) {
+                    score+=0.1;
+                }
+                if (unit.hasSUA(BattleForceSUA.C3M)
+                      || unit.hasSUA(BattleForceSUA.C3S)
+                      || unit.hasSUA(BattleForceSUA.C3I)) {
+                    score+=0.1;
+                }
                 break;
             case STRIKER:
                 /* Fast and light-medium armor, preference for short range */

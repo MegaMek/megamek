@@ -279,6 +279,11 @@ class ComputeToHitIsImpossible {
             return Messages.getString("WeaponAttackAction.CantFireWhileLoadingUnloadingCargo");
         }
 
+        // Climbing units can only fire rear-mounted weapons (TO:AR p.20)
+        if ((weapon != null) && attacker.isClimbing() && !weapon.isRearMounted()) {
+            return Messages.getString("WeaponAttackAction.CantFireWhileClimbing");
+        }
+
         // can't fire arm/forward facing torso weapons if carrying cargo in hands
         if ((weapon != null)) {
             if ((attacker instanceof Mek) && !weapon.isRearMounted() && !attacker.canFireWeapon(weapon.getLocation())) {

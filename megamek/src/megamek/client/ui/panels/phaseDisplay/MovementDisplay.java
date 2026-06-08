@@ -3731,10 +3731,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
         String baseLabel = climbModeOn
               ? Messages.getString("MovementDisplay.moveClimbModeOn")
               : Messages.getString("MovementDisplay.moveClimbModeOff");
-        ClimbModeContext context = computeClimbModeContext();
-        String label = (context.suffix() != null)
-              ? baseLabel + " — " + context.suffix()
-              : baseLabel;
+        ClimbModeContext context = computeClimbModeContext(climbModeOn);
+        String label;
+        if (context.fullLabel() != null) {
+            label = context.fullLabel();
+        } else if (context.suffix() != null) {
+            label = baseLabel + " " + context.suffix();
+        } else {
+            label = baseLabel;
+        }
         getBtn(MoveCommand.MOVE_CLIMB_MODE).setText(label);
         getBtn(MoveCommand.MOVE_CLIMB_MODE).setToolTipText(context.tooltip());
     }
@@ -3743,19 +3748,25 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * Climb-mode button context, used to give the player at-a-glance feedback about what the Climbing / Move Thru
      * toggle actually does in their current situation.
      *
-     * @param suffix  short label appended to the button, or null if no climbable terrain
-     * @param tooltip HTML tooltip describing the toggle's current effect
+     * @param suffix     short label appended to the base "Climbing" / "Move Thru" button text, or null if no
+     *                   climbable terrain
+     * @param fullLabel  when non-null, replaces the base + suffix label entirely — used for contexts where an
+     *                   action-style label ("Move onto Bridge") reads better than the mode + tag pattern
+     *                   ("Climbing Bridge")
+     * @param tooltip    HTML tooltip describing the toggle's current effect
      */
-    private record ClimbModeContext(@megamek.common.annotations.Nullable String suffix, String tooltip) {}
+    private record ClimbModeContext(@megamek.common.annotations.Nullable String suffix,
+          @megamek.common.annotations.Nullable String fullLabel,
+          String tooltip) {}
 
     /**
      * Inspects the entity's current/pending position and facing to determine what the Climb Mode toggle currently
      * controls. Used by {@link #updateClimbModeButtonText()} to produce a context-aware button label and tooltip.
      */
-    private ClimbModeContext computeClimbModeContext() {
+    private ClimbModeContext computeClimbModeContext(boolean climbModeOn) {
         Entity entity = currentEntity();
         if (entity == null) {
-            return new ClimbModeContext(null, Messages.getString("MovementDisplay.climbModeTip.none"));
+            return new ClimbModeContext(null, null, Messages.getString("MovementDisplay.climbModeTip.none"));
         }
         // Use end-of-path position/facing if a path is being plotted, else the entity's current state.
         Coords curPos = entity.getPosition();
@@ -3767,8 +3778,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
             curElevation = cmd.getLastStep().getElevation();
         }
         if (curPos == null) {
-            return new ClimbModeContext(null, Messages.getString("MovementDisplay.climbModeTip.none"));
+            return new ClimbModeContext(null, null, Messages.getString("MovementDisplay.climbModeTip.none"));
         }
+        // Tooltip text branches on game-option state — the climbing rule actually changes what
+        // each mode does. Leaping matters for the at-edge case (no climb dialog, but leaping
+        // still gates the fall-vs-illegal behaviour).
+        boolean tacOpsClimbing = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
+        boolean tacOpsLeaping = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING);
         Hex curHex = game.getBoard(entity).getHex(curPos);
         Coords frontPos = curPos.translated(curFacing);
         Hex frontHex = game.getBoard(entity).getHex(frontPos);
@@ -3776,8 +3794,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
         boolean bridgeHere = (curHex != null) && curHex.containsTerrain(Terrains.BRIDGE);
         boolean bridgeFront = (frontHex != null) && frontHex.containsTerrain(Terrains.BRIDGE);
         if (bridgeHere || bridgeFront) {
+            String bridgeTipKey = tacOpsClimbing
+                  ? "MovementDisplay.climbModeTip.bridge"
+                  : "MovementDisplay.climbModeTip.bridge.standard";
+            // Bridge gets an action-style label override — "Move onto Bridge" / "Move under
+            // Bridge" reads more clearly than "Climbing Bridge" / "Move Thru Bridge" because
+            // it tells the player which physical level the current toggle puts them at.
+            String bridgeBtn = climbModeOn
+                  ? Messages.getString("MovementDisplay.climbModeBtn.bridgeOnto")
+                  : Messages.getString("MovementDisplay.climbModeBtn.bridgeUnder");
             return new ClimbModeContext(Messages.getString("MovementDisplay.climbModeCtx.bridge"),
-                  Messages.getString("MovementDisplay.climbModeTip.bridge"));
+                  bridgeBtn, Messages.getString(bridgeTipKey));
         }
         if (frontHex != null) {
             int curAlt = ((curHex != null) ? curHex.getLevel() : 0) + curElevation;
@@ -3786,30 +3813,49 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 frontTopAlt += frontHex.terrainLevel(Terrains.BLDG_ELEV);
             }
             int diff = frontTopAlt - curAlt;
-            // Climbing UP: front hex is 3+ levels higher (TacOps Climbing applies).
+            // Climbing UP: front hex is 3+ levels higher. With TacOps Climbing ON the climb is
+            // possible; with it OFF the step is illegal in either mode.
             if (diff >= ClimbingHelper.MIN_CLIMBING_LEVELS) {
-                String key = frontHex.containsTerrain(Terrains.BUILDING)
+                boolean isBuilding = frontHex.containsTerrain(Terrains.BUILDING);
+                String suffixKey = isBuilding
                       ? "MovementDisplay.climbModeCtx.upBuilding"
                       : "MovementDisplay.climbModeCtx.upCliff";
-                String tipKey = frontHex.containsTerrain(Terrains.BUILDING)
-                      ? "MovementDisplay.climbModeTip.upBuilding"
-                      : "MovementDisplay.climbModeTip.upCliff";
-                return new ClimbModeContext(Messages.getString(key),
+                String tipKey;
+                if (tacOpsClimbing) {
+                    tipKey = isBuilding
+                          ? "MovementDisplay.climbModeTip.upBuilding"
+                          : "MovementDisplay.climbModeTip.upCliff";
+                } else {
+                    tipKey = isBuilding
+                          ? "MovementDisplay.climbModeTip.upBuilding.standard"
+                          : "MovementDisplay.climbModeTip.upCliff.standard";
+                }
+                return new ClimbModeContext(Messages.getString(suffixKey), null,
                       Messages.getString(tipKey, diff));
             }
-            // At edge of a 3+ level drop: toggle no longer matters for descent (post-fix).
+            // At edge of a 3+ level drop: with TacOps Climbing ON the descent dialog fires;
+            // with it OFF, behaviour depends on TacOps Leaping (leap-with-fall-PSRs vs illegal).
             if (-diff >= ClimbingHelper.MIN_CLIMBING_LEVELS) {
-                return new ClimbModeContext(Messages.getString("MovementDisplay.climbModeCtx.atEdge"),
-                      Messages.getString("MovementDisplay.climbModeTip.atEdge", -diff));
+                String tipKey;
+                if (tacOpsClimbing) {
+                    tipKey = "MovementDisplay.climbModeTip.atEdge";
+                } else if (tacOpsLeaping) {
+                    tipKey = "MovementDisplay.climbModeTip.atEdge.leaping";
+                } else {
+                    tipKey = "MovementDisplay.climbModeTip.atEdge.standardIllegal";
+                }
+                return new ClimbModeContext(Messages.getString("MovementDisplay.climbModeCtx.atEdge"), null,
+                      Messages.getString(tipKey, -diff));
             }
-            // Building adjacent (small one): toggle controls roof vs walk-through.
+            // Building adjacent (small one): toggle controls roof vs walk-through. Works in
+            // both rule modes since the step is within normal max elevation change.
             if (frontHex.containsTerrain(Terrains.BUILDING)
                   || ((curHex != null) && curHex.containsTerrain(Terrains.BUILDING))) {
-                return new ClimbModeContext(Messages.getString("MovementDisplay.climbModeCtx.building"),
+                return new ClimbModeContext(Messages.getString("MovementDisplay.climbModeCtx.building"), null,
                       Messages.getString("MovementDisplay.climbModeTip.building"));
             }
         }
-        return new ClimbModeContext(null, Messages.getString("MovementDisplay.climbModeTip.none"));
+        return new ClimbModeContext(null, null, Messages.getString("MovementDisplay.climbModeTip.none"));
     }
 
     private void updateManeuverButton() {

@@ -372,18 +372,11 @@ public enum UnitRole {
                 if (unit.hasSUA(BattleForceSUA.ENE)) {
                     score--;
                 }
-                if (unit.hasSUA(BattleForceSUA.AC)) {
-                    score -= unit.getAC().L().damage * 0.1;
-                    score -= unit.getAC().M().damage * 0.1;
-                    score -= unit.getAC().S().damage * 0.1;
-                }
+                score -= Math.max(0,unit.getStandardDamage().S().damage - 1 - unit.getIF().damage) * 0.5;
                 /* Can do damage by indirect fire at long range */
-                score -= unit.getStandardDamage().S().damage * 0.1;
                 if (unit.getStandardDamage().L().damage > 0 && unit.hasSUA(BattleForceSUA.IF)) {
                     score += unit.getIF().damage;
-                    if (unit.getStandardDamage().L().damage > unit.getIF().damage) {
-                        score -= (unit.getStandardDamage().L().damage - unit.getIF().damage) * 0.5;
-                    }
+                    score -= Math.max(0, (unit.getStandardDamage().L().damage - 1 - unit.getIF().damage)) * 0.5;
                 } else {
                     score--;
                 }

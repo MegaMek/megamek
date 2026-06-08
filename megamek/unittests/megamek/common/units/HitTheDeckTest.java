@@ -86,6 +86,16 @@ public class HitTheDeckTest extends GameBoardTestCase {
                   MoveStepType.HIT_THE_DECK, MoveStepType.FORWARDS);
             assertFalse(deckThenMove.isMoveLegal(), "A unit may not move after hitting the deck");
         }
+
+        @Test
+        @DisplayName("A dug-in unit cannot also hit the deck")
+        void cannotHitDeckWhileDugIn() {
+            setBoard("HIT_DECK_BOARD");
+            ConvInfantry infantry = getInfantry();
+            infantry.setDugIn(Infantry.DUG_IN_COMPLETE);
+            MovePath path = getMovePathFor(infantry, MoveStepType.HIT_THE_DECK);
+            assertFalse(path.isMoveLegal(), "A unit that is dug in may not also hit the deck");
+        }
     }
 
     @Nested

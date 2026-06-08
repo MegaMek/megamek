@@ -759,11 +759,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
               && ((infantry.getDugIn() == Infantry.DUG_IN_NONE) || infantry.canDigInFromDeck());
         getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(canDigIn);
 
-        // Infantry - Hitting the deck, TO:AR p.106. Allowed for any infantry (including mechanized) that has not
-        // already hit the deck and has not yet moved this turn (enforced as a first/only action in MoveStep).
+        // Infantry - Hitting the deck, TO:AR p.106. Allowed for any infantry (including mechanized) that is not
+        // already in a ground posture (dug in or on the deck) and has not yet moved this turn (the first/only action
+        // restriction is enforced in MoveStep).
         boolean canHitDeck = infantryGroundPostureAvailable(selectedUnit, gameOptions)
               && (selectedUnit instanceof Infantry deckInfantry)
-              && !deckInfantry.isHitTheDeck();
+              && !deckInfantry.isHitTheDeck()
+              && (deckInfantry.getDugIn() == Infantry.DUG_IN_NONE);
         getBtn(MoveCommand.MOVE_HIT_DECK).setEnabled(canHitDeck);
 
         // Infantry - Take Cover

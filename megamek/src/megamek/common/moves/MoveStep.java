@@ -1790,8 +1790,9 @@ public class MoveStep implements Serializable {
             if (!isInfantry || !isFirstStep()) {
                 return; // only infantry can hit the deck, and only as their first/only action
             }
-            if (((Infantry) entity).isHitTheDeck()) {
-                return; // already on the deck
+            Infantry infantry = (Infantry) entity;
+            if (infantry.isHitTheDeck() || (infantry.getDugIn() != Infantry.DUG_IN_NONE)) {
+                return; // can't hit the deck while already on the deck or dug in (two postures at once)
             }
             isHittingDeck = true;
             movementType = EntityMovementType.MOVE_NONE;

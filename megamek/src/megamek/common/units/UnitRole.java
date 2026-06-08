@@ -372,11 +372,16 @@ public enum UnitRole {
                 if (unit.hasSUA(BattleForceSUA.ENE)) {
                     score--;
                 }
-                score -= Math.max(0,unit.getStandardDamage().S().damage - 1 - unit.getIF().damage) * 0.5;
+                double missileBoatIndirectFireValue = unit.getIF().damage;
+                if (missileBoatIndirectFireValue == 0 && unit.hasSUA(BattleForceSUA.IF)) {
+                    missileBoatIndirectFireValue = 0.5;
+                }
+                score -= Math.max(0,unit.getStandardDamage().S().damage - 1 - missileBoatIndirectFireValue) * 0.5;
+                
                 /* Can do damage by indirect fire at long range */
                 if (unit.getStandardDamage().L().damage > 0 && unit.hasSUA(BattleForceSUA.IF)) {
-                    score += unit.getIF().damage;
-                    score -= Math.max(0, (unit.getStandardDamage().L().damage - 1 - unit.getIF().damage)) * 0.5;
+                    score += missileBoatIndirectFireValue;
+                    score -= Math.max(0, (unit.getStandardDamage().L().damage - 1 - missileBoatIndirectFireValue)) * 0.5;
                 } else {
                     score--;
                 }
@@ -456,8 +461,11 @@ public enum UnitRole {
                 break;
             case SNIPER:
                 /* Can do damage at long range without LRMs */
-                double indirectFireValue = unit.getIF().damage;
-                double damageWithoutIF = unit.getStandardDamage().L().damage - indirectFireValue;
+                double sniperIndirectFireValue = unit.getIF().damage;
+                if (sniperIndirectFireValue == 0 && unit.hasSUA(BattleForceSUA.IF)) {
+                    sniperIndirectFireValue = 0.5;
+                }
+                double damageWithoutIF = unit.getStandardDamage().L().damage - sniperIndirectFireValue;
                 score += (damageWithoutIF * 0.5);
                 score -= unit.getLRM().L().damage * 0.25;
                 score += (unit.getStandardDamage().L().damage - Math.max(unit.getStandardDamage().S().damage,

@@ -384,20 +384,26 @@ public enum UnitRole {
                     score += unit.getLRM().L().damage * 0.5;
                 }
                 /* Any artillery piece */
-                if (unit.hasSUA(BattleForceSUA.ARTAIS)
-                    || unit.hasSUA(BattleForceSUA.ARTAC)
-                    || unit.hasSUA(BattleForceSUA.ARTBA)
-                    || unit.hasSUA(BattleForceSUA.ARTCM5)
-                    || unit.hasSUA(BattleForceSUA.ARTCM7)
-                    || unit.hasSUA(BattleForceSUA.ARTCM9)
-                    || unit.hasSUA(BattleForceSUA.ARTCM12)
-                    || unit.hasSUA(BattleForceSUA.ARTT)
-                    || unit.hasSUA(BattleForceSUA.ARTS)
-                    || unit.hasSUA(BattleForceSUA.ARTLT)
-                    || unit.hasSUA(BattleForceSUA.ARTTC)
-                    || unit.hasSUA(BattleForceSUA.ARTSC)
-                    || unit.hasSUA(BattleForceSUA.ARTLTC)) {
-                    score++;
+                if (unit.hasSUA(BattleForceSUA.ARTCM7)
+                || unit.hasSUA(BattleForceSUA.ARTCM9)
+                || unit.hasSUA(BattleForceSUA.ARTCM12)) {
+                    score += 5;
+                }
+                if (unit.hasSUA(BattleForceSUA.ARTCM5)
+                || unit.hasSUA(BattleForceSUA.ARTLT)) {
+                    score += 4;
+                }
+                if (unit.hasSUA(BattleForceSUA.ARTAC)
+                || unit.hasSUA(BattleForceSUA.ARTAIS)
+                || unit.hasSUA(BattleForceSUA.ARTS)
+                || unit.hasSUA(BattleForceSUA.ARTLTC)) {
+                    score += 3;
+                }
+                if (unit.hasSUA(BattleForceSUA.ARTBA)
+                ||unit.hasSUA(BattleForceSUA.ARTT)
+                || unit.hasSUA(BattleForceSUA.ARTTC)
+                || unit.hasSUA(BattleForceSUA.ARTSC)) {
+                    score += 1.5;
                 }
                 break;
             case SCOUT:

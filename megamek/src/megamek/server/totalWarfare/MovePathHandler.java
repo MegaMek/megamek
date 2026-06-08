@@ -49,7 +49,6 @@ import megamek.common.MPCalculationSetting;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.ToHitData;
-import megamek.common.annotations.Nullable;
 import megamek.common.actions.AirMekRamAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ChargeAttackAction;
@@ -57,6 +56,7 @@ import megamek.common.actions.ClearMinefieldAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
 import megamek.common.actions.UnjamAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
 import megamek.common.board.Board;
@@ -205,6 +205,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 addReport(gameManager.doEntityFallsInto(entity, entity.getElevation(),
                       entity.getPosition(), entity.getPosition(), autoFallRoll, true, 0));
                 addNewLines();
+                // The Mek just fell — terminate movement processing immediately. Without
+                // this return, processMovement would fall through to the edge-dangle block
+                // and then iterate the player's remaining steps in processSteps, executing
+                // movement on a prone unit (or worse, on a Mek that just lost the arms it
+                // would need to do that). Mirrors the early-return pattern used by the
+                // EDGE DANGLE and DROP server branches below.
+                entity.setDone(true);
+                entity.moved = EntityMovementType.MOVE_WALK;
+                entity.mpUsed = 0;
+                entity.delta_distance = 0;
+                gameManager.entityUpdate(entity.getId());
+                return;
             }
         }
 
@@ -930,7 +942,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         // set entity parameters
-        logger.info("End of movement: entity={}, curPos={}, climbing={}, elevation={}, curVTOLElevation={}",
+        logger.debug("End of movement: entity={}, curPos={}, climbing={}, elevation={}, curVTOLElevation={}",
               entity.getDisplayName(), curPos, entity.isClimbing(), entity.getElevation(), curVTOLElevation);
         entity.setPosition(curPos);
         entity.setFacing(curFacing);

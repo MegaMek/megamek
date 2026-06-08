@@ -2898,11 +2898,15 @@ public class MoveStep implements Serializable {
               .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
               .equals(Crew.ENVIRONMENT_SPECIALIST_LIGHT);
         int nSrcEl = srcHex.getLevel() + prevEl;
-        // When a climbing entity moves into the destination hex, it arrives at
-        // ground level (elevation 0), not at the climbing elevation.
-        int destElevation = (prevStep.isClimbing() && (elevation > 0)
-              && (destHex.getLevel() > srcHex.getLevel())) ? 0 : elevation;
-        int nDestEl = destHex.getLevel() + destElevation;
+        // Use the step's actual resolved elevation. MoveStep.compile sets it correctly via
+        // ClimbingHelper.getClimbDestinationElevation for continuation climbs (top of the
+        // building roof / bridge surface / cliff top in the destination hex), so no reset is
+        // needed here. The previous "destElevation = 0 when prevStep.isClimbing() &&
+        // destHex.level > srcHex.level" workaround broke isContinuedClimb detection for
+        // climbs onto buildings or bridges sitting on elevated terrain — nDestEl came back as
+        // destHex.getLevel() (ignoring the BLDG_ELEV / BRIDGE_ELEV component) and the
+        // nDestEl > nSrcEl check below missed the climb, dropping the climbing MP cost.
+        int nDestEl = destHex.getLevel() + elevation;
         PlanetaryConditions conditions = game.getPlanetaryConditions();
 
         mp = 1;

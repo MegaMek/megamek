@@ -56,7 +56,6 @@ import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
@@ -385,12 +384,8 @@ class BaManipulatorChoice {
                       .findFirst();
                 if (glove.isPresent()) {
                     Mounted<?> newWeapon = battleArmor.addEquipment(selectedWeaponType, glove.get().getLocation());
+                    // mountOnApm marks Disposable Weapons (TO:AR p.106) so they resolve with the disposable rules.
                     BaConstructionUtil.mountOnApm(newWeapon, glove.get());
-                    // Disposable Weapons (TO:AR p.106) carried in an armored glove are marked so they resolve as such
-                    if ((newWeapon instanceof WeaponMounted weaponMounted)
-                          && selectedWeaponType.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
-                        weaponMounted.setDisposableWeapon(true);
-                    }
                 }
             } catch (LocationFullException ex) {
                 // this is not thrown for BA

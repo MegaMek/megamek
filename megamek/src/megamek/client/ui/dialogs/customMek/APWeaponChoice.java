@@ -44,7 +44,6 @@ import megamek.client.ui.GBC2;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.BaConstructionUtil;
@@ -106,12 +105,8 @@ class APWeaponChoice {
         if (weaponType != null && apMount.getLinked() == null) {
             try {
                 Mounted<?> newWeapon = entity.addEquipment(weaponType, apMount.getLocation());
+                // mountOnApm marks Disposable Weapons (TO:AR p.106) so they resolve with the disposable rules.
                 BaConstructionUtil.mountOnApm(newWeapon, apMount);
-                // Disposable Weapons (TO:AR p.106) carried in an AP mount are marked so they resolve as disposable
-                if ((newWeapon instanceof WeaponMounted weaponMounted)
-                      && weaponType.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
-                    weaponMounted.setDisposableWeapon(true);
-                }
             } catch (LocationFullException ex) {
                 // this is not thrown for BA
             }

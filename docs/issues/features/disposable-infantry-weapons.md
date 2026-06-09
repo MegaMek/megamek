@@ -361,3 +361,37 @@ disposable is covered:
 
 - **Construction exception** (one disposable per trooper, bypassing the 2-support-weapon cap) is primarily a
   MegaMekLab (Phase 3) validation concern.
+
+---
+
+## Phase 3 — MegaMekLab — DONE (build CI + BA units)
+
+MegaMekLab uses a Gradle composite build (`includeBuild('../megamek')`), so the engine changes are visible
+directly. Branch `Implement-disposable-infantry-weapons` in both repos.
+
+**Conventional Infantry build view** (mirrors the Primary/Secondary weapon style):
+
+- `CIWeaponView`: a read-only **Disposable:** field in the left panel (clickable -> opens the weapon table, like
+  Primary/Secondary), showing the current disposable or "None".
+- `CIEquipmentView`: a **Disposable Weapons** filter category plus **Add Disposable** / **Remove Disposable**
+  buttons next to Add Primary/Add Secondary. Add Disposable enables only for a tech-legal `F_INF_DISPOSABLE`
+  selection; it calls `ConvInfantry.equipDisposableWeapon(weapon)` (shared field+mount sync) and `refreshAll`,
+  which repopulates the left field. Remove Disposable clears it. (`actionPerformed` refactored to extract
+  `selectedEquipment`/`addMainWeapon`/`addDisposableWeapon` helpers.)
+- The `disposableWeapon` BLK block round-trips via MegaMek's `BLKFile`.
+- i18n: `InfantryWeaponView.txtDisposable.text/.tooltip` in `Views.properties`.
+
+**Battle Armor build view:**
+
+- Marking moved to the shared `BaConstructionUtil.mountOnApm` (MegaMek): any AP-mounted/gloved
+  `F_INF_DISPOSABLE` weapon is marked disposable, so BOTH the MM lobby and MML's `BABuildView` mounting path
+  mark it. Removed the now-redundant marking from the MM-lobby `APWeaponChoice`/`BaManipulatorChoice`.
+- `BABuildView`: relaxed the "support weapons only on gloves" restriction for disposables, so disposable
+  support weapons (LAW, grenades) may be mounted in a standard AP mount (the construction exception).
+- `MiscType` disposable eligibility on the suit is already enforced by `TestBattleArmor`
+  (`canCarryDisposableWeapons`), which MML uses for validation.
+
+**Tests:** `BaConstructionUtilDisposableTest` (2) — AP-mounting a `(1-D)` weapon marks it disposable; a normal
+AP weapon is not. MML UI is verified manually (GUI). MegaMek disposable suite: 21 tests green.
+
+### MegaMek + MegaMekLab status: COMPLETE for CI + BA. Remaining: Phase 4 (MekHQ campaign).

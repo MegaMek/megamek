@@ -49,9 +49,11 @@ import megamek.codeUtilities.MathUtility;
 import megamek.common.SimpleTechLevel;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.ConvInfantry;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class InfantryArmorPanel {
 
@@ -68,6 +70,10 @@ public class InfantryArmorPanel {
     private final List<JCheckBox> chSpecs = new ArrayList<>(ConvInfantry.NUM_SPECIALIZATIONS);
 
     private final List<EquipmentType> armorKits = new ArrayList<>();
+
+    private final JComboBox<String> cbDisposableWeapon = new JComboBox<>();
+    private final List<InfantryWeapon> disposableWeapons = new ArrayList<>();
+    private boolean disposableWeaponConfigurable = false;
 
     public InfantryArmorPanel(ConvInfantry entity, JPanel parentPanel, GBC2 gbc) {
         infantry = entity;
@@ -156,6 +162,46 @@ public class InfantryArmorPanel {
             int spec = 1 << i;
             chSpecs.get(i).setSelected(infantry.hasSpecialization(spec));
         }
+
+        // Disposable Weapon (TO:AR p.106) - only configurable when the advanced rule is enabled
+        if (entity.getGame().getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
+            disposableWeaponConfigurable = true;
+            addDisposableWeaponSection(parentPanel, gbc);
+        }
+    }
+
+    /**
+     * Builds the Disposable Weapon (TO:AR p.106) chooser: a "None" option plus every legal {@code (1-D)} infantry
+     * weapon, pre-selecting the platoon's current Disposable Weapon.
+     *
+     * @param parentPanel the panel the controls are added to
+     * @param gbc         the shared layout constraints
+     */
+    private void addDisposableWeaponSection(JPanel parentPanel, GBC2 gbc) {
+        JComponent disposableTitle = new EquipChoicePanel.SectionTitleLabel(
+              Messages.getString("CustomMekDialog.infDisposableSection"));
+        parentPanel.add(disposableTitle, gbc.fullLine());
+
+        int year = infantry.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+        SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(infantry.getGame());
+        boolean showExtinct = infantry.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT);
+        for (EquipmentType et : EquipmentType.allTypes()) {
+            if ((et instanceof InfantryWeapon infantryWeapon)
+                  && infantryWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE)
+                  && et.isLegal(year, legalLevel, infantry.isClan(), infantry.isMixedTech(), showExtinct)) {
+                disposableWeapons.add(infantryWeapon);
+            }
+        }
+        disposableWeapons.sort(Comparator.comparing(EquipmentType::getName));
+
+        cbDisposableWeapon.addItem(Messages.getString("CustomMekDialog.infDisposableNone"));
+        disposableWeapons.forEach(weapon -> cbDisposableWeapon.addItem(weapon.getName()));
+        InfantryWeapon current = infantry.getDisposableWeapon();
+        cbDisposableWeapon.setSelectedIndex((current == null) ? 0 : disposableWeapons.indexOf(current) + 1);
+
+        parentPanel.add(new JLabel(Messages.getString("CustomMekDialog.labDisposableWeapon")), gbc.forLabel());
+        parentPanel.add(cbDisposableWeapon, gbc.eol());
     }
 
     public void armorStateChanged() {
@@ -203,6 +249,12 @@ public class InfantryArmorPanel {
             }
         }
         infantry.setSpecializations(spec);
+
+        if (disposableWeaponConfigurable) {
+            int selectedIndex = cbDisposableWeapon.getSelectedIndex();
+            InfantryWeapon selectedDisposable = (selectedIndex > 0) ? disposableWeapons.get(selectedIndex - 1) : null;
+            infantry.equipDisposableWeapon(selectedDisposable);
+        }
     }
 
     public void setEnabled(boolean enabled) {
@@ -221,5 +273,6 @@ public class InfantryArmorPanel {
         for (JCheckBox spec : chSpecs) {
             spec.setEnabled(enabled);
         }
+        cbDisposableWeapon.setEnabled(enabled && disposableWeaponConfigurable);
     }
 }

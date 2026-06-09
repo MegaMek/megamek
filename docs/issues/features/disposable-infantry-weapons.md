@@ -272,4 +272,20 @@ a disposable weapon only if it has an AP mount or two armored gloves (use
 - Test `InfantryDisposableWeaponBVTest` (1): a platoon with a Disposable Weapon has higher BV than
   one without.
 
-### MegaMek status: COMPLETE for CI + BA (engine + client). 13 disposable tests green.
+### Phase 2 — Lobby Configure UI (CI) — DONE
+
+- `ConvInfantry.equipDisposableWeapon(@Nullable InfantryWeapon)`: in-place loadout change that syncs the
+  `disposableWeapon` field AND the fireable `WeaponMounted` (removes any old marked mount from
+  `equipmentList`/`weaponList`/`totalWeaponList`, then adds the new marked mount). The BLK loader now
+  reuses this method (removed the duplicated mount-creation).
+- `InfantryArmorPanel` (lobby Configure dialog) shows a **Disposable Weapon** chooser when the
+  `ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS` option is enabled: "None" + every legal `(1-D)` weapon
+  (filtered by year/tech level/faction/extinct), pre-selecting the current one; `applyChoice` calls
+  `equipDisposableWeapon`. i18n keys added.
+- Test `ConvInfantryDisposableWeaponTest` (3): add / replace / remove keep field + mount in sync.
+
+### MegaMek status: COMPLETE for CI + BA (engine + client, incl. lobby Configure). 16 disposable tests green.
+
+Note: the lobby chooser only appears when the **TacOps Disposable Infantry Weapons** game option is on.
+BA disposable assignment in the lobby still goes through the existing AP-mount/armored-glove weapon
+selectors (the disposable flag rides on the weapon type) — a dedicated BA lobby affordance is not yet added.

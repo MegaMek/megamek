@@ -67,6 +67,7 @@ import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
@@ -824,6 +825,37 @@ public class ConvInfantry extends Infantry {
      */
     public boolean hasDisposableWeapon() {
         return disposableWeapon != null;
+    }
+
+    /**
+     * Sets the platoon's one-shot Disposable Weapon (TO:AR p.106) and synchronizes the corresponding fireable mount.
+     * Any previously-equipped Disposable Weapon mount is removed first; pass null to remove the Disposable Weapon
+     * entirely. Use this (rather than {@link #setDisposableWeapon}) when changing the loadout of an already-built
+     * platoon, e.g. from the lobby configuration dialog.
+     *
+     * @param weapon the Disposable Weapon to equip, or null to remove it
+     */
+    public void equipDisposableWeapon(@Nullable InfantryWeapon weapon) {
+        List<WeaponMounted> existingDisposableMounts = weaponList.stream()
+              .filter(WeaponMounted::isDisposableWeapon)
+              .toList();
+        for (WeaponMounted disposableMount : existingDisposableMounts) {
+            equipmentList.remove(disposableMount);
+            weaponList.remove(disposableMount);
+            totalWeaponList.remove(disposableMount);
+        }
+
+        setDisposableWeapon(weapon);
+
+        if (weapon != null) {
+            try {
+                WeaponMounted disposableMount = (WeaponMounted) Mounted.createMounted(this, weapon);
+                disposableMount.setDisposableWeapon(true);
+                addEquipment(disposableMount, LOC_INFANTRY, false);
+            } catch (LocationFullException ex) {
+                logger.error("Could not equip Disposable Weapon {}", weapon.getName(), ex);
+            }
+        }
     }
 
     public void setSecondaryWeaponsPerSquad(int n) {

@@ -40,7 +40,6 @@ import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.InfantryWeaponMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.ConvInfantry;
@@ -347,13 +346,6 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         if (!disposableWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
             throw new EntityLoadingException(disposableWeaponName + " is not a Disposable Weapon");
         }
-        infantry.setDisposableWeapon(disposableWeapon);
-        try {
-            WeaponMounted disposableMount = (WeaponMounted) Mounted.createMounted(infantry, disposableWeapon);
-            disposableMount.setDisposableWeapon(true);
-            infantry.addEquipment(disposableMount, ConvInfantry.LOC_INFANTRY, false);
-        } catch (LocationFullException ex) {
-            throw new EntityLoadingException(ex.getMessage());
-        }
+        infantry.equipDisposableWeapon(disposableWeapon);
     }
 }

@@ -48,6 +48,7 @@ import megamek.common.options.PilotOptions;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.InfantryMount;
 import megamek.common.verifier.TestInfantry;
+import megamek.common.weapons.infantry.InfantryDisposableWeaponHandler;
 
 /**
  * The Entity information shown in the unit selector and many other places in MM, MML and MHQ.
@@ -251,8 +252,12 @@ class InfantryReadout extends GeneralEntityReadout {
               (null != infantry.getPrimaryWeapon()) ? infantry.getPrimaryWeapon().getDesc() : MESSAGE_NONE));
         result.add(new LabeledLine(Messages.getString("MekView.SecondWeapon"),
               secondaryCIWeaponDescriptor()));
+        if (infantry.hasDisposableWeapon()) {
+            result.add(new LabeledLine(Messages.getString("MekView.DisposableWeapon"),
+                  infantry.getDisposableWeapon().getDesc()));
+        }
         result.add(new LabeledLine(Messages.getString("MekView.DmgPerTrooper"),
-              "%3.3f".formatted(infantry.getDamagePerTrooper())));
+              damagePerTrooperDescriptor()));
 
         if (infantry.hasFieldWeapon()) {
             result.add(new PlainLine());
@@ -290,6 +295,20 @@ class InfantryReadout extends GeneralEntityReadout {
         } else {
             return MESSAGE_NONE;
         }
+    }
+
+    /**
+     * @return the per-soldier damage, with the Disposable Weapon's per-soldier contribution (3x its damage, TO:AR
+     *       p.106) appended as a "+" bonus when the platoon carries one
+     */
+    private String damagePerTrooperDescriptor() {
+        String damage = "%3.3f".formatted(infantry.getDamagePerTrooper());
+        if (infantry.hasDisposableWeapon()) {
+            double disposableDamage = InfantryDisposableWeaponHandler.DISPOSABLE_DAMAGE_MULTIPLIER
+                  * infantry.getDisposableWeapon().getInfantryDamage();
+            damage += " + %3.3f".formatted(disposableDamage);
+        }
+        return damage;
     }
 
     @Override

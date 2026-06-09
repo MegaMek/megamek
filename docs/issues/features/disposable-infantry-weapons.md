@@ -187,6 +187,62 @@ a disposable weapon only if it has an AP mount or two armored gloves (use
 
 ---
 
+## Phase 4 — MekHQ Plan (campaign consumable)
+
+MekHQ uses a Gradle composite build (`includeBuild('../megamek')`), so the engine changes are live. Branch
+`Implement-disposable-infantry-weapons` to be cut in MekHQ.
+
+### Relevant existing patterns (verified)
+
+- **Field guns**: created in `Unit.initializeParts()` as plain `EquipmentPart` at `LOC_FIELD_GUNS`
+  (`Unit.java` ~3913-3936). Durable; not consumed. Field-gun ammo is a separate `InfantryAmmoBin`.
+- **Ammo (the consumable model)**: `InfantryAmmoBin extends AmmoBin extends EquipmentPart` on the unit
+  (tracks `shotsNeeded`, synced in `updateConditionFromEntity` from `Mounted.getBaseShotsLeft()`), plus
+  `InfantryAmmoStorage extends AmmoStorage` (warehouse spare, `IAcquisitionWork`, buy/sell). `loadBin()`
+  pulls from the `Quartermaster`; post-battle `Unit.runDiagnostic` -> `updateConditionFromEntity` detects use.
+- A part is buyable/sellable by implementing `IAcquisitionWork` + `getStickerPrice()`, `getNewPart()`,
+  `getAcquisitionWork()`; spares live in the `Warehouse` and are bought via the `Quartermaster`/`ShoppingList`.
+
+### Design — "field-gun-shaped, ammo-style consumption"
+
+Disposables have no separate ammo (`ammoType NA`); the whole weapon is the consumable. So model the platoon's
+disposable loadout as a single consumable weapon part keyed on the `InfantryWeapon` (not an `AmmoType`):
+
+1. **`InfantryDisposableWeaponPart extends EquipmentPart`** (on the unit) — created in
+   `Unit.initializeParts()` when a mount has `WeaponMounted.isDisposableWeapon()` (CI `LOC_INFANTRY`; BA AP
+   mount). NOTE: the loader currently skips non-field-gun infantry weapons (`Unit.java` ~3913) — add an
+   exception so disposable mounts are picked up.
+  - Tracks a `spent` state synced in `updateConditionFromEntity()` from `Mounted.isFired()`.
+  - When spent it behaves like a consumed item needing replenishment (acquire a spare, then
+    `Mounted.setFired(false)` on reload), mirroring `AmmoBin.loadBin()`/`unload()`.
+2. **`InfantryDisposableWeaponStorage`** (warehouse spare, `IAcquisitionWork`) — the buyable/sellable spare,
+   keyed on the `InfantryWeapon`; `getStickerPrice()` from `InfantryWeapon.getCost()`.
+3. **`MissingInfantryDisposableWeaponPart`** — the missing/needs-replacement state driving re-acquisition.
+4. **Post-battle**: `runDiagnostic` -> `updateConditionFromEntity` flags the part spent when `isFired()`;
+   reload consumes a spare (or flags shortage if none in stock).
+
+### Design decisions (RESOLVED)
+
+- **Cost/quantity basis**: DECIDED — per-weapon x troopers. The platoon's disposable loadout is N weapons
+  (N = active troopers); buy/sell/replenish at `weapon.getCost() x troopers`. The part tracks quantity = troopers.
+- **Replenish behavior**: DECIDED — auto-reload from warehouse stock post-battle/refit (like `AmmoBin`); if no
+  spare in stock, the unit shows its disposables as missing until bought.
+- **Unit type scope**: DECIDED — Conventional Infantry AND Battle Armor together. (BA disposables are
+  AP-mounted `F_INFANTRY` weapons via the BA parts path.)
+- **Model**: DECIDED — consumable-weapon-part keyed on the `InfantryWeapon` (field-gun-shaped + ammo-style
+  consumption). Not a pure durable EquipmentPart, and not the `AmmoBin` classes (blocked by `ammoType NA`).
+
+### Work items (once decisions are set)
+
+1. New part classes (on-unit + storage + missing) under `mekhq/campaign/parts/`.
+2. `Unit.initializeParts()` detection of disposable mounts (CI + BA).
+3. `updateConditionFromEntity()` spent-detection + reload reset of `Mounted.setFired`.
+4. Acquisition/warehouse wiring (`IAcquisitionWork`, sticker price, `getNewPart`).
+5. XML save/load for the new parts.
+6. Tests: part generation, spent detection after `isFired()`, cost, buy/sell round-trip, save/load.
+
+---
+
 ## 7. Resolved Decisions
 
 1. **Handler strategy**: DECIDED — dedicated `InfantryDisposableWeaponHandler` subclass (isolation/testability).
@@ -262,15 +318,12 @@ a disposable weapon only if it has an AP mount or two armored gloves (use
   `(Disposable)` suffix in `Mounted.getDesc()` so it is clearly distinguished from the same weapon
   fired normally; the existing one-shot `fired` marker (`- ` prefix + `canFire()`) shows it as spent
   after use. Server rules enforce instead-of-standard / once-per-scenario / not-anti-Mek.
-- BV: `InfantryBVCalculator.processWeapons` now adds the Disposable Weapon to offensive BV at full
-  per-trooper BV (scaled by `originalTroopers`, then by the surviving-trooper ratio), consistent with
-  how Battle Armor already counts AP-mounted infantry weapons via its squad weapon filter. BA needs
-  no change (the disposable is `F_INFANTRY` at `LOC_SQUAD`, already counted).
-    - NOTE/approximation: the one-shot half-BV convention is intentionally NOT applied (matches BA's
-      existing full-BV treatment of AP-mounted infantry weapons). If rules require the 0.5 reduction it
-      is a one-line change (halve the disposable delta). Flagged for rules confirmation.
-- Test `InfantryDisposableWeaponBVTest` (1): a platoon with a Disposable Weapon has higher BV than
-  one without.
+- BV (per ruling): `InfantryBVCalculator.processDisposableWeapon` adds **0.2 x (disposable weapon BV
+  x troopers)** to the offensive value (scaled by `originalTroopers`, then by the surviving-trooper
+  ratio with the rest of the offensive value). All 11 disposable weapons have BV values (0.02-5.08).
+  BA needs no change (the disposable is `F_INFANTRY` at `LOC_SQUAD`, already counted by the BA calc).
+- Test `InfantryDisposableWeaponBVTest` (1): a platoon with a Disposable Weapon has higher BV than one
+  without, and the increase is small (0.2 factor) rather than full-BV.
 
 ### Phase 2 — Lobby Configure UI (CI) — DONE
 
@@ -380,6 +433,18 @@ directly. Branch `Implement-disposable-infantry-weapons` in both repos.
   `selectedEquipment`/`addMainWeapon`/`addDisposableWeapon` helpers.)
 - The `disposableWeapon` BLK block round-trips via MegaMek's `BLKFile`.
 - i18n: `InfantryWeaponView.txtDisposable.text/.tooltip` in `Views.properties`.
+- Tech-level gating (like Field Guns/Armor Kit): the `txtDisposable` field and the **Add Disposable** button
+  are enabled only at **Advanced+** tech level (`SimpleTechLevel.ADVANCED.ordinal()`); Remove Disposable stays
+  enabled when one is equipped so an over-tech config can be cleaned up.
+- The category filter dropdown lists **Disposable Weapons** directly above **All Weapons**.
+
+**Summary / entity readout** (`megamek` `InfantryReadout`, shown in the MML Preview MekView):
+
+- Adds a **Disposable Weapon** line (only when one is equipped) between Secondary Weapon and Damage per soldier.
+- The **Damage per soldier** line now shows the base per-trooper damage plus the disposable contribution as a
+  `+` value (`InfantryDisposableWeaponHandler.DISPOSABLE_DAMAGE_MULTIPLIER x weapon damage`), e.g. `0.400 + 1.590`.
+- i18n: `MekView.DisposableWeapon` in MegaMek client messages. (The freemarker TRO template `InfantryTROView`
+  is not yet updated — a possible follow-up.)
 
 **Battle Armor build view:**
 

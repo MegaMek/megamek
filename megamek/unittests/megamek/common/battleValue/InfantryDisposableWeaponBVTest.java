@@ -83,15 +83,21 @@ class InfantryDisposableWeaponBVTest {
     }
 
     @Test
-    @DisplayName("a platoon with a Disposable Weapon has higher BV than one without")
+    @DisplayName("a Disposable Weapon adds 0.2 x (weapon BV x troopers) to BV")
     void disposableWeaponAddsBattleValue() {
         ConvInfantry withDisposable = createInfantry(true);
         ConvInfantry withoutDisposable = createInfantry(false);
 
         int bvWith = withDisposable.calculateBattleValue();
         int bvWithout = withoutDisposable.calculateBattleValue();
+        int delta = bvWith - bvWithout;
 
-        assertTrue(bvWith > bvWithout,
-              "Disposable Weapon should raise BV. With: " + bvWith + ", Without: " + bvWithout);
+        assertTrue(delta > 0, "Disposable Weapon should raise BV. With: " + bvWith + ", Without: " + bvWithout);
+
+        // TO:AR p.106: Disposable Weapons add only 0.2 x (weapon BV x troopers) to the offensive value, so the BV
+        // increase is a small fraction of counting them at full BV. For this platoon (Rocket Launcher (LAW),
+        // 28 troopers) the increase is modest (~6 BV); counting at full BV would add roughly 5x as much. This upper
+        // bound guards against a regression to full-BV counting.
+        assertTrue(delta < 15, "Disposable BV should be reduced by the 0.2 factor, got delta " + delta);
     }
 }

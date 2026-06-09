@@ -294,10 +294,9 @@ public class InfantryBVCalculator extends BVCalculator {
     }
 
     /**
-     * Adds the platoon's Disposable Weapon (TO:AR p.106) to the offensive Battle Value, if present. It is counted as an
-     * additional offensive weapon carried by every trooper, at full per-trooper BV (consistent with how Battle Armor
-     * counts AP-mounted infantry weapons). The surviving-trooper ratio is applied with the rest of the offensive
-     * value.
+     * Adds the platoon's Disposable Weapons (TO:AR p.106) to the offensive Battle Value, if present. Disposable Weapons
+     * count at 0.2 x the Battle Value of all the platoon's disposable weapons (one per trooper). The surviving-trooper
+     * ratio is applied with the rest of the offensive value below.
      *
      * @param originalTroopers the platoon's full-strength trooper count
      */
@@ -305,8 +304,12 @@ public class InfantryBVCalculator extends BVCalculator {
         if (!infantry.hasDisposableWeapon()) {
             return;
         }
-        Mounted<?> disposableWeaponMounted = Mounted.createMounted(infantry, infantry.getDisposableWeapon());
-        processWeapon(disposableWeaponMounted, true, true, originalTroopers);
+        double weaponBV = infantry.getDisposableWeapon().getBV(infantry);
+        double disposableBV = weaponBV * originalTroopers * 0.2;
+        offensiveValue += disposableBV;
+        bvReport.addLine("Disposable Weapons:",
+              formatForReport(weaponBV) + " x " + originalTroopers + " x 0.2",
+              "= +" + formatForReport(disposableBV));
     }
 
     @Override

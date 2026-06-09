@@ -1671,8 +1671,10 @@ class ComputeToHitIsImpossible {
                 return Messages.getString("WeaponAttackAction.NoSpotter");
             }
 
-            // Disposable Weapon attacks (TO:AR p.106)
-            if ((weapon instanceof WeaponMounted disposableMount) && disposableMount.isDisposableWeapon()) {
+            // Disposable Weapon attacks (TO:AR p.106) - only gated while the rule is enabled; otherwise the mount
+            // fires as an ordinary weapon and the standard checks apply.
+            if ((weapon instanceof WeaponMounted disposableMount) && disposableMount.isDisposableWeapon()
+                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
                 String disposableReason = disposableWeaponAttackReason(game, attacker, weaponType, entityTarget);
                 if (disposableReason != null) {
                     return disposableReason;
@@ -1930,10 +1932,6 @@ class ComputeToHitIsImpossible {
     }
 
     /**
-     * Some attacks are the only actions that a particular entity can make during its turn Also, only this unit can make
-     * that particular attack.
-     */
-    /**
      * Determines whether a Disposable Weapon attack (TO:AR p.106) is impossible. The attack is a single
      * once-per-scenario attack made instead of the platoon's standard weapon attack, and may not be made while the unit
      * is engaged in an anti-Mek (leg/swarm) attack.
@@ -1947,9 +1945,6 @@ class ComputeToHitIsImpossible {
      */
     private static @Nullable String disposableWeaponAttackReason(Game game, Entity attacker, WeaponType weaponType,
           @Nullable Entity entityTarget) {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
-            return Messages.getString("WeaponAttackAction.DisposableRuleOff");
-        }
         if (Entity.NONE != attacker.getSwarmTargetId()) {
             return Messages.getString("WeaponAttackAction.NoDisposableWhenSwarming");
         }
@@ -1959,6 +1954,10 @@ class ComputeToHitIsImpossible {
         return null;
     }
 
+    /**
+     * Some attacks are the only actions that a particular entity can make during its turn Also, only this unit can make
+     * that particular attack.
+     */
     private static boolean isOnlyAttack(Game game, Entity attacker, String attackType, Entity target) {
         // meks can only be the target of one leg or swarm attack
         for (EntityAction action : game.getActionsVector()) {

@@ -284,8 +284,80 @@ a disposable weapon only if it has an AP mount or two armored gloves (use
   `equipDisposableWeapon`. i18n keys added.
 - Test `ConvInfantryDisposableWeaponTest` (3): add / replace / remove keep field + mount in sync.
 
-### MegaMek status: COMPLETE for CI + BA (engine + client, incl. lobby Configure). 16 disposable tests green.
+### Phase 2 — Lobby Configure UI (BA) — DONE
 
-Note: the lobby chooser only appears when the **TacOps Disposable Infantry Weapons** game option is on.
-BA disposable assignment in the lobby still goes through the existing AP-mount/armored-glove weapon
-selectors (the disposable flag rides on the weapon type) — a dedicated BA lobby affordance is not yet added.
+- `EquipChoicePanel`: disposable `(1-D)` weapons are offered in the BA AP-mount and armored-glove weapon
+  dropdowns **only when the option is on** (both lists gated consistently; normal AP weapons unaffected).
+  A **safety net** re-adds any currently-mounted AP/glove weapon the gating would otherwise hide, so opening
+  Configure with the rule off never silently drops an existing weapon.
+- Disposable entries are **labeled `"<name> (Disposable)"`** in both dropdowns via
+  `EquipChoicePanel.weaponChoiceLabel` (i18n `CustomMekDialog.disposableWeaponLabel`), so they are
+  distinguishable from ordinary AP weapons.
+- `APWeaponChoice.applyChoice` (AP mounts) and `BaManipulatorChoice.applyApWeapon` (armored gloves) mark a
+  mounted `F_INF_DISPOSABLE` weapon as disposable. These selectors only show when the suit has an AP mount
+  / armored gloves, which matches `canCarryDisposableWeapons()`.
+
+### Robustness fix — option-gate the *behavior*, not the marking
+
+A weapon can be `F_INF_DISPOSABLE` yet a legitimate normal weapon (e.g. White Dwarf laser pistol as a BA
+AP weapon). The disposable mount is a construction property, but disposable *behavior* is gated on the game
+option:
+
+- `InfantryWeapon.getCorrectHandler` routes to `InfantryDisposableWeaponHandler` only when the option is on;
+  otherwise the mount fires through the normal `InfantryWeaponHandler`.
+- `ComputeToHitIsImpossible` applies the disposable to-hit gating only when the option is on (removed the
+  now-redundant `DisposableRuleOff` message).
+
+### MegaMek status: COMPLETE for CI + BA (engine + client, incl. lobby Configure for both). 19 disposable tests green.
+
+Lobby choosers (CI dedicated dropdown; BA AP-mount/glove lists) surface disposables only when the **TacOps
+Disposable Infantry Weapons** option is on. BA lobby UI and the handler-routing gate are verified manually
+(GUI / integration); the core rules logic is unit-tested.
+
+---
+
+## Official Rulings Reconciliation
+
+Pasted (TO:AR p.106) text is authoritative and overrides the forum; forum rulings fill gaps the pasted text
+does not cover. Sources: forum topics 74598, 66887, 56461, 51899 (Xotl, Dominus Erratorum).
+
+**Confirmed already-correct (no change):**
+
+- **3x damage** = three times the disposable weapon's damage-each x troopers who hit; the 3x compensates for
+  the normal single-shot /3 conversion. (74598) Matches `InfantryDisposableWeaponHandler`.
+- **One single attack per game**, a single volley of all disposables, instead of the standard attack. (74598)
+  Enforced by the one-shot `fired` flag + `isOnlyAttack`.
+- **Cluster Hits uses the platoon/firing column** (e.g. full 28), and ~40 dmg for 28x VLAW is correct. (56461)
+  Matches `Compute.missilesHit(getShootingStrength(), ...)`.
+- **All troopers carry the same disposable**, one per trooper, an exception to the 2-support-weapon limit. (74598)
+- **Range uses the disposable weapon's own brackets** — already correct because the fired weapon's type is the
+  range-determining weapon at `Compute.getInfantryRangeMods` (`Compute.java` ~1730).
+
+**Implemented from rulings (not covered by pasted text):**
+
+- **A 1E disposable weapon encumbers the platoon** like a secondary support weapon, even when firing the normal
+  weapon. (51899) -> `Compute.getInfantryRangeMods` now also checks the platoon's disposable weapon for the
+  point-blank support-weapon penalty (new `disposableWeapon` param threaded through callers: Compute,
+  FireControl, InfantryTROView). Test `InfantryDisposableEncumbranceTest`.
+- **Mk. 1 Light AA's anti-air applies only when it makes its single attack**, not permanently. (66887) TW
+  ground-to-air already keys off the fired weapon (`ComputeToHitIsImpossible` ~1610); also made the unit-wide
+  `Compute` AA-eligibility check ignore a spent (`isFired`) disposable. No Alpha Strike AA is derived from
+  `F_INF_AA`, so nothing permanent to remove there.
+
+**Verified — BA AP-attack limits (51899):** no code change needed; MM already enforces all three parts and the
+disposable is covered:
+
+- One weapon per AP mount / glove (construction): each mount/glove links exactly one weapon via
+  `BaConstructionUtil.mountOnApm`; `TestBattleArmor.isMountLegal` + `getNumAllowedAntiPersonnelWeapons` bound it.
+- One AP attack per turn (firing): `ComputeToHitIsImpossible` ~1209 `OnlyOneBAAPAttack` blocks a second
+  `F_INFANTRY` weapon attack — i.e. only one AP mount used per turn, gloves included (glove AP weapons are
+  `F_INFANTRY`).
+- The disposable is `F_INFANTRY` (`InfantryWeapon` base ctor sets it), so it counts as the single AP attack.
+- Consistency: the disposable `isOnlyAttack` gate (pasted "instead of the standard attack") is stricter than
+  `OnlyOneBAAPAttack` and governs; no conflict. Nuance: `isOnlyAttack` also blocks field-gun + disposable in the
+  same turn — defensible under "single attack", easy to relax if a future ruling separates field guns.
+
+**Noted for later phases:**
+
+- **Construction exception** (one disposable per trooper, bypassing the 2-support-weapon cap) is primarily a
+  MegaMekLab (Phase 3) validation concern.

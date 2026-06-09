@@ -1730,6 +1730,8 @@ public class Compute {
                   (InfantryWeapon) weaponType,
                   (attackingEntity instanceof ConvInfantry infantry) ? infantry.getSecondaryWeapon() :
                         null,
+                  (attackingEntity instanceof ConvInfantry infantry) ? infantry.getDisposableWeapon() :
+                        null,
                   weaponUnderwater);
 
             int rangeModifier = mods.getValue();
@@ -1769,7 +1771,7 @@ public class Compute {
      * @return - all modifiers for range
      */
     public static ToHitData getInfantryRangeMods(int distance, InfantryWeapon primaryWeapon,
-          InfantryWeapon secondaryWeapon, boolean underwater) {
+          InfantryWeapon secondaryWeapon, @Nullable InfantryWeapon disposableWeapon, boolean underwater) {
         ToHitData mods = new ToHitData();
         int range = primaryWeapon.getInfantryRange();
         if (underwater) {
@@ -1888,10 +1890,15 @@ public class Compute {
                   || (secondaryWeapon != null && secondaryWeapon.hasFlag(WeaponType.F_INF_POINT_BLANK))) {
                 mods.addModifier(1, "point blank weapon");
             }
-            if (primaryWeapon.hasFlag(WeaponType.F_INF_ENCUMBER) || (primaryWeapon.getCrew() > 1)
-                  || (secondaryWeapon != null
-                  && (secondaryWeapon.hasFlag(WeaponType.F_INF_ENCUMBER)
-                  || secondaryWeapon.getCrew() > 1))) {
+            // A Disposable Weapon (TO:AR p.106) encumbers the platoon like a secondary support weapon (per ruling),
+            // so its encumbrance counts even when the platoon fires its normal weapon.
+            boolean primaryEncumbers = primaryWeapon.hasFlag(WeaponType.F_INF_ENCUMBER) || (primaryWeapon.getCrew()
+                  > 1);
+            boolean secondaryEncumbers = (secondaryWeapon != null)
+                  && (secondaryWeapon.hasFlag(WeaponType.F_INF_ENCUMBER) || (secondaryWeapon.getCrew() > 1));
+            boolean disposableEncumbers = (disposableWeapon != null)
+                  && (disposableWeapon.hasFlag(WeaponType.F_INF_ENCUMBER) || (disposableWeapon.getCrew() > 1));
+            if (primaryEncumbers || secondaryEncumbers || disposableEncumbers) {
                 mods.addModifier(1, "point blank support weapon");
             }
 
@@ -7865,9 +7872,12 @@ public class Compute {
                 } else {
                     boolean hasFieldGuns =
                           attacker instanceof ConvInfantry infantry && infantry.hasActiveFieldWeapon();
+                    // A spent Disposable Weapon (TO:AR p.106) no longer grants anti-air capability; the AA ability of
+                    // a disposable Mk. 1 Light AA only applies when it makes its single attack (per ruling).
                     boolean hasInfantryAA = attacker.getEquipment().stream().anyMatch(
-                          eq -> eq instanceof WeaponMounted
-                                && ((WeaponMounted) eq).getType().hasFlag(WeaponType.F_INF_AA)
+                          eq -> (eq instanceof WeaponMounted weaponMounted)
+                                && weaponMounted.getType().hasFlag(WeaponType.F_INF_AA)
+                                && !weaponMounted.isFired()
                     );
                     // Either allows infantry PBS on Aerospace.
                     return (hasFieldGuns || hasInfantryAA);

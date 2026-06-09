@@ -169,6 +169,9 @@ public class EquipChoicePanel extends JPanel {
         if ((entity instanceof BattleArmor battleArmor)) {
             List<WeaponType> apmWeaponTypes = new Vector<>(100);
             List<WeaponType> agloveWeaponTypes = new Vector<>(100);
+            // Disposable Weapons (TO:AR p.106) - support-class disposables may be AP-mounted only with the rule on
+            boolean disposableRuleEnabled = entity.getGame().getOptions()
+                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS);
             int gameYear;
             SimpleTechLevel legalLevel;
             if (clientgui == null) {
@@ -196,11 +199,30 @@ public class EquipChoicePanel extends JPanel {
                     continue;
                 }
 
-                if (!infantryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)) {
-                    apmWeaponTypes.add(infantryWeapon);
+                boolean isDisposable = infantryWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE);
+                // Disposable Weapons (TO:AR p.106) are only offered while the rule is on; normal AP weapons are
+                // unaffected. AP mounts take non-support weapons (or any disposable); gloves take crew < 2 weapons.
+                if (!isDisposable || disposableRuleEnabled) {
+                    if (!infantryWeapon.hasFlag(WeaponType.F_INF_SUPPORT) || isDisposable) {
+                        apmWeaponTypes.add(infantryWeapon);
+                    }
+                    if (infantryWeapon.getCrew() < 2) {
+                        agloveWeaponTypes.add(infantryWeapon);
+                    }
                 }
-                if (infantryWeapon.getCrew() < 2) {
-                    agloveWeaponTypes.add(infantryWeapon);
+            }
+            // Preserve any currently-mounted AP/glove weapon the rule gating would otherwise hide, so opening
+            // Configure with the rule off never silently drops an existing weapon.
+            for (Mounted<?> misc : entity.getMisc()) {
+                if ((misc.getLinked() == null)
+                      || !(misc.getLinked().getType() instanceof WeaponType linkedWeaponType)) {
+                    continue;
+                }
+                if (misc.is(EquipmentTypeLookup.BA_APM) && !apmWeaponTypes.contains(linkedWeaponType)) {
+                    apmWeaponTypes.add(linkedWeaponType);
+                }
+                if (misc.getType().hasFlag(MiscType.F_ARMORED_GLOVE) && !agloveWeaponTypes.contains(linkedWeaponType)) {
+                    agloveWeaponTypes.add(linkedWeaponType);
                 }
             }
             apmWeaponTypes.sort(Comparator.comparing(EquipmentType::getName));
@@ -1211,6 +1233,22 @@ public class EquipChoicePanel extends JPanel {
             UIUtil.setHighQualityRendering(g);
             nothingToConfigureText.at(getWidth() / 2, getHeight() / 2).draw(g);
         }
+    }
+
+    /**
+     * Returns the dropdown label for a Battle Armor AP/glove weapon choice, tagging Disposable Weapons (TO:AR p.106) so
+     * they are distinguishable from ordinary AP weapons in the list.
+     *
+     * @param equipmentType the weapon type being listed
+     *
+     * @return the display label, with a "(Disposable)" suffix for disposable weapons
+     */
+    static String weaponChoiceLabel(EquipmentType equipmentType) {
+        String name = equipmentType.getName();
+        if ((equipmentType instanceof WeaponType weaponType) && weaponType.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
+            return Messages.getString("CustomMekDialog.disposableWeaponLabel", name);
+        }
+        return name;
     }
 
     static class SectionTitleLabel extends JPanel {

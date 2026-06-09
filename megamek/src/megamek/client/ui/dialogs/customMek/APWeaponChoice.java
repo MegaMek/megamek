@@ -44,6 +44,7 @@ import megamek.client.ui.GBC2;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.BaConstructionUtil;
@@ -77,10 +78,10 @@ class APWeaponChoice {
 
         Vector<String> agWeaponNames = new Vector<>();
         agWeaponNames.add("None");
-        agWeaponNames.addAll(suitableWeapons.stream().map(EquipmentType::getName).toList());
+        agWeaponNames.addAll(suitableWeapons.stream().map(EquipChoicePanel::weaponChoiceLabel).toList());
         comboChoices.setModel(new DefaultComboBoxModel<>(agWeaponNames));
         if (equipmentType != null) {
-            comboChoices.setSelectedItem(equipmentType.getName());
+            comboChoices.setSelectedItem(EquipChoicePanel.weaponChoiceLabel(equipmentType));
         }
 
         String location = BattleArmor.MOUNT_LOC_NAMES[apMount.getBaMountLoc()] + ":";
@@ -106,6 +107,11 @@ class APWeaponChoice {
             try {
                 Mounted<?> newWeapon = entity.addEquipment(weaponType, apMount.getLocation());
                 BaConstructionUtil.mountOnApm(newWeapon, apMount);
+                // Disposable Weapons (TO:AR p.106) carried in an AP mount are marked so they resolve as disposable
+                if ((newWeapon instanceof WeaponMounted weaponMounted)
+                      && weaponType.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
+                    weaponMounted.setDisposableWeapon(true);
+                }
             } catch (LocationFullException ex) {
                 // this is not thrown for BA
             }

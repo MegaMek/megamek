@@ -149,6 +149,9 @@ public class MoveStep implements Serializable {
     private boolean isRunProhibited = false;
     private boolean isStackingViolation = false;
     private boolean isDiggingIn = false;
+    private boolean isClimbing = false;
+    private int climbingTotalLevels = 0;
+    private int climbingChargedLevels = 0;
     private boolean isTakingCover = false;
     private int wigeBonus = 0;
     private int nWigeDescent = 0;
@@ -623,12 +626,24 @@ public class MoveStep implements Serializable {
                         // if the wall is taller than the unit then they cannot climb it or enter it
                         return;
                     }
+                } else if (isClimbing) {
+                    // Continuation climb into a hex with a building — Mek lands on the top
+                    // climbable surface (building roof / bridge / bare hex level). Goes through
+                    // ClimbingHelper rather than entity.calcElevation so the water-emergence
+                    // adjustment doesn't fire when the Mek is clinging on a cliff face above
+                    // the waterline (the dest hex's own water/no-water state is what matters).
+                    setElevation(ClimbingHelper.getClimbDestinationElevation(hex));
                 } else {
                     setElevation(entity.calcElevation(game.getBoard(boardId).getHex(prev.getPosition()),
                           game.getBoard(boardId).getHex(getPosition()),
                           elevation,
                           climbMode()));
                 }
+            } else if (isClimbing) {
+                // Same as above for the no-building case. A Mek climbing onto a plain higher
+                // hex (bare cliff top) lands at the destination's hex level — relative elev 0.
+                Hex curHex = game.getBoard(boardId).getHex(getPosition());
+                setElevation(ClimbingHelper.getClimbDestinationElevation(curHex));
             } else {
                 setElevation(entity.calcElevation(game.getBoard(boardId).getHex(prev.getPosition()),
                       game.getBoard(boardId).getHex(getPosition()),
@@ -795,6 +810,14 @@ public class MoveStep implements Serializable {
 
         // set moveType, illegal, trouble flags
         compileIllegal(game, entity, prev, cachedEntityState);
+
+        if (isClimbing) {
+            LOGGER.debug("[CLIMB-TRACE] compile FINAL: type={}, movementType={}, mp={}, mpUsed={}, " +
+                  "elevation={}, position={}, isClimbing={}, isStackingViolation={}, terrainInvalid={}, " +
+                  "isLegalEndPos={}",
+                  type, movementType, mp, mpUsed, elevation, position,
+                  isClimbing, isStackingViolation, terrainInvalid, isLegalEndPos());
+        }
     }
 
     /**
@@ -880,6 +903,7 @@ public class MoveStep implements Serializable {
         isHullDown = prev.isHullDown;
         climbMode = prev.climbMode;
         isRunProhibited = prev.isRunProhibited;
+        isClimbing = prev.isClimbing;
         hasEverUnloaded = prev.hasEverUnloaded;
         elevation = prev.elevation;
         altitude = prev.altitude;
@@ -918,6 +942,7 @@ public class MoveStep implements Serializable {
         isFlying = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
         isHullDown = entity.isHullDown();
         climbMode = entity.climbMode();
+        isClimbing = entity.isClimbing();
         thisStepBackwards = entity.inReverse;
 
         // Moving in reverse prohibits running
@@ -929,6 +954,10 @@ public class MoveStep implements Serializable {
         altitude = entity.getAltitude();
         movementType = entity.moved;
         movementMode = entity.getMovementMode();
+        if (isClimbing) {
+            LOGGER.debug("setFromEntity: climbing entity {} at elevation={}, position={}, isClimbing={}",
+                  entity.getDisplayName(), elevation, position, isClimbing);
+        }
 
         isRolled = false;
         freeTurn = false;
@@ -1099,6 +1128,30 @@ public class MoveStep implements Serializable {
         return climbMode;
     }
 
+    public boolean isClimbing() {
+        return isClimbing;
+    }
+
+    public void setIsClimbing(boolean climbing) {
+        this.isClimbing = climbing;
+    }
+
+    /**
+     * Returns the total remaining levels for this climbing step, used for turn count display.
+     */
+    public int getClimbingTotalLevels() {
+        return climbingTotalLevels;
+    }
+
+    /**
+     * Returns the number of climbing levels actually charged this turn (the player's chosen count, capped at the full
+     * delta). Differs from {@link #getClimbingTotalLevels()} when the player picked a partial climb. Used by the
+     * turn-count display to compute non-climbing MP correctly without going negative.
+     */
+    public int getClimbingChargedLevels() {
+        return climbingChargedLevels;
+    }
+
     public boolean isTurning() {
         return isTurning;
     }
@@ -1167,6 +1220,13 @@ public class MoveStep implements Serializable {
         // If this step's position is the end of the path, and it is not a valid end position, then the movement type
         // is "illegal".
         if (isLastStep && !isLegalEndPos()) {
+            if (isClimbing) {
+                LOGGER.debug("[CLIMB-TRACE] getMovementType: isLastStep={}, isLegalEndPos=false, " +
+                            "overriding {} to MOVE_ILLEGAL, isStackingViolation={}, terrainInvalid={}, " +
+                      "isJumping={}, distance={}, hasEverUnloaded={}, position={}, elevation={}",
+                      isLastStep, movementType, isStackingViolation, terrainInvalid,
+                      isJumping(), distance, hasEverUnloaded, position, elevation);
+            }
             moveType = EntityMovementType.MOVE_ILLEGAL;
         }
         return moveType;
@@ -1194,9 +1254,17 @@ public class MoveStep implements Serializable {
         // Can't be a stacking violation.
         boolean legal = true;
         if (isStackingViolation) {
+            if (isClimbing) {
+                LOGGER.debug("[CLIMB-TRACE] isLegalEndPos: BLOCKED by stacking violation, pos={}", position);
+            }
             legal = false;
         } else if (terrainInvalid) {
             // Can't be into invalid terrain.
+            if (isClimbing) {
+                LOGGER.debug("[CLIMB-TRACE] isLegalEndPos: BLOCKED by terrainInvalid, pos={}, elevation={}",
+                      position,
+                      elevation);
+            }
             legal = false;
         } else if (isJumping() && (distance == 0)) {
             // Can't jump zero hexes.
@@ -1755,6 +1823,29 @@ public class MoveStep implements Serializable {
             }
         }
 
+        // A climbing unit inherits the climbing state from the previous step.
+        // A climbing unit cannot turn - it must face the cliff/building (TO:AR p.20).
+        // Only FORWARDS (to continue climbing) and CLIMB_MODE_ON/OFF are allowed.
+        if (prev.isClimbing) {
+            isClimbing = true;
+            if ((stepType != MoveStepType.FORWARDS)
+                  && (stepType != MoveStepType.CLIMB_MODE_ON)
+                  && (stepType != MoveStepType.CLIMB_MODE_OFF)
+                  && (stepType != MoveStepType.DOWN)) {
+                LOGGER.debug("[CLIMB-TRACE] Blocked step type {} while climbing - set MOVE_ILLEGAL", stepType);
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+                return;
+            }
+            LOGGER.debug("[CLIMB-TRACE] Allowed step type {} while climbing", stepType);
+        }
+
+        // Log all facing changes for debugging
+        if ((stepType == MoveStepType.TURN_LEFT) || (stepType == MoveStepType.TURN_RIGHT)) {
+            LOGGER.debug("[FACING-TRACE] Facing change: type={}, prev.isClimbing={}, " +
+                        "entity.isClimbing={}, position={}, elevation={}, prev.facing={}",
+                  stepType, prev.isClimbing, entity.isClimbing(), curPos, elevation, prev.getFacing());
+        }
+
         if (prev.isDiggingIn) {
             isDiggingIn = true;
             if ((type != MoveStepType.TURN_LEFT) && (type != MoveStepType.TURN_RIGHT)) {
@@ -2067,7 +2158,16 @@ public class MoveStep implements Serializable {
                 return;
             }
 
-            if (getMpUsed() <= tmpWalkMP) {
+            // Climbing uses walking movement only (TO:AR p.20).
+            // Multi-turn climbs are allowed - the server handles partial execution.
+            // Force MOVE_WALK and skip the run/sprint cascade (climbing's mpUsed can
+            // exceed walkMP for multi-turn climbs), but let the legality checks below
+            // (isMovementPossible, prev-step-illegal, etc.) still run.
+            if (isClimbing) {
+                movementType = EntityMovementType.MOVE_WALK;
+                LOGGER.debug("[CLIMB-TRACE] compileIllegal: isClimbing=true, set MOVE_WALK, mpUsed={}, stepType={}",
+                      getMpUsed(), stepType);
+            } else if (getMpUsed() <= tmpWalkMP) {
                 // VTOL includes powered flight infantry whose getMovementMode() returns VTOL
                 boolean isVTOLMovement = (getEntity().getMovementMode() == EntityMovementMode.VTOL ||
                       getEntity().getMovementMode() == EntityMovementMode.WIGE) && getClearance() > 0;
@@ -2103,6 +2203,11 @@ public class MoveStep implements Serializable {
             } else if (getMpUsed() <= runMPMax && isRunAllowed()) {
                 // RUN - If we got this far, entity is moving farther than a walk
                 // but within run and running is legal
+                if (isClimbing) {
+                    LOGGER.info("compileIllegal: climbing step classified as RUN! " +
+                          "mpUsed={}, walkMP={}, runMPMax={}, isRunProhibited={}, isRunAllowed={}",
+                          getMpUsed(), tmpWalkMP, runMPMax, isRunProhibited, isRunAllowed());
+                }
 
                 if (getMpUsed() > runMPNoBoost) {
                     // must be using MP booster to go this fast
@@ -2224,6 +2329,10 @@ public class MoveStep implements Serializable {
             if (entity.isProne()) {
                 if (((stepType != MoveStepType.TURN_LEFT && stepType != MoveStepType.TURN_RIGHT) || getMpUsed() > 1) &&
                       stepType != MoveStepType.EJECT) {
+                    if (isClimbing) {
+                        LOGGER.debug("[CLIMB-TRACE] gyro destroyed (prone): set MOVE_ILLEGAL, stepType={}",
+                              stepType);
+                    }
                     movementType = EntityMovementType.MOVE_ILLEGAL;
                 }
             } else {
@@ -2239,11 +2348,20 @@ public class MoveStep implements Serializable {
                         // We are in `Mek/non-tracked mode if the end mode is vee, and we are converting of the end
                         // mode is `Mek, and we are not converting.
                         if (isTracked == entity.isConvertingNow() && stepType != MoveStepType.CONVERT_MODE) {
+                            if (isClimbing) {
+                                LOGGER.debug("[CLIMB-TRACE] gyro destroyed (QuadVee): set MOVE_ILLEGAL, stepType={}",
+                                      stepType);
+                            }
                             movementType = EntityMovementType.MOVE_ILLEGAL;
                         }
                     } else if (!isTracked) {
                         // Non QuadVee tracked 'Meks don't actually convert. They just go, so we only need to know
                         // the end mode.
+                        if (isClimbing) {
+                            LOGGER.debug("[CLIMB-TRACE] gyro destroyed (non-tracked Mek): set MOVE_ILLEGAL, "
+                                        + "stepType={}, mp={}, mpUsed={}",
+                                  stepType, getMp(), getMpUsed());
+                        }
                         movementType = EntityMovementType.MOVE_ILLEGAL;
                     }
                 }
@@ -2256,6 +2374,7 @@ public class MoveStep implements Serializable {
               entity.isLocationBad(Mek.LOC_LEFT_ARM) &&
               entity.isLocationBad(Mek.LOC_RIGHT_ARM) &&
               (entity.isLocationBad(Mek.LOC_RIGHT_LEG) || entity.isLocationBad(Mek.LOC_LEFT_LEG))) {
+            LOGGER.debug("[STAND-TRACE] {} blocked: no arms + missing leg", stepType);
             movementType = EntityMovementType.MOVE_ILLEGAL;
             return;
         }
@@ -2266,11 +2385,21 @@ public class MoveStep implements Serializable {
               (1 == cachedEntityState.getRunMP()) &&
               (entity.mpUsed < 1) &&
               !entity.isStuck()) {
+            LOGGER.debug("[STAND-TRACE] GET_UP with 1 MP, set MOVE_RUN");
             movementType = EntityMovementType.MOVE_RUN;
         }
 
         if ((MoveStepType.CAREFUL_STAND == stepType) && (entity.mpUsed > 1)) {
+            LOGGER.debug("[STAND-TRACE] CAREFUL_STAND blocked: entity.mpUsed={}", entity.mpUsed);
             movementType = EntityMovementType.MOVE_ILLEGAL;
+        }
+
+        if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
+            LOGGER.debug("[STAND-TRACE] {} after checks: movementType={}, isProne={}, " +
+                        "isClimbing={}, entity.isClimbing={}, climbMode={}, elevation={}, " +
+                  "entity.elevation={}, entity.position={}, entity.mpUsed={}",
+                  stepType, movementType, isProne(), isClimbing, entity.isClimbing(),
+                  climbMode, elevation, entity.getElevation(), entity.getPosition(), entity.mpUsed);
         }
 
         if (isFirstStep() && ((stepType == MoveStepType.TAKEOFF) || (stepType == MoveStepType.VERTICAL_TAKE_OFF))) {
@@ -2506,7 +2635,12 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
-        // Check elevation change when climbing onto a building
+        // Check elevation change when climbing onto a building.
+        // TacOps Climbing (TO:AR p.20) bypass: a Mek with climb mode on and canClimb may
+        // exceed normal max elevation change to scale a building, the same way it does for
+        // cliffs. isMovementPossible already permits the step under those conditions; this
+        // check would otherwise re-reject it and flip MOVE_WALK back to MOVE_ILLEGAL,
+        // making any building climb >2 levels impossible despite the climbing option.
         if (climbMode && !isJumping()) {
             Hex curHex = game.getBoard(boardId).getHex(curPos);
             if (curHex.containsTerrain(Terrains.BUILDING)) {
@@ -2524,7 +2658,13 @@ public class MoveStep implements Serializable {
                         maxAllowed += 1;
                     }
 
-                    if (elevChange > maxAllowed) {
+                    boolean climbingEnabled = game.getOptions()
+                          .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
+                    boolean canTacOpsClimb = climbingEnabled
+                          && (entity instanceof Mek)
+                          && ClimbingHelper.canClimb(entity, prev.isProne())
+                          && (elevChange > 0);
+                    if ((elevChange > maxAllowed) && !canTacOpsClimb) {
                         movementType = EntityMovementType.MOVE_ILLEGAL;
                     }
                 }
@@ -2584,14 +2724,39 @@ public class MoveStep implements Serializable {
 
         // check if this movement is illegal for reasons other than points
         // Only a CHAFF step or another unloading step can follow an existing unloading step
-        if (!isMovementPossible(game, lastPos, prev.getElevation(), cachedEntityState) ||
+        // In-place actions (GET_UP, CAREFUL_STAND, etc.) should not be blocked by
+        // isMovementPossible - the entity is already at this position.
+        // A DOWN step on a climbing/dangling Mek (TO:AR p.20) likewise stays in the same hex,
+        // moving down the cliff face — isMovementPossible would reject the in-air elevation.
+        boolean isInPlaceAction = (stepType == MoveStepType.GET_UP)
+              || (stepType == MoveStepType.CAREFUL_STAND)
+              || (stepType == MoveStepType.GO_PRONE)
+              || (stepType == MoveStepType.HULL_DOWN)
+              || (isClimbing && (stepType == MoveStepType.DOWN));
+        boolean movementPossible = isInPlaceAction
+              || isMovementPossible(game, lastPos, prev.getElevation(), cachedEntityState);
+        if (!movementPossible ||
               (isUnloaded && !(type == MoveStepType.CHAFF || type == MoveStepType.UNLOAD))
         ) {
+            if (isClimbing) {
+                LOGGER.info("compileIllegal: climbing step overridden to MOVE_ILLEGAL! " +
+                      "movementPossible={}, movementType was={}, prevEl={}",
+                      movementPossible, movementType, prev.getElevation());
+            }
+            if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
+                LOGGER.debug("[STAND-TRACE] {} overridden to MOVE_ILLEGAL by isMovementPossible! " +
+                            "movementPossible={}, prevEl={}, lastPos={}, prev.movementType={}",
+                      stepType, movementPossible, prev.getElevation(), lastPos, prev.movementType);
+            }
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
         // If the previous step is always illegal, then so is this one
         if (EntityMovementType.MOVE_ILLEGAL == prev.movementType) {
+            if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
+                LOGGER.debug("[STAND-TRACE] {} overridden to MOVE_ILLEGAL because prev step was ILLEGAL! " +
+                      "prev.type={}", stepType, prev.type);
+            }
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
@@ -2733,6 +2898,14 @@ public class MoveStep implements Serializable {
               .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
               .equals(Crew.ENVIRONMENT_SPECIALIST_LIGHT);
         int nSrcEl = srcHex.getLevel() + prevEl;
+        // Use the step's actual resolved elevation. MoveStep.compile sets it correctly via
+        // ClimbingHelper.getClimbDestinationElevation for continuation climbs (top of the
+        // building roof / bridge surface / cliff top in the destination hex), so no reset is
+        // needed here. The previous "destElevation = 0 when prevStep.isClimbing() &&
+        // destHex.level > srcHex.level" workaround broke isContinuedClimb detection for
+        // climbs onto buildings or bridges sitting on elevated terrain — nDestEl came back as
+        // destHex.getLevel() (ignoring the BLDG_ELEV / BRIDGE_ELEV component) and the
+        // nDestEl > nSrcEl check below missed the climb, dropping the climbing MP cost.
         int nDestEl = destHex.getLevel() + elevation;
         PlanetaryConditions conditions = game.getPlanetaryConditions();
 
@@ -2882,8 +3055,14 @@ public class MoveStep implements Serializable {
                   (moveMode != EntityMovementMode.BIPED_SWIM) &&
                   (moveMode != EntityMovementMode.QUAD_SWIM) &&
                   (moveMode != EntityMovementMode.WIGE)) {
+                // Water entry MP only applies when the unit is actually IN the water column at
+                // the destination — i.e., its destination elevation is at or below the hex
+                // surface. A Mek crossing a bridge over water (nDestEl above the hex level) is
+                // never wading through anything, so the water-depth MP shouldn't be charged.
+                boolean inWaterColumn = nDestEl <= destHex.getLevel();
                 // no additional cost when moving on surface of ice.
-                if (!destHex.containsTerrain(Terrains.ICE) || (nDestEl < destHex.getLevel())) {
+                if (inWaterColumn
+                      && (!destHex.containsTerrain(Terrains.ICE) || (nDestEl < destHex.getLevel()))) {
                     if ((destHex.terrainLevel(Terrains.WATER) == 1) && !isAmphibious) {
                         mp++;
                     } else if ((destHex.terrainLevel(Terrains.WATER) > 1) && !isAmphibious) {
@@ -2911,6 +3090,12 @@ public class MoveStep implements Serializable {
         // non-WIGEs pay for elevation differences
         if ((nSrcEl != nDestEl) && (moveMode != EntityMovementMode.WIGE)) {
             int deltaElevation = Math.abs(nSrcEl - nDestEl);
+            if (isMek && (deltaElevation > 2)) {
+                LOGGER.debug("calcMovementCostFor elevation: prevEl={}, elevation={}, " +
+                            "srcHex.level={}, destHex.level={}, nSrcEl={}, nDestEl={}, deltaElevation={}",
+                      prevEl, elevation, srcHex.getLevel(), destHex.getLevel(),
+                      nSrcEl, nDestEl, deltaElevation);
+            }
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING) &&
                   isMek &&
                   (deltaElevation > 2) &&
@@ -2918,6 +3103,44 @@ public class MoveStep implements Serializable {
                 // leaping (moving down more than 2 hexes) always costs 4 mp
                 // regardless of anything else
                 mp = 4;
+                return;
+            }
+            // TacOps Climbing (TO:AR p.20): Meks climbing pay 2 MP/level (2 hands)
+            // or 3 MP/level (1 hand) instead of normal elevation costs.
+            // Also applies when continuing a multi-turn climb (entity already climbing)
+            // even if remaining elevation is within normal movement limits.
+            boolean isNewClimb = (deltaElevation > entity.getMaxElevationChange())
+                  && (nDestEl > nSrcEl);
+            boolean isContinuedClimb = isClimbing && (nDestEl > nSrcEl);
+            // Climbing only applies to walking movement, not jumping or VTOL
+            boolean isWalkingMovement = (movementType != EntityMovementType.MOVE_JUMP)
+                  && (movementType != EntityMovementType.MOVE_VTOL_WALK)
+                  && (movementType != EntityMovementType.MOVE_VTOL_RUN)
+                  && (movementType != EntityMovementType.MOVE_VTOL_SPRINT);
+            boolean isClimbingMove = isMek
+                  && climbMode
+                  && isWalkingMovement
+                  && (isNewClimb || isContinuedClimb)
+                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
+                  && ClimbingHelper.canClimb(entity, prevStep.isProne());
+            if (isClimbingMove) {
+                int climbCostPerLevel = ClimbingHelper.getClimbingMPCostPerLevel((Mek) entity);
+                // Use player-chosen levels if set, otherwise full elevation delta
+                int chosenLevels = entity.getClimbingLevelsChosen();
+                int levelsToCharge = (chosenLevels > 0)
+                      ? Math.min(chosenLevels, deltaElevation)
+                      : deltaElevation;
+                mp += levelsToCharge * climbCostPerLevel;
+                isClimbing = true;
+                climbingTotalLevels = deltaElevation;
+                climbingChargedLevels = levelsToCharge;
+                // Climbing requires walking only (TO:AR p.20)
+                isRunProhibited = true;
+                movementType = EntityMovementType.MOVE_WALK;
+                LOGGER.debug("calcMovementCostFor: climbing {} of {} levels at {} MP/level = {} MP, " +
+                            "chosenLevels={}, movementType forced to MOVE_WALK",
+                      levelsToCharge, deltaElevation, climbCostPerLevel, levelsToCharge * climbCostPerLevel,
+                      chosenLevels);
                 return;
             }
             // Mountain Troops only expend 1 MP per 2 levels moved up or down (TO:AUE p.153).
@@ -3100,8 +3323,15 @@ public class MoveStep implements Serializable {
         final int destAlt;
         // For buildings (but NOT bridges), when entering from ground level in climbMode,
         // use floor elevation. Bridges should use the bridge elevation instead.
+        // Exception: TacOps Climbing allows climbing the outside of a building to the roof,
+        // so use the full building elevation when climbing is enabled.
+        boolean tacOpsClimbingAvailable = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
+              && climbMode
+              && ClimbingHelper.canClimb(entity, isProne());
         if (bld != null && getEntity().getElevation() == 0 && climbMode
-              && !destHex.containsTerrain(Terrains.BRIDGE)) {
+              && !destHex.containsTerrain(Terrains.BRIDGE)
+              && !tacOpsClimbingAvailable) {
             destAlt = destHex.floor();
         } else {
             destAlt = elevation + destHex.getLevel();
@@ -3266,9 +3496,41 @@ public class MoveStep implements Serializable {
                               (srcHex.terrainLevel(Terrains.BLDG_ELEV) >= srcEl)))) {
                 maxDown = entity.getMaxElevationChange();
             }
-            if ((((srcAlt - destAlt) > 0) && ((srcAlt - destAlt) > maxDown)) ||
-                  (((destAlt - srcAlt) > 0) && ((destAlt - srcAlt) > entity.getMaxElevationChange()))) {
-                return false;
+            // TacOps Climbing (TO:AR p.20): Meks with functional arms can climb
+            // elevation changes greater than their normal max, but only when climb
+            // mode is enabled. Climb mode OFF ("Move Thru") means normal movement
+            // restrictions apply — cannot scale cliffs without climb mode.
+            boolean climbingEnabled = game.getOptions()
+                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
+            boolean canUseClimbing = climbingEnabled && climbMode && ClimbingHelper.canClimb(entity, isProne());
+            // Edge descent (TO:AR p.20): Meks with at least one functional climbing arm
+            // stepping off a 3+ level edge with climb mode on can climb-down (1 arm) or
+            // dangle / drop (2 arms). The server's edge dangle/climb-down handler reinterprets
+            // the FORWARDS step. Without this clause the step would be rejected as illegal
+            // (descent > maxDown) when leaping is OFF, and ready()'s clipToPossible() would
+            // strip it before the server saw the path. Use canClimb (1 arm) not canDangle
+            // (2 arms) so one-arm climb-down still works.
+            boolean canEdgeDescend = climbingEnabled && climbMode
+                  && ClimbingHelper.canClimb(entity, isProne());
+            int elevationUp = (destAlt - srcAlt);
+            int elevationDown = (srcAlt - destAlt);
+
+            if (((elevationDown > 0) && (elevationDown > maxDown)) ||
+                  ((elevationUp > 0) && (elevationUp > entity.getMaxElevationChange()))) {
+                // Allow climbing UP if the option is enabled and entity can climb;
+                // allow climbing DOWN (edge descent) if the entity can dangle.
+                boolean allowUp = canUseClimbing && (elevationUp > 0);
+                boolean allowDown = canEdgeDescend && (elevationDown > 0);
+                if (!allowUp && !allowDown) {
+                    return false;
+                }
+                if (allowUp) {
+                    LOGGER.debug("isValidStep: allowing climbing for {} levels up (TacOps Climbing)",
+                          elevationUp);
+                } else {
+                    LOGGER.debug("isValidStep: allowing edge descent for {} levels down (TacOps Climbing)",
+                          elevationDown);
+                }
             }
         }
 
@@ -3627,6 +3889,11 @@ public class MoveStep implements Serializable {
 
         // check the elevation is valid for the type of entity and hex
         if ((type != MoveStepType.DFA) && !entity.isElevationValid(elevation, destHex)) {
+            LOGGER.debug("[CLIMB-TRACE] isMovementPossible: elevation NOT valid! elevation={}, " +
+                        "destHex={}, destHex.level={}, destHex.ceiling={}, destHex.floor={}, " +
+                  "isClimbing={}, entity={}",
+                  elevation, dest, destHex.getLevel(), destHex.ceiling(), destHex.floor(),
+                  isClimbing, entity.getDisplayName());
             if (isJumping()) {
                 terrainInvalid = true;
             } else {
@@ -3648,9 +3915,21 @@ public class MoveStep implements Serializable {
     /**
      * In hexes with buildings, returns the elevation relative to the roof. Otherwise, returns the elevation relative to
      * the surface.
+     *
+     * <p>Defensive against a deserialized MoveStep whose transient entity reference exists but whose
+     * {@code Entity.getGame()} hasn't been re-bound on the server. Hit by GameDatasetLogger →
+     * SharedUtility.getPSRList while logging a freshly-received path. Falls back to raw elevation
+     * when game/hex aren't reachable; the dataset metric is best-effort, not authoritative.</p>
      */
     public int getClearance() {
-        Hex hex = entity.getGame().getBoard(boardId).getHex(getPosition());
+        Game game = (entity != null) ? entity.getGame() : null;
+        if (game == null) {
+            return elevation;
+        }
+        Hex hex = game.getBoard(boardId).getHex(getPosition());
+        if (hex == null) {
+            return elevation;
+        }
         if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
             return elevation - hex.terrainLevel(Terrains.BLDG_ELEV);
         }

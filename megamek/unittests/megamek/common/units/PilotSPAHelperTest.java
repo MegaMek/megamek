@@ -186,7 +186,7 @@ class PilotSPAHelperTest {
     }
 
     @Test
-    void testWindWalkerInvalidForJumpship() {
+    void testWindWalkerValidForJumpShip() {
         Jumpship jumpship = new Jumpship();
         jumpship.setCrew(new Crew(CrewType.SINGLE));
 
@@ -194,7 +194,7 @@ class PilotSPAHelperTest {
     }
 
     @Test
-    void testWindWalkerInvalidForWarship() {
+    void testWindWalkerValidForWarShip() {
         Warship warship = new Warship();
         warship.setCrew(new Crew(CrewType.SINGLE));
 
@@ -202,7 +202,7 @@ class PilotSPAHelperTest {
     }
 
     @Test
-    void testWindWalkerInvalidForSpaceStation() {
+    void testWindWalkerValidForSpaceStation() {
         SpaceStation spaceStation = new SpaceStation();
         spaceStation.setCrew(new Crew(CrewType.SINGLE));
 

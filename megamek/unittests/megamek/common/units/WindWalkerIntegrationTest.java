@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
- * This file is part of <Package Name>.
+ * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
@@ -115,7 +115,7 @@ class WindWalkerIntegrationTest {
     }
 
     @Test
-    void testNoWinWalkerModifierWithoutSPA() {
+    void testNoWindWalkerModifierWithoutSPA() {
         AeroSpaceFighter aero = new AeroSpaceFighter();
         Crew crew = new Crew(CrewType.SINGLE);
         aero.setCrew(crew);

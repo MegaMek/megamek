@@ -132,7 +132,10 @@ public class ConvInfantry extends Infantry {
     // Disposable Weapon (TO:AR p.106): a one-shot weapon carried by every trooper, used for a single
     // once-per-scenario attack instead of the platoon's standard weapon attack. Unlike primary/secondary,
     // the disposable weapon IS added to the equipment array as a separate, fireable WeaponMounted.
-    private InfantryWeapon disposableWeapon;
+    // disposableWeapon is transient: an EquipmentType cannot be relied on to survive the entity's client/server
+    // serialization (it is referenced by name from the registry, not serialized directly). It is reconstructed from
+    // disposableName, which does survive, by getDisposableWeapon().
+    private transient InfantryWeapon disposableWeapon;
     private String disposableName;
 
     private InfantryMount mount = null;
@@ -809,7 +812,7 @@ public class ConvInfantry extends Infantry {
      */
     public void setDisposableWeapon(@Nullable InfantryWeapon weapon) {
         disposableWeapon = weapon;
-        disposableName = (weapon == null) ? null : weapon.getName();
+        disposableName = (weapon == null) ? null : weapon.getInternalName();
     }
 
     /**
@@ -817,6 +820,11 @@ public class ConvInfantry extends Infantry {
      */
     @Nullable
     public InfantryWeapon getDisposableWeapon() {
+        // Reconstruct the type from its name after client/server serialization dropped the transient reference.
+        if ((disposableWeapon == null) && (disposableName != null)
+              && (EquipmentType.get(disposableName) instanceof InfantryWeapon infantryWeapon)) {
+            disposableWeapon = infantryWeapon;
+        }
         return disposableWeapon;
     }
 
@@ -824,7 +832,7 @@ public class ConvInfantry extends Infantry {
      * @return true if this platoon carries a one-shot Disposable Weapon (TO:AR p.106)
      */
     public boolean hasDisposableWeapon() {
-        return disposableWeapon != null;
+        return getDisposableWeapon() != null;
     }
 
     /**

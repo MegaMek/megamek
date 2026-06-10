@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import megamek.common.Player;
@@ -124,5 +125,22 @@ class ConvInfantryDisposableWeaponTest {
 
         assertFalse(infantry.hasDisposableWeapon());
         assertTrue(disposableMounts(infantry).isEmpty(), "No disposable mount should remain");
+    }
+
+    @Test
+    @DisplayName("the Disposable Weapon is reconstructed by name after client/server serialization")
+    void disposableWeaponSurvivesSerialization() throws Exception {
+        ConvInfantry infantry = createInfantry();
+        InfantryWeapon law = (InfantryWeapon) EquipmentType.get("Rocket Launcher (LAW)");
+        infantry.equipDisposableWeapon(law);
+
+        // Simulate the transient weapon reference being dropped by entity serialization (the name is kept).
+        Field disposableWeaponField = ConvInfantry.class.getDeclaredField("disposableWeapon");
+        disposableWeaponField.setAccessible(true);
+        disposableWeaponField.set(infantry, null);
+
+        assertTrue(infantry.hasDisposableWeapon(), "Disposable Weapon should be restored from its saved name");
+        assertEquals(law, infantry.getDisposableWeapon());
+        assertEquals("Rocket Launcher (LAW)", infantry.getDisposableWeapon().getInternalName());
     }
 }

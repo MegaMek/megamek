@@ -1948,10 +1948,35 @@ class ComputeToHitIsImpossible {
         if (Entity.NONE != attacker.getSwarmTargetId()) {
             return Messages.getString("WeaponAttackAction.NoDisposableWhenSwarming");
         }
-        if (!isOnlyAttack(game, attacker, weaponType.getInternalName(), entityTarget)) {
+        if (!isUnitsOnlyWeaponAttack(game, attacker, weaponType.getInternalName())) {
             return Messages.getString("WeaponAttackAction.DisposableOnly");
         }
         return null;
+    }
+
+    /**
+     * Determines whether the given attack type is the only weapon attack the attacker has declared this turn. Unlike
+     * {@link #isOnlyAttack}, this does NOT restrict other units from making the same attack against the same target -
+     * the Disposable Weapon rule (TO:AR p.106) only requires the disposable to replace the firing unit's own standard
+     * attack, so two different platoons may each fire their own disposable at the same target.
+     *
+     * @param game       the current game
+     * @param attacker   the attacking unit
+     * @param attackType the internal name of the disposable weapon
+     *
+     * @return true if the attacker has declared no other (different) weapon attack this turn
+     */
+    private static boolean isUnitsOnlyWeaponAttack(Game game, Entity attacker, String attackType) {
+        for (EntityAction action : game.getActionsVector()) {
+            if (action instanceof WeaponAttackAction waa) {
+                Entity otherAttacker = waa.getEntity(game);
+                if ((otherAttacker != null) && otherAttacker.equals(attacker)
+                      && !otherAttacker.getEquipment(waa.getWeaponId()).getType().is(attackType)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

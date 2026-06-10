@@ -34,6 +34,12 @@
 
 package megamek.common.units;
 
+import static java.util.stream.Collectors.toList;
+
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CompositeTechLevel;
@@ -73,12 +79,6 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
-
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * This class represents Conventional Infantry. The lowest of the low, the ground pounders, the city rats, the PBI (Poor
@@ -1951,6 +1951,11 @@ public class ConvInfantry extends Infantry {
             if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
                 return Compute.ARC_TURRET;
             }
+            return Compute.ARC_FORWARD;
+        }
+        // Hitting the Deck (TO:AR p.106): a unit that can only move or fire (i.e. one set up with field weapons)
+        // must designate a facing and may only fire in its front arc while on the deck.
+        if (isHitTheDeck() && hasActiveFieldWeapon()) {
             return Compute.ARC_FORWARD;
         }
         // According to TacOps rules, dug-in units no longer have to declare a facing

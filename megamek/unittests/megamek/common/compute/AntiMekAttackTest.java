@@ -584,4 +584,81 @@ class AntiMekAttackTest {
                   "ToHit description should NOT mention Mountain Troops modifier");
         }
     }
+
+    @Nested
+    @DisplayName("Hitting the Deck Anti-Mek Modifier Tests")
+    class HitTheDeckAntiMekTests {
+
+        @Test
+        @DisplayName("On-deck infantry get +1 anti-mek modifier on leg attacks (TO:AR p.106)")
+        void hitTheDeckGivesPlusOneOnLegAttack() {
+            ConvInfantry deckAttacker = createConventionalInfantry(22);
+            ConvInfantry standardAttacker = createConventionalInfantry(22);
+            Mek defender = createTargetMek();
+
+            deckAttacker.setHitTheDeck(true);
+
+            deckAttacker.setPosition(new Coords(5, 5));
+            standardAttacker.setPosition(new Coords(5, 5));
+            defender.setPosition(new Coords(5, 5));
+
+            game.addEntity(deckAttacker);
+            game.addEntity(standardAttacker);
+            game.addEntity(defender);
+
+            ToHitData deckToHit = Compute.getLegAttackBaseToHit(deckAttacker, defender, game);
+            ToHitData standardToHit = Compute.getLegAttackBaseToHit(standardAttacker, defender, game);
+
+            assertNotEquals(TargetRoll.IMPOSSIBLE, deckToHit.getValue(),
+                  "On-deck infantry should still be able to leg attack");
+            assertEquals(standardToHit.getValue() + 1, deckToHit.getValue(),
+                  "On-deck infantry should have +1 modifier compared to standard infantry");
+        }
+
+        @Test
+        @DisplayName("On-deck infantry get +1 anti-mek modifier on swarm attacks (TO:AR p.106)")
+        void hitTheDeckGivesPlusOneOnSwarmAttack() {
+            ConvInfantry deckAttacker = createConventionalInfantry(22);
+            ConvInfantry standardAttacker = createConventionalInfantry(22);
+            Mek defender = createTargetMek();
+
+            deckAttacker.setHitTheDeck(true);
+
+            deckAttacker.setPosition(new Coords(5, 5));
+            standardAttacker.setPosition(new Coords(5, 5));
+            defender.setPosition(new Coords(5, 5));
+
+            game.addEntity(deckAttacker);
+            game.addEntity(standardAttacker);
+            game.addEntity(defender);
+
+            ToHitData deckToHit = Compute.getSwarmMekBaseToHit(deckAttacker, defender, game);
+            ToHitData standardToHit = Compute.getSwarmMekBaseToHit(standardAttacker, defender, game);
+
+            assertNotEquals(TargetRoll.IMPOSSIBLE, deckToHit.getValue(),
+                  "On-deck infantry should still be able to swarm attack");
+            assertEquals(standardToHit.getValue() + 1, deckToHit.getValue(),
+                  "On-deck infantry should have +1 modifier compared to standard infantry");
+        }
+
+        @Test
+        @DisplayName("Infantry not on the deck does NOT get the +1 anti-mek modifier")
+        void standardInfantryDoesNotGetHitTheDeckModifier() {
+            ConvInfantry attacker = createConventionalInfantry(22);
+            Mek defender = createTargetMek();
+
+            attacker.setPosition(new Coords(5, 5));
+            defender.setPosition(new Coords(5, 5));
+
+            game.addEntity(attacker);
+            game.addEntity(defender);
+
+            assertFalse(attacker.isHitTheDeck(), "Test setup: infantry should not be on the deck");
+
+            ToHitData toHit = Compute.getLegAttackBaseToHit(attacker, defender, game);
+
+            assertFalse(toHit.getDesc().contains(Messages.getString("Compute.HitTheDeck")),
+                  "ToHit description should NOT mention the hit-the-deck modifier");
+        }
+    }
 }

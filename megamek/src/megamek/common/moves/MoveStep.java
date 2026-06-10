@@ -149,6 +149,7 @@ public class MoveStep implements Serializable {
     private boolean isRunProhibited = false;
     private boolean isStackingViolation = false;
     private boolean isDiggingIn = false;
+    private boolean isHittingDeck = false;
     private boolean isClimbing = false;
     private int climbingTotalLevels = 0;
     private int climbingChargedLevels = 0;
@@ -1846,10 +1847,11 @@ public class MoveStep implements Serializable {
                   stepType, prev.isClimbing, entity.isClimbing(), curPos, elevation, prev.getFacing());
         }
 
-        if (prev.isDiggingIn) {
-            isDiggingIn = true;
+        if (prev.isDiggingIn || prev.isHittingDeck) {
+            isDiggingIn = prev.isDiggingIn;
+            isHittingDeck = prev.isHittingDeck;
             if ((type != MoveStepType.TURN_LEFT) && (type != MoveStepType.TURN_RIGHT)) {
-                return; // can't move when digging in
+                return; // can't move when digging in or hitting the deck
             }
             movementType = EntityMovementType.MOVE_NONE;
         } else if ((type == MoveStepType.DIG_IN) || (type == MoveStepType.FORTIFY)) {
@@ -1873,6 +1875,17 @@ public class MoveStep implements Serializable {
                 return;
             }
             isDiggingIn = true;
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.HIT_THE_DECK) {
+            // Hitting the deck (TO:AR p.106) may only be the unit's sole action and is allowed in any terrain.
+            if (!isInfantry || !isFirstStep()) {
+                return; // only infantry can hit the deck, and only as their first/only action
+            }
+            Infantry infantry = (Infantry) entity;
+            if (infantry.isHitTheDeck() || (infantry.getDugIn() != Infantry.DUG_IN_NONE)) {
+                return; // can't hit the deck while already on the deck or dug in (two postures at once)
+            }
+            isHittingDeck = true;
             movementType = EntityMovementType.MOVE_NONE;
         }
 

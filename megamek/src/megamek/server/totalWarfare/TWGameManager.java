@@ -31386,6 +31386,12 @@ public class TWGameManager extends AbstractGameManager {
                     r.addDesc(inf);
                     r.subject = inf.getId();
                     addReport(r);
+                } else if (inf.isHitTheDeck() && (inf.getTurnsOnDeck() == 0)) {
+                    // Report only on the turn the unit hits the deck (before its idle counter advances). TO:AR p.106.
+                    r = new Report(5301);
+                    r.addDesc(inf);
+                    r.subject = inf.getId();
+                    addReport(r);
                 } else if (dig == Infantry.DUG_IN_FORTIFYING3) {
                     Coords c = inf.getPosition();
                     r = new Report(5305);
@@ -31547,6 +31553,10 @@ public class TWGameManager extends AbstractGameManager {
                     hhwUsedReport.subject = ah.getWeaponAttackAction().getEntityId();
                     hhwUsedReport.addDesc(ah.getWeaponAttackAction().getEntity(game));
                     handleAttackReports.addElement(hhwUsedReport);
+                }
+                // An on-deck infantry unit that fires breaks the idle streak needed to convert to dug in. TO:AR p.106.
+                if (ah.getAttacker() instanceof Infantry firingInfantry && firingInfantry.isHitTheDeck()) {
+                    firingInfantry.setFiredWhileOnDeck(true);
                 }
                 boolean keep = ah.handle(game.getPhase(), handleAttackReports);
                 if (keep) {

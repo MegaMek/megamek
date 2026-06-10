@@ -34,6 +34,7 @@ package megamek.client.ui.dialogs.randomArmy;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -53,6 +54,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeModelListener;
@@ -106,6 +109,10 @@ public class ForceGeneratorViewUi implements ActionListener {
     private JLabel lblRating;
     private JScrollPane paneForceTree;
     private JTree forceTree;
+    private JTextField txtSearch;
+    private JLabel lblSearchStatus;
+    private final List<TreePath> searchMatches = new ArrayList<>();
+    private int searchIndex = -1;
 
     private JTable tblChosen;
     private ChosenEntityModel modelChosen;
@@ -179,8 +186,53 @@ public class ForceGeneratorViewUi implements ActionListener {
         gbc.gridy = 2;
         rightPanel.add(lblRating, gbc);
 
+        // ToE search bar: a live, non-destructive find that highlights and steps through nodes
+        // whose unit name, pilot, ship name, or formation/cluster name matches the query.
         gbc.gridx = 0;
         gbc.gridy = 3;
+        rightPanel.add(new JLabel(Messages.getString("ForceGeneratorDialog.search")), gbc);
+
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        txtSearch = new JTextField(18);
+        txtSearch.setToolTipText(Messages.getString("ForceGeneratorDialog.search.tooltip"));
+        JButton btnSearchPrev = new JButton(Messages.getString("ForceGeneratorDialog.search.prev"));
+        JButton btnSearchNext = new JButton(Messages.getString("ForceGeneratorDialog.search.next"));
+        lblSearchStatus = new JLabel();
+        searchPanel.add(txtSearch);
+        searchPanel.add(btnSearchPrev);
+        searchPanel.add(btnSearchNext);
+        searchPanel.add(lblSearchStatus);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        rightPanel.add(searchPanel, gbc);
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                runToeSearch();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                runToeSearch();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                runToeSearch();
+            }
+        });
+        // Enter in the field, and the buttons, step through matches.
+        txtSearch.addActionListener(e -> gotoToeMatch(1));
+        btnSearchNext.addActionListener(e -> gotoToeMatch(1));
+        btnSearchPrev.addActionListener(e -> gotoToeMatch(-1));
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
         gbc.gridwidth = 3;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
@@ -318,6 +370,11 @@ public class ForceGeneratorViewUi implements ActionListener {
 
     private void setGeneratedForce(ForceDescriptor fd) {
         forceTree.setModel(new ForceTreeModel(fd));
+        // A new force invalidates the previous search; clearing the field re-runs the (now empty)
+        // search via the document listener, resetting the match list and status.
+        if (txtSearch != null) {
+            txtSearch.setText("");
+        }
 
         if (null != fd) {
             lblOrganization.setText(Ruleset.findRuleset(fd).getEschelonNames(fd.getUnitType() == null
@@ -331,6 +388,88 @@ public class ForceGeneratorViewUi implements ActionListener {
             lblFaction.setText("");
             lblRating.setText("");
         }
+    }
+
+    /**
+     * Runs the order-of-battle search against the current field text and jumps to the first match. Matches are
+     * case-insensitive substring hits on each node's unit name/chassis/model, pilot name, ship fluff name, and
+     * formation/cluster name. Non-destructive: the tree is only expanded and selected, never rebuilt or filtered.
+     */
+    private void runToeSearch() {
+        searchMatches.clear();
+        searchIndex = -1;
+        String query = txtSearch.getText().trim().toLowerCase();
+        Object root = forceTree.getModel().getRoot();
+        if (!query.isEmpty() && (root instanceof ForceDescriptor rootForce)) {
+            collectToeMatches(rootForce, new ArrayList<>(), query, searchMatches);
+        }
+        if (searchMatches.isEmpty()) {
+            forceTree.clearSelection();
+            lblSearchStatus.setText(query.isEmpty()
+                  ? ""
+                  : Messages.getString("ForceGeneratorDialog.search.noMatches"));
+        } else {
+            gotoToeMatch(1);
+        }
+    }
+
+    /** Depth-first walk that records the {@link TreePath} of every node matching {@code query}. */
+    private void collectToeMatches(ForceDescriptor node, List<Object> ancestors, String query,
+          List<TreePath> out) {
+        List<Object> path = new ArrayList<>(ancestors);
+        path.add(node);
+        if (matchesToeQuery(node, query)) {
+            out.add(new TreePath(path.toArray()));
+        }
+        for (Object child : node.getAllChildren()) {
+            if (child instanceof ForceDescriptor childForce) {
+                collectToeMatches(childForce, path, query, out);
+            }
+        }
+    }
+
+    /** True when {@code query} (already lower-case) is a substring of any of the node's display text. */
+    private boolean matchesToeQuery(ForceDescriptor fd, String query) {
+        StringBuilder haystack = new StringBuilder();
+        appendSearchable(haystack, fd.parseName());
+        appendSearchable(haystack, fd.getDescription());
+        appendSearchable(haystack, fd.getFluffName());
+        appendSearchable(haystack, fd.getModelName());
+        if (fd.getCo() != null) {
+            appendSearchable(haystack, fd.getCo().getName());
+        }
+        if (fd.getXo() != null) {
+            appendSearchable(haystack, fd.getXo().getName());
+        }
+        Entity en = fd.getEntity();
+        if (en != null) {
+            appendSearchable(haystack, en.getShortName());
+            appendSearchable(haystack, en.getChassis());
+            appendSearchable(haystack, en.getModel());
+        }
+        return haystack.toString().toLowerCase().contains(query);
+    }
+
+    private static void appendSearchable(StringBuilder haystack, String value) {
+        if ((value != null) && !value.isBlank()) {
+            haystack.append(value).append(' ');
+        }
+    }
+
+    /**
+     * Steps the selection to the next ({@code delta > 0}) or previous ({@code delta < 0}) match, wrapping around,
+     * scrolls it into view, and updates the "k / N" status. No-op with no matches.
+     */
+    private void gotoToeMatch(int delta) {
+        if (searchMatches.isEmpty()) {
+            return;
+        }
+        int size = searchMatches.size();
+        searchIndex = (((searchIndex + delta) % size) + size) % size;
+        TreePath path = searchMatches.get(searchIndex);
+        forceTree.setSelectionPath(path);
+        forceTree.scrollPathToVisible(path);
+        lblSearchStatus.setText((searchIndex + 1) + " / " + size);
     }
 
     private final MouseListener treeMouseListener = new MouseAdapter() {

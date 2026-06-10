@@ -207,6 +207,33 @@ public class ForceDescriptor {
             chassis.addAll(parent.getChassis());
             models.addAll(parent.getModels());
         }
+        // Artillery is built by unit selection, not by FormationType. The "Mobile Artillery"
+        // formation backfills non-artillery units when it cannot fill, which is exactly what we
+        // want to avoid. Clearing the formation and group rule routes each element through
+        // generate() individually (via the subforce recursion below), where the artillery ladder
+        // (artillery Mek -> artillery Vehicle -> other Mek) applies.
+        if (roles.contains(MissionRole.ARTILLERY)) {
+            formationType = null;
+            generationRule = null;
+            // The formation pick stamps combat roles (Recon, Fire Support, Urban, etc.) on these
+            // nodes during the build. With the formation now cleared, those roles are spurious -
+            // they would mislabel an artillery star as "Mobile Recon" (getDescription builds the
+            // name from roles) and could skew unit selection. Keep only the artillery roles.
+            roles.removeIf(r -> (r != MissionRole.ARTILLERY)
+                  && (r != MissionRole.MISSILE_ARTILLERY)
+                  && (r != MissionRole.MIXED_ARTILLERY));
+            // Battery uniformity: an artillery formation fields one gun type. The first artillery
+            // node with children picks a single artillery unit and pins it via setUnit, which on a
+            // non-leaf node propagates the model to every descendant. Each element then resolves
+            // that one model by name (generateUnits' getModelRecord rescue), so the whole battery
+            // comes out identical even when the Mek->vehicle fallback changes the unit type.
+            if (models.isEmpty() && chassis.isEmpty() && !subForces.isEmpty()) {
+                ModelRecord arty = generateArtilleryPreferred();
+                if (arty != null) {
+                    setUnit(arty);
+                }
+            }
+        }
         // First see if a formation has been assigned. If unable to fulfill the
         // formation requirements, generate using default parameters.
         if (subForces.isEmpty()) {
@@ -216,6 +243,16 @@ public class ForceDescriptor {
             }
             if (null != mr) {
                 setUnit(mr);
+            } else if (models.isEmpty() && chassis.size() == 1) {
+                // Chassis-only element (e.g. a named WarShip referenced by chassis for a faction with
+                // no warship availability table): generate() found no ModelRecord, so setUnit - which
+                // is what normally flags a leaf as an element - was never called. Mark it an element
+                // here so loadEntities resolves it by chassis name (see getModelName) and the warship
+                // CSV records it (both gate on isElement()).
+                element = true;
+                LOGGER.debug("[ForceGen][ChassisOnly] generateUnits leaf: RAT gave no unit; marked"
+                            + " element=true, will load by chassis name. chassis={} unitType={} faction={} year={}",
+                      chassis, unitType, faction, year);
             } else {
                 LOGGER.error("Could not generate unit");
             }
@@ -858,6 +895,20 @@ public class ForceDescriptor {
         if (unitType == null) {
             return null;
         }
+        // Artillery preference: before the rating ladder below relaxes the mission role and
+        // backfills a non-artillery unit, try a real artillery unit. Front-line (Mek) prefers an
+        // artillery BattleMek then drops to an artillery combat vehicle; second-line (Tank) stays
+        // vehicle. Only if no artillery unit exists for this faction and year do we fall through and
+        // let the normal ladder field a non-artillery unit of the original type as a last resort.
+        // Skipped when a model is already pinned (battery uniformity), so the pinned gun wins and
+        // every element resolves to the same unit instead of re-picking its own.
+        if (models.isEmpty() && ((unitType == UnitType.MEK) || (unitType == UnitType.TANK))
+              && roles.contains(MissionRole.ARTILLERY)) {
+            ModelRecord arty = generateArtilleryPreferred();
+            if (arty != null) {
+                return arty;
+            }
+        }
         // Equipment-rating fallback ladder: try the force's own rating first and, only when
         // generation comes up empty, step down to progressively worse ratings (never better).
         // A rating-C force may field C/D/F equipment when nothing matches at its own rating,
@@ -892,6 +943,54 @@ public class ForceDescriptor {
             }
         }
         return null;
+    }
+
+    /**
+     * Front-line artillery fallback used by {@link #generate()}: looks for a true artillery unit, preferring an
+     * artillery BattleMek and dropping to an artillery combat vehicle, across the equipment-rating ladder. Weight class
+     * is intentionally NOT constrained - artillery hulls have fixed tonnages, so the artillery role takes priority over
+     * the star's rolled weight. Returns {@code null} when no artillery unit of either type exists for this faction and
+     * year, leaving {@link #generate()} to relax the role and field a non-artillery Mek as a last resort.
+     *
+     * @return an artillery unit of a preferred type, or {@code null} if none is available
+     */
+    private ModelRecord generateArtilleryPreferred() {
+        // Front-line (Mek) prefers an artillery Mek, then an artillery vehicle. Second-line (Tank)
+        // stays vehicle, honoring the "front line = Mek, otherwise = vehicle" rule.
+        int[] order = (unitType == UnitType.TANK)
+              ? new int[] { UnitType.TANK }
+              : new int[] { UnitType.MEK, UnitType.TANK };
+        for (int candidateType : order) {
+            for (String ratGenRating : ratingFallbackList()) {
+                ModelRecord mr = generateArtilleryUnit(candidateType, ratGenRating);
+                if (mr != null) {
+                    return mr;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Generates a single artillery unit of the given unit type at a fixed equipment rating, keeping the artillery
+     * mission role strict so non-artillery units are never substituted. Returns {@code null} if no qualifying artillery
+     * unit exists.
+     */
+    private ModelRecord generateArtilleryUnit(int candidateType, String ratGenRating) {
+        UnitTable table = UnitTable.findTable(getFactionRec(),
+              candidateType,
+              getYear(),
+              ratGenRating,
+              new ArrayList<>(),
+              ModelRecord.NETWORK_NONE,
+              movementModes,
+              EnumSet.of(MissionRole.ARTILLERY),
+              2);
+        MekSummary ms = table.generateUnit();
+        if (ms == null) {
+            return null;
+        }
+        return RATGenerator.getInstance().getModelRecord(ms.getName());
     }
 
     /**
@@ -1004,7 +1103,15 @@ public class ForceDescriptor {
 
     public void loadEntities(Ruleset.ProgressListener l, double progress) {
         if (element) {
-            MekSummary ms = MekSummaryCache.getInstance().getMek(getModelName());
+            String modelName = getModelName();
+            MekSummary ms = MekSummaryCache.getInstance().getMek(modelName);
+            if (!chassis.isEmpty()) {
+                // Chassis-only element (no model pinned via setUnit): resolved by chassis name.
+                LOGGER.debug("[ForceGen][ChassisOnly] loadEntities chassis-only element: modelName='{}'"
+                            + " chassis={} unitType={} -> getMek {}",
+                      modelName, chassis, unitType,
+                      (ms == null) ? "= NULL (NOT FOUND in cache)" : "= '" + ms.getName() + "'");
+            }
             if (ms != null) {
                 try {
                     entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
@@ -1637,16 +1744,27 @@ public class ForceDescriptor {
         } else {
             wc = EntityWeightClass.WEIGHT_MEDIUM;
         }
+        Integer rolledWeightClass = weightClass; // the picker's intended weight, before the overwrite
         weightClass = (int) Math.round(wc);
 
-        // Some names require knowing the weight class first.
+        // Resolve the name against the INTENDED (rolled) weight class, not the recalculated average,
+        // so a formation keeps its doctrinal type: an Assault Cluster whose units average out to
+        // Heavy is still named "Assault Cluster" rather than "Battle Cluster". This matters for
+        // weight-skewed factions (e.g. Clan Coyote) where every cluster averages Heavy and the
+        // recalculated weight would collapse all names to one type. Falls back to the recalculated
+        // weight when the picker never set one (rolledWeightClass null/unset).
         if (null != nameNodes) {
+            int recalculatedWeightClass = weightClass;
+            if ((rolledWeightClass != null) && (rolledWeightClass >= 0)) {
+                weightClass = rolledWeightClass;
+            }
             for (ValueNode n : nameNodes) {
                 if (n.matches(this)) {
                     setName(n.getContent());
                     break;
                 }
             }
+            weightClass = recalculatedWeightClass;
         }
         attached.forEach(ForceDescriptor::recalcWeightClass);
 
@@ -2017,10 +2135,17 @@ public class ForceDescriptor {
     }
 
     public String getModelName() {
-        if (models.size() != 1) {
-            return "";
+        if (models.size() == 1) {
+            return models.iterator().next();
         }
-        return models.iterator().next();
+        // Chassis-only fallback: a unit pinned to a single chassis with no model resolved - e.g. a
+        // named WarShip referenced by chassis for a faction that has no warship availability table,
+        // so the RAT ladder in generate() cannot supply a model. The chassis of a unique hull (like
+        // a WarShip) is its full unit name, so loadEntities can resolve it directly from the cache.
+        if (models.isEmpty() && chassis.size() == 1) {
+            return chassis.iterator().next();
+        }
+        return "";
     }
 
     public Set<String> getChassis() {
@@ -2172,26 +2297,24 @@ public class ForceDescriptor {
                   EnumSet.noneOf(EntityMovementMode.class),
                   EnumSet.noneOf(MissionRole.class),
                   0);
-            List<MekSummary> fighters = new ArrayList<>();
-            for (int i = 0; i < capacity; i++) {
-                MekSummary fighterSummary = table.generateUnit();
-                if (fighterSummary == null) {
-                    break;
-                }
-                fighters.add(fighterSummary);
-            }
-            if (fighters.isEmpty()) {
-                continue;
-            }
-            // Organize the complement into Clan Stars / IS Squadrons rather than a flat list, each
-            // attached under the carrier so the ToE reads: Ship -> Star/Squadron -> fighters. A Clan
-            // aerospace Star is 5 Points of 2 fighters = 10; an IS aero Squadron is 3 Flights of 2 = 6.
+            // Organize the complement into Clan Stars of Points / IS Squadrons of Flights, each
+            // attached under the carrier so the ToE reads: Ship -> Star/Squadron -> Point/Flight ->
+            // fighters. The two fighters in a Point (Clan) or Flight (IS) are the SAME model: a Point
+            // is a matched pair. Different Points within a Star may differ. A Clan aero Star is 5
+            // Points of 2 = 10; an IS aero Squadron is 3 Flights of 2 = 6.
             boolean clan = (carrier.getFactionRec() != null) && carrier.getFactionRec().isClan();
-            int groupSize = clan ? 10 : 6;
+            int pointSize = 2;
+            int pointsPerGroup = clan ? 5 : 3;
+            int groupSize = pointsPerGroup * pointSize;
             String groupLabel = clan ? "Star" : "Squadron";
-            int groupEchelon = clan ? 3 : 2;
-            int totalGroups = (fighters.size() + groupSize - 1) / groupSize;
-            for (int g = 0; g < totalGroups; g++) {
+            String pointLabel = clan ? "Point" : "Flight";
+            int groupEchelon = clan ? 3 : 4;
+            int pointEchelon = clan ? 2 : 3;
+            int totalGroups = (capacity + groupSize - 1) / groupSize;
+
+            int generated = 0;
+            boolean exhausted = false;
+            for (int g = 0; (g < totalGroups) && !exhausted; g++) {
                 String groupName = (totalGroups > 1)
                       ? PHONETIC[Math.min(g, PHONETIC.length - 1)] + " " + groupLabel
                       : groupLabel;
@@ -2203,15 +2326,51 @@ public class ForceDescriptor {
                 group.setEchelon(groupEchelon);
                 group.setCoRank(32);
                 carrier.addAttached(group);
-                int start = g * groupSize;
-                int end = Math.min(start + groupSize, fighters.size());
-                for (int i = start; i < end; i++) {
-                    ForceDescriptor fighter = group.createChild(group.getSubForces().size());
-                    fighter.setUnitType(UnitType.AEROSPACE_FIGHTER);
-                    fighter.setUnit(RATGenerator.getInstance().getModelRecord(fighters.get(i).getName()));
-                    fighter.setEchelon(1);
-                    fighter.setCoRank(31);
-                    group.addSubForce(fighter);
+
+                int groupTarget = Math.min(groupSize, capacity - generated);
+                int producedInGroup = 0;
+                int pointIndex = 0;
+                while (producedInGroup < groupTarget) {
+                    // One model per Point: both fighters in the Point share it.
+                    MekSummary fighterSummary = table.generateUnit();
+                    if (fighterSummary == null) {
+                        exhausted = true;
+                        break;
+                    }
+                    // Keep the FIRST Point as a subForce so the Star inherits its commander
+                    // (assignCommanders sets a force's CO from its lead subForce). Attach the rest:
+                    // the CO-reorder only sorts SUBFORCES, so with one subForce nothing scrambles, and
+                    // getAllChildren() (subForces + attached) still nests every Point in creation order.
+                    ForceDescriptor point = group.createChild(pointIndex);
+                    point.getModels().clear();
+                    point.getChassis().clear();
+                    point.setUnitType(UnitType.AEROSPACE_FIGHTER);
+                    point.setName(pointLabel + " " + (pointIndex + 1));
+                    point.setEchelon(pointEchelon);
+                    point.setCoRank(16);
+                    if (pointIndex == 0) {
+                        group.addSubForce(point);
+                    } else {
+                        group.addAttached(point);
+                    }
+                    pointIndex++;
+
+                    int pointTarget = Math.min(pointSize, groupTarget - producedInGroup);
+                    for (int k = 0; k < pointTarget; k++) {
+                        ForceDescriptor fighter = point.createChild(point.getSubForces().size());
+                        fighter.setUnitType(UnitType.AEROSPACE_FIGHTER);
+                        fighter.setUnit(RATGenerator.getInstance().getModelRecord(fighterSummary.getName()));
+                        fighter.setEchelon(1);
+                        fighter.setCoRank(31);
+                        point.addSubForce(fighter);
+                        producedInGroup++;
+                        generated++;
+                    }
+                }
+                // Drop a group that produced nothing because the table dried up. Points live in
+                // both lists now (first = subForce, rest = attached), so check both.
+                if (group.getSubForces().isEmpty() && group.getAttached().isEmpty()) {
+                    carrier.getAttached().remove(group);
                 }
             }
         }

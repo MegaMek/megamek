@@ -79,6 +79,7 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
     MOVE_HULL_DOWN("moveHullDown", MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK),
     MOVE_CLIMB_MODE("moveClimbMode",
           MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_INF | MovementDisplay.CMD_PROTOMEK),
+    MOVE_DESCEND("moveDescend", MovementDisplay.CMD_MEK),
     MOVE_SWIM("moveSwim", MovementDisplay.CMD_MEK),
     MOVE_SHAKE_OFF("moveShakeOff", MovementDisplay.CMD_TANK | MovementDisplay.CMD_VTOL),
     MOVE_BRACE("moveBrace", MovementDisplay.CMD_MEK),

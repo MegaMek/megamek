@@ -979,6 +979,18 @@ public class EntityListFile {
                     output.write("\" " + MULParser.ATTR_INF_SPEC + "=\"");
                     output.write(infantry.getSpecializations() + "");
                 }
+                // Disposable Weapon (TO:AR p.106): not part of the cached design, so persist it (and whether the
+                // platoon has fired it this scenario) so it round-trips through MUL/save games and to MekHQ.
+                if (infantry.getDisposableWeapon() != null) {
+                    output.write("\" " + MULParser.ATTR_DISPOSABLE_WEAPON + "=\"");
+                    output.write(infantry.getDisposableWeapon().getInternalName());
+                    boolean disposableFired = infantry.getWeaponList()
+                          .stream()
+                          .anyMatch(weaponMounted -> weaponMounted.isDisposableWeapon() && weaponMounted.isFired());
+                    if (disposableFired) {
+                        output.write("\" " + MULParser.ATTR_DISPOSABLE_WEAPON_FIRED + "=\"1");
+                    }
+                }
             }
             output.write("\">\n");
 

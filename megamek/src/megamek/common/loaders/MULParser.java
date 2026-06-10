@@ -262,6 +262,8 @@ public class MULParser {
     public static final String ATTR_SNEAK_IR = "sneakIR";
     public static final String ATTR_SNEAK_ECM = "sneakECM";
     public static final String ATTR_INF_SPEC = "infantrySpecializations";
+    public static final String ATTR_DISPOSABLE_WEAPON = "disposableWeapon";
+    public static final String ATTR_DISPOSABLE_WEAPON_FIRED = "disposableWeaponFired";
     public static final String ATTR_INF_SQUAD_NUM = "squadNum";
     public static final String ATTR_RFMG = "rfmg";
     public static final String ATTR_LINK = "link";
@@ -968,6 +970,20 @@ public class MULParser {
             String infSpec = entityTag.getAttribute(ATTR_INF_SPEC);
             if (!infSpec.isBlank()) {
                 inf.setSpecializations(Integer.parseInt(infSpec));
+            }
+
+            // Disposable Weapon (TO:AR p.106): the design's weapons are re-derived from the cache, but the disposable
+            // is not part of that, so restore it (and whether it was already fired) from the saved attributes.
+            String disposableName = entityTag.getAttribute(ATTR_DISPOSABLE_WEAPON);
+            if (!disposableName.isBlank() && (EquipmentType.get(disposableName) instanceof InfantryWeapon disposable)) {
+                inf.equipDisposableWeapon(disposable);
+                if (!entityTag.getAttribute(ATTR_DISPOSABLE_WEAPON_FIRED).isBlank()) {
+                    inf.getWeaponList()
+                          .stream()
+                          .filter(WeaponMounted::isDisposableWeapon)
+                          .findFirst()
+                          .ifPresent(weaponMounted -> weaponMounted.setFired(true));
+                }
             }
 
             String infSquadNum = entityTag.getAttribute(ATTR_INF_SQUAD_NUM);

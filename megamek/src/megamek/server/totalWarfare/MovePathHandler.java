@@ -2886,7 +2886,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // check for dig in or fortify
             if (entity instanceof Infantry inf) {
                 if (step.getType() == MoveStepType.DIG_IN) {
-                    inf.setDugIn(Infantry.DUG_IN_WORKING);
+                    // A unit that has been hitting the deck long enough may convert straight to dug in. TO:AR p.106.
+                    if (inf.canDigInFromDeck()) {
+                        inf.setHitTheDeck(false);
+                        inf.setDugIn(Infantry.DUG_IN_COMPLETE);
+                    } else {
+                        inf.setDugIn(Infantry.DUG_IN_WORKING);
+                    }
+                    continue;
+                } else if (step.getType() == MoveStepType.HIT_THE_DECK) {
+                    inf.setHitTheDeck(true);
                     continue;
                 } else if (step.getType() == MoveStepType.FORTIFY) {
                     if (!inf.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
@@ -2897,8 +2906,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     continue;
                 } else if ((step.getType() != MoveStepType.TURN_LEFT)
                       && (step.getType() != MoveStepType.TURN_RIGHT)) {
-                    // other movement clears dug in status
-                    inf.setDugIn(Infantry.DUG_IN_NONE);
+                    // other movement clears dug in and hitting the deck status
+                    inf.clearGroundPostures();
                 }
 
                 if (step.getType() == MoveStepType.TAKE_COVER) {

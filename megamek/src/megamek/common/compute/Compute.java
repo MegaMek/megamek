@@ -5941,6 +5941,11 @@ public class Compute {
             data.addModifier(-1, Messages.getString("Compute.EnhancedImaging"));
         }
 
+        // Hitting the Deck imposes a +1 modifier on the unit's Anti-Mek Skill Rolls - TO:AR p.106
+        if (attacker.isHitTheDeck()) {
+            data.addModifier(+1, Messages.getString("Compute.HitTheDeck"));
+        }
+
         // swarm/leg attacks take target movement mods into account
         data.append(getTargetMovementModifier(attacker.getGame(), defender.getId()));
 

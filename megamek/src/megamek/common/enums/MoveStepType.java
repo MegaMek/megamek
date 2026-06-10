@@ -69,6 +69,7 @@ public enum MoveStepType {
     CLIMB_MODE_OFF(false, "CM-"),
     SWIM(false, "Swim"),
     DIG_IN(false, "DigIn"),
+    HIT_THE_DECK(false, "HitDeck"),
     FORTIFY(false, "Fortify"),
     SHAKE_OFF_SWARMERS(false, "ShakeOffSwarmers"),
     TAKEOFF(false, "Takeoff"),

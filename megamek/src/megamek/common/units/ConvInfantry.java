@@ -2026,6 +2026,11 @@ public class ConvInfantry extends Infantry {
             }
             return Compute.ARC_FORWARD;
         }
+        // Hitting the Deck (TO:AR p.106): a unit that can only move or fire (i.e. one set up with field weapons)
+        // must designate a facing and may only fire in its front arc while on the deck.
+        if (isHitTheDeck() && hasActiveFieldWeapon()) {
+            return Compute.ARC_FORWARD;
+        }
         // According to TacOps rules, dug-in units no longer have to declare a facing
         return Compute.ARC_360;
     }

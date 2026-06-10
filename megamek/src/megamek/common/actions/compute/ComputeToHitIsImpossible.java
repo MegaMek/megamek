@@ -1675,7 +1675,7 @@ class ComputeToHitIsImpossible {
             // fires as an ordinary weapon and the standard checks apply.
             if ((weapon instanceof WeaponMounted disposableMount) && disposableMount.isDisposableWeapon()
                   && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
-                String disposableReason = disposableWeaponAttackReason(game, attacker, weaponType, entityTarget);
+                String disposableReason = disposableWeaponAttackReason(game, attacker, weaponType);
                 if (disposableReason != null) {
                     return disposableReason;
                 }
@@ -1939,12 +1939,10 @@ class ComputeToHitIsImpossible {
      * @param game         the current game
      * @param attacker     the attacking infantry/battle armor unit
      * @param weaponType   the disposable weapon's type
-     * @param entityTarget the targeted entity, or null
      *
      * @return a localized reason string if the attack is impossible, or null if it is allowed
      */
-    private static @Nullable String disposableWeaponAttackReason(Game game, Entity attacker, WeaponType weaponType,
-          @Nullable Entity entityTarget) {
+    private static @Nullable String disposableWeaponAttackReason(Game game, Entity attacker, WeaponType weaponType) {
         if (Entity.NONE != attacker.getSwarmTargetId()) {
             return Messages.getString("WeaponAttackAction.NoDisposableWhenSwarming");
         }

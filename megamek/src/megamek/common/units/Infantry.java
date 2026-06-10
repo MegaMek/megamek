@@ -478,7 +478,7 @@ public abstract class Infantry extends Entity {
     }
 
     /**
-     * @return True if this infantry is currently "hitting the deck", TO:AR p.106.
+     * @return {@code true} if this infantry is currently "hitting the deck", TO:AR p.106.
      */
     public boolean isHitTheDeck() {
         return hitTheDeck;
@@ -488,7 +488,7 @@ public abstract class Infantry extends Entity {
      * Sets the "hitting the deck" status. Clearing the status (e.g. when the unit moves or is loaded) also resets the
      * idle-turn counter used for the dig-in conversion.
      *
-     * @param hitTheDeck True to mark the unit as hitting the deck
+     * @param hitTheDeck {@code true} to mark the unit as hitting the deck
      */
     public void setHitTheDeck(boolean hitTheDeck) {
         this.hitTheDeck = hitTheDeck;

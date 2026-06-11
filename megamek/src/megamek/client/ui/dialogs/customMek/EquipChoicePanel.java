@@ -169,7 +169,8 @@ public class EquipChoicePanel extends JPanel {
         if ((entity instanceof BattleArmor battleArmor)) {
             List<WeaponType> apmWeaponTypes = new Vector<>(100);
             List<WeaponType> agloveWeaponTypes = new Vector<>(100);
-            // Disposable Weapons (TO:AR p.106) - support-class disposables may be AP-mounted only with the rule on
+            // Disposable Weapons (TO:AuE p.116, Corrected Sixth Printing) - support-class disposables may be
+            // AP-mounted only with the rule on
             boolean disposableRuleEnabled = entity.getGame().getOptions()
                   .booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS);
             int gameYear;
@@ -200,8 +201,9 @@ public class EquipChoicePanel extends JPanel {
                 }
 
                 boolean isDisposable = infantryWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE);
-                // Disposable Weapons (TO:AR p.106) are only offered while the rule is on; normal AP weapons are
-                // unaffected. AP mounts take non-support weapons (or any disposable); gloves take crew < 2 weapons.
+                // Disposable Weapons (TO:AuE p.116, Corrected Sixth Printing) are only offered while the rule is on;
+                // normal AP weapons are unaffected. AP mounts take non-support weapons (or any disposable); gloves
+                // take crew < 2 weapons.
                 if (!isDisposable || disposableRuleEnabled) {
                     if (!infantryWeapon.hasFlag(WeaponType.F_INF_SUPPORT) || isDisposable) {
                         apmWeaponTypes.add(infantryWeapon);
@@ -1236,8 +1238,8 @@ public class EquipChoicePanel extends JPanel {
     }
 
     /**
-     * Returns the dropdown label for a Battle Armor AP/glove weapon choice, tagging Disposable Weapons (TO:AR p.106) so
-     * they are distinguishable from ordinary AP weapons in the list.
+     * Returns the dropdown label for a Battle Armor AP/glove weapon choice, tagging Disposable Weapons (TO:AuE p.116,
+     * Corrected Sixth Printing) so they are distinguishable from ordinary AP weapons in the list.
      *
      * @param equipmentType the weapon type being listed
      *

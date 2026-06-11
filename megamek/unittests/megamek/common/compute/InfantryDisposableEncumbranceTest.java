@@ -42,9 +42,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Verifies the ruling that an encumbering (1E) Disposable Weapon (TO:AR p.106) encumbers a conventional infantry
- * platoon like a secondary support weapon: it adds the point-blank support-weapon to-hit penalty even when the platoon
- * fires its normal weapon.
+ * Verifies the ruling that an encumbering (1E) Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) encumbers a
+ * conventional infantry platoon like a secondary support weapon: it adds the point-blank support-weapon to-hit penalty
+ * even when the platoon fires its normal weapon.
  */
 class InfantryDisposableEncumbranceTest {
 

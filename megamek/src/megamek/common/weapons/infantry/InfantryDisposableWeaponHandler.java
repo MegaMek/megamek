@@ -49,16 +49,18 @@ import megamek.common.weapons.DamageType;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
- * Resolves a Disposable Infantry Weapon attack (TO:AR p.106). Conventional infantry and battle armor may make a single
- * once-per-scenario attack with their one-shot Disposable Weapons instead of the platoon's standard weapon attack.
+ * Resolves a Disposable Infantry Weapon attack (TO:AuE p.116, Corrected Sixth Printing). Conventional infantry and
+ * battle armor may make a single once-per-scenario attack with their one-shot Disposable Weapons instead of the
+ * platoon's standard weapon attack.
  * <p>
- * The damage formula differs from a standard infantry weapon attack: the total damage equals three times the disposable
- * weapon's per-trooper damage value, multiplied by the number of troopers who hit on the Cluster Hits Table, rounded
- * normally. None of the standard conventional-infantry range-0 bonuses (TSM, prosthetic enhancements, extraneous limbs,
- * tail or beast-mount damage) and none of the primary-weapon damage caps apply: these are fired weapons resolved
- * strictly by the formula.
+ * The damage formula differs from a standard infantry weapon attack: the total damage equals three times the
+ * disposable weapon's per-trooper damage value, multiplied by the number of troopers who hit on the Cluster Hits
+ * Table, rounded normally. None of the standard conventional-infantry range-0 bonuses (TSM, prosthetic enhancements,
+ * extraneous limbs, tail or beast-mount damage) and none of the primary-weapon damage caps apply: these are fired
+ * weapons resolved strictly by the formula.
+ * </p>
  *
- * @author The MegaMek Team
+ * @author HammerGS
  */
 public class InfantryDisposableWeaponHandler extends InfantryWeaponHandler {
 
@@ -67,7 +69,7 @@ public class InfantryDisposableWeaponHandler extends InfantryWeaponHandler {
 
     /**
      * The per-trooper damage of a Disposable Weapon attack is multiplied by this value before being scaled by the
-     * number of troopers who hit (TO:AR p.106).
+     * number of troopers who hit (TO:AuE p.116, Corrected Sixth Printing).
      */
     public static final double DISPOSABLE_DAMAGE_MULTIPLIER = 3.0;
 
@@ -77,13 +79,13 @@ public class InfantryDisposableWeaponHandler extends InfantryWeaponHandler {
     }
 
     @Override
-    protected int calcHits(Vector<Report> vPhaseReport) {
-        int nHitMod = 0;
+    protected int calcHits(Vector<Report> phaseReportVector) {
+        int hitModifierCount = 0;
         if (bGlancing) {
-            nHitMod -= 4;
+            hitModifierCount -= 4;
         }
         if (bLowProfileGlancing) {
-            nHitMod -= 4;
+            hitModifierCount -= 4;
         }
 
         int troopersHit;
@@ -93,7 +95,7 @@ public class InfantryDisposableWeaponHandler extends InfantryWeaponHandler {
         } else if (!(attackingEntity instanceof Infantry)) {
             troopersHit = 1;
         } else {
-            troopersHit = Compute.missilesHit(((Infantry) attackingEntity).getShootingStrength(), nHitMod);
+            troopersHit = Compute.missilesHit(((Infantry) attackingEntity).getShootingStrength(), hitModifierCount);
         }
 
         double damagePerTrooper = DISPOSABLE_DAMAGE_MULTIPLIER * ((InfantryWeapon) weaponType).getInfantryDamage();
@@ -109,18 +111,14 @@ public class InfantryDisposableWeaponHandler extends InfantryWeaponHandler {
             damageType = DamageType.NONPENETRATING;
         }
 
-        Report r = new Report(3325);
-        r.subject = subjectId;
-        if (attackingEntity instanceof Infantry) {
-            r.add(troopersHit);
-            r.add(" troopers ");
-        } else { // Needed for support tanks with infantry weapons
-            r.add("");
-            r.add("");
-        }
-        r.add(toHit.getTableDesc() + ", causing " + damageDealt + " damage.");
-        r.newlines = 0;
-        vPhaseReport.addElement(r);
+        // Only infantry can carry Disposable Weapons, so no non-infantry report variant is needed.
+        Report report = new Report(3301);
+        report.subject = subjectId;
+        report.add(troopersHit);
+        report.add(toHit.getTableDesc());
+        report.add(damageDealt);
+        report.newlines = 0;
+        phaseReportVector.addElement(report);
 
         if (target.isConventionalInfantry()) {
             nDamPerHit = damageDealt;

@@ -48,8 +48,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests round-tripping a conventional infantry unit's Disposable Weapon (TO:AR p.106) through the BLK loader and
- * writer, and verifies that the disposable mount is created and marked.
+ * Tests round-tripping a conventional infantry unit's Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing)
+ * through the BLK loader and writer, and verifies that the disposable mount is created and marked.
  */
 class BLKInfantryDisposableWeaponTest {
 

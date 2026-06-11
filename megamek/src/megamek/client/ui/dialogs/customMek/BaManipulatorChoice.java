@@ -384,7 +384,8 @@ class BaManipulatorChoice {
                       .findFirst();
                 if (glove.isPresent()) {
                     Mounted<?> newWeapon = battleArmor.addEquipment(selectedWeaponType, glove.get().getLocation());
-                    // mountOnApm marks Disposable Weapons (TO:AR p.106) so they resolve with the disposable rules.
+                    // mountOnApm marks Disposable Weapons (TO:AuE p.116, Corrected Sixth Printing) so they resolve
+                    // with the disposable rules.
                     BaConstructionUtil.mountOnApm(newWeapon, glove.get());
                 }
             } catch (LocationFullException ex) {

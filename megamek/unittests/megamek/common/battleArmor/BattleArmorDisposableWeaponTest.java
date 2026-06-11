@@ -48,9 +48,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests Battle Armor eligibility to carry Disposable Weapons (TO:AR p.106): only suits with an anti-personnel weapon
- * mount or two armored gloves may carry them. Armored gloves themselves carry the {@code F_AP_MOUNT} flag, so the "AP
- * mount" path must exclude them.
+ * Tests Battle Armor eligibility to carry Disposable Weapons (TO:AuE p.116, Corrected Sixth Printing): only suits with
+ * an anti-personnel weapon mount or two armored gloves may carry them. Armored gloves themselves carry the
+ * {@code F_AP_MOUNT} flag, so the "AP mount" path must exclude them.
  */
 class BattleArmorDisposableWeaponTest {
 

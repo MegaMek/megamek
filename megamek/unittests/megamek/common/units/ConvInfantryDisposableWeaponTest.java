@@ -52,7 +52,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests {@link ConvInfantry#equipDisposableWeapon} - the in-place loadout change used by the lobby configuration dialog
  * - keeps the disposable weapon field and the fireable mount in sync when adding, replacing and removing a Disposable
- * Weapon (TO:AR p.106).
+ * Weapon (TO:AuE p.116, Corrected Sixth Printing).
  */
 class ConvInfantryDisposableWeaponTest {
 

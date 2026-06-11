@@ -64,9 +64,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 /**
- * Unit tests for the Disposable Infantry Weapon damage formula (TO:AR p.106): total damage equals three times the
- * disposable weapon's per-trooper damage, multiplied by the number of troopers who hit on the Cluster Hits Table,
- * rounded normally.
+ * Unit tests for the Disposable Infantry Weapon damage formula (TO:AuE p.116, Corrected Sixth Printing): total damage
+ * equals three times the disposable weapon's per-trooper damage, multiplied by the number of troopers who hit on the
+ * Cluster Hits Table, rounded normally.
  */
 class InfantryDisposableWeaponHandlerTest {
 

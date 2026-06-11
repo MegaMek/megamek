@@ -1890,8 +1890,8 @@ public class Compute {
                   || (secondaryWeapon != null && secondaryWeapon.hasFlag(WeaponType.F_INF_POINT_BLANK))) {
                 mods.addModifier(1, "point blank weapon");
             }
-            // A Disposable Weapon (TO:AR p.106) encumbers the platoon like a secondary support weapon (per ruling),
-            // so its encumbrance counts even when the platoon fires its normal weapon.
+            // A Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) encumbers the platoon like a secondary
+            // support weapon (per ruling), so its encumbrance counts even when the platoon fires its normal weapon.
             boolean primaryEncumbers = primaryWeapon.hasFlag(WeaponType.F_INF_ENCUMBER) || (primaryWeapon.getCrew()
                   > 1);
             boolean secondaryEncumbers = (secondaryWeapon != null)
@@ -5926,8 +5926,8 @@ public class Compute {
             }
         }
 
-        // Mountain Troops anti-Mek bonus - TO:AUE p.153
-        // "Mountain troops apply a -2 modifier to any Anti-Mek Skill Rolls"
+        // Mountain Troops anti-Mek bonus - TO:AUE p.153 "Mountain troops apply a -2 modifier to any Anti-Mek Skill
+        // Rolls"
         if (attacker instanceof ConvInfantry attackingInfantry
               && attackingInfantry.hasSpecialization(ConvInfantry.MOUNTAIN_TROOPS)) {
             data.addModifier(-2, Messages.getString("Compute.MountainTroops"));
@@ -7877,8 +7877,9 @@ public class Compute {
                 } else {
                     boolean hasFieldGuns =
                           attacker instanceof ConvInfantry infantry && infantry.hasActiveFieldWeapon();
-                    // A spent Disposable Weapon (TO:AR p.106) no longer grants anti-air capability; the AA ability of
-                    // a disposable Mk. 1 Light AA only applies when it makes its single attack (per ruling).
+                    // A spent Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) no longer grants anti-air
+                    // capability; the AA ability of a disposable Mk. 1 Light AA only applies when it makes its single
+                    // attack (per ruling).
                     boolean hasInfantryAA = attacker.getEquipment().stream().anyMatch(
                           eq -> (eq instanceof WeaponMounted weaponMounted)
                                 && weaponMounted.getType().hasFlag(WeaponType.F_INF_AA)

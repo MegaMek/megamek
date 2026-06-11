@@ -50,9 +50,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests that a conventional infantry platoon's Disposable Weapon (TO:AR p.106) is written to the MUL/entity-XML used by
- * save games and by MekHQ scenario transfer. Without this the disposable - which is not part of the cached unit design -
- * is lost on round-trip and arrives in MegaMek as a null weapon.
+ * Tests that a conventional infantry platoon's Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) is written
+ * to the MUL/entity-XML used by save games and by MekHQ scenario transfer. Without this the disposable - which is not
+ * part of the cached unit design - is lost on round-trip and arrives in MegaMek as a null weapon.
  */
 class EntityListFileDisposableWeaponTest {
 

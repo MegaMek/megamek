@@ -1705,12 +1705,12 @@ public class BattleArmor extends Infantry {
     }
 
     /**
-     * Determines whether this Battle Armor squad is permitted to carry Disposable Weapons (TO:AR p.106). A suit may
-     * only carry Disposable Weapons if it is also equipped with an anti-personnel weapon mount or two armored gloves.
-     * Note that armored gloves themselves carry the {@link MiscType#F_AP_MOUNT} flag, so a dedicated AP mount is
-     * identified as an {@code F_AP_MOUNT} item that is not an armored glove.
+     * Determines whether this Battle Armor squad is permitted to carry Disposable Weapons (TO:AuE p.116, Corrected
+     * Sixth Printing). A suit may only carry Disposable Weapons if it is also equipped with an anti-personnel weapon
+     * mount or two armored gloves. Note that armored gloves themselves carry the {@link MiscType#F_AP_MOUNT} flag, so
+     * a dedicated AP mount is identified as an {@code F_AP_MOUNT} item that is not an armored glove.
      *
-     * @return true if this squad may carry Disposable Weapons
+     * @return {@code true} if this squad may carry Disposable Weapons
      */
     public boolean canCarryDisposableWeapons() {
         boolean hasAntiPersonnelMount = getMisc().stream()

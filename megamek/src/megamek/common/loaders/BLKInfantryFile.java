@@ -325,9 +325,10 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
     }
 
     /**
-     * Loads the platoon's Disposable Weapon (TO:AR p.106), if present. A Disposable Weapon is a one-shot weapon carried
-     * by every trooper; it is added to {@code LOC_INFANTRY} as a separate fireable mount marked disposable so it
-     * resolves with the disposable damage formula instead of the standard infantry weapon attack.
+     * Loads the platoon's Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing), if present. A Disposable Weapon
+     * is a one-shot weapon carried by every trooper; it is added to {@code LOC_INFANTRY} as a separate fireable mount
+     * marked disposable so it resolves with the disposable damage formula instead of the standard infantry weapon
+     * attack.
      *
      * @param infantry the platoon being loaded
      *

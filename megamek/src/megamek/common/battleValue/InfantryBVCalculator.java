@@ -294,9 +294,9 @@ public class InfantryBVCalculator extends BVCalculator {
     }
 
     /**
-     * Adds the platoon's Disposable Weapons (TO:AR p.106) to the offensive Battle Value, if present. Disposable Weapons
-     * count at 0.2 x the Battle Value of all the platoon's disposable weapons (one per trooper). The surviving-trooper
-     * ratio is applied with the rest of the offensive value below.
+     * Adds the platoon's Disposable Weapons (TO:AuE p.116, Corrected Sixth Printing) to the offensive Battle Value, if
+     * present. Disposable Weapons count at 0.2 x the Battle Value of all the platoon's disposable weapons (one per
+     * trooper). The surviving-trooper ratio is applied with the rest of the offensive value below.
      *
      * @param originalTroopers the platoon's full-strength trooper count
      */

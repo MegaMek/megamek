@@ -297,8 +297,9 @@ public abstract class InfantryWeapon extends Weapon {
 
             if (entity != null) {
                 Mounted<?> mounted = entity.getEquipment(waa.getWeaponId());
-                // A Disposable Weapon attack (TO:AR p.106) uses the disposable damage formula instead of the weapon's
-                // normal handler, but only while the rule is enabled; otherwise the mount fires as an ordinary weapon.
+                // A Disposable Weapon attack (TO:AuE p.116, Corrected Sixth Printing) uses the disposable damage
+                // formula instead of the weapon's normal handler, but only while the rule is enabled; otherwise the
+                // mount fires as an ordinary weapon.
                 if ((mounted instanceof WeaponMounted weaponMounted) && weaponMounted.isDisposableWeapon()
                       && game.getOptions()
                       .booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {

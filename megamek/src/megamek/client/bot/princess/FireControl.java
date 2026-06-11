@@ -694,7 +694,7 @@ public class FireControl {
      * @param distance   The distance to the target.
      * @param weapon     The {@link InfantryWeapon} being fired.
      * @param secondary  The platoon's secondary {@link InfantryWeapon}, or null.
-     * @param disposable The platoon's Disposable Weapon (TO:AR p.106), or null.
+     * @param disposable The platoon's Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing), or null.
      * @param underwater Whether the attack is made underwater.
      *
      * @return The to hit modifiers as a {@link ToHitData} object.

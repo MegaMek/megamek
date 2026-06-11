@@ -59,9 +59,9 @@ public class WeaponMounted extends Mounted<WeaponType> {
     private final List<Integer> bayAmmo = new ArrayList<>();
 
     /**
-     * True when this mount is a unit's one-shot Disposable Weapon (TO:AR p.106) rather than the same weapon type fired
-     * as a normal platoon/secondary weapon. Used to route the attack to {@code InfantryDisposableWeaponHandler} and to
-     * present the once-per-scenario disposable attack option.
+     * {@code true} when this mount is a unit's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing)
+     * rather than the same weapon type fired as a normal platoon/secondary weapon. Used to route the attack to
+     * {@code InfantryDisposableWeaponHandler} and to present the once-per-scenario disposable attack option.
      */
     private boolean disposableWeapon = false;
 
@@ -70,14 +70,15 @@ public class WeaponMounted extends Mounted<WeaponType> {
     }
 
     /**
-     * @return true if this mount is a unit's one-shot Disposable Weapon (TO:AR p.106)
+     * @return {@code true} if this mount is a unit's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth
+     *       Printing)
      */
     public boolean isDisposableWeapon() {
         return disposableWeapon;
     }
 
     /**
-     * Marks this mount as a one-shot Disposable Weapon (TO:AR p.106).
+     * Marks this mount as a one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing).
      *
      * @param disposableWeapon whether this mount is a Disposable Weapon
      */

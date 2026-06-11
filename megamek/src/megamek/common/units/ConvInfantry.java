@@ -129,12 +129,12 @@ public class ConvInfantry extends Infantry {
     private String secondName;
     private int secondaryWeaponsPerSquad = 0;
 
-    // Disposable Weapon (TO:AR p.106): a one-shot weapon carried by every trooper, used for a single
-    // once-per-scenario attack instead of the platoon's standard weapon attack. Unlike primary/secondary,
-    // the disposable weapon IS added to the equipment array as a separate, fireable WeaponMounted.
-    // disposableWeapon is transient: an EquipmentType cannot be relied on to survive the entity's client/server
-    // serialization (it is referenced by name from the registry, not serialized directly). It is reconstructed from
-    // disposableName, which does survive, by getDisposableWeapon().
+    // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): a one-shot weapon carried by every trooper, used for
+    // a single once-per-scenario attack instead of the platoon's standard weapon attack. Unlike primary/secondary, the
+    // disposable weapon IS added to the equipment array as a separate, fireable WeaponMounted. disposableWeapon is
+    // transient: an EquipmentType cannot be relied on to survive the entity's client/server serialization (it is
+    // referenced by name from the registry, not serialized directly). It is reconstructed from disposableName, which
+    // does survive, by getDisposableWeapon().
     private transient InfantryWeapon disposableWeapon;
     private String disposableName;
 
@@ -804,9 +804,9 @@ public class ConvInfantry extends Infantry {
     }
 
     /**
-     * Sets the platoon's one-shot Disposable Weapon (TO:AR p.106). All troopers carry the same Disposable Weapon. This
-     * only records the weapon type; the corresponding fireable {@link megamek.common.equipment.WeaponMounted} is added
-     * to {@code LOC_INFANTRY} by the loader/editor.
+     * Sets the platoon's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing). All troopers carry the
+     * same Disposable Weapon. This only records the weapon type; the corresponding fireable {@link
+     * megamek.common.equipment.WeaponMounted} is added to {@code LOC_INFANTRY} by the loader/editor.
      *
      * @param weapon the Disposable Weapon, or null to clear it
      */
@@ -816,7 +816,7 @@ public class ConvInfantry extends Infantry {
     }
 
     /**
-     * @return the platoon's one-shot Disposable Weapon (TO:AR p.106), or null if it has none
+     * @return the platoon's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing), or null if it has none
      */
     @Nullable
     public InfantryWeapon getDisposableWeapon() {
@@ -829,17 +829,18 @@ public class ConvInfantry extends Infantry {
     }
 
     /**
-     * @return true if this platoon carries a one-shot Disposable Weapon (TO:AR p.106)
+     * @return {@code true} if this platoon carries a one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth
+     *       Printing)
      */
     public boolean hasDisposableWeapon() {
         return getDisposableWeapon() != null;
     }
 
     /**
-     * Sets the platoon's one-shot Disposable Weapon (TO:AR p.106) and synchronizes the corresponding fireable mount.
-     * Any previously-equipped Disposable Weapon mount is removed first; pass null to remove the Disposable Weapon
-     * entirely. Use this (rather than {@link #setDisposableWeapon}) when changing the loadout of an already-built
-     * platoon, e.g. from the lobby configuration dialog.
+     * Sets the platoon's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) and synchronizes the
+     * corresponding fireable mount. Any previously-equipped Disposable Weapon mount is removed first; pass null to
+     * remove the Disposable Weapon entirely. Use this (rather than {@link #setDisposableWeapon}) when changing the
+     * loadout of an already-built platoon, e.g. from the lobby configuration dialog.
      *
      * @param weapon the Disposable Weapon to equip, or null to remove it
      */

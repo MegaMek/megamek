@@ -47,8 +47,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Verifies that a conventional infantry platoon carrying a Disposable Weapon (TO:AR p.106) has a higher Battle Value
- * than an otherwise identical platoon without one, i.e. the disposable offensive capability is not free.
+ * Verifies that a conventional infantry platoon carrying a Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing)
+ * has a higher Battle Value than an otherwise identical platoon without one, i.e. the disposable offensive capability
+ * is not free.
  */
 class InfantryDisposableWeaponBVTest {
 
@@ -94,10 +95,10 @@ class InfantryDisposableWeaponBVTest {
 
         assertTrue(delta > 0, "Disposable Weapon should raise BV. With: " + bvWith + ", Without: " + bvWithout);
 
-        // TO:AR p.106: Disposable Weapons add only 0.2 x (weapon BV x troopers) to the offensive value, so the BV
-        // increase is a small fraction of counting them at full BV. For this platoon (Rocket Launcher (LAW),
-        // 28 troopers) the increase is modest (~6 BV); counting at full BV would add roughly 5x as much. This upper
-        // bound guards against a regression to full-BV counting.
+        // TO:AuE p.116, Corrected Sixth Printing: Disposable Weapons add only 0.2 x (weapon BV x troopers) to the
+        // offensive value, so the BV increase is a small fraction of counting them at full BV. For this platoon
+        // (Rocket Launcher (LAW), 28 troopers) the increase is modest (~6 BV); counting at full BV would add roughly
+        // 5x as much. This upper bound guards against a regression to full-BV counting.
         assertTrue(delta < 15, "Disposable BV should be reduced by the 0.2 factor, got delta " + delta);
     }
 }

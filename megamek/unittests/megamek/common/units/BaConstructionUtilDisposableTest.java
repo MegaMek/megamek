@@ -46,9 +46,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests that {@link BaConstructionUtil#mountOnApm} marks a Disposable Weapon (TO:AR p.106) as disposable. This is the
- * shared mounting path used by both the MegaMek lobby and MegaMekLab, so it is what makes a Battle Armor AP-mounted
- * disposable weapon resolve with the disposable rules.
+ * Tests that {@link BaConstructionUtil#mountOnApm} marks a Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing)
+ * as disposable. This is the shared mounting path used by both the MegaMek lobby and MegaMekLab, so it is what makes a
+ * Battle Armor AP-mounted disposable weapon resolve with the disposable rules.
  */
 class BaConstructionUtilDisposableTest {
 

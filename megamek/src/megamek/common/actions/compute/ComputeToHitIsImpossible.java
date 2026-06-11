@@ -1671,8 +1671,8 @@ class ComputeToHitIsImpossible {
                 return Messages.getString("WeaponAttackAction.NoSpotter");
             }
 
-            // Disposable Weapon attacks (TO:AR p.106) - only gated while the rule is enabled; otherwise the mount
-            // fires as an ordinary weapon and the standard checks apply.
+            // Disposable Weapon attacks (TO:AuE p.116, Corrected Sixth Printing) - only gated while the rule is
+            // enabled; otherwise the mount fires as an ordinary weapon and the standard checks apply.
             if ((weapon instanceof WeaponMounted disposableMount) && disposableMount.isDisposableWeapon()
                   && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
                 String disposableReason = disposableWeaponAttackReason(game, attacker, weaponType);
@@ -1932,9 +1932,9 @@ class ComputeToHitIsImpossible {
     }
 
     /**
-     * Determines whether a Disposable Weapon attack (TO:AR p.106) is impossible. The attack is a single
-     * once-per-scenario attack made instead of the platoon's standard weapon attack, and may not be made while the unit
-     * is engaged in an anti-Mek (leg/swarm) attack.
+     * Determines whether a Disposable Weapon attack (TO:AuE p.116, Corrected Sixth Printing) is impossible. The attack
+     * is a single once-per-scenario attack made instead of the platoon's standard weapon attack, and may not be made
+     * while the unit is engaged in an anti-Mek (leg/swarm) attack.
      *
      * @param game         the current game
      * @param attacker     the attacking infantry/battle armor unit
@@ -1955,14 +1955,15 @@ class ComputeToHitIsImpossible {
     /**
      * Determines whether the given attack type is the only weapon attack the attacker has declared this turn. Unlike
      * {@link #isOnlyAttack}, this does NOT restrict other units from making the same attack against the same target -
-     * the Disposable Weapon rule (TO:AR p.106) only requires the disposable to replace the firing unit's own standard
-     * attack, so two different platoons may each fire their own disposable at the same target.
+     * the Disposable Weapon rule (TO:AuE p.116, Corrected Sixth Printing) only requires the disposable to replace the
+     * firing unit's own standard attack, so two different platoons may each fire their own disposable at the same
+     * target.
      *
      * @param game       the current game
      * @param attacker   the attacking unit
      * @param attackType the internal name of the disposable weapon
      *
-     * @return true if the attacker has declared no other (different) weapon attack this turn
+     * @return {@code true} if the attacker has declared no other (different) weapon attack this turn
      */
     private static boolean isUnitsOnlyWeaponAttack(Game game, Entity attacker, String attackType) {
         for (EntityAction action : game.getActionsVector()) {

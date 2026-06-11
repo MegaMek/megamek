@@ -51,6 +51,8 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.game.Game;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.ConvInfantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -163,7 +165,8 @@ public class InfantryArmorPanel {
             chSpecs.get(i).setSelected(infantry.hasSpecialization(spec));
         }
 
-        // Disposable Weapon (TO:AR p.106) - only configurable when the advanced rule is enabled
+        // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) - only configurable when the advanced rule is
+        // enabled
         if (entity.getGame().getOptions()
               .booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
             disposableWeaponConfigurable = true;
@@ -172,8 +175,8 @@ public class InfantryArmorPanel {
     }
 
     /**
-     * Builds the Disposable Weapon (TO:AR p.106) chooser: a "None" option plus every legal {@code (1-D)} infantry
-     * weapon, pre-selecting the platoon's current Disposable Weapon.
+     * Builds the Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) chooser: a "None" option plus every legal
+     * {@code (1-D)} infantry weapon, pre-selecting the platoon's current Disposable Weapon.
      *
      * @param parentPanel the panel the controls are added to
      * @param gbc         the shared layout constraints
@@ -183,13 +186,15 @@ public class InfantryArmorPanel {
               Messages.getString("CustomMekDialog.infDisposableSection"));
         parentPanel.add(disposableTitle, gbc.fullLine());
 
-        int year = infantry.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
-        SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(infantry.getGame());
-        boolean showExtinct = infantry.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT);
-        for (EquipmentType et : EquipmentType.allTypes()) {
-            if ((et instanceof InfantryWeapon infantryWeapon)
+        Game game = infantry.getGame();
+        GameOptions gameOptions = game.getOptions();
+        int year = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
+        SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(game);
+        boolean showExtinct = gameOptions.booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT);
+        for (EquipmentType equipmentType : EquipmentType.allTypes()) {
+            if ((equipmentType instanceof InfantryWeapon infantryWeapon)
                   && infantryWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE)
-                  && et.isLegal(year, legalLevel, infantry.isClan(), infantry.isMixedTech(), showExtinct)) {
+                  && equipmentType.isLegal(year, legalLevel, infantry.isClan(), infantry.isMixedTech(), showExtinct)) {
                 disposableWeapons.add(infantryWeapon);
             }
         }

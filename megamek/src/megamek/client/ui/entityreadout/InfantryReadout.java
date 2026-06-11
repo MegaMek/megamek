@@ -298,8 +298,8 @@ class InfantryReadout extends GeneralEntityReadout {
     }
 
     /**
-     * @return the per-soldier damage, with the Disposable Weapon's per-soldier contribution (3x its damage, TO:AR
-     *       p.106) appended as a "+" bonus when the platoon carries one
+     * @return the per-soldier damage, with the Disposable Weapon's per-soldier contribution (3x its damage, TO:AuE
+     *       p.116, Corrected Sixth Printing) appended as a "+" bonus when the platoon carries one
      */
     private String damagePerTrooperDescriptor() {
         String damage = "%3.3f".formatted(infantry.getDamagePerTrooper());

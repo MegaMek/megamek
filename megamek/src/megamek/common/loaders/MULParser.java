@@ -972,8 +972,10 @@ public class MULParser {
                 inf.setSpecializations(Integer.parseInt(infSpec));
             }
 
-            // Disposable Weapon (TO:AR p.106): the design's weapons are re-derived from the cache, but the disposable
-            // is not part of that, so restore it (and whether it was already fired) from the saved attributes.
+            // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): the design's weapons are re-derived from the
+            // cache, but the disposable is not part of that, so restore it (and whether it was already fired) from the
+            // saved attributes. A platoon carries at most one Disposable Weapon - equipDisposableWeapon() replaces any
+            // existing disposable mount - so the single mount found below is the one just equipped.
             String disposableName = entityTag.getAttribute(ATTR_DISPOSABLE_WEAPON);
             if (!disposableName.isBlank() && (EquipmentType.get(disposableName) instanceof InfantryWeapon disposable)) {
                 inf.equipDisposableWeapon(disposable);

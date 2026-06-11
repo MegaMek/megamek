@@ -262,8 +262,9 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
                             m.setOriginalShots(numShots);
                             m.setSize(numShots * ((AmmoType) m.getType()).getKgPerShot() / 1000.0);
                         }
-                        // Disposable Weapon (TO:AR p.106): a one-shot weapon mounted in an AP mount/armored glove,
-                        // used for a single once-per-scenario attack and resolved with the disposable damage formula.
+                        // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): a one-shot weapon mounted in an
+                        // AP mount/armored glove, used for a single once-per-scenario attack and resolved with the
+                        // disposable damage formula.
                         if ((m instanceof WeaponMounted weaponMounted)
                               && etype.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
                             weaponMounted.setDisposableWeapon(true);

@@ -105,7 +105,8 @@ class APWeaponChoice {
         if (weaponType != null && apMount.getLinked() == null) {
             try {
                 Mounted<?> newWeapon = entity.addEquipment(weaponType, apMount.getLocation());
-                // mountOnApm marks Disposable Weapons (TO:AR p.106) so they resolve with the disposable rules.
+                // mountOnApm marks Disposable Weapons (TO:AuE p.116, Corrected Sixth Printing) so they resolve with
+                // the disposable rules.
                 BaConstructionUtil.mountOnApm(newWeapon, apMount);
             } catch (LocationFullException ex) {
                 // this is not thrown for BA

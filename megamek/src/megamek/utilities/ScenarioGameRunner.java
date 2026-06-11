@@ -1,0 +1,240 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.utilities;
+
+import static megamek.MMConstants.LOCALHOST_IP;
+
+import java.io.File;
+import java.io.ObjectInputFilter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
+
+import megamek.MMConstants;
+import megamek.client.HeadlessClient;
+import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.bot.princess.BehaviorSettingsFactory;
+import megamek.client.bot.princess.Princess;
+import megamek.common.Player;
+import megamek.common.enums.GamePhase;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.game.Game;
+import megamek.common.game.IGame;
+import megamek.common.jacksonAdapters.BotParser;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.net.marshalling.SanityInputFilter;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.scenario.Scenario;
+import megamek.common.scenario.ScenarioLoader;
+import megamek.logging.MMLogger;
+import megamek.server.Server;
+import megamek.server.totalWarfare.TWGameManager;
+
+/**
+ * Runs a Scenario file headless as a fully automated bot-vs-bot game, without any GUI or human interaction.
+ *
+ * <p>The first faction in the scenario is claimed by a headless watcher client that automatically acknowledges
+ * report phases; every other faction is played by a Princess bot, using the behavior settings declared in the
+ * scenario's {@code bot:} block when present, or default behavior otherwise. The game runs until victory, the given
+ * round limit, or the timeout, whichever comes first.</p>
+ *
+ * <p>Intended for AI testing and decision-log generation (see {@code docs/issues/princess-work-tracker.md}):
+ * bot decision data is written to the BotLogger TSV and the standard logs while the game runs.</p>
+ *
+ * <p>Usage: {@code ScenarioGameRunner <scenarioFile> [roundsLimit] [timeoutMinutes]}</p>
+ */
+public class ScenarioGameRunner {
+    private static final MMLogger logger = MMLogger.create(ScenarioGameRunner.class);
+
+    private static final int DEFAULT_ROUNDS_LIMIT = 6;
+    private static final int DEFAULT_TIMEOUT_MINUTES = 10;
+    private static final int CONNECT_RETRY_LIMIT = 250;
+    private static final int CONNECT_RETRY_SLEEP_MILLIS = 50;
+
+    static {
+        MekSummaryCache.getInstance();
+        ObjectInputFilter.Config.setSerialFilter(new SanityInputFilter());
+    }
+
+    private final Server server;
+    private final Scenario scenario;
+    private final Game game;
+
+    public ScenarioGameRunner(File scenarioFile) throws Exception {
+        TWGameManager gameManager = new TWGameManager();
+        Random random = new Random();
+        server = new Server(null,
+              random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
+              gameManager, false, "", null, true);
+
+        ScenarioLoader scenarioLoader = new ScenarioLoader(scenarioFile);
+        scenario = scenarioLoader.load();
+        IGame loadedGame = scenario.createGame();
+        if (!(loadedGame instanceof Game totalWarfareGame)) {
+            throw new IllegalArgumentException("Only Total Warfare scenarios are supported: " + scenarioFile);
+        }
+        game = totalWarfareGame;
+
+        server.setGame(game);
+        scenario.applyDamage(gameManager);
+        gameManager.calculatePlayerInitialCounts();
+    }
+
+    /**
+     * Connects the watcher and bots, then runs the game.
+     *
+     * @param roundsLimit    maximum number of rounds before the game is ended via /victory
+     * @param timeoutMinutes wall-clock limit; the game is abandoned when exceeded
+     *
+     * @return true if the game finished (victory or round limit), false on timeout
+     */
+    private boolean run(int roundsLimit, int timeoutMinutes) throws Exception {
+        List<Player> players = new ArrayList<>(game.getPlayersList());
+        if (players.isEmpty()) {
+            throw new IllegalStateException("Scenario defines no players");
+        }
+        players.sort(Comparator.comparingInt(Player::getId));
+
+        Player watcherSlot = players.getFirst();
+        CountDownLatch roundCounter = new CountDownLatch(roundsLimit);
+
+        HeadlessClient watcher = new HeadlessClient(watcherSlot.getName(), LOCALHOST_IP, server.getPort());
+        watcher.getGame().addGameListener(new GameListenerAdapter() {
+            @Override
+            public void gamePhaseChange(GamePhaseChangeEvent event) {
+                GamePhase newPhase = event.getNewPhase();
+                if (newPhase == GamePhase.END_REPORT) {
+                    roundCounter.countDown();
+                    if (roundCounter.getCount() == 1) {
+                        watcher.sendChat("/victory");
+                    }
+                } else if (newPhase == GamePhase.VICTORY) {
+                    while (roundCounter.getCount() > 0) {
+                        roundCounter.countDown();
+                    }
+                }
+
+                // the watcher has no units; acknowledge every report phase so the game never waits on it
+                if (newPhase.isReport()) {
+                    watcher.sendDone(true);
+                }
+            }
+        });
+
+        watcher.connect();
+        waitForLocalPlayer(watcher.getName(), () -> watcher.getLocalPlayer() != null);
+
+        for (Player botSlot : players.subList(1, players.size())) {
+            Princess princess = Princess.createPrincess(botSlot.getName(),
+                  LOCALHOST_IP,
+                  server.getPort(),
+                  behaviorFor(botSlot.getName()));
+            if (!princess.connect()) {
+                throw new IllegalStateException("Princess failed to connect for player " + botSlot.getName());
+            }
+            waitForLocalPlayer(princess.getName(), () -> princess.getLocalPlayer() != null);
+            princess.sendPlayerInfo();
+            logger.info("Connected Princess for {}", botSlot.getName());
+        }
+
+        logger.info("Running scenario '{}' for up to {} rounds ({} minute timeout)",
+              scenario.getName(), roundsLimit, timeoutMinutes);
+        boolean finished = roundCounter.await(timeoutMinutes, TimeUnit.MINUTES);
+        if (finished) {
+            logger.info("Scenario game completed");
+        } else {
+            logger.error("Scenario game timed out");
+        }
+        return finished;
+    }
+
+    /**
+     * Returns the Princess behavior declared for the named player in the scenario, or default behavior.
+     */
+    private BehaviorSettings behaviorFor(String playerName) {
+        if (scenario.hasBotInfo(playerName)
+              && scenario.getBotInfo(playerName) instanceof BotParser.PrincessRecord(BehaviorSettings settings)) {
+            return settings;
+        }
+        return BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR;
+    }
+
+    private void waitForLocalPlayer(String clientName, BooleanSupplier connected) throws InterruptedException {
+        int retryCount = 0;
+        while (!connected.getAsBoolean() && (retryCount++ < CONNECT_RETRY_LIMIT)) {
+            Thread.sleep(CONNECT_RETRY_SLEEP_MILLIS);
+        }
+        if (!connected.getAsBoolean()) {
+            throw new IllegalStateException("Client " + clientName + " failed to receive its player slot");
+        }
+    }
+
+    public static void main(String[] args) {
+        if (args.length < 1) {
+            System.out.println("Usage: ScenarioGameRunner <scenarioFile> [roundsLimit] [timeoutMinutes]");
+            System.out.println(" - scenarioFile: an MMS scenario; first faction is the headless watcher,");
+            System.out.println("   all other factions are played by Princess bots");
+            System.out.println(" - roundsLimit: stop the game after this many rounds (default "
+                  + DEFAULT_ROUNDS_LIMIT + ")");
+            System.out.println(" - timeoutMinutes: abandon the game after this long (default "
+                  + DEFAULT_TIMEOUT_MINUTES + ")");
+            System.exit(1);
+        }
+
+        File scenarioFile = new File(args[0]);
+        int roundsLimit = (args.length > 1) ? Integer.parseInt(args[1]) : DEFAULT_ROUNDS_LIMIT;
+        int timeoutMinutes = (args.length > 2) ? Integer.parseInt(args[2]) : DEFAULT_TIMEOUT_MINUTES;
+
+        PreferenceManager.getClientPreferences().setAskForVictoryList(false);
+        // stamp gamelog.html and game_actions TSV filenames with date+time so consecutive runs
+        // accumulate instead of overwriting each other
+        PreferenceManager.getClientPreferences().setStampFilenames(true);
+
+        int exitCode = 0;
+        try {
+            ScenarioGameRunner runner = new ScenarioGameRunner(scenarioFile);
+            if (!runner.run(roundsLimit, timeoutMinutes)) {
+                exitCode = 2;
+            }
+        } catch (Exception e) {
+            logger.fatal(e, "Failed to run scenario game");
+            exitCode = 1;
+        }
+        System.exit(exitCode);
+    }
+}

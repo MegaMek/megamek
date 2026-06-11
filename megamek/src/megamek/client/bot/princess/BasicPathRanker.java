@@ -104,6 +104,10 @@ public class BasicPathRanker extends PathRanker {
     // this is a value used to indicate how much we dis-value the unit being destroyed as a result of what it's doing
     private final int UNIT_DESTRUCTION_FACTOR = 1000;
 
+    // penalty for ending a sprint inside enemy weapon range; a sprinting unit forfeits all of its attacks,
+    // so this must outweigh the aggression/bravery incentives that would otherwise favor closing distance
+    private final int SPRINT_INTO_THREAT_PENALTY = 250;
+
     private final FacingDiffCalculator facingDiffCalculator;
     private final UnitsMedianCoordinateCalculator unitsMedianCoordinateCalculator;
     protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
@@ -233,7 +237,9 @@ public class BasicPathRanker extends PathRanker {
             rightBounds = new HexLine(behind, (myFacing + 5) % 6);
         }
 
-        if (isInMyLoS(enemy, leftBounds, rightBounds)) {
+        // A unit that sprinted may not make any deliberate attacks this turn, so a sprinting
+        // path contributes no damage of mine no matter who ends up in my line of fire.
+        if (!isSprintingPath(path) && isInMyLoS(enemy, leftBounds, rightBounds)) {
             returnResponse.addToMyEstimatedDamage(getMaxDamageAtRange(path.getEntity(),
                   range,
                   useExtremeRange,
@@ -449,15 +455,188 @@ public class BasicPathRanker extends PathRanker {
 
         returnResponse.setEstimatedEnemyDamage(theirDamagePotential);
 
-        // How much damage can I do to them?
-        returnResponse.setMyEstimatedDamage(calculateMyDamagePotential(path, enemy, distance, game));
+        // A unit that sprinted may not make any deliberate attacks this turn, weapon or physical,
+        // so a sprinting path contributes no damage of mine.
+        if (!isSprintingPath(path)) {
+            // How much damage can I do to them?
+            returnResponse.setMyEstimatedDamage(calculateMyDamagePotential(path, enemy, distance, game));
 
-        // How much physical damage can I do to them?
-        if (distance <= 1) {
-            returnResponse.setMyEstimatedPhysicalDamage(calculateMyKickDamagePotential(path, enemy, game));
+            // How much physical damage can I do to them?
+            if (distance <= 1) {
+                returnResponse.setMyEstimatedPhysicalDamage(calculateMyKickDamagePotential(path, enemy, game));
+            }
         }
 
         return returnResponse;
+    }
+
+    /**
+     * Determines whether an enemy can be disregarded when evaluating a move path: it is on another board, is an ejected
+     * crew, is off the board or has no position, or is broken and fleeing the field.
+     *
+     * @param movingUnit the unit whose move path is being evaluated
+     * @param enemy      the enemy to check
+     * @param game       the current {@link Game}
+     *
+     * @return true if the enemy has no bearing on the path evaluation
+     */
+    boolean isIgnorableEnemy(Entity movingUnit, Entity enemy, Game game) {
+        // For now, disregard enemy units that are not on the same board
+        if (!game.onTheSameBoard(movingUnit, enemy)) {
+            return true;
+        }
+
+        // Skip ejected pilots.
+        if (enemy instanceof EjectedCrew) {
+            return true;
+        }
+
+        // Skip units not on the board.
+        if (enemy.isOffBoard() || (enemy.getPosition() == null) || !game.getBoard(enemy)
+              .contains(enemy.getPosition())) {
+            return true;
+        }
+
+        // Skip broken enemies
+        return getOwner().getHonorUtil()
+              .isEnemyBroken(enemy.getId(), enemy.getOwnerId(), getOwner().getForcedWithdrawal());
+    }
+
+    /**
+     * Returns true if the given path ends in sprinting movement. A unit that sprinted may not make any deliberate
+     * attacks or spot for indirect fire that turn (TacOps Sprinting rules).
+     *
+     * @param path the move path to check
+     *
+     * @return true if the path's final movement type is a ground or VTOL sprint
+     */
+    static boolean isSprintingPath(MovePath path) {
+        EntityMovementType movementType = path.getLastStepMovementType();
+        return (EntityMovementType.MOVE_SPRINT == movementType)
+              || (EntityMovementType.MOVE_VTOL_SPRINT == movementType);
+    }
+
+    /**
+     * Describes the enemy that makes ending a sprint at a given position dangerous.
+     *
+     * @param enemy             the threatening enemy
+     * @param firingPosition    the position the enemy can bring weapons to bear from
+     * @param distance          hexes from the path's final position to the firing position
+     * @param maxWeaponRange    the threatening enemy's maximum weapon range
+     * @param positionPredicted true if the firing position is a prediction (the enemy has not moved yet this turn and
+     *                          the position is the closest one it can reach), false if it is where the enemy currently
+     *                          stands
+     */
+    record SprintThreat(Entity enemy, Coords firingPosition, int distance, int maxWeaponRange,
+          boolean positionPredicted) {
+    }
+
+    /**
+     * Finds an enemy that can bring weapons to bear on the given path's final position, if any. For enemies that can
+     * still move this turn, range is measured from the closest position they can reach instead of where they currently
+     * stand. Returns the first threatening enemy found, not necessarily the closest one.
+     *
+     * @param path    the move path to check
+     * @param enemies the known enemy units
+     * @param game    the current {@link Game}
+     *
+     * @return the threat assessment for one enemy in weapon range of the path's final position, or empty if none
+     */
+    Optional<SprintThreat> findSprintThreat(MovePath path, List<Entity> enemies, Game game) {
+        Coords finalCoords = path.getFinalCoords();
+        Entity movingUnit = path.getEntity();
+
+        for (Entity enemy : enemies) {
+            if (isIgnorableEnemy(movingUnit, enemy, game)) {
+                continue;
+            }
+
+            boolean positionPredicted = !evaluateAsMoved(enemy);
+            Coords firingPosition = positionPredicted ? getClosestCoordsTo(enemy.getId(), finalCoords)
+                  : enemy.getPosition();
+            if (firingPosition == null) {
+                // no movable-area data for this enemy; fall back to where it currently stands
+                firingPosition = enemy.getPosition();
+                positionPredicted = false;
+            }
+
+            int distance = finalCoords.distance(firingPosition);
+            int maxWeaponRange = getOwner().getMaxWeaponRange(enemy, movingUnit.isAirborne());
+            if (distance <= maxWeaponRange) {
+                return Optional.of(new SprintThreat(enemy, firingPosition, distance, maxWeaponRange,
+                      positionPredicted));
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Calculates a penalty for paths that end a sprint inside enemy weapon range. A sprinting unit forfeits all of its
+     * attacks and suffers an additional -1 to-hit modifier against it, so ending a sprint where the enemy can shoot
+     * back gives up firepower for no defensive gain. Units performing a forced withdrawal are exempt: they do not
+     * intend to attack, and the extra movement serves the withdrawal.
+     *
+     * <p>The decision is traced two ways so it can be reconstructed after a battle: the sprint-related entries in
+     * {@code scores} become columns in the {@link megamek.client.bot.BotLogger} TSV output, and {@code sprintFormula}
+     * receives a human-readable explanation that ends up in the ranked path's reason string.</p>
+     *
+     * @param path          the move path to evaluate
+     * @param enemies       the known enemy units
+     * @param game          the current {@link Game}
+     * @param scores        the path's score map; receives {@code isSprinting}, {@code sprintThreatEnemyId},
+     *                      {@code sprintThreatDistance} and {@code sprintThreatRange} entries (-1 where not
+     *                      applicable)
+     * @param sprintFormula receives a human-readable explanation of the decision; left empty for non-sprint paths
+     *
+     * @return {@code SPRINT_INTO_THREAT_PENALTY} if the path sprints into enemy weapon range, otherwise 0
+     */
+    double calculateSprintExposurePenalty(MovePath path, List<Entity> enemies, Game game,
+          Map<String, Double> scores, StringBuilder sprintFormula) {
+        boolean sprinting = isSprintingPath(path);
+        scores.put("isSprinting", sprinting ? 1.0 : 0.0);
+        scores.put("sprintThreatEnemyId", -1.0);
+        scores.put("sprintThreatDistance", -1.0);
+        scores.put("sprintThreatRange", -1.0);
+
+        if (!sprinting) {
+            return 0;
+        }
+
+        Entity movingUnit = path.getEntity();
+        boolean isWithdrawing = BehaviorType.ForcedWithdrawal ==
+              getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner());
+        if (isWithdrawing) {
+            sprintFormula.append("sprintExposurePenalty [0: withdrawing, sprint always allowed]");
+            return 0;
+        }
+
+        Optional<SprintThreat> sprintThreat = findSprintThreat(path, enemies, game);
+        if (sprintThreat.isEmpty()) {
+            sprintFormula.append("sprintExposurePenalty [0: no enemy can reach ")
+                  .append(path.getFinalCoords().toFriendlyString())
+                  .append(" with weapons]");
+            return 0;
+        }
+
+        SprintThreat threat = sprintThreat.get();
+        scores.put("sprintThreatEnemyId", (double) threat.enemy().getId());
+        scores.put("sprintThreatDistance", (double) threat.distance());
+        scores.put("sprintThreatRange", (double) threat.maxWeaponRange());
+        sprintFormula.append("sprintExposurePenalty [")
+              .append(SPRINT_INTO_THREAT_PENALTY)
+              .append(": sprint ends at ")
+              .append(path.getFinalCoords().toFriendlyString())
+              .append(", ")
+              .append(threat.enemy().getDisplayName())
+              .append(threat.positionPredicted() ? " can reach " : " stands at ")
+              .append(threat.firingPosition().toFriendlyString())
+              .append(", distance ")
+              .append(threat.distance())
+              .append(" <= weapon range ")
+              .append(threat.maxWeaponRange())
+              .append("]");
+        return SPRINT_INTO_THREAT_PENALTY;
     }
 
     /**
@@ -760,25 +939,7 @@ public class BasicPathRanker extends PathRanker {
         boolean extremeRange = isExtremeRange(game);
         boolean losRange = isLosRange(game);
         for (Entity enemy : enemies) {
-            // For now, disregard enemy units that are not on the same board
-            if (!game.onTheSameBoard(movingUnit, enemy)) {
-                continue;
-            }
-
-            // Skip ejected pilots.
-            if (enemy instanceof EjectedCrew) {
-                continue;
-            }
-
-            // Skip units not on the board.
-            if (enemy.isOffBoard() || (enemy.getPosition() == null) || !game.getBoard(enemy)
-                  .contains(enemy.getPosition())) {
-                continue;
-            }
-
-            // Skip broken enemies
-            if (getOwner().getHonorUtil()
-                  .isEnemyBroken(enemy.getId(), enemy.getOwnerId(), getOwner().getForcedWithdrawal())) {
+            if (isIgnorableEnemy(movingUnit, enemy, game)) {
                 continue;
             }
 
@@ -904,6 +1065,11 @@ public class BasicPathRanker extends PathRanker {
 
         double selfPreservationMod = calculateSelfPreservationMod(movingUnit, pathCopy, game);
 
+        StringBuilder sprintFormula = new StringBuilder(64);
+        double sprintExposurePenalty = calculateSprintExposurePenalty(pathCopy, enemies, game, scores,
+              sprintFormula);
+        scores.put("sprintExposurePenalty", sprintExposurePenalty);
+
         double offBoardMod = calculateOffBoardMod(pathCopy);
         // if we're an aircraft, we want to devalue paths that will force us off the board on the subsequent turn.
         double utility = -fallMod;
@@ -914,6 +1080,7 @@ public class BasicPathRanker extends PathRanker {
         utility -= crowdingTolerance;
         utility -= facingMod;
         utility -= selfPreservationMod;
+        utility -= sprintExposurePenalty;
         utility -= utility * offBoardMod;
 
         formula.append("Calculation: {fall mod [")
@@ -963,6 +1130,10 @@ public class BasicPathRanker extends PathRanker {
               .append(" * ")
               .append((int) (facingMod / FACING_MOD_MULTIPLIER))
               .append("]");
+
+        if (!sprintFormula.isEmpty()) {
+            formula.append(" - ").append(sprintFormula);
+        }
 
         logger.trace("{}", formula);
 

@@ -69,6 +69,7 @@ public class EntitySprite extends Sprite {
     private static final Color LABEL_CRITICAL_BACK = new Color(200, 0, 0, 200);
     private static final Color LABEL_SPACE_BACK = new Color(0, 0, 200, 200);
     private static final Color LABEL_GROUND_BACK = new Color(50, 50, 50, 200);
+    private static final int ON_DECK_ARC_ALPHA = 100;
 
     enum Positioning {
         LEFT, RIGHT
@@ -642,6 +643,8 @@ public class EntitySprite extends Sprite {
                 } else if (dig != Infantry.DUG_IN_NONE) {
                     stStr.add(new Status(GUIP.getPrecautionColor(), "Working", DIRECT));
                     stStr.add(new Status(Color.PINK, "D", SMALL));
+                } else if (inf.isHitTheDeck()) {
+                    stStr.add(new Status(GUIP.getPrecautionColor(), "Deck", DIRECT));
                 } else if (inf.isTakingCover()) {
                     stStr.add(new Status(GUIP.getPrecautionColor(), "TakingCover"));
                 }
@@ -796,6 +799,9 @@ public class EntitySprite extends Sprite {
                 }
             }
 
+            // highlight the active front arc for infantry that has hit the deck with a field weapon
+            drawOnDeckFrontArc(graph);
+
             // determine secondary facing for non-meks & flipped arms
             int secFacing = entity.getFacing();
             if (!((entity instanceof Mek) || (entity instanceof ProtoMek)) || (entity instanceof QuadVee)) {
@@ -888,6 +894,33 @@ public class EntitySprite extends Sprite {
         }
 
         graph.dispose();
+    }
+
+    /**
+     * Highlights the three front-arc hexsides for conventional infantry that has hit the deck while carrying an active
+     * field weapon. While on the deck such a unit may only fire in its front arc (TO:AR p.106), so the player must
+     * designate a facing; filling the active arc makes that choice obvious at a glance instead of having to infer it
+     * from the single facing arrow. Mirrors the directional emphasis used for the Taking Cover posture.
+     *
+     * @param graph the entity sprite graphics context, already scaled to the board zoom
+     */
+    private void drawOnDeckFrontArc(Graphics2D graph) {
+        if (!(entity instanceof ConvInfantry infantry)
+              || !infantry.isHitTheDeck()
+              || !infantry.hasActiveFieldWeapon()) {
+            return;
+        }
+        int facing = entity.getFacing();
+        if (facing == -1) {
+            return;
+        }
+        Color arcColor = GUIP.getPrecautionColor();
+        graph.setColor(new Color(arcColor.getRed(), arcColor.getGreen(), arcColor.getBlue(), ON_DECK_ARC_ALPHA));
+        Shape[] facingShapes = bv.getFacingPolys();
+        for (int arcOffset = -1; arcOffset <= 1; arcOffset++) {
+            int arcDirection = ((facing + arcOffset) + 6) % 6;
+            graph.fill(facingShapes[arcDirection]);
+        }
     }
 
     /**

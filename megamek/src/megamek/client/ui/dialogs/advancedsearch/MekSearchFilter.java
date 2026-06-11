@@ -71,6 +71,7 @@ public class MekSearchFilter {
     public int iOmni;
     public int iMilitary;
     public int iIndustrial;
+    public int iFrankenMek;
     public int iMountedInfantry;
     public int iWaterOnly;
     public int iDoomedOnGround;
@@ -455,6 +456,10 @@ public class MekSearchFilter {
         }
 
         if (!isMatch(f.iIndustrial, mek.isIndustrialMek())) {
+            return false;
+        }
+
+        if (!isMatch(f.iFrankenMek, mek.isFrankenMek())) {
             return false;
         }
 

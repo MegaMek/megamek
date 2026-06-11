@@ -79,6 +79,7 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
     MOVE_HULL_DOWN("moveHullDown", MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK),
     MOVE_CLIMB_MODE("moveClimbMode",
           MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_INF | MovementDisplay.CMD_PROTOMEK),
+    MOVE_DESCEND("moveDescend", MovementDisplay.CMD_MEK),
     MOVE_SWIM("moveSwim", MovementDisplay.CMD_MEK),
     MOVE_SHAKE_OFF("moveShakeOff", MovementDisplay.CMD_TANK | MovementDisplay.CMD_VTOL),
     MOVE_BRACE("moveBrace", MovementDisplay.CMD_MEK),
@@ -101,6 +102,7 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
 
     // Infantry only
     MOVE_DIG_IN("moveDigIn", MovementDisplay.CMD_INF),
+    MOVE_HIT_DECK("moveHitDeck", MovementDisplay.CMD_INF),
     MOVE_FORTIFY("moveFortify", MovementDisplay.CMD_INF | MovementDisplay.CMD_TANK),
     MOVE_TAKE_COVER("moveTakeCover", MovementDisplay.CMD_INF),
     MOVE_CALL_SUPPORT("moveCallSupport", MovementDisplay.CMD_INF),

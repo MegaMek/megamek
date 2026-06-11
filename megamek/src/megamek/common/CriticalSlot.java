@@ -72,6 +72,7 @@ public class CriticalSlot implements Serializable {
     private boolean repairable = true; // true = can be repaired
 
     private boolean armored = false; // Armored Component Rule
+    private boolean originalArmored = false; // Tracks armored components after their armor is expended
 
     public CriticalSlot(int type, int index) {
         this(type, index, true, false);
@@ -84,6 +85,7 @@ public class CriticalSlot implements Serializable {
         // non-hittable crits cannot be armored.
         if (hittable) {
             this.armored = armored;
+            this.originalArmored = armored;
         }
     }
 
@@ -231,10 +233,21 @@ public class CriticalSlot implements Serializable {
 
     public void setArmored(boolean armored) {
         this.armored = armored;
+        this.originalArmored = armored;
+    }
+
+    public void hitArmored() {
+        if (armored) {
+            armored = false;
+        }
     }
 
     public boolean isArmored() {
         return armored;
+    }
+
+    public boolean isOriginalArmored() {
+        return originalArmored;
     }
 
     public void setRepairable(boolean repair) {

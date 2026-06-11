@@ -83,6 +83,23 @@
               <AppenderRef ref="MegaMekLog" />
           </Logger>
         -->
+        <!--
+          Princess movement-decision loggers, silent by default (parent "megamek.client.bot"
+          logger at error). Candidate-path data with scoring columns (isSprinting,
+          sprintExposurePenalty, sprintThreatEnemyId, ...) is always written as TSV to
+          logs/bot_path_ranker.log by the BotLogger above. To also log the per-unit sprint
+          decision summary to logs/megamek.log, uncomment the PathRanker logger below. The
+          BasicPathRanker logger additionally emits the full per-path scoring formula with
+          sprint threat detail, but only at trace level, which also logs per-hex hazard
+          checks and is extremely verbose - use it for short test games only.
+
+          <Logger name="megamek.client.bot.princess.PathRanker" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.client.bot.princess.BasicPathRanker" level="trace" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

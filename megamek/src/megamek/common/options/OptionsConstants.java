@@ -182,6 +182,9 @@ public class OptionsConstants {
     public static final String PILOT_ZWEIHANDER = "zweihander";
     public static final String PILOT_ATOW_G_TOLERANCE = "atow_g_tolerance";
 
+    // AIRBORNE ONLY SKILLS
+    public static final String PILOT_WIND_WALKER = "wind_walker";
+
     // GUNNERY SKILLS
     public static final String GUNNERY_BLOOD_STALKER = "blood_stalker";
     public static final String GUNNERY_CLUSTER_HITTER = "cluster_hitter";
@@ -462,6 +465,7 @@ public class OptionsConstants {
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_EVADE = "tacops_evade";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_SKILLED_EVASION = "tacops_skilled_evasion";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING = "tacops_leaping";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING = "tacops_climbing";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_PSR = "tacops_physical_psr";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_ATTACK_PSR = "tacops_attack_physical_psr";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_TAKING_DAMAGE = "tacops_taking_damage";

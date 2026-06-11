@@ -185,7 +185,58 @@ public abstract class PathRanker implements IPathRanker {
             i++;
         }
 
+        logSprintDecisionSummary(returnPaths);
+
         return returnPaths;
+    }
+
+    /**
+     * Logs a one-line, debug-level summary of the sprint decision for a unit's move: whether the best-ranked path
+     * sprints, how many candidate paths end in a sprint, how many of those were penalized for ending inside enemy
+     * weapon range, and the best sprint vs. non-sprint ranks. This makes the bot's sprint reasoning visible without
+     * wading through per-path trace output; the full per-path detail is in the BotLogger TSV columns
+     * ({@code isSprinting}, {@code sprintExposurePenalty}, {@code sprintThreatEnemyId}, {@code sprintThreatDistance},
+     * {@code sprintThreatRange}) and each ranked path's reason string.
+     *
+     * @param rankedPaths the ranked paths for this unit's move, best first
+     */
+    private void logSprintDecisionSummary(TreeSet<RankedPath> rankedPaths) {
+        if (rankedPaths.isEmpty() || !logger.isLevelLessSpecificThan(Level.INFO)) {
+            return;
+        }
+
+        int sprintPathCount = 0;
+        int penalizedPathCount = 0;
+        RankedPath bestSprintPath = null;
+        RankedPath bestNonSprintPath = null;
+
+        for (RankedPath rankedPath : rankedPaths) {
+            if (BasicPathRanker.isSprintingPath(rankedPath.getPath())) {
+                sprintPathCount++;
+                Double sprintExposurePenalty = rankedPath.getScores().get("sprintExposurePenalty");
+                if ((sprintExposurePenalty != null) && (sprintExposurePenalty > 0)) {
+                    penalizedPathCount++;
+                }
+                if (bestSprintPath == null) {
+                    bestSprintPath = rankedPath;
+                }
+            } else if (bestNonSprintPath == null) {
+                bestNonSprintPath = rankedPath;
+            }
+        }
+
+        RankedPath bestPath = rankedPaths.first();
+        logger.debug("Sprint decision for {}: best path {} (rank {}); {} of {} candidate paths sprint, "
+                    + "{} sprint paths penalized for ending in enemy weapon range; "
+                    + "best sprint rank {}, best non-sprint rank {}",
+              bestPath.getPath().getEntity().getDisplayName(),
+              BasicPathRanker.isSprintingPath(bestPath.getPath()) ? "SPRINTS" : "does not sprint",
+              bestPath.getRank(),
+              sprintPathCount,
+              rankedPaths.size(),
+              penalizedPathCount,
+              (bestSprintPath == null) ? "n/a" : bestSprintPath.getRank(),
+              (bestNonSprintPath == null) ? "n/a" : bestNonSprintPath.getRank());
     }
 
     private List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,

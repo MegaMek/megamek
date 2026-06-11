@@ -72,7 +72,8 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
         if (!(entity instanceof Infantry inf)) {
             return 0;
         }
-        int numTurns = Math.min(MAX_TURNS_LAYING_EXPLOSIVES, inf.turnsLayingExplosives);
+        // Clamp at 0: turnsLayingExplosives is -1 while the platoon is not laying charges
+        int numTurns = Math.clamp(inf.turnsLayingExplosives, 0, MAX_TURNS_LAYING_EXPLOSIVES);
         return getDamagePerTurn(entity) * numTurns;
     }
 

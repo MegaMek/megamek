@@ -34,8 +34,10 @@
 package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
+import megamek.common.actions.LayExplosivesAttackAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
@@ -203,6 +205,23 @@ public class DemolitionChargeLayingTest extends GameBoardTestCase {
         // Assert
         assertEquals(1, infantry.turnsLayingExplosives,
               "Laying must continue (counter incremented) while in a fuel tank hex (#687)");
+    }
+
+    @Test
+    void noDamageWhenNotLayingExplosives() {
+        // Arrange - getDamageFor must not go negative for a platoon that is not laying (counter is -1)
+        Infantry infantry = createLayingInfantry(CLEAR_COORDS);
+        infantry.setSquadSize(7);
+        infantry.autoSetInternal();
+        infantry.turnsLayingExplosives = -1;
+
+        // Sanity: the platoon would deal damage per turn if it were laying
+        assertTrue(LayExplosivesAttackAction.getDamagePerTurn(infantry) > 0,
+              "Test platoon must have a positive per-turn damage for this test to be meaningful");
+
+        // Act & Assert
+        assertEquals(0, LayExplosivesAttackAction.getDamageFor(infantry),
+              "A platoon that is not laying explosives must have 0 charge damage, never negative");
     }
 
     @Test

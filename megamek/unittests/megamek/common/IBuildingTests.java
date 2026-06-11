@@ -319,6 +319,10 @@ public class IBuildingTests extends GameBoardTestCase {
         building.addDemolitionCharge(1, 10, testCoords);
         assertEquals(1, building.getDemolitionCharges().size(),
               String.format("%s: should have 1 demolition charge after adding", implName));
+        // Regression check for #8330: the charge must keep the absolute board coordinates it was placed at,
+        // otherwise the touch-off menu and end-phase detonation cannot find it again
+        assertEquals(testCoords, building.getDemolitionCharges().getFirst().pos,
+              String.format("%s: demolition charge must store absolute board coordinates", implName));
 
         // Add another charge
         building.addDemolitionCharge(2, 20, testCoords);

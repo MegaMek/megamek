@@ -11095,16 +11095,10 @@ public abstract class Entity extends TurnOrdered
             return false; // not on board?
         }
 
-        if ((this instanceof Infantry) && hasWorkingMisc(MiscTypeFlag.F_TOOLS, MiscTypeFlag.S_DEMOLITION_CHARGE)) {
-            Hex hex = game.getHex(position, boardId);
-
-            if (hex == null) {
-                return false;
-            }
-
-            // Check if can lay demolition charges
-            return hex.containsTerrain(Terrains.BUILDING) && hasWorkingMisc(MiscTypeFlag.F_TOOLS,
-                  MiscTypeFlag.S_DEMOLITION_CHARGE);
+        // Laying demolition charges is one way to be eligible, but must not preclude other physical attacks
+        // such as Battle Armor vibroclaw attacks (see issue #6614)
+        if (canLayDemolitionCharges()) {
+            return true;
         }
 
         // only Meks and ProtoMek's have physical attacks (except tank charges)
@@ -11233,6 +11227,36 @@ public abstract class Entity extends TurnOrdered
         }
 
         return canHit;
+    }
+
+    /**
+     * Returns true when this unit is infantry carrying a working demolition charge while in a hex containing a
+     * structure that charges can be rigged on, i.e. when it can lay demolition charges this turn, TO:AUE p.152. Laying
+     * demolition charges is a physical-phase action.
+     *
+     * @return True if this unit can lay demolition charges this turn
+     */
+    public boolean canLayDemolitionCharges() {
+        return (this instanceof Infantry)
+              && hasWorkingMisc(MiscTypeFlag.F_TOOLS, MiscTypeFlag.S_DEMOLITION_CHARGE)
+              && isInDemolishableStructureHex();
+    }
+
+    /**
+     * Returns true when this unit is in a hex containing a structure that demolition charges can be rigged on: a
+     * building, a bridge or a fuel tank, TO:AUE p.152. Per the rule, the platoon only needs to spend its turns "in the
+     * target hex", so standing on top of the structure also counts.
+     *
+     * @return True if this unit's hex contains a demolishable structure
+     */
+    public boolean isInDemolishableStructureHex() {
+        if (game == null) {
+            return false;
+        }
+        Hex hex = game.getHex(position, boardId);
+        return (hex != null) && (hex.containsTerrain(Terrains.BUILDING)
+              || hex.containsTerrain(Terrains.BRIDGE)
+              || hex.containsTerrain(Terrains.FUEL_TANK));
     }
 
     /**

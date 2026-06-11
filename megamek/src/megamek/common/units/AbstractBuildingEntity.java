@@ -1129,7 +1129,8 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     @Override
     public void addDemolitionCharge(int playerId, int damage, Coords pos) {
-        building.addDemolitionCharge(playerId, damage, boardToRelative(pos));
+        // Demolition charge positions are absolute board coordinates; see Building#addDemolitionCharge
+        building.addDemolitionCharge(playerId, damage, pos);
     }
 
     @Override

@@ -22524,11 +22524,17 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vDesc = new Vector<>();
         PilotingRollData psr = en.getBasePilotingRoll();
         Hex hex = game.getBoard().getHex(en.getPosition());
+
         if (en instanceof VTOL) {
             psr.addModifier(4, "VTOL making forced landing");
         } else {
             psr.addModifier(0, "WiGE making forced landing");
         }
+
+        if (en.hasAbility(OptionsConstants.PILOT_WIND_WALKER) && PilotSPAHelper.isWindWalkerValid(en)) {
+            psr.addModifier(-1, "Wind Walker SPA");
+        }
+
         int elevation = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
         elevation = Math.max(elevation, 0);
         elevation = Math.min(elevation, en.getElevation());

@@ -182,6 +182,9 @@ public class OptionsConstants {
     public static final String PILOT_ZWEIHANDER = "zweihander";
     public static final String PILOT_ATOW_G_TOLERANCE = "atow_g_tolerance";
 
+    // AIRBORNE ONLY SKILLS
+    public static final String PILOT_WIND_WALKER = "wind_walker";
+
     // GUNNERY SKILLS
     public static final String GUNNERY_BLOOD_STALKER = "blood_stalker";
     public static final String GUNNERY_CLUSTER_HITTER = "cluster_hitter";

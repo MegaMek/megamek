@@ -1079,8 +1079,8 @@ public class ProtoMek extends Entity {
     }
 
     /**
-     * ProtoMeks have EI built-in per IO:AE p.69, but it is only active when neural interface rules are enabled
-     * (Pilot Abilities Only or Full Tracking mode). When Off, ProtoMeks behave as standard TW units.
+     * ProtoMeks have EI built-in per IO:AE p.69, but it is only active when neural interface rules are enabled (Pilot
+     * Abilities Only or Full Tracking mode). When Off, ProtoMeks behave as standard TW units.
      *
      * @return true if neural interface rules are enabled, false otherwise
      */
@@ -1090,9 +1090,9 @@ public class ProtoMek extends Entity {
     }
 
     /**
-     * ProtoMeks have EI built-in and always active unless the head is damaged. Unlike other units,
-     * ProtoMek pilots don't need the EI Implant option - they are neurally connected by default
-     * per IO:AE p.69. Returns false if neural interface rules are disabled (Off mode).
+     * ProtoMeks have EI built-in and always active unless the head is damaged. Unlike other units, ProtoMek pilots
+     * don't need the EI Implant option - they are neurally connected by default per IO:AE p.69. Returns false if neural
+     * interface rules are disabled (Off mode).
      *
      * @return true if neural interface is enabled and head is undamaged, false otherwise
      */
@@ -1191,10 +1191,18 @@ public class ProtoMek extends Entity {
             return new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, "Landing with destroyed legs.");
         } else if (!getCrew().isActive()) {
             return new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, "Landing incapacitated pilot.");
-        } else if (getRunMP() < 4) {
-            return new PilotingRollData(getId(), 8, "Forced landing with insufficient thrust.");
         } else {
-            return new PilotingRollData(getId(), 4, "Attempting to land");
+            PilotingRollData roll;
+            if (getRunMP() < 4) {
+                roll = new PilotingRollData(getId(), 8, "Forced landing with insufficient thrust.");
+            } else {
+                roll = new PilotingRollData(getId(), 4, "Attempting to land");
+            }
+
+            if (hasAbility(OptionsConstants.PILOT_WIND_WALKER) && PilotSPAHelper.isWindWalkerValid(this)) {
+                roll.addModifier(-1, "Wind Walker SPA");
+            }
+            return roll;
         }
     }
 

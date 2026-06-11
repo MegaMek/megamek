@@ -156,7 +156,9 @@ public class ScenarioGameRunner {
             }
         });
 
-        watcher.connect();
+        if (!watcher.connect()) {
+            throw new IllegalStateException("Watcher client failed to connect to the local server");
+        }
         waitForLocalPlayer(watcher.getName(), () -> watcher.getLocalPlayer() != null);
 
         for (Player botSlot : players.subList(1, players.size())) {
@@ -217,8 +219,21 @@ public class ScenarioGameRunner {
         }
 
         File scenarioFile = new File(args[0]);
-        int roundsLimit = (args.length > 1) ? Integer.parseInt(args[1]) : DEFAULT_ROUNDS_LIMIT;
-        int timeoutMinutes = (args.length > 2) ? Integer.parseInt(args[2]) : DEFAULT_TIMEOUT_MINUTES;
+        int roundsLimit = DEFAULT_ROUNDS_LIMIT;
+        int timeoutMinutes = DEFAULT_TIMEOUT_MINUTES;
+        try {
+            if (args.length > 1) {
+                roundsLimit = Integer.parseInt(args[1]);
+            }
+            if (args.length > 2) {
+                timeoutMinutes = Integer.parseInt(args[2]);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("roundsLimit and timeoutMinutes must be whole numbers, but got: "
+                  + String.join(" ", args));
+            System.out.println("Usage: ScenarioGameRunner <scenarioFile> [roundsLimit] [timeoutMinutes]");
+            System.exit(1);
+        }
 
         PreferenceManager.getClientPreferences().setAskForVictoryList(false);
         // stamp gamelog.html and game_actions TSV filenames with date+time so consecutive runs

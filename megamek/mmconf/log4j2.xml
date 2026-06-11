@@ -88,14 +88,15 @@
           logger at error). Candidate-path data with scoring columns (isSprinting,
           sprintExposurePenalty, sprintThreatEnemyId, ...) is always written as TSV to
           logs/bot_path_ranker.log by the BotLogger above. To also log the per-unit sprint
-          decision summary (debug, PathRanker) and the per-path scoring detail (debug,
-          BasicPathRanker) to logs/megamek.log, uncomment the loggers below. Avoid trace on
-          BasicPathRanker during full games: per-hex hazard logging is extremely verbose.
+          decision summary to logs/megamek.log, uncomment the PathRanker logger below. The
+          BasicPathRanker logger additionally emits the full per-path scoring formula with
+          sprint threat detail, but only at trace level, which also logs per-hex hazard
+          checks and is extremely verbose - use it for short test games only.
 
           <Logger name="megamek.client.bot.princess.PathRanker" level="debug" additivity="false">
               <AppenderRef ref="MegaMekLog" />
           </Logger>
-          <Logger name="megamek.client.bot.princess.BasicPathRanker" level="debug" additivity="false">
+          <Logger name="megamek.client.bot.princess.BasicPathRanker" level="trace" additivity="false">
               <AppenderRef ref="MegaMekLog" />
           </Logger>
         -->

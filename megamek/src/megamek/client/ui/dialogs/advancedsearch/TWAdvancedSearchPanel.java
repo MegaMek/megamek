@@ -284,6 +284,7 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         mekFilter.filterTripod = getValue(unitTypePanel.btnFilterTripod);
         mekFilter.filterQuad = getValue(unitTypePanel.btnFilterQuad);
         mekFilter.filterQuadVee = getValue(unitTypePanel.btnFilterQuadVee);
+        mekFilter.iFrankenMek = getValue(unitTypePanel.btnFilterFrankenMek);
         mekFilter.filterAero = getValue(unitTypePanel.btnFilterAero);
         mekFilter.filterFixedWingSupport = getValue(unitTypePanel.btnFilterFixedWingSupport);
         mekFilter.filterConvFighter = getValue(unitTypePanel.btnFilterConvFighter);

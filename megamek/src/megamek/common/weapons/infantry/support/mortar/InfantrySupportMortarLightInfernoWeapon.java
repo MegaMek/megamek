@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,6 +44,7 @@ import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -63,14 +64,14 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
         super();
 
         name = "Mortar (Light) - Inferno";
-        setInternalName("InfantryLightMortarInferno");
+        setInternalName(EquipmentTypeLookup.INFANTRY_MORTAR_LIGHT_INFERNO);
         addLookupName(name);
         addLookupName("Infantry Light Mortar Inferno");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1400;
         bv = 0.79;
         tonnage = .050;
-        flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
+        flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_MORTAR_TYPE_INDIRECT);
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
         infantryDamage = 0.26;
@@ -100,5 +101,19 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
             removeMode(MODE_MISSILE_INDIRECT);
             removeMode(MODE_INDIRECT_HEAT);
         }
+    }
+
+    @Override
+    public boolean hasIndirectFire() {
+        // TO:AUE - conventional infantry whose Light/Heavy Mortar defines their final range value may
+        // use indirect fire like Mek Mortars. The F_MORTAR_TYPE_INDIRECT flag is only consulted on the
+        // platoon's range-defining weapon, so this capability applies only when the mortar sets the range.
+        return true;
+    }
+
+    @Override
+    public boolean isAlphaStrikeIndirectFire() {
+        // Conventional infantry do not gain the AlphaStrike IF ability from a carried mortar.
+        return false;
     }
 }

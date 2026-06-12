@@ -104,6 +104,11 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             return "Attacker is evading.";
         }
 
+        // Climbing units cannot make physical attacks (TO:AR p.20)
+        if (ae.isClimbing()) {
+            return Messages.getString("WeaponAttackAction.CantPhysicalWhileClimbing");
+        }
+
         // can't make physical attacks if loading/unloading cargo
         if (ae.endOfTurnCargoInteraction()) {
             return Messages.getString("WeaponAttackAction.CantFireWhileLoadingUnloadingCargo");

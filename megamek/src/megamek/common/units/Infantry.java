@@ -37,7 +37,10 @@ package megamek.common.units;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Report;
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechAdvancement;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.AvailabilityValue;
@@ -83,6 +86,21 @@ public abstract class Infantry extends Entity {
     public static final int DUG_IN_FORTIFYING2 = 4; // no protection, can't attack
     public static final int DUG_IN_FORTIFYING3 = 5; // no protection, can't attack
     private int dugIn = DUG_IN_NONE;
+
+    /**
+     * Number of idle turns (no movement, no fire) the unit must spend "hitting the deck" before it may convert to "dug
+     * in" status. Per TO:AR p.106.
+     */
+    public static final int HIT_DECK_TURNS_TO_DIG_IN = 2;
+
+    /** True when this infantry is "hitting the deck", TO:AR p.106. */
+    private boolean hitTheDeck = false;
+
+    /** Consecutive turns spent on the deck without moving or firing, used for the dig-in conversion. */
+    private int turnsOnDeck = 0;
+
+    /** Transient flag set when an on-deck unit fires; breaks the idle streak for the dig-in conversion. */
+    private boolean firedWhileOnDeck = false;
 
     private boolean isTakingCover = false;
     private boolean canCallSupport = true;
@@ -436,6 +454,17 @@ public abstract class Infantry extends Entity {
             }
         }
 
+        // Track idle turns spent on the deck. Moving clears the deck status (and the counter) on the server, so a
+        // unit still on the deck here did not move last turn. Firing breaks the idle streak. TO:AR p.106.
+        if (hitTheDeck) {
+            if (firedWhileOnDeck) {
+                turnsOnDeck = 0;
+            } else {
+                turnsOnDeck++;
+            }
+            firedWhileOnDeck = false;
+        }
+
         setTakingCover(false);
         super.newRound(roundNumber);
     }
@@ -449,15 +478,70 @@ public abstract class Infantry extends Entity {
     }
 
     /**
+     * @return {@code true} if this infantry is currently "hitting the deck", TO:AR p.106.
+     */
+    public boolean isHitTheDeck() {
+        return hitTheDeck;
+    }
+
+    /**
+     * Sets the "hitting the deck" status. Clearing the status (e.g. when the unit moves or is loaded) also resets the
+     * idle-turn counter used for the dig-in conversion.
+     *
+     * @param hitTheDeck {@code true} to mark the unit as hitting the deck
+     */
+    public void setHitTheDeck(boolean hitTheDeck) {
+        this.hitTheDeck = hitTheDeck;
+        if (!hitTheDeck) {
+            turnsOnDeck = 0;
+            firedWhileOnDeck = false;
+        }
+    }
+
+    /**
+     * @return The number of consecutive idle turns this unit has spent on the deck (no movement, no fire).
+     */
+    public int getTurnsOnDeck() {
+        return turnsOnDeck;
+    }
+
+    /**
+     * Marks that this unit fired while on the deck this turn, which breaks the idle streak required for converting to
+     * "dug in". TO:AR p.106.
+     *
+     * @param firedWhileOnDeck True if the unit made a weapon attack while on the deck
+     */
+    public void setFiredWhileOnDeck(boolean firedWhileOnDeck) {
+        this.firedWhileOnDeck = firedWhileOnDeck;
+    }
+
+    /**
+     * @return True if this on-deck unit has remained idle long enough that it may convert directly to "dug in"
+     *       (protected) status, per TO:AR p.106.
+     */
+    public boolean canDigInFromDeck() {
+        return hitTheDeck && (turnsOnDeck >= HIT_DECK_TURNS_TO_DIG_IN);
+    }
+
+    /**
+     * Clears the transient ground defensive postures (dug in and hitting the deck). Called when the unit moves or is
+     * loaded into a transport, since either action ends those postures. TO:AR p.106.
+     */
+    public void clearGroundPostures() {
+        setDugIn(DUG_IN_NONE);
+        setHitTheDeck(false);
+    }
+
+    /**
      * This function is called when loading a unit into transport. This is overridden to ensure infantry are no longer
-     * considered dug in when they are being transported.
+     * considered dug in or hitting the deck when they are being transported.
      *
      * @param transportID The entity ID of the transporter
      */
     @Override
     public void setTransportId(int transportID) {
         super.setTransportId(transportID);
-        setDugIn(DUG_IN_NONE);
+        clearGroundPostures();
     }
 
     public boolean isMechanized() {

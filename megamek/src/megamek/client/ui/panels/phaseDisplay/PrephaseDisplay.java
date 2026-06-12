@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -53,11 +54,13 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
 import megamek.common.actions.GhostTargetAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.MiscMounted;
@@ -67,6 +70,7 @@ import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
 /**
@@ -457,9 +461,9 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             b.getBoardView().select(b.getCoords());
 
-            // In ghost target mode, find a unit at the clicked hex and assign it
+            // In ghost target mode, pick a unit at the clicked hex (with a chooser for stacked units) and assign it
             if (ghostTargetMode && (b.getCoords() != null)) {
-                Entity target = findEntityAtCoords(b.getCoords());
+                Entity target = chooseGhostTarget(b.getCoords(), b.getBoardId());
                 if (target != null) {
                     assignGhostTarget(target);
                 }
@@ -769,15 +773,37 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
     }
 
     /**
-     * Finds the first deployed entity at the given coordinates.
+     * Returns the ghost target the player wants to assign at the clicked hex. When several units are stacked in
+     * the hex, a selection dialog is shown so a specific unit can be picked (for example a Demolisher sitting
+     * underneath a tank); otherwise the single deployed unit is returned. The current entity is never offered as
+     * a target. Eligibility checks (infantry immunity, range, available equipment) are left to
+     * {@link #assignGhostTarget(Entity)} so the player still receives the matching feedback.
+     *
+     * @param coords  the clicked hex
+     * @param boardId the board the hex belongs to
+     *
+     * @return the chosen target entity, or null if the hex holds no eligible unit or the player cancels the
+     *       selection dialog
      */
-    private Entity findEntityAtCoords(Coords coords) {
-        for (Entity entity : game().inGameTWEntities()) {
-            if (entity.isDeployed() && coords.equals(entity.getPosition())) {
-                return entity;
-            }
+    private @Nullable Entity chooseGhostTarget(Coords coords, int boardId) {
+        Entity source = currentEntity();
+        List<Entity> candidates = new ArrayList<>(game().getEntitiesVector(coords, boardId));
+        candidates.removeIf(entity -> (entity == null) || !entity.isDeployed() || entity.equals(source));
+
+        if (candidates.isEmpty()) {
+            return null;
         }
-        return null;
+        if (candidates.size() == 1) {
+            return candidates.getFirst();
+        }
+
+        // Stacked units: let the player choose which one to ghost target.
+        List<Targetable> targets = new ArrayList<>(candidates);
+        Targetable choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
+              "PrephaseDisplay.ghostTargetChoiceDialog.title",
+              Messages.getString("PrephaseDisplay.ghostTargetChoiceDialog.message", coords.getBoardNum()),
+              targets, clientgui, null);
+        return (choice instanceof Entity chosen) ? chosen : null;
     }
 
     private boolean isStandardGhostTargetMode() {

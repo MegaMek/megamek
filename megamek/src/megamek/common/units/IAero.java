@@ -629,7 +629,10 @@ public interface IAero {
             }
             roll.addModifier(mod, Terrains.getDisplayName(terrain.getFirst(), terrain.get(1)) + " in landing path");
         }
-
+        if ((((Entity) this).hasAbility(OptionsConstants.PILOT_WIND_WALKER))
+              && PilotSPAHelper.isWindWalkerValid((Entity) this)) {
+            roll.addModifier(-1, "Wind Walker SPA");
+        }
         return roll;
     }
 

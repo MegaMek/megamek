@@ -32,18 +32,18 @@
  */
 package megamek.client.ui.dialogs.advancedsearch;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import megamek.common.alphaStrike.ASDamage;
-import megamek.common.alphaStrike.ASUnitType;
-import megamek.common.alphaStrike.BattleForceSUA;
-import megamek.common.units.UnitRole;
+import static com.formdev.flatlaf.extras.components.FlatTriStateCheckBox.State;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.formdev.flatlaf.extras.components.FlatTriStateCheckBox.State;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import megamek.common.alphaStrike.ASDamage;
+import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.units.UnitRole;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 class AdvSearchState {
@@ -90,6 +90,7 @@ class AdvSearchState {
         public State tripod = State.UNSELECTED;
         public State quad = State.UNSELECTED;
         public State quadVee = State.UNSELECTED;
+        public State frankenMek = State.UNSELECTED;
         public State aero = State.UNSELECTED;
         public State fixedWingSupport = State.UNSELECTED;
         public State convFighter = State.UNSELECTED;

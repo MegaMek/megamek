@@ -157,10 +157,13 @@ public class ComputeTerrainMods {
         Hex targetHex = game.getHexOf(target);
         boolean targetInFortifiedHex = (targetHex != null) && targetHex.containsTerrain(Terrains.FORTIFIED);
 
-        // Fortified/Dug-In Infantry
+        // Fortified/Dug-In Infantry (+2) or Hitting the Deck (+1), TO:AR p.106. Both bonuses are excluded against
+        // flamers (the rules also exclude area-effect weapons, which is a separate, pre-existing gap).
         if ((target instanceof Infantry infantry) && (weaponType != null) && !weaponType.hasFlag(WeaponType.F_FLAMER)) {
             if (targetInFortifiedHex || (infantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.DugInInf"));
+            } else if (infantry.isHitTheDeck()) {
+                toHit.addModifier(1, Messages.getString("WeaponAttackAction.HitDeckInf"));
             }
         }
 

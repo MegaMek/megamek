@@ -1973,9 +1973,9 @@ public class TeamLoadOutGenerator {
 
         // Some bombers may not be loaded; calculate percentage of total to equip
         int maxBombers = Math.min((int) Math.ceil(((castPropertyInt(
-              "Defaults.Bombs.percentBombersToEquipMin", 40) +
+              "Defaults.Bombs.percentBombersToEquipMin", 10) +
               Compute.randomInt(castPropertyInt("Defaults.Bombs.percentBombersToEquipRange",
-                    60))) / 100.0) * bomberList.size()), bomberList.size());
+                    20))) / 100.0) * bomberList.size()), bomberList.size());
         int numBombers = 0;
 
         Map<Integer, BombLoadout> bombsByCarrier = new HashMap<>();

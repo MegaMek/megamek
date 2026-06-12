@@ -22524,11 +22524,17 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vDesc = new Vector<>();
         PilotingRollData psr = en.getBasePilotingRoll();
         Hex hex = game.getBoard().getHex(en.getPosition());
+
         if (en instanceof VTOL) {
             psr.addModifier(4, "VTOL making forced landing");
         } else {
             psr.addModifier(0, "WiGE making forced landing");
         }
+
+        if (en.hasAbility(OptionsConstants.PILOT_WIND_WALKER) && PilotSPAHelper.isWindWalkerValid(en)) {
+            psr.addModifier(-1, "Wind Walker SPA");
+        }
+
         int elevation = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
         elevation = Math.max(elevation, 0);
         elevation = Math.min(elevation, en.getElevation());
@@ -23185,7 +23191,7 @@ public class TWGameManager extends AbstractGameManager {
                         r.add(en.getLocationName(loc));
                         r.newlines = 0;
                         vDesc.addElement(r);
-                        cs.setArmored(false);
+                        cs.hitArmored();
                         return vDesc;
                     }
                     // limb blown off
@@ -23213,7 +23219,7 @@ public class TWGameManager extends AbstractGameManager {
                         r.add(en.getLocationName(loc));
                         r.newlines = 0;
                         vDesc.addElement(r);
-                        cs.setArmored(false);
+                        cs.hitArmored();
                         return vDesc;
                     }
 
@@ -23352,7 +23358,7 @@ public class TWGameManager extends AbstractGameManager {
                         }
                     }
                     vDesc.addElement(r);
-                    slot.setArmored(false);
+                    slot.hitArmored();
                     hits--;
                     continue;
                 }
@@ -27874,7 +27880,59 @@ public class TWGameManager extends AbstractGameManager {
      */
     public boolean checkForCollapse(IBuilding bldg, Coords coords, boolean checkBecauseOfDamage,
           Vector<Report> vPhaseReport) {
-        return buildingCollapseHandler.checkForCollapse(bldg, coords, checkBecauseOfDamage, vPhaseReport);
+        boolean collapsed = buildingCollapseHandler.checkForCollapse(bldg, coords, checkBecauseOfDamage, vPhaseReport);
+
+        // TacOps Climbing (TO:AR p.20): check if any climbing entity on an adjacent hex
+        // can no longer be supported by this building after damage
+        if (!collapsed && (bldg != null) && (coords != null)) {
+            checkClimbingEntitiesOnBuilding(bldg, coords, vPhaseReport);
+        }
+
+        return collapsed;
+    }
+
+    /**
+     * Check if any entity climbing this building hex can no longer be supported because the building's CF dropped below
+     * the entity's weight (TO:AR p.20).
+     */
+    private void checkClimbingEntitiesOnBuilding(IBuilding bldg, Coords buildingCoords,
+          Vector<Report> vPhaseReport) {
+        int currentCF = bldg.getCurrentCF(buildingCoords);
+        for (Entity entity : game.getEntitiesVector()) {
+            if (!entity.isClimbing() || entity.isDestroyed() || entity.isDoomed()) {
+                continue;
+            }
+            // Check if this entity is climbing toward the building hex
+            Coords facingCoords = entity.getPosition().translated(entity.getFacing());
+            if (facingCoords.equals(buildingCoords) && (entity.getWeight() > currentCF)) {
+                // Entity is too heavy for the damaged building - falls from climbing position.
+                // Clear the climbing flags BEFORE doEntityFallsInto so the entity update sent
+                // during fall processing carries the cleared state to clients. Otherwise the
+                // client copy stays isClimbing=true and the next-turn selectEntity dialog
+                // wrongly fires "can no longer hold on and will fall!" while prone on ground.
+                Report climbFallReport = new Report(6461, Report.PUBLIC);
+                climbFallReport.add(entity.getDisplayName());
+                vPhaseReport.add(climbFallReport);
+                // Push the same report as a SENDING_REPORTS_SPECIAL packet so clients
+                // surface it immediately as a kill-feed toast at the moment of the fall,
+                // not just buried in the end-of-phase round report. Matches the EMP-mine
+                // popup pattern in MovePathHandler.processSteps. The chat mirror below
+                // gives the player a persistent record in chat as well.
+                Vector<Report> climbFallSpecial = new Vector<>();
+                climbFallSpecial.add(climbFallReport);
+                send(createSpecialReportPacket(climbFallSpecial));
+                sendServerChat(Messages.getString(
+                      "MovementDisplay.ClimbingDialog.buildingTooDamagedChat",
+                      entity.getDisplayName()));
+                entity.setClimbing(false);
+                entity.setDangling(false);
+                entity.setClimbingLevelsChosen(0);
+                PilotingRollData autoFallRoll = new PilotingRollData(entity.getId(),
+                      TargetRoll.AUTOMATIC_FAIL, "building too damaged to support climbing unit");
+                vPhaseReport.addAll(doEntityFallsInto(entity, entity.getElevation(),
+                      entity.getPosition(), entity.getPosition(), autoFallRoll, true, 0));
+            }
+        }
     }
 
     /**
@@ -27974,6 +28032,9 @@ public class TWGameManager extends AbstractGameManager {
                     if (buildingCollapseHandler.checkForCollapse(bldg, positionMap, coords, false, mainPhaseReport)) {
                         coordsToRemove.add(coords);
                     }
+                    // TacOps Climbing (TO:AR p.20): check if any climbing entity
+                    // can no longer be supported after CF reduction
+                    checkClimbingEntitiesOnBuilding(bldg, coords, mainPhaseReport);
                 }
                 updateCoords.removeAll(coordsToRemove);
                 update.put(bldg, updateCoords);
@@ -31331,6 +31392,12 @@ public class TWGameManager extends AbstractGameManager {
                     r.addDesc(inf);
                     r.subject = inf.getId();
                     addReport(r);
+                } else if (inf.isHitTheDeck() && (inf.getTurnsOnDeck() == 0)) {
+                    // Report only on the turn the unit hits the deck (before its idle counter advances). TO:AR p.106.
+                    r = new Report(5301);
+                    r.addDesc(inf);
+                    r.subject = inf.getId();
+                    addReport(r);
                 } else if (dig == Infantry.DUG_IN_FORTIFYING3) {
                     Coords c = inf.getPosition();
                     r = new Report(5305);
@@ -31492,6 +31559,10 @@ public class TWGameManager extends AbstractGameManager {
                     hhwUsedReport.subject = ah.getWeaponAttackAction().getEntityId();
                     hhwUsedReport.addDesc(ah.getWeaponAttackAction().getEntity(game));
                     handleAttackReports.addElement(hhwUsedReport);
+                }
+                // An on-deck infantry unit that fires breaks the idle streak needed to convert to dug in. TO:AR p.106.
+                if (ah.getAttacker() instanceof Infantry firingInfantry && firingInfantry.isHitTheDeck()) {
+                    firingInfantry.setFiredWhileOnDeck(true);
                 }
                 boolean keep = ah.handle(game.getPhase(), handleAttackReports);
                 if (keep) {

@@ -56,8 +56,12 @@ public class ArtilleryCommandAndControl {
         SINGLE,
     }
 
+    /**
+     * The ammo type a fire mission should use. STANDARD means normal high-explosive rounds; the other values select
+     * zero-damage utility munitions.
+     */
     public enum SpecialAmmo {
-        NONE,
+        STANDARD,
         SMOKE,
         FLARE,
         MINE
@@ -66,7 +70,7 @@ public class ArtilleryCommandAndControl {
     private ArtilleryOrder artilleryOrder = ArtilleryOrder.AUTO;
     private final Vector<Coords> artilleryTargets = new Vector<>();
     private final Set<Integer> shooterUnits = new HashSet<>();
-    private SpecialAmmo ammo = SpecialAmmo.NONE;
+    private SpecialAmmo ammo = SpecialAmmo.STANDARD;
 
     public void addArtilleryTargets(Collection<Coords> targets) {
         artilleryTargets.addAll(targets);
@@ -111,7 +115,7 @@ public class ArtilleryCommandAndControl {
     }
 
     public void setArtilleryOrder(ArtilleryOrder order) {
-        setArtilleryOrder(order, SpecialAmmo.NONE);
+        setArtilleryOrder(order, SpecialAmmo.STANDARD);
     }
 
     public void setArtilleryOrder(ArtilleryOrder order, SpecialAmmo ammo) {
@@ -134,7 +138,7 @@ public class ArtilleryCommandAndControl {
 
     @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isSpecialAmmo() {
-        return ammo != SpecialAmmo.NONE;
+        return ammo != SpecialAmmo.STANDARD;
     }
 
     /**
@@ -163,7 +167,7 @@ public class ArtilleryCommandAndControl {
     public void reset() {
         shooterUnits.clear();
         artilleryTargets.clear();
-        ammo = SpecialAmmo.NONE;
+        ammo = SpecialAmmo.STANDARD;
         artilleryOrder = ArtilleryOrder.AUTO;
     }
 }

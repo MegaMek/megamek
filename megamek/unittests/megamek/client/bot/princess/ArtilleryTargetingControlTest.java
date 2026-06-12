@@ -73,7 +73,7 @@ class ArtilleryTargetingControlTest {
 
     @Test
     void testBarrageOrderedHexIsFireMissionTarget() {
-        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.BARRAGE, SpecialAmmo.NONE);
+        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.BARRAGE, SpecialAmmo.STANDARD);
 
         assertTrue(artilleryTargetingControl.isOrderedFireMissionTarget(artilleryCommandAndControl,
               hexTargetAt(ORDERED_HEX)), "A barrage order must treat the ordered hex as a fire mission target");
@@ -81,7 +81,7 @@ class ArtilleryTargetingControlTest {
 
     @Test
     void testVolleyOrderedHexIsFireMissionTarget() {
-        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.VOLLEY, SpecialAmmo.NONE);
+        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.VOLLEY, SpecialAmmo.STANDARD);
 
         assertTrue(artilleryTargetingControl.isOrderedFireMissionTarget(artilleryCommandAndControl,
               hexTargetAt(ORDERED_HEX)), "A volley order must treat the ordered hex as a fire mission target");
@@ -89,7 +89,7 @@ class ArtilleryTargetingControlTest {
 
     @Test
     void testSingleOrderedHexIsFireMissionTarget() {
-        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.SINGLE, SpecialAmmo.NONE);
+        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.SINGLE, SpecialAmmo.STANDARD);
 
         assertTrue(artilleryTargetingControl.isOrderedFireMissionTarget(artilleryCommandAndControl,
               hexTargetAt(ORDERED_HEX)), "A single order must treat the ordered hex as a fire mission target");
@@ -97,7 +97,7 @@ class ArtilleryTargetingControlTest {
 
     @Test
     void testUnorderedHexIsNotFireMissionTarget() {
-        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.BARRAGE, SpecialAmmo.NONE);
+        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.BARRAGE, SpecialAmmo.STANDARD);
 
         assertFalse(artilleryTargetingControl.isOrderedFireMissionTarget(artilleryCommandAndControl,
               hexTargetAt(OTHER_HEX)), "Hexes that were not ordered must not be treated as fire mission targets");
@@ -105,7 +105,7 @@ class ArtilleryTargetingControlTest {
 
     @Test
     void testAutoOrderHexIsNotFireMissionTarget() {
-        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.AUTO, SpecialAmmo.NONE);
+        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.AUTO, SpecialAmmo.STANDARD);
 
         assertFalse(artilleryTargetingControl.isOrderedFireMissionTarget(artilleryCommandAndControl,
                     hexTargetAt(ORDERED_HEX)),
@@ -114,7 +114,7 @@ class ArtilleryTargetingControlTest {
 
     @Test
     void testHaltOrderHexIsNotFireMissionTarget() {
-        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.HALT, SpecialAmmo.NONE);
+        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.HALT, SpecialAmmo.STANDARD);
 
         assertFalse(artilleryTargetingControl.isOrderedFireMissionTarget(artilleryCommandAndControl,
               hexTargetAt(ORDERED_HEX)), "A halted artillery must not have fire mission targets");

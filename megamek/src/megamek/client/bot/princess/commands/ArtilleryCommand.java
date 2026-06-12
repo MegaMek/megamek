@@ -37,17 +37,20 @@ import java.util.List;
 import megamek.client.bot.Messages;
 import megamek.client.bot.princess.ArtilleryCommandAndControl;
 import megamek.client.bot.princess.Princess;
+import megamek.logging.MMLogger;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.EnumArgument;
 import megamek.server.commands.arguments.NotRequiredMultiHexNumberArgument;
 
 /**
- * Command to ignore a target unit for the bot.
+ * Command to give artillery orders to the bot.
  *
  * @author Luana Coppio
  */
 public class ArtilleryCommand implements ChatCommand {
+    private static final MMLogger LOGGER = MMLogger.create(ArtilleryCommand.class);
+
     private static final String ORDER = "order";
     private static final String AMMO = "ammo";
     private static final String TARGET = "targets";
@@ -61,7 +64,7 @@ public class ArtilleryCommand implements ChatCommand {
               new EnumArgument<>(AMMO,
                     Messages.getString("Princess.command.artillery.ammo"),
                     ArtilleryCommandAndControl.SpecialAmmo.class,
-                    ArtilleryCommandAndControl.SpecialAmmo.NONE),
+                    ArtilleryCommandAndControl.SpecialAmmo.STANDARD),
               new NotRequiredMultiHexNumberArgument(TARGET,
                     Messages.getString("Princess.command.artillery.targetHex"))
         );
@@ -78,11 +81,16 @@ public class ArtilleryCommand implements ChatCommand {
         if (!artilleryOrder.equals(ArtilleryCommandAndControl.ArtilleryOrder.AUTO) && !artilleryOrder.equals(
               ArtilleryCommandAndControl.ArtilleryOrder.HALT)) {
             if (multiHexNumberArgument.getValue().isEmpty()) {
+                LOGGER.warn("{}: artillery {} order received without target hexes - order ignored",
+                      princess.getLocalPlayer().getName(), artilleryOrder);
                 princess.sendChat(Messages.getString("Princess.command.artillery.noTargets"));
                 return;
             }
             artilleryCommandAndControl.addArtilleryTargets(multiHexNumberArgument.getValue());
         }
         artilleryCommandAndControl.setArtilleryOrder(artilleryOrder, specialAmmo);
+        LOGGER.info("{}: artillery order set to {} (ammo {}, targets {})",
+              princess.getLocalPlayer().getName(), artilleryOrder, specialAmmo,
+              multiHexNumberArgument.getValue());
     }
 }

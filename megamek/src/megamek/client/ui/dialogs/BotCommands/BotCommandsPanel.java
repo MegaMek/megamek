@@ -58,6 +58,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.audio.AudioService;
 import megamek.client.ui.clientGUI.audio.SoundType;
+import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
@@ -576,16 +577,16 @@ public class BotCommandsPanel extends JPanel {
      * @param botPlayer The bot to receive the orders
      */
     private void promptAndSendStrategicTargets(Player botPlayer) {
-        String targets = promptForHexNumbers("BotCommandPanel.StrategicTargetPrompt.message",
-              "BotCommandPanel.TargetHexPrompt.title");
-        if (targets == null) {
-            return;
-        }
-        // the target-ground command takes a single hex, so send one command per hex
-        for (String hexNumber : targets.split("-")) {
-            sendChatCommand(botPlayer, ChatCommands.TARGET, hexNumber);
-        }
-        acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.strategicTarget", targets));
+        pickTargetHexes(Messages.getString("BotCommandPanel.StrategicTarget.title"), false,
+              "BotCommandPanel.StrategicTargetPrompt.message",
+              targets -> {
+                  // the target-ground command takes a single hex, so send one command per hex
+                  for (String hexNumber : targets.split("-")) {
+                      sendChatCommand(botPlayer, ChatCommands.TARGET, hexNumber);
+                  }
+                  acknowledgeOrder(botPlayer,
+                        Messages.getString("BotCommandPanel.toast.strategicTarget", targets));
+              });
     }
 
     private JPopupMenu createIgnoreTargetPopup() {
@@ -643,9 +644,9 @@ public class BotCommandsPanel extends JPanel {
     private JPopupMenu createArtilleryPopup() {
         JPopupMenu popup = new JPopupMenu();
         createMenuItem(popup, "ArtilleryHalt",
-              botPlayer -> sendArtilleryOrder(botPlayer, ArtilleryOrder.HALT, SpecialAmmo.NONE, ""));
+              botPlayer -> sendArtilleryOrder(botPlayer, ArtilleryOrder.HALT, SpecialAmmo.STANDARD, ""));
         createMenuItem(popup, "ArtilleryAuto",
-              botPlayer -> sendArtilleryOrder(botPlayer, ArtilleryOrder.AUTO, SpecialAmmo.NONE, ""));
+              botPlayer -> sendArtilleryOrder(botPlayer, ArtilleryOrder.AUTO, SpecialAmmo.STANDARD, ""));
         popup.addSeparator();
         popup.add(createArtilleryFireMissionMenu("ArtilleryBarrage", ArtilleryOrder.BARRAGE));
         popup.add(createArtilleryFireMissionMenu("ArtilleryVolley", ArtilleryOrder.VOLLEY));
@@ -679,20 +680,47 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * Prompts the player for fire mission target hexes and sends the artillery order. Accepts hex numbers separated by
-     * spaces or commas (e.g. "0810 0811").
+     * Lets the player pick fire mission target hexes by clicking the board, then sends the artillery order. Falls
+     * back to a typed hex number prompt when no board view is available.
      *
      * @param botPlayer The bot to receive the order
      * @param order     The artillery order to issue
      * @param ammo      The special ammo to use
      */
     private void promptAndSendFireMission(Player botPlayer, ArtilleryOrder order, SpecialAmmo ammo) {
-        String targets = promptForHexNumbers("BotCommandPanel.ArtilleryTargetPrompt.message",
-              "BotCommandPanel.ArtilleryTargetPrompt.title");
-        if (targets == null) {
+        pickTargetHexes(Messages.getString("BotCommandPanel.HexPicker.artilleryOrder",
+                    order.name(), botPlayer.getName()),
+              order == ArtilleryOrder.SINGLE,
+              "BotCommandPanel.ArtilleryTargetPrompt.message",
+              targets -> sendArtilleryOrder(botPlayer, order, ammo, targets));
+    }
+
+    /**
+     * Lets the player designate target hexes by clicking them on the board. When no board view is available (e.g. in
+     * the Commander GUI), falls back to a typed hex number prompt.
+     *
+     * @param orderDescription  Human-readable description of the order shown while picking
+     * @param singleHex         TRUE to finish after the first hex is picked
+     * @param fallbackPromptKey The resource key for the typed prompt message used as fallback
+     * @param onTargetsSelected Called with the picked hexes as dash-separated hex numbers
+     */
+    private void pickTargetHexes(String orderDescription, boolean singleHex, String fallbackPromptKey,
+          Consumer<String> onTargetsSelected) {
+        BoardView boardView = null;
+        if (clientGUI != null) {
+            boardView = clientGUI.getCurrentBoardView()
+                  .filter(BoardView.class::isInstance)
+                  .map(BoardView.class::cast)
+                  .orElse(null);
+        }
+        if (boardView == null) {
+            String targets = promptForHexNumbers(fallbackPromptKey, "BotCommandPanel.TargetHexPrompt.title");
+            if (targets != null) {
+                onTargetsSelected.accept(targets);
+            }
             return;
         }
-        sendArtilleryOrder(botPlayer, order, ammo, targets);
+        new HexTargetPicker(clientGUI, boardView, orderDescription, singleHex, onTargetsSelected).start();
     }
 
     /**
@@ -753,7 +781,10 @@ public class BotCommandsPanel extends JPanel {
      * @param targets   Dash-separated target hex numbers, or an empty string for orders without targets
      */
     private void sendArtilleryOrder(Player botPlayer, ArtilleryOrder order, SpecialAmmo ammo, String targets) {
-        String arguments = (order.name() + " " + ammo.name() + " " + targets).trim();
+        // halt/auto take no ammo or targets, so send just the order to keep the chat echo readable
+        String arguments = targets.isBlank()
+              ? order.name()
+              : order.name() + " " + ammo.name() + " " + targets;
         sendChatCommand(botPlayer, ChatCommands.ARTILLERY, arguments);
         if (!targets.isBlank()) {
             acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.artillery",
@@ -855,14 +886,13 @@ public class BotCommandsPanel extends JPanel {
      */
     private void promptAndSendWaypoints(Player botPlayer, InGameObject unit, ChatCommands waypointCommand,
           String orderTitle) {
-        String targets = promptForHexNumbers("BotCommandPanel.WaypointPrompt.message",
-              "BotCommandPanel.TargetHexPrompt.title");
-        if (targets == null) {
-            return;
-        }
-        sendChatCommand(botPlayer, waypointCommand, unit.getId() + " " + targets);
-        acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.unitOrder",
-              orderTitle, unit.getId(), unit.generalName()));
+        pickTargetHexes(orderTitle + " - " + unit.generalName(), false,
+              "BotCommandPanel.WaypointPrompt.message",
+              targets -> {
+                  sendChatCommand(botPlayer, waypointCommand, unit.getId() + " " + targets);
+                  acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.unitOrder",
+                        orderTitle, unit.getId(), unit.generalName()));
+              });
     }
 
     private record PlayerInGameObject(Player player, InGameObject inGameObject) {}

@@ -71,8 +71,8 @@ public class BotCommandsDialog extends JDialog {
         this.setTitle(Messages.getString("ClientGUI.BotCommand"));
 
         this.setLocation(GUIP.getBotCommandsPosX(), GUIP.getBotCommandsPosY());
-        this.setSize(new Dimension(600, 120));
-        this.setMinimumSize(new Dimension(600, 120));
+        this.setSize(new Dimension(770, 130));
+        this.setMinimumSize(new Dimension(770, 130));
         this.setResizable(true);
 
         UIUtil.updateWindowBounds(this);

@@ -75,7 +75,7 @@ class ArtilleryCommandAndControlTest {
     @Test
     void testBarrageOrderKeepsTargets() {
         artilleryCommandAndControl.addArtilleryTargets(List.of(new Coords(7, 7), new Coords(7, 9)));
-        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.BARRAGE, SpecialAmmo.NONE);
+        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.BARRAGE, SpecialAmmo.STANDARD);
 
         assertTrue(artilleryCommandAndControl.isArtilleryBarrage());
         assertTrue(artilleryCommandAndControl.contains(new Coords(7, 7)));
@@ -85,7 +85,7 @@ class ArtilleryCommandAndControlTest {
 
     @Test
     void testVolleyShooterTracking() {
-        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.VOLLEY, SpecialAmmo.NONE);
+        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.VOLLEY, SpecialAmmo.STANDARD);
 
         assertFalse(artilleryCommandAndControl.hasAlreadyFired(mockShooter),
               "A unit that has not been marked must not count as having fired");
@@ -96,10 +96,10 @@ class ArtilleryCommandAndControlTest {
 
     @Test
     void testNewOrderClearsVolleyShooters() {
-        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.VOLLEY, SpecialAmmo.NONE);
+        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.VOLLEY, SpecialAmmo.STANDARD);
         artilleryCommandAndControl.setShooter(mockShooter);
 
-        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.VOLLEY, SpecialAmmo.NONE);
+        artilleryCommandAndControl.setArtilleryOrder(ArtilleryOrder.VOLLEY, SpecialAmmo.STANDARD);
         assertFalse(artilleryCommandAndControl.hasAlreadyFired(mockShooter),
               "Issuing a new order must reset the volley shooter tracking");
     }

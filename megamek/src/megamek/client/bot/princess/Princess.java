@@ -1256,8 +1256,13 @@ public class Princess extends BotClient {
               this);
 
         if (!firingPlan.getEntityActionVector().isEmpty()) {
+            LOGGER.info("{}: targeting phase turn for {}: sending {} attack action(s)",
+                  getLocalPlayer().getName(), entityToFire.getDisplayName(),
+                  firingPlan.getEntityActionVector().size());
             sendAttackData(entityToFire.getId(), firingPlan.getEntityActionVector());
         } else {
+            LOGGER.info("{}: targeting phase turn for {}: no artillery attacks planned",
+                  getLocalPlayer().getName(), entityToFire.getDisplayName());
             if (fireControls == null) {
                 initializeFireControls();
             }

@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import megamek.client.bot.Messages;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.Player;
@@ -67,6 +68,7 @@ import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
+import megamek.logging.MMLogger;
 
 /**
  * This class handles the creation of firing plans for indirect-fire artillery and other weapons that get used during
@@ -75,6 +77,8 @@ import megamek.common.units.Targetable;
  * @author NickAragua
  */
 public class ArtilleryTargetingControl {
+    private static final MMLogger LOGGER = MMLogger.create(ArtilleryTargetingControl.class);
+
     private static final int NO_AMMO = -1;
 
     // biggest known kaboom is the 120 cruise missile with a 4-hex radius, but it's not very common and greatly
@@ -100,6 +104,10 @@ public class ArtilleryTargetingControl {
     private Map<Integer, HashMap<Coords, Double>> damageValues = new HashMap<>();
 
     private Set<Targetable> targetSet;
+
+    // ordered fire mission hexes that were already reported as impossible to the commanding player,
+    // keyed by hex + to-hit failure reason, so a standing order does not spam the chat every round
+    private final Set<String> reportedFireMissionWarnings = new HashSet<>();
 
     /**
      * Wrapper for calculateDamageValue that accounts for leading with artillery shots by accounting for both the
@@ -307,8 +315,13 @@ public class ArtilleryTargetingControl {
                 targetSet.add(new HexTarget(coords, Targetable.TYPE_HEX_ARTILLERY));
             }
             if (!targetSet.isEmpty()) {
+                LOGGER.info("{}: artillery fire mission target list built with {} ordered hex(es): {}",
+                      owner.getLocalPlayer().getName(), targetSet.size(),
+                      owner.getArtilleryCommandAndControl().getArtilleryTargets());
                 return;
             }
+            LOGGER.warn("{}: artillery fire mission ordered but no target hexes are set - "
+                  + "falling through to automatic targeting", owner.getLocalPlayer().getName());
         }
         // Auto mode will target all enemy units it can target
         for (Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext(); ) {
@@ -414,7 +427,28 @@ public class ArtilleryTargetingControl {
     }
 
     /**
-     * Calculate an indirect artillery "fire plan", taking into account the possibility of rotating the turret.
+     * Tells the commanding player in the chat why an ordered fire mission hex cannot be attacked (e.g. inside the
+     * 17-hex minimum range for indirect artillery). Each hex/reason combination is only reported once so a standing
+     * barrage order does not spam the chat every round.
+     *
+     * @param owner   The Princess bot
+     * @param shooter The artillery unit that cannot make the attack
+     * @param target  The ordered fire mission hex
+     * @param reason  The to-hit failure reason from the rules engine
+     */
+    private void reportImpossibleFireMission(Princess owner, Entity shooter, Targetable target, String reason) {
+        String warningKey = target.getPosition().toString() + "|" + reason;
+        if (reportedFireMissionWarnings.add(warningKey)) {
+            owner.sendChat(Messages.getString("Princess.artillery.fireMissionImpossible",
+                  shooter.getDisplayName(), target.getPosition().getBoardNum(), reason));
+        }
+    }
+
+    /**
+     * Calculate an indirect artillery "fire plan", taking into account the possibility of rotating the torso or
+     * turret: if no attack is possible with the current facing (e.g. an ordered fire mission hex is out of arc),
+     * the valid secondary facing changes are tried and the first one that produces attacks is used. The resulting
+     * plan includes the necessary torso twist action.
      *
      * @param shooter Entity doing the shooting
      * @param game    The current {@link Game}
@@ -423,7 +457,19 @@ public class ArtilleryTargetingControl {
      * @return Firing plan
      */
     public FiringPlan calculateIndirectArtilleryPlan(Entity shooter, Game game, Princess owner) {
-        return calculateIndirectArtilleryPlan(shooter, game, owner, 0);
+        FiringPlan forwardPlan = calculateIndirectArtilleryPlan(shooter, game, owner, 0);
+        if (!forwardPlan.isEmpty()) {
+            return forwardPlan;
+        }
+        for (int facingChange : FireControl.getValidFacingChanges(shooter)) {
+            FiringPlan twistedPlan = calculateIndirectArtilleryPlan(shooter, game, owner, facingChange);
+            if (!twistedPlan.isEmpty()) {
+                LOGGER.info("{}: {} twisting {} to bring artillery to bear",
+                      owner.getLocalPlayer().getName(), shooter.getDisplayName(), facingChange);
+                return twistedPlan;
+            }
+        }
+        return forwardPlan;
     }
 
     /**
@@ -441,8 +487,14 @@ public class ArtilleryTargetingControl {
         ArtilleryCommandAndControl artilleryCommandAndControl = owner.getArtilleryCommandAndControl();
         // if we're fleeing and haven't been shot at, then try not to agitate guys that
         // may pursue us.
-        if ((owner.isFallingBack(shooter) && !owner.canShootWhileFallingBack(shooter))
-              || artilleryCommandAndControl.isArtilleryHalted()) {
+        if (artilleryCommandAndControl.isArtilleryHalted()) {
+            LOGGER.info("{}: {} artillery is halted, not firing",
+                  owner.getLocalPlayer().getName(), shooter.getDisplayName());
+            return returnValue;
+        }
+        if (owner.isFallingBack(shooter) && !owner.canShootWhileFallingBack(shooter)) {
+            LOGGER.info("{}: {} is falling back and was not shot at, not firing artillery",
+                  owner.getLocalPlayer().getName(), shooter.getDisplayName());
             return returnValue;
         }
 
@@ -461,12 +513,16 @@ public class ArtilleryTargetingControl {
             buildTargetList(shooter, game, owner);
             // If we decided not to shoot this phase, no reason to continue calculating.
             if (targetSet == null || targetSet.isEmpty()) {
+                LOGGER.info("{}: {} has no artillery targets this phase",
+                      owner.getLocalPlayer().getName(), shooter.getDisplayName());
                 return returnValue;
             }
         }
         // when doing volleys, each unit can shoot only once, after all of them have shot, they will have to sit
         // and wait. The shooter is only marked as having fired once we know it actually has an attack to make.
         if (artilleryCommandAndControl.isArtilleryVolley() && artilleryCommandAndControl.hasAlreadyFired(shooter)) {
+            LOGGER.info("{}: {} has already fired its volley shot, not firing",
+                  owner.getLocalPlayer().getName(), shooter.getDisplayName());
             return returnValue;
         }
         // loop through all weapons on entity
@@ -608,6 +664,13 @@ public class ArtilleryTargetingControl {
                                     topValuedFireInfos.add(wfi);
                                 }
                             }
+                        } else if (isOrderedFireMissionTarget(artilleryCommandAndControl, target)) {
+                            // an ordered fire mission hex the weapon cannot hit at all is worth surfacing
+                            LOGGER.warn("{}: {} cannot hit ordered fire mission hex {} with {} ({}): {}",
+                                  owner.getLocalPlayer().getName(), shooter.getDisplayName(),
+                                  target.getPosition(), currentWeapon.getName(),
+                                  ammo.getType().getShortName(), wfi.getToHit().getDesc());
+                            reportImpossibleFireMission(owner, shooter, target, wfi.getToHit().getDesc());
                         }
                     }
                 }
@@ -642,6 +705,11 @@ public class ArtilleryTargetingControl {
                         returnValue.add(actualFireInfo);
                         returnValue.setUtility(returnValue.getUtility() + maxDamage);
                         artilleryAttackPlanned = true;
+                        LOGGER.info("{}: {} firing {} ({}) at {} (expected value {}, probability {})",
+                              owner.getLocalPlayer().getName(), shooter.getDisplayName(),
+                              currentWeapon.getName(), actualFireInfo.getAmmo().getType().getShortName(),
+                              actualFireInfo.getTarget().getPosition(),
+                              maxDamage, actualFireInfo.getProbabilityToHit());
                         owner.sendAmmoChange(
                               shooter.getId(),
                               shooter.getEquipmentNum(actualFireInfo.getWeapon()),
@@ -653,8 +721,20 @@ public class ArtilleryTargetingControl {
                             // halt the artillery and clear the ordered targets
                             artilleryCommandAndControl.setArtilleryOrder(ArtilleryCommandAndControl.ArtilleryOrder.HALT);
                             artilleryCommandAndControl.removeArtilleryTargets();
+                            LOGGER.info("{}: single fire mission complete, artillery halted",
+                                  owner.getLocalPlayer().getName());
                         }
+                    } else {
+                        LOGGER.warn("{}: {} found a fire solution for {} but could not match its ammo bin - "
+                                    + "shot dropped",
+                              owner.getLocalPlayer().getName(), shooter.getDisplayName(),
+                              currentWeapon.getName());
                     }
+                } else {
+                    LOGGER.info("{}: {} found no valid fire solution for {} against {} target(s) "
+                                + "(all zero expected value or zero hit probability)",
+                          owner.getLocalPlayer().getName(), shooter.getDisplayName(),
+                          currentWeapon.getName(), targetSet.size());
                 }
             } else if (currentWeapon.getType().hasFlag(WeaponType.F_TAG)) {
                 WeaponFireInfo tagInfo = getTAGInfo(currentWeapon, shooter, game, owner);

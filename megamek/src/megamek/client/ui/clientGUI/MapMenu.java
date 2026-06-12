@@ -610,10 +610,10 @@ public class MapMenu extends JPopupMenu {
         menu.add(createArtilleryFireMissionMenu(bot, "Bot.commands.artillery.single", ArtilleryOrder.SINGLE));
         menu.addSeparator();
         JMenuItem halt = new JMenuItem(Messages.getString("Bot.commands.artillery.halt"));
-        halt.addActionListener(evt -> sendArtilleryOrder(bot, ArtilleryOrder.HALT, SpecialAmmo.NONE, ""));
+        halt.addActionListener(evt -> sendArtilleryOrder(bot, ArtilleryOrder.HALT, SpecialAmmo.STANDARD, ""));
         menu.add(halt);
         JMenuItem auto = new JMenuItem(Messages.getString("Bot.commands.artillery.auto"));
-        auto.addActionListener(evt -> sendArtilleryOrder(bot, ArtilleryOrder.AUTO, SpecialAmmo.NONE, ""));
+        auto.addActionListener(evt -> sendArtilleryOrder(bot, ArtilleryOrder.AUTO, SpecialAmmo.STANDARD, ""));
         menu.add(auto);
         return menu;
     }
@@ -646,7 +646,10 @@ public class MapMenu extends JPopupMenu {
      * @param targets Dash-separated target hex numbers, or an empty string for orders without targets
      */
     private void sendArtilleryOrder(Player bot, ArtilleryOrder order, SpecialAmmo ammo, String targets) {
-        String arguments = (order.name() + " " + ammo.name() + " " + targets).trim();
+        // halt/auto take no ammo or targets, so send just the order to keep the chat echo readable
+        String arguments = targets.isBlank()
+              ? order.name()
+              : order.name() + " " + ammo.name() + " " + targets;
         client.sendChat(String.format("%s: %s : %s",
               bot.getName(), ChatCommands.ARTILLERY.getCommand(), arguments));
         String orderText = targets.isBlank()

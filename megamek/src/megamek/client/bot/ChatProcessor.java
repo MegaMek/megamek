@@ -226,14 +226,20 @@ public class ChatProcessor {
                   command.toLowerCase().equalsIgnoreCase(cmd.getCommand())) {
                 try {
                     Arguments args = ArgumentsParser.parse(arguments, cmd.getChatCommand().defineArguments());
+                    LOGGER.info("{}: executing chat command {} with arguments {}",
+                          princess.getLocalPlayer().getName(), cmd.getCommand(), Arrays.toString(arguments));
                     cmd.getChatCommand().execute(princess, args);
                 } catch (IllegalArgumentException e) {
+                    LOGGER.warn("{}: invalid arguments for chat command {}: {} ({})",
+                          princess.getLocalPlayer().getName(), cmd.getCommand(), Arrays.toString(arguments),
+                          e.getMessage());
                     princess.sendChat("Invalid arguments for command: " + command);
                     return;
                 }
                 return;
             }
         }
+        LOGGER.warn("Unrecognized chat command: {} with arguments {}", command, Arrays.toString(arguments));
         princess.sendChat("I do not recognize that command.");
     }
 }

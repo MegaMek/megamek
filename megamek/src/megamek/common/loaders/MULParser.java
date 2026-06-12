@@ -217,6 +217,7 @@ public class MULParser {
     public static final String ATTR_INDEX = "index";
     public static final String ATTR_IS_DESTROYED = "isDestroyed";
     public static final String ATTR_IS_REPAIRABLE = "isRepairable";
+    public static final String ATTR_ARMOR_HIT = "armorHit";
     public static final String ATTR_POINTS = "points";
     public static final String ATTR_TYPE = "type";
     public static final String ATTR_SHOTS = "shots";
@@ -253,6 +254,7 @@ public class MULParser {
     public static final String ATTR_BA_MEA_TYPE_NAME = "baMEATypeName";
     public static final String ATTR_KILLED = "killed";
     public static final String ATTR_KILLER = "killer";
+    public static final String ATTR_DAMAGE_TAKEN = "damageTaken";
     private static final String EXTRA_DATA = "extraData";
     public static final String ATTR_ARMOR_DIVISOR = "armorDivisor";
     public static final String ATTR_ARMOR_ENC = "armorEncumbering";
@@ -1745,6 +1747,13 @@ public class MULParser {
         }
     }
 
+    private void parseArmoredSlotState(CriticalSlot slot, String armorHit) {
+        if (Boolean.parseBoolean(armorHit) && (slot.isOriginalArmored() || slot.isArmorable())) {
+            slot.setArmored(true);
+            slot.hitArmored();
+        }
+    }
+
     /**
      * Parse a slot tag for the given Entity and location.
      *
@@ -1758,6 +1767,8 @@ public class MULParser {
         String capacity = slotTag.getAttribute(ATTR_CAPACITY);
         String hit = slotTag.getAttribute(ATTR_IS_HIT);
         String destroyed = slotTag.getAttribute(ATTR_IS_DESTROYED);
+        String armorHit = slotTag.getAttribute(ATTR_ARMOR_HIT);
+        String damageTaken = slotTag.getAttribute(ATTR_DAMAGE_TAKEN);
         String repairable = (slotTag.getAttribute(ATTR_IS_REPAIRABLE).isBlank() ? "true"
               : slotTag.getAttribute(ATTR_IS_REPAIRABLE));
         String munition = slotTag.getAttribute(ATTR_MUNITION);
@@ -1903,6 +1914,7 @@ public class MULParser {
                 }
                 return locAmmoCount;
             }
+            parseArmoredSlotState(slot, armorHit);
 
             // Is the slot for a critical system?
             if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
@@ -1952,6 +1964,20 @@ public class MULParser {
 
                 // Hit and destroy the mounted, according to the flags.
                 mounted.setDestroyed(hitFlag || destFlag);
+
+                if ((mounted instanceof MiscMounted miscMounted) &&
+                      mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR) &&
+                      !damageTaken.isBlank()) {
+                    int damageTakenVal = MathUtility.parseInt(damageTaken, -1);
+                    if ((damageTakenVal < 0) || (damageTakenVal > miscMounted.getBaseDamageCapacity())) {
+                        warning.append("Found invalid modular armor damageTaken value for slot: ")
+                              .append(damageTaken)
+                              .append(".\n");
+                    } else {
+                        miscMounted.setDamageTaken(damageTakenVal);
+                        miscMounted.setHit(damageTakenVal >= miscMounted.getBaseDamageCapacity());
+                    }
+                }
 
                 mounted.setRepairable(repairFlag);
 

@@ -519,6 +519,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
                 desc.append(" (APM)");
             }
         }
+        if ((this instanceof WeaponMounted weaponMounted) && weaponMounted.isDisposableWeapon()) {
+            desc.append(" (Disposable)");
+        }
         if (isDumping()) {
             desc.append(" (dumping)");
         }

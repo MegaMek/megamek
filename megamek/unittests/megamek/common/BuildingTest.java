@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.stream.Stream;
 
+import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
@@ -346,9 +347,12 @@ public class BuildingTest {
               String.format("Demolition charges initially: expected 0, got %d",
                     building.getDemolitionCharges().size()));
 
-        building.addDemolitionCharge(1, 50, coords);
+        Coords boardCoords = coords.toOffset();
+        building.addDemolitionCharge(1, 50, boardCoords);
         assertEquals(1, building.getDemolitionCharges().size(),
               String.format("Demolition charges after add: expected 1, got %d",
                     building.getDemolitionCharges().size()));
+        assertEquals(boardCoords, building.getDemolitionCharges().getFirst().pos,
+              "Demolition charge must store the absolute board coordinates it was placed at");
     }
 }

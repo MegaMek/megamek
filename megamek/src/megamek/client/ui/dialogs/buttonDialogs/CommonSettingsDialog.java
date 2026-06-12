@@ -340,6 +340,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private ColourSelectorButton csbUnitTextColor;
     private ColourSelectorButton csbBuildingTextColor;
     private ColourSelectorButton csbLowFoliageColor;
+    private ColourSelectorButton csbDemolitionChargeColor;
     private ColourSelectorButton csbBoardTextColor;
     private ColourSelectorButton csbBoardSpaceTextColor;
     private ColourSelectorButton csbMapSheetColor;
@@ -862,6 +863,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.LowFoliageColor"));
         csbLowFoliageColor.setColour(GUIP.getLowFoliageColor());
         row.add(csbLowFoliageColor);
+
+        csbDemolitionChargeColor = new ColourSelectorButton(Messages.getString(
+              "CommonSettingsDialog.colors.DemolitionChargeColor"));
+        csbDemolitionChargeColor.setColour(GUIP.getDemolitionChargeColor());
+        row.add(csbDemolitionChargeColor);
         comps.add(row);
 
         addLineSpacer(comps);
@@ -2523,6 +2529,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         csbBoardTextColor.setColour(GUIP.getBoardTextColor());
         csbBoardSpaceTextColor.setColour(GUIP.getBoardSpaceTextColor());
         csbLowFoliageColor.setColour(GUIP.getLowFoliageColor());
+        csbDemolitionChargeColor.setColour(GUIP.getDemolitionChargeColor());
         csbMapSheetColor.setColour(GUIP.getMapsheetColor());
 
         attackArrowTransparency.setValue(GUIP.getAttackArrowTransparency());
@@ -2722,6 +2729,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setBoardTextColor(csbBoardTextColor.getColour());
         GUIP.setBoardSpaceTextColor(csbBoardSpaceTextColor.getColour());
         GUIP.setLowFoliageColor(csbLowFoliageColor.getColour());
+        GUIP.setDemolitionChargeColor(csbDemolitionChargeColor.getColour());
         GUIP.setMapSheetColor(csbMapSheetColor.getColour());
 
         GUIP.setAttackArrowTransparency((Integer) attackArrowTransparency.getValue());

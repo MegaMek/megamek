@@ -46,6 +46,7 @@ import java.util.Vector;
 
 import megamek.common.Report;
 import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BasementType;
@@ -530,8 +531,17 @@ public class Building implements Serializable {
         burning.put(coords, onFire);
     }
 
-    public void addDemolitionCharge(int playerId, int damage, CubeCoords pos) {
-        DemolitionCharge charge = new DemolitionCharge(playerId, damage, pos.toOffset());
+    /**
+     * Adds a demolition charge to this building. The position is stored as absolute board coordinates (not
+     * building-relative coordinates) because all consumers of {@link DemolitionCharge#pos} - the touch-off menu, the
+     * end-phase building lookup and the damage application - operate on board coordinates.
+     *
+     * @param playerId the ID of the player that owns the charge
+     * @param damage   the damage the charge inflicts when detonated
+     * @param pos      the absolute board {@link Coords} of the building hex the charge is placed in
+     */
+    public void addDemolitionCharge(int playerId, int damage, Coords pos) {
+        DemolitionCharge charge = new DemolitionCharge(playerId, damage, pos);
         demolitionCharges.add(charge);
     }
 

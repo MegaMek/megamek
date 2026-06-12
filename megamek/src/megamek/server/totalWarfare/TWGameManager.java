@@ -25292,6 +25292,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         hex.removeTerrain(Terrains.FIRE);
         hex.resetFireTurn();
+        game.getBoard().removeFlamerStartedFire(fireCoords);
         sendChangedHex(fireCoords);
         // fire goes out
         Report r = new Report(5170, Report.PUBLIC);

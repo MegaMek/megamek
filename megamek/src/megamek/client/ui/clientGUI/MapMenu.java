@@ -94,8 +94,6 @@ import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
-import megamek.common.weapons.other.clan.CLFireExtinguisher;
-import megamek.common.weapons.other.innerSphere.ISFireExtinguisher;
 import megamek.logging.MMLogger;
 import megamek.server.commands.*;
 
@@ -1522,7 +1520,7 @@ public class MapMenu extends JPopupMenu {
                       || hasAmmoType(AmmoType.AmmoTypeEnum.BA_TUBE)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
                 }
-                if (canStartFires && hasFireExtinguisher()
+                if (canStartFires && (hasFireExtinguisher() || isFirefightingInfantry())
                       && h.containsTerrain(Terrains.FIRE)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_EXTINGUISH)));
                 }
@@ -1635,17 +1633,12 @@ public class MapMenu extends JPopupMenu {
     }
 
     private boolean hasFireExtinguisher() {
-        if (myEntity.getWeaponList().isEmpty()) {
-            return false;
-        }
+        return myEntity.getWeaponList().stream()
+              .anyMatch(weapon -> weapon.getType().hasFlag(WeaponType.F_EXTINGUISHER));
+    }
 
-        for (Mounted<?> weapon : myEntity.getWeaponList()) {
-            if ((weapon.getType() instanceof ISFireExtinguisher) || (weapon.getType() instanceof CLFireExtinguisher)) {
-                return true;
-            }
-        }
-
-        return false;
+    private boolean isFirefightingInfantry() {
+        return (myEntity instanceof ConvInfantry firefighter) && firefighter.isFirefighter();
     }
 
     private JMenuItem createTorsoTwistJMenuItem(int direction) {

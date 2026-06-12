@@ -38,11 +38,17 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.util.List;
 
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.BaConstructionUtil;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestBattleArmor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,8 +57,20 @@ import org.junit.jupiter.api.Test;
  * Tests Battle Armor eligibility to carry Disposable Weapons (TO:AuE p.116, Corrected Sixth Printing): only suits with
  * an anti-personnel weapon mount or two armored gloves may carry them. Armored gloves themselves carry the
  * {@code F_AP_MOUNT} flag, so the "AP mount" path must exclude them.
+ * <p>
+ * Also tests the construction validation of the actual mounting: the Disposable Weapon must be attached to the
+ * anti-personnel weapon mount or to an armored glove (on a suit with two armored gloves) - a suit whose AP mount is
+ * occupied by a different weapon may not carry a Disposable Weapon on the side.
+ * </p>
  */
 class BattleArmorDisposableWeaponTest {
+
+    private static final String DISPOSABLE_WEAPON = "InfantryGrenade";
+    private static final String OTHER_AP_WEAPON = "Auto-Pistol";
+    // Internal name from MiscType#createBAArmoredGlove (mirrored in BattleArmor.MANIPULATOR_TYPE_STRINGS, which we
+    // cannot reference here: it would class-load BattleArmor before EquipmentType.initializeTypes() has run)
+    private static final String ARMORED_GLOVE = "BAArmoredGlove";
+    private static final String DISPOSABLE_ERROR_MARKER = "is a Disposable Weapon";
 
     @BeforeAll
     static void initialize() {
@@ -103,5 +121,78 @@ class BattleArmorDisposableWeaponTest {
     void noMountIsNotEligible() {
         BattleArmor battleArmor = battleArmorWith(List.of(), 0);
         assertFalse(battleArmor.canCarryDisposableWeapons());
+    }
+
+    private static BattleArmor buildSuit() {
+        BattleArmor battleArmor = new BattleArmor();
+        battleArmor.setChassisType(BattleArmor.CHASSIS_TYPE_BIPED);
+        battleArmor.setSquadSize(4);
+        return battleArmor;
+    }
+
+    private static Mounted<?> addToSquad(BattleArmor battleArmor, String internalName) throws Exception {
+        Mounted<?> mounted = Mounted.createMounted(battleArmor, EquipmentType.get(internalName));
+        battleArmor.addEquipment(mounted, BattleArmor.LOC_SQUAD, false);
+        return mounted;
+    }
+
+    private static String verifierErrors(BattleArmor battleArmor) {
+        EntityVerifier entityVerifier = EntityVerifier.getInstance(
+              new File("testresources/data/mekfiles/UnitVerifierOptions.xml"));
+        TestBattleArmor testBattleArmor = new TestBattleArmor(battleArmor, entityVerifier.baOption, null);
+        StringBuffer errors = new StringBuffer();
+        testBattleArmor.hasIllegalEquipmentCombinations(errors);
+        return errors.toString();
+    }
+
+    @Test
+    @DisplayName("a Disposable Weapon mounted in the AP weapon mount passes verification")
+    void disposableInApMountIsLegal() throws Exception {
+        BattleArmor battleArmor = buildSuit();
+        Mounted<?> apMount = addToSquad(battleArmor, EquipmentTypeLookup.BA_APM);
+        Mounted<?> disposable = addToSquad(battleArmor, DISPOSABLE_WEAPON);
+        BaConstructionUtil.mountOnApm(disposable, apMount);
+
+        String errors = verifierErrors(battleArmor);
+        assertFalse(errors.contains(DISPOSABLE_ERROR_MARKER), errors);
+    }
+
+    @Test
+    @DisplayName("a Disposable Weapon carried by an armored glove on a two-glove suit passes verification")
+    void disposableOnGloveWithTwoGlovesIsLegal() throws Exception {
+        BattleArmor battleArmor = buildSuit();
+        Mounted<?> leftGlove = addToSquad(battleArmor, ARMORED_GLOVE);
+        addToSquad(battleArmor, ARMORED_GLOVE);
+        Mounted<?> disposable = addToSquad(battleArmor, DISPOSABLE_WEAPON);
+        BaConstructionUtil.mountOnApm(disposable, leftGlove);
+
+        String errors = verifierErrors(battleArmor);
+        assertFalse(errors.contains(DISPOSABLE_ERROR_MARKER), errors);
+    }
+
+    @Test
+    @DisplayName("a Disposable Weapon on a single glove fails even when the suit's AP mount holds another weapon")
+    void disposableOnSingleGloveWithOccupiedApMountIsIllegal() throws Exception {
+        BattleArmor battleArmor = buildSuit();
+        Mounted<?> apMount = addToSquad(battleArmor, EquipmentTypeLookup.BA_APM);
+        Mounted<?> otherWeapon = addToSquad(battleArmor, OTHER_AP_WEAPON);
+        BaConstructionUtil.mountOnApm(otherWeapon, apMount);
+        Mounted<?> glove = addToSquad(battleArmor, ARMORED_GLOVE);
+        Mounted<?> disposable = addToSquad(battleArmor, DISPOSABLE_WEAPON);
+        BaConstructionUtil.mountOnApm(disposable, glove);
+
+        String errors = verifierErrors(battleArmor);
+        assertTrue(errors.contains(DISPOSABLE_ERROR_MARKER), errors);
+    }
+
+    @Test
+    @DisplayName("a Disposable Weapon attached to nothing fails verification even when an AP mount exists")
+    void unattachedDisposableIsIllegal() throws Exception {
+        BattleArmor battleArmor = buildSuit();
+        addToSquad(battleArmor, EquipmentTypeLookup.BA_APM);
+        addToSquad(battleArmor, DISPOSABLE_WEAPON);
+
+        String errors = verifierErrors(battleArmor);
+        assertTrue(errors.contains(DISPOSABLE_ERROR_MARKER), errors);
     }
 }

@@ -34,6 +34,7 @@ package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 
+import megamek.codeUtilities.MathUtility;
 import megamek.logging.MMLogger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -79,14 +80,14 @@ public class SubForcesNode extends RulesetNode {
                         continue;
                     }
                     ForceDescriptor sub = forceDescriptor.createChild(i);
-                    sub.setEchelon(Integer.parseInt(valueNode.getContent()));
+                    sub.setEchelon(parseEchelon(valueNode.getContent()));
                     apply(sub, i);
                     valueNode.apply(sub, i);
                     subs.add(sub);
                 }
                 if (!isAttached && forceDescriptor.getSizeMod() == ForceDescriptor.REINFORCED) {
                     ForceDescriptor sub = forceDescriptor.createChild(subs.size());
-                    sub.setEchelon(Integer.parseInt(valueNode.getContent()));
+                    sub.setEchelon(parseEchelon(valueNode.getContent()));
                     apply(sub, valueNode.getNum() / 2);
                     valueNode.apply(sub, valueNode.getNum() / 2);
                     subs.add(sub);
@@ -120,12 +121,12 @@ public class SubForcesNode extends RulesetNode {
                         ForceDescriptor sub = forceDescriptor.createChild(i);
                         if (valueNode.getContent().endsWith("+")) {
                             sub.setSizeMod(ForceDescriptor.REINFORCED);
-                            sub.setEchelon(Integer.parseInt(valueNode.getContent().replace("+", "")));
+                            sub.setEchelon(parseEchelon(valueNode.getContent().replace("+", "")));
                         } else if (valueNode.getContent().endsWith("-")) {
                             sub.setSizeMod(ForceDescriptor.UNDERSTRENGTH);
-                            sub.setEchelon(Integer.parseInt(valueNode.getContent().replace("-", "")));
+                            sub.setEchelon(parseEchelon(valueNode.getContent().replace("-", "")));
                         } else {
-                            sub.setEchelon(Integer.parseInt(valueNode.getContent()));
+                            sub.setEchelon(parseEchelon(valueNode.getContent()));
                         }
                         apply(sub, i);
                         optionGroup.apply(sub, i);
@@ -140,7 +141,7 @@ public class SubForcesNode extends RulesetNode {
                     }
                     if (forceDescriptor.getSizeMod() == ForceDescriptor.REINFORCED) {
                         ForceDescriptor sub = forceDescriptor.createChild(subs.size());
-                        sub.setEchelon(Integer.parseInt(valueNode.getContent()));
+                        sub.setEchelon(parseEchelon(valueNode.getContent()));
                         apply(sub, valueNode.getNum() / 2);
                         optionGroup.apply(sub, valueNode.getNum() / 2);
                         subs.add(sub);
@@ -154,6 +155,25 @@ public class SubForcesNode extends RulesetNode {
             }
         }
         return retVal;
+    }
+
+    /**
+     * Parses an echelon level from a subforce rule's content, tolerating malformed data instead of throwing. Echelon
+     * strings in the faction_rules XML are authored integers (any +/- size suffix is stripped by the caller), so a
+     * non-numeric value means a malformed ruleset. Rather than abort the whole force generation with a
+     * {@link NumberFormatException}, the bad value is logged and echelon 0 is used as a safe fallback.
+     *
+     * @param content the subforce content to parse (already stripped of any +/- size suffix)
+     *
+     * @return the parsed echelon, or 0 if the content is not a valid integer
+     */
+    private int parseEchelon(String content) {
+        int echelon = MathUtility.parseInt(content, -1);
+        if (echelon < 0) {
+            LOGGER.warn("[ForceGen] Malformed echelon value '{}' in a subforce rule; defaulting to 0.", content);
+            return 0;
+        }
+        return echelon;
     }
 
     /**

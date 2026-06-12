@@ -1332,12 +1332,14 @@ public class TestBattleArmor extends TestEntity {
      */
     private static boolean isValidDisposableWeaponMounting(BattleArmor battleArmor, Mounted<?> mount) {
         Mounted<?> attachmentPoint = mount.getLinkedBy();
-        if (attachmentPoint == null) {
+        // The instanceof guard also prevents EquipmentBitSet ordinal collisions: MiscTypeFlags must only ever be
+        // tested against a MiscType (see EquipmentType#hasFlag)
+        if ((attachmentPoint == null) || !(attachmentPoint.getType() instanceof MiscType attachmentType)) {
             return false;
         }
-        boolean inAntiPersonnelWeaponMount = attachmentPoint.getType().hasFlag(MiscType.F_AP_MOUNT)
-              && !attachmentPoint.getType().hasFlag(MiscType.F_ARMORED_GLOVE);
-        boolean carriedByArmoredGlove = attachmentPoint.getType().hasFlag(MiscType.F_ARMORED_GLOVE)
+        boolean inAntiPersonnelWeaponMount = attachmentType.hasFlag(MiscType.F_AP_MOUNT)
+              && !attachmentType.hasFlag(MiscType.F_ARMORED_GLOVE);
+        boolean carriedByArmoredGlove = attachmentType.hasFlag(MiscType.F_ARMORED_GLOVE)
               && (battleArmor.countWorkingMisc(MiscType.F_ARMORED_GLOVE) >= 2);
         return inAntiPersonnelWeaponMount || carriedByArmoredGlove;
     }

@@ -442,6 +442,36 @@ public class FormationType {
     }
 
     /**
+     * Resolves the weight classes one parameter set will draw from. Starts from this formation's own min/max range (the
+     * air range drops Assault for fighters), then intersects it with any weight classes the caller requested (the Force
+     * Generator passes the lance's element weights). An empty intersection means the request is incompatible with the
+     * formation, so it falls back to the formation's own range rather than failing.
+     *
+     * @param parameters  the parameter set to update in place
+     * @param groundRange the formation's full weight-class range (used for ground unit types)
+     * @param airRange    the formation's weight-class range with Assault removed (used for fighters)
+     */
+    private void applyFormationWeightClasses(Parameters parameters, List<Integer> groundRange,
+          List<Integer> airRange) {
+        parameters.addRoles(missionRoles);
+        List<Integer> formationRange = (parameters.getUnitType() < UnitType.CONV_FIGHTER) ? groundRange : airRange;
+        Collection<Integer> requested = parameters.getWeightClasses();
+        if (requested.isEmpty()) {
+            parameters.setWeightClasses(formationRange);
+            LOGGER.debug("[ForceGen][Formation]   weightIntersect: requested=[] formationRange={} -> final={}"
+                  + " (no caller weight; using formation range)", formationRange, parameters.getWeightClasses());
+            return;
+        }
+        List<Integer> intersection = requested.stream()
+              .filter(formationRange::contains)
+              .collect(Collectors.toList());
+        parameters.setWeightClasses(intersection.isEmpty() ? formationRange : intersection);
+        LOGGER.debug("[ForceGen][Formation]   weightIntersect: requested={} formationRange={} -> final={}{}",
+              requested, formationRange, parameters.getWeightClasses(),
+              intersection.isEmpty() ? " (EMPTY intersection; fell back to formation range)" : "");
+    }
+
+    /**
      * Builds a list of units that satisfy this formation's rules, sampled from {@link UnitTable}s derived from the
      * provided parameters. Handles paired-OR constraints, network role distribution (C3 master/slave, C3i, Nova), mixed
      * unit types via parallel parameter sets, and movement-mode resolution for vehicles/infantry whose mode is left
@@ -477,10 +507,11 @@ public class FormationType {
                     + " networkMask={} paramSets={} totalUnits={}",
               name, minWeightClass, maxWeightClass, idealRole, bestEffort, networkMask, params.size(),
               numUnits.stream().mapToInt(Integer::intValue).sum());
-        for (int pi = 0; pi < params.size(); pi++) {
-            Parameters p = params.get(pi);
+        for (int paramIndex = 0; paramIndex < params.size(); paramIndex++) {
+            Parameters parameters = params.get(paramIndex);
             LOGGER.debug("[ForceGen][Formation]   param[{}] unitType={} requestedWC={} roles={} moves={} numUnits={}",
-                  pi, p.getUnitType(), p.getWeightClasses(), p.getRoles(), p.getMovementModes(), numUnits.get(pi));
+                  paramIndex, parameters.getUnitType(), parameters.getWeightClasses(), parameters.getRoles(),
+                  parameters.getMovementModes(), numUnits.get(paramIndex));
         }
 
         final GroupingConstraint useGrouping;
@@ -500,32 +531,11 @@ public class FormationType {
 
         List<Integer> weightClasses = IntStream.rangeClosed(minWeightClass,
               Math.min(maxWeightClass, EntityWeightClass.WEIGHT_SUPER_HEAVY)).boxed().collect(Collectors.toList());
-        List<Integer> airWcs = weightClasses.stream()
-              .filter(wc -> wc < EntityWeightClass.WEIGHT_ASSAULT)
+        List<Integer> airWeightClasses = weightClasses.stream()
+              .filter(weightClass -> weightClass < EntityWeightClass.WEIGHT_ASSAULT)
               .collect(Collectors.toList());
 
-        params.forEach(p -> {
-            p.addRoles(missionRoles);
-            List<Integer> formationRange = (p.getUnitType() < UnitType.CONV_FIGHTER) ? weightClasses : airWcs;
-            // If the caller supplied weight classes (the Force Generator passes the lance's
-            // element weights), keep only those that also fall within this FormationType's own
-            // min/max range. An empty intersection means the requested weights are incompatible
-            // with the formation, so fall back to the formation's range rather than fail.
-            Collection<Integer> requested = p.getWeightClasses();
-            if (requested.isEmpty()) {
-                p.setWeightClasses(formationRange);
-                LOGGER.debug("[ForceGen][Formation]   weightIntersect: requested=[] formationRange={} -> final={}"
-                      + " (no caller weight; using formation range)", formationRange, p.getWeightClasses());
-            } else {
-                List<Integer> intersection = requested.stream()
-                      .filter(formationRange::contains)
-                      .collect(Collectors.toList());
-                p.setWeightClasses(intersection.isEmpty() ? formationRange : intersection);
-                LOGGER.debug("[ForceGen][Formation]   weightIntersect: requested={} formationRange={} -> final={}{}",
-                      requested, formationRange, p.getWeightClasses(),
-                      intersection.isEmpty() ? " (EMPTY intersection; fell back to formation range)" : "");
-            }
-        });
+        params.forEach(parameters -> applyFormationWeightClasses(parameters, weightClasses, airWeightClasses));
 
         List<UnitTable> tables = params.stream().map(UnitTable::findTable).toList();
 
@@ -1865,12 +1875,12 @@ public class FormationType {
               "Heavy+"));
         // Campaign Operations (Assault Lance base, inherited by Hunter): at least one Juggernaut OR
         // two Snipers. Encoded as a paired-OR pair of CountConstraints.
-        Constraint c = new CountConstraint(1, ms -> ms.getRole() == JUGGERNAUT, "Juggernaut");
-        c.setPairedWithNext(true);
-        ft.otherCriteria.add(c);
-        c = new CountConstraint(2, ms -> ms.getRole() == SNIPER, "Sniper");
-        c.setPairedWithPrevious(true);
-        ft.otherCriteria.add(c);
+        Constraint juggernautConstraint = new CountConstraint(1, ms -> ms.getRole() == JUGGERNAUT, "Juggernaut");
+        juggernautConstraint.setPairedWithNext(true);
+        ft.otherCriteria.add(juggernautConstraint);
+        Constraint sniperConstraint = new CountConstraint(2, ms -> ms.getRole() == SNIPER, "Sniper");
+        sniperConstraint.setPairedWithPrevious(true);
+        ft.otherCriteria.add(sniperConstraint);
         // Hunter-specific rule: at least 50% of the units must be Ambushers or Juggernauts.
         ft.otherCriteria.add(new PercentConstraint(0.5,
               ms -> ms.getRole().isAnyOf(JUGGERNAUT, AMBUSHER),

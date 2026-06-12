@@ -34,7 +34,6 @@ package megamek.client.ui.dialogs.randomArmy;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -63,6 +62,7 @@ import javax.swing.table.DefaultTableModel;
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.Ruleset.ProgressListener;
 import megamek.client.ui.Messages;
+import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Player;
 import megamek.common.battleArmor.BattleArmor;
@@ -175,7 +175,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(5, 5, 5, 5);
+        int inset = UIUtil.scaleForGUI(5);
+        gbc.insets = new Insets(inset, inset, inset, inset);
 
         int y = 0;
 
@@ -726,7 +727,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // Preferred width sized so the BorderLayout wrapper extends most of the way to the right
         // edge of the dialog (cols 0-3 grow to accommodate this preferred when it exceeds the
         // natural column-sum width). Roughly Transport width + a combo-and-a-half on the right.
-        scrollPane.setPreferredSize(new Dimension(480, 140));
+        scrollPane.setPreferredSize(UIUtil.scaleForGUI(480, 140));
         return scrollPane;
     }
 

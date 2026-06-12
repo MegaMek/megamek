@@ -89,6 +89,13 @@ public class Ruleset {
     private static final String directory = "data/forcegenerator/faction_rules";
     private static final String CONSTANTS_FILE = "constants.txt";
 
+    // Progress-bar weights for the phases of processRoot(), as fractions of the force-generation
+    // pass. They are display hints for the ProgressListener only and do not affect generation.
+    private static final double PROGRESS_BUILD_TREE = 0.05;
+    private static final double PROGRESS_GENERATE_UNITS = 0.5;
+    private static final double PROGRESS_LOAD_ENTITIES = 0.4;
+    private static final double PROGRESS_FINALIZE = 0.05;
+
     private static HashMap<String, String> constants;
     private static final Pattern constantPattern = Pattern.compile("%(.*?)%");
     private static HashMap<String, Ruleset> rulesets;
@@ -196,7 +203,7 @@ public class Ruleset {
         // save the setting so it can be restored after assigning names
         String rngFaction = RandomNameGenerator.getInstance().getChosenFaction();
 
-        buildForceTree(fd, l, 0.05);
+        buildForceTree(fd, l, PROGRESS_BUILD_TREE);
         // Capture the weight class the ruleset ROLLED for this force (the value that drove the
         // <weightTarget> selection) before recalcWeightClass() below overwrites it with the
         // weight implied by the units actually generated. This is the right label for tuning.
@@ -208,7 +215,7 @@ public class Ruleset {
         // blocks before units are picked. Data-gated -- a no-op for any cluster that declares no
         // targets, so factions without <weightTarget> generate exactly as before.
         WeightBudgetAllocator.allocate(fd);
-        fd.generateUnits(l, 0.5);
+        fd.generateUnits(l, PROGRESS_GENERATE_UNITS);
         if (null != l) {
             l.updateProgress(0, "Finalizing formation");
         }
@@ -223,12 +230,12 @@ public class Ruleset {
         fd.assignPositions();
 
         if (null != l) {
-            l.updateProgress(0.05, "Finalizing formation");
+            l.updateProgress(PROGRESS_FINALIZE, "Finalizing formation");
         }
         // Stamp every node with a unique force id before loading entities, so the force strings
         // written onto the entities are collision-free and the server reconstructs the exact tree.
         int nextForceId = fd.assignForceIds(1);
-        fd.loadEntities(l, 0.4);
+        fd.loadEntities(l, PROGRESS_LOAD_ENTITIES);
         // fd.assignBloodnames();
 
         ForceDescriptor transports = fd.assignTransport();

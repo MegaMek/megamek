@@ -58,33 +58,33 @@ public class OptionGroupNode extends RulesetNode {
 
     public @Nullable ValueNode selectOption(ForceDescriptor fd, boolean apply) {
         ArrayList<ValueNode> matching = new ArrayList<>();
-        for (ValueNode o : options) {
-            if (o.matches(fd)) {
-                matching.add(o);
+        for (ValueNode option : options) {
+            if (option.matches(fd)) {
+                matching.add(option);
             }
         }
         if (matching.isEmpty()) {
             return null;
         }
 
-        ArrayList<ValueNode> list = new ArrayList<>();
-        for (ValueNode o : matching) {
-            for (int i = 0; i < o.getWeight(); i++) {
-                list.add(o);
+        ArrayList<ValueNode> weightedOptions = new ArrayList<>();
+        for (ValueNode option : matching) {
+            for (int i = 0; i < option.getWeight(); i++) {
+                weightedOptions.add(option);
             }
         }
-        if (list.isEmpty()) {
+        if (weightedOptions.isEmpty()) {
             return null;
         }
-        ValueNode n = list.get(Compute.randomInt(list.size()));
+        ValueNode selected = weightedOptions.get(Compute.randomInt(weightedOptions.size()));
 
         if (apply) {
-            n.apply(fd);
+            selected.apply(fd);
         }
-        if (n.getContent() == null) {
+        if (selected.getContent() == null) {
             return null;
         }
-        return n;
+        return selected;
     }
 
     public static OptionGroupNode createFromXml(Node node) {

@@ -83,10 +83,10 @@ final class ForceGenWeightCsv {
         }
         StringBuilder rows = new StringBuilder();
         for (Map.Entry<Integer, int[]> entry : byType.entrySet()) {
-            int[] w = entry.getValue();
+            int[] weightCounts = entry.getValue();
             int total = 0;
-            for (int c : w) {
-                total += c;
+            for (int count : weightCounts) {
+                total += count;
             }
             if (total == 0) {
                 continue;
@@ -99,12 +99,12 @@ final class ForceGenWeightCsv {
                   safe(clusterFlags),
                   safe(UnitType.getTypeName(entry.getKey())),
                   Integer.toString(total),
-                  cell(w, EntityWeightClass.WEIGHT_ULTRA_LIGHT),
-                  cell(w, EntityWeightClass.WEIGHT_LIGHT),
-                  cell(w, EntityWeightClass.WEIGHT_MEDIUM),
-                  cell(w, EntityWeightClass.WEIGHT_HEAVY),
-                  cell(w, EntityWeightClass.WEIGHT_ASSAULT),
-                  cell(w, EntityWeightClass.WEIGHT_SUPER_HEAVY))).append("\n");
+                  cell(weightCounts, EntityWeightClass.WEIGHT_ULTRA_LIGHT),
+                  cell(weightCounts, EntityWeightClass.WEIGHT_LIGHT),
+                  cell(weightCounts, EntityWeightClass.WEIGHT_MEDIUM),
+                  cell(weightCounts, EntityWeightClass.WEIGHT_HEAVY),
+                  cell(weightCounts, EntityWeightClass.WEIGHT_ASSAULT),
+                  cell(weightCounts, EntityWeightClass.WEIGHT_SUPER_HEAVY))).append("\n");
         }
         if (rows.isEmpty()) {
             return;
@@ -114,8 +114,8 @@ final class ForceGenWeightCsv {
             if (writeHeader && (FILE.getParent() != null)) {
                 Files.createDirectories(FILE.getParent());
             }
-            String out = writeHeader ? (HEADER + "\n" + rows) : rows.toString();
-            Files.writeString(FILE, out, StandardCharsets.UTF_8,
+            String content = writeHeader ? (HEADER + "\n" + rows) : rows.toString();
+            Files.writeString(FILE, content, StandardCharsets.UTF_8,
                   StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException ex) {
             LOGGER.warn("Could not append force-gen weight rows to {}: {}", FILE, ex.getMessage());

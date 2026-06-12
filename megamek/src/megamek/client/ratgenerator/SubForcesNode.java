@@ -98,38 +98,38 @@ public class SubForcesNode extends RulesetNode {
                 }
             }
         }
-        for (OptionGroupNode n : optionSubForces) {
-            if (n.matches(forceDescriptor)) {
-                ValueNode vn = n.selectOption(forceDescriptor);
-                if (vn != null) {
+        for (OptionGroupNode optionGroup : optionSubForces) {
+            if (optionGroup.matches(forceDescriptor)) {
+                ValueNode valueNode = optionGroup.selectOption(forceDescriptor);
+                if (valueNode != null) {
                     if (isAttached) {
                         LOGGER.debug("[ForceGen][Attached] subforceOption picked: parentEschelon={} " +
                                     "parentUnitType={} parentName='{}' optionContent='{}' optionUnitType='{}' " +
                                     "optionName='{}' optionNum={}",
                               forceDescriptor.getEchelon(), forceDescriptor.getUnitType(),
-                              forceDescriptor.getName(), vn.getContent(),
-                              vn.assertions.getProperty("unitType"),
-                              vn.assertions.getProperty("name"), vn.getNum());
+                              forceDescriptor.getName(), valueNode.getContent(),
+                              valueNode.assertions.getProperty("unitType"),
+                              valueNode.assertions.getProperty("name"), valueNode.getNum());
                     }
                     ArrayList<ForceDescriptor> subs = new ArrayList<>();
-                    for (int i = 0; i < vn.getNum(); i++) {
+                    for (int i = 0; i < valueNode.getNum(); i++) {
                         if (forceDescriptor.getSizeMod() == ForceDescriptor.UNDERSTRENGTH
-                              && i == vn.getNum() / 2) {
+                              && i == valueNode.getNum() / 2) {
                             continue;
                         }
                         ForceDescriptor sub = forceDescriptor.createChild(i);
-                        if (vn.getContent().endsWith("+")) {
+                        if (valueNode.getContent().endsWith("+")) {
                             sub.setSizeMod(ForceDescriptor.REINFORCED);
-                            sub.setEchelon(Integer.parseInt(vn.getContent().replace("+", "")));
-                        } else if (vn.getContent().endsWith("-")) {
+                            sub.setEchelon(Integer.parseInt(valueNode.getContent().replace("+", "")));
+                        } else if (valueNode.getContent().endsWith("-")) {
                             sub.setSizeMod(ForceDescriptor.UNDERSTRENGTH);
-                            sub.setEchelon(Integer.parseInt(vn.getContent().replace("-", "")));
+                            sub.setEchelon(Integer.parseInt(valueNode.getContent().replace("-", "")));
                         } else {
-                            sub.setEchelon(Integer.parseInt(vn.getContent()));
+                            sub.setEchelon(Integer.parseInt(valueNode.getContent()));
                         }
                         apply(sub, i);
-                        n.apply(sub, i);
-                        vn.apply(sub, i);
+                        optionGroup.apply(sub, i);
+                        valueNode.apply(sub, i);
                         if (isAttached) {
                             LOGGER.debug("[ForceGen][Attached]   created child[{}]: echelon={} " +
                                         "unitType={} name='{}' weightClass={}",
@@ -140,15 +140,15 @@ public class SubForcesNode extends RulesetNode {
                     }
                     if (forceDescriptor.getSizeMod() == ForceDescriptor.REINFORCED) {
                         ForceDescriptor sub = forceDescriptor.createChild(subs.size());
-                        sub.setEchelon(Integer.parseInt(vn.getContent()));
-                        apply(sub, vn.getNum() / 2);
-                        n.apply(sub, vn.getNum() / 2);
+                        sub.setEchelon(Integer.parseInt(valueNode.getContent()));
+                        apply(sub, valueNode.getNum() / 2);
+                        optionGroup.apply(sub, valueNode.getNum() / 2);
                         subs.add(sub);
 
                     }
                     retVal.addAll(subs);
                     if (!isAttached && null == forceDescriptor.getGenerationRule()) {
-                        forceDescriptor.setGenerationRule(findGenerateProperty(vn, n, this));
+                        forceDescriptor.setGenerationRule(findGenerateProperty(valueNode, optionGroup, this));
                     }
                 }
             }

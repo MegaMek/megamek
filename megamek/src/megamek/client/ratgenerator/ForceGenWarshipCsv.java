@@ -89,63 +89,63 @@ final class ForceGenWarshipCsv {
             if (writeHeader && (FILE.getParent() != null)) {
                 Files.createDirectories(FILE.getParent());
             }
-            String out = writeHeader ? (HEADER + "\n" + rows) : rows.toString();
-            Files.writeString(FILE, out, StandardCharsets.UTF_8,
+            String content = writeHeader ? (HEADER + "\n" + rows) : rows.toString();
+            Files.writeString(FILE, content, StandardCharsets.UTF_8,
                   StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException ex) {
             LOGGER.warn("Could not append force-gen warship rows to {}: {}", FILE, ex.getMessage());
         }
     }
 
-    private static void collect(ForceDescriptor fd, String path, StringBuilder rows) {
-        if (fd.isElement()) {
-            if (isLargeCraft(fd)) {
-                rows.append(row(fd, path)).append("\n");
+    private static void collect(ForceDescriptor forceDescriptor, String path, StringBuilder rows) {
+        if (forceDescriptor.isElement()) {
+            if (isLargeCraft(forceDescriptor)) {
+                rows.append(row(forceDescriptor, path)).append("\n");
             }
             return;
         }
         // Extend the structural path with this formation's name (Galaxy, Naval Reserve, etc.) so each
         // ship row carries the full chain of named parents it lives under.
-        String name = fd.parseName();
+        String name = forceDescriptor.parseName();
         String childPath = ((name != null) && !name.isBlank())
               ? (path.isEmpty() ? name : path + " > " + name)
               : path;
-        for (ForceDescriptor sub : fd.getSubForces()) {
+        for (ForceDescriptor sub : forceDescriptor.getSubForces()) {
             collect(sub, childPath, rows);
         }
-        for (ForceDescriptor att : fd.getAttached()) {
-            collect(att, childPath, rows);
+        for (ForceDescriptor attachedForce : forceDescriptor.getAttached()) {
+            collect(attachedForce, childPath, rows);
         }
     }
 
-    private static boolean isLargeCraft(ForceDescriptor fd) {
-        Entity en = fd.getEntity();
-        if (en != null) {
-            return en.isLargeCraft();
+    private static boolean isLargeCraft(ForceDescriptor forceDescriptor) {
+        Entity entity = forceDescriptor.getEntity();
+        if (entity != null) {
+            return entity.isLargeCraft();
         }
         // No entity generated: treat it as a large-craft slot (an empty point) if the descriptor was
         // asking for one, so empty WarShip points still get logged.
-        Integer ut = fd.getUnitType();
-        return (ut != null) && ((ut == UnitType.WARSHIP) || (ut == UnitType.DROPSHIP)
-              || (ut == UnitType.JUMPSHIP) || (ut == UnitType.SPACE_STATION));
+        Integer unitType = forceDescriptor.getUnitType();
+        return (unitType != null) && ((unitType == UnitType.WARSHIP) || (unitType == UnitType.DROPSHIP)
+              || (unitType == UnitType.JUMPSHIP) || (unitType == UnitType.SPACE_STATION));
     }
 
-    private static String row(ForceDescriptor fd, String path) {
-        Entity en = fd.getEntity();
-        String chassis = (en != null) ? en.getChassis() : "";
-        String model = (en != null) ? en.getModel() : "";
+    private static String row(ForceDescriptor forceDescriptor, String path) {
+        Entity entity = forceDescriptor.getEntity();
+        String chassis = (entity != null) ? entity.getChassis() : "";
+        String model = (entity != null) ? entity.getModel() : "";
         String commander = "";
         String skill = "";
-        if (fd.getCo() != null) {
-            commander = fd.getCo().getName();
-            skill = fd.getCo().getGunnery() + "/" + fd.getCo().getPiloting();
+        if (forceDescriptor.getCo() != null) {
+            commander = forceDescriptor.getCo().getName();
+            skill = forceDescriptor.getCo().getGunnery() + "/" + forceDescriptor.getCo().getPiloting();
         }
-        String status = (en != null) ? "OK" : "EMPTY";
+        String status = (entity != null) ? "OK" : "EMPTY";
         return String.join(",",
-              safe(fd.getFaction()),
-              (fd.getYear() != null) ? fd.getYear().toString() : "-1",
+              safe(forceDescriptor.getFaction()),
+              (forceDescriptor.getYear() != null) ? forceDescriptor.getYear().toString() : "-1",
               safe(path),
-              safe(fd.getFluffName()),
+              safe(forceDescriptor.getFluffName()),
               safe(chassis),
               safe(model),
               safe(commander),

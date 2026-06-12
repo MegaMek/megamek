@@ -76,29 +76,29 @@ final class WeightBudgetAllocator {
     private static final Map<String, Double> CATEGORY_WEIGHT_PREF = buildCategoryPref();
 
     private static Map<String, Double> buildCategoryPref() {
-        Map<String, Double> m = new HashMap<>();
-        m.put("Assault", 4.0);
-        m.put("Heavy Battle", 3.5);
-        m.put("Direct Fire", 3.3);
-        m.put("Fire", 3.2);
-        m.put("Fire Support", 3.2);
-        m.put("Anti-Air", 3.0);
-        m.put("Battle", 3.0);
-        m.put("Heavy Striker/Cavalry", 3.0);
-        m.put("Heavy Recon", 3.0);
-        m.put("Medium Battle", 2.5);
-        m.put("Urban", 2.3);
-        m.put("Striker/Cavalry", 2.0);
-        m.put("Light Battle", 2.0);
-        m.put("Ranger", 2.0);
-        m.put("Sweep", 1.8);
-        m.put("Probe", 1.8);
-        m.put("Pursuit", 1.6);
-        m.put("Light Fire", 1.6);
-        m.put("Recon", 1.5);
-        m.put("Light Striker/Cavalry", 1.4);
-        m.put("Light Recon", 1.2);
-        return m;
+        Map<String, Double> categoryPref = new HashMap<>();
+        categoryPref.put("Assault", 4.0);
+        categoryPref.put("Heavy Battle", 3.5);
+        categoryPref.put("Direct Fire", 3.3);
+        categoryPref.put("Fire", 3.2);
+        categoryPref.put("Fire Support", 3.2);
+        categoryPref.put("Anti-Air", 3.0);
+        categoryPref.put("Battle", 3.0);
+        categoryPref.put("Heavy Striker/Cavalry", 3.0);
+        categoryPref.put("Heavy Recon", 3.0);
+        categoryPref.put("Medium Battle", 2.5);
+        categoryPref.put("Urban", 2.3);
+        categoryPref.put("Striker/Cavalry", 2.0);
+        categoryPref.put("Light Battle", 2.0);
+        categoryPref.put("Ranger", 2.0);
+        categoryPref.put("Sweep", 1.8);
+        categoryPref.put("Probe", 1.8);
+        categoryPref.put("Pursuit", 1.6);
+        categoryPref.put("Light Fire", 1.6);
+        categoryPref.put("Recon", 1.5);
+        categoryPref.put("Light Striker/Cavalry", 1.4);
+        categoryPref.put("Light Recon", 1.2);
+        return categoryPref;
     }
 
     private WeightBudgetAllocator() {}
@@ -118,8 +118,8 @@ final class WeightBudgetAllocator {
         }
         // Also reshape clusters reached through attached forces (e.g. aerospace/naval clusters
         // attached to a galaxy or touman), mirroring how collectClusters walks attached forces.
-        for (ForceDescriptor att : root.getAttached()) {
-            allocate(att);
+        for (ForceDescriptor attachedForce : root.getAttached()) {
+            allocate(attachedForce);
         }
     }
 
@@ -134,7 +134,7 @@ final class WeightBudgetAllocator {
         for (Leaf leaf : leaves) {
             Integer unitType = leaf.element().getUnitType();
             if (unitType != null) {
-                byType.computeIfAbsent(unitType, k -> new ArrayList<>()).add(leaf);
+                byType.computeIfAbsent(unitType, key -> new ArrayList<>()).add(leaf);
             }
         }
 
@@ -155,53 +155,54 @@ final class WeightBudgetAllocator {
     }
 
     // DFS tracking the nearest STAR ancestor so element slots can be grouped per star.
-    private static void collectLeaves(ForceDescriptor fd, ForceDescriptor currentStar, List<Leaf> out) {
+    private static void collectLeaves(ForceDescriptor forceDescriptor, ForceDescriptor currentStar, List<Leaf> leaves) {
         ForceDescriptor star = currentStar;
-        Integer echelon = fd.getEchelon();
+        Integer echelon = forceDescriptor.getEchelon();
         if ((echelon != null) && (echelon == STAR_ECHELON)) {
-            star = fd;
+            star = forceDescriptor;
         }
         // A leaf unit slot: no children, carries a weight class, and uses the L/M/H/A system (so
         // ProtoMeks and infantry are skipped, matching the prototype). Tested structurally rather than
         // via the element flag, which may not be set until the later fill phase.
-        if (fd.getSubForces().isEmpty() && (fd.getWeightClass() != null) && fd.useWeightClass()) {
-            out.add(new Leaf(fd, star));
+        if (forceDescriptor.getSubForces().isEmpty() && (forceDescriptor.getWeightClass() != null)
+              && forceDescriptor.useWeightClass()) {
+            leaves.add(new Leaf(forceDescriptor, star));
         }
-        for (ForceDescriptor sub : fd.getSubForces()) {
-            collectLeaves(sub, star, out);
+        for (ForceDescriptor sub : forceDescriptor.getSubForces()) {
+            collectLeaves(sub, star, leaves);
         }
     }
 
-    private static void assignBudget(List<Leaf> group, WeightTarget spec) {
-        int n = group.size();
-        if (n == 0) {
+    private static void assignBudget(List<Leaf> group, WeightTarget target) {
+        int slotCount = group.size();
+        if (slotCount == 0) {
             return;
         }
-        Map<Integer, Integer> budget = integerBudget(spec.pct(), spec.spread(), n);
+        Map<Integer, Integer> budget = integerBudget(target.pct(), target.spread(), slotCount);
 
-        List<Integer> tokens = new ArrayList<>(n);
-        for (int wc : WEIGHT_CLASSES_HEAVY_FIRST) {
-            int count = budget.getOrDefault(wc, 0);
+        List<Integer> tokens = new ArrayList<>(slotCount);
+        for (int weightClass : WEIGHT_CLASSES_HEAVY_FIRST) {
+            int count = budget.getOrDefault(weightClass, 0);
             for (int i = 0; i < count; i++) {
-                tokens.add(wc);
+                tokens.add(weightClass);
             }
         }
 
         Map<ForceDescriptor, List<Leaf>> stars = new LinkedHashMap<>();
         for (Leaf leaf : group) {
-            stars.computeIfAbsent(leaf.star(), k -> new ArrayList<>()).add(leaf);
+            stars.computeIfAbsent(leaf.star(), key -> new ArrayList<>()).add(leaf);
         }
 
         List<ForceDescriptor> ordered = new ArrayList<>(stars.keySet());
-        ordered.sort((a, b) -> Double.compare(starPref(b), starPref(a)));
+        ordered.sort((first, second) -> Double.compare(starPref(second), starPref(first)));
 
-        int ti = 0;
+        int tokenIndex = 0;
         for (ForceDescriptor star : ordered) {
             for (Leaf leaf : stars.get(star)) {
-                if (ti < tokens.size()) {
-                    leaf.element().setWeightClass(tokens.get(ti));
+                if (tokenIndex < tokens.size()) {
+                    leaf.element().setWeightClass(tokens.get(tokenIndex));
                 }
-                ti++;
+                tokenIndex++;
             }
         }
     }
@@ -210,34 +211,34 @@ final class WeightBudgetAllocator {
         if (star == null) {
             return DEFAULT_CATEGORY_PREF;
         }
-        FormationType ft = star.getFormation();
-        if (ft == null) {
+        FormationType formationType = star.getFormation();
+        if (formationType == null) {
             return DEFAULT_CATEGORY_PREF;
         }
-        return CATEGORY_WEIGHT_PREF.getOrDefault(ft.getName(), DEFAULT_CATEGORY_PREF);
+        return CATEGORY_WEIGHT_PREF.getOrDefault(formationType.getName(), DEFAULT_CATEGORY_PREF);
     }
 
     /**
-     * Largest-remainder integer allocation of {@code n} slots across L/M/H/A from a target percentage map, with
+     * Largest-remainder integer allocation of {@code slotCount} slots across L/M/H/A from a target percentage map, with
      * optional +/- spread jitter. Mirrors ratgen_sim.py {@code _integer_budget}. The result always sums to exactly
-     * {@code n}.
+     * {@code slotCount}.
      *
-     * @param pct    target percentage by weight-class int (missing classes treated as 0)
-     * @param spread +/- percentage-point jitter applied per class before normalizing (0 = none)
-     * @param n      total number of slots to distribute
+     * @param targetPercentages target percentage by weight-class int (missing classes treated as 0)
+     * @param spread            +/- percentage-point jitter applied per class before normalizing (0 = none)
+     * @param slotCount         total number of slots to distribute
      *
-     * @return integer slot count by weight-class int, summing to {@code n}
+     * @return integer slot count by weight-class int, summing to {@code slotCount}
      */
-    static Map<Integer, Integer> integerBudget(Map<Integer, Double> pct, double spread, int n) {
-        int[] classes = { EntityWeightClass.WEIGHT_LIGHT, EntityWeightClass.WEIGHT_MEDIUM,
-                          EntityWeightClass.WEIGHT_HEAVY, EntityWeightClass.WEIGHT_ASSAULT };
+    static Map<Integer, Integer> integerBudget(Map<Integer, Double> targetPercentages, double spread, int slotCount) {
+        int[] weightClasses = { EntityWeightClass.WEIGHT_LIGHT, EntityWeightClass.WEIGHT_MEDIUM,
+                                EntityWeightClass.WEIGHT_HEAVY, EntityWeightClass.WEIGHT_ASSAULT };
         Map<Integer, Double> jittered = new HashMap<>();
         double total = 0.0;
-        for (int wc : classes) {
-            double base = pct.getOrDefault(wc, 0.0);
+        for (int weightClass : weightClasses) {
+            double base = targetPercentages.getOrDefault(weightClass, 0.0);
             double jitter = (spread > 0) ? ((Compute.randomInt(2001) / 1000.0 - 1.0) * spread) : 0.0;
             double value = Math.max(0.0, base + jitter);
-            jittered.put(wc, value);
+            jittered.put(weightClass, value);
             total += value;
         }
         if (total <= 0.0) {
@@ -246,23 +247,23 @@ final class WeightBudgetAllocator {
         Map<Integer, Double> raw = new HashMap<>();
         Map<Integer, Integer> budget = new HashMap<>();
         int assigned = 0;
-        for (int wc : classes) {
-            double scaled = jittered.get(wc) / total * n;
-            raw.put(wc, scaled);
+        for (int weightClass : weightClasses) {
+            double scaled = jittered.get(weightClass) / total * slotCount;
+            raw.put(weightClass, scaled);
             int floor = (int) Math.floor(scaled);
-            budget.put(wc, floor);
+            budget.put(weightClass, floor);
             assigned += floor;
         }
-        int leftover = n - assigned;
+        int leftover = slotCount - assigned;
         List<Integer> order = new ArrayList<>();
-        for (int wc : classes) {
-            order.add(wc);
+        for (int weightClass : weightClasses) {
+            order.add(weightClass);
         }
-        order.sort((a, b) -> Double.compare(raw.get(b) - Math.floor(raw.get(b)),
-              raw.get(a) - Math.floor(raw.get(a))));
-        for (int k = 0; k < leftover; k++) {
-            int wc = order.get(k % order.size());
-            budget.put(wc, budget.get(wc) + 1);
+        order.sort((first, second) -> Double.compare(raw.get(second) - Math.floor(raw.get(second)),
+              raw.get(first) - Math.floor(raw.get(first))));
+        for (int index = 0; index < leftover; index++) {
+            int weightClass = order.get(index % order.size());
+            budget.put(weightClass, budget.get(weightClass) + 1);
         }
         return budget;
     }

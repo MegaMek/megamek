@@ -44,6 +44,7 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.actions.LayExplosivesAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -650,7 +651,13 @@ public class EntitySprite extends Sprite {
                 }
 
                 if (inf.turnsLayingExplosives >= 0) {
-                    stStr.add(new Status(GUIP.getPrecautionColor(), "Working", DIRECT));
+                    int turnsSpent = Math.min(inf.turnsLayingExplosives,
+                          LayExplosivesAttackAction.MAX_TURNS_LAYING_EXPLOSIVES);
+                    // Keep this label short: non-small statuses draw centered in the hex-sized sprite buffer
+                    // and longer text gets clipped at its edges
+                    stStr.add(new Status(GUIP.getPrecautionColor(),
+                          "Rigging " + turnsSpent + "/" + LayExplosivesAttackAction.MAX_TURNS_LAYING_EXPLOSIVES,
+                          DIRECT));
                     stStr.add(new Status(Color.PINK, "E", SMALL));
                 }
             }

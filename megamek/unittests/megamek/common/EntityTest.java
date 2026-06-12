@@ -55,6 +55,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.ComputeECM;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.game.Game;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.options.OptionsConstants;
@@ -935,6 +936,138 @@ class EntityTest {
                 // Assert
                 assertFalse(result);
             }
+        }
+    }
+
+    /**
+     * Tests for {@link Entity#canLayDemolitionCharges()} and its interaction with
+     * {@link Entity#isEligibleForPhysical()}. Regression tests for issue #6614: carrying a Demolition Charge must not
+     * prevent Battle Armor from making vibroclaw attacks in the physical phase.
+     */
+    @Nested
+    class DemolitionChargeEligibilityTests {
+
+        private static final Coords BUILDING_COORDS = new Coords(1, 1);
+        private static final Coords CLEAR_COORDS = new Coords(2, 2);
+
+        private Game createGameWithBuildingHex() {
+            Game game = new Game();
+            int width = 4, height = 4;
+            Hex[] hexes = new Hex[width * height];
+            for (int i = 0; i < hexes.length; i++) {
+                hexes[i] = new Hex(0);
+            }
+            game.setBoard(1, new Board(width, height, hexes));
+            Hex buildingHex = game.getBoard(1).getHex(BUILDING_COORDS);
+            buildingHex.addTerrain(new Terrain(Terrains.BUILDING, 2));
+            buildingHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, 1));
+            buildingHex.addTerrain(new Terrain(Terrains.BLDG_CF, 40));
+            return game;
+        }
+
+        private BattleArmor createBattleArmor(Game game, int id, Player owner, Coords position,
+              boolean withDemolitionCharge, boolean withVibroClaws) throws Exception {
+            BattleArmor battleArmor = new BattleArmor();
+            battleArmor.setId(id);
+            battleArmor.setOwner(owner);
+            battleArmor.setCrew(new Crew(CrewType.INFANTRY_CREW));
+            battleArmor.setSquadSize(4);
+            battleArmor.autoSetInternal();
+            if (withDemolitionCharge) {
+                battleArmor.addEquipment(EquipmentType.get(EquipmentTypeLookup.DEMOLITION_CHARGE),
+                      BattleArmor.LOC_SQUAD);
+            }
+            if (withVibroClaws) {
+                battleArmor.addEquipment(EquipmentType.get("BABattleClawVibro"), BattleArmor.LOC_SQUAD);
+            }
+            battleArmor.setPosition(position);
+            battleArmor.setBoardId(1);
+            battleArmor.setDeployed(true);
+            game.addEntity(battleArmor);
+            return battleArmor;
+        }
+
+        private Infantry createEnemyInfantry(Game game, int id, Player owner, Coords position) {
+            Infantry infantry = new ConvInfantry();
+            infantry.setId(id);
+            infantry.setOwner(owner);
+            infantry.setCrew(new Crew(CrewType.INFANTRY_CREW));
+            infantry.setSquadSize(7);
+            infantry.autoSetInternal();
+            infantry.setPosition(position);
+            infantry.setBoardId(1);
+            infantry.setDeployed(true);
+            game.addEntity(infantry);
+            return infantry;
+        }
+
+        @Test
+        void battleArmorWithDemolitionChargeCanStillMakeVibroClawAttacks() throws Exception {
+            // Arrange - regression test for #6614: BA with a demolition charge outside a building hex,
+            // enemy infantry in the same hex, must remain eligible for the physical phase (vibroclaw attack)
+            Game game = createGameWithBuildingHex();
+            Player player1 = new Player(1, "Player 1");
+            Player player2 = new Player(2, "Player 2");
+            game.addPlayer(1, player1);
+            game.addPlayer(2, player2);
+
+            BattleArmor battleArmor = createBattleArmor(game, 1, player1, CLEAR_COORDS, true, true);
+            createEnemyInfantry(game, 2, player2, CLEAR_COORDS);
+
+            // Act
+            boolean result = battleArmor.isEligibleForPhysical();
+
+            // Assert
+            assertTrue(result,
+                  "BA carrying a demolition charge must still be eligible for vibroclaw attacks (#6614)");
+        }
+
+        @Test
+        void infantryWithDemolitionChargeInBuildingIsEligibleForPhysical() throws Exception {
+            // Arrange - laying demolition charges is a physical-phase action, so a demo-equipped unit
+            // standing in a building hex must be eligible even without any attackable target
+            Game game = createGameWithBuildingHex();
+            Player player1 = new Player(1, "Player 1");
+            game.addPlayer(1, player1);
+
+            BattleArmor battleArmor = createBattleArmor(game, 1, player1, BUILDING_COORDS, true, false);
+
+            // Act
+            boolean result = battleArmor.isEligibleForPhysical();
+
+            // Assert
+            assertTrue(result, "Unit with a demolition charge in a building hex must be eligible to lay charges");
+        }
+
+        @Test
+        void canLayDemolitionChargesRequiresBuildingHex() throws Exception {
+            // Arrange
+            Game game = createGameWithBuildingHex();
+            Player player1 = new Player(1, "Player 1");
+            game.addPlayer(1, player1);
+
+            BattleArmor inBuilding = createBattleArmor(game, 1, player1, BUILDING_COORDS, true, false);
+            BattleArmor inClear = createBattleArmor(game, 2, player1, CLEAR_COORDS, true, false);
+
+            // Act & Assert
+            assertTrue(inBuilding.canLayDemolitionCharges(),
+                  "Demo-equipped unit in a building hex can lay charges");
+            assertFalse(inClear.canLayDemolitionCharges(),
+                  "Demo-equipped unit outside a building hex cannot lay charges");
+        }
+
+        @Test
+        void canLayDemolitionChargesRequiresDemolitionCharge() throws Exception {
+            // Arrange
+            Game game = createGameWithBuildingHex();
+            Player player1 = new Player(1, "Player 1");
+            game.addPlayer(1, player1);
+
+            BattleArmor noCharge = createBattleArmor(game, 1, player1, BUILDING_COORDS, false, false);
+
+            // Act & Assert
+            assertFalse(noCharge.canLayDemolitionCharges(),
+                  "Unit without a demolition charge cannot lay charges");
         }
     }
 }

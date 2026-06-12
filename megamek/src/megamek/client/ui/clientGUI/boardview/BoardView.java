@@ -1178,6 +1178,9 @@ public final class BoardView extends AbstractBoardView
         // Minefield signs all over the place!
         drawMinefields(graphics2D);
 
+        // Demolition charges set by the local player
+        drawDemolitionCharges(graphics2D);
+
         // Artillery targets
         drawArtilleryHexes(graphics2D);
 
@@ -1954,6 +1957,113 @@ public final class BoardView extends AbstractBoardView
         }
     }
 
+    /**
+     * Draws an indicator on every hex holding a demolition charge set by the local player, so the player can keep track
+     * of armed charges until they are touched off (TO:AUE p.152). Charges are only visible to their owner.
+     *
+     * @param graphics2D the graphics context to draw on
+     */
+    private void drawDemolitionCharges(Graphics2D graphics2D) {
+        if (localPlayer == null) {
+            return;
+        }
+        Rectangle view = graphics2D.getClipBounds();
+        // only update visible hexes
+        int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
+        int drawY = (view.y / (int) (HEX_H * scale)) - 1;
+
+        int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
+        int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
+
+        int maxX = drawX + drawWidth;
+        int maxY = drawY + drawHeight;
+
+        Board board = game.getBoard(boardId);
+        for (IBuilding building : board.getBuildingsVector()) {
+            for (DemolitionCharge charge : building.getDemolitionCharges()) {
+                if (charge.playerId != localPlayer.getId()) {
+                    continue;
+                }
+                Coords coords = charge.pos;
+                // If the coords aren't visible, skip
+                if ((coords.getX() < drawX)
+                      || (coords.getX() > maxX)
+                      || (coords.getY() < drawY)
+                      || (coords.getY() > maxY)
+                      || !board.contains(coords)) {
+                    continue;
+                }
+
+                Point hexLocation = getHexLocation(coords);
+                drawDemolitionChargeLabel(graphics2D, hexLocation,
+                      Messages.getString("BoardView1.demoChargeSet", charge.damage));
+            }
+        }
+    }
+
+    private static final Color DEMO_CHARGE_OUTLINE_COLOR = new Color(0, 0, 0, 200);
+
+    /**
+     * Draws the armed-charge marker: a crosshair centered in the hex to clearly mark the rigged hex, with the damage
+     * label on a dark backing pill below it so it stays readable over any terrain and is clearly distinct from unit
+     * status tags.
+     *
+     * @param graphics2D  the graphics context to draw on
+     * @param hexLocation the pixel location of the hex
+     * @param label       the label text
+     */
+    private void drawDemolitionChargeLabel(Graphics2D graphics2D, Point hexLocation, String label) {
+        // The marker color is a client setting so players can adjust it for color vision deficiencies
+        // and for visibility against the terrain colors of the current map
+        Color demolitionChargeColor = GUIP.getDemolitionChargeColor();
+        int centerX = hexLocation.x + (hex_size.width / 2);
+        int centerY = hexLocation.y + (hex_size.height / 2);
+        int radius = Math.max(3, (int) (7 * scale));
+        int tickLength = Math.max(2, (int) (4 * scale));
+
+        Stroke oldStroke = graphics2D.getStroke();
+        // Outline pass (thicker, dark) below the colored pass keeps the crosshair visible on any terrain
+        graphics2D.setStroke(new BasicStroke(Math.max(2.5f, 3f * scale)));
+        graphics2D.setColor(DEMO_CHARGE_OUTLINE_COLOR);
+        drawCrosshair(graphics2D, centerX, centerY, radius, tickLength);
+        graphics2D.setStroke(new BasicStroke(Math.max(1f, 1.5f * scale)));
+        graphics2D.setColor(demolitionChargeColor);
+        drawCrosshair(graphics2D, centerX, centerY, radius, tickLength);
+        graphics2D.setStroke(oldStroke);
+
+        // Damage label on a dark backing pill below the crosshair
+        FontMetrics metrics = boardPanel.getFontMetrics(font_minefield);
+        int stringWidth = metrics.stringWidth(label);
+        int labelX = centerX - (stringWidth / 2);
+        int labelY = centerY + radius + tickLength + metrics.getAscent() + 2;
+
+        graphics2D.setColor(new Color(0, 0, 0, 160));
+        graphics2D.fillRoundRect(labelX - 4, labelY - metrics.getAscent() - 1,
+              stringWidth + 8, metrics.getAscent() + metrics.getDescent() + 2, 8, 8);
+
+        graphics2D.setFont(font_minefield);
+        graphics2D.setColor(demolitionChargeColor);
+        graphics2D.drawString(label, labelX, labelY);
+    }
+
+    /**
+     * Draws a crosshair: a circle with four tick lines extending outward at the cardinal points and a center dot.
+     *
+     * @param graphics2D the graphics context to draw on
+     * @param centerX    the x pixel coordinate of the crosshair center
+     * @param centerY    the y pixel coordinate of the crosshair center
+     * @param radius     the circle radius in pixels
+     * @param tickLength the length of the tick lines in pixels
+     */
+    private void drawCrosshair(Graphics2D graphics2D, int centerX, int centerY, int radius, int tickLength) {
+        graphics2D.drawOval(centerX - radius, centerY - radius, radius * 2, radius * 2);
+        graphics2D.drawLine(centerX, centerY - radius - tickLength, centerX, centerY - radius + tickLength);
+        graphics2D.drawLine(centerX, centerY + radius - tickLength, centerX, centerY + radius + tickLength);
+        graphics2D.drawLine(centerX - radius - tickLength, centerY, centerX - radius + tickLength, centerY);
+        graphics2D.drawLine(centerX + radius - tickLength, centerY, centerX + radius + tickLength, centerY);
+        graphics2D.fillOval(centerX - 1, centerY - 1, 3, 3);
+    }
+
     private void drawCenteredString(String string, int x, int y, Font font, Graphics2D graphics2D) {
         FontMetrics currentMetrics = boardPanel.getFontMetrics(font);
         int stringWidth = currentMetrics.stringWidth(string);
@@ -1987,6 +2097,9 @@ public final class BoardView extends AbstractBoardView
         if (!ignoreUnits) {
             // Minefield signs all over the place!
             drawMinefields(boardGraph);
+
+            // Demolition charges set by the local player
+            drawDemolitionCharges(boardGraph);
 
             // Artillery targets
             drawArtilleryHexes(boardGraph);

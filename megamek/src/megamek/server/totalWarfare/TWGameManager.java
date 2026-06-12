@@ -749,14 +749,7 @@ public class TWGameManager extends AbstractGameManager {
                     receiveForwardIni(connId);
                     break;
                 case BLDG_EXPLODE:
-                    DemolitionCharge charge = (DemolitionCharge) packet.data()[0];
-                    if (charge.playerId == connId) {
-                        if (!explodingCharges.contains(charge)) {
-                            explodingCharges.add(charge);
-                            Player p = game.getPlayer(connId);
-                            sendServerChat(p.getName() + " has touched off explosives " + "(handled in end phase)!");
-                        }
-                    }
+                    receiveExplodeBuilding(packet, connId);
                     break;
                 case ENTITY_MOVE:
                     receiveMovement(packet, connId);
@@ -15761,19 +15754,45 @@ public class TWGameManager extends AbstractGameManager {
      * explosives
      */
     void checkLayExplosives() {
-        // Report continuing explosive work
+        // Report continuing explosive work; auto-finish platoons that reached the maximum of 6 turns
+        // (TO:AUE p.152) since additional turns add no further damage. A platoon that was displaced out of
+        // the target hex (e.g. by a charge or a collapsing building) abandons the work; Infantry#newRound
+        // would also catch this, but silently - reporting it here tells the player the progress was lost.
         for (Entity e : game.getEntitiesVector()) {
             if (!(e instanceof Infantry inf)) {
                 continue;
             }
-            if (inf.turnsLayingExplosives > 0) {
+            if (inf.turnsLayingExplosives < 0) {
+                continue;
+            }
+            if (!inf.isInDemolishableStructureHex()) {
+                inf.turnsLayingExplosives = -1;
+                Report r = new Report(4273);
+                r.subject = inf.getId();
+                r.addDesc(inf);
+                addReport(r);
+            } else if (inf.turnsLayingExplosives >= LayExplosivesAttackAction.MAX_TURNS_LAYING_EXPLOSIVES) {
+                finishLayingExplosives(inf, LayExplosivesAttackAction.getDamageFor(inf));
+            } else if (inf.turnsLayingExplosives > 0) {
                 Report r = new Report(4271);
                 r.subject = inf.getId();
                 r.addDesc(inf);
+                r.add(inf.turnsLayingExplosives);
+                r.add(LayExplosivesAttackAction.MAX_TURNS_LAYING_EXPLOSIVES);
+                r.add(LayExplosivesAttackAction.getDamageFor(inf));
                 addReport(r);
             }
         }
         // Check for touched-off explosives
+        resolveExplodingCharges();
+    }
+
+    /**
+     * Resolves all announced demolition charge detonations, TO:AUE p.152: each charge is removed from its building and
+     * inflicts its damage on the rigged structure hex. Called during End Phase processing and immediately when a
+     * detonation is announced during the End Phase report (the announcement must resolve in the same End Phase).
+     */
+    void resolveExplodingCharges() {
         Vector<IBuilding> updatedBuildings = new Vector<>();
         for (DemolitionCharge charge : explodingCharges) {
             IBuilding bldg = game.getBoard().getBuildingAt(charge.pos);
@@ -15793,6 +15812,34 @@ public class TWGameManager extends AbstractGameManager {
         }
         explodingCharges.clear();
         sendChangedBuildings(updatedBuildings);
+    }
+
+    /**
+     * Receives a demolition charge detonation announcement, TO:AUE p.152. During the End Phase and its report, the
+     * detonation resolves immediately - the rules let the player announce it "during any subsequent End Phase" and the
+     * damage applies in that same phase, but the automatic end-phase processing has already run by the time the
+     * announcement arrives. At any other time (e.g. a map menu touch-off in an earlier phase) the charge is queued and
+     * resolves in the upcoming End Phase.
+     *
+     * @param packet the packet carrying the {@link DemolitionCharge}
+     * @param connId the connection ID of the announcing player
+     */
+    private void receiveExplodeBuilding(Packet packet, int connId) {
+        DemolitionCharge charge = (DemolitionCharge) packet.data()[0];
+        if ((charge.playerId != connId) || explodingCharges.contains(charge)) {
+            return;
+        }
+        explodingCharges.add(charge);
+        Player player = game.getPlayer(connId);
+        GamePhase phase = game.getPhase();
+        if ((phase == GamePhase.END) || (phase == GamePhase.END_REPORT)) {
+            sendServerChat(player.getName() + " has touched off explosives!");
+            resolveExplodingCharges();
+            applyBuildingDamage();
+            sendReport();
+        } else {
+            sendServerChat(player.getName() + " has touched off explosives (handled in end phase)!");
+        }
     }
 
     /**
@@ -16471,22 +16518,33 @@ public class TWGameManager extends AbstractGameManager {
                 r.addDesc(inf);
                 addReport(r);
             } else {
-                IBuilding building = game.getBoard().getBuildingAt(ae.getPosition());
-                if (building != null) {
-                    building.addDemolitionCharge(ae.getOwner().getId(), pr.damage, ae.getPosition());
-                    Report r = new Report(4275);
-                    r.subject = inf.getId();
-                    r.addDesc(inf);
-                    r.add(pr.damage);
-                    addReport(r);
-                    // Update clients with this info
-                    Vector<IBuilding> updatedBuildings = new Vector<>();
-                    updatedBuildings.add(building);
-                    sendChangedBuildings(updatedBuildings);
-                }
-                inf.turnsLayingExplosives = -1;
+                finishLayingExplosives(inf, pr.damage);
             }
         }
+    }
+
+    /**
+     * Finishes a platoon's demolition charge work, TO:AUE p.152: places the accumulated charge on the building in the
+     * platoon's hex and frees the platoon from the laying process.
+     *
+     * @param infantry the platoon that ceases planting charges
+     * @param damage   the accumulated demolition charge damage
+     */
+    private void finishLayingExplosives(Infantry infantry, int damage) {
+        IBuilding building = game.getBoard().getBuildingAt(infantry.getPosition());
+        if (building != null) {
+            building.addDemolitionCharge(infantry.getOwner().getId(), damage, infantry.getPosition());
+            Report r = new Report(4275);
+            r.subject = infantry.getId();
+            r.addDesc(infantry);
+            r.add(damage);
+            addReport(r);
+            // Update clients with this info
+            Vector<IBuilding> updatedBuildings = new Vector<>();
+            updatedBuildings.add(building);
+            sendChangedBuildings(updatedBuildings);
+        }
+        infantry.turnsLayingExplosives = -1;
     }
 
     /**

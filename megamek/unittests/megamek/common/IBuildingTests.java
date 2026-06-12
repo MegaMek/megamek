@@ -36,6 +36,7 @@ package megamek.common;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.stream.Stream;
@@ -51,6 +52,7 @@ import megamek.common.units.DemolitionCharge;
 import megamek.common.units.IBuilding;
 import megamek.common.units.MobileStructure;
 import megamek.common.units.Terrains;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -319,6 +321,10 @@ public class IBuildingTests extends GameBoardTestCase {
         building.addDemolitionCharge(1, 10, testCoords);
         assertEquals(1, building.getDemolitionCharges().size(),
               String.format("%s: should have 1 demolition charge after adding", implName));
+        // Regression check for #8330: the charge must keep the absolute board coordinates it was placed at,
+        // otherwise the touch-off menu and end-phase detonation cannot find it again
+        assertEquals(testCoords, building.getDemolitionCharges().getFirst().pos,
+              String.format("%s: demolition charge must store absolute board coordinates", implName));
 
         // Add another charge
         building.addDemolitionCharge(2, 20, testCoords);
@@ -330,6 +336,20 @@ public class IBuildingTests extends GameBoardTestCase {
         building.removeDemolitionCharge(charge);
         assertEquals(1, building.getDemolitionCharges().size(),
               String.format("%s: should have 1 demolition charge after removing", implName));
+    }
+
+    @Test
+    void mobileStructuresRejectDemolitionCharges() {
+        // Demolition charges anchor to a board hex, which a mobile structure can move away from. Until mobile
+        // structures are implemented (and the rules team decides whether they are valid demolition targets),
+        // placing a charge on one must fail loudly instead of silently leaving an orphaned charge on the map.
+        // Construction is inside the lambda because the MobileStructure constructor itself currently throws;
+        // once the class becomes constructible, this test still requires addDemolitionCharge to throw until a
+        // real implementation overrides it.
+        assertThrows(UnsupportedOperationException.class, () -> {
+            MobileStructure mobileStructure = new MobileStructure(BuildingType.MEDIUM, 1);
+            mobileStructure.addDemolitionCharge(1, 10, new Coords(0, 0));
+        }, "MobileStructure must reject demolition charges until it provides a real implementation");
     }
 
     @ParameterizedTest(name = "{0} - Hex counts")

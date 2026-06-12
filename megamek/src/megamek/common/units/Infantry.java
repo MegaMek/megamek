@@ -442,8 +442,11 @@ public abstract class Infantry extends Entity {
     public void newRound(int roundNumber) {
         if (turnsLayingExplosives >= 0) {
             turnsLayingExplosives++;
-            if (!isInBuilding()) {
-                turnsLayingExplosives = -1; // give up if no longer in a building
+            // Give up if no longer in the target structure's hex (building, bridge or fuel tank, TO:AUE p.152).
+            // This deliberately matches the eligibility check for starting to lay charges so that a platoon that
+            // could start (e.g. on a building roof or on a bridge) does not silently abandon its work next round.
+            if (!isInDemolishableStructureHex()) {
+                turnsLayingExplosives = -1;
             }
         }
 

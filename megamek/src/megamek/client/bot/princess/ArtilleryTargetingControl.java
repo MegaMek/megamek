@@ -397,6 +397,23 @@ public class ArtilleryTargetingControl {
     }
 
     /**
+     * Checks whether the given target is one of the hexes the player ordered a fire mission at via the artillery chat
+     * command (barrage/volley/single orders).
+     *
+     * @param artilleryCommandAndControl The bot's artillery command state
+     * @param target                     The target being evaluated
+     *
+     * @return TRUE if the target is an ordered fire mission hex
+     */
+    boolean isOrderedFireMissionTarget(ArtilleryCommandAndControl artilleryCommandAndControl,
+          Targetable target) {
+        boolean orderedFireMission = artilleryCommandAndControl.isArtilleryBarrage()
+              || artilleryCommandAndControl.isArtilleryVolley()
+              || artilleryCommandAndControl.isArtillerySingle();
+        return orderedFireMission && artilleryCommandAndControl.contains(target.getPosition());
+    }
+
+    /**
      * Calculate an indirect artillery "fire plan", taking into account the possibility of rotating the turret.
      *
      * @param shooter Entity doing the shooting
@@ -447,11 +464,10 @@ public class ArtilleryTargetingControl {
                 return returnValue;
             }
         }
-        // when doing volleys, each unit can shoot only once, after all of them have shoot, they will have to sit and wait.
-        if (artilleryCommandAndControl.isArtilleryVolley()) {
-            if (!artilleryCommandAndControl.setShooter(shooter)) {
-                return returnValue;
-            }
+        // when doing volleys, each unit can shoot only once, after all of them have shot, they will have to sit
+        // and wait. The shooter is only marked as having fired once we know it actually has an attack to make.
+        if (artilleryCommandAndControl.isArtilleryVolley() && artilleryCommandAndControl.hasAlreadyFired(shooter)) {
+            return returnValue;
         }
         // loop through all weapons on entity
         // each indirect artillery piece randomly picks a target from the priority list
@@ -461,10 +477,14 @@ public class ArtilleryTargetingControl {
         // Track ADA and Flak WFIs separately.
         EnumSet<AmmoType.Munitions> aaMunitions = EnumSet.of(AmmoType.Munitions.M_CLUSTER, AmmoType.Munitions.M_FLAK);
         List<WeaponFireInfo> topValuedFlakInfos = new ArrayList<>();
+        boolean artilleryAttackPlanned = false;
         for (WeaponMounted currentWeapon : shooter.getWeaponList()) {
             List<WeaponFireInfo> topValuedFireInfos = new ArrayList<>();
             double maxDamage = 0;
-            if (currentWeapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            // a SINGLE fire mission halts itself after the first weapon fires, which must also stop the
+            // remaining artillery weapons on this unit (TAG weapons are still processed below)
+            if (currentWeapon.getType().hasFlag(WeaponType.F_ARTILLERY)
+                  && !artilleryCommandAndControl.isArtilleryHalted()) {
                 WeaponType wType = currentWeapon.getType();
                 int damage = wType.getRackSize(); // crazy, but rack size appears to correspond to given damage values
                 // for arty pieces in TacOps
@@ -515,11 +535,18 @@ public class ArtilleryTargetingControl {
                                 damageValue = (target.isAirborne() && homing) ? 0 : damage;
                             } else {
                                 if (!isADA) {
-                                    damageValue = calculateDamageValue(damage,
-                                          (HexTarget) target,
-                                          shooter,
-                                          game,
-                                          owner);
+                                    if (isOrderedFireMissionTarget(artilleryCommandAndControl, target)) {
+                                        // Hexes from a player fire mission order (barrage/volley/single) are
+                                        // commands: fire at them even if no units are near them (e.g. area
+                                        // denial), instead of valuing them by expected damage to nearby units.
+                                        damageValue = damage;
+                                    } else {
+                                        damageValue = calculateDamageValue(damage,
+                                              (HexTarget) target,
+                                              shooter,
+                                              game,
+                                              owner);
+                                    }
                                 } else {
                                     // No ADA attacks except at Entities; no Flak attacks except direct fire
                                     continue;
@@ -605,11 +632,6 @@ public class ArtilleryTargetingControl {
                     ArtilleryAttackAction aaa = (ArtilleryAttackAction) actualFireInfo.buildWeaponAttackAction();
                     HelperAmmo ammo = findAmmo(shooter, actualFireInfo.getWeapon(), actualFireInfo.getAmmo());
 
-                    if (artilleryCommandAndControl.isArtillerySingle()) {
-                        artilleryCommandAndControl.setArtilleryOrder(ArtilleryCommandAndControl.ArtilleryOrder.HALT);
-                        artilleryCommandAndControl.removeArtilleryTargets();
-                    }
-
                     if (ammo.equipmentNum > NO_AMMO) {
                         // This can happen if princess is towing ammo trailers, which she really
                         // shouldn't be doing...
@@ -619,11 +641,19 @@ public class ArtilleryTargetingControl {
                         actualFireInfo.setAction(aaa);
                         returnValue.add(actualFireInfo);
                         returnValue.setUtility(returnValue.getUtility() + maxDamage);
+                        artilleryAttackPlanned = true;
                         owner.sendAmmoChange(
                               shooter.getId(),
                               shooter.getEquipmentNum(actualFireInfo.getWeapon()),
                               ammo.equipmentNum,
                               actualFireInfo.getAmmo().getSwitchedReason());
+
+                        if (artilleryCommandAndControl.isArtillerySingle()) {
+                            // a single fire mission is complete after one weapon has actually fired:
+                            // halt the artillery and clear the ordered targets
+                            artilleryCommandAndControl.setArtilleryOrder(ArtilleryCommandAndControl.ArtilleryOrder.HALT);
+                            artilleryCommandAndControl.removeArtilleryTargets();
+                        }
                     }
                 }
             } else if (currentWeapon.getType().hasFlag(WeaponType.F_TAG)) {
@@ -647,6 +677,12 @@ public class ArtilleryTargetingControl {
                 returnValue.add(tagInfo);
                 returnValue.setUtility(returnValue.getUtility() + tagInfo.getProbabilityToHit());
             }
+        }
+
+        // when doing a volley, only mark the shooter as having taken its shot if it actually fired -
+        // otherwise a unit that could not fire this round would lose its volley shot without shooting
+        if (artilleryCommandAndControl.isArtilleryVolley() && artilleryAttackPlanned) {
+            artilleryCommandAndControl.setShooter(shooter);
         }
 
         shooter.setSecondaryFacing(originalFacing);

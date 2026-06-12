@@ -185,6 +185,7 @@ public class ChatProcessor {
         String command = tokenizer.nextToken().trim();
         if (command.length() < 2) {
             princess.sendChat("I do not recognize that command.");
+            return;
         }
 
         // Any remaining tokens should be the command arguments.

@@ -382,7 +382,13 @@ public class Princess extends BotClient {
         return getBehaviorSettings().isForcedWithdrawal();
     }
 
-    private void setFleeBoard(final boolean fleeBoard, final String reason) {
+    /**
+     * Sets whether Princess-controlled units are allowed to flee off the board once they reach their destination edge.
+     *
+     * @param fleeBoard TRUE if units should leave the board when they reach their destination edge.
+     * @param reason    The reason for the change, used for logging.
+     */
+    public void setFleeBoard(final boolean fleeBoard, final String reason) {
         LOGGER.debug("Setting Flee Board {} because: {}", fleeBoard, reason);
 
         this.fleeBoard = fleeBoard;

@@ -149,6 +149,17 @@ public class ArtilleryCommandAndControl {
         return shooterUnits.add(shooter.getId());
     }
 
+    /**
+     * Checks whether the given unit has already taken its shot during the current volley fire mission.
+     *
+     * @param shooter the shooter unit
+     *
+     * @return true if the shooter has already fired during this volley
+     */
+    public boolean hasAlreadyFired(Entity shooter) {
+        return shooterUnits.contains(shooter.getId());
+    }
+
     public void reset() {
         shooterUnits.clear();
         artilleryTargets.clear();

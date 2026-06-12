@@ -53,9 +53,13 @@ import javax.swing.JSeparator;
 import javax.swing.UIManager;
 
 import megamek.client.Client;
+import megamek.client.bot.princess.ArtilleryCommandAndControl.ArtilleryOrder;
+import megamek.client.bot.princess.ArtilleryCommandAndControl.SpecialAmmo;
 import megamek.client.bot.princess.CardinalEdge;
+import megamek.client.bot.princess.ChatCommands;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.client.ui.dialogs.NoteDialog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
@@ -417,6 +421,7 @@ public class MapMenu extends JPopupMenu {
         JMenu targetHexMenu = createTargetHexMenuItem(bot);
         menu.add(targetHexMenu);
         menu.add(createWaypointMenu(bot));
+        menu.add(createArtilleryMenu(bot));
         for (Entity entity : client.getGame().getEntitiesVector(coords)) {
             prioritizeTargetUnitMenu.add(createPrioritizeTargetUnitMenu(bot, entity));
             ignoreTargetMenu.add(createIgnoreTargetUnitMenu(bot, entity));
@@ -446,61 +451,48 @@ public class MapMenu extends JPopupMenu {
         return menu;
     }
 
-    JMenu createHerdingMenu(Player bot) {
-        JMenu menu = new JMenu(Messages.getString("Bot.commands.herding"));
+    /**
+     * Creates a menu with "+" and "-" items that increase or decrease one of the bot's behavior indexes through the
+     * given chat command.
+     *
+     * @param bot         The bot player to send the command to
+     * @param messageKey  The resource key for the menu title
+     * @param chatCommand The behavior index chat command to send
+     *
+     * @return The created menu
+     */
+    private JMenu createBehaviorAdjustmentMenu(Player bot, String messageKey, ChatCommands chatCommand) {
+        JMenu menu = new JMenu(Messages.getString(messageKey));
         JMenuItem item = new JMenuItem("+");
-        item.addActionListener(evt -> client.sendChat(String.format("%s: herd : +", bot.getName())));
+        item.addActionListener(evt ->
+              client.sendChat(String.format("%s: %s : +", bot.getName(), chatCommand.getCommand())));
         menu.add(item);
         item = new JMenuItem("-");
-        item.addActionListener(evt -> client.sendChat(String.format("%s: herd : -", bot.getName())));
+        item.addActionListener(evt ->
+              client.sendChat(String.format("%s: %s : -", bot.getName(), chatCommand.getCommand())));
         menu.add(item);
         return menu;
+    }
+
+    JMenu createHerdingMenu(Player bot) {
+        return createBehaviorAdjustmentMenu(bot, "Bot.commands.herding", ChatCommands.HERDING);
     }
 
     JMenu createBraveryMenu(Player bot) {
-        JMenu menu = new JMenu(Messages.getString("Bot.commands.bravery"));
-        JMenuItem item = new JMenuItem("+");
-        item.addActionListener(evt -> client.sendChat(String.format("%s: brave : +", bot.getName())));
-        menu.add(item);
-        item = new JMenuItem("-");
-        item.addActionListener(evt -> client.sendChat(String.format("%s: brave : -", bot.getName())));
-        menu.add(item);
-        return menu;
+        return createBehaviorAdjustmentMenu(bot, "Bot.commands.bravery", ChatCommands.BRAVERY);
     }
 
     JMenu createAggressionMenu(Player bot) {
-        JMenu menu = new JMenu(Messages.getString("Bot.commands.aggression"));
-        JMenuItem item = new JMenuItem("+");
-        item.addActionListener(evt -> client.sendChat(String.format("%s: aggression : +", bot.getName())));
-        menu.add(item);
-        item = new JMenuItem("-");
-        item.addActionListener(evt -> client.sendChat(String.format("%s: aggression : -", bot.getName())));
-        menu.add(item);
-        return menu;
+        return createBehaviorAdjustmentMenu(bot, "Bot.commands.aggression", ChatCommands.AGGRESSION);
     }
 
     JMenu createAvoidMenu(Player bot) {
-        JMenu menu = new JMenu(Messages.getString("Bot.commands.avoid"));
-        JMenuItem item = new JMenuItem("+");
-        item.addActionListener(evt -> client.sendChat(String.format("%s: avoid : +", bot.getName())));
-        menu.add(item);
-        item = new JMenuItem("-");
-        item.addActionListener(evt -> client.sendChat(String.format("%s: avoid : -", bot.getName())));
-        menu.add(item);
-        return menu;
+        return createBehaviorAdjustmentMenu(bot, "Bot.commands.avoid", ChatCommands.AVOID);
     }
 
     JMenu createCautionMenu(Player bot) {
-        JMenu menu = new JMenu(Messages.getString("Bot.commands.caution"));
-        JMenuItem item = new JMenuItem("+");
-        item.addActionListener(evt -> client.sendChat(String.format("%s: caution : +", bot.getName())));
-        menu.add(item);
-        item = new JMenuItem("-");
-        item.addActionListener(evt -> client.sendChat(String.format("%s: caution : -", bot.getName())));
-        menu.add(item);
-        return menu;
+        return createBehaviorAdjustmentMenu(bot, "Bot.commands.caution", ChatCommands.CAUTION);
     }
-
 
     JMenu createFleeMenu(Player bot) {
         JMenu menu = new JMenu(Messages.getString("Bot.commands.flee"));
@@ -547,34 +539,15 @@ public class MapMenu extends JPopupMenu {
 
     JMenu createWaypointMenu(Player bot) {
         JMenu targetHexMenu = new JMenu(Messages.getString("Bot.commands.waypoint"));
-        JMenu setWaypointMenu = new JMenu(Messages.getString("Bot.commands.setWaypoint")); // "Set hex " + coords.toFriendlyString() + " as the waypoint"
-        for (Entity entity : client.getGame().getPlayerEntities(bot, false)) {
-            JMenuItem waypoint = new JMenuItem(entity.getDisplayName());
-            waypoint.addActionListener(evt ->
-                  client.sendChat(String.format("%s: aw : %s %s",
-                        bot.getName(),
-                        entity.getId() + "",
-                        coords.hexCode(board)
-                  ))
-            );
-            setWaypointMenu.add(waypoint);
-        }
-
-        JMenu addWaypointMenu = new JMenu(Messages.getString("Bot.commands.addWaypoint")); // "Add hex " + coords.toFriendlyString() + " as a waypoint");
-        for (Entity entity : client.getGame().getPlayerEntities(bot, false)) {
-            JMenuItem waypoint = new JMenuItem(entity.getDisplayName());
-            waypoint.addActionListener(evt ->
-                  client.sendChat(String.format("%s: sw : %s %s",
-                        bot.getName(),
-                        entity.getId() + "",
-                        coords.hexCode(board)
-                  ))
-            );
-            addWaypointMenu.add(waypoint);
-        }
+        // "Set hex" replaces the unit's waypoint list with this hex, "Add hex" appends this hex to it
+        JMenu setWaypointMenu = createWaypointCommandMenu(bot,
+              "Bot.commands.setWaypoint", ChatCommands.SET_WAYPOINT);
+        JMenu addWaypointMenu = createWaypointCommandMenu(bot,
+              "Bot.commands.addWaypoint", ChatCommands.ADD_WAYPOINT);
 
         JMenuItem clearWaypoints = new JMenuItem(Messages.getString("Bot.commands.clearAllWaypoints"));
-        clearWaypoints.addActionListener(evt -> client.sendChat(String.format("%s: nw", bot.getName())));
+        clearWaypoints.addActionListener(evt -> client.sendChat(String.format("%s: %s",
+              bot.getName(), ChatCommands.CLEAR_ALL_WAYPOINTS.getCommand())));
 
         targetHexMenu.add(setWaypointMenu);
         targetHexMenu.add(addWaypointMenu);
@@ -583,15 +556,104 @@ public class MapMenu extends JPopupMenu {
         return targetHexMenu;
     }
 
+    /**
+     * Creates a menu listing the bot's units; selecting a unit sends the given waypoint chat command for the currently
+     * selected hex.
+     *
+     * @param bot             The bot player to send the command to
+     * @param messageKey      The resource key for the menu title
+     * @param waypointCommand The waypoint chat command to send (e.g. add-waypoint or set-waypoints)
+     *
+     * @return The created menu
+     */
+    private JMenu createWaypointCommandMenu(Player bot, String messageKey, ChatCommands waypointCommand) {
+        JMenu menu = new JMenu(Messages.getString(messageKey));
+        for (Entity entity : client.getGame().getPlayerEntities(bot, false)) {
+            JMenuItem waypoint = new JMenuItem(entity.getDisplayName());
+            waypoint.addActionListener(evt ->
+                  client.sendChat(String.format("%s: %s : %s %s",
+                        bot.getName(),
+                        waypointCommand.getCommand(),
+                        entity.getId(),
+                        coords.hexCode(board)
+                  ))
+            );
+            menu.add(waypoint);
+        }
+        return menu;
+    }
+
     JMenu createTargetHexMenuItem(Player bot) {
         JMenu targetHexMenu = new JMenu(Messages.getString("Bot.commands.targetHex"));
-        JMenuItem item = new JMenuItem("Add hex " + coords.toFriendlyString() + " as strategic target");
-        item.addActionListener(evt -> client.sendChat(String.format("%s: ta : %02d%02d",
+        JMenuItem item = new JMenuItem(Messages.getString("Bot.commands.targetHex.addHex",
+              coords.toFriendlyString()));
+        item.addActionListener(evt -> client.sendChat(String.format("%s: %s : %s",
               bot.getName(),
-              coords.getX() + 1,
-              coords.getY() + 1)));
+              ChatCommands.TARGET.getCommand(),
+              coords.hexCode(board))));
         targetHexMenu.add(item);
         return targetHexMenu;
+    }
+
+    /**
+     * Creates the artillery orders menu for the given bot: fire missions (barrage/volley/single shot) at the clicked
+     * hex with a choice of ammo, plus halting and resuming automatic artillery fire.
+     *
+     * @param bot The bot player to send the orders to
+     *
+     * @return The created menu
+     */
+    JMenu createArtilleryMenu(Player bot) {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.artillery"));
+        menu.add(createArtilleryFireMissionMenu(bot, "Bot.commands.artillery.barrage", ArtilleryOrder.BARRAGE));
+        menu.add(createArtilleryFireMissionMenu(bot, "Bot.commands.artillery.volley", ArtilleryOrder.VOLLEY));
+        menu.add(createArtilleryFireMissionMenu(bot, "Bot.commands.artillery.single", ArtilleryOrder.SINGLE));
+        menu.addSeparator();
+        JMenuItem halt = new JMenuItem(Messages.getString("Bot.commands.artillery.halt"));
+        halt.addActionListener(evt -> sendArtilleryOrder(bot, ArtilleryOrder.HALT, SpecialAmmo.NONE, ""));
+        menu.add(halt);
+        JMenuItem auto = new JMenuItem(Messages.getString("Bot.commands.artillery.auto"));
+        auto.addActionListener(evt -> sendArtilleryOrder(bot, ArtilleryOrder.AUTO, SpecialAmmo.NONE, ""));
+        menu.add(auto);
+        return menu;
+    }
+
+    /**
+     * Creates a fire mission menu for the given artillery order at the clicked hex, with one entry per ammo type.
+     *
+     * @param bot        The bot player to send the order to
+     * @param messageKey The resource key for the menu title (formatted with the clicked hex)
+     * @param order      The artillery order to issue
+     *
+     * @return The created menu
+     */
+    private JMenu createArtilleryFireMissionMenu(Player bot, String messageKey, ArtilleryOrder order) {
+        JMenu menu = new JMenu(Messages.getString(messageKey, coords.toFriendlyString()));
+        for (SpecialAmmo ammo : SpecialAmmo.values()) {
+            JMenuItem item = new JMenuItem(Messages.getString("Bot.commands.artillery.ammo." + ammo.name()));
+            item.addActionListener(evt -> sendArtilleryOrder(bot, order, ammo, coords.hexCode(board)));
+            menu.add(item);
+        }
+        return menu;
+    }
+
+    /**
+     * Sends an artillery order chat command to the given bot and shows a confirmation toast.
+     *
+     * @param bot     The bot player to send the order to
+     * @param order   The artillery order to issue
+     * @param ammo    The special ammo to use
+     * @param targets Dash-separated target hex numbers, or an empty string for orders without targets
+     */
+    private void sendArtilleryOrder(Player bot, ArtilleryOrder order, SpecialAmmo ammo, String targets) {
+        String arguments = (order.name() + " " + ammo.name() + " " + targets).trim();
+        client.sendChat(String.format("%s: %s : %s",
+              bot.getName(), ChatCommands.ARTILLERY.getCommand(), arguments));
+        String orderText = targets.isBlank()
+              ? Messages.getString("Bot.commands.artillery.toast.order", order.name())
+              : Messages.getString("BotCommandPanel.toast.artillery", order.name(), targets);
+        gui.addToast(ToastLevel.SUCCESS,
+              Messages.getString("BotCommandPanel.toast.orderSent", bot.getName(), orderText));
     }
 
     /**

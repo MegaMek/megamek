@@ -838,7 +838,7 @@ public class ClientGUI extends AbstractClientGUI
         RulerDialog.color2 = GUIP.getRulerColor2();
 
         setBotCommandsDialog(new BotCommandsDialog(frame, this));
-        getBotCommandsDialog().add(new BotCommandsPanel(getClient(), audioService, null));
+        getBotCommandsDialog().add(new BotCommandsPanel(getClient(), audioService, null, this));
 
         client.changePhase(GamePhase.UNKNOWN);
         MekSummaryCache mekSummaryCache = MekSummaryCache.getInstance();

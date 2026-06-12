@@ -2001,7 +2001,6 @@ public final class BoardView extends AbstractBoardView
         }
     }
 
-    private static final Color DEMO_CHARGE_COLOR = new Color(255, 80, 80);
     private static final Color DEMO_CHARGE_OUTLINE_COLOR = new Color(0, 0, 0, 200);
 
     /**
@@ -2014,6 +2013,9 @@ public final class BoardView extends AbstractBoardView
      * @param label       the label text
      */
     private void drawDemolitionChargeLabel(Graphics2D graphics2D, Point hexLocation, String label) {
+        // The marker color is a client setting so players can adjust it for color vision deficiencies
+        // and for visibility against the terrain colors of the current map
+        Color demolitionChargeColor = GUIP.getDemolitionChargeColor();
         int centerX = hexLocation.x + (hex_size.width / 2);
         int centerY = hexLocation.y + (hex_size.height / 2);
         int radius = Math.max(3, (int) (7 * scale));
@@ -2025,7 +2027,7 @@ public final class BoardView extends AbstractBoardView
         graphics2D.setColor(DEMO_CHARGE_OUTLINE_COLOR);
         drawCrosshair(graphics2D, centerX, centerY, radius, tickLength);
         graphics2D.setStroke(new BasicStroke(Math.max(1f, 1.5f * scale)));
-        graphics2D.setColor(DEMO_CHARGE_COLOR);
+        graphics2D.setColor(demolitionChargeColor);
         drawCrosshair(graphics2D, centerX, centerY, radius, tickLength);
         graphics2D.setStroke(oldStroke);
 
@@ -2040,7 +2042,7 @@ public final class BoardView extends AbstractBoardView
               stringWidth + 8, metrics.getAscent() + metrics.getDescent() + 2, 8, 8);
 
         graphics2D.setFont(font_minefield);
-        graphics2D.setColor(DEMO_CHARGE_COLOR);
+        graphics2D.setColor(demolitionChargeColor);
         graphics2D.drawString(label, labelX, labelY);
     }
 

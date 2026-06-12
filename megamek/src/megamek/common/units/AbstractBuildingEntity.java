@@ -1127,10 +1127,18 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         building.setBurning(onFire, boardToRelative(coords));
     }
 
+    /**
+     * Demolition charges anchor to an absolute board hex, which only works for structures that cannot move.
+     * {@link BuildingEntity} overrides this with a real implementation; {@link MobileStructure} must provide its own
+     * (or remain unsupported) if mobile structures are ever ruled to be valid demolition targets.
+     *
+     * @throws UnsupportedOperationException always; subclasses that support demolition charges must override
+     */
     @Override
     public void addDemolitionCharge(int playerId, int damage, Coords pos) {
-        // Demolition charge positions are absolute board coordinates; see Building#addDemolitionCharge
-        building.addDemolitionCharge(playerId, damage, pos);
+        throw new UnsupportedOperationException(
+              "Demolition charges are not supported on " + getClass().getSimpleName()
+                    + "; only immobile structures can have charges placed on them");
     }
 
     @Override

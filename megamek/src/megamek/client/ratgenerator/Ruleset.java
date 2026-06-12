@@ -187,7 +187,7 @@ public class Ruleset {
     }
 
     public void processRoot(ForceDescriptor fd, ProgressListener l) {
-        logger.info("[ForceGen][Weight] processRoot ENTER: faction={} echelon={} unitType={} rating={} " +
+        logger.debug("[ForceGen][Weight] processRoot ENTER: faction={} echelon={} unitType={} rating={} " +
                     "weightClass={} ({})",
               fd.getFaction(), fd.getEchelon(), fd.getUnitType(), fd.getRating(),
               fd.getWeightClass(),
@@ -253,7 +253,7 @@ public class Ruleset {
             totalMeks += count;
         }
         if (totalMeks > 0) {
-            logger.info("[ForceGen][Weight] generated BattleMek weight distribution ({} total): " +
+            logger.debug("[ForceGen][Weight] generated BattleMek weight distribution ({} total): " +
                         "UltraLight={} Light={} Medium={} Heavy={} Assault={} SuperHeavy={}",
                   totalMeks,
                   mekWeights[EntityWeightClass.WEIGHT_ULTRA_LIGHT],
@@ -380,7 +380,7 @@ public class Ruleset {
 
         // Any attached support units are then built.
         for (ForceDescriptor sub : fd.getAttached()) {
-            logger.info("[ForceGen][Attached] buildForceTree ENTER: parent='{}' (esch={} ut={}) " +
+            logger.debug("[ForceGen][Attached] buildForceTree ENTER: parent='{}' (esch={} ut={}) " +
                         "attached='{}' (esch={} ut={} wc={} faction={})",
                   fd.getName(), fd.getEchelon(), fd.getUnitType(),
                   sub.getName(), sub.getEchelon(), sub.getUnitType(),
@@ -388,7 +388,7 @@ public class Ruleset {
             int subCountBefore = sub.getSubForces().size();
             int attCountBefore = sub.getAttached().size();
             buildForceTree(sub, l, progress / count);
-            logger.info("[ForceGen][Attached] buildForceTree DONE:  attached='{}' (esch={}) " +
+            logger.debug("[ForceGen][Attached] buildForceTree DONE:  attached='{}' (esch={}) " +
                         "produced subForces={} (was {}) attached={} (was {})",
                   sub.getName(), sub.getEchelon(),
                   sub.getSubForces().size(), subCountBefore,

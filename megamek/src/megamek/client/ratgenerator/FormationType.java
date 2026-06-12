@@ -473,13 +473,13 @@ public class FormationType {
                   "Formation parameter list and numUnit list must have the same number of elements.");
         }
 
-        LOGGER.info("[ForceGen][Formation] ENTER formation='{}' minWC={} maxWC={} idealRole={} bestEffort={}"
+        LOGGER.debug("[ForceGen][Formation] ENTER formation='{}' minWC={} maxWC={} idealRole={} bestEffort={}"
                     + " networkMask={} paramSets={} totalUnits={}",
               name, minWeightClass, maxWeightClass, idealRole, bestEffort, networkMask, params.size(),
               numUnits.stream().mapToInt(Integer::intValue).sum());
         for (int pi = 0; pi < params.size(); pi++) {
             Parameters p = params.get(pi);
-            LOGGER.info("[ForceGen][Formation]   param[{}] unitType={} requestedWC={} roles={} moves={} numUnits={}",
+            LOGGER.debug("[ForceGen][Formation]   param[{}] unitType={} requestedWC={} roles={} moves={} numUnits={}",
                   pi, p.getUnitType(), p.getWeightClasses(), p.getRoles(), p.getMovementModes(), numUnits.get(pi));
         }
 
@@ -514,14 +514,14 @@ public class FormationType {
             Collection<Integer> requested = p.getWeightClasses();
             if (requested.isEmpty()) {
                 p.setWeightClasses(formationRange);
-                LOGGER.info("[ForceGen][Formation]   weightIntersect: requested=[] formationRange={} -> final={}"
+                LOGGER.debug("[ForceGen][Formation]   weightIntersect: requested=[] formationRange={} -> final={}"
                       + " (no caller weight; using formation range)", formationRange, p.getWeightClasses());
             } else {
                 List<Integer> intersection = requested.stream()
                       .filter(formationRange::contains)
                       .collect(Collectors.toList());
                 p.setWeightClasses(intersection.isEmpty() ? formationRange : intersection);
-                LOGGER.info("[ForceGen][Formation]   weightIntersect: requested={} formationRange={} -> final={}{}",
+                LOGGER.debug("[ForceGen][Formation]   weightIntersect: requested={} formationRange={} -> final={}{}",
                       requested, formationRange, p.getWeightClasses(),
                       intersection.isEmpty() ? " (EMPTY intersection; fell back to formation range)" : "");
             }
@@ -653,16 +653,16 @@ public class FormationType {
             for (int i = 0; i < params.size(); i++) {
                 retVal.addAll(tables.get(i).generateUnits(numUnits.get(i), ms -> mainCriteria.test(ms)));
             }
-            LOGGER.info("[ForceGen][Formation] path=simple-case(mainCriteria only) primaryResult={}/{} units={}",
+            LOGGER.debug("[ForceGen][Formation] path=simple-case(mainCriteria only) primaryResult={}/{} units={}",
                   retVal.size(), cUnits, summarize(retVal));
             if (retVal.size() < cUnits) {
                 List<MekSummary> matchRole = tryIdealRole(params, numUnits);
                 if (matchRole != null) {
-                    LOGGER.info("[ForceGen][Formation] path=simple-case -> tryIdealRole SUCCESS units={}",
+                    LOGGER.debug("[ForceGen][Formation] path=simple-case -> tryIdealRole SUCCESS units={}",
                           summarize(matchRole));
                     return matchRole;
                 }
-                LOGGER.info("[ForceGen][Formation] path=simple-case -> tryIdealRole null; returning partial {}",
+                LOGGER.debug("[ForceGen][Formation] path=simple-case -> tryIdealRole null; returning partial {}",
                       summarize(retVal));
             }
             return retVal;
@@ -678,31 +678,31 @@ public class FormationType {
             retVal.addAll(tables.getFirst()
                   .generateUnits(criterionMin,
                         ms -> mainCriteria.test(ms) && otherCriteria.getFirst().criterion.test(ms)));
-            LOGGER.info("[ForceGen][Formation] path=single-criterion('{}') constraintMin={} satisfied={}/{} units={}",
+            LOGGER.debug("[ForceGen][Formation] path=single-criterion('{}') constraintMin={} satisfied={}/{} units={}",
                   otherCriteria.getFirst().description, criterionMin, retVal.size(), criterionMin, summarize(retVal));
             if (retVal.size() < criterionMin) {
                 List<MekSummary> onRole = tryIdealRole(params, numUnits);
                 if (onRole != null) {
-                    LOGGER.info("[ForceGen][Formation] path=single-criterion -> tryIdealRole SUCCESS units={}",
+                    LOGGER.debug("[ForceGen][Formation] path=single-criterion -> tryIdealRole SUCCESS units={}",
                           summarize(onRole));
                     return onRole;
                 } else if (!bestEffort) {
-                    LOGGER.info("[ForceGen][Formation] path=single-criterion -> tryIdealRole null, bestEffort=false;"
+                    LOGGER.debug("[ForceGen][Formation] path=single-criterion -> tryIdealRole null, bestEffort=false;"
                           + " returning EMPTY");
                     return new ArrayList<>();
                 }
-                LOGGER.info("[ForceGen][Formation] path=single-criterion -> tryIdealRole null, bestEffort=true;"
+                LOGGER.debug("[ForceGen][Formation] path=single-criterion -> tryIdealRole null, bestEffort=true;"
                       + " filling remainder with mainCriteria");
             }
             if (retVal.size() >= criterionMin || bestEffort) {
                 retVal.addAll(tables.getFirst()
                       .generateUnits(numUnits.getFirst() - retVal.size(), ms -> mainCriteria.test(ms)));
             }
-            LOGGER.info("[ForceGen][Formation] path=single-criterion FINAL units={}", summarize(retVal));
+            LOGGER.debug("[ForceGen][Formation] path=single-criterion FINAL units={}", summarize(retVal));
             return retVal;
         }
 
-        LOGGER.info("[ForceGen][Formation] path=complex (otherCriteria={} grouping={} network={})",
+        LOGGER.debug("[ForceGen][Formation] path=complex (otherCriteria={} grouping={} network={})",
               otherCriteria.size(), useGrouping != null, networkMask != ModelRecord.NETWORK_NONE);
 
         /*
@@ -1024,7 +1024,7 @@ public class FormationType {
      */
     private @Nullable List<MekSummary> tryIdealRole(List<Parameters> params, List<Integer> numUnits) {
         if (idealRole.equals(UnitRole.UNDETERMINED)) {
-            LOGGER.info("[ForceGen][Formation] tryIdealRole skipped: idealRole=UNDETERMINED");
+            LOGGER.debug("[ForceGen][Formation] tryIdealRole skipped: idealRole=UNDETERMINED");
             return null;
         }
         List<Parameters> tmpParams = params.stream().map(Parameters::copy).toList();
@@ -1038,10 +1038,10 @@ public class FormationType {
         for (int i = 0; i < tmpParams.size(); i++) {
             UnitTable t = UnitTable.findTable(tmpParams.get(i));
             List<MekSummary> units = t.generateUnits(numUnits.get(i), ms -> ms.getRole() == idealRole);
-            LOGGER.info("[ForceGen][Formation]   tryIdealRole role={} wc={} need={} found={} units={}",
+            LOGGER.debug("[ForceGen][Formation]   tryIdealRole role={} wc={} need={} found={} units={}",
                   idealRole, tmpParams.get(i).getWeightClasses(), numUnits.get(i), units.size(), summarize(units));
             if (units.size() < numUnits.get(i)) {
-                LOGGER.info("[ForceGen][Formation]   tryIdealRole FAILED at param[{}] (insufficient {} units at"
+                LOGGER.debug("[ForceGen][Formation]   tryIdealRole FAILED at param[{}] (insufficient {} units at"
                       + " weight {}); returning null", i, idealRole, tmpParams.get(i).getWeightClasses());
                 return null;
             }

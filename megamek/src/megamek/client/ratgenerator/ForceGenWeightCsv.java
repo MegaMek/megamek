@@ -39,6 +39,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
 
+import megamek.common.preference.PreferenceManager;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
@@ -74,6 +75,9 @@ final class ForceGenWeightCsv {
      */
     static void append(String faction, int year, String rating, String rolledWeight, String clusterFlags,
           Map<Integer, int[]> byType) {
+        if (!PreferenceManager.getClientPreferences().getForceGeneratorDiagnostics()) {
+            return;
+        }
         if ((byType == null) || byType.isEmpty()) {
             return;
         }

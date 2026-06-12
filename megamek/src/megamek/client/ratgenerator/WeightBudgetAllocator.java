@@ -116,6 +116,11 @@ final class WeightBudgetAllocator {
         for (ForceDescriptor sub : root.getSubForces()) {
             allocate(sub);
         }
+        // Also reshape clusters reached through attached forces (e.g. aerospace/naval clusters
+        // attached to a galaxy or touman), mirroring how collectClusters walks attached forces.
+        for (ForceDescriptor att : root.getAttached()) {
+            allocate(att);
+        }
     }
 
     /** A generated element slot together with the star it belongs to. */
@@ -145,7 +150,7 @@ final class WeightBudgetAllocator {
                 reshaped += entry.getValue().size();
             }
         }
-        logger.info("[ForceGen][Budget] cluster faction={} weightClass={} reshaped {} of {} element slots",
+        logger.debug("[ForceGen][Budget] cluster faction={} weightClass={} reshaped {} of {} element slots",
               cluster.getFaction(), cluster.getWeightClassCode(), reshaped, leaves.size());
     }
 

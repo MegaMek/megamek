@@ -268,7 +268,9 @@ public class TransportCalculator {
                 Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                 bayTypeCache.put(ms, countBays(entity));
             } catch (EntityLoadingException ex) {
-                return 0;
+                // Cache the failure as an empty bay map so we do not re-parse and re-throw this unit
+                // on every subsequent call.
+                bayTypeCache.put(ms, Map.of());
             }
         }
         return bayTypeCache.get(ms).getOrDefault(UnitType.AEROSPACE_FIGHTER, 0);

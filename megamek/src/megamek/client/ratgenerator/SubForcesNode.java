@@ -103,7 +103,7 @@ public class SubForcesNode extends RulesetNode {
                 ValueNode vn = n.selectOption(forceDescriptor);
                 if (vn != null) {
                     if (isAttached) {
-                        LOGGER.info("[ForceGen][Attached] subforceOption picked: parentEschelon={} " +
+                        LOGGER.debug("[ForceGen][Attached] subforceOption picked: parentEschelon={} " +
                                     "parentUnitType={} parentName='{}' optionContent='{}' optionUnitType='{}' " +
                                     "optionName='{}' optionNum={}",
                               forceDescriptor.getEchelon(), forceDescriptor.getUnitType(),
@@ -131,7 +131,7 @@ public class SubForcesNode extends RulesetNode {
                         n.apply(sub, i);
                         vn.apply(sub, i);
                         if (isAttached) {
-                            LOGGER.info("[ForceGen][Attached]   created child[{}]: echelon={} " +
+                            LOGGER.debug("[ForceGen][Attached]   created child[{}]: echelon={} " +
                                         "unitType={} name='{}' weightClass={}",
                                   i, sub.getEchelon(), sub.getUnitType(), sub.getName(),
                                   sub.getWeightClass());

@@ -372,15 +372,15 @@ public class ForceDescriptor {
                         ModelRecord picked = list.get(i);
                         if (target.getSubForces().isEmpty()) {
                             target.setUnit(picked);
-                            LOGGER.info("[ForceGen][Formation]   assign LEAF '{}' <- setUnit {}(wc={})",
+                            LOGGER.debug("[ForceGen][Formation]   assign LEAF '{}' <- setUnit {}(wc={})",
                                   target.parseName(), picked.getKey(), picked.getWeightClass());
                         } else if (chassis) {
                             target.getChassis().add(picked.getChassis());
-                            LOGGER.info("[ForceGen][Formation]   assign NON-LEAF '{}' <- PIN chassis '{}' (children"
+                            LOGGER.debug("[ForceGen][Formation]   assign NON-LEAF '{}' <- PIN chassis '{}' (children"
                                   + " will regenerate against this)", target.parseName(), picked.getChassis());
                         } else {
                             target.getModels().add(picked.getKey());
-                            LOGGER.info("[ForceGen][Formation]   assign NON-LEAF '{}' <- PIN model '{}' (children"
+                            LOGGER.debug("[ForceGen][Formation]   assign NON-LEAF '{}' <- PIN model '{}' (children"
                                         + " will regenerate against this; Task #2 failure point if unavailable)",
                                   target.parseName(), picked.getKey());
                         }
@@ -641,7 +641,7 @@ public class ForceDescriptor {
             for (ForceDescriptor sub : subs) {
                 weights.add(sub.getWeightClass());
             }
-            LOGGER.info("[ForceGen][Weight] generateLance: unitType={} faction={} parentWeightClass={} " +
+            LOGGER.debug("[ForceGen][Weight] generateLance: unitType={} faction={} parentWeightClass={} " +
                         "element target weights={}",
                   UnitType.getTypeName(ut), faction, getWeightClassCode(), weights);
         } else {
@@ -926,18 +926,18 @@ public class ForceDescriptor {
             if (models.isEmpty()) {
                 // Genuine failure: no pinned model to fall back on, so the caller's
                 // getModelRecord(getModelName()) rescue (generateUnits) cannot recover. Log the full trace.
-                LOGGER.info("[ForceGen][Weight] generate() FAILED requestedWeight={} -> no unit found."
+                LOGGER.debug("[ForceGen][Weight] generate() FAILED requestedWeight={} -> no unit found."
                             + " element: faction={} unitType={} year={} echelon={} roles={} movementModes={}"
                             + " models={} chassis={}",
                       weightClass, faction, unitType, year, echelon, roles, movementModes, models, chassis);
                 for (String line : failureTrace) {
-                    LOGGER.info("[ForceGen][Weight]   attempt: {}", line);
+                    LOGGER.debug("[ForceGen][Weight]   attempt: {}", line);
                 }
             } else {
                 // Not a real failure: a formation already pinned this model (setUnit) but it is not in the
                 // element's own faction/year/role/weight table. The caller resolves it by name via the
                 // getModelRecord fallback, so emit one concise line instead of the full FAILED + attempt trace.
-                LOGGER.info("[ForceGen][Weight] generate() table-miss for pinned model(s) {} (faction={} year={}"
+                LOGGER.debug("[ForceGen][Weight] generate() table-miss for pinned model(s) {} (faction={} year={}"
                             + " weightClass={} roles={}); resolving by name via fallback",
                       models, faction, year, weightClass, roles);
             }
@@ -1074,7 +1074,7 @@ public class ForceDescriptor {
                 }
                 if (ms != null && RATGenerator.getInstance().getModelRecord(ms.getName()) != null) {
                     if (unitType != null && unitType == UnitType.MEK) {
-                        LOGGER.info("[ForceGen][Weight] generate() requestedWeight={} wtIndex={}"
+                        LOGGER.debug("[ForceGen][Weight] generate() requestedWeight={} wtIndex={}"
                                     + " tableWeight={} rating={} -> {} (mekWeightClass={})",
                               weightClass, wtIndex, fd.getWeightClass(), ratGenRating,
                               ms.getName(), ms.getWeightClass());
@@ -1119,12 +1119,12 @@ public class ForceDescriptor {
                     entity.setExternalIdAsString(UUID.randomUUID().toString());
                     String forceString = getForceString();
                     entity.setForceString(forceString);
-                    LOGGER.info("[ForceGen][ToE] leaf '{}' forceString='{}'{}",
-                          entity.getShortName(), forceString,
-                          forceString.isBlank()
-                                ? " (BLANK - this unit will lose its ToE position; parent="
-                                      + (parent == null ? "null" : "set") + ")"
-                                : "");
+                    if (forceString.isBlank()) {
+                        LOGGER.warn("[ForceGen][ToE] leaf '{}' has a BLANK force string; it will lose its "
+                              + "ToE position (parent={})", entity.getShortName(), (parent == null ? "null" : "set"));
+                    } else {
+                        LOGGER.debug("[ForceGen][ToE] leaf '{}' forceString='{}'", entity.getShortName(), forceString);
+                    }
                 } catch (EntityLoadingException ex) {
                     LOGGER.error(ex, "Error loading {} from file {}", ms.getName(), ms.getSourceFile().getPath());
                 }

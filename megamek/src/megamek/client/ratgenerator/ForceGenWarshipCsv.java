@@ -38,6 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
+import megamek.common.preference.PreferenceManager;
 import megamek.common.units.Entity;
 import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
@@ -72,6 +73,9 @@ final class ForceGenWarshipCsv {
      * @param root the root descriptor of a generated force (Touman, Galaxy, Cluster, or smaller)
      */
     static void append(ForceDescriptor root) {
+        if (!PreferenceManager.getClientPreferences().getForceGeneratorDiagnostics()) {
+            return;
+        }
         if (root == null) {
             return;
         }

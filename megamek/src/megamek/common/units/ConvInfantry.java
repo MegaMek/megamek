@@ -58,6 +58,7 @@ import megamek.common.cost.InfantryCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -428,68 +429,55 @@ public class ConvInfantry extends Infantry {
     }
 
     public void setSpecializations(int spec) {
-        // Equipment for Trench/Fieldwork's Engineers
-        if ((spec & TRENCH_ENGINEERS) > 0 && (infSpecs & TRENCH_ENGINEERS) == 0) {
-            // Add vibro shovels if not already present (may already be loaded from file)
-            boolean hasShovels = getMisc().stream()
-                  .anyMatch(m -> m.getType().hasFlag(MiscType.F_TOOLS) && m.getType()
-                        .hasFlag(MiscTypeFlag.S_VIBRO_SHOVEL));
-            if (!hasShovels) {
-                try {
-                    EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.VIBRO_SHOVEL);
-                    addEquipment(shovels, LOC_INFANTRY);
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            }
-        } else if ((spec & TRENCH_ENGINEERS) == 0 && (infSpecs & TRENCH_ENGINEERS) > 0) {
-            // Need to remove vibro shovels
-            List<Mounted<?>> eqToRemove = new ArrayList<>();
-            for (Mounted<?> eq : getMisc()) {
-                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasFlag(MiscTypeFlag.S_VIBRO_SHOVEL)) {
-                    eqToRemove.add(eq);
-                }
-            }
-            getEquipment().removeAll(eqToRemove);
-
-            for (Mounted<?> mounted : eqToRemove) {
-                if (mounted instanceof MiscMounted) {
-                    getMisc().remove(mounted);
-                }
-            }
-        }
-
-        // Equipment for Demolition Engineers
-        if ((spec & DEMO_ENGINEERS) > 0 && (infSpecs & DEMO_ENGINEERS) == 0) {
-            // Add demolition charge if not already present (may already be loaded from file)
-            boolean hasCharge = getMisc().stream()
-                  .anyMatch(m -> m.getType().hasFlag(MiscType.F_TOOLS) && m.getType()
-                        .hasFlag(MiscTypeFlag.S_DEMOLITION_CHARGE));
-            if (!hasCharge) {
-                try {
-                    EquipmentType charge = EquipmentType.get(EquipmentTypeLookup.DEMOLITION_CHARGE);
-                    addEquipment(charge, LOC_INFANTRY);
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            }
-        } else if ((spec & DEMO_ENGINEERS) == 0 && (infSpecs & DEMO_ENGINEERS) > 0) {
-            // Need to remove demolition charges
-            List<Mounted<?>> eqToRemove = new ArrayList<>();
-            for (Mounted<?> eq : getMisc()) {
-                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasFlag(MiscTypeFlag.S_DEMOLITION_CHARGE)) {
-                    eqToRemove.add(eq);
-                }
-            }
-            getEquipment().removeAll(eqToRemove);
-
-            for (Mounted<?> mounted : eqToRemove) {
-                if (mounted instanceof MiscMounted) {
-                    getMisc().remove(mounted);
-                }
-            }
-        }
+        // Engineer specializations come with their tools; add or remove them with the specialization
+        updateEngineerEquipment(spec, TRENCH_ENGINEERS, MiscTypeFlag.S_VIBRO_SHOVEL, EquipmentTypeLookup.VIBRO_SHOVEL);
+        updateEngineerEquipment(spec, DEMO_ENGINEERS, MiscTypeFlag.S_DEMOLITION_CHARGE,
+              EquipmentTypeLookup.DEMOLITION_CHARGE);
+        updateEngineerEquipment(spec, BRIDGE_ENGINEERS, MiscTypeFlag.S_BRIDGE_KIT,
+              EquipmentTypeLookup.INFANTRY_BRIDGE_KIT);
         infSpecs = spec;
+    }
+
+    /**
+     * Adds or removes the tool equipment tied to an engineer specialization when that specialization is gained or lost.
+     * The tool is only added if not already present (it may already be loaded from the unit file).
+     *
+     * @param newSpecs       the new specialization bitmask being applied
+     * @param specialization the single specialization flag whose equipment is managed
+     * @param toolFlag       the MiscType subtype flag identifying the specialization's tool
+     * @param equipmentName  the EquipmentTypeLookup name of the tool to add
+     */
+    private void updateEngineerEquipment(int newSpecs, int specialization, MiscTypeFlag toolFlag,
+          String equipmentName) {
+        boolean isGainingSpecialization = ((newSpecs & specialization) > 0) && ((infSpecs & specialization) == 0);
+        boolean isLosingSpecialization = ((newSpecs & specialization) == 0) && ((infSpecs & specialization) > 0);
+        if (isGainingSpecialization) {
+            boolean hasTool = getMisc().stream()
+                  .anyMatch(mounted -> mounted.getType().hasFlag(MiscType.F_TOOLS)
+                        && mounted.getType().hasFlag(toolFlag));
+            if (!hasTool) {
+                try {
+                    EquipmentType tool = EquipmentType.get(equipmentName);
+                    addEquipment(tool, LOC_INFANTRY);
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+            }
+        } else if (isLosingSpecialization) {
+            List<Mounted<?>> equipmentToRemove = new ArrayList<>();
+            for (Mounted<?> equipment : getMisc()) {
+                if (equipment.getType().hasFlag(MiscType.F_TOOLS) && equipment.getType().hasFlag(toolFlag)) {
+                    equipmentToRemove.add(equipment);
+                }
+            }
+            getEquipment().removeAll(equipmentToRemove);
+
+            for (Mounted<?> mounted : equipmentToRemove) {
+                if (mounted instanceof MiscMounted) {
+                    getMisc().remove(mounted);
+                }
+            }
+        }
     }
 
     public static String getSpecializationName(int spec) {
@@ -521,6 +509,223 @@ public class ConvInfantry extends Infantry {
         }
         return name.toString();
     }
+
+    // region Bridge building (TO:AUE, Bridge-Building Engineers)
+
+    /** Number of full turns of work needed to raise a bridge, before any extensions from casualties. TO:AUE. */
+    public static final int BRIDGE_BUILD_TURNS = 6;
+
+    /** A Light Bridge (CF 15). The value doubles as its point cost: the budget of 2 allows two per scenario. */
+    public static final int BRIDGE_TYPE_LIGHT = 1;
+
+    /** A Medium Bridge (CF 40). The value doubles as its point cost: the budget of 2 allows one per scenario. */
+    public static final int BRIDGE_TYPE_MEDIUM = 2;
+
+    /** The per-scenario bridge building budget: 2 Light Bridges (1 point each) or 1 Medium Bridge (2 points). */
+    public static final int BRIDGE_BUILD_POINTS = 2;
+
+    private static final int LIGHT_BRIDGE_CF = 15;
+    private static final int MEDIUM_BRIDGE_CF = 40;
+
+    /** Full turns of bridge building completed before the current round; -1 while not building. */
+    private int bridgeBuildTurns = -1;
+
+    /** Turns of work needed to finish the current bridge; starts at {@link #BRIDGE_BUILD_TURNS}, +1 per casualty turn. */
+    private int bridgeBuildRequiredTurns = BRIDGE_BUILD_TURNS;
+
+    /** The hex the bridge is being raised in, or null while not building. */
+    private Coords bridgeTargetCoords = null;
+
+    /** Exits bitmask of the two hexsides the finished bridge will connect. */
+    private int bridgeExits = 0;
+
+    /** The bridge type under construction, {@link #BRIDGE_TYPE_LIGHT} or {@link #BRIDGE_TYPE_MEDIUM}. */
+    private int bridgeType = BRIDGE_TYPE_LIGHT;
+
+    /** Remaining per-scenario bridge building points. */
+    private int bridgeBuildPoints = BRIDGE_BUILD_POINTS;
+
+    /** Trooper count at the last casualty check, used to detect losses that extend the build by a turn. */
+    private int bridgeBuildTroopersSnapshot = 0;
+
+    /**
+     * @return {@code true} while this platoon is raising a bridge. While building, the platoon may take no other action
+     *       (it is ineligible for all phases).
+     */
+    public boolean isBuildingBridge() {
+        return bridgeBuildTurns >= 0;
+    }
+
+    /**
+     * Begins raising a bridge in the given hex. The declaring turn counts as the first full turn of work.
+     *
+     * @param target     the hex the bridge will be raised in; must be adjacent to this platoon
+     * @param exits      exits bitmask of the two hexsides the finished bridge will connect
+     * @param bridgeType {@link #BRIDGE_TYPE_LIGHT} or {@link #BRIDGE_TYPE_MEDIUM}
+     */
+    public void startBridgeBuild(Coords target, int exits, int bridgeType) {
+        bridgeBuildTurns = 0;
+        bridgeBuildRequiredTurns = BRIDGE_BUILD_TURNS;
+        bridgeTargetCoords = target;
+        bridgeExits = exits;
+        this.bridgeType = bridgeType;
+        bridgeBuildTroopersSnapshot = Math.max(getInternal(LOC_INFANTRY), 0);
+    }
+
+    /** Stops the current bridge build, losing all progress. The bridge building budget is not refunded. */
+    public void cancelBridgeBuild() {
+        bridgeBuildTurns = -1;
+        bridgeBuildRequiredTurns = BRIDGE_BUILD_TURNS;
+        bridgeTargetCoords = null;
+        bridgeExits = 0;
+        bridgeType = BRIDGE_TYPE_LIGHT;
+        bridgeBuildTroopersSnapshot = 0;
+    }
+
+    /**
+     * @return The number of full turns of bridge building completed before the current round, or -1 while not building.
+     *       The current (in-progress) round is not included.
+     */
+    public int getBridgeBuildTurns() {
+        return bridgeBuildTurns;
+    }
+
+    /**
+     * @return The total turns of work needed to finish the current bridge: {@link #BRIDGE_BUILD_TURNS} plus one for
+     *       each turn the platoon took casualties while building. TO:AUE.
+     */
+    public int getBridgeBuildRequiredTurns() {
+        return bridgeBuildRequiredTurns;
+    }
+
+    /**
+     * @return The hex the bridge is being raised in, or null while not building.
+     */
+    public @Nullable Coords getBridgeTargetCoords() {
+        return bridgeTargetCoords;
+    }
+
+    /**
+     * @return The exits bitmask of the two hexsides the finished bridge will connect.
+     */
+    public int getBridgeExits() {
+        return bridgeExits;
+    }
+
+    /**
+     * @return The bridge type under construction, {@link #BRIDGE_TYPE_LIGHT} or {@link #BRIDGE_TYPE_MEDIUM}.
+     */
+    public int getBridgeType() {
+        return bridgeType;
+    }
+
+    /**
+     * @return The remaining per-scenario bridge building points (Light Bridge costs 1, Medium Bridge costs 2).
+     */
+    public int getBridgeBuildPoints() {
+        return bridgeBuildPoints;
+    }
+
+    /**
+     * Spends bridge building points when a build begins. The cost equals the bridge type value.
+     *
+     * @param bridgeType {@link #BRIDGE_TYPE_LIGHT} or {@link #BRIDGE_TYPE_MEDIUM}
+     */
+    public void spendBridgeBuildPoints(int bridgeType) {
+        bridgeBuildPoints = Math.max(0, bridgeBuildPoints - bridgeType);
+    }
+
+    /**
+     * @param bridgeType {@link #BRIDGE_TYPE_LIGHT} or {@link #BRIDGE_TYPE_MEDIUM}
+     *
+     * @return {@code true} if the remaining budget covers a bridge of the given type.
+     */
+    public boolean canAffordBridge(int bridgeType) {
+        return bridgeBuildPoints >= bridgeType;
+    }
+
+    /**
+     * @return {@code true} if this platoon is a Bridge-Building Engineer unit that still carries its bridge kit, has
+     *       budget left, and is not already raising a bridge. Does not check the game option or terrain.
+     */
+    public boolean canStartBridgeBuild() {
+        return hasSpecialization(BRIDGE_ENGINEERS) && hasBridgeKit() && canAffordBridge(BRIDGE_TYPE_LIGHT)
+              && !isBuildingBridge();
+    }
+
+    /**
+     * @return {@code true} if this platoon carries an Infantry Bridge Kit.
+     */
+    public boolean hasBridgeKit() {
+        return getMisc().stream()
+              .anyMatch(mounted -> mounted.getType().hasFlag(MiscType.F_TOOLS)
+                    && mounted.getType().hasFlag(MiscTypeFlag.S_BRIDGE_KIT));
+    }
+
+    /**
+     * @return {@code true} while this platoon is adjacent to its bridge construction site. A platoon that is displaced,
+     *       transported or destroyed is no longer adjacent and abandons the build.
+     */
+    public boolean isAdjacentToBridgeSite() {
+        return (getPosition() != null) && (bridgeTargetCoords != null)
+              && (getPosition().distance(bridgeTargetCoords) == 1);
+    }
+
+    /**
+     * Checks whether this platoon lost troopers since the last check; a turn with casualties extends the build by one
+     * turn, regardless of how many separate attacks caused them. TO:AUE. Called once per turn from the END phase.
+     *
+     * @return {@code true} if casualties extended the build this turn.
+     */
+    public boolean updateBridgeBuildCasualties() {
+        if (!isBuildingBridge()) {
+            return false;
+        }
+        int currentTroopers = Math.max(getInternal(LOC_INFANTRY), 0);
+        boolean tookCasualties = currentTroopers < bridgeBuildTroopersSnapshot;
+        bridgeBuildTroopersSnapshot = currentTroopers;
+        if (tookCasualties) {
+            bridgeBuildRequiredTurns++;
+        }
+        return tookCasualties;
+    }
+
+    /**
+     * @param bridgeType  the bridge type, {@link #BRIDGE_TYPE_LIGHT} or {@link #BRIDGE_TYPE_MEDIUM}
+     * @param isOverWater {@code true} if the bridge is being raised over a water hex (depth 1+)
+     *
+     * @return The Construction Factor of a bridge raised by Bridge-Building Engineers: 15 for a Light Bridge, 40 for a
+     *       Medium Bridge, doubled when built over water. TO:AUE.
+     */
+    public static int getBuiltBridgeCF(int bridgeType, boolean isOverWater) {
+        int constructionFactor = (bridgeType == BRIDGE_TYPE_MEDIUM) ? MEDIUM_BRIDGE_CF : LIGHT_BRIDGE_CF;
+        return isOverWater ? constructionFactor * 2 : constructionFactor;
+    }
+
+    @Override
+    public void newRound(int roundNumber) {
+        if (isBuildingBridge()) {
+            bridgeBuildTurns++;
+            // Silently abandon the build if the platoon was displaced or transported away from the site; the
+            // END phase check in TWGameManager also catches this and reports the lost progress to the player.
+            if (!isAdjacentToBridgeSite()) {
+                cancelBridgeBuild();
+            }
+        }
+        super.newRound(roundNumber);
+    }
+
+    @Override
+    public boolean isEligibleFor(GamePhase phase) {
+        // A platoon raising a bridge may engage in no other actions for the duration of the build, TO:AUE. The
+        // build progresses and completes in END phase processing, so the platoon needs no turns of its own.
+        if (isBuildingBridge()) {
+            return false;
+        }
+        return super.isEligibleFor(phase);
+    }
+
+    // endregion
 
     /**
      * Returns the movement mode for this infantry unit. For powered flight infantry (IO p.85), this returns VTOL when

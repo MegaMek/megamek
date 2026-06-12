@@ -2904,6 +2904,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     }
                     inf.setDugIn(Infantry.DUG_IN_FORTIFYING1);
                     continue;
+                } else if (step.getType() == MoveStepType.BUILD_BRIDGE) {
+                    processBuildBridgeStep(inf, step);
+                    continue;
                 } else if ((step.getType() != MoveStepType.TURN_LEFT)
                       && (step.getType() != MoveStepType.TURN_RIGHT)) {
                     // other movement clears dug in and hitting the deck status
@@ -4642,5 +4645,27 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
     private boolean usingAeroOnGroundMovement() {
         return getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_GROUND_MOVE);
+    }
+
+    /**
+     * Begins a bridge build for a Bridge-Building Engineer platoon: spends the bridge building budget, locks the
+     * platoon into the build for its duration and reports the started work. The step was already validated when the
+     * move path was compiled. TO:AUE.
+     *
+     * @param infantry the platoon starting the build
+     * @param step     the BUILD_BRIDGE step carrying the site, orientation and bridge type
+     */
+    private void processBuildBridgeStep(Infantry infantry, MoveStep step) {
+        if (!(infantry instanceof ConvInfantry convInfantry) || (step.getBridgeTargetCoords() == null)) {
+            return;
+        }
+        convInfantry.startBridgeBuild(step.getBridgeTargetCoords(), step.getBridgeExits(), step.getBridgeType());
+        convInfantry.spendBridgeBuildPoints(step.getBridgeType());
+        Report report = new Report(4274);
+        report.subject = convInfantry.getId();
+        report.addDesc(convInfantry);
+        report.add(step.getBridgeTargetCoords().getBoardNum());
+        report.add(convInfantry.getBridgeBuildRequiredTurns());
+        addReport(report);
     }
 }

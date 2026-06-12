@@ -71,6 +71,7 @@ public enum MoveStepType {
     DIG_IN(false, "DigIn"),
     HIT_THE_DECK(false, "HitDeck"),
     FORTIFY(false, "Fortify"),
+    BUILD_BRIDGE(false, "BuildBridge"),
     SHAKE_OFF_SWARMERS(false, "ShakeOffSwarmers"),
     TAKEOFF(false, "Takeoff"),
     VERTICAL_TAKE_OFF(false, "Vertical Takeoff"),

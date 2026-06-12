@@ -104,6 +104,7 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
     MOVE_DIG_IN("moveDigIn", MovementDisplay.CMD_INF),
     MOVE_HIT_DECK("moveHitDeck", MovementDisplay.CMD_INF),
     MOVE_FORTIFY("moveFortify", MovementDisplay.CMD_INF | MovementDisplay.CMD_TANK),
+    MOVE_BUILD_BRIDGE("moveBuildBridge", MovementDisplay.CMD_INF),
     MOVE_TAKE_COVER("moveTakeCover", MovementDisplay.CMD_INF),
     MOVE_CALL_SUPPORT("moveCallSupport", MovementDisplay.CMD_INF),
 

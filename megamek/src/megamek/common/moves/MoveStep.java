@@ -48,7 +48,9 @@ import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.LosEffects;
 import megamek.common.ManeuverType;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.BridgeConstruction;
 import megamek.common.board.Coords;
 import megamek.common.board.FloorTarget;
 import megamek.common.compute.Compute;
@@ -88,6 +90,15 @@ public class MoveStep implements Serializable {
      * arm/right arm, vehicle body, etc.)
      */
     public static final int CARGO_LOCATION_KEY = 1;
+
+    /**
+     * Additional int data keys for a BUILD_BRIDGE step (keys are scoped per step type): the target hex coordinates, the
+     * exits bitmask of the two connected hexsides, and the bridge type (light/medium).
+     */
+    public static final int BRIDGE_TARGET_X_KEY = 0;
+    public static final int BRIDGE_TARGET_Y_KEY = 1;
+    public static final int BRIDGE_EXITS_KEY = 2;
+    public static final int BRIDGE_TYPE_KEY = 3;
 
     private final MoveStepType type;
     private int targetId = Entity.NONE;
@@ -1560,6 +1571,30 @@ public class MoveStep implements Serializable {
      * @param entity The {@link Entity} taking this step.
      * @param prev   The {@link MoveStep} previous step in the path.
      */
+    /**
+     * @param game   the current game
+     * @param entity the moving entity
+     * @param curPos the position of the entity when this step begins, or null if unknown
+     *
+     * @return {@code true} if this BUILD_BRIDGE step is legal: the Bridge-Building Engineers game option is active, the
+     *       unit is an engineer platoon with its bridge kit and enough remaining budget for the chosen bridge type, and
+     *       the step's target hex is adjacent and a valid bridge site. TO:AUE.
+     */
+    private boolean isValidBridgeBuildStep(Game game, Entity entity, @Nullable Coords curPos) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS)) {
+            return false;
+        }
+        if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.canStartBridgeBuild()
+              || !convInfantry.canAffordBridge(getBridgeType())) {
+            return false;
+        }
+        Coords target = getBridgeTargetCoords();
+        if ((target == null) || (curPos == null) || (curPos.distance(target) != 1)) {
+            return false;
+        }
+        return BridgeConstruction.isValidBridgeSite(game.getBoard(boardId), target, getBridgeExits());
+    }
+
     private void compileIllegal(final Game game, final Entity entity, final MoveStep prev,
           CachedEntityState cachedEntityState) {
         final MoveStepType stepType = getType();
@@ -1875,6 +1910,12 @@ public class MoveStep implements Serializable {
                 return;
             }
             isDiggingIn = true;
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.BUILD_BRIDGE) {
+            // Raising a bridge must be the platoon's only action for the turn, TO:AUE
+            if (!isFirstStep() || !isValidBridgeBuildStep(game, entity, curPos)) {
+                return;
+            }
             movementType = EntityMovementType.MOVE_NONE;
         } else if (type == MoveStepType.HIT_THE_DECK) {
             // Hitting the deck (TO:AR p.106) may only be the unit's sole action and is allowed in any terrain.
@@ -4270,6 +4311,34 @@ public class MoveStep implements Serializable {
 
     public Minefield getMinefield() {
         return mf;
+    }
+
+    /**
+     * @return The hex a BUILD_BRIDGE step raises its bridge in, from the step's additional data, or null if the step
+     *       does not carry target coordinates.
+     */
+    public @Nullable Coords getBridgeTargetCoords() {
+        Integer targetX = additionalData.get(BRIDGE_TARGET_X_KEY);
+        Integer targetY = additionalData.get(BRIDGE_TARGET_Y_KEY);
+        if ((targetX == null) || (targetY == null)) {
+            return null;
+        }
+        return new Coords(targetX, targetY);
+    }
+
+    /**
+     * @return The exits bitmask of the two hexsides the bridge of a BUILD_BRIDGE step will connect.
+     */
+    public int getBridgeExits() {
+        return additionalData.getOrDefault(BRIDGE_EXITS_KEY, 0);
+    }
+
+    /**
+     * @return The bridge type of a BUILD_BRIDGE step, {@link ConvInfantry#BRIDGE_TYPE_LIGHT} or
+     *       {@link ConvInfantry#BRIDGE_TYPE_MEDIUM}.
+     */
+    public int getBridgeType() {
+        return additionalData.getOrDefault(BRIDGE_TYPE_KEY, ConvInfantry.BRIDGE_TYPE_LIGHT);
     }
 
     /**

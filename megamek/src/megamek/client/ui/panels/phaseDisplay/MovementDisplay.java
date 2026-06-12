@@ -100,6 +100,7 @@ import megamek.common.bays.InfantryBay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardHelper;
 import megamek.common.board.BoardLocation;
+import megamek.common.board.BridgeConstruction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
@@ -179,6 +180,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private boolean isSelectingEscapePodLanding;
     /** Valid hexes for escape pod landing (rear arc, 0-4 hexes) */
     private Set<Coords> validEscapePodHexes = new HashSet<>();
+
+    /** True when selecting the target hex of a bridge build (TO:AUE Bridge-Building Engineers). */
+    private boolean isSelectingBridgeTarget;
+    /** True when selecting the orientation of a bridge build by clicking a hex adjacent to the chosen target. */
+    private boolean isSelectingBridgeDirection;
+    /** The bridge type chosen for the bridge build being declared. */
+    private int selectedBridgeType;
+    /** The target hex chosen for the bridge build being declared. */
+    private Coords selectedBridgeTarget;
+    /** Valid hexes for the current bridge build selection stage (target hexes, then orientation hexes). */
+    private final Set<Coords> validBridgeSelectionHexes = new HashSet<>();
 
     // buttons
     private Map<MoveCommand, MegaMekButton> buttons;
@@ -914,6 +926,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
               && !deckInfantry.isHitTheDeck()
               && (deckInfantry.getDugIn() == Infantry.DUG_IN_NONE);
         getBtn(MoveCommand.MOVE_HIT_DECK).setEnabled(canHitDeck);
+
+        // Infantry - Bridge building, TO:AUE. Bridge-Building Engineers with their kit, remaining budget and at
+        // least one valid adjacent site may spend 6 turns raising a single-hex bridge.
+        getBtn(MoveCommand.MOVE_BUILD_BRIDGE).setEnabled(canSelectBridgeBuild(selectedUnit, gameOptions));
 
         // Infantry - Take Cover
         // Crews adrift in space or atmosphere can't do this
@@ -1751,6 +1767,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // Cancel escape pod hex selection if active
         if (isSelectingEscapePodLanding) {
             cancelEscapePodHexSelection();
+        }
+
+        // Cancel bridge build hex selection if active
+        if (isSelectingBridgeTarget || isSelectingBridgeDirection) {
+            cancelBridgeBuildSelection();
         }
 
         // clear board cursors
@@ -6444,6 +6465,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_FORTIFY.getCmd())) {
             addStepToMovePath(MoveStepType.FORTIFY);
+        } else if (actionCmd.equals(MoveCommand.MOVE_BUILD_BRIDGE.getCmd())) {
+            startBridgeBuildSelection();
         } else if (actionCmd.equals(MoveCommand.MOVE_TAKE_COVER.getCmd())) {
             addStepToMovePath(MoveStepType.TAKE_COVER);
         } else if (actionCmd.equals(MoveCommand.MOVE_SHAKE_OFF.getCmd())) {
@@ -7597,6 +7620,206 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // Cancel selection on click outside valid hexes
                 cancelEscapePodHexSelection();
             }
+            return;
         }
+
+        // Handle bridge build hex selection: first the target hex, then the orientation
+        if (isSelectingBridgeTarget && event.getCoords() != null) {
+            if (validBridgeSelectionHexes.contains(event.getCoords())) {
+                startBridgeDirectionSelection(event.getCoords());
+            } else {
+                // Cancel selection on click outside valid hexes
+                cancelBridgeBuildSelection();
+            }
+        } else if (isSelectingBridgeDirection && event.getCoords() != null) {
+            if (validBridgeSelectionHexes.contains(event.getCoords())) {
+                completeBridgeBuildSelection(event.getCoords());
+            } else {
+                cancelBridgeBuildSelection();
+            }
+        }
+    }
+
+    /**
+     * Returns whether the given unit may declare a bridge build this turn: it is a Bridge-Building Engineer platoon
+     * with its kit and remaining budget, the game option is active, the unit is at ground level on a ground map, and at
+     * least one adjacent hex is a valid bridge site for some orientation. TO:AUE.
+     *
+     * @param unit        the currently selected unit
+     * @param gameOptions the active game options
+     *
+     * @return {@code true} if the Build Bridge button should be enabled.
+     */
+    private boolean canSelectBridgeBuild(Entity unit, GameOptions gameOptions) {
+        boolean isEligibleEngineer = (unit instanceof ConvInfantry convInfantry)
+              && gameOptions.booleanOption(OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS)
+              && game.isOnGroundMap(unit)
+              && (unit.getAltitude() == 0)
+              && (unit.getElevation() == 0)
+              && convInfantry.canStartBridgeBuild();
+        if (!isEligibleEngineer) {
+            return false;
+        }
+        return !computeValidBridgeTargetHexes((ConvInfantry) unit).isEmpty();
+    }
+
+    /**
+     * @param convInfantry the engineer platoon
+     *
+     * @return The adjacent hexes that are valid bridge sites for at least one orientation.
+     */
+    private Set<Coords> computeValidBridgeTargetHexes(ConvInfantry convInfantry) {
+        Set<Coords> validTargets = new HashSet<>();
+        Coords position = convInfantry.getPosition();
+        if (position == null) {
+            return validTargets;
+        }
+        Board board = game.getBoard(convInfantry.getBoardId());
+        for (int direction = 0; direction < 6; direction++) {
+            Coords adjacent = position.translated(direction);
+            if (hasAnyValidBridgeOrientation(board, adjacent)) {
+                validTargets.add(adjacent);
+            }
+        }
+        return validTargets;
+    }
+
+    /**
+     * @param board  the board to build on
+     * @param target the candidate bridge hex
+     *
+     * @return {@code true} if any of the three opposite-hexside orientations is a valid bridge site there.
+     */
+    private boolean hasAnyValidBridgeOrientation(Board board, Coords target) {
+        for (int axis = 0; axis < 3; axis++) {
+            if (BridgeConstruction.isValidBridgeSite(board, target, bridgeExitsForAxis(axis))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param direction a hexside direction (0-5)
+     *
+     * @return The exits bitmask connecting that hexside and its opposite.
+     */
+    private static int bridgeExitsForAxis(int direction) {
+        return (1 << (direction % 3)) | (1 << ((direction % 3) + 3));
+    }
+
+    /**
+     * Starts declaring a bridge build (TO:AUE Bridge-Building Engineers): asks for the bridge type (Light/Medium,
+     * limited by the remaining budget), then highlights the valid adjacent target hexes for the player to pick.
+     */
+    private void startBridgeBuildSelection() {
+        clear();
+        if (!(currentEntity() instanceof ConvInfantry convInfantry)) {
+            return;
+        }
+
+        // Choose the bridge type; Medium is only offered while the budget covers its cost of 2
+        List<String> choices = new ArrayList<>();
+        choices.add(Messages.getString("MovementDisplay.BuildBridgeDialog.light"));
+        if (convInfantry.canAffordBridge(ConvInfantry.BRIDGE_TYPE_MEDIUM)) {
+            choices.add(Messages.getString("MovementDisplay.BuildBridgeDialog.medium"));
+        }
+        String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
+              Messages.getString("MovementDisplay.BuildBridgeDialog.message"),
+              Messages.getString("MovementDisplay.BuildBridgeDialog.title"),
+              JOptionPane.QUESTION_MESSAGE,
+              null,
+              choices.toArray(new String[0]),
+              choices.getFirst());
+        if (input == null) {
+            return;
+        }
+        selectedBridgeType = input.equals(Messages.getString("MovementDisplay.BuildBridgeDialog.medium"))
+              ? ConvInfantry.BRIDGE_TYPE_MEDIUM : ConvInfantry.BRIDGE_TYPE_LIGHT;
+
+        Set<Coords> validTargets = computeValidBridgeTargetHexes(convInfantry);
+        if (validTargets.isEmpty()) {
+            return;
+        }
+        isSelectingBridgeTarget = true;
+        validBridgeSelectionHexes.clear();
+        validBridgeSelectionHexes.addAll(validTargets);
+        highlightBridgeSelectionHexes(convInfantry);
+        setStatusBarText(Messages.getString("MovementDisplay.BuildBridge.selectTarget"));
+    }
+
+    /**
+     * Second selection stage: the target hex is chosen; highlights the hexes adjacent to it that define a valid
+     * orientation, for the player to pick the axis the bridge will span.
+     *
+     * @param target the chosen bridge hex
+     */
+    private void startBridgeDirectionSelection(Coords target) {
+        if (!(currentEntity() instanceof ConvInfantry convInfantry)) {
+            cancelBridgeBuildSelection();
+            return;
+        }
+        selectedBridgeTarget = target;
+        isSelectingBridgeTarget = false;
+
+        Board board = game.getBoard(convInfantry.getBoardId());
+        validBridgeSelectionHexes.clear();
+        for (int direction = 0; direction < 6; direction++) {
+            if (BridgeConstruction.isValidBridgeSite(board, target, bridgeExitsForAxis(direction))) {
+                validBridgeSelectionHexes.add(target.translated(direction));
+            }
+        }
+        if (validBridgeSelectionHexes.isEmpty()) {
+            cancelBridgeBuildSelection();
+            return;
+        }
+        isSelectingBridgeDirection = true;
+        highlightBridgeSelectionHexes(convInfantry);
+        setStatusBarText(Messages.getString("MovementDisplay.BuildBridge.selectDirection"));
+    }
+
+    /**
+     * Completes the bridge build declaration with the chosen orientation and commits the move.
+     *
+     * @param directionHex the hex adjacent to the target that defines the axis the bridge will span
+     */
+    private void completeBridgeBuildSelection(Coords directionHex) {
+        int exits = bridgeExitsForAxis(selectedBridgeTarget.direction(directionHex));
+        Coords target = selectedBridgeTarget;
+        int bridgeType = selectedBridgeType;
+        cancelBridgeBuildSelection();
+        clear();
+
+        Map<Integer, Integer> bridgeData = new HashMap<>();
+        bridgeData.put(MoveStep.BRIDGE_TARGET_X_KEY, target.getX());
+        bridgeData.put(MoveStep.BRIDGE_TARGET_Y_KEY, target.getY());
+        bridgeData.put(MoveStep.BRIDGE_EXITS_KEY, exits);
+        bridgeData.put(MoveStep.BRIDGE_TYPE_KEY, bridgeType);
+        addStepToMovePath(MoveStepType.BUILD_BRIDGE, bridgeData);
+        ready();
+    }
+
+    /**
+     * Cancels any bridge build hex selection in progress and clears the highlighting.
+     */
+    private void cancelBridgeBuildSelection() {
+        isSelectingBridgeTarget = false;
+        isSelectingBridgeDirection = false;
+        selectedBridgeTarget = null;
+        validBridgeSelectionHexes.clear();
+        clientgui.clearMovementEnvelope();
+    }
+
+    /**
+     * Highlights the hexes of the current bridge build selection stage on the board.
+     *
+     * @param convInfantry the engineer platoon declaring the build
+     */
+    private void highlightBridgeSelectionHexes(ConvInfantry convInfantry) {
+        Map<Coords, Integer> highlightData = new HashMap<>();
+        for (Coords coords : validBridgeSelectionHexes) {
+            highlightData.put(coords, 0); // 0 = walkable range color
+        }
+        clientgui.showMovementEnvelope(convInfantry, highlightData, GEAR_LAND);
     }
 }

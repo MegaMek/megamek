@@ -57,6 +57,7 @@ import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
+import megamek.common.board.BridgeConstruction;
 import megamek.common.board.Coords;
 import megamek.common.comparators.WeaponComparatorBV;
 import megamek.common.compute.Compute;
@@ -15785,6 +15786,85 @@ public class TWGameManager extends AbstractGameManager {
         }
         // Check for touched-off explosives
         resolveExplodingCharges();
+    }
+
+    /**
+     * End-phase checks for Bridge-Building Engineers, TO:AUE: reports build progress, extends the build by a turn when
+     * the platoon took casualties this turn, abandons builds whose platoon is no longer adjacent to the site (e.g.
+     * displaced or transported away; ConvInfantry#newRound also catches this, but silently - reporting it here tells
+     * the player the progress was lost), and completes bridges whose work is done.
+     */
+    void checkBuildBridges() {
+        for (Entity entity : game.getEntitiesVector()) {
+            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBuildingBridge()) {
+                continue;
+            }
+            if (!convInfantry.isAdjacentToBridgeSite()) {
+                convInfantry.cancelBridgeBuild();
+                Report report = new Report(4278);
+                report.subject = convInfantry.getId();
+                report.addDesc(convInfantry);
+                addReport(report);
+                continue;
+            }
+            if (convInfantry.updateBridgeBuildCasualties()) {
+                Report report = new Report(4279);
+                report.subject = convInfantry.getId();
+                report.addDesc(convInfantry);
+                addReport(report);
+            }
+            // The current round counts as a full turn of work: the platoon is locked out of all phases while
+            // building, so by the END phase it has spent this entire round on the bridge.
+            int turnsWorked = convInfantry.getBridgeBuildTurns() + 1;
+            if (turnsWorked >= convInfantry.getBridgeBuildRequiredTurns()) {
+                finishBridgeBuild(convInfantry);
+            } else {
+                Report report = new Report(4276);
+                report.subject = convInfantry.getId();
+                report.addDesc(convInfantry);
+                report.add(turnsWorked);
+                report.add(convInfantry.getBridgeBuildRequiredTurns());
+                addReport(report);
+            }
+        }
+    }
+
+    /**
+     * Completes a bridge build, TO:AUE: places the new bridge on the board, registers it as a structure, and updates
+     * the clients with the changed hex and the new bridge. If the site became invalid while building (e.g. another
+     * structure appeared there), the work is abandoned instead.
+     *
+     * @param convInfantry the platoon finishing its bridge
+     */
+    private void finishBridgeBuild(ConvInfantry convInfantry) {
+        Coords target = convInfantry.getBridgeTargetCoords();
+        int boardId = convInfantry.getBoardId();
+        Board board = game.getBoard(boardId);
+        if (!BridgeConstruction.isValidBridgeSite(board, target, convInfantry.getBridgeExits())) {
+            convInfantry.cancelBridgeBuild();
+            Report report = new Report(4278);
+            report.subject = convInfantry.getId();
+            report.addDesc(convInfantry);
+            addReport(report);
+            return;
+        }
+
+        boolean isOverWater = BridgeConstruction.isOverWater(board.getHex(target));
+        int constructionFactor = ConvInfantry.getBuiltBridgeCF(convInfantry.getBridgeType(), isOverWater);
+        IBuilding bridge = BridgeConstruction.placeBridge(board, target, convInfantry.getBridgeExits(),
+              convInfantry.getBridgeType(), constructionFactor);
+        sendChangedHex(target, boardId);
+        Vector<IBuilding> newBridges = new Vector<>();
+        newBridges.add(bridge);
+        send(createAddBuildingPacket(newBridges));
+
+        Report report = new Report(4277);
+        report.subject = convInfantry.getId();
+        report.addDesc(convInfantry);
+        report.add(constructionFactor);
+        report.add(target.getBoardNum());
+        addReport(report);
+        convInfantry.cancelBridgeBuild();
     }
 
     /**

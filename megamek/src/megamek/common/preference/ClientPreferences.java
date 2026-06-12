@@ -69,6 +69,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String MEK_HIT_LOC_LOG = "MekHitLocLog";
     public static final String MEMORY_DUMP_ON = "MemoryDumpOn";
     public static final String DEBUG_OUTPUT_ON = "DebugOutputOn";
+    // Silent (no UI) diagnostic flag for the Force Generator: when true, ratGenerator writes the
+    // forcegen_weights.csv / forcegen_warships.csv tuning files. Off by default; set by hand in
+    // the mmconf client settings.
+    public static final String FORCE_GENERATOR_DIAGNOSTICS = "ForceGeneratorDiagnostics";
     public static final String GAME_LOG_KEEP = "KeepGameLog";
     public static final String GAME_LOG_FILENAME = "GameLogFilename";
     public static final String AUTO_RESOLVE_GAME_LOG_FILENAME = "AutoResolveGameLogFilename";
@@ -142,6 +146,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_START_CHAR, 'A');
         store.setDefault(GUI_NAME, "swing");
         store.setDefault(USE_AVERAGE_SKILLS, true);
+        store.setDefault(FORCE_GENERATOR_DIAGNOSTICS, false);
         store.setDefault(USE_GP_IN_UNIT_SELECTION, false);
         store.setDefault(GENERATE_NAMES, true);
         store.setDefault(PRINT_ENTITY_CHANGE, false);
@@ -300,6 +305,11 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public boolean debugOutputOn() {
         return store.getBoolean(DEBUG_OUTPUT_ON);
+    }
+
+    /** @return whether the Force Generator should write its diagnostic CSV tuning files. */
+    public boolean getForceGeneratorDiagnostics() {
+        return store.getBoolean(FORCE_GENERATOR_DIAGNOSTICS);
     }
 
     public void setDefaultAutoEjectDisabled(boolean state) {

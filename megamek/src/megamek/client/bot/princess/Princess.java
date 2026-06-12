@@ -210,6 +210,7 @@ public class Princess extends BotClient {
     private boolean fallBack = false;
     private final ChatProcessor chatProcessor = new ChatProcessor();
     private boolean fleeBoard = false;
+    private boolean holdPosition = false;
     private final MoraleUtil moraleUtil = new MoraleUtil();
     private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Set<Integer> crippledUnits = new HashSet<>();
@@ -425,6 +426,88 @@ public class Princess extends BotClient {
     public void setFallBack(final boolean fallBack, final String reason) {
         LOGGER.debug("Setting Fall Back {} because: {}", fallBack, reason);
         this.fallBack = fallBack;
+    }
+
+    /**
+     * @return TRUE if the bot has been ordered to hold position (units stay where they are).
+     */
+    public boolean getHoldPosition() {
+        return holdPosition;
+    }
+
+    /**
+     * Orders the bot to hold position: its units stay where they are during the movement phase (they still fight from
+     * their current location and may turn in place to face the enemy) until the hold is lifted. Airborne units are
+     * exempt, as they cannot legally stand still.
+     *
+     * @param holdPosition TRUE to hold position, FALSE to resume normal movement.
+     */
+    public void setHoldPosition(final boolean holdPosition) {
+        LOGGER.info("{}: setting hold position to {}", getName(), holdPosition);
+        this.holdPosition = holdPosition;
+    }
+
+    /**
+     * Builds the move path for a unit under a hold position order: the unit stays in its hex but is allowed to change
+     * facing toward the closest enemy so it keeps its weapons bearing.
+     *
+     * @param entity The unit holding position
+     *
+     * @return A turn-in-place move path, or an empty path when no facing change is possible or needed
+     */
+    private MovePath getHoldPositionPath(final Entity entity) {
+        MovePath movePath = new MovePath(game, entity);
+        boolean canTurnInPlace = !entity.isProne() && !entity.isImmobile() && (entity.getWalkMP() > 0)
+              && (entity.getPosition() != null);
+        if (!canTurnInPlace) {
+            return movePath;
+        }
+        Coords closestEnemyPosition = findClosestEnemyPosition(entity);
+        if ((closestEnemyPosition == null) || closestEnemyPosition.equals(entity.getPosition())) {
+            return movePath;
+        }
+        int desiredFacing = entity.getPosition().direction(closestEnemyPosition);
+        int rightTurns = ((desiredFacing - entity.getFacing()) + 6) % 6;
+        if (rightTurns == 0) {
+            return movePath;
+        }
+        // turn the short way around
+        if (rightTurns <= 3) {
+            for (int turn = 0; turn < rightTurns; turn++) {
+                movePath.addStep(MoveStepType.TURN_RIGHT);
+            }
+        } else {
+            for (int turn = 0; turn < (6 - rightTurns); turn++) {
+                movePath.addStep(MoveStepType.TURN_LEFT);
+            }
+        }
+        // trim the path in case the unit lacks the MP for the full turn
+        movePath.clipToPossible();
+        return movePath;
+    }
+
+    /**
+     * Finds the position of the deployed enemy unit closest to the given unit.
+     *
+     * @param entity The unit looking for enemies
+     *
+     * @return The closest enemy position, or null if no deployed enemy with a position exists
+     */
+    private @Nullable Coords findClosestEnemyPosition(final Entity entity) {
+        Coords closestPosition = null;
+        int closestDistance = Integer.MAX_VALUE;
+        for (Iterator<Entity> enemies = game.getAllEnemyEntities(entity); enemies.hasNext(); ) {
+            Entity enemy = enemies.next();
+            if ((enemy.getPosition() == null) || enemy.isOffBoard() || !enemy.isDeployed()) {
+                continue;
+            }
+            int distance = entity.getPosition().distance(enemy.getPosition());
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestPosition = enemy.getPosition();
+            }
+        }
+        return closestPosition;
     }
 
     public void setBehaviorSettings(final BehaviorSettings behaviorSettings) {
@@ -2629,6 +2712,13 @@ public class Princess extends BotClient {
         Objects.requireNonNull(entity, "Entity is null.");
 
         try {
+            // a hold position order trumps all other movement; airborne units are exempt because they
+            // cannot legally stand still
+            if (getHoldPosition() && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE()) {
+                LOGGER.info("{}: {} is holding position", getName(), entity.getDisplayName());
+                return getHoldPositionPath(entity);
+            }
+
             // figure out who moved last, and whose move lists need to be updated
 
             // moves this entity during movement phase

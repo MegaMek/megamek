@@ -461,6 +461,16 @@ public class ArtilleryTargetingControl {
         if (!forwardPlan.isEmpty()) {
             return forwardPlan;
         }
+        // only retry with facing changes when a twist could actually help - not when the artillery is
+        // halted, the unit already took its volley shot, or there is nothing to shoot at
+        ArtilleryCommandAndControl artilleryCommandAndControl = owner.getArtilleryCommandAndControl();
+        boolean twistCouldHelp = !artilleryCommandAndControl.isArtilleryHalted()
+              && !(artilleryCommandAndControl.isArtilleryVolley()
+              && artilleryCommandAndControl.hasAlreadyFired(shooter))
+              && (targetSet != null) && !targetSet.isEmpty();
+        if (!twistCouldHelp) {
+            return forwardPlan;
+        }
         for (int facingChange : FireControl.getValidFacingChanges(shooter)) {
             FiringPlan twistedPlan = calculateIndirectArtilleryPlan(shooter, game, owner, facingChange);
             if (!twistedPlan.isEmpty()) {

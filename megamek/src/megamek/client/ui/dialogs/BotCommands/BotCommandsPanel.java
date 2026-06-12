@@ -320,7 +320,18 @@ public class BotCommandsPanel extends JPanel {
         createMenuItem(popup, CardinalEdge.WEST, this::retreatWest);
         createMenuItem(popup, CardinalEdge.NEAREST, this::retreatNearestEdge);
         createMenuItem(popup, CardinalEdge.NONE, this::noRetreat);
+        popup.addSeparator();
+        createMenuItem(popup, "HoldPosition", this::holdPosition);
+        createMenuItem(popup, "ResumeMovement", this::resumeMovement);
         return popup;
+    }
+
+    private void holdPosition(Player botPlayer) {
+        sendChatCommand(botPlayer, ChatCommands.HOLD_POSITION);
+    }
+
+    private void resumeMovement(Player botPlayer) {
+        sendChatCommand(botPlayer, ChatCommands.HOLD_POSITION, "false");
     }
 
     private JPopupMenu createManeuverPopup() {

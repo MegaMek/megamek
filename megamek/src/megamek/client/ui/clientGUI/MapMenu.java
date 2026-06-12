@@ -438,7 +438,29 @@ public class MapMenu extends JPopupMenu {
         menu.addSeparator();
         menu.add(behaviorMenu);
         menu.add(fleeMenu);
+        menu.add(createHoldPositionMenuItem(bot, true));
+        menu.add(createHoldPositionMenuItem(bot, false));
         return menu;
+    }
+
+    /**
+     * Creates a menu item ordering the given bot to hold position or to resume movement.
+     *
+     * @param bot  The bot player to send the order to
+     * @param hold TRUE for a hold position order, FALSE to resume movement
+     *
+     * @return The created menu item
+     */
+    private JMenuItem createHoldPositionMenuItem(Player bot, boolean hold) {
+        String messageKey = hold ? "Bot.commands.holdPosition" : "Bot.commands.resumeMovement";
+        JMenuItem item = new JMenuItem(Messages.getString(messageKey));
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: %s : %s",
+                  bot.getName(), ChatCommands.HOLD_POSITION.getCommand(), hold));
+            gui.addToast(ToastLevel.SUCCESS, Messages.getString("BotCommandPanel.toast.orderSent",
+                  bot.getName(), Messages.getString(messageKey)));
+        });
+        return item;
     }
 
     JMenu createBehaviorMenu(Player bot) {

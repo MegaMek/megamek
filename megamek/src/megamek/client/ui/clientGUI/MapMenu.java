@@ -56,6 +56,7 @@ import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.client.ui.dialogs.NoteDialog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
@@ -331,14 +332,19 @@ public class MapMenu extends JPopupMenu {
     }
 
     private JMenu touchOffExplosivesMenu() {
-        JMenu menu = new JMenu("Touch off explosives");
+        JMenu menu = new JMenu(Messages.getString("MapMenu.touchOffExplosives"));
 
         IBuilding bldg = board.getBuildingAt(coords);
         if ((bldg != null)) {
             for (final DemolitionCharge charge : bldg.getDemolitionCharges()) {
                 if (charge.playerId == client.getLocalPlayer().getId() && coords.equals(charge.pos)) {
-                    JMenuItem item = new JMenuItem(charge.damage + " Damage");
-                    item.addActionListener(e -> client.sendExplodeBuilding(charge));
+                    JMenuItem item = new JMenuItem(
+                          Messages.getString("MapMenu.touchOffExplosives.damage", charge.damage));
+                    item.addActionListener(e -> {
+                        client.sendExplodeBuilding(charge);
+                        gui.addToast(ToastLevel.SUCCESS,
+                              Messages.getString("MapMenu.touchOffExplosives.toast", charge.damage));
+                    });
                     menu.add(item);
                 }
             }

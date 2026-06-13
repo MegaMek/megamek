@@ -34,6 +34,17 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
+import java.awt.FlowLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
@@ -53,10 +64,6 @@ import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
 
 /**
  * This is the random army dialog shown in MM's lobby and game (reinforcement), where the system was initially
@@ -199,6 +206,12 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
     public void setVisible(boolean show) {
         if (show) {
             updatePlayerChoice();
+            // Re-pull the current game options every time the dialog is opened so the Force
+            // Generator's Year field defaults to the current game year. The dialog is constructed
+            // once at ClientGUI startup, before the user has set the year in the lobby, and the
+            // gameListener is only installed on first show — so without this, year changes made
+            // before the first open never propagate. Still user-editable after defaulting.
+            setGameOptions(client.getGame().getOptions());
             if (gameListener == null) {
                 installGameListener();
             }

@@ -43,6 +43,7 @@ import java.util.Map;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.dialogs.phaseDisplay.AbandonUnitDialog;
+import megamek.client.ui.dialogs.phaseDisplay.DetonateChargesDialog;
 import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkDialog;
 import megamek.client.ui.dialogs.phaseDisplay.VariableRangeTargetingDialog;
 import megamek.client.ui.util.KeyCommandBind;
@@ -67,7 +68,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         REPORT_REROLL_INITIATIVE("reportRerollInitiative"),
         REPORT_NOVA_NETWORK("reportNovaNetwork"),
         REPORT_VAR_RANGE_TARGETING("reportVarRangeTargeting"),
-        REPORT_ABANDON("reportAbandon");
+        REPORT_ABANDON("reportAbandon"),
+        REPORT_DETONATE_CHARGES("reportDetonateCharges");
 
         final String cmd;
 
@@ -240,6 +242,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             showVariableRangeTargetingDialog();
         } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_ABANDON.getCmd()))) {
             showAbandonDialog();
+        } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_DETONATE_CHARGES.getCmd()))) {
+            showDetonateChargesDialog();
         }
     }
 
@@ -263,10 +267,14 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             setVariableRangeTargetingEnabled(hasVariableRangeUnits());
             // Enable Abandon button if player has abandonable units (Meks: prone+shutdown, Vehicles: any)
             setAbandonEnabled(hasAbandonableUnits());
+            // Enable Detonate Charges button if player has set demolition charges (TO:AUE p.152: detonation is
+            // announced in any End Phase after the charges are finished)
+            setDetonateChargesEnabled(hasDemolitionCharges());
         } else {
             setNovaNetworkEnabled(false);
             setVariableRangeTargetingEnabled(false);
             setAbandonEnabled(false);
+            setDetonateChargesEnabled(false);
         }
     }
 
@@ -395,6 +403,41 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
      */
     private void setAbandonEnabled(boolean enabled) {
         MegaMekButton button = buttons.get(ReportCommand.REPORT_ABANDON);
+        if (button != null) {
+            button.setEnabled(enabled);
+        }
+    }
+
+    /**
+     * Shows the Detonate Charges dialog (TO:AUE p.152: detonation of finished demolition charges is announced in any
+     * End Phase after the charges were set).
+     */
+    private void showDetonateChargesDialog() {
+        DetonateChargesDialog dialog = new DetonateChargesDialog(clientgui.getFrame(), clientgui);
+        dialog.setVisible(true);
+        // Clear focus from the button after dialog closes
+        MegaMekButton button = buttons.get(ReportCommand.REPORT_DETONATE_CHARGES);
+        if (button != null) {
+            button.transferFocus();
+        }
+    }
+
+    /**
+     * Checks if the local player has any demolition charges set on any building.
+     */
+    private boolean hasDemolitionCharges() {
+        int localPlayerId = clientgui.getClient().getLocalPlayer().getId();
+        return clientgui.getClient().getGame().getBoards().values().stream()
+              .flatMap(board -> board.getBuildingsVector().stream())
+              .flatMap(building -> building.getDemolitionCharges().stream())
+              .anyMatch(charge -> charge.playerId == localPlayerId);
+    }
+
+    /**
+     * Enables or disables the Detonate Charges button.
+     */
+    private void setDetonateChargesEnabled(boolean enabled) {
+        MegaMekButton button = buttons.get(ReportCommand.REPORT_DETONATE_CHARGES);
         if (button != null) {
             button.setEnabled(enabled);
         }

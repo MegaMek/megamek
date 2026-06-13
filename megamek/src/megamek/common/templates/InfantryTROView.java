@@ -154,11 +154,12 @@ public class InfantryTROView extends TROView {
 
         sj = new StringJoiner(", ");
         final int maxRange = rangeWeapon.getInfantryRange() * 3;
-        int lastMod = Compute.getInfantryRangeMods(0, rangeWeapon, inf.getSecondaryWeapon(), false).getValue();
+        int lastMod = Compute.getInfantryRangeMods(0, rangeWeapon, inf.getSecondaryWeapon(),
+              inf.getDisposableWeapon(), false).getValue();
         int hex = 0;
         for (int range = 1; range <= (maxRange + 1); range++) {
-            final int mod = Compute.getInfantryRangeMods(range, rangeWeapon, inf.getSecondaryWeapon(), false)
-                  .getValue();
+            final int mod = Compute.getInfantryRangeMods(range, rangeWeapon, inf.getSecondaryWeapon(),
+                  inf.getDisposableWeapon(), false).getValue();
             if (mod != lastMod) {
                 if ((range - hex) > 1) {
                     sj.add(String.format("%+d (%d-%d Hexes)", lastMod, hex, range - 1));

@@ -765,8 +765,8 @@ public class BLKFile {
         String type = getType(t);
         blk.writeBlockData("type", type);
 
-        if (t.hasRole()) {
-            blk.writeBlockData("role", t.getRole().toString());
+        if (t.hasRoleOverride()) {
+            blk.writeBlockData("role", t.getRoleOverride().toString());
         }
 
         List<String> quirkList = t.getQuirks()

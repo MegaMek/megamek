@@ -7651,16 +7651,49 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * @return {@code true} if the Build Bridge button should be enabled.
      */
     private boolean canSelectBridgeBuild(Entity unit, GameOptions gameOptions) {
-        boolean isEligibleEngineer = (unit instanceof ConvInfantry convInfantry)
-              && gameOptions.booleanOption(OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS)
-              && game.isOnGroundMap(unit)
-              && (unit.getAltitude() == 0)
-              && (unit.getElevation() == 0)
-              && convInfantry.canStartBridgeBuild();
-        if (!isEligibleEngineer) {
+        if (!(unit instanceof ConvInfantry convInfantry)) {
             return false;
         }
-        return !computeValidBridgeTargetHexes((ConvInfantry) unit).isEmpty();
+        // Each failing condition is logged at DEBUG so playtests can diagnose why the button is disabled
+        String unitName = unit.getShortName();
+        if (!gameOptions.booleanOption(OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS)) {
+            LOGGER.debug("[BuildBridge] {}: button disabled - game option {} is off", unitName,
+                  OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS);
+            return false;
+        }
+        if (!convInfantry.hasSpecialization(ConvInfantry.BRIDGE_ENGINEERS)) {
+            LOGGER.debug("[BuildBridge] {}: button disabled - no Bridge-Building Engineers specialization "
+                  + "(specialization bitmask is {})", unitName, convInfantry.getSpecializations());
+            return false;
+        }
+        if (!convInfantry.hasBridgeKit()) {
+            LOGGER.debug("[BuildBridge] {}: button disabled - platoon carries no Infantry Bridge Kit", unitName);
+            return false;
+        }
+        if (!convInfantry.canAffordBridge(ConvInfantry.BRIDGE_TYPE_LIGHT)) {
+            LOGGER.debug("[BuildBridge] {}: button disabled - bridge building budget spent ({} points left)",
+                  unitName, convInfantry.getBridgeBuildPoints());
+            return false;
+        }
+        if (convInfantry.isBuildingBridge()) {
+            LOGGER.debug("[BuildBridge] {}: button disabled - already raising a bridge (turn {} of {})", unitName,
+                  convInfantry.getBridgeBuildTurns(), convInfantry.getBridgeBuildRequiredTurns());
+            return false;
+        }
+        if (!game.isOnGroundMap(unit) || (unit.getAltitude() != 0) || (unit.getElevation() != 0)) {
+            LOGGER.debug("[BuildBridge] {}: button disabled - not at ground level on a ground map "
+                  + "(altitude {}, elevation {})", unitName, unit.getAltitude(), unit.getElevation());
+            return false;
+        }
+        Set<Coords> validTargets = computeValidBridgeTargetHexes(convInfantry);
+        if (validTargets.isEmpty()) {
+            LOGGER.debug("[BuildBridge] {}: button disabled - no valid bridge site adjacent to {}", unitName,
+                  unit.getPosition());
+            return false;
+        }
+        LOGGER.debug("[BuildBridge] {}: button enabled - {} valid adjacent site(s): {}", unitName,
+              validTargets.size(), validTargets);
+        return true;
     }
 
     /**
@@ -7736,11 +7769,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         selectedBridgeType = input.equals(Messages.getString("MovementDisplay.BuildBridgeDialog.medium"))
               ? ConvInfantry.BRIDGE_TYPE_MEDIUM : ConvInfantry.BRIDGE_TYPE_LIGHT;
+        LOGGER.debug("[BuildBridge] {}: chose bridge type {} (1=light, 2=medium)", convInfantry.getShortName(),
+              selectedBridgeType);
 
         Set<Coords> validTargets = computeValidBridgeTargetHexes(convInfantry);
         if (validTargets.isEmpty()) {
+            LOGGER.debug("[BuildBridge] {}: selection aborted - no valid bridge site adjacent to {}",
+                  convInfantry.getShortName(), convInfantry.getPosition());
             return;
         }
+        LOGGER.debug("[BuildBridge] {}: selecting target hex from {}", convInfantry.getShortName(), validTargets);
         isSelectingBridgeTarget = true;
         validBridgeSelectionHexes.clear();
         validBridgeSelectionHexes.addAll(validTargets);
@@ -7770,9 +7808,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
         if (validBridgeSelectionHexes.isEmpty()) {
+            LOGGER.debug("[BuildBridge] {}: selection aborted - no valid orientation for target hex {}",
+                  convInfantry.getShortName(), target);
             cancelBridgeBuildSelection();
             return;
         }
+        LOGGER.debug("[BuildBridge] {}: target hex {} chosen, selecting orientation from {}",
+              convInfantry.getShortName(), target, validBridgeSelectionHexes);
         isSelectingBridgeDirection = true;
         highlightBridgeSelectionHexes(convInfantry);
         setStatusBarText(Messages.getString("MovementDisplay.BuildBridge.selectDirection"));
@@ -7790,12 +7832,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
         cancelBridgeBuildSelection();
         clear();
 
+        LOGGER.info("[BuildBridge] declaring bridge build: target {}, exits bitmask {}, type {} (1=light, 2=medium)",
+              target, exits, bridgeType);
         Map<Integer, Integer> bridgeData = new HashMap<>();
         bridgeData.put(MoveStep.BRIDGE_TARGET_X_KEY, target.getX());
         bridgeData.put(MoveStep.BRIDGE_TARGET_Y_KEY, target.getY());
         bridgeData.put(MoveStep.BRIDGE_EXITS_KEY, exits);
         bridgeData.put(MoveStep.BRIDGE_TYPE_KEY, bridgeType);
         addStepToMovePath(MoveStepType.BUILD_BRIDGE, bridgeData);
+        if (currentEntity() != null) {
+            clientgui.addToast(ToastLevel.INFO, Messages.getString("MovementDisplay.buildBridge.toast.start",
+                        currentEntity().getShortName(), target.getBoardNum(), ConvInfantry.BRIDGE_BUILD_TURNS),
+                  currentEntity());
+        }
         ready();
     }
 

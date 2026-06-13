@@ -570,6 +570,9 @@ public class ConvInfantry extends Infantry {
         bridgeExits = exits;
         this.bridgeType = bridgeType;
         bridgeBuildTroopersSnapshot = Math.max(getInternal(LOC_INFANTRY), 0);
+        logger.debug("[BuildBridge] {} starts a type-{} bridge at {} (exits bitmask {}, {} troopers, {} turns of "
+                    + "work)", getShortName(), bridgeType, target, exits, bridgeBuildTroopersSnapshot,
+              bridgeBuildRequiredTurns);
     }
 
     /** Stops the current bridge build, losing all progress. The bridge building budget is not refunded. */
@@ -683,10 +686,13 @@ public class ConvInfantry extends Infantry {
         }
         int currentTroopers = Math.max(getInternal(LOC_INFANTRY), 0);
         boolean tookCasualties = currentTroopers < bridgeBuildTroopersSnapshot;
-        bridgeBuildTroopersSnapshot = currentTroopers;
         if (tookCasualties) {
             bridgeBuildRequiredTurns++;
+            logger.debug("[BuildBridge] {} took casualties while building ({} -> {} troopers); the build now "
+                        + "requires {} turns", getShortName(), bridgeBuildTroopersSnapshot, currentTroopers,
+                  bridgeBuildRequiredTurns);
         }
+        bridgeBuildTroopersSnapshot = currentTroopers;
         return tookCasualties;
     }
 
@@ -706,9 +712,11 @@ public class ConvInfantry extends Infantry {
     public void newRound(int roundNumber) {
         if (isBuildingBridge()) {
             bridgeBuildTurns++;
-            // Silently abandon the build if the platoon was displaced or transported away from the site; the
-            // END phase check in TWGameManager also catches this and reports the lost progress to the player.
+            // Abandon the build if the platoon was displaced or transported away from the site; the END phase
+            // check in TWGameManager also catches this and reports the lost progress to the player.
             if (!isAdjacentToBridgeSite()) {
+                logger.debug("[BuildBridge] {} abandons its bridge build: no longer adjacent to {} (position {})",
+                      getShortName(), bridgeTargetCoords, getPosition());
                 cancelBridgeBuild();
             }
         }

@@ -39,6 +39,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import megamek.common.GameBoardTestCase;
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -46,10 +51,14 @@ import megamek.common.board.Board;
 import megamek.common.board.BridgeConstruction;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.ConvInfantry;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,7 +97,27 @@ public class BridgeBuildingTest extends GameBoardTestCase {
     private Game game;
     private Board board;
 
+    /** A 1x3 column for crossing tests: level 1 bank, level 0 depth 1 river, level 1 bank. */
+    private static final String CROSSING_BOARD = "BRIDGE_CROSSING_BOARD";
+
+    /** The same column with a map-authored bridge over the river, as a control for the crossing tests. */
+    private static final String CROSSING_BOARD_AUTHORED = "BRIDGE_CROSSING_BOARD_AUTHORED";
+
     private static void loadBoard() {
+        initializeBoard(CROSSING_BOARD, """
+              size 1 3
+              hex 0101 1 "" ""
+              hex 0102 0 "water:1" ""
+              hex 0103 1 "" ""
+              end"""
+        );
+        initializeBoard(CROSSING_BOARD_AUTHORED, """
+              size 1 3
+              hex 0101 1 "" ""
+              hex 0102 0 "water:1;bridge:1:09;bridge_cf:30;bridge_elev:1" ""
+              hex 0103 1 "" ""
+              end"""
+        );
         // Note: board files assign hexes sequentially; the coordinates in the hex lines are ignored.
         initializeBoard(BOARD_NAME, """
               size 5 6
@@ -417,6 +446,179 @@ public class BridgeBuildingTest extends GameBoardTestCase {
         gameManager.checkBuildBridges();
         assertTrue(board.getHex(WATER_TARGET_COORDS).containsTerrain(Terrains.BRIDGE),
               "The extended build must complete one turn later");
+    }
+
+    // endregion
+
+    // region Crossing a completed bridge
+
+    /** The river hex of the 1x3 crossing boards. */
+    private static final Coords CROSSING_RIVER_COORDS = new Coords(0, 1);
+
+    @Test
+    void infantryCanCrossACompletedBridgeWithClimbModeOn() {
+        // Crossing on top of a bridge requires climb mode "climb up"; with "go through" units prefer to wade
+        // under the bridge instead (TO:AR p.115, see also the climb mode notes in the README)
+        setBoard(CROSSING_BOARD);
+        BridgeConstruction.placeBridge(getBoard(CROSSING_BOARD), CROSSING_RIVER_COORDS, EXITS_NORTH_SOUTH,
+              ConvInfantry.BRIDGE_TYPE_LIGHT, 30);
+
+        MovePath path = getMovePathFor(createCrossingInfantry(),
+              MoveStepType.CLIMB_MODE_ON, MoveStepType.FORWARDS, MoveStepType.FORWARDS);
+        assertTrue(path.isMoveLegal(), "Foot infantry must be able to cross a completed engineer bridge but the "
+              + "path was: " + describeSteps(path) + " walkMP=" + path.getEntity().getWalkMP()
+              + " runMP=" + path.getEntity().getRunMP()
+              + " lastMpUsed=" + path.getLastStep().getMpUsed());
+    }
+
+    @Test
+    void infantryCanCrossAMapAuthoredBridgeWithClimbModeOn() {
+        // Control: the same crossing over a bridge that was part of the board file must also be legal,
+        // proving the placed bridge behaves no differently
+        setBoard(CROSSING_BOARD_AUTHORED);
+
+        MovePath path = getMovePathFor(createCrossingInfantry(),
+              MoveStepType.CLIMB_MODE_ON, MoveStepType.FORWARDS, MoveStepType.FORWARDS);
+        assertTrue(path.isMoveLegal(), "Foot infantry must be able to cross a map-authored bridge");
+    }
+
+    @Test
+    void tankCanCrossACompletedBridgeWithoutClimbMode() {
+        // For a tank the river is impassable, so it mounts the bridge even with climb mode off
+        setBoard(CROSSING_BOARD);
+        BridgeConstruction.placeBridge(getBoard(CROSSING_BOARD), CROSSING_RIVER_COORDS, EXITS_NORTH_SOUTH,
+              ConvInfantry.BRIDGE_TYPE_LIGHT, 30);
+
+        MovePath path = getMovePathFor(new Tank(), EntityMovementMode.TRACKED,
+              MoveStepType.FORWARDS, MoveStepType.FORWARDS);
+        assertTrue(path.isMoveLegal(), "A tank must be able to cross a completed engineer bridge but the path was: "
+              + describeSteps(path));
+    }
+
+    @Test
+    void infantryCanCrossAGapBridgeWithClimbModeOn() {
+        // Bisect: the same crossing over a dry gap instead of water isolates whether the water hex is the problem
+        initializeBoard("BRIDGE_GAP_BOARD", """
+              size 1 3
+              hex 0101 1 "" ""
+              hex 0102 0 "bridge:1:09;bridge_cf:30;bridge_elev:1" ""
+              hex 0103 1 "" ""
+              end"""
+        );
+        setBoard("BRIDGE_GAP_BOARD");
+
+        MovePath path = getMovePathFor(createCrossingInfantry(),
+              MoveStepType.CLIMB_MODE_ON, MoveStepType.FORWARDS, MoveStepType.FORWARDS);
+        assertTrue(path.isMoveLegal(), "Foot infantry must be able to cross a gap bridge but the path was: "
+              + describeSteps(path));
+    }
+
+    @Test
+    void infantryCanStepOffABridgeDeck() {
+        // Isolates the dismount: the platoon starts on the bridge deck and steps onto the same-level bank
+        initializeBoard("BRIDGE_DISMOUNT_BOARD", """
+              size 1 2
+              hex 0101 0 "water:1;bridge:1:09;bridge_cf:30;bridge_elev:1" ""
+              hex 0102 1 "" ""
+              end"""
+        );
+        setBoard("BRIDGE_DISMOUNT_BOARD");
+
+        MovePath path = getMovePathFor(new ConvInfantry(), 1, EntityMovementMode.INF_LEG,
+              MoveStepType.CLIMB_MODE_ON, MoveStepType.FORWARDS);
+        assertTrue(path.isMoveLegal(), "Foot infantry must be able to step off a bridge deck onto a same-level "
+              + "bank but the path was: " + describeSteps(path));
+    }
+
+    @Test
+    void tankCanCrossACompletedBridgeWithClimbModeOn() {
+        setBoard(CROSSING_BOARD);
+        BridgeConstruction.placeBridge(getBoard(CROSSING_BOARD), CROSSING_RIVER_COORDS, EXITS_NORTH_SOUTH,
+              ConvInfantry.BRIDGE_TYPE_LIGHT, 30);
+
+        MovePath path = getMovePathFor(new Tank(), EntityMovementMode.TRACKED,
+              MoveStepType.CLIMB_MODE_ON, MoveStepType.FORWARDS, MoveStepType.FORWARDS);
+        assertTrue(path.isMoveLegal(), "A tank with climb mode on must be able to cross a completed engineer "
+              + "bridge but the path was: " + describeSteps(path));
+    }
+
+    @Test
+    void bridgeBuildStateSurvivesSerialization() throws Exception {
+        // Players can save mid-build, and clients receive the build state through entity update packets. Both
+        // save games (XStream field reflection) and packets (Java serialization) persist all non-transient
+        // fields, so a Java serialization round trip proves none of the build state is lost.
+        ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
+        engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_MEDIUM);
+        engineers.spendBridgeBuildPoints(ConvInfantry.BRIDGE_TYPE_MEDIUM);
+        engineers.newRound(2);
+        engineers.newRound(3);
+        engineers.setInternal(5, ConvInfantry.LOC_INFANTRY);
+        engineers.updateBridgeBuildCasualties();
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        try (ObjectOutputStream objectOut = new ObjectOutputStream(buffer)) {
+            objectOut.writeObject(engineers);
+        }
+        ConvInfantry restored;
+        try (ObjectInputStream objectIn = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
+            restored = (ConvInfantry) objectIn.readObject();
+        }
+
+        assertTrue(restored.isBuildingBridge(), "The restored platoon must still be building");
+        assertEquals(engineers.getBridgeBuildTurns(), restored.getBridgeBuildTurns(),
+              "Completed build turns must survive a save game round trip");
+        assertEquals(engineers.getBridgeBuildRequiredTurns(), restored.getBridgeBuildRequiredTurns(),
+              "The casualty-extended required turns must survive a save game round trip");
+        assertEquals(WATER_TARGET_COORDS, restored.getBridgeTargetCoords(),
+              "The bridge site must survive a save game round trip");
+        assertEquals(EXITS_NORTH_SOUTH, restored.getBridgeExits(),
+              "The bridge orientation must survive a save game round trip");
+        assertEquals(ConvInfantry.BRIDGE_TYPE_MEDIUM, restored.getBridgeType(),
+              "The bridge type must survive a save game round trip");
+        assertEquals(0, restored.getBridgeBuildPoints(),
+              "The spent bridge building budget must survive a save game round trip");
+    }
+
+    /**
+     * @return A motorized-speed test platoon (3 MP) so a full bank-bridge-bank crossing fits in one turn; a foot
+     *       platoon (1 MP) legitimately needs two turns for it.
+     */
+    private static ConvInfantry createCrossingInfantry() {
+        ConvInfantry infantry = new ConvInfantry();
+        // Mode first: setting the movement mode resets the walk MP to the mode default of 1
+        infantry.setMovementMode(EntityMovementMode.INF_LEG);
+        infantry.setOriginalWalkMP(3);
+        return infantry;
+    }
+
+    /** Builds a diagnostic description of every step in the path for assertion messages. */
+    private static String describeSteps(MovePath path) {
+        StringBuilder description = new StringBuilder();
+        for (megamek.common.moves.MoveStep step : path.getStepVector()) {
+            description.append(String.format("[%s to %s elev %d type %s] ",
+                  step.getType(), step.getPosition(), step.getElevation(), step.getMovementType(false)));
+        }
+        return description.toString();
+    }
+
+    @Test
+    void completedBridgeHexMatchesMapAuthoredBridgeHex() {
+        // The hex a finished build produces must look exactly like the same bridge written in a board file
+        setBoard(CROSSING_BOARD);
+        BridgeConstruction.placeBridge(getBoard(CROSSING_BOARD), CROSSING_RIVER_COORDS, EXITS_NORTH_SOUTH,
+              ConvInfantry.BRIDGE_TYPE_LIGHT, 30);
+
+        Hex placedHex = getBoard(CROSSING_BOARD).getHex(CROSSING_RIVER_COORDS);
+        Hex authoredHex = getBoard(CROSSING_BOARD_AUTHORED).getHex(CROSSING_RIVER_COORDS);
+        assertEquals(authoredHex.terrainLevel(Terrains.BRIDGE), placedHex.terrainLevel(Terrains.BRIDGE),
+              "Placed bridge type must match the map-authored bridge");
+        assertEquals(authoredHex.terrainLevel(Terrains.BRIDGE_ELEV), placedHex.terrainLevel(Terrains.BRIDGE_ELEV),
+              "Placed bridge elevation must match the map-authored bridge");
+        assertEquals(authoredHex.terrainLevel(Terrains.BRIDGE_CF), placedHex.terrainLevel(Terrains.BRIDGE_CF),
+              "Placed bridge CF must match the map-authored bridge");
+        assertEquals(authoredHex.getTerrain(Terrains.BRIDGE).getExits(),
+              placedHex.getTerrain(Terrains.BRIDGE).getExits(),
+              "Placed bridge exits must match the map-authored bridge");
     }
 
     // endregion

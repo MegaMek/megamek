@@ -1563,15 +1563,6 @@ public class MoveStep implements Serializable {
     }
 
     /**
-     * This function checks that a step is legal. And adjust the movement type. This only checks for things that can
-     * make this step by itself illegal. Things that can make a step illegal as part of a movement path are considered
-     * in MovePath.addStep.
-     *
-     * @param game   The current {@link Game}
-     * @param entity The {@link Entity} taking this step.
-     * @param prev   The {@link MoveStep} previous step in the path.
-     */
-    /**
      * @param game   the current game
      * @param entity the moving entity
      * @param curPos the position of the entity when this step begins, or null if unknown
@@ -1581,20 +1572,54 @@ public class MoveStep implements Serializable {
      *       the step's target hex is adjacent and a valid bridge site. TO:AUE.
      */
     private boolean isValidBridgeBuildStep(Game game, Entity entity, @Nullable Coords curPos) {
+        // Failures are logged at DEBUG: a rejected BUILD_BRIDGE step silently becomes an illegal move, so the log
+        // is the only way to see why a declared build was refused
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS)) {
+            LOGGER.debug("[BuildBridge] step rejected: game option is off");
             return false;
         }
         if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.canStartBridgeBuild()
               || !convInfantry.canAffordBridge(getBridgeType())) {
+            LOGGER.debug("[BuildBridge] step rejected for {}: not an eligible engineer platoon "
+                  + "(specialization, kit, budget or an active build)", entity.getShortName());
             return false;
         }
         Coords target = getBridgeTargetCoords();
         if ((target == null) || (curPos == null) || (curPos.distance(target) != 1)) {
+            LOGGER.debug("[BuildBridge] step rejected for {}: target {} is not adjacent to {}",
+                  entity.getShortName(), target, curPos);
             return false;
         }
-        return BridgeConstruction.isValidBridgeSite(game.getBoard(boardId), target, getBridgeExits());
+        boolean isValidSite = BridgeConstruction.isValidBridgeSite(game.getBoard(boardId), target, getBridgeExits());
+        if (!isValidSite) {
+            LOGGER.debug("[BuildBridge] step rejected for {}: {} with exits bitmask {} is not a valid bridge site",
+                  entity.getShortName(), target, getBridgeExits());
+        }
+        return isValidSite;
     }
 
+    /**
+     * @param hex              the hex to check, or null (returns {@code false})
+     * @param assumedElevation the elevation of the unit in that hex
+     *
+     * @return {@code true} if a unit at the given elevation in the given hex stands on top of a bridge deck. Such a
+     *       unit is on the bridge, not in the terrain below it, so the underlying terrain's movement restrictions do
+     *       not apply to it (TO:AR p.115).
+     */
+    private static boolean isOnBridgeDeck(@Nullable Hex hex, int assumedElevation) {
+        return (hex != null) && hex.containsTerrain(Terrains.BRIDGE)
+              && (assumedElevation == hex.terrainLevel(Terrains.BRIDGE_ELEV));
+    }
+
+    /**
+     * This function checks that a step is legal. And adjust the movement type. This only checks for things that can
+     * make this step by itself illegal. Things that can make a step illegal as part of a movement path are considered
+     * in MovePath.addStep.
+     *
+     * @param game   The current {@link Game}
+     * @param entity The {@link Entity} taking this step.
+     * @param prev   The {@link MoveStep} previous step in the path.
+     */
     private void compileIllegal(final Game game, final Entity entity, final MoveStep prev,
           CachedEntityState cachedEntityState) {
         final MoveStepType stepType = getType();
@@ -3776,7 +3801,12 @@ public class MoveStep implements Serializable {
         // restrictions are lifted when moving along a road or bridge,
         // or when flying. Naval movement does not have the pavement
         // exemption.
+        // A unit at bridge deck elevation is standing on the bridge, not in the terrain below it, so the
+        // restrictions of the underlying terrain do not apply (TO:AR p.115). This also covers bridges without
+        // approach roads, such as those raised by Bridge-Building Engineers (TO:AUE), where the step onto the
+        // bridge does not qualify as a pavement step.
         if (entity.isLocationProhibited(dest, boardId, getElevation())
+              && !isOnBridgeDeck(game.getBoard(boardId).getHex(dest), getElevation())
               // Units in prohibited terran should still be able to unload/disconnect
               &&
               (type != MoveStepType.UNLOAD) &&
@@ -3886,6 +3916,9 @@ public class MoveStep implements Serializable {
               &&
               (type != MoveStepType.CONVERT_MODE) &&
               entity.isLocationProhibited(src, boardId, srcEl) &&
+              // Standing on a bridge deck is not standing in the prohibited terrain below it (TO:AR p.115), so
+              // a unit on a bridge without approach roads may still leave it
+              !isOnBridgeDeck(game.getBoard(boardId).getHex(src), srcEl) &&
               !isPavementStep()) {
             return false;
         }

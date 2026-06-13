@@ -40,6 +40,7 @@ import megamek.common.units.BuildingTerrain;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
+import megamek.logging.MMLogger;
 
 /**
  * Validates sites for and places single-hex bridges that are constructed during a game, as opposed to bridges that are
@@ -53,6 +54,8 @@ import megamek.common.units.Terrains;
  * no water doubling.
  */
 public final class BridgeConstruction {
+
+    private static final MMLogger LOGGER = MMLogger.create(BridgeConstruction.class);
 
     /** The maximum level difference between the two banks a constructed bridge connects, TM p.242. */
     public static final int MAX_BANK_LEVEL_DIFFERENCE = 1;
@@ -160,6 +163,8 @@ public final class BridgeConstruction {
 
         IBuilding bridge = new BuildingTerrain(target, board, Terrains.BRIDGE, BasementType.NONE);
         board.addBuildingToBoard(bridge);
+        LOGGER.info("[BuildBridge] placed a type-{} bridge at {}: CF {}, elevation {}, exits bitmask {}, "
+              + "registered as structure", bridgeType, target, cf, bridgeElevation, exits & 63);
         return bridge;
     }
 

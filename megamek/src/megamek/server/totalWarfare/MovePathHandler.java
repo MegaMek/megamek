@@ -4657,10 +4657,21 @@ class MovePathHandler extends AbstractTWRuleHandler {
      */
     private void processBuildBridgeStep(Infantry infantry, MoveStep step) {
         if (!(infantry instanceof ConvInfantry convInfantry) || (step.getBridgeTargetCoords() == null)) {
+            logger.warn("[BuildBridge] BUILD_BRIDGE step ignored for {}: not a ConvInfantry platoon or no target "
+                  + "hex in the step data", infantry.getShortName());
             return;
         }
+        logger.info("[BuildBridge] {} begins a bridge build: target {}, exits bitmask {}, type {} (1=light, "
+                    + "2=medium)", convInfantry.getShortName(), step.getBridgeTargetCoords(), step.getBridgeExits(),
+              step.getBridgeType());
         convInfantry.startBridgeBuild(step.getBridgeTargetCoords(), step.getBridgeExits(), step.getBridgeType());
         convInfantry.spendBridgeBuildPoints(step.getBridgeType());
+        // Free facing change toward the construction site: the platoon works facing its bridge
+        if (convInfantry.getPosition() != null) {
+            int facingToBridge = convInfantry.getPosition().direction(step.getBridgeTargetCoords());
+            convInfantry.setFacing(facingToBridge);
+            convInfantry.setSecondaryFacing(facingToBridge);
+        }
         Report report = new Report(4274);
         report.subject = convInfantry.getId();
         report.addDesc(convInfantry);

@@ -15800,6 +15800,9 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
             if (!convInfantry.isAdjacentToBridgeSite()) {
+                LOGGER.info("[BuildBridge] {} abandons its bridge build at {}: no longer adjacent (position {})",
+                      convInfantry.getShortName(), convInfantry.getBridgeTargetCoords(),
+                      convInfantry.getPosition());
                 convInfantry.cancelBridgeBuild();
                 Report report = new Report(4278);
                 report.subject = convInfantry.getId();
@@ -15816,6 +15819,9 @@ public class TWGameManager extends AbstractGameManager {
             // The current round counts as a full turn of work: the platoon is locked out of all phases while
             // building, so by the END phase it has spent this entire round on the bridge.
             int turnsWorked = convInfantry.getBridgeBuildTurns() + 1;
+            LOGGER.debug("[BuildBridge] {} bridge build progress: turn {} of {} at {}",
+                  convInfantry.getShortName(), turnsWorked, convInfantry.getBridgeBuildRequiredTurns(),
+                  convInfantry.getBridgeTargetCoords());
             if (turnsWorked >= convInfantry.getBridgeBuildRequiredTurns()) {
                 finishBridgeBuild(convInfantry);
             } else {
@@ -15841,6 +15847,8 @@ public class TWGameManager extends AbstractGameManager {
         int boardId = convInfantry.getBoardId();
         Board board = game.getBoard(boardId);
         if (!BridgeConstruction.isValidBridgeSite(board, target, convInfantry.getBridgeExits())) {
+            LOGGER.info("[BuildBridge] {} abandons its bridge build: {} is no longer a valid bridge site",
+                  convInfantry.getShortName(), target);
             convInfantry.cancelBridgeBuild();
             Report report = new Report(4278);
             report.subject = convInfantry.getId();
@@ -15853,6 +15861,9 @@ public class TWGameManager extends AbstractGameManager {
         int constructionFactor = ConvInfantry.getBuiltBridgeCF(convInfantry.getBridgeType(), isOverWater);
         IBuilding bridge = BridgeConstruction.placeBridge(board, target, convInfantry.getBridgeExits(),
               convInfantry.getBridgeType(), constructionFactor);
+        LOGGER.info("[BuildBridge] {} completed a type-{} bridge at {} (CF {}, over water: {}, exits bitmask {})",
+              convInfantry.getShortName(), convInfantry.getBridgeType(), target, constructionFactor, isOverWater,
+              convInfantry.getBridgeExits());
         sendChangedHex(target, boardId);
         Vector<IBuilding> newBridges = new Vector<>();
         newBridges.add(bridge);

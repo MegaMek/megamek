@@ -258,11 +258,13 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
         boolean selfDestruct = false;
         boolean advVehicle = false;
         boolean vtolStrafe = false;
+        boolean bridgeBuilding = false;
 
         if (opts != null) {
             selfDestruct = opts.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SELF_DESTRUCT);
             advVehicle = opts.booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ADVANCED_MANEUVERS);
             vtolStrafe = opts.booleanOption(OptionsConstants.ADVANCED_COMBAT_VTOL_STRAFING);
+            bridgeBuilding = opts.booleanOption(OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS);
         }
 
         ArrayList<MoveCommand> flaggedCommands = new ArrayList<>();
@@ -275,6 +277,8 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
             } else if ((command == MOVE_BOOTLEGGER) && !advVehicle) {
                 continue;
             } else if ((command == MOVE_STRAFE) && !vtolStrafe) {
+                continue;
+            } else if ((command == MOVE_BUILD_BRIDGE) && !bridgeBuilding) {
                 continue;
             }
 

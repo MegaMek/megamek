@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,11 +37,13 @@ package megamek.common.weapons.handlers;
 import java.io.Serial;
 import java.util.Vector;
 
+import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
@@ -74,9 +76,16 @@ public class FireExtinguisherHandler extends WeaponHandler {
                 r.add(target.getPosition().getBoardNum());
                 r.indent(3);
                 vPhaseReport.add(r);
-                game.getBoard().getHex(target.getPosition()).removeTerrain(Terrains.FIRE);
-                gameManager.sendChangedHex(target.getPosition());
-                game.getBoard().removeInfernoFrom(target.getPosition());
+                int boardId = target.getBoardId();
+                Hex extinguishedHex = game.getBoard(boardId).getHex(target.getPosition());
+                extinguishedHex.removeTerrain(Terrains.FIRE);
+                // Reset the fire-turn counter so the hex is treated as unburned. Without this it keeps a
+                // stale value, and a fire later restarted here (e.g. by a flamer) is mistaken for an
+                // already-burning fire - skipping the "fire started" report and spreading immediately.
+                extinguishedHex.resetFireTurn();
+                gameManager.sendChangedHex(target.getPosition(), boardId);
+                game.getBoard(boardId).removeInfernoFrom(target.getPosition());
+                game.getBoard(boardId).removeFlamerStartedFire(target.getPosition());
             } else if (target instanceof Entity) {
                 if (entityTarget.infernos.isStillBurning()
                       || (target instanceof Tank && ((Tank) target).isOnFire())) {
@@ -93,6 +102,12 @@ public class FireExtinguisherHandler extends WeaponHandler {
                     }
                 }
             }
+        }
+        // Firefighting engineers that keep battling the same hex get a cumulative bonus next turn,
+        // whether or not this attempt put the fire out (TO:AR p.53). Record the attempt either way.
+        if ((attackingEntity instanceof ConvInfantry firefighter) && firefighter.isFirefighter()
+              && (Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType())) {
+            firefighter.recordFirefight(target.getPosition(), game.getRoundCount());
         }
         return true;
     }

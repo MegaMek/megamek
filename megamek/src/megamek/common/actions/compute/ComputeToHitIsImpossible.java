@@ -1550,16 +1550,24 @@ class ComputeToHitIsImpossible {
 
             // Extinguishing Fires
 
-            // You can use certain types of flamer/sprayer ammo or infantry firefighting engineers to extinguish
-            // burning hexes (and units).
-            // TODO: This functionality does not appear to be implemented
+            // Fires (in hexes) can be put out by fire extinguisher weapons, flamer/sprayer ammo in cool
+            // mode, or firefighting engineer infantry using their portable gear (TO:AR p.53).
+            boolean firefightingEngineer = (attacker instanceof ConvInfantry convInfantry)
+                  && convInfantry.isFirefighter();
             if (Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType()) {
-                if (!weaponType.hasFlag(WeaponType.F_EXTINGUISHER) && !vf_cool) {
+                if (!weaponType.hasFlag(WeaponType.F_EXTINGUISHER) && !vf_cool && !firefightingEngineer) {
                     return Messages.getString("WeaponAttackAction.InvalidForFirefighting");
                 }
                 Hex hexTarget = game.getHexOf(target);
                 if ((hexTarget != null) && !hexTarget.containsTerrain(Terrains.FIRE)) {
                     return Messages.getString("WeaponAttackAction.TargetNotBurning");
+                }
+                // Firefighting engineers fight an adjacent burning hex - not the one they stand in, and not
+                // on a different board (coords on separate boards are never truly adjacent).
+                if (firefightingEngineer && (attacker.getPosition() != null)
+                      && ((attacker.getBoardId() != target.getBoardId())
+                      || (attacker.getPosition().distance(target.getPosition()) != 1))) {
+                    return Messages.getString("WeaponAttackAction.FirefightNotAdjacent");
                 }
             } else if (weaponType.hasFlag(WeaponType.F_EXTINGUISHER)) {
                 if (!(((target instanceof Tank) && ((Tank) target).isOnFire()) ||

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -55,10 +55,13 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.common.util.YamlEncDec;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.FireExtinguisherHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -294,6 +297,14 @@ public abstract class InfantryWeapon extends Weapon {
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
         try {
             Entity entity = game.getEntity(waa.getEntityId());
+
+            // Firefighting engineers extinguish a burning hex in place of a weapon attack (TO:AR p.53).
+            // Route that to the shared fire extinguisher resolution.
+            Targetable target = waa.getTarget(game);
+            if ((entity instanceof ConvInfantry firefighter) && firefighter.isFirefighter()
+                  && (target != null) && (target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH)) {
+                return new FireExtinguisherHandler(toHit, waa, game, manager);
+            }
 
             if (entity != null) {
                 Mounted<?> mounted = entity.getEquipment(waa.getWeaponId());

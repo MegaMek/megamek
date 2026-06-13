@@ -1,0 +1,1507 @@
+/*
+ * Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.common.equipment;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechAdvancement;
+import megamek.common.TechAdvancement.AdvancementPhase;
+import megamek.common.TechConstants;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Era;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.interfaces.ITechnology;
+import megamek.common.units.Entity;
+import megamek.common.util.RoundWeight;
+import megamek.common.util.YamlEncDec;
+import megamek.common.weapons.autoCannons.HVACWeapon;
+import megamek.common.weapons.defensivePods.BPodWeapon;
+import megamek.common.weapons.defensivePods.MPodWeapon;
+import megamek.common.weapons.ppc.PPCWeapon;
+
+/**
+ * Represents any type of equipment mounted on a 'Mek, excluding systems and actuators.
+ *
+ * @author Ben
+ * @since April 1, 2002, 1:35 PM
+ */
+public class EquipmentType implements ITechnology {
+
+    public static final double TONNAGE_VARIABLE = Float.MIN_VALUE;
+    public static final int CRITICAL_SLOTS_VARIABLE = Integer.MIN_VALUE;
+    public static final int BV_VARIABLE = Integer.MIN_VALUE;
+    public static final int COST_VARIABLE = Integer.MIN_VALUE;
+    /**
+     * Default value for support vehicle slot cost. Those that differ from `Meks are assigned a value >= 0
+     */
+    private static final int MEK_SLOT_COST = -1;
+
+    public static final int T_ARMOR_UNKNOWN = -1;
+    public static final int T_ARMOR_STANDARD = 0;
+    public static final int T_ARMOR_FERRO_FIBROUS = 1;
+    public static final int T_ARMOR_REACTIVE = 2;
+    public static final int T_ARMOR_REFLECTIVE = 3;
+    public static final int T_ARMOR_HARDENED = 4;
+    public static final int T_ARMOR_LIGHT_FERRO = 5;
+    public static final int T_ARMOR_HEAVY_FERRO = 6;
+    public static final int T_ARMOR_PATCHWORK = 7;
+    public static final int T_ARMOR_STEALTH = 8;
+    public static final int T_ARMOR_FERRO_FIBROUS_PROTO = 9;
+    public static final int T_ARMOR_COMMERCIAL = 10;
+    public static final int T_ARMOR_LC_FERRO_CARBIDE = 11; // Large Craft Only
+    public static final int T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE = 12; // Large Craft Only
+    public static final int T_ARMOR_LC_FERRO_IMP = 13; // Large Craft Only
+    public static final int T_ARMOR_INDUSTRIAL = 14;
+    public static final int T_ARMOR_HEAVY_INDUSTRIAL = 15;
+    public static final int T_ARMOR_FERRO_LAMELLOR = 16;
+    public static final int T_ARMOR_PRIMITIVE = 17;
+    public static final int T_ARMOR_EDP = 18;
+    public static final int T_ARMOR_ALUM = 19;
+    public static final int T_ARMOR_HEAVY_ALUM = 20;
+    public static final int T_ARMOR_LIGHT_ALUM = 21;
+    public static final int T_ARMOR_STEALTH_VEHICLE = 22;
+    public static final int T_ARMOR_ANTI_PENETRATIVE_ABLATION = 23;
+    public static final int T_ARMOR_HEAT_DISSIPATING = 24;
+    public static final int T_ARMOR_IMPACT_RESISTANT = 25;
+    public static final int T_ARMOR_BALLISTIC_REINFORCED = 26;
+    public static final int T_ARMOR_FERRO_ALUM_PROTO = 27;
+    public static final int T_ARMOR_BA_STANDARD = 28;
+    public static final int T_ARMOR_BA_STANDARD_PROTOTYPE = 29;
+    public static final int T_ARMOR_BA_STANDARD_ADVANCED = 30;
+    public static final int T_ARMOR_BA_STEALTH_BASIC = 31;
+    public static final int T_ARMOR_BA_STEALTH = 32;
+    public static final int T_ARMOR_BA_STEALTH_IMP = 33;
+    public static final int T_ARMOR_BA_STEALTH_PROTOTYPE = 34;
+    public static final int T_ARMOR_BA_FIRE_RESIST = 35;
+    public static final int T_ARMOR_BA_MIMETIC = 36;
+    public static final int T_ARMOR_BA_REFLECTIVE = 37;
+    public static final int T_ARMOR_BA_REACTIVE = 38;
+    public static final int T_ARMOR_PRIMITIVE_FIGHTER = 39;
+    public static final int T_ARMOR_PRIMITIVE_AERO = 40;
+    public static final int T_ARMOR_AEROSPACE = 41;
+    public static final int T_ARMOR_STANDARD_PROTOMEK = 42;
+    public static final int T_ARMOR_SV_BAR_2 = 43;
+    public static final int T_ARMOR_SV_BAR_3 = 44;
+    public static final int T_ARMOR_SV_BAR_4 = 45;
+    public static final int T_ARMOR_SV_BAR_5 = 46;
+    public static final int T_ARMOR_SV_BAR_6 = 47;
+    public static final int T_ARMOR_SV_BAR_7 = 48;
+    public static final int T_ARMOR_SV_BAR_8 = 49;
+    public static final int T_ARMOR_SV_BAR_9 = 50;
+    public static final int T_ARMOR_SV_BAR_10 = 51;
+
+    public static final int T_STRUCTURE_UNKNOWN = -1;
+    public static final int T_STRUCTURE_STANDARD = 0;
+    public static final int T_STRUCTURE_INDUSTRIAL = 1;
+    public static final int T_STRUCTURE_ENDO_STEEL = 2;
+    public static final int T_STRUCTURE_ENDO_PROTOTYPE = 3;
+    public static final int T_STRUCTURE_REINFORCED = 4;
+    public static final int T_STRUCTURE_COMPOSITE = 5;
+    public static final int T_STRUCTURE_ENDO_COMPOSITE = 6;
+
+    public static final String[] structureNames = { "Standard", "Industrial", "Endo Steel", "Endo Steel Prototype",
+                                                    "Reinforced", "Composite", "Endo-Composite" };
+    public static final String[] structureAbbreviations = { "STD", "IND", "ES", "ES-P", "REIN", "COMP", "EC" };
+
+    // Assume for now that prototype is not more expensive
+    public static final double[] structureCosts = { 400, 300, 1600, 4800, 6400, 1600, 3200 };
+
+    protected String name = null;
+
+    // Short name for RS Printing
+    protected String shortName = "";
+
+    protected String internalName = null;
+
+    /**
+     * Sorting lists of equipment by this string groups and sorts equipment better.
+     */
+    protected String sortingName;
+
+    protected Vector<String> namesVector = new Vector<>();
+
+    protected double tonnage = 0;
+    protected int criticalSlots = 0;
+    protected int tankSlots = 1;
+    protected int svSlots = MEK_SLOT_COST;
+
+    protected boolean explosive = false;
+    protected boolean hittable = true; // if false, reroll critical hits
+
+    /** can the criticalSlots for this be spread over locations? */
+    protected boolean spreadable = false;
+    protected int toHitModifier = 0;
+
+    protected TechAdvancement techAdvancement = new TechAdvancement();
+
+    protected EquipmentBitSet flags = new EquipmentBitSet();
+
+    public double bv = 0;
+    protected double cost = 0;
+
+    // For equipment that cannot be pod-mounted on an Omni unit
+    protected boolean omniFixedOnly = false;
+
+    /**
+     * what modes can this equipment be in?
+     */
+    final protected Vector<EquipmentMode> modes = new Vector<>();
+
+    /**
+     * can modes be switched instantly, or at end of turn?
+     */
+    protected boolean instantModeSwitch = true;
+    /**
+     * sometimes some modes can be switched at the end of turn and some instantly In that case, the specific end of turn
+     * mode names can be added here
+     */
+    public Vector<String> endTurnModes = new Vector<>();
+
+    // static list of equipment
+    protected static Vector<EquipmentType> allTypes;
+    protected static Hashtable<String, EquipmentType> lookupHash;
+
+    /**
+     * Keeps track of page numbers for rules references.
+     */
+    protected String rulesRefs = "";
+
+    /** Creates new EquipmentType */
+    public EquipmentType() {
+        // default constructor
+    }
+
+    public void setFlags(EquipmentBitSet flags) {
+        this.flags = flags;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getName(double size) {
+        return getName();
+    }
+
+    public String getDesc() {
+        String result = EquipmentMessages.getString("EquipmentType." + name);
+        if (result != null) {
+            return result;
+        }
+        return name;
+    }
+
+    public double getBaseCost() {
+        return cost;
+    }
+
+    public double getBaseBV() {
+        return bv;
+    }
+
+    public double getBaseTonnage() {
+        return tonnage;
+    }
+
+    public double getBaseCriticalSlots() {
+        return criticalSlots;
+    }
+
+    public String getDesc(double size) {
+        return getDesc();
+    }
+
+    public String getInternalName() {
+        return internalName;
+    }
+
+    public String getRulesRefs() {
+        return rulesRefs;
+    }
+
+    public Map<Integer, Integer> getTechLevels() {
+        Map<Integer, Integer> techLevel = new HashMap<>();
+        if (isUnofficial()) {
+            if (techAdvancement.getTechBase() == TechBase.CLAN) {
+                techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_CLAN_UNOFFICIAL);
+            } else {
+                techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_IS_UNOFFICIAL);
+            }
+            return techLevel;
+        }
+
+        if (techAdvancement.getPrototypeDate(true) > 0) {
+            techLevel.put(techAdvancement.getPrototypeDate(true), TechConstants.T_CLAN_EXPERIMENTAL);
+        }
+
+        if (techAdvancement.getPrototypeDate(false) > 0) {
+            techLevel.put(techAdvancement.getPrototypeDate(false), TechConstants.T_IS_EXPERIMENTAL);
+        }
+
+        if (techAdvancement.getProductionDate(true) > 0) {
+            techLevel.put(techAdvancement.getProductionDate(true), TechConstants.T_CLAN_ADVANCED);
+        }
+
+        if (techAdvancement.getProductionDate(false) > 0) {
+            techLevel.put(techAdvancement.getProductionDate(false), TechConstants.T_IS_ADVANCED);
+        }
+
+        if (techAdvancement.getTechBase() == TechBase.ALL && techAdvancement.getCommonDate() > 0) {
+            techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_TW_ALL);
+        } else if (techAdvancement.getCommonDate(true) > 0) {
+            techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_CLAN_TW);
+        } else if (techAdvancement.getCommonDate(false) > 0) {
+            techLevel.put(techAdvancement.getCommonDate(false),
+                  isIntroLevel() ? TechConstants.T_INTRO_BOX_SET : TechConstants.T_IS_TW_NON_BOX);
+        }
+
+        return techLevel;
+    }
+
+    @Override
+    public int getTechLevel(int date) {
+        return techAdvancement.getTechLevel(date);
+    }
+
+    @Override
+    public int getTechLevel(int date, boolean clan) {
+        return techAdvancement.getTechLevel(date, clan);
+    }
+
+    @Override
+    public SimpleTechLevel getStaticTechLevel() {
+        if (null != techAdvancement.getStaticTechLevel()) {
+            return techAdvancement.getStaticTechLevel();
+        } else {
+            return techAdvancement.guessStaticTechLevel(rulesRefs);
+        }
+    }
+
+    /**
+     * Calculates the weight of the equipment. If {@code entity} is {@code null}, equipment without a fixed weight will
+     * return {@link EquipmentType#TONNAGE_VARIABLE}.
+     *
+     * @param entity The unit the equipment is mounted on
+     *
+     * @return The weight of the equipment in tons
+     */
+    public double getTonnage(@Nullable Entity entity) {
+        return getTonnage(entity, Entity.LOC_NONE, 1.0);
+    }
+
+    /**
+     * Calculates the weight of the equipment. If {@code entity} is {@code null}, equipment without a fixed weight will
+     * return {@link EquipmentType#TONNAGE_VARIABLE}.
+     *
+     * @param entity The unit the equipment is mounted on
+     * @param size   The size of variable-sized equipment
+     *
+     * @return The weight of the equipment in tons
+     */
+    public double getTonnage(@Nullable Entity entity, double size) {
+        return getTonnage(entity, Entity.LOC_NONE, size);
+    }
+
+    /**
+     * Calculates the weight of the equipment. If {@code entity} is {@code null}, equipment without a fixed weight will
+     * return {@link EquipmentType#TONNAGE_VARIABLE}.
+     *
+     * @param entity   The unit the equipment is mounted on
+     * @param location The mount location
+     * @param size     The size (for variable-sized equipment)
+     *
+     * @return The weight of the equipment in tons
+     */
+    public double getTonnage(Entity entity, int location, double size) {
+        return tonnage;
+    }
+
+    /**
+     * Calculates the weight of the equipment, with the option to override the standard rounding based on unit type.
+     * This allows for the optional fractional accounting construction rules. If {@code entity} is {@code null},
+     * equipment without a fixed weight will return {@link EquipmentType#TONNAGE_VARIABLE}.
+     *
+     * @param entity        The unit the equipment is mounted on
+     * @param location      The mount location
+     * @param size          The size (for variable-sized equipment)
+     * @param defaultMethod The rounding method to use for any variable weight equipment. Any equipment that is normally
+     *                      rounded to either the half ton or kg based on unit type will have this method applied
+     *                      instead.
+     *
+     * @return The weight of the equipment in tons
+     */
+    public double getTonnage(Entity entity, int location, double size, RoundWeight defaultMethod) {
+        // Default implementation does not deal with variable-weight equipment.
+        return getTonnage(entity, location, size);
+    }
+
+    void setTonnage(double tonnage) {
+        this.tonnage = tonnage;
+    }
+
+    public int getNumCriticalSlots(Entity entity) {
+        return getNumCriticalSlots(entity, 1.0);
+    }
+
+    public int getNumCriticalSlots(Entity entity, double size) {
+        return criticalSlots;
+    }
+
+    public int getTankSlots(Entity entity) {
+        return tankSlots;
+    }
+
+    public int getSupportVeeSlots(Entity entity) {
+        if (svSlots == MEK_SLOT_COST) {
+            return getNumCriticalSlots(entity);
+        }
+        return svSlots;
+    }
+
+    public boolean isExplosive(Mounted<?> mounted) {
+        return isExplosive(mounted, false);
+    }
+
+    public boolean isExplosive(Mounted<?> mounted, boolean ignoreCharge) {
+        if (null == mounted) {
+            return explosive;
+        }
+
+        // Special case: discharged M- and B-pods shouldn't explode.
+        if (((this instanceof MPodWeapon) || (this instanceof BPodWeapon)) &&
+              ((mounted.getLinked() == null) || (mounted.getLinked().getUsableShotsLeft() == 0))) {
+            return false;
+        }
+
+        // special case: RISC laser pulse module are only explosive when the
+        // laser they're linked to is working
+        if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+            if ((mounted.getLinked() == null) || mounted.getLinked().isInoperable()) {
+                return false;
+            }
+        }
+
+        // special-case. RACs only explode when jammed
+        if ((mounted.getType() instanceof WeaponType) &&
+              (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY)) {
+            if (!mounted.isJammed()) {
+                return false;
+            }
+        }
+
+        // special case. ACs only explode when firing incendiary ammo
+        if ((mounted.getType() instanceof WeaponType) &&
+              ((((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
+                    (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
+                    (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
+                    (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.PAC))) {
+            if (!mounted.isUsedThisRound()) {
+                return false;
+            }
+            Mounted<?> ammo = mounted.getLinked();
+            if ((ammo == null) ||
+                  !(ammo.getType() instanceof AmmoType) ||
+                  (!((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC))) {
+                return false;
+            }
+        }
+
+        // special case. HVACs only explode when there's ammo left
+        if (mounted.getType() instanceof HVACWeapon) {
+            if ((mounted.getEntity() == null) ||
+                  (mounted.getLinked() == null) ||
+                  (mounted.getEntity().getTotalAmmoOfType(mounted.getLinked().getType()) == 0)) {
+                return false;
+            }
+        }
+
+        // special case. Blue Shield Particle Field Damper only explodes when
+        // switched on
+        if ((mounted.getType() instanceof MiscType) &&
+              (mounted.getType().hasFlag(MiscType.F_BLUE_SHIELD) && mounted.curMode().equals("Off"))) {
+            return false;
+        }
+
+        // special case. PPC with Capacitor only explodes when charged
+        if (ignoreCharge) {
+            // for BV purposes, we need to ignore the charged-ness and check only
+            // if there's a capacitor
+            if ((mounted.getType() instanceof PPCWeapon) && (mounted.getLinkedBy() != null)) {
+                return true;
+            }
+            if ((mounted.getType() instanceof MiscType) &&
+                  mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) &&
+                  (mounted.getLinked() != null)) {
+                return true;
+            }
+
+        }
+        if ((mounted.getType() instanceof MiscType) &&
+              mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) &&
+              !mounted.curMode().equals("Charge")) {
+            return false;
+        }
+        if ((mounted.getType() instanceof PPCWeapon) && (mounted.hasChargedCapacitor() == 0)) {
+            return false;
+        }
+
+        // If we're here, then none of the special cases apply, and we should
+        // just return our own explosive status.
+        return explosive;
+    }
+
+    public boolean isHittable() {
+        return hittable;
+    }
+
+    // like margarine!
+    public boolean isSpreadable() {
+        return spreadable;
+    }
+
+    public int getToHitModifier(@Nullable Mounted<?> mounted) {
+        return toHitModifier;
+    }
+
+    public EquipmentBitSet getFlags() {
+        return flags;
+    }
+
+    /**
+     * Returns true when this EquipmentType has the given flag. NOTE: Even though EquipmentFlags are enums, checking
+     * e.g. a WeaponType if it has a MiscTypeFlag may return an incorrect true result, as the actual test is made using
+     * EquipmentBitSet, i.e. a number comparison.
+     * <p>
+     * Example: EquipmentType.get("BAArmoredGlove").hasFlag(WeaponType.F_VGL) returns true, as WeaponType.F_VGL has the
+     * same ordinal as MiscType.F_ARMORED_GLOVE. Therefore, always make sure to test only MiscTypes against
+     * MiscTypeFlags, WeaponTypes against WeaponTypeFlags and AmmoTypes against AmmoTypeFlags. This method will log a
+     * warning if the rule is not followed.
+     *
+     * @param flag The EquipmentFlag to check
+     *
+     * @return True when this EquipmentType has the given flag
+     *
+     * @see EquipmentFlag
+     */
+    public boolean hasFlag(EquipmentFlag flag) {
+        return flags.get(flag);
+    }
+
+    /**
+     * @return True when the equipment has at least one of the given flags.
+     */
+    public boolean hasAnyFlag(EquipmentFlag... flags) {
+        for (EquipmentFlag flag : flags) {
+            if (this.flags.get(flag)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return True when the equipment has at least one of the given flags.
+     */
+    public boolean hasAnyFlag(EquipmentBitSet mask) {
+        return flags.intersects(mask);
+    }
+
+    /**
+     * Checks if the equipment has all the specified flags.
+     *
+     * @param flag The flags to check
+     *
+     * @return True if the equipment has all the specified flags
+     */
+    public boolean hasFlag(EquipmentBitSet flag) {
+        return flags.contains(flag);
+    }
+
+    public double getBV(Entity entity) {
+        return bv;
+    }
+
+    /**
+     * @return - whether the equipment must be considered part of the base chassis when mounted on an omni unit
+     */
+    public boolean isOmniFixedOnly() {
+        return omniFixedOnly;
+    }
+
+    /**
+     * @return <code>true</code> if this type of equipment has set of modes that
+     *       it can be in.
+     */
+    public boolean hasModes() {
+        return !modes.isEmpty();
+    }
+
+    /**
+     * Simple way to check if a piece of equipment has a specific usage/firing mode
+     *
+     * @param modeType The name of the mode to check.
+     *
+     * @return True or false.
+     */
+    public boolean hasModeType(String modeType) {
+        if (!hasModes()) {
+            return false;
+        }
+
+        // Avoid Concurrent Modification exception with this one simple trick!
+        synchronized (modes) {
+            for (EquipmentMode mode : modes) {
+                if (mode.getName().equals(modeType)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param mounted The equipment mount. In some cases the modes are affected by linked equipment.
+     *
+     * @return the number of modes that this type of equipment can be in or
+     *       <code>0</code> if it doesn't have modes.
+     */
+    public int getModesCount(Mounted<?> mounted) {
+        return getModesCount();
+    }
+
+    /**
+     * @return the number of modes that this type of equipment can be in or
+     *       <code>0</code> if it doesn't have modes.
+     */
+    public int getModesCount() {
+        return modes.size();
+    }
+
+    /**
+     * @return <code>Enumeration</code> of the <code>EquipmentMode</code> that
+     *       this type of equipment can be in
+     */
+    public Enumeration<EquipmentMode> getModes() {
+        return modes.elements();
+    }
+
+    /**
+     * Sets the modes that this type of equipment can be in. By default, the EquipmentType doesn't have the modes, so
+     * don't try to call this method with null or empty argument.
+     * TODO: Refactor so the equipment knows the phase they can be armed/disarmed
+     *
+     * @param modes non-null, non-empty list of available mode names.
+     */
+    public void setModes(String... modes) {
+        this.modes.clear();
+
+        for (String mode : modes) {
+            this.modes.addElement(EquipmentMode.getMode(mode));
+        }
+    }
+
+    /**
+     * Remove a specific mode from the list of modes.
+     *
+     */
+    public boolean removeMode(String mode) {
+        return modes.remove(EquipmentMode.getMode(mode));
+    }
+
+    /**
+     * Add a mode to the Equipment
+     * TODO: Refactor so the equipment knows the phase they can be armed/disarmed
+     *
+     * @param mode The mode to be added
+     *
+     * @return true if the mode was added; false if modes was null or the mode was already present
+     *
+     * @author Simon (Juliez)
+     */
+    public boolean addMode(String mode) {
+        EquipmentMode mod = EquipmentMode.getMode(mode);
+        if (!modes.contains(mod)) {
+            return modes.add(mod);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Clears the modes that this type of equipment can be in. This is useful where a subtype such as Streak LRMs has no
+     * modes, but the supertype of that type such as standard LRMs has modes that do not apply to the subtype
+     */
+    protected void clearModes() {
+        modes.clear();
+    }
+
+    public void addEndTurnMode(String mode) {
+        endTurnModes.add(mode);
+    }
+
+    /**
+     * Some equipment types might have both instant and next turn mode switching. This method checks for end of turn
+     * modes that are kept in a vector of names. It is used by the {@link Mounted#setMode(int)} method to distinguish
+     * instant and end of turn switching.
+     *
+     * @param mode - the <code>String</code> of the mode name involved in the switch
+     *
+     * @return true if the mode name is found in the next turn mode vector
+     */
+    public boolean isNextTurnModeSwitch(String mode) {
+        for (String modeName : endTurnModes) {
+            if (modeName.equals(mode)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * <p>
+     * Returns the mode number <code>modeNum</code> from the list of modes available for this type of equipment. Modes
+     * are numbered from
+     * <code>0</code> to <code>getModesCount() - 1</code>
+     * </p>
+     * <p>
+     * Fails if this type of the equipment doesn't have modes, or given mode is out of the valid range.
+     *
+     * @return mode number <code>modeNum</code> from the list of modes available for this type of equipment.
+     *
+     * @see #hasModes()
+     */
+    public EquipmentMode getMode(int modeNum) {
+        return modes.elementAt(modeNum);
+    }
+
+    public void setInstantModeSwitch(boolean b) {
+        instantModeSwitch = b;
+    }
+
+    public boolean hasInstantModeSwitch() {
+        return instantModeSwitch;
+    }
+
+    public void setInternalName(String s) {
+        if (s == null || s.isEmpty()) {
+            throw new IllegalArgumentException("Internal name cannot be null or empty");
+        }
+        internalName = s;
+        addLookupName(s);
+    }
+
+    public void addLookupName(String s) {
+        EquipmentType.lookupHash.put(s.toLowerCase(), this); // static variable
+        namesVector.addElement(s); // member variable
+    }
+
+    /**
+     * Returns an EquipmentType having the given internal name or lookup name (but not the "name" which is the display
+     * text unless it's equal to the internal name). Internal names may be taken from {@link EquipmentTypeLookup}.
+     * Returns null if there is none with that name.
+     *
+     * @param key The internal name or lookup name
+     *
+     * @return The EquipmentType with the given internal name or lookup name
+     */
+    public static @Nullable EquipmentType get(String key) {
+        if (null == EquipmentType.lookupHash) {
+            EquipmentType.initializeTypes();
+        }
+        return EquipmentType.lookupHash.get(key.toLowerCase());
+    }
+
+    /**
+     * Add a way to find if a given equipment type matches a particular string in _any_ of its names (Case sensitive)
+     */
+    public boolean matchesName(String name) {
+        for (String s : namesVector) {
+            if (s.contains(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Enumeration<String> getNames() {
+        return namesVector.elements();
+    }
+
+    public static void initializeTypes() {
+        if (null == EquipmentType.allTypes) {
+            EquipmentType.allTypes = new Vector<>();
+            EquipmentType.lookupHash = new Hashtable<>();
+
+            WeaponType.initializeTypes();
+            AmmoType.initializeTypes();
+            MiscType.initializeTypes();
+            BombType.initializeTypes();
+            SmallWeaponAmmoType.initializeTypes();
+            ArmorType.initializeTypes();
+            PowerGeneratorType.initializeTypes();
+            for (EquipmentType et : allTypes) {
+                if (et.getTechAdvancement().getStaticTechLevel() == null) {
+                    et.getTechAdvancement()
+                          .setStaticTechLevel(et.getTechAdvancement().guessStaticTechLevel(et.getRulesRefs()));
+                }
+            }
+        }
+    }
+
+    public static Enumeration<EquipmentType> getAllTypes() {
+        if (null == EquipmentType.allTypes) {
+            EquipmentType.initializeTypes();
+        }
+        return EquipmentType.allTypes.elements();
+    }
+
+    /**
+     * @return All equipment types as a List. The list is a copy and can safely be modified.
+     */
+    public static List<EquipmentType> allTypes() {
+        if (EquipmentType.allTypes == null) {
+            EquipmentType.initializeTypes();
+        }
+        return new ArrayList<>(EquipmentType.allTypes);
+    }
+
+    protected static void addType(EquipmentType type) {
+        if (null == EquipmentType.allTypes) {
+            EquipmentType.initializeTypes();
+        }
+        EquipmentType.allTypes.addElement(type);
+    }
+
+    public static int getArmorType(EquipmentType et) {
+        if (et instanceof ArmorType) {
+            return ((ArmorType) et).getArmorType();
+        } else {
+            return T_ARMOR_UNKNOWN;
+        }
+    }
+
+    public static String getArmorTypeName(int armorType) {
+        ArmorType armor = ArmorType.of(armorType, false);
+        return armor.getName();
+    }
+
+    public static String getArmorTypeName(int armorType, boolean clan) {
+        ArmorType armor = ArmorType.of(armorType, clan);
+        return clan ? "Clan " + armor.getName() : "IS " + armor.getName();
+    }
+
+    /**
+     * Convenience method to test whether an EquipmentType instance is armor.
+     *
+     * @param et The equipment instance to test
+     *
+     * @return Whether the equipment is an armor type
+     */
+    public static boolean isArmorType(EquipmentType et) {
+        return et instanceof ArmorType;
+    }
+
+    public static int getStructureType(EquipmentType et) {
+        if (et == null) {
+            return T_STRUCTURE_UNKNOWN;
+        }
+        for (int x = 0; x < structureNames.length; x++) {
+            if (structureNames[x].equals(et.getName())) {
+                return x;
+            }
+        }
+        return T_STRUCTURE_UNKNOWN;
+    }
+
+    public static String getStructureTypeName(int structureType) {
+        if ((structureType < 0) || (structureType >= structureNames.length)) {
+            return "UNKNOWN";
+        }
+        return structureNames[structureType];
+    }
+
+    public static String getStructureTypeName(int structureType, boolean clan) {
+        if ((structureType < 0) || (structureType >= structureNames.length)) {
+            return "UNKNOWN";
+        }
+        return clan ? "Clan " + structureNames[structureType] : "IS " + structureNames[structureType];
+    }
+
+    public static String getStructureTypeAbbrev(int structureType) {
+        if ((structureType < 0) || (structureType >= structureAbbreviations.length)) {
+            return "UNK";
+        }
+        return structureAbbreviations[structureType];
+    }
+
+    /**
+     * Convenience method to test whether an EquipmentType instance is mek structure. This works by comparing the
+     * results of {@link #getName()} to the structure names array and returning {@code true} if there is a match.
+     *
+     * @param et The equipment instance to test
+     *
+     * @return Whether the equipment is a structure type
+     */
+    public static boolean isStructureType(EquipmentType et) {
+        return getStructureType(et) != T_STRUCTURE_UNKNOWN;
+    }
+
+    protected static final TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TechBase.ALL).setAdvancement(
+                2430,
+                2439,
+                2505)
+          .setApproximate(true, false, false)
+          .setIntroLevel(true)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.C,
+                AvailabilityValue.C,
+                AvailabilityValue.C,
+                AvailabilityValue.C)
+          .setStaticTechLevel(SimpleTechLevel.INTRO);
+    protected static final TechAdvancement TA_NONE = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE)
+          .setTechRating(TechRating.A)
+          .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+          .setStaticTechLevel(SimpleTechLevel.INTRO);
+
+    public static TechAdvancement getStructureTechAdvancement(int at, boolean clan) {
+        if (at == T_STRUCTURE_STANDARD) {
+            return TA_STANDARD_STRUCTURE;
+        }
+        String structureName = EquipmentType.getStructureTypeName(at, clan);
+        EquipmentType structure = EquipmentType.get(structureName);
+        if (structure != null) {
+            return structure.getTechAdvancement();
+        }
+        return TA_NONE;
+    }
+
+    /**
+     * For variable-sized equipment this assumes a size of 1.0.
+     *
+     * @return The C-Bill cost of the piece of equipment.
+     */
+    public double getCost(Entity entity, boolean armored, int loc) {
+        return getCost(entity, armored, loc, 1.0);
+    }
+
+    /**
+     * @return The C-Bill cost of the piece of equipment.
+     */
+    public double getCost(Entity entity, boolean armored, int loc, double size) {
+        return cost;
+    }
+
+    public double getRawCost() {
+        return cost;
+    }
+
+    /**
+     * @return Whether the item weight varies according to the unit it's installed on
+     */
+    public boolean isVariableTonnage() {
+        return tonnage == TONNAGE_VARIABLE;
+    }
+
+    /**
+     * @return Whether the item BV varies according to the unit it's installed on
+     */
+    public boolean isVariableBV() {
+        return bv == BV_VARIABLE;
+    }
+
+    /**
+     * @return Whether the item cost varies according to the unit it's installed on
+     */
+    public boolean isVariableCost() {
+        return cost == COST_VARIABLE;
+    }
+
+    public boolean isVariableCriticalSlots() {
+        return criticalSlots == CRITICAL_SLOTS_VARIABLE;
+    }
+
+    /**
+     * @return Whether the item's size is variable independent of external factors
+     */
+    public boolean isVariableSize() {
+        return false;
+    }
+
+    /**
+     * @return The increment between sizes of variable-sized equipment
+     */
+    public Double variableStepSize() {
+        return 1.0;
+    }
+
+    /**
+     * @return The maximum size of variable-sized equipment. Items with no maximum return {@code null}.
+     */
+    public @Nullable Double variableMaxSize() {
+        return null;
+    }
+
+    public TechAdvancement getTechAdvancement() {
+        return techAdvancement;
+    }
+
+    @Override
+    public TechRating getTechRating() {
+        return techAdvancement.getTechRating();
+    }
+
+    @Override
+    public boolean isClan() {
+        return techAdvancement.getTechBase() == TechBase.CLAN;
+    }
+
+    @Override
+    public boolean isMixedTech() {
+        return techAdvancement.getTechBase() == TechBase.ALL;
+    }
+
+    @Override
+    public TechBase getTechBase() {
+        return techAdvancement.getTechBase();
+    }
+
+    @Deprecated(since = "0.51.0", forRemoval = true)
+    public static String getEquipDateAsString(int date) {
+        if (date == DATE_NONE) {
+            return "-";
+        } else {
+            return Integer.toString(date);
+        }
+
+    }
+
+    @Override
+    public int getIntroductionDate(boolean clan) {
+        return techAdvancement.getIntroductionDate(clan);
+    }
+
+    @Override
+    public int getIntroductionDate() {
+        return techAdvancement.getIntroductionDate();
+    }
+
+    @Override
+    public int getIntroductionDate(boolean clan, Faction faction) {
+        return techAdvancement.getIntroductionDate(clan, faction);
+    }
+
+    @Override
+    public int getExtinctionDate(boolean clan) {
+        return techAdvancement.getExtinctionDate(clan);
+    }
+
+    @Override
+    public int getExtinctionDate() {
+        return techAdvancement.getExtinctionDate();
+    }
+
+    @Override
+    public int getExtinctionDate(boolean clan, Faction faction) {
+        return techAdvancement.getExtinctionDate(clan, faction);
+    }
+
+    @Override
+    public int getReintroductionDate(boolean clan) {
+        return techAdvancement.getReintroductionDate(clan);
+    }
+
+    @Override
+    public int getReintroductionDate() {
+        return techAdvancement.getReintroductionDate();
+    }
+
+    @Override
+    public int getReintroductionDate(boolean clan, Faction faction) {
+        return techAdvancement.getReintroductionDate(clan, faction);
+    }
+
+    public static double getStructureCost(int inStructure) {
+        if ((inStructure < 0) || (inStructure >= structureCosts.length)) {
+            return -1;
+        }
+        return structureCosts[inStructure];
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if ((null == obj) || (getClass() != obj.getClass())) {
+            return false;
+        }
+        final EquipmentType other = (EquipmentType) obj;
+        return Objects.equals(internalName, other.internalName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(internalName);
+    }
+
+    public static final String YAML_VERSION = "1.0";
+    public static final String VARIABLE = "variable";
+
+    /**
+     * Constructs a map containing the YAML-serializable data for this equipment type. Subclasses should override this
+     * method to add type-specific data.
+     *
+     * @return A map containing the YAML-serializable data for this equipment type.
+     */
+    public Map<String, Object> getYamlData() {
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("version", YAML_VERSION);
+        data.put("type", getYamlTypeName());
+
+        // Basic identification
+        addBasicIdentification(data);
+
+        // Equipment statistics
+        addStatistics(data);
+
+        // Equipment modes
+        addModes(data);
+
+        // Technology advancement
+        addTechAdvancement(data);
+
+        // Flags (subclasses should override addFlags to add type-specific flags)
+        addFlags(data);
+
+        return data;
+    }
+
+    /**
+     * Returns the YAML type name for this equipment type. Subclasses should override this to return their specific type
+     * name.
+     *
+     * @return The YAML type name (e.g., "weapon", "ammo", "misc", "armor")
+     */
+    protected String getYamlTypeName() {
+        return "equipment";
+    }
+
+    /**
+     * Adds equipment flags to the YAML data map. Subclasses should override this to add type-specific flags.
+     *
+     * @param data The YAML data map to add flags to
+     */
+    protected void addFlags(Map<String, Object> data) {
+        // Base EquipmentType has no flags to add
+        // Subclasses override this to add their specific flags
+    }
+
+    /**
+     * Adds basic identification information to the YAML data map.
+     */
+    private void addBasicIdentification(Map<String, Object> data) {
+        data.put("id", internalName);
+        data.put("name", name);
+
+        YamlEncDec.addPropIfNotEmpty(data, "shortName", shortName);
+        YamlEncDec.addPropIfNotEmpty(data, "sortingName", sortingName);
+        YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", rulesRefs);
+
+        addAliases(data);
+    }
+
+    /**
+     * Adds alias names to the YAML data map, excluding duplicates.
+     */
+    private void addAliases(Map<String, Object> data) {
+        Enumeration<String> names = getNames();
+        if (names == null || !names.hasMoreElements()) {
+            return;
+        }
+
+        Set<String> uniqueAliases = new LinkedHashSet<>();
+
+        while (names.hasMoreElements()) {
+            String aliasName = names.nextElement();
+            if (aliasName != null && !aliasName.trim().isEmpty()) {
+                if (aliasName.equals(internalName) || aliasName.equals(name) || aliasName.equals(shortName)) {
+                    continue;
+                }
+                uniqueAliases.add(aliasName);
+            }
+        }
+
+        if (!uniqueAliases.isEmpty()) {
+            data.put("aliases", new ArrayList<>(uniqueAliases));
+        }
+    }
+
+    /**
+     * Adds equipment statistics to the YAML data map.
+     */
+    private void addStatistics(Map<String, Object> data) {
+        Map<String, Object> stats = new LinkedHashMap<>();
+
+        // Core statistics - use formatDouble to avoid scientific notation
+        stats.put("tonnage", isVariableTonnage() ? VARIABLE : YamlEncDec.formatDouble(tonnage));
+        stats.put("cost", isVariableCost() ? VARIABLE : YamlEncDec.formatDouble(cost));
+        stats.put("bv", isVariableBV() ? VARIABLE : YamlEncDec.formatDouble(bv));
+        stats.put("criticalSlots", isVariableCriticalSlots() ? VARIABLE : criticalSlots);
+
+        // Optional statistics - only add if not default
+        if (!hittable) {
+            stats.put("hittable", false);
+        }
+        if (spreadable) {
+            stats.put("spreadable", true);
+        }
+        if (explosive) {
+            stats.put("explosive", true);
+        }
+        if (toHitModifier != 0) {
+            stats.put("toHitModifier", toHitModifier);
+        }
+        if (tankSlots > -1) {
+            stats.put("tankSlots", tankSlots);
+        }
+        if (svSlots > -1) {
+            stats.put("svSlots", svSlots);
+        }
+        if (omniFixedOnly) {
+            stats.put("omniFixedOnly", true);
+        }
+        if (!instantModeSwitch) {
+            stats.put("instantModeSwitch", false);
+        }
+
+        data.put("stats", stats);
+    }
+
+    /**
+     * Adds equipment modes to the YAML data map.
+     */
+    private void addModes(Map<String, Object> data) {
+        if (!hasModes()) {
+            return;
+        }
+
+        List<String> modeNames = new ArrayList<>();
+        Enumeration<EquipmentMode> modeEnum = getModes();
+
+        while (modeEnum.hasMoreElements()) {
+            EquipmentMode mode = modeEnum.nextElement();
+            if (mode != null && mode.getName() != null) {
+                modeNames.add(mode.getName());
+            }
+        }
+
+        if (!modeNames.isEmpty()) {
+            data.put("modes", modeNames);
+        }
+    }
+
+    /**
+     * Adds technology advancement information to the YAML data map.
+     */
+    private void addTechAdvancement(Map<String, Object> data) {
+        if (techAdvancement == null) {
+            return;
+        }
+
+        Map<String, Object> techData = new LinkedHashMap<>();
+
+        // Basic tech information
+        techData.put("base", techAdvancement.getTechBase().toString());
+        techData.put("rating", techAdvancement.getTechRating().name());
+        techData.put("level", techAdvancement.getStaticTechLevel().toString());
+
+        // Availability by era
+        addAvailabilityData(techData);
+
+        // Advancement dates
+        addAdvancementData(techData);
+
+        // Faction information
+        addFactionData(techData);
+
+        data.put("tech", techData);
+    }
+
+    /**
+     * Adds availability information by era to the technology data.
+     */
+    private void addAvailabilityData(Map<String, Object> techData) {
+        Map<String, Object> availability = new LinkedHashMap<>();
+        for (Era era : Era.values()) {
+            AvailabilityValue availabilityValue = techAdvancement.getBaseAvailability(era);
+            availability.put(era.name().toLowerCase(), availabilityValue.name());
+        }
+        techData.put("availability", availability);
+    }
+
+    /**
+     * Adds advancement phase dates to the technology data.
+     */
+    private void addAdvancementData(Map<String, Object> techData) {
+        Map<String, Object> advancement = new LinkedHashMap<>();
+
+        Map<String, Object> advancementIS = createAdvancementPhaseMap(false);
+        Map<String, Object> advancementClan = createAdvancementPhaseMap(true);
+
+        if (!advancementIS.isEmpty()) {
+            advancement.put("is", advancementIS);
+        }
+        if (!advancementClan.isEmpty()) {
+            advancement.put("clan", advancementClan);
+        }
+
+        if (!advancement.isEmpty()) {
+            techData.put("advancement", advancement);
+        }
+    }
+
+    /**
+     * Creates advancement phase map for IS or Clan technology.
+     */
+    private Map<String, Object> createAdvancementPhaseMap(boolean isClan) {
+        Map<String, Object> advancementMap = new LinkedHashMap<>();
+
+        for (AdvancementPhase phase : AdvancementPhase.values()) {
+            Integer advancementDate = isClan ? techAdvancement.getClanAdvancement(phase)
+                  : techAdvancement.getISAdvancement(phase);
+            if (advancementDate == null || advancementDate < 0) {
+                continue;
+            }
+
+            boolean isApproximate = isClan ? techAdvancement.getClanApproximate(phase)
+                  : techAdvancement.getISApproximate(phase);
+            String advancementStr = (isApproximate ? "~" : "") + advancementDate;
+
+            advancementMap.put(phase.name().toLowerCase(), advancementStr);
+        }
+
+        return advancementMap;
+    }
+
+    /**
+     * Adds faction information to the technology data.
+     */
+    private void addFactionData(Map<String, Object> techData) {
+        Map<String, Object> factions = new LinkedHashMap<>();
+
+        addFactionList(factions, "prototype", techAdvancement.getPrototypeFactions());
+        addFactionList(factions, "production", techAdvancement.getProductionFactions());
+        addFactionList(factions, "extinction", techAdvancement.getExtinctionFactions());
+        addFactionList(factions, "reintroduction", techAdvancement.getReintroductionFactions());
+
+        if (!factions.isEmpty()) {
+            techData.put("factions", factions);
+        }
+    }
+
+    /**
+     * Adds a faction list to the factions map if not empty.
+     */
+    private void addFactionList(Map<String, Object> factions, String key, Set<Faction> factionSet) {
+        if (factionSet == null || factionSet.isEmpty()) {
+            return;
+        }
+
+        List<String> factionCodes = factionSet.stream()
+              .filter(Objects::nonNull)
+              .map(Faction::getCodeMM)
+              .filter(Objects::nonNull)
+              .collect(Collectors.toList());
+
+        if (!factionCodes.isEmpty()) {
+            factions.put(key, factionCodes);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "[Equipment] " + internalName;
+    }
+
+    public String getShortName() {
+        return shortName.isBlank() ? getName() : shortName;
+    }
+
+    public String getShortName(double size) {
+        return getShortName();
+    }
+
+    @Override
+    public boolean isIntroLevel() {
+        return techAdvancement.isIntroLevel();
+    }
+
+    @Override
+    public boolean isUnofficial() {
+        return techAdvancement.isUnofficial();
+    }
+
+    @Override
+    public int getPrototypeDate() {
+        return techAdvancement.getPrototypeDate();
+    }
+
+    @Override
+    public int getPrototypeDate(boolean clan, Faction faction) {
+        return techAdvancement.getPrototypeDate(clan, faction);
+    }
+
+    @Override
+    public int getProductionDate() {
+        return techAdvancement.getProductionDate();
+    }
+
+    @Override
+    public int getProductionDate(boolean clan, Faction faction) {
+        return techAdvancement.getProductionDate(clan, faction);
+    }
+
+    @Override
+    public int getCommonDate() {
+        return techAdvancement.getCommonDate();
+    }
+
+    @Override
+    public AvailabilityValue getBaseAvailability(Era era) {
+        return techAdvancement.getBaseAvailability(era);
+    }
+
+    /**
+     * This does not include heat generated by stealth armor, as that depends on whether it is installed as patchwork
+     * and does not appear in the equipment list of all unit types.
+     *
+     * @return The amount of heat generated by the equipment
+     */
+    public int getHeat() {
+        return 0;
+    }
+
+    /**
+     * Sorting with the String returned by this method results in an improved ordering and grouping of equipment than by
+     * getName(); for example, AC2/5/10/20 will appear in that order instead of the order AC10/2/20/5 and S/M/L Lasers
+     * will be grouped together.
+     *
+     * @return A String similar to getName() but modified to support a better sorting
+     */
+    public String getSortingName() {
+        return (sortingName != null) ? sortingName : name;
+    }
+
+    /**
+     * Returns true if this equipment is any of those identified by the given type Strings. The given typeInternalNames
+     * are compared to the internal name of this EquipmentType, not the (display) name!
+     * <p>
+     * Best use the constants defined in EquipmentTypeLookup.
+     *
+     * @param typeInternalName  An Equipment internal name to check
+     * @param typeInternalNames More Equipment internal names to check
+     *
+     * @return true if the internalName of this equipment matches any of the given types
+     */
+    public boolean isAnyOf(String typeInternalName, String... typeInternalNames) {
+        return internalName.equals(typeInternalName) || Arrays.asList(typeInternalNames).contains(internalName);
+    }
+
+    /**
+     * Returns true if this equipment is that identified by the given typeInternalName String. The given
+     * typeInternalName is compared to the internal name of this EquipmentType, not the (display) name!
+     * <p>
+     * Best use the constants defined in EquipmentTypeLookup. Calling this is equivalent to
+     * {@link #isAnyOf(String, String...)} with only the one parameter.
+     *
+     * @param typeInternalName An Equipment internal name to check
+     *
+     * @return true if the internalName of this equipment matches the given type
+     */
+    public boolean is(String typeInternalName) {
+        return isAnyOf(typeInternalName);
+    }
+
+    public static Map<Integer, String> getAllStructureCodeName() {
+        Map<Integer, String> result = new HashMap<>();
+
+        result.put(T_STRUCTURE_UNKNOWN, getStructureTypeName(T_STRUCTURE_UNKNOWN));
+        result.put(T_STRUCTURE_STANDARD, getStructureTypeName(T_STRUCTURE_STANDARD));
+        result.put(T_STRUCTURE_INDUSTRIAL, getStructureTypeName(T_STRUCTURE_INDUSTRIAL));
+        result.put(T_STRUCTURE_ENDO_STEEL, getStructureTypeName(T_STRUCTURE_ENDO_STEEL));
+        result.put(T_STRUCTURE_ENDO_PROTOTYPE, getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE));
+        result.put(T_STRUCTURE_REINFORCED, getStructureTypeName(T_STRUCTURE_REINFORCED));
+        result.put(T_STRUCTURE_COMPOSITE, getStructureTypeName(T_STRUCTURE_COMPOSITE));
+        result.put(T_STRUCTURE_ENDO_COMPOSITE, getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE));
+
+        return result;
+    }
+
+    /**
+     * @return True if this equipment type is eligible for being an armored component, TO:AUE p.95
+     */
+    public boolean isEligibleForBeingArmored() {
+        return isHittable();
+    }
+
+    /**
+     * @return True if this equipment type is any type of C3 equipment, meaning C3S/M and variations of those, C3i, Nova
+     *       CEWS, NC3 and BA C3. Note that this returns true for some MiscTypes as well as some WeaponTypes.
+     */
+    public boolean isC3Equipment() {
+        return false;
+    }
+
+    /**
+     * @return True if this equipment type can be mounted on a BattleArmor Detachable Weapon Pack, TO:AUE p.99
+     */
+    public boolean canBeMountedOnBaDwp() {
+        return false;
+    }
+
+    /**
+     * @return True if this equipment counts for the size and weight of a Targeting Computer, and benefits from it in
+     * the case of weapons. TM p.238, TO:AUE p.157
+     */
+    public boolean relevantToTargetingComputer() {
+        return false;
+    }
+}

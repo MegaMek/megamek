@@ -1,0 +1,71 @@
+# Example full SBF formation
+
+# Most elements are canon units and need not list stats; these are converted from the unit cache
+# The two tanks that are not canon have their stats listed, so this MMU file can be loaded without any
+# outside information (other files)
+
+# Note that in nested objects, consistent indentation and hyphens are important (YAML formatting)
+type: SBFFormation
+generalname: Test Formation
+units:
+- type: SBFUnit
+  generalname: Command Lance
+  elements:
+  - type: ASElement
+    fullname: Rakshasa MDG-1A
+  - type: ASElement
+    fullname: Rifleman RFL-6D
+  - type: ASElement
+    fullname: Thunderbolt TDR-9NAIS
+- type: SBFUnit
+  generalname: Strike Lance
+  elements:
+  - type: ASElement
+    fullname: Enforcer III ENF-6M
+  - type: ASElement
+    fullname: Shadow Hawk SHD-5D
+    skill: 5
+  - type: ASElement
+    fullname: Hatchetman HCT-6D
+  - type: ASElement
+    fullname: Fennec FEC-3C
+- type: SBFUnit
+  generalname: Fire Lance
+  elements:
+  - type: ASElement
+    fullname: Valkyrie VLK-QD1
+    skill: 3
+  - type: ASElement
+    fullname: Osiris OSR-5D
+  - type: ASElement
+    fullname: Garm GRM-01A2
+  - type: ASElement
+    fullname: Javelin JVN-11A 'Fire Javelin'
+- type: SBFUnit
+  generalname: Tank Lance
+  elements:
+  - type: ASElement
+    fullname: Alacorn Heavy Tank Mk III
+  - type: ASElement
+    fullname: Ajax Assault Tank A
+    skill: 5
+  - type: ASElement
+    chassis: Manticore Heavy Tank
+    model: C-Ph Mk II
+    astype: CV
+    size: 3
+    move: 8t
+    damage: 5/5/2
+    armor: 7
+    structure: 3
+    specials: "ARS, CASE, CR, IF1, SRCH, SRM1/1, TUR(4/4/2, IF1)"
+  - type: ASElement
+    chassis: Manticore Heavy Tank
+    model: C-Ph Mk II
+    astype: CV
+    size: 3
+    move: 8t
+    damage: 5/5/2
+    armor: 7
+    structure: 3
+    specials: "ARS, CASE, CR, IF1, SRCH, SRM1/1, TUR(4/4/2, IF1)"

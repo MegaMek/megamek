@@ -1,0 +1,169 @@
+/*
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.client.bot;
+
+import java.util.Vector;
+
+import megamek.common.units.Entity;
+import megamek.common.equipment.INarcPod;
+import megamek.common.units.Targetable;
+import megamek.common.ToHitData;
+import megamek.common.actions.AbstractAttackAction;
+import megamek.common.actions.BrushOffAttackAction;
+import megamek.common.actions.ClubAttackAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.KickAttackAction;
+import megamek.common.actions.PunchAttackAction;
+import megamek.common.actions.PushAttackAction;
+import megamek.common.equipment.MiscMounted;
+
+/**
+ * TODO: add more options, pushing, kick both for quad Meks, etc.
+ * <p>
+ * also, what
+ * are the conditions for multiple physical attacks?
+ */
+public class PhysicalOption {
+    public static final int NONE = 0;
+    public static final int PUNCH_LEFT = 1;
+    public static final int PUNCH_RIGHT = 2;
+    public static final int PUNCH_BOTH = 3;
+    public static final int KICK_LEFT = 4;
+    public static final int KICK_RIGHT = 5;
+    public static final int USE_CLUB = 6; // Includes sword, hatchet, mace,
+    // and found clubs
+    public static final int USE_CLAW = 7; // Level 3 rules, not incorporated
+    // yet
+    public static final int PUSH_ATTACK = 8;
+    public static final int TRIP_ATTACK = 9; // Level 3 rules, not
+    // incorporated yet
+    public static final int BRUSH_LEFT = 10;
+    public static final int BRUSH_RIGHT = 11;
+    public static final int BRUSH_BOTH = 12;
+    public static final int THRASH_INF = 13;
+
+    Entity attacker;
+    Targetable target;
+    INarcPod i_target;
+    double expectedDmg;
+    int type;
+    MiscMounted club;
+
+    public PhysicalOption(Entity attacker) {
+        this.attacker = attacker;
+        this.type = NONE;
+    }
+
+    public PhysicalOption(Entity attacker, Targetable target, double dmg,
+          int type, MiscMounted club) {
+        this.attacker = attacker;
+        this.target = target;
+
+        if (target instanceof INarcPod) {
+            this.i_target = (INarcPod) target;
+        }
+        this.expectedDmg = dmg;
+        this.type = type;
+        this.club = club;
+    }
+
+    public AbstractAttackAction toAction() {
+        return switch (type) {
+            case PUNCH_LEFT -> new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
+                  PunchAttackAction.LEFT);
+            case PUNCH_RIGHT -> new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
+                  PunchAttackAction.RIGHT);
+            case PUNCH_BOTH -> new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
+                  PunchAttackAction.BOTH);
+            case KICK_LEFT -> new KickAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
+                  KickAttackAction.LEFT);
+            case KICK_RIGHT -> new KickAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
+                  KickAttackAction.RIGHT);
+            case USE_CLUB -> {
+                if (club != null) {
+                    yield new ClubAttackAction(attacker.getId(), target.getTargetType(), target
+                          .getId(), club, ToHitData.HIT_NORMAL, false);
+                }
+                yield null;
+            }
+            case PUSH_ATTACK -> new PushAttackAction(attacker.getId(), target.getId(),
+                  target.getPosition());
+            case TRIP_ATTACK -> null; // Trip attack not implemented yet
+            case BRUSH_LEFT -> {
+                if (target == null) {
+                    yield new BrushOffAttackAction(attacker.getId(), i_target
+                          .getTargetType(), i_target.getId(),
+                          BrushOffAttackAction.LEFT);
+                }
+                yield new BrushOffAttackAction(attacker.getId(), target
+                      .getTargetType(), target.getId(),
+                      BrushOffAttackAction.LEFT);
+            }
+            case BRUSH_RIGHT -> {
+                if (target == null) {
+                    yield new BrushOffAttackAction(attacker.getId(), i_target
+                          .getTargetType(), i_target.getId(),
+                          BrushOffAttackAction.RIGHT);
+                }
+                yield new BrushOffAttackAction(attacker.getId(), target
+                      .getTargetType(), target.getId(),
+                      BrushOffAttackAction.RIGHT);
+            }
+            case BRUSH_BOTH -> {
+                if (target == null) {
+                    yield new BrushOffAttackAction(attacker.getId(), i_target
+                          .getTargetType(), i_target.getId(),
+                          BrushOffAttackAction.BOTH);
+                }
+                yield new BrushOffAttackAction(attacker.getId(), target
+                      .getTargetType(), target.getId(),
+                      BrushOffAttackAction.BOTH);
+                /*
+                 * case THRASH_INF : return new
+                 * ThrashAttackAction(attacker.getId(), target.getId());
+                 */
+            }
+            default -> null;
+        };
+    }
+
+    public Vector<EntityAction> getVector() {
+        AbstractAttackAction aaa = toAction();
+        Vector<EntityAction> v = new Vector<>();
+        if (aaa != null) {
+            v.addElement(aaa);
+        }
+        return v;
+    }
+}

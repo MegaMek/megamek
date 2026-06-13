@@ -1,0 +1,483 @@
+/*
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
+
+package megamek.server.commands;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+
+import megamek.common.compute.Compute;
+import megamek.common.units.Entity;
+import megamek.server.Server;
+import megamek.server.totalWarfare.TWGameManager;
+
+/**
+ * @author dirk This command exists to print entity information to the chat window, it's primarily intended for
+ *       vissually impaired users.
+ */
+
+public class AssignNovaNetServerCommand extends ServerCommand {
+
+    private final TWGameManager gameManager;
+
+    public AssignNovaNetServerCommand(Server server, TWGameManager gameManager) {
+        super(
+              server,
+              "nova",
+              "This command allows you to link NovaCEWS units.\nDo not use this command unless you can link something.\nCall #nova for detailed help.");
+        /*
+         * This command will change the nova net at end of turn.
+         *
+         * /nova print will print info about your current nova links
+         * /nova print ID will print the network for ID
+         * /nova link ID will link the two IDs into their own network. Unlinks from all other networks
+         * /nova link ID ID ID will link the 3 IDs in their own network. Unlinks from all other networks
+         * /nova unlink will unlink all
+         *  /nova unlink ID will unlink ID
+         */
+        this.gameManager = gameManager;
+    }
+
+    /**
+     * Run this command with the arguments supplied
+     *
+     * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
+     */
+    @Override
+    public void run(int connID, String[] args) {
+
+        if (args.length == 1) {
+            server.sendServerChat(connID, "Server Side nova command");
+            server.sendServerChat(
+                  connID,
+                  "/nova print : will print all of your current nova networks and unlinked units.");
+            server.sendServerChat(connID,
+                  "/nova print id : will print the network status for the Unit with ID id.");
+            server.sendServerChat(connID,
+                  "/nova link id1 id2 : will link the units with ID id1 and id2.");
+            server.sendServerChat(connID,
+                  "+++Will Disconnect them from all prior nets.");
+            server.sendServerChat(connID,
+                  "/nova link id1 id2 id3 : will link the three units with ID id1 id2 and id3.");
+            server.sendServerChat(connID,
+                  "+++Will Disconnect them from all prior nets.");
+            server.sendServerChat(connID,
+                  "/nova unlink : will unlink all your novaCEWS units.");
+            server.sendServerChat(connID,
+                  "/nova unlink id : will unlink unit with ID id from all nova networks.");
+        }
+        try {
+            if (args.length > 1) {
+                // we have a command!
+                String cmd = args[1];
+                if (cmd.equalsIgnoreCase("print")) {
+                    if (args.length > 2) {
+                        // do /nova print ID
+                        int id = Integer.parseInt(args[2]);
+                        server.sendServerChat(connID,
+                              strListNetwork(connID, id, true));
+                    } else {
+                        // do /nova print
+                        server.sendServerChat(connID,
+                              strListNetworks(connID, true));
+                    }
+
+                } else if (cmd.equalsIgnoreCase("printcurrent")) {
+                    if (args.length > 2) {
+                        // do /nova print ID
+                        int id = Integer.parseInt(args[2]);
+                        server.sendServerChat(connID,
+                              strListNetwork(connID, id, false));
+                    } else {
+                        // do /nova print
+                        server.sendServerChat(connID,
+                              strListNetworks(connID, false));
+                    }
+
+                } else if (cmd.equalsIgnoreCase("debug")) {
+                    debug(connID, server);
+
+                } else if (cmd.equalsIgnoreCase("link")) {
+                    if (args.length > 4) {
+                        int id1 = Integer.parseInt(args[2]);
+                        int id2 = Integer.parseInt(args[3]);
+                        int id3 = Integer.parseInt(args[4]);
+                        // do /nova link ID ID ID
+                        server.sendServerChat(connID,
+                              strLink3(connID, id1, id2, id3));
+                    } else if (args.length > 3) {
+                        // do /nova link ID ID
+                        int id1 = Integer.parseInt(args[2]);
+                        int id2 = Integer.parseInt(args[3]);
+                        server.sendServerChat(connID,
+                              strLink2(connID, id1, id2));
+                    }
+                } else if (cmd.equalsIgnoreCase("unlink")) {
+                    if (args.length > 2) {
+                        // do /nova unlink ID
+                        int id = Integer.parseInt(args[2]);
+                        server.sendServerChat(connID, strUnlinkID(connID, id));
+                    } else {
+                        // do /nova unlink
+                        server.sendServerChat(connID, strUnlinkAll(connID));
+                    }
+                } else {
+                    StringBuilder failString = new StringBuilder(args[0]);
+                    for (int i = 1; i < args.length; i++) {
+                        failString.append(" ").append(args[i]);
+                    }
+                    server.sendServerChat(connID, "I do not understand "
+                          + failString + ". /nova for help.\n");
+                }
+            }
+        } catch (NumberFormatException nfe) {
+            server.sendServerChat(connID,
+                  "Error parsing the command. NumberFormatException: Cannot determine the format of a number in the command.");
+        } catch (NullPointerException npe) {
+            server.sendServerChat(connID, "Error parsing the command. NullPointerException: " + npe.getMessage());
+        } catch (IndexOutOfBoundsException indexOutOfBoundsException) {
+            server.sendServerChat(connID,
+                  "Error parsing the command. IndexOutOfBoundsException: Insufficient arguments supplied.");
+        }
+
+    }
+
+    private void debug(int connID, Server server) {
+        // TODO Auto-generated method stub
+        server.sendServerChat(connID, "Called /nova Debug");
+        server.sendServerChat(connID,
+              "Check if server really thinks that stuff is connected");
+        List<Entity> novaUnits = getAlliedNovaUnits(connID);
+        List<Entity> opponent = gameManager.getGame().getEntitiesVector();
+        for (Entity e : novaUnits) {
+            List<Entity> curNetwork = listNetwork(connID, e, false);
+
+            for (Entity t : curNetwork) {
+                if (e.getId() != t.getId()) {
+                    server.sendServerChat(connID, "Checking ID " + e.getId()
+                          + " and " + t.getId());
+                    if (!e.onSameC3NetworkAs(t)) {
+                        server.sendServerChat(connID, "ID " + e.getId()
+                              + " and " + t.getId()
+                              + " network Error with ECM.");
+                    }
+                    if (!e.onSameC3NetworkAs(t, true)) {
+                        server.sendServerChat(connID, "ID " + e.getId()
+                              + " and " + t.getId()
+                              + " network Error without ECM.");
+                    }
+                }
+            }
+
+            for (Entity t : opponent) {
+                if (t.getOwnerId() != e.getOwnerId()) {
+                    // we are hostile
+                    Entity entity = Compute.exposed_findC3Spotter(gameManager.getGame(), e, t);
+                    if (entity.getId() != e.getId()) {
+                        server.sendServerChat(connID, "ID " + e.getId()
+                              + " gets bonus from ID " + entity.getId());
+                    } else {
+                        server.sendServerChat(connID, "ID " + e.getId()
+                              + " does not have a good spotter");
+                    }
+                }
+            }
+        }
+
+    }
+
+    private void setNewNetworkID(int connID, Entity ent, String net) {
+        ent.setNewRoundNovaNetworkString(net);
+        // TODO: Send packet to client.
+
+        gameManager.sendNovaChange(ent.getId(), net);
+    }
+
+    private String strLink3(int connID, int id1, int id2, int id3) {
+        String retValue = "";
+
+        Entity ent1 = gameManager.getGame().getEntity(id1);
+        Entity ent2 = gameManager.getGame().getEntity(id2);
+        Entity ent3 = gameManager.getGame().getEntity(id3);
+
+        if ((ent1 == null) || (ent2 == null) || (ent3 == null)) {
+            return "ID Mismatch!\n";
+        }
+
+        if (ent1.getOwnerId() == connID || ent2.getOwnerId() == connID || ent3.getOwnerId() == connID) {
+            if (ent1.isEnemyOf(ent2) || ent1.isEnemyOf(ent3) || ent2.isEnemyOf(ent3)) {
+                return "These units are not on the same team!";
+            }
+        } else {
+            return "None of these units belong to you!\n";
+        }
+
+        if (!ent1.hasActiveNovaCEWS()) {
+            return "ID: " + id1 + " has no active nova CEWS. Aborting.";
+        }
+        if (!ent2.hasActiveNovaCEWS()) {
+            return "ID: " + id2 + " has no active nova CEWS. Aborting.";
+        }
+        if (!ent3.hasActiveNovaCEWS()) {
+            return "ID: " + id3 + " has no active nova CEWS. Aborting.";
+        }
+        retValue += strUnlinkID(ent1.getOwnerId(), id1);
+        retValue += strUnlinkID(ent2.getOwnerId(), id2);
+        retValue += strUnlinkID(ent3.getOwnerId(), id3);
+
+        String networkId = getEffectiveNovaNetworkId(ent1);
+        setNewNetworkID(connID, ent2, networkId);
+        setNewNetworkID(connID, ent3, networkId);
+
+        return retValue + "New Network! Linked Units: " + id1 + ", " + id2 + ", "
+              + id3 + "\n";
+    }
+
+    private String strLink2(int connID, int id1, int id2) {
+        String retVal = "";
+
+        Entity ent1 = gameManager.getGame().getEntity(id1);
+        Entity ent2 = gameManager.getGame().getEntity(id2);
+        if ((ent1 == null) || (ent2 == null)) {
+            return "ID Mismatch!\n";
+        }
+        if (ent1.getOwnerId() == connID || ent2.getOwnerId() == connID) {
+            if (ent1.isEnemyOf(ent2)) {
+                return "These units are not on the same team!";
+            }
+        } else {
+            return "None of these units belong to you!\n";
+        }
+        if (!ent1.hasActiveNovaCEWS()) {
+            return "ID: " + id1 + " has no active nova CEWS. Aborting.";
+        }
+        if (!ent2.hasActiveNovaCEWS()) {
+            return "ID: " + id2 + " has no active nova CEWS. Aborting.";
+        }
+
+        retVal += strUnlinkID(ent1.getOwnerId(), id1);
+        retVal += strUnlinkID(ent2.getOwnerId(), id2);
+        setNewNetworkID(connID, ent2, getEffectiveNovaNetworkId(ent1));
+
+        return retVal + "New Network! Linked Units: " + id1 + ", " + id2 + "\n";
+    }
+
+    private String strUnlinkID(int connID, int id) {
+        Entity ent = gameManager.getGame().getEntity(id);
+
+        if (ent == null) {
+            return "ID Mismatch\n";
+        }
+
+        if (ent.getOwnerId() != connID) {
+            return "This unit doesn't belong to you!\n";
+        }
+
+        List<Entity> network = listNetwork(connID, ent, true);
+        if (network.size() < 2) {
+            // no other member, we're done.
+            return "Unit " + id + " was already unlinked\n";
+        }
+        // there are other members in that network. Need to find a different ID
+        // for them.
+        // first remove the unit from the network list.
+        network.removeIf(e -> e.getId() == id);
+
+        // now set the network ID of the remaining units to something different.
+        String newID = network.getFirst().getOriginalNovaC3NetId(); // this resets
+        // the C3i network name to the default 'Nova.ID'
+        for (Entity e : network) {
+            setNewNetworkID(connID, e, newID);
+        }
+        // finally set the unlinked units network ID to default value.
+        setNewNetworkID(connID, ent, ent.getOriginalNovaC3NetId());
+        return "Unit " + id + " unlinked\n";
+    }
+
+    private String strUnlinkAll(int connID) {
+        List<Entity> novaUnits = getMyNovaUnits(connID);
+        for (Entity e : novaUnits) {
+            strUnlinkID(connID, e.getId());
+        }
+        return "Everything unlinked";
+    }
+
+    private String strListNetworks(int connID, boolean planned) {
+        StringBuilder retVal = new StringBuilder();
+
+        List<Integer> allReadyReported = new LinkedList<>();
+        List<Entity> novaUnits = getMyNovaUnits(connID);
+        List<Entity> network;
+
+        StringBuilder noLink = new StringBuilder();
+
+        for (Entity ent : novaUnits) {
+            if (!allReadyReported.contains(ent.getId())) {
+                network = listNetwork(connID, ent, planned);
+                if (network.size() > 1) // we actually have more than one member
+                // in this network
+                {
+                    retVal.append("Network ID '").append(ent.getC3NetId()).append("' contains:\n");
+                    for (Entity re : network) {
+                        retVal.append("+ ").append(re.getId()).append(" ").append(re.getDisplayName()).append("\n");
+                        allReadyReported.add(re.getId());
+                    }
+                    retVal.append("+-----\n");
+                } else {
+                    noLink.append("+ ").append(ent.getId()).append(" ").append(ent.getDisplayName()).append("\n");
+                    allReadyReported.add(ent.getId());
+                }
+            }
+
+        }
+        if (retVal.toString().isEmpty()) {
+            // no networks found
+            retVal = new StringBuilder("No Networks found. Create some with the /nova command\n");
+        }
+        if (!noLink.toString().isEmpty()) {
+            // we have unlinked units.
+            noLink.insert(0, "XXX Unlinked Units:\n");
+        }
+        if (planned) {
+            retVal = new StringBuilder("Status for next turn networks:\n" + retVal + noLink);
+        } else {
+            retVal = new StringBuilder("Status for current turn networks:\n" + retVal + noLink);
+        }
+        return retVal.toString();
+    }
+
+    private String strListNetwork(int connID, int id, boolean planned) {
+        StringBuilder retVal = new StringBuilder();
+        Entity ent = gameManager.getGame().getEntity(id);
+        if (ent != null) {
+            if (ent.getOwnerId() != connID) {
+                return "This unit doesn't belong to you!\n";
+            }
+            for (Entity e : listNetwork(connID, ent, planned)) {
+                retVal.append("+ ").append(e.getId()).append(" ").append(e.getDisplayName()).append("\n");
+            }
+        }
+
+        if (!retVal.toString().isEmpty()) {
+            retVal.insert(0, "Unit " + id + " is in the Network consisting of:\n");
+        } else {
+            retVal = new StringBuilder("Error. No ID match.\n");
+        }
+
+        return retVal.toString();
+    }
+
+    /**
+     * Returns a list with all members of entity 's nova network, including entity.
+     *
+     * @param entity  the entity.
+     * @param planned set this to true if you want to calculate based on next turns net.
+     *
+     */
+    private List<Entity> listNetwork(int connID, Entity entity, boolean planned) {
+        List<Entity> novaNetworkMembers = new LinkedList<>();
+        List<Entity> novaUnits = getAlliedNovaUnits(connID);
+
+        for (Entity novaUnit : novaUnits) {
+            if (planned) {
+                if (Objects.equals(getEffectiveNovaNetworkId(novaUnit),
+                      getEffectiveNovaNetworkId(entity))) {
+                    novaNetworkMembers.add(novaUnit);
+                }
+            } else {
+                if (Objects.equals(novaUnit.getC3NetId(), entity.getC3NetId())) {
+                    novaNetworkMembers.add(novaUnit);
+                }
+            }
+        }
+        return novaNetworkMembers;
+    }
+
+    /**
+     * Returns the effective Nova network ID for the entity.
+     * <p>
+     * Precedence:
+     * <ol>
+     *     <li>Pending next-round network ID, if set.</li>
+     *     <li>Current C3 network ID (shared by linked units).</li>
+     *     <li>Original per-unit Nova C3 network ID as a last resort.</li>
+     * </ol>
+     */
+    private String getEffectiveNovaNetworkId(Entity entity) {
+        String pendingId = entity.getNewRoundNovaNetworkString();
+        if (pendingId != null) {
+            return pendingId;
+        }
+
+        String currentId = entity.getC3NetId();
+        if (currentId != null) {
+            return currentId;
+        }
+
+        return entity.getOriginalNovaC3NetId();
+    }
+
+    /**
+     * Return a list of all nova CEWS units the clients player owns.
+     *
+     */
+    private List<Entity> getMyNovaUnits(int connID) {
+        List<Entity> novaUnits = new LinkedList<>();
+        for (Entity ent : gameManager.getGame().getEntitiesVector()) {
+            if ((ent.getOwnerId() == connID) && ent.hasNovaCEWS()) {
+                novaUnits.add(ent);
+            }
+        }
+        return novaUnits;
+    }
+
+    /**
+     * Return a list of all nova CEWS units the clients units could connect with.
+     *
+     */
+    private List<Entity> getAlliedNovaUnits(int connID) {
+        List<Entity> novaUnits = new LinkedList<>();
+        for (Entity ent : gameManager.getGame().getEntitiesVector()) {
+            if (ent.hasNovaCEWS()
+                  && ((ent.getOwnerId() == connID)
+                  || (gameManager.getGame().getPlayer(connID) != null
+                  && !gameManager.getGame().getPlayer(connID).isEnemyOf(ent.getOwner())))) {
+                novaUnits.add(ent);
+            }
+        }
+        return novaUnits;
+    }
+
+}

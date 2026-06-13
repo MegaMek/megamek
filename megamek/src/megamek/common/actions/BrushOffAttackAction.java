@@ -1,0 +1,282 @@
+/*
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
+package megamek.common.actions;
+
+import java.io.Serial;
+
+import megamek.common.CriticalSlot;
+import megamek.common.ToHitData;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
+import megamek.logging.MMLogger;
+
+/**
+ * The attacker brushes the target off.
+ */
+public class BrushOffAttackAction extends AbstractAttackAction {
+    private static final MMLogger LOGGER = MMLogger.create(BrushOffAttackAction.class);
+
+    @Serial
+    private static final long serialVersionUID = -7455082808488032572L;
+    public static final int BOTH = 0;
+    public static final int LEFT = 1;
+    public static final int RIGHT = 2;
+
+    private int arm;
+
+    public BrushOffAttackAction(int entityId, int targetType, int targetId,
+          int arm) {
+        super(entityId, targetType, targetId);
+        this.arm = arm;
+    }
+
+    public int getArm() {
+        return arm;
+    }
+
+    public void setArm(int arm) {
+        this.arm = arm;
+    }
+
+    /**
+     * Damage that the specified mek does with a brush-off attack. This equals the damage done by a punch from the same
+     * arm.
+     *
+     * @param entity - the <code>Entity</code> brushing off the swarm.
+     * @param arm    - the <code>int</code> of the arm making the attack; this value must be
+     *               <code>BrushOffAttackAction.RIGHT</code> or
+     *               <code>BrushOffAttackAction.LEFT</code>.
+     *
+     * @return the <code>int</code> amount of damage caused by the attack. If the attack hits, the swarming infantry
+     *       takes the damage; if the attack misses, the entity deals the damage to themselves.
+     */
+    public static int getDamageFor(Entity entity, int arm) {
+        return PunchAttackAction.getDamageFor(entity, arm, false, false);
+    }
+
+    /**
+     * To-hit number for the specified arm to brush off swarming infantry. If this attack misses, the Mek will suffer
+     * punch damage. This same action is used to remove iNARC pods.
+     *
+     * @param game The current {@link Game} containing all entities.
+     *
+     * @return the <code>ToHitData</code> containing the target roll.
+     */
+    public ToHitData toHit(Game game) {
+        return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()), getArm());
+    }
+
+    /**
+     * To-hit number for the specified arm to brush off swarming infantry. If this attack misses, the Mek will suffer
+     * punch damage. This same action is used to remove iNARC pods.
+     *
+     * @param game       The current {@link Game} containing all entities.
+     * @param attackerId the <code>int</code> ID of the attacking unit.
+     * @param target     the <code>Targetable</code> object being targeted.
+     * @param arm        the <code>int</code> of the arm making the attack; this value must be
+     *                   <code>BrushOffAttackAction.RIGHT</code> or
+     *                   <code>BrushOffAttackAction.LEFT</code>.
+     *
+     * @return the <code>ToHitData</code> containing the target roll.
+     */
+    public static ToHitData toHit(Game game, int attackerId, Targetable target, int arm) {
+        final Entity ae = game.getEntity(attackerId);
+        int targetId = Entity.NONE;
+        Entity te = null;
+        if (ae == null) {
+            LOGGER.error("Attacker not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
+        }
+        if (target == null) {
+            LOGGER.error("target not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
+        }
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            te = (Entity) target;
+            targetId = target.getId();
+        }
+        final int armLoc = (arm == BrushOffAttackAction.RIGHT) ? Mek.LOC_RIGHT_ARM : Mek.LOC_LEFT_ARM;
+        ToHitData toHit;
+
+        // non-meks can't BrushOff
+        if (!(ae instanceof Mek)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                  "Only meks can brush off swarming infantry or iNarc Pods");
+        }
+
+        // arguments legal?
+        if ((arm != BrushOffAttackAction.RIGHT)
+              && (arm != BrushOffAttackAction.LEFT)) {
+            throw new IllegalArgumentException("Arm must be LEFT or RIGHT");
+        }
+        if (((targetId != ae.getSwarmAttackerId()) || !(te instanceof Infantry))
+              && (target.getTargetType() != Targetable.TYPE_I_NARC_POD)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                  "Can only brush off swarming infantry or iNarc Pods");
+        }
+
+        // Quads can't brush off.
+        if (ae.entityIsQuad()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is a quad");
+        }
+
+        // Can't brush off with flipped arms
+        if (ae.getArmsFlipped()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                  "Arms are flipped to the rear. Can not punch.");
+        }
+
+        // check if arm is present
+        if (ae.isLocationBad(armLoc)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
+        }
+
+        // check for no/minimal arms quirk
+        if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "No/minimal arms");
+        }
+
+        // check if shoulder is functional
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, armLoc)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder destroyed");
+        }
+
+        // check if attacker has fired arm-mounted weapons
+        if (ae.weaponFiredFrom(armLoc)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                  "Weapons fired from arm this turn");
+        }
+
+        // can't physically attack meks making dfa attacks
+        if ((te != null) && te.isMakingDfa()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                  "Target is making a DFA attack");
+        }
+
+        // Can't brush off while prone.
+        if (ae.isProne()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
+        }
+
+        // Can't target woods or a building with a brush-off attack.
+        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+              || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
+              || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
+              || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE)
+              || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+              || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
+        }
+
+        // okay, modifiers...
+        toHit = new ToHitData(ae.getCrew().getPiloting(), "base PSR");
+        toHit.addModifier(4, "brush off swarming infantry");
+
+        // damaged or missing actuators
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, armLoc)) {
+            toHit.addModifier(2, "Upper arm actuator destroyed");
+        }
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, armLoc)) {
+            toHit.addModifier(2, "Lower arm actuator missing or destroyed");
+        }
+
+        if (ae.hasFunctionalArmAES(armLoc)) {
+            toHit.addModifier(-1, "AES modifier");
+        }
+
+        // Claws replace Actuators, but they are Equipment vs System as they take up multiple crits. Rules state +1
+        // bth with claws and if claws are critted then you get the normal +1 bth for missing hand actuator.
+        // Damn if you do damn if you don't. --Torren.
+        final boolean hasClaws = ((Mek) ae).hasClaw(armLoc);
+        final boolean hasLowerArmActuator = ae.hasSystem(Mek.ACTUATOR_LOWER_ARM, armLoc);
+        final boolean hasHandActuator = ae.hasSystem(Mek.ACTUATOR_HAND, armLoc);
+        // Missing hand actuator is not cumulative with missing actuator,
+        // but critical damage is cumulative
+        if (!hasClaws && !hasHandActuator &&
+              hasLowerArmActuator) {
+            toHit.addModifier(1, "Hand actuator missing");
+            // Check for present but damaged hand actuator
+        } else if (hasHandActuator && !hasClaws &&
+              !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc)) {
+            toHit.addModifier(1, "Hand actuator destroyed");
+        } else if (hasClaws) {
+            toHit.addModifier(1, "Using Claws");
+        }
+
+        // If it has a torso-mounted cockpit and two head sensor hits or three
+        // sensor hits...
+        // It gets a =4 penalty for being blind!
+        if (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
+            int sensorHits = ae.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM,
+                  Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+            int sensorHits2 = ae.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM,
+                  Mek.SYSTEM_SENSORS, Mek.LOC_CENTER_TORSO);
+            if ((sensorHits + sensorHits2) == 3) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                      "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+            } else if (sensorHits == 2) {
+                toHit.addModifier(4,
+                      "Head Sensors Destroyed for Torso-Mounted Cockpit");
+            }
+        }
+
+        Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
+
+        // If the target has assault claws, give a 1 modifier.
+        // We can stop looking when we find our first match.
+        if (te != null) {
+            for (Mounted<?> mount : te.getMisc()) {
+                EquipmentType equip = mount.getType();
+                if (equip.hasFlag(MiscType.F_MAGNET_CLAW)) {
+                    toHit.addModifier(1, "defender has magnetic claws");
+                    break;
+                }
+            }
+        }
+
+        // done!
+        return toHit;
+    }
+
+}

@@ -1,0 +1,175 @@
+# MegaMek Data (C) 2025 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+generator:MegaMek Suite 0.50.11 on 2025-12-02
+chassis:Cephalus
+model:Prime
+mul id:3930
+
+Config:Biped OmniMek
+techbase:Mixed (Clan Chassis)
+era:3072
+source:WoR
+rules level:4
+role:Scout
+
+quirk:difficult_maintain
+quirk:no_arms
+quirk:imp_life_support
+quirk:bad_rep_clan
+
+mass:25
+engine:250 XXL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:10 Clan Double
+base chassis heat sinks:10
+walk mp:10
+jump mp:0
+
+armor:Ferro-Lamellor(Clan)
+LA armor:6
+RA armor:6
+LT armor:8
+RT armor:8
+CT armor:12
+HD armor:8
+LL armor:12
+RL armor:12
+RTL armor:4
+RTR armor:4
+RTC armor:4
+
+Weapons:3
+Light TAG, Left Torso
+Laser AMS, Left Torso
+Laser AMS, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Mek Null Signature System
+Chameleon Light Polarization Shield
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Mek Null Signature System
+Chameleon Light Polarization Shield
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLLightTAG (OMNIPOD)
+CLLaserAntiMissileSystem (OMNIPOD)
+ISModularArmor (OMNIPOD)
+Mek Null Signature System
+Chameleon Light Polarization Shield
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLLaserAntiMissileSystem (OMNIPOD)
+ISModularArmor (OMNIPOD)
+Mek Null Signature System
+Chameleon Light Polarization Shield
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISModularArmor (OMNIPOD)
+Mek Null Signature System
+
+Head:
+Life Support
+Sensors
+Cockpit
+NovaCEWS
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Mek Null Signature System
+Chameleon Light Polarization Shield
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Mek Null Signature System
+Chameleon Light Polarization Shield
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

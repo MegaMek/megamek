@@ -1,0 +1,108 @@
+name: "Report an Issue"
+description: >
+  Please make sure you're opening the issue on the correct repo;
+  you've checked to make sure this isn't a duplicate, and checked
+  on the Discord that there is an issue and not working as intended.
+title: "[Issue]"
+labels:
+  - bug
+
+body:
+  - type: textarea
+    id: brief-description
+    attributes:
+      label: "Brief Description *"
+      description: |
+        Please describe the issue in detail.
+
+        For more detailed instructions, check out
+        [our wiki](https://github.com/MegaMek/megamek/wiki/Creating-an-Issue-(Bug-Report%2C-Request-for-Enhancement%2C-Errata)).
+
+        1. Provide in-game screenshots if possible.
+        2. If it's a rules-related issue:
+           - Specify the rulebook edition
+           - Include the page number
+           - Quote the relevant text
+      placeholder: "Describe the issue here..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: "3. Steps to Reproduce"
+      description: "Provide a detailed numbered list of steps."
+      placeholder: "1. Step one\n2. Step two\n3. Step three"
+
+  - type: textarea
+    id: attached-files
+    attributes:
+      label: "Attach Files"
+      description: "Please provide all the logs from the logs folder (zipped) and any other relevant files."
+      placeholder: "Drag and drop or click to upload relevant files."
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: "Severity *"
+      description: "Choose the severity of the bug."
+      options:
+        - "Critical (Game-breaking/Crash): The game crashes or a core feature (like saving, loading, or network connection) is completely unusable."
+        - "High (Major Disruption): A major feature is broken or incorrect, but a workaround exists."
+        - "Medium (Gameplay Limitation): Non-core functionality is impaired, providing a suboptimal but playable experience."
+        - "Low (Minor/Nuisance): Minor glitches or cosmetic issues that don't affect gameplay and occur rarely."
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## User Environment
+        For the next sections, go to the "logs" folder. Find the MegaMek.log file and open it with a text editor. The information in the header will be needed.
+
+  - type: markdown
+    attributes:
+      value: |
+        ![Alt text](https://i.imgur.com/KD8cnvf.png)
+
+  - type: input
+    id: custom-megamek-version
+    attributes:
+      label: "MegaMek Suite Version *"
+      description: "Enter your MegaMek version here"
+      placeholder: "Example: 0.50.02"
+    validations:
+      required: true
+
+  - type: input
+    id: operating-system
+    attributes:
+      label: "Operating System *"
+      description: "Select your operating system"
+      placeholder: "Please be specific with the OS, e.g. Windows 11, macOS 15 Sequoia, Linux (Ubuntu)"
+    validations:
+      required: true
+
+  - type: input
+    id: java-version
+    attributes:
+      label: "Java Version *"
+      description: "Enter the Java version from the .log file"
+      placeholder: "Example: Java Vendor: Eclipse Adoptium     Java Version: 17.0.11"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: final-checks
+    attributes:
+      label: "Final Verification"
+      description: "Please confirm the following before submitting"
+      options:
+        - label: "I confirm this is a single, unique issue that hasn't been reported before"
+          required: true
+        - label: "I have included all necessary information and files to help reproduce this issue"
+          required: true
+        - label: "I have asked on MegaMek Discord about this issue"
+          required: true
+        - label: "I have confirmed this issue is being opened on the correct repository: MegaMek, MegaMekLab, or MekHQ"
+          required: true

@@ -1,0 +1,85 @@
+/*
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
+package megamek.common.util;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+/** Some utility methods for Collections. */
+public final class CollectionUtil {
+
+    private CollectionUtil() {}
+
+    /**
+     * Returns a list that is the concatenation of the provided lists. Does NOT do anything else (e.g. remove duplicate
+     * entries).
+     */
+    public static <T> List<T> union(List<T> c1, List<T> c2) {
+        List<T> result = new ArrayList<>(c1);
+        result.addAll(c2);
+        return result;
+    }
+
+    /**
+     * \ Returns a hashmap that has the number of occurrence of each element on the list
+     *
+     * @param listOfElements List of elements to count.
+     *
+     * @return Map with the count of each element in the list.
+     */
+    static public <T> Counter<T> counter(List<T> listOfElements) {
+        return new Counter<>(listOfElements);
+    }
+
+    /**
+     * @return One element (not randomly chosen) of the collection or the element if it has only one.
+     *
+     * @throws java.util.NoSuchElementException if the collection is empty.
+     */
+    public static <T> T anyOneElement(Collection<T> collection) {
+        return collection.stream().findFirst().orElseThrow();
+    }
+
+    /**
+     * Returns the only element of the collection. Throws an IllegalArgument exception if the collection size is greater
+     * than 1. Throws a NoSuchElement exception if it is empty.
+     */
+    public static <T> T theElement(Collection<T> collection) {
+        if (collection.size() > 1) {
+            throw new IllegalArgumentException("The given collection has more than one element.");
+        }
+        return collection.stream().findFirst().orElseThrow();
+    }
+}

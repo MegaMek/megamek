@@ -1,0 +1,17 @@
+# This is an example MMU file for a single Alpha Strike element
+# This file uses YAML formatting. Always leave a space behind the colon
+# The Annihilator 3EX is not a canon unit and it is not converted from a Total Warfare unit
+# Values that have a default may be omitted
+# TMM, Threshold and PV are calculated from the given values
+type: ASElement
+chassis: Annihilator
+model: ANH-3EX                # default: empty model text ("")
+skill: 5                      # default: 4
+astype: BM
+size: 4
+role: Brawler                 # default: Undetermined
+move: 6/4j                    # never write the inch (") character
+damage: 5/3/0                 # default: no damage
+armor: 12
+structure: 10
+specials: AC2/2/0, CASE       # default: no specials

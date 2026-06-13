@@ -1,0 +1,99 @@
+# MegaMek Data (C) 2025 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.50.06 on 2025-04-25
+<UnitType>
+BuildingEntity
+</UnitType>
+
+
+<building_class>
+0
+</building_class>
+
+<building_type>
+1
+</building_type>
+
+<Name>
+Simple Building Entity
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+3025
+</year>
+
+<originalBuildYear>
+3025
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<armor_type>
+0
+</armor_type>
+
+<armor_tech_rating>
+0
+</armor_tech_rating>
+
+<armor_tech_level>
+7
+</armor_tech_level>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+0
+</armor>
+
+<cf>
+15
+</cf>
+
+<coords>
+0.0,0.0,0.0
+</coords>
+
+<height>
+4
+</height>
+
+<Level 3 0.0,0.0,0.0 Equipment>
+Machine Gun
+Machine Gun (FR)
+Machine Gun (RR)
+Machine Gun (R)
+Machine Gun (RL)
+Machine Gun (FL)
+Flamer (Vehicle) (ST)
+IS Vehicle Flamer Ammo:Shots20#
+IS Machine Gun Ammo - Half:Shots100#
+</Level 3 0.0,0.0,0.0 Equipment>
+
+<source>
+Psi
+</source>
+

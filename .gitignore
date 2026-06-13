@@ -1,0 +1,95 @@
+meks.tsv
+/tmp/
+/.metadata
+/.recommenders/
+/RemoteSystemsTempFiles/
+/bin/
+.settings/
+logs/
+*.log
+.DS_Store
+Thumbs.db
+/tmp
+/megamek/*.blame
+/megamek/*.diff
+/megamek/*.patch
+/megamek/classes/
+/megamek/bin/
+
+# IDE directories
+out/
+.claude/
+.idea/
+.vscode/
+.run/
+.classpath
+.project
+.run
+settings_local.gradle
+properties_local.gradle
+
+# Build directories
+build/
+.gradle/
+
+# Jars
+/megamek/MegaMekLab.jar
+/megamek/MegaMek.jar
+
+#MegaMek Data Folders
+# mmconf
+/megamek/mmconf/clientsettings.xml
+/megamek/mmconf/recent_boards.yml
+/megamek/mmconf/*gameoptions.xml
+/megamek/mmconf/*.properties
+!/megamek/mmconf/shared.properties
+/megamek/mmconf/*.properties.bak
+/megamek/mmconf/*.preferences
+/megamek/mmconf/searches/*.json
+/megamek/mmconf/recent-advanced-searches.json
+
+# UserData
+megamek/userdata/**
+!/megamek/userdata/README.md
+
+# Save Games
+/megamek/savegames
+*.sav.gz
+
+# MUL Files
+*.mul
+
+#Revision
+/megamek/docs/mm-revision.txt
+/megamek/docs/mml-revision.txt
+/megamek/docs/mhq-revision.txt
+
+#MegaMek Other Outputs
+/megamek/mechs.csv
+/megamek/*.pdf
+/megamek/*.ps
+/megamek/*.png
+/megamek/atlasedImages.txt
+/megamek/Entity Issues.txt
+/megamek/apidocs/
+#End MegaMek Other Outputs
+
+/megamek/MegaMek.l4j.ini
+OfficialUnitList.txt
+equipment.txt
+.github/copilot-instructions.md
+.github/workflows
+*.iml
+
+# Testing Temp Folder
+/megamek/testresources/tmp/*
+!/megamek/testresources/tmp/.keep
+/megamek/resources/extraVersion.properties
+
+/megamek/docs/README.md
+/megamek/docs/LICENSE*
+
+# No need to re-commit this folder
+/megamek/data
+units.cache
+

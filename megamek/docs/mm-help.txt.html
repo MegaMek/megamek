@@ -1,0 +1,345 @@
+<html><head><style>body {
+   color: white;
+}
+</style></head><body><h1 id="megamek-tabletop-battletech-on-your-computer">MegaMek-TableTop BattleTech on your computer</h1>
+<h2 id="about">About</h2>
+<p>MegaMek is a Java version of BattleTech that you can play with your friends over the internet. All rules from Total
+Warfare are implemented. Rules from Tactical Operations and Strategic Operations are constantly in the works, and many
+of those rules and weapons are already implemented.</p>
+<p>Players can create their own units, maps, and scenarios for use with MegaMek. MegaMek supports all unit types, from
+infantry, BattleMek, and vehicles, to Aerospace fighters, DropShips, and warships. Ground battles as well as space
+battles can be played.</p>
+<p>If you would like information about how to play the game, see the &quot;PLAYING THE GAME&quot; section, below. If you&#39;re having
+trouble getting MegaMek started, see the next section, &quot;RUNNING MEGAMEK.&quot;</p>
+<p>For complete game rules, consult the Classic BattleTech rule books published by Catalyst Game Labs. These books
+include <a href="https://store.catalystgamelabs.com/collections/battletech/products/battletech-total-warfare-pdf">Total Warfare</a>,
+<a href="https://store.catalystgamelabs.com/collections/battletech/products/battletech-tactical-operations-advanced-rules">Tactical Operations: Advanced Rules</a>,
+<a href="https://store.catalystgamelabs.com/collections/battletech/products/battletech-tactical-operations-advanced-units-equipement">Tactical Operations: Advanced Units &amp; Equipment</a>,
+and <a href="https://store.catalystgamelabs.com/collections/battletech/products/battletech-strategic-operations">Strategic Operations</a>.</p>
+<h2 id="running-megamek">RUNNING MEGAMEK</h2>
+<p>Java programs run in their own environment, called a Virtual Machine or VM for short. These Java VMs are available on
+most systems from a variety of sources.</p>
+<p>Windows users: To start MegaMek, run the MegaMek.exe file. If this fails to start MegaMek, see the &quot;INSTALLING OR
+UPDATING YOUR JAVA RUNTIME&quot; section, below.</p>
+<p>Other graphical OSes: Many other graphical OSes, such as macOS, will allow you to double-click the .jar file to run it.
+If this does not work, try running MegaMek from the command line.</p>
+<p>Running MegaMek from the command line: To do this using Sun Java, or most other implementations, navigate to the
+directory containing the .jar file and run: <code>java -jar MegaMek.jar</code>.</p>
+<p>If none of the above options work for you, see the &quot;INSTALLING OR UPDATING YOUR JAVA RUNTIME&quot; section, below.</p>
+<h3 id="installing-or-updating-your-java-runtime">INSTALLING OR UPDATING YOUR JAVA RUNTIME</h3>
+<p>Of the versions available, we now require Java 17 LTS as the bare minimal version. Newer versions should work but are
+not currently supported.</p>
+<h4 id="adoptium-windows-">Adoptium (Windows)</h4>
+<p>For Windows, follow the instructions <a href="https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium">here</a> to ensure Java
+is installed correctly for the most seamless experience.</p>
+<h4 id="adoptium-mac-">Adoptium (Mac)</h4>
+<p>For Mac, download the installer
+from <a href="https://adoptium.net/temurin/releases/?os=mac&amp;version=17&amp;arch=aarch64&amp;package=jre">Adoptium</a> directly for your
+version of macOS and underling platform (AARCH64 is for M-Series Mac&#39;s).</p>
+<h4 id="linux">Linux</h4>
+<p>For Linux, your distribution should have a version of Java available via your package manager.</p>
+<h2 id="connecting">CONNECTING</h2>
+<p>MegaMek is a network game. One player hosts a game and the rest of the players connect. The connecting players can
+connect from anywhere with a TCP/IP connection to the host, including the same computer (see &quot;hot seat,&quot; below.)</p>
+<p>To host a game, press the &quot;Host a New Game...&quot; button in the main menu. Fill in your name and click &quot;Okay.&quot; The password
+field allows you to specify a password for certain server commands (Type /help in the chat line to get a list of server
+commands.) If you don&#39;t specify a password, anybody is allowed to reset the server or kick players, so be careful.</p>
+<p>Once the lobby screen comes up, other players can connect and the game can begin. The other players will need to know
+the IP address of the host computer. There are several ways to determine your IP address. If you are on Windows 9x/ME,
+you can use the Run command on the start menu and enter <code>winipcfg</code>. On Windows 2000/NT/XP/Vista/7/8/10, you will need to
+open a command prompt and type <code>ipconfig</code>. As a last resort, there are some web pages, such
+as <a href="https://www.whatismyip.com">WhatIsMyIP</a> that will try to detect your IP address, but if your internet service uses a
+proxy or firewall, these pages cannot accurately detect it.</p>
+<p>To connect to a game, press the <code>Connect To A Server</code> button on the main menu and fill in your player name and the
+host&#39;s IP address.</p>
+<p>To play in a hot seat fashion, you can run the host and any number of other players on the same computer. First, launch
+and host a game. Then, launch another copy of the game for each connecting player, and in the &quot;Server Address&quot; field of
+the <code>Connect To A Server</code> dialog, type <code>localhost</code>. Each player will need to switch to his/her copy of the game to play
+their turn.</p>
+<p>To start a dedicated server, use the <code>-dedicated</code> command line switch. A dedicated server just runs the server, in the
+console, without a &quot;host&quot; player in the game. People, including yourself, can join it like a game with a host. The
+dedicated server reads the password and port options from the <code>clientsettings.xml</code> file, or uses the default (no
+password and port 2346.) If you want the dedicated server to load a saved game, supply the filename at the end of
+<code>-dedicated</code> args, like this: <code>-dedicated savedgame.sav</code> or <code>-dedicated -port 2346 savedgame.sav</code>. To stop the server,
+you will need to tell the Java machine to halt execution, which is <code>CTRL + C</code> on most platforms.</p>
+<h2 id="playing-the-game">PLAYING THE GAME</h2>
+<h3 id="pre-game-lobby">Pre-game Lobby</h3>
+<p>Here you can chat, specify what units you wish to use, select map settings, declare starting positions, and change your
+player&#39;s color. When everybody has at least one unit, you may all hit &quot;ready&quot; to start the game. Most changes to the
+game parameters will cancel your ready status, so you should wait for everybody to finish choosing their units and
+positions. Note: If you wish to use custom unit designs, please see the section below entitled &quot;CUSTOM UNITS.&quot;</p>
+<p>You can enter the map selector by clicking on the &quot;Select Map&quot; tab at the top of the lobby. You can change the
+dimensions of the map boards (in hexes) or the dimensions of the whole map (in boards). All maps are loaded off the
+server. Most of the map boards that MegaMek comes with are 16x17.</p>
+<p>Below the map size inputs is a not-to-scale representation of how the boards are laid out relative to each other. The
+middle column lists the current maps, and the rightmost column lists the available maps. To change the current map,
+select it in the middle column, select the map you want in the right column, and press the &quot;&lt;&lt;&quot; button between the two
+columns. You may also select a map by clicking on its number in the map layout grid. When you select a map, (other
+than [SURPRISE] or [RANDOM]), you have the choice or rotating it 180 degrees (North becomes South, East becomes West,
+and vice versa) by clicking on the &quot;Rotate Board&quot; checkbox; the fact that the map is rotated will be shown in the middle
+column.</p>
+<ul>
+<li><strong>[SURPRISE]</strong> means that the Server will pick a random map and not tell you what it has picked until the game starts.</li>
+<li><strong>[RANDOM]</strong> means that the Server will pick a map as soon as you hit &quot;Okay.&quot;</li>
+<li><strong>[GENERATED]</strong> means that the server will create random terrain for you to play on. You need to use the &quot;generated
+map settings&quot; button to select what kind of terrain you want.</li>
+</ul>
+<p>There is a set of settings with a drop-down list of choices. For most settings, you can pick &quot;none,&quot; &quot;low,&quot; &quot;medium&quot;
+or &quot;high.&quot; Except for cities, where you pick a type of city instead.</p>
+<ul>
+<li><strong>Theme</strong>: leave blank for the default theme, or enter a theme supported by your tileset. grass, jungle, lunar, Mars,
+snow, and volcano are supported by the standard tileset</li>
+<li><strong>Elevation</strong>: how hilly you want the map</li>
+<li><strong>Cliffs</strong>: chance of 2+ level elevation changes if you have enough elevation already</li>
+<li><strong>Woods</strong>: higher settings have more and larger tree patches and more heavy woods</li>
+<li><strong>Roughs</strong>: higher settings have more and larger rough patches</li>
+<li><strong>Lakes</strong>: works the same as woods, but deep water instead of heavy woods Swamps/Pavement/Ice/Rubble/Fortified all
+work like roughs. Fortified hexes are described in the MaxTech rulebook.</li>
+<li><strong>River</strong>: chance to have a river running across the map</li>
+<li><strong>Road</strong>: chance to have a single road running across the map</li>
+<li><strong>Craters</strong>: chance for craters, also the size and number. Good for a &quot;moonscape&quot; map</li>
+<li><strong>City:</strong><ul>
+<li><strong>HUB</strong>: roads wander out from the center with plenty of twists and turns. A common pattern for older european
+  cities.</li>
+<li><strong>GRID</strong>: vertical and horizontal roads divide the city into rectangular blocks. A pattern common in newer cities,
+  especially in North America and asia.</li>
+<li><strong>METRO</strong>: a grid with roads forming a diagonal X from the center as well.</li>
+</ul>
+</li>
+</ul>
+<p>Water and swamp will affect the city plan, as the builders will have to make bridges to cross it or just give up and
+stop the road at the edge. Mountain tops (4+ height) are expensive to build on, so they will only build in the valleys.
+Other terrain will just be bulldozed in the name of progress, though you may find a few hexes left between buildings.</p>
+<p>There is also an &quot;advanced&quot; button, which lets you fine-tune the map to your liking. See the &quot;advanced map settings&quot;
+section near the end of this file</p>
+<h3 id="initiative-report">Initiative Report</h3>
+<p>Each player&#39;s initiative rolls, and the corresponding turn order will be shown here.</p>
+<h3 id="movement-phase">Movement Phase</h3>
+<p>The buttons at the bottom of the screen let you change between different modes of movement, switch to another unit, or
+commit to your current path. You do not have to move the first selected unit first.</p>
+<p>Left-click on the map to specify a hex to move to. A path should appear on the board, showing your unit&#39;s path to the
+target hex. The numbers in the center represent how many movement points you will have to use to reach each hex. Cyan
+indicates walking, yellow running, and red jump movement. Dark gray sections of the path indicate where you have
+exceeded your movement capacity or other illegal moves. You can drag the mouse to see movement options for several
+different hexes. Please note that you can change the colors used to display the movement points by editing
+<code>clientsettings.xml</code>; you may specify a color in RGB notation (e.g., 255 255 255 for white) or with any of the following
+text values: black, blue, cyan, darkgray, gray, green, lightgray, magenta, orange, pink, red, white, or yellow.</p>
+<p>Units can also be moved by using &quot;waypoints.&quot; By clicking each hex between the unit&#39;s current location and destination,
+you can delineate the exact path to be taken.</p>
+<p>Holding the <code>Shift</code> key while clicking on the map allows you to change the unit&#39;s facing without moving. Since you
+automatically change facing while moving, this is best done at the end of any movement.</p>
+<p>To move backwards, click the &quot;Back Up&quot; button before clicking a hex in the arc behind the unit. To jump, click the
+&quot;Jump&quot; button before the destination hex. Facing changes during jumps is free.</p>
+<p>Prone units can change facing without getting up at the normal cost. To get up, click the &quot;Get Up&quot; button, then the
+desired destination hex and/or facing. Facing changes performed immediately after getting up are free. To get up and
+back up, click &quot;Get Up,&quot; then &quot;Back Up,&quot; then the destination hex and/or facing. You cannot get up and jump in the same
+turn.</p>
+<p>Charging and death from the above attacks are also declared during the movement phase. Click the &quot;Charge&quot; or &quot;D.F.A.&quot;
+button and then click on the mek you wish to target. If the attack is valid, it will be sent to the server immediately
+(but resolved during the physical attack phase.) If the program is not using the path you want for your attack, you may
+plot a path near the target using the appropriate type of movement and then use the charge or dfa button to complete the
+attack.</p>
+<p>If a vehicle or Mek that has sufficient empty space starts a turn in the same hex as a friendly infantry unit, it can
+Load the unit as its first move of the turn. A vehicle or Mek that is already carrying an infantry unit can unload the
+unit as its last movement of the turn.</p>
+<p>If an Anti-Mek infantry platoon or Battle Armor squad has succeeded in mounting a Mek with a Swarm attack, the Mek can
+attempt to dislodge the squad during the movement phase in one of three ways:</p>
+<p>1) jumping (requires a Pilot Skill Roll, with a +4 modifier),
+2) walking into (and perhaps through) a Level 2 or deeper water hex, or
+3) ending its turn in a hex that is on fire (this will not work against Battle Armor squads).</p>
+<p>Swarming infantry automatically die if they are dislodged into a Level 1 or deeper water hex. Infantry dislodged in the
+Movement Phase cannot move or fire for the rest of the turn. Swarming units cannot move off of their target Mek until
+they use the Stop Swarm action in the Weapons Fire Phase.</p>
+<p>VTOLs and VTOL BA use the &quot;go up&quot; and &quot;go down&quot; buttons to change elevation (flight level).</p>
+<p>Movement around structures (buildings/bridges) is a little more complicated because of the different floors a unit can
+occupy. The &quot;climb mode&quot; button sets your current preference. &quot;Go through&quot; means you prefer to go under bridges or
+through the walls of buildings if there is a choice. &quot;Climb up&quot; means you prefer to climb on top of structures when
+possible. You can change mode multiple times during your movement. For example, a StormCrow Prime could use &quot;climb up&quot;
+to go over a heavy building to save MP, then change to &quot;go through&quot; to pass a light building that won&#39;t support its
+weight.</p>
+<p>Infantry can move up and down inside buildings using the stairs. This is achieved by using the &quot;go up&quot; and &quot;go down&quot;
+buttons. Also, infantry that jumps into a building can use the &quot;go up&quot; and &quot;go down&quot; buttons to choose which floor to
+jump through the window of. Click the building hex you want to jump into first, and the game will pick the highest floor
+you can reach (or the roof). Then use the &quot;go down&quot; button to select a lower floor if you want to.</p>
+<p>The <code>Esc</code> key clears all current movement.</p>
+<h3 id="movement-report">Movement Report</h3>
+<p>If any units needed piloting skill rolls during their movement, a report showing the results of these rolls will be
+shown.</p>
+<h3 id="weapons-fire-phase">Weapons Fire Phase</h3>
+<p>If you need to check the range and line of sight (LoS) between two hexes, there are two tools available for you to use;
+the LoS tool and the ruler tool. To use the LoS tool, hold <code>CTRL</code> and click on the two hexes you want to check. The
+ruler tool works like the LoS tool, but uses the <code>ALT</code> key instead of the <code>CTRL</code> key. The ruler tool can also be used by
+middle-clicking the two hexes with a three-button mouse. Both tools will pop up a window that tells you what terrain is
+intervening and whether one or both hexes has partial cover. The ruler tool also draws the line of sight on the board so
+that you can see which hexes LoS passes through.</p>
+<p>You can switch between &#39;Mek line of sight and non-&#39;Mek line of sight in the &quot;LoS Setting&quot; panel, located under the
+&quot;View&quot; menu at the top of the screen. &#39;Mek line of sight and non-&#39;Mek line of sight differ in that &#39;Meks are assumed to
+be &quot;looking&quot; from one elevation level above that of the hex they are in, whereas infantry and vehicles only take up the
+elevation level of their hex.</p>
+<p>The buttons at the bottom of the screen allow you to fire your weapons, switch to another unit, or commit to your
+currently declared fire. Again, you do not need to declare fire for your first selected unit first.</p>
+<p>To target another unit, click on it on the board. Targeting information for your current weapon should appear in the mek
+display window. To fire your current weapon at the target, press the &quot;Fire&quot; button at the bottom of the screen. To
+switch to another weapon, click on its name at the top of the mek display window. Spread your fire among multiple
+targets by repeating these steps using unassigned weapons. When all desired weapons have been assigned to a target,
+press the &quot;Done&quot; button at the bottom of the screen.</p>
+<p>Note that fire is resolved in the order that it is declared, so if you feel that it is a good idea to fire weapons in a
+different order than they are listed, go ahead.</p>
+<p>Secondary facing changes (torso twists) are achieved by holding <code>Shift</code> and clicking on the board. Your unit will
+attempt to change its secondary facing in the direction specified. If you assign a weapon to a target and then attempt a
+facing change, the weapons fire will be canceled.</p>
+<p>You cannot switch to another unit after declaring some weapons fire. To switch to another unit, first cancel all current
+fire by hitting the <code>Esc</code> key. When you hit the fire button for your last available weapon, all declared fires will be
+committed.</p>
+<p>An Anti-Mek trained infantry platoon or Battle Armor squad in the same hex as a Mek can conduct a Leg Attack or a Swarm
+Mek attack. The base-to-hit number varies with the number of men in the unit. A Swarm Mek attack against a Mek that is
+prone and/or immobile gains a -4 modifier to its to-hit roll. A successful Leg Attack may cause critical damage to one
+of the Meks legs; if no critical is rolled, the leg will take 4 points of damage (which may damage the leg&#39;s internal
+structure and cause another critical roll). A successful Swarm Mek attack does no damage in the turn it hits, but it
+means that the unit has attached itself to the &#39;Mek, and can begin to cause significant damage on later turns. Starting
+the turn after the unit starts a Swarming a &#39;Mek, all attacks by that unit automatically hit, use a location chart that
+is more dangerous than normally, and automatically roll for a Thru-Armor Critical. A unit Swarming a Mek can also choose
+to Stop Swarming in any weapons phase. The Leg Attack, Swarm Mek, and Stop Swarm actions are all &quot;solo&quot; actions: the
+unit can take no other action in the Weapons Fire Phase. Attempts to do so will cancel the &quot;solo&quot; action. Swarming
+infantry cannot be targeted by any attacks other than a &quot;Brush Off&quot; attack (see Physical Attacks Phase).</p>
+<h3 id="weapons-fire-report">Weapons Fire Report</h3>
+<p>If there were any weapon attacks, the server will resolve them all at the end of the phase in the order they were
+declared. The results will be shown in a report.</p>
+<h3 id="physical-attacks-phase">Physical Attacks Phase</h3>
+<p>To declare a physical attack, select your target on the board and click the button corresponding to the attack you want
+to make. If a physical attack type is unavailable (or isn&#39;t programmed yet), the button will be greyed out.</p>
+<p>Units ineligible to make physical attacks due to being out of range, having made weapons attacks, or for any other
+reason, will be skipped. If all units are ineligible, the entire phase will be skipped.</p>
+<p>Prone Meks that are in the same hex as a vehicle can punch the vehicle if they have both arms. Prone Meks that are in a
+Clear or Pavement hex as an infantry platoon or Battle Armor squad can &quot;thrash&quot; at the unit if they have at least one
+arm or leg. Be warned that &quot;thrashing&quot; causes a Pilot Skill Roll that, if failed, causes the Mek to suffer damage as if
+it has fallen 1 level.</p>
+<p>Meks that are not prone that have been Swarmed by an infantry platoon or Battle Armor squad can attempt to &quot;Brush Off&quot;
+the squad with either or both arms. Any &quot;Brush Off&quot; attack that fails to hit the infantry will inflict punch damage on
+the Mek. Any successful &quot;Brush Off&quot; attack ends a Swarm Mek attack.</p>
+<h3 id="end-of-turn-report">End of Turn Report</h3>
+<p>If there were any physical attacks, the results will be shown. The results of the Heat and End phases will be shown.</p>
+<p>After this phase, it&#39;s time for initiative again! Hurrah!</p>
+<h2 id="custom-units">CUSTOM UNITS</h2>
+<p>All units (meks, vehicles, infantry, etc.) are located in the data/mekfiles directory. They may be individual files or
+zipped up into archives (&quot;.zip&quot;), and you may also create subdirectories if you like.</p>
+<p>We recommend creating a folder called Customs in the data/mekfiles directory. Then using this folder to store all custom
+units.</p>
+<p>As of 0.49.13, We&#39;ve removed the unsupported and unofficial folders. Over the years the unsupported units dropped to
+only a couple. The unofficial folder is available
+from <a href="https://github.com/MegaMek/megamek-extras">the Extras repository</a>.</p>
+<p>Over the years the number of custom mek builders that support MegaMek has shrunk. For the best compatibility we
+recommend using MegaMekLab. Any issues from the use of other programs should be directed to their developers for
+support.</p>
+<h3 id="note-of-file-types">Note of file types</h3>
+<p>MegaMek uses two file types for units. Files with the extension MTF are meks, and all other unit types are BLK files.
+Both are editable with a quality text editor, but we recommend not hand editing files as it can break the programs.</p>
+<h2 id="advanced-map-settings">ADVANCED MAP SETTINGS</h2>
+<p><em><strong>Tip:</strong> Use the basic settings, then select advanced, and the boxes will be filled in with the values from the basic
+settings.</em></p>
+<ul>
+<li><strong>Board Size</strong>: set the size of the map sheet generated. When using generated maps, it is better to generate one
+large play area than to try and combine multiple map sheets.</li>
+<li><strong>Theme</strong>: leave blank or enter a theme supported by the tileset. Grass, Lunar, Mars, Snow are themes supported by
+the standard tileset.</li>
+<li><strong>Elevation settings:</strong><ul>
+<li><strong>Amount of elevation</strong>: changes the &quot;roughness&quot; of the map, a low number will have fewer elevation changes than a
+  high number Elevation range: height difference between the lowest and highest hex on the map. Level 0 is set to
+  the most common height.</li>
+<li><strong>Probability of inverting</strong>: % chance to make a sinkhole instead of a mountain.</li>
+<li><strong>Algorithm</strong>: 0 generates rolling hills, 1 generates spiky terrain, 2 combines both generators. 0 is likely to
+  have less LOS blocking terrain.</li>
+<li><strong>Cliffs</strong>: % chance to change a steep slope into a cliff. For example, if a group of level 1 hexes have level 0
+  and level 2 hexes adjacent, they will all be moved to level 0, giving a cliff for meks to hide behind. The effect
+  is quite subtle unless you have quite a high-elevation range to begin with.</li>
+</ul>
+</li>
+<li><strong>Patch terrain settings (woods, roughs, swamps, lakes, pavements, rubble, fortified, ice)</strong>: Each of these works the
+same way, but places a different type of terrain.<ul>
+<li><strong>Number of XXX</strong>: the number of patches which would be present on a 16x17 map. scales up if you have a bigger
+  map.</li>
+<li><strong>XXX size in hexes</strong>: the size of each patch of terrain</li>
+<li><strong>Probability for heavy woods/deep water</strong>: % chance to place instead of light.</li>
+<li><strong>River/road settings</strong>: Probability is a % chance to have one on the map. If a road crosses water, you&#39;ll get a
+  bridge.</li>
+</ul>
+</li>
+<li><strong>Crater settings:</strong><ul>
+<li><strong>Probability for craters</strong>: % chance that craters are present Number of craters: as for the number of woods, the
+  number that would be present on a 16x17 map, scaled up for larger maps.</li>
+<li><strong>Crater radius</strong>: size range for each crater.</li>
+</ul>
+</li>
+<li><strong>Special effects settings</strong>: Each probability is a % chance. FX modifier changes the amount of effect each one has.
+Values should be small, e.g. -3 to +3<ul>
+<li><strong>Fires</strong>: woods hexes will be set on fire or already burned down to rough at the start of the game. + modifier
+  increases number of burned down hexes, —modifier increases number of unscathed woods.</li>
+<li><strong>Frozen water</strong>: water hexes are ice-covered. +modifier decreases the water depth, so for example with a
+  modifier of 1, shallow water hexes are frozen solid, and deep water hexes are converted to ice-covered shallow
+  water.</li>
+<li><strong>Flooded map</strong>: hexes with negative elevations are converted to water hexes, while level 0 hexes are converted
+  to swamps. Ideal for hovercraft and naval units. modifier changes the &quot;sea level&quot;</li>
+<li><strong>Drought</strong>: water hexes are dried up, to shallower water, swamp or rough. Modifier changes the severity of the
+  drought.</li>
+<li><strong>Special effects can be combined</strong>: e.g., flood + drought = rocky shore, flood + frozen + high modifier = glacier</li>
+</ul>
+</li>
+<li><strong>City Settings</strong>: City type is the same as for the basic settings.<ul>
+<li><strong>City Blocks (0-) [16 default]</strong>: higher numbers mean more roads on the map. Scales with map size.</li>
+<li><strong>CF min/max (1–150) [10–100 default]</strong>: CF range for generated buildings. The CF determines the building type
+  from the table in BMR.</li>
+<li><strong>Floors min/max (1-50) [1-6 default]</strong>: height range for generated buildings</li>
+<li><strong>Density (1–100) [75 default]</strong>: % chance of a building in each hex where a building is possible. Also chance to
+  try and build multi-hex buildings.</li>
+</ul>
+</li>
+</ul>
+<h2 id="differences-between-the-board-game-and-megamek">DIFFERENCES BETWEEN THE BOARD GAME AND MEGAMEK</h2>
+<p>Although MegaMek tries to be faithful to the original board game rules, in some cases, due to technical or design
+limitations, this is not possible. These differences are not considered &quot;bugs.&quot; If you spot any more discrepancies,
+please contact the author (see &quot;CONTACT&quot; below.)</p>
+<ul>
+<li>If the line of fire lies along the edge of two hexes, in the board game, the defender chooses which hex to use.
+Instead, MegaMek chooses the hex that most favors the defender.</li>
+<li>When punching, you automatically punch with both arms, if possible. This means you cannot punch two different targets
+in the same round.</li>
+<li>When kicking, you automatically use the leg with the better chance to hit.</li>
+<li>There are several situations, notably death from above, where a unit is displaced out of a hex, and that unit&#39;s owner
+may pick the hex to move to. MegaMek currently picks the hex for you, choosing high elevations over low ones to avoid
+falling damage.</li>
+</ul>
+<h2 id="compiling">Compiling</h2>
+<p>1) Install <a href="https://gradle.org/">Gradle</a>.</p>
+<p>2) Follow the <a href="https://github.com/MegaMek/megamek/wiki/Working-With-Gradle">instructions on the wiki</a> for using Gradle.</p>
+<h3 id="style-guide">Style Guide</h3>
+<p>When contributing to this project, please enable the EditorConfig option within your IDE to ensure some basic compliance
+with our <a href="https://github.com/MegaMek/megamek/wiki/MegaMek-Coding-Style-Guide">style guide</a> which includes some defaults
+for line length, tabs vs. spaces, etc. When all else fails, we follow
+the <a href="https://google.github.io/styleguide/javaguide.html">Google Java Style Guide</a>.</p>
+<h2 id="support">Support</h2>
+<p>For bugs, crashes, or other issues you can fill out a <a href="https://github.com/MegaMek/MegaMek/issues">GitHub issue request</a>.</p>
+<h2 id="contact-further-information">CONTACT &amp; FURTHER INFORMATION</h2>
+<p>For more information, and to get the latest version of MegaMek, visit the <a href="https://megamek.org">website</a>.</p>
+<p>For more information about the BattleTech board game, visit its <a href="https://www.battletech.com">website</a>.</p>
+<p>To submit a bug report, suggestion, or feature request, please visit
+our <a href="https://github.com/MegaMek/megamek/issues">issue tracker</a></p>
+<p>To discuss all things MegaMek, please visit our <a href="https://discord.gg/megamek">Discord</a></p>
+<h2 id="licensing">Licensing</h2>
+<p>MegaMek is licensed under a dual-licensing approach:</p>
+<h3 id="code-license">Code License</h3>
+<p>All source code is licensed under the GNU General Public License v3.0 (GPLv3).
+See the <a href="LICENSE.code">LICENSE.code</a> file for details.</p>
+<h3 id="data-assets-license">Data/Assets License</h3>
+<p>Game data, artwork, and other non-code assets are licensed under the Creative Commons Attribution-NonCommercial 4.0
+International License (CC-BY-NC-4.0).
+See the <a href="LICENSE.assets">LICENSE.assets</a> file for details.</p>
+<h3 id="battletech-ip-notice">BattleTech IP Notice</h3>
+<p>MechWarrior, BattleMech, `Mech, and AeroTech are registered trademarks of The Topps Company, Inc. All Rights Reserved.
+Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of InMediaRes Productions, LLC.</p>
+<p>The BattleTech name for electronic games is a trademark of Microsoft Corporation.</p>
+<p>MegaMek is an unofficial, fan-created digital adaptation and is not affiliated with, endorsed by, or licensed by
+Microsoft Corporation, The Topps Company, Inc., or Catalyst Game Labs.</p>
+<h3 id="full-licensing-details">Full Licensing Details</h3>
+<p>For complete information about licensing, including specific directories and files, please see
+the <a href="LICENSE">LICENSE</a> document.</p>
+</body></html>

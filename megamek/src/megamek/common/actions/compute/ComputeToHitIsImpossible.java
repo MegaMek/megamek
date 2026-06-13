@@ -1561,9 +1561,11 @@ class ComputeToHitIsImpossible {
                 if ((hexTarget != null) && !hexTarget.containsTerrain(Terrains.FIRE)) {
                     return Messages.getString("WeaponAttackAction.TargetNotBurning");
                 }
-                // Firefighting engineers fight an adjacent burning hex - not the one they stand in.
+                // Firefighting engineers fight an adjacent burning hex - not the one they stand in, and not
+                // on a different board (coords on separate boards are never truly adjacent).
                 if (firefightingEngineer && (attacker.getPosition() != null)
-                      && (attacker.getPosition().distance(target.getPosition()) != 1)) {
+                      && ((attacker.getBoardId() != target.getBoardId())
+                      || (attacker.getPosition().distance(target.getPosition()) != 1))) {
                     return Messages.getString("WeaponAttackAction.FirefightNotAdjacent");
                 }
             } else if (weaponType.hasFlag(WeaponType.F_EXTINGUISHER)) {

@@ -76,15 +76,16 @@ public class FireExtinguisherHandler extends WeaponHandler {
                 r.add(target.getPosition().getBoardNum());
                 r.indent(3);
                 vPhaseReport.add(r);
-                Hex extinguishedHex = game.getBoard().getHex(target.getPosition());
+                int boardId = target.getBoardId();
+                Hex extinguishedHex = game.getBoard(boardId).getHex(target.getPosition());
                 extinguishedHex.removeTerrain(Terrains.FIRE);
                 // Reset the fire-turn counter so the hex is treated as unburned. Without this it keeps a
                 // stale value, and a fire later restarted here (e.g. by a flamer) is mistaken for an
                 // already-burning fire - skipping the "fire started" report and spreading immediately.
                 extinguishedHex.resetFireTurn();
-                gameManager.sendChangedHex(target.getPosition());
-                game.getBoard().removeInfernoFrom(target.getPosition());
-                game.getBoard().removeFlamerStartedFire(target.getPosition());
+                gameManager.sendChangedHex(target.getPosition(), boardId);
+                game.getBoard(boardId).removeInfernoFrom(target.getPosition());
+                game.getBoard(boardId).removeFlamerStartedFire(target.getPosition());
             } else if (target instanceof Entity) {
                 if (entityTarget.infernos.isStillBurning()
                       || (target instanceof Tank && ((Tank) target).isOnFire())) {

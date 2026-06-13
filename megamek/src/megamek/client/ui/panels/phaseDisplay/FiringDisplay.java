@@ -1844,6 +1844,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
         Coords coords = event.getCoords();
         if (isMyTurn() && (coords != null) && (currentEntity() != null)) {
+            // Remember the clicked hex so the Extinguish button can act on it, even when the hex holds no
+            // normal target (a bare burning hex) or is the unit's own hex. Done for any click so the button
+            // never acts on a stale, previously-selected hex.
+            selectedCoords = coords;
+            selectedBoardId = event.getBoardId();
+            updateExtinguish();
             if (isStrafing) {
                 if (currentEntity().getPassedThroughBoardId() == event.getBoardId()) {
                     strafingCoords.clear();
@@ -1852,11 +1858,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                     updateStrafingTargets();
                 }
             } else if (!coords.equals(currentEntity().getPosition())) {
-                // Remember the clicked hex so the Extinguish button can act on it, even when the hex holds
-                // no normal target (a bare burning hex).
-                selectedCoords = coords;
-                selectedBoardId = event.getBoardId();
-                updateExtinguish();
                 // HACK : sometimes we don't show the target choice window
                 Targetable target = null;
                 if (showTargetChoice) {
@@ -2079,6 +2080,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
         boolean firefighter = (ce instanceof ConvInfantry firefighters) && firefighters.isFirefighter();
         if (!firefighter && !hasReadyFireExtinguisher(ce)) {
+            return false;
+        }
+        // The hex must be on the unit's own board; a hex on a different board is never reachable.
+        if (ce.getBoardId() != selectedBoardId) {
             return false;
         }
         Hex hex = game.getBoard(selectedBoardId).getHex(selectedCoords);

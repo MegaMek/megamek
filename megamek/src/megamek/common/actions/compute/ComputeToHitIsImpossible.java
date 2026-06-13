@@ -48,6 +48,7 @@ import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -1678,6 +1679,16 @@ class ComputeToHitIsImpossible {
                 return Messages.getString("WeaponAttackAction.NoSpotter");
             }
 
+            // Disposable Weapon attacks (TO:AuE p.116, Corrected Sixth Printing) - only gated while the rule is
+            // enabled; otherwise the mount fires as an ordinary weapon and the standard checks apply.
+            if ((weapon instanceof WeaponMounted disposableMount) && disposableMount.isDisposableWeapon()
+                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
+                String disposableReason = disposableWeaponAttackReason(game, attacker, weaponType);
+                if (disposableReason != null) {
+                    return disposableReason;
+                }
+            }
+
             // Infantry Leg attacks and Swarm attacks
             if (Infantry.LEG_ATTACK.equals(weaponType.getInternalName()) && entityTarget != null) {
                 toHit = Compute.getLegAttackBaseToHit(attacker, entityTarget, game);
@@ -1926,6 +1937,53 @@ class ComputeToHitIsImpossible {
 
         // If we get here, the shot is possible
         return null;
+    }
+
+    /**
+     * Determines whether a Disposable Weapon attack (TO:AuE p.116, Corrected Sixth Printing) is impossible. The attack
+     * is a single once-per-scenario attack made instead of the platoon's standard weapon attack, and may not be made
+     * while the unit is engaged in an anti-Mek (leg/swarm) attack.
+     *
+     * @param game         the current game
+     * @param attacker     the attacking infantry/battle armor unit
+     * @param weaponType   the disposable weapon's type
+     *
+     * @return a localized reason string if the attack is impossible, or null if it is allowed
+     */
+    private static @Nullable String disposableWeaponAttackReason(Game game, Entity attacker, WeaponType weaponType) {
+        if (Entity.NONE != attacker.getSwarmTargetId()) {
+            return Messages.getString("WeaponAttackAction.NoDisposableWhenSwarming");
+        }
+        if (!isUnitsOnlyWeaponAttack(game, attacker, weaponType.getInternalName())) {
+            return Messages.getString("WeaponAttackAction.DisposableOnly");
+        }
+        return null;
+    }
+
+    /**
+     * Determines whether the given attack type is the only weapon attack the attacker has declared this turn. Unlike
+     * {@link #isOnlyAttack}, this does NOT restrict other units from making the same attack against the same target -
+     * the Disposable Weapon rule (TO:AuE p.116, Corrected Sixth Printing) only requires the disposable to replace the
+     * firing unit's own standard attack, so two different platoons may each fire their own disposable at the same
+     * target.
+     *
+     * @param game       the current game
+     * @param attacker   the attacking unit
+     * @param attackType the internal name of the disposable weapon
+     *
+     * @return {@code true} if the attacker has declared no other (different) weapon attack this turn
+     */
+    private static boolean isUnitsOnlyWeaponAttack(Game game, Entity attacker, String attackType) {
+        for (EntityAction action : game.getActionsVector()) {
+            if (action instanceof WeaponAttackAction waa) {
+                Entity otherAttacker = waa.getEntity(game);
+                if ((otherAttacker != null) && otherAttacker.equals(attacker)
+                      && !otherAttacker.getEquipment(waa.getWeaponId()).getType().is(attackType)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

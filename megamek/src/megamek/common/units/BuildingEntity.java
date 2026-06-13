@@ -37,6 +37,7 @@ package megamek.common.units;
 import megamek.common.MPCalculationSetting;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
+import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.BasementType;
@@ -343,6 +344,20 @@ public class BuildingEntity extends AbstractBuildingEntity {
         }
 
         return totalWeight;
+    }
+
+    /**
+     * Places a demolition charge on this building (TO:AUE p.152). Demolition charges anchor to an absolute board hex,
+     * which is only valid for structures that cannot move; this is why the implementation lives here rather than in
+     * {@link AbstractBuildingEntity}, where {@link MobileStructure} would inherit it.
+     *
+     * @param playerId the ID of the player who placed the charge
+     * @param damage   the damage the charge will deal when detonated
+     * @param pos      the absolute board coordinates of the charge; see {@link Building#addDemolitionCharge}
+     */
+    @Override
+    public void addDemolitionCharge(int playerId, int damage, Coords pos) {
+        getInternalBuilding().addDemolitionCharge(playerId, damage, pos);
     }
 
     // FIXME: IDK if this is right, just needed something to pass tests

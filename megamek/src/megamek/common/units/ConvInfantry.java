@@ -67,6 +67,7 @@ import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
@@ -127,6 +128,15 @@ public class ConvInfantry extends Infantry {
     private InfantryWeapon secondaryWeapon;
     private String secondName;
     private int secondaryWeaponsPerSquad = 0;
+
+    // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): a one-shot weapon carried by every trooper, used for
+    // a single once-per-scenario attack instead of the platoon's standard weapon attack. Unlike primary/secondary, the
+    // disposable weapon IS added to the equipment array as a separate, fireable WeaponMounted. disposableWeapon is
+    // transient: an EquipmentType cannot be relied on to survive the entity's client/server serialization (it is
+    // referenced by name from the registry, not serialized directly). It is reconstructed from disposableName, which
+    // does survive, by getDisposableWeapon().
+    private transient InfantryWeapon disposableWeapon;
+    private String disposableName;
 
     private InfantryMount mount = null;
 
@@ -866,6 +876,70 @@ public class ConvInfantry extends Infantry {
 
     public InfantryWeapon getSecondaryWeapon() {
         return secondaryWeapon;
+    }
+
+    /**
+     * Sets the platoon's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing). All troopers carry the
+     * same Disposable Weapon. This only records the weapon type; the corresponding fireable {@link
+     * megamek.common.equipment.WeaponMounted} is added to {@code LOC_INFANTRY} by the loader/editor.
+     *
+     * @param weapon the Disposable Weapon, or null to clear it
+     */
+    public void setDisposableWeapon(@Nullable InfantryWeapon weapon) {
+        disposableWeapon = weapon;
+        disposableName = (weapon == null) ? null : weapon.getInternalName();
+    }
+
+    /**
+     * @return the platoon's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing), or null if it has none
+     */
+    @Nullable
+    public InfantryWeapon getDisposableWeapon() {
+        // Reconstruct the type from its name after client/server serialization dropped the transient reference.
+        if ((disposableWeapon == null) && (disposableName != null)
+              && (EquipmentType.get(disposableName) instanceof InfantryWeapon infantryWeapon)) {
+            disposableWeapon = infantryWeapon;
+        }
+        return disposableWeapon;
+    }
+
+    /**
+     * @return {@code true} if this platoon carries a one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth
+     *       Printing)
+     */
+    public boolean hasDisposableWeapon() {
+        return getDisposableWeapon() != null;
+    }
+
+    /**
+     * Sets the platoon's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) and synchronizes the
+     * corresponding fireable mount. Any previously-equipped Disposable Weapon mount is removed first; pass null to
+     * remove the Disposable Weapon entirely. Use this (rather than {@link #setDisposableWeapon}) when changing the
+     * loadout of an already-built platoon, e.g. from the lobby configuration dialog.
+     *
+     * @param weapon the Disposable Weapon to equip, or null to remove it
+     */
+    public void equipDisposableWeapon(@Nullable InfantryWeapon weapon) {
+        List<WeaponMounted> existingDisposableMounts = weaponList.stream()
+              .filter(WeaponMounted::isDisposableWeapon)
+              .toList();
+        for (WeaponMounted disposableMount : existingDisposableMounts) {
+            equipmentList.remove(disposableMount);
+            weaponList.remove(disposableMount);
+            totalWeaponList.remove(disposableMount);
+        }
+
+        setDisposableWeapon(weapon);
+
+        if (weapon != null) {
+            try {
+                WeaponMounted disposableMount = (WeaponMounted) Mounted.createMounted(this, weapon);
+                disposableMount.setDisposableWeapon(true);
+                addEquipment(disposableMount, LOC_INFANTRY, false);
+            } catch (LocationFullException ex) {
+                logger.error("Could not equip Disposable Weapon {}", weapon.getName(), ex);
+            }
+        }
     }
 
     public void setSecondaryWeaponsPerSquad(int n) {

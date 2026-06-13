@@ -59,6 +59,7 @@ import megamek.common.weapons.autoCannons.UACWeapon;
 import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.common.weapons.tag.TAGWeapon;
+import megamek.logging.MMLogger;
 
 /**
  * Defines a Campaign Operations formation type (e.g., Battle Lance, Assault Lance, Aerospace Superiority Squadron),
@@ -82,6 +83,8 @@ import megamek.common.weapons.tag.TAGWeapon;
  * @see GroupingConstraint
  */
 public class FormationType {
+    private static final MMLogger LOGGER = MMLogger.create(FormationType.class);
+
     /** Bit flag identifying {@link UnitType#MEK} units. */
     public static final int FLAG_MEK = 1 << UnitType.MEK;
     /** Bit flag identifying {@link UnitType#TANK} units. */
@@ -439,6 +442,36 @@ public class FormationType {
     }
 
     /**
+     * Resolves the weight classes one parameter set will draw from. Starts from this formation's own min/max range (the
+     * air range drops Assault for fighters), then intersects it with any weight classes the caller requested (the Force
+     * Generator passes the lance's element weights). An empty intersection means the request is incompatible with the
+     * formation, so it falls back to the formation's own range rather than failing.
+     *
+     * @param parameters  the parameter set to update in place
+     * @param groundRange the formation's full weight-class range (used for ground unit types)
+     * @param airRange    the formation's weight-class range with Assault removed (used for fighters)
+     */
+    private void applyFormationWeightClasses(Parameters parameters, List<Integer> groundRange,
+          List<Integer> airRange) {
+        parameters.addRoles(missionRoles);
+        List<Integer> formationRange = (parameters.getUnitType() < UnitType.CONV_FIGHTER) ? groundRange : airRange;
+        Collection<Integer> requested = parameters.getWeightClasses();
+        if (requested.isEmpty()) {
+            parameters.setWeightClasses(formationRange);
+            LOGGER.debug("[ForceGen][Formation]   weightIntersect: requested=[] formationRange={} -> final={}"
+                  + " (no caller weight; using formation range)", formationRange, parameters.getWeightClasses());
+            return;
+        }
+        List<Integer> intersection = requested.stream()
+              .filter(formationRange::contains)
+              .collect(Collectors.toList());
+        parameters.setWeightClasses(intersection.isEmpty() ? formationRange : intersection);
+        LOGGER.debug("[ForceGen][Formation]   weightIntersect: requested={} formationRange={} -> final={}{}",
+              requested, formationRange, parameters.getWeightClasses(),
+              intersection.isEmpty() ? " (EMPTY intersection; fell back to formation range)" : "");
+    }
+
+    /**
      * Builds a list of units that satisfy this formation's rules, sampled from {@link UnitTable}s derived from the
      * provided parameters. Handles paired-OR constraints, network role distribution (C3 master/slave, C3i, Nova), mixed
      * unit types via parallel parameter sets, and movement-mode resolution for vehicles/infantry whose mode is left
@@ -470,6 +503,17 @@ public class FormationType {
                   "Formation parameter list and numUnit list must have the same number of elements.");
         }
 
+        LOGGER.debug("[ForceGen][Formation] ENTER formation='{}' minWC={} maxWC={} idealRole={} bestEffort={}"
+                    + " networkMask={} paramSets={} totalUnits={}",
+              name, minWeightClass, maxWeightClass, idealRole, bestEffort, networkMask, params.size(),
+              numUnits.stream().mapToInt(Integer::intValue).sum());
+        for (int paramIndex = 0; paramIndex < params.size(); paramIndex++) {
+            Parameters parameters = params.get(paramIndex);
+            LOGGER.debug("[ForceGen][Formation]   param[{}] unitType={} requestedWC={} roles={} moves={} numUnits={}",
+                  paramIndex, parameters.getUnitType(), parameters.getWeightClasses(), parameters.getRoles(),
+                  parameters.getMovementModes(), numUnits.get(paramIndex));
+        }
+
         final GroupingConstraint useGrouping;
         if (null == groupingCriteria) {
             useGrouping = null;
@@ -487,14 +531,11 @@ public class FormationType {
 
         List<Integer> weightClasses = IntStream.rangeClosed(minWeightClass,
               Math.min(maxWeightClass, EntityWeightClass.WEIGHT_SUPER_HEAVY)).boxed().collect(Collectors.toList());
-        List<Integer> airWcs = weightClasses.stream()
-              .filter(wc -> wc < EntityWeightClass.WEIGHT_ASSAULT)
+        List<Integer> airWeightClasses = weightClasses.stream()
+              .filter(weightClass -> weightClass < EntityWeightClass.WEIGHT_ASSAULT)
               .collect(Collectors.toList());
 
-        params.forEach(p -> {
-            p.addRoles(missionRoles);
-            p.setWeightClasses(p.getUnitType() < UnitType.CONV_FIGHTER ? weightClasses : airWcs);
-        });
+        params.forEach(parameters -> applyFormationWeightClasses(parameters, weightClasses, airWeightClasses));
 
         List<UnitTable> tables = params.stream().map(UnitTable::findTable).toList();
 
@@ -622,11 +663,17 @@ public class FormationType {
             for (int i = 0; i < params.size(); i++) {
                 retVal.addAll(tables.get(i).generateUnits(numUnits.get(i), ms -> mainCriteria.test(ms)));
             }
+            LOGGER.debug("[ForceGen][Formation] path=simple-case(mainCriteria only) primaryResult={}/{} units={}",
+                  retVal.size(), cUnits, summarize(retVal));
             if (retVal.size() < cUnits) {
                 List<MekSummary> matchRole = tryIdealRole(params, numUnits);
                 if (matchRole != null) {
+                    LOGGER.debug("[ForceGen][Formation] path=simple-case -> tryIdealRole SUCCESS units={}",
+                          summarize(matchRole));
                     return matchRole;
                 }
+                LOGGER.debug("[ForceGen][Formation] path=simple-case -> tryIdealRole null; returning partial {}",
+                      summarize(retVal));
             }
             return retVal;
         }
@@ -637,23 +684,36 @@ public class FormationType {
               useGrouping == null &&
               networkMask == ModelRecord.NETWORK_NONE) {
             List<MekSummary> retVal = new ArrayList<>();
+            int criterionMin = otherCriteria.getFirst().getMinimum(numUnits.getFirst());
             retVal.addAll(tables.getFirst()
-                  .generateUnits(otherCriteria.getFirst().getMinimum(numUnits.getFirst()),
+                  .generateUnits(criterionMin,
                         ms -> mainCriteria.test(ms) && otherCriteria.getFirst().criterion.test(ms)));
-            if (retVal.size() < otherCriteria.getFirst().getMinimum(numUnits.getFirst())) {
+            LOGGER.debug("[ForceGen][Formation] path=single-criterion('{}') constraintMin={} satisfied={}/{} units={}",
+                  otherCriteria.getFirst().description, criterionMin, retVal.size(), criterionMin, summarize(retVal));
+            if (retVal.size() < criterionMin) {
                 List<MekSummary> onRole = tryIdealRole(params, numUnits);
                 if (onRole != null) {
+                    LOGGER.debug("[ForceGen][Formation] path=single-criterion -> tryIdealRole SUCCESS units={}",
+                          summarize(onRole));
                     return onRole;
                 } else if (!bestEffort) {
+                    LOGGER.debug("[ForceGen][Formation] path=single-criterion -> tryIdealRole null, bestEffort=false;"
+                          + " returning EMPTY");
                     return new ArrayList<>();
                 }
+                LOGGER.debug("[ForceGen][Formation] path=single-criterion -> tryIdealRole null, bestEffort=true;"
+                      + " filling remainder with mainCriteria");
             }
-            if (retVal.size() >= otherCriteria.getFirst().getMinimum(numUnits.getFirst()) || bestEffort) {
+            if (retVal.size() >= criterionMin || bestEffort) {
                 retVal.addAll(tables.getFirst()
                       .generateUnits(numUnits.getFirst() - retVal.size(), ms -> mainCriteria.test(ms)));
             }
+            LOGGER.debug("[ForceGen][Formation] path=single-criterion FINAL units={}", summarize(retVal));
             return retVal;
         }
+
+        LOGGER.debug("[ForceGen][Formation] path=complex (otherCriteria={} grouping={} network={})",
+              otherCriteria.size(), useGrouping != null, networkMask != ModelRecord.NETWORK_NONE);
 
         /*
          * If a network is indicated, we decide which units are part of the network (usually all, but not
@@ -974,20 +1034,43 @@ public class FormationType {
      */
     private @Nullable List<MekSummary> tryIdealRole(List<Parameters> params, List<Integer> numUnits) {
         if (idealRole.equals(UnitRole.UNDETERMINED)) {
+            LOGGER.debug("[ForceGen][Formation] tryIdealRole skipped: idealRole=UNDETERMINED");
             return null;
         }
         List<Parameters> tmpParams = params.stream().map(Parameters::copy).toList();
-        tmpParams.forEach(Parameters::clearWeightClasses);
+        // NOTE: do NOT clear weight classes here. The caller (Force Generator) supplies the
+        // lance's tree-assigned weight class, and the Formation Builder supplies the formation
+        // type's own min/max weight range. Clearing them lets the ideal-role rescue search every
+        // weight class, which silently upweights a Light lance into Mediums/Heavies and lets a
+        // Light Battle Lance pick Assault units past its own maxWeightClass. Keep the constraint;
+        // return null if the ideal role can't be filled within it, and let the caller fall back.
         List<MekSummary> retVal = new ArrayList<>();
         for (int i = 0; i < tmpParams.size(); i++) {
             UnitTable t = UnitTable.findTable(tmpParams.get(i));
             List<MekSummary> units = t.generateUnits(numUnits.get(i), ms -> ms.getRole() == idealRole);
+            LOGGER.debug("[ForceGen][Formation]   tryIdealRole role={} wc={} need={} found={} units={}",
+                  idealRole, tmpParams.get(i).getWeightClasses(), numUnits.get(i), units.size(), summarize(units));
             if (units.size() < numUnits.get(i)) {
+                LOGGER.debug("[ForceGen][Formation]   tryIdealRole FAILED at param[{}] (insufficient {} units at"
+                      + " weight {}); returning null", i, idealRole, tmpParams.get(i).getWeightClasses());
                 return null;
             }
             retVal.addAll(units);
         }
         return retVal;
+    }
+
+    /**
+     * Compact one-line summary of a unit list for the [ForceGen][Formation] trace: each entry as "Name(weightClass)",
+     * e.g. "Locust LCT-1V(1), Stinger STG-3R(1)". Returns "[]" for an empty list.
+     */
+    private static String summarize(List<MekSummary> units) {
+        if (units == null || units.isEmpty()) {
+            return "[]";
+        }
+        return units.stream()
+              .map(ms -> ms.getName() + "(" + ms.getWeightClass() + ")")
+              .collect(Collectors.joining(", "));
     }
 
     /**
@@ -1725,6 +1808,7 @@ public class FormationType {
     private static void createAnvilLance() {
         FormationType ft = new FormationType("Anvil", "Assault");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
+        ft.idealRole = UnitRole.JUGGERNAUT;
         ft.exclusiveFaction = "FWL";
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         // Campaign Operations (Anvil Lance): all units must possess at least 105 armor points.
@@ -1751,6 +1835,7 @@ public class FormationType {
     private static void createFastAssaultLance() {
         FormationType ft = new FormationType("Fast Assault", "Assault");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
+        ft.idealRole = UnitRole.JUGGERNAUT;
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.mainCriteria = ms -> ms.getTotalArmor() >= 135 && (ms.getWalkMp() >= 5 || ms.getJumpMp() > 0);
         ft.mainDescription = "Walk 5+ or Jump 1+";
@@ -1772,15 +1857,36 @@ public class FormationType {
 
     /**
      * Registers the Hunter Lance (Campaign Operations p. 62): an Assault Lance variant favoring heavy woods or urban
-     * terrain for ambush combat. Ideal role: Ambusher.
+     * terrain for ambush combat. As an Assault variant it inherits the full Assault Lance base requirements (no light
+     * units, 135+ armor, 75% able to do 25 damage at range 7, three or more Heavy+, and one Juggernaut or two Snipers)
+     * and adds its own rule: at least half the units must be Ambushers or Juggernauts. Ideal role: Ambusher.
      */
     private static void createHunterLance() {
         FormationType ft = new FormationType("Hunter", "Assault");
-        ft.allowedUnitTypes = FLAG_GROUND;
+        ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
         ft.idealRole = UnitRole.AMBUSHER;
+        ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
+        // Campaign Operations (Assault Lance base, inherited by Hunter): 135+ armor.
+        ft.mainCriteria = ms -> ms.getTotalArmor() >= 135;
+        ft.mainDescription = "Armor 135+";
+        ft.otherCriteria.add(new PercentConstraint(0.75, ms -> getDamageAtRange(ms, 7) >= 25, "25 damage at range 7"));
+        ft.otherCriteria.add(new CountConstraint(3,
+              ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
+              "Heavy+"));
+        // Campaign Operations (Assault Lance base, inherited by Hunter): at least one Juggernaut OR
+        // two Snipers. Encoded as a paired-OR pair of CountConstraints.
+        Constraint juggernautConstraint = new CountConstraint(1, ms -> ms.getRole() == JUGGERNAUT, "Juggernaut");
+        juggernautConstraint.setPairedWithNext(true);
+        ft.otherCriteria.add(juggernautConstraint);
+        Constraint sniperConstraint = new CountConstraint(2, ms -> ms.getRole() == SNIPER, "Sniper");
+        sniperConstraint.setPairedWithPrevious(true);
+        ft.otherCriteria.add(sniperConstraint);
+        // Hunter-specific rule: at least 50% of the units must be Ambushers or Juggernauts.
         ft.otherCriteria.add(new PercentConstraint(0.5,
               ms -> ms.getRole().isAnyOf(JUGGERNAUT, AMBUSHER),
               "Juggernaut or Ambusher"));
+        ft.reportMetrics.put("Armor", MekSummary::getTotalArmor);
+        ft.reportMetrics.put("Damage @ 7", ms -> getDamageAtRange(ms, 7));
         allFormationTypes.put(ft.name, ft);
     }
 

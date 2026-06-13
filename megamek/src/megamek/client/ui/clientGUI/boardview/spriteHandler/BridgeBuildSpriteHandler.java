@@ -67,18 +67,21 @@ public class BridgeBuildSpriteHandler extends BoardViewSpriteHandler {
             return;
         }
         for (Entity entity : game.getEntitiesVector()) {
-            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBuildingBridge()
+            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBusyWithBridge()
                   || (convInfantry.getBridgeTargetCoords() == null)) {
                 continue;
             }
             BoardLocation location = BoardLocation.of(convInfantry.getBridgeTargetCoords(), entity.getBoardId());
             BoardView boardView = (BoardView) clientGUI.getBoardView(location);
             if (boardView != null) {
-                // The current round counts as a turn of work in progress, capped at the required total
-                int turnsWorked = Math.min(convInfantry.getBridgeBuildTurns() + 1,
-                      convInfantry.getBridgeBuildRequiredTurns());
+                // Both build and dismantling show the standing structure on the same N / build-required scale: the
+                // build counts it up as turns are banked, the dismantling counts the same number back down to zero.
+                int turnsRequired = convInfantry.getBridgeBuildRequiredTurns();
+                int turnsStanding = convInfantry.isDismantlingBridge()
+                      ? convInfantry.getBridgeDismantleRemaining()
+                      : Math.min(convInfantry.getBridgeBuildTurns(), turnsRequired);
                 currentSprites.add(new BridgeBuildSprite(boardView, convInfantry.getBridgeTargetCoords(),
-                      turnsWorked, convInfantry.getBridgeBuildRequiredTurns(), convInfantry.getBridgeExits()));
+                      turnsStanding, turnsRequired, convInfantry.getBridgeExits()));
             }
         }
         currentSprites.forEach(sprite -> sprite.bv.addSprite(sprite));

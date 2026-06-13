@@ -70,6 +70,9 @@ public class BridgeBuildSprite extends HexSprite {
     private static final int FONT_SIZE = 11;
     private static final int BOTTOM_OFFSET = 24;
 
+    /** Minimum ghost opacity while building, so the planned bridge is faintly visible before any turn is banked. */
+    private static final float GHOST_MIN_ALPHA = 0.18f;
+
     /** The standard tileset bridge images by exits bitmask, loaded once and shared by all sprites. */
     private static final Map<Integer, Image> BRIDGE_IMAGES = new HashMap<>();
 
@@ -78,12 +81,14 @@ public class BridgeBuildSprite extends HexSprite {
     private final int exits;
 
     /**
-     * Creates a new bridge building sprite for the given hex.
+     * Creates a new bridge building sprite for the given hex. The sprite shows how much of the bridge is currently
+     * standing, on the build's {@code N / build-required} scale: a build counts this up as turns are banked, a
+     * dismantling counts the same number back down to zero.
      *
      * @param boardView     the parent board view
      * @param loc           the hex the bridge is being raised in
-     * @param turnsWorked   the build turn currently in progress (1-based)
-     * @param turnsRequired the total turns of work the build needs
+     * @param turnsWorked   the turns of structure currently standing (0 to {@code turnsRequired})
+     * @param turnsRequired the total turns of work a finished bridge needs (the denominator)
      * @param exits         exits bitmask of the two hexsides the finished bridge will connect
      */
     public BridgeBuildSprite(BoardView boardView, Coords loc, int turnsWorked, int turnsRequired, int exits) {
@@ -121,7 +126,10 @@ public class BridgeBuildSprite extends HexSprite {
         if (bridgeImage == null) {
             return;
         }
-        float alpha = Math.clamp((float) turnsWorked / Math.max(1, turnsRequired), 0f, 1f);
+        // Opacity tracks the standing structure: it grows as a build banks turns and shrinks as a dismantling counts
+        // them back down. A faint floor keeps the planned/last sliver of bridge visible.
+        float standing = Math.clamp((float) turnsWorked / Math.max(1, turnsRequired), 0f, 1f);
+        float alpha = Math.max(GHOST_MIN_ALPHA, standing);
 
         Composite oldComposite = graph.getComposite();
         graph.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));

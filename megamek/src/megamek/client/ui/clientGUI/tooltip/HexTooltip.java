@@ -273,19 +273,25 @@ public final class HexTooltip {
      */
     private static void appendBridgeBuildInfo(StringBuilder result, Game game, Coords mcoords, int boardId) {
         for (Entity entity : game.getEntitiesVector()) {
-            boolean isBuildingHere = (entity instanceof ConvInfantry convInfantry)
-                  && convInfantry.isBuildingBridge()
+            boolean isWorkingHere = (entity instanceof ConvInfantry convInfantry)
+                  && convInfantry.isBusyWithBridge()
                   && (entity.getBoardId() == boardId)
                   && mcoords.equals(convInfantry.getBridgeTargetCoords());
-            if (!isBuildingHere) {
+            if (!isWorkingHere) {
                 continue;
             }
             ConvInfantry convInfantry = (ConvInfantry) entity;
-            // The current round counts as a turn of work in progress, capped at the required total
-            int turnsWorked = Math.min(convInfantry.getBridgeBuildTurns() + 1,
-                  convInfantry.getBridgeBuildRequiredTurns());
-            String buildInfo = Messages.getString("BoardView1.Tooltip.BridgeBuilding",
-                  turnsWorked, convInfantry.getBridgeBuildRequiredTurns());
+            String buildInfo;
+            if (convInfantry.isDismantlingBridge()) {
+                // Count the standing structure back down on the build's scale (e.g. 4/6, 3/6, ...)
+                buildInfo = Messages.getString("BoardView1.Tooltip.BridgeDismantling",
+                      convInfantry.getBridgeDismantleRemaining(), convInfantry.getBridgeBuildRequiredTurns());
+            } else {
+                int turnsWorked = Math.min(convInfantry.getBridgeBuildTurns(),
+                      convInfantry.getBridgeBuildRequiredTurns());
+                buildInfo = Messages.getString("BoardView1.Tooltip.BridgeBuilding",
+                      turnsWorked, convInfantry.getBridgeBuildRequiredTurns());
+            }
             String attr = String.format("FACE=Dialog COLOR=%s",
                   UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
             buildInfo = UIUtil.tag("FONT", attr, buildInfo);

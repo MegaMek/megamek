@@ -590,20 +590,27 @@ public class ClientGUI extends AbstractClientGUI
      */
     private void showBridgeBuildProgressToasts() {
         for (Entity entity : getClient().getGame().getEntitiesVector()) {
-            boolean isOwnBuildingPlatoon = (entity instanceof ConvInfantry convInfantry)
-                  && convInfantry.isBuildingBridge()
+            boolean isOwnBridgePlatoon = (entity instanceof ConvInfantry convInfantry)
+                  && convInfantry.isBusyWithBridge()
                   && (convInfantry.getBridgeTargetCoords() != null)
                   && (entity.getOwnerId() == getClient().getLocalPlayer().getId());
-            if (!isOwnBuildingPlatoon) {
+            if (!isOwnBridgePlatoon) {
                 continue;
             }
             ConvInfantry convInfantry = (ConvInfantry) entity;
-            // The current round counts as a turn of work in progress, capped at the required total
-            int turnsWorked = Math.min(convInfantry.getBridgeBuildTurns() + 1,
-                  convInfantry.getBridgeBuildRequiredTurns());
-            addToast(ToastLevel.INFO, Messages.getString("ClientGUI.bridgeBuildProgress.toast",
-                  entity.getShortName(), turnsWorked, convInfantry.getBridgeBuildRequiredTurns(),
-                  convInfantry.getBridgeTargetCoords().getBoardNum()), entity);
+            if (convInfantry.isDismantlingBridge()) {
+                // Count the standing structure back down on the build's scale (e.g. 4/6, 3/6, ...)
+                addToast(ToastLevel.INFO, Messages.getString("ClientGUI.bridgeDismantleProgress.toast",
+                      entity.getShortName(), convInfantry.getBridgeDismantleRemaining(),
+                      convInfantry.getBridgeBuildRequiredTurns(),
+                      convInfantry.getBridgeTargetCoords().getBoardNum()), entity);
+            } else {
+                int turnsWorked = Math.min(convInfantry.getBridgeBuildTurns(),
+                      convInfantry.getBridgeBuildRequiredTurns());
+                addToast(ToastLevel.INFO, Messages.getString("ClientGUI.bridgeBuildProgress.toast",
+                      entity.getShortName(), turnsWorked, convInfantry.getBridgeBuildRequiredTurns(),
+                      convInfantry.getBridgeTargetCoords().getBoardNum()), entity);
+            }
         }
     }
 

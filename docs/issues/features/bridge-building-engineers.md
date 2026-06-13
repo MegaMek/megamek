@@ -19,8 +19,15 @@ The feature is gated behind a new dedicated game option: **TO Bridge-Building En
 
 ## Rule interpretations (user decisions)
 
-1. **Placement**: the player picks the adjacent target hex AND the orientation (which two opposite hexsides the
-   bridge connects), via two board clicks.
+1. **Placement** (revised 2026-06-13 - origin-from-engineer, 2 clicks): the bridge always **originates from the
+   engineer's hex**. The player clicks the **hex the bridge will occupy** (must be adjacent to the engineer; stage 1
+   highlights only these <=6 hexes), then clicks the **far end the bridge reaches to** (stage 2 highlights the valid
+   far ends). The near bank is fixed to the deck side facing the engineer, so the far end alone uniquely determines a
+   straight or curved span - no third click. The two banks may be opposite (straight bridge) or non-opposite (curved
+   bridge); the connected-hexside bitmask both validates the site and selects the tileset image
+   (`bridge_<exits>.gif`, e.g. `bridge_17.gif` for a curve connecting sides 0 and 4). (Earlier iterations led with a
+   start bank, then with the bridge hex + auto-straight pairing; the auto-straight prevented aiming curves and ignored
+   the engineer's side, so the origin is now fixed at the engineer.)
 2. **Type choice**: Light/Medium prompt when declaring the build; per-scenario budget of 2 points
    (Light = 1, Medium = 2) tracked on the unit and persisted in saves. Points are spent when the build starts and
    are not refunded on abandonment.
@@ -28,7 +35,9 @@ The feature is gated behind a new dedicated game option: **TO Bridge-Building En
 4. **Damage extension trigger**: only actual trooper losses extend the build (detected via a per-turn strength
    snapshot); a hit that kills no troopers does not extend.
 5. **Placement constraints**: the TM p.242 Bridge-Layer constraints apply: a water hex is a legal site only if it
-   connects to at least one land hex or another bridge; the two banks may differ by at most 1 level.
+   connects to at least one land hex or another bridge; the two banks may differ by at most 1 level. Bridges may
+   be straight or curved (any two distinct hexsides), revising the earlier "straight only" decision after
+   playtesting curved crossings.
 6. **Bridge elevation**: the bridge surface sits level with the LOWER of the two connected banks (a bridge hex has
    a single `BRIDGE_ELEV`; two ends cannot differ in height).
 
@@ -95,6 +104,12 @@ The feature is gated behind a new dedicated game option: **TO Bridge-Building En
   the pavement-step exemption only applies when arriving FROM a road/pavement hex. Crossing notes: climb mode
   "Climb Up" is needed for units that could instead enter the underlying terrain (existing engine behavior,
   documented in the README); foot infantry (1 MP) needs two turns for a bank-bridge-bank crossing.
+- `common/moves/MoveStep.java` - bridge-deck exit constraint (`isRealBridgeSpan()`): a unit on a bridge deck
+  may only enter and leave through the bridge's connected hexsides (its exits) - you board a bridge at its
+  ends, not over its sides (TO:AR p.115). The pre-existing engine check only covered climbing onto a bridge
+  from below; this adds the same constraint for decks flush with the bank level (engineer bridges over water,
+  whose `BRIDGE_ELEV` is 0). Scoped to "real" spans (over water, or deck raised above the hex) so flush dry
+  bridges that act as road segments keep their existing free movement.
 
 ### Player feedback
 
@@ -128,6 +143,59 @@ The feature is gated behind a new dedicated game option: **TO Bridge-Building En
   casualty extension, budget, CF values, kit auto-equip), END phase (completion after 6 turns with water-doubled
   CF, displacement abandon, casualty delay).
 
+## Cancel / dismantle (added 2026-06-13)
+
+A build can be cancelled any time before completion, and a dismantling can be reversed. The "Build Bridge" button
+has three modes:
+
+- **Build Bridge** (idle platoon): opens the type/site selection flow as before.
+- **Cancel Bridge** (platoon currently building): a confirmation dialog appears; on confirm it declares a
+  `CANCEL_BRIDGE` move step and ends the turn so dismantling begins. The platoon stops building and dismantles the
+  partial structure over as many turns as were **banked** building (at least one). Once dismantling finishes, the
+  spent bridge building point(s) are **refunded**.
+- **Resume Building** (platoon currently dismantling): declares a `RESUME_BRIDGE` move step and ends the turn,
+  reversing the dismantling back into building. The build resumes from the structure still standing (e.g. dismantled
+  down to 3/6, Resume rebuilds from 3/6 toward 6/6). The spent points are **not** refunded (only a completed
+  dismantle refunds).
+
+Rules / behavior:
+
+- A **finished** bridge cannot be dismantled (the button only enters cancel mode while `isBuildingBridge()`).
+- A building or dismantling platoon is **movement-phase eligible only** (so the player can keep working, or cancel),
+  and may take **no other action whatsoever** - it cannot move and cannot even turn in place (TO:AUE p.152, "no
+  other actions"). Enforced in `MoveStep` (busy-with-bridge guard blocks every step except `CANCEL_BRIDGE` /
+  `RESUME_BRIDGE`) and in the ribbon, which is locked down to **Next Unit**, **Done**, and the bridge button
+  (**Cancel Bridge** while building, **Resume Building** while dismantling). Starting a build also clears any dug-in
+  / hit-the-deck posture (`clearGroundPostures`).
+- Displacement or destruction **during dismantling** abandons the work with **no refund** (refund is only on
+  successful completion).
+- The hex indicator, per-turn toast and hex tooltip all show dismantling progress; the ghost bridge image fades
+  out as the structure is removed.
+
+**Dismantle countback (2026-06-13):** the dismantling indicator counts the **standing structure** back down on the
+**same `N / build-required` scale** as the build, rather than starting a fresh `1 / dismantle-turns` scale. Cancel at
+4/6 -> the indicator reads 4/6, 3/6, 2/6, 1/6, then gone (the ghost fades from where it was, no jump). Implemented
+via `ConvInfantry.getBridgeDismantleRemaining()` with the build's required-turn denominator preserved through the
+dismantle; the sprite/tooltip/toast/report 4282 all read "N of 6 still standing".
+
+**Turn counting (banked semantics, revised 2026-06-13):** a turn of work is counted **once, at the END phase**
+(`TWGameManager.checkBuildBridges` -> `ConvInfantry.bankBridgeBuildTurn`/`bankBridgeDismantleTurn`), not at
+`newRound` (INITIATIVE). So the counter, the on-board indicator (`N/6`), and the dismantle length all reflect turns
+**actually completed**: the indicator advances at END (not at the start of the round), and cancelling at "3/6"
+dismantles 3 turns and shows "3/6 -> 0/3" (3 built, none dismantled yet, full ghost) rather than jumping. `newRound`
+only performs the displacement-abandon check now. The build still completes in 6 game rounds and the END-phase
+reports are unchanged. The build ghost has a faint minimum opacity so the planned bridge is visible at "0/6".
+
+Key additions: `ConvInfantry` dismantle/resume state (`bridgeDismantleTurns`/`-RequiredTurns`,
+`isDismantlingBridge()`, `isBusyWithBridge()`, `startBridgeDismantle()`, `resumeBridgeBuild()`,
+`getBridgeDismantleRemaining()`, `refundBridgeBuildPoints()`); `MoveStepType.CANCEL_BRIDGE` / `RESUME_BRIDGE`;
+`MovePathHandler.processCancelBridgeStep`/`processResumeBridgeStep`;
+`TWGameManager.progressBridgeBuild`/`progressBridgeDismantle`; three-mode button in
+`MovementDisplay.updateBridgeBuildButton` (Build / Cancel / Resume); reports 4281-4284; messages
+`MovementDisplay.moveCancelBridge*` / `moveResumeBridge*`, `ClientGUI.bridgeDismantleProgress.toast`,
+`BoardView1.Tooltip.BridgeDismantling`. Tests added for the dismantle lifecycle, countback, resume,
+displacement-no-refund, movement-only eligibility and serialization.
+
 ## Future work (out of scope)
 
 - **Vehicle Bridge-Layer equipment (TM p.242)**: Light/Medium/Heavy bridge layers already exist as `MiscType`
@@ -141,3 +209,16 @@ The feature is gated behind a new dedicated game option: **TO Bridge-Building En
 
 - Exact TO:AUE page number for the citation (rules text supplied without page); update Javadoc citations from
   "TO:AUE" to "TO:AUE p.XXX" when confirmed.
+
+## Considered and declined
+
+- **Showing a bridge's absolute deck level in the hex tooltip** (2026-06-13). A playtest read a bridge as
+  "level 4" while its bank hex was "level 3" and questioned the 1-MP entry. Investigation: no bug - the bridge hex
+  was level -1, so `BRIDGE_ELEV 4` puts the deck at absolute level 3, **at grade** with the level-3 bank (1 MP is
+  correct). The "level 4" was the tooltip's relative **Height** (`BRIDGE_ELEV`). Declined to change it: the bridge
+  tooltip line (`BoardView1.Tooltip.Bridge` = "Height: {bridge_elev}, CF: ...") is **shared by all bridges** -
+  board-authored, engineer-built, and the future vehicle bridge-layers all use it, and a completed engineer bridge
+  has no special tooltip. An engineer-only tweak would give players two ways to read bridges; changing the shared
+  line would alter every bridge on every board and diverge from the long-standing MM/Board Editor convention (height
+  is relative to the hex). Keeping engineer bridges consistent with core MM was judged more important than removing
+  the relative-vs-absolute reading, which applies uniformly to every bridge in the game.

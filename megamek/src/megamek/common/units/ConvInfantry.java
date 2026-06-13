@@ -510,9 +510,9 @@ public class ConvInfantry extends Infantry {
         return name.toString();
     }
 
-    // region Bridge building (TO:AUE, Bridge-Building Engineers)
+    // region Bridge building (TO:AUE p.152, Bridge-Building Engineers)
 
-    /** Number of full turns of work needed to raise a bridge, before any extensions from casualties. TO:AUE. */
+    /** Number of full turns of work needed to raise a bridge, before any extensions from casualties. TO:AUE p.152. */
     public static final int BRIDGE_BUILD_TURNS = 6;
 
     /** A Light Bridge (CF 15). The value doubles as its point cost: the budget of 2 allows two per scenario. */
@@ -548,12 +548,33 @@ public class ConvInfantry extends Infantry {
     /** Trooper count at the last casualty check, used to detect losses that extend the build by a turn. */
     private int bridgeBuildTroopersSnapshot = 0;
 
+    /** Full turns of dismantling completed before the current round; -1 while not dismantling. */
+    private int bridgeDismantleTurns = -1;
+
+    /** Turns of dismantling needed to fully cancel the build; set to the turns already spent building. */
+    private int bridgeDismantleRequiredTurns = 0;
+
     /**
-     * @return {@code true} while this platoon is raising a bridge. While building, the platoon may take no other action
-     *       (it is ineligible for all phases).
+     * @return {@code true} while this platoon is raising a bridge. While building, the platoon is eligible only in
+     *       the movement phase (to continue or cancel), and takes no other action.
      */
     public boolean isBuildingBridge() {
         return bridgeBuildTurns >= 0;
+    }
+
+    /**
+     * @return {@code true} while this platoon is dismantling a cancelled bridge. Dismantling takes as many turns as
+     *       were spent building; on completion the bridge building budget is refunded and the platoon is freed.
+     */
+    public boolean isDismantlingBridge() {
+        return bridgeDismantleTurns >= 0;
+    }
+
+    /**
+     * @return {@code true} while this platoon is occupied raising or dismantling a bridge.
+     */
+    public boolean isBusyWithBridge() {
+        return isBuildingBridge() || isDismantlingBridge();
     }
 
     /**
@@ -583,6 +604,86 @@ public class ConvInfantry extends Infantry {
         bridgeExits = 0;
         bridgeType = BRIDGE_TYPE_LIGHT;
         bridgeBuildTroopersSnapshot = 0;
+        bridgeDismantleTurns = -1;
+        bridgeDismantleRequiredTurns = 0;
+    }
+
+    /**
+     * Begins dismantling the partially built bridge instead of finishing it. Dismantling takes as many full turns as
+     * were already spent building (the declaring turn counts as the first). The target hex, exits and type are kept so
+     * the in-progress structure can keep being shown; the spent budget is refunded only once dismantling finishes.
+     */
+    public void startBridgeDismantle() {
+        // Dismantling undoes the turns of work actually banked so far (END-phase completions); at least one turn.
+        bridgeDismantleRequiredTurns = Math.max(1, bridgeBuildTurns);
+        bridgeDismantleTurns = 0;
+        bridgeBuildTurns = -1;
+        logger.debug("[BuildBridge] {} starts dismantling its type-{} bridge at {} ({} turns of dismantling)",
+              getShortName(), bridgeType, bridgeTargetCoords, bridgeDismantleRequiredTurns);
+    }
+
+    /**
+     * Reverses a dismantling back into building: the structure still standing (the dismantle countback position)
+     * becomes the build's completed-turn total, so building resumes from where the dismantling left off. The trooper
+     * snapshot is refreshed so casualty extensions resume cleanly. The bridge site, exits, type and spent budget are
+     * unchanged. TO:AUE p.152.
+     */
+    public void resumeBridgeBuild() {
+        int standing = getBridgeDismantleRemaining();
+        bridgeBuildTurns = standing;
+        bridgeDismantleTurns = -1;
+        bridgeDismantleRequiredTurns = 0;
+        bridgeBuildTroopersSnapshot = Math.max(getInternal(LOC_INFANTRY), 0);
+        logger.debug("[BuildBridge] {} resumes building its type-{} bridge at {} from {} of {} turns",
+              getShortName(), bridgeType, bridgeTargetCoords, bridgeBuildTurns, bridgeBuildRequiredTurns);
+    }
+
+    /**
+     * Banks one full turn of bridge building (called once per round from the END phase, where the work is actually
+     * completed) and returns the new completed-turn total.
+     *
+     * @return the number of full turns of work now completed
+     */
+    public int bankBridgeBuildTurn() {
+        bridgeBuildTurns++;
+        return bridgeBuildTurns;
+    }
+
+    /**
+     * Banks one full turn of bridge dismantling (called once per round from the END phase) and returns the new
+     * completed-turn total.
+     *
+     * @return the number of full turns of dismantling now completed
+     */
+    public int bankBridgeDismantleTurn() {
+        bridgeDismantleTurns++;
+        return bridgeDismantleTurns;
+    }
+
+    /**
+     * @return the turns of built structure still standing while dismantling: the work banked at cancel time counts back
+     *       down to zero. Shown on the same {@code N / build-required} scale as the build (e.g. cancel at 4/6 -> the
+     *       dismantling counts 4/6, 3/6, 2/6, 1/6).
+     */
+    public int getBridgeDismantleRemaining() {
+        return Math.max(0, bridgeDismantleRequiredTurns - bridgeDismantleTurns);
+    }
+
+    /** Refunds the points spent on the cancelled bridge, capped at the per-scenario budget. */
+    public void refundBridgeBuildPoints() {
+        bridgeBuildPoints = Math.min(BRIDGE_BUILD_POINTS, bridgeBuildPoints + bridgeType);
+        logger.debug("[BuildBridge] {} refunded {} bridge building point(s); budget now {}", getShortName(),
+              bridgeType, bridgeBuildPoints);
+    }
+
+    /** @return full turns of dismantling completed so far before the current round, or -1 while not dismantling. */
+    public int getBridgeDismantleTurns() {
+        return bridgeDismantleTurns;
+    }
+
+    /** @return total turns of dismantling needed to fully cancel the build. */
+    public int getBridgeDismantleRequiredTurns() {
+        return bridgeDismantleRequiredTurns;
     }
 
     /**
@@ -595,7 +696,7 @@ public class ConvInfantry extends Infantry {
 
     /**
      * @return The total turns of work needed to finish the current bridge: {@link #BRIDGE_BUILD_TURNS} plus one for
-     *       each turn the platoon took casualties while building. TO:AUE.
+     *       each turn the platoon took casualties while building. TO:AUE p.152.
      */
     public int getBridgeBuildRequiredTurns() {
         return bridgeBuildRequiredTurns;
@@ -653,7 +754,7 @@ public class ConvInfantry extends Infantry {
      */
     public boolean canStartBridgeBuild() {
         return hasSpecialization(BRIDGE_ENGINEERS) && hasBridgeKit() && canAffordBridge(BRIDGE_TYPE_LIGHT)
-              && !isBuildingBridge();
+              && !isBusyWithBridge();
     }
 
     /**
@@ -676,7 +777,7 @@ public class ConvInfantry extends Infantry {
 
     /**
      * Checks whether this platoon lost troopers since the last check; a turn with casualties extends the build by one
-     * turn, regardless of how many separate attacks caused them. TO:AUE. Called once per turn from the END phase.
+     * turn, regardless of how many separate attacks caused them. TO:AUE p.152. Called once per turn from the END phase.
      *
      * @return {@code true} if casualties extended the build this turn.
      */
@@ -701,7 +802,7 @@ public class ConvInfantry extends Infantry {
      * @param isOverWater {@code true} if the bridge is being raised over a water hex (depth 1+)
      *
      * @return The Construction Factor of a bridge raised by Bridge-Building Engineers: 15 for a Light Bridge, 40 for a
-     *       Medium Bridge, doubled when built over water. TO:AUE.
+     *       Medium Bridge, doubled when built over water. TO:AUE p.152.
      */
     public static int getBuiltBridgeCF(int bridgeType, boolean isOverWater) {
         int constructionFactor = (bridgeType == BRIDGE_TYPE_MEDIUM) ? MEDIUM_BRIDGE_CF : LIGHT_BRIDGE_CF;
@@ -710,25 +811,35 @@ public class ConvInfantry extends Infantry {
 
     @Override
     public void newRound(int roundNumber) {
-        if (isBuildingBridge()) {
-            bridgeBuildTurns++;
-            // Abandon the build if the platoon was displaced or transported away from the site; the END phase
-            // check in TWGameManager also catches this and reports the lost progress to the player.
-            if (!isAdjacentToBridgeSite()) {
-                logger.debug("[BuildBridge] {} abandons its bridge build: no longer adjacent to {} (position {})",
-                      getShortName(), bridgeTargetCoords, getPosition());
-                cancelBridgeBuild();
-            }
+        // Turns of work are banked once per round in the END phase (TWGameManager.checkBuildBridges), not here, so the
+        // counter reflects turns actually completed. newRound (INITIATIVE phase) only abandons the work if the platoon
+        // was displaced or transported away from its site since the END phase.
+        if (isBuildingBridge() && !isAdjacentToBridgeSite()) {
+            logger.debug("[BuildBridge] {} abandons its bridge build: no longer adjacent to {} (position {})",
+                  getShortName(), bridgeTargetCoords, getPosition());
+            cancelBridgeBuild();
+        } else if (isDismantlingBridge() && !isAdjacentToBridgeSite()) {
+            // Displacement while dismantling abandons the work; the partial bridge is lost and no points are refunded.
+            logger.debug("[BuildBridge] {} abandons its bridge dismantling: no longer adjacent to {} (position {})",
+                  getShortName(), bridgeTargetCoords, getPosition());
+            cancelBridgeBuild();
+        } else if (isBuildingBridge()) {
+            logger.debug("[BuildBridge] {} newRound (round {}): {} of {} build turns banked",
+                  getShortName(), roundNumber, bridgeBuildTurns, bridgeBuildRequiredTurns);
+        } else if (isDismantlingBridge()) {
+            logger.debug("[BuildBridge] {} newRound (round {}): {} of {} dismantle turns banked",
+                  getShortName(), roundNumber, bridgeDismantleTurns, bridgeDismantleRequiredTurns);
         }
         super.newRound(roundNumber);
     }
 
     @Override
     public boolean isEligibleFor(GamePhase phase) {
-        // A platoon raising a bridge may engage in no other actions for the duration of the build, TO:AUE. The
-        // build progresses and completes in END phase processing, so the platoon needs no turns of its own.
-        if (isBuildingBridge()) {
-            return false;
+        // A platoon raising or dismantling a bridge takes no other action, but stays eligible in the movement phase so
+        // the player can keep working, cancel the build, or start dismantling. Building/dismantling progresses and
+        // completes in END phase processing. TO:AUE p.152.
+        if (isBusyWithBridge()) {
+            return phase.isMovement() && super.isEligibleFor(phase);
         }
         return super.isEligibleFor(phase);
     }

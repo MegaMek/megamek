@@ -43,21 +43,30 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 import megamek.common.GameBoardTestCase;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
 import megamek.common.board.BridgeConstruction;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.game.IGame;
 import megamek.common.moves.MovePath;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.ConvInfantry;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeAll;
@@ -77,7 +86,7 @@ public class BridgeBuildingTest extends GameBoardTestCase {
     private static final Coords WATER_TARGET_COORDS = new Coords(1, 2);
     /** Clear gap between a level 1 bank to the north and a level 2 bank to the south; a valid site. */
     private static final Coords GAP_TARGET_COORDS = new Coords(0, 2);
-    /** Clear hex between a level 0 bank to the north and a level 4 bank to the south; bank difference too large. */
+    /** Clear hex at level 0 with a level 0 bank to the north and a level 4 rim to the south; one high rim anchors. */
     private static final Coords HIGH_BANK_TARGET_COORDS = new Coords(2, 2);
     /** Water hex whose north and south banks are also water; no land connection along that axis. */
     private static final Coords ISOLATED_WATER_COORDS = new Coords(3, 2);
@@ -172,6 +181,7 @@ public class BridgeBuildingTest extends GameBoardTestCase {
         Mockito.doNothing().when(gameManager).send(any(Packet.class));
         Mockito.doNothing().when(gameManager).sendChangedHex(any(Coords.class), any(int.class));
         Mockito.doNothing().when(gameManager).entityUpdate(any(int.class));
+        Mockito.doNothing().when(gameManager).sendChangedBuildings(any());
 
         game = gameManager.getGame();
         game.addPlayer(0, player);
@@ -198,17 +208,79 @@ public class BridgeBuildingTest extends GameBoardTestCase {
     // region BridgeConstruction site validation
 
     @Test
-    void onlyOppositeHexsidePairsAreValidExits() {
-        for (int axis = 0; axis < 3; axis++) {
-            assertTrue(BridgeConstruction.isValidBridgeExits((1 << axis) | (1 << (axis + 3))),
-                  "Opposite hexside pair on axis " + axis + " must be a valid bridge orientation");
-        }
+    void anyTwoDistinctHexsidesAreValidExits() {
+        // Opposite sides give a straight bridge
+        assertTrue(BridgeConstruction.isValidBridgeExits((1 << 0) | (1 << 3)),
+              "Opposite hexsides must be a valid (straight) bridge orientation");
+        // Non-opposite sides give a curved bridge, e.g. bridge_17.gif connects sides 0 and 4
+        assertTrue(BridgeConstruction.isValidBridgeExits((1 << 0) | (1 << 4)),
+              "Non-opposite hexsides must be a valid (curved) bridge orientation");
+        assertTrue(BridgeConstruction.isValidBridgeExits((1 << 0) | (1 << 1)),
+              "Adjacent hexsides must be a valid (sharp curve) bridge orientation");
         assertFalse(BridgeConstruction.isValidBridgeExits(1 << 2), "A single hexside is not a valid orientation");
-        assertFalse(BridgeConstruction.isValidBridgeExits((1 << 0) | (1 << 1)),
-              "Adjacent hexsides are not a valid orientation (a bridge cannot bend)");
         assertFalse(BridgeConstruction.isValidBridgeExits((1 << 0) | (1 << 2) | (1 << 3)),
               "Three hexsides are not a valid orientation");
         assertFalse(BridgeConstruction.isValidBridgeExits(0), "No hexsides is not a valid orientation");
+    }
+
+    @Test
+    void exitsForMatchesTheTilesetImageIndex() {
+        // bridge_17.gif is the curved bridge connecting sides 0 and 4; exitsFor must produce 17 so the sprite
+        // and terrain pick that image
+        assertEquals(17, BridgeConstruction.exitsFor(0, 4), "Sides 0 and 4 must give exits bitmask 17");
+        assertEquals(9, BridgeConstruction.exitsFor(0, 3), "Opposite sides 0 and 3 must give exits bitmask 9");
+    }
+
+    @Test
+    void curvedBridgeIsValidAndPlacedWithTheMatchingExits() {
+        // A water hex surrounded by land: a bridge connecting two non-opposite sides (a curve) is a valid site,
+        // and the placed terrain carries the exact exits bitmask so the tileset picks the matching curved image
+        initializeBoard("BRIDGE_CURVED_BOARD", """
+              size 3 3
+              hex 0101 0 "" ""
+              hex 0201 0 "" ""
+              hex 0301 0 "" ""
+              hex 0102 0 "" ""
+              hex 0202 0 "water:1" ""
+              hex 0302 0 "" ""
+              hex 0103 0 "" ""
+              hex 0203 0 "" ""
+              hex 0303 0 "" ""
+              end"""
+        );
+        Board curvedBoard = getBoard("BRIDGE_CURVED_BOARD");
+        Coords middle = new Coords(1, 1);
+        int curvedExits = BridgeConstruction.exitsFor(0, 2);
+
+        assertTrue(BridgeConstruction.isValidBridgeSite(curvedBoard, middle, curvedExits),
+              "A curved bridge between two land banks of a water hex must be a valid site");
+        BridgeConstruction.placeBridge(curvedBoard, middle, curvedExits, ConvInfantry.BRIDGE_TYPE_LIGHT, 30);
+        assertEquals(curvedExits, curvedBoard.getHex(middle).getTerrain(Terrains.BRIDGE).getExits(),
+              "The placed curved bridge must store the exact exits bitmask that selects its tileset image");
+    }
+
+    @Test
+    void waterBridgeFromElevatedLandTowardWaterIsValidAndSitsAtLandLevel() {
+        // First span of a wide-river crossing: from a level-2 land bank, across a water hex, pointing at the next
+        // water hex (which a later span will bridge). Valid because one bank is land; the far side may be water.
+        // The deck sits at the land bank's level so units cross from the land at grade and the chain stays level.
+        initializeBoard("BRIDGE_ELEVATED_WATER_BOARD", """
+              size 1 3
+              hex 0101 2 "" ""
+              hex 0102 0 "water:1" ""
+              hex 0103 0 "water:1" ""
+              end"""
+        );
+        Board elevatedBoard = getBoard("BRIDGE_ELEVATED_WATER_BOARD");
+        Coords section = new Coords(0, 1);
+        int exits = BridgeConstruction.exitsFor(section.direction(new Coords(0, 0)),
+              section.direction(new Coords(0, 2)));
+
+        assertTrue(BridgeConstruction.isValidBridgeSite(elevatedBoard, section, exits),
+              "A water span from a level-2 land bank toward more water must be valid (one bank is land)");
+        BridgeConstruction.placeBridge(elevatedBoard, section, exits, ConvInfantry.BRIDGE_TYPE_LIGHT, 30);
+        assertEquals(2, elevatedBoard.getHex(section).terrainLevel(Terrains.BRIDGE_ELEV),
+              "The deck must sit at the level-2 land bank, not dip to the water surface");
     }
 
     @Test
@@ -230,15 +302,132 @@ public class BridgeBuildingTest extends GameBoardTestCase {
     }
 
     @Test
-    void largeBankLevelDifferenceIsInvalid() {
-        assertFalse(BridgeConstruction.isValidBridgeSite(board, HIGH_BANK_TARGET_COORDS, EXITS_NORTH_SOUTH),
-              "Banks 4 levels apart must not be a valid bridge site (TM p.242 allows at most 1)");
+    void siteAnchoredToOneHighRimWithALowerFarSideIsValid() {
+        // A canyon-floor/cliff site below one tall rim (the other side at floor level) is buildable: the span
+        // anchors to the rim, the far side may be deeper/equal canyon to be reached by a further span. Engineers
+        // can bridge any canyon regardless of depth (TO:AuE p.152 clarification).
+        assertTrue(BridgeConstruction.isValidBridgeSite(board, HIGH_BANK_TARGET_COORDS, EXITS_NORTH_SOUTH),
+              "A site below a single high rim must be a valid bridge site");
     }
 
     @Test
     void gapWithOneLevelBankDifferenceIsValid() {
         assertTrue(BridgeConstruction.isValidBridgeSite(board, GAP_TARGET_COORDS, EXITS_NORTH_SOUTH),
               "Gap between banks 1 level apart must be a valid bridge site (TM p.242)");
+    }
+
+    @Test
+    void deepCanyonWithRimsWithinOneLevelIsValid() {
+        // A single span may cross a canyon of any DEPTH (floor far below the rims), as long as its two rims are
+        // within one level of each other - a single-hex span changes at most one level (TO:AuE p.152). Here the
+        // floor is at -4 but the rims are level 3 and 2 (within 1), so the span is valid.
+        initializeBoard("BRIDGE_CANYON_BOARD", """
+              size 1 3
+              hex 0101 3 "" ""
+              hex 0102 -4 "" ""
+              hex 0103 2 "" ""
+              end"""
+        );
+        Board canyonBoard = getBoard("BRIDGE_CANYON_BOARD");
+        Coords canyonFloor = new Coords(0, 1);
+        assertTrue(BridgeConstruction.isValidBridgeSite(canyonBoard, canyonFloor, EXITS_NORTH_SOUTH),
+              "A deep canyon whose rims are within one level must be a valid bridge site at any depth");
+    }
+
+    @Test
+    void bridgeSiteIssueReportsTheSpecificReason() {
+        // The validator exposes WHY a site is rejected so the UI can explain it to the player
+        assertEquals(BridgeConstruction.BridgeSiteIssue.VALID,
+              BridgeConstruction.bridgeSiteIssue(board, WATER_TARGET_COORDS, EXITS_NORTH_SOUTH),
+              "A water hex with land banks is valid");
+        assertEquals(BridgeConstruction.BridgeSiteIssue.OCCUPIED,
+              BridgeConstruction.bridgeSiteIssue(board, BUILDING_COORDS, EXITS_NORTH_SOUTH),
+              "A hex with a structure reports OCCUPIED");
+        assertEquals(BridgeConstruction.BridgeSiteIssue.NO_ANCHOR,
+              BridgeConstruction.bridgeSiteIssue(board, ISOLATED_WATER_COORDS, EXITS_NORTH_SOUTH),
+              "Water touching only deeper water reports NO_ANCHOR");
+        assertEquals(BridgeConstruction.BridgeSiteIssue.OFF_BOARD,
+              BridgeConstruction.bridgeSiteIssue(board, EDGE_COORDS, EXITS_NORTH_SOUTH),
+              "A site whose bank lies off the board reports OFF_BOARD");
+
+        initializeBoard("BRIDGE_STEEP_ISSUE_BOARD", """
+              size 1 3
+              hex 0101 2 "" ""
+              hex 0102 -2 "" ""
+              hex 0103 4 "" ""
+              end"""
+        );
+        assertEquals(BridgeConstruction.BridgeSiteIssue.RIMS_TOO_STEEP,
+              BridgeConstruction.bridgeSiteIssue(getBoard("BRIDGE_STEEP_ISSUE_BOARD"), new Coords(0, 1),
+                    EXITS_NORTH_SOUTH),
+              "Two rims more than one level apart report RIMS_TOO_STEEP");
+    }
+
+    @Test
+    void singleSpanBetweenRimsOverTwoLevelsApartIsInvalid() {
+        // Rims 2 levels apart cannot be a single span (max 1 level of change per hex); the climb is made by chaining
+        // spans up terrain that steps one level per hex (TO:AuE p.152 multi-level bridge rule).
+        initializeBoard("BRIDGE_STEEP_RIMS_BOARD", """
+              size 1 3
+              hex 0101 2 "" ""
+              hex 0102 -2 "" ""
+              hex 0103 4 "" ""
+              end"""
+        );
+        Board steepBoard = getBoard("BRIDGE_STEEP_RIMS_BOARD");
+        assertFalse(BridgeConstruction.isValidBridgeSite(steepBoard, new Coords(0, 1), EXITS_NORTH_SOUTH),
+              "A single span between rims 2 levels apart must be invalid (more than 1 level of change in one hex)");
+    }
+
+    @Test
+    void wideCanyonCanBeChainedSpanBySpan() {
+        // A two-hex-wide canyon (two floor hexes between two rims): span 1 anchors to the rim and points at the
+        // second floor hex (not a rim); the engineers then stand on span 1 to bridge the second floor hex to the
+        // far rim. Span 1's far side being canyon floor (not a rim) must be allowed, exactly like a wide river.
+        initializeBoard("BRIDGE_WIDE_CANYON_BOARD", """
+              size 1 4
+              hex 0101 2 "" ""
+              hex 0102 -2 "" ""
+              hex 0103 -2 "" ""
+              hex 0104 2 "" ""
+              end"""
+        );
+        Board wideCanyonBoard = getBoard("BRIDGE_WIDE_CANYON_BOARD");
+        Coords nearRim = new Coords(0, 0);
+        Coords floorOne = new Coords(0, 1);
+        Coords floorTwo = new Coords(0, 2);
+        Coords farRim = new Coords(0, 3);
+
+        // Span 1: near rim (level 2) over the first floor hex, pointing at the second floor hex (also -2)
+        int spanOneExits = BridgeConstruction.exitsFor(floorOne.direction(nearRim), floorOne.direction(floorTwo));
+        assertTrue(BridgeConstruction.isValidBridgeSite(wideCanyonBoard, floorOne, spanOneExits),
+              "Span 1 over the first canyon floor (anchored to the rim) must be valid even though the far side "
+                    + "is more canyon floor");
+        BridgeConstruction.placeBridge(wideCanyonBoard, floorOne, spanOneExits, ConvInfantry.BRIDGE_TYPE_LIGHT, 15);
+        Hex spanOneHex = wideCanyonBoard.getHex(floorOne);
+        // BRIDGE_ELEV is relative to the hex level; the absolute deck level is hex level + BRIDGE_ELEV
+        assertEquals(2, spanOneHex.getLevel() + spanOneHex.terrainLevel(Terrains.BRIDGE_ELEV),
+              "Span 1 deck must sit at the rim's absolute level (2), spanning the canyon below");
+
+        // Span 2: the first span (a bridge, deck at 2) over the second floor hex to the far rim
+        int spanTwoExits = BridgeConstruction.exitsFor(floorTwo.direction(floorOne), floorTwo.direction(farRim));
+        assertTrue(BridgeConstruction.isValidBridgeSite(wideCanyonBoard, floorTwo, spanTwoExits),
+              "Span 2 must be valid, anchored to span 1 (a bridge) and the far rim");
+    }
+
+    @Test
+    void flatDryGroundIsNotAValidBridgeSite() {
+        // A dry hex level with its banks is not a gap; a bridge there would span nothing (TM p.242)
+        initializeBoard("BRIDGE_FLAT_BOARD", """
+              size 1 3
+              hex 0101 0 "" ""
+              hex 0102 0 "" ""
+              hex 0103 0 "" ""
+              end"""
+        );
+        Board flatBoard = getBoard("BRIDGE_FLAT_BOARD");
+        assertFalse(BridgeConstruction.isValidBridgeSite(flatBoard, new Coords(0, 1), EXITS_NORTH_SOUTH),
+              "Flat open ground level with its banks must not be a valid bridge site");
     }
 
     @Test
@@ -275,13 +464,14 @@ public class BridgeBuildingTest extends GameBoardTestCase {
     }
 
     @Test
-    void placedBridgeAcrossGapSitsAtTheLowerBank() {
+    void placedBridgeSitsAtTheLowerRim() {
         BridgeConstruction.placeBridge(board, GAP_TARGET_COORDS, EXITS_NORTH_SOUTH,
               ConvInfantry.BRIDGE_TYPE_MEDIUM, 40);
 
         Hex hex = board.getHex(GAP_TARGET_COORDS);
         assertEquals(1, hex.terrainLevel(Terrains.BRIDGE_ELEV),
-              "A bridge between level 1 and level 2 banks must sit level with the lower bank");
+              "A bridge between level 1 and level 2 rims sits at the lower rim; both are within 1 level so the deck "
+                    + "is reachable from each (a single-hex span changes at most one level)");
     }
 
     // endregion
@@ -289,16 +479,33 @@ public class BridgeBuildingTest extends GameBoardTestCase {
     // region ConvInfantry build lifecycle
 
     @Test
-    void startingABuildLocksThePlatoonOutOfAllPhases() {
+    void buildingPlatoonIsMovementOnlyEligibleSoItCanContinueOrCancel() {
         ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
         engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
 
         assertTrue(engineers.isBuildingBridge(), "The platoon must be building after the build is declared");
-        assertFalse(engineers.isEligibleFor(GamePhase.MOVEMENT),
-              "A building platoon may take no other action (movement)");
+        // The platoon stays selectable in the movement phase so the player can keep building or cancel to dismantle,
+        // but it may take no firing or physical action while building. TO:AUE p.152.
+        assertTrue(engineers.isEligibleFor(GamePhase.MOVEMENT),
+              "A building platoon stays movement-eligible so it can continue or cancel the build");
         assertFalse(engineers.isEligibleFor(GamePhase.FIRING), "A building platoon may take no other action (firing)");
         assertFalse(engineers.isEligibleFor(GamePhase.PHYSICAL),
               "A building platoon may take no other action (physical)");
+    }
+
+    @Test
+    void dismantlingPlatoonIsMovementOnlyEligible() {
+        ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
+        engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
+        engineers.startBridgeDismantle();
+
+        assertTrue(engineers.isDismantlingBridge(), "The platoon must be dismantling after cancelling");
+        assertTrue(engineers.isEligibleFor(GamePhase.MOVEMENT),
+              "A dismantling platoon stays movement-eligible");
+        assertFalse(engineers.isEligibleFor(GamePhase.FIRING),
+              "A dismantling platoon may take no other action (firing)");
+        assertFalse(engineers.isEligibleFor(GamePhase.PHYSICAL),
+              "A dismantling platoon may take no other action (physical)");
     }
 
     @Test
@@ -306,11 +513,13 @@ public class BridgeBuildingTest extends GameBoardTestCase {
         ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
         engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
 
+        // Turns of work are banked once per round in the END phase, not at newRound
+        gameManager.checkBuildBridges();
         engineers.newRound(2);
-        engineers.newRound(3);
+        gameManager.checkBuildBridges();
 
         assertEquals(2, engineers.getBridgeBuildTurns(),
-              "Each new round adjacent to the site must add a completed turn of work");
+              "Each round's END phase adjacent to the site must bank a completed turn of work");
     }
 
     @Test
@@ -390,16 +599,16 @@ public class BridgeBuildingTest extends GameBoardTestCase {
         ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
         engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
 
-        // END of the declaring round: 1 full turn worked, build continues
-        gameManager.checkBuildBridges();
-        assertTrue(engineers.isBuildingBridge(), "The build must still be in progress after 1 of 6 turns");
-        assertFalse(board.getHex(WATER_TARGET_COORDS).containsTerrain(Terrains.BRIDGE),
-              "No bridge may appear before the work is done");
-
-        // Rounds 2-6: with the current round counted, the 6th END phase completes the build
-        for (int round = 2; round <= 6; round++) {
-            engineers.newRound(round);
+        // Each round's END phase banks one turn; the first five leave the build in progress
+        for (int round = 1; round <= 5; round++) {
+            gameManager.checkBuildBridges();
+            assertTrue(engineers.isBuildingBridge(),
+                  "The build must still be in progress after " + round + " of 6 turns");
+            assertFalse(board.getHex(WATER_TARGET_COORDS).containsTerrain(Terrains.BRIDGE),
+                  "No bridge may appear before the work is done");
+            engineers.newRound(round + 1);
         }
+        // The sixth END phase completes the build
         gameManager.checkBuildBridges();
 
         Hex hex = board.getHex(WATER_TARGET_COORDS);
@@ -425,13 +634,34 @@ public class BridgeBuildingTest extends GameBoardTestCase {
     }
 
     @Test
+    void destroyedPlatoonDoesNotCompleteItsBridgeOnTheFinalTurn() {
+        // TO:AUE: destroyed before completing the task means no bridge. A platoon wiped out during the combat of
+        // its final turn must not still finish the bridge in the END phase completion check.
+        ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
+        engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
+        // Bank five turns of work, leaving the build one turn from completion
+        for (int round = 1; round <= 5; round++) {
+            gameManager.checkBuildBridges();
+            engineers.newRound(round + 1);
+        }
+        engineers.setDestroyed(true);
+
+        gameManager.checkBuildBridges();
+
+        assertFalse(board.getHex(WATER_TARGET_COORDS).containsTerrain(Terrains.BRIDGE),
+              "A platoon destroyed before the completion check must not finish its bridge (TO:AUE)");
+        assertFalse(engineers.isBuildingBridge(), "The destroyed platoon's build must be abandoned");
+    }
+
+    @Test
     void casualtiesDelayCompletionByOneTurn() {
         ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
         engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
 
-        // 5 completed turns plus the current round would normally finish the build this END phase...
-        for (int round = 2; round <= 6; round++) {
-            engineers.newRound(round);
+        // Bank five turns; the sixth END phase would normally finish the build...
+        for (int round = 1; round <= 5; round++) {
+            gameManager.checkBuildBridges();
+            engineers.newRound(round + 1);
         }
         // ...but the platoon takes casualties during the final turn
         engineers.setInternal(5, ConvInfantry.LOC_INFANTRY);
@@ -448,12 +678,315 @@ public class BridgeBuildingTest extends GameBoardTestCase {
               "The extended build must complete one turn later");
     }
 
+    @Test
+    void cancelledBridgeDismantlesOverTheTurnsSpentAndRefundsTheBudget() {
+        ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
+        engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
+        engineers.spendBridgeBuildPoints(ConvInfantry.BRIDGE_TYPE_LIGHT);
+        assertEquals(ConvInfantry.BRIDGE_BUILD_POINTS - ConvInfantry.BRIDGE_TYPE_LIGHT,
+              engineers.getBridgeBuildPoints(), "A light bridge must spend one point when the build starts");
+
+        // Bank three full turns of work (one per round's END phase), then cancel
+        gameManager.checkBuildBridges();
+        engineers.newRound(2);
+        gameManager.checkBuildBridges();
+        engineers.newRound(3);
+        gameManager.checkBuildBridges();
+        assertEquals(3, engineers.getBridgeBuildTurns(), "Three turns of work must be banked before cancelling");
+
+        engineers.startBridgeDismantle();
+        assertFalse(engineers.isBuildingBridge(), "Cancelling must stop the build");
+        assertTrue(engineers.isDismantlingBridge(), "Cancelling must start dismantling");
+        assertEquals(3, engineers.getBridgeDismantleRequiredTurns(),
+              "Dismantling must take as many turns as were banked building (3)");
+
+        // Dismantling turn 1 of 3
+        engineers.newRound(4);
+        gameManager.checkBuildBridges();
+        assertTrue(engineers.isDismantlingBridge(), "Dismantling must still be in progress after 1 of 3 turns");
+        assertEquals(ConvInfantry.BRIDGE_BUILD_POINTS - ConvInfantry.BRIDGE_TYPE_LIGHT,
+              engineers.getBridgeBuildPoints(), "The budget must not be refunded until dismantling finishes");
+
+        // Turn 2 of 3
+        engineers.newRound(5);
+        gameManager.checkBuildBridges();
+        assertTrue(engineers.isDismantlingBridge(), "Dismantling must still be in progress after 2 of 3 turns");
+
+        // Turn 3 of 3 finishes the dismantling
+        engineers.newRound(6);
+        gameManager.checkBuildBridges();
+        assertFalse(engineers.isDismantlingBridge(), "Dismantling must finish after 3 turns");
+        assertFalse(engineers.isBuildingBridge(), "The platoon must be free after dismantling");
+        assertEquals(ConvInfantry.BRIDGE_BUILD_POINTS, engineers.getBridgeBuildPoints(),
+              "The spent point must be refunded once dismantling finishes");
+        assertFalse(board.getHex(WATER_TARGET_COORDS).containsTerrain(Terrains.BRIDGE),
+              "A cancelled build must never place a bridge");
+    }
+
+    @Test
+    void dismantlingCountsTheStandingStructureBackDownOnTheBuildScale() {
+        ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
+        engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
+
+        // Bank four turns of work (display would read 4/6), then cancel
+        for (int round = 1; round <= 4; round++) {
+            gameManager.checkBuildBridges();
+            engineers.newRound(round + 1);
+        }
+        assertEquals(4, engineers.getBridgeBuildTurns());
+
+        engineers.startBridgeDismantle();
+        // Dismantling starts from the last build turn (4 of 6 still standing), not a fresh 1
+        assertEquals(4, engineers.getBridgeDismantleRemaining(),
+              "Dismantling must start from the structure that was built (4), not restart at 1");
+        assertEquals(ConvInfantry.BRIDGE_BUILD_TURNS, engineers.getBridgeBuildRequiredTurns(),
+              "The build's required-turn denominator must be preserved as the countback scale");
+
+        // Each dismantling turn removes one turn of structure: 4 -> 3 -> 2 -> 1 still standing
+        int round = 6;
+        for (int expectedRemaining : new int[] { 3, 2, 1 }) {
+            gameManager.checkBuildBridges();
+            assertTrue(engineers.isDismantlingBridge(), "Dismantling must still be in progress");
+            assertEquals(expectedRemaining, engineers.getBridgeDismantleRemaining(),
+                  "The standing structure must count back down one per round");
+            engineers.newRound(round++);
+        }
+        // The fourth dismantling turn removes the last of the structure and frees the platoon
+        gameManager.checkBuildBridges();
+        assertFalse(engineers.isDismantlingBridge(), "Dismantling must finish when the structure reaches 0");
+    }
+
+    @Test
+    void resumeReversesDismantlingBackToBuildingFromTheStandingStructure() {
+        ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
+        engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
+
+        // Bank four turns of work, then cancel and dismantle one turn (4 -> 3 still standing)
+        for (int round = 1; round <= 4; round++) {
+            gameManager.checkBuildBridges();
+            engineers.newRound(round + 1);
+        }
+        engineers.startBridgeDismantle();
+        gameManager.checkBuildBridges();
+        assertEquals(3, engineers.getBridgeDismantleRemaining(), "One dismantling turn must leave 3 standing");
+
+        // Resume: building continues from the structure still standing, not from scratch
+        engineers.resumeBridgeBuild();
+        assertTrue(engineers.isBuildingBridge(), "Resuming must put the platoon back into building");
+        assertFalse(engineers.isDismantlingBridge(), "Resuming must clear the dismantling state");
+        assertEquals(3, engineers.getBridgeBuildTurns(),
+              "Building must resume from the structure still standing (3 of 6)");
+        assertEquals(ConvInfantry.BRIDGE_BUILD_TURNS, engineers.getBridgeBuildRequiredTurns(),
+              "The build's required turns must be preserved across the cancel/resume");
+
+        // Banking the three remaining turns completes the bridge (3 -> 6)
+        int round = 7;
+        for (int i = 0; i < 3; i++) {
+            engineers.newRound(round++);
+            gameManager.checkBuildBridges();
+        }
+        assertTrue(board.getHex(WATER_TARGET_COORDS).containsTerrain(Terrains.BRIDGE),
+              "A resumed build must complete once the remaining turns are banked");
+        assertFalse(engineers.isBuildingBridge(), "The build must end when the resumed bridge completes");
+    }
+
+    @Test
+    void displacedDismantlingPlatoonLosesItsWorkWithoutRefund() {
+        ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
+        engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
+        engineers.spendBridgeBuildPoints(ConvInfantry.BRIDGE_TYPE_LIGHT);
+        gameManager.checkBuildBridges();
+        engineers.newRound(2);
+        engineers.startBridgeDismantle();
+
+        // The platoon is displaced before the dismantling completes
+        engineers.setPosition(new Coords(4, 5));
+        engineers.newRound(3);
+
+        assertFalse(engineers.isDismantlingBridge(), "A displaced dismantling platoon must abandon the work");
+        assertFalse(engineers.isBuildingBridge(), "A displaced dismantling platoon must not be building");
+        assertEquals(ConvInfantry.BRIDGE_BUILD_POINTS - ConvInfantry.BRIDGE_TYPE_LIGHT,
+              engineers.getBridgeBuildPoints(), "An abandoned dismantling must not refund the budget");
+    }
+
+    @Test
+    void dismantlingStateSurvivesSerialization() throws Exception {
+        ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
+        engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
+        gameManager.checkBuildBridges();
+        engineers.newRound(2);
+        gameManager.checkBuildBridges();
+        engineers.startBridgeDismantle();
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        try (ObjectOutputStream objectOut = new ObjectOutputStream(buffer)) {
+            objectOut.writeObject(engineers);
+        }
+        ConvInfantry restored;
+        try (ObjectInputStream objectIn = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
+            restored = (ConvInfantry) objectIn.readObject();
+        }
+
+        assertTrue(restored.isDismantlingBridge(), "The restored platoon must still be dismantling");
+        assertEquals(engineers.getBridgeDismantleRequiredTurns(), restored.getBridgeDismantleRequiredTurns(),
+              "The dismantling duration must survive serialization");
+        assertEquals(engineers.getBridgeDismantleTurns(), restored.getBridgeDismantleTurns(),
+              "The dismantling progress must survive serialization");
+    }
+
+    // endregion
+
+    // region Weight collapse (a built bridge is a real load-bearing structure)
+
+    /** A 1x3 column with land banks at level 2 over a water hex, so a placed bridge deck sits at elevation 2. */
+    private static final String COLLAPSE_BOARD = "BRIDGE_COLLAPSE_BOARD";
+
+    private IBuilding placeCollapseTestBridge(int constructionFactor) {
+        initializeBoard(COLLAPSE_BOARD, """
+              size 1 3
+              hex 0101 2 "" ""
+              hex 0102 0 "water:1" ""
+              hex 0103 2 "" ""
+              end"""
+        );
+        setBoard(COLLAPSE_BOARD);
+        Board collapseBoard = getBoard(COLLAPSE_BOARD);
+        Coords section = new Coords(0, 1);
+        int exits = BridgeConstruction.exitsFor(section.direction(new Coords(0, 0)),
+              section.direction(new Coords(0, 2)));
+        return BridgeConstruction.placeBridge(collapseBoard, section, exits, ConvInfantry.BRIDGE_TYPE_LIGHT,
+              constructionFactor);
+    }
+
+    @Test
+    void builtBridgeIsALoadBearingStructureThatCanCollapse() {
+        // A built bridge is a normal registered structure whose CF is its load capacity in tons; it participates in
+        // standard collapse (CF -> 0), so it drops under a unit heavier than its CF. The weight threshold and the
+        // rider's fall are standard bridge handling (confirmed in play); here we lock in that an engineer-built
+        // bridge is a real, collapsible load-bearing structure with the expected capacity.
+        IBuilding bridge = placeCollapseTestBridge(30);
+        Coords section = new Coords(0, 1);
+        assertNotNull(getBoard(COLLAPSE_BOARD).getBuildingAt(section),
+              "The built bridge must be registered as a board structure");
+        assertEquals(30, bridge.getCurrentCF(section),
+              "The bridge's CF is its load capacity in tons (a unit over 30 tons would collapse it)");
+
+        Map<BoardLocation, List<Entity>> positionMap = new HashMap<>();
+        positionMap.put(BoardLocation.of(section, IGame.DEFAULT_BOARD_ID), new ArrayList<>());
+        BuildingCollapseHandler collapseHandler = new BuildingCollapseHandler(gameManager);
+        collapseHandler.collapseBuilding(bridge, positionMap, section, new Vector<>());
+
+        assertEquals(0, bridge.getCurrentCF(section),
+              "The engineer bridge must collapse (CF 0) like any structure");
+    }
+
     // endregion
 
     // region Crossing a completed bridge
 
     /** The river hex of the 1x3 crossing boards. */
     private static final Coords CROSSING_RIVER_COORDS = new Coords(0, 1);
+
+    @Test
+    void bridgesCanBeChainedAcrossATwoHexRiver() {
+        // A two-hex-wide river: span 1 is built from the near bank into the first river hex; the engineers then
+        // stand on span 1 to build span 2 in the second river hex, connecting span 1 to the far bank. The second
+        // site is valid because a water hex may connect to another bridge (TM p.242), and the two spans form one
+        // continuous crossing a ground unit can drive across.
+        initializeBoard("BRIDGE_CHAIN_BOARD", """
+              size 1 4
+              hex 0101 0 "" ""
+              hex 0102 0 "water:1" ""
+              hex 0103 0 "water:1" ""
+              hex 0104 0 "" ""
+              end"""
+        );
+        setBoard("BRIDGE_CHAIN_BOARD");
+        Board chainBoard = getBoard("BRIDGE_CHAIN_BOARD");
+        Coords nearBank = new Coords(0, 0);
+        Coords riverHexOne = new Coords(0, 1);
+        Coords riverHexTwo = new Coords(0, 2);
+        Coords farBank = new Coords(0, 3);
+
+        // Span 1: near bank <-> first river hex's far side (the second river hex)
+        int spanOneExits = BridgeConstruction.exitsFor(riverHexOne.direction(nearBank),
+              riverHexOne.direction(riverHexTwo));
+        assertTrue(BridgeConstruction.isValidBridgeSite(chainBoard, riverHexOne, spanOneExits),
+              "Span 1 over the first river hex must be a valid site (one bank is land)");
+        BridgeConstruction.placeBridge(chainBoard, riverHexOne, spanOneExits, ConvInfantry.BRIDGE_TYPE_LIGHT, 30);
+
+        // Span 2: first river hex (now bridged) <-> far bank
+        int spanTwoExits = BridgeConstruction.exitsFor(riverHexTwo.direction(riverHexOne),
+              riverHexTwo.direction(farBank));
+        assertTrue(BridgeConstruction.isValidBridgeSite(chainBoard, riverHexTwo, spanTwoExits),
+              "Span 2 must be a valid site by connecting to span 1 (a bridge) and the far bank");
+        BridgeConstruction.placeBridge(chainBoard, riverHexTwo, spanTwoExits, ConvInfantry.BRIDGE_TYPE_LIGHT, 30);
+
+        // A tank drives the full crossing: near bank -> span 1 -> span 2 -> far bank
+        MovePath path = getMovePathFor(new Tank(), EntityMovementMode.TRACKED,
+              MoveStepType.CLIMB_MODE_ON, MoveStepType.FORWARDS, MoveStepType.FORWARDS, MoveStepType.FORWARDS);
+        assertTrue(path.isMoveLegal(), "A tank must be able to drive across two chained bridge spans; path was: "
+              + describeSteps(path));
+    }
+
+    @Test
+    void laidBridgeHasExitsOnlyTowardItsBanks() {
+        // The exits the bridge is laid with must point at its two banks and nowhere else; movement uses them to
+        // decide where a unit may get on and off the bridge
+        setBoard(CROSSING_BOARD);
+        BridgeConstruction.placeBridge(getBoard(CROSSING_BOARD), CROSSING_RIVER_COORDS, EXITS_NORTH_SOUTH,
+              ConvInfantry.BRIDGE_TYPE_LIGHT, 30);
+
+        Hex bridgeHex = getBoard(CROSSING_BOARD).getHex(CROSSING_RIVER_COORDS);
+        assertTrue(bridgeHex.containsTerrainExit(Terrains.BRIDGE, 0), "Bridge must have an exit toward its north bank");
+        assertTrue(bridgeHex.containsTerrainExit(Terrains.BRIDGE, 3), "Bridge must have an exit toward its south bank");
+        for (int nonBankDirection : new int[] { 1, 2, 4, 5 }) {
+            assertFalse(bridgeHex.containsTerrainExit(Terrains.BRIDGE, nonBankDirection),
+                  "Bridge must not have an exit toward non-bank side " + nonBankDirection);
+        }
+    }
+
+    @Test
+    void crossingOntoABridgeFromANonBankSideIsIllegal() {
+        // A bridge over water whose exits face its side banks, not north/south: a tank approaching from the north
+        // (a side the bridge does not connect) may not step onto the deck - you board a bridge at its ends
+        initializeBoard("BRIDGE_EXIT_BOARD", """
+              size 2 3
+              hex 0101 0 "" ""
+              hex 0201 0 "" ""
+              hex 0102 0 "water:1" ""
+              hex 0202 0 "" ""
+              hex 0103 0 "" ""
+              hex 0203 0 "" ""
+              end"""
+        );
+        setBoard("BRIDGE_EXIT_BOARD");
+        Board exitBoard = getBoard("BRIDGE_EXIT_BOARD");
+        Coords middle = new Coords(0, 1);
+        Coords northBank = new Coords(0, 0);
+        Coords southBank = new Coords(0, 2);
+
+        // Connect two on-board side banks that are not the north or south neighbour the tank will approach from
+        int firstSide = -1;
+        int secondSide = -1;
+        for (int direction = 0; direction < 6; direction++) {
+            Coords neighbour = middle.translated(direction);
+            if (exitBoard.contains(neighbour) && !neighbour.equals(northBank) && !neighbour.equals(southBank)) {
+                if (firstSide < 0) {
+                    firstSide = direction;
+                } else if (secondSide < 0) {
+                    secondSide = direction;
+                }
+            }
+        }
+        int sideExits = BridgeConstruction.exitsFor(firstSide, secondSide);
+        BridgeConstruction.placeBridge(exitBoard, middle, sideExits, ConvInfantry.BRIDGE_TYPE_LIGHT, 30);
+
+        MovePath path = getMovePathFor(new Tank(), EntityMovementMode.TRACKED,
+              MoveStepType.CLIMB_MODE_ON, MoveStepType.FORWARDS, MoveStepType.FORWARDS);
+        assertFalse(path.isMoveLegal(), "A tank may not cross onto a bridge from a side the bridge does not "
+              + "connect; path was: " + describeSteps(path));
+    }
 
     @Test
     void infantryCanCrossACompletedBridgeWithClimbModeOn() {
@@ -550,8 +1083,10 @@ public class BridgeBuildingTest extends GameBoardTestCase {
         ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
         engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_MEDIUM);
         engineers.spendBridgeBuildPoints(ConvInfantry.BRIDGE_TYPE_MEDIUM);
+        // Bank two turns of work, then take casualties to extend the required turns
+        gameManager.checkBuildBridges();
         engineers.newRound(2);
-        engineers.newRound(3);
+        gameManager.checkBuildBridges();
         engineers.setInternal(5, ConvInfantry.LOC_INFANTRY);
         engineers.updateBridgeBuildCasualties();
 

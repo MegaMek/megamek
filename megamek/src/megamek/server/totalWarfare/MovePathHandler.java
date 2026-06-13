@@ -2907,6 +2907,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 } else if (step.getType() == MoveStepType.BUILD_BRIDGE) {
                     processBuildBridgeStep(inf, step);
                     continue;
+                } else if (step.getType() == MoveStepType.CANCEL_BRIDGE) {
+                    processCancelBridgeStep(inf);
+                    continue;
+                } else if (step.getType() == MoveStepType.RESUME_BRIDGE) {
+                    processResumeBridgeStep(inf);
+                    continue;
                 } else if ((step.getType() != MoveStepType.TURN_LEFT)
                       && (step.getType() != MoveStepType.TURN_RIGHT)) {
                     // other movement clears dug in and hitting the deck status
@@ -4650,7 +4656,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
     /**
      * Begins a bridge build for a Bridge-Building Engineer platoon: spends the bridge building budget, locks the
      * platoon into the build for its duration and reports the started work. The step was already validated when the
-     * move path was compiled. TO:AUE.
+     * move path was compiled. TO:AUE p.152.
      *
      * @param infantry the platoon starting the build
      * @param step     the BUILD_BRIDGE step carrying the site, orientation and bridge type
@@ -4664,6 +4670,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
         logger.info("[BuildBridge] {} begins a bridge build: target {}, exits bitmask {}, type {} (1=light, "
                     + "2=medium)", convInfantry.getShortName(), step.getBridgeTargetCoords(), step.getBridgeExits(),
               step.getBridgeType());
+        // Building a bridge is the platoon's sole action, so any other ground posture (dug in / hitting the deck) ends
+        convInfantry.clearGroundPostures();
         convInfantry.startBridgeBuild(step.getBridgeTargetCoords(), step.getBridgeExits(), step.getBridgeType());
         convInfantry.spendBridgeBuildPoints(step.getBridgeType());
         // Free facing change toward the construction site: the platoon works facing its bridge
@@ -4676,6 +4684,59 @@ class MovePathHandler extends AbstractTWRuleHandler {
         report.subject = convInfantry.getId();
         report.addDesc(convInfantry);
         report.add(step.getBridgeTargetCoords().getBoardNum());
+        report.add(convInfantry.getBridgeBuildRequiredTurns());
+        addReport(report);
+    }
+
+    /**
+     * Cancels an in-progress bridge build and begins dismantling it. Dismantling takes as many turns as were spent
+     * building; the spent budget is refunded only once dismantling finishes, in the END phase. TO:AUE p.152.
+     *
+     * @param infantry the platoon cancelling its build
+     */
+    private void processCancelBridgeStep(Infantry infantry) {
+        if (!(infantry instanceof ConvInfantry convInfantry) || !convInfantry.isBuildingBridge()) {
+            logger.warn("[BuildBridge] CANCEL_BRIDGE step ignored for {}: not a ConvInfantry platoon currently "
+                  + "building a bridge", infantry.getShortName());
+            return;
+        }
+        Coords target = convInfantry.getBridgeTargetCoords();
+        convInfantry.startBridgeDismantle();
+        logger.info("[BuildBridge] {} cancels its bridge build at {}: dismantling will take {} turn(s)",
+              convInfantry.getShortName(), target, convInfantry.getBridgeDismantleRequiredTurns());
+        Report report = new Report(4281);
+        report.subject = convInfantry.getId();
+        report.addDesc(convInfantry);
+        if (target != null) {
+            report.add(target.getBoardNum());
+        } else {
+            report.add("?");
+        }
+        report.add(convInfantry.getBridgeDismantleRequiredTurns());
+        addReport(report);
+    }
+
+    /**
+     * Reverses a bridge dismantling back into building: the platoon resumes the build from the structure still
+     * standing. TO:AUE p.152.
+     *
+     * @param infantry the platoon resuming its build
+     */
+    private void processResumeBridgeStep(Infantry infantry) {
+        if (!(infantry instanceof ConvInfantry convInfantry) || !convInfantry.isDismantlingBridge()) {
+            logger.warn("[BuildBridge] RESUME_BRIDGE step ignored for {}: not a ConvInfantry platoon currently "
+                  + "dismantling a bridge", infantry.getShortName());
+            return;
+        }
+        Coords target = convInfantry.getBridgeTargetCoords();
+        convInfantry.resumeBridgeBuild();
+        logger.info("[BuildBridge] {} resumes its bridge build at {}: {} of {} turns built",
+              convInfantry.getShortName(), target, convInfantry.getBridgeBuildTurns(),
+              convInfantry.getBridgeBuildRequiredTurns());
+        Report report = new Report(4284);
+        report.subject = convInfantry.getId();
+        report.addDesc(convInfantry);
+        report.add(convInfantry.getBridgeBuildTurns());
         report.add(convInfantry.getBridgeBuildRequiredTurns());
         addReport(report);
     }

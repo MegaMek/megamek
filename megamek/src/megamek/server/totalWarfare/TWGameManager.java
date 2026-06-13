@@ -15789,18 +15789,28 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * End-phase checks for Bridge-Building Engineers, TO:AUE: reports build progress, extends the build by a turn when
+     * End-phase checks for Bridge-Building Engineers, TO:AUE p.152: reports build progress, extends the build by a turn when
      * the platoon took casualties this turn, abandons builds whose platoon is no longer adjacent to the site (e.g.
      * displaced or transported away; ConvInfantry#newRound also catches this, but silently - reporting it here tells
      * the player the progress was lost), and completes bridges whose work is done.
      */
     void checkBuildBridges() {
         for (Entity entity : game.getEntitiesVector()) {
-            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBuildingBridge()) {
+            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBusyWithBridge()) {
+                continue;
+            }
+            // A platoon destroyed before this completion check does not finish its bridge, TO:AUE p.152 ("if destroyed
+            // before completing its task, the bridge is destroyed as well"). This also covers a platoon wiped out
+            // during the combat of its final turn that is still doomed in the entity list when the END phase runs. A
+            // platoon destroyed while dismantling loses the partial bridge and is not refunded.
+            if (entity.isDestroyed() || entity.isDoomed()) {
+                LOGGER.info("[BuildBridge] {} was destroyed before finishing its bridge work at {}; abandoned",
+                      convInfantry.getShortName(), convInfantry.getBridgeTargetCoords());
+                convInfantry.cancelBridgeBuild();
                 continue;
             }
             if (!convInfantry.isAdjacentToBridgeSite()) {
-                LOGGER.info("[BuildBridge] {} abandons its bridge build at {}: no longer adjacent (position {})",
+                LOGGER.info("[BuildBridge] {} abandons its bridge work at {}: no longer adjacent (position {})",
                       convInfantry.getShortName(), convInfantry.getBridgeTargetCoords(),
                       convInfantry.getPosition());
                 convInfantry.cancelBridgeBuild();
@@ -15810,33 +15820,84 @@ public class TWGameManager extends AbstractGameManager {
                 addReport(report);
                 continue;
             }
-            if (convInfantry.updateBridgeBuildCasualties()) {
-                Report report = new Report(4279);
-                report.subject = convInfantry.getId();
-                report.addDesc(convInfantry);
-                addReport(report);
-            }
-            // The current round counts as a full turn of work: the platoon is locked out of all phases while
-            // building, so by the END phase it has spent this entire round on the bridge.
-            int turnsWorked = convInfantry.getBridgeBuildTurns() + 1;
-            LOGGER.debug("[BuildBridge] {} bridge build progress: turn {} of {} at {}",
-                  convInfantry.getShortName(), turnsWorked, convInfantry.getBridgeBuildRequiredTurns(),
-                  convInfantry.getBridgeTargetCoords());
-            if (turnsWorked >= convInfantry.getBridgeBuildRequiredTurns()) {
-                finishBridgeBuild(convInfantry);
+            if (convInfantry.isDismantlingBridge()) {
+                progressBridgeDismantle(convInfantry);
             } else {
-                Report report = new Report(4276);
-                report.subject = convInfantry.getId();
-                report.addDesc(convInfantry);
-                report.add(turnsWorked);
-                report.add(convInfantry.getBridgeBuildRequiredTurns());
-                addReport(report);
+                progressBridgeBuild(convInfantry);
             }
         }
     }
 
     /**
-     * Completes a bridge build, TO:AUE: places the new bridge on the board, registers it as a structure, and updates
+     * Advances one turn of bridge building for a platoon during the END phase, applying any casualty extension and
+     * completing the bridge once the work is done. TO:AUE p.152.
+     *
+     * @param convInfantry the platoon building a bridge
+     */
+    private void progressBridgeBuild(ConvInfantry convInfantry) {
+        if (convInfantry.updateBridgeBuildCasualties()) {
+            Report report = new Report(4279);
+            report.subject = convInfantry.getId();
+            report.addDesc(convInfantry);
+            addReport(report);
+        }
+        // The platoon spent this whole round on the bridge (it could take no other action), so bank a turn of work now.
+        int turnsWorked = convInfantry.bankBridgeBuildTurn();
+        LOGGER.debug("[BuildBridge] {} bridge build progress: turn {} of {} at {}",
+              convInfantry.getShortName(), turnsWorked, convInfantry.getBridgeBuildRequiredTurns(),
+              convInfantry.getBridgeTargetCoords());
+        if (turnsWorked >= convInfantry.getBridgeBuildRequiredTurns()) {
+            finishBridgeBuild(convInfantry);
+        } else {
+            Report report = new Report(4276);
+            report.subject = convInfantry.getId();
+            report.addDesc(convInfantry);
+            report.add(turnsWorked);
+            report.add(convInfantry.getBridgeBuildRequiredTurns());
+            addReport(report);
+        }
+    }
+
+    /**
+     * Advances one turn of bridge dismantling for a platoon during the END phase. Once the work is done the spent
+     * bridge building budget is refunded and the platoon is freed. TO:AUE p.152.
+     *
+     * @param convInfantry the platoon dismantling its cancelled bridge
+     */
+    private void progressBridgeDismantle(ConvInfantry convInfantry) {
+        // The platoon spent this whole round dismantling, so bank a turn of dismantling now.
+        int turnsWorked = convInfantry.bankBridgeDismantleTurn();
+        LOGGER.debug("[BuildBridge] {} bridge dismantling progress: turn {} of {} at {}",
+              convInfantry.getShortName(), turnsWorked, convInfantry.getBridgeDismantleRequiredTurns(),
+              convInfantry.getBridgeTargetCoords());
+        if (turnsWorked >= convInfantry.getBridgeDismantleRequiredTurns()) {
+            Coords target = convInfantry.getBridgeTargetCoords();
+            convInfantry.refundBridgeBuildPoints();
+            convInfantry.cancelBridgeBuild();
+            LOGGER.info("[BuildBridge] {} finished dismantling its bridge at {}; budget refunded",
+                  convInfantry.getShortName(), target);
+            Report report = new Report(4283);
+            report.subject = convInfantry.getId();
+            report.addDesc(convInfantry);
+            if (target != null) {
+                report.add(target.getBoardNum());
+            } else {
+                report.add("?");
+            }
+            addReport(report);
+        } else {
+            // Report the standing structure counting back down on the build's scale (e.g. 3 of 6 remaining)
+            Report report = new Report(4282);
+            report.subject = convInfantry.getId();
+            report.addDesc(convInfantry);
+            report.add(convInfantry.getBridgeDismantleRemaining());
+            report.add(convInfantry.getBridgeBuildRequiredTurns());
+            addReport(report);
+        }
+    }
+
+    /**
+     * Completes a bridge build, TO:AUE p.152: places the new bridge on the board, registers it as a structure, and updates
      * the clients with the changed hex and the new bridge. If the site became invalid while building (e.g. another
      * structure appeared there), the work is abandoned instead.
      *

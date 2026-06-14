@@ -2904,6 +2904,21 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     }
                     inf.setDugIn(Infantry.DUG_IN_FORTIFYING1);
                     continue;
+                } else if (step.getType() == MoveStepType.BUILD_BRIDGE) {
+                    processBuildBridgeStep(inf, step);
+                    continue;
+                } else if (step.getType() == MoveStepType.CANCEL_BRIDGE) {
+                    processCancelBridgeStep(inf);
+                    continue;
+                } else if (step.getType() == MoveStepType.RESUME_BRIDGE) {
+                    processResumeBridgeStep(inf);
+                    continue;
+                } else if (step.getType() == MoveStepType.PAUSE_BRIDGE) {
+                    processPauseBridgeStep(inf);
+                    continue;
+                } else if (step.getType() == MoveStepType.ABANDON_BRIDGE) {
+                    processAbandonBridgeStep(inf);
+                    continue;
                 } else if ((step.getType() != MoveStepType.TURN_LEFT)
                       && (step.getType() != MoveStepType.TURN_RIGHT)) {
                     // other movement clears dug in and hitting the deck status
@@ -4642,5 +4657,156 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
     private boolean usingAeroOnGroundMovement() {
         return getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_GROUND_MOVE);
+    }
+
+    /**
+     * Begins a bridge build for a Bridge-Building Engineer platoon: spends the bridge building budget, locks the
+     * platoon into the build for its duration and reports the started work. The step was already validated when the
+     * move path was compiled. TO:AUE p.152.
+     *
+     * @param infantry the platoon starting the build
+     * @param step     the BUILD_BRIDGE step carrying the site, orientation and bridge type
+     */
+    private void processBuildBridgeStep(Infantry infantry, MoveStep step) {
+        if (!(infantry instanceof ConvInfantry convInfantry) || (step.getBridgeTargetCoords() == null)) {
+            logger.warn("[BuildBridge] BUILD_BRIDGE step ignored for {}: not a ConvInfantry platoon or no target "
+                  + "hex in the step data", infantry.getShortName());
+            return;
+        }
+        // Another platoon may have started/paused a bridge in this hex since the path was plotted; an in-progress
+        // bridge places no terrain, so reject a second build in the same hex here.
+        if (ConvInfantry.isBridgeTargetClaimed(getGame(), convInfantry.getBoardId(), step.getBridgeTargetCoords(),
+              convInfantry)) {
+            logger.warn("[BuildBridge] BUILD_BRIDGE step ignored for {}: another platoon already has a bridge in "
+                  + "progress at {}", convInfantry.getShortName(), step.getBridgeTargetCoords());
+            return;
+        }
+        logger.info("[BuildBridge] {} begins a bridge build: target {}, exits bitmask {}, type {} (1=light, "
+                    + "2=medium)", convInfantry.getShortName(), step.getBridgeTargetCoords(), step.getBridgeExits(),
+              step.getBridgeType());
+        // Building a bridge is the platoon's sole action, so any other ground posture (dug in / hitting the deck) ends
+        convInfantry.clearGroundPostures();
+        convInfantry.startBridgeBuild(step.getBridgeTargetCoords(), step.getBridgeExits(), step.getBridgeType());
+        convInfantry.spendBridgeBuildPoints(step.getBridgeType());
+        // Free facing change toward the construction site: the platoon works facing its bridge
+        if (convInfantry.getPosition() != null) {
+            int facingToBridge = convInfantry.getPosition().direction(step.getBridgeTargetCoords());
+            convInfantry.setFacing(facingToBridge);
+            convInfantry.setSecondaryFacing(facingToBridge);
+        }
+        Report report = new Report(4274);
+        report.subject = convInfantry.getId();
+        report.addDesc(convInfantry);
+        report.add(step.getBridgeTargetCoords().getBoardNum());
+        report.add(convInfantry.getBridgeBuildRequiredTurns());
+        addReport(report);
+    }
+
+    /**
+     * Cancels an in-progress bridge build and begins dismantling it. Dismantling takes as many turns as were spent
+     * building; the spent budget is refunded only once dismantling finishes, in the END phase. TO:AUE p.152.
+     *
+     * @param infantry the platoon cancelling its build
+     */
+    private void processCancelBridgeStep(Infantry infantry) {
+        if (!(infantry instanceof ConvInfantry convInfantry) || !convInfantry.isBuildingBridge()) {
+            logger.warn("[BuildBridge] CANCEL_BRIDGE step ignored for {}: not a ConvInfantry platoon currently "
+                  + "building a bridge", infantry.getShortName());
+            return;
+        }
+        Coords target = convInfantry.getBridgeTargetCoords();
+        convInfantry.startBridgeDismantle();
+        logger.info("[BuildBridge] {} cancels its bridge build at {}: dismantling will take {} turn(s)",
+              convInfantry.getShortName(), target, convInfantry.getBridgeDismantleRequiredTurns());
+        Report report = new Report(4281);
+        report.subject = convInfantry.getId();
+        report.addDesc(convInfantry);
+        if (target != null) {
+            report.add(target.getBoardNum());
+        } else {
+            report.add("?");
+        }
+        report.add(convInfantry.getBridgeDismantleRequiredTurns());
+        addReport(report);
+    }
+
+    /**
+     * Resumes building, from either a paused build or a dismantling: the platoon resumes from the structure still
+     * standing (dismantling) or the held progress (paused). TO:AUE p.152.
+     *
+     * @param infantry the platoon resuming its build
+     */
+    private void processResumeBridgeStep(Infantry infantry) {
+        boolean canResume = (infantry instanceof ConvInfantry ci)
+              && (ci.isDismantlingBridge() || ci.isBridgePaused());
+        if (!canResume) {
+            logger.warn("[BuildBridge] RESUME_BRIDGE step ignored for {}: not a ConvInfantry platoon currently "
+                  + "dismantling or paused", infantry.getShortName());
+            return;
+        }
+        ConvInfantry convInfantry = (ConvInfantry) infantry;
+        Coords target = convInfantry.getBridgeTargetCoords();
+        convInfantry.resumeBridgeBuild();
+        logger.info("[BuildBridge] {} resumes its bridge build at {}: {} of {} turns built",
+              convInfantry.getShortName(), target, convInfantry.getBridgeBuildTurns(),
+              convInfantry.getBridgeBuildRequiredTurns());
+        Report report = new Report(4284);
+        report.subject = convInfantry.getId();
+        report.addDesc(convInfantry);
+        report.add(convInfantry.getBridgeBuildTurns());
+        report.add(convInfantry.getBridgeBuildRequiredTurns());
+        addReport(report);
+    }
+
+    /**
+     * Pauses an active bridge build: the platoon holds its progress and is freed to act normally until it returns to
+     * resume. TO:AUE p.152.
+     *
+     * @param infantry the platoon pausing its build
+     */
+    private void processPauseBridgeStep(Infantry infantry) {
+        if (!(infantry instanceof ConvInfantry convInfantry) || !convInfantry.isBuildingBridge()) {
+            logger.warn("[BuildBridge] PAUSE_BRIDGE step ignored for {}: not a ConvInfantry platoon currently "
+                  + "building a bridge", infantry.getShortName());
+            return;
+        }
+        Coords target = convInfantry.getBridgeTargetCoords();
+        convInfantry.pauseBridgeBuild();
+        logger.info("[BuildBridge] {} pauses its bridge build at {}: {} of {} turns held",
+              convInfantry.getShortName(), target, convInfantry.getBridgeBuildTurns(),
+              convInfantry.getBridgeBuildRequiredTurns());
+        Report report = new Report(4286);
+        report.subject = convInfantry.getId();
+        report.addDesc(convInfantry);
+        report.add(convInfantry.getBridgeBuildTurns());
+        report.add(convInfantry.getBridgeBuildRequiredTurns());
+        addReport(report);
+    }
+
+    /**
+     * Abandons any bridge work in progress: the partial structure is lost immediately and the spent budget is not
+     * refunded. TO:AUE p.152.
+     *
+     * @param infantry the platoon abandoning its bridge
+     */
+    private void processAbandonBridgeStep(Infantry infantry) {
+        if (!(infantry instanceof ConvInfantry convInfantry) || !convInfantry.hasBridgeInProgress()) {
+            logger.warn("[BuildBridge] ABANDON_BRIDGE step ignored for {}: not a ConvInfantry platoon with bridge "
+                  + "work in progress", infantry.getShortName());
+            return;
+        }
+        Coords target = convInfantry.getBridgeTargetCoords();
+        convInfantry.abandonBridge();
+        logger.info("[BuildBridge] {} abandons its bridge at {}; progress lost, points forfeit",
+              convInfantry.getShortName(), target);
+        Report report = new Report(4287);
+        report.subject = convInfantry.getId();
+        report.addDesc(convInfantry);
+        if (target != null) {
+            report.add(target.getBoardNum());
+        } else {
+            report.add("?");
+        }
+        addReport(report);
     }
 }

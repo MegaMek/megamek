@@ -179,6 +179,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityListFile;
 import megamek.common.units.IBomber;
@@ -583,6 +584,37 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
+     * Shows a progress toast for each of the local player's platoons that is raising a bridge (TO:AUE). Called once per
+     * round at the start of the movement phase: a building platoon is ineligible for all phases, so no phase display
+     * ever selects it and this is its only per-turn feedback besides the hex indicator and END phase report.
+     */
+    private void showBridgeBuildProgressToasts() {
+        for (Entity entity : getClient().getGame().getEntitiesVector()) {
+            boolean isOwnBridgePlatoon = (entity instanceof ConvInfantry convInfantry)
+                  && convInfantry.isBusyWithBridge()
+                  && (convInfantry.getBridgeTargetCoords() != null)
+                  && (entity.getOwnerId() == getClient().getLocalPlayer().getId());
+            if (!isOwnBridgePlatoon) {
+                continue;
+            }
+            ConvInfantry convInfantry = (ConvInfantry) entity;
+            if (convInfantry.isDismantlingBridge()) {
+                // Count the standing structure back down on the build's scale (e.g. 4/6, 3/6, ...)
+                addToast(ToastLevel.INFO, Messages.getString("ClientGUI.bridgeDismantleProgress.toast",
+                      entity.getShortName(), convInfantry.getBridgeDismantleRemaining(),
+                      convInfantry.getBridgeBuildRequiredTurns(),
+                      convInfantry.getBridgeTargetCoords().getBoardNum()), entity);
+            } else {
+                int turnsWorked = Math.min(convInfantry.getBridgeBuildTurns(),
+                      convInfantry.getBridgeBuildRequiredTurns());
+                addToast(ToastLevel.INFO, Messages.getString("ClientGUI.bridgeBuildProgress.toast",
+                      entity.getShortName(), turnsWorked, convInfantry.getBridgeBuildRequiredTurns(),
+                      convInfantry.getBridgeTargetCoords().getBoardNum()), entity);
+            }
+        }
+    }
+
+    /**
      * Splits a server-side report HTML stream into per-event toasts via {@link ReportToastFormatter} and drip-feeds
      * them to the overlay on the {@link GUIPreferences#TOAST_DRIP_SECONDS} cadence so each one has time to scroll past
      * before the next appears.
@@ -757,6 +789,7 @@ public class ClientGUI extends AbstractClientGUI
         sensorRangeSpriteHandler = new SensorRangeSpriteHandler(this, client.getGame());
         collapseWarningSpriteHandler = new CollapseWarningSpriteHandler(this);
         sawClearingSpriteHandler = new SawClearingSpriteHandler(this, client.getGame());
+        BridgeBuildSpriteHandler bridgeBuildSpriteHandler = new BridgeBuildSpriteHandler(this, client.getGame());
         groundObjectSpriteHandler = new GroundObjectSpriteHandler(this, client.getGame());
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(this, client);
         firingArcSpriteHandler = new FiringArcSpriteHandler(this);
@@ -768,6 +801,7 @@ public class ClientGUI extends AbstractClientGUI
               flareSpritesHandler,
               collapseWarningSpriteHandler,
               sawClearingSpriteHandler,
+              bridgeBuildSpriteHandler,
               groundObjectSpriteHandler,
               firingSolutionSpriteHandler,
               firingArcSpriteHandler,
@@ -2886,6 +2920,12 @@ public class ClientGUI extends AbstractClientGUI
             // Swap to this phase's panel.
             GamePhase phase = getClient().getGame().getPhase();
             switchPanel(phase);
+
+            // Once per round, remind the player of own platoons busy raising bridges (TO:AUE); building
+            // platoons are ineligible for all phases, so no phase display ever selects them
+            if (phase.isMovement()) {
+                showBridgeBuildProgressToasts();
+            }
 
             // Reset spotting FOV mode at game start to prevent player confusion
             if (phase.isLounge()) {

@@ -11693,7 +11693,7 @@ public class MiscType extends EquipmentType {
         // TODO this is the equipment that bridging engineers use.
         // Likely needs to be split into a BA version and and Infantry version.
         misc.name = "Infantry Bridge Kit";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.INFANTRY_BRIDGE_KIT);
         misc.tonnage = 0;
         misc.criticalSlots = 0;
         misc.hittable = false;

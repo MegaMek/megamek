@@ -239,6 +239,20 @@ unit icon) instead of relying on the always-`INFO`, text-parsed report path.
 2. Completion toast - **SUCCESS via new typed packet** to avoid INFO spam. [resolved]
 3. Tracking doc - this file. [resolved]
 
+## 6a. Player feedback for in-progress fortification ✅ DONE
+
+- [x] **Entity sprite badge**: shows fortify progress as **"Fortify N/3"** (i18n `BoardView1.fortifyProgress`) for
+  infantry and vehicles, replacing the generic "Working" badge for the FORTIFYING stages (plain 1-turn self dig-in still
+  shows "Working"/"D"). `EntitySprite.java`.
+- [x] **Bridge-style ghost hex**: `FortifyBuildSprite` (HexSprite) draws the sandbags/fortified graphic (
+  `boring/sandbags.gif`) as a ghost whose opacity = stage/3 (0.18 floor), plus "N/3" text low in the hex - modeled on PR
+  #8343's `BridgeBuildSprite`. New `FortifyBuildSpriteHandler` rebuilds the sprites from entity state on
+  phase/entity/board changes, registered in `ClientGUI.initializeSpriteHandlers`. It's a self-contained fortify-specific
+  sprite (no dependency on bridge code, which isn't on this branch).
+- [x] Single source of truth: `Infantry`/`Tank` expose `isFortifying()` / `getFortifyStage()` /
+  `getFortifyTotalStages()`, used by both the badge and the ghost sprite/handler. Stage accessor unit-tested in
+  `FortifyTest`.
+
 ## 7. Progress log
 
 - 2026-06-13: Rules compared to code, gaps identified, plan approved, this doc created. Implementation pending.
@@ -257,5 +271,10 @@ unit icon) instead of relying on the always-`INFO`, text-parsed report path.
   delayed-by-damage report 5306 + INFO toast (`reportFortificationDelayed`), client-side WARNING rejection toasts on
   illegal terrain (via shared `MoveStep.isFortifiableTerrain`). `resolveFortify` refactored to dedupe infantry/tank.
   i18n keys added. All tests green (`FortifyTest` 19, `ComputeTerrainModsTest` 5, `GameToastEventTest` 2,
-  `HitTheDeckTest` ok). **Tasks A-F + G + H + I complete.** Remaining: optional manual playtest; the `int`->
-  `enum DugInState` cleanup is intentionally deferred.
+  `HitTheDeckTest` ok). Tasks A-F + G + H + I complete. The `int`->`enum DugInState` cleanup is intentionally deferred.
+- 2026-06-14: Player-feedback pass (poor in-game feedback reported). Added "Fortify N/3" entity-sprite badge AND a
+  bridge-style ghost-hex indicator (`FortifyBuildSprite` + `FortifyBuildSpriteHandler`, registered in `ClientGUI`)
+  drawing the sandbags graphic at opacity = stage/3 with "N/3" text. Backed by new `isFortifying()` /
+  `getFortifyStage()` / `getFortifyTotalStages()` on Infantry/Tank (single source of truth for badge + sprite).
+  Modeled on PR #8343 (`Implement-Bridge-Laying-Engineers`) `BridgeBuildSprite`. `FortifyTest` now 20, all green;
+  compiles. Remaining: manual visual playtest of the ghost sprite.

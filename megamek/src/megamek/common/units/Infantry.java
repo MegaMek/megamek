@@ -542,6 +542,27 @@ public abstract class Infantry extends Entity {
     }
 
     /**
+     * @return {@code true} if this unit is partway through building a fortified hex (one of the multi-turn FORTIFYING
+     *       stages), as opposed to plain one-turn self digging-in. TO:AUE p.153.
+     */
+    public boolean isFortifying() {
+        return (dugIn >= DUG_IN_FORTIFYING1) && (dugIn <= DUG_IN_FORTIFYING3);
+    }
+
+    /**
+     * @return the current fortification stage (1..{@link #getFortifyTotalStages()}) while {@link #isFortifying()}, or 0
+     *       when the unit is not building a fortification.
+     */
+    public int getFortifyStage() {
+        return isFortifying() ? (dugIn - DUG_IN_FORTIFYING1 + 1) : 0;
+    }
+
+    /** @return the number of turns of work a fortified hex takes to complete. */
+    public int getFortifyTotalStages() {
+        return DUG_IN_FORTIFYING3 - DUG_IN_FORTIFYING1 + 1;
+    }
+
+    /**
      * @return {@code true} if this infantry is currently "hitting the deck", TO:AR p.106.
      */
     public boolean isHitTheDeck() {

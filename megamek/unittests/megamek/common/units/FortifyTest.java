@@ -150,6 +150,25 @@ public class FortifyTest extends GameBoardTestCase {
         }
 
         @Test
+        @DisplayName("getFortifyStage reports 1..3 across the build and 0 otherwise (drives the hex indicator)")
+        void fortifyStageTracksProgress() {
+            ConvInfantry infantry = fortifyingInfantry();
+            assertFalse(infantry.isFortifying(), "Not fortifying before it starts");
+            assertEquals(0, infantry.getFortifyStage(), "Stage is 0 when not fortifying");
+            assertEquals(3, infantry.getFortifyTotalStages(), "A fortified hex takes three stages");
+
+            infantry.beginFortify();
+            assertTrue(infantry.isFortifying(), "Fortifying after starting");
+            assertEquals(1, infantry.getFortifyStage(), "Stage 1 after starting");
+
+            infantry.newRound(1);
+            assertEquals(2, infantry.getFortifyStage(), "Stage 2 after one clean turn");
+
+            infantry.newRound(2);
+            assertEquals(3, infantry.getFortifyStage(), "Stage 3 on the final turn");
+        }
+
+        @Test
         @DisplayName("Damage during a fortifying turn extends the effort by one turn")
         void damageExtendsFortify() {
             ConvInfantry infantry = fortifyingInfantry();

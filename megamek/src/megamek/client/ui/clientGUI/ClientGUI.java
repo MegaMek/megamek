@@ -770,6 +770,7 @@ public class ClientGUI extends AbstractClientGUI
         firingArcSpriteHandler = new FiringArcSpriteHandler(this);
         fleeZoneSpriteHandler = new FleeZoneSpriteHandler(this);
         FortifyBuildSpriteHandler fortifyBuildSpriteHandler = new FortifyBuildSpriteHandler(this, client.getGame());
+        DugInSpriteHandler dugInSpriteHandler = new DugInSpriteHandler(this, client.getGame());
 
         spriteHandlers.addAll(List.of(movementEnvelopeHandler,
               movementModifierSpriteHandler,
@@ -781,7 +782,8 @@ public class ClientGUI extends AbstractClientGUI
               firingSolutionSpriteHandler,
               firingArcSpriteHandler,
               fleeZoneSpriteHandler,
-              fortifyBuildSpriteHandler));
+              fortifyBuildSpriteHandler,
+              dugInSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 

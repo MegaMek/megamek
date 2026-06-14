@@ -67,6 +67,7 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
+import megamek.common.Hex;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.bays.Bay;
@@ -87,6 +88,7 @@ import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.Infantry;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
@@ -185,7 +187,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         /** Entity cannot deploy on this board type (e.g., space unit on ground board) */
         WRONG_BOARD_TYPE,
         /** Coordinates are outside the allowed deployment area */
-        OUTSIDE_DEPLOYMENT_AREA
+        OUTSIDE_DEPLOYMENT_AREA,
+        /** A hidden unit cannot deploy onto a fortified hex (the fortification would reveal the position) */
+        HIDDEN_IN_FORTIFIED
     }
 
     /**
@@ -586,6 +590,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (!(board.isLegalDeployment(coords, entity) || assaultDropPreference)) {
             return BoardValidationResult.OUTSIDE_DEPLOYMENT_AREA;
         }
+        // A hidden unit cannot start in a fortified hex - the fortification is visible terrain that would give
+        // the position away. (A unit may, however, deploy both dug in and hidden in concealing terrain.)
+        Hex deployHex = board.getHex(coords);
+        if (entity.isHidden() && (deployHex != null) && deployHex.containsTerrain(Terrains.FORTIFIED)) {
+            return BoardValidationResult.HIDDEN_IN_FORTIFIED;
+        }
         return BoardValidationResult.VALID;
     }
 
@@ -714,6 +724,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             } else if (validationResult == BoardValidationResult.OUTSIDE_DEPLOYMENT_AREA) {
                 showOutsideDeployAreaMessage();
                 return;
+            } else if (validationResult == BoardValidationResult.HIDDEN_IN_FORTIFIED) {
+                showHiddenInFortifiedMessage();
+                return;
             }
 
             if (!board.isSpace()) {
@@ -814,6 +827,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void showOutsideDeployAreaMessage() {
         String msg = Messages.getString("DeploymentDisplay.outsideDeployArea");
         clientgui.addToast(ToastLevel.ERROR, msg);
+    }
+
+    private void showHiddenInFortifiedMessage() {
+        String msg = Messages.getString("DeploymentDisplay.hiddenInFortified");
+        clientgui.addToast(ToastLevel.WARNING, msg);
     }
 
     private void showCannotDeployHereMessage(Coords coords) {

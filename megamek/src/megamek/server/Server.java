@@ -623,6 +623,7 @@ public class Server implements Runnable {
             gamePlayer.setNbrMFActive(player.getNbrMFActive());
             gamePlayer.setNbrMFInferno(player.getNbrMFInferno());
             gamePlayer.setNbrMFEMP(player.getNbrMFEMP());
+            gamePlayer.setNbrFortifiedHexes(player.getNbrFortifiedHexes());
             if (gamePlayer.getConstantInitBonus() != player.getConstantInitBonus()) {
                 sendServerChat("Player " +
                       gamePlayer.getName() +

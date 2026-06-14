@@ -253,6 +253,94 @@ unit icon) instead of relying on the always-`INFO`, text-parsed report path.
   `getFortifyTotalStages()`, used by both the badge and the ghost sprite/handler. Stage accessor unit-tested in
   `FortifyTest`.
 
+### Ribbon button helper text
+
+- [x] Added hover tooltips explaining the difference for infantry: `MovementDisplay.moveDigIn.tooltip` (1-turn personal
+  cover, any non-mech infantry, ends on move) and `MovementDisplay.moveFortify.tooltip` (3-turn engineer/vehicle build
+  of a permanent fortified hex that benefits any occupant). Resource-only - `StatusBarPhaseDisplay.createToolTip`
+  already wires `MovementDisplay.<cmd>.tooltip` keys.
+
+### Visual split: trenches for dug-in, sandbags for fortified
+
+- [x] **Trench overlay for dug-in infantry**: new asset `boring/trenches.png` (84x72, cropped/centered from the user's
+  `saxarba/Trenches.png`). New `DugInSprite` (HexSprite) draws it on the hex of infantry that are digging in
+  (`DUG_IN_WORKING`, faint 0.4 alpha) or dug in (`DUG_IN_COMPLETE`, full alpha). `DugInSpriteHandler` rebuilds these on
+  phase/entity changes, registered in `ClientGUI`. Infantry only (tanks don't self dig in).
+- [x] **Status text** on the trench overlay ("Digging in" / "Dug in", i18n `BoardView1.diggingIn` / `BoardView1.dugIn`),
+  mirroring the fortify sprite's progress text. (Dig-in is a 1-turn action so there is no N/3-style counter; the label
+  conveys the state.)
+- [x] **Z-order**: `DugInSprite.isBehindTerrain()` returns `true` so the trench draws on top of the base terrain but
+  before the entity sprites - the platoon's icon sits on top of its trench, not under it. (FortifyBuildSprite still
+  draws
+  over the unit; left as-is unless the same treatment is wanted there.)
+- [x] **Sandbags stays for fortify build / FORTIFIED terrain**: `FortifyBuildSprite` (FORTIFYING1-3) and the completed
+  `FORTIFIED` tileset hex keep the sandbags graphic. No overlap: `DugInSprite` shows only for WORKING/COMPLETE,
+  `FortifyBuildSprite` only for the FORTIFYING stages.
+
+## 6b. Pre-placed fortified hexes (mapmaker + scenario/player setup)
+
+Goal: let mapmakers and players start a game with fortified hexes already on the board.
+
+- **Mapmaker: already supported (no code).** `FORTIFIED` (type 37) is not in `Terrains.AUTOMATIC`, so it is in the
+  board-editor terrain palette, and `.board` files round-trip `fortified:1` (existing boards use it, e.g. Gothic
+  Trenches, Tukayyid pack). Nothing to plumb.
+- **Player allotment + place in the Minefields deployment phase** (mirrors minefields; a fortified hex is just terrain,
+  so no Minefield object / hidden-info needed). Decisions: deployment-zone-only placement, visible to all, own "
+  Fortifications" settings section.
+  - [x] `Player`: `numFortifiedHexes` + `getNbrFortifiedHexes()`/`setNbrFortifiedHexes()`; added to `hasMinefields()` so
+    the deploy phase triggers (and a player gets a turn) on fortifications alone - independent of the minefields game
+    option, since the phase transition (`TWPhaseEndManager`) is gated by `hasMinefields()`, not the option. Serializes
+    automatically via `PLAYER_UPDATE`.
+  - [x] `PlayerSettingsDialog`: new "Fortifications" section (`fortificationSection()`) with a Fortified Hexes field,
+    shown unconditionally; read/write like the minefield fields.
+  - [x] `PacketCommand.DEPLOY_FORTIFICATIONS` + `Client.sendDeployFortifications(Vector<BoardLocation>)`.
+  - [x] `DeployMinefieldDisplay`: new "Fortify(N)" tool. Click a hex -> validate (fortifiable terrain via shared
+    `MoveStep.isFortifiableTerrain` + within deployment zone via `Board.isLegalDeployment`), preview locally (
+    `board.setHex` repaints), decrement count; the Remove tool undoes a fortification placed this turn (refund). Sends
+    placed `BoardLocation`s on Done.
+  - [x] `TWGameManager.receiveDeployFortifications` / `processDeployFortifications` / `isLegalFortificationPlacement`:
+    re-validates each hex (on board, fortifiable terrain, in the player's deployment zone, within allotment), writes
+    `FORTIFIED` terrain, `sendChangedHex` to all clients (visible to everyone). `[Fortify]` logging on
+    rejects/placement.
+  - [x] i18n: `DeployMinefieldDisplay.deployFortification`/`.tooltip`/`DuplicateFortification`/`fortifyIllegalTerrain`/
+    `fortifyOutsideZone`/`undeployedFortifications`/`undeployedItems`; `PlayerSettingsDialog.header.fortifications`/
+    `labFortifiedHexes`/`fortifiedHexesTT`.
+  - Reuses the existing FORTIFIED terrain rendering (sandbags tileset) and the combat rules already implemented (A-E).
+    Compiles; `FortifyTest`/`ComputeTerrainModsTest` still green. Remaining: manual playtest of the deploy-phase tool.
+
+## 6c. Playtest fixes
+
+- [x] **Deploy phase never appeared for fortifications.** Root cause: `Server.receivePlayerInfo` applies a
+  `PLAYER_UPDATE` by copying individual fields (it does NOT replace the Player wholesale), and it copied the minefield
+  counts but not `numFortifiedHexes` - so the client's allotment was dropped server-side and `hasMinefields()` stayed
+  false. Fixed by adding `gamePlayer.setNbrFortifiedHexes(player.getNbrFortifiedHexes())` alongside the minefield copies
+  in `Server.java`.
+
+## 6d. Player feedback / awareness additions (playtest-driven)
+
+- [x] **To-hit wording split**: cover bonus now reads "infantry in fortified hex" (`WeaponAttackAction.FortifiedHexInf`)
+  when sourced from terrain vs "infantry dug in" (`DugInInf`) from the unit's own posture.
+- [x] **To-hit diagnostics**: `[Fortify]` DEBUG logging in `ComputeTerrainMods` (applied / suppressed-area-effect /
+  not-yet-WORKING) + a ready-to-uncomment "Trench/Fieldworks diagnostics" logger block in `mmconf/log4j2.xml` (the
+  `megamek` logger is info by default, so these are opt-in).
+- [x] **Unit display General tab indicator**: `UnitToolTip.getFortificationStatus(entity)` adds a line between Facing
+  and Sensors - "Dug in" / "Digging in" / "Fortify N/3" (building) / "In fortified hex (cover)" (infantry) / "In
+  fortified hex" (other). i18n `BoardView1.inFortifiedHexCover` / `inFortifiedHex` (+ reused
+  dugIn/diggingIn/fortifyProgress).
+- [x] **Deploy-dug-in lobby option**: `CustomMekDialog` Deployment tab gets a "Dug In" checkbox for **non-mechanized
+  infantry** when the dig-in option is on; sets `DUG_IN_COMPLETE` on the entity at OK so it deploys already dug in (
+  `CustomMekDialog.labDeployDugIn`). RAW note: mechanized excluded (can't dig in); terrain legality of the eventual
+  deploy hex isn't re-validated at config time (setup convenience).
+
+## 6e. Hidden-unit interaction
+
+- [x] **Dug in + hidden allowed**: the deploy-dug-in checkbox and the Hidden checkbox are independent, so a
+  non-mechanized infantry can deploy both dug in and hidden (in concealing terrain). No change needed.
+- [x] **Hidden onto a fortified hex blocked**: `DeploymentDisplay.validateDeploymentBoard` now returns a new
+  `HIDDEN_IN_FORTIFIED` result when a hidden unit is placed on a FORTIFIED hex (the visible fortification would reveal
+  the position), surfaced via a WARNING toast (`DeploymentDisplay.hiddenInFortified`). Terrain-based, so it applies to
+  any hidden unit regardless of dug-in posture. Client-side guard; server-side enforcement could be added if needed.
+
 ## 7. Progress log
 
 - 2026-06-13: Rules compared to code, gaps identified, plan approved, this doc created. Implementation pending.

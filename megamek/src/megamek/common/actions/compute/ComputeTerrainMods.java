@@ -64,8 +64,11 @@ import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
+import megamek.logging.MMLogger;
 
 public class ComputeTerrainMods {
+
+    private static final MMLogger LOGGER = MMLogger.create(ComputeTerrainMods.class);
 
     /**
      * Convenience method that compiles the ToHit modifiers applicable to the terrain and line of sight (LOS) Woods
@@ -165,11 +168,28 @@ public class ComputeTerrainMods {
         boolean excludedFromCoverBonus = (weaponType == null)
               || weaponType.hasFlag(WeaponType.F_FLAMER)
               || isAreaEffectAgainstInfantry(weaponType, ammoType);
-        if ((target instanceof Infantry infantry) && !excludedFromCoverBonus) {
-            if (targetInFortifiedHex || (infantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
-                toHit.addModifier(2, Messages.getString("WeaponAttackAction.DugInInf"));
+        if (target instanceof Infantry infantry) {
+            boolean qualifiesForCover = targetInFortifiedHex || (infantry.getDugIn() == Infantry.DUG_IN_COMPLETE);
+            if (excludedFromCoverBonus) {
+                if (qualifiesForCover || infantry.isHitTheDeck()) {
+                    LOGGER.debug("[Fortify] cover to-hit bonus vs {} suppressed - {} is a flamer or area-effect weapon",
+                          target.getDisplayName(),
+                          (weaponType != null) ? weaponType.getName() : "weapon");
+                }
+            } else if (qualifiesForCover) {
+                // Distinguish the two RAW sources of the +2: the infantry's own dug-in posture vs. the cover
+                // of a fortified hex it is occupying (TO:AR p.106 / TO:AUE p.153).
+                String coverReason = targetInFortifiedHex
+                      ? "WeaponAttackAction.FortifiedHexInf"
+                      : "WeaponAttackAction.DugInInf";
+                toHit.addModifier(2, Messages.getString(coverReason));
+                LOGGER.debug("[Fortify] +2 to-hit vs {} ({})", target.getDisplayName(),
+                      targetInFortifiedHex ? "fortified hex" : "dug in");
             } else if (infantry.isHitTheDeck()) {
                 toHit.addModifier(1, Messages.getString("WeaponAttackAction.HitDeckInf"));
+            } else if (infantry.getDugIn() == Infantry.DUG_IN_WORKING) {
+                LOGGER.debug("[Fortify] no +2 to-hit vs {} - still digging in (WORKING); not protected until the "
+                      + "next round converts it to dug-in", target.getDisplayName());
             }
         }
 

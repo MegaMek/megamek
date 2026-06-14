@@ -764,6 +764,9 @@ public class TWGameManager extends AbstractGameManager {
                 case DEPLOY_MINEFIELDS:
                     receiveDeployMinefields(packet, connId);
                     break;
+                case DEPLOY_FORTIFICATIONS:
+                    receiveDeployFortifications(packet, connId);
+                    break;
                 case UPDATE_GROUND_OBJECTS:
                     receiveGroundObjectUpdate(packet, connId);
                     break;
@@ -9632,6 +9635,74 @@ public class TWGameManager extends AbstractGameManager {
                 player.addMinefields(minefields);
             }
         }
+    }
+
+    /**
+     * Receives a player's fortified-hex placements made during the minefield deployment phase and applies them to the
+     * board. Fortified hexes are visible terrain, so no per-player concealment is needed.
+     */
+    private void receiveDeployFortifications(Packet packet, int connId) throws InvalidPacketDataException {
+        // is this the right phase?
+        if (!getGame().getPhase().isDeployMinefields()) {
+            LOGGER.error("Server got deploy fortifications packet in wrong phase");
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        Vector<BoardLocation> fortifiedHexes = (Vector<BoardLocation>) packet.getObject(0);
+        processDeployFortifications(getGame().getPlayer(connId), fortifiedHexes);
+        endCurrentTurn(null);
+    }
+
+    /**
+     * Applies a player's fortified-hex placements: writes FORTIFIED terrain to each legal hex within the player's
+     * allotment and pushes the hex change to all clients. TO:AUE p.153.
+     *
+     * @param player         the placing player
+     * @param fortifiedHexes the hex locations the player chose to fortify
+     */
+    private void processDeployFortifications(@Nullable Player player, @Nullable Vector<BoardLocation> fortifiedHexes) {
+        if ((player == null) || (fortifiedHexes == null)) {
+            return;
+        }
+        int allowed = player.getNbrFortifiedHexes();
+        int placed = 0;
+        for (BoardLocation location : fortifiedHexes) {
+            if (placed >= allowed) {
+                LOGGER.warn("[Fortify] {}: ignoring fortified hex beyond allotment of {}", player.getName(), allowed);
+                break;
+            }
+            if (!isLegalFortificationPlacement(player, location)) {
+                continue;
+            }
+            Hex hex = game.getBoard(location.boardId()).getHex(location.coords());
+            hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
+            sendChangedHex(location.coords(), location.boardId());
+            placed++;
+        }
+        if (placed > 0) {
+            LOGGER.info("[Fortify] {}: placed {} fortified hex(es) during deployment", player.getName(), placed);
+        }
+    }
+
+    /**
+     * @return {@code true} if the player may place a fortified hex at the given location: it is on the board, on
+     *       fortifiable terrain (TO:AR p.106 / TO:AUE p.153), and within the player's deployment zone
+     */
+    private boolean isLegalFortificationPlacement(Player player, BoardLocation location) {
+        Board board = game.getBoard(location.boardId());
+        if ((board == null) || !board.contains(location.coords())) {
+            return false;
+        }
+        if (!MoveStep.isFortifiableTerrain(board.getHex(location.coords()))) {
+            LOGGER.debug("[Fortify] {}: rejected fortified hex at {} - illegal terrain", player.getName(), location);
+            return false;
+        }
+        if (!board.isLegalDeployment(location.coords(), player)) {
+            LOGGER.debug("[Fortify] {}: rejected fortified hex at {} - outside deployment zone", player.getName(),
+                  location);
+            return false;
+        }
+        return true;
     }
 
     /**

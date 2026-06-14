@@ -145,6 +145,9 @@ public enum PacketCommand {
     SENDING_MAP_SETTINGS,
     END_OF_GAME,
     DEPLOY_MINEFIELDS,
+
+    /** A Client to Server packet carrying the hex coordinates a player is placing as fortified hexes. */
+    DEPLOY_FORTIFICATIONS,
     REVEAL_MINEFIELD,
     REMOVE_MINEFIELD,
     SENDING_MINEFIELDS,

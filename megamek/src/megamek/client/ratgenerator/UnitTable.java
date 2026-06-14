@@ -260,6 +260,21 @@ public class UnitTable {
         return salvageTable.size() + unitTable.size();
     }
 
+    public Parameters getParameters() {
+        return key.copy();
+    }
+
+    public List<TableEntry> getEntries() {
+        List<TableEntry> entries = new ArrayList<>(salvageTable.size() + unitTable.size());
+        entries.addAll(salvageTable);
+        entries.addAll(unitTable);
+        return Collections.unmodifiableList(entries);
+    }
+
+    public int getTotalWeight() {
+        return salvageTotal + unitTotal;
+    }
+
     /**
      * @param index index of the {@link TableEntry}
      *
@@ -495,6 +510,10 @@ public class UnitTable {
 
         public MekSummary getUnitEntry() {
             return (MekSummary) entry;
+        }
+
+        public int getWeight() {
+            return weight;
         }
 
         public FactionRecord getSalvageFaction() {

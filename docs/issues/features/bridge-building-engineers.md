@@ -145,18 +145,31 @@ The feature is gated behind a new dedicated game option: **TO Bridge-Building En
 
 ## Cancel / dismantle (added 2026-06-13)
 
-A build can be cancelled any time before completion, and a dismantling can be reversed. The "Build Bridge" button
-has three modes:
+A build in progress has several exits, offered through a **chooser dialog** (added 2026-06-13) when the bridge
+button is clicked. The button label is state-based — **Build Bridge** (idle), **Cancel Bridge** (building),
+**Resume Building** (paused/dismantling) — and clicking it (when busy) opens a dialog listing the valid actions:
 
-- **Build Bridge** (idle platoon): opens the type/site selection flow as before.
-- **Cancel Bridge** (platoon currently building): a confirmation dialog appears; on confirm it declares a
-  `CANCEL_BRIDGE` move step and ends the turn so dismantling begins. The platoon stops building and dismantles the
-  partial structure over as many turns as were **banked** building (at least one). Once dismantling finishes, the
-  spent bridge building point(s) are **refunded**.
-- **Resume Building** (platoon currently dismantling): declares a `RESUME_BRIDGE` move step and ends the turn,
-  reversing the dismantling back into building. The build resumes from the structure still standing (e.g. dismantled
-  down to 3/6, Resume rebuilds from 3/6 toward 6/6). The spent points are **not** refunded (only a completed
-  dismantle refunds).
+- **Build Bridge** (idle platoon): opens the type/site selection flow.
+- While **actively building** → **Pause**, **Dismantle**, or **Abandon**:
+    - **Dismantle** (`CANCEL_BRIDGE`): dismantles the partial structure over as many turns as were **banked** building
+      (at least one); the spent point(s) are **refunded** once it finishes.
+    - **Abandon** (`ABANDON_BRIDGE`): instant — the partial work is lost this turn and the points are **forfeit** (no
+      refund).
+    - **Pause** (`PAUSE_BRIDGE`): the progress is held on the platoon and the platoon is **freed** to move and fight;
+      the spent points stay committed. Persists indefinitely.
+- While **paused** → **Resume** (only when standing adjacent to the site again) or **Abandon**.
+- While **dismantling** → **Resume** (`RESUME_BRIDGE`, reverses the dismantle from the structure still standing) or
+  **Abandon**.
+
+Each declaration ends the platoon's turn. Pausing frees the platoon from the **next** turn (it can't be unlocked
+mid-movement-phase because the client doesn't know it's freed until the server round-trips). A platoon can have only
+**one** bridge in progress at a time (building, paused, or dismantling). A paused platoon that is destroyed loses the
+work (no bridge, no refund).
+
+An in-progress bridge (building, paused, or dismantling) **reserves its hex**: no terrain is placed until 6/6, so
+`ConvInfantry.isBridgeTargetClaimed(game, boardId, target, excluded)` stops a second platoon from raising another
+bridge in the same hex. It's enforced both in the client's site list (the hex isn't offered, with a "claimed" reason)
+and defensively on the server in `processBuildBridgeStep`.
 
 Rules / behavior:
 

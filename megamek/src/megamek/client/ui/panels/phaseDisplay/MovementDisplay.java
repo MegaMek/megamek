@@ -6506,13 +6506,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_FORTIFY.getCmd())) {
             addStepToMovePath(MoveStepType.FORTIFY);
         } else if (actionCmd.equals(MoveCommand.MOVE_BUILD_BRIDGE.getCmd())) {
-            if ((currentEntity() instanceof ConvInfantry bridgePlatoon) && bridgePlatoon.isBuildingBridge()) {
-                // The button is in "Cancel Bridge" mode: confirm, then declare dismantling and end the turn.
-                confirmAndDeclareBridgeCancel(bridgePlatoon);
-            } else if ((currentEntity() instanceof ConvInfantry bridgePlatoon)
-                  && bridgePlatoon.isDismantlingBridge()) {
-                // The button is in "Resume Building" mode: reverse the dismantling and end the turn.
-                declareBridgeResume(bridgePlatoon);
+            if ((currentEntity() instanceof ConvInfantry bridgePlatoon) && bridgePlatoon.hasBridgeInProgress()) {
+                // A bridge is in progress (building, paused, or dismantling): offer the valid actions for this state.
+                showBridgeActionChooser(bridgePlatoon);
             } else {
                 startBridgeBuildSelection();
             }
@@ -7733,6 +7729,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if ((hex != null) && hex.containsAnyTerrainOf(Terrains.BRIDGE, Terrains.BUILDING, Terrains.FUEL_TANK)) {
             return Messages.getString("MovementDisplay.BuildBridge.reason.occupied");
         }
+        if (ConvInfantry.isBridgeTargetClaimed(game, convInfantry.getBoardId(), clicked, convInfantry)) {
+            return Messages.getString("MovementDisplay.BuildBridge.reason.claimed");
+        }
         return Messages.getString("MovementDisplay.BuildBridge.reason.middleNoSpan");
     }
 
@@ -7780,10 +7779,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void updateBridgeBuildButton(@Nullable Entity selectedUnit, GameOptions gameOptions) {
         MegaMekButton button = getBtn(MoveCommand.MOVE_BUILD_BRIDGE);
         if ((selectedUnit instanceof ConvInfantry building) && building.isBuildingBridge()) {
+            // Actively building: the button opens a chooser (Pause / Dismantle / Abandon)
             button.setText(Messages.getString("MovementDisplay.moveCancelBridge"));
             button.setToolTipText(Messages.getString("MovementDisplay.moveCancelBridge.tooltip"));
             button.setEnabled(true);
-        } else if ((selectedUnit instanceof ConvInfantry dismantling) && dismantling.isDismantlingBridge()) {
+        } else if ((selectedUnit instanceof ConvInfantry resuming)
+              && (resuming.isDismantlingBridge() || resuming.isBridgePaused())) {
+            // Paused or dismantling: the button opens a chooser (Resume / Abandon)
             button.setText(Messages.getString("MovementDisplay.moveResumeBridge"));
             button.setToolTipText(Messages.getString("MovementDisplay.moveResumeBridge.tooltip"));
             button.setEnabled(true);
@@ -7879,6 +7881,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (!board.contains(middle)) {
                 continue;
             }
+            // Don't offer a hex another platoon is already raising/pausing/dismantling a bridge in (no terrain is
+            // placed until it completes, so the site validator alone can't see the in-progress claim)
+            if (ConvInfantry.isBridgeTargetClaimed(game, convInfantry.getBoardId(), middle, convInfantry)) {
+                continue;
+            }
             // The bridge originates from the engineer: the near bank is always the deck side facing the platoon
             int originSide = middle.direction(engineerPosition);
             for (int farSide = 0; farSide < 6; farSide++) {
@@ -7895,42 +7902,57 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     /**
-     * Confirms cancelling an in-progress bridge build with the player, then declares the dismantling and ends the
-     * platoon's turn so the work begins. Dismantling takes as many turns as were banked building (at least one); the
-     * bridge building points are refunded once it finishes. TO:AUE p.152.
+     * Presents the bridge actions available for the platoon's current state and, on a choice, declares the matching
+     * move step and ends the turn. Active building offers Pause / Dismantle / Abandon; a paused build offers Resume
+     * (when adjacent) / Abandon; a dismantling offers Resume / Abandon. TO:AUE p.152.
      *
-     * @param bridgePlatoon the platoon whose build is being cancelled
+     * @param bridgePlatoon the platoon with bridge work in progress
      */
-    private void confirmAndDeclareBridgeCancel(ConvInfantry bridgePlatoon) {
-        int dismantleTurns = Math.max(1, bridgePlatoon.getBridgeBuildTurns());
-        int choice = JOptionPane.showConfirmDialog(clientgui.getFrame(),
-              Messages.getString("MovementDisplay.CancelBridge.confirm", dismantleTurns),
-              Messages.getString("MovementDisplay.CancelBridge.confirmTitle"),
-              JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if (choice != JOptionPane.YES_OPTION) {
-            LOGGER.debug("[BuildBridge] {}: bridge cancellation declined at the confirmation dialog",
+    private void showBridgeActionChooser(ConvInfantry bridgePlatoon) {
+        List<String> labels = new ArrayList<>();
+        List<MoveStepType> steps = new ArrayList<>();
+        if (bridgePlatoon.isBuildingBridge()) {
+            labels.add(Messages.getString("MovementDisplay.BridgeAction.pause"));
+            steps.add(MoveStepType.PAUSE_BRIDGE);
+            int dismantleTurns = Math.max(1, bridgePlatoon.getBridgeBuildTurns());
+            labels.add(Messages.getString("MovementDisplay.BridgeAction.dismantle", dismantleTurns));
+            steps.add(MoveStepType.CANCEL_BRIDGE);
+            labels.add(Messages.getString("MovementDisplay.BridgeAction.abandon"));
+            steps.add(MoveStepType.ABANDON_BRIDGE);
+        } else if (bridgePlatoon.isBridgePaused()) {
+            if (bridgePlatoon.isAdjacentToBridgeSite()) {
+                labels.add(Messages.getString("MovementDisplay.BridgeAction.resume"));
+                steps.add(MoveStepType.RESUME_BRIDGE);
+            }
+            labels.add(Messages.getString("MovementDisplay.BridgeAction.abandon"));
+            steps.add(MoveStepType.ABANDON_BRIDGE);
+        } else if (bridgePlatoon.isDismantlingBridge()) {
+            labels.add(Messages.getString("MovementDisplay.BridgeAction.resume"));
+            steps.add(MoveStepType.RESUME_BRIDGE);
+            labels.add(Messages.getString("MovementDisplay.BridgeAction.abandon"));
+            steps.add(MoveStepType.ABANDON_BRIDGE);
+        } else {
+            return;
+        }
+        // A trailing "keep current state" option; selecting it (or closing) changes nothing
+        labels.add(Messages.getString("MovementDisplay.BridgeAction.keep"));
+
+        String message = (bridgePlatoon.isBridgePaused() && !bridgePlatoon.isAdjacentToBridgeSite())
+              ? Messages.getString("MovementDisplay.BridgeAction.messagePausedAway")
+              : Messages.getString("MovementDisplay.BridgeAction.message");
+        Object[] options = labels.toArray();
+        int choice = JOptionPane.showOptionDialog(clientgui.getFrame(), message,
+              Messages.getString("MovementDisplay.BridgeAction.title"),
+              JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[options.length - 1]);
+        if ((choice < 0) || (choice >= steps.size())) {
+            LOGGER.debug("[BuildBridge] {}: bridge action chooser dismissed with no change",
                   bridgePlatoon.getShortName());
             return;
         }
-        LOGGER.info("[BuildBridge] {}: declaring bridge cancellation (dismantle over {} turn(s))",
-              bridgePlatoon.getShortName(), dismantleTurns);
+        MoveStepType step = steps.get(choice);
+        LOGGER.info("[BuildBridge] {}: chose bridge action {}", bridgePlatoon.getShortName(), step);
         clear();
-        addStepToMovePath(MoveStepType.CANCEL_BRIDGE);
-        ready();
-    }
-
-    /**
-     * Reverses an in-progress dismantling back into building and ends the platoon's turn so the build resumes from the
-     * structure still standing. TO:AUE p.152.
-     *
-     * @param bridgePlatoon the platoon resuming its build
-     */
-    private void declareBridgeResume(ConvInfantry bridgePlatoon) {
-        LOGGER.info("[BuildBridge] {}: declaring bridge resume (from {} of {} turns built)",
-              bridgePlatoon.getShortName(), bridgePlatoon.getBridgeDismantleRemaining(),
-              bridgePlatoon.getBridgeBuildRequiredTurns());
-        clear();
-        addStepToMovePath(MoveStepType.RESUME_BRIDGE);
+        addStepToMovePath(step);
         ready();
     }
 

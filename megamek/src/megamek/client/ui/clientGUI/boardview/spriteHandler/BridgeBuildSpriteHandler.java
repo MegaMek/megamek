@@ -67,7 +67,7 @@ public class BridgeBuildSpriteHandler extends BoardViewSpriteHandler {
             return;
         }
         for (Entity entity : game.getEntitiesVector()) {
-            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBusyWithBridge()
+            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.hasBridgeInProgress()
                   || (convInfantry.getBridgeTargetCoords() == null)) {
                 continue;
             }

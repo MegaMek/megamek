@@ -274,23 +274,27 @@ public final class HexTooltip {
     private static void appendBridgeBuildInfo(StringBuilder result, Game game, Coords mcoords, int boardId) {
         for (Entity entity : game.getEntitiesVector()) {
             boolean isWorkingHere = (entity instanceof ConvInfantry convInfantry)
-                  && convInfantry.isBusyWithBridge()
+                  && convInfantry.hasBridgeInProgress()
                   && (entity.getBoardId() == boardId)
                   && mcoords.equals(convInfantry.getBridgeTargetCoords());
             if (!isWorkingHere) {
                 continue;
             }
             ConvInfantry convInfantry = (ConvInfantry) entity;
+            int builtTurns = Math.min(convInfantry.getBridgeBuildTurns(), convInfantry.getBridgeBuildRequiredTurns());
+            // Identify the engineer platoon so the player can see who is working the hex
+            String builder = convInfantry.getShortName() + " (ID " + convInfantry.getId() + ")";
             String buildInfo;
             if (convInfantry.isDismantlingBridge()) {
                 // Count the standing structure back down on the build's scale (e.g. 4/6, 3/6, ...)
                 buildInfo = Messages.getString("BoardView1.Tooltip.BridgeDismantling",
-                      convInfantry.getBridgeDismantleRemaining(), convInfantry.getBridgeBuildRequiredTurns());
+                      convInfantry.getBridgeDismantleRemaining(), convInfantry.getBridgeBuildRequiredTurns(), builder);
+            } else if (convInfantry.isBridgePaused()) {
+                buildInfo = Messages.getString("BoardView1.Tooltip.BridgePaused",
+                      builtTurns, convInfantry.getBridgeBuildRequiredTurns(), builder);
             } else {
-                int turnsWorked = Math.min(convInfantry.getBridgeBuildTurns(),
-                      convInfantry.getBridgeBuildRequiredTurns());
                 buildInfo = Messages.getString("BoardView1.Tooltip.BridgeBuilding",
-                      turnsWorked, convInfantry.getBridgeBuildRequiredTurns());
+                      builtTurns, convInfantry.getBridgeBuildRequiredTurns(), builder);
             }
             String attr = String.format("FACE=Dialog COLOR=%s",
                   UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));

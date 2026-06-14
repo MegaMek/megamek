@@ -791,6 +791,139 @@ public class BridgeBuildingTest extends GameBoardTestCase {
     }
 
     @Test
+    void anInProgressBridgeReservesItsHexAgainstASecondBuild() {
+        ConvInfantry first = createEngineerPlatoon(ENGINEER_COORDS);
+        first.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
+        ConvInfantry second = createEngineerPlatoon(new Coords(2, 2));
+
+        // Another platoon must see the target hex as claimed; the building platoon excludes itself
+        assertTrue(ConvInfantry.isBridgeTargetClaimed(game, board.getBoardId(), WATER_TARGET_COORDS, second),
+              "An in-progress bridge must reserve its hex against a second platoon");
+        assertFalse(ConvInfantry.isBridgeTargetClaimed(game, board.getBoardId(), WATER_TARGET_COORDS, first),
+              "The building platoon must not be blocked by its own build");
+
+        // The reservation persists while paused (the partial bridge places no terrain to mark the hex)
+        first.pauseBridgeBuild();
+        assertTrue(ConvInfantry.isBridgeTargetClaimed(game, board.getBoardId(), WATER_TARGET_COORDS, second),
+              "A paused bridge must still reserve its hex");
+
+        // A hex with no in-progress bridge is free
+        assertFalse(ConvInfantry.isBridgeTargetClaimed(game, board.getBoardId(), ENGINEER_COORDS, second),
+              "A hex with no in-progress bridge is not claimed");
+    }
+
+    @Test
+    void abandonIsInstantAndForfeitsThePoints() {
+        ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
+        engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
+        engineers.spendBridgeBuildPoints(ConvInfantry.BRIDGE_TYPE_LIGHT);
+        gameManager.checkBuildBridges();
+
+        engineers.abandonBridge();
+
+        assertFalse(engineers.hasBridgeInProgress(), "Abandon clears all bridge work immediately");
+        assertFalse(engineers.isBuildingBridge(), "Abandon stops building at once");
+        assertEquals(ConvInfantry.BRIDGE_BUILD_POINTS - ConvInfantry.BRIDGE_TYPE_LIGHT,
+              engineers.getBridgeBuildPoints(), "Abandon must NOT refund the spent point");
+        assertFalse(board.getHex(WATER_TARGET_COORDS).containsTerrain(Terrains.BRIDGE),
+              "An abandoned build never places a bridge");
+    }
+
+    @Test
+    void pausedPlatoonIsFreedHoldsProgressAndDoesNotAdvance() {
+        ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
+        engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
+        // Bank three turns, then pause
+        gameManager.checkBuildBridges();
+        engineers.newRound(2);
+        gameManager.checkBuildBridges();
+        engineers.newRound(3);
+        gameManager.checkBuildBridges();
+        assertEquals(3, engineers.getBridgeBuildTurns());
+
+        engineers.pauseBridgeBuild();
+        assertTrue(engineers.isBridgePaused(), "Pausing must enter the paused state");
+        assertFalse(engineers.isBuildingBridge(), "A paused platoon is not actively building");
+        assertFalse(engineers.isBusyWithBridge(), "A paused platoon is freed (not busy with the bridge)");
+        assertTrue(engineers.hasBridgeInProgress(), "A paused platoon still has bridge work in progress");
+        assertTrue(engineers.isEligibleFor(GamePhase.MOVEMENT), "A paused platoon is eligible to act");
+
+        // A paused build does not advance at END
+        gameManager.checkBuildBridges();
+        assertEquals(3, engineers.getBridgeBuildTurns(), "A paused build must not advance");
+        assertTrue(engineers.isBridgePaused());
+
+        // A paused platoon may move away without losing the work
+        engineers.setPosition(new Coords(4, 5));
+        engineers.newRound(4);
+        assertTrue(engineers.isBridgePaused(), "Moving away must not abandon a paused build");
+        assertEquals(3, engineers.getBridgeBuildTurns(), "The held progress persists while paused");
+    }
+
+    @Test
+    void pausedBridgeResumesFromHeldProgressAndCompletes() {
+        ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
+        engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
+        // Bank three turns, pause, wander off and back
+        for (int round = 1; round <= 3; round++) {
+            gameManager.checkBuildBridges();
+            engineers.newRound(round + 1);
+        }
+        engineers.pauseBridgeBuild();
+        engineers.setPosition(new Coords(4, 5));
+        engineers.newRound(5);
+        // Return adjacent and resume
+        engineers.setPosition(ENGINEER_COORDS);
+        engineers.resumeBridgeBuild();
+        assertTrue(engineers.isBuildingBridge(), "Resuming a pause returns to active building");
+        assertFalse(engineers.isBridgePaused());
+        assertEquals(3, engineers.getBridgeBuildTurns(), "Building resumes from the held 3 turns");
+
+        // Bank the remaining three turns to finish
+        for (int round = 6; round <= 8; round++) {
+            engineers.newRound(round);
+            gameManager.checkBuildBridges();
+        }
+        assertTrue(board.getHex(WATER_TARGET_COORDS).containsTerrain(Terrains.BRIDGE),
+              "A resumed paused build completes once the remaining turns are banked");
+    }
+
+    @Test
+    void cannotStartANewBridgeWhilePausedOrBuilding() {
+        ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
+        engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
+        assertFalse(engineers.canStartBridgeBuild(), "Cannot start a second bridge while actively building");
+        engineers.pauseBridgeBuild();
+        assertFalse(engineers.canStartBridgeBuild(), "Cannot start a second bridge while one is paused");
+    }
+
+    @Test
+    void pausedBridgeStateSurvivesSerialization() throws Exception {
+        ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
+        engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_MEDIUM);
+        gameManager.checkBuildBridges();
+        engineers.newRound(2);
+        gameManager.checkBuildBridges();
+        engineers.pauseBridgeBuild();
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        try (ObjectOutputStream objectOut = new ObjectOutputStream(buffer)) {
+            objectOut.writeObject(engineers);
+        }
+        ConvInfantry restored;
+        try (ObjectInputStream objectIn = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
+            restored = (ConvInfantry) objectIn.readObject();
+        }
+
+        assertTrue(restored.isBridgePaused(), "The restored platoon must still be paused");
+        assertFalse(restored.isBuildingBridge(), "A restored paused platoon is not actively building");
+        assertEquals(engineers.getBridgeBuildTurns(), restored.getBridgeBuildTurns(),
+              "The held progress must survive a save game round trip");
+        assertEquals(WATER_TARGET_COORDS, restored.getBridgeTargetCoords(),
+              "The paused bridge site must survive a save game round trip");
+    }
+
+    @Test
     void displacedDismantlingPlatoonLosesItsWorkWithoutRefund() {
         ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
         engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);

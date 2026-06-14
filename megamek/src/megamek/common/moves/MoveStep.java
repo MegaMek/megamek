@@ -1919,11 +1919,12 @@ public class MoveStep implements Serializable {
                   stepType, prev.isClimbing, entity.isClimbing(), curPos, elevation, prev.getFacing());
         }
 
-        // A platoon raising or dismantling a bridge may take no other action at all (TO:AUE p.152): it can only keep
-        // working (no step), declare CANCEL_BRIDGE to start dismantling, or declare RESUME_BRIDGE to reverse a
-        // dismantling back into building - it may not move, and not even turn in place.
+        // A platoon actively raising or dismantling a bridge may take no other action at all (TO:AUE p.152): it can
+        // only keep working (no step) or declare one of the bridge actions (pause/cancel/abandon/resume) - it may not
+        // move, and not even turn in place. A *paused* build does not lock the platoon: it is freed to move and fight.
         if ((entity instanceof ConvInfantry bridgeWorker) && bridgeWorker.isBusyWithBridge()
-              && (type != MoveStepType.CANCEL_BRIDGE) && (type != MoveStepType.RESUME_BRIDGE)) {
+              && (type != MoveStepType.CANCEL_BRIDGE) && (type != MoveStepType.RESUME_BRIDGE)
+              && (type != MoveStepType.PAUSE_BRIDGE) && (type != MoveStepType.ABANDON_BRIDGE)) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
             return;
         }
@@ -1964,15 +1965,32 @@ public class MoveStep implements Serializable {
             }
             movementType = EntityMovementType.MOVE_NONE;
         } else if (type == MoveStepType.CANCEL_BRIDGE) {
-            // A platoon may abandon its in-progress bridge to dismantle it; legal only while actually building.
+            // A platoon may dismantle its in-progress bridge for a refund; legal only while actively building.
+            if (!isFirstStep() || !(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBuildingBridge()) {
+                return;
+            }
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.PAUSE_BRIDGE) {
+            // A platoon may pause an active build to free itself and return later; legal only while actively building.
             if (!isFirstStep() || !(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBuildingBridge()) {
                 return;
             }
             movementType = EntityMovementType.MOVE_NONE;
         } else if (type == MoveStepType.RESUME_BRIDGE) {
-            // A platoon may reverse a dismantling back into building; legal only while actually dismantling.
+            // A platoon may reverse a dismantling, or resume a paused build (must be back adjacent to its site).
+            if (!isFirstStep() || !(entity instanceof ConvInfantry convInfantry)) {
+                return;
+            }
+            boolean canResume = convInfantry.isDismantlingBridge()
+                  || (convInfantry.isBridgePaused() && convInfantry.isAdjacentToBridgeSite());
+            if (!canResume) {
+                return;
+            }
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.ABANDON_BRIDGE) {
+            // A platoon may abandon any bridge work in progress (building, paused, or dismantling) - instant, no refund.
             if (!isFirstStep() || !(entity instanceof ConvInfantry convInfantry)
-                  || !convInfantry.isDismantlingBridge()) {
+                  || !convInfantry.hasBridgeInProgress()) {
                 return;
             }
             movementType = EntityMovementType.MOVE_NONE;

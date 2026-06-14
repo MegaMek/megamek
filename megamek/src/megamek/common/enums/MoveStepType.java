@@ -74,6 +74,8 @@ public enum MoveStepType {
     BUILD_BRIDGE(false, "BuildBridge"),
     CANCEL_BRIDGE(false, "CancelBridge"),
     RESUME_BRIDGE(false, "ResumeBridge"),
+    PAUSE_BRIDGE(false, "PauseBridge"),
+    ABANDON_BRIDGE(false, "AbandonBridge"),
     SHAKE_OFF_SWARMERS(false, "ShakeOffSwarmers"),
     TAKEOFF(false, "Takeoff"),
     VERTICAL_TAKE_OFF(false, "Vertical Takeoff"),

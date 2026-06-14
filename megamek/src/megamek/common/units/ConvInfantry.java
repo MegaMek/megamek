@@ -72,6 +72,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
@@ -555,11 +556,25 @@ public class ConvInfantry extends Infantry {
     private int bridgeDismantleRequiredTurns = 0;
 
     /**
-     * @return {@code true} while this platoon is raising a bridge. While building, the platoon is eligible only in
-     *       the movement phase (to continue or cancel), and takes no other action.
+     * {@code true} while a bridge build is paused: the partial progress is held on the platoon but the platoon is
+     * freed (it may move and fight normally) until it returns to the site and resumes. Stored in saves (non-transient).
+     */
+    private boolean bridgeBuildPaused = false;
+
+    /**
+     * @return {@code true} while this platoon is actively raising a bridge (not paused). While actively building, the
+     *       platoon is eligible only in the movement phase (to continue or change the build) and takes no other action.
      */
     public boolean isBuildingBridge() {
-        return bridgeBuildTurns >= 0;
+        return (bridgeBuildTurns >= 0) && !bridgeBuildPaused;
+    }
+
+    /**
+     * @return {@code true} while a bridge build is paused: progress is held but the platoon is freed to act normally
+     *       and may return to its site to resume. TO:AUE p.152.
+     */
+    public boolean isBridgePaused() {
+        return (bridgeBuildTurns >= 0) && bridgeBuildPaused;
     }
 
     /**
@@ -571,10 +586,44 @@ public class ConvInfantry extends Infantry {
     }
 
     /**
-     * @return {@code true} while this platoon is occupied raising or dismantling a bridge.
+     * @return {@code true} while this platoon is actively occupied raising or dismantling a bridge - it takes no other
+     *       action this turn. A <i>paused</i> build is not "busy": the platoon is freed (see {@link #isBridgePaused()}).
      */
     public boolean isBusyWithBridge() {
         return isBuildingBridge() || isDismantlingBridge();
+    }
+
+    /**
+     * @return {@code true} if this platoon has any bridge work in progress - actively building, paused, or dismantling.
+     *       Used to block starting a second bridge and to show the in-progress indicator.
+     */
+    public boolean hasBridgeInProgress() {
+        return (bridgeBuildTurns >= 0) || isDismantlingBridge();
+    }
+
+    /**
+     * @param game     the current game
+     * @param boardId  the board the target hex is on
+     * @param target   the candidate bridge hex
+     * @param excluded a platoon to ignore (the one considering the build), or null
+     *
+     * @return {@code true} if another platoon already has bridge work in progress (building, paused, or dismantling)
+     *       targeting this hex. An in-progress bridge places no terrain until it completes, so this is the only way to
+     *       stop two platoons from raising two bridges in the same hex. TO:AUE p.152.
+     */
+    public static boolean isBridgeTargetClaimed(Game game, int boardId, Coords target, @Nullable Entity excluded) {
+        if (target == null) {
+            return false;
+        }
+        for (Entity entity : game.getEntitiesVector()) {
+            if ((entity != excluded) && (entity instanceof ConvInfantry convInfantry)
+                  && convInfantry.hasBridgeInProgress()
+                  && (convInfantry.getBoardId() == boardId)
+                  && target.equals(convInfantry.getBridgeTargetCoords())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -596,7 +645,7 @@ public class ConvInfantry extends Infantry {
               bridgeBuildRequiredTurns);
     }
 
-    /** Stops the current bridge build, losing all progress. The bridge building budget is not refunded. */
+    /** Stops all bridge work, losing any progress. The bridge building budget is not refunded. */
     public void cancelBridgeBuild() {
         bridgeBuildTurns = -1;
         bridgeBuildRequiredTurns = BRIDGE_BUILD_TURNS;
@@ -606,6 +655,29 @@ public class ConvInfantry extends Infantry {
         bridgeBuildTroopersSnapshot = 0;
         bridgeDismantleTurns = -1;
         bridgeDismantleRequiredTurns = 0;
+        bridgeBuildPaused = false;
+    }
+
+    /**
+     * Abandons any bridge work in progress immediately: the partial structure is lost this turn and the spent budget
+     * is
+     * <b>not</b> refunded. Unlike dismantling (which takes turns and refunds), abandoning is instant and forfeits the
+     * points. TO:AUE p.152.
+     */
+    public void abandonBridge() {
+        logger.debug("[BuildBridge] {} abandons its bridge at {} - progress lost, {} point(s) forfeit",
+              getShortName(), bridgeTargetCoords, bridgeType);
+        cancelBridgeBuild();
+    }
+
+    /**
+     * Pauses an active bridge build: the partial progress is held on the platoon, which is then freed to move and fight
+     * normally until it returns to the site and resumes. The spent budget stays committed. TO:AUE p.152.
+     */
+    public void pauseBridgeBuild() {
+        bridgeBuildPaused = true;
+        logger.debug("[BuildBridge] {} pauses its type-{} bridge at {} at {} of {} turns; the platoon is freed",
+              getShortName(), bridgeType, bridgeTargetCoords, bridgeBuildTurns, bridgeBuildRequiredTurns);
     }
 
     /**
@@ -623,16 +695,19 @@ public class ConvInfantry extends Infantry {
     }
 
     /**
-     * Reverses a dismantling back into building: the structure still standing (the dismantle countback position)
-     * becomes the build's completed-turn total, so building resumes from where the dismantling left off. The trooper
-     * snapshot is refreshed so casualty extensions resume cleanly. The bridge site, exits, type and spent budget are
-     * unchanged. TO:AUE p.152.
+     * Resumes building, from either a paused build or a dismantling. From a pause, the held progress simply continues.
+     * From a dismantling, the structure still standing (the dismantle countback position) becomes the build's
+     * completed-turn total, so building resumes from where the dismantling left off. Either way the trooper snapshot is
+     * refreshed so casualty extensions resume cleanly, and the bridge site, exits, type and spent budget are unchanged.
+     * TO:AUE p.152.
      */
     public void resumeBridgeBuild() {
-        int standing = getBridgeDismantleRemaining();
-        bridgeBuildTurns = standing;
-        bridgeDismantleTurns = -1;
-        bridgeDismantleRequiredTurns = 0;
+        if (isDismantlingBridge()) {
+            bridgeBuildTurns = getBridgeDismantleRemaining();
+            bridgeDismantleTurns = -1;
+            bridgeDismantleRequiredTurns = 0;
+        }
+        bridgeBuildPaused = false;
         bridgeBuildTroopersSnapshot = Math.max(getInternal(LOC_INFANTRY), 0);
         logger.debug("[BuildBridge] {} resumes building its type-{} bridge at {} from {} of {} turns",
               getShortName(), bridgeType, bridgeTargetCoords, bridgeBuildTurns, bridgeBuildRequiredTurns);
@@ -754,7 +829,7 @@ public class ConvInfantry extends Infantry {
      */
     public boolean canStartBridgeBuild() {
         return hasSpecialization(BRIDGE_ENGINEERS) && hasBridgeKit() && canAffordBridge(BRIDGE_TYPE_LIGHT)
-              && !isBusyWithBridge();
+              && !hasBridgeInProgress();
     }
 
     /**

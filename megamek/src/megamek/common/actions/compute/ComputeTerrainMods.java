@@ -46,6 +46,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.ToHitData;
+import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeECM;
 import megamek.common.compute.ComputeSideTable;
@@ -62,6 +63,7 @@ import megamek.common.units.QuadVee;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
+import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 
 public class ComputeTerrainMods {
 
@@ -158,8 +160,12 @@ public class ComputeTerrainMods {
         boolean targetInFortifiedHex = (targetHex != null) && targetHex.containsTerrain(Terrains.FORTIFIED);
 
         // Fortified/Dug-In Infantry (+2) or Hitting the Deck (+1), TO:AR p.106. Both bonuses are excluded against
-        // flamers (the rules also exclude area-effect weapons, which is a separate, pre-existing gap).
-        if ((target instanceof Infantry infantry) && (weaponType != null) && !weaponType.hasFlag(WeaponType.F_FLAMER)) {
+        // flamers and area-effect weapons (artillery, bombs, fuel-air explosives): those blanket the whole hex,
+        // so the cover the infantry is using does not foil them.
+        boolean excludedFromCoverBonus = (weaponType == null)
+              || weaponType.hasFlag(WeaponType.F_FLAMER)
+              || isAreaEffectAgainstInfantry(weaponType, ammoType);
+        if ((target instanceof Infantry infantry) && !excludedFromCoverBonus) {
             if (targetInFortifiedHex || (infantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.DugInInf"));
             } else if (infantry.isHitTheDeck()) {
@@ -326,6 +332,27 @@ public class ComputeTerrainMods {
               && (target != null) && !target.isOffBoard() && (target.getPosition() != null)
               && (attacker.getBAPRange() >= Compute.effectiveDistance(game, attacker, target))
               && !ComputeECM.isAffectedByECM(attacker, attacker.getPosition(), target.getPosition());
+    }
+
+    /**
+     * Determines whether an attack is "area-effect" for the purposes of the dug-in / fortified / hit-the-deck cover
+     * bonus (TO:AR p.106 / TO:AUE p.153). Such attacks blanket the whole hex, so they ignore the cover the infantry is
+     * relying on and do not receive the to-hit penalty.
+     *
+     * @param weaponType the weapon being fired (never null - callers guard this)
+     * @param ammoType   the ammo being used, or null for weapons without ammo
+     *
+     * @return {@code true} for artillery (including Arrow IV and artillery cannons), bombs, and fuel-air explosive
+     *       munitions
+     */
+    // Package-private for unit testing.
+    static boolean isAreaEffectAgainstInfantry(WeaponType weaponType, @Nullable AmmoType ammoType) {
+        boolean isArtillery = weaponType.hasFlag(WeaponType.F_ARTILLERY)
+              || (weaponType instanceof ArtilleryCannonWeapon);
+        boolean isBomb = weaponType.hasAnyFlag(WeaponType.F_ALT_BOMB, WeaponType.F_DIVE_BOMB,
+              WeaponType.F_SPACE_BOMB);
+        boolean isFuelAir = (ammoType != null) && ammoType.getMunitionType().contains(AmmoType.Munitions.M_FAE);
+        return isArtillery || isBomb || isFuelAir;
     }
 
     private ComputeTerrainMods() {}

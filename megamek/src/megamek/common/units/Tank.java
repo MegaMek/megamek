@@ -143,6 +143,12 @@ public class Tank extends Entity {
     public static final int DUG_IN_FORTIFYING3 = 3;
     private int dugIn = DUG_IN_NONE;
 
+    /**
+     * Tracks damage taken between turns while fortifying, so that being attacked extends the effort by one turn (TO:AUE
+     * p.153). Server-side runtime state; not written to save files (dug-in progress is itself not persisted).
+     */
+    private final FortifyState fortifyState = new FortifyState();
+
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25 };
 
@@ -991,9 +997,16 @@ public class Tank extends Entity {
 
         // Continue to fortify
         if (dugIn != DUG_IN_NONE) {
-            dugIn++;
-            if (dugIn > DUG_IN_FORTIFYING3) {
-                dugIn = DUG_IN_NONE;
+            // Damage taken during a fortifying turn extends the effort by one turn (TO:AUE p.153): hold the
+            // progress counter this round instead of advancing it.
+            if (fortifyState.checkpointWasDamaged(currentFortifyHealthSignature())) {
+                logger.debug("[Fortify] {}: damaged while fortifying - effort extended by 1 turn (dug-in stage {})",
+                      getShortName(), dugIn);
+            } else {
+                dugIn++;
+                if (dugIn > DUG_IN_FORTIFYING3) {
+                    dugIn = DUG_IN_NONE;
+                }
             }
         }
     }
@@ -1004,6 +1017,32 @@ public class Tank extends Entity {
 
     public int getDugIn() {
         return dugIn;
+    }
+
+    /**
+     * Begins the three-turn fieldwork that raises a fortified hex, for vehicles with fieldworks-capable
+     * equipment such as a bulldozer or backhoe (Vehicles and Fieldworks, TO:AUE p.153). Seeds the damage
+     * baseline used to detect an interrupting attack that extends the effort.
+     */
+    public void beginFortify() {
+        setDugIn(DUG_IN_FORTIFYING1);
+        fortifyState.begin(currentFortifyHealthSignature());
+    }
+
+    /**
+     * @return the health signature used to detect damage between fortifying turns: total armor plus internal structure.
+     *       Any armor or structural damage between turns lowers this value and marks the turn as interrupted.
+     */
+    private int currentFortifyHealthSignature() {
+        return getTotalArmor() + getTotalInternal();
+    }
+
+    /**
+     * @return {@code true} if this vehicle's fortification effort was set back by damage this round (so its progress
+     *       counter was held rather than advanced). TO:AUE p.153.
+     */
+    public boolean isFortifyExtendedThisRound() {
+        return fortifyState.wasExtendedAtLastCheckpoint();
     }
 
     /**

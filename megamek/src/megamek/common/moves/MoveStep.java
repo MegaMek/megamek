@@ -48,6 +48,7 @@ import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.LosEffects;
 import megamek.common.ManeuverType;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.board.FloorTarget;
@@ -380,6 +381,24 @@ public class MoveStep implements Serializable {
         newStep.boardId = finalBoardId;
         newStep.position = finalPosition;
         return newStep;
+    }
+
+    /**
+     * Determines whether a hex allows digging in or building a fortified hex. Water, pavement, building and road hexes
+     * are excluded, as is an already-fortified hex (TO:AR p.106 / TO:AUE p.153). Shared by the move-step legality check
+     * and the UI so both agree on the terrain rule.
+     *
+     * @param hex the hex to test, or null
+     *
+     * @return {@code true} if a unit may dig in or fortify in the given hex
+     */
+    public static boolean isFortifiableTerrain(@Nullable Hex hex) {
+        return (hex != null)
+              && !hex.containsTerrain(Terrains.WATER)
+              && !hex.containsTerrain(Terrains.PAVEMENT)
+              && !hex.containsTerrain(Terrains.FORTIFIED)
+              && !hex.containsTerrain(Terrains.BUILDING)
+              && !hex.containsTerrain(Terrains.ROAD);
     }
 
     @Override
@@ -1856,22 +1875,36 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_NONE;
         } else if ((type == MoveStepType.DIG_IN) || (type == MoveStepType.FORTIFY)) {
             if ((!isInfantry && !isTank) || !isFirstStep()) {
+                LOGGER.debug("[Fortify] {}: {} illegal - only infantry or vehicles, and only as the first/sole action",
+                      entity.getDisplayName(), type);
                 return; // can't dig in
+            }
+
+            // Building a fortified hex (FORTIFY) requires fieldworks-capable equipment - bulldozer, backhoe,
+            // vibro-shovel or equivalent (TO:AUE p.153). Plain self digging-in (DIG_IN) does not.
+            if ((type == MoveStepType.FORTIFY) && !entity.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
+                LOGGER.debug("[Fortify] {}: fortify illegal - no fieldworks-capable equipment (F_TRENCH_CAPABLE)",
+                      entity.getDisplayName());
+                return;
             }
 
             if (isInfantry) {
                 Infantry inf = (Infantry) entity;
                 if ((inf.getDugIn() != Infantry.DUG_IN_NONE) && (inf.getDugIn() != Infantry.DUG_IN_COMPLETE)) {
+                    LOGGER.debug("[Fortify] {}: {} illegal - already dug in (stage {})",
+                          entity.getDisplayName(), type, inf.getDugIn());
                     return; // Already dug in
                 }
             }
 
-            if (game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.PAVEMENT) ||
-                  game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.FORTIFIED) ||
-                  game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.BUILDING) ||
-                  game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.ROAD)) {
-                // already fortified - pointless, or terrain is illegal for
-                // digging in
+            // A fortified hex may not be created in - and a unit may not dig into - water, pavement, building
+            // or road hexes (TO:AR p.106 / TO:AUE p.153). An already-fortified hex is excluded too (no gain).
+            if (!isFortifiableTerrain(game.getBoard(boardId).getHex(curPos))) {
+                LOGGER.debug(
+                      "[Fortify] {}: {} illegal - terrain at {} is water/pavement/building/road or already fortified",
+                      entity.getDisplayName(),
+                      type,
+                      curPos);
                 return;
             }
             isDiggingIn = true;

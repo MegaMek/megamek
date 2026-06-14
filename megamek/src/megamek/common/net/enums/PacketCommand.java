@@ -195,6 +195,12 @@ public enum PacketCommand {
     /** A Server to Client packet instructing the Client to show a message (e.g. story message) to the player. */
     SCRIPTED_MESSAGE,
 
+    /**
+     * A Server to Client packet instructing the Client to show a transient toast notification on the board view, with a
+     * severity level, message text and an optional acting unit (for its icon).
+     */
+    SEND_TOAST,
+
     /** An SBF packet instructing the Client to replace the pending actions with the sent actions (possibly none). */
     ACTIONS,
 

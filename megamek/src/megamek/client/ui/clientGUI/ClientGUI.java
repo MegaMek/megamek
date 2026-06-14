@@ -152,15 +152,7 @@ import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.event.GameCFREvent;
-import megamek.common.event.GameEndEvent;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GameReportEvent;
-import megamek.common.event.GameScriptedEvent;
-import megamek.common.event.GameScriptedMessageEvent;
-import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.*;
 import megamek.common.event.board.GameBoardNewEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.event.entity.GameEntityNewEvent;
@@ -580,6 +572,22 @@ public class ClientGUI extends AbstractClientGUI
             logger.debug("Toast [{}] ({}): {}", level, entityLabel, normalized);
             toastOverlay.show(level, normalized, entity);
         }
+    }
+
+    /**
+     * Maps the layer-neutral severity carried by a {@link GameToastEvent} to the board view's toast styling.
+     *
+     * @param level the severity from the server-sent toast event
+     *
+     * @return the matching {@link ToastLevel} used to color and time the toast
+     */
+    private static ToastLevel toastLevelFor(GameToastEvent.Level level) {
+        return switch (level) {
+            case SUCCESS -> ToastLevel.SUCCESS;
+            case WARNING -> ToastLevel.WARNING;
+            case ERROR -> ToastLevel.ERROR;
+            case INFO -> ToastLevel.INFO;
+        };
     }
 
     /**
@@ -3032,6 +3040,12 @@ public class ClientGUI extends AbstractClientGUI
             if (event instanceof GameScriptedMessageEvent) {
                 showScriptedMessage((GameScriptedMessageEvent) event);
             }
+        }
+
+        @Override
+        public void gameToast(GameToastEvent event) {
+            Entity entity = client.getGame().getEntity(event.entityId());
+            addToast(toastLevelFor(event.level()), event.message(), entity);
         }
 
         @Override

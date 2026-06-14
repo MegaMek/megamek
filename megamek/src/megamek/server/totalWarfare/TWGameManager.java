@@ -76,6 +76,7 @@ import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.event.GameToastEvent;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -31438,69 +31439,110 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Sends a transient toast notification to all clients, to be shown on the board view. Use for high-signal one-shot
+     * events (such as a fortification completing) that warrant more emphasis than a routine report line, without
+     * flooding the player with a toast per report entry.
+     *
+     * @param level   the severity of the toast
+     * @param message the (already localized) text to display
+     * @param entity  the acting unit whose icon should accompany the toast, or null for a text-only toast
+     */
+    public void sendToast(GameToastEvent.Level level, String message, @Nullable Entity entity) {
+        int entityId = (entity != null) ? entity.getId() : Entity.NONE;
+        send(new Packet(PacketCommand.SEND_TOAST, level, message, entityId));
+    }
+
+    /**
      * Resolve any Infantry units which are fortifying hexes
      */
     void resolveFortify() {
-        Report r;
         for (Entity ent : game.getEntitiesVector()) {
             if (ent instanceof Infantry inf) {
                 int dig = inf.getDugIn();
-                if (dig == Infantry.DUG_IN_WORKING) {
-                    r = new Report(5300);
-                    r.addDesc(inf);
-                    r.subject = inf.getId();
-                    addReport(r);
+                boolean isFortifying = (dig == Infantry.DUG_IN_FORTIFYING1)
+                      || (dig == Infantry.DUG_IN_FORTIFYING2)
+                      || (dig == Infantry.DUG_IN_FORTIFYING3);
+                if (dig == Infantry.DUG_IN_FORTIFYING3) {
+                    completeFortification(inf);
+                } else if (isFortifying && inf.isFortifyExtendedThisRound()) {
+                    reportFortificationDelayed(inf);
+                } else if (dig == Infantry.DUG_IN_WORKING) {
+                    addSimpleFortifyReport(5300, inf);
                 } else if (inf.isHitTheDeck() && (inf.getTurnsOnDeck() == 0)) {
                     // Report only on the turn the unit hits the deck (before its idle counter advances). TO:AR p.106.
-                    r = new Report(5301);
-                    r.addDesc(inf);
-                    r.subject = inf.getId();
-                    addReport(r);
-                } else if (dig == Infantry.DUG_IN_FORTIFYING3) {
-                    Coords c = inf.getPosition();
-                    r = new Report(5305);
-                    r.addDesc(inf);
-                    r.add(c.getBoardNum());
-                    r.subject = inf.getId();
-                    addReport(r);
-                    // fortification complete - add to map
-                    Hex hex = game.getBoard().getHex(c);
-                    hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
-                    sendChangedHex(c);
-                    // Clear the dig in for any units in same hex, since they
-                    // get it for free by fort
-                    for (Entity ent2 : game.getEntitiesVector(c)) {
-                        if (ent2 instanceof Infantry inf2) {
-                            inf2.setDugIn(Infantry.DUG_IN_NONE);
-                        }
-                    }
+                    addSimpleFortifyReport(5301, inf);
                 }
             }
 
             if (ent instanceof Tank tnk) {
                 int dig = tnk.getDugIn();
                 if (dig == Tank.DUG_IN_FORTIFYING3) {
-                    Coords c = tnk.getPosition();
-                    r = new Report(5305);
-                    r.addDesc(tnk);
-                    r.add(c.getBoardNum());
-                    r.subject = tnk.getId();
-                    addReport(r);
-                    // Fort complete, now add it to the map
-                    Hex hex = game.getBoard().getHex(c);
-                    hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
-                    sendChangedHex(c);
-                    tnk.setDugIn(Tank.DUG_IN_NONE);
-                    // Clear the dig in for any units in same hex, since they
-                    // get it for free by fort
-                    for (Entity ent2 : game.getEntitiesVector(c)) {
-                        if (ent2 instanceof Infantry inf2) {
-                            inf2.setDugIn(Infantry.DUG_IN_NONE);
-                        }
-                    }
+                    completeFortification(tnk);
+                } else if ((dig != Tank.DUG_IN_NONE) && tnk.isFortifyExtendedThisRound()) {
+                    reportFortificationDelayed(tnk);
                 }
             }
         }
+    }
+
+    /**
+     * Completes a fortified hex once a unit's fieldwork reaches its final turn: writes the FORTIFIED terrain, clears
+     * the dug-in state of every unit sharing the hex (they now get the benefit for free) and raises a SUCCESS toast for
+     * the builder. TO:AUE p.153.
+     *
+     * @param builder the infantry platoon or vehicle that finished the fortification
+     */
+    private void completeFortification(Entity builder) {
+        Coords c = builder.getPosition();
+        Report r = new Report(5305);
+        r.addDesc(builder);
+        r.add(c.getBoardNum());
+        r.subject = builder.getId();
+        addReport(r);
+
+        Hex hex = game.getBoard().getHex(c);
+        hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
+        sendChangedHex(c);
+
+        // Any infantry sharing the hex (including an infantry builder) now gets the dug-in benefit for free
+        // from the terrain, so clear their in-progress dug-in state.
+        for (Entity occupant : game.getEntitiesVector(c)) {
+            if (occupant instanceof Infantry coLocated) {
+                coLocated.setDugIn(Infantry.DUG_IN_NONE);
+            }
+        }
+        // A vehicle builder is not cleared by the loop above, so reset it explicitly.
+        if (builder instanceof Tank tank) {
+            tank.setDugIn(Tank.DUG_IN_NONE);
+        }
+
+        sendToast(GameToastEvent.Level.SUCCESS,
+              Messages.getString("Fortify.completeToast", builder.getShortName()), builder);
+    }
+
+    /**
+     * Reports - and notifies via an INFO toast - that a unit's digging-in / fortification effort was set back by one
+     * turn after it took damage. TO:AR p.106 / TO:AUE p.153.
+     *
+     * @param builder the unit whose effort was delayed
+     */
+    private void reportFortificationDelayed(Entity builder) {
+        addSimpleFortifyReport(5306, builder);
+        sendToast(GameToastEvent.Level.INFO,
+              Messages.getString("Fortify.delayedToast", builder.getShortName()), builder);
+    }
+
+    /**
+     * Adds a fortification status report that only needs the unit's description (no extra data fields).
+     *
+     * @param messageId the report-messages id to use
+     * @param ent       the subject unit
+     */
+    private void addSimpleFortifyReport(int messageId, Entity ent) {
+        Report r = new Report(messageId);
+        r.addDesc(ent);
+        r.subject = ent.getId();
+        addReport(r);
     }
 
     /**

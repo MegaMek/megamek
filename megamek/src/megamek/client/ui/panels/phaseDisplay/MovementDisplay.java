@@ -6433,7 +6433,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
             ((Infantry) entity).createLocalSupport();
             clientgui.getClient().sendUpdateEntity(currentEntity());
         } else if (actionCmd.equals(MoveCommand.MOVE_DIG_IN.getCmd())) {
-            addStepToMovePath(MoveStepType.DIG_IN);
+            if (MoveStep.isFortifiableTerrain(game.getHexOf(entity))) {
+                addStepToMovePath(MoveStepType.DIG_IN);
+            } else {
+                clientgui.addToast(ToastLevel.WARNING,
+                      Messages.getString("MovementDisplay.digInIllegalTerrain.toast"), entity);
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_HIT_DECK.getCmd())) {
             addStepToMovePath(MoveStepType.HIT_THE_DECK);
             // Field-weapon infantry may only fire in their front arc while on the deck (TO:AR p.106). There is no
@@ -6443,7 +6448,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       Messages.getString("MovementDisplay.hitDeckFacing.toast"), entity);
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_FORTIFY.getCmd())) {
-            addStepToMovePath(MoveStepType.FORTIFY);
+            if (MoveStep.isFortifiableTerrain(game.getHexOf(entity))) {
+                addStepToMovePath(MoveStepType.FORTIFY);
+            } else {
+                clientgui.addToast(ToastLevel.WARNING,
+                      Messages.getString("MovementDisplay.fortifyIllegalTerrain.toast"), entity);
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_TAKE_COVER.getCmd())) {
             addStepToMovePath(MoveStepType.TAKE_COVER);
         } else if (actionCmd.equals(MoveCommand.MOVE_SHAKE_OFF.getCmd())) {

@@ -105,8 +105,10 @@
           logs/megamek.log for that tag to follow the whole feature flow. MovementDisplay logs why the
           Build Bridge button is enabled/disabled per condition; ConvInfantry logs build state transitions;
           MoveStep logs why a declared BUILD_BRIDGE step was rejected (note: MoveStep at debug also emits
-          climb/facing trace messages during normal movement). Comment these out when not diagnosing.
+          climb/facing trace messages during normal movement, which is why these are OFF by default).
+          Uncomment the loggers below to diagnose; leave them commented out for normal play.
         -->
+        <!--
         <Logger name="megamek.client.ui.panels.phaseDisplay.MovementDisplay" level="debug" additivity="false">
             <AppenderRef ref="MegaMekLog" />
         </Logger>
@@ -116,6 +118,7 @@
         <Logger name="megamek.common.moves.MoveStep" level="debug" additivity="false">
             <AppenderRef ref="MegaMekLog" />
         </Logger>
+        -->
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

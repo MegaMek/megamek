@@ -15796,17 +15796,22 @@ public class TWGameManager extends AbstractGameManager {
      */
     void checkBuildBridges() {
         for (Entity entity : game.getEntitiesVector()) {
-            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBusyWithBridge()) {
+            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.hasBridgeInProgress()) {
                 continue;
             }
             // A platoon destroyed before this completion check does not finish its bridge, TO:AUE p.152 ("if destroyed
             // before completing its task, the bridge is destroyed as well"). This also covers a platoon wiped out
-            // during the combat of its final turn that is still doomed in the entity list when the END phase runs. A
-            // platoon destroyed while dismantling loses the partial bridge and is not refunded.
+            // during the combat of its final turn that is still doomed in the entity list when the END phase runs, and
+            // a platoon that was paused or dismantling - clearing the state so no stale reservation/indicator remains.
             if (entity.isDestroyed() || entity.isDoomed()) {
                 LOGGER.info("[BuildBridge] {} was destroyed before finishing its bridge work at {}; abandoned",
                       convInfantry.getShortName(), convInfantry.getBridgeTargetCoords());
                 convInfantry.cancelBridgeBuild();
+                continue;
+            }
+            // A paused build does not advance and the platoon is free to move away, so the displacement check and the
+            // per-round progression below apply only while actively building or dismantling.
+            if (!convInfantry.isBusyWithBridge()) {
                 continue;
             }
             if (!convInfantry.isAdjacentToBridgeSite()) {

@@ -861,6 +861,21 @@ public class BridgeBuildingTest extends GameBoardTestCase {
     }
 
     @Test
+    void destroyedPausedPlatoonClearsItsBridgeState() {
+        ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
+        engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
+        gameManager.checkBuildBridges();
+        engineers.pauseBridgeBuild();
+        assertTrue(engineers.hasBridgeInProgress(), "Sanity: the paused platoon has bridge work in progress");
+
+        engineers.setDestroyed(true);
+        gameManager.checkBuildBridges();
+
+        assertFalse(engineers.hasBridgeInProgress(),
+              "A destroyed paused platoon must have its bridge state cleared, leaving no stale reservation/indicator");
+    }
+
+    @Test
     void pausedBridgeResumesFromHeldProgressAndCompletes() {
         ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
         engineers.startBridgeBuild(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);

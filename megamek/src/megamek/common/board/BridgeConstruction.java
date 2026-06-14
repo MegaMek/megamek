@@ -217,8 +217,8 @@ public final class BridgeConstruction {
         Hex firstBank = board.getHex(target.translated(exitDirections[0]));
         Hex secondBank = board.getHex(target.translated(exitDirections[1]));
 
-        // The deck sits at the highest anchoring bank (land, rim, or previous span) so units cross at grade and a
-        // chain of spans stays level, spanning the water or canyon below.
+        // The deck sits at the lowest anchoring bank (land, rim, or previous span) so units cross at grade and a
+        // chain of spans steps down the lower rim, spanning the water or canyon below. See bridgeDeckLevel().
         int surfaceLevel = bridgeDeckLevel(firstBank, secondBank, targetHex);
         int bridgeElevation = Math.max(0, surfaceLevel - targetHex.getLevel());
 

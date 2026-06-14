@@ -43,15 +43,21 @@ The feature is gated behind a new dedicated game option: **TO Bridge-Building En
 
 ## Mechanics
 
-- **Declaration** (movement phase): `Build Bridge` button -> Light/Medium dialog -> click target hex (highlighted
-  valid sites) -> click a hex adjacent to the target to set the axis -> move committed. The declaring turn counts
-  as the first full turn of work.
-- **Progress**: `ConvInfantry.newRound()` increments the completed-turn counter; `isEligibleFor()` returns false
-  for all phases while building, so the platoon takes no turns.
-- **END phase** (`TWGameManager.checkBuildBridges()`, called from `TWPhasePreparationManager`): reports progress,
-  applies the casualty extension, abandons builds whose platoon is no longer adjacent (with a report), and
-  completes finished bridges: terrain added, the bridge registered as an `IBuilding` (so it can take damage and
-  collapse), clients updated via `CHANGE_HEX` + `BLDG_ADD` packets.
+- **Declaration** (movement phase): `Build Bridge` button -> Light/Medium dialog -> click the bridge hex (highlighted
+  hexes next to the engineer) -> click the far end the bridge reaches to -> move committed. The bridge originates from
+  the engineer's side; the declaring turn counts as the first full turn of work.
+- **Eligibility while busy**: a platoon actively building or dismantling stays **Movement-phase eligible only**
+  (`ConvInfantry.isEligibleFor()` returns true only for Movement, false for firing/physical), so the player can select
+  it each turn to keep working or to pause/cancel/abandon; it takes no other action. A **paused** platoon is *not*
+  busy - it is freed and eligible in all phases. `newRound()` no longer advances progress; it only abandons an active
+  build/dismantle whose platoon was displaced from its site.
+- **Progress is banked in the END phase** (`TWGameManager.checkBuildBridges()`, called from
+  `TWPhasePreparationManager`): each round of active work banks one completed turn (`ConvInfantry.bankBridgeBuildTurn()`
+  / `bankBridgeDismantleTurn()`) so the count reflects turns actually completed. It applies the casualty extension,
+  abandons builds whose platoon is no longer adjacent or was destroyed (clearing paused builds too, with a report),
+  advances dismantling (refunding the budget on completion), and completes finished bridges: terrain added, the bridge
+  registered as an `IBuilding` (so it can take damage and collapse), clients updated via `CHANGE_HEX` + `BLDG_ADD`
+  packets.
 
 ## Files changed
 

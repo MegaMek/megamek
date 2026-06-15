@@ -1569,6 +1569,14 @@ class ComputeToHitIsImpossible {
                       || (attacker.getPosition().distance(target.getPosition()) != 1))) {
                     return Messages.getString("WeaponAttackAction.FirefightNotAdjacent");
                 }
+                // A non-engineer using a Fire Extinguisher weapon (range 1) can only put out a fire in its own
+                // hex or an adjacent one, and never on a different board.
+                boolean fireExtinguisherWeapon = weaponType.hasFlag(WeaponType.F_EXTINGUISHER);
+                if (!firefightingEngineer && fireExtinguisherWeapon && (attacker.getPosition() != null)
+                      && ((attacker.getBoardId() != target.getBoardId())
+                      || (attacker.getPosition().distance(target.getPosition()) > 1))) {
+                    return Messages.getString("WeaponAttackAction.FirefightOutOfRange");
+                }
             } else if (weaponType.hasFlag(WeaponType.F_EXTINGUISHER)) {
                 if (!(((target instanceof Tank) && ((Tank) target).isOnFire()) ||
                       ((target instanceof Entity) && (((Entity) target).infernos.getTurnsLeftToBurn() > 0)))) {

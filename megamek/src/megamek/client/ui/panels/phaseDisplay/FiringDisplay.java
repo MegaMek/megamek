@@ -2090,8 +2090,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         if ((hex == null) || !hex.containsTerrain(Terrains.FIRE)) {
             return false;
         }
-        // Firefighting engineers fight an adjacent hex, not the one they stand in.
-        return !firefighter || ((ce.getPosition() != null) && (ce.getPosition().distance(selectedCoords) == 1));
+        if (ce.getPosition() == null) {
+            return false;
+        }
+        int distanceToHex = ce.getPosition().distance(selectedCoords);
+        // Firefighting engineers fight an adjacent hex, not the one they stand in (TO:AR p.53). Other units use a
+        // range-1 Fire Extinguisher weapon, which reaches only their own hex or an adjacent one.
+        return firefighter ? (distanceToHex == 1) : (distanceToHex <= 1);
     }
 
     private boolean hasReadyFireExtinguisher(Entity entity) {

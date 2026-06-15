@@ -25338,25 +25338,48 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * remove fire from a hex
+     * Removes the fire from a hex on a specific board, clearing any flamer-started-fire marker and notifying the
+     * clients that view that board. Fire processing runs once per board (see
+     * {@link megamek.server.FireProcessor}), so the board id must be passed through to keep the per-board
+     * {@link Board#removeFlamerStartedFire(Coords)} state and the hex update on the correct board.
      *
-     * @param fireCoords {@link Coords} of the hex on fire.
-     * @param reason     Reason to remove the fire.
+     * @param boardId    the id of the board the burning hex is on
+     * @param fireCoords {@link Coords} of the hex on fire
+     * @param reason     reason to remove the fire
      */
-    public void removeFire(Coords fireCoords, String reason) {
-        Hex hex = game.getBoard().getHex(fireCoords);
+    public void removeFire(int boardId, Coords fireCoords, String reason) {
+        Board board = game.getBoard(boardId);
+        if (board == null) {
+            return;
+        }
+        Hex hex = board.getHex(fireCoords);
         if (null == hex) {
             return;
         }
         hex.removeTerrain(Terrains.FIRE);
         hex.resetFireTurn();
-        game.getBoard().removeFlamerStartedFire(fireCoords);
-        sendChangedHex(fireCoords);
+        board.removeFlamerStartedFire(fireCoords);
+        sendChangedHex(fireCoords, boardId);
         // fire goes out
         Report r = new Report(5170, Report.PUBLIC);
         r.add(fireCoords.getBoardNum());
         r.add(reason);
         addReport(r);
+    }
+
+    /**
+     * Removes the fire from a hex on the first board.
+     *
+     * @param fireCoords {@link Coords} of the hex on fire.
+     * @param reason     Reason to remove the fire.
+     *
+     * @deprecated since 0.51.0, use {@link #removeFire(int, Coords, String)} so the fire and the per-board
+     *       flamer-started-fire marker are cleared on the correct board in multi-board games. This overload only
+     *       affects board 0.
+     */
+    @Deprecated(since = "0.51.0", forRemoval = true)
+    public void removeFire(Coords fireCoords, String reason) {
+        removeFire(0, fireCoords, reason);
     }
 
     /**

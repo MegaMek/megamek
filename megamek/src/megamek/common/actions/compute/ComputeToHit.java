@@ -1337,6 +1337,15 @@ public class ComputeToHit {
         if (!game.getBoard(target).isInfernoBurning(pos) && game.getBoard(target).isFlamerStartedFire(pos)) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
         }
+        // Multiple platoons combining into a single roll grant the lead platoon -1 each (TO:AR p.53). Apply the
+        // penalties (above) before the reductions (here) so the running total honours the minimum target number 3.
+        int supportingPlatoons = FirefightingSupport.supportingPlatoons(game, ae, target);
+        if (supportingPlatoons > 0) {
+            int reduction = Math.min(supportingPlatoons, toHit.getValue() - 3);
+            if (reduction > 0) {
+                toHit.addModifier(-reduction, Messages.getString("WeaponAttackAction.FirefightSupport"));
+            }
+        }
         int priorStreak = firefighter.getPriorFirefightStreak(pos, game.getRoundCount());
         if (priorStreak > 0) {
             int reduction = Math.min(priorStreak, toHit.getValue() - 3);

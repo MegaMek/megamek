@@ -2278,6 +2278,29 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      */
     protected void adaptFireModeEnabled(Mounted<?> m) {
         setFireModeEnabled(m.isModeSwitchable() && m.hasModes());
+        updateFireModeTooltip(m);
+    }
+
+    /**
+     * Refreshes the Mode button tooltip for the selected weapon. Most weapons keep the generic tooltip, but the Fire
+     * Extinguisher carried by firefighting engineers gets extra helper text explaining its Firefight/Support modes
+     * (TO:AR p.53), since the choice of which platoon rolls is not otherwise obvious from the button.
+     *
+     * @param weapon the currently selected weapon
+     */
+    private void updateFireModeTooltip(Mounted<?> weapon) {
+        MegaMekButton modeButton = buttons.get(FiringCommand.FIRE_MODE);
+        String tooltip = createToolTip(FiringCommand.FIRE_MODE.getCmd(), "FiringDisplay.",
+              FiringCommand.FIRE_MODE.getHotKeyDesc());
+        if (weapon.getType().hasFlag(WeaponType.F_EXTINGUISHER)) {
+            String helper = Messages.getString("FiringDisplay.fireMode.extinguisher.tooltip");
+            if (tooltip.contains("</BODY>")) {
+                tooltip = tooltip.replace("</BODY>", "<BR>" + helper + "</BODY>");
+            } else {
+                tooltip = "<HTML><BODY>" + helper + "</BODY></HTML>";
+            }
+        }
+        modeButton.setToolTipText(tooltip);
     }
 
     protected void setFireCalledEnabled(boolean enabled) {

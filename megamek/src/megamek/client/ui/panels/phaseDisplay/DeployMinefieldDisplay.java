@@ -674,8 +674,10 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         endMyTurn();
         clientgui.getClient().sendDeployGroundObjects(clientgui.getClient().getGame().getGroundObjects());
-        clientgui.getClient().sendDeployMinefields(deployedMinefields);
+        // Fortifications must be sent BEFORE minefields: the minefield packet ends the deploy phase server-side, so
+        // anything sent after it arrives in the wrong phase and is dropped. (Same ordering as ground objects.)
         clientgui.getClient().sendDeployFortifications(deployedFortifications);
+        clientgui.getClient().sendDeployMinefields(deployedMinefields);
         clientgui.getClient().sendPlayerInfo();
     }
 

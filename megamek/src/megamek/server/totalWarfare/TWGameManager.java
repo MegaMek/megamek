@@ -9650,7 +9650,8 @@ public class TWGameManager extends AbstractGameManager {
         @SuppressWarnings("unchecked")
         Vector<BoardLocation> fortifiedHexes = (Vector<BoardLocation>) packet.getObject(0);
         processDeployFortifications(getGame().getPlayer(connId), fortifiedHexes);
-        endCurrentTurn(null);
+        // Do NOT end the turn here: fortifications are applied before the minefield packet (which is the turn-ender
+        // for this phase). Ending the turn here would advance the phase before minefields/player info are processed.
     }
 
     /**

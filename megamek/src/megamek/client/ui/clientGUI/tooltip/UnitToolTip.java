@@ -1971,6 +1971,11 @@ public final class UnitToolTip {
                   tank.getFortifyStage(), tank.getFortifyTotalStages());
         }
 
+        // A hull-down vehicle (or Mek) is in cover; report that explicitly rather than just "in a fortified hex".
+        if (entity.isHullDown() && !(entity instanceof Infantry)) {
+            return Messages.getString("BoardView1.hullDown");
+        }
+
         Hex hex = entity.getGame().getHex(entity.getBoardLocation());
         if ((hex != null) && hex.containsTerrain(Terrains.FORTIFIED)) {
             return Messages.getString((entity instanceof Infantry)

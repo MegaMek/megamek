@@ -1154,6 +1154,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if (entity.isHullDown() && !md.getFinalHullDown()
               && (entity instanceof Tank
               || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
+            logger.debug("[HullDown] {}: hull-down cleared on move - path did not end hull-down",
+                  entity.getDisplayName());
             entity.setHullDown(false);
         }
 
@@ -4475,6 +4477,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (step.getType() == MoveStepType.HULL_DOWN) {
                 mpUsed = step.getMpUsed();
                 entity.setHullDown(true);
+                logger.debug("[HullDown] {}: went hull-down via movement at {}", entity.getDisplayName(), curPos);
             }
 
             // Check for crushing buildings by Dropships/Mobile Structures

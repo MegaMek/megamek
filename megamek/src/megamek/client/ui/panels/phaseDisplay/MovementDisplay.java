@@ -2814,6 +2814,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
             }
         }
+
+        // Two-state Hull Down button: "Go Hull Down" when the unit can enter hull-down, "Hull Down" (current
+        // state) once it already is, so the player can tell at a glance whether the unit is in cover.
+        getBtn(MoveCommand.MOVE_HULL_DOWN).setText(Messages.getString(cmd.getFinalHullDown()
+              ? "MovementDisplay.moveHullDownActive"
+              : "MovementDisplay.moveHullDownGo"));
     }
 
     private void updateRACButton() {

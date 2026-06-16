@@ -6724,6 +6724,19 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
+    /**
+     * @return True if this unit mounts a minesweeper (TO:AUE p.138), whether or not it is currently activated. Used to
+     *       offer the End-Phase activation toggle.
+     */
+    public boolean hasMinesweeper() {
+        for (MiscMounted mounted : getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_MINESWEEPER)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean hasC3i() {
         if (isShutDown() || isOffBoard()) {
             return false;

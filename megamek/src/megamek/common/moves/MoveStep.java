@@ -781,6 +781,30 @@ public class MoveStep implements Serializable {
     }
 
     /**
+     * A vehicle that is hull-down in a fortified ("infantry-built") hex cannot change facing while remaining in the
+     * hex; per TO:AUE it must exit, turn, then re-enter. An in-place facing change therefore forfeits the hull-down
+     * cover. Meks use the partial-cover hull-down rules and are unaffected.
+     *
+     * @param game   the current {@link Game}
+     * @param entity the moving entity
+     *
+     * @return true if this step is an in-place facing change that should drop the entity's hull-down state
+     */
+    private boolean losesHullDownToInPlaceTurn(final Game game, final Entity entity) {
+        boolean isTurnStep = (type == MoveStepType.TURN_LEFT) || (type == MoveStepType.TURN_RIGHT);
+        if (!isTurnStep || !isHullDown()) {
+            return false;
+        }
+        boolean isVehicleHullDown = (entity instanceof Tank)
+              || ((entity instanceof QuadVee) && (entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE));
+        if (!isVehicleHullDown) {
+            return false;
+        }
+        Hex currentHex = game.getBoard(boardId).getHex(getPosition());
+        return (currentHex != null) && currentHex.containsTerrain(Terrains.FORTIFIED);
+    }
+
+    /**
      * Compile the static move data for this step.
      *
      * @param game   The current {@link Game}
@@ -805,11 +829,16 @@ public class MoveStep implements Serializable {
             movementMode = prev.getMovementMode();
         }
 
-        // Tanks can just drive out of hull-down. If we're a tank, and we moved
-        // then we are no longer hull-down.
+        // Tanks can just drive out of hull-down: if a vehicle moved, it is no longer hull-down. A vehicle that is
+        // hull-down in a fortified ("infantry-built") hex also forfeits cover when it changes facing in place,
+        // since RAW requires it to exit, turn, then re-enter rather than turning within the hex (TO:AUE).
         if ((entity instanceof Tank ||
               (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) &&
               (distance > 0)) {
+            setHullDown(false);
+        } else if (losesHullDownToInPlaceTurn(game, entity)) {
+            LOGGER.debug("[HullDown] {}: hull-down lost - a vehicle cannot change facing within a fortified hex; "
+                  + "it must exit, turn, then re-enter (TO:AUE)", entity.getDisplayName());
             setHullDown(false);
         }
 
@@ -2632,6 +2661,11 @@ public class MoveStep implements Serializable {
                         ((entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE) != entity.isConvertingNow()))) {
                 // Tanks and QuadVees ending movement in vehicle mode require a fortified hex.
                 if (!(game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.FORTIFIED))) {
+                    movementType = EntityMovementType.MOVE_ILLEGAL;
+                } else if ((entity instanceof Tank tank) && tank.isLargeVehicleForHullDown()) {
+                    // Large Vehicles cannot use infantry-built (fortified) hexes for cover (TO:AUE).
+                    LOGGER.debug("[HullDown] {}: HULL_DOWN step illegal - Large Vehicles cannot use infantry-built "
+                          + "(fortified) hexes for cover", entity.getDisplayName());
                     movementType = EntityMovementType.MOVE_ILLEGAL;
                 }
             } else if (entity.isGyroDestroyed()) {

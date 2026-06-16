@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -50,6 +50,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.IAero;
 import megamek.common.units.IBuilding;
+import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import megamek.common.units.VTOL;
 import megamek.logging.MMLogger;
@@ -345,6 +346,17 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         // If deploying a BuildingEntity, add building terrain to all hexes it occupies
         if (entity instanceof AbstractBuildingEntity buildingEntity) {
             buildingEntity.updateBuildingEntityHexes(boardId, gameManager);
+        }
+
+        // A vehicle may only start hull-down in a fortified ("infantry-built") hex, and Large Vehicles cannot use
+        // such hexes for cover at all (TO:AUE). Re-validate server-side so a crafted client cannot bypass the UI gate.
+        if ((entity instanceof Tank deployingVehicle) && entity.isHullDown()) {
+            boolean fortifiedHex = hex.containsTerrain(Terrains.FORTIFIED);
+            if (deployingVehicle.isLargeVehicleForHullDown() || !fortifiedHex) {
+                entity.setHullDown(false);
+                LOGGER.debug("[HullDown] {}: cleared illegal deploy hull-down - {}", entity.getDisplayName(),
+                      deployingVehicle.isLargeVehicleForHullDown() ? "Large Vehicle" : "deploy hex is not fortified");
+            }
         }
 
         entity.setDone(true);

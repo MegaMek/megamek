@@ -2804,7 +2804,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     Hex occupiedHex = game.getBoard(currentEntity)
                           .getHex(cmd.getLastStep().getPosition());
                     boolean fortifiedHex = occupiedHex.containsTerrain(Terrains.FORTIFIED);
-                    setHullDownEnabled(hullDownEnabled && fortifiedHex);
+                    // Large Vehicles cannot use infantry-built (fortified) hexes for cover (TO:AUE).
+                    boolean isLargeVehicle = (currentEntity instanceof Tank tank) && tank.isLargeVehicleForHullDown();
+                    setHullDownEnabled(hullDownEnabled && fortifiedHex && !isLargeVehicle);
                 } else {
                     // If there's queued up movement, we can call the canGoHullDown() method in the Tank class.
                     setHullDownEnabled(currentEntity.canGoHullDown());

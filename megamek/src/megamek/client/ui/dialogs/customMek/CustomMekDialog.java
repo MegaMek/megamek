@@ -2334,6 +2334,19 @@ public class CustomMekDialog extends AbstractButtonDialog
             chDeployProne.addItemListener(this);
         }
 
+        // Vehicles may deploy already hull-down (TO:AUE) when the hull-down option is enabled. Large Vehicles
+        // cannot use infantry-built (fortified) hexes for cover, so the option is offered only to non-large
+        // vehicles; the deploy hex must still be fortified, which is validated at deployment time.
+        boolean isHullDownCapableVehicle = (entity instanceof Tank deployingVehicle)
+              && !deployingVehicle.isLargeVehicleForHullDown()
+              && gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
+        if (isHullDownCapableVehicle) {
+            panDeploy.add(labDeployHullDown, GBC.std());
+            panDeploy.add(chDeployHullDown, GBC.eol());
+            chDeployHullDown.setSelected(entity.isHullDown());
+            chDeployHullDown.addItemListener(this);
+        }
+
         // Infantry may deploy already dug in (TO:AR p.106). Mechanized infantry cannot dig in, so this is
         // offered only to non-mechanized infantry and only when the dig-in option is enabled.
         if ((entity instanceof Infantry deployingInfantry) && !deployingInfantry.isMechanized()

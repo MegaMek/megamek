@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -1749,22 +1749,43 @@ public class Tank extends Entity {
     }
 
     /**
-     * Checks to see if a Tank is capable of going hull-down. This is true if hull-down rules are enabled and the Tank
-     * is in a fortified hex.
+     * Large Vehicles (Large Support Vehicles and super-heavy combat vehicles) are too big to take advantage of the
+     * cover offered by a fortified ("infantry-built") hex, and so cannot go hull-down in one. TO:AUE.
+     *
+     * @return True if this vehicle is a Large Vehicle for the purposes of the hull-down rules.
+     */
+    public boolean isLargeVehicleForHullDown() {
+        return (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) || isSuperHeavy();
+    }
+
+    /**
+     * Checks to see if a Tank is capable of going hull-down. This is true if hull-down rules are enabled, the Tank is
+     * in a fortified hex, and the Tank is not a Large Vehicle (which cannot use infantry-built hexes for cover).
      *
      * @return True if hull-down is enabled and the Tank is in a fortified hex.
      */
     @Override
     public boolean canGoHullDown() {
-        // MoveStep line 2179 performs this same check
-        // performing it here will allow us to disable the Hull down button
-        // if the movement is illegal
+        // MoveStep performs these same checks; performing them here lets us disable the Hull Down button when the
+        // movement would be illegal. Each failing gate logs its reason so playtests can diagnose a missing button.
         if (!game.hasBoardLocation(getPosition(), getBoardId())) {
             return false;
         }
+        if (isLargeVehicleForHullDown()) {
+            logger.debug("[HullDown] {}: ineligible - Large Vehicles cannot use infantry-built (fortified) hexes "
+                  + "for cover (TO:AUE)", getDisplayName());
+            return false;
+        }
+        if (!gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN)) {
+            logger.debug("[HullDown] {}: ineligible - Hull Down game option is disabled", getDisplayName());
+            return false;
+        }
         Hex occupiedHex = game.getHex(getBoardLocation());
-        return occupiedHex.containsTerrain(Terrains.FORTIFIED) &&
-              gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
+        if (!occupiedHex.containsTerrain(Terrains.FORTIFIED)) {
+            logger.debug("[HullDown] {}: ineligible - current hex is not fortified", getDisplayName());
+            return false;
+        }
+        return true;
     }
 
     public void setOnFire(boolean inferno) {

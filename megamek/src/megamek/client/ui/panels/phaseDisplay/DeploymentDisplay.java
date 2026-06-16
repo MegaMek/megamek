@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2006 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -88,6 +88,7 @@ import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.Infantry;
+import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
@@ -189,7 +190,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         /** Coordinates are outside the allowed deployment area */
         OUTSIDE_DEPLOYMENT_AREA,
         /** A hidden unit cannot deploy onto a fortified hex (the fortification would reveal the position) */
-        HIDDEN_IN_FORTIFIED
+        HIDDEN_IN_FORTIFIED,
+        /** A vehicle set to deploy hull-down must start in a fortified hex and must not be a Large Vehicle */
+        HULL_DOWN_NEEDS_FORTIFIED
     }
 
     /**
@@ -596,6 +599,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (entity.isHidden() && (deployHex != null) && deployHex.containsTerrain(Terrains.FORTIFIED)) {
             return BoardValidationResult.HIDDEN_IN_FORTIFIED;
         }
+        // A vehicle set to deploy hull-down must start in a fortified ("infantry-built") hex; only that terrain lets
+        // a vehicle take cover, and Large Vehicles cannot use it at all (TO:AUE).
+        if ((entity instanceof Tank deployingVehicle) && entity.isHullDown()) {
+            boolean fortifiedHex = (deployHex != null) && deployHex.containsTerrain(Terrains.FORTIFIED);
+            if (deployingVehicle.isLargeVehicleForHullDown() || !fortifiedHex) {
+                return BoardValidationResult.HULL_DOWN_NEEDS_FORTIFIED;
+            }
+        }
         return BoardValidationResult.VALID;
     }
 
@@ -727,6 +738,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             } else if (validationResult == BoardValidationResult.HIDDEN_IN_FORTIFIED) {
                 showHiddenInFortifiedMessage();
                 return;
+            } else if (validationResult == BoardValidationResult.HULL_DOWN_NEEDS_FORTIFIED) {
+                showHullDownNeedsFortifiedMessage();
+                return;
             }
 
             if (!board.isSpace()) {
@@ -831,6 +845,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     private void showHiddenInFortifiedMessage() {
         String msg = Messages.getString("DeploymentDisplay.hiddenInFortified");
+        clientgui.addToast(ToastLevel.WARNING, msg);
+    }
+
+    private void showHullDownNeedsFortifiedMessage() {
+        String msg = Messages.getString("DeploymentDisplay.hullDownNeedsFortified");
         clientgui.addToast(ToastLevel.WARNING, msg);
     }
 

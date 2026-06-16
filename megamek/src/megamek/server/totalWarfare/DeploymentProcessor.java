@@ -353,7 +353,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         // here. For the terrain case we deliberately do NOT strip the unit's chosen state: the client deployment
         // validation already blocks placing a hull-down vehicle off fortified terrain, and the combat code gates the
         // cover bonus on fortified terrain anyway - so silently clearing here only risks dropping a legitimately
-        // deployed hull-down. Logged at INFO so a playtest can confirm the unit deployed hull-down.
+        // deployed hull-down. Logged at DEBUG so a playtest can confirm the unit deployed hull-down.
         if ((entity instanceof Tank deployingVehicle) && entity.isHullDown()) {
             if (deployingVehicle.isLargeVehicleForHullDown()) {
                 entity.setHullDown(false);

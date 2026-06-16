@@ -9668,6 +9668,10 @@ public class TWGameManager extends AbstractGameManager {
         int allowed = player.getNbrFortifiedHexes();
         int placed = 0;
         for (BoardLocation location : fortifiedHexes) {
+            // The list comes off the network packet; defensively skip null entries before any dereference.
+            if (location == null) {
+                continue;
+            }
             if (placed >= allowed) {
                 LOGGER.warn("[Fortify] {}: ignoring fortified hex beyond allotment of {}", player.getName(), allowed);
                 break;

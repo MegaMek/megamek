@@ -146,8 +146,6 @@ public enum PacketCommand {
     END_OF_GAME,
     DEPLOY_MINEFIELDS,
 
-    /** A Client to Server packet carrying the hex coordinates a player is placing as fortified hexes. */
-    DEPLOY_FORTIFICATIONS,
     REVEAL_MINEFIELD,
     REMOVE_MINEFIELD,
     SENDING_MINEFIELDS,
@@ -198,12 +196,6 @@ public enum PacketCommand {
     /** A Server to Client packet instructing the Client to show a message (e.g. story message) to the player. */
     SCRIPTED_MESSAGE,
 
-    /**
-     * A Server to Client packet instructing the Client to show a transient toast notification on the board view, with a
-     * severity level, message text and an optional acting unit (for its icon).
-     */
-    SEND_TOAST,
-
     /** An SBF packet instructing the Client to replace the pending actions with the sent actions (possibly none). */
     ACTIONS,
 
@@ -217,7 +209,20 @@ public enum PacketCommand {
     SYNC_TEMPORARY_ECM_FIELDS,
 
     /** A packet updating hex locations being cleared by saws (for board view rendering). */
-    UPDATE_CUT_HEXES;
+    UPDATE_CUT_HEXES,
+
+    // NOTE: Packet marshalling uses PacketCommand.ordinal() as the wire identifier
+    // (see NativeSerializationMarshaller), so new commands MUST be appended here at the
+    // end to keep existing ordinals stable. Never insert new constants mid-enum.
+
+    /** A Client to Server packet carrying the hex coordinates a player is placing as fortified hexes. */
+    DEPLOY_FORTIFICATIONS,
+
+    /**
+     * A Server to Client packet instructing the Client to show a transient toast notification on the board view, with a
+     * severity level, message text and an optional acting unit (for its icon).
+     */
+    SEND_TOAST;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

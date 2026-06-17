@@ -600,7 +600,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return BoardValidationResult.HIDDEN_IN_FORTIFIED;
         }
         // A vehicle set to deploy hull-down must start in a fortified ("infantry-built") hex; only that terrain lets
-        // a vehicle take cover, and Large Vehicles cannot use it at all (TO:AUE).
+        // a vehicle take cover, and Large Vehicles cannot use it at all (TO:AR p.19).
         if ((entity instanceof Tank deployingVehicle) && entity.isHullDown()) {
             boolean fortifiedHex = (deployHex != null) && deployHex.containsTerrain(Terrains.FORTIFIED);
             if (deployingVehicle.isLargeVehicleForHullDown() || !fortifiedHex) {

@@ -349,7 +349,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         }
 
         // A vehicle may only benefit from hull-down in a fortified ("infantry-built") hex, and Large Vehicles cannot
-        // use such hexes for cover at all (TO:AUE). The Large Vehicle case is a hard unit-property rule, so clear it
+        // use such hexes for cover at all (TO:AR p.19). The Large Vehicle case is a hard unit-property rule, so clear it
         // here. For the terrain case we deliberately do NOT strip the unit's chosen state: the client deployment
         // validation already blocks placing a hull-down vehicle off fortified terrain, and the combat code gates the
         // cover bonus on fortified terrain anyway - so silently clearing here only risks dropping a legitimately

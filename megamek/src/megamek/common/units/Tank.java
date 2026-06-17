@@ -1750,7 +1750,7 @@ public class Tank extends Entity {
 
     /**
      * Large Vehicles (Large Support Vehicles and super-heavy combat vehicles) are too big to take advantage of the
-     * cover offered by a fortified ("infantry-built") hex, and so cannot go hull-down in one. TO:AUE.
+     * cover offered by a fortified ("infantry-built") hex, and so cannot go hull-down in one. TO:AR p.19.
      *
      * @return True if this vehicle is a Large Vehicle for the purposes of the hull-down rules.
      */

@@ -2804,7 +2804,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     Hex occupiedHex = game.getBoard(currentEntity)
                           .getHex(cmd.getLastStep().getPosition());
                     boolean fortifiedHex = occupiedHex.containsTerrain(Terrains.FORTIFIED);
-                    // Large Vehicles cannot use infantry-built (fortified) hexes for cover (TO:AUE).
+                    // Large Vehicles cannot use infantry-built (fortified) hexes for cover (TO:AR p.19).
                     boolean isLargeVehicle = (currentEntity instanceof Tank tank) && tank.isLargeVehicleForHullDown();
                     setHullDownEnabled(hullDownEnabled && fortifiedHex && !isLargeVehicle);
                 } else {

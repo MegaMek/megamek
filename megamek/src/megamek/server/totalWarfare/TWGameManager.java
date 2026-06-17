@@ -9680,6 +9680,11 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
             Hex hex = game.getBoard(location.boardId()).getHex(location.coords());
+            // isLegalFortificationPlacement already verified the hex is on the board, so this should not be null;
+            // guard defensively anyway so a malformed location can never NPE.
+            if (hex == null) {
+                continue;
+            }
             hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
             sendChangedHex(location.coords(), location.boardId());
             placed++;
@@ -31569,20 +31574,20 @@ public class TWGameManager extends AbstractGameManager {
      * @param builder the infantry platoon or vehicle that finished the fortification
      */
     private void completeFortification(Entity builder) {
-        Coords c = builder.getPosition();
-        Report r = new Report(5305);
-        r.addDesc(builder);
-        r.add(c.getBoardNum());
-        r.subject = builder.getId();
-        addReport(r);
+        Coords coords = builder.getPosition();
+        Report report = new Report(5305);
+        report.addDesc(builder);
+        report.add(coords.getBoardNum());
+        report.subject = builder.getId();
+        addReport(report);
 
-        Hex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(coords);
         hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
-        sendChangedHex(c);
+        sendChangedHex(coords);
 
         // Any infantry sharing the hex (including an infantry builder) now gets the dug-in benefit for free
         // from the terrain, so clear their in-progress dug-in state.
-        for (Entity occupant : game.getEntitiesVector(c)) {
+        for (Entity occupant : game.getEntitiesVector(coords)) {
             if (occupant instanceof Infantry coLocated) {
                 coLocated.setDugIn(Infantry.DUG_IN_NONE);
             }

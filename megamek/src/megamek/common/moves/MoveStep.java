@@ -782,7 +782,7 @@ public class MoveStep implements Serializable {
 
     /**
      * A vehicle that is hull-down in a fortified ("infantry-built") hex cannot change facing while remaining in the
-     * hex; per TO:AUE it must exit, turn, then re-enter. An in-place facing change therefore forfeits the hull-down
+     * hex; per TO:AR p.19 it must exit, turn, then re-enter. An in-place facing change therefore forfeits the hull-down
      * cover. Meks use the partial-cover hull-down rules and are unaffected.
      *
      * @param game   the current {@link Game}
@@ -2663,7 +2663,7 @@ public class MoveStep implements Serializable {
                 if (!(game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.FORTIFIED))) {
                     movementType = EntityMovementType.MOVE_ILLEGAL;
                 } else if ((entity instanceof Tank tank) && tank.isLargeVehicleForHullDown()) {
-                    // Large Vehicles cannot use infantry-built (fortified) hexes for cover (TO:AUE).
+                    // Large Vehicles cannot use infantry-built (fortified) hexes for cover (TO:AR p.19).
                     LOGGER.debug("[HullDown] {}: HULL_DOWN step illegal - Large Vehicles cannot use infantry-built "
                           + "(fortified) hexes for cover", entity.getDisplayName());
                     movementType = EntityMovementType.MOVE_ILLEGAL;

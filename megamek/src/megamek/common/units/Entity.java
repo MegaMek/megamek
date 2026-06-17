@@ -6725,8 +6725,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if this unit mounts a minesweeper (TO:AUE p.138), whether or not it is currently activated. Used to
-     *       offer the End-Phase activation toggle.
+     * @return {@code true} if this unit mounts a minesweeper (TO:AuE p.138, Corrected Sixth Printing), whether or not it
+     *       is currently activated. Used to offer the End-Phase activation toggle.
      */
     public boolean hasMinesweeper() {
         for (MiscMounted mounted : getMisc()) {

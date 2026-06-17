@@ -49,6 +49,7 @@ import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkDialog;
 import megamek.client.ui.dialogs.phaseDisplay.VariableRangeTargetingDialog;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.widget.MegaMekButton;
+import megamek.common.Player;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.units.CombatVehicleEscapePod;
@@ -469,7 +470,11 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
      * Checks if the local player has any units mounting a minesweeper.
      */
     private boolean hasMinesweeperUnits() {
-        int localPlayerId = clientgui.getClient().getLocalPlayer().getId();
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        if (localPlayer == null) {
+            return false;
+        }
+        int localPlayerId = localPlayer.getId();
         return clientgui.getClient().getGame().getEntitiesVector().stream()
               .filter(e -> e.getOwnerId() == localPlayerId)
               .anyMatch(Entity::hasMinesweeper);

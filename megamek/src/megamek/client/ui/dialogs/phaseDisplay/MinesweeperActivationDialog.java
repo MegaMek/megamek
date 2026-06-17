@@ -57,10 +57,13 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
+import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.Player;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.game.Game;
@@ -97,8 +100,10 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
     public MinesweeperActivationDialog(JFrame parent, ClientGUI clientGUI) {
         super(parent, Messages.getString("MinesweeperActivationDialog.title"), true);
         this.clientGUI = clientGUI;
-        this.game = clientGUI.getClient().getGame();
-        this.localPlayerId = clientGUI.getClient().getLocalPlayer().getId();
+        Client client = clientGUI.getClient();
+        this.game = client.getGame();
+        Player localPlayer = client.getLocalPlayer();
+        this.localPlayerId = (localPlayer != null) ? localPlayer.getId() : Player.PLAYER_NONE;
 
         initializeData();
         initializeUI();
@@ -111,6 +116,7 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
             @Override
             public void windowClosing(WindowEvent e) {
                 clearHighlighting();
+                dispose();
             }
         });
 
@@ -133,7 +139,7 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
     /**
      * Returns the first minesweeper mounted on the entity, or {@code null} if it has none.
      */
-    private static MiscMounted getMinesweeper(Entity entity) {
+    private static @Nullable MiscMounted getMinesweeper(Entity entity) {
         for (MiscMounted mounted : entity.getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_MINESWEEPER)) {
                 return mounted;
@@ -158,23 +164,17 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
         gbc.insets = new Insets(PADDING_SMALL, PADDING_SMALL, PADDING_SMALL, PADDING_SMALL);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Header row
+        // Header row (markup lives in the resource bundle)
         gbc.gridx = 0;
         gbc.gridy = 0;
-        unitPanel.add(new JLabel("<html><b>"
-              + Messages.getString("MinesweeperActivationDialog.unitHeader")
-              + "</b></html>"), gbc);
+        unitPanel.add(new JLabel(Messages.getString("MinesweeperActivationDialog.unitHeader")), gbc);
 
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.CENTER;
-        unitPanel.add(new JLabel("<html><b>"
-              + Messages.getString("MinesweeperActivationDialog.currentStateHeader")
-              + "</b></html>"), gbc);
+        unitPanel.add(new JLabel(Messages.getString("MinesweeperActivationDialog.currentStateHeader")), gbc);
 
         gbc.gridx = 2;
-        unitPanel.add(new JLabel("<html><b>"
-              + Messages.getString("MinesweeperActivationDialog.newStateHeader")
-              + "</b></html>"), gbc);
+        unitPanel.add(new JLabel(Messages.getString("MinesweeperActivationDialog.newStateHeader")), gbc);
         gbc.anchor = GridBagConstraints.WEST;
 
         int row = 1;

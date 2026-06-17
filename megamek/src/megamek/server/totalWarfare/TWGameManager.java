@@ -7417,10 +7417,10 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Returns the entity's active (switched-on) minesweeper, or {@code null} if it has none, the sweeper is not ready,
-     * its armor is depleted, or the player has deactivated it in the End Phase (TO:AUE p.138). A unit may mount only
-     * one minesweeper.
+     * its armor is depleted, or the player has deactivated it in the End Phase (TO:AuE p.138, Corrected Sixth Printing).
+     * A unit may mount only one minesweeper.
      */
-    private static Mounted<?> getActiveMinesweeper(Entity entity) {
+    private static @Nullable Mounted<?> getActiveMinesweeper(Entity entity) {
         for (Mounted<?> mounted : entity.getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_MINESWEEPER)
                   && mounted.isReady()

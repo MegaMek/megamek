@@ -108,6 +108,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         DEPLOY_UNLOAD("deployUnload"),
         DEPLOY_REMOVE("deployRemove"),
         DEPLOY_ASSAULT_DROP("assaultDrop"),
+        DEPLOY_HULL_DOWN("deployHullDown"),
         DEPLOY_DOCK("deployDock");
 
         public final String cmd;
@@ -333,6 +334,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             assaultDropPreference = false;
         }
 
+        // Vehicles may deploy hull down (TO:AR p.19) onto a fortified hex. Offer a toggle so a player who set a
+        // vehicle to deploy hull-down can turn it off when there is no fortified hex to deploy into.
+        boolean hullDownOption = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
+        boolean canToggleHullDown = (entity instanceof Tank deployingVehicle)
+              && deployingVehicle.isHullDownCapable() && hullDownOption;
+        setHullDownEnabled(canToggleHullDown);
+        updateHullDownButtonText(entity);
+
         setLoadEnabled(!getLoadableEntities().isEmpty());
         setUnloadEnabled(!entity.getLoadedUnits().isEmpty());
 
@@ -386,6 +396,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         setLoadEnabled(false);
         setUnloadEnabled(false);
         setAssaultDropEnabled(false);
+        setHullDownEnabled(false);
     }
 
     private void setButtonEnabled(DeployCommand cmd, boolean enabled) {
@@ -1065,7 +1076,23 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 buttons.get(DeployCommand.DEPLOY_ASSAULT_DROP)
                       .setText(Messages.getString("DeploymentDisplay.assaultDrop"));
             }
+        } else if (actionCmd.equals(DeployCommand.DEPLOY_HULL_DOWN.getCmd())) {
+            Entity entity = currentEntity();
+            if (entity != null) {
+                entity.setHullDown(!entity.isHullDown());
+                updateHullDownButtonText(entity);
+                // Sync the toggle so the server applies the chosen state when the unit deploys.
+                clientgui.getClient().sendUpdateEntity(entity);
+                clientgui.getUnitDisplay().displayEntity(entity);
+            }
         }
+    }
+
+    /** Sets the Hull Down deploy button label to reflect the entity's current hull-down state. */
+    private void updateHullDownButtonText(Entity entity) {
+        buttons.get(DeployCommand.DEPLOY_HULL_DOWN).setText(Messages.getString(entity.isHullDown()
+              ? "DeploymentDisplay.deployHullDownOff"
+              : "DeploymentDisplay.deployHullDown"));
     }
 
     @Override
@@ -1163,6 +1190,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void setAssaultDropEnabled(boolean enabled) {
         buttons.get(DeployCommand.DEPLOY_ASSAULT_DROP).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_ASSAULT_DROP.getCmd(), enabled);
+    }
+
+    private void setHullDownEnabled(boolean enabled) {
+        buttons.get(DeployCommand.DEPLOY_HULL_DOWN).setEnabled(enabled);
     }
 
     /**

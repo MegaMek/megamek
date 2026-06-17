@@ -1759,8 +1759,23 @@ public class Tank extends Entity {
     }
 
     /**
+     * Whether this vehicle type can use hull-down at all, independent of its current hex. Large Vehicles cannot use
+     * the cover, and naval, hydrofoil, and submarine (water-based) vehicles cannot dig in / hull down since
+     * hull-down requires a fortified land hex (TO:AR p.19).
+     *
+     * @return true if this vehicle may ever go hull-down
+     */
+    public boolean isHullDownCapable() {
+        if (isLargeVehicleForHullDown()) {
+            return false;
+        }
+        EntityMovementMode movementMode = getMovementMode();
+        return !movementMode.isNaval() && !movementMode.isHydrofoil() && !movementMode.isSubmarine();
+    }
+
+    /**
      * Checks to see if a Tank is capable of going hull-down. This is true if hull-down rules are enabled, the Tank is
-     * in a fortified hex, and the Tank is not a Large Vehicle (which cannot use infantry-built hexes for cover).
+     * in a fortified hex, and the Tank is a hull-down-capable type (not a Large Vehicle or a water-based vehicle).
      *
      * @return True if hull-down is enabled and the Tank is in a fortified hex.
      */
@@ -1771,9 +1786,9 @@ public class Tank extends Entity {
         if (!game.hasBoardLocation(getPosition(), getBoardId())) {
             return false;
         }
-        if (isLargeVehicleForHullDown()) {
-            logger.debug("[HullDown] {}: ineligible - Large Vehicles cannot use infantry-built (fortified) hexes "
-                  + "for cover (TO:AUE)", getDisplayName());
+        if (!isHullDownCapable()) {
+            logger.debug("[HullDown] {}: ineligible - Large Vehicles and naval/submarine vehicles cannot use "
+                  + "hull-down (TO:AR p.19)", getDisplayName());
             return false;
         }
         if (!gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN)) {

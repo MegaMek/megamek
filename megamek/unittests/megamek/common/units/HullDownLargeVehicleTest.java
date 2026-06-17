@@ -81,4 +81,35 @@ class HullDownLargeVehicleTest {
         assertTrue(tank.isLargeVehicleForHullDown(),
               "A Large Support Vehicle should be treated as a Large Vehicle for hull-down");
     }
+
+    @Test
+    @DisplayName("A standard ground combat vehicle is hull-down capable")
+    void standardTankIsHullDownCapable() {
+        Tank tank = new Tank();
+        tank.setMovementMode(EntityMovementMode.TRACKED);
+
+        assertTrue(tank.isHullDownCapable(), "A tracked combat vehicle should be hull-down capable");
+    }
+
+    @Test
+    @DisplayName("Naval, hydrofoil, and submarine vehicles are not hull-down capable")
+    void waterVehiclesAreNotHullDownCapable() {
+        for (EntityMovementMode waterMode : new EntityMovementMode[] {
+              EntityMovementMode.NAVAL, EntityMovementMode.HYDROFOIL, EntityMovementMode.SUBMARINE }) {
+            Tank tank = new Tank();
+            tank.setMovementMode(waterMode);
+
+            assertFalse(tank.isHullDownCapable(),
+                  "A " + waterMode + " vehicle cannot hull down (no fortified land hex)");
+        }
+    }
+
+    @Test
+    @DisplayName("A Large Vehicle is not hull-down capable regardless of movement mode")
+    void largeVehicleIsNotHullDownCapable() {
+        SuperHeavyTank tank = new SuperHeavyTank();
+        tank.setMovementMode(EntityMovementMode.TRACKED);
+
+        assertFalse(tank.isHullDownCapable(), "A Large Vehicle should never be hull-down capable");
+    }
 }

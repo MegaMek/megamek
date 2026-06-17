@@ -831,14 +831,14 @@ public class MoveStep implements Serializable {
 
         // Tanks can just drive out of hull-down: if a vehicle moved, it is no longer hull-down. A vehicle that is
         // hull-down in a fortified ("infantry-built") hex also forfeits cover when it changes facing in place,
-        // since RAW requires it to exit, turn, then re-enter rather than turning within the hex (TO:AUE).
+        // since RAW requires it to exit, turn, then re-enter rather than turning within the hex (TO:AR p.19).
         if ((entity instanceof Tank ||
               (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) &&
               (distance > 0)) {
             setHullDown(false);
         } else if (losesHullDownToInPlaceTurn(game, entity)) {
             LOGGER.debug("[HullDown] {}: hull-down lost - a vehicle cannot change facing within a fortified hex; "
-                  + "it must exit, turn, then re-enter (TO:AUE)", entity.getDisplayName());
+                  + "it must exit, turn, then re-enter (TO:AR p.19)", entity.getDisplayName());
             setHullDown(false);
         }
 

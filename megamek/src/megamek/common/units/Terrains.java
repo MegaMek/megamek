@@ -186,6 +186,13 @@ public class Terrains implements Serializable {
     public static final int ULTRA_SUBLEVEL = 59;
 
     /**
+     * Marks a bridge hex whose section was rebuilt in-game by Bridge-Building Engineers (the unofficial bridge-repair
+     * option), so the board view can badge it as a field repair. A data-only marker carried alongside the BRIDGE
+     * terrain; it serializes with the hex (surviving save games) and is removed when the bridge is destroyed.
+     */
+    public static final int BRIDGE_REPAIRED = 60;
+
+    /**
      * Keeps track of the different type of terrains that can have exits.
      */
     public static final int[] exitableTerrains = { PAVEMENT, ROAD, BUILDING, FUEL_TANK, BRIDGE, WATER };
@@ -203,11 +210,12 @@ public class Terrains implements Serializable {
                                             "water_fluff", "cliff_top", "cliff_bottom",
                                             "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom",
                                             "foliage_elev", "black_ice", "sky",
-                                            "deployment_zone", "hazardous_liquid", "ultra_sublevel" };
+                                            "deployment_zone", "hazardous_liquid", "ultra_sublevel",
+                                            "bridge_repaired" };
 
     /** Terrains in this set are hidden in the Editor, not saved to board files and handled internally. */
     public static final HashSet<Integer> AUTOMATIC = new HashSet<>(Arrays.asList(
-          INCLINE_TOP, INCLINE_BOTTOM, INCLINE_HIGH_TOP, INCLINE_HIGH_BOTTOM, CLIFF_BOTTOM, SKY));
+          INCLINE_TOP, INCLINE_BOTTOM, INCLINE_HIGH_TOP, INCLINE_HIGH_BOTTOM, CLIFF_BOTTOM, SKY, BRIDGE_REPAIRED));
 
     public static final int SIZE = names.length;
 

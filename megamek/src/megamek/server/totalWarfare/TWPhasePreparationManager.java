@@ -197,6 +197,7 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.reportGhostTargetModeChanges();
                 gameManager.addReport(gameManager.resolveInternalBombHits());
                 gameManager.checkLayExplosives();
+                gameManager.checkBuildBridges();
                 gameManager.resolveInfantryActions();
                 gameManager.resolveHarJelRepairs();
                 gameManager.resolveEmergencyCoolantSystem();

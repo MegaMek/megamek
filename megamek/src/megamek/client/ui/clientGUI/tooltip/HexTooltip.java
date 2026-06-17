@@ -63,6 +63,8 @@ import megamek.common.equipment.Minefield;
 import megamek.common.game.Game;
 import megamek.common.planetaryConditions.IlluminationLevel;
 import megamek.common.units.BuildingTarget;
+import megamek.common.units.ConvInfantry;
+import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Terrains;
 
@@ -252,7 +254,56 @@ public final class HexTooltip {
             }
         }
 
+        // Bridge under construction indicator (TO:AUE Bridge-Building Engineers)
+        if (game != null) {
+            appendBridgeBuildInfo(result, game, mcoords, boardId);
+        }
+
         return result.toString();
+    }
+
+    /**
+     * Appends a "bridge under construction (turn X of Y)" line when a Bridge-Building Engineer platoon is raising a
+     * bridge in the given hex, TO:AUE. The build state is read from the synced ConvInfantry entities.
+     *
+     * @param result  the tooltip text being built
+     * @param game    the current game
+     * @param coords  the hex the tooltip describes
+     * @param boardId the board of the hex
+     */
+    private static void appendBridgeBuildInfo(StringBuilder result, Game game, Coords coords, int boardId) {
+        for (Entity entity : game.getEntitiesVector()) {
+            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.hasBridgeInProgress()
+                  || (entity.getBoardId() != boardId)
+                  || !coords.equals(convInfantry.getBridgeTargetCoords())) {
+                continue;
+            }
+            int builtTurns = Math.min(convInfantry.getBridgeBuildTurns(), convInfantry.getBridgeBuildRequiredTurns());
+            // Identify the engineer platoon so the player can see who is working the hex
+            String builder = convInfantry.getShortName() + " (ID " + convInfantry.getId() + ")";
+            // Repairing a destroyed section reads differently from raising a new bridge (unofficial repair option)
+            boolean isRepair = convInfantry.isBridgeBuildRepair();
+            String buildInfo;
+            if (convInfantry.isDismantlingBridge()) {
+                // Count the standing structure back down on the build's scale (e.g. 4/6, 3/6, ...)
+                buildInfo = Messages.getString(isRepair ? "BoardView1.Tooltip.BridgeRepairDismantling"
+                            : "BoardView1.Tooltip.BridgeDismantling",
+                      convInfantry.getBridgeDismantleRemaining(), convInfantry.getBridgeBuildRequiredTurns(), builder);
+            } else if (convInfantry.isBridgePaused()) {
+                buildInfo = Messages.getString(isRepair ? "BoardView1.Tooltip.BridgeRepairPaused"
+                            : "BoardView1.Tooltip.BridgePaused",
+                      builtTurns, convInfantry.getBridgeBuildRequiredTurns(), builder);
+            } else {
+                buildInfo = Messages.getString(isRepair ? "BoardView1.Tooltip.BridgeRepairing"
+                            : "BoardView1.Tooltip.BridgeBuilding",
+                      builtTurns, convInfantry.getBridgeBuildRequiredTurns(), builder);
+            }
+            String attr = String.format("FACE=Dialog COLOR=%s",
+                  UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
+            buildInfo = UIUtil.tag("FONT", attr, buildInfo);
+            result.append(buildInfo);
+            result.append("<BR>");
+        }
     }
 
     public static String getBuildingTargetTip(BuildingTarget target, Board board) {

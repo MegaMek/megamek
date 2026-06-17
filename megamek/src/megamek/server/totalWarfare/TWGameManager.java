@@ -15788,6 +15788,14 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * End-phase resolution for Bridge-Building Engineers, TO:AUE p.152. Delegates to {@link BridgeBuildPhaseHandler}
+     * so the bridge rules do not add to this already very large class.
+     */
+    void checkBuildBridges() {
+        new BridgeBuildPhaseHandler(this).checkBuildBridges();
+    }
+
+    /**
      * Resolves all announced demolition charge detonations, TO:AUE p.152: each charge is removed from its building and
      * inflicts its damage on the rigged structure hex. Called during End Phase processing and immediately when a
      * detonation is announced during the End Phase report (the announcement must resolve in the same End Phase).

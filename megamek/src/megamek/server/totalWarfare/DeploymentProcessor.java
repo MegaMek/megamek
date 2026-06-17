@@ -348,20 +348,19 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             buildingEntity.updateBuildingEntityHexes(boardId, gameManager);
         }
 
-        // A vehicle may only benefit from hull-down in a fortified ("infantry-built") hex, and Large Vehicles cannot
-        // use such hexes for cover at all (TO:AR p.19). The Large Vehicle case is a hard unit-property rule, so clear it
-        // here. For the terrain case we deliberately do NOT strip the unit's chosen state: the client deployment
-        // validation already blocks placing a hull-down vehicle off fortified terrain, and the combat code gates the
-        // cover bonus on fortified terrain anyway - so silently clearing here only risks dropping a legitimately
-        // deployed hull-down. Logged at DEBUG so a playtest can confirm the unit deployed hull-down.
+        // A vehicle may only be hull-down in a fortified ("infantry-built") hex, and only hull-down-capable vehicles
+        // can do so (not Large Vehicles, not naval/submarine) - TO:AR p.19. Re-validate authoritatively here and clear
+        // an illegal hull-down state, because combat code such as Tank.rollHitLocation keys off isHullDown() without
+        // re-checking terrain, so a state from an old/crafted client or corrupted save could otherwise grant the
+        // hull-down hit-location benefit on open ground.
         if ((entity instanceof Tank deployingVehicle) && entity.isHullDown()) {
-            if (deployingVehicle.isLargeVehicleForHullDown()) {
+            boolean fortifiedHex = hex.containsTerrain(Terrains.FORTIFIED);
+            if (!deployingVehicle.isHullDownCapable() || !fortifiedHex) {
                 entity.setHullDown(false);
-                LOGGER.debug("[HullDown] {}: cleared deploy hull-down - Large Vehicles cannot use fortified hexes "
-                      + "for cover", entity.getDisplayName());
+                LOGGER.debug("[HullDown] {}: cleared illegal deploy hull-down - {}", entity.getDisplayName(),
+                      !deployingVehicle.isHullDownCapable() ? "vehicle type cannot hull down" : "deploy hex is not fortified");
             } else {
-                LOGGER.debug("[HullDown] {}: deployed hull-down (fortified hex = {})", entity.getDisplayName(),
-                      hex.containsTerrain(Terrains.FORTIFIED));
+                LOGGER.debug("[HullDown] {}: deployed hull-down on a fortified hex", entity.getDisplayName());
             }
         }
 

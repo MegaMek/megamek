@@ -1897,7 +1897,7 @@ public class CustomMekDialog extends AbstractButtonDialog
                 // Should the entity begin the game prone?
                 entity.setProne(chDeployProne.isSelected());
 
-                // Should the entity begin the game prone?
+                // Should the entity begin the game hull down?
                 entity.setHullDown(chDeployHullDown.isSelected());
             }
 

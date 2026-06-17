@@ -1,8 +1,9 @@
 # Trench/Fieldworks Engineers + Vehicle Fieldworks
 
 **Branch:** `Update-Trench-and-Fieldworks-Engineers`
-**Status:** Planning complete - implementation not started
-**Rules:** TO:AUE p.153 (Trench/Fieldworks Engineers, Vehicles and Fieldworks), TO:AR p.106 (Digging In)
+**Status:** Implemented (in review - PR #8347)
+**Rules:** TO:AUE p.153 (Trench/Fieldworks Engineers, Vehicles and Fieldworks), TO:AR p.106 (Digging In),
+TO:AR p.19 (vehicle Hull Down)
 **Related:** Bridge-Building Engineers (`bridge-building-engineers.md`) - the fortify rule explicitly mirrors it.
 
 ---

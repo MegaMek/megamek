@@ -386,7 +386,6 @@ import megamek.common.weapons.mortars.innerSphere.ISMekMortar4;
 import megamek.common.weapons.mortars.innerSphere.ISMekMortar8;
 import megamek.common.weapons.mortars.innerSphere.ISVehicularGrenadeLauncher;
 import megamek.common.weapons.other.clan.CLAMS;
-import megamek.common.weapons.other.clan.CLFireExtinguisher;
 import megamek.common.weapons.other.clan.CLFluidGun;
 import megamek.common.weapons.other.clan.CLFussilade;
 import megamek.common.weapons.other.clan.CLLaserAMS;
@@ -2206,8 +2205,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryProstheticVibroBladeWeapon());
         EquipmentType.addType(new InfantryProstheticClimbingClawsWeapon());
 
+        // IS and Clan fire extinguishers are mechanically identical; merged into one TechBase.ALL weapon.
         EquipmentType.addType(new ISFireExtinguisher());
-        EquipmentType.addType(new CLFireExtinguisher());
 
         // Plasma Weapons
         EquipmentType.addType(new ISPlasmaRifle());

@@ -94,6 +94,7 @@ public class NoFiresCommand extends GamemasterServerCommand {
             // they should not happen, but I don't want to crash the command
             return;
         }
-        gameManager.removeFire(coords, reason);
+        // This GM command operates on the first board.
+        gameManager.removeFire(0, coords, reason);
     }
 }

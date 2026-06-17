@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -145,8 +145,11 @@ public class FlamerHandler extends WeaponHandler {
         TargetRoll tn = new TargetRoll(weaponType.getFireTN(), weaponType.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
-            gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false,
-                  tn, true, -1, vPhaseReport);
+            if (gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false,
+                  tn, true, -1, vPhaseReport)) {
+                // Fuel-fed flamer fires are harder for firefighting engineers to put out (TO:AuE p.153).
+                game.getBoard(target.getBoardId()).markFlamerStartedFire(target.getPosition());
+            }
         }
     }
 
@@ -176,6 +179,8 @@ public class FlamerHandler extends WeaponHandler {
               false,
               new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5,
               vPhaseReport)) {
+            // Fuel-fed flamer fires are harder for firefighting engineers to put out (TO:AuE p.153).
+            game.getBoard(target.getBoardId()).markFlamerStartedFire(target.getPosition());
             return;
         }
         Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(),

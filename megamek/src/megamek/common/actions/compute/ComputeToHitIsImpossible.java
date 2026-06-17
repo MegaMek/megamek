@@ -881,10 +881,10 @@ class ComputeToHitIsImpossible {
         if (weapon != null && weaponType != null) {
             // Variable setup
 
-            // "Cool" mode for vehicle flamer requires coolant ammo
-            boolean vf_cool = ammoType != null &&
-                  ammo != null &&
-                  (ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_COOLANT));
+            // A vehicle flamer loaded with coolant ammo fires in "cool" mode: it suppresses fires (and can help
+            // extinguish a hex) rather than igniting them, so it is barred from starting fires below.
+            boolean flamerInCoolMode = (ammoType != null) && (ammo != null)
+                  && ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_COOLANT);
 
             // Anti-Infantry weapons can only target infantry
             if (weaponType.hasFlag(WeaponType.F_INFANTRY_ONLY)) {
@@ -1497,7 +1497,7 @@ class ComputeToHitIsImpossible {
             // Causing Fires
 
             // Some weapons can't cause fires, but Infernos always can.
-            if ((vf_cool || (weaponType.hasFlag(WeaponType.F_NO_FIRES) && !isInferno)) &&
+            if ((flamerInCoolMode || (weaponType.hasFlag(WeaponType.F_NO_FIRES) && !isInferno)) &&
                   (Targetable.TYPE_HEX_IGNITE == target.getTargetType())) {
                 return Messages.getString("WeaponAttackAction.WeaponCantIgnite");
             }
@@ -1550,16 +1550,31 @@ class ComputeToHitIsImpossible {
 
             // Extinguishing Fires
 
-            // You can use certain types of flamer/sprayer ammo or infantry firefighting engineers to extinguish
-            // burning hexes (and units).
-            // TODO: This functionality does not appear to be implemented
+            // Fires (in hexes) can be put out by fire extinguisher weapons, flamer/sprayer ammo in cool
+            // mode, or firefighting engineer infantry using their portable gear (TO:AuE p.153).
+            boolean firefightingEngineer = attacker.isFirefighter();
             if (Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType()) {
-                if (!weaponType.hasFlag(WeaponType.F_EXTINGUISHER) && !vf_cool) {
+                if (!weaponType.hasFlag(WeaponType.F_EXTINGUISHER) && !flamerInCoolMode && !firefightingEngineer) {
                     return Messages.getString("WeaponAttackAction.InvalidForFirefighting");
                 }
                 Hex hexTarget = game.getHexOf(target);
                 if ((hexTarget != null) && !hexTarget.containsTerrain(Terrains.FIRE)) {
                     return Messages.getString("WeaponAttackAction.TargetNotBurning");
+                }
+                // Firefighting engineers fight an adjacent burning hex - not the one they stand in, and not
+                // on a different board (coords on separate boards are never truly adjacent).
+                if (firefightingEngineer && (attacker.getPosition() != null)
+                      && ((attacker.getBoardId() != target.getBoardId())
+                      || (attacker.getPosition().distance(target.getPosition()) != 1))) {
+                    return Messages.getString("WeaponAttackAction.FirefightNotAdjacent");
+                }
+                // A non-engineer using a Fire Extinguisher weapon (range 1) can only put out a fire in its own
+                // hex or an adjacent one, and never on a different board.
+                boolean fireExtinguisherWeapon = weaponType.hasFlag(WeaponType.F_EXTINGUISHER);
+                if (!firefightingEngineer && fireExtinguisherWeapon && (attacker.getPosition() != null)
+                      && ((attacker.getBoardId() != target.getBoardId())
+                      || (attacker.getPosition().distance(target.getPosition()) > 1))) {
+                    return Messages.getString("WeaponAttackAction.FirefightOutOfRange");
                 }
             } else if (weaponType.hasFlag(WeaponType.F_EXTINGUISHER)) {
                 if (!(((target instanceof Tank) && ((Tank) target).isOnFire()) ||

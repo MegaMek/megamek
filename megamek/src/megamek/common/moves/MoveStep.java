@@ -50,6 +50,8 @@ import megamek.common.LosEffects;
 import megamek.common.ManeuverType;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Board;
+import megamek.common.board.BridgeConstruction;
 import megamek.common.board.Coords;
 import megamek.common.board.FloorTarget;
 import megamek.common.compute.Compute;
@@ -89,6 +91,15 @@ public class MoveStep implements Serializable {
      * arm/right arm, vehicle body, etc.)
      */
     public static final int CARGO_LOCATION_KEY = 1;
+
+    /**
+     * Additional int data keys for a BUILD_BRIDGE step (keys are scoped per step type): the target hex coordinates, the
+     * exits bitmask of the two connected hexsides, and the bridge type (light/medium).
+     */
+    public static final int BRIDGE_TARGET_X_KEY = 0;
+    public static final int BRIDGE_TARGET_Y_KEY = 1;
+    public static final int BRIDGE_EXITS_KEY = 2;
+    public static final int BRIDGE_TYPE_KEY = 3;
 
     private final MoveStepType type;
     private int targetId = Entity.NONE;
@@ -1600,6 +1611,95 @@ public class MoveStep implements Serializable {
     }
 
     /**
+     * @param game   the current game
+     * @param entity the moving entity
+     * @param curPos the position of the entity when this step begins, or null if unknown
+     *
+     * @return {@code true} if this BUILD_BRIDGE step is legal: the Bridge-Building Engineers game option is active, the
+     *       unit is an engineer platoon with its bridge kit and enough remaining budget for the chosen bridge type, and
+     *       the step's target hex is adjacent and a valid bridge site. TO:AUE p.152.
+     */
+    private boolean isValidBridgeBuildStep(Game game, Entity entity, @Nullable Coords curPos) {
+        // Failures are logged at DEBUG: a rejected BUILD_BRIDGE step silently becomes an illegal move, so the log
+        // is the only way to see why a declared build was refused
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS)) {
+            LOGGER.debug("[BuildBridge] step rejected: game option is off");
+            return false;
+        }
+        if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.canStartBridgeBuild()
+              || !convInfantry.canAffordBridge(getBridgeType())) {
+            LOGGER.debug("[BuildBridge] step rejected for {}: not an eligible engineer platoon "
+                  + "(specialization, kit, budget or an active build)", entity.getShortName());
+            return false;
+        }
+        Coords target = getBridgeTargetCoords();
+        if ((target == null) || (curPos == null) || (curPos.distance(target) != 1)) {
+            LOGGER.debug("[BuildBridge] step rejected for {}: target {} is not adjacent to {}",
+                  entity.getShortName(), target, curPos);
+            return false;
+        }
+        Board board = game.getBoard(boardId);
+        int exits = getBridgeExits();
+        boolean isFreshSite = BridgeConstruction.isValidBridgeSite(board, target, exits);
+        // Repairing a destroyed section is an unofficial option that also requires the base bridge-building option
+        // (already checked above). A repairable gap is a legal build target even though it is not a fresh site.
+        boolean repairAllowed = game.getOptions().booleanOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
+        boolean isRepairSite = repairAllowed && BridgeConstruction.isBridgeRepairSite(board, target, exits);
+        if (!isFreshSite && !isRepairSite) {
+            LOGGER.debug("[BuildBridge] step rejected for {}: {} with exits bitmask {} is neither a valid bridge site "
+                        + "nor a repairable gap (repair option {})", entity.getShortName(), target, exits,
+                  repairAllowed ? "on" : "off");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param hex              the hex to check, or null (returns {@code false})
+     * @param assumedElevation the elevation of the unit in that hex
+     *
+     * @return {@code true} if a unit at the given elevation in the given hex stands on top of a bridge deck. Such a
+     *       unit is on the bridge, not in the terrain below it, so the underlying terrain's movement restrictions do
+     *       not apply to it (TO:AR p.115).
+     */
+    private static boolean isOnBridgeDeck(@Nullable Hex hex, int assumedElevation) {
+        return (hex != null) && hex.containsTerrain(Terrains.BRIDGE)
+              && (assumedElevation == hex.terrainLevel(Terrains.BRIDGE_ELEV));
+    }
+
+    /**
+     * @param hex the hex to check, or null
+     *
+     * @return {@code true} if the hex holds a bridge that a ground unit must use the bridge to cross - one over water,
+     *       or one whose deck is raised above the hex. A bridge flush with dry ground acts as a road and is not
+     *       constrained to its exits, so it returns {@code false}.
+     */
+    private static boolean isRealBridgeSpan(@Nullable Hex hex) {
+        return (hex != null) && hex.containsTerrain(Terrains.BRIDGE)
+              && ((hex.terrainLevel(Terrains.WATER) > 0) || (hex.terrainLevel(Terrains.BRIDGE_ELEV) > 0));
+    }
+
+    /**
+     * @param entity    the moving entity
+     * @param bridgeHex the bridge hex being entered or left, or null
+     * @param elevation the entity's elevation in {@code bridgeHex}
+     * @param hexPos    the coordinates of {@code bridgeHex}
+     * @param otherPos  the hex the entity is moving to or from across the bridge edge
+     *
+     * @return {@code true} if the entity would cross the edge between {@code hexPos} and {@code otherPos} while
+     *       standing on a real bridge deck it must use (one over water or raised above the hex) at a hexside that is
+     *       not one of the bridge's exits - i.e. boarding or leaving the bridge over its side rather than at an end
+     *       (TO:AR p.115). A unit that could traverse the terrain under the bridge is not bound to its exits.
+     */
+    private boolean crossesBridgeDeckOffExit(Entity entity, @Nullable Hex bridgeHex, int elevation, Coords hexPos,
+          Coords otherPos) {
+        return isRealBridgeSpan(bridgeHex)
+              && (elevation == bridgeHex.terrainLevel(Terrains.BRIDGE_ELEV))
+              && entity.isLocationProhibited(hexPos, boardId, elevation)
+              && !bridgeHex.containsTerrainExit(Terrains.BRIDGE, hexPos.direction(otherPos));
+    }
+
+    /**
      * This function checks that a step is legal. And adjust the movement type. This only checks for things that can
      * make this step by itself illegal. Things that can make a step illegal as part of a movement path are considered
      * in MovePath.addStep.
@@ -1895,6 +1995,16 @@ public class MoveStep implements Serializable {
                   stepType, prev.isClimbing, entity.isClimbing(), curPos, elevation, prev.getFacing());
         }
 
+        // A platoon actively raising or dismantling a bridge may take no other action at all (TO:AUE p.152): it can
+        // only keep working (no step) or declare one of the bridge actions (pause/cancel/abandon/resume) - it may not
+        // move, and not even turn in place. A *paused* build does not lock the platoon: it is freed to move and fight.
+        if ((entity instanceof ConvInfantry bridgeWorker) && bridgeWorker.isBusyWithBridge()
+              && (type != MoveStepType.CANCEL_BRIDGE) && (type != MoveStepType.RESUME_BRIDGE)
+              && (type != MoveStepType.PAUSE_BRIDGE) && (type != MoveStepType.ABANDON_BRIDGE)) {
+            movementType = EntityMovementType.MOVE_ILLEGAL;
+            return;
+        }
+
         if (prev.isDiggingIn || prev.isHittingDeck) {
             isDiggingIn = prev.isDiggingIn;
             isHittingDeck = prev.isHittingDeck;
@@ -1937,6 +2047,42 @@ public class MoveStep implements Serializable {
                 return;
             }
             isDiggingIn = true;
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.BUILD_BRIDGE) {
+            // Raising a bridge must be the platoon's only action for the turn, TO:AUE p.152
+            if (!isFirstStep() || !isValidBridgeBuildStep(game, entity, curPos)) {
+                return;
+            }
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.CANCEL_BRIDGE) {
+            // A platoon may dismantle its in-progress bridge for a refund; legal only while actively building.
+            if (!isFirstStep() || !(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBuildingBridge()) {
+                return;
+            }
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.PAUSE_BRIDGE) {
+            // A platoon may pause an active build to free itself and return later; legal only while actively building.
+            if (!isFirstStep() || !(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBuildingBridge()) {
+                return;
+            }
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.RESUME_BRIDGE) {
+            // A platoon may reverse a dismantling, or resume a paused build (must be back adjacent to its site).
+            if (!isFirstStep() || !(entity instanceof ConvInfantry convInfantry)) {
+                return;
+            }
+            boolean canResume = convInfantry.isDismantlingBridge()
+                  || (convInfantry.isBridgePaused() && convInfantry.isAdjacentToBridgeSite());
+            if (!canResume) {
+                return;
+            }
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.ABANDON_BRIDGE) {
+            // A platoon may abandon any bridge work in progress (building, paused, or dismantling) - instant, no refund.
+            if (!isFirstStep() || !(entity instanceof ConvInfantry convInfantry)
+                  || !convInfantry.hasBridgeInProgress()) {
+                return;
+            }
             movementType = EntityMovementType.MOVE_NONE;
         } else if (type == MoveStepType.HIT_THE_DECK) {
             // Hitting the deck (TO:AR p.106) may only be the unit's sole action and is allowed in any terrain.
@@ -2705,6 +2851,28 @@ public class MoveStep implements Serializable {
               (getElevation() + entity.getHeight() >=
                     game.getBoard(boardId).getHex(curPos).terrainLevel(Terrains.BRIDGE_ELEV))) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
+        }
+
+        // A unit on a bridge deck enters and leaves only through the bridge's connected hexsides (its exits): you
+        // use a bridge at its ends, not over its sides (TO:AR p.115). This covers bridges flush with the bank
+        // level - including engineer bridges over water (TO:AUE p.152) - which the climb-from-below check above misses.
+        // Bridges flush with dry ground (a bridge acting as a road) are exempt, preserving road-segment movement.
+        if (!isFirstStep() &&
+              !curPos.equals(lastPos) &&
+              (movementType != EntityMovementType.MOVE_JUMP) &&
+              (entity.getMovementMode() != EntityMovementMode.VTOL) &&
+              ((entity.getMovementMode() != EntityMovementMode.WIGE) || (getClearance() == 0))) {
+            Hex bridgeDestHex = game.getBoard(boardId).getHex(curPos);
+            Hex bridgeSrcHex = game.getBoard(boardId).getHex(lastPos);
+            // Only units that cannot traverse the terrain under the bridge are bound to use its exits; a hovercraft
+            // or naval unit crossing the water is not on the bridge and moves freely.
+            boolean leavingBridgeDeckOffExit = crossesBridgeDeckOffExit(entity, bridgeSrcHex, prev.getElevation(),
+                  lastPos, curPos);
+            boolean enteringBridgeDeckOffExit = crossesBridgeDeckOffExit(entity, bridgeDestHex, getElevation(),
+                  curPos, lastPos);
+            if (leavingBridgeDeckOffExit || enteringBridgeDeckOffExit) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            }
         }
 
         // super heavy meks can't climb on buildings
@@ -3802,7 +3970,12 @@ public class MoveStep implements Serializable {
         // restrictions are lifted when moving along a road or bridge,
         // or when flying. Naval movement does not have the pavement
         // exemption.
+        // A unit at bridge deck elevation is standing on the bridge, not in the terrain below it, so the
+        // restrictions of the underlying terrain do not apply (TO:AR p.115). This also covers bridges without
+        // approach roads, such as those raised by Bridge-Building Engineers (TO:AUE p.152), where the step onto the
+        // bridge does not qualify as a pavement step.
         if (entity.isLocationProhibited(dest, boardId, getElevation())
+              && !isOnBridgeDeck(game.getBoard(boardId).getHex(dest), getElevation())
               // Units in prohibited terran should still be able to unload/disconnect
               &&
               (type != MoveStepType.UNLOAD) &&
@@ -3912,6 +4085,9 @@ public class MoveStep implements Serializable {
               &&
               (type != MoveStepType.CONVERT_MODE) &&
               entity.isLocationProhibited(src, boardId, srcEl) &&
+              // Standing on a bridge deck is not standing in the prohibited terrain below it (TO:AR p.115), so
+              // a unit on a bridge without approach roads may still leave it
+              !isOnBridgeDeck(game.getBoard(boardId).getHex(src), srcEl) &&
               !isPavementStep()) {
             return false;
         }
@@ -4337,6 +4513,34 @@ public class MoveStep implements Serializable {
 
     public Minefield getMinefield() {
         return mf;
+    }
+
+    /**
+     * @return The hex a BUILD_BRIDGE step raises its bridge in, from the step's additional data, or null if the step
+     *       does not carry target coordinates.
+     */
+    public @Nullable Coords getBridgeTargetCoords() {
+        Integer targetX = additionalData.get(BRIDGE_TARGET_X_KEY);
+        Integer targetY = additionalData.get(BRIDGE_TARGET_Y_KEY);
+        if ((targetX == null) || (targetY == null)) {
+            return null;
+        }
+        return new Coords(targetX, targetY);
+    }
+
+    /**
+     * @return The exits bitmask of the two hexsides the bridge of a BUILD_BRIDGE step will connect.
+     */
+    public int getBridgeExits() {
+        return additionalData.getOrDefault(BRIDGE_EXITS_KEY, 0);
+    }
+
+    /**
+     * @return The bridge type of a BUILD_BRIDGE step, {@link ConvInfantry#BRIDGE_TYPE_LIGHT} or
+     *       {@link ConvInfantry#BRIDGE_TYPE_MEDIUM}.
+     */
+    public int getBridgeType() {
+        return additionalData.getOrDefault(BRIDGE_TYPE_KEY, ConvInfantry.BRIDGE_TYPE_LIGHT);
     }
 
     /**

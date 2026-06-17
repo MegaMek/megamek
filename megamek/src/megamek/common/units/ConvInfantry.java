@@ -562,6 +562,13 @@ public class ConvInfantry extends Infantry {
     private boolean bridgeBuildPaused = false;
 
     /**
+     * {@code true} when the current work is repairing a destroyed section of an existing bridge (the unofficial
+     * bridge-repair option) rather than raising a new bridge. Decides which placement rule runs when the work finishes:
+     * a repaired section matches the surviving span's deck so the bridge reconnects. Stored in saves (non-transient).
+     */
+    private boolean bridgeBuildIsRepair = false;
+
+    /**
      * @return {@code true} while this platoon is actively raising a bridge (not paused). While actively building, the
      *       platoon is eligible only in the movement phase (to continue or change the build) and takes no other action.
      */
@@ -639,10 +646,28 @@ public class ConvInfantry extends Infantry {
         bridgeTargetCoords = target;
         bridgeExits = exits;
         this.bridgeType = bridgeType;
+        bridgeBuildIsRepair = false;
         bridgeBuildTroopersSnapshot = Math.max(getInternal(LOC_INFANTRY), 0);
         logger.debug("[BuildBridge] {} starts a type-{} bridge at {} (exits bitmask {}, {} troopers, {} turns of "
                     + "work)", getShortName(), bridgeType, target, exits, bridgeBuildTroopersSnapshot,
               bridgeBuildRequiredTurns);
+    }
+
+    /**
+     * Begins repairing a single destroyed section of an existing bridge (the unofficial bridge-repair option). The
+     * work, turn count, casualty extension, pause/dismantle/abandon lifecycle and budget cost are identical to a new
+     * bridge build; only the finished section differs - it is placed at the surviving span's deck so the bridge
+     * reconnects. The declaring turn counts as the first full turn of work.
+     *
+     * @param target     the gap hex the section will be rebuilt in; must be adjacent to this platoon
+     * @param exits      exits bitmask of the two hexsides the repaired section will connect
+     * @param bridgeType {@link #BRIDGE_TYPE_LIGHT} or {@link #BRIDGE_TYPE_MEDIUM}
+     */
+    public void startBridgeRepair(Coords target, int exits, int bridgeType) {
+        startBridgeBuild(target, exits, bridgeType);
+        bridgeBuildIsRepair = true;
+        logger.debug("[BridgeRepair] {} starts repairing a type-{} section at {} (exits bitmask {})", getShortName(),
+              bridgeType, target, exits);
     }
 
     /** Stops all bridge work, losing any progress. The bridge building budget is not refunded. */
@@ -656,6 +681,7 @@ public class ConvInfantry extends Infantry {
         bridgeDismantleTurns = -1;
         bridgeDismantleRequiredTurns = 0;
         bridgeBuildPaused = false;
+        bridgeBuildIsRepair = false;
     }
 
     /**
@@ -796,6 +822,15 @@ public class ConvInfantry extends Infantry {
      */
     public int getBridgeType() {
         return bridgeType;
+    }
+
+    /**
+     * @return {@code true} if the current work is repairing a destroyed section of an existing bridge (unofficial
+     *       bridge-repair option) rather than raising a new bridge. Decides the placement rule used when the work
+     *       finishes.
+     */
+    public boolean isBridgeBuildRepair() {
+        return bridgeBuildIsRepair;
     }
 
     /**

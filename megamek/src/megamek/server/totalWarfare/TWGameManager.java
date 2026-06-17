@@ -15912,9 +15912,17 @@ public class TWGameManager extends AbstractGameManager {
         Coords target = convInfantry.getBridgeTargetCoords();
         int boardId = convInfantry.getBoardId();
         Board board = game.getBoard(boardId);
-        if (!BridgeConstruction.isValidBridgeSite(board, target, convInfantry.getBridgeExits())) {
-            LOGGER.info("[BuildBridge] {} abandons its bridge build: {} is no longer a valid bridge site",
-                  convInfantry.getShortName(), target);
+        int exits = convInfantry.getBridgeExits();
+        boolean isRepair = convInfantry.isBridgeBuildRepair();
+        String featureTag = isRepair ? "BridgeRepair" : "BuildBridge";
+        // A repair must still be a repairable gap, and a fresh build must still be a valid site - either may have
+        // become invalid while building (e.g. the surviving span collapsed, or a structure appeared in the hex).
+        boolean siteStillValid = isRepair
+              ? BridgeConstruction.isBridgeRepairSite(board, target, exits)
+              : BridgeConstruction.isValidBridgeSite(board, target, exits);
+        if (!siteStillValid) {
+            LOGGER.info("[{}] {} abandons its bridge work: {} is no longer a valid {}", featureTag,
+                  convInfantry.getShortName(), target, isRepair ? "repair gap" : "bridge site");
             convInfantry.cancelBridgeBuild();
             Report report = new Report(4278);
             report.subject = convInfantry.getId();
@@ -15925,17 +15933,19 @@ public class TWGameManager extends AbstractGameManager {
 
         boolean isOverWater = BridgeConstruction.isOverWater(board.getHex(target));
         int constructionFactor = ConvInfantry.getBuiltBridgeCF(convInfantry.getBridgeType(), isOverWater);
-        IBuilding bridge = BridgeConstruction.placeBridge(board, target, convInfantry.getBridgeExits(),
-              convInfantry.getBridgeType(), constructionFactor);
-        LOGGER.info("[BuildBridge] {} completed a type-{} bridge at {} (CF {}, over water: {}, exits bitmask {})",
-              convInfantry.getShortName(), convInfantry.getBridgeType(), target, constructionFactor, isOverWater,
-              convInfantry.getBridgeExits());
+        IBuilding bridge = isRepair
+              ? BridgeConstruction.placeRepairedBridge(board, target, exits, convInfantry.getBridgeType(),
+              constructionFactor)
+              : BridgeConstruction.placeBridge(board, target, exits, convInfantry.getBridgeType(), constructionFactor);
+        LOGGER.info("[{}] {} completed a type-{} bridge {} at {} (CF {}, over water: {}, exits bitmask {})", featureTag,
+              convInfantry.getShortName(), convInfantry.getBridgeType(), isRepair ? "repair" : "build", target,
+              constructionFactor, isOverWater, exits);
         sendChangedHex(target, boardId);
         Vector<IBuilding> newBridges = new Vector<>();
         newBridges.add(bridge);
         send(createAddBuildingPacket(newBridges));
 
-        Report report = new Report(4277);
+        Report report = new Report(isRepair ? 4289 : 4277);
         report.subject = convInfantry.getId();
         report.addDesc(convInfantry);
         report.add(constructionFactor);

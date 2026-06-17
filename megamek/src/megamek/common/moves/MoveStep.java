@@ -50,6 +50,7 @@ import megamek.common.LosEffects;
 import megamek.common.ManeuverType;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Board;
 import megamek.common.board.BridgeConstruction;
 import megamek.common.board.Coords;
 import megamek.common.board.FloorTarget;
@@ -1590,12 +1591,20 @@ public class MoveStep implements Serializable {
                   entity.getShortName(), target, curPos);
             return false;
         }
-        boolean isValidSite = BridgeConstruction.isValidBridgeSite(game.getBoard(boardId), target, getBridgeExits());
-        if (!isValidSite) {
-            LOGGER.debug("[BuildBridge] step rejected for {}: {} with exits bitmask {} is not a valid bridge site",
-                  entity.getShortName(), target, getBridgeExits());
+        Board board = game.getBoard(boardId);
+        int exits = getBridgeExits();
+        boolean isFreshSite = BridgeConstruction.isValidBridgeSite(board, target, exits);
+        // Repairing a destroyed section is an unofficial option that also requires the base bridge-building option
+        // (already checked above). A repairable gap is a legal build target even though it is not a fresh site.
+        boolean repairAllowed = game.getOptions().booleanOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
+        boolean isRepairSite = repairAllowed && BridgeConstruction.isBridgeRepairSite(board, target, exits);
+        if (!isFreshSite && !isRepairSite) {
+            LOGGER.debug("[BuildBridge] step rejected for {}: {} with exits bitmask {} is neither a valid bridge site "
+                        + "nor a repairable gap (repair option {})", entity.getShortName(), target, exits,
+                  repairAllowed ? "on" : "off");
+            return false;
         }
-        return isValidSite;
+        return true;
     }
 
     /**

@@ -1525,6 +1525,8 @@ public class Board implements Serializable {
         curHex.removeTerrain(Terrains.BRIDGE);
         curHex.removeTerrain(Terrains.BRIDGE_CF);
         curHex.removeTerrain(Terrains.BRIDGE_ELEV);
+        // A destroyed section drops its field-repair badge along with the bridge terrain.
+        curHex.removeTerrain(Terrains.BRIDGE_REPAIRED);
 
         // Add rubble terrain that matches the building type.
         if (type > 0) {

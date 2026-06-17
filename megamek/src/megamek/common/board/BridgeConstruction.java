@@ -220,8 +220,166 @@ public final class BridgeConstruction {
         // The deck sits at the lowest anchoring bank (land, rim, or previous span) so units cross at grade and a
         // chain of spans steps down the lower rim, spanning the water or canyon below. See bridgeDeckLevel().
         int surfaceLevel = bridgeDeckLevel(firstBank, secondBank, targetHex);
-        int bridgeElevation = Math.max(0, surfaceLevel - targetHex.getLevel());
+        IBuilding bridge = addBridgeStructure(board, target, targetHex, exits, bridgeType, cf, surfaceLevel);
+        LOGGER.info("[BuildBridge] placed a type-{} bridge at {}: CF {}, elevation {}, exits bitmask {}, "
+                    + "registered as structure", bridgeType, target, cf, Math.max(0, surfaceLevel - targetHex.getLevel()),
+              exits & 63);
+        return bridge;
+    }
 
+    /**
+     * The reason a hex is or is not a valid bridge-<i>repair</i> site, so callers can explain a rejection to the
+     * player. Repairing a destroyed bridge section is an unofficial option (not part of any published ruleset): a
+     * Bridge-Building Engineer platoon refills one missing hex of an existing bridge, working from an adjacent
+     * surviving span or bank. See {@link #bridgeRepairIssue}.
+     */
+    public enum BridgeRepairIssue {
+        /** The site is a valid repair gap. */
+        VALID,
+        /** The exits are not two distinct hexsides (cannot happen through the normal UI). */
+        BAD_EXITS,
+        /** The site hex or one of its connected neighbors is off the board. */
+        OFF_BOARD,
+        /** The hex already holds a bridge, building or fuel tank - there is no gap to repair. */
+        NOT_A_GAP,
+        /** Neither connected neighbor is a surviving span of a bridge pointing into the hex - nothing to reconnect. */
+        NO_SURVIVING_SPAN,
+        /**
+         * With one surviving span, the far side does not continue the run: it is not the straight hexside opposite the
+         * span, or it does not reach a bank a unit can step on/off of (open water or deep canyon).
+         */
+        FAR_SIDE_UNANCHORED
+    }
+
+    /**
+     * @param board  the board to repair on
+     * @param target the gap hex the section would be rebuilt in, or null
+     * @param exits  exits bitmask of the two hexsides the repaired section would connect
+     *
+     * @return {@code true} if a destroyed bridge section may be rebuilt in the target hex (unofficial). See
+     *       {@link #bridgeRepairIssue(Board, Coords, int)} for the full set of conditions.
+     */
+    public static boolean isBridgeRepairSite(Board board, @Nullable Coords target, int exits) {
+        return bridgeRepairIssue(board, target, exits) == BridgeRepairIssue.VALID;
+    }
+
+    /**
+     * Checks whether a single destroyed bridge section may be rebuilt in the target hex (unofficial bridge-repair
+     * option). A repair fills a gap - a hex that currently holds no structure - and must reconnect the broken run: at
+     * least one connected neighbor is a surviving span of a bridge pointing back into the hex (that span also fixes the
+     * repaired deck height, so the section lines up with the rest of the bridge), and the far side either continues the
+     * bridge with another surviving span or reaches a bank a unit can step on/off of. A gap flanked only by banks is a
+     * fresh build, not a repair, and a span whose far side is open water or deep canyon with no bank cannot be repaired
+     * (the run is rebuilt inward from a span or bank). Any underlying rubble or water left by the collapse is
+     * preserved.
+     *
+     * @param board  the board to repair on
+     * @param target the gap hex the section would be rebuilt in, or null
+     * @param exits  exits bitmask of the two hexsides the repaired section would connect
+     *
+     * @return Why the site is or is not a repairable gap (see {@link BridgeRepairIssue}).
+     */
+    public static BridgeRepairIssue bridgeRepairIssue(Board board, @Nullable Coords target, int exits) {
+        if (!isValidBridgeExits(exits)) {
+            return BridgeRepairIssue.BAD_EXITS;
+        }
+        if ((target == null) || !board.contains(target)) {
+            return BridgeRepairIssue.OFF_BOARD;
+        }
+        Hex targetHex = board.getHex(target);
+        if (targetHex == null) {
+            return BridgeRepairIssue.OFF_BOARD;
+        }
+        // A repair fills a gap left by a destroyed section: the hex must currently hold no structure of its own.
+        if (targetHex.containsAnyTerrainOf(Terrains.BRIDGE, Terrains.BUILDING, Terrains.FUEL_TANK)) {
+            return BridgeRepairIssue.NOT_A_GAP;
+        }
+
+        int[] exitDirections = exitDirections(exits);
+        Coords firstBankCoords = target.translated(exitDirections[0]);
+        Coords secondBankCoords = target.translated(exitDirections[1]);
+        if (!board.contains(firstBankCoords) || !board.contains(secondBankCoords)) {
+            return BridgeRepairIssue.OFF_BOARD;
+        }
+        Hex firstBank = board.getHex(firstBankCoords);
+        Hex secondBank = board.getHex(secondBankCoords);
+
+        boolean firstIsSpan = isSurvivingSpanToward(firstBank, exitDirections[0]);
+        boolean secondIsSpan = isSurvivingSpanToward(secondBank, exitDirections[1]);
+        // A repair must reconnect to at least one surviving span of the broken bridge; that span also fixes the
+        // deck height. A hex flanked only by banks is a fresh build (use isValidBridgeSite), not a repair.
+        if (!firstIsSpan && !secondIsSpan) {
+            return BridgeRepairIssue.NO_SURVIVING_SPAN;
+        }
+        // Two surviving spans pointing into the gap fully fix the orientation (straight or, for a curved bridge,
+        // bent) - the repaired section simply reconnects them.
+        if (firstIsSpan && secondIsSpan) {
+            return BridgeRepairIssue.VALID;
+        }
+        // Exactly one surviving span (an end-of-run gap): the far side must be the straight continuation of the run
+        // (the hexside opposite the span) onto a bank a unit can step on/off of. Requiring the straight opposite
+        // keeps the repaired section in the bridge's line rather than bending it to an arbitrary side bank; an
+        // originally curved end span is the one case this cannot repair (logged by the caller).
+        int spanSide = firstIsSpan ? exitDirections[0] : exitDirections[1];
+        int farSide = firstIsSpan ? exitDirections[1] : exitDirections[0];
+        Hex farBank = firstIsSpan ? secondBank : firstBank;
+        if ((farSide != ((spanSide + 3) % 6)) || !anchorsBridge(farBank, targetHex)) {
+            return BridgeRepairIssue.FAR_SIDE_UNANCHORED;
+        }
+        return BridgeRepairIssue.VALID;
+    }
+
+    /**
+     * Rebuilds a single destroyed bridge section in the gap hex (unofficial repair option): adds the bridge terrain at
+     * the surviving span's deck height so the section reconnects, registers it as a board structure, and recomputes
+     * terrain exits. Underlying rubble or water left by the collapse is preserved (only bridge terrain is added). The
+     * caller is responsible for validating the site with {@link #isBridgeRepairSite(Board, Coords, int)} and for
+     * sending the changed hex and the new structure to the clients.
+     *
+     * @param board      the board to repair on
+     * @param target     the gap hex the section is rebuilt in
+     * @param exits      exits bitmask of the two hexsides the repaired section connects
+     * @param bridgeType the bridge type as a {@link megamek.common.enums.BuildingType} value (1 = light, 2 = medium)
+     * @param cf         the Construction Factor of the rebuilt section
+     *
+     * @return The newly registered bridge structure, for sending to the clients.
+     */
+    public static IBuilding placeRepairedBridge(Board board, Coords target, int exits, int bridgeType, int cf) {
+        Hex targetHex = board.getHex(target);
+        int[] exitDirections = exitDirections(exits);
+        Hex firstBank = board.getHex(target.translated(exitDirections[0]));
+        Hex secondBank = board.getHex(target.translated(exitDirections[1]));
+
+        // Match the surviving span's deck (not the lowest bank) so the repaired section lines up with the rest of
+        // the bridge and units cross the run at grade. See repairedDeckLevel().
+        int surfaceLevel = repairedDeckLevel(firstBank, secondBank, exitDirections, targetHex);
+        IBuilding bridge = addBridgeStructure(board, target, targetHex, exits, bridgeType, cf, surfaceLevel);
+        // Mark the hex as a field repair so the board view can badge it (removed if the section is later destroyed).
+        targetHex.addTerrain(new Terrain(Terrains.BRIDGE_REPAIRED, 1));
+        LOGGER.info("[BridgeRepair] rebuilt a type-{} section at {}: CF {}, elevation {}, exits bitmask {}, matched "
+                    + "surviving span deck {}", bridgeType, target, cf, Math.max(0, surfaceLevel - targetHex.getLevel()),
+              exits & 63, surfaceLevel);
+        return bridge;
+    }
+
+    /**
+     * Adds bridge terrain (type, elevation, CF) to the target hex at the given absolute deck level, recomputes the
+     * surrounding terrain exits, and registers the span as a board structure. Shared by {@link #placeBridge} and
+     * {@link #placeRepairedBridge}; only bridge terrain is added, so any underlying rubble or water is preserved.
+     *
+     * @param board        the board to build on
+     * @param target       the hex the bridge is placed in
+     * @param targetHex    the hex at {@code target} (passed in to avoid a second lookup)
+     * @param exits        exits bitmask of the two hexsides the bridge connects
+     * @param bridgeType   the bridge type (1 = light, 2 = medium)
+     * @param cf           the Construction Factor of the new bridge
+     * @param surfaceLevel the absolute level the deck sits at
+     *
+     * @return The newly registered bridge structure.
+     */
+    private static IBuilding addBridgeStructure(Board board, Coords target, Hex targetHex, int exits, int bridgeType,
+          int cf, int surfaceLevel) {
+        int bridgeElevation = Math.max(0, surfaceLevel - targetHex.getLevel());
         targetHex.addTerrain(new Terrain(Terrains.BRIDGE, bridgeType, true, exits & 63));
         targetHex.addTerrain(new Terrain(Terrains.BRIDGE_ELEV, bridgeElevation));
         targetHex.addTerrain(new Terrain(Terrains.BRIDGE_CF, cf));
@@ -229,9 +387,43 @@ public final class BridgeConstruction {
 
         IBuilding bridge = new BuildingTerrain(target, board, Terrains.BRIDGE, BasementType.NONE);
         board.addBuildingToBoard(bridge);
-        LOGGER.info("[BuildBridge] placed a type-{} bridge at {}: CF {}, elevation {}, exits bitmask {}, "
-              + "registered as structure", bridgeType, target, cf, bridgeElevation, exits & 63);
         return bridge;
+    }
+
+    /**
+     * @param neighbor  a hex adjacent to a repair gap, reached by stepping {@code direction}
+     * @param direction the hexside direction (0-5) from the gap to this neighbor
+     *
+     * @return {@code true} if the neighbor holds a bridge whose exits point back into the gap (i.e. it is a surviving
+     *       span of the broken bridge that the repaired section should reconnect to).
+     */
+    private static boolean isSurvivingSpanToward(Hex neighbor, int direction) {
+        if (!neighbor.containsTerrain(Terrains.BRIDGE)) {
+            return false;
+        }
+        int backDirection = (direction + 3) % 6;
+        return (neighbor.getTerrain(Terrains.BRIDGE).getExits() & (1 << backDirection)) != 0;
+    }
+
+    /**
+     * @param firstBank      one connected neighbor
+     * @param secondBank     the other connected neighbor
+     * @param exitDirections the two hexside directions (0-5) from the gap to the neighbors
+     * @param targetHex      the gap hex
+     *
+     * @return The deck level for a repaired section: the surviving span's deck, so the section lines up with the rest
+     *       of the bridge. If (defensively) both sides are spans at different decks, the lower is used; if neither side
+     *       is a span the gap level is returned (a non-repair site never reaches here).
+     */
+    private static int repairedDeckLevel(Hex firstBank, Hex secondBank, int[] exitDirections, Hex targetHex) {
+        int deckLevel = Integer.MAX_VALUE;
+        if (isSurvivingSpanToward(firstBank, exitDirections[0])) {
+            deckLevel = Math.min(deckLevel, bankSurfaceLevel(firstBank));
+        }
+        if (isSurvivingSpanToward(secondBank, exitDirections[1])) {
+            deckLevel = Math.min(deckLevel, bankSurfaceLevel(secondBank));
+        }
+        return (deckLevel == Integer.MAX_VALUE) ? targetHex.getLevel() : deckLevel;
     }
 
     /**

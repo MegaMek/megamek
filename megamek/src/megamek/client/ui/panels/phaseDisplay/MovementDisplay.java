@@ -7732,7 +7732,53 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (ConvInfantry.isBridgeTargetClaimed(game, convInfantry.getBoardId(), clicked, convInfantry)) {
             return Messages.getString("MovementDisplay.BuildBridge.reason.claimed");
         }
+        // When repairs are enabled and the clicked hex is a gap next to a surviving span, explain the repair-specific
+        // rejection (e.g. an open-water far side) rather than the generic "no bridge can be built here".
+        if (game.getOptions().booleanOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS)) {
+            String repairReason = bridgeRepairClickReason(board, clicked);
+            if (repairReason != null) {
+                return repairReason;
+            }
+        }
         return Messages.getString("MovementDisplay.BuildBridge.reason.middleNoSpan");
+    }
+
+    /**
+     * Explains why a clicked gap hex was not offered for repair (the unofficial bridge-repair option). If a surviving
+     * span points into the hex, the straight repair across it is evaluated and the reason reported; if no span points
+     * in, the hex is not a broken section of any bridge.
+     *
+     * @param board   the board the gap is on
+     * @param clicked the rejected hex
+     *
+     * @return a localized repair reason, or null if the hex is not next to a bridge at all (the caller falls back to
+     *       the generic reason)
+     */
+    private @Nullable String bridgeRepairClickReason(Board board, Coords clicked) {
+        for (int spanDirection = 0; spanDirection < 6; spanDirection++) {
+            Hex neighbor = board.getHex(clicked.translated(spanDirection));
+            if ((neighbor == null) || !neighbor.containsTerrain(Terrains.BRIDGE)) {
+                continue;
+            }
+            int backDirection = (spanDirection + 3) % 6;
+            boolean spanPointsIntoGap = (neighbor.getTerrain(Terrains.BRIDGE).getExits() & (1 << backDirection)) != 0;
+            if (!spanPointsIntoGap) {
+                continue;
+            }
+            // The hex is the broken section of this bridge; report why the straight repair across the span fails.
+            int straightExits = BridgeConstruction.exitsFor(spanDirection, backDirection);
+            BridgeConstruction.BridgeRepairIssue issue = BridgeConstruction.bridgeRepairIssue(board, clicked,
+                  straightExits);
+            LOGGER.debug("[BridgeRepair] {} rejected as a repair site: straight orientation across the span toward {} "
+                  + "gives {}", clicked, clicked.translated(spanDirection), issue);
+            return switch (issue) {
+                case VALID -> null;
+                case FAR_SIDE_UNANCHORED -> Messages.getString("MovementDisplay.BuildBridge.reason.repairFarSide");
+                case NOT_A_GAP -> Messages.getString("MovementDisplay.BuildBridge.reason.occupied");
+                default -> Messages.getString("MovementDisplay.BuildBridge.reason.repairNoSpan");
+            };
+        }
+        return null;
     }
 
     /**
@@ -7790,8 +7836,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
             button.setToolTipText(Messages.getString("MovementDisplay.moveResumeBridge.tooltip"));
             button.setEnabled(true);
         } else {
-            button.setText(Messages.getString("MovementDisplay.moveBuildBridge"));
-            button.setToolTipText(Messages.getString("MovementDisplay.moveBuildBridge.tooltip"));
+            // The same button raises new bridges and (with the unofficial option) repairs destroyed sections; the
+            // label reflects both so players know the engineer can do either.
+            boolean repairAllowed = gameOptions.booleanOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
+            button.setText(Messages.getString(repairAllowed ? "MovementDisplay.moveBuildRepairBridge"
+                  : "MovementDisplay.moveBuildBridge"));
+            button.setToolTipText(Messages.getString(repairAllowed ? "MovementDisplay.moveBuildRepairBridge.tooltip"
+                  : "MovementDisplay.moveBuildBridge.tooltip"));
             button.setEnabled(canSelectBridgeBuild(selectedUnit, gameOptions));
         }
     }
@@ -7876,6 +7927,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return plans;
         }
         Board board = game.getBoard(convInfantry.getBoardId());
+        boolean repairAllowed = game.getOptions().booleanOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
         for (int middleDirection = 0; middleDirection < 6; middleDirection++) {
             Coords middle = engineerPosition.translated(middleDirection);
             if (!board.contains(middle)) {
@@ -7884,6 +7936,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // Don't offer a hex another platoon is already raising/pausing/dismantling a bridge in (no terrain is
             // placed until it completes, so the site validator alone can't see the in-progress claim)
             if (ConvInfantry.isBridgeTargetClaimed(game, convInfantry.getBoardId(), middle, convInfantry)) {
+                continue;
+            }
+            // A gap in an existing bridge (a destroyed section) is repaired, not freshly built: its orientation is
+            // fixed by the surviving span, so offer the repair plans instead of engineer-origin fresh orientations.
+            if (repairAllowed && addRepairPlansForGap(plans, board, engineerPosition, middle)) {
                 continue;
             }
             // The bridge originates from the engineer: the near bank is always the deck side facing the platoon
@@ -7899,6 +7956,37 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
         return plans;
+    }
+
+    /**
+     * Adds repair plans for a candidate gap hex the engineer is adjacent to (the unofficial bridge-repair option): for
+     * each pair of hexsides that reconnects the broken run, a plan whose orientation is fixed by the surviving span(s),
+     * not by the engineer's facing. The highlighted far end is the exit side away from the engineer so the player
+     * clicks where the repaired section reaches to. TO:AUE.
+     *
+     * @param plans            the plan list to add to
+     * @param board            the board the gap is on
+     * @param engineerPosition the engineer platoon's hex
+     * @param middle           the candidate gap hex (adjacent to the engineer)
+     *
+     * @return {@code true} if the hex is a repairable gap (at least one repair plan was added)
+     */
+    private boolean addRepairPlansForGap(List<BridgeBuildPlan> plans, Board board, Coords engineerPosition,
+          Coords middle) {
+        int originSide = middle.direction(engineerPosition);
+        boolean isRepairableGap = false;
+        for (int firstSide = 0; firstSide < 6; firstSide++) {
+            for (int secondSide = firstSide + 1; secondSide < 6; secondSide++) {
+                int exits = BridgeConstruction.exitsFor(firstSide, secondSide);
+                if (!BridgeConstruction.isBridgeRepairSite(board, middle, exits)) {
+                    continue;
+                }
+                isRepairableGap = true;
+                int endSide = (firstSide == originSide) ? secondSide : firstSide;
+                plans.add(new BridgeBuildPlan(engineerPosition, middle, middle.translated(endSide), exits));
+            }
+        }
+        return isRepairableGap;
     }
 
     /**
@@ -8063,11 +8151,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
         int bridgeType = selectedBridgeType;
         Entity engineer = currentEntity();
 
+        // Rebuilding a destroyed section (unofficial repair option) reads differently from raising a new bridge; the
+        // server makes the same determination from the site, this only chooses the player-facing wording.
+        boolean isRepair = game.getOptions().booleanOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS)
+              && BridgeConstruction.isBridgeRepairSite(game.getBoard(engineer == null ? 0 : engineer.getBoardId()),
+              middle, exits);
+
         cancelBridgeBuildSelection();
         clear();
 
-        LOGGER.info("[BuildBridge] declaring bridge build: bridge hex {}, exits bitmask {}, type {} "
-              + "(1=light, 2=medium)", middle, exits, bridgeType);
+        LOGGER.info("[BuildBridge] declaring bridge {}: bridge hex {}, exits bitmask {}, type {} (1=light, 2=medium)",
+              isRepair ? "repair" : "build", middle, exits, bridgeType);
         Map<Integer, Integer> bridgeData = new HashMap<>();
         bridgeData.put(MoveStep.BRIDGE_TARGET_X_KEY, middle.getX());
         bridgeData.put(MoveStep.BRIDGE_TARGET_Y_KEY, middle.getY());
@@ -8075,7 +8169,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         bridgeData.put(MoveStep.BRIDGE_TYPE_KEY, bridgeType);
         addStepToMovePath(MoveStepType.BUILD_BRIDGE, bridgeData);
         if (engineer != null) {
-            clientgui.addToast(ToastLevel.INFO, Messages.getString("MovementDisplay.buildBridge.toast.start",
+            String startToastKey = isRepair ? "MovementDisplay.repairBridge.toast.start"
+                  : "MovementDisplay.buildBridge.toast.start";
+            clientgui.addToast(ToastLevel.INFO, Messages.getString(startToastKey,
                   engineer.getShortName(), middle.getBoardNum(), ConvInfantry.BRIDGE_BUILD_TURNS), engineer);
         }
         ready();

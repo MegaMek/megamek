@@ -284,16 +284,21 @@ public final class HexTooltip {
             int builtTurns = Math.min(convInfantry.getBridgeBuildTurns(), convInfantry.getBridgeBuildRequiredTurns());
             // Identify the engineer platoon so the player can see who is working the hex
             String builder = convInfantry.getShortName() + " (ID " + convInfantry.getId() + ")";
+            // Repairing a destroyed section reads differently from raising a new bridge (unofficial repair option)
+            boolean isRepair = convInfantry.isBridgeBuildRepair();
             String buildInfo;
             if (convInfantry.isDismantlingBridge()) {
                 // Count the standing structure back down on the build's scale (e.g. 4/6, 3/6, ...)
-                buildInfo = Messages.getString("BoardView1.Tooltip.BridgeDismantling",
+                buildInfo = Messages.getString(isRepair ? "BoardView1.Tooltip.BridgeRepairDismantling"
+                            : "BoardView1.Tooltip.BridgeDismantling",
                       convInfantry.getBridgeDismantleRemaining(), convInfantry.getBridgeBuildRequiredTurns(), builder);
             } else if (convInfantry.isBridgePaused()) {
-                buildInfo = Messages.getString("BoardView1.Tooltip.BridgePaused",
+                buildInfo = Messages.getString(isRepair ? "BoardView1.Tooltip.BridgeRepairPaused"
+                            : "BoardView1.Tooltip.BridgePaused",
                       builtTurns, convInfantry.getBridgeBuildRequiredTurns(), builder);
             } else {
-                buildInfo = Messages.getString("BoardView1.Tooltip.BridgeBuilding",
+                buildInfo = Messages.getString(isRepair ? "BoardView1.Tooltip.BridgeRepairing"
+                            : "BoardView1.Tooltip.BridgeBuilding",
                       builtTurns, convInfantry.getBridgeBuildRequiredTurns(), builder);
             }
             String attr = String.format("FACE=Dialog COLOR=%s",

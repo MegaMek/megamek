@@ -984,6 +984,194 @@ public class BridgeBuildingTest extends GameBoardTestCase {
 
     // endregion
 
+    // region Bridge repair (unofficial: rebuilding a destroyed section)
+
+    /**
+     * Loads a board, makes it the game's board and the engineer-platoon board, and returns it. Used by the repair
+     * tests, which each need a custom board carrying a surviving span next to a gap.
+     */
+    private Board useRepairBoard(String name, String boardData) {
+        initializeBoard(name, boardData);
+        setBoard(name);
+        Board repairBoard = getBoard(name);
+        game.setBoard(repairBoard);
+        this.board = repairBoard;
+        return repairBoard;
+    }
+
+    @Test
+    void endGapNextToASurvivingSpanAndBankIsARepairSite() {
+        // A bridge ran north-south over water onto a south land bank; the southern section (the gap) was destroyed.
+        // The surviving span to the north points into the gap and the south bank anchors the straight far side.
+        Board repairBoard = useRepairBoard("BRIDGE_REPAIR_END_GAP", """
+              size 1 3
+              hex 0101 0 "water:1;bridge:1:09;bridge_cf:30;bridge_elev:0" ""
+              hex 0102 0 "water:1" ""
+              hex 0103 0 "" ""
+              end"""
+        );
+        Coords gap = new Coords(0, 1);
+        assertTrue(BridgeConstruction.isBridgeRepairSite(repairBoard, gap, EXITS_NORTH_SOUTH),
+              "A gap with a surviving span on one side and a straight bank on the other must be a repair site");
+    }
+
+    @Test
+    void midSpanGapBetweenTwoSurvivingSpansIsARepairSite() {
+        // Both neighbors of the gap are surviving spans pointing into it; the repaired section reconnects them.
+        Board repairBoard = useRepairBoard("BRIDGE_REPAIR_MID_SPAN", """
+              size 1 4
+              hex 0101 0 "" ""
+              hex 0102 0 "water:1;bridge:1:09;bridge_cf:30;bridge_elev:0" ""
+              hex 0103 0 "water:1" ""
+              hex 0104 0 "water:1;bridge:1:09;bridge_cf:30;bridge_elev:0" ""
+              end"""
+        );
+        Coords gap = new Coords(0, 2);
+        assertTrue(BridgeConstruction.isBridgeRepairSite(repairBoard, gap, EXITS_NORTH_SOUTH),
+              "A gap flanked by two surviving spans must be a repair site");
+    }
+
+    @Test
+    void aGapWithNoSurvivingSpanIsNotARepairSite() {
+        // A water hex with plain land banks and no adjacent bridge is a fresh build, not a repair.
+        assertEquals(BridgeConstruction.BridgeRepairIssue.NO_SURVIVING_SPAN,
+              BridgeConstruction.bridgeRepairIssue(board, WATER_TARGET_COORDS, EXITS_NORTH_SOUTH),
+              "Without a surviving span pointing in, there is nothing to repair");
+    }
+
+    @Test
+    void aHexThatStillHoldsABridgeIsNotARepairGap() {
+        // 0502 on the test board already holds a map-authored bridge; there is no gap to fill.
+        Coords existingBridge = new Coords(4, 1);
+        assertEquals(BridgeConstruction.BridgeRepairIssue.NOT_A_GAP,
+              BridgeConstruction.bridgeRepairIssue(board, existingBridge, EXITS_NORTH_SOUTH),
+              "A hex that still holds a bridge is not a repairable gap");
+    }
+
+    @Test
+    void aBentRepairToAnArbitrarySideBankIsRejected() {
+        // The surviving span points in from the north; a repair that bends to a side bank instead of continuing the
+        // run straight south is rejected, so the repaired section stays in the bridge's line.
+        Board repairBoard = useRepairBoard("BRIDGE_REPAIR_BENT", """
+              size 3 3
+              hex 0101 0 "" ""
+              hex 0201 0 "water:1;bridge:1:09;bridge_cf:30;bridge_elev:0" ""
+              hex 0301 0 "" ""
+              hex 0102 0 "" ""
+              hex 0202 0 "water:1" ""
+              hex 0302 0 "" ""
+              hex 0103 0 "" ""
+              hex 0203 0 "" ""
+              hex 0303 0 "" ""
+              end"""
+        );
+        Coords gap = new Coords(1, 1);
+        assertTrue(BridgeConstruction.isBridgeRepairSite(repairBoard, gap, BridgeConstruction.exitsFor(0, 3)),
+              "The straight north-south repair that continues the run must be valid");
+        assertEquals(BridgeConstruction.BridgeRepairIssue.FAR_SIDE_UNANCHORED,
+              BridgeConstruction.bridgeRepairIssue(repairBoard, gap, BridgeConstruction.exitsFor(0, 1)),
+              "A repair that bends to a side bank instead of continuing the run straight must be rejected");
+    }
+
+    @Test
+    void aRepairedSectionMatchesTheSurvivingSpanDeckNotTheLowerBank() {
+        // The surviving span's deck is raised 2 above the water; the south bank is at level 0. A fresh build would
+        // dip the deck to the lower bank, but a repair must match the span so the bridge reconnects at its height.
+        Board repairBoard = useRepairBoard("BRIDGE_REPAIR_DECK", """
+              size 1 3
+              hex 0101 0 "water:1;bridge:1:09;bridge_cf:30;bridge_elev:2" ""
+              hex 0102 0 "water:1" ""
+              hex 0103 0 "" ""
+              end"""
+        );
+        Coords gap = new Coords(0, 1);
+        BridgeConstruction.placeRepairedBridge(repairBoard, gap, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT, 30);
+        assertEquals(2, repairBoard.getHex(gap).terrainLevel(Terrains.BRIDGE_ELEV),
+              "A repaired section must sit at the surviving span's deck (elevation 2), not the lower south bank");
+    }
+
+    @Test
+    void aRepairedSectionIsMarkedAndAFreshBuildIsNot() {
+        // The repaired section carries the persistent BRIDGE_REPAIRED marker terrain (which drives the field-repair
+        // badge and survives save games); a freshly built bridge does not, so the two are distinguishable.
+
+        // A fresh build on the default board's water site must not be marked as a repair.
+        BridgeConstruction.placeBridge(board, WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT,
+              30);
+        assertFalse(board.getHex(WATER_TARGET_COORDS).containsTerrain(Terrains.BRIDGE_REPAIRED),
+              "A freshly built bridge must not carry the repair marker");
+
+        Board repairBoard = useRepairBoard("BRIDGE_REPAIR_MARKER", """
+              size 1 3
+              hex 0101 0 "water:1;bridge:1:09;bridge_cf:30;bridge_elev:0" ""
+              hex 0102 0 "water:1" ""
+              hex 0103 0 "" ""
+              end"""
+        );
+        Coords gap = new Coords(0, 1);
+        BridgeConstruction.placeRepairedBridge(repairBoard, gap, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT, 30);
+        assertTrue(repairBoard.getHex(gap).containsTerrain(Terrains.BRIDGE_REPAIRED),
+              "A repaired section must carry the BRIDGE_REPAIRED marker so the board view can badge it");
+    }
+
+    @Test
+    void endPhaseCompletesARepairFromTheSurvivingSpanFooting() {
+        // The engineer stands on the surviving span deck (bridge-deck footing) and rebuilds the adjacent gap over
+        // six turns; the finished section is a repaired span at the run's deck and CF, registered as a structure.
+        Board repairBoard = useRepairBoard("BRIDGE_REPAIR_LIFECYCLE", """
+              size 1 4
+              hex 0101 0 "" ""
+              hex 0102 0 "water:1;bridge:1:09;bridge_cf:30;bridge_elev:0" ""
+              hex 0103 0 "water:1" ""
+              hex 0104 0 "water:1;bridge:1:09;bridge_cf:30;bridge_elev:0" ""
+              end"""
+        );
+        Coords gap = new Coords(0, 2);
+        // The engineer works from the surviving span to the north of the gap
+        ConvInfantry engineers = createEngineerPlatoon(new Coords(0, 1));
+        engineers.startBridgeRepair(gap, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
+        assertTrue(engineers.isBridgeBuildRepair(), "The platoon must be flagged as repairing, not freshly building");
+
+        for (int round = 1; round <= 5; round++) {
+            gameManager.checkBuildBridges();
+            assertFalse(repairBoard.getHex(gap).containsTerrain(Terrains.BRIDGE),
+                  "No section may appear before the repair is done");
+            engineers.newRound(round + 1);
+        }
+        gameManager.checkBuildBridges();
+
+        Hex hex = repairBoard.getHex(gap);
+        assertTrue(hex.containsTerrain(Terrains.BRIDGE), "The repaired section must be placed after 6 full turns");
+        assertEquals(30, hex.terrainLevel(Terrains.BRIDGE_CF),
+              "A light section repaired over water must have its CF doubled to 30 (TO:AUE)");
+        assertEquals(0, hex.terrainLevel(Terrains.BRIDGE_ELEV),
+              "The repaired section must match the surviving spans' deck so the bridge reconnects");
+        assertTrue(hex.containsTerrain(Terrains.BRIDGE_REPAIRED),
+              "A completed repair must mark the hex so the field-repair badge shows");
+        assertNotNull(repairBoard.getBuildingAt(gap), "The repaired section must register as a board structure");
+        assertFalse(engineers.isBuildingBridge(), "The repair must end when the section is completed");
+    }
+
+    @Test
+    void repairFlagSurvivesSerialization() throws Exception {
+        ConvInfantry engineers = createEngineerPlatoon(ENGINEER_COORDS);
+        engineers.startBridgeRepair(WATER_TARGET_COORDS, EXITS_NORTH_SOUTH, ConvInfantry.BRIDGE_TYPE_LIGHT);
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        try (ObjectOutputStream objectOut = new ObjectOutputStream(buffer)) {
+            objectOut.writeObject(engineers);
+        }
+        ConvInfantry restored;
+        try (ObjectInputStream objectIn = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
+            restored = (ConvInfantry) objectIn.readObject();
+        }
+
+        assertTrue(restored.isBridgeBuildRepair(),
+              "A repair in progress must still be a repair after a save game round trip");
+    }
+
+    // endregion
+
     // region Weight collapse (a built bridge is a real load-bearing structure)
 
     /** A 1x3 column with land banks at level 2 over a water hex, so a placed bridge deck sits at elevation 2. */

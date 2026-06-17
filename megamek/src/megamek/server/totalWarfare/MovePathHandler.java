@@ -62,6 +62,7 @@ import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardHelper;
 import megamek.common.board.BoardLocation;
+import megamek.common.board.BridgeConstruction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
@@ -4681,12 +4682,22 @@ class MovePathHandler extends AbstractTWRuleHandler {
                   + "progress at {}", convInfantry.getShortName(), step.getBridgeTargetCoords());
             return;
         }
-        logger.info("[BuildBridge] {} begins a bridge build: target {}, exits bitmask {}, type {} (1=light, "
-                    + "2=medium)", convInfantry.getShortName(), step.getBridgeTargetCoords(), step.getBridgeExits(),
-              step.getBridgeType());
+        // A gap in an existing bridge (a destroyed section) is repaired rather than freshly built when the unofficial
+        // bridge-repair option is on; the work is identical but the finished section matches the surviving span's deck.
+        boolean repairAllowed = getGame().getOptions()
+              .booleanOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
+        boolean isRepair = repairAllowed && BridgeConstruction.isBridgeRepairSite(
+              getGame().getBoard(convInfantry.getBoardId()), step.getBridgeTargetCoords(), step.getBridgeExits());
+        logger.info("[BuildBridge] {} begins a bridge {}: target {}, exits bitmask {}, type {} (1=light, 2=medium)",
+              convInfantry.getShortName(), isRepair ? "repair" : "build", step.getBridgeTargetCoords(),
+              step.getBridgeExits(), step.getBridgeType());
         // Building a bridge is the platoon's sole action, so any other ground posture (dug in / hitting the deck) ends
         convInfantry.clearGroundPostures();
-        convInfantry.startBridgeBuild(step.getBridgeTargetCoords(), step.getBridgeExits(), step.getBridgeType());
+        if (isRepair) {
+            convInfantry.startBridgeRepair(step.getBridgeTargetCoords(), step.getBridgeExits(), step.getBridgeType());
+        } else {
+            convInfantry.startBridgeBuild(step.getBridgeTargetCoords(), step.getBridgeExits(), step.getBridgeType());
+        }
         convInfantry.spendBridgeBuildPoints(step.getBridgeType());
         // Free facing change toward the construction site: the platoon works facing its bridge
         if (convInfantry.getPosition() != null) {
@@ -4694,7 +4705,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             convInfantry.setFacing(facingToBridge);
             convInfantry.setSecondaryFacing(facingToBridge);
         }
-        Report report = new Report(4274);
+        Report report = new Report(isRepair ? 4288 : 4274);
         report.subject = convInfantry.getId();
         report.addDesc(convInfantry);
         report.add(step.getBridgeTargetCoords().getBoardNum());

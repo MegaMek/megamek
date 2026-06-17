@@ -607,7 +607,9 @@ public class ClientGUI extends AbstractClientGUI
             } else {
                 int turnsWorked = Math.min(convInfantry.getBridgeBuildTurns(),
                       convInfantry.getBridgeBuildRequiredTurns());
-                addToast(ToastLevel.INFO, Messages.getString("ClientGUI.bridgeBuildProgress.toast",
+                String progressKey = convInfantry.isBridgeBuildRepair() ? "ClientGUI.bridgeRepairProgress.toast"
+                      : "ClientGUI.bridgeBuildProgress.toast";
+                addToast(ToastLevel.INFO, Messages.getString(progressKey,
                       entity.getShortName(), turnsWorked, convInfantry.getBridgeBuildRequiredTurns(),
                       convInfantry.getBridgeTargetCoords().getBoardNum()), entity);
             }
@@ -790,6 +792,8 @@ public class ClientGUI extends AbstractClientGUI
         collapseWarningSpriteHandler = new CollapseWarningSpriteHandler(this);
         sawClearingSpriteHandler = new SawClearingSpriteHandler(this, client.getGame());
         BridgeBuildSpriteHandler bridgeBuildSpriteHandler = new BridgeBuildSpriteHandler(this, client.getGame());
+        BridgeRepairedSpriteHandler bridgeRepairedSpriteHandler = new BridgeRepairedSpriteHandler(this,
+              client.getGame());
         groundObjectSpriteHandler = new GroundObjectSpriteHandler(this, client.getGame());
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(this, client);
         firingArcSpriteHandler = new FiringArcSpriteHandler(this);
@@ -802,6 +806,7 @@ public class ClientGUI extends AbstractClientGUI
               collapseWarningSpriteHandler,
               sawClearingSpriteHandler,
               bridgeBuildSpriteHandler,
+              bridgeRepairedSpriteHandler,
               groundObjectSpriteHandler,
               firingSolutionSpriteHandler,
               firingArcSpriteHandler,

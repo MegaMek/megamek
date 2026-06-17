@@ -584,20 +584,18 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Shows a progress toast for each of the local player's platoons that is raising a bridge (TO:AUE). Called once per
-     * round at the start of the movement phase: a building platoon is ineligible for all phases, so no phase display
-     * ever selects it and this is its only per-turn feedback besides the hex indicator and END phase report.
+     * Shows a progress toast for each of the local player's platoons that is busy raising or dismantling a bridge
+     * (TO:AUE). Called once per round at the start of the movement phase: a busy platoon is eligible only in the
+     * movement phase (movement-only, so it can continue/cancel/pause/resume) and takes no other action, so this is
+     * its main per-turn feedback besides the hex indicator and the END phase report.
      */
     private void showBridgeBuildProgressToasts() {
         for (Entity entity : getClient().getGame().getEntitiesVector()) {
-            boolean isOwnBridgePlatoon = (entity instanceof ConvInfantry convInfantry)
-                  && convInfantry.isBusyWithBridge()
-                  && (convInfantry.getBridgeTargetCoords() != null)
-                  && (entity.getOwnerId() == getClient().getLocalPlayer().getId());
-            if (!isOwnBridgePlatoon) {
+            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBusyWithBridge()
+                  || (convInfantry.getBridgeTargetCoords() == null)
+                  || (entity.getOwnerId() != getClient().getLocalPlayer().getId())) {
                 continue;
             }
-            ConvInfantry convInfantry = (ConvInfantry) entity;
             if (convInfantry.isDismantlingBridge()) {
                 // Count the standing structure back down on the build's scale (e.g. 4/6, 3/6, ...)
                 addToast(ToastLevel.INFO, Messages.getString("ClientGUI.bridgeDismantleProgress.toast",

@@ -1633,6 +1633,26 @@ public class MoveStep implements Serializable {
     }
 
     /**
+     * @param entity    the moving entity
+     * @param bridgeHex the bridge hex being entered or left, or null
+     * @param elevation the entity's elevation in {@code bridgeHex}
+     * @param hexPos    the coordinates of {@code bridgeHex}
+     * @param otherPos  the hex the entity is moving to or from across the bridge edge
+     *
+     * @return {@code true} if the entity would cross the edge between {@code hexPos} and {@code otherPos} while
+     *       standing on a real bridge deck it must use (one over water or raised above the hex) at a hexside that is
+     *       not one of the bridge's exits - i.e. boarding or leaving the bridge over its side rather than at an end
+     *       (TO:AR p.115). A unit that could traverse the terrain under the bridge is not bound to its exits.
+     */
+    private boolean crossesBridgeDeckOffExit(Entity entity, @Nullable Hex bridgeHex, int elevation, Coords hexPos,
+          Coords otherPos) {
+        return isRealBridgeSpan(bridgeHex)
+              && (elevation == bridgeHex.terrainLevel(Terrains.BRIDGE_ELEV))
+              && entity.isLocationProhibited(hexPos, boardId, elevation)
+              && !bridgeHex.containsTerrainExit(Terrains.BRIDGE, hexPos.direction(otherPos));
+    }
+
+    /**
      * This function checks that a step is legal. And adjust the movement type. This only checks for things that can
      * make this step by itself illegal. Things that can make a step illegal as part of a movement path are considered
      * in MovePath.addStep.
@@ -2780,14 +2800,10 @@ public class MoveStep implements Serializable {
             Hex bridgeSrcHex = game.getBoard(boardId).getHex(lastPos);
             // Only units that cannot traverse the terrain under the bridge are bound to use its exits; a hovercraft
             // or naval unit crossing the water is not on the bridge and moves freely.
-            boolean leavingBridgeDeckOffExit = isRealBridgeSpan(bridgeSrcHex)
-                  && (prev.getElevation() == bridgeSrcHex.terrainLevel(Terrains.BRIDGE_ELEV))
-                  && entity.isLocationProhibited(lastPos, boardId, prev.getElevation())
-                  && !bridgeSrcHex.containsTerrainExit(Terrains.BRIDGE, lastPos.direction(curPos));
-            boolean enteringBridgeDeckOffExit = isRealBridgeSpan(bridgeDestHex)
-                  && (getElevation() == bridgeDestHex.terrainLevel(Terrains.BRIDGE_ELEV))
-                  && entity.isLocationProhibited(curPos, boardId, getElevation())
-                  && !bridgeDestHex.containsTerrainExit(Terrains.BRIDGE, curPos.direction(lastPos));
+            boolean leavingBridgeDeckOffExit = crossesBridgeDeckOffExit(entity, bridgeSrcHex, prev.getElevation(),
+                  lastPos, curPos);
+            boolean enteringBridgeDeckOffExit = crossesBridgeDeckOffExit(entity, bridgeDestHex, getElevation(),
+                  curPos, lastPos);
             if (leavingBridgeDeckOffExit || enteringBridgeDeckOffExit) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }

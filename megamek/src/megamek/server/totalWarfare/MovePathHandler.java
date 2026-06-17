@@ -4669,9 +4669,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * @param step     the BUILD_BRIDGE step carrying the site, orientation and bridge type
      */
     private void processBuildBridgeStep(Infantry infantry, MoveStep step) {
-        if (!(infantry instanceof ConvInfantry convInfantry) || (step.getBridgeTargetCoords() == null)) {
-            logger.warn("[BuildBridge] BUILD_BRIDGE step ignored for {}: not a ConvInfantry platoon or no target "
-                  + "hex in the step data", infantry.getShortName());
+        if (!(infantry instanceof ConvInfantry convInfantry)) {
+            logger.warn("[BuildBridge] BUILD_BRIDGE step ignored for {}: not a conventional infantry platoon",
+                  infantry.getShortName());
+            return;
+        }
+        if (step.getBridgeTargetCoords() == null) {
+            logger.warn("[BuildBridge] BUILD_BRIDGE step ignored for {}: no target hex in the step data",
+                  convInfantry.getShortName());
             return;
         }
         // Another platoon may have started/paused a bridge in this hex since the path was plotted; an in-progress
@@ -4720,9 +4725,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * @param infantry the platoon cancelling its build
      */
     private void processCancelBridgeStep(Infantry infantry) {
-        if (!(infantry instanceof ConvInfantry convInfantry) || !convInfantry.isBuildingBridge()) {
-            logger.warn("[BuildBridge] CANCEL_BRIDGE step ignored for {}: not a ConvInfantry platoon currently "
-                  + "building a bridge", infantry.getShortName());
+        if (!(infantry instanceof ConvInfantry convInfantry)) {
+            logger.warn("[BuildBridge] CANCEL_BRIDGE step ignored for {}: not a conventional infantry platoon",
+                  infantry.getShortName());
+            return;
+        }
+        if (!convInfantry.isBuildingBridge()) {
+            logger.warn("[BuildBridge] CANCEL_BRIDGE step ignored for {}: not currently building a bridge",
+                  convInfantry.getShortName());
             return;
         }
         Coords target = convInfantry.getBridgeTargetCoords();
@@ -4748,14 +4758,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * @param infantry the platoon resuming its build
      */
     private void processResumeBridgeStep(Infantry infantry) {
-        boolean canResume = (infantry instanceof ConvInfantry ci)
-              && (ci.isDismantlingBridge() || ci.isBridgePaused());
-        if (!canResume) {
-            logger.warn("[BuildBridge] RESUME_BRIDGE step ignored for {}: not a ConvInfantry platoon currently "
-                  + "dismantling or paused", infantry.getShortName());
+        if (!(infantry instanceof ConvInfantry convInfantry)) {
+            logger.warn("[BuildBridge] RESUME_BRIDGE step ignored for {}: not a conventional infantry platoon",
+                  infantry.getShortName());
             return;
         }
-        ConvInfantry convInfantry = (ConvInfantry) infantry;
+        if (!convInfantry.isDismantlingBridge() && !convInfantry.isBridgePaused()) {
+            logger.warn("[BuildBridge] RESUME_BRIDGE step ignored for {}: not currently dismantling or paused",
+                  convInfantry.getShortName());
+            return;
+        }
         Coords target = convInfantry.getBridgeTargetCoords();
         convInfantry.resumeBridgeBuild();
         logger.info("[BuildBridge] {} resumes its bridge build at {}: {} of {} turns built",
@@ -4776,9 +4788,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * @param infantry the platoon pausing its build
      */
     private void processPauseBridgeStep(Infantry infantry) {
-        if (!(infantry instanceof ConvInfantry convInfantry) || !convInfantry.isBuildingBridge()) {
-            logger.warn("[BuildBridge] PAUSE_BRIDGE step ignored for {}: not a ConvInfantry platoon currently "
-                  + "building a bridge", infantry.getShortName());
+        if (!(infantry instanceof ConvInfantry convInfantry)) {
+            logger.warn("[BuildBridge] PAUSE_BRIDGE step ignored for {}: not a conventional infantry platoon",
+                  infantry.getShortName());
+            return;
+        }
+        if (!convInfantry.isBuildingBridge()) {
+            logger.warn("[BuildBridge] PAUSE_BRIDGE step ignored for {}: not currently building a bridge",
+                  convInfantry.getShortName());
             return;
         }
         Coords target = convInfantry.getBridgeTargetCoords();
@@ -4801,9 +4818,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * @param infantry the platoon abandoning its bridge
      */
     private void processAbandonBridgeStep(Infantry infantry) {
-        if (!(infantry instanceof ConvInfantry convInfantry) || !convInfantry.hasBridgeInProgress()) {
-            logger.warn("[BuildBridge] ABANDON_BRIDGE step ignored for {}: not a ConvInfantry platoon with bridge "
-                  + "work in progress", infantry.getShortName());
+        if (!(infantry instanceof ConvInfantry convInfantry)) {
+            logger.warn("[BuildBridge] ABANDON_BRIDGE step ignored for {}: not a conventional infantry platoon",
+                  infantry.getShortName());
+            return;
+        }
+        if (!convInfantry.hasBridgeInProgress()) {
+            logger.warn("[BuildBridge] ABANDON_BRIDGE step ignored for {}: no bridge work in progress",
+                  convInfantry.getShortName());
             return;
         }
         Coords target = convInfantry.getBridgeTargetCoords();

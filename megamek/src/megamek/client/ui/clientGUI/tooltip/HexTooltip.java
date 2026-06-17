@@ -268,19 +268,16 @@ public final class HexTooltip {
      *
      * @param result  the tooltip text being built
      * @param game    the current game
-     * @param mcoords the hex the tooltip describes
+     * @param coords  the hex the tooltip describes
      * @param boardId the board of the hex
      */
-    private static void appendBridgeBuildInfo(StringBuilder result, Game game, Coords mcoords, int boardId) {
+    private static void appendBridgeBuildInfo(StringBuilder result, Game game, Coords coords, int boardId) {
         for (Entity entity : game.getEntitiesVector()) {
-            boolean isWorkingHere = (entity instanceof ConvInfantry convInfantry)
-                  && convInfantry.hasBridgeInProgress()
-                  && (entity.getBoardId() == boardId)
-                  && mcoords.equals(convInfantry.getBridgeTargetCoords());
-            if (!isWorkingHere) {
+            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.hasBridgeInProgress()
+                  || (entity.getBoardId() != boardId)
+                  || !coords.equals(convInfantry.getBridgeTargetCoords())) {
                 continue;
             }
-            ConvInfantry convInfantry = (ConvInfantry) entity;
             int builtTurns = Math.min(convInfantry.getBridgeBuildTurns(), convInfantry.getBridgeBuildRequiredTurns());
             // Identify the engineer platoon so the player can see who is working the hex
             String builder = convInfantry.getShortName() + " (ID " + convInfantry.getId() + ")";

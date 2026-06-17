@@ -455,14 +455,14 @@ class SystemPanel extends PicMap
      * of 2 points covers either 2 Light Bridges (1 point each) or 1 Medium Bridge (2 points); the counts drop as
      * bridges are built.
      *
-     * @param sb the display text being built
-     * @param m  the mounted equipment for this row
+     * @param displayText the systems-tab display text being built
+     * @param mounted     the mounted equipment for this row
      */
-    private void appendBridgeKitBudget(StringBuilder sb, Mounted<?> m) {
+    private void appendBridgeKitBudget(StringBuilder displayText, Mounted<?> mounted) {
         if (!(en instanceof ConvInfantry convInfantry)) {
             return;
         }
-        boolean isBridgeKit = (m.getType() instanceof MiscType miscType)
+        boolean isBridgeKit = (mounted.getType() instanceof MiscType miscType)
               && miscType.hasFlag(MiscType.F_TOOLS)
               && miscType.hasFlag(MiscTypeFlag.S_BRIDGE_KIT);
         if (!isBridgeKit) {
@@ -471,7 +471,7 @@ class SystemPanel extends PicMap
         int pointsLeft = convInfantry.getBridgeBuildPoints();
         int lightLeft = pointsLeft / ConvInfantry.BRIDGE_TYPE_LIGHT;
         int mediumLeft = pointsLeft / ConvInfantry.BRIDGE_TYPE_MEDIUM;
-        sb.append(' ').append(Messages.getString("MekDisplay.bridgeKitBudget", lightLeft, mediumLeft));
+        displayText.append(' ').append(Messages.getString("MekDisplay.bridgeKitBudget", lightLeft, mediumLeft));
     }
 
     private String getMountedDisplay(Mounted<?> m, int loc, CriticalSlot cs) {

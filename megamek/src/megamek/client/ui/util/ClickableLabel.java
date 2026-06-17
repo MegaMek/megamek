@@ -49,9 +49,12 @@ import javax.swing.JLabel;
  */
 public class ClickableLabel extends JLabel implements MouseListener {
 
-    private static final String HOVERED_PREFIX = "<HTML><U>";
-    private static final String NON_HOVERED_PREFIX = "<HTML>";
+    private static final String HOVERED_PREFIX = "<html><u>";
+    private static final String HOVERED_SUFFIX = "</u></html>";
+    private static final String NON_HOVERED_PREFIX = "<html>";
+    private static final String NON_HOVERED_SUFFIX = "</html>";
     private static final String ALT_PREFIX = "<html><a href='#'>";
+    private static final String ALT_SUFFIX = "</a></html>";
 
     private boolean isHyperlinkMode = false;
     private boolean isHovered = false;
@@ -92,27 +95,20 @@ public class ClickableLabel extends JLabel implements MouseListener {
     private void updateText() {
         StringBuilder text = new StringBuilder();
         if (isHyperlinkMode) {
-            text.append(ALT_PREFIX);
+            text.append(ALT_PREFIX).append(baseText).append(ALT_SUFFIX);
         } else if (isHovered) {
-            text.append(HOVERED_PREFIX);
+            text.append(HOVERED_PREFIX).append(baseText).append(HOVERED_SUFFIX);
         } else {
-            text.append(NON_HOVERED_PREFIX);
+            text.append(NON_HOVERED_PREFIX).append(baseText).append(NON_HOVERED_SUFFIX);
         }
-        text.append(baseText);
         super.setText(text.toString());
     }
 
+    // We react on mouse released event because mouse clicked is inconsistent and does
+    // not register if mouse cursor moves even a single pixel between pressing and releasing
     @Override
     public void mouseReleased(MouseEvent event) {
         clickCallback.accept(event);
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent event) {
-    }
-
-    @Override
-    public void mousePressed(MouseEvent event) {
     }
 
     @Override
@@ -126,4 +122,11 @@ public class ClickableLabel extends JLabel implements MouseListener {
         isHovered = false;
         updateText();
     }
+
+    @Override
+    public void mouseClicked(MouseEvent event) {}
+
+    @Override
+    public void mousePressed(MouseEvent event) {}
+
 }

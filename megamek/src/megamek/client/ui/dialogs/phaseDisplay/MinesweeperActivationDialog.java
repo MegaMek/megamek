@@ -137,11 +137,11 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
     }
 
     /**
-     * Returns the first minesweeper mounted on the entity, or {@code null} if it has none.
+     * Returns the entity's first operable minesweeper, or {@code null} if it has none.
      */
     private static @Nullable MiscMounted getMinesweeper(Entity entity) {
         for (MiscMounted mounted : entity.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_MINESWEEPER)) {
+            if (mounted.getType().hasFlag(MiscType.F_MINESWEEPER) && mounted.isOperable()) {
                 return mounted;
             }
         }

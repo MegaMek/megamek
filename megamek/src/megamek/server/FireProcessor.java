@@ -138,7 +138,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     // has collapsed put non-inferno fires out.
                     if ((currentHex.terrainLevel(Terrains.FIRE) == Terrains.FIRE_LVL_NORMAL)
                           && !currentHex.isIgnitable()) {
-                        gameManager.removeFire(currentCoords, "lack of fuel");
+                        gameManager.removeFire(boardId, currentCoords, "lack of fuel");
                         continue;
                     }
 

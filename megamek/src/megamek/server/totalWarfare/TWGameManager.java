@@ -7416,6 +7416,23 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Returns the entity's active (switched-on) minesweeper, or {@code null} if it has none, the sweeper is not ready,
+     * its armor is depleted, or the player has deactivated it in the End Phase (TO:AUE p.138). A unit may mount only
+     * one minesweeper.
+     */
+    private static Mounted<?> getActiveMinesweeper(Entity entity) {
+        for (Mounted<?> mounted : entity.getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_MINESWEEPER)
+                  && mounted.isReady()
+                  && (mounted.getArmorValue() > 0)
+                  && !mounted.curMode().isOff()) {
+                return mounted;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Check for any detonations when an entity enters a minefield, except a vibrabomb.
      *
      * @param entity      - the <code>entity</code> who entered the minefield
@@ -7429,23 +7446,6 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return - <code>true</code> if the entity set off any mines
      */
-    /**
-     * Returns the entity's active (switched-on) minesweeper, or {@code null} if it has none, the sweeper is not ready,
-     * its armor is depleted, or the player has deactivated it in the End Phase (TO:AUE p.138). A unit may mount only
-     * one minesweeper.
-     */
-    private static Mounted<?> getActiveMinesweeper(Entity entity) {
-        for (Mounted<?> mounted : entity.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_MINESWEEPER)
-                  && mounted.isReady()
-                  && (mounted.getArmorValue() > 0)
-                  && !mounted.curMode().equals("Off")) {
-                return mounted;
-            }
-        }
-        return null;
-    }
-
     private boolean enterMinefield(Entity entity, Coords c, int curElev, boolean isOnGround, Vector<Report> vMineReport,
           int target) {
         Report r;

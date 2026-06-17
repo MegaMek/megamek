@@ -79,12 +79,10 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
     private static final int PADDING = UIUtil.scaleForGUI(10);
     private static final int PADDING_SMALL = UIUtil.scaleForGUI(5);
 
-    // Mode indexes follow the order declared in MiscType.createISMineSweeper(): setModes("On", "Off")
+    // Mode names declared in MiscType.createISMineSweeper(): setModes("On", "Off")
     private static final String MODE_ON = "On";
     private static final String MODE_OFF = "Off";
     private static final String MODE_NONE = "None";
-    private static final int MODE_INDEX_ON = 0;
-    private static final int MODE_INDEX_OFF = 1;
 
     private final ClientGUI clientGUI;
     private final Game game;
@@ -331,9 +329,12 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
                 continue; // no change
             }
 
-            int newMode = selectOff ? MODE_INDEX_OFF : MODE_INDEX_ON;
-            logger.debug("Entity {} switching minesweeper to {}", entity.getId(), selectOff ? MODE_OFF : MODE_ON);
-            clientGUI.getClient().sendModeChange(entity.getId(), entity.getEquipmentNum(minesweeper), newMode);
+            // Derive the mode index from its name so the dialog never couples to the declared mode order.
+            int newMode = minesweeper.setMode(selectOff ? MODE_OFF : MODE_ON);
+            if (newMode != -1) {
+                logger.debug("Entity {} switching minesweeper to {}", entity.getId(), selectOff ? MODE_OFF : MODE_ON);
+                clientGUI.getClient().sendModeChange(entity.getId(), entity.getEquipmentNum(minesweeper), newMode);
+            }
         }
     }
 }

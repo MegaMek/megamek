@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,10 +44,12 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.dialogs.phaseDisplay.AbandonUnitDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DetonateChargesDialog;
+import megamek.client.ui.dialogs.phaseDisplay.MinesweeperActivationDialog;
 import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkDialog;
 import megamek.client.ui.dialogs.phaseDisplay.VariableRangeTargetingDialog;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.widget.MegaMekButton;
+import megamek.common.Player;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.units.CombatVehicleEscapePod;
@@ -69,7 +71,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         REPORT_NOVA_NETWORK("reportNovaNetwork"),
         REPORT_VAR_RANGE_TARGETING("reportVarRangeTargeting"),
         REPORT_ABANDON("reportAbandon"),
-        REPORT_DETONATE_CHARGES("reportDetonateCharges");
+        REPORT_DETONATE_CHARGES("reportDetonateCharges"),
+        REPORT_MINESWEEPER("reportMinesweeper");
 
         final String cmd;
 
@@ -244,6 +247,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             showAbandonDialog();
         } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_DETONATE_CHARGES.getCmd()))) {
             showDetonateChargesDialog();
+        } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_MINESWEEPER.getCmd()))) {
+            showMinesweeperDialog();
         }
     }
 
@@ -270,11 +275,15 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             // Enable Detonate Charges button if player has set demolition charges (TO:AUE p.152: detonation is
             // announced in any End Phase after the charges are finished)
             setDetonateChargesEnabled(hasDemolitionCharges());
+            // Enable Minesweeper button if player has units mounting a minesweeper (TO:AUE p.138: the sweeper
+            // is activated or deactivated in the End Phase)
+            setMinesweeperEnabled(hasMinesweeperUnits());
         } else {
             setNovaNetworkEnabled(false);
             setVariableRangeTargetingEnabled(false);
             setAbandonEnabled(false);
             setDetonateChargesEnabled(false);
+            setMinesweeperEnabled(false);
         }
     }
 
@@ -438,6 +447,44 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
      */
     private void setDetonateChargesEnabled(boolean enabled) {
         MegaMekButton button = buttons.get(ReportCommand.REPORT_DETONATE_CHARGES);
+        if (button != null) {
+            button.setEnabled(enabled);
+        }
+    }
+
+    /**
+     * Shows the Minesweeper activation dialog (TO:AUE p.138: the sweeper is activated or deactivated in the End Phase,
+     * taking effect next turn).
+     */
+    private void showMinesweeperDialog() {
+        MinesweeperActivationDialog dialog = new MinesweeperActivationDialog(clientgui.getFrame(), clientgui);
+        dialog.setVisible(true);
+        // Clear focus from the button after dialog closes
+        MegaMekButton button = buttons.get(ReportCommand.REPORT_MINESWEEPER);
+        if (button != null) {
+            button.transferFocus();
+        }
+    }
+
+    /**
+     * Checks if the local player has any units mounting a minesweeper.
+     */
+    private boolean hasMinesweeperUnits() {
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        if (localPlayer == null) {
+            return false;
+        }
+        int localPlayerId = localPlayer.getId();
+        return clientgui.getClient().getGame().getEntitiesVector().stream()
+              .filter(entity -> entity.getOwnerId() == localPlayerId)
+              .anyMatch(Entity::hasMinesweeper);
+    }
+
+    /**
+     * Enables or disables the Minesweeper button.
+     */
+    private void setMinesweeperEnabled(boolean enabled) {
+        MegaMekButton button = buttons.get(ReportCommand.REPORT_MINESWEEPER);
         if (button != null) {
             button.setEnabled(enabled);
         }

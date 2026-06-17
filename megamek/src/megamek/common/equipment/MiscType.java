@@ -7805,6 +7805,11 @@ public class MiscType extends EquipmentType {
         misc.cost = 40000;
         misc.flags = misc.flags.or(F_MINESWEEPER, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 30;
+        // A Minesweeper is activated or deactivated in the End Phase; only an activated sweeper clears
+        // mines (TO:AUE p.138). Default "On" preserves the prior always-sweep behavior. instantModeSwitch
+        // = false defers the switch to the next turn, matching the rule's End-Phase timing.
+        misc.setModes("On", "Off");
+        misc.instantModeSwitch = false;
         misc.rulesRefs = "138, TO:AUE";
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)

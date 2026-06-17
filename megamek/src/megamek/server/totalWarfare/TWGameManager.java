@@ -7420,6 +7420,23 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Returns the entity's active (switched-on) minesweeper, or {@code null} if it has none, the sweeper is not ready,
+     * its armor is depleted, or the player has deactivated it in the End Phase (TO:AuE p.138, Corrected Sixth Printing).
+     * A unit may mount only one minesweeper.
+     */
+    private static @Nullable Mounted<?> getActiveMinesweeper(Entity entity) {
+        for (Mounted<?> mounted : entity.getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_MINESWEEPER)
+                  && mounted.isReady()
+                  && (mounted.getArmorValue() > 0)
+                  && !mounted.curMode().isOff()) {
+                return mounted;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Check for any detonations when an entity enters a minefield, except a vibrabomb.
      *
      * @param entity      - the <code>entity</code> who entered the minefield
@@ -7442,14 +7459,7 @@ public class TWGameManager extends AbstractGameManager {
             return false;
         }
 
-        // Check for Mine sweepers
-        Mounted<?> minesweeper = null;
-        for (Mounted<?> m : entity.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_MINESWEEPER) && m.isReady() && (m.getArmorValue() > 0)) {
-                minesweeper = m;
-                break; // Can only have one minesweeper
-            }
-        }
+        Mounted<?> minesweeper = getActiveMinesweeper(entity);
 
         Vector<Minefield> fieldsToRemove = new Vector<>();
         // loop through mines in this hex
@@ -7847,14 +7857,7 @@ public class TWGameManager extends AbstractGameManager {
           Vector<Report> vMineReport) {
         int mass = (int) entity.getWeight();
 
-        // Check for Mine sweepers
-        Mounted<?> minesweeper = null;
-        for (Mounted<?> m : entity.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_MINESWEEPER) && m.isReady() && (m.getArmorValue() > 0)) {
-                minesweeper = m;
-                break; // Can only have one minesweeper
-            }
-        }
+        Mounted<?> minesweeper = getActiveMinesweeper(entity);
 
         // Check for minesweepers sweeping VB minefields
         if (minesweeper != null) {

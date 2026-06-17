@@ -476,7 +476,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         }
         int localPlayerId = localPlayer.getId();
         return clientgui.getClient().getGame().getEntitiesVector().stream()
-              .filter(e -> e.getOwnerId() == localPlayerId)
+              .filter(entity -> entity.getOwnerId() == localPlayerId)
               .anyMatch(Entity::hasMinesweeper);
     }
 

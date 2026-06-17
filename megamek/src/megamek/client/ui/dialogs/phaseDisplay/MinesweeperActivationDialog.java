@@ -114,7 +114,7 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
         // Clear highlighting when dialog is closed via X button
         addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
+            public void windowClosing(WindowEvent event) {
                 clearHighlighting();
                 dispose();
             }
@@ -160,22 +160,22 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
         mainPanel.add(instructions, BorderLayout.NORTH);
 
         JPanel unitPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(PADDING_SMALL, PADDING_SMALL, PADDING_SMALL, PADDING_SMALL);
-        gbc.anchor = GridBagConstraints.WEST;
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.insets = new Insets(PADDING_SMALL, PADDING_SMALL, PADDING_SMALL, PADDING_SMALL);
+        constraints.anchor = GridBagConstraints.WEST;
 
         // Header row (markup lives in the resource bundle)
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        unitPanel.add(new JLabel(Messages.getString("MinesweeperActivationDialog.unitHeader")), gbc);
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        unitPanel.add(new JLabel(Messages.getString("MinesweeperActivationDialog.unitHeader")), constraints);
 
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.CENTER;
-        unitPanel.add(new JLabel(Messages.getString("MinesweeperActivationDialog.currentStateHeader")), gbc);
+        constraints.gridx = 1;
+        constraints.anchor = GridBagConstraints.CENTER;
+        unitPanel.add(new JLabel(Messages.getString("MinesweeperActivationDialog.currentStateHeader")), constraints);
 
-        gbc.gridx = 2;
-        unitPanel.add(new JLabel(Messages.getString("MinesweeperActivationDialog.newStateHeader")), gbc);
-        gbc.anchor = GridBagConstraints.WEST;
+        constraints.gridx = 2;
+        unitPanel.add(new JLabel(Messages.getString("MinesweeperActivationDialog.newStateHeader")), constraints);
+        constraints.anchor = GridBagConstraints.WEST;
 
         int row = 1;
         for (Entity entity : playerUnits) {
@@ -183,19 +183,19 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
             if (minesweeper == null) {
                 continue;
             }
-            gbc.gridy = row++;
+            constraints.gridy = row++;
 
             // Unit name
-            gbc.gridx = 0;
-            unitPanel.add(new JLabel(entity.getShortName()), gbc);
+            constraints.gridx = 0;
+            unitPanel.add(new JLabel(entity.getShortName()), constraints);
 
             // Current state (center aligned)
-            gbc.gridx = 1;
-            gbc.anchor = GridBagConstraints.CENTER;
-            unitPanel.add(new JLabel(getStateDisplayText(minesweeper)), gbc);
+            constraints.gridx = 1;
+            constraints.anchor = GridBagConstraints.CENTER;
+            unitPanel.add(new JLabel(getStateDisplayText(minesweeper)), constraints);
 
             // State selection (center aligned)
-            gbc.gridx = 2;
+            constraints.gridx = 2;
             JPanel statePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, PADDING_SMALL, 0));
             ButtonGroup stateGroup = new ButtonGroup();
 
@@ -204,7 +204,7 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
             onButton.setToolTipText(Messages.getString("MinesweeperActivationDialog.stateOn.tooltip"));
             offButton.setToolTipText(Messages.getString("MinesweeperActivationDialog.stateOff.tooltip"));
 
-            ActionListener highlightListener = e -> highlightEntity(entity);
+            ActionListener highlightListener = event -> highlightEntity(entity);
             onButton.addActionListener(highlightListener);
             offButton.addActionListener(highlightListener);
 
@@ -220,8 +220,8 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
 
             statePanel.add(onButton);
             statePanel.add(offButton);
-            unitPanel.add(statePanel, gbc);
-            gbc.anchor = GridBagConstraints.WEST;
+            unitPanel.add(statePanel, constraints);
+            constraints.anchor = GridBagConstraints.WEST;
 
             onModeButtons.put(entity.getId(), onButton);
         }
@@ -256,7 +256,7 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
     }
 
     /**
-     * @return True if the minesweeper's effective state (pending if set, otherwise current) is Off.
+     * @return {@code true} if the minesweeper's effective state (pending if set, otherwise current) is Off.
      */
     private static boolean isEffectivelyOff(MiscMounted minesweeper) {
         if (!minesweeper.pendingMode().equals(MODE_NONE)) {
@@ -301,12 +301,12 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnApply) {
+    public void actionPerformed(ActionEvent event) {
+        if (event.getSource() == btnApply) {
             applyChanges();
             clearHighlighting();
             dispose();
-        } else if (e.getSource() == btnCancel) {
+        } else if (event.getSource() == btnCancel) {
             clearHighlighting();
             dispose();
         }

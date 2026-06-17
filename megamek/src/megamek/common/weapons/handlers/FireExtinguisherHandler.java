@@ -104,9 +104,10 @@ public class FireExtinguisherHandler extends WeaponHandler {
             }
         }
         // Firefighting engineers that keep battling the same hex get a cumulative bonus next turn,
-        // whether or not this attempt put the fire out (TO:AR p.53). Record the attempt either way.
-        if ((attackingEntity instanceof ConvInfantry firefighter) && firefighter.isFirefighter()
-              && (Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType())) {
+        // whether or not this attempt put the fire out (TO:AuE p.153). Record the attempt either way.
+        // isFirefighter() implies ConvInfantry, which records the consecutive-turn streak.
+        if (attackingEntity.isFirefighter() && (Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType())
+              && (attackingEntity instanceof ConvInfantry firefighter)) {
             firefighter.recordFirefight(target.getPosition(), game.getRoundCount());
         }
         return true;

@@ -2069,44 +2069,44 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     }
 
     /**
-     * @return true if the current unit can extinguish the hex the player has selected: the unit is a firefighting
-     *       engineer or carries a ready fire extinguisher, it has not already declared an attack this phase, and the
-     *       selected hex is burning (and adjacent, for firefighting engineers).
+     * @return {@code true} if the current unit can extinguish the hex the player has selected: the unit is a
+     *       firefighting engineer or carries a ready fire extinguisher, it has not already declared an attack this
+     *       phase, and the selected hex is burning (and adjacent, for firefighting engineers).
      */
     private boolean canExtinguishSelectedHex() {
-        Entity ce = currentEntity();
-        if ((ce == null) || !attacks.isEmpty() || (selectedCoords == null)) {
+        Entity firingUnit = currentEntity();
+        if ((firingUnit == null) || !attacks.isEmpty() || (selectedCoords == null)) {
             return false;
         }
-        boolean firefighter = (ce instanceof ConvInfantry firefighters) && firefighters.isFirefighter();
-        if (!firefighter && !hasReadyFireExtinguisher(ce)) {
+        boolean firefighter = firingUnit.isFirefighter();
+        if (!firefighter && !hasReadyFireExtinguisher(firingUnit)) {
             return false;
         }
         // The hex must be on the unit's own board; a hex on a different board is never reachable.
-        if (ce.getBoardId() != selectedBoardId) {
+        if (firingUnit.getBoardId() != selectedBoardId) {
             return false;
         }
         Hex hex = game.getBoard(selectedBoardId).getHex(selectedCoords);
         if ((hex == null) || !hex.containsTerrain(Terrains.FIRE)) {
             return false;
         }
-        if (ce.getPosition() == null) {
+        if (firingUnit.getPosition() == null) {
             return false;
         }
-        int distanceToHex = ce.getPosition().distance(selectedCoords);
-        // Firefighting engineers fight an adjacent hex, not the one they stand in (TO:AR p.53). Other units use a
+        int distanceToHex = firingUnit.getPosition().distance(selectedCoords);
+        // Firefighting engineers fight an adjacent hex, not the one they stand in (TO:AuE p.153). Other units use a
         // range-1 Fire Extinguisher weapon, which reaches only their own hex or an adjacent one.
         return firefighter ? (distanceToHex == 1) : (distanceToHex <= 1);
     }
 
     private boolean hasReadyFireExtinguisher(Entity entity) {
         return entity.getWeaponList().stream()
-              .anyMatch(w -> w.getType().hasFlag(WeaponType.F_EXTINGUISHER) && !w.isUsedThisRound());
+              .anyMatch(weapon -> weapon.getType().hasFlag(WeaponType.F_EXTINGUISHER) && !weapon.isUsedThisRound());
     }
 
     /**
      * Declares an attack to extinguish the fire in the player-selected hex, using a carried fire extinguisher weapon if
-     * present, otherwise the firefighting engineers' own gear. This consumes the unit's attack (TO:AR p.53 -
+     * present, otherwise the firefighting engineers' own gear. This consumes the unit's attack (TO:AuE p.153 -
      * firefighting is done in place of a weapon attack).
      */
     private void extinguish() {
@@ -2289,7 +2289,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     /**
      * Refreshes the Mode button tooltip for the selected weapon. Most weapons keep the generic tooltip, but the Fire
      * Extinguisher carried by firefighting engineers gets extra helper text explaining its Firefight/Support modes
-     * (TO:AR p.53), since the choice of which platoon rolls is not otherwise obvious from the button.
+     * (TO:AuE p.153), since the choice of which platoon rolls is not otherwise obvious from the button.
      *
      * @param weapon the currently selected weapon
      */

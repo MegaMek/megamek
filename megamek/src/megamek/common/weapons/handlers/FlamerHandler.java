@@ -147,7 +147,7 @@ public class FlamerHandler extends WeaponHandler {
             Report.addNewline(vPhaseReport);
             if (gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false,
                   tn, true, -1, vPhaseReport)) {
-                // Fuel-fed flamer fires are harder for firefighting engineers to put out (TO:AR p.53).
+                // Fuel-fed flamer fires are harder for firefighting engineers to put out (TO:AuE p.153).
                 game.getBoard(target.getBoardId()).markFlamerStartedFire(target.getPosition());
             }
         }
@@ -179,7 +179,7 @@ public class FlamerHandler extends WeaponHandler {
               false,
               new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5,
               vPhaseReport)) {
-            // Fuel-fed flamer fires are harder for firefighting engineers to put out (TO:AR p.53).
+            // Fuel-fed flamer fires are harder for firefighting engineers to put out (TO:AuE p.153).
             game.getBoard(target.getBoardId()).markFlamerStartedFire(target.getPosition());
             return;
         }

@@ -155,7 +155,7 @@ public class ConvInfantry extends Infantry {
     /**
      * Firefighting engineers (FIRE_ENGINEERS): the hex this platoon last fought a fire in, the round it did so, and how
      * many consecutive rounds it has fought that same hex. Used for the cumulative -1 target number per consecutive
-     * turn of firefighting (TO:AR p.53, minimum target number 3).
+     * turn of firefighting (TO:AuE p.153, minimum target number 3).
      */
     private Coords lastFirefightCoords = null;
     private int lastFirefightRound = -1;
@@ -432,14 +432,15 @@ public class ConvInfantry extends Infantry {
         return (infSpecs & spec) > 0;
     }
 
-    /** @return true if this platoon are firefighting engineers (FIRE_ENGINEERS specialization). */
+    /** @return {@code true} if this platoon are firefighting engineers (FIRE_ENGINEERS specialization). */
+    @Override
     public boolean isFirefighter() {
         return hasSpecialization(FIRE_ENGINEERS);
     }
 
     /**
      * Number of consecutive prior rounds this platoon has already spent fighting a fire in the given hex, used for the
-     * cumulative firefighting target-number reduction (TO:AR p.53). Returns 0 when the platoon did not fight this same
+     * cumulative firefighting target-number reduction (TO:AuE p.153). Returns 0 when the platoon did not fight this same
      * hex on the immediately preceding round.
      *
      * @param coords the burning hex being targeted
@@ -540,7 +541,7 @@ public class ConvInfantry extends Infantry {
         }
 
         // Equipment for Firefighting Engineers: a Fire Extinguisher the platoon selects and fires in place
-        // of a weapon attack (TO:AR p.53). It carries the F_SOLO_ATTACK flag, so firing it stops the platoon
+        // of a weapon attack (TO:AuE p.153). It carries the F_SOLO_ATTACK flag, so firing it stops the platoon
         // also firing their small arms that turn.
         if ((spec & FIRE_ENGINEERS) > 0 && (infSpecs & FIRE_ENGINEERS) == 0) {
             boolean hasExtinguisher = getWeaponList().stream()

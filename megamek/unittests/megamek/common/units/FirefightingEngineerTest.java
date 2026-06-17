@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests the firefighting engineer (FIRE_ENGINEERS) consecutive-turn streak logic on {@link ConvInfantry}.
  *
- * <p>Per TO:AR p.53, a firefighting platoon reduces the target number by 1 for every consecutive turn it
+ * <p>Per TO:AuE p.153, a firefighting platoon reduces the target number by 1 for every consecutive turn it
  * keeps fighting a blaze in a single hex (to a minimum target number of 3). A platoon that stops fighting a fire before
  * it is out must start over.</p>
  */

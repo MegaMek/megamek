@@ -1316,41 +1316,44 @@ public class ComputeToHit {
     }
 
     /**
-     * Applies the firefighting engineer extras on top of the base fire-extinguisher to-hit (TO:AR p.53): a +2 for
+     * Applies the firefighting engineer extras on top of the base fire-extinguisher to-hit (TO:AuE p.153): a +2 for
      * fuel-fed flamer fires (the same penalty inferno fires already get, not stacking with it) and a cumulative -1 per
      * consecutive turn the platoon has fought this hex, down to a minimum target number of 3. Does nothing unless the
      * attacker is a firefighting engineer extinguishing a hex.
      *
-     * @param toHit  the running fire-extinguisher to-hit (target number 8, +2 if already inferno)
-     * @param ae     the attacking entity
-     * @param target the hex being extinguished
-     * @param game   the current {@link Game}
+     * @param toHit           the running fire-extinguisher to-hit (target number 8, +2 if already inferno)
+     * @param attackingEntity the attacking entity
+     * @param target          the hex being extinguished
+     * @param game            the current {@link Game}
      */
-    private static void applyFirefightingEngineerModifiers(ToHitData toHit, Entity ae, Targetable target,
+    private static void applyFirefightingEngineerModifiers(ToHitData toHit, Entity attackingEntity, Targetable target,
           Game game) {
-        if (!(ae instanceof ConvInfantry firefighter) || !firefighter.isFirefighter()
-              || (target.getTargetType() != Targetable.TYPE_HEX_EXTINGUISH)) {
+        if (!attackingEntity.isFirefighter() || (target.getTargetType() != Targetable.TYPE_HEX_EXTINGUISH)) {
             return;
         }
-        Coords pos = target.getPosition();
+        Coords targetCoords = target.getPosition();
         // Inferno fires already added +2 above; apply the same to fuel-fed flamer fires when not inferno.
-        if (!game.getBoard(target).isInfernoBurning(pos) && game.getBoard(target).isFlamerStartedFire(pos)) {
+        if (!game.getBoard(target).isInfernoBurning(targetCoords)
+              && game.getBoard(target).isFlamerStartedFire(targetCoords)) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
         }
-        // Multiple platoons combining into a single roll grant the lead platoon -1 each (TO:AR p.53). Apply the
+        // Multiple platoons combining into a single roll grant the lead platoon -1 each (TO:AuE p.153). Apply the
         // penalties (above) before the reductions (here) so the running total honours the minimum target number 3.
-        int supportingPlatoons = FirefightingSupport.supportingPlatoons(game, ae, target);
+        int supportingPlatoons = FirefightingSupport.supportingPlatoons(game, attackingEntity, target);
         if (supportingPlatoons > 0) {
             int reduction = Math.min(supportingPlatoons, toHit.getValue() - 3);
             if (reduction > 0) {
                 toHit.addModifier(-reduction, Messages.getString("WeaponAttackAction.FirefightSupport"));
             }
         }
-        int priorStreak = firefighter.getPriorFirefightStreak(pos, game.getRoundCount());
-        if (priorStreak > 0) {
-            int reduction = Math.min(priorStreak, toHit.getValue() - 3);
-            if (reduction > 0) {
-                toHit.addModifier(-reduction, Messages.getString("WeaponAttackAction.FirefightSustained"));
+        // isFirefighter() is only ever true for ConvInfantry, which holds the consecutive-turn streak state.
+        if (attackingEntity instanceof ConvInfantry firefighter) {
+            int priorStreak = firefighter.getPriorFirefightStreak(targetCoords, game.getRoundCount());
+            if (priorStreak > 0) {
+                int reduction = Math.min(priorStreak, toHit.getValue() - 3);
+                if (reduction > 0) {
+                    toHit.addModifier(-reduction, Messages.getString("WeaponAttackAction.FirefightSustained"));
+                }
             }
         }
     }
@@ -1418,11 +1421,10 @@ public class ComputeToHit {
         }
 
         // Firefighting engineers without a fire extinguisher weapon (e.g. an older platoon that predates the
-        // auto-equipped extinguisher) can still put out an adjacent burning hex with their own gear (TO:AR
-        // p.53), firing their small arms at the hex. New platoons select the Fire Extinguisher weapon, which
+        // auto-equipped extinguisher) can still put out an adjacent burning hex with their own gear (TO:AuE
+        // p.153), firing their small arms at the hex. New platoons select the Fire Extinguisher weapon, which
         // is handled by the F_EXTINGUISHER branch above; both paths apply the same modifiers.
-        if ((ae instanceof ConvInfantry firefighter) && firefighter.isFirefighter()
-              && (target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH)) {
+        if (ae.isFirefighter() && (target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH)) {
             toHit = new ToHitData(8, Messages.getString("WeaponAttackAction.FireExt"));
             if (game.getBoard(target).isInfernoBurning(target.getPosition())) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));

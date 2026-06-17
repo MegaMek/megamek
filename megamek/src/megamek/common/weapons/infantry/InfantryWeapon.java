@@ -55,7 +55,6 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 import megamek.common.util.YamlEncDec;
@@ -298,10 +297,10 @@ public abstract class InfantryWeapon extends Weapon {
         try {
             Entity entity = game.getEntity(waa.getEntityId());
 
-            // Firefighting engineers extinguish a burning hex in place of a weapon attack (TO:AR p.53).
+            // Firefighting engineers extinguish a burning hex in place of a weapon attack (TO:AuE p.153).
             // Route that to the shared fire extinguisher resolution.
             Targetable target = waa.getTarget(game);
-            if ((entity instanceof ConvInfantry firefighter) && firefighter.isFirefighter()
+            if ((entity != null) && entity.isFirefighter()
                   && (target != null) && (target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH)) {
                 return new FireExtinguisherHandler(toHit, waa, game, manager);
             }

@@ -47,7 +47,7 @@ import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * Resolves a firefighting-engineer platoon that, instead of rolling itself, is supporting the lead platoon fighting the
- * same blaze (TO:AR p.53). A supporting platoon makes no roll of its own: its -1 modifier is already folded into the
+ * same blaze (TO:AuE p.153). A supporting platoon makes no roll of its own: its -1 modifier is already folded into the
  * lead platoon's to-hit. This handler only reports the assist and advances the platoon's consecutive-turn streak so a
  * platoon that later takes the lead keeps the bonus it earned while supporting.
  *
@@ -74,8 +74,9 @@ public class FirefightingSupportHandler extends WeaponHandler {
         report.add(target.getPosition().getBoardNum());
         returnedReports.addElement(report);
 
-        // A supporting platoon is still actively fighting the blaze, so its streak continues (TO:AR p.53).
-        if ((attackingEntity instanceof ConvInfantry firefighter) && firefighter.isFirefighter()) {
+        // A supporting platoon is still actively fighting the blaze, so its streak continues (TO:AuE p.153).
+        // isFirefighter() implies ConvInfantry, which records the consecutive-turn streak.
+        if (attackingEntity.isFirefighter() && (attackingEntity instanceof ConvInfantry firefighter)) {
             firefighter.recordFirefight(target.getPosition(), game.getRoundCount());
         }
         return false;

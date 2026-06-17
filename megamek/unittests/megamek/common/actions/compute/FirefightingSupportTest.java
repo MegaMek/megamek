@@ -55,7 +55,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests the multi-platoon firefighting choice from TO:AR p.53 (see {@link FirefightingSupport}): platoons in
+ * Tests the multi-platoon firefighting choice from TO:AuE p.153 (see {@link FirefightingSupport}): platoons in
  * {@link FirefightingSupport#MODE_FIREFIGHT} mode roll separately, while platoons in
  * {@link FirefightingSupport#MODE_SUPPORT} mode yield their roll and lend -1 to the lead platoon on the same hex.
  */

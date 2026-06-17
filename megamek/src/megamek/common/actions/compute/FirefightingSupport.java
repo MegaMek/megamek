@@ -43,13 +43,12 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
-import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
 /**
- * Resolves the multi-platoon firefighting choice from TO:AR p.53: when more than one firefighting-engineer platoon
+ * Resolves the multi-platoon firefighting choice from TO:AuE p.153: when more than one firefighting-engineer platoon
  * fights the same blaze, the controlling player may either have each platoon roll separately, or pool the platoons into
  * a single roll that gets a -1 modifier for each additional platoon.
  *
@@ -81,7 +80,7 @@ public final class FirefightingSupport {
     private FirefightingSupport() {}
 
     /**
-     * The number of supporting platoons whose -1 modifiers apply to this attacker's firefighting roll (TO:AR p.53).
+     * The number of supporting platoons whose -1 modifiers apply to this attacker's firefighting roll (TO:AuE p.153).
      * Returns a value greater than zero only when this attacker is the lead (rolling) platoon for the targeted hex;
      * non-lead platoons (separate rollers and yielding supporters) get 0.
      *
@@ -109,7 +108,7 @@ public final class FirefightingSupport {
     }
 
     /**
-     * Whether this attacker yields its firefighting roll to a lead platoon (TO:AR p.53). A yielding supporter is in
+     * Whether this attacker yields its firefighting roll to a lead platoon (TO:AuE p.153). A yielding supporter is in
      * {@link #MODE_SUPPORT} mode and is not the lead platoon for the hex, so it makes no roll of its own and instead
      * lends -1 to the lead.
      *
@@ -132,8 +131,8 @@ public final class FirefightingSupport {
         return yielding;
     }
 
-    private static boolean appliesTo(Entity attacker, @Nullable Targetable target) {
-        return (attacker instanceof ConvInfantry firefighter) && firefighter.isFirefighter()
+    private static boolean appliesTo(@Nullable Entity attacker, @Nullable Targetable target) {
+        return (attacker != null) && attacker.isFirefighter()
               && (target != null) && (target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH)
               && (target.getPosition() != null);
     }
@@ -181,7 +180,7 @@ public final class FirefightingSupport {
             return false;
         }
         Entity attacker = game.getEntity(waa.getEntityId());
-        return (attacker instanceof ConvInfantry firefighter) && firefighter.isFirefighter();
+        return (attacker != null) && attacker.isFirefighter();
     }
 
     /**

@@ -82,7 +82,7 @@ public class ISFireExtinguisher extends Weapon {
         criticalSlots = 0;
         flags = flags.or(F_NO_FIRES).or(F_SOLO_ATTACK).or(F_EXTINGUISHER);
         // Firefighting engineers fighting one blaze together may either roll separately or pool into a single
-        // roll at -1 per extra platoon (TO:AR p.53). The mode picks which: FIREFIGHT rolls on its own, SUPPORT
+        // roll at -1 per extra platoon (TO:AuE p.153). The mode picks which: FIREFIGHT rolls on its own, SUPPORT
         // yields its roll and lends -1 to the lead platoon. FIREFIGHT is first so it is the default.
         setModes(new String[] { FirefightingSupport.MODE_FIREFIGHT, FirefightingSupport.MODE_SUPPORT });
         setInstantModeSwitch(true);
@@ -111,7 +111,7 @@ public class ISFireExtinguisher extends Weapon {
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         try {
             // A firefighting platoon in Support mode yields its roll and only lends -1 to the lead platoon
-            // fighting the same hex (TO:AR p.53), so it resolves through the lightweight support handler.
+            // fighting the same hex (TO:AuE p.153), so it resolves through the lightweight support handler.
             Entity attacker = game.getEntity(waa.getEntityId());
             Targetable target = waa.getTarget(game);
             if ((attacker != null) && FirefightingSupport.isYieldingSupporter(game, attacker, target)) {

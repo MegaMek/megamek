@@ -1526,7 +1526,11 @@ public class MapMenu extends JPopupMenu {
                       || hasAmmoType(AmmoType.AmmoTypeEnum.BA_TUBE)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
                 }
-                if (canStartFires && (hasFireExtinguisher() || isFirefightingInfantry())
+                // canStartFires is the TacOps fire game option (ADVANCED_COMBAT_TAC_OPS_START_FIRE), not a unit
+                // trait: extinguishing is only offered when the fire rules are in play, the same option that
+                // gates igniting hexes above. A unit qualifies if it carries a fire extinguisher weapon or is a
+                // firefighting-engineer platoon (TO:AuE p.153).
+                if (canStartFires && (hasFireExtinguisher() || myEntity.isFirefighter())
                       && h.containsTerrain(Terrains.FIRE)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_EXTINGUISH)));
                 }
@@ -1641,10 +1645,6 @@ public class MapMenu extends JPopupMenu {
     private boolean hasFireExtinguisher() {
         return myEntity.getWeaponList().stream()
               .anyMatch(weapon -> weapon.getType().hasFlag(WeaponType.F_EXTINGUISHER));
-    }
-
-    private boolean isFirefightingInfantry() {
-        return (myEntity instanceof ConvInfantry firefighter) && firefighter.isFirefighter();
     }
 
     private JMenuItem createTorsoTwistJMenuItem(int direction) {

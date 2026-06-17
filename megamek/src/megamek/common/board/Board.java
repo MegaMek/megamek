@@ -164,7 +164,7 @@ public class Board implements Serializable {
 
     /**
      * Coords of fires started by fuel-fed flamers (such as Vehicular Flamers). These fires are harder for firefighting
-     * engineers to put out (TO:AR p.53), the same way inferno fires are.
+     * engineers to put out (TO:AuE p.153), the same way inferno fires are.
      * <p>Not final: save games made before this field existed deserialize it as null, so the accessors guard against
      * that.</p>
      */
@@ -1379,7 +1379,7 @@ public class Board implements Serializable {
     }
 
     /**
-     * Record that a fire at the given coordinates was started by a fuel-fed flamer (TO:AR p.53). Such fires are harder
+     * Record that a fire at the given coordinates was started by a fuel-fed flamer (TO:AuE p.153). Such fires are harder
      * for firefighting engineers to extinguish.
      *
      * @param coords the <code>Coords</code> of the flamer-started fire

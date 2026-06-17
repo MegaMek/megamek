@@ -32,9 +32,9 @@
  */
 package megamek.client.ui.util;
 
-import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.Cursor;
 import java.util.Objects;
 import java.util.function.Consumer;
 import javax.swing.JLabel;
@@ -51,6 +51,9 @@ public class ClickableLabel extends JLabel implements MouseListener {
 
     private static final String HOVERED_PREFIX = "<HTML><U>";
     private static final String NON_HOVERED_PREFIX = "<HTML>";
+    private static final String ALT_PREFIX = "<html><a href='#'>";
+
+    private boolean isHyperlinkMode = false;
     private boolean isHovered = false;
     private String baseText = "";
     private final Consumer<MouseEvent> clickCallback;
@@ -63,7 +66,6 @@ public class ClickableLabel extends JLabel implements MouseListener {
     public ClickableLabel(Consumer<MouseEvent> clickCallback) {
         this.clickCallback = Objects.requireNonNull(clickCallback);
         addMouseListener(this);
-        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
     @Override
@@ -72,29 +74,55 @@ public class ClickableLabel extends JLabel implements MouseListener {
         updateText();
     }
 
+    /**
+     * Allows to set hyperlink mode. If enabled, changes mouse cursor to hand, always underscores the label, and changes
+     * its color to blue.
+     *
+     * @param hyperlinkMode {@code true} to enable the mode, {@code false} otherwise
+     */
+    public void setHyperlinkMode(boolean hyperlinkMode) {
+        this.isHyperlinkMode = hyperlinkMode;
+        if (hyperlinkMode) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        } else {
+            setCursor(Cursor.getDefaultCursor());
+        }
+    }
+
     private void updateText() {
-        super.setText((isHovered ? HOVERED_PREFIX : NON_HOVERED_PREFIX) + baseText);
+        StringBuilder text = new StringBuilder();
+        if (isHyperlinkMode) {
+            text.append(ALT_PREFIX);
+        } else if (isHovered) {
+            text.append(HOVERED_PREFIX);
+        } else {
+            text.append(NON_HOVERED_PREFIX);
+        }
+        text.append(baseText);
+        super.setText(text.toString());
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {}
-
-    @Override
-    public void mousePressed(MouseEvent e) {}
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        clickCallback.accept(e);
+    public void mouseReleased(MouseEvent event) {
+        clickCallback.accept(event);
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
+    public void mouseClicked(MouseEvent event) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent event) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent event) {
         isHovered = true;
         updateText();
     }
 
     @Override
-    public void mouseExited(MouseEvent e) {
+    public void mouseExited(MouseEvent event) {
         isHovered = false;
         updateText();
     }

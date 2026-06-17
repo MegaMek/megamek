@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.util;
 
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Objects;
@@ -62,6 +63,7 @@ public class ClickableLabel extends JLabel implements MouseListener {
     public ClickableLabel(Consumer<MouseEvent> clickCallback) {
         this.clickCallback = Objects.requireNonNull(clickCallback);
         addMouseListener(this);
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
     @Override
@@ -75,15 +77,15 @@ public class ClickableLabel extends JLabel implements MouseListener {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        clickCallback.accept(e);
-    }
+    public void mouseClicked(MouseEvent e) {}
 
     @Override
     public void mousePressed(MouseEvent e) {}
 
     @Override
-    public void mouseReleased(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {
+        clickCallback.accept(e);
+    }
 
     @Override
     public void mouseEntered(MouseEvent e) {

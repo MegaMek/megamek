@@ -1333,9 +1333,10 @@ public class ComputeToHit {
         }
         Coords targetCoords = target.getPosition();
         // Inferno fires already added +2 above; apply the same to fuel-fed flamer fires when not inferno.
+        // Label it as a flamer fire so the to-hit breakdown does not misreport a flamer fire as an inferno.
         if (!game.getBoard(target).isInfernoBurning(targetCoords)
               && game.getBoard(target).isFlamerStartedFire(targetCoords)) {
-            toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
+            toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutFlamerFire"));
         }
         // Multiple platoons combining into a single roll grant the lead platoon -1 each (TO:AuE p.153). Apply the
         // penalties (above) before the reductions (here) so the running total honours the minimum target number 3.

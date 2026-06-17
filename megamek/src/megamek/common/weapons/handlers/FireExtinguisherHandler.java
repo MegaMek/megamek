@@ -41,6 +41,7 @@ import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Board;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.ConvInfantry;
@@ -48,6 +49,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -55,6 +57,8 @@ import megamek.server.totalWarfare.TWGameManager;
  * @since Sep 23, 2004
  */
 public class FireExtinguisherHandler extends WeaponHandler {
+    private static final MMLogger LOGGER = MMLogger.create(FireExtinguisherHandler.class);
+
     @Serial
     private static final long serialVersionUID = -7047033962986081773L;
 
@@ -77,15 +81,25 @@ public class FireExtinguisherHandler extends WeaponHandler {
                 r.indent(3);
                 vPhaseReport.add(r);
                 int boardId = target.getBoardId();
-                Hex extinguishedHex = game.getBoard(boardId).getHex(target.getPosition());
-                extinguishedHex.removeTerrain(Terrains.FIRE);
-                // Reset the fire-turn counter so the hex is treated as unburned. Without this it keeps a
-                // stale value, and a fire later restarted here (e.g. by a flamer) is mistaken for an
-                // already-burning fire - skipping the "fire started" report and spreading immediately.
-                extinguishedHex.resetFireTurn();
-                gameManager.sendChangedHex(target.getPosition(), boardId);
-                game.getBoard(boardId).removeInfernoFrom(target.getPosition());
-                game.getBoard(boardId).removeFlamerStartedFire(target.getPosition());
+                Board extinguishedBoard = game.getBoard(boardId);
+                Hex extinguishedHex = (extinguishedBoard == null) ? null
+                      : extinguishedBoard.getHex(target.getPosition());
+                // A corrupted or out-of-sync action could carry a stale boardId/coords; guard against it so
+                // resolution never crashes the phase with an NPE.
+                if (extinguishedHex == null) {
+                    LOGGER.warn("[Firefight] cannot extinguish hex {} on board {}: {} - skipping terrain update",
+                          target.getPosition(), boardId,
+                          (extinguishedBoard == null) ? "board not found" : "hex not found");
+                } else {
+                    extinguishedHex.removeTerrain(Terrains.FIRE);
+                    // Reset the fire-turn counter so the hex is treated as unburned. Without this it keeps a
+                    // stale value, and a fire later restarted here (e.g. by a flamer) is mistaken for an
+                    // already-burning fire - skipping the "fire started" report and spreading immediately.
+                    extinguishedHex.resetFireTurn();
+                    gameManager.sendChangedHex(target.getPosition(), boardId);
+                    extinguishedBoard.removeInfernoFrom(target.getPosition());
+                    extinguishedBoard.removeFlamerStartedFire(target.getPosition());
+                }
             } else if (target instanceof Entity) {
                 if (entityTarget.infernos.isStillBurning()
                       || (target instanceof Tank && ((Tank) target).isOnFire())) {

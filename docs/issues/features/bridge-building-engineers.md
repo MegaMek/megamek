@@ -215,6 +215,65 @@ Key additions: `ConvInfantry` dismantle/resume state (`bridgeDismantleTurns`/`-R
 `BoardView1.Tooltip.BridgeDismantling`. Tests added for the dismantle lifecycle, countback, resume,
 displacement-no-refund, movement-only eligibility and serialization.
 
+## Bridge section repair (unofficial, added 2026-06-17)
+
+An **unofficial** extension (not part of any published ruleset) lets a Bridge-Building Engineer platoon rebuild a
+single **destroyed section** (a missing hex) of an existing bridge. It reuses the entire build lifecycle; only the
+finished section's deck placement differs.
+
+**Game option**: `OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS` (`"unofficial_bridge_repair_engineers"`),
+registered in `advancedRules`, default off. Its displayable name contains "(Unofficial)" so the options dialog hides
+it behind the *Unofficial Opts* toggle. It is **only effective when the RAW `bridge_building_engineers` option is also
+on** - every gate (`MoveStep.isValidBridgeBuildStep`, `MovementDisplay.canSelectBridgeBuild`, the step processor)
+checks the base option first, so repair cannot be declared without it.
+
+**User decisions (2026-06-17)**:
+
+- *Footing*: the engineer may work while standing on an **adjacent surviving bridge deck** (enables mid-span repairs
+  over water, where the only adjacent footing is the span itself). Adjacency is the existing distance-1 check.
+- *Cost*: a repair **spends one bridge-building point** (Light 1 / Medium 2), refunded on dismantle, exactly like a
+  fresh build.
+- *Strength*: the player picks **Light (CF 15) or Medium (CF 40)**, doubled over water - the kit's own values, which
+  may be weaker than the original section. CF is not matched to the destroyed section.
+- *Toggle*: its own unofficial option that requires the TacOps bridge-building option (above).
+
+**What is a repairable gap** (`BridgeConstruction.bridgeRepairIssue`): the target hex holds no structure, and at least
+one connected neighbor is a **surviving span pointing into the hex** (that span also fixes the repaired deck height).
+The far side must reconnect the run - either a second surviving span (mid-span gap, orientation fully fixed) or, with
+one span, the **straight hexside opposite** the span onto a bank a unit can use (end-of-run gap). A bent repair to an
+arbitrary side bank is rejected so the section stays in the bridge's line; an originally **curved end span** is the
+one case this cannot repair (rejected as `FAR_SIDE_UNANCHORED`, logged). Underlying rubble/water left by the collapse
+is preserved (only bridge terrain is added).
+
+**Deck matching**: `BridgeConstruction.placeRepairedBridge` sets the section's `BRIDGE_ELEV` to the **surviving span's
+deck** (not the lowest bank, as a fresh build does), so the repaired hex lines up with the rest of the run. The two
+placement methods share a private `addBridgeStructure` helper.
+
+**State / flow**: `ConvInfantry.bridgeBuildIsRepair` (serialized, non-transient) records the intent;
+`startBridgeRepair()` sets it. `MovePathHandler.processBuildBridgeStep` derives repair-vs-build from the option plus
+`isBridgeRepairSite` (no new `MoveStep` field) and routes to `startBridgeRepair`; `TWGameManager.finishBridgeBuild`
+re-validates with the matching predicate and calls `placeRepairedBridge`. UI: `MovementDisplay.addRepairPlansForGap`
+surfaces gap hexes (orientation fixed by the span, not the engineer's facing) when the option is on. Reports 4288
+(repair started) / 4289 (section repaired); `[BridgeRepair]`-tagged diagnostic logging throughout.
+
+**Player wording (repair vs new)**: the same engineer button reads "Build / Repair Bridge" when the repair option is
+on; the declaration toast, per-round progress toast and the in-progress hex tooltip (building / paused / dismantling
+variants) all say "repair / section" when `isBridgeBuildRepair()`; END-phase reports 4288/4289 read "repairing /
+repairs a destroyed bridge section". Clicking a non-repairable gap explains why (`bridgeRepairClickReason` maps the
+`BridgeRepairIssue` to a toast, e.g. "the far side is open water or out of line").
+
+**Repair badge (distinct graphic)**: a finished repair carries a persistent marker terrain
+`Terrains.BRIDGE_REPAIRED` (id 60, in `AUTOMATIC` so it is hidden from the board editor and not written to `.board`
+files, but rides the hex through save games and `sendChangedHex` sync). `placeRepairedBridge` adds it;
+`Board.removeBuilding` strips it when the section is destroyed. The board view draws a small amber hazard-stripe
+badge on marked hexes via `BridgeRepairedSprite` + `BridgeRepairedSpriteHandler` (registered in `ClientGUI`,
+scans boards on phase/board-change events) - no new tileset art, survives save/reload, shows on every client.
+
+**Tests** (`BridgeBuildingTest`): end-gap and mid-span gaps validate; no-span and still-a-bridge hexes reject; the
+bent-repair rejection; the repaired deck matches the elevated span rather than the lower bank; a full 6-turn repair
+from bridge-deck footing places the section at the run's deck/CF, marks it BRIDGE_REPAIRED, and registers it; a fresh
+build is not marked; the repair flag survives serialization.
+
 ## Future work (out of scope)
 
 - **Vehicle Bridge-Layer equipment (TM p.242)**: Light/Medium/Heavy bridge layers already exist as `MiscType`

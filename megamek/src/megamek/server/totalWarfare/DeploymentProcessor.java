@@ -50,6 +50,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.IAero;
 import megamek.common.units.IBuilding;
+import megamek.common.units.Infantry;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import megamek.common.units.VTOL;
@@ -362,6 +363,17 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             } else {
                 LOGGER.debug("[HullDown] {}: deployed hull-down on a fortified hex", entity.getDisplayName());
             }
+        }
+
+        // Infantry deploying onto a fortified hex already gets the dug-in cover from the terrain, so it cannot also be
+        // separately dug in (the two postures don't stack - TO:AR p.106 / TO:AUE p.153). Keep the fortified-hex state
+        // and clear the redundant dug-in, mirroring what completeFortification does for co-located infantry.
+        if ((entity instanceof Infantry deployingInfantry)
+              && (deployingInfantry.getDugIn() != Infantry.DUG_IN_NONE)
+              && hex.containsTerrain(Terrains.FORTIFIED)) {
+            deployingInfantry.setDugIn(Infantry.DUG_IN_NONE);
+            LOGGER.debug("[Fortify] {}: cleared redundant dug-in - deployed onto a fortified hex",
+                  entity.getDisplayName());
         }
 
         entity.setDone(true);

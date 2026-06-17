@@ -158,6 +158,9 @@ public class CustomMekDialog extends AbstractButtonDialog
     private final JLabel labDeployHullDown = new JLabel(Messages.getString("CustomMekDialog.labDeployHullDown"),
           SwingConstants.RIGHT);
     private final JCheckBox chDeployHullDown = new JCheckBox();
+    private final JLabel labDeployDugIn = new JLabel(Messages.getString("CustomMekDialog.labDeployDugIn"),
+          SwingConstants.RIGHT);
+    private final JCheckBox chDeployDugIn = new JCheckBox();
     private final JLabel labHidden = new JLabel(Messages.getString("CustomMekDialog.labHidden"), SwingConstants.RIGHT);
     private final JCheckBox chHidden = new JCheckBox();
 
@@ -1894,8 +1897,16 @@ public class CustomMekDialog extends AbstractButtonDialog
                 // Should the entity begin the game prone?
                 entity.setProne(chDeployProne.isSelected());
 
-                // Should the entity begin the game prone?
+                // Should the entity begin the game hull down?
                 entity.setHullDown(chDeployHullDown.isSelected());
+            }
+
+            // Should the infantry begin the game dug in? (TO:AR p.106; mechanized infantry cannot dig in.)
+            if ((entity instanceof Infantry deployingInfantry) && !deployingInfantry.isMechanized()
+                  && gameOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_DIG_IN)) {
+                deployingInfantry.setDugIn(chDeployDugIn.isSelected()
+                      ? Infantry.DUG_IN_COMPLETE
+                      : Infantry.DUG_IN_NONE);
             }
         }
 
@@ -2321,6 +2332,28 @@ public class CustomMekDialog extends AbstractButtonDialog
             panDeploy.add(chDeployProne, GBC.eol());
             chDeployProne.setSelected(entity.isProne() && !entity.isHullDown());
             chDeployProne.addItemListener(this);
+        }
+
+        // Vehicles may deploy already hull-down (TO:AR p.19) when the hull-down option is enabled. The option is
+        // offered only to hull-down-capable vehicles (not Large Vehicles, and not naval/hydrofoil/submarine units);
+        // the deploy hex must still be fortified, which is validated at deployment time.
+        boolean isHullDownCapableVehicle = (entity instanceof Tank deployingVehicle)
+              && deployingVehicle.isHullDownCapable()
+              && gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
+        if (isHullDownCapableVehicle) {
+            panDeploy.add(labDeployHullDown, GBC.std());
+            panDeploy.add(chDeployHullDown, GBC.eol());
+            chDeployHullDown.setSelected(entity.isHullDown());
+            chDeployHullDown.addItemListener(this);
+        }
+
+        // Infantry may deploy already dug in (TO:AR p.106). Mechanized infantry cannot dig in, so this is
+        // offered only to non-mechanized infantry and only when the dig-in option is enabled.
+        if ((entity instanceof Infantry deployingInfantry) && !deployingInfantry.isMechanized()
+              && gameOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_DIG_IN)) {
+            panDeploy.add(labDeployDugIn, GBC.std());
+            panDeploy.add(chDeployDugIn, GBC.eol());
+            chDeployDugIn.setSelected(deployingInfantry.getDugIn() == Infantry.DUG_IN_COMPLETE);
         }
 
         refreshDeployment();

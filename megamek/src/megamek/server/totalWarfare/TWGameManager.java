@@ -76,6 +76,7 @@ import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.event.GameToastEvent;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -762,6 +763,9 @@ public class TWGameManager extends AbstractGameManager {
                     break;
                 case DEPLOY_MINEFIELDS:
                     receiveDeployMinefields(packet, connId);
+                    break;
+                case DEPLOY_FORTIFICATIONS:
+                    receiveDeployFortifications(packet, connId);
                     break;
                 case UPDATE_GROUND_OBJECTS:
                     receiveGroundObjectUpdate(packet, connId);
@@ -9631,6 +9635,84 @@ public class TWGameManager extends AbstractGameManager {
                 player.addMinefields(minefields);
             }
         }
+    }
+
+    /**
+     * Receives a player's fortified-hex placements made during the minefield deployment phase and applies them to the
+     * board. Fortified hexes are visible terrain, so no per-player concealment is needed.
+     */
+    private void receiveDeployFortifications(Packet packet, int connId) throws InvalidPacketDataException {
+        // is this the right phase?
+        if (!getGame().getPhase().isDeployMinefields()) {
+            LOGGER.error("Server got deploy fortifications packet in wrong phase");
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        Vector<BoardLocation> fortifiedHexes = (Vector<BoardLocation>) packet.getObject(0);
+        processDeployFortifications(getGame().getPlayer(connId), fortifiedHexes);
+        // Do NOT end the turn here: fortifications are applied before the minefield packet (which is the turn-ender
+        // for this phase). Ending the turn here would advance the phase before minefields/player info are processed.
+    }
+
+    /**
+     * Applies a player's fortified-hex placements: writes FORTIFIED terrain to each legal hex within the player's
+     * allotment and pushes the hex change to all clients. TO:AUE p.153.
+     *
+     * @param player         the placing player
+     * @param fortifiedHexes the hex locations the player chose to fortify
+     */
+    private void processDeployFortifications(@Nullable Player player, @Nullable Vector<BoardLocation> fortifiedHexes) {
+        if ((player == null) || (fortifiedHexes == null)) {
+            return;
+        }
+        int allowed = player.getNbrFortifiedHexes();
+        int placed = 0;
+        for (BoardLocation location : fortifiedHexes) {
+            // The list comes off the network packet; defensively skip null entries before any dereference.
+            if (location == null) {
+                continue;
+            }
+            if (placed >= allowed) {
+                LOGGER.warn("[Fortify] {}: ignoring fortified hex beyond allotment of {}", player.getName(), allowed);
+                break;
+            }
+            if (!isLegalFortificationPlacement(player, location)) {
+                continue;
+            }
+            Hex hex = game.getBoard(location.boardId()).getHex(location.coords());
+            // isLegalFortificationPlacement already verified the hex is on the board, so this should not be null;
+            // guard defensively anyway so a malformed location can never NPE.
+            if (hex == null) {
+                continue;
+            }
+            hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
+            sendChangedHex(location.coords(), location.boardId());
+            placed++;
+        }
+        if (placed > 0) {
+            LOGGER.info("[Fortify] {}: placed {} fortified hex(es) during deployment", player.getName(), placed);
+        }
+    }
+
+    /**
+     * @return {@code true} if the player may place a fortified hex at the given location: it is on the board, on
+     *       fortifiable terrain (TO:AR p.106 / TO:AUE p.153), and within the player's deployment zone
+     */
+    private boolean isLegalFortificationPlacement(Player player, BoardLocation location) {
+        Board board = game.getBoard(location.boardId());
+        if ((board == null) || !board.contains(location.coords())) {
+            return false;
+        }
+        if (!MoveStep.isFortifiableTerrain(board.getHex(location.coords()))) {
+            LOGGER.debug("[Fortify] {}: rejected fortified hex at {} - illegal terrain", player.getName(), location);
+            return false;
+        }
+        if (!board.isLegalDeployment(location.coords(), player)) {
+            LOGGER.debug("[Fortify] {}: rejected fortified hex at {} - outside deployment zone", player.getName(),
+                  location);
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -31470,69 +31552,110 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Sends a transient toast notification to all clients, to be shown on the board view. Use for high-signal one-shot
+     * events (such as a fortification completing) that warrant more emphasis than a routine report line, without
+     * flooding the player with a toast per report entry.
+     *
+     * @param level   the severity of the toast
+     * @param message the (already localized) text to display
+     * @param entity  the acting unit whose icon should accompany the toast, or null for a text-only toast
+     */
+    public void sendToast(GameToastEvent.Level level, String message, @Nullable Entity entity) {
+        int entityId = (entity != null) ? entity.getId() : Entity.NONE;
+        send(new Packet(PacketCommand.SEND_TOAST, level, message, entityId));
+    }
+
+    /**
      * Resolve any Infantry units which are fortifying hexes
      */
     void resolveFortify() {
-        Report r;
         for (Entity ent : game.getEntitiesVector()) {
             if (ent instanceof Infantry inf) {
                 int dig = inf.getDugIn();
-                if (dig == Infantry.DUG_IN_WORKING) {
-                    r = new Report(5300);
-                    r.addDesc(inf);
-                    r.subject = inf.getId();
-                    addReport(r);
+                boolean isFortifying = (dig == Infantry.DUG_IN_FORTIFYING1)
+                      || (dig == Infantry.DUG_IN_FORTIFYING2)
+                      || (dig == Infantry.DUG_IN_FORTIFYING3);
+                if (dig == Infantry.DUG_IN_FORTIFYING3) {
+                    completeFortification(inf);
+                } else if (isFortifying && inf.isFortifyExtendedThisRound()) {
+                    reportFortificationDelayed(inf);
+                } else if (dig == Infantry.DUG_IN_WORKING) {
+                    addSimpleFortifyReport(5300, inf);
                 } else if (inf.isHitTheDeck() && (inf.getTurnsOnDeck() == 0)) {
                     // Report only on the turn the unit hits the deck (before its idle counter advances). TO:AR p.106.
-                    r = new Report(5301);
-                    r.addDesc(inf);
-                    r.subject = inf.getId();
-                    addReport(r);
-                } else if (dig == Infantry.DUG_IN_FORTIFYING3) {
-                    Coords c = inf.getPosition();
-                    r = new Report(5305);
-                    r.addDesc(inf);
-                    r.add(c.getBoardNum());
-                    r.subject = inf.getId();
-                    addReport(r);
-                    // fortification complete - add to map
-                    Hex hex = game.getBoard().getHex(c);
-                    hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
-                    sendChangedHex(c);
-                    // Clear the dig in for any units in same hex, since they
-                    // get it for free by fort
-                    for (Entity ent2 : game.getEntitiesVector(c)) {
-                        if (ent2 instanceof Infantry inf2) {
-                            inf2.setDugIn(Infantry.DUG_IN_NONE);
-                        }
-                    }
+                    addSimpleFortifyReport(5301, inf);
                 }
             }
 
             if (ent instanceof Tank tnk) {
                 int dig = tnk.getDugIn();
                 if (dig == Tank.DUG_IN_FORTIFYING3) {
-                    Coords c = tnk.getPosition();
-                    r = new Report(5305);
-                    r.addDesc(tnk);
-                    r.add(c.getBoardNum());
-                    r.subject = tnk.getId();
-                    addReport(r);
-                    // Fort complete, now add it to the map
-                    Hex hex = game.getBoard().getHex(c);
-                    hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
-                    sendChangedHex(c);
-                    tnk.setDugIn(Tank.DUG_IN_NONE);
-                    // Clear the dig in for any units in same hex, since they
-                    // get it for free by fort
-                    for (Entity ent2 : game.getEntitiesVector(c)) {
-                        if (ent2 instanceof Infantry inf2) {
-                            inf2.setDugIn(Infantry.DUG_IN_NONE);
-                        }
-                    }
+                    completeFortification(tnk);
+                } else if ((dig != Tank.DUG_IN_NONE) && tnk.isFortifyExtendedThisRound()) {
+                    reportFortificationDelayed(tnk);
                 }
             }
         }
+    }
+
+    /**
+     * Completes a fortified hex once a unit's fieldwork reaches its final turn: writes the FORTIFIED terrain, clears
+     * the dug-in state of every unit sharing the hex (they now get the benefit for free) and raises a SUCCESS toast for
+     * the builder. TO:AUE p.153.
+     *
+     * @param builder the infantry platoon or vehicle that finished the fortification
+     */
+    private void completeFortification(Entity builder) {
+        Coords coords = builder.getPosition();
+        Report report = new Report(5305);
+        report.addDesc(builder);
+        report.add(coords.getBoardNum());
+        report.subject = builder.getId();
+        addReport(report);
+
+        Hex hex = game.getBoard().getHex(coords);
+        hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
+        sendChangedHex(coords);
+
+        // Any infantry sharing the hex (including an infantry builder) now gets the dug-in benefit for free
+        // from the terrain, so clear their in-progress dug-in state.
+        for (Entity occupant : game.getEntitiesVector(coords)) {
+            if (occupant instanceof Infantry coLocated) {
+                coLocated.setDugIn(Infantry.DUG_IN_NONE);
+            }
+        }
+        // A vehicle builder is not cleared by the loop above, so reset it explicitly.
+        if (builder instanceof Tank tank) {
+            tank.setDugIn(Tank.DUG_IN_NONE);
+        }
+
+        sendToast(GameToastEvent.Level.SUCCESS,
+              Messages.getString("Fortify.completeToast", builder.getShortName()), builder);
+    }
+
+    /**
+     * Reports - and notifies via an INFO toast - that a unit's digging-in / fortification effort was set back by one
+     * turn after it took damage. TO:AR p.106 / TO:AUE p.153.
+     *
+     * @param builder the unit whose effort was delayed
+     */
+    private void reportFortificationDelayed(Entity builder) {
+        addSimpleFortifyReport(5306, builder);
+        sendToast(GameToastEvent.Level.INFO,
+              Messages.getString("Fortify.delayedToast", builder.getShortName()), builder);
+    }
+
+    /**
+     * Adds a fortification status report that only needs the unit's description (no extra data fields).
+     *
+     * @param messageId the report-messages id to use
+     * @param ent       the subject unit
+     */
+    private void addSimpleFortifyReport(int messageId, Entity ent) {
+        Report r = new Report(messageId);
+        r.addDesc(ent);
+        r.subject = ent.getId();
+        addReport(r);
     }
 
     /**

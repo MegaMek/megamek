@@ -53,6 +53,7 @@ import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
+import megamek.logging.MMLogger;
 
 /**
  * This is a superclass for infantry unit types, Conventional Infantry and BattleArmor. Other personnel on the
@@ -62,6 +63,8 @@ import megamek.common.rolls.TargetRoll;
  * been changed as a substantional number of rules for CI/BA do not overlap.
  */
 public abstract class Infantry extends Entity {
+
+    private static final MMLogger LOGGER = MMLogger.create(Infantry.class);
 
     protected int squadCount = 1;
     protected int squadSize = 1;
@@ -86,6 +89,13 @@ public abstract class Infantry extends Entity {
     public static final int DUG_IN_FORTIFYING2 = 4; // no protection, can't attack
     public static final int DUG_IN_FORTIFYING3 = 5; // no protection, can't attack
     private int dugIn = DUG_IN_NONE;
+
+    /**
+     * Tracks damage taken between turns while digging in or fortifying, so that being attacked extends the effort by
+     * one turn (TO:AR p.106 / TO:AUE p.153). Server-side runtime state; not written to save files (dug-in progress is
+     * itself not persisted).
+     */
+    private final FortifyState fortifyState = new FortifyState();
 
     /**
      * Number of idle turns (no movement, no fire) the unit must spend "hitting the deck" before it may convert to "dug
@@ -451,9 +461,16 @@ public abstract class Infantry extends Entity {
         }
 
         if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
-            dugIn++;
-            if (dugIn > DUG_IN_FORTIFYING3) {
-                dugIn = DUG_IN_NONE;
+            // Damage taken during a digging-in / fortifying turn extends the effort by one turn (TO:AR p.106 /
+            // TO:AUE p.153): hold the progress counter this round instead of advancing it.
+            if (fortifyState.checkpointWasDamaged(currentFortifyHealthSignature())) {
+                LOGGER.debug("[Fortify] {}: damaged while fortifying - effort extended by 1 turn (dug-in stage {})",
+                      getShortName(), dugIn);
+            } else {
+                dugIn++;
+                if (dugIn > DUG_IN_FORTIFYING3) {
+                    dugIn = DUG_IN_NONE;
+                }
             }
         }
 
@@ -478,6 +495,71 @@ public abstract class Infantry extends Entity {
 
     public int getDugIn() {
         return dugIn;
+    }
+
+    /**
+     * Begins the one-turn self "digging in" process (TO:AR p.106), or completes it immediately for a unit that has
+     * stayed on the deck long enough to convert directly. Seeds the damage baseline used to detect an interrupting
+     * attack that would extend the effort.
+     *
+     * @param convertFromDeck {@code true} if the unit qualifies to convert straight to fully dug-in from the deck (see
+     *                        {@link #canDigInFromDeck()})
+     */
+    public void beginDigIn(boolean convertFromDeck) {
+        if (convertFromDeck) {
+            setHitTheDeck(false);
+            setDugIn(DUG_IN_COMPLETE);
+        } else {
+            setDugIn(DUG_IN_WORKING);
+        }
+        fortifyState.begin(currentFortifyHealthSignature());
+    }
+
+    /**
+     * Begins the three-turn fieldwork that raises a fortified hex (Trench/Fieldworks Engineers, TO:AUE p.153). Seeds
+     * the damage baseline used to detect an interrupting attack that extends the effort.
+     */
+    public void beginFortify() {
+        setDugIn(DUG_IN_FORTIFYING1);
+        fortifyState.begin(currentFortifyHealthSignature());
+    }
+
+    /**
+     * @return the health signature used to detect damage between fortifying turns: total armor plus internal structure.
+     *       For infantry, internal structure is the trooper count, so any casualties lower this value and mark the turn
+     *       as interrupted.
+     */
+    private int currentFortifyHealthSignature() {
+        return getTotalArmor() + getTotalInternal();
+    }
+
+    /**
+     * @return {@code true} if this unit's digging-in / fortification effort was set back by damage this round (so its
+     *       progress counter was held rather than advanced). TO:AR p.106 / TO:AUE p.153.
+     */
+    public boolean isFortifyExtendedThisRound() {
+        return fortifyState.wasExtendedAtLastCheckpoint();
+    }
+
+    /**
+     * @return {@code true} if this unit is partway through building a fortified hex (one of the multi-turn FORTIFYING
+     *       stages), as opposed to plain one-turn self digging-in. TO:AUE p.153.
+     */
+    public boolean isFortifying() {
+        return (dugIn >= DUG_IN_FORTIFYING1) && (dugIn <= DUG_IN_FORTIFYING3);
+    }
+
+    /**
+     * @return the current fortification stage (1..{@link #getFortifyTotalStages()}) while {@link #isFortifying()}, or 0
+     *       when the unit is not building a fortification.
+     */
+    public int getFortifyStage() {
+        return isFortifying() ? (dugIn - DUG_IN_FORTIFYING1 + 1) : 0;
+    }
+
+    /** @return the number of turns of work a fortified hex takes to complete. */
+    public int getFortifyTotalStages() {
+        return DUG_IN_FORTIFYING3 - DUG_IN_FORTIFYING1 + 1;
     }
 
     /**
@@ -533,6 +615,7 @@ public abstract class Infantry extends Entity {
     public void clearGroundPostures() {
         setDugIn(DUG_IN_NONE);
         setHitTheDeck(false);
+        fortifyState.reset();
     }
 
     /**

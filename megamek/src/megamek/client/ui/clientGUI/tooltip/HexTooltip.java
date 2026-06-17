@@ -353,17 +353,21 @@ public final class HexTooltip {
         Coords mcoords = mhex.getCoords();
         String indicator = IlluminationLevel.determineIlluminationLevel(game, boardId, mcoords).getIndicator();
         String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
-        String illuminated = UIUtil.tag("FONT", attr, " " + indicator);
-        illuminated = DOT_SPACER + illuminated;
 
         String result;
+        // Hex number and level, with the terrain features following inline on the same line (separated by the
+        // dot spacer) so a single-feature hex like a fortified hex reads as one line.
         StringBuilder sTerrain = new StringBuilder(
               Messages.getString(
                     (inAtmosphere) ? "BoardView1.Tooltip.HexAlt" : "BoardView1.Tooltip.Hex",
                     mcoords.getBoardNum(),
                     mhex.getLevel()
-              ) + illuminated + "<BR>"
+              )
         );
+        // Illumination indicator, only when the hex is specially lit (the NONE level has a blank indicator).
+        if (!indicator.isBlank()) {
+            sTerrain.append(DOT_SPACER).append(UIUtil.tag("FONT", attr, indicator));
+        }
         // Types that represent Elevations need converting and possibly zeroing if board is in Atmosphere (Low Alt.)
         List<Integer> typesThatNeedAltitudeChecked = List.of(
               Terrains.INDUSTRIAL, Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV, Terrains.FOLIAGE_ELEV
@@ -381,9 +385,10 @@ public final class HexTooltip {
             if (name != null) {
                 String msg_tf = Messages.getString("BoardView1.Tooltip.TF");
                 name += (tf > 0) ? " (" + msg_tf + ": " + tf + ')' : "";
-                sTerrain.append(name).append("<BR>");
+                sTerrain.append(DOT_SPACER).append(name);
             }
         }
+        sTerrain.append("<BR>");
 
         attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainFGColor()));
         result = UIUtil.tag("FONT", attr, sTerrain.toString());

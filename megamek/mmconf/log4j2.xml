@@ -84,6 +84,30 @@
           </Logger>
         -->
         <!--
+          Trench/Fieldworks (dig-in and fortify) diagnostics, silent by default (parent "megamek" logger at
+          info). All emit [Fortify]-tagged lines. Uncomment to trace: the to-hit +2/+1 cover decision
+          (ComputeTerrainMods - answers "why isn't the dug-in bonus applying?"); the dig-in/fortify damage
+          extension and stage transitions (Infantry, Tank); move-step legality and the equipment gate
+          (MoveStep, MovePathHandler); and fortify completion / deploy-phase placement (TWGameManager, which
+          is also listed in the sensor block above). Then grep logs/megamek.log for "[Fortify]".
+
+          <Logger name="megamek.common.actions.compute.ComputeTerrainMods" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.common.units.Infantry" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.common.units.Tank" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.common.moves.MoveStep" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.server.totalWarfare.MovePathHandler" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
           Princess movement-decision loggers, silent by default (parent "megamek.client.bot"
           logger at error). Candidate-path data with scoring columns (isSprinting,
           sprintExposurePenalty, sprintThreatEnemyId, ...) is always written as TSV to

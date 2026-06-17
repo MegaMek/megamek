@@ -2865,7 +2865,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     Hex occupiedHex = game.getBoard(currentEntity)
                           .getHex(cmd.getLastStep().getPosition());
                     boolean fortifiedHex = occupiedHex.containsTerrain(Terrains.FORTIFIED);
-                    setHullDownEnabled(hullDownEnabled && fortifiedHex);
+                    // Large Vehicles cannot use infantry-built (fortified) hexes for cover (TO:AR p.19).
+                    boolean isLargeVehicle = (currentEntity instanceof Tank tank) && tank.isLargeVehicleForHullDown();
+                    setHullDownEnabled(hullDownEnabled && fortifiedHex && !isLargeVehicle);
                 } else {
                     // If there's queued up movement, we can call the canGoHullDown() method in the Tank class.
                     setHullDownEnabled(currentEntity.canGoHullDown());
@@ -2873,6 +2875,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
             }
         }
+
+        // Two-state Hull Down button: "Go Hull Down" when the unit can enter hull-down, "Hull Down" (current
+        // state) once it already is, so the player can tell at a glance whether the unit is in cover.
+        getBtn(MoveCommand.MOVE_HULL_DOWN).setText(Messages.getString(cmd.getFinalHullDown()
+              ? "MovementDisplay.moveHullDownActive"
+              : "MovementDisplay.moveHullDownGo"));
     }
 
     private void updateRACButton() {
@@ -6494,7 +6502,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
             ((Infantry) entity).createLocalSupport();
             clientgui.getClient().sendUpdateEntity(currentEntity());
         } else if (actionCmd.equals(MoveCommand.MOVE_DIG_IN.getCmd())) {
-            addStepToMovePath(MoveStepType.DIG_IN);
+            if (MoveStep.isFortifiableTerrain(game.getHexOf(entity))) {
+                addStepToMovePath(MoveStepType.DIG_IN);
+            } else {
+                clientgui.addToast(ToastLevel.WARNING,
+                      Messages.getString("MovementDisplay.digInIllegalTerrain.toast"), entity);
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_HIT_DECK.getCmd())) {
             addStepToMovePath(MoveStepType.HIT_THE_DECK);
             // Field-weapon infantry may only fire in their front arc while on the deck (TO:AR p.106). There is no
@@ -6504,7 +6517,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       Messages.getString("MovementDisplay.hitDeckFacing.toast"), entity);
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_FORTIFY.getCmd())) {
-            addStepToMovePath(MoveStepType.FORTIFY);
+            if (MoveStep.isFortifiableTerrain(game.getHexOf(entity))) {
+                addStepToMovePath(MoveStepType.FORTIFY);
+            } else {
+                clientgui.addToast(ToastLevel.WARNING,
+                      Messages.getString("MovementDisplay.fortifyIllegalTerrain.toast"), entity);
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_BUILD_BRIDGE.getCmd())) {
             if ((currentEntity() instanceof ConvInfantry bridgePlatoon) && bridgePlatoon.hasBridgeInProgress()) {
                 // A bridge is in progress (building, paused, or dismantling): offer the valid actions for this state.

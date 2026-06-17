@@ -1155,6 +1155,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if (entity.isHullDown() && !md.getFinalHullDown()
               && (entity instanceof Tank
               || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
+            logger.debug("[HullDown] {}: hull-down cleared on move - path did not end hull-down",
+                  entity.getDisplayName());
             entity.setHullDown(false);
         }
 
@@ -2888,22 +2890,20 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (entity instanceof Infantry inf) {
                 if (step.getType() == MoveStepType.DIG_IN) {
                     // A unit that has been hitting the deck long enough may convert straight to dug in. TO:AR p.106.
-                    if (inf.canDigInFromDeck()) {
-                        inf.setHitTheDeck(false);
-                        inf.setDugIn(Infantry.DUG_IN_COMPLETE);
-                    } else {
-                        inf.setDugIn(Infantry.DUG_IN_WORKING);
-                    }
+                    inf.beginDigIn(inf.canDigInFromDeck());
                     continue;
                 } else if (step.getType() == MoveStepType.HIT_THE_DECK) {
                     inf.setHitTheDeck(true);
                     continue;
                 } else if (step.getType() == MoveStepType.FORTIFY) {
+                    // Building a fortified hex requires fieldworks-capable equipment (TO:AUE p.153). The move
+                    // step is already gated client-side, so this is a defensive server-side enforcement.
                     if (!inf.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
-                        gameManager.sendServerChat(entity.getDisplayName()
-                              + " failed to fortify because it is missing suitable equipment");
+                        logger.debug("[Fortify] {}: fortify rejected - no fieldworks-capable equipment "
+                              + "(F_TRENCH_CAPABLE)", entity.getDisplayName());
+                        continue;
                     }
-                    inf.setDugIn(Infantry.DUG_IN_FORTIFYING1);
+                    inf.beginFortify();
                     continue;
                 } else if (step.getType() == MoveStepType.BUILD_BRIDGE) {
                     processBuildBridgeStep(inf, step);
@@ -2942,11 +2942,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // check for tank fortify
             if (entity instanceof Tank tnk) {
                 if (step.getType() == MoveStepType.FORTIFY) {
+                    // Vehicles need fieldworks-capable equipment - bulldozer, backhoe or equivalent - to build
+                    // a fortified hex (Vehicles and Fieldworks, TO:AUE p.153). Defensive server-side check.
                     if (!tnk.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
-                        gameManager.sendServerChat(entity.getDisplayName()
-                              + " failed to fortify because it is missing suitable equipment");
+                        logger.debug("[Fortify] {}: fortify rejected - no fieldworks-capable equipment "
+                              + "(F_TRENCH_CAPABLE)", entity.getDisplayName());
+                    } else {
+                        tnk.beginFortify();
                     }
-                    tnk.setDugIn(Tank.DUG_IN_FORTIFYING1);
                 }
             }
 
@@ -4490,6 +4493,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (step.getType() == MoveStepType.HULL_DOWN) {
                 mpUsed = step.getMpUsed();
                 entity.setHullDown(true);
+                logger.debug("[HullDown] {}: went hull-down via movement at {}", entity.getDisplayName(), curPos);
             }
 
             // Check for crushing buildings by Dropships/Mobile Structures

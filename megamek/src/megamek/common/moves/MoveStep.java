@@ -394,6 +394,24 @@ public class MoveStep implements Serializable {
         return newStep;
     }
 
+    /**
+     * Determines whether a hex allows digging in or building a fortified hex. Water, pavement, building and road hexes
+     * are excluded, as is an already-fortified hex (TO:AR p.106 / TO:AUE p.153). Shared by the move-step legality check
+     * and the UI so both agree on the terrain rule.
+     *
+     * @param hex the hex to test, or null
+     *
+     * @return {@code true} if a unit may dig in or fortify in the given hex
+     */
+    public static boolean isFortifiableTerrain(@Nullable Hex hex) {
+        return (hex != null)
+              && !hex.containsTerrain(Terrains.WATER)
+              && !hex.containsTerrain(Terrains.PAVEMENT)
+              && !hex.containsTerrain(Terrains.FORTIFIED)
+              && !hex.containsTerrain(Terrains.BUILDING)
+              && !hex.containsTerrain(Terrains.ROAD);
+    }
+
     @Override
     public String toString() {
         return type.getHumanReadableLabel();
@@ -774,6 +792,30 @@ public class MoveStep implements Serializable {
     }
 
     /**
+     * A vehicle that is hull-down in a fortified ("infantry-built") hex cannot change facing while remaining in the
+     * hex; per TO:AR p.19 it must exit, turn, then re-enter. An in-place facing change therefore forfeits the hull-down
+     * cover. Meks use the partial-cover hull-down rules and are unaffected.
+     *
+     * @param game   the current {@link Game}
+     * @param entity the moving entity
+     *
+     * @return true if this step is an in-place facing change that should drop the entity's hull-down state
+     */
+    private boolean losesHullDownToInPlaceTurn(final Game game, final Entity entity) {
+        boolean isTurnStep = (type == MoveStepType.TURN_LEFT) || (type == MoveStepType.TURN_RIGHT);
+        if (!isTurnStep || !isHullDown()) {
+            return false;
+        }
+        boolean isVehicleHullDown = (entity instanceof Tank)
+              || ((entity instanceof QuadVee) && (entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE));
+        if (!isVehicleHullDown) {
+            return false;
+        }
+        Hex currentHex = game.getBoard(boardId).getHex(getPosition());
+        return (currentHex != null) && currentHex.containsTerrain(Terrains.FORTIFIED);
+    }
+
+    /**
      * Compile the static move data for this step.
      *
      * @param game   The current {@link Game}
@@ -798,11 +840,16 @@ public class MoveStep implements Serializable {
             movementMode = prev.getMovementMode();
         }
 
-        // Tanks can just drive out of hull-down. If we're a tank, and we moved
-        // then we are no longer hull-down.
+        // Tanks can just drive out of hull-down: if a vehicle moved, it is no longer hull-down. A vehicle that is
+        // hull-down in a fortified ("infantry-built") hex also forfeits cover when it changes facing in place,
+        // since RAW requires it to exit, turn, then re-enter rather than turning within the hex (TO:AR p.19).
         if ((entity instanceof Tank ||
               (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) &&
               (distance > 0)) {
+            setHullDown(false);
+        } else if (losesHullDownToInPlaceTurn(game, entity)) {
+            LOGGER.debug("[HullDown] {}: hull-down lost - a vehicle cannot change facing within a fortified hex; "
+                  + "it must exit, turn, then re-enter (TO:AR p.19)", entity.getDisplayName());
             setHullDown(false);
         }
 
@@ -1967,22 +2014,36 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_NONE;
         } else if ((type == MoveStepType.DIG_IN) || (type == MoveStepType.FORTIFY)) {
             if ((!isInfantry && !isTank) || !isFirstStep()) {
+                LOGGER.debug("[Fortify] {}: {} illegal - only infantry or vehicles, and only as the first/sole action",
+                      entity.getDisplayName(), type);
                 return; // can't dig in
+            }
+
+            // Building a fortified hex (FORTIFY) requires fieldworks-capable equipment - bulldozer, backhoe,
+            // vibro-shovel or equivalent (TO:AUE p.153). Plain self digging-in (DIG_IN) does not.
+            if ((type == MoveStepType.FORTIFY) && !entity.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
+                LOGGER.debug("[Fortify] {}: fortify illegal - no fieldworks-capable equipment (F_TRENCH_CAPABLE)",
+                      entity.getDisplayName());
+                return;
             }
 
             if (isInfantry) {
                 Infantry inf = (Infantry) entity;
                 if ((inf.getDugIn() != Infantry.DUG_IN_NONE) && (inf.getDugIn() != Infantry.DUG_IN_COMPLETE)) {
+                    LOGGER.debug("[Fortify] {}: {} illegal - already dug in (stage {})",
+                          entity.getDisplayName(), type, inf.getDugIn());
                     return; // Already dug in
                 }
             }
 
-            if (game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.PAVEMENT) ||
-                  game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.FORTIFIED) ||
-                  game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.BUILDING) ||
-                  game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.ROAD)) {
-                // already fortified - pointless, or terrain is illegal for
-                // digging in
+            // A fortified hex may not be created in - and a unit may not dig into - water, pavement, building
+            // or road hexes (TO:AR p.106 / TO:AUE p.153). An already-fortified hex is excluded too (no gain).
+            if (!isFortifiableTerrain(game.getBoard(boardId).getHex(curPos))) {
+                LOGGER.debug(
+                      "[Fortify] {}: {} illegal - terrain at {} is water/pavement/building/road or already fortified",
+                      entity.getDisplayName(),
+                      type,
+                      curPos);
                 return;
             }
             isDiggingIn = true;
@@ -2746,6 +2807,11 @@ public class MoveStep implements Serializable {
                         ((entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE) != entity.isConvertingNow()))) {
                 // Tanks and QuadVees ending movement in vehicle mode require a fortified hex.
                 if (!(game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.FORTIFIED))) {
+                    movementType = EntityMovementType.MOVE_ILLEGAL;
+                } else if ((entity instanceof Tank tank) && tank.isLargeVehicleForHullDown()) {
+                    // Large Vehicles cannot use infantry-built (fortified) hexes for cover (TO:AR p.19).
+                    LOGGER.debug("[HullDown] {}: HULL_DOWN step illegal - Large Vehicles cannot use infantry-built "
+                          + "(fortified) hexes for cover", entity.getDisplayName());
                     movementType = EntityMovementType.MOVE_ILLEGAL;
                 }
             } else if (entity.isGyroDestroyed()) {

@@ -456,6 +456,13 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Sends a "deploy fortifications" packet carrying the hex locations the player is fortifying.
+     */
+    public void sendDeployFortifications(Vector<BoardLocation> fortifiedHexes) {
+        send(new Packet(PacketCommand.DEPLOY_FORTIFICATIONS, fortifiedHexes));
+    }
+
+    /**
      * Sends an updated state of ground objects (i.e. cargo etc.)
      */
     public void sendDeployGroundObjects(Map<Coords, List<ICarryable>> groundObjects) {

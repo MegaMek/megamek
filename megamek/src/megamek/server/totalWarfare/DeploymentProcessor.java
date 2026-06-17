@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -50,6 +50,8 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.IAero;
 import megamek.common.units.IBuilding;
+import megamek.common.units.Infantry;
+import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import megamek.common.units.VTOL;
 import megamek.logging.MMLogger;
@@ -345,6 +347,33 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         // If deploying a BuildingEntity, add building terrain to all hexes it occupies
         if (entity instanceof AbstractBuildingEntity buildingEntity) {
             buildingEntity.updateBuildingEntityHexes(boardId, gameManager);
+        }
+
+        // A vehicle may only be hull-down in a fortified ("infantry-built") hex, and only hull-down-capable vehicles
+        // can do so (not Large Vehicles, not naval/submarine) - TO:AR p.19. Re-validate authoritatively here and clear
+        // an illegal hull-down state, because combat code such as Tank.rollHitLocation keys off isHullDown() without
+        // re-checking terrain, so a state from an old/crafted client or corrupted save could otherwise grant the
+        // hull-down hit-location benefit on open ground.
+        if ((entity instanceof Tank deployingVehicle) && entity.isHullDown()) {
+            boolean fortifiedHex = hex.containsTerrain(Terrains.FORTIFIED);
+            if (!deployingVehicle.isHullDownCapable() || !fortifiedHex) {
+                entity.setHullDown(false);
+                LOGGER.debug("[HullDown] {}: cleared illegal deploy hull-down - {}", entity.getDisplayName(),
+                      !deployingVehicle.isHullDownCapable() ? "vehicle type cannot hull down" : "deploy hex is not fortified");
+            } else {
+                LOGGER.debug("[HullDown] {}: deployed hull-down on a fortified hex", entity.getDisplayName());
+            }
+        }
+
+        // Infantry deploying onto a fortified hex already gets the dug-in cover from the terrain, so it cannot also be
+        // separately dug in (the two postures don't stack - TO:AR p.106 / TO:AUE p.153). Keep the fortified-hex state
+        // and clear the redundant dug-in, mirroring what completeFortification does for co-located infantry.
+        if ((entity instanceof Infantry deployingInfantry)
+              && (deployingInfantry.getDugIn() != Infantry.DUG_IN_NONE)
+              && hex.containsTerrain(Terrains.FORTIFIED)) {
+            deployingInfantry.setDugIn(Infantry.DUG_IN_NONE);
+            LOGGER.debug("[Fortify] {}: cleared redundant dug-in - deployed onto a fortified hex",
+                  entity.getDisplayName());
         }
 
         entity.setDone(true);

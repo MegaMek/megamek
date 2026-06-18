@@ -169,9 +169,9 @@ public class ConvInfantry extends Infantry {
      */
     private boolean isMicrolite = false;
 
-    /** Base VTOL MP for a Microlite VTOL platoon (TO p.324). */
+    /** Base VTOL MP for a Microlite VTOL platoon (TO:AUE p.136). */
     private static final int MICROLITE_VTOL_MP = 6;
-    /** Base VTOL MP for a Micro-Copter VTOL platoon (TO p.324). */
+    /** Base VTOL MP for a Micro-Copter VTOL platoon (TO:AUE p.136). */
     private static final int MICRO_COPTER_VTOL_MP = 5;
 
     private boolean pheromoneImpaired = false;
@@ -1861,7 +1861,7 @@ public class ConvInfantry extends Infantry {
     public void setMicrolite(boolean microlite) {
         this.isMicrolite = microlite;
         // Keep VTOL MP in sync when the unit is already in VTOL mode, so the MP is correct no matter
-        // whether the microlite flag is set before or after the movement mode (TO p.324).
+        // whether the microlite flag is set before or after the movement mode (TO:AUE p.136).
         if (getMovementMode() == EntityMovementMode.VTOL) {
             setOriginalJumpMP(microlite ? MICROLITE_VTOL_MP : MICRO_COPTER_VTOL_MP);
         }

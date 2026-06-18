@@ -3467,13 +3467,13 @@ public abstract class Entity extends TurnOrdered
         return null;
     }
 
-    // region Bridge-Layer (AVLB) - TO:AuE p.241
+    // region Bridge-Layer (AVLB) - TM p.242 / TW
 
     /**
      * @return all carried, still-deployable Bridge-Layer (AVLB) mounts on this unit, in equipment order - each a
      *       bridgelayer whose folding bridge is not yet deployed, whose deploy mechanism is intact, that still has
      *       Construction Factor, and that is not itself destroyed. A unit may carry more than one (e.g. the Prometheus
-     *       has a Right and a Left bridge), and the player chooses which to deploy. TO:AuE p.241.
+     *       has a Right and a Left bridge), and the player chooses which to deploy. TM p.242 / TW.
      */
     public List<MiscMounted> getDeployableBridgeLayers() {
         List<MiscMounted> deployable = new ArrayList<>();
@@ -3515,7 +3515,7 @@ public abstract class Entity extends TurnOrdered
      * @return the carried (not-yet-deployed) bridgelayer mount whose folding bridge should absorb a hit to this
      *       location, or null if none applies. A hit to the location where a bridgelayer is mounted is absorbed by the
      *       carried bridge (e.g. the Right/Left side bridges on the Prometheus absorb RS/LS hits). On a Support Vehicle
-     *       a hit to the turret is also absorbed (TO:AuE p.241; this covers turret-mounted SV bridgelayers, while the
+     *       a hit to the turret is also absorbed (TM p.242 / TW; this covers turret-mounted SV bridgelayers, while the
      *       mounted-location rule still protects side/body-mounted ones). Returns null once the carried bridge has no
      *       Construction Factor left - it is destroyed and the location then takes damage normally.
      */
@@ -3541,7 +3541,7 @@ public abstract class Entity extends TurnOrdered
      * @param location a weapon's location index
      *
      * @return whether a carried, not-yet-deployed bridgelayer occupies this location and so blocks weapons mounted
-     *       there from firing (TO:AuE p.241: "If the bridge has not yet been deployed, the unit cannot make attacks
+     *       there from firing (TM p.242 / TW: "If the bridge has not yet been deployed, the unit cannot make attacks
      *       from any weapons mounted in its location."). A destroyed or already-deployed bridge no longer blocks fire.
      */
     public boolean isWeaponLocationBlockedByCarriedBridge(int location) {
@@ -3561,7 +3561,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return whether this unit's motive system currently permits deploying a bridgelayer (TO:AuE p.241): ground units
+     * @return whether this unit's motive system currently permits deploying a bridgelayer (TM p.242 / TW): ground units
      *       always qualify; Hover and WiGE units only when landed (they spent no MP the previous round and sit at
      *       ground level, not airborne); Naval, Hydrofoil and Submersible units only when surfaced (at Depth 0). The
      *       stationary-this-turn requirement is enforced separately, since the deploy declaration must be the unit's
@@ -3589,7 +3589,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * @return the exits bitmask for a bridge deployed straight ahead of this unit, connecting the front hexside and its
-     *       opposite so the single-hex span runs along the unit's facing (TO:AuE p.241: the bridge cannot extend at an
+     *       opposite so the single-hex span runs along the unit's facing (TM p.242 / TW: the bridge cannot extend at an
      *       angle).
      */
     public int getBridgeLayerExits() {
@@ -3600,7 +3600,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Determines whether this unit may declare a bridgelayer deployment now (during the movement phase). Each failing
      * condition is logged at DEBUG with its reason and relevant values so a playtest can diagnose a disabled "Deploy
-     * Bridge" button from megamek.log. TO:AuE p.241.
+     * Bridge" button from megamek.log. TM p.242 / TW.
      *
      * @param game the current game (for the board and the target hex validation)
      *
@@ -3635,7 +3635,7 @@ public abstract class Entity extends TurnOrdered
         // A bridge may be placed in a water hex (adjacent to >=1 land/bridge - already covered by isValidBridgeSite,
         // which also lets a naval layer in water bridge to a far land bank). A DRY hex is only a legal site as a gap
         // "between two elevated hexes", so both banks along the facing must be rims higher than the target floor (the
-        // shared site check accepts a single rim, for engineer span-chaining, which is too loose for AVLB). TO:AuE p.241.
+        // shared site check accepts a single rim, for engineer span-chaining, which is too loose for AVLB). TM p.242 / TW.
         Hex targetHex = board.getHex(target);
         if ((targetHex != null) && !BridgeConstruction.isOverWater(targetHex)) {
             Hex nearBank = board.getHex(getPosition());
@@ -11498,7 +11498,7 @@ public abstract class Entity extends TurnOrdered
      * Check if the entity can initiate NEW infantry vs. infantry combat. This is for the PREEND_DECLARATIONS phase.
      */
     public boolean isEligibleForPreEndDeclarations() {
-        // Bridge-Layer (AVLB) deployment is declared in the pre-end declarations phase (TO:AuE p.241).
+        // Bridge-Layer (AVLB) deployment is declared in the pre-end declarations phase (TM p.242 / TW).
         return canInitiateInfantryVsInfantryCombat() || canDeclareBridgeDeploy(game);
     }
 

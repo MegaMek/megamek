@@ -48,7 +48,7 @@ import megamek.common.units.ConvInfantry;
  * <p>Lifecycle: a bridgelayer starts <em>carried</em> (the folding bridge occupies the unit, absorbs attacks to its
  * location, and blocks weapon fire there). The controlling player may declare a deploy; the unit must then remain
  * stationary and the bridge is placed on the board in the following End Phase, after which the mount is
- * <em>deployed</em> (spent). Construction Factors per TO:AuE Bridge-Layer Table.</p>
+ * <em>deployed</em> (spent). Construction Factors per TechManual Bridge-Layer table.</p>
  *
  * @author Claude Code (Opus 4.8)
  */
@@ -64,13 +64,13 @@ public class BridgeLayerState implements Serializable {
      */
     public static final String DIAGNOSTIC_LOGGER_NAME = "megamek.feature.AVLB";
 
-    /** Carried bridge Construction Factor for the Light Bridge-Layer (TO:AuE Bridge-Layer Table). */
+    /** Carried bridge Construction Factor for the Light Bridge-Layer (TechManual Bridge-Layer table). */
     public static final int LIGHT_BRIDGE_LAYER_CF = 8;
 
-    /** Carried bridge Construction Factor for the Medium Bridge-Layer (TO:AuE Bridge-Layer Table). */
+    /** Carried bridge Construction Factor for the Medium Bridge-Layer (TechManual Bridge-Layer table). */
     public static final int MEDIUM_BRIDGE_LAYER_CF = 20;
 
-    /** Carried bridge Construction Factor for the Heavy Bridge-Layer (TO:AuE Bridge-Layer Table). */
+    /** Carried bridge Construction Factor for the Heavy Bridge-Layer (TechManual Bridge-Layer table). */
     public static final int HEAVY_BRIDGE_LAYER_CF = 45;
 
     /** Light bridge terrain type level (matches {@link ConvInfantry#BRIDGE_TYPE_LIGHT}). */

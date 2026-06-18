@@ -292,7 +292,7 @@ class ComputeToHitIsImpossible {
             }
         }
 
-        // A carried, not-yet-deployed Bridge-Layer (AVLB) blocks weapons mounted in its location (TO:AuE p.241).
+        // A carried, not-yet-deployed Bridge-Layer (AVLB) blocks weapons mounted in its location (TM p.242 / TW).
         if ((weapon != null) && attacker.isWeaponLocationBlockedByCarriedBridge(weapon.getLocation())) {
             return Messages.getString("WeaponAttackAction.CantFireUndeployedBridge");
         }

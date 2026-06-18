@@ -144,7 +144,7 @@
         </Logger>
         -->
         <!--
-          Bridge-Layer (AVLB) diagnostics (TO:AuE p.241). All messages are tagged [AVLB]; grep logs/megamek.log
+          Bridge-Layer (AVLB) diagnostics (TM p.242 / TW). All messages are tagged [AVLB]; grep logs/megamek.log
           for that tag to follow the whole feature flow. This is a dedicated logger (megamek.feature.AVLB), not a
           host class, so enabling it at debug surfaces the eligibility-gate reasons (why the Deploy Bridge button is
           disabled, why a deploy step was rejected) without flooding the log with Entity/MoveStep debug noise. Deploy

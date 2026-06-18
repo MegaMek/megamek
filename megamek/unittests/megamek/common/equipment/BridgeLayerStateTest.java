@@ -50,8 +50,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit tests for {@link BridgeLayerState}: the carried-bridge Construction Factors per Bridge-Layer variant (TO:AuE
- * Bridge-Layer Table), the board bridge terrain type each variant deploys, and the deploy lifecycle state machine.
+ * Unit tests for {@link BridgeLayerState}: the carried-bridge Construction Factors per Bridge-Layer variant
+ * (TechManual Bridge-Layer table), the board bridge terrain type each variant deploys, and the deploy lifecycle
+ * state machine.
  *
  * @author Claude Code (Opus 4.8)
  */
@@ -63,7 +64,7 @@ class BridgeLayerStateTest {
     }
 
     @Test
-    @DisplayName("each variant initializes its carried bridge CF from the TO:AuE Bridge-Layer Table (8 / 20 / 45)")
+    @DisplayName("each variant initializes its carried bridge CF from the TechManual Bridge-Layer table (8 / 20 / 45)")
     void initialCFMatchesTheRulebookTable() {
         assertEquals(8, new BridgeLayerState(MiscType.createLightBridgeLayer()).getCurrentCF(),
               "Light Bridge-Layer carries a CF 8 bridge");

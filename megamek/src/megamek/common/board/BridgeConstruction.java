@@ -185,7 +185,7 @@ public final class BridgeConstruction {
      * @return whether the bank can anchor a bridge in the target hex: over water it must be land/shallow (or already
      *       hold a bridge); over a dry gap it must be a rim higher than the target floor (or hold a bridge). Exposes the
      *       internal anchor test for callers that must require a <em>specific</em> bank to anchor - e.g. the AVLB
-     *       bridgelayer's own hex, which must be a rim/land rather than the canyon floor. TO:AuE p.241.
+     *       bridgelayer's own hex, which must be a rim/land rather than the canyon floor. TM p.242 / TW.
      */
     public static boolean isAnchoringBank(Hex bank, Hex targetHex) {
         return anchorsBridge(bank, targetHex);
@@ -205,7 +205,7 @@ public final class BridgeConstruction {
      *       covered by a stream, river, swamp, pond or lake, so this is any hex holding water of any depth
      *       (streams/rivers/ponds/lakes), a swamp, or rapids. A bridge may be placed in any water hex (when adjacent to
      *       a land hex or another bridge), and a bridge over water gains double CF from its flotation devices. Shared by
-     *       Bridge-Building Engineers (TO:AUE p.152) and the Bridge-Layer / AVLB (TO:AuE p.241) so both use the same
+     *       Bridge-Building Engineers (TO:AUE p.152) and the Bridge-Layer / AVLB (TM p.242 / TW) so both use the same
      *       water-hex definition.
      */
     public static boolean isOverWater(Hex hex) {

@@ -46,7 +46,7 @@ import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
 /**
- * Manages bridge-deployment indicator sprites for Bridge-Layer (AVLB) units (TO:AuE p.241). A unit that has declared a
+ * Manages bridge-deployment indicator sprites for Bridge-Layer (AVLB) units (TM p.242 / TW). A unit that has declared a
  * deployment must remain stationary for a turn before the folding bridge is placed; this handler draws a partial bridge
  * (with a turns-to-finish counter) on the target hex of every unit with a pending deployment, reusing the same
  * {@link BridgeBuildSprite} the infantry bridge build uses, so the in-progress deployment is visible just like an

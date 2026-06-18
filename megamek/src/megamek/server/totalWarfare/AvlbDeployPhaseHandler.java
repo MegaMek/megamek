@@ -46,7 +46,7 @@ import megamek.common.units.IBuilding;
 import megamek.logging.MMLogger;
 
 /**
- * Resolves the END-phase placement of bridges declared by Bridge-Layer (AVLB) equipment, TO:AuE p.241. A unit declares
+ * Resolves the END-phase placement of bridges declared by Bridge-Layer (AVLB) equipment, TM p.242 / TW. A unit declares
  * a deployment during its movement phase; it must then remain stationary, and this handler places the folding bridge in
  * the hex directly in front of the unit at the end of the following turn. Extracted from {@link TWGameManager} so that
  * large class does not also carry the bridgelayer rules; {@link TWGameManager#checkDeployBridges()} delegates here once
@@ -63,7 +63,7 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Records an End-Phase deployment declaration for a unit (TO:AuE p.241): the controlling player declares during an
+     * Records an End-Phase deployment declaration for a unit (TM p.242 / TW): the controlling player declares during an
      * End Phase, the bridge is then placed at the end of the following turn if the unit stays stationary. Validates
      * eligibility, sets the pending state on the bridgelayer mount (target hex directly in front, along the unit's
      * facing), broadcasts the unit so clients show the in-progress indicator, and reports the declaration.
@@ -98,7 +98,7 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
     /**
      * End-phase check for every unit with a pending bridgelayer deployment: once a full stationary turn has elapsed
      * since the declaration, places the bridge if the unit stayed put and the site is still valid, or cancels the
-     * deployment otherwise. TO:AuE p.241.
+     * deployment otherwise. TM p.242 / TW.
      */
     void checkDeployBridges() {
         for (Entity entity : getGame().getEntitiesVector()) {
@@ -138,7 +138,7 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Places a declared bridgelayer bridge on the board, TO:AuE p.241: lays the folding bridge in the hex in front of
+     * Places a declared bridgelayer bridge on the board, TM p.242 / TW: lays the folding bridge in the hex in front of
      * the unit along its facing, registers it as a structure, marks the equipment spent, and updates the clients. If
      * the site became invalid while the unit waited (e.g. a structure appeared in the hex or a bank changed), the
      * deployment is cancelled instead.
@@ -165,7 +165,7 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
 
         // A dry target is only a legal site as a gap between two elevated hexes, so both banks must be rims above it
         // (a water target instead only needs one adjacent land/bridge, already checked above). Re-checked here in case
-        // the terrain changed while the unit waited. TO:AuE p.241.
+        // the terrain changed while the unit waited. TM p.242 / TW.
         Hex targetHex = board.getHex(target);
         if ((targetHex != null) && !BridgeConstruction.isOverWater(targetHex)) {
             Hex nearBank = (entity.getPosition() == null) ? null : board.getHex(entity.getPosition());
@@ -188,7 +188,7 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
         int bridgeType = BridgeLayerState.terrainBridgeType(bridgeLayer.getType());
         // A bridge deployed over water rides on flotation devices and supports units up to twice its current CF;
         // placing it at double CF makes the standard load-collapse (load > CF) give that 2x capacity. A bridge laid
-        // across a land gap has no flotation, so it is placed at its plain CF (TO:AuE p.241).
+        // across a land gap has no flotation, so it is placed at its plain CF (TM p.242 / TW).
         boolean isOverWater = BridgeConstruction.isOverWater(board.getHex(target));
         int constructionFactor = isOverWater ? (bridgeState.getCurrentCF() * 2) : bridgeState.getCurrentCF();
         IBuilding bridge = BridgeConstruction.placeBridge(board, target, exits, bridgeType, constructionFactor);

@@ -818,7 +818,7 @@ public class TWDamageManager implements IDamageManager {
                 }
             }
 
-            // A carried Bridge-Layer (AVLB) folding bridge absorbs hits to its location before armor (TO:AuE p.241).
+            // A carried Bridge-Layer (AVLB) folding bridge absorbs hits to its location before armor (TM p.242 / TW).
             damage = applyBridgeLayerAbsorption(mek, hit, damage, ammoExplosion, mods, reportVec);
 
             // Armored Cowl may absorb some damage from a hit
@@ -1617,7 +1617,7 @@ public class TWDamageManager implements IDamageManager {
             reportVec.addElement(report);
 
             // A carried Bridge-Layer (AVLB) folding bridge absorbs hits to its location - or, on a Support Vehicle, to
-            // the turret - before armor (TO:AuE p.241).
+            // the turret - before armor (TM p.242 / TW).
             damage = applyBridgeLayerAbsorption(tank, hit, damage, ammoExplosion, mods, reportVec);
 
             damage = applyModularArmor(tank, hit, damage, ammoExplosion, damageIS, reportVec);
@@ -2798,7 +2798,7 @@ public class TWDamageManager implements IDamageManager {
     }
 
     /**
-     * Applies a carried Bridge-Layer (AVLB) folding bridge as damage protection, TO:AuE p.241: an attack that would hit
+     * Applies a carried Bridge-Layer (AVLB) folding bridge as damage protection, TM p.242 / TW: an attack that would hit
      * the location where the bridge is mounted (or, on a Support Vehicle, the turret) hits the bridge instead, reducing
      * its Construction Factor by the damage. Once the bridge's CF reaches 0 it is destroyed and any remaining damage
      * passes to the location normally. A critical hit while the bridge is still carried disables the deploy mechanism

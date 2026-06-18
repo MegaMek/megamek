@@ -15884,7 +15884,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * End-phase resolution for Bridge-Layer (AVLB) deployments, TO:AuE p.241. Delegates to
+     * End-phase resolution for Bridge-Layer (AVLB) deployments, TM p.242 / TW. Delegates to
      * {@link AvlbDeployPhaseHandler} so the bridgelayer rules do not add to this already very large class.
      */
     void checkDeployBridges() {
@@ -26778,7 +26778,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Receives an End-Phase Bridge-Layer (AVLB) deployment declaration (TO:AuE p.241) and delegates the rules
+     * Receives an End-Phase Bridge-Layer (AVLB) deployment declaration (TM p.242 / TW) and delegates the rules
      * resolution to {@link AvlbDeployPhaseHandler}.
      *
      * @param c         the packet carrying the declaring unit's id

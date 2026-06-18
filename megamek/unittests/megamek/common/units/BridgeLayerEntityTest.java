@@ -55,7 +55,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests the Entity-level Bridge-Layer (AVLB) rules logic: locating the deployable mount, redirecting hits to the
  * carried bridge (including the Support Vehicle turret rule), and blocking weapon fire in the bridge's location until
- * it is deployed. TO:AuE p.241.
+ * it is deployed. TM p.242 / TW.
  *
  * @author Claude Code (Opus 4.8)
  */

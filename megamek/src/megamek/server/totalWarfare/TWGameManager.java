@@ -26786,6 +26786,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     private void receiveDeployBridge(Packet c, int connIndex) throws InvalidPacketDataException {
         int entityId = c.getIntValue(0);
+        int equipNum = c.getIntValue(1);
         Entity entity = game.getEntity(entityId);
         if (entity == null) {
             LOGGER.error("Unit #{} not found", entityId);
@@ -26796,7 +26797,12 @@ public class TWGameManager extends AbstractGameManager {
                   entity.getOwnerId());
             return;
         }
-        new AvlbDeployPhaseHandler(this).declareDeploy(entity);
+        if (!(entity.getEquipment(equipNum) instanceof MiscMounted bridgeLayer)) {
+            LOGGER.warn("Deploy-bridge packet for {} referenced equipment #{} that is not a bridgelayer",
+                  entity.getShortName(), equipNum);
+            return;
+        }
+        new AvlbDeployPhaseHandler(this).declareDeploy(entity, bridgeLayer);
     }
 
     /**

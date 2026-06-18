@@ -3470,20 +3470,30 @@ public abstract class Entity extends TurnOrdered
     // region Bridge-Layer (AVLB) - TO:AuE p.241
 
     /**
-     * @return the carried, still-deployable Bridge-Layer (AVLB) mount on this unit - one whose folding bridge has not
-     *       yet been deployed, whose deploy mechanism is intact, that still has Construction Factor, and that is not
-     *       itself destroyed - or null if this unit has no usable bridgelayer. If more than one is carried, the first
-     *       is returned. TO:AuE p.241.
+     * @return all carried, still-deployable Bridge-Layer (AVLB) mounts on this unit, in equipment order - each a
+     *       bridgelayer whose folding bridge is not yet deployed, whose deploy mechanism is intact, that still has
+     *       Construction Factor, and that is not itself destroyed. A unit may carry more than one (e.g. the Prometheus
+     *       has a Right and a Left bridge), and the player chooses which to deploy. TO:AuE p.241.
      */
-    public @Nullable MiscMounted getDeployableBridgeLayer() {
+    public List<MiscMounted> getDeployableBridgeLayers() {
+        List<MiscMounted> deployable = new ArrayList<>();
         for (MiscMounted misc : getMisc()) {
             BridgeLayerState bridgeState = misc.getBridgeLayerState();
             if ((bridgeState != null) && !bridgeState.isDeployed() && !bridgeState.isDeployMechanismDisabled()
                   && (bridgeState.getCurrentCF() > 0) && !misc.isInoperable()) {
-                return misc;
+                deployable.add(misc);
             }
         }
-        return null;
+        return deployable;
+    }
+
+    /**
+     * @return the first carried, still-deployable Bridge-Layer (AVLB) mount on this unit, or null if none. Used for
+     *       eligibility checks; see {@link #getDeployableBridgeLayers()} for the full list the player chooses from.
+     */
+    public @Nullable MiscMounted getDeployableBridgeLayer() {
+        List<MiscMounted> deployable = getDeployableBridgeLayers();
+        return deployable.isEmpty() ? null : deployable.get(0);
     }
 
     /**
@@ -3504,23 +3514,23 @@ public abstract class Entity extends TurnOrdered
      *
      * @return the carried (not-yet-deployed) bridgelayer mount whose folding bridge should absorb a hit to this
      *       location, or null if none applies. A hit to the location where a bridgelayer is mounted is absorbed by the
-     *       carried bridge; on a Support Vehicle a hit to the turret is absorbed instead (TO:AuE p.241). Returns null
-     *       once the carried bridge has no Construction Factor left - it is destroyed and the location then takes
-     *       damage normally.
+     *       carried bridge (e.g. the Right/Left side bridges on the Prometheus absorb RS/LS hits). On a Support Vehicle
+     *       a hit to the turret is also absorbed (TO:AuE p.241; this covers turret-mounted SV bridgelayers, while the
+     *       mounted-location rule still protects side/body-mounted ones). Returns null once the carried bridge has no
+     *       Construction Factor left - it is destroyed and the location then takes damage normally.
      */
     public @Nullable MiscMounted getBridgeLayerForHit(HitData hit) {
-        boolean isSupportVehicleTurretRule = isSupportVehicle() && (this instanceof Tank);
-        boolean isTurretHit = (this instanceof Tank) && (hit.getLocation() == Tank.LOC_TURRET);
+        boolean isSupportVehicleTurretHit = isSupportVehicle() && (this instanceof Tank)
+              && (hit.getLocation() == Tank.LOC_TURRET);
         for (MiscMounted misc : getMisc()) {
             BridgeLayerState bridgeState = misc.getBridgeLayerState();
             if ((bridgeState == null) || bridgeState.isDeployed() || (bridgeState.getCurrentCF() <= 0)
                   || misc.isMissing()) {
                 continue;
             }
-            boolean redirect = isSupportVehicleTurretRule
-                  ? isTurretHit
-                  : (misc.getLocation() == hit.getLocation());
-            if (redirect) {
+            // The bridge absorbs hits to the location where it is mounted; on a Support Vehicle a turret hit is
+            // absorbed too (regardless of where the bridgelayer sits).
+            if ((misc.getLocation() == hit.getLocation()) || isSupportVehicleTurretHit) {
                 return misc;
             }
         }
@@ -3621,6 +3631,23 @@ public abstract class Entity extends TurnOrdered
             AVLB_LOGGER.debug("[AVLB] {}: deploy unavailable - {} is not a valid bridge site (exits bitmask {})",
                   getShortName(), target, exits);
             return false;
+        }
+        // A bridge may be placed in a water hex (adjacent to >=1 land/bridge - already covered by isValidBridgeSite,
+        // which also lets a naval layer in water bridge to a far land bank). A DRY hex is only a legal site as a gap
+        // "between two elevated hexes", so both banks along the facing must be rims higher than the target floor (the
+        // shared site check accepts a single rim, for engineer span-chaining, which is too loose for AVLB). TO:AuE p.241.
+        Hex targetHex = board.getHex(target);
+        if ((targetHex != null) && !BridgeConstruction.isOverWater(targetHex)) {
+            Hex nearBank = board.getHex(getPosition());
+            Hex farBank = board.getHex(target.translated(getFacing()));
+            boolean spansTwoElevatedHexes = (nearBank != null) && (farBank != null)
+                  && BridgeConstruction.isAnchoringBank(nearBank, targetHex)
+                  && BridgeConstruction.isAnchoringBank(farBank, targetHex);
+            if (!spansTwoElevatedHexes) {
+                AVLB_LOGGER.debug("[AVLB] {}: deploy unavailable - {} is dry ground, not a gap between two elevated "
+                      + "hexes (both banks along the facing must be rims above it)", getShortName(), target);
+                return false;
+            }
         }
         return true;
     }
@@ -11471,7 +11498,8 @@ public abstract class Entity extends TurnOrdered
      * Check if the entity can initiate NEW infantry vs. infantry combat. This is for the PREEND_DECLARATIONS phase.
      */
     public boolean isEligibleForPreEndDeclarations() {
-        return canInitiateInfantryVsInfantryCombat();
+        // Bridge-Layer (AVLB) deployment is declared in the pre-end declarations phase (TO:AuE p.241).
+        return canInitiateInfantryVsInfantryCombat() || canDeclareBridgeDeploy(game);
     }
 
     /**

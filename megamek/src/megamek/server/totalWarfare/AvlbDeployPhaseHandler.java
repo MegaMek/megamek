@@ -34,6 +34,7 @@ package megamek.server.totalWarfare;
 
 import java.util.Vector;
 
+import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.board.Board;
 import megamek.common.board.BridgeConstruction;
@@ -69,22 +70,29 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
      *
      * @param entity the unit declaring the deployment
      */
-    void declareDeploy(Entity entity) {
+    void declareDeploy(Entity entity, MiscMounted bridgeLayer) {
         if (!entity.canDeclareBridgeDeploy(getGame())) {
             // canDeclareBridgeDeploy logs the specific reason at debug; nothing more to do.
             return;
         }
-        MiscMounted bridgeLayer = entity.getDeployableBridgeLayer();
+        BridgeLayerState bridgeState = bridgeLayer.getBridgeLayerState();
+        if ((bridgeState == null) || bridgeState.isDeployed() || bridgeState.isDeployMechanismDisabled()
+              || (bridgeState.getCurrentCF() <= 0)) {
+            LOGGER.warn("[AVLB] {}: deploy declaration ignored - the chosen equipment is not a deployable bridgelayer",
+                  entity.getShortName());
+            return;
+        }
         Coords target = entity.getBridgeLayerTargetCoords();
-        if ((bridgeLayer == null) || (target == null)) {
+        if (target == null) {
             return;
         }
         int exits = entity.getBridgeLayerExits();
-        bridgeLayer.getBridgeLayerState().startDeploy(target, exits, getGame().getCurrentRound());
+        bridgeState.startDeploy(target, exits, getGame().getCurrentRound());
         // Sync the unit so all clients show the in-progress (partial bridge) indicator on the target hex.
         gameManager.entityUpdate(entity.getId());
-        LOGGER.info("[AVLB] {} declares a bridge deployment: target {}, exits bitmask {}; the bridge is placed at the "
-              + "end of the next turn if the unit stays stationary", entity.getShortName(), target, exits);
+        LOGGER.info("[AVLB] {} declares a bridge deployment (bridge at location {}): target {}, exits bitmask {}; the "
+              + "bridge is placed at the end of the next turn if the unit stays stationary", entity.getShortName(),
+              bridgeLayer.getLocation(), target, exits);
     }
 
     /**
@@ -155,6 +163,28 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
             return;
         }
 
+        // A dry target is only a legal site as a gap between two elevated hexes, so both banks must be rims above it
+        // (a water target instead only needs one adjacent land/bridge, already checked above). Re-checked here in case
+        // the terrain changed while the unit waited. TO:AuE p.241.
+        Hex targetHex = board.getHex(target);
+        if ((targetHex != null) && !BridgeConstruction.isOverWater(targetHex)) {
+            Hex nearBank = (entity.getPosition() == null) ? null : board.getHex(entity.getPosition());
+            Hex farBank = board.getHex(target.translated(entity.getFacing()));
+            boolean spansTwoElevatedHexes = (nearBank != null) && (farBank != null)
+                  && BridgeConstruction.isAnchoringBank(nearBank, targetHex)
+                  && BridgeConstruction.isAnchoringBank(farBank, targetHex);
+            if (!spansTwoElevatedHexes) {
+                LOGGER.info("[AVLB] {} cannot place its bridge: {} is dry ground, not a gap between two elevated "
+                      + "hexes; deployment cancelled", entity.getShortName(), target);
+                bridgeState.clearPendingDeploy();
+                Report report = new Report(4294);
+                report.subject = entity.getId();
+                report.addDesc(entity);
+                addReport(report);
+                return;
+            }
+        }
+
         int bridgeType = BridgeLayerState.terrainBridgeType(bridgeLayer.getType());
         // A bridge deployed over water rides on flotation devices and supports units up to twice its current CF;
         // placing it at double CF makes the standard load-collapse (load > CF) give that 2x capacity. A bridge laid
@@ -171,11 +201,24 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
         newBridges.add(bridge);
         gameManager.sendNewBuildings(newBridges);
 
-        Report report = new Report(4292);
-        report.subject = entity.getId();
-        report.addDesc(entity);
-        report.add(constructionFactor);
-        report.add(target.getBoardNum());
+        // If the unit carries more than one bridgelayer, name which one was deployed (its mounted-location side);
+        // otherwise the plain "its bridge" wording reads better.
+        long bridgeLayerCount = entity.getMisc().stream().filter(misc -> misc.getBridgeLayerState() != null).count();
+        Report report;
+        if (bridgeLayerCount > 1) {
+            report = new Report(4299);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            report.add(entity.getLocationName(bridgeLayer.getLocation()));
+            report.add(constructionFactor);
+            report.add(target.getBoardNum());
+        } else {
+            report = new Report(4292);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            report.add(constructionFactor);
+            report.add(target.getBoardNum());
+        }
         addReport(report);
     }
 }

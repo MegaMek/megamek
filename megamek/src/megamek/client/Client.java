@@ -1474,14 +1474,15 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Declares, during the End Phase, that the given unit is deploying its Bridge-Layer (AVLB) bridge (TO:AuE p.241).
-     * The server validates eligibility and computes the target hex (directly in front, along the unit's facing); the
-     * bridge is placed at the end of the following turn if the unit stays stationary.
+     * Declares that the given unit is deploying one of its Bridge-Layer (AVLB) bridges (TO:AuE p.241). The server
+     * validates eligibility and computes the target hex (directly in front, along the unit's facing); the bridge is
+     * placed at the end of the following turn if the unit stays stationary.
      *
      * @param entityId the unit declaring the deployment
+     * @param equipNum the equipment index of the specific bridgelayer to deploy (a unit may carry more than one)
      */
-    public void sendDeployBridge(int entityId) {
-        send(new Packet(PacketCommand.ENTITY_DEPLOY_BRIDGE, entityId));
+    public void sendDeployBridge(int entityId, int equipNum) {
+        send(new Packet(PacketCommand.ENTITY_DEPLOY_BRIDGE, entityId, equipNum));
     }
 
     /**

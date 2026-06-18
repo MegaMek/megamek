@@ -986,7 +986,8 @@ public class ConvInfantry extends Infantry {
 
     /**
      * @param bridgeType  the bridge type, {@link #BRIDGE_TYPE_LIGHT} or {@link #BRIDGE_TYPE_MEDIUM}
-     * @param isOverWater {@code true} if the bridge is being raised over a water hex (depth 1+)
+     * @param isOverWater {@code true} if the bridge is being raised over a water hex (water of any depth, swamp or
+     *                    rapids; see {@link megamek.common.board.BridgeConstruction#isOverWater})
      *
      * @return The Construction Factor of a bridge raised by Bridge-Building Engineers: 15 for a Light Bridge, 40 for a
      *       Medium Bridge, doubled when built over water. TO:AUE p.152.

@@ -66,6 +66,9 @@ import megamek.server.ServerHelper;
 
 public class TWDamageManager implements IDamageManager {
     private static final MMLogger logger = MMLogger.create(TWDamageManager.class);
+
+    /** Dedicated Bridge-Layer (AVLB) diagnostics logger; see {@link BridgeLayerState#DIAGNOSTIC_LOGGER_NAME}. */
+    private static final MMLogger AVLB_LOGGER = MMLogger.create(BridgeLayerState.DIAGNOSTIC_LOGGER_NAME);
     protected TWGameManager manager = null;
     protected Game game = null;
     protected boolean initialized = false;
@@ -834,8 +837,9 @@ public class TWDamageManager implements IDamageManager {
 
             damage = applyModularArmor(mek, hit, damage, ammoExplosion, damageIS, reportVec);
 
-            // Destroy searchlights on 7+ (torso hits on meks)
-            if (mek.hasSearchlight()) {
+            // Destroy searchlights on 7+ (torso hits on meks). Only when damage actually reached the location: a hit
+            // fully absorbed by a carried bridge (or shield/modular armor) hit that protection, not the searchlight.
+            if (mek.hasSearchlight() && (damage > 0)) {
                 boolean spotlightHittable = true;
                 int loc = hit.getLocation();
                 if ((loc != Mek.LOC_CENTER_TORSO) && (loc != Mek.LOC_LEFT_TORSO) && (loc != Mek.LOC_RIGHT_TORSO)) {
@@ -1618,8 +1622,9 @@ public class TWDamageManager implements IDamageManager {
 
             damage = applyModularArmor(tank, hit, damage, ammoExplosion, damageIS, reportVec);
 
-            // Destroy searchlights on 7+ (torso hits on meks)
-            if (tank.hasSearchlight()) {
+            // Destroy searchlights on 7+ (torso hits on meks). Only when damage actually reached the location: a hit
+            // fully absorbed by a carried bridge (or modular armor) hit that protection, not the location's equipment.
+            if (tank.hasSearchlight() && (damage > 0)) {
                 boolean spotlightHittable = isSpotlightHittable(tank, hit);
                 if (spotlightHittable) {
                     Roll diceRoll = Compute.rollD6(2);
@@ -2816,11 +2821,15 @@ public class TWDamageManager implements IDamageManager {
         }
         MiscMounted bridgeLayer = entity.getBridgeLayerForHit(hit);
         if (bridgeLayer == null) {
+            logBridgeAbsorptionMiss(entity, hit);
             return damage;
         }
         BridgeLayerState bridgeState = bridgeLayer.getBridgeLayerState();
         int currentCF = bridgeState.getCurrentCF();
         int absorbed = Math.min(currentCF, damage);
+        AVLB_LOGGER.debug("[AVLB] {}: bridge at loc {} absorbs hit to loc {} ({} dmg, CF {} -> {})",
+              entity.getShortName(), bridgeLayer.getLocation(), hit.getLocation(), absorbed, currentCF,
+              currentCF - absorbed);
         int remainingCF = currentCF - absorbed;
         bridgeState.setCurrentCF(remainingCF);
         entity.damageThisPhase += absorbed;
@@ -2856,6 +2865,27 @@ public class TWDamageManager implements IDamageManager {
             reportVec.addElement(destroyedReport);
         }
         return damage - absorbed;
+    }
+
+    /**
+     * Logs (at debug, [AVLB]) why a hit was NOT absorbed by a carried bridge when the unit carries one or more
+     * bridgelayers - listing the hit location and each bridgelayer's location and state - so a playtest can tell a
+     * deployed/destroyed bridge from a location mismatch. Does nothing for units with no bridgelayer.
+     *
+     * @param entity the unit being damaged
+     * @param hit    the incoming hit that was not absorbed
+     */
+    private void logBridgeAbsorptionMiss(Entity entity, HitData hit) {
+        for (MiscMounted misc : entity.getMisc()) {
+            BridgeLayerState bridgeState = misc.getBridgeLayerState();
+            if (bridgeState == null) {
+                continue;
+            }
+            AVLB_LOGGER.debug("[AVLB] {}: hit to loc {} NOT absorbed; bridgelayer at loc {} (deployed={}, CF={}, "
+                  + "mechanismDisabled={}, missing={})", entity.getShortName(), hit.getLocation(), misc.getLocation(),
+                  bridgeState.isDeployed(), bridgeState.getCurrentCF(), bridgeState.isDeployMechanismDisabled(),
+                  misc.isMissing());
+        }
     }
 
     /**

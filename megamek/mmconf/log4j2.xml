@@ -156,6 +156,16 @@
             <AppenderRef ref="UnifiedLog" />
             <AppenderRef ref="MegaMekLog" />
         </Logger>
+        <!--
+          Pre-end declarations phase diagnostics ([PreEnd]-tagged): turn start, unit selection, button enable
+          decisions, infantry-combat / bridge-deploy declarations, and ready/skip. At debug here while the AVLB
+          bridge-deploy and infantry-combat flows are being play-tested; set to info / remove for normal play.
+        -->
+        <Logger name="megamek.client.ui.panels.phaseDisplay.PreEndDeclarationsDisplay" level="debug" additivity="false">
+            <AppenderRef ref="${env:mm.profile:-null}" />
+            <AppenderRef ref="UnifiedLog" />
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

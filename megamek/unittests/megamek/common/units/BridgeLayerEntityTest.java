@@ -82,6 +82,7 @@ class BridgeLayerEntityTest {
         doReturn(List.of(mount)).when(mek).getMisc();
         when(mek.getShortName()).thenReturn("Test Quad");
         when(mek.isSupportVehicle()).thenReturn(false);
+        when(mek.getDeployableBridgeLayers()).thenCallRealMethod();
         when(mek.getDeployableBridgeLayer()).thenCallRealMethod();
         when(mek.getBridgeLayerForHit(org.mockito.ArgumentMatchers.any())).thenCallRealMethod();
         when(mek.isWeaponLocationBlockedByCarriedBridge(org.mockito.ArgumentMatchers.anyInt())).thenCallRealMethod();
@@ -134,14 +135,16 @@ class BridgeLayerEntityTest {
     }
 
     @Test
-    @DisplayName("on a Support Vehicle, a turret hit is absorbed by the bridge regardless of where it is mounted")
-    void supportVehicleTurretHitRedirects() {
-        MiscMounted mount = bridgeLayerMount(Tank.LOC_BODY, new BridgeLayerState(MiscType.createLightBridgeLayer()));
+    @DisplayName("on a Support Vehicle, both the bridge's own location and the turret are absorbed")
+    void supportVehicleRedirectsMountLocationAndTurret() {
+        MiscMounted mount = bridgeLayerMount(Tank.LOC_RIGHT, new BridgeLayerState(MiscType.createLightBridgeLayer()));
         Tank supportTank = tankCarrying(mount, true);
+        assertSame(mount, supportTank.getBridgeLayerForHit(new HitData(Tank.LOC_RIGHT)),
+              "an SV hit to the bridge's own (right side) location hits the bridge - the Prometheus case");
         assertSame(mount, supportTank.getBridgeLayerForHit(new HitData(Tank.LOC_TURRET)),
-              "an SV turret hit hits the bridge");
-        assertNull(supportTank.getBridgeLayerForHit(new HitData(Tank.LOC_BODY)),
-              "an SV body hit does not hit the bridge (only the turret rule applies)");
+              "an SV turret hit also hits the bridge");
+        assertNull(supportTank.getBridgeLayerForHit(new HitData(Tank.LOC_FRONT)),
+              "a hit to an unrelated location is not absorbed");
     }
 
     @Test

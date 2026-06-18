@@ -292,6 +292,11 @@ class ComputeToHitIsImpossible {
             }
         }
 
+        // A carried, not-yet-deployed Bridge-Layer (AVLB) blocks weapons mounted in its location (TO:AuE p.241).
+        if ((weapon != null) && attacker.isWeaponLocationBlockedByCarriedBridge(weapon.getLocation())) {
+            return Messages.getString("WeaponAttackAction.CantFireUndeployedBridge");
+        }
+
         // Only large spacecraft can shoot while evading
         if (attacker.isEvading() && !(attacker instanceof Dropship) && !(attacker instanceof Jumpship)) {
             return Messages.getString("WeaponAttackAction.AeEvading");

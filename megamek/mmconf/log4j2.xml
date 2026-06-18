@@ -143,6 +143,19 @@
             <AppenderRef ref="MegaMekLog" />
         </Logger>
         -->
+        <!--
+          Bridge-Layer (AVLB) diagnostics (TO:AuE p.241). All messages are tagged [AVLB]; grep logs/megamek.log
+          for that tag to follow the whole feature flow. This is a dedicated logger (megamek.feature.AVLB), not a
+          host class, so enabling it at debug surfaces the eligibility-gate reasons (why the Deploy Bridge button is
+          disabled, why a deploy step was rejected) without flooding the log with Entity/MoveStep debug noise. Deploy
+          declaration, placement and cancellation are also logged at INFO by the server handlers. Set level to "info"
+          (or remove this logger) for normal play; it is at debug here while the feature is being play-tested.
+        -->
+        <Logger name="megamek.feature.AVLB" level="debug" additivity="false">
+            <AppenderRef ref="${env:mm.profile:-null}" />
+            <AppenderRef ref="UnifiedLog" />
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

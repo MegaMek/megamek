@@ -76,6 +76,7 @@ import megamek.common.bays.SmallCraftBay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.BoardType;
+import megamek.common.board.BridgeConstruction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
@@ -159,6 +160,9 @@ public abstract class Entity extends TurnOrdered
                  Deployable, ICarryable {
 
     private static final MMLogger LOGGER = MMLogger.create(Entity.class);
+
+    /** Dedicated logger for Bridge-Layer (AVLB) diagnostics; see {@link BridgeLayerState#DIAGNOSTIC_LOGGER_NAME}. */
+    private static final MMLogger AVLB_LOGGER = MMLogger.create(BridgeLayerState.DIAGNOSTIC_LOGGER_NAME);
 
     @Serial
     private static final long serialVersionUID = 1430806396279853295L;
@@ -3462,6 +3466,166 @@ public abstract class Entity extends TurnOrdered
     protected Map<Integer, List<Integer>> getBlockedFiringLocations() {
         return null;
     }
+
+    // region Bridge-Layer (AVLB) - TO:AuE p.241
+
+    /**
+     * @return the carried, still-deployable Bridge-Layer (AVLB) mount on this unit - one whose folding bridge has not
+     *       yet been deployed, whose deploy mechanism is intact, that still has Construction Factor, and that is not
+     *       itself destroyed - or null if this unit has no usable bridgelayer. If more than one is carried, the first
+     *       is returned. TO:AuE p.241.
+     */
+    public @Nullable MiscMounted getDeployableBridgeLayer() {
+        for (MiscMounted misc : getMisc()) {
+            BridgeLayerState bridgeState = misc.getBridgeLayerState();
+            if ((bridgeState != null) && !bridgeState.isDeployed() && !bridgeState.isDeployMechanismDisabled()
+                  && (bridgeState.getCurrentCF() > 0) && !misc.isInoperable()) {
+                return misc;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return the Bridge-Layer mount on this unit that has a deploy declared and awaiting placement, or null if none.
+     */
+    public @Nullable MiscMounted getPendingDeployBridgeLayer() {
+        for (MiscMounted misc : getMisc()) {
+            BridgeLayerState bridgeState = misc.getBridgeLayerState();
+            if ((bridgeState != null) && bridgeState.isDeployPending() && !bridgeState.isDeployed()) {
+                return misc;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param hit the incoming hit
+     *
+     * @return the carried (not-yet-deployed) bridgelayer mount whose folding bridge should absorb a hit to this
+     *       location, or null if none applies. A hit to the location where a bridgelayer is mounted is absorbed by the
+     *       carried bridge; on a Support Vehicle a hit to the turret is absorbed instead (TO:AuE p.241). Returns null
+     *       once the carried bridge has no Construction Factor left - it is destroyed and the location then takes
+     *       damage normally.
+     */
+    public @Nullable MiscMounted getBridgeLayerForHit(HitData hit) {
+        boolean isSupportVehicleTurretRule = isSupportVehicle() && (this instanceof Tank);
+        boolean isTurretHit = (this instanceof Tank) && (hit.getLocation() == Tank.LOC_TURRET);
+        for (MiscMounted misc : getMisc()) {
+            BridgeLayerState bridgeState = misc.getBridgeLayerState();
+            if ((bridgeState == null) || bridgeState.isDeployed() || (bridgeState.getCurrentCF() <= 0)
+                  || misc.isMissing()) {
+                continue;
+            }
+            boolean redirect = isSupportVehicleTurretRule
+                  ? isTurretHit
+                  : (misc.getLocation() == hit.getLocation());
+            if (redirect) {
+                return misc;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param location a weapon's location index
+     *
+     * @return whether a carried, not-yet-deployed bridgelayer occupies this location and so blocks weapons mounted
+     *       there from firing (TO:AuE p.241: "If the bridge has not yet been deployed, the unit cannot make attacks
+     *       from any weapons mounted in its location."). A destroyed or already-deployed bridge no longer blocks fire.
+     */
+    public boolean isWeaponLocationBlockedByCarriedBridge(int location) {
+        for (MiscMounted misc : getMisc()) {
+            BridgeLayerState bridgeState = misc.getBridgeLayerState();
+            if ((bridgeState == null) || bridgeState.isDeployed() || (bridgeState.getCurrentCF() <= 0)
+                  || misc.isMissing()) {
+                continue;
+            }
+            if (misc.getLocation() == location) {
+                AVLB_LOGGER.debug("[AVLB] {}: weapons in location {} cannot fire - carried bridge not yet deployed",
+                      getShortName(), location);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return whether this unit's motive system currently permits deploying a bridgelayer (TO:AuE p.241): ground units
+     *       always qualify; Hover and WiGE units only when landed (they spent no MP the previous round and sit at
+     *       ground level, not airborne); Naval, Hydrofoil and Submersible units only when surfaced (at Depth 0). The
+     *       stationary-this-turn requirement is enforced separately, since the deploy declaration must be the unit's
+     *       only action.
+     */
+    public boolean isBridgeLayerMotiveReady() {
+        EntityMovementMode movementMode = getMovementMode();
+        if (movementMode.isHoverOrWiGE()) {
+            return (mpUsedLastRound == 0) && (getElevation() == 0) && !isAirborneVTOLorWIGE();
+        }
+        if (movementMode.isNaval() || movementMode.isHydrofoil() || movementMode.isSubmarine()) {
+            return getElevation() == 0;
+        }
+        return true;
+    }
+
+    /**
+     * @return the hex directly in front of this unit (in its current facing), where its bridgelayer would deploy its
+     *       folding bridge, or null if this unit has no board position.
+     */
+    public @Nullable Coords getBridgeLayerTargetCoords() {
+        Coords currentPosition = getPosition();
+        return (currentPosition == null) ? null : currentPosition.translated(getFacing());
+    }
+
+    /**
+     * @return the exits bitmask for a bridge deployed straight ahead of this unit, connecting the front hexside and its
+     *       opposite so the single-hex span runs along the unit's facing (TO:AuE p.241: the bridge cannot extend at an
+     *       angle).
+     */
+    public int getBridgeLayerExits() {
+        int facing = getFacing();
+        return BridgeConstruction.exitsFor(facing, (facing + 3) % 6);
+    }
+
+    /**
+     * Determines whether this unit may declare a bridgelayer deployment now (during the movement phase). Each failing
+     * condition is logged at DEBUG with its reason and relevant values so a playtest can diagnose a disabled "Deploy
+     * Bridge" button from megamek.log. TO:AuE p.241.
+     *
+     * @param game the current game (for the board and the target hex validation)
+     *
+     * @return {@code true} if a deployment may be declared
+     */
+    public boolean canDeclareBridgeDeploy(Game game) {
+        if (getDeployableBridgeLayer() == null) {
+            AVLB_LOGGER.debug("[AVLB] {}: deploy unavailable - no functional carried bridgelayer", getShortName());
+            return false;
+        }
+        if (getPendingDeployBridgeLayer() != null) {
+            AVLB_LOGGER.debug("[AVLB] {}: deploy unavailable - a bridge deployment is already pending", getShortName());
+            return false;
+        }
+        if (!isBridgeLayerMotiveReady()) {
+            AVLB_LOGGER.debug("[AVLB] {}: deploy unavailable - motive system not ready (mode {}, elevation {}, "
+                  + "mpUsedLastRound {})", getShortName(), getMovementMode(), getElevation(), mpUsedLastRound);
+            return false;
+        }
+        Coords target = getBridgeLayerTargetCoords();
+        if (target == null) {
+            AVLB_LOGGER.debug("[AVLB] {}: deploy unavailable - unit has no position", getShortName());
+            return false;
+        }
+        Board board = game.getBoard(getBoardId());
+        int exits = getBridgeLayerExits();
+        if (!BridgeConstruction.isValidBridgeSite(board, target, exits)) {
+            AVLB_LOGGER.debug("[AVLB] {}: deploy unavailable - {} is not a valid bridge site (exits bitmask {})",
+                  getShortName(), target, exits);
+            return false;
+        }
+        return true;
+    }
+
+    // endregion Bridge-Layer (AVLB)
 
     /**
      * Returns this entity's original walking movement points

@@ -842,6 +842,9 @@ public class TWGameManager extends AbstractGameManager {
                 case ENTITY_ACTIVATE_HIDDEN:
                     receiveEntityActivateHidden(packet, connId);
                     break;
+                case ENTITY_DEPLOY_BRIDGE:
+                    receiveDeployBridge(packet, connId);
+                    break;
                 case ENTITY_NOVA_NETWORK_CHANGE:
                     receiveEntityNovaNetworkModeChange(packet, connId);
                     break;
@@ -15881,6 +15884,14 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * End-phase resolution for Bridge-Layer (AVLB) deployments, TO:AuE p.241. Delegates to
+     * {@link AvlbDeployPhaseHandler} so the bridgelayer rules do not add to this already very large class.
+     */
+    void checkDeployBridges() {
+        new AvlbDeployPhaseHandler(this).checkDeployBridges();
+    }
+
+    /**
      * Resolves all announced demolition charge detonations, TO:AUE p.152: each charge is removed from its building and
      * inflicts its damage on the rigged structure hex. Called during End Phase processing and immediately when a
      * detonation is announced during the End Phase report (the announcement must resolve in the same End Phase).
@@ -26764,6 +26775,28 @@ public class TWGameManager extends AbstractGameManager {
         }
         activatingUnit.setHiddenActivationPhase(phase);
         entityUpdate(entityId);
+    }
+
+    /**
+     * Receives an End-Phase Bridge-Layer (AVLB) deployment declaration (TO:AuE p.241) and delegates the rules
+     * resolution to {@link AvlbDeployPhaseHandler}.
+     *
+     * @param c         the packet carrying the declaring unit's id
+     * @param connIndex the connection that sent the packet
+     */
+    private void receiveDeployBridge(Packet c, int connIndex) throws InvalidPacketDataException {
+        int entityId = c.getIntValue(0);
+        Entity entity = game.getEntity(entityId);
+        if (entity == null) {
+            LOGGER.error("Unit #{} not found", entityId);
+            return;
+        }
+        if (connIndex != entity.getOwnerId()) {
+            LOGGER.error("Player #{} tried to deploy a bridge with a unit owned by Player #{}", connIndex,
+                  entity.getOwnerId());
+            return;
+        }
+        new AvlbDeployPhaseHandler(this).declareDeploy(entity);
     }
 
     /**

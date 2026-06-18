@@ -1117,6 +1117,15 @@ public class TestMek extends TestEntity {
                 illegal = true;
             }
 
+            // TO:AuE p.241: only quad BattleMeks and quad IndustrialMeks may mount a bridgelayer.
+            if ((misc.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
+                  || misc.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+                  || misc.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER))
+                  && !mek.isQuadMek()) {
+                buff.append("Only quad meks may mount ").append(misc.getName()).append("\n");
+                illegal = true;
+            }
+
             if ((misc.hasFlag(MiscType.F_CHAIN_DRAPE_APRON) || misc.hasFlag(MiscType.F_CHAIN_DRAPE_PONCHO))
                   && (mek.isQuadMek() || mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)
             ) {

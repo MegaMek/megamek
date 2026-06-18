@@ -1474,6 +1474,17 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Declares, during the End Phase, that the given unit is deploying its Bridge-Layer (AVLB) bridge (TO:AuE p.241).
+     * The server validates eligibility and computes the target hex (directly in front, along the unit's facing); the
+     * bridge is placed at the end of the following turn if the unit stays stationary.
+     *
+     * @param entityId the unit declaring the deployment
+     */
+    public void sendDeployBridge(int entityId) {
+        send(new Packet(PacketCommand.ENTITY_DEPLOY_BRIDGE, entityId));
+    }
+
+    /**
      * Send mount-facing-change data to the server
      */
     public void sendMountFacingChange(int nEntity, int nEquip, int nFacing) {

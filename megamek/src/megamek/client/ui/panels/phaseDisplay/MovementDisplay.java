@@ -7927,6 +7927,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         return true;
     }
 
+
     /**
      * Computes every legal bridge the platoon could raise this turn. The bridge always originates from the engineer's
      * own hex: for each hex adjacent to the engineer (the bridge would occupy it), the near bank is fixed to the side

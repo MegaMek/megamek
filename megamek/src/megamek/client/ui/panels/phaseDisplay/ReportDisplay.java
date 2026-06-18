@@ -43,6 +43,7 @@ import java.util.Map;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.dialogs.phaseDisplay.AbandonUnitDialog;
+import megamek.client.ui.dialogs.phaseDisplay.BridgeDeployDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DetonateChargesDialog;
 import megamek.client.ui.dialogs.phaseDisplay.MinesweeperActivationDialog;
 import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkDialog;
@@ -72,7 +73,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         REPORT_VAR_RANGE_TARGETING("reportVarRangeTargeting"),
         REPORT_ABANDON("reportAbandon"),
         REPORT_DETONATE_CHARGES("reportDetonateCharges"),
-        REPORT_MINESWEEPER("reportMinesweeper");
+        REPORT_MINESWEEPER("reportMinesweeper"),
+        REPORT_DEPLOY_BRIDGE("reportDeployBridge");
 
         final String cmd;
 
@@ -249,6 +251,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             showDetonateChargesDialog();
         } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_MINESWEEPER.getCmd()))) {
             showMinesweeperDialog();
+        } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_DEPLOY_BRIDGE.getCmd()))) {
+            showDeployBridgeDialog();
         }
     }
 
@@ -278,12 +282,16 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             // Enable Minesweeper button if player has units mounting a minesweeper (TO:AUE p.138: the sweeper
             // is activated or deactivated in the End Phase)
             setMinesweeperEnabled(hasMinesweeperUnits());
+            // Enable Deploy Bridge button if the player has a unit able to deploy a Bridge-Layer this End Phase
+            // (TO:AuE p.241: the deployment is declared during the End Phase)
+            setDeployBridgeEnabled(hasDeployableBridgeLayerUnits());
         } else {
             setNovaNetworkEnabled(false);
             setVariableRangeTargetingEnabled(false);
             setAbandonEnabled(false);
             setDetonateChargesEnabled(false);
             setMinesweeperEnabled(false);
+            setDeployBridgeEnabled(false);
         }
     }
 
@@ -485,6 +493,43 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
      */
     private void setMinesweeperEnabled(boolean enabled) {
         MegaMekButton button = buttons.get(ReportCommand.REPORT_MINESWEEPER);
+        if (button != null) {
+            button.setEnabled(enabled);
+        }
+    }
+
+    /**
+     * Shows the Bridge-Layer (AVLB) deployment dialog (TO:AuE p.241: the deployment is declared during the End Phase;
+     * the bridge is placed at the end of the following turn if the unit stays stationary).
+     */
+    private void showDeployBridgeDialog() {
+        BridgeDeployDialog dialog = new BridgeDeployDialog(clientgui.getFrame(), clientgui);
+        dialog.setVisible(true);
+        MegaMekButton button = buttons.get(ReportCommand.REPORT_DEPLOY_BRIDGE);
+        if (button != null) {
+            button.transferFocus();
+        }
+    }
+
+    /**
+     * @return whether the local player has any unit that can declare a Bridge-Layer deployment this End Phase.
+     */
+    private boolean hasDeployableBridgeLayerUnits() {
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        if (localPlayer == null) {
+            return false;
+        }
+        int localPlayerId = localPlayer.getId();
+        return clientgui.getClient().getGame().getEntitiesVector().stream()
+              .filter(entity -> entity.getOwnerId() == localPlayerId)
+              .anyMatch(entity -> entity.canDeclareBridgeDeploy(clientgui.getClient().getGame()));
+    }
+
+    /**
+     * Enables or disables the Deploy Bridge button.
+     */
+    private void setDeployBridgeEnabled(boolean enabled) {
+        MegaMekButton button = buttons.get(ReportCommand.REPORT_DEPLOY_BRIDGE);
         if (button != null) {
             button.setEnabled(enabled);
         }

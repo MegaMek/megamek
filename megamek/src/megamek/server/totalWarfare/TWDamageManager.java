@@ -815,6 +815,9 @@ public class TWDamageManager implements IDamageManager {
                 }
             }
 
+            // A carried Bridge-Layer (AVLB) folding bridge absorbs hits to its location before armor (TO:AuE p.241).
+            damage = applyBridgeLayerAbsorption(mek, hit, damage, ammoExplosion, mods, reportVec);
+
             // Armored Cowl may absorb some damage from a hit
             if (mek.hasCowl() &&
                   (hit.getLocation() == Mek.LOC_HEAD) &&
@@ -1608,6 +1611,10 @@ public class TWDamageManager implements IDamageManager {
             }
             report.add(tank.getLocationAbbr(hit));
             reportVec.addElement(report);
+
+            // A carried Bridge-Layer (AVLB) folding bridge absorbs hits to its location - or, on a Support Vehicle, to
+            // the turret - before armor (TO:AuE p.241).
+            damage = applyBridgeLayerAbsorption(tank, hit, damage, ammoExplosion, mods, reportVec);
 
             damage = applyModularArmor(tank, hit, damage, ammoExplosion, damageIS, reportVec);
 
@@ -2783,6 +2790,72 @@ public class TWDamageManager implements IDamageManager {
             damage = damageNew;
         }
         return damage;
+    }
+
+    /**
+     * Applies a carried Bridge-Layer (AVLB) folding bridge as damage protection, TO:AuE p.241: an attack that would hit
+     * the location where the bridge is mounted (or, on a Support Vehicle, the turret) hits the bridge instead, reducing
+     * its Construction Factor by the damage. Once the bridge's CF reaches 0 it is destroyed and any remaining damage
+     * passes to the location normally. A critical hit while the bridge is still carried disables the deploy mechanism
+     * (the first one; further crits have no effect) and does not carry through to the location. The carried bridge does
+     * not protect against ammo explosions or damage applied directly to internal structure.
+     *
+     * @param entity        the unit being damaged
+     * @param hit           the incoming hit
+     * @param damage        the incoming damage
+     * @param ammoExplosion whether the damage is from an ammo explosion (not absorbed)
+     * @param mods          damage modifiers; critical-hit flags are cleared when a crit is consumed by the bridge
+     * @param reportVec     the running report list, appended to with absorption/destruction/crit reports
+     *
+     * @return the damage remaining after the bridge absorbs what it can
+     */
+    public int applyBridgeLayerAbsorption(Entity entity, HitData hit, int damage, boolean ammoExplosion,
+          ModsInfo mods, Vector<Report> reportVec) {
+        if (ammoExplosion || mods.damageIS) {
+            return damage;
+        }
+        MiscMounted bridgeLayer = entity.getBridgeLayerForHit(hit);
+        if (bridgeLayer == null) {
+            return damage;
+        }
+        BridgeLayerState bridgeState = bridgeLayer.getBridgeLayerState();
+        int currentCF = bridgeState.getCurrentCF();
+        int absorbed = Math.min(currentCF, damage);
+        int remainingCF = currentCF - absorbed;
+        bridgeState.setCurrentCF(remainingCF);
+        entity.damageThisPhase += absorbed;
+
+        Report absorbReport = new Report(4296);
+        absorbReport.subject = entity.getId();
+        absorbReport.indent(3);
+        absorbReport.addDesc(entity);
+        absorbReport.add(absorbed);
+        absorbReport.add(remainingCF);
+        reportVec.addElement(absorbReport);
+
+        // A critical hit to the carried bridge disables the deploy mechanism (the first one); further crits have no
+        // effect while the bridge is carried, and the crit does not carry through to the location.
+        if ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) {
+            if (!bridgeState.isDeployMechanismDisabled()) {
+                bridgeState.setDeployMechanismDisabled(true);
+                Report critReport = new Report(4298);
+                critReport.subject = entity.getId();
+                critReport.indent(3);
+                critReport.addDesc(entity);
+                reportVec.addElement(critReport);
+            }
+            mods.crits = 0;
+            mods.specCrits = 0;
+        }
+
+        if (remainingCF <= 0) {
+            Report destroyedReport = new Report(4297);
+            destroyedReport.subject = entity.getId();
+            destroyedReport.indent(3);
+            destroyedReport.addDesc(entity);
+            reportVec.addElement(destroyedReport);
+        }
+        return damage - absorbed;
     }
 
     /**

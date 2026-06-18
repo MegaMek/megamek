@@ -33,6 +33,8 @@
 
 package megamek.common.event;
 
+import megamek.logging.MMLogger;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,6 +44,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class EventBus {
+    private static final MMLogger LOGGER = MMLogger.create(EventBus.class);
     private static final Object INSTANCE_LOCK = new Object[0];
 
     private static EventBus instance;
@@ -187,5 +190,11 @@ public final class EventBus {
             // Highest to lowest, by priority
             return Integer.compare(el2.getPriority(), el1.getPriority());
         }
+    }
+
+    public void logActiveSubscribers() {
+        handlerMap.forEach((key, values) -> {
+            LOGGER.warn("Active subscriber: " + key.getClass().getSimpleName());
+        });
     }
 }

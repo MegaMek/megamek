@@ -140,6 +140,8 @@ public final class EventBus {
 
     public void unregister(Object handler) {
         synchronized (REGISTER_LOCK) {
+            // queue unregisters to avoid ConcurrentModificationException if the listener
+            // unregisters in the middle of {@code trigger} processing
             unregisterQueue.put(handler, handler);
         }
     }
@@ -193,8 +195,10 @@ public final class EventBus {
     }
 
     public void logActiveSubscribers() {
-        handlerMap.forEach((key, values) -> {
-            LOGGER.warn("Active subscriber: " + key.getClass().getSimpleName());
+        handlerMap.forEach((handler, listeners) -> {
+            if (!unregisterQueue.containsKey(handler)) {
+                LOGGER.warn("Active subscriber: " + handler.getClass().getSimpleName());
+            }
         });
     }
 }

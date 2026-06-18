@@ -26797,7 +26797,8 @@ public class TWGameManager extends AbstractGameManager {
                   entity.getOwnerId());
             return;
         }
-        if (!(entity.getEquipment(equipNum) instanceof MiscMounted bridgeLayer)) {
+        if (!(entity.getEquipment(equipNum) instanceof MiscMounted bridgeLayer)
+              || (bridgeLayer.getBridgeLayerState() == null)) {
             LOGGER.warn("Deploy-bridge packet for {} referenced equipment #{} that is not a bridgelayer",
                   entity.getShortName(), equipNum);
             return;

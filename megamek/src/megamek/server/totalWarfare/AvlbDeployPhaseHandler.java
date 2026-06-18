@@ -47,8 +47,9 @@ import megamek.logging.MMLogger;
 
 /**
  * Resolves the END-phase placement of bridges declared by Bridge-Layer (AVLB) equipment, TM p.242 / TW. A unit declares
- * a deployment during its movement phase; it must then remain stationary, and this handler places the folding bridge in
- * the hex directly in front of the unit at the end of the following turn. Extracted from {@link TWGameManager} so that
+ * a deployment during the Pre-End declarations phase; it must then remain stationary, and this handler places the
+ * folding bridge in the hex directly in front of the unit at the end of the following turn. Extracted from
+ * {@link TWGameManager} so that
  * large class does not also carry the bridgelayer rules; {@link TWGameManager#checkDeployBridges()} delegates here once
  * per END phase.
  *
@@ -63,12 +64,14 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Records an End-Phase deployment declaration for a unit (TM p.242 / TW): the controlling player declares during an
-     * End Phase, the bridge is then placed at the end of the following turn if the unit stays stationary. Validates
-     * eligibility, sets the pending state on the bridgelayer mount (target hex directly in front, along the unit's
-     * facing), broadcasts the unit so clients show the in-progress indicator, and reports the declaration.
+     * Records a Pre-End deployment declaration for a unit (TM p.242 / TW): the controlling player declares during the
+     * Pre-End declarations phase, and the bridge is then placed at the end of the following turn if the unit stays
+     * stationary. Validates eligibility, sets the pending state on the bridgelayer mount (target hex directly in front,
+     * along the unit's facing), broadcasts the unit so clients show the in-progress indicator, and reports the
+     * declaration.
      *
-     * @param entity the unit declaring the deployment
+     * @param entity      the unit declaring the deployment
+     * @param bridgeLayer the bridgelayer mount being deployed (the player's choice on a multi-bridge unit)
      */
     void declareDeploy(Entity entity, MiscMounted bridgeLayer) {
         if (!entity.canDeclareBridgeDeploy(getGame())) {
@@ -93,6 +96,10 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
         LOGGER.info("[AVLB] {} declares a bridge deployment (bridge at location {}): target {}, exits bitmask {}; the "
               + "bridge is placed at the end of the next turn if the unit stays stationary", entity.getShortName(),
               bridgeLayer.getLocation(), target, exits);
+        Report report = new Report(4291);
+        report.subject = entity.getId();
+        report.addDesc(entity);
+        addReport(report);
     }
 
     /**

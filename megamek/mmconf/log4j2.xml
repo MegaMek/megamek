@@ -148,24 +148,27 @@
           for that tag to follow the whole feature flow. This is a dedicated logger (megamek.feature.AVLB), not a
           host class, so enabling it at debug surfaces the eligibility-gate reasons (why the Deploy Bridge button is
           disabled, why a deploy step was rejected) without flooding the log with Entity/MoveStep debug noise. Deploy
-          declaration, placement and cancellation are also logged at INFO by the server handlers. Set level to "info"
-          (or remove this logger) for normal play; it is at debug here while the feature is being play-tested.
+          declaration, placement and cancellation are logged at INFO by the server handlers and appear via the parent
+          "megamek" logger even with this block commented out. Uncomment the logger below to also surface the debug
+          gate reasons while diagnosing; leave it commented for normal play.
+
+          <Logger name="megamek.feature.AVLB" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
         -->
-        <Logger name="megamek.feature.AVLB" level="debug" additivity="false">
-            <AppenderRef ref="${env:mm.profile:-null}" />
-            <AppenderRef ref="UnifiedLog" />
-            <AppenderRef ref="MegaMekLog" />
-        </Logger>
         <!--
           Pre-end declarations phase diagnostics ([PreEnd]-tagged): turn start, unit selection, button enable
-          decisions, infantry-combat / bridge-deploy declarations, and ready/skip. At debug here while the AVLB
-          bridge-deploy and infantry-combat flows are being play-tested; set to info / remove for normal play.
+          decisions, infantry-combat / bridge-deploy declarations, and ready/skip. Uncomment the logger below to
+          surface these debug messages while diagnosing; leave it commented for normal play.
+
+          <Logger name="megamek.client.ui.panels.phaseDisplay.PreEndDeclarationsDisplay" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
         -->
-        <Logger name="megamek.client.ui.panels.phaseDisplay.PreEndDeclarationsDisplay" level="debug" additivity="false">
-            <AppenderRef ref="${env:mm.profile:-null}" />
-            <AppenderRef ref="UnifiedLog" />
-            <AppenderRef ref="MegaMekLog" />
-        </Logger>
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

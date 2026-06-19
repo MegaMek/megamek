@@ -2950,6 +2950,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     } else {
                         tnk.beginFortify();
                     }
+                } else if (step.getType() == MoveStepType.CLEAR_RUBBLE) {
+                    beginRubbleClearing(tnk, step.getPosition());
                 }
             }
 
@@ -4845,5 +4847,36 @@ class MovePathHandler extends AbstractTWRuleHandler {
             report.add("?");
         }
         addReport(report);
+    }
+
+    /**
+     * Begins a vehicle's bulldozer clearing of a rubble hex, TacOps. The required number of turns is taken from the
+     * rubble's structure level (2/4/8/16, capped at 16). Re-declaring the same hex while already clearing it does not
+     * reset progress.
+     *
+     * @param tank     the bulldozer vehicle
+     * @param position the rubble hex being cleared (the vehicle's own hex)
+     */
+    private void beginRubbleClearing(Tank tank, Coords position) {
+        // Defensive server-side checks mirror the MoveStep legality: bulldozer present and a rubble hex.
+        if (!tank.hasWorkingBulldozer()) {
+            logger.debug("[Bulldozer] {}: clear rubble rejected - no working bulldozer", tank.getDisplayName());
+            return;
+        }
+        Hex hex = getGame().getBoard(tank.getBoardId()).getHex(position);
+        if ((hex == null) || (hex.terrainLevel(Terrains.RUBBLE) <= 0)) {
+            logger.debug("[Bulldozer] {}: clear rubble rejected - hex at {} contains no rubble",
+                  tank.getDisplayName(), position);
+            return;
+        }
+        // Already clearing this same hex: leave the in-progress counter untouched so progress is not reset.
+        if (tank.isClearingRubble() && position.equals(tank.getRubbleClearTarget())) {
+            return;
+        }
+        int rubbleLevel = hex.terrainLevel(Terrains.RUBBLE);
+        int requiredTurns = RubbleClearingHandler.clearingTurnsFor(rubbleLevel);
+        tank.beginClearingRubble(position, requiredTurns);
+        logger.info("[Bulldozer] {} begins clearing rubble (level {}) at {}: {} turns required",
+              tank.getShortName(), rubbleLevel, position, requiredTurns);
     }
 }

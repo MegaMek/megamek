@@ -5425,6 +5425,45 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Checks if this entity has a working bulldozer in any location.
+     *
+     * <p>Per TacOps, a vehicle equipped with a bulldozer may clear rubble hexes and takes half the usual
+     * damage (rounded down) when it charges. By default, entities cannot mount a bulldozer; only vehicles (Tank
+     * subclass) can.</p>
+     *
+     * @return true if this entity has a working bulldozer
+     */
+    public boolean hasWorkingBulldozer() {
+        return false;
+    }
+
+    /**
+     * Checks if this entity has a working front-mounted bulldozer.
+     *
+     * <p>Per TacOps, a front-mounted bulldozer doubles the damage dealt to a building hex when the vehicle
+     * charges it. By default, entities do not have a front-mounted bulldozer; only vehicles (Tank subclass) can mount
+     * one.</p>
+     *
+     * @return true if this entity has a working front-mounted bulldozer
+     */
+    public boolean hasFrontMountedBulldozer() {
+        return false;
+    }
+
+    /**
+     * Checks if this entity has a working rear-mounted bulldozer.
+     *
+     * <p>Per TacOps, a bulldozer may be mounted on the front or rear; a rear-mounted blade (as on the Reverse Buffel)
+     * engages rubble while the vehicle backs into it. By default, entities do not have a rear-mounted bulldozer; only
+     * vehicles (Tank subclass) can mount one.</p>
+     *
+     * @return true if this entity has a working rear-mounted bulldozer
+     */
+    public boolean hasRearMountedBulldozer() {
+        return false;
+    }
+
+    /**
      * Returns the CriticalSlots in the given location as a list. The returned list can be empty depending on the unit
      * and the chosen slot but not null. The entries are not filtered in any way (could be null although that is
      * probably an error in the internal representation of the unit.)
@@ -8736,6 +8775,10 @@ public abstract class Entity extends TurnOrdered
               (step.getElevation() == 0) &&
               canFall()) {
             adjustDifficultTerrainPSRModifier(roll);
+            if (curHex.terrainLevel(Terrains.RUBBLE) > 5) {
+                // Ultra-rubble (destroyed Castle Brian / fortress) is exceptionally hard to navigate (TacOps:AR p.37).
+                roll.addModifier(1, "ultra-rubble");
+            }
             if (hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                 roll.addModifier(-1, "Mountaineer");
             }

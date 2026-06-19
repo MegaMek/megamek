@@ -71,6 +71,7 @@ public enum MoveStepType {
     DIG_IN(false, "DigIn"),
     HIT_THE_DECK(false, "HitDeck"),
     FORTIFY(false, "Fortify"),
+    CLEAR_RUBBLE(false, "ClearRubble"),
     BUILD_BRIDGE(false, "BuildBridge"),
     CANCEL_BRIDGE(false, "CancelBridge"),
     RESUME_BRIDGE(false, "ResumeBridge"),

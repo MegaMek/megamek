@@ -162,6 +162,7 @@ public class MoveStep implements Serializable {
     private boolean isStackingViolation = false;
     private boolean isDiggingIn = false;
     private boolean isHittingDeck = false;
+    private boolean isClearingRubble = false;
     private boolean isClimbing = false;
     private int climbingTotalLevels = 0;
     private int climbingChargedLevels = 0;
@@ -2005,12 +2006,26 @@ public class MoveStep implements Serializable {
             return;
         }
 
-        if (prev.isDiggingIn || prev.isHittingDeck) {
+        if (prev.isDiggingIn || prev.isHittingDeck || prev.isClearingRubble) {
             isDiggingIn = prev.isDiggingIn;
             isHittingDeck = prev.isHittingDeck;
+            isClearingRubble = prev.isClearingRubble;
             if ((type != MoveStepType.TURN_LEFT) && (type != MoveStepType.TURN_RIGHT)) {
-                return; // can't move when digging in or hitting the deck
+                return; // can't move when digging in, hitting the deck or clearing rubble
             }
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.CLEAR_RUBBLE) {
+            // Clearing rubble with a bulldozer must be the vehicle's sole action; it remains in the hex but may still
+            // change facing (TacOps). The vehicle drives into the rubble hex and then clears it, so this is the final
+            // step of the move (after any movement into the hex), not necessarily the first step.
+            String illegalReason = BulldozerRules.clearRubbleIllegalReason(entity,
+                  game.getBoard(boardId).getHex(curPos), game);
+            if (illegalReason != null) {
+                LOGGER.debug("[Bulldozer] {}: {} (at {})", entity.getDisplayName(), illegalReason, curPos);
+                return;
+            }
+            LOGGER.debug("[Bulldozer] {}: clear rubble step accepted at {}", entity.getDisplayName(), curPos);
+            isClearingRubble = true;
             movementType = EntityMovementType.MOVE_NONE;
         } else if ((type == MoveStepType.DIG_IN) || (type == MoveStepType.FORTIFY)) {
             if ((!isInfantry && !isTank) || !isFirstStep()) {

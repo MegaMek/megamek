@@ -264,6 +264,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public static final int GEAR_STRAFE = 12;
     /** Used to designate a ground map flight path for an aero on an atmospheric map. */
     public static final int GEAR_FLIGHTPATH = 13;
+    /** Used to designate the rubble hex a bulldozer vehicle drives into and clears (TacOps). */
+    public static final int GEAR_CLEAR_RUBBLE = 14;
     /** Used to choose a ground map hex for landing an aero from an atmospheric map (aero-on-ground move off). */
     public static final int GEAR_LANDING_AERO = 14;
     public static final int GEAR_SUB_STANDARD = 0;
@@ -922,6 +924,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else {
             getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(isTank &&
                   selectedUnit.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE));
+        }
+
+        // Tank - Clear Rubble with a bulldozer (TacOps): a bulldozer vehicle in, or next to, a clearable rubble hex
+        // with the optional rule enabled. Logs the gating decision for any bulldozer vehicle so playtests can see
+        // from megamek.log why the button is or is not available.
+        boolean bulldozerOptionOn = gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BULLDOZER);
+        boolean hasWorkingBulldozer = isTank && selectedUnit.hasWorkingBulldozer();
+        boolean rubbleInReach = hasWorkingBulldozer
+              && BulldozerRules.isInOrAdjacentToClearableRubble(selectedUnit, game);
+        boolean canClearRubble = hasWorkingBulldozer && bulldozerOptionOn && rubbleInReach;
+        getBtn(MoveCommand.MOVE_CLEAR_RUBBLE).setEnabled(canClearRubble);
+        // Only log when there is rubble in reach (the moment the player expects the button), to avoid flooding the
+        // log while the vehicle drives elsewhere. Tells the playtest why the button is or is not available.
+        if (hasWorkingBulldozer && rubbleInReach) {
+            LOGGER.debug("[Bulldozer] {}: rubble in reach - Clear Rubble button {} (TacOps Bulldozers option {})",
+                  selectedUnit.getDisplayName(), canClearRubble ? "ENABLED" : "disabled",
+                  bulldozerOptionOn ? "on" : "OFF - enable it in Game Options > Advanced Combat");
         }
 
         // Infantry - Digging in, TO:AR p.106; could add terrain checking and restrict to first action here.
@@ -2338,6 +2357,35 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 cmd.removeLastStep();
                 addStepToMovePath(MoveStepType.CHARGE);
             }
+        } else if (gear == GEAR_CLEAR_RUBBLE) {
+            // Drive into the chosen rubble hex (the bulldozer override makes the entry legal) and clear it.
+            Hex targetHex = game.getBoard(boardId).getHex(dest);
+            if (!BulldozerRules.hasClearableRubble(targetHex)) {
+                LOGGER.debug("[Bulldozer] {}: clear-rubble target {} has no clearable rubble; ignoring click",
+                      currentEntity().getDisplayName(), dest);
+                clientgui.addToast(ToastLevel.WARNING,
+                      Messages.getString("MovementDisplay.clearRubbleIllegalTerrain.toast"), currentEntity());
+            } else {
+                // The blade must engage the rubble: a front-mounted bulldozer drives in forwards; a rear-mounted one
+                // (e.g. the Reverse Buffel) backs into the hex so its rear blade leads.
+                Entity clearingUnit = currentEntity();
+                boolean rearBlade = !clearingUnit.hasFrontMountedBulldozer() && clearingUnit.hasRearMountedBulldozer();
+                MoveStepType approach = rearBlade ? MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
+                LOGGER.debug("[Bulldozer] {}: clear-rubble target at {} (rubble level {}), {}-mounted blade -> {}",
+                      clearingUnit.getDisplayName(), dest, targetHex.terrainLevel(Terrains.RUBBLE),
+                      rearBlade ? "rear" : "front", approach);
+                extendPathTo(dest, boardId, approach);
+                if (cmd.getFinalCoords().equals(dest)) {
+                    addStepToMovePath(MoveStepType.CLEAR_RUBBLE);
+                } else {
+                    LOGGER.debug("[Bulldozer] {}: could not reach rubble hex {} {} (path ended at {})",
+                          clearingUnit.getDisplayName(), dest, rearBlade ? "in reverse" : "forwards",
+                          cmd.getFinalCoords());
+                    clientgui.addToast(ToastLevel.WARNING,
+                          Messages.getString("MovementDisplay.clearRubbleUnreachable.toast"), clearingUnit);
+                }
+            }
+            gear = GEAR_LAND;
         } else if (gear == GEAR_DFA) {
             extendPathTo(dest, boardId, MoveStepType.DFA);
             // The path planner shouldn't add the DFA step
@@ -6523,6 +6571,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 clientgui.addToast(ToastLevel.WARNING,
                       Messages.getString("MovementDisplay.fortifyIllegalTerrain.toast"), entity);
             }
+        } else if (actionCmd.equals(MoveCommand.MOVE_CLEAR_RUBBLE.getCmd())) {
+            // Enter target-selection: the player clicks the rubble hex to drive into and clear (TacOps).
+            if (gear != MovementDisplay.GEAR_LAND) {
+                clear();
+            }
+            gear = MovementDisplay.GEAR_CLEAR_RUBBLE;
+            LOGGER.debug("[Bulldozer] {}: entering clear-rubble target mode - awaiting rubble hex selection",
+                  entity.getDisplayName());
+            setStatusBarText(Messages.getString("MovementDisplay.status.selectRubbleHex"));
+            computeMovementEnvelope(entity);
         } else if (actionCmd.equals(MoveCommand.MOVE_BUILD_BRIDGE.getCmd())) {
             if ((currentEntity() instanceof ConvInfantry bridgePlatoon) && bridgePlatoon.hasBridgeInProgress()) {
                 // A bridge is in progress (building, paused, or dismantling): offer the valid actions for this state.

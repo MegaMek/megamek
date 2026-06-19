@@ -4665,7 +4665,9 @@ public class TWGameManager extends AbstractGameManager {
                       game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE),
                       entity.delta_distance);
                 if (!bldgSuffered) {
-                    Vector<Report> reports = damageBuilding(bldg, chargeDamage, nextPos);
+                    // A front-mounted bulldozer doubles the charge damage dealt to the building (TacOps).
+                    int buildingChargeDamage = ChargeAttackAction.getBuildingChargeDamage(entity, chargeDamage);
+                    Vector<Report> reports = damageBuilding(bldg, buildingChargeDamage, nextPos);
                     for (Report report : reports) {
                         report.subject = entity.getId();
                     }
@@ -14881,7 +14883,9 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
-            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
+            // A front-mounted bulldozer doubles the charge damage dealt to the building (TacOps).
+            int buildingChargeDamage = ChargeAttackAction.getBuildingChargeDamage(ae, damage);
+            Vector<Report> buildingReport = damageBuilding(bldg, buildingChargeDamage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
@@ -15878,6 +15882,14 @@ public class TWGameManager extends AbstractGameManager {
      */
     void checkBuildBridges() {
         new BridgeBuildPhaseHandler(this).checkBuildBridges();
+    }
+
+    /**
+     * End-phase resolution for vehicles clearing rubble with a bulldozer, TacOps. Delegates to
+     * {@link RubbleClearingHandler} so the bulldozer rules do not add to this already very large class.
+     */
+    void checkClearRubble() {
+        new RubbleClearingHandler(this).checkClearRubble();
     }
 
     /**

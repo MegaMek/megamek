@@ -46,6 +46,7 @@ import java.util.Vector;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmorHandlesTank;
 import megamek.common.bays.BattleArmorBay;
 import megamek.common.bays.Bay;
@@ -148,6 +149,16 @@ public class Tank extends Entity {
      * p.153). Server-side runtime state; not written to save files (dug-in progress is itself not persisted).
      */
     private final FortifyState fortifyState = new FortifyState();
+
+    /**
+     * The rubble hex this vehicle is currently clearing with its bulldozer, or null if it is not clearing (TacOps). The
+     * vehicle must remain in this hex for the duration; if displaced or destroyed the work is abandoned.
+     */
+    private Coords rubbleClearTarget = null;
+    /** Turns of bulldozer clearing banked so far against {@link #rubbleClearTurnsRequired}. */
+    private int rubbleClearTurnsCompleted = 0;
+    /** Total turns of bulldozer clearing this rubble hex needs (2/4/8/16 by structure type, capped at 16). */
+    private int rubbleClearTurnsRequired = 0;
 
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25 };
@@ -447,6 +458,21 @@ public class Tank extends Entity {
     public boolean hasFrontMountedSaw() {
         return hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_CHAINSAW, Tank.LOC_FRONT)
               || hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_DUAL_SAW, Tank.LOC_FRONT);
+    }
+
+    @Override
+    public boolean hasWorkingBulldozer() {
+        return hasWorkingMisc(MiscType.F_BULLDOZER);
+    }
+
+    @Override
+    public boolean hasFrontMountedBulldozer() {
+        return hasWorkingMisc(MiscType.F_BULLDOZER, null, Tank.LOC_FRONT);
+    }
+
+    @Override
+    public boolean hasRearMountedBulldozer() {
+        return hasWorkingMisc(MiscType.F_BULLDOZER, null, Tank.LOC_REAR);
     }
 
     public boolean isTurretLocked(int turret) {
@@ -760,6 +786,9 @@ public class Tank extends Entity {
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
         boolean sealed = hasEnvironmentalSealing();
         boolean hexHasRoad = hex.containsTerrain(Terrains.ROAD);
+        // A bulldozer lets a vehicle enter a rubble hex its motive type would normally bar, so it can clear it
+        // (TacOps). Only the rubble prohibition is lifted; other prohibiting terrain still applies.
+        boolean rubblePassable = hasWorkingBulldozer();
         boolean scoutBikeIntoLightWoods = (hex.terrainLevel(Terrains.WOODS) == 1) &&
               hasQuirk(OptionsConstants.QUIRK_POS_SCOUT_BIKE);
         boolean isCrossCountry = hasAbility(OptionsConstants.PILOT_CROSS_COUNTRY);
@@ -787,7 +816,7 @@ public class Tank extends Entity {
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.MAGMA) > 1) ||
                           (hex.terrainLevel(Terrains.ROUGH) > 1) ||
-                          ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad);
+                          ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad && !rubblePassable);
                 } else {
                     return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.WATER) > 1) &&
@@ -812,7 +841,7 @@ public class Tank extends Entity {
                           ((hex.terrainLevel(Terrains.WATER) > 0) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
                                 !(hasFlotationHull || sealed || isAmphibious)) ||
-                          (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad) ||
+                          (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad && !rubblePassable) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.SNOW) > 1) && !hexHasRoad) ||
@@ -823,7 +852,7 @@ public class Tank extends Entity {
                           ((hex.terrainLevel(Terrains.WATER) > 1) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
                                 !(hasFlotationHull || sealed || isAmphibious)) ||
-                          (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad) ||
+                          (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad && !rubblePassable) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.GEYSER) == 2);
@@ -1064,6 +1093,59 @@ public class Tank extends Entity {
     /** @return the number of turns of work a fortified hex takes to complete. */
     public int getFortifyTotalStages() {
         return DUG_IN_FORTIFYING3 - DUG_IN_FORTIFYING1 + 1;
+    }
+
+    /**
+     * Begins clearing a rubble hex with this vehicle's bulldozer (TacOps). The vehicle must remain in {@code target}
+     * for {@code requiredTurns} turns; clearing replaces any in-progress effort on a different hex.
+     *
+     * @param target        the rubble hex being cleared (the vehicle's own hex)
+     * @param requiredTurns the number of full turns the clearing takes (2/4/8/16 by structure type, capped at 16)
+     */
+    public void beginClearingRubble(Coords target, int requiredTurns) {
+        rubbleClearTarget = target;
+        rubbleClearTurnsRequired = requiredTurns;
+        rubbleClearTurnsCompleted = 0;
+    }
+
+    /**
+     * @return {@code true} if this vehicle is partway through clearing a rubble hex with its bulldozer
+     */
+    public boolean isClearingRubble() {
+        return rubbleClearTarget != null;
+    }
+
+    /**
+     * Banks one full turn of bulldozer clearing.
+     *
+     * @return the number of turns of clearing completed so far (including this one)
+     */
+    public int bankRubbleClearTurn() {
+        rubbleClearTurnsCompleted++;
+        return rubbleClearTurnsCompleted;
+    }
+
+    /** @return the rubble hex this vehicle is clearing, or null if it is not clearing rubble */
+    @Nullable
+    public Coords getRubbleClearTarget() {
+        return rubbleClearTarget;
+    }
+
+    /** @return the number of turns of bulldozer clearing banked so far */
+    public int getRubbleClearTurnsCompleted() {
+        return rubbleClearTurnsCompleted;
+    }
+
+    /** @return the total number of turns this rubble hex needs to be cleared */
+    public int getRubbleClearTurnsRequired() {
+        return rubbleClearTurnsRequired;
+    }
+
+    /** Clears the in-progress rubble-clearing state; call when the vehicle stops or finishes clearing. */
+    public void cancelClearingRubble() {
+        rubbleClearTarget = null;
+        rubbleClearTurnsRequired = 0;
+        rubbleClearTurnsCompleted = 0;
     }
 
     /**

@@ -146,6 +146,12 @@ public class TWDamageManager implements IDamageManager {
         Report report;
         int entityId = entity.getId();
 
+        // A bulldozer is destroyed on a 2D6 roll of 2 each time damage is dealt to the location mounting it (TacOps).
+        if ((damage > 0) && (entity instanceof Tank bulldozerTank)) {
+            BulldozerRules.rollDestructionFromLocationDamage(bulldozerTank, hit.getLocation())
+                  .ifPresent(reportVec::add);
+        }
+
         // If this unit is hit in the arm, and it's carrying something that should be damaged on arm hits, let's roll
         // and determine if the unit being carried is hit instead
         if ((hit.getLocation() == Mek.LOC_LEFT_ARM || hit.getLocation() == Mek.LOC_RIGHT_ARM)) {

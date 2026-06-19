@@ -32,37 +32,109 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
+import java.awt.Component;
+import java.util.List;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 
 import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
-import megamek.common.units.Entity;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.units.Entity;
 
+/**
+ * A per-dispenser choice of mine type shown in the unit configuration dialog. Mine dispensers may carry any land-type
+ * mine (TO:AUE p.176), so all implemented land mine types are offered here. Command-detonated mines are listed but
+ * disabled because dispenser deployment is not yet implemented for them.
+ */
 public class MineChoice {
 
-    private final JComboBox<String> comboChoices;
+    /**
+     * A selectable mine type. {@code code} is the {@link MiscMounted} {@code MINE_*} constant; {@code implemented} is
+     * false for placeholder types that cannot yet be deployed by a dispenser.
+     */
+    private record MineOption(int code, String label, boolean implemented) {
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
+
+    private static final List<MineOption> MINE_OPTIONS = List.of(
+          new MineOption(MiscMounted.MINE_CONVENTIONAL, Messages.getString("CustomMekDialog.Conventional"), true),
+          new MineOption(MiscMounted.MINE_VIBRABOMB, Messages.getString("CustomMekDialog.Vibrabomb"), true),
+          new MineOption(MiscMounted.MINE_ACTIVE, Messages.getString("CustomMekDialog.Active"), true),
+          new MineOption(MiscMounted.MINE_INFERNO, Messages.getString("CustomMekDialog.Inferno"), true),
+          new MineOption(MiscMounted.MINE_EMP, Messages.getString("CustomMekDialog.EMP"), true),
+          new MineOption(MiscMounted.MINE_COMMAND_DETONATED,
+                Messages.getString("CustomMekDialog.CommandDetonatedNotImplemented"), false));
+
+    private final JComboBox<MineOption> comboChoices;
 
     private final MiscMounted miscMounted;
+
+    /** Tracks the last selection that maps to an implemented mine type, so disabled rows can be reverted. */
+    private int lastImplementedIndex;
 
     public MineChoice(MiscMounted miscMounted, Entity entity, JPanel parentPanel, GBC2 gbc) {
         this.miscMounted = miscMounted;
         comboChoices = new JComboBox<>();
-        comboChoices.addItem(Messages.getString("CustomMekDialog.Conventional"));
-        comboChoices.addItem(Messages.getString("CustomMekDialog.Vibrabomb"));
-        comboChoices.setSelectedIndex(miscMounted.getMineType());
+        for (MineOption option : MINE_OPTIONS) {
+            comboChoices.addItem(option);
+        }
+        comboChoices.setRenderer(new MineOptionRenderer());
+        selectMineType(miscMounted.getMineType());
+        lastImplementedIndex = comboChoices.getSelectedIndex();
+
+        // Prevent the user from settling on a placeholder (unimplemented) mine type.
+        comboChoices.addActionListener(event -> {
+            MineOption selected = (MineOption) comboChoices.getSelectedItem();
+            if ((selected != null) && !selected.implemented()) {
+                comboChoices.setSelectedIndex(lastImplementedIndex);
+            } else {
+                lastImplementedIndex = comboChoices.getSelectedIndex();
+            }
+        });
 
         parentPanel.add(new JLabel(entity.getLocationName(miscMounted.getLocation()) + ":"), gbc.forLabel());
         parentPanel.add(comboChoices, gbc.eol());
     }
 
+    /** Selects the combo row whose mine code matches the given type, defaulting to the first row if none match. */
+    private void selectMineType(int mineType) {
+        for (int index = 0; index < MINE_OPTIONS.size(); index++) {
+            if (MINE_OPTIONS.get(index).code() == mineType) {
+                comboChoices.setSelectedIndex(index);
+                return;
+            }
+        }
+        comboChoices.setSelectedIndex(0);
+    }
+
     public void applyChoice() {
-        miscMounted.setMineType(comboChoices.getSelectedIndex());
+        MineOption selected = (MineOption) comboChoices.getSelectedItem();
+        if ((selected != null) && selected.implemented()) {
+            miscMounted.setMineType(selected.code());
+        }
     }
 
     public void setEnabled(boolean enabled) {
         comboChoices.setEnabled(enabled);
+    }
+
+    /** Greys out placeholder (unimplemented) mine types so they read as unavailable. */
+    private static class MineOptionRenderer extends DefaultListCellRenderer {
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+              boolean cellHasFocus) {
+            Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            if (value instanceof MineOption option) {
+                component.setEnabled(option.implemented());
+            }
+            return component;
+        }
     }
 }

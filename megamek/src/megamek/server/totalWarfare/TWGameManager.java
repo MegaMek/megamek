@@ -6695,6 +6695,46 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Adds an EMP minefield to the hex, as deployed by a vehicular or battle armor mine dispenser (TO:AUE p.177).
+     *
+     * @param coords   the minefield's coordinates
+     * @param playerId the deploying player's id
+     * @param damage   the amount of damage the minefield does
+     * @param setting  the weight threshold (in tons) that triggers the mine
+     * @param entityId an entity that might spot the minefield
+     */
+    public void deliverThunderEMPMinefield(Coords coords, int playerId, int damage, int setting, int entityId) {
+        Minefield minefield = null;
+        Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
+        // Check if there already is an EMP minefield in the hex.
+        while (minefields.hasMoreElements()) {
+            Minefield mf = minefields.nextElement();
+            if (mf.getType() == Minefield.TYPE_EMP) {
+                minefield = mf;
+                break;
+            }
+        }
+
+        // Create a new EMP minefield
+        if (minefield == null) {
+            minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_EMP, damage, setting);
+            game.addMinefield(minefield);
+            game.addEMPMine(minefield);
+            checkForRevealMinefield(minefield, game.getEntity(entityId));
+        } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
+            // Add to the old one
+            removeMinefield(minefield);
+            int oldDamage = minefield.getDensity();
+            damage += oldDamage;
+            damage = Math.min(damage, Minefield.MAX_DAMAGE);
+            minefield.setDensity(damage);
+            game.addMinefield(minefield);
+            game.addEMPMine(minefield);
+            checkForRevealMinefield(minefield, game.getEntity(entityId));
+        }
+    }
+
+    /**
      * Creates an artillery flare of the given radius above the target
      */
     public void deliverArtilleryFlare(Coords coords, int radius) {
@@ -32030,9 +32070,15 @@ public class TWGameManager extends AbstractGameManager {
                 case MiscMounted.MINE_INFERNO -> {
                     deliverThunderInfernoMinefield(coords, entity.getOwnerId(), 10, entity.getId());
                     yield 3515;
-                    // TODO : command-detonated mines
-                    // case 2:
                 }
+                case MiscMounted.MINE_EMP -> {
+                    deliverThunderEMPMinefield(coords, entity.getOwnerId(), 10, mine.getEmpSetting(), entity.getId());
+                    yield 3516;
+                }
+                case MiscMounted.MINE_COMMAND_DETONATED ->
+                    // Placeholder: command-detonated mine deployment by dispenser is not yet implemented, so no
+                    // minefield is laid. The shot is still consumed below to match the other cases.
+                      3517;
                 default -> 0;
             };
             mine.setShotsLeft(mine.getUsableShotsLeft() - 1);

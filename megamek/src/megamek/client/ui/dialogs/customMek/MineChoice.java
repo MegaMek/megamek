@@ -103,10 +103,14 @@ public class MineChoice {
         parentPanel.add(comboChoices, gbc.eol());
     }
 
-    /** Selects the combo row whose mine code matches the given type, defaulting to the first row if none match. */
+    /**
+     * Selects the combo row whose mine code matches the given type. Unimplemented placeholder types (and unknown codes)
+     * fall back to the first row, which is always an implemented type, so the dialog never starts on a disabled row.
+     */
     private void selectMineType(int mineType) {
         for (int index = 0; index < MINE_OPTIONS.size(); index++) {
-            if (MINE_OPTIONS.get(index).code() == mineType) {
+            MineOption option = MINE_OPTIONS.get(index);
+            if ((option.code() == mineType) && option.implemented()) {
                 comboChoices.setSelectedIndex(index);
                 return;
             }

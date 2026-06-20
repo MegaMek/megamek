@@ -588,6 +588,7 @@ public class WeaponType extends EquipmentType {
     // fire Extinguisher
     public static final WeaponTypeFlag F_EXTINGUISHER = WeaponTypeFlag.F_EXTINGUISHER;
     public static final WeaponTypeFlag F_PULSE = WeaponTypeFlag.F_PULSE;
+    public static final WeaponTypeFlag F_VSP = WeaponTypeFlag.F_VSP;
     // Full Damage vs. Infantry
     public static final WeaponTypeFlag F_BURST_FIRE = WeaponTypeFlag.F_BURST_FIRE;
     // Machine Gun Array

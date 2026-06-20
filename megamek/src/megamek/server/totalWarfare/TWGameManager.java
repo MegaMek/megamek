@@ -2866,6 +2866,27 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Collapses redundant pre-end declaration turns. A player makes their player-wide declarations (Nova networks,
+     * Variable Range Targeting, crew abandonment, minesweeper activation) once for all their units through a single
+     * dialog, so they only need one turn for them - not one per qualifying unit. Infantry-vs-infantry combat is
+     * declared per unit and keeps its own turns. This keeps one selectable player-wide-only unit per player as the
+     * declarations representative and marks the rest done, so {@link #determineTurnOrder} generates a single
+     * declarations turn per player. Must run after {@link #setIneligible} and before {@link #determineTurnOrder}.
+     */
+    void collapsePreEndPlayerWideTurns() {
+        Set<Integer> representativeChosen = new HashSet<>();
+        for (Entity entity : game.getEntitiesVector()) {
+            if (!entity.isSelectableThisTurn() || entity.hasEntityScopedPreEndDeclaration()) {
+                continue;
+            }
+            // Selectable only for player-wide declarations: keep the first per player, collapse the rest to one turn.
+            if (!representativeChosen.add(entity.getOwnerId())) {
+                entity.setDone(true);
+            }
+        }
+    }
+
+    /**
      * Write the initiative results to the report
      */
     void writeInitiativeReport(boolean abbreviatedReport) {

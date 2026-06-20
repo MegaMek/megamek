@@ -11304,9 +11304,55 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Check if the entity can initiate NEW infantry vs. infantry combat. This is for the PREEND_DECLARATIONS phase.
+     * Checks whether this unit can announce abandonment of its crew in the End Phase. Abandonment is declared in the
+     * PREEND_DECLARATIONS phase. The base implementation returns false; unit types that support abandonment (Meks,
+     * vehicles, and escape pods) override this.
+     *
+     * @return true if this unit can announce crew abandonment
+     */
+    public boolean canAnnounceAbandon() {
+        return false;
+    }
+
+    /**
+     * Checks whether this entity has any declaration to make in the PREEND_DECLARATIONS phase, and so should be granted
+     * a turn. This covers initiating new infantry vs. infantry combat plus the end-phase declarations formerly made on
+     * the end report: Nova CEWS network changes, Variable Range Targeting mode changes, crew abandonment, minesweeper
+     * activation, and detonating a demolition charge this player has set.
      */
     public boolean isEligibleForPreEndDeclarations() {
+        return canInitiateInfantryVsInfantryCombat()
+              || hasNovaCEWS()
+              || hasVariableRangeTargeting()
+              || canAnnounceAbandon()
+              || hasMinesweeper()
+              || ownerHasDemolitionCharge();
+    }
+
+    /**
+     * Returns true if this unit's owner has a demolition charge set on any building, so the owner can announce its
+     * detonation in the End Phase (TO:AUE p.152). A demolition charge belongs to the player rather than a unit, so this
+     * is a player-wide condition: it grants any of the owner's units a pre-end declarations turn, which the turn
+     * collapse then reduces to one per player. Returns false off-game (e.g. unit construction).
+     */
+    public boolean ownerHasDemolitionCharge() {
+        if (game == null) {
+            return false;
+        }
+        return game.getBoards().values().stream()
+              .flatMap(board -> board.getBuildingsVector().stream())
+              .flatMap(building -> building.getDemolitionCharges().stream())
+              .anyMatch(charge -> charge.playerId == getOwnerId());
+    }
+
+    /**
+     * Returns true if this unit's pre-end declaration is made per unit (it needs its own turn), as opposed to the
+     * player-wide declarations (Nova networks, Variable Range Targeting, crew abandonment, minesweeper) that a player
+     * makes once for all their units through a single dialog. Used to collapse the player-wide turns to one per player
+     * while keeping the per-unit turns.
+     */
+    public boolean hasEntityScopedPreEndDeclaration() {
+        // Infantry-vs-infantry combat is declared per unit. (Bridge-Layer deployment, when merged, is also per unit.)
         return canInitiateInfantryVsInfantryCombat();
     }
 

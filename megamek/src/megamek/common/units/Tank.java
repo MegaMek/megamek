@@ -3184,6 +3184,11 @@ public class Tank extends Entity {
         return game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT);
     }
 
+    @Override
+    public boolean canAnnounceAbandon() {
+        return canAbandon();
+    }
+
     /**
      * Returns true if this vehicle has been abandoned - the crew has exited but the vehicle itself is not destroyed.
      *

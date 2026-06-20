@@ -179,7 +179,20 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.transmitAllPlayerUpdates();
                 gameManager.resetActivePlayersDone();
                 gameManager.setIneligible(phase);
+                // A player makes their player-wide declarations (Nova, Variable Targeting, abandonment, minesweeper)
+                // once for all their units, so collapse those to one turn per player before building the turn order.
+                if (phase.isPreEndDeclarations()) {
+                    gameManager.collapsePreEndPlayerWideTurns();
+                }
                 gameManager.determineTurnOrder(phase);
+                if (phase.isPreEndDeclarations()) {
+                    LOGGER.debug("[PreEnd] turn order built: {} turn(s); eligible units: [{}]",
+                          gameManager.getGame().getTurnsList().size(),
+                          gameManager.getGame().getEntitiesVector().stream()
+                                .filter(Entity::isEligibleForPreEndDeclarations)
+                                .map(entity -> entity.getShortName() + " (p" + entity.getOwnerId() + ")")
+                                .collect(Collectors.joining(", ")));
+                }
                 gameManager.entityAllUpdate();
                 gameManager.clearReports();
                 gameManager.doTryUnstuck();

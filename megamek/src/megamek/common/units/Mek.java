@@ -7290,6 +7290,11 @@ public abstract class Mek extends Entity {
         return game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT);
     }
 
+    @Override
+    public boolean canAnnounceAbandon() {
+        return canAbandon();
+    }
+
     /**
      * Returns true if this Mek has been abandoned - the crew has exited but the Mek itself is not destroyed. This is
      * different from ejection which destroys the cockpit.

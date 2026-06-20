@@ -179,13 +179,15 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.transmitAllPlayerUpdates();
                 gameManager.resetActivePlayersDone();
                 gameManager.setIneligible(phase);
-                // A player makes their player-wide declarations (Nova, Variable Targeting, abandonment, minesweeper)
-                // once for all their units, so collapse those to one turn per player before building the turn order.
+                // A player makes their player-wide declarations (Nova, Variable Targeting, abandonment, minesweeper,
+                // demolition charge detonation) once for all their units, so collapse those to one turn per player
+                // before building the turn order.
                 if (phase.isPreEndDeclarations()) {
                     gameManager.collapsePreEndPlayerWideTurns();
                 }
                 gameManager.determineTurnOrder(phase);
-                if (phase.isPreEndDeclarations()) {
+                // Guard the eligibility scan behind the level check so it only runs when [PreEnd] tracing is enabled.
+                if (phase.isPreEndDeclarations() && LOGGER.isDebugEnabled()) {
                     LOGGER.debug("[PreEnd] turn order built: {} turn(s); eligible units: [{}]",
                           gameManager.getGame().getTurnsList().size(),
                           gameManager.getGame().getEntitiesVector().stream()

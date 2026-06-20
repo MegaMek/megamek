@@ -11339,10 +11339,9 @@ public abstract class Entity extends TurnOrdered
         if (game == null) {
             return false;
         }
-        return game.getBoards().values().stream()
-              .flatMap(board -> board.getBuildingsVector().stream())
-              .flatMap(building -> building.getDemolitionCharges().stream())
-              .anyMatch(charge -> charge.playerId == getOwnerId());
+        // Constant-time lookup against the game's per-phase cached set, so the per-entity eligibility scan in
+        // setIneligible() does not re-scan every board and building for each unit.
+        return game.getPlayerIdsWithDemolitionCharges().contains(getOwnerId());
     }
 
     /**

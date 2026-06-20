@@ -39,11 +39,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.Set;
 
-import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
@@ -317,16 +314,16 @@ class PreEndDeclarationsEligibilityTest {
         @Test
         @DisplayName("True when this unit's owner set a charge")
         void ownerSetCharge_returnsTrue() {
-            BipedMek mek = chargeOwnerMek(7, 7);
+            BipedMek mek = chargeOwnerMek(7, Set.of(7));
 
             assertTrue(mek.ownerHasDemolitionCharge(),
-                  "Owner id matches the charge's player id, so the owner has a charge");
+                  "Owner id is in the charge-owner set, so the owner has a charge");
         }
 
         @Test
         @DisplayName("False when only another player set a charge")
         void otherPlayerSetCharge_returnsFalse() {
-            BipedMek mek = chargeOwnerMek(7, 8);
+            BipedMek mek = chargeOwnerMek(7, Set.of(8));
 
             assertFalse(mek.ownerHasDemolitionCharge(),
                   "The only charge belongs to a different player, so this owner has none");
@@ -335,38 +332,19 @@ class PreEndDeclarationsEligibilityTest {
         @Test
         @DisplayName("False when no charges are set")
         void noCharges_returnsFalse() {
-            IBuilding building = mock(IBuilding.class);
-            when(building.getDemolitionCharges()).thenReturn(List.of());
-            Board board = mock(Board.class);
-            when(board.getBuildingsVector()).thenReturn(new Vector<>(List.of(building)));
-            when(mockGame.getBoards()).thenReturn(Map.of(0, board));
-
-            BipedMek mek = ownedMek(7);
+            BipedMek mek = chargeOwnerMek(7, Set.of());
 
             assertFalse(mek.ownerHasDemolitionCharge(),
                   "No demolition charges exist, so the owner has none");
         }
 
         /**
-         * Builds a BipedMek owned by {@code ownerId}, on a game whose single building holds one demolition charge owned
-         * by {@code chargePlayerId}.
+         * Builds a BipedMek owned by {@code ownerId}, on a game whose cached demolition-charge owner set is
+         * {@code chargeOwnerIds}. {@code ownerHasDemolitionCharge()} does a constant-time lookup against that set.
          */
-        private BipedMek chargeOwnerMek(int ownerId, int chargePlayerId) {
-            DemolitionCharge charge = new DemolitionCharge(chargePlayerId, 5, new Coords(1, 1));
-            IBuilding building = mock(IBuilding.class);
-            when(building.getDemolitionCharges()).thenReturn(List.of(charge));
-            Board board = mock(Board.class);
-            when(board.getBuildingsVector()).thenReturn(new Vector<>(List.of(building)));
-            when(mockGame.getBoards()).thenReturn(Map.of(0, board));
-            return ownedMek(ownerId);
-        }
-
-        /**
-         * Returns a BipedMek on the mocked game whose {@link Entity#getOwnerId()} is stubbed to {@code ownerId}. Stubs
-         * the id directly because {@link Entity#setOwnerId(int)} resolves a {@link megamek.common.Player} from the
-         * game, which is mocked here.
-         */
-        private BipedMek ownedMek(int ownerId) {
+        private BipedMek chargeOwnerMek(int ownerId, Set<Integer> chargeOwnerIds) {
+            when(mockGame.getPlayerIdsWithDemolitionCharges()).thenReturn(chargeOwnerIds);
+            // Stub the id directly because setOwnerId() resolves a Player from the game, which is mocked here.
             BipedMek mek = spy(new BipedMek());
             mek.setGame(mockGame);
             doReturn(ownerId).when(mek).getOwnerId();

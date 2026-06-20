@@ -2867,8 +2867,9 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Collapses redundant pre-end declaration turns. A player makes their player-wide declarations (Nova networks,
-     * Variable Range Targeting, crew abandonment, minesweeper activation) once for all their units through a single
-     * dialog, so they only need one turn for them - not one per qualifying unit. Infantry-vs-infantry combat is
+     * Variable Range Targeting, crew abandonment, minesweeper activation, demolition charge detonation) once for all
+     * their units through a single dialog, so they only need one turn for them - not one per qualifying unit.
+     * Infantry-vs-infantry combat is
      * declared per unit and keeps its own turns. This keeps one selectable player-wide-only unit per player as the
      * declarations representative and marks the rest done, so {@link #determineTurnOrder} generates a single
      * declarations turn per player. Must run after {@link #setIneligible} and before {@link #determineTurnOrder}.

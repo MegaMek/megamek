@@ -42,6 +42,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import megamek.MMConstants;
 import megamek.Version;
@@ -154,6 +155,13 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * The present phase
      */
     private GamePhase phase = GamePhase.UNKNOWN;
+
+    /**
+     * Lazily-computed set of player ids that own at least one demolition charge. Computed on demand and cleared on
+     * phase change, so the per-entity pre-end eligibility check is a constant-time lookup rather than a board scan per
+     * unit. Null means not yet computed.
+     */
+    private transient Set<Integer> playerIdsWithDemolitionCharges = null;
 
     /**
      * The past phase
@@ -945,6 +953,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public void setPhase(GamePhase phase) {
         final GamePhase oldPhase = this.phase;
         this.phase = phase;
+        // Demolition charges only change during the End Phase; clearing the cache on every phase change keeps the
+        // pre-end eligibility lookup correct and recomputes it at most once per phase.
+        playerIdsWithDemolitionCharges = null;
         // Handle phase-specific items.
         switch (phase) {
             case LOUNGE:
@@ -974,6 +985,24 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
 
         processGameEvent(new GamePhaseChangeEvent(this, oldPhase, phase));
+    }
+
+    /**
+     * Returns the ids of players that own at least one demolition charge set on a building. The result is computed once
+     * per phase and cached (see {@link #setPhase}), so callers such as the per-entity pre-end declarations eligibility
+     * check do a constant-time lookup instead of scanning every board and building per unit.
+     *
+     * @return the set of owning player ids (empty if no charges are set)
+     */
+    public Set<Integer> getPlayerIdsWithDemolitionCharges() {
+        if (playerIdsWithDemolitionCharges == null) {
+            playerIdsWithDemolitionCharges = getBoards().values().stream()
+                  .flatMap(board -> board.getBuildingsVector().stream())
+                  .flatMap(building -> building.getDemolitionCharges().stream())
+                  .map(charge -> charge.playerId)
+                  .collect(Collectors.toSet());
+        }
+        return playerIdsWithDemolitionCharges;
     }
 
     public void processGameEvent(GameEvent event) {

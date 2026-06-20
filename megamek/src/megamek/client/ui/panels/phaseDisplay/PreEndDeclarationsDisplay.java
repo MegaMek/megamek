@@ -51,6 +51,7 @@ import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.VariableRangeTargetingDialog;
 import megamek.client.ui.widget.MegaMekButton;
+import megamek.common.Player;
 import megamek.common.actions.InitiateInfantryCombatAction;
 import megamek.common.board.Coords;
 import megamek.common.units.AbstractBuildingEntity;
@@ -508,10 +509,19 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     }
 
     /**
+     * The local player's id, or {@link Player#PLAYER_NONE} when there is no local player (e.g. an observer or during
+     * early initialization). PLAYER_NONE matches no owned unit, so the player-wide checks below return false.
+     */
+    private int localPlayerId() {
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        return (localPlayer == null) ? Player.PLAYER_NONE : localPlayer.getId();
+    }
+
+    /**
      * Checks if the local player has any Nova CEWS units.
      */
     private boolean hasNovaUnits() {
-        int localPlayerId = clientgui.getClient().getLocalPlayer().getId();
+        int localPlayerId = localPlayerId();
         return game.getEntitiesVector().stream()
               .filter(entity -> entity.getOwnerId() == localPlayerId)
               .anyMatch(Entity::hasNovaCEWS);
@@ -537,7 +547,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * Checks if the local player has any units with the Variable Range Targeting quirk.
      */
     private boolean hasVariableRangeUnits() {
-        int localPlayerId = clientgui.getClient().getLocalPlayer().getId();
+        int localPlayerId = localPlayerId();
         return game.getEntitiesVector().stream()
               .filter(entity -> entity.getOwnerId() == localPlayerId)
               .anyMatch(Entity::hasVariableRangeTargeting);
@@ -564,7 +574,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * escape pods: crew can exit).
      */
     private boolean hasAbandonableUnits() {
-        int localPlayerId = clientgui.getClient().getLocalPlayer().getId();
+        int localPlayerId = localPlayerId();
         return game.getEntitiesVector().stream()
               .filter(entity -> entity.getOwnerId() == localPlayerId)
               .anyMatch(Entity::canAnnounceAbandon);
@@ -592,7 +602,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * Checks if the local player has any demolition charges set on any building.
      */
     private boolean hasDemolitionCharges() {
-        int localPlayerId = clientgui.getClient().getLocalPlayer().getId();
+        int localPlayerId = localPlayerId();
         return game.getBoards().values().stream()
               .flatMap(board -> board.getBuildingsVector().stream())
               .flatMap(building -> building.getDemolitionCharges().stream())
@@ -620,11 +630,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * Checks if the local player has any units mounting a minesweeper.
      */
     private boolean hasMinesweeperUnits() {
-        var localPlayer = clientgui.getClient().getLocalPlayer();
-        if (localPlayer == null) {
-            return false;
-        }
-        int localPlayerId = localPlayer.getId();
+        int localPlayerId = localPlayerId();
         return game.getEntitiesVector().stream()
               .filter(entity -> entity.getOwnerId() == localPlayerId)
               .anyMatch(Entity::hasMinesweeper);

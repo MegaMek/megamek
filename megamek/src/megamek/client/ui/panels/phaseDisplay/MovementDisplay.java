@@ -62,15 +62,7 @@ import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.clientGUI.boardview.sprite.FlyOverSprite;
 import megamek.client.ui.dialogs.ChoiceDialog;
 import megamek.client.ui.dialogs.ConfirmDialog;
-import megamek.client.ui.dialogs.phaseDisplay.BombPayloadDialog;
-import megamek.client.ui.dialogs.phaseDisplay.ClimbingChoiceDialog;
-import megamek.client.ui.dialogs.phaseDisplay.FlightPathNotice;
-import megamek.client.ui.dialogs.phaseDisplay.LandingConfirmation;
-import megamek.client.ui.dialogs.phaseDisplay.LandingHexNotice;
-import megamek.client.ui.dialogs.phaseDisplay.ManeuverChoiceDialog;
-import megamek.client.ui.dialogs.phaseDisplay.MineLayingDialog;
-import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
-import megamek.client.ui.dialogs.phaseDisplay.VibrabombSettingDialog;
+import megamek.client.ui.dialogs.phaseDisplay.*;
 import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
 import megamek.client.ui.util.CommandAction;
 import megamek.client.ui.util.KeyCommandBind;
@@ -6486,6 +6478,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     VibrabombSettingDialog vsd = new VibrabombSettingDialog(clientgui.getFrame());
                     vsd.setVisible(true);
                     m.setVibraSetting(vsd.getSetting());
+                } else if (m.getMineType() == MiscMounted.MINE_EMP) {
+                    EMPMineSettingDialog empDialog = new EMPMineSettingDialog(clientgui.getFrame());
+                    empDialog.setVisible(true);
+                    m.setEmpSetting(empDialog.getSetting());
                 }
                 if (cmd.getLastStep() == null &&
                       entity instanceof BattleArmor &&

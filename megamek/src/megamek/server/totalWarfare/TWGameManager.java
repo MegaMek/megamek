@@ -220,6 +220,7 @@ public class TWGameManager extends AbstractGameManager {
     private final BuildingCollapseHandler buildingCollapseHandler = new BuildingCollapseHandler(this);
     private final DeploymentProcessor deploymentProcessor = new DeploymentProcessor(this);
     final HeatResolver heatResolver = new HeatResolver(this);
+    private final MinefieldManager minefieldManager = new MinefieldManager(this);
 
     /**
      * Special packet queue for client feedback requests.
@@ -6470,52 +6471,7 @@ public class TWGameManager extends AbstractGameManager {
      *               halving and rounding just for <em>being</em> T-Aug) already applied.
      */
     public void deliverThunderAugMinefield(Coords coords, int playerId, int damage, int entityId) {
-        Coords mfCoord;
-        for (int dir = 0; dir < 7; dir++) {
-            // May need to reset here for each new hex.
-            int hexDamage = damage;
-            if (dir == 6) {// The targeted hex.
-                mfCoord = coords;
-            } else {// The hex in the dir direction from the targeted hex.
-                mfCoord = coords.translated(dir);
-            }
-
-            // Only if this is on the board...
-            if (game.getBoard().contains(mfCoord)) {
-                Minefield minefield = null;
-                Enumeration<Minefield> minefields = game.getMinefields(mfCoord).elements();
-                // Check if there already are Thunder minefields in the hex.
-                while (minefields.hasMoreElements()) {
-                    Minefield mf = minefields.nextElement();
-                    if (mf.getType() == Minefield.TYPE_CONVENTIONAL) {
-                        minefield = mf;
-                        break;
-                    }
-                }
-
-                // Did we find a Thunder minefield in the hex?
-                // N.B. damage Thunder minefields equals the number of
-                // missiles, divided by two, rounded up.
-                if (minefield == null) {
-                    // Nope. Create a new Thunder minefield
-                    minefield = Minefield.createMinefield(mfCoord, playerId, Minefield.TYPE_CONVENTIONAL, hexDamage);
-                    game.addMinefield(minefield);
-                    checkForRevealMinefield(minefield, game.getEntity(entityId));
-                } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
-                    // Yup. Replace the old one.
-                    removeMinefield(minefield);
-                    hexDamage += minefield.getDensity();
-
-                    // Damage from Thunder minefields are capped.
-                    if (hexDamage > Minefield.MAX_DAMAGE) {
-                        hexDamage = Minefield.MAX_DAMAGE;
-                    }
-                    minefield.setDensity(hexDamage);
-                    game.addMinefield(minefield);
-                    checkForRevealMinefield(minefield, game.getEntity(entityId));
-                }
-            }
-        }
+        minefieldManager.deliverThunderAugMinefield(coords, playerId, damage, entityId);
     }
 
     /**
@@ -6527,32 +6483,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param entityId an entity that might spot the minefield
      */
     public void deliverThunderMinefield(Coords coords, int playerId, int damage, int entityId) {
-        Minefield minefield = null;
-        Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
-        // Check if there already are Thunder minefields in the hex.
-        while (minefields.hasMoreElements()) {
-            Minefield mf = minefields.nextElement();
-            if (mf.getType() == Minefield.TYPE_CONVENTIONAL) {
-                minefield = mf;
-                break;
-            }
-        }
-
-        // Create a new Thunder minefield
-        if (minefield == null) {
-            minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_CONVENTIONAL, damage);
-            game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
-            // Add to the old one
-            removeMinefield(minefield);
-            int oldDamage = minefield.getDensity();
-            damage += oldDamage;
-            damage = Math.min(damage, Minefield.MAX_DAMAGE);
-            minefield.setDensity(damage);
-            game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        }
+        minefieldManager.deliverThunderMinefield(coords, playerId, damage, entityId);
     }
 
     /**
@@ -6564,66 +6495,14 @@ public class TWGameManager extends AbstractGameManager {
      * @param entityId an entity that might spot the minefield
      */
     public void deliverThunderInfernoMinefield(Coords coords, int playerId, int damage, int entityId) {
-        Minefield minefield = null;
-        Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
-        // Check if there already are Thunder minefields in the hex.
-        while (minefields.hasMoreElements()) {
-            Minefield mf = minefields.nextElement();
-            if (mf.getType() == Minefield.TYPE_INFERNO) {
-                minefield = mf;
-                break;
-            }
-        }
-
-        // Create a new Thunder Inferno minefield
-        if (minefield == null) {
-            minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_INFERNO, damage);
-            game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
-            // Add to the old one
-            removeMinefield(minefield);
-            int oldDamage = minefield.getDensity();
-            damage += oldDamage;
-            damage = Math.min(damage, Minefield.MAX_DAMAGE);
-            minefield.setDensity(damage);
-            game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        }
+        minefieldManager.deliverThunderInfernoMinefield(coords, playerId, damage, entityId);
     }
 
     /**
      * Delivers an artillery FASCAM shot to the targeted hex area.
      */
     public void deliverFASCAMMinefield(Coords coords, int playerId, int damage, int entityId) {
-        // Only if this is on the board...
-        if (game.getBoard().contains(coords)) {
-            Minefield minefield = null;
-            Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
-            // Check if there already are Thunder minefields in the hex.
-            while (minefields.hasMoreElements()) {
-                Minefield mf = minefields.nextElement();
-                if (mf.getType() == Minefield.TYPE_CONVENTIONAL) {
-                    minefield = mf;
-                    break;
-                }
-            }
-            // Did we find a Thunder minefield in the hex?
-            if (minefield == null) {
-                minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_CONVENTIONAL, damage);
-                game.addMinefield(minefield);
-                checkForRevealMinefield(minefield, game.getEntity(entityId));
-            } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
-                // Add to the old one.
-                removeMinefield(minefield);
-                int oldDamage = minefield.getDensity();
-                damage += oldDamage;
-                damage = Math.min(damage, Minefield.MAX_DAMAGE);
-                minefield.setDensity(damage);
-                game.addMinefield(minefield);
-                checkForRevealMinefield(minefield, game.getEntity(entityId));
-            }
-        }
+        minefieldManager.deliverFASCAMMinefield(coords, playerId, damage, entityId);
     }
 
     /**
@@ -6635,66 +6514,27 @@ public class TWGameManager extends AbstractGameManager {
      * @param entityId an entity that might spot the minefield
      */
     public void deliverThunderActiveMinefield(Coords coords, int playerId, int damage, int entityId) {
-        Minefield minefield = null;
-        Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
-        // Check if there already are Thunder minefields in the hex.
-        while (minefields.hasMoreElements()) {
-            Minefield mf = minefields.nextElement();
-            if (mf.getType() == Minefield.TYPE_ACTIVE) {
-                minefield = mf;
-                break;
-            }
-        }
-
-        // Create a new Thunder-Active minefield
-        if (minefield == null) {
-            minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_ACTIVE, damage);
-            game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
-            // Add to the old one
-            removeMinefield(minefield);
-            int oldDamage = minefield.getDensity();
-            damage += oldDamage;
-            damage = Math.min(damage, Minefield.MAX_DAMAGE);
-            minefield.setDensity(damage);
-            game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        }
+        minefieldManager.deliverThunderActiveMinefield(coords, playerId, damage, entityId);
     }
 
     /**
      * Adds a Thunder-Vibrabomb minefield to the hex.
      */
     public void deliverThunderVibraMinefield(Coords coords, int playerId, int damage, int sensitivity, int entityId) {
-        Minefield minefield = null;
-        Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
-        // Check if there already are Thunder minefields in the hex.
-        while (minefields.hasMoreElements()) {
-            Minefield mf = minefields.nextElement();
-            if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
-                minefield = mf;
-                break;
-            }
-        }
+        minefieldManager.deliverThunderVibraMinefield(coords, playerId, damage, sensitivity, entityId);
+    }
 
-        // Create a new Thunder-Vibra minefield
-        if (minefield == null) {
-            minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_VIBRABOMB, damage, sensitivity);
-            game.addMinefield(minefield);
-            game.addVibrabomb(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
-            // Add to the old one
-            removeMinefield(minefield);
-            int oldDamage = minefield.getDensity();
-            damage += oldDamage;
-            damage = Math.min(damage, Minefield.MAX_DAMAGE);
-            minefield.setDensity(damage);
-            game.addMinefield(minefield);
-            game.addVibrabomb(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        }
+    /**
+     * Adds an EMP minefield to the hex, as deployed by a vehicular or battle armor mine dispenser (TO:AUE p.177).
+     *
+     * @param coords   the minefield's coordinates
+     * @param playerId the deploying player's id
+     * @param damage   the amount of damage the minefield does
+     * @param setting  the weight threshold (in tons) that triggers the mine
+     * @param entityId an entity that might spot the minefield
+     */
+    public void deliverThunderEMPMinefield(Coords coords, int playerId, int damage, int setting, int entityId) {
+        minefieldManager.deliverThunderEMPMinefield(coords, playerId, damage, setting, entityId);
     }
 
     /**
@@ -8157,7 +7997,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * checks whether a newly set mine should be revealed to players based on LOS. If so, then it reveals the mine
      */
-    private void checkForRevealMinefield(Minefield mf, Entity layer) {
+    void checkForRevealMinefield(Minefield mf, Entity layer) {
         // loop through each team and determine if they can see the mine, then
         // loop through players on team
         // and reveal the mine
@@ -32047,45 +31887,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param mineId an <code>int</code> pointing to the mine
      */
     void layMine(Entity entity, int mineId, Coords coords) {
-        MiscMounted mine = (MiscMounted) entity.getEquipment(mineId);
-        Report r;
-        if (!mine.isMissing()) {
-            int reportId = switch (mine.getMineType()) {
-                case MiscMounted.MINE_CONVENTIONAL -> {
-                    deliverThunderMinefield(coords, entity.getOwnerId(), 10, entity.getId());
-                    yield 3500;
-                }
-                case MiscMounted.MINE_VIBRABOMB -> {
-                    deliverThunderVibraMinefield(coords,
-                          entity.getOwnerId(),
-                          10,
-                          mine.getVibraSetting(),
-                          entity.getId());
-                    yield 3505;
-                }
-                case MiscMounted.MINE_ACTIVE -> {
-                    deliverThunderActiveMinefield(coords, entity.getOwnerId(), 10, entity.getId());
-                    yield 3510;
-                }
-                case MiscMounted.MINE_INFERNO -> {
-                    deliverThunderInfernoMinefield(coords, entity.getOwnerId(), 10, entity.getId());
-                    yield 3515;
-                    // TODO : command-detonated mines
-                    // case 2:
-                }
-                default -> 0;
-            };
-            mine.setShotsLeft(mine.getUsableShotsLeft() - 1);
-            if (mine.getUsableShotsLeft() <= 0) {
-                mine.setMissing(true);
-            }
-            r = new Report(reportId);
-            r.subject = entity.getId();
-            r.addDesc(entity);
-            r.add(coords.getBoardNum());
-            addReport(r);
-            entity.setLayingMines(true);
-        }
+        minefieldManager.layMine(entity, mineId, coords);
     }
 
     /**

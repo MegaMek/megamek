@@ -212,6 +212,11 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         return parseField(fldEMP);
     }
 
+    /** Returns the chosen number of fortified hexes. */
+    public int getFortifiedHexes() {
+        return parseField(fldFortifiedHexes);
+    }
+
     /** Returns the start location offset */
     public int getStartOffset() {
         return parseField(txtOffset);
@@ -281,6 +286,11 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private final JTextField fldInferno = new JTextField(3);
     private final JTextField fldEMP = new JTextField(3);
 
+    // Fortifications Section
+    private final JLabel labFortifiedHexes = new JLabel(getString("PlayerSettingsDialog.labFortifiedHexes"),
+          SwingConstants.RIGHT);
+    private final JTextField fldFortifiedHexes = new JTextField(3);
+
     // Skills Section
     private SkillGenerationOptionsPanel skillGenerationOptionsPanel;
 
@@ -347,6 +357,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         if (client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             mainPanel.add(mineSection());
         }
+        mainPanel.add(fortificationSection());
         mainPanel.add(groundObjectConfigSection());
         mainPanel.add(skillsSection());
         if (!(client instanceof BotClient)) {
@@ -615,6 +626,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         player.setNbrMFActive(getActMines());
         player.setNbrMFInferno(getInfMines());
         player.setNbrMFEMP(getEmpMines());
+        player.setNbrFortifiedHexes(getFortifiedHexes());
         getSkillGenerationOptionsPanel().updateClient();
         player.setEmail(getEmail());
 
@@ -689,6 +701,18 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         return result;
     }
 
+    private JPanel fortificationSection() {
+        JPanel result = new OptionPanel("PlayerSettingsDialog.header.fortifications");
+        Content panContent = new Content(new GridLayout(1, 2, 10, 5));
+        result.add(panContent);
+        panContent.add(labFortifiedHexes);
+        panContent.add(fldFortifiedHexes);
+        String tooltip = Messages.getString("PlayerSettingsDialog.fortifiedHexesTT");
+        labFortifiedHexes.setToolTipText(tooltip);
+        fldFortifiedHexes.setToolTipText(tooltip);
+        return result;
+    }
+
     private JPanel skillsSection() {
         final JPanel skillsPanel = new OptionPanel("PlayerSettingsDialog.header.skills");
         skillsPanel.setName("skillsPanel");
@@ -726,6 +750,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         fldActive.setText(Integer.toString(player.getNbrMFActive()));
         fldInferno.setText(Integer.toString(player.getNbrMFInferno()));
         fldEMP.setText(Integer.toString(player.getNbrMFEMP()));
+        fldFortifiedHexes.setText(Integer.toString(player.getNbrFortifiedHexes()));
         fldEmail.setText(player.getEmail());
         txtWidth.setText(Integer.toString(player.getStartWidth()));
         txtOffset.setText(Integer.toString(player.getStartOffset()));

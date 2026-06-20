@@ -99,6 +99,9 @@ public interface GameListener extends java.util.EventListener {
 
     default void gameScriptedEvent(GameScriptedEvent event) {}
 
+    /** Raised when the server asks the client to show a transient toast notification on the board view. */
+    default void gameToast(GameToastEvent event) {}
+
     /**
      * This event is used in SBF games when a unit (formation) changes.
      *

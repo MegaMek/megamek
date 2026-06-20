@@ -62,15 +62,7 @@ import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.clientGUI.boardview.sprite.FlyOverSprite;
 import megamek.client.ui.dialogs.ChoiceDialog;
 import megamek.client.ui.dialogs.ConfirmDialog;
-import megamek.client.ui.dialogs.phaseDisplay.BombPayloadDialog;
-import megamek.client.ui.dialogs.phaseDisplay.ClimbingChoiceDialog;
-import megamek.client.ui.dialogs.phaseDisplay.FlightPathNotice;
-import megamek.client.ui.dialogs.phaseDisplay.LandingConfirmation;
-import megamek.client.ui.dialogs.phaseDisplay.LandingHexNotice;
-import megamek.client.ui.dialogs.phaseDisplay.ManeuverChoiceDialog;
-import megamek.client.ui.dialogs.phaseDisplay.MineLayingDialog;
-import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
-import megamek.client.ui.dialogs.phaseDisplay.VibrabombSettingDialog;
+import megamek.client.ui.dialogs.phaseDisplay.*;
 import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
 import megamek.client.ui.util.CommandAction;
 import megamek.client.ui.util.KeyCommandBind;
@@ -100,6 +92,7 @@ import megamek.common.bays.InfantryBay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardHelper;
 import megamek.common.board.BoardLocation;
+import megamek.common.board.BridgeConstruction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
@@ -179,6 +172,31 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private boolean isSelectingEscapePodLanding;
     /** Valid hexes for escape pod landing (rear arc, 0-4 hexes) */
     private Set<Coords> validEscapePodHexes = new HashSet<>();
+
+    /**
+     * The stages of declaring a bridge build (TO:AUE Bridge-Building Engineers). The bridge always originates from the
+     * engineer's hex: the player first clicks the hex the bridge will occupy (SECTION), then clicks the far end the
+     * bridge reaches to (DIRECTION). Two clicks, with the near bank fixed at the engineer.
+     */
+    private enum BridgeSelectionStage {NONE, SECTION, DIRECTION}
+
+    /**
+     * One legal bridge a platoon could raise: the bridge occupies {@code middle} (adjacent to the engineer), with its
+     * near bank {@code start} fixed at the engineer's hex and reaching the far bank {@code end}; {@code exits} is the
+     * resulting hexside bitmask.
+     */
+    private record BridgeBuildPlan(Coords start, Coords middle, Coords end, int exits) {}
+
+    /** The current stage of bridge build hex selection, or NONE when not declaring a build. */
+    private BridgeSelectionStage bridgeSelectionStage = BridgeSelectionStage.NONE;
+    /** The bridge type chosen for the bridge build being declared. */
+    private int selectedBridgeType;
+    /** The hex the bridge will occupy (the "section"), chosen as the first click of the build being declared. */
+    private Coords selectedBridgeMiddle;
+    /** Every legal bridge the selected platoon could raise this turn, computed when the build is declared. */
+    private final List<BridgeBuildPlan> bridgeBuildPlans = new ArrayList<>();
+    /** Valid hexes for the current bridge build selection stage. */
+    private final Set<Coords> validBridgeSelectionHexes = new HashSet<>();
 
     // buttons
     private Map<MoveCommand, MegaMekButton> buttons;
@@ -915,6 +933,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
               && (deckInfantry.getDugIn() == Infantry.DUG_IN_NONE);
         getBtn(MoveCommand.MOVE_HIT_DECK).setEnabled(canHitDeck);
 
+        // Infantry - Bridge building, TO:AUE. Bridge-Building Engineers with their kit, remaining budget and at
+        // least one valid adjacent site may spend 6 turns raising a single-hex bridge. The same button cancels an
+        // in-progress build (switching to "Cancel Bridge"), dismantling the partial bridge over the turns spent.
+        updateBridgeBuildButton(selectedUnit, gameOptions);
+
         // Infantry - Take Cover
         // Crews adrift in space or atmosphere can't do this
         if (selectedUnit instanceof EjectedCrew &&
@@ -988,6 +1011,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (selectedUnit.hasUnloadedUnitsFromBays()) {
             disableButtons();
             updateLoadButtons();
+        }
+
+        // A platoon raising or dismantling a bridge may take no other action (TO:AUE p.152): lock the ribbon down to
+        // ending its turn (Done / Next Unit) and the bridge button (Cancel Bridge while building, Resume Building while
+        // dismantling). Everything else is disabled.
+        if ((selectedUnit instanceof ConvInfantry bridgeWorker) && bridgeWorker.isBusyWithBridge()) {
+            disableButtons();
+            setNextEnabled(true);
+            butDone.setEnabled(true);
+            // Keep page navigation so the bridge button is reachable if it sits on another ribbon page
+            getBtn(MoveCommand.MOVE_MORE).setEnabled(numButtonGroups > 1);
+            getBtn(MoveCommand.MOVE_BUILD_BRIDGE).setEnabled(true);
         }
 
         setupButtonPanel();
@@ -1753,6 +1788,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             cancelEscapePodHexSelection();
         }
 
+        // Cancel bridge build hex selection if active
+        if (bridgeSelectionStage != BridgeSelectionStage.NONE) {
+            cancelBridgeBuildSelection();
+        }
+
         // clear board cursors
         clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
         // Needed to clear best move modifiers
@@ -2399,6 +2439,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
+        // While declaring a bridge build, board clicks select the bridge's start/section/end hexes; they must not
+        // plot a movement path (which would draw move costs and, on the final click, run past the completed
+        // selection and discard it). A click is handled as a selection here and consumes the event.
+        if (bridgeSelectionStage != BridgeSelectionStage.NONE) {
+            if ((boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
+                  && (boardViewEvent.getCoords() != null)) {
+                LOGGER.debug("[BuildBridge] board click during stage {} at {}", bridgeSelectionStage,
+                      boardViewEvent.getCoords());
+                handleBridgeSelectionClick(boardViewEvent.getCoords());
+            }
+            return;
+        }
+
         if ((currentlySelectedEntity != null) && (gear == GEAR_FLIGHTPATH)
               && (boardViewEvent.getBoardId() == flightPathTarget(currentlySelectedEntity))
               && (boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_CLICKED)) {
@@ -2804,7 +2857,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     Hex occupiedHex = game.getBoard(currentEntity)
                           .getHex(cmd.getLastStep().getPosition());
                     boolean fortifiedHex = occupiedHex.containsTerrain(Terrains.FORTIFIED);
-                    setHullDownEnabled(hullDownEnabled && fortifiedHex);
+                    // Large Vehicles cannot use infantry-built (fortified) hexes for cover (TO:AR p.19).
+                    boolean isLargeVehicle = (currentEntity instanceof Tank tank) && tank.isLargeVehicleForHullDown();
+                    setHullDownEnabled(hullDownEnabled && fortifiedHex && !isLargeVehicle);
                 } else {
                     // If there's queued up movement, we can call the canGoHullDown() method in the Tank class.
                     setHullDownEnabled(currentEntity.canGoHullDown());
@@ -2812,6 +2867,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
             }
         }
+
+        // Two-state Hull Down button: "Go Hull Down" when the unit can enter hull-down, "Hull Down" (current
+        // state) once it already is, so the player can tell at a glance whether the unit is in cover.
+        getBtn(MoveCommand.MOVE_HULL_DOWN).setText(Messages.getString(cmd.getFinalHullDown()
+              ? "MovementDisplay.moveHullDownActive"
+              : "MovementDisplay.moveHullDownGo"));
     }
 
     private void updateRACButton() {
@@ -6417,6 +6478,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     VibrabombSettingDialog vsd = new VibrabombSettingDialog(clientgui.getFrame());
                     vsd.setVisible(true);
                     m.setVibraSetting(vsd.getSetting());
+                } else if (m.getMineType() == MiscMounted.MINE_EMP) {
+                    EMPMineSettingDialog empDialog = new EMPMineSettingDialog(clientgui.getFrame());
+                    empDialog.setVisible(true);
+                    m.setEmpSetting(empDialog.getSetting());
                 }
                 if (cmd.getLastStep() == null &&
                       entity instanceof BattleArmor &&
@@ -6433,7 +6498,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
             ((Infantry) entity).createLocalSupport();
             clientgui.getClient().sendUpdateEntity(currentEntity());
         } else if (actionCmd.equals(MoveCommand.MOVE_DIG_IN.getCmd())) {
-            addStepToMovePath(MoveStepType.DIG_IN);
+            if (MoveStep.isFortifiableTerrain(game.getHexOf(entity))) {
+                addStepToMovePath(MoveStepType.DIG_IN);
+            } else {
+                clientgui.addToast(ToastLevel.WARNING,
+                      Messages.getString("MovementDisplay.digInIllegalTerrain.toast"), entity);
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_HIT_DECK.getCmd())) {
             addStepToMovePath(MoveStepType.HIT_THE_DECK);
             // Field-weapon infantry may only fire in their front arc while on the deck (TO:AR p.106). There is no
@@ -6443,7 +6513,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       Messages.getString("MovementDisplay.hitDeckFacing.toast"), entity);
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_FORTIFY.getCmd())) {
-            addStepToMovePath(MoveStepType.FORTIFY);
+            if (MoveStep.isFortifiableTerrain(game.getHexOf(entity))) {
+                addStepToMovePath(MoveStepType.FORTIFY);
+            } else {
+                clientgui.addToast(ToastLevel.WARNING,
+                      Messages.getString("MovementDisplay.fortifyIllegalTerrain.toast"), entity);
+            }
+        } else if (actionCmd.equals(MoveCommand.MOVE_BUILD_BRIDGE.getCmd())) {
+            if ((currentEntity() instanceof ConvInfantry bridgePlatoon) && bridgePlatoon.hasBridgeInProgress()) {
+                // A bridge is in progress (building, paused, or dismantling): offer the valid actions for this state.
+                showBridgeActionChooser(bridgePlatoon);
+            } else {
+                startBridgeBuildSelection();
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_TAKE_COVER.getCmd())) {
             addStepToMovePath(MoveStepType.TAKE_COVER);
         } else if (actionCmd.equals(MoveCommand.MOVE_SHAKE_OFF.getCmd())) {
@@ -7597,6 +7679,551 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // Cancel selection on click outside valid hexes
                 cancelEscapePodHexSelection();
             }
+            return;
         }
+
+        // Handle bridge build hex selection: trace start bank -> bridge hex -> end bank
+        if ((bridgeSelectionStage != BridgeSelectionStage.NONE) && (event.getCoords() != null)) {
+            handleBridgeSelectionClick(event.getCoords());
+        }
+    }
+
+    /**
+     * Handles a board click during bridge build hex selection. A click outside the highlighted valid hexes cancels the
+     * declaration; otherwise it advances to the next stage of the start -> middle -> end trace.
+     *
+     * @param clicked the clicked hex
+     */
+    private void handleBridgeSelectionClick(Coords clicked) {
+        if (!validBridgeSelectionHexes.contains(clicked)) {
+            // Ignore a click outside the highlighted hexes rather than throwing away the whole declaration - a
+            // stray or exploratory click should not undo earlier picks. The player presses Esc to cancel. Tell the
+            // player WHY the hex is not valid for this step rather than just that it isn't.
+            String reason = bridgeInvalidClickReason(clicked);
+            LOGGER.debug("[BuildBridge] ignoring {} at stage {} - {} (valid: {})", clicked, bridgeSelectionStage,
+                  reason, validBridgeSelectionHexes);
+            clientgui.addToast(ToastLevel.WARNING, reason, currentEntity());
+            return;
+        }
+        LOGGER.debug("[BuildBridge] accepted {} click at {}", bridgeSelectionStage, clicked);
+        switch (bridgeSelectionStage) {
+            case SECTION -> advanceToBridgeDirectionStage(clicked);
+            case DIRECTION -> resolveBridgeDirection(clicked);
+            case NONE -> {}
+        }
+    }
+
+    /**
+     * Builds a player-facing explanation of why the clicked hex is not valid for the current bridge selection stage.
+     *
+     * @param clicked the rejected hex
+     *
+     * @return a localized reason, ending with how to proceed
+     */
+    private String bridgeInvalidClickReason(Coords clicked) {
+        if (!(currentEntity() instanceof ConvInfantry convInfantry)) {
+            return Messages.getString("MovementDisplay.BuildBridge.invalidHex");
+        }
+        Board board = game.getBoard(convInfantry.getBoardId());
+        return switch (bridgeSelectionStage) {
+            case SECTION -> bridgeSectionClickReason(convInfantry, board, clicked);
+            case DIRECTION -> bridgeDirectionClickReason(convInfantry, board, clicked);
+            case NONE -> Messages.getString("MovementDisplay.BuildBridge.invalidHex");
+        };
+    }
+
+    /**
+     * @return why the clicked hex cannot be the bridge hex (stage 1)
+     */
+    private String bridgeSectionClickReason(ConvInfantry convInfantry, Board board, Coords clicked) {
+        if ((convInfantry.getPosition() == null) || (convInfantry.getPosition().distance(clicked) != 1)) {
+            return Messages.getString("MovementDisplay.BuildBridge.reason.middleNotAdjacent");
+        }
+        Hex hex = board.getHex(clicked);
+        if ((hex != null) && hex.containsAnyTerrainOf(Terrains.BRIDGE, Terrains.BUILDING, Terrains.FUEL_TANK)) {
+            return Messages.getString("MovementDisplay.BuildBridge.reason.occupied");
+        }
+        if (ConvInfantry.isBridgeTargetClaimed(game, convInfantry.getBoardId(), clicked, convInfantry)) {
+            return Messages.getString("MovementDisplay.BuildBridge.reason.claimed");
+        }
+        // When repairs are enabled and the clicked hex is a gap next to a surviving span, explain the repair-specific
+        // rejection (e.g. an open-water far side) rather than the generic "no bridge can be built here".
+        if (game.getOptions().booleanOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS)) {
+            String repairReason = bridgeRepairClickReason(board, clicked);
+            if (repairReason != null) {
+                return repairReason;
+            }
+        }
+        return Messages.getString("MovementDisplay.BuildBridge.reason.middleNoSpan");
+    }
+
+    /**
+     * Explains why a clicked gap hex was not offered for repair (the unofficial bridge-repair option). If a surviving
+     * span points into the hex, the straight repair across it is evaluated and the reason reported; if no span points
+     * in, the hex is not a broken section of any bridge.
+     *
+     * @param board   the board the gap is on
+     * @param clicked the rejected hex
+     *
+     * @return a localized repair reason, or null if the hex is not next to a bridge at all (the caller falls back to
+     *       the generic reason)
+     */
+    private @Nullable String bridgeRepairClickReason(Board board, Coords clicked) {
+        for (int spanDirection = 0; spanDirection < 6; spanDirection++) {
+            Hex neighbor = board.getHex(clicked.translated(spanDirection));
+            if ((neighbor == null) || !neighbor.containsTerrain(Terrains.BRIDGE)) {
+                continue;
+            }
+            int backDirection = (spanDirection + 3) % 6;
+            boolean spanPointsIntoGap = (neighbor.getTerrain(Terrains.BRIDGE).getExits() & (1 << backDirection)) != 0;
+            if (!spanPointsIntoGap) {
+                continue;
+            }
+            // The hex is the broken section of this bridge; report why the straight repair across the span fails.
+            int straightExits = BridgeConstruction.exitsFor(spanDirection, backDirection);
+            BridgeConstruction.BridgeRepairIssue issue = BridgeConstruction.bridgeRepairIssue(board, clicked,
+                  straightExits);
+            LOGGER.debug("[BridgeRepair] {} rejected as a repair site: straight orientation across the span toward {} "
+                  + "gives {}", clicked, clicked.translated(spanDirection), issue);
+            return switch (issue) {
+                case VALID -> null;
+                case FAR_SIDE_UNANCHORED -> Messages.getString("MovementDisplay.BuildBridge.reason.repairFarSide");
+                case NOT_A_GAP -> Messages.getString("MovementDisplay.BuildBridge.reason.occupied");
+                default -> Messages.getString("MovementDisplay.BuildBridge.reason.repairNoSpan");
+            };
+        }
+        return null;
+    }
+
+    /**
+     * @return why the clicked far end is not a valid bridge end for the chosen bridge hex (stage 2), using the site
+     *       validator's reason for the span from the engineer's hex to the clicked far end
+     */
+    private String bridgeDirectionClickReason(ConvInfantry convInfantry, Board board, Coords clicked) {
+        Coords middle = selectedBridgeMiddle;
+        if (middle.distance(clicked) != 1) {
+            return Messages.getString("MovementDisplay.BuildBridge.reason.endNotAdjacent");
+        }
+        Coords engineerPosition = convInfantry.getPosition();
+        if ((engineerPosition == null) || clicked.equals(engineerPosition)) {
+            return Messages.getString("MovementDisplay.BuildBridge.invalidHex");
+        }
+        int exits = BridgeConstruction.exitsFor(middle.direction(engineerPosition), middle.direction(clicked));
+        return bridgeSiteIssueReason(board, middle, exits);
+    }
+
+    /**
+     * @return the localized reason a bridge span at the given hex and exits is not a valid site
+     */
+    private String bridgeSiteIssueReason(Board board, Coords middle, int exits) {
+        BridgeConstruction.BridgeSiteIssue issue = BridgeConstruction.bridgeSiteIssue(board, middle, exits);
+        return switch (issue) {
+            case OFF_BOARD -> Messages.getString("MovementDisplay.BuildBridge.reason.offBoard");
+            case OCCUPIED -> Messages.getString("MovementDisplay.BuildBridge.reason.occupied");
+            case RIMS_TOO_STEEP -> Messages.getString("MovementDisplay.BuildBridge.reason.tooSteep");
+            case NO_ANCHOR -> BridgeConstruction.isOverWater(board.getHex(middle))
+                  ? Messages.getString("MovementDisplay.BuildBridge.reason.noAnchorWater")
+                  : Messages.getString("MovementDisplay.BuildBridge.reason.noAnchorDry");
+            case BAD_EXITS, VALID -> Messages.getString("MovementDisplay.BuildBridge.invalidHex");
+        };
+    }
+
+    /**
+     * Sets the bridge button's label, tooltip and enabled state for the selected unit. The button has three modes:
+     * "Build Bridge" starts a new build when the platoon is idle; "Cancel Bridge" begins dismantling while the platoon
+     * is raising a bridge; and "Resume Building" reverses a dismantling back into building. TO:AUE p.152.
+     *
+     * @param selectedUnit the currently selected unit, or null if none
+     * @param gameOptions  the active game options
+     */
+    private void updateBridgeBuildButton(@Nullable Entity selectedUnit, GameOptions gameOptions) {
+        MegaMekButton button = getBtn(MoveCommand.MOVE_BUILD_BRIDGE);
+        if ((selectedUnit instanceof ConvInfantry building) && building.isBuildingBridge()) {
+            // Actively building: the button opens a chooser (Pause / Dismantle / Abandon)
+            button.setText(Messages.getString("MovementDisplay.moveCancelBridge"));
+            button.setToolTipText(Messages.getString("MovementDisplay.moveCancelBridge.tooltip"));
+            button.setEnabled(true);
+        } else if ((selectedUnit instanceof ConvInfantry resuming)
+              && (resuming.isDismantlingBridge() || resuming.isBridgePaused())) {
+            // Paused or dismantling: the button opens a chooser (Resume / Abandon)
+            button.setText(Messages.getString("MovementDisplay.moveResumeBridge"));
+            button.setToolTipText(Messages.getString("MovementDisplay.moveResumeBridge.tooltip"));
+            button.setEnabled(true);
+        } else {
+            // The same button raises new bridges and (with the unofficial option) repairs destroyed sections; the
+            // label reflects both so players know the engineer can do either.
+            boolean repairAllowed = gameOptions.booleanOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
+            button.setText(Messages.getString(repairAllowed ? "MovementDisplay.moveBuildRepairBridge"
+                  : "MovementDisplay.moveBuildBridge"));
+            button.setToolTipText(Messages.getString(repairAllowed ? "MovementDisplay.moveBuildRepairBridge.tooltip"
+                  : "MovementDisplay.moveBuildBridge.tooltip"));
+            button.setEnabled(canSelectBridgeBuild(selectedUnit, gameOptions));
+        }
+    }
+
+    /**
+     * Returns whether the given unit may declare a bridge build this turn: it is a Bridge-Building Engineer platoon
+     * with its kit and remaining budget, the game option is active, the unit is at ground level on a ground map, and at
+     * least one adjacent hex is a valid bridge site for some orientation. TO:AUE.
+     *
+     * @param unit        the currently selected unit, or null if none
+     * @param gameOptions the active game options
+     *
+     * @return {@code true} if the Build Bridge button should be enabled.
+     */
+    private boolean canSelectBridgeBuild(@Nullable Entity unit, GameOptions gameOptions) {
+        if (!(unit instanceof ConvInfantry convInfantry)) {
+            return false;
+        }
+        // Each failing condition is logged at DEBUG so playtests can diagnose why the button is disabled
+        String unitName = unit.getShortName();
+        if (!gameOptions.booleanOption(OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS)) {
+            LOGGER.debug("[BuildBridge] {}: button disabled - game option {} is off", unitName,
+                  OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS);
+            return false;
+        }
+        if (!convInfantry.hasSpecialization(ConvInfantry.BRIDGE_ENGINEERS)) {
+            LOGGER.debug("[BuildBridge] {}: button disabled - no Bridge-Building Engineers specialization "
+                  + "(specialization bitmask is {})", unitName, convInfantry.getSpecializations());
+            return false;
+        }
+        if (!convInfantry.hasBridgeKit()) {
+            LOGGER.debug("[BuildBridge] {}: button disabled - platoon carries no Infantry Bridge Kit", unitName);
+            return false;
+        }
+        if (!convInfantry.canAffordBridge(ConvInfantry.BRIDGE_TYPE_LIGHT)) {
+            LOGGER.debug("[BuildBridge] {}: button disabled - bridge building budget spent ({} points left)",
+                  unitName, convInfantry.getBridgeBuildPoints());
+            return false;
+        }
+        if (convInfantry.isBuildingBridge()) {
+            LOGGER.debug("[BuildBridge] {}: button disabled - already raising a bridge (turn {} of {})", unitName,
+                  convInfantry.getBridgeBuildTurns(), convInfantry.getBridgeBuildRequiredTurns());
+            return false;
+        }
+        // The platoon must be at ground level, or standing on a bridge deck - the latter lets engineers build the
+        // next span of a multi-hex crossing while standing on the span they just finished (TO:AUE).
+        Hex unitHex = game.getHex(unit.getPosition(), unit.getBoardId());
+        boolean onBridgeDeck = (unitHex != null) && unitHex.containsTerrain(Terrains.BRIDGE)
+              && (unit.getElevation() == unitHex.terrainLevel(Terrains.BRIDGE_ELEV));
+        if (!game.isOnGroundMap(unit) || (unit.getAltitude() != 0)
+              || ((unit.getElevation() != 0) && !onBridgeDeck)) {
+            LOGGER.debug("[BuildBridge] {}: button disabled - not at ground level or on a bridge deck "
+                        + "(altitude {}, elevation {}, onBridgeDeck {})", unitName, unit.getAltitude(),
+                  unit.getElevation(), onBridgeDeck);
+            return false;
+        }
+        List<BridgeBuildPlan> plans = computeValidBridgePlans(convInfantry);
+        if (plans.isEmpty()) {
+            LOGGER.debug("[BuildBridge] {}: button disabled - no valid bridge can be raised adjacent to {}",
+                  unitName, unit.getPosition());
+            return false;
+        }
+        LOGGER.debug("[BuildBridge] {}: button enabled - {} valid bridge plan(s)", unitName, plans.size());
+        return true;
+    }
+
+    /**
+     * Computes every legal bridge the platoon could raise this turn. The bridge always originates from the engineer's
+     * own hex: for each hex adjacent to the engineer (the bridge would occupy it), the near bank is fixed to the side
+     * facing the engineer, and a plan is added for every far side that forms a valid bridge site. The far side facing
+     * straight across gives a straight bridge, the others give curves; the tileset image is chosen from the exits
+     * later. TO:AUE.
+     *
+     * @param convInfantry the engineer platoon
+     *
+     * @return the valid bridge plans, possibly empty
+     */
+    private List<BridgeBuildPlan> computeValidBridgePlans(ConvInfantry convInfantry) {
+        List<BridgeBuildPlan> plans = new ArrayList<>();
+        Coords engineerPosition = convInfantry.getPosition();
+        if (engineerPosition == null) {
+            return plans;
+        }
+        Board board = game.getBoard(convInfantry.getBoardId());
+        boolean repairAllowed = game.getOptions().booleanOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
+        for (int middleDirection = 0; middleDirection < 6; middleDirection++) {
+            Coords middle = engineerPosition.translated(middleDirection);
+            if (!board.contains(middle)) {
+                continue;
+            }
+            // Don't offer a hex another platoon is already raising/pausing/dismantling a bridge in (no terrain is
+            // placed until it completes, so the site validator alone can't see the in-progress claim)
+            if (ConvInfantry.isBridgeTargetClaimed(game, convInfantry.getBoardId(), middle, convInfantry)) {
+                continue;
+            }
+            // A gap in an existing bridge (a destroyed section) is repaired, not freshly built: its orientation is
+            // fixed by the surviving span, so offer the repair plans instead of engineer-origin fresh orientations.
+            if (repairAllowed && addRepairPlansForGap(plans, board, engineerPosition, middle)) {
+                continue;
+            }
+            // The bridge originates from the engineer: the near bank is always the deck side facing the platoon
+            int originSide = middle.direction(engineerPosition);
+            for (int farSide = 0; farSide < 6; farSide++) {
+                if (farSide == originSide) {
+                    continue;
+                }
+                int exits = BridgeConstruction.exitsFor(originSide, farSide);
+                if (BridgeConstruction.isValidBridgeSite(board, middle, exits)) {
+                    plans.add(new BridgeBuildPlan(engineerPosition, middle, middle.translated(farSide), exits));
+                }
+            }
+        }
+        return plans;
+    }
+
+    /**
+     * Adds repair plans for a candidate gap hex the engineer is adjacent to (the unofficial bridge-repair option): for
+     * each pair of hexsides that reconnects the broken run, a plan whose orientation is fixed by the surviving span(s),
+     * not by the engineer's facing. The highlighted far end is the exit side away from the engineer so the player
+     * clicks where the repaired section reaches to. TO:AUE.
+     *
+     * @param plans            the plan list to add to
+     * @param board            the board the gap is on
+     * @param engineerPosition the engineer platoon's hex
+     * @param middle           the candidate gap hex (adjacent to the engineer)
+     *
+     * @return {@code true} if the hex is a repairable gap (at least one repair plan was added)
+     */
+    private boolean addRepairPlansForGap(List<BridgeBuildPlan> plans, Board board, Coords engineerPosition,
+          Coords middle) {
+        int originSide = middle.direction(engineerPosition);
+        boolean isRepairableGap = false;
+        for (int firstSide = 0; firstSide < 6; firstSide++) {
+            for (int secondSide = firstSide + 1; secondSide < 6; secondSide++) {
+                int exits = BridgeConstruction.exitsFor(firstSide, secondSide);
+                if (!BridgeConstruction.isBridgeRepairSite(board, middle, exits)) {
+                    continue;
+                }
+                isRepairableGap = true;
+                int endSide = (firstSide == originSide) ? secondSide : firstSide;
+                plans.add(new BridgeBuildPlan(engineerPosition, middle, middle.translated(endSide), exits));
+            }
+        }
+        return isRepairableGap;
+    }
+
+    /**
+     * Presents the bridge actions available for the platoon's current state and, on a choice, declares the matching
+     * move step and ends the turn. Active building offers Pause / Dismantle / Abandon; a paused build offers Resume
+     * (when adjacent) / Abandon; a dismantling offers Resume / Abandon. TO:AUE p.152.
+     *
+     * @param bridgePlatoon the platoon with bridge work in progress
+     */
+    private void showBridgeActionChooser(ConvInfantry bridgePlatoon) {
+        List<String> labels = new ArrayList<>();
+        List<MoveStepType> steps = new ArrayList<>();
+        if (bridgePlatoon.isBuildingBridge()) {
+            labels.add(Messages.getString("MovementDisplay.BridgeAction.pause"));
+            steps.add(MoveStepType.PAUSE_BRIDGE);
+            int dismantleTurns = Math.max(1, bridgePlatoon.getBridgeBuildTurns());
+            labels.add(Messages.getString("MovementDisplay.BridgeAction.dismantle", dismantleTurns));
+            steps.add(MoveStepType.CANCEL_BRIDGE);
+            labels.add(Messages.getString("MovementDisplay.BridgeAction.abandon"));
+            steps.add(MoveStepType.ABANDON_BRIDGE);
+        } else if (bridgePlatoon.isBridgePaused()) {
+            if (bridgePlatoon.isAdjacentToBridgeSite()) {
+                labels.add(Messages.getString("MovementDisplay.BridgeAction.resume"));
+                steps.add(MoveStepType.RESUME_BRIDGE);
+            }
+            labels.add(Messages.getString("MovementDisplay.BridgeAction.abandon"));
+            steps.add(MoveStepType.ABANDON_BRIDGE);
+        } else if (bridgePlatoon.isDismantlingBridge()) {
+            labels.add(Messages.getString("MovementDisplay.BridgeAction.resume"));
+            steps.add(MoveStepType.RESUME_BRIDGE);
+            labels.add(Messages.getString("MovementDisplay.BridgeAction.abandon"));
+            steps.add(MoveStepType.ABANDON_BRIDGE);
+        } else {
+            return;
+        }
+        // A trailing "keep current state" option; selecting it (or closing) changes nothing
+        labels.add(Messages.getString("MovementDisplay.BridgeAction.keep"));
+
+        String message = (bridgePlatoon.isBridgePaused() && !bridgePlatoon.isAdjacentToBridgeSite())
+              ? Messages.getString("MovementDisplay.BridgeAction.messagePausedAway")
+              : Messages.getString("MovementDisplay.BridgeAction.message");
+        Object[] options = labels.toArray();
+        int choice = JOptionPane.showOptionDialog(clientgui.getFrame(), message,
+              Messages.getString("MovementDisplay.BridgeAction.title"),
+              JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[options.length - 1]);
+        if ((choice < 0) || (choice >= steps.size())) {
+            LOGGER.debug("[BuildBridge] {}: bridge action chooser dismissed with no change",
+                  bridgePlatoon.getShortName());
+            return;
+        }
+        MoveStepType step = steps.get(choice);
+        LOGGER.info("[BuildBridge] {}: chose bridge action {}", bridgePlatoon.getShortName(), step);
+        clear();
+        addStepToMovePath(step);
+        ready();
+    }
+
+    /**
+     * Starts declaring a bridge build (TO:AUE Bridge-Building Engineers): asks for the bridge type (Light/Medium,
+     * limited by the remaining budget), then highlights the valid bridge hexes for the player to begin the
+     * bridge hex -> direction selection.
+     */
+    private void startBridgeBuildSelection() {
+        clear();
+        if (!(currentEntity() instanceof ConvInfantry convInfantry)) {
+            return;
+        }
+
+        // Choose the bridge type; Medium is only offered while the budget covers its cost of 2
+        List<String> choices = new ArrayList<>();
+        choices.add(Messages.getString("MovementDisplay.BuildBridgeDialog.light"));
+        if (convInfantry.canAffordBridge(ConvInfantry.BRIDGE_TYPE_MEDIUM)) {
+            choices.add(Messages.getString("MovementDisplay.BuildBridgeDialog.medium"));
+        }
+        String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
+              Messages.getString("MovementDisplay.BuildBridgeDialog.message"),
+              Messages.getString("MovementDisplay.BuildBridgeDialog.title"),
+              JOptionPane.QUESTION_MESSAGE,
+              null,
+              choices.toArray(new String[0]),
+              choices.getFirst());
+        if (input == null) {
+            return;
+        }
+        selectedBridgeType = input.equals(Messages.getString("MovementDisplay.BuildBridgeDialog.medium"))
+              ? ConvInfantry.BRIDGE_TYPE_MEDIUM : ConvInfantry.BRIDGE_TYPE_LIGHT;
+        LOGGER.debug("[BuildBridge] {}: chose bridge type {} (1=light, 2=medium)", convInfantry.getShortName(),
+              selectedBridgeType);
+
+        bridgeBuildPlans.clear();
+        bridgeBuildPlans.addAll(computeValidBridgePlans(convInfantry));
+        if (bridgeBuildPlans.isEmpty()) {
+            LOGGER.debug("[BuildBridge] {}: selection aborted - no valid bridge plan adjacent to {}",
+                  convInfantry.getShortName(), convInfantry.getPosition());
+            return;
+        }
+
+        // Stage 1: highlight only the hexes the bridge could occupy - the at-most-6 hexes adjacent to the engineer
+        // where the bridge graphic actually appears. This is far fewer (and clearer) than highlighting every bank.
+        Set<Coords> sectionHexes = new HashSet<>();
+        for (BridgeBuildPlan plan : bridgeBuildPlans) {
+            sectionHexes.add(plan.middle());
+        }
+        selectedBridgeMiddle = null;
+        bridgeSelectionStage = BridgeSelectionStage.SECTION;
+        showBridgeSelectionHexes(convInfantry, sectionHexes, "MovementDisplay.BuildBridge.selectSection");
+        LOGGER.debug("[BuildBridge] {}: selecting bridge hex from {}", convInfantry.getShortName(), sectionHexes);
+    }
+
+    /**
+     * Second selection stage: the bridge hex (section) is chosen; highlights the far ends the bridge could reach. The
+     * bridge always originates from the engineer's hex, so every far end uniquely determines the span (straight or
+     * curved) - the player just clicks where the bridge should reach to.
+     *
+     * @param middle the chosen hex the bridge will occupy
+     */
+    private void advanceToBridgeDirectionStage(Coords middle) {
+        if (!(currentEntity() instanceof ConvInfantry convInfantry)) {
+            cancelBridgeBuildSelection();
+            return;
+        }
+        selectedBridgeMiddle = middle;
+        Set<Coords> farEnds = new HashSet<>();
+        for (BridgeBuildPlan plan : bridgeBuildPlans) {
+            if (plan.middle().equals(middle)) {
+                farEnds.add(plan.end());
+            }
+        }
+        bridgeSelectionStage = BridgeSelectionStage.DIRECTION;
+        showBridgeSelectionHexes(convInfantry, farEnds, "MovementDisplay.BuildBridge.selectDirection");
+        clientgui.addToast(ToastLevel.INFO, Messages.getString("MovementDisplay.BuildBridge.toast.sectionSet",
+              middle.getBoardNum()), convInfantry);
+        LOGGER.debug("[BuildBridge] {}: bridge hex {} set, selecting far end from {}",
+              convInfantry.getShortName(), middle, farEnds);
+    }
+
+    /**
+     * Resolves the bridge span from the chosen bridge hex and the clicked far end, then declares the build. The near
+     * bank is fixed at the engineer's hex, so the clicked far end uniquely identifies the plan and its exits.
+     *
+     * @param farEnd the clicked far end the bridge reaches to
+     */
+    private void resolveBridgeDirection(Coords farEnd) {
+        Coords middle = selectedBridgeMiddle;
+        for (BridgeBuildPlan plan : bridgeBuildPlans) {
+            if (plan.middle().equals(middle) && plan.end().equals(farEnd)) {
+                declareBridgeBuild(middle, plan.exits());
+                return;
+            }
+        }
+        LOGGER.debug("[BuildBridge] no bridge plan for hex {} reaching {}; ignoring", middle, farEnd);
+    }
+
+    /**
+     * Declares the bridge build with the resolved bridge hex and exits and commits the move. The exits bitmask both
+     * validates the site and selects the tileset image.
+     *
+     * @param middle the hex the bridge will occupy
+     * @param exits  the exits bitmask of the two hexsides the bridge connects
+     */
+    private void declareBridgeBuild(Coords middle, int exits) {
+        int bridgeType = selectedBridgeType;
+        Entity engineer = currentEntity();
+
+        // Rebuilding a destroyed section (unofficial repair option) reads differently from raising a new bridge; the
+        // server makes the same determination from the site, this only chooses the player-facing wording.
+        boolean isRepair = game.getOptions().booleanOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS)
+              && BridgeConstruction.isBridgeRepairSite(game.getBoard(engineer == null ? 0 : engineer.getBoardId()),
+              middle, exits);
+
+        cancelBridgeBuildSelection();
+        clear();
+
+        LOGGER.info("[BuildBridge] declaring bridge {}: bridge hex {}, exits bitmask {}, type {} (1=light, 2=medium)",
+              isRepair ? "repair" : "build", middle, exits, bridgeType);
+        Map<Integer, Integer> bridgeData = new HashMap<>();
+        bridgeData.put(MoveStep.BRIDGE_TARGET_X_KEY, middle.getX());
+        bridgeData.put(MoveStep.BRIDGE_TARGET_Y_KEY, middle.getY());
+        bridgeData.put(MoveStep.BRIDGE_EXITS_KEY, exits);
+        bridgeData.put(MoveStep.BRIDGE_TYPE_KEY, bridgeType);
+        addStepToMovePath(MoveStepType.BUILD_BRIDGE, bridgeData);
+        if (engineer != null) {
+            String startToastKey = isRepair ? "MovementDisplay.repairBridge.toast.start"
+                  : "MovementDisplay.buildBridge.toast.start";
+            clientgui.addToast(ToastLevel.INFO, Messages.getString(startToastKey,
+                  engineer.getShortName(), middle.getBoardNum(), ConvInfantry.BRIDGE_BUILD_TURNS), engineer);
+        }
+        ready();
+    }
+
+    /**
+     * Cancels any bridge build hex selection in progress and clears the highlighting.
+     */
+    private void cancelBridgeBuildSelection() {
+        bridgeSelectionStage = BridgeSelectionStage.NONE;
+        selectedBridgeMiddle = null;
+        bridgeBuildPlans.clear();
+        validBridgeSelectionHexes.clear();
+        clientgui.clearMovementEnvelope();
+    }
+
+    /**
+     * Highlights the given hexes for the current bridge build selection stage and sets the status bar prompt. If
+     * there are no valid hexes for the stage, the declaration is cancelled.
+     *
+     * @param convInfantry  the engineer platoon declaring the build
+     * @param hexes         the valid hexes to highlight for this stage
+     * @param statusBarKey  the message key for the stage's status bar prompt
+     */
+    private void showBridgeSelectionHexes(ConvInfantry convInfantry, Set<Coords> hexes, String statusBarKey) {
+        if (hexes.isEmpty()) {
+            LOGGER.debug("[BuildBridge] {}: selection aborted - no valid hexes for stage {}",
+                  convInfantry.getShortName(), bridgeSelectionStage);
+            cancelBridgeBuildSelection();
+            return;
+        }
+        validBridgeSelectionHexes.clear();
+        validBridgeSelectionHexes.addAll(hexes);
+        Map<Coords, Integer> highlightData = new HashMap<>();
+        for (Coords coords : validBridgeSelectionHexes) {
+            highlightData.put(coords, 0); // 0 = walkable range color
+        }
+        clientgui.showMovementEnvelope(convInfantry, highlightData, GEAR_LAND);
+        setStatusBarText(Messages.getString(statusBarKey));
     }
 }

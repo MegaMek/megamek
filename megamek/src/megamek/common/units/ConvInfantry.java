@@ -58,6 +58,7 @@ import megamek.common.cost.InfantryCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -67,9 +68,11 @@ import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
@@ -128,6 +131,15 @@ public class ConvInfantry extends Infantry {
     private String secondName;
     private int secondaryWeaponsPerSquad = 0;
 
+    // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): a one-shot weapon carried by every trooper, used for
+    // a single once-per-scenario attack instead of the platoon's standard weapon attack. Unlike primary/secondary, the
+    // disposable weapon IS added to the equipment array as a separate, fireable WeaponMounted. disposableWeapon is
+    // transient: an EquipmentType cannot be relied on to survive the entity's client/server serialization (it is
+    // referenced by name from the registry, not serialized directly). It is reconstructed from disposableName, which
+    // does survive, by getDisposableWeapon().
+    private transient InfantryWeapon disposableWeapon;
+    private String disposableName;
+
     private InfantryMount mount = null;
 
     // Armor
@@ -143,10 +155,24 @@ public class ConvInfantry extends Infantry {
     private int infSpecs = 0;
 
     /**
+     * Firefighting engineers (FIRE_ENGINEERS): the hex this platoon last fought a fire in, the round it did so, and how
+     * many consecutive rounds it has fought that same hex. Used for the cumulative -1 target number per consecutive
+     * turn of firefighting (TO:AuE p.153, minimum target number 3).
+     */
+    private Coords lastFirefightCoords = null;
+    private int lastFirefightRound = -1;
+    private int consecutiveFirefightTurns = 0;
+
+    /**
      * For mechanized VTOL infantry, stores whether the platoon are microlite troops, which need to enter a hex every
      * turn to remain in flight.
      */
     private boolean isMicrolite = false;
+
+    /** Base VTOL MP for a Microlite VTOL platoon (TO:AUE p.136). */
+    private static final int MICROLITE_VTOL_MP = 6;
+    /** Base VTOL MP for a Micro-Copter VTOL platoon (TO:AUE p.136). */
+    private static final int MICRO_COPTER_VTOL_MP = 5;
 
     private boolean pheromoneImpaired = false;
 
@@ -413,73 +439,128 @@ public class ConvInfantry extends Infantry {
         return (infSpecs & spec) > 0;
     }
 
+    /** @return {@code true} if this platoon are firefighting engineers (FIRE_ENGINEERS specialization). */
+    @Override
+    public boolean isFirefighter() {
+        return hasSpecialization(FIRE_ENGINEERS);
+    }
+
+    /**
+     * Number of consecutive prior rounds this platoon has already spent fighting a fire in the given hex, used for the
+     * cumulative firefighting target-number reduction (TO:AuE p.153). Returns 0 when the platoon did not fight this same
+     * hex on the immediately preceding round.
+     *
+     * @param coords the burning hex being targeted
+     * @param round  the current game round
+     *
+     * @return the prior consecutive firefighting streak for this hex, or 0 if the streak is broken
+     */
+    public int getPriorFirefightStreak(Coords coords, int round) {
+        if ((coords != null) && coords.equals(lastFirefightCoords) && (lastFirefightRound == round - 1)) {
+            return consecutiveFirefightTurns;
+        }
+        return 0;
+    }
+
+    /**
+     * Records that this platoon fought a fire in the given hex on the given round, advancing the consecutive-turn
+     * streak. The streak resets when the platoon did not fight this same hex on the immediately preceding round (TO:AR
+     * p.53: a platoon that stops fighting a blaze starts over).
+     *
+     * @param coords the burning hex that was fought
+     * @param round  the current game round
+     */
+    public void recordFirefight(Coords coords, int round) {
+        if ((coords != null) && coords.equals(lastFirefightCoords) && (lastFirefightRound == round - 1)) {
+            consecutiveFirefightTurns++;
+        } else {
+            consecutiveFirefightTurns = 1;
+        }
+        lastFirefightCoords = coords;
+        lastFirefightRound = round;
+    }
+
     public int getSpecializations() {
         return infSpecs;
     }
 
     public void setSpecializations(int spec) {
-        // Equipment for Trench/Fieldwork's Engineers
-        if ((spec & TRENCH_ENGINEERS) > 0 && (infSpecs & TRENCH_ENGINEERS) == 0) {
-            // Add vibro shovels if not already present (may already be loaded from file)
-            boolean hasShovels = getMisc().stream()
-                  .anyMatch(m -> m.getType().hasFlag(MiscType.F_TOOLS) && m.getType()
-                        .hasFlag(MiscTypeFlag.S_VIBRO_SHOVEL));
-            if (!hasShovels) {
+        // Engineer specializations come with their tools; add or remove them with the specialization
+        updateEngineerEquipment(spec, TRENCH_ENGINEERS, MiscTypeFlag.S_VIBRO_SHOVEL, EquipmentTypeLookup.VIBRO_SHOVEL);
+        updateEngineerEquipment(spec, DEMO_ENGINEERS, MiscTypeFlag.S_DEMOLITION_CHARGE,
+              EquipmentTypeLookup.DEMOLITION_CHARGE);
+        updateEngineerEquipment(spec, BRIDGE_ENGINEERS, MiscTypeFlag.S_BRIDGE_KIT,
+              EquipmentTypeLookup.INFANTRY_BRIDGE_KIT);
+
+        // Equipment for Firefighting Engineers: a Fire Extinguisher the platoon selects and fires in place
+        // of a weapon attack (TO:AuE p.153). It carries the F_SOLO_ATTACK flag, so firing it stops the platoon
+        // also firing their small arms that turn. It is a weapon (not a MiscType tool), so it is handled here
+        // rather than by updateEngineerEquipment.
+        if ((spec & FIRE_ENGINEERS) > 0 && (infSpecs & FIRE_ENGINEERS) == 0) {
+            boolean hasExtinguisher = getWeaponList().stream()
+                  .anyMatch(w -> w.getType().hasFlag(WeaponType.F_EXTINGUISHER));
+            if (!hasExtinguisher) {
                 try {
-                    EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.VIBRO_SHOVEL);
-                    addEquipment(shovels, LOC_INFANTRY);
+                    EquipmentType extinguisher = EquipmentType.get("Fire Extinguisher");
+                    addEquipment(extinguisher, LOC_INFANTRY);
                 } catch (Exception e) {
                     logger.error("", e);
                 }
             }
-        } else if ((spec & TRENCH_ENGINEERS) == 0 && (infSpecs & TRENCH_ENGINEERS) > 0) {
-            // Need to remove vibro shovels
+        } else if ((spec & FIRE_ENGINEERS) == 0 && (infSpecs & FIRE_ENGINEERS) > 0) {
+            // Need to remove the Fire Extinguisher
             List<Mounted<?>> eqToRemove = new ArrayList<>();
-            for (Mounted<?> eq : getMisc()) {
-                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasFlag(MiscTypeFlag.S_VIBRO_SHOVEL)) {
+            for (Mounted<?> eq : getWeaponList()) {
+                if (eq.getType().hasFlag(WeaponType.F_EXTINGUISHER)) {
                     eqToRemove.add(eq);
                 }
             }
             getEquipment().removeAll(eqToRemove);
-
-            for (Mounted<?> mounted : eqToRemove) {
-                if (mounted instanceof MiscMounted) {
-                    getMisc().remove(mounted);
-                }
-            }
-        }
-
-        // Equipment for Demolition Engineers
-        if ((spec & DEMO_ENGINEERS) > 0 && (infSpecs & DEMO_ENGINEERS) == 0) {
-            // Add demolition charge if not already present (may already be loaded from file)
-            boolean hasCharge = getMisc().stream()
-                  .anyMatch(m -> m.getType().hasFlag(MiscType.F_TOOLS) && m.getType()
-                        .hasFlag(MiscTypeFlag.S_DEMOLITION_CHARGE));
-            if (!hasCharge) {
-                try {
-                    EquipmentType charge = EquipmentType.get(EquipmentTypeLookup.DEMOLITION_CHARGE);
-                    addEquipment(charge, LOC_INFANTRY);
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            }
-        } else if ((spec & DEMO_ENGINEERS) == 0 && (infSpecs & DEMO_ENGINEERS) > 0) {
-            // Need to remove demolition charges
-            List<Mounted<?>> eqToRemove = new ArrayList<>();
-            for (Mounted<?> eq : getMisc()) {
-                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasFlag(MiscTypeFlag.S_DEMOLITION_CHARGE)) {
-                    eqToRemove.add(eq);
-                }
-            }
-            getEquipment().removeAll(eqToRemove);
-
-            for (Mounted<?> mounted : eqToRemove) {
-                if (mounted instanceof MiscMounted) {
-                    getMisc().remove(mounted);
-                }
-            }
+            getWeaponList().removeAll(eqToRemove);
         }
         infSpecs = spec;
+    }
+
+    /**
+     * Adds or removes the tool equipment tied to an engineer specialization when that specialization is gained or lost.
+     * The tool is only added if not already present (it may already be loaded from the unit file).
+     *
+     * @param newSpecs       the new specialization bitmask being applied
+     * @param specialization the single specialization flag whose equipment is managed
+     * @param toolFlag       the MiscType subtype flag identifying the specialization's tool
+     * @param equipmentName  the EquipmentTypeLookup name of the tool to add
+     */
+    private void updateEngineerEquipment(int newSpecs, int specialization, MiscTypeFlag toolFlag,
+          String equipmentName) {
+        boolean isGainingSpecialization = ((newSpecs & specialization) > 0) && ((infSpecs & specialization) == 0);
+        boolean isLosingSpecialization = ((newSpecs & specialization) == 0) && ((infSpecs & specialization) > 0);
+        if (isGainingSpecialization) {
+            boolean hasTool = getMisc().stream()
+                  .anyMatch(mounted -> mounted.getType().hasFlag(MiscType.F_TOOLS)
+                        && mounted.getType().hasFlag(toolFlag));
+            if (!hasTool) {
+                try {
+                    EquipmentType tool = EquipmentType.get(equipmentName);
+                    addEquipment(tool, LOC_INFANTRY);
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+            }
+        } else if (isLosingSpecialization) {
+            List<Mounted<?>> equipmentToRemove = new ArrayList<>();
+            for (Mounted<?> equipment : getMisc()) {
+                if (equipment.getType().hasFlag(MiscType.F_TOOLS) && equipment.getType().hasFlag(toolFlag)) {
+                    equipmentToRemove.add(equipment);
+                }
+            }
+            getEquipment().removeAll(equipmentToRemove);
+
+            for (Mounted<?> mounted : equipmentToRemove) {
+                if (mounted instanceof MiscMounted) {
+                    getMisc().remove(mounted);
+                }
+            }
+        }
     }
 
     public static String getSpecializationName(int spec) {
@@ -511,6 +592,451 @@ public class ConvInfantry extends Infantry {
         }
         return name.toString();
     }
+
+    // region Bridge building (TO:AUE p.152, Bridge-Building Engineers)
+
+    /** Number of full turns of work needed to raise a bridge, before any extensions from casualties. TO:AUE p.152. */
+    public static final int BRIDGE_BUILD_TURNS = 6;
+
+    /** A Light Bridge (CF 15). The value doubles as its point cost: the budget of 2 allows two per scenario. */
+    public static final int BRIDGE_TYPE_LIGHT = 1;
+
+    /** A Medium Bridge (CF 40). The value doubles as its point cost: the budget of 2 allows one per scenario. */
+    public static final int BRIDGE_TYPE_MEDIUM = 2;
+
+    /** The per-scenario bridge building budget: 2 Light Bridges (1 point each) or 1 Medium Bridge (2 points). */
+    public static final int BRIDGE_BUILD_POINTS = 2;
+
+    private static final int LIGHT_BRIDGE_CF = 15;
+    private static final int MEDIUM_BRIDGE_CF = 40;
+
+    /** Full turns of bridge building completed before the current round; -1 while not building. */
+    private int bridgeBuildTurns = -1;
+
+    /** Turns of work needed to finish the current bridge; starts at {@link #BRIDGE_BUILD_TURNS}, +1 per casualty turn. */
+    private int bridgeBuildRequiredTurns = BRIDGE_BUILD_TURNS;
+
+    /** The hex the bridge is being raised in, or null while not building. */
+    private Coords bridgeTargetCoords = null;
+
+    /** Exits bitmask of the two hexsides the finished bridge will connect. */
+    private int bridgeExits = 0;
+
+    /** The bridge type under construction, {@link #BRIDGE_TYPE_LIGHT} or {@link #BRIDGE_TYPE_MEDIUM}. */
+    private int bridgeType = BRIDGE_TYPE_LIGHT;
+
+    /** Remaining per-scenario bridge building points. */
+    private int bridgeBuildPoints = BRIDGE_BUILD_POINTS;
+
+    /** Trooper count at the last casualty check, used to detect losses that extend the build by a turn. */
+    private int bridgeBuildTroopersSnapshot = 0;
+
+    /** Full turns of dismantling completed before the current round; -1 while not dismantling. */
+    private int bridgeDismantleTurns = -1;
+
+    /** Turns of dismantling needed to fully cancel the build; set to the turns already spent building. */
+    private int bridgeDismantleRequiredTurns = 0;
+
+    /**
+     * {@code true} while a bridge build is paused: the partial progress is held on the platoon but the platoon is
+     * freed (it may move and fight normally) until it returns to the site and resumes. Stored in saves (non-transient).
+     */
+    private boolean bridgeBuildPaused = false;
+
+    /**
+     * {@code true} when the current work is repairing a destroyed section of an existing bridge (the unofficial
+     * bridge-repair option) rather than raising a new bridge. Decides which placement rule runs when the work finishes:
+     * a repaired section matches the surviving span's deck so the bridge reconnects. Stored in saves (non-transient).
+     */
+    private boolean bridgeBuildIsRepair = false;
+
+    /**
+     * @return {@code true} while this platoon is actively raising a bridge (not paused). While actively building, the
+     *       platoon is eligible only in the movement phase (to continue or change the build) and takes no other action.
+     */
+    public boolean isBuildingBridge() {
+        return (bridgeBuildTurns >= 0) && !bridgeBuildPaused;
+    }
+
+    /**
+     * @return {@code true} while a bridge build is paused: progress is held but the platoon is freed to act normally
+     *       and may return to its site to resume. TO:AUE p.152.
+     */
+    public boolean isBridgePaused() {
+        return (bridgeBuildTurns >= 0) && bridgeBuildPaused;
+    }
+
+    /**
+     * @return {@code true} while this platoon is dismantling a cancelled bridge. Dismantling takes as many turns as
+     *       were spent building; on completion the bridge building budget is refunded and the platoon is freed.
+     */
+    public boolean isDismantlingBridge() {
+        return bridgeDismantleTurns >= 0;
+    }
+
+    /**
+     * @return {@code true} while this platoon is actively occupied raising or dismantling a bridge - it takes no other
+     *       action this turn. A <i>paused</i> build is not "busy": the platoon is freed (see {@link #isBridgePaused()}).
+     */
+    public boolean isBusyWithBridge() {
+        return isBuildingBridge() || isDismantlingBridge();
+    }
+
+    /**
+     * @return {@code true} if this platoon has any bridge work in progress - actively building, paused, or dismantling.
+     *       Used to block starting a second bridge and to show the in-progress indicator.
+     */
+    public boolean hasBridgeInProgress() {
+        return (bridgeBuildTurns >= 0) || isDismantlingBridge();
+    }
+
+    /**
+     * @param game     the current game
+     * @param boardId  the board the target hex is on
+     * @param target   the candidate bridge hex
+     * @param excluded a platoon to ignore (the one considering the build), or null
+     *
+     * @return {@code true} if another platoon already has bridge work in progress (building, paused, or dismantling)
+     *       targeting this hex. An in-progress bridge places no terrain until it completes, so this is the only way to
+     *       stop two platoons from raising two bridges in the same hex. TO:AUE p.152.
+     */
+    public static boolean isBridgeTargetClaimed(Game game, int boardId, Coords target, @Nullable Entity excluded) {
+        if (target == null) {
+            return false;
+        }
+        for (Entity entity : game.getEntitiesVector()) {
+            if ((entity != excluded) && (entity instanceof ConvInfantry convInfantry)
+                  && convInfantry.hasBridgeInProgress()
+                  && (convInfantry.getBoardId() == boardId)
+                  && target.equals(convInfantry.getBridgeTargetCoords())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Begins raising a bridge in the given hex. The declaring turn counts as the first full turn of work.
+     *
+     * @param target     the hex the bridge will be raised in; must be adjacent to this platoon
+     * @param exits      exits bitmask of the two hexsides the finished bridge will connect
+     * @param bridgeType {@link #BRIDGE_TYPE_LIGHT} or {@link #BRIDGE_TYPE_MEDIUM}
+     */
+    public void startBridgeBuild(Coords target, int exits, int bridgeType) {
+        bridgeBuildTurns = 0;
+        bridgeBuildRequiredTurns = BRIDGE_BUILD_TURNS;
+        bridgeTargetCoords = target;
+        bridgeExits = exits;
+        this.bridgeType = bridgeType;
+        bridgeBuildIsRepair = false;
+        bridgeBuildTroopersSnapshot = Math.max(getInternal(LOC_INFANTRY), 0);
+        logger.debug("[BuildBridge] {} starts a type-{} bridge at {} (exits bitmask {}, {} troopers, {} turns of "
+                    + "work)", getShortName(), bridgeType, target, exits, bridgeBuildTroopersSnapshot,
+              bridgeBuildRequiredTurns);
+    }
+
+    /**
+     * Begins repairing a single destroyed section of an existing bridge (the unofficial bridge-repair option). The
+     * work, turn count, casualty extension, pause/dismantle/abandon lifecycle and budget cost are identical to a new
+     * bridge build; only the finished section differs - it is placed at the surviving span's deck so the bridge
+     * reconnects. The declaring turn counts as the first full turn of work.
+     *
+     * @param target     the gap hex the section will be rebuilt in; must be adjacent to this platoon
+     * @param exits      exits bitmask of the two hexsides the repaired section will connect
+     * @param bridgeType {@link #BRIDGE_TYPE_LIGHT} or {@link #BRIDGE_TYPE_MEDIUM}
+     */
+    public void startBridgeRepair(Coords target, int exits, int bridgeType) {
+        startBridgeBuild(target, exits, bridgeType);
+        bridgeBuildIsRepair = true;
+        logger.debug("[BridgeRepair] {} starts repairing a type-{} section at {} (exits bitmask {})", getShortName(),
+              bridgeType, target, exits);
+    }
+
+    /** Stops all bridge work, losing any progress. The bridge building budget is not refunded. */
+    public void cancelBridgeBuild() {
+        bridgeBuildTurns = -1;
+        bridgeBuildRequiredTurns = BRIDGE_BUILD_TURNS;
+        bridgeTargetCoords = null;
+        bridgeExits = 0;
+        bridgeType = BRIDGE_TYPE_LIGHT;
+        bridgeBuildTroopersSnapshot = 0;
+        bridgeDismantleTurns = -1;
+        bridgeDismantleRequiredTurns = 0;
+        bridgeBuildPaused = false;
+        bridgeBuildIsRepair = false;
+    }
+
+    /**
+     * Abandons any bridge work in progress immediately: the partial structure is lost this turn and the spent budget
+     * is
+     * <b>not</b> refunded. Unlike dismantling (which takes turns and refunds), abandoning is instant and forfeits the
+     * points. TO:AUE p.152.
+     */
+    public void abandonBridge() {
+        logger.debug("[BuildBridge] {} abandons its bridge at {} - progress lost, {} point(s) forfeit",
+              getShortName(), bridgeTargetCoords, bridgeType);
+        cancelBridgeBuild();
+    }
+
+    /**
+     * Pauses an active bridge build: the partial progress is held on the platoon, which is then freed to move and fight
+     * normally until it returns to the site and resumes. The spent budget stays committed. TO:AUE p.152.
+     */
+    public void pauseBridgeBuild() {
+        bridgeBuildPaused = true;
+        logger.debug("[BuildBridge] {} pauses its type-{} bridge at {} at {} of {} turns; the platoon is freed",
+              getShortName(), bridgeType, bridgeTargetCoords, bridgeBuildTurns, bridgeBuildRequiredTurns);
+    }
+
+    /**
+     * Begins dismantling the partially built bridge instead of finishing it. Dismantling takes as many full turns as
+     * were already spent building (the declaring turn counts as the first). The target hex, exits and type are kept so
+     * the in-progress structure can keep being shown; the spent budget is refunded only once dismantling finishes.
+     */
+    public void startBridgeDismantle() {
+        // Dismantling undoes the turns of work actually banked so far (END-phase completions); at least one turn.
+        bridgeDismantleRequiredTurns = Math.max(1, bridgeBuildTurns);
+        bridgeDismantleTurns = 0;
+        bridgeBuildTurns = -1;
+        logger.debug("[BuildBridge] {} starts dismantling its type-{} bridge at {} ({} turns of dismantling)",
+              getShortName(), bridgeType, bridgeTargetCoords, bridgeDismantleRequiredTurns);
+    }
+
+    /**
+     * Resumes building, from either a paused build or a dismantling. From a pause, the held progress simply continues.
+     * From a dismantling, the structure still standing (the dismantle countback position) becomes the build's
+     * completed-turn total, so building resumes from where the dismantling left off. Either way the trooper snapshot is
+     * refreshed so casualty extensions resume cleanly, and the bridge site, exits, type and spent budget are unchanged.
+     * TO:AUE p.152.
+     */
+    public void resumeBridgeBuild() {
+        if (isDismantlingBridge()) {
+            bridgeBuildTurns = getBridgeDismantleRemaining();
+            bridgeDismantleTurns = -1;
+            bridgeDismantleRequiredTurns = 0;
+        }
+        bridgeBuildPaused = false;
+        bridgeBuildTroopersSnapshot = Math.max(getInternal(LOC_INFANTRY), 0);
+        logger.debug("[BuildBridge] {} resumes building its type-{} bridge at {} from {} of {} turns",
+              getShortName(), bridgeType, bridgeTargetCoords, bridgeBuildTurns, bridgeBuildRequiredTurns);
+    }
+
+    /**
+     * Banks one full turn of bridge building (called once per round from the END phase, where the work is actually
+     * completed) and returns the new completed-turn total.
+     *
+     * @return the number of full turns of work now completed
+     */
+    public int bankBridgeBuildTurn() {
+        bridgeBuildTurns++;
+        return bridgeBuildTurns;
+    }
+
+    /**
+     * Banks one full turn of bridge dismantling (called once per round from the END phase) and returns the new
+     * completed-turn total.
+     *
+     * @return the number of full turns of dismantling now completed
+     */
+    public int bankBridgeDismantleTurn() {
+        bridgeDismantleTurns++;
+        return bridgeDismantleTurns;
+    }
+
+    /**
+     * @return the turns of built structure still standing while dismantling: the work banked at cancel time counts back
+     *       down to zero. Shown on the same {@code N / build-required} scale as the build (e.g. cancel at 4/6 -> the
+     *       dismantling counts 4/6, 3/6, 2/6, 1/6).
+     */
+    public int getBridgeDismantleRemaining() {
+        return Math.max(0, bridgeDismantleRequiredTurns - bridgeDismantleTurns);
+    }
+
+    /** Refunds the points spent on the cancelled bridge, capped at the per-scenario budget. */
+    public void refundBridgeBuildPoints() {
+        bridgeBuildPoints = Math.min(BRIDGE_BUILD_POINTS, bridgeBuildPoints + bridgeType);
+        logger.debug("[BuildBridge] {} refunded {} bridge building point(s); budget now {}", getShortName(),
+              bridgeType, bridgeBuildPoints);
+    }
+
+    /** @return full turns of dismantling completed so far before the current round, or -1 while not dismantling. */
+    public int getBridgeDismantleTurns() {
+        return bridgeDismantleTurns;
+    }
+
+    /** @return total turns of dismantling needed to fully cancel the build. */
+    public int getBridgeDismantleRequiredTurns() {
+        return bridgeDismantleRequiredTurns;
+    }
+
+    /**
+     * @return The number of full turns of bridge building completed before the current round, or -1 while not building.
+     *       The current (in-progress) round is not included.
+     */
+    public int getBridgeBuildTurns() {
+        return bridgeBuildTurns;
+    }
+
+    /**
+     * @return The total turns of work needed to finish the current bridge: {@link #BRIDGE_BUILD_TURNS} plus one for
+     *       each turn the platoon took casualties while building. TO:AUE p.152.
+     */
+    public int getBridgeBuildRequiredTurns() {
+        return bridgeBuildRequiredTurns;
+    }
+
+    /**
+     * @return The hex the bridge is being raised in, or null while not building.
+     */
+    public @Nullable Coords getBridgeTargetCoords() {
+        return bridgeTargetCoords;
+    }
+
+    /**
+     * @return The exits bitmask of the two hexsides the finished bridge will connect.
+     */
+    public int getBridgeExits() {
+        return bridgeExits;
+    }
+
+    /**
+     * @return The bridge type under construction, {@link #BRIDGE_TYPE_LIGHT} or {@link #BRIDGE_TYPE_MEDIUM}.
+     */
+    public int getBridgeType() {
+        return bridgeType;
+    }
+
+    /**
+     * @return {@code true} if the current work is repairing a destroyed section of an existing bridge (unofficial
+     *       bridge-repair option) rather than raising a new bridge. Decides the placement rule used when the work
+     *       finishes.
+     */
+    public boolean isBridgeBuildRepair() {
+        return bridgeBuildIsRepair;
+    }
+
+    /**
+     * @return The remaining per-scenario bridge building points (Light Bridge costs 1, Medium Bridge costs 2).
+     */
+    public int getBridgeBuildPoints() {
+        return bridgeBuildPoints;
+    }
+
+    /**
+     * Spends bridge building points when a build begins. The cost equals the bridge type value.
+     *
+     * @param bridgeType {@link #BRIDGE_TYPE_LIGHT} or {@link #BRIDGE_TYPE_MEDIUM}
+     */
+    public void spendBridgeBuildPoints(int bridgeType) {
+        bridgeBuildPoints = Math.max(0, bridgeBuildPoints - bridgeType);
+    }
+
+    /**
+     * @param bridgeType {@link #BRIDGE_TYPE_LIGHT} or {@link #BRIDGE_TYPE_MEDIUM}
+     *
+     * @return {@code true} if the remaining budget covers a bridge of the given type.
+     */
+    public boolean canAffordBridge(int bridgeType) {
+        return bridgeBuildPoints >= bridgeType;
+    }
+
+    /**
+     * @return {@code true} if this platoon is a Bridge-Building Engineer unit that still carries its bridge kit, has
+     *       budget left, and is not already raising a bridge. Does not check the game option or terrain.
+     */
+    public boolean canStartBridgeBuild() {
+        return hasSpecialization(BRIDGE_ENGINEERS) && hasBridgeKit() && canAffordBridge(BRIDGE_TYPE_LIGHT)
+              && !hasBridgeInProgress();
+    }
+
+    /**
+     * @return {@code true} if this platoon carries an Infantry Bridge Kit.
+     */
+    public boolean hasBridgeKit() {
+        return getMisc().stream()
+              .anyMatch(mounted -> mounted.getType().hasFlag(MiscType.F_TOOLS)
+                    && mounted.getType().hasFlag(MiscTypeFlag.S_BRIDGE_KIT));
+    }
+
+    /**
+     * @return {@code true} while this platoon is adjacent to its bridge construction site. A platoon that is displaced,
+     *       transported or destroyed is no longer adjacent and abandons the build.
+     */
+    public boolean isAdjacentToBridgeSite() {
+        return (getPosition() != null) && (bridgeTargetCoords != null)
+              && (getPosition().distance(bridgeTargetCoords) == 1);
+    }
+
+    /**
+     * Checks whether this platoon lost troopers since the last check; a turn with casualties extends the build by one
+     * turn, regardless of how many separate attacks caused them. TO:AUE p.152. Called once per turn from the END phase.
+     *
+     * @return {@code true} if casualties extended the build this turn.
+     */
+    public boolean updateBridgeBuildCasualties() {
+        if (!isBuildingBridge()) {
+            return false;
+        }
+        int currentTroopers = Math.max(getInternal(LOC_INFANTRY), 0);
+        boolean tookCasualties = currentTroopers < bridgeBuildTroopersSnapshot;
+        if (tookCasualties) {
+            bridgeBuildRequiredTurns++;
+            logger.debug("[BuildBridge] {} took casualties while building ({} -> {} troopers); the build now "
+                        + "requires {} turns", getShortName(), bridgeBuildTroopersSnapshot, currentTroopers,
+                  bridgeBuildRequiredTurns);
+        }
+        bridgeBuildTroopersSnapshot = currentTroopers;
+        return tookCasualties;
+    }
+
+    /**
+     * @param bridgeType  the bridge type, {@link #BRIDGE_TYPE_LIGHT} or {@link #BRIDGE_TYPE_MEDIUM}
+     * @param isOverWater {@code true} if the bridge is being raised over a water hex (depth 1+)
+     *
+     * @return The Construction Factor of a bridge raised by Bridge-Building Engineers: 15 for a Light Bridge, 40 for a
+     *       Medium Bridge, doubled when built over water. TO:AUE p.152.
+     */
+    public static int getBuiltBridgeCF(int bridgeType, boolean isOverWater) {
+        int constructionFactor = (bridgeType == BRIDGE_TYPE_MEDIUM) ? MEDIUM_BRIDGE_CF : LIGHT_BRIDGE_CF;
+        return isOverWater ? constructionFactor * 2 : constructionFactor;
+    }
+
+    @Override
+    public void newRound(int roundNumber) {
+        // Turns of work are banked once per round in the END phase (TWGameManager.checkBuildBridges), not here, so the
+        // counter reflects turns actually completed. newRound (INITIATIVE phase) only abandons the work if the platoon
+        // was displaced or transported away from its site since the END phase.
+        if (isBuildingBridge() && !isAdjacentToBridgeSite()) {
+            logger.debug("[BuildBridge] {} abandons its bridge build: no longer adjacent to {} (position {})",
+                  getShortName(), bridgeTargetCoords, getPosition());
+            cancelBridgeBuild();
+        } else if (isDismantlingBridge() && !isAdjacentToBridgeSite()) {
+            // Displacement while dismantling abandons the work; the partial bridge is lost and no points are refunded.
+            logger.debug("[BuildBridge] {} abandons its bridge dismantling: no longer adjacent to {} (position {})",
+                  getShortName(), bridgeTargetCoords, getPosition());
+            cancelBridgeBuild();
+        } else if (isBuildingBridge()) {
+            logger.debug("[BuildBridge] {} newRound (round {}): {} of {} build turns banked",
+                  getShortName(), roundNumber, bridgeBuildTurns, bridgeBuildRequiredTurns);
+        } else if (isDismantlingBridge()) {
+            logger.debug("[BuildBridge] {} newRound (round {}): {} of {} dismantle turns banked",
+                  getShortName(), roundNumber, bridgeDismantleTurns, bridgeDismantleRequiredTurns);
+        }
+        super.newRound(roundNumber);
+    }
+
+    @Override
+    public boolean isEligibleFor(GamePhase phase) {
+        // A platoon raising or dismantling a bridge takes no other action, but stays eligible in the movement phase so
+        // the player can keep working, cancel the build, or start dismantling. Building/dismantling progresses and
+        // completes in END phase processing. TO:AUE p.152.
+        if (isBusyWithBridge()) {
+            return phase.isMovement() && super.isEligibleFor(phase);
+        }
+        return super.isEligibleFor(phase);
+    }
+
+    // endregion
 
     /**
      * Returns the movement mode for this infantry unit. For powered flight infantry (IO p.85), this returns VTOL when
@@ -791,6 +1317,70 @@ public class ConvInfantry extends Infantry {
 
     public InfantryWeapon getSecondaryWeapon() {
         return secondaryWeapon;
+    }
+
+    /**
+     * Sets the platoon's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing). All troopers carry the
+     * same Disposable Weapon. This only records the weapon type; the corresponding fireable {@link
+     * megamek.common.equipment.WeaponMounted} is added to {@code LOC_INFANTRY} by the loader/editor.
+     *
+     * @param weapon the Disposable Weapon, or null to clear it
+     */
+    public void setDisposableWeapon(@Nullable InfantryWeapon weapon) {
+        disposableWeapon = weapon;
+        disposableName = (weapon == null) ? null : weapon.getInternalName();
+    }
+
+    /**
+     * @return the platoon's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing), or null if it has none
+     */
+    @Nullable
+    public InfantryWeapon getDisposableWeapon() {
+        // Reconstruct the type from its name after client/server serialization dropped the transient reference.
+        if ((disposableWeapon == null) && (disposableName != null)
+              && (EquipmentType.get(disposableName) instanceof InfantryWeapon infantryWeapon)) {
+            disposableWeapon = infantryWeapon;
+        }
+        return disposableWeapon;
+    }
+
+    /**
+     * @return {@code true} if this platoon carries a one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth
+     *       Printing)
+     */
+    public boolean hasDisposableWeapon() {
+        return getDisposableWeapon() != null;
+    }
+
+    /**
+     * Sets the platoon's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) and synchronizes the
+     * corresponding fireable mount. Any previously-equipped Disposable Weapon mount is removed first; pass null to
+     * remove the Disposable Weapon entirely. Use this (rather than {@link #setDisposableWeapon}) when changing the
+     * loadout of an already-built platoon, e.g. from the lobby configuration dialog.
+     *
+     * @param weapon the Disposable Weapon to equip, or null to remove it
+     */
+    public void equipDisposableWeapon(@Nullable InfantryWeapon weapon) {
+        List<WeaponMounted> existingDisposableMounts = weaponList.stream()
+              .filter(WeaponMounted::isDisposableWeapon)
+              .toList();
+        for (WeaponMounted disposableMount : existingDisposableMounts) {
+            equipmentList.remove(disposableMount);
+            weaponList.remove(disposableMount);
+            totalWeaponList.remove(disposableMount);
+        }
+
+        setDisposableWeapon(weapon);
+
+        if (weapon != null) {
+            try {
+                WeaponMounted disposableMount = (WeaponMounted) Mounted.createMounted(this, weapon);
+                disposableMount.setDisposableWeapon(true);
+                addEquipment(disposableMount, LOC_INFANTRY, false);
+            } catch (LocationFullException ex) {
+                logger.error("Could not equip Disposable Weapon {}", weapon.getName(), ex);
+            }
+        }
     }
 
     public void setSecondaryWeaponsPerSquad(int n) {
@@ -1184,11 +1774,7 @@ public class ConvInfantry extends Infantry {
                 setSpecializations(getSpecializations() | SCUBA);
                 break;
             case VTOL:
-                if (hasMicrolite()) {
-                    setOriginalJumpMP(6);
-                } else {
-                    setOriginalJumpMP(5);
-                }
+                setOriginalJumpMP(hasMicrolite() ? MICROLITE_VTOL_MP : MICRO_COPTER_VTOL_MP);
                 setOriginalWalkMP(1);
                 break;
             case INF_UMU:
@@ -1274,6 +1860,11 @@ public class ConvInfantry extends Infantry {
 
     public void setMicrolite(boolean microlite) {
         this.isMicrolite = microlite;
+        // Keep VTOL MP in sync when the unit is already in VTOL mode, so the MP is correct no matter
+        // whether the microlite flag is set before or after the movement mode (TO:AUE p.136).
+        if (getMovementMode() == EntityMovementMode.VTOL) {
+            setOriginalJumpMP(microlite ? MICROLITE_VTOL_MP : MICRO_COPTER_VTOL_MP);
+        }
     }
 
     public void setMount(InfantryMount mount) {

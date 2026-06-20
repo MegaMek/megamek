@@ -68,7 +68,7 @@ public class InfantryPistolWhiteDwarfLaserPistolWeapon extends InfantryWeapon {
         cost = 250;
         bv = 0.02;
         tonnage = .00025;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_DISPOSABLE);
         infantryDamage = 0.02;
         infantryRange = 0;
         rulesRefs = "273, TM";

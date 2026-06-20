@@ -113,6 +113,9 @@ public final class Player extends TurnOrdered {
     private int numMfInferno = 0;
     private int numMfEMP = 0;
 
+    // number of fortified hexes the player may place during the minefield deployment phase (TO:AUE p.153)
+    private int numFortifiedHexes = 0;
+
     // hexes that are automatically hit by artillery
     private List<BoardLocation> artyAutoHitHexes = new ArrayList<>();
 
@@ -185,6 +188,7 @@ public final class Player extends TurnOrdered {
               (numMfActive > 0) ||
               (numMfInferno > 0) ||
               (numMfEMP > 0) ||
+              (numFortifiedHexes > 0) ||
               !getGroundObjectsToPlace().isEmpty();
     }
 
@@ -234,6 +238,18 @@ public final class Player extends TurnOrdered {
 
     public int getNbrMFEMP() {
         return numMfEMP;
+    }
+
+    /**
+     * @return the number of fortified hexes this player may place during the minefield deployment phase
+     *       (Trench/Fieldworks Engineers, TO:AUE p.153)
+     */
+    public int getNbrFortifiedHexes() {
+        return numFortifiedHexes;
+    }
+
+    public void setNbrFortifiedHexes(int nbrFortifiedHexes) {
+        numFortifiedHexes = nbrFortifiedHexes;
     }
 
     public Camouflage getCamouflage() {

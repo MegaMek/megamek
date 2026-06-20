@@ -48,7 +48,10 @@ import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.LosEffects;
 import megamek.common.ManeuverType;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Board;
+import megamek.common.board.BridgeConstruction;
 import megamek.common.board.Coords;
 import megamek.common.board.FloorTarget;
 import megamek.common.compute.Compute;
@@ -88,6 +91,15 @@ public class MoveStep implements Serializable {
      * arm/right arm, vehicle body, etc.)
      */
     public static final int CARGO_LOCATION_KEY = 1;
+
+    /**
+     * Additional int data keys for a BUILD_BRIDGE step (keys are scoped per step type): the target hex coordinates, the
+     * exits bitmask of the two connected hexsides, and the bridge type (light/medium).
+     */
+    public static final int BRIDGE_TARGET_X_KEY = 0;
+    public static final int BRIDGE_TARGET_Y_KEY = 1;
+    public static final int BRIDGE_EXITS_KEY = 2;
+    public static final int BRIDGE_TYPE_KEY = 3;
 
     private final MoveStepType type;
     private int targetId = Entity.NONE;
@@ -380,6 +392,24 @@ public class MoveStep implements Serializable {
         newStep.boardId = finalBoardId;
         newStep.position = finalPosition;
         return newStep;
+    }
+
+    /**
+     * Determines whether a hex allows digging in or building a fortified hex. Water, pavement, building and road hexes
+     * are excluded, as is an already-fortified hex (TO:AR p.106 / TO:AUE p.153). Shared by the move-step legality check
+     * and the UI so both agree on the terrain rule.
+     *
+     * @param hex the hex to test, or null
+     *
+     * @return {@code true} if a unit may dig in or fortify in the given hex
+     */
+    public static boolean isFortifiableTerrain(@Nullable Hex hex) {
+        return (hex != null)
+              && !hex.containsTerrain(Terrains.WATER)
+              && !hex.containsTerrain(Terrains.PAVEMENT)
+              && !hex.containsTerrain(Terrains.FORTIFIED)
+              && !hex.containsTerrain(Terrains.BUILDING)
+              && !hex.containsTerrain(Terrains.ROAD);
     }
 
     @Override
@@ -762,6 +792,30 @@ public class MoveStep implements Serializable {
     }
 
     /**
+     * A vehicle that is hull-down in a fortified ("infantry-built") hex cannot change facing while remaining in the
+     * hex; per TO:AR p.19 it must exit, turn, then re-enter. An in-place facing change therefore forfeits the hull-down
+     * cover. Meks use the partial-cover hull-down rules and are unaffected.
+     *
+     * @param game   the current {@link Game}
+     * @param entity the moving entity
+     *
+     * @return true if this step is an in-place facing change that should drop the entity's hull-down state
+     */
+    private boolean losesHullDownToInPlaceTurn(final Game game, final Entity entity) {
+        boolean isTurnStep = (type == MoveStepType.TURN_LEFT) || (type == MoveStepType.TURN_RIGHT);
+        if (!isTurnStep || !isHullDown()) {
+            return false;
+        }
+        boolean isVehicleHullDown = (entity instanceof Tank)
+              || ((entity instanceof QuadVee) && (entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE));
+        if (!isVehicleHullDown) {
+            return false;
+        }
+        Hex currentHex = game.getBoard(boardId).getHex(getPosition());
+        return (currentHex != null) && currentHex.containsTerrain(Terrains.FORTIFIED);
+    }
+
+    /**
      * Compile the static move data for this step.
      *
      * @param game   The current {@link Game}
@@ -786,11 +840,16 @@ public class MoveStep implements Serializable {
             movementMode = prev.getMovementMode();
         }
 
-        // Tanks can just drive out of hull-down. If we're a tank, and we moved
-        // then we are no longer hull-down.
+        // Tanks can just drive out of hull-down: if a vehicle moved, it is no longer hull-down. A vehicle that is
+        // hull-down in a fortified ("infantry-built") hex also forfeits cover when it changes facing in place,
+        // since RAW requires it to exit, turn, then re-enter rather than turning within the hex (TO:AR p.19).
         if ((entity instanceof Tank ||
               (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) &&
               (distance > 0)) {
+            setHullDown(false);
+        } else if (losesHullDownToInPlaceTurn(game, entity)) {
+            LOGGER.debug("[HullDown] {}: hull-down lost - a vehicle cannot change facing within a fortified hex; "
+                  + "it must exit, turn, then re-enter (TO:AR p.19)", entity.getDisplayName());
             setHullDown(false);
         }
 
@@ -1552,6 +1611,95 @@ public class MoveStep implements Serializable {
     }
 
     /**
+     * @param game   the current game
+     * @param entity the moving entity
+     * @param curPos the position of the entity when this step begins, or null if unknown
+     *
+     * @return {@code true} if this BUILD_BRIDGE step is legal: the Bridge-Building Engineers game option is active, the
+     *       unit is an engineer platoon with its bridge kit and enough remaining budget for the chosen bridge type, and
+     *       the step's target hex is adjacent and a valid bridge site. TO:AUE p.152.
+     */
+    private boolean isValidBridgeBuildStep(Game game, Entity entity, @Nullable Coords curPos) {
+        // Failures are logged at DEBUG: a rejected BUILD_BRIDGE step silently becomes an illegal move, so the log
+        // is the only way to see why a declared build was refused
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS)) {
+            LOGGER.debug("[BuildBridge] step rejected: game option is off");
+            return false;
+        }
+        if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.canStartBridgeBuild()
+              || !convInfantry.canAffordBridge(getBridgeType())) {
+            LOGGER.debug("[BuildBridge] step rejected for {}: not an eligible engineer platoon "
+                  + "(specialization, kit, budget or an active build)", entity.getShortName());
+            return false;
+        }
+        Coords target = getBridgeTargetCoords();
+        if ((target == null) || (curPos == null) || (curPos.distance(target) != 1)) {
+            LOGGER.debug("[BuildBridge] step rejected for {}: target {} is not adjacent to {}",
+                  entity.getShortName(), target, curPos);
+            return false;
+        }
+        Board board = game.getBoard(boardId);
+        int exits = getBridgeExits();
+        boolean isFreshSite = BridgeConstruction.isValidBridgeSite(board, target, exits);
+        // Repairing a destroyed section is an unofficial option that also requires the base bridge-building option
+        // (already checked above). A repairable gap is a legal build target even though it is not a fresh site.
+        boolean repairAllowed = game.getOptions().booleanOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
+        boolean isRepairSite = repairAllowed && BridgeConstruction.isBridgeRepairSite(board, target, exits);
+        if (!isFreshSite && !isRepairSite) {
+            LOGGER.debug("[BuildBridge] step rejected for {}: {} with exits bitmask {} is neither a valid bridge site "
+                        + "nor a repairable gap (repair option {})", entity.getShortName(), target, exits,
+                  repairAllowed ? "on" : "off");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param hex              the hex to check, or null (returns {@code false})
+     * @param assumedElevation the elevation of the unit in that hex
+     *
+     * @return {@code true} if a unit at the given elevation in the given hex stands on top of a bridge deck. Such a
+     *       unit is on the bridge, not in the terrain below it, so the underlying terrain's movement restrictions do
+     *       not apply to it (TO:AR p.115).
+     */
+    private static boolean isOnBridgeDeck(@Nullable Hex hex, int assumedElevation) {
+        return (hex != null) && hex.containsTerrain(Terrains.BRIDGE)
+              && (assumedElevation == hex.terrainLevel(Terrains.BRIDGE_ELEV));
+    }
+
+    /**
+     * @param hex the hex to check, or null
+     *
+     * @return {@code true} if the hex holds a bridge that a ground unit must use the bridge to cross - one over water,
+     *       or one whose deck is raised above the hex. A bridge flush with dry ground acts as a road and is not
+     *       constrained to its exits, so it returns {@code false}.
+     */
+    private static boolean isRealBridgeSpan(@Nullable Hex hex) {
+        return (hex != null) && hex.containsTerrain(Terrains.BRIDGE)
+              && ((hex.terrainLevel(Terrains.WATER) > 0) || (hex.terrainLevel(Terrains.BRIDGE_ELEV) > 0));
+    }
+
+    /**
+     * @param entity    the moving entity
+     * @param bridgeHex the bridge hex being entered or left, or null
+     * @param elevation the entity's elevation in {@code bridgeHex}
+     * @param hexPos    the coordinates of {@code bridgeHex}
+     * @param otherPos  the hex the entity is moving to or from across the bridge edge
+     *
+     * @return {@code true} if the entity would cross the edge between {@code hexPos} and {@code otherPos} while
+     *       standing on a real bridge deck it must use (one over water or raised above the hex) at a hexside that is
+     *       not one of the bridge's exits - i.e. boarding or leaving the bridge over its side rather than at an end
+     *       (TO:AR p.115). A unit that could traverse the terrain under the bridge is not bound to its exits.
+     */
+    private boolean crossesBridgeDeckOffExit(Entity entity, @Nullable Hex bridgeHex, int elevation, Coords hexPos,
+          Coords otherPos) {
+        return isRealBridgeSpan(bridgeHex)
+              && (elevation == bridgeHex.terrainLevel(Terrains.BRIDGE_ELEV))
+              && entity.isLocationProhibited(hexPos, boardId, elevation)
+              && !bridgeHex.containsTerrainExit(Terrains.BRIDGE, hexPos.direction(otherPos));
+    }
+
+    /**
      * This function checks that a step is legal. And adjust the movement type. This only checks for things that can
      * make this step by itself illegal. Things that can make a step illegal as part of a movement path are considered
      * in MovePath.addStep.
@@ -1847,6 +1995,16 @@ public class MoveStep implements Serializable {
                   stepType, prev.isClimbing, entity.isClimbing(), curPos, elevation, prev.getFacing());
         }
 
+        // A platoon actively raising or dismantling a bridge may take no other action at all (TO:AUE p.152): it can
+        // only keep working (no step) or declare one of the bridge actions (pause/cancel/abandon/resume) - it may not
+        // move, and not even turn in place. A *paused* build does not lock the platoon: it is freed to move and fight.
+        if ((entity instanceof ConvInfantry bridgeWorker) && bridgeWorker.isBusyWithBridge()
+              && (type != MoveStepType.CANCEL_BRIDGE) && (type != MoveStepType.RESUME_BRIDGE)
+              && (type != MoveStepType.PAUSE_BRIDGE) && (type != MoveStepType.ABANDON_BRIDGE)) {
+            movementType = EntityMovementType.MOVE_ILLEGAL;
+            return;
+        }
+
         if (prev.isDiggingIn || prev.isHittingDeck) {
             isDiggingIn = prev.isDiggingIn;
             isHittingDeck = prev.isHittingDeck;
@@ -1856,25 +2014,75 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_NONE;
         } else if ((type == MoveStepType.DIG_IN) || (type == MoveStepType.FORTIFY)) {
             if ((!isInfantry && !isTank) || !isFirstStep()) {
+                LOGGER.debug("[Fortify] {}: {} illegal - only infantry or vehicles, and only as the first/sole action",
+                      entity.getDisplayName(), type);
                 return; // can't dig in
+            }
+
+            // Building a fortified hex (FORTIFY) requires fieldworks-capable equipment - bulldozer, backhoe,
+            // vibro-shovel or equivalent (TO:AUE p.153). Plain self digging-in (DIG_IN) does not.
+            if ((type == MoveStepType.FORTIFY) && !entity.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
+                LOGGER.debug("[Fortify] {}: fortify illegal - no fieldworks-capable equipment (F_TRENCH_CAPABLE)",
+                      entity.getDisplayName());
+                return;
             }
 
             if (isInfantry) {
                 Infantry inf = (Infantry) entity;
                 if ((inf.getDugIn() != Infantry.DUG_IN_NONE) && (inf.getDugIn() != Infantry.DUG_IN_COMPLETE)) {
+                    LOGGER.debug("[Fortify] {}: {} illegal - already dug in (stage {})",
+                          entity.getDisplayName(), type, inf.getDugIn());
                     return; // Already dug in
                 }
             }
 
-            if (game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.PAVEMENT) ||
-                  game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.FORTIFIED) ||
-                  game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.BUILDING) ||
-                  game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.ROAD)) {
-                // already fortified - pointless, or terrain is illegal for
-                // digging in
+            // A fortified hex may not be created in - and a unit may not dig into - water, pavement, building
+            // or road hexes (TO:AR p.106 / TO:AUE p.153). An already-fortified hex is excluded too (no gain).
+            if (!isFortifiableTerrain(game.getBoard(boardId).getHex(curPos))) {
+                LOGGER.debug(
+                      "[Fortify] {}: {} illegal - terrain at {} is water/pavement/building/road or already fortified",
+                      entity.getDisplayName(),
+                      type,
+                      curPos);
                 return;
             }
             isDiggingIn = true;
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.BUILD_BRIDGE) {
+            // Raising a bridge must be the platoon's only action for the turn, TO:AUE p.152
+            if (!isFirstStep() || !isValidBridgeBuildStep(game, entity, curPos)) {
+                return;
+            }
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.CANCEL_BRIDGE) {
+            // A platoon may dismantle its in-progress bridge for a refund; legal only while actively building.
+            if (!isFirstStep() || !(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBuildingBridge()) {
+                return;
+            }
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.PAUSE_BRIDGE) {
+            // A platoon may pause an active build to free itself and return later; legal only while actively building.
+            if (!isFirstStep() || !(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBuildingBridge()) {
+                return;
+            }
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.RESUME_BRIDGE) {
+            // A platoon may reverse a dismantling, or resume a paused build (must be back adjacent to its site).
+            if (!isFirstStep() || !(entity instanceof ConvInfantry convInfantry)) {
+                return;
+            }
+            boolean canResume = convInfantry.isDismantlingBridge()
+                  || (convInfantry.isBridgePaused() && convInfantry.isAdjacentToBridgeSite());
+            if (!canResume) {
+                return;
+            }
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if (type == MoveStepType.ABANDON_BRIDGE) {
+            // A platoon may abandon any bridge work in progress (building, paused, or dismantling) - instant, no refund.
+            if (!isFirstStep() || !(entity instanceof ConvInfantry convInfantry)
+                  || !convInfantry.hasBridgeInProgress()) {
+                return;
+            }
             movementType = EntityMovementType.MOVE_NONE;
         } else if (type == MoveStepType.HIT_THE_DECK) {
             // Hitting the deck (TO:AR p.106) may only be the unit's sole action and is allowed in any terrain.
@@ -2600,6 +2808,11 @@ public class MoveStep implements Serializable {
                 // Tanks and QuadVees ending movement in vehicle mode require a fortified hex.
                 if (!(game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.FORTIFIED))) {
                     movementType = EntityMovementType.MOVE_ILLEGAL;
+                } else if ((entity instanceof Tank tank) && tank.isLargeVehicleForHullDown()) {
+                    // Large Vehicles cannot use infantry-built (fortified) hexes for cover (TO:AR p.19).
+                    LOGGER.debug("[HullDown] {}: HULL_DOWN step illegal - Large Vehicles cannot use infantry-built "
+                          + "(fortified) hexes for cover", entity.getDisplayName());
+                    movementType = EntityMovementType.MOVE_ILLEGAL;
                 }
             } else if (entity.isGyroDestroyed()) {
                 // Meks need to check for valid Gyros
@@ -2638,6 +2851,28 @@ public class MoveStep implements Serializable {
               (getElevation() + entity.getHeight() >=
                     game.getBoard(boardId).getHex(curPos).terrainLevel(Terrains.BRIDGE_ELEV))) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
+        }
+
+        // A unit on a bridge deck enters and leaves only through the bridge's connected hexsides (its exits): you
+        // use a bridge at its ends, not over its sides (TO:AR p.115). This covers bridges flush with the bank
+        // level - including engineer bridges over water (TO:AUE p.152) - which the climb-from-below check above misses.
+        // Bridges flush with dry ground (a bridge acting as a road) are exempt, preserving road-segment movement.
+        if (!isFirstStep() &&
+              !curPos.equals(lastPos) &&
+              (movementType != EntityMovementType.MOVE_JUMP) &&
+              (entity.getMovementMode() != EntityMovementMode.VTOL) &&
+              ((entity.getMovementMode() != EntityMovementMode.WIGE) || (getClearance() == 0))) {
+            Hex bridgeDestHex = game.getBoard(boardId).getHex(curPos);
+            Hex bridgeSrcHex = game.getBoard(boardId).getHex(lastPos);
+            // Only units that cannot traverse the terrain under the bridge are bound to use its exits; a hovercraft
+            // or naval unit crossing the water is not on the bridge and moves freely.
+            boolean leavingBridgeDeckOffExit = crossesBridgeDeckOffExit(entity, bridgeSrcHex, prev.getElevation(),
+                  lastPos, curPos);
+            boolean enteringBridgeDeckOffExit = crossesBridgeDeckOffExit(entity, bridgeDestHex, getElevation(),
+                  curPos, lastPos);
+            if (leavingBridgeDeckOffExit || enteringBridgeDeckOffExit) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            }
         }
 
         // super heavy meks can't climb on buildings
@@ -3735,7 +3970,12 @@ public class MoveStep implements Serializable {
         // restrictions are lifted when moving along a road or bridge,
         // or when flying. Naval movement does not have the pavement
         // exemption.
+        // A unit at bridge deck elevation is standing on the bridge, not in the terrain below it, so the
+        // restrictions of the underlying terrain do not apply (TO:AR p.115). This also covers bridges without
+        // approach roads, such as those raised by Bridge-Building Engineers (TO:AUE p.152), where the step onto the
+        // bridge does not qualify as a pavement step.
         if (entity.isLocationProhibited(dest, boardId, getElevation())
+              && !isOnBridgeDeck(game.getBoard(boardId).getHex(dest), getElevation())
               // Units in prohibited terran should still be able to unload/disconnect
               &&
               (type != MoveStepType.UNLOAD) &&
@@ -3845,6 +4085,9 @@ public class MoveStep implements Serializable {
               &&
               (type != MoveStepType.CONVERT_MODE) &&
               entity.isLocationProhibited(src, boardId, srcEl) &&
+              // Standing on a bridge deck is not standing in the prohibited terrain below it (TO:AR p.115), so
+              // a unit on a bridge without approach roads may still leave it
+              !isOnBridgeDeck(game.getBoard(boardId).getHex(src), srcEl) &&
               !isPavementStep()) {
             return false;
         }
@@ -4270,6 +4513,34 @@ public class MoveStep implements Serializable {
 
     public Minefield getMinefield() {
         return mf;
+    }
+
+    /**
+     * @return The hex a BUILD_BRIDGE step raises its bridge in, from the step's additional data, or null if the step
+     *       does not carry target coordinates.
+     */
+    public @Nullable Coords getBridgeTargetCoords() {
+        Integer targetX = additionalData.get(BRIDGE_TARGET_X_KEY);
+        Integer targetY = additionalData.get(BRIDGE_TARGET_Y_KEY);
+        if ((targetX == null) || (targetY == null)) {
+            return null;
+        }
+        return new Coords(targetX, targetY);
+    }
+
+    /**
+     * @return The exits bitmask of the two hexsides the bridge of a BUILD_BRIDGE step will connect.
+     */
+    public int getBridgeExits() {
+        return additionalData.getOrDefault(BRIDGE_EXITS_KEY, 0);
+    }
+
+    /**
+     * @return The bridge type of a BUILD_BRIDGE step, {@link ConvInfantry#BRIDGE_TYPE_LIGHT} or
+     *       {@link ConvInfantry#BRIDGE_TYPE_MEDIUM}.
+     */
+    public int getBridgeType() {
+        return additionalData.getOrDefault(BRIDGE_TYPE_KEY, ConvInfantry.BRIDGE_TYPE_LIGHT);
     }
 
     /**

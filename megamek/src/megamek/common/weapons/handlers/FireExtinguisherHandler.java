@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,15 +37,19 @@ package megamek.common.weapons.handlers;
 import java.io.Serial;
 import java.util.Vector;
 
+import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Board;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -53,6 +57,8 @@ import megamek.server.totalWarfare.TWGameManager;
  * @since Sep 23, 2004
  */
 public class FireExtinguisherHandler extends WeaponHandler {
+    private static final MMLogger LOGGER = MMLogger.create(FireExtinguisherHandler.class);
+
     @Serial
     private static final long serialVersionUID = -7047033962986081773L;
 
@@ -74,9 +80,26 @@ public class FireExtinguisherHandler extends WeaponHandler {
                 r.add(target.getPosition().getBoardNum());
                 r.indent(3);
                 vPhaseReport.add(r);
-                game.getBoard().getHex(target.getPosition()).removeTerrain(Terrains.FIRE);
-                gameManager.sendChangedHex(target.getPosition());
-                game.getBoard().removeInfernoFrom(target.getPosition());
+                int boardId = target.getBoardId();
+                Board extinguishedBoard = game.getBoard(boardId);
+                Hex extinguishedHex = (extinguishedBoard == null) ? null
+                      : extinguishedBoard.getHex(target.getPosition());
+                // A corrupted or out-of-sync action could carry a stale boardId/coords; guard against it so
+                // resolution never crashes the phase with an NPE.
+                if (extinguishedHex == null) {
+                    LOGGER.warn("[Firefight] cannot extinguish hex {} on board {}: {} - skipping terrain update",
+                          target.getPosition(), boardId,
+                          (extinguishedBoard == null) ? "board not found" : "hex not found");
+                } else {
+                    extinguishedHex.removeTerrain(Terrains.FIRE);
+                    // Reset the fire-turn counter so the hex is treated as unburned. Without this it keeps a
+                    // stale value, and a fire later restarted here (e.g. by a flamer) is mistaken for an
+                    // already-burning fire - skipping the "fire started" report and spreading immediately.
+                    extinguishedHex.resetFireTurn();
+                    gameManager.sendChangedHex(target.getPosition(), boardId);
+                    extinguishedBoard.removeInfernoFrom(target.getPosition());
+                    extinguishedBoard.removeFlamerStartedFire(target.getPosition());
+                }
             } else if (target instanceof Entity) {
                 if (entityTarget.infernos.isStillBurning()
                       || (target instanceof Tank && ((Tank) target).isOnFire())) {
@@ -93,6 +116,13 @@ public class FireExtinguisherHandler extends WeaponHandler {
                     }
                 }
             }
+        }
+        // Firefighting engineers that keep battling the same hex get a cumulative bonus next turn,
+        // whether or not this attempt put the fire out (TO:AuE p.153). Record the attempt either way.
+        // isFirefighter() implies ConvInfantry, which records the consecutive-turn streak.
+        if (attackingEntity.isFirefighter() && (Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType())
+              && (attackingEntity instanceof ConvInfantry firefighter)) {
+            firefighter.recordFirefight(target.getPosition(), game.getRoundCount());
         }
         return true;
     }

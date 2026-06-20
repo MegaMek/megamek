@@ -113,6 +113,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARD_UNIT_SELECTED_COLOR = "BoardUnitSelectedColor";
     public static final String BOARD_UNIT_VALID_COLOR = "BoardUnitValidColor";
     public static final String BOARD_UNIT_TEXT_COLOR = "BoardUnitTextColor";
+    public static final String BOARD_DEMOLITION_CHARGE_COLOR = "BoardDemolitionChargeColor";
 
     public static final String BOARD_ATTACK_ARROW_TRANSPARENCY = "BoardAttackArrowTransparency";
     public static final String BOARD_ECM_TRANSPARENCY = "BoardECMTransparency";
@@ -614,6 +615,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(BOARD_UNIT_SELECTED_COLOR, DEFAULT_MAGENTA);
         setDefault(BOARD_UNIT_VALID_COLOR, DEFAULT_CYAN);
         setDefault(BOARD_UNIT_TEXT_COLOR, Color.white);
+        setDefault(BOARD_DEMOLITION_CHARGE_COLOR, new Color(255, 80, 80));
 
         setDefault(BOARD_MOVE_FONT_TYPE, "SansSerif");
         setDefault(BOARD_MOVE_FONT_SIZE, 26);
@@ -2855,6 +2857,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setBuildingTextColor(Color color) {
         store.setValue(BOARD_BUILDING_TEXT_COLOR, getColorString(color));
+    }
+
+    public Color getDemolitionChargeColor() {
+        return getColor(BOARD_DEMOLITION_CHARGE_COLOR);
+    }
+
+    public void setDemolitionChargeColor(Color color) {
+        store.setValue(BOARD_DEMOLITION_CHARGE_COLOR, getColorString(color));
     }
 
     public Color getLowFoliageColor() {

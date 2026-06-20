@@ -69,7 +69,12 @@ public class InfantrySupportMk1LightAAWeapon extends InfantryWeapon {
         cost = 1000;
         bv = 0.70;
         tonnage = .005;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_AA).or(F_INF_SUPPORT);
+        flags = flags.or(F_NO_FIRES)
+              .or(F_DIRECT_FIRE)
+              .or(F_MISSILE)
+              .or(F_INF_AA)
+              .or(F_INF_SUPPORT)
+              .or(F_INF_DISPOSABLE);
         infantryDamage = 0.23;
         infantryRange = 1;
         crew = 1;

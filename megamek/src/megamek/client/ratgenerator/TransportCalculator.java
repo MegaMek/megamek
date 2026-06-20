@@ -253,6 +253,29 @@ public class TransportCalculator {
         return false;
     }
 
+    /**
+     * Returns the Aerospace Fighter bay capacity of a unit (how many fighters it can carry), loading the Entity once
+     * and caching the result. Used to size the carried fighter complement of WarShips, DropShips, JumpShips, and Space
+     * Stations.
+     *
+     * @param mekSummary the carrier unit
+     *
+     * @return number of fighters the unit can carry, or 0 if none / could not be loaded
+     */
+    public static int fighterBayCapacity(MekSummary mekSummary) {
+        if (!bayTypeCache.containsKey(mekSummary)) {
+            try {
+                Entity entity = new MekFileParser(mekSummary.getSourceFile(), mekSummary.getEntryName()).getEntity();
+                bayTypeCache.put(mekSummary, countBays(entity));
+            } catch (EntityLoadingException ex) {
+                // Cache the failure as an empty bay map so we do not re-parse and re-throw this unit
+                // on every subsequent call.
+                bayTypeCache.put(mekSummary, Map.of());
+            }
+        }
+        return bayTypeCache.get(mekSummary).getOrDefault(UnitType.AEROSPACE_FIGHTER, 0);
+    }
+
     private int getBayCount(MekSummary ms, int unitType) {
         if (bayTypeCache.containsKey(ms) || countBays(ms)) {
             return bayTypeCache.get(ms).getOrDefault(unitType, 0);
@@ -284,7 +307,7 @@ public class TransportCalculator {
      *
      * @return a Mapping of unit types with counts.
      */
-    private Map<Integer, Integer> countBays(Entity entity) {
+    private static Map<Integer, Integer> countBays(Entity entity) {
         Map<Integer, Integer> bayCount = new HashMap<>();
         for (Bay bay : entity.getTransportBays()) {
             if (bay instanceof MekBay) {

@@ -90,10 +90,11 @@ public class BridgeDeploySpriteHandler extends BoardViewSpriteHandler {
             BoardView boardView = (BoardView) clientGUI.getBoardView(location);
             if (boardView != null) {
                 // A one-turn deployment has no meaningful build ramp, so reuse the engineers' build sprite at full
-                // strength (a solid "1/1" bridge ghost) rather than the faint just-declared opacity, which playtesters
-                // (including colour-blind players) flagged as hard to see.
+                // strength (a solid "1/1" bridge ghost), and ring it with a yellow/black hazard outline so the target
+                // hex is unmistakable - playtesters (colour-blind players in particular) flagged the plain ghost as
+                // hard to see.
                 currentSprites.add(new BridgeBuildSprite(boardView, target, DEPLOY_TURNS_REQUIRED,
-                      DEPLOY_TURNS_REQUIRED, bridgeState.getDeployExits()));
+                      DEPLOY_TURNS_REQUIRED, bridgeState.getDeployExits(), true));
             }
         }
         currentSprites.forEach(sprite -> sprite.bv.addSprite(sprite));

@@ -32,19 +32,13 @@
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.ImageIcon;
 
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.UIUtil;
@@ -66,6 +60,15 @@ public class BridgeBuildSprite extends HexSprite {
 
     private static final Color TEXT_OUTLINE_COLOR = new Color(40, 40, 50);
 
+    /** Stroke width (unscaled hex pixels) of the yellow/black hazard outline drawn around an emphasized hex. */
+    private static final float HAZARD_OUTLINE_WIDTH = 4.0f;
+
+    /** Dash length (unscaled hex pixels) for the alternating yellow/black hazard stripes. */
+    private static final float HAZARD_DASH_LENGTH = 8.0f;
+
+    /** Solid backing behind the caution-coloured stripes, giving the high-contrast yellow/black hazard-tape look. */
+    private static final Color HAZARD_BACKING_COLOR = Color.BLACK;
+
     private static final int HEX_CENTER_X = HexTileset.HEX_W / 2;
     private static final int FONT_SIZE = 11;
     private static final int BOTTOM_OFFSET = 24;
@@ -79,6 +82,7 @@ public class BridgeBuildSprite extends HexSprite {
     private final int turnsWorked;
     private final int turnsRequired;
     private final int exits;
+    private final boolean hazardOutline;
 
     /**
      * Creates a new bridge building sprite for the given hex. The sprite shows how much of the bridge is currently
@@ -92,18 +96,62 @@ public class BridgeBuildSprite extends HexSprite {
      * @param exits         exits bitmask of the two hexsides the finished bridge will connect
      */
     public BridgeBuildSprite(BoardView boardView, Coords loc, int turnsWorked, int turnsRequired, int exits) {
+        this(boardView, loc, turnsWorked, turnsRequired, exits, false);
+    }
+
+    /**
+     * Creates a new bridge indicator sprite, optionally ringed with a bold yellow/black hazard outline. A short-lived
+     * indicator (such as a one-turn Bridge-Layer deployment, whose ghost is easy to overlook - colour-blind players in
+     * particular flagged it as hard to see) uses the outline so the target hex is unmistakable; the multi-turn engineer
+     * build leaves it off and relies on its growing ghost.
+     *
+     * @param boardView     the parent board view
+     * @param loc           the hex the bridge is being raised in
+     * @param turnsWorked   the turns of structure currently standing (0 to {@code turnsRequired})
+     * @param turnsRequired the total turns of work a finished bridge needs (the denominator)
+     * @param exits         exits bitmask of the two hexsides the finished bridge will connect
+     * @param hazardOutline whether to ring the hex with a high-visibility yellow/black hazard outline
+     */
+    public BridgeBuildSprite(BoardView boardView, Coords loc, int turnsWorked, int turnsRequired, int exits,
+          boolean hazardOutline) {
         super(boardView, loc);
         this.turnsWorked = turnsWorked;
         this.turnsRequired = turnsRequired;
         this.exits = exits;
+        this.hazardOutline = hazardOutline;
     }
 
     @Override
     public void prepare() {
         Graphics2D graph = spriteSetup();
         drawGhostBridge(graph);
+        if (hazardOutline) {
+            drawHazardOutline(graph);
+        }
         drawProgressIndicator(graph);
         graph.dispose();
+    }
+
+    /**
+     * Rings the hex with a bold yellow/black hazard outline so the target is unmistakable even when the ghost bridge is
+     * hard to make out - in particular for colour-blind players, who flagged the plain ghost as hard to see. The yellow
+     * stripes use the themeable caution colour (so a player can recolour them), drawn as dashes over a solid black
+     * backing so the alternating yellow/black hazard-tape pattern stays high-contrast on any terrain.
+     *
+     * @param graph the sprite graphics
+     */
+    private void drawHazardOutline(Graphics2D graph) {
+        graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Stroke oldStroke = graph.getStroke();
+        // Solid black base, then caution-yellow dashes on top: the gaps reveal the black underneath for hazard tape.
+        graph.setColor(HAZARD_BACKING_COLOR);
+        graph.setStroke(new BasicStroke(HAZARD_OUTLINE_WIDTH));
+        graph.drawPolygon(BoardView.getHexPoly());
+        graph.setColor(GUIPreferences.getInstance().getCautionColor());
+        graph.setStroke(new BasicStroke(HAZARD_OUTLINE_WIDTH, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f,
+              new float[] { HAZARD_DASH_LENGTH, HAZARD_DASH_LENGTH }, 0.0f));
+        graph.drawPolygon(BoardView.getHexPoly());
+        graph.setStroke(oldStroke);
     }
 
     private Graphics2D spriteSetup() {

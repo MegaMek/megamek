@@ -91,8 +91,11 @@ public class BridgeDeploySpriteHandler extends BoardViewSpriteHandler {
             if (boardView != null) {
                 int turnsWorked = Math.clamp((long) game.getCurrentRound() - bridgeState.getDeployDeclaredTurn(),
                       0, DEPLOY_TURNS_REQUIRED);
+                // Emphasize the hex with a bright outline: a one-turn deployment's ghost bridge would otherwise sit at
+                // its faint minimum opacity and be easy to miss, which playtesters (including colour-blind players)
+                // flagged as hard to see.
                 currentSprites.add(new BridgeBuildSprite(boardView, target, turnsWorked, DEPLOY_TURNS_REQUIRED,
-                      bridgeState.getDeployExits()));
+                      bridgeState.getDeployExits(), true));
             }
         }
         currentSprites.forEach(sprite -> sprite.bv.addSprite(sprite));

@@ -209,23 +209,30 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
         gameManager.sendNewBuildings(newBridges);
 
         // If the unit carries more than one bridgelayer, name which one was deployed (its mounted-location side);
-        // otherwise the plain "its bridge" wording reads better.
+        // otherwise the plain "its bridge" wording reads better. The deployed bridge is public board terrain (the
+        // changed hex is broadcast to everyone), so the report is public.
         long bridgeLayerCount = entity.getMisc().stream().filter(misc -> misc.getBridgeLayerState() != null).count();
         Report report;
         if (bridgeLayerCount > 1) {
-            report = new Report(4299);
+            report = new Report(4299, Report.PUBLIC);
             report.subject = entity.getId();
             report.addDesc(entity);
             report.add(entity.getLocationName(bridgeLayer.getLocation()));
             report.add(constructionFactor);
             report.add(target.getBoardNum());
         } else {
-            report = new Report(4292);
+            report = new Report(4292, Report.PUBLIC);
             report.subject = entity.getId();
             report.addDesc(entity);
             report.add(constructionFactor);
             report.add(target.getBoardNum());
         }
         addReport(report);
+        // Also surface the placement as a kill-feed style toast (mirroring other end-phase board changes such as the
+        // climb-completed and building-collapse pop-ups), so players notice a bridge appearing - especially an
+        // opponent's - immediately, instead of only finding it buried in the End Phase report.
+        Vector<Report> deployToast = new Vector<>();
+        deployToast.add(report);
+        gameManager.send(gameManager.createSpecialReportPacket(deployToast));
     }
 }

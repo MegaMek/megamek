@@ -85,14 +85,14 @@ class BridgeLayerStateTest {
     }
 
     @Test
-    @DisplayName("Light deploys a light (1) bridge; Medium and Heavy deploy a medium (2) bridge terrain")
+    @DisplayName("each variant deploys its matching bridge terrain level: Light (1), Medium (2), Heavy (3)")
     void terrainBridgeTypeMapsVariantToTerrainLevel() {
         assertEquals(ConvInfantry.BRIDGE_TYPE_LIGHT,
               BridgeLayerState.terrainBridgeType(MiscType.createLightBridgeLayer()));
         assertEquals(ConvInfantry.BRIDGE_TYPE_MEDIUM,
               BridgeLayerState.terrainBridgeType(MiscType.createMediumBridgeLayer()));
-        assertEquals(ConvInfantry.BRIDGE_TYPE_MEDIUM,
-              BridgeLayerState.terrainBridgeType(MiscType.createHeavyBridgeLayer()));
+        // Heavy uses terrain level 3 (BuildingType.HEAVY) so the placed bridge is labelled "Heavy", not "Medium".
+        assertEquals(3, BridgeLayerState.terrainBridgeType(MiscType.createHeavyBridgeLayer()));
     }
 
     @Test

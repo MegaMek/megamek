@@ -79,6 +79,14 @@ public class BridgeLayerState implements Serializable {
     /** Medium bridge terrain type level (matches {@link ConvInfantry#BRIDGE_TYPE_MEDIUM}). */
     private static final int TERRAIN_TYPE_MEDIUM = ConvInfantry.BRIDGE_TYPE_MEDIUM;
 
+    /**
+     * Heavy bridge terrain type level. The placed bridge's displayed type name (Light/Medium/Heavy) is derived from
+     * this terrain level via {@link megamek.common.enums.BuildingType#getType(int)}, so the Heavy variant uses level 3
+     * (HEAVY) to avoid being mislabelled as a "Medium" bridge. Bridge images are selected by the exits bitmask, not the
+     * type level (the tileset wildcards the level), so any level renders.
+     */
+    private static final int TERRAIN_TYPE_HEAVY = 3;
+
     private int currentCF;
     private boolean deployed;
     private boolean deployMechanismDisabled;
@@ -129,12 +137,17 @@ public class BridgeLayerState implements Serializable {
     /**
      * @param type a bridgelayer equipment type
      *
-     * @return the board bridge terrain type level placed when this variant deploys. The Heavy variant reuses the medium
-     *       terrain level: bridge images are selected by the exits bitmask, not the type level, so any level renders;
-     *       the CF (not the terrain level) distinguishes the variants in play.
+     * @return the board bridge terrain type level placed when this variant deploys (Light = 1, Medium = 2, Heavy = 3).
+     *       The deployed bridge's displayed type name is taken from this level, so each variant maps to its matching
+     *       level; bridge images are selected by the exits bitmask, not the type level, so any level renders.
      */
     public static int terrainBridgeType(MiscType type) {
-        return type.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER) ? TERRAIN_TYPE_LIGHT : TERRAIN_TYPE_MEDIUM;
+        if (type.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)) {
+            return TERRAIN_TYPE_LIGHT;
+        } else if (type.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)) {
+            return TERRAIN_TYPE_HEAVY;
+        }
+        return TERRAIN_TYPE_MEDIUM;
     }
 
     /**

@@ -32,7 +32,14 @@
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,16 +66,6 @@ public class BridgeBuildSprite extends HexSprite {
 
     private static final Color TEXT_OUTLINE_COLOR = new Color(40, 40, 50);
 
-    /**
-     * Bright high-contrast outline drawn around an emphasized indicator hex. Orange reads clearly against the green,
-     * grey and blue terrain a bridge is laid over and stays distinguishable for the common red-green colour-vision
-     * deficiencies, so the pending-deploy hex pops the way the move-selection cursor does.
-     */
-    private static final Color EMPHASIS_BORDER_COLOR = new Color(255, 150, 0);
-
-    /** Stroke width (unscaled hex pixels) of the emphasis outline. */
-    private static final float EMPHASIS_BORDER_WIDTH = 3.0f;
-
     private static final int HEX_CENTER_X = HexTileset.HEX_W / 2;
     private static final int FONT_SIZE = 11;
     private static final int BOTTOM_OFFSET = 24;
@@ -82,7 +79,6 @@ public class BridgeBuildSprite extends HexSprite {
     private final int turnsWorked;
     private final int turnsRequired;
     private final int exits;
-    private final boolean emphasizeBorder;
 
     /**
      * Creates a new bridge building sprite for the given hex. The sprite shows how much of the bridge is currently
@@ -96,54 +92,18 @@ public class BridgeBuildSprite extends HexSprite {
      * @param exits         exits bitmask of the two hexsides the finished bridge will connect
      */
     public BridgeBuildSprite(BoardView boardView, Coords loc, int turnsWorked, int turnsRequired, int exits) {
-        this(boardView, loc, turnsWorked, turnsRequired, exits, false);
-    }
-
-    /**
-     * Creates a new bridge indicator sprite, optionally with a bright outline around the hex. A short-lived indicator
-     * (such as a one-turn Bridge-Layer deployment, whose ghost would otherwise barely register) uses the outline so the
-     * target hex is easy to spot; the multi-turn engineer build leaves it off and relies on its growing ghost.
-     *
-     * @param boardView       the parent board view
-     * @param loc             the hex the bridge is being raised in
-     * @param turnsWorked     the turns of structure currently standing (0 to {@code turnsRequired})
-     * @param turnsRequired   the total turns of work a finished bridge needs (the denominator)
-     * @param exits           exits bitmask of the two hexsides the finished bridge will connect
-     * @param emphasizeBorder whether to draw a bright outline around the hex for high visibility
-     */
-    public BridgeBuildSprite(BoardView boardView, Coords loc, int turnsWorked, int turnsRequired, int exits,
-          boolean emphasizeBorder) {
         super(boardView, loc);
         this.turnsWorked = turnsWorked;
         this.turnsRequired = turnsRequired;
         this.exits = exits;
-        this.emphasizeBorder = emphasizeBorder;
     }
 
     @Override
     public void prepare() {
         Graphics2D graph = spriteSetup();
         drawGhostBridge(graph);
-        if (emphasizeBorder) {
-            drawEmphasisBorder(graph);
-        }
         drawProgressIndicator(graph);
         graph.dispose();
-    }
-
-    /**
-     * Draws a bright, thick outline around the hex so a short-lived or faint indicator is easy to spot, the way the
-     * move-selection cursor stands out.
-     *
-     * @param graph the sprite graphics
-     */
-    private void drawEmphasisBorder(Graphics2D graph) {
-        graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Stroke oldStroke = graph.getStroke();
-        graph.setColor(EMPHASIS_BORDER_COLOR);
-        graph.setStroke(new BasicStroke(EMPHASIS_BORDER_WIDTH));
-        graph.drawPolygon(BoardView.getHexPoly());
-        graph.setStroke(oldStroke);
     }
 
     private Graphics2D spriteSetup() {

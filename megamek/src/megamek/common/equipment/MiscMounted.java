@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -54,6 +54,7 @@ public class MiscMounted extends Mounted<MiscType> {
     private int damageTaken = 0;
     private int mineType = MINE_NONE;
     private int vibraSetting = 20;
+    private int empSetting = 10;
 
     public MiscMounted(Entity entity, MiscType type) {
         super(entity, type);
@@ -255,6 +256,24 @@ public class MiscMounted extends Mounted<MiscType> {
         return vibraSetting;
     }
 
+    /**
+     * set the EMP mine weight threshold
+     *
+     * @param empSetting the <code>int</code> weight threshold (in tons) to set
+     */
+    public void setEmpSetting(int empSetting) {
+        this.empSetting = empSetting;
+    }
+
+    /**
+     * get the EMP mine weight threshold
+     *
+     * @return the <code>int</code> weight threshold (in tons) this mine is set to.
+     */
+    public int getEmpSetting() {
+        return empSetting;
+    }
+
     @Override
     public String getBaseDesc() {
         return switch (getMineType()) {
@@ -263,6 +282,7 @@ public class MiscMounted extends Mounted<MiscType> {
             case MINE_COMMAND_DETONATED -> Messages.getString("Mounted.CommandDetonatedMine");
             case MINE_ACTIVE -> Messages.getString("Mounted.ActiveMine");
             case MINE_INFERNO -> Messages.getString("Mounted.InfernoMine");
+            case MINE_EMP -> Messages.getString("Mounted.EMPMine");
             default -> super.getBaseDesc();
         };
     }

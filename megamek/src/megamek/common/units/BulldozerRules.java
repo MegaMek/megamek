@@ -58,12 +58,59 @@ public final class BulldozerRules {
     /** Report id for "the bulldozer is destroyed" (report-messages.properties). */
     private static final int BULLDOZER_DESTROYED_REPORT = 5347;
 
+    /** Extra turns a backhoe takes vs a bulldozer to clear a rubble hex (unofficial rule). */
+    public static final int BACKHOE_CLEAR_TURN_PENALTY = 4;
+
     private BulldozerRules() {}
 
     /**
+     * @param tank the vehicle to check
+     * @param game the game, for the optional-rule checks
+     *
+     * @return {@code true} if this vehicle clears rubble using a backhoe under the unofficial rule: it has a working
+     *       backhoe, no bulldozer to use instead, and both the TacOps Bulldozers and the unofficial backhoe rules are
+     *       enabled. Clearing with a backhoe is slower (see {@link #BACKHOE_CLEAR_TURN_PENALTY}).
+     */
+    public static boolean canBackhoeClearRubble(Tank tank, Game game) {
+        return !tank.hasWorkingBulldozer()
+              && tank.hasWorkingBackhoe()
+              && game.getOptions().booleanOption(OptionsConstants.UNOFFICIAL_BACKHOE_CLEARS_RUBBLE)
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BULLDOZER);
+    }
+
+    /**
+     * @param entity the unit to check
+     * @param game   the game, for the optional-rule checks
+     *
+     * @return {@code true} if the unit may currently clear rubble - a vehicle with a working bulldozer (with the TacOps
+     *       Bulldozers rule on), or with a working backhoe (with the unofficial backhoe rule on).
+     */
+    public static boolean canClearRubble(Entity entity, Game game) {
+        if (!(entity instanceof Tank tank)) {
+            return false;
+        }
+        if (tank.hasWorkingBulldozer()) {
+            return game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BULLDOZER);
+        }
+        return canBackhoeClearRubble(tank, game);
+    }
+
+    /**
+     * @param entity the clearing unit
+     * @param game   the game, for the optional-rule checks
+     *
+     * @return the extra turns this vehicle's clearing takes because it uses a backhoe rather than a bulldozer
+     *       (unofficial: {@link #BACKHOE_CLEAR_TURN_PENALTY}), or 0 when clearing with a bulldozer
+     */
+    public static int extraClearingTurns(Entity entity, Game game) {
+        return ((entity instanceof Tank tank) && canBackhoeClearRubble(tank, game)) ? BACKHOE_CLEAR_TURN_PENALTY : 0;
+    }
+
+    /**
      * Checks whether a vehicle may declare a Clear Rubble action ending in the given hex (TacOps): it must be a vehicle
-     * with a working bulldozer, the bulldozer optional rule must be enabled, and the hex must hold rubble. Returns the
-     * specific reason it is illegal so the caller can log it, or null when legal.
+     * with a working bulldozer (or, with the unofficial rule, a backhoe), the relevant optional rule(s) must be enabled,
+     * and the hex must hold rubble. Returns the specific reason it is illegal so the caller can log it, or null when
+     * legal.
      *
      * @param entity the unit attempting to clear rubble
      * @param hex    the hex the clearing would take place in (the unit's final hex), or null
@@ -73,13 +120,13 @@ public final class BulldozerRules {
      */
     public static @Nullable String clearRubbleIllegalReason(Entity entity, @Nullable Hex hex, Game game) {
         if (!(entity instanceof Tank clearingTank)) {
-            return "clear rubble illegal - only vehicles can mount a bulldozer";
-        }
-        if (!clearingTank.hasWorkingBulldozer()) {
-            return "clear rubble illegal - no working bulldozer";
+            return "clear rubble illegal - only vehicles can clear rubble";
         }
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BULLDOZER)) {
             return "clear rubble illegal - bulldozer optional rule is disabled";
+        }
+        if (!clearingTank.hasWorkingBulldozer() && !canBackhoeClearRubble(clearingTank, game)) {
+            return "clear rubble illegal - no working bulldozer (or backhoe with the unofficial rule enabled)";
         }
         if (!hasClearableRubble(hex)) {
             return "clear rubble illegal - hex contains no rubble (the vehicle must end its move in the rubble hex)";

@@ -31602,12 +31602,13 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            if (ent instanceof Tank tnk) {
-                int dig = tnk.getDugIn();
-                if (dig == Tank.DUG_IN_FORTIFYING3) {
-                    completeFortification(tnk);
-                } else if ((dig != Tank.DUG_IN_NONE) && tnk.isFortifyExtendedThisRound()) {
-                    reportFortificationDelayed(tnk);
+            // Vehicle-style fieldworkers (Tank and a Mek with a backhoe/equivalent) share the Fortifiable stage
+            // machine; Infantry is handled above and is not Fortifiable.
+            if (ent instanceof Fortifiable fortifier) {
+                if (fortifier.isFortifyOnFinalStage()) {
+                    completeFortification(ent);
+                } else if (fortifier.isFortifying() && fortifier.isFortifyExtendedThisRound()) {
+                    reportFortificationDelayed(ent);
                 }
             }
         }
@@ -31639,9 +31640,9 @@ public class TWGameManager extends AbstractGameManager {
                 coLocated.setDugIn(Infantry.DUG_IN_NONE);
             }
         }
-        // A vehicle builder is not cleared by the loop above, so reset it explicitly.
-        if (builder instanceof Tank tank) {
-            tank.setDugIn(Tank.DUG_IN_NONE);
+        // A vehicle or Mek builder is not cleared by the infantry loop above, so reset it explicitly.
+        if (builder instanceof Fortifiable fortifier) {
+            fortifier.cancelFortify();
         }
 
         sendToast(GameToastEvent.Level.SUCCESS,

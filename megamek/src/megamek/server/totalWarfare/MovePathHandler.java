@@ -2939,20 +2939,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            // check for tank fortify
-            if (entity instanceof Tank tnk) {
-                if (step.getType() == MoveStepType.FORTIFY) {
-                    // Vehicles need fieldworks-capable equipment - bulldozer, backhoe or equivalent - to build
-                    // a fortified hex (Vehicles and Fieldworks, TO:AUE p.153). Defensive server-side check.
-                    if (!tnk.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
-                        logger.debug("[Fortify] {}: fortify rejected - no fieldworks-capable equipment "
-                              + "(F_TRENCH_CAPABLE)", entity.getDisplayName());
-                    } else {
-                        tnk.beginFortify();
-                    }
-                } else if (step.getType() == MoveStepType.CLEAR_RUBBLE) {
-                    beginRubbleClearing(tnk, step.getPosition());
+            // Fieldworks: a vehicle or a Mek with fieldworks-capable equipment - bulldozer, backhoe or equivalent -
+            // builds a fortified hex (Vehicles and Fieldworks, TO:AUE p.153). Clearing rubble remains vehicle-only.
+            if ((entity instanceof Fortifiable fortifier) && (step.getType() == MoveStepType.FORTIFY)) {
+                // Defensive server-side check mirroring the MoveStep legality.
+                if (!entity.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
+                    logger.debug("[Fortify] {}: fortify rejected - no fieldworks-capable equipment "
+                          + "(F_TRENCH_CAPABLE)", entity.getDisplayName());
+                } else {
+                    fortifier.beginFortify();
                 }
+            } else if ((entity instanceof Tank tnk) && (step.getType() == MoveStepType.CLEAR_RUBBLE)) {
+                beginRubbleClearing(tnk, step.getPosition());
             }
 
             // If we have turned, check whether we have fulfilled any turn mode
@@ -4858,9 +4856,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * @param position the rubble hex being cleared (the vehicle's own hex)
      */
     private void beginRubbleClearing(Tank tank, Coords position) {
-        // Defensive server-side checks mirror the MoveStep legality: bulldozer present and a rubble hex.
-        if (!tank.hasWorkingBulldozer()) {
-            logger.debug("[Bulldozer] {}: clear rubble rejected - no working bulldozer", tank.getDisplayName());
+        // Defensive server-side checks mirror the MoveStep legality: a rubble-clearing tool (bulldozer, or backhoe
+        // under the unofficial rule) and a rubble hex.
+        if (!BulldozerRules.canClearRubble(tank, getGame())) {
+            logger.debug("[Bulldozer] {}: clear rubble rejected - no working rubble-clearing equipment / rule off",
+                  tank.getDisplayName());
             return;
         }
         Hex hex = getGame().getBoard(tank.getBoardId()).getHex(position);
@@ -4874,7 +4874,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
             return;
         }
         int rubbleLevel = hex.terrainLevel(Terrains.RUBBLE);
-        int requiredTurns = RubbleClearingHandler.clearingTurnsFor(rubbleLevel);
+        // A backhoe takes 4 turns longer than a bulldozer (unofficial rule).
+        int requiredTurns = RubbleClearingHandler.clearingTurnsFor(rubbleLevel)
+              + BulldozerRules.extraClearingTurns(tank, getGame());
         tank.beginClearingRubble(position, requiredTurns);
         logger.info("[Bulldozer] {} begins clearing rubble (level {}) at {}: {} turns required",
               tank.getShortName(), rubbleLevel, position, requiredTurns);

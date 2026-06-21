@@ -418,6 +418,7 @@ public class OptionsConstants {
     public static final String ADVANCED_COMBAT_TAC_OPS_PPC_INHIBITORS = "tacops_ppc_inhibitors";
     public static final String ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE = "tacops_charge_damage";
     public static final String ADVANCED_COMBAT_TAC_OPS_BULLDOZER = "tacops_bulldozer";
+    public static final String UNOFFICIAL_BACKHOE_CLEARS_RUBBLE = "unofficial_backhoe_clears_rubble";
     public static final String ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS = "tacops_glancing_blows";
     public static final String ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW = "tacops_direct_blow";
     public static final String ADVANCED_COMBAT_TAC_OPS_BURST = "tacops_burst";

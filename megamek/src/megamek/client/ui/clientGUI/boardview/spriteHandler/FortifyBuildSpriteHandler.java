@@ -41,8 +41,8 @@ import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
+import megamek.common.units.Fortifiable;
 import megamek.common.units.Infantry;
-import megamek.common.units.Tank;
 
 /**
  * Manages fortification-under-construction indicator sprites on the board view (TO:AUE Trench/Fieldworks Engineers and
@@ -89,7 +89,7 @@ public class FortifyBuildSpriteHandler extends BoardViewSpriteHandler {
     private static int fortifyStageOf(Entity entity) {
         return switch (entity) {
             case Infantry infantry -> infantry.getFortifyStage();
-            case Tank tank -> tank.getFortifyStage();
+            case Fortifiable fortifiable -> fortifiable.getFortifyStage();
             default -> 0;
         };
     }
@@ -100,7 +100,7 @@ public class FortifyBuildSpriteHandler extends BoardViewSpriteHandler {
     private static int fortifyTotalStagesOf(Entity entity) {
         return switch (entity) {
             case Infantry infantry -> infantry.getFortifyTotalStages();
-            case Tank tank -> tank.getFortifyTotalStages();
+            case Fortifiable fortifiable -> fortifiable.getFortifyTotalStages();
             default -> 0;
         };
     }

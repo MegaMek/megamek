@@ -227,9 +227,10 @@ public class SupportTank extends Tank {
             }
         }
 
-        // A bulldozer lets a vehicle enter a rubble hex its motive type would normally bar, so it can clear it
-        // (TacOps). Only the rubble prohibition is lifted; other prohibiting terrain still applies.
-        boolean rubblePassable = hasWorkingBulldozer();
+        // A bulldozer (or, under the unofficial rule, a backhoe) lets a vehicle enter a rubble hex its motive type
+        // would normally bar, so it can clear it (TacOps). Only the rubble prohibition is lifted; other prohibiting
+        // terrain still applies.
+        boolean rubblePassable = hasWorkingBulldozer() || BulldozerRules.canBackhoeClearRubble(this, game);
         return switch (movementMode) {
             case TRACKED -> (hex.terrainLevel(Terrains.WOODS) > 1)
                   || ((hex.terrainLevel(Terrains.WATER) > 0)

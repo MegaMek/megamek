@@ -912,7 +912,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateStrafeButton();
         updateBombButton();
 
-        // Infantry and Tank - Fortify
+        // Fortify - Infantry, vehicles, and Meks with fieldworks-capable equipment (a backhoe/bulldozer or
+        // equivalent). Vehicles and Fieldworks, TO:AUE p.153.
         if (isInfantry && selectedUnit.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
             // Crews adrift in space or atmosphere can't do this
             if (selectedUnit instanceof EjectedCrew &&
@@ -922,25 +923,27 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(true);
             }
         } else {
-            getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(isTank &&
-                  selectedUnit.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE));
+            boolean canBuildFieldworks = (isTank || (selectedUnit instanceof Mek))
+                  && selectedUnit.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE);
+            getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(canBuildFieldworks);
         }
 
-        // Tank - Clear Rubble with a bulldozer (TacOps): a bulldozer vehicle in, or next to, a clearable rubble hex
-        // with the optional rule enabled. Logs the gating decision for any bulldozer vehicle so playtests can see
-        // from megamek.log why the button is or is not available.
-        boolean bulldozerOptionOn = gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BULLDOZER);
-        boolean hasWorkingBulldozer = isTank && selectedUnit.hasWorkingBulldozer();
-        boolean rubbleInReach = hasWorkingBulldozer
+        // Tank - Clear Rubble (TacOps): a vehicle with a bulldozer (or, under the unofficial rule, a backhoe) in, or
+        // next to, a clearable rubble hex, with the relevant optional rule(s) enabled. Logs the gating decision for
+        // any vehicle with clearing equipment so playtests can see from megamek.log why the button is or is not
+        // available.
+        boolean hasClearingEquipment = isTank
+              && (selectedUnit.hasWorkingBulldozer() || ((Tank) selectedUnit).hasWorkingBackhoe());
+        boolean rubbleInReach = hasClearingEquipment
               && BulldozerRules.isInOrAdjacentToClearableRubble(selectedUnit, game);
-        boolean canClearRubble = hasWorkingBulldozer && bulldozerOptionOn && rubbleInReach;
-        getBtn(MoveCommand.MOVE_CLEAR_RUBBLE).setEnabled(canClearRubble);
-        // Only log when there is rubble in reach (the moment the player expects the button), to avoid flooding the
-        // log while the vehicle drives elsewhere. Tells the playtest why the button is or is not available.
-        if (hasWorkingBulldozer && rubbleInReach) {
-            LOGGER.debug("[Bulldozer] {}: rubble in reach - Clear Rubble button {} (TacOps Bulldozers option {})",
-                  selectedUnit.getDisplayName(), canClearRubble ? "ENABLED" : "disabled",
-                  bulldozerOptionOn ? "on" : "OFF - enable it in Game Options > Advanced Combat");
+        boolean clearingRulesOn = BulldozerRules.canClearRubble(selectedUnit, game);
+        getBtn(MoveCommand.MOVE_CLEAR_RUBBLE).setEnabled(rubbleInReach && clearingRulesOn);
+        // Only log when a clearing-capable vehicle is next to rubble (the moment the player expects the button), to
+        // avoid flooding the log. Tells the playtest why the button is or is not available.
+        if (rubbleInReach) {
+            LOGGER.debug("[Bulldozer] {}: rubble in reach - Clear Rubble button {} (optional rule {})",
+                  selectedUnit.getDisplayName(), (rubbleInReach && clearingRulesOn) ? "ENABLED" : "disabled",
+                  clearingRulesOn ? "on" : "OFF - enable it in Game Options > Advanced Combat");
         }
 
         // Infantry - Digging in, TO:AR p.106; could add terrain checking and restrict to first action here.

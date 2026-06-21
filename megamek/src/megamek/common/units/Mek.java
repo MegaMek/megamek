@@ -77,7 +77,7 @@ import megamek.logging.MMLogger;
 /**
  * You know what Meks are, silly.
  */
-public abstract class Mek extends Entity {
+public abstract class Mek extends Entity implements Fortifiable {
     @Serial
     private static final long serialVersionUID = -1929593228891136561L;
     private static final MMLogger LOGGER = MMLogger.create(Mek.class);
@@ -1266,11 +1266,46 @@ public abstract class Mek extends Entity {
 
         grappledThisRound = false;
 
+        // Continue any fieldwork in progress (a Mek with a backhoe/equivalent may fortify like a vehicle,
+        // Vehicles and Fieldworks, TO:AUE p.153). The stage machine lives in Fortifiable.
+        advanceFortifyRound();
+
         // clear HarJel "took damage this turn" flags
         for (int loc = 0; loc < locations(); ++loc) {
             setArmorDamagedThisTurn(loc, false);
         }
     } // End public void newRound()
+
+    // --- Fieldworks / fortify: a Mek with a backhoe (or equivalent) may build a fortified hex like a vehicle
+    // (Vehicles and Fieldworks, TO:AUE p.153). The multi-turn stage machine lives in Fortifiable.
+
+    private int dugIn = DUG_IN_NONE;
+
+    /**
+     * Tracks damage taken between turns while fortifying, so an interrupting attack extends the effort by one turn
+     * (TO:AUE p.153). Server-side runtime state; dug-in progress itself is not persisted.
+     */
+    private final FortifyState fortifyState = new FortifyState();
+
+    @Override
+    public int getDugIn() {
+        return dugIn;
+    }
+
+    @Override
+    public void setDugIn(int stage) {
+        dugIn = stage;
+    }
+
+    @Override
+    public FortifyState getFortifyState() {
+        return fortifyState;
+    }
+
+    @Override
+    public int currentFortifyHealthSignature() {
+        return getTotalArmor() + getTotalInternal();
+    }
 
     /**
      * Returns true if the location in question is a torso location

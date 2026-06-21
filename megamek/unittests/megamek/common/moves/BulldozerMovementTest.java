@@ -32,6 +32,7 @@
  */
 package megamek.common.moves;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -41,6 +42,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.BulldozerRules;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.SupportTank;
 import megamek.common.units.Tank;
@@ -173,5 +175,52 @@ class BulldozerMovementTest extends GameBoardTestCase {
         getGame().getOptions().getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BULLDOZER).setValue(false);
         MovePath path = getMovePathFor(wheeledTank(true), EntityMovementMode.WHEELED, MoveStepType.CLEAR_RUBBLE);
         assertFalse(path.isMoveLegal(), "Clearing rubble requires the bulldozer optional rule to be enabled");
+    }
+
+    /** A wheeled vehicle whose only clearing tool is a (front-mounted) backhoe. */
+    private Tank backhoeTank() throws LocationFullException {
+        Tank tank = new Tank();
+        tank.addEquipment(EquipmentType.get(EquipmentTypeLookup.BACKHOE), Tank.LOC_FRONT);
+        return tank;
+    }
+
+    private void enableBulldozerRule() {
+        getGame().getOptions().getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BULLDOZER).setValue(true);
+    }
+
+    private void setBackhoeRule(boolean enabled) {
+        getGame().getOptions().getOption(OptionsConstants.UNOFFICIAL_BACKHOE_CLEARS_RUBBLE).setValue(enabled);
+    }
+
+    @Test
+    @DisplayName("A backhoe vehicle may clear rubble when the unofficial rule is on")
+    void backhoeClearsRubbleWithUnofficialRule() throws LocationFullException {
+        setBoard("BULLDOZER_ON_RUBBLE");
+        enableBulldozerRule();
+        setBackhoeRule(true);
+        MovePath path = getMovePathFor(backhoeTank(), EntityMovementMode.WHEELED, MoveStepType.CLEAR_RUBBLE);
+        assertTrue(path.isMoveLegal(), "A backhoe vehicle may clear rubble with the unofficial rule enabled");
+    }
+
+    @Test
+    @DisplayName("A backhoe vehicle may NOT clear rubble without the unofficial rule")
+    void backhoeCannotClearWithoutUnofficialRule() throws LocationFullException {
+        setBoard("BULLDOZER_ON_RUBBLE");
+        enableBulldozerRule();
+        setBackhoeRule(false);
+        MovePath path = getMovePathFor(backhoeTank(), EntityMovementMode.WHEELED, MoveStepType.CLEAR_RUBBLE);
+        assertFalse(path.isMoveLegal(), "Without the unofficial rule a backhoe cannot clear rubble");
+    }
+
+    @Test
+    @DisplayName("A backhoe clears rubble 4 turns slower than a bulldozer")
+    void backhoeTakesFourExtraTurns() throws LocationFullException {
+        enableBulldozerRule();
+        setBackhoeRule(true);
+        assertEquals(BulldozerRules.BACKHOE_CLEAR_TURN_PENALTY,
+              BulldozerRules.extraClearingTurns(backhoeTank(), getGame()),
+              "A backhoe takes the +4 turn penalty");
+        assertEquals(0, BulldozerRules.extraClearingTurns(wheeledTank(true), getGame()),
+              "A bulldozer takes no penalty");
     }
 }

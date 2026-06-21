@@ -2028,9 +2028,12 @@ public class MoveStep implements Serializable {
             isClearingRubble = true;
             movementType = EntityMovementType.MOVE_NONE;
         } else if ((type == MoveStepType.DIG_IN) || (type == MoveStepType.FORTIFY)) {
-            if ((!isInfantry && !isTank) || !isFirstStep()) {
-                LOGGER.debug("[Fortify] {}: {} illegal - only infantry or vehicles, and only as the first/sole action",
-                      entity.getDisplayName(), type);
+            // Meks may build a fortified hex (FORTIFY) with fieldworks equipment (Vehicles and Fieldworks,
+            // TO:AUE p.153) but cannot dig foxholes (DIG_IN); infantry and vehicles may do both.
+            boolean isMekFortify = (type == MoveStepType.FORTIFY) && (entity instanceof Mek);
+            if ((!isInfantry && !isTank && !isMekFortify) || !isFirstStep()) {
+                LOGGER.debug("[Fortify] {}: {} illegal - only infantry, vehicles, or fieldworks-capable Meks, and "
+                      + "only as the first/sole action", entity.getDisplayName(), type);
                 return; // can't dig in
             }
 

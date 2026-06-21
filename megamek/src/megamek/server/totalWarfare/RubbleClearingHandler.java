@@ -35,6 +35,7 @@ package megamek.server.totalWarfare;
 import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.board.Coords;
+import megamek.common.units.BulldozerRules;
 import megamek.common.units.Entity;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrain;
@@ -106,9 +107,10 @@ class RubbleClearingHandler extends AbstractTWRuleHandler {
                 tank.cancelClearingRubble();
                 continue;
             }
-            // The vehicle must remain in the rubble hex with a working bulldozer; otherwise the work is abandoned.
-            if (!tank.hasWorkingBulldozer()) {
-                LOGGER.info("[Bulldozer] {} abandons clearing rubble at {}: bulldozer no longer working",
+            // The vehicle must remain in the rubble hex with working clearing equipment (bulldozer, or backhoe under
+            // the unofficial rule); otherwise the work is abandoned.
+            if (!BulldozerRules.canClearRubble(tank, getGame())) {
+                LOGGER.info("[Bulldozer] {} abandons clearing rubble at {}: clearing equipment no longer working",
                       tank.getShortName(), tank.getRubbleClearTarget());
                 abandonClearing(tank);
                 continue;

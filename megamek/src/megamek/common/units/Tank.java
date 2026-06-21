@@ -77,7 +77,7 @@ import megamek.logging.MMLogger;
 /**
  * You know what tanks are, silly.
  */
-public class Tank extends Entity {
+public class Tank extends Entity implements Fortifiable {
     private static final MMLogger logger = MMLogger.create(Tank.class);
 
     @Serial
@@ -137,11 +137,7 @@ public class Tank extends Entity {
 
     public static final int CRIT_SENSOR_MAX = 4;
 
-    // Fortify terrain just like infantry
-    public static final int DUG_IN_NONE = 0;
-    public static final int DUG_IN_FORTIFYING1 = 1;
-    public static final int DUG_IN_FORTIFYING2 = 2;
-    public static final int DUG_IN_FORTIFYING3 = 3;
+    // Fortify (build a fortified hex) over several turns; the stage machine lives in Fortifiable.
     private int dugIn = DUG_IN_NONE;
 
     /**
@@ -475,6 +471,14 @@ public class Tank extends Entity {
         return hasWorkingMisc(MiscType.F_BULLDOZER, null, Tank.LOC_REAR);
     }
 
+    /**
+     * @return true if this vehicle has a working backhoe (F_CLUB / S_BACKHOE). Used by the unofficial rule that lets a
+     *       backhoe clear rubble like a bulldozer (slower).
+     */
+    public boolean hasWorkingBackhoe() {
+        return hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_BACKHOE);
+    }
+
     public boolean isTurretLocked(int turret) {
         if (turret == getLocTurret()) {
             return m_bTurretLocked || m_bTurretJammed;
@@ -786,9 +790,10 @@ public class Tank extends Entity {
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
         boolean sealed = hasEnvironmentalSealing();
         boolean hexHasRoad = hex.containsTerrain(Terrains.ROAD);
-        // A bulldozer lets a vehicle enter a rubble hex its motive type would normally bar, so it can clear it
-        // (TacOps). Only the rubble prohibition is lifted; other prohibiting terrain still applies.
-        boolean rubblePassable = hasWorkingBulldozer();
+        // A bulldozer (or, under the unofficial rule, a backhoe) lets a vehicle enter a rubble hex its motive type
+        // would normally bar, so it can clear it (TacOps). Only the rubble prohibition is lifted; other prohibiting
+        // terrain still applies.
+        boolean rubblePassable = hasWorkingBulldozer() || BulldozerRules.canBackhoeClearRubble(this, game);
         boolean scoutBikeIntoLightWoods = (hex.terrainLevel(Terrains.WOODS) == 1) &&
               hasQuirk(OptionsConstants.QUIRK_POS_SCOUT_BIKE);
         boolean isCrossCountry = hasAbility(OptionsConstants.PILOT_CROSS_COUNTRY);
@@ -1024,75 +1029,32 @@ public class Tank extends Entity {
             setSecondaryFacing(getFacing());
         }
 
-        // Continue to fortify
-        if (dugIn != DUG_IN_NONE) {
-            // Damage taken during a fortifying turn extends the effort by one turn (TO:AUE p.153): hold the
-            // progress counter this round instead of advancing it.
-            if (fortifyState.checkpointWasDamaged(currentFortifyHealthSignature())) {
-                logger.debug("[Fortify] {}: damaged while fortifying - effort extended by 1 turn (dug-in stage {})",
-                      getShortName(), dugIn);
-            } else {
-                dugIn++;
-                if (dugIn > DUG_IN_FORTIFYING3) {
-                    dugIn = DUG_IN_NONE;
-                }
-            }
-        }
+        // Continue to fortify (the stage machine and damage-interrupt logic live in Fortifiable).
+        advanceFortifyRound();
     }
 
-    public void setDugIn(int i) {
-        dugIn = i;
+    @Override
+    public void setDugIn(int stage) {
+        dugIn = stage;
     }
 
+    @Override
     public int getDugIn() {
         return dugIn;
     }
 
-    /**
-     * Begins the three-turn fieldwork that raises a fortified hex, for vehicles with fieldworks-capable
-     * equipment such as a bulldozer or backhoe (Vehicles and Fieldworks, TO:AUE p.153). Seeds the damage
-     * baseline used to detect an interrupting attack that extends the effort.
-     */
-    public void beginFortify() {
-        setDugIn(DUG_IN_FORTIFYING1);
-        fortifyState.begin(currentFortifyHealthSignature());
+    @Override
+    public FortifyState getFortifyState() {
+        return fortifyState;
     }
 
     /**
      * @return the health signature used to detect damage between fortifying turns: total armor plus internal structure.
      *       Any armor or structural damage between turns lowers this value and marks the turn as interrupted.
      */
-    private int currentFortifyHealthSignature() {
+    @Override
+    public int currentFortifyHealthSignature() {
         return getTotalArmor() + getTotalInternal();
-    }
-
-    /**
-     * @return {@code true} if this vehicle's fortification effort was set back by damage this round (so its progress
-     *       counter was held rather than advanced). TO:AUE p.153.
-     */
-    public boolean isFortifyExtendedThisRound() {
-        return fortifyState.wasExtendedAtLastCheckpoint();
-    }
-
-    /**
-     * @return {@code true} if this vehicle is partway through building a fortified hex (one of the multi-turn
-     *       FORTIFYING stages). TO:AUE p.153.
-     */
-    public boolean isFortifying() {
-        return (dugIn >= DUG_IN_FORTIFYING1) && (dugIn <= DUG_IN_FORTIFYING3);
-    }
-
-    /**
-     * @return the current fortification stage (1..{@link #getFortifyTotalStages()}) while {@link #isFortifying()}, or 0
-     *       when the vehicle is not building a fortification.
-     */
-    public int getFortifyStage() {
-        return isFortifying() ? (dugIn - DUG_IN_FORTIFYING1 + 1) : 0;
-    }
-
-    /** @return the number of turns of work a fortified hex takes to complete. */
-    public int getFortifyTotalStages() {
-        return DUG_IN_FORTIFYING3 - DUG_IN_FORTIFYING1 + 1;
     }
 
     /**

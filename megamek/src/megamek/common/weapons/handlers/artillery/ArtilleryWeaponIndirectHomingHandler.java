@@ -111,6 +111,15 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 vPhaseReport.addElement(report);
                 Report.addNewline(vPhaseReport);
                 handledAmmoAndReport = true;
+
+                // "Shot, out" - homing round, will guide onto a tagged target
+                String shotGrid = ((target != null) && (target.getPosition() != null))
+                      ? target.getPosition().getBoardNum() : "off-board";
+                addProWordReport(vPhaseReport, 3133, batteryName(aaa), weaponType.getName(), shotGrid,
+                      String.valueOf(game.getRoundCount() + aaa.getTurnsTilHit()));
+                if (attackingEntity != null) {
+                    gameManager.sendArtilleryNetToast("shot", attackingEntity, game.getRoundCount());
+                }
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
@@ -123,6 +132,13 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         if (aaa.getTurnsTilHit() > 0) {
             aaa.decrementTurnsTilHit();
             return true;
+        }
+        // "Splash, over" - homing rounds about to land and seek the tagged target near the aim hex
+        if ((target != null) && (target.getPosition() != null)) {
+            addProWordReport(vPhaseReport, 3128, batteryName(aaa), target.getPosition().getBoardNum());
+            if (attackingEntity != null) {
+                gameManager.sendArtilleryNetToast("splash", attackingEntity, game.getRoundCount());
+            }
         }
         Entity entityTarget;
         try {

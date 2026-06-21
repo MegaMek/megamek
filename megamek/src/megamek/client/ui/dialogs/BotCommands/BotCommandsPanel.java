@@ -33,14 +33,18 @@
 
 package megamek.client.ui.dialogs.BotCommands;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -67,9 +71,14 @@ import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.game.InGameObject;
+import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 
 /**
  * The Bot Commands Panel contains a small set of buttons which allow the player to change the configuration of any bot
@@ -289,16 +298,20 @@ public class BotCommandsPanel extends JPanel {
     }
 
     private JPopupMenu createSelectBehaviorPopup() {
-        JPopupMenu popup = new JPopupMenu();
         var behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
-
-        for (var behaviorName : behaviorSettingsFactory.getBehaviorNameList()) {
-            createMenuItemForSetBehavior(popup, behaviorName);
-        }
-        popup.addSeparator();
-        createMenuItem(popup, "ShowStatus", this::requestStatus);
-        MenuScroller.setScrollerFor(popup, 15);
-        return popup;
+        return createBotFirstPopup((botMenu, botPlayer) -> {
+            for (var behaviorName : behaviorSettingsFactory.getBehaviorNameList()) {
+                JMenuItem behaviorItem = new JMenuItem(behaviorName);
+                behaviorItem.addActionListener(evt -> {
+                    setBehavior(new PlayerBehavior(botPlayer, behaviorName));
+                    acknowledgeOrder(botPlayer,
+                          Messages.getString("BotCommandPanel.toast.behavior", behaviorName));
+                });
+                botMenu.add(behaviorItem);
+            }
+            botMenu.addSeparator();
+            addBotAction(botMenu, botPlayer, "ShowStatus", this::requestStatus);
+        }, 15);
     }
 
     /**
@@ -313,17 +326,64 @@ public class BotCommandsPanel extends JPanel {
     }
 
     private JPopupMenu createRetreatPopup() {
-        JPopupMenu popup = new JPopupMenu();
-        createMenuItem(popup, CardinalEdge.NORTH, this::retreatNorth);
-        createMenuItem(popup, CardinalEdge.EAST, this::retreatEast);
-        createMenuItem(popup, CardinalEdge.SOUTH, this::retreatSouth);
-        createMenuItem(popup, CardinalEdge.WEST, this::retreatWest);
-        createMenuItem(popup, CardinalEdge.NEAREST, this::retreatNearestEdge);
-        createMenuItem(popup, CardinalEdge.NONE, this::noRetreat);
-        popup.addSeparator();
-        createMenuItem(popup, "HoldPosition", this::holdPosition);
-        createMenuItem(popup, "ResumeMovement", this::resumeMovement);
-        return popup;
+        return createBotFirstPopup((botMenu, botPlayer) -> {
+            addRetreatAction(botMenu, botPlayer, CardinalEdge.NORTH, this::retreatNorth);
+            addRetreatAction(botMenu, botPlayer, CardinalEdge.EAST, this::retreatEast);
+            addRetreatAction(botMenu, botPlayer, CardinalEdge.SOUTH, this::retreatSouth);
+            addRetreatAction(botMenu, botPlayer, CardinalEdge.WEST, this::retreatWest);
+            addRetreatAction(botMenu, botPlayer, CardinalEdge.NEAREST, this::retreatNearestEdge);
+            addRetreatAction(botMenu, botPlayer, CardinalEdge.NONE, this::noRetreat);
+            botMenu.addSeparator();
+            addBotAction(botMenu, botPlayer, "HoldPosition", this::holdPosition);
+            addBotAction(botMenu, botPlayer, "ResumeMovement", this::resumeMovement);
+            // Shoot-and-scoot only moves on-board artillery; gray it out for a bot whose artillery is all off-board
+            // (off-board units cannot move). Evaluated per bot, since a player may command a mix of on- and off-board
+            // artillery bots.
+            boolean canScoot = hasMovableArtillery(botPlayer);
+            JMenuItem shootAndScootItem = addBotAction(botMenu, botPlayer, "ShootAndScoot", this::enableShootAndScoot);
+            JMenuItem stopShootAndScootItem = addBotAction(botMenu, botPlayer, "StopShootAndScoot",
+                  this::disableShootAndScoot);
+            JMenuItem scootToHexItem = new JMenuItem(Messages.getString("BotCommandPanel.ScootToHex.title"));
+            scootToHexItem.setToolTipText(Messages.getString("BotCommandPanel.ScootToHex.tooltip"));
+            scootToHexItem.addActionListener(e -> scootToHex(botPlayer));
+            botMenu.add(scootToHexItem);
+            if (!canScoot) {
+                String reason = Messages.getString("BotCommandPanel.ShootAndScoot.noOnBoardArtillery");
+                for (JMenuItem item : List.of(shootAndScootItem, stopShootAndScootItem, scootToHexItem)) {
+                    item.setEnabled(false);
+                    item.setToolTipText(reason);
+                }
+            }
+        }, this::hasOnBoardUnits);
+    }
+
+    /**
+     * @param botPlayer The bot to inspect
+     *
+     * @return TRUE if the bot has at least one deployed on-board unit, i.e. movement commands make sense for it
+     */
+    private boolean hasOnBoardUnits(Player botPlayer) {
+        for (InGameObject unit : getUnitsOwnedBy(botPlayer)) {
+            if ((unit instanceof Entity entity) && !entity.isOffBoard()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param botPlayer The bot to inspect
+     *
+     * @return TRUE if the bot has at least one on-board artillery unit with usable ammo, i.e. artillery that
+     *       shoot-and-scoot can actually move
+     */
+    private boolean hasMovableArtillery(Player botPlayer) {
+        for (InGameObject unit : getUnitsOwnedBy(botPlayer)) {
+            if ((unit instanceof Entity entity) && !entity.isOffBoard() && (countReadyArtilleryWeapons(entity) > 0)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void holdPosition(Player botPlayer) {
@@ -334,114 +394,201 @@ public class BotCommandsPanel extends JPanel {
         sendChatCommand(botPlayer, ChatCommands.HOLD_POSITION, "false");
     }
 
+    private void enableShootAndScoot(Player botPlayer) {
+        sendChatCommand(botPlayer, ChatCommands.SHOOT_AND_SCOOT);
+    }
+
+    private void disableShootAndScoot(Player botPlayer) {
+        sendChatCommand(botPlayer, ChatCommands.SHOOT_AND_SCOOT, "false");
+    }
+
+    private void scootToHex(Player botPlayer) {
+        pickTargetHexes(Messages.getString("BotCommandPanel.ScootToHex.title") + " - " + botPlayer.getName(),
+              true, 1,
+              "BotCommandPanel.ScootToHexPrompt.message",
+              targets -> {
+                  sendChatCommand(botPlayer, ChatCommands.SCOOT_TO_HEX, targets);
+                  acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.scootToHex", targets));
+              });
+    }
+
     private JPopupMenu createManeuverPopup() {
-        JPopupMenu popup = new JPopupMenu();
-        createMenuItem(popup, "AlphaStrike", this::alphaStrikeManeuver);
-        createMenuItem(popup, "NoPrisoners", this::noPrisonersManeuver);
-        createMenuItem(popup, "StayAtRange", this::stayAtRangeManeuver);
-        createMenuItem(popup, "Disperse", this::disperseManeuver);
-        createMenuItem(popup, "TightFormation", this::tightFormationManeuver);
-        createMenuItem(popup, "LooseFormation", this::looseFormationManeuver);
-        createMenuItem(popup, "HoldTheLine", this::holdTheLineManeuver);
-        createMenuItem(popup, "DoubleTimeMarch", this::doubleTimeMarchManeuver);
-        createMenuItem(popup, "FinalGlory", this::finalGloryManeuver);
-        createMenuItem(popup, "FallBack", this::fallBackManeuver);
-        createMenuItem(popup, "EvasiveAction", this::evasiveActionManeuver);
-        createMenuItem(popup, "CarefulAim", this::carefulAimManeuver);
-        popup.addSeparator();
-        popup.add(createFineTuneMenu());
-        return popup;
+        return createBotFirstPopup((botMenu, botPlayer) -> {
+            addBotAction(botMenu, botPlayer, "AlphaStrike", this::alphaStrikeManeuver);
+            addBotAction(botMenu, botPlayer, "NoPrisoners", this::noPrisonersManeuver);
+            addBotAction(botMenu, botPlayer, "StayAtRange", this::stayAtRangeManeuver);
+            addBotAction(botMenu, botPlayer, "Disperse", this::disperseManeuver);
+            addBotAction(botMenu, botPlayer, "TightFormation", this::tightFormationManeuver);
+            addBotAction(botMenu, botPlayer, "LooseFormation", this::looseFormationManeuver);
+            addBotAction(botMenu, botPlayer, "HoldTheLine", this::holdTheLineManeuver);
+            addBotAction(botMenu, botPlayer, "DoubleTimeMarch", this::doubleTimeMarchManeuver);
+            addBotAction(botMenu, botPlayer, "FinalGlory", this::finalGloryManeuver);
+            addBotAction(botMenu, botPlayer, "FallBack", this::fallBackManeuver);
+            addBotAction(botMenu, botPlayer, "EvasiveAction", this::evasiveActionManeuver);
+            addBotAction(botMenu, botPlayer, "CarefulAim", this::carefulAimManeuver);
+            botMenu.addSeparator();
+            botMenu.add(createFineTuneMenu(botPlayer));
+        });
     }
 
     /**
-     * Creates the fine-tuning menu, which exposes the five behavior dials the maneuver presets are built from so each
-     * can be set directly per bot.
+     * Creates the fine-tuning menu for one bot, which exposes the five behavior dials the maneuver presets are built
+     * from so each can be set directly.
+     *
+     * @param botPlayer The bot the dials will be applied to
      *
      * @return The created menu
      */
-    private JMenu createFineTuneMenu() {
+    private JMenu createFineTuneMenu(Player botPlayer) {
         JMenu menu = new JMenu(Messages.getString("BotCommandPanel.FineTune.title"));
         menu.setToolTipText(Messages.getString("BotCommandPanel.FineTune.tooltip"));
-        menu.add(createBehaviorDialMenu("Bot.commands.caution", ChatCommands.CAUTION));
-        menu.add(createBehaviorDialMenu("Bot.commands.avoid", ChatCommands.AVOID));
-        menu.add(createBehaviorDialMenu("Bot.commands.aggression", ChatCommands.AGGRESSION));
-        menu.add(createBehaviorDialMenu("Bot.commands.herding", ChatCommands.HERDING));
-        menu.add(createBehaviorDialMenu("Bot.commands.bravery", ChatCommands.BRAVERY));
+        menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.caution", ChatCommands.CAUTION));
+        menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.avoid", ChatCommands.AVOID));
+        menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.aggression", ChatCommands.AGGRESSION));
+        menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.herding", ChatCommands.HERDING));
+        menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.bravery", ChatCommands.BRAVERY));
         return menu;
     }
 
     /**
-     * Creates a menu for one behavior dial: pick a bot, then a value from 0 to 10.
+     * Creates a menu for one behavior dial of one bot: a value from 0 to 10.
      *
+     * @param botPlayer   The bot the dial will be applied to
      * @param labelKey    The resource key for the dial's display name
      * @param dialCommand The behavior index chat command to send
      *
      * @return The created menu
      */
-    private JMenu createBehaviorDialMenu(String labelKey, ChatCommands dialCommand) {
+    private JMenu createBehaviorDialMenu(Player botPlayer, String labelKey, ChatCommands dialCommand) {
         JMenu menu = new JMenu(Messages.getString(labelKey));
-        for (Player botPlayer : getBotPlayersUnderYourCommand()) {
-            JMenu botMenu = new JMenu(botPlayer.getName());
-            for (int value = 0; value <= 10; value++) {
-                final int dialValue = value;
-                JMenuItem valueItem = new JMenuItem(String.valueOf(dialValue));
-                valueItem.addActionListener(evt -> {
-                    sendChatCommand(botPlayer, dialCommand, dialValue);
-                    acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.fineTune",
-                          Messages.getString(labelKey), dialValue));
-                });
-                botMenu.add(valueItem);
-            }
-            menu.add(botMenu);
+        for (int value = 0; value <= 10; value++) {
+            final int dialValue = value;
+            JMenuItem valueItem = new JMenuItem(String.valueOf(dialValue));
+            valueItem.addActionListener(evt -> {
+                sendChatCommand(botPlayer, dialCommand, dialValue);
+                acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.fineTune",
+                      Messages.getString(labelKey), dialValue));
+            });
+            menu.add(valueItem);
         }
         return menu;
     }
 
-    private record ActionPlayerMenu(Consumer<Player> action, Player botPlayer, JMenu menu) {
+    /**
+     * Builds a popup whose top level is one submenu per commandable bot, each populated with the command's actions
+     * already bound to that bot. When the player commands exactly one bot, the bot level is skipped and that bot's
+     * actions are inlined directly into the popup so no extra navigation is needed.
+     *
+     * @param populator Fills a given bot's submenu with the command's actions, bound to that bot
+     *
+     * @return The created popup
+     */
+    private JPopupMenu createBotFirstPopup(BiConsumer<JMenu, Player> populator) {
+        return createBotFirstPopup(populator, 0, botPlayer -> true);
     }
 
-    private void createMenuItem(JPopupMenu popup, String commandName, Consumer<Player> action) {
-        JMenu menu = new JMenu(Messages.getString("BotCommandPanel." + commandName + ".title"));
-        menu.setToolTipText(Messages.getString("BotCommandPanel." + commandName + ".tooltip"));
-        Consumer<Player> acknowledgedAction = action.andThen(botPlayer ->
-              acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel." + commandName + ".title")));
-        // Set a sub menu where you select which bot will receive the order
-        getBotPlayersUnderYourCommand().stream()
-              .map(botPlayer -> new ActionPlayerMenu(acknowledgedAction, botPlayer, menu))
-              .forEach(this::createMenuItemForBot);
-        popup.add(menu);
+    /**
+     * Builds a bot-first popup including only bots that pass the given filter - used to drop bots from menus that do
+     * not make sense for them (e.g. excluding fully off-board bots from movement menus).
+     *
+     * @param populator Fills a given bot's submenu with the command's actions, bound to that bot
+     * @param botFilter Only bots passing this test get a submenu
+     *
+     * @return The created popup
+     */
+    private JPopupMenu createBotFirstPopup(BiConsumer<JMenu, Player> populator, Predicate<Player> botFilter) {
+        return createBotFirstPopup(populator, 0, botFilter);
     }
 
-    private void createMenuItem(JPopupMenu popup, CardinalEdge cardinalEdge, Consumer<Player> action) {
-        JMenu menu = new JMenu(cardinalEdge.toString());
-        Consumer<Player> acknowledgedAction = action.andThen(botPlayer ->
-              acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.retreat", cardinalEdge)));
-        // Set a sub menu where you select which bot will receive the order
-        getBotPlayersUnderYourCommand().stream()
-              .map(botPlayer -> new ActionPlayerMenu(acknowledgedAction, botPlayer, menu))
-              .forEach(this::createMenuItemForBot);
-        popup.add(menu);
+    /**
+     * Builds a bot-first popup (see {@link #createBotFirstPopup(BiConsumer)}) and, when {@code scrollThreshold} is
+     * positive, attaches a scroller so long per-bot action lists stay usable.
+     *
+     * @param populator       Fills a given bot's submenu with the command's actions, bound to that bot
+     * @param scrollThreshold The maximum number of visible items before scrolling, or 0 for no scroller
+     *
+     * @return The created popup
+     */
+    private JPopupMenu createBotFirstPopup(BiConsumer<JMenu, Player> populator, int scrollThreshold) {
+        return createBotFirstPopup(populator, scrollThreshold, botPlayer -> true);
     }
 
-    private void createMenuItemForSetBehavior(JPopupMenu popup, String behaviorName) {
-        JMenu menu = new JMenu(behaviorName);
-        // Set a sub menu where you select which bot will receive the order
-        getBotPlayersUnderYourCommand().stream()
-              .map(botPlayer -> new ActionPlayerMenu(player -> {
-                  setBehavior(new PlayerBehavior(player, behaviorName));
-                  acknowledgeOrder(player,
-                        Messages.getString("BotCommandPanel.toast.behavior", behaviorName));
-              },
-                    botPlayer,
-                    menu))
-              .forEach(this::createMenuItemForBot);
-        popup.add(menu);
+    /**
+     * Builds a bot-first popup with both a scroll threshold and a bot filter.
+     *
+     * @param populator       Fills a given bot's submenu with the command's actions, bound to that bot
+     * @param scrollThreshold The maximum number of visible items before scrolling, or 0 for no scroller
+     * @param botFilter       Only bots passing this test get a submenu
+     *
+     * @return The created popup
+     */
+    private JPopupMenu createBotFirstPopup(BiConsumer<JMenu, Player> populator, int scrollThreshold,
+          Predicate<Player> botFilter) {
+        JPopupMenu popup = new JPopupMenu();
+        List<Player> botPlayers = getBotPlayersUnderYourCommand().stream().filter(botFilter).toList();
+        if (botPlayers.size() == 1) {
+            // Single-bot shortcut: inline the only bot's actions, dropping the redundant bot submenu level.
+            JMenu botMenu = new JMenu();
+            populator.accept(botMenu, botPlayers.getFirst());
+            for (Component item : botMenu.getMenuComponents()) {
+                popup.add(item);
+            }
+            if (scrollThreshold > 0) {
+                MenuScroller.setScrollerFor(popup, scrollThreshold);
+            }
+        } else {
+            for (Player botPlayer : botPlayers) {
+                JMenu botMenu = new JMenu(botPlayer.getName());
+                populator.accept(botMenu, botPlayer);
+                if (botMenu.getItemCount() > 0) {
+                    if (scrollThreshold > 0) {
+                        MenuScroller.setScrollerFor(botMenu, scrollThreshold);
+                    }
+                    popup.add(botMenu);
+                }
+            }
+        }
+        return popup;
     }
 
-    private void createMenuItemForBot(ActionPlayerMenu actionPlayerMenu) {
-        var menuItem = new JMenuItem(actionPlayerMenu.botPlayer.getName());
-        menuItem.addActionListener(evt -> actionPlayerMenu.action.accept(actionPlayerMenu.botPlayer));
-        actionPlayerMenu.menu.add(menuItem);
+    /**
+     * Adds a single action item to a bot's submenu. The item is titled and tooltipped from the command's resource keys
+     * and, when clicked, runs the action against the bot and shows a confirmation toast.
+     *
+     * @param botMenu     The bot submenu to add the item to
+     * @param botPlayer   The bot the action will be issued to
+     * @param commandName The resource key prefix for the item's title and tooltip
+     * @param action      The action to run against the bot
+     *
+     * @return The created menu item, so callers can adjust it (e.g. disable it)
+     */
+    private JMenuItem addBotAction(JMenu botMenu, Player botPlayer, String commandName, Consumer<Player> action) {
+        JMenuItem menuItem = new JMenuItem(Messages.getString("BotCommandPanel." + commandName + ".title"));
+        menuItem.setToolTipText(Messages.getString("BotCommandPanel." + commandName + ".tooltip"));
+        menuItem.addActionListener(evt -> {
+            action.accept(botPlayer);
+            acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel." + commandName + ".title"));
+        });
+        botMenu.add(menuItem);
+        return menuItem;
+    }
+
+    /**
+     * Adds a retreat-edge action item to a bot's submenu.
+     *
+     * @param botMenu      The bot submenu to add the item to
+     * @param botPlayer    The bot the retreat order will be issued to
+     * @param cardinalEdge The edge to retreat toward
+     * @param action       The action to run against the bot
+     */
+    private void addRetreatAction(JMenu botMenu, Player botPlayer, CardinalEdge cardinalEdge,
+          Consumer<Player> action) {
+        JMenuItem menuItem = new JMenuItem(cardinalEdge.toString());
+        menuItem.addActionListener(evt -> {
+            action.accept(botPlayer);
+            acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.retreat", cardinalEdge));
+        });
+        botMenu.add(menuItem);
     }
 
     private void carefulAimManeuver(Player botPlayer) {
@@ -556,30 +703,37 @@ public class BotCommandsPanel extends JPanel {
     }
 
     private JPopupMenu createPriorityTargetPopup() {
-        var popup = entitySelectionMenu("PriorityTargetMenu", this::setPriorityTarget);
-        popup.addSeparator();
-        createStrategicTargetMenu(popup);
-        createEnemyPlayerOrderMenu(popup, "BloodFeud", ChatCommands.BLOOD_FEUD,
-              "BotCommandPanel.toast.bloodFeud");
-        MenuScroller.setScrollerFor(popup, 15);
-        return popup;
+        return createBotFirstPopup((botMenu, botPlayer) -> {
+            addEnemyUnitMenu(botMenu, botPlayer, "PriorityTargetMenu", this::setPriorityTarget);
+            addEnemyUnitMenu(botMenu, botPlayer, "TagTargetMenu", this::setTagTarget);
+            addStrategicTargetItem(botMenu, botPlayer);
+            addEnemyPlayerMenu(botMenu, botPlayer, "BloodFeud", ChatCommands.BLOOD_FEUD,
+                  "BotCommandPanel.toast.bloodFeud");
+        });
+    }
+
+    private void setTagTarget(PlayerInGameObject playerInGameObject) {
+        sendChatCommand(playerInGameObject.player(), ChatCommands.TAG_TARGET,
+              String.valueOf(playerInGameObject.inGameObject().getId()));
+        acknowledgeOrder(playerInGameObject.player(),
+              Messages.getString("BotCommandPanel.toast.unitOrder",
+                    Messages.getString("BotCommandPanel.TagTargetMenu.title"),
+                    playerInGameObject.inGameObject().getId(),
+                    playerInGameObject.inGameObject().generalName()));
     }
 
     /**
-     * Adds a menu listing the bots; selecting one prompts for strategic target hexes and orders the bot to attack them
+     * Adds an item that, when selected, prompts for strategic target hexes and orders the given bot to attack them
      * (buildings or hexes, used by both regular weapons and artillery).
      *
-     * @param popup The popup menu to add the menu to
+     * @param botMenu   The bot submenu to add the item to
+     * @param botPlayer The bot the order will be issued to
      */
-    private void createStrategicTargetMenu(JPopupMenu popup) {
-        JMenu menu = new JMenu(Messages.getString("BotCommandPanel.StrategicTarget.title"));
-        menu.setToolTipText(Messages.getString("BotCommandPanel.StrategicTarget.tooltip"));
-        for (Player botPlayer : getBotPlayersUnderYourCommand()) {
-            JMenuItem botEntry = new JMenuItem(botPlayer.getName());
-            botEntry.addActionListener(e -> promptAndSendStrategicTargets(botPlayer));
-            menu.add(botEntry);
-        }
-        popup.add(menu);
+    private void addStrategicTargetItem(JMenu botMenu, Player botPlayer) {
+        JMenuItem strategicTargetItem = new JMenuItem(Messages.getString("BotCommandPanel.StrategicTarget.title"));
+        strategicTargetItem.setToolTipText(Messages.getString("BotCommandPanel.StrategicTarget.tooltip"));
+        strategicTargetItem.addActionListener(e -> promptAndSendStrategicTargets(botPlayer));
+        botMenu.add(strategicTargetItem);
     }
 
     /**
@@ -588,7 +742,7 @@ public class BotCommandsPanel extends JPanel {
      * @param botPlayer The bot to receive the orders
      */
     private void promptAndSendStrategicTargets(Player botPlayer) {
-        pickTargetHexes(Messages.getString("BotCommandPanel.StrategicTarget.title"), false,
+        pickTargetHexes(Messages.getString("BotCommandPanel.StrategicTarget.title"), false, 0,
               "BotCommandPanel.StrategicTargetPrompt.message",
               targets -> {
                   // the target-ground command takes a single hex, so send one command per hex
@@ -601,47 +755,44 @@ public class BotCommandsPanel extends JPanel {
     }
 
     private JPopupMenu createIgnoreTargetPopup() {
-        var popup = entitySelectionMenu("IgnoreTargetMenu", this::setIgnoreTarget);
-        popup.addSeparator();
-        createEnemyPlayerOrderMenu(popup, "IgnorePlayer", ChatCommands.IGNORE_PLAYER,
-              "BotCommandPanel.toast.ignorePlayer");
-        createMenuItem(popup, "IgnoreTurrets", this::ignoreTurrets);
-        createMenuItem(popup, "ClearIgnoredTargets", this::clearIgnoredTargetsOrder);
-        MenuScroller.setScrollerFor(popup, 15);
-        return popup;
+        return createBotFirstPopup((botMenu, botPlayer) -> {
+            addEnemyUnitMenu(botMenu, botPlayer, "IgnoreTargetMenu", this::setIgnoreTarget);
+            addEnemyPlayerMenu(botMenu, botPlayer, "IgnorePlayer", ChatCommands.IGNORE_PLAYER,
+                  "BotCommandPanel.toast.ignorePlayer");
+            addBotAction(botMenu, botPlayer, "IgnoreTurrets", this::ignoreTurrets);
+            addBotAction(botMenu, botPlayer, "ClearIgnoredTargets", this::clearIgnoredTargetsOrder);
+        });
     }
 
     /**
-     * Adds a menu listing each enemy player; selecting one sends the given chat command with that player's ID to the
-     * chosen bot (e.g. ignore-player or blood-feud).
+     * Adds a submenu listing each enemy player of the given bot; selecting one sends the given chat command with that
+     * player's ID to the bot (e.g. ignore-player or blood-feud). The submenu is omitted when the bot has no enemy
+     * players.
      *
-     * @param popup      The popup menu to add the menu to
+     * @param botMenu    The bot submenu to add the menu to
+     * @param botPlayer  The bot the order will be issued to
      * @param messageKey The resource key for the menu title and tooltip
      * @param command    The chat command to send with the enemy player's ID
      * @param toastKey   The resource key for the confirmation toast (formatted with the enemy player's name)
      */
-    private void createEnemyPlayerOrderMenu(JPopupMenu popup, String messageKey, ChatCommands command,
+    private void addEnemyPlayerMenu(JMenu botMenu, Player botPlayer, String messageKey, ChatCommands command,
           String toastKey) {
         JMenu menu = new JMenu(Messages.getString("BotCommandPanel." + messageKey + ".title"));
         menu.setToolTipText(Messages.getString("BotCommandPanel." + messageKey + ".tooltip"));
         for (Player enemyPlayer : client.getGame().getPlayersList()) {
-            JMenu playerMenu = new JMenu(enemyPlayer.getName());
-            for (Player botPlayer : getBotPlayersUnderYourCommand()) {
-                if (!enemyPlayer.isEnemyOf(botPlayer)) {
-                    continue;
-                }
-                JMenuItem botEntry = new JMenuItem(botPlayer.getName());
-                botEntry.addActionListener(e -> {
-                    sendChatCommand(botPlayer, command, String.valueOf(enemyPlayer.getId()));
-                    acknowledgeOrder(botPlayer, Messages.getString(toastKey, enemyPlayer.getName()));
-                });
-                playerMenu.add(botEntry);
+            if (!enemyPlayer.isEnemyOf(botPlayer)) {
+                continue;
             }
-            if (playerMenu.getItemCount() > 0) {
-                menu.add(playerMenu);
-            }
+            JMenuItem playerEntry = new JMenuItem(enemyPlayer.getName());
+            playerEntry.addActionListener(e -> {
+                sendChatCommand(botPlayer, command, String.valueOf(enemyPlayer.getId()));
+                acknowledgeOrder(botPlayer, Messages.getString(toastKey, enemyPlayer.getName()));
+            });
+            menu.add(playerEntry);
         }
-        popup.add(menu);
+        if (menu.getItemCount() > 0) {
+            botMenu.add(menu);
+        }
     }
 
     private void ignoreTurrets(Player botPlayer) {
@@ -653,41 +804,75 @@ public class BotCommandsPanel extends JPanel {
     }
 
     private JPopupMenu createArtilleryPopup() {
-        JPopupMenu popup = new JPopupMenu();
-        createMenuItem(popup, "ArtilleryHalt",
-              botPlayer -> sendArtilleryOrder(botPlayer, ArtilleryOrder.HALT, SpecialAmmo.STANDARD, ""));
-        createMenuItem(popup, "ArtilleryAuto",
-              botPlayer -> sendArtilleryOrder(botPlayer, ArtilleryOrder.AUTO, SpecialAmmo.STANDARD, ""));
-        popup.addSeparator();
-        popup.add(createArtilleryFireMissionMenu("ArtilleryBarrage", ArtilleryOrder.BARRAGE));
-        popup.add(createArtilleryFireMissionMenu("ArtilleryVolley", ArtilleryOrder.VOLLEY));
-        popup.add(createArtilleryFireMissionMenu("ArtillerySingle", ArtilleryOrder.SINGLE));
-        return popup;
+        return createBotFirstPopup((botMenu, botPlayer) -> {
+            addBotAction(botMenu, botPlayer, "ArtilleryHalt",
+                  bot -> sendArtilleryOrder(bot, ArtilleryOrder.HALT, SpecialAmmo.STANDARD, ""));
+            addBotAction(botMenu, botPlayer, "ArtilleryAuto",
+                  bot -> sendArtilleryOrder(bot, ArtilleryOrder.AUTO, SpecialAmmo.STANDARD, ""));
+            botMenu.addSeparator();
+            botMenu.add(createArtilleryFireMissionMenu(botPlayer, "ArtillerySingle", ArtilleryOrder.SINGLE));
+            botMenu.add(createArtilleryFireMissionMenu(botPlayer, "ArtilleryVolley", ArtilleryOrder.VOLLEY));
+            botMenu.add(createArtilleryFireMissionMenu(botPlayer, "ArtilleryBarrage", ArtilleryOrder.BARRAGE));
+        });
     }
 
     /**
-     * Creates a fire mission menu for the given artillery order: the player picks a bot and an ammo type, then is
+     * Creates a fire mission menu for one bot and the given artillery order: the player picks an ammo type, then is
      * prompted for the target hexes.
      *
+     * @param botPlayer  The bot the fire mission will be issued to
      * @param messageKey The resource key for the menu title and tooltip
      * @param order      The artillery order this menu issues
      *
      * @return The created menu
      */
-    private JMenu createArtilleryFireMissionMenu(String messageKey, ArtilleryOrder order) {
+    private JMenu createArtilleryFireMissionMenu(Player botPlayer, String messageKey, ArtilleryOrder order) {
         JMenu menu = new JMenu(Messages.getString("BotCommandPanel." + messageKey + ".title"));
         menu.setToolTipText(Messages.getString("BotCommandPanel." + messageKey + ".tooltip"));
-        for (Player botPlayer : getBotPlayersUnderYourCommand()) {
-            JMenu botMenu = new JMenu(botPlayer.getName());
-            for (SpecialAmmo ammo : SpecialAmmo.values()) {
-                JMenuItem ammoItem = new JMenuItem(
-                      Messages.getString("BotCommandPanel.ArtilleryAmmo." + ammo.name()));
-                ammoItem.addActionListener(evt -> promptAndSendFireMission(botPlayer, order, ammo));
-                botMenu.add(ammoItem);
+        Set<SpecialAmmo> loadedAmmo = availableArtilleryAmmo(botPlayer);
+        for (SpecialAmmo ammo : SpecialAmmo.values()) {
+            if (!loadedAmmo.contains(ammo)) {
+                // only offer ammo the bot's artillery actually carries
+                continue;
             }
-            menu.add(botMenu);
+            JMenuItem ammoItem = new JMenuItem(
+                  Messages.getString("BotCommandPanel.ArtilleryAmmo." + ammo.name()));
+            ammoItem.addActionListener(evt -> promptAndSendFireMission(botPlayer, order, ammo));
+            menu.add(ammoItem);
         }
         return menu;
+    }
+
+    /**
+     * Collects the special-ammo types actually loaded (with shots remaining) across all of the given bot's artillery
+     * units, so the fire-mission menu only offers ammo the bot can really fire.
+     *
+     * @param botPlayer The bot whose artillery ammunition is inspected
+     *
+     * @return The set of available special-ammo types (empty if the bot has no loaded artillery ammo)
+     */
+    private Set<SpecialAmmo> availableArtilleryAmmo(Player botPlayer) {
+        Set<SpecialAmmo> available = EnumSet.noneOf(SpecialAmmo.class);
+        boolean nukesAllowed = client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ALLOW_NUKES);
+        for (InGameObject unit : getUnitsOwnedBy(botPlayer)) {
+            if (unit instanceof Entity entity) {
+                for (WeaponMounted weapon : entity.getWeaponList()) {
+                    if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+                        for (AmmoMounted ammo : entity.getAmmo(weapon)) {
+                            if (ammo.getUsableShotsLeft() > 0) {
+                                SpecialAmmo category = SpecialAmmo.forMunitions(ammo.getType().getMunitionType());
+                                if ((category == SpecialAmmo.DAVY_CROCKETT) && !nukesAllowed) {
+                                    // a tactical nuke only fires when the nuke game option is enabled
+                                    continue;
+                                }
+                                available.add(category);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return available;
     }
 
     /**
@@ -699,11 +884,65 @@ public class BotCommandsPanel extends JPanel {
      * @param ammo      The special ammo to use
      */
     private void promptAndSendFireMission(Player botPlayer, ArtilleryOrder order, SpecialAmmo ammo) {
+        // A volley feeds one shot to one tube across distinct hexes, so cap the picks at the bot's available tubes.
+        int maxHexes = (order == ArtilleryOrder.VOLLEY) ? maxArtilleryShots(botPlayer) : 0;
         pickTargetHexes(Messages.getString("BotCommandPanel.HexPicker.artilleryOrder",
-                    order.name(), botPlayer.getName()),
+                    artilleryProWord(order), botPlayer.getName()),
               order == ArtilleryOrder.SINGLE,
+              maxHexes,
               "BotCommandPanel.ArtilleryTargetPrompt.message",
               targets -> sendArtilleryOrder(botPlayer, order, ammo, targets));
+    }
+
+    /**
+     * Computes the largest number of ready artillery tubes on any single one of the given bot's units. This is the
+     * number of distinct hexes a volley fire mission can usefully target, since each unit feeds one shot to one tube
+     * across distinct hexes.
+     *
+     * @param botPlayer The bot whose artillery units are counted
+     *
+     * @return The most ready artillery weapons on a single unit, or 0 if none (treated as "no limit")
+     */
+    private int maxArtilleryShots(Player botPlayer) {
+        int maxShots = 0;
+        for (InGameObject unit : getUnitsOwnedBy(botPlayer)) {
+            if (unit instanceof Entity entity) {
+                maxShots = Math.max(maxShots, countReadyArtilleryWeapons(entity));
+            }
+        }
+        return maxShots;
+    }
+
+    /**
+     * Counts the artillery weapons on the given entity that have usable ammunition.
+     *
+     * @param entity The unit to inspect
+     *
+     * @return The number of ready artillery weapons
+     */
+    private int countReadyArtilleryWeapons(Entity entity) {
+        int readyWeapons = 0;
+        for (WeaponMounted weapon : entity.getWeaponList()) {
+            if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY) && hasUsableAmmo(entity, weapon)) {
+                readyWeapons++;
+            }
+        }
+        return readyWeapons;
+    }
+
+    /**
+     * @param entity The unit carrying the weapon
+     * @param weapon The artillery weapon
+     *
+     * @return TRUE if the weapon has at least one ammo bin with shots remaining
+     */
+    private boolean hasUsableAmmo(Entity entity, WeaponMounted weapon) {
+        for (AmmoMounted ammo : entity.getAmmo(weapon)) {
+            if (ammo.getUsableShotsLeft() > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -712,10 +951,11 @@ public class BotCommandsPanel extends JPanel {
      *
      * @param orderDescription  Human-readable description of the order shown while picking
      * @param singleHex         TRUE to finish after the first hex is picked
+     * @param maxHexes          The maximum number of hexes that may be picked, or 0 for no limit
      * @param fallbackPromptKey The resource key for the typed prompt message used as fallback
      * @param onTargetsSelected Called with the picked hexes as dash-separated hex numbers
      */
-    private void pickTargetHexes(String orderDescription, boolean singleHex, String fallbackPromptKey,
+    private void pickTargetHexes(String orderDescription, boolean singleHex, int maxHexes, String fallbackPromptKey,
           Consumer<String> onTargetsSelected) {
         BoardView boardView = null;
         if (clientGUI != null) {
@@ -725,13 +965,13 @@ public class BotCommandsPanel extends JPanel {
                   .orElse(null);
         }
         if (boardView == null) {
-            String targets = promptForHexNumbers(fallbackPromptKey, "BotCommandPanel.TargetHexPrompt.title");
+            String targets = promptForHexNumbers(fallbackPromptKey, "BotCommandPanel.TargetHexPrompt.title", maxHexes);
             if (targets != null) {
                 onTargetsSelected.accept(targets);
             }
             return;
         }
-        new HexTargetPicker(clientGUI, boardView, orderDescription, singleHex, onTargetsSelected).start();
+        new HexTargetPicker(clientGUI, boardView, orderDescription, singleHex, maxHexes, onTargetsSelected).start();
     }
 
     /**
@@ -740,10 +980,11 @@ public class BotCommandsPanel extends JPanel {
      *
      * @param promptMessageKey The resource key for the prompt message
      * @param promptTitleKey   The resource key for the prompt dialog title
+     * @param maxHexes         The maximum number of hexes accepted, or 0 for no limit
      *
      * @return The entered hex numbers joined with dashes, or null if the player canceled or the input was invalid
      */
-    private @Nullable String promptForHexNumbers(String promptMessageKey, String promptTitleKey) {
+    private @Nullable String promptForHexNumbers(String promptMessageKey, String promptTitleKey, int maxHexes) {
         String input = JOptionPane.showInputDialog(this,
               Messages.getString(promptMessageKey),
               Messages.getString(promptTitleKey),
@@ -751,11 +992,19 @@ public class BotCommandsPanel extends JPanel {
         if ((input == null) || input.isBlank()) {
             return null;
         }
-        String targets = String.join("-", input.trim().split("[\\s,]+"));
+        String[] hexNumbers = input.trim().split("[\\s,]+");
+        String targets = String.join("-", hexNumbers);
         if (!isValidHexInput(targets)) {
             if (clientGUI != null) {
                 clientGUI.addToast(ToastLevel.ERROR,
                       Messages.getString("BotCommandPanel.ArtilleryTargetPrompt.invalid", input));
+            }
+            return null;
+        }
+        if ((maxHexes > 0) && (hexNumbers.length > maxHexes)) {
+            if (clientGUI != null) {
+                clientGUI.addToast(ToastLevel.ERROR,
+                      Messages.getString("BotCommandPanel.HexPicker.tooMany", maxHexes));
             }
             return null;
         }
@@ -797,21 +1046,57 @@ public class BotCommandsPanel extends JPanel {
               ? order.name()
               : order.name() + " " + ammo.name() + " " + targets;
         sendChatCommand(botPlayer, ChatCommands.ARTILLERY, arguments);
-        if (!targets.isBlank()) {
-            acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.artillery",
-                  order.name(), targets));
+        if (targets.isBlank()) {
+            // Control order (halt/auto): no grid, just the warning order pro-word
+            acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.fireMissionControl",
+                  artilleryProWord(order)));
+        } else {
+            acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.fireMission",
+                  artilleryProWord(order), artilleryAmmoProWord(ammo), toGrid(targets)));
         }
     }
 
+    /**
+     * @param order The artillery warning order
+     *
+     * @return The call-for-fire pro-word for the warning order (e.g. "Fire for effect")
+     */
+    private String artilleryProWord(ArtilleryOrder order) {
+        return Messages.getString("BotCommandPanel.artilleryProWord." + order.name());
+    }
+
+    /**
+     * @param ammo The special ammunition selected for the fire mission
+     *
+     * @return The call-for-fire pro-word for the ammunition (e.g. "HE", "Illum")
+     */
+    private String artilleryAmmoProWord(SpecialAmmo ammo) {
+        return Messages.getString("BotCommandPanel.artilleryAmmoProWord." + ammo.name());
+    }
+
+    /**
+     * Converts the internal dash-separated target hex list (e.g. "0810-0811") into a readable grid string (e.g. "0810,
+     * 0811") for call-for-fire messages.
+     *
+     * @param targets The dash-separated target hex list
+     *
+     * @return The comma-separated grid string
+     */
+    private String toGrid(String targets) {
+        return targets.replace("-", ", ");
+    }
+
     private JPopupMenu createWaypointsPopup() {
-        JPopupMenu popup = new JPopupMenu();
-        popup.add(createWaypointHexOrderMenu("SetWaypoints", ChatCommands.SET_WAYPOINT));
-        popup.add(createWaypointHexOrderMenu("AddWaypoint", ChatCommands.ADD_WAYPOINT));
-        popup.addSeparator();
-        popup.add(createWaypointUnitOrderMenu("RemoveWaypoint", ChatCommands.REMOVE_WAYPOINT));
-        popup.add(createWaypointUnitOrderMenu("ClearWaypoints", ChatCommands.CLEAR_WAYPOINT));
-        createMenuItem(popup, "ClearAllWaypoints", this::clearAllWaypoints);
-        return popup;
+        return createBotFirstPopup((botMenu, botPlayer) -> {
+            if (!getUnitsOwnedBy(botPlayer).isEmpty()) {
+                botMenu.add(createWaypointHexOrderMenu(botPlayer, "SetWaypoints", ChatCommands.SET_WAYPOINT));
+                botMenu.add(createWaypointHexOrderMenu(botPlayer, "AddWaypoint", ChatCommands.ADD_WAYPOINT));
+                botMenu.addSeparator();
+                botMenu.add(createWaypointUnitOrderMenu(botPlayer, "RemoveWaypoint", ChatCommands.REMOVE_WAYPOINT));
+                botMenu.add(createWaypointUnitOrderMenu(botPlayer, "ClearWaypoints", ChatCommands.CLEAR_WAYPOINT));
+            }
+            addBotAction(botMenu, botPlayer, "ClearAllWaypoints", this::clearAllWaypoints);
+        }, this::hasOnBoardUnits);
     }
 
     private void clearAllWaypoints(Player botPlayer) {
@@ -832,57 +1117,54 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * Creates a waypoint menu that needs target hexes: pick a bot, then one of its units, then enter the hexes.
+     * Creates a waypoint menu for one bot that needs target hexes: pick one of the bot's units, then enter the hexes.
      *
+     * @param botPlayer       The bot the waypoint order will be issued to
      * @param messageKey      The resource key for the menu title and tooltip
      * @param waypointCommand The waypoint chat command to send (set-waypoints or add-waypoint)
      *
      * @return The created menu
      */
-    private JMenu createWaypointHexOrderMenu(String messageKey, ChatCommands waypointCommand) {
-        return createWaypointMenu(messageKey, (botPlayer, unit) ->
-              promptAndSendWaypoints(botPlayer, unit, waypointCommand,
+    private JMenu createWaypointHexOrderMenu(Player botPlayer, String messageKey, ChatCommands waypointCommand) {
+        return createWaypointMenu(botPlayer, messageKey, (bot, unit) ->
+              promptAndSendWaypoints(bot, unit, waypointCommand,
                     Messages.getString("BotCommandPanel." + messageKey + ".title")));
     }
 
     /**
-     * Creates a waypoint menu that acts on a unit without needing hexes (remove last / clear waypoints).
+     * Creates a waypoint menu for one bot that acts on a unit without needing hexes (remove last / clear waypoints).
      *
+     * @param botPlayer       The bot the waypoint order will be issued to
      * @param messageKey      The resource key for the menu title and tooltip
      * @param waypointCommand The waypoint chat command to send (remove-waypoint or clear-waypoints)
      *
      * @return The created menu
      */
-    private JMenu createWaypointUnitOrderMenu(String messageKey, ChatCommands waypointCommand) {
-        return createWaypointMenu(messageKey, (botPlayer, unit) -> {
-            sendChatCommand(botPlayer, waypointCommand, String.valueOf(unit.getId()));
-            acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.unitOrder",
+    private JMenu createWaypointUnitOrderMenu(Player botPlayer, String messageKey, ChatCommands waypointCommand) {
+        return createWaypointMenu(botPlayer, messageKey, (bot, unit) -> {
+            sendChatCommand(bot, waypointCommand, String.valueOf(unit.getId()));
+            acknowledgeOrder(bot, Messages.getString("BotCommandPanel.toast.unitOrder",
                   Messages.getString("BotCommandPanel." + messageKey + ".title"),
                   unit.getId(), unit.generalName()));
         });
     }
 
     /**
-     * Creates a menu listing each bot and its units; selecting a unit runs the given action.
+     * Creates a menu listing one bot's units; selecting a unit runs the given action.
      *
+     * @param botPlayer  The bot whose units are listed
      * @param messageKey The resource key for the menu title and tooltip
-     * @param unitAction The action to run with the chosen bot and unit
+     * @param unitAction The action to run with the bot and the chosen unit
      *
      * @return The created menu
      */
-    private JMenu createWaypointMenu(String messageKey, BiConsumer<Player, InGameObject> unitAction) {
+    private JMenu createWaypointMenu(Player botPlayer, String messageKey, BiConsumer<Player, InGameObject> unitAction) {
         JMenu menu = new JMenu(Messages.getString("BotCommandPanel." + messageKey + ".title"));
         menu.setToolTipText(Messages.getString("BotCommandPanel." + messageKey + ".tooltip"));
-        for (Player botPlayer : getBotPlayersUnderYourCommand()) {
-            JMenu botMenu = new JMenu(botPlayer.getName());
-            for (InGameObject unit : getUnitsOwnedBy(botPlayer)) {
-                JMenuItem unitItem = new JMenuItem("ID:" + unit.getId() + " " + unit.generalName());
-                unitItem.addActionListener(evt -> unitAction.accept(botPlayer, unit));
-                botMenu.add(unitItem);
-            }
-            if (botMenu.getItemCount() > 0) {
-                menu.add(botMenu);
-            }
+        for (InGameObject unit : getUnitsOwnedBy(botPlayer)) {
+            JMenuItem unitItem = new JMenuItem("ID:" + unit.getId() + " " + unit.generalName());
+            unitItem.addActionListener(evt -> unitAction.accept(botPlayer, unit));
+            menu.add(unitItem);
         }
         return menu;
     }
@@ -897,7 +1179,7 @@ public class BotCommandsPanel extends JPanel {
      */
     private void promptAndSendWaypoints(Player botPlayer, InGameObject unit, ChatCommands waypointCommand,
           String orderTitle) {
-        pickTargetHexes(orderTitle + " - " + unit.generalName(), false,
+        pickTargetHexes(orderTitle + " - " + unit.generalName(), false, 0,
               "BotCommandPanel.WaypointPrompt.message",
               targets -> {
                   sendChatCommand(botPlayer, waypointCommand, unit.getId() + " " + targets);
@@ -908,28 +1190,34 @@ public class BotCommandsPanel extends JPanel {
 
     private record PlayerInGameObject(Player player, InGameObject inGameObject) {}
 
-    private JPopupMenu entitySelectionMenu(String messageKey, Consumer<PlayerInGameObject> action) {
-        JPopupMenu popup = new JPopupMenu(Messages.getString("BotCommandPanel." + messageKey + ".title"));
-        popup.setToolTipText(Messages.getString("BotCommandPanel." + messageKey + ".tooltip"));
+    /**
+     * Adds a submenu listing every enemy unit of the given bot; selecting a unit runs the action against that bot and
+     * unit (e.g. prioritize or ignore). The submenu is omitted when the bot has no enemy units, and a scroller keeps
+     * long unit lists usable.
+     *
+     * @param botMenu    The bot submenu to add the menu to
+     * @param botPlayer  The bot the order will be issued to
+     * @param messageKey The resource key for the menu title and tooltip
+     * @param action     The action to run with the chosen bot and unit
+     */
+    private void addEnemyUnitMenu(JMenu botMenu, Player botPlayer, String messageKey,
+          Consumer<PlayerInGameObject> action) {
+        JMenu menu = new JMenu(Messages.getString("BotCommandPanel." + messageKey + ".title"));
+        menu.setToolTipText(Messages.getString("BotCommandPanel." + messageKey + ".tooltip"));
         var playerMap = new HashMap<Integer, Player>();
-        client.getGame().getPlayersList().forEach(p -> playerMap.put(p.getId(), p));
+        client.getGame().getPlayersList().forEach(player -> playerMap.put(player.getId(), player));
         for (var inGameObject : client.getInGameObjects()) {
-            var isEnemyOfSomeone = false;
-            var unit = new JMenu("ID:" + inGameObject.getId() + " " + inGameObject.generalName());
-            for (var botPlayer : getBotPlayersUnderYourCommand()) {
-                var player = playerMap.get(inGameObject.getOwnerId());
-                if (player != null && player.isEnemyOf(botPlayer)) {
-                    var botEntry = new JMenuItem(botPlayer.getName());
-                    botEntry.addActionListener(e -> action.accept(new PlayerInGameObject(botPlayer, inGameObject)));
-                    unit.add(botEntry);
-                    isEnemyOfSomeone = true;
-                }
-            }
-            if (isEnemyOfSomeone) {
-                popup.add(unit);
+            var owner = playerMap.get(inGameObject.getOwnerId());
+            if (owner != null && owner.isEnemyOf(botPlayer)) {
+                var unitEntry = new JMenuItem("ID:" + inGameObject.getId() + " " + inGameObject.generalName());
+                unitEntry.addActionListener(e -> action.accept(new PlayerInGameObject(botPlayer, inGameObject)));
+                menu.add(unitEntry);
             }
         }
-        return popup;
+        if (menu.getItemCount() > 0) {
+            MenuScroller.setScrollerFor(menu, 15);
+            botMenu.add(menu);
+        }
     }
 
     private void setIgnoreTarget(PlayerInGameObject playerInGameObject) {

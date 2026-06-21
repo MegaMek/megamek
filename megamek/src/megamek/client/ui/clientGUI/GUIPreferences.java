@@ -81,6 +81,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_KEY_REPEAT_DELAY = "AdvancedKeyRepeatDelay";
     public static final String ADVANCED_KEY_REPEAT_RATE = "AdvancedKeyRepeatRate";
     public static final String ADVANCED_SHOW_FPS = "AdvancedShowFPS";
+    // Testing/observer aid: reveal otherwise-obscured artillery markers (e.g. enemy incoming) on the local view only
+    public static final String ADVANCED_REVEAL_OBSCURED_ARTILLERY = "AdvancedRevealObscuredArtillery";
+    // Testing aid: have Princess paint her artillery heat map (predicted impacts + chosen targets) on the board
+    public static final String ADVANCED_SHOW_BOT_ARTILLERY_HEATMAP = "AdvancedShowBotArtilleryHeatMap";
     public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
     public static final String ADVANCED_SAVE_LOBBY_ON_START = "AdvancedSaveLobbyOnStart";
 
@@ -628,6 +632,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(SHOW_ARTILLERY_MISSES, true);
         store.setDefault(SHOW_ARTILLERY_DRIFTS, true);
+        store.setDefault(ADVANCED_REVEAL_OBSCURED_ARTILLERY, false);
+        store.setDefault(ADVANCED_SHOW_BOT_ARTILLERY_HEATMAP, false);
         store.setDefault(SHOW_BOMB_MISSES, true);
         store.setDefault(SHOW_BOMB_DRIFTS, false);
         store.setDefault(SHOW_DEPLOY_ZONES_ARTY_AUTO, false);

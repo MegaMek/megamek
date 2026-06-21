@@ -216,6 +216,12 @@ public class SpecialHexDisplay implements Serializable {
      */
     public static int SHD_VISIBLE_TO_ALL = 2;
 
+    /**
+     * Prefix marking a bot artillery heat-map testing marker. The turn number to render on the hex follows this prefix
+     * immediately, up to the first space; the rest of the info is the hover text.
+     */
+    public static final String HEAT_MAP_PREFIX = "[HM]";
+
     private String info;
     private Type type;
     private int round;
@@ -435,8 +441,14 @@ public class SpecialHexDisplay implements Serializable {
             return false;
         }
 
-        // Only display obscured hexes to owner
-        if (isObscured(playerChecking)) {
+        // Only display obscured hexes to owner - unless the local player has turned on the testing/observer aid to
+        // reveal otherwise-hidden artillery markers (e.g. an enemy battery's incoming rounds) on their own view.
+        boolean revealForTesting = (guiPref != null)
+              && guiPref.getBoolean(GUIPreferences.ADVANCED_REVEAL_OBSCURED_ARTILLERY)
+              && ((type == Type.ARTILLERY_INCOMING) || (type == Type.ARTILLERY_ADJUSTED)
+              || (type == Type.ARTILLERY_TARGET) || (type == Type.ARTILLERY_HIT)
+              || (type == Type.ARTILLERY_MISS) || (type == Type.ARTILLERY_DRIFT));
+        if (!revealForTesting && isObscured(playerChecking)) {
             return false;
         }
 

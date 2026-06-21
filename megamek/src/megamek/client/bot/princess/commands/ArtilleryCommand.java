@@ -33,10 +33,12 @@
 package megamek.client.bot.princess.commands;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import megamek.client.bot.Messages;
 import megamek.client.bot.princess.ArtilleryCommandAndControl;
 import megamek.client.bot.princess.Princess;
+import megamek.common.board.Coords;
 import megamek.logging.MMLogger;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
@@ -92,5 +94,30 @@ public class ArtilleryCommand implements ChatCommand {
         LOGGER.info("{}: artillery order set to {} (ammo {}, targets {})",
               princess.getLocalPlayer().getName(), artilleryOrder, specialAmmo,
               multiHexNumberArgument.getValue());
+        sendBatteryReadback(princess, artilleryOrder, specialAmmo, multiHexNumberArgument.getValue());
+    }
+
+    /**
+     * Sends a call-for-fire "readback" to the chat so the bot's artillery acknowledges the fire mission in
+     * radio-procedure style.
+     *
+     * @param princess       The bot acknowledging the order
+     * @param artilleryOrder The warning order received
+     * @param specialAmmo    The ammunition selected
+     * @param targets        The target hexes, empty for control orders (halt/auto)
+     */
+    private void sendBatteryReadback(Princess princess, ArtilleryCommandAndControl.ArtilleryOrder artilleryOrder,
+          ArtilleryCommandAndControl.SpecialAmmo specialAmmo, List<Coords> targets) {
+        String batteryName = princess.getLocalPlayer().getName();
+        String warningOrder = Messages.getString("Princess.command.artillery.proWord." + artilleryOrder.name());
+        if (targets.isEmpty()) {
+            princess.sendChat(Messages.getString("Princess.command.artillery.readbackControl",
+                  batteryName, warningOrder));
+            return;
+        }
+        String ammoProWord = Messages.getString("Princess.command.artillery.ammoProWord." + specialAmmo.name());
+        String grid = targets.stream().map(Coords::getBoardNum).collect(Collectors.joining(", "));
+        princess.sendChat(Messages.getString("Princess.command.artillery.readback",
+              batteryName, warningOrder, ammoProWord, grid));
     }
 }

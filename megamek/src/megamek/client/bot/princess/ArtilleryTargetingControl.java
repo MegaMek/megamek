@@ -33,9 +33,6 @@
 
 package megamek.client.bot.princess;
 
-import static megamek.common.equipment.AmmoType.FLARE_MUNITIONS;
-import static megamek.common.equipment.AmmoType.MINE_MUNITIONS;
-import static megamek.common.equipment.AmmoType.SMOKE_MUNITIONS;
 import static megamek.common.equipment.AmmoType.isAmmoValid;
 
 import java.util.ArrayList;
@@ -47,9 +44,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import megamek.client.bot.Messages;
+import megamek.client.bot.princess.ArtilleryCommandAndControl.SpecialAmmo;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.Player;
@@ -85,6 +82,15 @@ public class ArtilleryTargetingControl {
     // increases the number of spaces we need to check
     private static final int MAX_ARTILLERY_BLAST_RADIUS = 2;
 
+    // Minimum number of enemies in/around the predicted impact for auto-mode artillery to bother firing, so it does
+    // not waste rounds long-shotting a single unit.
+    private static final int MIN_AUTO_CLUSTER_UNITS = 2;
+
+    // Effective hit odds we credit a homing round when a friendly TAG unit can designate a target near its aim point:
+    // the round homes onto the TAG instead of scattering, so it is treated as a near-certain hit rather than the ~8%
+    // of unobserved indirect fire. This makes the bot spend homing ammo when - and only when - a spotter is in place.
+    private static final double TAG_GUIDED_HIT_ODDS = 0.75;
+
     // per TacOps, this is the to-hit modifier for indirect artillery attacks.
     private static final int ARTILLERY_ATTACK_MODIFIER = 7;
 
@@ -102,6 +108,10 @@ public class ArtilleryTargetingControl {
     // dictionary containing sets of coordinates and the damage value if one of those coordinates were hit by a shell
     // does not take into account hit odds or anything like that
     private Map<Integer, HashMap<Coords, Double>> damageValues = new HashMap<>();
+
+    // The hexes each enemy was predicted to advance to this phase, mapped to the number of enemies feeding that hex
+    // (its "heat"), for the optional heat-map visualization
+    private final Map<Coords, Integer> heatMapPredictedHexes = new HashMap<>();
 
     private Set<Targetable> targetSet;
 
@@ -290,10 +300,6 @@ public class ArtilleryTargetingControl {
         return getAmmoTypeAvailable(shooter, Munitions.M_ADA);
     }
 
-    private boolean getHomingAvailable(Entity shooter) {
-        return getAmmoTypeAvailable(shooter, Munitions.M_HOMING);
-    }
-
     /**
      * Builds a list of eligible targets for artillery strikes. This includes hexes on and within the max radius of all
      * non-airborne enemy entities and hexes on and within the max radius of all strategic targets.
@@ -304,8 +310,8 @@ public class ArtilleryTargetingControl {
      */
     private void buildTargetList(Entity shooter, Game game, Princess owner) {
         targetSet = new HashSet<>();
+        heatMapPredictedHexes.clear();
         boolean adaAvailable = getADAAvailable(shooter);
-        boolean homingAvailable = getHomingAvailable(shooter);
 
         // if we're not in auto mode, we're going to shoot at the targets we've been given.
         if (owner.getArtilleryCommandAndControl().isArtilleryVolley()
@@ -327,6 +333,12 @@ public class ArtilleryTargetingControl {
         for (Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext(); ) {
             Entity e = enemies.next();
 
+            // Skip enemies that are not actually on the board yet (still deploying / entering): they have no real
+            // position to target, so firing at their phantom hex just wastes rounds.
+            if (!e.isDeployed()) {
+                continue;
+            }
+
             // Given how accurate and long-ranged ADA missiles are, prioritize airborne targets if ADA is available
             if (adaAvailable) {
                 // We will check these first, but still look at other possible shots.
@@ -344,26 +356,16 @@ public class ArtilleryTargetingControl {
 
                 HexTarget hex = new HexTarget(e.getPosition(), Targetable.TYPE_HEX_ARTILLERY);
 
-                // Add leading hex for standard rounds
-                HexTarget leadHex = new HexTarget(Compute.calculateArtilleryLead(game, shooter, e, false),
-                      Targetable.TYPE_HEX_ARTILLERY);
-                leadHex.setOriginalTarget(hex);
-
-                // Add leading hex for homing rounds
-                HexTarget homingHex = new HexTarget(Compute.calculateArtilleryLead(game, shooter, e, homingAvailable),
-                      Targetable.TYPE_HEX_ARTILLERY);
-                homingHex.setOriginalTarget(hex);
-
-                // Decide which target to use; if all are the same position, use the first hex position
-                if (!(leadHex.getPosition().equals(hex.getPosition()) &&
-                      homingHex.getPosition().equals(hex.getPosition()))) {
-                    if (leadHex.getPosition().equals(homingHex.getPosition())) {
-                        // Either the target is fast, or we're not going to use homing
-                        hex = leadHex;
-                    } else {
-                        // Homing is in play, lead farther (probably)
-                        hex = homingHex;
-                    }
+                // Lead the shot to where this enemy is predicted to be when the rounds land: advancing toward the
+                // nearest friendly unit (us) at its OWN move rate, scaled by the flight time. This aims the heat map
+                // at where the enemy is actually heading rather than the direction it last jinked. Homing rounds use
+                // the same hex - they home onto a TAG within blast radius of it - so there is no separate (and
+                // previously wildly over-led) homing lead.
+                Coords predictedPosition = predictEnemyAdvance(e, shooter, game, owner);
+                if (!predictedPosition.equals(e.getPosition())) {
+                    HexTarget leadHex = new HexTarget(predictedPosition, Targetable.TYPE_HEX_ARTILLERY);
+                    leadHex.setOriginalTarget(hex);
+                    hex = leadHex;
                 }
                 targetSet.add(hex);
 
@@ -386,6 +388,195 @@ public class ArtilleryTargetingControl {
             // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS" of the strategic targets.
             addHexDonuts(coords, targetSet, game);
         }
+    }
+
+    /**
+     * Predicts where an enemy will be when the rounds land: it advances toward our force's centre of mass at its OWN
+     * walking speed (a conservative estimate - units rarely sprint straight at the guns every turn), over the shot's
+     * flight time (from the TO:AR flight-times table, which already accounts for an off-board battery's distance from
+     * the battlefield). The lead is capped a blast radius short of the anchor so it never shells our own position.
+     * Falls back to the enemy's current hex when there is no friendly anchor.
+     *
+     * @param enemy   The enemy being led
+     * @param shooter The firing artillery unit
+     * @param game    The current game
+     * @param owner   The bot
+     *
+     * @return The predicted impact hex for this enemy
+     */
+    private Coords predictEnemyAdvance(Entity enemy, Entity shooter, Game game, Princess owner) {
+        Coords enemyPos = enemy.getPosition();
+        Coords anchor = friendlyForceCentre(enemy, game);
+        if ((enemyPos == null) || (anchor == null)) {
+            return enemyPos;
+        }
+        // Lead by the average of walking and the unit's fastest movement (run or jump): walking alone falls behind a
+        // unit that runs or jumps toward us, running alone overshoots a cautious advance.
+        int fastMove = Math.max(enemy.getRunMP(), enemy.getJumpMP());
+        int moveRate = (int) Math.round((enemy.getWalkMP() + fastMove) / 2.0);
+        // Flight time per the Indirect Artillery Flight Times Table (TO:AR p149), via turnsTilHit. The shooter's
+        // effective distance already accounts for an off-board battery's distance from the battlefield, so this is
+        // the real number of turns the enemy gets to move before the rounds land (0 = lands this turn, no lead).
+        int flightTime = Compute.turnsTilHit(Compute.effectiveDistance(game, shooter, enemy));
+        int distanceToAnchor = enemyPos.distance(anchor);
+        // Keep the lead a blast radius short of the anchor so an over-eager prediction never collapses onto - and
+        // shells - our own force.
+        int maxLead = Math.max(0, distanceToAnchor - MAX_ARTILLERY_BLAST_RADIUS);
+        int leadHexes = Math.min(moveRate * flightTime, maxLead);
+        if (leadHexes <= 0) {
+            return enemyPos;
+        }
+        int direction = enemyPos.direction(anchor);
+        Coords predicted = enemyPos.translated(direction, leadHexes);
+        heatMapPredictedHexes.put(predicted, enemyCountNear(enemyPos, shooter, game));
+        LOGGER.info("{}: leading {} (move {}, flight {}) {} hexes toward force centre {} -> predicted impact {}",
+              owner.getLocalPlayer().getName(), enemy.getDisplayName(), moveRate, flightTime, leadHexes, anchor,
+              predicted);
+        return predicted;
+    }
+
+    /**
+     * Finds the centre of mass of our force - the deployed, on-board units the given enemy opposes - weighted by each
+     * unit's battle value (falling back to tonnage) so the enemy is assumed to advance on our main force rather than
+     * being pulled toward a single light scout sitting forward.
+     *
+     * @param enemy The enemy whose opponents (our force) we want the centre of
+     * @param game  The current game
+     *
+     * @return The battle-value-weighted centre of our on-board force, or null if we have no on-board units
+     */
+    private Coords friendlyForceCentre(Entity enemy, Game game) {
+        long totalWeight = 0;
+        long weightedX = 0;
+        long weightedY = 0;
+        for (Entity friendly : game.getEntitiesVector()) {
+            if (friendly.isDeployed() && !friendly.isOffBoard() && (friendly.getPosition() != null)
+                  && friendly.isEnemyOf(enemy)) {
+                // Battle value best captures combat weight; fall back to tonnage if BV is unavailable.
+                long unitWeight = Math.max(friendly.getInitialBV(), Math.round(friendly.getWeight()));
+                unitWeight = Math.max(1, unitWeight);
+                totalWeight += unitWeight;
+                weightedX += (long) friendly.getPosition().getX() * unitWeight;
+                weightedY += (long) friendly.getPosition().getY() * unitWeight;
+            }
+        }
+        if (totalWeight == 0) {
+            return null;
+        }
+        return new Coords((int) Math.round(weightedX / (double) totalWeight),
+              (int) Math.round(weightedY / (double) totalWeight));
+    }
+
+    /**
+     * Counts the deployed, on-board enemies within the artillery blast radius of a hex.
+     *
+     * @param centre  The hex to count around
+     * @param shooter The firing artillery unit (used to identify its enemies)
+     * @param game    The current game
+     *
+     * @return The number of enemies within the blast radius of the centre (0 if the centre is null)
+     */
+    private int enemyCountNear(Coords centre, Entity shooter, Game game) {
+        if (centre == null) {
+            return 0;
+        }
+        int count = 0;
+        for (Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext(); ) {
+            Entity enemy = enemies.next();
+            if (enemy.isDeployed() && !enemy.isOffBoard() && (enemy.getPosition() != null)
+                  && (centre.distance(enemy.getPosition()) <= MAX_ARTILLERY_BLAST_RADIUS)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Counts the enemies clustered around a candidate shot's impact, used to gate auto-mode fire on a meaningful
+     * target. For a leading shot the units are clustered around the shot's original (current) position, so that hex is
+     * used as the centre; otherwise the impact hex itself is used.
+     *
+     * @param fireInfo The candidate shot
+     * @param shooter  The firing artillery unit
+     * @param game     The current game
+     *
+     * @return The number of deployed, on-board enemies within the artillery blast radius of the cluster centre
+     */
+    private int clusterSizeNear(WeaponFireInfo fireInfo, Entity shooter, Game game) {
+        Coords centre = fireInfo.getTarget().getPosition();
+        if ((fireInfo.getTarget() instanceof HexTarget hexTarget) && (hexTarget.getOriginalTarget() != null)) {
+            centre = hexTarget.getOriginalTarget().getPosition();
+        }
+        return enemyCountNear(centre, shooter, game);
+    }
+
+    /**
+     * Finds the positions of enemies that one of our own TAG-equipped units could designate by the time the rounds
+     * land. This is deliberately predictive: it checks TAG range only, not current line of sight, because the spotter
+     * fires TAG in the offboard phase from its post-movement position - so at artillery-targeting time it may be in
+     * range but not yet have a clear shot. A homing round aimed within {@link Compute#HOMING_RADIUS} of one of these
+     * can be expected to home onto the designated target rather than scatter.
+     *
+     * @param shooter The firing artillery unit (used to tell friend from foe)
+     * @param game    The current game
+     * @param owner   The bot
+     *
+     * @return The set of enemy hexes a friendly TAG unit is in range to designate
+     */
+    private Set<Coords> tagSpottedEnemyPositions(Entity shooter, Game game, Princess owner) {
+        Set<Coords> spotted = new HashSet<>();
+        List<Targetable> enemies = FireControl.getAllTargetableEnemyEntities(owner.getLocalPlayer(), game,
+              owner.getFireControlState());
+        for (Entity ally : game.getEntitiesVector()) {
+            if (!ally.isDeployed() || ally.isOffBoard() || (ally.getPosition() == null) || ally.isEnemyOf(shooter)) {
+                continue;
+            }
+            int tagRange = maxTagRange(ally);
+            if (tagRange <= 0) {
+                continue;
+            }
+            for (Targetable enemy : enemies) {
+                if ((enemy.getPosition() != null)
+                      && (ally.getPosition().distance(enemy.getPosition()) <= tagRange)) {
+                    spotted.add(enemy.getPosition());
+                }
+            }
+        }
+        return spotted;
+    }
+
+    /**
+     * @param unit The unit to check
+     *
+     * @return The longest range of the unit's undamaged TAG weapons, or 0 if it carries no operational TAG
+     */
+    private int maxTagRange(Entity unit) {
+        int range = 0;
+        for (WeaponMounted weapon : unit.getWeaponList()) {
+            if (weapon.getType().hasFlag(WeaponType.F_TAG) && !weapon.isDestroyed()) {
+                range = Math.max(range, weapon.getType().getLongRange());
+            }
+        }
+        return range;
+    }
+
+    /**
+     * @param target                A candidate impact hex
+     * @param spottedEnemyPositions The hexes a friendly TAG unit can designate this phase
+     *
+     * @return TRUE if a homing round aimed at the target hex could home onto a TAG-designated enemy (one within the
+     *       homing radius)
+     */
+    private boolean isGuidedByTag(Coords target, Set<Coords> spottedEnemyPositions) {
+        if (target == null) {
+            return false;
+        }
+        for (Coords spotted : spottedEnemyPositions) {
+            if (target.distance(spotted) <= Compute.HOMING_RADIUS) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -457,29 +648,61 @@ public class ArtilleryTargetingControl {
      * @return Firing plan
      */
     public FiringPlan calculateIndirectArtilleryPlan(Entity shooter, Game game, Princess owner) {
-        FiringPlan forwardPlan = calculateIndirectArtilleryPlan(shooter, game, owner, 0);
-        if (!forwardPlan.isEmpty()) {
-            return forwardPlan;
-        }
-        // only retry with facing changes when a twist could actually help - not when the artillery is
-        // halted, the unit already took its volley shot, or there is nothing to shoot at
-        ArtilleryCommandAndControl artilleryCommandAndControl = owner.getArtilleryCommandAndControl();
-        boolean twistCouldHelp = !artilleryCommandAndControl.isArtilleryHalted()
-              && !(artilleryCommandAndControl.isArtilleryVolley()
-              && artilleryCommandAndControl.hasAlreadyFired(shooter))
-              && (targetSet != null) && !targetSet.isEmpty();
-        if (!twistCouldHelp) {
-            return forwardPlan;
-        }
-        for (int facingChange : FireControl.getValidFacingChanges(shooter)) {
-            FiringPlan twistedPlan = calculateIndirectArtilleryPlan(shooter, game, owner, facingChange);
-            if (!twistedPlan.isEmpty()) {
-                LOGGER.info("{}: {} twisting {} to bring artillery to bear",
-                      owner.getLocalPlayer().getName(), shooter.getDisplayName(), facingChange);
-                return twistedPlan;
+        FiringPlan plan = calculateIndirectArtilleryPlan(shooter, game, owner, 0);
+        if (plan.isEmpty()) {
+            // only retry with facing changes when a twist could actually help - not when the artillery is
+            // halted, the unit already took its volley shot, or there is nothing to shoot at
+            ArtilleryCommandAndControl artilleryCommandAndControl = owner.getArtilleryCommandAndControl();
+            boolean twistCouldHelp = !artilleryCommandAndControl.isArtilleryHalted()
+                  && !(artilleryCommandAndControl.isArtilleryVolley()
+                  && artilleryCommandAndControl.hasAlreadyFired(shooter))
+                  && (targetSet != null) && !targetSet.isEmpty();
+            if (twistCouldHelp) {
+                for (int facingChange : FireControl.getValidFacingChanges(shooter)) {
+                    FiringPlan twistedPlan = calculateIndirectArtilleryPlan(shooter, game, owner, facingChange);
+                    if (!twistedPlan.isEmpty()) {
+                        LOGGER.info("{}: {} twisting {} to bring artillery to bear",
+                              owner.getLocalPlayer().getName(), shooter.getDisplayName(), facingChange);
+                        plan = twistedPlan;
+                        break;
+                    }
+                }
             }
         }
-        return forwardPlan;
+        showArtilleryHeatMap(shooter, plan, owner);
+        return plan;
+    }
+
+    /**
+     * Hands the optional heat-map visualization the hexes each enemy was predicted to advance to and the hexes this
+     * plan actually fires at - each tagged with a turn number (the current round for predictions, the impact round for
+     * shots) - so a local Princess can paint and track them on the board for testing.
+     *
+     * @param shooter The firing artillery unit
+     * @param plan    The chosen firing plan
+     * @param owner   The bot
+     */
+    private void showArtilleryHeatMap(Entity shooter, FiringPlan plan, Princess owner) {
+        Game game = owner.getGame();
+        int currentRound = game.getRoundCount();
+        Map<Coords, Princess.HeatMapMarker> predictedTargets = new HashMap<>();
+        for (Map.Entry<Coords, Integer> predicted : heatMapPredictedHexes.entrySet()) {
+            predictedTargets.putIfAbsent(predicted.getKey(),
+                  new Princess.HeatMapMarker(currentRound, predicted.getValue()));
+        }
+        Map<Coords, Princess.HeatMapMarker> chosenTargets = new HashMap<>();
+        for (WeaponFireInfo fireInfo : plan) {
+            if ((fireInfo.getTarget() == null) || (fireInfo.getTarget().getPosition() == null)) {
+                continue;
+            }
+            int impactRound = currentRound;
+            if (fireInfo.getAction() instanceof ArtilleryAttackAction artilleryAttack) {
+                impactRound = currentRound + artilleryAttack.getTurnsTilHit();
+            }
+            chosenTargets.put(fireInfo.getTarget().getPosition(),
+                  new Princess.HeatMapMarker(impactRound, clusterSizeNear(fireInfo, shooter, game)));
+        }
+        owner.showArtilleryHeatMap(predictedTargets, chosenTargets, shooter.getBoardId());
     }
 
     /**
@@ -544,6 +767,13 @@ public class ArtilleryTargetingControl {
         EnumSet<AmmoType.Munitions> aaMunitions = EnumSet.of(AmmoType.Munitions.M_CLUSTER, AmmoType.Munitions.M_FLAK);
         List<WeaponFireInfo> topValuedFlakInfos = new ArrayList<>();
         boolean artilleryAttackPlanned = false;
+        // For an ordered volley, spread this unit's tubes across the ordered hexes: each weapon takes a hex no other
+        // weapon on this unit has already been assigned, so one shot is fed to one weapon instead of every tube
+        // dog-piling the single best hex.
+        Set<Coords> volleyAssignedHexes = new HashSet<>();
+        // Hexes a friendly TAG unit can designate this phase: a homing round aimed near one of these will home onto the
+        // designated target instead of scattering, so it is worth firing homing ammo there.
+        Set<Coords> tagSpottedPositions = tagSpottedEnemyPositions(shooter, game, owner);
         for (WeaponMounted currentWeapon : shooter.getWeaponList()) {
             List<WeaponFireInfo> topValuedFireInfos = new ArrayList<>();
             double maxDamage = 0;
@@ -560,14 +790,22 @@ public class ArtilleryTargetingControl {
                     // for each enemy unit, evaluate damage value of firing at its hex.
                     // keep track of top target hexes with the same value and fire at them
                     boolean isADA = ammo.getType().getMunitionType().contains(Munitions.M_ADA);
-                    boolean isZeroDamageMunition = (
-                          Stream.of(SMOKE_MUNITIONS, FLARE_MUNITIONS, MINE_MUNITIONS).anyMatch(
-                                munitions -> munitions.containsAll(ammo.getType().getMunitionType())
-                          )
-                    );
+                    boolean isHoming = ammo.getType().getMunitionType().contains(Munitions.M_HOMING);
+                    // Classify this ammo bin and note whether it is the special ammo the player ordered, so the
+                    // ordered ammo is preferred for ordered hexes and utility (zero-damage) munitions only fire when
+                    // explicitly commanded.
+                    SpecialAmmo binCategory = SpecialAmmo.forMunitions(ammo.getType().getMunitionType());
+                    boolean playerOrderedThisAmmo = (artilleryCommandAndControl.getAmmo() == binCategory);
+                    boolean isZeroDamageMunition = binCategory.isUtility();
 
 
                     for (Targetable target : targetSet) {
+                        // Skip ordered hexes already taken by another tube on this unit during this volley
+                        if (artilleryCommandAndControl.isArtilleryVolley()
+                              && isOrderedFireMissionTarget(artilleryCommandAndControl, target)
+                              && volleyAssignedHexes.contains(target.getPosition())) {
+                            continue;
+                        }
                         boolean attackOnEntity = (target.getTargetType() == Targetable.TYPE_ENTITY);
                         boolean attackOnAirborneEntity = attackOnEntity &&
                               (target instanceof Entity targetedEntity) &&
@@ -576,20 +814,11 @@ public class ArtilleryTargetingControl {
                                     (targetedEntity.isAirborneAeroOnGroundMap()));
                         double damageValue;
                         if (isZeroDamageMunition) {
-                            // Skip zero-damage utility munitions for now.
-                            // XXX: update when utility munition handling goes in
+                            // Utility munitions do no damage, so only fire them at an ordered hex when the player
+                            // explicitly ordered this utility type.
                             damageValue = 0.0;
-                            if (artilleryCommandAndControl.contains(target.getPosition())) {
-                                if (artilleryCommandAndControl.isMineAmmo() && MINE_MUNITIONS.containsAll(ammo.getType()
-                                      .getMunitionType())) {
-                                    damageValue = Integer.MAX_VALUE;
-                                } else if (artilleryCommandAndControl.isSmokeAmmo()
-                                      && SMOKE_MUNITIONS.containsAll(ammo.getType().getMunitionType())) {
-                                    damageValue = Integer.MAX_VALUE;
-                                } else if (artilleryCommandAndControl.isFlareAmmo()
-                                      && FLARE_MUNITIONS.containsAll(ammo.getType().getMunitionType())) {
-                                    damageValue = Integer.MAX_VALUE;
-                                }
+                            if (artilleryCommandAndControl.contains(target.getPosition()) && playerOrderedThisAmmo) {
+                                damageValue = Integer.MAX_VALUE;
                             }
                         } else {
                             // Flak Artillery need to be made during direct fire, not as Indirect
@@ -606,6 +835,12 @@ public class ArtilleryTargetingControl {
                                         // commands: fire at them even if no units are near them (e.g. area
                                         // denial), instead of valuing them by expected damage to nearby units.
                                         damageValue = damage;
+                                        // When the player ordered a specific damage munition, prefer that ammo for
+                                        // the ordered hexes so it is chosen over standard rounds.
+                                        if (playerOrderedThisAmmo
+                                              && (artilleryCommandAndControl.getAmmo() != SpecialAmmo.STANDARD)) {
+                                            damageValue = Integer.MAX_VALUE;
+                                        }
                                     } else {
                                         damageValue = calculateDamageValue(damage,
                                               (HexTarget) target,
@@ -630,11 +865,28 @@ public class ArtilleryTargetingControl {
                               false,
                               owner);
 
+                        // A homing round aimed within homing radius of a hex a friendly TAG unit can designate will
+                        // home onto that target, so it counts as a near-certain hit rather than scatter.
+                        boolean guidedByTag = isHoming
+                              && (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
+                              && isGuidedByTag(target.getPosition(), tagSpottedPositions);
+
                         // factor the chance to hit when picking a target - if we've got a spotted hex
                         // or an auto-hit hex
                         // we should prefer to hit that over something that may scatter to who knows
                         // where
-                        if (wfi.getProbabilityToHit() > 0) {
+                        if (guidedByTag) {
+                            // Credit the homing round as a TAG-guided hit so it is chosen over unguided scatter shots.
+                            double guidedValue = damage * TAG_GUIDED_HIT_ODDS;
+                            wfi.getAmmo().setSwitchedReason(1505);
+                            if (guidedValue > maxDamage) {
+                                topValuedFireInfos.clear();
+                                maxDamage = guidedValue;
+                                topValuedFireInfos.add(wfi);
+                            } else if (guidedValue == maxDamage) {
+                                topValuedFireInfos.add(wfi);
+                            }
+                        } else if (wfi.getProbabilityToHit() > 0) {
                             damageValue *= wfi.getProbabilityToHit();
 
                             if (damageValue > maxDamage) {
@@ -674,6 +926,22 @@ public class ArtilleryTargetingControl {
                                     topValuedFireInfos.add(wfi);
                                 }
                             }
+                        } else if (artilleryCommandAndControl.isHomingAmmo()
+                              && ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_HOMING)
+                              && isOrderedFireMissionTarget(artilleryCommandAndControl, target)) {
+                            // Player ordered a homing fire mission: fire it trusting a friendly TAG will designate
+                            // this turn, even though no spotter is confirmed now. The round simply fails at impact
+                            // if no TAG lands (the wasted-round risk the player accepted).
+                            if (damageValue > maxDamage) {
+                                topValuedFireInfos.clear();
+                                maxDamage = damageValue;
+                                topValuedFireInfos.add(wfi);
+                            } else if (damageValue == maxDamage) {
+                                topValuedFireInfos.add(wfi);
+                            }
+                            LOGGER.info("{}: {} firing ordered homing mission at {} without a confirmed TAG - "
+                                        + "trusting the player to designate",
+                                  owner.getLocalPlayer().getName(), shooter.getDisplayName(), target.getPosition());
                         } else if (isOrderedFireMissionTarget(artilleryCommandAndControl, target)) {
                             // an ordered fire mission hex the weapon cannot hit at all is worth surfacing
                             LOGGER.warn("{}: {} cannot hit ordered fire mission hex {} with {} ({}): {}",
@@ -702,6 +970,27 @@ public class ArtilleryTargetingControl {
                             actualFireInfo.getAmmo().setSwitchedReason(1507);
                         }
                     }
+                    // In auto mode, only fire when the predicted impact covers a meaningful cluster of enemies -
+                    // don't waste rounds on a long-shot at a single unit. Ordered fire missions and TAG-guided homing
+                    // shots (a precise, near-certain hit on a designated target) bypass this.
+                    boolean guidedHomingShot = actualFireInfo.getAmmo().getType().getMunitionType()
+                          .contains(Munitions.M_HOMING)
+                          && isGuidedByTag(actualFireInfo.getTarget().getPosition(), tagSpottedPositions);
+                    if (!isOrderedFireMissionTarget(artilleryCommandAndControl, actualFireInfo.getTarget())
+                          && !guidedHomingShot
+                          && (clusterSizeNear(actualFireInfo, shooter, game) < MIN_AUTO_CLUSTER_UNITS)) {
+                        LOGGER.info("{}: {} holding {} - predicted impact at {} covers fewer than {} units",
+                              owner.getLocalPlayer().getName(), shooter.getDisplayName(), currentWeapon.getName(),
+                              actualFireInfo.getTarget().getPosition(), MIN_AUTO_CLUSTER_UNITS);
+                        continue;
+                    }
+                    if (guidedHomingShot) {
+                        LOGGER.info("{}: {} firing TAG-guided homing at {} - friendly spotter can designate a target "
+                                    + "within homing radius",
+                              owner.getLocalPlayer().getName(), shooter.getDisplayName(),
+                              actualFireInfo.getTarget().getPosition());
+                    }
+
                     ArtilleryAttackAction aaa = (ArtilleryAttackAction) actualFireInfo.buildWeaponAttackAction();
                     HelperAmmo ammo = findAmmo(shooter, actualFireInfo.getWeapon(), actualFireInfo.getAmmo());
 
@@ -715,6 +1004,10 @@ public class ArtilleryTargetingControl {
                         returnValue.add(actualFireInfo);
                         returnValue.setUtility(returnValue.getUtility() + maxDamage);
                         artilleryAttackPlanned = true;
+                        // Reserve this hex so the unit's remaining tubes pick different ordered hexes for the volley
+                        if (artilleryCommandAndControl.isArtilleryVolley()) {
+                            volleyAssignedHexes.add(actualFireInfo.getTarget().getPosition());
+                        }
                         LOGGER.info("{}: {} firing {} ({}) at {} (expected value {}, probability {})",
                               owner.getLocalPlayer().getName(), shooter.getDisplayName(),
                               currentWeapon.getName(), actualFireInfo.getAmmo().getType().getShortName(),
@@ -750,8 +1043,16 @@ public class ArtilleryTargetingControl {
                 WeaponFireInfo tagInfo = getTAGInfo(currentWeapon, shooter, game, owner);
 
                 if (tagInfo != null) {
+                    boolean designated = owner.getDesignatedTagTargets().contains(tagInfo.getTarget().getId());
+                    LOGGER.info("{}: {} firing TAG at {} (probability {}){}",
+                          owner.getLocalPlayer().getName(), shooter.getDisplayName(),
+                          tagInfo.getTarget().getDisplayName(), tagInfo.getProbabilityToHit(),
+                          designated ? " - player-designated TAG target" : "");
                     TAGPlan.add(tagInfo);
                     TAGPlan.setUtility(returnValue.getUtility() + tagInfo.getProbabilityToHit());
+                } else {
+                    LOGGER.info("{}: {} has a TAG but found no target to TAG this phase",
+                          owner.getLocalPlayer().getName(), shooter.getDisplayName());
                 }
             }
         }
@@ -787,23 +1088,32 @@ public class ArtilleryTargetingControl {
      * @param game    The current {@link Game}
      * @param owner   {@link Princess} instance that owns shooter
      *
-     * @return Highest hit-chance TAG attack's {@link WeaponFireInfo}
+     * @return Highest hit-chance TAG attack's {@link WeaponFireInfo}, preferring a player-designated target when one
+     *       is hittable
      */
     private WeaponFireInfo getTAGInfo(WeaponMounted weapon, Entity shooter, Game game, Princess owner) {
         WeaponFireInfo returnValue = null;
+        WeaponFireInfo designatedFireInfo = null;
         double hitOdds = 0.0;
+        double designatedHitOdds = 0.0;
 
-        // pretty simple logic here: take the best shot that you have
+        // take the best shot you have, but prefer an enemy the player designated for TAG
         for (Targetable target : FireControl.getAllTargetableEnemyEntities(owner.getLocalPlayer(), game,
               owner.getFireControlState())) {
             WeaponFireInfo wfi = new WeaponFireInfo(shooter, target, weapon, null, game, false, owner);
+            boolean isDesignated = owner.getDesignatedTagTargets().contains(target.getId());
+            if (isDesignated && (wfi.getProbabilityToHit() > designatedHitOdds)) {
+                designatedHitOdds = wfi.getProbabilityToHit();
+                designatedFireInfo = wfi;
+            }
             if (wfi.getProbabilityToHit() > hitOdds) {
                 hitOdds = wfi.getProbabilityToHit();
                 returnValue = wfi;
             }
         }
 
-        return returnValue;
+        // a designated target the bot can actually hit wins; otherwise fall back to the best available shot
+        return (designatedFireInfo != null) ? designatedFireInfo : returnValue;
     }
 
     private static class HelperAmmo {
@@ -869,11 +1179,12 @@ public class ArtilleryTargetingControl {
             ArtilleryAttackAction aaa = attackEnum.nextElement();
 
             // calculate damage: damage - (10 * distance to me), floored at 0
-            // we only say that it will actually be damage if the attack coming in is
-            // landing right after the movement phase
+            // Count attacks landing this movement phase (turnsTilHit 0) AND those just fired this turn that land next
+            // turn (turnsTilHit 1) - otherwise a unit moving in the same turn its own side fired sees no danger and
+            // walks straight into the impact area.
             double actualDamage = 0.0;
 
-            if ((aaa.getTurnsTilHit() == 0) && (aaa.getTarget(operator.getGame()) != null)) {
+            if ((aaa.getTurnsTilHit() <= 1) && (aaa.getTarget(operator.getGame()) != null)) {
                 // damage for artillery weapons is, for some reason, derived from the weapon
                 // type's rack size
                 int damage;

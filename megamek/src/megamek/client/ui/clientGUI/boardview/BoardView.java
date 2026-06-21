@@ -2072,6 +2072,54 @@ public final class BoardView extends AbstractBoardView
         graphics2D.drawString(string, x, y);
     }
 
+    /**
+     * Draws the turn number of a bot artillery heat-map marker directly on the hex, so it is visible in screenshots and
+     * not just in the hover text. No-op for any other special hex display.
+     *
+     * @param shd        The special hex display being drawn
+     * @param graphics2D The hex graphics context
+     * @param scale      The current board scale
+     */
+    private void drawHeatMapTurnLabel(SpecialHexDisplay shd, Graphics2D graphics2D, float scale) {
+        String info = shd.getInfo();
+        if ((info == null) || !info.startsWith(SpecialHexDisplay.HEAT_MAP_PREFIX)) {
+            return;
+        }
+        // Format is "[HM]<turn>:<opacityPercent> <description>" - the turn runs from the prefix to the ':'.
+        int prefixLength = SpecialHexDisplay.HEAT_MAP_PREFIX.length();
+        int colon = info.indexOf(':', prefixLength);
+        int end = (colon > prefixLength) ? colon : info.indexOf(' ', prefixLength);
+        String turn = (end > prefixLength) ? info.substring(prefixLength, end) : info.substring(prefixLength);
+        Color previousColor = graphics2D.getColor();
+        graphics2D.setColor(Color.WHITE);
+        drawCenteredString("T" + turn, 0, (int) (45 * scale), font_note, graphics2D);
+        graphics2D.setColor(previousColor);
+    }
+
+    /**
+     * @param shd A special hex display being drawn
+     *
+     * @return The opacity (0.2-1.0) to draw a bot artillery heat-map marker's icon at, encoded as a percent after the
+     *       ':' in its info text; 1.0 (fully opaque) for any non-heat-map display
+     */
+    private float heatMapMarkerAlpha(SpecialHexDisplay shd) {
+        String info = shd.getInfo();
+        if ((info == null) || !info.startsWith(SpecialHexDisplay.HEAT_MAP_PREFIX)) {
+            return 1.0f;
+        }
+        int colon = info.indexOf(':', SpecialHexDisplay.HEAT_MAP_PREFIX.length());
+        int space = (colon > 0) ? info.indexOf(' ', colon) : -1;
+        if ((colon < 0) || (space < 0)) {
+            return 1.0f;
+        }
+        try {
+            int percent = Integer.parseInt(info.substring(colon + 1, space));
+            return Math.max(0.1f, Math.min(1.0f, percent / 100.0f));
+        } catch (NumberFormatException ignored) {
+            return 1.0f;
+        }
+    }
+
     @Override
     public BufferedImage getEntireBoardImage(boolean ignoreUnits, boolean useBaseZoom) {
         // Set zoom to base, so we get a consistent board image
@@ -2606,7 +2654,16 @@ public final class BoardView extends AbstractBoardView
                 for (SpecialHexDisplay shd : shdList) {
                     if (shd.drawNow(game.getPhase(), game.getRoundCount(), getLocalPlayer(), GUIP)) {
                         scaledImage = getScaledImage(shd.getDefaultImage(), true);
+                        // Heat-map markers fade their icon by heat (20% per contributing enemy); everything else is
+                        // drawn fully opaque. The turn label is always drawn at full opacity so it stays readable.
+                        float heatAlpha = heatMapMarkerAlpha(shd);
+                        Composite previousComposite = graphics2D.getComposite();
+                        if (heatAlpha < 1.0f) {
+                            graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, heatAlpha));
+                        }
                         graphics2D.drawImage(scaledImage, 0, 0, boardPanel);
+                        graphics2D.setComposite(previousComposite);
+                        drawHeatMapTurnLabel(shd, graphics2D, scale);
                     }
                 }
             }

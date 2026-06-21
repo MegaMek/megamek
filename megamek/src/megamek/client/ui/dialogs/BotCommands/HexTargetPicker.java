@@ -80,6 +80,7 @@ public class HexTargetPicker {
     private final BoardView boardView;
     private final String orderDescription;
     private final boolean singleHex;
+    private final int maxHexes;
     private final Consumer<String> onTargetsSelected;
 
     // insertion order matters: waypoints are followed in the order they were picked
@@ -98,14 +99,16 @@ public class HexTargetPicker {
      * @param boardView         The board view to pick hexes on
      * @param orderDescription  Human-readable description of the order shown in the control dialog
      * @param singleHex         TRUE to finish automatically after the first hex is picked
+     * @param maxHexes          The maximum number of hexes that may be picked, or 0 for no limit
      * @param onTargetsSelected Called with the picked hexes as dash-separated hex numbers (e.g. "0810-0811")
      */
     public HexTargetPicker(ClientGUI clientGUI, BoardView boardView, String orderDescription, boolean singleHex,
-          Consumer<String> onTargetsSelected) {
+          int maxHexes, Consumer<String> onTargetsSelected) {
         this.clientGUI = clientGUI;
         this.boardView = boardView;
         this.orderDescription = orderDescription;
         this.singleHex = singleHex;
+        this.maxHexes = maxHexes;
         this.onTargetsSelected = onTargetsSelected;
     }
 
@@ -152,6 +155,11 @@ public class HexTargetPicker {
             clientGUI.addToast(ToastLevel.INFO, Messages.getString("BotCommandPanel.HexPicker.hexRemoved",
                   coords.getBoardNum()));
             updateStatus();
+            return;
+        }
+        if ((maxHexes > 0) && (pickedHexes.size() >= maxHexes)) {
+            // at the tube limit for a volley - reject extra hexes instead of silently dropping them later
+            clientGUI.addToast(ToastLevel.WARNING, Messages.getString("BotCommandPanel.HexPicker.tooMany", maxHexes));
             return;
         }
         FieldOfFireSprite highlight = new FieldOfFireSprite(boardView, RangeType.RANGE_SHORT, coords,

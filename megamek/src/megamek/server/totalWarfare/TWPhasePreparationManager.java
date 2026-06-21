@@ -183,6 +183,10 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.entityAllUpdate();
                 gameManager.clearReports();
                 gameManager.doTryUnstuck();
+                if (phase.isMovement()) {
+                    // remind teams with a homing round landing next round to put a TAG on the target
+                    gameManager.remindHomingArtilleryInbound();
+                }
                 break;
             case END:
                 gameManager.resetEntityPhase(phase);

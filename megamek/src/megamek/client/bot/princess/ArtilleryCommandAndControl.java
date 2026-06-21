@@ -32,12 +32,15 @@
  */
 package megamek.client.bot.princess;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.board.Coords;
+import megamek.common.equipment.AmmoType;
 import megamek.common.units.Entity;
 
 /**
@@ -57,14 +60,72 @@ public class ArtilleryCommandAndControl {
     }
 
     /**
-     * The ammo type a fire mission should use. STANDARD means normal high-explosive rounds; the other values select
-     * zero-damage utility munitions.
+     * The ammo type a fire mission should use, mapped to the artillery munitions it covers. STANDARD is a plain
+     * high-explosive round; the {@code utility} flag marks zero-damage munitions (smoke, flare, mines and variants)
+     * that the bot only fires when explicitly ordered at a hex.
      */
     public enum SpecialAmmo {
-        STANDARD,
-        SMOKE,
-        FLARE,
-        MINE
+        STANDARD(false),
+        SMOKE(true, AmmoType.SMOKE_MUNITIONS),
+        FLARE(true, AmmoType.FLARE_MUNITIONS),
+        MINE(true, AmmoType.MINE_MUNITIONS),
+        LASER_INHIBITING(true, AmmoType.Munitions.M_LASER_INHIB),
+        VIBRABOMB(true, AmmoType.Munitions.M_VIBRABOMB_IV),
+        FAE(false, AmmoType.Munitions.M_FAE),
+        CLUSTER(false, AmmoType.Munitions.M_CLUSTER),
+        INFERNO(false, AmmoType.Munitions.M_INFERNO_IV),
+        FLECHETTE(false, AmmoType.Munitions.M_FLECHETTE),
+        ADA(false, AmmoType.Munitions.M_ADA),
+        DAVY_CROCKETT(false, AmmoType.Munitions.M_DAVY_CROCKETT_M),
+        HOMING(false, AmmoType.Munitions.M_HOMING);
+
+        private final boolean utility;
+        private final Set<AmmoType.Munitions> munitions;
+
+        SpecialAmmo(boolean utility, AmmoType.Munitions... munitions) {
+            this.utility = utility;
+            this.munitions = (munitions.length == 0)
+                  ? EnumSet.noneOf(AmmoType.Munitions.class)
+                  : EnumSet.copyOf(Arrays.asList(munitions));
+        }
+
+        SpecialAmmo(boolean utility, Set<AmmoType.Munitions> munitions) {
+            this.utility = utility;
+            this.munitions = EnumSet.copyOf(munitions);
+        }
+
+        /**
+         * @return TRUE for zero-damage utility munitions (smoke, flare, mines and their variants), which the bot only
+         *       fires when the player explicitly orders them at a hex
+         */
+        public boolean isUtility() {
+            return utility;
+        }
+
+        /**
+         * @return The munition types this category covers (empty for STANDARD)
+         */
+        public Set<AmmoType.Munitions> getMunitions() {
+            return munitions;
+        }
+
+        /**
+         * Classifies a loaded ammo bin's munition set into a fire-mission ammo category, or STANDARD when it is a plain
+         * high-explosive round not matched by any special category.
+         *
+         * @param ammoMunitions The bin's munition types
+         *
+         * @return The matching category
+         */
+        public static SpecialAmmo forMunitions(Set<AmmoType.Munitions> ammoMunitions) {
+            for (SpecialAmmo candidate : values()) {
+                if ((candidate != STANDARD) && !candidate.munitions.isEmpty()
+                      && candidate.munitions.containsAll(ammoMunitions)) {
+                    return candidate;
+                }
+            }
+            return STANDARD;
+        }
     }
 
     private ArtilleryOrder artilleryOrder = ArtilleryOrder.AUTO;
@@ -124,16 +185,15 @@ public class ArtilleryCommandAndControl {
         shooterUnits.clear();
     }
 
-    public boolean isSmokeAmmo() {
-        return ammo == SpecialAmmo.SMOKE;
+    /**
+     * @return The special-ammo type the current fire mission should use
+     */
+    public SpecialAmmo getAmmo() {
+        return ammo;
     }
 
-    public boolean isFlareAmmo() {
-        return ammo == SpecialAmmo.FLARE;
-    }
-
-    public boolean isMineAmmo() {
-        return ammo == SpecialAmmo.MINE;
+    public boolean isHomingAmmo() {
+        return ammo == SpecialAmmo.HOMING;
     }
 
     @Deprecated(since = "0.51.0", forRemoval = true)

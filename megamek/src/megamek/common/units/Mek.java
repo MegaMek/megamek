@@ -1285,7 +1285,7 @@ public abstract class Mek extends Entity implements Fortifiable {
      * Tracks damage taken between turns while fortifying, so an interrupting attack extends the effort by one turn
      * (TO:AUE p.153). Server-side runtime state; dug-in progress itself is not persisted.
      */
-    private final FortifyState fortifyState = new FortifyState();
+    private transient FortifyState fortifyState = new FortifyState();
 
     @Override
     public int getDugIn() {
@@ -1299,6 +1299,11 @@ public abstract class Mek extends Entity implements Fortifiable {
 
     @Override
     public FortifyState getFortifyState() {
+        // Runtime-only state (transient, not persisted): recreate it lazily so it is never null on a
+        // deserialized entity (the field initializer does not run during deserialization).
+        if (fortifyState == null) {
+            fortifyState = new FortifyState();
+        }
         return fortifyState;
     }
 

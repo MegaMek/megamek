@@ -144,7 +144,7 @@ public class Tank extends Entity implements Fortifiable {
      * Tracks damage taken between turns while fortifying, so that being attacked extends the effort by one turn (TO:AUE
      * p.153). Server-side runtime state; not written to save files (dug-in progress is itself not persisted).
      */
-    private final FortifyState fortifyState = new FortifyState();
+    private transient FortifyState fortifyState = new FortifyState();
 
     /**
      * The rubble hex this vehicle is currently clearing with its bulldozer, or null if it is not clearing (TacOps). The
@@ -1045,6 +1045,11 @@ public class Tank extends Entity implements Fortifiable {
 
     @Override
     public FortifyState getFortifyState() {
+        // Runtime-only state (transient, not persisted): recreate it lazily so it is never null on a
+        // deserialized entity (the field initializer does not run during deserialization).
+        if (fortifyState == null) {
+            fortifyState = new FortifyState();
+        }
         return fortifyState;
     }
 

@@ -34,7 +34,13 @@ package megamek.common.units;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import megamek.common.GameBoardTestCase;
 import megamek.common.Hex;
@@ -75,6 +81,17 @@ public class FortifyTest extends GameBoardTestCase {
     @BeforeAll
     static void initializeEquipment() {
         EquipmentType.initializeTypes();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T serializeRoundTrip(T object) throws Exception {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream out = new ObjectOutputStream(bytes)) {
+            out.writeObject(object);
+        }
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            return (T) in.readObject();
+        }
     }
 
     @Nested
@@ -278,6 +295,15 @@ public class FortifyTest extends GameBoardTestCase {
             tank.newRound(2);
             assertEquals(2, tank.getFortifyStage(), "With no further damage, the effort resumes");
         }
+
+        @Test
+        @DisplayName("A deserialized vehicle can still fortify (regression: null FortifyState NPE)")
+        void deserializedVehicleCanFortify() throws Exception {
+            Tank restored = serializeRoundTrip(fortifyingTank());
+            assertNotNull(restored.getFortifyState(), "Fortify state is recreated after deserialization");
+            restored.beginFortify();
+            assertEquals(1, restored.getFortifyStage(), "A deserialized vehicle begins fortifying without an NPE");
+        }
     }
 
     @Nested
@@ -323,6 +349,15 @@ public class FortifyTest extends GameBoardTestCase {
 
             mek.newRound(2);
             assertEquals(2, mek.getFortifyStage(), "With no further damage, the effort resumes");
+        }
+
+        @Test
+        @DisplayName("A deserialized Mek can still fortify (regression: null FortifyState NPE)")
+        void deserializedMekCanFortify() throws Exception {
+            BipedMek restored = serializeRoundTrip(fortifyingMek());
+            assertNotNull(restored.getFortifyState(), "Fortify state is recreated after deserialization");
+            restored.beginFortify();
+            assertEquals(1, restored.getFortifyStage(), "A deserialized Mek begins fortifying without an NPE");
         }
     }
 

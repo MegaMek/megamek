@@ -866,9 +866,12 @@ public class ArtilleryTargetingControl {
                               owner);
 
                         // A homing round aimed within homing radius of a hex a friendly TAG unit can designate will
-                        // home onto that target, so it counts as a near-certain hit rather than scatter.
+                        // home onto that target, so it counts as a near-certain hit rather than scatter - but only if
+                        // the shot is actually legal: a tube inside its minimum indirect range cannot fire at all, no
+                        // matter how good the spotter, so don't credit an impossible shot as a guided hit.
                         boolean guidedByTag = isHoming
                               && (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
+                              && !wfi.getToHit().cannotSucceed()
                               && isGuidedByTag(target.getPosition(), tagSpottedPositions);
 
                         // factor the chance to hit when picking a target - if we've got a spotted hex

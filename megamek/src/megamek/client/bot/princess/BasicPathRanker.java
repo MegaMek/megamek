@@ -679,33 +679,56 @@ public class BasicPathRanker extends PathRanker {
         return aggressionMod;
     }
 
-    // Standoff distance (hexes) artillery tubes try to keep from the nearest enemy: one mapsheet back, clear of their
-    // minimum range and most direct fire.
-    private static final int ARTILLERY_STANDOFF_DISTANCE = 17;
+    // Indirect artillery (targeting phase) is impossible at one mapsheet or closer - TooShortForIndirectArty,
+    // ComputeToHitIsImpossible - so a tube must hold at least one hex beyond that (18+) to be able to fire at all.
+    private static final int ARTILLERY_INDIRECT_MIN_RANGE = Board.DEFAULT_BOARD_HEIGHT + 1;
 
-    // Dead zone (hexes) around the artillery standoff: a tube already within this much of its standoff distance holds
-    // position rather than shuffling closer to it and taking the moved-this-turn artillery firing penalty.
-    private static final int ARTILLERY_STANDOFF_TOLERANCE = 4;
+    // How sharply a tube is pulled back once it is inside its minimum indirect range: steep, so it overrides the herd
+    // pull toward the advancing friendly line rather than drifting into a range from which it cannot fire.
+    private static final double ARTILLERY_STANDOFF_URGENCY = 4.0;
 
-    // Desired standoff distance (hexes) for a TAG spotter: close enough to designate within TAG range, far enough to
-    // stay clear of the friendly barrage. Capped at the unit's actual TAG range below.
-    private static final int TAG_SPOTTER_STANDOFF_DISTANCE = 10;
+    // Closest a TAG spotter will ever willingly get to an enemy - clear of the artillery blast and never point-blank -
+    // even when it is hunting for a line of sight to designate.
+    private static final int MIN_TAG_STANDOFF_DISTANCE = 4;
 
     /**
      * @param unit The unit being moved
      *
      * @return The distance (hexes) this unit prefers to hold from the nearest enemy because of its role - a tube's
-     *       artillery standoff, a spotter's TAG standoff - or 0 if it has no standoff role and should close normally
+     *       artillery standoff, or a spotter's TAG short-range bracket (the "line between short and medium" that gives
+     *       the best TAG to-hit) - or 0 if it has no standoff role and should close normally
      */
     private int desiredStandoffDistance(Entity unit) {
         if (hasOperationalArtillery(unit)) {
-            return ARTILLERY_STANDOFF_DISTANCE;
+            return ARTILLERY_INDIRECT_MIN_RANGE;
         }
-        int tagRange = maxOperationalTagRange(unit);
-        if (tagRange > 0) {
-            return Math.min(TAG_SPOTTER_STANDOFF_DISTANCE, Math.max(1, tagRange - 1));
+        // A spotter wants the short/medium range line of its TAG: the longest distance that still gives the short-range
+        // to-hit bonus. It holds here when it can; the existing movement (TMM) and incoming-damage terms then pull it
+        // back toward whatever distance is actually survivable, so it ends up as close as it can safely afford.
+        int tagShortRange = maxOperationalTagShortRange(unit);
+        if (tagShortRange > 0) {
+            // Never hold closer than the minimum safe distance, even if the TAG's short bracket is very short.
+            return Math.max(MIN_TAG_STANDOFF_DISTANCE, tagShortRange);
         }
         return 0;
+    }
+
+    /**
+     * @param enemies The enemy units
+     *
+     * @return The average run MP of the deployed, on-board enemies (the rate at which the enemy force closes), or 0 if
+     *       there are none
+     */
+    private int averageEnemyRunMP(List<Entity> enemies) {
+        int total = 0;
+        int count = 0;
+        for (Entity enemy : enemies) {
+            if (enemy.isDeployed() && !enemy.isOffBoard() && (enemy.getPosition() != null)) {
+                total += enemy.getRunMP();
+                count++;
+            }
+        }
+        return (count > 0) ? total / count : 0;
     }
 
     /**
@@ -755,6 +778,22 @@ public class BasicPathRanker extends PathRanker {
             }
         }
         return range;
+    }
+
+    /**
+     * @param unit The unit to check
+     *
+     * @return The short-range bracket of the unit's undamaged TAG weapon - the distance giving the best TAG to-hit - or
+     *       0 if it carries no operational TAG
+     */
+    private int maxOperationalTagShortRange(Entity unit) {
+        int shortRange = 0;
+        for (WeaponMounted weapon : unit.getWeaponList()) {
+            if (weapon.getType().hasFlag(WeaponType.F_TAG) && !weapon.isDestroyed()) {
+                shortRange = Math.max(shortRange, weapon.getType().getShortRange());
+            }
+        }
+        return shortRange;
     }
 
     /**
@@ -1101,6 +1140,12 @@ public class BasicPathRanker extends PathRanker {
         // range, and is fragile); a TAG spotter wants to sit in a band - close enough to designate, far enough to keep
         // clear of its own side's barrage. Reuse the aggression weight so the magnitude matches normal movement.
         int standoffDistance = isNotAirborne ? desiredStandoffDistance(movingUnit) : 0;
+        if (standoffDistance > 0) {
+            // Closure buffer: a standoff unit slower than the enemy force cannot just back away to keep its distance,
+            // so it must hold farther out to still be effective - and alive - after the enemy closes the gap. Buffer =
+            // how much faster the average enemy is than this unit (0 if it can outrun them).
+            standoffDistance += Math.max(0, averageEnemyRunMP(enemies) - movingUnit.getRunMP());
+        }
         double aggressionMod;
         if (!isNotAirborne) {
             aggressionMod = 0;
@@ -1108,21 +1153,28 @@ public class BasicPathRanker extends PathRanker {
             boolean tagSpotter = !hasOperationalArtillery(movingUnit);
             if (tagSpotter) {
                 // A spotter that can actually designate from this hex (line of sight + TAG range to an enemy) holds its
-                // standoff band; one that cannot see a target closes like a normal attacker until it regains line of
-                // sight, rather than sitting at the "right" distance behind cover where its TAG is useless.
+                // standoff band; one that cannot see a target closes to regain line of sight - but only down to a
+                // minimum safe distance, so a fragile spotter never charges to point-blank just to get a shot.
                 if (canDesignateFrom(movingUnit, path.getFinalCoords(), enemies, maxOperationalTagRange(movingUnit),
                       game)) {
                     aggressionMod = Math.abs(distToEnemy - standoffDistance)
                           * getOwner().getBehaviorSettings().getHyperAggressionValue();
                 } else {
-                    aggressionMod = calculateAggressionMod(movingUnit, pathCopy, game);
+                    aggressionMod = Math.abs(distToEnemy - MIN_TAG_STANDOFF_DISTANCE)
+                          * getOwner().getBehaviorSettings().getHyperAggressionValue();
                 }
             } else {
-                // Artillery dead zone: hold position when already within tolerance of the standoff (so it does not
-                // shuffle 1-2 hexes and eat the moved-this-turn firing penalty), but once it is meaningfully too close
-                // pull it all the way back to the full standoff distance - not just to the edge of the dead zone.
-                double deficit = standoffDistance - distToEnemy;
-                double distanceFromStandoff = (deficit <= ARTILLERY_STANDOFF_TOLERANCE) ? 0 : deficit;
+                // Artillery holds position - it fires from range and the enemy closes on its own, so it should never
+                // walk its tube forward. Its floor is the larger of how far back it already is and the minimum indirect
+                // range, so any path that ends closer than that (advancing, or sitting inside minimum range) is steeply
+                // penalized, while holding or falling back is free. This mirrors a player setting artillery to Hold
+                // Position and only repositioning it when the enemy gets too close.
+                double currentDistToEnemy = (movingUnit.getPosition() != null)
+                      ? distanceToClosestEnemy(movingUnit, movingUnit.getPosition(), game)
+                      : standoffDistance;
+                double holdDistance = Math.max(currentDistToEnemy, standoffDistance);
+                double shortfall = holdDistance - distToEnemy;
+                double distanceFromStandoff = (shortfall <= 0) ? 0 : shortfall * ARTILLERY_STANDOFF_URGENCY;
                 aggressionMod = distanceFromStandoff * getOwner().getBehaviorSettings().getHyperAggressionValue();
             }
         } else {

@@ -69,6 +69,7 @@ import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.MenuScroller;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
@@ -1019,10 +1020,15 @@ public class BotCommandsPanel extends JPanel {
      * @return TRUE if all hex numbers are valid
      */
     private boolean isValidHexInput(String targets) {
+        Board board = client.getGame().getBoard();
         try {
             for (String hexNumber : targets.split("-")) {
                 Coords coords = Coords.parseHexNumber(hexNumber);
                 if ((coords.getX() < 0) || (coords.getY() < 0)) {
+                    return false;
+                }
+                // Reject hexes that parse but fall outside the current board (e.g. "9999"), when a board is available.
+                if ((board != null) && !board.contains(coords)) {
                     return false;
                 }
             }

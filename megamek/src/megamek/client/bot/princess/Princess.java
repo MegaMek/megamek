@@ -696,11 +696,12 @@ public class Princess extends BotClient {
     /**
      * @param entity The unit to inspect
      *
-     * @return TRUE if the entity carries at least one artillery weapon with usable ammunition
+     * @return TRUE if the entity carries at least one operational (undestroyed) artillery weapon with usable
+     *       ammunition
      */
     private boolean isArtilleryWithAmmo(final Entity entity) {
         for (WeaponMounted weapon : entity.getWeaponList()) {
-            if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY) && !weapon.isDestroyed()) {
                 for (AmmoMounted ammo : entity.getAmmo(weapon)) {
                     if (ammo.getUsableShotsLeft() > 0) {
                         return true;

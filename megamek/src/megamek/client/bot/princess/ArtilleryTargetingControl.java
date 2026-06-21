@@ -428,7 +428,9 @@ public class ArtilleryTargetingControl {
         }
         int direction = enemyPos.direction(anchor);
         Coords predicted = enemyPos.translated(direction, leadHexes);
-        heatMapPredictedHexes.put(predicted, enemyCountNear(enemyPos, shooter, game));
+        // Count how many enemies are predicted to converge on this hex (accumulate, do not overwrite) so the heat -
+        // and the marker opacity it drives - reflects every enemy feeding the hex.
+        heatMapPredictedHexes.merge(predicted, 1, Integer::sum);
         LOGGER.info("{}: leading {} (move {}, flight {}) {} hexes toward force centre {} -> predicted impact {}",
               owner.getLocalPlayer().getName(), enemy.getDisplayName(), moveRate, flightTime, leadHexes, anchor,
               predicted);
@@ -931,10 +933,12 @@ public class ArtilleryTargetingControl {
                             }
                         } else if (artilleryCommandAndControl.isHomingAmmo()
                               && ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_HOMING)
-                              && isOrderedFireMissionTarget(artilleryCommandAndControl, target)) {
+                              && isOrderedFireMissionTarget(artilleryCommandAndControl, target)
+                              && !wfi.getToHit().cannotSucceed()) {
                             // Player ordered a homing fire mission: fire it trusting a friendly TAG will designate
-                            // this turn, even though no spotter is confirmed now. The round simply fails at impact
-                            // if no TAG lands (the wasted-round risk the player accepted).
+                            // this turn, even though no spotter is confirmed now. We still require the shot itself to
+                            // be legal (e.g. not too short for indirect fire) - only the TAG confirmation is relaxed.
+                            // The round simply fails at impact if no TAG lands (the wasted-round risk the player took).
                             if (damageValue > maxDamage) {
                                 topValuedFireInfos.clear();
                                 maxDamage = damageValue;

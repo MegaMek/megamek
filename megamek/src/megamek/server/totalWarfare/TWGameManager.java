@@ -31409,7 +31409,9 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     // De-duplicates artillery call-for-fire toasts so a multi-tube volley raises one toast per moment, not per tube.
+    // Scoped to a single round: cleared whenever the round changes so it does not grow over a long game.
     private final Set<String> sentArtilleryNetToasts = new HashSet<>();
+    private int sentArtilleryNetToastsRound = Integer.MIN_VALUE;
 
     /**
      * Sends a single artillery call-for-fire toast (Shot / Splash / Rounds complete) to the firing player and their
@@ -31425,6 +31427,11 @@ public class TWGameManager extends AbstractGameManager {
         Player owner = firingEntity.getOwner();
         if (owner == null) {
             return;
+        }
+        // Reset the per-round dedupe set when the round advances so it stays bounded over a long game.
+        if (momentRound != sentArtilleryNetToastsRound) {
+            sentArtilleryNetToasts.clear();
+            sentArtilleryNetToastsRound = momentRound;
         }
         String dedupeKey = firingEntity.getId() + ":" + momentKey + ":" + momentRound;
         if (!sentArtilleryNetToasts.add(dedupeKey)) {

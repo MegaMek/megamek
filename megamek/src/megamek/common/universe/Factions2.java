@@ -105,7 +105,7 @@ public final class Factions2 {
     private static final MMLogger LOGGER = MMLogger.create(Factions2.class);
     private static Factions2 instance;
 
-    private static final String TEST_DIR = "testresources/data/universe/factions";
+    public static final String FACTIONS2_TEST_DIRECTORY = "testresources/data/universe/factions";
 
     private final Map<String, Faction2> factions = new HashMap<>();
 
@@ -118,11 +118,15 @@ public final class Factions2 {
     }
 
     public static synchronized Factions2 getInstance(boolean useTestDirectory) {
-        if (instance == null || useTestDirectory) {
-            instance = useTestDirectory ? new Factions2(TEST_DIR) : new Factions2();
+        if (instance == null) {
+            instance = useTestDirectory ? new Factions2(FACTIONS2_TEST_DIRECTORY) : new Factions2();
         }
 
         return instance;
+    }
+
+    public static void setInstance(@Nullable Factions2 instance) {
+        Factions2.instance = instance;
     }
 
     /**

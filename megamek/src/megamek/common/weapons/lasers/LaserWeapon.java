@@ -118,7 +118,8 @@ public abstract class LaserWeapon extends EnergyWeapon {
             // per-call stream pipeline was a major allocation source (JFR profiling, 2026-06-21).
             synchronized (modes) {
                 int nonPulseModeCount = 0;
-                for (int index = 0; index < modes.size(); index++) {
+                int modeCount = modes.size();
+                for (int index = 0; index < modeCount; index++) {
                     if (!modes.get(index).getName().startsWith("Pulse")) {
                         nonPulseModeCount++;
                     }

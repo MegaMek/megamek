@@ -288,11 +288,6 @@ public class RubbleClearSprite extends HexSprite {
     }
 
     /**
-     * Draws the clearing progress ("2/8") as text in the upper portion of the hex, clear of the unit icon.
-     *
-     * @param graph the sprite graphics
-     */
-    /**
      * @return the turn of work currently under way (1-based, capped at the total). Clearing banks a turn at end phase,
      *       so it starts a turn at 0 completed; showing the current turn (1..n) keeps the indicator consistent with the
      *       fortify indicator, which starts at 1/3 rather than 0/3.
@@ -301,6 +296,11 @@ public class RubbleClearSprite extends HexSprite {
         return Math.min(turnsCompleted + 1, turnsRequired);
     }
 
+    /**
+     * Draws the clearing progress ("2/8") as text in the upper portion of the hex, clear of the unit icon.
+     *
+     * @param graph the sprite graphics
+     */
     private void drawProgressIndicator(Graphics2D graph) {
         graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 

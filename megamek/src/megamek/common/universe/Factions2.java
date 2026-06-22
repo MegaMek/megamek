@@ -118,7 +118,7 @@ public final class Factions2 {
     }
 
     public static synchronized Factions2 getInstance(boolean useTestDirectory) {
-        if (instance == null) {
+        if (instance == null || useTestDirectory) {
             instance = useTestDirectory ? new Factions2(TEST_DIR) : new Factions2();
         }
 

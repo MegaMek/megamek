@@ -42,8 +42,12 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.BipedMek;
 import megamek.common.units.BulldozerRules;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Mek;
 import megamek.common.units.SupportTank;
 import megamek.common.units.Tank;
 import org.junit.jupiter.api.DisplayName;
@@ -222,5 +226,37 @@ class BulldozerMovementTest extends GameBoardTestCase {
               "A backhoe takes the +4 turn penalty");
         assertEquals(0, BulldozerRules.extraClearingTurns(wheeledTank(true), getGame()),
               "A bulldozer takes no penalty");
+    }
+
+    /** A Mek whose only rubble-clearing tool is a backhoe (a Mek cannot mount a bulldozer). */
+    private Mek backhoeMek() throws LocationFullException {
+        BipedMek mek = new BipedMek();
+        mek.setCrew(new Crew(CrewType.SINGLE));
+        for (int location = 0; location < mek.locations(); location++) {
+            mek.initializeArmor(10, location);
+            mek.initializeInternal(5, location);
+        }
+        mek.addEquipment(EquipmentType.get(EquipmentTypeLookup.BACKHOE), Mek.LOC_RIGHT_ARM);
+        return mek;
+    }
+
+    @Test
+    @DisplayName("A Mek with a backhoe may clear rubble when the unofficial rule is on")
+    void mekBackhoeClearsRubbleWithUnofficialRule() throws LocationFullException {
+        setBoard("BULLDOZER_ON_RUBBLE");
+        enableBulldozerRule();
+        setBackhoeRule(true);
+        MovePath path = getMovePathFor(backhoeMek(), MoveStepType.CLEAR_RUBBLE);
+        assertTrue(path.isMoveLegal(), "A backhoe Mek may clear rubble with the unofficial rule enabled");
+    }
+
+    @Test
+    @DisplayName("A Mek with a backhoe may NOT clear rubble without the unofficial rule")
+    void mekBackhoeCannotClearWithoutUnofficialRule() throws LocationFullException {
+        setBoard("BULLDOZER_ON_RUBBLE");
+        enableBulldozerRule();
+        setBackhoeRule(false);
+        MovePath path = getMovePathFor(backhoeMek(), MoveStepType.CLEAR_RUBBLE);
+        assertFalse(path.isMoveLegal(), "Without the unofficial rule a backhoe Mek cannot clear rubble");
     }
 }

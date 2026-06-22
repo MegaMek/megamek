@@ -5464,6 +5464,18 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Checks if this entity has a working backhoe.
+     *
+     * <p>A backhoe provides fieldworks (fortification) ability and, under the unofficial rule, can clear rubble more
+     * slowly than a bulldozer. By default, entities do not have a backhoe; vehicles and Meks can mount one.</p>
+     *
+     * @return true if this entity has a working backhoe
+     */
+    public boolean hasWorkingBackhoe() {
+        return false;
+    }
+
+    /**
      * Returns the CriticalSlots in the given location as a list. The returned list can be empty depending on the unit
      * and the chosen slot but not null. The entries are not filtered in any way (could be null although that is
      * probably an error in the internal representation of the unit.)

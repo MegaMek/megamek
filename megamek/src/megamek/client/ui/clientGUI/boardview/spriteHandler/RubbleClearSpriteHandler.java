@@ -42,7 +42,7 @@ import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
-import megamek.common.units.Tank;
+import megamek.common.units.RubbleClearer;
 
 /**
  * Manages rubble-clearing-in-progress indicator sprites on the board view (TacOps bulldozer rubble clearing). Creates
@@ -69,18 +69,22 @@ public class RubbleClearSpriteHandler extends BoardViewSpriteHandler {
             return;
         }
         for (Entity entity : game.getEntitiesVector()) {
-            if (!(entity instanceof Tank tank) || !tank.isClearingRubble()) {
+            if (!(entity instanceof RubbleClearer clearer) || !clearer.isClearingRubble()) {
                 continue;
             }
-            Coords target = tank.getRubbleClearTarget();
+            Coords target = clearer.getRubbleClearTarget();
             if (target == null) {
                 continue;
             }
-            BoardLocation location = BoardLocation.of(target, tank.getBoardId());
+            BoardLocation location = BoardLocation.of(target, entity.getBoardId());
             BoardView boardView = (BoardView) clientGUI.getBoardView(location);
             if (boardView != null) {
-                currentSprites.add(new RubbleClearSprite(boardView, target,
-                      tank.getRubbleClearTurnsCompleted(), tank.getRubbleClearTurnsRequired()));
+                int turnsCompleted = clearer.getRubbleClearTurnsCompleted();
+                int turnsRequired = clearer.getRubbleClearTurnsRequired();
+                // Two layers: the cleared-path fade behind the unit, and the progress counter over it so it reads
+                // clearly without the fade dimming the vehicle (QA feedback).
+                currentSprites.add(new RubbleClearSprite(boardView, target, turnsCompleted, turnsRequired, false));
+                currentSprites.add(new RubbleClearSprite(boardView, target, turnsCompleted, turnsRequired, true));
             }
         }
         currentSprites.forEach(sprite -> sprite.bv.addSprite(sprite));

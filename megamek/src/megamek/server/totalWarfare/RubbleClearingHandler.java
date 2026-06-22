@@ -32,12 +32,14 @@
  */
 package megamek.server.totalWarfare;
 
+import megamek.client.ui.Messages;
 import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.board.Coords;
+import megamek.common.event.GameToastEvent;
 import megamek.common.units.BulldozerRules;
 import megamek.common.units.Entity;
-import megamek.common.units.Tank;
+import megamek.common.units.RubbleClearer;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
@@ -54,24 +56,20 @@ class RubbleClearingHandler extends AbstractTWRuleHandler {
 
     private static final MMLogger LOGGER = MMLogger.create(RubbleClearingHandler.class);
 
-    /** The most turns a bulldozer takes to clear any rubble hex (hardened/ultra structure rubble). TacOps. */
-    private static final int MAX_CLEAR_TURNS = 16;
-
     RubbleClearingHandler(TWGameManager gameManager) {
         super(gameManager);
     }
 
     /**
-     * The number of full turns a bulldozer needs to clear rubble of the given terrain level: two turns for the rubble
-     * of a light structure, doubling for each heavier class (medium 4, heavy 8, hardened 16), capped at 16 for any
-     * heavier rubble (wall / ultra). TacOps.
+     * The number of full turns a bulldozer needs to clear rubble of the given terrain level. Delegates to
+     * {@link BulldozerRules#clearingTurnsFor(int)} so the client (prompt) and server share one formula.
      *
      * @param rubbleLevel the {@link Terrains#RUBBLE} terrain level (1 = light .. 4 = hardened, 5+ = wall/ultra)
      *
      * @return the number of turns of clearing required, between 2 and 16
      */
     static int clearingTurnsFor(int rubbleLevel) {
-        return Math.min(1 << rubbleLevel, MAX_CLEAR_TURNS);
+        return BulldozerRules.clearingTurnsFor(rubbleLevel);
     }
 
     /**
@@ -97,51 +95,55 @@ class RubbleClearingHandler extends AbstractTWRuleHandler {
      */
     void checkClearRubble() {
         for (Entity entity : getGame().getEntitiesVector()) {
-            if (!(entity instanceof Tank tank) || !tank.isClearingRubble()) {
+            if (!(entity instanceof RubbleClearer clearer) || !clearer.isClearingRubble()) {
                 continue;
             }
-            // A vehicle destroyed before this check does not finish clearing; clear the state so no stale work remains.
+            // A unit destroyed before this check does not finish clearing; clear the state so no stale work remains.
             if (entity.isDestroyed() || entity.isDoomed()) {
                 LOGGER.info("[Bulldozer] {} was destroyed before finishing clearing rubble at {}; abandoned",
-                      tank.getShortName(), tank.getRubbleClearTarget());
-                tank.cancelClearingRubble();
+                      entity.getShortName(), clearer.getRubbleClearTarget());
+                clearer.cancelClearingRubble();
                 continue;
             }
-            // The vehicle must remain in the rubble hex with working clearing equipment (bulldozer, or backhoe under
-            // the unofficial rule); otherwise the work is abandoned.
-            if (!BulldozerRules.canClearRubble(tank, getGame())) {
+            // The unit must remain in the rubble hex with working clearing equipment (bulldozer, or backhoe under the
+            // unofficial rule); otherwise the work is abandoned.
+            if (!BulldozerRules.canClearRubble(entity, getGame())) {
                 LOGGER.info("[Bulldozer] {} abandons clearing rubble at {}: clearing equipment no longer working",
-                      tank.getShortName(), tank.getRubbleClearTarget());
-                abandonClearing(tank);
+                      entity.getShortName(), clearer.getRubbleClearTarget());
+                abandonClearing(entity);
                 continue;
             }
-            Coords target = tank.getRubbleClearTarget();
-            if ((target == null) || !target.equals(tank.getPosition())) {
+            Coords target = clearer.getRubbleClearTarget();
+            if ((target == null) || !target.equals(entity.getPosition())) {
                 LOGGER.info("[Bulldozer] {} abandons clearing rubble at {}: no longer in the hex (position {})",
-                      tank.getShortName(), target, tank.getPosition());
-                abandonClearing(tank);
+                      entity.getShortName(), target, entity.getPosition());
+                abandonClearing(entity);
                 continue;
             }
-            progressClearing(tank);
+            progressClearing(entity);
         }
     }
 
     /**
-     * Banks one turn of clearing for a vehicle and completes the hex once the work is done. TacOps.
+     * Banks one turn of clearing for a unit and completes the hex once the work is done. TacOps.
      *
-     * @param tank the vehicle clearing rubble
+     * @param entity the unit clearing rubble (a {@link RubbleClearer})
      */
-    private void progressClearing(Tank tank) {
-        int turnsWorked = tank.bankRubbleClearTurn();
-        int turnsRequired = tank.getRubbleClearTurnsRequired();
+    private void progressClearing(Entity entity) {
+        if (!(entity instanceof RubbleClearer clearer)) {
+            return;
+        }
+        int turnsWorked = clearer.bankRubbleClearTurn();
+        int turnsRequired = clearer.getRubbleClearTurnsRequired();
         LOGGER.debug("[Bulldozer] {} rubble clearing progress: turn {} of {} at {}",
-              tank.getShortName(), turnsWorked, turnsRequired, tank.getRubbleClearTarget());
+              entity.getShortName(), turnsWorked, turnsRequired, clearer.getRubbleClearTarget());
         if (turnsWorked >= turnsRequired) {
-            completeClearing(tank);
+            completeClearing(entity);
         } else {
             Report report = new Report(5307);
-            report.subject = tank.getId();
-            report.addDesc(tank);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            report.add(BulldozerRules.clearingToolName(entity));
             report.add(turnsWorked);
             report.add(turnsRequired);
             addReport(report);
@@ -154,42 +156,54 @@ class RubbleClearingHandler extends AbstractTWRuleHandler {
      * rubble. Updates the clients and clears the vehicle's clearing state. TacOps. If the hex no longer holds rubble
      * (already cleared by other means) the work is simply ended.
      *
-     * @param tank the vehicle finishing the clear
+     * @param entity the unit finishing the clear (a {@link RubbleClearer})
      */
-    private void completeClearing(Tank tank) {
-        Coords target = tank.getRubbleClearTarget();
-        int boardId = tank.getBoardId();
+    private void completeClearing(Entity entity) {
+        if (!(entity instanceof RubbleClearer clearer)) {
+            return;
+        }
+        Coords target = clearer.getRubbleClearTarget();
+        int boardId = entity.getBoardId();
         Hex hex = getGame().getBoard(boardId).getHex(target);
         Terrain rubble = (hex == null) ? null : hex.getTerrain(Terrains.RUBBLE);
         if (rubble != null) {
-            // The rubble is bulldozed away: the hex is clear terrain now, with only a cosmetic path overlay left.
+            // The rubble is bulldozed away: the hex is clear terrain now, with only cosmetic overlays left. Two
+            // stacked super layers (both gameplay-free): a GROUND_FLUFF "scraped ground" layer (quicksand_0) under a
+            // FLUFF "_path" layer (the debris pushed into the wedges). Tilesets without these entries just draw clear.
             hex.removeTerrain(Terrains.RUBBLE);
+            hex.addTerrain(new Terrain(Terrains.GROUND_FLUFF, Terrains.CLEARED_RUBBLE_FLUFF_BASE));
             hex.addTerrain(new Terrain(Terrains.FLUFF, clearedRubbleFluffLevel(rubble.getLevel())));
             gameManager.sendChangedHex(target, boardId);
             LOGGER.info("[Bulldozer] {} finished clearing rubble (level {}) at {}; the hex is now clear",
-                  tank.getShortName(), rubble.getLevel(), target);
+                  entity.getShortName(), rubble.getLevel(), target);
             Report report = new Report(5308);
-            report.subject = tank.getId();
-            report.addDesc(tank);
+            report.subject = entity.getId();
+            report.addDesc(entity);
             report.add(target.getBoardNum());
             addReport(report);
+            gameManager.sendToast(GameToastEvent.Level.SUCCESS,
+                  Messages.getString("Bulldozer.completeClearToast", entity.getShortName(), target.getBoardNum()),
+                  entity);
         } else {
             LOGGER.info("[Bulldozer] {} finished clearing at {} but the hex no longer holds rubble",
-                  tank.getShortName(), target);
+                  entity.getShortName(), target);
         }
-        tank.cancelClearingRubble();
+        clearer.cancelClearingRubble();
     }
 
     /**
-     * Abandons a vehicle's rubble-clearing work, clearing its state and reporting the loss of progress. TacOps.
+     * Abandons a unit's rubble-clearing work, clearing its state and reporting the loss of progress. TacOps.
      *
-     * @param tank the vehicle abandoning the clear
+     * @param entity the unit abandoning the clear (a {@link RubbleClearer})
      */
-    private void abandonClearing(Tank tank) {
+    private void abandonClearing(Entity entity) {
+        if (!(entity instanceof RubbleClearer clearer)) {
+            return;
+        }
         Report report = new Report(5309);
-        report.subject = tank.getId();
-        report.addDesc(tank);
+        report.subject = entity.getId();
+        report.addDesc(entity);
         addReport(report);
-        tank.cancelClearingRubble();
+        clearer.cancelClearingRubble();
     }
 }

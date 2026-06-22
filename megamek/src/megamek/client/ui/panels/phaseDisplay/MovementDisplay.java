@@ -924,8 +924,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // next to, a clearable rubble hex, with the relevant optional rule(s) enabled. Logs the gating decision for
         // any vehicle with clearing equipment so playtests can see from megamek.log why the button is or is not
         // available.
-        boolean hasClearingEquipment = isTank
-              && (selectedUnit.hasWorkingBulldozer() || ((Tank) selectedUnit).hasWorkingBackhoe());
+        boolean hasClearingEquipment = (selectedUnit instanceof RubbleClearer)
+              && (selectedUnit.hasWorkingBulldozer() || selectedUnit.hasWorkingBackhoe());
         boolean rubbleInReach = hasClearingEquipment
               && BulldozerRules.isInOrAdjacentToClearableRubble(selectedUnit, game);
         boolean clearingRulesOn = BulldozerRules.canClearRubble(selectedUnit, game);
@@ -2361,23 +2361,36 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 clientgui.addToast(ToastLevel.WARNING,
                       Messages.getString("MovementDisplay.clearRubbleIllegalTerrain.toast"), currentEntity());
             } else {
-                // The blade must engage the rubble: a front-mounted bulldozer drives in forwards; a rear-mounted one
-                // (e.g. the Reverse Buffel) backs into the hex so its rear blade leads.
                 Entity clearingUnit = currentEntity();
-                boolean rearBlade = !clearingUnit.hasFrontMountedBulldozer() && clearingUnit.hasRearMountedBulldozer();
-                MoveStepType approach = rearBlade ? MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
-                LOGGER.debug("[Bulldozer] {}: clear-rubble target at {} (rubble level {}), {}-mounted blade -> {}",
-                      clearingUnit.getDisplayName(), dest, targetHex.terrainLevel(Terrains.RUBBLE),
-                      rearBlade ? "rear" : "front", approach);
-                extendPathTo(dest, boardId, approach);
-                if (cmd.getFinalCoords().equals(dest)) {
-                    addStepToMovePath(MoveStepType.CLEAR_RUBBLE);
+                // Confirm up front so the player gets clear feedback and the expected duration before committing
+                // (QA feedback); the prompt names the actual tool - bulldozer or backhoe.
+                int requiredTurns = BulldozerRules.totalClearingTurns(clearingUnit, targetHex, game);
+                boolean confirmed = clientgui.doYesNoDialog(
+                      Messages.getString("MovementDisplay.clearRubbleConfirm.title"),
+                      Messages.getString("MovementDisplay.clearRubbleConfirm.message",
+                            BulldozerRules.clearingToolName(clearingUnit), requiredTurns));
+                if (!confirmed) {
+                    LOGGER.debug("[Bulldozer] {}: player declined to clear rubble at {}",
+                          clearingUnit.getDisplayName(), dest);
                 } else {
-                    LOGGER.debug("[Bulldozer] {}: could not reach rubble hex {} {} (path ended at {})",
-                          clearingUnit.getDisplayName(), dest, rearBlade ? "in reverse" : "forwards",
-                          cmd.getFinalCoords());
-                    clientgui.addToast(ToastLevel.WARNING,
-                          Messages.getString("MovementDisplay.clearRubbleUnreachable.toast"), clearingUnit);
+                    // The blade must engage the rubble: a front-mounted bulldozer drives in forwards; a rear-mounted
+                    // one (e.g. the Reverse Buffel) backs into the hex so its rear blade leads.
+                    boolean rearBlade = !clearingUnit.hasFrontMountedBulldozer()
+                          && clearingUnit.hasRearMountedBulldozer();
+                    MoveStepType approach = rearBlade ? MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
+                    LOGGER.debug("[Bulldozer] {}: clear-rubble target at {} (rubble level {}), {}-mounted blade -> {}",
+                          clearingUnit.getDisplayName(), dest, targetHex.terrainLevel(Terrains.RUBBLE),
+                          rearBlade ? "rear" : "front", approach);
+                    extendPathTo(dest, boardId, approach);
+                    if (cmd.getFinalCoords().equals(dest)) {
+                        addStepToMovePath(MoveStepType.CLEAR_RUBBLE);
+                    } else {
+                        LOGGER.debug("[Bulldozer] {}: could not reach rubble hex {} {} (path ended at {})",
+                              clearingUnit.getDisplayName(), dest, rearBlade ? "in reverse" : "forwards",
+                              cmd.getFinalCoords());
+                        clientgui.addToast(ToastLevel.WARNING,
+                              Messages.getString("MovementDisplay.clearRubbleUnreachable.toast"), clearingUnit);
+                    }
                 }
             }
             gear = GEAR_LAND;

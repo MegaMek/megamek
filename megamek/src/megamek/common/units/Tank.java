@@ -77,7 +77,7 @@ import megamek.logging.MMLogger;
 /**
  * You know what tanks are, silly.
  */
-public class Tank extends Entity implements Fortifiable {
+public class Tank extends Entity implements Fortifiable, RubbleClearer {
     private static final MMLogger logger = MMLogger.create(Tank.class);
 
     @Serial
@@ -471,10 +471,7 @@ public class Tank extends Entity implements Fortifiable {
         return hasWorkingMisc(MiscType.F_BULLDOZER, null, Tank.LOC_REAR);
     }
 
-    /**
-     * @return true if this vehicle has a working backhoe (F_CLUB / S_BACKHOE). Used by the unofficial rule that lets a
-     *       backhoe clear rubble like a bulldozer (slower).
-     */
+    @Override
     public boolean hasWorkingBackhoe() {
         return hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_BACKHOE);
     }
@@ -1062,57 +1059,35 @@ public class Tank extends Entity implements Fortifiable {
         return getTotalArmor() + getTotalInternal();
     }
 
-    /**
-     * Begins clearing a rubble hex with this vehicle's bulldozer (TacOps). The vehicle must remain in {@code target}
-     * for {@code requiredTurns} turns; clearing replaces any in-progress effort on a different hex.
-     *
-     * @param target        the rubble hex being cleared (the vehicle's own hex)
-     * @param requiredTurns the number of full turns the clearing takes (2/4/8/16 by structure type, capped at 16)
-     */
-    public void beginClearingRubble(Coords target, int requiredTurns) {
-        rubbleClearTarget = target;
-        rubbleClearTurnsRequired = requiredTurns;
-        rubbleClearTurnsCompleted = 0;
-    }
-
-    /**
-     * @return {@code true} if this vehicle is partway through clearing a rubble hex with its bulldozer
-     */
-    public boolean isClearingRubble() {
-        return rubbleClearTarget != null;
-    }
-
-    /**
-     * Banks one full turn of bulldozer clearing.
-     *
-     * @return the number of turns of clearing completed so far (including this one)
-     */
-    public int bankRubbleClearTurn() {
-        rubbleClearTurnsCompleted++;
-        return rubbleClearTurnsCompleted;
-    }
-
-    /** @return the rubble hex this vehicle is clearing, or null if it is not clearing rubble */
+    @Override
     @Nullable
     public Coords getRubbleClearTarget() {
         return rubbleClearTarget;
     }
 
-    /** @return the number of turns of bulldozer clearing banked so far */
+    @Override
+    public void setRubbleClearTarget(@Nullable Coords target) {
+        rubbleClearTarget = target;
+    }
+
+    @Override
     public int getRubbleClearTurnsCompleted() {
         return rubbleClearTurnsCompleted;
     }
 
-    /** @return the total number of turns this rubble hex needs to be cleared */
+    @Override
+    public void setRubbleClearTurnsCompleted(int turns) {
+        rubbleClearTurnsCompleted = turns;
+    }
+
+    @Override
     public int getRubbleClearTurnsRequired() {
         return rubbleClearTurnsRequired;
     }
 
-    /** Clears the in-progress rubble-clearing state; call when the vehicle stops or finishes clearing. */
-    public void cancelClearingRubble() {
-        rubbleClearTarget = null;
-        rubbleClearTurnsRequired = 0;
-        rubbleClearTurnsCompleted = 0;
+    @Override
+    public void setRubbleClearTurnsRequired(int turns) {
+        rubbleClearTurnsRequired = turns;
     }
 
     /**

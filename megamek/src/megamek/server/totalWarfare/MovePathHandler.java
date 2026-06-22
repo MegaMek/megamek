@@ -68,6 +68,7 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.event.GameToastEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.moves.ClimbingHelper;
@@ -2940,7 +2941,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // Fieldworks: a vehicle or a Mek with fieldworks-capable equipment - bulldozer, backhoe or equivalent -
-            // builds a fortified hex (Vehicles and Fieldworks, TO:AUE p.153). Clearing rubble remains vehicle-only.
+            // builds a fortified hex (Vehicles and Fieldworks, TO:AUE p.153). A vehicle or backhoe-equipped Mek may
+            // also clear rubble.
             if ((entity instanceof Fortifiable fortifier) && (step.getType() == MoveStepType.FORTIFY)) {
                 // Defensive server-side check mirroring the MoveStep legality.
                 if (!entity.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
@@ -2949,8 +2951,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 } else {
                     fortifier.beginFortify();
                 }
-            } else if ((entity instanceof Tank tnk) && (step.getType() == MoveStepType.CLEAR_RUBBLE)) {
-                beginRubbleClearing(tnk, step.getPosition());
+            } else if ((entity instanceof RubbleClearer) && (step.getType() == MoveStepType.CLEAR_RUBBLE)) {
+                beginRubbleClearing(entity, step.getPosition());
             }
 
             // If we have turned, check whether we have fulfilled any turn mode
@@ -4848,37 +4850,51 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Begins a vehicle's bulldozer clearing of a rubble hex, TacOps. The required number of turns is taken from the
-     * rubble's structure level (2/4/8/16, capped at 16). Re-declaring the same hex while already clearing it does not
-     * reset progress.
+     * Begins a unit's clearing of a rubble hex (a vehicle with a bulldozer/backhoe, or a backhoe Mek), TacOps. The
+     * required number of turns is taken from the rubble's structure level (2/4/8/16, capped at 16) plus any backhoe
+     * penalty. Re-declaring the same hex while already clearing it does not reset progress.
      *
-     * @param tank     the bulldozer vehicle
-     * @param position the rubble hex being cleared (the vehicle's own hex)
+     * @param entity   the clearing unit (a {@link RubbleClearer})
+     * @param position the rubble hex being cleared (the unit's own hex)
      */
-    private void beginRubbleClearing(Tank tank, Coords position) {
-        // Defensive server-side checks mirror the MoveStep legality: a rubble-clearing tool (bulldozer, or backhoe
-        // under the unofficial rule) and a rubble hex.
-        if (!BulldozerRules.canClearRubble(tank, getGame())) {
-            logger.debug("[Bulldozer] {}: clear rubble rejected - no working rubble-clearing equipment / rule off",
-                  tank.getDisplayName());
+    private void beginRubbleClearing(Entity entity, Coords position) {
+        if (!(entity instanceof RubbleClearer clearer)) {
             return;
         }
-        Hex hex = getGame().getBoard(tank.getBoardId()).getHex(position);
+        // Defensive server-side checks mirror the MoveStep legality: a rubble-clearing tool (bulldozer, or backhoe
+        // under the unofficial rule) and a rubble hex.
+        if (!BulldozerRules.canClearRubble(entity, getGame())) {
+            logger.debug("[Bulldozer] {}: clear rubble rejected - no working rubble-clearing equipment / rule off",
+                  entity.getDisplayName());
+            return;
+        }
+        Hex hex = getGame().getBoard(entity.getBoardId()).getHex(position);
         if ((hex == null) || (hex.terrainLevel(Terrains.RUBBLE) <= 0)) {
             logger.debug("[Bulldozer] {}: clear rubble rejected - hex at {} contains no rubble",
-                  tank.getDisplayName(), position);
+                  entity.getDisplayName(), position);
             return;
         }
         // Already clearing this same hex: leave the in-progress counter untouched so progress is not reset.
-        if (tank.isClearingRubble() && position.equals(tank.getRubbleClearTarget())) {
+        if (clearer.isClearingRubble() && position.equals(clearer.getRubbleClearTarget())) {
             return;
         }
         int rubbleLevel = hex.terrainLevel(Terrains.RUBBLE);
-        // A backhoe takes 4 turns longer than a bulldozer (unofficial rule).
-        int requiredTurns = RubbleClearingHandler.clearingTurnsFor(rubbleLevel)
-              + BulldozerRules.extraClearingTurns(tank, getGame());
-        tank.beginClearingRubble(position, requiredTurns);
+        // The base time plus any backhoe penalty (a backhoe takes 4 turns longer, unofficial rule).
+        int requiredTurns = BulldozerRules.totalClearingTurns(entity, hex, getGame());
+        clearer.beginClearingRubble(position, requiredTurns);
+
+        // Player-visible feedback that the work has started (the QA pain point): a movement-phase report and a toast,
+        // naming the actual tool so a backhoe is not reported as a bulldozer.
+        String toolName = BulldozerRules.clearingToolName(entity);
+        Report report = new Report(5348);
+        report.subject = entity.getId();
+        report.addDesc(entity);
+        report.add(toolName);
+        report.add(requiredTurns);
+        addReport(report);
+        gameManager.sendToast(GameToastEvent.Level.INFO,
+              Messages.getString("Bulldozer.beginClearToast", entity.getShortName(), requiredTurns), entity);
         logger.info("[Bulldozer] {} begins clearing rubble (level {}) at {}: {} turns required",
-              tank.getShortName(), rubbleLevel, position, requiredTurns);
+              entity.getShortName(), rubbleLevel, position, requiredTurns);
     }
 }

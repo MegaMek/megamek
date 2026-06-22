@@ -34,6 +34,7 @@ package megamek.common.units;
 
 import java.util.Optional;
 
+import megamek.client.ui.Messages;
 import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
@@ -64,16 +65,16 @@ public final class BulldozerRules {
     private BulldozerRules() {}
 
     /**
-     * @param tank the vehicle to check
-     * @param game the game, for the optional-rule checks
+     * @param entity the unit to check (a vehicle or a Mek)
+     * @param game   the game, for the optional-rule checks
      *
-     * @return {@code true} if this vehicle clears rubble using a backhoe under the unofficial rule: it has a working
+     * @return {@code true} if this unit clears rubble using a backhoe under the unofficial rule: it has a working
      *       backhoe, no bulldozer to use instead, and both the TacOps Bulldozers and the unofficial backhoe rules are
      *       enabled. Clearing with a backhoe is slower (see {@link #BACKHOE_CLEAR_TURN_PENALTY}).
      */
-    public static boolean canBackhoeClearRubble(Tank tank, Game game) {
-        return !tank.hasWorkingBulldozer()
-              && tank.hasWorkingBackhoe()
+    public static boolean canBackhoeClearRubble(Entity entity, Game game) {
+        return !entity.hasWorkingBulldozer()
+              && entity.hasWorkingBackhoe()
               && game.getOptions().booleanOption(OptionsConstants.UNOFFICIAL_BACKHOE_CLEARS_RUBBLE)
               && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BULLDOZER);
     }
@@ -86,13 +87,13 @@ public final class BulldozerRules {
      *       Bulldozers rule on), or with a working backhoe (with the unofficial backhoe rule on).
      */
     public static boolean canClearRubble(Entity entity, Game game) {
-        if (!(entity instanceof Tank tank)) {
+        if (!(entity instanceof RubbleClearer)) {
             return false;
         }
-        if (tank.hasWorkingBulldozer()) {
+        if (entity.hasWorkingBulldozer()) {
             return game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BULLDOZER);
         }
-        return canBackhoeClearRubble(tank, game);
+        return canBackhoeClearRubble(entity, game);
     }
 
     /**
@@ -103,7 +104,44 @@ public final class BulldozerRules {
      *       (unofficial: {@link #BACKHOE_CLEAR_TURN_PENALTY}), or 0 when clearing with a bulldozer
      */
     public static int extraClearingTurns(Entity entity, Game game) {
-        return ((entity instanceof Tank tank) && canBackhoeClearRubble(tank, game)) ? BACKHOE_CLEAR_TURN_PENALTY : 0;
+        return canBackhoeClearRubble(entity, game) ? BACKHOE_CLEAR_TURN_PENALTY : 0;
+    }
+
+    /** A rubble clear is capped at this many turns regardless of structure type (wall/ultra treated as hardened). */
+    public static final int MAX_CLEAR_TURNS = 16;
+
+    /**
+     * @param rubbleLevel the RUBBLE terrain level (structure type: 1 light .. 6 ultra)
+     *
+     * @return the base turns a bulldozer needs to clear that rubble (2/4/8/16 by structure type, capped at 16). TacOps.
+     */
+    public static int clearingTurnsFor(int rubbleLevel) {
+        return Math.min(1 << rubbleLevel, MAX_CLEAR_TURNS);
+    }
+
+    /**
+     * @param entity the clearing unit
+     * @param hex    the rubble hex, or null
+     * @param game   the game, for the optional-rule checks
+     *
+     * @return the total turns this unit needs to clear the hex - the base time plus any backhoe penalty - or 0 when the
+     *       hex holds no rubble
+     */
+    public static int totalClearingTurns(Entity entity, @Nullable Hex hex, Game game) {
+        if (!hasClearableRubble(hex)) {
+            return 0;
+        }
+        return clearingTurnsFor(hex.terrainLevel(Terrains.RUBBLE)) + extraClearingTurns(entity, game);
+    }
+
+    /**
+     * @param entity the clearing unit
+     *
+     * @return the localized name of the tool the unit clears rubble with (its bulldozer, or otherwise its backhoe), for
+     *       reports and prompts
+     */
+    public static String clearingToolName(Entity entity) {
+        return Messages.getString(entity.hasWorkingBulldozer() ? "Bulldozer.tool.bulldozer" : "Bulldozer.tool.backhoe");
     }
 
     /**
@@ -119,13 +157,13 @@ public final class BulldozerRules {
      * @return a human-readable reason the clear is illegal, or null if it is legal
      */
     public static @Nullable String clearRubbleIllegalReason(Entity entity, @Nullable Hex hex, Game game) {
-        if (!(entity instanceof Tank clearingTank)) {
-            return "clear rubble illegal - only vehicles can clear rubble";
+        if (!(entity instanceof RubbleClearer)) {
+            return "clear rubble illegal - only vehicles and backhoe-equipped Meks can clear rubble";
         }
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BULLDOZER)) {
             return "clear rubble illegal - bulldozer optional rule is disabled";
         }
-        if (!clearingTank.hasWorkingBulldozer() && !canBackhoeClearRubble(clearingTank, game)) {
+        if (!entity.hasWorkingBulldozer() && !canBackhoeClearRubble(entity, game)) {
             return "clear rubble illegal - no working bulldozer (or backhoe with the unofficial rule enabled)";
         }
         if (!hasClearableRubble(hex)) {

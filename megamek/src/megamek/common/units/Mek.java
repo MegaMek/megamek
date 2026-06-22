@@ -47,6 +47,7 @@ import megamek.SuiteConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmorHandles;
 import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.board.Coords;
@@ -77,7 +78,7 @@ import megamek.logging.MMLogger;
 /**
  * You know what Meks are, silly.
  */
-public abstract class Mek extends Entity implements Fortifiable {
+public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     @Serial
     private static final long serialVersionUID = -1929593228891136561L;
     private static final MMLogger LOGGER = MMLogger.create(Mek.class);
@@ -1305,6 +1306,53 @@ public abstract class Mek extends Entity implements Fortifiable {
             fortifyState = new FortifyState();
         }
         return fortifyState;
+    }
+
+    // --- Rubble clearing: a Mek with a backhoe may clear rubble like a vehicle (TacOps; backhoe clearing is the
+    // unofficial rule). The multi-turn state machine lives in RubbleClearer.
+
+    private Coords rubbleClearTarget = null;
+    private int rubbleClearTurnsCompleted = 0;
+    private int rubbleClearTurnsRequired = 0;
+
+    /**
+     * @return true if this Mek has a working backhoe (F_CLUB / S_BACKHOE), used for fieldworks and the unofficial
+     *       backhoe rubble-clearing rule
+     */
+    @Override
+    public boolean hasWorkingBackhoe() {
+        return hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_BACKHOE);
+    }
+
+    @Override
+    @Nullable
+    public Coords getRubbleClearTarget() {
+        return rubbleClearTarget;
+    }
+
+    @Override
+    public void setRubbleClearTarget(@Nullable Coords target) {
+        rubbleClearTarget = target;
+    }
+
+    @Override
+    public int getRubbleClearTurnsCompleted() {
+        return rubbleClearTurnsCompleted;
+    }
+
+    @Override
+    public void setRubbleClearTurnsCompleted(int turns) {
+        rubbleClearTurnsCompleted = turns;
+    }
+
+    @Override
+    public int getRubbleClearTurnsRequired() {
+        return rubbleClearTurnsRequired;
+    }
+
+    @Override
+    public void setRubbleClearTurnsRequired(int turns) {
+        rubbleClearTurnsRequired = turns;
     }
 
     @Override

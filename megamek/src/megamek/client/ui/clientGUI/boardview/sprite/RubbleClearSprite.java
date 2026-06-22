@@ -91,6 +91,12 @@ public class RubbleClearSprite extends HexSprite {
 
     private final int turnsCompleted;
     private final int turnsRequired;
+    /**
+     * When true this sprite draws only the "n/m" progress counter and layers OVER the unit; when false it draws only
+     * the cleared-path fade and layers BEHIND the unit. The handler creates one of each so the fade does not dim the
+     * vehicle while the counter still reads clearly on top of it (matching the fortify indicator). QA feedback.
+     */
+    private final boolean overlayCounter;
 
     /**
      * Creates a new rubble-clearing sprite for the given hex.
@@ -99,18 +105,24 @@ public class RubbleClearSprite extends HexSprite {
      * @param loc            the rubble hex being cleared
      * @param turnsCompleted the turns of clearing banked so far (the numerator)
      * @param turnsRequired  the total turns the clearing needs (the denominator)
+     * @param overlayCounter true to draw the progress counter over the unit; false to draw the cleared-path fade behind
      */
-    public RubbleClearSprite(BoardView boardView, Coords loc, int turnsCompleted, int turnsRequired) {
+    public RubbleClearSprite(BoardView boardView, Coords loc, int turnsCompleted, int turnsRequired,
+          boolean overlayCounter) {
         super(boardView, loc);
         this.turnsCompleted = turnsCompleted;
         this.turnsRequired = turnsRequired;
+        this.overlayCounter = overlayCounter;
     }
 
     @Override
     public void prepare() {
         Graphics2D graph = spriteSetup();
-        drawClearedReveal(graph);
-        drawProgressIndicator(graph);
+        if (overlayCounter) {
+            drawProgressIndicator(graph);
+        } else {
+            drawClearedReveal(graph);
+        }
         graph.dispose();
     }
 
@@ -132,7 +144,7 @@ public class RubbleClearSprite extends HexSprite {
      */
     private void drawClearedReveal(Graphics2D graph) {
         graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        float progress = Math.clamp((float) turnsCompleted / Math.max(1, turnsRequired), 0f, 1f);
+        float progress = Math.clamp((float) displayTurn() / Math.max(1, turnsRequired), 0f, 1f);
 
         Composite oldComposite = graph.getComposite();
         Hex hex = bv.getBoard().getHex(loc);
@@ -280,10 +292,19 @@ public class RubbleClearSprite extends HexSprite {
      *
      * @param graph the sprite graphics
      */
+    /**
+     * @return the turn of work currently under way (1-based, capped at the total). Clearing banks a turn at end phase,
+     *       so it starts a turn at 0 completed; showing the current turn (1..n) keeps the indicator consistent with the
+     *       fortify indicator, which starts at 1/3 rather than 0/3.
+     */
+    private int displayTurn() {
+        return Math.min(turnsCompleted + 1, turnsRequired);
+    }
+
     private void drawProgressIndicator(Graphics2D graph) {
         graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        String progress = turnsCompleted + "/" + turnsRequired;
+        String progress = displayTurn() + "/" + turnsRequired;
         Font progressFont = new Font("Sans Serif", Font.BOLD, FONT_SIZE);
         FontMetrics metrics = graph.getFontMetrics(progressFont);
         int textX = HEX_CENTER_X - (metrics.stringWidth(progress) / 2);
@@ -301,8 +322,8 @@ public class RubbleClearSprite extends HexSprite {
 
     @Override
     public boolean isBehindTerrain() {
-        // Draw over the hex terrain but BEHIND the unit, so the clearing fade does not dim the bulldozer sitting on
-        // the hex (same layering as DugInSprite).
-        return true;
+        // The fade layers BEHIND the unit (so it does not dim the vehicle, like DugInSprite); the progress counter
+        // layers OVER the unit so it reads clearly (like the fortify indicator). QA feedback.
+        return !overlayCounter;
     }
 }

@@ -125,7 +125,7 @@ public final class Factions2 {
         return instance;
     }
 
-    public static void setInstance(@Nullable Factions2 instance) {
+    public static synchronized void setInstance(@Nullable Factions2 instance) {
         Factions2.instance = instance;
     }
 

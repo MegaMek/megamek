@@ -34,6 +34,7 @@ package megamek.common.units;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -97,14 +98,20 @@ public class HeatBreakdown implements Serializable {
         }
     }
 
-    /** @return the itemized heat-buildup contributions for this turn (source label -> count and signed total) */
+    /**
+     * @return an unmodifiable, insertion-ordered view of this turn's heat-buildup contributions
+     *       (source label -> count and signed total)
+     */
     public Map<String, HeatContribution> buildup() {
-        return buildup;
+        return Collections.unmodifiableMap(buildup);
     }
 
-    /** @return the itemized heat-dissipation contributions for this turn (source label -> heat removed) */
+    /**
+     * @return an unmodifiable, insertion-ordered view of this turn's heat-dissipation contributions
+     *       (source label -> heat removed)
+     */
     public Map<String, Integer> dissipation() {
-        return dissipation;
+        return Collections.unmodifiableMap(dissipation);
     }
 
     /** Clears both breakdowns so the next turn starts fresh. */

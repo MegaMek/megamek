@@ -919,6 +919,9 @@ public class WeaponAttackActionToHitTest {
             when(mockAttackingEntity.getSwarmTargetId()).thenReturn(Entity.NONE);
             when(mockAttackingEntity.getAttackingEntity()).thenReturn(mockAttackingEntity);
             when(mockAttackingEntity.getGame()).thenReturn(mockGame);
+            // Not grappling: an unstubbed mock returns 0, which is != Entity.NONE (-1) and would send the
+            // impossible-checks down the grapple-only targeting path; keep the test focused on flak behavior.
+            when(mockAttackingEntity.getGrappled()).thenReturn(Entity.NONE);
             mockAttackingEntity.moved = EntityMovementType.MOVE_RUN;
 
             when(mockWeapon.getEntity()).thenReturn(mockAttackingEntity);

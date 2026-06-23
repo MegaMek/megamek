@@ -3601,12 +3601,12 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISCruiseMissile90Ammo());
         EquipmentType.addType(AmmoType.createISCruiseMissile120Ammo());
 
-        base = AmmoType.createISFluidGunAmmo();
-        fluidGunAmmos.add(base);
-        EquipmentType.addType(base);
-        base = AmmoType.createCLFluidGunAmmo();
-        clanFluidGunAmmos.add(base);
-        EquipmentType.addType(base);
+        AmmoType isFluidGunWaterRound = AmmoType.createISFluidGunAmmo();
+        fluidGunAmmos.add(isFluidGunWaterRound);
+        EquipmentType.addType(isFluidGunWaterRound);
+        AmmoType clanFluidGunWaterRound = AmmoType.createCLFluidGunAmmo();
+        clanFluidGunAmmos.add(clanFluidGunWaterRound);
+        EquipmentType.addType(clanFluidGunWaterRound);
 
         // Rifles
         EquipmentType.addType(AmmoType.createISLightRifleAmmo());
@@ -3978,6 +3978,16 @@ public class AmmoType extends EquipmentType {
         munitions.add(CLAN_PAINT_OBSCURANT_MUNITION_MUTATOR);
         munitions.add(CLAN_INFERNO_FUEL_MUNITION_MUTATOR);
         AmmoType.createMunitions(clanFluidGunAmmos, munitions);
+
+        // The base Fluid Gun round is Water (TO:AUE p.172). Name it explicitly now that the other fluid
+        // variants - which prepend their fluid name to the base "Fluid Gun Ammo" - have been generated, so
+        // every round reads consistently: "Water Fluid Gun Ammo" alongside "Coolant Fluid Gun Ammo", etc.
+        // The internal name ("ISFluidGun Ammo" / "CLFluidGun Ammo") is left unchanged for unit-file
+        // compatibility.
+        isFluidGunWaterRound.name = "Water Fluid Gun Ammo";
+        isFluidGunWaterRound.shortName = "Water Fluid Gun";
+        clanFluidGunWaterRound.name = "Water Fluid Gun Ammo";
+        clanFluidGunWaterRound.shortName = "Water Fluid Gun";
 
         // Create incendiary variants of all LRM-compatible ammo types (TO:AUE pg 181)
         createIncendiaryVariants();

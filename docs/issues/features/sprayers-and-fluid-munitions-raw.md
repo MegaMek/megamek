@@ -399,7 +399,14 @@ Only remaining work is end-to-end **manual playtest** + the mm-data classpath ch
 
 ## STATUS
 - **Phase 1 (Munition definitions): DONE + tested** (2026-06-22). `AmmoType.java` updated; new
-  `FluidMunitionTest` (4 tests) passes; full `compileJava` clean. Effects are NOT wired yet (Phase 3).
+  `FluidMunitionTest` passes; full `compileJava` clean. Effects are NOT wired yet (Phase 3).
+  - **Naming fix (2026-06-23):** the base Fluid Gun round (which is Water) now **displays as "Water
+    Fluid Gun Ammo"** instead of the bare "Fluid Gun Ammo", for consistency with the named variants
+    ("Coolant Fluid Gun Ammo", etc.) so players can see which fluid is loaded. Done by renaming the two
+    base rounds (IS/CL) *after* `createMunitions` runs (variants prepend their fluid name to `base.name`,
+    so the base must keep "Fluid Gun Ammo" during generation). Internal names ("ISFluidGun Ammo" /
+    "CLFluidGun Ammo") unchanged for unit-file compatibility. `FluidMunitionTest` extended to lock the
+    base name + variant names.
 - **Phase 3a (Water + KO tracking): DONE + tested** (2026-06-22). New `WaterHandler` (conv-inf
   ceil(1D6/2) burst KO damage, unit-fire douse 3+/12, heat -1); `M_WATER` routing in Fluid Gun /
   Vehicle Flamer / Sprayer `getCorrectHandler` (Sprayer default water now governs infantry damage,

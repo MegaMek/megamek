@@ -103,6 +103,21 @@ class FluidMunitionTest {
         AmmoType base = (AmmoType) EquipmentType.get("ISFluidGun Ammo");
         assertTrue(base.getMunitionType().contains(Munitions.M_WATER),
               "The default Fluid Gun round should be Water (TO:AUE p.172)");
+        // The base round is named explicitly as Water, just like the other fluids are named, so players can
+        // tell which fluid is loaded. The internal name stays "ISFluidGun Ammo" for unit-file compatibility.
+        assertEquals("Water Fluid Gun Ammo", base.getName(),
+              "The base Fluid Gun round should be named as Water for consistency with the other fluids");
+        assertEquals("ISFluidGun Ammo", base.getInternalName(),
+              "The base round's internal name must stay unchanged for unit-file compatibility");
+    }
+
+    @Test
+    void otherFluidVariantsKeepTheirOwnNames() {
+        // Renaming the base must not corrupt the variant names (which are built from the base name).
+        assertEquals("Coolant Fluid Gun Ammo", firstWith(AmmoTypeEnum.FLUID_GUN, Munitions.M_COOLANT).getName(),
+              "Coolant variant should read 'Coolant Fluid Gun Ammo', not include 'Water'");
+        assertEquals("Oil Slick Fluid Gun Ammo", firstWith(AmmoTypeEnum.FLUID_GUN, Munitions.M_OIL_SLICK).getName(),
+              "Oil Slick variant should read 'Oil Slick Fluid Gun Ammo'");
     }
 
     @Test

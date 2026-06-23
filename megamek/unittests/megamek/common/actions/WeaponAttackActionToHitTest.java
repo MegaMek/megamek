@@ -45,6 +45,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Vector;
 
@@ -60,6 +61,7 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.Gender;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.HandheldWeapon;
@@ -76,15 +78,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.planetaryConditions.Light;
 import megamek.common.planetaryConditions.PlanetaryConditions;
-import megamek.common.units.Aero;
-import megamek.common.units.BipedMek;
-import megamek.common.units.Crew;
-import megamek.common.units.CrewType;
-import megamek.common.units.Entity;
-import megamek.common.units.Mek;
-import megamek.common.units.MekWithArms;
-import megamek.common.units.Tank;
-import megamek.common.units.Targetable;
+import megamek.common.units.*;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
@@ -887,5 +881,79 @@ public class WeaponAttackActionToHitTest {
         assertFalse(waa.getAssumedHit());
         assertEquals(4.58f, returnValue, 0.1f);
         assertEquals(4.58f, waa.getExpectedDamage(), 0.1f);
+    }
+
+    /**
+     * Regression tests for issue #8370: direct-fire artillery against an airborne VTOL/WiGE/aerospace target resolves
+     * as a flak attack, which must still include the attacker's movement modifier (TO:AR corrected 7th printing,
+     * p.153). The flak branch in {@code ComputeToHit.artilleryDirectToHit} previously short-circuited via special
+     * resolution without applying that modifier.
+     */
+    @Nested
+    class ArtilleryDirectFlakAttackerMovementTests {
+
+        Tank mockAttackingEntity;
+        VTOL mockTarget;
+        AmmoType mockAmmoType;
+
+        @BeforeEach
+        void beforeEach() {
+            // Weapon is a direct-fire artillery piece (Arrow IV) loaded with standard, flak-capable ammo
+            when(mockWeaponType.hasFlag(WeaponType.F_ARTILLERY)).thenReturn(true);
+            when(mockWeaponType.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.ARROW_IV);
+
+            mockAmmoType = mock(AmmoType.class);
+            when(mockAmmoType.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.ARROW_IV);
+            when(mockAmmoType.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
+            when(mockAmmoType.countsAsFlak()).thenReturn(true);
+            when(mockAmmo.getType()).thenReturn(mockAmmoType);
+
+            // Attacker is a vehicle (e.g. a Long Tom carrier) that ran this turn, so the movement modifier is
+            // "attacker ran" (+2)
+            mockAttackingEntity = mock(Tank.class);
+            when(mockAttackingEntity.getOwner()).thenReturn(mockPlayer);
+            when(mockAttackingEntity.getPosition()).thenReturn(new Coords(0, 0));
+            when(mockAttackingEntity.getWeapon(anyInt())).thenReturn(mockWeapon);
+            when(mockAttackingEntity.getEquipment(anyInt())).thenReturn(mockWeaponEquipment);
+            when(mockAttackingEntity.getCrew()).thenReturn(mockCrew);
+            when(mockAttackingEntity.getSwarmTargetId()).thenReturn(Entity.NONE);
+            when(mockAttackingEntity.getAttackingEntity()).thenReturn(mockAttackingEntity);
+            when(mockAttackingEntity.getGame()).thenReturn(mockGame);
+            mockAttackingEntity.moved = EntityMovementType.MOVE_RUN;
+
+            when(mockWeapon.getEntity()).thenReturn(mockAttackingEntity);
+
+            // Target is an airborne VTOL, which routes the attack through the artillery flak branch. It sits
+            // beyond the 6-hex direct-fire minimum (and within the 17-hex maximum) so the attack is legal.
+            mockTarget = mock(VTOL.class);
+            when(mockTarget.getOwner()).thenReturn(mockEnemy);
+            when(mockTarget.getPosition()).thenReturn(new Coords(0, 10));
+            when(mockTarget.getTargetType()).thenReturn(Targetable.TYPE_ENTITY);
+            when(mockTarget.getSwarmTargetId()).thenReturn(Entity.NONE);
+            when(mockTarget.isAirborneVTOLorWIGE()).thenReturn(true);
+            when(mockTarget.getGame()).thenReturn(mockGame);
+
+            when(mockGame.getEntity(0)).thenReturn(mockAttackingEntity);
+            when(mockGame.getEntity(1)).thenReturn(mockTarget);
+        }
+
+        @Test
+        void testAttackerMovementAppliedToArtilleryFlak() {
+            try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class,
+                  invocationOnMock -> mockLos)) {
+                mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
+                      .thenReturn(mockLos);
+
+                ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
+
+                boolean hasAttackerRanModifier = toHit.getModifiers().stream()
+                      .anyMatch(modifier -> "attacker ran".equals(modifier.description()) && (modifier.value() == 2));
+                assertTrue(hasAttackerRanModifier,
+                      "Direct-fire artillery flak vs. an airborne VTOL must include the attacker movement modifier. "
+                            + "Modifiers: " + toHit.getModifiers().stream()
+                            .map(modifier -> "[" + modifier.value() + ": " + modifier.description() + "]")
+                            .collect(java.util.stream.Collectors.joining(", ")));
+            }
+        }
     }
 }

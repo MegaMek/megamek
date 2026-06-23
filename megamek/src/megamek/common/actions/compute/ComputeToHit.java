@@ -1809,6 +1809,13 @@ public class ComputeToHit {
         ComputeAbilityMods.processAttackerSPAs(toHit, ae, te, weapon, game);
         ComputeAbilityMods.processDefenderSPAs(toHit, ae, te, game);
 
+        // The attacker's movement modifier applies to every direct-fire artillery attack that resolves here,
+        // including flak attacks against airborne VTOL/WiGE/aerospace targets (TO:AR corrected 7th printing,
+        // p.153). It is added here - after the ADA early return above (ADA falls through to the normal to-hit
+        // path, which already applies this modifier) and before the flak branch returns - so that each direct
+        // artillery path includes it exactly once.
+        toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
+
         // If an airborne unit occupies the target hex, standard artillery ammo makes a
         // flak attack against it
         // TN is a flat 3 + the altitude mod + the attacker's weapon skill - 2 for Flak
@@ -1836,9 +1843,8 @@ public class ComputeToHit {
             }
         }
 
-        // All other direct fire artillery attacks
+        // All other direct fire artillery attacks (attacker movement modifier already appended above)
         toHit.addModifier(4, Messages.getString("WeaponAttackAction.DirectArty"));
-        toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
         // without LOS, it is a short-range indirect attack that ignores LOS modifiers, TO:AR p.153
         if (!losMods.cannotSucceed()) {
             toHit.append(losMods);

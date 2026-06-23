@@ -8192,32 +8192,32 @@ public class TWGameManager extends AbstractGameManager {
     public void addMovementHeat() {
         for (Entity entity : game.inGameTWEntities()) {
             if (entity.hasDamagedRHS()) {
-                entity.heatBuildup += 1;
+                entity.addHeatBuildup(1, "Damaged radical heat sink");
             }
 
             if ((entity.getMovementMode() == EntityMovementMode.BIPED_SWIM) ||
                   (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
                 // UMU heat
-                entity.heatBuildup += 1;
+                entity.addHeatBuildup(1, "Movement (UMU)");
                 continue;
             }
 
             // build up heat from movement
             if (entity.moved == EntityMovementType.MOVE_NONE) {
-                entity.heatBuildup += entity.getStandingHeat();
+                entity.addHeatBuildup(entity.getStandingHeat(), "Movement (Standing)");
             } else if ((entity.moved == EntityMovementType.MOVE_WALK) ||
                   (entity.moved == EntityMovementType.MOVE_VTOL_WALK) ||
                   (entity.moved == EntityMovementType.MOVE_CAREFUL_STAND)) {
-                entity.heatBuildup += entity.getWalkHeat();
+                entity.addHeatBuildup(entity.getWalkHeat(), "Movement (Walking)");
             } else if ((entity.moved == EntityMovementType.MOVE_RUN) ||
                   (entity.moved == EntityMovementType.MOVE_VTOL_RUN) ||
                   (entity.moved == EntityMovementType.MOVE_SKID)) {
-                entity.heatBuildup += entity.getRunHeat();
+                entity.addHeatBuildup(entity.getRunHeat(), "Movement (Running)");
             } else if (entity.moved == EntityMovementType.MOVE_JUMP && !entity.isJumpingWithMechanicalBoosters()) {
-                entity.heatBuildup += entity.getJumpHeat(entity.delta_distance);
+                entity.addHeatBuildup(entity.getJumpHeat(entity.delta_distance), "Movement (Jumping)");
             } else if (entity.moved == EntityMovementType.MOVE_SPRINT ||
                   entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) {
-                entity.heatBuildup += entity.getSprintHeat();
+                entity.addHeatBuildup(entity.getSprintHeat(), "Movement (Sprinting)");
             }
         }
     }

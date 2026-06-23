@@ -120,7 +120,7 @@ class HeatBuildupBreakdownTest {
         mek.addHeatBuildup(5, "Engine hits");
         mek.getHeatBreakdown().addDissipation(10, "Heat sinks");
 
-        mek.clearHeatBuildupBreakdown();
+        mek.clearHeatBreakdown();
         assertTrue(mek.getHeatBreakdown().buildup().isEmpty(), "Clearing resets the buildup breakdown");
         assertTrue(mek.getHeatBreakdown().dissipation().isEmpty(), "Clearing also resets the dissipation breakdown");
     }

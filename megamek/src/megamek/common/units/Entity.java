@@ -5621,10 +5621,10 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Clears the itemized heat breakdown. Called when heat resolves and {@link #heatBuildup} is reset, so the next turn
-     * starts fresh.
+     * Clears the itemized heat breakdown (both buildup and dissipation). Called when heat resolves and
+     * {@link #heatBuildup} is reset, so the next turn starts fresh.
      */
-    public void clearHeatBuildupBreakdown() {
+    public void clearHeatBreakdown() {
         getHeatBreakdown().clear();
     }
 

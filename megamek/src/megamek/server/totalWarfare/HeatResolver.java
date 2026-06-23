@@ -531,7 +531,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             report.add(Report.bold(report.fgColor(color, String.valueOf(entity.heat))));
             addReport(report);
             entity.heatBuildup = 0;
-            entity.clearHeatBuildupBreakdown();
+            entity.clearHeatBreakdown();
             gameManager.getMainPhaseReport().addAll(rhsReports);
             gameManager.getMainPhaseReport().addAll(heatEffectsReports);
 
@@ -1141,7 +1141,7 @@ class HeatResolver extends AbstractTWRuleHandler {
         report.add(entity.heat);
         vPhaseReport.add(report);
         entity.heatBuildup = 0;
-        entity.clearHeatBuildupBreakdown();
+        entity.clearHeatBreakdown();
         vPhaseReport.addAll(rhsReports);
 
         // add in the effects of heat

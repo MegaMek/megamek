@@ -1568,8 +1568,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCargo());
         EquipmentType.addType(MiscType.createLiquidCargo());
         EquipmentType.addType(MiscType.createCargoContainer());
-        EquipmentType.addType(MiscType.createMekSprayer());
-        EquipmentType.addType(MiscType.createTankSprayer());
         EquipmentType.addType(MiscType.createFrontDumper());
         EquipmentType.addType(MiscType.createRearDumper());
         EquipmentType.addType(MiscType.createLeftDumper());
@@ -6482,60 +6480,9 @@ public class MiscType extends EquipmentType {
 
     // TAG - In with the Weapons.
 
-    // Fluid Guns and Sprayer.
-    // Fluid Guns - in with Weapons.
-
-    public static MiscType createMekSprayer() {
-        MiscType misc = new MiscType();
-        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
-        misc.name = "Sprayer (Mech)";
-        misc.setInternalName(EquipmentTypeLookup.SPRAYER_MEK);
-        misc.addLookupName("Sprayer [Mech]");
-
-        misc.tonnage = 0.5;
-        misc.criticalSlots = 1;
-        misc.cost = 1000;
-        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_SPRAYER);
-        misc.industrial = true;
-        misc.rulesRefs = "248, TM";
-        misc.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
-              .setTechRating(TechRating.B)
-              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
-              .setISAdvancement(2305, 2315, 2320, DATE_NONE, DATE_NONE)
-              .setISApproximate(true, false, false, false, false)
-              .setClanAdvancement(2305, 2315, 2320, DATE_NONE, DATE_NONE)
-              .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.TA)
-              .setProductionFactions(Faction.FS);
-        return misc;
-    }
-
-    public static MiscType createTankSprayer() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Sprayer (Vehicular)";
-        misc.setInternalName(EquipmentTypeLookup.SPRAYER_VEE);
-        misc.addLookupName("Sprayer [Vehicular]");
-        misc.shortName = "Sprayer";
-        misc.tonnage = 0.015;
-        misc.criticalSlots = 1;
-        misc.cost = 1000;
-        misc.flags = misc.flags.or(F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT, F_SPRAYER);
-        misc.industrial = true;
-        misc.rulesRefs = "248, TM";
-        misc.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
-              .setTechRating(TechRating.B)
-              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
-              .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-              .setISApproximate(false, false, false, false, false)
-              .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-              .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
+    // Fluid Guns and Sprayers - in with the Weapons (see megamek.common.weapons.sprayers and
+    // megamek.common.weapons.other). Sprayers were moved from MiscType to WeaponType so they can
+    // "fire" fluid-gun ammunition as the rules require (TM pp.248-249).
 
     // Heat Sinks
     public static MiscType createHeatSink() {

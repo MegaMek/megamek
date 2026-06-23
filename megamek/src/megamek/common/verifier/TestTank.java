@@ -888,13 +888,12 @@ public class TestTank extends TestEntity {
             if ((eq.hasFlag(MiscTypeFlag.F_MODULAR_ARMOR) || eq.hasFlag(MiscTypeFlag.F_HARJEL)
                   || eq.hasFlag(MiscTypeFlag.F_LIGHT_FLUID_SUCTION_SYSTEM) || eq.hasFlag(MiscTypeFlag.F_LIFT_HOIST)
                   || eq.hasFlag(MiscTypeFlag.F_MANIPULATOR) || eq.hasFlag(MiscTypeFlag.F_FLUID_SUCTION_SYSTEM)
-                  || eq.hasFlag(MiscTypeFlag.F_LIGHT_FLUID_SUCTION_SYSTEM) || eq.hasFlag(MiscTypeFlag.F_SPRAYER))
+                  || eq.hasFlag(MiscTypeFlag.F_LIGHT_FLUID_SUCTION_SYSTEM))
                   && (tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)) {
                 buffer.append(eq.getName()).append(" cannot be mounted in the rotor.\n");
                 return false;
             }
             if ((eq.hasFlag(MiscTypeFlag.F_HARJEL) || eq.hasFlag(MiscTypeFlag.F_LIGHT_FLUID_SUCTION_SYSTEM)
-                  || eq.hasFlag(MiscTypeFlag.F_SPRAYER)
                   || (eq.hasFlag(MiscTypeFlag.F_LIFT_HOIST) && !(tank instanceof VTOL)))
                   && (location == Tank.LOC_BODY)) {
                 buffer.append(eq.getName()).append(" cannot be mounted in the body.\n");

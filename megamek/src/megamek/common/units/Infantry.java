@@ -80,6 +80,14 @@ public abstract class Infantry extends Entity {
      */
     protected int activeTroopers;
 
+    /**
+     * The cumulative number of troopers in this platoon that have been knocked out (rather than killed)
+     * by non-lethal effects such as Water Ammo (TO:AUE p.174). These troopers are still casualties for
+     * the current battle, but should be considered recoverable afterward (e.g. for MekHQ salvage) rather
+     * than dead. Persisted with the unit so post-battle processing can read it.
+     */
+    private int knockedOutTroopers = 0;
+
     public int turnsLayingExplosives = -1;
 
     public static final int DUG_IN_NONE = 0;
@@ -365,6 +373,26 @@ public abstract class Infantry extends Entity {
 
     public int getActiveTroopers() {
         return activeTroopers;
+    }
+
+    /**
+     * @return the cumulative number of troopers knocked out (rather than killed) by non-lethal effects
+     *       such as Water Ammo (TO:AUE p.174); these casualties should be considered recoverable
+     */
+    public int getKnockedOutTroopers() {
+        return knockedOutTroopers;
+    }
+
+    /**
+     * Records that {@code count} troopers became casualties through a non-lethal effect (e.g. Water Ammo)
+     * and so were knocked out rather than killed (TO:AUE p.174).
+     *
+     * @param count the number of newly knocked-out troopers (ignored if not positive)
+     */
+    public void addKnockedOutTroopers(int count) {
+        if (count > 0) {
+            knockedOutTroopers += count;
+        }
     }
 
     /**

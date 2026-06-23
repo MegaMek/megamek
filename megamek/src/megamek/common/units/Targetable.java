@@ -63,6 +63,8 @@ public interface Targetable extends InGameObject, Serializable {
     int TYPE_FUEL_TANK_IGNITE = 16;
     int TYPE_HEX_SCREEN = 17;
     int TYPE_HEX_AERO_BOMB = 18;
+    /** A hex coated with a Fluid Gun / Sprayer fluid such as Oil Slick or Flame-Retardant Foam (TO:AUE). */
+    int TYPE_HEX_FLUID = 21;
 
     int getTargetType();
 

@@ -62,6 +62,7 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_NO_FIRES, // can not start fires
     F_NO_AIM,
     F_ONE_SHOT,
+    F_SPRAYER, // Sprayer (TM pp.248-249): fires fluid-gun ammo but is not a true weapon (no gunner, no FCS)
     /** A weapon with this flag can only be fired alone, i.e. it must be the only weapon attacking */
     F_SOLO_ATTACK,
     F_PROTOTYPE, // War of 3039 prototypes

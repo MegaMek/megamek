@@ -48,7 +48,8 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
-import megamek.common.weapons.handlers.FluidGunCoolHandler;
+import megamek.common.weapons.handlers.FluidMunitionHandlers;
+import megamek.common.weapons.handlers.InfernoFuelHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -87,8 +88,14 @@ public abstract class FluidGunWeapon extends AmmoWeapon {
         try {
             AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                   .getEquipment(waa.getWeaponId()).getLinked().getType();
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_COOLANT)) {
-                return new FluidGunCoolHandler(toHit, waa, game, manager);
+            // Coolant, Water, Corrosive, Foam, Oil Slick and Paint/Obscurant resolve the same as for a
+            // Sprayer; only Inferno Fuel and the default ballistic attack are Fluid-Gun-specific.
+            AttackHandler fluidHandler = FluidMunitionHandlers.forFluidGunOrSprayer(atype, toHit, waa, game, manager);
+            if (fluidHandler != null) {
+                return fluidHandler;
+            }
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_FUEL)) {
+                return new InfernoFuelHandler(toHit, waa, game, manager);
             }
             return super.getCorrectHandler(toHit, waa, game, manager);
         } catch (EntityLoadingException ignored) {

@@ -1845,6 +1845,167 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "173, TO:AUE");
 
+    // Flamer / Fluid Gun / Sprayer fluid ammunition (TO:AUE pp.172-175). Tech data per the official
+    // Ammo Tech Progression table. Mirrors the Coolant pattern: IS mutators feed the IS ammo lists,
+    // Clan mutators the Clan lists. Water is a named variant for Flamers only (the Fluid Gun base round
+    // is already Water). Inferno Fuel serves Flamers and Fluid Guns; the other fluids are Fluid Gun only.
+
+    private static final MunitionMutator WATER_MUNITION_MUTATOR = new MunitionMutator("Water",
+          1,
+          Munitions.M_WATER,
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.A)
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+                .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          "174, TO:AUE");
+
+    private static final MunitionMutator CLAN_WATER_MUNITION_MUTATOR = new MunitionMutator("(Clan) Water",
+          "Water",
+          1,
+          Munitions.M_WATER,
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.A)
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          "174, TO:AUE");
+
+    private static final MunitionMutator CORROSIVE_MUNITION_MUTATOR = new MunitionMutator("Corrosive",
+          1,
+          Munitions.M_CORROSIVE,
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
+                .setISAdvancement(DATE_PS, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          "173, TO:AUE");
+
+    private static final MunitionMutator CLAN_CORROSIVE_MUNITION_MUTATOR = new MunitionMutator("(Clan) Corrosive",
+          "Corrosive",
+          1,
+          Munitions.M_CORROSIVE,
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
+                .setClanAdvancement(DATE_PS, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          "173, TO:AUE");
+
+    private static final MunitionMutator FLAME_RETARDANT_FOAM_MUNITION_MUTATOR = new MunitionMutator(
+          "Flame-Retardant Foam", "Foam",
+          1,
+          Munitions.M_ANTI_FLAME_FOAM,
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
+                .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          "173, TO:AUE");
+
+    private static final MunitionMutator CLAN_FLAME_RETARDANT_FOAM_MUNITION_MUTATOR = new MunitionMutator(
+          "(Clan) Flame-Retardant Foam", "Foam",
+          1,
+          Munitions.M_ANTI_FLAME_FOAM,
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
+                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          "173, TO:AUE");
+
+    private static final MunitionMutator OIL_SLICK_MUNITION_MUTATOR = new MunitionMutator("Oil Slick",
+          1,
+          Munitions.M_OIL_SLICK,
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
+                .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          "174, TO:AUE");
+
+    private static final MunitionMutator CLAN_OIL_SLICK_MUNITION_MUTATOR = new MunitionMutator("(Clan) Oil Slick",
+          "Oil Slick",
+          1,
+          Munitions.M_OIL_SLICK,
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
+                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          "174, TO:AUE");
+
+    private static final MunitionMutator PAINT_OBSCURANT_MUNITION_MUTATOR = new MunitionMutator("Paint/Obscurant",
+          "Paint",
+          1,
+          Munitions.M_PAINT_OBSCURANT,
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
+                .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          "174, TO:AUE");
+
+    private static final MunitionMutator CLAN_PAINT_OBSCURANT_MUNITION_MUTATOR = new MunitionMutator(
+          "(Clan) Paint/Obscurant", "Paint",
+          1,
+          Munitions.M_PAINT_OBSCURANT,
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
+                .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          "174, TO:AUE");
+
+    private static final MunitionMutator INFERNO_FUEL_MUNITION_MUTATOR = new MunitionMutator("Inferno Fuel",
+          1,
+          Munitions.M_INFERNO_FUEL,
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
+                .setISAdvancement(2390, 2400, 2425, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          "173, TO:AUE");
+
+    private static final MunitionMutator CLAN_INFERNO_FUEL_MUNITION_MUTATOR = new MunitionMutator("(Clan) Inferno Fuel",
+          "Inferno Fuel",
+          1,
+          Munitions.M_INFERNO_FUEL,
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
+                .setClanAdvancement(2390, 2400, 2425, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          "173, TO:AUE");
+
     private static final MunitionMutator CLAN_NARC_CAPABLE_MUNITION_MUTATOR_FOR_MISSILE = new MunitionMutator(
           "(Clan) Narc-capable", "Narc",
           1,
@@ -2090,16 +2251,14 @@ public class AmmoType extends EquipmentType {
         M_DAVY_CROCKETT_M,
         // M_SANTA_ANNA,
 
-        // fluid gun
-        // TODO: implement all of these except coolant
-        // water should also be used for vehicle flamers
-        // TO page 361-363
+        // Flamer / Fluid Gun / Sprayer fluid ammunition (TO:AUE pp.172-175)
         M_WATER,
         M_PAINT_OBSCURANT,
         M_OIL_SLICK,
         M_ANTI_FLAME_FOAM,
         M_CORROSIVE,
         M_COOLANT,
+        M_INFERNO_FUEL,
 
         // vehicular grenade launcher
         M_CHAFF,
@@ -2280,6 +2439,48 @@ public class AmmoType extends EquipmentType {
 
     public AmmoTypeEnum getAmmoType() {
         return ammoType;
+    }
+
+    /**
+     * @return true if this is a Flamer / Fluid Gun / Sprayer fluid ammunition that does not cook off from
+     *       a unit's own heat - Coolant, Water, Corrosive, Flame-Retardant Foam or Paint/Obscurant
+     *       (TO:AUE pp.172-174). Oil Slick and Inferno Fuel are volatile and still cook off normally.
+     */
+    public boolean isHeatStableFluid() {
+        boolean isFluidAmmo = (ammoType == AmmoTypeEnum.FLUID_GUN)
+              || (ammoType == AmmoTypeEnum.VEHICLE_FLAMER)
+              || (ammoType == AmmoTypeEnum.HEAVY_FLAMER);
+        return isFluidAmmo && (munitionType.contains(Munitions.M_COOLANT)
+              || munitionType.contains(Munitions.M_WATER)
+              || munitionType.contains(Munitions.M_CORROSIVE)
+              || munitionType.contains(Munitions.M_ANTI_FLAME_FOAM)
+              || munitionType.contains(Munitions.M_PAINT_OBSCURANT));
+    }
+
+    /**
+     * @return true if this is a Flamer / Fluid Gun Inferno Fuel load (TO:AUE p.173). Inferno Fuel is
+     *       treated as Inferno SRM ammunition for the purposes of heat-induced cook-off, so a unit
+     *       carrying it checks for an inferno ammo explosion just as if it carried Inferno SRMs.
+     */
+    public boolean isInfernoFuel() {
+        boolean isFluidAmmo = (ammoType == AmmoTypeEnum.FLUID_GUN)
+              || (ammoType == AmmoTypeEnum.VEHICLE_FLAMER)
+              || (ammoType == AmmoTypeEnum.HEAVY_FLAMER);
+        return isFluidAmmo && munitionType.contains(Munitions.M_INFERNO_FUEL);
+    }
+
+    /**
+     * @return true if this is a Flamer / Fluid Gun / Sprayer fluid ammunition that can put out fires -
+     *       Coolant, Water or Flame-Retardant Foam (TO:AUE pp.173-174). Such ammo can target a burning
+     *       hex to extinguish it and is barred from starting fires.
+     */
+    public boolean isFireSuppressantFluid() {
+        boolean isFluidAmmo = (ammoType == AmmoTypeEnum.FLUID_GUN)
+              || (ammoType == AmmoTypeEnum.VEHICLE_FLAMER)
+              || (ammoType == AmmoTypeEnum.HEAVY_FLAMER);
+        return isFluidAmmo && (munitionType.contains(Munitions.M_COOLANT)
+              || munitionType.contains(Munitions.M_WATER)
+              || munitionType.contains(Munitions.M_ANTI_FLAME_FOAM));
     }
 
     public int getToHitModifier() {
@@ -2646,10 +2847,11 @@ public class AmmoType extends EquipmentType {
         ArrayList<AmmoType> clanImprovedAcAmmo = new ArrayList<>();
         ArrayList<AmmoType> clanProtoAcAmmo = new ArrayList<>();
 
+        ArrayList<AmmoType> fluidGunAmmos = new ArrayList<>();
+        ArrayList<AmmoType> clanFluidGunAmmos = new ArrayList<>();
+
         // Updated, never used.
         // They need to be implemented
-        //        ArrayList<AmmoType> fluidGunAmmos = new ArrayList<>();
-        //        ArrayList<AmmoType> clanFluidGunAmmos = new ArrayList<>();
         //        ArrayList<AmmoType> primLongTomAmmos = new ArrayList<>();
 
         ArrayList<MunitionMutator> munitions = new ArrayList<>();
@@ -3400,10 +3602,10 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISCruiseMissile120Ammo());
 
         base = AmmoType.createISFluidGunAmmo();
-        //        fluidGunAmmos.add(base);
+        fluidGunAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createCLFluidGunAmmo();
-        //        clanFluidGunAmmos.add(base);
+        clanFluidGunAmmos.add(base);
         EquipmentType.addType(base);
 
         // Rifles
@@ -3727,28 +3929,55 @@ public class AmmoType extends EquipmentType {
         AmmoType.createMunitions(clanLrtAmmos, munitions);
 
         munitions.clear();
-        // TODO : Need Corrosive, Flame-Retardant, Oil Slick, Paint and Water Ammo's for
-        // all Fluid Guns/Sprayers
-        //
-        // Create the munition types for vehicle flamers Tech Progression tweaked to
-        // combine IntOps with TRO Prototypes/3145 NTNU RS
-        // December 2021 - CGL requested we move this to Advanced for all fluid gun
-        // ammunition.
+        // Flamer / Fluid Gun / Sprayer fluid ammunition (TO:AUE pp.172-175).
+        // Flamers (Vehicle + Heavy) may load Coolant, Water and Inferno Fuel; the Fluid Gun base round
+        // is already Water, so Fluid Guns add the remaining fluids (Coolant, Corrosive, Flame-Retardant
+        // Foam, Oil Slick, Paint/Obscurant and Inferno Fuel). Sprayers fire Fluid Gun ammo and are
+        // gated against Inferno Fuel at the weapon level.
+
+        // Vehicle flamers
         munitions.add(COOLANT_MUNITION_MUTATOR);
+        munitions.add(WATER_MUNITION_MUTATOR);
+        munitions.add(INFERNO_FUEL_MUNITION_MUTATOR);
         AmmoType.createMunitions(vehicleFlamerAmmos, munitions);
 
         munitions.clear();
         munitions.add(CLAN_COOLANT_MUNITION_MUTATOR);
+        munitions.add(CLAN_WATER_MUNITION_MUTATOR);
+        munitions.add(CLAN_INFERNO_FUEL_MUNITION_MUTATOR);
         AmmoType.createMunitions(clanVehicleFlamerAmmos, munitions);
 
-        // Create the munition types for heavy flamers
+        // Heavy flamers
         munitions.clear();
         munitions.add(COOLANT_MUNITION_MUTATOR_FOR_HEAVY_FLAMER);
+        munitions.add(WATER_MUNITION_MUTATOR);
+        munitions.add(INFERNO_FUEL_MUNITION_MUTATOR);
         AmmoType.createMunitions(heavyFlamerAmmos, munitions);
 
         munitions.clear();
         munitions.add(CLAN_COOLANT_MUNITION_MUTATOR_FOR_HEAVY_FLAMER);
+        munitions.add(CLAN_WATER_MUNITION_MUTATOR);
+        munitions.add(CLAN_INFERNO_FUEL_MUNITION_MUTATOR);
         AmmoType.createMunitions(clanHeavyFlamerAmmos, munitions);
+
+        // Fluid guns (base round is Water; add the other fluids)
+        munitions.clear();
+        munitions.add(COOLANT_MUNITION_MUTATOR);
+        munitions.add(CORROSIVE_MUNITION_MUTATOR);
+        munitions.add(FLAME_RETARDANT_FOAM_MUNITION_MUTATOR);
+        munitions.add(OIL_SLICK_MUNITION_MUTATOR);
+        munitions.add(PAINT_OBSCURANT_MUNITION_MUTATOR);
+        munitions.add(INFERNO_FUEL_MUNITION_MUTATOR);
+        AmmoType.createMunitions(fluidGunAmmos, munitions);
+
+        munitions.clear();
+        munitions.add(CLAN_COOLANT_MUNITION_MUTATOR);
+        munitions.add(CLAN_CORROSIVE_MUNITION_MUTATOR);
+        munitions.add(CLAN_FLAME_RETARDANT_FOAM_MUNITION_MUTATOR);
+        munitions.add(CLAN_OIL_SLICK_MUNITION_MUTATOR);
+        munitions.add(CLAN_PAINT_OBSCURANT_MUNITION_MUTATOR);
+        munitions.add(CLAN_INFERNO_FUEL_MUNITION_MUTATOR);
+        AmmoType.createMunitions(clanFluidGunAmmos, munitions);
 
         // Create incendiary variants of all LRM-compatible ammo types (TO:AUE pg 181)
         createIncendiaryVariants();
@@ -5964,6 +6193,9 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Fluid Gun Ammo";
         ammo.shortName = "Fluid Gun";
         ammo.setInternalName("ISFluidGun Ammo");
+        // A Fluid Gun with no specialty ammo designated is presumed to fire Water (TO:AUE p.172),
+        // so the base round is the Water/default round. Internal name kept for unit-file compatibility.
+        ammo.munitionType = EnumSet.of(Munitions.M_WATER);
         ammo.damagePerShot = 2; // only used for ammo criticalSlots
         ammo.rackSize = 1;
         ammo.ammoType = AmmoTypeEnum.FLUID_GUN;
@@ -5971,7 +6203,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 1;
         ammo.cost = 500;
         ammo.explosive = false;
-        ammo.rulesRefs = "125, TO:AUE";
+        ammo.rulesRefs = "172, TO:AUE";
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5988,13 +6220,16 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Fluid Gun Ammo";
         ammo.shortName = "Fluid Gun";
         ammo.setInternalName("CLFluidGun Ammo");
+        // A Fluid Gun with no specialty ammo designated is presumed to fire Water (TO:AUE p.172),
+        // so the base round is the Water/default round. Internal name kept for unit-file compatibility.
+        ammo.munitionType = EnumSet.of(Munitions.M_WATER);
         ammo.damagePerShot = 2; // only used for ammo criticalSlots
         ammo.rackSize = 1;
         ammo.ammoType = AmmoTypeEnum.FLUID_GUN;
         ammo.shots = 20;
         ammo.bv = 1;
         ammo.cost = 500;
-        ammo.rulesRefs = "125, TO:AUE";
+        ammo.rulesRefs = "172, TO:AUE";
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -16626,6 +16861,16 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.FLUID_GUN)) &&
                   (munition.getMunitionType().contains(Munitions.M_COOLANT))) {
                 cost = 3000;
+            }
+
+            // Corrosive and Inferno Fuel fluid ammo double the base ammunition BV (TO:AUE Alternative
+            // Munitions BV table); all other fluids use the base ammo BV.
+            if (((munition.getAmmoType() == AmmoTypeEnum.VEHICLE_FLAMER) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.HEAVY_FLAMER) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.FLUID_GUN)) &&
+                  (munition.getMunitionType().contains(Munitions.M_CORROSIVE) ||
+                        munition.getMunitionType().contains(Munitions.M_INFERNO_FUEL))) {
+                bv *= 2.0;
             }
 
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||

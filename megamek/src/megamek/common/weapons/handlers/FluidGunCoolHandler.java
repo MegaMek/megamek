@@ -48,8 +48,8 @@ import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
-import megamek.common.units.Mek;
 import megamek.common.units.Tank;
+import megamek.common.units.Targetable;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -68,6 +68,16 @@ public class FluidGunCoolHandler extends AmmoWeaponHandler {
     public FluidGunCoolHandler(ToHitData toHit, WeaponAttackAction weaponAttackAction, Game game,
           TWGameManager twGameManager) throws EntityLoadingException {
         super(toHit, weaponAttackAction, game, twGameManager);
+    }
+
+    @Override
+    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
+        if (!bMissed && (target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH)) {
+            // Coolant douses an ordinary hex fire on a 2D6 roll of 4+ (12 for an Inferno fire) (TO:AUE p.173).
+            FluidFireSuppression.extinguishHex(game, gameManager, target, subjectId, 4, vPhaseReport);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -102,7 +112,8 @@ public class FluidGunCoolHandler extends AmmoWeaponHandler {
                 report.choose(false);
             }
             vPhaseReport.add(report);
-        } else if ((target instanceof Tank) && ((Tank) target).isOnFire()) {
+        } else if ((target instanceof Tank tankTarget) && tankTarget.isOnFire()) {
+            // Ordinary (non-Inferno) fires are doused by coolant on a roll of 4+ (TO:AUE p.173).
             report = new Report(3550);
             report.subject = subjectId;
             report.addDesc(entityTarget);
@@ -112,24 +123,25 @@ public class FluidGunCoolHandler extends AmmoWeaponHandler {
 
             if (diceRoll.getIntValue() >= 4) {
                 report.choose(true);
-                for (int i = 0; i < entityTarget.locations(); i++) {
-                    ((Tank) target).extinguishAll();
-                }
+                tankTarget.extinguishAll();
             } else {
                 report.choose(false);
             }
             vPhaseReport.add(report);
         }
-        // coolant also reduces heat of meks
-        if (target instanceof Mek) {
-            int nDamage = 3;
+
+        // Coolant reduces the heat of any heat-tracking target by 3 points per hit (a Fluid Gun and a
+        // Sprayer are never Heavy Flamers); the heat phase caps total external cooling at 9 per turn
+        // (TO:AUE p.173).
+        if (entityTarget.tracksHeat()) {
+            int cooling = 3;
             report = new Report(3400);
             report.subject = subjectId;
             report.indent(2);
-            report.add(nDamage);
+            report.add(cooling);
             report.choose(false);
             vPhaseReport.add(report);
-            entityTarget.coolFromExternal += nDamage;
+            entityTarget.coolFromExternal += cooling;
         }
     }
 }

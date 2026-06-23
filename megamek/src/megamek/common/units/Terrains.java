@@ -193,6 +193,22 @@ public class Terrains implements Serializable {
     public static final int BRIDGE_REPAIRED = 60;
 
     /**
+     * Marks a hex doused with Oil Slick Ammo by a Fluid Gun / Sprayer (TO:AUE p.174). A data-only marker
+     * applied in-game (never placed in the Editor): ground units other than infantry, hovercraft and WiGEs
+     * must make a skid Piloting Skill Roll when passing through, and the hex is easier to set alight. It
+     * serializes with the hex (surviving save games) and is removed when the slick is cleared.
+     */
+    public static final int OIL_SLICK = 61;
+
+    /**
+     * Marks a hex coated with Flame-Retardant Foam Ammo by a Fluid Gun / Sprayer (TO:AUE p.173). A data-only
+     * marker applied in-game (never placed in the Editor): rolls to set the hex on fire take a +4
+     * target-number modifier. It serializes with the hex (surviving save games) and is removed when the
+     * coating is cleared.
+     */
+    public static final int FLAME_RETARDANT_FOAM = 62;
+
+    /**
      * Keeps track of the different type of terrains that can have exits.
      */
     public static final int[] exitableTerrains = { PAVEMENT, ROAD, BUILDING, FUEL_TANK, BRIDGE, WATER };
@@ -211,11 +227,12 @@ public class Terrains implements Serializable {
                                             "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom",
                                             "foliage_elev", "black_ice", "sky",
                                             "deployment_zone", "hazardous_liquid", "ultra_sublevel",
-                                            "bridge_repaired" };
+                                            "bridge_repaired", "oil_slick", "flame_retardant_foam" };
 
     /** Terrains in this set are hidden in the Editor, not saved to board files and handled internally. */
     public static final HashSet<Integer> AUTOMATIC = new HashSet<>(Arrays.asList(
-          INCLINE_TOP, INCLINE_BOTTOM, INCLINE_HIGH_TOP, INCLINE_HIGH_BOTTOM, CLIFF_BOTTOM, SKY, BRIDGE_REPAIRED));
+          INCLINE_TOP, INCLINE_BOTTOM, INCLINE_HIGH_TOP, INCLINE_HIGH_BOTTOM, CLIFF_BOTTOM, SKY, BRIDGE_REPAIRED,
+          OIL_SLICK, FLAME_RETARDANT_FOAM));
 
     public static final int SIZE = names.length;
 
@@ -482,6 +499,10 @@ public class Terrains implements Serializable {
                 };
             case ULTRA_SUBLEVEL:
                 return "Ultra Sublevel";
+            case OIL_SLICK:
+                return "Oil Slick";
+            case FLAME_RETARDANT_FOAM:
+                return "Flame-Retardant Foam";
             default:
                 return null;
         }

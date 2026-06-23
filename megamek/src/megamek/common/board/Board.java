@@ -1413,6 +1413,93 @@ public class Board implements Serializable {
         return (flamerStartedFires != null) && flamerStartedFires.contains(coords);
     }
 
+    /**
+     * Marks the given coordinates as doused with Oil Slick Ammo (TO:AUE p.174). The marker is stored as an
+     * {@link Terrains#OIL_SLICK} terrain on the hex so the tileset renders it and it serializes with saves;
+     * callers should broadcast the hex change (e.g. {@code sendChangedHex}) so clients see the slick.
+     *
+     * @param coords the <code>Coords</code> to oil
+     */
+    public void markOilSlick(Coords coords) {
+        Hex hex = getHex(coords);
+        if ((hex != null) && !hex.containsTerrain(Terrains.OIL_SLICK)) {
+            hex.addTerrain(new Terrain(Terrains.OIL_SLICK, 1));
+        }
+    }
+
+    /**
+     * Clears the Oil Slick marker from the given coordinates.
+     *
+     * @param coords the <code>Coords</code> to clear
+     */
+    public void removeOilSlick(Coords coords) {
+        Hex hex = getHex(coords);
+        if (hex != null) {
+            hex.removeTerrain(Terrains.OIL_SLICK);
+        }
+    }
+
+    /**
+     * @param coords the <code>Coords</code> being checked
+     *
+     * @return true if these coordinates have been doused with Oil Slick Ammo (TO:AUE p.174)
+     */
+    public boolean isOilSlick(Coords coords) {
+        Hex hex = getHex(coords);
+        return (hex != null) && hex.containsTerrain(Terrains.OIL_SLICK);
+    }
+
+    /**
+     * Marks the given coordinates as coated with Flame-Retardant Foam Ammo (TO:AUE p.173). The marker is
+     * stored as a {@link Terrains#FLAME_RETARDANT_FOAM} terrain on the hex so the tileset renders it and it
+     * serializes with saves; callers should broadcast the hex change so clients see the coating.
+     *
+     * @param coords the <code>Coords</code> to coat with foam
+     */
+    public void markFlameRetardantFoam(Coords coords) {
+        Hex hex = getHex(coords);
+        if ((hex != null) && !hex.containsTerrain(Terrains.FLAME_RETARDANT_FOAM)) {
+            hex.addTerrain(new Terrain(Terrains.FLAME_RETARDANT_FOAM, 1));
+        }
+    }
+
+    /**
+     * Clears the Flame-Retardant Foam marker from the given coordinates.
+     *
+     * @param coords the <code>Coords</code> to clear
+     */
+    public void removeFlameRetardantFoam(Coords coords) {
+        Hex hex = getHex(coords);
+        if (hex != null) {
+            hex.removeTerrain(Terrains.FLAME_RETARDANT_FOAM);
+        }
+    }
+
+    /**
+     * @param coords the <code>Coords</code> being checked
+     *
+     * @return true if these coordinates have been coated with Flame-Retardant Foam Ammo (TO:AUE p.173)
+     */
+    public boolean isFlameRetardantFoam(Coords coords) {
+        Hex hex = getHex(coords);
+        return (hex != null) && hex.containsTerrain(Terrains.FLAME_RETARDANT_FOAM);
+    }
+
+    /**
+     * @param coords the hex being checked
+     *
+     * @return the target-number modifier a fluid coating applies to attempts to set the hex on fire
+     *       (TO:AUE pp.173-174): +4 for Flame-Retardant Foam, -2 for an Oil Slick, otherwise 0
+     */
+    public int getFluidIgnitionModifier(Coords coords) {
+        if (isFlameRetardantFoam(coords)) {
+            return 4;
+        } else if (isOilSlick(coords)) {
+            return -2;
+        }
+        return 0;
+    }
+
     public void removeBombIconsFrom(Coords coords) {
         // Do nothing if the coords aren't on this board.
         if (!this.contains(coords) || null == specialHexes.get(coords)) {

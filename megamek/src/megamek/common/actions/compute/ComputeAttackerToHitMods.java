@@ -345,6 +345,19 @@ public class ComputeAttackerToHitMods {
             }
         }
 
+        // Sprayers "fire" as weapons but gain no benefit from a fire control system or targeting
+        // computer, so every Sprayer attack is made as if the unit has no fire control (TM pp.248-249).
+        if ((weaponType != null) && weaponType.hasFlag(WeaponType.F_SPRAYER)) {
+            toHit.addModifier(2, Messages.getString("WeaponAttackAction.SprayerNoFireControl"));
+        }
+
+        // A unit whose sensors have been fouled by Paint/Obscurant Ammo attacks at +1 to +3 to-hit until
+        // the obscurants are washed off (TO:AUE p.174).
+        int obscurantPenalty = attacker.getObscurantToHitPenalty();
+        if (obscurantPenalty > 0) {
+            toHit.addModifier(obscurantPenalty, Messages.getString("WeaponAttackAction.Obscurant"));
+        }
+
         // penalty for an active void signature system
         if (attacker.isVoidSigActive()) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeVoidSig"));

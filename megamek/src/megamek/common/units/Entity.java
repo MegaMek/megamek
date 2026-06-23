@@ -455,6 +455,35 @@ public abstract class Entity extends TurnOrdered
     public int heatBuildup = 0;
     public int heatFromExternal = 0;
     public int coolFromExternal = 0;
+
+    /**
+     * Corrosive (acid) damage from Fluid Gun / Sprayer Corrosive Ammo that has been rolled but not yet
+     * applied; it is dealt to this unit's structure in the End Phase of the same turn (TO:AUE p.173).
+     * Resolved and cleared by the End-Phase corrosive pass.
+     */
+    private int pendingCorrosiveDamage = 0;
+
+    /**
+     * Corrosive (acid) damage queued to fall on this unit's structure in the End Phase of the *following*
+     * turn, as produced by a Corrosive Ammo critical-hit explosion (TO:AUE p.173). It is promoted into
+     * {@link #pendingCorrosiveDamage} at the end of the current turn so it lands one turn later.
+     */
+    private int nextTurnCorrosiveDamage = 0;
+
+    /**
+     * Cumulative to-hit penalty (0-3) this unit suffers on all of its own weapon attacks because its
+     * sensors have been fouled by Paint/Obscurant Ammo (TO:AUE p.174). Lasts for the rest of the scenario
+     * unless washed off by Water Ammo. Persisted with the unit.
+     */
+    private int obscurantToHitPenalty = 0;
+
+    /**
+     * A chemical coating sprayed onto this unit by a Fluid Gun / Sprayer that changes how readily it can be
+     * set alight (TO:AUE pp.173-174). Unlike a hex coating it travels with the unit, so ignition rolls
+     * against whatever hex the unit occupies are modified while the coating lasts. Persisted with the unit.
+     */
+    private FluidCoating fluidCoating = FluidCoating.NONE;
+
     public int delta_distance = 0;
     public int mpUsed = 0;
     public int underwaterRounds = 0;
@@ -8714,11 +8743,39 @@ public abstract class Entity extends TurnOrdered
             String description = isMek() ? "running & turning on pavement" : "reckless driving on pavement";
             roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), description));
 
+        } else if (entersOilSlick(currStep, lastPos, curPos, isInfantry)) {
+            // Passing through an oil-slicked hex forces a skid check at +1 (an extra +1 on a paved or
+            // bridge hex), regardless of movement speed (TO:AUE p.174).
+            int oilSlickModifier = 1;
+            Hex oiledHex = game.getBoard(currStep.getBoardId()).getHex(curPos);
+            if ((oiledHex != null)
+                  && oiledHex.containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.ROAD, Terrains.BRIDGE)) {
+                oilSlickModifier += 1;
+            }
+            roll.append(new PilotingRollData(getId(), oilSlickModifier, "oil slick"));
+
         } else {
             return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "unit doesn't skid");
         }
         adjustDifficultTerrainPSRModifier(roll);
         return roll;
+    }
+
+    /**
+     * @param currStep   the move step entering the hex being checked
+     * @param lastPos    the coordinates the unit is leaving
+     * @param curPos     the coordinates the unit is entering
+     * @param isInfantry whether the moving unit is infantry
+     *
+     * @return true if this unit is a ground unit (not infantry, hovercraft or WiGE) moving into an
+     *       oil-slicked hex, and so must make a skid check (TO:AUE p.174)
+     */
+    private boolean entersOilSlick(MoveStep currStep, Coords lastPos, Coords curPos, boolean isInfantry) {
+        if (isInfantry || movementMode.isHoverOrWiGE() || Objects.equals(curPos, lastPos)) {
+            return false;
+        }
+        Board board = game.getBoard(currStep.getBoardId());
+        return (board != null) && board.isOilSlick(curPos);
     }
 
     /**
@@ -10294,6 +10351,10 @@ public abstract class Entity extends TurnOrdered
             // Incendiary LRM checks for heat-induced explosions as Inferno (TO:AUE pg 181)
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM) &&
                   (amounted.getHittableShotsLeft() > 0)) {
+                found = true;
+            }
+            // Inferno Fuel for Flamers / Fluid Guns checks heat-induced cook-off as Inferno SRMs (TO:AUE pg 173)
+            if (ammoType.isInfernoFuel() && (amounted.getHittableShotsLeft() > 0)) {
                 found = true;
             }
         }
@@ -16271,6 +16332,118 @@ public abstract class Entity extends TurnOrdered
 
     public int getHeat() {
         return heat;
+    }
+
+    /**
+     * @return the amount of Corrosive Ammo (acid) damage queued to be applied to this unit's structure in
+     *       the End Phase of the current turn (TO:AUE p.173)
+     */
+    public int getPendingCorrosiveDamage() {
+        return pendingCorrosiveDamage;
+    }
+
+    /**
+     * Queues additional Corrosive Ammo damage to be applied to this unit's structure in the End Phase of
+     * the current turn (TO:AUE p.173).
+     *
+     * @param damage the additional corrosive damage (ignored if not positive)
+     */
+    public void addPendingCorrosiveDamage(int damage) {
+        if (damage > 0) {
+            pendingCorrosiveDamage += damage;
+        }
+    }
+
+    /** Clears any queued Corrosive Ammo damage once it has been applied. */
+    public void clearPendingCorrosiveDamage() {
+        pendingCorrosiveDamage = 0;
+    }
+
+    /**
+     * @return corrosive damage queued to land in the End Phase of the following turn (from a Corrosive
+     *       Ammo critical-hit explosion, TO:AUE p.173)
+     */
+    public int getNextTurnCorrosiveDamage() {
+        return nextTurnCorrosiveDamage;
+    }
+
+    /**
+     * Queues corrosive damage to land in the End Phase of the following turn (a Corrosive Ammo
+     * critical-hit explosion, TO:AUE p.173).
+     *
+     * @param damage the corrosive damage (ignored if not positive)
+     */
+    public void addNextTurnCorrosiveDamage(int damage) {
+        if (damage > 0) {
+            nextTurnCorrosiveDamage += damage;
+        }
+    }
+
+    /**
+     * Promotes any following-turn corrosive damage into the current pending pool so it is applied at the
+     * next End Phase, then clears the following-turn queue. Called once per turn.
+     */
+    public void promoteNextTurnCorrosiveDamage() {
+        if (nextTurnCorrosiveDamage > 0) {
+            addPendingCorrosiveDamage(nextTurnCorrosiveDamage);
+            nextTurnCorrosiveDamage = 0;
+        }
+    }
+
+    /** Largest to-hit penalty Paint/Obscurant Ammo can inflict on a fouled unit (TO:AUE p.174). */
+    public static final int MAX_OBSCURANT_PENALTY = 3;
+
+    /**
+     * @return the to-hit penalty (0-3) this unit currently suffers on its own weapon attacks from having
+     *       been struck by Paint/Obscurant Ammo (TO:AUE p.174)
+     */
+    public int getObscurantToHitPenalty() {
+        return obscurantToHitPenalty;
+    }
+
+    /**
+     * Records another sensor-fouling hit from Paint/Obscurant Ammo, raising this unit's to-hit penalty by
+     * one to a maximum of {@link #MAX_OBSCURANT_PENALTY} (TO:AUE p.174).
+     *
+     * @return {@code true} if the penalty increased, {@code false} if it was already at the maximum
+     */
+    public boolean addObscurantToHitPenalty() {
+        if (obscurantToHitPenalty >= MAX_OBSCURANT_PENALTY) {
+            return false;
+        }
+        obscurantToHitPenalty++;
+        return true;
+    }
+
+    /** Removes all Paint/Obscurant sensor fouling from this unit (e.g. washed off by Water Ammo). */
+    public void clearObscurantToHitPenalty() {
+        obscurantToHitPenalty = 0;
+    }
+
+    /**
+     * @return the chemical fluid coating currently on this unit (TO:AUE pp.173-174); never null - returns
+     *       {@link FluidCoating#NONE} when the unit is uncoated (also for units from older saves)
+     */
+    public FluidCoating getFluidCoating() {
+        return (fluidCoating == null) ? FluidCoating.NONE : fluidCoating;
+    }
+
+    /**
+     * Applies (or clears) a Fluid Gun / Sprayer chemical coating on this unit (TO:AUE pp.173-174). A new
+     * coating replaces any previous one - foam over oil, for instance, since foam is fire-retardant.
+     *
+     * @param coating the coating to apply, or {@link FluidCoating#NONE} to clear it
+     */
+    public void setFluidCoating(FluidCoating coating) {
+        fluidCoating = coating;
+    }
+
+    /**
+     * @return the target-number modifier this unit's fluid coating applies to attempts to set its hex on
+     *       fire (TO:AUE pp.173-174): -2 for an Oil Slick coating, +4 for Flame-Retardant Foam, 0 if none
+     */
+    public int getFluidCoatingIgnitionModifier() {
+        return getFluidCoating().ignitionModifier();
     }
 
     public int getTsempHitsThisTurn() {

@@ -881,10 +881,17 @@ class ComputeToHitIsImpossible {
         if (weapon != null && weaponType != null) {
             // Variable setup
 
-            // A vehicle flamer loaded with coolant ammo fires in "cool" mode: it suppresses fires (and can help
-            // extinguish a hex) rather than igniting them, so it is barred from starting fires below.
-            boolean flamerInCoolMode = (ammoType != null) && (ammo != null)
-                  && ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_COOLANT);
+            // A flamer/fluid gun/sprayer loaded with a fire-suppressant fluid (coolant, water or
+            // flame-retardant foam) suppresses fires (and can help extinguish a hex) rather than igniting
+            // them, so it is barred from starting fires below (TO:AUE pp.173-174).
+            boolean fireSuppressantFluidAmmo = (ammo != null) && (ammo.getType() instanceof AmmoType fluidAmmo)
+                  && fluidAmmo.isFireSuppressantFluid();
+
+            // Sprayers share Fluid Gun ammunition but may not load Inferno Fuel (TO:AUE p.173).
+            if (weaponType.hasFlag(WeaponType.F_SPRAYER) && (ammo != null)
+                  && ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_INFERNO_FUEL)) {
+                return Messages.getString("WeaponAttackAction.SprayerNoInfernoFuel");
+            }
 
             // Anti-Infantry weapons can only target infantry
             if (weaponType.hasFlag(WeaponType.F_INFANTRY_ONLY)) {
@@ -1497,7 +1504,7 @@ class ComputeToHitIsImpossible {
             // Causing Fires
 
             // Some weapons can't cause fires, but Infernos always can.
-            if ((flamerInCoolMode || (weaponType.hasFlag(WeaponType.F_NO_FIRES) && !isInferno)) &&
+            if ((fireSuppressantFluidAmmo || (weaponType.hasFlag(WeaponType.F_NO_FIRES) && !isInferno)) &&
                   (Targetable.TYPE_HEX_IGNITE == target.getTargetType())) {
                 return Messages.getString("WeaponAttackAction.WeaponCantIgnite");
             }
@@ -1554,7 +1561,7 @@ class ComputeToHitIsImpossible {
             // mode, or firefighting engineer infantry using their portable gear (TO:AuE p.153).
             boolean firefightingEngineer = attacker.isFirefighter();
             if (Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType()) {
-                if (!weaponType.hasFlag(WeaponType.F_EXTINGUISHER) && !flamerInCoolMode && !firefightingEngineer) {
+                if (!weaponType.hasFlag(WeaponType.F_EXTINGUISHER) && !fireSuppressantFluidAmmo && !firefightingEngineer) {
                     return Messages.getString("WeaponAttackAction.InvalidForFirefighting");
                 }
                 Hex hexTarget = game.getHexOf(target);

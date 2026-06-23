@@ -7458,8 +7458,11 @@ public class Compute {
         final boolean basicFireCon = !advFireCon && entity.hasMisc(MiscType.F_BASIC_FIRE_CONTROL);
         if (entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             if (!advFireCon && !basicFireCon) {
-                // No fire control requires one gunner per weapon.
-                return entity.getWeaponList().size();
+                // No fire control requires one gunner per weapon. Sprayers do not count as weapons
+                // and require no gunner (TM pp.248-249).
+                return (int) entity.getWeaponList().stream()
+                      .filter(m -> !m.getType().hasFlag(WeaponType.F_SPRAYER))
+                      .count();
             } else {
                 // Otherwise we require one gunner per facing, with turrets and pintle mounts
                 // counting
@@ -7467,6 +7470,10 @@ public class Compute {
                 Set<Integer> facings = new HashSet<>();
                 Set<Integer> pintleLocations = new HashSet<>();
                 for (Mounted<?> m : entity.getWeaponList()) {
+                    // Sprayers are not true weapons and require no gunner (TM pp.248-249).
+                    if (m.getType().hasFlag(WeaponType.F_SPRAYER)) {
+                        continue;
+                    }
                     if (m.isPintleTurretMounted()) {
                         // We consider pintle-mounted weapons in the same location to be in the same
                         // pintle
@@ -7485,8 +7492,10 @@ public class Compute {
             }
         } else {
             // Medium and large support vehicle gunner requirements are based on weapon
-            // tonnage
-            double tonnage = entity.getWeaponList().stream().filter(m -> !m.getType().hasFlag(WeaponType.F_AMS))
+            // tonnage. Sprayers are not true weapons and require no gunner (TM pp.248-249).
+            double tonnage = entity.getWeaponList().stream()
+                  .filter(m -> !m.getType().hasFlag(WeaponType.F_AMS))
+                  .filter(m -> !m.getType().hasFlag(WeaponType.F_SPRAYER))
                   .mapToDouble(Mounted::getTonnage).sum();
             if (advFireCon) {
                 if (entity.getStructuralTechRating() == TechRating.F) {

@@ -1404,9 +1404,12 @@ public class ComputeToHit {
             return toHit;
         }
 
-        // Engineer's fire extinguisher has fixed to hit number,
-        // Note that coolant trucks make a regular attack.
-        if (weaponType.hasFlag(WeaponType.F_EXTINGUISHER)) {
+        // Engineer's fire extinguisher has a fixed to-hit number. A Flamer / Fluid Gun / Sprayer firing a
+        // fire-suppressant fluid (water, coolant or foam) at a burning hex uses the same TN 8 firefighting
+        // attack (TO:AUE pp.173-174); the per-fluid extinguish roll then happens in its handler.
+        boolean fluidHexExtinguish = (ammoType != null) && ammoType.isFireSuppressantFluid()
+              && (target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH);
+        if (weaponType.hasFlag(WeaponType.F_EXTINGUISHER) || fluidHexExtinguish) {
             toHit = new ToHitData(8, Messages.getString("WeaponAttackAction.FireExt"));
             if (((target instanceof Entity) && ((Entity) target).infernos.isStillBurning()) ||
                   ((target instanceof Tank) && ((Tank) target).isInfernoFire())) {

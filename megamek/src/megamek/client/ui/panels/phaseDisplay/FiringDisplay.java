@@ -2079,7 +2079,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             return false;
         }
         boolean firefighter = firingUnit.isFirefighter();
-        if (!firefighter && !hasReadyFireExtinguisher(firingUnit)) {
+        WeaponMounted suppressant = firefighter ? null : findFireSuppressantWeapon(firingUnit);
+        if (!firefighter && (suppressant == null)) {
             return false;
         }
         // The hex must be on the unit's own board; a hex on a different board is never reachable.
@@ -2094,14 +2095,36 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             return false;
         }
         int distanceToHex = firingUnit.getPosition().distance(selectedCoords);
-        // Firefighting engineers fight an adjacent hex, not the one they stand in (TO:AuE p.153). Other units use a
-        // range-1 Fire Extinguisher weapon, which reaches only their own hex or an adjacent one.
-        return firefighter ? (distanceToHex == 1) : (distanceToHex <= 1);
+        // Firefighting engineers fight an adjacent hex, not the one they stand in (TO:AuE p.153). Other units
+        // reach as far as the firefighting weapon's range - 1 for a Fire Extinguisher or Sprayer, up to 3 for
+        // a Fluid Gun (TO:AUE pp.173-174).
+        return firefighter ? (distanceToHex == 1) : (distanceToHex <= suppressant.getType().getLongRange());
     }
 
-    private boolean hasReadyFireExtinguisher(Entity entity) {
-        return entity.getWeaponList().stream()
-              .anyMatch(weapon -> weapon.getType().hasFlag(WeaponType.F_EXTINGUISHER) && !weapon.isUsedThisRound());
+    /**
+     * @param entity the firing unit
+     *
+     * @return a ready weapon that can put out a fire - a Fire Extinguisher (preferred) or a Flamer / Fluid
+     *       Gun / Sprayer loaded with a fire-suppressant fluid (water, coolant or foam) - or {@code null} if
+     *       the unit has none
+     */
+    private WeaponMounted findFireSuppressantWeapon(Entity entity) {
+        WeaponMounted fluidWeapon = null;
+        for (WeaponMounted weapon : entity.getWeaponList()) {
+            if (weapon.isUsedThisRound()) {
+                continue;
+            }
+            if (weapon.getType().hasFlag(WeaponType.F_EXTINGUISHER)) {
+                return weapon;
+            }
+            if (fluidWeapon == null) {
+                AmmoMounted ammo = weapon.getLinkedAmmo();
+                if ((ammo != null) && ammo.getType().isFireSuppressantFluid()) {
+                    fluidWeapon = weapon;
+                }
+            }
+        }
+        return fluidWeapon;
     }
 
     /**
@@ -2113,12 +2136,14 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         if (!canExtinguishSelectedHex()) {
             return;
         }
-        // Prefer a real fire extinguisher weapon (coolant trucks, etc.); firefighting engineers use their
-        // currently selected weapon, which their FIRE_ENGINEERS specialization routes to the extinguisher path.
-        for (WeaponMounted weapon : currentEntity().getWeaponList()) {
-            if (weapon.getType().hasFlag(WeaponType.F_EXTINGUISHER) && !weapon.isUsedThisRound()) {
-                clientgui.getUnitDisplay().wPan.selectWeapon(weapon);
-                break;
+        // Select the firefighting weapon: a Fire Extinguisher (coolant trucks, etc.) or a Flamer / Fluid Gun
+        // / Sprayer loaded with a fire-suppressant fluid. Firefighting engineers use their currently selected
+        // weapon, which their FIRE_ENGINEERS specialization routes to the extinguisher path.
+        Entity firingUnit = currentEntity();
+        if (!firingUnit.isFirefighter()) {
+            WeaponMounted suppressant = findFireSuppressantWeapon(firingUnit);
+            if (suppressant != null) {
+                clientgui.getUnitDisplay().wPan.selectWeapon(suppressant);
             }
         }
         target(new HexTarget(selectedCoords, selectedBoardId, Targetable.TYPE_HEX_EXTINGUISH));
@@ -2459,6 +2484,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 return new HexTarget(pos, boardId, Targetable.TYPE_HEX_CLEAR);
             } else if (munitionType.contains(AmmoType.Munitions.M_MINE_CLEARANCE)) {
                 return new HexTarget(pos, boardId, Targetable.TYPE_HEX_CLEAR);
+            } else if (munitionType.contains(AmmoType.Munitions.M_OIL_SLICK)) {
+                // Oil Slick coats the hex itself rather than a unit (TO:AUE p.174).
+                return new HexTarget(pos, boardId, Targetable.TYPE_HEX_FLUID);
+            } else if (munitionType.contains(AmmoType.Munitions.M_ANTI_FLAME_FOAM)
+                  && game.getEnemyEntities(pos, boardId, currentEntity()).isEmpty()) {
+                // Flame-Retardant Foam can coat a bare hex; if an enemy unit is present, target it instead.
+                return new HexTarget(pos, boardId, Targetable.TYPE_HEX_FLUID);
             }
         }
         // Get the available choices, depending on friendly fire

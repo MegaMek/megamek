@@ -48,8 +48,10 @@ import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
-import megamek.common.units.Mek;
 import megamek.common.units.Tank;
+import megamek.common.units.Targetable;
+import megamek.common.weapons.flamers.clan.CLHeavyFlamer;
+import megamek.common.weapons.flamers.innerSphere.ISHeavyFlamer;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -71,6 +73,16 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
     }
 
     @Override
+    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
+        if (!bMissed && (target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH)) {
+            // Coolant douses an ordinary hex fire on a 2D6 roll of 4+ (12 for an Inferno fire) (TO:AUE p.173).
+            FluidFireSuppression.extinguishHex(game, gameManager, target, subjectId, 4, vPhaseReport);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
           int nCluster, int bldgAbsorbs) {
         if (entityTarget.isConventionalInfantry()) {
@@ -85,8 +97,9 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
         Report report = new Report(3390);
         report.subject = subjectId;
         vPhaseReport.addElement(report);
-        if (entityTarget.infernos.isStillBurning() ||
-              ((target instanceof Tank) && ((Tank) target).isOnFire() && ((Tank) target).isInfernoFire())) {
+        boolean infernoFireOnTank = (target instanceof Tank tank) && tank.isOnFire() && tank.isInfernoFire();
+        if (entityTarget.infernos.isStillBurning() || infernoFireOnTank) {
+            // Fires created by Inferno munitions are only doused by coolant on a roll of 12 (TO:AUE p.173).
             report = new Report(3545);
             report.subject = subjectId;
             report.addDesc(entityTarget);
@@ -101,7 +114,8 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
                 report.choose(false);
             }
             vPhaseReport.add(report);
-        } else if ((target instanceof Tank) && ((Tank) target).isOnFire()) {
+        } else if ((target instanceof Tank tank) && tank.isOnFire()) {
+            // Ordinary (non-Inferno) fires are doused by coolant on a roll of 4+ (TO:AUE p.173).
             report = new Report(3550);
             report.subject = subjectId;
             report.addDesc(entityTarget);
@@ -111,24 +125,34 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
 
             if (diceRoll.getIntValue() >= 4) {
                 report.choose(true);
-                for (int i = 0; i < entityTarget.locations(); i++) {
-                    ((Tank) target).extinguishAll();
-                }
+                tank.extinguishAll();
             } else {
                 report.choose(false);
             }
             vPhaseReport.add(report);
         }
-        // coolant also reduces heat of meks
-        if (target instanceof Mek) {
-            int nDamage = (nDamPerHit * hits) + 1;
+
+        // Coolant reduces the heat of any heat-tracking target by 3 points per hit - 4 from a Heavy Flamer
+        // (the heat phase caps total external cooling at 9 per turn) (TO:AUE p.173).
+        if (entityTarget.tracksHeat()) {
+            int cooling = coolingPointsFor(weaponType);
             report = new Report(3400);
             report.subject = subjectId;
             report.indent(2);
-            report.add(nDamage);
+            report.add(cooling);
             report.choose(false);
             vPhaseReport.add(report);
-            entityTarget.coolFromExternal += nDamage;
+            entityTarget.coolFromExternal += cooling;
         }
+    }
+
+    /**
+     * @param weaponType the flamer firing Coolant Ammo
+     *
+     * @return the heat a single Coolant hit removes from a heat-tracking target: 4 from a Heavy Flamer,
+     *       3 from a standard Vehicle Flamer (TO:AUE p.173)
+     */
+    static int coolingPointsFor(WeaponType weaponType) {
+        return ((weaponType instanceof ISHeavyFlamer) || (weaponType instanceof CLHeavyFlamer)) ? 4 : 3;
     }
 }

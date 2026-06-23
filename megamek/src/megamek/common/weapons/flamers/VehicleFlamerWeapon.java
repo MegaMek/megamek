@@ -51,8 +51,10 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.InfernoFuelHandler;
 import megamek.common.weapons.handlers.VehicleFlamerCoolHandler;
 import megamek.common.weapons.handlers.VehicleFlamerHandler;
+import megamek.common.weapons.handlers.WaterHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -89,7 +91,12 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
                     if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_COOLANT)) {
                         return new VehicleFlamerCoolHandler(toHit, waa, game, manager);
                     }
-
+                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_WATER)) {
+                        return new WaterHandler(toHit, waa, game, manager);
+                    }
+                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_FUEL)) {
+                        return new InfernoFuelHandler(toHit, waa, game, manager);
+                    }
                 }
             }
 

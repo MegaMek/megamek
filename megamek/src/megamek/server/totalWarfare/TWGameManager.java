@@ -127,6 +127,7 @@ import megamek.common.weapons.autoCannons.ACWeapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.DamageFalloff;
+import megamek.common.weapons.handlers.FluidAmmoExplosion;
 import megamek.common.weapons.handlers.NukeStats;
 import megamek.common.weapons.handlers.TAGHandler;
 import megamek.common.weapons.handlers.WeaponHandler;
@@ -7122,6 +7123,8 @@ public class TWGameManager extends AbstractGameManager {
                               0,
                               DamageType.INFERNO));
                     }
+                    // An unsealed Support Vehicle carrying Inferno Fuel may cook off from this heat shock.
+                    vPhaseReport.addAll(checkSupportVehicleInfernoFuelCookOff(te, "external heat damage"));
                 } else if (te instanceof ConvFighter ftr) {
                     // CFs take a point SI damage for every three missiles that hit.
                     // Use the heatFromExternal field to carry the remainder in case of multiple
@@ -11181,6 +11184,15 @@ public class TWGameManager extends AbstractGameManager {
             nTargetRoll.addModifier(terrainMod, "terrain");
         }
 
+        // Fluid-gun chemical coatings change how readily a hex catches fire (TO:AUE pp.173-174):
+        // Flame-Retardant Foam makes it much harder, Oil Slick makes it easier. A coating on the hex
+        // itself or carried by a unit standing in it both count.
+        int fluidIgnitionModifier = fluidIgnitionModifier(c, boardId);
+        if (fluidIgnitionModifier != 0) {
+            nTargetRoll.addModifier(fluidIgnitionModifier,
+                  (fluidIgnitionModifier > 0) ? "flame-retardant foam" : "oil slick");
+        }
+
         // building modifiers
         IBuilding bldg = game.getBuildingAt(c, boardId).orElse(null);
         if (null != bldg) {
@@ -11258,6 +11270,33 @@ public class TWGameManager extends AbstractGameManager {
           TargetRoll nTargetRoll,
           int accidentTarget, Vector<Report> vPhaseReport) {
         return tryIgniteHex(c, boardId, entityId, bHotGun, bInferno, nTargetRoll, false, accidentTarget, vPhaseReport);
+    }
+
+    /**
+     * Combines the Fluid Gun / Sprayer chemical-coating ignition modifiers that apply when trying to set a
+     * hex on fire (TO:AUE pp.173-174): the coating on the hex itself plus any coating carried by a unit
+     * standing in it. Flame-Retardant Foam (+4, fire-retardant) dominates an Oil Slick (-2) rather than
+     * stacking with or cancelling it.
+     *
+     * @param c       the hex being ignited
+     * @param boardId the board the hex is on
+     *
+     * @return +4 if foam protects the hex, -2 if only oil coats it, otherwise 0
+     */
+    private int fluidIgnitionModifier(Coords c, int boardId) {
+        Board board = game.getBoard(boardId);
+        int hexModifier = (board != null) ? board.getFluidIgnitionModifier(c) : 0;
+        boolean foam = hexModifier > 0;
+        boolean oil = hexModifier < 0;
+        for (Entity entity : game.getEntitiesVector(c, boardId)) {
+            int coatingModifier = entity.getFluidCoatingIgnitionModifier();
+            foam |= coatingModifier > 0;
+            oil |= coatingModifier < 0;
+        }
+        if (foam) {
+            return FluidCoating.FLAME_RETARDANT_FOAM.ignitionModifier();
+        }
+        return oil ? FluidCoating.OIL_SLICK.ignitionModifier() : 0;
     }
 
     public Vector<Report> tryClearHex(Coords c, int nDamage, int entityId) {
@@ -15718,6 +15757,29 @@ public class TWGameManager extends AbstractGameManager {
      */
     void checkBuildBridges() {
         new BridgeBuildPhaseHandler(this).checkBuildBridges();
+    }
+
+    /**
+     * Applies the End-Phase corrosive (acid) damage queued by Fluid Gun / Sprayer Corrosive Ammo
+     * attacks this turn (TO:AUE p.173). Delegates to {@link CorrosiveDamageHandler} so the rule does not
+     * add to this already very large class.
+     */
+    void resolveCorrosiveDamage() {
+        new CorrosiveDamageHandler(this).resolveCorrosiveDamage();
+    }
+
+    /**
+     * Checks whether an unsealed Support Vehicle carrying Inferno Fuel cooks off after a heat-shock event
+     * (external heat damage or a transport-bay critical hit), TO:AUE p.173. Delegates to
+     * {@link SupportVehicleFluidExplosionHandler} so the rule does not add to this already very large class.
+     *
+     * @param entity  the unit that just suffered the heat-shock event
+     * @param trigger a short description of the triggering event (for diagnostic logging)
+     *
+     * @return the reports describing the cook-off roll and any resulting explosion
+     */
+    Vector<Report> checkSupportVehicleInfernoFuelCookOff(Entity entity, String trigger) {
+        return new SupportVehicleFluidExplosionHandler(this).checkInfernoFuelCookOff(entity, trigger);
     }
 
     /**
@@ -22029,6 +22091,8 @@ public class TWGameManager extends AbstractGameManager {
                     hit = target.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                     reports.addAll(damageEntity(target, hit, damageCaused));
                 }
+                // An unsealed Support Vehicle's Inferno Fuel may cook off when its transport bay is breached.
+                reports.addAll(checkSupportVehicleInfernoFuelCookOff(tank, "transport-bay critical hit"));
                 break;
             case Tank.CRIT_COMMANDER:
                 // VDNI vehicles get 1 damage on Commander critical (IO pg 71)
@@ -24314,14 +24378,10 @@ public class TWGameManager extends AbstractGameManager {
                     (mounted.getHittableShotsLeft() > 0))) {
             damage = ((mounted.getExplosionDamage()) / 2);
         }
-        // coolant explodes for 2 damage and reduces heat by 3
-        if ((mounted.getType() instanceof AmmoType) &&
-              ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.VEHICLE_FLAMER) ||
-                    (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.HEAVY_FLAMER)) &&
-              (((AmmoType) mounted.getType()).getMunitionType().contains(Munitions.M_COOLANT) &&
-                    (mounted.getHittableShotsLeft() > 0))) {
-            damage = 2;
-            en.coolFromExternal += 3;
+        // Flamer / Fluid Gun / Sprayer fluid ammo has special critical-hit explosion effects (TO:AUE
+        // pp.173-174): Coolant/Foam cool the carrier, Corrosive deals extra and delayed structural damage.
+        if ((mounted.getType() instanceof AmmoType fluidAmmo) && (mounted.getHittableShotsLeft() > 0)) {
+            damage = FluidAmmoExplosion.applyCriticalEffects(en, fluidAmmo, damage);
         }
 
         // divide damage by 10 for aerospace, per TW rules on pg. 161
@@ -24481,11 +24541,10 @@ public class TWGameManager extends AbstractGameManager {
                 if (!ammoType.isExplosive(mounted)) {
                     continue;
                 }
-                // coolant pods and flamer coolant ammo don't explode from heat
-                if ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) ||
-                      (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.VEHICLE_FLAMER) ||
-                            (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.HEAVY_FLAMER)) &&
-                            (ammoType.getMunitionType().contains(Munitions.M_COOLANT)))) {
+                // Coolant pods and the inert / anti-fire fluid ammunitions do not cook off from a unit's
+                // own heat (TO:AUE pp.172-174). Oil Slick and Inferno Fuel still check normally.
+                if ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD)
+                      || ammoType.isHeatStableFluid()) {
                     continue;
                 }
                 // ignore empty, destroyed, or missing bins
@@ -27467,7 +27526,8 @@ public class TWGameManager extends AbstractGameManager {
                 if (mounted.getType() instanceof AmmoType ammoType) {
                     boolean isInfernoType = ammoType.getMunitionType().contains(Munitions.M_INFERNO) ||
                           ammoType.getMunitionType().contains(Munitions.M_IATM_IIW) ||
-                          ammoType.getMunitionType().contains(Munitions.M_INCENDIARY_LRM);
+                          ammoType.getMunitionType().contains(Munitions.M_INCENDIARY_LRM) ||
+                          ammoType.isInfernoFuel();
                     if (!ammoType.isExplosive(mounted) || !isInfernoType) {
                         continue;
                     }

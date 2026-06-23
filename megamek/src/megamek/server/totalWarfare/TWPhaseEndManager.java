@@ -281,6 +281,10 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.changePhase(GamePhase.PREMOVEMENT);
                 break;
             case END:
+                // Apply delayed Corrosive Ammo (acid) damage queued this turn before removing the dead,
+                // so units the acid finishes off are cleaned up in the same pass (TO:AUE p.173).
+                gameManager.resolveCorrosiveDamage();
+
                 // remove any entities that died in the heat/end phase before
                 // checking for victory
                 gameManager.resetEntityPhase(GamePhase.END);

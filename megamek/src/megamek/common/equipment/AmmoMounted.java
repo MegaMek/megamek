@@ -109,6 +109,27 @@ public class AmmoMounted extends Mounted<AmmoType> {
             }
         }
 
+        // Flamer / Fluid Gun / Sprayer fluid ammunition explodes by special rules (TO:AUE pp.124,172-174)
+        // rather than the standard damage-per-shot times shots remaining.
+        if (getType().getAmmoType() == AmmoType.AmmoTypeEnum.FLUID_GUN) {
+            if (mType.contains(AmmoType.Munitions.M_WATER)) {
+                // Water Ammo never explodes from a critical hit.
+                return 0;
+            }
+            // A Fluid Gun ammo explosion is a flat 2 points of internal damage; Oil Slick and
+            // Paint/Obscurant add a further 1 point per unfired shot.
+            int fluidExplosion = 2;
+            if (mType.contains(AmmoType.Munitions.M_OIL_SLICK)
+                  || mType.contains(AmmoType.Munitions.M_PAINT_OBSCURANT)) {
+                fluidExplosion += getBaseShotsLeft();
+            }
+            return fluidExplosion;
+        }
+        if (getType().getAmmoType() == AmmoType.AmmoTypeEnum.HEAVY_FLAMER) {
+            // Heavy Flamer ammo does 5 points of damage per unfired shot.
+            return 5 * getBaseShotsLeft();
+        }
+
         return damagePerShot * rackSize * getBaseShotsLeft();
     }
 

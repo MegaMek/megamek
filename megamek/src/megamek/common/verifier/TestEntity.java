@@ -56,6 +56,7 @@ import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
+import megamek.common.bays.LiquidCargoBay;
 import megamek.common.enums.MPBoosters;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.*;
@@ -1908,7 +1909,29 @@ public abstract class TestEntity implements TestEntityOption {
             }
         }
 
+        // A Sprayer can only function if the carrying unit sets aside cargo space for liquid storage
+        // (TM pp.248-249).
+        boolean hasSprayer = getEntity().getWeaponList().stream()
+              .anyMatch(weapon -> weapon.getType().hasFlag(WeaponType.F_SPRAYER));
+        if (hasSprayer && !hasLiquidCargoStorage(getEntity())) {
+            buff.append("A Sprayer requires liquid cargo storage (a liquid cargo bay) to function.\n");
+            illegal = true;
+        }
+
         return illegal;
+    }
+
+    /**
+     * @param entity the unit to inspect
+     *
+     * @return true if the unit has somewhere to store the fluid a Sprayer or Fluid Suction System needs -
+     *       either a Liquid Cargo transport bay or liquid cargo equipment (TM pp.248-249)
+     */
+    private static boolean hasLiquidCargoStorage(Entity entity) {
+        if (entity.hasWorkingMisc(MiscType.F_LIQUID_CARGO)) {
+            return true;
+        }
+        return entity.getTransportBays().stream().anyMatch(bay -> bay instanceof LiquidCargoBay);
     }
 
     private boolean checkIllegalArtemisApolloLinks(StringBuffer buffer, int expected,

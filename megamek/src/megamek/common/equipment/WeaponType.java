@@ -387,6 +387,8 @@ import megamek.common.weapons.mortars.innerSphere.ISMekMortar8;
 import megamek.common.weapons.mortars.innerSphere.ISVehicularGrenadeLauncher;
 import megamek.common.weapons.other.clan.CLAMS;
 import megamek.common.weapons.other.clan.CLFluidGun;
+import megamek.common.weapons.sprayers.MekSprayer;
+import megamek.common.weapons.sprayers.VehicularSprayer;
 import megamek.common.weapons.other.clan.CLFussilade;
 import megamek.common.weapons.other.clan.CLLaserAMS;
 import megamek.common.weapons.other.clan.CLNarc;
@@ -587,6 +589,8 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_PLASMA_MFUK = WeaponTypeFlag.F_PLASMA_MFUK;
     // fire Extinguisher
     public static final WeaponTypeFlag F_EXTINGUISHER = WeaponTypeFlag.F_EXTINGUISHER;
+    // Sprayer (industrial fluid dispenser) - fires fluid-gun ammo but is not a true weapon
+    public static final WeaponTypeFlag F_SPRAYER = WeaponTypeFlag.F_SPRAYER;
     public static final WeaponTypeFlag F_PULSE = WeaponTypeFlag.F_PULSE;
     public static final WeaponTypeFlag F_VSP = WeaponTypeFlag.F_VSP;
     // Full Damage vs. Infantry
@@ -1752,6 +1756,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISRailGun());
         EquipmentType.addType(new ISFluidGun());
         EquipmentType.addType(new CLFluidGun());
+        EquipmentType.addType(new MekSprayer());
+        EquipmentType.addType(new VehicularSprayer());
         EquipmentType.addType(new ISCenturionWeaponSystem());
 
         // MapPack Solaris VII

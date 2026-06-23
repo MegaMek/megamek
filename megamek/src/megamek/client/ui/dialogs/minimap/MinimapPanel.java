@@ -352,15 +352,18 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                             ImageIO.write(image, "png", imgFile);
                         }
                         if (GUIP.getGifGameSummaryMinimap()) {
-                            // Claim GIF ownership for this game exactly once. In a multi-board game every board's
-                            // panel reaches this code, but only the first to add the UUID becomes the writer; the
-                            // others skip it so they don't write the same file and race when saving at game end.
-                            if (!ownsSummaryGif && (gifWriterThread == null)
-                                  && GIF_WRITING_GAMES.add(game.getUUIDString())) {
-                                ownsSummaryGif = true;
-                                gifWriterThread = new GifWriterThread(new GifWriter(game.getUUIDString()),
-                                      "GifWriterThread");
-                                gifWriterThread.start();
+                            // Only one panel per game writes the GIF. In a multi-board game every board's panel
+                            // reaches this code, but only the owner (first to claim the game UUID) writes; the others
+                            // skip it so they don't share the file and race when saving at game end. Ownership is
+                            // tracked separately from the thread instance, so the owner also restarts its writer if
+                            // that thread has died, instead of silently ending the GIF for the rest of the game.
+                            if ((gifWriterThread == null) || !gifWriterThread.isAlive()) {
+                                if (ownsSummaryGif || GIF_WRITING_GAMES.add(game.getUUIDString())) {
+                                    ownsSummaryGif = true;
+                                    gifWriterThread = new GifWriterThread(new GifWriter(game.getUUIDString()),
+                                          "GifWriterThread");
+                                    gifWriterThread.start();
+                                }
                             }
                             if (ownsSummaryGif && (gifWriterThread != null) && gifWriterThread.isAlive()) {
                                 gifWriterThread.addFrame(image, 400);

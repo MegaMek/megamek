@@ -143,12 +143,12 @@ class BridgeLayerStateTest {
         original.setDeployMechanismDisabled(true);
 
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        try (ObjectOutputStream out = new ObjectOutputStream(bytes)) {
-            out.writeObject(original);
+        try (ObjectOutputStream objectOutput = new ObjectOutputStream(bytes)) {
+            objectOutput.writeObject(original);
         }
         BridgeLayerState restored;
-        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
-            restored = (BridgeLayerState) in.readObject();
+        try (ObjectInputStream objectInput = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            restored = (BridgeLayerState) objectInput.readObject();
         }
 
         assertEquals(original.getCurrentCF(), restored.getCurrentCF());

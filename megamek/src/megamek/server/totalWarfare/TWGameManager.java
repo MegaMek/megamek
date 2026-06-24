@@ -26621,29 +26621,12 @@ public class TWGameManager extends AbstractGameManager {
      * Receives an End-Phase Bridge-Layer (AVLB) deployment declaration (TM p.242 / TW) and delegates the rules
      * resolution to {@link AvlbDeployPhaseHandler}.
      *
-     * @param c         the packet carrying the declaring unit's id
+     * @param packet    the packet carrying the declaring unit's id and chosen equipment index
      * @param connIndex the connection that sent the packet
      */
-    private void receiveDeployBridge(Packet c, int connIndex) throws InvalidPacketDataException {
-        int entityId = c.getIntValue(0);
-        int equipNum = c.getIntValue(1);
-        Entity entity = game.getEntity(entityId);
-        if (entity == null) {
-            LOGGER.error("Unit #{} not found", entityId);
-            return;
-        }
-        if (connIndex != entity.getOwnerId()) {
-            LOGGER.error("Player #{} tried to deploy a bridge with a unit owned by Player #{}", connIndex,
-                  entity.getOwnerId());
-            return;
-        }
-        if (!(entity.getEquipment(equipNum) instanceof MiscMounted bridgeLayer)
-              || (bridgeLayer.getBridgeLayerState() == null)) {
-            LOGGER.warn("Deploy-bridge packet for {} referenced equipment #{} that is not a bridgelayer",
-                  entity.getShortName(), equipNum);
-            return;
-        }
-        new AvlbDeployPhaseHandler(this).declareDeploy(entity, bridgeLayer);
+    private void receiveDeployBridge(Packet packet, int connIndex) throws InvalidPacketDataException {
+        new AvlbDeployPhaseHandler(this).receiveDeployDeclaration(packet.getIntValue(0), packet.getIntValue(1),
+              connIndex);
     }
 
     /**

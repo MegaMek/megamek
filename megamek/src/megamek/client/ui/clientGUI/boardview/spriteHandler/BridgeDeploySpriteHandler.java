@@ -37,6 +37,7 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.BridgeBuildSprite;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
+import megamek.common.equipment.BridgeLayerLogic;
 import megamek.common.equipment.BridgeLayerState;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -77,7 +78,7 @@ public class BridgeDeploySpriteHandler extends BoardViewSpriteHandler {
             return;
         }
         for (Entity entity : game.getEntitiesVector()) {
-            MiscMounted bridgeLayer = entity.getPendingDeployBridgeLayer();
+            MiscMounted bridgeLayer = BridgeLayerLogic.getPendingDeployBridgeLayer(entity);
             if (bridgeLayer == null) {
                 continue;
             }
@@ -112,17 +113,17 @@ public class BridgeDeploySpriteHandler extends BoardViewSpriteHandler {
     }
 
     @Override
-    public void gamePhaseChange(GamePhaseChangeEvent e) {
+    public void gamePhaseChange(GamePhaseChangeEvent event) {
         updateBridgeDeploySprites();
     }
 
     @Override
-    public void gameEntityChange(GameEntityChangeEvent e) {
+    public void gameEntityChange(GameEntityChangeEvent event) {
         updateBridgeDeploySprites();
     }
 
     @Override
-    public void gameBoardChanged(GameBoardChangeEvent e) {
+    public void gameBoardChanged(GameBoardChangeEvent event) {
         // A completed deployment changes the board and clears the pending state; refresh so the indicator disappears.
         updateBridgeDeploySprites();
     }

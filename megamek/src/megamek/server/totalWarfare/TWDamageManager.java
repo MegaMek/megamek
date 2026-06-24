@@ -2819,7 +2819,7 @@ public class TWDamageManager implements IDamageManager {
         if (ammoExplosion || mods.damageIS) {
             return damage;
         }
-        MiscMounted bridgeLayer = entity.getBridgeLayerForHit(hit);
+        MiscMounted bridgeLayer = BridgeLayerLogic.getBridgeLayerForHit(entity, hit);
         if (bridgeLayer == null) {
             logBridgeAbsorptionMiss(entity, hit);
             return damage;

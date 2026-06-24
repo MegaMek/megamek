@@ -57,7 +57,7 @@ public class MiscMounted extends Mounted<MiscType> {
     private int vibraSetting = 20;
     private int empSetting = 10;
 
-    /** Carried folding-bridge state for Bridge-Layer (AVLB) equipment; null for all other equipment. */
+    /** Carried folding-bridge state for Bridge-Layer (AVLB) equipment; {@code null} for all other equipment. */
     private BridgeLayerState bridgeLayerState = null;
 
     public MiscMounted(Entity entity, MiscType type) {
@@ -89,8 +89,8 @@ public class MiscMounted extends Mounted<MiscType> {
     }
 
     /**
-     * @return the carried folding-bridge state for a Bridge-Layer (AVLB) mount, or null if this equipment is not a
-     *       bridgelayer
+     * @return the carried folding-bridge state for a Bridge-Layer (AVLB) mount, or {@code null} if this equipment is
+     *       not a bridgelayer
      */
     public @Nullable BridgeLayerState getBridgeLayerState() {
         return bridgeLayerState;

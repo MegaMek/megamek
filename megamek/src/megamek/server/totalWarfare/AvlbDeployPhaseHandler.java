@@ -39,6 +39,7 @@ import megamek.common.Report;
 import megamek.common.board.Board;
 import megamek.common.board.BridgeConstruction;
 import megamek.common.board.Coords;
+import megamek.common.equipment.BridgeLayerLogic;
 import megamek.common.equipment.BridgeLayerState;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.units.Entity;
@@ -64,6 +65,36 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
     }
 
     /**
+     * Validates an incoming Bridge-Layer (AVLB) deploy-declaration packet and, if it is well-formed, records the
+     * declaration. The unit must exist, be owned by the sending player, and the referenced equipment must be a
+     * bridgelayer. Kept here (rather than in {@link TWGameManager}) so the bridgelayer rules stay out of that very
+     * large class; the manager only extracts the packet fields and delegates.
+     *
+     * @param entityId        the declaring unit's id (from the packet)
+     * @param equipmentNumber the equipment index of the chosen bridgelayer mount (from the packet)
+     * @param connIndex       the connection that sent the packet, validated against the unit's owner
+     */
+    void receiveDeployDeclaration(int entityId, int equipmentNumber, int connIndex) {
+        Entity entity = getGame().getEntity(entityId);
+        if (entity == null) {
+            LOGGER.error("[AVLB] deploy-bridge packet for unknown unit #{}", entityId);
+            return;
+        }
+        if (connIndex != entity.getOwnerId()) {
+            LOGGER.error("[AVLB] player #{} tried to deploy a bridge with a unit owned by player #{}", connIndex,
+                  entity.getOwnerId());
+            return;
+        }
+        if (!(entity.getEquipment(equipmentNumber) instanceof MiscMounted bridgeLayer)
+              || (bridgeLayer.getBridgeLayerState() == null)) {
+            LOGGER.warn("[AVLB] deploy-bridge packet for {} referenced equipment #{} that is not a bridgelayer",
+                  entity.getShortName(), equipmentNumber);
+            return;
+        }
+        declareDeploy(entity, bridgeLayer);
+    }
+
+    /**
      * Records a Pre-End deployment declaration for a unit (TM p.242 / TW): the controlling player declares during the
      * Pre-End declarations phase, and the bridge is then placed at the end of the following turn if the unit stays
      * stationary. Validates eligibility, sets the pending state on the bridgelayer mount (target hex directly in front,
@@ -74,7 +105,7 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
      * @param bridgeLayer the bridgelayer mount being deployed (the player's choice on a multi-bridge unit)
      */
     void declareDeploy(Entity entity, MiscMounted bridgeLayer) {
-        if (!entity.canDeclareBridgeDeploy(getGame())) {
+        if (!BridgeLayerLogic.canDeclareBridgeDeploy(entity, getGame())) {
             // canDeclareBridgeDeploy logs the specific reason at debug; nothing more to do.
             return;
         }
@@ -85,11 +116,11 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
                   entity.getShortName());
             return;
         }
-        Coords target = entity.getBridgeLayerTargetCoords();
+        Coords target = BridgeLayerLogic.getBridgeLayerTargetCoords(entity);
         if (target == null) {
             return;
         }
-        int exits = entity.getBridgeLayerExits();
+        int exits = BridgeLayerLogic.getBridgeLayerExits(entity);
         bridgeState.startDeploy(target, exits, getGame().getCurrentRound());
         // Sync the unit so all clients show the in-progress (partial bridge) indicator on the target hex.
         gameManager.entityUpdate(entity.getId());
@@ -109,7 +140,7 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
      */
     void checkDeployBridges() {
         for (Entity entity : getGame().getEntitiesVector()) {
-            MiscMounted bridgeLayer = entity.getPendingDeployBridgeLayer();
+            MiscMounted bridgeLayer = BridgeLayerLogic.getPendingDeployBridgeLayer(entity);
             if (bridgeLayer == null) {
                 continue;
             }

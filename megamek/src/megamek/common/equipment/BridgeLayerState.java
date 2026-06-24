@@ -91,7 +91,7 @@ public class BridgeLayerState implements Serializable {
     private boolean deployed;
     private boolean deployMechanismDisabled;
     private boolean deployPending;
-    /** The hex the bridge will be placed in, or null when no deploy is pending. */
+    /** The hex the bridge will be placed in, or {@code null} when no deploy is pending. */
     private Coords deployTarget;
     private int deployExits;
     private int deployDeclaredTurn = -1;
@@ -107,7 +107,7 @@ public class BridgeLayerState implements Serializable {
     }
 
     /**
-     * @param type an equipment type, possibly null
+     * @param type an equipment type, possibly {@code null}
      *
      * @return {@code true} if the type is any of the Light/Medium/Heavy Bridge-Layer variants
      */
@@ -161,10 +161,10 @@ public class BridgeLayerState implements Serializable {
     /**
      * Sets the carried bridge's current Construction Factor, clamped to a minimum of 0.
      *
-     * @param cf the new Construction Factor
+     * @param constructionFactor the new Construction Factor
      */
-    public void setCurrentCF(int cf) {
-        currentCF = Math.max(0, cf);
+    public void setCurrentCF(int constructionFactor) {
+        currentCF = Math.max(0, constructionFactor);
     }
 
     /**
@@ -203,7 +203,7 @@ public class BridgeLayerState implements Serializable {
     }
 
     /**
-     * @return the hex the bridge will be placed in, or null when no deploy is pending
+     * @return the hex the bridge will be placed in, or {@code null} when no deploy is pending
      */
     public @Nullable Coords getDeployTarget() {
         return deployTarget;

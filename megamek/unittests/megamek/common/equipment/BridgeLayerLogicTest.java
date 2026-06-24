@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.units;
+package megamek.common.equipment;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -44,22 +44,20 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import megamek.common.HitData;
-import megamek.common.equipment.BridgeLayerState;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.MiscType;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests the Entity-level Bridge-Layer (AVLB) rules logic: locating the deployable mount, redirecting hits to the
- * carried bridge (including the Support Vehicle turret rule), and blocking weapon fire in the bridge's location until
- * it is deployed. TM p.242 / TW.
+ * Tests {@link BridgeLayerLogic}: the Bridge-Layer (AVLB) rules helper that locates the deployable mount, redirects
+ * hits to the carried bridge (including the Support Vehicle turret rule), and blocks weapon fire in the bridge's
+ * location until it is deployed. TM p.242 / TW.
  *
  * @author Claude Code (Opus 4.8)
  */
-class BridgeLayerEntityTest {
+class BridgeLayerLogicTest {
 
     private static final int MEK_TORSO = Mek.LOC_RIGHT_TORSO;
 
@@ -82,10 +80,6 @@ class BridgeLayerEntityTest {
         doReturn(List.of(mount)).when(mek).getMisc();
         when(mek.getShortName()).thenReturn("Test Quad");
         when(mek.isSupportVehicle()).thenReturn(false);
-        when(mek.getDeployableBridgeLayers()).thenCallRealMethod();
-        when(mek.getDeployableBridgeLayer()).thenCallRealMethod();
-        when(mek.getBridgeLayerForHit(org.mockito.ArgumentMatchers.any())).thenCallRealMethod();
-        when(mek.isWeaponLocationBlockedByCarriedBridge(org.mockito.ArgumentMatchers.anyInt())).thenCallRealMethod();
         return mek;
     }
 
@@ -94,7 +88,6 @@ class BridgeLayerEntityTest {
         doReturn(List.of(mount)).when(tank).getMisc();
         when(tank.getShortName()).thenReturn("Test Tank");
         when(tank.isSupportVehicle()).thenReturn(supportVehicle);
-        when(tank.getBridgeLayerForHit(org.mockito.ArgumentMatchers.any())).thenCallRealMethod();
         return tank;
     }
 
@@ -103,7 +96,7 @@ class BridgeLayerEntityTest {
     void carriedBridgeLayerIsDeployable() {
         MiscMounted mount = bridgeLayerMount(MEK_TORSO, new BridgeLayerState(MiscType.createLightBridgeLayer()));
         Mek mek = quadMekCarrying(mount);
-        assertSame(mount, mek.getDeployableBridgeLayer());
+        assertSame(mount, BridgeLayerLogic.getDeployableBridgeLayer(mek));
     }
 
     @Test
@@ -112,7 +105,7 @@ class BridgeLayerEntityTest {
         BridgeLayerState state = new BridgeLayerState(MiscType.createLightBridgeLayer());
         state.setDeployed(true);
         Mek mek = quadMekCarrying(bridgeLayerMount(MEK_TORSO, state));
-        assertNull(mek.getDeployableBridgeLayer());
+        assertNull(BridgeLayerLogic.getDeployableBridgeLayer(mek));
     }
 
     @Test
@@ -121,7 +114,7 @@ class BridgeLayerEntityTest {
         BridgeLayerState state = new BridgeLayerState(MiscType.createLightBridgeLayer());
         state.setCurrentCF(0);
         Mek mek = quadMekCarrying(bridgeLayerMount(MEK_TORSO, state));
-        assertNull(mek.getDeployableBridgeLayer());
+        assertNull(BridgeLayerLogic.getDeployableBridgeLayer(mek));
     }
 
     @Test
@@ -129,8 +122,8 @@ class BridgeLayerEntityTest {
     void hitToBridgeLocationRedirects() {
         MiscMounted mount = bridgeLayerMount(MEK_TORSO, new BridgeLayerState(MiscType.createLightBridgeLayer()));
         Mek mek = quadMekCarrying(mount);
-        assertSame(mount, mek.getBridgeLayerForHit(new HitData(MEK_TORSO)));
-        assertNull(mek.getBridgeLayerForHit(new HitData(Mek.LOC_LEFT_TORSO)),
+        assertSame(mount, BridgeLayerLogic.getBridgeLayerForHit(mek, new HitData(MEK_TORSO)));
+        assertNull(BridgeLayerLogic.getBridgeLayerForHit(mek, new HitData(Mek.LOC_LEFT_TORSO)),
               "a hit to a different location is not absorbed by the bridge");
     }
 
@@ -139,11 +132,11 @@ class BridgeLayerEntityTest {
     void supportVehicleRedirectsMountLocationAndTurret() {
         MiscMounted mount = bridgeLayerMount(Tank.LOC_RIGHT, new BridgeLayerState(MiscType.createLightBridgeLayer()));
         Tank supportTank = tankCarrying(mount, true);
-        assertSame(mount, supportTank.getBridgeLayerForHit(new HitData(Tank.LOC_RIGHT)),
+        assertSame(mount, BridgeLayerLogic.getBridgeLayerForHit(supportTank, new HitData(Tank.LOC_RIGHT)),
               "an SV hit to the bridge's own (right side) location hits the bridge - the Prometheus case");
-        assertSame(mount, supportTank.getBridgeLayerForHit(new HitData(Tank.LOC_TURRET)),
+        assertSame(mount, BridgeLayerLogic.getBridgeLayerForHit(supportTank, new HitData(Tank.LOC_TURRET)),
               "an SV turret hit also hits the bridge");
-        assertNull(supportTank.getBridgeLayerForHit(new HitData(Tank.LOC_FRONT)),
+        assertNull(BridgeLayerLogic.getBridgeLayerForHit(supportTank, new HitData(Tank.LOC_FRONT)),
               "a hit to an unrelated location is not absorbed");
     }
 
@@ -152,8 +145,8 @@ class BridgeLayerEntityTest {
     void combatVehicleHitToMountLocationRedirects() {
         MiscMounted mount = bridgeLayerMount(Tank.LOC_TURRET, new BridgeLayerState(MiscType.createLightBridgeLayer()));
         Tank combatTank = tankCarrying(mount, false);
-        assertSame(mount, combatTank.getBridgeLayerForHit(new HitData(Tank.LOC_TURRET)));
-        assertNull(combatTank.getBridgeLayerForHit(new HitData(Tank.LOC_FRONT)));
+        assertSame(mount, BridgeLayerLogic.getBridgeLayerForHit(combatTank, new HitData(Tank.LOC_TURRET)));
+        assertNull(BridgeLayerLogic.getBridgeLayerForHit(combatTank, new HitData(Tank.LOC_FRONT)));
     }
 
     @Test
@@ -162,13 +155,13 @@ class BridgeLayerEntityTest {
         BridgeLayerState state = new BridgeLayerState(MiscType.createLightBridgeLayer());
         Mek mek = quadMekCarrying(bridgeLayerMount(MEK_TORSO, state));
 
-        assertTrue(mek.isWeaponLocationBlockedByCarriedBridge(MEK_TORSO),
+        assertTrue(BridgeLayerLogic.isWeaponLocationBlockedByCarriedBridge(mek, MEK_TORSO),
               "weapons in the bridge's location are blocked while it is carried");
-        assertFalse(mek.isWeaponLocationBlockedByCarriedBridge(Mek.LOC_LEFT_TORSO),
+        assertFalse(BridgeLayerLogic.isWeaponLocationBlockedByCarriedBridge(mek, Mek.LOC_LEFT_TORSO),
               "weapons in other locations are not blocked");
 
         state.setDeployed(true);
-        assertFalse(mek.isWeaponLocationBlockedByCarriedBridge(MEK_TORSO),
+        assertFalse(BridgeLayerLogic.isWeaponLocationBlockedByCarriedBridge(mek, MEK_TORSO),
               "once deployed, the location's weapons may fire again");
     }
 }

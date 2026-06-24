@@ -35,7 +35,6 @@ package megamek.server.totalWarfare;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -61,7 +60,8 @@ import org.junit.jupiter.api.Test;
  * Tests {@link TWDamageManager#applyBridgeLayerAbsorption} - the carried Bridge-Layer (AVLB) damage-absorption math (TM
  * p.242 / TW): CF reduction, fall-through once the bridge is destroyed, the crit-disables-mechanism rule, and the cases
  * the bridge does not protect against. The location-resolution itself (which bridge for which hit) is covered by
- * {@code BridgeLayerEntityTest}, so here {@code getBridgeLayerForHit} is stubbed to isolate the absorption logic.
+ * {@code BridgeLayerLogicTest}; here the unit simply carries a single bridge in the hit location so the absorption
+ * logic is exercised.
  *
  * @author Claude Code (Opus 4.8)
  */
@@ -81,13 +81,14 @@ class BridgeLayerDamageTest {
         return state;
     }
 
-    /** A unit whose hits all redirect to a bridge backed by the given state (location resolution is stubbed). */
+    /** A unit carrying a single bridge in {@link Tank#LOC_RIGHT}, backed by the given state. */
     private static Entity unitWithBridge(BridgeLayerState state) {
         MiscMounted mount = mock(MiscMounted.class);
         when(mount.getBridgeLayerState()).thenReturn(state);
         when(mount.getLocation()).thenReturn(Tank.LOC_RIGHT);
+        when(mount.isMissing()).thenReturn(false);
         Entity entity = mock(Entity.class);
-        when(entity.getBridgeLayerForHit(any())).thenReturn(mount);
+        when(entity.getMisc()).thenReturn(List.of(mount));
         when(entity.getShortName()).thenReturn("Test Bridgelayer");
         // addDesc() on the absorption report reads several crew fields, so use a real (default) crew.
         when(entity.getCrew()).thenReturn(new Crew(CrewType.SINGLE));
@@ -153,7 +154,6 @@ class BridgeLayerDamageTest {
     @DisplayName("a hit to a location with no bridge is not absorbed")
     void noBridgeForHitLeavesDamageUnchanged() {
         Entity entity = mock(Entity.class);
-        when(entity.getBridgeLayerForHit(any())).thenReturn(null);
         when(entity.getShortName()).thenReturn("Test");
         when(entity.getMisc()).thenReturn(List.of());
         Vector<Report> reports = new Vector<>();

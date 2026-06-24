@@ -489,5 +489,4 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             button.setEnabled(enabled);
         }
     }
-
 }

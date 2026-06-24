@@ -90,13 +90,13 @@ public class BridgeBuildSprite extends HexSprite {
      * dismantling counts the same number back down to zero.
      *
      * @param boardView     the parent board view
-     * @param loc           the hex the bridge is being raised in
+     * @param location      the hex the bridge is being raised in
      * @param turnsWorked   the turns of structure currently standing (0 to {@code turnsRequired})
      * @param turnsRequired the total turns of work a finished bridge needs (the denominator)
      * @param exits         exits bitmask of the two hexsides the finished bridge will connect
      */
-    public BridgeBuildSprite(BoardView boardView, Coords loc, int turnsWorked, int turnsRequired, int exits) {
-        this(boardView, loc, turnsWorked, turnsRequired, exits, false);
+    public BridgeBuildSprite(BoardView boardView, Coords location, int turnsWorked, int turnsRequired, int exits) {
+        this(boardView, location, turnsWorked, turnsRequired, exits, false);
     }
 
     /**
@@ -106,15 +106,15 @@ public class BridgeBuildSprite extends HexSprite {
      * build leaves it off and relies on its growing ghost.
      *
      * @param boardView     the parent board view
-     * @param loc           the hex the bridge is being raised in
+     * @param location      the hex the bridge is being raised in
      * @param turnsWorked   the turns of structure currently standing (0 to {@code turnsRequired})
      * @param turnsRequired the total turns of work a finished bridge needs (the denominator)
      * @param exits         exits bitmask of the two hexsides the finished bridge will connect
      * @param hazardOutline whether to ring the hex with a high-visibility yellow/black hazard outline
      */
-    public BridgeBuildSprite(BoardView boardView, Coords loc, int turnsWorked, int turnsRequired, int exits,
+    public BridgeBuildSprite(BoardView boardView, Coords location, int turnsWorked, int turnsRequired, int exits,
           boolean hazardOutline) {
-        super(boardView, loc);
+        super(boardView, location);
         this.turnsWorked = turnsWorked;
         this.turnsRequired = turnsRequired;
         this.exits = exits;

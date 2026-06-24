@@ -48,6 +48,7 @@ import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.common.actions.InitiateInfantryCombatAction;
 import megamek.common.board.Coords;
+import megamek.common.equipment.BridgeLayerLogic;
 import megamek.common.equipment.BridgeLayerState;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.units.AbstractBuildingEntity;
@@ -183,19 +184,19 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * laid there at the end of the next turn if the unit stays stationary.
      */
     private void deployBridge() {
-        Entity ce = game.getEntity(currentEntity);
-        if (ce == null) {
+        Entity entity = game.getEntity(currentEntity);
+        if (entity == null) {
             AVLB_LOGGER.debug("[AVLB] deploy bridge button pressed with no current entity");
             return;
         }
-        if (!ce.canDeclareBridgeDeploy(game)) {
+        if (!BridgeLayerLogic.canDeclareBridgeDeploy(entity, game)) {
             AVLB_LOGGER.debug("[AVLB] {}: deploy bridge pressed but unit is not eligible (see prior [AVLB] gate line)",
-                  ce.getShortName());
+                  entity.getShortName());
             return;
         }
-        List<MiscMounted> deployable = ce.getDeployableBridgeLayers();
+        List<MiscMounted> deployable = BridgeLayerLogic.getDeployableBridgeLayers(entity);
         if (deployable.isEmpty()) {
-            AVLB_LOGGER.debug("[AVLB] {}: deploy bridge pressed but no deployable bridgelayer", ce.getShortName());
+            AVLB_LOGGER.debug("[AVLB] {}: deploy bridge pressed but no deployable bridgelayer", entity.getShortName());
             return;
         }
         // Multi-mode button: the first press enters confirm mode for the first bridge; pressing it again while still
@@ -208,38 +209,38 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             selectedDeployBridgeIndex = 0;
         }
         MiscMounted selected = deployable.get(selectedDeployBridgeIndex);
-        updateDeployBridgeButtonLabel(ce, deployable);
-        Coords frontHex = ce.getBridgeLayerTargetCoords();
+        updateDeployBridgeButtonLabel(entity, deployable);
+        Coords frontHex = BridgeLayerLogic.getBridgeLayerTargetCoords(entity);
         if (frontHex != null) {
             clientgui.getBoardView().highlight(frontHex);
         }
         if (deployable.size() > 1) {
             MiscMounted next = deployable.get((selectedDeployBridgeIndex + 1) % deployable.size());
             setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.SelectDeployBridgeHexMulti",
-                  ce.getLocationName(selected.getLocation()), ce.getLocationName(next.getLocation())));
+                  entity.getLocationName(selected.getLocation()), entity.getLocationName(next.getLocation())));
         } else {
             setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.SelectDeployBridgeHex"));
         }
         AVLB_LOGGER.debug("[AVLB] {}: deploy-confirm; selected bridge at loc {} ({} of {}); front hex {} (facing {})",
-              ce.getShortName(), selected.getLocation(), selectedDeployBridgeIndex + 1, deployable.size(), frontHex,
-              ce.getFacing());
+              entity.getShortName(), selected.getLocation(), selectedDeployBridgeIndex + 1, deployable.size(), frontHex,
+              entity.getFacing());
     }
 
     /**
      * Sets the Deploy Bridge button label: a plain "Deploy Bridge" for a single bridge, or "Deploy &lt;side&gt; Bridge"
      * (the currently selected bridge's mounted-location name) when the unit carries more than one.
      *
-     * @param ce         the current unit
+     * @param entity     the current unit
      * @param deployable the unit's deployable bridgelayers, in equipment order
      */
-    private void updateDeployBridgeButtonLabel(Entity ce, List<MiscMounted> deployable) {
+    private void updateDeployBridgeButtonLabel(Entity entity, List<MiscMounted> deployable) {
         MegaMekButton button = buttons.get(PreEndCommand.PREEND_DEPLOY_BRIDGE);
         if (deployable.size() <= 1) {
             button.setText(Messages.getString("PreEndDeclarationsDisplay.deployBridge"));
         } else {
             MiscMounted selected = deployable.get(Math.min(selectedDeployBridgeIndex, deployable.size() - 1));
             button.setText(Messages.getString("PreEndDeclarationsDisplay.deployBridgeSide",
-                  ce.getLocationName(selected.getLocation())));
+                  entity.getLocationName(selected.getLocation())));
         }
     }
 
@@ -251,28 +252,28 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      */
     private void completeDeployBridge(Coords targetCoords) {
         selectingDeployBridgeHex = false;
-        Entity ce = game.getEntity(currentEntity);
-        if ((ce == null) || !ce.canDeclareBridgeDeploy(game)) {
+        Entity entity = game.getEntity(currentEntity);
+        if ((entity == null) || !BridgeLayerLogic.canDeclareBridgeDeploy(entity, game)) {
             AVLB_LOGGER.debug("[AVLB] deploy confirm aborted: unit gone or no longer eligible");
             return;
         }
-        Coords frontHex = ce.getBridgeLayerTargetCoords();
+        Coords frontHex = BridgeLayerLogic.getBridgeLayerTargetCoords(entity);
         if (!targetCoords.equals(frontHex)) {
             // The only valid target is the hex in front; keep waiting for it.
             AVLB_LOGGER.debug("[AVLB] {}: clicked {} but the only valid target is the front hex {}; still waiting",
-                  ce.getShortName(), targetCoords, frontHex);
+                  entity.getShortName(), targetCoords, frontHex);
             selectingDeployBridgeHex = true;
             setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.SelectDeployBridgeHex"));
             return;
         }
-        List<MiscMounted> deployable = ce.getDeployableBridgeLayers();
+        List<MiscMounted> deployable = BridgeLayerLogic.getDeployableBridgeLayers(entity);
         if (deployable.isEmpty()) {
             return;
         }
         MiscMounted selected = deployable.get(Math.min(selectedDeployBridgeIndex, deployable.size() - 1));
         AVLB_LOGGER.debug("[AVLB] {}: confirmed deploy of bridge at loc {} at front hex {}; sending declaration",
-              ce.getShortName(), selected.getLocation(), frontHex);
-        clientgui.getClient().sendDeployBridge(currentEntity, ce.getEquipmentNum(selected));
+              entity.getShortName(), selected.getLocation(), frontHex);
+        clientgui.getClient().sendDeployBridge(currentEntity, entity.getEquipmentNum(selected));
         ready();
     }
 
@@ -347,18 +348,18 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     /**
      * Checks for nag conditions before ending turn.
      *
-     * @return true if the turn should be cancelled
+     * @return {@code true} if the turn should be cancelled
      */
     private boolean checkNags() {
-        Entity ce = currentEntity();
-        if (ce == null) {
+        Entity entity = currentEntity();
+        if (entity == null) {
             return false;
         }
         // Only nag about un-declared infantry combat for a unit that could actually initiate it. Other units in this
         // phase (e.g. a bridgelayer that chose not to deploy) end their turn silently.
-        if (attacks.isEmpty() && ce.canInitiateInfantryVsInfantryCombat()) {
+        if (attacks.isEmpty() && entity.canInitiateInfantryVsInfantryCombat()) {
             LOGGER.debug("[PreEnd] {}: nag - infantry-combat-capable but none declared; confirming skip",
-                  ce.getShortName());
+                  entity.getShortName());
             String title = Messages.getString("PreEndDeclarationsDisplay.skipTurn.title");
             String body = Messages.getString("PreEndDeclarationsDisplay.skipTurn.message");
             return !clientgui.doYesNoDialog(title, body);  // User canceled
@@ -491,29 +492,29 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * Updates button states based on current game state
      */
     protected void updateButtons() {
-        Entity ce = game.getEntity(currentEntity);
+        Entity entity = game.getEntity(currentEntity);
 
         // Bridge-Layer (AVLB) deployment is available to any eligible unit (vehicle or quad Mek), independent of the
         // infantry-combat declaration below.
-        boolean canDeployBridge = (ce != null) && ce.canDeclareBridgeDeploy(game);
+        boolean canDeployBridge = (entity != null) && BridgeLayerLogic.canDeclareBridgeDeploy(entity, game);
         setDeployBridgeEnabled(canDeployBridge);
-        if (ce != null) {
+        if (entity != null) {
             // Show the button on its first selectable bridge from the start (e.g. "Deploy Right Bridge" on a unit
             // with two bridges) rather than a generic label.
-            updateDeployBridgeButtonLabel(ce, ce.getDeployableBridgeLayers());
+            updateDeployBridgeButtonLabel(entity, BridgeLayerLogic.getDeployableBridgeLayers(entity));
         }
         LOGGER.debug("[PreEnd] updateButtons for {}: deployBridge={}",
-              (ce == null) ? "<none>" : ce.getShortName(), canDeployBridge);
+              (entity == null) ? "<none>" : entity.getShortName(), canDeployBridge);
 
-        if (!(ce instanceof Infantry inf)) {
+        if (!(entity instanceof Infantry infantry)) {
             setInitiateInfantryCombatEnabled(false);
             updateDonePanel();
             return;
         }
 
-        boolean canInitiate = inf.canInitiateInfantryVsInfantryCombat()
+        boolean canInitiate = infantry.canInitiateInfantryVsInfantryCombat()
               && target != null
-              && isValidBuildingTargetNoCombat(ce, target);
+              && isValidBuildingTargetNoCombat(entity, target);
 
         setInitiateInfantryCombatEnabled(canInitiate);
         updateDonePanel();
@@ -566,7 +567,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             return;
         }
         LOGGER.debug("[PreEnd] selected {} (canDeployBridge={}, canInitiateInfantryCombat={})",
-              selected.getShortName(), selected.canDeclareBridgeDeploy(game),
+              selected.getShortName(), BridgeLayerLogic.canDeclareBridgeDeploy(selected, game),
               selected.canInitiateInfantryVsInfantryCombat());
 
         currentEntity = entityId;

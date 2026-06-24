@@ -2356,6 +2356,12 @@ public abstract class Entity extends TurnOrdered
     public BoardLocation getBoardLocation() {
         Coords currentPosition = getPosition();
         int currentBoardId = getBoardId();
+        // With no position or an invalid board id, BoardLocation.of() always returns the NO_LOCATION singleton.
+        // Its coords (Integer.MIN_VALUE) never match a null position, so the cache validation below would fail on
+        // every call in this state. Return the singleton directly to skip the redundant comparison and rewrite.
+        if ((currentPosition == null) || (currentBoardId < 0)) {
+            return BoardLocation.NO_LOCATION;
+        }
         BoardLocation cached = cachedBoardLocation;
         if ((cached == null) || (cached.boardId() != currentBoardId)
               || !Objects.equals(cached.coords(), currentPosition)) {

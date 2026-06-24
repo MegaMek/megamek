@@ -88,5 +88,7 @@ class EntityBoardLocationTest {
         entity.setPosition(null, false);
         assertSame(BoardLocation.NO_LOCATION, entity.getBoardLocation(),
               "A null position should yield the NO_LOCATION singleton");
+        assertSame(BoardLocation.NO_LOCATION, entity.getBoardLocation(),
+              "Repeated calls without a position should keep returning the NO_LOCATION singleton");
     }
 }

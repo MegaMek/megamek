@@ -63,6 +63,16 @@ import megamek.common.board.Coords;
  *                           hatches the lower endpoint's hex column as a marker
  * @param deadZoneVictimPos  the lower-elevation endpoint - the unit sitting inside the dead-zone shadow.
  *                           {@code null} when {@code deadZone} is false
+ * @param attackerHasMastMount whether the attacker is a VTOL with a working Mast Mount. The Mast Mount raises
+ *                             onboard sensors by 1 level for spotting only (TacOps), so the diagram draws a
+ *                             "+1 spotting eye" marker one level above the attacker silhouette
+ * @param targetHasMastMount   whether the target is a VTOL with a working Mast Mount (same marker as the attacker)
+ * @param attackerSpottingClear whether the attacker, spotting from its +1 Mast Mount elevation, has clear LOS to
+ *                              the target. Colors the attacker's eye marker. Meaningful only when
+ *                              {@code attackerHasMastMount} is true
+ * @param targetSpottingClear  whether the target, spotting from its +1 Mast Mount elevation, has clear LOS to the
+ *                             attacker. Colors the target's eye marker. Meaningful only when
+ *                             {@code targetHasMastMount} is true
  */
 record LOSDiagramData(
       List<HexRow> hexPath,
@@ -81,7 +91,11 @@ record LOSDiagramData(
       String targetName,
       LosRuleMode losRuleMode,
       boolean deadZone,
-      @Nullable Coords deadZoneVictimPos
+      @Nullable Coords deadZoneVictimPos,
+      boolean attackerHasMastMount,
+      boolean targetHasMastMount,
+      boolean attackerSpottingClear,
+      boolean targetSpottingClear
 ) {
 
     /**

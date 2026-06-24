@@ -11342,7 +11342,8 @@ public abstract class Entity extends TurnOrdered
      * Check if the entity can initiate NEW infantry vs. infantry combat. This is for the PREEND_DECLARATIONS phase.
      */
     public boolean isEligibleForPreEndDeclarations() {
-        return canInitiateInfantryVsInfantryCombat();
+        // Bridge-Layer (AVLB) deployment is declared in the pre-end declarations phase (TM p.242 / TW).
+        return canInitiateInfantryVsInfantryCombat() || BridgeLayerLogic.canDeclareBridgeDeploy(this, game);
     }
 
     /**

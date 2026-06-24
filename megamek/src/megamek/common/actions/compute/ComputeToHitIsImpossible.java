@@ -55,15 +55,7 @@ import megamek.common.board.Coords;
 import megamek.common.board.CrossBoardAttackHelper;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.HandheldWeapon;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.equipment.WeaponType;
-import megamek.common.equipment.WeaponTypeFlag;
+import megamek.common.equipment.*;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
@@ -290,6 +282,12 @@ class ComputeToHitIsImpossible {
             if ((attacker instanceof Mek) && !weapon.isRearMounted() && !attacker.canFireWeapon(weapon.getLocation())) {
                 return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
             }
+        }
+
+        // A carried, not-yet-deployed Bridge-Layer (AVLB) blocks weapons mounted in its location (TM p.242 / TW).
+        if ((weapon != null)
+              && BridgeLayerLogic.isWeaponLocationBlockedByCarriedBridge(attacker, weapon.getLocation())) {
+            return Messages.getString("WeaponAttackAction.CantFireUndeployedBridge");
         }
 
         // Only large spacecraft can shoot while evading

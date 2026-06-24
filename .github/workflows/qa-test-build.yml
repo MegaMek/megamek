@@ -88,7 +88,7 @@ jobs:
           fi
           echo "- **Commit:** ${{ env.COMMIT_SHORT_SHA }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Java Version:** 17" >> $GITHUB_STEP_SUMMARY
+          echo "- **Java Version:** 21" >> $GITHUB_STEP_SUMMARY
           echo "- **Build Date:** $(date +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Artifacts" >> $GITHUB_STEP_SUMMARY

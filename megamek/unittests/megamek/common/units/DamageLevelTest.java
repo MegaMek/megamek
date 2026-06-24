@@ -34,8 +34,14 @@ package megamek.common.units;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -220,6 +226,75 @@ class DamageLevelTest {
             // Act & Assert - should now show as damaged
             assertEquals(Entity.DMG_HEAVY, tank.getDamageLevel(false),
                   "Heavily damaged tank should have DMG_HEAVY");
+        }
+    }
+
+    /**
+     * Regression tests for issue #8381: bay-mounted craft (DropShips, etc.) were incorrectly reported as lightly
+     * damaged at full health. A weapon bay never links its ammunition through {@code getLinked()} - the ammo lives in
+     * the bay's member weapons - so {@code Mounted#isCrippled()} always flagged a fully-loaded ammo bay as crippled,
+     * inflating the inoperable-weapon ratio used by {@link Aero#isDmgLight()}.
+     *
+     * @see megamek.common.equipment.Mounted#isCrippled()
+     */
+    @Nested
+    @DisplayName("Weapon Bays Should Not Inflate Damage Level")
+    class WeaponBayDamageLevelTests {
+
+        private static final String LRM20_NAME = "ISLRM20";
+        private static final String LRM20_AMMO_NAME = "IS Ammo LRM-20";
+
+        @Test
+        @DisplayName("DropShip with a fully-loaded ammo bay should return DMG_NONE")
+        void loadedAmmoBayShouldNotBeDamaged() throws LocationFullException {
+            Dropship dropship = buildDropshipWithLrmBay();
+
+            WeaponMounted bay = dropship.getWeaponBayList().get(0);
+            assertFalse(bay.isCrippled(), "A fully-loaded weapon bay should not be crippled");
+            assertEquals(Entity.DMG_NONE, dropship.getDamageLevel(false),
+                  "An undamaged, fully-loaded DropShip should have damage level DMG_NONE");
+        }
+
+        @Test
+        @DisplayName("DropShip whose bay weapons are all out of ammo should report the bay as crippled")
+        void emptyAmmoBayShouldBeCrippled() throws LocationFullException {
+            Dropship dropship = buildDropshipWithLrmBay();
+
+            // Empty every ammo bin so the bay's member weapons are genuinely out of ammunition.
+            for (AmmoMounted ammo : dropship.getAmmo()) {
+                ammo.setShotsLeft(0);
+            }
+
+            WeaponMounted bay = dropship.getWeaponBayList().get(0);
+            assertTrue(bay.isCrippled(), "A weapon bay whose every weapon is out of ammo should be crippled");
+            assertEquals(Entity.DMG_CRIPPLED, dropship.getDamageLevel(false),
+                  "A DropShip whose only weapons are all out of ammo should be crippled");
+        }
+
+        /**
+         * Builds a minimal, undamaged DropShip carrying a single LRM 20 bay (one launcher plus a full ammo bin) in the
+         * nose, with full armor and structural integrity.
+         */
+        private Dropship buildDropshipWithLrmBay() throws LocationFullException {
+            Dropship dropship = new Dropship();
+            dropship.setOSI(30);
+            for (int loc = 0; loc < dropship.locations(); loc++) {
+                dropship.initializeArmor(40, loc);
+            }
+
+            WeaponType lrm20Type = (WeaponType) EquipmentType.get(LRM20_NAME);
+            AmmoType lrm20AmmoType = (AmmoType) EquipmentType.get(LRM20_AMMO_NAME);
+
+            WeaponMounted launcher = (WeaponMounted) dropship.addEquipment(lrm20Type, Aero.LOC_NOSE);
+            WeaponMounted bay = (WeaponMounted) dropship.addEquipment(lrm20Type.getBayType(), Aero.LOC_NOSE);
+            AmmoMounted ammo = (AmmoMounted) dropship.addEquipment(lrm20AmmoType, Aero.LOC_NOSE);
+
+            bay.addWeaponToBay(launcher);
+            bay.addAmmoToBay(ammo);
+            launcher.setLinked(ammo);
+
+            dropship.initMilitary();
+            return dropship;
         }
     }
 }

@@ -88,7 +88,7 @@ body:
     attributes:
       label: "Java Version *"
       description: "Enter the Java version from the .log file"
-      placeholder: "Example: Java Vendor: Eclipse Adoptium     Java Version: 17.0.11"
+      placeholder: "Example: Java Vendor: Eclipse Adoptium     Java Version: 21.0.5"
     validations:
       required: true
 

@@ -75,7 +75,9 @@ final class LOSDiagramDataBuilder {
           DiagramUnitType attackerUnitType, DiagramUnitType targetUnitType,
           boolean attackerAtAltitude, boolean targetAtAltitude,
           String attackerName, String targetName,
-          LosRuleMode losRuleMode) {
+          LosRuleMode losRuleMode,
+          boolean attackerHasMastMount, boolean targetHasMastMount,
+          boolean attackerSpottingClear, boolean targetSpottingClear) {
         LosEffects losEffects = LosEffects.calculateLos(game, attackInfo);
         boolean losBlocked = !losEffects.canSee();
 
@@ -84,7 +86,9 @@ final class LOSDiagramDataBuilder {
               attackerUnitType, targetUnitType,
               attackerAtAltitude, targetAtAltitude,
               attackerName, targetName,
-              losRuleMode);
+              losRuleMode,
+              attackerHasMastMount, targetHasMastMount,
+              attackerSpottingClear, targetSpottingClear);
     }
 
     /**
@@ -101,7 +105,9 @@ final class LOSDiagramDataBuilder {
           DiagramUnitType attackerUnitType, DiagramUnitType targetUnitType,
           boolean attackerAtAltitude, boolean targetAtAltitude,
           String attackerName, String targetName,
-          LosRuleMode losRuleMode) {
+          LosRuleMode losRuleMode,
+          boolean attackerHasMastMount, boolean targetHasMastMount,
+          boolean attackerSpottingClear, boolean targetSpottingClear) {
         Board board = game.getBoard();
         Coords attackPos = attackInfo.attackPos;
         Coords targetPos = attackInfo.targetPos;
@@ -222,7 +228,11 @@ final class LOSDiagramDataBuilder {
               targetName,
               losRuleMode,
               deadZone,
-              deadZoneVictimPos
+              deadZoneVictimPos,
+              attackerHasMastMount,
+              targetHasMastMount,
+              attackerSpottingClear,
+              targetSpottingClear
         );
     }
 

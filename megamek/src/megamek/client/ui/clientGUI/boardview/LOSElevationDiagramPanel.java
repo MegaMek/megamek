@@ -77,6 +77,9 @@ class LOSElevationDiagramPanel extends JPanel {
     private static final int LEVEL_PADDING = 2;
     private static final int MAX_DISPLAY_RANGE = 40;
 
+    /** Point size (before GUI scaling) of the elevation axis level labels. */
+    private static final float AXIS_LABEL_FONT_SIZE = 10.0f;
+
 
     private static final Color COLOR_GROUND = new Color(139, 119, 101);
     private static final Color COLOR_GROUND_OUTLINE = new Color(100, 80, 60);
@@ -114,6 +117,13 @@ class LOSElevationDiagramPanel extends JPanel {
     private static final float[] DASH_PATTERN = { 6.0f, 4.0f };
     private static final Stroke STROKE_SPLIT = new BasicStroke(
           1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, DASH_PATTERN, 0.0f);
+
+    /** Dotted stroke for the VTOL Mast Mount "antenna" between the unit top and its +1 sensor eye marker. */
+    private static final Stroke STROKE_MAST_MOUNT = new BasicStroke(
+          1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 10.0f, new float[] { 2.0f, 2.0f }, 0.0f);
+
+    /** Half-size of the Mast Mount "+1 spotting eye" diamond marker, in unscaled pixels. */
+    private static final int MAST_MOUNT_EYE_RADIUS = 5;
 
     /** Width of the unit silhouette as a fraction of the hex column width. */
     private static final float SILHOUETTE_WIDTH_FACTOR = 0.7f;
@@ -266,7 +276,7 @@ class LOSElevationDiagramPanel extends JPanel {
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
             List<HexRow> hexPath = diagramData.hexPath();
-            DiagramMetrics metrics = calculateMetrics(hexPath);
+            DiagramMetrics metrics = calculateMetrics(hexPath, axisLabelFontMetrics());
 
             drawGrid(g2d, metrics);
             drawSkyGradient(g2d, metrics, hexPath);
@@ -300,9 +310,18 @@ class LOSElevationDiagramPanel extends JPanel {
     }
 
     /**
-     * Calculates rendering metrics (scale, offsets) for the current panel size and data.
+     * Returns the font metrics for the elevation axis level labels, used both to draw the labels and to size the
+     * left gutter so wide labels (negative or multi-digit levels) are not clipped.
      */
-    private DiagramMetrics calculateMetrics(List<HexRow> hexPath) {
+    private FontMetrics axisLabelFontMetrics() {
+        return getFontMetrics(getFont().deriveFont(UIUtil.scaleForGUI(AXIS_LABEL_FONT_SIZE)));
+    }
+
+    /**
+     * Calculates rendering metrics (scale, offsets) for the current panel size and data. The left gutter is widened
+     * when the level labels are wider than the default margin so they are not clipped at the left edge.
+     */
+    private DiagramMetrics calculateMetrics(List<HexRow> hexPath, FontMetrics axisFontMetrics) {
         int scaledLeftMargin = UIUtil.scaleForGUI(LEFT_MARGIN);
         int scaledRightMargin = UIUtil.scaleForGUI(RIGHT_MARGIN);
         int scaledTopMargin = UIUtil.scaleForGUI(TOP_MARGIN);
@@ -397,6 +416,21 @@ class LOSElevationDiagramPanel extends JPanel {
             clippedTop = true;
         }
 
+        // Widen the left gutter when the level labels are wider than the default margin (negative levels or
+        // 2-3 digit elevations). The labels are right-aligned into the gutter at (leftMargin - labelWidth - 4),
+        // so the gutter must hold the widest label plus that offset, otherwise it clips at the left edge.
+        // Recompute the dependent column width when the margin grows. minLevel/maxLevel are a safe upper bound
+        // for the widest drawn label (the padding levels at the extremes are not labeled).
+        int widestLabelWidth = Math.max(
+              axisFontMetrics.stringWidth(String.valueOf(minLevel)),
+              axisFontMetrics.stringWidth(String.valueOf(maxLevel)));
+        int neededLeftMargin = widestLabelWidth + UIUtil.scaleForGUI(8);
+        if (neededLeftMargin > scaledLeftMargin) {
+            scaledLeftMargin = neededLeftMargin;
+            drawAreaWidth = getWidth() - scaledLeftMargin - scaledRightMargin;
+            hexColumnWidth = Math.max(scaledMinHexWidth, drawAreaWidth / Math.max(hexCount, 1));
+        }
+
         int levelRange = Math.max(maxLevel - minLevel, 1);
         double levelHeight = (double) drawAreaHeight / levelRange;
 
@@ -417,7 +451,7 @@ class LOSElevationDiagramPanel extends JPanel {
     private void drawGrid(Graphics2D g2d, DiagramMetrics metrics) {
         g2d.setStroke(STROKE_GRID);
         g2d.setColor(getGridColor());
-        Font labelFont = g2d.getFont().deriveFont(UIUtil.scaleForGUI(10.0f));
+        Font labelFont = g2d.getFont().deriveFont(UIUtil.scaleForGUI(AXIS_LABEL_FONT_SIZE));
         g2d.setFont(labelFont);
         FontMetrics fontMetrics = g2d.getFontMetrics();
 
@@ -1181,6 +1215,9 @@ class LOSElevationDiagramPanel extends JPanel {
             drawUnitSilhouette(g2d, metrics, 0, attackerBottom, attackerTop,
                   RulerDialog.color1,
                   diagramData.attackerUnitType(), true);
+            if (diagramData.attackerHasMastMount()) {
+                drawMastMountEye(g2d, metrics, 0, attackerTop, diagramData.attackerSpottingClear());
+            }
         }
 
         // Target silhouette
@@ -1195,7 +1232,46 @@ class LOSElevationDiagramPanel extends JPanel {
             drawUnitSilhouette(g2d, metrics, hexPath.size() - 1, targetBottom, targetTop,
                   RulerDialog.color2,
                   diagramData.targetUnitType(), false);
+            if (diagramData.targetHasMastMount()) {
+                drawMastMountEye(g2d, metrics, hexPath.size() - 1, targetTop,
+                      diagramData.targetSpottingClear());
+            }
         }
+    }
+
+    /**
+     * Draws a VTOL Mast Mount "+1 spotting eye": a small diamond marker one level above the unit silhouette, joined
+     * to the unit top by a short dotted antenna. The Mast Mount raises onboard sensors by 1 level for spotting only
+     * (TacOps), so this marks the elevation the unit actually sees from when spotting. The marker is green when the
+     * unit has clear spotting LOS to the other endpoint from the raised eye, red when blocked. The direct-fire LOS
+     * line is drawn separately and is unaffected.
+     *
+     * @param hexIndex      the hex column the unit occupies
+     * @param unitTopLevel  the unit silhouette top elevation (its absolute height)
+     * @param spottingClear whether spotting LOS from the +1 eye to the other endpoint is clear
+     */
+    private void drawMastMountEye(Graphics2D g2d, DiagramMetrics metrics, int hexIndex,
+          int unitTopLevel, boolean spottingClear) {
+        int xCenter = metrics.leftMargin + (hexIndex * metrics.hexColumnWidth)
+              + (metrics.hexColumnWidth / 2);
+        int yUnitTop = metrics.levelToY(unitTopLevel);
+        int yEye = metrics.levelToY(unitTopLevel + 1);
+        Color eyeColor = spottingClear ? COLOR_LOS_CLEAR : COLOR_LOS_BLOCKED;
+
+        // Dotted antenna from the unit top up to the raised sensor eye.
+        Stroke oldStroke = g2d.getStroke();
+        g2d.setColor(eyeColor);
+        g2d.setStroke(STROKE_MAST_MOUNT);
+        g2d.drawLine(xCenter, yUnitTop, xCenter, yEye);
+        g2d.setStroke(oldStroke);
+
+        // Diamond marker at the +1 sensor eye elevation.
+        int half = Math.max(UIUtil.scaleForGUI(MAST_MOUNT_EYE_RADIUS), 3);
+        int[] xPoints = { xCenter, xCenter + half, xCenter, xCenter - half };
+        int[] yPoints = { yEye - half, yEye, yEye + half, yEye };
+        g2d.fillPolygon(xPoints, yPoints, 4);
+        g2d.setColor(eyeColor.darker());
+        g2d.drawPolygon(xPoints, yPoints, 4);
     }
 
     /**
@@ -2356,7 +2432,7 @@ class LOSElevationDiagramPanel extends JPanel {
         }
 
         List<HexRow> hexPath = diagramData.hexPath();
-        DiagramMetrics metrics = calculateMetrics(hexPath);
+        DiagramMetrics metrics = calculateMetrics(hexPath, axisLabelFontMetrics());
 
         int hexIndex = (mouseX - metrics.leftMargin) / metrics.hexColumnWidth;
         if (hexIndex < 0 || hexIndex >= hexPath.size()) {

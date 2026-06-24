@@ -47,6 +47,9 @@ import static org.mockito.Mockito.when;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BuildingType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
@@ -58,7 +61,10 @@ import megamek.common.units.BuildingEntity;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Mek;
+import megamek.common.units.VTOL;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -207,6 +213,7 @@ public class LosEffectsTest extends GameBoardTestCase {
               hex 0105 0 "geyser:2" ""
               end"""
         );
+
     }
 
     @BeforeEach
@@ -851,6 +858,108 @@ public class LosEffectsTest extends GameBoardTestCase {
             assertNotNull(result);
             assertEquals(0, result.ultraWoods, "A target above the plume should not be engulfed");
             assertTrue(result.hasLoS, "hasLoS should be true for a target raised above the geyser plume");
+        }
+    }
+
+    /**
+     * Tests for the VTOL Mast Mount spotting rule (issue #8385). A Mast Mount treats the VTOL's onboard sensors as
+     * 1 elevation higher for spotting only (TacOps), letting a VTOL hovering behind cover spot over it. The +1 must
+     * apply only when {@code spotting} is true, and never for a unit without a working Mast Mount.
+     */
+    @Nested
+    @DisplayName("VTOL Mast Mount Spotting Tests (Issue #8385)")
+    class MastMountSpottingTests {
+        private static GameOptions mockGameOptions;
+
+        @BeforeAll
+        static void initEquipment() {
+            EquipmentType.initializeTypes();
+        }
+
+        @BeforeEach
+        void setUp() {
+            setBoard("03_BY_05_CENTER_HILLS");
+            mockGameOptions = mock(GameOptions.class);
+            game.setOptions(mockGameOptions);
+            when(mockGameOptions.booleanOption(anyString())).thenReturn(false);
+        }
+
+        private VTOL createVtol(Coords position, int elevation, boolean withMastMount) {
+            VTOL vtol = new VTOL();
+            vtol.setGame(game);
+            vtol.setChassis("Mantis");
+            vtol.setModel("ECCM");
+            vtol.setMovementMode(EntityMovementMode.VTOL);
+            vtol.setCrew(new Crew(CrewType.SINGLE));
+            vtol.setId(1);
+            vtol.setOwnerId(player.getId());
+            vtol.setPosition(position);
+            vtol.setElevation(elevation);
+            if (withMastMount) {
+                try {
+                    vtol.addEquipment(EquipmentType.get(EquipmentTypeLookup.MAST_MOUNT), VTOL.LOC_ROTOR);
+                } catch (LocationFullException exception) {
+                    throw new IllegalStateException("Could not mount Mast Mount on test VTOL", exception);
+                }
+            }
+            return vtol;
+        }
+
+        private Mek createGroundTarget(Coords position) {
+            Mek target = new BipedMek();
+            target.setGame(game);
+            target.setChassis("Target");
+            target.setModel("TGT");
+            target.setCrew(new Crew(CrewType.SINGLE));
+            target.setId(2);
+            target.setOwnerId(player.getId());
+            target.setPosition(position);
+            return target;
+        }
+
+        // Attacker fires from 0305 toward 0301 across the level-3 hill at 0303. At eye height 3 the hill
+        // strictly blocks the line; the Mast Mount's +1 spotting elevation (eye 4) clears it.
+        private static final Coords ATTACKER_POS = new Coords(0, 4);
+        private static final Coords TARGET_POS = new Coords(2, 0);
+        private static final int BLOCKED_EYE_HEIGHT = 3;
+
+        @Test
+        @DisplayName("mast-mount VTOL spotting over a level-3 hill: the +1 elevation clears the block")
+        void shouldSpotOverHill_WithMastMount() {
+            VTOL vtol = createVtol(ATTACKER_POS, 0, true);
+            Mek target = createGroundTarget(TARGET_POS);
+            game.addEntity(vtol);
+            game.addEntity(target);
+            int boardId = vtol.getBoardId();
+
+            boolean directCanSee = LosEffects.calculateLOS(game, vtol, target,
+                  ATTACKER_POS, TARGET_POS, BLOCKED_EYE_HEIGHT, boardId, false).canSee();
+            boolean spottingCanSee = LosEffects.calculateLOS(game, vtol, target,
+                  ATTACKER_POS, TARGET_POS, BLOCKED_EYE_HEIGHT, boardId, true).canSee();
+
+            assertFalse(directCanSee,
+                  "Without the spotting +1, the level-3 hill blocks the VTOL eye at height 3");
+            assertTrue(spottingCanSee,
+                  "Mast Mount +1 spotting elevation should clear the level-3 hill");
+        }
+
+        @Test
+        @DisplayName("VTOL without a mast mount is unaffected by the spotting flag")
+        void shouldNotChangeLos_WithoutMastMount() {
+            VTOL vtol = createVtol(ATTACKER_POS, 0, false);
+            Mek target = createGroundTarget(TARGET_POS);
+            game.addEntity(vtol);
+            game.addEntity(target);
+            int boardId = vtol.getBoardId();
+
+            boolean directCanSee = LosEffects.calculateLOS(game, vtol, target,
+                  ATTACKER_POS, TARGET_POS, BLOCKED_EYE_HEIGHT, boardId, false).canSee();
+            boolean spottingCanSee = LosEffects.calculateLOS(game, vtol, target,
+                  ATTACKER_POS, TARGET_POS, BLOCKED_EYE_HEIGHT, boardId, true).canSee();
+
+            assertFalse(spottingCanSee, "A plain VTOL gets no +1, so the level-3 hill still blocks it");
+            assertEquals(directCanSee, spottingCanSee,
+                  "The spotting flag must not change LOS for a unit without a Mast Mount");
         }
     }
 }

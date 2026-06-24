@@ -36,9 +36,9 @@ import megamek.logging.MMLogger;
 
 /**
  * Shared vehicle-style fieldworks behaviour for units that build a fortified hex over several turns with a bulldozer,
- * backhoe or equivalent (Vehicles and Fieldworks, TO:AUE p.153). A unit progresses through {@code DUG_IN_FORTIFYING_*}
- * stages, one per turn, and the hex is fortified once it reaches the final stage; damage taken during a turn holds the
- * progress rather than advancing it.
+ * backhoe or equivalent (Vehicles and Fieldworks, TO:AUE p.153, Corrected Sixth Printing). A unit progresses through
+ * {@code DUG_IN_FORTIFYING_*} stages, one per turn, and the hex is fortified once it reaches the final stage; damage
+ * taken during a turn holds the progress rather than advancing it.
  *
  * <p>An implementor supplies the small amount of per-unit state - the dug-in stage counter, the {@link FortifyState}
  * damage tracker and its current health signature - and inherits the stage logic as default methods. Both {@link Tank}
@@ -76,8 +76,8 @@ public interface Fortifiable {
     String getShortName();
 
     /**
-     * Begins the multi-turn fieldwork that raises a fortified hex (TO:AUE p.153). Seeds the damage baseline used to
-     * detect an interrupting attack that extends the effort.
+     * Begins the multi-turn fieldwork that raises a fortified hex (TO:AUE p.153, Corrected Sixth Printing). Seeds the
+     * damage baseline used to detect an interrupting attack that extends the effort.
      */
     default void beginFortify() {
         setDugIn(DUG_IN_FORTIFYING_FIRST);
@@ -99,7 +99,10 @@ public interface Fortifiable {
         return DUG_IN_FORTIFYING_LAST - DUG_IN_FORTIFYING_FIRST + 1;
     }
 
-    /** @return {@code true} if this unit's fortification effort was set back by damage this round. TO:AUE p.153. */
+    /**
+     * @return {@code true} if this unit's fortification effort was set back by damage this round. TO:AUE p.153,
+     *       Corrected Sixth Printing.
+     */
     default boolean isFortifyExtendedThisRound() {
         return getFortifyState().wasExtendedAtLastCheckpoint();
     }
@@ -117,8 +120,9 @@ public interface Fortifiable {
 
     /**
      * Advances one round of fieldwork, called from {@code newRound}: damage taken during the turn holds the progress
-     * counter for a turn (TO:AUE p.153); otherwise the stage advances and rolls back to {@link #DUG_IN_NONE} once it
-     * passes the final stage (completion is recognized separately during END-phase resolution).
+     * counter for a turn (TO:AUE p.153, Corrected Sixth Printing); otherwise the stage advances and rolls back to
+     * {@link #DUG_IN_NONE} once it passes the final stage (completion is recognized separately during END-phase
+     * resolution).
      */
     default void advanceFortifyRound() {
         if (getDugIn() == DUG_IN_NONE) {

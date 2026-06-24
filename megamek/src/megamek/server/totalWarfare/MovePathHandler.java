@@ -2941,8 +2941,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // Fieldworks: a vehicle or a Mek with fieldworks-capable equipment - bulldozer, backhoe or equivalent -
-            // builds a fortified hex (Vehicles and Fieldworks, TO:AUE p.153). A vehicle or backhoe-equipped Mek may
-            // also clear rubble.
+            // builds a fortified hex (Vehicles and Fieldworks, TO:AUE p.153, Corrected Sixth Printing). A vehicle or
+            // backhoe-equipped Mek may also clear rubble.
             if ((entity instanceof Fortifiable fortifier) && (step.getType() == MoveStepType.FORTIFY)) {
                 // Defensive server-side check mirroring the MoveStep legality.
                 if (!entity.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {

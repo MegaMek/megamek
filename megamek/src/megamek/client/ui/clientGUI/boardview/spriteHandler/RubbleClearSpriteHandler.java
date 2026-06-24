@@ -102,17 +102,17 @@ public class RubbleClearSpriteHandler extends BoardViewSpriteHandler {
     }
 
     @Override
-    public void gamePhaseChange(GamePhaseChangeEvent e) {
+    public void gamePhaseChange(GamePhaseChangeEvent event) {
         updateRubbleClearSprites();
     }
 
     @Override
-    public void gameEntityChange(GameEntityChangeEvent e) {
+    public void gameEntityChange(GameEntityChangeEvent event) {
         updateRubbleClearSprites();
     }
 
     @Override
-    public void gameBoardChanged(GameBoardChangeEvent e) {
+    public void gameBoardChanged(GameBoardChangeEvent event) {
         // A finished clear removes the RUBBLE terrain and ends the work; refresh so the indicator disappears once
         // the hex is opened up.
         updateRubbleClearSprites();

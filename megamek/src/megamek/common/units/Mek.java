@@ -1268,7 +1268,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         grappledThisRound = false;
 
         // Continue any fieldwork in progress (a Mek with a backhoe/equivalent may fortify like a vehicle,
-        // Vehicles and Fieldworks, TO:AUE p.153). The stage machine lives in Fortifiable.
+        // Vehicles and Fieldworks, TO:AUE p.153, Corrected Sixth Printing). The stage machine lives in Fortifiable.
         advanceFortifyRound();
 
         // clear HarJel "took damage this turn" flags
@@ -1278,13 +1278,14 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     } // End public void newRound()
 
     // --- Fieldworks / fortify: a Mek with a backhoe (or equivalent) may build a fortified hex like a vehicle
-    // (Vehicles and Fieldworks, TO:AUE p.153). The multi-turn stage machine lives in Fortifiable.
+    // (Vehicles and Fieldworks, TO:AUE p.153, Corrected Sixth Printing). The multi-turn stage machine lives in
+    // Fortifiable.
 
     private int dugIn = DUG_IN_NONE;
 
     /**
      * Tracks damage taken between turns while fortifying, so an interrupting attack extends the effort by one turn
-     * (TO:AUE p.153). Server-side runtime state; dug-in progress itself is not persisted.
+     * (TO:AUE p.153, Corrected Sixth Printing). Server-side runtime state; dug-in progress itself is not persisted.
      */
     private transient FortifyState fortifyState = new FortifyState();
 
@@ -1316,8 +1317,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     private int rubbleClearTurnsRequired = 0;
 
     /**
-     * @return true if this Mek has a working backhoe (F_CLUB / S_BACKHOE), used for fieldworks and the unofficial
-     *       backhoe rubble-clearing rule
+     * @return {@code true} if this Mek has a working backhoe ({@code F_CLUB} / {@code S_BACKHOE}), used for fieldworks
+     *       and the unofficial backhoe rubble-clearing rule
      */
     @Override
     public boolean hasWorkingBackhoe() {

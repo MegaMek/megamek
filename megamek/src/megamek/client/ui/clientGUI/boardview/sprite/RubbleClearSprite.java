@@ -195,16 +195,16 @@ public class RubbleClearSprite extends HexSprite {
         if (rubbleLevel <= 0) {
             return null;
         }
-        return loadPathImage("saxarba/rubble_" + structureName(rubbleLevel) + "_path.png");
+        return loadPathImage("saxarba/rubble_" + structureImageFileToken(rubbleLevel) + "_path.png");
     }
 
     /**
      * @param rubbleLevel the {@link Terrains#RUBBLE} level (1 light .. 4 hardened, 5 wall, 6+ ultra)
      *
-     * @return the structure name used in the cleared-path image file name; ultra and any other level reuse the heavy
-     *       artwork, matching the saxarba tileset's rubble image mapping
+     * @return the structure token used to build the cleared-path image file name (NOT a user-facing label); ultra and
+     *       any other level reuse the heavy artwork, matching the saxarba tileset's rubble image mapping
      */
-    private static String structureName(int rubbleLevel) {
+    private static String structureImageFileToken(int rubbleLevel) {
         return switch (rubbleLevel) {
             case 1 -> "light";
             case 2 -> "medium";
@@ -282,7 +282,7 @@ public class RubbleClearSprite extends HexSprite {
                 return CLEARED_FALLBACK_COLOR;
             }
             return new Color((int) (red / samples), (int) (green / samples), (int) (blue / samples));
-        } catch (RuntimeException e) {
+        } catch (RuntimeException runtimeException) {
             return CLEARED_FALLBACK_COLOR;
         }
     }

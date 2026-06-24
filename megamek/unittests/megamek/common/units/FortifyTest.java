@@ -307,7 +307,7 @@ public class FortifyTest extends GameBoardTestCase {
     }
 
     @Nested
-    @DisplayName("Mek fortification (backhoe / fieldworks, TO:AUE p.153)")
+    @DisplayName("Mek fortification (backhoe / fieldworks, TO:AUE p.153, Corrected Sixth Printing)")
     class MekFortification {
 
         private BipedMek fortifyingMek() {
@@ -439,7 +439,8 @@ public class FortifyTest extends GameBoardTestCase {
         }
 
         @Test
-        @DisplayName("A Mek with a backhoe may fortify clear terrain (Vehicles and Fieldworks, TO:AUE p.153)")
+        @DisplayName("A Mek with a backhoe may fortify clear terrain (Vehicles and Fieldworks, TO:AUE p.153, "
+              + "Corrected Sixth Printing)")
         void mekWithBackhoeMayFortify() throws LocationFullException {
             setBoard("FORTIFY_BOARD");
             MovePath path = getMovePathFor(backhoeMek(), MoveStepType.FORTIFY);

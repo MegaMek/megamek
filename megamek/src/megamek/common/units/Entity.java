@@ -5436,7 +5436,7 @@ public abstract class Entity extends TurnOrdered
      * damage (rounded down) when it charges. By default, entities cannot mount a bulldozer; only vehicles (Tank
      * subclass) can.</p>
      *
-     * @return true if this entity has a working bulldozer
+     * @return {@code true} if this entity has a working bulldozer
      */
     public boolean hasWorkingBulldozer() {
         return false;
@@ -5449,7 +5449,7 @@ public abstract class Entity extends TurnOrdered
      * charges it. By default, entities do not have a front-mounted bulldozer; only vehicles (Tank subclass) can mount
      * one.</p>
      *
-     * @return true if this entity has a working front-mounted bulldozer
+     * @return {@code true} if this entity has a working front-mounted bulldozer
      */
     public boolean hasFrontMountedBulldozer() {
         return false;
@@ -5462,7 +5462,7 @@ public abstract class Entity extends TurnOrdered
      * engages rubble while the vehicle backs into it. By default, entities do not have a rear-mounted bulldozer; only
      * vehicles (Tank subclass) can mount one.</p>
      *
-     * @return true if this entity has a working rear-mounted bulldozer
+     * @return {@code true} if this entity has a working rear-mounted bulldozer
      */
     public boolean hasRearMountedBulldozer() {
         return false;
@@ -5474,7 +5474,7 @@ public abstract class Entity extends TurnOrdered
      * <p>A backhoe provides fieldworks (fortification) ability and, under the unofficial rule, can clear rubble more
      * slowly than a bulldozer. By default, entities do not have a backhoe; vehicles and Meks can mount one.</p>
      *
-     * @return true if this entity has a working backhoe
+     * @return {@code true} if this entity has a working backhoe
      */
     public boolean hasWorkingBackhoe() {
         return false;

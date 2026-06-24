@@ -256,10 +256,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public static final int GEAR_STRAFE = 12;
     /** Used to designate a ground map flight path for an aero on an atmospheric map. */
     public static final int GEAR_FLIGHTPATH = 13;
-    /** Used to designate the rubble hex a bulldozer vehicle drives into and clears (TacOps). */
-    public static final int GEAR_CLEAR_RUBBLE = 14;
     /** Used to choose a ground map hex for landing an aero from an atmospheric map (aero-on-ground move off). */
     public static final int GEAR_LANDING_AERO = 14;
+    /** Used to designate the rubble hex a bulldozer vehicle drives into and clears (TacOps). */
+    public static final int GEAR_CLEAR_RUBBLE = 15;
     public static final int GEAR_SUB_STANDARD = 0;
     public static final int GEAR_SUB_MEK_BOOSTERS = 2;
 
@@ -905,7 +905,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateBombButton();
 
         // Fortify - Infantry, vehicles, and Meks with fieldworks-capable equipment (a backhoe/bulldozer or
-        // equivalent). Vehicles and Fieldworks, TO:AUE p.153.
+        // equivalent). Vehicles and Fieldworks, TO:AUE p.153, Corrected Sixth Printing.
         if (isInfantry && selectedUnit.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
             // Crews adrift in space or atmosphere can't do this
             if (selectedUnit instanceof EjectedCrew &&
@@ -2353,46 +2353,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 addStepToMovePath(MoveStepType.CHARGE);
             }
         } else if (gear == GEAR_CLEAR_RUBBLE) {
-            // Drive into the chosen rubble hex (the bulldozer override makes the entry legal) and clear it.
-            Hex targetHex = game.getBoard(boardId).getHex(dest);
-            if (!BulldozerRules.hasClearableRubble(targetHex)) {
-                LOGGER.debug("[Bulldozer] {}: clear-rubble target {} has no clearable rubble; ignoring click",
-                      currentEntity().getDisplayName(), dest);
-                clientgui.addToast(ToastLevel.WARNING,
-                      Messages.getString("MovementDisplay.clearRubbleIllegalTerrain.toast"), currentEntity());
-            } else {
-                Entity clearingUnit = currentEntity();
-                // Confirm up front so the player gets clear feedback and the expected duration before committing
-                // (QA feedback); the prompt names the actual tool - bulldozer or backhoe.
-                int requiredTurns = BulldozerRules.totalClearingTurns(clearingUnit, targetHex, game);
-                boolean confirmed = clientgui.doYesNoDialog(
-                      Messages.getString("MovementDisplay.clearRubbleConfirm.title"),
-                      Messages.getString("MovementDisplay.clearRubbleConfirm.message",
-                            BulldozerRules.clearingToolName(clearingUnit), requiredTurns));
-                if (!confirmed) {
-                    LOGGER.debug("[Bulldozer] {}: player declined to clear rubble at {}",
-                          clearingUnit.getDisplayName(), dest);
-                } else {
-                    // The blade must engage the rubble: a front-mounted bulldozer drives in forwards; a rear-mounted
-                    // one (e.g. the Reverse Buffel) backs into the hex so its rear blade leads.
-                    boolean rearBlade = !clearingUnit.hasFrontMountedBulldozer()
-                          && clearingUnit.hasRearMountedBulldozer();
-                    MoveStepType approach = rearBlade ? MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
-                    LOGGER.debug("[Bulldozer] {}: clear-rubble target at {} (rubble level {}), {}-mounted blade -> {}",
-                          clearingUnit.getDisplayName(), dest, targetHex.terrainLevel(Terrains.RUBBLE),
-                          rearBlade ? "rear" : "front", approach);
-                    extendPathTo(dest, boardId, approach);
-                    if (cmd.getFinalCoords().equals(dest)) {
-                        addStepToMovePath(MoveStepType.CLEAR_RUBBLE);
-                    } else {
-                        LOGGER.debug("[Bulldozer] {}: could not reach rubble hex {} {} (path ended at {})",
-                              clearingUnit.getDisplayName(), dest, rearBlade ? "in reverse" : "forwards",
-                              cmd.getFinalCoords());
-                        clientgui.addToast(ToastLevel.WARNING,
-                              Messages.getString("MovementDisplay.clearRubbleUnreachable.toast"), clearingUnit);
-                    }
-                }
-            }
+            planClearRubbleMove(dest, boardId);
             gear = GEAR_LAND;
         } else if (gear == GEAR_DFA) {
             extendPathTo(dest, boardId, MoveStepType.DFA);
@@ -2456,6 +2417,58 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         clientgui.showSensorRanges(currentEntity(), cmd.getFinalCoords());
         clientgui.updateFiringArc(currentEntity());
+    }
+
+    /**
+     * Plans a rubble-clearing move to the chosen hex: validates that the hex holds clearable rubble, confirms the
+     * action (and its expected duration) with the player, then drives the clearing unit into the hex - forwards for a
+     * front-mounted blade, in reverse for a rear-mounted one (e.g. the Reverse Buffel) - and appends the
+     * {@link MoveStepType#CLEAR_RUBBLE} step. The caller resets {@code gear} to {@link #GEAR_LAND} afterwards.
+     *
+     * @param dest    the rubble hex the player clicked
+     * @param boardId the board the destination hex is on
+     */
+    private void planClearRubbleMove(Coords dest, int boardId) {
+        // Drive into the chosen rubble hex (the bulldozer override makes the entry legal) and clear it.
+        Hex targetHex = game.getBoard(boardId).getHex(dest);
+        if (!BulldozerRules.hasClearableRubble(targetHex)) {
+            LOGGER.debug("[Bulldozer] {}: clear-rubble target {} has no clearable rubble; ignoring click",
+                  currentEntity().getDisplayName(), dest);
+            clientgui.addToast(ToastLevel.WARNING,
+                  Messages.getString("MovementDisplay.clearRubbleIllegalTerrain.toast"), currentEntity());
+            return;
+        }
+        Entity clearingUnit = currentEntity();
+        // Confirm up front so the player gets clear feedback and the expected duration before committing
+        // (QA feedback); the prompt names the actual tool - bulldozer or backhoe.
+        int requiredTurns = BulldozerRules.totalClearingTurns(clearingUnit, targetHex, game);
+        boolean confirmed = clientgui.doYesNoDialog(
+              Messages.getString("MovementDisplay.clearRubbleConfirm.title"),
+              Messages.getString("MovementDisplay.clearRubbleConfirm.message",
+                    BulldozerRules.clearingToolName(clearingUnit), requiredTurns));
+        if (!confirmed) {
+            LOGGER.debug("[Bulldozer] {}: player declined to clear rubble at {}",
+                  clearingUnit.getDisplayName(), dest);
+            return;
+        }
+        // The blade must engage the rubble: a front-mounted bulldozer drives in forwards; a rear-mounted
+        // one (e.g. the Reverse Buffel) backs into the hex so its rear blade leads.
+        boolean rearBlade = !clearingUnit.hasFrontMountedBulldozer()
+              && clearingUnit.hasRearMountedBulldozer();
+        MoveStepType approach = rearBlade ? MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
+        LOGGER.debug("[Bulldozer] {}: clear-rubble target at {} (rubble level {}), {}-mounted blade -> {}",
+              clearingUnit.getDisplayName(), dest, targetHex.terrainLevel(Terrains.RUBBLE),
+              rearBlade ? "rear" : "front", approach);
+        extendPathTo(dest, boardId, approach);
+        if (cmd.getFinalCoords().equals(dest)) {
+            addStepToMovePath(MoveStepType.CLEAR_RUBBLE);
+        } else {
+            LOGGER.debug("[Bulldozer] {}: could not reach rubble hex {} {} (path ended at {})",
+                  clearingUnit.getDisplayName(), dest, rearBlade ? "in reverse" : "forwards",
+                  cmd.getFinalCoords());
+            clientgui.addToast(ToastLevel.WARNING,
+                  Messages.getString("MovementDisplay.clearRubbleUnreachable.toast"), clearingUnit);
+        }
     }
 
     /**

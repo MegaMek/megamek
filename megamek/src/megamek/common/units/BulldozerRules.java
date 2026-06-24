@@ -73,10 +73,12 @@ public final class BulldozerRules {
      *       enabled. Clearing with a backhoe is slower (see {@link #BACKHOE_CLEAR_TURN_PENALTY}).
      */
     public static boolean canBackhoeClearRubble(Entity entity, Game game) {
-        return !entity.hasWorkingBulldozer()
-              && entity.hasWorkingBackhoe()
-              && game.getOptions().booleanOption(OptionsConstants.UNOFFICIAL_BACKHOE_CLEARS_RUBBLE)
-              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BULLDOZER);
+        boolean hasOnlyBackhoe = !entity.hasWorkingBulldozer() && entity.hasWorkingBackhoe();
+        boolean unofficialBackhoeRuleEnabled =
+              game.getOptions().booleanOption(OptionsConstants.UNOFFICIAL_BACKHOE_CLEARS_RUBBLE);
+        boolean bulldozerRuleEnabled =
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BULLDOZER);
+        return hasOnlyBackhoe && unofficialBackhoeRuleEnabled && bulldozerRuleEnabled;
     }
 
     /**

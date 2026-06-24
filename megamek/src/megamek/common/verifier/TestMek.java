@@ -1117,6 +1117,15 @@ public class TestMek extends TestEntity {
                 illegal = true;
             }
 
+            // TM p.242 / TW: only quad BattleMeks and quad IndustrialMeks may mount a bridgelayer.
+            if ((misc.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
+                  || misc.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+                  || misc.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER))
+                  && !mek.isQuadMek()) {
+                buff.append("Only quad meks may mount ").append(misc.getName()).append("\n");
+                illegal = true;
+            }
+
             if ((misc.hasFlag(MiscType.F_CHAIN_DRAPE_APRON) || misc.hasFlag(MiscType.F_CHAIN_DRAPE_PONCHO))
                   && (mek.isQuadMek() || mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)
             ) {
@@ -1694,6 +1703,17 @@ public class TestMek extends TestEntity {
                   && !mek.hasSystem(Mek.SYSTEM_ENGINE, location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in the a location with an engine critical.\n");
+                }
+                return false;
+            }
+            // TM p.242 / TW: only quad BattleMeks/IndustrialMeks may mount a bridgelayer, so it has no valid location
+            // on any other mek (this blocks placement in MML/construction, not just flags the finished unit invalid).
+            if ((eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
+                  || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+                  || eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER))
+                  && !mek.isQuadMek()) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" may only be mounted on a quad mek.\n");
                 }
                 return false;
             }

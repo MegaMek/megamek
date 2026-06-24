@@ -1949,11 +1949,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 int loc = weapon.getLocation();
                 boolean rearMount = weapon.isRearMounted();
                 if (!attackingEntity.hasArcFired(loc, rearMount)) {
-                    attackingEntity.heatBuildup += attackingEntity.getHeatInArc(loc, rearMount);
+                    attackingEntity.changeHeatBuildup(attackingEntity.getHeatInArc(loc, rearMount),
+                          Messages.getString("HeatBreakdown.weaponsFiredArc", attackingEntity.getLocationName(loc)));
                     attackingEntity.setArcFired(loc, rearMount);
                 }
             } else {
-                weaponEntity.heatBuildup += (weapon.getHeatByBay());
+                weaponEntity.changeHeatBuildup(weapon.getHeatByBay(), weapon.getName());
             }
         }
     }

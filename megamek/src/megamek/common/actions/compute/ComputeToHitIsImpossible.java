@@ -1686,13 +1686,22 @@ class ComputeToHitIsImpossible {
                 return Messages.getString("WeaponAttackAction.NoSpotter");
             }
 
-            // Disposable Weapon attacks (TO:AuE p.116, Corrected Sixth Printing) - only gated while the rule is
+            // Disposable Weapon attacks (TO:AuE p.116, Corrected Sixth Printing) replace the unit's standard weapon
+            // attack: a platoon or squad may fire EITHER its Disposable Weapon OR its other weapons in a turn, never
+            // both - and the restriction must hold regardless of declaration order. Only gated while the rule is
             // enabled; otherwise the mount fires as an ordinary weapon and the standard checks apply.
-            if ((weapon instanceof WeaponMounted disposableMount) && disposableMount.isDisposableWeapon()
-                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
-                String disposableReason = disposableWeaponAttackReason(game, attacker, weaponType);
-                if (disposableReason != null) {
-                    return disposableReason;
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
+                boolean firingDisposableWeapon = (weapon instanceof WeaponMounted disposableMount)
+                      && disposableMount.isDisposableWeapon();
+                if (firingDisposableWeapon) {
+                    // Declaring the Disposable Weapon: it must be this unit's only weapon attack this turn.
+                    String disposableReason = disposableWeaponAttackReason(game, attacker, weaponType);
+                    if (disposableReason != null) {
+                        return disposableReason;
+                    }
+                } else if (hasDeclaredDisposableAttack(game, attacker)) {
+                    // Declaring a standard weapon after the Disposable Weapon already replaced the standard attack.
+                    return Messages.getString("WeaponAttackAction.DisposableReplacesStandard");
                 }
             }
 
@@ -1991,6 +2000,33 @@ class ComputeToHitIsImpossible {
             }
         }
         return true;
+    }
+
+    /**
+     * Determines whether the attacker has already declared a Disposable Weapon attack this turn (TO:AuE p.116,
+     * Corrected Sixth Printing). Because the Disposable Weapon attack replaces the unit's standard weapon attack, a
+     * unit that has declared its disposable may not also declare a standard weapon attack - regardless of which is
+     * declared first. This is the mirror image of the check made by {@link #disposableWeaponAttackReason} when the
+     * disposable itself is being declared.
+     *
+     * @param game     the current game
+     * @param attacker the attacking unit
+     *
+     * @return {@code true} if this unit has already declared a Disposable Weapon attack this turn
+     */
+    // package-private for regression testing of the order-independent gating (see ComputeToHitIsImpossibleTest)
+    static boolean hasDeclaredDisposableAttack(Game game, Entity attacker) {
+        for (EntityAction action : game.getActionsVector()) {
+            if (action instanceof WeaponAttackAction weaponAttackAction) {
+                Entity otherAttacker = weaponAttackAction.getEntity(game);
+                if ((otherAttacker != null) && otherAttacker.equals(attacker)
+                      && (otherAttacker.getEquipment(weaponAttackAction.getWeaponId()) instanceof WeaponMounted mount)
+                      && mount.isDisposableWeapon()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

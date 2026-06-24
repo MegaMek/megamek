@@ -251,9 +251,13 @@ class LOSElevationDiagramPanel extends JPanel {
         }
 
         int scaledMinHexWidth = UIUtil.scaleForGUI(MIN_HEX_WIDTH);
-        int scaledLeftMargin = UIUtil.scaleForGUI(LEFT_MARGIN);
         int scaledRightMargin = UIUtil.scaleForGUI(RIGHT_MARGIN);
         int hexCount = diagramData.hexPath().size();
+
+        // Match the dynamic left gutter the renderer uses, so a gutter widened for tall/negative labels
+        // doesn't push content past the preferred width and clip the right side inside the scroll pane.
+        LevelRange range = computeLevelRange(diagramData.hexPath());
+        int scaledLeftMargin = computeLeftMargin(range.minLevel(), range.maxLevel());
         int neededWidth = scaledLeftMargin + (hexCount * scaledMinHexWidth) + scaledRightMargin;
 
         // Only set preferred width if content is wider than the parent would give us
@@ -276,7 +280,7 @@ class LOSElevationDiagramPanel extends JPanel {
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
             List<HexRow> hexPath = diagramData.hexPath();
-            DiagramMetrics metrics = calculateMetrics(hexPath, axisLabelFontMetrics());
+            DiagramMetrics metrics = calculateMetrics(hexPath);
 
             drawGrid(g2d, metrics);
             drawSkyGradient(g2d, metrics, hexPath);
@@ -317,23 +321,55 @@ class LOSElevationDiagramPanel extends JPanel {
         return getFontMetrics(getFont().deriveFont(UIUtil.scaleForGUI(AXIS_LABEL_FONT_SIZE)));
     }
 
+    /** Vertical display range (in levels) and clip flags derived from the diagram data. */
+    private record LevelRange(int minLevel, int maxLevel, int actualMinLevel, int actualMaxLevel,
+          boolean clippedTop, boolean clippedBottom) { }
+
     /**
      * Calculates rendering metrics (scale, offsets) for the current panel size and data. The left gutter is widened
      * when the level labels are wider than the default margin so they are not clipped at the left edge.
      */
-    private DiagramMetrics calculateMetrics(List<HexRow> hexPath, FontMetrics axisFontMetrics) {
-        int scaledLeftMargin = UIUtil.scaleForGUI(LEFT_MARGIN);
+    private DiagramMetrics calculateMetrics(List<HexRow> hexPath) {
         int scaledRightMargin = UIUtil.scaleForGUI(RIGHT_MARGIN);
         int scaledTopMargin = UIUtil.scaleForGUI(TOP_MARGIN);
         int scaledBottomMargin = UIUtil.scaleForGUI(BOTTOM_MARGIN);
 
-        int drawAreaWidth = getWidth() - scaledLeftMargin - scaledRightMargin;
-        int drawAreaHeight = getHeight() - scaledTopMargin - scaledBottomMargin;
-
         int hexCount = hexPath.size();
         int scaledMinHexWidth = UIUtil.scaleForGUI(MIN_HEX_WIDTH);
+
+        LevelRange range = computeLevelRange(hexPath);
+        int minLevel = range.minLevel();
+        int maxLevel = range.maxLevel();
+
+        // Left gutter sized to the widest axis label so negative/multi-digit levels aren't clipped. The same
+        // value feeds updatePreferredWidth() so the scroll pane reserves enough width and the right side of
+        // the diagram is not clipped when the gutter grows.
+        int scaledLeftMargin = computeLeftMargin(minLevel, maxLevel);
+
+        int drawAreaWidth = getWidth() - scaledLeftMargin - scaledRightMargin;
+        int drawAreaHeight = getHeight() - scaledTopMargin - scaledBottomMargin;
         int hexColumnWidth = Math.max(scaledMinHexWidth, drawAreaWidth / Math.max(hexCount, 1));
 
+        int levelRange = Math.max(maxLevel - minLevel, 1);
+        double levelHeight = (double) drawAreaHeight / levelRange;
+
+        return new DiagramMetrics(
+              scaledLeftMargin, scaledTopMargin,
+              drawAreaWidth, drawAreaHeight,
+              hexColumnWidth, levelHeight,
+              minLevel, maxLevel, hexCount,
+              range.clippedTop(), range.clippedBottom(),
+              range.actualMinLevel(), range.actualMaxLevel(),
+              diagramData.attackerAtAltitude(), diagramData.targetAtAltitude()
+        );
+    }
+
+    /**
+     * Computes the vertical level range to display, capped at {@link #MAX_DISPLAY_RANGE} and centered on the ground
+     * units when the natural range is too large. Shared by {@link #calculateMetrics} (rendering) and
+     * {@link #updatePreferredWidth} (scroll sizing) so both agree on the range and the resulting gutter width.
+     */
+    private LevelRange computeLevelRange(List<HexRow> hexPath) {
         // Find elevation range across all hexes, units, and LOS line
         int minLevel = Integer.MAX_VALUE;
         int maxLevel = Integer.MIN_VALUE;
@@ -416,33 +452,21 @@ class LOSElevationDiagramPanel extends JPanel {
             clippedTop = true;
         }
 
-        // Widen the left gutter when the level labels are wider than the default margin (negative levels or
-        // 2-3 digit elevations). The labels are right-aligned into the gutter at (leftMargin - labelWidth - 4),
-        // so the gutter must hold the widest label plus that offset, otherwise it clips at the left edge.
-        // Recompute the dependent column width when the margin grows. minLevel/maxLevel are a safe upper bound
-        // for the widest drawn label (the padding levels at the extremes are not labeled).
+        return new LevelRange(minLevel, maxLevel, actualMinLevel, actualMaxLevel, clippedTop, clippedBottom);
+    }
+
+    /**
+     * Returns the left gutter width, widened beyond {@link #LEFT_MARGIN} when the level labels (negative or
+     * multi-digit) would otherwise clip at the left edge. The labels are right-aligned into the gutter at
+     * (leftMargin - labelWidth - 4), so it must hold the widest label plus that offset. {@code minLevel}/
+     * {@code maxLevel} are a safe upper bound for the widest drawn label (the padding levels are not labeled).
+     */
+    private int computeLeftMargin(int minLevel, int maxLevel) {
+        FontMetrics axisFontMetrics = axisLabelFontMetrics();
         int widestLabelWidth = Math.max(
               axisFontMetrics.stringWidth(String.valueOf(minLevel)),
               axisFontMetrics.stringWidth(String.valueOf(maxLevel)));
-        int neededLeftMargin = widestLabelWidth + UIUtil.scaleForGUI(8);
-        if (neededLeftMargin > scaledLeftMargin) {
-            scaledLeftMargin = neededLeftMargin;
-            drawAreaWidth = getWidth() - scaledLeftMargin - scaledRightMargin;
-            hexColumnWidth = Math.max(scaledMinHexWidth, drawAreaWidth / Math.max(hexCount, 1));
-        }
-
-        int levelRange = Math.max(maxLevel - minLevel, 1);
-        double levelHeight = (double) drawAreaHeight / levelRange;
-
-        return new DiagramMetrics(
-              scaledLeftMargin, scaledTopMargin,
-              drawAreaWidth, drawAreaHeight,
-              hexColumnWidth, levelHeight,
-              minLevel, maxLevel, hexCount,
-              clippedTop, clippedBottom,
-              actualMinLevel, actualMaxLevel,
-              attackerIsAltitude, targetIsAltitude
-        );
+        return Math.max(UIUtil.scaleForGUI(LEFT_MARGIN), widestLabelWidth + UIUtil.scaleForGUI(8));
     }
 
     /**
@@ -2432,7 +2456,7 @@ class LOSElevationDiagramPanel extends JPanel {
         }
 
         List<HexRow> hexPath = diagramData.hexPath();
-        DiagramMetrics metrics = calculateMetrics(hexPath, axisLabelFontMetrics());
+        DiagramMetrics metrics = calculateMetrics(hexPath);
 
         int hexIndex = (mouseX - metrics.leftMargin) / metrics.hexColumnWidth;
         if (hexIndex < 0 || hexIndex >= hexPath.size()) {

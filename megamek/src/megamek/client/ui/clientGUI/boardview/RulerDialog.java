@@ -1179,16 +1179,19 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         // Pass the active LOS rule through to the diagram so it can pick the matching line shape and overlays.
         LosRuleMode losRuleMode = LosRuleMode.fromGameOptions(game);
 
-        // VTOL Mast Mount: detect it on each endpoint and pre-compute the spotting LOS (spotting=true applies
-        // the +1 sensor elevation per TacOps), so the diagram draws a "+1 spotting eye" marker colored by
-        // whether that unit can spot the other from the raised elevation. The main direct-fire LOS line is
-        // unaffected - the Mast Mount never helps direct fire over cover.
+        // VTOL Mast Mount marker: only on the entity-based path (entityLosBlocked != null), where the diagram
+        // uses the units' real heights, so the "+1 spotting eye" stays consistent with the drawn LOS. The
+        // manual/spinner-override path has no real entity heights to reason about. Never surface it for a
+        // sensor return - that would leak hidden equipment under double-blind, matching the POV-label gating.
+        // The spotting LOS (spotting=true applies the +1 sensor elevation per TacOps) colors the marker;
+        // the main direct-fire LOS line is unaffected (a Mast Mount never helps direct fire over cover).
+        boolean entityPath = (entityLosBlocked != null);
         Entity attackerEntity = getSelectedEntity(flip);
         Entity targetEntity = getSelectedEntity(!flip);
-        boolean attackerHasMastMount = (attackerEntity != null)
-              && attackerEntity.hasWorkingMisc(MiscType.F_MAST_MOUNT);
-        boolean targetHasMastMount = (targetEntity != null)
-              && targetEntity.hasWorkingMisc(MiscType.F_MAST_MOUNT);
+        boolean attackerHasMastMount = entityPath && (attackerEntity != null)
+              && !isSensorReturn(attackerEntity) && attackerEntity.hasWorkingMisc(MiscType.F_MAST_MOUNT);
+        boolean targetHasMastMount = entityPath && (targetEntity != null)
+              && !isSensorReturn(targetEntity) && targetEntity.hasWorkingMisc(MiscType.F_MAST_MOUNT);
         boolean attackerSpottingClear = attackerHasMastMount && (targetEntity != null)
               && LosEffects.calculateLOS(game, attackerEntity, targetEntity, true).canSee();
         boolean targetSpottingClear = targetHasMastMount && (attackerEntity != null)

@@ -33,16 +33,20 @@
 
 package megamek.common.actions.compute;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.ConvInfantry;
+import megamek.common.units.Infantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,14 +55,17 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Regression tests for the order-independent gating of Disposable Weapon attacks (TO:AuE p.116, Corrected Sixth
- * Printing). A Disposable Weapon attack replaces the platoon's standard weapon attack, so a unit may fire EITHER its
- * disposable OR its other weapons in a turn, never both - regardless of which is declared first. The bug that prompted
- * these tests: firing the disposable first did not block a following standard weapon attack (only the reverse order was
- * gated).
+ * Printing). A Disposable Weapon attack replaces the platoon's standard weapon attack, so a unit may declare EITHER its
+ * Disposable Weapon OR its other weapons in a turn, never both - regardless of which is declared first. The bug that
+ * prompted these tests: declaring the disposable first did not block a following standard weapon attack (only the
+ * reverse order was gated).
  *
- * @see ComputeToHitIsImpossible#hasDeclaredDisposableAttack(Game, megamek.common.units.Entity)
+ * @see ComputeToHitIsImpossible#disposableWeaponGateReason(Game, megamek.common.units.Entity, WeaponMounted, WeaponType)
  */
 class ComputeToHitIsImpossibleTest {
+
+    private static final String DISPOSABLE_WEAPON = "Rocket Launcher (LAW)";
+    private static final String STANDARD_WEAPON = "InfantryAssaultRifle";
 
     private Game game;
 
@@ -71,6 +78,11 @@ class ComputeToHitIsImpossibleTest {
     void setUp() {
         game = new Game();
         game.addPlayer(0, new Player(0, "Test Player"));
+        setDisposableRule(true);
+    }
+
+    private void setDisposableRule(boolean enabled) {
+        game.getOptions().getOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS).setValue(enabled);
     }
 
     private ConvInfantry createInfantry() {
@@ -79,10 +91,16 @@ class ComputeToHitIsImpossibleTest {
         infantry.setId(game.getNextEntityId());
         infantry.setChassis("Test Platoon");
         infantry.setOwner(game.getPlayer(0));
-        infantry.setPrimaryWeapon((InfantryWeapon) EquipmentType.get("InfantryAssaultRifle"));
+        infantry.setPrimaryWeapon((InfantryWeapon) EquipmentType.get(STANDARD_WEAPON));
         infantry.autoSetInternal();
         infantry.initializeInternal(28, ConvInfantry.LOC_INFANTRY);
         game.addEntity(infantry);
+        return infantry;
+    }
+
+    private ConvInfantry createInfantryWithDisposable() {
+        ConvInfantry infantry = createInfantry();
+        infantry.equipDisposableWeapon((InfantryWeapon) EquipmentType.get(DISPOSABLE_WEAPON));
         return infantry;
     }
 
@@ -94,8 +112,7 @@ class ComputeToHitIsImpossibleTest {
     }
 
     private WeaponMounted addStandardWeapon(ConvInfantry infantry) throws Exception {
-        WeaponMounted rifle = (WeaponMounted) Mounted.createMounted(infantry,
-              EquipmentType.get("InfantryAssaultRifle"));
+        WeaponMounted rifle = (WeaponMounted) Mounted.createMounted(infantry, EquipmentType.get(STANDARD_WEAPON));
         infantry.addEquipment(rifle, ConvInfantry.LOC_INFANTRY, false);
         return rifle;
     }
@@ -105,47 +122,79 @@ class ComputeToHitIsImpossibleTest {
               attacker.getEquipmentNum(weapon)));
     }
 
-    @Test
-    @DisplayName("no declared attacks: the unit has not committed its Disposable Weapon")
-    void noDeclaredAttack() {
-        ConvInfantry infantry = createInfantry();
-        infantry.equipDisposableWeapon((InfantryWeapon) EquipmentType.get("Rocket Launcher (LAW)"));
-
-        assertFalse(ComputeToHitIsImpossible.hasDeclaredDisposableAttack(game, infantry));
+    private String gateReason(ConvInfantry attacker, WeaponMounted weapon) {
+        return ComputeToHitIsImpossible.disposableWeaponGateReason(game, attacker, weapon,
+              (WeaponType) weapon.getType());
     }
 
     @Test
-    @DisplayName("a declared Disposable Weapon attack is detected (blocks a later standard weapon attack)")
-    void declaredDisposableAttackIsDetected() {
-        ConvInfantry infantry = createInfantry();
-        infantry.equipDisposableWeapon((InfantryWeapon) EquipmentType.get("Rocket Launcher (LAW)"));
-
+    @DisplayName("declaring a standard weapon after the Disposable Weapon is impossible (the reported bug)")
+    void standardWeaponAfterDisposableIsBlocked() throws Exception {
+        ConvInfantry infantry = createInfantryWithDisposable();
+        WeaponMounted rifle = addStandardWeapon(infantry);
         declareAttack(infantry, disposableMount(infantry));
 
-        assertTrue(ComputeToHitIsImpossible.hasDeclaredDisposableAttack(game, infantry));
+        assertEquals(Messages.getString("WeaponAttackAction.DisposableReplacesStandard"), gateReason(infantry, rifle));
     }
 
     @Test
-    @DisplayName("a declared standard weapon attack is NOT counted as a Disposable Weapon attack")
-    void declaredStandardWeaponIsNotDisposable() throws Exception {
-        ConvInfantry infantry = createInfantry();
-        infantry.equipDisposableWeapon((InfantryWeapon) EquipmentType.get("Rocket Launcher (LAW)"));
+    @DisplayName("declaring the Disposable Weapon after a standard weapon is impossible (the already-working order)")
+    void disposableAfterStandardWeaponIsBlocked() throws Exception {
+        ConvInfantry infantry = createInfantryWithDisposable();
         WeaponMounted rifle = addStandardWeapon(infantry);
-
         declareAttack(infantry, rifle);
 
-        assertFalse(ComputeToHitIsImpossible.hasDeclaredDisposableAttack(game, infantry));
+        assertEquals(Messages.getString("WeaponAttackAction.DisposableOnly"),
+              gateReason(infantry, disposableMount(infantry)));
     }
 
     @Test
-    @DisplayName("a Disposable Weapon attack by another unit does not block this unit's standard weapons")
-    void disposableAttackByOtherUnitIsIgnored() {
-        ConvInfantry otherPlatoon = createInfantry();
-        otherPlatoon.equipDisposableWeapon((InfantryWeapon) EquipmentType.get("Rocket Launcher (LAW)"));
+    @DisplayName("a standard weapon is allowed when no Disposable Weapon attack has been declared")
+    void standardWeaponAloneIsAllowed() throws Exception {
+        ConvInfantry infantry = createInfantryWithDisposable();
+        WeaponMounted rifle = addStandardWeapon(infantry);
+
+        assertNull(gateReason(infantry, rifle));
+    }
+
+    @Test
+    @DisplayName("the Disposable Weapon is allowed when it is the unit's only declared attack")
+    void disposableAloneIsAllowed() {
+        ConvInfantry infantry = createInfantryWithDisposable();
+
+        assertNull(gateReason(infantry, disposableMount(infantry)));
+    }
+
+    @Test
+    @DisplayName("with the Disposable Weapon rule disabled, the gate never blocks an attack")
+    void ruleDisabledNeverBlocks() throws Exception {
+        setDisposableRule(false);
+        ConvInfantry infantry = createInfantryWithDisposable();
+        WeaponMounted rifle = addStandardWeapon(infantry);
+        declareAttack(infantry, disposableMount(infantry));
+
+        assertNull(gateReason(infantry, rifle));
+    }
+
+    @Test
+    @DisplayName("another unit's Disposable Weapon attack does not block this unit's standard weapon")
+    void otherUnitsDisposableDoesNotBlock() throws Exception {
+        ConvInfantry otherPlatoon = createInfantryWithDisposable();
         declareAttack(otherPlatoon, disposableMount(otherPlatoon));
 
         ConvInfantry infantry = createInfantry();
+        WeaponMounted rifle = addStandardWeapon(infantry);
 
-        assertFalse(ComputeToHitIsImpossible.hasDeclaredDisposableAttack(game, infantry));
+        assertNull(gateReason(infantry, rifle));
+    }
+
+    @Test
+    @DisplayName("an anti-'Mech leg attack is not gated here, so its own dedicated rules produce the reason")
+    void antiMekAttackIsNotGatedByDisposableRule() {
+        ConvInfantry infantry = createInfantryWithDisposable();
+        declareAttack(infantry, disposableMount(infantry));
+        WeaponType legAttack = (WeaponType) EquipmentType.get(Infantry.LEG_ATTACK);
+
+        assertNull(ComputeToHitIsImpossible.disposableWeaponGateReason(game, infantry, null, legAttack));
     }
 }

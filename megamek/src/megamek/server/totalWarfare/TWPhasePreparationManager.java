@@ -33,6 +33,8 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -183,7 +185,7 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 // demolition charge detonation) once for all their units, so collapse those to one turn per player
                 // before building the turn order.
                 if (phase.isPreEndDeclarations()) {
-                    gameManager.collapsePreEndPlayerWideTurns();
+                    collapsePreEndPlayerWideTurns();
                 }
                 gameManager.determineTurnOrder(phase);
                 // Guard the eligibility scan behind the level check so it only runs when [PreEnd] tracing is enabled.
@@ -338,6 +340,28 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * Collapses redundant pre-end declaration turns. A player makes their player-wide declarations (Nova networks,
+     * Variable Range Targeting, crew abandonment, minesweeper activation, demolition charge detonation) once for all
+     * their units through a single dialog, so they only need one turn for them - not one per qualifying unit.
+     * Infantry-vs-infantry combat is declared per unit and keeps its own turns. This keeps one selectable
+     * player-wide-only unit per player as the declarations representative and marks the rest done, so
+     * {@link TWGameManager#determineTurnOrder} generates a single declarations turn per player. Must run after
+     * {@link TWGameManager#setIneligible} and before {@link TWGameManager#determineTurnOrder}.
+     */
+    private void collapsePreEndPlayerWideTurns() {
+        Set<Integer> representativeChosen = new HashSet<>();
+        for (Entity entity : gameManager.getGame().getEntitiesVector()) {
+            if (!entity.isSelectableThisTurn() || entity.hasEntityScopedPreEndDeclaration()) {
+                continue;
+            }
+            // Selectable only for player-wide declarations: keep the first per player, collapse the rest to one turn.
+            if (!representativeChosen.add(entity.getOwnerId())) {
+                entity.setDone(true);
+            }
         }
     }
 }

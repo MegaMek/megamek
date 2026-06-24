@@ -92,7 +92,7 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
     private List<Entity> playerUnits;
     private final Map<Integer, JRadioButton> longModeButtons = new HashMap<>();
 
-    /** True once Apply sent at least one real mode change, so the caller can confirm a declaration was made. */
+    /** {@code true} once Apply sent at least one real mode change, so the caller can confirm a declaration was made. */
     private boolean applied;
 
     public VariableRangeTargetingDialog(JFrame parent, ClientGUI clientGUI) {
@@ -350,7 +350,8 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
     }
 
     /**
-     * @return true if Apply sent at least one Variable Range Targeting mode change this time the dialog was shown
+     * @return {@code true} if Apply sent at least one Variable Range Targeting mode change this time the dialog was
+     *       shown
      */
     public boolean wasApplied() {
         return applied;

@@ -97,7 +97,10 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
     private List<Entity> playerUnits;
     private final Map<Integer, JRadioButton> onModeButtons = new HashMap<>();
 
-    /** True once Apply sent at least one minesweeper mode change, so the caller can confirm a declaration was made. */
+    /**
+     * {@code true} once Apply sent at least one minesweeper mode change, so the caller can confirm a declaration was
+     * made.
+     */
     private boolean applied;
 
     public MinesweeperActivationDialog(JFrame parent, ClientGUI clientGUI) {
@@ -343,7 +346,7 @@ public class MinesweeperActivationDialog extends JDialog implements ActionListen
     }
 
     /**
-     * @return true if Apply sent at least one minesweeper mode change this time the dialog was shown
+     * @return {@code true} if Apply sent at least one minesweeper mode change this time the dialog was shown
      */
     public boolean wasApplied() {
         return applied;

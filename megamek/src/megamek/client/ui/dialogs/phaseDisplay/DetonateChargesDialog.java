@@ -271,11 +271,11 @@ public class DetonateChargesDialog extends JDialog implements ActionListener {
         boardView.repaint();
     }
 
-    /** True once Detonate announced at least one charge, so the caller can confirm a declaration was made. */
+    /** {@code true} once Detonate announced at least one charge, so the caller can confirm a declaration was made. */
     private boolean applied;
 
     /**
-     * @return true if Detonate announced at least one charge this time the dialog was shown
+     * @return {@code true} if Detonate announced at least one charge this time the dialog was shown
      */
     public boolean wasApplied() {
         return applied;

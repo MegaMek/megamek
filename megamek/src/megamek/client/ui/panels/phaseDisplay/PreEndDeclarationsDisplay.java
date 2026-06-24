@@ -110,7 +110,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     protected Targetable target;
 
     /**
-     * True once the local player has applied a player-wide declaration (Nova, Variable Targeting, abandon, charges,
+     * {@code true} once the local player applied a player-wide declaration (Nova, Variable Targeting, abandon, charges,
      * minesweeper) this turn. These send their data directly rather than queuing an attack, so this flag drives the
      * end-turn button to read "Done" instead of "Skip Turn" - otherwise the player gets no sign the declaration took.
      */
@@ -276,11 +276,11 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * @return true if the turn should be cancelled
      */
     private boolean checkNags() {
-        Entity ce = currentEntity();
+        Entity entity = currentEntity();
         // Only nag about un-declared infantry combat for a unit that could actually initiate it. A unit selected for an
         // end-phase declaration (Nova, abandonment, charges, minesweeper) sends its action through a dialog rather than
         // queuing an attack, so it ends its turn without a nag.
-        if (attacks.isEmpty() && (ce != null) && ce.canInitiateInfantryVsInfantryCombat()) {
+        if (attacks.isEmpty() && (entity != null) && entity.canInitiateInfantryVsInfantryCombat()) {
             String title = "Skip Turn?";
             String body = "You haven't initiated any infantry combat. Skip turn anyway?";
             return !clientgui.doYesNoDialog(title, body);  // User canceled
@@ -407,7 +407,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * Updates button states based on current game state
      */
     protected void updateButtons() {
-        Entity ce = game.getEntity(currentEntity);
+        Entity entity = game.getEntity(currentEntity);
 
         // The end-phase declarations are player-wide: their dialogs act on every eligible unit (or charge) the local
         // player owns, so they are enabled on the player's turn regardless of which unit is currently selected.
@@ -423,10 +423,10 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         setMinesweeperEnabled(minesweeper);
 
         // Initiate Infantry Combat is entity-scoped: it depends on the selected unit and target building.
-        boolean canInitiate = (ce instanceof Infantry inf)
-              && inf.canInitiateInfantryVsInfantryCombat()
+        boolean canInitiate = (entity instanceof Infantry infantry)
+              && infantry.canInitiateInfantryVsInfantryCombat()
               && target != null
-              && isValidBuildingTargetNoCombat(ce, target);
+              && isValidBuildingTargetNoCombat(entity, target);
         setInitiateInfantryCombatEnabled(canInitiate);
         updateDonePanel();
 

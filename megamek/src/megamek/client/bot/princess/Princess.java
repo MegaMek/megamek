@@ -2283,8 +2283,7 @@ public class Princess extends BotClient {
         try {
             initialize();
             Entity entity = getGame().getFirstEntity(getMyTurn());
-            LOGGER.debug("[PreEnd] bot calculatePreEndDeclarationsTurn: entity={}",
-                  (entity == null) ? "null" : entity.getShortName());
+            LOGGER.debug("[PreEnd] bot calculatePreEndDeclarationsTurn: entity={}", entity);
 
             // No selectable entity for this turn; end it so the phase can advance.
             if (entity == null) {

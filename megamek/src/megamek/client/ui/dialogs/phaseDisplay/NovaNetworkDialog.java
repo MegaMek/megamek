@@ -617,11 +617,11 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         logger.debug("Unlink action completed successfully");
     }
 
-    /** True once Apply sent at least one network change, so the caller can confirm a declaration was made. */
+    /** {@code true} once Apply sent at least one network change, so the caller can confirm a declaration was made. */
     private boolean applied;
 
     /**
-     * @return true if Apply sent at least one Nova network change this time the dialog was shown
+     * @return {@code true} if Apply sent at least one Nova network change this time the dialog was shown
      */
     public boolean wasApplied() {
         return applied;

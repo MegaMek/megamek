@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,7 +42,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 import megamek.MMConstants;
 import megamek.Version;
@@ -159,7 +158,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * Lazily-computed set of player ids that own at least one demolition charge. Computed on demand and cleared on
      * phase change, so the per-entity pre-end eligibility check is a constant-time lookup rather than a board scan per
-     * unit. Null means not yet computed.
+     * unit. {@code null} means not yet computed.
      */
     private transient Set<Integer> playerIdsWithDemolitionCharges = null;
 
@@ -996,11 +995,15 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public Set<Integer> getPlayerIdsWithDemolitionCharges() {
         if (playerIdsWithDemolitionCharges == null) {
-            playerIdsWithDemolitionCharges = getBoards().values().stream()
-                  .flatMap(board -> board.getBuildingsVector().stream())
-                  .flatMap(building -> building.getDemolitionCharges().stream())
-                  .map(charge -> charge.playerId)
-                  .collect(Collectors.toSet());
+            Set<Integer> ownerIds = new HashSet<>();
+            for (Board board : getBoards().values()) {
+                for (IBuilding building : board.getBuildingsVector()) {
+                    for (DemolitionCharge charge : building.getDemolitionCharges()) {
+                        ownerIds.add(charge.playerId);
+                    }
+                }
+            }
+            playerIdsWithDemolitionCharges = ownerIds;
         }
         return playerIdsWithDemolitionCharges;
     }

@@ -11340,10 +11340,10 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Checks whether this unit can announce abandonment of its crew in the End Phase. Abandonment is declared in the
-     * PREEND_DECLARATIONS phase. The base implementation returns false; unit types that support abandonment (Meks,
-     * vehicles, and escape pods) override this.
+     * PREEND_DECLARATIONS phase. The base implementation returns {@code false}; unit types that support abandonment
+     * (Meks, vehicles, and escape pods) override this.
      *
-     * @return true if this unit can announce crew abandonment
+     * @return {@code true} if this unit can announce crew abandonment
      */
     public boolean canAnnounceAbandon() {
         return false;
@@ -11365,10 +11365,10 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true if this unit's owner has a demolition charge set on any building, so the owner can announce its
-     * detonation in the End Phase (TO:AUE p.152). A demolition charge belongs to the player rather than a unit, so this
-     * is a player-wide condition: it grants any of the owner's units a pre-end declarations turn, which the turn
-     * collapse then reduces to one per player. Returns false off-game (e.g. unit construction).
+     * Returns {@code true} if this unit's owner has a demolition charge set on any building, so the owner can announce
+     * its detonation in the End Phase (TO:AUE p.152). A demolition charge belongs to the player rather than a unit, so
+     * this is a player-wide condition: it grants any of the owner's units a pre-end declarations turn, which the turn
+     * collapse then reduces to one per player. Returns {@code false} off-game (e.g. unit construction).
      */
     public boolean ownerHasDemolitionCharge() {
         if (game == null) {
@@ -11380,10 +11380,10 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true if this unit's pre-end declaration is made per unit (it needs its own turn), as opposed to the
-     * player-wide declarations (Nova networks, Variable Range Targeting, crew abandonment, minesweeper) that a player
-     * makes once for all their units through a single dialog. Used to collapse the player-wide turns to one per player
-     * while keeping the per-unit turns.
+     * Returns {@code true} if this unit's pre-end declaration is made per unit (it needs its own turn), as opposed to
+     * the player-wide declarations (Nova networks, Variable Range Targeting, crew abandonment, minesweeper) that a
+     * player makes once for all their units through a single dialog. Used to collapse the player-wide turns to one
+     * per player while keeping the per-unit turns.
      */
     public boolean hasEntityScopedPreEndDeclaration() {
         // Infantry-vs-infantry combat is declared per unit. (Bridge-Layer deployment, when merged, is also per unit.)

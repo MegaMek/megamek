@@ -353,8 +353,8 @@ class PreEndDeclarationsEligibilityTest {
     }
 
     /**
-     * Returns a real BipedMek configured so {@link BipedMek#canAbandon()} is true: prone, shut down, with a living crew
-     * and the vehicle eject/abandon option enabled.
+     * Returns a real BipedMek configured so {@link BipedMek#canAbandon()} is {@code true}: prone, shut down, with a
+     * living crew and the vehicle eject/abandon option enabled.
      */
     private BipedMek abandonReadyMek() {
         BipedMek mek = new BipedMek();
@@ -370,8 +370,8 @@ class PreEndDeclarationsEligibilityTest {
     }
 
     /**
-     * Returns a BipedMek spy with every pre-end declaration capability stubbed to false, so a single capability can be
-     * flipped on to test that {@link Entity#isEligibleForPreEndDeclarations()} reacts to it.
+     * Returns a BipedMek spy with every pre-end declaration capability stubbed to {@code false}, so a single
+     * capability can be flipped on to test that {@link Entity#isEligibleForPreEndDeclarations()} reacts to it.
      */
     private BipedMek eligibilitySpyAllFalse() {
         BipedMek mek = spy(new BipedMek());

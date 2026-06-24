@@ -291,11 +291,14 @@ public class AbandonUnitDialog extends JDialog implements ActionListener {
         boardView.repaint();
     }
 
-    /** True once Confirm announced at least one abandonment, so the caller can confirm a declaration was made. */
+    /**
+     * {@code true} once Confirm announced at least one abandonment, so the caller can confirm a declaration was
+     * made.
+     */
     private boolean applied;
 
     /**
-     * @return true if Confirm announced at least one unit abandonment this time the dialog was shown
+     * @return {@code true} if Confirm announced at least one unit abandonment this time the dialog was shown
      */
     public boolean wasApplied() {
         return applied;

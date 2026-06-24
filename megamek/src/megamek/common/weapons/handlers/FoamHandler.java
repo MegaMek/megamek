@@ -102,6 +102,7 @@ public class FoamHandler extends AmmoWeaponHandler {
 
     private void applyFoamToUnit(Entity entityTarget, Vector<Report> vPhaseReport) {
         entityTarget.setFluidCoating(FluidCoating.FLAME_RETARDANT_FOAM);
+        LOGGER.debug("[Fluid:Foam] foam-coated {}", entityTarget.getShortName());
 
         Report report = new Report(3404);
         report.subject = subjectId;
@@ -135,6 +136,8 @@ public class FoamHandler extends AmmoWeaponHandler {
         gameManager.sendChangedHex(target.getPosition(), boardId);
         board.removeInfernoFrom(target.getPosition());
         board.removeFlamerStartedFire(target.getPosition());
+        FluidFireSuppression.clearBuildingFire(game, gameManager, target.getPosition(), boardId, subjectId);
+        LOGGER.debug("[Fluid:Foam] extinguished fire in hex {}", target.getPosition().getBoardNum());
     }
 
     private void extinguishUnit(Entity entityTarget, Vector<Report> vPhaseReport) {
@@ -151,6 +154,7 @@ public class FoamHandler extends AmmoWeaponHandler {
         if (target instanceof Tank tank) {
             tank.extinguishAll();
         }
+        LOGGER.debug("[Fluid:Foam] doused all fires on {}", entityTarget.getShortName());
     }
 
     private void applyFoam(Vector<Report> vPhaseReport) {
@@ -161,6 +165,7 @@ public class FoamHandler extends AmmoWeaponHandler {
         }
         board.markFlameRetardantFoam(coords);
         gameManager.sendChangedHex(coords, target.getBoardId());
+        LOGGER.debug("[Fluid:Foam] foam-coated hex {}", coords.getBoardNum());
 
         Report report = new Report(3388);
         report.subject = subjectId;

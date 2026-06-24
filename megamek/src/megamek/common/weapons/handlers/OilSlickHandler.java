@@ -47,6 +47,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.FluidCoating;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Targetable;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -57,6 +58,8 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author The MegaMek Team
  */
 public class OilSlickHandler extends AmmoWeaponHandler {
+    private static final MMLogger LOGGER = MMLogger.create(OilSlickHandler.class);
+
     @Serial
     private static final long serialVersionUID = 4751095925582942501L;
 
@@ -88,6 +91,7 @@ public class OilSlickHandler extends AmmoWeaponHandler {
         // Oil Slick fired at a unit coats that unit, so it is easier to set alight wherever it goes
         // (TO:AUE p.174); the slick travels with the unit rather than pooling on the ground.
         entityTarget.setFluidCoating(FluidCoating.OIL_SLICK);
+        LOGGER.debug("[Fluid:OilSlick] oil-coated {}", entityTarget.getShortName());
 
         Report report = new Report(3382);
         report.subject = subjectId;
@@ -113,6 +117,7 @@ public class OilSlickHandler extends AmmoWeaponHandler {
         }
         board.markOilSlick(coords);
         gameManager.sendChangedHex(coords, boardId);
+        LOGGER.debug("[Fluid:OilSlick] oiled hex {}", coords.getBoardNum());
 
         Report report = new Report(3387);
         report.subject = subjectId;

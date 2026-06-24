@@ -41,8 +41,10 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.rolls.Roll;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -53,6 +55,7 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author The MegaMek Team
  */
 public final class FluidFireSuppression {
+    private static final MMLogger LOGGER = MMLogger.create(FluidFireSuppression.class);
 
     private FluidFireSuppression() {
     }
@@ -76,6 +79,19 @@ public final class FluidFireSuppression {
         Board board = game.getBoard(boardId);
         Hex hex = (board == null) ? null : board.getHex(coords);
         if (hex == null) {
+            LOGGER.debug("[Fluid:Extinguish] no hex at {} on board {} - skipping", coords, boardId);
+            return;
+        }
+
+        // Nothing to put out: report it rather than silently rolling against no fire.
+        if (!hex.containsTerrain(Terrains.FIRE)) {
+            LOGGER.debug("[Fluid:Extinguish] hex {} is not on fire - nothing to extinguish",
+                  coords.getBoardNum());
+            Report noFire = new Report(3542);
+            noFire.subject = subjectId;
+            noFire.add(coords.getBoardNum());
+            noFire.indent(2);
+            vPhaseReport.add(noFire);
             return;
         }
 
@@ -89,12 +105,17 @@ public final class FluidFireSuppression {
         attempt.indent(2);
         vPhaseReport.add(attempt);
 
-        if (diceRoll.getIntValue() >= neededRoll) {
+        boolean doused = diceRoll.getIntValue() >= neededRoll;
+        LOGGER.debug("[Fluid:Extinguish] hex {}: rolled {} vs {}+ -> {}",
+              coords.getBoardNum(), diceRoll.getIntValue(), neededRoll, doused ? "EXTINGUISHED" : "still burning");
+
+        if (doused) {
             hex.removeTerrain(Terrains.FIRE);
             hex.resetFireTurn();
             gameManager.sendChangedHex(coords, boardId);
             board.removeInfernoFrom(coords);
             board.removeFlamerStartedFire(coords);
+            clearBuildingFire(game, gameManager, coords, boardId, subjectId);
 
             Report extinguished = new Report(3540);
             extinguished.subject = subjectId;
@@ -102,5 +123,30 @@ public final class FluidFireSuppression {
             extinguished.indent(3);
             vPhaseReport.add(extinguished);
         }
+    }
+
+    /**
+     * Stops any building in the doused hex from burning. A building tracks its own burning state separately
+     * from the hex fire, and the engine never otherwise clears it, so without this the FireProcessor keeps
+     * eating the building's CF every fire phase even after the hex fire is out (TO:AUE pp.173-174).
+     *
+     * @param game        the game
+     * @param gameManager the game manager (used to broadcast the building change)
+     * @param coords      the doused hex
+     * @param boardId     the board the hex is on
+     * @param subjectId   the firing weapon's subject id (for logging context)
+     */
+    static void clearBuildingFire(Game game, TWGameManager gameManager, Coords coords, int boardId,
+          int subjectId) {
+        game.getBuildingAt(coords, boardId).ifPresent(building -> {
+            if (building.isBurning(coords)) {
+                building.setBurning(false, coords);
+                Vector<IBuilding> changed = new Vector<>();
+                changed.add(building);
+                gameManager.sendChangedBuildings(changed);
+                LOGGER.debug("[Fluid:Extinguish] cleared burning state on building {} at {} (subject {})",
+                      building.getName(), coords.getBoardNum(), subjectId);
+            }
+        });
     }
 }

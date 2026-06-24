@@ -47,6 +47,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -58,6 +59,8 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author The MegaMek Team
  */
 public class CorrosiveHandler extends AmmoWeaponHandler {
+    private static final MMLogger LOGGER = MMLogger.create(CorrosiveHandler.class);
+
     @Serial
     private static final long serialVersionUID = 6157212447692058194L;
 
@@ -105,6 +108,8 @@ public class CorrosiveHandler extends AmmoWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding building,
           int hits, int nCluster, int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, building, hits, nCluster, bldgAbsorbs);
+        LOGGER.debug("[Fluid:Corrosive] {}: applied {} immediate damage in {}-point cluster(s)",
+              entityTarget.getShortName(), hits, nCluster);
 
         // Queue the End-Phase corrosive damage once, only on a successful hit against a non-infantry target.
         if (!entityTarget.isConventionalInfantry() && !endPhaseDamageScheduled) {
@@ -117,6 +122,8 @@ public class CorrosiveHandler extends AmmoWeaponHandler {
             report.indent(2);
             report.add(delayedDamage);
             vPhaseReport.addElement(report);
+            LOGGER.debug("[Fluid:Corrosive] {}: queued {} corrosive damage for the End Phase",
+                  entityTarget.getShortName(), delayedDamage);
         }
     }
 }

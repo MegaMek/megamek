@@ -59,6 +59,7 @@ import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
+import megamek.common.units.Terrains;
 import megamek.common.LosEffects;
 import megamek.common.Player;
 import megamek.common.ToHitData;
@@ -2471,6 +2472,16 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         if ((weapon != null) && (weapon.getLinked() != null)
               && (weapon.getLinked().getType() instanceof AmmoType ammoType)) {
             EnumSet<AmmoType.Munitions> munitionType = ammoType.getMunitionType();
+            // A fire-suppressant fluid (water, coolant, foam) fired at a hex or building that is on fire puts
+            // the fire out rather than making a no-op weapon attack, matching the intuitive "spray the fire"
+            // action (TO:AUE pp.173-174). Only auto-extinguish when no enemy is present, so attacking an
+            // enemy standing in the hex still works.
+            Hex targetHex = game.getBoard(boardId).getHex(pos);
+            boolean hexOnFire = (targetHex != null) && targetHex.containsTerrain(Terrains.FIRE);
+            if (ammoType.isFireSuppressantFluid() && hexOnFire
+                  && game.getEnemyEntities(pos, boardId, currentEntity()).isEmpty()) {
+                return new HexTarget(pos, boardId, Targetable.TYPE_HEX_EXTINGUISH);
+            }
             // Mek mortar flares should default to deliver flare
             if ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)
                   && (munitionType.contains(AmmoType.Munitions.M_FLARE))) {

@@ -45,6 +45,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -56,6 +57,8 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author The MegaMek Team
  */
 public class PaintObscurantHandler extends AmmoWeaponHandler {
+    private static final MMLogger LOGGER = MMLogger.create(PaintObscurantHandler.class);
+
     @Serial
     private static final long serialVersionUID = -3477345021151736742L;
 
@@ -94,6 +97,8 @@ public class PaintObscurantHandler extends AmmoWeaponHandler {
             failure.subject = subjectId;
             failure.indent(3);
             vPhaseReport.add(failure);
+            LOGGER.debug("[Fluid:Paint] {}: sensor-foul rolled {} vs {} -> no penalty applied",
+                  entityTarget.getShortName(), diceRoll.getIntValue(), OBSCURANT_TARGET_NUMBER);
             return;
         }
 
@@ -104,12 +109,18 @@ public class PaintObscurantHandler extends AmmoWeaponHandler {
             applied.add(entityTarget.getObscurantToHitPenalty());
             applied.indent(3);
             vPhaseReport.add(applied);
+            LOGGER.debug("[Fluid:Paint] {}: sensor-foul rolled {} vs {} -> penalty applied, now +{} to-hit",
+                  entityTarget.getShortName(), diceRoll.getIntValue(), OBSCURANT_TARGET_NUMBER,
+                  entityTarget.getObscurantToHitPenalty());
         } else {
             Report maxed = new Report(3396);
             maxed.subject = subjectId;
             maxed.addDesc(entityTarget);
             maxed.indent(3);
             vPhaseReport.add(maxed);
+            LOGGER.debug("[Fluid:Paint] {}: sensor-foul rolled {} vs {} -> already at maximum penalty +{}",
+                  entityTarget.getShortName(), diceRoll.getIntValue(), OBSCURANT_TARGET_NUMBER,
+                  entityTarget.getObscurantToHitPenalty());
         }
     }
 }

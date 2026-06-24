@@ -46,6 +46,7 @@ import megamek.common.units.IBuilding;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.flamers.clan.CLHeavyFlamer;
 import megamek.common.weapons.flamers.innerSphere.ISHeavyFlamer;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -56,6 +57,8 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author The MegaMek Team
  */
 public class InfernoFuelHandler extends AmmoWeaponHandler {
+    private static final MMLogger LOGGER = MMLogger.create(InfernoFuelHandler.class);
+
     @Serial
     private static final long serialVersionUID = -2295861876703866443L;
 
@@ -88,6 +91,8 @@ public class InfernoFuelHandler extends AmmoWeaponHandler {
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding building,
           int hits, int nCluster, int bldgAbsorbs) {
+        LOGGER.debug("[Fluid:InfernoFuel] delivered {} inferno missile(s) to {}",
+              infernoMissiles(), entityTarget.getShortName());
         vPhaseReport.addAll(gameManager.deliverInfernoMissiles(attackingEntity, target, infernoMissiles(),
               weapon.getCalledShot().getCall()));
     }
@@ -95,6 +100,8 @@ public class InfernoFuelHandler extends AmmoWeaponHandler {
     @Override
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport, IBuilding bldg, int hits) {
         // Targeting a hex with Inferno Fuel sets it ablaze exactly like Inferno SRMs landing there.
+        LOGGER.debug("[Fluid:InfernoFuel] delivered {} inferno missile(s) to {}",
+              infernoMissiles(), target.getDisplayName());
         vPhaseReport.addAll(gameManager.deliverInfernoMissiles(attackingEntity, target, infernoMissiles(),
               weapon.getCalledShot().getCall()));
     }

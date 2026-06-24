@@ -41,6 +41,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -52,6 +53,7 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author The MegaMek Team
  */
 public final class FluidMunitionHandlers {
+    private static final MMLogger LOGGER = MMLogger.create(FluidMunitionHandlers.class);
 
     private FluidMunitionHandlers() {
     }
@@ -73,6 +75,16 @@ public final class FluidMunitionHandlers {
     public static AttackHandler forFluidGunOrSprayer(AmmoType ammoType, ToHitData toHit, WeaponAttackAction waa,
           Game game, TWGameManager manager) throws EntityLoadingException {
         EnumSet<Munitions> munitions = ammoType.getMunitionType();
+        AttackHandler handler = selectHandler(munitions, toHit, waa, game, manager);
+        LOGGER.debug("[Fluid:Dispatch] {} ammo -> {}", ammoType.getName(),
+              (handler == null) ? "no fluid handler (caller resolves Inferno Fuel / default attack)"
+                    : handler.getClass().getSimpleName());
+        return handler;
+    }
+
+    @Nullable
+    private static AttackHandler selectHandler(EnumSet<Munitions> munitions, ToHitData toHit,
+          WeaponAttackAction waa, Game game, TWGameManager manager) throws EntityLoadingException {
         if (munitions.contains(Munitions.M_COOLANT)) {
             return new FluidGunCoolHandler(toHit, waa, game, manager);
         }

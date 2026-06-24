@@ -52,6 +52,7 @@ import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -63,6 +64,8 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author The MegaMek Team
  */
 public class WaterHandler extends AmmoWeaponHandler {
+    private static final MMLogger LOGGER = MMLogger.create(WaterHandler.class);
+
     @Serial
     private static final long serialVersionUID = 8267429735710097183L;
 
@@ -111,6 +114,9 @@ public class WaterHandler extends AmmoWeaponHandler {
             if ((knockedOut > 0) && (entityTarget instanceof Infantry infantry)) {
                 infantry.addKnockedOutTroopers(knockedOut);
             }
+            LOGGER.debug("[Fluid:Water] {}: {} trooper(s) knocked out (recoverable), {} now have {} total",
+                  entityTarget.getShortName(), knockedOut, entityTarget.getShortName(),
+                  entityTarget.getTotalInternal());
             return;
         }
 
@@ -128,12 +134,15 @@ public class WaterHandler extends AmmoWeaponHandler {
             report.indent(3);
             Roll diceRoll = Compute.rollD6(2);
             report.add(diceRoll);
-            if (diceRoll.getIntValue() == 12) {
+            boolean doused = diceRoll.getIntValue() == 12;
+            if (doused) {
                 report.choose(true);
                 entityTarget.infernos.clear();
             } else {
                 report.choose(false);
             }
+            LOGGER.debug("[Fluid:Water] {}: inferno-fire douse rolled {} vs 12 -> {}",
+                  entityTarget.getShortName(), diceRoll.getIntValue(), doused ? "OUT" : "still burning");
             vPhaseReport.add(report);
         } else if ((target instanceof Tank tank) && tank.isOnFire()) {
             // Ordinary (non-Inferno) fires are doused by Water on a roll of 3+ (TO:AUE p.174).
@@ -143,12 +152,15 @@ public class WaterHandler extends AmmoWeaponHandler {
             report.indent(3);
             Roll diceRoll = Compute.rollD6(2);
             report.add(diceRoll);
-            if (diceRoll.getIntValue() >= 3) {
+            boolean doused = diceRoll.getIntValue() >= 3;
+            if (doused) {
                 report.choose(true);
                 tank.extinguishAll();
             } else {
                 report.choose(false);
             }
+            LOGGER.debug("[Fluid:Water] {}: vehicle-fire douse rolled {} vs 3 -> {}",
+                  entityTarget.getShortName(), diceRoll.getIntValue(), doused ? "OUT" : "still burning");
             vPhaseReport.add(report);
         }
 
@@ -162,6 +174,8 @@ public class WaterHandler extends AmmoWeaponHandler {
             report.choose(false);
             vPhaseReport.add(report);
             entityTarget.coolFromExternal += cooling;
+            LOGGER.debug("[Fluid:Water] cooled {} by {} heat this turn (pending external cooling now {})",
+                  entityTarget.getShortName(), cooling, entityTarget.coolFromExternal);
         }
 
         // Water can wash Paint/Obscurant sensor fouling off a unit on a 2D6 roll of 9+ (TO:AUE p.174).
@@ -173,13 +187,16 @@ public class WaterHandler extends AmmoWeaponHandler {
             washReport.add(washRoll);
             washReport.indent(2);
             vPhaseReport.add(washReport);
-            if (washRoll.getIntValue() >= 9) {
+            boolean washedOff = washRoll.getIntValue() >= 9;
+            if (washedOff) {
                 entityTarget.clearObscurantToHitPenalty();
                 Report cleared = new Report(3399);
                 cleared.subject = subjectId;
                 cleared.indent(3);
                 vPhaseReport.add(cleared);
             }
+            LOGGER.debug("[Fluid:Water] {}: obscurant wash rolled {} vs 9 -> {}",
+                  entityTarget.getShortName(), washRoll.getIntValue(), washedOff ? "CLEARED" : "still fouled");
         }
     }
 }

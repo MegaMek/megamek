@@ -369,16 +369,16 @@ class ComputeToHitIsImpossible {
         // Invalid Target Reasons
 
         // a friendly unit can never be the target of a direct attack.
-        // but we do allow vehicle flamers to cool. Also swarm missile secondary targets
-        // and strafing are exempt.
+        // but we do allow fire-suppressant fluids (coolant, water, flame-retardant foam) to cool or put
+        // out fires on friendly units (TO:AUE pp.173-174). Also swarm missile secondary targets and
+        // strafing are exempt.
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE) &&
               !isStrafing &&
               !exchangeSwarmTarget) {
-            if (entityTarget != null && !entityTarget.getOwner().isEnemyOf(attacker.getOwner())) {
-                if (!(usesAmmo && ammoType != null && (ammoType.getMunitionType()
-                      .contains(AmmoType.Munitions.M_COOLANT)))) {
-                    return Messages.getString("WeaponAttackAction.NoFriendlyTarget");
-                }
+            boolean fireSuppressantFluid = usesAmmo && (ammoType != null) && ammoType.isFireSuppressantFluid();
+            if ((entityTarget != null) && !entityTarget.getOwner().isEnemyOf(attacker.getOwner())
+                  && !fireSuppressantFluid) {
+                return Messages.getString("WeaponAttackAction.NoFriendlyTarget");
             }
         }
 

@@ -52,12 +52,15 @@ import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.flamers.clan.CLHeavyFlamer;
 import megamek.common.weapons.flamers.innerSphere.ISHeavyFlamer;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks Created on Sep 23, 2004
  */
 public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
+    private static final MMLogger LOGGER = MMLogger.create(VehicleFlamerCoolHandler.class);
+
     @Serial
     private static final long serialVersionUID = 4856089237895318515L;
 
@@ -107,12 +110,15 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
             Roll diceRoll = Compute.rollD6(2);
             report.add(diceRoll);
 
-            if (diceRoll.getIntValue() == 12) {
+            boolean doused = diceRoll.getIntValue() == 12;
+            if (doused) {
                 report.choose(true);
                 entityTarget.infernos.clear();
             } else {
                 report.choose(false);
             }
+            LOGGER.debug("[Fluid:Coolant] {}: inferno-fire douse rolled {} vs 12 -> {}",
+                  entityTarget.getShortName(), diceRoll.getIntValue(), doused ? "OUT" : "still burning");
             vPhaseReport.add(report);
         } else if ((target instanceof Tank tank) && tank.isOnFire()) {
             // Ordinary (non-Inferno) fires are doused by coolant on a roll of 4+ (TO:AUE p.173).
@@ -123,12 +129,15 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
             Roll diceRoll = Compute.rollD6(2);
             report.add(diceRoll);
 
-            if (diceRoll.getIntValue() >= 4) {
+            boolean doused = diceRoll.getIntValue() >= 4;
+            if (doused) {
                 report.choose(true);
                 tank.extinguishAll();
             } else {
                 report.choose(false);
             }
+            LOGGER.debug("[Fluid:Coolant] {}: vehicle-fire douse rolled {} vs 4 -> {}",
+                  entityTarget.getShortName(), diceRoll.getIntValue(), doused ? "OUT" : "still burning");
             vPhaseReport.add(report);
         }
 
@@ -143,6 +152,8 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
             report.choose(false);
             vPhaseReport.add(report);
             entityTarget.coolFromExternal += cooling;
+            LOGGER.debug("[Fluid:Coolant] cooled {} by {} heat this turn (pending external cooling now {})",
+                  entityTarget.getShortName(), cooling, entityTarget.coolFromExternal);
         }
     }
 

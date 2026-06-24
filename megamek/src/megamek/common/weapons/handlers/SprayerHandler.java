@@ -44,6 +44,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -55,6 +56,8 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author The MegaMek Team
  */
 public class SprayerHandler extends AmmoWeaponHandler {
+    private static final MMLogger LOGGER = MMLogger.create(SprayerHandler.class);
+
     @Serial
     private static final long serialVersionUID = -3097044328957258071L;
 
@@ -72,6 +75,8 @@ public class SprayerHandler extends AmmoWeaponHandler {
         super.useAmmo();
         if ((ammo != null) && (ammo.getBaseShotsLeft() > 0)) {
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
+            LOGGER.debug("[Fluid:Sprayer] consumed 2 shots (Sprayer half-shot rate); {} shots remaining",
+                  ammo.getBaseShotsLeft());
         }
     }
 
@@ -92,6 +97,8 @@ public class SprayerHandler extends AmmoWeaponHandler {
             damage /= 2;
         }
         damage = applyGlancingBlowModifier(damage, true);
+        LOGGER.debug("[Fluid:Sprayer] {}: infantry burst-fire attack applied {} damage",
+              target.getDisplayName(), (int) damage);
         return (int) damage;
     }
 }

@@ -5568,14 +5568,15 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Adds heat to this turn's {@link #heatBuildup} and records the contribution under a source label so it can be
-     * shown as an itemized breakdown on the heat-phase report. Negative amounts (e.g. cooling) are supported;
-     * contributions sharing a label are summed.
+     * Adjusts this turn's running {@link #heatBuildup} by a signed amount and records the contribution under a source
+     * label so it can be shown as an itemized breakdown on the heat-phase report. Positive amounts come from heat
+     * sources; negative amounts represent cooling or reductions. Contributions sharing a label are summed.
      *
-     * @param heat   the signed heat to add to the buildup (may be negative for cooling or reductions)
+     * @param heat   the signed amount to adjust the running heat buildup by (positive for heat sources, negative for
+     *               cooling or reductions)
      * @param reason a short human-readable source label, e.g. "Movement (Running)" or "Medium Laser"
      */
-    public void addHeatBuildup(int heat, String reason) {
+    public void changeHeatBuildup(int heat, String reason) {
         heatBuildup += heat;
         getHeatBreakdown().addBuildup(heat, reason);
     }
@@ -5585,9 +5586,6 @@ public abstract class Entity extends TurnOrdered
      *       Heat Phase report's "gains N heat" / "sinks N heat" breakdown tooltips.
      */
     public HeatBreakdown getHeatBreakdown() {
-        if (heatBreakdown == null) {
-            heatBreakdown = new HeatBreakdown();
-        }
         return heatBreakdown;
     }
 

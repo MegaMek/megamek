@@ -38,6 +38,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import megamek.common.Messages;
+
 /**
  * Itemized record of how a unit's heat was built up and dissipated during a single turn, used to give the Heat Phase
  * report (report 5035) a hover/click breakdown of its "gains N heat" and "sinks N heat" values.
@@ -128,11 +130,11 @@ public class HeatBreakdown implements Serializable {
      *
      * @param reportedTotal the heat-buildup total shown on the report (used to reconcile un-itemized heat)
      *
-     * @return the tooltip text, or null if nothing was itemized this turn
+     * @return the tooltip text, or an empty string if nothing was itemized this turn
      */
     public String buildupTooltip(int reportedTotal) {
         if (buildup.isEmpty()) {
-            return null;
+            return "";
         }
         StringBuilder tooltip = new StringBuilder();
         int tracked = 0;
@@ -152,7 +154,7 @@ public class HeatBreakdown implements Serializable {
             }
             tooltip.append(": ").append(heat > 0 ? "+" : "").append(heat);
             if ((count > 1) && (heat % count == 0)) {
-                tooltip.append(" (").append(heat / count).append(" each)");
+                tooltip.append(" (").append(Messages.getString("HeatBreakdown.each", heat / count)).append(")");
             }
         }
         int remainder = reportedTotal - tracked;
@@ -160,9 +162,9 @@ public class HeatBreakdown implements Serializable {
             if (tooltip.length() > 0) {
                 tooltip.append(", ");
             }
-            tooltip.append("Other: ").append(remainder > 0 ? "+" : "").append(remainder);
+            tooltip.append(Messages.getString("HeatBreakdown.other")).append(": ").append(remainder > 0 ? "+" : "").append(remainder);
         }
-        return tooltip.isEmpty() ? null : tooltip.toString();
+        return tooltip.toString();
     }
 
     /**
@@ -170,11 +172,11 @@ public class HeatBreakdown implements Serializable {
      * Submerged: 2, Radical heat sink: 3"). The figures are the unit's dissipation capacity by source; a cool unit may
      * not use all of it.
      *
-     * @return the tooltip text, or null if nothing recorded dissipation this turn
+     * @return the tooltip text, or an empty string if nothing recorded dissipation this turn
      */
     public String dissipationTooltip() {
         if (dissipation.isEmpty()) {
-            return null;
+            return "";
         }
         StringBuilder tooltip = new StringBuilder();
         for (Map.Entry<String, Integer> contribution : dissipation.entrySet()) {
@@ -186,6 +188,6 @@ public class HeatBreakdown implements Serializable {
             }
             tooltip.append(contribution.getKey()).append(": ").append(contribution.getValue());
         }
-        return tooltip.isEmpty() ? null : tooltip.toString();
+        return tooltip.toString();
     }
 }

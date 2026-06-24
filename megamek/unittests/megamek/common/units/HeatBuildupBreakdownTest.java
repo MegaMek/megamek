@@ -33,7 +33,6 @@
 package megamek.common.units;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -64,10 +63,10 @@ class HeatBuildupBreakdownTest {
     @Test
     void tracksTotalCountAndItemizedContributions() {
         BipedMek mek = new BipedMek();
-        mek.addHeatBuildup(2, "Movement (Running)");
-        mek.addHeatBuildup(10, "PPC");
-        mek.addHeatBuildup(10, "PPC");
-        mek.addHeatBuildup(-9, "Cooling (water/coolant/etc.)");
+        mek.changeHeatBuildup(2, "Movement (Running)");
+        mek.changeHeatBuildup(10, "PPC");
+        mek.changeHeatBuildup(10, "PPC");
+        mek.changeHeatBuildup(-9, "Cooling (water/coolant/etc.)");
 
         assertEquals(13, mek.heatBuildup, "The running total is the signed sum of every contribution");
 
@@ -110,14 +109,14 @@ class HeatBuildupBreakdownTest {
     @Test
     void emptyBreakdownYieldsNoTooltip() {
         HeatBreakdown breakdown = new HeatBreakdown();
-        assertNull(breakdown.buildupTooltip(0), "No tracked buildup means no tooltip");
-        assertNull(breakdown.dissipationTooltip(), "No tracked dissipation means no tooltip");
+        assertEquals("", breakdown.buildupTooltip(0), "No tracked buildup means an empty tooltip");
+        assertEquals("", breakdown.dissipationTooltip(), "No tracked dissipation means an empty tooltip");
     }
 
     @Test
     void clearEmptiesBothBreakdowns() {
         BipedMek mek = new BipedMek();
-        mek.addHeatBuildup(5, "Engine hits");
+        mek.changeHeatBuildup(5, "Engine hits");
         mek.getHeatBreakdown().addDissipation(10, "Heat sinks");
 
         mek.clearHeatBreakdown();
@@ -128,9 +127,9 @@ class HeatBuildupBreakdownTest {
     @Test
     void zeroOrUnlabeledHeatChangesTheTotalButIsNotItemized() {
         BipedMek mek = new BipedMek();
-        mek.addHeatBuildup(0, "No-op");
-        mek.addHeatBuildup(5, null);
-        mek.addHeatBuildup(4, "   ");
+        mek.changeHeatBuildup(0, "No-op");
+        mek.changeHeatBuildup(5, null);
+        mek.changeHeatBuildup(4, "   ");
 
         assertEquals(9, mek.heatBuildup, "Heat still accrues even when no usable source label is given");
         assertTrue(mek.getHeatBreakdown().buildup().isEmpty(),
@@ -140,8 +139,8 @@ class HeatBuildupBreakdownTest {
     @Test
     void breakdownSurvivesSerialization() throws Exception {
         BipedMek mek = new BipedMek();
-        mek.addHeatBuildup(2, "Movement (Walking)");
-        mek.addHeatBuildup(8, "PPC");
+        mek.changeHeatBuildup(2, "Movement (Walking)");
+        mek.changeHeatBuildup(8, "PPC");
         mek.getHeatBreakdown().addDissipation(10, "Heat sinks");
 
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();

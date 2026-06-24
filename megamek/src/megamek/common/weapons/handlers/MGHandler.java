@@ -129,7 +129,7 @@ public class MGHandler extends AmmoWeaponHandler {
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (weapon.isRapidFire()) {
-                weaponEntity.addHeatBuildup(nRapidDamHeatPerHit, weapon.getName());
+                weaponEntity.changeHeatBuildup(nRapidDamHeatPerHit, weapon.getName());
             } else {
                 super.addHeat();
             }

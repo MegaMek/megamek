@@ -91,7 +91,7 @@ public class GifWriter {
     }
 
     private OutputStream outputStream = null;
-    private int[] rgbData = null;
+    private int[] reusableRgbBuffer = null;
 
     /**
      * Appends a frame to the gif.
@@ -106,8 +106,9 @@ public class GifWriter {
         // Reuse the pixel buffer across frames. Frame dimensions are fixed after the first frame
         // (ensureImageSize enforces this), so the same int[] is valid for every frame and avoids
         // allocating a full width*height array per frame on this hot path.
-        rgbData = image.getRGB(START_OFFSET, START_OFFSET, width, height, rgbData, START_OFFSET, width);
-        getEncoder().addImage(rgbData, width, getImageOptions(duration));
+        reusableRgbBuffer = image.getRGB(START_OFFSET, START_OFFSET, width, height, reusableRgbBuffer,
+              START_OFFSET, width);
+        getEncoder().addImage(reusableRgbBuffer, width, getImageOptions(duration));
         LOGGER.debug("Appended frame with duration {} ms, image size: {}x{}", duration, width, height);
     }
 

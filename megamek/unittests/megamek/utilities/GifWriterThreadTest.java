@@ -33,6 +33,7 @@
 
 package megamek.utilities;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -89,6 +90,7 @@ class GifWriterThreadTest {
             // forceInterrupt = true skips the interactive save dialog in the thread's shutdown path.
             thread.stopThread(true);
             thread.join(5000);
+            assertFalse(thread.isAlive(), "GifWriterThread should terminate within the join timeout");
         }
     }
 }

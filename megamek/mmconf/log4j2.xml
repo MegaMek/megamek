@@ -83,6 +83,66 @@
               <AppenderRef ref="MegaMekLog" />
           </Logger>
         -->
+        <!--
+          Trench/Fieldworks (dig-in and fortify) diagnostics, silent by default (parent "megamek" logger at
+          info). All emit [Fortify]-tagged lines. Uncomment to trace: the to-hit +2/+1 cover decision
+          (ComputeTerrainMods - answers "why isn't the dug-in bonus applying?"); the dig-in/fortify damage
+          extension and stage transitions (Infantry, Tank); move-step legality and the equipment gate
+          (MoveStep, MovePathHandler); and fortify completion / deploy-phase placement (TWGameManager, which
+          is also listed in the sensor block above). Then grep logs/megamek.log for "[Fortify]".
+
+          <Logger name="megamek.common.actions.compute.ComputeTerrainMods" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.common.units.Infantry" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.common.units.Tank" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.common.moves.MoveStep" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.server.totalWarfare.MovePathHandler" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
+          Princess movement-decision loggers, silent by default (parent "megamek.client.bot"
+          logger at error). Candidate-path data with scoring columns (isSprinting,
+          sprintExposurePenalty, sprintThreatEnemyId, ...) is always written as TSV to
+          logs/bot_path_ranker.log by the BotLogger above. To also log the per-unit sprint
+          decision summary to logs/megamek.log, uncomment the PathRanker logger below. The
+          BasicPathRanker logger additionally emits the full per-path scoring formula with
+          sprint threat detail, but only at trace level, which also logs per-hex hazard
+          checks and is extremely verbose - use it for short test games only.
+
+          <Logger name="megamek.client.bot.princess.PathRanker" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.client.bot.princess.BasicPathRanker" level="trace" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
+          Bridge-Building Engineers diagnostics (TO:AUE). All messages are tagged [BuildBridge]; grep
+          logs/megamek.log for that tag to follow the whole feature flow. MovementDisplay logs why the
+          Build Bridge button is enabled/disabled per condition; ConvInfantry logs build state transitions;
+          MoveStep logs why a declared BUILD_BRIDGE step was rejected (note: MoveStep at debug also emits
+          climb/facing trace messages during normal movement, which is why these are OFF by default).
+          Uncomment the loggers below to diagnose; leave them commented out for normal play.
+        -->
+        <!--
+        <Logger name="megamek.client.ui.panels.phaseDisplay.MovementDisplay" level="debug" additivity="false">
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
+        <Logger name="megamek.common.units.ConvInfantry" level="debug" additivity="false">
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
+        <Logger name="megamek.common.moves.MoveStep" level="debug" additivity="false">
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
+        -->
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

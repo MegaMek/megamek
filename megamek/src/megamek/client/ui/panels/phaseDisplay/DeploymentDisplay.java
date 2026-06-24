@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2006 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -67,6 +67,7 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
+import megamek.common.Hex;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.bays.Bay;
@@ -87,6 +88,8 @@ import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.Infantry;
+import megamek.common.units.Tank;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
@@ -105,6 +108,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         DEPLOY_UNLOAD("deployUnload"),
         DEPLOY_REMOVE("deployRemove"),
         DEPLOY_ASSAULT_DROP("assaultDrop"),
+        DEPLOY_HULL_DOWN("deployHullDown"),
         DEPLOY_DOCK("deployDock");
 
         public final String cmd;
@@ -185,7 +189,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         /** Entity cannot deploy on this board type (e.g., space unit on ground board) */
         WRONG_BOARD_TYPE,
         /** Coordinates are outside the allowed deployment area */
-        OUTSIDE_DEPLOYMENT_AREA
+        OUTSIDE_DEPLOYMENT_AREA,
+        /** A hidden unit cannot deploy onto a fortified hex (the fortification would reveal the position) */
+        HIDDEN_IN_FORTIFIED,
+        /** A vehicle set to deploy hull-down must start in a fortified hex and must not be a Large Vehicle */
+        HULL_DOWN_NEEDS_FORTIFIED
     }
 
     /**
@@ -326,6 +334,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             assaultDropPreference = false;
         }
 
+        // Vehicles may deploy hull down (TO:AR p.19) onto a fortified hex. Offer a toggle so a player who set a
+        // vehicle to deploy hull-down can turn it off when there is no fortified hex to deploy into.
+        boolean hullDownOption = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
+        boolean canToggleHullDown = (entity instanceof Tank deployingVehicle)
+              && deployingVehicle.isHullDownCapable() && hullDownOption;
+        setHullDownEnabled(canToggleHullDown);
+        updateHullDownButtonText(entity);
+
         setLoadEnabled(!getLoadableEntities().isEmpty());
         setUnloadEnabled(!entity.getLoadedUnits().isEmpty());
 
@@ -379,6 +396,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         setLoadEnabled(false);
         setUnloadEnabled(false);
         setAssaultDropEnabled(false);
+        setHullDownEnabled(false);
     }
 
     private void setButtonEnabled(DeployCommand cmd, boolean enabled) {
@@ -586,6 +604,20 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (!(board.isLegalDeployment(coords, entity) || assaultDropPreference)) {
             return BoardValidationResult.OUTSIDE_DEPLOYMENT_AREA;
         }
+        // A hidden unit cannot start in a fortified hex - the fortification is visible terrain that would give
+        // the position away. (A unit may, however, deploy both dug in and hidden in concealing terrain.)
+        Hex deployHex = board.getHex(coords);
+        if (entity.isHidden() && (deployHex != null) && deployHex.containsTerrain(Terrains.FORTIFIED)) {
+            return BoardValidationResult.HIDDEN_IN_FORTIFIED;
+        }
+        // A vehicle set to deploy hull-down must start in a fortified ("infantry-built") hex; only that terrain lets
+        // a vehicle take cover, and Large Vehicles cannot use it at all (TO:AR p.19).
+        if ((entity instanceof Tank deployingVehicle) && entity.isHullDown()) {
+            boolean fortifiedHex = (deployHex != null) && deployHex.containsTerrain(Terrains.FORTIFIED);
+            if (deployingVehicle.isLargeVehicleForHullDown() || !fortifiedHex) {
+                return BoardValidationResult.HULL_DOWN_NEEDS_FORTIFIED;
+            }
+        }
         return BoardValidationResult.VALID;
     }
 
@@ -714,6 +746,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             } else if (validationResult == BoardValidationResult.OUTSIDE_DEPLOYMENT_AREA) {
                 showOutsideDeployAreaMessage();
                 return;
+            } else if (validationResult == BoardValidationResult.HIDDEN_IN_FORTIFIED) {
+                showHiddenInFortifiedMessage();
+                return;
+            } else if (validationResult == BoardValidationResult.HULL_DOWN_NEEDS_FORTIFIED) {
+                showHullDownNeedsFortifiedMessage();
+                return;
             }
 
             if (!board.isSpace()) {
@@ -814,6 +852,16 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void showOutsideDeployAreaMessage() {
         String msg = Messages.getString("DeploymentDisplay.outsideDeployArea");
         clientgui.addToast(ToastLevel.ERROR, msg);
+    }
+
+    private void showHiddenInFortifiedMessage() {
+        String msg = Messages.getString("DeploymentDisplay.hiddenInFortified");
+        clientgui.addToast(ToastLevel.WARNING, msg);
+    }
+
+    private void showHullDownNeedsFortifiedMessage() {
+        String msg = Messages.getString("DeploymentDisplay.hullDownNeedsFortified");
+        clientgui.addToast(ToastLevel.WARNING, msg);
     }
 
     private void showCannotDeployHereMessage(Coords coords) {
@@ -1028,7 +1076,23 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 buttons.get(DeployCommand.DEPLOY_ASSAULT_DROP)
                       .setText(Messages.getString("DeploymentDisplay.assaultDrop"));
             }
+        } else if (actionCmd.equals(DeployCommand.DEPLOY_HULL_DOWN.getCmd())) {
+            Entity entity = currentEntity();
+            if (entity != null) {
+                entity.setHullDown(!entity.isHullDown());
+                updateHullDownButtonText(entity);
+                // Sync the toggle so the server applies the chosen state when the unit deploys.
+                clientgui.getClient().sendUpdateEntity(entity);
+                clientgui.getUnitDisplay().displayEntity(entity);
+            }
         }
+    }
+
+    /** Sets the Hull Down deploy button label to reflect the entity's current hull-down state. */
+    private void updateHullDownButtonText(Entity entity) {
+        buttons.get(DeployCommand.DEPLOY_HULL_DOWN).setText(Messages.getString(entity.isHullDown()
+              ? "DeploymentDisplay.deployHullDownOff"
+              : "DeploymentDisplay.deployHullDown"));
     }
 
     @Override
@@ -1126,6 +1190,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void setAssaultDropEnabled(boolean enabled) {
         buttons.get(DeployCommand.DEPLOY_ASSAULT_DROP).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_ASSAULT_DROP.getCmd(), enabled);
+    }
+
+    private void setHullDownEnabled(boolean enabled) {
+        buttons.get(DeployCommand.DEPLOY_HULL_DOWN).setEnabled(enabled);
     }
 
     /**

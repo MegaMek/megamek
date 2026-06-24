@@ -19,13 +19,13 @@ jobs:
 
     steps:
       - name: Checkout Data Repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: megamek/mm-data
           path: mm-data
 
       - name: "Check out MegaMek"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: megamek
 
@@ -50,7 +50,7 @@ jobs:
           path: ./megamek/megamek/build/reports/
 
       - name: CodeCov.io Coverage Report
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           directory: ./megamek/megamek/build/reports/jacoco/test
           fail_ci_if_error: false

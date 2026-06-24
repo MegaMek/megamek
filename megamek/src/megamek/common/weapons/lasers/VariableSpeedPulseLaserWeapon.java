@@ -57,7 +57,7 @@ public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
 
     public VariableSpeedPulseLaserWeapon() {
         super();
-        flags = flags.or(F_PULSE).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_PULSE).or(F_VSP).andNot(F_PROTO_WEAPON);
         atClass = CLASS_PULSE_LASER;
         infDamageClass = WEAPON_DIRECT_FIRE;
     }

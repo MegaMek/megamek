@@ -104,6 +104,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private double tons;
     private int weightClass;
     private int bv;
+    private int genericBattleValue;
 
     /** The full cost of the unit (including ammo). */
     private long cost;
@@ -118,6 +119,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private String extinctRange;
     private boolean canon;
     private boolean patchwork;
+    private boolean frankenMek;
     private boolean doomedOnGround;
     private boolean doomedInAtmosphere;
     private boolean doomedInSpace;
@@ -271,6 +273,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
 
     public boolean isPatchwork() {
         return patchwork;
+    }
+
+    public boolean isFrankenMek() {
+        return frankenMek;
     }
 
     public boolean isDoomedOnGround() {
@@ -553,6 +559,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
 
     public int getBV() {
         return bv;
+    }
+
+    public int getGenericBattleValue() {
+        return genericBattleValue;
     }
 
     public long getCost() {
@@ -964,6 +974,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         this.bv = nBV;
     }
 
+    public void setGenericBattleValue(int genericBattleValue) {
+        this.genericBattleValue = genericBattleValue;
+    }
+
     public void setModified(long lModified) {
         this.modified = lModified;
     }
@@ -986,6 +1000,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
 
     public void setPatchwork(boolean patchwork) {
         this.patchwork = patchwork;
+    }
+
+    public void setFrankenMek(boolean frankenMek) {
+        this.frankenMek = frankenMek;
     }
 
     public void setDoomedOnGround(boolean doomedOnGround) {

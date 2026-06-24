@@ -224,9 +224,19 @@ public class EquipmentTypeLookup {
     @EquipmentName
     public static final String INFANTRY_TAG = "InfantryTAG";
     @EquipmentName
+    public static final String INFANTRY_MORTAR_LIGHT = "InfantryLightMortar";
+    @EquipmentName
+    public static final String INFANTRY_MORTAR_HEAVY = "InfantryHeavyMortar";
+    @EquipmentName
+    public static final String INFANTRY_MORTAR_LIGHT_INFERNO = "InfantryLightMortarInferno";
+    @EquipmentName
+    public static final String INFANTRY_MORTAR_HEAVY_INFERNO = "InfantryHeavyMortarInferno";
+    @EquipmentName
     public static final String VIBRO_SHOVEL = "Vibro-Shovel";
     @EquipmentName
     public static final String DEMOLITION_CHARGE = "Demolition Charge";
+    @EquipmentName
+    public static final String INFANTRY_BRIDGE_KIT = "Infantry Bridge Kit";
     @EquipmentName
     public static final String INFANTRY_AMMO = "Infantry Ammo";
     @EquipmentName

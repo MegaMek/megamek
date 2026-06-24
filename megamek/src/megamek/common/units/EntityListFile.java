@@ -118,7 +118,7 @@ public class EntityListFile {
      * @return a <code>String</code> describing the slot.
      */
     private static String formatSlot(String index, Mounted<?> mount, boolean isHit, boolean isDestroyed,
-          boolean isRepairable, boolean isMissing, int indentLvl) {
+                    boolean isRepairable, boolean isMissing, boolean armorHit, int indentLvl) {
         StringBuilder output = new StringBuilder();
 
         output.append(indentStr(indentLvl))
@@ -179,10 +179,19 @@ public class EntityListFile {
             if (mount.isAnyMissingTroopers()) {
                 output.append("\" " + MULParser.ATTR_TROOPER_MISS + "=\"").append(mount.getMissingTrooperString());
             }
+
+            if (hasModularArmorDamage(mount)) {
+                output.append("\" " + MULParser.ATTR_DAMAGE_TAKEN + "=\"")
+                      .append(((MiscMounted) mount).getDamageTaken());
+            }
         }
 
         if (isHit) {
             output.append("\" " + MULParser.ATTR_IS_HIT + "=\"").append(true);
+        }
+
+        if (armorHit) {
+            output.append("\" " + MULParser.ATTR_ARMOR_HIT + "=\"").append(true);
         }
 
         if (!isRepairable && (isHit || isDestroyed)) {
@@ -197,6 +206,16 @@ public class EntityListFile {
               .append(isDestroyed)
               .append("\"/>\n")
               .toString();
+    }
+
+    private static boolean hasModularArmorDamage(Mounted<?> mount) {
+        return (mount instanceof MiscMounted miscMounted) &&
+              mount.getType().hasFlag(MiscType.F_MODULAR_ARMOR) &&
+              (miscMounted.getDamageTaken() > 0);
+    }
+
+    private static boolean slotHasDepletedArmor(CriticalSlot slot) {
+        return (slot != null) && slot.isOriginalArmored() && !slot.isArmored();
     }
 
     /**
@@ -362,6 +381,7 @@ public class EntityListFile {
                               slot.isDestroyed(),
                               slot.isRepairable(),
                               slot.isMissing(),
+                              slotHasDepletedArmor(slot),
                               indentLvl + 1));
                         haveSlot = true;
                     }
@@ -374,6 +394,7 @@ public class EntityListFile {
                               slot.isDestroyed(),
                               slot.isRepairable(),
                               slot.isMissing(),
+                              slotHasDepletedArmor(slot),
                               indentLvl + 1));
                         haveSlot = true;
                     }
@@ -386,6 +407,7 @@ public class EntityListFile {
                               slot.isDestroyed(),
                               slot.isRepairable(),
                               slot.isMissing(),
+                              slotHasDepletedArmor(slot),
                               indentLvl + 1));
                         haveSlot = true;
                     }
@@ -398,6 +420,33 @@ public class EntityListFile {
                               slot.isDestroyed(),
                               slot.isRepairable(),
                               slot.isMissing(),
+                              slotHasDepletedArmor(slot),
+                              indentLvl + 1));
+                        haveSlot = true;
+                    }
+
+                    // Record armored components that absorbed a critical hit without damaging the slot.
+                    else if (!isDestroyed && slotHasDepletedArmor(slot)) {
+                        thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
+                              mount,
+                              slot.isHit(),
+                              slot.isDestroyed(),
+                              slot.isRepairable(),
+                              slot.isMissing(),
+                              slotHasDepletedArmor(slot),
+                              indentLvl + 1));
+                        haveSlot = true;
+                    }
+
+                    // Record modular armor damage that has not become a critical-slot hit.
+                    else if (!isDestroyed && hasModularArmorDamage(mount)) {
+                        thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
+                              mount,
+                              slot.isHit(),
+                              slot.isDestroyed(),
+                              slot.isRepairable(),
+                              slot.isMissing(),
+                              slotHasDepletedArmor(slot),
                               indentLvl + 1));
                         haveSlot = true;
                     }
@@ -426,6 +475,11 @@ public class EntityListFile {
                         thisLoc.append("\" " + MULParser.ATTR_SHOTS + "=\"");
                         thisLoc.append(mount.getBaseShotsLeft());
 
+                        if (slotHasDepletedArmor(slot)) {
+                            thisLoc.append("\" " + MULParser.ATTR_ARMOR_HIT + "=\"")
+                                  .append(true);
+                        }
+
                         if (!bayIndex.isEmpty()) {
                             thisLoc.append("\" " + MULParser.ATTR_WEAPONS_BAY_INDEX + "=\"");
                             thisLoc.append(bayIndex);
@@ -448,6 +502,7 @@ public class EntityListFile {
                               slot.isDestroyed(),
                               slot.isRepairable(),
                               slot.isMissing(),
+                              slotHasDepletedArmor(slot),
                               indentLvl + 1));
                         haveSlot = true;
                     }
@@ -460,6 +515,7 @@ public class EntityListFile {
                               slot.isDestroyed(),
                               slot.isRepairable(),
                               slot.isMissing(),
+                              slotHasDepletedArmor(slot),
                               indentLvl + 1));
                         haveSlot = true;
                     }
@@ -490,6 +546,7 @@ public class EntityListFile {
                               mount.isDestroyed(),
                               mount.isRepairable(),
                               mount.isMissing(),
+                              false,
                               indentLvl + 1));
                         haveSlot = true;
                     }
@@ -509,6 +566,7 @@ public class EntityListFile {
                               mount.isDestroyed(),
                               mount.isRepairable(),
                               mount.isMissing(),
+                              false,
                               indentLvl + 1));
                         haveSlot = true;
                     }
@@ -978,6 +1036,19 @@ public class EntityListFile {
                 if (infantry.getSpecializations() > 0) {
                     output.write("\" " + MULParser.ATTR_INF_SPEC + "=\"");
                     output.write(infantry.getSpecializations() + "");
+                }
+                // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): not part of the cached design, so
+                // persist it (and whether the platoon has fired it this scenario) so it round-trips through MUL/save
+                // games and to MekHQ.
+                if (infantry.getDisposableWeapon() != null) {
+                    output.write("\" " + MULParser.ATTR_DISPOSABLE_WEAPON + "=\"");
+                    output.write(infantry.getDisposableWeapon().getInternalName());
+                    boolean disposableFired = infantry.getWeaponList()
+                          .stream()
+                          .anyMatch(weaponMounted -> weaponMounted.isDisposableWeapon() && weaponMounted.isFired());
+                    if (disposableFired) {
+                        output.write("\" " + MULParser.ATTR_DISPOSABLE_WEAPON_FIRED + "=\"1");
+                    }
                 }
             }
             output.write("\">\n");

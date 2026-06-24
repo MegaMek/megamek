@@ -1,6 +1,106 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.13
+0.51.01
+
+0.51.0 (2026-06-06 1600 UTC) - First version requiring Java 21
+## What's Changed
+* Add @JsonCreator to Atmosphere enum for backwards-compatible deserialization by @HammerGS in https://github.com/MegaMek/megamek/pull/8138
+* Implement missing Mountain Troops rules from TO:AUE p.153 less the full climbing rules. by @HammerGS in https://github.com/MegaMek/megamek/pull/8140
+* Fix #8141: Prevent HHW weapons from generating heat on the entity carrying it when attacking by @psikomonkie in https://github.com/MegaMek/megamek/pull/8145
+* Allows the TacOps Advanced Hit locations to used with Playtest 1. by @TenkawaBC in https://github.com/MegaMek/megamek/pull/8146
+* Set the reroll for ties code to send initiative compensation flag. by @TenkawaBC in https://github.com/MegaMek/megamek/pull/8152
+* Implement correct Ghost Targets rules per Tac Ops AR - pg 100 by @HammerGS in https://github.com/MegaMek/megamek/pull/8123
+* Add board toast notification overlay system by @HammerGS in https://github.com/MegaMek/megamek/pull/8154
+* Address SJuliez review feedback on toast system by @HammerGS in https://github.com/MegaMek/megamek/pull/8156
+* Move Searchlights default option to game options. Allow turning off searchlights in lobby by @TenkawaBC in https://github.com/MegaMek/megamek/pull/8148
+* Cluster artillery logic for when it doubles was poor by @TenkawaBC in https://github.com/MegaMek/megamek/pull/8150
+* Implement Chainsaw and Dual Saw woods clearing, building bonus damage, and vehicle charge per TO:AR by @HammerGS in https://github.com/MegaMek/megamek/pull/8147
+* BA manipulator selection in MM lobby by @SJuliez in https://github.com/MegaMek/megamek/pull/8161
+* Fix #8158: Fix HHW with ArtilleryCannons throwing exceptions by @psikomonkie in https://github.com/MegaMek/megamek/pull/8163
+* Add licensing acknowledgment dialog and update About dialog by @HammerGS in https://github.com/MegaMek/megamek/pull/8164
+* Fixed infantry minimum movement in AS conversion + added rebuild unit cache by @exeea in https://github.com/MegaMek/megamek/pull/8169
+* Clean up saw tracker when fire burns away woods (Fixes #8147 follow-up) by @HammerGS in https://github.com/MegaMek/megamek/pull/8165
+* Fix crippled damage calculations for bomb-mounted weapons and gyro/engine hits by @HammerGS in https://github.com/MegaMek/megamek/pull/8157
+* Fix LOS not blocked by combined intervening woods and smoke  by @HammerGS in https://github.com/MegaMek/megamek/pull/8172
+* Title: Fix Battle Armor slotless equipment failing to load ammo with :Shots# suffix by @HammerGS in https://github.com/MegaMek/megamek/pull/8175
+* Fix: Use design-spec ammo count for bay validation instead of current shots (#6606) by @VicenteCartas in https://github.com/MegaMek/megamek/pull/8182
+* Bump org.apache.logging.log4j:log4j-core from 2.25.3 to 2.25.4 in /megamek in the gradle group across 1 directory by @dependabot[bot] in https://github.com/MegaMek/megamek/pull/8186
+* Fix NPE in player done packet and incorrect flag check in Infantry specializations by @HammerGS in https://github.com/MegaMek/megamek/pull/8171
+* Lobby equipment choice update by @SJuliez in https://github.com/MegaMek/megamek/pull/8184
+* Refactor neural interface into three-state game option (Off/Pilot Only/Full Tracking) by @HammerGS in https://github.com/MegaMek/megamek/pull/8162
+* MML #1917 Omni meks, heavy guns and arm actuators by @SJuliez in https://github.com/MegaMek/megamek/pull/8190
+* Refactor LOS Elevation Diagram and Ruler Tool Improvements by @HammerGS in https://github.com/MegaMek/megamek/pull/8185
+* Improve ghost target multi-equipment UI, lobby mode selection, and comms tonnage check by @HammerGS in https://github.com/MegaMek/megamek/pull/8170
+* Bump actions/upload-pages-artifact from 4 to 5 by @dependabot[bot] in https://github.com/MegaMek/megamek/pull/8194
+* Fix 8179: infantry damage report not complete by @Sleet01 in https://github.com/MegaMek/megamek/pull/8198
+* Fix MegaMek/mekhq#6833: OPFOR ammo ignores campaign year by @VicenteCartas in https://github.com/MegaMek/megamek/pull/8200
+* Adding NLRT and ammo by @SJuliez in https://github.com/MegaMek/megamek/pull/8202
+* Dependency Updates by @rjhancock in https://github.com/MegaMek/megamek/pull/8205
+* MML #2176 update weapon bay tests again by @SJuliez in https://github.com/MegaMek/megamek/pull/8201
+* Fix 8176: adf file does not apply by @Sleet01 in https://github.com/MegaMek/megamek/pull/8199
+* Use automatic alternate table row coloring by @SJuliez in https://github.com/MegaMek/megamek/pull/8197
+* Language updates by @rjhancock in https://github.com/MegaMek/megamek/pull/8206
+* Language updates through megamek.common.units, universe, util, and ve… by @rjhancock in https://github.com/MegaMek/megamek/pull/8209
+* J21 Language Updates - Finished megamek.common (except individual weapon files) by @rjhancock in https://github.com/MegaMek/megamek/pull/8210
+* J21 Language Updates - Finished core files. Started on Tests. by @rjhancock in https://github.com/MegaMek/megamek/pull/8211
+* J21 Updates for get(0) to getFirst() by @rjhancock in https://github.com/MegaMek/megamek/pull/8212
+* Constructor removal for Packet by @rjhancock in https://github.com/MegaMek/megamek/pull/8216
+* Playtest AMS always tried to assign second shot, when one may not be needed by @TenkawaBC in https://github.com/MegaMek/megamek/pull/8208
+* fix MegaMek/mekhq#8742 Ammo dumping status is saved between battles by @AlexOldenburger in https://github.com/MegaMek/megamek/pull/8174
+* Initial CodeQL Update for MM by @rjhancock in https://github.com/MegaMek/megamek/pull/8223
+* Conditional apply for SHA by @rjhancock in https://github.com/MegaMek/megamek/pull/8224
+* Fix 8222: Implement suggested fix for improperly reporting blank reports as missing by @Sleet01 in https://github.com/MegaMek/megamek/pull/8225
+* Show chassis names in Ruler tool POV labels and Compare table headers (Fixes #8218) by @HammerGS in https://github.com/MegaMek/megamek/pull/8219
+* PR Title: Fix bridge textures obscuring hex text and improve building text color default (Fixes #8153) by @HammerGS in https://github.com/MegaMek/megamek/pull/8173
+* added support to multi-sources by @exeea in https://github.com/MegaMek/megamek/pull/8232
+* Main menu / Mac issues  by @SJuliez in https://github.com/MegaMek/megamek/pull/8221
+* Fix 8233: NPE during reactive armor crit if any slots were empty by @Sleet01 in https://github.com/MegaMek/megamek/pull/8234
+* Implement VRPP 1.4 BV multiplier per IO:AE p.183 (Fixes #8142) by @HammerGS in https://github.com/MegaMek/megamek/pull/8239
+* Fix hex note tooltips by correcting SHD draw-guard operator (Fixes #8228) by @HammerGS in https://github.com/MegaMek/megamek/pull/8238
+* Fix C3 IllegalStateException when master is jammed but slave line is clear (Fixes #8226) by @HammerGS in https://github.com/MegaMek/megamek/pull/8237
+* Quiet Board.collapseBuilding "no building" error log (Fixes #8229) by @HammerGS in https://github.com/MegaMek/megamek/pull/8236
+* Issue MML 2180 Mek Taser should not be counted towards a TC by @SJuliez in https://github.com/MegaMek/megamek/pull/8241
+* Fix toast notification errors  by @HammerGS in https://github.com/MegaMek/megamek/pull/8231
+* Fix BotClient.toggleStealth NPE on null-position enemies (Fixes #8166) by @HammerGS in https://github.com/MegaMek/megamek/pull/8240
+* Fix grounded Spheroid DropShips having run MP (Fixes #8187) by @HammerGS in https://github.com/MegaMek/megamek/pull/8244
+* Mine deployment UX fixes (tooltip, density default, sizing, labels) by @HammerGS in https://github.com/MegaMek/megamek/pull/8243
+* Fix 8195: Add null WAA safety checks to assignAMS() by @Sleet01 in https://github.com/MegaMek/megamek/pull/8242
+* Add sucsCodes field to Faction2 for SUCS-to-MekHQ crosswalk by @HammerGS in https://github.com/MegaMek/megamek/pull/8250
+* Fix MegaMek/mekhq#5881 Clan availability for early mixed-tech equipment by @VicenteCartas in https://github.com/MegaMek/megamek/pull/8246
+* Sourcebooks and retrofit original year by @exeea in https://github.com/MegaMek/megamek/pull/8247
+* Fix wreck sprites drawn above unit layer (Fixes #8253) by @HammerGS in https://github.com/MegaMek/megamek/pull/8254
+* Fix FormationType discrepancies with Campaign Operations rules by @HammerGS in https://github.com/MegaMek/megamek/pull/8261
+* Fix MML 2189: dual turrets don't load correctly by @Sleet01 in https://github.com/MegaMek/megamek/pull/8259
+* Entity Readout and BV update for HHW by @SJuliez in https://github.com/MegaMek/megamek/pull/8263
+* Ruler mode aware los line by @HammerGS in https://github.com/MegaMek/megamek/pull/8262
+* Fix Force Generator engine and UI by @HammerGS in https://github.com/MegaMek/megamek/pull/8265
+* MM #8215 adjust for new unit types in team overview panel by @SJuliez in https://github.com/MegaMek/megamek/pull/8267
+* Move conventional infantry to its own Infantry subclass by @SJuliez in https://github.com/MegaMek/megamek/pull/8257
+* Fix #8268: Fixed Missing Trooper Count in TRO Infantry Readout by @IllianiBird in https://github.com/MegaMek/megamek/pull/8269
+* Issue #8252 Prevent HHW from being marked as destroyed when saving to MUL by @SJuliez in https://github.com/MegaMek/megamek/pull/8266
+* Frankenmek support by @exeea in https://github.com/MegaMek/megamek/pull/8275
+* Frankenmek Support (part 2) by @exeea in https://github.com/MegaMek/megamek/pull/8278
+* Fix MegaMek/mekhq#8685: Corrected driver count for trailers that can't move on its own by @psikomonkie in https://github.com/MegaMek/megamek/pull/8273
+* Fix Entity.NONE id assignment in Game.addEntity by @VicenteCartas in https://github.com/MegaMek/megamek/pull/8274
+* Fix #8155: error unmarshalling INarcPods from MegaMek save games by @Sleet01 in https://github.com/MegaMek/megamek/pull/8282
+* Fix ammo configuration options missing from Equipment tab (Fixes #8284) by @HammerGS in https://github.com/MegaMek/megamek/pull/8285
+* Fix geysers not impacting line of sight by @HammerGS in https://github.com/MegaMek/megamek/pull/8283
+* MML 2198 - fix front turret on SV unable to receive equipment by @SJuliez in https://github.com/MegaMek/megamek/pull/8286
+* FrankenMek leg-mismatch fix by @exeea in https://github.com/MegaMek/megamek/pull/8280
+* Fix #7873: Fix units receiving reduced damage when not actually inside buildings by @psikomonkie in https://github.com/MegaMek/megamek/pull/8292
+* Fix: add mek mortar ammo to 'no aim' list (6636) by @NickAragua in https://github.com/MegaMek/megamek/pull/8297
+* Fix #8010: successful attempts to brush off iNarc pods do nothing by @Sleet01 in https://github.com/MegaMek/megamek/pull/8295
+* Fixed Mek Bays Being Able to Load LAM in Air Mek Mode by @IllianiBird in https://github.com/MegaMek/megamek/pull/8296
+* Fix #8293: Fix infantry jumping into positions that're higher than possible by @psikomonkie in https://github.com/MegaMek/megamek/pull/8299
+* Fix #8293: Fix terrain elevation not being accounted for when infantry are jumping into a building by @psikomonkie in https://github.com/MegaMek/megamek/pull/8300
+* PR: When turning infantry vs infantry combat marine point damage into actual casualties, round down by @psikomonkie in https://github.com/MegaMek/megamek/pull/8304
+* Stored GBV in MekSummary to Improve Ease of Access by @IllianiBird in https://github.com/MegaMek/megamek/pull/8309
+* Fix #8311: Removed Three Old Unofficial SPAs Due to Them Breaking MekHQ by @IllianiBird in https://github.com/MegaMek/megamek/pull/8310
+* EquipmentType code by @SJuliez in https://github.com/MegaMek/megamek/pull/8298
+* Apply EMI ECM-range doubling to ground units (display + effect) by @HammerGS in https://github.com/MegaMek/megamek/pull/8312
+
+## New Contributors
+* @AlexOldenburger made their first contribution in https://github.com/MegaMek/megamek/pull/8174
 
 0.50.12 (2026-03-28 2100 UTC)
 ## What's Changed

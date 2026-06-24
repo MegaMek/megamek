@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -61,6 +61,7 @@ import megamek.common.util.RoundWeight;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.bayWeapons.AmmoBayWeapon;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.logging.MMLogger;
 
 /**
@@ -518,6 +519,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             if (isAPMMounted()) {
                 desc.append(" (APM)");
             }
+        }
+        if ((this instanceof WeaponMounted weaponMounted) && weaponMounted.isDisposableWeapon()) {
+            desc.append(" (Disposable)");
         }
         if (isDumping()) {
             desc.append(" (dumping)");
@@ -1231,7 +1235,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      *
      * @return {@code true} if the weapon is at least one of: destroyed, missing, breached, jammed, a detachable weapon
      *       no longer attached to its original battle armor, or simply out of ammo (includes discharged one-shot
-     *       weapons), {@code false} otherwise.
+     *       weapons), {@code false} otherwise. A weapon bay is crippled only when every weapon it contains is crippled.
      */
     public boolean isCrippled() {
         /*
@@ -1244,6 +1248,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
          */
         if (destroyed || jammed || missing || useless || fired) {
             return true;
+        }
+        // Weapon bays never link ammo directly - getLinked() is always null for a bay because its
+        // ammunition lives in the bay's member weapons (getBayAmmo()/getBayWeapons()), not on the bay
+        // mount itself. Assessing the bay's getLinked() below would therefore always flag a fully-loaded
+        // ammo bay as crippled (e.g. a brand-new DropShip would show "light damage"). Instead, a bay is
+        // crippled only when every weapon it contains is crippled.
+        if ((this instanceof WeaponMounted weaponMounted) && (type instanceof BayWeapon)) {
+            List<WeaponMounted> bayWeapons = weaponMounted.getBayWeapons();
+            return !bayWeapons.isEmpty() && bayWeapons.stream().allMatch(WeaponMounted::isCrippled);
         }
         if ((type instanceof AmmoWeapon) || (type instanceof AmmoBayWeapon)) {
             if ((getLinked() == null) || (entity.getTotalAmmoOfType(getLinked().getType()) < 1)) {

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2004-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -903,12 +903,20 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
             // Point Defense fire vs Capital Missiles
 
+            // Glancing and direct blows are damage-attack concepts. They don't apply to fire extinguishing,
+            // which is a simple pass/fail roll to put out a fire, so skip (and don't report) them.
+            boolean isFireExtinguishing = weaponType.hasFlag(WeaponType.F_EXTINGUISHER)
+                  || (target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH);
+
             // are we a glancing hit? Check for this here, report it later
-            setGlancingBlowFlags(entityTarget);
+            if (!isFireExtinguishing) {
+                setGlancingBlowFlags(entityTarget);
+            }
 
             // Set Margin of Success/Failure and check for Direct Blows
             toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
+            bDirect = !isFireExtinguishing
+                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
                   && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
             // This has to be up here so that we don't screw up glancing/direct blow reports
@@ -1606,11 +1614,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
         nDamage = checkLI(nDamage, entityTarget, vPhaseReport);
 
-        // some buildings scale remaining damage that is not absorbed
-        // TODO: this isn't quite right for castles brian
-        if ((null != bldg) && !targetStickingOutOfBuilding) {
-            nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
-        }
+        nDamage = getBuildingDamageAdjustment(entityTarget, bldg, targetStickingOutOfBuilding, nDamage);
 
         // A building may absorb the entire shot.
         if (nDamage == 0) {

@@ -838,6 +838,10 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         // Base piloting skill
         PilotingRollData roll = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
 
+        if ((hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PilotSPAHelper.isWindWalkerValid(this)) {
+            roll.addModifier(-1, "Wind Walker SPA");
+        }
+
         addEntityBonuses(roll);
 
         // Landing in AirMek mode only requires a roll if gyro or hip/leg actuators are damaged.

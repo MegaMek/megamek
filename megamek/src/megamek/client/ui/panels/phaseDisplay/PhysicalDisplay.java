@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -69,6 +69,7 @@ import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.ToHitData;
 import megamek.common.actions.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -518,8 +519,38 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         } else if (hasSaw) {
             logger.debug("  Has saw but prone or immobile, not enabling clear woods");
         }
+
+        // Laying demolition charges targets the structure in the unit's own hex, so the button does not depend
+        // on a selected target (TO:AUE p.152). The label reflects the unit's state: starting new charges or
+        // finishing the work in progress.
+        boolean isLayingExplosives = (entity instanceof Infantry infantry) && (infantry.turnsLayingExplosives >= 0);
+        buttons.get(PhysicalCommand.PHYSICAL_EXPLOSIVES).setText(Messages.getString(
+              isLayingExplosives ? "PhysicalDisplay.explosives.finish" : "PhysicalDisplay.explosives"));
+        setExplosivesEnabled(entity.canLayDemolitionCharges());
+        showLayExplosivesProgressToast(entity);
+
         updateDonePanel();
         cacheVisibleTargets();
+    }
+
+    /**
+     * Shows a progress toast for a platoon that is currently setting demolition charges: the turns spent so far and the
+     * damage of the charge if it were finished now (TO:AUE p.152).
+     *
+     * @param entity the selected unit
+     */
+    private void showLayExplosivesProgressToast(Entity entity) {
+        if ((entity instanceof Infantry infantry) && (infantry.turnsLayingExplosives > 0)) {
+            int maxTurns = LayExplosivesAttackAction.MAX_TURNS_LAYING_EXPLOSIVES;
+            int turnsSpent = Math.min(infantry.turnsLayingExplosives, maxTurns);
+            clientgui.addToast(ToastLevel.INFO,
+                  Messages.getString("PhysicalDisplay.layExplosives.toast.progress",
+                        entity.getShortName(),
+                        turnsSpent,
+                        maxTurns,
+                        LayExplosivesAttackAction.getDamageFor(entity)),
+                  entity);
+        }
     }
 
     /**
@@ -1387,18 +1418,82 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     }
 
     private void explosives() {
-        ToHitData explosives = LayExplosivesAttackAction.toHit(game, currentEntity, target);
+        // Demolition charges are always set on the structure in the unit's own hex (TO:AUE p.152), so the
+        // target is derived from the unit's position instead of requiring the player to select one manually
+        Targetable structureTarget = getOwnHexStructureTarget();
+        if (structureTarget == null) {
+            return;
+        }
         String title = Messages.getString("PhysicalDisplay.LayExplosivesAttackDialog.title",
-              target.getDisplayName());
-        String message = Messages.getString("PhysicalDisplay.LayExplosivesAttackDialog.message",
-              explosives.getValueAsString(),
-              Compute.oddsAbove(explosives.getValue()),
-              explosives.getDesc());
-        if (clientgui.doYesNoDialog(title, message)) {
+              structureTarget.getDisplayName());
+        if (clientgui.doYesNoDialog(title, buildLayExplosivesMessage())) {
             disableButtons();
-            addAttack(new LayExplosivesAttackAction(currentEntity, target.getTargetType(), target.getId()));
+            addAttack(new LayExplosivesAttackAction(currentEntity, structureTarget.getTargetType(),
+                  structureTarget.getId()));
+            showLayExplosivesToast();
             ready();
         }
+    }
+
+    /**
+     * Builds the confirmation message for the lay-explosives action: when starting, the per-turn damage and the 6-turn
+     * maximum; when finishing, the turns spent so far and the resulting charge damage (TO:AUE p.152).
+     *
+     * @return the dialog message text
+     */
+    private String buildLayExplosivesMessage() {
+        Entity attacker = currentEntity();
+        int maxTurns = LayExplosivesAttackAction.MAX_TURNS_LAYING_EXPLOSIVES;
+        boolean isFinishing = (attacker instanceof Infantry infantry) && (infantry.turnsLayingExplosives >= 0);
+        if (isFinishing) {
+            int turnsSpent = Math.min(((Infantry) attacker).turnsLayingExplosives, maxTurns);
+            return Messages.getString("PhysicalDisplay.LayExplosivesAttackDialog.finish",
+                  turnsSpent,
+                  maxTurns,
+                  LayExplosivesAttackAction.getDamageFor(attacker));
+        }
+        int damagePerTurn = LayExplosivesAttackAction.getDamagePerTurn(attacker);
+        return Messages.getString("PhysicalDisplay.LayExplosivesAttackDialog.start",
+              damagePerTurn,
+              maxTurns,
+              damagePerTurn * maxTurns);
+    }
+
+    /**
+     * Returns a {@link BuildingTarget} for the structure (building, bridge or fuel tank) in the current unit's own hex,
+     * or null when there is no structure there.
+     *
+     * @return the structure target in the unit's hex, or null if the hex contains no structure
+     */
+    private @Nullable Targetable getOwnHexStructureTarget() {
+        Entity attacker = currentEntity();
+        if ((attacker == null) || (attacker.getPosition() == null)) {
+            return null;
+        }
+        Board board = game.getBoard(attacker.getBoardId());
+        if ((board == null) || (board.getBuildingAt(attacker.getPosition()) == null)) {
+            return null;
+        }
+        return new BuildingTarget(attacker.getPosition(), board, false);
+    }
+
+    /**
+     * Shows a toast confirming the queued lay-explosives action: either starting to set charges or finishing the
+     * already running work (TO:AUE p.152).
+     */
+    private void showLayExplosivesToast() {
+        Entity attacker = currentEntity();
+        boolean isFinishing = (attacker instanceof Infantry infantry) && (infantry.turnsLayingExplosives >= 0);
+        String text = isFinishing
+              ? Messages.getString("PhysicalDisplay.layExplosives.toast.finish",
+              attacker.getShortName(), LayExplosivesAttackAction.getDamageFor(attacker))
+              : Messages.getString("PhysicalDisplay.layExplosives.toast.start", attacker.getShortName());
+        clientgui.addToast(ToastLevel.INFO, text, attacker);
+    }
+
+    public void doBrush(Targetable brushTarget) {
+        target(brushTarget);
+        brush();
     }
 
     /**
@@ -1753,10 +1848,9 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                       target);
                 setProtoEnabled(proto.getValue() != TargetRoll.IMPOSSIBLE);
 
-                ToHitData explosives = LayExplosivesAttackAction.toHit(clientgui.getClient().getGame(),
-                      currentEntity,
-                      target);
-                setExplosivesEnabled(explosives.getValue() != TargetRoll.IMPOSSIBLE);
+                // Laying demolition charges always targets the structure in the unit's own hex, independent of
+                // the selected target (TO:AUE p.152)
+                setExplosivesEnabled(currentEntity().canLayDemolitionCharges());
 
                 // vibro attack?
                 ToHitData vibro = BAVibroClawAttackAction.toHit(clientgui.getClient().getGame(), currentEntity, target);
@@ -1885,13 +1979,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         // Add any iNarc pods attached to the entity if the attacker is targeting its own hex
-        if (attacker.getPosition().equals(pos)) {
-            Iterator<INarcPod> pods = attacker.getINarcPodsAttached();
-            while (pods.hasNext()) {
-                Targetable choice = pods.next();
-                targets.add(choice);
-            }
-        }
+        targets.addAll(getINarcPods(attacker, pos));
 
         if (targets.size() == 1) {
             // Return the single choice
@@ -2247,5 +2335,26 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             aimingAt = icb.getIndex();
             updateTarget();
         }
+    }
+
+    /**
+     * Helper method that allows us to get the list of iNarc pods in a given attacker's Coords,
+     * used by PhysicalDisplay and the MapMenu right-click menu.
+     *
+     * @param attacker  Should be the current entity for whom we're building attack data.
+     * @param pos       Coords of the hex to check; may not be the same as attacker.getPosition()
+     * @return          List of Targetables containing co-located iNarc pods
+     */
+    public static List<Targetable> getINarcPods(Entity attacker, Coords pos) {
+        List<Targetable> targets = new ArrayList<>();
+        // Add any iNarc pods attached to the entity if the attacker is targeting its own hex
+        if (attacker.getPosition().equals(pos)) {
+            Iterator<INarcPod> pods = attacker.getINarcPodsAttached();
+            while (pods.hasNext()) {
+                Targetable choice = pods.next();
+                targets.add(choice);
+            }
+        }
+        return targets;
     }
 }

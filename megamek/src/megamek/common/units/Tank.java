@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -142,6 +142,12 @@ public class Tank extends Entity {
     public static final int DUG_IN_FORTIFYING2 = 2;
     public static final int DUG_IN_FORTIFYING3 = 3;
     private int dugIn = DUG_IN_NONE;
+
+    /**
+     * Tracks damage taken between turns while fortifying, so that being attacked extends the effort by one turn (TO:AUE
+     * p.153). Server-side runtime state; not written to save files (dug-in progress is itself not persisted).
+     */
+    private final FortifyState fortifyState = new FortifyState();
 
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25 };
@@ -991,9 +997,16 @@ public class Tank extends Entity {
 
         // Continue to fortify
         if (dugIn != DUG_IN_NONE) {
-            dugIn++;
-            if (dugIn > DUG_IN_FORTIFYING3) {
-                dugIn = DUG_IN_NONE;
+            // Damage taken during a fortifying turn extends the effort by one turn (TO:AUE p.153): hold the
+            // progress counter this round instead of advancing it.
+            if (fortifyState.checkpointWasDamaged(currentFortifyHealthSignature())) {
+                logger.debug("[Fortify] {}: damaged while fortifying - effort extended by 1 turn (dug-in stage {})",
+                      getShortName(), dugIn);
+            } else {
+                dugIn++;
+                if (dugIn > DUG_IN_FORTIFYING3) {
+                    dugIn = DUG_IN_NONE;
+                }
             }
         }
     }
@@ -1004,6 +1017,53 @@ public class Tank extends Entity {
 
     public int getDugIn() {
         return dugIn;
+    }
+
+    /**
+     * Begins the three-turn fieldwork that raises a fortified hex, for vehicles with fieldworks-capable
+     * equipment such as a bulldozer or backhoe (Vehicles and Fieldworks, TO:AUE p.153). Seeds the damage
+     * baseline used to detect an interrupting attack that extends the effort.
+     */
+    public void beginFortify() {
+        setDugIn(DUG_IN_FORTIFYING1);
+        fortifyState.begin(currentFortifyHealthSignature());
+    }
+
+    /**
+     * @return the health signature used to detect damage between fortifying turns: total armor plus internal structure.
+     *       Any armor or structural damage between turns lowers this value and marks the turn as interrupted.
+     */
+    private int currentFortifyHealthSignature() {
+        return getTotalArmor() + getTotalInternal();
+    }
+
+    /**
+     * @return {@code true} if this vehicle's fortification effort was set back by damage this round (so its progress
+     *       counter was held rather than advanced). TO:AUE p.153.
+     */
+    public boolean isFortifyExtendedThisRound() {
+        return fortifyState.wasExtendedAtLastCheckpoint();
+    }
+
+    /**
+     * @return {@code true} if this vehicle is partway through building a fortified hex (one of the multi-turn
+     *       FORTIFYING stages). TO:AUE p.153.
+     */
+    public boolean isFortifying() {
+        return (dugIn >= DUG_IN_FORTIFYING1) && (dugIn <= DUG_IN_FORTIFYING3);
+    }
+
+    /**
+     * @return the current fortification stage (1..{@link #getFortifyTotalStages()}) while {@link #isFortifying()}, or 0
+     *       when the vehicle is not building a fortification.
+     */
+    public int getFortifyStage() {
+        return isFortifying() ? (dugIn - DUG_IN_FORTIFYING1 + 1) : 0;
+    }
+
+    /** @return the number of turns of work a fortified hex takes to complete. */
+    public int getFortifyTotalStages() {
+        return DUG_IN_FORTIFYING3 - DUG_IN_FORTIFYING1 + 1;
     }
 
     /**
@@ -1689,22 +1749,58 @@ public class Tank extends Entity {
     }
 
     /**
-     * Checks to see if a Tank is capable of going hull-down. This is true if hull-down rules are enabled and the Tank
-     * is in a fortified hex.
+     * Large Vehicles (Large Support Vehicles and super-heavy combat vehicles) are too big to take advantage of the
+     * cover offered by a fortified ("infantry-built") hex, and so cannot go hull-down in one. TO:AR p.19.
+     *
+     * @return True if this vehicle is a Large Vehicle for the purposes of the hull-down rules.
+     */
+    public boolean isLargeVehicleForHullDown() {
+        return (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) || isSuperHeavy();
+    }
+
+    /**
+     * Whether this vehicle type can use hull-down at all, independent of its current hex. Large Vehicles cannot use
+     * the cover, and naval, hydrofoil, and submarine (water-based) vehicles cannot dig in / hull down since
+     * hull-down requires a fortified land hex (TO:AR p.19).
+     *
+     * @return true if this vehicle may ever go hull-down
+     */
+    public boolean isHullDownCapable() {
+        if (isLargeVehicleForHullDown()) {
+            return false;
+        }
+        EntityMovementMode movementMode = getMovementMode();
+        return !movementMode.isNaval() && !movementMode.isHydrofoil() && !movementMode.isSubmarine();
+    }
+
+    /**
+     * Checks to see if a Tank is capable of going hull-down. This is true if hull-down rules are enabled, the Tank is
+     * in a fortified hex, and the Tank is a hull-down-capable type (not a Large Vehicle or a water-based vehicle).
      *
      * @return True if hull-down is enabled and the Tank is in a fortified hex.
      */
     @Override
     public boolean canGoHullDown() {
-        // MoveStep line 2179 performs this same check
-        // performing it here will allow us to disable the Hull down button
-        // if the movement is illegal
+        // MoveStep performs these same checks; performing them here lets us disable the Hull Down button when the
+        // movement would be illegal. Each failing gate logs its reason so playtests can diagnose a missing button.
         if (!game.hasBoardLocation(getPosition(), getBoardId())) {
             return false;
         }
+        if (!isHullDownCapable()) {
+            logger.debug("[HullDown] {}: ineligible - Large Vehicles and naval/submarine vehicles cannot use "
+                  + "hull-down (TO:AR p.19)", getDisplayName());
+            return false;
+        }
+        if (!gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN)) {
+            logger.debug("[HullDown] {}: ineligible - Hull Down game option is disabled", getDisplayName());
+            return false;
+        }
         Hex occupiedHex = game.getHex(getBoardLocation());
-        return occupiedHex.containsTerrain(Terrains.FORTIFIED) &&
-              gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
+        if (!occupiedHex.containsTerrain(Terrains.FORTIFIED)) {
+            logger.debug("[HullDown] {}: ineligible - current hex is not fortified", getDisplayName());
+            return false;
+        }
+        return true;
     }
 
     public void setOnFire(boolean inferno) {

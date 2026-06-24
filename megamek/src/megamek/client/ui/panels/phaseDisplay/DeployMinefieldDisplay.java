@@ -57,12 +57,16 @@ import megamek.client.ui.dialogs.phaseDisplay.VibrabombSettingDialog;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.common.Hex;
 import megamek.common.Player;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.game.Game;
+import megamek.common.moves.MoveStep;
+import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 
 public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
@@ -83,12 +87,13 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         DEPLOY_MINE_ACTIVE("deployMineActive"),
         DEPLOY_MINE_INFERNO("deployMineInferno"),
         DEPLOY_MINE_EMP("deployMineEMP"),
+        DEPLOY_FORTIFICATION("deployFortification"),
         DEPLOY_CARRYABLE("deployCarriable"),
         REMOVE_MINES("removeMines");
 
         private static final DeployMinefieldCommand[] actualCommands =
               { DEPLOY_MINE_CONV, DEPLOY_MINE_COM, DEPLOY_MINE_VIBRA, DEPLOY_MINE_ACTIVE,
-                DEPLOY_MINE_INFERNO, DEPLOY_MINE_EMP, DEPLOY_CARRYABLE, REMOVE_MINES };
+                DEPLOY_MINE_INFERNO, DEPLOY_MINE_EMP, DEPLOY_FORTIFICATION, DEPLOY_CARRYABLE, REMOVE_MINES };
 
         /**
          * Priority that determines this buttons order
@@ -178,8 +183,13 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         return currentCommand.equals(DeployMinefieldCommand.DEPLOY_MINE_EMP);
     }
 
+    private boolean deployingFortifications() {
+        return currentCommand.equals(DeployMinefieldCommand.DEPLOY_FORTIFICATION);
+    }
+
     private Player p;
     private final Vector<Minefield> deployedMinefields = new Vector<>();
+    private final Vector<BoardLocation> deployedFortifications = new Vector<>();
 
     protected final ClientGUI clientgui;
 
@@ -237,6 +247,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         setActiveEnabled(p.getNbrMFActive());
         setInfernoEnabled(p.getNbrMFInferno());
         setEMPEnabled(p.getNbrMFEMP());
+        setFortificationEnabled(p.getNbrFortifiedHexes());
         setCarryableEnabled(p.getGroundObjectsToPlace().size());
         setRemoveMineEnabled(true);
         butDone.setEnabled(true);
@@ -263,6 +274,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         setActiveEnabled(0);
         setInfernoEnabled(0);
         setEMPEnabled(0);
+        setFortificationEnabled(0);
         setCarryableEnabled(0);
         setRemoveMineEnabled(false);
 
@@ -285,9 +297,18 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         Coords coords = event.getCoords();
 
         if (currentCommand == DeployMinefieldCommand.REMOVE_MINES) {
-            if (!game.containsMinefield(coords) &&
-                  game.getGroundObjects(coords).isEmpty()) {
+            if (!game.containsMinefield(coords)
+                  && game.getGroundObjects(coords).isEmpty()
+                  && !deployedFortifications.contains(event.getBoardLocation())) {
                 return;
+            }
+
+            // undo a fortified hex this player placed this turn (refund the allotment)
+            if (deployedFortifications.remove(event.getBoardLocation())) {
+                Hex fortHex = game.getHex(event.getBoardLocation());
+                fortHex.removeTerrain(Terrains.FORTIFIED);
+                game.getBoard(event.getBoardLocation().boardId()).setHex(coords, fortHex);
+                p.setNbrFortifiedHexes(p.getNbrFortifiedHexes() + 1);
             }
             Enumeration<?> mfs = game.getMinefields(coords).elements();
             ArrayList<Minefield> mfRemoved = new ArrayList<>();
@@ -350,6 +371,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             }
 
             clientgui.showGroundObjects(game.getGroundObjects());
+        } else if (deployingFortifications()) {
+            deployFortification(game, event.getBoardLocation(), coords);
         } else {
             // first check that there is not already a mine of this type
             // deployed
@@ -496,7 +519,46 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         setActiveEnabled(p.getNbrMFActive());
         setInfernoEnabled(p.getNbrMFInferno());
         setEMPEnabled(p.getNbrMFEMP());
+        setFortificationEnabled(p.getNbrFortifiedHexes());
         setCarryableEnabled(p.getGroundObjectsToPlace().size());
+    }
+
+    /**
+     * Places a fortified hex at the chosen location during the minefield deployment phase, if the player has an
+     * allotment left and the hex is legal (fortifiable terrain within the player's deployment zone). The change is
+     * previewed locally and confirmed by the server when the turn ends. TO:AUE p.153.
+     *
+     * @param game     the current game
+     * @param location the board location clicked
+     * @param coords   the coordinates clicked (within {@code location}'s board)
+     */
+    private void deployFortification(Game game, BoardLocation location, Coords coords) {
+        Board board = game.getBoard(location.boardId());
+        Hex hex = board.getHex(coords);
+
+        if (deployedFortifications.contains(location) || hex.containsTerrain(Terrains.FORTIFIED)) {
+            clientgui.addToast(ToastLevel.WARNING,
+                  Messages.getString("DeployMinefieldDisplay.DuplicateFortification"));
+            return;
+        }
+        if (!MoveStep.isFortifiableTerrain(hex)) {
+            clientgui.addToast(ToastLevel.WARNING,
+                  Messages.getString("DeployMinefieldDisplay.fortifyIllegalTerrain"));
+            return;
+        }
+        if (!board.isLegalDeployment(coords, p)) {
+            clientgui.addToast(ToastLevel.WARNING,
+                  Messages.getString("DeployMinefieldDisplay.fortifyOutsideZone"));
+            return;
+        }
+
+        hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
+        board.setHex(coords, hex);
+        deployedFortifications.add(location);
+        p.setNbrFortifiedHexes(p.getNbrFortifiedHexes() - 1);
+        if (p.getNbrFortifiedHexes() <= 0) {
+            currentCommand = DeployMinefieldCommand.COMMAND_NONE;
+        }
     }
 
     @Override
@@ -583,16 +645,22 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         int undeployedMines = p.getNbrMFConventional() + p.getNbrMFCommand() + p.getNbrMFVibra()
               + p.getNbrMFActive() + p.getNbrMFInferno() + p.getNbrMFEMP();
         int undeployedCarryables = p.getGroundObjectsToPlace().size();
+        int undeployedFortifications = p.getNbrFortifiedHexes();
 
-        if ((undeployedMines > 0) || (undeployedCarryables > 0)) {
+        if ((undeployedMines > 0) || (undeployedCarryables > 0) || (undeployedFortifications > 0)) {
             String message;
-            if ((undeployedMines > 0) && (undeployedCarryables > 0)) {
-                message = Messages.getString("DeployMinefieldDisplay.undeployedBoth",
-                      undeployedMines, undeployedCarryables);
+            if (((undeployedMines > 0) ? 1 : 0) + ((undeployedCarryables > 0) ? 1 : 0)
+                  + ((undeployedFortifications > 0) ? 1 : 0) > 1) {
+                // More than one category remains - use a generic message listing all three counts.
+                message = Messages.getString("DeployMinefieldDisplay.undeployedItems",
+                      undeployedMines, undeployedCarryables, undeployedFortifications);
             } else if (undeployedMines > 0) {
                 message = Messages.getString("DeployMinefieldDisplay.undeployedMines", undeployedMines);
-            } else {
+            } else if (undeployedCarryables > 0) {
                 message = Messages.getString("DeployMinefieldDisplay.undeployedCarryables", undeployedCarryables);
+            } else {
+                message = Messages.getString("DeployMinefieldDisplay.undeployedFortifications",
+                      undeployedFortifications);
             }
 
             if (JOptionPane.showConfirmDialog(clientgui.getFrame(),
@@ -606,6 +674,9 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         endMyTurn();
         clientgui.getClient().sendDeployGroundObjects(clientgui.getClient().getGame().getGroundObjects());
+        // Fortifications must be sent BEFORE minefields: the minefield packet ends the deploy phase server-side, so
+        // anything sent after it arrives in the wrong phase and is dropped. (Same ordering as ground objects.)
+        clientgui.getClient().sendDeployFortifications(deployedFortifications);
         clientgui.getClient().sendDeployMinefields(deployedMinefields);
         clientgui.getClient().sendPlayerInfo();
     }
@@ -672,6 +743,12 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         buttons.get(DeployMinefieldCommand.DEPLOY_MINE_EMP).setText(Messages.getString(
               "DeployMinefieldDisplay." + DeployMinefieldCommand.DEPLOY_MINE_EMP.getCmd(), nbr));
         buttons.get(DeployMinefieldCommand.DEPLOY_MINE_EMP).setEnabled(nbr > 0);
+    }
+
+    private void setFortificationEnabled(int nbr) {
+        buttons.get(DeployMinefieldCommand.DEPLOY_FORTIFICATION).setText(Messages.getString(
+              "DeployMinefieldDisplay." + DeployMinefieldCommand.DEPLOY_FORTIFICATION.getCmd(), nbr));
+        buttons.get(DeployMinefieldCommand.DEPLOY_FORTIFICATION).setEnabled(nbr > 0);
     }
 
     private void setCarryableEnabled(int nbr) {

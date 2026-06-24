@@ -1730,6 +1730,8 @@ public class Compute {
                   (InfantryWeapon) weaponType,
                   (attackingEntity instanceof ConvInfantry infantry) ? infantry.getSecondaryWeapon() :
                         null,
+                  (attackingEntity instanceof ConvInfantry infantry) ? infantry.getDisposableWeapon() :
+                        null,
                   weaponUnderwater);
 
             int rangeModifier = mods.getValue();
@@ -1769,7 +1771,7 @@ public class Compute {
      * @return - all modifiers for range
      */
     public static ToHitData getInfantryRangeMods(int distance, InfantryWeapon primaryWeapon,
-          InfantryWeapon secondaryWeapon, boolean underwater) {
+          InfantryWeapon secondaryWeapon, @Nullable InfantryWeapon disposableWeapon, boolean underwater) {
         ToHitData mods = new ToHitData();
         int range = primaryWeapon.getInfantryRange();
         if (underwater) {
@@ -1888,10 +1890,15 @@ public class Compute {
                   || (secondaryWeapon != null && secondaryWeapon.hasFlag(WeaponType.F_INF_POINT_BLANK))) {
                 mods.addModifier(1, "point blank weapon");
             }
-            if (primaryWeapon.hasFlag(WeaponType.F_INF_ENCUMBER) || (primaryWeapon.getCrew() > 1)
-                  || (secondaryWeapon != null
-                  && (secondaryWeapon.hasFlag(WeaponType.F_INF_ENCUMBER)
-                  || secondaryWeapon.getCrew() > 1))) {
+            // A Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) encumbers the platoon like a secondary
+            // support weapon (per ruling), so its encumbrance counts even when the platoon fires its normal weapon.
+            boolean primaryEncumbers = primaryWeapon.hasFlag(WeaponType.F_INF_ENCUMBER) || (primaryWeapon.getCrew()
+                  > 1);
+            boolean secondaryEncumbers = (secondaryWeapon != null)
+                  && (secondaryWeapon.hasFlag(WeaponType.F_INF_ENCUMBER) || (secondaryWeapon.getCrew() > 1));
+            boolean disposableEncumbers = (disposableWeapon != null)
+                  && (disposableWeapon.hasFlag(WeaponType.F_INF_ENCUMBER) || (disposableWeapon.getCrew() > 1));
+            if (primaryEncumbers || secondaryEncumbers || disposableEncumbers) {
                 mods.addModifier(1, "point blank support weapon");
             }
 
@@ -5919,8 +5926,8 @@ public class Compute {
             }
         }
 
-        // Mountain Troops anti-Mek bonus - TO:AUE p.153
-        // "Mountain troops apply a -2 modifier to any Anti-Mek Skill Rolls"
+        // Mountain Troops anti-Mek bonus - TO:AUE p.153 "Mountain troops apply a -2 modifier to any Anti-Mek Skill
+        // Rolls"
         if (attacker instanceof ConvInfantry attackingInfantry
               && attackingInfantry.hasSpecialization(ConvInfantry.MOUNTAIN_TROOPS)) {
             data.addModifier(-2, Messages.getString("Compute.MountainTroops"));
@@ -5932,6 +5939,11 @@ public class Compute {
         // as well as anti-Mek attacks by EI-equipped battle armor."
         if (attacker.hasActiveEiCockpit()) {
             data.addModifier(-1, Messages.getString("Compute.EnhancedImaging"));
+        }
+
+        // Hitting the Deck imposes a +1 modifier on the unit's Anti-Mek Skill Rolls - TO:AR p.106
+        if (attacker.isHitTheDeck()) {
+            data.addModifier(+1, Messages.getString("Compute.HitTheDeck"));
         }
 
         // swarm/leg attacks take target movement mods into account
@@ -7267,6 +7279,7 @@ public class Compute {
                          TBOLT_15,
                          TBOLT_20,
                          HAG,
+                         MEK_MORTAR,
                          ROCKET_LAUNCHER -> {
                         return false;
                     }
@@ -7864,9 +7877,13 @@ public class Compute {
                 } else {
                     boolean hasFieldGuns =
                           attacker instanceof ConvInfantry infantry && infantry.hasActiveFieldWeapon();
+                    // A spent Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) no longer grants anti-air
+                    // capability; the AA ability of a disposable Mk. 1 Light AA only applies when it makes its single
+                    // attack (per ruling).
                     boolean hasInfantryAA = attacker.getEquipment().stream().anyMatch(
-                          eq -> eq instanceof WeaponMounted
-                                && ((WeaponMounted) eq).getType().hasFlag(WeaponType.F_INF_AA)
+                          eq -> (eq instanceof WeaponMounted weaponMounted)
+                                && weaponMounted.getType().hasFlag(WeaponType.F_INF_AA)
+                                && !weaponMounted.isFired()
                     );
                     // Either allows infantry PBS on Aerospace.
                     return (hasFieldGuns || hasInfantryAA);

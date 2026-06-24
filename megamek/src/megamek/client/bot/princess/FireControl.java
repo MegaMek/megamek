@@ -688,10 +688,14 @@ public class FireControl {
     }
 
     /**
-     * Returns the value of {@link Compute#getInfantryRangeMods(int, InfantryWeapon, InfantryWeapon, boolean)}.
+     * Returns the value of
+     * {@link Compute#getInfantryRangeMods(int, InfantryWeapon, InfantryWeapon, InfantryWeapon, boolean)}.
      *
-     * @param distance The distance to the target.
-     * @param weapon   The {@link InfantryWeapon} being fired.
+     * @param distance   The distance to the target.
+     * @param weapon     The {@link InfantryWeapon} being fired.
+     * @param secondary  The platoon's secondary {@link InfantryWeapon}, or null.
+     * @param disposable The platoon's Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing), or null.
+     * @param underwater Whether the attack is made underwater.
      *
      * @return The to hit modifiers as a {@link ToHitData} object.
      */
@@ -699,8 +703,9 @@ public class FireControl {
     private ToHitData getInfantryRangeMods(final int distance,
           final InfantryWeapon weapon,
           final InfantryWeapon secondary,
+          final InfantryWeapon disposable,
           final boolean underwater) {
-        return Compute.getInfantryRangeMods(distance, weapon, secondary, underwater);
+        return Compute.getInfantryRangeMods(distance, weapon, secondary, disposable, underwater);
     }
 
     /**
@@ -929,6 +934,7 @@ public class FireControl {
         } else {
             toHit.append(getInfantryRangeMods(distance, (InfantryWeapon) weapon.getType(),
                   shooter instanceof ConvInfantry infantry ? infantry.getSecondaryWeapon() : null,
+                  shooter instanceof ConvInfantry infantry ? infantry.getDisposableWeapon() : null,
                   ILocationExposureStatus.WET == shooter.getLocationStatus(weapon.getLocation())));
         }
 

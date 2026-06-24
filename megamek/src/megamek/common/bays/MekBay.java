@@ -72,7 +72,7 @@ public final class MekBay extends UnitBay {
     public boolean canLoad(Entity unit) {
         boolean loadableQuadVee = (unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_MEK);
         boolean loadableLAM = (unit instanceof LandAirMek) && (unit.getConversionMode()
-              != LandAirMek.CONV_MODE_FIGHTER);
+              == LandAirMek.CONV_MODE_MEK);
         boolean loadableOtherMek = (unit instanceof Mek) && !(unit instanceof QuadVee) && !(unit instanceof LandAirMek);
         return (getUnused() >= 1) && (doors > loadedThisTurn) && (loadableLAM || loadableQuadVee || loadableOtherMek);
     }

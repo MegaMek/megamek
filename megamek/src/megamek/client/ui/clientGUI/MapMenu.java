@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -56,6 +56,7 @@ import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.client.ui.dialogs.NoteDialog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
@@ -94,8 +95,6 @@ import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
-import megamek.common.weapons.other.clan.CLFireExtinguisher;
-import megamek.common.weapons.other.innerSphere.ISFireExtinguisher;
 import megamek.logging.MMLogger;
 import megamek.server.commands.*;
 
@@ -333,14 +332,19 @@ public class MapMenu extends JPopupMenu {
     }
 
     private JMenu touchOffExplosivesMenu() {
-        JMenu menu = new JMenu("Touch off explosives");
+        JMenu menu = new JMenu(Messages.getString("MapMenu.touchOffExplosives"));
 
         IBuilding bldg = board.getBuildingAt(coords);
         if ((bldg != null)) {
             for (final DemolitionCharge charge : bldg.getDemolitionCharges()) {
                 if (charge.playerId == client.getLocalPlayer().getId() && coords.equals(charge.pos)) {
-                    JMenuItem item = new JMenuItem(charge.damage + " Damage");
-                    item.addActionListener(e -> client.sendExplodeBuilding(charge));
+                    JMenuItem item = new JMenuItem(
+                          Messages.getString("MapMenu.touchOffExplosives.damage", charge.damage));
+                    item.addActionListener(e -> {
+                        client.sendExplodeBuilding(charge);
+                        gui.addToast(ToastLevel.SUCCESS,
+                              Messages.getString("MapMenu.touchOffExplosives.toast", charge.damage));
+                    });
                     menu.add(item);
                 }
             }
@@ -1251,6 +1255,16 @@ public class MapMenu extends JPopupMenu {
                 }
             }
 
+            // Populate brush-off targets
+            // BAs / Infantry should be handled normally by selecting them as a target, we just
+            // don't have a good GUI way to do that for iNarc pods.
+            List<Targetable> inarcs = PhysicalDisplay.getINarcPods(myEntity, coords);
+            if (!inarcs.isEmpty()) {
+                for (Targetable brushTarget : inarcs) {
+                    menu.add(createBrushOffJMenuItem(brushTarget));
+                }
+            }
+
             ToHitData grappleAttackActionToHitData = GrappleAttackAction.toHit(client.getGame(),
                   myEntity.getId(),
                   myTarget);
@@ -1512,7 +1526,11 @@ public class MapMenu extends JPopupMenu {
                       || hasAmmoType(AmmoType.AmmoTypeEnum.BA_TUBE)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
                 }
-                if (canStartFires && hasFireExtinguisher()
+                // canStartFires is the TacOps fire game option (ADVANCED_COMBAT_TAC_OPS_START_FIRE), not a unit
+                // trait: extinguishing is only offered when the fire rules are in play, the same option that
+                // gates igniting hexes above. A unit qualifies if it carries a fire extinguisher weapon or is a
+                // firefighting-engineer platoon (TO:AuE p.153).
+                if (canStartFires && (hasFireExtinguisher() || myEntity.isFirefighter())
                       && h.containsTerrain(Terrains.FIRE)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_EXTINGUISH)));
                 }
@@ -1625,17 +1643,8 @@ public class MapMenu extends JPopupMenu {
     }
 
     private boolean hasFireExtinguisher() {
-        if (myEntity.getWeaponList().isEmpty()) {
-            return false;
-        }
-
-        for (Mounted<?> weapon : myEntity.getWeaponList()) {
-            if ((weapon.getType() instanceof ISFireExtinguisher) || (weapon.getType() instanceof CLFireExtinguisher)) {
-                return true;
-            }
-        }
-
-        return false;
+        return myEntity.getWeaponList().stream()
+              .anyMatch(weapon -> weapon.getType().hasFlag(WeaponType.F_EXTINGUISHER));
     }
 
     private JMenuItem createTorsoTwistJMenuItem(int direction) {
@@ -1888,6 +1897,26 @@ public class MapMenu extends JPopupMenu {
         item.addActionListener(evt -> {
             try {
                 ((PhysicalDisplay) currentPanel).doGrapple();
+            } catch (Exception ex) {
+                logger.error(ex, "");
+            }
+        });
+        return item;
+    }
+
+    /**
+     * Create a menu entry for sweeping off a specific target (currently only supports iNarc pods)
+     * Each valid iNarc pod should get one entry with the target's name, which will create the
+     * BrushOffAttackAction to try to clear that target only.
+     * @param brushTarget   Targetable iNarc pod instance
+     * @return              JMenuItem that will launch the physical attack selection dialog
+     */
+    private JMenuItem createBrushOffJMenuItem(Targetable brushTarget) {
+        JMenuItem item = new JMenuItem(String.format("Brush Off [%s]", brushTarget.getDisplayName()));
+
+        item.addActionListener(evt -> {
+            try {
+                ((PhysicalDisplay) currentPanel).doBrush(brushTarget);
             } catch (Exception ex) {
                 logger.error(ex, "");
             }

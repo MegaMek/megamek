@@ -182,6 +182,9 @@ public class OptionsConstants {
     public static final String PILOT_ZWEIHANDER = "zweihander";
     public static final String PILOT_ATOW_G_TOLERANCE = "atow_g_tolerance";
 
+    // AIRBORNE ONLY SKILLS
+    public static final String PILOT_WIND_WALKER = "wind_walker";
+
     // GUNNERY SKILLS
     public static final String GUNNERY_BLOOD_STALKER = "blood_stalker";
     public static final String GUNNERY_CLUSTER_HITTER = "cluster_hitter";
@@ -216,9 +219,6 @@ public class OptionsConstants {
     /** @deprecated Use {@link #MD_EI_IMPLANT} instead. EI Implant is now an official Manei Domini augmentation. */
     @Deprecated(since = "0.50.07", forRemoval = true)
     public static final String UNOFFICIAL_EI_IMPLANT = "ei_implant";
-    public static final String UNOFFICIAL_GUNNERY_LASER = "gunnery_laser";
-    public static final String UNOFFICIAL_GUNNERY_MISSILE = "gunnery_missile";
-    public static final String UNOFFICIAL_GUNNERY_BALLISTIC = "gunnery_ballistic";
     public static final String UNOFFICIAL_CLAN_PILOT_TRAINING = "clan_pilot_training";
     public static final String UNOFFICIAL_SOME_LIKE_IT_HOT = "some_like_it_hot";
     public static final String UNOFFICIAL_WEATHERED = "weathered";
@@ -374,6 +374,8 @@ public class OptionsConstants {
     public static final String ADVANCED_STRATOPS_PARTIAL_REPAIRS = "stratops_partial_repairs";
     public static final String ADVANCED_ASSAULT_DROP = "assault_drop";
     public static final String ADVANCED_PARATROOPERS = "paratroopers";
+    public static final String ADVANCED_BRIDGE_BUILDING_ENGINEERS = "bridge_building_engineers";
+    public static final String UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS = "unofficial_bridge_repair_engineers";
     public static final String ADVANCED_INCLUSIVE_SENSOR_RANGE = "inclusive_sensor_range";
     public static final String ADVANCED_SENSORS_DETECT_ALL = "sensors_detect_all";
     public static final String ADVANCED_MAG_SCAN_NO_HILLS = "magscan_nohills";
@@ -460,11 +462,13 @@ public class OptionsConstants {
     public static final String ADVANCED_COMBAT_HOT_LOAD_IN_GAME = "hotload_in_game";
     public static final String ADVANCED_COMBAT_MULTI_USE_AMS = "multiuse_ams";
     public static final String ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS = "picking_up_and_throwing_units";
+    public static final String ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS = "disposable_infantry_weapons";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_SPRINT = "tacops_sprint";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL = "tacops_standing_still";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_EVADE = "tacops_evade";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_SKILLED_EVASION = "tacops_skilled_evasion";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING = "tacops_leaping";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING = "tacops_climbing";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_PSR = "tacops_physical_psr";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_ATTACK_PSR = "tacops_attack_physical_psr";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_TAKING_DAMAGE = "tacops_taking_damage";

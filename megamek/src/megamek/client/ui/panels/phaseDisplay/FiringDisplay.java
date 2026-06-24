@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -119,6 +119,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         FIRE_SEARCHLIGHT("fireSearchlight"),
         FIRE_CLEAR_TURRET("fireClearTurret"),
         FIRE_CLEAR_WEAPON("fireClearWeaponJam"),
+        FIRE_EXTINGUISH("fireExtinguish"),
         FIRE_CALLED("fireCalled"),
         FIRE_CANCEL("fireCancel"),
         FIRE_ACTIVATE_SPA("fireActivateSPA"),
@@ -248,6 +249,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      * Keeps track of the Coords that are in a strafing run.
      */
     private final List<Coords> strafingCoords = new ArrayList<>(5);
+
+    /** The last hex the player selected, used by the firing-phase Extinguish button. */
+    private Coords selectedCoords = null;
+    private int selectedBoardId = 0;
 
     /**
      * Creates and lays out a new firing phase display for the specified clientGUI.getClient().
@@ -485,6 +490,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             updateClearTurret();
             updateClearWeaponJam();
             updateStrafe();
+            selectedCoords = null;
+            updateExtinguish();
 
             // Hidden units can only spot
             if ((currentEntity() != null) && currentEntity().isHidden()) {
@@ -600,6 +607,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         setFireCalledEnabled(false);
         setFireClearTurretEnabled(false);
         setFireClearWeaponJamEnabled(false);
+        setFireExtinguishEnabled(false);
         setStrafeEnabled(false);
     }
 
@@ -1328,12 +1336,19 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // set the weapon as used
         mounted.setUsedThisRound(true);
 
-        // find the next available weapon
-        WeaponMounted nextWeapon = clientgui.getUnitDisplay().wPan.getNextWeapon();
+        // find the next available weapon. A solo-attack weapon (e.g. the fire extinguisher) is the unit's
+        // only attack this turn, so don't advance to other weapons - doing so would show a confusing
+        // "already firing a weapon that can only be fired by itself" message for a weapon the player never
+        // tried to fire.
+        WeaponMounted nextWeapon = mounted.getType().hasFlag(WeaponType.F_SOLO_ATTACK)
+              ? null
+              : clientgui.getUnitDisplay().wPan.getNextWeapon();
 
         // we fired a weapon, can't clear turret jams or weapon jams anymore
         updateClearTurret();
         updateClearWeaponJam();
+        // an attack was declared, so firefighting is no longer available this phase
+        updateExtinguish();
 
         // check; if there are no ready weapons, you're done.
         if ((nextWeapon == null)) {
@@ -1829,6 +1844,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
         Coords coords = event.getCoords();
         if (isMyTurn() && (coords != null) && (currentEntity() != null)) {
+            // Remember the clicked hex so the Extinguish button can act on it, even when the hex holds no
+            // normal target (a bare burning hex) or is the unit's own hex. Done for any click so the button
+            // never acts on a stale, previously-selected hex.
+            selectedCoords = coords;
+            selectedBoardId = event.getBoardId();
+            updateExtinguish();
             if (isStrafing) {
                 if (currentEntity().getPassedThroughBoardId() == event.getBoardId()) {
                     strafingCoords.clear();
@@ -1984,6 +2005,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             doClearTurret();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_CLEAR_WEAPON.getCmd())) {
             doClearWeaponJam();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_EXTINGUISH.getCmd())) {
+            extinguish();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_STRAFE.getCmd())) {
             startStrafe();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_ACTIVATE_SPA.getCmd())) {
@@ -2039,6 +2062,67 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     private void updateClearWeaponJam() {
         setFireClearWeaponJamEnabled((currentEntity() instanceof Tank) && ((Tank) currentEntity()).canUnjamWeapon()
               && attacks.isEmpty());
+    }
+
+    private void updateExtinguish() {
+        setFireExtinguishEnabled(canExtinguishSelectedHex());
+    }
+
+    /**
+     * @return {@code true} if the current unit can extinguish the hex the player has selected: the unit is a
+     *       firefighting engineer or carries a ready fire extinguisher, it has not already declared an attack this
+     *       phase, and the selected hex is burning (and adjacent, for firefighting engineers).
+     */
+    private boolean canExtinguishSelectedHex() {
+        Entity firingUnit = currentEntity();
+        if ((firingUnit == null) || !attacks.isEmpty() || (selectedCoords == null)) {
+            return false;
+        }
+        boolean firefighter = firingUnit.isFirefighter();
+        if (!firefighter && !hasReadyFireExtinguisher(firingUnit)) {
+            return false;
+        }
+        // The hex must be on the unit's own board; a hex on a different board is never reachable.
+        if (firingUnit.getBoardId() != selectedBoardId) {
+            return false;
+        }
+        Hex hex = game.getBoard(selectedBoardId).getHex(selectedCoords);
+        if ((hex == null) || !hex.containsTerrain(Terrains.FIRE)) {
+            return false;
+        }
+        if (firingUnit.getPosition() == null) {
+            return false;
+        }
+        int distanceToHex = firingUnit.getPosition().distance(selectedCoords);
+        // Firefighting engineers fight an adjacent hex, not the one they stand in (TO:AuE p.153). Other units use a
+        // range-1 Fire Extinguisher weapon, which reaches only their own hex or an adjacent one.
+        return firefighter ? (distanceToHex == 1) : (distanceToHex <= 1);
+    }
+
+    private boolean hasReadyFireExtinguisher(Entity entity) {
+        return entity.getWeaponList().stream()
+              .anyMatch(weapon -> weapon.getType().hasFlag(WeaponType.F_EXTINGUISHER) && !weapon.isUsedThisRound());
+    }
+
+    /**
+     * Declares an attack to extinguish the fire in the player-selected hex, using a carried fire extinguisher weapon if
+     * present, otherwise the firefighting engineers' own gear. This consumes the unit's attack (TO:AuE p.153 -
+     * firefighting is done in place of a weapon attack).
+     */
+    private void extinguish() {
+        if (!canExtinguishSelectedHex()) {
+            return;
+        }
+        // Prefer a real fire extinguisher weapon (coolant trucks, etc.); firefighting engineers use their
+        // currently selected weapon, which their FIRE_ENGINEERS specialization routes to the extinguisher path.
+        for (WeaponMounted weapon : currentEntity().getWeaponList()) {
+            if (weapon.getType().hasFlag(WeaponType.F_EXTINGUISHER) && !weapon.isUsedThisRound()) {
+                clientgui.getUnitDisplay().wPan.selectWeapon(weapon);
+                break;
+            }
+        }
+        target(new HexTarget(selectedCoords, selectedBoardId, Targetable.TYPE_HEX_EXTINGUISH));
+        fire();
     }
 
     private void updateStrafe() {
@@ -2199,6 +2283,29 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      */
     protected void adaptFireModeEnabled(Mounted<?> m) {
         setFireModeEnabled(m.isModeSwitchable() && m.hasModes());
+        updateFireModeTooltip(m);
+    }
+
+    /**
+     * Refreshes the Mode button tooltip for the selected weapon. Most weapons keep the generic tooltip, but the Fire
+     * Extinguisher carried by firefighting engineers gets extra helper text explaining its Firefight/Support modes
+     * (TO:AuE p.153), since the choice of which platoon rolls is not otherwise obvious from the button.
+     *
+     * @param weapon the currently selected weapon
+     */
+    private void updateFireModeTooltip(Mounted<?> weapon) {
+        MegaMekButton modeButton = buttons.get(FiringCommand.FIRE_MODE);
+        String tooltip = createToolTip(FiringCommand.FIRE_MODE.getCmd(), "FiringDisplay.",
+              FiringCommand.FIRE_MODE.getHotKeyDesc());
+        if (weapon.getType().hasFlag(WeaponType.F_EXTINGUISHER)) {
+            String helper = Messages.getString("FiringDisplay.fireMode.extinguisher.tooltip");
+            if (tooltip.contains("</BODY>")) {
+                tooltip = tooltip.replace("</BODY>", "<BR>" + helper + "</BODY>");
+            } else {
+                tooltip = "<HTML><BODY>" + helper + "</BODY></HTML>";
+            }
+        }
+        modeButton.setToolTipText(tooltip);
     }
 
     protected void setFireCalledEnabled(boolean enabled) {
@@ -2214,6 +2321,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     protected void setFireClearWeaponJamEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_CLEAR_WEAPON).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_CLEAR_WEAPON.getCmd(), enabled);
+    }
+
+    protected void setFireExtinguishEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_EXTINGUISH).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_EXTINGUISH.getCmd(), enabled);
     }
 
     protected void setStrafeEnabled(boolean enabled) {

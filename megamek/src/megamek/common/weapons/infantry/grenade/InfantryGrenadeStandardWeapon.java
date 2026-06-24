@@ -68,7 +68,7 @@ public class InfantryGrenadeStandardWeapon extends InfantryWeapon {
         cost = 16;
         bv = 0.44;
         tonnage = .0006;
-        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
+        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_INF_DISPOSABLE);
         infantryDamage = 0.48;
         infantryRange = 0;
         rulesRefs = " 273, TM";

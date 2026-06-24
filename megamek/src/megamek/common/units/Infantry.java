@@ -37,7 +37,10 @@ package megamek.common.units;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Report;
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechAdvancement;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.AvailabilityValue;
@@ -50,6 +53,7 @@ import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
+import megamek.logging.MMLogger;
 
 /**
  * This is a superclass for infantry unit types, Conventional Infantry and BattleArmor. Other personnel on the
@@ -59,6 +63,8 @@ import megamek.common.rolls.TargetRoll;
  * been changed as a substantional number of rules for CI/BA do not overlap.
  */
 public abstract class Infantry extends Entity {
+
+    private static final MMLogger LOGGER = MMLogger.create(Infantry.class);
 
     protected int squadCount = 1;
     protected int squadSize = 1;
@@ -83,6 +89,28 @@ public abstract class Infantry extends Entity {
     public static final int DUG_IN_FORTIFYING2 = 4; // no protection, can't attack
     public static final int DUG_IN_FORTIFYING3 = 5; // no protection, can't attack
     private int dugIn = DUG_IN_NONE;
+
+    /**
+     * Tracks damage taken between turns while digging in or fortifying, so that being attacked extends the effort by
+     * one turn (TO:AR p.106 / TO:AUE p.153). Server-side runtime state; not written to save files (dug-in progress is
+     * itself not persisted).
+     */
+    private final FortifyState fortifyState = new FortifyState();
+
+    /**
+     * Number of idle turns (no movement, no fire) the unit must spend "hitting the deck" before it may convert to "dug
+     * in" status. Per TO:AR p.106.
+     */
+    public static final int HIT_DECK_TURNS_TO_DIG_IN = 2;
+
+    /** True when this infantry is "hitting the deck", TO:AR p.106. */
+    private boolean hitTheDeck = false;
+
+    /** Consecutive turns spent on the deck without moving or firing, used for the dig-in conversion. */
+    private int turnsOnDeck = 0;
+
+    /** Transient flag set when an on-deck unit fires; breaks the idle streak for the dig-in conversion. */
+    private boolean firedWhileOnDeck = false;
 
     private boolean isTakingCover = false;
     private boolean canCallSupport = true;
@@ -424,16 +452,37 @@ public abstract class Infantry extends Entity {
     public void newRound(int roundNumber) {
         if (turnsLayingExplosives >= 0) {
             turnsLayingExplosives++;
-            if (!isInBuilding()) {
-                turnsLayingExplosives = -1; // give up if no longer in a building
+            // Give up if no longer in the target structure's hex (building, bridge or fuel tank, TO:AUE p.152).
+            // This deliberately matches the eligibility check for starting to lay charges so that a platoon that
+            // could start (e.g. on a building roof or on a bridge) does not silently abandon its work next round.
+            if (!isInDemolishableStructureHex()) {
+                turnsLayingExplosives = -1;
             }
         }
 
         if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
-            dugIn++;
-            if (dugIn > DUG_IN_FORTIFYING3) {
-                dugIn = DUG_IN_NONE;
+            // Damage taken during a digging-in / fortifying turn extends the effort by one turn (TO:AR p.106 /
+            // TO:AUE p.153): hold the progress counter this round instead of advancing it.
+            if (fortifyState.checkpointWasDamaged(currentFortifyHealthSignature())) {
+                LOGGER.debug("[Fortify] {}: damaged while fortifying - effort extended by 1 turn (dug-in stage {})",
+                      getShortName(), dugIn);
+            } else {
+                dugIn++;
+                if (dugIn > DUG_IN_FORTIFYING3) {
+                    dugIn = DUG_IN_NONE;
+                }
             }
+        }
+
+        // Track idle turns spent on the deck. Moving clears the deck status (and the counter) on the server, so a
+        // unit still on the deck here did not move last turn. Firing breaks the idle streak. TO:AR p.106.
+        if (hitTheDeck) {
+            if (firedWhileOnDeck) {
+                turnsOnDeck = 0;
+            } else {
+                turnsOnDeck++;
+            }
+            firedWhileOnDeck = false;
         }
 
         setTakingCover(false);
@@ -449,15 +498,136 @@ public abstract class Infantry extends Entity {
     }
 
     /**
+     * Begins the one-turn self "digging in" process (TO:AR p.106), or completes it immediately for a unit that has
+     * stayed on the deck long enough to convert directly. Seeds the damage baseline used to detect an interrupting
+     * attack that would extend the effort.
+     *
+     * @param convertFromDeck {@code true} if the unit qualifies to convert straight to fully dug-in from the deck (see
+     *                        {@link #canDigInFromDeck()})
+     */
+    public void beginDigIn(boolean convertFromDeck) {
+        if (convertFromDeck) {
+            setHitTheDeck(false);
+            setDugIn(DUG_IN_COMPLETE);
+        } else {
+            setDugIn(DUG_IN_WORKING);
+        }
+        fortifyState.begin(currentFortifyHealthSignature());
+    }
+
+    /**
+     * Begins the three-turn fieldwork that raises a fortified hex (Trench/Fieldworks Engineers, TO:AUE p.153). Seeds
+     * the damage baseline used to detect an interrupting attack that extends the effort.
+     */
+    public void beginFortify() {
+        setDugIn(DUG_IN_FORTIFYING1);
+        fortifyState.begin(currentFortifyHealthSignature());
+    }
+
+    /**
+     * @return the health signature used to detect damage between fortifying turns: total armor plus internal structure.
+     *       For infantry, internal structure is the trooper count, so any casualties lower this value and mark the turn
+     *       as interrupted.
+     */
+    private int currentFortifyHealthSignature() {
+        return getTotalArmor() + getTotalInternal();
+    }
+
+    /**
+     * @return {@code true} if this unit's digging-in / fortification effort was set back by damage this round (so its
+     *       progress counter was held rather than advanced). TO:AR p.106 / TO:AUE p.153.
+     */
+    public boolean isFortifyExtendedThisRound() {
+        return fortifyState.wasExtendedAtLastCheckpoint();
+    }
+
+    /**
+     * @return {@code true} if this unit is partway through building a fortified hex (one of the multi-turn FORTIFYING
+     *       stages), as opposed to plain one-turn self digging-in. TO:AUE p.153.
+     */
+    public boolean isFortifying() {
+        return (dugIn >= DUG_IN_FORTIFYING1) && (dugIn <= DUG_IN_FORTIFYING3);
+    }
+
+    /**
+     * @return the current fortification stage (1..{@link #getFortifyTotalStages()}) while {@link #isFortifying()}, or 0
+     *       when the unit is not building a fortification.
+     */
+    public int getFortifyStage() {
+        return isFortifying() ? (dugIn - DUG_IN_FORTIFYING1 + 1) : 0;
+    }
+
+    /** @return the number of turns of work a fortified hex takes to complete. */
+    public int getFortifyTotalStages() {
+        return DUG_IN_FORTIFYING3 - DUG_IN_FORTIFYING1 + 1;
+    }
+
+    /**
+     * @return {@code true} if this infantry is currently "hitting the deck", TO:AR p.106.
+     */
+    public boolean isHitTheDeck() {
+        return hitTheDeck;
+    }
+
+    /**
+     * Sets the "hitting the deck" status. Clearing the status (e.g. when the unit moves or is loaded) also resets the
+     * idle-turn counter used for the dig-in conversion.
+     *
+     * @param hitTheDeck {@code true} to mark the unit as hitting the deck
+     */
+    public void setHitTheDeck(boolean hitTheDeck) {
+        this.hitTheDeck = hitTheDeck;
+        if (!hitTheDeck) {
+            turnsOnDeck = 0;
+            firedWhileOnDeck = false;
+        }
+    }
+
+    /**
+     * @return The number of consecutive idle turns this unit has spent on the deck (no movement, no fire).
+     */
+    public int getTurnsOnDeck() {
+        return turnsOnDeck;
+    }
+
+    /**
+     * Marks that this unit fired while on the deck this turn, which breaks the idle streak required for converting to
+     * "dug in". TO:AR p.106.
+     *
+     * @param firedWhileOnDeck True if the unit made a weapon attack while on the deck
+     */
+    public void setFiredWhileOnDeck(boolean firedWhileOnDeck) {
+        this.firedWhileOnDeck = firedWhileOnDeck;
+    }
+
+    /**
+     * @return True if this on-deck unit has remained idle long enough that it may convert directly to "dug in"
+     *       (protected) status, per TO:AR p.106.
+     */
+    public boolean canDigInFromDeck() {
+        return hitTheDeck && (turnsOnDeck >= HIT_DECK_TURNS_TO_DIG_IN);
+    }
+
+    /**
+     * Clears the transient ground defensive postures (dug in and hitting the deck). Called when the unit moves or is
+     * loaded into a transport, since either action ends those postures. TO:AR p.106.
+     */
+    public void clearGroundPostures() {
+        setDugIn(DUG_IN_NONE);
+        setHitTheDeck(false);
+        fortifyState.reset();
+    }
+
+    /**
      * This function is called when loading a unit into transport. This is overridden to ensure infantry are no longer
-     * considered dug in when they are being transported.
+     * considered dug in or hitting the deck when they are being transported.
      *
      * @param transportID The entity ID of the transporter
      */
     @Override
     public void setTransportId(int transportID) {
         super.setTransportId(transportID);
-        setDugIn(DUG_IN_NONE);
+        clearGroundPostures();
     }
 
     public boolean isMechanized() {

@@ -152,15 +152,7 @@ import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.event.GameCFREvent;
-import megamek.common.event.GameEndEvent;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GameReportEvent;
-import megamek.common.event.GameScriptedEvent;
-import megamek.common.event.GameScriptedMessageEvent;
-import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.*;
 import megamek.common.event.board.GameBoardNewEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.event.entity.GameEntityNewEvent;
@@ -179,6 +171,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityListFile;
 import megamek.common.units.IBomber;
@@ -583,6 +576,53 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
+     * Maps the layer-neutral severity carried by a {@link GameToastEvent} to the board view's toast styling.
+     *
+     * @param level the severity from the server-sent toast event
+     *
+     * @return the matching {@link ToastLevel} used to color and time the toast
+     */
+    private static ToastLevel toastLevelFor(GameToastEvent.Level level) {
+        return switch (level) {
+            case SUCCESS -> ToastLevel.SUCCESS;
+            case WARNING -> ToastLevel.WARNING;
+            case ERROR -> ToastLevel.ERROR;
+            case INFO -> ToastLevel.INFO;
+        };
+    }
+
+    /**
+     * Shows a progress toast for each of the local player's platoons that is busy raising or dismantling a bridge
+     * (TO:AUE). Called once per round at the start of the movement phase: a busy platoon is eligible only in the
+     * movement phase (movement-only, so it can continue/cancel/pause/resume) and takes no other action, so this is
+     * its main per-turn feedback besides the hex indicator and the END phase report.
+     */
+    private void showBridgeBuildProgressToasts() {
+        for (Entity entity : getClient().getGame().getEntitiesVector()) {
+            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBusyWithBridge()
+                  || (convInfantry.getBridgeTargetCoords() == null)
+                  || (entity.getOwnerId() != getClient().getLocalPlayer().getId())) {
+                continue;
+            }
+            if (convInfantry.isDismantlingBridge()) {
+                // Count the standing structure back down on the build's scale (e.g. 4/6, 3/6, ...)
+                addToast(ToastLevel.INFO, Messages.getString("ClientGUI.bridgeDismantleProgress.toast",
+                      entity.getShortName(), convInfantry.getBridgeDismantleRemaining(),
+                      convInfantry.getBridgeBuildRequiredTurns(),
+                      convInfantry.getBridgeTargetCoords().getBoardNum()), entity);
+            } else {
+                int turnsWorked = Math.min(convInfantry.getBridgeBuildTurns(),
+                      convInfantry.getBridgeBuildRequiredTurns());
+                String progressKey = convInfantry.isBridgeBuildRepair() ? "ClientGUI.bridgeRepairProgress.toast"
+                      : "ClientGUI.bridgeBuildProgress.toast";
+                addToast(ToastLevel.INFO, Messages.getString(progressKey,
+                      entity.getShortName(), turnsWorked, convInfantry.getBridgeBuildRequiredTurns(),
+                      convInfantry.getBridgeTargetCoords().getBoardNum()), entity);
+            }
+        }
+    }
+
+    /**
      * Splits a server-side report HTML stream into per-event toasts via {@link ReportToastFormatter} and drip-feeds
      * them to the overlay on the {@link GUIPreferences#TOAST_DRIP_SECONDS} cadence so each one has time to scroll past
      * before the next appears.
@@ -757,10 +797,15 @@ public class ClientGUI extends AbstractClientGUI
         sensorRangeSpriteHandler = new SensorRangeSpriteHandler(this, client.getGame());
         collapseWarningSpriteHandler = new CollapseWarningSpriteHandler(this);
         sawClearingSpriteHandler = new SawClearingSpriteHandler(this, client.getGame());
+        BridgeBuildSpriteHandler bridgeBuildSpriteHandler = new BridgeBuildSpriteHandler(this, client.getGame());
+        BridgeRepairedSpriteHandler bridgeRepairedSpriteHandler = new BridgeRepairedSpriteHandler(this,
+              client.getGame());
         groundObjectSpriteHandler = new GroundObjectSpriteHandler(this, client.getGame());
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(this, client);
         firingArcSpriteHandler = new FiringArcSpriteHandler(this);
         fleeZoneSpriteHandler = new FleeZoneSpriteHandler(this);
+        FortifyBuildSpriteHandler fortifyBuildSpriteHandler = new FortifyBuildSpriteHandler(this, client.getGame());
+        DugInSpriteHandler dugInSpriteHandler = new DugInSpriteHandler(this, client.getGame());
 
         spriteHandlers.addAll(List.of(movementEnvelopeHandler,
               movementModifierSpriteHandler,
@@ -768,10 +813,14 @@ public class ClientGUI extends AbstractClientGUI
               flareSpritesHandler,
               collapseWarningSpriteHandler,
               sawClearingSpriteHandler,
+              bridgeBuildSpriteHandler,
+              bridgeRepairedSpriteHandler,
               groundObjectSpriteHandler,
               firingSolutionSpriteHandler,
               firingArcSpriteHandler,
-              fleeZoneSpriteHandler));
+              fleeZoneSpriteHandler,
+              fortifyBuildSpriteHandler,
+              dugInSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 
@@ -2887,6 +2936,12 @@ public class ClientGUI extends AbstractClientGUI
             GamePhase phase = getClient().getGame().getPhase();
             switchPanel(phase);
 
+            // Once per round, remind the player of own platoons busy raising bridges (TO:AUE); building
+            // platoons are ineligible for all phases, so no phase display ever selects them
+            if (phase.isMovement()) {
+                showBridgeBuildProgressToasts();
+            }
+
             // Reset spotting FOV mode at game start to prevent player confusion
             if (phase.isLounge()) {
                 GUIP.setFovSpottingMode(false);
@@ -3032,6 +3087,12 @@ public class ClientGUI extends AbstractClientGUI
             if (event instanceof GameScriptedMessageEvent) {
                 showScriptedMessage((GameScriptedMessageEvent) event);
             }
+        }
+
+        @Override
+        public void gameToast(GameToastEvent event) {
+            Entity entity = client.getGame().getEntity(event.entityId());
+            addToast(toastLevelFor(event.level()), event.message(), entity);
         }
 
         @Override

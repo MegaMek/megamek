@@ -48,6 +48,7 @@ import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -277,6 +278,11 @@ class ComputeToHitIsImpossible {
         // can't fire weapons if loading/unloading cargo
         if (attacker.endOfTurnCargoInteraction()) {
             return Messages.getString("WeaponAttackAction.CantFireWhileLoadingUnloadingCargo");
+        }
+
+        // Climbing units can only fire rear-mounted weapons (TO:AR p.20)
+        if ((weapon != null) && attacker.isClimbing() && !weapon.isRearMounted()) {
+            return Messages.getString("WeaponAttackAction.CantFireWhileClimbing");
         }
 
         // can't fire arm/forward facing torso weapons if carrying cargo in hands
@@ -875,10 +881,10 @@ class ComputeToHitIsImpossible {
         if (weapon != null && weaponType != null) {
             // Variable setup
 
-            // "Cool" mode for vehicle flamer requires coolant ammo
-            boolean vf_cool = ammoType != null &&
-                  ammo != null &&
-                  (ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_COOLANT));
+            // A vehicle flamer loaded with coolant ammo fires in "cool" mode: it suppresses fires (and can help
+            // extinguish a hex) rather than igniting them, so it is barred from starting fires below.
+            boolean flamerInCoolMode = (ammoType != null) && (ammo != null)
+                  && ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_COOLANT);
 
             // Anti-Infantry weapons can only target infantry
             if (weaponType.hasFlag(WeaponType.F_INFANTRY_ONLY)) {
@@ -1491,7 +1497,7 @@ class ComputeToHitIsImpossible {
             // Causing Fires
 
             // Some weapons can't cause fires, but Infernos always can.
-            if ((vf_cool || (weaponType.hasFlag(WeaponType.F_NO_FIRES) && !isInferno)) &&
+            if ((flamerInCoolMode || (weaponType.hasFlag(WeaponType.F_NO_FIRES) && !isInferno)) &&
                   (Targetable.TYPE_HEX_IGNITE == target.getTargetType())) {
                 return Messages.getString("WeaponAttackAction.WeaponCantIgnite");
             }
@@ -1544,16 +1550,31 @@ class ComputeToHitIsImpossible {
 
             // Extinguishing Fires
 
-            // You can use certain types of flamer/sprayer ammo or infantry firefighting engineers to extinguish
-            // burning hexes (and units).
-            // TODO: This functionality does not appear to be implemented
+            // Fires (in hexes) can be put out by fire extinguisher weapons, flamer/sprayer ammo in cool
+            // mode, or firefighting engineer infantry using their portable gear (TO:AuE p.153).
+            boolean firefightingEngineer = attacker.isFirefighter();
             if (Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType()) {
-                if (!weaponType.hasFlag(WeaponType.F_EXTINGUISHER) && !vf_cool) {
+                if (!weaponType.hasFlag(WeaponType.F_EXTINGUISHER) && !flamerInCoolMode && !firefightingEngineer) {
                     return Messages.getString("WeaponAttackAction.InvalidForFirefighting");
                 }
                 Hex hexTarget = game.getHexOf(target);
                 if ((hexTarget != null) && !hexTarget.containsTerrain(Terrains.FIRE)) {
                     return Messages.getString("WeaponAttackAction.TargetNotBurning");
+                }
+                // Firefighting engineers fight an adjacent burning hex - not the one they stand in, and not
+                // on a different board (coords on separate boards are never truly adjacent).
+                if (firefightingEngineer && (attacker.getPosition() != null)
+                      && ((attacker.getBoardId() != target.getBoardId())
+                      || (attacker.getPosition().distance(target.getPosition()) != 1))) {
+                    return Messages.getString("WeaponAttackAction.FirefightNotAdjacent");
+                }
+                // A non-engineer using a Fire Extinguisher weapon (range 1) can only put out a fire in its own
+                // hex or an adjacent one, and never on a different board.
+                boolean fireExtinguisherWeapon = weaponType.hasFlag(WeaponType.F_EXTINGUISHER);
+                if (!firefightingEngineer && fireExtinguisherWeapon && (attacker.getPosition() != null)
+                      && ((attacker.getBoardId() != target.getBoardId())
+                      || (attacker.getPosition().distance(target.getPosition()) > 1))) {
+                    return Messages.getString("WeaponAttackAction.FirefightOutOfRange");
                 }
             } else if (weaponType.hasFlag(WeaponType.F_EXTINGUISHER)) {
                 if (!(((target instanceof Tank) && ((Tank) target).isOnFire()) ||
@@ -1663,6 +1684,16 @@ class ComputeToHitIsImpossible {
                   && !attacker.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)
                   && !weaponType.hasFlag(WeaponType.F_MORTAR_TYPE_INDIRECT)) {
                 return Messages.getString("WeaponAttackAction.NoSpotter");
+            }
+
+            // Disposable Weapon attacks (TO:AuE p.116, Corrected Sixth Printing) - only gated while the rule is
+            // enabled; otherwise the mount fires as an ordinary weapon and the standard checks apply.
+            if ((weapon instanceof WeaponMounted disposableMount) && disposableMount.isDisposableWeapon()
+                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
+                String disposableReason = disposableWeaponAttackReason(game, attacker, weaponType);
+                if (disposableReason != null) {
+                    return disposableReason;
+                }
             }
 
             // Infantry Leg attacks and Swarm attacks
@@ -1913,6 +1944,53 @@ class ComputeToHitIsImpossible {
 
         // If we get here, the shot is possible
         return null;
+    }
+
+    /**
+     * Determines whether a Disposable Weapon attack (TO:AuE p.116, Corrected Sixth Printing) is impossible. The attack
+     * is a single once-per-scenario attack made instead of the platoon's standard weapon attack, and may not be made
+     * while the unit is engaged in an anti-Mek (leg/swarm) attack.
+     *
+     * @param game         the current game
+     * @param attacker     the attacking infantry/battle armor unit
+     * @param weaponType   the disposable weapon's type
+     *
+     * @return a localized reason string if the attack is impossible, or null if it is allowed
+     */
+    private static @Nullable String disposableWeaponAttackReason(Game game, Entity attacker, WeaponType weaponType) {
+        if (Entity.NONE != attacker.getSwarmTargetId()) {
+            return Messages.getString("WeaponAttackAction.NoDisposableWhenSwarming");
+        }
+        if (!isUnitsOnlyWeaponAttack(game, attacker, weaponType.getInternalName())) {
+            return Messages.getString("WeaponAttackAction.DisposableOnly");
+        }
+        return null;
+    }
+
+    /**
+     * Determines whether the given attack type is the only weapon attack the attacker has declared this turn. Unlike
+     * {@link #isOnlyAttack}, this does NOT restrict other units from making the same attack against the same target -
+     * the Disposable Weapon rule (TO:AuE p.116, Corrected Sixth Printing) only requires the disposable to replace the
+     * firing unit's own standard attack, so two different platoons may each fire their own disposable at the same
+     * target.
+     *
+     * @param game       the current game
+     * @param attacker   the attacking unit
+     * @param attackType the internal name of the disposable weapon
+     *
+     * @return {@code true} if the attacker has declared no other (different) weapon attack this turn
+     */
+    private static boolean isUnitsOnlyWeaponAttack(Game game, Entity attacker, String attackType) {
+        for (EntityAction action : game.getActionsVector()) {
+            if (action instanceof WeaponAttackAction waa) {
+                Entity otherAttacker = waa.getEntity(game);
+                if ((otherAttacker != null) && otherAttacker.equals(attacker)
+                      && !otherAttacker.getEquipment(waa.getWeaponId()).getType().is(attackType)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

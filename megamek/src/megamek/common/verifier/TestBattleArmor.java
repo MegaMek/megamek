@@ -1315,6 +1315,35 @@ public class TestBattleArmor extends TestEntity {
         return totalWeight;
     }
 
+    /**
+     * Determines whether the given Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) is legally carried by the
+     * suit. Beyond the suit-level eligibility of {@link BattleArmor#canCarryDisposableWeapons()} (an anti-personnel
+     * weapon mount or two armored gloves), the weapon must actually be attached to such a mount point (TM p.262
+     * Modular/Turret Mounts, pp.259-260 Manipulators): either a dedicated anti-personnel weapon mount, or an armored
+     * glove on a suit equipped with two armored gloves. The suit merely owning an AP mount that is occupied by a
+     * different weapon is not sufficient. Note that armored gloves themselves carry the {@code F_AP_MOUNT} flag, so a
+     * dedicated AP mount is identified as an {@code F_AP_MOUNT} item that is not an armored glove.
+     *
+     * @param battleArmor the suit carrying the weapon
+     * @param mount       the Disposable Weapon mount to validate
+     *
+     * @return {@code true} if the weapon is attached to an anti-personnel weapon mount, or to an armored glove on a
+     *       suit with two armored gloves
+     */
+    private static boolean isValidDisposableWeaponMounting(BattleArmor battleArmor, Mounted<?> mount) {
+        Mounted<?> attachmentPoint = mount.getLinkedBy();
+        // The instanceof guard also prevents EquipmentBitSet ordinal collisions: MiscTypeFlags must only ever be
+        // tested against a MiscType (see EquipmentType#hasFlag)
+        if ((attachmentPoint == null) || !(attachmentPoint.getType() instanceof MiscType attachmentType)) {
+            return false;
+        }
+        boolean inAntiPersonnelWeaponMount = attachmentType.hasFlag(MiscType.F_AP_MOUNT)
+              && !attachmentType.hasFlag(MiscType.F_ARMORED_GLOVE);
+        boolean carriedByArmoredGlove = attachmentType.hasFlag(MiscType.F_ARMORED_GLOVE)
+              && (battleArmor.countWorkingMisc(MiscType.F_ARMORED_GLOVE) >= 2);
+        return inAntiPersonnelWeaponMount || carriedByArmoredGlove;
+    }
+
     @Override
     public boolean hasIllegalEquipmentCombinations(@Nullable StringBuffer errors) {
         BattleArmor battleArmor = (BattleArmor) getEntity();
@@ -1328,6 +1357,16 @@ public class TestBattleArmor extends TestEntity {
                 if (!mount.getType().hasFlag(WeaponType.F_BA_WEAPON) && !mount.getType().hasFlag(WeaponType.F_INFANTRY)
                       && !mount.getType().hasFlag(WeaponType.F_INFANTRY_ATTACK)) {
                     currentErrors.add(mount.getName() + " is not a legal BattleArmor weapon");
+                }
+
+                // Disposable Weapons (TO:AuE p.116, Corrected Sixth Printing) require an anti-personnel weapon mount
+                // or two armored gloves, and must actually be carried by that mount point - a suit whose AP mount is
+                // occupied by a different weapon may not carry a Disposable Weapon on the side
+                if (mount.getType().hasFlag(WeaponType.F_INF_DISPOSABLE)
+                      && !isValidDisposableWeaponMounting(battleArmor, mount)) {
+                    currentErrors.add(mount.getName()
+                          + " is a Disposable Weapon, which must be mounted in an anti-personnel weapon mount or "
+                          + "carried by an armored glove on a suit with two armored gloves");
                 }
 
             } else if (mount.getType() instanceof MiscType misc) {

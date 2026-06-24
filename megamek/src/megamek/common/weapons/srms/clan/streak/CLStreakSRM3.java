@@ -72,6 +72,7 @@ public class CLStreakSRM3 extends StreakSRMWeapon {
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         //But SRM Tech Base and Avail Ratings.
+        cost = 45000;
         rulesRefs = "230, TM";
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

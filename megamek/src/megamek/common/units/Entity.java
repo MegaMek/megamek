@@ -102,6 +102,7 @@ import megamek.common.interfaces.PhaseUpdated;
 import megamek.common.interfaces.RoundUpdated;
 import megamek.common.jacksonAdapters.EntityDeserializer;
 import megamek.common.loaders.MekFileParser;
+import megamek.common.moves.ClimbingHelper;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
@@ -399,6 +400,9 @@ public abstract class Entity extends TurnOrdered
 
     protected boolean prone = false;
     protected boolean hullDown = false;
+    protected boolean climbing = false;
+    protected boolean dangling = false;
+    protected int climbingLevelsChosen = 0;
     protected boolean findingClub = false;
     protected boolean armsFlipped = false;
     protected boolean unjammingRAC = false;
@@ -2101,6 +2105,58 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Returns true if this entity is currently climbing or dangling from a cliff face (TO:AR p.20).
+     * Both climbing and dangling entities have the same combat restrictions
+     * (rear weapons only, no physical attacks, -2 to-hit target modifier).
+     */
+    public boolean isClimbing() {
+        return climbing || dangling;
+    }
+
+    /**
+     * Sets the climbing state (TO:AR p.20).
+     *
+     * @param climbing true if the entity is climbing
+     */
+    public void setClimbing(boolean climbing) {
+        this.climbing = climbing;
+    }
+
+    /**
+     * Returns true if this entity is currently dangling from a cliff face as part of a Dangle-and-Drop maneuver (TO:AR
+     * p.20).
+     */
+    public boolean isDangling() {
+        return dangling;
+    }
+
+    /**
+     * Sets the dangling state for the Dangle-and-Drop maneuver (TO:AR p.20).
+     *
+     * @param dangling true if the entity is dangling
+     */
+    public void setDangling(boolean dangling) {
+        this.dangling = dangling;
+    }
+
+    /**
+     * Returns the number of levels the player chose to climb this turn. 0 means no choice has been made yet (use max
+     * affordable). Uses 0 as sentinel to survive XStream deserialization (which defaults unset ints to 0).
+     */
+    public int getClimbingLevelsChosen() {
+        return climbingLevelsChosen;
+    }
+
+    /**
+     * Sets the number of levels to climb this turn.
+     *
+     * @param levels the number of levels to climb, or 0 for no choice
+     */
+    public void setClimbingLevelsChosen(int levels) {
+        this.climbingLevelsChosen = levels;
+    }
+
+    /**
      * Returns true if the target is considered immobile (-4 to hit) as a target and also if it is considered immobile
      * or temporarily or permanently immbolized for active movement. Overriding methods should check the status of the
      * unit (shutdown, damage) and also the status of the crew (unconscious).
@@ -2493,8 +2549,19 @@ public abstract class Entity extends TurnOrdered
                     bridgeElev = 0;
                 }
                 int elevDiff = Math.abs((next.getLevel() + bridgeElev) - (current.getLevel() + assumedElevation));
-                if (elevDiff <= getMaxElevationChange()) {
-                    // bridge is reachable at least
+                // TacOps Climbing (TO:AR p.20): a Mek with climb mode on and at least one
+                // functional climbing arm may scale the side of a bridge that sits more than
+                // getMaxElevationChange() levels above it, just as it climbs a building. Without
+                // this, calcElevation never places the Mek on a tall bridge, so the move compiles
+                // as a normal (non-climbing) step and the climb dialog never appears.
+                boolean climbingOntoTallBridge = climb
+                      && (this instanceof Mek)
+                      && next.containsTerrain(Terrains.BRIDGE)
+                      && ((next.getLevel() + bridgeElev) > (current.getLevel() + assumedElevation))
+                      && gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
+                      && ClimbingHelper.canClimb(this);
+                if ((elevDiff <= getMaxElevationChange()) || climbingOntoTallBridge) {
+                    // bridge is reachable, or a climbing Mek can scale up to it (TO:AR p.20)
                     if (climb || !isElevationValid(retVal, next)) {
                         // use bridge if you can't use the base terrain or if
                         // you prefer to by climb mode
@@ -6657,6 +6724,19 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
+    /**
+     * @return {@code true} if this unit mounts an operable minesweeper (TO:AuE p.138, Corrected Sixth Printing),
+     *       whether or not it is currently activated. Used to offer the End-Phase activation toggle.
+     */
+    public boolean hasMinesweeper() {
+        for (MiscMounted mounted : getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_MINESWEEPER) && mounted.isOperable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean hasC3i() {
         if (isShutDown() || isOffBoard()) {
             return false;
@@ -7279,6 +7359,7 @@ public abstract class Entity extends TurnOrdered
         loadedThisTurn = false;
         done = false;
         delta_distance = 0;
+        climbingLevelsChosen = 0;
         mpUsedLastRound = mpUsed;
         mpUsed = 0;
         isJumpingNow = false;
@@ -11027,16 +11108,10 @@ public abstract class Entity extends TurnOrdered
             return false; // not on board?
         }
 
-        if ((this instanceof Infantry) && hasWorkingMisc(MiscTypeFlag.F_TOOLS, MiscTypeFlag.S_DEMOLITION_CHARGE)) {
-            Hex hex = game.getHex(position, boardId);
-
-            if (hex == null) {
-                return false;
-            }
-
-            // Check if can lay demolition charges
-            return hex.containsTerrain(Terrains.BUILDING) && hasWorkingMisc(MiscTypeFlag.F_TOOLS,
-                  MiscTypeFlag.S_DEMOLITION_CHARGE);
+        // Laying demolition charges is one way to be eligible, but must not preclude other physical attacks
+        // such as Battle Armor vibroclaw attacks (see issue #6614)
+        if (canLayDemolitionCharges()) {
+            return true;
         }
 
         // only Meks and ProtoMek's have physical attacks (except tank charges)
@@ -11165,6 +11240,36 @@ public abstract class Entity extends TurnOrdered
         }
 
         return canHit;
+    }
+
+    /**
+     * Returns true when this unit is infantry carrying a working demolition charge while in a hex containing a
+     * structure that charges can be rigged on, i.e. when it can lay demolition charges this turn, TO:AUE p.152. Laying
+     * demolition charges is a physical-phase action.
+     *
+     * @return True if this unit can lay demolition charges this turn
+     */
+    public boolean canLayDemolitionCharges() {
+        return (this instanceof Infantry)
+              && hasWorkingMisc(MiscTypeFlag.F_TOOLS, MiscTypeFlag.S_DEMOLITION_CHARGE)
+              && isInDemolishableStructureHex();
+    }
+
+    /**
+     * Returns true when this unit is in a hex containing a structure that demolition charges can be rigged on: a
+     * building, a bridge or a fuel tank, TO:AUE p.152. Per the rule, the platoon only needs to spend its turns "in the
+     * target hex", so standing on top of the structure also counts.
+     *
+     * @return True if this unit's hex contains a demolishable structure
+     */
+    public boolean isInDemolishableStructureHex() {
+        if (game == null) {
+            return false;
+        }
+        Hex hex = game.getHex(position, boardId);
+        return (hex != null) && (hex.containsTerrain(Terrains.BUILDING)
+              || hex.containsTerrain(Terrains.BRIDGE)
+              || hex.containsTerrain(Terrains.FUEL_TANK));
     }
 
     /**
@@ -12667,6 +12772,19 @@ public abstract class Entity extends TurnOrdered
      * @return true if abandoned, false otherwise
      */
     public boolean isAbandoned() {
+        return false;
+    }
+
+    /**
+     * Returns whether this unit is a firefighting engineer - specialized infantry that can extinguish an adjacent
+     * burning hex in place of a weapon attack (TO:AuE p.153). The base implementation returns {@code false};
+     * {@link megamek.common.units.ConvInfantry} overrides this for platoons carrying the FIRE_ENGINEERS specialization.
+     * Putting the check here lets callers ask {@code entity.isFirefighter()} without first testing
+     * {@code instanceof ConvInfantry}.
+     *
+     * @return {@code true} if this unit is a firefighting-engineer platoon, {@code false} otherwise
+     */
+    public boolean isFirefighter() {
         return false;
     }
 

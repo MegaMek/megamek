@@ -1956,7 +1956,7 @@ class ComputeToHitIsImpossible {
      *
      * @param game       the current game
      * @param attacker   the attacking unit
-     * @param weapon     the weapon mount being declared (may be null)
+     * @param weapon     the weapon mount being declared (may be {@code null})
      * @param weaponType the type of the weapon being declared
      *
      * @return a localized impossibility reason, or {@code null} if the Disposable Weapon rule does not forbid this

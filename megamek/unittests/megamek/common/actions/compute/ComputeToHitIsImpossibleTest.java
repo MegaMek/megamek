@@ -189,7 +189,7 @@ class ComputeToHitIsImpossibleTest {
     }
 
     @Test
-    @DisplayName("an anti-'Mech leg attack is not gated here, so its own dedicated rules produce the reason")
+    @DisplayName("an anti-Mek leg attack is not gated here, so its own dedicated rules produce the reason")
     void antiMekAttackIsNotGatedByDisposableRule() {
         ConvInfantry infantry = createInfantryWithDisposable();
         declareAttack(infantry, disposableMount(infantry));

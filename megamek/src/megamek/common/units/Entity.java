@@ -5619,6 +5619,11 @@ public abstract class Entity extends TurnOrdered
      *       Heat Phase report's "gains N heat" / "sinks N heat" breakdown tooltips.
      */
     public HeatBreakdown getHeatBreakdown() {
+        if (heatBreakdown == null) {
+            // A unit deserialized from a stream written before this field existed restores it as null; lazily
+            // recreate it so the documented never-null contract holds and heat sources can always be recorded.
+            heatBreakdown = new HeatBreakdown();
+        }
         return heatBreakdown;
     }
 

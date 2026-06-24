@@ -459,6 +459,11 @@ public abstract class Entity extends TurnOrdered
     public int heatBuildup = 0;
     public int heatFromExternal = 0;
     public int coolFromExternal = 0;
+    /**
+     * Itemized record of this turn's heat buildup and dissipation, used to give the Heat Phase report a breakdown
+     * tooltip on its "gains N heat" / "sinks N heat" values. Rebuilt each turn.
+     */
+    private HeatBreakdown heatBreakdown = new HeatBreakdown();
     public int delta_distance = 0;
     public int mpUsed = 0;
     public int underwaterRounds = 0;
@@ -5751,6 +5756,36 @@ public abstract class Entity extends TurnOrdered
      */
     public int getEngineCritHeat() {
         return 0;
+    }
+
+    /**
+     * Adjusts this turn's running {@link #heatBuildup} by a signed amount and records the contribution under a source
+     * label so it can be shown as an itemized breakdown on the heat-phase report. Positive amounts come from heat
+     * sources; negative amounts represent cooling or reductions. Contributions sharing a label are summed.
+     *
+     * @param heat   the signed amount to adjust the running heat buildup by (positive for heat sources, negative for
+     *               cooling or reductions)
+     * @param reason a short human-readable source label, e.g. "Movement (Running)" or "Medium Laser"
+     */
+    public void changeHeatBuildup(int heat, String reason) {
+        heatBuildup += heat;
+        getHeatBreakdown().addBuildup(heat, reason);
+    }
+
+    /**
+     * @return this unit's itemized heat buildup/dissipation record for the current turn (never null). Used to build the
+     *       Heat Phase report's "gains N heat" / "sinks N heat" breakdown tooltips.
+     */
+    public HeatBreakdown getHeatBreakdown() {
+        return heatBreakdown;
+    }
+
+    /**
+     * Clears the itemized heat breakdown (both buildup and dissipation). Called when heat resolves and
+     * {@link #heatBuildup} is reset, so the next turn starts fresh.
+     */
+    public void clearHeatBreakdown() {
+        getHeatBreakdown().clear();
     }
 
     /**

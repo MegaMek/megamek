@@ -59,11 +59,13 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.RowSorterEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.components.FlatTriStateCheckBox;
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
@@ -117,8 +119,10 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     private JButton buttonAdvancedSearch;
     private JButton buttonResetSearch;
     private final JToggleButton buttonPvToggle = new JToggleButton(Messages.getString("MekSelectorDialog.TogglePV"));
+    private final JToggleButton buttonGPToggle = new JToggleButton(Messages.getString("MekSelectorDialog.ToggleGP"));
     protected JList<String> listTechLevel = new JList<>();
-    private JLabel lblCount;
+    private final JComponent gpLine = new JPanel();
+    private final JLabel lblCount = new JLabel();
     /**
      * We need to map the selected index of listTechLevel to the actual TL it belongs to
      */
@@ -128,8 +132,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected JLabel labelImage = new JLabel(""); // inline to avoid potential null pointer issues
     protected JTable tableUnits;
     protected JTextField textFilter;
-    protected JTextField textGunnery;
-    protected JTextField textPilot;
+    protected JTextField textGunnery = new JTextField("4", 3);
+    protected JTextField textPilot = new JTextField("5", 3);
     private final FlatTriStateCheckBox checkboxCanonOnly = createSourceFilterCheckbox(
           Messages.getString("MekSelectorDialog.chkCanonOnly"));
     private final FlatTriStateCheckBox checkboxHasPublishedRecordSheet = createSourceFilterCheckbox(
@@ -409,73 +413,23 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         panelFilterButtons.add(textFilter, gridBagConstraintsWest);
         gridBagConstraintsWest.fill = GridBagConstraints.NONE;
 
-        // Add the Gunnery and Piloting entry boxes and labels to the filter panel in the UI
+        // Gunnery and Piloting textfields and labels
         JLabel lblGun = new JLabel(Messages.getString("MekSelectorDialog.m_labelGunnery"));
         lblGun.setName("lblGun");
-        gridBagConstraintsWest.gridx = 0;
-        gridBagConstraintsWest.gridy = 5;
-        if (CLIENT_PREFERENCES.useGPinUnitSelection()) {
-            panelFilterButtons.add(lblGun, gridBagConstraintsWest);
-        }
-
-        textGunnery = new JTextField("4");
         textGunnery.setName("textGunnery");
-        if (CLIENT_PREFERENCES.useGPinUnitSelection()) {
-            textGunnery.getDocument().addDocumentListener(new DocumentListener() {
-                // Set the table to refresh when the gunnery is changed
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    sorter.allRowsChanged();
-                }
-
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    sorter.allRowsChanged();
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    sorter.allRowsChanged();
-                }
-
-            });
-            gridBagConstraintsWest.gridx = 1;
-            gridBagConstraintsWest.gridy = 5;
-            panelFilterButtons.add(textGunnery, gridBagConstraintsWest);
-        }
+        textGunnery.getDocument().addDocumentListener(new GPDocumentListener());
 
         JLabel lblPilot = new JLabel(Messages.getString("MekSelectorDialog.m_labelPiloting"));
         lblGun.setName("lblPilot");
-        gridBagConstraintsWest.gridx = 0;
-        gridBagConstraintsWest.gridy = 6;
-        if (CLIENT_PREFERENCES.useGPinUnitSelection()) {
-            panelFilterButtons.add(lblPilot, gridBagConstraintsWest);
-        }
-
-        textPilot = new JTextField("5");
         textPilot.setName("textPilot");
-        if (CLIENT_PREFERENCES.useGPinUnitSelection()) {
-            textPilot.getDocument().addDocumentListener(new DocumentListener() {
-                // Set the table to refresh when the piloting is changed
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    sorter.allRowsChanged();
-                }
+        textPilot.getDocument().addDocumentListener(new GPDocumentListener());
 
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    sorter.allRowsChanged();
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    sorter.allRowsChanged();
-                }
-            });
-            gridBagConstraintsWest.gridx = 1;
-            gridBagConstraintsWest.gridy = 6;
-            panelFilterButtons.add(textPilot, gridBagConstraintsWest);
-        }
+        gpLine.add(lblGun);
+        gpLine.add(textGunnery);
+        gpLine.add(Box.createHorizontalStrut(10));
+        gpLine.add(lblPilot);
+        gpLine.add(textPilot);
+        gpLine.setVisible(CLIENT_PREFERENCES.useGPinUnitSelection());
 
         labelImage.setHorizontalAlignment(SwingConstants.CENTER);
         labelImage.setName("labelImage");
@@ -489,6 +443,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         panelFilterButtons.add(labelImage, gridBagConstraints);
 
         JPanel panelSearchButtons = new JPanel(new GridBagLayout());
+        gridBagConstraintsWest.insets = new Insets(0, 7, 0, 0);
 
         buttonAdvancedSearch = new JButton(Messages.getString("MekSelectorDialog.AdvSearch"));
         buttonAdvancedSearch.setName("buttonAdvancedSearch");
@@ -511,9 +466,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 0;
         panelSearchButtons.add(buttonPvToggle, gridBagConstraintsWest);
 
-        lblCount = new JLabel("");
-        gridBagConstraintsWest.gridx = 3;
-        gridBagConstraintsWest.gridy = 0;
+        buttonGPToggle.setSelected(CLIENT_PREFERENCES.useGPinUnitSelection());
+        buttonGPToggle.addActionListener(e -> toggleGP());
+        gridBagConstraintsWest.gridx++;
+        panelSearchButtons.add(buttonGPToggle, gridBagConstraintsWest);
+
+        gridBagConstraintsWest.gridx++;
         panelSearchButtons.add(lblCount, gridBagConstraintsWest);
 
         gridBagConstraints = new GridBagConstraints();
@@ -523,10 +481,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraints.insets = new Insets(10, 10, 5, 0);
         selectionPanel.add(panelFilterButtons, gridBagConstraints);
 
-        gridBagConstraints.insets = new Insets(10, 10, 10, 0);
+        gridBagConstraints.insets = new Insets(10, 10, 0, 0);
         selectionPanel.add(panelSearchButtons, gridBagConstraints);
+        gridBagConstraints.insets = new Insets(0, 10, 0, 0);
+        selectionPanel.add(gpLine, gridBagConstraints);
 
-        gridBagConstraints.insets = new Insets(5, 0, 0, 0);
+        gridBagConstraints.insets = new Insets(10, 0, 0, 0);
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1;
         gridBagConstraints.weighty = 1;
@@ -582,6 +542,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(enter, SELECT_ACTION);
         rootPane.getInputMap(JComponent.WHEN_FOCUSED).put(enter, SELECT_ACTION);
         rootPane.getActionMap().put(SELECT_ACTION, selectAction);
+
+        sorter.addRowSorterListener(event -> {
+            if (event.getType() == RowSorterEvent.Type.SORTED) {
+                updateUnitCount();
+            }
+        });
     }
 
     private boolean isVTL() {
@@ -644,6 +610,16 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         listTechLevel.setModel(techModel);
         listTechLevel.setSelectedIndices(selectedIndices);
         listTechLevel.addListSelectionListener(this);
+    }
+
+    private void toggleGP() {
+        CLIENT_PREFERENCES.setUseGpInUnitSelection(buttonGPToggle.isSelected());
+        gpLine.setVisible(CLIENT_PREFERENCES.useGPinUnitSelection());
+        // Reset the values when hidden so there isn't an invisible BV modifier
+        if (!CLIENT_PREFERENCES.useGPinUnitSelection()) {
+            textGunnery.setText("4");
+            textPilot.setText("5");
+        }
     }
 
     /**
@@ -724,8 +700,10 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             return;
         }
         sorter.setRowFilter(unitTypeFilter);
-        String msgUnitCount = Messages.getString("MekSelectorDialog.UnitCount");
-        lblCount.setText(String.format(" %s %d", msgUnitCount, sorter.getViewRowCount()));
+    }
+
+    protected void updateUnitCount() {
+        lblCount.setText(Messages.getString("MekSelectorDialog.UnitCount", sorter.getViewRowCount()));
     }
 
     private boolean matchesCanonFilter(MekSummary mek) {
@@ -1103,35 +1081,16 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                     }
                 }
                 return ms.getTons();
+
             } else if (col == COL_BV) {
-                // This code allows for Gunnery and BV to be read from the UI, and update the BV values in
-                // the table as a result
-                int gunnery = 4;
-                int piloting = 5;
-                if (textGunnery.getText().matches("\\d+")) {
-                    gunnery = Integer.parseInt(textGunnery.getText());
-                    if (gunnery > 8) {
-                        gunnery = 4;
-                    }
-
-                }
-                if (textPilot.getText().matches("\\d+")) {
-                    piloting = Integer.parseInt(textPilot.getText());
-                    if (piloting > 8) {
-                        piloting = 5;
-                    }
-                }
-
+                int gunnery = parseSkillValue(textGunnery, 4);
+                int piloting = parseSkillValue(textPilot, 5);
                 double gp_multiply = BVCalculator.bvSkillMultiplier(gunnery, piloting);
                 return (int) Math.round(ms.getBV() * gp_multiply);
+
             } else if (col == COL_PV) {
-                // This code allows for Gunnery to be read from the UI, and update the PV values
-                // in the table as a result
-                // It uses Gunnery as the skill
-                int gunnery = 4;
-                if (textGunnery.getText().matches("\\d+")) {
-                    gunnery = Integer.parseInt(textGunnery.getText());
-                }
+                //FIXME It uses Gunnery as the skill - should be improved to show an AS "Skill" instead
+                int gunnery = parseSkillValue(textGunnery, 4);
 
                 double modifier;
                 if (gunnery == 4) {
@@ -1213,6 +1172,38 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 text = String.format(MegaMek.getMMOptions().getLocale(), "%,d ", price);
             }
             return super.getTableCellRendererComponent(table, text, isSelected, hasFocus, row, column);
+        }
+    }
+
+    /**
+     * Sets the table to refresh when gunnery/piloting is changed
+     */
+    private class GPDocumentListener implements DocumentListener {
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            sorter.allRowsChanged();
+        }
+
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            sorter.allRowsChanged();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            sorter.allRowsChanged();
+        }
+    }
+
+    private int parseSkillValue(JTextField field, int defaultValue) {
+        try {
+            int value = Integer.parseInt(field.getText());
+            boolean valid = value >= 0 && value <= 8;
+            field.putClientProperty(FlatClientProperties.OUTLINE, valid ? null : FlatClientProperties.OUTLINE_ERROR);
+            return valid ? value : defaultValue;
+        } catch (NumberFormatException ignored) {
+            field.putClientProperty(FlatClientProperties.OUTLINE, FlatClientProperties.OUTLINE_ERROR);
+            return defaultValue;
         }
     }
 }

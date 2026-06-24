@@ -149,6 +149,9 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
+import megamek.common.rules.rulesPsrCheck;
+import megamek.common.rules.core.coreRulesPsrCheck;
+import megamek.common.rules.totalwarfare.twRulesPsrCheck;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.
@@ -1052,6 +1055,8 @@ public abstract class Entity extends TurnOrdered
 
     private boolean hasFleeZone = false;
     private HexArea fleeZone = HexArea.EMPTY_AREA;
+    
+    private rulesPsrCheck rulesPsr = new coreRulesPsrCheck();
 
     /**
      * Generates a new, blank, entity.
@@ -1093,6 +1098,11 @@ public abstract class Entity extends TurnOrdered
         offBoardShotObservers = new HashSet<>();
         incomingGuidedAttacks = new ArrayList<>();
         carriedObjects = new HashMap<>();
+                
+        // Check if the game uses Total Warfare instead of Core, and swaps the rule objects
+        if (game.getOptions().booleanOption(OptionsConstants.TWRULES)) {
+            rulesPsr = new twRulesPsrCheck();
+        }
     }
 
     /**
@@ -8350,22 +8360,9 @@ public abstract class Entity extends TurnOrdered
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int gyroDamage = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CENTER_TORSO);
-        if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
-            // PLAYTEST3 No rolls for running with HD Gyro
-            if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                gyroDamage = 0;
-            } else {
-                gyroDamage--; // HD gyro ignores 1st damage
-            }
-        }
-        if (((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT)) &&
-              canFall() &&
-              ((gyroDamage > 0) || hasHipCrit())) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), 0, "running with damaged hip actuator or gyro"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
-        }
+        
+        rulesPsr.checkRunningWithDamage(this, roll, gyroDamage, overallMoveType);
+        
         addPilotingModifierForTerrain(roll);
         return roll;
     }

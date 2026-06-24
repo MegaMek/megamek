@@ -1630,7 +1630,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // allow spotting
         if ((attacker != null) && !attacker.isSpotting() && attacker.canSpot() && (target != null)
               && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
-            boolean hasLos = LosEffects.calculateLOS(game, attacker, target).canSee();
+            // Spotting LOS: pass spotting=true so a VTOL Mast Mount's +1 sensor elevation is
+            // applied (TacOps). This matches the server-side spot resolution and lets a mast-mount
+            // VTOL hovering behind cover enable the Spot button. Non-mast units are unaffected.
+            boolean hasLos = LosEffects.calculateLOS(game, attacker, target, true).canSee();
             // In double-blind, we need to "spot" the target as well as LoS
             if (hasLos
                   && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)

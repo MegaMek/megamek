@@ -409,14 +409,18 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             artyMsg = "Bay Artillery missed here on round "
                   + game.getRoundCount() + ", by "
                   + game.getPlayer(aaa.getPlayerId()).getName();
-            game.getBoard().addSpecialHexDisplay(origPos,
-                  new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_MISS, game.getRoundCount(),
-                        game.getPlayer(aaa.getPlayerId()), artyMsg));
+            SpecialHexDisplay bayMissMarker = new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_MISS,
+                  game.getRoundCount(), game.getPlayer(aaa.getPlayerId()), artyMsg);
+            game.getBoard().addSpecialHexDisplay(origPos, bayMissMarker);
             while (numWeaponsHit > 0) {
                 // We'll generate a new report and scatter for each weapon fired
                 targetPos = Compute.scatterDirectArty(origPos, moF);
                 if (game.getBoard().contains(targetPos)) {
                     targets.add(targetPos);
+                    // The bay scatters each weapon separately; draw the drift line to the first on-board impact.
+                    if (bayMissMarker.getDriftHex() == null) {
+                        bayMissMarker.setDriftHex(targetPos);
+                    }
                     targetHex = game.getBoard().getHex(targetPos);
                     if (targetHex != null) {
                         heights.add(

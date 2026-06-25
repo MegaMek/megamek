@@ -56,15 +56,7 @@ import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.BulldozerMovePath.MPCostComparator;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.DisengageAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FindClubAction;
-import megamek.common.actions.InitiateInfantryCombatAction;
-import megamek.common.actions.ReinforceInfantryCombatAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.actions.WithdrawInfantryCombatAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
@@ -525,10 +517,11 @@ public class Princess extends BotClient {
     }
 
     /**
-     * A bot artillery heat-map marker: the turn number to display (round of the prediction, or impact round of a shot)
-     * and the heat (number of enemies feeding the hex), which drives the marker's opacity.
+     * A bot artillery heat-map marker. For a predicted enemy position the value is the round of the prediction; for a
+     * shot it is the countdown of turns until the round lands (0 = lands this turn). The heat is the number of enemies
+     * feeding the hex, which drives a predicted hex's cold-to-hot color.
      *
-     * @param turn      The turn number to show on the hex
+     * @param turn      The value to show on the hex: the prediction round, or a shot's turns-til-impact countdown
      * @param heatUnits The number of enemies contributing to this hex's heat
      */
     public record HeatMapMarker(int turn, int heatUnits) {}
@@ -536,12 +529,14 @@ public class Princess extends BotClient {
     /**
      * Optionally paints this bot's artillery heat map on the board for testing: a cold-to-hot color fill at each hex an
      * enemy is predicted to advance to (navy blue for a single enemy converging, up to crimson red for many, so the
-     * map cools as units are destroyed), and a crosshair at each hex this turn's plan fires at. Each marker shows its
-     * turn number. Only acts when the local client has the "Show Bot Artillery Heat Map" advanced testing setting on;
-     * the markers are visible to all and clear themselves each round. No-op for a headless bot (no GUI preferences).
+     * map cools as units are destroyed), and a crosshair at each hex it is firing at. A predicted hex shows the
+     * prediction's turn; a firing hex counts down the turns until the rounds land. Only acts when the local client has
+     * the "Show Bot Artillery Heat Map" advanced testing setting on; the markers are visible to all and clear
+     * themselves each round. No-op for a headless bot (no GUI preferences).
      *
      * @param predictedImpacts The hexes enemies were predicted to advance to, mapped to their heat-map marker
-     * @param chosenTargets    The hexes this plan fires at, mapped to their heat-map marker
+     * @param chosenTargets    The hexes the bot is firing at (this turn's shots plus in-flight shells), mapped to their
+     *                         heat-map marker (turn = countdown to impact)
      * @param boardId          The board the hexes are on
      */
     public void showArtilleryHeatMap(final Map<Coords, HeatMapMarker> predictedImpacts,
@@ -1555,11 +1550,16 @@ public class Princess extends BotClient {
                         }
                     }
 
-                    actions.addAll(plan.getEntityActionVector());
-
                     EntityAction spotAction = getFireControl(shooter).getSpotAction(plan, shooter, fireControlState);
+                    // If the unit's own shot is too trivial to be worth the spotting penalty, spot instead of firing.
+                    boolean spotInsteadOfTrivialFire = (spotAction != null)
+                          && (plan.getExpectedDamage() < FireControl.MIN_USEFUL_FIRING_DAMAGE);
+                    if (!spotInsteadOfTrivialFire) {
+                        actions.addAll(plan.getEntityActionVector());
+                    }
                     if (spotAction != null) {
                         actions.add(spotAction);
+                        announceSpotting(spotAction, shooter);
                     }
 
                     sendAttackData(shooter.getId(), actions);
@@ -1603,6 +1603,7 @@ public class Princess extends BotClient {
                 EntityAction spotAction = getFireControl(shooter).getSpotAction(null, shooter, fireControlState);
                 if (spotAction != null) {
                     miscPlan.add(spotAction);
+                    announceSpotting(spotAction, shooter);
                 }
 
                 // Respect the "Searchlights On by Default" option
@@ -4558,6 +4559,22 @@ public class Princess extends BotClient {
         friendlyHeatMap.ageMaps(game);
     }
 
+
+    /**
+     * Sends a visible chat readback when the bot declares a spot, so a playtester can see at a glance when Princess is
+     * spotting for indirect fire. The detailed decision (and the reason on the failure path) is logged with the
+     * {@code [Spot]} tag in princess.log.
+     *
+     * @param spotAction The action the fire control returned (a no-op for anything that is not a {@link SpotAction})
+     * @param spotter    The unit doing the spotting
+     */
+    private void announceSpotting(final EntityAction spotAction, final Entity spotter) {
+        if (spotAction instanceof SpotAction spot) {
+            Entity target = getGame().getEntity(spot.getTargetId());
+            String targetName = (target != null) ? target.getShortName() : Integer.toString(spot.getTargetId());
+            sendChat(Messages.getString("Princess.spotting", spotter.getShortName(), targetName), Level.INFO);
+        }
+    }
 
     public void sendChat(final String message, final Level logLevel) {
         if (LOGGER.getLevel().isLessSpecificThan(logLevel)) {

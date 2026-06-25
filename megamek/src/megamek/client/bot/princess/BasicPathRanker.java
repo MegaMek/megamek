@@ -691,6 +691,11 @@ public class BasicPathRanker extends PathRanker {
     // even when it is hunting for a line of sight to designate.
     private static final int MIN_TAG_STANDOFF_DISTANCE = 4;
 
+    // Per-hex penalty that keeps a safely-positioned artillery tube in its current hex instead of shuffling sideways
+    // (which gains it nothing and can incur attacker-movement firing penalties). Large enough to dominate the small
+    // movement/herding pull; the tube may still turn in place to face the enemy.
+    private static final double ARTILLERY_HOLD_STILL_WEIGHT = 100.0;
+
     /**
      * @param unit The unit being moved
      *
@@ -1146,6 +1151,7 @@ public class BasicPathRanker extends PathRanker {
             // how much faster the average enemy is than this unit (0 if it can outrun them).
             standoffDistance += Math.max(0, averageEnemyRunMP(enemies) - movingUnit.getRunMP());
         }
+        boolean holdingArtilleryInPlace = false;
         double aggressionMod;
         if (!isNotAirborne) {
             aggressionMod = 0;
@@ -1166,16 +1172,27 @@ public class BasicPathRanker extends PathRanker {
             } else {
                 // Artillery holds position - it fires from range and the enemy closes on its own, so it should never
                 // walk its tube forward. Its floor is the larger of how far back it already is and the minimum indirect
-                // range, so any path that ends closer than that (advancing, or sitting inside minimum range) is steeply
-                // penalized, while holding or falling back is free. This mirrors a player setting artillery to Hold
-                // Position and only repositioning it when the enemy gets too close.
+                // range.
                 double currentDistToEnemy = (movingUnit.getPosition() != null)
                       ? distanceToClosestEnemy(movingUnit, movingUnit.getPosition(), game)
                       : standoffDistance;
                 double holdDistance = Math.max(currentDistToEnemy, standoffDistance);
                 double shortfall = holdDistance - distToEnemy;
-                double distanceFromStandoff = (shortfall <= 0) ? 0 : shortfall * ARTILLERY_STANDOFF_URGENCY;
-                aggressionMod = distanceFromStandoff * getOwner().getBehaviorSettings().getHyperAggressionValue();
+                if (shortfall > 0) {
+                    // Enemy is inside the hold distance: steeply penalize any path that ends closer (advancing, or
+                    // sitting inside minimum range), so the tube falls back to regain standoff.
+                    aggressionMod = shortfall * ARTILLERY_STANDOFF_URGENCY
+                          * getOwner().getBehaviorSettings().getHyperAggressionValue();
+                } else {
+                    // Safely at standoff: hold position. Penalize any move out of the current hex so the tube does not
+                    // shuffle sideways (which gains nothing and can incur attacker-movement firing penalties); it may
+                    // still turn in place to face the enemy. This mirrors a player setting artillery to Hold Position.
+                    holdingArtilleryInPlace = true;
+                    double hexesMoved = (movingUnit.getPosition() != null)
+                          ? movingUnit.getPosition().distance(path.getFinalCoords())
+                          : 0;
+                    aggressionMod = hexesMoved * ARTILLERY_HOLD_STILL_WEIGHT;
+                }
             }
         } else {
             aggressionMod = calculateAggressionMod(movingUnit, pathCopy, game);
@@ -1187,7 +1204,10 @@ public class BasicPathRanker extends PathRanker {
 
         // The further I am from my teammates, the lower this path
         // ranks (weighted by Herd Mentality).
-        double herdingMod = isNotAirborne ? calculateHerdingMod(friendsCoords, pathCopy) : 0;
+        // A holding artillery tube ignores the herd pull too, so it does not creep toward the advancing friendly line.
+        double herdingMod = (isNotAirborne && !holdingArtilleryInPlace)
+              ? calculateHerdingMod(friendsCoords, pathCopy)
+              : 0;
 
         // Movement is good, it gives defense and extends a player power in the game.
         if (movingUnit.getPosition() != null && friendsCoords != null) {
@@ -1199,7 +1219,9 @@ public class BasicPathRanker extends PathRanker {
 
         var movementModFormula = new StringBuilder(64);
 
-        double movementMod = calculateMovementMod(pathCopy, game, enemies, movementModFormula);
+        // A holding artillery tube does not chase movement TMM - staying put is the point - so skip the reward.
+        double movementMod = holdingArtilleryInPlace ? 0.0
+              : calculateMovementMod(pathCopy, game, enemies, movementModFormula);
         scores.put("enemyHotSpotCount", (double) getOwner().getEnemyHotSpots().size());
         scores.put("selfPreservationValue", getOwner().getBehaviorSettings().getSelfPreservationValue());
         scores.put("selfPreservationIndex", (double) getOwner().getBehaviorSettings().getSelfPreservationIndex());

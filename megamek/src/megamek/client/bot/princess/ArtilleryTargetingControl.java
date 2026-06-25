@@ -677,8 +677,8 @@ public class ArtilleryTargetingControl {
 
     /**
      * Hands the optional heat-map visualization the hexes each enemy was predicted to advance to and the hexes this
-     * plan actually fires at - each tagged with a turn number (the current round for predictions, the impact round for
-     * shots) - so a local Princess can paint and track them on the board for testing.
+     * plan actually fires at - each tagged with a turn value (the current round for predictions, a countdown of turns
+     * until impact for shots) - so a local Princess can paint and track them on the board for testing.
      *
      * @param shooter The firing artillery unit
      * @param plan    The chosen firing plan
@@ -693,16 +693,36 @@ public class ArtilleryTargetingControl {
                   new Princess.HeatMapMarker(currentRound, predicted.getValue()));
         }
         Map<Coords, Princess.HeatMapMarker> chosenTargets = new HashMap<>();
+        // Shots being planned this turn are not yet in the in-flight list, so tag them with their full flight time.
         for (WeaponFireInfo fireInfo : plan) {
             if ((fireInfo.getTarget() == null) || (fireInfo.getTarget().getPosition() == null)) {
                 continue;
             }
-            int impactRound = currentRound;
+            int turnsTilImpact = 0;
             if (fireInfo.getAction() instanceof ArtilleryAttackAction artilleryAttack) {
-                impactRound = currentRound + artilleryAttack.getTurnsTilHit();
+                turnsTilImpact = artilleryAttack.getTurnsTilHit();
             }
             chosenTargets.put(fireInfo.getTarget().getPosition(),
-                  new Princess.HeatMapMarker(impactRound, clusterSizeNear(fireInfo, shooter, game)));
+                  new Princess.HeatMapMarker(turnsTilImpact, clusterSizeNear(fireInfo, shooter, game)));
+        }
+        // This shooter's already-in-flight shells: re-tag them each turn with the engine's decremented turns-til-hit so
+        // the firing crosshair counts down to impact instead of vanishing after the turn it was fired.
+        for (Enumeration<ArtilleryAttackAction> inFlightAttacks = game.getArtilleryAttacks();
+              inFlightAttacks.hasMoreElements(); ) {
+            ArtilleryAttackAction inFlightAttack = inFlightAttacks.nextElement();
+            if (inFlightAttack.getEntityId() != shooter.getId()) {
+                continue;
+            }
+            // getCoords() is the firing position, not the impact hex - use the attack's target so the crosshair lands
+            // on the target hex rather than on the firing unit.
+            Targetable inFlightTarget = inFlightAttack.getTarget(game);
+            if ((inFlightTarget == null) || (inFlightTarget.getPosition() == null)) {
+                continue;
+            }
+            Coords impactHex = inFlightTarget.getPosition();
+            chosenTargets.putIfAbsent(impactHex,
+                  new Princess.HeatMapMarker(inFlightAttack.getTurnsTilHit(),
+                        enemyCountNear(impactHex, shooter, game)));
         }
         owner.showArtilleryHeatMap(predictedTargets, chosenTargets, shooter.getBoardId());
     }

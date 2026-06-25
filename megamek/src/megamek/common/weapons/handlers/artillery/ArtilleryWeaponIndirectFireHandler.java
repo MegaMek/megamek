@@ -652,12 +652,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                           + game.getRoundCount() + ", by "
                           + game.getPlayer(aaa.getPlayerId()).getName()
                           + ", drifted to " + targetPos.getBoardNum();
-                    game.getBoard().addSpecialHexDisplay(
-                          origPos,
-                          new SpecialHexDisplay(Type.ARTILLERY_MISS,
-                                game.getRoundCount(),
-                                game.getPlayer(aaa.getPlayerId()),
-                                artyMsg));
+                    SpecialHexDisplay missMarker = new SpecialHexDisplay(Type.ARTILLERY_MISS,
+                          game.getRoundCount(),
+                          game.getPlayer(aaa.getPlayerId()),
+                          artyMsg);
+                    // Record where the round actually drifted so the board view can draw the drift line.
+                    missMarker.setDriftHex(targetPos);
+                    game.getBoard().addSpecialHexDisplay(origPos, missMarker);
                 } else {
                     r = new Report(3192);
                 }

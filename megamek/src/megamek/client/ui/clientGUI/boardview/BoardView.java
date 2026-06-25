@@ -1227,6 +1227,9 @@ public final class BoardView extends AbstractBoardView
         // draw onscreen attacks
         drawSprites(graphics2D, attackSprites);
 
+        // draw artillery drift lines (from the targeted hex to where the round actually landed)
+        drawArtilleryDriftLines(graphics2D);
+
         // draw movement vectors.
         if (game.useVectorMove() && game.getPhase().isMovement()) {
             drawSprites(graphics2D, movementSprites);
@@ -2126,8 +2129,10 @@ public final class BoardView extends AbstractBoardView
     }
 
     /**
-     * Draws the turn number of a bot artillery heat-map marker directly on the hex, so it is visible in screenshots and
-     * not just in the hover text. No-op for any other special hex display.
+     * Draws a bot artillery heat-map marker's turn text directly on the hex, so it is visible in screenshots and not
+     * just in the hover text: a predicted-position hex shows the prediction's turn ({@code T<turn>}), while a firing
+     * hex counts down the turns until the round lands ({@code T-2}, {@code T-1}, then {@code HIT} on impact). No-op for
+     * any other special hex display.
      *
      * @param specialHexDisplay The special hex display being drawn
      * @param graphics2D        The hex graphics context
@@ -2138,14 +2143,22 @@ public final class BoardView extends AbstractBoardView
         if ((info == null) || !info.startsWith(SpecialHexDisplay.HEAT_MAP_PREFIX)) {
             return;
         }
-        // Format is "[HM]<turn>:<opacityPercent> <description>" - the turn runs from the prefix to the ':'.
-        int prefixLength = SpecialHexDisplay.HEAT_MAP_PREFIX.length();
-        int colon = info.indexOf(':', prefixLength);
-        int end = (colon > prefixLength) ? colon : info.indexOf(' ', prefixLength);
-        String turn = (end > prefixLength) ? info.substring(prefixLength, end) : info.substring(prefixLength);
+        // Control token is "<turn-or-countdown>:<heat>:<kind>".
+        String[] fields = heatMapToken(info).split(":");
+        if (fields.length == 0) {
+            return;
+        }
+        String value = fields[0];
+        boolean firing = (fields.length >= 3) && SpecialHexDisplay.HEAT_MAP_KIND_FIRING.equals(fields[2]);
+        String label;
+        if (firing) {
+            label = "0".equals(value) ? "HIT" : "T-" + value;
+        } else {
+            label = "T" + value;
+        }
         Color previousColor = graphics2D.getColor();
         graphics2D.setColor(Color.WHITE);
-        drawCenteredString("T" + turn, 0, (int) (45 * scale), font_note, graphics2D);
+        drawCenteredString(label, 0, (int) (45 * scale), font_note, graphics2D);
         graphics2D.setColor(previousColor);
     }
 
@@ -2258,6 +2271,74 @@ public final class BoardView extends AbstractBoardView
         graphics2D.fill(hexScale.createTransformedShape(HEX_POLY));
         graphics2D.setComposite(previousComposite);
         graphics2D.setColor(previousColor);
+    }
+
+    /** Color of the artillery drift line drawn from a targeted hex to where the round actually landed. */
+    private static final Color ARTILLERY_DRIFT_LINE_COLOR = new Color(255, 191, 0);
+
+    /**
+     * Draws a thin dashed line from each visible artillery miss marker's targeted hex to the hex the round actually
+     * drifted to, with an arrowhead at the landing hex, so the drift reads at a glance (in addition to the combat
+     * report). Only drawn for drift markers currently shown to the local player.
+     *
+     * @param graphics2D The board graphics context, in board pixel space at the current scale
+     */
+    private void drawArtilleryDriftLines(Graphics2D graphics2D) {
+        Board board = game.getBoard(boardId);
+        if (board == null) {
+            return;
+        }
+        Map<Coords, Collection<SpecialHexDisplay>> specialHexDisplays = board.getSpecialHexDisplayTable();
+        if ((specialHexDisplays == null) || specialHexDisplays.isEmpty()) {
+            return;
+        }
+        Stroke previousStroke = graphics2D.getStroke();
+        Color previousColor = graphics2D.getColor();
+        float dashLength = Math.max(4.0f, hex_size.width / 14.0f);
+        graphics2D.setColor(ARTILLERY_DRIFT_LINE_COLOR);
+        graphics2D.setStroke(new BasicStroke(Math.max(1.0f, hex_size.width / 60.0f), BasicStroke.CAP_ROUND,
+              BasicStroke.JOIN_ROUND, 1.0f, new float[] { dashLength, dashLength }, 0.0f));
+        for (Map.Entry<Coords, Collection<SpecialHexDisplay>> entry : specialHexDisplays.entrySet()) {
+            for (SpecialHexDisplay specialHexDisplay : entry.getValue()) {
+                Coords landingHex = specialHexDisplay.getDriftHex();
+                if ((landingHex == null)
+                      || !specialHexDisplay.drawNow(game.getPhase(), game.getRoundCount(), getLocalPlayer(), GUIP)) {
+                    continue;
+                }
+                drawDriftLine(graphics2D, entry.getKey(), landingHex);
+            }
+        }
+        graphics2D.setStroke(previousStroke);
+        graphics2D.setColor(previousColor);
+    }
+
+    /**
+     * Draws a single drift line, with an arrowhead at the landing hex, between the centers of two hexes.
+     *
+     * @param graphics2D  The board graphics context
+     * @param targetedHex The hex that was targeted (line origin)
+     * @param landingHex  The hex the round drifted to (arrowhead end)
+     */
+    private void drawDriftLine(Graphics2D graphics2D, Coords targetedHex, Coords landingHex) {
+        Point targetedPoint = getHexLocation(targetedHex);
+        Point landingPoint = getHexLocation(landingHex);
+        if ((targetedPoint == null) || (landingPoint == null)) {
+            return;
+        }
+        int fromX = targetedPoint.x + (hex_size.width / 2);
+        int fromY = targetedPoint.y + (hex_size.height / 2);
+        int toX = landingPoint.x + (hex_size.width / 2);
+        int toY = landingPoint.y + (hex_size.height / 2);
+        graphics2D.drawLine(fromX, fromY, toX, toY);
+        double angle = Math.atan2((double) toY - fromY, (double) toX - fromX);
+        int headLength = Math.max(6, hex_size.width / 6);
+        double spread = Math.toRadians(28);
+        int leftX = (int) Math.round(toX - (headLength * Math.cos(angle - spread)));
+        int leftY = (int) Math.round(toY - (headLength * Math.sin(angle - spread)));
+        int rightX = (int) Math.round(toX - (headLength * Math.cos(angle + spread)));
+        int rightY = (int) Math.round(toY - (headLength * Math.sin(angle + spread)));
+        graphics2D.drawLine(toX, toY, leftX, leftY);
+        graphics2D.drawLine(toX, toY, rightX, rightY);
     }
 
     @Override

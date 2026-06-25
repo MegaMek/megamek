@@ -328,7 +328,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_TARGETING, false);
         addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_FIRING, false);
         addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL, false);
-        addOption(initiative, OptionsConstants.INIT_FRONT_LOAD_INITIATIVE, false);
+        addOption(initiative, OptionsConstants.INIT_FRONT_LOAD_INITIATIVE, true);
         addOption(initiative, OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION, false);
 
         IBasicOptionGroup rpg = addGroup("rpg");

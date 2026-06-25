@@ -38,7 +38,12 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 
+/*
+This abstract class is to handle rules that are in relation to PSRs. 
+ */
 public abstract class rulesPsrCheck {
+    
+    // Entity calls this when trying to run with damage
     public abstract void checkRunningWithDamage(Entity e, PilotingRollData r, int gyroDamage,
           EntityMovementType overallMoveType);
 }

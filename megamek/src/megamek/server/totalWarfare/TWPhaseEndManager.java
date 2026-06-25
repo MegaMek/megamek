@@ -141,7 +141,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.changePhase(GamePhase.FIRING);
                 break;
             case FIRING:
-                // write Weapon Attack Phase header
+                // write Ranged Attack Phase header
                 gameManager.addReport(new Report(3000, Report.PUBLIC));
                 // Add ghost target reports (resolved during PRE_FIRING, displayed here)
                 gameManager.addGhostTargetReports();

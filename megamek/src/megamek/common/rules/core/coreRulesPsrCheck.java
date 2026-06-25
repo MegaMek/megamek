@@ -43,7 +43,10 @@ import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 import megamek.common.units.Entity;
 
+/* This class is for Core Rules that involve PSR checks and modifiers
+ */
 public class coreRulesPsrCheck extends rulesPsrCheck {
+    // Called from Entity
     public void checkRunningWithDamage(Entity e, PilotingRollData r, int gyroDamage, EntityMovementType overallMoveType) {
         if (e.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             gyroDamage = 0;

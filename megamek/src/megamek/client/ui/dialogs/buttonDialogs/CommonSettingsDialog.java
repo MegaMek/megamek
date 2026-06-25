@@ -339,6 +339,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private ColourSelectorButton csbBuildingTextColor;
     private ColourSelectorButton csbLowFoliageColor;
     private ColourSelectorButton csbDemolitionChargeColor;
+    private final JCheckBox demolitionChargeHazardOutline = new JCheckBox(
+          Messages.getString("CommonSettingsDialog.demolitionChargeHazardOutline"));
     private ColourSelectorButton csbBoardTextColor;
     private ColourSelectorButton csbBoardSpaceTextColor;
     private ColourSelectorButton csbMapSheetColor;
@@ -867,6 +869,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         csbDemolitionChargeColor.setColour(GUIP.getDemolitionChargeColor());
         row.add(csbDemolitionChargeColor);
         comps.add(row);
+
+        comps.add(checkboxEntry(demolitionChargeHazardOutline, null));
 
         addLineSpacer(comps);
 
@@ -2525,6 +2529,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         csbBoardSpaceTextColor.setColour(GUIP.getBoardSpaceTextColor());
         csbLowFoliageColor.setColour(GUIP.getLowFoliageColor());
         csbDemolitionChargeColor.setColour(GUIP.getDemolitionChargeColor());
+        demolitionChargeHazardOutline.setSelected(GUIP.getDemolitionChargeHazardOutline());
         csbMapSheetColor.setColour(GUIP.getMapsheetColor());
 
         attackArrowTransparency.setValue(GUIP.getAttackArrowTransparency());
@@ -2725,6 +2730,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setBoardSpaceTextColor(csbBoardSpaceTextColor.getColour());
         GUIP.setLowFoliageColor(csbLowFoliageColor.getColour());
         GUIP.setDemolitionChargeColor(csbDemolitionChargeColor.getColour());
+        GUIP.setDemolitionChargeHazardOutline(demolitionChargeHazardOutline.isSelected());
         GUIP.setMapSheetColor(csbMapSheetColor.getColour());
 
         GUIP.setAttackArrowTransparency((Integer) attackArrowTransparency.getValue());

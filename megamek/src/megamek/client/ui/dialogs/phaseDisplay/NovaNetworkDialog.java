@@ -617,6 +617,16 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         logger.debug("Unlink action completed successfully");
     }
 
+    /** {@code true} once Apply sent at least one network change, so the caller can confirm a declaration was made. */
+    private boolean applied;
+
+    /**
+     * @return {@code true} if Apply sent at least one Nova network change this time the dialog was shown
+     */
+    public boolean wasApplied() {
+        return applied;
+    }
+
     /**
      * Applies all pending network changes by sending them to the server.
      */
@@ -642,6 +652,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
 
                 entity.setNewRoundNovaNetworkString(targetNetwork);
                 clientGUI.getClient().sendNovaChange(entityId, targetNetwork);
+                applied = true;
             }
         }
 

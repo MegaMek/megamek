@@ -185,11 +185,22 @@
           </Logger>
         -->
         <!--
-          Pre-end declarations phase diagnostics ([PreEnd]-tagged): turn start, unit selection, button enable
-          decisions, infantry-combat / bridge-deploy declarations, and ready/skip. Uncomment the logger below to
-          surface these debug messages while diagnosing; leave it commented for normal play.
+          Pre-End Declarations phase diagnostics, silent by default (parent "megamek" logger at info). All emit
+          [PreEnd]-tagged lines. Uncomment to trace the client turn lifecycle and button/done state
+          (PreEndDeclarationsDisplay), server turn generation and the eligible-unit list (TWPhasePreparationManager),
+          and bot turn handling (Princess). Logs land in logs/megamek.log.
 
           <Logger name="megamek.client.ui.panels.phaseDisplay.PreEndDeclarationsDisplay" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.server.totalWarfare.TWPhasePreparationManager" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.client.bot.princess.Princess" level="debug" additivity="false">
               <AppenderRef ref="${env:mm.profile:-null}" />
               <AppenderRef ref="UnifiedLog" />
               <AppenderRef ref="MegaMekLog" />

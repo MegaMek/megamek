@@ -65,6 +65,7 @@ import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.BridgeLayerState;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscMounted;
@@ -474,12 +475,43 @@ class SystemPanel extends PicMap
         displayText.append(' ').append(Messages.getString("MekDisplay.bridgeKitBudget", lightLeft, mediumLeft));
     }
 
+    /**
+     * Appends the Bridge-Layer (AVLB) state to a systems-tab row: the carried bridge's remaining Construction Factor,
+     * "deploying" once a deployment has been declared but the bridge has not yet been laid (the stationary turn between
+     * the pre-end declaration and placement), "deployed" once the folding bridge has been laid, or "mechanism disabled"
+     * if a critical hit has knocked out the deploy mechanism (TM p.242 / TW). Does nothing for non-bridgelayer
+     * equipment.
+     *
+     * @param displayText the systems-tab display text being built
+     * @param mounted     the mounted equipment for this row
+     */
+    private void appendBridgeLayerState(StringBuilder displayText, Mounted<?> mounted) {
+        if (!(mounted instanceof MiscMounted miscMounted)) {
+            return;
+        }
+        BridgeLayerState bridgeState = miscMounted.getBridgeLayerState();
+        if (bridgeState == null) {
+            return;
+        }
+        if (bridgeState.isDeployed()) {
+            displayText.append(' ').append(Messages.getString("MekDisplay.bridgeLayerDeployed"));
+        } else if (bridgeState.isDeployPending()) {
+            displayText.append(' ').append(Messages.getString("MekDisplay.bridgeLayerDeploying",
+                  bridgeState.getCurrentCF()));
+        } else if (bridgeState.isDeployMechanismDisabled()) {
+            displayText.append(' ').append(Messages.getString("MekDisplay.bridgeLayerMechanismDisabled"));
+        } else {
+            displayText.append(' ').append(Messages.getString("MekDisplay.bridgeLayerCF", bridgeState.getCurrentCF()));
+        }
+    }
+
     private String getMountedDisplay(Mounted<?> m, int loc, CriticalSlot cs) {
         String hotLoaded = Messages.getString("MekDisplay.isHotLoaded");
         StringBuilder sb = new StringBuilder();
 
         sb.append(m.getDesc());
         appendBridgeKitBudget(sb, m);
+        appendBridgeLayerState(sb, m);
 
         if ((cs != null) && cs.getMount2() != null) {
             sb.append(" ");

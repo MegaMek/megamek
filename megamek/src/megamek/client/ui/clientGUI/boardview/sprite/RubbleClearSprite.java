@@ -92,7 +92,7 @@ public class RubbleClearSprite extends HexSprite {
     private final int turnsCompleted;
     private final int turnsRequired;
     /**
-     * When true this sprite draws only the "n/m" progress counter and layers OVER the unit; when false it draws only
+     * When {@code true} this sprite draws only the "n/m" progress counter and layers OVER the unit; when {@code false} it draws only
      * the cleared-path fade and layers BEHIND the unit. The handler creates one of each so the fade does not dim the
      * vehicle while the counter still reads clearly on top of it (matching the fortify indicator). QA feedback.
      */
@@ -105,7 +105,7 @@ public class RubbleClearSprite extends HexSprite {
      * @param loc            the rubble hex being cleared
      * @param turnsCompleted the turns of clearing banked so far (the numerator)
      * @param turnsRequired  the total turns the clearing needs (the denominator)
-     * @param overlayCounter true to draw the progress counter over the unit; false to draw the cleared-path fade behind
+     * @param overlayCounter {@code true} to draw the progress counter over the unit; {@code false} to draw the cleared-path fade behind
      */
     public RubbleClearSprite(BoardView boardView, Coords loc, int turnsCompleted, int turnsRequired,
           boolean overlayCounter) {
@@ -176,10 +176,10 @@ public class RubbleClearSprite extends HexSprite {
     }
 
     /**
-     * @param hex the rubble hex (may be null)
+     * @param hex the rubble hex (may be {@code null})
      *
      * @return the saxarba cleared-paths rubble image matching the hex's rubble level
-     *       (light/medium/heavy/hardened/wall), or null if the active tileset is not saxarba (other tilesets fall back
+     *       (light/medium/heavy/hardened/wall), or {@code null} if the active tileset is not saxarba (other tilesets fall back
      *       to the generic base-terrain fade), the hex has no rubble, or the image cannot be loaded
      */
     private @Nullable Image clearedPathImage(@Nullable Hex hex) {
@@ -220,7 +220,7 @@ public class RubbleClearSprite extends HexSprite {
      *
      * @param relativePath the image path relative to the hexes image directory
      *
-     * @return the loaded image, or null if it could not be found/loaded
+     * @return the loaded image, or {@code null} if it could not be found/loaded
      */
     private static @Nullable Image loadPathImage(String relativePath) {
         if (!PATH_IMAGE_CACHE.containsKey(relativePath)) {

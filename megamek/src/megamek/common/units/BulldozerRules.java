@@ -123,7 +123,7 @@ public final class BulldozerRules {
 
     /**
      * @param entity the clearing unit
-     * @param hex    the rubble hex, or null
+     * @param hex    the rubble hex, or {@code null}
      * @param game   the game, for the optional-rule checks
      *
      * @return the total turns this unit needs to clear the hex - the base time plus any backhoe penalty - or 0 when the
@@ -149,14 +149,14 @@ public final class BulldozerRules {
     /**
      * Checks whether a vehicle may declare a Clear Rubble action ending in the given hex (TacOps): it must be a vehicle
      * with a working bulldozer (or, with the unofficial rule, a backhoe), the relevant optional rule(s) must be enabled,
-     * and the hex must hold rubble. Returns the specific reason it is illegal so the caller can log it, or null when
-     * legal.
+     * and the hex must hold rubble. Returns the specific reason it is illegal so the caller can log it, or {@code null}
+     * when legal.
      *
      * @param entity the unit attempting to clear rubble
-     * @param hex    the hex the clearing would take place in (the unit's final hex), or null
+     * @param hex    the hex the clearing would take place in (the unit's final hex), or {@code null}
      * @param game   the game, for the optional-rule check
      *
-     * @return a human-readable reason the clear is illegal, or null if it is legal
+     * @return a human-readable reason the clear is illegal, or {@code null} if it is legal
      */
     public static @Nullable String clearRubbleIllegalReason(Entity entity, @Nullable Hex hex, Game game) {
         if (!(entity instanceof RubbleClearer)) {
@@ -175,7 +175,7 @@ public final class BulldozerRules {
     }
 
     /**
-     * @param hex the hex to test, or null
+     * @param hex the hex to test, or {@code null}
      *
      * @return {@code true} if the hex exists and holds rubble a bulldozer could clear
      */

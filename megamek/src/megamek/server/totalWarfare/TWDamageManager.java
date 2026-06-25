@@ -66,6 +66,9 @@ import megamek.server.ServerHelper;
 
 public class TWDamageManager implements IDamageManager {
     private static final MMLogger logger = MMLogger.create(TWDamageManager.class);
+
+    /** Dedicated Bridge-Layer (AVLB) diagnostics logger; see {@link BridgeLayerState#DIAGNOSTIC_LOGGER_NAME}. */
+    private static final MMLogger AVLB_LOGGER = MMLogger.create(BridgeLayerState.DIAGNOSTIC_LOGGER_NAME);
     protected TWGameManager manager = null;
     protected Game game = null;
     protected boolean initialized = false;
@@ -821,6 +824,9 @@ public class TWDamageManager implements IDamageManager {
                 }
             }
 
+            // A carried Bridge-Layer (AVLB) folding bridge absorbs hits to its location before armor (TM p.242 / TW).
+            damage = applyBridgeLayerAbsorption(mek, hit, damage, ammoExplosion, mods, reportVec);
+
             // Armored Cowl may absorb some damage from a hit
             if (mek.hasCowl() &&
                   (hit.getLocation() == Mek.LOC_HEAD) &&
@@ -837,8 +843,9 @@ public class TWDamageManager implements IDamageManager {
 
             damage = applyModularArmor(mek, hit, damage, ammoExplosion, damageIS, reportVec);
 
-            // Destroy searchlights on 7+ (torso hits on meks)
-            if (mek.hasSearchlight()) {
+            // Destroy searchlights on 7+ (torso hits on meks). Only when damage actually reached the location: a hit
+            // fully absorbed by a carried bridge (or shield/modular armor) hit that protection, not the searchlight.
+            if (mek.hasSearchlight() && (damage > 0)) {
                 boolean spotlightHittable = true;
                 int loc = hit.getLocation();
                 if ((loc != Mek.LOC_CENTER_TORSO) && (loc != Mek.LOC_LEFT_TORSO) && (loc != Mek.LOC_RIGHT_TORSO)) {
@@ -1615,10 +1622,15 @@ public class TWDamageManager implements IDamageManager {
             report.add(tank.getLocationAbbr(hit));
             reportVec.addElement(report);
 
+            // A carried Bridge-Layer (AVLB) folding bridge absorbs hits to its location - or, on a Support Vehicle, to
+            // the turret - before armor (TM p.242 / TW).
+            damage = applyBridgeLayerAbsorption(tank, hit, damage, ammoExplosion, mods, reportVec);
+
             damage = applyModularArmor(tank, hit, damage, ammoExplosion, damageIS, reportVec);
 
-            // Destroy searchlights on 7+ (torso hits on meks)
-            if (tank.hasSearchlight()) {
+            // Destroy searchlights on 7+ (torso hits on meks). Only when damage actually reached the location: a hit
+            // fully absorbed by a carried bridge (or modular armor) hit that protection, not the location's equipment.
+            if (tank.hasSearchlight() && (damage > 0)) {
                 boolean spotlightHittable = isSpotlightHittable(tank, hit);
                 if (spotlightHittable) {
                     Roll diceRoll = Compute.rollD6(2);
@@ -2789,6 +2801,97 @@ public class TWDamageManager implements IDamageManager {
             damage = damageNew;
         }
         return damage;
+    }
+
+    /**
+     * Applies a carried Bridge-Layer (AVLB) folding bridge as damage protection, TM p.242 / TW: an attack that would
+     * hit the location where the bridge is mounted (or, on a Support Vehicle, the turret) hits the bridge instead,
+     * reducing its Construction Factor by the damage. Once the bridge's CF reaches 0 it is destroyed and any remaining
+     * damage passes to the location normally. A critical hit while the bridge is still carried disables the deploy
+     * mechanism (the first one; further crits have no effect) and does not carry through to the location. The carried
+     * bridge does not protect against ammo explosions or damage applied directly to internal structure.
+     *
+     * @param entity        the unit being damaged
+     * @param hit           the incoming hit
+     * @param damage        the incoming damage
+     * @param ammoExplosion whether the damage is from an ammo explosion (not absorbed)
+     * @param mods          damage modifiers; critical-hit flags are cleared when a crit is consumed by the bridge
+     * @param reportVec     the running report list, appended to with absorption/destruction/crit reports
+     *
+     * @return the damage remaining after the bridge absorbs what it can
+     */
+    public int applyBridgeLayerAbsorption(Entity entity, HitData hit, int damage, boolean ammoExplosion,
+          ModsInfo mods, Vector<Report> reportVec) {
+        if (ammoExplosion || mods.damageIS) {
+            return damage;
+        }
+        MiscMounted bridgeLayer = BridgeLayerLogic.getBridgeLayerForHit(entity, hit);
+        if (bridgeLayer == null) {
+            logBridgeAbsorptionMiss(entity, hit);
+            return damage;
+        }
+        BridgeLayerState bridgeState = bridgeLayer.getBridgeLayerState();
+        int currentCF = bridgeState.getCurrentCF();
+        int absorbed = Math.min(currentCF, damage);
+        AVLB_LOGGER.debug("[AVLB] {}: bridge at loc {} absorbs hit to loc {} ({} dmg, CF {} -> {})",
+              entity.getShortName(), bridgeLayer.getLocation(), hit.getLocation(), absorbed, currentCF,
+              currentCF - absorbed);
+        int remainingCF = currentCF - absorbed;
+        bridgeState.setCurrentCF(remainingCF);
+        entity.damageThisPhase += absorbed;
+
+        Report absorbReport = new Report(4296);
+        absorbReport.subject = entity.getId();
+        absorbReport.indent(3);
+        absorbReport.addDesc(entity);
+        absorbReport.add(absorbed);
+        absorbReport.add(remainingCF);
+        reportVec.addElement(absorbReport);
+
+        // A critical hit to the carried bridge disables the deploy mechanism (the first one); further crits have no
+        // effect while the bridge is carried, and the crit does not carry through to the location.
+        if ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) {
+            if (!bridgeState.isDeployMechanismDisabled()) {
+                bridgeState.setDeployMechanismDisabled(true);
+                Report critReport = new Report(4298);
+                critReport.subject = entity.getId();
+                critReport.indent(3);
+                critReport.addDesc(entity);
+                reportVec.addElement(critReport);
+            }
+            mods.crits = 0;
+            mods.specCrits = 0;
+        }
+
+        if (remainingCF <= 0) {
+            Report destroyedReport = new Report(4297);
+            destroyedReport.subject = entity.getId();
+            destroyedReport.indent(3);
+            destroyedReport.addDesc(entity);
+            reportVec.addElement(destroyedReport);
+        }
+        return damage - absorbed;
+    }
+
+    /**
+     * Logs (at debug, [AVLB]) why a hit was NOT absorbed by a carried bridge when the unit carries one or more
+     * bridgelayers - listing the hit location and each bridgelayer's location and state - so a playtest can tell a
+     * deployed/destroyed bridge from a location mismatch. Does nothing for units with no bridgelayer.
+     *
+     * @param entity the unit being damaged
+     * @param hit    the incoming hit that was not absorbed
+     */
+    private void logBridgeAbsorptionMiss(Entity entity, HitData hit) {
+        for (MiscMounted misc : entity.getMisc()) {
+            BridgeLayerState bridgeState = misc.getBridgeLayerState();
+            if (bridgeState == null) {
+                continue;
+            }
+            AVLB_LOGGER.debug("[AVLB] {}: hit to loc {} NOT absorbed; bridgelayer at loc {} (deployed={}, CF={}, "
+                        + "mechanismDisabled={}, missing={})", entity.getShortName(), hit.getLocation(), misc.getLocation(),
+                  bridgeState.isDeployed(), bridgeState.getCurrentCF(), bridgeState.isDeployMechanismDisabled(),
+                  misc.isMissing());
+        }
     }
 
     /**

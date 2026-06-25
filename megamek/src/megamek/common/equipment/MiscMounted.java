@@ -35,6 +35,7 @@ package megamek.common.equipment;
 
 import megamek.common.CriticalSlot;
 import megamek.common.Messages;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -55,6 +56,9 @@ public class MiscMounted extends Mounted<MiscType> {
     private int mineType = MINE_NONE;
     private int vibraSetting = 20;
     private int empSetting = 10;
+
+    /** Carried folding-bridge state for Bridge-Layer (AVLB) equipment; {@code null} for all other equipment. */
+    private BridgeLayerState bridgeLayerState = null;
 
     public MiscMounted(Entity entity, MiscType type) {
         super(entity, type);
@@ -79,6 +83,24 @@ public class MiscMounted extends Mounted<MiscType> {
         if (type.hasFlag(MiscType.F_MINESWEEPER)) {
             setArmorValue(30);
         }
+        if (BridgeLayerState.isBridgeLayer(type)) {
+            bridgeLayerState = new BridgeLayerState(type);
+        }
+    }
+
+    /**
+     * @return the carried folding-bridge state for a Bridge-Layer (AVLB) mount, or {@code null} if this equipment is
+     *       not a bridgelayer
+     */
+    public @Nullable BridgeLayerState getBridgeLayerState() {
+        return bridgeLayerState;
+    }
+
+    /**
+     * @return {@code true} if this equipment is a Bridge-Layer (AVLB) variant
+     */
+    public boolean isBridgeLayer() {
+        return bridgeLayerState != null;
     }
 
     public int getBaseDamageAbsorptionRate() {

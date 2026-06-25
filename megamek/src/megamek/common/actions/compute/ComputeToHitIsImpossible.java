@@ -55,15 +55,7 @@ import megamek.common.board.Coords;
 import megamek.common.board.CrossBoardAttackHelper;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.HandheldWeapon;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.equipment.WeaponType;
-import megamek.common.equipment.WeaponTypeFlag;
+import megamek.common.equipment.*;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
@@ -290,6 +282,12 @@ class ComputeToHitIsImpossible {
             if ((attacker instanceof Mek) && !weapon.isRearMounted() && !attacker.canFireWeapon(weapon.getLocation())) {
                 return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
             }
+        }
+
+        // A carried, not-yet-deployed Bridge-Layer (AVLB) blocks weapons mounted in its location (TM p.242 / TW).
+        if ((weapon != null)
+              && BridgeLayerLogic.isWeaponLocationBlockedByCarriedBridge(attacker, weapon.getLocation())) {
+            return Messages.getString("WeaponAttackAction.CantFireUndeployedBridge");
         }
 
         // Only large spacecraft can shoot while evading
@@ -1686,14 +1684,11 @@ class ComputeToHitIsImpossible {
                 return Messages.getString("WeaponAttackAction.NoSpotter");
             }
 
-            // Disposable Weapon attacks (TO:AuE p.116, Corrected Sixth Printing) - only gated while the rule is
-            // enabled; otherwise the mount fires as an ordinary weapon and the standard checks apply.
-            if ((weapon instanceof WeaponMounted disposableMount) && disposableMount.isDisposableWeapon()
-                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
-                String disposableReason = disposableWeaponAttackReason(game, attacker, weaponType);
-                if (disposableReason != null) {
-                    return disposableReason;
-                }
+            // Disposable Weapon attacks (TO:AuE p.116, Corrected Sixth Printing) replace the unit's standard weapon
+            // attack, in either declaration order. The full rule (and the anti-Mek exclusion) lives in the helper.
+            String disposableReason = disposableWeaponGateReason(game, attacker, weapon, weaponType);
+            if (disposableReason != null) {
+                return disposableReason;
             }
 
             // Infantry Leg attacks and Swarm attacks
@@ -1947,6 +1942,60 @@ class ComputeToHitIsImpossible {
     }
 
     /**
+     * Determines whether the Disposable Weapon rule (TO:AuE p.116, Corrected Sixth Printing) makes the weapon attack
+     * being declared impossible. A Disposable Weapon attack replaces the unit's standard weapon attack, so a platoon or
+     * squad may declare EITHER its Disposable Weapon OR its other weapons in a turn, never both - and this holds
+     * regardless of which is declared first. The rule is only enforced while the corresponding game option is enabled;
+     * otherwise a disposable mount fires as an ordinary weapon and the standard checks apply.
+     *
+     * <p>Infantry anti-Mek attacks (leg attack, swarm, stop-swarm, swarm-mounted weapon) are deliberately not gated
+     * here: they have their own mutual-exclusivity checks and messages further along in the to-hit evaluation, which
+     * produce a more accurate reason than this one.</p>
+     *
+     * @param game       the current game
+     * @param attacker   the attacking unit
+     * @param weapon     the weapon mount being declared (may be {@code null})
+     * @param weaponType the type of the weapon being declared
+     *
+     * @return a localized impossibility reason, or {@code null} if the Disposable Weapon rule does not forbid this
+     *       attack
+     */
+    // package-private for regression testing of the order-independent gating (see ComputeToHitIsImpossibleTest)
+    static @Nullable String disposableWeaponGateReason(Game game, Entity attacker, @Nullable WeaponMounted weapon,
+          WeaponType weaponType) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
+            return null;
+        }
+        if ((weapon != null) && weapon.isDisposableWeapon()) {
+            // Declaring the Disposable Weapon: it must be this unit's only weapon attack this turn.
+            return disposableWeaponAttackReason(game, attacker, weaponType);
+        }
+        if (isAntiMekInfantryAttack(weaponType)) {
+            // Leg/swarm attacks are gated by their own rules below, with a more specific message.
+            return null;
+        }
+        if (hasDeclaredDisposableAttack(game, attacker)) {
+            // Declaring a standard weapon after the Disposable Weapon already replaced the standard attack.
+            return Messages.getString("WeaponAttackAction.DisposableReplacesStandard");
+        }
+        return null;
+    }
+
+    /**
+     * @param weaponType the weapon type being declared
+     *
+     * @return {@code true} if the given weapon type is an infantry anti-Mek attack (leg attack, swarm, stop-swarm, or
+     *       swarm-mounted weapon), which has its own mutual-exclusivity gating
+     */
+    private static boolean isAntiMekInfantryAttack(WeaponType weaponType) {
+        String internalName = weaponType.getInternalName();
+        return Infantry.LEG_ATTACK.equals(internalName)
+              || Infantry.SWARM_MEK.equals(internalName)
+              || Infantry.STOP_SWARM.equals(internalName)
+              || Infantry.SWARM_WEAPON_MEK.equals(internalName);
+    }
+
+    /**
      * Determines whether a Disposable Weapon attack (TO:AuE p.116, Corrected Sixth Printing) is impossible. The attack
      * is a single once-per-scenario attack made instead of the platoon's standard weapon attack, and may not be made
      * while the unit is engaged in an anti-Mek (leg/swarm) attack.
@@ -1991,6 +2040,32 @@ class ComputeToHitIsImpossible {
             }
         }
         return true;
+    }
+
+    /**
+     * Determines whether the attacker has already declared a Disposable Weapon attack this turn (TO:AuE p.116,
+     * Corrected Sixth Printing). Because the Disposable Weapon attack replaces the unit's standard weapon attack, a
+     * unit that has declared its disposable may not also declare a standard weapon attack - regardless of which is
+     * declared first. This is the mirror image of the check made by {@link #disposableWeaponAttackReason} when the
+     * disposable itself is being declared.
+     *
+     * @param game     the current game
+     * @param attacker the attacking unit
+     *
+     * @return {@code true} if this unit has already declared a Disposable Weapon attack this turn
+     */
+    private static boolean hasDeclaredDisposableAttack(Game game, Entity attacker) {
+        for (EntityAction action : game.getActionsVector()) {
+            if (action instanceof WeaponAttackAction weaponAttackAction) {
+                Entity otherAttacker = weaponAttackAction.getEntity(game);
+                if ((otherAttacker != null) && otherAttacker.equals(attacker)
+                      && (otherAttacker.getEquipment(weaponAttackAction.getWeaponId()) instanceof WeaponMounted mount)
+                      && mount.isDisposableWeapon()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

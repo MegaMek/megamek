@@ -384,6 +384,14 @@ public abstract class Entity extends TurnOrdered
     private int boardId = 0;
 
     /**
+     * Cached result of {@link #getBoardLocation()}. This is derived state (a {@link BoardLocation} carries only the
+     * current position and board id), so it is transient and rebuilt on demand whenever the position or board id no
+     * longer match. {@code getBoardLocation()} is called very frequently on hot paths (LOS, ECM, space checks), and
+     * each call otherwise allocated a fresh record.
+     */
+    private transient BoardLocation cachedBoardLocation;
+
+    /**
      * Used for Entities that are bigger than a single hex. This contains the central hex plus all the other hexes this
      * entity occupies. The central hex is important for drawing multi-hex sprites.
      */
@@ -2341,6 +2349,31 @@ public abstract class Entity extends TurnOrdered
     @Override
     public Coords getPosition() {
         return position;
+    }
+
+    /**
+     * Returns this entity's {@link BoardLocation}, reusing a cached instance while the position and board id are
+     * unchanged. The cache is validated against the current values on every call, so it can never go stale; it only
+     * rebuilds when the entity actually moves. This avoids allocating a record on every call along hot paths such as
+     * line of sight, ECM and space-map checks.
+     */
+    @Override
+    public BoardLocation getBoardLocation() {
+        Coords currentPosition = getPosition();
+        int currentBoardId = getBoardId();
+        // With no position or an invalid board id, BoardLocation.of() always returns the NO_LOCATION singleton.
+        // Its coords (Integer.MIN_VALUE) never match a null position, so the cache validation below would fail on
+        // every call in this state. Return the singleton directly to skip the redundant comparison and rewrite.
+        if ((currentPosition == null) || (currentBoardId < 0)) {
+            return BoardLocation.NO_LOCATION;
+        }
+        BoardLocation cached = cachedBoardLocation;
+        if ((cached == null) || (cached.boardId() != currentBoardId)
+              || !Objects.equals(cached.coords(), currentPosition)) {
+            cached = BoardLocation.of(currentPosition, currentBoardId);
+            cachedBoardLocation = cached;
+        }
+        return cached;
     }
 
     /**
@@ -5637,6 +5670,11 @@ public abstract class Entity extends TurnOrdered
      *       Heat Phase report's "gains N heat" / "sinks N heat" breakdown tooltips.
      */
     public HeatBreakdown getHeatBreakdown() {
+        if (heatBreakdown == null) {
+            // A unit deserialized from a stream written before this field existed restores it as null; lazily
+            // recreate it so the documented never-null contract holds and heat sources can always be recorded.
+            heatBreakdown = new HeatBreakdown();
+        }
         return heatBreakdown;
     }
 
@@ -11397,7 +11435,8 @@ public abstract class Entity extends TurnOrdered
      * Check if the entity can initiate NEW infantry vs. infantry combat. This is for the PREEND_DECLARATIONS phase.
      */
     public boolean isEligibleForPreEndDeclarations() {
-        return canInitiateInfantryVsInfantryCombat();
+        // Bridge-Layer (AVLB) deployment is declared in the pre-end declarations phase (TM p.242 / TW).
+        return canInitiateInfantryVsInfantryCombat() || BridgeLayerLogic.canDeclareBridgeDeploy(this, game);
     }
 
     /**

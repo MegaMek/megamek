@@ -33,12 +33,14 @@
 package megamek.common.units;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -134,6 +136,24 @@ class HeatBuildupBreakdownTest {
         assertEquals(9, mek.heatBuildup, "Heat still accrues even when no usable source label is given");
         assertTrue(mek.getHeatBreakdown().buildup().isEmpty(),
               "Zero or unlabeled contributions are not added to the itemized breakdown");
+    }
+
+    @Test
+    void nullBreakdownIsLazilyRecreatedWhenHeatIsApplied() throws Exception {
+        BipedMek mek = new BipedMek();
+        // Simulate a unit restored from a stream written before the heatBreakdown field existed: Java
+        // deserialization skips field initializers, so the field comes back null. Force that state directly.
+        Field heatBreakdownField = Entity.class.getDeclaredField("heatBreakdown");
+        heatBreakdownField.setAccessible(true);
+        heatBreakdownField.set(mek, null);
+
+        // Applying heat must not throw an NPE; the breakdown is lazily recreated and records the contribution.
+        mek.changeHeatBuildup(10, "PPC");
+
+        assertNotNull(mek.getHeatBreakdown(), "A null breakdown is lazily recreated to honor the never-null contract");
+        assertEquals(10, mek.heatBuildup, "Heat still accrues after the breakdown is recreated");
+        assertEquals(10, mek.getHeatBreakdown().buildup().get("PPC").totalHeat(),
+              "The contribution is recorded in the recreated breakdown");
     }
 
     @Test

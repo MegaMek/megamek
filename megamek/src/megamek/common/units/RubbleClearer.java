@@ -47,11 +47,11 @@ import megamek.common.board.Coords;
  */
 public interface RubbleClearer {
 
-    /** @return the rubble hex this unit is clearing, or null if it is not clearing rubble */
+    /** @return the rubble hex this unit is clearing, or {@code null} if it is not clearing rubble */
     @Nullable
     Coords getRubbleClearTarget();
 
-    /** @param target the rubble hex being cleared, or null to stop clearing */
+    /** @param target the rubble hex being cleared, or {@code null} to stop clearing */
     void setRubbleClearTarget(@Nullable Coords target);
 
     /** @return the number of turns of clearing banked so far */

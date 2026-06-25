@@ -305,6 +305,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           "CommonSettingsDialog.hexes.ShowArtilleryMisses"));
     private final JCheckBox artilleryDisplayDriftedHits = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.hexes.ShowArtilleryDriftedHits"));
+    private final JCheckBox artilleryDisplayDriftArrows = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.hexes.ShowArtilleryDriftArrows"));
     private final JCheckBox bombsDisplayMisses = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.hexes.ShowBombMisses"));
     private final JCheckBox bombsDisplayDrifts = new JCheckBox(Messages.getString(
@@ -836,6 +838,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         comps.add(checkboxEntry(artilleryDisplayDriftedHits,
               Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryDriftedHits.tooltip")));
         artilleryDisplayDriftedHits.setSelected(GUIP.getShowArtilleryDrifts());
+        comps.add(checkboxEntry(artilleryDisplayDriftArrows,
+              Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryDriftArrows.tooltip")));
+        artilleryDisplayDriftArrows.setSelected(GUIP.getShowArtilleryDriftArrows());
         comps.add(checkboxEntry(bombsDisplayMisses,
               Messages.getString("CommonSettingsDialog.hexes.ShowBombMisses.tooltip")));
         bombsDisplayMisses.setSelected(GUIP.getShowBombMisses());
@@ -2545,6 +2550,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         artilleryDisplayMisses.setSelected(GUIP.getShowArtilleryMisses());
         artilleryDisplayDriftedHits.setSelected(GUIP.getShowArtilleryDrifts());
+        artilleryDisplayDriftArrows.setSelected(GUIP.getShowArtilleryDriftArrows());
         bombsDisplayMisses.setSelected(GUIP.getShowBombMisses());
         bombsDisplayDrifts.setSelected(GUIP.getShowBombDrifts());
 
@@ -2748,6 +2754,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         GUIP.setShowArtilleryMisses(artilleryDisplayMisses.isSelected());
         GUIP.setShowArtilleryDrifts(artilleryDisplayDriftedHits.isSelected());
+        GUIP.setShowArtilleryDriftArrows(artilleryDisplayDriftArrows.isSelected());
         GUIP.setShowBombMisses(bombsDisplayMisses.isSelected());
         GUIP.setShowBombDrifts(bombsDisplayDrifts.isSelected());
 

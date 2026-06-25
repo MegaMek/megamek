@@ -86,6 +86,16 @@ public class ArtilleryTargetingControl {
     // not waste rounds long-shotting a single unit.
     private static final int MIN_AUTO_CLUSTER_UNITS = 2;
 
+    // How much an enemy already covered by another tube's shell this turn is worth when scoring a further shot, so the
+    // bot spreads fire across a dispersed cluster instead of dog-piling the densest hex. Covered enemies still carry
+    // some value (not zero) so a tube with no fresh target will overlap for extra damage rather than hold.
+    private static final double COVERAGE_OVERLAP_DISCOUNT = 0.2;
+
+    // How strongly to prioritize counter-battery fire at an observed off-board enemy battery. The battery keeps shelling
+    // us every turn, so its full damage is bumped by this factor before the hit-chance scaling - enough to beat a
+    // lone-unit potshot, while a strong on-board cluster (whose summed value is higher) still wins.
+    private static final double COUNTER_BATTERY_PRIORITY = 1.5;
+
     // Effective hit odds we credit a homing round when a friendly TAG unit can designate a target near its aim point:
     // the round homes onto the TAG instead of scattering, so it is treated as a near-certain hit rather than the ~8%
     // of unobserved indirect fire. This makes the bot spend homing ammo when - and only when - a spotter is in place.
@@ -112,6 +122,10 @@ public class ArtilleryTargetingControl {
     // The hexes each enemy was predicted to advance to this phase, mapped to the number of enemies feeding that hex
     // (its "heat"), for the optional heat-map visualization
     private final Map<Coords, Integer> heatMapPredictedHexes = new HashMap<>();
+
+    // Ids of enemies already covered by an artillery shell committed earlier this targeting phase (across all the bot's
+    // tubes). Subsequent shots discount these enemies so fire spreads to cover more of the cluster. Cleared each phase.
+    private final Set<Integer> volleyCoveredEnemyIds = new HashSet<>();
 
     private Set<Targetable> targetSet;
 
@@ -226,7 +240,13 @@ public class ArtilleryTargetingControl {
             }
 
             double speedMultiplier = 1.0 / (entity.getRunMP() + 1);
-            value += damage * speedMultiplier * friendlyMultiplier;
+            double contribution = damage * speedMultiplier * friendlyMultiplier;
+            // If another tube already covers this enemy this turn, discount it so fire spreads to uncovered enemies
+            // (it keeps some value, so a tube with no fresh target still overlaps for extra damage instead of holding).
+            if (entity.isEnemyOf(shooter) && volleyCoveredEnemyIds.contains(entity.getId())) {
+                contribution *= COVERAGE_OVERLAP_DISCOUNT;
+            }
+            value += contribution;
         }
 
         return value;
@@ -269,6 +289,7 @@ public class ArtilleryTargetingControl {
     public void initializeForTargetingPhase() {
         damageValues = new HashMap<>();
         targetSet = null;
+        volleyCoveredEnemyIds.clear();
     }
 
     private boolean getAmmoTypeAvailable(Entity shooter, Munitions munitions) {
@@ -671,8 +692,54 @@ public class ArtilleryTargetingControl {
                 }
             }
         }
+        recordCoveredEnemies(plan, shooter, game);
         showArtilleryHeatMap(shooter, plan, owner);
         return plan;
+    }
+
+    /**
+     * Records every enemy covered by the blast of each shot in the chosen plan into {@link #volleyCoveredEnemyIds}, so
+     * a later tube (on this or another of the bot's units this targeting phase) discounts those enemies and spreads its
+     * fire to cover more of the cluster. ADA (anti-air) shots are skipped - they do not blanket a ground hex. Clears
+     * the per-hex damage-value cache when the covered set grows so the next shooter re-scores with the discount
+     * applied.
+     *
+     * @param plan    The chosen firing plan
+     * @param shooter The firing unit
+     * @param game    The current game
+     */
+    private void recordCoveredEnemies(FiringPlan plan, Entity shooter, Game game) {
+        boolean coveredSetGrew = false;
+        for (WeaponFireInfo fireInfo : plan) {
+            Targetable target = fireInfo.getTarget();
+            if ((target == null) || (target.getPosition() == null)
+                  || !(fireInfo.getWeapon() != null && fireInfo.getWeapon()
+                  .getType() instanceof WeaponType weaponType)) {
+                continue;
+            }
+            // ADA is anti-air and does not blanket the ground hex, so it does not cover ground enemies.
+            if ((fireInfo.getAmmo() != null)
+                  && fireInfo.getAmmo().getType().getMunitionType().contains(Munitions.M_ADA)) {
+                continue;
+            }
+            // Homing/Copperhead are single-target (no area), so they claim only the unit in their impact hex.
+            boolean homing = (fireInfo.getAmmo() != null)
+                  && fireInfo.getAmmo().getType().getMunitionType().contains(Munitions.M_HOMING);
+            int blastRadius = homing ? 0 : Math.max(0, (int) Math.ceil(weaponType.getRackSize() / 10.0) - 1);
+            Coords impactHex = target.getPosition();
+            for (Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext(); ) {
+                Entity enemy = enemies.next();
+                if (enemy.isDeployed() && !enemy.isOffBoard() && (enemy.getPosition() != null)
+                      && !enemy.isAirborne() && !enemy.isAirborneVTOLorWIGE()
+                      && (impactHex.distance(enemy.getPosition()) <= blastRadius)) {
+                    coveredSetGrew |= volleyCoveredEnemyIds.add(enemy.getId());
+                }
+            }
+        }
+        if (coveredSetGrew) {
+            // The covered set changed, so the cached per-hex damage values are stale for the next shooter.
+            damageValues = new HashMap<>();
+        }
     }
 
     /**
@@ -849,7 +916,19 @@ public class ArtilleryTargetingControl {
                             if (attackOnAirborneEntity || attackOnEntity) {
                                 // Homing rounds can't hit flying Aerospace units because TAG can't hit them.
                                 boolean homing = ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_HOMING);
-                                damageValue = (target.isAirborne() && homing) ? 0 : damage;
+                                if (target.isAirborne() && homing) {
+                                    damageValue = 0;
+                                } else if (attackOnEntity && !attackOnAirborneEntity && target.isOffBoard()) {
+                                    // Counter-battery fire at an observed off-board enemy battery: prioritize silencing
+                                    // it (it keeps shelling us every turn). The bump lets it beat a lone-unit potshot,
+                                    // while a strong on-board cluster (whose summed value is higher) still wins. If the
+                                    // player has forced counter-battery, value it so high it always wins when reachable.
+                                    damageValue = owner.getForceCounterBattery()
+                                          ? Integer.MAX_VALUE
+                                          : (damage * COUNTER_BATTERY_PRIORITY);
+                                } else {
+                                    damageValue = damage;
+                                }
                             } else {
                                 if (!isADA) {
                                     if (isOrderedFireMissionTarget(artilleryCommandAndControl, target)) {
@@ -1003,8 +1082,14 @@ public class ArtilleryTargetingControl {
                     boolean guidedHomingShot = actualFireInfo.getAmmo().getType().getMunitionType()
                           .contains(Munitions.M_HOMING)
                           && isGuidedByTag(actualFireInfo.getTarget().getPosition(), tagSpottedPositions);
+                    // Counter-battery fire at an observed off-board battery is a precision strike at a known target, not
+                    // area fire at a cluster, so it bypasses the "needs 2+ enemies in the blast" auto gate.
+                    boolean counterBatteryShot =
+                          (actualFireInfo.getTarget().getTargetType() == Targetable.TYPE_ENTITY)
+                                && actualFireInfo.getTarget().isOffBoard();
                     if (!isOrderedFireMissionTarget(artilleryCommandAndControl, actualFireInfo.getTarget())
                           && !guidedHomingShot
+                          && !counterBatteryShot
                           && (clusterSizeNear(actualFireInfo, shooter, game) < MIN_AUTO_CLUSTER_UNITS)) {
                         LOGGER.info("{}: {} holding {} - predicted impact at {} covers fewer than {} units",
                               owner.getLocalPlayer().getName(), shooter.getDisplayName(), currentWeapon.getName(),
@@ -1016,6 +1101,11 @@ public class ArtilleryTargetingControl {
                                     + "within homing radius",
                               owner.getLocalPlayer().getName(), shooter.getDisplayName(),
                               actualFireInfo.getTarget().getPosition());
+                    }
+                    if (counterBatteryShot) {
+                        LOGGER.info("{}: {} firing counter-battery at observed off-board enemy battery {}",
+                              owner.getLocalPlayer().getName(), shooter.getDisplayName(),
+                              actualFireInfo.getTarget().getDisplayName());
                     }
 
                     ArtilleryAttackAction aaa = (ArtilleryAttackAction) actualFireInfo.buildWeaponAttackAction();

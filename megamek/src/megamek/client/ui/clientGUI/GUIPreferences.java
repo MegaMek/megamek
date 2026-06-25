@@ -128,6 +128,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public static final String SHOW_ARTILLERY_MISSES = "ShowArtilleryMisses";
     public static final String SHOW_ARTILLERY_DRIFTS = "ShowArtilleryHits";
+    public static final String SHOW_ARTILLERY_DRIFT_ARROWS = "ShowArtilleryDriftArrows";
     public static final String SHOW_BOMB_MISSES = "ShowBombMisses";
     public static final String SHOW_BOMB_DRIFTS = "ShowBombDrifts";
     public static final String SHOW_DEPLOY_ZONES_ARTY_AUTO = "ShowDeployZonesArtyAuto";
@@ -634,6 +635,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(SHOW_ARTILLERY_MISSES, true);
         store.setDefault(SHOW_ARTILLERY_DRIFTS, true);
+        store.setDefault(SHOW_ARTILLERY_DRIFT_ARROWS, true);
         store.setDefault(ADVANCED_REVEAL_OBSCURED_ARTILLERY, false);
         store.setDefault(ADVANCED_SHOW_BOT_ARTILLERY_HEATMAP, false);
         store.setDefault(SHOW_BOMB_MISSES, true);
@@ -3041,6 +3043,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getShowArtilleryDrifts() {
         return getBoolean(SHOW_ARTILLERY_DRIFTS);
+    }
+
+    public void setShowArtilleryDriftArrows(boolean b) {
+        store.setValue(SHOW_ARTILLERY_DRIFT_ARROWS, b);
+    }
+
+    public boolean getShowArtilleryDriftArrows() {
+        return getBoolean(SHOW_ARTILLERY_DRIFT_ARROWS);
     }
 
     public void setShowBombMisses(boolean b) {

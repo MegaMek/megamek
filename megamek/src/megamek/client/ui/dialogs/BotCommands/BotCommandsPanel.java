@@ -45,6 +45,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -81,6 +82,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.game.InGameObject;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.logging.MMLogger;
 
 /**
  * The Bot Commands Panel contains a small set of buttons which allow the player to change the configuration of any bot
@@ -90,6 +92,8 @@ import megamek.common.units.Entity;
  * @author Luana Coppio
  */
 public class BotCommandsPanel extends JPanel {
+    private static final MMLogger LOGGER = MMLogger.create(BotCommandsPanel.class);
+
     private final AbstractClient client;
     private final AudioService audioService;
     private final MegaMekController controller;
@@ -160,35 +164,14 @@ public class BotCommandsPanel extends JPanel {
         commandButtons = List.of(retreat, maneuver, priorityTarget, ignoreTarget, setBehavior, artillery,
               waypoints);
 
-        maneuver.addActionListener(e -> {
-            JPopupMenu popup = createManeuverPopup();
-            popup.show(maneuver, 0, maneuver.getHeight());
-        });
-        priorityTarget.addActionListener(e -> {
-            JPopupMenu popup = createPriorityTargetPopup();
-            popup.show(priorityTarget, 0, priorityTarget.getHeight());
-        });
-        ignoreTarget.addActionListener(e -> {
-            JPopupMenu popup = createIgnoreTargetPopup();
-            popup.show(ignoreTarget, 0, ignoreTarget.getHeight());
-        });
-        retreat.addActionListener(e -> {
-            JPopupMenu popup = createRetreatPopup();
-            popup.show(retreat, 0, retreat.getHeight());
-        });
-        setBehavior.addActionListener(e -> {
-            JPopupMenu popup = createSelectBehaviorPopup();
-            popup.show(setBehavior, 0, setBehavior.getHeight());
-        });
-        artillery.addActionListener(evt -> {
-            JPopupMenu popup = createArtilleryPopup();
-            popup.show(artillery, 0, artillery.getHeight());
-        });
-        waypoints.addActionListener(evt -> {
-            JPopupMenu popup = createWaypointsPopup();
-            popup.show(waypoints, 0, waypoints.getHeight());
-        });
-        pauseContinue.addActionListener(e -> pauseUnpause());
+        maneuver.addActionListener(evt -> showButtonPopup(maneuver, this::createManeuverPopup));
+        priorityTarget.addActionListener(evt -> showButtonPopup(priorityTarget, this::createPriorityTargetPopup));
+        ignoreTarget.addActionListener(evt -> showButtonPopup(ignoreTarget, this::createIgnoreTargetPopup));
+        retreat.addActionListener(evt -> showButtonPopup(retreat, this::createRetreatPopup));
+        setBehavior.addActionListener(evt -> showButtonPopup(setBehavior, this::createSelectBehaviorPopup));
+        artillery.addActionListener(evt -> showButtonPopup(artillery, this::createArtilleryPopup));
+        waypoints.addActionListener(evt -> showButtonPopup(waypoints, this::createWaypointsPopup));
+        pauseContinue.addActionListener(evt -> pauseUnpause());
 
         // Add them to the buttonPanel. With 2 rows set, the grid grows columns as needed.
         this.add(pauseContinue);
@@ -299,6 +282,28 @@ public class BotCommandsPanel extends JPanel {
         return button;
     }
 
+    /**
+     * Builds a button's popup and shows it, logging the reason instead of silently doing nothing if the build throws or
+     * the popup ends up empty. Popups are built lazily on click, so an exception there is otherwise lost on the AWT
+     * event thread and leaves the button looking dead (e.g. clicking it does nothing).
+     *
+     * @param button       The button the popup is anchored to
+     * @param popupFactory Supplies the popup to display
+     */
+    private void showButtonPopup(JButton button, Supplier<JPopupMenu> popupFactory) {
+        try {
+            JPopupMenu popup = popupFactory.get();
+            if (popup.getComponentCount() == 0) {
+                LOGGER.info("[BotPanel] {} popup has no entries to show (no commandable bots or applicable options)",
+                      button.getText());
+                return;
+            }
+            popup.show(button, 0, button.getHeight());
+        } catch (Exception exception) {
+            LOGGER.error(exception, "[BotPanel] Failed to build the {} popup", button.getText());
+        }
+    }
+
     private JPopupMenu createSelectBehaviorPopup() {
         var behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
         return createBotFirstPopup((botMenu, botPlayer) -> {
@@ -402,6 +407,14 @@ public class BotCommandsPanel extends JPanel {
 
     private void disableShootAndScoot(Player botPlayer) {
         sendChatCommand(botPlayer, ChatCommands.SHOOT_AND_SCOOT, "false");
+    }
+
+    private void enableCounterBattery(Player botPlayer) {
+        sendChatCommand(botPlayer, ChatCommands.COUNTER_BATTERY);
+    }
+
+    private void disableCounterBattery(Player botPlayer) {
+        sendChatCommand(botPlayer, ChatCommands.COUNTER_BATTERY, "false");
     }
 
     private void scootToHex(Player botPlayer) {
@@ -815,6 +828,9 @@ public class BotCommandsPanel extends JPanel {
             botMenu.add(createArtilleryFireMissionMenu(botPlayer, "ArtillerySingle", ArtilleryOrder.SINGLE));
             botMenu.add(createArtilleryFireMissionMenu(botPlayer, "ArtilleryVolley", ArtilleryOrder.VOLLEY));
             botMenu.add(createArtilleryFireMissionMenu(botPlayer, "ArtilleryBarrage", ArtilleryOrder.BARRAGE));
+            botMenu.addSeparator();
+            addBotAction(botMenu, botPlayer, "ForceCounterBattery", this::enableCounterBattery);
+            addBotAction(botMenu, botPlayer, "StopCounterBattery", this::disableCounterBattery);
         });
     }
 

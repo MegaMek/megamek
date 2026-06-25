@@ -2129,37 +2129,77 @@ public final class BoardView extends AbstractBoardView
     }
 
     /**
-     * Draws a bot artillery heat-map marker's turn text directly on the hex, so it is visible in screenshots and not
-     * just in the hover text: a predicted-position hex shows the prediction's turn ({@code T<turn>}), while a firing
-     * hex counts down the turns until the round lands ({@code T-2}, {@code T-1}, then {@code HIT} on impact). No-op for
-     * any other special hex display.
+     * Draws a single combined turn label for all the bot artillery heat-map markers stacked on one hex, so the text is
+     * visible in screenshots and not just in the hover text. Several tubes can target the same hex with different flight
+     * times, so the distinct values are merged into one label rather than drawn over each other: firing markers count
+     * down the turns until impact ({@code T-2}, joined as {@code T-1/2} when they differ, {@code HIT} when the only one
+     * is this turn), and otherwise a predicted-position hex shows the prediction's turn ({@code T<turn>}). No-op when no
+     * heat-map markers are given.
      *
-     * @param specialHexDisplay The special hex display being drawn
-     * @param graphics2D        The hex graphics context
-     * @param scale             The current board scale
+     * @param heatMapMarkers The heat-map markers drawn on this hex
+     * @param graphics2D     The hex graphics context
+     * @param scale          The current board scale
      */
-    private void drawHeatMapTurnLabel(SpecialHexDisplay specialHexDisplay, Graphics2D graphics2D, float scale) {
-        String info = specialHexDisplay.getInfo();
-        if ((info == null) || !info.startsWith(SpecialHexDisplay.HEAT_MAP_PREFIX)) {
-            return;
+    private void drawHeatMapTurnLabel(Collection<SpecialHexDisplay> heatMapMarkers, Graphics2D graphics2D,
+          float scale) {
+        SortedSet<Integer> firingCountdowns = new TreeSet<>();
+        SortedSet<Integer> predictedTurns = new TreeSet<>();
+        for (SpecialHexDisplay marker : heatMapMarkers) {
+            String info = marker.getInfo();
+            if ((info == null) || !info.startsWith(SpecialHexDisplay.HEAT_MAP_PREFIX)) {
+                continue;
+            }
+            // Control token is "<turn-or-countdown>:<heat>:<kind>".
+            String[] fields = heatMapToken(info).split(":");
+            if (fields.length == 0) {
+                continue;
+            }
+            try {
+                int value = Integer.parseInt(fields[0]);
+                if ((fields.length >= 3) && SpecialHexDisplay.HEAT_MAP_KIND_FIRING.equals(fields[2])) {
+                    firingCountdowns.add(value);
+                } else {
+                    predictedTurns.add(value);
+                }
+            } catch (NumberFormatException ignored) {
+                // skip a marker whose turn value is not numeric
+            }
         }
-        // Control token is "<turn-or-countdown>:<heat>:<kind>".
-        String[] fields = heatMapToken(info).split(":");
-        if (fields.length == 0) {
-            return;
-        }
-        String value = fields[0];
-        boolean firing = (fields.length >= 3) && SpecialHexDisplay.HEAT_MAP_KIND_FIRING.equals(fields[2]);
+
         String label;
-        if (firing) {
-            label = "0".equals(value) ? "HIT" : "T-" + value;
+        if (!firingCountdowns.isEmpty()) {
+            // A firing marker's countdown wins over a predicted label; merge distinct countdowns with '/'.
+            if ((firingCountdowns.size() == 1) && (firingCountdowns.first() == 0)) {
+                label = "HIT";
+            } else {
+                label = "T-" + joinValues(firingCountdowns);
+            }
+        } else if (!predictedTurns.isEmpty()) {
+            label = "T" + joinValues(predictedTurns);
         } else {
-            label = "T" + value;
+            return;
         }
+
         Color previousColor = graphics2D.getColor();
         graphics2D.setColor(Color.WHITE);
         drawCenteredString(label, 0, (int) (45 * scale), font_note, graphics2D);
         graphics2D.setColor(previousColor);
+    }
+
+    /**
+     * @param values The values to render
+     *
+     * @return The values joined with a slash, e.g. {@code 1/2}
+     */
+    private String joinValues(Collection<Integer> values) {
+        StringBuilder joined = new StringBuilder();
+        for (Integer value : values) {
+            if (joined.length() > 0) {
+                joined.append('/');
+            }
+            joined.append(value);
+        }
+        return joined.toString();
     }
 
     /**
@@ -2193,6 +2233,16 @@ public final class BoardView extends AbstractBoardView
         int prefixLength = SpecialHexDisplay.HEAT_MAP_PREFIX.length();
         int space = info.indexOf(' ', prefixLength);
         return (space > prefixLength) ? info.substring(prefixLength, space) : info.substring(prefixLength);
+    }
+
+    /**
+     * @param specialHexDisplay A special hex display being drawn
+     *
+     * @return {@code true} if this is any bot artillery heat-map marker (predicted-position or firing)
+     */
+    private boolean isHeatMapMarker(SpecialHexDisplay specialHexDisplay) {
+        String info = specialHexDisplay.getInfo();
+        return (info != null) && info.startsWith(SpecialHexDisplay.HEAT_MAP_PREFIX);
     }
 
     /**
@@ -2284,6 +2334,9 @@ public final class BoardView extends AbstractBoardView
      * @param graphics2D The board graphics context, in board pixel space at the current scale
      */
     private void drawArtilleryDriftLines(Graphics2D graphics2D) {
+        if (!GUIP.getShowArtilleryDriftArrows()) {
+            return;
+        }
         Board board = game.getBoard(boardId);
         if (board == null) {
             return;
@@ -2872,19 +2925,28 @@ public final class BoardView extends AbstractBoardView
         final Collection<SpecialHexDisplay> shdList = game.getBoard(boardId).getSpecialHexDisplay(coords);
         try {
             if (shdList != null) {
+                // Several heat-map markers can stack on one hex (multiple tubes firing it, or a prediction plus a
+                // shot). Draw each marker's icon/fill, but collect them so a single combined turn label is drawn (their
+                // distinct values merged), rather than each marker drawing its label over the others.
+                List<SpecialHexDisplay> heatMapMarkers = new ArrayList<>();
                 for (SpecialHexDisplay shd : shdList) {
                     if (shd.drawNow(game.getPhase(), game.getRoundCount(), getLocalPlayer(), GUIP)) {
                         // A predicted-position heat-map marker paints the hex with a cold-to-hot color (navy = one
                         // enemy converging, crimson = many) instead of an icon; the firing marker and every other
-                        // display draw their icon. The turn label is drawn on top for either heat-map marker.
+                        // display draw their icon.
                         if (isPredictedHeatMapMarker(shd)) {
                             drawHeatMapPredictedHex(shd, graphics2D, scale);
                         } else {
                             scaledImage = getScaledImage(shd.getDefaultImage(), true);
                             graphics2D.drawImage(scaledImage, 0, 0, boardPanel);
                         }
-                        drawHeatMapTurnLabel(shd, graphics2D, scale);
+                        if (isHeatMapMarker(shd)) {
+                            heatMapMarkers.add(shd);
+                        }
                     }
+                }
+                if (!heatMapMarkers.isEmpty()) {
+                    drawHeatMapTurnLabel(heatMapMarkers, graphics2D, scale);
                 }
             }
         } catch (Exception e) {

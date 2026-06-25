@@ -207,6 +207,7 @@ public class Princess extends BotClient {
     private boolean holdPosition = false;
     private boolean shootAndScoot = false;
     private Coords shootAndScootHex = null;
+    private boolean forceCounterBattery = false;
     private final Set<Integer> unitsScootingToHex = new HashSet<>();
     private final Set<Integer> designatedTagTargets = new HashSet<>();
     private final MoraleUtil moraleUtil = new MoraleUtil();
@@ -464,6 +465,25 @@ public class Princess extends BotClient {
             shootAndScootHex = null;
             unitsScootingToHex.clear();
         }
+    }
+
+    /**
+     * @return {@code true} if the bot has been ordered to force counter-battery fire, prioritizing observed off-board
+     *       enemy batteries over on-board targets
+     */
+    public boolean getForceCounterBattery() {
+        return forceCounterBattery;
+    }
+
+    /**
+     * Orders the bot to force counter-battery fire: while on, its artillery prioritizes any observed off-board enemy
+     * battery over on-board targets, firing back to silence it whenever a tube can reach.
+     *
+     * @param forceCounterBattery {@code true} to force counter-battery fire, {@code false} for normal targeting
+     */
+    public void setForceCounterBattery(final boolean forceCounterBattery) {
+        LOGGER.info("{}: setting force counter-battery to {}", getName(), forceCounterBattery);
+        this.forceCounterBattery = forceCounterBattery;
     }
 
     /**

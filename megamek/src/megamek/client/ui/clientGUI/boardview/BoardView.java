@@ -2132,8 +2132,9 @@ public final class BoardView extends AbstractBoardView
      * Draws a single combined turn label for all the bot artillery heat-map markers stacked on one hex, so the text is
      * visible in screenshots and not just in the hover text. Several tubes can target the same hex with different flight
      * times, so the distinct values are merged into one label rather than drawn over each other: firing markers count
-     * down the turns until impact ({@code T-2}, joined as {@code T-1/2} when they differ, {@code HIT} when the only one
-     * is this turn), and otherwise a predicted-position hex shows the prediction's turn ({@code T<turn>}). No-op when no
+     * down the turns until impact ({@code T-2}, joined as {@code T-1/2} when they differ, {@code SPLASH} when the only
+     * one is this turn), and otherwise a predicted-position hex shows the prediction's turn ({@code T<turn>}). No-op when
+     * no
      * heat-map markers are given.
      *
      * @param heatMapMarkers The heat-map markers drawn on this hex
@@ -2170,7 +2171,7 @@ public final class BoardView extends AbstractBoardView
         if (!firingCountdowns.isEmpty()) {
             // A firing marker's countdown wins over a predicted label; merge distinct countdowns with '/'.
             if ((firingCountdowns.size() == 1) && (firingCountdowns.first() == 0)) {
-                label = "HIT";
+                label = "SPLASH";
             } else {
                 label = "T-" + joinValues(firingCountdowns);
             }

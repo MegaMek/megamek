@@ -31482,6 +31482,40 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Sends a radio-flavored counter-battery toast to the team that just spotted an enemy off-board battery's fall of
+     * shot, so a player sees the call-for-fire moment alongside the report. Scoped to the observing team only and
+     * de-duplicated per enemy battery per team per round (shares the artillery net-toast dedupe set).
+     *
+     * @param observer     the friendly unit that observed the enemy battery's fall of shot
+     * @param enemyBattery the off-board enemy battery that was spotted
+     * @param impactHex    the hex the enemy rounds landed on (what the observer saw)
+     * @param momentRound  the round the observation happens in, used to scope de-duplication
+     */
+    public void sendCounterBatteryObservedToast(Entity observer, Entity enemyBattery, Coords impactHex,
+          int momentRound) {
+        Player observerOwner = observer.getOwner();
+        if ((observerOwner == null) || (enemyBattery == null) || (impactHex == null)) {
+            return;
+        }
+        if (momentRound != sentArtilleryNetToastsRound) {
+            sentArtilleryNetToasts.clear();
+            sentArtilleryNetToastsRound = momentRound;
+        }
+        String dedupeKey = "counterBattery:" + enemyBattery.getId() + ":" + observerOwner.getTeam() + ":" + momentRound;
+        if (!sentArtilleryNetToasts.add(dedupeKey)) {
+            return;
+        }
+        String message = Messages.getString("Artillery.counterBatteryToast",
+              observer.getShortName(), impactHex.getBoardNum());
+        for (Player player : game.getPlayersList()) {
+            if (!player.isEnemyOf(observerOwner)) {
+                send(player.getId(), new Packet(PacketCommand.SEND_TOAST,
+                      GameToastEvent.Level.INFO, message, observer.getId()));
+            }
+        }
+    }
+
+    /**
      * During the movement phase, reminds each team that has a homing artillery round landing next round to put a TAG on
      * the target - a homing round needs a friendly TAG within 8 hexes when it impacts. Fired at
      * {@code turnsTilHit == 1} (the movement phase before the landing turn) so the team still has its firing phase this

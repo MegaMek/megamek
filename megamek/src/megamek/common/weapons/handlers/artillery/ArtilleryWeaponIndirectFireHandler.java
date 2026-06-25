@@ -724,6 +724,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                         r.add(entity.getDisplayName());
                         r.subject = subjectId;
                         vPhaseReport.add(r);
+                        // Radio-flavored call-for-fire toast to the team that just spotted the enemy battery.
+                        gameManager.sendCounterBatteryObservedToast(entity, aaa.getEntity(game), targetPos,
+                              game.getRoundCount());
                     }
                 }
             }

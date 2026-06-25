@@ -44,8 +44,14 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.phaseDisplay.AbandonUnitDialog;
+import megamek.client.ui.dialogs.phaseDisplay.DetonateChargesDialog;
+import megamek.client.ui.dialogs.phaseDisplay.MinesweeperActivationDialog;
+import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
+import megamek.client.ui.dialogs.phaseDisplay.VariableRangeTargetingDialog;
 import megamek.client.ui.widget.MegaMekButton;
+import megamek.common.Player;
 import megamek.common.actions.InitiateInfantryCombatAction;
 import megamek.common.board.Coords;
 import megamek.common.equipment.BridgeLayerLogic;
@@ -67,6 +73,11 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
 
     public enum PreEndCommand implements PhaseCommand {
         PREEND_INITIATE_INFANTRY_COMBAT("initiateInfantryCombat"),
+        PREEND_NOVA_NETWORK("novaNetwork"),
+        PREEND_VAR_RANGE_TARGETING("varRangeTargeting"),
+        PREEND_ABANDON("abandon"),
+        PREEND_DETONATE_CHARGES("detonateCharges"),
+        PREEND_MINESWEEPER("minesweeper"),
         PREEND_DEPLOY_BRIDGE("deployBridge"),
         PREEND_NEXT("next");
 
@@ -112,6 +123,13 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     private int selectedDeployBridgeIndex = 0;
 
     /**
+     * {@code true} once the local player applied a player-wide declaration (Nova, Variable Targeting, abandon, charges,
+     * minesweeper) this turn. These send their data directly rather than queuing an attack, so this flag drives the
+     * end-turn button to read "Done" instead of "Skip Turn" - otherwise the player gets no sign the declaration took.
+     */
+    private boolean declarationMade;
+
+    /**
      * Sets the current target and updates button states
      */
     public void setTarget(Targetable newTarget) {
@@ -144,24 +162,36 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
 
     @Override
     protected void setButtons() {
-        buttons.put(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT,
-              createButton(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT.getCmd(), "PreEndDeclarationsDisplay."));
-        buttons.put(PreEndCommand.PREEND_DEPLOY_BRIDGE,
-              createButton(PreEndCommand.PREEND_DEPLOY_BRIDGE.getCmd(), "PreEndDeclarationsDisplay."));
-        buttons.put(PreEndCommand.PREEND_NEXT,
-              createButton(PreEndCommand.PREEND_NEXT.getCmd(), "PreEndDeclarationsDisplay."));
+        for (PreEndCommand command : PreEndCommand.values()) {
+            buttons.put(command, createButton(command.getCmd(), "PreEndDeclarationsDisplay."));
+        }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
     }
 
     @Override
     protected void setButtonsTooltips() {
-        // Add tooltips if needed
+        // The end-phase declaration buttons carry rulebook references; the infantry-combat and next buttons do not.
+        setTooltip(PreEndCommand.PREEND_NOVA_NETWORK);
+        setTooltip(PreEndCommand.PREEND_VAR_RANGE_TARGETING);
+        setTooltip(PreEndCommand.PREEND_ABANDON);
+        setTooltip(PreEndCommand.PREEND_DETONATE_CHARGES);
+        setTooltip(PreEndCommand.PREEND_MINESWEEPER);
+    }
+
+    private void setTooltip(PreEndCommand command) {
+        buttons.get(command)
+              .setToolTipText(Messages.getString("PreEndDeclarationsDisplay." + command.getCmd() + ".tooltip"));
     }
 
     @Override
     protected List<MegaMekButton> getButtonList() {
         ArrayList<MegaMekButton> buttonList = new ArrayList<>();
         buttonList.add(buttons.get(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT));
+        buttonList.add(buttons.get(PreEndCommand.PREEND_NOVA_NETWORK));
+        buttonList.add(buttons.get(PreEndCommand.PREEND_VAR_RANGE_TARGETING));
+        buttonList.add(buttons.get(PreEndCommand.PREEND_ABANDON));
+        buttonList.add(buttons.get(PreEndCommand.PREEND_DETONATE_CHARGES));
+        buttonList.add(buttons.get(PreEndCommand.PREEND_MINESWEEPER));
         buttonList.add(buttons.get(PreEndCommand.PREEND_DEPLOY_BRIDGE));
         buttonList.add(buttons.get(PreEndCommand.PREEND_NEXT));
         return buttonList;
@@ -171,6 +201,16 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     public void actionPerformed(ActionEvent ev) {
         if (ev.getActionCommand().equals(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT.getCmd())) {
             initiateInfantryCombat();
+        } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_NOVA_NETWORK.getCmd())) {
+            showNovaNetworkDialog();
+        } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_VAR_RANGE_TARGETING.getCmd())) {
+            showVariableRangeTargetingDialog();
+        } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_ABANDON.getCmd())) {
+            showAbandonDialog();
+        } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_DETONATE_CHARGES.getCmd())) {
+            showDetonateChargesDialog();
+        } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_MINESWEEPER.getCmd())) {
+            showMinesweeperDialog();
         } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_DEPLOY_BRIDGE.getCmd())) {
             deployBridge();
         } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_NEXT.getCmd())) {
@@ -179,9 +219,9 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     }
 
     /**
-     * Enters confirm mode for a Bridge-Layer (AVLB) deployment: the hex directly in front of the unit, along its facing,
-     * is the only valid target (TM p.242 / TW), so it is highlighted and the player clicks it to confirm. The bridge is
-     * laid there at the end of the next turn if the unit stays stationary.
+     * Enters confirm mode for a Bridge-Layer (AVLB) deployment: the hex directly in front of the unit, along its
+     * facing, is the only valid target (TM p.242 / TW), so it is highlighted and the player clicks it to confirm. The
+     * bridge is laid there at the end of the next turn if the unit stays stationary.
      */
     private void deployBridge() {
         Entity entity = game.getEntity(currentEntity);
@@ -356,7 +396,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             return false;
         }
         // Only nag about un-declared infantry combat for a unit that could actually initiate it. Other units in this
-        // phase (e.g. a bridgelayer that chose not to deploy) end their turn silently.
+        // phase (a unit making an end-phase declaration, or a bridgelayer that chose not to deploy) end silently.
         if (attacks.isEmpty() && entity.canInitiateInfantryVsInfantryCombat()) {
             LOGGER.debug("[PreEnd] {}: nag - infantry-combat-capable but none declared; confirming skip",
                   entity.getShortName());
@@ -375,6 +415,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
 
         LOGGER.debug("[PreEnd] entity {} ready; {} queued action(s), advancing turn", currentEntity, attacks.size());
         // Always send attack data to advance turn, even if empty
+        LOGGER.debug("[PreEnd] ready: entity {} advancing turn with {} action(s)", currentEntity, attacks.size());
         clientgui.getClient().sendAttackData(currentEntity, attacks.toVector());
         removeAllAttacks();
 
@@ -494,8 +535,20 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     protected void updateButtons() {
         Entity entity = game.getEntity(currentEntity);
 
-        // Bridge-Layer (AVLB) deployment is available to any eligible unit (vehicle or quad Mek), independent of the
-        // infantry-combat declaration below.
+        // The end-phase declarations are player-wide: their dialogs act on every eligible unit (or charge) the local
+        // player owns, so they are enabled on the player's turn regardless of which unit is currently selected.
+        boolean nova = hasNovaUnits();
+        boolean variableRange = hasVariableRangeUnits();
+        boolean abandon = hasAbandonableUnits();
+        boolean charges = hasDemolitionCharges();
+        boolean minesweeper = hasMinesweeperUnits();
+        setNovaNetworkEnabled(nova);
+        setVariableRangeTargetingEnabled(variableRange);
+        setAbandonEnabled(abandon);
+        setDetonateChargesEnabled(charges);
+        setMinesweeperEnabled(minesweeper);
+
+        // Bridge-Layer (AVLB) deployment is entity-scoped: it depends on the selected unit (vehicle or quad Mek).
         boolean canDeployBridge = (entity != null) && BridgeLayerLogic.canDeclareBridgeDeploy(entity, game);
         setDeployBridgeEnabled(canDeployBridge);
         if (entity != null) {
@@ -503,21 +556,49 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             // with two bridges) rather than a generic label.
             updateDeployBridgeButtonLabel(entity, BridgeLayerLogic.getDeployableBridgeLayers(entity));
         }
-        LOGGER.debug("[PreEnd] updateButtons for {}: deployBridge={}",
-              (entity == null) ? "<none>" : entity.getShortName(), canDeployBridge);
 
-        if (!(entity instanceof Infantry infantry)) {
-            setInitiateInfantryCombatEnabled(false);
-            updateDonePanel();
-            return;
-        }
-
-        boolean canInitiate = infantry.canInitiateInfantryVsInfantryCombat()
+        // Initiate Infantry Combat is entity-scoped: it depends on the selected unit and target building.
+        boolean canInitiate = (entity instanceof Infantry infantry)
+              && infantry.canInitiateInfantryVsInfantryCombat()
               && target != null
               && isValidBuildingTargetNoCombat(entity, target);
-
         setInitiateInfantryCombatEnabled(canInitiate);
         updateDonePanel();
+
+        LOGGER.debug("[PreEnd] updateButtons: currentEntity={}, infantryCombat={}, deployBridge={}, nova={}, vrt={}, "
+                    + "abandon={}, charges={}, minesweeper={}, declarationMade={}, butDoneEnabled={}, butSkipEnabled={}",
+              currentEntity, canInitiate, canDeployBridge, nova, variableRange, abandon, charges, minesweeper,
+              declarationMade, butDone.isEnabled(), butSkipTurn.isEnabled());
+    }
+
+    @Override
+    protected void updateDonePanel() {
+        // A player-wide declaration sends its data directly and never queues an attack, so also treat a made
+        // declaration as "acted". Without this the button stays on "Skip Turn" and reads as if nothing happened.
+        boolean acted = !attacks.isEmpty() || declarationMade;
+        updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), acted,
+              acted ? attacks.getDescriptions() : null);
+    }
+
+    /**
+     * Records that the local player applied a player-wide declaration this turn and shows a confirmation toast. Flips
+     * the end-turn button to "Done" so the player can see the declaration registered.
+     *
+     * @param confirmationKey i18n key for the confirmation toast text
+     */
+    private void registerDeclaration(String confirmationKey) {
+        clientgui.addToast(ToastLevel.SUCCESS, Messages.getString(confirmationKey));
+        registerDeclaration();
+    }
+
+    /**
+     * Records that the local player applied a player-wide declaration this turn, without its own toast (used where the
+     * dialog already shows one, e.g. Detonate Charges). Flips the end-turn button to "Done".
+     */
+    private void registerDeclaration() {
+        declarationMade = true;
+        LOGGER.debug("[PreEnd] declaration registered for {}", currentEntity);
+        updateButtons();
     }
 
     /**
@@ -552,6 +633,149 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     }
 
     /**
+     * Shows the Nova CEWS network management dialog (IO:AE p.60).
+     */
+    private void showNovaNetworkDialog() {
+        NovaNetworkDialog dialog = new NovaNetworkDialog(clientgui.getFrame(), clientgui);
+        dialog.setVisible(true);
+        if (dialog.wasApplied()) {
+            registerDeclaration("PreEndDeclarationsDisplay.declared.novaNetwork");
+        }
+    }
+
+    /**
+     * The local player's id, or {@link Player#PLAYER_NONE} when there is no local player (e.g. an observer or during
+     * early initialization). PLAYER_NONE matches no owned unit, so the player-wide checks below return false.
+     */
+    private int localPlayerId() {
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        return (localPlayer == null) ? Player.PLAYER_NONE : localPlayer.getId();
+    }
+
+    /**
+     * Checks if the local player has any Nova CEWS units.
+     */
+    private boolean hasNovaUnits() {
+        int localPlayerId = localPlayerId();
+        return game.getEntitiesVector().stream()
+              .filter(entity -> entity.getOwnerId() == localPlayerId)
+              .anyMatch(Entity::hasNovaCEWS);
+    }
+
+    private void setNovaNetworkEnabled(boolean enabled) {
+        buttons.get(PreEndCommand.PREEND_NOVA_NETWORK).setEnabled(enabled);
+    }
+
+    /**
+     * Shows the Variable Range Targeting mode selection dialog (BMM pg. 86).
+     */
+    private void showVariableRangeTargetingDialog() {
+        VariableRangeTargetingDialog dialog = new VariableRangeTargetingDialog(clientgui.getFrame(), clientgui);
+        dialog.setVisible(true);
+        if (dialog.wasApplied()) {
+            registerDeclaration("PreEndDeclarationsDisplay.declared.varRangeTargeting");
+        }
+        buttons.get(PreEndCommand.PREEND_VAR_RANGE_TARGETING).transferFocus();
+    }
+
+    /**
+     * Checks if the local player has any units with the Variable Range Targeting quirk.
+     */
+    private boolean hasVariableRangeUnits() {
+        int localPlayerId = localPlayerId();
+        return game.getEntitiesVector().stream()
+              .filter(entity -> entity.getOwnerId() == localPlayerId)
+              .anyMatch(Entity::hasVariableRangeTargeting);
+    }
+
+    private void setVariableRangeTargetingEnabled(boolean enabled) {
+        buttons.get(PreEndCommand.PREEND_VAR_RANGE_TARGETING).setEnabled(enabled);
+    }
+
+    /**
+     * Shows the Unit Abandonment dialog (TO:AR p.165: announce abandonment in the End Phase).
+     */
+    private void showAbandonDialog() {
+        AbandonUnitDialog dialog = new AbandonUnitDialog(clientgui.getFrame(), clientgui);
+        dialog.setVisible(true);
+        if (dialog.wasApplied()) {
+            registerDeclaration("PreEndDeclarationsDisplay.declared.abandon");
+        }
+        buttons.get(PreEndCommand.PREEND_ABANDON).transferFocus();
+    }
+
+    /**
+     * Checks if the local player has any units that can announce crew abandonment (Meks: prone+shutdown, vehicles: any,
+     * escape pods: crew can exit).
+     */
+    private boolean hasAbandonableUnits() {
+        int localPlayerId = localPlayerId();
+        return game.getEntitiesVector().stream()
+              .filter(entity -> entity.getOwnerId() == localPlayerId)
+              .anyMatch(Entity::canAnnounceAbandon);
+    }
+
+    private void setAbandonEnabled(boolean enabled) {
+        buttons.get(PreEndCommand.PREEND_ABANDON).setEnabled(enabled);
+    }
+
+    /**
+     * Shows the Detonate Charges dialog (TO:AUE p.152: detonation of finished demolition charges is announced in any
+     * End Phase after the charges were set).
+     */
+    private void showDetonateChargesDialog() {
+        DetonateChargesDialog dialog = new DetonateChargesDialog(clientgui.getFrame(), clientgui);
+        dialog.setVisible(true);
+        if (dialog.wasApplied()) {
+            // The dialog already shows its own "charges announced" toast, so flip the button without a second toast.
+            registerDeclaration();
+        }
+        buttons.get(PreEndCommand.PREEND_DETONATE_CHARGES).transferFocus();
+    }
+
+    /**
+     * Checks if the local player has any demolition charges set on any building.
+     */
+    private boolean hasDemolitionCharges() {
+        int localPlayerId = localPlayerId();
+        return game.getBoards().values().stream()
+              .flatMap(board -> board.getBuildingsVector().stream())
+              .flatMap(building -> building.getDemolitionCharges().stream())
+              .anyMatch(charge -> charge.playerId == localPlayerId);
+    }
+
+    private void setDetonateChargesEnabled(boolean enabled) {
+        buttons.get(PreEndCommand.PREEND_DETONATE_CHARGES).setEnabled(enabled);
+    }
+
+    /**
+     * Shows the Minesweeper activation dialog (TO:AUE p.138: the sweeper is activated or deactivated in the End Phase,
+     * taking effect next turn).
+     */
+    private void showMinesweeperDialog() {
+        MinesweeperActivationDialog dialog = new MinesweeperActivationDialog(clientgui.getFrame(), clientgui);
+        dialog.setVisible(true);
+        if (dialog.wasApplied()) {
+            registerDeclaration("PreEndDeclarationsDisplay.declared.minesweeper");
+        }
+        buttons.get(PreEndCommand.PREEND_MINESWEEPER).transferFocus();
+    }
+
+    /**
+     * Checks if the local player has any units mounting a minesweeper.
+     */
+    private boolean hasMinesweeperUnits() {
+        int localPlayerId = localPlayerId();
+        return game.getEntitiesVector().stream()
+              .filter(entity -> entity.getOwnerId() == localPlayerId)
+              .anyMatch(Entity::hasMinesweeper);
+    }
+
+    private void setMinesweeperEnabled(boolean enabled) {
+        buttons.get(PreEndCommand.PREEND_MINESWEEPER).setEnabled(enabled);
+    }
+
+    /**
      * Enables or disables the Deploy Bridge button.
      */
     protected void setDeployBridgeEnabled(boolean enabled) {
@@ -575,9 +799,9 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         selectingDeployBridgeHex = false;
         selectedDeployBridgeIndex = 0;
         clientgui.setSelectedEntityNum(entityId);
-        clientgui.getUnitDisplay().displayEntity(game.getEntity(entityId));
-        clientgui.getBoardView().highlight(game.getEntity(entityId).getPosition());
-        clientgui.getBoardView().centerOnHex(game.getEntity(entityId).getPosition());
+        clientgui.getUnitDisplay().displayEntity(selected);
+        clientgui.getBoardView().highlight(selected.getPosition());
+        clientgui.getBoardView().centerOnHex(selected.getPosition());
 
         updateButtons();
     }
@@ -586,6 +810,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * Called when the player's turn begins
      */
     private void beginMyTurn() {
+        declarationMade = false;
         LOGGER.debug("[PreEnd] pre-end declarations turn begins for the local player");
         clientgui.maybeShowUnitDisplay();
         setTarget(null);
@@ -596,17 +821,20 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             selectEntity(clientgui.getClient().getFirstEntityNum());
         }
 
-        // Note: do not force butDone disabled here - updateButtons() -> updateDonePanel() already sets the correct
-        // Done/Skip state. With "nag for no action" off, the Done button itself is the Skip-Turn button, so disabling
-        // it would wrongly gray out Skip for a unit that just wants to pass (e.g. a bridgelayer not deploying).
+        // Let updateButtons() -> updateDonePanel() decide the Done/Skip state. Do NOT force butDone disabled here:
+        // with "nag for no action" off the Done button doubles as Skip Turn, so disabling it would strand a player who
+        // has nothing to declare (e.g. a unit eligible only for a player-wide declaration) with no way to end the turn.
         updateButtons();
         startTimer();
+        LOGGER.debug("[PreEnd] beginMyTurn complete: currentEntity={}, butDoneEnabled={}, butSkipEnabled={}",
+              currentEntity, butDone.isEnabled(), butSkipTurn.isEnabled());
     }
 
     /**
      * Called when the player's turn ends
      */
     private void endMyTurn() {
+        declarationMade = false;
         currentEntity = Entity.NONE;
         stopTimer();
         disableButtons();
@@ -619,6 +847,11 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      */
     private void disableButtons() {
         setInitiateInfantryCombatEnabled(false);
+        setNovaNetworkEnabled(false);
+        setVariableRangeTargetingEnabled(false);
+        setAbandonEnabled(false);
+        setDetonateChargesEnabled(false);
+        setMinesweeperEnabled(false);
         setDeployBridgeEnabled(false);
         selectingDeployBridgeHex = false;
         selectedDeployBridgeIndex = 0;
@@ -638,8 +871,11 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             return;
         }
 
-        if (!game.getPhase().isSimultaneous(game)) {
-            if (clientgui.getClient().isMyTurn()) {
+        boolean myTurn = clientgui.getClient().isMyTurn();
+        boolean simultaneous = game.getPhase().isSimultaneous(game);
+
+        if (!simultaneous) {
+            if (myTurn) {
                 beginMyTurn();
                 String s = getRemainingPlayerWithTurns();
                 setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.its_your_turn") + s);

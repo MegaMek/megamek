@@ -183,8 +183,8 @@ public final class BridgeConstruction {
      * @param targetHex the hex a bridge would be placed in
      *
      * @return whether the bank can anchor a bridge in the target hex: over water it must be land/shallow (or already
-     *       hold a bridge); over a dry gap it must be a rim higher than the target floor (or hold a bridge). Exposes the
-     *       internal anchor test for callers that must require a <em>specific</em> bank to anchor - e.g. the AVLB
+     *       hold a bridge); over a dry gap it must be a rim higher than the target floor (or hold a bridge). Exposes
+     *       the internal anchor test for callers that must require a <em>specific</em> bank to anchor - e.g. the AVLB
      *       bridgelayer's own hex, which must be a rim/land rather than the canyon floor. TM p.242 / TW.
      */
     public static boolean isAnchoringBank(Hex bank, Hex targetHex) {

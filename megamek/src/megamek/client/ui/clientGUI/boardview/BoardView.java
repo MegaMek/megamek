@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2008 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -344,6 +344,10 @@ public final class BoardView extends AbstractBoardView
 
     // highlighted entity hexes (for Nova CEWS network dialog)
     private List<Coords> highlightedEntityHexes = new ArrayList<>();
+
+    // highlighted demolition charge hexes (selected in the Detonate Charges dialog) - drawn with a bold yellow/black
+    // hazard outline, separate from the plain entity highlight above
+    private List<Coords> demolitionChargeHighlightHexes = new ArrayList<>();
 
     private Coords rulerStart;
     private Coords rulerEnd;
@@ -1190,6 +1194,9 @@ public final class BoardView extends AbstractBoardView
         // draw entity hex highlights (Nova CEWS network dialog)
         drawEntityHexHighlights(graphics2D);
 
+        // draw demolition charge selection highlights (Detonate Charges dialog)
+        drawDemolitionChargeHighlights(graphics2D);
+
         // draw cursors
         drawSprite(graphics2D, cursorSprite);
         drawSprite(graphics2D, selectedSprite);
@@ -1752,6 +1759,52 @@ public final class BoardView extends AbstractBoardView
                   .createTransformedShape(scaled);
             graphics.draw(translated);
         }
+    }
+
+    /** Hazard-stripe yellow for the bold demolition charge selection outline. */
+    private static final Color DEMO_CHARGE_HAZARD_COLOR = new Color(255, 213, 0);
+
+    /**
+     * Draws the outline around demolition charge hexes selected in the Detonate Charges dialog. With the hazard-outline
+     * client setting on (default), each hex gets a bold yellow/black hazard-stripe border (a thick black base with a
+     * yellow dashed line over it). With the setting off, it falls back to the same plain border the generic entity
+     * highlight uses.
+     *
+     * @param graphics The graphics object to draw on
+     */
+    private void drawDemolitionChargeHighlights(Graphics2D graphics) {
+        if (demolitionChargeHighlightHexes.isEmpty()) {
+            return;
+        }
+        boolean hazard = GUIP.getDemolitionChargeHazardOutline();
+        Stroke oldStroke = graphics.getStroke();
+        for (Coords hex : demolitionChargeHighlightHexes) {
+            Point hexPos = getHexLocation(hex);
+            Shape hexBorder = HexDrawUtilities.getHexFullBorderLine(0);
+            Shape scaled = AffineTransform
+                  .getScaleInstance(scale, scale)
+                  .createTransformedShape(hexBorder);
+            Shape border = AffineTransform
+                  .getTranslateInstance(hexPos.x, hexPos.y)
+                  .createTransformedShape(scaled);
+            if (hazard) {
+                float boldWidth = (float) Math.max(3.0, 4.0 * scale);
+                // Black base pass, then a yellow dashed pass on top so the gaps show black underneath - a hazard stripe.
+                graphics.setColor(Color.BLACK);
+                graphics.setStroke(new BasicStroke(boldWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                graphics.draw(border);
+                float dash = (float) Math.max(6.0, 10.0 * scale);
+                graphics.setColor(DEMO_CHARGE_HAZARD_COLOR);
+                graphics.setStroke(new BasicStroke(boldWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                      10.0f, new float[] { dash, dash }, 0.0f));
+                graphics.draw(border);
+            } else {
+                graphics.setColor(UIUtil.uiGreen());
+                graphics.setStroke(new BasicStroke((float) (2.0 * scale)));
+                graphics.draw(border);
+            }
+        }
+        graphics.setStroke(oldStroke);
     }
 
     /**
@@ -4773,6 +4826,17 @@ public final class BoardView extends AbstractBoardView
      */
     public void setHighlightedEntityHexes(List<Coords> hexes) {
         highlightedEntityHexes = new ArrayList<>(hexes);
+        repaint();
+    }
+
+    /**
+     * Sets the demolition charge hexes to highlight (selected in the Detonate Charges dialog). These are drawn with a
+     * bold yellow/black hazard outline when the matching client setting is on, otherwise with the plain highlight.
+     *
+     * @param hexes List of hex coordinates to highlight (can be empty to clear all highlights)
+     */
+    public void setDemolitionChargeHighlightHexes(List<Coords> hexes) {
+        demolitionChargeHighlightHexes = new ArrayList<>(hexes);
         repaint();
     }
 

@@ -47,6 +47,7 @@ import megamek.SuiteConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmorHandles;
 import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.board.Coords;
@@ -77,7 +78,7 @@ import megamek.logging.MMLogger;
 /**
  * You know what Meks are, silly.
  */
-public abstract class Mek extends Entity {
+public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     @Serial
     private static final long serialVersionUID = -1929593228891136561L;
     private static final MMLogger LOGGER = MMLogger.create(Mek.class);
@@ -1266,11 +1267,99 @@ public abstract class Mek extends Entity {
 
         grappledThisRound = false;
 
+        // Continue any fieldwork in progress (a Mek with a backhoe/equivalent may fortify like a vehicle,
+        // Vehicles and Fieldworks, TO:AUE p.153, Corrected Sixth Printing). The stage machine lives in Fortifiable.
+        advanceFortifyRound();
+
         // clear HarJel "took damage this turn" flags
         for (int loc = 0; loc < locations(); ++loc) {
             setArmorDamagedThisTurn(loc, false);
         }
     } // End public void newRound()
+
+    // --- Fieldworks / fortify: a Mek with a backhoe (or equivalent) may build a fortified hex like a vehicle
+    // (Vehicles and Fieldworks, TO:AUE p.153, Corrected Sixth Printing). The multi-turn stage machine lives in
+    // Fortifiable.
+
+    private int dugIn = DUG_IN_NONE;
+
+    /**
+     * Tracks damage taken between turns while fortifying, so an interrupting attack extends the effort by one turn
+     * (TO:AUE p.153, Corrected Sixth Printing). Server-side runtime state; dug-in progress itself is not persisted.
+     */
+    private transient FortifyState fortifyState = new FortifyState();
+
+    @Override
+    public int getDugIn() {
+        return dugIn;
+    }
+
+    @Override
+    public void setDugIn(int stage) {
+        dugIn = stage;
+    }
+
+    @Override
+    public FortifyState getFortifyState() {
+        // Runtime-only state (transient, not persisted): recreate it lazily so it is never null on a
+        // deserialized entity (the field initializer does not run during deserialization).
+        if (fortifyState == null) {
+            fortifyState = new FortifyState();
+        }
+        return fortifyState;
+    }
+
+    // --- Rubble clearing: a Mek with a backhoe may clear rubble like a vehicle (TacOps; backhoe clearing is the
+    // unofficial rule). The multi-turn state machine lives in RubbleClearer.
+
+    private Coords rubbleClearTarget = null;
+    private int rubbleClearTurnsCompleted = 0;
+    private int rubbleClearTurnsRequired = 0;
+
+    /**
+     * @return {@code true} if this Mek has a working backhoe ({@code F_CLUB} / {@code S_BACKHOE}), used for fieldworks
+     *       and the unofficial backhoe rubble-clearing rule
+     */
+    @Override
+    public boolean hasWorkingBackhoe() {
+        return hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_BACKHOE);
+    }
+
+    @Override
+    @Nullable
+    public Coords getRubbleClearTarget() {
+        return rubbleClearTarget;
+    }
+
+    @Override
+    public void setRubbleClearTarget(@Nullable Coords target) {
+        rubbleClearTarget = target;
+    }
+
+    @Override
+    public int getRubbleClearTurnsCompleted() {
+        return rubbleClearTurnsCompleted;
+    }
+
+    @Override
+    public void setRubbleClearTurnsCompleted(int turns) {
+        rubbleClearTurnsCompleted = turns;
+    }
+
+    @Override
+    public int getRubbleClearTurnsRequired() {
+        return rubbleClearTurnsRequired;
+    }
+
+    @Override
+    public void setRubbleClearTurnsRequired(int turns) {
+        rubbleClearTurnsRequired = turns;
+    }
+
+    @Override
+    public int currentFortifyHealthSignature() {
+        return getTotalArmor() + getTotalInternal();
+    }
 
     /**
      * Returns true if the location in question is a torso location
@@ -7288,6 +7377,11 @@ public abstract class Mek extends Entity {
             return false;
         }
         return game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT);
+    }
+
+    @Override
+    public boolean canAnnounceAbandon() {
+        return canAbandon();
     }
 
     /**

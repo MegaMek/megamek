@@ -2693,6 +2693,14 @@ public class Princess extends BotClient {
         try {
             initialize();
             Entity entity = getGame().getFirstEntity(getMyTurn());
+            LOGGER.debug("[PreEnd] bot calculatePreEndDeclarationsTurn: entity={}", entity);
+
+            // No selectable entity for this turn; end it so the phase can advance.
+            if (entity == null) {
+                LOGGER.debug("[PreEnd] bot: no entity for this turn; sending done");
+                sendDone(true);
+                return;
+            }
 
             // Only infantry can initiate combat
             if (!(entity instanceof Infantry)) {

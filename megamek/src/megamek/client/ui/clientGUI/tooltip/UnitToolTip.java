@@ -1949,6 +1949,43 @@ public final class UnitToolTip {
     }
 
     /**
+     * @return a short label describing the unit's fortification state for the unit display - building a fortified hex,
+     *       personally dug in / digging in, or occupying a fortified hex (cover) - or an empty string if none applies.
+     *       Cover only benefits infantry (TO:AR p.106 / TO:AUE p.153); a vehicle in a fortified hex is noted without
+     *       implying a benefit.
+     */
+    private static String getFortificationStatus(Entity entity) {
+        if (entity instanceof Infantry infantry) {
+            if (infantry.isFortifying()) {
+                return Messages.getString("BoardView1.fortifyProgress",
+                      infantry.getFortifyStage(), infantry.getFortifyTotalStages());
+            }
+            if (infantry.getDugIn() == Infantry.DUG_IN_COMPLETE) {
+                return Messages.getString("BoardView1.dugIn");
+            }
+            if (infantry.getDugIn() == Infantry.DUG_IN_WORKING) {
+                return Messages.getString("BoardView1.diggingIn");
+            }
+        } else if ((entity instanceof Tank tank) && tank.isFortifying()) {
+            return Messages.getString("BoardView1.fortifyProgress",
+                  tank.getFortifyStage(), tank.getFortifyTotalStages());
+        }
+
+        // A hull-down vehicle (or Mek) is in cover; report that explicitly rather than just "in a fortified hex".
+        if (entity.isHullDown() && !(entity instanceof Infantry)) {
+            return Messages.getString("BoardView1.hullDown");
+        }
+
+        Hex hex = entity.getGame().getHex(entity.getBoardLocation());
+        if ((hex != null) && hex.containsTerrain(Terrains.FORTIFIED)) {
+            return Messages.getString((entity instanceof Infantry)
+                  ? "BoardView1.inFortifiedHexCover"
+                  : "BoardView1.inFortifiedHex");
+        }
+        return "";
+    }
+
+    /**
      * Returns Variable Range Targeting mode info for tooltip display. Shows icon + mode name for units with VRT quirk
      * (BMM pg. 86).
      */
@@ -2025,6 +2062,18 @@ public final class UnitToolTip {
             sFacingTwist = UIUtil.tag("FONT", attr, sFacingTwist);
             sFacingTwist = UIUtil.tag("span", fontSizeAttr, sFacingTwist);
             col = UIUtil.tag("TD", "", sFacingTwist);
+            row = UIUtil.tag("TR", "", col);
+            rows += row;
+        }
+
+        // Fortification / dug-in status (TO:AR p.106 / TO:AUE p.153)
+        String fortInfo = getFortificationStatus(entity);
+        if (!fortInfo.isEmpty()) {
+            attr = String.format("FACE=Dialog COLOR=%s",
+                  UIUtil.toColorHexString((GUIP.getUnitToolTipHighlightColor())));
+            fortInfo = UIUtil.tag("FONT", attr, "&nbsp;&nbsp;" + fortInfo);
+            fortInfo = UIUtil.tag("span", fontSizeAttr, fortInfo);
+            col = UIUtil.tag("TD", "", fortInfo);
             row = UIUtil.tag("TR", "", col);
             rows += row;
         }

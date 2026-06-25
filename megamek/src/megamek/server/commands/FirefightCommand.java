@@ -89,7 +89,8 @@ public class FirefightCommand extends GamemasterServerCommand {
         try {
             Hex hex = gameManager.getGame().getBoard().getHex(coords);
             Objects.requireNonNull(hex, "Hex not found.");
-            gameManager.removeFire(coords, Messages.getString("Gamemaster.cmd.firefight.reason"));
+            // This GM command takes only X/Y and operates on the first board.
+            gameManager.removeFire(0, coords, Messages.getString("Gamemaster.cmd.firefight.reason"));
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to ignite hex: " + e.getMessage());
         }

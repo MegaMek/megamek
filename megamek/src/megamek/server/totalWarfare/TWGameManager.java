@@ -76,6 +76,7 @@ import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.event.GameToastEvent;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -219,6 +220,7 @@ public class TWGameManager extends AbstractGameManager {
     private final BuildingCollapseHandler buildingCollapseHandler = new BuildingCollapseHandler(this);
     private final DeploymentProcessor deploymentProcessor = new DeploymentProcessor(this);
     final HeatResolver heatResolver = new HeatResolver(this);
+    private final MinefieldManager minefieldManager = new MinefieldManager(this);
 
     /**
      * Special packet queue for client feedback requests.
@@ -763,6 +765,9 @@ public class TWGameManager extends AbstractGameManager {
                 case DEPLOY_MINEFIELDS:
                     receiveDeployMinefields(packet, connId);
                     break;
+                case DEPLOY_FORTIFICATIONS:
+                    receiveDeployFortifications(packet, connId);
+                    break;
                 case UPDATE_GROUND_OBJECTS:
                     receiveGroundObjectUpdate(packet, connId);
                     break;
@@ -837,6 +842,9 @@ public class TWGameManager extends AbstractGameManager {
                     break;
                 case ENTITY_ACTIVATE_HIDDEN:
                     receiveEntityActivateHidden(packet, connId);
+                    break;
+                case ENTITY_DEPLOY_BRIDGE:
+                    receiveDeployBridge(packet, connId);
                     break;
                 case ENTITY_NOVA_NETWORK_CHANGE:
                     receiveEntityNovaNetworkModeChange(packet, connId);
@@ -4661,7 +4669,9 @@ public class TWGameManager extends AbstractGameManager {
                       game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE),
                       entity.delta_distance);
                 if (!bldgSuffered) {
-                    Vector<Report> reports = damageBuilding(bldg, chargeDamage, nextPos);
+                    // A front-mounted bulldozer doubles the charge damage dealt to the building (TacOps).
+                    int buildingChargeDamage = ChargeAttackAction.getBuildingChargeDamage(entity, chargeDamage);
+                    Vector<Report> reports = damageBuilding(bldg, buildingChargeDamage, nextPos);
                     for (Report report : reports) {
                         report.subject = entity.getId();
                     }
@@ -6463,52 +6473,7 @@ public class TWGameManager extends AbstractGameManager {
      *               halving and rounding just for <em>being</em> T-Aug) already applied.
      */
     public void deliverThunderAugMinefield(Coords coords, int playerId, int damage, int entityId) {
-        Coords mfCoord;
-        for (int dir = 0; dir < 7; dir++) {
-            // May need to reset here for each new hex.
-            int hexDamage = damage;
-            if (dir == 6) {// The targeted hex.
-                mfCoord = coords;
-            } else {// The hex in the dir direction from the targeted hex.
-                mfCoord = coords.translated(dir);
-            }
-
-            // Only if this is on the board...
-            if (game.getBoard().contains(mfCoord)) {
-                Minefield minefield = null;
-                Enumeration<Minefield> minefields = game.getMinefields(mfCoord).elements();
-                // Check if there already are Thunder minefields in the hex.
-                while (minefields.hasMoreElements()) {
-                    Minefield mf = minefields.nextElement();
-                    if (mf.getType() == Minefield.TYPE_CONVENTIONAL) {
-                        minefield = mf;
-                        break;
-                    }
-                }
-
-                // Did we find a Thunder minefield in the hex?
-                // N.B. damage Thunder minefields equals the number of
-                // missiles, divided by two, rounded up.
-                if (minefield == null) {
-                    // Nope. Create a new Thunder minefield
-                    minefield = Minefield.createMinefield(mfCoord, playerId, Minefield.TYPE_CONVENTIONAL, hexDamage);
-                    game.addMinefield(minefield);
-                    checkForRevealMinefield(minefield, game.getEntity(entityId));
-                } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
-                    // Yup. Replace the old one.
-                    removeMinefield(minefield);
-                    hexDamage += minefield.getDensity();
-
-                    // Damage from Thunder minefields are capped.
-                    if (hexDamage > Minefield.MAX_DAMAGE) {
-                        hexDamage = Minefield.MAX_DAMAGE;
-                    }
-                    minefield.setDensity(hexDamage);
-                    game.addMinefield(minefield);
-                    checkForRevealMinefield(minefield, game.getEntity(entityId));
-                }
-            }
-        }
+        minefieldManager.deliverThunderAugMinefield(coords, playerId, damage, entityId);
     }
 
     /**
@@ -6520,32 +6485,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param entityId an entity that might spot the minefield
      */
     public void deliverThunderMinefield(Coords coords, int playerId, int damage, int entityId) {
-        Minefield minefield = null;
-        Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
-        // Check if there already are Thunder minefields in the hex.
-        while (minefields.hasMoreElements()) {
-            Minefield mf = minefields.nextElement();
-            if (mf.getType() == Minefield.TYPE_CONVENTIONAL) {
-                minefield = mf;
-                break;
-            }
-        }
-
-        // Create a new Thunder minefield
-        if (minefield == null) {
-            minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_CONVENTIONAL, damage);
-            game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
-            // Add to the old one
-            removeMinefield(minefield);
-            int oldDamage = minefield.getDensity();
-            damage += oldDamage;
-            damage = Math.min(damage, Minefield.MAX_DAMAGE);
-            minefield.setDensity(damage);
-            game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        }
+        minefieldManager.deliverThunderMinefield(coords, playerId, damage, entityId);
     }
 
     /**
@@ -6557,66 +6497,14 @@ public class TWGameManager extends AbstractGameManager {
      * @param entityId an entity that might spot the minefield
      */
     public void deliverThunderInfernoMinefield(Coords coords, int playerId, int damage, int entityId) {
-        Minefield minefield = null;
-        Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
-        // Check if there already are Thunder minefields in the hex.
-        while (minefields.hasMoreElements()) {
-            Minefield mf = minefields.nextElement();
-            if (mf.getType() == Minefield.TYPE_INFERNO) {
-                minefield = mf;
-                break;
-            }
-        }
-
-        // Create a new Thunder Inferno minefield
-        if (minefield == null) {
-            minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_INFERNO, damage);
-            game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
-            // Add to the old one
-            removeMinefield(minefield);
-            int oldDamage = minefield.getDensity();
-            damage += oldDamage;
-            damage = Math.min(damage, Minefield.MAX_DAMAGE);
-            minefield.setDensity(damage);
-            game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        }
+        minefieldManager.deliverThunderInfernoMinefield(coords, playerId, damage, entityId);
     }
 
     /**
      * Delivers an artillery FASCAM shot to the targeted hex area.
      */
     public void deliverFASCAMMinefield(Coords coords, int playerId, int damage, int entityId) {
-        // Only if this is on the board...
-        if (game.getBoard().contains(coords)) {
-            Minefield minefield = null;
-            Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
-            // Check if there already are Thunder minefields in the hex.
-            while (minefields.hasMoreElements()) {
-                Minefield mf = minefields.nextElement();
-                if (mf.getType() == Minefield.TYPE_CONVENTIONAL) {
-                    minefield = mf;
-                    break;
-                }
-            }
-            // Did we find a Thunder minefield in the hex?
-            if (minefield == null) {
-                minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_CONVENTIONAL, damage);
-                game.addMinefield(minefield);
-                checkForRevealMinefield(minefield, game.getEntity(entityId));
-            } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
-                // Add to the old one.
-                removeMinefield(minefield);
-                int oldDamage = minefield.getDensity();
-                damage += oldDamage;
-                damage = Math.min(damage, Minefield.MAX_DAMAGE);
-                minefield.setDensity(damage);
-                game.addMinefield(minefield);
-                checkForRevealMinefield(minefield, game.getEntity(entityId));
-            }
-        }
+        minefieldManager.deliverFASCAMMinefield(coords, playerId, damage, entityId);
     }
 
     /**
@@ -6628,66 +6516,27 @@ public class TWGameManager extends AbstractGameManager {
      * @param entityId an entity that might spot the minefield
      */
     public void deliverThunderActiveMinefield(Coords coords, int playerId, int damage, int entityId) {
-        Minefield minefield = null;
-        Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
-        // Check if there already are Thunder minefields in the hex.
-        while (minefields.hasMoreElements()) {
-            Minefield mf = minefields.nextElement();
-            if (mf.getType() == Minefield.TYPE_ACTIVE) {
-                minefield = mf;
-                break;
-            }
-        }
-
-        // Create a new Thunder-Active minefield
-        if (minefield == null) {
-            minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_ACTIVE, damage);
-            game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
-            // Add to the old one
-            removeMinefield(minefield);
-            int oldDamage = minefield.getDensity();
-            damage += oldDamage;
-            damage = Math.min(damage, Minefield.MAX_DAMAGE);
-            minefield.setDensity(damage);
-            game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        }
+        minefieldManager.deliverThunderActiveMinefield(coords, playerId, damage, entityId);
     }
 
     /**
      * Adds a Thunder-Vibrabomb minefield to the hex.
      */
     public void deliverThunderVibraMinefield(Coords coords, int playerId, int damage, int sensitivity, int entityId) {
-        Minefield minefield = null;
-        Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
-        // Check if there already are Thunder minefields in the hex.
-        while (minefields.hasMoreElements()) {
-            Minefield mf = minefields.nextElement();
-            if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
-                minefield = mf;
-                break;
-            }
-        }
+        minefieldManager.deliverThunderVibraMinefield(coords, playerId, damage, sensitivity, entityId);
+    }
 
-        // Create a new Thunder-Vibra minefield
-        if (minefield == null) {
-            minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_VIBRABOMB, damage, sensitivity);
-            game.addMinefield(minefield);
-            game.addVibrabomb(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
-            // Add to the old one
-            removeMinefield(minefield);
-            int oldDamage = minefield.getDensity();
-            damage += oldDamage;
-            damage = Math.min(damage, Minefield.MAX_DAMAGE);
-            minefield.setDensity(damage);
-            game.addMinefield(minefield);
-            game.addVibrabomb(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
-        }
+    /**
+     * Adds an EMP minefield to the hex, as deployed by a vehicular or battle armor mine dispenser (TO:AUE p.177).
+     *
+     * @param coords   the minefield's coordinates
+     * @param playerId the deploying player's id
+     * @param damage   the amount of damage the minefield does
+     * @param setting  the weight threshold (in tons) that triggers the mine
+     * @param entityId an entity that might spot the minefield
+     */
+    public void deliverThunderEMPMinefield(Coords coords, int playerId, int damage, int setting, int entityId) {
+        minefieldManager.deliverThunderEMPMinefield(coords, playerId, damage, setting, entityId);
     }
 
     /**
@@ -7416,6 +7265,23 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Returns the entity's active (switched-on) minesweeper, or {@code null} if it has none, the sweeper is not ready,
+     * its armor is depleted, or the player has deactivated it in the End Phase (TO:AuE p.138, Corrected Sixth Printing).
+     * A unit may mount only one minesweeper.
+     */
+    private static @Nullable Mounted<?> getActiveMinesweeper(Entity entity) {
+        for (Mounted<?> mounted : entity.getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_MINESWEEPER)
+                  && mounted.isReady()
+                  && (mounted.getArmorValue() > 0)
+                  && !mounted.curMode().isOff()) {
+                return mounted;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Check for any detonations when an entity enters a minefield, except a vibrabomb.
      *
      * @param entity      - the <code>entity</code> who entered the minefield
@@ -7438,14 +7304,7 @@ public class TWGameManager extends AbstractGameManager {
             return false;
         }
 
-        // Check for Mine sweepers
-        Mounted<?> minesweeper = null;
-        for (Mounted<?> m : entity.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_MINESWEEPER) && m.isReady() && (m.getArmorValue() > 0)) {
-                minesweeper = m;
-                break; // Can only have one minesweeper
-            }
-        }
+        Mounted<?> minesweeper = getActiveMinesweeper(entity);
 
         Vector<Minefield> fieldsToRemove = new Vector<>();
         // loop through mines in this hex
@@ -7843,14 +7702,7 @@ public class TWGameManager extends AbstractGameManager {
           Vector<Report> vMineReport) {
         int mass = (int) entity.getWeight();
 
-        // Check for Mine sweepers
-        Mounted<?> minesweeper = null;
-        for (Mounted<?> m : entity.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_MINESWEEPER) && m.isReady() && (m.getArmorValue() > 0)) {
-                minesweeper = m;
-                break; // Can only have one minesweeper
-            }
-        }
+        Mounted<?> minesweeper = getActiveMinesweeper(entity);
 
         // Check for minesweepers sweeping VB minefields
         if (minesweeper != null) {
@@ -8147,7 +7999,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * checks whether a newly set mine should be revealed to players based on LOS. If so, then it reveals the mine
      */
-    private void checkForRevealMinefield(Minefield mf, Entity layer) {
+    void checkForRevealMinefield(Minefield mf, Entity layer) {
         // loop through each team and determine if they can see the mine, then
         // loop through players on team
         // and reveal the mine
@@ -8342,32 +8194,32 @@ public class TWGameManager extends AbstractGameManager {
     public void addMovementHeat() {
         for (Entity entity : game.inGameTWEntities()) {
             if (entity.hasDamagedRHS()) {
-                entity.heatBuildup += 1;
+                entity.changeHeatBuildup(1, Messages.getString("HeatBreakdown.damagedRadicalHeatSink"));
             }
 
             if ((entity.getMovementMode() == EntityMovementMode.BIPED_SWIM) ||
                   (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
                 // UMU heat
-                entity.heatBuildup += 1;
+                entity.changeHeatBuildup(1, Messages.getString("HeatBreakdown.movementUMU"));
                 continue;
             }
 
             // build up heat from movement
             if (entity.moved == EntityMovementType.MOVE_NONE) {
-                entity.heatBuildup += entity.getStandingHeat();
+                entity.changeHeatBuildup(entity.getStandingHeat(), Messages.getString("HeatBreakdown.movementStanding"));
             } else if ((entity.moved == EntityMovementType.MOVE_WALK) ||
                   (entity.moved == EntityMovementType.MOVE_VTOL_WALK) ||
                   (entity.moved == EntityMovementType.MOVE_CAREFUL_STAND)) {
-                entity.heatBuildup += entity.getWalkHeat();
+                entity.changeHeatBuildup(entity.getWalkHeat(), Messages.getString("HeatBreakdown.movementWalking"));
             } else if ((entity.moved == EntityMovementType.MOVE_RUN) ||
                   (entity.moved == EntityMovementType.MOVE_VTOL_RUN) ||
                   (entity.moved == EntityMovementType.MOVE_SKID)) {
-                entity.heatBuildup += entity.getRunHeat();
+                entity.changeHeatBuildup(entity.getRunHeat(), Messages.getString("HeatBreakdown.movementRunning"));
             } else if (entity.moved == EntityMovementType.MOVE_JUMP && !entity.isJumpingWithMechanicalBoosters()) {
-                entity.heatBuildup += entity.getJumpHeat(entity.delta_distance);
+                entity.changeHeatBuildup(entity.getJumpHeat(entity.delta_distance), Messages.getString("HeatBreakdown.movementJumping"));
             } else if (entity.moved == EntityMovementType.MOVE_SPRINT ||
                   entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) {
-                entity.heatBuildup += entity.getSprintHeat();
+                entity.changeHeatBuildup(entity.getSprintHeat(), Messages.getString("HeatBreakdown.movementSprinting"));
             }
         }
     }
@@ -9631,6 +9483,84 @@ public class TWGameManager extends AbstractGameManager {
                 player.addMinefields(minefields);
             }
         }
+    }
+
+    /**
+     * Receives a player's fortified-hex placements made during the minefield deployment phase and applies them to the
+     * board. Fortified hexes are visible terrain, so no per-player concealment is needed.
+     */
+    private void receiveDeployFortifications(Packet packet, int connId) throws InvalidPacketDataException {
+        // is this the right phase?
+        if (!getGame().getPhase().isDeployMinefields()) {
+            LOGGER.error("Server got deploy fortifications packet in wrong phase");
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        Vector<BoardLocation> fortifiedHexes = (Vector<BoardLocation>) packet.getObject(0);
+        processDeployFortifications(getGame().getPlayer(connId), fortifiedHexes);
+        // Do NOT end the turn here: fortifications are applied before the minefield packet (which is the turn-ender
+        // for this phase). Ending the turn here would advance the phase before minefields/player info are processed.
+    }
+
+    /**
+     * Applies a player's fortified-hex placements: writes FORTIFIED terrain to each legal hex within the player's
+     * allotment and pushes the hex change to all clients. TO:AUE p.153.
+     *
+     * @param player         the placing player
+     * @param fortifiedHexes the hex locations the player chose to fortify
+     */
+    private void processDeployFortifications(@Nullable Player player, @Nullable Vector<BoardLocation> fortifiedHexes) {
+        if ((player == null) || (fortifiedHexes == null)) {
+            return;
+        }
+        int allowed = player.getNbrFortifiedHexes();
+        int placed = 0;
+        for (BoardLocation location : fortifiedHexes) {
+            // The list comes off the network packet; defensively skip null entries before any dereference.
+            if (location == null) {
+                continue;
+            }
+            if (placed >= allowed) {
+                LOGGER.warn("[Fortify] {}: ignoring fortified hex beyond allotment of {}", player.getName(), allowed);
+                break;
+            }
+            if (!isLegalFortificationPlacement(player, location)) {
+                continue;
+            }
+            Hex hex = game.getBoard(location.boardId()).getHex(location.coords());
+            // isLegalFortificationPlacement already verified the hex is on the board, so this should not be null;
+            // guard defensively anyway so a malformed location can never NPE.
+            if (hex == null) {
+                continue;
+            }
+            hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
+            sendChangedHex(location.coords(), location.boardId());
+            placed++;
+        }
+        if (placed > 0) {
+            LOGGER.info("[Fortify] {}: placed {} fortified hex(es) during deployment", player.getName(), placed);
+        }
+    }
+
+    /**
+     * @return {@code true} if the player may place a fortified hex at the given location: it is on the board, on
+     *       fortifiable terrain (TO:AR p.106 / TO:AUE p.153), and within the player's deployment zone
+     */
+    private boolean isLegalFortificationPlacement(Player player, BoardLocation location) {
+        Board board = game.getBoard(location.boardId());
+        if ((board == null) || !board.contains(location.coords())) {
+            return false;
+        }
+        if (!MoveStep.isFortifiableTerrain(board.getHex(location.coords()))) {
+            LOGGER.debug("[Fortify] {}: rejected fortified hex at {} - illegal terrain", player.getName(), location);
+            return false;
+        }
+        if (!board.isLegalDeployment(location.coords(), player)) {
+            LOGGER.debug("[Fortify] {}: rejected fortified hex at {} - outside deployment zone", player.getName(),
+                  location);
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -14796,7 +14726,9 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
-            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
+            // A front-mounted bulldozer doubles the charge damage dealt to the building (TacOps).
+            int buildingChargeDamage = ChargeAttackAction.getBuildingChargeDamage(ae, damage);
+            Vector<Report> buildingReport = damageBuilding(bldg, buildingChargeDamage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
@@ -15785,6 +15717,30 @@ public class TWGameManager extends AbstractGameManager {
         }
         // Check for touched-off explosives
         resolveExplodingCharges();
+    }
+
+    /**
+     * End-phase resolution for Bridge-Building Engineers, TO:AUE p.152. Delegates to {@link BridgeBuildPhaseHandler}
+     * so the bridge rules do not add to this already very large class.
+     */
+    void checkBuildBridges() {
+        new BridgeBuildPhaseHandler(this).checkBuildBridges();
+    }
+
+    /**
+     * End-phase resolution for vehicles clearing rubble with a bulldozer, TacOps. Delegates to
+     * {@link RubbleClearingHandler} so the bulldozer rules do not add to this already very large class.
+     */
+    void checkClearRubble() {
+        new RubbleClearingHandler(this).checkClearRubble();
+    }
+
+    /**
+     * End-phase resolution for Bridge-Layer (AVLB) deployments, TM p.242 / TW. Delegates to
+     * {@link AvlbDeployPhaseHandler} so the bridgelayer rules do not add to this already very large class.
+     */
+    void checkDeployBridges() {
+        new AvlbDeployPhaseHandler(this).checkDeployBridges();
     }
 
     /**
@@ -25338,24 +25294,48 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * remove fire from a hex
+     * Removes the fire from a hex on a specific board, clearing any flamer-started-fire marker and notifying the
+     * clients that view that board. Fire processing runs once per board (see
+     * {@link megamek.server.FireProcessor}), so the board id must be passed through to keep the per-board
+     * {@link Board#removeFlamerStartedFire(Coords)} state and the hex update on the correct board.
      *
-     * @param fireCoords {@link Coords} of the hex on fire.
-     * @param reason     Reason to remove the fire.
+     * @param boardId    the id of the board the burning hex is on
+     * @param fireCoords {@link Coords} of the hex on fire
+     * @param reason     reason to remove the fire
      */
-    public void removeFire(Coords fireCoords, String reason) {
-        Hex hex = game.getBoard().getHex(fireCoords);
+    public void removeFire(int boardId, Coords fireCoords, String reason) {
+        Board board = game.getBoard(boardId);
+        if (board == null) {
+            return;
+        }
+        Hex hex = board.getHex(fireCoords);
         if (null == hex) {
             return;
         }
         hex.removeTerrain(Terrains.FIRE);
         hex.resetFireTurn();
-        sendChangedHex(fireCoords);
+        board.removeFlamerStartedFire(fireCoords);
+        sendChangedHex(fireCoords, boardId);
         // fire goes out
         Report r = new Report(5170, Report.PUBLIC);
         r.add(fireCoords.getBoardNum());
         r.add(reason);
         addReport(r);
+    }
+
+    /**
+     * Removes the fire from a hex on the first board.
+     *
+     * @param fireCoords {@link Coords} of the hex on fire.
+     * @param reason     Reason to remove the fire.
+     *
+     * @deprecated since 0.51.0, use {@link #removeFire(int, Coords, String)} so the fire and the per-board
+     *       flamer-started-fire marker are cleared on the correct board in multi-board games. This overload only
+     *       affects board 0.
+     */
+    @Deprecated(since = "0.51.0", forRemoval = true)
+    public void removeFire(Coords fireCoords, String reason) {
+        removeFire(0, fireCoords, reason);
     }
 
     /**
@@ -26647,6 +26627,18 @@ public class TWGameManager extends AbstractGameManager {
         }
         activatingUnit.setHiddenActivationPhase(phase);
         entityUpdate(entityId);
+    }
+
+    /**
+     * Receives an End-Phase Bridge-Layer (AVLB) deployment declaration (TM p.242 / TW) and delegates the rules
+     * resolution to {@link AvlbDeployPhaseHandler}.
+     *
+     * @param packet    the packet carrying the declaring unit's id and chosen equipment index
+     * @param connIndex the connection that sent the packet
+     */
+    private void receiveDeployBridge(Packet packet, int connIndex) throws InvalidPacketDataException {
+        new AvlbDeployPhaseHandler(this).receiveDeployDeclaration(packet.getIntValue(0), packet.getIntValue(1),
+              connIndex);
     }
 
     /**
@@ -31438,69 +31430,111 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Sends a transient toast notification to all clients, to be shown on the board view. Use for high-signal one-shot
+     * events (such as a fortification completing) that warrant more emphasis than a routine report line, without
+     * flooding the player with a toast per report entry.
+     *
+     * @param level   the severity of the toast
+     * @param message the (already localized) text to display
+     * @param entity  the acting unit whose icon should accompany the toast, or null for a text-only toast
+     */
+    public void sendToast(GameToastEvent.Level level, String message, @Nullable Entity entity) {
+        int entityId = (entity != null) ? entity.getId() : Entity.NONE;
+        send(new Packet(PacketCommand.SEND_TOAST, level, message, entityId));
+    }
+
+    /**
      * Resolve any Infantry units which are fortifying hexes
      */
     void resolveFortify() {
-        Report r;
         for (Entity ent : game.getEntitiesVector()) {
             if (ent instanceof Infantry inf) {
                 int dig = inf.getDugIn();
-                if (dig == Infantry.DUG_IN_WORKING) {
-                    r = new Report(5300);
-                    r.addDesc(inf);
-                    r.subject = inf.getId();
-                    addReport(r);
+                boolean isFortifying = (dig == Infantry.DUG_IN_FORTIFYING1)
+                      || (dig == Infantry.DUG_IN_FORTIFYING2)
+                      || (dig == Infantry.DUG_IN_FORTIFYING3);
+                if (dig == Infantry.DUG_IN_FORTIFYING3) {
+                    completeFortification(inf);
+                } else if (isFortifying && inf.isFortifyExtendedThisRound()) {
+                    reportFortificationDelayed(inf);
+                } else if (dig == Infantry.DUG_IN_WORKING) {
+                    addSimpleFortifyReport(5300, inf);
                 } else if (inf.isHitTheDeck() && (inf.getTurnsOnDeck() == 0)) {
                     // Report only on the turn the unit hits the deck (before its idle counter advances). TO:AR p.106.
-                    r = new Report(5301);
-                    r.addDesc(inf);
-                    r.subject = inf.getId();
-                    addReport(r);
-                } else if (dig == Infantry.DUG_IN_FORTIFYING3) {
-                    Coords c = inf.getPosition();
-                    r = new Report(5305);
-                    r.addDesc(inf);
-                    r.add(c.getBoardNum());
-                    r.subject = inf.getId();
-                    addReport(r);
-                    // fortification complete - add to map
-                    Hex hex = game.getBoard().getHex(c);
-                    hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
-                    sendChangedHex(c);
-                    // Clear the dig in for any units in same hex, since they
-                    // get it for free by fort
-                    for (Entity ent2 : game.getEntitiesVector(c)) {
-                        if (ent2 instanceof Infantry inf2) {
-                            inf2.setDugIn(Infantry.DUG_IN_NONE);
-                        }
-                    }
+                    addSimpleFortifyReport(5301, inf);
                 }
             }
 
-            if (ent instanceof Tank tnk) {
-                int dig = tnk.getDugIn();
-                if (dig == Tank.DUG_IN_FORTIFYING3) {
-                    Coords c = tnk.getPosition();
-                    r = new Report(5305);
-                    r.addDesc(tnk);
-                    r.add(c.getBoardNum());
-                    r.subject = tnk.getId();
-                    addReport(r);
-                    // Fort complete, now add it to the map
-                    Hex hex = game.getBoard().getHex(c);
-                    hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
-                    sendChangedHex(c);
-                    tnk.setDugIn(Tank.DUG_IN_NONE);
-                    // Clear the dig in for any units in same hex, since they
-                    // get it for free by fort
-                    for (Entity ent2 : game.getEntitiesVector(c)) {
-                        if (ent2 instanceof Infantry inf2) {
-                            inf2.setDugIn(Infantry.DUG_IN_NONE);
-                        }
-                    }
+            // Vehicle-style fieldworkers (Tank and a Mek with a backhoe/equivalent) share the Fortifiable stage
+            // machine; Infantry is handled above and is not Fortifiable.
+            if (ent instanceof Fortifiable fortifier) {
+                if (fortifier.isFortifyOnFinalStage()) {
+                    completeFortification(ent);
+                } else if (fortifier.isFortifying() && fortifier.isFortifyExtendedThisRound()) {
+                    reportFortificationDelayed(ent);
                 }
             }
         }
+    }
+
+    /**
+     * Completes a fortified hex once a unit's fieldwork reaches its final turn: writes the FORTIFIED terrain, clears
+     * the dug-in state of every unit sharing the hex (they now get the benefit for free) and raises a SUCCESS toast for
+     * the builder. TO:AUE p.153.
+     *
+     * @param builder the infantry platoon or vehicle that finished the fortification
+     */
+    private void completeFortification(Entity builder) {
+        Coords coords = builder.getPosition();
+        Report report = new Report(5305);
+        report.addDesc(builder);
+        report.add(coords.getBoardNum());
+        report.subject = builder.getId();
+        addReport(report);
+
+        Hex hex = game.getBoard().getHex(coords);
+        hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
+        sendChangedHex(coords);
+
+        // Any infantry sharing the hex (including an infantry builder) now gets the dug-in benefit for free
+        // from the terrain, so clear their in-progress dug-in state.
+        for (Entity occupant : game.getEntitiesVector(coords)) {
+            if (occupant instanceof Infantry coLocated) {
+                coLocated.setDugIn(Infantry.DUG_IN_NONE);
+            }
+        }
+        // A vehicle or Mek builder is not cleared by the infantry loop above, so reset it explicitly.
+        if (builder instanceof Fortifiable fortifier) {
+            fortifier.cancelFortify();
+        }
+
+        sendToast(GameToastEvent.Level.SUCCESS,
+              Messages.getString("Fortify.completeToast", builder.getShortName()), builder);
+    }
+
+    /**
+     * Reports - and notifies via an INFO toast - that a unit's digging-in / fortification effort was set back by one
+     * turn after it took damage. TO:AR p.106 / TO:AUE p.153.
+     *
+     * @param builder the unit whose effort was delayed
+     */
+    private void reportFortificationDelayed(Entity builder) {
+        addSimpleFortifyReport(5306, builder);
+        sendToast(GameToastEvent.Level.INFO,
+              Messages.getString("Fortify.delayedToast", builder.getShortName()), builder);
+    }
+
+    /**
+     * Adds a fortification status report that only needs the unit's description (no extra data fields).
+     *
+     * @param messageId the report-messages id to use
+     * @param ent       the subject unit
+     */
+    private void addSimpleFortifyReport(int messageId, Entity ent) {
+        Report r = new Report(messageId);
+        r.addDesc(ent);
+        r.subject = ent.getId();
+        addReport(r);
     }
 
     /**
@@ -31849,45 +31883,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param mineId an <code>int</code> pointing to the mine
      */
     void layMine(Entity entity, int mineId, Coords coords) {
-        MiscMounted mine = (MiscMounted) entity.getEquipment(mineId);
-        Report r;
-        if (!mine.isMissing()) {
-            int reportId = switch (mine.getMineType()) {
-                case MiscMounted.MINE_CONVENTIONAL -> {
-                    deliverThunderMinefield(coords, entity.getOwnerId(), 10, entity.getId());
-                    yield 3500;
-                }
-                case MiscMounted.MINE_VIBRABOMB -> {
-                    deliverThunderVibraMinefield(coords,
-                          entity.getOwnerId(),
-                          10,
-                          mine.getVibraSetting(),
-                          entity.getId());
-                    yield 3505;
-                }
-                case MiscMounted.MINE_ACTIVE -> {
-                    deliverThunderActiveMinefield(coords, entity.getOwnerId(), 10, entity.getId());
-                    yield 3510;
-                }
-                case MiscMounted.MINE_INFERNO -> {
-                    deliverThunderInfernoMinefield(coords, entity.getOwnerId(), 10, entity.getId());
-                    yield 3515;
-                    // TODO : command-detonated mines
-                    // case 2:
-                }
-                default -> 0;
-            };
-            mine.setShotsLeft(mine.getUsableShotsLeft() - 1);
-            if (mine.getUsableShotsLeft() <= 0) {
-                mine.setMissing(true);
-            }
-            r = new Report(reportId);
-            r.subject = entity.getId();
-            r.addDesc(entity);
-            r.add(coords.getBoardNum());
-            addReport(r);
-            entity.setLayingMines(true);
-        }
+        minefieldManager.layMine(entity, mineId, coords);
     }
 
     /**

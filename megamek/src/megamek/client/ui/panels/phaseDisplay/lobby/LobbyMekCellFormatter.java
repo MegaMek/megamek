@@ -477,6 +477,12 @@ class LobbyMekCellFormatter {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(getString("ChatLounge.prone"));
             }
+
+            if ((entity instanceof Infantry dugInInfantry)
+                  && (dugInInfantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
+                firstEntry = dotSpacer(result, firstEntry);
+                result.append(getString("ChatLounge.dugIn"));
+            }
         }
 
         if (entity.isOffBoard()) {
@@ -792,6 +798,12 @@ class LobbyMekCellFormatter {
             if (entity.isProne()) {
                 result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
                 result.append(Messages.getString("ChatLounge.compact.prone")).append("</I></FONT>");
+            }
+
+            if ((entity instanceof Infantry dugInInfantry)
+                  && (dugInInfantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
+                result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
+                result.append(Messages.getString("ChatLounge.compact.dugIn")).append("</I></FONT>");
             }
         }
 

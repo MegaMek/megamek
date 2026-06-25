@@ -387,6 +387,14 @@ public abstract class Entity extends TurnOrdered
     private int boardId = 0;
 
     /**
+     * Cached result of {@link #getBoardLocation()}. This is derived state (a {@link BoardLocation} carries only the
+     * current position and board id), so it is transient and rebuilt on demand whenever the position or board id no
+     * longer match. {@code getBoardLocation()} is called very frequently on hot paths (LOS, ECM, space checks), and
+     * each call otherwise allocated a fresh record.
+     */
+    private transient BoardLocation cachedBoardLocation;
+
+    /**
      * Used for Entities that are bigger than a single hex. This contains the central hex plus all the other hexes this
      * entity occupies. The central hex is important for drawing multi-hex sprites.
      */
@@ -458,6 +466,11 @@ public abstract class Entity extends TurnOrdered
     public int heatBuildup = 0;
     public int heatFromExternal = 0;
     public int coolFromExternal = 0;
+    /**
+     * Itemized record of this turn's heat buildup and dissipation, used to give the Heat Phase report a breakdown
+     * tooltip on its "gains N heat" / "sinks N heat" values. Rebuilt each turn.
+     */
+    private HeatBreakdown heatBreakdown = new HeatBreakdown();
     public int delta_distance = 0;
     public int mpUsed = 0;
     public int underwaterRounds = 0;
@@ -2346,6 +2359,31 @@ public abstract class Entity extends TurnOrdered
     @Override
     public Coords getPosition() {
         return position;
+    }
+
+    /**
+     * Returns this entity's {@link BoardLocation}, reusing a cached instance while the position and board id are
+     * unchanged. The cache is validated against the current values on every call, so it can never go stale; it only
+     * rebuilds when the entity actually moves. This avoids allocating a record on every call along hot paths such as
+     * line of sight, ECM and space-map checks.
+     */
+    @Override
+    public BoardLocation getBoardLocation() {
+        Coords currentPosition = getPosition();
+        int currentBoardId = getBoardId();
+        // With no position or an invalid board id, BoardLocation.of() always returns the NO_LOCATION singleton.
+        // Its coords (Integer.MIN_VALUE) never match a null position, so the cache validation below would fail on
+        // every call in this state. Return the singleton directly to skip the redundant comparison and rewrite.
+        if ((currentPosition == null) || (currentBoardId < 0)) {
+            return BoardLocation.NO_LOCATION;
+        }
+        BoardLocation cached = cachedBoardLocation;
+        if ((cached == null) || (cached.boardId() != currentBoardId)
+              || !Objects.equals(cached.coords(), currentPosition)) {
+            cached = BoardLocation.of(currentPosition, currentBoardId);
+            cachedBoardLocation = cached;
+        }
+        return cached;
     }
 
     /**
@@ -5435,6 +5473,57 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Checks if this entity has a working bulldozer in any location.
+     *
+     * <p>Per TacOps, a vehicle equipped with a bulldozer may clear rubble hexes and takes half the usual
+     * damage (rounded down) when it charges. By default, entities cannot mount a bulldozer; only vehicles (Tank
+     * subclass) can.</p>
+     *
+     * @return {@code true} if this entity has a working bulldozer
+     */
+    public boolean hasWorkingBulldozer() {
+        return false;
+    }
+
+    /**
+     * Checks if this entity has a working front-mounted bulldozer.
+     *
+     * <p>Per TacOps, a front-mounted bulldozer doubles the damage dealt to a building hex when the vehicle
+     * charges it. By default, entities do not have a front-mounted bulldozer; only vehicles (Tank subclass) can mount
+     * one.</p>
+     *
+     * @return {@code true} if this entity has a working front-mounted bulldozer
+     */
+    public boolean hasFrontMountedBulldozer() {
+        return false;
+    }
+
+    /**
+     * Checks if this entity has a working rear-mounted bulldozer.
+     *
+     * <p>Per TacOps, a bulldozer may be mounted on the front or rear; a rear-mounted blade (as on the Reverse Buffel)
+     * engages rubble while the vehicle backs into it. By default, entities do not have a rear-mounted bulldozer; only
+     * vehicles (Tank subclass) can mount one.</p>
+     *
+     * @return {@code true} if this entity has a working rear-mounted bulldozer
+     */
+    public boolean hasRearMountedBulldozer() {
+        return false;
+    }
+
+    /**
+     * Checks if this entity has a working backhoe.
+     *
+     * <p>A backhoe provides fieldworks (fortification) ability and, under the unofficial rule, can clear rubble more
+     * slowly than a bulldozer. By default, entities do not have a backhoe; vehicles and Meks can mount one.</p>
+     *
+     * @return {@code true} if this entity has a working backhoe
+     */
+    public boolean hasWorkingBackhoe() {
+        return false;
+    }
+
+    /**
      * Returns the CriticalSlots in the given location as a list. The returned list can be empty depending on the unit
      * and the chosen slot but not null. The entries are not filtered in any way (could be null although that is
      * probably an error in the internal representation of the unit.)
@@ -5570,6 +5659,41 @@ public abstract class Entity extends TurnOrdered
      */
     public int getEngineCritHeat() {
         return 0;
+    }
+
+    /**
+     * Adjusts this turn's running {@link #heatBuildup} by a signed amount and records the contribution under a source
+     * label so it can be shown as an itemized breakdown on the heat-phase report. Positive amounts come from heat
+     * sources; negative amounts represent cooling or reductions. Contributions sharing a label are summed.
+     *
+     * @param heat   the signed amount to adjust the running heat buildup by (positive for heat sources, negative for
+     *               cooling or reductions)
+     * @param reason a short human-readable source label, e.g. "Movement (Running)" or "Medium Laser"
+     */
+    public void changeHeatBuildup(int heat, String reason) {
+        heatBuildup += heat;
+        getHeatBreakdown().addBuildup(heat, reason);
+    }
+
+    /**
+     * @return this unit's itemized heat buildup/dissipation record for the current turn (never null). Used to build the
+     *       Heat Phase report's "gains N heat" / "sinks N heat" breakdown tooltips.
+     */
+    public HeatBreakdown getHeatBreakdown() {
+        if (heatBreakdown == null) {
+            // A unit deserialized from a stream written before this field existed restores it as null; lazily
+            // recreate it so the documented never-null contract holds and heat sources can always be recorded.
+            heatBreakdown = new HeatBreakdown();
+        }
+        return heatBreakdown;
+    }
+
+    /**
+     * Clears the itemized heat breakdown (both buildup and dissipation). Called when heat resolves and
+     * {@link #heatBuildup} is reset, so the next turn starts fresh.
+     */
+    public void clearHeatBreakdown() {
+        getHeatBreakdown().clear();
     }
 
     /**
@@ -6728,6 +6852,19 @@ public abstract class Entity extends TurnOrdered
         }
         for (MiscMounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_NAVAL_C3) && !m.isInoperable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return {@code true} if this unit mounts an operable minesweeper (TO:AuE p.138, Corrected Sixth Printing),
+     *       whether or not it is currently activated. Used to offer the End-Phase activation toggle.
+     */
+    public boolean hasMinesweeper() {
+        for (MiscMounted mounted : getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_MINESWEEPER) && mounted.isOperable()) {
                 return true;
             }
         }
@@ -8720,6 +8857,10 @@ public abstract class Entity extends TurnOrdered
               (step.getElevation() == 0) &&
               canFall()) {
             adjustDifficultTerrainPSRModifier(roll);
+            if (curHex.terrainLevel(Terrains.RUBBLE) > 5) {
+                // Ultra-rubble (destroyed Castle Brian / fortress) is exceptionally hard to navigate (TacOps:AR p.37).
+                roll.addModifier(1, "ultra-rubble");
+            }
             if (hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                 roll.addModifier(-1, "Mountaineer");
             }
@@ -11291,7 +11432,8 @@ public abstract class Entity extends TurnOrdered
      * Check if the entity can initiate NEW infantry vs. infantry combat. This is for the PREEND_DECLARATIONS phase.
      */
     public boolean isEligibleForPreEndDeclarations() {
-        return canInitiateInfantryVsInfantryCombat();
+        // Bridge-Layer (AVLB) deployment is declared in the pre-end declarations phase (TM p.242 / TW).
+        return canInitiateInfantryVsInfantryCombat() || BridgeLayerLogic.canDeclareBridgeDeploy(this, game);
     }
 
     /**
@@ -12756,6 +12898,19 @@ public abstract class Entity extends TurnOrdered
      * @return true if abandoned, false otherwise
      */
     public boolean isAbandoned() {
+        return false;
+    }
+
+    /**
+     * Returns whether this unit is a firefighting engineer - specialized infantry that can extinguish an adjacent
+     * burning hex in place of a weapon attack (TO:AuE p.153). The base implementation returns {@code false};
+     * {@link megamek.common.units.ConvInfantry} overrides this for platoons carrying the FIRE_ENGINEERS specialization.
+     * Putting the check here lets callers ask {@code entity.isFirefighter()} without first testing
+     * {@code instanceof ConvInfantry}.
+     *
+     * @return {@code true} if this unit is a firefighting-engineer platoon, {@code false} otherwise
+     */
+    public boolean isFirefighter() {
         return false;
     }
 

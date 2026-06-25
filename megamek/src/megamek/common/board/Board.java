@@ -1,7 +1,7 @@
 /*
   Copyright (Cc) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -161,6 +161,14 @@ public class Board implements Serializable {
      * Record the infernos placed on the board.
      */
     private final Hashtable<Coords, InfernoTracker> infernos = new Hashtable<>();
+
+    /**
+     * Coords of fires started by fuel-fed flamers (such as Vehicular Flamers). These fires are harder for firefighting
+     * engineers to put out (TO:AuE p.153), the same way inferno fires are.
+     * <p>Not final: save games made before this field existed deserialize it as null, so the accessors guard against
+     * that.</p>
+     */
+    private Set<Coords> flamerStartedFires = new HashSet<>();
 
     private Map<Coords, Collection<SpecialHexDisplay>> specialHexes = new Hashtable<>();
 
@@ -1370,6 +1378,41 @@ public class Board implements Serializable {
         infernos.remove(coords);
     }
 
+    /**
+     * Record that a fire at the given coordinates was started by a fuel-fed flamer (TO:AuE p.153). Such fires are harder
+     * for firefighting engineers to extinguish.
+     *
+     * @param coords the <code>Coords</code> of the flamer-started fire
+     */
+    public void markFlamerStartedFire(Coords coords) {
+        if (contains(coords)) {
+            if (flamerStartedFires == null) {
+                flamerStartedFires = new HashSet<>();
+            }
+            flamerStartedFires.add(coords);
+        }
+    }
+
+    /**
+     * Clear the flamer-started fire marker for the given coordinates, e.g. when the fire goes out.
+     *
+     * @param coords the <code>Coords</code> to clear
+     */
+    public void removeFlamerStartedFire(Coords coords) {
+        if (flamerStartedFires != null) {
+            flamerStartedFires.remove(coords);
+        }
+    }
+
+    /**
+     * @param coords the <code>Coords</code> being checked
+     *
+     * @return true if the fire at these coordinates was started by a fuel-fed flamer
+     */
+    public boolean isFlamerStartedFire(Coords coords) {
+        return (flamerStartedFires != null) && flamerStartedFires.contains(coords);
+    }
+
     public void removeBombIconsFrom(Coords coords) {
         // Do nothing if the coords aren't on this board.
         if (!this.contains(coords) || null == specialHexes.get(coords)) {
@@ -1525,6 +1568,8 @@ public class Board implements Serializable {
         curHex.removeTerrain(Terrains.BRIDGE);
         curHex.removeTerrain(Terrains.BRIDGE_CF);
         curHex.removeTerrain(Terrains.BRIDGE_ELEV);
+        // A destroyed section drops its field-repair badge along with the bridge terrain.
+        curHex.removeTerrain(Terrains.BRIDGE_REPAIRED);
 
         // Add rubble terrain that matches the building type.
         if (type > 0) {

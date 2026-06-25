@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,15 +41,19 @@ import java.io.Serial;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.compute.FirefightingSupport;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.FireExtinguisherHandler;
+import megamek.common.weapons.handlers.FirefightingSupportHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -64,6 +68,9 @@ public class ISFireExtinguisher extends Weapon {
         super();
         name = "Fire Extinguisher";
         addLookupName("IS Fire Extinguisher");
+        // The IS and Clan fire extinguishers are mechanically identical, so they are merged into this single
+        // TechBase.ALL weapon. Keep the Clan lookup name so existing units/saves still resolve to it.
+        addLookupName("Clan Fire Extinguisher");
         setInternalName(name);
         heat = 0;
         damage = 0;
@@ -73,13 +80,20 @@ public class ISFireExtinguisher extends Weapon {
         extremeRange = 1;
         tonnage = 0.0;
         criticalSlots = 0;
-        flags = flags.or(F_NO_FIRES).or(F_SOLO_ATTACK);
-        techAdvancement.setTechBase(TechBase.IS)
+        flags = flags.or(F_NO_FIRES).or(F_SOLO_ATTACK).or(F_EXTINGUISHER);
+        // Firefighting engineers fighting one blaze together may either roll separately or pool into a single
+        // roll at -1 per extra platoon (TO:AuE p.153). The mode picks which: FIREFIGHT rolls on its own, SUPPORT
+        // yields its roll and lends -1 to the lead platoon. FIREFIGHT is first so it is the default.
+        setModes(new String[] { FirefightingSupport.MODE_FIREFIGHT, FirefightingSupport.MODE_SUPPORT });
+        setInstantModeSwitch(true);
+        techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.B)
               .setIntroLevel(false)
               .setUnofficial(false)
               .setISAdvancement(DATE_NONE, DATE_NONE, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
+              .setClanAdvancement(DATE_NONE, 2820, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, false, false, false)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
@@ -96,6 +110,13 @@ public class ISFireExtinguisher extends Weapon {
     public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         try {
+            // A firefighting platoon in Support mode yields its roll and only lends -1 to the lead platoon
+            // fighting the same hex (TO:AuE p.153), so it resolves through the lightweight support handler.
+            Entity attacker = game.getEntity(waa.getEntityId());
+            Targetable target = waa.getTarget(game);
+            if ((attacker != null) && FirefightingSupport.isYieldingSupporter(game, attacker, target)) {
+                return new FirefightingSupportHandler(toHit, waa, game, manager);
+            }
             return new FireExtinguisherHandler(toHit, waa, game, manager);
         } catch (EntityLoadingException ignored) {
             LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");

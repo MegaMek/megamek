@@ -49,6 +49,7 @@ import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameScriptedMessageEvent;
+import megamek.common.event.GameToastEvent;
 import megamek.common.event.player.GamePlayerChangeEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.event.player.GamePlayerDisconnectedEvent;
@@ -520,6 +521,12 @@ public abstract class AbstractClient implements IClient {
                           (String) packet.getObject(0),
                           (String) packet.getObject(1),
                           (Base64Image) packet.getObject(2)));
+                    break;
+                case SEND_TOAST:
+                    getGame().fireGameEvent(new GameToastEvent(this,
+                          (GameToastEvent.Level) packet.getObject(0),
+                          (String) packet.getObject(1),
+                          packet.getIntValue(2)));
                     break;
                 default:
                     return false;

@@ -641,6 +641,11 @@ public class EntitySprite extends Sprite {
                 int dig = inf.getDugIn();
                 if (dig == Infantry.DUG_IN_COMPLETE) {
                     stStr.add(new Status(Color.PINK, "D", SMALL));
+                } else if (inf.isFortifying()) {
+                    // Multi-turn fortification: show how far along the build is (stage of total).
+                    stStr.add(new Status(GUIP.getPrecautionColor(), "fortifyProgress",
+                          new Object[] { inf.getFortifyStage(), inf.getFortifyTotalStages() }));
+                    stStr.add(new Status(Color.PINK, "D", SMALL));
                 } else if (dig != Infantry.DUG_IN_NONE) {
                     stStr.add(new Status(GUIP.getPrecautionColor(), "Working", DIRECT));
                     stStr.add(new Status(Color.PINK, "D", SMALL));
@@ -664,9 +669,10 @@ public class EntitySprite extends Sprite {
 
             // Tank
             if (isTank && entity instanceof Tank tank) {
-                int dig = tank.getDugIn();
-                if ((dig >= Tank.DUG_IN_FORTIFYING1) && (dig <= Tank.DUG_IN_FORTIFYING3)) {
-                    stStr.add(new Status(GUIP.getPrecautionColor(), "Working", DIRECT));
+                if (tank.isFortifying()) {
+                    // Multi-turn fortification: show how far along the build is (stage of total).
+                    stStr.add(new Status(GUIP.getPrecautionColor(), "fortifyProgress",
+                          new Object[] { tank.getFortifyStage(), tank.getFortifyTotalStages() }));
                     stStr.add(new Status(Color.PINK, "D", SMALL));
                 }
             }

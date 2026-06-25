@@ -750,6 +750,16 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
+     * Explicit structure lookup by name, to avoid armor type collisions (mainly "IS Standard")
+     * Works because all structure names (q.v.) are added to the hash with " structure" appended.
+     * @param key   String name, probably generated from looking up a structure type name using an index
+     * @return      The matching Structure-specific Equipment Type.
+     */
+    public static @Nullable EquipmentType getStructureFromName(String key) {
+        return EquipmentType.get(String.format("%s structure", key));
+    }
+
+    /**
      * Add a way to find if a given equipment type matches a particular string in _any_ of its names (Case sensitive)
      */
     public boolean matchesName(String name) {

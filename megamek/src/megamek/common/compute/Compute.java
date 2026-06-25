@@ -2786,6 +2786,10 @@ public class Compute {
         if (entity == null) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Entity Does Not Exist");
         }
+        // A vehicle clearing rubble with its bulldozer fires as if it had moved at Flank speed (TacOps).
+        if ((entity instanceof Tank clearingTank) && clearingTank.isClearingRubble()) {
+            return Compute.getAttackerMovementModifier(game, entityId, EntityMovementType.MOVE_RUN);
+        }
         return Compute.getAttackerMovementModifier(game, entityId, entity.moved);
     }
 

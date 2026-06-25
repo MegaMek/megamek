@@ -7805,6 +7805,11 @@ public class MiscType extends EquipmentType {
         misc.cost = 40000;
         misc.flags = misc.flags.or(F_MINESWEEPER, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 30;
+        // A Minesweeper is activated or deactivated in the End Phase; only an activated sweeper clears
+        // mines (TO:AUE p.138). Default "On" preserves the prior always-sweep behavior. instantModeSwitch
+        // = false defers the switch to the next turn, matching the rule's End-Phase timing.
+        misc.setModes("On", "Off");
+        misc.instantModeSwitch = false;
         misc.rulesRefs = "138, TO:AUE";
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
@@ -11693,7 +11698,7 @@ public class MiscType extends EquipmentType {
         // TODO this is the equipment that bridging engineers use.
         // Likely needs to be split into a BA version and and Infantry version.
         misc.name = "Infantry Bridge Kit";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.INFANTRY_BRIDGE_KIT);
         misc.tonnage = 0;
         misc.criticalSlots = 0;
         misc.hittable = false;

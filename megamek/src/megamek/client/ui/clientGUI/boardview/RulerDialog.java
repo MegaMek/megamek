@@ -62,6 +62,7 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
+import megamek.common.equipment.MiscType;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -648,10 +649,12 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         String targetName = unitOrTerrainNameFor(!attackerIsFirst);
 
         if (attackerPovLabel != null) {
-            attackerPovLabel.setText(formatPovLabel(attackerName, true) + ":");
+            attackerPovLabel.setText(
+                  formatPovLabel(decorateWithMastMount(attackerName, attackerIsFirst), true) + ":");
         }
         if (targetPovLabel != null) {
-            targetPovLabel.setText(formatPovLabel(targetName, false) + ":");
+            targetPovLabel.setText(
+                  formatPovLabel(decorateWithMastMount(targetName, !attackerIsFirst), false) + ":");
         }
 
         String attackerHeader = (attackerName != null)
@@ -697,6 +700,28 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         }
         Coords coords = isFirstPoint ? start : end;
         return describeHexTerrain(coords);
+    }
+
+    /**
+     * Appends a localized "(Mast Mount)" marker to a POV name when that endpoint's unit is a VTOL with a working
+     * Mast Mount whose identity is visible (not a sensor return). Returns {@code name} unchanged otherwise, including
+     * when it is null, so the generic POV fallback still applies.
+     */
+    private String decorateWithMastMount(String name, boolean isFirstPoint) {
+        if (name == null || !hasVisibleMastMount(isFirstPoint)) {
+            return name;
+        }
+        return name + " " + Messages.getString("Ruler.mastMount");
+    }
+
+    /**
+     * Returns whether the unit selected at the given point is a VTOL with a working Mast Mount and a visible identity.
+     * Sensor returns hide equipment, matching how the unit short name is hidden for them.
+     */
+    private boolean hasVisibleMastMount(boolean isFirstPoint) {
+        Entity entity = getSelectedEntity(isFirstPoint);
+        return (entity != null) && !isSensorReturn(entity)
+              && entity.hasWorkingMisc(MiscType.F_MAST_MOUNT);
     }
 
     /**
@@ -1154,19 +1179,41 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         // Pass the active LOS rule through to the diagram so it can pick the matching line shape and overlays.
         LosRuleMode losRuleMode = LosRuleMode.fromGameOptions(game);
 
+        // VTOL Mast Mount marker: only on the entity-based path (entityLosBlocked != null), where the diagram
+        // uses the units' real heights, so the "+1 spotting eye" stays consistent with the drawn LOS. The
+        // manual/spinner-override path has no real entity heights to reason about. Never surface it for a
+        // sensor return - that would leak hidden equipment under double-blind, matching the POV-label gating.
+        // The spotting LOS (spotting=true applies the +1 sensor elevation per TacOps) colors the marker;
+        // the main direct-fire LOS line is unaffected (a Mast Mount never helps direct fire over cover).
+        boolean entityPath = (entityLosBlocked != null);
+        Entity attackerEntity = getSelectedEntity(flip);
+        Entity targetEntity = getSelectedEntity(!flip);
+        boolean attackerHasMastMount = entityPath && (attackerEntity != null)
+              && !isSensorReturn(attackerEntity) && attackerEntity.hasWorkingMisc(MiscType.F_MAST_MOUNT);
+        boolean targetHasMastMount = entityPath && (targetEntity != null)
+              && !isSensorReturn(targetEntity) && targetEntity.hasWorkingMisc(MiscType.F_MAST_MOUNT);
+        boolean attackerSpottingClear = attackerHasMastMount && (targetEntity != null)
+              && LosEffects.calculateLOS(game, attackerEntity, targetEntity, true).canSee();
+        boolean targetSpottingClear = targetHasMastMount && (attackerEntity != null)
+              && LosEffects.calculateLOS(game, targetEntity, attackerEntity, true).canSee();
+
         LOSDiagramData diagramData;
         if (entityLosBlocked != null) {
             // Use pre-computed entity-based LOS result (matches fire phase)
             diagramData = LOSDiagramDataBuilder.buildWithLosResult(game, attackInfo,
                   entityLosBlocked, entityDeadZone, attackerHullDown, targetHullDown,
                   attackerType, targetType, attackerIsAlt, targetIsAlt,
-                  attackerName, targetName, losRuleMode);
+                  attackerName, targetName, losRuleMode,
+                  attackerHasMastMount, targetHasMastMount,
+                  attackerSpottingClear, targetSpottingClear);
         } else {
             // Use manual AttackInfo-based LOS (scenario testing)
             diagramData = LOSDiagramDataBuilder.build(game, attackInfo,
                   attackerHullDown, targetHullDown, attackerType, targetType,
                   attackerIsAlt, targetIsAlt,
-                  attackerName, targetName, losRuleMode);
+                  attackerName, targetName, losRuleMode,
+                  attackerHasMastMount, targetHasMastMount,
+                  attackerSpottingClear, targetSpottingClear);
         }
 
         diagramPanel.setData(diagramData);

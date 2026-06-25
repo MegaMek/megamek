@@ -358,4 +358,25 @@ public class TargetRoll implements Serializable {
     public boolean cannotSucceed() {
         return (getValue() == IMPOSSIBLE) || (getValue() == AUTOMATIC_FAIL);
     }
+
+    /**
+     * @return True when this roll automatically fails. Returns false otherwise.
+     */
+    public boolean isAutomaticFail() {
+        return getValue() == AUTOMATIC_FAIL;
+    }
+
+    /**
+     * @return True when this roll automatically succeeds. Returns false otherwise.
+     */
+    public boolean isAutomaticSuccess() {
+        return getValue() == AUTOMATIC_SUCCESS;
+    }
+
+    /**
+     * @return True when this roll is impossible. Returns false otherwise.
+     */
+    public boolean isImpossible() {
+        return getValue() == IMPOSSIBLE;
+    }
 }

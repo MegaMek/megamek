@@ -236,6 +236,8 @@ public class EquipmentTypeLookup {
     @EquipmentName
     public static final String DEMOLITION_CHARGE = "Demolition Charge";
     @EquipmentName
+    public static final String INFANTRY_BRIDGE_KIT = "Infantry Bridge Kit";
+    @EquipmentName
     public static final String INFANTRY_AMMO = "Infantry Ammo";
     @EquipmentName
     public static final String INFANTRY_INFERNO_AMMO = "Infantry Inferno Ammo";

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,8 +36,11 @@ package megamek.common;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.lasers.LaserWeapon;
@@ -158,6 +161,40 @@ class DazzleModeTest {
         assertTrue(dazzleIndex >= 0, "Dazzle mode should exist");
         assertTrue(firstPulseIndex >= 0, "Pulse mode should exist");
         assertTrue(dazzleIndex < firstPulseIndex, "Dazzle mode should come before Pulse mode for proper filtering");
+    }
+
+    @Test
+    void testGetModesCountExcludesPulseModes() {
+        // Regression guard for LaserWeapon.getModesCount(Mounted): it must return only the non-Pulse
+        // modes. A non-pulse laser has "Pulse ..." modes appended, so the filtered count must be smaller
+        // than the full mode list. Independently re-counts via getModes() to catch off-by-one errors.
+        LaserWeapon weapon = new ISERLaserLarge();
+
+        GameOptions options = new GameOptions();
+        options.getOption(OptionsConstants.ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE).setValue(true);
+        weapon.adaptToGameOptions(options);
+
+        // A Mounted with nothing linked exercises the filtered-count path (no RISC pulse module).
+        Mounted<?> mounted = mock(Mounted.class);
+        when(mounted.getLinkedBy()).thenReturn(null);
+
+        int totalModes = 0;
+        int expectedNonPulseModes = 0;
+        int pulseModes = 0;
+        for (var mode : java.util.Collections.list(weapon.getModes())) {
+            totalModes++;
+            if (mode.getName().startsWith("Pulse")) {
+                pulseModes++;
+            } else {
+                expectedNonPulseModes++;
+            }
+        }
+
+        assertTrue(pulseModes > 0, "Test setup should produce at least one Pulse mode to filter");
+        assertEquals(expectedNonPulseModes, weapon.getModesCount(mounted),
+              "getModesCount should count only non-Pulse modes");
+        assertTrue(weapon.getModesCount(mounted) < totalModes,
+              "Filtered mode count should be smaller than the full mode list");
     }
 
     @Test

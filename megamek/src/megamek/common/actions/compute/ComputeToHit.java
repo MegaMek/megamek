@@ -1316,6 +1316,50 @@ public class ComputeToHit {
     }
 
     /**
+     * Applies the firefighting engineer extras on top of the base fire-extinguisher to-hit (TO:AuE p.153): a +2 for
+     * fuel-fed flamer fires (the same penalty inferno fires already get, not stacking with it) and a cumulative -1 per
+     * consecutive turn the platoon has fought this hex, down to a minimum target number of 3. Does nothing unless the
+     * attacker is a firefighting engineer extinguishing a hex.
+     *
+     * @param toHit           the running fire-extinguisher to-hit (target number 8, +2 if already inferno)
+     * @param attackingEntity the attacking entity
+     * @param target          the hex being extinguished
+     * @param game            the current {@link Game}
+     */
+    private static void applyFirefightingEngineerModifiers(ToHitData toHit, Entity attackingEntity, Targetable target,
+          Game game) {
+        if (!attackingEntity.isFirefighter() || (target.getTargetType() != Targetable.TYPE_HEX_EXTINGUISH)) {
+            return;
+        }
+        Coords targetCoords = target.getPosition();
+        // Inferno fires already added +2 above; apply the same to fuel-fed flamer fires when not inferno.
+        // Label it as a flamer fire so the to-hit breakdown does not misreport a flamer fire as an inferno.
+        if (!game.getBoard(target).isInfernoBurning(targetCoords)
+              && game.getBoard(target).isFlamerStartedFire(targetCoords)) {
+            toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutFlamerFire"));
+        }
+        // Multiple platoons combining into a single roll grant the lead platoon -1 each (TO:AuE p.153). Apply the
+        // penalties (above) before the reductions (here) so the running total honours the minimum target number 3.
+        int supportingPlatoons = FirefightingSupport.supportingPlatoons(game, attackingEntity, target);
+        if (supportingPlatoons > 0) {
+            int reduction = Math.min(supportingPlatoons, toHit.getValue() - 3);
+            if (reduction > 0) {
+                toHit.addModifier(-reduction, Messages.getString("WeaponAttackAction.FirefightSupport"));
+            }
+        }
+        // isFirefighter() is only ever true for ConvInfantry, which holds the consecutive-turn streak state.
+        if (attackingEntity instanceof ConvInfantry firefighter) {
+            int priorStreak = firefighter.getPriorFirefightStreak(targetCoords, game.getRoundCount());
+            if (priorStreak > 0) {
+                int reduction = Math.min(priorStreak, toHit.getValue() - 3);
+                if (reduction > 0) {
+                    toHit.addModifier(-reduction, Messages.getString("WeaponAttackAction.FirefightSustained"));
+                }
+            }
+        }
+    }
+
+    /**
      * If you're using a weapon that does something totally special and doesn't apply mods like everything else, look
      * here
      *
@@ -1372,6 +1416,21 @@ public class ComputeToHit {
                   game.getBoard(target).isInfernoBurning(target.getPosition())) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
             }
+            applyFirefightingEngineerModifiers(toHit, ae, target, game);
+            srt.setSpecialResolution(true);
+            return toHit;
+        }
+
+        // Firefighting engineers without a fire extinguisher weapon (e.g. an older platoon that predates the
+        // auto-equipped extinguisher) can still put out an adjacent burning hex with their own gear (TO:AuE
+        // p.153), firing their small arms at the hex. New platoons select the Fire Extinguisher weapon, which
+        // is handled by the F_EXTINGUISHER branch above; both paths apply the same modifiers.
+        if (ae.isFirefighter() && (target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH)) {
+            toHit = new ToHitData(8, Messages.getString("WeaponAttackAction.FireExt"));
+            if (game.getBoard(target).isInfernoBurning(target.getPosition())) {
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
+            }
+            applyFirefightingEngineerModifiers(toHit, ae, target, game);
             srt.setSpecialResolution(true);
             return toHit;
         }
@@ -1750,6 +1809,13 @@ public class ComputeToHit {
         ComputeAbilityMods.processAttackerSPAs(toHit, ae, te, weapon, game);
         ComputeAbilityMods.processDefenderSPAs(toHit, ae, te, game);
 
+        // The attacker's movement modifier applies to every direct-fire artillery attack that resolves here,
+        // including flak attacks against airborne VTOL/WiGE/aerospace targets (TO:AR corrected 7th printing,
+        // p.153). It is added here - after the ADA early return above (ADA falls through to the normal to-hit
+        // path, which already applies this modifier) and before the flak branch returns - so that each direct
+        // artillery path includes it exactly once.
+        toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
+
         // If an airborne unit occupies the target hex, standard artillery ammo makes a
         // flak attack against it
         // TN is a flat 3 + the altitude mod + the attacker's weapon skill - 2 for Flak
@@ -1777,9 +1843,8 @@ public class ComputeToHit {
             }
         }
 
-        // All other direct fire artillery attacks
+        // All other direct fire artillery attacks (attacker movement modifier already appended above)
         toHit.addModifier(4, Messages.getString("WeaponAttackAction.DirectArty"));
-        toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
         // without LOS, it is a short-range indirect attack that ignores LOS modifiers, TO:AR p.153
         if (!losMods.cannotSucceed()) {
             toHit.append(losMods);

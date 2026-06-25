@@ -93,6 +93,7 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_PLASMA_MFUK, // Plasma Rifle
     F_PPC,
     F_PULSE,
+    F_VSP, // Variable Speed Pulse
     F_TASER,
     F_TSEMP, // Used for TSEMP Weapons.
     F_VGL,

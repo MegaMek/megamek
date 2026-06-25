@@ -843,6 +843,9 @@ public class TWGameManager extends AbstractGameManager {
                 case ENTITY_ACTIVATE_HIDDEN:
                     receiveEntityActivateHidden(packet, connId);
                     break;
+                case ENTITY_DEPLOY_BRIDGE:
+                    receiveDeployBridge(packet, connId);
+                    break;
                 case ENTITY_NOVA_NETWORK_CHANGE:
                     receiveEntityNovaNetworkModeChange(packet, connId);
                     break;
@@ -8189,32 +8192,32 @@ public class TWGameManager extends AbstractGameManager {
     public void addMovementHeat() {
         for (Entity entity : game.inGameTWEntities()) {
             if (entity.hasDamagedRHS()) {
-                entity.heatBuildup += 1;
+                entity.changeHeatBuildup(1, Messages.getString("HeatBreakdown.damagedRadicalHeatSink"));
             }
 
             if ((entity.getMovementMode() == EntityMovementMode.BIPED_SWIM) ||
                   (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
                 // UMU heat
-                entity.heatBuildup += 1;
+                entity.changeHeatBuildup(1, Messages.getString("HeatBreakdown.movementUMU"));
                 continue;
             }
 
             // build up heat from movement
             if (entity.moved == EntityMovementType.MOVE_NONE) {
-                entity.heatBuildup += entity.getStandingHeat();
+                entity.changeHeatBuildup(entity.getStandingHeat(), Messages.getString("HeatBreakdown.movementStanding"));
             } else if ((entity.moved == EntityMovementType.MOVE_WALK) ||
                   (entity.moved == EntityMovementType.MOVE_VTOL_WALK) ||
                   (entity.moved == EntityMovementType.MOVE_CAREFUL_STAND)) {
-                entity.heatBuildup += entity.getWalkHeat();
+                entity.changeHeatBuildup(entity.getWalkHeat(), Messages.getString("HeatBreakdown.movementWalking"));
             } else if ((entity.moved == EntityMovementType.MOVE_RUN) ||
                   (entity.moved == EntityMovementType.MOVE_VTOL_RUN) ||
                   (entity.moved == EntityMovementType.MOVE_SKID)) {
-                entity.heatBuildup += entity.getRunHeat();
+                entity.changeHeatBuildup(entity.getRunHeat(), Messages.getString("HeatBreakdown.movementRunning"));
             } else if (entity.moved == EntityMovementType.MOVE_JUMP && !entity.isJumpingWithMechanicalBoosters()) {
-                entity.heatBuildup += entity.getJumpHeat(entity.delta_distance);
+                entity.changeHeatBuildup(entity.getJumpHeat(entity.delta_distance), Messages.getString("HeatBreakdown.movementJumping"));
             } else if (entity.moved == EntityMovementType.MOVE_SPRINT ||
                   entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) {
-                entity.heatBuildup += entity.getSprintHeat();
+                entity.changeHeatBuildup(entity.getSprintHeat(), Messages.getString("HeatBreakdown.movementSprinting"));
             }
         }
     }
@@ -15718,6 +15721,14 @@ public class TWGameManager extends AbstractGameManager {
      */
     void checkBuildBridges() {
         new BridgeBuildPhaseHandler(this).checkBuildBridges();
+    }
+
+    /**
+     * End-phase resolution for Bridge-Layer (AVLB) deployments, TM p.242 / TW. Delegates to
+     * {@link AvlbDeployPhaseHandler} so the bridgelayer rules do not add to this already very large class.
+     */
+    void checkDeployBridges() {
+        new AvlbDeployPhaseHandler(this).checkDeployBridges();
     }
 
     /**
@@ -26604,6 +26615,18 @@ public class TWGameManager extends AbstractGameManager {
         }
         activatingUnit.setHiddenActivationPhase(phase);
         entityUpdate(entityId);
+    }
+
+    /**
+     * Receives an End-Phase Bridge-Layer (AVLB) deployment declaration (TM p.242 / TW) and delegates the rules
+     * resolution to {@link AvlbDeployPhaseHandler}.
+     *
+     * @param packet    the packet carrying the declaring unit's id and chosen equipment index
+     * @param connIndex the connection that sent the packet
+     */
+    private void receiveDeployBridge(Packet packet, int connIndex) throws InvalidPacketDataException {
+        new AvlbDeployPhaseHandler(this).receiveDeployDeclaration(packet.getIntValue(0), packet.getIntValue(1),
+              connIndex);
     }
 
     /**

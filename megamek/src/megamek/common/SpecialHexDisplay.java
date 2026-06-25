@@ -222,6 +222,18 @@ public class SpecialHexDisplay implements Serializable {
      */
     public static final String HEAT_MAP_PREFIX = "[HM]";
 
+    /**
+     * Marks a heat-map control token's kind as a predicted enemy position (drawn as a cold-to-hot color fill). It is
+     * the third colon-separated field of the token, e.g. {@code [HM]<turn>:<heat>:P}.
+     */
+    public static final String HEAT_MAP_KIND_PREDICTED = "P";
+
+    /**
+     * Marks a heat-map control token's kind as a hex this turn's plan is firing at (drawn as a crosshair icon). It is
+     * the third colon-separated field of the token, e.g. {@code [HM]<turn>:<heat>:F}.
+     */
+    public static final String HEAT_MAP_KIND_FIRING = "F";
+
     private String info;
     private Type type;
     private int round;
@@ -443,11 +455,12 @@ public class SpecialHexDisplay implements Serializable {
 
         // Only display obscured hexes to owner - unless the local player has turned on the testing/observer aid to
         // reveal otherwise-hidden artillery markers (e.g. an enemy battery's incoming rounds) on their own view.
-        boolean revealForTesting = (guiPref != null)
-              && guiPref.getBoolean(GUIPreferences.ADVANCED_REVEAL_OBSCURED_ARTILLERY)
-              && ((type == Type.ARTILLERY_INCOMING) || (type == Type.ARTILLERY_ADJUSTED)
+        boolean revealSettingEnabled = (guiPref != null)
+              && guiPref.getBoolean(GUIPreferences.ADVANCED_REVEAL_OBSCURED_ARTILLERY);
+        boolean isArtilleryMarker = (type == Type.ARTILLERY_INCOMING) || (type == Type.ARTILLERY_ADJUSTED)
               || (type == Type.ARTILLERY_TARGET) || (type == Type.ARTILLERY_HIT)
-              || (type == Type.ARTILLERY_MISS) || (type == Type.ARTILLERY_DRIFT));
+              || (type == Type.ARTILLERY_MISS) || (type == Type.ARTILLERY_DRIFT);
+        boolean revealForTesting = revealSettingEnabled && isArtilleryMarker;
         if (!revealForTesting && isObscured(playerChecking)) {
             return false;
         }

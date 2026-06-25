@@ -98,7 +98,7 @@ public class HexTargetPicker {
      * @param clientGUI         The client GUI, used for the board view, toasts, and the parent frame
      * @param boardView         The board view to pick hexes on
      * @param orderDescription  Human-readable description of the order shown in the control dialog
-     * @param singleHex         TRUE to finish automatically after the first hex is picked
+     * @param singleHex         {@code true} to finish automatically after the first hex is picked
      * @param maxHexes          The maximum number of hexes that may be picked, or 0 for no limit
      * @param onTargetsSelected Called with the picked hexes as dash-separated hex numbers (e.g. "0810-0811")
      */
@@ -191,9 +191,9 @@ public class HexTargetPicker {
         controlDialog.add(statusLabel, BorderLayout.CENTER);
 
         JButton doneButton = new JButton(Messages.getString("BotCommandPanel.HexPicker.done"));
-        doneButton.addActionListener(e -> finish(true));
+        doneButton.addActionListener(evt -> finish(true));
         JButton cancelButton = new JButton(Messages.getString("BotCommandPanel.HexPicker.cancel"));
-        cancelButton.addActionListener(e -> finish(false));
+        cancelButton.addActionListener(evt -> finish(false));
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(doneButton);
         buttonPanel.add(cancelButton);
@@ -223,7 +223,7 @@ public class HexTargetPicker {
     /**
      * Ends the picking session, restoring the phase display and removing all hooks.
      *
-     * @param sendSelection TRUE to deliver the picked hexes to the consumer (if any were picked)
+     * @param sendSelection {@code true} to deliver the picked hexes to the consumer (if any were picked)
      */
     private void finish(boolean sendSelection) {
         if (finished) {

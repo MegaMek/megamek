@@ -31497,7 +31497,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * @param artilleryAttack The in-flight artillery attack
      *
-     * @return TRUE if the attack uses a homing round, checked from the attack's recorded munition type and, as a
+     * @return {@code true} if the attack uses a homing round, checked from the attack's recorded munition type and, as a
      *       fallback, the linked ammo bin
      */
     private boolean isHomingArtilleryAttack(ArtilleryAttackAction artilleryAttack) {

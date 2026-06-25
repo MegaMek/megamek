@@ -445,7 +445,7 @@ public class ArtilleryTargetingControl {
      * @param enemy The enemy whose opponents (our force) we want the centre of
      * @param game  The current game
      *
-     * @return The battle-value-weighted centre of our on-board force, or null if we have no on-board units
+     * @return The battle-value-weighted centre of our on-board force, or {@code null} if we have no on-board units
      */
     private Coords friendlyForceCentre(Entity enemy, Game game) {
         long totalWeight = 0;
@@ -476,7 +476,7 @@ public class ArtilleryTargetingControl {
      * @param shooter The firing artillery unit (used to identify its enemies)
      * @param game    The current game
      *
-     * @return The number of enemies within the blast radius of the centre (0 if the centre is null)
+     * @return The number of enemies within the blast radius of the centre (0 if the centre is {@code null})
      */
     private int enemyCountNear(Coords centre, Entity shooter, Game game) {
         if (centre == null) {
@@ -566,7 +566,7 @@ public class ArtilleryTargetingControl {
      * @param target                A candidate impact hex
      * @param spottedEnemyPositions The hexes a friendly TAG unit can designate this phase
      *
-     * @return TRUE if a homing round aimed at the target hex could home onto a TAG-designated enemy (one within the
+     * @return {@code true} if a homing round aimed at the target hex could home onto a TAG-designated enemy (one within the
      *       homing radius)
      */
     private boolean isGuidedByTag(Coords target, Set<Coords> spottedEnemyPositions) {
@@ -609,7 +609,7 @@ public class ArtilleryTargetingControl {
      * @param artilleryCommandAndControl The bot's artillery command state
      * @param target                     The target being evaluated
      *
-     * @return TRUE if the target is an ordered fire mission hex
+     * @return {@code true} if the target is an ordered fire mission hex
      */
     boolean isOrderedFireMissionTarget(ArtilleryCommandAndControl artilleryCommandAndControl,
           Targetable target) {

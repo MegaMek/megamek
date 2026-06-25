@@ -67,6 +67,7 @@ import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.MenuScroller;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
@@ -104,7 +105,7 @@ public class BotCommandsPanel extends JPanel {
      *
      * @param client       reference to the client instance
      * @param audioService reference to the instance of the AudioService
-     * @param controller   reference to the MegaMekController for key binds, or null when key binds are not used
+     * @param controller   reference to the MegaMekController for key binds, or {@code null} when key binds are not used
      */
     public BotCommandsPanel(AbstractClient client, @Nullable AudioService audioService,
           @Nullable MegaMekController controller) {
@@ -116,8 +117,8 @@ public class BotCommandsPanel extends JPanel {
      *
      * @param client       reference to the client instance
      * @param audioService reference to the instance of the AudioService
-     * @param controller   reference to the MegaMekController for key binds, or null when key binds are not used
-     * @param clientGUI    reference to the ClientGUI for toast notifications, or null when toasts are unavailable
+     * @param controller   reference to the MegaMekController for key binds, or {@code null} when key binds are not used
+     * @param clientGUI    reference to the ClientGUI for toast notifications, or {@code null} when toasts are unavailable
      */
     public BotCommandsPanel(AbstractClient client, @Nullable AudioService audioService,
           @Nullable MegaMekController controller, @Nullable ClientGUI clientGUI) {
@@ -145,9 +146,9 @@ public class BotCommandsPanel extends JPanel {
 
     private void initialize() {
         this.setLayout(new GridLayout(2, 4, 2, 2));
-        this.setMinimumSize(new Dimension(750, 80));
-        this.setPreferredSize(new Dimension(-1, 80));
-        this.setMaximumSize(new Dimension(-1, 80));
+        this.setMinimumSize(UIUtil.scaleForGUI(750, 80));
+        this.setPreferredSize(new Dimension(-1, UIUtil.scaleForGUI(80)));
+        this.setMaximumSize(new Dimension(-1, UIUtil.scaleForGUI(80)));
         JButton retreat = createButton("Retreat");
         pauseContinue = createButton("PauseGame");
         JButton maneuver = createButton("Maneuver");
@@ -179,11 +180,11 @@ public class BotCommandsPanel extends JPanel {
             JPopupMenu popup = createSelectBehaviorPopup();
             popup.show(setBehavior, 0, setBehavior.getHeight());
         });
-        artillery.addActionListener(e -> {
+        artillery.addActionListener(evt -> {
             JPopupMenu popup = createArtilleryPopup();
             popup.show(artillery, 0, artillery.getHeight());
         });
-        waypoints.addActionListener(e -> {
+        waypoints.addActionListener(evt -> {
             JPopupMenu popup = createWaypointsPopup();
             popup.show(waypoints, 0, waypoints.getHeight());
         });
@@ -301,7 +302,7 @@ public class BotCommandsPanel extends JPanel {
     private JPopupMenu createSelectBehaviorPopup() {
         var behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
         return createBotFirstPopup((botMenu, botPlayer) -> {
-            for (var behaviorName : behaviorSettingsFactory.getBehaviorNameList()) {
+            for (String behaviorName : behaviorSettingsFactory.getBehaviorNameList()) {
                 JMenuItem behaviorItem = new JMenuItem(behaviorName);
                 behaviorItem.addActionListener(evt -> {
                     setBehavior(new PlayerBehavior(botPlayer, behaviorName));
@@ -346,7 +347,7 @@ public class BotCommandsPanel extends JPanel {
                   this::disableShootAndScoot);
             JMenuItem scootToHexItem = new JMenuItem(Messages.getString("BotCommandPanel.ScootToHex.title"));
             scootToHexItem.setToolTipText(Messages.getString("BotCommandPanel.ScootToHex.tooltip"));
-            scootToHexItem.addActionListener(e -> scootToHex(botPlayer));
+            scootToHexItem.addActionListener(evt -> scootToHex(botPlayer));
             botMenu.add(scootToHexItem);
             if (!canScoot) {
                 String reason = Messages.getString("BotCommandPanel.ShootAndScoot.noOnBoardArtillery");
@@ -361,7 +362,7 @@ public class BotCommandsPanel extends JPanel {
     /**
      * @param botPlayer The bot to inspect
      *
-     * @return TRUE if the bot has at least one deployed on-board unit, i.e. movement commands make sense for it
+     * @return {@code true} if the bot has at least one deployed on-board unit, i.e. movement commands make sense for it
      */
     private boolean hasOnBoardUnits(Player botPlayer) {
         for (InGameObject unit : getUnitsOwnedBy(botPlayer)) {
@@ -375,7 +376,7 @@ public class BotCommandsPanel extends JPanel {
     /**
      * @param botPlayer The bot to inspect
      *
-     * @return TRUE if the bot has at least one on-board artillery unit with usable ammo, i.e. artillery that
+     * @return {@code true} if the bot has at least one on-board artillery unit with usable ammo, i.e. artillery that
      *       shoot-and-scoot can actually move
      */
     private boolean hasMovableArtillery(Player botPlayer) {
@@ -733,7 +734,7 @@ public class BotCommandsPanel extends JPanel {
     private void addStrategicTargetItem(JMenu botMenu, Player botPlayer) {
         JMenuItem strategicTargetItem = new JMenuItem(Messages.getString("BotCommandPanel.StrategicTarget.title"));
         strategicTargetItem.setToolTipText(Messages.getString("BotCommandPanel.StrategicTarget.tooltip"));
-        strategicTargetItem.addActionListener(e -> promptAndSendStrategicTargets(botPlayer));
+        strategicTargetItem.addActionListener(evt -> promptAndSendStrategicTargets(botPlayer));
         botMenu.add(strategicTargetItem);
     }
 
@@ -785,7 +786,7 @@ public class BotCommandsPanel extends JPanel {
                 continue;
             }
             JMenuItem playerEntry = new JMenuItem(enemyPlayer.getName());
-            playerEntry.addActionListener(e -> {
+            playerEntry.addActionListener(evt -> {
                 sendChatCommand(botPlayer, command, String.valueOf(enemyPlayer.getId()));
                 acknowledgeOrder(botPlayer, Messages.getString(toastKey, enemyPlayer.getName()));
             });
@@ -857,23 +858,50 @@ public class BotCommandsPanel extends JPanel {
         boolean nukesAllowed = client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ALLOW_NUKES);
         for (InGameObject unit : getUnitsOwnedBy(botPlayer)) {
             if (unit instanceof Entity entity) {
-                for (WeaponMounted weapon : entity.getWeaponList()) {
-                    if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
-                        for (AmmoMounted ammo : entity.getAmmo(weapon)) {
-                            if (ammo.getUsableShotsLeft() > 0) {
-                                SpecialAmmo category = SpecialAmmo.forMunitions(ammo.getType().getMunitionType());
-                                if ((category == SpecialAmmo.DAVY_CROCKETT) && !nukesAllowed) {
-                                    // a tactical nuke only fires when the nuke game option is enabled
-                                    continue;
-                                }
-                                available.add(category);
-                            }
-                        }
-                    }
-                }
+                collectLoadedArtilleryAmmo(entity, nukesAllowed, available);
             }
         }
         return available;
+    }
+
+    /**
+     * Adds to {@code available} every special-ammo category that the given entity has loaded (with shots remaining)
+     * for one of its artillery weapons.
+     *
+     * @param entity       The unit whose artillery weapons are inspected
+     * @param nukesAllowed Whether the nuke game option is enabled (gates Davy Crockett rounds)
+     * @param available    The accumulating set of available special-ammo categories
+     */
+    private void collectLoadedArtilleryAmmo(Entity entity, boolean nukesAllowed, Set<SpecialAmmo> available) {
+        for (WeaponMounted weapon : entity.getWeaponList()) {
+            if (!weapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+                continue;
+            }
+            for (AmmoMounted ammo : entity.getAmmo(weapon)) {
+                addUsableAmmoCategory(ammo, nukesAllowed, available);
+            }
+        }
+    }
+
+    /**
+     * Adds the special-ammo category of a single ammo bin to {@code available}, provided the bin has shots remaining
+     * and is not a Davy Crockett round while nukes are disabled.
+     *
+     * @param ammo         The ammo bin to categorize
+     * @param nukesAllowed Whether the nuke game option is enabled (gates Davy Crockett rounds)
+     * @param available    The accumulating set of available special-ammo categories
+     */
+    private void addUsableAmmoCategory(AmmoMounted ammo, boolean nukesAllowed, Set<SpecialAmmo> available) {
+        if (ammo.getUsableShotsLeft() <= 0) {
+            return;
+        }
+        SpecialAmmo category = SpecialAmmo.forMunitions(ammo.getType().getMunitionType());
+        boolean isDisallowedNuke = (category == SpecialAmmo.DAVY_CROCKETT) && !nukesAllowed;
+        if (isDisallowedNuke) {
+            // a tactical nuke only fires when the nuke game option is enabled
+            return;
+        }
+        available.add(category);
     }
 
     /**
@@ -935,7 +963,7 @@ public class BotCommandsPanel extends JPanel {
      * @param entity The unit carrying the weapon
      * @param weapon The artillery weapon
      *
-     * @return TRUE if the weapon has at least one ammo bin with shots remaining
+     * @return {@code true} if the weapon has at least one ammo bin with shots remaining
      */
     private boolean hasUsableAmmo(Entity entity, WeaponMounted weapon) {
         for (AmmoMounted ammo : entity.getAmmo(weapon)) {
@@ -951,7 +979,7 @@ public class BotCommandsPanel extends JPanel {
      * the Commander GUI), falls back to a typed hex number prompt.
      *
      * @param orderDescription  Human-readable description of the order shown while picking
-     * @param singleHex         TRUE to finish after the first hex is picked
+     * @param singleHex         {@code true} to finish after the first hex is picked
      * @param maxHexes          The maximum number of hexes that may be picked, or 0 for no limit
      * @param fallbackPromptKey The resource key for the typed prompt message used as fallback
      * @param onTargetsSelected Called with the picked hexes as dash-separated hex numbers
@@ -983,7 +1011,7 @@ public class BotCommandsPanel extends JPanel {
      * @param promptTitleKey   The resource key for the prompt dialog title
      * @param maxHexes         The maximum number of hexes accepted, or 0 for no limit
      *
-     * @return The entered hex numbers joined with dashes, or null if the player canceled or the input was invalid
+     * @return The entered hex numbers joined with dashes, or {@code null} if the player canceled or the input was invalid
      */
     private @Nullable String promptForHexNumbers(String promptMessageKey, String promptTitleKey, int maxHexes) {
         String input = JOptionPane.showInputDialog(this,
@@ -1017,7 +1045,7 @@ public class BotCommandsPanel extends JPanel {
      *
      * @param targets Dash-separated hex numbers, e.g. "0810-0811"
      *
-     * @return TRUE if all hex numbers are valid
+     * @return {@code true} if all hex numbers are valid
      */
     private boolean isValidHexInput(String targets) {
         Board board = client.getGame().getBoard();
@@ -1213,10 +1241,10 @@ public class BotCommandsPanel extends JPanel {
         var playerMap = new HashMap<Integer, Player>();
         client.getGame().getPlayersList().forEach(player -> playerMap.put(player.getId(), player));
         for (var inGameObject : client.getInGameObjects()) {
-            var owner = playerMap.get(inGameObject.getOwnerId());
+            Player owner = playerMap.get(inGameObject.getOwnerId());
             if (owner != null && owner.isEnemyOf(botPlayer)) {
                 var unitEntry = new JMenuItem("ID:" + inGameObject.getId() + " " + inGameObject.generalName());
-                unitEntry.addActionListener(e -> action.accept(new PlayerInGameObject(botPlayer, inGameObject)));
+                unitEntry.addActionListener(evt -> action.accept(new PlayerInGameObject(botPlayer, inGameObject)));
                 menu.add(unitEntry);
             }
         }

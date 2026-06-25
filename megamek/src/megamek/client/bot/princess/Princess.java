@@ -392,7 +392,7 @@ public class Princess extends BotClient {
     /**
      * Sets whether Princess-controlled units are allowed to flee off the board once they reach their destination edge.
      *
-     * @param fleeBoard TRUE if units should leave the board when they reach their destination edge.
+     * @param fleeBoard {@code true} if units should leave the board when they reach their destination edge.
      * @param reason    The reason for the change, used for logging.
      */
     public void setFleeBoard(final boolean fleeBoard, final String reason) {
@@ -435,7 +435,7 @@ public class Princess extends BotClient {
     }
 
     /**
-     * @return TRUE if the bot has been ordered to hold position (units stay where they are).
+     * @return {@code true} if the bot has been ordered to hold position (units stay where they are).
      */
     public boolean getHoldPosition() {
         return holdPosition;
@@ -446,7 +446,7 @@ public class Princess extends BotClient {
      * their current location and may turn in place to face the enemy) until the hold is lifted. Airborne units are
      * exempt, as they cannot legally stand still.
      *
-     * @param holdPosition TRUE to hold position, FALSE to resume normal movement.
+     * @param holdPosition {@code true} to hold position, {@code false} to resume normal movement.
      */
     public void setHoldPosition(final boolean holdPosition) {
         LOGGER.info("{}: setting hold position to {}", getName(), holdPosition);
@@ -463,7 +463,7 @@ public class Princess extends BotClient {
      * regain standoff, instead of sitting still and being overrun. Only the threatened artillery unit moves; every
      * other unit keeps holding.
      *
-     * @param shootAndScoot TRUE to let threatened artillery displace, FALSE for a pure hold.
+     * @param shootAndScoot {@code true} to let threatened artillery displace, {@code false} for a pure hold.
      */
     public void setShootAndScoot(final boolean shootAndScoot) {
         LOGGER.info("{}: setting shoot and scoot to {}", getName(), shootAndScoot);
@@ -475,7 +475,7 @@ public class Princess extends BotClient {
     }
 
     /**
-     * @return The hex the bot's artillery should fall back to under shoot-and-scoot, or null to auto-displace away from
+     * @return The hex the bot's artillery should fall back to under shoot-and-scoot, or {@code null} to auto-displace away from
      *       the nearest enemy
      */
     public @Nullable Coords getShootAndScootHex() {
@@ -485,9 +485,9 @@ public class Princess extends BotClient {
     /**
      * Designates a fallback hex for shoot-and-scoot: threatened artillery heads to this hex (which may take several
      * turns) and then holds and fires from there, instead of auto-displacing. Setting a hex also enables
-     * shoot-and-scoot. Passing null clears the hex and reverts to auto-displacement.
+     * shoot-and-scoot. Passing {@code null} clears the hex and reverts to auto-displacement.
      *
-     * @param shootAndScootHex The fallback hex, or null to clear it
+     * @param shootAndScootHex The fallback hex, or {@code null} to clear it
      */
     public void setShootAndScootHex(final @Nullable Coords shootAndScootHex) {
         LOGGER.info("{}: setting shoot and scoot hex to {}", getName(), shootAndScootHex);
@@ -534,12 +534,11 @@ public class Princess extends BotClient {
     public record HeatMapMarker(int turn, int heatUnits) {}
 
     /**
-     * Optionally paints this bot's artillery heat map on the board for testing: a crosshair at each hex an enemy is
-     * predicted to advance to, and an explosion at each hex this turn's plan fires at. Each marker shows its turn
-     * number and is drawn at an opacity of 20% per contributing enemy (so hexes cool by 20% as units are destroyed and
-     * the map works). Only acts when the local client has the "Show Bot Artillery Heat Map" advanced testing setting
-     * on; the markers are visible to all and clear themselves each round. No-op for a headless bot (no GUI
-     * preferences).
+     * Optionally paints this bot's artillery heat map on the board for testing: a cold-to-hot color fill at each hex an
+     * enemy is predicted to advance to (navy blue for a single enemy converging, up to crimson red for many, so the
+     * map cools as units are destroyed), and a crosshair at each hex this turn's plan fires at. Each marker shows its
+     * turn number. Only acts when the local client has the "Show Bot Artillery Heat Map" advanced testing setting on;
+     * the markers are visible to all and clear themselves each round. No-op for a headless bot (no GUI preferences).
      *
      * @param predictedImpacts The hexes enemies were predicted to advance to, mapped to their heat-map marker
      * @param chosenTargets    The hexes this plan fires at, mapped to their heat-map marker
@@ -551,38 +550,41 @@ public class Princess extends BotClient {
             return;
         }
         for (Map.Entry<Coords, HeatMapMarker> predicted : predictedImpacts.entrySet()) {
-            sendHeatMapMarker(predicted.getKey(), boardId, SpecialHexDisplay.Type.ARTILLERY_TARGET,
+            sendHeatMapMarker(predicted.getKey(), boardId, SpecialHexDisplay.HEAT_MAP_KIND_PREDICTED,
                   predicted.getValue(), "predicted enemy position");
         }
         for (Map.Entry<Coords, HeatMapMarker> chosen : chosenTargets.entrySet()) {
-            sendHeatMapMarker(chosen.getKey(), boardId, SpecialHexDisplay.Type.ARTILLERY_HIT,
+            sendHeatMapMarker(chosen.getKey(), boardId, SpecialHexDisplay.HEAT_MAP_KIND_FIRING,
                   chosen.getValue(), "firing here");
         }
     }
 
     /**
      * Sends one heat-map special hex display. The info text is prefixed with {@link SpecialHexDisplay#HEAT_MAP_PREFIX}
-     * followed by the turn number and the opacity percent (20% per contributing enemy, 20-100), which the board view
-     * parses to draw the turn on the hex and fade the icon by heat.
+     * followed by the control token {@code <turn>:<heat>:<kind>}, which the board view parses to draw the turn on the
+     * hex, pick the cold-to-hot color from the enemy count (heat), and tell a predicted-position fill apart from a
+     * firing crosshair. Both marker kinds use the crosshair icon type; the board view paints predicted hexes as a
+     * color fill instead and only draws the icon for firing hexes.
      *
      * @param coords      The hex to mark
      * @param boardId     The board the hex is on
-     * @param type        The marker icon type (crosshair for predicted, explosion for firing)
-     * @param marker      The marker's turn and heat
+     * @param kind        The marker kind, {@link SpecialHexDisplay#HEAT_MAP_KIND_PREDICTED} or
+     *                    {@link SpecialHexDisplay#HEAT_MAP_KIND_FIRING}
+     * @param marker      The marker's turn and heat (number of enemies converging on the hex)
      * @param description The human-readable description for the hover text
      */
-    private void sendHeatMapMarker(Coords coords, int boardId, SpecialHexDisplay.Type type, HeatMapMarker marker,
+    private void sendHeatMapMarker(Coords coords, int boardId, String kind, HeatMapMarker marker,
           String description) {
-        int opacityPercent = Math.min(100, Math.max(20, 20 * marker.heatUnits()));
-        String info = SpecialHexDisplay.HEAT_MAP_PREFIX + marker.turn() + ":" + opacityPercent + " " + getName()
-              + ": " + description + " (turn " + marker.turn() + ", " + marker.heatUnits() + " units)";
+        String info = SpecialHexDisplay.HEAT_MAP_PREFIX + marker.turn() + ":" + marker.heatUnits() + ":" + kind
+              + " " + getName() + ": " + description + " (turn " + marker.turn() + ", " + marker.heatUnits()
+              + " units)";
         sendSpecialHexDisplayAppend(coords, boardId,
-              new SpecialHexDisplay(type, getGame().getRoundCount(), getLocalPlayer(), info,
-                    SpecialHexDisplay.SHD_VISIBLE_TO_ALL));
+              new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_TARGET, getGame().getRoundCount(),
+                    getLocalPlayer(), info, SpecialHexDisplay.SHD_VISIBLE_TO_ALL));
     }
 
     /**
-     * @return TRUE if the local client has the artillery-heat-map testing setting on, FALSE for a headless bot with no
+     * @return {@code true} if the local client has the artillery-heat-map testing setting on, {@code false} for a headless bot with no
      *       GUI preferences
      */
     private boolean showBotArtilleryHeatMap() {
@@ -642,7 +644,7 @@ public class Princess extends BotClient {
     /**
      * @param entity The artillery unit
      *
-     * @return TRUE if the nearest enemy is within the minimum effective (indirect) artillery standoff
+     * @return {@code true} if the nearest enemy is within the minimum effective (indirect) artillery standoff
      */
     private boolean isEnemyWithinStandoff(final Entity entity) {
         if (entity.getPosition() == null) {
@@ -696,7 +698,7 @@ public class Princess extends BotClient {
     /**
      * @param entity The unit to inspect
      *
-     * @return TRUE if the entity carries at least one operational (undestroyed) artillery weapon with usable
+     * @return {@code true} if the entity carries at least one operational (undestroyed) artillery weapon with usable
      *       ammunition
      */
     private boolean isArtilleryWithAmmo(final Entity entity) {
@@ -805,7 +807,7 @@ public class Princess extends BotClient {
      *
      * @param entity The unit looking for enemies
      *
-     * @return The closest enemy position, or null if no deployed enemy with a position exists
+     * @return The closest enemy position, or {@code null} if no deployed enemy with a position exists
      */
     private @Nullable Coords findClosestEnemyPosition(final Entity entity) {
         Coords closestPosition = null;

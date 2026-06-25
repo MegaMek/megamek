@@ -32,7 +32,6 @@
  */
 package megamek.client.ui.dialogs.BotCommands;
 
-import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -71,8 +70,8 @@ public class BotCommandsDialog extends JDialog {
         this.setTitle(Messages.getString("ClientGUI.BotCommand"));
 
         this.setLocation(GUIP.getBotCommandsPosX(), GUIP.getBotCommandsPosY());
-        this.setSize(new Dimension(770, 130));
-        this.setMinimumSize(new Dimension(770, 130));
+        this.setSize(UIUtil.scaleForGUI(770, 130));
+        this.setMinimumSize(UIUtil.scaleForGUI(770, 130));
         this.setResizable(true);
 
         UIUtil.updateWindowBounds(this);

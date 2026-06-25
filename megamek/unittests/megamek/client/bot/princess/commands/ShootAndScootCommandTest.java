@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link ShootAndScootCommand}: shoot-and-scoot must enable the bot's displacement mode, and shoot-and-scoot
- * with FALSE must disable it.
+ * with {@code false} must disable it.
  *
  * @author HammerGS
  */

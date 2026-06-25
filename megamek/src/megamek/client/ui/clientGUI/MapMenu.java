@@ -450,7 +450,7 @@ public class MapMenu extends JPopupMenu {
      * Creates a menu item ordering the given bot to hold position or to resume movement.
      *
      * @param bot  The bot player to send the order to
-     * @param hold TRUE for a hold position order, FALSE to resume movement
+     * @param hold {@code true} for a hold position order, {@code false} to resume movement
      *
      * @return The created menu item
      */

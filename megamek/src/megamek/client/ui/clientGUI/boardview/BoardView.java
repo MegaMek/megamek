@@ -2076,12 +2076,12 @@ public final class BoardView extends AbstractBoardView
      * Draws the turn number of a bot artillery heat-map marker directly on the hex, so it is visible in screenshots and
      * not just in the hover text. No-op for any other special hex display.
      *
-     * @param shd        The special hex display being drawn
-     * @param graphics2D The hex graphics context
-     * @param scale      The current board scale
+     * @param specialHexDisplay The special hex display being drawn
+     * @param graphics2D        The hex graphics context
+     * @param scale             The current board scale
      */
-    private void drawHeatMapTurnLabel(SpecialHexDisplay shd, Graphics2D graphics2D, float scale) {
-        String info = shd.getInfo();
+    private void drawHeatMapTurnLabel(SpecialHexDisplay specialHexDisplay, Graphics2D graphics2D, float scale) {
+        String info = specialHexDisplay.getInfo();
         if ((info == null) || !info.startsWith(SpecialHexDisplay.HEAT_MAP_PREFIX)) {
             return;
         }
@@ -2097,27 +2097,114 @@ public final class BoardView extends AbstractBoardView
     }
 
     /**
-     * @param shd A special hex display being drawn
-     *
-     * @return The opacity (0.2-1.0) to draw a bot artillery heat-map marker's icon at, encoded as a percent after the
-     *       ':' in its info text; 1.0 (fully opaque) for any non-heat-map display
+     * The cold-to-hot diverging color ramp for predicted-position heat-map markers: navy blue (coldest, a single
+     * enemy converging on the hex) through light blue, light gray, and light orange to crimson red (hottest, many
+     * enemies converging).
      */
-    private float heatMapMarkerAlpha(SpecialHexDisplay shd) {
-        String info = shd.getInfo();
+    private static final Color[] HEAT_MAP_COLOR_RAMP = {
+          new Color(0, 0, 128),      // navy blue - coldest
+          new Color(102, 178, 255),  // light blue
+          new Color(220, 220, 220),  // light gray (neutral middle)
+          new Color(255, 178, 102),  // light orange
+          new Color(220, 20, 60)     // crimson red - hottest
+    };
+
+    /** The enemy count at which a predicted-position heat-map hex is drawn fully hot (crimson). */
+    private static final int HEAT_MAP_MAX_HEAT_UNITS = 5;
+
+    /** Opacity of the predicted-position heat-map color fill, so the underlying terrain still shows through. */
+    private static final float HEAT_MAP_FILL_ALPHA = 0.55f;
+
+    /**
+     * Extracts the colon-separated heat-map control token (the {@code <turn>:<heat>:<kind>} part up to the first
+     * space) from a heat-map marker's info text. See {@link SpecialHexDisplay#HEAT_MAP_PREFIX}.
+     *
+     * @param info The marker's info text
+     *
+     * @return The control token (without the prefix), or an empty string if there is none
+     */
+    private String heatMapToken(String info) {
+        int prefixLength = SpecialHexDisplay.HEAT_MAP_PREFIX.length();
+        int space = info.indexOf(' ', prefixLength);
+        return (space > prefixLength) ? info.substring(prefixLength, space) : info.substring(prefixLength);
+    }
+
+    /**
+     * @param specialHexDisplay A special hex display being drawn
+     *
+     * @return {@code true} if this is a predicted-position heat-map marker (painted as a cold-to-hot color fill),
+     *       {@code false} for a firing marker or any non-heat-map display
+     */
+    private boolean isPredictedHeatMapMarker(SpecialHexDisplay specialHexDisplay) {
+        String info = specialHexDisplay.getInfo();
         if ((info == null) || !info.startsWith(SpecialHexDisplay.HEAT_MAP_PREFIX)) {
-            return 1.0f;
+            return false;
         }
-        int colon = info.indexOf(':', SpecialHexDisplay.HEAT_MAP_PREFIX.length());
-        int space = (colon > 0) ? info.indexOf(' ', colon) : -1;
-        if ((colon < 0) || (space < 0)) {
-            return 1.0f;
+        String[] fields = heatMapToken(info).split(":");
+        return (fields.length >= 3) && SpecialHexDisplay.HEAT_MAP_KIND_PREDICTED.equals(fields[2]);
+    }
+
+    /**
+     * @param info A heat-map marker's info text
+     *
+     * @return The number of enemies predicted to converge on the hex (the marker's heat), or 1 if it cannot be parsed
+     */
+    private int heatMapHeatUnits(String info) {
+        String[] fields = heatMapToken(info).split(":");
+        if (fields.length >= 2) {
+            try {
+                return Integer.parseInt(fields[1]);
+            } catch (NumberFormatException ignored) {
+                return 1;
+            }
         }
-        try {
-            int percent = Integer.parseInt(info.substring(colon + 1, space));
-            return Math.max(0.1f, Math.min(1.0f, percent / 100.0f));
-        } catch (NumberFormatException ignored) {
-            return 1.0f;
-        }
+        return 1;
+    }
+
+    /**
+     * Maps a predicted hex's heat (number of enemies converging on it) to a color on the cold-to-hot diverging ramp:
+     * one enemy is navy blue (coldest) and {@link #HEAT_MAP_MAX_HEAT_UNITS} or more is crimson red (hottest), with the
+     * intermediate counts interpolated through the ramp.
+     *
+     * @param heatUnits The number of enemies converging on the hex
+     *
+     * @return The color to paint the hex
+     */
+    private Color heatMapDivergingColor(int heatUnits) {
+        float normalized = (float) (heatUnits - 1) / (HEAT_MAP_MAX_HEAT_UNITS - 1);
+        normalized = Math.max(0.0f, Math.min(1.0f, normalized));
+        float scaledPosition = normalized * (HEAT_MAP_COLOR_RAMP.length - 1);
+        int lowerStop = (int) Math.floor(scaledPosition);
+        int upperStop = Math.min(lowerStop + 1, HEAT_MAP_COLOR_RAMP.length - 1);
+        float fraction = scaledPosition - lowerStop;
+        Color from = HEAT_MAP_COLOR_RAMP[lowerStop];
+        Color to = HEAT_MAP_COLOR_RAMP[upperStop];
+        int red = Math.round(from.getRed() + (fraction * (to.getRed() - from.getRed())));
+        int green = Math.round(from.getGreen() + (fraction * (to.getGreen() - from.getGreen())));
+        int blue = Math.round(from.getBlue() + (fraction * (to.getBlue() - from.getBlue())));
+        return new Color(red, green, blue);
+    }
+
+    /**
+     * Paints a predicted-position heat-map marker as a cold-to-hot translucent fill over the whole hex (navy = one
+     * enemy converging, crimson = many), so the predicted enemy concentration reads at a glance and cools as units
+     * are destroyed. No-op for any other special hex display.
+     *
+     * @param specialHexDisplay The special hex display being drawn
+     * @param graphics2D        The hex graphics context
+     * @param scale             The current board scale
+     */
+    private void drawHeatMapPredictedHex(SpecialHexDisplay specialHexDisplay, Graphics2D graphics2D, float scale) {
+        Color heatColor = heatMapDivergingColor(heatMapHeatUnits(specialHexDisplay.getInfo()));
+        Color previousColor = graphics2D.getColor();
+        Composite previousComposite = graphics2D.getComposite();
+        graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, HEAT_MAP_FILL_ALPHA));
+        graphics2D.setColor(heatColor);
+        AffineTransform hexScale = new AffineTransform();
+        hexScale.scale(scale, scale);
+        graphics2D.fill(hexScale.createTransformedShape(HEX_POLY));
+        graphics2D.setComposite(previousComposite);
+        graphics2D.setColor(previousColor);
     }
 
     @Override
@@ -2653,16 +2740,15 @@ public final class BoardView extends AbstractBoardView
             if (shdList != null) {
                 for (SpecialHexDisplay shd : shdList) {
                     if (shd.drawNow(game.getPhase(), game.getRoundCount(), getLocalPlayer(), GUIP)) {
-                        scaledImage = getScaledImage(shd.getDefaultImage(), true);
-                        // Heat-map markers fade their icon by heat (20% per contributing enemy); everything else is
-                        // drawn fully opaque. The turn label is always drawn at full opacity so it stays readable.
-                        float heatAlpha = heatMapMarkerAlpha(shd);
-                        Composite previousComposite = graphics2D.getComposite();
-                        if (heatAlpha < 1.0f) {
-                            graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, heatAlpha));
+                        // A predicted-position heat-map marker paints the hex with a cold-to-hot color (navy = one
+                        // enemy converging, crimson = many) instead of an icon; the firing marker and every other
+                        // display draw their icon. The turn label is drawn on top for either heat-map marker.
+                        if (isPredictedHeatMapMarker(shd)) {
+                            drawHeatMapPredictedHex(shd, graphics2D, scale);
+                        } else {
+                            scaledImage = getScaledImage(shd.getDefaultImage(), true);
+                            graphics2D.drawImage(scaledImage, 0, 0, boardPanel);
                         }
-                        graphics2D.drawImage(scaledImage, 0, 0, boardPanel);
-                        graphics2D.setComposite(previousComposite);
                         drawHeatMapTurnLabel(shd, graphics2D, scale);
                     }
                 }

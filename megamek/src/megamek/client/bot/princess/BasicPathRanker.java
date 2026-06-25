@@ -734,7 +734,7 @@ public class BasicPathRanker extends PathRanker {
     /**
      * @param unit The unit to check
      *
-     * @return TRUE if the unit has an undamaged artillery weapon (so it should fight from standoff range as a tube)
+     * @return {@code true} if the unit has an undamaged artillery weapon (so it should fight from standoff range as a tube)
      */
     private boolean hasOperationalArtillery(Entity unit) {
         return unit.getWeaponList().stream()
@@ -748,7 +748,7 @@ public class BasicPathRanker extends PathRanker {
      * @param tagRange The spotter's TAG range
      * @param game     The current game
      *
-     * @return TRUE if, from the given hex, the spotter has both TAG range and line of sight to at least one enemy (so
+     * @return {@code true} if, from the given hex, the spotter has both TAG range and line of sight to at least one enemy (so
      *       it can actually designate from there)
      */
     private boolean canDesignateFrom(Entity tagUnit, Coords from, List<Entity> enemies, int tagRange, Game game) {

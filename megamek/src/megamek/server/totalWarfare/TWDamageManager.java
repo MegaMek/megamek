@@ -149,6 +149,12 @@ public class TWDamageManager implements IDamageManager {
         Report report;
         int entityId = entity.getId();
 
+        // A bulldozer is destroyed on a 2D6 roll of 2 each time damage is dealt to the location mounting it (TacOps).
+        if ((damage > 0) && (entity instanceof Tank bulldozerTank)) {
+            BulldozerRules.rollDestructionFromLocationDamage(bulldozerTank, hit.getLocation())
+                  .ifPresent(reportVec::add);
+        }
+
         // If this unit is hit in the arm, and it's carrying something that should be damaged on arm hits, let's roll
         // and determine if the unit being carried is hit instead
         if ((hit.getLocation() == Mek.LOC_LEFT_ARM || hit.getLocation() == Mek.LOC_RIGHT_ARM)) {
@@ -2798,12 +2804,12 @@ public class TWDamageManager implements IDamageManager {
     }
 
     /**
-     * Applies a carried Bridge-Layer (AVLB) folding bridge as damage protection, TM p.242 / TW: an attack that would hit
-     * the location where the bridge is mounted (or, on a Support Vehicle, the turret) hits the bridge instead, reducing
-     * its Construction Factor by the damage. Once the bridge's CF reaches 0 it is destroyed and any remaining damage
-     * passes to the location normally. A critical hit while the bridge is still carried disables the deploy mechanism
-     * (the first one; further crits have no effect) and does not carry through to the location. The carried bridge does
-     * not protect against ammo explosions or damage applied directly to internal structure.
+     * Applies a carried Bridge-Layer (AVLB) folding bridge as damage protection, TM p.242 / TW: an attack that would
+     * hit the location where the bridge is mounted (or, on a Support Vehicle, the turret) hits the bridge instead,
+     * reducing its Construction Factor by the damage. Once the bridge's CF reaches 0 it is destroyed and any remaining
+     * damage passes to the location normally. A critical hit while the bridge is still carried disables the deploy
+     * mechanism (the first one; further crits have no effect) and does not carry through to the location. The carried
+     * bridge does not protect against ammo explosions or damage applied directly to internal structure.
      *
      * @param entity        the unit being damaged
      * @param hit           the incoming hit
@@ -2882,7 +2888,7 @@ public class TWDamageManager implements IDamageManager {
                 continue;
             }
             AVLB_LOGGER.debug("[AVLB] {}: hit to loc {} NOT absorbed; bridgelayer at loc {} (deployed={}, CF={}, "
-                  + "mechanismDisabled={}, missing={})", entity.getShortName(), hit.getLocation(), misc.getLocation(),
+                        + "mechanismDisabled={}, missing={})", entity.getShortName(), hit.getLocation(), misc.getLocation(),
                   bridgeState.isDeployed(), bridgeState.getCurrentCF(), bridgeState.isDeployMechanismDisabled(),
                   misc.isMissing());
         }

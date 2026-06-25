@@ -179,9 +179,9 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     }
 
     /**
-     * Enters confirm mode for a Bridge-Layer (AVLB) deployment: the hex directly in front of the unit, along its facing,
-     * is the only valid target (TM p.242 / TW), so it is highlighted and the player clicks it to confirm. The bridge is
-     * laid there at the end of the next turn if the unit stays stationary.
+     * Enters confirm mode for a Bridge-Layer (AVLB) deployment: the hex directly in front of the unit, along its
+     * facing, is the only valid target (TM p.242 / TW), so it is highlighted and the player clicks it to confirm. The
+     * bridge is laid there at the end of the next turn if the unit stays stationary.
      */
     private void deployBridge() {
         Entity entity = game.getEntity(currentEntity);

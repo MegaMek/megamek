@@ -34,12 +34,20 @@ package megamek.common.units;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import megamek.common.GameBoardTestCase;
 import megamek.common.Hex;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import org.junit.jupiter.api.BeforeAll;
@@ -73,6 +81,17 @@ public class FortifyTest extends GameBoardTestCase {
     @BeforeAll
     static void initializeEquipment() {
         EquipmentType.initializeTypes();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T serializeRoundTrip(T object) throws Exception {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream out = new ObjectOutputStream(bytes)) {
+            out.writeObject(object);
+        }
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            return (T) in.readObject();
+        }
     }
 
     @Nested
@@ -253,13 +272,14 @@ public class FortifyTest extends GameBoardTestCase {
         void undamagedVehicleFortifyAdvances() {
             Tank tank = fortifyingTank();
             tank.beginFortify();
-            assertEquals(Tank.DUG_IN_FORTIFYING1, tank.getDugIn(), "First turn enters stage 1");
+            assertEquals(1, tank.getFortifyStage(), "First turn enters stage 1");
 
             tank.newRound(1);
-            assertEquals(Tank.DUG_IN_FORTIFYING2, tank.getDugIn(), "Second turn advances to stage 2");
+            assertEquals(2, tank.getFortifyStage(), "Second turn advances to stage 2");
 
             tank.newRound(2);
-            assertEquals(Tank.DUG_IN_FORTIFYING3, tank.getDugIn(), "Third turn reaches stage 3");
+            assertEquals(3, tank.getFortifyStage(), "Third turn reaches stage 3");
+            assertTrue(tank.isFortifyOnFinalStage(), "Stage 3 is the final stage (completed at end phase)");
         }
 
         @Test
@@ -270,10 +290,74 @@ public class FortifyTest extends GameBoardTestCase {
 
             tank.setArmor(4, Tank.LOC_FRONT);
             tank.newRound(1);
-            assertEquals(Tank.DUG_IN_FORTIFYING1, tank.getDugIn(), "A damaged turn holds the vehicle at stage 1");
+            assertEquals(1, tank.getFortifyStage(), "A damaged turn holds the vehicle at stage 1");
 
             tank.newRound(2);
-            assertEquals(Tank.DUG_IN_FORTIFYING2, tank.getDugIn(), "With no further damage, the effort resumes");
+            assertEquals(2, tank.getFortifyStage(), "With no further damage, the effort resumes");
+        }
+
+        @Test
+        @DisplayName("A deserialized vehicle can still fortify (regression: null FortifyState NPE)")
+        void deserializedVehicleCanFortify() throws Exception {
+            Tank restored = serializeRoundTrip(fortifyingTank());
+            assertNotNull(restored.getFortifyState(), "Fortify state is recreated after deserialization");
+            restored.beginFortify();
+            assertEquals(1, restored.getFortifyStage(), "A deserialized vehicle begins fortifying without an NPE");
+        }
+    }
+
+    @Nested
+    @DisplayName("Mek fortification (backhoe / fieldworks, TO:AUE p.153, Corrected Sixth Printing)")
+    class MekFortification {
+
+        private BipedMek fortifyingMek() {
+            BipedMek mek = new BipedMek();
+            mek.setId(4);
+            mek.setCrew(new Crew(CrewType.SINGLE));
+            for (int location = 0; location < mek.locations(); location++) {
+                mek.initializeArmor(10, location);
+                mek.initializeInternal(5, location);
+            }
+            mek.setGame(getGame());
+            return mek;
+        }
+
+        @Test
+        @DisplayName("A Mek shares the vehicle-style fortify machine: it advances each clean turn")
+        void mekFortifyAdvances() {
+            BipedMek mek = fortifyingMek();
+            mek.beginFortify();
+            assertEquals(1, mek.getFortifyStage(), "First turn enters stage 1");
+
+            mek.newRound(1);
+            assertEquals(2, mek.getFortifyStage(), "Second turn advances to stage 2");
+
+            mek.newRound(2);
+            assertEquals(3, mek.getFortifyStage(), "Third turn reaches stage 3");
+            assertTrue(mek.isFortifyOnFinalStage(), "Stage 3 is the final stage");
+        }
+
+        @Test
+        @DisplayName("Damage during a fortifying turn extends the Mek's effort by one turn")
+        void damageExtendsMekFortify() {
+            BipedMek mek = fortifyingMek();
+            mek.beginFortify();
+
+            mek.setArmor(4, Mek.LOC_CENTER_TORSO);
+            mek.newRound(1);
+            assertEquals(1, mek.getFortifyStage(), "A damaged turn holds the Mek at stage 1");
+
+            mek.newRound(2);
+            assertEquals(2, mek.getFortifyStage(), "With no further damage, the effort resumes");
+        }
+
+        @Test
+        @DisplayName("A deserialized Mek can still fortify (regression: null FortifyState NPE)")
+        void deserializedMekCanFortify() throws Exception {
+            BipedMek restored = serializeRoundTrip(fortifyingMek());
+            assertNotNull(restored.getFortifyState(), "Fortify state is recreated after deserialization");
+            restored.beginFortify();
+            assertEquals(1, restored.getFortifyStage(), "A deserialized Mek begins fortifying without an NPE");
         }
     }
 
@@ -335,6 +419,48 @@ public class FortifyTest extends GameBoardTestCase {
             setBoard("FORTIFY_WATER_BOARD");
             MovePath path = getMovePathFor(fieldworksInfantry(), MoveStepType.FORTIFY);
             assertFalse(path.isMoveLegal(), "A fortified hex may not be created in water (TO:AUE p.153)");
+        }
+
+        private BipedMek plainMek() {
+            BipedMek mek = new BipedMek();
+            mek.setId(6);
+            mek.setCrew(new Crew(CrewType.SINGLE));
+            for (int location = 0; location < mek.locations(); location++) {
+                mek.initializeArmor(10, location);
+                mek.initializeInternal(5, location);
+            }
+            return mek;
+        }
+
+        private BipedMek backhoeMek() throws LocationFullException {
+            BipedMek mek = plainMek();
+            mek.addEquipment(EquipmentType.get(EquipmentTypeLookup.BACKHOE), Mek.LOC_RIGHT_ARM);
+            return mek;
+        }
+
+        @Test
+        @DisplayName("A Mek with a backhoe may fortify clear terrain (Vehicles and Fieldworks, TO:AUE p.153, "
+              + "Corrected Sixth Printing)")
+        void mekWithBackhoeMayFortify() throws LocationFullException {
+            setBoard("FORTIFY_BOARD");
+            MovePath path = getMovePathFor(backhoeMek(), MoveStepType.FORTIFY);
+            assertTrue(path.isMoveLegal(), "A Mek with fieldworks equipment may build a fortified hex");
+        }
+
+        @Test
+        @DisplayName("A Mek without fieldworks equipment may not fortify")
+        void mekWithoutEquipmentMayNotFortify() {
+            setBoard("FORTIFY_BOARD");
+            MovePath path = getMovePathFor(plainMek(), MoveStepType.FORTIFY);
+            assertFalse(path.isMoveLegal(), "Building a fortified hex requires fieldworks-capable equipment");
+        }
+
+        @Test
+        @DisplayName("A Mek may not dig a foxhole (DIG_IN remains infantry/vehicle only)")
+        void mekMayNotDigIn() throws LocationFullException {
+            setBoard("FORTIFY_BOARD");
+            MovePath path = getMovePathFor(backhoeMek(), MoveStepType.DIG_IN);
+            assertFalse(path.isMoveLegal(), "Meks build fortified hexes but do not dig foxholes");
         }
     }
 

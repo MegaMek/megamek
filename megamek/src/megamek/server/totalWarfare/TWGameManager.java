@@ -843,6 +843,9 @@ public class TWGameManager extends AbstractGameManager {
                 case ENTITY_ACTIVATE_HIDDEN:
                     receiveEntityActivateHidden(packet, connId);
                     break;
+                case ENTITY_DEPLOY_BRIDGE:
+                    receiveDeployBridge(packet, connId);
+                    break;
                 case ENTITY_NOVA_NETWORK_CHANGE:
                     receiveEntityNovaNetworkModeChange(packet, connId);
                     break;
@@ -4666,7 +4669,9 @@ public class TWGameManager extends AbstractGameManager {
                       game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE),
                       entity.delta_distance);
                 if (!bldgSuffered) {
-                    Vector<Report> reports = damageBuilding(bldg, chargeDamage, nextPos);
+                    // A front-mounted bulldozer doubles the charge damage dealt to the building (TacOps).
+                    int buildingChargeDamage = ChargeAttackAction.getBuildingChargeDamage(entity, chargeDamage);
+                    Vector<Report> reports = damageBuilding(bldg, buildingChargeDamage, nextPos);
                     for (Report report : reports) {
                         report.subject = entity.getId();
                     }
@@ -14721,7 +14726,9 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
-            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
+            // A front-mounted bulldozer doubles the charge damage dealt to the building (TacOps).
+            int buildingChargeDamage = ChargeAttackAction.getBuildingChargeDamage(ae, damage);
+            Vector<Report> buildingReport = damageBuilding(bldg, buildingChargeDamage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
@@ -15718,6 +15725,22 @@ public class TWGameManager extends AbstractGameManager {
      */
     void checkBuildBridges() {
         new BridgeBuildPhaseHandler(this).checkBuildBridges();
+    }
+
+    /**
+     * End-phase resolution for vehicles clearing rubble with a bulldozer, TacOps. Delegates to
+     * {@link RubbleClearingHandler} so the bulldozer rules do not add to this already very large class.
+     */
+    void checkClearRubble() {
+        new RubbleClearingHandler(this).checkClearRubble();
+    }
+
+    /**
+     * End-phase resolution for Bridge-Layer (AVLB) deployments, TM p.242 / TW. Delegates to
+     * {@link AvlbDeployPhaseHandler} so the bridgelayer rules do not add to this already very large class.
+     */
+    void checkDeployBridges() {
+        new AvlbDeployPhaseHandler(this).checkDeployBridges();
     }
 
     /**
@@ -26607,6 +26630,18 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Receives an End-Phase Bridge-Layer (AVLB) deployment declaration (TM p.242 / TW) and delegates the rules
+     * resolution to {@link AvlbDeployPhaseHandler}.
+     *
+     * @param packet    the packet carrying the declaring unit's id and chosen equipment index
+     * @param connIndex the connection that sent the packet
+     */
+    private void receiveDeployBridge(Packet packet, int connIndex) throws InvalidPacketDataException {
+        new AvlbDeployPhaseHandler(this).receiveDeployDeclaration(packet.getIntValue(0), packet.getIntValue(1),
+              connIndex);
+    }
+
+    /**
      * receive and process an entity nova network mode change packet
      *
      * @param packet    the packet to be processed
@@ -31430,12 +31465,13 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            if (ent instanceof Tank tnk) {
-                int dig = tnk.getDugIn();
-                if (dig == Tank.DUG_IN_FORTIFYING3) {
-                    completeFortification(tnk);
-                } else if ((dig != Tank.DUG_IN_NONE) && tnk.isFortifyExtendedThisRound()) {
-                    reportFortificationDelayed(tnk);
+            // Vehicle-style fieldworkers (Tank and a Mek with a backhoe/equivalent) share the Fortifiable stage
+            // machine; Infantry is handled above and is not Fortifiable.
+            if (ent instanceof Fortifiable fortifier) {
+                if (fortifier.isFortifyOnFinalStage()) {
+                    completeFortification(ent);
+                } else if (fortifier.isFortifying() && fortifier.isFortifyExtendedThisRound()) {
+                    reportFortificationDelayed(ent);
                 }
             }
         }
@@ -31467,9 +31503,9 @@ public class TWGameManager extends AbstractGameManager {
                 coLocated.setDugIn(Infantry.DUG_IN_NONE);
             }
         }
-        // A vehicle builder is not cleared by the loop above, so reset it explicitly.
-        if (builder instanceof Tank tank) {
-            tank.setDugIn(Tank.DUG_IN_NONE);
+        // A vehicle or Mek builder is not cleared by the infantry loop above, so reset it explicitly.
+        if (builder instanceof Fortifiable fortifier) {
+            fortifier.cancelFortify();
         }
 
         sendToast(GameToastEvent.Level.SUCCESS,

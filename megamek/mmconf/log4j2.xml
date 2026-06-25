@@ -108,6 +108,32 @@
           </Logger>
         -->
         <!--
+          Bulldozer (rubble clearing / movement override / destruction roll) diagnostics, silent by default
+          (parent "megamek" logger at info). All emit [Bulldozer]-tagged lines. Uncomment to trace: the Clear
+          Rubble button enablement and rubble-hex target selection (MovementDisplay); the clear-rubble move-step
+          legality and the bulldozer rubble-entry override (MoveStep); starting the clear (MovePathHandler);
+          per-turn clearing progress, completion and abandonment (RubbleClearingHandler); and the
+          bulldozer-location 2D6 destruction roll (TWDamageManager). Then grep logs/megamek.log for "[Bulldozer]".
+          NOTE: if the Trench/Fieldworks block above is also uncommented, delete the duplicate MoveStep and
+          MovePathHandler lines here - log4j rejects two Logger entries with the same name.
+
+          <Logger name="megamek.client.ui.panels.phaseDisplay.MovementDisplay" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.common.moves.MoveStep" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.server.totalWarfare.MovePathHandler" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.server.totalWarfare.RubbleClearingHandler" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.server.totalWarfare.TWDamageManager" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
           Princess movement-decision loggers, silent by default (parent "megamek.client.bot"
           logger at error). Candidate-path data with scoring columns (isSprinting,
           sprintExposurePenalty, sprintThreatEnemyId, ...) is always written as TSV to
@@ -144,18 +170,39 @@
         </Logger>
         -->
         <!--
+          Bridge-Layer (AVLB) diagnostics (TM p.242 / TW). All messages are tagged [AVLB]; grep logs/megamek.log
+          for that tag to follow the whole feature flow. This is a dedicated logger (megamek.feature.AVLB), not a
+          host class, so enabling it at debug surfaces the eligibility-gate reasons (why the Deploy Bridge button is
+          disabled, why a deploy step was rejected) without flooding the log with Entity/MoveStep debug noise. Deploy
+          declaration, placement and cancellation are logged at INFO by the server handlers and appear via the parent
+          "megamek" logger even with this block commented out. Uncomment the logger below to also surface the debug
+          gate reasons while diagnosing; leave it commented for normal play.
+
+          <Logger name="megamek.feature.AVLB" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
           Pre-End Declarations phase diagnostics, silent by default (parent "megamek" logger at info). All emit
           [PreEnd]-tagged lines. Uncomment to trace the client turn lifecycle and button/done state
           (PreEndDeclarationsDisplay), server turn generation and the eligible-unit list (TWPhasePreparationManager),
           and bot turn handling (Princess). Logs land in logs/megamek.log.
 
           <Logger name="megamek.client.ui.panels.phaseDisplay.PreEndDeclarationsDisplay" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
               <AppenderRef ref="MegaMekLog" />
           </Logger>
           <Logger name="megamek.server.totalWarfare.TWPhasePreparationManager" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
               <AppenderRef ref="MegaMekLog" />
           </Logger>
           <Logger name="megamek.client.bot.princess.Princess" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
               <AppenderRef ref="MegaMekLog" />
           </Logger>
         -->

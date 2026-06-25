@@ -56,6 +56,13 @@ public class Terrains implements Serializable {
     public static final int RUBBLE = 4; // 1: light bldg 2: medium bldg 3: heavy
     // bldg 4: hardened bldg 5: wall 6:
     // ultra
+    /**
+     * Base {@link #FLUFF} terrain level for the cosmetic "cleared rubble path" overlay left after a bulldozer clears a
+     * rubble hex (TacOps). The hex itself becomes clear terrain (rubble removed); a fluff terrain at
+     * {@code CLEARED_RUBBLE_FLUFF_BASE + structureType} (1 light .. 5 wall) is added purely so the tileset can draw the
+     * rubble "_path" tiles showing the hex was once rubble. Fluff has no gameplay effect (see {@code Hex.isClearHex}).
+     */
+    public static final int CLEARED_RUBBLE_FLUFF_BASE = 2000;
     public static final int JUNGLE = 5; // 1: light 2: heavy 3: ultra
     public static final int SAND = 6;
     public static final int TUNDRA = 7;
@@ -352,11 +359,16 @@ public class Terrains implements Serializable {
                     return "Rough (unknown)";
                 }
             case RUBBLE:
-                if (level > 5) {
-                    return "Ultra rubble";
-                } else {
-                    return "Rubble";
-                }
+                // Rubble level encodes the destroyed structure's type (BuildingType value): 1 Light .. 4 Hardened,
+                // 5 Wall, 6+ ultra (destroyed Castle Brian / fortress, TacOps:AR p.37).
+                return switch (level) {
+                    case 1 -> "Rubble (Light)";
+                    case 2 -> "Rubble (Medium)";
+                    case 3 -> "Rubble (Heavy)";
+                    case 4 -> "Rubble (Hardened)";
+                    case 5 -> "Rubble (Wall)";
+                    default -> "Ultra-Rubble";
+                };
             case WATER:
                 return "Water (depth " + level + ")";
             case PAVEMENT:

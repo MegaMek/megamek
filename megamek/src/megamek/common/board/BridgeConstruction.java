@@ -178,6 +178,19 @@ public final class BridgeConstruction {
      *       than the site, cannot anchor; a span may still point that way to be continued by a further span (wide
      *       rivers/canyons). Flat ground anchors nothing, so a flat site is never valid.
      */
+    /**
+     * @param bank      a hex adjacent to a bridge site (e.g. the bridgelayer's own hex)
+     * @param targetHex the hex a bridge would be placed in
+     *
+     * @return whether the bank can anchor a bridge in the target hex: over water it must be land/shallow (or already
+     *       hold a bridge); over a dry gap it must be a rim higher than the target floor (or hold a bridge). Exposes
+     *       the internal anchor test for callers that must require a <em>specific</em> bank to anchor - e.g. the AVLB
+     *       bridgelayer's own hex, which must be a rim/land rather than the canyon floor. TM p.242 / TW.
+     */
+    public static boolean isAnchoringBank(Hex bank, Hex targetHex) {
+        return anchorsBridge(bank, targetHex);
+    }
+
     private static boolean anchorsBridge(Hex bank, Hex targetHex) {
         if (bank.containsTerrain(Terrains.BRIDGE)) {
             return true;
@@ -188,11 +201,15 @@ public final class BridgeConstruction {
     /**
      * @param hex the hex to check
      *
-     * @return {@code true} if the hex holds water of depth 1 or more. Engineers double the CF of a bridge raised over
-     *       water, TO:AUE p.152; depth 0 water is treated as land.
+     * @return {@code true} if the hex is a water hex for bridge purposes. A water hex (Total Warfare p.32) is one
+     *       covered by a stream, river, swamp, pond or lake, so this is any hex holding water of any depth
+     *       (streams/rivers/ponds/lakes), a swamp, or rapids. A bridge may be placed in any water hex (when adjacent to
+     *       a land hex or another bridge), and a bridge over water gains double CF from its flotation devices. Shared by
+     *       Bridge-Building Engineers (TO:AUE p.152) and the Bridge-Layer / AVLB (TM p.242 / TW) so both use the same
+     *       water-hex definition.
      */
     public static boolean isOverWater(Hex hex) {
-        return hex.terrainLevel(Terrains.WATER) > 0;
+        return hex.containsAnyTerrainOf(Terrains.WATER, Terrains.SWAMP, Terrains.RAPIDS);
     }
 
     /**

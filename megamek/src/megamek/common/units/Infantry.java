@@ -95,7 +95,18 @@ public abstract class Infantry extends Entity {
      * one turn (TO:AR p.106 / TO:AUE p.153). Server-side runtime state; not written to save files (dug-in progress is
      * itself not persisted).
      */
-    private final FortifyState fortifyState = new FortifyState();
+    private transient FortifyState fortifyState = new FortifyState();
+
+    /**
+     * @return the fortify damage tracker, recreated lazily so it is never {@code null} on a deserialized platoon (the field is
+     *       transient runtime state, so its initializer does not run during deserialization).
+     */
+    private FortifyState fortifyState() {
+        if (fortifyState == null) {
+            fortifyState = new FortifyState();
+        }
+        return fortifyState;
+    }
 
     /**
      * Number of idle turns (no movement, no fire) the unit must spend "hitting the deck" before it may convert to "dug
@@ -463,7 +474,7 @@ public abstract class Infantry extends Entity {
         if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
             // Damage taken during a digging-in / fortifying turn extends the effort by one turn (TO:AR p.106 /
             // TO:AUE p.153): hold the progress counter this round instead of advancing it.
-            if (fortifyState.checkpointWasDamaged(currentFortifyHealthSignature())) {
+            if (fortifyState().checkpointWasDamaged(currentFortifyHealthSignature())) {
                 LOGGER.debug("[Fortify] {}: damaged while fortifying - effort extended by 1 turn (dug-in stage {})",
                       getShortName(), dugIn);
             } else {
@@ -512,7 +523,7 @@ public abstract class Infantry extends Entity {
         } else {
             setDugIn(DUG_IN_WORKING);
         }
-        fortifyState.begin(currentFortifyHealthSignature());
+        fortifyState().begin(currentFortifyHealthSignature());
     }
 
     /**
@@ -521,7 +532,7 @@ public abstract class Infantry extends Entity {
      */
     public void beginFortify() {
         setDugIn(DUG_IN_FORTIFYING1);
-        fortifyState.begin(currentFortifyHealthSignature());
+        fortifyState().begin(currentFortifyHealthSignature());
     }
 
     /**
@@ -538,7 +549,7 @@ public abstract class Infantry extends Entity {
      *       progress counter was held rather than advanced). TO:AR p.106 / TO:AUE p.153.
      */
     public boolean isFortifyExtendedThisRound() {
-        return fortifyState.wasExtendedAtLastCheckpoint();
+        return fortifyState().wasExtendedAtLastCheckpoint();
     }
 
     /**
@@ -615,7 +626,7 @@ public abstract class Infantry extends Entity {
     public void clearGroundPostures() {
         setDugIn(DUG_IN_NONE);
         setHitTheDeck(false);
-        fortifyState.reset();
+        fortifyState().reset();
     }
 
     /**

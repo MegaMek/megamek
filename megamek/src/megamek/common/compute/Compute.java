@@ -5995,6 +5995,7 @@ public class Compute {
             // Can't attack if flying
             reason = "Cannot do leg attack while flying.";
         } else if ((attacker.getMovementMode().isUMUInfantry())
+              && (game.getHexOf(defender) != null)
               && !(game.getHexOf(defender).hasDepth1WaterOrDeeper())) {
             // UMU equipped infantry can only make leg attacks if the target is in depth 1+ water
             reason = "Cannot make leg attacks unless the target is in depth 1 or deeper water";

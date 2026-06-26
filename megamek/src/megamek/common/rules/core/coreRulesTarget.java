@@ -1,5 +1,4 @@
-package megamek.common.rules;
-
+package megamek.common.rules.core;
 /*
  * Copyright (C) 2026 James Magnan (bmazur@sev.org)
  * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
@@ -34,16 +33,7 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
-import megamek.common.rolls.PilotingRollData;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityMovementType;
+import megamek.common.rules.rulesTarget;
 
-/*
-This abstract class is to handle rules that are in relation to PSRs. 
- */
-public abstract class rulesPsrCheck {
-    
-    // Entity calls this when trying to run with damage
-    public abstract void checkRunningWithDamage(Entity e, PilotingRollData r, int gyroDamage,
-          EntityMovementType overallMoveType);
+public class coreRulesTarget extends rulesTarget {
 }

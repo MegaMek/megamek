@@ -149,9 +149,9 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
-import megamek.common.rules.rulesPsrCheck;
-import megamek.common.rules.core.coreRulesPsrCheck;
-import megamek.common.rules.totalwarfare.twRulesPsrCheck;
+import megamek.common.rules.rulesPsr;
+import megamek.common.rules.core.coreRulesPsr;
+import megamek.common.rules.totalwarfare.twRulesPsr;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.
@@ -1069,7 +1069,7 @@ public abstract class Entity extends TurnOrdered
     private boolean hasFleeZone = false;
     private HexArea fleeZone = HexArea.EMPTY_AREA;
     
-    private rulesPsrCheck rulesPsr = new coreRulesPsrCheck();
+    private rulesPsr rulesPsr = new coreRulesPsr();
 
     /**
      * Generates a new, blank, entity.
@@ -1114,7 +1114,7 @@ public abstract class Entity extends TurnOrdered
                 
         // Check if the game uses Total Warfare instead of Core, and swaps the rule objects
         if (game.getOptions().booleanOption(OptionsConstants.TWRULES)) {
-            rulesPsr = new twRulesPsrCheck();
+            rulesPsr = new twRulesPsr();
         }
     }
 

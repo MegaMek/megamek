@@ -1,6 +1,4 @@
 package megamek.common.rules.core;
-
-
 /*
  * Copyright (C) 2026 James Magnan (bmazur@sev.org)
  * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
@@ -35,29 +33,7 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
-import megamek.common.options.OptionsConstants;
-import megamek.common.rolls.PilotingRollData;
-import megamek.common.rolls.TargetRoll;
-import megamek.common.rules.rulesPsrCheck;
-import megamek.common.units.EntityMovementType;
-import megamek.common.units.Mek;
-import megamek.common.units.Entity;
+import megamek.common.rules.rulesUnits;
 
-/* This class is for Core Rules that involve PSR checks and modifiers
- */
-public class coreRulesPsrCheck extends rulesPsrCheck {
-    // Called from Entity
-    public void checkRunningWithDamage(Entity e, PilotingRollData r, int gyroDamage, EntityMovementType overallMoveType) {
-        if (e.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
-            gyroDamage = 0;
-        }
-        if (((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT)) &&
-              e.canFall() &&
-              ((gyroDamage > 0) || e.hasHipCrit())) {
-            // append the reason modifier
-            r.append(new PilotingRollData(e.getId(), 0, "running with damaged hip actuator or gyro"));
-        } else {
-            r.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
-        }
-    }
+public class coreRulesUnits extends rulesUnits {
 }

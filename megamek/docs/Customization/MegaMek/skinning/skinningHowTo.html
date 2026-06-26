@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<HTML lang="en">
+<HEAD>
+    <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+    <TITLE></TITLE>
+    <STYLE TYPE="text/css">
+        @page {
+            margin: 0.79in
+        }
+
+        P {
+            margin-bottom: 0.08in
+        }
+
+        H2 {
+            margin-bottom: 0.08in
+        }
+    </STYLE>
+</HEAD>
+<BODY>
+<H1>How to custom Megamek Skins</H1>
+<P>
+    The skin specifications for Megamek can be found in <code>mmconf/defaultSkin.xml</code>. The schema for this XML
+    file can be found in <code>mmconfg/skinSchema.xls</code>. Skin specifications consist of multiple UI_Element tags
+    which consist of a name, a border specification, and zero or more background_image tags. The name identifies which
+    UI elements this skin specification applies to. The <code>defaultButton</code> and <code>defaultElement</code>
+    specifications are special in that they are used to specify the skin for any unspecified <code>MegamekButton</code>
+    and any UI component that uses a <code>MegamekBorder</code> but doesn't have an explicit UI_element tag.
+</P>
+<P>
+    Border tags define what images are used in the border for the UI component. Currently, there are 8 possible images:
+    four corners, and four images that go in between the corners. The images that go in between corners are referred to
+    as edges. The image below illustrates these: each corner is highlighted in green and each edge is highlighted in
+    red.
+</P>
+<P>
+    <IMG SRC="skinningHowTo_html_m76ab8b0.png" NAME="graphics1" WIDTH=502 HEIGHT=385 BORDER=0>
+</P>
+<P>
+    Additionally, the two background images for buttons are illustrated.
+</P>
+</BODY>
+</HTML>

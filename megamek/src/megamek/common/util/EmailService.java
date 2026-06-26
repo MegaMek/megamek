@@ -1,0 +1,220 @@
+/*
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
+package megamek.common.util;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Vector;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import megamek.codeUtilities.StringUtility;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.game.Game;
+import megamek.logging.MMLogger;
+
+public class EmailService {
+    private static final MMLogger logger = MMLogger.create(EmailService.class);
+
+    private static class RoundReportMessage extends MimeMessage {
+
+        private RoundReportMessage(InternetAddress from,
+              Player to,
+              Game game,
+              Vector<Report> reports,
+              int sequenceNumber,
+              Session session) throws Exception {
+            super(session);
+
+            // Since MM mutates game state as it progresses, need to
+            // fully create the complete message here, so that by the
+            // time it is sent things like the current round number
+            // hasn't changed from underneath it
+
+            setFrom(from);
+            setRecipient(
+                  RecipientType.TO,
+                  new InternetAddress(to.getEmail(), to.getName()));
+
+            setHeader(
+                  "Message-ID",
+                  newMessageId(from, to, game, sequenceNumber));
+            if (sequenceNumber > 0) {
+                setHeader(
+                      "In-Reply-To",
+                      newMessageId(from, to, game, sequenceNumber - 1));
+            }
+
+            Report subjectReport;
+            var round = game.getRoundCount();
+            if (round < 1) {
+                subjectReport = new Report(990);
+            } else {
+                subjectReport = new Report(991);
+                subjectReport.add(round, false);
+            }
+            setSubject(subjectReport.text());
+
+            var body = new StringBuilder("<div style=\"white-space: pre\">");
+            for (var report : reports) {
+                body.append(report.text());
+            }
+            body.append("</div>");
+            setText(body.toString(), "UTF-8", "html");
+        }
+
+        @Override
+        protected void updateMessageID() {
+            // no-op, we have already set it in the ctor
+        }
+
+        private static String newMessageId(InternetAddress from,
+              Player to,
+              Game game,
+              int actualSequenceNumber) {
+            final var address = from.getAddress();
+            return String.format(
+                  "<megamek.%s.%d.%d.%d@%s>",
+                  game.getUUIDString(),
+                  game.getRoundCount(),
+                  to.getId(),
+                  actualSequenceNumber,
+                  address.substring(address.indexOf("@") + 1));
+        }
+
+    }
+
+    private final InternetAddress from;
+    private final Map<Player, Integer> messageSequences = new HashMap<>();
+    private final Session mailSession;
+
+    private final BlockingQueue<Message> mailQueue = new LinkedBlockingQueue<>();
+    private final Thread mailWorker;
+    private boolean running = true;
+
+    public EmailService(Properties mailProperties) throws Exception {
+        this.from = InternetAddress.parse(
+              mailProperties.getProperty("megamek.smtp.from", ""))[0];
+
+        Authenticator auth = null;
+        var login = mailProperties.getProperty("megamek.smtp.login", "").trim();
+        var password = mailProperties.getProperty("megamek.smtp.password", "").trim();
+        if (!login.isBlank() && !password.isBlank()) {
+            auth = new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(login, password);
+                }
+            };
+        }
+
+        mailSession = Session.getInstance(mailProperties, auth);
+
+        mailWorker = new Thread(this::workerMain);
+        mailWorker.start();
+    }
+
+    public Vector<Player> getEmailablePlayers(Game game) {
+        Vector<Player> emailable = new Vector<>();
+        for (var player : game.getPlayersList()) {
+            if (!StringUtility.isNullOrBlank(player.getEmail()) && !player.isBot()
+                  && !player.isObserver()) {
+                emailable.add(player);
+            }
+        }
+        return emailable;
+    }
+
+    public Message newReportMessage(Game game, Vector<Report> reports, Player player) throws Exception {
+        int nextSequence = 0;
+        synchronized (messageSequences) {
+            var messageSequence = messageSequences.get(player);
+            if (messageSequence != null) {
+                nextSequence = messageSequence + 1;
+            }
+            messageSequences.put(player, nextSequence);
+        }
+        return new RoundReportMessage(
+              from, player, game, reports, nextSequence, mailSession);
+    }
+
+    public void send(final Message message) {
+        mailQueue.offer(message);
+    }
+
+    public void reset() {
+        messageSequences.clear();
+    }
+
+    public void shutdown() {
+        this.running = false;
+        this.mailWorker.interrupt();
+    }
+
+    private void workerMain() {
+        while (running) {
+            try {
+                // blocks until a message is received
+                var message = mailQueue.take();
+
+                try (Transport transport = mailSession.getTransport(message.getFrom()[0])) {
+                    transport.connect();
+                    while (message != null) {
+                        message.saveChanges();
+                        transport.sendMessage(message, message.getAllRecipients());
+
+                        // If there are any other messages in the queue,
+                        // send them immediately while the connection is
+                        // still open. This doesn't block;
+                        message = mailQueue.poll();
+                    }
+                }
+            } catch (InterruptedException ex) {
+                // All good, just shut down
+                running = false;
+            } catch (Exception ex) {
+                logger.error("Error sending email", ex);
+            }
+        }
+    }
+}

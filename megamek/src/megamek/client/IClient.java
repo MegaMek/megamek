@@ -1,0 +1,190 @@
+/*
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
+package megamek.client;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import megamek.common.game.IGame;
+import megamek.common.game.InGameObject;
+import megamek.common.Player;
+
+public interface IClient {
+    // region Server Connection
+
+    /**
+     * Attempt to connect to the specified host
+     *
+     * @return true if successful.
+     */
+    boolean connect();
+
+    /**
+     * @return The name of Client, typically the same as the local player's name.
+     */
+    String getName();
+
+    /**
+     * @return The port that this Client uses to connect to the server.
+     */
+    int getPort();
+
+    /**
+     * @return The server host address.
+     */
+    String getHost();
+
+    /**
+     * Cleans up and closes resources of this Client.
+     */
+    void die();
+
+    // endregion
+
+    // region Game Content
+
+    /**
+     * Returns the game of this client as a game-type independent IGame. Note that the game object is only updated, not
+     * replaced and a reference to it can therefore be kept.
+     *
+     * @return The game of this client
+     */
+    IGame getGame();
+
+    /**
+     * @param id The in-game object associated with the given ID.
+     *
+     * @return An Optional of {@link InGameObject} if it exists.
+     */
+    default Optional<InGameObject> getInGameObject(int id) {
+        return getGame().getInGameObject(id);
+    }
+
+    /**
+     * @return A list of all in-game objects of the game. This list is copied and may be safely modified.
+     */
+    default List<InGameObject> getInGameObjects() {
+        return getGame().getInGameObjects();
+    }
+
+    /**
+     * @param id The player with the given ID, or null if there is no such player.
+     *
+     * @return The player object.
+     */
+    default Player getPlayer(int id) {
+        return getGame().getPlayer(id);
+    }
+
+    /**
+     * @return The ID of the player playing at this Client.
+     */
+    int getLocalPlayerNumber();
+
+    /**
+     * @return True when the currently active turn is a turn for the local player
+     */
+    boolean isMyTurn();
+
+    /**
+     * Sets the ID of the player playing at this Client.
+     *
+     * @param localPlayerNumber The new local player's ID
+     */
+    // TODO : only used by AddBotUtil -> could be included in a bot's constructor
+    // and removed here
+    void setLocalPlayerNumber(int localPlayerNumber);
+
+    /**
+     * @return The local player (playing at this Client).
+     */
+    default Player getLocalPlayer() {
+        return getPlayer(getLocalPlayerNumber());
+    }
+
+    /**
+     * @param id ID of player
+     *
+     * @return True when there is a player (incl. bot) with the given ID in the game.
+     */
+    default boolean playerExists(int id) {
+        return getPlayer(id) != null;
+    }
+
+    // endregion
+
+    // region Bots
+
+    /**
+     * Returns the map containing this Client's local bots, wherein the key is the bot's player name and the value the
+     * Client.
+     *
+     * @return This Client's local bots mapped to their player name
+     */
+    Map<String, AbstractClient> getBots();
+
+    /**
+     * @param player the {@link Player} that we need to know is a bot or not.
+     *
+     * @return True when the given player is a bot added/controlled by this Client.
+     */
+    default boolean isLocalBot(Player player) {
+        return getBots().containsKey(player.getName());
+    }
+
+    /**
+     * Returns the Client associated with the given local bot player. If the player is not a local bot, returns null.
+     *
+     * @param player The player whose client we're looking for.
+     *
+     * @return The Client for the given player if it's a bot, null otherwise
+     */
+    default AbstractClient getBotClient(Player player) {
+        return getBots().get(player.getName());
+    }
+
+    // endregion
+
+    /**
+     * Sends a "this player is done/not done" message to the server.
+     *
+     * @param done Is the player done or not.
+     */
+    void sendDone(boolean done);
+
+    void sendChat(String message);
+
+    void sendPause();
+}

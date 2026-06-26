@@ -1,0 +1,316 @@
+/*
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
+package megamek.common.equipment;
+
+import megamek.common.CriticalSlot;
+import megamek.common.Messages;
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+
+public class MiscMounted extends Mounted<MiscType> {
+
+    public static final int MINE_NONE = -1;
+    public static final int MINE_CONVENTIONAL = 0;
+    public static final int MINE_VIBRABOMB = 1;
+    public static final int MINE_ACTIVE = 2;
+    public static final int MINE_INFERNO = 3;
+    public static final int MINE_EMP = 4;
+    public static final int MINE_COMMAND_DETONATED = 5;
+
+    private int baseDamageAbsorptionRate = 0;
+    private int baseDamageCapacity = 0;
+    private int damageTaken = 0;
+    private int mineType = MINE_NONE;
+    private int vibraSetting = 20;
+    private int empSetting = 10;
+
+    /** Carried folding-bridge state for Bridge-Layer (AVLB) equipment; {@code null} for all other equipment. */
+    private BridgeLayerState bridgeLayerState = null;
+
+    public MiscMounted(Entity entity, MiscType type) {
+        super(entity, type);
+
+        if (type.hasFlag(MiscType.F_MINE)) {
+            setMineType(MINE_CONVENTIONAL);
+            // Used to keep track of the # of mines
+            setShotsLeft(1);
+        }
+        if (type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {
+            setMineType(MINE_CONVENTIONAL);
+            // Used to keep track of the # of mines
+            setShotsLeft(2);
+        }
+        if (type.hasFlag(MiscType.F_SENSOR_DISPENSER)) {
+            setShotsLeft(type.hasFlag(MiscType.F_BA_EQUIPMENT) ? 6 : 30);
+        }
+        if (((type.isShield() || type.hasFlag(MiscType.F_MODULAR_ARMOR)))) {
+            baseDamageAbsorptionRate = type.getBaseDamageAbsorptionRate();
+            baseDamageCapacity = type.getBaseDamageCapacity();
+        }
+        if (type.hasFlag(MiscType.F_MINESWEEPER)) {
+            setArmorValue(30);
+        }
+        if (BridgeLayerState.isBridgeLayer(type)) {
+            bridgeLayerState = new BridgeLayerState(type);
+        }
+    }
+
+    /**
+     * @return the carried folding-bridge state for a Bridge-Layer (AVLB) mount, or {@code null} if this equipment is
+     *       not a bridgelayer
+     */
+    public @Nullable BridgeLayerState getBridgeLayerState() {
+        return bridgeLayerState;
+    }
+
+    /**
+     * @return {@code true} if this equipment is a Bridge-Layer (AVLB) variant
+     */
+    public boolean isBridgeLayer() {
+        return bridgeLayerState != null;
+    }
+
+    public int getBaseDamageAbsorptionRate() {
+        return baseDamageAbsorptionRate;
+    }
+
+    public int getBaseDamageCapacity() {
+        return baseDamageCapacity;
+    }
+
+
+    /**
+     * Rules state that every time the shield takes a crit its damage absorption for each attack is reduced by 1. Also
+     * for every Arm actuator critted damage absorption is reduced by 1 and finally if the shoulder is hit the damage
+     * absorption is reduced by 2 making it possible to kill a shield before its gone through its full damage capacity.
+     *
+     * @param entity   Entity mounted the shield
+     * @param location The shield location index
+     *
+     * @return The shield's damage absorption value
+     */
+    public int getDamageAbsorption(Entity entity, int location) {
+        // Shields can only be used in arms so if you've got a shield in a
+        // location
+        // other than an arm your SOL --Torren.
+        if ((location != Mek.LOC_RIGHT_ARM) && (location != Mek.LOC_LEFT_ARM)) {
+            return 0;
+        }
+
+        int base = baseDamageAbsorptionRate;
+
+        for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
+            CriticalSlot cs = entity.getCritical(location, slot);
+
+            if (cs == null) {
+                continue;
+            }
+
+            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
+                continue;
+            }
+
+            Mounted<?> m = cs.getMount();
+            EquipmentType type = m.getType();
+            if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
+                if (cs.isDamaged()) {
+                    base--;
+                }
+            }
+        }
+        if (entity.hasSystem(Mek.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER,
+              location)) {
+            base -= 2;
+        }
+
+        if (entity.hasSystem(Mek.ACTUATOR_LOWER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM,
+              location)) {
+            base--;
+        }
+        if (entity.hasSystem(Mek.ACTUATOR_UPPER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM,
+              location)) {
+            base--;
+        }
+        if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND,
+              location)) {
+            base--;
+        }
+
+        return Math.max(0, base);
+    }
+
+    /**
+     * Rules say every time a shield is critted it loses 5 points from its Damage Capacity. basically count down from
+     * the top then subtract the amount of damage its already take. The damage capacity is used to determine if the
+     * shield is still viable.
+     *
+     * @param entity   The entity the shield is mounted on
+     * @param location The shield's location index
+     *
+     * @return damage capacity(no less than 0)
+     */
+    public int getCurrentDamageCapacity(Entity entity, int location) {
+        // Shields can only be used in arms so if you've got a shield in a
+        // location
+        // other than an arm your SOL --Torren.
+        if ((location != Mek.LOC_RIGHT_ARM) && (location != Mek.LOC_LEFT_ARM)) {
+            return 0;
+        }
+
+        int base = baseDamageCapacity;
+
+        for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
+            CriticalSlot cs = entity.getCritical(location, slot);
+
+            if (cs == null) {
+                continue;
+            }
+
+            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
+                continue;
+            }
+
+            Mounted<?> m = cs.getMount();
+            EquipmentType type = m.getType();
+            if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
+                if (cs.isDamaged()) {
+                    base -= 5;
+                }
+            }
+        }
+        if (entity.hasSystem(Mek.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER,
+              location)) {
+            base -= 2;
+        }
+
+        if (entity.hasSystem(Mek.ACTUATOR_LOWER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM,
+              location)) {
+            base--;
+        }
+        if (entity.hasSystem(Mek.ACTUATOR_UPPER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM,
+              location)) {
+            base--;
+        }
+        if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND,
+              location)) {
+            base--;
+        }
+
+        return Math.max(0, base - damageTaken);
+    }
+
+    public int getDamageTaken() {
+        return damageTaken;
+    }
+
+    public void setDamageTaken(int damage) {
+        damageTaken = damage;
+    }
+
+    public void takeDamage(int damage) {
+        damageTaken += damage;
+    }
+
+    /**
+     * @return the type of mine this mounted is, or <code>-1</code> if it isn't a mine
+     */
+    public int getMineType() {
+        return mineType;
+    }
+
+    /**
+     * set the type of mine this should be
+     *
+     * @param mineType The mine type index
+     */
+    public void setMineType(int mineType) {
+        this.mineType = mineType;
+    }
+
+    /**
+     * set the vibrabomb sensitivity
+     *
+     * @param vibraSetting the <code>int</code> sensitivity to set
+     */
+    public void setVibraSetting(int vibraSetting) {
+        this.vibraSetting = vibraSetting;
+    }
+
+    /**
+     * get the vibrabomb sensitivity
+     *
+     * @return the <code>int</code> vibrabomb sensitivity this mine is set to.
+     */
+    public int getVibraSetting() {
+        return vibraSetting;
+    }
+
+    /**
+     * set the EMP mine weight threshold
+     *
+     * @param empSetting the <code>int</code> weight threshold (in tons) to set
+     */
+    public void setEmpSetting(int empSetting) {
+        this.empSetting = empSetting;
+    }
+
+    /**
+     * get the EMP mine weight threshold
+     *
+     * @return the <code>int</code> weight threshold (in tons) this mine is set to.
+     */
+    public int getEmpSetting() {
+        return empSetting;
+    }
+
+    @Override
+    public String getBaseDesc() {
+        return switch (getMineType()) {
+            case MINE_CONVENTIONAL -> Messages.getString("Mounted.ConventionalMine");
+            case MINE_VIBRABOMB -> Messages.getString("Mounted.VibraBombMine");
+            case MINE_COMMAND_DETONATED -> Messages.getString("Mounted.CommandDetonatedMine");
+            case MINE_ACTIVE -> Messages.getString("Mounted.ActiveMine");
+            case MINE_INFERNO -> Messages.getString("Mounted.InfernoMine");
+            case MINE_EMP -> Messages.getString("Mounted.EMPMine");
+            default -> super.getBaseDesc();
+        };
+    }
+
+    @Override
+    public boolean isTurret() {
+        return getType().hasFlag(MiscTypeFlag.F_TURRET);
+    }
+}

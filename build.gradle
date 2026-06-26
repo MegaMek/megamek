@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    Properties versionProperties = new Properties()
+    versionProperties.load(rootProject.file("megamek/resources/Version.properties").newDataInputStream())
+    def processedVersion = String.format("%d.%02d.%02d", Integer.parseInt(versionProperties.getProperty("major")), Integer.parseInt(versionProperties.getProperty("minor")), Integer.parseInt(versionProperties.getProperty("patch")))
+
+    if (project.hasProperty("extraVersion")) {
+        processedVersion = String.format("%s-%s", processedVersion, project.getProperty('extraVersion'))
+    }
+
+    group = 'org.megamek'
+    version = processedVersion
+}
+
+
+// A properties_local.gradle file can be used to override any of the above options. For instance,
+// rootProject.ext.mmGitRoot = 'file:///path/to/local/repo' will cause the release target to clone a
+// local copy of the repository rather than downloading it.
+
+def localProperties = file('properties_local.gradle')
+if (localProperties.exists()) {
+    apply from: localProperties
+}

@@ -1,0 +1,29 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "name" : "Water Vee w/ LRT",
+  "twState" : {
+    "unitTypeState" : {
+      "tank" : "SELECTED",
+      "waterOnly" : "SELECTED"
+    },
+    "transportsState" : { },
+    "quirksState" : {
+      "chassisQuirks" : { },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "cockpitType" : { },
+      "armorType" : { },
+      "internalsType" : { },
+      "engineType" : { },
+      "gyroType" : { },
+      "techLevel" : { },
+      "techBase" : { },
+      "moveMode" : { }
+    },
+    "equipmentState" : {
+      "filterTokens" : [ "(", "LRT 10__1__>=", "or", "LRT 15__1__>=", "or", "LRT 20__1__>=", "or", "LRT 5__1__>=", ")" ]
+    }
+  },
+  "asState" : { }
+}

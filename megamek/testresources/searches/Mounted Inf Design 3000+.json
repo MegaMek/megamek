@@ -1,0 +1,27 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "name" : "Mounted Inf Design 3000+",
+  "twState" : {
+    "unitTypeState" : {
+      "mountedInfantry" : "SELECTED"
+    },
+    "transportsState" : { },
+    "quirksState" : {
+      "chassisQuirks" : { },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "startYear" : "3000",
+      "cockpitType" : { },
+      "armorType" : { },
+      "internalsType" : { },
+      "engineType" : { },
+      "gyroType" : { },
+      "techLevel" : { },
+      "techBase" : { },
+      "moveMode" : { }
+    },
+    "equipmentState" : { }
+  },
+  "asState" : { }
+}

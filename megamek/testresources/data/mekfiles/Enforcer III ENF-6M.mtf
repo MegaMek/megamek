@@ -1,0 +1,176 @@
+# MegaMek Data (C) 2025 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+chassis:Enforcer III
+model:ENF-6M
+mul id:982
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3059
+Source:TRO: 3060
+Rules Level:2
+role:Sniper
+
+
+
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+weaponquirk:fast_reload:RA:3:ISUltraAC10
+
+
+Mass:50
+Engine:250 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Standard(Inner Sphere)
+LA Armor:16
+RA Armor:16
+LT Armor:19
+RT Armor:19
+CT Armor:24
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:3
+ER Large Laser, Left Arm
+Ultra AC/10, Right Arm
+ER Small Laser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERLargeLaser
+ISERLargeLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERSmallLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

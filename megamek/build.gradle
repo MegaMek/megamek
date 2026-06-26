@@ -1,0 +1,609 @@
+import java.time.LocalDateTime
+
+plugins {
+    id 'application'
+    id 'com.palantir.git-version' version '5.0.0'
+    id 'edu.sc.seis.launch4j' version '4.0.0'
+    id "io.sentry.jvm.gradle" version '6.4.0'
+    id 'jacoco'
+    id 'java'
+    id 'checkstyle'
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = true
+    reproducibleFileOrder = true
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+        resources {
+            srcDirs = ['resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['unittests']
+        }
+        resources {
+            srcDirs = ['testresources']
+        }
+    }
+}
+
+dependencies {
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.21.2'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.2'
+
+    implementation 'com.formdev:flatlaf:3.7.1'
+    implementation 'com.formdev:flatlaf-extras:3.7.1'
+
+    implementation 'com.sun.mail:jakarta.mail:2.0.2'
+
+    implementation 'com.thoughtworks.xstream:xstream:1.4.21'
+
+    implementation 'commons-io:commons-io:2.21.0'
+
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.5'
+    implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
+
+    implementation 'org.apache.commons:commons-collections4:4.5.0'
+    implementation 'org.apache.commons:commons-lang3:3.20.0'
+    implementation 'org.apache.commons:commons-text:1.15.0'
+
+    implementation 'org.apache.logging.log4j:log4j-api:2.25.4'
+    implementation 'org.apache.logging.log4j:log4j-core:2.25.4'
+
+    implementation 'org.apache.pdfbox:pdfbox:3.0.7'
+
+    implementation 'org.freemarker:freemarker:2.3.34'
+
+    implementation 'org.commonmark:commonmark:0.28.0'
+
+    implementation 'com.squareup:gifencoder:0.10.1'
+
+    implementation 'com.ibm.icu:icu4j:78.3'
+
+    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.7'
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.3'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:6.0.3'
+    testImplementation 'org.mockito:mockito-core:5.23.0'
+}
+
+application {
+    mainClass = 'megamek.MegaMek'
+    applicationDefaultJvmArgs = [
+            '-Xmx4096m',
+            '--add-opens',
+            'java.base/java.util=ALL-UNNAMED',
+            '--add-opens',
+            'java.base/java.util.concurrent=ALL-UNNAMED',
+            '-Dsun.awt.disablegrab=true'
+    ]
+}
+
+ext {
+    mmJvmOptions = [
+            '-Xmx4096m',
+            '--add-opens',
+            'java.base/java.util=ALL-UNNAMED',
+            '--add-opens',
+            'java.base/java.util.concurrent=ALL-UNNAMED',
+            '-Dsun.awt.disablegrab=true'
+    ]
+    fileStagingDir = "${layout.buildDirectory.get()}/files"
+    atlasedImages = "${fileStagingDir}/atlasedImages.txt"
+}
+
+jar {
+    archiveFileName = 'MegaMek.jar'
+
+    manifest {
+        attributes "Main-Class": application.mainClass
+        attributes "Class-Path": project.sourceSets.main.runtimeClasspath.files
+                .findAll { it.name.endsWith(".jar") }.collect { "lib/${it.name}" }.join(' ')
+        attributes "Add-Opens": 'java.base/java.util java.base/java.util.concurrent'
+        attributes "Build-Date": LocalDateTime.now()
+        attributes "Sealed": true
+    }
+}
+
+checkstyle {
+    toolVersion = '13.4.0'
+    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+    configProperties = [
+            'suppressionFile': file("${rootDir}/config/checkstyle/checkstyle-suppressions.xml")
+    ]
+    maxWarnings = 0  // Fail on any warning
+    maxErrors = 0    // Fail on any error
+}
+
+tasks.withType(Checkstyle).configureEach {
+    minHeapSize = "1g"
+    maxHeapSize = "4g"
+}
+
+tasks.register('stageDataFiles', Sync) {
+    dependsOn gradle.includedBuild('mm-data').task(':stageMMFiles')
+    description = "Syncs Data Files from MM Data"
+    group = 'build'
+    from "../../mm-data/build/staging/mm"
+    into "${layout.projectDirectory.asFile}/data"
+
+}
+
+tasks.register('generateDynamicFiles') {
+    def jvmOptions = project.ext.mmJvmOptions.join('\n')
+
+    doLast {
+        new File("${projectDir}/docs/mm-revision.txt").text = versionDetails().gitHashFull
+        new File("${projectDir}/MegaMek.l4j.ini").text = """# Launch4j runtime config
+# you can add arguments here that will be processed by the JVM at runtime
+${jvmOptions}
+"""
+    }
+}
+
+tasks.register("stageLicenseFiles", Sync) {
+    description = "Copy the license files to the build folder."
+    group = 'build'
+    from "../"
+    into "${layout.buildDirectory.get()}/licenses"
+
+    includes = [
+            'LICENSE',
+            'LICENSE.code',
+            'LICENSE.assets',
+            'README.md'
+    ]
+
+}
+
+tasks.register("copyLicenseFiles", Copy) {
+    description = "Copies from the build folder to the staging folder"
+    group = 'build'
+
+    dependsOn stageLicenseFiles
+
+    from "${layout.buildDirectory.get()}/licenses"
+    into fileStagingDir
+}
+
+tasks.register('copyFiles', Copy) {
+    description = 'Stages files that are to be copied into the distribution.'
+    group = 'build'
+
+    mustRunAfter(stageDataFiles)
+
+    dependsOn copyLicenseFiles
+    dependsOn generateDynamicFiles
+
+    from projectDir
+    include "data/**"
+    include "docs/**"
+    include "mmconf/**"
+    include "SubmitBug.html"
+    include "sentry.properties"
+    include "*.ini"
+    exclude "**/*.psd"
+
+    // User Config Files
+    exclude "mmconf/clientsettings.xml"
+    exclude "mmconf/gameoptions.xml"
+    exclude "mmconf/megameklab.properties"
+    exclude "mmconf/megameklab.properties.bak"
+    exclude "mmconf/mhq.preferences"
+    exclude "mmconf/mm.preferences"
+    exclude "mmconf/mml.preferences"
+    exclude "mmconf/recent-advanced-searches.json"
+    exclude "mmconf/searches/*.json"
+
+    include "userdata/"
+
+    exclude("data/**/*.cache")
+
+    into fileStagingDir
+}
+
+tasks.register('createImageAtlases', JavaExec) {
+    mustRunAfter(stageDataFiles)
+    dependsOn copyFiles
+    description = 'Combines individual image files into a set of image atlases.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "megamek.utilities.CreateImageAtlases"
+    workingDir = file(fileStagingDir)
+}
+
+tasks.register('deleteAtlasedImages') {
+    dependsOn createImageAtlases
+    description = 'Removes images from the staging directory that have been incorporated into atlases.'
+    doLast {
+        if (file(atlasedImages).exists()) {
+            ant.delete dir: fileStagingDir, includesfile: atlasedImages
+            ant.delete file: atlasedImages
+        }
+    }
+}
+
+tasks.register('officialUnitList', JavaExec) {
+    dependsOn jar
+    mustRunAfter(stageDataFiles)
+    description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = ['-oul', "${projectDir}/docs/OfficialUnitList.txt"]
+}
+
+
+tasks.register('stageFiles') {
+    description = 'Process data files to be included in distribution'
+    group = 'distribution'
+    mustRunAfter(stageDataFiles)
+    dependsOn officialUnitList
+    dependsOn deleteAtlasedImages
+
+    doLast {
+        mkdir "${fileStagingDir}/logs"
+    }
+}
+
+tasks.register('createStartScripts', CreateStartScripts) {
+    description = 'Create shell script for generic distribution.'
+    applicationName = 'MegaMek'
+    mainClass = application.mainClass
+    outputDir = startScripts.outputDir
+    classpath = jar.outputs.files + files(project.sourceSets.main.runtimeClasspath.files)
+            .filter { it.name.endsWith(".jar") }
+}
+
+distributions {
+    main {
+        distributionBaseName = 'MegaMek'
+        contents {
+            from("${buildDir}/launch4j") {
+                include '*.exe'
+            }
+
+            from(jar) {
+                into "lib"
+            }
+
+            from("${projectDir}/scripts") {
+                include "shell.sh"
+                rename "shell.sh", "MegaMek.sh"
+            }
+
+            from(jar)
+            from fileStagingDir
+
+            from(project.sourceSets.main.runtimeClasspath.files
+                    .findAll { it.name.endsWith(".jar") }) {
+                into "lib"
+            }
+
+            duplicatesStrategy = 'exclude'
+        }
+    }
+}
+
+launch4j {
+    description = 'Create Windows executable for Megamek'
+    mainClassName = application.mainClass
+    outfile = 'MegaMek.exe'
+    icon = "${projectDir}/data/images/misc/megamek.ico"
+    jarTask = project.tasks.jar
+    windowTitle = 'MegaMek'
+    internalName = 'MegaMek'
+    downloadUrl = 'https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
+    supportUrl = 'https://megamek.org'
+    copyright = '2026 MegaMek Development Team.'
+    trademarks = 'MechWarrior, BattleMech, `Mech and AeroTech - The The Topps Company, Inc. Catalyst Game Labs - InMediaRes Productions, LLC.'
+    companyName = "MegaMek Development Team"
+    jreMinVersion = '21'
+    dontWrapJar = true
+    messagesJreVersionError = 'We require a Java Runtime of version 21 or higher installed. https://github.' +
+            'com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
+    messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
+}
+
+project.tasks.createExe.dependsOn(stageDataFiles)
+project.tasks.createExe.mustRunAfter(stageDataFiles)
+
+tasks.register("packagePrepWork") {
+    description = 'General Catch All for all distributions'
+    dependsOn stageFiles
+    dependsOn startScripts
+    dependsOn createStartScripts
+    dependsOn copyFiles
+    dependsOn createImageAtlases
+    dependsOn createAllExecutables
+}
+
+distZip {
+    description = 'Creates a Zip file for distribution'
+    enabled = false
+    dependsOn packagePrepWork
+}
+
+distTar {
+    description = 'Creates a gzipped tar ball for distribution'
+    dependsOn packagePrepWork
+    archiveExtension = 'tar.gz'
+    compression = Compression.GZIP
+}
+
+run {
+    dependsOn(stageDataFiles)
+    jvmArgs = mmJvmOptions
+}
+
+assemble {
+    dependsOn jar
+}
+
+assembleDist {
+    dependsOn distTar
+}
+
+test {
+    useJUnitPlatform {
+        excludeTags 'on-demand'
+    }
+    dependsOn(checkstyleMain)
+
+    minHeapSize = "1024m"
+    maxHeapSize = "8192m"
+
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn(test)
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+tasks.register('cleanAll') {
+    description = 'Cleans all related projects to ensure a proper build.'
+    group = 'build'
+    dependsOn gradle.includedBuild('mm-data').task(':clean')
+    dependsOn clean
+}
+
+tasks.register('easyTest', Test) {
+    useJUnitPlatform()
+    jvmArgs = mmJvmOptions
+    group = 'verification'
+    description = 'Runs the easy tests.'
+}
+
+// Test task including GUI tests
+tasks.register('testWithGUITests', Test) {
+    useJUnitPlatform()
+    jvmArgs = mmJvmOptions
+    environment 'GUITests', "true"
+
+    group = 'verification'
+    description = 'Sets environment var to include GUI unit tests; no report generated.'
+}
+
+// These are utility classes for all of the classes with the src/utilities folder.
+tasks.register('equipmentList', JavaExec) {
+    dependsOn jar
+    description = 'Generate Full Equipment Database'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = ['-eq_db', "${projectDir}/equipment.txt"]
+}
+
+tasks.register('extendedEquipmentList', JavaExec) {
+    dependsOn jar
+    description = 'Generate Extended Equipment Database'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = ['-eqe_db', "${projectDir}/extended-equipment.txt"]
+}
+
+tasks.register('yamlEquipment', JavaExec) {
+    dependsOn jar
+    description = 'Generate YAML Equipment Database'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = ['-eq_yaml_db', "${projectDir}/yaml/"]
+}
+
+tasks.register('weaponsList', JavaExec) {
+    dependsOn jar
+    description = 'Generate Weapons Database'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = ['-eqw_db', "${projectDir}/weapons.txt"]
+}
+
+tasks.register('ammoList', JavaExec) {
+    dependsOn jar
+    description = 'Generate Ammo Database'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = ['-eqa_db', "${projectDir}/ammo.txt"]
+}
+
+tasks.register('weaponsMiscList', JavaExec) {
+    dependsOn jar
+    description = 'Generate Misc Weapons Database'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = ['-eqm_db', "${projectDir}/misc-weapons.txt"]
+}
+
+tasks.register('alphaStrikeMassConvert', JavaExec) {
+    dependsOn jar
+    description = 'Outputs the Alpha Strike conversion of all units'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.AlphaStrikeMassConvert'
+}
+
+tasks.register('boardsTagger', JavaExec) {
+    dependsOn jar
+    description = 'Tags all boards'
+    group = 'boards'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.BoardsTagger'
+}
+
+tasks.register('boardsCopyrightUpdater', JavaExec) {
+    dependsOn jar
+    description = 'Updates copyright headers on all boards'
+    group = 'boards'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.BoardsTagger'
+    args '--update-headers'
+}
+
+tasks.register('boardsValidator', JavaExec) {
+    dependsOn jar
+    description = 'Validates all boards'
+    group = 'boards'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.BoardsValidator'
+}
+
+tasks.register('filteredUnitListTool', JavaExec) {
+    dependsOn jar
+    description = 'Filter Unit List Tool'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.FilteredUnitListTool'
+}
+
+tasks.register('gifWriter', JavaExec) {
+    dependsOn jar
+    description = 'Generate a GIF from a game summary'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.GifWriter'
+    args project.hasProperty('gifGameSummary') ? project.gifGameSummary.tokenize(' ') : []
+}
+
+tasks.register('entityVerifier', JavaExec) {
+    dependsOn jar
+    description = 'Entity Verifier'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.common.verifier.EntityVerifier'
+}
+
+tasks.register('mekDataForCaspar', JavaExec) {
+    dependsOn jar
+    description = 'Mek Data for Caspar'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.MekDataForCasparTrainingTool'
+}
+
+tasks.register('iconTest', JavaExec) {
+    dependsOn jar
+    description = 'Icon Tool'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.test.IconTest'
+}
+
+tasks.register('mekCacheCSVTool', JavaExec) {
+    dependsOn jar
+    description = 'Mek CSV Database'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.MekCacheCSVTool'
+}
+
+tasks.register('nameChangesValidator', JavaExec) {
+    dependsOn jar
+    description = 'Checks for issues related to name changes.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.NameChangesValidator'
+}
+
+tasks.register('ratGeneratorEditor', JavaExec) {
+    dependsOn copyFiles
+    description = 'RAT Editor.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.common.ui.RATGeneratorEditor'
+}
+
+tasks.register('techLevelCompareTool', JavaExec) {
+    dependsOn jar
+    description = 'Tech Level Comparison Tool'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.TechLevelCompareTool'
+}
+
+tasks.register('unitFileMigrationTool', JavaExec) {
+    dependsOn jar
+    description = 'Unit File Migration Tool'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.UnitFileMigrationTool'
+}
+
+tasks.register('resaveUnits', JavaExec) {
+    dependsOn jar
+    mustRunAfter(stageDataFiles)
+    description = 'Loads all units and resaves them with license headers to an output folder.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.UnitFileResaver'
+    args(project.hasProperty("resaveOutputDir") ? [project.property("resaveOutputDir")] : [])
+    jvmArgs = mmJvmOptions
+}
+
+tasks.register('testAi', JavaExec) {
+    dependsOn jar
+    description = 'Test AI'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.QuickGameRunner'
+    args(project.hasProperty("testAiArgs") ? project.property("testAiArgs").split(' ') : "")
+
+    jvmArgs = mmJvmOptions
+}
+
+tasks.register('roundTripSaveUnitsTest', Test) {
+    useJUnitPlatform {
+        includeTags 'on-demand'
+    }
+    testClassesDirs = testing.suites.test.targets.first().testTask.get().testClassesDirs
+    classpath = testing.suites.test.targets.first().testTask.get().classpath
+    jvmArgs = mmJvmOptions
+    group = 'verification'
+    description = 'Round trip save/load test for all units: detects data loss in save/load cycle.'
+    filter {
+        includeTestsMatching 'megamek.common.loaders.BulkRoundTripTest'
+    }
+}

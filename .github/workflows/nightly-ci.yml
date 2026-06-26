@@ -1,0 +1,79 @@
+name: MegaMek Nightly CI
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 5 * * *"
+
+env:
+  GRADLE_OPTS: "-Dscan.link.VCS=https://github.com/MegaMek/megamek/commit/${{ github.sha }}"
+
+jobs:
+  nightly_ci:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        java-distribution: [ temurin ]
+        java-version: [ 21, 25 ]
+      fail-fast: false
+
+    name: Nightly MegaMek CI ${{ matrix.os }} on ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
+
+    steps:
+      - name: Checkout Data Repo
+        uses: actions/checkout@v7
+        with:
+          repository: megamek/mm-data
+          path: mm-data
+
+      - uses: actions/checkout@v7
+        with:
+          path: megamek
+
+      - name: "Output branch information to Version file"
+        run: |
+          echo "branch=nightly" >> megamek/megamek/resources/extraVersion.properties
+          echo "gitHash=$(date +'%Y-%m-%d')" >> megamek/megamek/resources/extraVersion.properties 
+
+      - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v5
+        with:
+          distribution: ${{ matrix.java-distribution }}
+          java-version: ${{ matrix.java-version }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          build-scan-publish: true
+          build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+          build-scan-terms-of-use-agree: "yes"
+
+      - name: Testing Nightly
+        working-directory: megamek
+        run: ./gradlew test
+
+      - name: Upload Test Logs on Failure
+        uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: cd-failure-logs
+          path: ./megamek/megamek/build/reports/
+
+      - name: CodeCov.io Coverage Report
+        uses: codecov/codecov-action@v7
+        with:
+          directory: ./megamek/megamek/build/reports/jacoco/test
+          fail_ci_if_error: false
+          verbose: true
+
+      - name: Build with Gradle
+        working-directory: megamek
+        run: ./gradlew build -x test -PextraVersion="nightly-$(date +'%Y-%m-%d')"
+
+      - name: Upload TarGZ Release
+        uses: actions/upload-artifact@v7
+        with:
+          name: mm-release-tar-gz-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+          path: ./megamek/megamek/build/distributions/*.tar.gz

@@ -1,0 +1,1889 @@
+/*
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
+package megamek.common.loaders;
+
+import static megamek.common.bays.Bay.UNSET_BAY;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.Vector;
+import java.util.stream.Collectors;
+
+import megamek.common.QuirkEntry;
+import megamek.common.SourceBooks;
+import megamek.common.TechConstants;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.bays.*;
+import megamek.common.board.CubeCoords;
+import megamek.common.enums.Faction;
+import megamek.common.equipment.*;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.options.IOption;
+import megamek.common.options.PilotOptions;
+import megamek.common.units.*;
+import megamek.common.units.System;
+import megamek.common.util.BuildingBlock;
+import megamek.common.weapons.attacks.InfantryAttack;
+import megamek.common.weapons.bayWeapons.BayWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.logging.MMLogger;
+
+public class BLKFile {
+    private static final MMLogger logger = MMLogger.create(BLKFile.class);
+
+    BuildingBlock dataFile;
+
+    public static final int FUSION = 0;
+    public static final int ICE = 1;
+    public static final int XL = 2;
+    public static final int XXL = 3; // don't ask
+    public static final int LIGHT = 4; // don't ask
+    public static final int COMPACT = 5; // don't ask
+    public static final int FUELCELL = 6;
+    public static final int FISSION = 7;
+    public static final int NONE = 8;
+    public static final int MAGLEV = 9;
+    public static final int STEAM = 10;
+    public static final int BATTERY = 11;
+    public static final int SOLAR = 12;
+    public static final int EXTERNAL = 13;
+
+    private static final String COMSTAR_BAY = "c*";
+    private static final int TRANSPORTER_FIELDS = 6;
+
+    /**
+     * Bitmap fields; 2 of 32 used currently COMSTAR: bit 0 IS/Clan tech (for mixed tech): bit 1
+     * <p>
+     * Note: mutual exclusivity is _not_ enforced here.
+     */
+
+    private static final int COMSTAR_BIT = 1;
+    // IS = 0; CLAN = 1, mutually exclusive
+    private static final int TECH_CLAN_BASE = 1 << 1;
+
+    static final String BLK_EXTRA_SEATS = "extra_seats";
+    static final String BLK_SLOTLESS_EQUIPMENT = "slotless_equipment";
+
+    /**
+     * If a vehicular grenade launcher does not have a facing provided, assign a default facing. The vehicle location
+     * determines this. For ProtoMeks the only legal location is the torso, but it may be mounted rear-facing.
+     *
+     * @param location The location where the VGL is mounted.
+     * @param rear     Whether the VGL is rear-facing.
+     *
+     * @return The facing to assign to the VGL.
+     */
+    protected int defaultVGLFacing(int location, boolean rear) {
+        return rear ? 3 : 0;
+    }
+
+    protected void setBasicEntityData(Entity entity) throws EntityLoadingException {
+        if (!dataFile.exists("Name")) {
+            throw new EntityLoadingException("Could not find name block.");
+        }
+
+        entity.setChassis(dataFile.getDataAsString("Name")[0]);
+
+        // Model is not strictly necessary.
+        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
+            entity.setModel(dataFile.getDataAsString("Model")[0]);
+        } else {
+            entity.setModel("");
+        }
+
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            entity.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
+
+        if (dataFile.exists("role")) {
+            entity.setUnitRole(UnitRole.parseRole(dataFile.getDataAsString("role")[0]));
+        }
+
+        if (dataFile.exists("source")) {
+            entity.setSource(SourceBooks.formatSourceList(List.of(dataFile.getDataAsString("source"))));
+        }
+
+        if (dataFile.exists("published")) {
+            entity.setPublished(SourceBooks.formatSourceList(List.of(dataFile.getDataAsString("published"))));
+        }
+
+        if (dataFile.exists("faction")) {
+            entity.setTechFaction(Faction.fromAbbr(dataFile.getDataAsString("faction")[0]));
+        }
+
+        if (dataFile.exists("fluffimage")) {
+            entity.getFluff().setFluffImage(dataFile.getDataAsString("fluffimage")[0]);
+        }
+
+        if (dataFile.exists("icon")) {
+            entity.setIcon(dataFile.getDataAsString("icon")[0]);
+        }
+
+        if (dataFile.exists("invalidSourceBuildReasons")) {
+            loadInvalidSourceBuildReasons(entity);
+        }
+
+        setTechLevel(entity);
+        setFluff(entity);
+        checkManualBV(entity);
+    }
+
+    protected void loadInvalidSourceBuildReasons(Entity entity) {
+        String[] reasons = dataFile.getDataAsString("invalidSourceBuildReasons");
+        var invalidSourceBuildReasons = new ArrayList<Entity.InvalidSourceBuildReason>();
+        if (reasons != null) {
+            for (var reason : reasons) {
+                try {
+                    invalidSourceBuildReasons.add(Entity.InvalidSourceBuildReason.valueOf(reason));
+                } catch (Exception e) {
+                    logger.warn("Unable to load reason {}", reason);
+                }
+            }
+        }
+        entity.setInvalidSourceBuildReasons(invalidSourceBuildReasons);
+    }
+
+    protected void loadQuirks(Entity entity) throws EntityLoadingException {
+        try {
+            List<QuirkEntry> quirks = new ArrayList<>();
+            if (dataFile.exists("quirks")) {
+                for (String unitQuirk : dataFile.getDataAsVector("quirks")) {
+                    QuirkEntry quirkEntry = new QuirkEntry(unitQuirk);
+                    quirks.add(quirkEntry);
+                }
+            }
+            if (dataFile.exists("weaponQuirks")) {
+                for (String weaponQuirk : dataFile.getDataAsVector("weaponQuirks")) {
+                    String[] fields = weaponQuirk.split(":");
+                    int slot = Integer.parseInt(fields[2]);
+                    QuirkEntry quirkEntry = new QuirkEntry(fields[0], fields[1], slot, fields[3]);
+                    quirks.add(quirkEntry);
+                }
+            }
+            entity.loadQuirks(quirks);
+        } catch (Exception e) {
+            throw new EntityLoadingException("Error loading unit quirks!", e);
+        }
+    }
+
+    public int defaultAeroVGLFacing(int location, boolean rearFacing) {
+        return switch (location) {
+            case Aero.LOC_LEFT_WING -> rearFacing ? 4 : 5;
+            case Aero.LOC_RIGHT_WING -> rearFacing ? 2 : 1;
+            case Aero.LOC_AFT -> 4;
+            default -> 0;
+        };
+    }
+
+    protected void loadEquipment(Entity t, String sName, int nLoc) throws EntityLoadingException {
+        String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
+        if (saEquip == null || saEquip.length == 0 || saEquip[0].isEmpty()) {
+            return;
+        }
+
+        // the prefix is "Clan " or "IS "
+        String prefix;
+        if (t.isClan()) {
+            prefix = "Clan ";
+        } else {
+            prefix = "IS ";
+        }
+
+        if (saEquip[0] != null) {
+            for (String s : saEquip) {
+                String equipName = s.trim();
+                boolean isOmniMounted = false;
+                boolean isTurreted = false;
+                boolean isPintleTurreted = false;
+                double size = 0.0;
+                int shots = -1;
+                int sizeIndex = equipName.toUpperCase().indexOf(":SIZE:");
+                if (sizeIndex > 0) {
+                    size = Double.parseDouble(equipName.substring(sizeIndex + 6));
+                    equipName = equipName.substring(0, sizeIndex);
+                }
+                int shotsIndex = equipName.toUpperCase().indexOf(":SHOTS");
+                if (shotsIndex > 0) {
+                    int shotsEndIndex = equipName.substring(shotsIndex).indexOf("#");
+                    if (shotsEndIndex <= 0) {
+                        throw new EntityLoadingException("Improperly formatted ammo count");
+                    }
+                    shots = Integer.parseInt(equipName.substring(shotsIndex + ":Shots".length(),
+                          shotsIndex + shotsEndIndex));
+                    equipName = equipName.substring(0, shotsIndex);
+                }
+                if (equipName.toUpperCase().endsWith(":OMNI")) {
+                    isOmniMounted = true;
+                    equipName = equipName.substring(0, equipName.length() - 5).trim();
+                }
+                if (equipName.toUpperCase().endsWith("(PT)")) {
+                    isPintleTurreted = true;
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
+                }
+                if (equipName.toUpperCase().endsWith("(ST)")) {
+                    isTurreted = true;
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
+                }
+
+                int facing = -1;
+                if (equipName.toUpperCase().endsWith(("(F)"))) {
+                    facing = 0;
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
+                }
+                if (equipName.toUpperCase().endsWith("(FL)")) {
+                    facing = 5;
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
+                }
+                if (equipName.toUpperCase().endsWith("(FR)")) {
+                    facing = 1;
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
+                }
+                if (equipName.toUpperCase().endsWith("(RL)")) {
+                    facing = 4;
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
+                }
+                if (equipName.toUpperCase().endsWith("(RR)")) {
+                    facing = 2;
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
+                }
+                if (equipName.toUpperCase().endsWith("(R)")) {
+                    facing = 3;
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
+                }
+
+                EquipmentType etype = EquipmentType.get(equipName);
+
+                if (etype == null) {
+                    // try w/ prefix
+                    etype = EquipmentType.get(prefix + equipName);
+                }
+
+                // The stealth armor mount is added when the armor type is set
+                if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_STEALTH)) {
+                    continue;
+                }
+
+                if (etype != null) {
+                    try {
+                        Mounted<?> mount = t.addEquipment(etype,
+                              nLoc,
+                              false,
+                              BattleArmor.MOUNT_LOC_NONE,
+                              false,
+                              false,
+                              isTurreted,
+                              isPintleTurreted,
+                              isOmniMounted);
+                        // Need to set facing for VGLs & AbstractBuildingEntity instances
+                        if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_VGL)) {
+                            if (facing == -1) {
+                                mount.setFacing(defaultVGLFacing(nLoc, false));
+                            } else {
+                                mount.setFacing(facing);
+                            }
+                        } else if (t instanceof AbstractBuildingEntity) {
+                            mount.setFacing(facing);
+                        }
+                        if (shots > 0) {
+                            mount.setOriginalShots(shots);
+                            mount.setShotsLeft(shots);
+                            mount.setSize(shots);
+                        }
+                        if (etype instanceof MiscType && mount.getType().hasFlag(MiscType.F_LIFT_HOIST)) { //
+                            // Cargo
+                            // Container too?
+                            t.addTransporter(new LiftHoist(mount, t.getWeight() / 2), isOmniMounted);
+                        }
+                        if (etype.isVariableSize()) {
+                            if (size == 0) {
+                                size = MtfFile.extractLegacySize(equipName);
+                            }
+
+                            mount.setSize(size);
+                        } else if (t.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon) && size > 1) {
+                            // The ammo bin is created by Entity#addEquipment but the size has not
+                            // been set yet, so if the unit carries multiple clips, the number of
+                            // shots needs to be adjusted.
+                            mount.setSize(size);
+                            Objects.requireNonNull(mount.getLinked());
+                            mount.getLinked()
+                                  .setOriginalShots((int) size * ((InfantryWeapon) mount.getType()).getShots());
+                            mount.getLinked().setShotsLeft(mount.getLinked().getOriginalShots());
+                        }
+                    } catch (LocationFullException ex) {
+                        throw new EntityLoadingException(ex.getMessage());
+                    }
+                } else if (!equipName.isBlank()) {
+                    t.addFailedEquipment(equipName);
+                }
+            }
+        }
+    }
+
+    /**
+     * Loads slotless equipment (equipment at LOC_NONE) such as cockpit modifications.
+     * This equipment has no location but still needs to be saved and loaded.
+     *
+     * @param t the entity to load equipment into
+     * @throws EntityLoadingException if the equipment cannot be loaded
+     */
+    protected void loadSlotlessEquipment(Entity t) throws EntityLoadingException {
+        String[] saEquip = dataFile.getDataAsString(BLK_SLOTLESS_EQUIPMENT);
+        if (saEquip == null) {
+            return;
+        }
+
+        // Build a count of ammo at LOC_NONE already auto-created by addOneShotAmmo().
+        // These are linked to their parent weapon, so linkedBy != null. When loading
+        // slotless equipment we skip ammo entries that match already-present auto-created
+        // ammo to avoid duplication on roundtrip save/load.
+        Map<String, Integer> autoCreatedAmmoBudget = new HashMap<>();
+        for (Mounted<?> m : t.getEquipment()) {
+            if (m.getLocation() == Entity.LOC_NONE
+                  && m.getType() instanceof AmmoType
+                  && m.getLinkedBy() != null) {
+                autoCreatedAmmoBudget.merge(m.getType().getInternalName(), 1, Integer::sum);
+            }
+        }
+
+        String prefix = t.isClan() ? "Clan " : "IS ";
+
+        for (String s : saEquip) {
+            if (s == null || s.isBlank()) {
+                continue;
+            }
+            String equipName = s.trim();
+
+            // Backward compatibility: strip suffixes that older versions of
+            // encodeEquipmentLine() wrote into the slotless_equipment block.
+            int numShots = 0;
+            int shotsIndex = equipName.indexOf(":Shots");
+            if (shotsIndex > 0) {
+                int shotsEndIndex = equipName.indexOf("#", shotsIndex);
+                if (shotsEndIndex <= 0) {
+                    throw new EntityLoadingException(
+                          "Improperly formatted ammo count for equipment: " + equipName);
+                }
+                try {
+                    numShots = Integer.parseInt(
+                          equipName.substring(shotsIndex + ":Shots".length(), shotsEndIndex));
+                } catch (NumberFormatException ex) {
+                    throw new EntityLoadingException(
+                          "Improperly formatted ammo count for equipment: " + equipName, ex);
+                }
+                equipName = equipName.substring(0, shotsIndex);
+            }
+            equipName = equipName.replace(":Body", "").replace(":LA", "")
+                  .replace(":RA", "").replace(":TU", "").replace(":OMNI", "");
+
+            EquipmentType etype = EquipmentType.get(equipName);
+            if (etype == null) {
+                etype = EquipmentType.get(prefix + equipName);
+            }
+
+            if (etype != null) {
+                // Skip ammo that was already auto-created by a weapon's addOneShotAmmo()
+                if (etype instanceof AmmoType) {
+                    String key = etype.getInternalName();
+                    int remaining = autoCreatedAmmoBudget.getOrDefault(key, 0);
+                    if (remaining > 0) {
+                        autoCreatedAmmoBudget.put(key, remaining - 1);
+                        continue;
+                    }
+                }
+                try {
+                    Mounted<?> mount = t.addEquipment(etype, Entity.LOC_NONE);
+                    if (numShots > 0 && (mount.getType() instanceof AmmoType)) {
+                        mount.setShotsLeft(numShots);
+                        mount.setOriginalShots(numShots);
+                        mount.setSize(numShots * ((AmmoType) mount.getType()).getKgPerShot() / 1000.0);
+                    }
+                } catch (LocationFullException ex) {
+                    throw new EntityLoadingException(ex.getMessage());
+                }
+            } else if (!equipName.isBlank()) {
+                t.addFailedEquipment(equipName);
+            }
+        }
+    }
+
+    protected void loadSVArmor(Entity sv) throws EntityLoadingException {
+        boolean patchworkArmor = dataFile.exists("armor_type") &&
+              dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK;
+        if (patchworkArmor) {
+            for (int i = 1; i < sv.locations(); i++) {
+                megamek.common.equipment.ArmorType armor = dataFile.exists(sv.getLocationName(i) + "_barrating") ?
+                      megamek.common.equipment.ArmorType.svArmor(dataFile.getDataAsInt(
+                            sv.getLocationName(i) + "_barrating")[0]) :
+                      megamek.common.equipment.ArmorType.of(dataFile.getDataAsInt(
+                                  sv.getLocationName(i) + "_armor_type")[0],
+                            TechConstants.isClan(dataFile.getDataAsInt(sv.getLocationName(
+                                  i) + "_armor_tech")[0]));
+                sv.setArmorType(armor.getArmorType(), i);
+                sv.setBARRating(armor.getBAR(), i);
+                sv.setArmorTechLevel(armor.getStaticTechLevel().getCompoundTechLevel(sv.isClan()), i);
+            }
+        } else {
+            if (dataFile.exists("barrating")) {
+                megamek.common.equipment.ArmorType armor = ArmorType.svArmor(dataFile.getDataAsInt("barrating")[0]);
+                if (dataFile.exists("armor_type")) {
+                    sv.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+                } else {
+                    sv.setArmorType(armor.getArmorType());
+                }
+                if (dataFile.exists("armor_tech_level")) {
+                    sv.setArmorTechLevel(dataFile.getDataAsInt("armor_tech_level")[0]);
+                } else {
+                    sv.setArmorTechLevel(armor.getStaticTechLevel().getCompoundTechLevel(sv.isClan()));
+                }
+                sv.setBARRating(armor.getBAR());
+            } else {
+                if (dataFile.exists("armor_type")) {
+                    sv.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+                } else {
+                    throw new EntityLoadingException("could not find armor_type block.");
+                }
+                if (dataFile.exists("armor_tech_level")) {
+                    sv.setArmorTechLevel(dataFile.getDataAsInt("armor_tech_level")[0]);
+                } else {
+                    sv.setArmorTechLevel(sv.getStaticTechLevel().getCompoundTechLevel(sv.isClan()));
+                }
+            }
+
+            if (dataFile.exists("armor_tech_rating")) {
+                sv.setArmorTechRating(dataFile.getDataAsInt("armor_tech_rating")[0]);
+            }
+        }
+    }
+
+    public boolean isMine() {
+        return dataFile.exists("blockversion");
+    }
+
+    static int translateEngineCode(int code) {
+        if (code == BLKFile.FUSION) {
+            return Engine.NORMAL_ENGINE;
+        } else if (code == BLKFile.ICE) {
+            return Engine.COMBUSTION_ENGINE;
+        } else if (code == BLKFile.XL) {
+            return Engine.XL_ENGINE;
+        } else if (code == BLKFile.LIGHT) {
+            return Engine.LIGHT_ENGINE;
+        } else if (code == BLKFile.XXL) {
+            return Engine.XXL_ENGINE;
+        } else if (code == BLKFile.COMPACT) {
+            return Engine.COMPACT_ENGINE;
+        } else if (code == BLKFile.FUELCELL) {
+            return Engine.FUEL_CELL;
+        } else if (code == BLKFile.FISSION) {
+            return Engine.FISSION;
+        } else if (code == BLKFile.NONE) {
+            return Engine.NONE;
+        } else if (code == BLKFile.MAGLEV) {
+            return Engine.MAGLEV;
+        } else if (code == BLKFile.STEAM) {
+            return Engine.STEAM;
+        } else if (code == BLKFile.BATTERY) {
+            return Engine.BATTERY;
+        } else if (code == BLKFile.SOLAR) {
+            return Engine.SOLAR;
+        } else if (code == BLKFile.EXTERNAL) {
+            return Engine.EXTERNAL;
+        } else {
+            return -1;
+        }
+    }
+
+    public void setFluff(Entity e) {
+
+        if (dataFile.exists("capabilities")) {
+            e.getFluff().setCapabilities(dataFile.getDataAsString("capabilities")[0]);
+        }
+
+        if (dataFile.exists("overview")) {
+            e.getFluff().setOverview(dataFile.getDataAsString("overview")[0]);
+        }
+
+        if (dataFile.exists("deployment")) {
+            e.getFluff().setDeployment(dataFile.getDataAsString("deployment")[0]);
+        }
+
+        if (dataFile.exists("history")) {
+            e.getFluff().setHistory(dataFile.getDataAsString("history")[0]);
+        }
+
+        if (dataFile.exists("manufacturer")) {
+            e.getFluff().setManufacturer(dataFile.getDataAsString("manufacturer")[0]);
+        }
+
+        if (dataFile.exists("primaryFactory")) {
+            e.getFluff().setPrimaryFactory(dataFile.getDataAsString("primaryFactory")[0]);
+        }
+
+        if (dataFile.exists("systemManufacturers")) {
+            for (String line : dataFile.getDataAsString("systemManufacturers")) {
+                String[] fields = line.split(":");
+                System comp = System.parse(fields[0]);
+                if ((null != comp) && (fields.length > 1)) {
+                    e.getFluff().setSystemManufacturer(comp, fields[1]);
+                }
+            }
+        }
+
+        if (dataFile.exists("systemModels")) {
+            for (String line : dataFile.getDataAsString("systemModels")) {
+                String[] fields = line.split(":");
+                System comp = System.parse(fields[0]);
+                if ((null != comp) && (fields.length > 1)) {
+                    e.getFluff().setSystemModel(comp, fields[1]);
+                }
+            }
+        }
+
+        if (dataFile.exists("notes")) {
+            e.getFluff().setNotes(dataFile.getDataAsString("notes")[0]);
+        }
+
+        if (dataFile.exists("fluffDate")) {
+            e.getFluff().setFluffDate(dataFile.getDataAsString("fluffDate")[0]);
+        }
+
+        if (dataFile.exists("use")) {
+            e.getFluff().setUse(dataFile.getDataAsString("use")[0]);
+        }
+
+        if (dataFile.exists("length")) {
+            e.getFluff().setLength(dataFile.getDataAsString("length")[0]);
+        }
+
+        if (dataFile.exists("width")) {
+            e.getFluff().setWidth(dataFile.getDataAsString("width")[0]);
+        }
+
+        if (dataFile.exists("height")) {
+            e.getFluff().setHeight(dataFile.getDataAsString("height")[0]);
+        }
+    }
+
+    public void checkManualBV(Entity e) {
+        if (dataFile.exists("bv")) {
+            int bv = dataFile.getDataAsInt("bv")[0];
+
+            if (bv != 0) {
+                e.setUseManualBV(true);
+                e.setManualBV(bv);
+            }
+        }
+    }
+
+    public void setTechLevel(Entity e) throws EntityLoadingException {
+        if (!dataFile.exists("year")) {
+            throw new EntityLoadingException("Could not find year block.");
+        }
+        e.setYear(dataFile.getDataAsInt("year")[0]);
+
+        if (dataFile.exists("originalBuildYear")) {
+            e.setOriginalBuildYear(dataFile.getDataAsInt("originalBuildYear")[0]);
+        }
+        
+        if (!dataFile.exists("type")) {
+            throw new EntityLoadingException("Could not find type block.");
+        }
+
+        switch (dataFile.getDataAsString("type")[0]) {
+            case "IS":
+                if (e.getYear() == 3025) {
+                    e.setTechLevel(TechConstants.T_INTRO_BOX_SET);
+                } else {
+                    e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+                }
+                break;
+            case "IS Level 1":
+                e.setTechLevel(TechConstants.T_INTRO_BOX_SET);
+                break;
+            case "IS Level 2":
+                e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+                break;
+            case "IS Level 3":
+                e.setTechLevel(TechConstants.T_IS_ADVANCED);
+                break;
+            case "IS Level 4":
+                e.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+                break;
+            case "IS Level 5":
+                e.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
+                break;
+            case "Clan":
+            case "Clan Level 2":
+                e.setTechLevel(TechConstants.T_CLAN_TW);
+                break;
+            case "Clan Level 3":
+                e.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+                break;
+            case "Clan Level 4":
+                e.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
+                break;
+            case "Clan Level 5":
+                e.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
+                break;
+            case "Mixed (IS Chassis)":
+                e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+                e.setMixedTech(true);
+                break;
+            case "Mixed (IS Chassis) Advanced":
+                e.setTechLevel(TechConstants.T_IS_ADVANCED);
+                e.setMixedTech(true);
+                break;
+            case "Mixed (IS Chassis) Experimental":
+                e.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+                e.setMixedTech(true);
+                break;
+            case "Mixed (IS Chassis) Unofficial":
+                e.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
+                e.setMixedTech(true);
+                break;
+            case "Mixed (Clan Chassis)":
+                e.setTechLevel(TechConstants.T_CLAN_TW);
+                e.setMixedTech(true);
+                break;
+            case "Mixed (Clan Chassis) Advanced":
+                e.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+                e.setMixedTech(true);
+                break;
+            case "Mixed (Clan Chassis) Experimental":
+                e.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
+                e.setMixedTech(true);
+                break;
+            case "Mixed (Clan Chassis) Unofficial":
+                e.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
+                e.setMixedTech(true);
+                break;
+            case "Mixed":
+                throw new EntityLoadingException(
+                      "Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
+            default:
+                throw new EntityLoadingException("Unsupported tech level: " + dataFile.getDataAsString("type")[0]);
+        }
+    }
+
+    public static BuildingBlock getBlock(Entity t) throws EntitySavingException {
+        BuildingBlock blk = new BuildingBlock();
+        blk.createNewBlock();
+
+        if (t instanceof BattleArmor) {
+            blk.writeBlockData("UnitType", "BattleArmor");
+        } else if (t instanceof ProtoMek) {
+            blk.writeBlockData("UnitType", "ProtoMek");
+        } else if (t instanceof Mek) {
+            blk.writeBlockData("UnitType", "Mek");
+        } else if (t instanceof GunEmplacement) {
+            blk.writeBlockData("UnitType", "GunEmplacement");
+        } else if (t instanceof LargeSupportTank) {
+            blk.writeBlockData("UnitType", "LargeSupportTank");
+        } else if (t instanceof SupportTank) {
+            blk.writeBlockData("UnitType", "SupportTank");
+        } else if (t instanceof SupportVTOL) {
+            blk.writeBlockData("UnitType", "SupportVTOL");
+        } else if (t instanceof VTOL) {
+            blk.writeBlockData("UnitType", "VTOL");
+        } else if (t instanceof FixedWingSupport) {
+            blk.writeBlockData("UnitType", "FixedWingSupport");
+        } else if (t instanceof ConvFighter) {
+            blk.writeBlockData("UnitType", "ConvFighter");
+        } else if (t instanceof Dropship) {
+            blk.writeBlockData("UnitType", "Dropship");
+        } else if (t instanceof SmallCraft) {
+            blk.writeBlockData("UnitType", "SmallCraft");
+        } else if (t instanceof Warship) {
+            blk.writeBlockData("UnitType", "Warship");
+        } else if (t instanceof SpaceStation) {
+            blk.writeBlockData("UnitType", "SpaceStation");
+        } else if (t instanceof Jumpship) {
+            blk.writeBlockData("UnitType", "Jumpship");
+        } else if (t instanceof Tank) {
+            blk.writeBlockData("UnitType", "Tank");
+        } else if (t instanceof Infantry) {
+            blk.writeBlockData("UnitType", "Infantry");
+        } else if (t instanceof AeroSpaceFighter) {
+            blk.writeBlockData("UnitType", "AeroSpaceFighter");
+        } else if (t instanceof Aero) {
+            blk.writeBlockData("UnitType", "Aero");
+        } else if (t instanceof HandheldWeapon) {
+            blk.writeBlockData("UnitType", "HandheldWeapon");
+        } else if (t instanceof AbstractBuildingEntity) {
+            blk.writeBlockData("UnitType", "BuildingEntity");
+        }
+
+        blk.writeBlockData("Name", t.getChassis());
+        blk.writeBlockData("Model", t.getModel());
+        if (t.hasMulId()) {
+            blk.writeBlockData(MtfFile.MUL_ID, t.getMulId());
+        }
+        blk.writeBlockData("year", t.getYear());
+        if (t.getOriginalBuildYear() > 0 && t.getOriginalBuildYear() != t.getYear()) {
+            blk.writeBlockData("originalBuildYear", t.getOriginalBuildYear());
+        }
+        String type = getType(t);
+        blk.writeBlockData("type", type);
+
+        if (t.hasRole()) {
+            blk.writeBlockData("role", t.getRole().toString());
+        }
+
+        List<String> quirkList = t.getQuirks()
+              .getOptionsList()
+              .stream()
+              .filter(BLKFile::isQuirkActive)
+              .map(BLKFile::formatQuirkForSave)
+              .collect(Collectors.toList());
+
+        if (!quirkList.isEmpty()) {
+            blk.writeBlockData("quirks", String.join("\n", quirkList));
+        }
+
+        List<String> weaponQuirkList = new ArrayList<>();
+        for (Mounted<?> equipment : t.getEquipment()) {
+            for (IOption weaponQuirk : equipment.getQuirks().activeQuirks()) {
+                weaponQuirkList.add(weaponQuirk.getName() +
+                      ":" +
+                      t.getLocationAbbr(equipment.getLocation()) +
+                      ":" +
+                      t.slotNumber(equipment) +
+                      ":" +
+                      equipment.getType().getInternalName());
+            }
+        }
+        if (!weaponQuirkList.isEmpty()) {
+            blk.writeBlockData("weaponQuirks", String.join("\n", weaponQuirkList));
+        }
+
+        if ((t instanceof ConvInfantry infantry) && infantry.isMounted()) {
+            blk.writeBlockData("motion_type", infantry.getMount().toString());
+        } else if (!t.isHandheldWeapon() && !(t instanceof GunEmplacement)) {
+            blk.writeBlockData("motion_type", t.getMovementModeAsString());
+        }
+
+        if (!t.getTransports().isEmpty()) {
+            // We should only write the transporters block for units that can and do
+            // have transporter bays. Empty Transporters blocks cause issues.
+            // ExternalCargo (LiftHoist, for example) transporters are reconstructed from
+            // equipment on load and must not be written to the transporters block.
+            List<Transporter> serializableTransports = t.getTransports().stream()
+                  .filter(tr -> !(tr instanceof ExternalCargo))
+                  .toList();
+            if (!serializableTransports.isEmpty()) {
+                String[] transporter_array = new String[serializableTransports.size()];
+                int index = 0;
+                for (Transporter transporter : serializableTransports) {
+                    transporter_array[index] = transporter.toString();
+                    if (t.isPodMountedTransport(transporter)) {
+                        transporter_array[index] += ":omni";
+                    }
+                    index++;
+                }
+                blk.writeBlockData("transporters", transporter_array);
+            }
+        }
+
+        if (!(t.isConventionalInfantry() || t.isHandheldWeapon() || t instanceof GunEmplacement)) {
+            if (t instanceof Aero) {
+                blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
+            } else {
+                blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
+                if (t.hasETypeFlag(Entity.ETYPE_PROTOMEK) && (t instanceof ProtoMek)) {
+                    blk.writeBlockData("jumpingMP", t.getOriginalJumpMP());
+                    blk.writeBlockData("interface_cockpit", String.valueOf(((ProtoMek) t).hasInterfaceCockpit()));
+                }
+            }
+        }
+
+        int numLocs = t.locations();
+        if (!(t instanceof Infantry || t instanceof GunEmplacement || t instanceof AbstractBuildingEntity)) {
+            if (t instanceof Aero) {
+                if (t.isFighter()) {
+                    blk.writeBlockData("cockpit_type", ((Aero) t).getCockpitType());
+                    if (t.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER) && ((Aero) t).isVSTOL()) {
+                        blk.writeBlockData("vstol", 1);
+                    }
+                } else if ((t instanceof Dropship) && t.isPrimitive()) {
+                    blk.writeBlockData("collartype", ((Dropship) t).getCollarType());
+                }
+                blk.writeBlockData("heatsinks", ((Aero) t).getHeatSinks());
+                blk.writeBlockData("sink_type", ((Aero) t).getHeatType());
+                if (((Aero) t).getPodHeatSinks() > 0) {
+                    blk.writeBlockData("omnipodheatsinks", ((Aero) t).getPodHeatSinks());
+                }
+                blk.writeBlockData("fuel", ((Aero) t).getFuel());
+            }
+            if (t.hasEngine()) {
+                int engineCode = getEngineCode(t);
+                blk.writeBlockData("engine_type", engineCode);
+                if (t.getEngine().isClan() != t.isClan()) {
+                    blk.writeBlockData("clan_engine", Boolean.toString(t.getEngine().isClan()));
+                }
+            }
+
+            // Need to make sure that only "Unknown" armor gets skipped
+            // barRating block written out later in the SV-specific section
+            if (!t.hasPatchworkArmor() && (t.getArmorType(0) != ArmorType.T_ARMOR_UNKNOWN)) {
+                blk.writeBlockData("armor_type", t.getArmorType(0));
+                blk.writeBlockData("armor_tech_rating", t.getArmorTechRating().getIndex());
+                blk.writeBlockData("armor_tech_level", t.getArmorTechLevel(0));
+            } else if (t.hasPatchworkArmor()) {
+                blk.writeBlockData("armor_type", EquipmentType.T_ARMOR_PATCHWORK);
+                for (int i = 0; i < t.locations(); i++) {
+                    ArmorType armor = ArmorType.forEntity(t, i);
+                    blk.writeBlockData(t.getLocationName(i) + "_armor_type", armor.getArmorType());
+                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech",
+                          TechConstants.getTechName(t.getArmorTechLevel(i)));
+                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech_rating",
+                          armor.getTechRating().getIndex());
+                    if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+                        blk.writeBlockData(t.getLocationName(i) + "_barrating", armor.getBAR());
+                    }
+                }
+            } else {
+                throw new EntitySavingException("Armor type unknown or not set; aborting save!");
+            }
+            if (t.getStructureType() != 0) {
+                blk.writeBlockData("internal_type", t.getStructureType());
+            }
+            if (t.isOmni()) {
+                blk.writeBlockData("omni", 1);
+            }
+
+            int[] armor_array;
+            if (t.hasETypeFlag(Entity.ETYPE_AERO)) {
+                if (t.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+                    armor_array = new int[6];
+                } else {
+                    armor_array = new int[4];
+                }
+                for (int i = 0; i < armor_array.length; i++) {
+                    armor_array[i] = t.getOArmor(i);
+                }
+            } else if (t.isHandheldWeapon()) {
+                armor_array = new int[] { t.getOArmor(HandheldWeapon.LOC_GUN) };
+            } else {
+                armor_array = new int[numLocs - 1];
+                for (int i = 1; i < numLocs; i++) {
+                    armor_array[i - 1] = t.getOArmor(i);
+                }
+            }
+            blk.writeBlockData("armor", armor_array);
+        } else if (t instanceof AbstractBuildingEntity abstractBuildingEntity) {
+            blk.writeBlockData("armor", abstractBuildingEntity.getInternalBuilding().getArmor(CubeCoords.ZERO));
+        }
+
+        // Write out armor_type and armor_tech entries for BA
+        if (t instanceof BattleArmor) {
+            blk.writeBlockData("armor_type", t.getArmorType(1));
+            blk.writeBlockData("armor_tech", t.getArmorTechLevel(1));
+        }
+
+        Vector<Vector<String>> eq = new Vector<>(numLocs);
+
+        for (int i = 0; i < numLocs; i++) {
+            eq.add(new Vector<>());
+        }
+        for (Mounted<?> m : t.getEquipment()) {
+            // Ignore Mounted's that represent a WeaponGroup
+            // BA anti-personnel weapon are written just after the mount
+            if (m.isWeaponGroup() || m.isAPMMounted() || (m.getType() instanceof InfantryAttack)) {
+                continue;
+            }
+
+            // Infantry primary and secondary are written separately
+            if (t.isConventionalInfantry() && m.getType() instanceof InfantryWeapon) {
+                continue;
+            }
+
+            // Ignore ammo for one-shot launchers
+            if ((m.getLinkedBy() != null) && (m.getLinkedBy().isOneShot())) {
+                continue;
+            }
+
+            if (m.getType() instanceof BayWeapon) {
+                int loc = m.getLocation();
+                if (loc == Entity.LOC_NONE) {
+                    continue;
+                }
+                boolean rear = m.isRearMounted();
+                List<WeaponMounted> bayWeapons = ((WeaponMounted) m).getBayWeapons();
+                for (int i = 0; i < bayWeapons.size(); i++) {
+                    String name = bayWeapons.get(i).getType().getInternalName();
+                    if (i == 0) {
+                        name = "(B) " + name;
+                    }
+                    if (rear) {
+                        name = "(R) " + name;
+                    }
+                    eq.get(loc).add(name);
+                }
+                for (AmmoMounted a : ((WeaponMounted) m).getBayAmmo()) {
+                    String name = a.getType().getInternalName();
+                    name += ":" + a.getBaseShotsLeft();
+                    if (rear) {
+                        name = "(R) " + name;
+                    }
+                    eq.get(loc).add(name);
+                }
+                continue;
+            }
+
+            if (t.usesWeaponBays() && ((m.getType() instanceof WeaponType) || (m.getType() instanceof AmmoType))) {
+                continue;
+            }
+
+            String name = encodeEquipmentLine(m);
+            int loc = m.getLocation();
+            if (loc != Entity.LOC_NONE) {
+                eq.get(loc).add(name);
+            }
+            if ((m.getLinked() != null) && m.getLinked().isAPMMounted()) {
+                eq.get(loc).add(encodeEquipmentLine(m.getLinked()));
+            }
+        }
+        for (int i = 0; i < numLocs; i++) {
+            blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
+        }
+
+        // Write slotless equipment (LOC_NONE) - e.g., cockpit modifications like DNI.
+        // Use the internal name only; positional suffixes like :Shots#, :Body, :LA
+        // are not meaningful for LOC_NONE and loadSlotlessEquipment() does not expect them.
+        // Skip auto-created one-shot ammo (linkedBy != null) since it is recreated by
+        // addOneShotAmmo() when the parent weapon loads.
+        Vector<String> slotlessEquipment = new Vector<>();
+        for (Mounted<?> m : t.getEquipment()) {
+            if (m.getLocation() == Entity.LOC_NONE && !m.isWeaponGroup() && !m.isAPMMounted()
+                  && !(m.getType() instanceof InfantryAttack)
+                  && !(m.getType() instanceof BayWeapon)
+                  && !(m.getType() instanceof AmmoType && m.getLinkedBy() != null)) {
+                slotlessEquipment.add(m.getType().getInternalName());
+            }
+        }
+        if (!slotlessEquipment.isEmpty()) {
+            blk.writeBlockData(BLK_SLOTLESS_EQUIPMENT, slotlessEquipment);
+        }
+        if (!t.hasPatchworkArmor() && ArmorType.forEntity(t).hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+            blk.writeBlockData("barrating", t.getBARRating(1));
+        }
+
+        if (t.isSupportVehicle()) {
+            blk.writeBlockData("structural_tech_rating", t.getStructuralTechRating().getIndex());
+            blk.writeBlockData("engine_tech_rating", t.getEngineTechRating().getIndex());
+
+        }
+
+        if (t.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT) || t.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            blk.writeBlockData("structural_integrity", ((Aero) t).getOSI());
+        }
+
+        if (!t.getFluff().getCapabilities().isBlank()) {
+            blk.writeBlockData("capabilities", t.getFluff().getCapabilities());
+        }
+
+        if (!t.getFluff().getOverview().isBlank()) {
+            blk.writeBlockData("overview", t.getFluff().getOverview());
+        }
+
+        if (!t.getFluff().getDeployment().isBlank()) {
+            blk.writeBlockData("deployment", t.getFluff().getDeployment());
+        }
+
+        if (!t.getFluff().getHistory().isBlank()) {
+            blk.writeBlockData("history", t.getFluff().getHistory());
+        }
+
+        if (!t.getFluff().getManufacturer().isBlank()) {
+            blk.writeBlockData("manufacturer", t.getFluff().getManufacturer());
+        }
+
+        if (!t.getFluff().getPrimaryFactory().isBlank()) {
+            blk.writeBlockData("primaryFactory", t.getFluff().getPrimaryFactory());
+        }
+
+        List<String> list = t.getFluff().createSystemManufacturersList();
+        if (!list.isEmpty()) {
+            blk.writeBlockData("systemManufacturers", list);
+        }
+
+        list = t.getFluff().createSystemModelsList();
+        if (!list.isEmpty()) {
+            blk.writeBlockData("systemModels", list);
+        }
+
+        if (!t.getFluff().getNotes().isBlank()) {
+            blk.writeBlockData("notes", t.getFluff().getNotes());
+        }
+
+        if (!t.getFluff().getFluffDate().isBlank()) {
+            blk.writeBlockData("fluffDate", t.getFluff().getFluffDate());
+        }
+
+        if (!t.getFluff().getUse().isBlank()) {
+            blk.writeBlockData("use", t.getFluff().getUse());
+        }
+
+        if (!t.getFluff().getLength().isBlank()) {
+            blk.writeBlockData("length", t.getFluff().getLength());
+        }
+
+        if (!t.getFluff().getWidth().isBlank()) {
+            blk.writeBlockData("width", t.getFluff().getWidth());
+        }
+
+        if (!t.getFluff().getHeight().isBlank()) {
+            blk.writeBlockData("height", t.getFluff().getHeight());
+        }
+
+        if (!t.getSource().isBlank()) {
+            blk.writeBlockData("source", t.getSource());
+        }
+
+        if (!t.getPublished().isBlank()) {
+            blk.writeBlockData("published", t.getPublished());
+        }
+
+        if (t.getTechFaction() != Faction.NONE) {
+            blk.writeBlockData("faction", t.getTechFaction().getCode());
+        }
+
+        if (t instanceof BattleArmor ba) {
+            if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_BIPED) {
+                blk.writeBlockData("chassis", "biped");
+
+            } else if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
+                blk.writeBlockData("chassis", "quad");
+                if (ba.getTurretCapacity() > 0) {
+                    blk.writeBlockData("turret",
+                          (ba.hasModularTurretMount() ? "Modular:" : "Standard:") + ba.getTurretCapacity());
+                }
+            }
+            if (ba.isExoskeleton()) {
+                blk.writeBlockData("exoskeleton", "true");
+            }
+            blk.writeBlockData("jumpingMP", ba.getOriginalJumpMP());
+            blk.writeBlockData("armor", new int[] { ba.getArmor(1) });
+            blk.writeBlockData("Trooper Count", (int) t.getWeight());
+            blk.writeBlockData("weightclass", ba.getWeightClass());
+        } else if (t instanceof ConvInfantry infantry) {
+            blk.writeBlockData("squad_size", infantry.getSquadSize());
+            blk.writeBlockData("squadn", infantry.getSquadCount());
+            if (infantry.getSecondaryWeaponsPerSquad() > 0) {
+                blk.writeBlockData("secondn", infantry.getSecondaryWeaponsPerSquad());
+            }
+            if (null != infantry.getPrimaryWeapon()) {
+                blk.writeBlockData("Primary", infantry.getPrimaryWeapon().getInternalName());
+            }
+            if (null != infantry.getSecondaryWeapon()) {
+                blk.writeBlockData("Secondary", infantry.getSecondaryWeapon().getInternalName());
+            }
+            if (null != infantry.getDisposableWeapon()) {
+                blk.writeBlockData("disposableWeapon", infantry.getDisposableWeapon().getInternalName());
+            }
+
+            if (infantry.getCustomArmorDamageDivisor() != 1) {
+                blk.writeBlockData("armordivisor", Double.toString(infantry.getCustomArmorDamageDivisor()));
+            }
+            if (infantry.isArmorEncumbering()) {
+                blk.writeBlockData("encumberingarmor", "true");
+            }
+            if (infantry.hasSpaceSuit()) {
+                blk.writeBlockData("spacesuit", "true");
+            }
+            if (infantry.hasDEST()) {
+                blk.writeBlockData("dest", "true");
+            }
+            if (infantry.hasSneakCamo()) {
+                blk.writeBlockData("sneakcamo", "true");
+            }
+            if (infantry.hasSneakIR()) {
+                blk.writeBlockData("sneakir", "true");
+            }
+            if (infantry.hasSneakECM()) {
+                blk.writeBlockData("sneakecm", "true");
+            }
+            if (infantry.hasSpecialization()) {
+                blk.writeBlockData("specialization", infantry.getSpecializations());
+            }
+            ArrayList<String> augmentations = new ArrayList<>();
+            for (Enumeration<IOption> e = infantry.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
+                  e.hasMoreElements(); ) {
+                final IOption o = e.nextElement();
+                if (o.booleanValue()) {
+                    augmentations.add(o.getName());
+                }
+            }
+            if (!augmentations.isEmpty()) {
+                blk.writeBlockData("augmentation", augmentations.toArray(new String[0]));
+            }
+
+            // Prosthetic Enhancement (Enhanced Limbs) - IO p.84
+            if (infantry.hasProstheticEnhancement1()) {
+                blk.writeBlockData("prostheticEnhancement1", infantry.getProstheticEnhancement1().toString());
+                if (infantry.getProstheticEnhancement1Count() > 0) {
+                    blk.writeBlockData("prostheticEnhancement1Count", infantry.getProstheticEnhancement1Count());
+                }
+            }
+            if (infantry.hasProstheticEnhancement2()) {
+                blk.writeBlockData("prostheticEnhancement2", infantry.getProstheticEnhancement2().toString());
+                if (infantry.getProstheticEnhancement2Count() > 0) {
+                    blk.writeBlockData("prostheticEnhancement2Count", infantry.getProstheticEnhancement2Count());
+                }
+            }
+
+            // Extraneous (Enhanced) Limbs - IO p.84
+            // Each pair always provides 2 items, so no count needed
+            if (infantry.hasExtraneousPair1()) {
+                blk.writeBlockData("extraneousPair1", infantry.getExtraneousPair1().toString());
+            }
+            if (infantry.hasExtraneousPair2()) {
+                blk.writeBlockData("extraneousPair2", infantry.getExtraneousPair2().toString());
+            }
+        } else if (t instanceof GunEmplacement gunEmplacement) {
+            if (!gunEmplacement.hasNoTurret()) {
+                blk.writeBlockData("turret", 1);
+            }
+        } else if (t instanceof AbstractBuildingEntity abstractBuildingEntity) {
+            blk.writeBlockData("building_class", abstractBuildingEntity.getBldgClass());
+            blk.writeBlockData("building_type", abstractBuildingEntity.getBuildingType().getTypeValue());
+            blk.writeBlockData("height", abstractBuildingEntity.getInternalBuilding().getBuildingHeight());
+            blk.writeBlockData("cf", abstractBuildingEntity.getInternalBuilding().getCurrentCF(CubeCoords.ZERO));
+
+            blk.writeBlockData("coords",
+                  abstractBuildingEntity.getInternalBuilding().getCoordsList().toArray(new CubeCoords[0]));
+        } else {
+            blk.writeBlockData("tonnage", t.getWeight());
+        }
+
+        if (t.getUseManualBV()) {
+            blk.writeBlockData("bv", t.getManualBV());
+        }
+
+        if ((t instanceof Tank tank) && t.isOmni()) {
+            if (tank.getBaseChassisTurretWeight() >= 0) {
+                blk.writeBlockData("baseChassisTurretWeight", tank.getBaseChassisTurretWeight());
+            }
+            if (tank.getBaseChassisTurret2Weight() >= 0) {
+                blk.writeBlockData("baseChassisTurret2Weight", tank.getBaseChassisTurret2Weight());
+            }
+        }
+
+        if ((t instanceof Tank tank) && (tank.getBaseChassisSponsonPintleWeight() >= 0)) {
+            blk.writeBlockData("baseChassisSponsonPintleWeight", tank.getBaseChassisSponsonPintleWeight());
+        }
+
+        if (t.isSupportVehicle() && t.isOmni()) {
+            blk.writeBlockData("baseChassisFireConWeight", t.getBaseChassisFireConWeight());
+        }
+
+        if (t instanceof Tank tank) {
+            if (tank.isSupportVehicle()) {
+                blk.writeBlockData("fuel", tank.getFuelTonnage());
+            }
+            if (tank.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) {
+                blk.writeBlockData("fuelType", tank.getICEFuelType().toString());
+            }
+            if (tank.hasNoControlSystems()) {
+                blk.writeBlockData("hasNoControlSystems", 1);
+            }
+            if (!t.isSupportVehicle() && t.isTrailer()) {
+                blk.writeBlockData("trailer", 1);
+            }
+            if (tank.getExtraCrewSeats() > 0) {
+                blk.writeBlockData(BLK_EXTRA_SEATS, tank.getExtraCrewSeats());
+            }
+        }
+
+        if (t instanceof SmallCraft sc) {
+            blk.writeBlockData("designtype", sc.getDesignType());
+            blk.writeBlockData("crew", sc.getNCrew());
+            blk.writeBlockData("officers", sc.getNOfficers());
+            blk.writeBlockData("gunners", sc.getNGunners());
+            blk.writeBlockData("passengers", sc.getNPassenger());
+            blk.writeBlockData("marines", sc.getNMarines());
+            blk.writeBlockData("battlearmor", sc.getNBattleArmor());
+            blk.writeBlockData("otherpassenger", sc.getNOtherPassenger());
+            blk.writeBlockData("life_boat", sc.getLifeBoats());
+            blk.writeBlockData("escape_pod", sc.getEscapePods());
+        }
+
+        if (t instanceof Warship ws) {
+            blk.writeBlockData("kf_core", ws.getDriveCoreType());
+            if (ws.getDriveCoreType() == Warship.DRIVE_CORE_PRIMITIVE) {
+                blk.writeBlockData("jump_range", ws.getJumpRange());
+            }
+        } else if ((t instanceof SpaceStation) && ((SpaceStation) t).isModularOrKFAdapter()) {
+            blk.writeBlockData("modular", 1);
+        }
+
+        if (t instanceof Jumpship js) {
+            if (js.hasHPG()) {
+                blk.writeBlockData("hpg", 1);
+            }
+            if (js.hasLF()) {
+                blk.writeBlockData("lithium-fusion", 1);
+            }
+            blk.writeBlockData("sail", js.hasSail() ? 1 : 0);
+            if (js.getTotalGravDeck() > 0) {
+                blk.writeBlockData("grav_decks",
+                      (Vector<String>) js.getGravDecks()
+                            .stream()
+                            .map(String::valueOf)
+                            .collect(Collectors.toCollection(Vector::new)));
+            }
+            blk.writeBlockData("designtype", js.getDesignType());
+            blk.writeBlockData("crew", js.getNCrew());
+            blk.writeBlockData("officers", js.getNOfficers());
+            blk.writeBlockData("gunners", js.getNGunners());
+            blk.writeBlockData("passengers", js.getNPassenger());
+            blk.writeBlockData("marines", js.getNMarines());
+            blk.writeBlockData("battlearmor", js.getNBattleArmor());
+            blk.writeBlockData("life_boat", js.getLifeBoats());
+            blk.writeBlockData("escape_pod", js.getEscapePods());
+        }
+
+        if (t.hasEmbeddedIcon()) {
+            blk.writeBlockData("icon", t.getBase64Icon().getBase64String());
+        }
+
+        if (t.getFluff().hasEmbeddedFluffImage()) {
+            blk.writeBlockData("fluffimage", t.getFluff().getBase64FluffImage().getBase64String());
+        }
+
+        if (t.canonUnitWithInvalidBuild()) {
+            blk.writeBlockData("invalidSourceBuildReasons",
+                  t.getInvalidSourceBuildReasons().stream().map(Enum::name).toList());
+        }
+
+        // some units, mostly capital scale, esp. primitive, may have redundant armor tonnage (meaning, half a ton
+        // less armor would provide the same amount of armor points); in that case, store the armor weight explicitly
+        // so the correct value can be set when loading the unit
+        if ((t instanceof Jumpship || t instanceof SmallCraft) && t.getArmorWeight() != t.getLabArmorTonnage()) {
+            blk.writeBlockData("armorWeight", t.getLabArmorTonnage());
+        }
+        return blk;
+    }
+
+    private static String getType(Entity t) {
+        String type;
+        if (t.isMixedTech()) {
+            if (!t.isClan()) {
+                type = "Mixed (IS Chassis)";
+            } else {
+                type = "Mixed (Clan Chassis)";
+            }
+            if ((t.getTechLevel() == TechConstants.T_IS_ADVANCED) ||
+                  (t.getTechLevel() == TechConstants.T_CLAN_ADVANCED)) {
+                type += " Advanced";
+            } else if ((t.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) ||
+                  (t.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)) {
+                type += " Experimental";
+            }
+            if ((t.getTechLevel() == TechConstants.T_IS_UNOFFICIAL) ||
+                  (t.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
+                type += " Unofficial";
+            }
+        } else {
+            type = switch (t.getTechLevel()) {
+                case TechConstants.T_INTRO_BOX_SET -> "IS Level 1";
+                case TechConstants.T_IS_TW_NON_BOX -> "IS Level 2";
+                case TechConstants.T_IS_ADVANCED -> "IS Level 3";
+                case TechConstants.T_IS_EXPERIMENTAL -> "IS Level 4";
+                case TechConstants.T_CLAN_TW -> "Clan Level 2";
+                case TechConstants.T_CLAN_ADVANCED -> "Clan Level 3";
+                case TechConstants.T_CLAN_EXPERIMENTAL -> "Clan Level 4";
+                case TechConstants.T_CLAN_UNOFFICIAL -> "Clan Level 5";
+                default -> "IS Level 5";
+            };
+        }
+        return type;
+    }
+
+    private static int getEngineCode(Entity t) {
+        int engineCode = BLKFile.FUSION;
+        engineCode = switch (t.getEngine().getEngineType()) {
+            case Engine.COMBUSTION_ENGINE -> BLKFile.ICE;
+            case Engine.LIGHT_ENGINE -> BLKFile.LIGHT;
+            case Engine.XL_ENGINE -> BLKFile.XL;
+            case Engine.XXL_ENGINE -> BLKFile.XXL;
+            case Engine.FUEL_CELL -> BLKFile.FUELCELL;
+            case Engine.FISSION -> BLKFile.FISSION;
+            case Engine.NONE -> BLKFile.NONE;
+            case Engine.MAGLEV -> BLKFile.MAGLEV;
+            case Engine.STEAM -> BLKFile.STEAM;
+            case Engine.BATTERY -> BLKFile.BATTERY;
+            case Engine.SOLAR -> BLKFile.SOLAR;
+            case Engine.EXTERNAL -> BLKFile.EXTERNAL;
+            default -> engineCode;
+        };
+        return engineCode;
+    }
+
+    /**
+     * Checks if a quirk is active and should be saved. Boolean quirks are active if true, integer quirks
+     * are active if they have a non-zero value, string quirks (like obsolete) are active if they have a
+     * non-empty value.
+     *
+     * @param quirk The quirk option to check
+     *
+     * @return true if the quirk should be saved
+     */
+    private static boolean isQuirkActive(IOption quirk) {
+        if (quirk.getType() == IOption.INTEGER) {
+            return quirk.intValue() != 0;
+        }
+        if (quirk.getType() == IOption.STRING) {
+            String value = quirk.stringValue();
+            return value != null && !value.isEmpty();
+        }
+        return quirk.booleanValue();
+    }
+
+    /**
+     * Formats a quirk for saving to a unit file. Boolean quirks are saved as just their name,
+     * while integer quirks are saved as "name:value" and string quirks (like obsolete) are saved
+     * as "name:value" (e.g., "obsolete:2950,3146").
+     *
+     * @param quirk The quirk option to format
+     * @return The formatted string for saving
+     */
+    private static String formatQuirkForSave(IOption quirk) {
+        if (quirk.getType() == IOption.INTEGER) {
+            return quirk.getName() + ":" + quirk.intValue();
+        }
+        if (quirk.getType() == IOption.STRING) {
+            String value = quirk.stringValue();
+            if (value != null && !value.isEmpty()) {
+                return quirk.getName() + ":" + value;
+            }
+        }
+        return quirk.getName();
+    }
+
+    private static String encodeEquipmentLine(Mounted<?> m) {
+        String name = m.getType().getInternalName();
+        if (m.getEntity() instanceof AbstractBuildingEntity) {
+            // Append the facing for VGLs or if mounted on an AbstractBuildingEntity
+            name += switch (m.getFacing()) {
+                case 0 -> " (F)";
+                case 1 -> " (FR)";
+                case 2 -> " (RR)";
+                case 3 -> " (R)";
+                case 4 -> " (RL)";
+                case 5 -> " (FL)";
+                default -> "";
+            };
+        }
+        if (m.isRearMounted()) {
+            name = "(R) " + name;
+        }
+        if (m.isSponsonTurretMounted()) {
+            name = name + "(ST)";
+        }
+        if (m.isMekTurretMounted()) {
+            name = name + "(T)";
+        }
+        if (m.isPintleTurretMounted()) {
+            name = name + "(PT)";
+        }
+        if (m.isDWPMounted()) {
+            name += ":DWP";
+        }
+        if (m.isSquadSupportWeapon()) {
+            name += ":SSWM";
+        }
+        if (m.isAPMMounted()) {
+            name += ":APM";
+        }
+        if (m.isOmniPodMounted()) {
+            name += ":OMNI";
+        }
+        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY) {
+            name += ":Body";
+        }
+        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LEFT_ARM) {
+            name += ":LA";
+        }
+        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RIGHT_ARM) {
+            name += ":RA";
+        }
+        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {
+            name += ":TU";
+        }
+        // For BattleArmor and ProtoMeks, we need to save how many shots are in this
+        // location, but they have different formats, yay!
+        if ((m.getEntity() instanceof BattleArmor || m.getEntity() instanceof HandheldWeapon) &&
+              (m.getType() instanceof AmmoType)) {
+            name += ":Shots" + m.getBaseShotsLeft() + "#";
+        } else if (m.getEntity() instanceof ProtoMek && (m.getType() instanceof AmmoType)) {
+            name += " (" + m.getBaseShotsLeft() + ")";
+        } else if (m.getType().isVariableSize() ||
+              (m.getEntity().isSupportVehicle() && (m.getType() instanceof InfantryWeapon))) {
+            name += ":SIZE:" + m.getSize();
+        }
+        return name;
+    }
+
+    public static void encode(String fileName, Entity t) throws EntitySavingException {
+        File file = new File(fileName);
+        encode(file, t);
+    }
+
+    public static void encode(File file, Entity t) throws EntitySavingException {
+        BuildingBlock blk = BLKFile.getBlock(t);
+        blk.writeBlockFile(file);
+    }
+
+    protected void addTransports(Entity e) throws EntityLoadingException {
+        if (dataFile.containsData("transporters")) {
+            String[] transporters = dataFile.getDataAsString("transporters");
+            HashSet<Integer> usedBayNumbers = new HashSet<>();
+
+            // Walk the array of transporters.
+            for (String transporter : transporters) {
+                transporter = transporter.toLowerCase();
+                boolean isPod = transporter.endsWith(":omni");
+                transporter = transporter.replace(":omni", "");
+                boolean hasARTS = transporter.startsWith("arts");
+                if (hasARTS) {
+                    transporter = transporter.substring(4);
+                }
+
+                String[] transporterParts = transporter.split(Bay.FIELD_SEPARATOR, 2);
+                String startsWith = transporterParts[0];
+                String numbers = transporterParts.length > 1 ? transporterParts[1] : "";
+                ParsedBayInfo pbi;
+
+                // TroopSpace:
+                try {
+                    switch (startsWith) {
+                        case "troopspace":
+                            // Everything after the ':' should be the space's size.
+                            double fsize = Double.parseDouble(numbers);
+                            e.addTransporter(new InfantryCompartment(fsize), isPod);
+                            break;
+                        case "cargobay":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new CargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
+                            break;
+                        case "liquidcargobay":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new LiquidCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()),
+                                  isPod);
+                            break;
+                        case "insulatedcargobay":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new InsulatedCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()),
+                                  isPod);
+                            break;
+                        case "refrigeratedcargobay":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new RefrigeratedCargoBay(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber()), isPod);
+                            break;
+                        case "livestockcargobay":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new LivestockCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()),
+                                  isPod);
+                            break;
+                        case "asfbay":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new ASFBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), hasARTS),
+                                  isPod);
+                            break;
+                        case "smallcraftbay":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new SmallCraftBay(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber(),
+                                  hasARTS), isPod);
+                            break;
+                        case "mekbay":
+                            // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
+                        case "mechbay": // for compatibility with older custom units
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new MekBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
+                            break;
+                        case "lightvehiclebay":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new LightVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()),
+                                  isPod);
+                            break;
+                        case "heavyvehiclebay":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new HeavyVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()),
+                                  isPod);
+                            break;
+                        case "superheavyvehiclebay":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new SuperHeavyVehicleBay(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber()), isPod);
+                            break;
+                        case "infantrybay":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new InfantryBay(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber(),
+                                  pbi.getPlatoonType()), isPod);
+                            break;
+                        case "battlearmorbay":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers, e.isClan());
+                            e.addTransporter(new BattleArmorBay(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber(),
+                                  pbi.isClan(),
+                                  pbi.isComstarBay()), isPod);
+                            break;
+                        case "bay":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new Bay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
+                            break;
+                        case "protomekbay":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new ProtoMekBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
+                            break;
+                        case "dropshuttlebay":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new DropShuttleBay(pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()),
+                                  isPod);
+                            break;
+                        case "navalrepairpressurized":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new NavalRepairFacility(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber(),
+                                  pbi.getFacing(),
+                                  true,
+                                  hasARTS), isPod);
+                            break;
+                        case "navalrepairunpressurized":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new NavalRepairFacility(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber(),
+                                  pbi.getFacing(),
+                                  false,
+                                  hasARTS), isPod);
+                            break;
+                        case "reinforcedrepairfacility":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new ReinforcedRepairFacility(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber(),
+                                  pbi.getFacing()), isPod);
+                            break;
+                        case "crewquarters":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new CrewQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
+                            break;
+                        case "steeragequarters":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new SteerageQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
+                            break;
+                        case "2ndclassquarters":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new SecondClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
+                            break;
+                        case "1stclassquarters":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new FirstClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
+                            break;
+                        case "pillionseats":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new PillionSeatCargoBay(pbi.getSize()), isPod);
+                            break;
+                        case "standardseats":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new StandardSeatCargoBay(pbi.getSize()), isPod);
+                            break;
+                        case "ejectionseats":
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new EjectionSeatCargoBay(pbi.getSize()), isPod);
+                            break;
+                        case "dockingcollar":
+                            // Add values for collars so they can be parsed and assigned a 'bay' number
+                            numbers = "1.0:0";
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            e.addTransporter(new DockingCollar(pbi.getBayNumber()));
+                            break;
+                        default:
+                            // Some Transport types (e.g., BattleArmorHandles) are not added here.
+                            // Do nothing for now.
+                            break;
+                    } // End switch-case
+                } catch (BLKDecodingException | NumberFormatException x) {
+                    throw new EntityLoadingException(String.format("Error decoding transporter '%s' (was '%s')",
+                          transporter,
+                          x));
+                }
+
+            } // Handle the next transportation component.
+
+        } // End has-transporters.
+    }
+
+    /**
+     * Class that holds data relating to transport bays and functionality to parse .blk file transport bay entries
+     *
+     * @author NickAragua
+     */
+    public static class ParsedBayInfo {
+        private final double size;
+        private final int doors;
+        private int bayNumber;
+        private final PlatoonType platoonType;
+        private final boolean isComstarBay;
+        private final boolean isClanBay;
+        private final int facing;
+
+        public ParsedBayInfo(String numbers, HashSet<Integer> usedBayNumbers) throws BLKDecodingException {
+            // Overloaded constructor that assumes IS tech base
+            this(numbers, usedBayNumbers, false);
+        }
+
+        public ParsedBayInfo(String numbers, HashSet<Integer> usedBayNumbers, boolean clanTechBase)
+              throws BLKDecodingException {
+            // expected format of "numbers" string:
+            // 0:1:2:3:4:5
+            // Field 0 is the size of the bay, in tons or # of units and is required
+            // Field 1 is the number of doors in the bay, and is required
+            // Field 2 is the bay number and is required; default value of "-1" is "unset"
+            // Field 3 is used to record infantry platoon type; default is an empty string
+            // Field 4 is an int recording facing; default is string representation of
+            // entity.LOC_NONE
+            // Field 5 is a bitmap recording status like tech type, ComStar bay; default is
+            // "0"
+            // To facilitate loading older .blk files, we first convert them to current
+            // format
+
+            try {
+                // Turn 2-, 3-, or 4-field number lines into standardized 6-field line.
+                String[] fields = normalizeTransporterNumbers(numbers, clanTechBase);
+
+                size = Double.parseDouble(fields[0]);
+                doors = Integer.parseInt(fields[1]);
+                bayNumber = Integer.parseInt(fields[2]);
+                platoonType = decodePlatoonType(fields[3]);
+                facing = Integer.parseInt(fields[4]);
+
+                // Convert and unpack bitmap
+                int bitmap = Integer.parseInt(fields[5]);
+
+                isComstarBay = (COMSTAR_BIT & bitmap) > 0;
+                isClanBay = (TECH_CLAN_BASE & bitmap) > 0;
+
+            } catch (BLKDecodingException | NumberFormatException e) {
+                throw new BLKDecodingException(String.format("Failure to load '%s' (was '%s'", numbers, e));
+            }
+
+            // if a positive bay number was not specified, assign one
+            // if a bay number was specified but is a duplicate, assign a different one
+            int newBay = 1;
+            if (bayNumber == UNSET_BAY || usedBayNumbers.contains(bayNumber)) {
+                while (usedBayNumbers.contains(newBay)) {
+                    newBay++;
+                }
+
+                bayNumber = newBay;
+            }
+
+            usedBayNumbers.add(bayNumber);
+
+        }
+
+        public double getSize() {
+            return size;
+        }
+
+        public int getDoors() {
+            return doors;
+        }
+
+        public int getBayNumber() {
+            return bayNumber;
+        }
+
+        public PlatoonType getPlatoonType() {
+            return platoonType;
+        }
+
+        public boolean isComstarBay() {
+            return isComstarBay;
+        }
+
+        public boolean isClan() {
+            return isClanBay;
+        }
+
+        public int getFacing() {
+            return facing;
+        }
+
+        public static String[] normalizeTransporterNumbers(String numbers) throws BLKDecodingException {
+            // If we don't care about the tech base (e.g., non-BA bays) use default value
+            return normalizeTransporterNumbers(numbers, false);
+        }
+
+        public static String[] normalizeTransporterNumbers(String numbers, boolean clanTechBase)
+              throws BLKDecodingException {
+            /*
+             * To make all transporter bays use the same number of data fields, we normalize and standardize the field.
+             */
+            String[] numbersArray = numbers.split(Bay.FIELD_SEPARATOR);
+
+            if (numbersArray.length == TRANSPORTER_FIELDS) {
+                // Already in the expected format
+                return numbersArray;
+            } else if (numbersArray.length > TRANSPORTER_FIELDS) {
+                throw new BLKDecodingException(String.format("Cannot decode numbers string '%s'", numbers));
+            }
+
+            // Expand old-format to new-format size; initialize new field.
+            String[] temp = new String[TRANSPORTER_FIELDS];
+            // Copy initial two fields; later fields get defaults or are set later
+            java.lang.System.arraycopy(numbersArray, 0, temp, 0, 2);
+            // Fill in other fields with default/unset values
+            temp[2] = String.valueOf(UNSET_BAY);
+            temp[3] = "";
+            temp[4] = String.valueOf(Entity.LOC_NONE);
+            temp[5] = String.valueOf(0);
+
+            // If 2-field format, return with default values set.
+            if (numbersArray.length == 2) {
+                return temp;
+            } else {
+                // Attempt to parse index 2 as an integer bay number, otherwise leave it as default
+                try {
+                    temp[2] = String.valueOf(Integer.parseInt(numbersArray[2]));
+                } catch (NumberFormatException e) {
+                    // pass
+                }
+            }
+
+            // Add a bitmap field
+            int bitmap = 0;
+            if (clanTechBase) {
+                bitmap |= TECH_CLAN_BASE;
+            }
+
+            // the bay type indicator will be either the third or fourth item, but the bay
+            // number always comes before it,
+            // so we make sure to pick the last item in the array
+            String potentialBayTypeIndicator = "";
+            if (numbersArray.length == 3) {
+                potentialBayTypeIndicator = numbersArray[2];
+            } else if (numbersArray.length == 4) {
+                potentialBayTypeIndicator = numbersArray[3];
+                temp[2] = numbersArray[2];
+            }
+
+            if (!potentialBayTypeIndicator.isEmpty()) {
+                if (potentialBayTypeIndicator.equalsIgnoreCase(COMSTAR_BAY)) {
+                    bitmap |= COMSTAR_BIT;
+                } else if (Set.of(new String[] { "jump", "foot", "motorized", "mechanized" })
+                      .contains(potentialBayTypeIndicator.toLowerCase())) {
+                    // Found an infantry type in the last field (2 or 3)
+                    // Assign to field 3
+                    temp[3] = potentialBayTypeIndicator;
+                    if (temp[2].equals(temp[3])) {
+                        // We found the infantry type in the bay number field; unset bay number
+                        temp[2] = String.valueOf(UNSET_BAY);
+                    }
+                } else if (potentialBayTypeIndicator.startsWith(Bay.FACING_PREFIX)) {
+                    // Strip old facing prefix, set field to remaining value.
+                    // It's challenging to standardize this
+                    temp[4] = potentialBayTypeIndicator.replace(Bay.FACING_PREFIX, "");
+                }
+            }
+
+            // save bitmap to normalize numbers
+            temp[5] = String.format("%s", bitmap);
+            return temp;
+        }
+
+        public static PlatoonType decodePlatoonType(String typeString) throws BLKDecodingException {
+            // Handle platoon type decoding from strings of various casing
+
+            if (typeString.equalsIgnoreCase("jump")) {
+                return PlatoonType.JUMP;
+            } else if (typeString.equalsIgnoreCase("foot")) {
+                return PlatoonType.FOOT;
+            } else if (typeString.equalsIgnoreCase("motorized")) {
+                return PlatoonType.MOTORIZED;
+            } else if (typeString.equalsIgnoreCase("mechanized")) {
+                return PlatoonType.MECHANIZED;
+            } else if (typeString.isEmpty()) {
+                return PlatoonType.FOOT;
+            } else {
+                throw new BLKDecodingException(String.format("Cannot determine platoon type from '%s'", typeString));
+            }
+        }
+    }
+
+    /**
+     * Sets the armor tech level for the entity based on the data file. The file should have "armor_tech_level", but it
+     * was changed from "armor_tech". And if this isn't found for some reason, it'll fall back and use the entity's tech
+     * base to determine this.
+     *
+     * @param entity entity that should have its armor tech level set based on the data file
+     */
+    protected void setArmorTechLevelFromDataFile(Entity entity) {
+        if (dataFile.exists("armor_tech_level")) {
+            entity.setArmorTechLevel(dataFile.getDataAsInt("armor_tech_level")[0]);
+        } else if (dataFile.exists("armor_tech")) {
+            entity.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        } else {
+            entity.setArmorTechLevel(entity.getStaticTechLevel().getCompoundTechLevel(entity.isClan()));
+        }
+    }
+
+
+    protected void resetCrew(Entity entity) {
+        if (entity.getCrew() != null && entity.getCrew().getCrewType() != entity.defaultCrewType()) {
+            entity.setCrew(new Crew(entity.defaultCrewType()));
+        }
+    }
+}

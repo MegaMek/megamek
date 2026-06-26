@@ -1,0 +1,63 @@
+/*
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
+package megamek.common.alphaStrike;
+
+public enum ASRange {
+    SHORT, MEDIUM, LONG, EXTREME, HORIZON;
+
+    @Deprecated(since = "0.51.0", forRemoval = true)
+    public boolean insideRange(int distance) {
+        return switch (this) {
+            case SHORT -> distance <= 6;
+            case MEDIUM -> distance <= 24;
+            case LONG -> distance <= 42;
+            case EXTREME -> distance <= 60;
+            case HORIZON -> distance > 60;
+        };
+    }
+
+    public static ASRange fromDistance(int distance) {
+        if (distance <= 6) {
+            return SHORT;
+        } else if (distance <= 24) {
+            return MEDIUM;
+        } else if (distance <= 42) {
+            return LONG;
+        } else if (distance <= 60) {
+            return EXTREME;
+        } else {
+            return HORIZON;
+        }
+    }
+}

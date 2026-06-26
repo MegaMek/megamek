@@ -1,0 +1,17 @@
+# This is an example MMU file for a single SBF Unit
+# This file uses YAML formatting. Always leave a space behind the colon
+# In most cases, surrounding quotes can be omitted
+# This Strategic BattleForce Unit does not list the elements it is built from;
+# therefore its values must all be given. It can be used to build a SBF formation
+type: "SBFUnit"
+generalname: "Heavy Mek Unit"
+sbftype: "BM"
+size: 3
+tmm: 1
+move: 4
+movemode: "MEK_WALK"
+jump: 1
+armor: 19
+damage: "5/7/5"
+specials: "IF4"
+pv: 69

@@ -71,7 +71,8 @@ public record CubeCoords(double q, double r, double s) implements Serializable {
     public Coords toOffset() {
         int offset = -1;
         int column = (int) q;
-        int row = (int) r + (int) ((q + offset * ((int) q & 1)) / 2.0);
+        int parity = column & 1;
+        int row = (int) (r + (q + offset * parity) / 2.0);
         return new Coords(column, row);
     }
 

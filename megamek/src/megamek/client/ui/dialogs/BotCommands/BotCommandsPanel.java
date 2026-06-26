@@ -409,13 +409,6 @@ public class BotCommandsPanel extends JPanel {
         sendChatCommand(botPlayer, ChatCommands.SHOOT_AND_SCOOT, "false");
     }
 
-    private void enableCounterBattery(Player botPlayer) {
-        sendChatCommand(botPlayer, ChatCommands.COUNTER_BATTERY);
-    }
-
-    private void disableCounterBattery(Player botPlayer) {
-        sendChatCommand(botPlayer, ChatCommands.COUNTER_BATTERY, "false");
-    }
 
     private void scootToHex(Player botPlayer) {
         pickTargetHexes(Messages.getString("BotCommandPanel.ScootToHex.title") + " - " + botPlayer.getName(),
@@ -828,9 +821,7 @@ public class BotCommandsPanel extends JPanel {
             botMenu.add(createArtilleryFireMissionMenu(botPlayer, "ArtillerySingle", ArtilleryOrder.SINGLE));
             botMenu.add(createArtilleryFireMissionMenu(botPlayer, "ArtilleryVolley", ArtilleryOrder.VOLLEY));
             botMenu.add(createArtilleryFireMissionMenu(botPlayer, "ArtilleryBarrage", ArtilleryOrder.BARRAGE));
-            botMenu.addSeparator();
-            addBotAction(botMenu, botPlayer, "ForceCounterBattery", this::enableCounterBattery);
-            addBotAction(botMenu, botPlayer, "StopCounterBattery", this::disableCounterBattery);
+            botMenu.add(createCounterBatteryMenu(botPlayer));
         });
     }
 
@@ -856,6 +847,34 @@ public class BotCommandsPanel extends JPanel {
             JMenuItem ammoItem = new JMenuItem(
                   Messages.getString("BotCommandPanel.ArtilleryAmmo." + ammo.name()));
             ammoItem.addActionListener(evt -> promptAndSendFireMission(botPlayer, order, ammo));
+            menu.add(ammoItem);
+        }
+        return menu;
+    }
+
+    /**
+     * Builds the counter-battery fire menu: one item per loaded ammo type the bot can use against an observed off-board
+     * enemy battery. Homing is excluded (there is no off-board TAG to guide it) and utility (zero-damage) munitions are
+     * excluded (they cannot silence a battery). Selecting an ammo puts the bot into forced counter-battery mode with
+     * that ammo; unlike the aimed fire missions it needs no target hexes, since it fires back at whatever enemy battery
+     * has been observed.
+     *
+     * @param botPlayer The bot whose counter-battery mode is being set
+     *
+     * @return The counter-battery fire menu
+     */
+    private JMenu createCounterBatteryMenu(Player botPlayer) {
+        JMenu menu = new JMenu(Messages.getString("BotCommandPanel.ArtilleryCounterBattery.title"));
+        menu.setToolTipText(Messages.getString("BotCommandPanel.ArtilleryCounterBattery.tooltip"));
+        Set<SpecialAmmo> loadedAmmo = availableArtilleryAmmo(botPlayer);
+        for (SpecialAmmo ammo : SpecialAmmo.values()) {
+            if (!loadedAmmo.contains(ammo) || (ammo == SpecialAmmo.HOMING) || ammo.isUtility()) {
+                // only damaging ammo the bot actually carries, and never homing (no off-board TAG to guide it)
+                continue;
+            }
+            JMenuItem ammoItem = new JMenuItem(
+                  Messages.getString("BotCommandPanel.ArtilleryAmmo." + ammo.name()));
+            ammoItem.addActionListener(evt -> sendArtilleryOrder(botPlayer, ArtilleryOrder.COUNTER_BATTERY, ammo, ""));
             menu.add(ammoItem);
         }
         return menu;
@@ -1091,12 +1110,22 @@ public class BotCommandsPanel extends JPanel {
      * @param targets   Dash-separated target hex numbers, or an empty string for orders without targets
      */
     private void sendArtilleryOrder(Player botPlayer, ArtilleryOrder order, SpecialAmmo ammo, String targets) {
-        // halt/auto take no ammo or targets, so send just the order to keep the chat echo readable
-        String arguments = targets.isBlank()
-              ? order.name()
-              : order.name() + " " + ammo.name() + " " + targets;
+        boolean counterBattery = (order == ArtilleryOrder.COUNTER_BATTERY);
+        // halt/auto take no ammo or targets; counter-battery takes ammo but no targets (it fires at whatever enemy
+        // battery is observed); aimed fire missions take both ammo and target hexes.
+        String arguments;
+        if (counterBattery) {
+            arguments = order.name() + " " + ammo.name();
+        } else if (targets.isBlank()) {
+            arguments = order.name();
+        } else {
+            arguments = order.name() + " " + ammo.name() + " " + targets;
+        }
         sendChatCommand(botPlayer, ChatCommands.ARTILLERY, arguments);
-        if (targets.isBlank()) {
+        if (counterBattery) {
+            acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.counterBattery",
+                  artilleryAmmoProWord(ammo)));
+        } else if (targets.isBlank()) {
             // Control order (halt/auto): no grid, just the warning order pro-word
             acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.fireMissionControl",
                   artilleryProWord(order)));

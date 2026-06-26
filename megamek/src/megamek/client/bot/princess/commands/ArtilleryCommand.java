@@ -80,8 +80,13 @@ public class ArtilleryCommand implements ChatCommand {
         var artilleryCommandAndControl = princess.getArtilleryCommandAndControl();
 
         artilleryCommandAndControl.reset();
-        if (!artilleryOrder.equals(ArtilleryCommandAndControl.ArtilleryOrder.AUTO) && !artilleryOrder.equals(
-              ArtilleryCommandAndControl.ArtilleryOrder.HALT)) {
+        // AUTO, HALT and COUNTER_BATTERY are standing orders that pick their own targets (automatic fire, ceasefire, or
+        // observed off-board enemy batteries), so they take no target hexes; the player-aimed fire missions require them.
+        boolean orderPicksOwnTargets =
+              artilleryOrder.equals(ArtilleryCommandAndControl.ArtilleryOrder.AUTO)
+                    || artilleryOrder.equals(ArtilleryCommandAndControl.ArtilleryOrder.HALT)
+                    || artilleryOrder.equals(ArtilleryCommandAndControl.ArtilleryOrder.COUNTER_BATTERY);
+        if (!orderPicksOwnTargets) {
             if (multiHexNumberArgument.getValue().isEmpty()) {
                 LOGGER.warn("{}: artillery {} order received without target hexes - order ignored",
                       princess.getLocalPlayer().getName(), artilleryOrder);
@@ -109,6 +114,14 @@ public class ArtilleryCommand implements ChatCommand {
     private void sendBatteryReadback(Princess princess, ArtilleryCommandAndControl.ArtilleryOrder artilleryOrder,
           ArtilleryCommandAndControl.SpecialAmmo specialAmmo, List<Coords> targets) {
         String batteryName = princess.getLocalPlayer().getName();
+        if (artilleryOrder == ArtilleryCommandAndControl.ArtilleryOrder.COUNTER_BATTERY) {
+            // Counter-battery is a standing order with ammo but no aimed grid, so read back the ammo and the intent.
+            String counterBatteryAmmo = Messages.getString(
+                  "Princess.command.artillery.ammoProWord." + specialAmmo.name());
+            princess.sendChat(Messages.getString("Princess.command.artillery.readbackCounterBattery",
+                  batteryName, counterBatteryAmmo));
+            return;
+        }
         String warningOrder = Messages.getString("Princess.command.artillery.proWord." + artilleryOrder.name());
         if (targets.isEmpty()) {
             princess.sendChat(Messages.getString("Princess.command.artillery.readbackControl",

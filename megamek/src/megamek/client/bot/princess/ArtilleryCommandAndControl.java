@@ -57,6 +57,7 @@ public class ArtilleryCommandAndControl {
         BARRAGE,
         VOLLEY,
         SINGLE,
+        COUNTER_BATTERY,
     }
 
     /**
@@ -173,6 +174,14 @@ public class ArtilleryCommandAndControl {
 
     public boolean isArtillerySingle() {
         return artilleryOrder == ArtilleryOrder.SINGLE;
+    }
+
+    /**
+     * @return {@code true} if the bot is in forced counter-battery mode: its artillery prioritizes firing the selected
+     *       ammo back at any observed off-board enemy battery.
+     */
+    public boolean isCounterBattery() {
+        return artilleryOrder == ArtilleryOrder.COUNTER_BATTERY;
     }
 
     public void setArtilleryOrder(ArtilleryOrder order) {

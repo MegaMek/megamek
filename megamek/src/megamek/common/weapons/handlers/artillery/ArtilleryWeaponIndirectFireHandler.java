@@ -727,6 +727,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                         // Radio-flavored call-for-fire toast to the team that just spotted the enemy battery.
                         gameManager.sendCounterBatteryObservedToast(entity, aaa.getEntity(game), targetPos,
                               game.getRoundCount());
+                        // The observed flag lives on the attacker's entity state; push the update so client bots (which
+                        // read their own synced game copy) actually see it and can return counter-battery fire.
+                        gameManager.entityUpdate(aaa.getEntity(game).getId());
                     }
                 }
             }
@@ -743,6 +746,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 r.add(target.getDisplayName());
                 r.subject = subjectId;
                 vPhaseReport.add(r);
+                // Push the updated observed flag to clients so a client bot can target it for counter-battery fire.
+                gameManager.entityUpdate(attacker.getId());
             }
         }
     }

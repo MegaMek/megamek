@@ -1152,6 +1152,9 @@ public class BasicPathRanker extends PathRanker {
             standoffDistance += Math.max(0, averageEnemyRunMP(enemies) - movingUnit.getRunMP());
         }
         boolean holdingArtilleryInPlace = false;
+        // True whenever this unit is being ranked by the artillery standoff branch (whether safely holding or falling
+        // back). Such a tube ignores the herd pull entirely so it never creeps toward the advancing friendly line.
+        boolean standoffArtillery = false;
         double aggressionMod;
         if (!isNotAirborne) {
             aggressionMod = 0;
@@ -1173,6 +1176,7 @@ public class BasicPathRanker extends PathRanker {
                 // Artillery holds position - it fires from range and the enemy closes on its own, so it should never
                 // walk its tube forward. Its floor is the larger of how far back it already is and the minimum indirect
                 // range.
+                standoffArtillery = true;
                 double currentDistToEnemy = (movingUnit.getPosition() != null)
                       ? distanceToClosestEnemy(movingUnit, movingUnit.getPosition(), game)
                       : standoffDistance;
@@ -1204,8 +1208,9 @@ public class BasicPathRanker extends PathRanker {
 
         // The further I am from my teammates, the lower this path
         // ranks (weighted by Herd Mentality).
-        // A holding artillery tube ignores the herd pull too, so it does not creep toward the advancing friendly line.
-        double herdingMod = (isNotAirborne && !holdingArtilleryInPlace)
+        // Standoff artillery (whether holding at range or falling back when the enemy breaches its standoff) ignores the
+        // herd pull, so it never gets dragged toward the advancing friendly line instead of keeping its distance.
+        double herdingMod = (isNotAirborne && !standoffArtillery)
               ? calculateHerdingMod(friendsCoords, pathCopy)
               : 0;
 

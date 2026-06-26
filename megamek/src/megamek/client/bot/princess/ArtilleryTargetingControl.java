@@ -96,6 +96,11 @@ public class ArtilleryTargetingControl {
     // lone-unit potshot, while a strong on-board cluster (whose summed value is higher) still wins.
     private static final double COUNTER_BATTERY_PRIORITY = 1.5;
 
+    // Multiplier applied to a special damaging munition (FA, cluster, inferno, flechette, etc.) when scoring automatic,
+    // non-ordered fire, so the bot prefers plain HE and does not waste situational rounds on a random tie-break. Just
+    // below 1.0 so standard wins the tie, but a special still fires when it is the only ammo loaded for that tube.
+    private static final double SPECIAL_MUNITION_AUTO_PENALTY = 0.9;
+
     // Effective hit odds we credit a homing round when a friendly TAG unit can designate a target near its aim point:
     // the round homes onto the TAG instead of scattering, so it is treated as a near-certain hit rather than the ~8%
     // of unobserved indirect fire. This makes the bot spend homing ammo when - and only when - a spotter is in place.
@@ -397,11 +402,22 @@ public class ArtilleryTargetingControl {
         }
 
         // TODO: Counter-battery fire must target a hex (TO:AR p 154); needs better off-board unit deploy logic
+        int counterBatteryTargets = 0;
+        int offBoardEnemiesKnown = 0;
         for (Entity enemy : game.getAllOffboardEnemyEntities(shooter.getOwner())) {
+            offBoardEnemiesKnown++;
             if (enemy.isOffBoardObserved(shooter.getOwner().getTeam())) {
                 targetSet.add(enemy);
+                counterBatteryTargets++;
             }
         }
+        // Distinguish the failure modes for a playtest: "0 of 0 known" means the bot cannot even see an enemy off-board
+        // battery (none exists, or double-blind hides it); "0 of N known" means it sees the battery but no friendly unit
+        // has observed its fall of shot yet; "M of N" means targets are available (the firing loop logs the shot/hold).
+        LOGGER.debug("[CounterBattery] {}: {} of {} known off-board enemy batteries are observed and targetable for "
+                    + "counter-battery (shooter team {})",
+              owner.getLocalPlayer().getName(), counterBatteryTargets, offBoardEnemiesKnown,
+              shooter.getOwner().getTeam());
 
         for (Coords coords : owner.getStrategicBuildingTargets()) {
             targetSet.add(new HexTarget(coords, Targetable.TYPE_HEX_ARTILLERY));
@@ -919,13 +935,19 @@ public class ArtilleryTargetingControl {
                                 if (target.isAirborne() && homing) {
                                     damageValue = 0;
                                 } else if (attackOnEntity && !attackOnAirborneEntity && target.isOffBoard()) {
-                                    // Counter-battery fire at an observed off-board enemy battery: prioritize silencing
-                                    // it (it keeps shelling us every turn). The bump lets it beat a lone-unit potshot,
-                                    // while a strong on-board cluster (whose summed value is higher) still wins. If the
-                                    // player has forced counter-battery, value it so high it always wins when reachable.
-                                    damageValue = owner.getForceCounterBattery()
-                                          ? Integer.MAX_VALUE
-                                          : (damage * COUNTER_BATTERY_PRIORITY);
+                                    // Counter-battery fire at an observed off-board enemy battery. Homing is never usable
+                                    // here - there is no off-board TAG to guide it - so a homing bin scores zero. Other
+                                    // ammo prioritizes silencing the battery (it keeps shelling us): the bump beats a
+                                    // lone-unit potshot while a strong on-board cluster still wins. In forced
+                                    // counter-battery mode the player-ordered ammo is valued so high it always wins when
+                                    // reachable.
+                                    if (isHoming) {
+                                        damageValue = 0;
+                                    } else if (artilleryCommandAndControl.isCounterBattery() && playerOrderedThisAmmo) {
+                                        damageValue = Integer.MAX_VALUE;
+                                    } else {
+                                        damageValue = damage * COUNTER_BATTERY_PRIORITY;
+                                    }
                                 } else {
                                     damageValue = damage;
                                 }
@@ -948,6 +970,17 @@ public class ArtilleryTargetingControl {
                                               shooter,
                                               game,
                                               owner);
+                                        // Prefer plain HE for automatic (non-ordered) fire: a special damaging munition
+                                        // (FA, cluster, inferno, flechette) scores the same as standard here because the
+                                        // value is launcher-damage based, so without this the bot would pick among the
+                                        // tied bins at random and waste situational rounds. Discount non-standard,
+                                        // non-homing bins so standard wins the tie, but a special still fires if it is
+                                        // the only ammo loaded.
+                                        if (!playerOrderedThisAmmo
+                                              && (binCategory != SpecialAmmo.STANDARD)
+                                              && !isHoming) {
+                                            damageValue *= SPECIAL_MUNITION_AUTO_PENALTY;
+                                        }
                                     }
                                 } else {
                                     // No ADA attacks except at Entities; no Flak attacks except direct fire
@@ -1161,14 +1194,14 @@ public class ArtilleryTargetingControl {
 
                 if (tagInfo != null) {
                     boolean designated = owner.getDesignatedTagTargets().contains(tagInfo.getTarget().getId());
-                    LOGGER.info("{}: {} firing TAG at {} (probability {}){}",
+                    LOGGER.info("[TAG] {}: {} firing TAG at {} (probability {}){}",
                           owner.getLocalPlayer().getName(), shooter.getDisplayName(),
                           tagInfo.getTarget().getDisplayName(), tagInfo.getProbabilityToHit(),
                           designated ? " - player-designated TAG target" : "");
                     TAGPlan.add(tagInfo);
                     TAGPlan.setUtility(returnValue.getUtility() + tagInfo.getProbabilityToHit());
                 } else {
-                    LOGGER.info("{}: {} has a TAG but found no target to TAG this phase",
+                    LOGGER.info("[TAG] {}: {} has a TAG but found no target to TAG this phase",
                           owner.getLocalPlayer().getName(), shooter.getDisplayName());
                 }
             }
@@ -1213,10 +1246,15 @@ public class ArtilleryTargetingControl {
         WeaponFireInfo designatedFireInfo = null;
         double hitOdds = 0.0;
         double designatedHitOdds = 0.0;
+        int enemiesEvaluated = 0;
+        // Accumulate why each unhittable enemy was rejected (built in the loop, logged once after) so a playtest can
+        // tell why a TAG unit did not designate - out of range, no line of sight, bad arc, etc.
+        StringBuilder rejectedReasons = new StringBuilder();
 
         // take the best shot you have, but prefer an enemy the player designated for TAG
         for (Targetable target : FireControl.getAllTargetableEnemyEntities(owner.getLocalPlayer(), game,
               owner.getFireControlState())) {
+            enemiesEvaluated++;
             WeaponFireInfo wfi = new WeaponFireInfo(shooter, target, weapon, null, game, false, owner);
             boolean isDesignated = owner.getDesignatedTagTargets().contains(target.getId());
             if (isDesignated && (wfi.getProbabilityToHit() > designatedHitOdds)) {
@@ -1226,11 +1264,27 @@ public class ArtilleryTargetingControl {
             if (wfi.getProbabilityToHit() > hitOdds) {
                 hitOdds = wfi.getProbabilityToHit();
                 returnValue = wfi;
+            } else if (wfi.getProbabilityToHit() <= 0) {
+                if (rejectedReasons.length() > 0) {
+                    rejectedReasons.append("; ");
+                }
+                rejectedReasons.append(target.getDisplayName()).append(": ").append(wfi.getToHit().getDesc());
             }
         }
 
         // a designated target the bot can actually hit wins; otherwise fall back to the best available shot
-        return (designatedFireInfo != null) ? designatedFireInfo : returnValue;
+        WeaponFireInfo chosen = (designatedFireInfo != null) ? designatedFireInfo : returnValue;
+        if (chosen == null) {
+            LOGGER.debug("[TAG] {}: {} found no TAG target ({} enemies evaluated){}",
+                  owner.getLocalPlayer().getName(), shooter.getDisplayName(), enemiesEvaluated,
+                  (rejectedReasons.length() > 0) ? " - " + rejectedReasons : "");
+        } else {
+            LOGGER.debug("[TAG] {}: {} best TAG target {} at probability {}{}",
+                  owner.getLocalPlayer().getName(), shooter.getDisplayName(),
+                  chosen.getTarget().getDisplayName(), chosen.getProbabilityToHit(),
+                  (designatedFireInfo != null) ? " (player-designated)" : "");
+        }
+        return chosen;
     }
 
     private static class HelperAmmo {

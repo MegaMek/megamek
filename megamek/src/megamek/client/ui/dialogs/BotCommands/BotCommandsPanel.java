@@ -61,12 +61,12 @@ import megamek.client.ui.util.MenuScroller;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.SkinSpecification;
+import megamek.common.game.InGameObject;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.game.InGameObject;
 
 /**
  * The Bot Commands Panel contains a small set of buttons which allow the player to change the configuration of any bot

@@ -281,7 +281,6 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_PLAYER_SETTINGS = "viewPlayerSettings";
     public static final String VIEW_PLAYER_LIST = "viewPlayerList";
     public static final String VIEW_RESET_WINDOW_POSITIONS = "viewResetWindowPos";
-    public static final String VIEW_BOT_COMMANDS = "viewBotCommands";
     public static final String VIEW_BOT_COMMANDS_OFF = "viewBotCommandsOff";
     public static final String VIEW_BOT_COMMANDS_FLOAT = "viewBotCommandsFloat";
     public static final String VIEW_BOT_COMMANDS_DOCK = "viewBotCommandsDock";

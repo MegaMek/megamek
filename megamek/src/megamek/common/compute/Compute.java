@@ -5988,6 +5988,9 @@ public class Compute {
 
         if (alreadyPerformingOther) {
             reason = "already performing a swarm attack";
+        } else if (game.getHexOf(defender) == null) {
+            // The defender does not exist on the board
+            reason = "Defender's occupied hex is null";
         } else if (!(defender instanceof Mek)) {
             // Can only attack a Mek's legs.
             reason = "Defender is not a Mek.";
@@ -5995,13 +5998,11 @@ public class Compute {
             // Can't attack if flying
             reason = "Cannot do leg attack while flying.";
         } else if ((attacker.getMovementMode().isUMUInfantry())
-              && !(game.getBoard(defender.getBoardId())
-              .getHex(defender.getPosition()).hasDepth1WaterOrDeeper())) {
+              && !(game.getHexOf(defender).hasDepth1WaterOrDeeper())) {
             // UMU equipped infantry can only make leg attacks if the target is in depth 1+ water
             reason = "Cannot make leg attacks unless the target is in depth 1 or deeper water";
         } else if (attacker instanceof BattleArmor inf) {
             // Handle BattleArmor attackers.
-
             toReturn = new ToHitData(inf.getCrew().getPiloting(),
                   "anti-mek skill",
                   ToHitData.HIT_KICK,

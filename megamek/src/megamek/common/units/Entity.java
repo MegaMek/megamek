@@ -149,9 +149,9 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
-import megamek.common.rules.rulesPsr;
-import megamek.common.rules.core.coreRulesPsr;
-import megamek.common.rules.totalwarfare.twRulesPsr;
+import megamek.common.rules.RulesPsr;
+import megamek.common.rules.core.CoreRulesPsr;
+import megamek.common.rules.totalwarfare.TwRulesPsr;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.
@@ -1073,7 +1073,7 @@ public abstract class Entity extends TurnOrdered
      * The rules that will be used for the game. Default is to Core Rules
      * // RULES
      */
-    private rulesPsr rulesPsr = new coreRulesPsr();
+    private RulesPsr rulesPsr = new CoreRulesPsr();
 
     /**
      * Generates a new, blank, entity.
@@ -1118,7 +1118,7 @@ public abstract class Entity extends TurnOrdered
                 
         // RULES Check if the game uses Total Warfare instead of Core, and swaps the rule objects
         if (game.getOptions().booleanOption(OptionsConstants.TWRULES)) {
-            rulesPsr = new twRulesPsr();
+            rulesPsr = new TwRulesPsr();
         }
     }
 

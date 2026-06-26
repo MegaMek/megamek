@@ -49,12 +49,11 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
-import megamek.common.rules.core.coreRulesTarget;
-import megamek.common.rules.core.coreRulesUnits;
-import megamek.common.rules.rulesTarget;
-import megamek.common.rules.rulesUnits;
-import megamek.common.rules.totalwarfare.twRulesTarget;
-import megamek.common.rules.totalwarfare.twRulesUnits;
+import megamek.common.rules.core.CoreRulesUnits;
+import megamek.common.rules.RulesTarget;
+import megamek.common.rules.RulesUnits;
+import megamek.common.rules.totalwarfare.TwRulesTarget;
+import megamek.common.rules.totalwarfare.TwRulesUnits;
 import megamek.common.units.*;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 
@@ -88,8 +87,8 @@ public class ComputeTargetToHitMods {
      * @param usesAmmo            flag that indicates whether the WeaponType being used is ammo-fed
      */
     // RULES set default rules level to Core rules
-    private static rulesTarget rulesTarget = new coreRulesTarget();
-    private static rulesUnits rulesUnits = new coreRulesUnits();
+    private static RulesTarget rulesTarget = new megamek.common.rules.core.CoreRulesTarget();
+    private static RulesUnits rulesUnits = new CoreRulesUnits();
 
     public static ToHitData compileTargetToHitMods(Game game, Entity attacker, Targetable target,
           ToHitData toHit, int aimingAt, AimingMode aimingMode, int distance, WeaponType weaponType,
@@ -420,8 +419,8 @@ public class ComputeTargetToHitMods {
 
     private static void initializeRules(Game game) {
         if (game.getOptions().booleanOption(OptionsConstants.TWRULES)) {
-            rulesTarget = new twRulesTarget();
-            rulesUnits = new twRulesUnits();
+            rulesTarget = new TwRulesTarget();
+            rulesUnits = new TwRulesUnits();
         }
     }
 

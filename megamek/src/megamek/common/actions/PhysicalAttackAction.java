@@ -50,19 +50,19 @@ import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.rules.core.coreRulesTarget;
-import megamek.common.rules.core.coreRulesUnits;
-import megamek.common.rules.rulesTarget;
-import megamek.common.rules.rulesUnits;
-import megamek.common.rules.totalwarfare.twRulesTarget;
-import megamek.common.rules.totalwarfare.twRulesUnits;
+import megamek.common.rules.core.CoreRulesTarget;
+import megamek.common.rules.core.CoreRulesUnits;
+import megamek.common.rules.RulesTarget;
+import megamek.common.rules.RulesUnits;
+import megamek.common.rules.totalwarfare.TwRulesTarget;
+import megamek.common.rules.totalwarfare.TwRulesUnits;
 import megamek.common.units.*;
 
 public class PhysicalAttackAction extends AbstractAttackAction {
     @Serial
     private static final long serialVersionUID = -4702357516725749181L;
-    private static rulesTarget rulesTarget = new coreRulesTarget();
-    private static rulesUnits rulesUnits = new coreRulesUnits();
+    private static RulesTarget rulesTarget = new CoreRulesTarget();
+    private static RulesUnits rulesUnits = new CoreRulesUnits();
 
     public PhysicalAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
@@ -78,8 +78,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
      */
     private static void initializeRules(Game game) {
         if (game.getOptions().booleanOption(OptionsConstants.TWRULES)) {
-            rulesTarget = new twRulesTarget();
-            rulesUnits = new twRulesUnits();
+            rulesTarget = new TwRulesTarget();
+            rulesUnits = new TwRulesUnits();
         }
     }
     /**

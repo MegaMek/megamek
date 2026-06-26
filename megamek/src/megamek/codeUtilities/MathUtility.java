@@ -562,4 +562,16 @@ public class MathUtility {
             return defaultValue;
         }
     }
+
+    /**
+     * Utility function to handle parsing strings into boolean and to handle the possible NumberFormatException with
+     * logging and a returned default value of {@code false}.
+     *
+     * @param value String value to parse.
+     *
+     * @return The <code>boolean</code> value or defaultValue.
+     */
+    public static boolean parseBoolean(final String value) {
+        return parseBoolean(value, false);
+    }
 }

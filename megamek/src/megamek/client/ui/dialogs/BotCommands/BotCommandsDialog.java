@@ -73,8 +73,9 @@ public class BotCommandsDialog extends JDialog {
         this.setMinimumSize(UIUtil.scaleForGUI(600, 120));
         this.setResizable(true);
 
-        // Center on the game window when there is no saved position yet; otherwise restore the player's last spot.
-        if ((GUIP.getBotCommandsPosX() == 0) && (GUIP.getBotCommandsPosY() == 0)) {
+        // Center on the game window when there is no saved position yet (sentinel -1,-1); otherwise restore the
+        // player's last spot. Using -1 rather than 0 keeps a legitimately saved top-left (0,0) placement restorable.
+        if ((GUIP.getBotCommandsPosX() == -1) && (GUIP.getBotCommandsPosY() == -1)) {
             this.setLocationRelativeTo(frame);
         } else {
             this.setLocation(GUIP.getBotCommandsPosX(), GUIP.getBotCommandsPosY());

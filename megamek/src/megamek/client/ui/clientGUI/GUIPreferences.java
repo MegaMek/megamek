@@ -702,6 +702,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_DISPLAY_ENABLED, true);
         store.setDefault(UNIT_DISPLAY_LOCATION, 0);
         store.setDefault(BOT_COMMANDS_LOCATION, 0);
+        // -1 is the "no saved position yet" sentinel so the floating dialog centers on first use; a real saved
+        // position (including a legitimate top-left 0,0) is restored instead.
+        store.setDefault(BOT_COMMANDS_POS_X, -1);
+        store.setDefault(BOT_COMMANDS_POS_Y, -1);
         // Default to MANUAL so the bot commands panel stays in whatever mode the player chose (Float/Dock/Off)
         // instead of being auto-hidden on every phase change.
         store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE, MANUAL);

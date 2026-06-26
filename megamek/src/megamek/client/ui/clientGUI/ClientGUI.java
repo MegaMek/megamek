@@ -134,7 +134,6 @@ import megamek.client.ui.tileset.EntityImage;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.BASE64ToolKit;
-import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
@@ -282,15 +281,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_PLAYER_LIST = "viewPlayerList";
     public static final String VIEW_RESET_WINDOW_POSITIONS = "viewResetWindowPos";
     public static final String VIEW_BOT_COMMANDS = "viewBotCommands";
-    public static final String VIEW_BOT_COMMANDS_OFF = "viewBotCommandsOff";
-    public static final String VIEW_BOT_COMMANDS_FLOAT = "viewBotCommandsFloat";
-    public static final String VIEW_BOT_COMMANDS_DOCK = "viewBotCommandsDock";
     // endregion view menu
-
-    /** Bot commands panel location: shown in a floating dialog. */
-    public static final int BOT_COMMANDS_LOCATION_FLOATING = 0;
-    /** Bot commands panel location: docked into the top of the board area. */
-    public static final int BOT_COMMANDS_LOCATION_DOCKED = 1;
 
     // region fire menu
     public static final String FIRE_SAVE_WEAPON_ORDER = "saveWeaponOrder";
@@ -370,7 +361,6 @@ public class ClientGUI extends AbstractClientGUI
     private UnitDisplayDialog unitDisplayDialog;
 
     private BotCommandsDialog botCommandsDialog;
-    private BotCommandsPanel botCommandsPanel;
 
     public ForceDisplayPanel forceDisplayPanel;
     private ForceDisplayDialog forceDisplayDialog;
@@ -719,10 +709,6 @@ public class ClientGUI extends AbstractClientGUI
         this.botCommandsDialog = botCommandsDialog;
     }
 
-    public BotCommandsPanel getBotCommandsPanel() {
-        return botCommandsPanel;
-    }
-
     public MiniReportDisplayPanel getMiniReportDisplay() {
         return miniReportDisplayPanel;
     }
@@ -905,13 +891,7 @@ public class ClientGUI extends AbstractClientGUI
         RulerDialog.color2 = GUIP.getRulerColor2();
 
         setBotCommandsDialog(new BotCommandsDialog(frame, this));
-        botCommandsPanel = new BotCommandsPanel(getClient(), audioService, null);
-        // Place the panel in its configured location (floating dialog or docked strip) before first use.
-        setBotCommandsLocation(GUIP.getBotCommandsEnabled());
-        // The Bot Commands submenu can no longer carry a working menu accelerator, so wire the show/hide hotkey here.
-        if (controller != null) {
-            controller.registerCommandAction(KeyCommandBind.BOT_COMMANDS.cmd, GUIP::toggleBotCommandsEnabled);
-        }
+        getBotCommandsDialog().add(new BotCommandsPanel(getClient(), audioService, null));
 
         client.changePhase(GamePhase.UNKNOWN);
         MekSummaryCache mekSummaryCache = MekSummaryCache.getInstance();
@@ -1298,16 +1278,8 @@ public class ClientGUI extends AbstractClientGUI
             case VIEW_MINI_MAP:
                 GUIP.toggleMinimapEnabled();
                 break;
-            case VIEW_BOT_COMMANDS_OFF:
-                GUIP.setBotCommandsEnabled(false);
-                break;
-            case VIEW_BOT_COMMANDS_FLOAT:
-                GUIP.setBotCommandsLocation(BOT_COMMANDS_LOCATION_FLOATING);
-                GUIP.setBotCommandsEnabled(true);
-                break;
-            case VIEW_BOT_COMMANDS_DOCK:
-                GUIP.setBotCommandsLocation(BOT_COMMANDS_LOCATION_DOCKED);
-                GUIP.setBotCommandsEnabled(true);
+            case VIEW_BOT_COMMANDS:
+                GUIP.toggleBotCommandsEnabled();
                 break;
             case VIEW_TOGGLE_HEX_COORDS:
                 GUIP.toggleCoords();
@@ -1933,18 +1905,23 @@ public class ClientGUI extends AbstractClientGUI
 
     private void maybeShowBotCommands() {
         GamePhase phase = getClient().getGame().getPhase();
-        boolean phaseAllowsPanel;
         if (phase.isReport()) {
-            phaseAllowsPanel = GUIP.getBotCommandsAutoDisplayReportPhase() != GUIPreferences.HIDE;
+            int action = GUIP.getBotCommandsAutoDisplayReportPhase();
+            if (action == GUIPreferences.SHOW) {
+                GUIP.setBotCommandsEnabled(true);
+            } else if (action == GUIPreferences.HIDE) {
+                GUIP.setBotCommandsEnabled(false);
+            }
         } else if (phase.isOnMap()) {
-            phaseAllowsPanel = GUIP.getBotCommandsAutoDisplayNonReportPhase() != GUIPreferences.HIDE;
+            int action = GUIP.getBotCommandsAutoDisplayNonReportPhase();
+            if (action == GUIPreferences.SHOW) {
+                GUIP.setBotCommandsEnabled(true);
+            } else if (action == GUIPreferences.HIDE) {
+                GUIP.setBotCommandsEnabled(false);
+            }
         } else {
-            // Lounge and other non-board phases never show the panel, but the player's on/off choice is kept.
-            phaseAllowsPanel = false;
+            GUIP.setBotCommandsEnabled(false);
         }
-        // BOT_COMMANDS_ENABLED is the persistent user choice (Off/Float/Dock); honor it here, never overwrite it,
-        // so the chosen mode is remembered across phases and across sessions.
-        setBotCommandsLocation(GUIP.getBotCommandsEnabled() && phaseAllowsPanel);
     }
 
     /** Shows or hides the minimap based on the current menu setting. */
@@ -2110,35 +2087,11 @@ public class ClientGUI extends AbstractClientGUI
         }
     }
 
-    /**
-     * Places the bot commands panel in its configured location and sets its visibility. Mirrors
-     * {@link #setUnitDisplayLocation(boolean)}: the single panel instance is reparented between the floating dialog and
-     * the docked strip at the top of the board area, so no command functionality is lost when switching. Floating mode
-     * keeps the panel's original size and two-row layout; docked mode uses a single-row strip.
-     *
-     * @param visible whether the bot commands panel should be shown
-     */
-    void setBotCommandsLocation(boolean visible) {
-        if ((botCommandsPanel == null) || (getBotCommandsDialog() == null) || (panTop == null)) {
-            return;
-        }
-        boolean docked = GUIP.getBotCommandsLocation() == BOT_COMMANDS_LOCATION_DOCKED;
-        botCommandsPanel.setDockedLayout(docked);
-        if (docked) {
-            getBotCommandsDialog().setVisible(false);
-            panTop.add(botCommandsPanel, BorderLayout.NORTH);
-            botCommandsPanel.setVisible(visible);
-            logger.debug("[BotPanel] docked at top of board, visible={}", visible);
-        } else {
-            panTop.remove(botCommandsPanel);
-            getBotCommandsDialog().add(botCommandsPanel);
-            botCommandsPanel.setVisible(true);
+    void setBotCommandsDialogVisible(boolean visible) {
+        if (getBotCommandsDialog() != null) {
             getBotCommandsDialog().setVisible(visible);
-            logger.debug("[BotPanel] floating dialog, visible={}", visible);
+            conditionalRequestFocus(visible);
         }
-        panTop.revalidate();
-        panTop.repaint();
-        conditionalRequestFocus(visible);
     }
 
     private void saveSplitPaneLocations() {
@@ -3737,8 +3690,7 @@ public class ClientGUI extends AbstractClientGUI
                  GUIPreferences.SOUND_BING_FILENAME_MY_TURN,
                  GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN -> audioService.loadSoundFiles();
             case GUIPreferences.MASTER_VOLUME -> audioService.setVolume();
-            case GUIPreferences.BOT_COMMANDS_ENABLED, GUIPreferences.BOT_COMMANDS_LOCATION ->
-                  setBotCommandsLocation(GUIP.getBotCommandsEnabled());
+            case GUIPreferences.BOT_COMMANDS_ENABLED -> setBotCommandsDialogVisible(GUIP.getBotCommandsEnabled());
         }
     }
 

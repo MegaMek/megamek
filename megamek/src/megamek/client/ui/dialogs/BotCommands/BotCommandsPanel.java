@@ -33,7 +33,6 @@
 
 package megamek.client.ui.dialogs.BotCommands;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
@@ -41,12 +40,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
 
 import megamek.client.AbstractClient;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
@@ -58,15 +57,12 @@ import megamek.client.ui.clientGUI.audio.SoundType;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.MenuScroller;
-import megamek.client.ui.util.UIUtil;
-import megamek.client.ui.widget.MegaMekButton;
-import megamek.client.ui.widget.SkinSpecification;
+import megamek.common.game.InGameObject;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.game.InGameObject;
 
 /**
  * The Bot Commands Panel contains a small set of buttons which allow the player to change the configuration of any bot
@@ -79,11 +75,10 @@ public class BotCommandsPanel extends JPanel {
     private final AbstractClient client;
     private final AudioService audioService;
     private final MegaMekController controller;
-    private final MegaMekButton miscButton =
-          new MegaMekButton("", SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+    private final JButton miscButton = new JButton();
     // This latch is used only to change the state of the button from pause to continue and back
     private boolean pauseLatch = false;
-    private MegaMekButton pauseContinue;
+    private JButton pauseContinue;
 
     /**
      * Bot Commands Panel constructor.
@@ -100,42 +95,11 @@ public class BotCommandsPanel extends JPanel {
         this.initialize();
     }
 
-    /**
-     * Switches the panel between its floating and docked layouts. The floating layout keeps the original two-row grid
-     * and size; the docked layout uses a single row sized for the thin strip above the board. Only the arrangement and
-     * size hints change - the same buttons and their actions are preserved in both modes.
-     *
-     * @param docked {@code true} to use the single-row docked layout, {@code false} to use the floating two-row layout
-     */
-    public void setDockedLayout(boolean docked) {
-        applyLayout(docked);
-        revalidate();
-        repaint();
-    }
-
-    /**
-     * Applies the layout manager and size hints for the requested mode.
-     *
-     * @param docked {@code true} for the single-row docked layout, {@code false} for the floating two-row layout
-     */
-    private void applyLayout(boolean docked) {
-        if (docked) {
-            // One row, columns grow to fit the buttons - a thin strip that steals little height from the board.
-            this.setLayout(new GridLayout(1, 0, 2, 2));
-            this.setMinimumSize(UIUtil.scaleForGUI(600, 40));
-            this.setPreferredSize(new Dimension(-1, UIUtil.scaleForGUI(40)));
-            this.setMaximumSize(new Dimension(-1, UIUtil.scaleForGUI(40)));
-        } else {
-            this.setLayout(new GridLayout(2, 4, 2, 2));
-            this.setMinimumSize(UIUtil.scaleForGUI(600, 80));
-            this.setPreferredSize(new Dimension(-1, UIUtil.scaleForGUI(80)));
-            this.setMaximumSize(new Dimension(-1, UIUtil.scaleForGUI(80)));
-        }
-    }
-
     private void initialize() {
-        applyLayout(false);
-        applyTopBarBackground();
+        this.setLayout(new GridLayout(2, 4, 2, 2));
+        this.setMinimumSize(new Dimension(600, 80));
+        this.setPreferredSize(new Dimension(-1, 80));
+        this.setMaximumSize(new Dimension(-1, 80));
         var retreat = createButton("Retreat");
         pauseContinue = createButton("PauseGame");
         var maneuver = createButton("Maneuver");
@@ -259,24 +223,10 @@ public class BotCommandsPanel extends JPanel {
               .toList();
     }
 
-    private MegaMekButton createButton(String messageKey) {
-        MegaMekButton button = new MegaMekButton(Messages.getString("BotCommandPanel." + messageKey + ".title"),
-              SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+    private JButton createButton(String messageKey) {
+        JButton button = new JButton(Messages.getString("BotCommandPanel." + messageKey + ".title"));
         button.setToolTipText(Messages.getString("BotCommandPanel." + messageKey + ".tooltip"));
         return button;
-    }
-
-    /**
-     * Sets the panel background to the top menu bar color so the docked strip blends with the bar above it. Falls back
-     * to the generic control color when the theme does not define a menu bar background.
-     */
-    private void applyTopBarBackground() {
-        Color barBackground = UIManager.getColor("MenuBar.background");
-        if (barBackground == null) {
-            barBackground = UIManager.getColor("control");
-        }
-        setOpaque(true);
-        setBackground(barBackground);
     }
 
     private JPopupMenu createSelectBehaviorPopup() {

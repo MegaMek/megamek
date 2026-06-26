@@ -47,12 +47,10 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
 
 import megamek.MMConstants;
@@ -151,14 +149,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JMenuItem viewZoomOut = new JMenuItem(getString("CommonMenuBar.viewZoomOut"));
     private final JMenuItem viewZoomOverviewToggle = new JMenuItem(getString("CommonMenuBar.viewZoomOverviewToggle"));
     private final JMenuItem viewLabels = new JMenuItem(getString("CommonMenuBar.viewLabels"));
-    // Bot Commands is a submenu offering three mutually exclusive display modes (Off / Float / Dock).
-    private final JMenu viewBotCommands = new JMenu(getString("CommonMenuBar.viewBotCommands"));
-    private final JRadioButtonMenuItem viewBotCommandsOff =
-          new JRadioButtonMenuItem(getString("CommonMenuBar.viewBotCommandsOff"));
-    private final JRadioButtonMenuItem viewBotCommandsFloat =
-          new JRadioButtonMenuItem(getString("CommonMenuBar.viewBotCommandsFloat"));
-    private final JRadioButtonMenuItem viewBotCommandsDock =
-          new JRadioButtonMenuItem(getString("CommonMenuBar.viewBotCommandsDock"));
+    private final JCheckBoxMenuItem viewBotCommands = new JCheckBoxMenuItem(getString("CommonMenuBar.viewBotCommands"));
     private final JCheckBoxMenuItem toggleIsometric = new JCheckBoxMenuItem(getString(
           "CommonMenuBar.viewToggleIsometric"));
     private final JCheckBoxMenuItem toggleHexCoords = new JCheckBoxMenuItem(getString(
@@ -327,8 +318,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         GUIP.setForceDisplayEnabled(false);
         initMenuItem(viewForceDisplay, menu, VIEW_FORCE_DISPLAY, GUIP.getForceDisplayEnabled());
         initMenuItem(viewNovaNetworks, menu, VIEW_NOVA_NETWORKS);
-        // Do not force the bot commands panel off at startup - its Off/Float/Dock choice is a persistent setting.
-        initBotCommandsMenu(menu);
+        GUIP.setBotCommandsEnabled(false);
+        initMenuItem(viewBotCommands, menu, VIEW_BOT_COMMANDS, VK_G, GUIP.getBotCommandsEnabled());
         menu.addSeparator();
 
         initMenuItem(viewKeybindsOverlay, menu, VIEW_KEYBINDS_OVERLAY, GUIP.getShowKeybindsOverlay());
@@ -436,8 +427,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         gameSave.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOCAL_SAVE));
         gameLoad.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOCAL_LOAD));
         gameEditBots.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.REPLACE_PLAYER));
-        // The bot commands show/hide hotkey is handled by the controller (ClientGUI), since a submenu cannot carry a
-        // working menu accelerator.
+        viewBotCommands.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.BOT_COMMANDS));
     }
 
     @Override
@@ -636,8 +626,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             case GUIPreferences.MINI_REPORT_ENABLED -> gameRoundReport.setSelected(GUIP.getMiniReportEnabled());
             case GUIPreferences.PLAYER_LIST_ENABLED -> gamePlayerList.setSelected(GUIP.getPlayerListEnabled());
             case RecentBoardList.RECENT_BOARDS_UPDATED -> initializeRecentBoardsMenu();
-            case GUIPreferences.BOT_COMMANDS_ENABLED, GUIPreferences.BOT_COMMANDS_LOCATION ->
-                  updateBotCommandsSelection();
+            case GUIPreferences.BOT_COMMANDS_ENABLED -> viewBotCommands.setSelected(GUIP.getBotCommandsEnabled());
         }
     }
 
@@ -669,40 +658,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(item, menu, command);
         item.setMnemonic(mnemonic);
         item.setSelected(selected);
-    }
-
-    /**
-     * Builds the Bot Commands submenu: three mutually exclusive radio items (Off / Float / Dock) grouped together, and
-     * adds the submenu to the given parent View menu. The submenu replaces the former single checkbox so the player can
-     * choose where the bot commands panel is shown without losing the on/off control.
-     *
-     * @param parentMenu the View menu the submenu is added to
-     */
-    private void initBotCommandsMenu(JMenu parentMenu) {
-        viewBotCommands.setMnemonic(VK_G);
-        initMenuItem(viewBotCommandsOff, viewBotCommands, ClientGUI.VIEW_BOT_COMMANDS_OFF);
-        initMenuItem(viewBotCommandsFloat, viewBotCommands, ClientGUI.VIEW_BOT_COMMANDS_FLOAT);
-        initMenuItem(viewBotCommandsDock, viewBotCommands, ClientGUI.VIEW_BOT_COMMANDS_DOCK);
-        ButtonGroup botCommandsGroup = new ButtonGroup();
-        botCommandsGroup.add(viewBotCommandsOff);
-        botCommandsGroup.add(viewBotCommandsFloat);
-        botCommandsGroup.add(viewBotCommandsDock);
-        parentMenu.add(viewBotCommands);
-        updateBotCommandsSelection();
-    }
-
-    /**
-     * Selects the Bot Commands radio item that matches the current enabled and location preferences: Off when the panel
-     * is disabled, otherwise Dock or Float depending on the configured location.
-     */
-    private void updateBotCommandsSelection() {
-        if (!GUIP.getBotCommandsEnabled()) {
-            viewBotCommandsOff.setSelected(true);
-        } else if (GUIP.getBotCommandsLocation() == ClientGUI.BOT_COMMANDS_LOCATION_DOCKED) {
-            viewBotCommandsDock.setSelected(true);
-        } else {
-            viewBotCommandsFloat.setSelected(true);
-        }
     }
 
     /**

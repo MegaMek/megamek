@@ -5988,9 +5988,6 @@ public class Compute {
 
         if (alreadyPerformingOther) {
             reason = "already performing a swarm attack";
-        } else if (game.getHexOf(defender) == null) {
-            // The defender does not exist on the board
-            reason = "Defender's occupied hex is null";
         } else if (!(defender instanceof Mek)) {
             // Can only attack a Mek's legs.
             reason = "Defender is not a Mek.";

@@ -445,6 +445,10 @@ public class Princess extends BotClient {
         this.holdPosition = holdPosition;
     }
 
+    /**
+     * @return {@code true} if "shoot and scoot" is enabled, letting a threatened artillery unit displace to regain its
+     *       standoff instead of holding in place
+     */
     public boolean getShootAndScoot() {
         return shootAndScoot;
     }

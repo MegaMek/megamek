@@ -175,8 +175,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return false;
         }
 
-        // "Splash, over" - the heads-up the rounds are about to land, called this phase right before impact
-        addProWordReport(vPhaseReport, 3128, batteryName(artilleryAttackAction), targetPos.getBoardNum());
+        // "Splash, over" - the heads-up the rounds are about to land, called this phase right before impact. A
+        // counter-battery shot aims at an off-board battery, whose virtual board number is meaningless to read out as a
+        // grid square, so name it as an off-board target instead (matching the "Shot, out" readback).
+        String splashTarget = target.isOffBoard()
+              ? Messages.getString("Artillery.offBoardTarget")
+              : targetPos.getBoardNum();
+        addProWordReport(vPhaseReport, 3128, batteryName(artilleryAttackAction), splashTarget);
         if (attackingEntity != null) {
             gameManager.sendArtilleryNetToast("splash", attackingEntity, game.getRoundCount());
         }
@@ -535,7 +540,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         String weaponName = weaponType.getName();
         String impactRound = String.valueOf(game.getRoundCount() + artilleryAttackAction.getTurnsTilHit());
         Coords targetPos = (target != null) ? target.getPosition() : null;
-        String grid = (targetPos != null) ? targetPos.getBoardNum() : "off-board";
+        // A counter-battery shot aims at an off-board enemy battery, whose virtual board number is meaningless to read
+        // out as a grid square, so name it as an off-board target instead.
+        boolean offBoardTarget = ((target != null) && target.isOffBoard()) || (targetPos == null);
+        String grid = offBoardTarget ? Messages.getString("Artillery.offBoardTarget") : targetPos.getBoardNum();
 
         // Board toast for the firing player and team (deduped to one per volley moment)
         if (attackingEntity != null) {

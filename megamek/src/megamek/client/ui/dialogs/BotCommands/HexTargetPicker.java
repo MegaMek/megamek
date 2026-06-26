@@ -136,8 +136,8 @@ public class HexTargetPicker {
 
         phaseChangeListener = new GameListenerAdapter() {
             @Override
-            public void gamePhaseChange(GamePhaseChangeEvent e) {
-                if (e.getNewPhase() != GamePhase.UNKNOWN) {
+            public void gamePhaseChange(GamePhaseChangeEvent event) {
+                if (event.getNewPhase() != GamePhase.UNKNOWN) {
                     finish(false);
                 }
             }
@@ -201,7 +201,7 @@ public class HexTargetPicker {
 
         controlDialog.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
+            public void windowClosing(WindowEvent event) {
                 finish(false);
             }
         });

@@ -229,10 +229,10 @@ public class ChatProcessor {
                     LOGGER.info("{}: executing chat command {} with arguments {}",
                           princess.getLocalPlayer().getName(), cmd.getCommand(), Arrays.toString(arguments));
                     cmd.getChatCommand().execute(princess, args);
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException exception) {
                     LOGGER.warn("{}: invalid arguments for chat command {}: {} ({})",
                           princess.getLocalPlayer().getName(), cmd.getCommand(), Arrays.toString(arguments),
-                          e.getMessage());
+                          exception.getMessage());
                     princess.sendChat("Invalid arguments for command: " + command);
                     return;
                 }

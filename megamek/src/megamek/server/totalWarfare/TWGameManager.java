@@ -31443,48 +31443,25 @@ public class TWGameManager extends AbstractGameManager {
         send(new Packet(PacketCommand.SEND_TOAST, level, message, entityId));
     }
 
-    // De-duplicates artillery call-for-fire toasts so a multi-tube volley raises one toast per moment, not per tube.
-    // Scoped to a single round: cleared whenever the round changes so it does not grow over a long game.
-    private final Set<String> sentArtilleryNetToasts = new HashSet<>();
-    private int sentArtilleryNetToastsRound = Integer.MIN_VALUE;
+    // Artillery call-for-fire notifications (Shot/Splash, counter-battery, homing-inbound) live in their own helper to
+    // keep that logic out of this already-large class; the methods below are thin delegators.
+    private final ArtilleryNotifications artilleryNotifications = new ArtilleryNotifications(this);
 
     /**
      * Sends a single artillery call-for-fire toast (Shot / Splash / Rounds complete) to the firing player and their
-     * teammates only - never to enemies, so it does not leak the target. A multi-tube volley is de-duplicated to one
-     * toast per moment via the round-scoped key, rather than one per tube.
+     * teammates only. Delegates to {@link ArtilleryNotifications#sendArtilleryNetToast}.
      *
-     * @param momentKey    the call-for-fire moment, used both to look up the localized text
-     *                     ({@code Artillery.netToast.<momentKey>}) and to scope de-duplication
+     * @param momentKey    the call-for-fire moment ({@code Artillery.netToast.<momentKey>})
      * @param firingEntity the artillery unit (its owner and team define the audience)
-     * @param momentRound  the round the moment occurs in, used only to scope de-duplication
+     * @param momentRound  the round the moment occurs in, used to scope de-duplication
      */
     public void sendArtilleryNetToast(String momentKey, Entity firingEntity, int momentRound) {
-        Player owner = firingEntity.getOwner();
-        if (owner == null) {
-            return;
-        }
-        // Reset the per-round dedupe set when the round advances so it stays bounded over a long game.
-        if (momentRound != sentArtilleryNetToastsRound) {
-            sentArtilleryNetToasts.clear();
-            sentArtilleryNetToastsRound = momentRound;
-        }
-        String dedupeKey = firingEntity.getId() + ":" + momentKey + ":" + momentRound;
-        if (!sentArtilleryNetToasts.add(dedupeKey)) {
-            return;
-        }
-        String message = Messages.getString("Artillery.netToast." + momentKey, owner.getName());
-        for (Player player : game.getPlayersList()) {
-            if (!player.isEnemyOf(owner)) {
-                send(player.getId(), new Packet(PacketCommand.SEND_TOAST,
-                      GameToastEvent.Level.INFO, message, firingEntity.getId()));
-            }
-        }
+        artilleryNotifications.sendArtilleryNetToast(momentKey, firingEntity, momentRound);
     }
 
     /**
      * Sends a radio-flavored counter-battery toast to the team that just spotted an enemy off-board battery's fall of
-     * shot, so a player sees the call-for-fire moment alongside the report. Scoped to the observing team only and
-     * de-duplicated per enemy battery per team per round (shares the artillery net-toast dedupe set).
+     * shot. Delegates to {@link ArtilleryNotifications#sendCounterBatteryObservedToast}.
      *
      * @param observer     the friendly unit that observed the enemy battery's fall of shot
      * @param enemyBattery the off-board enemy battery that was spotted
@@ -31493,70 +31470,15 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void sendCounterBatteryObservedToast(Entity observer, Entity enemyBattery, Coords impactHex,
           int momentRound) {
-        Player observerOwner = observer.getOwner();
-        if ((observerOwner == null) || (enemyBattery == null) || (impactHex == null)) {
-            return;
-        }
-        if (momentRound != sentArtilleryNetToastsRound) {
-            sentArtilleryNetToasts.clear();
-            sentArtilleryNetToastsRound = momentRound;
-        }
-        String dedupeKey = "counterBattery:" + enemyBattery.getId() + ":" + observerOwner.getTeam() + ":" + momentRound;
-        if (!sentArtilleryNetToasts.add(dedupeKey)) {
-            return;
-        }
-        String message = Messages.getString("Artillery.counterBatteryToast",
-              observer.getShortName(), impactHex.getBoardNum());
-        for (Player player : game.getPlayersList()) {
-            if (!player.isEnemyOf(observerOwner)) {
-                send(player.getId(), new Packet(PacketCommand.SEND_TOAST,
-                      GameToastEvent.Level.INFO, message, observer.getId()));
-            }
-        }
+        artilleryNotifications.sendCounterBatteryObservedToast(observer, enemyBattery, impactHex, momentRound);
     }
 
     /**
-     * During the movement phase, reminds each team that has a homing artillery round landing next round to put a TAG on
-     * the target - a homing round needs a friendly TAG within 8 hexes when it impacts. Fired at
-     * {@code turnsTilHit == 1} (the movement phase before the landing turn) so the team still has its firing phase this
-     * turn to TAG the target. De-duplicated per battery per round via {@link #sendArtilleryNetToast}.
+     * Reminds each team with a homing artillery round landing next round to put a TAG on the target. Delegates to
+     * {@link ArtilleryNotifications#remindHomingArtilleryInbound}.
      */
     public void remindHomingArtilleryInbound() {
-        for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks.hasMoreElements(); ) {
-            ArtilleryAttackAction artilleryAttack = attacks.nextElement();
-            // <= 1 covers both the move phase before the landing turn and the landing turn's own move phase (after the
-            // round has already been decremented to 0 in the prior offboard), so the reminder always lands in a move
-            // phase the player can act on.
-            if (artilleryAttack.getTurnsTilHit() > 1) {
-                continue;
-            }
-            if (!isHomingArtilleryAttack(artilleryAttack)) {
-                continue;
-            }
-            Entity firingEntity = artilleryAttack.getEntity(game);
-            if (firingEntity != null) {
-                sendArtilleryNetToast("homingInbound", firingEntity, game.getRoundCount());
-            }
-        }
-    }
-
-    /**
-     * @param artilleryAttack The in-flight artillery attack
-     *
-     * @return {@code true} if the attack uses a homing round, checked from the attack's recorded munition type and, as a
-     *       fallback, the linked ammo bin
-     */
-    private boolean isHomingArtilleryAttack(ArtilleryAttackAction artilleryAttack) {
-        if (artilleryAttack.getAmmoMunitionType().contains(Munitions.M_HOMING)) {
-            return true;
-        }
-        Entity firingEntity = artilleryAttack.getEntity(game);
-        if (firingEntity != null) {
-            Mounted<?> ammo = firingEntity.getEquipment(artilleryAttack.getAmmoId());
-            return (ammo instanceof AmmoMounted ammoMounted)
-                  && ammoMounted.getType().getMunitionType().contains(Munitions.M_HOMING);
-        }
-        return false;
+        artilleryNotifications.remindHomingArtilleryInbound();
     }
 
     /**

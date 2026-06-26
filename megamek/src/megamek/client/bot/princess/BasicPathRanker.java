@@ -696,6 +696,11 @@ public class BasicPathRanker extends PathRanker {
     // movement/herding pull; the tube may still turn in place to face the enemy.
     private static final double ARTILLERY_HOLD_STILL_WEIGHT = 100.0;
 
+    // Penalty added to a TAG spotter's path when it jumps to a hex it could otherwise designate from. Jumping piles a
+    // large attacker-movement modifier onto the TAG to-hit, likely wasting a designation a homing round relies on, so
+    // the bot prefers a non-jumping path and only jumps when that is the only way to reach a designating position.
+    private static final double TAG_JUMP_PENALTY = 10.0;
+
     /**
      * @param unit The unit being moved
      *
@@ -1164,10 +1169,17 @@ public class BasicPathRanker extends PathRanker {
                 // A spotter that can actually designate from this hex (line of sight + TAG range to an enemy) holds its
                 // standoff band; one that cannot see a target closes to regain line of sight - but only down to a
                 // minimum safe distance, so a fragile spotter never charges to point-blank just to get a shot.
-                if (canDesignateFrom(movingUnit, path.getFinalCoords(), enemies, maxOperationalTagRange(movingUnit),
-                      game)) {
+                boolean canDesignate = canDesignateFrom(movingUnit, path.getFinalCoords(), enemies,
+                      maxOperationalTagRange(movingUnit), game);
+                if (canDesignate) {
                     aggressionMod = Math.abs(distToEnemy - standoffDistance)
                           * getOwner().getBehaviorSettings().getHyperAggressionValue();
+                    // Prefer to walk/run when this hex can already designate: jumping would add a large attacker-moved
+                    // penalty to the TAG roll and likely waste the designation. Still allow a jump if it is the only way
+                    // to reach a designating position (the penalty just makes a non-jumping option win when one exists).
+                    if (path.isJumping()) {
+                        aggressionMod += TAG_JUMP_PENALTY;
+                    }
                 } else {
                     aggressionMod = Math.abs(distToEnemy - MIN_TAG_STANDOFF_DISTANCE)
                           * getOwner().getBehaviorSettings().getHyperAggressionValue();
@@ -1177,25 +1189,43 @@ public class BasicPathRanker extends PathRanker {
                 // walk its tube forward. Its floor is the larger of how far back it already is and the minimum indirect
                 // range.
                 standoffArtillery = true;
-                double currentDistToEnemy = (movingUnit.getPosition() != null)
-                      ? distanceToClosestEnemy(movingUnit, movingUnit.getPosition(), game)
-                      : standoffDistance;
-                double holdDistance = Math.max(currentDistToEnemy, standoffDistance);
-                double shortfall = holdDistance - distToEnemy;
-                if (shortfall > 0) {
-                    // Enemy is inside the hold distance: steeply penalize any path that ends closer (advancing, or
-                    // sitting inside minimum range), so the tube falls back to regain standoff.
-                    aggressionMod = shortfall * ARTILLERY_STANDOFF_URGENCY
-                          * getOwner().getBehaviorSettings().getHyperAggressionValue();
-                } else {
-                    // Safely at standoff: hold position. Penalize any move out of the current hex so the tube does not
-                    // shuffle sideways (which gains nothing and can incur attacker-movement firing penalties); it may
-                    // still turn in place to face the enemy. This mirrors a player setting artillery to Hold Position.
+                double hexesMoved = (movingUnit.getPosition() != null)
+                      ? movingUnit.getPosition().distance(path.getFinalCoords())
+                      : 0;
+                if (distToEnemy < 0) {
+                    // No on-board enemy to stand off from (e.g. they all fled off-board): the tube can already deliver
+                    // indirect and counter-battery fire on off-board targets from where it stands, so it holds position
+                    // instead of re-pathing toward an off-board enemy it can shell but never reach. Without this, every
+                    // path scored the same (distToEnemy == -1 for all of them) and the tube shuffled aimlessly back and
+                    // forth - the "2-step".
                     holdingArtilleryInPlace = true;
-                    double hexesMoved = (movingUnit.getPosition() != null)
-                          ? movingUnit.getPosition().distance(path.getFinalCoords())
-                          : 0;
                     aggressionMod = hexesMoved * ARTILLERY_HOLD_STILL_WEIGHT;
+                } else {
+                    double currentDistToEnemy = (movingUnit.getPosition() != null)
+                          ? distanceToClosestEnemy(movingUnit, movingUnit.getPosition(), game)
+                          : standoffDistance;
+                    double hyperAggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
+                    double deficit = standoffDistance - distToEnemy;
+                    boolean startedSafelyBack = currentDistToEnemy >= standoffDistance;
+                    if (deficit > 0) {
+                        // This path ends inside the standoff: fall back to regain it. Neutralize any positive bravery
+                        // (close-range damage) pull so the tube is not lured forward by the damage it could deal there -
+                        // a negative bravery (it would take damage) is left intact, since that also argues for falling
+                        // back. This is what stops an artillery tube from wading inside its own minimum range.
+                        aggressionMod = (deficit * ARTILLERY_STANDOFF_URGENCY * hyperAggression)
+                              + Math.max(0, braveryMod);
+                    } else if (startedSafelyBack) {
+                        // Already at or beyond standoff and staying there: hold position so the tube does not shuffle
+                        // sideways (which gains nothing and can incur attacker-movement firing penalties); it may still
+                        // turn in place to face the enemy. Mirrors setting artillery to Hold Position.
+                        holdingArtilleryInPlace = true;
+                        aggressionMod = hexesMoved * ARTILLERY_HOLD_STILL_WEIGHT;
+                    } else {
+                        // Was inside the standoff and this path reaches safety - exactly the retreat we want, so do not
+                        // penalize the move; bravery then settles the tube at the standoff edge, its best firing spot.
+                        holdingArtilleryInPlace = true;
+                        aggressionMod = 0;
+                    }
                 }
             }
         } else {

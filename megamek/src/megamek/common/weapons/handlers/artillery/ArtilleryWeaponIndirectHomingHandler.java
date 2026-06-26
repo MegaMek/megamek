@@ -113,8 +113,10 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 handledAmmoAndReport = true;
 
                 // "Shot, out" - homing round, will guide onto a tagged target
-                String shotGrid = ((target != null) && (target.getPosition() != null))
-                      ? target.getPosition().getBoardNum() : "off-board";
+                boolean offBoardTarget = (target == null) || (target.getPosition() == null) || target.isOffBoard();
+                String shotGrid = offBoardTarget
+                      ? Messages.getString("Artillery.offBoardTarget")
+                      : target.getPosition().getBoardNum();
                 addProWordReport(vPhaseReport, 3133, batteryName(aaa), weaponType.getName(), shotGrid,
                       String.valueOf(game.getRoundCount() + aaa.getTurnsTilHit()));
                 if (attackingEntity != null) {

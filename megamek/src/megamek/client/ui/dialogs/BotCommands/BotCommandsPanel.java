@@ -877,7 +877,38 @@ public class BotCommandsPanel extends JPanel {
             ammoItem.addActionListener(evt -> sendArtilleryOrder(botPlayer, ArtilleryOrder.COUNTER_BATTERY, ammo, ""));
             menu.add(ammoItem);
         }
+        // Only offer counter-battery when it can actually be used: the bot needs suitable ammo and an observed enemy
+        // battery to shoot back at. Otherwise gray the menu out with the reason, instead of issuing an order that
+        // silently does nothing.
+        if (menu.getItemCount() == 0) {
+            menu.setEnabled(false);
+            menu.setToolTipText(Messages.getString("BotCommandPanel.ArtilleryCounterBattery.noAmmo"));
+        } else if (!hasObservedEnemyBattery(botPlayer)) {
+            menu.setEnabled(false);
+            menu.setToolTipText(Messages.getString("BotCommandPanel.ArtilleryCounterBattery.noTarget"));
+        }
         return menu;
+    }
+
+    /**
+     * @param botPlayer The bot to inspect
+     *
+     * @return {@code true} if at least one off-board enemy battery has been observed by the bot's team and is therefore
+     *       a valid counter-battery target
+     */
+    private boolean hasObservedEnemyBattery(Player botPlayer) {
+        for (InGameObject unit : client.getInGameObjects()) {
+            if (!(unit instanceof Entity enemy)) {
+                continue;
+            }
+            Player enemyOwner = enemy.getOwner();
+            if (enemy.isOffBoard()
+                  && (enemyOwner != null) && enemyOwner.isEnemyOf(botPlayer)
+                  && enemy.isOffBoardObserved(botPlayer.getTeam())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

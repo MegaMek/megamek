@@ -51,6 +51,7 @@ import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.Player;
 import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.EntityAction;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -94,7 +95,7 @@ public class ArtilleryTargetingControl {
     // How strongly to prioritize counter-battery fire at an observed off-board enemy battery. The battery keeps shelling
     // us every turn, so its full damage is bumped by this factor before the hit-chance scaling - enough to beat a
     // lone-unit potshot, while a strong on-board cluster (whose summed value is higher) still wins.
-    private static final double COUNTER_BATTERY_PRIORITY = 1.5;
+    private static final double COUNTER_BATTERY_PRIORITY = 1.0;
 
     // Multiplier applied to a special damaging munition (FA, cluster, inferno, flechette, etc.) when scoring automatic,
     // non-ordered fire, so the bot prefers plain HE and does not waste situational rounds on a random tie-break. Just
@@ -131,6 +132,11 @@ public class ArtilleryTargetingControl {
     // Ids of enemies already covered by an artillery shell committed earlier this targeting phase (across all the bot's
     // tubes). Subsequent shots discount these enemies so fire spreads to cover more of the cluster. Cleared each phase.
     private final Set<Integer> volleyCoveredEnemyIds = new HashSet<>();
+
+    // Ids of off-board enemy batteries already assigned an opportunistic (Auto) counter-battery shot this targeting
+    // phase, so a second tube does not dog-pile a battery one tube already covered. Forced counter-battery ignores this.
+    // Cleared each phase.
+    private final Set<Integer> counterBatteryAssignedBatteryIds = new HashSet<>();
 
     private Set<Targetable> targetSet;
 
@@ -295,6 +301,7 @@ public class ArtilleryTargetingControl {
         damageValues = new HashMap<>();
         targetSet = null;
         volleyCoveredEnemyIds.clear();
+        counterBatteryAssignedBatteryIds.clear();
     }
 
     private boolean getAmmoTypeAvailable(Entity shooter, Munitions munitions) {
@@ -560,7 +567,7 @@ public class ArtilleryTargetingControl {
      * @param game    The current game
      * @param owner   The bot
      *
-     * @return The set of enemy hexes a friendly TAG unit is in range to designate
+     * @return The set of enemy hexes a friendly TAG unit could designate (its TAG range plus one move's reach)
      */
     private Set<Coords> tagSpottedEnemyPositions(Entity shooter, Game game, Princess owner) {
         Set<Coords> spotted = new HashSet<>();
@@ -574,9 +581,14 @@ public class ArtilleryTargetingControl {
             if (tagRange <= 0) {
                 continue;
             }
+            // The spotter fires TAG from its POST-movement position in a later phase (and can move again before the
+            // round lands next turn), so credit the reach it can move into, not just the hex it sits in now. Otherwise a
+            // mobile spotter that only maneuvers into TAG range during the movement phase - the common case - is
+            // invisible at artillery-targeting time, so the bot never trusts a homing round and the ammo goes unused.
+            int tagReach = tagRange + ally.getWalkMP();
             for (Targetable enemy : enemies) {
                 if ((enemy.getPosition() != null)
-                      && (ally.getPosition().distance(enemy.getPosition()) <= tagRange)) {
+                      && (ally.getPosition().distance(enemy.getPosition()) <= tagReach)) {
                     spotted.add(enemy.getPosition());
                 }
             }
@@ -759,6 +771,49 @@ public class ArtilleryTargetingControl {
     }
 
     /**
+     * Collects every hex a friendly (same-team) artillery shell is already aimed at, so this unit spreads its fire
+     * instead of dog-piling a hex the team is already hitting. Includes attacks declared by other team units this
+     * targeting phase (which coordinates across separate bot players on the team, and the player's own team artillery)
+     * and shells already in flight from earlier turns.
+     *
+     * @param shooter The firing artillery unit (used to tell friend from foe by team)
+     * @param game    The current game
+     *
+     * @return The set of hexes friendly artillery is already targeting (empty if none)
+     */
+    private Set<Coords> friendlyArtilleryTargetHexes(Entity shooter, Game game) {
+        Set<Coords> hexes = new HashSet<>();
+        for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements(); ) {
+            if (actions.nextElement() instanceof ArtilleryAttackAction artilleryAttack) {
+                addFriendlyArtilleryHex(artilleryAttack, shooter, game, hexes);
+            }
+        }
+        for (Enumeration<ArtilleryAttackAction> inFlight = game.getArtilleryAttacks(); inFlight.hasMoreElements(); ) {
+            addFriendlyArtilleryHex(inFlight.nextElement(), shooter, game, hexes);
+        }
+        return hexes;
+    }
+
+    /**
+     * Adds the target hex of one artillery attack to {@code hexes} if its shooter is on the firing unit's team.
+     *
+     * @param attack  The artillery attack to inspect
+     * @param shooter The firing artillery unit, whose team defines "friendly"
+     * @param game    The current game
+     * @param hexes   The accumulating set of friendly-targeted hexes
+     */
+    private void addFriendlyArtilleryHex(ArtilleryAttackAction attack, Entity shooter, Game game, Set<Coords> hexes) {
+        Entity attacker = attack.getEntity(game);
+        if ((attacker == null) || attacker.isEnemyOf(shooter)) {
+            return;
+        }
+        Targetable attackTarget = attack.getTarget(game);
+        if ((attackTarget != null) && (attackTarget.getPosition() != null)) {
+            hexes.add(attackTarget.getPosition());
+        }
+    }
+
+    /**
      * Hands the optional heat-map visualization the hexes each enemy was predicted to advance to and the hexes this
      * plan actually fires at - each tagged with a turn value (the current round for predictions, a countdown of turns
      * until impact for shots) - so a local Princess can paint and track them on the board for testing.
@@ -876,9 +931,25 @@ public class ArtilleryTargetingControl {
         // weapon on this unit has already been assigned, so one shot is fed to one weapon instead of every tube
         // dog-piling the single best hex.
         Set<Coords> volleyAssignedHexes = new HashSet<>();
+        // Hexes a friendly (same-team) artillery shell is already aimed at - declared by other team units this targeting
+        // phase or already in flight - so this unit spreads its fire instead of stacking another shell on a hex the team
+        // is already hitting. Coordinates across separate bot players on the team and the player's own team artillery.
+        Set<Coords> teamArtilleryHexes = friendlyArtilleryTargetHexes(shooter, game);
         // Hexes a friendly TAG unit can designate this phase: a homing round aimed near one of these will home onto the
         // designated target instead of scattering, so it is worth firing homing ammo there.
         Set<Coords> tagSpottedPositions = tagSpottedEnemyPositions(shooter, game, owner);
+        // Key homing diagnostic: if this is 0, no friendly TAG is (or can move) in range to guide a homing round, so the
+        // bot will not fire homing ammo - the answer to "why didn't it use homing?" A "firing TAG-guided homing" line
+        // later means a guided shot was actually chosen.
+        LOGGER.debug("[Homing] {}: {} sees {} enemy position(s) a friendly TAG could designate for homing guidance",
+              owner.getLocalPlayer().getName(), shooter.getDisplayName(), tagSpottedPositions.size());
+        // Homing regression diagnostics: when the shooter carries homing and saw a TAG-spotted enemy but still fires no
+        // guided homing, split WHY - shots blocked as impossible (inside min indirect range / no LOS) vs shots that were
+        // legal but had no aim hex within the homing radius of a spotted enemy (lead overshoot / aim mismatch).
+        boolean shooterHasHomingAmmo = false;
+        boolean guidedHomingEligible = false;
+        int homingImpossibleCount = 0;
+        int homingAimMissCount = 0;
         for (WeaponMounted currentWeapon : shooter.getWeaponList()) {
             List<WeaponFireInfo> topValuedFireInfos = new ArrayList<>();
             double maxDamage = 0;
@@ -936,15 +1007,18 @@ public class ArtilleryTargetingControl {
                                     damageValue = 0;
                                 } else if (attackOnEntity && !attackOnAirborneEntity && target.isOffBoard()) {
                                     // Counter-battery fire at an observed off-board enemy battery. Homing is never usable
-                                    // here - there is no off-board TAG to guide it - so a homing bin scores zero. Other
-                                    // ammo prioritizes silencing the battery (it keeps shelling us): the bump beats a
-                                    // lone-unit potshot while a strong on-board cluster still wins. In forced
-                                    // counter-battery mode the player-ordered ammo is valued so high it always wins when
-                                    // reachable.
+                                    // here - there is no off-board TAG to guide it - so a homing bin scores zero. In
+                                    // forced counter-battery mode the player-ordered ammo is valued so high it always
+                                    // wins. Otherwise it is opportunistic: valued at the weapon's damage so it competes
+                                    // fairly with on-board targets (it does not abandon a real on-board threat for a
+                                    // battery), and a battery another tube already engaged this phase is heavily
+                                    // discounted so the bot does not dog-pile both tubes onto one battery.
                                     if (isHoming) {
                                         damageValue = 0;
                                     } else if (artilleryCommandAndControl.isCounterBattery() && playerOrderedThisAmmo) {
                                         damageValue = Integer.MAX_VALUE;
+                                    } else if (counterBatteryAssignedBatteryIds.contains(target.getId())) {
+                                        damageValue = damage * COVERAGE_OVERLAP_DISCOUNT;
                                     } else {
                                         damageValue = damage * COUNTER_BATTERY_PRIORITY;
                                     }
@@ -981,6 +1055,14 @@ public class ArtilleryTargetingControl {
                                               && !isHoming) {
                                             damageValue *= SPECIAL_MUNITION_AUTO_PENALTY;
                                         }
+                                        // Spread the barrage: if a friendly shell (this unit's other tube, an allied
+                                        // bot, or the player's own team artillery) is already aimed at this hex,
+                                        // discount it so the tube picks an offset hex - two offset blasts cover more
+                                        // ground than two stacked on the same spot.
+                                        if (volleyAssignedHexes.contains(target.getPosition())
+                                              || teamArtilleryHexes.contains(target.getPosition())) {
+                                            damageValue *= COVERAGE_OVERLAP_DISCOUNT;
+                                        }
                                     }
                                 } else {
                                     // No ADA attacks except at Entities; no Flak attacks except direct fire
@@ -1007,6 +1089,19 @@ public class ArtilleryTargetingControl {
                               && (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
                               && !wfi.getToHit().cannotSucceed()
                               && isGuidedByTag(target.getPosition(), tagSpottedPositions);
+                        if (isHoming) {
+                            shooterHasHomingAmmo = true;
+                            if (guidedByTag) {
+                                guidedHomingEligible = true;
+                            } else if ((target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
+                                  && !tagSpottedPositions.isEmpty()) {
+                                if (wfi.getToHit().cannotSucceed()) {
+                                    homingImpossibleCount++;
+                                } else {
+                                    homingAimMissCount++;
+                                }
+                            }
+                        }
 
                         // factor the chance to hit when picking a target - if we've got a spotted hex
                         // or an auto-hit hex
@@ -1136,6 +1231,9 @@ public class ArtilleryTargetingControl {
                               actualFireInfo.getTarget().getPosition());
                     }
                     if (counterBatteryShot) {
+                        // Record the battery so another tube this phase does not dog-pile it (opportunistic fire only;
+                        // a forced counter-battery order ignores this and still commits every tube).
+                        counterBatteryAssignedBatteryIds.add(actualFireInfo.getTarget().getId());
                         LOGGER.info("{}: {} firing counter-battery at observed off-board enemy battery {}",
                               owner.getLocalPlayer().getName(), shooter.getDisplayName(),
                               actualFireInfo.getTarget().getDisplayName());
@@ -1154,10 +1252,9 @@ public class ArtilleryTargetingControl {
                         returnValue.add(actualFireInfo);
                         returnValue.setUtility(returnValue.getUtility() + maxDamage);
                         artilleryAttackPlanned = true;
-                        // Reserve this hex so the unit's remaining tubes pick different ordered hexes for the volley
-                        if (artilleryCommandAndControl.isArtilleryVolley()) {
-                            volleyAssignedHexes.add(actualFireInfo.getTarget().getPosition());
-                        }
+                        // Reserve this hex so the unit's remaining tubes spread to other hexes - for ordered volleys and
+                        // for automatic fire alike - instead of stacking another shell on the same spot.
+                        volleyAssignedHexes.add(actualFireInfo.getTarget().getPosition());
                         LOGGER.info("{}: {} firing {} ({}) at {} (expected value {}, probability {})",
                               owner.getLocalPlayer().getName(), shooter.getDisplayName(),
                               currentWeapon.getName(), actualFireInfo.getAmmo().getType().getShortName(),
@@ -1227,6 +1324,14 @@ public class ArtilleryTargetingControl {
         }
 
         shooter.setSecondaryFacing(originalFacing);
+
+        if (shooterHasHomingAmmo && !guidedHomingEligible && !tagSpottedPositions.isEmpty()) {
+            LOGGER.debug("[Homing] {}: {} carries homing and saw {} TAG-spotted enemies but NO shot was guidable - "
+                        + "{} homing shots impossible (inside min indirect range / no LOS), {} legal but no aim hex "
+                        + "within homing radius of a spotted enemy (lead overshoot)",
+                  owner.getLocalPlayer().getName(), shooter.getDisplayName(), tagSpottedPositions.size(),
+                  homingImpossibleCount, homingAimMissCount);
+        }
 
         return returnValue;
     }

@@ -33,6 +33,7 @@
 
 package megamek.client.ui.dialogs.BotCommands;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -46,12 +47,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.UIManager;
 
 import megamek.client.AbstractClient;
 import megamek.client.bot.princess.ArtilleryCommandAndControl.ArtilleryOrder;
@@ -69,6 +70,8 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.MenuScroller;
 import megamek.client.ui.util.UIUtil;
+import megamek.client.ui.widget.MegaMekButton;
+import megamek.client.ui.widget.SkinSpecification;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
@@ -98,11 +101,12 @@ public class BotCommandsPanel extends JPanel {
     private final AudioService audioService;
     private final MegaMekController controller;
     private final ClientGUI clientGUI;
-    private final JButton miscButton = new JButton();
+    private final MegaMekButton miscButton =
+          new MegaMekButton("", SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
     // This latch is used only to change the state of the button from pause to continue and back
     private boolean pauseLatch = false;
-    private JButton pauseContinue;
-    private List<JButton> commandButtons = List.of();
+    private MegaMekButton pauseContinue;
+    private List<MegaMekButton> commandButtons = List.of();
 
     /**
      * Bot Commands Panel constructor.
@@ -148,19 +152,50 @@ public class BotCommandsPanel extends JPanel {
         }
     }
 
+    /**
+     * Switches the panel between its floating and docked layouts. The floating layout keeps the original two-row grid
+     * and size; the docked layout uses a single row sized for the thin strip above the board. Only the arrangement and
+     * size hints change - the same buttons and their actions are preserved in both modes.
+     *
+     * @param docked {@code true} to use the single-row docked layout, {@code false} to use the floating two-row layout
+     */
+    public void setDockedLayout(boolean docked) {
+        applyLayout(docked);
+        revalidate();
+        repaint();
+    }
+
+    /**
+     * Applies the layout manager and size hints for the requested mode.
+     *
+     * @param docked {@code true} for the single-row docked layout, {@code false} for the floating two-row layout
+     */
+    private void applyLayout(boolean docked) {
+        if (docked) {
+            // One row, columns grow to fit the buttons - a thin strip that steals little height from the board.
+            this.setLayout(new GridLayout(1, 0, 2, 2));
+            this.setMinimumSize(UIUtil.scaleForGUI(600, 40));
+            this.setPreferredSize(new Dimension(-1, UIUtil.scaleForGUI(40)));
+            this.setMaximumSize(new Dimension(-1, UIUtil.scaleForGUI(40)));
+        } else {
+            this.setLayout(new GridLayout(2, 4, 2, 2));
+            this.setMinimumSize(UIUtil.scaleForGUI(600, 80));
+            this.setPreferredSize(new Dimension(-1, UIUtil.scaleForGUI(80)));
+            this.setMaximumSize(new Dimension(-1, UIUtil.scaleForGUI(80)));
+        }
+    }
+
     private void initialize() {
-        this.setLayout(new GridLayout(2, 4, 2, 2));
-        this.setMinimumSize(UIUtil.scaleForGUI(750, 80));
-        this.setPreferredSize(new Dimension(-1, UIUtil.scaleForGUI(80)));
-        this.setMaximumSize(new Dimension(-1, UIUtil.scaleForGUI(80)));
-        JButton retreat = createButton("Retreat");
+        applyLayout(false);
+        applyTopBarBackground();
+        var retreat = createButton("Retreat");
         pauseContinue = createButton("PauseGame");
-        JButton maneuver = createButton("Maneuver");
-        JButton priorityTarget = createButton("PriorityTarget");
-        JButton ignoreTarget = createButton("IgnoreTarget");
-        JButton setBehavior = createButton("SetBehavior");
-        JButton artillery = createButton("Artillery");
-        JButton waypoints = createButton("Waypoints");
+        var maneuver = createButton("Maneuver");
+        var priorityTarget = createButton("PriorityTarget");
+        var ignoreTarget = createButton("IgnoreTarget");
+        var setBehavior = createButton("SetBehavior");
+        var artillery = createButton("Artillery");
+        var waypoints = createButton("Waypoints");
         commandButtons = List.of(retreat, maneuver, priorityTarget, ignoreTarget, setBehavior, artillery,
               waypoints);
 
@@ -206,7 +241,7 @@ public class BotCommandsPanel extends JPanel {
      */
     private void updateButtonStates() {
         boolean inGame = client.getGame().getPhase() != GamePhase.LOUNGE;
-        for (JButton commandButton : commandButtons) {
+        for (MegaMekButton commandButton : commandButtons) {
             commandButton.setEnabled(inGame);
         }
         boolean pauseAllowed = canBePaused();
@@ -276,8 +311,9 @@ public class BotCommandsPanel extends JPanel {
               .toList();
     }
 
-    private JButton createButton(String messageKey) {
-        JButton button = new JButton(Messages.getString("BotCommandPanel." + messageKey + ".title"));
+    private MegaMekButton createButton(String messageKey) {
+        MegaMekButton button = new MegaMekButton(Messages.getString("BotCommandPanel." + messageKey + ".title"),
+              SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
         button.setToolTipText(Messages.getString("BotCommandPanel." + messageKey + ".tooltip"));
         return button;
     }
@@ -290,7 +326,7 @@ public class BotCommandsPanel extends JPanel {
      * @param button       The button the popup is anchored to
      * @param popupFactory Supplies the popup to display
      */
-    private void showButtonPopup(JButton button, Supplier<JPopupMenu> popupFactory) {
+    private void showButtonPopup(MegaMekButton button, Supplier<JPopupMenu> popupFactory) {
         try {
             JPopupMenu popup = popupFactory.get();
             if (popup.getComponentCount() == 0) {
@@ -302,6 +338,19 @@ public class BotCommandsPanel extends JPanel {
         } catch (Exception exception) {
             LOGGER.error(exception, "[BotPanel] Failed to build the {} popup", button.getText());
         }
+    }
+
+    /**
+     * Sets the panel background to the top menu bar color so the docked strip blends with the bar above it. Falls back
+     * to the generic control color when the theme does not define a menu bar background.
+     */
+    private void applyTopBarBackground() {
+        Color barBackground = UIManager.getColor("MenuBar.background");
+        if (barBackground == null) {
+            barBackground = UIManager.getColor("control");
+        }
+        setOpaque(true);
+        setBackground(barBackground);
     }
 
     private JPopupMenu createSelectBehaviorPopup() {

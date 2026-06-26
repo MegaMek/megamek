@@ -450,6 +450,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SUMMARY_FONT = "SummaryCardFont";
 
     public static final String BOT_COMMANDS_ENABLED = "BotCommandsEnabled";
+    public static final String BOT_COMMANDS_LOCATION = "BotCommandsLocation";
     public static final String BOT_COMMANDS_POS_X = "BotCommandsPosX";
     public static final String BOT_COMMANDS_POS_Y = "BotCommandsPosY";
     public static final String BOT_COMMANDS_WIDTH = "BotCommandsWidth";
@@ -714,6 +715,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_DISPLAY_AUTO_DISPLAY_NON_REPORT_PHASE, 1);
         store.setDefault(UNIT_DISPLAY_ENABLED, true);
         store.setDefault(UNIT_DISPLAY_LOCATION, 0);
+        store.setDefault(BOT_COMMANDS_LOCATION, 0);
+        // -1 is the "no saved position yet" sentinel so the floating dialog centers on first use; a real saved
+        // position (including a legitimate top-left 0,0) is restored instead.
+        store.setDefault(BOT_COMMANDS_POS_X, -1);
+        store.setDefault(BOT_COMMANDS_POS_Y, -1);
+        // Default to MANUAL so the bot commands panel stays in whatever mode the player chose (Float/Dock/Off)
+        // instead of being auto-hidden on every phase change.
+        store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE, MANUAL);
+        store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE, MANUAL);
         store.setDefault(SPLIT_PANE_A_DIVIDER_LOCATION, 300);
         setDefault(UNIT_DISPLAY_HEAT_COLOR_1, DEFAULT_HEAT_1_COLOR);
         setDefault(UNIT_DISPLAY_HEAT_COLOR_2, DEFAULT_HEAT_2_COLOR);
@@ -3229,6 +3239,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(BOT_COMMANDS_ENABLED);
     }
 
+    /**
+     * @return The bot commands panel location: {@code 0} for a floating dialog, {@code 1} for docked into the top of
+     *       the board area
+     */
+    public int getBotCommandsLocation() {
+        return store.getInt(BOT_COMMANDS_LOCATION);
+    }
+
     public void setReportLinkColor(Color color) {
         store.setValue(MINI_REPORT_COLOR_LINK, getColorString(color));
     }
@@ -3491,6 +3509,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setBotCommandsEnabled(boolean state) {
         store.setValue(BOT_COMMANDS_ENABLED, state);
+    }
+
+    /**
+     * Sets the bot commands panel location.
+     *
+     * @param location {@code 0} for a floating dialog, {@code 1} for docked into the top of the board area
+     */
+    public void setBotCommandsLocation(int location) {
+        store.setValue(BOT_COMMANDS_LOCATION, location);
     }
 
     public void setBotCommandsPosX(int i) {

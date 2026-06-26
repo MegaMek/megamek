@@ -562,14 +562,39 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // (same as buildings which have no tonnage)
         double effectiveTargetWeight = (target instanceof Dropship) ? entity.getWeight() : target.getWeight();
 
+        int damageTaken;
         if (!tacOps) {
-            return (int) Math
+            damageTaken = (int) Math
                   .ceil((effectiveTargetWeight / 10.0)
                         * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
+        } else {
+            damageTaken = (int) Math
+                  .floor((((effectiveTargetWeight * entity.getWeight()) * distance)
+                        / (effectiveTargetWeight + entity.getWeight())) / 10);
         }
-        return (int) Math
-              .floor((((effectiveTargetWeight * entity.getWeight()) * distance)
-                    / (effectiveTargetWeight + entity.getWeight())) / 10);
+
+        // A charging bulldozer takes half the usual damage, rounded down (TacOps). This stacks
+        // multiplicatively with the half-damage already applied above for charging through water.
+        if (entity.hasWorkingBulldozer()) {
+            damageTaken = (int) Math.floor(damageTaken * 0.5);
+        }
+
+        return damageTaken;
+    }
+
+    /**
+     * Returns the charge damage dealt to a building hex, doubled when the attacker mounts a front-mounted bulldozer.
+     *
+     * <p>Per TacOps, a vehicle with a front-mounted bulldozer doubles the standard charging damage it inflicts
+     * on a building hex. The damage to any infantry inside the building is unaffected.</p>
+     *
+     * @param attacker   the charging entity
+     * @param baseDamage the standard charge damage against the building
+     *
+     * @return the charge damage to apply to the building, doubled for a front-mounted bulldozer
+     */
+    public static int getBuildingChargeDamage(Entity attacker, int baseDamage) {
+        return attacker.hasFrontMountedBulldozer() ? (baseDamage * 2) : baseDamage;
     }
 
     /**

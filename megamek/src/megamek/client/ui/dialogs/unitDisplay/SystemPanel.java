@@ -479,7 +479,8 @@ class SystemPanel extends PicMap
      * Appends the Bridge-Layer (AVLB) state to a systems-tab row: the carried bridge's remaining Construction Factor,
      * "deploying" once a deployment has been declared but the bridge has not yet been laid (the stationary turn between
      * the pre-end declaration and placement), "deployed" once the folding bridge has been laid, or "mechanism disabled"
-     * if a critical hit has knocked out the deploy mechanism (TM p.242 / TW). Does nothing for non-bridgelayer equipment.
+     * if a critical hit has knocked out the deploy mechanism (TM p.242 / TW). Does nothing for non-bridgelayer
+     * equipment.
      *
      * @param displayText the systems-tab display text being built
      * @param mounted     the mounted equipment for this row

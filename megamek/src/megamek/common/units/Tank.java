@@ -46,6 +46,7 @@ import java.util.Vector;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmorHandlesTank;
 import megamek.common.bays.BattleArmorBay;
 import megamek.common.bays.Bay;
@@ -76,7 +77,7 @@ import megamek.logging.MMLogger;
 /**
  * You know what tanks are, silly.
  */
-public class Tank extends Entity {
+public class Tank extends Entity implements Fortifiable, RubbleClearer {
     private static final MMLogger logger = MMLogger.create(Tank.class);
 
     @Serial
@@ -136,18 +137,24 @@ public class Tank extends Entity {
 
     public static final int CRIT_SENSOR_MAX = 4;
 
-    // Fortify terrain just like infantry
-    public static final int DUG_IN_NONE = 0;
-    public static final int DUG_IN_FORTIFYING1 = 1;
-    public static final int DUG_IN_FORTIFYING2 = 2;
-    public static final int DUG_IN_FORTIFYING3 = 3;
+    // Fortify (build a fortified hex) over several turns; the stage machine lives in Fortifiable.
     private int dugIn = DUG_IN_NONE;
 
     /**
      * Tracks damage taken between turns while fortifying, so that being attacked extends the effort by one turn (TO:AUE
      * p.153). Server-side runtime state; not written to save files (dug-in progress is itself not persisted).
      */
-    private final FortifyState fortifyState = new FortifyState();
+    private transient FortifyState fortifyState = new FortifyState();
+
+    /**
+     * The rubble hex this vehicle is currently clearing with its bulldozer, or {@code null} if it is not clearing (TacOps). The
+     * vehicle must remain in this hex for the duration; if displaced or destroyed the work is abandoned.
+     */
+    private Coords rubbleClearTarget = null;
+    /** Turns of bulldozer clearing banked so far against {@link #rubbleClearTurnsRequired}. */
+    private int rubbleClearTurnsCompleted = 0;
+    /** Total turns of bulldozer clearing this rubble hex needs (2/4/8/16 by structure type, capped at 16). */
+    private int rubbleClearTurnsRequired = 0;
 
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25 };
@@ -447,6 +454,26 @@ public class Tank extends Entity {
     public boolean hasFrontMountedSaw() {
         return hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_CHAINSAW, Tank.LOC_FRONT)
               || hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_DUAL_SAW, Tank.LOC_FRONT);
+    }
+
+    @Override
+    public boolean hasWorkingBulldozer() {
+        return hasWorkingMisc(MiscType.F_BULLDOZER);
+    }
+
+    @Override
+    public boolean hasFrontMountedBulldozer() {
+        return hasWorkingMisc(MiscType.F_BULLDOZER, null, Tank.LOC_FRONT);
+    }
+
+    @Override
+    public boolean hasRearMountedBulldozer() {
+        return hasWorkingMisc(MiscType.F_BULLDOZER, null, Tank.LOC_REAR);
+    }
+
+    @Override
+    public boolean hasWorkingBackhoe() {
+        return hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_BACKHOE);
     }
 
     public boolean isTurretLocked(int turret) {
@@ -760,6 +787,10 @@ public class Tank extends Entity {
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
         boolean sealed = hasEnvironmentalSealing();
         boolean hexHasRoad = hex.containsTerrain(Terrains.ROAD);
+        // A bulldozer (or, under the unofficial rule, a backhoe) lets a vehicle enter a rubble hex its motive type
+        // would normally bar, so it can clear it (TacOps). Only the rubble prohibition is lifted; other prohibiting
+        // terrain still applies.
+        boolean rubblePassable = hasWorkingBulldozer() || BulldozerRules.canBackhoeClearRubble(this, game);
         boolean scoutBikeIntoLightWoods = (hex.terrainLevel(Terrains.WOODS) == 1) &&
               hasQuirk(OptionsConstants.QUIRK_POS_SCOUT_BIKE);
         boolean isCrossCountry = hasAbility(OptionsConstants.PILOT_CROSS_COUNTRY);
@@ -787,7 +818,7 @@ public class Tank extends Entity {
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.MAGMA) > 1) ||
                           (hex.terrainLevel(Terrains.ROUGH) > 1) ||
-                          ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad);
+                          ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad && !rubblePassable);
                 } else {
                     return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.WATER) > 1) &&
@@ -812,7 +843,7 @@ public class Tank extends Entity {
                           ((hex.terrainLevel(Terrains.WATER) > 0) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
                                 !(hasFlotationHull || sealed || isAmphibious)) ||
-                          (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad) ||
+                          (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad && !rubblePassable) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.SNOW) > 1) && !hexHasRoad) ||
@@ -823,7 +854,7 @@ public class Tank extends Entity {
                           ((hex.terrainLevel(Terrains.WATER) > 1) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
                                 !(hasFlotationHull || sealed || isAmphibious)) ||
-                          (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad) ||
+                          (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad && !rubblePassable) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.GEYSER) == 2);
@@ -995,75 +1026,68 @@ public class Tank extends Entity {
             setSecondaryFacing(getFacing());
         }
 
-        // Continue to fortify
-        if (dugIn != DUG_IN_NONE) {
-            // Damage taken during a fortifying turn extends the effort by one turn (TO:AUE p.153): hold the
-            // progress counter this round instead of advancing it.
-            if (fortifyState.checkpointWasDamaged(currentFortifyHealthSignature())) {
-                logger.debug("[Fortify] {}: damaged while fortifying - effort extended by 1 turn (dug-in stage {})",
-                      getShortName(), dugIn);
-            } else {
-                dugIn++;
-                if (dugIn > DUG_IN_FORTIFYING3) {
-                    dugIn = DUG_IN_NONE;
-                }
-            }
-        }
+        // Continue to fortify (the stage machine and damage-interrupt logic live in Fortifiable).
+        advanceFortifyRound();
     }
 
-    public void setDugIn(int i) {
-        dugIn = i;
+    @Override
+    public void setDugIn(int stage) {
+        dugIn = stage;
     }
 
+    @Override
     public int getDugIn() {
         return dugIn;
     }
 
-    /**
-     * Begins the three-turn fieldwork that raises a fortified hex, for vehicles with fieldworks-capable
-     * equipment such as a bulldozer or backhoe (Vehicles and Fieldworks, TO:AUE p.153). Seeds the damage
-     * baseline used to detect an interrupting attack that extends the effort.
-     */
-    public void beginFortify() {
-        setDugIn(DUG_IN_FORTIFYING1);
-        fortifyState.begin(currentFortifyHealthSignature());
+    @Override
+    public FortifyState getFortifyState() {
+        // Runtime-only state (transient, not persisted): recreate it lazily so it is never null on a
+        // deserialized entity (the field initializer does not run during deserialization).
+        if (fortifyState == null) {
+            fortifyState = new FortifyState();
+        }
+        return fortifyState;
     }
 
     /**
      * @return the health signature used to detect damage between fortifying turns: total armor plus internal structure.
      *       Any armor or structural damage between turns lowers this value and marks the turn as interrupted.
      */
-    private int currentFortifyHealthSignature() {
+    @Override
+    public int currentFortifyHealthSignature() {
         return getTotalArmor() + getTotalInternal();
     }
 
-    /**
-     * @return {@code true} if this vehicle's fortification effort was set back by damage this round (so its progress
-     *       counter was held rather than advanced). TO:AUE p.153.
-     */
-    public boolean isFortifyExtendedThisRound() {
-        return fortifyState.wasExtendedAtLastCheckpoint();
+    @Override
+    @Nullable
+    public Coords getRubbleClearTarget() {
+        return rubbleClearTarget;
     }
 
-    /**
-     * @return {@code true} if this vehicle is partway through building a fortified hex (one of the multi-turn
-     *       FORTIFYING stages). TO:AUE p.153.
-     */
-    public boolean isFortifying() {
-        return (dugIn >= DUG_IN_FORTIFYING1) && (dugIn <= DUG_IN_FORTIFYING3);
+    @Override
+    public void setRubbleClearTarget(@Nullable Coords target) {
+        rubbleClearTarget = target;
     }
 
-    /**
-     * @return the current fortification stage (1..{@link #getFortifyTotalStages()}) while {@link #isFortifying()}, or 0
-     *       when the vehicle is not building a fortification.
-     */
-    public int getFortifyStage() {
-        return isFortifying() ? (dugIn - DUG_IN_FORTIFYING1 + 1) : 0;
+    @Override
+    public int getRubbleClearTurnsCompleted() {
+        return rubbleClearTurnsCompleted;
     }
 
-    /** @return the number of turns of work a fortified hex takes to complete. */
-    public int getFortifyTotalStages() {
-        return DUG_IN_FORTIFYING3 - DUG_IN_FORTIFYING1 + 1;
+    @Override
+    public void setRubbleClearTurnsCompleted(int turns) {
+        rubbleClearTurnsCompleted = turns;
+    }
+
+    @Override
+    public int getRubbleClearTurnsRequired() {
+        return rubbleClearTurnsRequired;
+    }
+
+    @Override
+    public void setRubbleClearTurnsRequired(int turns) {
+        rubbleClearTurnsRequired = turns;
     }
 
     /**
@@ -3182,6 +3206,11 @@ public class Tank extends Entity {
         // Only requires the vehicle eject/abandon option
         // Crew size is defined in TM p.103, not dependent on TacOps Vehicle Crews option
         return game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT);
+    }
+
+    @Override
+    public boolean canAnnounceAbandon() {
+        return canAbandon();
     }
 
     /**

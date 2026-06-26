@@ -62,6 +62,7 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.units.DemolitionCharge;
 import megamek.common.units.IBuilding;
@@ -193,7 +194,7 @@ public class DetonateChargesDialog extends JDialog implements ActionListener {
             gbc.gridx = 0;
             gbc.anchor = GridBagConstraints.CENTER;
             JCheckBox checkbox = new JCheckBox();
-            checkbox.addActionListener(e -> highlightCharge(entry.charge()));
+            checkbox.addActionListener(e -> highlightSelectedCharges());
             chargePanel.add(checkbox, gbc);
             chargeCheckboxes.put(entry.charge(), checkbox);
 
@@ -245,11 +246,19 @@ public class DetonateChargesDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Highlights the hex of the given charge on the board view.
+     * Highlights the hexes of every currently-checked charge on the board view. The board view replaces its highlight
+     * list on each call, so the full set of selected charges is rebuilt here rather than adding one hex at a time -
+     * otherwise only the last-clicked charge would stay highlighted.
      */
-    private void highlightCharge(DemolitionCharge charge) {
+    private void highlightSelectedCharges() {
+        List<Coords> selectedHexes = new ArrayList<>();
+        for (Map.Entry<DemolitionCharge, JCheckBox> entry : chargeCheckboxes.entrySet()) {
+            if (entry.getValue().isSelected()) {
+                selectedHexes.add(entry.getKey().pos);
+            }
+        }
         BoardView boardView = clientGUI.getBoardView();
-        boardView.setHighlightedEntityHexes(Collections.singletonList(charge.pos));
+        boardView.setDemolitionChargeHighlightHexes(selectedHexes);
         boardView.repaint();
     }
 
@@ -258,8 +267,18 @@ public class DetonateChargesDialog extends JDialog implements ActionListener {
      */
     private void clearHighlighting() {
         BoardView boardView = clientGUI.getBoardView();
-        boardView.setHighlightedEntityHexes(Collections.emptyList());
+        boardView.setDemolitionChargeHighlightHexes(Collections.emptyList());
         boardView.repaint();
+    }
+
+    /** {@code true} once Detonate announced at least one charge, so the caller can confirm a declaration was made. */
+    private boolean applied;
+
+    /**
+     * @return {@code true} if Detonate announced at least one charge this time the dialog was shown
+     */
+    public boolean wasApplied() {
+        return applied;
     }
 
     @Override
@@ -275,6 +294,7 @@ public class DetonateChargesDialog extends JDialog implements ActionListener {
                 }
             }
             if (announcedCharges > 0) {
+                applied = true;
                 clientGUI.addToast(ToastLevel.SUCCESS,
                       Messages.getString("DetonateChargesDialog.toast.announced", announcedCharges));
             }

@@ -36,4 +36,5 @@ package megamek.common.rules.core;
 import megamek.common.rules.rulesUnits;
 
 public class coreRulesUnits extends rulesUnits {
+
 }

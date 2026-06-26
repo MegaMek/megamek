@@ -50,11 +50,19 @@ import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.core.coreRulesTarget;
+import megamek.common.rules.core.coreRulesUnits;
+import megamek.common.rules.rulesTarget;
+import megamek.common.rules.rulesUnits;
+import megamek.common.rules.totalwarfare.twRulesTarget;
+import megamek.common.rules.totalwarfare.twRulesUnits;
 import megamek.common.units.*;
 
 public class PhysicalAttackAction extends AbstractAttackAction {
     @Serial
     private static final long serialVersionUID = -4702357516725749181L;
+    private static rulesTarget rulesTarget = new coreRulesTarget();
+    private static rulesUnits rulesUnits = new coreRulesUnits();
 
     public PhysicalAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
@@ -64,6 +72,16 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         super(entityId, targetType, targetId);
     }
 
+    /**
+     * Set the rules for TW or Core rules. Core is the default
+     * @param game
+     */
+    private static void initializeRules(Game game) {
+        if (game.getOptions().booleanOption(OptionsConstants.TWRULES)) {
+            rulesTarget = new twRulesTarget();
+            rulesUnits = new twRulesUnits();
+        }
+    }
     /**
      * Common checking whether is it possible to physically attack the target
      *
@@ -176,6 +194,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, target);
         int attackerId = ae.getId();
         int targetId = target.getId();
+        initializeRules(game);
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if (target instanceof BattleArmor) {
             toHit.addModifier(1, "battle armor target");
@@ -208,6 +227,13 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
         // target terrain
         toHit.append(Compute.getTargetTerrainModifier(game, target, 0, inSameBuilding));
+
+        // RULES large targets check
+        int largeTarget = rulesTarget.largeTargetModifier(game.getEntity(target.getId()).getWeightClass());
+        // RULESFUTURE Call this with the the 2nd parameter when objectives that are large are added
+        if (largeTarget != 0) {
+            toHit.addModifier(largeTarget, "Large Target");
+        }
 
         if (ae.hasModularArmor()) {
             toHit.addModifier(1, "Modular Armor");

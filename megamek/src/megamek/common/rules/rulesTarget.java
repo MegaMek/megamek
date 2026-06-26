@@ -34,4 +34,8 @@ package megamek.common.rules;
  */
 
 public abstract class rulesTarget {
+    // Check if the target is large and if there is a modifier
+    public abstract int largeTargetModifier(int weightclass, boolean markedLarge);
+    public abstract int largeTargetModifier(int weightclass);
+    public abstract int largeTargetModifier(boolean markedLarge);
 }

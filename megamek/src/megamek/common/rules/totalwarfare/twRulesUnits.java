@@ -36,4 +36,5 @@ package megamek.common.rules.totalwarfare;
 import megamek.common.rules.rulesUnits;
 
 public class twRulesUnits extends rulesUnits {
+
 }

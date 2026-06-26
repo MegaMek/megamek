@@ -1068,7 +1068,11 @@ public abstract class Entity extends TurnOrdered
 
     private boolean hasFleeZone = false;
     private HexArea fleeZone = HexArea.EMPTY_AREA;
-    
+
+    /**
+     * The rules that will be used for the game. Default is to Core Rules
+     * // RULES
+     */
     private rulesPsr rulesPsr = new coreRulesPsr();
 
     /**
@@ -1112,7 +1116,7 @@ public abstract class Entity extends TurnOrdered
         incomingGuidedAttacks = new ArrayList<>();
         carriedObjects = new HashMap<>();
                 
-        // Check if the game uses Total Warfare instead of Core, and swaps the rule objects
+        // RULES Check if the game uses Total Warfare instead of Core, and swaps the rule objects
         if (game.getOptions().booleanOption(OptionsConstants.TWRULES)) {
             rulesPsr = new twRulesPsr();
         }

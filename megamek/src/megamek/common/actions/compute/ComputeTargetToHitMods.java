@@ -49,6 +49,12 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rules.core.coreRulesTarget;
+import megamek.common.rules.core.coreRulesUnits;
+import megamek.common.rules.rulesTarget;
+import megamek.common.rules.rulesUnits;
+import megamek.common.rules.totalwarfare.twRulesTarget;
+import megamek.common.rules.totalwarfare.twRulesUnits;
 import megamek.common.units.*;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 
@@ -81,11 +87,18 @@ public class ComputeTargetToHitMods {
      * @param isPointBlankShot    flag that indicates whether this is a PBS by a hidden unit
      * @param usesAmmo            flag that indicates whether the WeaponType being used is ammo-fed
      */
+    // RULES set default rules level to Core rules
+    private static rulesTarget rulesTarget = new coreRulesTarget();
+    private static rulesUnits rulesUnits = new coreRulesUnits();
+
     public static ToHitData compileTargetToHitMods(Game game, Entity attacker, Targetable target,
           ToHitData toHit, int aimingAt, AimingMode aimingMode, int distance, WeaponType weaponType,
           WeaponMounted weapon, AmmoType ammoType, EnumSet<AmmoType.Munitions> munition, boolean isArtilleryDirect,
           boolean isArtilleryIndirect, boolean isAttackerInfantry, boolean exchangeSwarmTarget, boolean isIndirect,
           boolean isPointBlankShot, boolean usesAmmo) {
+
+        // RULES initialize rules level
+        initializeRules(game);
 
         if (attacker == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
@@ -310,17 +323,12 @@ public class ComputeTargetToHitMods {
 
         // Unit-specific modifiers
 
-        // -1 to hit a SuperHeavy mek
-        if ((entityTarget instanceof Mek) && entityTarget.isSuperHeavy()) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMek"));
-        }
-
-        // large support tanks get a -1 per TW
-        if ((entityTarget != null)
-              && (entityTarget.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT)
-              && !entityTarget.isAirborne()
-              && !entityTarget.isSpaceborne()) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeLargeSupportUnit"));
+        // RULES Large Target / Superheavy
+        if (entityTarget != null && !entityTarget.isAirborne() && !entityTarget.isSpaceborne()) {
+            int largeTarget = rulesTarget.largeTargetModifier(entityTarget.getWeightClass());
+            if (largeTarget != 0) {
+                toHit.addModifier(largeTarget, Messages.getString("WeaponAttackAction.TeLargeUnit"));
+            }
         }
 
         // "grounded small craft" get a -1 per TW
@@ -408,6 +416,13 @@ public class ComputeTargetToHitMods {
         ComputeAbilityMods.processDefenderSPAs(toHit, attacker, entityTarget, game);
 
         return toHit;
+    }
+
+    private static void initializeRules(Game game) {
+        if (game.getOptions().booleanOption(OptionsConstants.TWRULES)) {
+            rulesTarget = new twRulesTarget();
+            rulesUnits = new twRulesUnits();
+        }
     }
 
     private static boolean createsSensorShadow(Entity target, Entity other) {

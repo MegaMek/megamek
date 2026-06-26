@@ -63,6 +63,13 @@ import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
+import megamek.common.rules.core.coreRulesTarget;
+import megamek.common.rules.core.coreRulesUnits;
+import megamek.common.rules.rulesTarget;
+import megamek.common.rules.rulesUnits;
+import megamek.common.rules.totalwarfare.twRulesTarget;
+import megamek.common.rules.totalwarfare.twRulesUnits;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
@@ -190,7 +197,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
         bombPayloads.put("internal", new BombLoadout(other.bombPayloads.get("internal")));
         bombPayloads.put("external", new BombLoadout(other.bombPayloads.get("external")));
     }
-
     public int getWeaponId() {
         return weaponId;
     }

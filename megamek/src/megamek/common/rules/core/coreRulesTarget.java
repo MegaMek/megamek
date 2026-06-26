@@ -34,6 +34,27 @@ package megamek.common.rules.core;
  */
 
 import megamek.common.rules.rulesTarget;
+import megamek.common.units.EntityWeightClass;
 
 public class coreRulesTarget extends rulesTarget {
+    /**
+     * Large targets get a -1 modifier to hit them. Superheavy meks are large targets
+     * Core rules page 64, 240
+     */
+    public int largeTargetModifier(int weightclass, boolean markedLarge) {
+        if (weightclass == EntityWeightClass.WEIGHT_SUPER_HEAVY || weightclass == EntityWeightClass.WEIGHT_LARGE_SUPPORT || markedLarge) {
+            return -1;
+        }
+        return 0;
+    }
+
+    // Overload of largeTargetModifier when there is no marker set
+    public int largeTargetModifier(int weightclass) {
+        return largeTargetModifier(weightclass, false);
+    }
+
+    // Overload of largeTargetModifier for large objectives
+    public int largeTargetModifier(boolean markedLarge) {
+        return largeTargetModifier(0, markedLarge);
+    }
 }

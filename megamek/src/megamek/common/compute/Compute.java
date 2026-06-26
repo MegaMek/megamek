@@ -5998,7 +5998,7 @@ public class Compute {
               && !(game.getBoard(defender.getBoardId())
               .getHex(defender.getPosition()).hasDepth1WaterOrDeeper())) {
             // UMU equipped infantry can only make leg attacks if the target is in depth 1+ water
-            reason = "Cannot make leg attacks unless the target is in depth 1  or deeper water";
+            reason = "Cannot make leg attacks unless the target is in depth 1 or deeper water";
         } else if (attacker instanceof BattleArmor inf) {
             // Handle BattleArmor attackers.
 

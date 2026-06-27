@@ -447,8 +447,9 @@ public class SpecialHexDisplay implements Serializable {
 
         if (phase.isBefore(GamePhase.OFFBOARD)
               && ((type == Type.ARTILLERY_TARGET)
-              || type == Type.ARTILLERY_MISS
-              || (type == Type.ARTILLERY_HIT))) {
+              || (type == Type.ARTILLERY_MISS)
+              || (type == Type.ARTILLERY_HIT)
+              || (type == Type.ARTILLERY_DRIFT))) {
             shouldDisplay = shouldDisplay || thisRound(curRound - 1);
         }
 

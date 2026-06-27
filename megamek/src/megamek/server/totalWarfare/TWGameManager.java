@@ -969,6 +969,9 @@ public class TWGameManager extends AbstractGameManager {
                 case PLAYER_TEAM_CHANGE:
                     ServerLobbyHelper.receiveLobbyTeamChange(packet, connId, getGame(), this);
                     break;
+                case CLIENT_ARTILLERY_REVEAL:
+                    receiveArtilleryRevealPreference(connId, packet);
+                    break;
                 default:
                     break;
             }
@@ -27412,6 +27415,24 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Applies a player's "reveal all artillery rounds" testing preference (see
+     * {@link PacketCommand#CLIENT_ARTILLERY_REVEAL}) and immediately resends that player's artillery packet so their
+     * Rounds in the Air view updates at once. Only affects the requesting player's own packet - other players (and
+     * bots, which never send this) are unchanged.
+     *
+     * @param connId The connection id of the player whose preference changed
+     * @param packet The packet carrying the boolean reveal preference
+     */
+    private void receiveArtilleryRevealPreference(int connId, Packet packet) throws InvalidPacketDataException {
+        Player player = game.getPlayer(connId);
+        if (player == null) {
+            return;
+        }
+        player.setArtilleryRevealAll(packet.getBooleanValue(0));
+        send(connId, createArtilleryPacket(player));
+    }
+
+    /**
      * Creates a packet containing off board artillery attacks
      */
     Packet createArtilleryPacket(Player p) {
@@ -27422,7 +27443,8 @@ public class TWGameManager extends AbstractGameManager {
             if (wh.weaponAttackAction instanceof ArtilleryAttackAction aaa) {
                 if ((aaa.getPlayerId() == p.getId()) ||
                       ((team != Player.TEAM_NONE) && (team == game.getPlayer(aaa.getPlayerId()).getTeam())) ||
-                      p.canIgnoreDoubleBlind()) {
+                      p.canIgnoreDoubleBlind() ||
+                      p.isArtilleryRevealAll()) {
                     v.addElement(aaa);
                 }
             }

@@ -343,6 +343,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String PLAYER_LIST_POS_X = "PlayerListPosX";
     public static final String PLAYER_LIST_POS_Y = "PlayerListPosY";
     public static final String PLAYER_LIST_ENABLED = "PlayerListEnabled";
+    public static final String ROUNDS_IN_AIR_POS_X = "RoundsInAirPosX";
+    public static final String ROUNDS_IN_AIR_POS_Y = "RoundsInAirPosY";
+    public static final String ROUNDS_IN_AIR_ENABLED = "RoundsInAirEnabled";
+    public static final String ADVANCED_REVEAL_ALL_ARTILLERY_ROUNDS = "AdvancedRevealAllArtilleryRounds";
     public static final String PLAYER_LIST_AUTO_DISPLAY_REPORT_PHASE = "PlayerListAutoDisplayReportPhase";
     public static final String PLAYER_LIST_AUTO_DISPLAY_NON_REPORT_PHASE = "PlayerListAutoDisplayNonReportPhase";
     public static final String MINI_MAP_COLOURS = "MinimapColours";
@@ -848,6 +852,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(PLAYER_LIST_ENABLED, true);
         store.setDefault(PLAYER_LIST_POS_X, 200);
         store.setDefault(PLAYER_LIST_POS_Y, 150);
+        store.setDefault(ROUNDS_IN_AIR_ENABLED, false);
+        store.setDefault(ROUNDS_IN_AIR_POS_X, 200);
+        store.setDefault(ROUNDS_IN_AIR_POS_Y, 150);
+        store.setDefault(ADVANCED_REVEAL_ALL_ARTILLERY_ROUNDS, false);
         store.setDefault(PLAYER_LIST_AUTO_DISPLAY_REPORT_PHASE, 1);
         store.setDefault(PLAYER_LIST_AUTO_DISPLAY_NON_REPORT_PHASE, 0);
 
@@ -1490,6 +1498,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getPlayerListPosY() {
         return store.getInt(PLAYER_LIST_POS_Y);
+    }
+
+    public boolean getRoundsInAirEnabled() {
+        return store.getBoolean(ROUNDS_IN_AIR_ENABLED);
+    }
+
+    public int getRoundsInAirPosX() {
+        return store.getInt(ROUNDS_IN_AIR_POS_X);
+    }
+
+    public int getRoundsInAirPosY() {
+        return store.getInt(ROUNDS_IN_AIR_POS_Y);
     }
 
     public int getPlayerListAutoDisplayReportPhase() {
@@ -2417,6 +2437,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setPlayerListPosY(int i) {
         store.setValue(PLAYER_LIST_POS_Y, i);
+    }
+
+    public void setRoundsInAirEnabled(boolean b) {
+        store.setValue(ROUNDS_IN_AIR_ENABLED, b);
+    }
+
+    public void toggleRoundsInAirEnabled() {
+        setRoundsInAirEnabled(!getRoundsInAirEnabled());
+    }
+
+    public void setRoundsInAirPosX(int i) {
+        store.setValue(ROUNDS_IN_AIR_POS_X, i);
+    }
+
+    public void setRoundsInAirPosY(int i) {
+        store.setValue(ROUNDS_IN_AIR_POS_Y, i);
     }
 
     public void setPlayerListAutoDisplayReportPhase(int i) {

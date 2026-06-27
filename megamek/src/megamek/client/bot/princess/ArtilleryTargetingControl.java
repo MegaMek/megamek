@@ -950,6 +950,13 @@ public class ArtilleryTargetingControl {
         boolean guidedHomingEligible = false;
         int homingImpossibleCount = 0;
         int homingAimMissCount = 0;
+        // Of the impossible homing shots, how many were actually aimed within homing radius of a TAG-spotted enemy -
+        // i.e. the guided shots the bot WANTED to make but the to-hit rejected as illegal. This isolates the actionable
+        // failures from candidates we never cared about.
+        int homingWantedButImpossibleCount = 0;
+        // Distinct to-hit rejection reasons for impossible homing shots (reason -> count) so the summary log names
+        // exactly WHY each was rejected (e.g. out of range, inside min indirect range) instead of guessing.
+        Map<String, Integer> homingImpossibleReasons = new HashMap<>();
         for (WeaponMounted currentWeapon : shooter.getWeaponList()) {
             List<WeaponFireInfo> topValuedFireInfos = new ArrayList<>();
             double maxDamage = 0;
@@ -1097,6 +1104,10 @@ public class ArtilleryTargetingControl {
                                   && !tagSpottedPositions.isEmpty()) {
                                 if (wfi.getToHit().cannotSucceed()) {
                                     homingImpossibleCount++;
+                                    homingImpossibleReasons.merge(wfi.getToHit().getDesc(), 1, Integer::sum);
+                                    if (isGuidedByTag(target.getPosition(), tagSpottedPositions)) {
+                                        homingWantedButImpossibleCount++;
+                                    }
                                 } else {
                                     homingAimMissCount++;
                                 }
@@ -1327,10 +1338,11 @@ public class ArtilleryTargetingControl {
 
         if (shooterHasHomingAmmo && !guidedHomingEligible && !tagSpottedPositions.isEmpty()) {
             LOGGER.debug("[Homing] {}: {} carries homing and saw {} TAG-spotted enemies but NO shot was guidable - "
-                        + "{} homing shots impossible (inside min indirect range / no LOS), {} legal but no aim hex "
-                        + "within homing radius of a spotted enemy (lead overshoot)",
+                        + "{} homing shots impossible ({} of them aimed within homing radius of a spotted enemy = "
+                        + "guided shots wanted but rejected as illegal); to-hit rejection reasons: {}; {} legal but no "
+                        + "aim hex within homing radius of a spotted enemy (lead overshoot)",
                   owner.getLocalPlayer().getName(), shooter.getDisplayName(), tagSpottedPositions.size(),
-                  homingImpossibleCount, homingAimMissCount);
+                  homingImpossibleCount, homingWantedButImpossibleCount, homingImpossibleReasons, homingAimMissCount);
         }
 
         return returnValue;

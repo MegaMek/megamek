@@ -103,6 +103,7 @@ import megamek.client.ui.dialogs.InformDialog;
 import megamek.client.ui.dialogs.MMAboutDialog;
 import megamek.client.ui.dialogs.PlayerListDialog;
 import megamek.client.ui.dialogs.RandomNameDialog;
+import megamek.client.ui.dialogs.RoundsInAirDialog;
 import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.EditBotsDialog;
@@ -280,6 +281,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_LOS_SETTING = "viewLOSSetting";
     public static final String VIEW_PLAYER_SETTINGS = "viewPlayerSettings";
     public static final String VIEW_PLAYER_LIST = "viewPlayerList";
+    public static final String VIEW_ROUNDS_IN_AIR = "viewRoundsInAir";
     public static final String VIEW_RESET_WINDOW_POSITIONS = "viewResetWindowPos";
     public static final String VIEW_BOT_COMMANDS = "viewBotCommands";
     public static final String VIEW_BOT_COMMANDS_OFF = "viewBotCommandsOff";
@@ -390,6 +392,7 @@ public class ClientGUI extends AbstractClientGUI
     private NetworkInformationDialog networkInformationDialog;
     private MegaMekUnitSelectorDialog mekSelectorDialog;
     private PlayerListDialog playerListDialog;
+    private RoundsInAirDialog roundsInAirDialog;
     private RandomArmyDialog randomArmyDialog;
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
@@ -749,6 +752,15 @@ public class ClientGUI extends AbstractClientGUI
         this.playerListDialog.setFocusableWindowState(false);
     }
 
+    public RoundsInAirDialog getRoundsInAirDialog() {
+        return roundsInAirDialog;
+    }
+
+    public void setRoundsInAirDialog(final RoundsInAirDialog roundsInAirDialog) {
+        this.roundsInAirDialog = roundsInAirDialog;
+        this.roundsInAirDialog.setFocusableWindowState(false);
+    }
+
     @Override
     public void setDisconnectQuietly(boolean quietly) {
         disconnectQuietly = quietly;
@@ -900,6 +912,7 @@ public class ClientGUI extends AbstractClientGUI
         setMiniReportVisible(GUIP.getMiniReportEnabled());
 
         setPlayerListDialog(new PlayerListDialog(frame, client, false));
+        setRoundsInAirDialog(new RoundsInAirDialog(frame, client));
 
         RulerDialog.color1 = GUIP.getRulerColor1();
         RulerDialog.color2 = GUIP.getRulerColor2();
@@ -1282,6 +1295,9 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case VIEW_PLAYER_LIST:
                 GUIP.togglePlayerListEnabled();
+                break;
+            case VIEW_ROUNDS_IN_AIR:
+                GUIP.toggleRoundsInAirEnabled();
                 break;
             case VIEW_ROUND_REPORT:
                 GUIP.toggleRoundReportEnabled();
@@ -2040,6 +2056,16 @@ public class ClientGUI extends AbstractClientGUI
             showPlayerList();
         } else if (getPlayerListDialog() != null) {
             getPlayerListDialog().setVisible(false);
+        }
+    }
+
+    void setRoundsInAirVisible(boolean visible) {
+        if (getRoundsInAirDialog() != null) {
+            if (visible) {
+                getRoundsInAirDialog().refresh();
+            }
+            getRoundsInAirDialog().setVisible(visible);
+            conditionalRequestFocus(visible);
         }
     }
 
@@ -2987,6 +3013,11 @@ public class ClientGUI extends AbstractClientGUI
             GamePhase phase = getClient().getGame().getPhase();
             switchPanel(phase);
 
+            // Keep the Rounds in the Air list current as rounds are declared, fly, and land each phase.
+            if (roundsInAirDialog != null) {
+                roundsInAirDialog.refresh();
+            }
+
             // Once per round, remind the player of own platoons busy raising bridges (TO:AUE); building
             // platoons are ineligible for all phases, so no phase display ever selects them
             if (phase.isMovement()) {
@@ -3720,6 +3751,13 @@ public class ClientGUI extends AbstractClientGUI
         switch (e.getName()) {
             case GUIPreferences.MINI_MAP_ENABLED -> setMapVisible(GUIP.getMinimapEnabled());
             case GUIPreferences.PLAYER_LIST_ENABLED -> setPlayerListVisible(GUIP.getPlayerListEnabled());
+            case GUIPreferences.ROUNDS_IN_AIR_ENABLED -> setRoundsInAirVisible(GUIP.getRoundsInAirEnabled());
+            case GUIPreferences.ADVANCED_REVEAL_ALL_ARTILLERY_ROUNDS -> {
+                getClient().sendArtilleryRevealPreference(GUIP.getBoolean(GUIPreferences.ADVANCED_REVEAL_ALL_ARTILLERY_ROUNDS));
+                if (roundsInAirDialog != null) {
+                    roundsInAirDialog.refresh();
+                }
+            }
             case GUIPreferences.UNIT_DISPLAY_ENABLED, GUIPreferences.UNIT_DISPLAY_LOCATION ->
                   setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
             case GUIPreferences.FORCE_DISPLAY_ENABLED -> setForceDisplayVisible(GUIP.getForceDisplayEnabled());

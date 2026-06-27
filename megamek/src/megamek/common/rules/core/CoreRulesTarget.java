@@ -47,14 +47,4 @@ public class CoreRulesTarget extends RulesTarget {
         }
         return 0;
     }
-
-    // Overload of largeTargetModifier when there is no marker set
-    public int largeTargetModifier(int weightclass) {
-        return largeTargetModifier(weightclass, false);
-    }
-
-    // Overload of largeTargetModifier for large objectives
-    public int largeTargetModifier(boolean markedLarge) {
-        return largeTargetModifier(0, markedLarge);
-    }
 }

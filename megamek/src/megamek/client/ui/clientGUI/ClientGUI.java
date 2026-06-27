@@ -155,6 +155,7 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
+import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.event.board.GameBoardNewEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.event.entity.GameEntityNewEvent;
@@ -2919,6 +2920,16 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     private final GameListener gameListener = new GameListenerAdapter() {
+
+        @Override
+        public void gameBoardChanged(GameBoardChangeEvent e) {
+            // Keep the Rounds in the Air window current the moment in-flight artillery changes. The artillery packet
+            // arrives after the phase-change event, so a phase-change-only refresh would lag a phase (and miss
+            // off-board counter-battery rounds entirely until the next phase).
+            if (roundsInAirDialog != null) {
+                roundsInAirDialog.refresh();
+            }
+        }
 
         @Override
         public void gameBoardNew(GameBoardNewEvent e) {

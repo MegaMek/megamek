@@ -1200,6 +1200,10 @@ public class Client extends AbstractClient {
                 case SENDING_ARTILLERY_ATTACKS:
                     Vector<ArtilleryAttackAction> artilleryAttackActions = packet.getArtilleryAttackAction(0);
                     game.setArtilleryVector(artilleryAttackActions);
+                    // Fire a board-change event so views tracking in-flight artillery (e.g. the Rounds in the Air
+                    // window) refresh now. This packet arrives AFTER the phase-change event, so a phase-change-only
+                    // refresh would always be one phase stale - notably for off-board counter-battery rounds.
+                    game.processGameEvent(new GameBoardChangeEvent(this));
                     break;
                 case SENDING_FLARES:
                     Vector<Flare> flareVector = packet.getFlareVector(0);

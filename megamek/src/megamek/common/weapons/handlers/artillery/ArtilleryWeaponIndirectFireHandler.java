@@ -552,9 +552,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                                   artyMsg));
             }
         } else {
-            // direct fire artillery only scatters by one d6
-            // we do this here to avoid duplicating handle()
-            // in the ArtilleryWeaponDirectFireHandler
+            // Standard scatter rolls 1d6 for the direction and uses the margin of failure as the
+            // distance; with the Advanced Scatter option the distance is rolled with dice instead.
+            // Resolved here so it is not duplicated in ArtilleryWeaponDirectFireHandler.
             Coords originalPosition = targetPos;
             // Oblique Artilleryman reduces scatter distance by two hexes, minimum 0 (CamOps p.78).
             int scatterReduction = attackingEntity.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)

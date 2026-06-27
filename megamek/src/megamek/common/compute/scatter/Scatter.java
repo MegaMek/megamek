@@ -36,8 +36,10 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 
 /**
- * Scatter geometry for missed shots (artillery, bombs, and anything else that uses a scatter diagram). These are pure
- * functions over {@link Coords}; nothing here is stored in game state, so no serialization handling is required.
+ * Scatter geometry for missed shots (artillery, bombs, and anything else that uses a scatter diagram). These are
+ * stateless helpers over {@link Coords}; the methods that pick a direction or distance roll dice via
+ * {@link Compute#d6(int)}, so they are random rather than deterministic. Nothing here is stored in game state, so no
+ * serialization handling is required.
  *
  * <p>Standard scatter (TW) moves a single distance in one of the six directions. Advanced Scatter
  * (TO:AR) instead rolls dice for two legs two hexsides apart, so a missed shot can land on any hex rather than only on

@@ -35,7 +35,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.rules.RulesArtillery;
+import megamek.common.rules.core.CoreRulesArtillery;
 
-public class TwRulesArtillery extends RulesArtillery {
+public class TwRulesArtillery extends CoreRulesArtillery {
 }

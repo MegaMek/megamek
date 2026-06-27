@@ -35,7 +35,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.rules.RulesCharts;
+import megamek.common.rules.core.CoreRulesCharts;
 
-public class TwRulesCharts extends RulesCharts {
+public class TwRulesCharts extends CoreRulesCharts {
 }

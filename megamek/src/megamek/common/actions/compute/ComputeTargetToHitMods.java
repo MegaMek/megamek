@@ -86,19 +86,13 @@ public class ComputeTargetToHitMods {
      * @param isPointBlankShot    flag that indicates whether this is a PBS by a hidden unit
      * @param usesAmmo            flag that indicates whether the WeaponType being used is ammo-fed
      */
-    // RULES set default rules level to Core rules
-    private static RulesTarget rulesTarget = new megamek.common.rules.core.CoreRulesTarget();
-    private static RulesUnits rulesUnits = new CoreRulesUnits();
 
     public static ToHitData compileTargetToHitMods(Game game, Entity attacker, Targetable target,
           ToHitData toHit, int aimingAt, AimingMode aimingMode, int distance, WeaponType weaponType,
           WeaponMounted weapon, AmmoType ammoType, EnumSet<AmmoType.Munitions> munition, boolean isArtilleryDirect,
           boolean isArtilleryIndirect, boolean isAttackerInfantry, boolean exchangeSwarmTarget, boolean isIndirect,
           boolean isPointBlankShot, boolean usesAmmo) {
-
-        // RULES initialize rules level
-        initializeRules(game);
-
+    
         if (attacker == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
             return toHit;
@@ -324,7 +318,7 @@ public class ComputeTargetToHitMods {
 
         // RULES Large Target / Superheavy
         if (entityTarget != null && !entityTarget.isAirborne() && !entityTarget.isSpaceborne()) {
-            int largeTarget = rulesTarget.largeTargetModifier(entityTarget.getWeightClass());
+            int largeTarget = Game.rulesManager.getRulesTarget().largeTargetModifier(entityTarget.getWeightClass());
             if (largeTarget != 0) {
                 toHit.addModifier(largeTarget, Messages.getString("WeaponAttackAction.TeLargeUnit"));
             }
@@ -416,14 +410,7 @@ public class ComputeTargetToHitMods {
 
         return toHit;
     }
-
-    private static void initializeRules(Game game) {
-        if (game.getOptions().booleanOption(OptionsConstants.TWRULES)) {
-            rulesTarget = new TwRulesTarget();
-            rulesUnits = new TwRulesUnits();
-        }
-    }
-
+    
     private static boolean createsSensorShadow(Entity target, Entity other) {
         return !other.isEnemyOf(target)
               && other.isLargeCraft()

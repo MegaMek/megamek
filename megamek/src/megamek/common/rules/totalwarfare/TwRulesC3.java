@@ -34,7 +34,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.rules.RulesC3;
+import megamek.common.rules.core.CoreRulesC3;
 
-public class TwRulesC3 extends RulesC3 {
+public class TwRulesC3 extends CoreRulesC3 {
 }

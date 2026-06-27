@@ -34,11 +34,13 @@ package megamek.common.rules.totalwarfare;
  */
 
 import megamek.common.rules.RulesTarget;
+import megamek.common.rules.core.CoreRulesTarget;
 import megamek.common.units.EntityWeightClass;
 
-public class TwRulesTarget extends RulesTarget {
+public class TwRulesTarget extends CoreRulesTarget {
 
     // Check return if the target is considered large. Not used in TW.
+    @Override
     public int largeTargetModifier(int weightclass, boolean markedLarge) {
         if (weightclass == EntityWeightClass.WEIGHT_SUPER_HEAVY || weightclass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
             return -1;

@@ -33,7 +33,7 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
-import megamek.common.rules.RulesPilot;
+import megamek.common.rules.core.CoreRulesPilot;
 
-public class TwRulesPilot extends RulesPilot {
+public class TwRulesPilot extends CoreRulesPilot {
 }

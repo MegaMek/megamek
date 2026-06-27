@@ -33,7 +33,7 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
-import megamek.common.rules.RulesUnderwater;
+import megamek.common.rules.core.CoreRulesUnderwater;
 
-public class TwRulesUnderwater extends RulesUnderwater {
+public class TwRulesUnderwater extends CoreRulesUnderwater {
 }

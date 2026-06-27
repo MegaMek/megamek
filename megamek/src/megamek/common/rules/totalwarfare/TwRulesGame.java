@@ -34,7 +34,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.rules.RulesGame;
+import megamek.common.rules.core.CoreRulesGame;
 
-public class TwRulesGame extends RulesGame {
+public class TwRulesGame extends CoreRulesGame {
 }

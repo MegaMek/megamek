@@ -34,7 +34,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.rules.RulesHeat;
+import megamek.common.rules.core.CoreRulesHeat;
 
-public class TwRulesHeat extends RulesHeat {
+public class TwRulesHeat extends CoreRulesHeat {
 }

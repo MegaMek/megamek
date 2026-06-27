@@ -35,7 +35,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.rules.RulesMovement;
+import megamek.common.rules.core.CoreRulesMovement;
 
-public class TwRulesMovement extends RulesMovement {
+public class TwRulesMovement extends CoreRulesMovement {
 }

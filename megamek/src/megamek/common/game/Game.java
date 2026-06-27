@@ -95,6 +95,9 @@ import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
 import megamek.common.planetaryConditions.WindDirection;
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.rules.RulesManager;
+import megamek.common.rules.core.CoreRulesManager;
+import megamek.common.rules.totalwarfare.TwRulesManager;
 import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.turns.TurnOrdered;
 import megamek.common.units.*;
@@ -118,7 +121,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public static final int TEAM_HAS_COMBAT_SENSE = 1;
     public static final int TEAM_HAS_NO_INITIATIVE_APTITUDE = 0;
     public static final int TEAM_HAS_COMBAT_PARALYSIS = -1;
-
+    public static RulesManager rulesManager;
     /**
      * A UUID to identify this game instance.
      */
@@ -295,6 +298,13 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return woodsClearingTracker;
     }
 
+    public void initializeRulesManager() {
+        if (getOptions().booleanOption(OptionsConstants.TWRULES)) {
+            rulesManager = new TwRulesManager();
+        } 
+        rulesManager = new CoreRulesManager();
+    }
+    
     /**
      * Returns the map of hex locations being cleared by saws to turns remaining. Used by the board view to render cut
      * indicators and tooltips.

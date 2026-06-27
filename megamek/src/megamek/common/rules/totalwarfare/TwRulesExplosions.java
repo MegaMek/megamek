@@ -35,7 +35,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.rules.RulesExplosions;
+import megamek.common.rules.core.CoreRulesExplosions;
 
-public class TwRulesExplosions extends RulesExplosions {
+public class TwRulesExplosions extends CoreRulesExplosions {
 }

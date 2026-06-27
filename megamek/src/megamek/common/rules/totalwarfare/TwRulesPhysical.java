@@ -33,7 +33,7 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
-import megamek.common.rules.RulesPhysical;
+import megamek.common.rules.core.CoreRulesPhysical;
 
-public class TwRulesPhysical extends RulesPhysical {
+public class TwRulesPhysical extends CoreRulesPhysical {
 }

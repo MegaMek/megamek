@@ -33,7 +33,7 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
-import megamek.common.rules.RulesWeapons;
+import megamek.common.rules.core.CoreRulesWeapons;
 
-public class TwRulesWeapons extends RulesWeapons {
+public class TwRulesWeapons extends CoreRulesWeapons {
 }

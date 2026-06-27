@@ -1,4 +1,4 @@
-package megamek.common.rules;
+package megamek.common.rules.totalwarfare;
 /*
  * Copyright (C) 2026 James Magnan (bmazur@sev.org)
  * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
@@ -33,10 +33,8 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
-public abstract class RulesTarget {
-    // Check if the target is large and if there is a modifier
 
-    public abstract int largeTargetModifier(int weightclass, boolean markedLarge);
-    public int largeTargetModifier(int weightclass) { return largeTargetModifier(weightclass, false); };
-    public int largeTargetModifier(boolean markedLarge) {return largeTargetModifier(0,markedLarge);};
+import megamek.common.rules.core.CoreRulesArmor;
+
+public class TwRulesArmor extends CoreRulesArmor {
 }

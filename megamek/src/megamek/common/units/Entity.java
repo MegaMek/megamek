@@ -1069,13 +1069,7 @@ public abstract class Entity extends TurnOrdered
     private boolean hasFleeZone = false;
     private HexArea fleeZone = HexArea.EMPTY_AREA;
 
-    /**
-     * The rules that will be used for the game. Default is to Core Rules
-     * // RULES
-     */
-    private RulesPsr rulesPsr = new CoreRulesPsr();
-
-    /**
+     /**
      * Generates a new, blank, entity.
      */
     public Entity() {
@@ -1116,10 +1110,6 @@ public abstract class Entity extends TurnOrdered
         incomingGuidedAttacks = new ArrayList<>();
         carriedObjects = new HashMap<>();
                 
-        // RULES Check if the game uses Total Warfare instead of Core, and swaps the rule objects
-        if (game.getOptions().booleanOption(OptionsConstants.TWRULES)) {
-            rulesPsr = new TwRulesPsr();
-        }
     }
 
     /**
@@ -8502,7 +8492,7 @@ public abstract class Entity extends TurnOrdered
 
         int gyroDamage = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CENTER_TORSO);
         
-        rulesPsr.checkRunningWithDamage(this, roll, gyroDamage, overallMoveType);
+        Game.rulesManager.getRulesPsr().checkRunningWithDamage(this, roll, gyroDamage, overallMoveType);
         
         addPilotingModifierForTerrain(roll);
         return roll;

@@ -34,7 +34,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.rules.RulesAmmo;
+import megamek.common.rules.core.CoreRulesAmmo;
 
-public class TwRulesAmmo extends RulesAmmo {
+public class TwRulesAmmo extends CoreRulesAmmo {
 }

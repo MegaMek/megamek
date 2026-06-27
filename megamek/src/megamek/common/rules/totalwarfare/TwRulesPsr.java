@@ -37,12 +37,12 @@ package megamek.common.rules.totalwarfare;
 
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.rules.RulesPsr;
+import megamek.common.rules.core.CoreRulesPsr;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 
-public class TwRulesPsr extends RulesPsr {
+public class TwRulesPsr extends CoreRulesPsr {
     public void checkRunningWithDamage(Entity e, PilotingRollData r, int gyroDamage, EntityMovementType overallMoveType) {
         if (e.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             gyroDamage--; // HD gyro ignores 1st damage

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -154,6 +154,13 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * The present phase
      */
     private GamePhase phase = GamePhase.UNKNOWN;
+
+    /**
+     * Lazily-computed set of player ids that own at least one demolition charge. Computed on demand and cleared on
+     * phase change, so the per-entity pre-end eligibility check is a constant-time lookup rather than a board scan per
+     * unit. {@code null} means not yet computed.
+     */
+    private transient Set<Integer> playerIdsWithDemolitionCharges = null;
 
     /**
      * The past phase
@@ -945,6 +952,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public void setPhase(GamePhase phase) {
         final GamePhase oldPhase = this.phase;
         this.phase = phase;
+        // Demolition charges only change during the End Phase; clearing the cache on every phase change keeps the
+        // pre-end eligibility lookup correct and recomputes it at most once per phase.
+        playerIdsWithDemolitionCharges = null;
         // Handle phase-specific items.
         switch (phase) {
             case LOUNGE:
@@ -974,6 +984,28 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
 
         processGameEvent(new GamePhaseChangeEvent(this, oldPhase, phase));
+    }
+
+    /**
+     * Returns the ids of players that own at least one demolition charge set on a building. The result is computed once
+     * per phase and cached (see {@link #setPhase}), so callers such as the per-entity pre-end declarations eligibility
+     * check do a constant-time lookup instead of scanning every board and building per unit.
+     *
+     * @return the set of owning player ids (empty if no charges are set)
+     */
+    public Set<Integer> getPlayerIdsWithDemolitionCharges() {
+        if (playerIdsWithDemolitionCharges == null) {
+            Set<Integer> ownerIds = new HashSet<>();
+            for (Board board : getBoards().values()) {
+                for (IBuilding building : board.getBuildingsVector()) {
+                    for (DemolitionCharge charge : building.getDemolitionCharges()) {
+                        ownerIds.add(charge.playerId);
+                    }
+                }
+            }
+            playerIdsWithDemolitionCharges = ownerIds;
+        }
+        return playerIdsWithDemolitionCharges;
     }
 
     public void processGameEvent(GameEvent event) {

@@ -43,6 +43,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Vector;
 import java.util.stream.Stream;
 
@@ -284,12 +285,17 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
         buildingEntity.setId(3);
         game.addEntity(buildingEntity);
 
-        // Call processDeployment
-        callProcessDeployment(buildingEntity, new Coords(0, 0));
+        // Deploy at the board centre so the whole footprint stays on the 3x3 board. At board (0,0) the
+        // west hex (1,-1,0) maps to row -1, off the board edge.
+        callProcessDeployment(buildingEntity, new Coords(1, 1));
 
         // Verify all 3 hexes have building terrain
         assertEquals(3, buildingEntity.getCoordsList().size(),
               "Building should occupy 3 hexes");
+        // The 3 footprint hexes must land on distinct board coords. The old toOffset bug collapsed
+        // (1,-1,0) and (1,0,-1) onto the same hex, which this guards against.
+        assertEquals(3, new HashSet<>(buildingEntity.getCoordsList()).size(),
+              "Building's 3 hexes must occupy distinct board coords (no overlap)");
 
         for (Coords buildingCoords : buildingEntity.getCoordsList()) {
             Hex hex = board.getHex(buildingCoords);

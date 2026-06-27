@@ -31661,7 +31661,8 @@ public class TWGameManager extends AbstractGameManager {
 
             if (ah.cares(game.getPhase())) {
                 int aId = ah.getAttackerId();
-                if ((aId != lastAttackerId) && !ah.announcedEntityFiring()) {
+                if ((aId != lastAttackerId) && !ah.announcedEntityFiring()
+                      && ah.producesReportThisPhase(game.getPhase())) {
                     // report who is firing
                     if (pointblankShot) {
                         r = new Report(3102);
@@ -31689,7 +31690,8 @@ public class TWGameManager extends AbstractGameManager {
             }
             if (ah.cares(game.getPhase())) {
                 int aId = ah.getAttackerId();
-                if ((aId != lastAttackerId) && !ah.announcedEntityFiring()) {
+                if ((aId != lastAttackerId) && !ah.announcedEntityFiring()
+                      && ah.producesReportThisPhase(game.getPhase())) {
                     // if this is a new attacker then resolve any standard-to-cap damage from previous
                     handleAttackReports.addAll(checkFatalThresholds(aId, lastAttackerId));
                     // report who is firing

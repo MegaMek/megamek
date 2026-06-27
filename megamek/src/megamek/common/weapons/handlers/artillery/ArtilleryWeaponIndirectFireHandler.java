@@ -100,6 +100,23 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
     }
 
     @Override
+    public boolean producesReportThisPhase(GamePhase phase) {
+        ArtilleryAttackAction artilleryAttackAction = (ArtilleryAttackAction) weaponAttackAction;
+        if (phase.isTargeting()) {
+            // Only the first targeting phase emits the "Shot, out" announcement; later targeting passes just flip the
+            // announce flag for the upcoming impact and add no report body.
+            return !handledAmmoAndReport;
+        }
+        if (phase.isOffboard()) {
+            // In the offboard phase an in-flight round only decrements its flight timer (no body); it reports only the
+            // turn it lands (turnsTilHit == 0). Without this, a multi-tube battery's not-yet-landing tubes each emit an
+            // empty "Weapons fire for X" header.
+            return artilleryAttackAction.getTurnsTilHit() == 0;
+        }
+        return true;
+    }
+
+    @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;

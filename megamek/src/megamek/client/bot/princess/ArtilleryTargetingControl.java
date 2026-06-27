@@ -565,7 +565,8 @@ public class ArtilleryTargetingControl {
      * <p>
      * Deliberately predictive: it credits each TAG unit's move-plus-TAG reach, not current line of sight, because the
      * spotter fires TAG in a later phase from its post-movement position. For each TAG unit a player-designated target it
-     * can reach wins; otherwise the nearest reachable enemy (closest = easiest to gain LOS and range after moving).
+     * can reach wins; otherwise the highest-value (BV) reachable enemy - homing onto an assault is worth far more than
+     * onto a fleeing light, and {@code getTAGInfo} selects by value too, so this prediction matches the actual TAG.
      *
      * @param shooter The firing artillery unit (used to tell friend from foe)
      * @param game    The current game
@@ -588,22 +589,22 @@ public class ArtilleryTargetingControl {
             }
             int tagReach = tagRange + ally.getWalkMP();
             Entity chosen = null;
-            int bestDistance = Integer.MAX_VALUE;
+            double bestValue = -1.0;
             boolean chosenIsDesignated = false;
             for (Targetable enemy : enemies) {
                 if (!(enemy instanceof Entity enemyEntity) || (enemyEntity.getPosition() == null)) {
                     continue;
                 }
-                int distance = ally.getPosition().distance(enemyEntity.getPosition());
-                if (distance > tagReach) {
+                if (ally.getPosition().distance(enemyEntity.getPosition()) > tagReach) {
                     continue;
                 }
                 boolean isDesignated = owner.getDesignatedTagTargets().contains(enemyEntity.getId());
+                double value = tagTargetValue(enemyEntity);
                 boolean better = (isDesignated && !chosenIsDesignated)
-                      || ((isDesignated == chosenIsDesignated) && (distance < bestDistance));
+                      || ((isDesignated == chosenIsDesignated) && (value > bestValue));
                 if (better) {
                     chosen = enemyEntity;
-                    bestDistance = distance;
+                    bestValue = value;
                     chosenIsDesignated = isDesignated;
                 }
             }
@@ -1501,31 +1502,38 @@ public class ArtilleryTargetingControl {
     private WeaponFireInfo getTAGInfo(WeaponMounted weapon, Entity shooter, Game game, Princess owner) {
         WeaponFireInfo returnValue = null;
         WeaponFireInfo designatedFireInfo = null;
-        double hitOdds = 0.0;
-        double designatedHitOdds = 0.0;
+        double bestScore = 0.0;
+        double designatedBestScore = 0.0;
         int enemiesEvaluated = 0;
         // Accumulate why each unhittable enemy was rejected (built in the loop, logged once after) so a playtest can
         // tell why a TAG unit did not designate - out of range, no line of sight, bad arc, etc.
         StringBuilder rejectedReasons = new StringBuilder();
 
-        // take the best shot you have, but prefer an enemy the player designated for TAG
+        // Rank candidates by TARGET VALUE first, then to-hit: score = target BV * hit probability. This makes the TAG
+        // (and the homing it guides) prefer a high-value target it can reasonably hit (e.g. an assault) over an easy
+        // shot at a low-value runner (e.g. a fleeing light) - "high target value, best to-hit". A player-designated
+        // target still wins when hittable.
         for (Targetable target : FireControl.getAllTargetableEnemyEntities(owner.getLocalPlayer(), game,
               owner.getFireControlState())) {
             enemiesEvaluated++;
             WeaponFireInfo wfi = new WeaponFireInfo(shooter, target, weapon, null, game, false, owner);
-            boolean isDesignated = owner.getDesignatedTagTargets().contains(target.getId());
-            if (isDesignated && (wfi.getProbabilityToHit() > designatedHitOdds)) {
-                designatedHitOdds = wfi.getProbabilityToHit();
-                designatedFireInfo = wfi;
-            }
-            if (wfi.getProbabilityToHit() > hitOdds) {
-                hitOdds = wfi.getProbabilityToHit();
-                returnValue = wfi;
-            } else if (wfi.getProbabilityToHit() <= 0) {
+            double hitProbability = wfi.getProbabilityToHit();
+            if (hitProbability <= 0) {
                 if (rejectedReasons.length() > 0) {
                     rejectedReasons.append("; ");
                 }
                 rejectedReasons.append(target.getDisplayName()).append(": ").append(wfi.getToHit().getDesc());
+                continue;
+            }
+            double score = tagTargetValue(target) * hitProbability;
+            boolean isDesignated = owner.getDesignatedTagTargets().contains(target.getId());
+            if (isDesignated && (score > designatedBestScore)) {
+                designatedBestScore = score;
+                designatedFireInfo = wfi;
+            }
+            if (score > bestScore) {
+                bestScore = score;
+                returnValue = wfi;
             }
         }
 
@@ -1536,12 +1544,27 @@ public class ArtilleryTargetingControl {
                   owner.getLocalPlayer().getName(), shooter.getDisplayName(), enemiesEvaluated,
                   (rejectedReasons.length() > 0) ? " - " + rejectedReasons : "");
         } else {
-            LOGGER.debug("[TAG] {}: {} best TAG target {} at probability {}{}",
+            LOGGER.debug("[TAG] {}: {} best TAG target {} (value {}, probability {}){}",
                   owner.getLocalPlayer().getName(), shooter.getDisplayName(),
-                  chosen.getTarget().getDisplayName(), chosen.getProbabilityToHit(),
+                  chosen.getTarget().getDisplayName(), tagTargetValue(chosen.getTarget()),
+                  chosen.getProbabilityToHit(),
                   (designatedFireInfo != null) ? " (player-designated)" : "");
         }
         return chosen;
+    }
+
+    /**
+     * @param target A candidate TAG/homing target
+     *
+     * @return A relative "worth killing" value for ranking targets - the target's initial battle value (BV) for an
+     *       entity (so an assault outranks a light), or a neutral {@code 1.0} for non-entity targets (ranked by to-hit
+     *       alone). Floored at {@code 1.0} so a zero-BV target still ranks by its hit probability.
+     */
+    private double tagTargetValue(Targetable target) {
+        if (target instanceof Entity entity) {
+            return Math.max(1.0, entity.getInitialBV());
+        }
+        return 1.0;
     }
 
     private static class HelperAmmo {

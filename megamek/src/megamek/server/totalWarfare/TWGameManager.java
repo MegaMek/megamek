@@ -10513,7 +10513,7 @@ public class TWGameManager extends AbstractGameManager {
                     Entity target = game.getEntity(bloodStalkerAction.getTargetID());
 
                     if (target != null) {
-                        target.setBloodStalkerTarget(bloodStalkerAction.getTargetID());
+                        entity.setBloodStalkerTarget(bloodStalkerAction.getTargetID());
                         Report r = new Report(10000);
                         r.subject = entity.getId();
                         r.add(entity.getDisplayName());

@@ -6470,13 +6470,16 @@ public class Compute {
      * scatter from a hex according, roll d6 to choose scatter direction
      *
      * @param coords The <code>Coords</code> to scatter from
-     * @param margin the <code>int</code> margin of failure, scatter distance will be the margin of failure
+     * @param margin the <code>int</code> margin of failure; the scatter distance is its magnitude
      *
      * @return the <code>Coords</code> scattered to
      */
     public static Coords scatter(Coords coords, int margin) {
         int scatterDirection = Compute.d6(1) - 1;
-        return coords.translated(scatterDirection, margin);
+        // Scatter distance is a magnitude. A negative margin would push the shot one hex off the
+        // straight-line scatter path, because Coords.translated() truncates toward zero on the
+        // diagonal directions (e.g. -5 / 2 == -2, not the floored -3).
+        return coords.translated(scatterDirection, Math.abs(margin));
     }
 
     /**

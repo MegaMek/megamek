@@ -44,7 +44,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.client.Client;
@@ -709,6 +711,37 @@ class ComputeTest {
         assertEquals(TargetRoll.IMPOSSIBLE,
               mods.getValue(),
               "Right leg-mounted weapon should be impossible to fire when prone");
+    }
+
+    @Test
+    @DisplayName("scatter stays on the straight-line path for a negative margin")
+    void scatterStaysOnStraightLineForNegativeMargin() {
+        // Regression for issues 7695 and 8227. On a miss, toHit.getMoS() is negative, and the old
+        // code passed it straight into Coords.translated(). That truncates toward zero on the four
+        // diagonal directions (e.g. -5 / 2 == -2 instead of the floored -3), so the shot landed one
+        // hex off the straight-line scatter path. scatter() now uses the magnitude, so every result
+        // must sit exactly |margin| hexes away on one of the six straight-line directions.
+        for (int startX : new int[] { 6, 7 }) { // even and odd column parity behave differently
+            Coords target = new Coords(startX, 9);
+            for (int distance : new int[] { 1, 3, 5, 6 }) {
+                Set<Coords> straightLineHexes = new HashSet<>();
+                for (int direction = 0; direction < 6; direction++) {
+                    Coords landing = target.translated(direction, distance);
+                    assertEquals(distance, target.distance(landing),
+                          "a straight-line hex must be exactly " + distance + " hexes from the target");
+                    straightLineHexes.add(landing);
+                }
+
+                for (int trial = 0; trial < 300; trial++) {
+                    Coords scattered = Compute.scatter(target, -distance);
+                    assertTrue(straightLineHexes.contains(scattered),
+                          "scatter(-" + distance + ") from " + target.getBoardNum()
+                                + " drifted off the straight line to " + scattered.getBoardNum());
+                    assertEquals(distance, target.distance(scattered),
+                          "a scattered hex must be exactly " + distance + " hexes from the target");
+                }
+            }
+        }
     }
 
     /**

@@ -6467,10 +6467,14 @@ public class Compute {
     }
 
     /**
-     * scatter from a hex according, roll d6 to choose scatter direction
+     * Scatters from a hex in a random direction, rolling 1d6 to pick one of the six straight-line
+     * directions.
      *
-     * @param coords The <code>Coords</code> to scatter from
-     * @param margin the <code>int</code> margin of failure; the scatter distance is its magnitude
+     * @param coords the <code>Coords</code> to scatter from
+     * @param margin the scatter distance in hexes; its magnitude is used, so a negative value (such
+     *               as a negative margin of failure) scatters the same distance as its positive
+     *               counterpart. Callers may also pass a fixed distance unrelated to a margin of
+     *               failure.
      *
      * @return the <code>Coords</code> scattered to
      */

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,6 +51,8 @@ import megamek.common.actions.NukeDetonatedAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.scatter.Scatter;
+import megamek.common.compute.scatter.ScatterMethod;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
@@ -203,7 +205,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             return true;
         }
         final Vector<Integer> spottersBefore = aaa.getSpotterIds();
-        Coords origPos = target.getPosition();
+        Coords originalPosition = target.getPosition();
         Coords targetPos = target.getPosition();
         final int playerId = aaa.getPlayerId();
         boolean targetIsEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
@@ -393,28 +395,22 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                   new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
                         game.getRoundCount(), game.getPlayer(aaa.getPlayerId()), artyMsg));
         } else {
-            int moF = toHit.getMoS();
-            if (attackingEntity.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)) {
-                // getMoS returns a negative MoF
-                // simple math is better so lets make it positive
-                if ((-moF - 2) < 1) {
-                    moF = 0;
-                } else {
-                    moF = moF + 2;
-                }
-            }
+            // Oblique Artilleryman reduces scatter distance by two hexes, minimum 0 (CamOps p.78).
+            int scatterReduction = attackingEntity.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)
+                  ? Scatter.SPA_SCATTER_REDUCTION : 0;
+            ScatterMethod scatterMethod = ScatterMethod.forGame(game);
             // We're only going to display one missed shot hex on the board, at the intended
             // target
             // Any drifted shots will be indicated at their end points
             artyMsg = "Bay Artillery missed here on round "
                   + game.getRoundCount() + ", by "
                   + game.getPlayer(aaa.getPlayerId()).getName();
-            game.getBoard().addSpecialHexDisplay(origPos,
+            game.getBoard().addSpecialHexDisplay(originalPosition,
                   new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_MISS, game.getRoundCount(),
                         game.getPlayer(aaa.getPlayerId()), artyMsg));
             while (numWeaponsHit > 0) {
                 // We'll generate a new report and scatter for each weapon fired
-                targetPos = Compute.scatterDirectArty(origPos, moF);
+                targetPos = scatterMethod.omnidirectional(originalPosition, toHit.getMoS(), scatterReduction).landing();
                 if (game.getBoard().contains(targetPos)) {
                     targets.add(targetPos);
                     targetHex = game.getBoard().getHex(targetPos);
@@ -524,7 +520,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 // Deliver a round to each target hex
                 for (Coords c : targets) {
 
-                    handleArtilleryDriftMarker(origPos, c, aaa,
+                    handleArtilleryDriftMarker(originalPosition, c, aaa,
                           gameManager.deliverArtilleryInferno(c, attackingEntity, subjectId, vPhaseReport));
                 }
             }
@@ -615,7 +611,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 if (!mineClear && game.containsMinefield(c)) {
                     ArtilleryHandlerHelper.getMinefields(vPhaseReport, c, game, attackingEntity, gameManager);
                 }
-                handleArtilleryDriftMarker(origPos, c, aaa,
+                handleArtilleryDriftMarker(originalPosition, c, aaa,
                       gameManager.artilleryDamageArea(c, ammoType, subjectId, attackingEntity, isFlak,
                             height, mineClear, vPhaseReport, asfFlak));
             }

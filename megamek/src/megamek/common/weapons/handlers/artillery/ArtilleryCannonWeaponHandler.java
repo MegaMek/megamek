@@ -46,6 +46,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.scatter.ScatterMethod;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Minefield;
@@ -163,7 +164,11 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         } else {
             Board board = game.getBoard(target);
             if (!board.isSpace()) {
-                targetPos = Compute.scatter(targetPos, (Math.abs(toHit.getMoS()) + 1) / 2);
+                // Artillery cannons use half the usual scatter distance (rounded up).
+                int standardDistance = (Math.abs(toHit.getMoS()) + 1) / 2;
+                targetPos = ScatterMethod.forGame(game)
+                      .omnidirectional(targetPos, standardDistance, toHit.getMoS(), 0)
+                      .landing();
                 if (board.contains(targetPos)) {
                     // misses and scatters to another hex
                     if (!isFlak) {

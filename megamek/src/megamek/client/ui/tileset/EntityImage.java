@@ -50,6 +50,7 @@ import java.awt.image.MemoryImageSource;
 import java.awt.image.PixelGrabber;
 import java.awt.image.RescaleOp;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
 import javax.swing.ImageIcon;
@@ -795,5 +796,39 @@ public class EntityImage {
             result++;
         }
         return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        EntityImage that = (EntityImage) o;
+        return dmgLevel == that.dmgLevel
+              && Double.compare(weight, that.weight) == 0
+              && isInfantry == that.isInfantry
+              && isPreview == that.isPreview
+              && isSlim == that.isSlim
+              && isVerySlim == that.isVerySlim
+              && pos == that.pos
+              && isSingleHex == that.isSingleHex
+              && unitHeight == that.unitHeight
+              && unitElevation == that.unitElevation
+              && withShadows == that.withShadows
+              && Objects.equals(base, that.base)
+              && Objects.equals(wreck, that.wreck)
+              && Objects.equals(decal, that.decal)
+              && Objects.equals(smoke, that.smoke)
+              && Objects.equals(icon, that.icon)
+              && Objects.equals(camouflage, that.camouflage)
+              && Objects.deepEquals(facings, that.facings)
+              && Objects.deepEquals(wreckFacings, that.wreckFacings);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(base, wreck, decal, smoke, icon, camouflage, Arrays.hashCode(facings),
+              Arrays.hashCode(wreckFacings), dmgLevel, weight, isInfantry, isPreview, isSlim, isVerySlim, pos,
+              isSingleHex, unitHeight, unitElevation, withShadows);
     }
 }

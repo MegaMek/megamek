@@ -2062,6 +2062,12 @@ public class ClientGUI extends AbstractClientGUI
     void setRoundsInAirVisible(boolean visible) {
         if (getRoundsInAirDialog() != null) {
             if (visible) {
+                // Push the current "reveal all artillery" preference to the server on open. The preference change
+                // listener only fires the push when the toggle CHANGES, so a value already set to true at game start
+                // would otherwise never reach the server and enemy rounds would stay hidden. The server's reply
+                // refreshes the list.
+                getClient().sendArtilleryRevealPreference(
+                      GUIP.getBoolean(GUIPreferences.ADVANCED_REVEAL_ALL_ARTILLERY_ROUNDS));
                 getRoundsInAirDialog().refresh();
             }
             getRoundsInAirDialog().setVisible(visible);

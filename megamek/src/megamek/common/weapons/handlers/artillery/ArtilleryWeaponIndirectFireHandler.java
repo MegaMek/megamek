@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -643,14 +643,14 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // direct fire artillery only scatters by one d6
             // we do this here to avoid duplicating handle()
             // in the ArtilleryWeaponDirectFireHandler
-            Coords origPos = targetPos;
-            int moF = toHit.getMoS();
-            if (attackingEntity.hasAbility("oblique_artillery")) {
-                // getMoS returns a negative MoF
-                // simple math is better so lets make it positive
-                moF = Math.max(moF + 2, 0);
+            Coords originalPosition = targetPos;
+            // getMoS() is negative on a miss; the scatter distance is its magnitude.
+            int scatterDistance = Math.abs(toHit.getMoS());
+            if (attackingEntity.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)) {
+                // Oblique Artilleryman reduces scatter distance by two hexes, minimum 0 (CamOps p.78).
+                scatterDistance = Math.max(scatterDistance - 2, 0);
             }
-            targetPos = Compute.scatterDirectArty(targetPos, moF);
+            targetPos = Compute.scatterDirectArty(targetPos, scatterDistance);
             if (game.getBoard().contains(targetPos)) {
                 // misses and scatters to another hex
                 if (!isFlak) {
@@ -666,7 +666,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                           artyMsg);
                     // Record where the round actually drifted so the board view can draw the drift line.
                     missMarker.setDriftHex(targetPos);
-                    game.getBoard().addSpecialHexDisplay(origPos, missMarker);
+                    game.getBoard().addSpecialHexDisplay(originalPosition, missMarker);
                 } else {
                     r = new Report(3192);
                 }
@@ -695,7 +695,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                       + game.getPlayer(aaa.getPlayerId()).getName()
                       + ", drifted off the board";
                 game.getBoard().addSpecialHexDisplay(
-                      origPos,
+                      originalPosition,
                       new SpecialHexDisplay(Type.ARTILLERY_MISS,
                             game.getRoundCount(),
                             game.getPlayer(aaa.getPlayerId()),

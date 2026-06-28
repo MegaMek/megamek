@@ -71,18 +71,6 @@ public class CoreRulesExplosions extends RulesExplosions {
 
             Report report;
 
-            if (caseIId) {
-                Roll diceRoll = Compute.rollD6(2);
-                report = new Report(6127);
-                report.subject = mek.getId();
-                report.add(diceRoll);
-                reportVec.add(report);
-
-                if (diceRoll.getIntValue() >= 8) {
-                    hit.setEffect(HitData.EFFECT_NO_CRITICAL_SLOTS);
-                }
-            }
-
             int cap = caseIId ? 1 : cased ? 10 : 20;
             if (damage < cap) {
                 return damage;
@@ -201,4 +189,11 @@ public class CoreRulesExplosions extends RulesExplosions {
         return damage;
     }
 
+    // CASE II reduces the crit chance for ammo explosions
+    public int explosionCASEIImod(boolean hasCaseII, boolean ammoExplosion) {
+        if (hasCaseII && ammoExplosion) {
+            return -1;
+        }
+        return 0;
+    }
 }

@@ -894,6 +894,9 @@ public class TWDamageManager implements IDamageManager {
 
             // Apply damage reductions (max damage, CASE, CASEII)
             damage = Game.rulesManager.getRulesExplosions().explosionDamageReduction(mek, hit, damage, ammoExplosion, reportVec);
+            mods.critBonus +=
+                  Game.rulesManager.getRulesExplosions().explosionCASEIImod(mek.hasCASEII(hit.getLocation()),
+                              ammoExplosion);
 
             // if damage has not all been absorbed, continue dealing with damage internally
             if (damage > 0) {

@@ -131,4 +131,10 @@ public class TwRulesExplosions extends CoreRulesExplosions {
         return damage;
     }
 
+    // CASE II handles this in the CASEII Damage Reduction
+    @Override
+    public int explosionCASEIImod(boolean hasCaseII, boolean ammoExplosion) {
+        return 0;
+    }
+
 }

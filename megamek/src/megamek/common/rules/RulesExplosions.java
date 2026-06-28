@@ -50,4 +50,7 @@ public abstract class RulesExplosions {
     // CASE II damage reduction
     public abstract int applyCASEIIDamageReduction(Entity entity, HitData hit, int damage, boolean ammoExplosion,
           Vector<Report> reportVec);
+
+    // CASE II check crit chance for explosions
+    public abstract int explosionCASEIImod(boolean hasCaseII, boolean ammoExplosion);
 }

@@ -32,7 +32,25 @@ package megamek.common.rules.core;
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
+import megamek.common.equipment.AmmoType;
 import megamek.common.rules.RulesAmmo;
 
 public class CoreRulesAmmo extends RulesAmmo {
+    // Armor piercing modifiers. Core Rules P.191
+    public int armorPiercingMod(AmmoType inType) {
+        switch (inType.getRackSize()) {
+            case 2:
+                return -3;
+            case 4:
+            case 5:
+                return -2;
+            case 6:
+            case 8:
+            case 10:
+            case 15:
+            case 20:
+                return -1;
+        }
+        return 0;
+    }
 }

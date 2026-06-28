@@ -35,6 +35,26 @@ package megamek.common.rules.totalwarfare;
 
 
 import megamek.common.rules.core.CoreRulesArmor;
+import megamek.server.totalWarfare.TWDamageManager;
 
 public class TwRulesArmor extends CoreRulesArmor {
+    // TW does not need to know about heat weapons for armor
+    @Override
+    public boolean allowHeatWeapon(boolean heat_weapon) {
+        return false;
+    }
+
+    // Hardened, FerroLam, and Reactive prevent AP ammo
+    @Override
+    public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods) {
+        if (mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor) {
+            return false;
+        }
+        return true;
+    }
+
+    // Impact armor reduces crit rolls
+    @Override
+    public int impactArmorMod() { return 1; }
+
 }

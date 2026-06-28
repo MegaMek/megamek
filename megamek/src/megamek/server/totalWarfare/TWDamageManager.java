@@ -667,11 +667,7 @@ public class TWDamageManager implements IDamageManager {
                 // ok, we dealt damage but didn't go on to internal
                 // we get a chance of a crit, using Armor Piercing.
                 // but only if we don't have hardened, Ferro-Lamellor, or reactive armor
-                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                    if (!(mods.hardenedArmor || mods.abaArmor)) {
-                        mods.specCrits = mods.specCrits + 1;
-                    }
-                } else if (!(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor)) {
+                if (Game.rulesManager.getRulesArmor().allowArmorPiercing(mods)) {
                     mods.specCrits = mods.specCrits + 1;
                 }
             }
@@ -3144,12 +3140,11 @@ public class TWDamageManager implements IDamageManager {
                 // against BAR or reflective armor, we get a +2 mod
                 int critMod = entity.hasBARArmor(hit.getLocation()) ? 2 : 0;
                 critMod += ((mods.reflectiveArmor) && !(mods.isBattleArmor)) ? 2 : 0; // BA
-                // against impact armor, we get a +1 mod
-                // PLAYTEST3 no longer gets the +1 mod with impact.
-                if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                    critMod += (mods.impactArmor) ? 1 : 0;
-                }
-                // hardened armour has no crit penalty
+
+                // Check for impact armor
+                critMod += (mods.impactArmor) ? Game.rulesManager.getRulesArmor().impactArmorMod() : 0;
+
+                // hardened armor has no crit penalty
                 if (!mods.hardenedArmor) {
                     // non-hardened armor gets modifiers
                     // the -2 for hardened is handled in the critBonus
@@ -3225,7 +3220,6 @@ public class TWDamageManager implements IDamageManager {
               isBattleArmor &&
                     (entity.getArmorType(hit.getLocation()) ==
                           EquipmentType.T_ARMOR_BA_REFLECTIVE);
-        // PLAYTEST3 add notes for ABA and heat
         mods.heatArmor = (entity instanceof Mek) &&
               (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING);
         mods.abaArmor = (entity instanceof Mek) &&
@@ -3556,10 +3550,7 @@ public class TWDamageManager implements IDamageManager {
                 report.indent(3);
                 report.add(damage);
                 reportVec.addElement(report);
-            } else if (heatArmor && hit.getHeatWeapon() && game.getOptions()
-                  .booleanOption(OptionsConstants.PLAYTEST_3)) {
-                // PLAYTEST3 only applies if heat_weapon is true in hitdata, which can only occur when playtest
-                // is on.
+            } else if (heatArmor && hit.getHeatWeapon() ) {
                 tmpDamageHold = damage;
                 damage = (int) Math.ceil((((double) damage) / 2));
                 if (tmpDamageHold == 1) {
@@ -3747,7 +3738,6 @@ public class TWDamageManager implements IDamageManager {
         public int crits = 0;
         public int specCrits = 0;
         public int damageOriginal = 0;
-        // PLAYTEST3 add armor types
         public boolean heatArmor = false;
         public boolean abaArmor = false;
     }

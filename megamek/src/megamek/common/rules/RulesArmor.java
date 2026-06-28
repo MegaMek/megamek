@@ -34,5 +34,15 @@ package megamek.common.rules;
  */
 
 
+import megamek.server.totalWarfare.TWDamageManager;
+
 public abstract class RulesArmor {
+    // Allow heat weapons for heat armor
+    public abstract boolean allowHeatWeapon(boolean heat_weapon);
+
+    // Does armor allow armor piercing
+    public abstract boolean allowArmorPiercing(TWDamageManager.ModsInfo mods);
+
+    // Impact resistant armor
+    public abstract int impactArmorMod();
 }

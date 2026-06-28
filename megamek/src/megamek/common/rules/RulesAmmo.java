@@ -34,5 +34,10 @@ package megamek.common.rules;
  */
 
 
+import megamek.common.equipment.AmmoType;
+
 public abstract class RulesAmmo {
+    // Armor Piercing modifiers
+    public abstract int armorPiercingMod(AmmoType inType);
+
 }

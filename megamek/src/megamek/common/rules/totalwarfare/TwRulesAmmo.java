@@ -34,7 +34,28 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.common.equipment.AmmoType;
 import megamek.common.rules.core.CoreRulesAmmo;
 
 public class TwRulesAmmo extends CoreRulesAmmo {
+    // Return the modifier for armor piercing based on size
+    @Override
+    public int armorPiercingMod(AmmoType inType) {
+        switch (inType.getRackSize()) {
+            case 2:
+                return -4;
+            case 4:
+            case 5:
+            case 6:
+                return -3;
+            case 8:
+            case 10:
+            case 15:
+                return -2;
+            case 20:
+                return -1;
+        }
+        return 0;
+    }
+
 }

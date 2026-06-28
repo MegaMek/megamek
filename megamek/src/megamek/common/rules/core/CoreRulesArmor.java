@@ -35,6 +35,24 @@ package megamek.common.rules.core;
 
 
 import megamek.common.rules.RulesArmor;
+import megamek.server.totalWarfare.TWDamageManager;
 
 public class CoreRulesArmor extends RulesArmor {
+    // Core rules heat armor halves heat weapon damage. This allows for weapons to be marked for heat.
+    // Core rules p.202
+    public boolean allowHeatWeapon(boolean heat_weapon) {
+        return heat_weapon;
+    }
+
+    // Hardened and ABA armor prevent AP
+    public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods) {
+        if (mods.hardenedArmor || mods.abaArmor) {
+            return false;
+        }
+        return true;
+    }
+
+    // Impact armor does not reduce anything
+    public int impactArmorMod() { return 0; }
+
 }

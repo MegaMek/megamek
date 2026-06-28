@@ -61,7 +61,7 @@ public class BLKHandheldWeaponFileTest {
         e = (HandheldWeapon) mfp.getEntity();
         assertEquals(10, e.getOArmor(HandheldWeapon.LOC_GUN), "Failed to load tonnage");
         assertEquals(2, e.getEquipment().size(), "Failed to load equipment");
-        assertEquals(6, e.getAmmo().get(0).getOriginalShots(), "Failed to load ammo");
+        assertEquals(6, e.getAmmo().getFirst().getOriginalShots(), "Failed to load ammo");
         assertEquals(12.0, e.getWeight(), "Failed to load weight");
 
     }

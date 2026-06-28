@@ -34,12 +34,14 @@
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.enums.MDAugmentationType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Infantry;
 
 public class InfantryCostCalculator {
 
-    public static double calculateCost(Infantry infantry, CalculationReport costReport, boolean ignoreAmmo) {
+    public static double calculateCost(ConvInfantry infantry, CalculationReport costReport, boolean ignoreAmmo) {
         double[] costs = new double[15];
         int idx = 0;
 
@@ -66,7 +68,7 @@ public class InfantryCostCalculator {
         double armorCost = 0;
         EquipmentType armor = infantry.getArmorKit();
         if (armor != null) {
-            armorCost = armor.getCost(infantry, false, Infantry.LOC_INFANTRY);
+            armorCost = armor.getCost(infantry, false, ConvInfantry.LOC_INFANTRY);
         } else {
             // add in infantry armor cost
             if (infantry.getCustomArmorDamageDivisor() > 1) {
@@ -115,11 +117,36 @@ public class InfantryCostCalculator {
         costs[idx++] = infantry.originalFieldWeapons().stream()
               .mapToDouble(m -> m.getType().getCost(infantry, false, m.getLocation())).sum();
 
-        costs[idx] = infantry.getMount() == null ? 0 : 5000 * infantry.getWeight();
+        costs[idx++] = infantry.getMount() == null ? 0 : 5000 * infantry.getWeight();
+
+        // MD Augmentation costs (per-trooper, IO rules)
+        costs[idx] = calculateAugmentationCost(infantry);
 
         double cost = CostCalculator.calculateCost(costs);
-        String[] systemNames = { "Weapons", "Armor", "Multiplier", "Field Gun", "Mount" };
+        String[] systemNames = { "Weapons", "Armor", "Multiplier", "Field Gun", "Mount", "Augmentations" };
         CostCalculator.fillInReport(costReport, infantry, ignoreAmmo, systemNames, -1, cost, costs);
         return cost;
+    }
+
+    /**
+     * Calculates the total cost of MD augmentations for an infantry unit. Costs are per-trooper per IO rules.
+     *
+     * @param infantry The infantry unit to calculate augmentation costs for
+     *
+     * @return Total augmentation cost (per-trooper cost * trooper count)
+     */
+    private static double calculateAugmentationCost(Infantry infantry) {
+        long perTrooperCost = 0;
+
+        // Check each known augmentation type using the Entity.hasAbility() pattern
+        for (MDAugmentationType augType : MDAugmentationType.values()) {
+            if (infantry.hasAbility(augType.getOptionName())) {
+                perTrooperCost += augType.getCost();
+            }
+        }
+
+        // Multiply by number of troopers (costs are per-trooper)
+        int troopers = infantry.getOInternal(ConvInfantry.LOC_INFANTRY);
+        return perTrooperCost * troopers;
     }
 }

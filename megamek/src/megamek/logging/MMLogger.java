@@ -223,6 +223,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * @param message   Message to be logged.
      * @param exception Exception to be logged.
      */
+    @Override
     public void error(String message, Throwable exception) {
         Sentry.captureException(exception);
         exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.ERROR, null, message, exception);

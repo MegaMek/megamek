@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,7 +31,6 @@
  * affiliated with Microsoft.
  */
 
-
 package megamek.common.equipment;
 
 import java.io.Serial;
@@ -43,6 +42,7 @@ import megamek.common.Report;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
+import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.cost.HandheldWeaponCostCalculator;
 import megamek.common.enums.AimingMode;
@@ -59,6 +59,9 @@ import megamek.common.units.UnitType;
 import megamek.common.util.RoundWeight;
 import megamek.server.totalWarfare.TWGameManager;
 
+/**
+ * See TO:AUE p.126, 127; TRO: Irregulars, TRO: Prototypes
+ */
 public class HandheldWeapon extends Entity {
 
     @Serial
@@ -255,18 +258,8 @@ public class HandheldWeapon extends Entity {
     }
 
     @Override
-    public int getTotalCommGearTons() {
-        return 0;
-    }
-
-    @Override
     public int getEngineHits() {
         return 0;
-    }
-
-    @Override
-    public String getLocationDamage(int loc) {
-        return "";
     }
 
     @Override
@@ -312,6 +305,30 @@ public class HandheldWeapon extends Entity {
     @Override
     public boolean isCarryableObject() {
         return true;
+    }
+
+    /**
+     * What {@link Coords} is this weapon physically firing from?
+     *
+     * @param weapon {@link WeaponMounted}
+     *
+     * @return {@link Coords}
+     */
+    @Override
+    public Coords getWeaponFiringPosition(WeaponMounted weapon) {
+        return getAttackingEntity() != null ? getAttackingEntity().getPosition() : getPosition();
+    }
+
+    /**
+     * What height is this weapon physically firing from?
+     *
+     * @param weapon {@link WeaponMounted}
+     *
+     * @return int
+     */
+    @Override
+    public int getWeaponFiringHeight(WeaponMounted weapon) {
+        return getAttackingEntity() != null ? getAttackingEntity().getHeight() : getHeight();
     }
 
     /**

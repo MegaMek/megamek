@@ -45,6 +45,7 @@ public class IntegerArgument extends Argument<Integer> {
     private final int maxValue;
     private final Integer defaultValue;
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public IntegerArgument(String name, String description) {
         this(name, description, Integer.MIN_VALUE, Integer.MAX_VALUE, null);
     }

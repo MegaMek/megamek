@@ -43,7 +43,7 @@ public class MapSettingsDataSerializer
       extends EntityDataSerializer<MapSettingsData.Field, MapSettingsData> {
 
     /**
-     * Creates a serializer with default field order.
+     * Creates a serializer with the default field order.
      */
     public MapSettingsDataSerializer() {
         super(Field.class);

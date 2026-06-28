@@ -36,7 +36,6 @@ package megamek.common.options;
 
 import java.io.Serial;
 
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.units.Aero;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
@@ -103,7 +102,7 @@ public class PartialRepairs extends AbstractOptions {
                   || quirk.getName().equals("mek_engine_replace")
                   || quirk.getName().equals("mek_gyro_replace")
                   || quirk.getName().equals("sensors_1_crit");
-        } else if (en instanceof GunEmplacement) {
+        } else if (en.isBuildingEntityOrGunEmplacement()) {
             return false;
         } else if (en instanceof Tank) {
             return quirk.getName().equals("veh_locked_turret")

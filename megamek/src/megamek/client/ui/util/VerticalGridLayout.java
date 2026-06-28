@@ -44,11 +44,13 @@ import java.awt.Insets;
  *
  * @author MegaMek Team
  */
+@Deprecated(since = "0.51.0", forRemoval = true)
 public class VerticalGridLayout extends GridLayout {
 
     /**
      * Creates a vertical grid layout with a default of one column per component.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public VerticalGridLayout() {
         super();
     }
@@ -59,6 +61,7 @@ public class VerticalGridLayout extends GridLayout {
      * @param rows the number of rows in the grid
      * @param cols the number of columns in the grid
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public VerticalGridLayout(int rows, int cols) {
         super(rows, cols);
     }
@@ -72,6 +75,7 @@ public class VerticalGridLayout extends GridLayout {
      * @param horizontalGap the horizontal gap between components
      * @param verticalGap   the vertical gap between components
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public VerticalGridLayout(int rows, int cols, int horizontalGap, int verticalGap) {
         super(rows, cols, horizontalGap, verticalGap);
     }

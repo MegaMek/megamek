@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,6 +47,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.MathUtility;
 
 /**
@@ -67,7 +68,7 @@ public class MineDensityDialog extends JDialog implements ActionListener {
         butOk.addActionListener(this);
 
         choDensity.removeAllItems();
-        for (int i = 5; i < 35; i = i + 5) {
+        for (int i = 30; i >= 5; i = i - 5) {
             choDensity.addItem(Integer.toString(i));
         }
         choDensity.setSelectedIndex(0);
@@ -96,6 +97,10 @@ public class MineDensityDialog extends JDialog implements ActionListener {
         gridBagLayout.setConstraints(butOk, gridBagConstraints);
         getContentPane().add(butOk);
         pack();
+        int minWidth = UIUtil.scaleForGUI(250);
+        if (getWidth() < minWidth) {
+            setSize(minWidth, getHeight());
+        }
         setLocation(frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
               frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
     }

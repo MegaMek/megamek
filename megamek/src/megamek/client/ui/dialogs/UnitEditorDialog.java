@@ -1271,8 +1271,8 @@ public class UnitEditorDialog extends JDialog {
                 }
             }
         }
-        if (entity instanceof Infantry) {
-            ((Infantry) entity).damageOrRestoreFieldWeapons();
+        if (entity instanceof ConvInfantry infantry) {
+            infantry.damageOrRestoreFieldWeapons();
             entity.applyDamage();
         }
 

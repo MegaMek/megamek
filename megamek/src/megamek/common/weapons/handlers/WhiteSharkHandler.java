@@ -45,6 +45,7 @@ import megamek.server.totalWarfare.TWGameManager;
 /**
  * @author Jay Lawson
  */
+@Deprecated(since = "0.51.0", forRemoval = true)
 public class WhiteSharkHandler extends AmmoWeaponHandler {
 
     /**

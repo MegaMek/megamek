@@ -49,6 +49,7 @@ public final class CargoBay extends Bay implements InfantryTransporter {
     /**
      * The default constructor is only for serialization.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private CargoBay() {
         totalSpace = 0;
         currentSpace = 0;

@@ -35,6 +35,7 @@ package megamek.client.bot.princess;
 
 import static megamek.common.equipment.AmmoType.FLARE_MUNITIONS;
 import static megamek.common.equipment.AmmoType.MINE_MUNITIONS;
+import static megamek.common.equipment.AmmoType.Munitions.M_INCENDIARY_LRM;
 import static megamek.common.equipment.AmmoType.SMOKE_MUNITIONS;
 
 import java.text.DecimalFormat;
@@ -548,7 +549,17 @@ public class WeaponFireInfo {
                   .contains(weaponType.getAmmoType())) {
                 boolean artillery = (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY);
                 int rs = weaponType.getRackSize();
-                int damage = Compute.calculateClusterHitTableAmount(7, rs);
+                double damage = Compute.calculateClusterHitTableAmount(7, rs);
+
+                // Account for Incendiary-modded munitions when firing on infantry
+                if ((target != null && target.isInfantry()) &&
+                      (preferredAmmo != null && preferredAmmo.getType() != null)) {
+                    AmmoType ammoType = preferredAmmo.getType();
+                    if (ammoType.getMunitionType().contains(M_INCENDIARY_LRM)) {
+                        damage += Math.ceil(weaponType.getRackSize() / 5.0);
+                    }
+                }
+
                 return new double[] {
                       damage,
                       (artillery) ? damage * 4 : 0D,
@@ -796,9 +807,13 @@ public class WeaponFireInfo {
                     // Entities can only be hit once per hex they occupy; blastShape assures we record
                     // highest damage first.
                     for (final Entity currentVictim : game.getEntitiesVector(coords)) {
-                        if (currentVictim.isAirborne() || hitVictims.contains(currentVictim)) {
+                        // Skip airborne, already-blasted, and hidden entities in calcs
+                        if (currentVictim.isAirborne()
+                              || hitVictims.contains(currentVictim)
+                              || currentVictim.isHidden()) {
                             continue;
                         }
+
                         int floor = currentVictim.getElevation() + hex.getLevel();
                         int ceil = currentVictim.relHeight() + hex.getLevel();
                         if (!(floor <= entry.getKey() && entry.getKey() <= ceil)) {
@@ -935,6 +950,10 @@ public class WeaponFireInfo {
             Iterator<Entity> targetEnemies = game.getEnemyEntities(c, this.shooter);
             while (targetEnemies.hasNext()) {
                 Entity next = targetEnemies.next();
+                // Skip hidden entities in calcs
+                if (next.isHidden()) {
+                    continue;
+                }
                 if (next instanceof Mek potentialTargetMek) {
                     targetMek = potentialTargetMek;
                     break;

@@ -34,8 +34,8 @@ package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 
-import megamek.common.compute.Compute;
 import megamek.common.annotations.Nullable;
+import megamek.common.compute.Compute;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -57,26 +57,34 @@ public class OptionGroupNode extends RulesetNode {
     }
 
     public @Nullable ValueNode selectOption(ForceDescriptor fd, boolean apply) {
-        ArrayList<ValueNode> list = new ArrayList<>();
-        for (ValueNode o : options) {
-            if (o.matches(fd)) {
-                for (int i = 0; i < o.getWeight(); i++) {
-                    list.add(o);
-                }
+        ArrayList<ValueNode> matching = new ArrayList<>();
+        for (ValueNode option : options) {
+            if (option.matches(fd)) {
+                matching.add(option);
             }
+        }
+        if (matching.isEmpty()) {
+            return null;
         }
 
-        if (!list.isEmpty()) {
-            ValueNode n = list.get(Compute.randomInt(list.size()));
-            if (apply) {
-                n.apply(fd);
+        ArrayList<ValueNode> weightedOptions = new ArrayList<>();
+        for (ValueNode option : matching) {
+            for (int i = 0; i < option.getWeight(); i++) {
+                weightedOptions.add(option);
             }
-            if (n.getContent() == null) {
-                return null;
-            }
-            return n;
         }
-        return null;
+        if (weightedOptions.isEmpty()) {
+            return null;
+        }
+        ValueNode selected = weightedOptions.get(Compute.randomInt(weightedOptions.size()));
+
+        if (apply) {
+            selected.apply(fd);
+        }
+        if (selected.getContent() == null) {
+            return null;
+        }
+        return selected;
     }
 
     public static OptionGroupNode createFromXml(Node node) {

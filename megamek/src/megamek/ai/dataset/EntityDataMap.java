@@ -52,7 +52,7 @@ public abstract class EntityDataMap<F extends Enum<F>> {
     // Use EnumMap for type safety with our enum fields
     private final Map<F, Object> data;
 
-    // Keep track of insertion order separately
+    // Keep track of the insertion order separately
     private final List<F> fieldOrder = new ArrayList<>();
 
     private static final String VERSION = "31052025";
@@ -142,7 +142,7 @@ public abstract class EntityDataMap<F extends Enum<F>> {
     /**
      * Gets the versioned class name for this data map.
      *
-     * @return The class name with version appended
+     * @return The class name with a version appended
      */
     public String getVersionedClassName() {
         return getClass().getSimpleName() + "." + VERSION;

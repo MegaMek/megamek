@@ -73,6 +73,7 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
+import megamek.common.TemporaryECMField;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -157,6 +158,7 @@ public class Client extends AbstractClient {
         }
     }
 
+    @Override
     public Game getGame() {
         return game;
     }
@@ -354,6 +356,19 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Send a ghost target action to the server (Standard mode, TO:AR rules). The server performs the Piloting+3 roll
+     * and derives friendliness from entity ownership.
+     *
+     * @param sourceEntityId the entity generating the ghost target
+     * @param equipmentId    the equipment number on the source entity
+     * @param targetEntityId the entity being targeted
+     */
+    public void sendGhostTargetAction(int sourceEntityId, int equipmentId, int targetEntityId) {
+        send(new Packet(PacketCommand.ENTITY_GHOST_TARGET,
+              sourceEntityId, equipmentId, targetEntityId));
+    }
+
+    /**
      * Send the game options to the server
      */
     public void sendGameOptions(String password, Vector<IBasicOption> options) {
@@ -442,6 +457,13 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Sends a "deploy fortifications" packet carrying the hex locations the player is fortifying.
+     */
+    public void sendDeployFortifications(Vector<BoardLocation> fortifiedHexes) {
+        send(new Packet(PacketCommand.DEPLOY_FORTIFICATIONS, fortifiedHexes));
+    }
+
+    /**
      * Sends an updated state of ground objects (i.e. cargo etc.)
      */
     public void sendDeployGroundObjects(Map<Coords, List<ICarryable>> groundObjects) {
@@ -472,7 +494,7 @@ public class Client extends AbstractClient {
     /**
      * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
-    public void sendChangeOwner(Collection<Entity> entities, int newOwnerId) throws InvalidPacketDataException {
+    public void sendChangeOwner(Collection<Entity> entities, int newOwnerId) {
         send(new Packet(PacketCommand.ENTITY_ASSIGN, entities, newOwnerId));
     }
 
@@ -548,7 +570,7 @@ public class Client extends AbstractClient {
                         sb.append(entity.getNC3NextUUIDAsString(i)).append(", ");
                     }
                     LOGGER.debug("[CLIENT] receiveEntities: Entity {} ({}), c3NetIdString: {}, NC3UUIDs: [{}]",
-                        entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
+                          entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
                 }
             }
         }
@@ -676,17 +698,9 @@ public class Client extends AbstractClient {
     @SuppressWarnings("unchecked")
     protected void receiveUpdateIndustrialElevators(Packet packet) {
         Object data = packet.getObject(0);
-        LOGGER.debug("[ELEVATOR] Client.receiveUpdateIndustrialElevators: Received packet, data type={}",
-              (data != null ? data.getClass().getName() : "null"));
         if (data instanceof Collection) {
             Collection<IndustrialElevator> elevators = (Collection<IndustrialElevator>) data;
-            LOGGER.debug("[ELEVATOR] Client.receiveUpdateIndustrialElevators: Setting {} elevators", elevators.size());
-            for (IndustrialElevator elevator : elevators) {
-                LOGGER.debug("[ELEVATOR]   - {}", elevator);
-            }
             game.setIndustrialElevators(elevators);
-            LOGGER.debug("[ELEVATOR] Client.receiveUpdateIndustrialElevators: After set, game has {} elevators",
-                  game.getIndustrialElevators().size());
         }
     }
 
@@ -700,6 +714,11 @@ public class Client extends AbstractClient {
 
     protected void receiveIlluminatedHexes(Packet packet) throws InvalidPacketDataException {
         game.setIlluminatedPositions(packet.getCoordsHashSet(0));
+    }
+
+    protected void receiveUpdateCutHexes(Packet packet) throws InvalidPacketDataException {
+        game.setHexesBeingCut(packet.getBoardLocationIntegerMap(0));
+        game.processGameEvent(new GameBoardChangeEvent(this));
     }
 
     protected void receiveRevealMinefield(Packet packet) throws InvalidPacketDataException {
@@ -741,6 +760,12 @@ public class Client extends AbstractClient {
     protected void receiveBuildingUpdate(Packet packet) throws InvalidPacketDataException {
         for (IBuilding building : packet.getBuildingList(0)) {
             game.getBoard(building.getBoardId()).updateBuilding(building);
+        }
+    }
+
+    protected void receiveBuildingRemove(Packet packet) throws InvalidPacketDataException {
+        for (IBuilding building : packet.getBuildingList(0)) {
+            game.getBoard(building.getBoardId()).removeBuilding(building);
         }
     }
 
@@ -963,6 +988,17 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_VARIABLE_RANGE_MODE_CHANGE, entityId, mode));
     }
 
+    /**
+     * Sends a unit abandonment announcement to the server. For Meks (TacOps:AR p.165): Must be prone and shutdown. For
+     * Vehicles (TacOps): Can be abandoned anytime. The abandonment will execute during the End Phase of the following
+     * turn.
+     *
+     * @param entityId the ID of the unit announcing abandonment
+     */
+    public void sendUnitAbandonmentAnnouncement(int entityId) {
+        send(new Packet(PacketCommand.ENTITY_ABANDON_ANNOUNCE, entityId));
+    }
+
     public void sendSpecialHexDisplayAppend(Coords c, int boardId, SpecialHexDisplay shd) {
         send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_APPEND, c, boardId, shd));
     }
@@ -1022,6 +1058,9 @@ public class Client extends AbstractClient {
                 case REMOVE_MINEFIELD:
                     receiveRemoveMinefield(packet);
                     break;
+                case UPDATE_CUT_HEXES:
+                    receiveUpdateCutHexes(packet);
+                    break;
                 case UPDATE_GROUND_OBJECTS:
                     receiveUpdateGroundObjects(packet);
                     break;
@@ -1034,6 +1073,24 @@ public class Client extends AbstractClient {
                     if (cloud != null) {
                         game.addSmokeCloud(cloud);
                     }
+
+                    break;
+                case ADD_TEMPORARY_ECM_FIELD:
+                    TemporaryECMField ecmField = packet.getTemporaryECMField(0);
+
+                    if (ecmField != null) {
+                        game.addTemporaryECMField(ecmField);
+                        // Trigger ECM list update in BoardView
+                        game.processGameEvent(new GameBoardChangeEvent(this));
+                    }
+
+                    break;
+                case SYNC_TEMPORARY_ECM_FIELDS:
+                    @SuppressWarnings("unchecked")
+                    List<TemporaryECMField> ecmFields = (List<TemporaryECMField>) packet.getObject(0);
+                    game.setTemporaryECMFields(ecmFields);
+                    // Trigger ECM list update in BoardView
+                    game.processGameEvent(new GameBoardChangeEvent(this));
 
                     break;
                 case CHANGE_HEX:
@@ -1052,6 +1109,9 @@ public class Client extends AbstractClient {
                     break;
                 case BLDG_ADD:
                     receiveBuildingAdd(packet);
+                    break;
+                case BLDG_REMOVE:
+                    receiveBuildingRemove(packet);
                     break;
                 case BLDG_UPDATE:
                     receiveBuildingUpdate(packet);
@@ -1282,7 +1342,7 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_DOMINO_EFFECT, mp));
     }
 
-    public void sendAMSAssignCFRResponse(Integer waaIndex) {
+    public void sendAMSAssignCFRResponse(int[] waaIndex) {
         send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_AMS_ASSIGN, waaIndex));
     }
 
@@ -1392,6 +1452,7 @@ public class Client extends AbstractClient {
     /**
      * Sends an "update custom initiative" packet
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void sendCustomInit(Player player) {
         send(new Packet(PacketCommand.CUSTOM_INITIATIVE, player));
     }
@@ -1426,6 +1487,18 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Declares that the given unit is deploying one of its Bridge-Layer (AVLB) bridges (TM p.242 / TW). The server
+     * validates eligibility and computes the target hex (directly in front, along the unit's facing); the bridge is
+     * placed at the end of the following turn if the unit stays stationary.
+     *
+     * @param entityId the unit declaring the deployment
+     * @param equipNum the equipment index of the specific bridgelayer to deploy (a unit may carry more than one)
+     */
+    public void sendDeployBridge(int entityId, int equipNum) {
+        send(new Packet(PacketCommand.ENTITY_DEPLOY_BRIDGE, entityId, equipNum));
+    }
+
+    /**
      * Send mount-facing-change data to the server
      */
     public void sendMountFacingChange(int nEntity, int nEquip, int nFacing) {
@@ -1442,6 +1515,7 @@ public class Client extends AbstractClient {
     /**
      * Send system mode-change data to the server
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void sendSystemModeChange(int nEntity, int nSystem, int nMode) {
         send(new Packet(PacketCommand.ENTITY_SYSTEM_MODE_CHANGE, nEntity, nSystem, nMode));
     }

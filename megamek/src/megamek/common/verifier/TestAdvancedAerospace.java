@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -91,16 +91,48 @@ public class TestAdvancedAerospace extends TestAero {
         }
     }
 
+    /**
+     * Returns the maximum number of total (all locations summed) armor points that the given vessel (JS/WS/SS) can
+     * have, including free armor points it receives from its SI and modified for primitive armor, if appropriate. See
+     * SO:AA p.140, IO:AE p.122-125.
+     *
+     * @param vessel The JS/WS/SS to compute armor for
+     *
+     * @return The total number of armor points allowed to the vessel
+     */
     public static int maxArmorPoints(Jumpship vessel) {
-        // The ship gets a number of armor points equal to 10% of the SI, rounded normally, per facing.
-        double freeSI = Math.round(vessel.getOSI() / 10.0) * 6;
-        // Primitive jump ships multiply the armor by a factor of 0.66. Per errata, the armor is calculated based on
-        // standard armor then rounded down, and the free SI armor is rounded down separately.
+        double pointsPerTon = ArmorType.forEntity(vessel).getPointsPerTon();
+        int baseArmor = (int) (pointsPerTon * maxArmorWeight(vessel) + getSIBonusArmorPoints(vessel));
         if (vessel.isPrimitive()) {
-            return (int) (Math.floor(ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false).getPointsPerTon(vessel) *
-                  maxArmorWeight(vessel)) + Math.floor(freeSI * 0.66));
+            return (int) (baseArmor * 0.66);
+        } else {
+            return baseArmor;
         }
-        return (int) Math.floor(ArmorType.forEntity(vessel).getPointsPerTon(vessel) * maxArmorWeight(vessel) + freeSI);
+    }
+
+    /**
+     * Returns the number of free additional armor points provided for a capital craft based on their structural
+     * integrity (for primitive craft, *without* the 0.66 primitive adjustment factor). See TM p.191, SO:AA p.140, IO:AE
+     * p.119-125.
+     *
+     * @param jumpship The JS/WS/SS to compute bonus armor for
+     *
+     * @return The total number of extra armor points received for SI (disregarding primitive adjustment)
+     */
+    static int getSIBonusArmorPointsForJS(Jumpship jumpship) {
+        return getSIBonusArmorPointsPerLocation(jumpship) * 6; // 6 armor locations
+    }
+
+    /**
+     * Returns the number of free additional armor points per location provided for a capital craft based on their SI.
+     * TM p.191, SO:AA p.140, IO:AE p.119-125.
+     *
+     * @param jumpship The JS/WS/SS to compute bonus armor for
+     *
+     * @return The number of extra armor points received for SI per location
+     */
+    public static int getSIBonusArmorPointsPerLocation(Jumpship jumpship) {
+        return (int) Math.round(jumpship.getOSI() / 10.0);
     }
 
     /**
@@ -120,6 +152,7 @@ public class TestAdvancedAerospace extends TestAero {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static double armorPointsPerTon(Jumpship vessel, int at, boolean clan) {
         ArmorType arm = ArmorType.of(at, clan);
         return arm.getPointsPerTon(vessel);
@@ -583,6 +616,7 @@ public class TestAdvancedAerospace extends TestAero {
         return vessel;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Jumpship getAdvancedAerospace() {
         return vessel;
     }
@@ -674,51 +708,7 @@ public class TestAdvancedAerospace extends TestAero {
 
     @Override
     public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
-        boolean illegal = false;
-
-        // Make sure all bays have at least one weapon and that there are at least
-        // ten shots of ammo for each ammo-using weapon in the bay.
-        for (WeaponMounted bay : vessel.getWeaponBayList()) {
-            if (bay.getBayWeapons().isEmpty()) {
-                buff.append("Bay ").append(bay.getName()).append(" has no weapons\n");
-                illegal = true;
-            }
-            Map<AmmoTypeEnum, Integer> ammoWeaponCount = new HashMap<>();
-            Map<AmmoTypeEnum, Integer> ammoTypeCount = new HashMap<>();
-            for (WeaponMounted w : bay.getBayWeapons()) {
-                if (w.isOneShot()) {
-                    continue;
-                }
-                ammoWeaponCount.merge(w.getType().getAmmoType(), 1, Integer::sum);
-            }
-            for (AmmoMounted a : bay.getBayAmmo()) {
-                ammoTypeCount.merge(a.getType().getAmmoType(), a.getUsableShotsLeft(), Integer::sum);
-            }
-            for (AmmoTypeEnum at : ammoWeaponCount.keySet()) {
-                if (at != AmmoType.AmmoTypeEnum.NA) {
-                    int needed = ammoWeaponCount.get(at) * 10;
-                    if ((at == AmmoType.AmmoTypeEnum.AC_ULTRA) || (at == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
-                        needed *= 2;
-                    } else if ((at == AmmoType.AmmoTypeEnum.AC_ROTARY)) {
-                        needed *= 6;
-                    }
-                    if (!ammoTypeCount.containsKey(at) || ammoTypeCount.get(at) < needed) {
-                        buff.append("Bay ")
-                              .append(bay.getName())
-                              .append(" does not have the minimum 10 shots of ammo for each weapon\n");
-                        illegal = true;
-                        break;
-                    }
-                }
-            }
-            for (AmmoTypeEnum at : ammoTypeCount.keySet()) {
-                if (!ammoWeaponCount.containsKey(at)) {
-                    buff.append("Bay ").append(bay.getName()).append(" has ammo for a weapon not in the bay\n");
-                    illegal = true;
-                    break;
-                }
-            }
-        }
+        boolean illegal = TestSmallCraft.hasIllegalBayAmmo(vessel, buff);
 
         // Count lateral weapons to make sure both sides match
         Map<EquipmentType, Integer> leftFwd = new HashMap<>();
@@ -988,7 +978,7 @@ public class TestAdvancedAerospace extends TestAero {
         buff.append("Intro year: ").append(getEntity().getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             buff.append("Weight: ").append(getWeight()).append(" (").append(calculateWeight()).append(")\n");
         }
         buff.append(printWeightCalculation()).append("\n");

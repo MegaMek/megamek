@@ -42,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import megamek.common.equipment.EquipmentType;
@@ -59,13 +60,10 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for Nova CEWS network management and UUID persistence.
- *
- * TT Rules (IO: Alternate Eras p.60):
- * - Nova CEWS can link up to 2 other units (3 units total per network)
- * - Units must declare connection in End Phase
- * - Link becomes active next turn
- * - Operates per C3i rules
- *
+ * <p>
+ * TT Rules (IO: Alternate Eras p.60): - Nova CEWS can link up to 2 other units (3 units total per network) - Units must
+ * declare connection in End Phase - Link becomes active next turn - Operates per C3i rules
+ * <p>
  * These tests focus on network persistence, UUID management, and lobby→game transition.
  */
 public class NovaCEWSNetworkTest {
@@ -144,16 +142,16 @@ public class NovaCEWSNetworkTest {
 
         // Verify both entities have the same network ID
         assertEquals(entity1.getC3NetId(), entity2.getC3NetId(),
-            "Both units should have the same network ID");
+              "Both units should have the same network ID");
 
         // Verify UUID cross-references
         String entity2UUID = entity2.getC3UUIDAsString();
         assertEquals(entity2UUID, entity1.getNC3NextUUIDAsString(0),
-            "Entity 1 should have Entity 2's UUID in position 0");
+              "Entity 1 should have Entity 2's UUID in position 0");
 
         String entity1UUID = entity1.getC3UUIDAsString();
         assertEquals(entity1UUID, entity2.getNC3NextUUIDAsString(0),
-            "Entity 2 should have Entity 1's UUID in position 0");
+              "Entity 2 should have Entity 1's UUID in position 0");
     }
 
     /**
@@ -167,30 +165,30 @@ public class NovaCEWSNetworkTest {
         // Verify all entities have the same network ID
         String networkId = entity1.getC3NetId();
         assertEquals(networkId, entity2.getC3NetId(),
-            "Entity 2 should have the same network ID as Entity 1");
+              "Entity 2 should have the same network ID as Entity 1");
         assertEquals(networkId, entity3.getC3NetId(),
-            "Entity 3 should have the same network ID as Entity 1");
+              "Entity 3 should have the same network ID as Entity 1");
 
         // Verify Entity 1 has both partners' UUIDs
         String entity2UUID = entity2.getC3UUIDAsString();
         String entity3UUID = entity3.getC3UUIDAsString();
 
         assertTrue(
-            entity2UUID.equals(entity1.getNC3NextUUIDAsString(0)) ||
-            entity2UUID.equals(entity1.getNC3NextUUIDAsString(1)),
-            "Entity 1 should have Entity 2's UUID in its array"
+              entity2UUID.equals(entity1.getNC3NextUUIDAsString(0)) ||
+                    entity2UUID.equals(entity1.getNC3NextUUIDAsString(1)),
+              "Entity 1 should have Entity 2's UUID in its array"
         );
 
         assertTrue(
-            entity3UUID.equals(entity1.getNC3NextUUIDAsString(0)) ||
-            entity3UUID.equals(entity1.getNC3NextUUIDAsString(1)),
-            "Entity 1 should have Entity 3's UUID in its array"
+              entity3UUID.equals(entity1.getNC3NextUUIDAsString(0)) ||
+                    entity3UUID.equals(entity1.getNC3NextUUIDAsString(1)),
+              "Entity 1 should have Entity 3's UUID in its array"
         );
     }
 
     /**
-     * Test that wireC3() correctly reconstructs network IDs from UUID arrays.
-     * This simulates what happens when entities are deserialized from the lobby.
+     * Test that wireC3() correctly reconstructs network IDs from UUID arrays. This simulates what happens when entities
+     * are deserialized from the lobby.
      */
     @Test
     void testWireC3ReconstructsNetworkFromUUIDs() throws Exception {
@@ -208,9 +206,9 @@ public class NovaCEWSNetworkTest {
 
         // Verify each entity now has its own unique network ID
         assertNotEquals(entity1.getC3NetId(), entity2.getC3NetId(),
-            "Entity 1 and Entity 2 should have different network IDs after setC3NetIdSelf()");
+              "Entity 1 and Entity 2 should have different network IDs after setC3NetIdSelf()");
         assertNotEquals(entity1.getC3NetId(), entity3.getC3NetId(),
-            "Entity 1 and Entity 3 should have different network IDs after setC3NetIdSelf()");
+              "Entity 1 and Entity 3 should have different network IDs after setC3NetIdSelf()");
 
         // Step 3: Call wireC3() to reconstruct network (simulates client-side processing)
         C3Util.wireC3(game, entity1);
@@ -220,14 +218,14 @@ public class NovaCEWSNetworkTest {
         // Step 4: Verify network IDs are reconstructed
         String reconstructedNetworkId = entity1.getC3NetId();
         assertEquals(reconstructedNetworkId, entity2.getC3NetId(),
-            "Entity 2 should have the same network ID after wireC3()");
+              "Entity 2 should have the same network ID after wireC3()");
         assertEquals(reconstructedNetworkId, entity3.getC3NetId(),
-            "Entity 3 should have the same network ID after wireC3()");
+              "Entity 3 should have the same network ID after wireC3()");
     }
 
     /**
-     * Test that joinNh() clears old UUID entries before assigning new ones.
-     * This prevents stale UUIDs from previous network configurations.
+     * Test that joinNh() clears old UUID entries before assigning new ones. This prevents stale UUIDs from previous
+     * network configurations.
      */
     @Test
     void testJoinNhClearsOldUUIDs() throws Exception {
@@ -237,12 +235,12 @@ public class NovaCEWSNetworkTest {
 
         // Verify initial network
         assertNotNull(entity1.getNC3NextUUIDAsString(0),
-            "Entity 1 should have a UUID at position 0");
+              "Entity 1 should have a UUID at position 0");
         assertNull(entity1.getNC3NextUUIDAsString(1),
-            "Entity 1 should have null at position 1 (only 1 partner)");
+              "Entity 1 should have null at position 1 (only 1 partner)");
 
         // Disconnect entity2 from the network before reconfiguring
-        C3Util.disconnectFromNetwork(game, Arrays.asList(entity2));
+        C3Util.disconnectFromNetwork(game, Collections.singletonList(entity2));
 
         // Reconfigure to 3-unit network (entity1, entity3, entity4)
         List<Entity> newNetwork = Arrays.asList(entity1, entity3, entity4);
@@ -253,9 +251,9 @@ public class NovaCEWSNetworkTest {
         String uuid4 = entity4.getC3UUIDAsString();
 
         boolean hasUuid3 = uuid3.equals(entity1.getNC3NextUUIDAsString(0)) ||
-                          uuid3.equals(entity1.getNC3NextUUIDAsString(1));
+              uuid3.equals(entity1.getNC3NextUUIDAsString(1));
         boolean hasUuid4 = uuid4.equals(entity1.getNC3NextUUIDAsString(0)) ||
-                          uuid4.equals(entity1.getNC3NextUUIDAsString(1));
+              uuid4.equals(entity1.getNC3NextUUIDAsString(1));
 
         assertTrue(hasUuid3, "Entity 1 should have Entity 3's UUID");
         assertTrue(hasUuid4, "Entity 1 should have Entity 4's UUID");
@@ -263,9 +261,9 @@ public class NovaCEWSNetworkTest {
         // Verify old UUID from entity2 is NOT present
         String oldUuid2 = entity2.getC3UUIDAsString();
         assertFalse(
-            oldUuid2.equals(entity1.getNC3NextUUIDAsString(0)) ||
-            oldUuid2.equals(entity1.getNC3NextUUIDAsString(1)),
-            "Entity 1 should NOT have old Entity 2 UUID after reconfiguration"
+              oldUuid2.equals(entity1.getNC3NextUUIDAsString(0)) ||
+                    oldUuid2.equals(entity1.getNC3NextUUIDAsString(1)),
+              "Entity 1 should NOT have old Entity 2 UUID after reconfiguration"
         );
     }
 
@@ -280,16 +278,16 @@ public class NovaCEWSNetworkTest {
 
         // Verify UUIDs are present
         assertNotNull(entity1.getNC3NextUUIDAsString(0),
-            "Entity 1 should have a UUID before disconnect");
+              "Entity 1 should have a UUID before disconnect");
 
         // Disconnect
-        C3Util.disconnectFromNetwork(game, Arrays.asList(entity1));
+        C3Util.disconnectFromNetwork(game, Collections.singletonList(entity1));
 
         // Verify UUID array is cleared
         assertNull(entity1.getNC3NextUUIDAsString(0),
-            "Entity 1 UUID array should be cleared after disconnect");
+              "Entity 1 UUID array should be cleared after disconnect");
         assertNull(entity1.getNC3NextUUIDAsString(1),
-            "Entity 1 UUID array should be cleared after disconnect");
+              "Entity 1 UUID array should be cleared after disconnect");
     }
 
     /**
@@ -307,34 +305,34 @@ public class NovaCEWSNetworkTest {
 
         // Verify separate networks
         assertNotEquals(network1Id, network2Id,
-            "Networks should have different IDs");
+              "Networks should have different IDs");
 
         // Disconnect entity2 from network1
-        C3Util.disconnectFromNetwork(game, Arrays.asList(entity2));
+        C3Util.disconnectFromNetwork(game, Collections.singletonList(entity2));
 
         // Re-link entity2 to network2
         C3Util.joinNh(game, Arrays.asList(entity3, entity4, entity2), entity3.getId(), true);
 
         // Verify entity2 is now on network2
         assertEquals(network2Id, entity2.getC3NetId(),
-            "Entity 2 should now be on network 2");
+              "Entity 2 should now be on network 2");
 
         // Verify entity2 has UUIDs from network2 members
         String uuid3 = entity3.getC3UUIDAsString();
         String uuid4 = entity4.getC3UUIDAsString();
 
         boolean hasUuid3 = uuid3.equals(entity2.getNC3NextUUIDAsString(0)) ||
-                          uuid3.equals(entity2.getNC3NextUUIDAsString(1));
+              uuid3.equals(entity2.getNC3NextUUIDAsString(1));
         boolean hasUuid4 = uuid4.equals(entity2.getNC3NextUUIDAsString(0)) ||
-                          uuid4.equals(entity2.getNC3NextUUIDAsString(1));
+              uuid4.equals(entity2.getNC3NextUUIDAsString(1));
 
         assertTrue(hasUuid3 || hasUuid4,
-            "Entity 2 should have UUIDs from its new network partners");
+              "Entity 2 should have UUIDs from its new network partners");
     }
 
     /**
-     * Test that all slots in UUID array are properly managed.
-     * Entity should have exactly N-1 UUIDs for N-entity network.
+     * Test that all slots in UUID array are properly managed. Entity should have exactly N-1 UUIDs for N-entity
+     * network.
      */
     @Test
     void testUUIDArraySlotManagement() throws Exception {
@@ -349,7 +347,7 @@ public class NovaCEWSNetworkTest {
         }
 
         assertEquals(2, uuidCount,
-            "Entity 1 should have exactly 2 UUIDs (for 2 partners in 3-unit network)");
+              "Entity 1 should have exactly 2 UUIDs (for 2 partners in 3-unit network)");
     }
 
     /**
@@ -366,8 +364,8 @@ public class NovaCEWSNetworkTest {
 
         // Remaining entities should still have same network ID
         assertEquals(networkId, entity1.getC3NetId(),
-            "Entity 1 should retain network ID after member removal");
+              "Entity 1 should retain network ID after member removal");
         assertEquals(networkId, entity2.getC3NetId(),
-            "Entity 2 should retain network ID after member removal");
+              "Entity 2 should retain network ID after member removal");
     }
 }

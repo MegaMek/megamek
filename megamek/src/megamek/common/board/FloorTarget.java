@@ -165,6 +165,7 @@ public class FloorTarget implements Targetable {
     }
 
     // decode 1 number into 2
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static Coords idToCoords(int id) {
         int idNoType = id - Targetable.TYPE_BUILDING * 1000000;
         int y = (idNoType) / 1000;

@@ -37,6 +37,7 @@ import static megamek.client.ui.util.UIUtil.uiWhite;
 
 import java.awt.Point;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -53,6 +54,7 @@ import megamek.common.Player;
 import megamek.common.ReportMessages;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
 import megamek.common.equipment.FuelTank;
@@ -61,6 +63,8 @@ import megamek.common.equipment.Minefield;
 import megamek.common.game.Game;
 import megamek.common.planetaryConditions.IlluminationLevel;
 import megamek.common.units.BuildingTarget;
+import megamek.common.units.ConvInfantry;
+import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Terrains;
 
@@ -230,7 +234,76 @@ public final class HexTooltip {
             }
         }
 
+        // Woods clearing indicator
+        if (game != null) {
+            Map<BoardLocation, Integer> cutHexes = game.getHexesBeingCut();
+            BoardLocation thisLoc = BoardLocation.of(mcoords, boardId);
+            Integer turnsRemaining = cutHexes.get(thisLoc);
+            if (turnsRemaining != null) {
+                String cutInfo;
+                if (turnsRemaining <= 0) {
+                    cutInfo = Messages.getString("BoardView1.Tooltip.WoodsClearingComplete");
+                } else {
+                    cutInfo = Messages.getString("BoardView1.Tooltip.WoodsClearing", turnsRemaining);
+                }
+                String attr = String.format("FACE=Dialog COLOR=%s",
+                      UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
+                cutInfo = UIUtil.tag("FONT", attr, cutInfo);
+                result.append(cutInfo);
+                result.append("<BR>");
+            }
+        }
+
+        // Bridge under construction indicator (TO:AUE Bridge-Building Engineers)
+        if (game != null) {
+            appendBridgeBuildInfo(result, game, mcoords, boardId);
+        }
+
         return result.toString();
+    }
+
+    /**
+     * Appends a "bridge under construction (turn X of Y)" line when a Bridge-Building Engineer platoon is raising a
+     * bridge in the given hex, TO:AUE. The build state is read from the synced ConvInfantry entities.
+     *
+     * @param result  the tooltip text being built
+     * @param game    the current game
+     * @param coords  the hex the tooltip describes
+     * @param boardId the board of the hex
+     */
+    private static void appendBridgeBuildInfo(StringBuilder result, Game game, Coords coords, int boardId) {
+        for (Entity entity : game.getEntitiesVector()) {
+            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.hasBridgeInProgress()
+                  || (entity.getBoardId() != boardId)
+                  || !coords.equals(convInfantry.getBridgeTargetCoords())) {
+                continue;
+            }
+            int builtTurns = Math.min(convInfantry.getBridgeBuildTurns(), convInfantry.getBridgeBuildRequiredTurns());
+            // Identify the engineer platoon so the player can see who is working the hex
+            String builder = convInfantry.getShortName() + " (ID " + convInfantry.getId() + ")";
+            // Repairing a destroyed section reads differently from raising a new bridge (unofficial repair option)
+            boolean isRepair = convInfantry.isBridgeBuildRepair();
+            String buildInfo;
+            if (convInfantry.isDismantlingBridge()) {
+                // Count the standing structure back down on the build's scale (e.g. 4/6, 3/6, ...)
+                buildInfo = Messages.getString(isRepair ? "BoardView1.Tooltip.BridgeRepairDismantling"
+                            : "BoardView1.Tooltip.BridgeDismantling",
+                      convInfantry.getBridgeDismantleRemaining(), convInfantry.getBridgeBuildRequiredTurns(), builder);
+            } else if (convInfantry.isBridgePaused()) {
+                buildInfo = Messages.getString(isRepair ? "BoardView1.Tooltip.BridgeRepairPaused"
+                            : "BoardView1.Tooltip.BridgePaused",
+                      builtTurns, convInfantry.getBridgeBuildRequiredTurns(), builder);
+            } else {
+                buildInfo = Messages.getString(isRepair ? "BoardView1.Tooltip.BridgeRepairing"
+                            : "BoardView1.Tooltip.BridgeBuilding",
+                      builtTurns, convInfantry.getBridgeBuildRequiredTurns(), builder);
+            }
+            String attr = String.format("FACE=Dialog COLOR=%s",
+                  UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
+            buildInfo = UIUtil.tag("FONT", attr, buildInfo);
+            result.append(buildInfo);
+            result.append("<BR>");
+        }
     }
 
     public static String getBuildingTargetTip(BuildingTarget target, Board board) {
@@ -280,17 +353,21 @@ public final class HexTooltip {
         Coords mcoords = mhex.getCoords();
         String indicator = IlluminationLevel.determineIlluminationLevel(game, boardId, mcoords).getIndicator();
         String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
-        String illuminated = UIUtil.tag("FONT", attr, " " + indicator);
-        illuminated = DOT_SPACER + illuminated;
 
         String result;
+        // Hex number and level, with the terrain features following inline on the same line (separated by the
+        // dot spacer) so a single-feature hex like a fortified hex reads as one line.
         StringBuilder sTerrain = new StringBuilder(
               Messages.getString(
                     (inAtmosphere) ? "BoardView1.Tooltip.HexAlt" : "BoardView1.Tooltip.Hex",
                     mcoords.getBoardNum(),
                     mhex.getLevel()
-              ) + illuminated + "<BR>"
+              )
         );
+        // Illumination indicator, only when the hex is specially lit (the NONE level has a blank indicator).
+        if (!indicator.isBlank()) {
+            sTerrain.append(DOT_SPACER).append(UIUtil.tag("FONT", attr, indicator));
+        }
         // Types that represent Elevations need converting and possibly zeroing if board is in Atmosphere (Low Alt.)
         List<Integer> typesThatNeedAltitudeChecked = List.of(
               Terrains.INDUSTRIAL, Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV, Terrains.FOLIAGE_ELEV
@@ -308,9 +385,10 @@ public final class HexTooltip {
             if (name != null) {
                 String msg_tf = Messages.getString("BoardView1.Tooltip.TF");
                 name += (tf > 0) ? " (" + msg_tf + ": " + tf + ')' : "";
-                sTerrain.append(name).append("<BR>");
+                sTerrain.append(DOT_SPACER).append(name);
             }
         }
+        sTerrain.append("<BR>");
 
         attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainFGColor()));
         result = UIUtil.tag("FONT", attr, sTerrain.toString());
@@ -434,7 +512,7 @@ public final class HexTooltip {
     public static String getWrecks(GUIPreferences GUIP, BoardView bv, Coords coords) {
         String result = "";
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
-        var wreckList = bv.useIsometric() ? bv.getIsoWreckSprites() : bv.getWreckSprites();
+        var wreckList = bv.getIsoWreckSprites();
         for (var wSprite : wreckList) {
             if (wSprite.getPosition().equals(coords)) {
                 String sWreck = wSprite.getTooltip().toString();

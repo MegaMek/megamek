@@ -58,7 +58,6 @@ public interface Role {
     static Role getRole(UnitRole role) {
         return switch (role) {
             case AMBUSHER -> new Ambusher();
-            case BRAWLER -> new Brawler();
             case JUGGERNAUT -> new Juggernaut();
             case MISSILE_BOAT -> new MissileBoat();
             case SCOUT -> new Scout();

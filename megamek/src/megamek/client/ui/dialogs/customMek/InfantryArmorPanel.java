@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,97 +32,87 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.GridBagLayout;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import megamek.client.ui.GBC;
+import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.units.Entity;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.units.Infantry;
-import megamek.common.equipment.MiscType;
 import megamek.common.SimpleTechLevel;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.game.Game;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
-public class InfantryArmorPanel extends JPanel {
-    @Serial
-    private static final long serialVersionUID = -909995917737642853L;
+public class InfantryArmorPanel {
 
-    final private Infantry infantry;
+    final private ConvInfantry infantry;
     private final JComboBox<String> cbArmorKit = new JComboBox<>();
     private final JTextField fldDivisor = new JTextField(3);
 
-    JLabel labArmor = new JLabel(Messages.getString("CustomMekDialog.labInfantryArmor"));
-    JLabel labDivisor = new JLabel(Messages.getString("CustomMekDialog.labDamageDivisor"));
-    JLabel labEncumber = new JLabel(Messages.getString("CustomMekDialog.labEncumber"));
-    JLabel labSpaceSuit = new JLabel(Messages.getString("CustomMekDialog.labSpaceSuit"));
-    JLabel labDEST = new JLabel(Messages.getString("CustomMekDialog.labDEST"));
-    JLabel labSneakCamo = new JLabel(Messages.getString("CustomMekDialog.labSneakCamo"));
-    JLabel labSneakIR = new JLabel(Messages.getString("CustomMekDialog.labSneakIR"));
-    JLabel labSneakECM = new JLabel(Messages.getString("CustomMekDialog.labSneakECM"));
-    JLabel labSpec = new JLabel(Messages.getString("CustomMekDialog.labInfSpec"));
+    private final JCheckBox chEncumber = new JCheckBox(Messages.getString("CustomMekDialog.labEncumber"));
+    private final JCheckBox chSpaceSuit = new JCheckBox(Messages.getString("CustomMekDialog.labSpaceSuit"));
+    private final JCheckBox chDEST = new JCheckBox(Messages.getString("CustomMekDialog.labDEST"));
+    private final JCheckBox chSneakCamo = new JCheckBox(Messages.getString("CustomMekDialog.labSneakCamo"));
+    private final JCheckBox chSneakIR = new JCheckBox(Messages.getString("CustomMekDialog.labSneakIR"));
+    private final JCheckBox chSneakECM = new JCheckBox(Messages.getString("CustomMekDialog.labSneakECM"));
+    private final List<JCheckBox> chSpecs = new ArrayList<>(ConvInfantry.NUM_SPECIALIZATIONS);
 
-    JCheckBox chEncumber = new JCheckBox();
-    JCheckBox chSpaceSuit = new JCheckBox();
-    JCheckBox chDEST = new JCheckBox();
-    JCheckBox chSneakCamo = new JCheckBox();
-    JCheckBox chSneakIR = new JCheckBox();
-    JCheckBox chSneakECM = new JCheckBox();
-    List<JCheckBox> chSpecs = new ArrayList<>(Infantry.NUM_SPECIALIZATIONS);
+    private final List<EquipmentType> armorKits = new ArrayList<>();
 
-    List<EquipmentType> armorKits = new ArrayList<>();
+    private final JComboBox<String> cbDisposableWeapon = new JComboBox<>();
+    private final List<InfantryWeapon> disposableWeapons = new ArrayList<>();
+    private boolean disposableWeaponConfigurable = false;
 
-    public InfantryArmorPanel(Entity entity) {
-        this.infantry = (Infantry) entity;
+    public InfantryArmorPanel(ConvInfantry entity, JPanel parentPanel, GBC2 gbc) {
+        infantry = entity;
 
-        for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
-            int spec = 1 << i;
-            JCheckBox newSpec = new JCheckBox();
-            newSpec.setText(Infantry.getSpecializationName(spec));
-            newSpec.setToolTipText(Infantry.getSpecializationTooltip(spec));
-            chSpecs.add(newSpec);
-        }
-
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        setLayout(gridBagLayout);
-        add(labArmor, GBC.std());
-        add(cbArmorKit, GBC.eol());
-        add(labDivisor, GBC.std());
-        add(fldDivisor, GBC.eol());
-        add(labEncumber, GBC.std());
-        add(chEncumber, GBC.eol());
-        add(labSpaceSuit, GBC.std());
-        add(chSpaceSuit, GBC.eol());
-        add(labDEST, GBC.std());
-        add(chDEST, GBC.eol());
-        add(labSneakCamo, GBC.std());
-        add(chSneakCamo, GBC.eol());
-        add(labSneakIR, GBC.std());
-        add(chSneakIR, GBC.eol());
-        add(labSneakECM, GBC.std());
-        add(chSneakECM, GBC.eol());
-        add(Box.createVerticalStrut(10), GBC.eol());
-        add(labSpec, GBC.eol());
-
-        for (JCheckBox spec : chSpecs) {
-            add(spec, GBC.eol());
-        }
+        JComponent armorTitle = new EquipChoicePanel.SectionTitleLabel(Messages.getString(
+              "CustomMekDialog.infArmorSection"));
+        parentPanel.add(armorTitle, gbc.fullLine());
 
         SimpleTechLevel gameTechLevel = SimpleTechLevel.getGameTechLevel(entity.getGame());
+        if (gameTechLevel != SimpleTechLevel.STANDARD &&
+              gameTechLevel != SimpleTechLevel.INTRO) {
+            JLabel labArmor = new JLabel(Messages.getString("CustomMekDialog.labInfantryArmor"));
+            JLabel labDivisor = new JLabel(Messages.getString("CustomMekDialog.labDamageDivisor"));
+            parentPanel.add(labArmor, gbc.forLabel());
+            parentPanel.add(cbArmorKit, gbc.eol());
+            parentPanel.add(labDivisor, gbc.forLabel());
+            parentPanel.add(fldDivisor, gbc.eol());
+
+            parentPanel.add(Box.createVerticalStrut(5), gbc.fullLine());
+
+            parentPanel.add(new JLabel(), gbc.forLabel());
+            parentPanel.add(chEncumber, gbc.oneColumn());
+            parentPanel.add(chSneakCamo, gbc.eol());
+            parentPanel.add(new JLabel(), gbc.forLabel());
+            parentPanel.add(chSpaceSuit, gbc.oneColumn());
+            parentPanel.add(chSneakIR, gbc.eol());
+            parentPanel.add(new JLabel(), gbc.forLabel());
+            parentPanel.add(chDEST, gbc.oneColumn());
+            parentPanel.add(chSneakECM, gbc.eol());
+        }
+
         int year = entity.getGame().getOptions().intOption("year");
 
+        // If the rules level isn't at least Advanced, these won't be displayed, but it will iterate them still to 
+        // avoid potential issues.
         for (EquipmentType et : MiscType.allTypes()) {
-            if (et.hasFlag(MiscType.F_ARMOR_KIT) &&
+            if (et instanceof MiscType miscType && miscType.hasFlag(MiscType.F_ARMOR_KIT) &&
                   et.isLegal(year,
                         gameTechLevel,
                         entity.isClan(),
@@ -157,13 +147,68 @@ public class InfantryArmorPanel extends JPanel {
             armorStateChanged();
             updateArmorValues();
         });
-
         chDEST.addItemListener(e -> armorStateChanged());
 
-        for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+        JComponent specTitle = new EquipChoicePanel.SectionTitleLabel(Messages.getString(
+              "CustomMekDialog.infSpecSection"));
+        parentPanel.add(specTitle, gbc.fullLine());
+
+        for (int i = 0; i < ConvInfantry.NUM_SPECIALIZATIONS; i++) {
+            int spec = 1 << i;
+            JCheckBox newSpec = new JCheckBox(ConvInfantry.getSpecializationName(spec));
+            newSpec.setToolTipText(ConvInfantry.getSpecializationTooltip(spec));
+            chSpecs.add(newSpec);
+            parentPanel.add(new JLabel(), gbc.oneColumn());
+            parentPanel.add(newSpec, gbc.eol());
+        }
+
+        for (int i = 0; i < ConvInfantry.NUM_SPECIALIZATIONS; i++) {
             int spec = 1 << i;
             chSpecs.get(i).setSelected(infantry.hasSpecialization(spec));
         }
+
+        // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) - only configurable when the advanced rule is
+        // enabled
+        if (entity.getGame().getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
+            disposableWeaponConfigurable = true;
+            addDisposableWeaponSection(parentPanel, gbc);
+        }
+    }
+
+    /**
+     * Builds the Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) chooser: a "None" option plus every legal
+     * {@code (1-D)} infantry weapon, pre-selecting the platoon's current Disposable Weapon.
+     *
+     * @param parentPanel the panel the controls are added to
+     * @param gbc         the shared layout constraints
+     */
+    private void addDisposableWeaponSection(JPanel parentPanel, GBC2 gbc) {
+        JComponent disposableTitle = new EquipChoicePanel.SectionTitleLabel(
+              Messages.getString("CustomMekDialog.infDisposableSection"));
+        parentPanel.add(disposableTitle, gbc.fullLine());
+
+        Game game = infantry.getGame();
+        GameOptions gameOptions = game.getOptions();
+        int year = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
+        SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(game);
+        boolean showExtinct = gameOptions.booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT);
+        for (EquipmentType equipmentType : EquipmentType.allTypes()) {
+            if ((equipmentType instanceof InfantryWeapon infantryWeapon)
+                  && infantryWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE)
+                  && equipmentType.isLegal(year, legalLevel, infantry.isClan(), infantry.isMixedTech(), showExtinct)) {
+                disposableWeapons.add(infantryWeapon);
+            }
+        }
+        disposableWeapons.sort(Comparator.comparing(EquipmentType::getName));
+
+        cbDisposableWeapon.addItem(Messages.getString("CustomMekDialog.infDisposableNone"));
+        disposableWeapons.forEach(weapon -> cbDisposableWeapon.addItem(weapon.getName()));
+        InfantryWeapon current = infantry.getDisposableWeapon();
+        cbDisposableWeapon.setSelectedIndex((current == null) ? 0 : disposableWeapons.indexOf(current) + 1);
+
+        parentPanel.add(new JLabel(Messages.getString("CustomMekDialog.labDisposableWeapon")), gbc.forLabel());
+        parentPanel.add(cbDisposableWeapon, gbc.eol());
     }
 
     public void armorStateChanged() {
@@ -180,12 +225,12 @@ public class InfantryArmorPanel extends JPanel {
         if (cbArmorKit.getSelectedIndex() > 0) {
             EquipmentType kit = armorKits.get(cbArmorKit.getSelectedIndex() - 1);
             fldDivisor.setText(Double.toString(((MiscType) kit).getDamageDivisor()));
-            chEncumber.setSelected((kit.getSubType() & MiscType.S_ENCUMBERING) != 0);
-            chSpaceSuit.setSelected((kit.getSubType() & MiscType.S_SPACE_SUIT) != 0);
-            chDEST.setSelected((kit.getSubType() & MiscType.S_DEST) != 0);
-            chSneakCamo.setSelected((kit.getSubType() & MiscType.S_SNEAK_CAMO) != 0);
-            chSneakIR.setSelected((kit.getSubType() & MiscType.S_SNEAK_IR) != 0);
-            chSneakECM.setSelected((kit.getSubType() & MiscType.S_SNEAK_ECM) != 0);
+            chEncumber.setSelected(kit.hasFlag(MiscTypeFlag.S_ENCUMBERING));
+            chSpaceSuit.setSelected(kit.hasFlag(MiscTypeFlag.S_SPACE_SUIT));
+            chDEST.setSelected(kit.hasFlag(MiscTypeFlag.S_DEST));
+            chSneakCamo.setSelected(kit.hasFlag(MiscTypeFlag.S_SNEAK_CAMO));
+            chSneakIR.setSelected(kit.hasFlag(MiscTypeFlag.S_SNEAK_IR));
+            chSneakECM.setSelected(kit.hasFlag(MiscTypeFlag.S_SNEAK_ECM));
         }
     }
 
@@ -205,15 +250,20 @@ public class InfantryArmorPanel extends JPanel {
             }
         }
         int spec = 0;
-        for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+        for (int i = 0; i < ConvInfantry.NUM_SPECIALIZATIONS; i++) {
             if (chSpecs.get(i).isSelected()) {
                 spec |= 1 << i;
             }
         }
         infantry.setSpecializations(spec);
+
+        if (disposableWeaponConfigurable) {
+            int selectedIndex = cbDisposableWeapon.getSelectedIndex();
+            InfantryWeapon selectedDisposable = (selectedIndex > 0) ? disposableWeapons.get(selectedIndex - 1) : null;
+            infantry.equipDisposableWeapon(selectedDisposable);
+        }
     }
 
-    @Override
     public void setEnabled(boolean enabled) {
         cbArmorKit.setEnabled(enabled);
         if (enabled) {
@@ -230,5 +280,6 @@ public class InfantryArmorPanel extends JPanel {
         for (JCheckBox spec : chSpecs) {
             spec.setEnabled(enabled);
         }
+        cbDisposableWeapon.setEnabled(enabled && disposableWeaponConfigurable);
     }
 }

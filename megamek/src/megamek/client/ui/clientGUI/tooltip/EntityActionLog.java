@@ -42,13 +42,14 @@ import java.util.ListIterator;
 import java.util.Vector;
 import java.util.stream.Stream;
 
+import jakarta.annotation.Nonnull;
 import megamek.client.ui.Messages;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 
 /**
  * An ordered List-like collection of EntityActions with a cached description of each action, created as the action is
@@ -126,12 +127,12 @@ public class EntityActionLog implements Collection<EntityAction> {
     }
 
     @Override
-    public boolean containsAll(Collection<?> collection) {
+    public boolean containsAll(@Nonnull Collection<?> collection) {
         return actions.containsAll(collection);
     }
 
     @Override
-    public boolean addAll(Collection<? extends EntityAction> entityActions) {
+    public boolean addAll(@Nonnull Collection<? extends EntityAction> entityActions) {
         if (!actions.addAll(entityActions)) {
             return false;
         }
@@ -140,7 +141,7 @@ public class EntityActionLog implements Collection<EntityAction> {
     }
 
     @Override
-    public boolean removeAll(Collection<?> collection) {
+    public boolean removeAll(@Nonnull Collection<?> collection) {
         if (!actions.removeAll(collection)) {
             return false;
         }
@@ -154,16 +155,16 @@ public class EntityActionLog implements Collection<EntityAction> {
     }
 
     @Override
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(@Nonnull Collection<?> c) {
         return actions.retainAll(c);
     }
 
     public EntityAction firstElement() {
-        return actions.isEmpty() ? null : actions.get(0);
+        return actions.isEmpty() ? null : actions.getFirst();
     }
 
     public EntityAction lastElement() {
-        return actions.isEmpty() ? null : actions.get(actions.size() - 1);
+        return actions.isEmpty() ? null : actions.getLast();
     }
 
     @Override
@@ -182,21 +183,25 @@ public class EntityActionLog implements Collection<EntityAction> {
     }
 
     @Override
+    @Nonnull
     public Iterator<EntityAction> iterator() {
         return actions.iterator();
     }
 
     @Override
+    @Nonnull
     public Object[] toArray() {
         return new Object[0];
     }
 
     @Override
-    public <T> T[] toArray(T[] a) {
+    @Nonnull
+    public <T> T[] toArray(@Nonnull T[] a) {
         return actions.toArray(a);
     }
 
     @Override
+    @Nonnull
     public Stream<EntityAction> stream() {
         return actions.stream();
     }
@@ -228,7 +233,7 @@ public class EntityActionLog implements Collection<EntityAction> {
 
         if (weaponEntity != null) {
             final String weaponName = (weaponEntity.getEquipment(attack.getWeaponId()).getType()).getName();
-            
+
             Entity ammoCarrier = game.getEntity(attack.getAmmoCarrier());
             if (ammoCarrier == null) {
                 ammoCarrier = weaponEntity;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2019-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -111,6 +111,10 @@ public class EquipmentTypeLookup {
     public static final String BA_MISSION_EQUIPMENT = "Mission Equipment Storage";
     @EquipmentName
     public static final String BA_DWP = "ISDetachableWeaponPack";
+    @EquipmentName
+    public static final String BA_APM = "BAAPMount";
+    @EquipmentName
+    public static final String BA_MODULAR_EQUIPMENT_ADAPTOR = "BAMEA";
 
     @EquipmentName
     public static final String SINGLE_HS = "Heat Sink";
@@ -164,6 +168,10 @@ public class EquipmentTypeLookup {
     public static final String PINTLE_TURRET = "PintleTurret";
     @EquipmentName
     public static final String MAST_MOUNT = "ISMastMount";
+    @EquipmentName
+    public static final String DNI_COCKPIT_MOD = "DNICockpitModification";
+    @EquipmentName
+    public static final String EI_INTERFACE = "EIInterface";
 
     @EquipmentName
     public static final String AMPHIBIOUS_CHASSIS_MOD = "AmphibiousChassisMod";
@@ -216,9 +224,19 @@ public class EquipmentTypeLookup {
     @EquipmentName
     public static final String INFANTRY_TAG = "InfantryTAG";
     @EquipmentName
+    public static final String INFANTRY_MORTAR_LIGHT = "InfantryLightMortar";
+    @EquipmentName
+    public static final String INFANTRY_MORTAR_HEAVY = "InfantryHeavyMortar";
+    @EquipmentName
+    public static final String INFANTRY_MORTAR_LIGHT_INFERNO = "InfantryLightMortarInferno";
+    @EquipmentName
+    public static final String INFANTRY_MORTAR_HEAVY_INFERNO = "InfantryHeavyMortarInferno";
+    @EquipmentName
     public static final String VIBRO_SHOVEL = "Vibro-Shovel";
     @EquipmentName
     public static final String DEMOLITION_CHARGE = "Demolition Charge";
+    @EquipmentName
+    public static final String INFANTRY_BRIDGE_KIT = "Infantry Bridge Kit";
     @EquipmentName
     public static final String INFANTRY_AMMO = "Infantry Ammo";
     @EquipmentName
@@ -361,10 +379,21 @@ public class EquipmentTypeLookup {
     @EquipmentName
     public static final String IS_BA_TUBE_ARTY = "ISBATubeArtillery";
     @EquipmentName
+    public static final String CL_BA_BOMB_RACK = "CLBAMicroBomb";
+    @EquipmentName
     public static final String THUMPER_ARTY = "ISThumper";
     @EquipmentName
     public static final String SNIPER_ARTY = "ISSniper";
 
     @EquipmentName
     public static final String SV_EXTERNAL_HARDPOINT = "External Stores Hardpoint";
+
+    @EquipmentName
+    public static final String NLRT5 = "ISNLRT05";
+    @EquipmentName
+    public static final String NLRT10 = "ISNLRT10";
+    @EquipmentName
+    public static final String NLRT15 = "ISNLRT15";
+    @EquipmentName
+    public static final String NLRT20 = "ISNLRT20";
 }

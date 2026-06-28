@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002, 2004 Josh Yockey
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 import javax.swing.*;
@@ -58,11 +59,14 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.RowSorterEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.extras.components.FlatTriStateCheckBox;
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -115,8 +119,10 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     private JButton buttonAdvancedSearch;
     private JButton buttonResetSearch;
     private final JToggleButton buttonPvToggle = new JToggleButton(Messages.getString("MekSelectorDialog.TogglePV"));
+    private final JToggleButton buttonGPToggle = new JToggleButton(Messages.getString("MekSelectorDialog.ToggleGP"));
     protected JList<String> listTechLevel = new JList<>();
-    private JLabel lblCount;
+    private final JComponent gpLine = new JPanel();
+    private final JLabel lblCount = new JLabel();
     /**
      * We need to map the selected index of listTechLevel to the actual TL it belongs to
      */
@@ -126,8 +132,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected JLabel labelImage = new JLabel(""); // inline to avoid potential null pointer issues
     protected JTable tableUnits;
     protected JTextField textFilter;
-    protected JTextField textGunnery;
-    protected JTextField textPilot;
+    protected JTextField textGunnery = new JTextField("4", 3);
+    protected JTextField textPilot = new JTextField("5", 3);
+    private final FlatTriStateCheckBox checkboxCanonOnly = createSourceFilterCheckbox(
+          Messages.getString("MekSelectorDialog.chkCanonOnly"));
+    private final FlatTriStateCheckBox checkboxHasPublishedRecordSheet = createSourceFilterCheckbox(
+          Messages.getString("MekSelectorDialog.chkHasPublishedRecordSheet"));
     protected EntityViewPane panePreview;
     private JSplitPane splitPane;
 
@@ -143,6 +153,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     private final MekTableModel unitModel = new MekTableModel();
     private final XTableColumnModel unitColumnModel = new XTableColumnModel();
+    private Predicate<MekSummary> unitSelectionScopeFilter = Objects::nonNull;
     private TableColumn pvColumn;
     private TableColumn bvColumn;
     private TableColumn rulesLevelColumn;
@@ -182,6 +193,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         super.setVisible(false);
     }
 
+    private static FlatTriStateCheckBox createSourceFilterCheckbox(String text) {
+        FlatTriStateCheckBox checkbox = new FlatTriStateCheckBox(text, FlatTriStateCheckBox.State.UNSELECTED);
+        checkbox.setAltStateCycleOrder(true);
+        return checkbox;
+    }
+
     /**
      * This is used to update any values that are set based on individual options
      */
@@ -214,6 +231,10 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         splitPane.setDividerLocation(GUIP.getMekSelectorSplitPos());
         setSize(GUIP.getMekSelectorSizeWidth(), GUIP.getMekSelectorSizeHeight());
         setLocation(GUIP.getMekSelectorPosX(), GUIP.getMekSelectorPosY());
+        if (canonOnly) {
+            checkboxCanonOnly.setState(FlatTriStateCheckBox.State.SELECTED);
+        }
+        checkboxCanonOnly.setEnabled(!canonOnly);
         toggleVtl(isVTL());
     }
 
@@ -343,10 +364,29 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 0;
         panelFilterButtons.add(comboUnitType, gridBagConstraintsWest);
 
+        JPanel panelSourceFilters = new JPanel(new GridBagLayout());
+        checkboxCanonOnly.setName("checkboxCanonOnly");
+        checkboxCanonOnly.addActionListener(this);
+        checkboxHasPublishedRecordSheet.setName("checkboxHasPublishedRecordSheet");
+        checkboxHasPublishedRecordSheet.addActionListener(this);
+
+        GridBagConstraints checkboxConstraints = new GridBagConstraints();
+        checkboxConstraints.anchor = GridBagConstraints.WEST;
+        checkboxConstraints.gridx = 0;
+        checkboxConstraints.gridy = 0;
+        panelSourceFilters.add(checkboxCanonOnly, checkboxConstraints);
+        checkboxConstraints.gridx = 1;
+        checkboxConstraints.insets = new Insets(0, 10, 0, 0);
+        panelSourceFilters.add(checkboxHasPublishedRecordSheet, checkboxConstraints);
+
+        gridBagConstraintsWest.gridx = 1;
+        gridBagConstraintsWest.gridy = 3;
+        panelFilterButtons.add(panelSourceFilters, gridBagConstraintsWest);
+
         JLabel labelFilter = new JLabel(Messages.getString("MekSelectorDialog.m_labelFilter"));
         labelFilter.setName("labelFilter");
         gridBagConstraintsWest.gridx = 0;
-        gridBagConstraintsWest.gridy = 3;
+        gridBagConstraintsWest.gridy = 4;
         panelFilterButtons.add(labelFilter, gridBagConstraintsWest);
 
         textFilter = new JTextField("");
@@ -368,91 +408,42 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             }
         });
         gridBagConstraintsWest.gridx = 1;
-        gridBagConstraintsWest.gridy = 3;
+        gridBagConstraintsWest.gridy = 4;
         gridBagConstraintsWest.fill = GridBagConstraints.HORIZONTAL;
         panelFilterButtons.add(textFilter, gridBagConstraintsWest);
         gridBagConstraintsWest.fill = GridBagConstraints.NONE;
 
-        // Add the Gunnery and Piloting entry boxes and labels to the filter panel in the UI
+        // Gunnery and Piloting textfields and labels
         JLabel lblGun = new JLabel(Messages.getString("MekSelectorDialog.m_labelGunnery"));
         lblGun.setName("lblGun");
-        gridBagConstraintsWest.gridx = 0;
-        gridBagConstraintsWest.gridy = 4;
-        if (CLIENT_PREFERENCES.useGPinUnitSelection()) {
-            panelFilterButtons.add(lblGun, gridBagConstraintsWest);
-        }
-
-        textGunnery = new JTextField("4");
         textGunnery.setName("textGunnery");
-        if (CLIENT_PREFERENCES.useGPinUnitSelection()) {
-            textGunnery.getDocument().addDocumentListener(new DocumentListener() {
-                // Set the table to refresh when the gunnery is changed
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    sorter.allRowsChanged();
-                }
-
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    sorter.allRowsChanged();
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    sorter.allRowsChanged();
-                }
-
-            });
-            gridBagConstraintsWest.gridx = 1;
-            gridBagConstraintsWest.gridy = 4;
-            panelFilterButtons.add(textGunnery, gridBagConstraintsWest);
-        }
+        textGunnery.getDocument().addDocumentListener(new GPDocumentListener());
 
         JLabel lblPilot = new JLabel(Messages.getString("MekSelectorDialog.m_labelPiloting"));
         lblGun.setName("lblPilot");
-        gridBagConstraintsWest.gridx = 0;
-        gridBagConstraintsWest.gridy = 5;
-        if (CLIENT_PREFERENCES.useGPinUnitSelection()) {
-            panelFilterButtons.add(lblPilot, gridBagConstraintsWest);
-        }
-
-        textPilot = new JTextField("5");
         textPilot.setName("textPilot");
-        if (CLIENT_PREFERENCES.useGPinUnitSelection()) {
-            textPilot.getDocument().addDocumentListener(new DocumentListener() {
-                // Set the table to refresh when the piloting is changed
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    sorter.allRowsChanged();
-                }
+        textPilot.getDocument().addDocumentListener(new GPDocumentListener());
 
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    sorter.allRowsChanged();
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    sorter.allRowsChanged();
-                }
-            });
-            gridBagConstraintsWest.gridx = 1;
-            gridBagConstraintsWest.gridy = 5;
-            panelFilterButtons.add(textPilot, gridBagConstraintsWest);
-        }
+        gpLine.add(lblGun);
+        gpLine.add(textGunnery);
+        gpLine.add(Box.createHorizontalStrut(10));
+        gpLine.add(lblPilot);
+        gpLine.add(textPilot);
+        gpLine.setVisible(CLIENT_PREFERENCES.useGPinUnitSelection());
 
         labelImage.setHorizontalAlignment(SwingConstants.CENTER);
         labelImage.setName("labelImage");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 4;
+        gridBagConstraints.gridheight = 5;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         panelFilterButtons.add(labelImage, gridBagConstraints);
 
         JPanel panelSearchButtons = new JPanel(new GridBagLayout());
+        gridBagConstraintsWest.insets = new Insets(0, 7, 0, 0);
 
         buttonAdvancedSearch = new JButton(Messages.getString("MekSelectorDialog.AdvSearch"));
         buttonAdvancedSearch.setName("buttonAdvancedSearch");
@@ -475,9 +466,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 0;
         panelSearchButtons.add(buttonPvToggle, gridBagConstraintsWest);
 
-        lblCount = new JLabel("");
-        gridBagConstraintsWest.gridx = 3;
-        gridBagConstraintsWest.gridy = 0;
+        buttonGPToggle.setSelected(CLIENT_PREFERENCES.useGPinUnitSelection());
+        buttonGPToggle.addActionListener(e -> toggleGP());
+        gridBagConstraintsWest.gridx++;
+        panelSearchButtons.add(buttonGPToggle, gridBagConstraintsWest);
+
+        gridBagConstraintsWest.gridx++;
         panelSearchButtons.add(lblCount, gridBagConstraintsWest);
 
         gridBagConstraints = new GridBagConstraints();
@@ -487,10 +481,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraints.insets = new Insets(10, 10, 5, 0);
         selectionPanel.add(panelFilterButtons, gridBagConstraints);
 
-        gridBagConstraints.insets = new Insets(10, 10, 10, 0);
+        gridBagConstraints.insets = new Insets(10, 10, 0, 0);
         selectionPanel.add(panelSearchButtons, gridBagConstraints);
+        gridBagConstraints.insets = new Insets(0, 10, 0, 0);
+        selectionPanel.add(gpLine, gridBagConstraints);
 
-        gridBagConstraints.insets = new Insets(5, 0, 0, 0);
+        gridBagConstraints.insets = new Insets(10, 0, 0, 0);
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1;
         gridBagConstraints.weighty = 1;
@@ -546,6 +542,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(enter, SELECT_ACTION);
         rootPane.getInputMap(JComponent.WHEN_FOCUSED).put(enter, SELECT_ACTION);
         rootPane.getActionMap().put(SELECT_ACTION, selectAction);
+
+        sorter.addRowSorterListener(event -> {
+            if (event.getType() == RowSorterEvent.Type.SORTED) {
+                updateUnitCount();
+            }
+        });
     }
 
     private boolean isVTL() {
@@ -610,6 +612,16 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         listTechLevel.addListSelectionListener(this);
     }
 
+    private void toggleGP() {
+        CLIENT_PREFERENCES.setUseGpInUnitSelection(buttonGPToggle.isSelected());
+        gpLine.setVisible(CLIENT_PREFERENCES.useGPinUnitSelection());
+        // Reset the values when hidden so there isn't an invisible BV modifier
+        if (!CLIENT_PREFERENCES.useGPinUnitSelection()) {
+            textGunnery.setText("4");
+            textPilot.setText("5");
+        }
+    }
+
     /**
      * This is used to create the bottom row of buttons for the interface
      *
@@ -662,7 +674,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                         /* Year Limits */
                           (!enableYearLimits || (mek.getYear() <= allowedYear))
                                 /* Canon */
-                                && (!canonOnly || mek.isCanon())
+                                && matchesCanonFilter(mek)
+                                /* Published Record Sheet */
+                                && matchesPublishedRecordSheetFilter(mek)
                                 /* Invalid units */
                                 && (allowInvalid || !mek.getLevel().equals("F"))
                                 /* Weight */
@@ -672,6 +686,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                                 /* Support Vehicles */
                                 && ((nUnit == -1) || (checkSupportVee && mek.isSupport())
                                 || (!checkSupportVee && mek.getUnitType().equals(UnitType.getTypeName(nUnit))))
+                                /* Additional caller-specific restrictions */
+                                && unitSelectionScopeFilter.test(mek)
                                 /* Advanced Search */
                                 && ((searchFilter == null) || MekSearchFilter.isMatch(mek, searchFilter))
                                 && advancedSearchDialog.getASAdvancedSearch().matches(mek)) {
@@ -684,8 +700,30 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             return;
         }
         sorter.setRowFilter(unitTypeFilter);
-        String msgUnitCount = Messages.getString("MekSelectorDialog.UnitCount");
-        lblCount.setText(String.format(" %s %d", msgUnitCount, sorter.getViewRowCount()));
+    }
+
+    protected void updateUnitCount() {
+        lblCount.setText(Messages.getString("MekSelectorDialog.UnitCount", sorter.getViewRowCount()));
+    }
+
+    private boolean matchesCanonFilter(MekSummary mek) {
+        if (canonOnly) {
+            return !mek.isNonCanonBySource();
+        }
+
+        return switch (checkboxCanonOnly.getState()) {
+            case SELECTED -> !mek.isNonCanonBySource();
+            case INDETERMINATE -> mek.isNonCanonBySource();
+            case UNSELECTED -> true;
+        };
+    }
+
+    private boolean matchesPublishedRecordSheetFilter(MekSummary mek) {
+        return switch (checkboxHasPublishedRecordSheet.getState()) {
+            case SELECTED -> mek.hasPublishedRecordSheet();
+            case INDETERMINATE -> !mek.hasPublishedRecordSheet();
+            case UNSELECTED -> true;
+        };
     }
 
     protected boolean matchesTextFilter(MekSummary unit) {
@@ -701,6 +739,23 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         }
         return true;
     }
+
+    /**
+     * Sets additional unit-list restrictions beyond the shared selector controls. The base selector accepts every
+     * candidate that passed the built-in filters; callers can use this to constrain specialized pickers without
+     * duplicating the full filter pipeline.
+     *
+     * @param unitSelectionScopeFilter Predicate that returns true when a candidate should remain visible
+     */
+    protected void setUnitSelectionScopeFilter(Predicate<MekSummary> unitSelectionScopeFilter) {
+        this.unitSelectionScopeFilter = Objects.requireNonNull(unitSelectionScopeFilter, "unitSelectionScopeFilter");
+    }
+
+    /**
+     * Allows subclasses to keep filter controls in sync with additional unit-list restrictions after persisted user
+     * preferences have been restored.
+     */
+    protected void configureUnitSelectionScope() {}
 
     /**
      * @return the selected entity (required for MekHQ/MegaMek overrides)
@@ -753,7 +808,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         if (summaries.size() != 1) {
             return null;
         }
-        return summaries.get(0);
+        return summaries.getFirst();
     }
 
     public List<MekSummary> getSelectedMekSummaries() {
@@ -784,6 +839,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     public void setVisible(boolean visible) {
         if (visible) {
             setUserPreferences();
+            configureUnitSelectionScope();
         }
         searchFilter = null;
         buttonResetSearch.setEnabled(false);
@@ -803,11 +859,13 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
         if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
-            GUIP.setMekSelectorUnitType(comboUnitType.getSelectedIndex());
+            if (comboUnitType.isEnabled()) {
+                GUIP.setMekSelectorUnitType(comboUnitType.getSelectedIndex());
+            }
             GUIP.setMekSelectorWeightClass(comboWeight.getSelectedIndex());
             GUIP.setMekSelectorRulesLevels(Arrays.toString(listTechLevel.getSelectedIndices()));
-            GUIP.setMekSelectorSortColumn(tableUnits.getRowSorter().getSortKeys().get(0).getColumn());
-            GUIP.setMekSelectorSortOrder(tableUnits.getRowSorter().getSortKeys().get(0).getSortOrder().name());
+            GUIP.setMekSelectorSortColumn(tableUnits.getRowSorter().getSortKeys().getFirst().getColumn());
+            GUIP.setMekSelectorSortOrder(tableUnits.getRowSorter().getSortKeys().getFirst().getSortOrder().name());
             GUIP.setMekSelectorSizeHeight(getSize().height);
             GUIP.setMekSelectorSizeWidth(getSize().width);
             GUIP.setMekSelectorPosX(getLocation().x);
@@ -874,7 +932,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      */
     @Override
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getSource().equals(comboWeight) || ev.getSource().equals(comboUnitType)) {
+        if (ev.getSource().equals(comboWeight) || ev.getSource().equals(comboUnitType)
+              || ev.getSource().equals(checkboxCanonOnly)
+              || ev.getSource().equals(checkboxHasPublishedRecordSheet)) {
             filterUnits();
         } else if (ev.getSource().equals(buttonSelect)) {
             select(false);
@@ -1021,35 +1081,16 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                     }
                 }
                 return ms.getTons();
+
             } else if (col == COL_BV) {
-                // This code allows for Gunnery and BV to be read from the UI, and update the BV values in
-                // the table as a result
-                int gunnery = 4;
-                int piloting = 5;
-                if (textGunnery.getText().matches("\\d+")) {
-                    gunnery = Integer.parseInt(textGunnery.getText());
-                    if (gunnery > 8) {
-                        gunnery = 4;
-                    }
-
-                }
-                if (textPilot.getText().matches("\\d+")) {
-                    piloting = Integer.parseInt(textPilot.getText());
-                    if (piloting > 8) {
-                        piloting = 5;
-                    }
-                }
-
+                int gunnery = parseSkillValue(textGunnery, 4);
+                int piloting = parseSkillValue(textPilot, 5);
                 double gp_multiply = BVCalculator.bvSkillMultiplier(gunnery, piloting);
                 return (int) Math.round(ms.getBV() * gp_multiply);
+
             } else if (col == COL_PV) {
-                // This code allows for Gunnery to be read from the UI, and update the PV values
-                // in the table as a result
-                // It uses Gunnery as the skill
-                int gunnery = 4;
-                if (textGunnery.getText().matches("\\d+")) {
-                    gunnery = Integer.parseInt(textGunnery.getText());
-                }
+                //FIXME It uses Gunnery as the skill - should be improved to show an AS "Skill" instead
+                int gunnery = parseSkillValue(textGunnery, 4);
 
                 double modifier;
                 if (gunnery == 4) {
@@ -1093,42 +1134,76 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     /** A specialized renderer for the mek table (formats the unit tonnage). */
     public static class TonnageRenderer extends DefaultTableCellRenderer {
 
+        public TonnageRenderer() {
+            setHorizontalAlignment(JLabel.RIGHT);
+        }
+
         @Override
         public Component getTableCellRendererComponent(final JTable table, final @Nullable Object value,
               final boolean isSelected, final boolean hasFocus, final int row, final int column) {
-            if (value instanceof Double) {
-                setHorizontalAlignment(JLabel.RIGHT);
-                double weight = (Double) value;
-                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            String text = "?";
+            if (value instanceof Double weight) {
                 if (weight < 2) {
-                    setText(String.format(MegaMek.getMMOptions().getLocale(), "%,d kg ", (int) (weight * 1000)));
+                    text = String.format(MegaMek.getMMOptions().getLocale(), "%,d kg ", (int) (weight * 1000));
                 } else if (Math.round(weight) == weight) {
-                    setText(String.format(MegaMek.getMMOptions().getLocale(), "%,d t ", Math.round(weight)));
+                    text = String.format(MegaMek.getMMOptions().getLocale(), "%,d t ", Math.round(weight));
                 } else {
-                    setText(String.format(MegaMek.getMMOptions().getLocale(), "%.1f t ", weight));
+                    text = String.format(MegaMek.getMMOptions().getLocale(), "%.1f t ", weight);
                 }
-                return this;
-            } else {
-                return null;
             }
+            return super.getTableCellRendererComponent(table, text, isSelected, hasFocus, row, column);
         }
     }
 
     /** A specialized renderer for the mek table (formats the unit price). */
     public static class PriceRenderer extends DefaultTableCellRenderer {
 
+        public PriceRenderer() {
+            setHorizontalAlignment(JLabel.RIGHT);
+        }
+
         @Override
-        public Component getTableCellRendererComponent(final JTable table, final @Nullable Object value,
-              final boolean isSelected, final boolean hasFocus,
-              final int row, final int column) {
-            if (value instanceof Long) {
-                setHorizontalAlignment(JLabel.RIGHT);
-                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                setText(String.format(MegaMek.getMMOptions().getLocale(), "%,d ", (Long) value));
-                return this;
-            } else {
-                return null;
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+              int row, int column) {
+
+            String text = "?";
+            if (value instanceof Long price) {
+                text = String.format(MegaMek.getMMOptions().getLocale(), "%,d ", price);
             }
+            return super.getTableCellRendererComponent(table, text, isSelected, hasFocus, row, column);
+        }
+    }
+
+    /**
+     * Sets the table to refresh when gunnery/piloting is changed
+     */
+    private class GPDocumentListener implements DocumentListener {
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            sorter.allRowsChanged();
+        }
+
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            sorter.allRowsChanged();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            sorter.allRowsChanged();
+        }
+    }
+
+    private int parseSkillValue(JTextField field, int defaultValue) {
+        try {
+            int value = Integer.parseInt(field.getText());
+            boolean valid = value >= 0 && value <= 8;
+            field.putClientProperty(FlatClientProperties.OUTLINE, valid ? null : FlatClientProperties.OUTLINE_ERROR);
+            return valid ? value : defaultValue;
+        } catch (NumberFormatException ignored) {
+            field.putClientProperty(FlatClientProperties.OUTLINE, FlatClientProperties.OUTLINE_ERROR);
+            return defaultValue;
         }
     }
 }

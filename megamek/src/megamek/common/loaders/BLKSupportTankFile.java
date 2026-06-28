@@ -148,13 +148,9 @@ public class BLKSupportTankFile extends BLKFile implements IMekLoader {
         t.setStructuralTechRating(dataFile
               .getDataAsInt("structural_tech_rating")[0]);
         // Set armor tech rating, if it exists (defaults to structural tr)
-        // Allow use of armor_tech field if provided
         if (dataFile.exists("armor_tech_rating")) {
             t.setArmorTechRating(dataFile
                   .getDataAsInt("armor_tech_rating")[0]);
-        } else if (dataFile.exists("armor_tech")) {
-            t.setArmorTechRating(dataFile
-                  .getDataAsInt("armor_tech")[0]);
         }
         // Set engine tech rating, if it exists (defaults to structural tr)
         if (dataFile.exists("engine_tech_rating")) {
@@ -170,7 +166,10 @@ public class BLKSupportTankFile extends BLKFile implements IMekLoader {
         loadEquipment(t, "Left", Tank.LOC_LEFT);
         loadEquipment(t, "Rear", Tank.LOC_REAR);
         if (!t.hasNoTurret()) {
+            // Try to load any and all turrets; missing turrets will be skipped
             loadEquipment(t, "Turret", Tank.LOC_TURRET);
+            loadEquipment(t, "Rear Turret", Tank.LOC_TURRET);
+            loadEquipment(t, "Front Turret", Tank.LOC_TURRET_2);
         }
         loadEquipment(t, "Body", Tank.LOC_BODY);
 
@@ -206,6 +205,7 @@ public class BLKSupportTankFile extends BLKFile implements IMekLoader {
             }
         }
         loadQuirks(t);
+        loadSlotlessEquipment(t);
 
         resetCrew(t);
 

@@ -133,7 +133,7 @@ public enum KeyCommandBind {
     DRAW_LABELS(true, "toggleDrawLabels", VK_B, CTRL_DOWN_MASK),
     HEX_COORDS(true, "toggleHexCoords", VK_G, CTRL_DOWN_MASK),
     MINIMAP(true, "toggleMinimap", VK_M, CTRL_DOWN_MASK),
-    LOS_SETTING(true, "viewLosSetting", VK_L, CTRL_DOWN_MASK | ALT_DOWN_MASK),
+    LOS_SETTING(true, "viewLosSetting", VK_L),
     UNIT_DISPLAY(true, "toggleUnitDisplay", VK_D, CTRL_DOWN_MASK),
     UNIT_OVERVIEW(true, "toggleUnitOverview", VK_U, CTRL_DOWN_MASK),
     KEY_BINDS(true, "toggleKeybinds", VK_K, CTRL_DOWN_MASK),
@@ -156,7 +156,8 @@ public enum KeyCommandBind {
     UNDO_SINGLE_STEP("undoSingleStep", VK_BACK_SPACE, CTRL_DOWN_MASK),
     FORCE_DISPLAY(true, "toggleForceDisplay", VK_F, CTRL_DOWN_MASK),
     EXTEND_TURN_TIMER("extendTurnTimer", VK_F4, CTRL_DOWN_MASK),
-    BOT_COMMANDS(true, "toggleBotCommandsDisplay", VK_G, CTRL_DOWN_MASK | SHIFT_DOWN_MASK);
+    BOT_COMMANDS(true, "toggleBotCommandsDisplay", VK_G, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    FOV_SPOTTING(true, "toggleFovSpotting", VK_O);
 
     /** The command associated with this binding. */
     public String cmd;
@@ -200,6 +201,7 @@ public enum KeyCommandBind {
         this(command, repeatable, keyCode, 0, false);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     KeyCommandBind(String command, boolean repeatable, int keyCode, int modifier) {
         this(command, repeatable, keyCode, modifier, false);
     }

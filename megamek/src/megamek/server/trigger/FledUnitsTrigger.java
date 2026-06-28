@@ -37,12 +37,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import megamek.common.units.Entity;
-import megamek.common.interfaces.IEntityRemovalConditions;
-import megamek.common.game.IGame;
-import megamek.common.game.InGameObject;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.game.IGame;
+import megamek.common.game.InGameObject;
+import megamek.common.interfaces.IEntityRemovalConditions;
+import megamek.common.units.Entity;
 
 /**
  * This Trigger reacts when the count of units that fled the battlefield is equal to the given count. When the
@@ -69,10 +69,12 @@ public class FledUnitsTrigger implements Trigger {
         this(playerName, unitIds, fledUnitCount, fledUnitCount);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public FledUnitsTrigger(@Nullable String playerName, int fledUnitCount) {
         this(playerName, new ArrayList<>(), fledUnitCount);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public FledUnitsTrigger(@Nullable String playerName, int minUnitCount, int maxUnitCount) {
         this(playerName, new ArrayList<>(), minUnitCount, maxUnitCount);
     }

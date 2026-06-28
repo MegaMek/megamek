@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,11 +33,9 @@
 
 package megamek.server.totalWarfare;
 
-import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Hex;
-import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
@@ -52,7 +50,8 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.IAero;
 import megamek.common.units.IBuilding;
-import megamek.common.units.Terrain;
+import megamek.common.units.Infantry;
+import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import megamek.common.units.VTOL;
 import megamek.logging.MMLogger;
@@ -345,53 +344,38 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             }
         }
 
-        // If deploying a AbstractBuildingEntity, add building terrain to all hexes it occupies
-        if (entity instanceof AbstractBuildingEntity abstractBuildingEntity) {
-            Board board = getGame().getBoard(boardId);
-            for (Coords buildingCoords : abstractBuildingEntity.getCoordsList()) {
-                Hex targetHex = board.getHex(buildingCoords);
-                if (targetHex != null) {
-                    // Add building terrain with the building type
-                    targetHex.addTerrain(new Terrain(Terrains.BUILDING,
-                          abstractBuildingEntity.getBuildingType().getTypeValue()));
+        // If deploying a BuildingEntity, add building terrain to all hexes it occupies
+        if (entity instanceof AbstractBuildingEntity buildingEntity) {
+            buildingEntity.updateBuildingEntityHexes(boardId, gameManager);
+        }
 
-                    // Add building class
-                    targetHex.addTerrain(new Terrain(Terrains.BLDG_CLASS, abstractBuildingEntity.getBldgClass()));
-
-                    // Add CF value
-                    int cf = abstractBuildingEntity.getCurrentCF(buildingCoords);
-                    targetHex.addTerrain(new Terrain(Terrains.BLDG_CF, cf));
-
-                    // Add armor if present
-                    int armor = abstractBuildingEntity.getArmor(buildingCoords);
-                    if (armor > 0) {
-                        targetHex.addTerrain(new Terrain(Terrains.BLDG_ARMOR, armor));
-                    }
-
-                    // Add height (BLDG_ELEV)
-                    int height = abstractBuildingEntity.getHeight(buildingCoords);
-                    targetHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, height));
-
-                    // Add basement type if present
-                    if (abstractBuildingEntity.getBasement(buildingCoords) != null) {
-                        targetHex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE,
-                              abstractBuildingEntity.getBasement(buildingCoords).ordinal()));
-                    }
-                }
+        // A vehicle may only be hull-down in a fortified ("infantry-built") hex, and only hull-down-capable vehicles
+        // can do so (not Large Vehicles, not naval/submarine) - TO:AR p.19. Re-validate authoritatively here and clear
+        // an illegal hull-down state, because combat code such as Tank.rollHitLocation keys off isHullDown() without
+        // re-checking terrain, so a state from an old/crafted client or corrupted save could otherwise grant the
+        // hull-down hit-location benefit on open ground.
+        if ((entity instanceof Tank deployingVehicle) && entity.isHullDown()) {
+            boolean fortifiedHex = hex.containsTerrain(Terrains.FORTIFIED);
+            if (!deployingVehicle.isHullDownCapable() || !fortifiedHex) {
+                entity.setHullDown(false);
+                LOGGER.debug("[HullDown] {}: cleared illegal deploy hull-down - {}", entity.getDisplayName(),
+                      !deployingVehicle.isHullDownCapable() ?
+                            "vehicle type cannot hull down" :
+                            "deploy hex is not fortified");
+            } else {
+                LOGGER.debug("[HullDown] {}: deployed hull-down on a fortified hex", entity.getDisplayName());
             }
+        }
 
-            board.addBuildingToBoard(abstractBuildingEntity);
-
-            gameManager.sendNewBuildings(new Vector<IBuilding>(List.of(abstractBuildingEntity)));
-
-            // Do this as a separate loop - All building terrains need added before we can initialize building exits
-            for (Coords buildingCoords : abstractBuildingEntity.getCoordsList()) {
-                // Set up building exits to adjacent hexes with matching building type and class
-                initializeBuildingExits(buildingCoords, boardId);
-
-                // Notify clients of hex changes
-                gameManager.sendChangedHex(buildingCoords, boardId);
-            }
+        // Infantry deploying onto a fortified hex already gets the dug-in cover from the terrain, so it cannot also be
+        // separately dug in (the two postures don't stack - TO:AR p.106 / TO:AUE p.153). Keep the fortified-hex state
+        // and clear the redundant dug-in, mirroring what completeFortification does for co-located infantry.
+        if ((entity instanceof Infantry deployingInfantry)
+              && (deployingInfantry.getDugIn() != Infantry.DUG_IN_NONE)
+              && hex.containsTerrain(Terrains.FORTIFIED)) {
+            deployingInfantry.setDugIn(Infantry.DUG_IN_NONE);
+            LOGGER.debug("[Fortify] {}: cleared redundant dug-in - deployed onto a fortified hex",
+                  entity.getDisplayName());
         }
 
         entity.setDone(true);
@@ -400,50 +384,5 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         addReport(gameManager.doSetLocationsExposure(entity, hex, false, entity.getElevation()));
     }
 
-    /**
-     * Initializes building exits for a hex containing building terrain. This ensures that
-     * building hexes properly connect to adjacent building hexes with matching building type
-     * and building class.
-     *
-     * @param buildingCoords the coordinates of the building hex
-     * @param boardId the board ID where the building is located
-     */
-    private void initializeBuildingExits(Coords buildingCoords, int boardId) {
-        Hex hex = getGame().getBoard(boardId).getHex(buildingCoords);
-        if (hex == null || !hex.containsTerrain(Terrains.BUILDING)) {
-            return;
-        }
 
-        Terrain buildingTerrain = hex.getTerrain(Terrains.BUILDING);
-        if (buildingTerrain == null) {
-            return;
-        }
-
-        // Check each of the 6 directions
-        for (int direction = 0; direction < 6; direction++) {
-            Coords adjacentCoords = buildingCoords.translated(direction);
-            Hex adjacentHex = getGame().getBoard(boardId).getHex(adjacentCoords);
-
-            if (adjacentHex != null && adjacentHex.containsTerrain(Terrains.BUILDING)) {
-                Terrain adjacentBuilding = adjacentHex.getTerrain(Terrains.BUILDING);
-
-                // Buildings connect if they have the same building type (level)
-                // and the same building class
-                boolean sameType = (buildingTerrain.getLevel() == adjacentBuilding.getLevel());
-                boolean sameClass = (hex.terrainLevel(Terrains.BLDG_CLASS) == adjacentHex.terrainLevel(Terrains.BLDG_CLASS));
-
-                // Gun emplacements never connect (single hex buildings)
-                boolean isGunEmplacement = (hex.terrainLevel(Terrains.BLDG_CLASS) == IBuilding.GUN_EMPLACEMENT);
-
-                if (sameType && sameClass && !isGunEmplacement) {
-                    buildingTerrain.setExit(direction, true);
-                } else {
-                    buildingTerrain.setExit(direction, false);
-                }
-            } else {
-                // No building adjacent in this direction
-                buildingTerrain.setExit(direction, false);
-            }
-        }
-    }
 }

@@ -42,13 +42,13 @@ import java.util.function.Predicate;
 import megamek.common.Messages;
 import megamek.common.equipment.Mounted;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class InfantryBVCalculator extends BVCalculator {
 
-    Infantry infantry = (Infantry) entity;
+    ConvInfantry infantry = (ConvInfantry) entity;
 
     InfantryBVCalculator(Entity entity) {
         super(entity);
@@ -56,7 +56,7 @@ public class InfantryBVCalculator extends BVCalculator {
 
     @Override
     protected void processStructure() {
-        int men = Math.max(0, entity.getInternal(Infantry.LOC_INFANTRY));
+        int men = Math.max(0, entity.getInternal(ConvInfantry.LOC_INFANTRY));
         double dmgDivisor = infantry.calcDamageDivisor();
         defensiveValue = men * 1.5 * dmgDivisor;
         String calculation = men + " x 1.5";
@@ -117,7 +117,7 @@ public class InfantryBVCalculator extends BVCalculator {
         bvReport.addLine("Weapons:", "", "");
         final InfantryWeapon primaryWeapon = infantry.getPrimaryWeapon();
         final InfantryWeapon secondaryWeapon = infantry.getSecondaryWeapon();
-        int originalTroopers = Math.max(0, infantry.getOInternal(Infantry.LOC_INFANTRY));
+        int originalTroopers = Math.max(0, infantry.getOInternal(ConvInfantry.LOC_INFANTRY));
         int secondaryShooterCount = infantry.getSecondaryWeaponsPerSquad() * infantry.getSquadCount();
         int primaryShooterCount = originalTroopers - secondaryShooterCount;
 
@@ -134,8 +134,11 @@ public class InfantryBVCalculator extends BVCalculator {
             processWeapon(secondaryWeaponMounted, true, true, secondaryShooterCount);
         }
 
+        processDisposableWeapon(originalTroopers);
+
         if (infantry.canMakeAntiMekAttacks()) {
             bvReport.addLine("Anti-Mek:", "", "");
+            double preAntiMekBV = offensiveValue;
             if (primaryWeapon != null && !primaryWeapon.hasFlag(InfantryWeapon.F_INF_ARCHAIC)) {
                 Mounted<?> primaryWeaponMounted = Mounted.createMounted(infantry, primaryWeapon);
                 processWeapon(primaryWeaponMounted, true, true, primaryShooterCount);
@@ -143,6 +146,19 @@ public class InfantryBVCalculator extends BVCalculator {
             if (secondaryWeapon != null && !secondaryWeapon.hasFlag(InfantryWeapon.F_INF_ARCHAIC)) {
                 Mounted<?> secondaryWeaponMounted = Mounted.createMounted(infantry, secondaryWeapon);
                 processWeapon(secondaryWeaponMounted, true, true, secondaryShooterCount);
+            }
+
+            // Apply 1.2x multiplier to Anti-Mek BR if unit has Grappler or Climbing Claws (IO p.84)
+            double antiMekMultiplier = infantry.getAntiMekBvMultiplier();
+            if (antiMekMultiplier > 1.0) {
+                double antiMekBV = offensiveValue - preAntiMekBV;
+                double multipliedAntiMekBV = antiMekBV * antiMekMultiplier;
+                double bonus = multipliedAntiMekBV - antiMekBV;
+                offensiveValue += bonus;
+                bvReport.addLine("Anti-Mek x " + formatForReport(antiMekMultiplier) + " (" +
+                            infantry.getBestProstheticAntiMekName() + "):",
+                      formatForReport(antiMekBV) + " x " + formatForReport(antiMekMultiplier),
+                      "= +" + formatForReport(bonus));
             }
         }
 
@@ -155,7 +171,7 @@ public class InfantryBVCalculator extends BVCalculator {
                   "= +" + formatForReport(toxinBonus));
         }
 
-        int troopers = Math.max(0, infantry.getInternal(Infantry.LOC_INFANTRY));
+        int troopers = Math.max(0, infantry.getInternal(ConvInfantry.LOC_INFANTRY));
         if (troopers < originalTroopers) {
             bvReport.addLine("Surviving troopers:",
                   formatForReport(offensiveValue) + " x " + troopers + " / " + originalTroopers,
@@ -172,10 +188,51 @@ public class InfantryBVCalculator extends BVCalculator {
                   "= +" + formatForReport(tsmBonus));
         }
 
+        // Explosive Suicide Implant: +0.12 per trooper to Weapon Battle Value (IO pg 83)
+        // Only applies to conventional infantry
+        if (infantry.isConventionalInfantry() && infantry.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS)) {
+            double suicideImplantBonus = troopers * 0.12;
+            offensiveValue += suicideImplantBonus;
+            bvReport.addLine(Messages.getString("BV.SuicideImplant"),
+                  troopers + " x 0.12",
+                  "= +" + formatForReport(suicideImplantBonus));
+        }
+
+        // Prosthetic Enhancement adds damage bonus per trooper to Offensive BV (IO p.84)
+        // Only applies if the unit has the MD_PL_ENHANCED or MD_PL_I_ENHANCED ability
+        // Sum damage from both slots for BV calculation
+        boolean hasProstheticAbility = infantry.hasAbility(OptionsConstants.MD_PL_ENHANCED)
+              || infantry.hasAbility(OptionsConstants.MD_PL_I_ENHANCED);
+        if (hasProstheticAbility) {
+            double prostheticDamagePerTrooper = infantry.getProstheticDamageBonus();
+            if (prostheticDamagePerTrooper > 0) {
+                double prostheticBonus = troopers * prostheticDamagePerTrooper;
+                offensiveValue += prostheticBonus;
+                bvReport.addLine(Messages.getString("BV.ProstheticEnhancement"),
+                      troopers + " x " + formatForReport(prostheticDamagePerTrooper),
+                      "= +" + formatForReport(prostheticBonus));
+            }
+        }
+
+        // Prosthetic Tail, Enhanced: +0.2 per trooper to Offensive Battle Value (IO p.85)
+        // Only applies to conventional infantry
+        if (infantry.isConventionalInfantry() && infantry.hasAbility(OptionsConstants.MD_PL_TAIL)) {
+            double tailBonus = troopers * 0.2;
+            offensiveValue += tailBonus;
+            bvReport.addLine(Messages.getString("BV.ProstheticTail"),
+                  troopers + " x 0.2",
+                  "= +" + formatForReport(tailBonus));
+        }
+
+        // Note: Prosthetic Glider Wings (MD_PL_GLIDER) have no impact on BV per IO p.85
+        // Note: Prosthetic Powered Flight Wings (MD_PL_FLIGHT) DO affect BV per IO p.85 -
+        // the 2 VTOL MP is accounted for in getJumpMP() which contributes to the defensive
+        // TMM factor via processDefensiveFactor().
+
         bvReport.startTentativeSection();
         bvReport.addLine("Field Guns:", "", "");
         Predicate<Mounted<?>> weaponFilter = m -> countAsOffensiveWeapon(m)
-              && m.getLocation() == Infantry.LOC_FIELD_GUNS;
+              && m.getLocation() == ConvInfantry.LOC_FIELD_GUNS;
         double fieldGunBV = processWeaponSection(true, weaponFilter, true);
         bvReport.finalizeTentativeSection(fieldGunBV > 0);
 
@@ -196,32 +253,32 @@ public class InfantryBVCalculator extends BVCalculator {
         List<String> modifierList = new ArrayList<>();
         double typeModifier = 1;
 
-        if (infantry.hasSpecialization(Infantry.COMBAT_ENGINEERS)) {
+        if (infantry.hasSpecialization(ConvInfantry.COMBAT_ENGINEERS)) {
             typeModifier += 0.1;
             modifierList.add("Combat Eng.");
         }
 
-        if (infantry.hasSpecialization(Infantry.MARINES)) {
+        if (infantry.hasSpecialization(ConvInfantry.MARINES)) {
             typeModifier += 0.3;
             modifierList.add("Marines");
         }
 
-        if (infantry.hasSpecialization(Infantry.MOUNTAIN_TROOPS)) {
+        if (infantry.hasSpecialization(ConvInfantry.MOUNTAIN_TROOPS)) {
             typeModifier += 0.2;
             modifierList.add("Mtn. Troops");
         }
 
-        if (infantry.hasSpecialization(Infantry.PARATROOPS)) {
+        if (infantry.hasSpecialization(ConvInfantry.PARATROOPS)) {
             typeModifier += 0.1;
             modifierList.add("Paratroops");
         }
 
-        if (infantry.hasSpecialization(Infantry.SCUBA)) {
+        if (infantry.hasSpecialization(ConvInfantry.SCUBA)) {
             typeModifier += 0.1;
             modifierList.add("SCUBA");
         }
 
-        if (infantry.hasSpecialization(Infantry.XCT)) {
+        if (infantry.hasSpecialization(ConvInfantry.XCT)) {
             typeModifier += 0.1;
             modifierList.add("XCT");
         }
@@ -234,6 +291,25 @@ public class InfantryBVCalculator extends BVCalculator {
             baseBV *= typeModifier;
         }
         bvReport.addLine("--- Base Unit BV:", "" + (int) Math.round(baseBV));
+    }
+
+    /**
+     * Adds the platoon's Disposable Weapons (TO:AuE p.116, Corrected Sixth Printing) to the offensive Battle Value, if
+     * present. Disposable Weapons count at 0.2 x the Battle Value of all the platoon's disposable weapons (one per
+     * trooper). The surviving-trooper ratio is applied with the rest of the offensive value below.
+     *
+     * @param originalTroopers the platoon's full-strength trooper count
+     */
+    private void processDisposableWeapon(int originalTroopers) {
+        if (!infantry.hasDisposableWeapon()) {
+            return;
+        }
+        double weaponBV = infantry.getDisposableWeapon().getBV(infantry);
+        double disposableBV = weaponBV * originalTroopers * 0.2;
+        offensiveValue += disposableBV;
+        bvReport.addLine("Disposable Weapons:",
+              formatForReport(weaponBV) + " x " + originalTroopers + " x 0.2",
+              "= +" + formatForReport(disposableBV));
     }
 
     @Override

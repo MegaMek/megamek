@@ -64,6 +64,7 @@ public class CLLRM4 extends LRMWeapon {
         // But LRM Tech Base and Avail Ratings.
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
+        cost = 40000;
         rulesRefs = "231, TM";
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

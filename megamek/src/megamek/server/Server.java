@@ -66,10 +66,12 @@ import megamek.client.ui.util.PlayerColour;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
 import megamek.common.commandLine.AbstractCommandLineParser.ParseException;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.icons.Camouflage;
+import megamek.common.loaders.MapSettings;
 import megamek.common.net.connections.AbstractConnection;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.events.DisconnectedEvent;
@@ -588,6 +590,7 @@ public class Server implements Runnable {
     /**
      * Returns a free entity id. Perhaps this should be in Game instead.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getFreeEntityId() {
         return getGame().getNextEntityId();
     }
@@ -619,6 +622,8 @@ public class Server implements Runnable {
             gamePlayer.setNbrMFVibra(player.getNbrMFVibra());
             gamePlayer.setNbrMFActive(player.getNbrMFActive());
             gamePlayer.setNbrMFInferno(player.getNbrMFInferno());
+            gamePlayer.setNbrMFEMP(player.getNbrMFEMP());
+            gamePlayer.setNbrFortifiedHexes(player.getNbrFortifiedHexes());
             if (gamePlayer.getConstantInitBonus() != player.getConstantInitBonus()) {
                 sendServerChat("Player " +
                       gamePlayer.getName() +
@@ -950,6 +955,12 @@ public class Server implements Runnable {
 
         setGame(newGame);
 
+        // Saves created before mapName tracking was added land here with Board.BOARD_NAME_UNNAMED.
+        // Reconstruct the name from the saved MapSettings so the Ruler title and other UI surfaces
+        // identify the map. Only fills in when the board has the placeholder; saves with an explicit
+        // name keep theirs.
+        backfillBoardNameFromMapSettings(newGame);
+
         if (!sendInfo) {
             return true;
         }
@@ -959,6 +970,50 @@ public class Server implements Runnable {
             sendCurrentInfo(conn.getId());
         }
         return true;
+    }
+
+    /**
+     * If the deserialized game's board has the placeholder map name (saves predate the name fix), reconstructs a
+     * display name from the saved MapSettings' selected board file names. The actual board hex data is unchanged; only
+     * the displayable name is filled in.
+     */
+    private static void backfillBoardNameFromMapSettings(Game game) {
+        Board board = game.getBoard();
+        if (board == null || !Board.BOARD_NAME_UNNAMED.equals(board.getBoardName())) {
+            return;
+        }
+        MapSettings ms = game.getMapSettings();
+        if (ms == null) {
+            return;
+        }
+        List<String> selected = ms.getBoardsSelectedVector();
+        if (selected == null || selected.isEmpty()) {
+            return;
+        }
+        LinkedHashSet<String> names = new LinkedHashSet<>();
+        for (String raw : selected) {
+            if (raw == null) {
+                continue;
+            }
+            String name = raw;
+            if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
+                name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
+            }
+            // Skip placeholders that don't correspond to an on-disk file
+            if (MapSettings.BOARD_GENERATED.equals(name)
+                  || MapSettings.BOARD_RANDOM.equals(name)
+                  || name.startsWith(MapSettings.BOARD_SURPRISE)) {
+                continue;
+            }
+            if (!name.isBlank()) {
+                names.add(name);
+            }
+        }
+        if (names.isEmpty()) {
+            return;
+        }
+        String reconstructed = names.size() == 1 ? names.iterator().next() : String.join(" + ", names);
+        board.setMapName(reconstructed);
     }
 
     public void saveGame(String fileName) {

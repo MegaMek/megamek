@@ -54,8 +54,8 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.units.EntityWeightClass;
 import megamek.common.loaders.MekSummary;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.units.UnitRole;
 
 /**
@@ -111,7 +111,11 @@ public class AnalyzeFormationDialog extends JDialog {
         gbc.gridwidth = 3;
         gbc.weightx = 0;
         gbc.weighty = 0;
-        panAvailable.add(new JLabel(Messages.getString("AnalyzeFormationDialog.formation") + ft.getName()), gbc);
+        JLabel formationLabel = new JLabel(Messages.getString("AnalyzeFormationDialog.formation") + ft.getName());
+        if (Messages.keyExists(ft.getTooltipKey())) {
+            formationLabel.setToolTipText(Messages.getString(ft.getTooltipKey()));
+        }
+        panAvailable.add(formationLabel, gbc);
 
         gbc.gridy++;
         StringBuilder sb = new StringBuilder(Messages.getString("AnalyzeFormationDialog.weightClassRange"));
@@ -167,7 +171,7 @@ public class AnalyzeFormationDialog extends JDialog {
             panAvailable.add(new JLabel(String.valueOf(units.stream().filter(c::matches).count())), gbc);
         });
 
-        if (ft.getGroupingCriteria() != null && ft.getGroupingCriteria().appliesTo(params.get(0).getUnitType())) {
+        if (ft.getGroupingCriteria() != null && ft.getGroupingCriteria().appliesTo(params.getFirst().getUnitType())) {
             gbc.gridy++;
             gbc.gridx = 0;
             gbc.anchor = GridBagConstraints.CENTER;
@@ -248,7 +252,7 @@ public class AnalyzeFormationDialog extends JDialog {
             }
         }
         if (otherCriteriaChecks.size() > allConstraints.size() &&
-              otherCriteriaChecks.get(otherCriteriaChecks.size() - 1).isSelected()) {
+              otherCriteriaChecks.getLast().isSelected()) {
             filters.add(new UnitTableRowFilter(formationType.getGroupingCriteria()));
         }
         tableSorter.setRowFilter(RowFilter.andFilter(filters));

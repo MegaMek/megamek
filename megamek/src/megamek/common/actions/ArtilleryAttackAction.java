@@ -180,6 +180,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
         return this.turnsTilHit;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setTurnsTilHit(int turnsTilHit) {
         this.turnsTilHit = turnsTilHit;
     }

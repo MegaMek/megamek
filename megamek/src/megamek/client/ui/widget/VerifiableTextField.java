@@ -69,10 +69,12 @@ public class VerifiableTextField extends JTextField implements FocusListener {
     private Boolean required = null;
     private String oldToolTip = null;
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public VerifiableTextField() throws HeadlessException {
         this(null, 0);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public VerifiableTextField(String text) throws HeadlessException {
         this(text, 0);
     }
@@ -97,6 +99,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
     /**
      * @return TRUE if all the text in this control will be automatically selected when it receives the focus.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isSelectAllTextOnGotFocus() {
         return selectAllTextOnGotFocus;
     }
@@ -225,6 +228,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
      *
      * @param verifier The {@link DataVerifier} to be removed.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeVerifier(DataVerifier verifier) {
         verifiers.remove(verifier);
     }
@@ -267,6 +271,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         return Integer.parseInt(getText().trim());
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getOldToolTip() {
         return oldToolTip;
     }

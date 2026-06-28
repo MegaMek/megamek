@@ -42,4 +42,9 @@ class OrFilterToken extends OperatorFT {
     public String toString() {
         return "or";
     }
+
+    @Override
+    public String toJson() {
+        return "or";
+    }
 }

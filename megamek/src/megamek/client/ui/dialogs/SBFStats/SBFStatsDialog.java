@@ -57,8 +57,8 @@ import megamek.client.ui.dialogs.abstractDialogs.AbstractDialog;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.game.Game;
 import megamek.common.force.Force;
+import megamek.common.game.Game;
 import megamek.common.jacksonAdapters.MMUWriter;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
@@ -208,7 +208,7 @@ public class SBFStatsDialog extends AbstractDialog {
         var fileChooser = new JFileChooser(".");
         fileChooser.setDialogTitle(Messages.getString("Save.text"));
         fileChooser.setFileFilter(new FileNameExtensionFilter("MUL files", "mmu"));
-        fileChooser.setSelectedFile(new File(formations.get(0).generalName() + ".mmu"));
+        fileChooser.setSelectedFile(new File(formations.getFirst().generalName() + ".mmu"));
         int returnVal = fileChooser.showSaveDialog(getParent());
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fileChooser.getSelectedFile() == null)) {
             return;

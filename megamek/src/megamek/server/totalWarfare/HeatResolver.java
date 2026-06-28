@@ -38,8 +38,10 @@ import java.util.Vector;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.CriticalSlot;
 import megamek.common.Hex;
+import megamek.common.Messages;
 import megamek.common.Report;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
@@ -89,6 +91,10 @@ class HeatResolver extends AbstractTWRuleHandler {
             if (entity.getTaserInterferenceHeat()) {
                 entity.heatBuildup += 5;
             }
+            boolean hasEMPInterferenceHeat = entity.hasEMPInterferenceHeat();
+            if (hasEMPInterferenceHeat) {
+                entity.heatBuildup += 5;
+            }
             if (entity.hasDamagedRHS() && entity.weaponFired()) {
                 entity.heatBuildup += 1;
             }
@@ -99,6 +105,24 @@ class HeatResolver extends AbstractTWRuleHandler {
             int radicalHSBonus = 0;
             Vector<Report> rhsReports = new Vector<>();
             Vector<Report> heatEffectsReports = new Vector<>();
+
+            // Report EMP interference heat and duration (must be after heatEffectsReports is created)
+            // Only for Meks/Aero - non-Meks handle this separately before their continue
+            if (hasEMPInterferenceHeat) {
+                report = new Report(2574);
+                report.subject = entity.getId();
+                heatEffectsReports.add(report);
+
+                // Also report interference duration (only when heat applies, i.e., Meks/Aero)
+                if (entity.getEMPInterferenceRounds() > 0) {
+                    report = new Report(2575);
+                    report.subject = entity.getId();
+                    report.add(entity.getShortName(), true);
+                    report.add(entity.getEMPInterferenceRounds());
+                    heatEffectsReports.add(report);
+                }
+            }
+
             if (entity.hasActivatedRadicalHS()) {
                 if (entity instanceof Mek) {
                     radicalHSBonus = ((Mek) entity).getActiveSinks();
@@ -234,7 +258,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                     entity.setBATaserShutdown(false);
                     if (entity.isShutDown() &&
                           !entity.isManualShutdown() &&
-                          (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
+                          (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN) &&
+                          (entity.getEMPShutdownRounds() == 0)) {
                         entity.setShutDown(false);
                         report = new Report(5045);
                         report.subject = entity.getId();
@@ -252,6 +277,27 @@ class HeatResolver extends AbstractTWRuleHandler {
                         entity.setBATaserShutdown(false);
                     }
                 }
+
+                // Report remaining EMP shutdown turns (from EMP mine effect)
+                if (entity.isShutDown() && (entity.getEMPShutdownRounds() > 0)) {
+                    report = new Report(2573);
+                    report.subject = entity.getId();
+                    report.add(entity.getShortName(), true);
+                    report.add(entity.getEMPShutdownRounds());
+                    heatEffectsReports.add(report);
+                }
+
+                // Report remaining EMP interference turns (from EMP mine effect)
+                if (entity.getEMPInterferenceRounds() > 0) {
+                    report = new Report(2575);
+                    report.subject = entity.getId();
+                    report.add(entity.getShortName(), true);
+                    report.add(entity.getEMPInterferenceRounds());
+                    heatEffectsReports.add(report);
+                }
+
+                // Add any heat effects reports for non-Meks before continuing
+                gameManager.getMainPhaseReport().addAll(heatEffectsReports);
 
                 continue;
             }
@@ -274,11 +320,12 @@ class HeatResolver extends AbstractTWRuleHandler {
             }
 
             // engine hits add a lot of heat, provided the engine is on
-            entity.heatBuildup += entity.getEngineCritHeat();
+            entity.changeHeatBuildup(entity.getEngineCritHeat(), Messages.getString("HeatBreakdown.engineHits"));
 
             // If a Mek had an active Stealth suite, add 10 heat.
             if (entity.isStealthOn()) {
-                entity.heatBuildup += ArmorType.STEALTH_ARMOR_HEAT;
+                entity.changeHeatBuildup(ArmorType.STEALTH_ARMOR_HEAT,
+                      Messages.getString("HeatBreakdown.stealthArmor"));
                 report = new Report(5015);
                 report.subject = entity.getId();
                 heatEffectsReports.add(report);
@@ -286,7 +333,7 @@ class HeatResolver extends AbstractTWRuleHandler {
 
             // Greg: Nova CEWS If a Mek had an active Nova suite, add 2 heat.
             if (entity.hasActiveNovaCEWS()) {
-                entity.heatBuildup += 2;
+                entity.changeHeatBuildup(2, Messages.getString("HeatBreakdown.novaCEWS"));
                 report = new Report(5013);
                 report.subject = entity.getId();
                 heatEffectsReports.add(report);
@@ -294,7 +341,7 @@ class HeatResolver extends AbstractTWRuleHandler {
 
             // void sig adds 10 heat
             if (entity.isVoidSigOn()) {
-                entity.heatBuildup += 10;
+                entity.changeHeatBuildup(10, Messages.getString("HeatBreakdown.voidSignature"));
                 report = new Report(5016);
                 report.subject = entity.getId();
                 heatEffectsReports.add(report);
@@ -302,7 +349,7 @@ class HeatResolver extends AbstractTWRuleHandler {
 
             // null sig adds 10 heat
             if (entity.isNullSigOn()) {
-                entity.heatBuildup += 10;
+                entity.changeHeatBuildup(10, Messages.getString("HeatBreakdown.nullSignature"));
                 report = new Report(5017);
                 report.subject = entity.getId();
                 heatEffectsReports.add(report);
@@ -310,7 +357,7 @@ class HeatResolver extends AbstractTWRuleHandler {
 
             // chameleon polarization field adds 6
             if (entity.isChameleonShieldOn()) {
-                entity.heatBuildup += 6;
+                entity.changeHeatBuildup(6, Messages.getString("HeatBreakdown.chameleonShield"));
                 report = new Report(5014);
                 report.subject = entity.getId();
                 heatEffectsReports.add(report);
@@ -355,7 +402,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                     report.subject = entity.getId();
                     report.add(vibroHeat);
                     heatEffectsReports.add(report);
-                    entity.heatBuildup += vibroHeat;
+                    entity.changeHeatBuildup(vibroHeat, Messages.getString("HeatBreakdown.vibroblades"));
                 }
             }
 
@@ -373,7 +420,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                 report.subject = entity.getId();
                 report.add(capHeat);
                 heatEffectsReports.add(report);
-                entity.heatBuildup += capHeat;
+                entity.changeHeatBuildup(capHeat, Messages.getString("HeatBreakdown.chargedCapacitors"));
             }
 
             // Add heat from external sources to the heat buildup
@@ -382,10 +429,12 @@ class HeatResolver extends AbstractTWRuleHandler {
             if (max_ext_heat < 0) {
                 max_ext_heat = 15; // standard value specified in TW p.159
             }
-            entity.heatBuildup += Math.min(max_ext_heat, entity.heatFromExternal);
+            entity.changeHeatBuildup(Math.min(max_ext_heat, entity.heatFromExternal),
+                  Messages.getString("HeatBreakdown.externalHeat"));
             entity.heatFromExternal = 0;
             // remove heat we cooled down
-            entity.heatBuildup -= Math.min(9, entity.coolFromExternal);
+            entity.changeHeatBuildup(-Math.min(9, entity.coolFromExternal),
+                  Messages.getString("HeatBreakdown.cooling"));
             entity.coolFromExternal = 0;
 
             // Combat computers help manage heat
@@ -395,7 +444,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                 report.subject = entity.getId();
                 report.add(reduce);
                 heatEffectsReports.add(report);
-                entity.heatBuildup -= reduce;
+                entity.changeHeatBuildup(-reduce, Messages.getString("HeatBreakdown.combatComputer"));
             }
 
             if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_FLAWED_COOLING) && mek.isCoolingFlawActive()) {
@@ -404,7 +453,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                 report.subject = entity.getId();
                 report.add(flaw);
                 heatEffectsReports.add(report);
-                entity.heatBuildup += flaw;
+                entity.changeHeatBuildup(flaw, Messages.getString("HeatBreakdown.flawedCooling"));
             }
             // if heat build up is negative due to temperature, set it to 0
             // for prettier turn reports
@@ -417,6 +466,18 @@ class HeatResolver extends AbstractTWRuleHandler {
 
             // how much heat can we sink?
             int toSink = entity.getHeatCapacityWithWater() + radicalHSBonus;
+            // Record where the dissipation comes from for the heat-report "sinks" tooltip.
+            entity.getHeatBreakdown()
+                  .addDissipation(entity.getHeatCapacity(), Messages.getString("HeatBreakdown.heatSinks"));
+            int submergedDissipation = entity.getHeatCapacityWithWater() - entity.getHeatCapacity();
+            if (submergedDissipation > 0) {
+                entity.getHeatBreakdown()
+                      .addDissipation(submergedDissipation, Messages.getString("HeatBreakdown.submerged"));
+            }
+            if (radicalHSBonus > 0) {
+                entity.getHeatBreakdown()
+                      .addDissipation(radicalHSBonus, Messages.getString("HeatBreakdown.radicalHeatSink"));
+            }
 
             if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE) &&
                   entity.getCoolantFailureAmount() > 0) {
@@ -428,6 +489,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             }
 
             // should we use a coolant pod?
+            int dissipationBeforeCoolantPod = toSink;
             int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
             int possibleSinkage = mek.getNumberOfSinks();
             for (Mounted<?> m : entity.getEquipment()) {
@@ -462,17 +524,23 @@ class HeatResolver extends AbstractTWRuleHandler {
                 }
             }
 
+            if (toSink > dissipationBeforeCoolantPod) {
+                entity.getHeatBreakdown()
+                      .addDissipation(toSink - dissipationBeforeCoolantPod,
+                            Messages.getString("HeatBreakdown.coolantPod"));
+            }
             toSink = Math.min(toSink, entity.heat);
             entity.heat -= toSink;
             report = new Report(5035);
             report.subject = entity.getId();
             report.addDesc(entity);
-            report.add(entity.heatBuildup);
-            report.add(toSink);
+            addHeatBuildupValue(report, entity);
+            addHeatDissipationValue(report, entity, toSink);
             Color color = GUIPreferences.getInstance().getColorForHeat(entity.heat, Color.BLACK);
             report.add(Report.bold(report.fgColor(color, String.valueOf(entity.heat))));
             addReport(report);
             entity.heatBuildup = 0;
+            entity.clearHeatBreakdown();
             gameManager.getMainPhaseReport().addAll(rhsReports);
             gameManager.getMainPhaseReport().addAll(heatEffectsReports);
 
@@ -524,7 +592,8 @@ class HeatResolver extends AbstractTWRuleHandler {
             // heat effects: start up
             if ((entity.heat < autoShutDownHeat) && entity.isShutDown() && !entity.isStalled()) {
                 if ((entity.getTaserShutdownRounds() == 0) &&
-                      (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
+                      (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN) &&
+                      (entity.getEMPShutdownRounds() == 0)) {
                     if ((entity.heat < 14) && !(entity.isManualShutdown())) {
                         // automatically starts up again
                         entity.setShutDown(false);
@@ -587,6 +656,16 @@ class HeatResolver extends AbstractTWRuleHandler {
                             entity.setBATaserShutdown(false);
                         }
                     }
+
+                    // Report remaining EMP shutdown turns (from EMP mine effect)
+                    if (entity.isShutDown() && (entity.getEMPShutdownRounds() > 0)) {
+                        report = new Report(2573);
+                        report.subject = entity.getId();
+                        report.add(entity.getShortName(), true);
+                        report.add(entity.getEMPShutdownRounds());
+                        addReport(report);
+                    }
+                    // Note: EMP interference duration is reported earlier with heat effects
                 }
             }
 
@@ -973,6 +1052,13 @@ class HeatResolver extends AbstractTWRuleHandler {
             vPhaseReport.add(report);
         }
 
+        // Report EMP interference heat (heat was already added in main loop)
+        if (entity.hasEMPInterferenceHeat()) {
+            report = new Report(2574);
+            report.subject = entity.getId();
+            vPhaseReport.add(report);
+        }
+
         // Add or subtract heat due to extreme temperatures TO:AR p60
         adjustHeatExtremeTemp(entity, vPhaseReport);
 
@@ -983,7 +1069,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             report.subject = entity.getId();
             report.add(reduce);
             vPhaseReport.add(report);
-            entity.heatBuildup -= reduce;
+            entity.changeHeatBuildup(-reduce, Messages.getString("HeatBreakdown.combatComputer"));
         }
 
         // Add heat from external sources to the heat buildup
@@ -992,10 +1078,11 @@ class HeatResolver extends AbstractTWRuleHandler {
         if (max_ext_heat < 0) {
             max_ext_heat = 15; // standard value specified in TW p.159
         }
-        entity.heatBuildup += Math.min(max_ext_heat, entity.heatFromExternal);
+        entity.changeHeatBuildup(Math.min(max_ext_heat, entity.heatFromExternal),
+              Messages.getString("HeatBreakdown.externalHeat"));
         entity.heatFromExternal = 0;
         // remove heat we cooled down
-        entity.heatBuildup -= Math.min(9, entity.coolFromExternal);
+        entity.changeHeatBuildup(-Math.min(9, entity.coolFromExternal), Messages.getString("HeatBreakdown.cooling"));
         entity.coolFromExternal = 0;
 
         // add the heat we've built up so far.
@@ -1003,8 +1090,21 @@ class HeatResolver extends AbstractTWRuleHandler {
 
         // how much heat can we sink?
         int toSink = entity.getHeatCapacityWithWater() + radicalHSBonus;
+        // Record where the dissipation comes from for the heat-report "sinks" tooltip.
+        entity.getHeatBreakdown()
+              .addDissipation(entity.getHeatCapacity(), Messages.getString("HeatBreakdown.heatSinks"));
+        int submergedDissipation = entity.getHeatCapacityWithWater() - entity.getHeatCapacity();
+        if (submergedDissipation > 0) {
+            entity.getHeatBreakdown()
+                  .addDissipation(submergedDissipation, Messages.getString("HeatBreakdown.submerged"));
+        }
+        if (radicalHSBonus > 0) {
+            entity.getHeatBreakdown()
+                  .addDissipation(radicalHSBonus, Messages.getString("HeatBreakdown.radicalHeatSink"));
+        }
 
         // should we use a coolant pod?
+        int dissipationBeforeCoolantPod = toSink;
         int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
         int possibleSinkage = ((Aero) entity).getHeatSinks();
         for (Mounted<?> mounted : entity.getEquipment()) {
@@ -1040,16 +1140,21 @@ class HeatResolver extends AbstractTWRuleHandler {
             }
         }
 
+        if (toSink > dissipationBeforeCoolantPod) {
+            entity.getHeatBreakdown()
+                  .addDissipation(toSink - dissipationBeforeCoolantPod, Messages.getString("HeatBreakdown.coolantPod"));
+        }
         toSink = Math.min(toSink, entity.heat);
         entity.heat -= toSink;
         report = new Report(5035);
         report.subject = entity.getId();
         report.addDesc(entity);
-        report.add(entity.heatBuildup);
-        report.add(toSink);
+        addHeatBuildupValue(report, entity);
+        addHeatDissipationValue(report, entity, toSink);
         report.add(entity.heat);
         vPhaseReport.add(report);
         entity.heatBuildup = 0;
+        entity.clearHeatBreakdown();
         vPhaseReport.addAll(rhsReports);
 
         // add in the effects of heat
@@ -1086,9 +1191,10 @@ class HeatResolver extends AbstractTWRuleHandler {
 
         // heat effects: start up
         if ((entity.heat < autoShutDownHeat) && entity.isShutDown()) {
-            // only start up if not shut down by taser or a TSEMP
+            // only start up if not shut down by taser, TSEMP, or EMP mine
             if ((entity.getTaserShutdownRounds() == 0)
-                  && (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
+                  && (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)
+                  && (entity.getEMPShutdownRounds() == 0)) {
                 if ((entity.heat < 14) && !entity.isManualShutdown()) {
                     // automatically starts up again
                     entity.setShutDown(false);
@@ -1151,6 +1257,24 @@ class HeatResolver extends AbstractTWRuleHandler {
                         }
                         entity.setBATaserShutdown(false);
                     }
+                }
+
+                // Report remaining EMP shutdown turns (from EMP mine effect)
+                if (entity.isShutDown() && (entity.getEMPShutdownRounds() > 0)) {
+                    report = new Report(2573);
+                    report.subject = entity.getId();
+                    report.add(entity.getShortName(), true);
+                    report.add(entity.getEMPShutdownRounds());
+                    vPhaseReport.add(report);
+                }
+
+                // Report remaining EMP interference turns (from EMP mine effect)
+                if (entity.getEMPInterferenceRounds() > 0) {
+                    report = new Report(2575);
+                    report.subject = entity.getId();
+                    report.add(entity.getShortName(), true);
+                    report.add(entity.getEMPInterferenceRounds());
+                    vPhaseReport.add(report);
                 }
             }
         }
@@ -1342,6 +1466,41 @@ class HeatResolver extends AbstractTWRuleHandler {
         report.subject = entity.getId();
         report.addDesc(entity);
         return report;
+    }
+
+    /**
+     * Adds the unit's net heat-buildup value to the heat-phase report. When an itemized breakdown was tracked this
+     * turn, the value is made a hover/click link whose tooltip lists every contribution; otherwise it is added as a
+     * plain value.
+     *
+     * @param report the heat-phase report being assembled (report 5035)
+     * @param entity the unit whose heat buildup is being reported
+     */
+    private static void addHeatBuildupValue(Report report, Entity entity) {
+        String tooltip = entity.getHeatBreakdown().buildupTooltip(entity.heatBuildup);
+        if (!StringUtility.isNullOrBlank(tooltip)) {
+            report.addDataWithTooltip(entity.heatBuildup, tooltip);
+        } else {
+            report.add(entity.heatBuildup);
+        }
+    }
+
+    /**
+     * Adds the unit's heat-dissipation value (the "sinks N heat" figure) to the heat-phase report. When an itemized
+     * dissipation breakdown was recorded this turn, the value is made a hover/click link whose tooltip lists each
+     * dissipation source; otherwise it is added as a plain value.
+     *
+     * @param report the heat-phase report being assembled (report 5035)
+     * @param entity the unit whose dissipation is being reported
+     * @param toSink the heat actually dissipated this turn
+     */
+    private static void addHeatDissipationValue(Report report, Entity entity, int toSink) {
+        String tooltip = entity.getHeatBreakdown().dissipationTooltip();
+        if (!StringUtility.isNullOrBlank(tooltip)) {
+            report.addDataWithTooltip(toSink, tooltip);
+        } else {
+            report.add(toSink);
+        }
     }
 
 }

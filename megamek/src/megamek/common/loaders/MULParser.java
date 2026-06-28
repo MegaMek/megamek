@@ -33,6 +33,8 @@
 
 package megamek.common.loaders;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -59,6 +61,7 @@ import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.compute.Compute;
 import megamek.common.enums.Gender;
+import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.exceptions.LocationFullException;
@@ -73,8 +76,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import static megamek.common.bays.Bay.UNSET_BAY;
 
 /**
  * Class for reading in and parsing MUL XML files. The MUL xsl is defined in the docs' directory.
@@ -180,6 +181,12 @@ public class MULParser {
     public static final String ATTR_ADVANTAGES = "advantages";
     public static final String ATTR_EDGE = "edge";
     public static final String ATTR_IMPLANTS = "implants";
+    public static final String ATTR_EI_IMPLANTS = "eiImplants";
+    public static final String ATTR_EI_MODE = "eiMode";
+    public static final String ATTR_PROSTHETIC_ENHANCEMENT_1 = "prostheticEnhancement1";
+    public static final String ATTR_PROSTHETIC_ENHANCEMENT_1_COUNT = "prostheticEnhancement1Count";
+    public static final String ATTR_PROSTHETIC_ENHANCEMENT_2 = "prostheticEnhancement2";
+    public static final String ATTR_PROSTHETIC_ENHANCEMENT_2_COUNT = "prostheticEnhancement2Count";
     public static final String ATTR_QUIRKS = "quirks";
     public static final String ATTR_TROOPER_MISS = "trooperMiss";
     public static final String ATTR_DRIVER = "driver";
@@ -205,10 +212,12 @@ public class MULParser {
     public static final String ATTR_COND_EJECT_ENGINE = "condejectengine";
     public static final String ATTR_COND_EJECT_CT_DEST = "condejectctdest";
     public static final String ATTR_COND_EJECT_HEAD_SHOT = "condejectheadshot";
+    public static final String ATTR_DIC_DISABLED = "dicdisabled";
     public static final String ATTR_EJECTED = "ejected";
     public static final String ATTR_INDEX = "index";
     public static final String ATTR_IS_DESTROYED = "isDestroyed";
     public static final String ATTR_IS_REPAIRABLE = "isRepairable";
+    public static final String ATTR_ARMOR_HIT = "armorHit";
     public static final String ATTR_POINTS = "points";
     public static final String ATTR_TYPE = "type";
     public static final String ATTR_SHOTS = "shots";
@@ -245,6 +254,7 @@ public class MULParser {
     public static final String ATTR_BA_MEA_TYPE_NAME = "baMEATypeName";
     public static final String ATTR_KILLED = "killed";
     public static final String ATTR_KILLER = "killer";
+    public static final String ATTR_DAMAGE_TAKEN = "damageTaken";
     private static final String EXTRA_DATA = "extraData";
     public static final String ATTR_ARMOR_DIVISOR = "armorDivisor";
     public static final String ATTR_ARMOR_ENC = "armorEncumbering";
@@ -254,6 +264,8 @@ public class MULParser {
     public static final String ATTR_SNEAK_IR = "sneakIR";
     public static final String ATTR_SNEAK_ECM = "sneakECM";
     public static final String ATTR_INF_SPEC = "infantrySpecializations";
+    public static final String ATTR_DISPOSABLE_WEAPON = "disposableWeapon";
+    public static final String ATTR_DISPOSABLE_WEAPON_FIRED = "disposableWeaponFired";
     public static final String ATTR_INF_SQUAD_NUM = "squadNum";
     public static final String ATTR_RFMG = "rfmg";
     public static final String ATTR_LINK = "link";
@@ -286,6 +298,7 @@ public class MULParser {
     public static final String VALUE_NONE = "None";
     public static final String VALUE_HIT = "hit";
     public static final String VALUE_CONSOLE = "console";
+    public static final String VALUE_SQUADRON = "Squadron";
 
     /**
      * Stores all the Entity's read in. This is for general use saving and loading to the chat lounge
@@ -554,6 +567,13 @@ public class MULParser {
         String model = entityNode.getAttribute(ATTR_MODEL);
 
         Entity entity = null;
+
+        // First check if this is a squadron - if so, just create a squadron instead of attempting to load one.
+        if (entityNode.getAttribute(ATTR_TYPE).equals(VALUE_SQUADRON)) {
+            entity = new FighterSquadron();
+            entity.setChassis(chassis);
+            entity.setModel(model);
+        }
 
         // Attempt to load the entity from the data embedded into the MUL file
         try {
@@ -919,7 +939,7 @@ public class MULParser {
         }
 
         // Load some values for conventional infantry
-        if (entity.isConventionalInfantry() && entity instanceof Infantry inf) {
+        if (entity instanceof ConvInfantry inf) {
             String armorDiv = entityTag.getAttribute(ATTR_ARMOR_DIVISOR);
             if (!armorDiv.isBlank()) {
                 inf.setCustomArmorDamageDivisor(Double.parseDouble(armorDiv));
@@ -952,6 +972,22 @@ public class MULParser {
             String infSpec = entityTag.getAttribute(ATTR_INF_SPEC);
             if (!infSpec.isBlank()) {
                 inf.setSpecializations(Integer.parseInt(infSpec));
+            }
+
+            // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): the design's weapons are re-derived from the
+            // cache, but the disposable is not part of that, so restore it (and whether it was already fired) from the
+            // saved attributes. A platoon carries at most one Disposable Weapon - equipDisposableWeapon() replaces any
+            // existing disposable mount - so the single mount found below is the one just equipped.
+            String disposableName = entityTag.getAttribute(ATTR_DISPOSABLE_WEAPON);
+            if (!disposableName.isBlank() && (EquipmentType.get(disposableName) instanceof InfantryWeapon disposable)) {
+                inf.equipDisposableWeapon(disposable);
+                if (!entityTag.getAttribute(ATTR_DISPOSABLE_WEAPON_FIRED).isBlank()) {
+                    inf.getWeaponList()
+                          .stream()
+                          .filter(WeaponMounted::isDisposableWeapon)
+                          .findFirst()
+                          .ifPresent(weaponMounted -> weaponMounted.setFired(true));
+                }
             }
 
             String infSquadNum = entityTag.getAttribute(ATTR_INF_SQUAD_NUM);
@@ -1215,6 +1251,23 @@ public class MULParser {
             }
         }
 
+        // EI Implants are loaded unconditionally - they require EI Interface equipment which is
+        // the primary gatekeeper, not a game option (EI is official Clan tech from IO p.69)
+        if (attributes.containsKey(ATTR_EI_IMPLANTS) && !attributes.get(ATTR_EI_IMPLANTS).isBlank()) {
+            StringTokenizer st = new StringTokenizer(attributes.get(ATTR_EI_IMPLANTS), "::");
+            while (st.hasMoreTokens()) {
+                String eiImplant = st.nextToken();
+                String eiImplantName = Crew.parseAdvantageName(eiImplant);
+                Object value = Crew.parseAdvantageValue(eiImplant);
+
+                try {
+                    crew.getOptions().getOption(eiImplantName).setValue(value);
+                } catch (Exception e) {
+                    warning.append("Error restoring EI implant: ").append(eiImplant).append(".\n");
+                }
+            }
+        }
+
         if (attributes.containsKey(ATTR_EJECTED) && !attributes.get(ATTR_EJECTED).isBlank()) {
             crew.setEjected(Boolean.parseBoolean(attributes.get(ATTR_EJECTED)));
         }
@@ -1245,6 +1298,76 @@ public class MULParser {
                 if (attributes.containsKey(ATTR_COND_EJECT_HEAD_SHOT) && !attributes.get(ATTR_COND_EJECT_HEAD_SHOT)
                       .isBlank()) {
                     mek.setCondEjectHeadshot(Boolean.parseBoolean(attributes.get(ATTR_COND_EJECT_HEAD_SHOT)));
+                }
+
+                if (attributes.containsKey(ATTR_DIC_DISABLED) && !attributes.get(ATTR_DIC_DISABLED).isBlank()) {
+                    mek.setDICDisabled(Boolean.parseBoolean(attributes.get(ATTR_DIC_DISABLED)));
+                }
+            }
+
+            // If pilot has EI Implant, ensure entity has EI Interface equipment (IO p.69)
+            // This handles MUL files where the pilot was configured with EI Implant
+            if (crew.getOptions().booleanOption(OptionsConstants.MD_EI_IMPLANT) && !entity.hasEiCockpit()) {
+                // Only add EI Interface for Meks and BA with Clan or Mixed tech (per IO p.69)
+                // ProtoMeks already have EI Interface added in BLKProtoMekFile
+                boolean canHaveEI = (entity.isMek() || entity.isBattleArmor())
+                      && (entity.isClan() || entity.isMixedTech());
+                if (canHaveEI) {
+                    try {
+                        EquipmentType eiType = EquipmentType.get("EIInterface");
+                        if (eiType != null) {
+                            entity.addEquipment(eiType, Entity.LOC_NONE);
+                        }
+                    } catch (LocationFullException e) {
+                        // Should not happen for 0-slot equipment
+                        warning.append("Could not add EI Interface equipment.\n");
+                    }
+                }
+            }
+
+            // Restore EI Interface equipment mode (skip for ProtoMeks - they're always on per IO:AE p.69)
+            if (!entity.isProtoMek() && attributes.containsKey(ATTR_EI_MODE)
+                  && !attributes.get(ATTR_EI_MODE).isBlank()) {
+                String eiModeName = attributes.get(ATTR_EI_MODE);
+                for (Mounted<?> m : entity.getMisc()) {
+                    if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                        // Find the mode index that matches the saved mode name
+                        for (int i = 0; i < m.getType().getModesCount(); i++) {
+                            if (m.getType().getMode(i).getName().equals(eiModeName)) {
+                                m.setMode(i);
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // Parse prosthetic enhancement data for infantry (IO p.84)
+            if (entity instanceof ConvInfantry infantry) {
+                if (attributes.containsKey(ATTR_PROSTHETIC_ENHANCEMENT_1)
+                      && !attributes.get(ATTR_PROSTHETIC_ENHANCEMENT_1).isBlank()) {
+                    ProstheticEnhancementType enhancement = ProstheticEnhancementType.parseFromString(
+                          attributes.get(ATTR_PROSTHETIC_ENHANCEMENT_1));
+                    if (enhancement != null) {
+                        infantry.setProstheticEnhancement1(enhancement);
+                        if (attributes.containsKey(ATTR_PROSTHETIC_ENHANCEMENT_1_COUNT)) {
+                            infantry.setProstheticEnhancement1Count(
+                                  MathUtility.parseInt(attributes.get(ATTR_PROSTHETIC_ENHANCEMENT_1_COUNT), 1));
+                        }
+                    }
+                }
+                if (attributes.containsKey(ATTR_PROSTHETIC_ENHANCEMENT_2)
+                      && !attributes.get(ATTR_PROSTHETIC_ENHANCEMENT_2).isBlank()) {
+                    ProstheticEnhancementType enhancement = ProstheticEnhancementType.parseFromString(
+                          attributes.get(ATTR_PROSTHETIC_ENHANCEMENT_2));
+                    if (enhancement != null) {
+                        infantry.setProstheticEnhancement2(enhancement);
+                        if (attributes.containsKey(ATTR_PROSTHETIC_ENHANCEMENT_2_COUNT)) {
+                            infantry.setProstheticEnhancement2Count(
+                                  MathUtility.parseInt(attributes.get(ATTR_PROSTHETIC_ENHANCEMENT_2_COUNT), 1));
+                        }
+                    }
                 }
             }
         }
@@ -1599,8 +1722,8 @@ public class MULParser {
                           .append(loc).append(".\n");
                 } else {
                     entity.setInternal(pointsVal, loc);
-                    if (entity instanceof Infantry) {
-                        ((Infantry) entity).damageOrRestoreFieldWeapons();
+                    if (entity instanceof ConvInfantry infantry) {
+                        infantry.damageOrRestoreFieldWeapons();
                         entity.applyDamage();
                     }
                 }
@@ -1624,6 +1747,13 @@ public class MULParser {
         }
     }
 
+    private void parseArmoredSlotState(CriticalSlot slot, String armorHit) {
+        if (Boolean.parseBoolean(armorHit) && (slot.isOriginalArmored() || slot.isArmorable())) {
+            slot.setArmored(true);
+            slot.hitArmored();
+        }
+    }
+
     /**
      * Parse a slot tag for the given Entity and location.
      *
@@ -1637,6 +1767,8 @@ public class MULParser {
         String capacity = slotTag.getAttribute(ATTR_CAPACITY);
         String hit = slotTag.getAttribute(ATTR_IS_HIT);
         String destroyed = slotTag.getAttribute(ATTR_IS_DESTROYED);
+        String armorHit = slotTag.getAttribute(ATTR_ARMOR_HIT);
+        String damageTaken = slotTag.getAttribute(ATTR_DAMAGE_TAKEN);
         String repairable = (slotTag.getAttribute(ATTR_IS_REPAIRABLE).isBlank() ? "true"
               : slotTag.getAttribute(ATTR_IS_REPAIRABLE));
         String munition = slotTag.getAttribute(ATTR_MUNITION);
@@ -1782,6 +1914,7 @@ public class MULParser {
                 }
                 return locAmmoCount;
             }
+            parseArmoredSlotState(slot, armorHit);
 
             // Is the slot for a critical system?
             if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
@@ -1831,6 +1964,20 @@ public class MULParser {
 
                 // Hit and destroy the mounted, according to the flags.
                 mounted.setDestroyed(hitFlag || destFlag);
+
+                if ((mounted instanceof MiscMounted miscMounted) &&
+                      mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR) &&
+                      !damageTaken.isBlank()) {
+                    int damageTakenVal = MathUtility.parseInt(damageTaken, -1);
+                    if ((damageTakenVal < 0) || (damageTakenVal > miscMounted.getBaseDamageCapacity())) {
+                        warning.append("Found invalid modular armor damageTaken value for slot: ")
+                              .append(damageTaken)
+                              .append(".\n");
+                    } else {
+                        miscMounted.setDamageTaken(damageTakenVal);
+                        miscMounted.setHit(damageTakenVal >= miscMounted.getBaseDamageCapacity());
+                    }
+                }
 
                 mounted.setRepairable(repairFlag);
 
@@ -2455,7 +2602,7 @@ public class MULParser {
         String value = OMenTag.getAttribute(ATTR_NUMBER);
         try {
             int newMen = Integer.parseInt(value);
-            entity.initializeInternal(newMen, Infantry.LOC_INFANTRY);
+            entity.initializeInternal(newMen, ConvInfantry.LOC_INFANTRY);
         } catch (Exception ignored) {
             warning.append("Invalid internal value in original number of men tag.\n");
         }
@@ -2772,8 +2919,8 @@ public class MULParser {
         // mark armor, internal as destroyed
         en.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
         en.setInternal(IArmorState.ARMOR_DESTROYED, loc);
-        if (en instanceof Infantry) {
-            ((Infantry) en).damageOrRestoreFieldWeapons();
+        if (en instanceof ConvInfantry infantry) {
+            infantry.damageOrRestoreFieldWeapons();
             en.applyDamage();
         }
         if (en.hasRearArmor(loc)) {

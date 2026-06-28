@@ -60,6 +60,7 @@ public class PreferenceChangeEvent extends EventObject {
         return name;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Object getOldValue() {
         return oldValue;
     }

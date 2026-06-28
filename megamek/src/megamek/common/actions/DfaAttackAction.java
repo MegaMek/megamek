@@ -46,7 +46,6 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
@@ -318,7 +317,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         // Attacks against adjacent buildings automatically hit.
         if ((target.getTargetType() == Targetable.TYPE_BUILDING) ||
               (target.getTargetType() == Targetable.TYPE_FUEL_TANK) ||
-              (target instanceof GunEmplacement)) {
+              (target.isBuildingEntityOrGunEmplacement())) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Targeting adjacent building.");
         }
 
@@ -430,18 +429,18 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
             if (entity instanceof BipedMek) {
 
-                return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RIGHT_LEG) &&
+                return (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_LEG) &&
                       entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_LEG)) ||
-                      (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LEFT_LEG) &&
+                      (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_LEFT_LEG) &&
                             entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG));
             }
-            return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RIGHT_LEG) &&
+            return (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_LEG) &&
                   entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_LEG)) ||
-                  (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LEFT_LEG) &&
+                  (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_LEFT_LEG) &&
                         entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG)) ||
-                  ((entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RIGHT_ARM)) &&
+                  ((entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_ARM)) &&
                         (entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_ARM) ||
-                              (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LEFT_ARM) &&
+                              (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_LEFT_ARM) &&
                                     entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_ARM))));
         }
 

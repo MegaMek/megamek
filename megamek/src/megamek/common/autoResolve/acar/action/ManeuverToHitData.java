@@ -38,12 +38,14 @@ import megamek.common.autoResolve.component.Formation;
 import megamek.common.internationalization.I18n;
 import megamek.common.rolls.TargetRoll;
 
+@Deprecated(since = "0.51.0", forRemoval = true)
 public class ManeuverToHitData extends TargetRoll {
 
     public ManeuverToHitData(int value, String desc) {
         super(value, desc);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static ManeuverToHitData compileToHit(Formation formation) {
         var toHit = new ManeuverToHitData(formation.getTactics(), I18n.getText("acar.formation_tactics"));
         processFormationModifiers(toHit, formation);

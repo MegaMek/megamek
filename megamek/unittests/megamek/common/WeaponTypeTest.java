@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,7 +39,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Enumeration;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
@@ -65,15 +64,16 @@ class WeaponTypeTest {
                 AmmoTypeEnum ammoType = weaponType.getAmmoType();
 
                 assertEquals(equipmentType.hasFlag(WeaponType.F_ARTEMIS_COMPATIBLE),
-                      (ammoType == AmmoType.AmmoTypeEnum.LRM)
-                            || (ammoType == AmmoType.AmmoTypeEnum.LRM_IMP)
-                            || (ammoType == AmmoType.AmmoTypeEnum.MML)
-                            || (ammoType == AmmoType.AmmoTypeEnum.SRM)
-                            || (ammoType == AmmoType.AmmoTypeEnum.SRM_IMP)
-                            || (ammoType == AmmoType.AmmoTypeEnum.NLRM)
-                            || (ammoType == AmmoType.AmmoTypeEnum.LRM_TORPEDO)
-                            || (ammoType == AmmoType.AmmoTypeEnum.SRM_TORPEDO)
-                            || (ammoType == AmmoType.AmmoTypeEnum.LRM_TORPEDO_COMBO));
+                      (ammoType == AmmoTypeEnum.LRM)
+                            || (ammoType == AmmoTypeEnum.LRM_IMP)
+                            || (ammoType == AmmoTypeEnum.MML)
+                            || (ammoType == AmmoTypeEnum.SRM)
+                            || (ammoType == AmmoTypeEnum.SRM_IMP)
+                            || (ammoType == AmmoTypeEnum.NLRM)
+                            || (ammoType == AmmoTypeEnum.LRM_TORPEDO)
+                            || (ammoType == AmmoTypeEnum.SRM_TORPEDO)
+                            || (ammoType == AmmoTypeEnum.NLRM_TORPEDO)
+                            || (ammoType == AmmoTypeEnum.LRM_TORPEDO_COMBO));
             }
         }
     }

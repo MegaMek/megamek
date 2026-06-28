@@ -78,10 +78,10 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.KeyBindingsOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.TraceOverlay;
 import megamek.client.ui.clientGUI.boardview.toolTip.BoardEditorTooltip;
-import megamek.client.ui.dialogs.CommonAboutDialog;
 import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.ExitsDialog;
 import megamek.client.ui.dialogs.IndustrialElevatorDialog;
+import megamek.client.ui.dialogs.MMAboutDialog;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.MultiIntSelectorDialog;
@@ -109,6 +109,7 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
+import megamek.utilities.BoardsTagger;
 
 // TODO: center map
 // TODO: background on the whole screen
@@ -421,6 +422,16 @@ public class BoardEditorPanel extends JPanel
         setFrameTitle();
         frame.add(bvc, BorderLayout.CENTER);
         frame.add(this, BorderLayout.EAST);
+
+        // on Mac, override auto-added "Quit MM" behavior to work like other exit variants (ask for save etc)
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_QUIT_HANDLER)) {
+            Desktop.getDesktop().setQuitHandler((e, response) -> {
+                handleExit();
+                response.cancelQuit(); // MM does not really exit, it returns to the startup screen
+            });
+        }
+
+
         menuBar.addActionListener(this);
         frame.setJMenuBar(menuBar);
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
@@ -435,21 +446,25 @@ public class BoardEditorPanel extends JPanel
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
-                // When the board has changes, ask the user
-                if (hasChanges && (showSavePrompt() == DialogResult.CANCELLED)) {
-                    return;
-                }
-                // otherwise: exit the Map Editor
-                minimapW.setVisible(false);
-                if (controller != null) {
-                    controller.removeAllActions();
-                    controller.boardEditor = null;
-                }
-                bv.dispose();
-                frame.dispose();
+            public void windowClosing(WindowEvent event) {
+                handleExit();
             }
         });
+    }
+
+    private void handleExit() {
+        // When the board has changes, ask the user
+        if (hasChanges && (showSavePrompt() == DialogResult.CANCELLED)) {
+            return;
+        }
+        // otherwise: exit the Map Editor
+        minimapW.setVisible(false);
+        if (controller != null) {
+            controller.removeAllActions();
+            controller.boardEditor = null;
+        }
+        bv.dispose();
+        frame.dispose();
     }
 
     /**
@@ -698,7 +713,7 @@ public class BoardEditorPanel extends JPanel
                 curHex.addTerrain(new Terrain(Terrains.BLDG_CF, newLevel));
             } else if (e.isControlDown()) {
                 int oldLevel = curHex.getTerrain(Terrains.BUILDING).getLevel();
-                int newLevel = Math.max(1, Math.min(4, oldLevel + wheelDir)); // keep between 1 and 4
+                int newLevel = Math.clamp(oldLevel + wheelDir, 1, 4); // keep between 1 and 4
 
                 if (newLevel != oldLevel) {
                     Terrain curTerr = curHex.getTerrain(Terrains.BUILDING);
@@ -1783,7 +1798,7 @@ public class BoardEditorPanel extends JPanel
 
     /** Called when the user selects the "Help->About" menu item. */
     private void showAbout() {
-        new CommonAboutDialog(frame).setVisible(true);
+        new MMAboutDialog(frame).show();
     }
 
     /** Called when the user selects the "Help->Contents" menu item. */
@@ -1904,6 +1919,16 @@ public class BoardEditorPanel extends JPanel
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_VALIDATE)) {
             correctExits();
             validateBoard(true);
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_RUN_BOARD_TAGGER)) {
+            ignoreHotKeys = true;
+
+            BoardsTagger.runBoardTagger();
+
+            JOptionPane.showMessageDialog(frame,
+                  Messages.getString("BoardEditor.boardRunBoardTagger.report"),
+                  Messages.getString("BoardEditor.boardRunBoardTagger.title"),
+                  JOptionPane.PLAIN_MESSAGE);
+            ignoreHotKeys = false;
         } else if (ae.getSource().equals(butDelTerrain) && !lisTerrain.isSelectionEmpty()) {
             Terrain toRemove = new Terrain(lisTerrain.getSelectedValue().getTerrain());
             curHex.removeTerrain(toRemove.getType());
@@ -1949,11 +1974,11 @@ public class BoardEditorPanel extends JPanel
                 exitsVal = Board.IntListAsExits(dlg.getSelectedItems());
                 texTerrExits.setNumber(exitsVal);
             } else if (ae.getActionCommand().equals(CMD_EDIT_INDUSTRIAL_ELEVATOR)) {
-                IndustrialElevatorDialog ied = new IndustrialElevatorDialog(frame);
+                IndustrialElevatorDialog elevatorDialog = new IndustrialElevatorDialog(frame);
                 exitsVal = texTerrExits.getNumber();
-                ied.setExits(exitsVal);
-                if (ied.showDialog()) {
-                    exitsVal = ied.getExits();
+                elevatorDialog.setExits(exitsVal);
+                if (elevatorDialog.showDialog()) {
+                    exitsVal = elevatorDialog.getExits();
                     texTerrExits.setNumber(exitsVal);
                 }
             } else {

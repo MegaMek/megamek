@@ -151,9 +151,9 @@ class MunitionTreeTest {
         // Expect Standard to be first; this will be used if all imperatives are
         // fulfilled and bins remain
         List<String> ammoOrdering = mt.getPriorityList("Paladin Defense System", "any", "any", "Long Tom");
-        assertEquals("Standard", ammoOrdering.get(0));
+        assertEquals("Standard", ammoOrdering.getFirst());
         assertEquals("Thunder", ammoOrdering.get(3));
-        assertEquals("Smoke", ammoOrdering.get(ammoOrdering.size() - 1));
+        assertEquals("Smoke", ammoOrdering.getLast());
     }
 
     @Test
@@ -185,8 +185,10 @@ class MunitionTreeTest {
                 assertTrue(line.toLowerCase().contains(
                       "any:any:any::AC:Standard:Precision::LRM:Standard:Heat-Seeking:Semi-Guided".toLowerCase()));
             } else if (line.startsWith("Mauler:")) {
+                // When dumping imperatives to an adf file, we now replace all pilot names with "any" for ease
+                // of application to other units of the same chassis and variant.
                 assertTrue(line.toLowerCase()
-                      .contains("Mauler:MAL-5X:Tsubaki Yonjuro::AC/5:Precision:Tracer:".toLowerCase()));
+                      .contains("Mauler:MAL-5X:any::AC/5:Precision:Tracer:".toLowerCase()));
             } else if (line.startsWith("Shadow Hawk:")) {
                 assertTrue(line.toLowerCase().contains("Shadow Hawk:SHD-2D:any::".toLowerCase()));
             }

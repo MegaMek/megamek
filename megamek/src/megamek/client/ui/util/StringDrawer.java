@@ -228,6 +228,7 @@ public class StringDrawer {
      *
      * @return The StringDrawer itself
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public StringDrawer rightAlign() {
         rightAlign = true;
         centerX = false;
@@ -241,6 +242,7 @@ public class StringDrawer {
      *
      * @return The StringDrawer itself
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public StringDrawer leftAlign() {
         rightAlign = false;
         centerX = false;
@@ -298,6 +300,7 @@ public class StringDrawer {
      *
      * @return The StringDrawer itself
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public StringDrawer dualOutline(Color color, float width) {
         dualOutlineColor = color;
         dualOutlineWidth = width;
@@ -323,6 +326,7 @@ public class StringDrawer {
      *
      * @return The StringDrawer itself
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public StringDrawer showExtent() {
         drawHelpLine = true;
         return this;

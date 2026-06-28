@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,7 +46,9 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.phaseDisplay.BombPayloadDialog;
+import megamek.client.ui.dialogs.phaseDisplay.SuicideImplantsDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TriggerAPPodDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TriggerBPodDialog;
@@ -117,10 +119,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         FIRE_SEARCHLIGHT("fireSearchlight"),
         FIRE_CLEAR_TURRET("fireClearTurret"),
         FIRE_CLEAR_WEAPON("fireClearWeaponJam"),
+        FIRE_EXTINGUISH("fireExtinguish"),
         FIRE_CALLED("fireCalled"),
         FIRE_CANCEL("fireCancel"),
         FIRE_ACTIVATE_SPA("fireActivateSPA"),
         FIRE_RHS("fireRHS"),
+        FIRE_SUICIDE_IMPLANTS("fireSuicideImplants"),
         FIRE_MORE("fireMore");
 
         final String cmd;
@@ -245,6 +249,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      * Keeps track of the Coords that are in a strafing run.
      */
     private final List<Coords> strafingCoords = new ArrayList<>(5);
+
+    /** The last hex the player selected, used by the firing-phase Extinguish button. */
+    private Coords selectedCoords = null;
+    private int selectedBoardId = 0;
 
     /**
      * Creates and lays out a new firing phase display for the specified clientGUI.getClient().
@@ -482,6 +490,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             updateClearTurret();
             updateClearWeaponJam();
             updateStrafe();
+            selectedCoords = null;
+            updateExtinguish();
 
             // Hidden units can only spot
             if ((currentEntity() != null) && currentEntity().isHidden()) {
@@ -597,6 +607,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         setFireCalledEnabled(false);
         setFireClearTurretEnabled(false);
         setFireClearWeaponJamEnabled(false);
+        setFireExtinguishEnabled(false);
         setStrafeEnabled(false);
     }
 
@@ -625,7 +636,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
               && (weaponMounted.getType() instanceof WeaponType)
               && weaponMounted.getType().hasFlag(WeaponType.F_BA_INDIVIDUAL)
               && (weaponMounted.curMode().getName().contains("-shot"))
-              && (Integer.parseInt(weaponMounted.curMode().getName().replace("-shot", "")) > currentEntity().getTotalInternal())) {
+              && (Integer.parseInt(weaponMounted.curMode().getName().replace("-shot", ""))
+              > currentEntity().getTotalInternal())) {
             weaponMounted.setMode(0);
         }
         clientgui.getClient().sendModeChange(weaponMounted.getEntity().getId(), weaponMounted.getEquipmentNum(), nMode);
@@ -1324,12 +1336,19 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // set the weapon as used
         mounted.setUsedThisRound(true);
 
-        // find the next available weapon
-        WeaponMounted nextWeapon = clientgui.getUnitDisplay().wPan.getNextWeapon();
+        // find the next available weapon. A solo-attack weapon (e.g. the fire extinguisher) is the unit's
+        // only attack this turn, so don't advance to other weapons - doing so would show a confusing
+        // "already firing a weapon that can only be fired by itself" message for a weapon the player never
+        // tried to fire.
+        WeaponMounted nextWeapon = mounted.getType().hasFlag(WeaponType.F_SOLO_ATTACK)
+              ? null
+              : clientgui.getUnitDisplay().wPan.getNextWeapon();
 
         // we fired a weapon, can't clear turret jams or weapon jams anymore
         updateClearTurret();
         updateClearWeaponJam();
+        // an attack was declared, so firefighting is no longer available this phase
+        updateExtinguish();
 
         // check; if there are no ready weapons, you're done.
         if ((nextWeapon == null)) {
@@ -1420,9 +1439,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
 
         if (currentEntity().isINarcedWith(INarcPod.HAYWIRE)) {
-            String title = Messages.getString("FiringDisplay.CantSpotDialog.title");
-            String body = Messages.getString("FiringDisplay.CantSpotDialog.message");
-            clientgui.doAlertDialog(title, body);
+            clientgui.addToast(ToastLevel.WARNING,
+                  Messages.getString("FiringDisplay.CantSpotDialog.message"), currentEntity());
             return;
         }
         // confirm this action
@@ -1612,7 +1630,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // allow spotting
         if ((attacker != null) && !attacker.isSpotting() && attacker.canSpot() && (target != null)
               && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
-            boolean hasLos = LosEffects.calculateLOS(game, attacker, target).canSee();
+            // Spotting LOS: pass spotting=true so a VTOL Mast Mount's +1 sensor elevation is
+            // applied (TacOps). This matches the server-side spot resolution and lets a mast-mount
+            // VTOL hovering behind cover enable the Spot button. Non-mast units are unaffected.
+            boolean hasLos = LosEffects.calculateLOS(game, attacker, target, true).canSee();
             // In double-blind, we need to "spot" the target as well as LoS
             if (hasLos
                   && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
@@ -1718,6 +1739,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         updateSearchlight();
         updateRHS();
         updateActivateSPA();
+        updateSuicideImplants();
         updateClearWeaponJam();
         updateClearTurret();
 
@@ -1825,6 +1847,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
         Coords coords = event.getCoords();
         if (isMyTurn() && (coords != null) && (currentEntity() != null)) {
+            // Remember the clicked hex so the Extinguish button can act on it, even when the hex holds no
+            // normal target (a bare burning hex) or is the unit's own hex. Done for any click so the button
+            // never acts on a stale, previously-selected hex.
+            selectedCoords = coords;
+            selectedBoardId = event.getBoardId();
+            updateExtinguish();
             if (isStrafing) {
                 if (currentEntity().getPassedThroughBoardId() == event.getBoardId()) {
                     strafingCoords.clear();
@@ -1980,12 +2008,16 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             doClearTurret();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_CLEAR_WEAPON.getCmd())) {
             doClearWeaponJam();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_EXTINGUISH.getCmd())) {
+            extinguish();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_STRAFE.getCmd())) {
             startStrafe();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_ACTIVATE_SPA.getCmd())) {
             doActivateSpecialAbility();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_RHS.getCmd())) {
             doToggleRHS();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_SUICIDE_IMPLANTS.getCmd())) {
+            doSuicideImplants();
         }
     }
 
@@ -2035,6 +2067,67 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
               && attacks.isEmpty());
     }
 
+    private void updateExtinguish() {
+        setFireExtinguishEnabled(canExtinguishSelectedHex());
+    }
+
+    /**
+     * @return {@code true} if the current unit can extinguish the hex the player has selected: the unit is a
+     *       firefighting engineer or carries a ready fire extinguisher, it has not already declared an attack this
+     *       phase, and the selected hex is burning (and adjacent, for firefighting engineers).
+     */
+    private boolean canExtinguishSelectedHex() {
+        Entity firingUnit = currentEntity();
+        if ((firingUnit == null) || !attacks.isEmpty() || (selectedCoords == null)) {
+            return false;
+        }
+        boolean firefighter = firingUnit.isFirefighter();
+        if (!firefighter && !hasReadyFireExtinguisher(firingUnit)) {
+            return false;
+        }
+        // The hex must be on the unit's own board; a hex on a different board is never reachable.
+        if (firingUnit.getBoardId() != selectedBoardId) {
+            return false;
+        }
+        Hex hex = game.getBoard(selectedBoardId).getHex(selectedCoords);
+        if ((hex == null) || !hex.containsTerrain(Terrains.FIRE)) {
+            return false;
+        }
+        if (firingUnit.getPosition() == null) {
+            return false;
+        }
+        int distanceToHex = firingUnit.getPosition().distance(selectedCoords);
+        // Firefighting engineers fight an adjacent hex, not the one they stand in (TO:AuE p.153). Other units use a
+        // range-1 Fire Extinguisher weapon, which reaches only their own hex or an adjacent one.
+        return firefighter ? (distanceToHex == 1) : (distanceToHex <= 1);
+    }
+
+    private boolean hasReadyFireExtinguisher(Entity entity) {
+        return entity.getWeaponList().stream()
+              .anyMatch(weapon -> weapon.getType().hasFlag(WeaponType.F_EXTINGUISHER) && !weapon.isUsedThisRound());
+    }
+
+    /**
+     * Declares an attack to extinguish the fire in the player-selected hex, using a carried fire extinguisher weapon if
+     * present, otherwise the firefighting engineers' own gear. This consumes the unit's attack (TO:AuE p.153 -
+     * firefighting is done in place of a weapon attack).
+     */
+    private void extinguish() {
+        if (!canExtinguishSelectedHex()) {
+            return;
+        }
+        // Prefer a real fire extinguisher weapon (coolant trucks, etc.); firefighting engineers use their
+        // currently selected weapon, which their FIRE_ENGINEERS specialization routes to the extinguisher path.
+        for (WeaponMounted weapon : currentEntity().getWeaponList()) {
+            if (weapon.getType().hasFlag(WeaponType.F_EXTINGUISHER) && !weapon.isUsedThisRound()) {
+                clientgui.getUnitDisplay().wPan.selectWeapon(weapon);
+                break;
+            }
+        }
+        target(new HexTarget(selectedCoords, selectedBoardId, Targetable.TYPE_HEX_EXTINGUISH));
+        fire();
+    }
+
     private void updateStrafe() {
         Entity entity = currentEntity();
         setStrafeEnabled((entity != null)
@@ -2057,6 +2150,47 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
     private void updateActivateSPA() {
         setActivateSPAEnabled(canActivateBloodStalker());
+    }
+
+    /**
+     * Updates the suicide implants button state based on whether the current entity has the suicide implants ability
+     * and can activate it.
+     */
+    private void updateSuicideImplants() {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            setSuicideImplantsEnabled(false);
+            return;
+        }
+
+        boolean hasImplants = entity.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS);
+        boolean isActiveUnit = entity.isActive();
+        boolean hasLiveCrew = (entity.getCrew() != null)
+              && !entity.getCrew().isDead()
+              && !entity.getCrew().isUnconscious();
+        boolean isNotTransported = entity.getTransportId() == Entity.NONE;
+        boolean isNotLargeCraft = !entity.isLargeCraft();
+
+        boolean canDetonate = hasImplants && isActiveUnit && hasLiveCrew && isNotTransported && isNotLargeCraft;
+        setSuicideImplantsEnabled(canDetonate);
+    }
+
+    /**
+     * Handles the suicide implants button action. Shows a dialog to configure the detonation, then adds the attack
+     * action.
+     */
+    private void doSuicideImplants() {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            return;
+        }
+
+        SuicideImplantsDialog dialog = new SuicideImplantsDialog(clientgui.getFrame(), entity);
+        if (dialog.showDialog()) {
+            int trooperCount = dialog.getTrooperCount();
+            attacks.add(new SuicideImplantsAttackAction(entity.getId(), trooperCount));
+            ready();
+        }
     }
 
     /**
@@ -2152,6 +2286,29 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      */
     protected void adaptFireModeEnabled(Mounted<?> m) {
         setFireModeEnabled(m.isModeSwitchable() && m.hasModes());
+        updateFireModeTooltip(m);
+    }
+
+    /**
+     * Refreshes the Mode button tooltip for the selected weapon. Most weapons keep the generic tooltip, but the Fire
+     * Extinguisher carried by firefighting engineers gets extra helper text explaining its Firefight/Support modes
+     * (TO:AuE p.153), since the choice of which platoon rolls is not otherwise obvious from the button.
+     *
+     * @param weapon the currently selected weapon
+     */
+    private void updateFireModeTooltip(Mounted<?> weapon) {
+        MegaMekButton modeButton = buttons.get(FiringCommand.FIRE_MODE);
+        String tooltip = createToolTip(FiringCommand.FIRE_MODE.getCmd(), "FiringDisplay.",
+              FiringCommand.FIRE_MODE.getHotKeyDesc());
+        if (weapon.getType().hasFlag(WeaponType.F_EXTINGUISHER)) {
+            String helper = Messages.getString("FiringDisplay.fireMode.extinguisher.tooltip");
+            if (tooltip.contains("</BODY>")) {
+                tooltip = tooltip.replace("</BODY>", "<BR>" + helper + "</BODY>");
+            } else {
+                tooltip = "<HTML><BODY>" + helper + "</BODY></HTML>";
+            }
+        }
+        modeButton.setToolTipText(tooltip);
     }
 
     protected void setFireCalledEnabled(boolean enabled) {
@@ -2167,6 +2324,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     protected void setFireClearWeaponJamEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_CLEAR_WEAPON).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_CLEAR_WEAPON.getCmd(), enabled);
+    }
+
+    protected void setFireExtinguishEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_EXTINGUISH).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_EXTINGUISH.getCmd(), enabled);
     }
 
     protected void setStrafeEnabled(boolean enabled) {
@@ -2187,6 +2349,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     protected void setRHSEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_RHS).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_RHS.getCmd(), enabled);
+    }
+
+    protected void setSuicideImplantsEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_SUICIDE_IMPLANTS).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SUICIDE_IMPLANTS.getCmd(), enabled);
     }
 
     @Override
@@ -2344,7 +2511,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // Do we have a single choice?
         if (targets.size() == 1) {
             // Return that choice.
-            choice = targets.get(0);
+            choice = targets.getFirst();
         } else if (targets.size() > 1) {
             // If we have multiple choices, display a selection dialog.
             choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
@@ -2403,14 +2570,14 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             return Collections.emptyList();
 
         } else if (centerCandidates.size() == 1) {
-            centerIndex = centerCandidates.get(0);
+            centerIndex = centerCandidates.getFirst();
 
         } else {
             // incomplete: choose one of the candidates
             centerIndex = (int) JOptionPane.showInputDialog(clientgui.getFrame(),
                   "Choose the hex to center the strafing path on",
                   "Strafing - Choose Hex", JOptionPane.QUESTION_MESSAGE, null,
-                  centerCandidates.toArray(), centerCandidates.get(0));
+                  centerCandidates.toArray(), centerCandidates.getFirst());
         }
 
         // When the flight path is shorter than 5 hexes, only that many can be strafed (may happen for aeros that are

@@ -46,6 +46,7 @@ import java.util.Vector;
 
 import megamek.common.Report;
 import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BasementType;
@@ -84,7 +85,8 @@ public class Building implements Serializable {
     private final int bldgClass;
 
     /**
-     * The height of the building (BLDG_ELEV). Individual hexes start with this height and can be set to 0 when destroyed.
+     * The height of the building (BLDG_ELEV). Individual hexes start with this height and can be set to 0 when
+     * destroyed.
      */
     private int buildingHeight;
 
@@ -97,6 +99,7 @@ public class Building implements Serializable {
      * The coordinates of every hex of this building.
      */
     private final Vector<CubeCoords> coordinates = new Vector<>();
+    private final Vector<CubeCoords> originalCoordinates = new Vector<>();
     private int boardId;
 
     /**
@@ -160,24 +163,26 @@ public class Building implements Serializable {
     }
 
     /**
-     * Add a hex to this building at the given RELATIVE coordinates.
-     * All coordinates are relative to the building's origin (0,0,0).
-     *
-     * Building stores everything in its own local coordinate space using CubeCoords.
-     * BuildingTerrain and AbstractBuildingEntity handle translation between board Coords and relative CubeCoords.
+     * Add a hex to this building at the given RELATIVE coordinates. All coordinates are relative to the building's
+     * origin (0,0,0).
+     * <p>
+     * Building stores everything in its own local coordinate space using CubeCoords. BuildingTerrain and
+     * AbstractBuildingEntity handle translation between board Coords and relative CubeCoords.
      *
      * @param relativeCoords the relative <code>CubeCoords</code> of the hex within the building
-     * @param cf the construction factor for this hex
-     * @param armorValue the armor value for this hex
-     * @param basementType the basement type for this hex
-     * @param collapsed whether the basement is collapsed
+     * @param cf             the construction factor for this hex
+     * @param armorValue     the armor value for this hex
+     * @param basementType   the basement type for this hex
+     * @param collapsed      whether the basement is collapsed
      */
-    public void addHex(CubeCoords relativeCoords, int cf, int armorValue, BasementType basementType, boolean collapsed) {
+    public void addHex(CubeCoords relativeCoords, int cf, int armorValue, BasementType basementType,
+          boolean collapsed) {
         if (isIn(relativeCoords)) {
             return; // Already added
         }
 
         coordinates.addElement(relativeCoords);
+        originalCoordinates.addElement(relativeCoords);
         originalHexes++;
         currentCF.put(relativeCoords, cf);
         phaseCF.put(relativeCoords, cf);
@@ -247,13 +252,18 @@ public class Building implements Serializable {
         return Collections.unmodifiableList(coordinates);
     }
 
+    /** Returns a list of this Building's original coords (before any hexes were removed). The list is unmodifiable. */
+    public List<CubeCoords> getOriginalCoordsList() {
+        return Collections.unmodifiableList(originalCoordinates);
+    }
+
     /**
      * Get the construction type of the building. This value will be one of the values defined in
      * megamek.common.enums.BuildingType
      *
      * @return the <code>int</code> code of the building's construction type.
      */
-    
+
     public BuildingType getBuildingType() {
         return type;
     }
@@ -263,7 +273,7 @@ public class Building implements Serializable {
      *
      * @return the <code>int</code> code of the building's classification.
      */
-    
+
     public int getBldgClass() {
         return bldgClass;
     }
@@ -297,8 +307,8 @@ public class Building implements Serializable {
     }
 
     /**
-     * Roll what kind of basement this building has at the given RELATIVE coordinates.
-     * Building works in relative CubeCoords - BuildingTerrain/BuildingEntity handle board coord translation.
+     * Roll what kind of basement this building has at the given RELATIVE coordinates. Building works in relative
+     * CubeCoords - BuildingTerrain/BuildingEntity handle board coord translation.
      *
      * @param coords       the RELATIVE <code>CubeCoords</code> of the building hex to roll for
      * @param vPhaseReport the {@link Report} <code>Vector</code> containing the phase report
@@ -348,7 +358,7 @@ public class Building implements Serializable {
      *       than or equal to zero.
      */
     public int getCurrentCF(CubeCoords coords) {
-        return currentCF.get(coords);
+        return currentCF.getOrDefault(coords, 0);
     }
 
     /**
@@ -361,11 +371,11 @@ public class Building implements Serializable {
      *       will be greater than or equal to zero.
      */
     public int getPhaseCF(CubeCoords coords) {
-        return phaseCF.get(coords);
+        return phaseCF.getOrDefault(coords, 0);
     }
 
     public int getArmor(CubeCoords coords) {
-        return armor.get(coords);
+        return armor.getOrDefault(coords, 0);
     }
 
     /**
@@ -421,15 +431,15 @@ public class Building implements Serializable {
      * @return the <code>int</code> value of the building hex's height. This value will be 0 if the hex is destroyed.
      */
     public int getHeight(CubeCoords coords) {
-        return height.get(coords);
+        return height.getOrDefault(coords, 0);
     }
 
     /**
      * Set the height of a specific building hex. Call this method when a hex is destroyed (set to 0).
      *
      * @param coords the <code>CubeCoords</code> of the hex in question
-     * @param h      the <code>int</code> value of the building hex's height. This value must be greater than or equal to
-     *               zero.
+     * @param h      the <code>int</code> value of the building hex's height. This value must be greater than or equal
+     *               to zero.
      *
      * @throws IllegalArgumentException if the passed value is less than zero
      */
@@ -464,7 +474,7 @@ public class Building implements Serializable {
      *
      * @return the <code>String</code> name of this building.
      */
-    
+
     public String getName() {
         return name;
     }
@@ -521,22 +531,31 @@ public class Building implements Serializable {
         burning.put(coords, onFire);
     }
 
-    public void addDemolitionCharge(int playerId, int damage, CubeCoords pos) {
-        DemolitionCharge charge = new DemolitionCharge(playerId, damage, pos.toOffset());
+    /**
+     * Adds a demolition charge to this building. The position is stored as absolute board coordinates (not
+     * building-relative coordinates) because all consumers of {@link DemolitionCharge#pos} - the touch-off menu, the
+     * end-phase building lookup and the damage application - operate on board coordinates.
+     *
+     * @param playerId the ID of the player that owns the charge
+     * @param damage   the damage the charge inflicts when detonated
+     * @param pos      the absolute board {@link Coords} of the building hex the charge is placed in
+     */
+    public void addDemolitionCharge(int playerId, int damage, Coords pos) {
+        DemolitionCharge charge = new DemolitionCharge(playerId, damage, pos);
         demolitionCharges.add(charge);
     }
 
-    
+
     public void removeDemolitionCharge(DemolitionCharge charge) {
         demolitionCharges.remove(charge);
     }
 
-    
+
     public List<DemolitionCharge> getDemolitionCharges() {
         return demolitionCharges;
     }
 
-    
+
     public void setDemolitionCharges(List<DemolitionCharge> charges) {
         demolitionCharges = charges;
     }
@@ -573,7 +592,7 @@ public class Building implements Serializable {
         basementCollapsed.put(coords, collapsed);
     }
 
-    
+
     public int getBoardId() {
         return boardId;
     }

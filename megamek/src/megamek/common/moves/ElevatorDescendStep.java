@@ -40,8 +40,6 @@ import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Handles the elevator descend step for industrial elevators.
@@ -53,7 +51,6 @@ import org.apache.logging.log4j.Logger;
  * @since 0.50.07
  */
 class ElevatorDescendStep implements PhasePass {
-    private static final Logger LOGGER = LogManager.getLogger();
     private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.ELEVATOR_DESCEND);
 
     @Override
@@ -64,7 +61,6 @@ class ElevatorDescendStep implements PhasePass {
     @Override
     public PhasePassResult preCompilation(final MoveStep moveStep, final Game game, final Entity entity,
           MoveStep prev, final CachedEntityState cachedEntityState) {
-        int oldElevation = moveStep.getElevation();
         // Industrial elevators always cost 1 MP per level moved
         moveStep.setMp(1);
         moveStep.addMpUsed(1);
@@ -74,13 +70,6 @@ class ElevatorDescendStep implements PhasePass {
         moveStep.setRunProhibited(true);
         // Set movement type to WALK (elevator use is walking movement)
         moveStep.setMovementType(EntityMovementType.MOVE_WALK);
-        LOGGER.debug(
-              "[ELEVATOR] ElevatorDescendStep.preCompilation: entity={}, oldElevation={}, newElevation={}, position={}, movementType={}",
-              entity.getDisplayName(),
-              oldElevation,
-              moveStep.getElevation(),
-              moveStep.getPosition(),
-              moveStep.getMovementType(false));
         return PhasePassResult.BREAK;
     }
 }

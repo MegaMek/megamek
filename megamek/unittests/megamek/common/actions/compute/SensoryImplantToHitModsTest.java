@@ -278,6 +278,8 @@ class SensoryImplantToHitModsTest {
                 return OptionsConstants.MD_MM_IMPLANTS.equals(arg)
                       || OptionsConstants.MD_VDNI.equals(arg);
             });
+            // Mock hasActiveDNI() to return true for entities with VDNI
+            when(mockMek.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockMek, toHit, mockWeapon);
@@ -298,6 +300,8 @@ class SensoryImplantToHitModsTest {
                 return OptionsConstants.MD_MM_IMPLANTS.equals(arg)
                       || OptionsConstants.MD_BVDNI.equals(arg);
             });
+            // Mock hasActiveDNI() to return true for entities with BVDNI
+            when(mockMek.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockMek, toHit, mockWeapon);
@@ -373,6 +377,8 @@ class SensoryImplantToHitModsTest {
                 return OptionsConstants.MD_ENH_MM_IMPLANTS.equals(arg)
                       || OptionsConstants.MD_VDNI.equals(arg);
             });
+            // Mock hasActiveDNI() to return true for entities with VDNI
+            when(mockMek.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockMek, toHit, mockWeapon);

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -66,8 +66,11 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.DisengageAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
+import megamek.common.actions.InitiateInfantryCombatAction;
+import megamek.common.actions.ReinforceInfantryCombatAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.WithdrawInfantryCombatAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
@@ -504,6 +507,10 @@ public class Princess extends BotClient {
         return strategicBuildingTargets;
     }
 
+    public boolean hasStrategicBuildingTargets(final Coords coords) {
+        return getStrategicBuildingTargets().contains(coords);
+    }
+
     public void addStrategicBuildingTarget(final Coords coords) {
         if (null == coords) {
             throw new NullPointerException("Coords is null.");
@@ -513,6 +520,23 @@ public class Princess extends BotClient {
             return;
         }
         getStrategicBuildingTargets().add(coords);
+    }
+
+    public void removeStrategicBuildingTarget(final Coords coords) {
+        if (null == coords) {
+            throw new NullPointerException("Coords is null.");
+        }
+        if (!getGame().getBoard().contains(coords)) {
+            LOGGER.warn("Board does not contain {}", coords.toFriendlyString());
+            return;
+        }
+        if (!hasStrategicBuildingTargets(coords)) {
+            LOGGER.warn("Strategic Building Targets does not contain {}", coords.toFriendlyString());
+            return;
+        }
+
+        getStrategicBuildingTargets().remove(coords);
+
     }
 
     public Set<Integer> getPriorityUnitTargets() {
@@ -664,7 +688,7 @@ public class Princess extends BotClient {
             final List<Coords> validCoords = calculateTurretDeploymentLocations((GunEmplacement) deployedUnit,
                   possibleDeployCoords);
             if (!validCoords.isEmpty()) {
-                return validCoords.get(0);
+                return validCoords.getFirst();
             }
 
             return null;
@@ -694,7 +718,7 @@ public class Princess extends BotClient {
         // if we can't find any good deployment coordinates, deploy anyway to the first available one
         // and maybe eventually we'll slow down enough that we can deploy without immediately flying off
         if (!possibleDeployCoords.isEmpty()) {
-            return possibleDeployCoords.get(0);
+            return possibleDeployCoords.getFirst();
         }
 
         return null;
@@ -833,6 +857,31 @@ public class Princess extends BotClient {
         }
 
 
+        // Filter to coords where AllowedDeploymentHelper confirms at least one valid deployment elevation.
+        // This catches prohibited terrain, level-uniformity rules, etc. (e.g. grounded DropShips needing
+        // 7-hex clearance) that BotClient.getFirstValidCoords() does not check.
+        Board deployBoard = game.getBoard(deployedUnit);
+        if (!deployBoard.isSpace()) {
+            boolean groundedAero = deployedUnit.isAero() && !deployedUnit.isAirborne();
+            possibleDeployCoords = possibleDeployCoords.stream()
+                  .filter(c -> {
+                      Hex h = deployBoard.getHex(c);
+                      if (h == null) {
+                          return false;
+                      }
+                      List<ElevationOption> elevations = new AllowedDeploymentHelper(deployedUnit,
+                            c,
+                            deployBoard,
+                            h,
+                            game)
+                            .findAllowedElevations();
+                      return groundedAero
+                            ? elevations.stream().anyMatch(o -> o.elevation() == 0)
+                            : !elevations.isEmpty();
+                  })
+                  .toList();
+        }
+
         // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
         int LIMIT = 20;
         int RADIUS = 3;
@@ -848,7 +897,7 @@ public class Princess extends BotClient {
         HashMap<Double, ArrayList<Coords>> rankedCoords = new HashMap<>();
 
         // Units that deploy airborne don't need to worry about all this
-        if (!(deployedUnit.isAero() ||
+        if (!(deployedUnit.isAirborne() ||
               ((deployedUnit.getMovementMode().isVTOL() || deployedUnit.getMovementMode().isWiGE()) &&
                     deployedUnit.getElevation() > 0))) {
             double hazard;
@@ -858,6 +907,12 @@ public class Princess extends BotClient {
                 deployStep.setPosition(dest);
                 if (null != super.getFirstValidCoords(deployedUnit, List.of(dest))) {
                     hazard = -((BasicPathRanker) ranker).checkPathForHazards(mp, deployedUnit, game);
+                    if (deployedUnit instanceof BuildingEntity
+                          && getBoard() != null
+                          && getBoard().getHex(dest) != null) {
+                        // If there's anything in the hex, let's increase the hazard so we don't prefer it
+                        hazard -= getBoard().getHex(dest).getTerrainTypesSet().size();
+                    }
                     if (!rankedCoords.containsKey(hazard)) {
                         rankedCoords.put(hazard, new ArrayList<>());
                     }
@@ -1002,7 +1057,7 @@ public class Princess extends BotClient {
                     int aimLocation = Mek.LOC_NONE;
                     int calledShotDirection = CalledShot.CALLED_NONE;
 
-                    WeaponFireInfo primaryFire = plan.get(0);
+                    WeaponFireInfo primaryFire = plan.getFirst();
                     int targetID;
                     if (primaryFire != null) {
                         targetID = primaryFire.getTarget().getId();
@@ -1086,10 +1141,13 @@ public class Princess extends BotClient {
                     Vector<EntityAction> actions = new Vector<>();
 
                     // if using search light, it needs to go before the other actions so we can light up what we're shooting at
-                    SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter,
-                          plan);
-                    if (searchLightAction != null) {
-                        actions.add(searchLightAction);
+                    // Respect the "Searchlights On by Default" option - disabled means Princess won't use searchlights offensively either.
+                    if (getGame().getOptions().booleanOption(OptionsConstants.SEARCHLIGHTS_ON)) {
+                        SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter,
+                              plan);
+                        if (searchLightAction != null) {
+                            actions.add(searchLightAction);
+                        }
                     }
 
                     actions.addAll(plan.getEntityActionVector());
@@ -1142,9 +1200,13 @@ public class Princess extends BotClient {
                     miscPlan.add(spotAction);
                 }
 
-                SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter, null);
-                if (searchLightAction != null) {
-                    miscPlan.add(searchLightAction);
+                // Respect the "Searchlights On by Default" option
+                if (getGame().getOptions().booleanOption(OptionsConstants.SEARCHLIGHTS_ON)) {
+                    SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter,
+                          null);
+                    if (searchLightAction != null) {
+                        miscPlan.add(searchLightAction);
+                    }
                 }
             }
 
@@ -1336,15 +1398,21 @@ public class Princess extends BotClient {
             }
 
             // If all else is equal, Infantry before Battle Armor before Tanks before Meks.
-            if (entity instanceof BattleArmor) {
-                total *= PRIORITY_BA;
-                modifiers.append("\tx2.0 (is BA)");
-            } else if (entity instanceof Infantry) {
-                total *= PRIORITY_INF;
-                modifiers.append("\tx3.0 (is Inf)");
-            } else if (entity instanceof Tank) {
-                total *= PRIORITY_TANK;
-                modifiers.append("\tx1.5 (is Tank)");
+            switch (entity) {
+                case BattleArmor ignored -> {
+                    total *= PRIORITY_BA;
+                    modifiers.append("\tx2.0 (is BA)");
+                }
+                case Infantry ignored -> {
+                    total *= PRIORITY_INF;
+                    modifiers.append("\tx3.0 (is Inf)");
+                }
+                case Tank ignored -> {
+                    total *= PRIORITY_TANK;
+                    modifiers.append("\tx1.5 (is Tank)");
+                }
+                default -> {
+                }
             }
 
             // Fleeing entities should move before those not fleeing.
@@ -1381,10 +1449,12 @@ public class Princess extends BotClient {
 
     // Enhanced targeting controls
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getEnhancedTargetingControl() {
         return enableEnhancedTargeting;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEnableEnhancedTargeting(boolean newSetting) {
         enableEnhancedTargeting = newSetting;
     }
@@ -1424,6 +1494,7 @@ public class Princess extends BotClient {
      *
      * @param newTargetTypes List of {@link UnitType} constants, may be empty or null to clear
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEnhancedTargetingTargetTypes(List<Integer> newTargetTypes) {
         enhancedTargetingTargetTypes = Objects.requireNonNullElseGet(newTargetTypes, ArrayList::new);
         if (enhancedTargetingTargetTypes.contains(UnitType.INFANTRY)) {
@@ -1439,6 +1510,7 @@ public class Princess extends BotClient {
      *
      * @param newAttackerTypes List of {@link UnitType} constants, may be empty or null to clear
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEnhancedTargetingAttackerTypes(List<Integer> newAttackerTypes) {
         enhancedTargetingAttackerTypes = Objects.requireNonNullElseGet(newAttackerTypes, ArrayList::new);
     }
@@ -1448,6 +1520,7 @@ public class Princess extends BotClient {
      *
      * @return list of {@link UnitType} constants, or empty list
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public List<Integer> seeEnhancedTargetingTargetTypes() {
         return new ArrayList<>(enhancedTargetingTargetTypes);
     }
@@ -1457,6 +1530,7 @@ public class Princess extends BotClient {
      *
      * @return list of {@link UnitType} constants, or empty list
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public List<Integer> seeEnhancedTargetingAttackerTypes() {
         return new ArrayList<>(enhancedTargetingAttackerTypes);
     }
@@ -1491,14 +1565,17 @@ public class Princess extends BotClient {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getAllowCalledShotsOnImmobile() {
         return useCalledShotsOnImmobileTarget;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setAllowCalledShotsOnImmobile(boolean newSetting) {
         useCalledShotsOnImmobileTarget = newSetting;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getPartialCoverEnhancedTargeting() {
         return allowCoverEnhancedTargeting;
     }
@@ -1509,6 +1586,7 @@ public class Princess extends BotClient {
      *
      * @param newSetting true, to allow aimed/called shots against targets with partial cover
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setPartialCoverEnhancedTargeting(boolean newSetting) {
         allowCoverEnhancedTargeting = newSetting;
     }
@@ -1647,7 +1725,7 @@ public class Princess extends BotClient {
             return calledShotDirection;
         }
 
-        WeaponFireInfo primaryFire = planOfAttack.get(0);
+        WeaponFireInfo primaryFire = planOfAttack.getFirst();
         if (primaryFire == null) {
             return calledShotDirection;
         }
@@ -1692,7 +1770,7 @@ public class Princess extends BotClient {
             return aimLocation;
         }
 
-        WeaponFireInfo primaryFire = aimedShots.get(0);
+        WeaponFireInfo primaryFire = aimedShots.getFirst();
         int lowestArmor = Integer.MAX_VALUE;
         List<Integer> rankedLocations = new ArrayList<>();
 
@@ -1846,11 +1924,11 @@ public class Princess extends BotClient {
     protected int calculateCalledShotDirection(Mek target, int attackSide, List<WeaponFireInfo> calledShots) {
         int calledShotDirection = CalledShot.CALLED_NONE;
 
-        if (calledShots == null || calledShots.isEmpty() || calledShots.get(0) == null) {
+        if (calledShots == null || calledShots.isEmpty() || calledShots.getFirst() == null) {
             return calledShotDirection;
         }
 
-        WeaponFireInfo primaryFire = calledShots.get(0);
+        WeaponFireInfo primaryFire = calledShots.getFirst();
 
         // If the target is being shot in a side arc, set the call direction to hit the rear arc
         if (attackSide == ToHitData.SIDE_LEFT || attackSide == ToHitData.SIDE_REAR_LEFT) {
@@ -2200,6 +2278,239 @@ public class Princess extends BotClient {
         }
     }
 
+    @Override
+    protected void calculatePreEndDeclarationsTurn() {
+        try {
+            initialize();
+            Entity entity = getGame().getFirstEntity(getMyTurn());
+            LOGGER.debug("[PreEnd] bot calculatePreEndDeclarationsTurn: entity={}", entity);
+
+            // No selectable entity for this turn; end it so the phase can advance.
+            if (entity == null) {
+                LOGGER.debug("[PreEnd] bot: no entity for this turn; sending done");
+                sendDone(true);
+                return;
+            }
+
+            // Only infantry can initiate combat
+            if (!(entity instanceof Infantry)) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+                sendDone(true);
+                return;
+            }
+
+            // Check if already in combat
+            if (entity.getInfantryCombatTargetId() != Entity.NONE) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+                sendDone(true);
+                return;
+            }
+
+            // Find potential targets (buildings/vessels in same hex or adjacent)
+            List<Entity> potentialTargets = findInfantryCombatTargets(entity);
+
+            if (potentialTargets.isEmpty()) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+                sendDone(true);
+                return;
+            }
+
+            // Evaluate each target and pick best
+            Entity bestTarget = null;
+            double bestRatio = 0;
+            double initiationThreshold = InfantryCombatHelper
+                  .calculateInitiationThreshold(getBehaviorSettings().getBraveryValue());
+
+            for (Entity target : potentialTargets) {
+                if (InfantryCombatHelper.shouldInitiateCombat(
+                      entity, target, getGame(), getBehaviorSettings())) {
+                    double ratio = calculateCombatRatio(entity, target);
+                    if (ratio > bestRatio) {
+                        bestRatio = ratio;
+                        bestTarget = target;
+                    }
+                }
+            }
+
+            if (bestTarget != null) {
+                LOGGER.info("{} initiating infantry combat at {} (MPS ratio: {}, threshold: {})",
+                      entity.getDisplayName(), bestTarget.getDisplayName(),
+                      String.format("%.2f", bestRatio),
+                      String.format("%.2f", initiationThreshold));
+
+                Vector<EntityAction> actions = new Vector<>();
+                actions.add(new InitiateInfantryCombatAction(
+                      entity.getId(), bestTarget.getId()));
+                sendAttackData(entity.getId(), actions);
+            } else {
+                sendAttackData(entity.getId(), new Vector<>(0));
+            }
+
+            sendDone(true);
+
+        } catch (Exception e) {
+            LOGGER.error(e, "Error in calculatePreEndDeclarationsTurn");
+            Entity entity = getGame().getFirstEntity(getMyTurn());
+            if (entity != null) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+            }
+            sendDone(true);
+        }
+    }
+
+    @Override
+    protected void calculateInfantryVsInfantryCombatTurn() {
+        try {
+            initialize();
+            Entity entity = getGame().getFirstEntity(getMyTurn());
+
+            if (!(entity instanceof Infantry)) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+                sendDone(true);
+                return;
+            }
+
+            Vector<EntityAction> actions = new Vector<>();
+
+            // Check if entity is already in infantry vs infantry combat
+            int targetId = entity.getInfantryCombatTargetId();
+
+            if (targetId != Entity.NONE) {
+                // Already in combat - check if should withdraw (attackers only)
+                if (entity.isInfantryCombatAttacker()) {
+                    if (InfantryCombatHelper.shouldWithdraw(
+                          entity, targetId, getGame(), getBehaviorSettings())) {
+
+                        Entity target = getGame().getEntity(targetId);
+                        LOGGER.info("{} withdrawing from infantry combat at {}",
+                              entity.getDisplayName(),
+                              target != null ? target.getDisplayName() : "unknown");
+
+                        actions.add(new WithdrawInfantryCombatAction(
+                              entity.getId(), targetId));
+                    }
+                }
+            } else {
+                // Not in combat - check if should reinforce existing combat
+                List<Integer> activeCombatTargets = findEligibleInfantryCombatsToReinforce(entity);
+
+                for (int combatTargetId : activeCombatTargets) {
+                    if (InfantryCombatHelper.shouldReinforce(
+                          entity, combatTargetId, getGame(), getBehaviorSettings())) {
+
+                        Entity target = getGame().getEntity(combatTargetId);
+                        LOGGER.info("{} reinforcing infantry combat at {}",
+                              entity.getDisplayName(),
+                              target != null ? target.getDisplayName() : "unknown");
+
+                        actions.add(new ReinforceInfantryCombatAction(
+                              entity.getId(), combatTargetId));
+                        break; // Only reinforce one combat per turn
+                    }
+                }
+            }
+
+            if (!actions.isEmpty()) {
+                sendAttackData(entity.getId(), actions);
+            } else {
+                sendAttackData(entity.getId(), new Vector<>(0));
+            }
+
+            sendDone(true);
+
+        } catch (Exception e) {
+            LOGGER.error(e, "Error in calculateInfantryVsInfantryCombatTurn");
+            Entity entity = getGame().getFirstEntity(getMyTurn());
+            if (entity != null) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+            }
+            sendDone(true);
+        }
+    }
+
+    /**
+     * Find buildings/vessels in same hex or adjacent that could be targets for infantry combat.
+     *
+     * @param infantry The infantry unit looking for targets
+     *
+     * @return List of potential target buildings/vessels
+     */
+    private List<Entity> findInfantryCombatTargets(Entity infantry) {
+        List<Entity> targets = new ArrayList<>();
+        Coords position = infantry.getPosition();
+
+        for (Entity e : getGame().getEntitiesVector(position)) {
+            if (e.isBoardable() && e.getOwner().isEnemyOf(infantry.getOwner())) {
+                targets.add(e);
+            }
+        }
+
+        return targets;
+    }
+
+    /**
+     * Get the building entity at a specific position.
+     *
+     * @param position The coordinates to check
+     *
+     * @return The building entity at this position, or null if none
+     */
+    private Entity getBuildingAtPosition(Coords position) {
+        for (Entity e : getGame().getEntitiesVector(position)) {
+            if (e instanceof AbstractBuildingEntity) {
+                return e;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Find eligible infantry combats that this entity can reinforce. Returns target IDs of buildings/vessels with
+     * active combat in the SAME building as the entity. Per TO:AR p. 172, reinforcements must be in the same multi-hex
+     * building.
+     *
+     * @param entity The entity looking to reinforce (must be in a building)
+     *
+     * @return List of combat target IDs in the same building, empty if not in a building
+     */
+    private List<Integer> findEligibleInfantryCombatsToReinforce(Entity entity) {
+        List<Integer> nearbyCombatTargets = new ArrayList<>();
+
+        // Get the building the infantry is in (if any)
+        Entity entityBuilding = getBuildingAtPosition(entity.getPosition());
+        if (entityBuilding == null) {
+            return nearbyCombatTargets; // Not in a building
+        }
+
+        // Find all unique target IDs where combat is happening IN THE SAME BUILDING
+        for (Entity e : getGame().getEntitiesVector()) {
+            int targetId = e.getInfantryCombatTargetId();
+            if (targetId != Entity.NONE && !nearbyCombatTargets.contains(targetId)) {
+                Entity target = getGame().getEntity(targetId);
+                // Check if target IS the same building the entity is in
+                if (target != null && target.getId() == entityBuilding.getId()) {
+                    nearbyCombatTargets.add(targetId);
+                }
+            }
+        }
+
+        return nearbyCombatTargets;
+    }
+
+    /**
+     * Calculate MPS ratio for combat evaluation.
+     *
+     * @param attacker The attacking entity
+     * @param target   The target building/vessel
+     *
+     * @return MPS ratio (attacker / defender)
+     */
+    private double calculateCombatRatio(Entity attacker, Entity target) {
+        int attackerMPS = InfantryCombatHelper.calculateAttackerMPS(attacker, target);
+        int defenderMPS = InfantryCombatHelper.calculateEnemyMPS(getGame(), target, attacker);
+        return InfantryCombatHelper.calculateMPSRatio(attackerMPS, defenderMPS);
+    }
+
     boolean wantsToFallBack(final Entity entity) {
         return (entity.isCrippled() && getForcedWithdrawal()) || getFallBack();
     }
@@ -2450,7 +2761,7 @@ public class Princess extends BotClient {
                             if (isEnemyInfantry(entity, coords) &&
                                   entity.isInBuilding() &&
                                   !entity.isHidden()) {
-                                fireControlState.getAdditionalTargets().add(bt);
+                                fireControlState.addAdditionalTarget(bt);
                                 sendChat("Building in Hex " +
                                       coords.toFriendlyString() +
                                       " designated target due to infantry inside building.", Level.INFO);
@@ -2534,10 +2845,10 @@ public class Princess extends BotClient {
                 // if the quickest route needs some terrain adjustments, let's get working on that
                 Targetable levelingTarget = null;
 
-                if (bulldozerPaths.get(0).needsLeveling()) {
-                    levelingTarget = getAppropriateTarget(bulldozerPaths.get(0).getCoordsToLevel().get(0),
+                if (bulldozerPaths.getFirst().needsLeveling()) {
+                    levelingTarget = getAppropriateTarget(bulldozerPaths.getFirst().getCoordsToLevel().getFirst(),
                           mover.getBoardId());
-                    getFireControlState().getAdditionalTargets().add(levelingTarget);
+                    getFireControlState().addAdditionalTarget(levelingTarget);
                     sendChat("Hex " +
                           levelingTarget.getPosition().toFriendlyString() +
                           " impedes route to destination, targeting for clearing.", Level.INFO);
@@ -2683,12 +2994,12 @@ public class Princess extends BotClient {
             fireControlState.setAdditionalTargets(new ArrayList<>());
             for (final Coords strategicTarget : getStrategicBuildingTargets()) {
                 if (null == game.getBoard().getBuildingAt(strategicTarget)) {
-                    fireControlState.getAdditionalTargets().add(getAppropriateTarget(strategicTarget));
+                    fireControlState.addAdditionalTarget(getAppropriateTarget(strategicTarget));
                     sendChat("No building to target in Hex " +
                           strategicTarget.toFriendlyString() +
                           ", targeting for clearing.", Level.INFO);
                 } else {
-                    fireControlState.getAdditionalTargets().add(getAppropriateTarget(strategicTarget));
+                    fireControlState.addAdditionalTarget(getAppropriateTarget(strategicTarget));
                     sendChat("Building in Hex " + strategicTarget.toFriendlyString() + " designated strategic target.",
                           Level.INFO);
                 }
@@ -2706,10 +3017,17 @@ public class Princess extends BotClient {
                             final Targetable bt = getAppropriateTarget(coords, board.getBoardId());
 
                             if (isEnemyGunEmplacement(entity, coords)) {
-                                fireControlState.getAdditionalTargets().add(bt);
+                                fireControlState.addAdditionalTarget(bt);
                                 sendChat("Building in Hex " +
                                       coords.toFriendlyString() +
                                       " designated target due to Gun Emplacement.", Level.INFO);
+                            }
+
+                            if (isEnemyBuildingEntity(entity, coords)) {
+                                fireControlState.addAdditionalTarget(bt);
+                                sendChat("Building in Hex " +
+                                      coords.toFriendlyString() +
+                                      " designated target due to Building Entity.", Level.INFO);
                             }
                         }
                     }
@@ -2773,6 +3091,14 @@ public class Princess extends BotClient {
                                 sendChat("Building in Hex " +
                                       coords.toFriendlyString() +
                                       " designated target due to Gun Emplacement.", Level.INFO);
+                            }
+
+
+                            if (isEnemyBuildingEntity(entity, coords)) {
+                                getStrategicBuildingTargets().add(coords);
+                                sendChat("Building in Hex " +
+                                      coords.toFriendlyString() +
+                                      " designated target due to Building Entity.", Level.INFO);
                             }
                         }
                     }
@@ -2956,6 +3282,14 @@ public class Princess extends BotClient {
               !entity.isCrippled();
     }
 
+    private boolean isEnemyBuildingEntity(final Entity entity, final Coords coords) {
+        return entity.hasETypeFlag(Entity.ETYPE_BUILDING_ENTITY) &&
+              !getBehaviorSettings().getIgnoredUnitTargets().contains(entity.getId()) &&
+              entity.getOwner().isEnemyOf(getLocalPlayer()) &&
+              !getStrategicBuildingTargets().contains(coords) &&
+              !entity.isCrippled();
+    }
+
     private boolean isEnemyInfantry(final Entity entity, final Coords coords) {
         return entity.hasETypeFlag(Entity.ETYPE_INFANTRY) &&
               !entity.hasETypeFlag(Entity.ETYPE_MEKWARRIOR) &&
@@ -3042,12 +3376,13 @@ public class Princess extends BotClient {
      */
     public int getSpinUpThreshold() {
         if (spinUpThreshold == null) {
-            spinUpThreshold = Math.max(4, Math.min(11, 13 - getBehaviorSettings().getSelfPreservationIndex()));
+            spinUpThreshold = Math.clamp(13 - getBehaviorSettings().getSelfPreservationIndex(), 4, 11);
         }
 
         return spinUpThreshold;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void resetSpinUpThreshold() {
         spinUpThreshold = null;
     }
@@ -3225,10 +3560,21 @@ public class Princess extends BotClient {
      */
     private void turnOnSearchLight(MovePath path, boolean possibleToInflictDamage) {
         Entity pathEntity = path.getEntity();
+        boolean option = path.getGame().getOptions().booleanOption(OptionsConstants.SEARCHLIGHTS_ON);
+        LOGGER.debug("Princess.turnOnSearchLight: entity={} SEARCHLIGHTS_ON={} damage={} hasSL={} usingSL={} isDark={}",
+              pathEntity.getDisplayName(), option, possibleToInflictDamage,
+              pathEntity.hasSearchlight(), pathEntity.isUsingSearchlight(),
+              path.getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack());
+        // Respect the "Searchlights On by Default" game option - if disabled, Princess won't
+        // auto-enable searchlights either (they give away position under double-blind).
+        if (!option) {
+            return;
+        }
         if (possibleToInflictDamage &&
               pathEntity.hasSearchlight() &&
               !pathEntity.isUsingSearchlight() &&
               path.getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
+            LOGGER.debug("Princess adding SEARCHLIGHT step for {}", pathEntity.getDisplayName());
             path.addStep(MoveStepType.SEARCHLIGHT);
         }
     }
@@ -3708,6 +4054,7 @@ public class Princess extends BotClient {
      *
      * @return {@code Coords} with high friendly activity; may return null
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Coords getFriendlyHotSpot() {
         return friendlyHeatMap.getHotSpot();
     }
@@ -3813,6 +4160,7 @@ public class Princess extends BotClient {
         return coverageValidator;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SwarmCenterManager getSwarmCenterManager() {
         return swarmCenterManager;
     }

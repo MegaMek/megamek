@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,40 +36,64 @@ package megamek.common;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 
+import java.util.Vector;
 import java.util.stream.Stream;
 
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.game.Game;
+import megamek.common.net.packets.Packet;
 import megamek.common.rolls.PilotingRollData;
-import megamek.common.units.Building;
 import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.Building;
 import megamek.common.units.BuildingEntity;
-import megamek.common.units.EntityMovementType;
 import megamek.common.units.MobileStructure;
 import megamek.common.weapons.lasers.innerSphere.medium.ISLaserMedium;
+import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 
 /**
  * Tests for {@link AbstractBuildingEntity} that aren't tested by {@link IBuildingTests}. If the method is from the
  * {@link Building} interface, the test should probably be in {@code IBuildingTests}.
- *
- * Many of these tests do not have their final values - this class is not yet fully implemented.
+ * <p>
+ * Many of these tests do not have their final values - this class is not yet fully implemented. Many of these
+ * method's'll be removed from this class as they're overriden.
  */
 public class AbstractBuildingEntityTest extends GameBoardTestCase {
+
+    TWGameManager gameManager;
+    private Game game;
 
     @BeforeAll
     static void beforeAll() {
         EquipmentType.initializeTypes();
+    }
+
+    @BeforeEach
+    void beforeEach() {
+        Player player = new Player(0, "Test");
+        gameManager = Mockito.spy(new TWGameManager());
+
+        // Mock methods that require Server to avoid NullPointerException
+        Mockito.doNothing().when(gameManager).send(any(Packet.class));
+        Mockito.doNothing().when(gameManager).sendChangedHex(any(Coords.class), any(int.class));
+        Mockito.doNothing().when(gameManager).entityUpdate(any(int.class));
+        Mockito.doNothing().when(gameManager).sendChangedBuildings(any());
+
+        game = gameManager.getGame();
+        game.addPlayer(0, player);
     }
 
     /**
@@ -77,10 +101,10 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
      */
     static Stream<AbstractBuildingEntity> buildingProvider() {
         return Stream.of(
-            createBuildingEntity(BuildingType.LIGHT),
-            createBuildingEntity(BuildingType.MEDIUM),
-            createBuildingEntity(BuildingType.HEAVY),
-            createBuildingEntity(BuildingType.HARDENED)/*,
+              createBuildingEntity(BuildingType.LIGHT),
+              createBuildingEntity(BuildingType.MEDIUM),
+              createBuildingEntity(BuildingType.HEAVY),
+              createBuildingEntity(BuildingType.HARDENED)/*,
             createMobileStructure(BuildingType.LIGHT),
             createMobileStructure(BuildingType.MEDIUM),
             createMobileStructure(BuildingType.HEAVY),
@@ -97,29 +121,50 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
     /**
      * Not yet implemented
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private static AbstractBuildingEntity createMobileStructure(BuildingType type) {
         AbstractBuildingEntity building = new MobileStructure(type, 1);
         return setupBuilding(building);
     }
 
-    private static AbstractBuildingEntity setupBuilding(AbstractBuildingEntity building) {
+    private static AbstractBuildingEntity setupBuilding(
+          AbstractBuildingEntity building) {        // Initialize a test board for BuildingEntity tests
         building.getInternalBuilding().setBuildingHeight(3);
         building.getInternalBuilding().addHex(new CubeCoords(0, 0, 0), 50, 10, BasementType.UNKNOWN, false);
-        building.setPosition(new Coords(5, 5));
         return building;
     }
 
     @ParameterizedTest
     @MethodSource("buildingProvider")
     void testLocations(AbstractBuildingEntity building) {
+        initializeBuildingOnBoard(building);
         // 1 hex * 3 height = 3 locations
         assertEquals(3, building.locations());
 
         building.getInternalBuilding().addHex(new CubeCoords(1, -1, 0), 50, 10, BasementType.UNKNOWN, false);
+        building.refreshLocations();
         building.refreshAdditionalLocations();
 
         // 2 hexes * 3 height = 6 locations
         assertEquals(6, building.locations());
+    }
+
+    private void initializeBuildingOnBoard(AbstractBuildingEntity building) {
+        initializeBoard("BUILDING_ENTITY_TEST_BOARD", """
+              size 16 17
+              hex 0101 0 "" ""
+              hex 0505 0 "" ""
+              hex 0506 0 "" ""
+              end"""
+        );
+        building.setOwner(game.getPlayer(0));
+        building.refreshLocations();
+        building.refreshAdditionalLocations();
+        building.setId(0);
+        game.addEntity(building);
+        building.setPosition(new Coords(5, 5));
+        building.updateBuildingEntityHexes(getBoard("BUILDING_ENTITY_TEST_BOARD").getBoardId(), gameManager);
+
     }
 
     @ParameterizedTest
@@ -146,6 +191,7 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
     @ParameterizedTest
     @MethodSource("buildingProvider")
     void testGetLocationNames(AbstractBuildingEntity building) {
+        initializeBuildingOnBoard(building);
         String[] names = building.getLocationNames();
         assertEquals(3, names.length);
         assertTrue(names[0].startsWith("Level"));
@@ -154,6 +200,7 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
     @ParameterizedTest
     @MethodSource("buildingProvider")
     void testGetLocationAbbreviations(AbstractBuildingEntity building) {
+        initializeBuildingOnBoard(building);
         String[] abbrs = building.getLocationAbbreviations();
         assertEquals(3, abbrs.length);
         assertTrue(abbrs[0].startsWith("LVL"));
@@ -180,11 +227,6 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
         assertEquals(hit, building.getTransferLocation(hit));
     }
 
-    @ParameterizedTest
-    @MethodSource("buildingProvider")
-    void testGetWeaponArc(AbstractBuildingEntity building) {
-        assertEquals(0, building.getWeaponArc(0));
-    }
 
     @ParameterizedTest
     @MethodSource("buildingProvider")
@@ -211,7 +253,15 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
     @ParameterizedTest
     @MethodSource("buildingProvider")
     void testVictoryReport(AbstractBuildingEntity building) {
-        assertNull(building.victoryReport());
+        // Arrange
+        initializeBuildingOnBoard(building);
+
+        // Act
+        Vector<Report> victoryReports = building.victoryReport();
+
+        // Assert
+        assertNotNull(victoryReports);
+        assertEquals(4, victoryReports.size());
     }
 
     @ParameterizedTest
@@ -223,8 +273,22 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
 
     @ParameterizedTest
     @MethodSource("buildingProvider")
-    void testIsRepairable(AbstractBuildingEntity building) {
-        assertEquals(building.isSalvage(), building.isRepairable());
+    void testIsRepairable_WithStructure(AbstractBuildingEntity building) {
+        initializeBuildingOnBoard(building);
+        // Building with structure is repairable
+        assertTrue(building.isRepairable());
+    }
+
+    @ParameterizedTest
+    @MethodSource("buildingProvider")
+    void testIsRepairable_CompletelyCollapsed(AbstractBuildingEntity building) {
+        initializeBuildingOnBoard(building);
+        // Destroy all structure (completely collapsed)
+        Coords buildingCoords = building.getPosition();
+        building.setCurrentCF(0, buildingCoords);
+
+        // Completely collapsed building is not repairable
+        assertFalse(building.isRepairable());
     }
 
     @ParameterizedTest
@@ -290,14 +354,60 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
 
     @ParameterizedTest
     @MethodSource("buildingProvider")
-    void testIsCrippled(AbstractBuildingEntity building) {
+    void testIsCrippled_NotCrippled(AbstractBuildingEntity building) {
+        // Pristine building with no weapons is not crippled
         assertFalse(building.isCrippled());
         assertFalse(building.isCrippled(true));
     }
 
     @ParameterizedTest
     @MethodSource("buildingProvider")
-    void testIsDmgHeavy(AbstractBuildingEntity building) {
+    void testIsCrippled_WithDisabledWeapons(AbstractBuildingEntity building) throws Exception {
+        initializeBuildingOnBoard(building);
+
+        // Add a weapon
+        WeaponMounted weapon = new WeaponMounted(building, new ISLaserMedium());
+        building.addEquipment(weapon, 0, false);
+
+        // Initialize as military building (has weapons)
+        building.initMilitary();
+
+        // Building with operational weapon is not crippled
+        assertFalse(building.isCrippled());
+
+        // Disable the weapon
+        weapon.setDestroyed(true);
+
+        // Military building with all weapons disabled is crippled
+        assertTrue(building.isCrippled());
+    }
+
+    @ParameterizedTest
+    @MethodSource("buildingProvider")
+    void testIsDmgHeavy_NotHeavyDamage(AbstractBuildingEntity building) {
+        // Pristine building is not heavily damaged
+        assertFalse(building.isDmgHeavy());
+    }
+
+    @ParameterizedTest
+    @MethodSource("buildingProvider")
+    void testIsDmgHeavy_WithHeavyDamage(AbstractBuildingEntity building) {
+        initializeBuildingOnBoard(building);
+
+        // Building starts with CF=50 per hex, 1 hex
+        // Heavy damage is <= 50% of original, so <= 25 CF
+        Coords buildingCoords = building.getPosition();
+
+        // Damage to 25 CF (exactly 50%) - should be heavy damage
+        building.setCurrentCF(25, buildingCoords);
+        assertTrue(building.isDmgHeavy());
+
+        // Damage to 20 CF (40% - less than 50%) - should still be heavy damage
+        building.setCurrentCF(20, buildingCoords);
+        assertTrue(building.isDmgHeavy());
+
+        // Restore to 26 CF (52% - more than 50%) - should not be heavy damage
+        building.setCurrentCF(26, buildingCoords);
         assertFalse(building.isDmgHeavy());
     }
 
@@ -336,5 +446,19 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
     @MethodSource("buildingProvider")
     void testGetEntityType(AbstractBuildingEntity building) {
         assertEquals(BuildingEntity.ETYPE_BUILDING_ENTITY, building.getEntityType());
+    }
+
+    @ParameterizedTest
+    @MethodSource("buildingProvider")
+    void testNewPhase_DoomedCrew_TransitionsToCarcass(AbstractBuildingEntity building) {
+        building.getCrew().setDoomed(true);
+        assertFalse(building.isCarcass(), "Building should not be carcass before newPhase");
+
+        building.newPhase(GamePhase.END);
+
+        assertTrue(building.isCarcass(), "Building with doomed crew should become carcass after newPhase");
+        assertTrue(building.getCrew().isDead(), "Building crew should be marked dead after newPhase");
+        assertFalse(building.isDestroyed(),
+              "Carcass building must not be pre-marked destroyed; prepareVictoryReport() calls destroyEntity with 'crew death' reason");
     }
 }

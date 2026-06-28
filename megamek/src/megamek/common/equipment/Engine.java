@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -582,47 +582,30 @@ public class Engine implements Serializable, ITechnology {
             }
             return slots;
         } else if (hasFlag(LARGE_ENGINE)) {
-            if (gyroType == Mek.GYRO_COMPACT) {
-                int[] slots;
-                if (hasFlag(SUPERHEAVY_ENGINE)) {
-                    slots = new int[] { 0, 1, 2, 5 };
-                } else {
-                    slots = new int[] { 0, 1, 2, 5, 6, 7, 8, 9 };
-                }
-                return slots;
-            }
-            int[] slots;
             if (hasFlag(SUPERHEAVY_ENGINE)) {
-                slots = new int[] { 0, 1, 2, 5 };
-            } else {
-                slots = new int[] { 0, 1, 2, 7, 8, 9, 10, 11 };
+                if (gyroType == Mek.GYRO_NONE) {
+                    return new int[] { 0, 1, 2, 3 };
+                }
+                return new int[] { 0, 1, 2, 5 };
             }
-            return slots;
-        } else {
             if (gyroType == Mek.GYRO_COMPACT) {
-                int[] slots;
-                if (hasFlag(SUPERHEAVY_ENGINE)) {
-                    slots = new int[] { 0, 1, 2 };
-                } else {
-                    slots = new int[] { 0, 1, 2, 5, 6, 7 };
-                }
-                return slots;
+                return new int[] { 0, 1, 2, 5, 6, 7, 8, 9 };
+            } else if (gyroType == Mek.GYRO_NONE) {
+                return new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+            }
+            return new int[] { 0, 1, 2, 7, 8, 9, 10, 11 };
+        } else {
+            if (hasFlag(SUPERHEAVY_ENGINE)) {
+                return new int[] { 0, 1, 2 };
+            }
+            if (gyroType == Mek.GYRO_COMPACT) {
+                return new int[] { 0, 1, 2, 5, 6, 7 };
             } else if (gyroType == Mek.GYRO_XL) {
-                int[] slots;
-                if (hasFlag(SUPERHEAVY_ENGINE)) {
-                    slots = new int[] { 0, 1, 2 };
-                } else {
-                    slots = new int[] { 0, 1, 2, 9, 10, 11 };
-                }
-                return slots;
+                return new int[] { 0, 1, 2, 9, 10, 11 };
+            } else if (gyroType == Mek.GYRO_NONE) {
+                return new int[] { 0, 1, 2, 3, 4, 5 };
             } else {
-                int[] slots;
-                if (hasFlag(SUPERHEAVY_ENGINE)) {
-                    slots = new int[] { 0, 1, 2 };
-                } else {
-                    slots = new int[] { 0, 1, 2, 7, 8, 9 };
-                }
-                return slots;
+                return new int[] { 0, 1, 2, 7, 8, 9 };
             }
         }
     }
@@ -680,7 +663,8 @@ public class Engine implements Serializable, ITechnology {
      * @return the heat generated while the mek is walking. Only Meks generate movement heat.
      */
     public int getWalkHeat(Entity entity) {
-        if (!(entity instanceof Mek mek)) {
+        // IndustrialMeks don't take movement heat, TW pg. 158
+        if (!(entity instanceof Mek mek) || mek.isIndustrialMek()) {
             return 0;
         }
         return switch (engineType) {
@@ -695,7 +679,8 @@ public class Engine implements Serializable, ITechnology {
      * @return the heat generated while the mek is running. Only Meks generate movement heat.
      */
     public int getRunHeat(Entity entity) {
-        if (!(entity instanceof Mek mek)) {
+        // IndustrialMeks don't take movement heat, TW pg. 158
+        if (!(entity instanceof Mek mek) || mek.isIndustrialMek()) {
             return 0;
         }
         return switch (engineType) {
@@ -710,7 +695,8 @@ public class Engine implements Serializable, ITechnology {
      * @return the heat generated while the mek is sprinting. Only Meks generate movement heat.
      */
     public int getSprintHeat(Entity entity) {
-        if (!(entity instanceof Mek mek)) {
+        // IndustrialMeks don't take movement heat, TW pg. 158
+        if (!(entity instanceof Mek mek) || mek.isIndustrialMek()) {
             return 0;
         }
         return switch (engineType) {

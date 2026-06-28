@@ -141,104 +141,122 @@ class ArmorPanel extends PicMap {
         }
         DisplayMapSet ams = null;
         removeAll();
-        if (en instanceof QuadMek) {
-            ams = quad;
-            minLeftMargin = minMekLeftMargin;
-            minTopMargin = minMekTopMargin;
-            minBottomMargin = minMekBottomMargin;
-            minRightMargin = minMekRightMargin;
-        } else if (en instanceof TripodMek) {
-            ams = tripod;
-            minLeftMargin = minMekLeftMargin;
-            minTopMargin = minMekTopMargin;
-            minBottomMargin = minMekBottomMargin;
-            minRightMargin = minMekRightMargin;
-        } else if (en instanceof Mek) {
-            ams = mek;
-            minLeftMargin = minMekLeftMargin;
-            minTopMargin = minMekTopMargin;
-            minBottomMargin = minMekBottomMargin;
-            minRightMargin = minMekRightMargin;
-        } else if (en instanceof GunEmplacement) {
-            ams = gunEmplacement;
-            minLeftMargin = minTankLeftMargin;
-            minTopMargin = minTankTopMargin;
-            minBottomMargin = minTankTopMargin;
-            minRightMargin = minTankLeftMargin;
-        } else if (en instanceof VTOL) {
-            ams = vtol;
-            minLeftMargin = minVTOLLeftMargin;
-            minTopMargin = minVTOLTopMargin;
-            minBottomMargin = minVTOLTopMargin;
-            minRightMargin = minVTOLLeftMargin;
-        } else if (en instanceof LargeSupportTank) {
-            ams = largeSupportTank;
-            minLeftMargin = minTankLeftMargin;
-            minTopMargin = minTankTopMargin;
-            minBottomMargin = minTankTopMargin;
-            minRightMargin = minTankLeftMargin;
-        } else if (en instanceof SuperHeavyTank) {
-            ams = superHeavyTank;
-            minLeftMargin = minTankLeftMargin;
-            minTopMargin = minTankTopMargin;
-            minBottomMargin = minTankTopMargin;
-            minRightMargin = minTankLeftMargin;
-        } else if (en instanceof Tank) {
-            ams = tank;
-            minLeftMargin = minTankLeftMargin;
-            minTopMargin = minTankTopMargin;
-            minBottomMargin = minTankTopMargin;
-            minRightMargin = minTankLeftMargin;
-        } else if (en instanceof BattleArmor) {
-            ams = battleArmor;
-            minLeftMargin = minInfLeftMargin;
-            minTopMargin = minInfTopMargin;
-            minBottomMargin = minInfTopMargin;
-            minRightMargin = minInfLeftMargin;
-        } else if (en instanceof Infantry) {
-            ams = infantry;
-            minLeftMargin = minInfLeftMargin;
-            minTopMargin = minInfTopMargin;
-            minBottomMargin = minInfTopMargin;
-            minRightMargin = minInfLeftMargin;
-        } else if (en instanceof ProtoMek) {
-            ams = proto;
-            minLeftMargin = minTankLeftMargin;
-            minTopMargin = minTankTopMargin;
-            minBottomMargin = minTankTopMargin;
-            minRightMargin = minTankLeftMargin;
-        } else if (en instanceof Warship) {
-            ams = warship;
-            minLeftMargin = minAeroLeftMargin;
-            minTopMargin = minAeroTopMargin;
-            minBottomMargin = minAeroTopMargin;
-            minRightMargin = minAeroLeftMargin;
-        } else if (en instanceof Jumpship) {
-            ams = jump;
-            minLeftMargin = minAeroLeftMargin;
-            minTopMargin = minAeroTopMargin;
-            minBottomMargin = minAeroTopMargin;
-            minRightMargin = minAeroLeftMargin;
-        } else if (en instanceof FighterSquadron) {
-            ams = squad;
-            minLeftMargin = minAeroLeftMargin;
-            minTopMargin = minAeroTopMargin;
-            minBottomMargin = minAeroTopMargin;
-            minRightMargin = minAeroLeftMargin;
-        } else if (en instanceof Aero) {
-            ams = aero;
-            if (en instanceof SmallCraft sc) {
-                if (sc.isSpheroid()) {
-                    ams = sphere;
+        switch (en) {
+            case QuadMek ignored -> {
+                ams = quad;
+                minLeftMargin = minMekLeftMargin;
+                minTopMargin = minMekTopMargin;
+                minBottomMargin = minMekBottomMargin;
+                minRightMargin = minMekRightMargin;
+            }
+            case TripodMek ignored -> {
+                ams = tripod;
+                minLeftMargin = minMekLeftMargin;
+                minTopMargin = minMekTopMargin;
+                minBottomMargin = minMekBottomMargin;
+                minRightMargin = minMekRightMargin;
+            }
+            case Mek ignored -> {
+                ams = mek;
+                minLeftMargin = minMekLeftMargin;
+                minTopMargin = minMekTopMargin;
+                minBottomMargin = minMekBottomMargin;
+                minRightMargin = minMekRightMargin;
+            }
+            case GunEmplacement ignored -> {
+                ams = gunEmplacement;
+                minLeftMargin = minTankLeftMargin;
+                minTopMargin = minTankTopMargin;
+                minBottomMargin = minTankTopMargin;
+                minRightMargin = minTankLeftMargin;
+            }
+            case VTOL ignored -> {
+                ams = vtol;
+                minLeftMargin = minVTOLLeftMargin;
+                minTopMargin = minVTOLTopMargin;
+                minBottomMargin = minVTOLTopMargin;
+                minRightMargin = minVTOLLeftMargin;
+            }
+            case LargeSupportTank ignored -> {
+                ams = largeSupportTank;
+                minLeftMargin = minTankLeftMargin;
+                minTopMargin = minTankTopMargin;
+                minBottomMargin = minTankTopMargin;
+                minRightMargin = minTankLeftMargin;
+            }
+            case SuperHeavyTank ignored -> {
+                ams = superHeavyTank;
+                minLeftMargin = minTankLeftMargin;
+                minTopMargin = minTankTopMargin;
+                minBottomMargin = minTankTopMargin;
+                minRightMargin = minTankLeftMargin;
+            }
+            case Tank ignored -> {
+                ams = tank;
+                minLeftMargin = minTankLeftMargin;
+                minTopMargin = minTankTopMargin;
+                minBottomMargin = minTankTopMargin;
+                minRightMargin = minTankLeftMargin;
+            }
+            case BattleArmor ignored -> {
+                ams = battleArmor;
+                minLeftMargin = minInfLeftMargin;
+                minTopMargin = minInfTopMargin;
+                minBottomMargin = minInfTopMargin;
+                minRightMargin = minInfLeftMargin;
+            }
+            case Infantry ignored -> {
+                ams = infantry;
+                minLeftMargin = minInfLeftMargin;
+                minTopMargin = minInfTopMargin;
+                minBottomMargin = minInfTopMargin;
+                minRightMargin = minInfLeftMargin;
+            }
+            case ProtoMek ignored -> {
+                ams = proto;
+                minLeftMargin = minTankLeftMargin;
+                minTopMargin = minTankTopMargin;
+                minBottomMargin = minTankTopMargin;
+                minRightMargin = minTankLeftMargin;
+            }
+            case Warship ignored -> {
+                ams = warship;
+                minLeftMargin = minAeroLeftMargin;
+                minTopMargin = minAeroTopMargin;
+                minBottomMargin = minAeroTopMargin;
+                minRightMargin = minAeroLeftMargin;
+            }
+            case Jumpship ignored -> {
+                ams = jump;
+                minLeftMargin = minAeroLeftMargin;
+                minTopMargin = minAeroTopMargin;
+                minBottomMargin = minAeroTopMargin;
+                minRightMargin = minAeroLeftMargin;
+            }
+            case FighterSquadron ignored -> {
+                ams = squad;
+                minLeftMargin = minAeroLeftMargin;
+                minTopMargin = minAeroTopMargin;
+                minBottomMargin = minAeroTopMargin;
+                minRightMargin = minAeroLeftMargin;
+            }
+            case Aero ignored -> {
+                ams = aero;
+                if (en instanceof SmallCraft sc) {
+                    if (sc.isSpheroid()) {
+                        ams = sphere;
+                    }
                 }
+                if (en.isCapitalFighter()) {
+                    ams = capFighter;
+                }
+                minLeftMargin = minAeroLeftMargin;
+                minTopMargin = minAeroTopMargin;
+                minBottomMargin = minAeroTopMargin;
+                minRightMargin = minAeroLeftMargin;
             }
-            if (en.isCapitalFighter()) {
-                ams = capFighter;
+            default -> {
             }
-            minLeftMargin = minAeroLeftMargin;
-            minTopMargin = minAeroTopMargin;
-            minBottomMargin = minAeroTopMargin;
-            minRightMargin = minAeroLeftMargin;
         }
 
         if (ams == null) {

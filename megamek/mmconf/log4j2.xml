@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Configuration status="debug">
+<Configuration status="info">
     <Properties>
         <Property name="layout">%d{ABSOLUTE} %-5p [%logger{36}] {%t}%n%l - %m%n%ex%n</Property>
         <Property name="tsvLayout">%d{ABSOLUTE}\t%p\t[%logger{36}]\t{%t}\t%l\t%m\t%ex%n</Property>
@@ -65,7 +65,148 @@
         <Logger name="BotLogger" level="info" additivity="false">
             <AppenderRef ref="BotLog" />
         </Logger>
-        <Logger name="megamek" level="debug" additivity="false">
+        <!--
+          Sensor/visibility debug loggers. These are silent by default (parent "megamek"
+          logger at info). To trace sensor returns, double-blind, searchlights, and LOS
+          visibility decisions, uncomment the blocks below:
+
+          <Logger name="megamek.common.compute.Compute" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.common.units.EntityVisibilityUtils" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.server.totalWarfare.TWGameManager" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.client.bot.princess.Princess" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
+          Trench/Fieldworks (dig-in and fortify) diagnostics, silent by default (parent "megamek" logger at
+          info). All emit [Fortify]-tagged lines. Uncomment to trace: the to-hit +2/+1 cover decision
+          (ComputeTerrainMods - answers "why isn't the dug-in bonus applying?"); the dig-in/fortify damage
+          extension and stage transitions (Infantry, Tank); move-step legality and the equipment gate
+          (MoveStep, MovePathHandler); and fortify completion / deploy-phase placement (TWGameManager, which
+          is also listed in the sensor block above). Then grep logs/megamek.log for "[Fortify]".
+
+          <Logger name="megamek.common.actions.compute.ComputeTerrainMods" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.common.units.Infantry" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.common.units.Tank" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.common.moves.MoveStep" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.server.totalWarfare.MovePathHandler" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
+          Bulldozer (rubble clearing / movement override / destruction roll) diagnostics, silent by default
+          (parent "megamek" logger at info). All emit [Bulldozer]-tagged lines. Uncomment to trace: the Clear
+          Rubble button enablement and rubble-hex target selection (MovementDisplay); the clear-rubble move-step
+          legality and the bulldozer rubble-entry override (MoveStep); starting the clear (MovePathHandler);
+          per-turn clearing progress, completion and abandonment (RubbleClearingHandler); and the
+          bulldozer-location 2D6 destruction roll (TWDamageManager). Then grep logs/megamek.log for "[Bulldozer]".
+          NOTE: if the Trench/Fieldworks block above is also uncommented, delete the duplicate MoveStep and
+          MovePathHandler lines here - log4j rejects two Logger entries with the same name.
+
+          <Logger name="megamek.client.ui.panels.phaseDisplay.MovementDisplay" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.common.moves.MoveStep" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.server.totalWarfare.MovePathHandler" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.server.totalWarfare.RubbleClearingHandler" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.server.totalWarfare.TWDamageManager" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
+          Princess movement-decision loggers, silent by default (parent "megamek.client.bot"
+          logger at error). Candidate-path data with scoring columns (isSprinting,
+          sprintExposurePenalty, sprintThreatEnemyId, ...) is always written as TSV to
+          logs/bot_path_ranker.log by the BotLogger above. To also log the per-unit sprint
+          decision summary to logs/megamek.log, uncomment the PathRanker logger below. The
+          BasicPathRanker logger additionally emits the full per-path scoring formula with
+          sprint threat detail, but only at trace level, which also logs per-hex hazard
+          checks and is extremely verbose - use it for short test games only.
+
+          <Logger name="megamek.client.bot.princess.PathRanker" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.client.bot.princess.BasicPathRanker" level="trace" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
+          Bridge-Building Engineers diagnostics (TO:AUE). All messages are tagged [BuildBridge]; grep
+          logs/megamek.log for that tag to follow the whole feature flow. MovementDisplay logs why the
+          Build Bridge button is enabled/disabled per condition; ConvInfantry logs build state transitions;
+          MoveStep logs why a declared BUILD_BRIDGE step was rejected (note: MoveStep at debug also emits
+          climb/facing trace messages during normal movement, which is why these are OFF by default).
+          Uncomment the loggers below to diagnose; leave them commented out for normal play.
+        -->
+        <!--
+        <Logger name="megamek.client.ui.panels.phaseDisplay.MovementDisplay" level="debug" additivity="false">
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
+        <Logger name="megamek.common.units.ConvInfantry" level="debug" additivity="false">
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
+        <Logger name="megamek.common.moves.MoveStep" level="debug" additivity="false">
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
+        -->
+        <!--
+          Bridge-Layer (AVLB) diagnostics (TM p.242 / TW). All messages are tagged [AVLB]; grep logs/megamek.log
+          for that tag to follow the whole feature flow. This is a dedicated logger (megamek.feature.AVLB), not a
+          host class, so enabling it at debug surfaces the eligibility-gate reasons (why the Deploy Bridge button is
+          disabled, why a deploy step was rejected) without flooding the log with Entity/MoveStep debug noise. Deploy
+          declaration, placement and cancellation are logged at INFO by the server handlers and appear via the parent
+          "megamek" logger even with this block commented out. Uncomment the logger below to also surface the debug
+          gate reasons while diagnosing; leave it commented for normal play.
+
+          <Logger name="megamek.feature.AVLB" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
+          Pre-End Declarations phase diagnostics, silent by default (parent "megamek" logger at info). All emit
+          [PreEnd]-tagged lines. Uncomment to trace the client turn lifecycle and button/done state
+          (PreEndDeclarationsDisplay), server turn generation and the eligible-unit list (TWPhasePreparationManager),
+          and bot turn handling (Princess). Logs land in logs/megamek.log.
+
+          <Logger name="megamek.client.ui.panels.phaseDisplay.PreEndDeclarationsDisplay" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.server.totalWarfare.TWPhasePreparationManager" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.client.bot.princess.Princess" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />
             <AppenderRef ref="MegaMekLog" />

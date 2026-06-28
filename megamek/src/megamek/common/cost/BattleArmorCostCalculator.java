@@ -35,11 +35,12 @@ package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.battleArmor.BattleArmor;
-import megamek.common.units.EntityMovementMode;
-import megamek.common.units.EntityWeightClass;
+import megamek.common.enums.MDAugmentationType;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.ArmorType;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EntityWeightClass;
 
 public class BattleArmorCostCalculator {
 
@@ -95,6 +96,9 @@ public class BattleArmorCostCalculator {
 
         costs[idx++] = (baseArmorCost * battleArmor.getOArmor(BattleArmor.LOC_TROOPER_1));
 
+        // MD Augmentation costs (per-trooper, IO rules) - will be multiplied by squad size later
+        costs[idx++] = calculateAugmentationCostPerTrooper(battleArmor);
+
         // For all additive costs - replace negatives with 0 to separate from multipliers
         CostCalculator.removeNegativeAdditiveCosts(costs);
 
@@ -116,9 +120,30 @@ public class BattleArmorCostCalculator {
 
         double cost = CostCalculator.calculateCost(costs);
         String[] systemNames = { "Chassis", "Jumping/VTOL/UMU", "Ground Movement", "Manipulators", "Armor",
-                                 "Clan Structure Multiplier", "Training", "Equipment", "Troopers" };
-        CostCalculator.fillInReport(costReport, battleArmor, ignoreAmmo, systemNames, 7, cost, costs);
+                                 "Augmentations", "Clan Structure Multiplier", "Training", "Equipment", "Troopers" };
+        CostCalculator.fillInReport(costReport, battleArmor, ignoreAmmo, systemNames, 8, cost, costs);
 
         return cost;
+    }
+
+    /**
+     * Calculates the per-trooper cost of MD augmentations for a Battle Armor unit. This cost will be multiplied by
+     * squad size in the main calculation.
+     *
+     * @param battleArmor The Battle Armor unit to calculate augmentation costs for
+     *
+     * @return Per-trooper augmentation cost
+     */
+    private static double calculateAugmentationCostPerTrooper(BattleArmor battleArmor) {
+        long perTrooperCost = 0;
+
+        // Check each known augmentation type using the Entity.hasAbility() pattern
+        for (MDAugmentationType augType : MDAugmentationType.values()) {
+            if (battleArmor.hasAbility(augType.getOptionName())) {
+                perTrooperCost += augType.getCost();
+            }
+        }
+
+        return perTrooperCost;
     }
 }

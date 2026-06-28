@@ -51,6 +51,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.LandAirMek;
@@ -305,7 +306,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
 
     @Override
     protected void setUmuMP() {
-        if (entity.hasShield() && (entity.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
+        if (entity.hasShield() && (entity.getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE) > 0)) {
             return;
         }
         umuMP = 0;
@@ -473,6 +474,11 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             modifier = " (Drone Op. Sys.)";
         } else if (mek.getCockpitType() == Mek.COCKPIT_INTERFACE) {
             cockpitMod = 1.3;
+            modifier = " (" + mek.getCockpitTypeString() + ")";
+        } else if (mek.getCockpitType() == Mek.COCKPIT_VRRP) {
+            // Virtual Reality Piloting Pod multiplies the unit's BV by 1.4 to reflect the MekWarrior's improved
+            // Piloting and Gunnery skills due to the system interface (IO:AE p.183).
+            cockpitMod = 1.4;
             modifier = " (" + mek.getCockpitTypeString() + ")";
         }
 

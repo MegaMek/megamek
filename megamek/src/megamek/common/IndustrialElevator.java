@@ -67,6 +67,12 @@ public class IndustrialElevator implements Serializable {
     /** Multiplier for capacity encoding (capacity stored as capacityTens * 10 = actual tons) */
     public static final int CAPACITY_MULTIPLIER = 10;
 
+    /** Bit shift for the shaft-top value within the terrain exits field: exits = (shaftTop &lt;&lt; 8) | capacityTens */
+    public static final int SHAFT_TOP_SHIFT = 8;
+
+    /** Bit mask for the capacity (in tens of tons) packed into the low byte of the terrain exits field */
+    public static final int CAPACITY_MASK = 0xFF;
+
     /** The hex location of this elevator shaft */
     private final BoardLocation location;
 
@@ -127,8 +133,8 @@ public class IndustrialElevator implements Serializable {
      */
     public static IndustrialElevator fromTerrain(BoardLocation location, int level, int exits) {
         int shaftBottom = level;
-        int shaftTop = (exits >> 8) & 0xFF;
-        int capacityTens = exits & 0xFF;
+        int shaftTop = (exits >> SHAFT_TOP_SHIFT) & CAPACITY_MASK;
+        int capacityTens = exits & CAPACITY_MASK;
         int capacityTons = capacityTens * CAPACITY_MULTIPLIER;
         return new IndustrialElevator(location, shaftBottom, shaftTop, capacityTons);
     }
@@ -192,7 +198,7 @@ public class IndustrialElevator implements Serializable {
      *
      * @param level The level to check
      *
-     * @return true if the platform is at this level
+     * @return {@code true} if the platform is at this level
      */
     public boolean isPlatformAt(int level) {
         return platformLevel == level;
@@ -203,7 +209,7 @@ public class IndustrialElevator implements Serializable {
      *
      * @param level The level to check
      *
-     * @return true if the level is within the shaft range
+     * @return {@code true} if the level is within the shaft range
      */
     public boolean isWithinShaft(int level) {
         return (level >= shaftBottom) && (level <= shaftTop);
@@ -242,7 +248,7 @@ public class IndustrialElevator implements Serializable {
      *
      * @param entity The entity to check
      *
-     * @return true if the entity is on the platform
+     * @return {@code true} if the entity is on the platform
      */
     public boolean isEntityOnPlatform(Entity entity) {
         if (entity == null) {
@@ -262,7 +268,7 @@ public class IndustrialElevator implements Serializable {
      *
      * @param game The game instance
      *
-     * @return true if current load is within capacity
+     * @return {@code true} if current load is within capacity
      */
     public boolean canMove(Game game) {
         return functional && (getCurrentLoad(game) <= capacityTons);
@@ -285,7 +291,7 @@ public class IndustrialElevator implements Serializable {
      *
      * @param call The call to remove
      *
-     * @return true if the call was found and removed
+     * @return {@code true} if the call was found and removed
      */
     public boolean removeCall(ElevatorCall call) {
         return callQueue.remove(call);
@@ -301,7 +307,7 @@ public class IndustrialElevator implements Serializable {
     /**
      * Gets the next call the elevator should respond to (nearest caller).
      *
-     * @return The next call, or null if queue is empty
+     * @return The next call, or {@code null} if queue is empty
      */
     public ElevatorCall getNextCall() {
         return callQueue.isEmpty() ? null : callQueue.get(0);
@@ -353,7 +359,7 @@ public class IndustrialElevator implements Serializable {
      *
      * @param game The game instance (for capacity checking)
      *
-     * @return true if the platform moved
+     * @return {@code true} if the platform moved
      */
     public boolean processEndPhaseMovement(Game game) {
         if (!functional) {
@@ -394,7 +400,7 @@ public class IndustrialElevator implements Serializable {
      */
     public int encodeExits() {
         int capacityTens = capacityTons / CAPACITY_MULTIPLIER;
-        return (shaftTop << 8) | (capacityTens & 0xFF);
+        return (shaftTop << SHAFT_TOP_SHIFT) | (capacityTens & CAPACITY_MASK);
     }
 
     @Override
@@ -404,7 +410,7 @@ public class IndustrialElevator implements Serializable {
               functional ? "functional" : "disabled");
     }
 
-    // --- Inner Record: ElevatorCall ---
+    // --- Inner Class: ElevatorCall ---
 
     /**
      * Represents a call to an industrial elevator.

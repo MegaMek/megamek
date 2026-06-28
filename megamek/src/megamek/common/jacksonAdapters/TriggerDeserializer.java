@@ -79,6 +79,7 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
     private static final String AT_END = "atend";
     private static final String AREA = "area";
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public TriggerDeserializer() {
         this(null);
     }

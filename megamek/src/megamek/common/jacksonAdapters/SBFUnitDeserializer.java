@@ -67,6 +67,7 @@ public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
     private static final String LEAD = "lead";
     private static final String COM = "com";
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SBFUnitDeserializer() {
         this(null);
     }
@@ -134,7 +135,7 @@ public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
 
                 if (node.has(SPECIALS)) {
                     String specials = node.get(SPECIALS).textValue();
-                    specials = specials.replaceAll(" ", ""); // remove empty spaces
+                    specials = specials.replace(" ", ""); // remove empty spaces
                     ASElementDeserializer.readSpecials(unit.getSpecialAbilities(), specials);
                 }
             }

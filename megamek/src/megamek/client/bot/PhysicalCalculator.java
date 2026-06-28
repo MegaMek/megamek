@@ -48,7 +48,6 @@ import megamek.common.actions.PushAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.game.Game;
@@ -319,7 +318,7 @@ public final class PhysicalCalculator {
         Targetable target = to;
 
         // if the object of our affections is in a building, we have to target the building instead
-        if (Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
+        if (Compute.isInBuilding(game, to) || (to.isBuildingEntityOrGunEmplacement())) {
             target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
         }
 
@@ -567,7 +566,7 @@ public final class PhysicalCalculator {
         Targetable target = to;
 
         // if the object of our affections is in a building, we have to target the building instead
-        if (Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
+        if (Compute.isInBuilding(game, to) || (to.isBuildingEntityOrGunEmplacement())) {
             target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
         }
 

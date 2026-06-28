@@ -290,6 +290,7 @@ public class CloseableTab extends JPanel {
      *
      * @return The parent pane of this tab
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public EnhancedTabbedPane getParentPane() {
         return parentPane;
     }

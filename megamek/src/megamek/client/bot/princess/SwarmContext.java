@@ -179,6 +179,7 @@ public class SwarmContext {
         return currentCenter;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isUnitTooFarFromCluster(Entity unit, double v) {
         SwarmCluster cluster = getClusterFor(unit);
         return unit.getPosition().distance(cluster.centroid) > v;
@@ -375,9 +376,9 @@ public class SwarmContext {
         while (!sortedUnits.isEmpty()) {
             SwarmCluster cluster = new SwarmCluster();
             for (int i = 0; i < optimalSize && !sortedUnits.isEmpty(); i++) {
-                var unit = sortedUnits.get(0);
+                var unit = sortedUnits.getFirst();
                 unitClusters.put(unit.getId(), cluster);
-                cluster.addMember(sortedUnits.remove(0));
+                cluster.addMember(sortedUnits.removeFirst());
                 clusterUnitsSize++;
             }
             clusters.add(cluster);

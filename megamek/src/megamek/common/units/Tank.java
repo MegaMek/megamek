@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,6 +46,7 @@ import java.util.Vector;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmorHandlesTank;
 import megamek.common.bays.BattleArmorBay;
 import megamek.common.bays.Bay;
@@ -62,6 +63,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.FuelType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
@@ -75,7 +77,7 @@ import megamek.logging.MMLogger;
 /**
  * You know what tanks are, silly.
  */
-public class Tank extends Entity {
+public class Tank extends Entity implements Fortifiable, RubbleClearer {
     private static final MMLogger logger = MMLogger.create(Tank.class);
 
     @Serial
@@ -135,12 +137,24 @@ public class Tank extends Entity {
 
     public static final int CRIT_SENSOR_MAX = 4;
 
-    // Fortify terrain just like infantry
-    public static final int DUG_IN_NONE = 0;
-    public static final int DUG_IN_FORTIFYING1 = 1;
-    public static final int DUG_IN_FORTIFYING2 = 2;
-    public static final int DUG_IN_FORTIFYING3 = 3;
+    // Fortify (build a fortified hex) over several turns; the stage machine lives in Fortifiable.
     private int dugIn = DUG_IN_NONE;
+
+    /**
+     * Tracks damage taken between turns while fortifying, so that being attacked extends the effort by one turn (TO:AUE
+     * p.153). Server-side runtime state; not written to save files (dug-in progress is itself not persisted).
+     */
+    private transient FortifyState fortifyState = new FortifyState();
+
+    /**
+     * The rubble hex this vehicle is currently clearing with its bulldozer, or {@code null} if it is not clearing
+     * (TacOps). The vehicle must remain in this hex for the duration; if displaced or destroyed the work is abandoned.
+     */
+    private Coords rubbleClearTarget = null;
+    /** Turns of bulldozer clearing banked so far against {@link #rubbleClearTurnsRequired}. */
+    private int rubbleClearTurnsCompleted = 0;
+    /** Total turns of bulldozer clearing this rubble hex needs (2/4/8/16 by structure type, capped at 16). */
+    private int rubbleClearTurnsRequired = 0;
 
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25 };
@@ -260,10 +274,12 @@ public class Tank extends Entity {
         potCrit = crit;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getOverThresh() {
         return overThresh;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setOverThresh(boolean tf) {
         overThresh = tf;
     }
@@ -432,6 +448,32 @@ public class Tank extends Entity {
         return movementMode == EntityMovementMode.TRACKED ||
               movementMode == EntityMovementMode.WHEELED ||
               movementMode == EntityMovementMode.HOVER;
+    }
+
+    @Override
+    public boolean hasFrontMountedSaw() {
+        return hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_CHAINSAW, Tank.LOC_FRONT)
+              || hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_DUAL_SAW, Tank.LOC_FRONT);
+    }
+
+    @Override
+    public boolean hasWorkingBulldozer() {
+        return hasWorkingMisc(MiscType.F_BULLDOZER);
+    }
+
+    @Override
+    public boolean hasFrontMountedBulldozer() {
+        return hasWorkingMisc(MiscType.F_BULLDOZER, null, Tank.LOC_FRONT);
+    }
+
+    @Override
+    public boolean hasRearMountedBulldozer() {
+        return hasWorkingMisc(MiscType.F_BULLDOZER, null, Tank.LOC_REAR);
+    }
+
+    @Override
+    public boolean hasWorkingBackhoe() {
+        return hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_BACKHOE);
     }
 
     public boolean isTurretLocked(int turret) {
@@ -682,9 +724,9 @@ public class Tank extends Entity {
     }
 
     /**
-     * Per https://bg.battletech.com/forums/index.php/topic,78336.msg1869386.html#msg1869386 CVs with working engines
-     * and Jump Jets should still have the option to jump during the movement phase, even if reduced to 0 MP by motive
-     * hits, or rolling 12 on the Motive System Damage table.
+     * Per <a href="https://bg.battletech.com/forums/index.php/topic,78336.msg1869386.html#msg1869386">BT Forums</a> CVs
+     * with working engines and Jump Jets should still have the option to jump during the movement phase, even if
+     * reduced to 0 MP by motive hits, or rolling 12 on the Motive System Damage table.
      */
     @Override
     public boolean isImmobileForJump() {
@@ -743,7 +785,12 @@ public class Tank extends Entity {
 
         boolean hasFlotationHull = hasWorkingMisc(MiscType.F_FLOTATION_HULL);
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
+        boolean sealed = hasEnvironmentalSealing();
         boolean hexHasRoad = hex.containsTerrain(Terrains.ROAD);
+        // A bulldozer (or, under the unofficial rule, a backhoe) lets a vehicle enter a rubble hex its motive type
+        // would normally bar, so it can clear it (TacOps). Only the rubble prohibition is lifted; other prohibiting
+        // terrain still applies.
+        boolean rubblePassable = hasWorkingBulldozer() || BulldozerRules.canBackhoeClearRubble(this, game);
         boolean scoutBikeIntoLightWoods = (hex.terrainLevel(Terrains.WOODS) == 1) &&
               hasQuirk(OptionsConstants.QUIRK_POS_SCOUT_BIKE);
         boolean isCrossCountry = hasAbility(OptionsConstants.PILOT_CROSS_COUNTRY);
@@ -756,28 +803,27 @@ public class Tank extends Entity {
         switch (movementMode) {
             case TRACKED:
                 if (isCrossCountry && !isSuperHeavy()) {
+                    // Water, no ice, no amphibious measures... or magma?  Bad.
                     return ((hex.terrainLevel(Terrains.WATER) > 0) &&
                           !hex.containsTerrain(Terrains.ICE) &&
-                          !hasFlotationHull &&
-                          !isAmphibious) || (hex.terrainLevel(Terrains.MAGMA) > 1);
+                          !(hasFlotationHull || sealed || isAmphibious) ||
+                          (hex.terrainLevel(Terrains.MAGMA) > 1));
                 }
 
                 if (!isSuperHeavy()) {
                     return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.WATER) > 0) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !hasFlotationHull &&
-                                !isAmphibious) ||
+                                !(hasFlotationHull || sealed || isAmphibious)) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.MAGMA) > 1) ||
                           (hex.terrainLevel(Terrains.ROUGH) > 1) ||
-                          ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad);
+                          ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad && !rubblePassable);
                 } else {
                     return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad) ||
-                          ((hex.terrainLevel(Terrains.WATER) > 0) &&
+                          ((hex.terrainLevel(Terrains.WATER) > 1) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !hasFlotationHull &&
-                                !isAmphibious) ||
+                                !(hasFlotationHull || sealed || isAmphibious)) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
@@ -785,8 +831,7 @@ public class Tank extends Entity {
                 if (isCrossCountry && !isSuperHeavy()) {
                     return ((hex.terrainLevel(Terrains.WATER) > 0) &&
                           !hex.containsTerrain(Terrains.ICE) &&
-                          !hasFlotationHull &&
-                          !isAmphibious) ||
+                          !(hasFlotationHull || sealed || isAmphibious)) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           ((hex.terrainLevel(Terrains.SNOW) > 1) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.GEYSER) == 2);
@@ -797,9 +842,8 @@ public class Tank extends Entity {
                           (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.WATER) > 0) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !hasFlotationHull &&
-                                !isAmphibious) ||
-                          (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad) ||
+                                !(hasFlotationHull || sealed || isAmphibious)) ||
+                          (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad && !rubblePassable) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.SNOW) > 1) && !hexHasRoad) ||
@@ -807,11 +851,10 @@ public class Tank extends Entity {
                 } else {
                     return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad) ||
                           (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad) ||
-                          ((hex.terrainLevel(Terrains.WATER) > 0) &&
+                          ((hex.terrainLevel(Terrains.WATER) > 1) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !hasFlotationHull &&
-                                !isAmphibious) ||
-                          (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad) ||
+                                !(hasFlotationHull || sealed || isAmphibious)) ||
+                          (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad && !rubblePassable) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.GEYSER) == 2);
@@ -983,21 +1026,68 @@ public class Tank extends Entity {
             setSecondaryFacing(getFacing());
         }
 
-        // Continue to fortify
-        if (dugIn != DUG_IN_NONE) {
-            dugIn++;
-            if (dugIn > DUG_IN_FORTIFYING3) {
-                dugIn = DUG_IN_NONE;
-            }
-        }
+        // Continue to fortify (the stage machine and damage-interrupt logic live in Fortifiable).
+        advanceFortifyRound();
     }
 
-    public void setDugIn(int i) {
-        dugIn = i;
+    @Override
+    public void setDugIn(int stage) {
+        dugIn = stage;
     }
 
+    @Override
     public int getDugIn() {
         return dugIn;
+    }
+
+    @Override
+    public FortifyState getFortifyState() {
+        // Runtime-only state (transient, not persisted): recreate it lazily so it is never null on a
+        // deserialized entity (the field initializer does not run during deserialization).
+        if (fortifyState == null) {
+            fortifyState = new FortifyState();
+        }
+        return fortifyState;
+    }
+
+    /**
+     * @return the health signature used to detect damage between fortifying turns: total armor plus internal structure.
+     *       Any armor or structural damage between turns lowers this value and marks the turn as interrupted.
+     */
+    @Override
+    public int currentFortifyHealthSignature() {
+        return getTotalArmor() + getTotalInternal();
+    }
+
+    @Override
+    @Nullable
+    public Coords getRubbleClearTarget() {
+        return rubbleClearTarget;
+    }
+
+    @Override
+    public void setRubbleClearTarget(@Nullable Coords target) {
+        rubbleClearTarget = target;
+    }
+
+    @Override
+    public int getRubbleClearTurnsCompleted() {
+        return rubbleClearTurnsCompleted;
+    }
+
+    @Override
+    public void setRubbleClearTurnsCompleted(int turns) {
+        rubbleClearTurnsCompleted = turns;
+    }
+
+    @Override
+    public int getRubbleClearTurnsRequired() {
+        return rubbleClearTurnsRequired;
+    }
+
+    @Override
+    public void setRubbleClearTurnsRequired(int turns) {
+        rubbleClearTurnsRequired = turns;
     }
 
     /**
@@ -1313,10 +1403,13 @@ public class Tank extends Entity {
         }
 
         // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
-        if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
-            prd.addModifier(-1, "VDNI");
-        } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
-            prd.addModifier(0, "BVDNI (no piloting bonus)");
+        // When tracking neural interface hardware, require DNI cockpit mod for benefits
+        if (hasActiveDNI()) {
+            if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                prd.addModifier(-1, "VDNI");
+            } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                prd.addModifier(0, "BVDNI (no piloting bonus)");
+            }
         }
 
         if (hasModularArmor()) {
@@ -1422,11 +1515,6 @@ public class Tank extends Entity {
         for (int x = 1; x < locations(); x++) {
             initializeInternal(nInternal, x);
         }
-    }
-
-    @Override
-    public int getMaxElevationChange() {
-        return 1;
     }
 
     @Override
@@ -1685,22 +1773,58 @@ public class Tank extends Entity {
     }
 
     /**
-     * Checks to see if a Tank is capable of going hull-down. This is true if hull-down rules are enabled and the Tank
-     * is in a fortified hex.
+     * Large Vehicles (Large Support Vehicles and super-heavy combat vehicles) are too big to take advantage of the
+     * cover offered by a fortified ("infantry-built") hex, and so cannot go hull-down in one. TO:AR p.19.
+     *
+     * @return True if this vehicle is a Large Vehicle for the purposes of the hull-down rules.
+     */
+    public boolean isLargeVehicleForHullDown() {
+        return (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) || isSuperHeavy();
+    }
+
+    /**
+     * Whether this vehicle type can use hull-down at all, independent of its current hex. Large Vehicles cannot use the
+     * cover, and naval, hydrofoil, and submarine (water-based) vehicles cannot dig in / hull down since hull-down
+     * requires a fortified land hex (TO:AR p.19).
+     *
+     * @return true if this vehicle may ever go hull-down
+     */
+    public boolean isHullDownCapable() {
+        if (isLargeVehicleForHullDown()) {
+            return false;
+        }
+        EntityMovementMode movementMode = getMovementMode();
+        return !movementMode.isNaval() && !movementMode.isHydrofoil() && !movementMode.isSubmarine();
+    }
+
+    /**
+     * Checks to see if a Tank is capable of going hull-down. This is true if hull-down rules are enabled, the Tank is
+     * in a fortified hex, and the Tank is a hull-down-capable type (not a Large Vehicle or a water-based vehicle).
      *
      * @return True if hull-down is enabled and the Tank is in a fortified hex.
      */
     @Override
     public boolean canGoHullDown() {
-        // MoveStep line 2179 performs this same check
-        // performing it here will allow us to disable the Hull down button
-        // if the movement is illegal
+        // MoveStep performs these same checks; performing them here lets us disable the Hull Down button when the
+        // movement would be illegal. Each failing gate logs its reason so playtests can diagnose a missing button.
         if (!game.hasBoardLocation(getPosition(), getBoardId())) {
             return false;
         }
+        if (!isHullDownCapable()) {
+            logger.debug("[HullDown] {}: ineligible - Large Vehicles and naval/submarine vehicles cannot use "
+                  + "hull-down (TO:AR p.19)", getDisplayName());
+            return false;
+        }
+        if (!gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN)) {
+            logger.debug("[HullDown] {}: ineligible - Hull Down game option is disabled", getDisplayName());
+            return false;
+        }
         Hex occupiedHex = game.getHex(getBoardLocation());
-        return occupiedHex.containsTerrain(Terrains.FORTIFIED) &&
-              gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
+        if (!occupiedHex.containsTerrain(Terrains.FORTIFIED)) {
+            logger.debug("[HullDown] {}: ineligible - current hex is not fortified", getDisplayName());
+            return false;
+        }
+        return true;
     }
 
     public void setOnFire(boolean inferno) {
@@ -1717,6 +1841,7 @@ public class Tank extends Entity {
         return infernoFire;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isLocationBurning(int location) {
         int flag = (1 << location);
         return (burningLocations & flag) == flag;
@@ -1783,11 +1908,6 @@ public class Tank extends Entity {
 
     public boolean hasHeavyMovementDamage() {
         return heavyMovementDamage;
-    }
-
-    @Override
-    public boolean isNuclearHardened() {
-        return true;
     }
 
     @Override
@@ -2265,6 +2385,7 @@ public class Tank extends Entity {
         return super.getRearArc();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean hasMovementDamage() {
         return motivePenalty > 0;
     }
@@ -2512,7 +2633,7 @@ public class Tank extends Entity {
                   !m.isBreached() &&
                   (m.getType() instanceof MiscType) &&
                   m.getType().hasFlag(MiscType.F_MASC) &&
-                  (m.curMode().equals("Armed") || m.getType().hasSubType(MiscType.S_JET_BOOSTER))) {
+                  (m.curMode().equals("Armed") || m.getType().hasFlag(MiscTypeFlag.S_JET_BOOSTER))) {
                 return true;
             }
         }
@@ -2536,7 +2657,7 @@ public class Tank extends Entity {
                       (mpBoosters.hasSupercharger() ?
                             " Supercharger:" +
                                   getSuperchargerTurns() +
-                                  (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") :
+                            (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") :
                             "");
             }
             return str;
@@ -3051,5 +3172,109 @@ public class Tank extends Entity {
     @Override
     public boolean canPerformGroundSalvageOperations() {
         return true;
+    }
+
+    /**
+     * Returns true if this vehicle can be abandoned by its crew. Per TacOps, vehicles can be abandoned during the End
+     * Phase. Crew size (1 per 15 tons) is defined in TM p.103 and is available regardless of optional rules.
+     * <p>
+     * Note: Naval vessels (surface ships, hydrofoils, submarines) are currently excluded. A future PR will address
+     * naval vessel abandonment once Large Naval Craft are implemented.
+     *
+     * @return true if this vehicle can be abandoned
+     */
+    public boolean canAbandon() {
+        // Must have a living crew that hasn't already ejected
+        if (getCrew() == null || getCrew().isEjected() || getCrew().isDead()) {
+            return false;
+        }
+
+        // Can't abandon if already pending abandonment
+        if (isPendingAbandon()) {
+            return false;
+        }
+
+        if (game == null) {
+            return false;
+        }
+
+        // Naval vessels excluded until Large Naval Craft abandonment is implemented
+        if (isNaval()) {
+            return false;
+        }
+
+        // Only requires the vehicle eject/abandon option
+        // Crew size is defined in TM p.103, not dependent on TacOps Vehicle Crews option
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT);
+    }
+
+    @Override
+    public boolean canAnnounceAbandon() {
+        return canAbandon();
+    }
+
+    /**
+     * Returns true if this vehicle has been abandoned - the crew has exited but the vehicle itself is not destroyed.
+     *
+     * @return true if this vehicle is crewless but intact
+     */
+    @Override
+    public boolean isAbandoned() {
+        if (getCrew() == null) {
+            return false;
+        }
+        return getCrew().isEjected() && !isDestroyed();
+    }
+
+    // Combat Vehicle Escape Pod (CVEP) - TO:AUE p.121
+
+    /**
+     * Returns true if this vehicle has a Combat Vehicle Escape Pod installed.
+     *
+     * @return true if this vehicle has a CVEP
+     */
+    public boolean hasCombatVehicleEscapePod() {
+        for (MiscMounted misc : getMisc()) {
+            if (misc.getType().hasFlag(MiscType.F_COMBAT_VEHICLE_ESCAPE_POD)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if this vehicle has an undamaged Combat Vehicle Escape Pod. Per TO:AUE p.121, the CVEP is treated as
+     * a weapon item and can be damaged by critical hits to the rear location.
+     *
+     * @return true if this vehicle has an undamaged CVEP
+     */
+    public boolean hasUndamagedCombatVehicleEscapePod() {
+        for (MiscMounted misc : getMisc()) {
+            if (misc.getType().hasFlag(MiscType.F_COMBAT_VEHICLE_ESCAPE_POD)) {
+                return !misc.isDestroyed() && !misc.isBreached() && !misc.isMissing();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if the crew can launch the Combat Vehicle Escape Pod this turn. Per TO:AUE p.121, the crew may
+     * choose to use the CVEP during the Movement Phase if the system has not been previously damaged.
+     *
+     * @return true if the CVEP can be launched
+     */
+    public boolean canLaunchEscapePod() {
+        // Must have a living crew
+        if (getCrew() == null || getCrew().isEjected() || getCrew().isDead()) {
+            return false;
+        }
+
+        // Must have an undamaged CVEP
+        if (!hasUndamagedCombatVehicleEscapePod()) {
+            return false;
+        }
+
+        // Vehicle must not already be destroyed
+        return !isDestroyed() && !isDoomed();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.ViewFormatting;
+import megamek.common.SourceBook;
 import megamek.common.SourceBooks;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.TechBase;
@@ -62,7 +63,6 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.game.Game;
-import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.IBomber;
@@ -139,7 +139,7 @@ class GeneralEntityReadout implements EntityReadout {
 
     protected List<ViewElement> createHeaderSection() {
         List<ViewElement> result = new ArrayList<>();
-        result.add(new UnitName(entity.getShortNameRaw()));
+        result.add(new UnitName(entity.getShortNameRaw(), entity.isNonCanonBySource()));
         result.add(new PlainLine(EntityReadoutUnitType.unitTypeAsString(entity)));
         return result;
     }
@@ -172,6 +172,7 @@ class GeneralEntityReadout implements EntityReadout {
         result.add(new PlainLine());
         result.add(createCostElement());
         result.add(createSourceElement());
+        result.add(createPublishedElement());
         return result;
     }
 
@@ -213,25 +214,36 @@ class GeneralEntityReadout implements EntityReadout {
         Game game = entity.getGame();
 
         if ((game == null) || game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            List<String> activeUnitQuirksNames = entity.getQuirks().activeQuirks().stream()
-                  .map(IOption::getDisplayableNameWithValue)
+            List<ToolTippedElement> activeUnitQuirkElements = entity.getQuirks().activeQuirks().stream()
+                  .map(quirk -> new ToolTippedElement(
+                        quirk.getDisplayableNameWithValue(),
+                        quirk.getDescription())
+                  )
                   .toList();
 
-            if (!activeUnitQuirksNames.isEmpty()) {
+            if (!activeUnitQuirkElements.isEmpty()) {
                 result.add(new PlainLine());
                 var list = new ItemList(Messages.getString("MekView.Quirks"));
-                activeUnitQuirksNames.forEach(list::addItem);
+                activeUnitQuirkElements.forEach(list::addItem);
                 result.add(list);
             }
 
-            List<String> wpQuirksList = new ArrayList<>();
+            List<ViewElement> wpQuirksList = new ArrayList<>();
             for (Mounted<?> weapon : entity.getWeaponList()) {
-                List<String> activeWeaponQuirksNames = weapon.getQuirks().activeQuirks().stream()
-                      .map(IOption::getDisplayableNameWithValue)
-                      .collect(Collectors.toList());
-                if (!activeWeaponQuirksNames.isEmpty()) {
-                    String wq = weapon.getDesc() + " (" + entity.getLocationAbbr(weapon.getLocation()) + "): ";
-                    wq += String.join(", ", activeWeaponQuirksNames);
+                List<ToolTippedElement> activeWeaponQuirkElements = weapon.getQuirks().activeQuirks().stream()
+                      .map(quirk -> new ToolTippedElement(
+                            quirk.getDisplayableNameWithValue(),
+                            quirk.getDescription()
+                      ))
+                      .toList();
+                if (!activeWeaponQuirkElements.isEmpty()) {
+                    JoinedViewElement wq = new JoinedViewElement();
+                    wq.add(weapon.getDesc() + " (" + entity.getLocationAbbr(weapon.getLocation()) + "): ");
+                    wq.add(activeWeaponQuirkElements.getFirst());
+                    for (int i = 1; i < activeWeaponQuirkElements.size(); i++) {
+                        wq.add(", ");
+                        wq.add(activeWeaponQuirkElements.get(i));
+                    }
                     wpQuirksList.add(wq);
                 }
             }
@@ -322,25 +334,84 @@ class GeneralEntityReadout implements EntityReadout {
     }
 
     protected ViewElement createSourceElement() {
-        String source = entity.getSource();
-        String sourceLabel = Messages.getString("MekView.Source");
-        var sourcebooks = new SourceBooks();
-        var book = sourcebooks.loadSourceBook(source);
-        if (book.isPresent()) {
-            if (book.get().getMul_url() != null) {
-                return new HyperLinkLine(sourceLabel, book.get().getMul_url(), book.get().getTitle());
-            } else if (book.get().getTitle() != null) {
-                source = Objects.requireNonNullElse(book.get().getTitle(), "");
-            }
+        return createSourceBookElement(Messages.getString("MekView.Source"), entity.getSource(), entity.getSources());
+    }
+
+    protected ViewElement createPublishedElement() {
+        if (entity.getPublishedSources().isEmpty()) {
+            return new EmptyElement();
+        }
+        return createSourceBookElement(Messages.getString("MekView.PublishedRecordSheet"), entity.getPublished(),
+              entity.getPublishedSources());
+    }
+
+    private ViewElement createSourceBookElement(String sourceLabel, String source, List<String> sources) {
+        if (sources.isEmpty()) {
+            return new LabeledLine(sourceLabel, Messages.getString("MekView.Unknown"));
         }
 
-        if (source.isBlank()) {
-            return new LabeledLine(sourceLabel, Messages.getString("MekView.Unknown"));
-        } else if (source.contains(MMConstants.SOURCE_TEXT_SHRAPNEL)) {
-            return new HyperLinkLine(sourceLabel, MMConstants.BT_URL_SHRAPNEL, source);
-        } else {
+        var sourcebooks = new SourceBooks();
+        if (sources.size() == 1) {
+            var book = sourcebooks.loadSourceBook(source);
+            if (book.isPresent()) {
+                SourceBook sourceBook = book.get();
+                String displaySource = sourceBookDisplayText(source, sourceBook);
+                if ((sourceBook.getMul_url() != null) && !sourceBook.getMul_url().isBlank()) {
+                    return new HyperLinkLine(sourceLabel, sourceBook.getMul_url(), displaySource);
+                } else {
+                    source = displaySource;
+                }
+            }
+
+            if (source.contains(MMConstants.SOURCE_TEXT_SHRAPNEL)) {
+                return new HyperLinkLine(sourceLabel, MMConstants.BT_URL_SHRAPNEL, source);
+            }
+
             return new LabeledLine(sourceLabel, source);
         }
+
+        JoinedViewElement displaySources = new JoinedViewElement();
+        for (String sourceName : sources) {
+            if (!displaySources.toPlainText().isEmpty()) {
+                displaySources.add(", ");
+            }
+            displaySources.add(sourcebooks.loadSourceBook(sourceName)
+                  .map(book -> sourceBookDisplayElement(sourceName, book))
+                  .orElse(new PlainElement(sourceName)));
+        }
+        return new LabeledLine(sourceLabel, displaySources);
+    }
+
+    private ViewElement sourceBookDisplayElement(String sourceName, SourceBook sourceBook) {
+        String displaySource = sourceBookDisplayText(sourceName, sourceBook);
+        if ((sourceBook.getMul_url() == null) || sourceBook.getMul_url().isBlank()) {
+            return new PlainElement(displaySource);
+        }
+
+        return new ViewElement() {
+            @Override
+            public String toPlainText() {
+                return displaySource;
+            }
+
+            @Override
+            public String toHTML() {
+                return "<A HREF=" + sourceBook.getMul_url() + ">" + displaySource + "</A>";
+            }
+
+            @Override
+            public String toDiscord() {
+                return displaySource;
+            }
+        };
+    }
+
+    private String sourceBookDisplayText(String sourceName, SourceBook sourceBook) {
+        String displaySource = Objects.requireNonNullElse(sourceBook.getTitle(), sourceName);
+        if (!sourceBook.isCanon()) {
+            displaySource += " (non-canon)";
+        }
+        return displaySource;
     }
 
     protected ViewElement createWeightElement() {

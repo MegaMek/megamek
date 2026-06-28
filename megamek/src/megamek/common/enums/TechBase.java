@@ -38,9 +38,10 @@ import java.util.Map;
 
 // --- Tech Base Enum ---
 public enum TechBase {
-    UNKNOWN(-1), ALL(0), IS(1), CLAN(2);
+    UNKNOWN(-1, "Unknown"), ALL(0, "All"), IS(1, "IS"), CLAN(2, "Clan");
 
     private final int index;
+    private final String name;
     private static final Map<Integer, TechBase> INDEX_LOOKUP = new HashMap<>();
 
     static {
@@ -49,9 +50,15 @@ public enum TechBase {
         }
     }
 
-    TechBase(int idx) {this.index = idx;}
+    TechBase(int idx, String name) {
+        this.index = idx;
+        this.name = name;
+    }
 
     public int getIndex() {return index;}
+
+    @Override
+    public String toString() {return name;}
 
     public static TechBase fromIndex(int idx) {
         TechBase tb = INDEX_LOOKUP.get(idx);

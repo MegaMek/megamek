@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,23 +33,12 @@
  */
 package megamek.common.equipment;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Vector;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import megamek.common.RangeType;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
+import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
@@ -66,7 +55,6 @@ import megamek.common.weapons.autoCannons.HVACWeapon;
 import megamek.common.weapons.defensivePods.BPodWeapon;
 import megamek.common.weapons.defensivePods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
-import megamek.logging.MMLogger;
 
 /**
  * Represents any type of equipment mounted on a 'Mek, excluding systems and actuators.
@@ -75,7 +63,6 @@ import megamek.logging.MMLogger;
  * @since April 1, 2002, 1:35 PM
  */
 public class EquipmentType implements ITechnology {
-    private static final MMLogger logger = MMLogger.create(EquipmentType.class);
 
     public static final double TONNAGE_VARIABLE = Float.MIN_VALUE;
     public static final int CRITICAL_SLOTS_VARIABLE = Integer.MIN_VALUE;
@@ -151,6 +138,7 @@ public class EquipmentType implements ITechnology {
 
     public static final String[] structureNames = { "Standard", "Industrial", "Endo Steel", "Endo Steel Prototype",
                                                     "Reinforced", "Composite", "Endo-Composite" };
+    public static final String[] structureAbbreviations = { "STD", "IND", "ES", "ES-P", "REIN", "COMP", "EC" };
 
     // Assume for now that prototype is not more expensive
     public static final double[] structureCosts = { 400, 300, 1600, 4800, 6400, 1600, 3200 };
@@ -185,10 +173,8 @@ public class EquipmentType implements ITechnology {
 
     protected EquipmentBitSet flags = new EquipmentBitSet();
 
-    protected long subType = 0;
-
-    public double bv = 0; // battle value point system
-    protected double cost = 0; // The C-Bill cost of the item.
+    public double bv = 0;
+    protected double cost = 0;
 
     // For equipment that cannot be pod-mounted on an Omni unit
     protected boolean omniFixedOnly = false;
@@ -226,26 +212,6 @@ public class EquipmentType implements ITechnology {
         this.flags = flags;
     }
 
-    public long getSubType() {
-        return subType;
-    }
-
-    public void setSubType(int newFlags) {
-        subType = newFlags;
-    }
-
-    public void addSubType(int newFlag) {
-        subType |= newFlag;
-    }
-
-    public boolean hasAnySubType(long... testFlags) {
-        return Arrays.stream(testFlags).anyMatch(this::hasSubType);
-    }
-
-    public boolean hasSubType(long testFlag) {
-        return (subType & testFlag) != 0;
-    }
-
     public String getName() {
         return name;
     }
@@ -260,6 +226,22 @@ public class EquipmentType implements ITechnology {
             return result;
         }
         return name;
+    }
+
+    public double getBaseCost() {
+        return cost;
+    }
+
+    public double getBaseBV() {
+        return bv;
+    }
+
+    public double getBaseTonnage() {
+        return tonnage;
+    }
+
+    public double getBaseCriticalSlots() {
+        return criticalSlots;
     }
 
     public String getDesc(double size) {
@@ -546,7 +528,19 @@ public class EquipmentType implements ITechnology {
      * @return True when the equipment has at least one of the given flags.
      */
     public boolean hasAnyFlag(EquipmentFlag... flags) {
-        return Arrays.stream(flags).anyMatch(this::hasFlag);
+        for (EquipmentFlag flag : flags) {
+            if (this.flags.get(flag)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return True when the equipment has at least one of the given flags.
+     */
+    public boolean hasAnyFlag(EquipmentBitSet mask) {
+        return flags.intersects(mask);
     }
 
     /**
@@ -756,10 +750,17 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Add a way to find if a given equipment type matches a particular string in _any_ of its names
-     * (Case sensitive)
-     * @param name
-     * @return
+     * Explicit structure lookup by name, to avoid armor type collisions (mainly "IS Standard")
+     * Works because all structure names (q.v.) are added to the hash with " structure" appended.
+     * @param key   String name, probably generated from looking up a structure type name using an index
+     * @return      The matching Structure-specific Equipment Type.
+     */
+    public static @Nullable EquipmentType getStructureFromName(String key) {
+        return EquipmentType.get(String.format("%s structure", key));
+    }
+
+    /**
+     * Add a way to find if a given equipment type matches a particular string in _any_ of its names (Case sensitive)
      */
     public boolean matchesName(String name) {
         for (String s : namesVector) {
@@ -874,6 +875,13 @@ public class EquipmentType implements ITechnology {
         return clan ? "Clan " + structureNames[structureType] : "IS " + structureNames[structureType];
     }
 
+    public static String getStructureTypeAbbrev(int structureType) {
+        if ((structureType < 0) || (structureType >= structureAbbreviations.length)) {
+            return "UNK";
+        }
+        return structureAbbreviations[structureType];
+    }
+
     /**
      * Convenience method to test whether an EquipmentType instance is mek structure. This works by comparing the
      * results of {@link #getName()} to the structure names array and returning {@code true} if there is a match.
@@ -885,26 +893,6 @@ public class EquipmentType implements ITechnology {
     public static boolean isStructureType(EquipmentType et) {
         return getStructureType(et) != T_STRUCTURE_UNKNOWN;
     }
-
-    /**
-     * Gives the weight of a single point of armor at a particular BAR for a given tech level.
-     */
-    private static final double[][] SV_ARMOR_WEIGHT = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-                                                        { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-                                                        { .040, .025, .016, .013, .012, .011 },
-                                                        { .060, .038, .024, .019, .017, .016 },
-                                                        { .000, .050, .032, .026, .023, .021 },
-                                                        { .000, .063, .040, .032, .028, .026 },
-                                                        { .000, .000, .048, .038, .034, .032 },
-                                                        { .000, .000, .056, .045, .040, .037 },
-                                                        { .000, .000, .000, .051, .045, .042 },
-                                                        { .000, .000, .000, .057, .051, .047 },
-                                                        { .000, .000, .000, .063, .056, .052 } };
-
-    /*
-     * Armor and structure are stored as integers and standard uses a generic
-     * MiscType that does not have its own TechAdvancement.
-     */
 
     protected static final TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TechBase.ALL).setAdvancement(
                 2430,
@@ -1025,6 +1013,7 @@ public class EquipmentType implements ITechnology {
         return techAdvancement.getTechBase();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static String getEquipDateAsString(int date) {
         if (date == DATE_NONE) {
             return "-";
@@ -1103,577 +1092,277 @@ public class EquipmentType implements ITechnology {
         return Objects.hashCode(internalName);
     }
 
-    public static void writeEquipmentDatabase(File f) {
-        try {
-            BufferedWriter w = new BufferedWriter(new FileWriter(f));
-            w.write("MegaMek Equipment Database");
-            w.newLine();
-            w.write("This file can be regenerated with java -jar MegaMek.jar -eqdb ");
-            w.write(f.toString());
-            w.newLine();
-            w.write("Type,Tech Base,Rules,Name,Aliases");
-            w.newLine();
-            for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements(); ) {
-                EquipmentType type = e.nextElement();
-                if (type instanceof AmmoType) {
-                    w.write("A,");
-                } else if (type instanceof WeaponType) {
-                    w.write("W,");
-                } else {
-                    w.write("M,");
-                }
-                for (int year : type.getTechLevels().keySet()) {
-                    w.write(year + "-" + TechConstants.getTechName(type.getTechLevel(year)));
-                }
-                w.write(",");
-                for (int year : type.getTechLevels().keySet()) {
-                    w.write(year + "-" + TechConstants.getLevelName(type.getTechLevel(year)));
-                }
-                w.write(",");
-                for (Enumeration<String> names = type.getNames(); names.hasMoreElements(); ) {
-                    String name = names.nextElement();
-                    w.write(name + ",");
-                }
-                w.newLine();
-            }
-            w.flush();
-            w.close();
-        } catch (Exception e) {
-            logger.error("", e);
-        }
-    }
-
+    public static final String YAML_VERSION = "1.0";
+    public static final String VARIABLE = "variable";
 
     /**
-     * Constructs a map containing the YAML-serializable data for this equipment type.
+     * Constructs a map containing the YAML-serializable data for this equipment type. Subclasses should override this
+     * method to add type-specific data.
      *
      * @return A map containing the YAML-serializable data for this equipment type.
      */
     public Map<String, Object> getYamlData() {
-        return YamlEncDec.serialize(this);
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("version", YAML_VERSION);
+        data.put("type", getYamlTypeName());
+
+        // Basic identification
+        addBasicIdentification(data);
+
+        // Equipment statistics
+        addStatistics(data);
+
+        // Equipment modes
+        addModes(data);
+
+        // Technology advancement
+        addTechAdvancement(data);
+
+        // Flags (subclasses should override addFlags to add type-specific flags)
+        addFlags(data);
+
+        return data;
     }
 
-    public static void writeEquipmentExtendedDatabase(File f) {
-        try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
-            bufferedWriter.write("MegaMek Equipment Extended Database");
-            bufferedWriter.newLine();
-            bufferedWriter.write("This file can be regenerated with java -jar MegaMek.jar -eqedb ");
-            bufferedWriter.write(f.toString());
-            bufferedWriter.newLine();
-            bufferedWriter.write(
-                  "Type,Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,RulesRef,Alias");
-            bufferedWriter.newLine();
-            for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes();
-                  equipmentTypes.hasMoreElements(); ) {
-                EquipmentType equipmentType = equipmentTypes.nextElement();
-                if (equipmentType instanceof AmmoType) {
-                    bufferedWriter.write("A");
-                } else if (equipmentType instanceof WeaponType) {
-                    bufferedWriter.write("W");
-                } else {
-                    bufferedWriter.write("M");
+    /**
+     * Returns the YAML type name for this equipment type. Subclasses should override this to return their specific type
+     * name.
+     *
+     * @return The YAML type name (e.g., "weapon", "ammo", "misc", "armor")
+     */
+    protected String getYamlTypeName() {
+        return "equipment";
+    }
+
+    /**
+     * Adds equipment flags to the YAML data map. Subclasses should override this to add type-specific flags.
+     *
+     * @param data The YAML data map to add flags to
+     */
+    protected void addFlags(Map<String, Object> data) {
+        // Base EquipmentType has no flags to add
+        // Subclasses override this to add their specific flags
+    }
+
+    /**
+     * Adds basic identification information to the YAML data map.
+     */
+    private void addBasicIdentification(Map<String, Object> data) {
+        data.put("id", internalName);
+        data.put("name", name);
+
+        YamlEncDec.addPropIfNotEmpty(data, "shortName", shortName);
+        YamlEncDec.addPropIfNotEmpty(data, "sortingName", sortingName);
+        YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", rulesRefs);
+
+        addAliases(data);
+    }
+
+    /**
+     * Adds alias names to the YAML data map, excluding duplicates.
+     */
+    private void addAliases(Map<String, Object> data) {
+        Enumeration<String> names = getNames();
+        if (names == null || !names.hasMoreElements()) {
+            return;
+        }
+
+        Set<String> uniqueAliases = new LinkedHashSet<>();
+
+        while (names.hasMoreElements()) {
+            String aliasName = names.nextElement();
+            if (aliasName != null && !aliasName.trim().isEmpty()) {
+                if (aliasName.equals(internalName) || aliasName.equals(name) || aliasName.equals(shortName)) {
+                    continue;
                 }
-
-                bufferedWriter.write(",\"");
-                bufferedWriter.write(equipmentType.getName());
-
-                // Gather the unique tech levels for this equipment ...
-                List<Integer> levels = equipmentType.getTechLevels()
-                      .keySet()
-                      .stream()
-                      .map(equipmentType::getTechLevel)
-                      .sorted() // ordered for ease of use
-                      .distinct()
-                      .toList();
-
-                // ... and use them to output the tech names ...
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(levels.stream()
-                      .map(TechConstants::getTechName)
-                      .distinct()
-                      .collect(Collectors.joining("/")));
-
-                // ... and associated rules levels.
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(levels.stream()
-                      .map(TechConstants::getLevelName)
-                      .distinct()
-                      .collect(Collectors.joining("/")));
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getFullRatingName());
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getTechAdvancement().getStaticTechLevel().toString());
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getTechAdvancement().getIntroductionDateName());
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getTechAdvancement().getPrototypeDateName());
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getTechAdvancement().getProductionDateName());
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getTechAdvancement().getCommonDateName());
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getTechAdvancement().getExtinctionDateName());
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getTechAdvancement().getReintroductionDateName());
-
-                bufferedWriter.write("\",");
-                if (equipmentType.tonnage == EquipmentType.TONNAGE_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Double.toString(equipmentType.tonnage));
-                }
-
-                bufferedWriter.write(",");
-                if (equipmentType.criticalSlots == EquipmentType.CRITICAL_SLOTS_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Integer.toString(equipmentType.criticalSlots));
-                }
-
-                bufferedWriter.write(",");
-                if (equipmentType.cost == EquipmentType.COST_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Double.toString(equipmentType.getCost(null, false, -1, 1.0)));
-                }
-
-                bufferedWriter.write(",");
-                if (equipmentType.bv == EquipmentType.BV_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Double.toString(equipmentType.bv));
-                }
-
-                bufferedWriter.write(",\"");
-                bufferedWriter.write(equipmentType.getRulesRefs());
-
-                bufferedWriter.write("\",\"");
-                for (Enumeration<String> names = equipmentType.getNames(); names.hasMoreElements(); ) {
-                    String name = names.nextElement();
-                    bufferedWriter.write(name + ",");
-                }
-                bufferedWriter.write("\"");
-                bufferedWriter.newLine();
+                uniqueAliases.add(aliasName);
             }
-            bufferedWriter.flush();
-            bufferedWriter.close();
-        } catch (Exception e) {
-            logger.error("", e);
+        }
+
+        if (!uniqueAliases.isEmpty()) {
+            data.put("aliases", new ArrayList<>(uniqueAliases));
         }
     }
 
-    public static void writeEquipmentWeaponDatabase(File f) {
-        try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
-            bufferedWriter.write("MegaMek Equipment Weapon Database");
-            bufferedWriter.newLine();
-            bufferedWriter.write("This file can be regenerated with java -jar MegaMek.jar -eqwdb ");
-            bufferedWriter.write(f.toString());
-            bufferedWriter.newLine();
-            bufferedWriter.write(
-                  "Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,RulesRef,MinimalRange,ShortRange,MediumRange,LongRange,ExtremeRange,ShortWaterRange,MediumWaterRange,LongWaterRange,ExtremeWaterRange,MinimalDamage,ShortDamage,MediumDamage,LongDamage,ExtremeDamage,Alias");
-            bufferedWriter.newLine();
+    /**
+     * Adds equipment statistics to the YAML data map.
+     */
+    private void addStatistics(Map<String, Object> data) {
+        Map<String, Object> stats = new LinkedHashMap<>();
 
-            for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes();
-                  equipmentTypes.hasMoreElements(); ) {
-                EquipmentType equipmentType = equipmentTypes.nextElement();
-                if (!(equipmentType instanceof WeaponType weaponType)) {
-                    continue;
-                }
+        // Core statistics - use formatDouble to avoid scientific notation
+        stats.put("tonnage", isVariableTonnage() ? VARIABLE : YamlEncDec.formatDouble(tonnage));
+        stats.put("cost", isVariableCost() ? VARIABLE : YamlEncDec.formatDouble(cost));
+        stats.put("bv", isVariableBV() ? VARIABLE : YamlEncDec.formatDouble(bv));
+        stats.put("criticalSlots", isVariableCriticalSlots() ? VARIABLE : criticalSlots);
 
-                bufferedWriter.write("\"");
-                bufferedWriter.write(weaponType.getName());
+        // Optional statistics - only add if not default
+        if (!hittable) {
+            stats.put("hittable", false);
+        }
+        if (spreadable) {
+            stats.put("spreadable", true);
+        }
+        if (explosive) {
+            stats.put("explosive", true);
+        }
+        if (toHitModifier != 0) {
+            stats.put("toHitModifier", toHitModifier);
+        }
+        if (tankSlots > -1) {
+            stats.put("tankSlots", tankSlots);
+        }
+        if (svSlots > -1) {
+            stats.put("svSlots", svSlots);
+        }
+        if (omniFixedOnly) {
+            stats.put("omniFixedOnly", true);
+        }
+        if (!instantModeSwitch) {
+            stats.put("instantModeSwitch", false);
+        }
 
-                // Gather the unique tech levels for this equipment ...
-                List<Integer> levels = weaponType.getTechLevels()
-                      .keySet()
-                      .stream()
-                      .map(weaponType::getTechLevel)
-                      .sorted() // ordered for ease of use
-                      .distinct()
-                      .toList();
+        data.put("stats", stats);
+    }
 
-                // ... and use them to output the tech names ...
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(levels.stream()
-                      .map(TechConstants::getTechName)
-                      .distinct()
-                      .collect(Collectors.joining("/")));
+    /**
+     * Adds equipment modes to the YAML data map.
+     */
+    private void addModes(Map<String, Object> data) {
+        if (!hasModes()) {
+            return;
+        }
 
-                // ... and associated rules levels.
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(levels.stream()
-                      .map(TechConstants::getLevelName)
-                      .distinct()
-                      .collect(Collectors.joining("/")));
+        List<String> modeNames = new ArrayList<>();
+        Enumeration<EquipmentMode> modeEnum = getModes();
 
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(weaponType.getFullRatingName());
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(weaponType.getTechAdvancement().getStaticTechLevel().toString());
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(weaponType.getTechAdvancement().getIntroductionDateName());
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(weaponType.getTechAdvancement().getPrototypeDateName());
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(weaponType.getTechAdvancement().getProductionDateName());
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(weaponType.getTechAdvancement().getCommonDateName());
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(weaponType.getTechAdvancement().getExtinctionDateName());
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(weaponType.getTechAdvancement().getReintroductionDateName());
-                bufferedWriter.write("\",");
-                if (weaponType.tonnage == EquipmentType.TONNAGE_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Double.toString(weaponType.tonnage));
-                }
-                bufferedWriter.write(",");
-                if (weaponType.criticalSlots == EquipmentType.CRITICAL_SLOTS_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Integer.toString(weaponType.criticalSlots));
-                }
-                bufferedWriter.write(",");
-                if (weaponType.cost == EquipmentType.COST_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Double.toString(weaponType.getCost(null, false, -1, 1.0)));
-                }
-                bufferedWriter.write(",");
-                if (weaponType.bv == EquipmentType.BV_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Double.toString(weaponType.bv));
-                }
-
-                bufferedWriter.write(",\"");
-                bufferedWriter.write(weaponType.getRulesRefs());
-
-                int minimalRange = weaponType.getMinimumRange();
-                minimalRange = (minimalRange < 0) ? -1 : minimalRange;
-                bufferedWriter.write("\",");
-                bufferedWriter.write(Integer.toString(minimalRange));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(weaponType.getShortRange()));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(weaponType.getMediumRange()));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(weaponType.getLongRange()));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(weaponType.getExtremeRange()));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(weaponType.getWShortRange()));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(weaponType.getWMediumRange()));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(weaponType.getWLongRange()));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(weaponType.getWExtremeRange()));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(weaponType.getDamage(RangeType.RANGE_MINIMUM)));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(weaponType.getDamage(RangeType.RANGE_SHORT)));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(weaponType.getDamage(RangeType.RANGE_MEDIUM)));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(weaponType.getDamage(RangeType.RANGE_LONG)));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(weaponType.getDamage(RangeType.RANGE_EXTREME)));
-
-                bufferedWriter.write(",\"");
-                for (Enumeration<String> names = weaponType.getNames(); names.hasMoreElements(); ) {
-                    String name = names.nextElement();
-                    bufferedWriter.write(name + ",");
-                }
-
-                bufferedWriter.write("\"");
-                bufferedWriter.newLine();
+        while (modeEnum.hasMoreElements()) {
+            EquipmentMode mode = modeEnum.nextElement();
+            if (mode != null && mode.getName() != null) {
+                modeNames.add(mode.getName());
             }
-            bufferedWriter.flush();
-            bufferedWriter.close();
-        } catch (Exception e) {
-            logger.error("", e);
+        }
+
+        if (!modeNames.isEmpty()) {
+            data.put("modes", modeNames);
         }
     }
 
-    public static void writeEquipmentAmmoDatabase(File f) {
-        try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
-            bufferedWriter.write("MegaMek Equipment Armor Database");
-            bufferedWriter.newLine();
-            bufferedWriter.write("This file can be regenerated with java -jar MegaMek.jar -eqadb ");
-            bufferedWriter.write(f.toString());
-            bufferedWriter.newLine();
-            bufferedWriter.write(
-                  "Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,RulesRef,CountAsFlak?,MunitionType,DamagePerShot,RackSize,Shots,AmmoRatio,IsCapital,KgPerShot,AeroUse?,Alias");
-            bufferedWriter.newLine();
-            for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes();
-                  equipmentTypes.hasMoreElements(); ) {
-                EquipmentType equipmentType = equipmentTypes.nextElement();
-                if (!(equipmentType instanceof AmmoType ammoType)) {
-                    continue;
-                }
+    /**
+     * Adds technology advancement information to the YAML data map.
+     */
+    private void addTechAdvancement(Map<String, Object> data) {
+        if (techAdvancement == null) {
+            return;
+        }
 
-                bufferedWriter.write("\"");
-                bufferedWriter.write(ammoType.getName());
+        Map<String, Object> techData = new LinkedHashMap<>();
 
-                // Gather the unique tech levels for this equipment ...
-                List<Integer> levels = ammoType.getTechLevels()
-                      .keySet()
-                      .stream()
-                      .map(ammoType::getTechLevel)
-                      .sorted() // ordered for ease of use
-                      .distinct()
-                      .toList();
+        // Basic tech information
+        techData.put("base", techAdvancement.getTechBase().toString());
+        techData.put("rating", techAdvancement.getTechRating().name());
+        techData.put("level", techAdvancement.getStaticTechLevel().toString());
 
-                // ... and use them to output the tech names ...
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(levels.stream()
-                      .map(TechConstants::getTechName)
-                      .distinct()
-                      .collect(Collectors.joining("/")));
+        // Availability by era
+        addAvailabilityData(techData);
 
-                // ... and associated rules levels.
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(levels.stream()
-                      .map(TechConstants::getLevelName)
-                      .distinct()
-                      .collect(Collectors.joining("/")));
+        // Advancement dates
+        addAdvancementData(techData);
 
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(ammoType.getFullRatingName());
+        // Faction information
+        addFactionData(techData);
 
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(ammoType.getTechAdvancement().getStaticTechLevel().toString());
+        data.put("tech", techData);
+    }
 
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(ammoType.getTechAdvancement().getIntroductionDateName());
+    /**
+     * Adds availability information by era to the technology data.
+     */
+    private void addAvailabilityData(Map<String, Object> techData) {
+        Map<String, Object> availability = new LinkedHashMap<>();
+        for (Era era : Era.values()) {
+            AvailabilityValue availabilityValue = techAdvancement.getBaseAvailability(era);
+            availability.put(era.name().toLowerCase(), availabilityValue.name());
+        }
+        techData.put("availability", availability);
+    }
 
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(ammoType.getTechAdvancement().getPrototypeDateName());
+    /**
+     * Adds advancement phase dates to the technology data.
+     */
+    private void addAdvancementData(Map<String, Object> techData) {
+        Map<String, Object> advancement = new LinkedHashMap<>();
 
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(ammoType.getTechAdvancement().getProductionDateName());
+        Map<String, Object> advancementIS = createAdvancementPhaseMap(false);
+        Map<String, Object> advancementClan = createAdvancementPhaseMap(true);
 
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(ammoType.getTechAdvancement().getCommonDateName());
+        if (!advancementIS.isEmpty()) {
+            advancement.put("is", advancementIS);
+        }
+        if (!advancementClan.isEmpty()) {
+            advancement.put("clan", advancementClan);
+        }
 
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(ammoType.getTechAdvancement().getExtinctionDateName());
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(ammoType.getTechAdvancement().getReintroductionDateName());
-
-                bufferedWriter.write("\",");
-                if (ammoType.tonnage == EquipmentType.TONNAGE_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Double.toString(ammoType.tonnage));
-                }
-
-                bufferedWriter.write(",");
-                if (ammoType.criticalSlots == EquipmentType.CRITICAL_SLOTS_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Integer.toString(ammoType.criticalSlots));
-                }
-
-                bufferedWriter.write(",");
-                if (ammoType.cost == EquipmentType.COST_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Double.toString(ammoType.getCost(null, false, -1, 1.0)));
-                }
-
-                bufferedWriter.write(",");
-                if (ammoType.bv == EquipmentType.BV_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Double.toString(ammoType.bv));
-                }
-
-                bufferedWriter.write(",\"");
-                bufferedWriter.write(ammoType.getRulesRefs());
-
-                bufferedWriter.write("\",");
-                bufferedWriter.write(Boolean.toString(ammoType.countsAsFlak()));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(ammoType.getMunitionType().toString());
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(ammoType.getDamagePerShot()));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(ammoType.getRackSize()));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Integer.toString(ammoType.getShots()));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Double.toString(ammoType.getAmmoRatio()));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Boolean.toString(ammoType.isCapital()));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Double.toString(ammoType.getKgPerShot()));
-
-                bufferedWriter.write(",");
-                bufferedWriter.write(Boolean.toString(ammoType.canAeroUse()));
-
-                bufferedWriter.write(",\"");
-                for (Enumeration<String> names = ammoType.getNames(); names.hasMoreElements(); ) {
-                    String name = names.nextElement();
-                    bufferedWriter.write(name + ",");
-                }
-                bufferedWriter.write("\"");
-                bufferedWriter.newLine();
-            }
-            bufferedWriter.flush();
-            bufferedWriter.close();
-        } catch (Exception e) {
-            logger.error("", e);
+        if (!advancement.isEmpty()) {
+            techData.put("advancement", advancement);
         }
     }
 
-    public static void writeEquipmentMiscDatabase(File f) {
-        try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
-            bufferedWriter.write("MegaMek Equipment Extended Database");
-            bufferedWriter.newLine();
-            bufferedWriter.write("This file can be regenerated with java -jar MegaMek.jar -eqmdb ");
-            bufferedWriter.write(f.toString());
-            bufferedWriter.newLine();
-            bufferedWriter.write(
-                  "Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,RulesRef,Alias");
-            bufferedWriter.newLine();
-            for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes();
-                  equipmentTypes.hasMoreElements(); ) {
-                EquipmentType equipmentType = equipmentTypes.nextElement();
-                if ((equipmentType instanceof AmmoType) || (equipmentType instanceof WeaponType)) {
-                    continue;
-                }
+    /**
+     * Creates advancement phase map for IS or Clan technology.
+     */
+    private Map<String, Object> createAdvancementPhaseMap(boolean isClan) {
+        Map<String, Object> advancementMap = new LinkedHashMap<>();
 
-                bufferedWriter.write("\"");
-                bufferedWriter.write(equipmentType.getName());
-
-                // Gather the unique tech levels for this equipment ...
-                List<Integer> levels = equipmentType.getTechLevels()
-                      .keySet()
-                      .stream()
-                      .map(equipmentType::getTechLevel)
-                      .sorted() // ordered for ease of use
-                      .distinct()
-                      .toList();
-
-                // ... and use them to output the tech names ...
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(levels.stream()
-                      .map(TechConstants::getTechName)
-                      .distinct()
-                      .collect(Collectors.joining("/")));
-
-                // ... and associated rules levels.
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(levels.stream()
-                      .map(TechConstants::getLevelName)
-                      .distinct()
-                      .collect(Collectors.joining("/")));
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getFullRatingName());
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getTechAdvancement().getStaticTechLevel().toString());
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getTechAdvancement().getIntroductionDateName());
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getTechAdvancement().getPrototypeDateName());
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getTechAdvancement().getProductionDateName());
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getTechAdvancement().getCommonDateName());
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getTechAdvancement().getExtinctionDateName());
-
-                bufferedWriter.write("\",\"");
-                bufferedWriter.write(equipmentType.getTechAdvancement().getReintroductionDateName());
-
-                bufferedWriter.write("\",");
-                if (equipmentType.tonnage == EquipmentType.TONNAGE_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Double.toString(equipmentType.tonnage));
-                }
-
-                bufferedWriter.write(",");
-                if (equipmentType.criticalSlots == EquipmentType.CRITICAL_SLOTS_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Integer.toString(equipmentType.criticalSlots));
-                }
-
-                bufferedWriter.write(",");
-                if (equipmentType.cost == EquipmentType.COST_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Double.toString(equipmentType.getCost(null, false, -1, 1.0)));
-                }
-
-                bufferedWriter.write(",");
-                if (equipmentType.bv == EquipmentType.BV_VARIABLE) {
-                    bufferedWriter.write("Variable");
-                } else {
-                    bufferedWriter.write(Double.toString(equipmentType.bv));
-                }
-
-                bufferedWriter.write(",\"");
-                bufferedWriter.write(equipmentType.getRulesRefs());
-
-                bufferedWriter.write("\",\"");
-                for (Enumeration<String> names = equipmentType.getNames(); names.hasMoreElements(); ) {
-                    String name = names.nextElement();
-                    bufferedWriter.write(name + ",");
-                }
-
-                bufferedWriter.write("\"");
-                bufferedWriter.newLine();
+        for (AdvancementPhase phase : AdvancementPhase.values()) {
+            Integer advancementDate = isClan ? techAdvancement.getClanAdvancement(phase)
+                  : techAdvancement.getISAdvancement(phase);
+            if (advancementDate == null || advancementDate < 0) {
+                continue;
             }
 
-            bufferedWriter.flush();
-            bufferedWriter.close();
-        } catch (Exception e) {
-            logger.error("", e);
+            boolean isApproximate = isClan ? techAdvancement.getClanApproximate(phase)
+                  : techAdvancement.getISApproximate(phase);
+            String advancementStr = (isApproximate ? "~" : "") + advancementDate;
+
+            advancementMap.put(phase.name().toLowerCase(), advancementStr);
+        }
+
+        return advancementMap;
+    }
+
+    /**
+     * Adds faction information to the technology data.
+     */
+    private void addFactionData(Map<String, Object> techData) {
+        Map<String, Object> factions = new LinkedHashMap<>();
+
+        addFactionList(factions, "prototype", techAdvancement.getPrototypeFactions());
+        addFactionList(factions, "production", techAdvancement.getProductionFactions());
+        addFactionList(factions, "extinction", techAdvancement.getExtinctionFactions());
+        addFactionList(factions, "reintroduction", techAdvancement.getReintroductionFactions());
+
+        if (!factions.isEmpty()) {
+            techData.put("factions", factions);
+        }
+    }
+
+    /**
+     * Adds a faction list to the factions map if not empty.
+     */
+    private void addFactionList(Map<String, Object> factions, String key, Set<Faction> factionSet) {
+        if (factionSet == null || factionSet.isEmpty()) {
+            return;
+        }
+
+        List<String> factionCodes = factionSet.stream()
+              .filter(Objects::nonNull)
+              .map(Faction::getCodeMM)
+              .filter(Objects::nonNull)
+              .collect(Collectors.toList());
+
+        if (!factionCodes.isEmpty()) {
+            factions.put(key, factionCodes);
         }
     }
 
@@ -1808,6 +1497,21 @@ public class EquipmentType implements ITechnology {
      *       CEWS, NC3 and BA C3. Note that this returns true for some MiscTypes as well as some WeaponTypes.
      */
     public boolean isC3Equipment() {
+        return false;
+    }
+
+    /**
+     * @return True if this equipment type can be mounted on a BattleArmor Detachable Weapon Pack, TO:AUE p.99
+     */
+    public boolean canBeMountedOnBaDwp() {
+        return false;
+    }
+
+    /**
+     * @return True if this equipment counts for the size and weight of a Targeting Computer, and benefits from it in
+     *       the case of weapons. TM p.238, TO:AUE p.157
+     */
+    public boolean relevantToTargetingComputer() {
         return false;
     }
 }

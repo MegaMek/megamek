@@ -40,8 +40,11 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import megamek.common.TargetRollModifier;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
+import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.NarcPod;
 import megamek.common.equipment.Sensor;
@@ -146,22 +149,29 @@ public class SerializationHelper {
 
         // Necessary because, while Java 17+ supports Record serialization/deserialization, XStream 1.4.x
         // does not (natively).
+        // Supports both Narc and iNarc pods
         xStream.registerConverter(new Converter() {
             @Override
             public boolean canConvert(Class cls) {
-                return (cls == NarcPod.class);
+                return (cls == NarcPod.class || cls == INarcPod.class);
             }
 
             @Override
             public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                // Shared by NarcPod and INarcPod
                 int team = -1;
                 int location = -1;
+
+                // INarcPod only
+                int type = -1;
+
                 while (reader.hasMoreChildren()) {
                     reader.moveDown();
                     try {
                         switch (reader.getNodeName()) {
                             case "team" -> team = Integer.parseInt(reader.getValue());
                             case "location" -> location = Integer.parseInt(reader.getValue());
+                            case "type" -> type = Integer.parseInt(reader.getValue());
                         }
                         reader.moveUp();
                     } catch (NumberFormatException e) {
@@ -169,7 +179,10 @@ public class SerializationHelper {
                         return null;
                     }
                 }
-                return ((team > -1) && (location > -1)) ? new NarcPod(team, location) : null;
+                if ((team > -1) && (location > -1)) {
+                    return (type > -1) ? new INarcPod(team, type, location) : new NarcPod(team, location);
+                }
+                return null;
             }
 
             @Override
@@ -190,8 +203,8 @@ public class SerializationHelper {
                 while (reader.hasMoreChildren()) {
                     reader.moveDown();
                     try {
-                        switch (reader.getNodeName()) {
-                            case "type" -> type = Integer.parseInt(reader.getValue());
+                        if (reader.getNodeName().equals("type")) {
+                            type = Integer.parseInt(reader.getValue());
                         }
                         reader.moveUp();
                     } catch (NumberFormatException e) {
@@ -331,7 +344,7 @@ public class SerializationHelper {
                     }
                 }
                 return (!Double.isNaN(q) && !Double.isNaN(r) && !Double.isNaN(s))
-                    ? new CubeCoords(q, r, s) : null;
+                      ? new CubeCoords(q, r, s) : null;
             }
 
             @Override
@@ -380,6 +393,52 @@ public class SerializationHelper {
                 }
                 return new InitiativeBonusBreakdown(hq, quirk, quirkName, console, crewCommand,
                       tcp, constant, compensation, crew);
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == BoardLocation.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                Coords coords = null;
+                int boardId = Board.BOARD_NONE - 1; // -1 is a valid board ID now.
+                boolean isNoLocation = false;
+                try {
+                    while (reader.hasMoreChildren()) {
+                        reader.moveDown();
+                        switch (reader.getNodeName()) {
+                            case "coords":
+                                coords = (Coords) context.convertAnother(null, Coords.class);
+                                break;
+                            case "boardId":
+                                boardId = Integer.parseInt(reader.getValue());
+                                break;
+                            case "isNoLocation":
+                                isNoLocation = Boolean.parseBoolean(reader.getValue());
+                                break;
+                            default:
+                                // Unknown node, or <hash>
+                                break;
+                        }
+                        reader.moveUp();
+                    }
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+                if (coords != null && boardId >= Board.BOARD_NONE) {
+                    return new BoardLocation(coords, boardId, isNoLocation);
+                } else {
+                    return null;
+                }
             }
 
             @Override

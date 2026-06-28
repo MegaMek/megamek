@@ -46,6 +46,11 @@ public class DemolitionCharge implements Serializable {
     private static final long serialVersionUID = -6655782801564155668L;
     public int damage;
     public int playerId;
+    /**
+     * The absolute board {@link Coords} of the building hex this charge is placed in. This must always be board
+     * coordinates (not building-relative coordinates): the touch-off menu compares it against the clicked board hex,
+     * and the end-phase detonation uses it to look up the building and apply damage.
+     */
     public Coords pos;
     /**
      * A UUID to keep track of to identify of this demolition charge. Since we could have multiple charges in the same

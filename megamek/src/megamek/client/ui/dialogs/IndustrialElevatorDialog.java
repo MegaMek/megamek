@@ -95,55 +95,55 @@ public class IndustrialElevatorDialog extends JDialog {
               UIUtil.scaleForGUI(10),
               UIUtil.scaleForGUI(15)));
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.insets = new Insets(
               UIUtil.scaleForGUI(5),
               UIUtil.scaleForGUI(5),
               UIUtil.scaleForGUI(5),
               UIUtil.scaleForGUI(5));
-        gbc.anchor = GridBagConstraints.WEST;
+        constraints.anchor = GridBagConstraints.WEST;
 
         // Shaft Top label and spinner
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        mainPanel.add(new JLabel(Messages.getString("BoardEditor.IndustrialElevatorDialog.shaftTop")), gbc);
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        mainPanel.add(new JLabel(Messages.getString("BoardEditor.IndustrialElevatorDialog.shaftTop")), constraints);
 
-        gbc.gridx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        mainPanel.add(spinnerShaftTop, gbc);
+        constraints.gridx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(spinnerShaftTop, constraints);
 
         // Capacity label and spinner
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        mainPanel.add(new JLabel(Messages.getString("BoardEditor.IndustrialElevatorDialog.capacity")), gbc);
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        constraints.fill = GridBagConstraints.NONE;
+        mainPanel.add(new JLabel(Messages.getString("BoardEditor.IndustrialElevatorDialog.capacity")), constraints);
 
-        gbc.gridx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        mainPanel.add(spinnerCapacity, gbc);
+        constraints.gridx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(spinnerCapacity, constraints);
 
         // Help text
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        constraints.gridwidth = 2;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
         JLabel helpLabel = new JLabel(Messages.getString("BoardEditor.IndustrialElevatorDialog.help"));
         helpLabel.setFont(helpLabel.getFont().deriveFont(helpLabel.getFont().getSize() * 0.9f));
-        mainPanel.add(helpLabel, gbc);
+        mainPanel.add(helpLabel, constraints);
 
         // Buttons
         JPanel buttonPanel = new JPanel();
-        JButton butOk = new JButton(Messages.getString("Okay"));
-        JButton butCancel = new JButton(Messages.getString("Cancel"));
+        JButton okButton = new JButton(Messages.getString("Okay"));
+        JButton cancelButton = new JButton(Messages.getString("Cancel"));
 
-        butOk.addActionListener(e -> {
+        okButton.addActionListener(event -> {
             confirmed = true;
             setVisible(false);
         });
-        butCancel.addActionListener(e -> setVisible(false));
+        cancelButton.addActionListener(event -> setVisible(false));
 
-        buttonPanel.add(butOk);
-        buttonPanel.add(butCancel);
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
 
         // Layout
         getContentPane().setLayout(new BorderLayout());
@@ -160,8 +160,8 @@ public class IndustrialElevatorDialog extends JDialog {
      * @param exits The exits value encoding shaft top and capacity
      */
     public void setExits(int exits) {
-        int shaftTop = (exits >> 8) & 0xFF;
-        int capacityTens = exits & 0xFF;
+        int shaftTop = (exits >> IndustrialElevator.SHAFT_TOP_SHIFT) & IndustrialElevator.CAPACITY_MASK;
+        int capacityTens = exits & IndustrialElevator.CAPACITY_MASK;
         int capacityTons = capacityTens * IndustrialElevator.CAPACITY_MULTIPLIER;
 
         spinnerShaftTop.setValue(shaftTop);
@@ -178,7 +178,7 @@ public class IndustrialElevatorDialog extends JDialog {
         int capacityTons = (Integer) spinnerCapacity.getValue();
         int capacityTens = capacityTons / IndustrialElevator.CAPACITY_MULTIPLIER;
 
-        return (shaftTop << 8) | (capacityTens & 0xFF);
+        return (shaftTop << IndustrialElevator.SHAFT_TOP_SHIFT) | (capacityTens & IndustrialElevator.CAPACITY_MASK);
     }
 
     /**
@@ -202,7 +202,7 @@ public class IndustrialElevatorDialog extends JDialog {
     /**
      * Shows the dialog and returns whether the user confirmed.
      *
-     * @return true if the user clicked OK, false if cancelled
+     * @return {@code true} if the user clicked OK, {@code false} if cancelled
      */
     public boolean showDialog() {
         confirmed = false;

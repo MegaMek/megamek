@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -55,11 +55,13 @@ import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.moves.MoveStep;
@@ -876,6 +878,14 @@ public class ProtoMek extends Entity {
             }
         }
         super.addEquipment(mounted, loc, rearMounted);
+
+        // ProtoMeks have EI Interface built-in (IO:AE p.69)
+        // Only activate when neural interface rules are enabled; lock mode to prevent UI toggle
+        if ((mounted.getType() instanceof MiscType) &&
+              mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+            mounted.setMode(isNeuralInterfaceEnabled() ? 1 : 0);
+            mounted.setModeSwitchable(false);
+        }
     }
 
     public int maxWeapons(int location) {
@@ -936,11 +946,6 @@ public class ProtoMek extends Entity {
         r.newlines = 2;
 
         return vDesc;
-    }
-
-    @Override
-    public int getMaxElevationChange() {
-        return 1;
     }
 
     @Override
@@ -1031,8 +1036,69 @@ public class ProtoMek extends Entity {
     }
 
     @Override
+    public void setGameOptions() {
+        super.setGameOptions();
+        // Update EI Interface equipment mode based on neural interface game option
+        boolean eiEnabled = isNeuralInterfaceEnabled();
+        for (Mounted<?> m : getEquipment()) {
+            if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                m.setMode(eiEnabled ? 1 : 0);
+                break;
+            }
+        }
+        // Recalculate tech advancement to pick up EI-related changes
+        recalculateTechAdvancement();
+    }
+
+    /**
+     * ProtoMeks have EI built-in per IO:AE p.69, but BLK files do not include EI Interface equipment. In Full Tracking
+     * mode the EI tech advancement (Experimental) must be added to the composite so that all tech level queries
+     * (year-based, static, etc.) reflect Experimental.
+     */
+    @Override
+    public void recalculateTechAdvancement() {
+        super.recalculateTechAdvancement();
+        if (isNeuralInterfaceFullTracking()) {
+            EquipmentType eiInterface = EquipmentType.get(EquipmentTypeLookup.EI_INTERFACE);
+            if (eiInterface != null) {
+                addTechComponent(eiInterface);
+            }
+        }
+    }
+
+    /**
+     * ProtoMeks in Full Tracking mode are Experimental tech per IO:AE p.69 due to built-in EI. Off and Pilot Only modes
+     * keep ProtoMeks at their base tech level (Standard).
+     */
+    @Override
+    public SimpleTechLevel getStaticTechLevel() {
+        if (isNeuralInterfaceFullTracking()) {
+            return SimpleTechLevel.max(super.getStaticTechLevel(), SimpleTechLevel.EXPERIMENTAL);
+        }
+        return super.getStaticTechLevel();
+    }
+
+    /**
+     * ProtoMeks have EI built-in per IO:AE p.69, but it is only active when neural interface rules are enabled (Pilot
+     * Abilities Only or Full Tracking mode). When Off, ProtoMeks behave as standard TW units.
+     *
+     * @return true if neural interface rules are enabled, false otherwise
+     */
+    @Override
+    public boolean hasEiCockpit() {
+        return isNeuralInterfaceEnabled();
+    }
+
+    /**
+     * ProtoMeks have EI built-in and always active unless the head is damaged. Unlike other units, ProtoMek pilots
+     * don't need the EI Implant option - they are neurally connected by default per IO:AE p.69. Returns false if neural
+     * interface rules are disabled (Off mode).
+     *
+     * @return true if neural interface is enabled and head is undamaged, false otherwise
+     */
+    @Override
     public boolean hasActiveEiCockpit() {
-        return (super.hasActiveEiCockpit() && (getCritsHit(LOC_HEAD) == 0));
+        return hasEiCockpit() && (getCritsHit(LOC_HEAD) == 0);
     }
 
     @Override
@@ -1076,11 +1142,6 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public boolean isNuclearHardened() {
-        return true;
-    }
-
-    @Override
     public void setGrappled(int id, boolean attacker) {
         grappled_id = id;
         isGrappleAttacker = attacker;
@@ -1117,11 +1178,6 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public int getTotalCommGearTons() {
-        return 0;
-    }
-
-    @Override
     public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType,
           MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos,
           boolean isInfantry, int distance) {
@@ -1135,10 +1191,18 @@ public class ProtoMek extends Entity {
             return new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, "Landing with destroyed legs.");
         } else if (!getCrew().isActive()) {
             return new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, "Landing incapacitated pilot.");
-        } else if (getRunMP() < 4) {
-            return new PilotingRollData(getId(), 8, "Forced landing with insufficient thrust.");
         } else {
-            return new PilotingRollData(getId(), 4, "Attempting to land");
+            PilotingRollData roll;
+            if (getRunMP() < 4) {
+                roll = new PilotingRollData(getId(), 8, "Forced landing with insufficient thrust.");
+            } else {
+                roll = new PilotingRollData(getId(), 4, "Attempting to land");
+            }
+
+            if (hasAbility(OptionsConstants.PILOT_WIND_WALKER) && PilotSPAHelper.isWindWalkerValid(this)) {
+                roll.addModifier(-1, "Wind Walker SPA");
+            }
+            return roll;
         }
     }
 
@@ -1355,8 +1419,8 @@ public class ProtoMek extends Entity {
     public int getJumpType() {
         jumpType = JUMP_NONE;
         for (Mounted<?> m : miscList) {
-            if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
-                if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
+            if (m.getType().hasFlag(MiscTypeFlag.F_JUMP_JET)) {
+                if (m.getType().hasFlag(MiscTypeFlag.S_IMPROVED)) {
                     jumpType = JUMP_IMPROVED;
                 } else {
                     jumpType = JUMP_STANDARD;

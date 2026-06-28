@@ -502,7 +502,7 @@ public class ASPointValueConverter {
 
     /**
      * Determines the Agile Bonus, AlphaStrike Companion Errata v1.4, p.17 and
-     * https://bg.battletech.com/forums/errata/alpha-strike-companion/msg1881442/#msg1881442
+     * <a href="https://bg.battletech.com/forums/errata/alpha-strike-companion/msg1881442/#msg1881442">BT Forums</a>
      */
     private double agileBonus() {
         double result = 0;

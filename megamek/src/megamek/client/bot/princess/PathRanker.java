@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,9 +40,11 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TreeSet;
 
@@ -117,9 +119,9 @@ public abstract class PathRanker implements IPathRanker {
         // If the heat map of friendly activity has sufficient data, use the nearest hot
         // spot as
         // the anchor point
-        Coords allyCenter = owner.getFriendlyHotSpot(movePaths.get(0).getEntity().getPosition());
+        Coords allyCenter = owner.getFriendlyHotSpot(movePaths.getFirst().getEntity().getPosition());
         if (allyCenter == null) {
-            allyCenter = this.calculateAlliesCenter(movePaths.get(0).getEntity().getId(), friends, game);
+            allyCenter = this.calculateAlliesCenter(movePaths.getFirst().getEntity().getId(), friends, game);
         }
 
         TreeSet<RankedPath> returnPaths = new TreeSet<>(Collections.reverseOrder());
@@ -153,7 +155,7 @@ public abstract class PathRanker implements IPathRanker {
                     logger.error(e, "{} while processing {}", e.getMessage(), path);
                 }
             }
-            Entity mover = movePaths.get(0).getEntity();
+            Entity mover = movePaths.getFirst().getEntity();
             UnitBehavior behaviorTracker = getOwner().getUnitBehaviorTracker();
             boolean noDamageButCanDoDamage = !pathsHaveExpectedDamage
                   && (FireControl.getMaxDamageAtRange(mover, 1, false, false) > 0);
@@ -183,7 +185,58 @@ public abstract class PathRanker implements IPathRanker {
             i++;
         }
 
+        logSprintDecisionSummary(returnPaths);
+
         return returnPaths;
+    }
+
+    /**
+     * Logs a one-line, debug-level summary of the sprint decision for a unit's move: whether the best-ranked path
+     * sprints, how many candidate paths end in a sprint, how many of those were penalized for ending inside enemy
+     * weapon range, and the best sprint vs. non-sprint ranks. This makes the bot's sprint reasoning visible without
+     * wading through per-path trace output; the full per-path detail is in the BotLogger TSV columns
+     * ({@code isSprinting}, {@code sprintExposurePenalty}, {@code sprintThreatEnemyId}, {@code sprintThreatDistance},
+     * {@code sprintThreatRange}) and each ranked path's reason string.
+     *
+     * @param rankedPaths the ranked paths for this unit's move, best first
+     */
+    private void logSprintDecisionSummary(TreeSet<RankedPath> rankedPaths) {
+        if (rankedPaths.isEmpty() || !logger.isLevelLessSpecificThan(Level.INFO)) {
+            return;
+        }
+
+        int sprintPathCount = 0;
+        int penalizedPathCount = 0;
+        RankedPath bestSprintPath = null;
+        RankedPath bestNonSprintPath = null;
+
+        for (RankedPath rankedPath : rankedPaths) {
+            if (BasicPathRanker.isSprintingPath(rankedPath.getPath())) {
+                sprintPathCount++;
+                Double sprintExposurePenalty = rankedPath.getScores().get("sprintExposurePenalty");
+                if ((sprintExposurePenalty != null) && (sprintExposurePenalty > 0)) {
+                    penalizedPathCount++;
+                }
+                if (bestSprintPath == null) {
+                    bestSprintPath = rankedPath;
+                }
+            } else if (bestNonSprintPath == null) {
+                bestNonSprintPath = rankedPath;
+            }
+        }
+
+        RankedPath bestPath = rankedPaths.first();
+        logger.debug("Sprint decision for {}: best path {} (rank {}); {} of {} candidate paths sprint, "
+                    + "{} sprint paths penalized for ending in enemy weapon range; "
+                    + "best sprint rank {}, best non-sprint rank {}",
+              bestPath.getPath().getEntity().getDisplayName(),
+              BasicPathRanker.isSprintingPath(bestPath.getPath()) ? "SPRINTS" : "does not sprint",
+              bestPath.getRank(),
+              sprintPathCount,
+              rankedPaths.size(),
+              penalizedPathCount,
+              (bestSprintPath == null) ? "n/a" : bestSprintPath.getRank(),
+              (bestNonSprintPath == null) ? "n/a" : bestNonSprintPath.getRank());
     }
 
     private List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,
@@ -194,7 +247,7 @@ public abstract class PathRanker implements IPathRanker {
             return startingPathList;
         }
 
-        Entity mover = startingPathList.get(0).getEntity();
+        Entity mover = startingPathList.getFirst().getEntity();
 
         Targetable closestTarget = findClosestEnemy(mover, mover.getPosition(), game);
         int startingTargetDistance = (closestTarget == null) ? Integer.MAX_VALUE
@@ -530,8 +583,8 @@ public abstract class PathRanker implements IPathRanker {
      * @return True if there is a building in our path that might collapse.
      */
     private boolean willBuildingCollapse(MovePath path, Game game) {
-        // airborne aircraft cannot collapse buildings
-        if (path.getEntity().isAero() || path.getEntity().hasETypeFlag(Entity.ETYPE_VTOL)) {
+        // airborne aircraft cannot collapse buildings; landed dropships can, so check isAirborne() not isAero()
+        if (path.getEntity().isAirborne() || path.getEntity().hasETypeFlag(Entity.ETYPE_VTOL)) {
             return false;
         }
 
@@ -555,20 +608,41 @@ public abstract class PathRanker implements IPathRanker {
 
         // If we're not jumping, check each building to see if it will collapse if it
         // has a basement.
-        final double mass = path.getEntity().getWeight() + 10;
+        final Entity entity = path.getEntity();
+        final double mass = entity.getWeight() + 10;
+        // Secondary positions are absolute coords based on the entity's current position.
+        // For multi-hex units (e.g. Dropships), key 0 is the center and keys 1-N are the
+        // surrounding hexes. For single-hex units, this map is empty.
+        final Map<Integer, Coords> secondaryPositions = entity.getSecondaryPositions();
+        final Coords entityCenter = entity.getPosition();
         final ListIterator<MoveStep> steps = path.getSteps();
         while (steps.hasNext()) {
             final MoveStep step = steps.next();
-            final IBuilding building = game.getBoard(step.getBoardId()).getBuildingAt(step.getPosition());
-            if (building == null) {
-                continue;
+
+            // Determine which hexes this entity occupies at this step position.
+            // For multi-hex units, translate each secondary position by the step delta.
+            Collection<Coords> occupiedHexes;
+            if (secondaryPositions.isEmpty()) {
+                occupiedHexes = List.of(step.getPosition());
+            } else {
+                final Coords stepCenter = step.getPosition();
+                occupiedHexes = secondaryPositions.values().stream()
+                      .map(sec -> stepCenter.add(sec.subtract(entityCenter)))
+                      .toList();
             }
 
-            // Add the mass of anyone else standing in/on this building.
-            double fullMass = mass + owner.getMassOfAllInBuilding(game, step.getPosition(), step.getBoardId());
+            for (Coords pos : occupiedHexes) {
+                final IBuilding building = game.getBoard(step.getBoardId()).getBuildingAt(pos);
+                if (building == null) {
+                    continue;
+                }
 
-            if (fullMass > building.getCurrentCF(step.getPosition())) {
-                return true;
+                // Add the mass of anyone else standing in/on this building.
+                double fullMass = mass + owner.getMassOfAllInBuilding(game, pos, step.getBoardId());
+
+                if (fullMass > building.getCurrentCF(pos)) {
+                    return true;
+                }
             }
         }
         return false;

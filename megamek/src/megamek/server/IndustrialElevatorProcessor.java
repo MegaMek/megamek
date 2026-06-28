@@ -49,8 +49,6 @@ import megamek.common.units.Entity;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.server.totalWarfare.TWGameManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Processes industrial elevator movement during the End Phase.
@@ -71,8 +69,6 @@ import org.apache.logging.log4j.Logger;
  * @since 0.50.07
  */
 public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
-    private static final Logger LOGGER = LogManager.getLogger();
-
     private boolean initialized = false;
 
     public IndustrialElevatorProcessor(TWGameManager gameManager) {
@@ -82,11 +78,6 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
     @Override
     public void doEndPhaseChanges(Vector<Report> vPhaseReport) {
         Game game = gameManager.getGame();
-        LOGGER.info(
-              "[ELEVATOR] IndustrialElevatorProcessor.doEndPhaseChanges: round={}, initialized={}, elevatorCount={}",
-              game.getRoundCount(),
-              initialized,
-              game.getIndustrialElevators().size());
 
         // Initialize elevators only once (not every round)
         if (!initialized) {
@@ -111,33 +102,17 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
      * movement).
      */
     public void initializeElevators() {
-        LOGGER.debug("[ELEVATOR] IndustrialElevatorProcessor.initializeElevators: Starting, initialized={}",
-              initialized);
         Game game = gameManager.getGame();
 
         // Skip if elevators already exist to preserve platform positions
         if (!game.getIndustrialElevators().isEmpty()) {
-            LOGGER.info(
-                  "[ELEVATOR] IndustrialElevatorProcessor.initializeElevators: Elevators already exist ({}), preserving state",
-                  game.getIndustrialElevators().size());
-            for (IndustrialElevator elevator : game.getIndustrialElevators()) {
-                LOGGER.debug("[ELEVATOR]   - {} platform at level {}",
-                      elevator.getLocation(),
-                      elevator.getPlatformLevel());
-            }
             initialized = true;
             return;
         }
 
         game.clearIndustrialElevators();
 
-        int elevatorCount = 0;
         for (Board board : game.getBoards().values()) {
-            LOGGER.info(
-                  "[ELEVATOR] IndustrialElevatorProcessor.initializeElevators: Scanning board {}, isLowAlt={}, isSpace={}",
-                  board.getBoardId(),
-                  board.isLowAltitude(),
-                  board.isSpace());
             if (board.isLowAltitude() || board.isSpace()) {
                 continue;
             }
@@ -153,19 +128,11 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
                         BoardLocation location = BoardLocation.of(new Coords(x, y), board.getBoardId());
                         IndustrialElevator elevator = IndustrialElevator.fromTerrain(
                               location, terrain.getLevel(), terrain.getExits());
-                        LOGGER.info(
-                              "[ELEVATOR] IndustrialElevatorProcessor.initializeElevators: Found elevator at ({}, {}): {}",
-                              x,
-                              y,
-                              elevator);
                         game.addIndustrialElevator(elevator);
-                        elevatorCount++;
                     }
                 }
             }
         }
-        LOGGER.debug("[ELEVATOR] IndustrialElevatorProcessor.initializeElevators: Complete, found {} elevators",
-              elevatorCount);
     }
 
     /**

@@ -46,6 +46,7 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.MissileWeaponHandler;
 import megamek.server.totalWarfare.TWGameManager;
@@ -150,6 +151,17 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
                   density,
                   attackingEntity.getId());
         }
+
+        // Per TO:AUE pg 181, incendiary LRM mixed with THUNDER also attempts to set fires
+        if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)) {
+            Report r = new Report(3329);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+            TargetRoll targetRoll = new TargetRoll(-4, "Incendiary LRM");
+            gameManager.tryIgniteHex(coords, target.getBoardId(), subjectId, false, false,
+                  targetRoll, true, -1, vPhaseReport);
+        }
+
         return true;
     }
 }

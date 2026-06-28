@@ -34,12 +34,15 @@
 package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -378,6 +381,210 @@ class BasicPathRankerTest {
         expected.setEstimatedEnemyDamage(15);
         actual = testRanker.evaluateMovedEnemy(mockEnemyMek, mockPath, mockGame);
         assertEntityEvaluationResponseEquals(expected, actual);
+    }
+
+    @Test
+    void testEvaluateUnmovedEnemySprintingPathDoesNoDamage() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(testRanker).getOwner();
+
+        final Coords testCoords = new Coords(10, 10);
+        final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMyUnit.canChangeSecondaryFacing()).thenReturn(true);
+
+        doReturn(10.0).when(testRanker).getMaxDamageAtRange(eq(mockMyUnit), anyInt(), anyBoolean(), anyBoolean());
+
+        // A sprinting unit may not attack, so a sprinting path contributes no damage of mine
+        // even with the enemy in my line of sight.
+        final MovePath mockPath = MockGenerators.generateMockPath(testCoords, mockMyUnit);
+        when(mockPath.getFinalFacing()).thenReturn(3);
+        when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_SPRINT);
+
+        Coords enemyCoords = new Coords(10, 15);
+        int enemyMekId = 1;
+        Entity mockEnemyMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockEnemyMek.getId()).thenReturn(enemyMekId);
+        doReturn(enemyCoords).when(testRanker).getClosestCoordsTo(eq(enemyMekId), eq(testCoords));
+        doReturn(true).when(testRanker).isInMyLoS(eq(mockEnemyMek), any(HexLine.class), any(HexLine.class));
+        doReturn(8.5).when(testRanker).getMaxDamageAtRange(eq(mockEnemyMek), anyInt(), anyBoolean(), anyBoolean());
+        doReturn(false).when(testRanker)
+              .canFlankAndKick(eq(mockEnemyMek), any(Coords.class), any(Coords.class), any(Coords.class), anyInt());
+
+        EntityEvaluationResponse expected = new EntityEvaluationResponse();
+        expected.setEstimatedEnemyDamage(2.125);
+        expected.setMyEstimatedDamage(0.0);
+        expected.setMyEstimatedPhysicalDamage(0.0);
+
+        EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockEnemyMek, mockPath, false, false);
+        assertEntityEvaluationResponseEquals(expected, actual);
+    }
+
+    @Test
+    void testEvaluateMovedEnemySprintingPathDoesNoDamage() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(testRanker).getOwner();
+
+        final MovePath mockPath = mock(MovePath.class);
+        final Entity mockMyUnit = mock(BipedMek.class);
+        final Crew mockCrew = mock(Crew.class);
+        final PilotOptions mockOptions = mock(PilotOptions.class);
+
+        when(mockPath.getEntity()).thenReturn(mockMyUnit);
+        when(mockMyUnit.getCrew()).thenReturn(mockCrew);
+        when(mockCrew.getOptions()).thenReturn(mockOptions);
+        when(mockOptions.booleanOption(any(String.class))).thenReturn(false);
+        when(mockPath.getFinalCoords()).thenReturn(new Coords(0, 0));
+        when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_SPRINT);
+
+        final Game mockGame = mock(Game.class);
+
+        final int mockEnemyMekId = 1;
+        final Entity mockEnemyMek = mock(BipedMek.class);
+        when(mockEnemyMek.getId()).thenReturn(mockEnemyMekId);
+        when(mockEnemyMek.getPosition()).thenReturn(new Coords(1, 0));
+        when(mockEnemyMek.getCrew()).thenReturn(mockCrew);
+
+        doReturn(15.0).when(testRanker)
+              .calculateDamagePotential(eq(mockEnemyMek),
+                    any(EntityState.class),
+                    any(MovePath.class),
+                    any(EntityState.class),
+                    anyInt(),
+                    any(Game.class));
+        doReturn(10.0).when(testRanker)
+              .calculateKickDamagePotential(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
+        doReturn(14.5).when(testRanker)
+              .calculateMyDamagePotential(any(MovePath.class), eq(mockEnemyMek), anyInt(), any(Game.class));
+        doReturn(8.0).when(testRanker)
+              .calculateMyKickDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
+        final Map<Integer, Double> testBestDamageByEnemies = new TreeMap<>();
+        testBestDamageByEnemies.put(mockEnemyMekId, 0.0);
+        doReturn(testBestDamageByEnemies).when(testRanker).getBestDamageByEnemies();
+
+        // The enemy still threatens me, but my sprinting path contributes no weapon or kick damage.
+        final EntityEvaluationResponse expected = new EntityEvaluationResponse();
+        expected.setMyEstimatedDamage(0.0);
+        expected.setMyEstimatedPhysicalDamage(0.0);
+        expected.setEstimatedEnemyDamage(25.0);
+        EntityEvaluationResponse actual = testRanker.evaluateMovedEnemy(mockEnemyMek, mockPath, mockGame);
+        assertEntityEvaluationResponseEquals(expected, actual);
+    }
+
+    @Test
+    void testIsSprintingPath() {
+        final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(new Coords(0, 0), mockMyUnit);
+
+        when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_RUN);
+        assertFalse(BasicPathRanker.isSprintingPath(mockPath));
+
+        when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_SPRINT);
+        assertTrue(BasicPathRanker.isSprintingPath(mockPath));
+
+        when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_VTOL_SPRINT);
+        assertTrue(BasicPathRanker.isSprintingPath(mockPath));
+    }
+
+    @Test
+    void testFindSprintThreat() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(testRanker).getOwner();
+
+        final Game mockGame = mock(Game.class);
+        final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(new Coords(10, 10), mockMyUnit);
+
+        final int enemyMekId = 1;
+        final Entity mockEnemyMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockEnemyMek.getId()).thenReturn(enemyMekId);
+        doReturn(false).when(testRanker).isIgnorableEnemy(any(Entity.class), any(Entity.class), any(Game.class));
+
+        // An already-moved enemy 10 hexes away with 21 hex weapon range can hit me.
+        doReturn(true).when(testRanker).evaluateAsMoved(mockEnemyMek);
+        when(mockEnemyMek.getPosition()).thenReturn(new Coords(10, 20));
+        Optional<BasicPathRanker.SprintThreat> threat = testRanker.findSprintThreat(mockPath,
+              List.of(mockEnemyMek), mockGame);
+        assertTrue(threat.isPresent());
+        assertEquals(10, threat.get().distance());
+        assertEquals(21, threat.get().maxWeaponRange());
+        assertFalse(threat.get().positionPredicted());
+
+        // The same enemy 30 hexes away cannot.
+        when(mockEnemyMek.getPosition()).thenReturn(new Coords(10, 40));
+        assertTrue(testRanker.findSprintThreat(mockPath, List.of(mockEnemyMek), mockGame).isEmpty());
+
+        // An unmoved enemy currently 30 hexes away is measured from the closest position
+        // it can reach, 15 hexes away, which is back in weapon range.
+        doReturn(false).when(testRanker).evaluateAsMoved(mockEnemyMek);
+        doReturn(new Coords(10, 25)).when(testRanker).getClosestCoordsTo(eq(enemyMekId), any(Coords.class));
+        threat = testRanker.findSprintThreat(mockPath, List.of(mockEnemyMek), mockGame);
+        assertTrue(threat.isPresent());
+        assertEquals(15, threat.get().distance());
+        assertTrue(threat.get().positionPredicted());
+    }
+
+    @Test
+    void testCalculateSprintExposurePenalty() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(testRanker).getOwner();
+
+        final Game mockGame = mock(Game.class);
+        final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(new Coords(10, 10), mockMyUnit);
+        final List<Entity> enemies = List.of();
+
+        final int enemyMekId = 7;
+        final Entity mockEnemyMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockEnemyMek.getId()).thenReturn(enemyMekId);
+        when(mockEnemyMek.getDisplayName()).thenReturn("Test Enemy Mek");
+        final BasicPathRanker.SprintThreat testThreat = new BasicPathRanker.SprintThreat(mockEnemyMek,
+              new Coords(10, 15), 5, 21, false);
+        doReturn(Optional.of(testThreat)).when(testRanker)
+              .findSprintThreat(any(MovePath.class), anyList(), any(Game.class));
+
+        // A non-sprinting path is never penalized and writes no formula entry.
+        Map<String, Double> scores = new HashMap<>();
+        StringBuilder sprintFormula = new StringBuilder();
+        when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_RUN);
+        assertEquals(0.0,
+              testRanker.calculateSprintExposurePenalty(mockPath, enemies, mockGame, scores, sprintFormula),
+              TOLERANCE);
+        assertEquals(0.0, scores.get("isSprinting"), TOLERANCE);
+        assertTrue(sprintFormula.isEmpty());
+
+        // Sprinting into enemy weapon range is penalized, and the decision detail is traceable.
+        scores = new HashMap<>();
+        sprintFormula = new StringBuilder();
+        when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_SPRINT);
+        assertTrue(testRanker.calculateSprintExposurePenalty(mockPath, enemies, mockGame, scores, sprintFormula) > 0);
+        assertEquals(1.0, scores.get("isSprinting"), TOLERANCE);
+        assertEquals(enemyMekId, scores.get("sprintThreatEnemyId"), TOLERANCE);
+        assertEquals(5.0, scores.get("sprintThreatDistance"), TOLERANCE);
+        assertEquals(21.0, scores.get("sprintThreatRange"), TOLERANCE);
+        assertFalse(sprintFormula.isEmpty());
+
+        // Sprinting outside enemy weapon range is fine, but still explained.
+        scores = new HashMap<>();
+        sprintFormula = new StringBuilder();
+        doReturn(Optional.empty()).when(testRanker)
+              .findSprintThreat(any(MovePath.class), anyList(), any(Game.class));
+        assertEquals(0.0,
+              testRanker.calculateSprintExposurePenalty(mockPath, enemies, mockGame, scores, sprintFormula),
+              TOLERANCE);
+        assertEquals(-1.0, scores.get("sprintThreatEnemyId"), TOLERANCE);
+        assertFalse(sprintFormula.isEmpty());
+
+        // A withdrawing unit may sprint even inside enemy weapon range.
+        scores = new HashMap<>();
+        sprintFormula = new StringBuilder();
+        doReturn(Optional.of(testThreat)).when(testRanker)
+              .findSprintThreat(any(MovePath.class), anyList(), any(Game.class));
+        when(mockPrincess.getUnitBehaviorTracker().getBehaviorType(any(Entity.class), any(Princess.class)))
+              .thenReturn(BehaviorType.ForcedWithdrawal);
+        assertEquals(0.0,
+              testRanker.calculateSprintExposurePenalty(mockPath, enemies, mockGame, scores, sprintFormula),
+              TOLERANCE);
+        assertFalse(sprintFormula.isEmpty());
     }
 
     private void assertEntityEvaluationResponseEquals(final EntityEvaluationResponse expected,
@@ -838,9 +1045,6 @@ class BasicPathRankerTest {
         }
 
         // TEST CASE 12: Set friends to null (no friends) - we'll check this in test case 14
-
-        // Reset friends coordinates
-        friendsCoords = new Coords(10, 10);
 
         // TEST CASE 13: Set friends to null (no friends)
         expected = new RankedPath(-36.25,

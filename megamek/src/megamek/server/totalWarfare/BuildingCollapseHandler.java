@@ -53,15 +53,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.rolls.PilotingRollData;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityMovementMode;
-import megamek.common.units.IBuilding;
-import megamek.common.units.Infantry;
-import megamek.common.units.Mek;
-import megamek.common.units.ProtoMek;
-import megamek.common.units.Tank;
-import megamek.common.units.Terrain;
-import megamek.common.units.Terrains;
+import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
 public class BuildingCollapseHandler extends AbstractTWRuleHandler {
@@ -448,6 +440,13 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                     continue;
                 }
 
+                if (bldg.equals(entity) && entity instanceof BuildingEntity buildingEntity) {
+                    int numFloorsToCollappse = topFloor ? 1 : numFloors;
+                    buildingEntity.collapseFloorsOnHex(coords, numFloorsToCollappse);
+                    gameManager.entityUpdate(entity.getId());
+                    continue;
+                }
+
                 int floor = entity.getElevation();
                 // If only the top floor collapses, we only care about units on the top level
                 // or on the roof.
@@ -541,10 +540,13 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             getGame().getBoard(bldg.getBoardId()).collapseBuilding(coords);
         }
         // if more than half of the hexes are gone, collapse all
-        if (bldg.getCollapsedHexCount() > (bldg.getOriginalHexCount() / 2)) {
+        if (bldg.getCollapsedHexCount() > ((double) bldg.getOriginalHexCount() / 2.0)) {
             for (Enumeration<Coords> coordsEnum = bldg.getCoords(); coordsEnum.hasMoreElements(); ) {
                 coords = coordsEnum.nextElement();
                 collapseBuilding(bldg, getGame().getPositionMapMulti(), coords, false, vPhaseReport);
+            }
+            if (bldg instanceof BuildingEntity buildingEntity) {
+                vPhaseReport.addAll(gameManager.destroyEntity(buildingEntity, "building collapse"));
             }
         }
     }

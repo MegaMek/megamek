@@ -377,7 +377,7 @@ public class FireControl {
               && (EntityMovementType.MOVE_NONE == targetState.getMovementType())
               && !targetState.isImmobile()
               && !((target instanceof Infantry) || (target instanceof VTOL) ||
-              (target instanceof GunEmplacement))) {
+              (target.isBuildingEntityOrGunEmplacement()))) {
             toHitData.addModifier(TH_TAR_NO_MOVE);
         }
 
@@ -422,12 +422,12 @@ public class FireControl {
 
         final boolean isShooterInfantry = (shooter instanceof Infantry);
         if (!isShooterInfantry) {
-            if (target instanceof BattleArmor) {
-                toHitData.addModifier(TH_TAR_BA);
-            } else if (target instanceof EjectedCrew) {
-                toHitData.addModifier(TH_TAR_MW);
-            } else if (target instanceof Infantry) {
-                toHitData.addModifier(TH_TAR_INF);
+            switch (target) {
+                case BattleArmor ignored -> toHitData.addModifier(TH_TAR_BA);
+                case EjectedCrew ignored -> toHitData.addModifier(TH_TAR_MW);
+                case Infantry ignored -> toHitData.addModifier(TH_TAR_INF);
+                default -> {
+                }
             }
         }
 
@@ -688,10 +688,14 @@ public class FireControl {
     }
 
     /**
-     * Returns the value of {@link Compute#getInfantryRangeMods(int, InfantryWeapon, InfantryWeapon, boolean)}.
+     * Returns the value of
+     * {@link Compute#getInfantryRangeMods(int, InfantryWeapon, InfantryWeapon, InfantryWeapon, boolean)}.
      *
-     * @param distance The distance to the target.
-     * @param weapon   The {@link InfantryWeapon} being fired.
+     * @param distance   The distance to the target.
+     * @param weapon     The {@link InfantryWeapon} being fired.
+     * @param secondary  The platoon's secondary {@link InfantryWeapon}, or null.
+     * @param disposable The platoon's Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing), or null.
+     * @param underwater Whether the attack is made underwater.
      *
      * @return The to hit modifiers as a {@link ToHitData} object.
      */
@@ -699,8 +703,9 @@ public class FireControl {
     private ToHitData getInfantryRangeMods(final int distance,
           final InfantryWeapon weapon,
           final InfantryWeapon secondary,
+          final InfantryWeapon disposable,
           final boolean underwater) {
-        return Compute.getInfantryRangeMods(distance, weapon, secondary, underwater);
+        return Compute.getInfantryRangeMods(distance, weapon, secondary, disposable, underwater);
     }
 
     /**
@@ -803,7 +808,7 @@ public class FireControl {
         }
         // Bays compute arc differently
         final boolean inArc = (bayWeapon)
-              ? ComputeArc.isInArc(game, shooter.getId(), weapon.getBayWeapons().get(0).getEquipmentNum(), target)
+              ? ComputeArc.isInArc(game, shooter.getId(), weapon.getBayWeapons().getFirst().getEquipmentNum(), target)
               : isInArc(shooterState.getPosition(), shooterFacing, targetState.getPosition(),
               shooter.getWeaponArc(shooter.getEquipmentNum(weapon)));
         if (!inArc) {
@@ -928,7 +933,8 @@ public class FireControl {
             }
         } else {
             toHit.append(getInfantryRangeMods(distance, (InfantryWeapon) weapon.getType(),
-                  isShooterInfantry ? ((Infantry) shooter).getSecondaryWeapon() : null,
+                  shooter instanceof ConvInfantry infantry ? infantry.getSecondaryWeapon() : null,
+                  shooter instanceof ConvInfantry infantry ? infantry.getDisposableWeapon() : null,
                   ILocationExposureStatus.WET == shooter.getLocationStatus(weapon.getLocation())));
         }
 
@@ -1984,12 +1990,13 @@ public class FireControl {
         // 1. Target is flying Aerospace unit
         // 2. Target is VTOL not above blast-causing terrain
         // 3. Target is Submarine too far below surface level
+        // 4. Target is hidden
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity entity = (Entity) target;
             Hex hex = game.getHexOf(entity);
             hexToBomb.setTargetLevel((hex != null) ? hex.getLevel() : 0);
 
-            if (entity.isAirborne()) {
+            if (entity.isAirborne() || entity.isHidden()) {
                 return diveBombPlan;
             }
             if (entity.isAirborneVTOLorWIGE()) {
@@ -2024,7 +2031,7 @@ public class FireControl {
         if (groundBombs.isEmpty()) {
             return diveBombPlan;
         } else {
-            exampleBomb = groundBombs.get(0);
+            exampleBomb = groundBombs.getFirst();
         }
 
         while (weaponIter.hasNext()) {
@@ -2270,7 +2277,7 @@ public class FireControl {
                     // target is likely to explode and ammo explosion splash damage is on, etc).
                     continue;
                 } else if (!(shooter instanceof BattleArmor)
-                      && (Infantry.LOC_FIELD_GUNS == weaponFireInfo.getWeapon().getLocation())) {
+                      && (ConvInfantry.LOC_FIELD_GUNS == weaponFireInfo.getWeapon().getLocation())) {
                     fieldGuns.add(weaponFireInfo);
                     continue;
                 }
@@ -3031,7 +3038,7 @@ public class FireControl {
 
             // AMS only uses 1 type of ammo.
             if (weaponType.hasFlag(WeaponType.F_AMS)) {
-                return validAmmo.get(0);
+                return validAmmo.getFirst();
             }
 
             // Target is a building.
@@ -3116,7 +3123,7 @@ public class FireControl {
             } else {
                 msg.append("\n\tLoading first available ammo.");
                 // Don't set switched reason if we didn't set it already.
-                preferredAmmo = validAmmo.get(0);
+                preferredAmmo = validAmmo.getFirst();
             }
             return preferredAmmo;
         } finally {
@@ -3304,7 +3311,8 @@ public class FireControl {
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_FRAGMENTATION)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)
-                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV)) {
+                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV)
+                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)) {
 
                 // MMLs have additional considerations.
                 if (!(weaponType instanceof MMLWeapon)) {
@@ -3386,10 +3394,10 @@ public class FireControl {
         for (final AmmoMounted ammo : ammoList) {
             final AmmoType ammoType = ammo.getType();
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY)
-                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)
-                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV)) {
+                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV)
+                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)) {
 
                 // MMLs have additional considerations.
                 if (!(weaponType instanceof MMLWeapon)) {
@@ -3442,9 +3450,9 @@ public class FireControl {
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_HAYWIRE)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC)
-                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV)
+                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_LASER_INHIB)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_OIL_SLICK)
                   || ammoType.getMunitionType().contains(AmmoType.Munitions.M_NEMESIS)

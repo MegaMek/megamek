@@ -5,10 +5,10 @@
 ### Prohibitions apply equally to all factions and all munition types.
 ### E.g. adding "  - Smoke" would prevent SRM, LRM, and various Artillery bins from being loaded with Smoke ammo.
 Prohibited:
-  # Prohibited ammo will never be used by any faction.  Entries are indented one level and start with a hyphen:
-  # - Tandem-Charge
-  # - AlamoMissile Ammo
-  # - Davey Crockett-M
+# Prohibited ammo will never be used by any faction.  Entries are indented one level and start with a hyphen:
+# - Tandem-Charge
+# - AlamoMissile Ammo
+# - Davey Crockett-M
 
 ### This section defines override weights, which are applied after all other calculations but before supply checks.
 ### To create an override,
@@ -109,6 +109,12 @@ Defaults:
         IS: 1.0
         Clan: 1.0
       Anti-Radiation:
+        IS: 1.0
+        Clan: 1.0
+      Incendiary:
+        # Incendiary is a special class that modifies other LRM munition types.
+        # Changes here (or Incendiary: entries in the Prohibited: or Overrides: sections) will apply to all
+        # "<Munition> w/ Incendiary" combinations.
         IS: 1.0
         Clan: 1.0
 
@@ -499,8 +505,8 @@ Defaults:
     pirateAntiBombLoad_LAA: 30
     pirateAntiBombLoad_AAA: 10
     # Sets the minimum + (0 ~ N) range of bomber units in a force that will be equipped.
-    percentBombersToEquipMin: 40
-    percentBombersToEquipRange: 60
+    percentBombersToEquipMin: 10
+    percentBombersToEquipRange: 20
     # For each Aerospace unit, if 1d6 is equal or below threshold, equip for CAP
     fightersLoadForCAPRollTargetThreshold: 1
     bomberMinUnarmedSafeThrustValue: 2
@@ -586,6 +592,8 @@ Defaults:
     minimumAvailFactor: 0.25
     # Maximum factor to apply to availabilityMap values (the factor will not go above this value):
     maximumAvailFactor: 2.0
+    # Default factor to apply to Incendiary-modified munitions before weights are calculated
+    mwcDefaultIncendiaryModWeight: 0.8
 
     ### These factors determine how far up and down an "increase" or "decrease" step actually moves the weight
     # of a munition type.  The default values increase a weight by (2.0 x weight) + 1, and decrease by

@@ -146,6 +146,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         pendingPackets.add(new PendingPacket(Player.PLAYER_NONE, packet));
     }
 
+    @Override
     public SBFGame getGame() {
         return game;
     }
@@ -461,6 +462,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
               .forEach(player -> addPendingPacket(player.getId(), packetHelper.createPlayerDonePacket(player.getId())));
     }
 
+    @Override
     public void send(Packet packet) {
         addPendingPacket(packet);
     }
@@ -470,6 +472,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
      *
      * @see Server#send(int, Packet)
      */
+    @Override
     public void send(int connId, Packet p) {
         addPendingPacket(connId, p);
     }
@@ -483,6 +486,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
      * @see #transmitAllPlayerUpdates() //TODO: wonder if pending packets can be extended to TW //TODO: might work
      *       easily by overriding send; must send CFR packets immediately
      */
+    @Override
     protected void transmitPlayerUpdate(Player player) {
         int playerId = player.getId();
         for (Player player1 : game.getPlayersList()) {

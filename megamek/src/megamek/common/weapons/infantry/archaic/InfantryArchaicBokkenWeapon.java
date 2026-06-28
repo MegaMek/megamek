@@ -65,8 +65,8 @@ public class InfantryArchaicBokkenWeapon extends InfantryWeapon {
         infantryDamage = 0.04;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-              .setISApproximate(false, false, false, false, false).setTechRating(TechRating.A)
+        techAdvancement.setTechBase(TechBase.ALL).setAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+              .setApproximate(false, false, false, false, false).setTechRating(TechRating.A)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);
 
     }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,9 @@
 
 package megamek.common.equipment;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import megamek.common.RangeType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -143,6 +145,7 @@ import megamek.common.weapons.gaussRifles.innerSphere.ISMagshotGaussRifle;
 import megamek.common.weapons.gaussRifles.innerSphere.ISSilverBulletGauss;
 import megamek.common.weapons.infantry.InfantrySniperStalkerWeapon;
 import megamek.common.weapons.infantry.InfantryTWFlamerWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.infantry.archaic.*;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeInfernoWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeMicroWeapon;
@@ -306,6 +309,10 @@ import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM20IOS;
 import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM20OS;
 import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM5IOS;
 import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM5OS;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT10;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT15;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT20;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT5;
 import megamek.common.weapons.lrms.innerSphere.torpedo.ISLRT10;
 import megamek.common.weapons.lrms.innerSphere.torpedo.ISLRT15;
 import megamek.common.weapons.lrms.innerSphere.torpedo.ISLRT20;
@@ -379,7 +386,6 @@ import megamek.common.weapons.mortars.innerSphere.ISMekMortar4;
 import megamek.common.weapons.mortars.innerSphere.ISMekMortar8;
 import megamek.common.weapons.mortars.innerSphere.ISVehicularGrenadeLauncher;
 import megamek.common.weapons.other.clan.CLAMS;
-import megamek.common.weapons.other.clan.CLFireExtinguisher;
 import megamek.common.weapons.other.clan.CLFluidGun;
 import megamek.common.weapons.other.clan.CLFussilade;
 import megamek.common.weapons.other.clan.CLLaserAMS;
@@ -582,6 +588,7 @@ public class WeaponType extends EquipmentType {
     // fire Extinguisher
     public static final WeaponTypeFlag F_EXTINGUISHER = WeaponTypeFlag.F_EXTINGUISHER;
     public static final WeaponTypeFlag F_PULSE = WeaponTypeFlag.F_PULSE;
+    public static final WeaponTypeFlag F_VSP = WeaponTypeFlag.F_VSP;
     // Full Damage vs. Infantry
     public static final WeaponTypeFlag F_BURST_FIRE = WeaponTypeFlag.F_BURST_FIRE;
     // Machine Gun Array
@@ -613,6 +620,7 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_INF_SUPPORT = WeaponTypeFlag.F_INF_SUPPORT;
     public static final WeaponTypeFlag F_INF_ENCUMBER = WeaponTypeFlag.F_INF_ENCUMBER;
     public static final WeaponTypeFlag F_INF_ARCHAIC = WeaponTypeFlag.F_INF_ARCHAIC;
+    public static final WeaponTypeFlag F_INF_DISPOSABLE = WeaponTypeFlag.F_INF_DISPOSABLE;
 
     // TODO Add game rules IO pg 84
     public static final WeaponTypeFlag F_INF_CLIMBING_CLAWS = WeaponTypeFlag.F_INF_CLIMBING_CLAWS;
@@ -1545,6 +1553,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISLRM10Primitive());
         EquipmentType.addType(new ISLRM15Primitive());
         EquipmentType.addType(new ISLRM20Primitive());
+        EquipmentType.addType(new ISEnhancedLRT5());
+        EquipmentType.addType(new ISEnhancedLRT10());
+        EquipmentType.addType(new ISEnhancedLRT15());
+        EquipmentType.addType(new ISEnhancedLRT20());
 
         // LRTs
         EquipmentType.addType(new ISLRT5());
@@ -2194,8 +2206,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryProstheticVibroBladeWeapon());
         EquipmentType.addType(new InfantryProstheticClimbingClawsWeapon());
 
+        // IS and Clan fire extinguishers are mechanically identical; merged into one TechBase.ALL weapon.
         EquipmentType.addType(new ISFireExtinguisher());
-        EquipmentType.addType(new CLFireExtinguisher());
 
         // Plasma Weapons
         EquipmentType.addType(new ISPlasmaRifle());
@@ -2518,5 +2530,178 @@ public class WeaponType extends EquipmentType {
     @Override
     public String toString() {
         return "[Weapon] " + internalName;
+    }
+
+    @Override
+    protected String getYamlTypeName() {
+        return "weapon";
+    }
+
+    @Override
+    protected void addFlags(Map<String, Object> data) {
+        String[] flagStrings = getFlags().getSetFlagNamesAsArray(WeaponTypeFlag.class);
+        if (flagStrings.length > 0) {
+            data.put("flags", flagStrings);
+        }
+    }
+
+    @Override
+    public Map<String, Object> getYamlData() {
+        Map<String, Object> data = super.getYamlData();
+        Map<String, Object> weapon = new LinkedHashMap<>();
+
+        weapon.put("damage", formatDamage());
+        if (explosionDamage > 0) {
+            weapon.put("explosionDamage", explosionDamage);
+        }
+
+        if (rackSize > 0) {
+            weapon.put("rackSize", this.rackSize);
+        }
+        weapon.put("ammoType", ammoType.name());
+        if (heat > 0) {
+            weapon.put("heat", this.heat);
+        }
+
+        // Export ranges (trimmed of trailing zeros)
+        int[] ranges = {
+              this.getShortRange(),
+              this.getMediumRange(),
+              this.getLongRange(),
+              this.getExtremeRange()
+        };
+        int[] trimmedRanges = trimTrailingZeros(ranges);
+        if (trimmedRanges.length > 0) {
+            weapon.put("ranges", trimmedRanges);
+        }
+
+        // Export water ranges (trimmed of trailing zeros, only if different from ranges)
+        int[] wRanges = {
+              this.getWShortRange(),
+              this.getWMediumRange(),
+              this.getWLongRange(),
+              this.getWExtremeRange()
+        };
+        int[] trimmedWRanges = trimTrailingZeros(wRanges);
+        if (trimmedWRanges.length > 0 && !java.util.Arrays.equals(trimmedRanges, trimmedWRanges)) {
+            weapon.put("wRanges", trimmedWRanges);
+        }
+
+        int minRange = Math.max(this.getMinimumRange(), 0);
+        if (minRange > 0) {
+            weapon.put("minRange", minRange);
+        }
+        weapon.put("maxRangeBracket", rangeBracketToString(this.getMaxRange()));
+
+        // Export AV values (trimmed of trailing zeros)
+        double[] av = {
+              this.getShortAV(),
+              this.getMedAV(),
+              this.getLongAV(),
+              this.getExtAV()
+        };
+        double[] trimmedAV = trimTrailingZeros(av);
+        if (trimmedAV.length > 0) {
+            weapon.put("av", trimmedAV);
+        }
+
+        if (this.capital) {
+            weapon.put("capital", this.capital);
+        }
+        if (this.subCapital) {
+            weapon.put("subCapital", this.subCapital);
+        }
+        data.put("weapon", weapon);
+        return data;
+    }
+
+    /**
+     * Formats the damage value for YAML export. Returns: - A special damage type string ("variable", "cluster",
+     * "special", "artillery") - An array [short, medium, long] if range-specific damages are defined - A simple numeric
+     * value if damage is constant across ranges
+     */
+    private Object formatDamage() {
+        // Handle infantry weapons specially
+        if (this instanceof InfantryWeapon wi) {
+            return wi.getInfantryDamage();
+        }
+
+        // Handle special damage types first.
+        if (damage == DAMAGE_VARIABLE) {
+            // Check if we have range-specific damages.
+            boolean hasRangeDamage = damageShort > 0 || damageMedium > 0 || damageLong > 0;
+            if (hasRangeDamage) {
+                return new int[] { damageShort, damageMedium, damageLong };
+            }
+            return "variable";
+        }
+        if (damage == DAMAGE_BY_CLUSTER_TABLE) {
+            return "cluster";
+        }
+        if (damage == DAMAGE_SPECIAL) {
+            return "special";
+        }
+        if (damage == DAMAGE_ARTILLERY) {
+            return "artillery";
+        }
+
+        // Default: simple damage value
+        return damage;
+    }
+
+    private String rangeBracketToString(int rangeBracket) {
+        return switch (rangeBracket) {
+            case RANGE_SHORT -> "short";
+            case RANGE_MED -> "medium";
+            case RANGE_LONG -> "long";
+            case RANGE_EXT -> "extreme";
+            default -> "unknown";
+        };
+    }
+
+    /**
+     * Trims trailing zeros from an int array. E.g., [0, 3, 6, 9, 0] becomes [0, 3, 6, 9] E.g., [0, 0, 0, 0, 0] becomes
+     * []
+     */
+    private int[] trimTrailingZeros(int[] arr) {
+        int lastNonZero = -1;
+        for (int i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] != 0) {
+                lastNonZero = i;
+                break;
+            }
+        }
+        if (lastNonZero < 0) {
+            return new int[0];
+        }
+        return java.util.Arrays.copyOf(arr, lastNonZero + 1);
+    }
+
+    /**
+     * Trims trailing zeros from a double array. E.g., [1.0, 2.0, 0.0, 0.0] becomes [1.0, 2.0] E.g., [0.0, 0.0, 0.0,
+     * 0.0] becomes []
+     */
+    private double[] trimTrailingZeros(double[] arr) {
+        int lastNonZero = -1;
+        for (int i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] != 0.0) {
+                lastNonZero = i;
+                break;
+            }
+        }
+        if (lastNonZero < 0) {
+            return new double[0];
+        }
+        return java.util.Arrays.copyOf(arr, lastNonZero + 1);
+    }
+
+    @Override
+    public boolean canBeMountedOnBaDwp() {
+        return true;
+    }
+
+    @Override
+    public boolean relevantToTargetingComputer() {
+        return hasFlag(F_DIRECT_FIRE) && !hasFlag(F_TASER);
     }
 }

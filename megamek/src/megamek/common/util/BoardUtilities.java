@@ -38,12 +38,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import megamek.client.bot.princess.CardinalEdge;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.Hex;
 import megamek.common.OffBoardDirection;
 import megamek.common.board.Board;
@@ -206,7 +206,40 @@ public class BoardUtilities {
         // assuming that the map setting and board types match
         result.setType(medium);
 
+        // Propagate the source sheet name(s) onto the combined board so UI elements (Ruler title,
+        // save dialogs, scenario reports) can identify the map. Without this the combined board lands
+        // with Board.BOARD_NAME_UNNAMED regardless of what the underlying .board files were called.
+        String combinedName = deriveCombinedName(boards);
+        if (!Board.BOARD_NAME_UNNAMED.equals(combinedName)) {
+            result.setMapName(combinedName);
+        }
+
         return result;
+    }
+
+    /**
+     * Returns a display name for a combined board, derived from the names of its source sheets. A single non-default
+     * sheet name is used as-is; multiple distinct sheet names are joined with " + " in iteration order. If every sheet
+     * is unnamed (random generation, etc.) returns {@link Board#BOARD_NAME_UNNAMED}.
+     */
+    private static String deriveCombinedName(Board[] sheets) {
+        LinkedHashSet<String> names = new LinkedHashSet<>();
+        for (Board sheet : sheets) {
+            if (sheet == null) {
+                continue;
+            }
+            String n = sheet.getBoardName();
+            if (n != null && !n.isBlank() && !Board.BOARD_NAME_UNNAMED.equals(n)) {
+                names.add(n);
+            }
+        }
+        if (names.isEmpty()) {
+            return Board.BOARD_NAME_UNNAMED;
+        }
+        if (names.size() == 1) {
+            return names.iterator().next();
+        }
+        return String.join(" + ", names);
     }
 
     /**
@@ -1464,7 +1497,7 @@ public class BoardUtilities {
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height; h++) {
                 elevationMap[w][h] = (int) Math.round(elevationMap[w][h] * scale) + inc;
-                elevationCount[MathUtility.clamp(elevationMap[w][h], 0, range)]++;
+                elevationCount[Math.clamp(elevationMap[w][h], 0, range)]++;
             }
         }
 

@@ -58,14 +58,14 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.PlayerColour;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.icons.Camouflage;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.units.Infantry;
 import megamek.common.units.Tank;
 import megamek.common.units.VTOL;
-import megamek.common.annotations.Nullable;
-import megamek.common.icons.Camouflage;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.AbstractDirectory;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -228,7 +228,7 @@ public class EntityImage {
         this.withShadows = withShadows;
         this.dmgLevel = calculateDamageLevel(entity);
         // hack: gun emplacements are pretty beefy but have weight 0
-        this.weight = entity instanceof GunEmplacement ? SMOKE_THREE + 1 : entity.getWeight();
+        this.weight = entity.isBuildingEntityOrGunEmplacement() ? SMOKE_THREE + 1 : entity.getWeight();
         isInfantry = entity instanceof Infantry;
         // True for tanks
         boolean isTank = entity instanceof Tank;
@@ -250,7 +250,7 @@ public class EntityImage {
     private int calculateDamageLevel(Entity entity) {
         // gun emplacements don't show up as crippled when destroyed, which leads to
         // them looking pristine
-        if ((entity instanceof GunEmplacement) && entity.isDestroyed()) {
+        if ((entity.isBuildingEntityOrGunEmplacement()) && entity.isDestroyed()) {
             return Entity.DMG_CRIPPLED;
         }
 

@@ -78,8 +78,8 @@ public class VTOLAttackSprite extends Sprite {
         }
         int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
         if (!targets.isEmpty()) {
-            x1 = x2 = (int) boardView.getHexLocation(targets.get(0)).getX();
-            y1 = y2 = (int) boardView.getHexLocation(targets.get(0)).getX();
+            x1 = x2 = (int) boardView.getHexLocation(targets.getFirst()).getX();
+            y1 = y2 = (int) boardView.getHexLocation(targets.getFirst()).getX();
         }
 
         if (targets.size() > 1) {

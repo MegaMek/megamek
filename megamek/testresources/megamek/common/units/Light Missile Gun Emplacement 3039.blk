@@ -1,0 +1,75 @@
+# MegaMek Data (C) 2025 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Guns block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BuildingEntity
+</UnitType>
+<Name>
+Light Missile Gun Emplacement
+</Name>
+<Model>
+(3039)
+</Model>
+<Year>
+3039
+</Year>
+<Type>
+IS Level 2
+</Type>
+<building_class>
+3
+</building_class>
+<building_type>
+1
+</building_type>
+<Level 0 0.0,0.0,0.0 Equipment>
+ISLRM5 (ST)
+ISArtemisIV
+ISLRM5 (ST)
+ISArtemisIV
+ISMG (ST)
+ISMG (ST)
+Searchlight (ST)
+ISMG Ammo Full
+ISLRM5 Ammo Artemis-capable
+ISLRM5 Ammo Artemis-capable
+ISLRM5 Ammo Artemis-capable
+FUSION PowerGenerator:SIZE:4.0
+</Level 0 0.0,0.0,0.0 Equipment>
+
+<cf>
+30
+</cf>
+<armor>
+20
+</armor>
+
+<coords>
+0,0,0
+</coords>
+
+<height>
+1
+</height>

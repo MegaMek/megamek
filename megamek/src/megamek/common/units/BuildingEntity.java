@@ -37,16 +37,17 @@ package megamek.common.units;
 import megamek.common.MPCalculationSetting;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
+import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
-import megamek.common.equipment.Engine;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.PowerGeneratorType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.equipment.enums.StructureEngine;
@@ -111,7 +112,6 @@ public class BuildingEntity extends AbstractBuildingEntity {
     /**
      * Returns the name of the type of movement used.
      *
-     * @param movementType
      */
     @Override
     public String getMovementString(EntityMovementType movementType) {
@@ -121,11 +121,50 @@ public class BuildingEntity extends AbstractBuildingEntity {
     /**
      * Returns the abbreviation of the name of the type of movement used.
      *
-     * @param movementType
      */
     @Override
     public String getMovementAbbr(EntityMovementType movementType) {
         return "!";
+    }
+
+    /**
+     * Returns the Rules.ARC that the weapon, specified by number, fires into.
+     *
+     * @param weaponNumber integer equipment number, index from equipment list
+     *
+     * @return arc the specified weapon is in
+     */
+    @Override
+    public int getWeaponArc(int weaponNumber) {
+        WeaponMounted weapon = getWeapon(weaponNumber);
+        if (weapon.isTurret()) {
+            return 0;
+        }
+        return switch (weapon.getFacing()) {
+            case 0 -> 1;
+            case 1 -> 50;
+            case 2 -> 51;
+            case 3 -> 52;
+            case 4 -> 53;
+            case 5 -> 54;
+            default -> 0;
+        };
+    }
+
+    /**
+     * What height is this weapon physically firing from?
+     *
+     * @param weapon {@link WeaponMounted}
+     *
+     * @return int
+     */
+    @Override
+    public int getWeaponFiringHeight(WeaponMounted weapon) {
+        if (weapon == null) {
+            return super.getWeaponFiringHeight(weapon);
+        }
+        int location = weapon.getLocation();
+        return location % getInternalBuilding().getBuildingHeight();
     }
 
     /**
@@ -140,7 +179,8 @@ public class BuildingEntity extends AbstractBuildingEntity {
      */
     @Override
     public int getGenericBattleValue() {
-        return 0;
+        // TODO: Actually calculate this? I ripped this from Aerospace
+        return calculateBattleValue();
     }
 
     /**
@@ -151,8 +191,28 @@ public class BuildingEntity extends AbstractBuildingEntity {
         return 0;
     }
 
+    @Override
+    public void performManualStartup() {
+        if (hasPower()) {
+            super.performManualStartup();
+        }
+    }
+
+    /**
+     * Applies any damage that the entity has suffered. When anything gets hit it is simply marked as "hit" but does not
+     * stop working until this is called.
+     */
+    @Override
+    public void applyDamage() {
+        super.applyDamage();
+        if (!hasPower()) {
+            setShutDown(true);
+        }
+    }
+
     /**
      * A {@link BuildingEntity} needs power to function.
+     *
      * @return true if the unit has power, otherwise false
      */
     public boolean hasPower() {
@@ -162,7 +222,8 @@ public class BuildingEntity extends AbstractBuildingEntity {
         double effectivePower = 0.0;
 
         for (MiscMounted miscMountedPowerGenerator : getMiscEquipment(MiscTypeFlag.F_POWER_GENERATOR)) {
-            if (miscMountedPowerGenerator.getType() instanceof PowerGeneratorType powerGeneratorType && miscMountedPowerGenerator.isOperable()) {
+            if (miscMountedPowerGenerator.getType() instanceof PowerGeneratorType powerGeneratorType
+                  && miscMountedPowerGenerator.isOperable()) {
                 StructureEngine engineType = powerGeneratorType.getStructureEngine();
                 effectivePower += miscMountedPowerGenerator.getSize() / engineType.getBuildingWeightMultiplier();
             }
@@ -175,16 +236,19 @@ public class BuildingEntity extends AbstractBuildingEntity {
         return effectivePower >= powerNeeded;
     }
 
+    @Override
+    public boolean isBuildingEntityOrGunEmplacement() {
+        return true;
+    }
+
     /**
      * Calculates the base generator weight for an advanced building.
      * <p>
-     * To find the Base Generator Weight for an advanced building (or a complex of buildings):
-     * 1. Add up the total number of hexes for all advanced buildings intended to receive power
-     * 2. Exclude Tent-, Fence-, Wall- and Bridge-class buildings
-     * 3. For multi-level buildings: multiply the building's hex-count by its height in levels
-     *    (plus any basement levels) before adding it to the sum
-     * 4. Add to this sum 10 percent of the total tonnage for all Heavy-class energy weapons
-     *    used by any of these buildings
+     * To find the Base Generator Weight for an advanced building (or a complex of buildings): 1. Add up the total
+     * number of hexes for all advanced buildings intended to receive power 2. Exclude Tent-, Fence-, Wall- and
+     * Bridge-class buildings 3. For multi-level buildings: multiply the building's hex-count by its height in levels
+     * (plus any basement levels) before adding it to the sum 4. Add to this sum 10 percent of the total tonnage for all
+     * Heavy-class energy weapons used by any of these buildings
      *
      * @return The base generator weight in tons
      */
@@ -232,6 +296,70 @@ public class BuildingEntity extends AbstractBuildingEntity {
         return baseHexWeight + (energyWeaponTonnage * 0.1);
     }
 
+    /**
+     * Calculates the internal weight capacity for this building.
+     * <p>
+     * For each hex of area covered, advanced buildings may internally carry a total tonnage of equipment equal to their
+     * Construction Factor times the number of levels of structure height.
+     * <p>
+     * Hangar-type structures may triple this capacity, but are limited to a maximum of 600 tons per hex for every 4
+     * levels of structural height (or fraction thereof).
+     *
+     * @return The total internal weight capacity in tons
+     */
+    @Override
+    public double getWeight() {
+        Building building = getInternalBuilding();
+        if (building == null) {
+            return 0.0;
+        }
+
+        double totalWeight = 0.0;
+        boolean isHangar = getBldgClass() == IBuilding.HANGAR;
+
+        // Calculate weight capacity for each hex
+        for (CubeCoords coords : building.getCoordsList()) {
+            int cf = building.getPhaseCF(coords);
+            int height = building.getHeight(coords);
+
+            if (height <= 0 || cf <= 0) {
+                continue;
+            }
+
+            // Base capacity: CF × height
+            double hexCapacity = cf * height;
+
+            if (isHangar) {
+                // Hangars triple the capacity
+                hexCapacity *= 3;
+
+                // But limited to 600 tons per hex for every 4 levels (or fraction)
+                int levelGroups = (int) Math.ceil(height / 4.0);
+                double maxCapacity = 600.0 * levelGroups;
+
+                hexCapacity = Math.min(hexCapacity, maxCapacity);
+            }
+
+            totalWeight += hexCapacity;
+        }
+
+        return totalWeight;
+    }
+
+    /**
+     * Places a demolition charge on this building (TO:AUE p.152). Demolition charges anchor to an absolute board hex,
+     * which is only valid for structures that cannot move; this is why the implementation lives here rather than in
+     * {@link AbstractBuildingEntity}, where {@link MobileStructure} would inherit it.
+     *
+     * @param playerId the ID of the player who placed the charge
+     * @param damage   the damage the charge will deal when detonated
+     * @param pos      the absolute board coordinates of the charge; see {@link Building#addDemolitionCharge}
+     */
+    @Override
+    public void addDemolitionCharge(int playerId, int damage, Coords pos) {
+        getInternalBuilding().addDemolitionCharge(playerId, damage, pos);
+    }
+
     // FIXME: IDK if this is right, just needed something to pass tests
     private static final TechAdvancement TA_BUILDING_ENTITY = new TechAdvancement(TechBase.ALL)
           .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
@@ -239,3 +367,4 @@ public class BuildingEntity extends AbstractBuildingEntity {
           .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
           .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 }
+

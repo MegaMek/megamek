@@ -197,7 +197,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         for (List<DialogOptionComponentYPanel> comps : optionComps.values()) {
             // Each option in the list should have the same value, so picking the first is fine
             if (!comps.isEmpty()) {
-                DialogOptionComponentYPanel comp = comps.get(0);
+                DialogOptionComponentYPanel comp = comps.getFirst();
                 if (comp.hasChanged()) {
                     changed.addElement(comp.changedOption());
                     comp.setOptionChanged(false);
@@ -221,7 +221,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             // Each option in the list should have the same value, so picking
             // the first is fine
             if (!comps.isEmpty()) {
-                IBasicOption option = comps.get(0).changedOption();
+                IBasicOption option = comps.getFirst().changedOption();
                 output.addElement(option);
             }
         }
@@ -264,7 +264,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         for (List<DialogOptionComponentYPanel> comps : optionComps.values()) {
             // Each option in the list should have the same value, so picking the first is fine
             if (!comps.isEmpty()) {
-                DialogOptionComponentYPanel comp = comps.get(0);
+                DialogOptionComponentYPanel comp = comps.getFirst();
                 if (isUnofficialOption(comp)) {
                     comp.setVisible(shouldShow(comp));
                     if (!shouldShow(comp)) {
@@ -497,6 +497,28 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
             optionComp.setSelected(option.stringValue());
             optionComp.setEditable(editable);
+        } else if (option.getName().equals(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE)) {
+            optionComp.addValue(OptionsConstants.NEURAL_INTERFACE_MODE_OFF);
+            optionComp.addValue(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
+            optionComp.addValue(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
+            optionComp.setSelected(option.stringValue());
+            optionComp.setEditable(editable);
+        } else if (option.getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MODE)) {
+            optionComp.addValue(OptionsConstants.GHOST_TARGET_MODE_LEGACY);
+            optionComp.addValue(OptionsConstants.GHOST_TARGET_MODE_STANDARD);
+            optionComp.setSelected(option.stringValue());
+            // Mode dropdown only editable when TacOps Ghost Targets is enabled
+            boolean ghostTargetsEnabled = options.getOption(
+                  OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET).booleanValue();
+            optionComp.setEditable(editable && ghostTargetsEnabled);
+        } else if (option.getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MAX)) {
+            // Ghost target max only applies to Legacy mode
+            IOption advancedOption = options.getOption(OptionsConstants.ADVANCED_GHOST_TARGET_MODE);
+            boolean isLegacyMode = advancedOption != null && OptionsConstants.GHOST_TARGET_MODE_LEGACY.equals(
+                  advancedOption.stringValue());
+            boolean ghostTargetsEnabled = options.getOption(
+                  OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET).booleanValue();
+            optionComp.setEditable(editable && isLegacyMode && ghostTargetsEnabled);
         } else if (option.getName().equals(OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT)) {
             // Disable if individual init is on
             if (!options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE).booleanValue()) {
@@ -745,7 +767,15 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
     @Override
     public void optionSwitched(DialogOptionComponentYPanel clickedComp, IOption option, int i) {
-        // tracks changes to a combobox option - nothing implemented yet
+        if (option.getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MODE)) {
+            boolean isLegacyMode = OptionsConstants.GHOST_TARGET_MODE_LEGACY.equals(clickedComp.getValue());
+            List<DialogOptionComponentYPanel> maxComps = optionComps.get(OptionsConstants.ADVANCED_GHOST_TARGET_MAX);
+            if (maxComps != null) {
+                for (DialogOptionComponentYPanel maxComp : maxComps) {
+                    maxComp.setEditable(editable && isLegacyMode);
+                }
+            }
+        }
     }
 
     @Override
@@ -774,7 +804,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 for (List<DialogOptionComponentYPanel> comps : optionComps.values()) {
                     // Each option in the list should have the same value, so picking the first is fine
                     if (!comps.isEmpty()) {
-                        DialogOptionComponentYPanel comp = comps.get(0);
+                        DialogOptionComponentYPanel comp = comps.getFirst();
                         if (comp.hasChanged()) {
                             changed.add(comp.getOption());
                         }
@@ -786,7 +816,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 for (IOption opt : changed) {
                     List<DialogOptionComponentYPanel> comps = optionComps.get(opt.getName());
                     if (!comps.isEmpty()) {
-                        comps.get(0).setOptionChanged(true);
+                        comps.getFirst().setOptionChanged(true);
                     }
                 }
             }
@@ -801,7 +831,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                     return;
                 }
             }
-            optionComps.get(OptionsConstants.BASE_HIDE_UNOFFICIAL).get(0).setSelected(!butUnofficial.isSelected());
+            optionComps.get(OptionsConstants.BASE_HIDE_UNOFFICIAL).getFirst().setSelected(!butUnofficial.isSelected());
             toggleOptions();
             refreshSearchPanel();
 

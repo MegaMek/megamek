@@ -344,6 +344,7 @@ public class FixedWingSupport extends ConvFighter {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getTotalSlots() {
         return 5 + (int) Math.floor(getWeight() / 10);
     }

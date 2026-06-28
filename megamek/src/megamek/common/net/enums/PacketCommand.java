@@ -77,6 +77,7 @@ public enum PacketCommand {
     ENTITY_ATTACK,
 
     ENTITY_PREPHASE,
+    ENTITY_GHOST_TARGET,
     ENTITY_GTA_HEX_SELECT,
 
     /** A packet informing the receiver of an unspecified change to a unit. */
@@ -93,6 +94,7 @@ public enum PacketCommand {
     ENTITY_SENSOR_CHANGE,
     ENTITY_SINKS_CHANGE,
     ENTITY_ACTIVATE_HIDDEN,
+    ENTITY_DEPLOY_BRIDGE,
     ENTITY_SYSTEM_MODE_CHANGE,
     FORCE_UPDATE,
     FORCE_ADD,
@@ -144,6 +146,7 @@ public enum PacketCommand {
     SENDING_MAP_SETTINGS,
     END_OF_GAME,
     DEPLOY_MINEFIELDS,
+
     REVEAL_MINEFIELD,
     REMOVE_MINEFIELD,
     SENDING_MINEFIELDS,
@@ -179,6 +182,7 @@ public enum PacketCommand {
     ENTITY_TOW,
     ENTITY_NOVA_NETWORK_CHANGE,
     ENTITY_VARIABLE_RANGE_MODE_CHANGE,
+    ENTITY_ABANDON_ANNOUNCE,
     RESET_ROUND_DEPLOYMENT,
     SENDING_TAG_INFO,
     RESET_TAG_INFO,
@@ -198,7 +202,29 @@ public enum PacketCommand {
     ACTIONS,
 
     /** A packet containing other packets to be processed in the order they are stored. */
-    MULTI_PACKET;
+    MULTI_PACKET,
+
+    /** A packet adding a temporary ECM field (e.g., from EMP mines). */
+    ADD_TEMPORARY_ECM_FIELD,
+
+    /** A packet syncing all temporary ECM fields to clients (replaces existing list). */
+    SYNC_TEMPORARY_ECM_FIELDS,
+
+    /** A packet updating hex locations being cleared by saws (for board view rendering). */
+    UPDATE_CUT_HEXES,
+
+    // NOTE: Packet marshalling uses PacketCommand.ordinal() as the wire identifier
+    // (see NativeSerializationMarshaller), so new commands MUST be appended here at the
+    // end to keep existing ordinals stable. Never insert new constants mid-enum.
+
+    /** A Client to Server packet carrying the hex coordinates a player is placing as fortified hexes. */
+    DEPLOY_FORTIFICATIONS,
+
+    /**
+     * A Server to Client packet instructing the Client to show a transient toast notification on the board view, with a
+     * severity level, message text and an optional acting unit (for its icon).
+     */
+    SEND_TOAST;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods
@@ -231,6 +257,7 @@ public enum PacketCommand {
         return this == CFR_TAG_TARGET;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isGameVictoryEvent() {
         return this == GAME_VICTORY_EVENT;
     }

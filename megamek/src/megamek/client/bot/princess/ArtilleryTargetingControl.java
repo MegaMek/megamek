@@ -592,7 +592,7 @@ public class ArtilleryTargetingControl {
                 if (!topValuedFireInfos.isEmpty()) {
                     WeaponFireInfo actualFireInfo;
                     if (topValuedFireInfos.size() == 1) {
-                        actualFireInfo = topValuedFireInfos.get(0);
+                        actualFireInfo = topValuedFireInfos.getFirst();
                     } else {
                         // lets choose from the top 5 if we have that many
                         int topValues = Math.min(5, topValuedFireInfos.size());
@@ -639,7 +639,7 @@ public class ArtilleryTargetingControl {
         // Clear all artillery attacks if we have valid ADA or Flak attacks that do damage, but
         // keep any TAG attacks.
         if (!topValuedFlakInfos.isEmpty()) {
-            if (topValuedFlakInfos.get(0).getExpectedDamage() > 0) {
+            if (topValuedFlakInfos.getFirst().getExpectedDamage() > 0) {
                 returnValue = TAGPlan;
             }
         } else {

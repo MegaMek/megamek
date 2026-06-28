@@ -71,7 +71,7 @@ import org.junit.jupiter.api.Test;
 class AeroCriticalHitTest {
 
     private final TWGameManager gameManager = new TWGameManager();
-    private TWDamageManagerModular damageManager;
+    private TWDamageManager damageManager;
     private Game game;
     private Player player;
     private Server server;
@@ -87,7 +87,7 @@ class AeroCriticalHitTest {
         GameOptions gameOptions = new GameOptions();
         game.setOptions(gameOptions);
 
-        damageManager = new TWDamageManagerModular(gameManager, game);
+        damageManager = new TWDamageManager(gameManager, game);
         gameManager.setDamageManager(damageManager);
 
         server = ServerFactory.createServer(gameManager);

@@ -39,11 +39,17 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.List;
 
 import megamek.common.IndustrialElevator.ElevatorCall;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
+import megamek.common.util.SerializationHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -494,5 +500,68 @@ class IndustrialElevatorTest {
         List<ElevatorCall> queue = elevator.getCallQueue();
 
         assertThrows(UnsupportedOperationException.class, () -> queue.clear());
+    }
+
+    // --- Serialization Tests ---
+
+    @Test
+    void industrialElevatorSurvivesJavaSerialization() throws Exception {
+        // The network/lobby path sends elevators in a packet via Java serialization
+        IndustrialElevator original = new IndustrialElevator(testLocation, -2, 5, 300);
+        original.setPlatformLevel(1);
+        original.setFunctional(false);
+        original.addCall(new ElevatorCall(1, new Coords(4, 5), 3, 1, 5, 1));
+        original.addCall(new ElevatorCall(2, new Coords(6, 5), -1, 2, 3, 1));
+
+        IndustrialElevator restored = javaRoundTrip(original);
+
+        assertElevatorMatches(original, restored);
+    }
+
+    @Test
+    void industrialElevatorSurvivesSaveGameXStreamRoundTrip() {
+        // The save-game path writes elevators via XStream and reads them back on load
+        IndustrialElevator original = new IndustrialElevator(testLocation, -2, 5, 300);
+        original.setPlatformLevel(1);
+        original.setFunctional(false);
+        original.addCall(new ElevatorCall(1, new Coords(4, 5), 3, 1, 5, 1));
+
+        String xml = SerializationHelper.getSaveGameXStream().toXML(original);
+        IndustrialElevator restored = (IndustrialElevator) SerializationHelper.getLoadSaveGameXStream().fromXML(xml);
+
+        assertElevatorMatches(original, restored);
+    }
+
+    @Test
+    void elevatorCallSurvivesJavaSerialization() throws Exception {
+        ElevatorCall original = new ElevatorCall(7, new Coords(3, 9), 4, 2, 6, 1);
+
+        ElevatorCall restored = javaRoundTrip(original);
+
+        assertEquals(original, restored);
+        assertEquals(original.getCallerPosition(), restored.getCallerPosition());
+        assertEquals(original.getDistanceFromPlatform(), restored.getDistanceFromPlatform());
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends Serializable> T javaRoundTrip(T original) throws Exception {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream objectOutput = new ObjectOutputStream(bytes)) {
+            objectOutput.writeObject(original);
+        }
+        try (ObjectInputStream objectInput = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            return (T) objectInput.readObject();
+        }
+    }
+
+    private static void assertElevatorMatches(IndustrialElevator expected, IndustrialElevator actual) {
+        assertNotNull(actual);
+        assertEquals(expected.getLocation(), actual.getLocation());
+        assertEquals(expected.getShaftBottom(), actual.getShaftBottom());
+        assertEquals(expected.getShaftTop(), actual.getShaftTop());
+        assertEquals(expected.getCapacityTons(), actual.getCapacityTons());
+        assertEquals(expected.getPlatformLevel(), actual.getPlatformLevel());
+        assertEquals(expected.isFunctional(), actual.isFunctional());
+        assertEquals(expected.getCallQueue(), actual.getCallQueue());
     }
 }

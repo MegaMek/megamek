@@ -183,6 +183,6 @@ primaryfactory:New Avalon
 systemmanufacturer:CHASSIS:Dorwinion Standard 55TES
 systemmanufacturer:ENGINE:Core Tek 275 XL
 systemmanufacturer:ARMOR:Durallex Ballistic-Reinforced with CASE II
-systemmanufacturer:JUMPJET:Swingline X-100
+systemmanufacturer:JUMP_JET:Swingline X-100
 systemmanufacturer:COMMUNICATIONS:Achernar Electronics HID-21
 systemmanufacturer:TARGETING:Federated Hunter Mk. II

@@ -239,6 +239,12 @@ public class BattleArmorBVCalculator extends BVCalculator {
             baseBV += 1;
             bvReport.addLine(Messages.getString("BV.TSMImplant"), "+1", "= " + formatForReport(baseBV));
         }
+
+        // Dermal Armor adds +3 BV per trooper before skill modifiers (IO p.78)
+        if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
+            baseBV += 3;
+            bvReport.addLine(Messages.getString("BV.DermalArmor"), "+3", "= " + formatForReport(baseBV));
+        }
     }
 
     @Override

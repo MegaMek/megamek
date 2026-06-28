@@ -43,11 +43,13 @@ import java.util.Collections;
 import java.util.List;
 
 import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.units.Entity;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -68,6 +70,12 @@ public class ARADEquipmentDetectorTest {
 
     private static final int FRIENDLY_TEAM = 1;
     private static final int ENEMY_TEAM = 2;
+
+    @BeforeAll
+    static void setUpAll() {
+        // Need equipment initialized
+        EquipmentType.initializeTypes();
+    }
 
     @Test
     void testNullTargetReturnsFalse() {

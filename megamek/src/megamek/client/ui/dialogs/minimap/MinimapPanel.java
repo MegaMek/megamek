@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2002-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -62,6 +62,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.imageio.ImageIO;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
@@ -188,7 +189,15 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     private final JDialog dialog;
     private Client client;
     private final IClientGUI clientGui;
+    /**
+     * Game UUIDs that already have a {@link MinimapPanel} writing the summary GIF. A multi-board game creates one
+     * MinimapPanel per board, but the GIF file is keyed per game, so without this guard several panels would write the
+     * same file at once and then race when saving at game end. Only the first panel per game owns the GIF.
+     */
+    private static final Set<String> GIF_WRITING_GAMES = ConcurrentHashMap.newKeySet();
+
     private GifWriterThread gifWriterThread;
+    private volatile boolean ownsSummaryGif = false;
     private int margin = MARGIN;
     private int topMargin;
     private int leftMargin;
@@ -343,23 +352,37 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                             ImageIO.write(image, "png", imgFile);
                         }
                         if (GUIP.getGifGameSummaryMinimap()) {
-                            if (gifWriterThread == null || !gifWriterThread.isAlive()) {
-                                gifWriterThread = new GifWriterThread(new GifWriter(game.getUUIDString()),
-                                      "GifWriterThread");
-                                gifWriterThread.start();
+                            // Only one panel per game writes the GIF. In a multi-board game every board's panel
+                            // reaches this code, but only the owner (first to claim the game UUID) writes; the others
+                            // skip it so they don't share the file and race when saving at game end. Ownership is
+                            // tracked separately from the thread instance, so the owner also restarts its writer if
+                            // that thread has died, instead of silently ending the GIF for the rest of the game.
+                            if ((gifWriterThread == null) || !gifWriterThread.isAlive()) {
+                                if (ownsSummaryGif || GIF_WRITING_GAMES.add(game.getUUIDString())) {
+                                    ownsSummaryGif = true;
+                                    gifWriterThread = new GifWriterThread(new GifWriter(game.getUUIDString()),
+                                          "GifWriterThread");
+                                    gifWriterThread.start();
+                                }
                             }
-                            gifWriterThread.addFrame(image, 400);
+                            if (ownsSummaryGif && (gifWriterThread != null) && gifWriterThread.isAlive()) {
+                                gifWriterThread.addFrame(image, 400);
+                            }
                         }
                     } catch (Exception ex) {
                         logger.error(ex, "Error saving game summary image.");
                     }
                 }
 
-                if (e.getNewPhase().isVictory() && (gifWriterThread != null) && gifWriterThread.isAlive()) {
+                if (e.getNewPhase().isVictory() && ownsSummaryGif && (gifWriterThread != null)) {
                     try {
-                        gifWriterThread.stopThread();
+                        if (gifWriterThread.isAlive()) {
+                            gifWriterThread.stopThread();
+                        }
                     } catch (Exception ex) {
                         logger.error(ex, "Error closing gif writer.");
+                    } finally {
+                        releaseSummaryGifOwnership();
                     }
                 }
 
@@ -421,12 +444,26 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         }
         if (client != null) {
             client.addCloseClientListener(() -> {
-                if (gifWriterThread != null && gifWriterThread.isAlive()) {
-                    gifWriterThread.stopThread(true);
+                if (ownsSummaryGif && (gifWriterThread != null)) {
+                    if (gifWriterThread.isAlive()) {
+                        gifWriterThread.stopThread(true);
+                    }
+                    releaseSummaryGifOwnership();
                 }
             });
         }
         GUIP.addPreferenceChangeListener(this);
+    }
+
+    /**
+     * Releases this panel's claim on the summary GIF so a later game (a new UUID) can be written, and so the entry does
+     * not linger after the writer has stopped. Safe to call when this panel is not the owner.
+     */
+    private void releaseSummaryGifOwnership() {
+        if (ownsSummaryGif) {
+            GIF_WRITING_GAMES.remove(game.getUUIDString());
+            ownsSummaryGif = false;
+        }
     }
 
     /**
@@ -435,11 +472,10 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     private void initializeDialog() {
         if (dialog != null) {
             if (dialog.getMouseListeners().length == 0) {
-                dialog.addMouseListener(mouseListener);
-                dialog.addMouseMotionListener(mouseMotionListener);
-                dialog.addMouseWheelListener(mouseWheelListener);
-                dialog.addComponentListener(componentListener);
-                dialog.addComponentListener(componentListener);
+                dialog.addMouseListener(minimapMouseListener);
+                dialog.addMouseMotionListener(minimapMouseMotionListener);
+                dialog.addMouseWheelListener(minimapMouseWheelListener);
+                dialog.addComponentListener(minimapComponentListener);
             }
         }
     }
@@ -615,7 +651,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
               + HEX_SIDE_BY_SIN30[zoom] + (2 * margin);
         int requiredHeight = minimized ? BUTTON_HEIGHT
               : (((2 * board.getHeight()) + 1)
-              * HEX_SIDE_BY_COS30[zoom]) + (2 * margin) + buttonHeight;
+                 * HEX_SIDE_BY_COS30[zoom]) + (2 * margin) + buttonHeight;
 
         if (dialog != null) {
             setSize(new Dimension(requiredWidth, requiredHeight));
@@ -924,7 +960,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         double[] relSize = bv.getVisibleArea();
         for (int i = 0; i < 4; i++) {
             // keep between 0 and 1 to not fall outside the minimap
-            relSize[i] = Math.min(1, Math.max(0, relSize[i]));
+            relSize[i] = Math.clamp(relSize[i], 0, 1);
         }
 
         int x1 = (int) (relSize[0] * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) * board.getWidth()) + leftMargin;
@@ -2029,7 +2065,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         }
     };
 
-    MouseListener mouseListener = new MouseAdapter() {
+    MouseListener minimapMouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent me) {
             if (me.getButton() == MouseEvent.BUTTON1) {
@@ -2060,7 +2096,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
     };
 
-    MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
+    MouseMotionListener minimapMouseMotionListener = new MouseMotionAdapter() {
 
         @Override
         public void mouseDragged(MouseEvent me) {
@@ -2075,7 +2111,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         }
     };
 
-    MouseWheelListener mouseWheelListener = new MouseWheelListener() {
+    MouseWheelListener minimapMouseWheelListener = new MouseWheelListener() {
         @Override
         public void mouseWheelMoved(MouseWheelEvent we) {
             Point mapPoint = SwingUtilities.convertPoint(dialog, we.getX(), we.getY(), MinimapPanel.this);
@@ -2089,7 +2125,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         }
     };
 
-    ComponentListener componentListener = new ComponentAdapter() {
+    ComponentListener minimapComponentListener = new ComponentAdapter() {
         @Override
         public void componentShown(ComponentEvent ce) {
             refreshMap();

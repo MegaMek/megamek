@@ -67,8 +67,8 @@ import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
- * Dialog for managing Variable Range Targeting modes during End Phase. Per BMM pg. 86: Player selects
- * Long or Short mode during End Phase for the NEXT turn.
+ * Dialog for managing Variable Range Targeting modes during End Phase. Per BMM pg. 86: Player selects Long or Short
+ * mode during End Phase for the NEXT turn.
  * <p>
  * - LONG mode: -1 TN at long range, +1 TN at short range - SHORT mode: -1 TN at short range, +1 TN at long range -
  * Medium range is unaffected by either mode
@@ -91,6 +91,9 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
     // Data structures
     private List<Entity> playerUnits;
     private final Map<Integer, JRadioButton> longModeButtons = new HashMap<>();
+
+    /** {@code true} once Apply sent at least one real mode change, so the caller can confirm a declaration was made. */
+    private boolean applied;
 
     public VariableRangeTargetingDialog(JFrame parent, ClientGUI clientGUI) {
         super(parent, Messages.getString("VariableRangeTargetingDialog.title"), true);
@@ -238,7 +241,7 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
         // Clamp between min (2 units worth) and max (10 units worth)
         int minHeight = UIUtil.scaleForGUI(95);   // ~2 units
         int maxHeight = UIUtil.scaleForGUI(335);  // ~10 units, then scroll
-        int scrollHeight = Math.max(minHeight, Math.min(contentHeight, maxHeight));
+        int scrollHeight = Math.clamp(contentHeight, minHeight, maxHeight);
 
         scrollPane.setPreferredSize(UIUtil.scaleForGUI(600, scrollHeight));
         mainPanel.add(scrollPane, BorderLayout.CENTER);
@@ -340,8 +343,17 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
                     logger.debug("Entity {} changing Variable Range Targeting mode from {} to {}",
                           entityId, effectiveMode, selectedMode);
                     clientGUI.getClient().sendVariableRangeTargetingModeChange(entityId, selectedMode);
+                    applied = true;
                 }
             }
         }
+    }
+
+    /**
+     * @return {@code true} if Apply sent at least one Variable Range Targeting mode change this time the dialog was
+     *       shown
+     */
+    public boolean wasApplied() {
+        return applied;
     }
 }

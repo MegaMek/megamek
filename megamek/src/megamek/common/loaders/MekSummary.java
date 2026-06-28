@@ -63,7 +63,6 @@ import megamek.common.options.IOptionInfo;
 import megamek.common.options.Quirks;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.units.EntityWeightClass;
 import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
 
@@ -89,6 +88,8 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int tankTurrets;
     private File sourceFile;
     private String source;
+    private String published;
+    private boolean nonCanonBySource;
     private boolean invalid;
     private String techLevel;
     private int techLevelCode;
@@ -101,7 +102,9 @@ public class MekSummary implements Serializable, ASCardDisplayable {
                                          TechConstants.T_IS_EXPERIMENTAL }; // tech level constant at standard, advanced, and experimental rules
     // levels
     private double tons;
+    private int weightClass;
     private int bv;
+    private int genericBattleValue;
 
     /** The full cost of the unit (including ammo). */
     private long cost;
@@ -116,6 +119,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private String extinctRange;
     private boolean canon;
     private boolean patchwork;
+    private boolean frankenMek;
     private boolean doomedOnGround;
     private boolean doomedInAtmosphere;
     private boolean doomedInSpace;
@@ -271,6 +275,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return patchwork;
     }
 
+    public boolean isFrankenMek() {
+        return frankenMek;
+    }
+
     public boolean isDoomedOnGround() {
         return doomedOnGround;
     }
@@ -328,7 +336,19 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     public String getSource() {
-        return source;
+        return (source != null) ? source : "";
+    }
+
+    public String getPublished() {
+        return (published != null) ? published : "";
+    }
+
+    public boolean hasPublishedRecordSheet() {
+        return !getPublished().isBlank();
+    }
+
+    public boolean isNonCanonBySource() {
+        return nonCanonBySource;
     }
 
     public String getEntryName() {
@@ -541,6 +561,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return bv;
     }
 
+    public int getGenericBattleValue() {
+        return genericBattleValue;
+    }
+
     public long getCost() {
         return cost;
     }
@@ -561,10 +585,12 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return level;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getAdvancedTechYear() {
         return advTechYear;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getStandardTechYear() {
         return stdTechYear;
     }
@@ -896,6 +922,14 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         this.source = sSource;
     }
 
+    public void setPublished(String published) {
+        this.published = published;
+    }
+
+    public void setNonCanonBySource(boolean nonCanonBySource) {
+        this.nonCanonBySource = nonCanonBySource;
+    }
+
     public void setEntryName(String sEntryName) {
         this.entryName = sEntryName;
     }
@@ -940,6 +974,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         this.bv = nBV;
     }
 
+    public void setGenericBattleValue(int genericBattleValue) {
+        this.genericBattleValue = genericBattleValue;
+    }
+
     public void setModified(long lModified) {
         this.modified = lModified;
     }
@@ -962,6 +1000,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
 
     public void setPatchwork(boolean patchwork) {
         this.patchwork = patchwork;
+    }
+
+    public void setFrankenMek(boolean frankenMek) {
+        this.frankenMek = frankenMek;
     }
 
     public void setDoomedOnGround(boolean doomedOnGround) {
@@ -996,17 +1038,12 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         unitSubType = subType;
     }
 
+    public void setWeightClass(int weightClass) {
+        this.weightClass = weightClass;
+    }
+
     public int getWeightClass() {
-        double tons;
-        if (getUnitType().equals("BattleArmor")) {
-            tons = getSuitWeight();
-        } else {
-            tons = getTons();
-        }
-        if (isSupport()) {
-            return EntityWeightClass.getSupportWeightClass(this.tons, unitSubType);
-        }
-        return EntityWeightClass.getWeightClass(tons, getUnitType());
+        return weightClass;
     }
 
     public int getWalkMp() {

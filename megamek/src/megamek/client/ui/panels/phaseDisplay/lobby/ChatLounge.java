@@ -110,10 +110,10 @@ import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.IMapSettingsObserver;
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.RulerDialog;
 import megamek.client.ui.clientGUI.boardview.toolTip.TWBoardViewTooltip;
 import megamek.client.ui.dialogs.InformDialog;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
-import megamek.client.ui.dialogs.RulerDialog;
 import megamek.client.ui.dialogs.abstractDialogs.AutoResolveChanceDialog;
 import megamek.client.ui.dialogs.abstractDialogs.AutoResolveProgressDialog;
 import megamek.client.ui.dialogs.advancedSearchMap.AdvancedSearchMapDialog;
@@ -469,12 +469,12 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         fldMapWidth.addActionListener(lobbyListener);
         fldMapHeight.addActionListener(lobbyListener);
-        fldMapWidth.addFocusListener(focusListener);
-        fldMapHeight.addFocusListener(focusListener);
+        fldMapWidth.addFocusListener(lobbyFocusListener);
+        fldMapHeight.addFocusListener(lobbyFocusListener);
         fldSpaceBoardWidth.addActionListener(lobbyListener);
         fldSpaceBoardHeight.addActionListener(lobbyListener);
-        fldSpaceBoardWidth.addFocusListener(focusListener);
-        fldSpaceBoardHeight.addFocusListener(focusListener);
+        fldSpaceBoardWidth.addFocusListener(lobbyFocusListener);
+        fldSpaceBoardHeight.addFocusListener(lobbyFocusListener);
 
         comboTeam.addActionListener(lobbyListener);
 
@@ -483,7 +483,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /** Applies changes to the board and map size when the text fields lose focus. */
-    FocusListener focusListener = new FocusAdapter() {
+    FocusListener lobbyFocusListener = new FocusAdapter() {
 
         @Override
         public void focusLost(FocusEvent e) {
@@ -579,7 +579,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         bvSorters.add(new PlayerBVSorter(clientgui, Sorting.DESCENDING));
         bvSorters.add(new BVSorter(Sorting.ASCENDING));
         bvSorters.add(new BVSorter(Sorting.DESCENDING));
-        activeSorter = unitSorters.get(0);
+        activeSorter = unitSorters.getFirst();
     }
 
     /** Enables buttons to allow adding units when the MSC has finished loading. */
@@ -958,10 +958,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
             RulerDialog.color1 = GUIP.getRulerColor1();
             RulerDialog.color2 = GUIP.getRulerColor2();
-            RulerDialog ruler = new RulerDialog(clientgui.getFrame(), client(), previewBV, boardPreviewGame);
-            ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
-            ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
-            UIUtil.updateWindowBounds(ruler);
+            RulerDialog ruler = new RulerDialog(clientgui.getFrame(), previewBV, boardPreviewGame);
 
             // Most boards will be far too large on the standard zoom
             previewBV.zoomOut();
@@ -1272,7 +1269,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                         String boardForImage = boardName;
                         // For a surprise board, just use the first board as example
                         if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
-                            boardForImage = extractSurpriseMaps(boardName).get(0);
+                            boardForImage = extractSurpriseMaps(boardName).getFirst();
                         }
 
                         boolean rotateBoard = false;
@@ -1732,6 +1729,7 @@ public class ChatLounge extends AbstractPhaseDisplay
      *
      * @see #isEditable(Entity)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     boolean isNotEditable(Entity entity) {
         return !isEditable(entity);
     }
@@ -2833,7 +2831,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             } else if (code == KeyEvent.VK_ENTER) {
                 evt.consume();
                 if (entities.size() == 1) {
-                    lobbyActions.customizeMek(entities.get(0));
+                    lobbyActions.customizeMek(entities.getFirst());
                 } else if (canConfigureMultipleDeployment(entities)) {
                     lobbyActions.customizeMeks(entities);
                 }
@@ -2981,7 +2979,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
             } else if (code == KeyEvent.VK_ENTER && onlyOneEntity) {
                 e.consume();
-                lobbyActions.customizeMek(selEntities.get(0));
+                lobbyActions.customizeMek(selEntities.getFirst());
 
             } else if (code == KeyEvent.VK_UP && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
                 e.consume();
@@ -3474,7 +3472,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         // the first sorter otherwise
         int index = sorters.indexOf(activeSorter);
         if (index == -1) {
-            activeSorter = sorters.get(0);
+            activeSorter = sorters.getFirst();
         } else {
             index = (index + 1) % sorters.size();
             activeSorter = sorters.get(index);

@@ -37,6 +37,7 @@ import megamek.client.ui.util.DiscordFormat;
 /**
  * An element with a label, a colon, and a value. In html and discord the label is bold.
  */
+@Deprecated(since = "0.51.0", forRemoval = true)
 class LabeledElement implements ViewElement {
 
     protected final String label;

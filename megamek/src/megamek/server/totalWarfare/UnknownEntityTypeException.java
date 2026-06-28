@@ -34,6 +34,7 @@
 package megamek.server.totalWarfare;
 
 class UnknownEntityTypeException extends Exception {
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public UnknownEntityTypeException() {}
 
     public UnknownEntityTypeException(String message) {

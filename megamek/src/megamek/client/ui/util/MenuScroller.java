@@ -57,7 +57,7 @@ import megamek.common.annotations.Nullable;
  *
  * @author Darryl
  *       <p>
- *       See http://tips4java.wordpress.com/2009/02/01/menu-scroller/
+ *       See <a href="http://tips4java.wordpress.com/2009/02/01/menu-scroller/">Menu Scroller</a>
  */
 public class MenuScroller {
     private JPopupMenu menu;
@@ -80,6 +80,7 @@ public class MenuScroller {
      *
      * @return the MenuScroller
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static MenuScroller setScrollerFor(JMenu menu) {
         return new MenuScroller(menu);
     }
@@ -92,6 +93,7 @@ public class MenuScroller {
      *
      * @return the MenuScroller
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static MenuScroller setScrollerFor(JPopupMenu menu) {
         return new MenuScroller(menu);
     }
@@ -138,6 +140,7 @@ public class MenuScroller {
      *
      * @throws IllegalArgumentException if scrollCount or interval is 0 or negative
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static MenuScroller setScrollerFor(JMenu menu, int scrollCount, int interval) {
         return new MenuScroller(menu, scrollCount, interval);
     }
@@ -154,6 +157,7 @@ public class MenuScroller {
      *
      * @throws IllegalArgumentException if scrollCount or interval is 0 or negative
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static MenuScroller setScrollerFor(JPopupMenu menu, int scrollCount, int interval) {
         return new MenuScroller(menu, scrollCount, interval);
     }
@@ -173,6 +177,7 @@ public class MenuScroller {
      * @throws IllegalArgumentException if scrollCount or interval is 0 or negative or if topFixedCount or
      *                                  bottomFixedCount is negative
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static MenuScroller setScrollerFor(JMenu menu, int scrollCount, int interval,
           int topFixedCount, int bottomFixedCount) {
         return new MenuScroller(menu, scrollCount, interval, topFixedCount, bottomFixedCount);
@@ -193,6 +198,7 @@ public class MenuScroller {
      * @throws IllegalArgumentException if scrollCount or interval is 0 or negative or if topFixedCount or
      *                                  bottomFixedCount is negative
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static MenuScroller setScrollerFor(JPopupMenu menu, int scrollCount, int interval,
           int topFixedCount, int bottomFixedCount) {
         return new MenuScroller(menu, scrollCount, interval, topFixedCount, bottomFixedCount);
@@ -333,6 +339,7 @@ public class MenuScroller {
     /**
      * @return the scroll interval in milliseconds
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getInterval() {
         return interval;
     }
@@ -357,6 +364,7 @@ public class MenuScroller {
     /**
      * @return the number of items to display in the scrolling portion of the menu at a time
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getScrollCount() {
         return scrollCount;
     }
@@ -380,6 +388,7 @@ public class MenuScroller {
     /**
      * @return the number of items fixed at the top of the menu or popup menu
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getTopFixedCount() {
         return topFixedCount;
     }
@@ -401,6 +410,7 @@ public class MenuScroller {
     /**
      * @return the number of items fixed at the bottom of the menu or popup menu
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getBottomFixedCount() {
         return bottomFixedCount;
     }
@@ -423,6 +433,7 @@ public class MenuScroller {
      *
      * @see #keepVisible(int)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void keepVisible(final @Nullable JMenuItem item) {
         keepVisibleIndex = (item == null) ? -1 : menu.getComponentIndex(item);
     }
@@ -435,6 +446,7 @@ public class MenuScroller {
      *
      * @see #keepVisible(JMenuItem)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void keepVisible(int index) {
         keepVisibleIndex = index;
     }

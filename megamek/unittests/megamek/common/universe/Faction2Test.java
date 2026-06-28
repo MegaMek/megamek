@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,7 +33,10 @@
 package megamek.common.universe;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
 
 import megamek.client.ratgenerator.FactionRecord;
 import org.junit.jupiter.api.Test;
@@ -77,5 +80,28 @@ class Faction2Test {
         var laFaction = testFactions.getFaction("LA");
         assertTrue(laFaction.isPresent());
         assertFalse(laFaction.get().performsBatchalls());
+    }
+
+    @Test
+    void getSucsCodesReturnsEmptySetByDefault() {
+        Faction2 faction = new Faction2();
+        assertTrue(faction.getSucsCodes().isEmpty());
+    }
+
+    @Test
+    void sucsCodesParsedFromYamlPreservingOrder() {
+        Factions2 testFactions = getTestFactions2();
+        Faction2 laFaction = testFactions.getFaction("LA").orElseThrow();
+        assertIterableEquals(List.of("LA", "LC"), laFaction.getSucsCodes());
+
+        Faction2 cbsFaction = testFactions.getFaction("CBS").orElseThrow();
+        assertTrue(cbsFaction.getSucsCodes().isEmpty());
+    }
+
+    @Test
+    void sucsCodesEmptyListInYamlParsesCleanly() {
+        Factions2 testFactions = getTestFactions2();
+        Faction2 mercFaction = testFactions.getFaction("MERC").orElseThrow();
+        assertTrue(mercFaction.getSucsCodes().isEmpty());
     }
 }

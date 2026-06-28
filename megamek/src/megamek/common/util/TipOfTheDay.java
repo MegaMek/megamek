@@ -274,6 +274,7 @@ public class TipOfTheDay {
     /**
      * Returns the current alpha value for fade animations
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public float getCurrentAlpha() {
         return currentAlpha;
     }
@@ -315,6 +316,7 @@ public class TipOfTheDay {
      *
      * @return A tip string for today
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getTodaysTip() {
         LocalDate today = LocalDate.now();
         int dayOfYear = today.getDayOfYear();
@@ -341,6 +343,7 @@ public class TipOfTheDay {
      * @param referenceBounds The bounds of the reference component
      * @param position        The position of the tip (BOTTOM_BORDER, etc.)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void drawTipOfTheDay(Graphics2D graphics2D, Rectangle referenceBounds, Position position) {
         drawTipOfTheDay(graphics2D, referenceBounds, position, DEFAULT_USE_RADIAL_GRADIENT);
     }
@@ -435,7 +438,7 @@ public class TipOfTheDay {
                 if (bgRectHeight > 0 && bgRectWidth > 0) {
                     if (!useRadialGradient) {
                         float fadeRegionPhysicalWidth = bgRectWidth * TIP_BACKGROUND_FADE_AREA_PERCENT;
-                        fadeRegionPhysicalWidth = Math.max(0f, Math.min(fadeRegionPhysicalWidth, bgRectWidth));
+                        fadeRegionPhysicalWidth = Math.clamp(fadeRegionPhysicalWidth, 0f, bgRectWidth);
                         // Opaque on the left, fades to transparent towards the right
                         bgPaint = new GradientPaint(bgRectX + fadeRegionPhysicalWidth,
                               bgRectTopY,
@@ -476,7 +479,7 @@ public class TipOfTheDay {
                 if (bgRectHeight > 0 && bgRectWidth > 0) {
                     if (!useRadialGradient) {
                         float fadeRegionPhysicalWidth = bgRectWidth * TIP_BACKGROUND_FADE_AREA_PERCENT;
-                        fadeRegionPhysicalWidth = Math.max(0f, Math.min(fadeRegionPhysicalWidth, bgRectWidth));
+                        fadeRegionPhysicalWidth = Math.clamp(fadeRegionPhysicalWidth, 0f, bgRectWidth);
                         // Opaque on the right, fades to transparent towards the left
                         bgPaint = new GradientPaint(bgRectX,
                               bgRectTopY,
@@ -516,7 +519,7 @@ public class TipOfTheDay {
 
                 if (bgRectHeight > 0 && bgRectWidth > 0) {
                     float fadeRegionPhysicalHeight = bgRectHeight * TIP_BACKGROUND_FADE_AREA_PERCENT;
-                    fadeRegionPhysicalHeight = Math.max(0f, Math.min(fadeRegionPhysicalHeight, bgRectHeight));
+                    fadeRegionPhysicalHeight = Math.clamp(fadeRegionPhysicalHeight, 0f, bgRectHeight);
 
                     // Transparent at its top, fades to opaque towards its bottom
                     bgPaint = new GradientPaint(bgRectX,
@@ -739,7 +742,7 @@ public class TipOfTheDay {
             return text; // No keybind variables to replace
         }
         Set<String> keybindCommands = new java.util.HashSet<>();
-        Pattern pattern = Pattern.compile("\\" + KEYBIND_VARIABLE_PREFIX + "([^}]+)\\" + VARIABLE_SUFFIX);
+        Pattern pattern = Pattern.compile("\\" + KEYBIND_VARIABLE_PREFIX + "([^}]+)" + VARIABLE_SUFFIX);
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             keybindCommands.add(matcher.group(1));

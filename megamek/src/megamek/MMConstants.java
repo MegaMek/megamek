@@ -47,6 +47,7 @@ public final class MMConstants extends SuiteConstants {
     public static final String PROJECT_NAME = "MegaMek";
     public static final String MUL_URL_PREFIX = "http://www.masterunitlist.info/Unit/Details/";
     public static final String BT_URL_SHRAPNEL = "https://bg.battletech.com/shrapnel/";
+    public static final String DISCORD_LINK = "https://discord.gg/megamek";
     /**
      * When this text is found in the source field, the Mek View will display a link to {@link #BT_URL_SHRAPNEL}
      */
@@ -87,6 +88,7 @@ public final class MMConstants extends SuiteConstants {
           .toString();
     public static final String USER_SURNAME_FILE = Paths.get("userdata/data/names/surnames.csv").toString();
     public static final String ERAS_FILE_PATH = Paths.get("data/universe/eras.xml").toString();
+    public static final String RANKS_FILE_PATH = Paths.get("data/universe/ranks.xml").toString();
     public static final String USER_LOADOUTS_DIR = Paths.get("userdata/data/").toString();
     public static final String FACTIONS_DIR = Paths.get("data/universe/factions").toString();
     public static final String COMMANDS_DIR = Paths.get("data/universe/commands").toString();
@@ -124,6 +126,11 @@ public final class MMConstants extends SuiteConstants {
     public static final int TSEMP_EFFECT_NONE = 0;
     public static final int TSEMP_EFFECT_INTERFERENCE = 1;
     public static final int TSEMP_EFFECT_SHUTDOWN = 2;
+
+    // EMP Mine Effect Constants (Tactical Operations: Advanced Rules)
+    public static final int EMP_EFFECT_NONE = 0;
+    public static final int EMP_EFFECT_INTERFERENCE = 1;
+    public static final int EMP_EFFECT_SHUTDOWN = 2;
     // endregion Magic Numbers That Should Be Enums
 
     public static final String CL_KEY_FILE_EXTENSION_BOARD = ".board";

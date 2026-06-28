@@ -59,6 +59,7 @@ public abstract class AbstractScrollPane extends JScrollPane {
      * This creates an AbstractScrollPane using the default resource bundle and using the default scrollbar policies of
      * vertical and horizontal scrollbars as required.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected AbstractScrollPane(final JFrame frame, final String name) {
         this(frame, name, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     }

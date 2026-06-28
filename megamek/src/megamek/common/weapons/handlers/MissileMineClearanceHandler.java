@@ -284,7 +284,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         }
 
         if (!reports.isEmpty()) {
-            reports.get(reports.size() - 1).newlines++;
+            reports.getLast().newlines++;
         }
     }
 }

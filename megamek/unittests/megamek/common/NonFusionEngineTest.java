@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,6 +32,7 @@
  */
 package megamek.common;
 
+import static megamek.common.equipment.EquipmentType.T_STRUCTURE_INDUSTRIAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,9 +40,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -52,6 +56,13 @@ import org.junit.jupiter.api.Test;
  * fusion) - Engine crits cause explosion checks instead
  */
 class NonFusionEngineTest {
+
+
+    @BeforeAll
+    static void setUpAll() {
+        // Need equipment initialized
+        EquipmentType.initializeTypes();
+    }
 
     @Nested
     @DisplayName("Movement Heat Tests - TacOps pg 85")
@@ -146,6 +157,30 @@ class NonFusionEngineTest {
                   "Non-Mek entity should generate 0 walk heat from ICE");
             assertEquals(0, engine.getRunHeat(entity),
                   "Non-Mek entity should generate 0 run heat from ICE");
+        }
+
+        @Test
+        @DisplayName("IndustrialMek generates 0 movement heat with Fuel Cell")
+        void industrialMekGeneratesNoMovementHeatWithFuelCell() {
+            Mek indie = new BipedMek();
+            indie.setStructureType(T_STRUCTURE_INDUSTRIAL);
+            Engine engine = new Engine(200, Engine.FUEL_CELL, 0);
+
+            assertEquals(0, engine.getWalkHeat(indie), "IndustrialMek Fuel Cell walk heat");
+            assertEquals(0, engine.getRunHeat(indie), "IndustrialMek Fuel Cell run heat");
+            assertEquals(0, engine.getSprintHeat(indie), "IndustrialMek Fuel Cell sprint heat");
+        }
+
+        @Test
+        @DisplayName("IndustrialMek generates 0 movement heat with ICE engine")
+        void industrialMekGeneratesNoMovementHeatWithICEEngine() {
+            Mek indie = new BipedMek();
+            indie.setStructureType(T_STRUCTURE_INDUSTRIAL);
+            Engine engine = new Engine(200, Engine.COMBUSTION_ENGINE, 0);
+
+            assertEquals(0, engine.getWalkHeat(indie), "IndustrialMek ICE walk heat");
+            assertEquals(0, engine.getRunHeat(indie), "IndustrialMek ICE run heat");
+            assertEquals(0, engine.getSprintHeat(indie), "IndustrialMek ICE sprint heat");
         }
     }
 

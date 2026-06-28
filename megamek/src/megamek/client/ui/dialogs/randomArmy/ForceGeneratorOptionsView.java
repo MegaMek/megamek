@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.dialogs.randomArmy;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -41,26 +42,35 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.Ruleset.ProgressListener;
 import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Player;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.game.Game;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityListFile;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
@@ -71,10 +81,15 @@ import megamek.logging.MMLogger;
  * @author Neoancient
  */
 public class ForceGeneratorOptionsView extends JPanel implements FocusListener, ActionListener {
-    private final static MMLogger logger = MMLogger.create(ForceGeneratorViewUi.class);
+    private final static MMLogger logger = MMLogger.create(ForceGeneratorOptionsView.class);
 
     private int currentYear;
     private final Consumer<ForceDescriptor> onGenerate;
+    /**
+     * Optional override for the Export-MUL button action. When set, replaces the built-in {@link #exportMUL} call so
+     * embedders can route the descriptor through their own export path. Null means use the default.
+     */
+    private Consumer<ForceDescriptor> onExportMUL;
 
     private ForceDescriptor forceDesc = new ForceDescriptor();
 
@@ -127,17 +142,23 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     private JTextField txtDropshipPct;
     private JTextField txtJumpshipPct;
+    private JTextField txtWarshipPct;
     private JTextField txtCargo;
+    private JCheckBox chkFighterComplement;
+
+    /** Post-generation summary: unit type rows, Light/Medium/Heavy/Assault columns. */
+    private JTable tblSummary;
+    private DefaultTableModel summaryModel;
 
     private JButton btnGenerate;
     private JButton btnExportMUL;
     private JButton btnClear;
 
-    private final ClientGUI clientGui;
+    private final GameOptions gameOptions;
 
-    public ForceGeneratorOptionsView(ClientGUI gui, Consumer<ForceDescriptor> onGenerate) {
-        clientGui = gui;
+    public ForceGeneratorOptionsView(Consumer<ForceDescriptor> onGenerate, GameOptions gameOptions) {
         this.onGenerate = onGenerate;
+        this.gameOptions = gameOptions;
         if (!Ruleset.isInitialized()) {
             Ruleset.loadData();
         }
@@ -145,7 +166,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void initUi() {
-        currentYear = clientGui.getClient().getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+        currentYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
         forceDesc.setYear(currentYear);
         RATGenerator rg = RATGenerator.getInstance();
         rg.loadYear(currentYear);
@@ -154,7 +175,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(5, 5, 5, 5);
+        int inset = UIUtil.scaleForGUI(5);
+        gbc.insets = new Insets(inset, inset, inset, inset);
 
         int y = 0;
 
@@ -190,6 +212,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         add(cbSubFaction, gbc);
         cbSubFaction.setToolTipText(Messages.getString("ForceGeneratorDialog.subfaction.tooltip"));
         cbSubFaction.addActionListener(this);
+
+        // TODO (future state) - Specific Unit picker (Option B). Add a combo here, after the
+        // subfaction, populated from the `units:` block of the selected command's universe data file
+        // (data/universe/commands/<KEY>.yml). Selecting a named regiment (e.g. "1st Sword of Light")
+        // would pin its era-appropriate composition - battalionWeights become a fixed
+        // <subforce weightClass="..."> distribution instead of the random <subforceOption> roll - plus
+        // skill and commander, with any unspecified field falling back to normal generic generation.
+        // The list should be year-filtered using each unit's yearsActive / history span (the Year
+        // field already set drives this; no era picker is needed). Only `name` is mandatory in the
+        // per-unit schema. See data/universe/commands/DC.SL.yml for the pilot data and schema notes.
 
         gbc.gridx = 0;
         gbc.gridy = y;
@@ -299,21 +331,49 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridx = 0;
         gbc.gridy = y++;
 
-        JPanel panTransport = new JPanel(new GridLayout(3, 2));
+        JPanel panTransport = new JPanel(new GridLayout(5, 2));
         txtDropshipPct = new JTextField("0");
         txtDropshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.dropshipPercentage.tooltip"));
         txtJumpshipPct = new JTextField("0");
         txtJumpshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.jumpshipPercentage.tooltip"));
+        txtWarshipPct = new JTextField("0");
+        txtWarshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.warshipPercentage.tooltip"));
         txtCargo = new JTextField("0");
+        txtCargo.setToolTipText(Messages.getString("ForceGeneratorDialog.cargo.tooltip"));
         panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.dropshipPercentage")));
         panTransport.add(txtDropshipPct, gbc);
         panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.jumpshipPercentage")));
         panTransport.add(txtJumpshipPct, gbc);
+        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.warshipPercentage")));
+        panTransport.add(txtWarshipPct, gbc);
+        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.cargo")));
+        panTransport.add(txtCargo, gbc);
+        chkFighterComplement = new JCheckBox(Messages.getString("ForceGeneratorDialog.fighterComplement"));
+        chkFighterComplement.setToolTipText(Messages.getString("ForceGeneratorDialog.fighterComplement.tooltip"));
+        panTransport.add(chkFighterComplement);
+        panTransport.add(new JLabel(""));
+        panTransport.setBorder(BorderFactory.createTitledBorder(Messages.getString("ForceGeneratorDialog.transport")));
+
+        // Pair the Transport panel with the post-generation Composition Summary table inside a single
+        // BorderLayout container so the summary absorbs whatever horizontal slack the GridBag's
+        // column-driven layout would otherwise leave between them. Transport sits at its preferred
+        // width on the WEST; the summary fills the rest of the row in the CENTER. Spans gridwidth=4
+        // to occupy the full dialog row, matching how panGroundRole / panInfRole are laid out above.
+        JPanel transportAndSummary = new JPanel(new BorderLayout(10, 0));
+        transportAndSummary.add(panTransport, BorderLayout.WEST);
+        JScrollPane panSummary = createSummaryTable();
+        transportAndSummary.add(panSummary, BorderLayout.CENTER);
+
         gbc.gridx = 0;
         gbc.gridy = y++;
+        gbc.gridwidth = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weighty = 1.0;
+        add(transportAndSummary, gbc);
+        gbc.gridx = 0;
+        gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
-        panTransport.setBorder(BorderFactory.createTitledBorder(Messages.getString("ForceGeneratorDialog.transport")));
-        add(panTransport, gbc);
+        gbc.weighty = 0;
 
         btnGenerate = new JButton(Messages.getString("ForceGeneratorDialog.generate"));
         btnGenerate.setToolTipText(Messages.getString("ForceGeneratorDialog.generate.tooltip"));
@@ -475,7 +535,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         return chk;
     }
 
-    private void generateForce() {
+    /**
+     * Builds a {@link ForceDescriptor} from the current state of this options view's controls. Public so embedders
+     * (e.g. MekHQ's company-generation dialog) can reuse the same input mapping without going through
+     * {@link #generateForce()}'s SwingWorker plumbing. Does not run {@link Ruleset#processRoot} or any IO.
+     */
+    public ForceDescriptor buildForceDescriptor() {
         ForceDescriptor fd = new ForceDescriptor();
         fd.setTopLevel(true);
         fd.setYear(forceDesc.getYear());
@@ -491,7 +556,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         } else {
             fd.setExperience(CrewDescriptor.randomExperienceLevel());
         }
-        fd.setWeightClass(forceDesc.getWeightClass());
+        // Read directly from the dropdown rather than the cached forceDesc field.
+        // The SwingWorker's done() callback overwrites forceDesc with the engine-mutated
+        // tree-root descriptor after each Generate, so the cached weightClass can drift
+        // away from the user's UI selection across consecutive runs.
+        Object selectedWeight = cbWeightClass.getSelectedItem();
+        fd.setWeightClass(selectedWeight instanceof Integer ? (Integer) selectedWeight : null);
         fd.setAttachments(chkAttachments.isSelected());
         if (forceDesc.getUnitType() != null) {
             switch (forceDesc.getUnitType()) {
@@ -570,15 +640,31 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
         }
 
-        double dropShipPCT = MathUtility.parseDouble(txtDropshipPct.getText(), 0.0) * 0.01;
-        fd.setDropshipPct(dropShipPCT);
-        txtDropshipPct.setText(String.valueOf(dropShipPCT));
+        // Internal storage uses fraction (0.0–N.0+); the textbox shows percentage (0–N00).
+        // Preserve the user's input form in the textbox so it doesn't reset to "1.0" after Generate.
+        double dropShipPct = MathUtility.parseDouble(txtDropshipPct.getText(), 0.0);
+        fd.setDropshipPct(dropShipPct * 0.01);
+        txtDropshipPct.setText(String.valueOf(dropShipPct));
 
-        double jumpShipPCT = MathUtility.parseDouble(txtJumpshipPct.getText(), 0.0) * 0.01;
-        txtJumpshipPct.setText(String.valueOf(jumpShipPCT));
+        double jumpShipPct = MathUtility.parseDouble(txtJumpshipPct.getText(), 0.0);
+        fd.setJumpshipPct(jumpShipPct * 0.01);
+        txtJumpshipPct.setText(String.valueOf(jumpShipPct));
+
+        double warShipPct = MathUtility.parseDouble(txtWarshipPct.getText(), 0.0);
+        fd.setWarshipPct(warShipPct * 0.01);
+        txtWarshipPct.setText(String.valueOf(warShipPct));
 
         double cargo = MathUtility.parseDouble(txtCargo.getText(), 0.0);
+        fd.setCargo(cargo);
         txtCargo.setText(String.valueOf(cargo));
+
+        fd.setFighterComplement(chkFighterComplement.isSelected());
+
+        return fd;
+    }
+
+    private void generateForce() {
+        ForceDescriptor fd = buildForceDescriptor();
 
         ProgressMonitor monitor = new ProgressMonitor(this,
               Messages.getString("ForceGeneratorDialog.generateFormation"),
@@ -600,6 +686,145 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private void clearForce() {
         if (null != onGenerate) {
             onGenerate.accept(null);
+        }
+        clearSummaryTable();
+    }
+
+    /**
+     * Builds the post-generation composition summary table (rows: unit types present in the force; columns: Light /
+     * Medium / Heavy / Assault counts). Empty until the first Generate.
+     */
+    private JScrollPane createSummaryTable() {
+        String[] columns = {
+              Messages.getString("ForceGeneratorDialog.summary.unitType"),
+              Messages.getString("ForceGeneratorDialog.summary.light"),
+              Messages.getString("ForceGeneratorDialog.summary.medium"),
+              Messages.getString("ForceGeneratorDialog.summary.heavy"),
+              Messages.getString("ForceGeneratorDialog.summary.assault")
+        };
+        summaryModel = new DefaultTableModel(columns, 0) {
+            @Serial
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tblSummary = new JTable(summaryModel);
+        tblSummary.setAutoCreateRowSorter(false);
+        tblSummary.getTableHeader().setReorderingAllowed(false);
+        // Unit Type column is wider to fit the longest name (AeroSpaceFighter); numeric columns
+        // are narrower since they only hold 1-3 digit counts. Total ~380px fits comfortably in
+        // the 480px scroll-pane viewport with the default AUTO_RESIZE_SUBSEQUENT_COLUMNS.
+        tblSummary.getColumnModel().getColumn(0).setPreferredWidth(140);
+        for (int col = 1; col <= 4; col++) {
+            tblSummary.getColumnModel().getColumn(col).setPreferredWidth(60);
+        }
+        JScrollPane scrollPane = new JScrollPane(tblSummary);
+        scrollPane.setBorder(BorderFactory.createTitledBorder(
+              Messages.getString("ForceGeneratorDialog.summary.title")));
+        // Preferred width sized so the BorderLayout wrapper extends most of the way to the right
+        // edge of the dialog (cols 0-3 grow to accommodate this preferred when it exceeds the
+        // natural column-sum width). Roughly Transport width + a combo-and-a-half on the right.
+        scrollPane.setPreferredSize(UIUtil.scaleForGUI(480, 140));
+        return scrollPane;
+    }
+
+    /**
+     * Walks the generated force tree, buckets each entity into (unit type, weight class), and rebuilds the summary
+     * table. Weight-class codes 0-1 collapse into Light and 4-5 into Assault to keep the table to a clean four
+     * columns.
+     * <p>For Battle Armor each entity represents one Squad/Point (5 Clan Elementals, 4-5 IS), so cells show
+     * "N (M)" where N is the squad count and M is the total trooper count. Other unit types show plain N.</p>
+     */
+    private void updateSummaryTable(ForceDescriptor fd) {
+        summaryModel.setRowCount(0);
+        if (fd == null) {
+            return;
+        }
+        ArrayList<Entity> entities = new ArrayList<>();
+        fd.addAllEntities(entities);
+        // Per (unitType, weightClassColumn): [0]=squad/entity count, [1]=trooper count (BA only).
+        Map<Integer, int[][]> counts = new TreeMap<>();
+        for (Entity entity : entities) {
+            int unitType = entity.getUnitType();
+            int weightClass = entity.getWeightClass();
+            int column;
+            if (weightClass <= EntityWeightClass.WEIGHT_LIGHT) {
+                column = 0;
+            } else if (weightClass == EntityWeightClass.WEIGHT_MEDIUM) {
+                column = 1;
+            } else if (weightClass == EntityWeightClass.WEIGHT_HEAVY) {
+                column = 2;
+            } else {
+                column = 3;
+            }
+            int[][] row = counts.computeIfAbsent(unitType, k -> new int[4][2]);
+            row[column][0]++;
+            if (entity instanceof BattleArmor ba) {
+                row[column][1] += ba.getShootingStrength();
+            }
+        }
+        // At Galaxy echelon and above (constants.txt: GALAXY/BRIGADE=7, TOUMAN/DIVISION=8, ...) a force
+        // holds hundreds of units, so raw per-cell counts are unreadable. Show each weight class as a
+        // percentage of that unit type's total instead. Smaller forces keep the exact counts.
+        Integer echelon = fd.getEchelon();
+        boolean asPercent = (echelon != null) && (echelon >= LARGE_ECHELON_PERCENT_THRESHOLD);
+        for (Map.Entry<Integer, int[][]> entry : counts.entrySet()) {
+            int[][] row = entry.getValue();
+            boolean isBA = (entry.getKey() == UnitType.BATTLE_ARMOR);
+            if (asPercent) {
+                int typeTotal = row[0][0] + row[1][0] + row[2][0] + row[3][0];
+                summaryModel.addRow(new Object[] {
+                      UnitType.getTypeName(entry.getKey()),
+                      formatSummaryPercent(row[0][0], typeTotal),
+                      formatSummaryPercent(row[1][0], typeTotal),
+                      formatSummaryPercent(row[2][0], typeTotal),
+                      formatSummaryPercent(row[3][0], typeTotal)
+                });
+            } else {
+                summaryModel.addRow(new Object[] {
+                      UnitType.getTypeName(entry.getKey()),
+                      formatSummaryCell(row[0], isBA),
+                      formatSummaryCell(row[1], isBA),
+                      formatSummaryCell(row[2], isBA),
+                      formatSummaryCell(row[3], isBA)
+                });
+            }
+        }
+    }
+
+    /** Echelon level at or above which the composition summary switches from counts to percentages. */
+    private static final int LARGE_ECHELON_PERCENT_THRESHOLD = 7;
+
+    /**
+     * Formats a summary-table cell as a whole-number percentage of the unit type's total, e.g. "43%". An empty bucket
+     * renders as "0%"; a type with no units renders blank.
+     */
+    private static String formatSummaryPercent(int count, int total) {
+        if (total <= 0) {
+            return "";
+        }
+        return Math.round(100.0 * count / total) + "%";
+    }
+
+    /**
+     * Formats a summary-table cell. For Battle Armor with at least one squad, shows "N (M)" — squad count and total
+     * trooper count in parentheses. Other unit types and empty cells render as the plain integer.
+     */
+    private static String formatSummaryCell(int[] squadsAndTroopers, boolean isBattleArmor) {
+        int squads = squadsAndTroopers[0];
+        int troopers = squadsAndTroopers[1];
+        if (isBattleArmor && squads > 0) {
+            return squads + " (" + troopers + ")";
+        }
+        return String.valueOf(squads);
+    }
+
+    private void clearSummaryTable() {
+        if (summaryModel != null) {
+            summaryModel.setRowCount(0);
         }
     }
 
@@ -624,6 +849,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void refreshSubFactions() {
+        logger.debug("refreshSubFactions: parentFaction={}, fdFaction={}",
+              cbFaction.getSelectedItem(), forceDesc.getFaction());
         FactionRecord oldFaction = (FactionRecord) cbSubFaction.getSelectedItem();
         cbSubFaction.removeActionListener(this);
         cbSubFaction.removeAllItems();
@@ -650,8 +877,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void refreshUnitTypes() {
+        logger.debug("refreshUnitTypes: fdFaction={}", forceDesc.getFaction());
         cbUnitType.removeActionListener(this);
         TOCNode tocNode = findTOCNode();
+        if (tocNode == null) {
+            logger.warn("refreshUnitTypes: no TOC node found for faction {}", forceDesc.getFaction());
+        }
         Integer currentType = forceDesc.getUnitType();
         boolean hasCurrent = false;
         cbUnitType.removeAllItems();
@@ -695,6 +926,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void refreshFormations() {
+        logger.debug("refreshFormations: fdFaction={}, unitType={}",
+              forceDesc.getFaction(), cbUnitType.getSelectedItem());
         cbFormation.removeActionListener(this);
         if (cbUnitType.getSelectedItem() != null) {
             Integer unitType = (Integer) cbUnitType.getSelectedItem();
@@ -767,6 +1000,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void refreshRatings() {
+        logger.debug("refreshRatings: fdFaction={}, echelon={}",
+              forceDesc.getFaction(), forceDesc.getEchelon());
         cbRating.removeActionListener(this);
         TOCNode tocNode = findTOCNode();
         cbRating.removeAllItems();
@@ -854,11 +1089,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     @Override
     public void actionPerformed(ActionEvent ev) {
         if (ev.getSource() == cbFaction) {
+            logger.debug("cbFaction action: selected={}, year={}", cbFaction.getSelectedItem(), currentYear);
             if (cbFaction.getSelectedItem() != null) {
                 forceDesc.setFaction(((FactionRecord) cbFaction.getSelectedItem()).getKey());
             }
             refreshSubFactions();
         } else if (ev.getSource() == cbSubFaction) {
+            logger.debug("cbSubFaction action: selected={}", cbSubFaction.getSelectedItem());
             if (cbSubFaction.getSelectedItem() != null) {
                 forceDesc.setFaction(((FactionRecord) cbSubFaction.getSelectedItem()).getKey());
             } else {
@@ -866,6 +1103,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
             refreshUnitTypes();
         } else if (ev.getSource() == cbUnitType) {
+            logger.debug("cbUnitType action: selected={}", cbUnitType.getSelectedItem());
             forceDesc.setUnitType((Integer) cbUnitType.getSelectedItem());
             refreshFormations();
         } else if (ev.getSource() == cbFormation) {
@@ -890,17 +1128,22 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 forceDesc.getFlags().add((String) cbFlags.getSelectedItem());
             }
         } else if (ev.getSource() == cbWeightClass) {
-            if (cbWeightClass.getSelectedIndex() < 1) {
-                forceDesc.setWeightClass(null);
-            } else {
-                forceDesc.setWeightClass(cbWeightClass.getSelectedIndex());
-            }
+            // Use getSelectedItem() so the stored value is the actual EntityWeightClass
+            // constant rather than the dropdown index. Index-and-value match today (1..4)
+            // but only by coincidence — defensive against future re-ordering or insertion
+            // of new entries like Ultra Light.
+            Object item = cbWeightClass.getSelectedItem();
+            forceDesc.setWeightClass(item instanceof Integer ? (Integer) item : null);
         } else if (ev.getSource() == btnGenerate) {
             generateForce();
             btnExportMUL.setEnabled(true);
             btnClear.setEnabled(true);
         } else if (ev.getSource() == btnExportMUL) {
-            exportMUL(forceDesc);
+            if (onExportMUL != null) {
+                onExportMUL.accept(forceDesc);
+            } else {
+                exportMUL(forceDesc);
+            }
         } else if (ev.getSource() == btnClear) {
             clearForce();
             btnExportMUL.setEnabled(false);
@@ -908,16 +1151,87 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
     }
 
+    /**
+     * Shows or hides the Generate button. Embedders that drive generation through their own controls (e.g. an OK button
+     * on a parent dialog) hide the built-in button.
+     */
+    public void setGenerateButtonVisible(boolean visible) {
+        btnGenerate.setVisible(visible);
+    }
+
+    /**
+     * Shows or hides the Export MUL button. Embedders that route the export through their own UI hide it.
+     */
+    public void setExportMULButtonVisible(boolean visible) {
+        btnExportMUL.setVisible(visible);
+    }
+
+    /**
+     * Shows or hides the Clear button.
+     */
+    public void setClearButtonVisible(boolean visible) {
+        btnClear.setVisible(visible);
+    }
+
+    /**
+     * Sets a custom handler for the Export-MUL button. When non-null, the built-in {@link #exportMUL} call is replaced
+     * by this consumer; the panel passes the live {@link ForceDescriptor} for the embedder to handle. Pass {@code null}
+     * to restore default behavior.
+     */
+    public void setOnExportMUL(Consumer<ForceDescriptor> handler) {
+        this.onExportMUL = handler;
+    }
+
+    /**
+     * Makes the year text field read-only. Use this when an embedder anchors the year to an external value (e.g.
+     * MekHQ's campaign year) and doesn't want the user editing it on this panel.
+     */
+    public void setYearFieldEditable(boolean editable) {
+        txtYear.setEditable(editable);
+    }
+
+    /**
+     * Programmatically picks a faction in the embedded picker. Embedders (e.g. MekHQ) call this to seed the picker with
+     * their campaign's faction so the dialog opens pre-aligned instead of defaulting to "IS". Looks up the
+     * FactionRecord from the loaded RATGenerator data; if the code doesn't match a known faction, the picker is left
+     * unchanged and {@code false} is returned.
+     *
+     * <p>The picker's existing {@link ActionListener} fires as a result of the
+     * {@code setSelectedItem} call, so the descriptor is updated as if the user had picked the faction by hand.</p>
+     *
+     * @param factionCode the short-name faction code (e.g. {@code "CHH"}, {@code "LC"}, {@code "FS"})
+     *
+     * @return {@code true} if a matching faction was found and selected; {@code false} otherwise
+     */
+    public boolean setSelectedFaction(String factionCode) {
+        if (factionCode == null || factionCode.isBlank()) {
+            return false;
+        }
+        FactionRecord faction = RATGenerator.getInstance().getFaction(factionCode);
+        if (faction == null) {
+            return false;
+        }
+        cbFaction.setSelectedItem(faction);
+        return true;
+    }
+
     public void exportMUL(ForceDescriptor fd) {
         ArrayList<Entity> list = new ArrayList<>();
         fd.addAllEntities(list);
+        if (list.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                  Messages.getString("ForceGeneratorDialog.exportMUL.empty"),
+                  Messages.getString("ForceGeneratorDialog.exportMUL.title"),
+                  JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         // Create a fake game so we can write the entities to a file without adding them
         // to the real game.
         Game game = new Game();
         // Add a player to prevent complaining in the log file
         Player p = new Player(1, "Observer");
         game.addPlayer(1, p);
-        game.setOptions(clientGui.getClient().getGame().getOptions());
+        game.setOptions(gameOptions);
         list.forEach(en -> {
             en.setOwner(p);
             // If we don't set the id, the first unit will be left at -1, which in most
@@ -927,7 +1241,47 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             game.addEntity(en);
         });
         configureNetworks(fd);
-        clientGui.saveListFile(list, clientGui.getClient().getLocalPlayer().getName());
+
+        JFileChooser chooser = new JFileChooser(".");
+        chooser.setDialogTitle(Messages.getString("ForceGeneratorDialog.exportMUL.title"));
+        chooser.setFileFilter(new FileNameExtensionFilter(
+              Messages.getString("ClientGUI.descriptionMULFiles"), "mul"));
+        // Sanitize the force name so it works as a filename on Windows and other OSes.
+        String sanitized = fd.parseName().replaceAll("[\\\\/:*?\"<>|]", "_").trim();
+        if (sanitized.isEmpty()) {
+            sanitized = "force";
+        }
+        chooser.setSelectedFile(new File(sanitized + ".mul"));
+
+        int result = chooser.showSaveDialog(this);
+        if (result != JFileChooser.APPROVE_OPTION || chooser.getSelectedFile() == null) {
+            return;
+        }
+        File unitFile = chooser.getSelectedFile();
+        String lowerName = unitFile.getName().toLowerCase();
+        if (!lowerName.endsWith(".mul") && !lowerName.endsWith(".xml")) {
+            try {
+                unitFile = new File(unitFile.getCanonicalPath() + ".mul");
+            } catch (IOException e) {
+                logger.error(e, "exportMUL: failed to canonicalize selected file");
+                JOptionPane.showMessageDialog(this,
+                      Messages.getString("ForceGeneratorDialog.exportMUL.error") + "\n" + e.getMessage(),
+                      Messages.getString("ForceGeneratorDialog.exportMUL.title"),
+                      JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+
+        try {
+            EntityListFile.saveTo(unitFile, list);
+            logger.info("exportMUL: wrote {} entities to {}", list.size(), unitFile.getAbsolutePath());
+        } catch (IOException e) {
+            logger.error(e, "exportMUL: save failed");
+            JOptionPane.showMessageDialog(this,
+                  Messages.getString("ForceGeneratorDialog.exportMUL.error") + "\n" + e.getMessage(),
+                  Messages.getString("ForceGeneratorDialog.exportMUL.title"),
+                  JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -1073,6 +1427,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         protected void done() {
             try {
                 forceDesc = get();
+                updateSummaryTable(forceDesc);
                 if (onGenerate != null) {
                     onGenerate.accept(forceDesc);
                 }

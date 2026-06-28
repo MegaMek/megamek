@@ -88,10 +88,6 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
     private final boolean editable;
     private final DialogOptionListener parent;
 
-    private JPanel positiveQuirksPanel;
-    private JPanel negativeQuirksPanel;
-    private JPanel weaponQuirksPanel;
-
     // Responsive layout tracking
     private final Map<JPanel, List<DialogOptionComponentYPanel>> panelQuirksMap = new LinkedHashMap<>();
     private final Map<DialogOptionComponentYPanel, Dimension> originalPreferredSizes = new HashMap<>();
@@ -136,9 +132,9 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
         List<DialogOptionComponentYPanel> negativeQuirksList = new ArrayList<>();
 
         // Create positive and negative quirks panels
-        positiveQuirksPanel = createTopAlignedPanel();
+        JPanel positiveQuirksPanel = createTopAlignedPanel();
         positiveQuirksPanel.setBorder(BorderFactory.createTitledBorder("Chassis Quirks (Positive)"));
-        negativeQuirksPanel = createTopAlignedPanel();
+        JPanel negativeQuirksPanel = createTopAlignedPanel();
         negativeQuirksPanel.setBorder(BorderFactory.createTitledBorder("Chassis Quirks (Negative)"));
 
         // Collect chassis quirks and separate into positive/negative
@@ -157,8 +153,8 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
                         continue;
                     }
 
-                    addQuirk(option, editable, isPositive ? positiveQuirksPanel : negativeQuirksPanel, targetList);
-                    allQuirks.add(targetList.get(targetList.size() - 1));
+                    addQuirk(option, editable, targetList);
+                    allQuirks.add(targetList.getLast());
                 }
             }
         }
@@ -254,11 +250,11 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
 
         // Create nested split panes for three-way horizontal split
         JSplitPane leftSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-            positiveScrollPane, negativeScrollPane);
+              positiveScrollPane, negativeScrollPane);
         leftSplitPane.setResizeWeight(0.5);
 
         JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-            leftSplitPane, weaponScrollPane);
+              leftSplitPane, weaponScrollPane);
         mainSplitPane.setResizeWeight(0.67);
 
         // Add the split pane to the main panel
@@ -300,7 +296,7 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
     /**
      * Adds a quirk to the specified panel and tracks it for responsive layout.
      */
-    private void addQuirk(IOption option, boolean editable, JPanel targetPanel, List<DialogOptionComponentYPanel> quirksList) {
+    private void addQuirk(IOption option, boolean editable, List<DialogOptionComponentYPanel> quirksList) {
         DialogOptionComponentYPanel optionComp = new DialogOptionComponentYPanel(this, option, editable);
         originalPreferredSizes.put(optionComp, optionComp.getPreferredSize());
         updateQuirkFontStyle(optionComp, option.booleanValue());
@@ -309,8 +305,8 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
     }
 
     /**
-     * Updates the font style and color of a quirk component based on its selection state.
-     * Selected quirks are highlighted in yellow.
+     * Updates the font style and color of a quirk component based on its selection state. Selected quirks are
+     * highlighted in yellow.
      */
     private void updateQuirkFontStyle(DialogOptionComponentYPanel comp, boolean selected) {
         for (Component child : comp.getComponents()) {
@@ -334,7 +330,7 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
         for (DialogOptionComponentYPanel comp : allQuirks) {
             Dimension originalSize = originalPreferredSizes.get(comp);
             globalMaxItemWidth = Math.max(globalMaxItemWidth,
-                (originalSize != null) ? originalSize.width : comp.getPreferredSize().width);
+                  (originalSize != null) ? originalSize.width : comp.getPreferredSize().width);
         }
         if (globalMaxItemWidth <= 0) {
             globalMaxItemWidth = 150; // Fallback width
@@ -352,24 +348,11 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
     }
 
     /**
-     * Gets the width of the visible area (viewport or panel itself).
-     */
-    private int getVisibleContainerWidth() {
-        Container parent = getParent();
-        if (parent instanceof JViewport) {
-            return parent.getWidth();
-        } else {
-            return getWidth();
-        }
-    }
-
-    /**
      * Calculates the usable width inside a panel's content area.
      */
     private int calculateAvailableWidthInPanel(JPanel panel) {
         Container scrollPaneParent = panel.getParent();
-        if (scrollPaneParent instanceof JViewport) {
-            JViewport viewport = (JViewport) scrollPaneParent;
+        if (scrollPaneParent instanceof JViewport viewport) {
             int viewportWidth = viewport.getWidth();
             Insets panelInsets = panel.getInsets();
             return viewportWidth - panelInsets.left - panelInsets.right;

@@ -109,6 +109,7 @@ public interface ForceAssignable extends InGameObject {
      *
      * @return A filtered list of all AlphaStrikeElements in the given list
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     static List<AlphaStrikeElement> filterToAlphaStrikeElementList(List<ForceAssignable> forceAssignableList) {
         return forceAssignableList.stream()
               .filter(a -> a instanceof AlphaStrikeElement)

@@ -207,6 +207,16 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         return parseField(fldVibrabomb);
     }
 
+    /** Returns the chosen EMP mines. */
+    public int getEmpMines() {
+        return parseField(fldEMP);
+    }
+
+    /** Returns the chosen number of fortified hexes. */
+    public int getFortifiedHexes() {
+        return parseField(fldFortifiedHexes);
+    }
+
     /** Returns the start location offset */
     public int getStartOffset() {
         return parseField(txtOffset);
@@ -269,10 +279,17 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
           SwingConstants.RIGHT);
     private final JLabel labActive = new JLabel(getString("PlayerSettingsDialog.labActive"), SwingConstants.RIGHT);
     private final JLabel labInferno = new JLabel(getString("PlayerSettingsDialog.labInferno"), SwingConstants.RIGHT);
+    private final JLabel labEMP = new JLabel(getString("PlayerSettingsDialog.labEMP"), SwingConstants.RIGHT);
     private final JTextField fldConventional = new JTextField(3);
     private final JTextField fldVibrabomb = new JTextField(3);
     private final JTextField fldActive = new JTextField(3);
     private final JTextField fldInferno = new JTextField(3);
+    private final JTextField fldEMP = new JTextField(3);
+
+    // Fortifications Section
+    private final JLabel labFortifiedHexes = new JLabel(getString("PlayerSettingsDialog.labFortifiedHexes"),
+          SwingConstants.RIGHT);
+    private final JTextField fldFortifiedHexes = new JTextField(3);
 
     // Skills Section
     private SkillGenerationOptionsPanel skillGenerationOptionsPanel;
@@ -291,6 +308,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private JSpinner spinStartingAnyNWy;
     private JSpinner spinStartingAnySEx;
     private JSpinner spinStartingAnySEy;
+    private JButton btnUseRuler = new JButton(Messages.getString("CustomMekDialog.BtnDeploymentUseRuler"));
+    private JButton btnApply = new JButton(Messages.getString("CustomMekDialog.BtnDeploymentApply"));
 
     // ground object config section
     private Content groundSectionContent = new Content(new GridLayout(2, 3));
@@ -338,6 +357,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         if (client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             mainPanel.add(mineSection());
         }
+        mainPanel.add(fortificationSection());
         mainPanel.add(groundObjectConfigSection());
         mainPanel.add(skillsSection());
         if (!(client instanceof BotClient)) {
@@ -566,6 +586,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         result.add(lblWidth, GBC.std());
         result.add(txtWidth, GBC.eol());
 
+        result.add(new JLabel(" "), GBC.eol());
+        result.add(new JLabel(Messages.getString("CustomMekDialog.labDeploymentCustomBox")), GBC.eol());
         result.add(new JLabel(Messages.getString("CustomMekDialog.labDeploymentAnyNW")), GBC.std());
         result.add(spinStartingAnyNWx, GBC.std());
         result.add(spinStartingAnyNWy, GBC.eol());
@@ -573,11 +595,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         result.add(spinStartingAnySEx, GBC.std());
         result.add(spinStartingAnySEy, GBC.eol());
 
-        JButton btnUseRuler = new JButton(Messages.getString("CustomMekDialog.BtnDeploymentUseRuler"));
         btnUseRuler.setToolTipText(Messages.getString("CustomMekDialog.BtnDeploymentUseRulerTip"));
         btnUseRuler.addActionListener(e -> useRuler());
         result.add(btnUseRuler, GBC.std());
-        JButton btnApply = new JButton(Messages.getString("CustomMekDialog.BtnDeploymentApply"));
         btnApply.setToolTipText(Messages.getString("CustomMekDialog.BtnDeploymentApplyTip"));
         btnApply.addActionListener(e -> apply());
         result.add(btnApply, GBC.eol());
@@ -605,6 +625,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         player.setNbrMFVibra(getVibMines());
         player.setNbrMFActive(getActMines());
         player.setNbrMFInferno(getInfMines());
+        player.setNbrMFEMP(getEmpMines());
+        player.setNbrFortifiedHexes(getFortifiedHexes());
         getSkillGenerationOptionsPanel().updateClient();
         player.setEmail(getEmail());
 
@@ -664,7 +686,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     private JPanel mineSection() {
         JPanel result = new OptionPanel("PlayerSettingsDialog.header.minefields");
-        Content panContent = new Content(new GridLayout(4, 2, 10, 5));
+        Content panContent = new Content(new GridLayout(5, 2, 10, 5));
         result.add(panContent);
         panContent.add(labConventional);
         panContent.add(fldConventional);
@@ -674,6 +696,20 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         panContent.add(fldActive);
         panContent.add(labInferno);
         panContent.add(fldInferno);
+        panContent.add(labEMP);
+        panContent.add(fldEMP);
+        return result;
+    }
+
+    private JPanel fortificationSection() {
+        JPanel result = new OptionPanel("PlayerSettingsDialog.header.fortifications");
+        Content panContent = new Content(new GridLayout(1, 2, 10, 5));
+        result.add(panContent);
+        panContent.add(labFortifiedHexes);
+        panContent.add(fldFortifiedHexes);
+        String tooltip = Messages.getString("PlayerSettingsDialog.fortifiedHexesTT");
+        labFortifiedHexes.setToolTipText(tooltip);
+        fldFortifiedHexes.setToolTipText(tooltip);
         return result;
     }
 
@@ -713,6 +749,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         fldVibrabomb.setText(Integer.toString(player.getNbrMFVibra()));
         fldActive.setText(Integer.toString(player.getNbrMFActive()));
         fldInferno.setText(Integer.toString(player.getNbrMFInferno()));
+        fldEMP.setText(Integer.toString(player.getNbrMFEMP()));
+        fldFortifiedHexes.setText(Integer.toString(player.getNbrFortifiedHexes()));
         fldEmail.setText(player.getEmail());
         txtWidth.setText(Integer.toString(player.getStartWidth()));
         txtOffset.setText(Integer.toString(player.getStartOffset()));
@@ -796,6 +834,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             panStartButtons.add(buttonCustomZone);
         }
 
+
         updateStartGrid();
     }
 
@@ -843,6 +882,23 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         butText.get(currentPlayerStartPos).append(UIUtil.fontHTML(GUIPreferences.getInstance().getMyUnitColor()));
         butText.get(currentPlayerStartPos).append("\u2B24</FONT>");
+
+        // Turn off custom deployment if start is not Any
+        if (currentPlayerStartPos == Board.START_ANY) {
+            spinStartingAnyNWx.setEnabled(true);
+            spinStartingAnyNWy.setEnabled(true);
+            spinStartingAnySEx.setEnabled(true);
+            spinStartingAnySEy.setEnabled(true);
+            btnUseRuler.setEnabled(true);
+            btnApply.setEnabled(true);
+        } else {
+            spinStartingAnyNWx.setEnabled(false);
+            spinStartingAnyNWy.setEnabled(false);
+            spinStartingAnySEx.setEnabled(false);
+            spinStartingAnySEy.setEnabled(false);
+            btnUseRuler.setEnabled(false);
+            btnApply.setEnabled(false);
+        }
 
         for (int i : butStartPos.keySet()) {
             butStartPos.get(i).setText(butText.get(i).toString());

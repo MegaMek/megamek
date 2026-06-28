@@ -100,7 +100,7 @@ public abstract class ExternalCargo implements Transporter {
      * @return <code>true</code> if the carryable can be loaded, <code>false</code> otherwise.
      */
     public boolean canLoadCarryable(ICarryable carryable) {
-        return canLoad() && getUnused() >= carryable.getTonnage();
+        return canLoad() && allowedCarryable(carryable) && getUnused() >= carryable.getTonnage();
     }
 
     /**
@@ -127,7 +127,7 @@ public abstract class ExternalCargo implements Transporter {
         if (validPickupLocations.isEmpty()) {
             throw new IllegalArgumentException("No valid locations for " + carryable.specificName());
         }
-        loadCarryable(carryable, validPickupLocations.get(0));
+        loadCarryable(carryable, validPickupLocations.getFirst());
     }
 
     /**
@@ -143,11 +143,11 @@ public abstract class ExternalCargo implements Transporter {
             throw new IllegalArgumentException("Invalid location for " + carryable.specificName());
         }
         if (maxObjects(location)) {
-            throw new IllegalArgumentException("Location already occupied by " + carriedObjects.get(location).get(0)
+            throw new IllegalArgumentException("Location already occupied by " + carriedObjects.get(location).getFirst()
                   .specificName());
         }
-        if (carryable instanceof Entity && !(carryable instanceof HandheldWeapon)) {
-            throw new IllegalArgumentException("Non-Functional Feature - Entities not supported");
+        if (!allowedCarryable(carryable)) {
+            throw new IllegalArgumentException("Non-Functional Feature - Unsupported Entity Type");
         }
         if (carryable.getTonnage() > getUnused()) {
             throw new IllegalArgumentException("Not enough space to load " + carryable.specificName());
@@ -170,8 +170,10 @@ public abstract class ExternalCargo implements Transporter {
         }
         List<Entity> retList = new ArrayList<>();
         for (ICarryable carriedObject : getCarryables()) {
-            if (carriedObject instanceof Entity) {
-                retList.add((Entity) carriedObject);
+            // Always try to get the entity from the game itself
+            if (carriedObject instanceof Entity e) {
+                Entity carriedEntity = (game != null) ? game.getEntity(e.getId()) : null;
+                retList.add(carriedEntity != null ? carriedEntity : e);
             }
         }
 
@@ -315,8 +317,6 @@ public abstract class ExternalCargo implements Transporter {
     }
 
     /**
-     * @param carrier
-     *
      * @return the MP reduction due to cargo carried by this transporter
      */
     @Override
@@ -377,5 +377,11 @@ public abstract class ExternalCargo implements Transporter {
                 entityId = Entity.NONE;
             }
         }
+    }
+
+    boolean allowedCarryable(ICarryable carryable) {
+        // Only HHWs and non-entities may currently be transported by External Cargo. I believe this may be expanded
+        // to include Infantry at some point? Unclear, for now let's leave this as it was.
+        return (carryable instanceof HandheldWeapon) || !(carryable instanceof Entity);
     }
 }

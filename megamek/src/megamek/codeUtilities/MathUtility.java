@@ -323,9 +323,12 @@ public class MathUtility {
      *           <li>clamp(7, 6, 8) returns 7</li>
      *           <li>clamp(12, 3, 5) returns 5</li>
      *       </ul>
+     *
+     * @deprecated Use the builtin Math.clamp() method instead.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static int clamp(final int value, final int min, final int max) {
-        return Math.min(Math.max(value, min), max);
+        return Math.clamp(value, min, max);
     }
 
     /**
@@ -340,9 +343,11 @@ public class MathUtility {
      *         <li>clamp(7, 6, 8) returns 7</li>
      *         <li>clamp(12, 3, 5) returns 5</li>
      *       </ul>
+     *
+     * @deprecated Use the builtin Math.clamp() method instead.
      */
     public static double clamp(final double value, final double min, final double max) {
-        return Math.min(Math.max(value, min), max);
+        return Math.clamp(value, min, max);
     }
 
     /**
@@ -357,9 +362,11 @@ public class MathUtility {
      *         <li>clamp(7, 6, 8) returns 7</li>
      *         <li>clamp(12, 3, 5) returns 5</li>
      *       </ul>
+     *
+     * @deprecated Use the builtin Math.clamp() method instead.
      */
     public static float clamp(final float value, final float min, final float max) {
-        return Math.min(Math.max(value, min), max);
+        return Math.clamp(value, min, max);
     }
 
     /**
@@ -374,9 +381,11 @@ public class MathUtility {
      *         <li>clamp(7, 6, 8) returns 7</li>
      *         <li>clamp(12, 3, 5) returns 5</li>
      *       </ul>
+     *
+     * @deprecated Use the builtin Math.clamp() method instead.
      */
     public static long clamp(final long value, final long min, final long max) {
-        return Math.min(Math.max(value, min), max);
+        return Math.clamp(value, min, max);
     }
 
     /**
@@ -391,7 +400,7 @@ public class MathUtility {
      *       </ul>
      */
     public static double clamp01(double value) {
-        return Math.min(1.0, Math.max(0.0, value));
+        return Math.clamp(value, 0.0, 1.0);
     }
 
     /**
@@ -409,7 +418,7 @@ public class MathUtility {
      *       </ul>
      */
     public static double clampUlp1(double value) {
-        return Math.min(1.0, Math.max(Math.ulp(1.0), value));
+        return Math.clamp(value, Math.ulp(1.0), 1.0);
     }
     // endregion Clamp
 

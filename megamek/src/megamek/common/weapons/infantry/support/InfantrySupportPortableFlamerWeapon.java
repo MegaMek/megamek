@@ -78,8 +78,8 @@ public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
         ammoCost = 2;
         shots = 12;
         rulesRefs = " 273, TM";
-        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-              .setISApproximate(false, false, false, false, false)
+        techAdvancement.setTechBase(TechBase.ALL).setAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+              .setApproximate(false, false, false, false, false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
 

@@ -75,8 +75,7 @@ public class InfantryArchaicVibroMaceWeapon extends InfantryWeapon {
         rulesRefs = "272, TM";
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3000, 3050, 3100, DATE_NONE, DATE_NONE)
               .setISApproximate(true, true, false, false, false)
-              .setClanAdvancement(3000, 3050, 3100, DATE_NONE, DATE_NONE)
-              .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.CF)
+              .setPrototypeFactions(Faction.CF)
               .setProductionFactions(Faction.CF).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E);
 

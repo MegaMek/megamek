@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,9 +44,11 @@ import java.util.stream.Collectors;
 
 import megamek.common.CalledShot;
 import megamek.common.CriticalSlot;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.interfaces.PhaseUpdated;
 import megamek.common.interfaces.RoundUpdated;
 import megamek.common.options.IGameOptions;
@@ -216,19 +218,13 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public static Mounted<?> createMounted(Entity entity, EquipmentType type) {
-        if (type instanceof BayWeapon bayWeapon) {
-            return new WeaponMounted(entity, bayWeapon);
-        } else if (type instanceof WeaponType weaponType) {
-            return new WeaponMounted(entity, weaponType);
-        } else if (type instanceof BombType bombType) {
-            return new BombMounted(entity, bombType);
-        } else if (type instanceof AmmoType ammoType) {
-            return new AmmoMounted(entity, ammoType);
-        } else if (type instanceof MiscType miscType) {
-            return new MiscMounted(entity, miscType);
-        } else {
-            return new Mounted<>(entity, type);
-        }
+        return switch (type) {
+            case WeaponType weaponType -> new WeaponMounted(entity, weaponType);
+            case BombType bombType -> new BombMounted(entity, bombType);
+            case AmmoType ammoType -> new AmmoMounted(entity, ammoType);
+            case MiscType miscType -> new MiscMounted(entity, miscType);
+            case null, default -> new Mounted<>(entity, type);
+        };
     }
 
     /**
@@ -512,7 +508,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
         if (getEntity() instanceof BattleArmor) {
             if ((getBaMountLoc() >= BattleArmor.MOUNT_LOC_BODY) && (getBaMountLoc() <= BattleArmor.MOUNT_LOC_TURRET)) {
-                desc.append(" (%s)".formatted(BattleArmor.getBaMountLocAbbr(getBaMountLoc())));
+                desc.append(" (%s)".formatted(BattleArmor.getBaMountLocName(getBaMountLoc())));
             }
             if (isDWPMounted()) {
                 desc.append(" (DWP)");
@@ -523,6 +519,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             if (isAPMMounted()) {
                 desc.append(" (APM)");
             }
+        }
+        if ((this instanceof WeaponMounted weaponMounted) && weaponMounted.isDisposableWeapon()) {
+            desc.append(" (Disposable)");
         }
         if (isDumping()) {
             desc.append(" (dumping)");
@@ -1091,7 +1090,16 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return crossLinkedBy;
     }
 
-    public void setLinked(Mounted<?> linked) {
+    /**
+     * Link this Mounted equipment to the given other equipment (or remove the link, if that other is null). When the
+     * other is not null, that equipment's linkedBy is set to the present Mounted. Typically, weapons link to their
+     * ammo; mounts (turrets, DWP etc) link to attached weapons. The other direction uses linkedBy.
+     *
+     * @param linked The equipment to link to
+     *
+     * @see #setLinkedBy(Mounted)
+     */
+    public void setLinked(@Nullable Mounted<?> linked) {
         this.linked = linked;
         if (linked != null) {
             linked.setLinkedBy(this);
@@ -1145,27 +1153,27 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     public int getExplosionDamage() {
         if (type instanceof MiscType miscType) {
-            if (miscType.hasFlag(MiscType.F_PPC_CAPACITOR)) {
+            if (miscType.hasFlag(MiscTypeFlag.F_PPC_CAPACITOR)) {
                 if (curMode().equals("Charge") && (linked != null) && !linked.isFired()) {
                     return 15;
                 }
             }
-            if (miscType.hasFlag(MiscType.F_FUEL)) {
+            if (miscType.hasFlag(MiscTypeFlag.F_FUEL)) {
                 return 20;
             }
-            if (miscType.hasFlag(MiscType.F_BLUE_SHIELD)) {
+            if (miscType.hasFlag(MiscTypeFlag.F_BLUE_SHIELD)) {
                 return 5;
             }
-            if (miscType.hasFlag(MiscType.F_JUMP_JET) &&
-                  miscType.hasSubType(MiscType.S_PROTOTYPE) &&
-                  miscType.hasSubType(MiscType.S_IMPROVED)) {
+            if (miscType.hasFlag(MiscTypeFlag.F_JUMP_JET) &&
+                  miscType.hasFlag(MiscTypeFlag.S_PROTOTYPE) &&
+                  miscType.hasFlag(MiscTypeFlag.S_IMPROVED)) {
                 return 10;
             }
             if (miscType.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
                 return 2;
             }
 
-            if (miscType.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+            if (miscType.hasFlag(MiscTypeFlag.F_EMERGENCY_COOLANT_SYSTEM)) {
                 return 5;
             }
             return 0;
@@ -1227,7 +1235,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      *
      * @return {@code true} if the weapon is at least one of: destroyed, missing, breached, jammed, a detachable weapon
      *       no longer attached to its original battle armor, or simply out of ammo (includes discharged one-shot
-     *       weapons), {@code false} otherwise.
+     *       weapons), {@code false} otherwise. A weapon bay is crippled only when every weapon it contains is crippled.
      */
     public boolean isCrippled() {
         /*
@@ -1240,6 +1248,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
          */
         if (destroyed || jammed || missing || useless || fired) {
             return true;
+        }
+        // Weapon bays never link ammo directly - getLinked() is always null for a bay because its
+        // ammunition lives in the bay's member weapons (getBayAmmo()/getBayWeapons()), not on the bay
+        // mount itself. Assessing the bay's getLinked() below would therefore always flag a fully-loaded
+        // ammo bay as crippled (e.g. a brand-new DropShip would show "light damage"). Instead, a bay is
+        // crippled only when every weapon it contains is crippled.
+        if ((this instanceof WeaponMounted weaponMounted) && (type instanceof BayWeapon)) {
+            List<WeaponMounted> bayWeapons = weaponMounted.getBayWeapons();
+            return !bayWeapons.isEmpty() && bayWeapons.stream().allMatch(WeaponMounted::isCrippled);
         }
         if ((type instanceof AmmoWeapon) || (type instanceof AmmoBayWeapon)) {
             if ((getLinked() == null) || (entity.getTotalAmmoOfType(getLinked().getType()) < 1)) {
@@ -1309,10 +1326,23 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return (baMountLoc == BattleArmor.MOUNT_LOC_BODY) || (baMountLoc == BattleArmor.MOUNT_LOC_TURRET);
     }
 
+    /**
+     * @return True if this equipment is mounted on a BA Detachable Weapon Pack, TO:AUE p.99. Note that when it is, the
+     *       BA mount location (arm, body etc) is set to LOC_NONE. The location must be found via the DWP. The DWP can
+     *       be obtained using getLinkedBy.
+     */
     public boolean isDWPMounted() {
         return isDWPMounted;
     }
 
+    /**
+     * Sets this mounted to be attached to a BA Detachable Weapon Pack, TO:AUE p.99. Note that when it is, the BA mount
+     * location (arm, body etc) must not be set or this equipment will also register as being normally allocated in that
+     * location (visible in MML). The location must be found via the DWP. The DWP should be set as linkedBy for this
+     * Mounted, and the DWP itself should have this mounted set as linked.
+     *
+     * @param dwpMounted True if this equipment is mounted in a DWP
+     */
     public void setDWPMounted(boolean dwpMounted) {
         isDWPMounted = dwpMounted;
     }
@@ -1768,5 +1798,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             state.add("Size: " + size);
         }
         return intro + " { " + String.join(", ", state) + " }";
+    }
+
+    /**
+     * @return True if this equipment counts for the size and weight of a Targeting Computer, and benefits from it in
+     *       case of weapons.
+     *
+     * @see EquipmentType#relevantToTargetingComputer()
+     */
+    public boolean relevantToTargetingComputer() {
+        return type.relevantToTargetingComputer();
     }
 }

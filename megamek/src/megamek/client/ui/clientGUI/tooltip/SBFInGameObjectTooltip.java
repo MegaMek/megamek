@@ -41,11 +41,11 @@ import java.util.Objects;
 import java.util.Set;
 
 import megamek.client.ui.util.UIUtil;
-import megamek.common.game.IGame;
-import megamek.common.game.InGameObject;
 import megamek.common.Player;
 import megamek.common.ReportMessages;
 import megamek.common.annotations.Nullable;
+import megamek.common.game.IGame;
+import megamek.common.game.InGameObject;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.common.strategicBattleSystems.SBFIGotSomethingUnitPlaceholder;
@@ -156,22 +156,18 @@ public final class SBFInGameObjectTooltip {
           String trsp, String trspcode, String tactics, String tmm, String spec, String skill) {}
 
     private static StringBuilder formationStats(InGameObject unit) {
-        Stats stats;
-        if (unit instanceof SBFFormation formation) {
-            stats = statsOf(formation);
-        } else if (unit instanceof SBFPartialScanUnitPlaceHolder p) {
-            stats = new Stats("" + p.getType(), "" + p.getSize(), "?", "" + p.getMovement(),
-                  "", "?", "?", "?", "?", "?", "?", "?");
-        } else if (unit instanceof SBFIGotSomethingUnitPlaceholder p) {
-            stats = new Stats("" + p.getType(), "" + p.getSize(), "?", "?", "?",
+        Stats stats = switch (unit) {
+            case SBFFormation formation -> statsOf(formation);
+            case SBFPartialScanUnitPlaceHolder p ->
+                  new Stats("" + p.getType(), "" + p.getSize(), "?", "" + p.getMovement(),
+                        "", "?", "?", "?", "?", "?", "?", "?");
+            case SBFIGotSomethingUnitPlaceholder p -> new Stats("" + p.getType(), "" + p.getSize(), "?", "?", "?",
                   "?", "?", "", "?", "?", "?", "?");
-        } else if (unit instanceof SBFSomethingOutThereUnitPlaceHolder p) {
-            stats = new Stats("" + p.getType(), "?", "?", "?", "", "?", "?",
+            case SBFSomethingOutThereUnitPlaceHolder p -> new Stats("" + p.getType(), "?", "?", "?", "", "?", "?",
                   "", "?", "?", "?", "?");
-        } else {
-            stats = new Stats("?", "?", "?", "?", "", "?", "?",
+            case null, default -> new Stats("?", "?", "?", "?", "", "?", "?",
                   "", "?", "?", "?", "?");
-        }
+        };
 
         return formationStats(stats, unit);
     }

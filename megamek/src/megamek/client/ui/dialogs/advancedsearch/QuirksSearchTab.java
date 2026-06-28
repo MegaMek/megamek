@@ -33,7 +33,6 @@
 package megamek.client.ui.dialogs.advancedsearch;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -52,8 +51,8 @@ class QuirksSearchTab extends JPanel {
     final JComboBox<String> cQuirkExclude = new JComboBox<>();
     final JComboBox<String> cWeaponQuirkInclude = new JComboBox<>();
     final JComboBox<String> cWeaponQuirkExclude = new JComboBox<>();
-    TriStateItemList listQuirkType;
-    TriStateItemList listWeaponQuirkType;
+    TriStateItemList chassisQuirks;
+    TriStateItemList weaponQuirks;
 
     QuirksSearchTab() {
         JButton btnQuirksClear = new JButton(Messages.getString("MekSelectorDialog.ClearTab"));
@@ -61,13 +60,15 @@ class QuirksSearchTab extends JPanel {
 
         loadAndOr(cQuirkInclude, 0);
         loadAndOr(cQuirkExclude, 1);
-        listQuirkType = new TriStateItemList(new Quirks(), 25);
+        chassisQuirks = new TriStateItemList(new Quirks(), 0);
 
         loadAndOr(cWeaponQuirkInclude, 0);
         loadAndOr(cWeaponQuirkExclude, 1);
         cWeaponQuirkExclude.setSelectedIndex(1);
+        weaponQuirks = new TriStateItemList(new WeaponQuirks(), 0);
 
-        listWeaponQuirkType = new TriStateItemList(new WeaponQuirks(), 17);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(btnQuirksClear);
 
         JPanel unitQuirksPanel = new JPanel(new BorderLayout());
         JPanel quirkIEPanel = new JPanel();
@@ -78,10 +79,7 @@ class QuirksSearchTab extends JPanel {
         quirkIEPanel.add(new JLabel("\u2612"));
         quirkIEPanel.add(cQuirkExclude);
         unitQuirksPanel.add(quirkIEPanel, BorderLayout.NORTH);
-        unitQuirksPanel.add(new JScrollPane(listQuirkType.getComponent()), BorderLayout.CENTER);
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        buttonPanel.add(btnQuirksClear);
-        unitQuirksPanel.add(buttonPanel, BorderLayout.SOUTH);
+        unitQuirksPanel.add(new JScrollPane(chassisQuirks.getComponent()), BorderLayout.CENTER);
 
         JPanel weaponQuirkPanel = new JPanel(new BorderLayout());
         JPanel weaponQuirkIEPanel = new JPanel();
@@ -92,12 +90,15 @@ class QuirksSearchTab extends JPanel {
         weaponQuirkIEPanel.add(new JLabel("\u2612"));
         weaponQuirkIEPanel.add(cWeaponQuirkExclude);
         weaponQuirkPanel.add(weaponQuirkIEPanel, BorderLayout.NORTH);
-        weaponQuirkPanel.add(new JScrollPane(listWeaponQuirkType.getComponent()), BorderLayout.CENTER);
+        weaponQuirkPanel.add(new JScrollPane(weaponQuirks.getComponent()), BorderLayout.CENTER);
 
         JPanel innerPanel = new JPanel(new GridLayout(1, 2, 20, 0));
         innerPanel.add(unitQuirksPanel);
         innerPanel.add(weaponQuirkPanel);
-        add(innerPanel);
+
+        setLayout(new BorderLayout());
+        add(innerPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
     }
 
     private void loadAndOr(JComboBox<String> cb, int index) {
@@ -109,10 +110,30 @@ class QuirksSearchTab extends JPanel {
     void clear() {
         cQuirkInclude.setSelectedIndex(0);
         cQuirkExclude.setSelectedIndex(1);
-        listQuirkType.clear();
+        chassisQuirks.clear();
 
         cWeaponQuirkInclude.setSelectedIndex(0);
         cWeaponQuirkExclude.setSelectedIndex(1);
-        listWeaponQuirkType.clear();
+        weaponQuirks.clear();
+    }
+
+    AdvSearchState.QuirksState getState() {
+        var state = new AdvSearchState.QuirksState();
+        state.chassisInclude = cQuirkInclude.getSelectedIndex();
+        state.chassisExclude = cQuirkExclude.getSelectedIndex();
+        state.weaponInclude = cWeaponQuirkInclude.getSelectedIndex();
+        state.weaponExclude = cWeaponQuirkExclude.getSelectedIndex();
+        state.chassisQuirks = chassisQuirks.getState();
+        state.weaponQuirks = weaponQuirks.getState();
+        return state;
+    }
+
+    void applyState(AdvSearchState.QuirksState state) {
+        cQuirkInclude.setSelectedIndex(state.chassisInclude);
+        cQuirkExclude.setSelectedIndex(state.chassisExclude);
+        cWeaponQuirkInclude.setSelectedIndex(state.weaponInclude);
+        cWeaponQuirkExclude.setSelectedIndex(state.weaponExclude);
+        chassisQuirks.applyState(state.chassisQuirks);
+        weaponQuirks.applyState(state.weaponQuirks);
     }
 }

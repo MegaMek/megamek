@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,7 +46,6 @@ import megamek.common.Configuration;
 import megamek.common.TechConstants;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
-import megamek.common.equipment.EquipmentType;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
@@ -112,7 +111,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
     @Override
     public String help() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%s %s\n", Messages.getString("MegaMek.Version"), MMConstants.VERSION));
+        sb.append(Messages.getString("MegaMek.Version", MMConstants.VERSION)).append("\n");
         for (MegaMekCommandLineFlag flag : MegaMekCommandLineFlag.values()) {
             sb.append(String.format("-%s %s\n", flag.toString().toLowerCase(), flag.helpText));
         }
@@ -198,7 +197,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
         if (getTokenType() == TOK_LITERAL) {
             filename = getTokenValue();
             nextToken();
-            EquipmentType.writeEquipmentDatabase(new File(filename));
+            EquipmentExporter.writeEquipmentDatabase(new File(filename));
         } else {
             throw new ParseException("file name expected");
         }
@@ -210,7 +209,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
         if (getTokenType() == TOK_LITERAL) {
             filename = getTokenValue();
             nextToken();
-            EquipmentType.writeEquipmentExtendedDatabase(new File(filename));
+            EquipmentExporter.writeEquipmentExtendedDatabase(new File(filename));
         } else {
             throw new ParseException("file name expected");
         }
@@ -234,7 +233,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
         if (getTokenType() == TOK_LITERAL) {
             filename = getTokenValue();
             nextToken();
-            EquipmentType.writeEquipmentWeaponDatabase(new File(filename));
+            EquipmentExporter.writeEquipmentWeaponDatabase(new File(filename));
         } else {
             throw new ParseException("file name expected");
         }
@@ -246,7 +245,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
         if (getTokenType() == TOK_LITERAL) {
             filename = getTokenValue();
             nextToken();
-            EquipmentType.writeEquipmentAmmoDatabase(new File(filename));
+            EquipmentExporter.writeEquipmentAmmoDatabase(new File(filename));
         } else {
             throw new ParseException("file name expected");
         }
@@ -258,7 +257,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
         if (getTokenType() == TOK_LITERAL) {
             filename = getTokenValue();
             nextToken();
-            EquipmentType.writeEquipmentMiscDatabase(new File(filename));
+            EquipmentExporter.writeEquipmentMiscDatabase(new File(filename));
         } else {
             throw new ParseException("file name expected");
         }

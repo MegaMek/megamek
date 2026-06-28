@@ -200,7 +200,7 @@ public class RATGenerator {
             if (chassisIndex.get(era).get(unit).containsKey(factionRecord.getKey())) {
                 retVal = chassisIndex.get(era).get(unit).get(factionRecord.getKey());
             } else if (factionRecord.getParentFactions().size() == 1) {
-                retVal = findChassisAvailabilityRecord(era, unit, factionRecord.getParentFactions().get(0), year);
+                retVal = findChassisAvailabilityRecord(era, unit, factionRecord.getParentFactions().getFirst(), year);
             } else if (!factionRecord.getParentFactions().isEmpty()) {
                 ArrayList<AvailabilityRating> list = new ArrayList<>();
                 for (String alt : factionRecord.getParentFactions()) {
@@ -226,7 +226,13 @@ public class RATGenerator {
     public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit, String faction) {
         if (factions.containsKey(faction)) {
             return findModelAvailabilityRecord(era, unit, factions.get(faction));
-        } else if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
+        }
+        // Normalize the unit key to the canonical MekSummary name so name_changes aliases work.
+        ModelRecord modelRecord = models.get(unit);
+        if (modelRecord != null && !unit.equals(modelRecord.getKey())) {
+            unit = modelRecord.getKey();
+        }
+        if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
             return modelIndex.get(era).get(unit).get("General");
         } else {
             return null;
@@ -245,10 +251,18 @@ public class RATGenerator {
     public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit,
           @Nullable FactionRecord factionRecord) {
 
-        if (null == models.get(unit)) {
+        ModelRecord modelRecord = models.get(unit);
+        if (modelRecord == null) {
             LOGGER.error("Trying to find record for unknown model {}", unit);
             return null;
-        } else if ((factionRecord == null) || models.get(unit).factionIsExcluded(factionRecord)) {
+        }
+        // modelIndex is keyed by the canonical MekSummary name (ModelRecord.getKey()).
+        // If the caller passed a name_changes alias, normalize to the canonical key
+        // so the era/availability lookup below succeeds.
+        if (!unit.equals(modelRecord.getKey())) {
+            unit = modelRecord.getKey();
+        }
+        if ((factionRecord == null) || modelRecord.factionIsExcluded(factionRecord)) {
             return null;
         }
 
@@ -260,7 +274,7 @@ public class RATGenerator {
 
             // If the provided faction has a single parent, return its availability
             if (factionRecord.getParentFactions().size() == 1) {
-                return findModelAvailabilityRecord(era, unit, factionRecord.getParentFactions().get(0));
+                return findModelAvailabilityRecord(era, unit, factionRecord.getParentFactions().getFirst());
             } else if (!factionRecord.getParentFactions().isEmpty()) {
                 // If neither the faction nor a direct parent is directly specified and multiple parent factions are
                 // available, calculate an average between them
@@ -423,10 +437,12 @@ public class RATGenerator {
         factions.remove(rec.getKey());
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeFaction(String key) {
         factions.remove(key);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Collection<String> getFactionKeySet() {
         return factions.keySet();
     }
@@ -467,7 +483,7 @@ public class RATGenerator {
             totalAdj += ar.ratingAdjustment;
         }
 
-        AvailabilityRating retVal = avList.get(0).makeCopy(faction);
+        AvailabilityRating retVal = avList.getFirst().makeCopy(faction);
 
         retVal.availability = (int) (AvailabilityRating.calcAvRating(totalWt / avList.size()));
         if (totalAdj != 0) {
@@ -567,7 +583,7 @@ public class RATGenerator {
         ArrayList<String> factionRatings = fRec.getRatingLevelSystem();
         int numRatingLevels = factionRatings.size();
         if (rating == null && fRec.getRatingLevels().size() == 1) {
-            ratingLevel = factionRatings.indexOf(fRec.getRatingLevels().get(0));
+            ratingLevel = factionRatings.indexOf(fRec.getRatingLevels().getFirst());
         }
 
         if (rating != null && numRatingLevels > 1) {
@@ -632,7 +648,7 @@ public class RATGenerator {
 
                 // Find the chassis availability at the start of the era, or at
                 // intro date, including dynamic modifiers
-                int interpolationStart = Math.max(currentEra, Math.min(year, curChassis.introYear));
+                int interpolationStart = Math.clamp(curChassis.introYear, currentEra, year);
                 chassisAdjRating = curChassis.calcAvailability(chassisAvRating,
                       ratingLevel,
                       numRatingLevels,
@@ -1613,7 +1629,15 @@ public class RATGenerator {
             if (mekSummary != null) {
                 modelRecord = new ModelRecord(mekSummary);
                 modelRecord.setOmni(chassisRecord.isOmni());
+                // Store under both the RAT-XML key and the MekSummary's canonical name.
+                // The canonical name is what ModelRecord.getKey() returns, so any caller
+                // that does a lookup via getKey() (e.g., ChassisRecord.totalModelWeight)
+                // needs that key in the map. Without this, name_changes aliases resolve
+                // the cache lookup but the resulting ModelRecord is unreachable by its own key.
                 models.put(modelKey, modelRecord);
+                if (!modelKey.equals(modelRecord.getKey())) {
+                    models.put(modelRecord.getKey(), modelRecord);
+                }
             }
 
             if (modelRecord == null) {
@@ -1749,7 +1773,7 @@ public class RATGenerator {
                                       ? "' omni='Clan"
                                       : "' omni='IS";
                             }
-                            pw.println("\t<chassis name='" + cr.getChassis().replaceAll("'", "&apos;")
+                            pw.println("\t<chassis name='" + cr.getChassis().replace("'", "&apos;")
                                   + "' unitType='" + UnitType.getTypeName(cr.getUnitType())
                                   + omni + "'>");
                             pw.print("\t\t<availability>");
@@ -1776,7 +1800,7 @@ public class RATGenerator {
                                     }
 
                                     if (!avFields.isEmpty()) {
-                                        pw.print("\t\t<model name='" + mr.getModel().replaceAll("'", "&apos;"));
+                                        pw.print("\t\t<model name='" + mr.getModel().replace("'", "&apos;"));
                                         if (mr.getUnitType() == UnitType.BATTLE_ARMOR) {
                                             pw.print("' mechanized='" + mr.canDoMechanizedBA());
                                         }

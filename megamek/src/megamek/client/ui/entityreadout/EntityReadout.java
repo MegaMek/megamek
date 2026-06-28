@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,10 +39,11 @@ import megamek.client.ui.util.ViewFormatting;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.units.Aero;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
-import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
@@ -115,26 +116,21 @@ public interface EntityReadout {
     static EntityReadout createReadout(Entity entity, boolean showDetail, boolean useAlternateCost,
           boolean ignorePilotBV) {
 
-        if (entity instanceof BattleArmor battleArmor) {
-            return new BattleArmorReadout(battleArmor, showDetail, useAlternateCost, ignorePilotBV);
-        } else if (entity instanceof Infantry infantry) {
-            return new InfantryReadout(infantry, showDetail, useAlternateCost, ignorePilotBV);
-        } else if (entity instanceof ProtoMek protoMek) {
-            return new ProtoMekReadout(protoMek, showDetail, useAlternateCost, ignorePilotBV);
-        } else if (entity instanceof GunEmplacement gunEmplacement) {
-            return new GunEmplacementReadout(gunEmplacement, showDetail, useAlternateCost, ignorePilotBV);
-        } else if (entity instanceof FighterSquadron squadron) {
-            return new FighterSquadronReadout(squadron, showDetail, useAlternateCost, ignorePilotBV);
-        } else if (entity instanceof Mek mek) {
-            return new MekReadout(mek, showDetail, useAlternateCost, ignorePilotBV);
-        } else if (entity instanceof Aero aero) {
-            return new AeroReadout(aero, showDetail, useAlternateCost, ignorePilotBV);
-        } else if (entity instanceof Tank tank) {
-            return new TankReadout(tank, showDetail, useAlternateCost, ignorePilotBV);
-        } else {
-            // the selection above should be exhaustive, but to be safe:
-            return new GeneralEntityReadout(entity, showDetail, useAlternateCost, ignorePilotBV);
-        }
+        return switch (entity) {
+            case BattleArmor battleArmor ->
+                  new BattleArmorReadout(battleArmor, showDetail, useAlternateCost, ignorePilotBV);
+            case ConvInfantry infantry -> new InfantryReadout(infantry, showDetail, useAlternateCost, ignorePilotBV);
+            case ProtoMek protoMek -> new ProtoMekReadout(protoMek, showDetail, useAlternateCost, ignorePilotBV);
+            case GunEmplacement gunEmplacement ->
+                  new GunEmplacementReadout(gunEmplacement, showDetail, useAlternateCost, ignorePilotBV);
+            case FighterSquadron squadron ->
+                  new FighterSquadronReadout(squadron, showDetail, useAlternateCost, ignorePilotBV);
+            case Mek mek -> new MekReadout(mek, showDetail, useAlternateCost, ignorePilotBV);
+            case Aero aero -> new AeroReadout(aero, showDetail, useAlternateCost, ignorePilotBV);
+            case Tank tank -> new TankReadout(tank, showDetail, useAlternateCost, ignorePilotBV);
+            case HandheldWeapon hhw -> new HhwReadout(hhw, showDetail, useAlternateCost, ignorePilotBV);
+            case null, default -> new GeneralEntityReadout(entity, showDetail, useAlternateCost, ignorePilotBV);
+        };
     }
 
     /**

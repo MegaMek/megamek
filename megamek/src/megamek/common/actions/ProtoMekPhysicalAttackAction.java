@@ -42,7 +42,7 @@ import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.MiscType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
@@ -85,9 +85,9 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
         }
 
         // ProtoMek weapon (TacOps, p. 337) or quad melee system (IO, p. 67)
-        if (entity.hasWorkingMisc(MiscType.F_PROTOMEK_MELEE, MiscType.S_PROTO_QMS)) {
+        if (entity.hasWorkingMisc(MiscTypeFlag.F_PROTOMEK_MELEE, MiscTypeFlag.S_PROTO_QMS)) {
             toReturn += (int) Math.ceil(entity.getWeight() / 5.0) * 2;
-        } else if (entity.hasWorkingMisc(MiscType.F_PROTOMEK_MELEE)) {
+        } else if (entity.hasWorkingMisc(MiscTypeFlag.F_PROTOMEK_MELEE)) {
             toReturn += (int) Math.ceil(entity.getWeight() / 5.0);
         }
 

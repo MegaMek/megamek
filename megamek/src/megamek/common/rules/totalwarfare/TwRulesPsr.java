@@ -56,4 +56,8 @@ public class TwRulesPsr extends CoreRulesPsr {
             r.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
         }
     }
+
+    // No modifier to stand
+    @Override
+    public void standing(PilotingRollData r) { }
 }

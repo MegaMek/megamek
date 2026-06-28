@@ -46,6 +46,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.game.Game;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
@@ -417,10 +418,7 @@ public abstract class MekWithArms extends Mek {
     }
 
     private void addAttemptStandingPenalties(PilotingRollData roll) {
-        // PLAYTEST2 Standing has -1 PSR
-        if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-            roll.addModifier(-1, "Trying to stand");
-        }
+        Game.rulesManager.getRulesPsr().standing(roll);
 
         if (hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             roll.addModifier(2, "no/minimal arms");

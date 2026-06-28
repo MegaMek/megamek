@@ -34,8 +34,12 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.common.Report;
 import megamek.common.rules.core.CoreRulesArmor;
+import megamek.common.units.Entity;
 import megamek.server.totalWarfare.TWDamageManager;
+
+import java.util.Vector;
 
 public class TwRulesArmor extends CoreRulesArmor {
     // TW does not need to know about heat weapons for armor
@@ -57,4 +61,13 @@ public class TwRulesArmor extends CoreRulesArmor {
     @Override
     public int impactArmorMod() { return 1; }
 
+    // Impact Resistant Armor breach
+    public int impactArmorBreach(Entity entity, Vector<Report> vDesc) {
+        Report r;
+        r = new Report(6344);
+        r.subject = entity.getId();
+        r.indent(3);
+        vDesc.addElement(r);
+        return 1;
+    }
 }

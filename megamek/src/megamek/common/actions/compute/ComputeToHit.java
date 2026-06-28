@@ -855,18 +855,9 @@ public class ComputeToHit {
 
         // Autocannon Munitions
 
-        // Armor Piercing ammo is a flat +1
-        // PLAYTEST3 AP ammo is no longer +1 to hit.
-        if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            if (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
-                  (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
-                  (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
-                  (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.PAC)) &&
-                  (munition.contains(AmmoType.Munitions.M_ARMOR_PIERCING)
-                        || munition.contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST))) {
-                toHit.addModifier(1, Messages.getString("WeaponAttackAction.ApAmmo"));
-            }
-        }
+        // Armor Piercing ammo checks. Modified toHit if needed.
+        Game.rulesManager.getRulesAmmo().armorPiercingAttackMod(ammoType.getAmmoType(), toHit,
+              munition.contains(AmmoType.Munitions.M_ARMOR_PIERCING));
 
         // Bombs
 
@@ -1651,18 +1642,15 @@ public class ComputeToHit {
         // VSP Lasers
         // Quirks and SPAs now handled in toHit
 
-        // PLAYTEST3 narc gets -1 to hit to units with a homing narc pod attached and not under ECM
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && ammoType != null) {
-            Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target : null;
-            boolean isTargetECMAffected = ComputeECM.isAffectedByECM(ae,
-                  target.getPosition(),
-                  target.getPosition());
-            if (entityTarget != null) {
-                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE) && (entityTarget.isNarcedBy(
-                      ae.getOwner().getTeam()) || entityTarget
-                      .isINarcedBy(ae.getOwner().getTeam())) && !isTargetECMAffected) {
-                    toHit.addModifier(-1, "Playtest 3, Narc gets -1 to hit");
-                }
+        Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target : null;
+        boolean isTargetECMAffected = ComputeECM.isAffectedByECM(ae,
+              target.getPosition(),
+              target.getPosition());
+        if (entityTarget != null) {
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE) && (entityTarget.isNarcedBy(
+                  ae.getOwner().getTeam()) || entityTarget
+                  .isINarcedBy(ae.getOwner().getTeam())) && !isTargetECMAffected) {
+                Game.rulesManager.getRulesAmmo().narcHomingTarget(toHit);
             }
         }
 

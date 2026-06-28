@@ -38,7 +38,10 @@ package megamek.common.rules.totalwarfare;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.core.CoreRulesExplosions;
 import megamek.common.units.Entity;
@@ -135,6 +138,29 @@ public class TwRulesExplosions extends CoreRulesExplosions {
     @Override
     public int explosionCASEIImod(boolean hasCaseII, boolean ammoExplosion) {
         return 0;
+    }
+
+    // How much damage to equipment explosions do
+    @Override
+    public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
+        if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
+            if (mounted.isFired()) {
+                if (mounted.hasChargedCapacitor() == 2) {
+                    return 15;
+                }
+                return 0;
+            }
+            if (mounted.hasChargedCapacitor() == 2) {
+                return 30;
+            }
+            return 15;
+        }
+
+        if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.MPOD) && mounted.isFired()) {
+            return 0;
+        }
+
+        return weaponType.getExplosionDamage();
     }
 
 }

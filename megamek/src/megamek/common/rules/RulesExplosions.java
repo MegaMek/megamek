@@ -37,6 +37,8 @@ package megamek.common.rules;
 
 import megamek.common.HitData;
 import megamek.common.Report;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 
@@ -53,4 +55,7 @@ public abstract class RulesExplosions {
 
     // CASE II check crit chance for explosions
     public abstract int explosionCASEIImod(boolean hasCaseII, boolean ammoExplosion);
+
+    // How much damage to equipment explosions do
+    public abstract int equipmentDamage(Mounted<?> mounted, WeaponType weaponType);
 }

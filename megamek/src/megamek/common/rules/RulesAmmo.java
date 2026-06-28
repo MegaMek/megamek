@@ -34,10 +34,16 @@ package megamek.common.rules;
  */
 
 
+import megamek.common.ToHitData;
 import megamek.common.equipment.AmmoType;
 
 public abstract class RulesAmmo {
-    // Armor Piercing modifiers
+    // Armor Piercing crit modifiers
     public abstract int armorPiercingMod(AmmoType inType);
 
+    // Armor Piercing attack modifiers
+    public abstract void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType, ToHitData toHit, boolean AP);
+
+    // Does NARC affect the target number
+    public abstract void narcHomingTarget(ToHitData toHit);
 }

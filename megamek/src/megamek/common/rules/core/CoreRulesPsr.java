@@ -59,4 +59,9 @@ public class CoreRulesPsr extends RulesPsr {
             r.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
         }
     }
+
+    // Trying to stand is a -1 modifier Core p.111
+    public void standing(PilotingRollData r) {
+        r.addModifier(-1, "trying to stand");
+    }
 }

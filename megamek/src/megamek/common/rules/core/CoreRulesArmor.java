@@ -34,8 +34,12 @@ package megamek.common.rules.core;
  */
 
 
+import megamek.common.Report;
 import megamek.common.rules.RulesArmor;
+import megamek.common.units.Entity;
 import megamek.server.totalWarfare.TWDamageManager;
+
+import java.util.Vector;
 
 public class CoreRulesArmor extends RulesArmor {
     // Core rules heat armor halves heat weapon damage. This allows for weapons to be marked for heat.
@@ -52,7 +56,11 @@ public class CoreRulesArmor extends RulesArmor {
         return true;
     }
 
-    // Impact armor does not reduce anything
-    public int impactArmorMod() { return 0; }
+    // Impact armor does not reduce anything. p.201
+    public int impactArmorMod() {return 0;}
 
+    // Impact Resistant Armor breach. Does not apply in Core. p.201
+    public int impactArmorBreach(Entity entity, Vector<Report> vDesc) {
+        return 0;
+    }
 }

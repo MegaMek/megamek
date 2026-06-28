@@ -34,6 +34,8 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.client.ui.Messages;
+import megamek.common.ToHitData;
 import megamek.common.equipment.AmmoType;
 import megamek.common.rules.core.CoreRulesAmmo;
 
@@ -57,5 +59,23 @@ public class TwRulesAmmo extends CoreRulesAmmo {
         }
         return 0;
     }
+
+    // Armor Piercing attack modifiers
+    @Override
+    public void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType, ToHitData toHit, boolean AP) {
+        switch (ammoType) {
+            case AmmoType.AmmoTypeEnum.AC:
+            case AmmoType.AmmoTypeEnum.LAC:
+            case AmmoType.AmmoTypeEnum.AC_IMP:
+            case AmmoType.AmmoTypeEnum.PAC:
+                if (AP) {
+                    toHit.addModifier(1, Messages.getString("WeaponAttackAction.ApAmmo"));
+                }
+        }
+    }
+
+    // Do nothing. Not in TW
+    @Override
+    public void narcHomingTarget(ToHitData toHit) { }
 
 }

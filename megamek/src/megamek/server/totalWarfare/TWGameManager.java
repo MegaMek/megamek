@@ -23532,17 +23532,12 @@ public class TWGameManager extends AbstractGameManager {
                     vDesc.addElement(r);
                     target -= 2;
                 }
-                // Impact-resistant armor easier to breach
-                // PLAYTEST3 no longer easier
-                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                    if ((entity.getArmorType(loc) == EquipmentType.T_ARMOR_IMPACT_RESISTANT)) {
-                        r = new Report(6344);
-                        r.subject = entity.getId();
-                        r.indent(3);
-                        vDesc.addElement(r);
-                        target += 1;
-                    }
+
+                // Check for impact resistant armor
+                if ((entity.getArmorType(loc) == EquipmentType.T_ARMOR_IMPACT_RESISTANT)) {
+                    target += Game.rulesManager.getRulesArmor().impactArmorBreach(entity, vDesc);
                 }
+
                 Roll diceRoll = Compute.rollD6(2);
                 breachRoll = diceRoll.getIntValue();
                 r = new Report(6345);
@@ -24321,11 +24316,6 @@ public class TWGameManager extends AbstractGameManager {
 
         // determine and deal damage
         int damage = mounted.getExplosionDamage();
-
-        // PLAYTEST3 explosive equipment does 2 damage per crit slot. This overrides previous amounts
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && !(mounted.getType() instanceof AmmoType)) {
-            damage = mounted.getNumCriticalSlots() * 2;
-        }
 
         // Smoke ammo halves damage
         if ((mounted.getType() instanceof AmmoType) &&

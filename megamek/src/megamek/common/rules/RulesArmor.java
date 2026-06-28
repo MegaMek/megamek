@@ -34,7 +34,11 @@ package megamek.common.rules;
  */
 
 
+import megamek.common.Report;
+import megamek.common.units.Entity;
 import megamek.server.totalWarfare.TWDamageManager;
+
+import java.util.Vector;
 
 public abstract class RulesArmor {
     // Allow heat weapons for heat armor
@@ -45,4 +49,7 @@ public abstract class RulesArmor {
 
     // Impact resistant armor
     public abstract int impactArmorMod();
+
+    // Impact Resistant Armor breach
+    public abstract int impactArmorBreach(Entity entity, Vector<Report> vDesc);
 }

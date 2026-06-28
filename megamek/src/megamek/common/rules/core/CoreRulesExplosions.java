@@ -37,7 +37,10 @@ package megamek.common.rules.core;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesExplosions;
 import megamek.common.units.Entity;
@@ -195,5 +198,22 @@ public class CoreRulesExplosions extends RulesExplosions {
             return -1;
         }
         return 0;
+    }
+
+    // How much damage to equipment explosions do
+    public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
+        // Charged PPC capacitors when hit can cause an explosion.
+        if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
+            if (mounted.isFired()) {
+                return 0;
+            }
+        }
+
+        switch (weaponType.getAmmoType()) {
+            case AmmoType.AmmoTypeEnum.MPOD:
+            case AmmoType.AmmoTypeEnum.BPOD:
+                return 0;
+        }
+        return mounted.getNumCriticalSlots() * 2;
     }
 }

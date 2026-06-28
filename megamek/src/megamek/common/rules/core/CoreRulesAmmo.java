@@ -32,6 +32,8 @@ package megamek.common.rules.core;
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
+import megamek.client.ui.Messages;
+import megamek.common.ToHitData;
 import megamek.common.equipment.AmmoType;
 import megamek.common.rules.RulesAmmo;
 
@@ -53,4 +55,15 @@ public class CoreRulesAmmo extends RulesAmmo {
         }
         return 0;
     }
+
+    // Armor Piercing attack modifiers. Core p.190
+    public void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType, ToHitData toHit, boolean AP) {
+        // Do nothing. there is no attack modifier
+    }
+
+    // Reduce to-hit if the target has a narc pod and not under ECM. Core p.193
+    public void narcHomingTarget(ToHitData toHit) {
+        toHit.addModifier(-1, "target has a narc pod");
+    }
+
 }

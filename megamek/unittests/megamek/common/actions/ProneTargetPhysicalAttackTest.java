@@ -55,6 +55,7 @@ import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
+import megamek.common.rules.core.CoreRulesTarget;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -107,7 +108,6 @@ public class ProneTargetPhysicalAttackTest {
         // Mock game
         mockGame = mock(Game.class);
         when(mockGame.getOptions()).thenReturn(mockOptions);
-        when(mockGame.getPlanetaryConditions()).thenReturn(mockConditions);
 
         // Mock hexes
         mockAttackerHex = mock(Hex.class);

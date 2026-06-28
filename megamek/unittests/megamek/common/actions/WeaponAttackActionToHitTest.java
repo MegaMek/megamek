@@ -155,7 +155,7 @@ public class WeaponAttackActionToHitTest {
         when(mockGame.onConnectedBoards(any(Targetable.class), any(Targetable.class))).thenReturn(true);
         when(mockGame.onTheSameBoard(any(Targetable.class), any(Targetable.class))).thenReturn(true);
         when(mockGame.isOnGroundMap(any(Targetable.class))).thenReturn(true);
-
+        mockGame.initializeRulesManager();
         // Mock LosEffects
         mockLos = mock(LosEffects.class);
         when(mockGame.getBoard()).thenReturn(mockBoard);

@@ -89,6 +89,7 @@ class TWGameManagerTest {
         game = gameManager.getGame();
         server = ServerFactory.createServer(gameManager);
         game.addPlayer(0, player);
+        game.initializeRulesManager();
     }
 
     @Test

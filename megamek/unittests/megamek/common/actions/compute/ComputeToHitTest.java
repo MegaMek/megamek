@@ -273,6 +273,7 @@ public class ComputeToHitTest extends GameBoardTestCase {
 
         game.addPlayer(0, player1);
         game.addPlayer(1, player2);
+        game.initializeRulesManager();
     }
 
     @Nested

@@ -219,7 +219,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
               Game.rulesManager.getRulesTarget().largeTargetModifier(game.getEntity(target.getId()).getWeightClass());
         // RULESFUTURE Call this with the the 2nd parameter when objectives that are large are added
         if (largeTarget != 0) {
-            toHit.addModifier(largeTarget, "Large Target");
+            toHit.addModifier(largeTarget, "large target");
         }
 
         if (ae.hasModularArmor()) {

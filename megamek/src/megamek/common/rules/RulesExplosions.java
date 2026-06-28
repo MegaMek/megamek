@@ -35,5 +35,19 @@ package megamek.common.rules;
  */
 
 
+import megamek.common.HitData;
+import megamek.common.Report;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+
+import java.util.Vector;
+
 public abstract class RulesExplosions {
+    // damage reduction for CASE, CASE II, etc
+    public abstract int explosionDamageReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion,
+          Vector<Report> reportVec);
+
+    // CASE II damage reduction
+    public abstract int applyCASEIIDamageReduction(Entity entity, HitData hit, int damage, boolean ammoExplosion,
+          Vector<Report> reportVec);
 }

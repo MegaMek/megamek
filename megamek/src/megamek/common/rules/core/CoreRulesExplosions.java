@@ -34,7 +34,171 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.HitData;
+import megamek.common.Report;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.IArmorState;
+import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesExplosions;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+
+import java.util.Vector;
 
 public class CoreRulesExplosions extends RulesExplosions {
+    /**
+     * Determine how much damage will be reduced on to internal explosion.
+     *
+     * @param mek           Mek entity that we are damaging
+     * @param hit           HitData recording aspects of the incoming damage
+     * @param damage        Actual amount of incoming damage
+     * @param ammoExplosion Whether damage was caused by an ammo explosion
+     * @param reportVec     Vector of Reports containing prior reports; usually modded and returned
+     *
+     * @return int          total of damage remaining after reduction
+     */
+    // Damage reduction for CASE, CASE II, explosions
+    public int explosionDamageReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion,
+          Vector<Report> reportVec) {
+            if (!ammoExplosion) {
+                return damage;
+            }
+
+            int loc = hit.getLocation();
+
+            boolean cased = mek.locationHasCase(hit.getLocation());
+            boolean caseIId = mek.hasCASEII(hit.getLocation());
+
+            Report report;
+
+            if (caseIId) {
+                Roll diceRoll = Compute.rollD6(2);
+                report = new Report(6127);
+                report.subject = mek.getId();
+                report.add(diceRoll);
+                reportVec.add(report);
+
+                if (diceRoll.getIntValue() >= 8) {
+                    hit.setEffect(HitData.EFFECT_NO_CRITICAL_SLOTS);
+                }
+            }
+
+            int cap = caseIId ? 1 : cased ? 10 : 20;
+            if (damage < cap) {
+                return damage;
+            }
+
+            report = new Report(caseIId ? 6134 : cased ? 6133 : 6132);
+            report.subject = mek.getId();
+            report.indent(3);
+            report.add(damage);
+            reportVec.addElement(report);
+
+            // Torso locations damage out the rear armor
+            boolean torso = mek.locationIsTorso(loc);
+
+            if (mek.getInternal(loc) > cap) { // Location survives, blow out armor
+                int armorDamage = damage - cap;
+                int armorDamageCap = 10;
+                if ((caseIId || cased) && mek.getArmor(loc, torso) > armorDamageCap) {
+                    if (armorDamage > armorDamageCap) {
+                        armorDamage = armorDamageCap;
+                    }
+                    mek.setArmor(mek.getArmor(loc, torso) - armorDamage, loc, torso);
+                } else {
+                    armorDamage = mek.getArmor(loc, torso);
+                    mek.setArmor(IArmorState.ARMOR_DESTROYED, loc, torso);
+                }
+
+                mek.damageThisPhase += armorDamage;
+                report = new Report(6131);
+                report.subject = mek.getId();
+                report.indent(3);
+                report.add((torso ? "Rear " : "") + mek.getLocationAbbr(loc));
+                report.add(armorDamage);
+                reportVec.addElement(report);
+            }
+
+            return cap;
+    }
+
+    /**
+     * Determine how much damage will be reduced by CASE II equipment
+     *
+     * @param entity        Entity that we are damaging
+     * @param hit           HitData recording aspects of the incoming damage
+     * @param damage        Actual amount of incoming damage
+     * @param ammoExplosion Whether damage was caused by an ammo explosion
+     * @param reportVec     Vector of Reports containing prior reports; usually modded and returned
+     *
+     * @return int          total of damage remaining after reduction by CASE II
+     */
+    public int applyCASEIIDamageReduction(Entity entity, HitData hit, int damage, boolean ammoExplosion,
+          Vector<Report> reportVec) {
+        // Check for CASE II right away. If so, reduce damage to 1 and let it hit the IS. Also, remove as much of the
+        // rear armor as allowed by the damage. If arm/leg/head, Then they lose all their armor if it's less than the
+        // explosion damage.
+        int entityId = entity.getId();
+        Report report;
+
+        if (ammoExplosion && entity.hasCASEII(hit.getLocation())) {
+            // 1 point of damage goes to IS
+            damage--;
+            // Remaining damage prevented by CASE II
+            report = new Report(6126);
+            report.subject = entityId;
+            report.add(damage);
+            report.indent(3);
+            reportVec.addElement(report);
+            int loc = hit.getLocation();
+            int armorDamage = damage;
+            int armorDamageCap = 10;
+
+            if (armorDamage > armorDamageCap) {
+                armorDamage = armorDamageCap;
+            }
+
+            if (entity instanceof Mek) {
+                boolean torso = ((Mek) entity).locationIsTorso(loc);
+                if (entity.getArmor(loc, torso) > armorDamage) {
+                    entity.setArmor(entity.getArmor(loc, torso) - armorDamage, loc, torso);
+                } else {
+                    armorDamage = entity.getArmor(loc, torso);
+                    entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, torso);
+                }
+            } else {
+                // Only used if it is not a mek.
+                if (armorDamage >= entity.getArmor(loc, true)) {
+                    // Remember the exact amount of armor damage for PSR purposes
+                    armorDamage = entity.getArmor(loc, true);
+                    entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
+                } else {
+                    entity.setArmor(entity.getArmor(loc, true) - armorDamage, loc, true);
+                }
+            }
+
+            // The armor blown out contributes towards the 20+ PSR
+            entity.damageThisPhase += armorDamage;
+
+            if (entity.getInternal(hit) > 0) {
+                // Mek takes 1 point of IS damage
+                damage = 1;
+            } else {
+                damage = 0;
+            }
+
+            Roll diceRoll = Compute.rollD6(2);
+            report = new Report(6127);
+            report.subject = entity.getId();
+            report.add(diceRoll);
+            reportVec.add(report);
+
+            if (diceRoll.getIntValue() >= 8) {
+                hit.setEffect(HitData.EFFECT_NO_CRITICAL_SLOTS);
+            }
+        }
+
+        return damage;
+    }
+
 }

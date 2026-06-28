@@ -132,6 +132,39 @@ public class IndustrialElevatorMovementTest extends GameBoardTestCase {
 
             assertFalse(movePath.isMoveLegal(), "Should not be able to descend below shaft bottom");
         }
+
+        @Test
+        void cannotRideOverCapacityElevator() {
+            setBoard("BOARD_ELEVATOR");
+            Coords elevatorCoords = new Coords(0, 0);
+            BoardLocation elevatorLocation = BoardLocation.of(elevatorCoords, 0);
+            // Capacity 40 tons; the default test Mek weighs 50 tons, so the loaded elevator is over capacity
+            IndustrialElevator elevator = new IndustrialElevator(elevatorLocation, 0, 4, 40);
+            elevator.setPlatformLevel(2);
+            getGame().addIndustrialElevator(elevator);
+
+            MovePath movePath = getMovePathFor(new BipedMek(), 2, EntityMovementMode.BIPED,
+                  MoveStepType.ELEVATOR_DESCEND);
+
+            assertFalse(movePath.isMoveLegal(), "Should not be able to ride an over-capacity elevator");
+        }
+
+        @Test
+        void cannotTravelMoreThanOneLevelPerTurn() {
+            setBoard("BOARD_ELEVATOR");
+            Coords elevatorCoords = new Coords(0, 0);
+            BoardLocation elevatorLocation = BoardLocation.of(elevatorCoords, 0);
+            IndustrialElevator elevator = new IndustrialElevator(elevatorLocation, 0, 4, 500);
+            elevator.setPlatformLevel(2);
+            getGame().addIndustrialElevator(elevator);
+
+            // The platform stays at level 2 during planning, so a second descend step (now from level 1)
+            // has no platform at the unit's level and is illegal: 1 level per turn (TO:AR).
+            MovePath movePath = getMovePathFor(new BipedMek(), 2, EntityMovementMode.BIPED,
+                  MoveStepType.ELEVATOR_DESCEND, MoveStepType.ELEVATOR_DESCEND);
+
+            assertFalse(movePath.isMoveLegal(), "Should only be able to move one level per turn");
+        }
     }
 
     @Nested

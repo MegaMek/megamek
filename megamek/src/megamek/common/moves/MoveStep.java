@@ -4138,6 +4138,10 @@ public class MoveStep implements Serializable {
             if (!elevator.isFunctional()) {
                 return false;
             }
+            // An over-capacity elevator will not move in either direction (TO:AR)
+            if (elevator.getCurrentLoad(game) > elevator.getCapacityTons()) {
+                return false;
+            }
             // Platform must be at the unit's current level
             if (elevator.getPlatformLevel() != srcEl) {
                 return false;

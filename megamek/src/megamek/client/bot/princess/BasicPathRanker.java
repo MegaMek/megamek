@@ -742,6 +742,39 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
+     * Finds the position at the highest concentration of enemy battle value - the deployed on-board enemy whose
+     * neighbourhood (within {@link Compute#HOMING_RADIUS}) holds the most total current BV. Standoff artillery and TAG
+     * spotters use this cluster as their anchor (to stand off from, and to point at) instead of the nearest single
+     * unit, so a lone low-value scout cannot decoy them and the homing's 8-hex radius covers the densest high-value
+     * group.
+     *
+     * @param enemies The enemy units
+     *
+     * @return The cluster anchor position, or {@code null} if there are no deployed on-board enemies
+     */
+    private @Nullable Coords highestBvClusterPosition(List<Entity> enemies) {
+        Coords clusterAnchor = null;
+        double bestClusterValue = -1.0;
+        for (Entity center : enemies) {
+            if (!center.isDeployed() || center.isOffBoard() || (center.getPosition() == null)) {
+                continue;
+            }
+            double clusterValue = 0.0;
+            for (Entity other : enemies) {
+                if (other.isDeployed() && !other.isOffBoard() && (other.getPosition() != null)
+                      && (center.getPosition().distance(other.getPosition()) <= Compute.HOMING_RADIUS)) {
+                    clusterValue += Math.max(1.0, other.calculateBattleValue());
+                }
+            }
+            if (clusterValue > bestClusterValue) {
+                bestClusterValue = clusterValue;
+                clusterAnchor = center.getPosition();
+            }
+        }
+        return clusterAnchor;
+    }
+
+    /**
      * @param unit The unit to check
      *
      * @return {@code true} if the unit has an undamaged artillery weapon (so it should fight from standoff range as a tube)
@@ -1145,6 +1178,12 @@ public class BasicPathRanker extends PathRanker {
         // The further I am from a target, the lower this path ranks
         // (weighted by Aggression slider).
         double distToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
+        // Highest enemy BV concentration: standoff artillery and TAG spotters position and face relative to this cluster
+        // rather than the nearest single unit, so a lone low-value scout cannot decoy them.
+        Coords highValueClusterPosition = highestBvClusterPosition(enemies);
+        double distToCluster = (highValueClusterPosition != null)
+              ? path.getFinalCoords().distance(highValueClusterPosition)
+              : distToEnemy;
         // Standoff units (artillery tubes, TAG spotters) prefer to hold at a standoff distance instead of closing to
         // contact. Artillery just wants to be at least that far back (it fires indirect from anywhere, has a minimum
         // range, and is fragile); a TAG spotter wants to sit in a band - close enough to designate, far enough to keep
@@ -1161,6 +1200,11 @@ public class BasicPathRanker extends PathRanker {
         // back). Such a tube ignores the herd pull entirely so it never creeps toward the advancing friendly line.
         boolean standoffArtillery = false;
         double aggressionMod;
+        // Diagnostics for the artillery/TAG standoff decision, surfaced in the [Move] breakdown so a playtest can see
+        // which branch drove a tube's move and pinpoint a 2-step shuffle (the branch that fires each turn + the deficit).
+        String standoffBranch = "none";
+        double standoffDeficit = 0.0;
+        double standoffCurrentDist = -1.0;
         if (!isNotAirborne) {
             aggressionMod = 0;
         } else if (standoffDistance > 0) {
@@ -1172,7 +1216,9 @@ public class BasicPathRanker extends PathRanker {
                 boolean canDesignate = canDesignateFrom(movingUnit, path.getFinalCoords(), enemies,
                       maxOperationalTagRange(movingUnit), game);
                 if (canDesignate) {
-                    aggressionMod = Math.abs(distToEnemy - standoffDistance)
+                    standoffBranch = "TAG_DESIGNATE";
+                    // Stand off relative to the high-BV cluster, not the nearest unit, so a lone scout cannot decoy it.
+                    aggressionMod = Math.abs(distToCluster - standoffDistance)
                           * getOwner().getBehaviorSettings().getHyperAggressionValue();
                     // Prefer to walk/run when this hex can already designate: jumping would add a large attacker-moved
                     // penalty to the TAG roll and likely waste the designation. Still allow a jump if it is the only way
@@ -1181,7 +1227,9 @@ public class BasicPathRanker extends PathRanker {
                         aggressionMod += TAG_JUMP_PENALTY;
                     }
                 } else {
-                    aggressionMod = Math.abs(distToEnemy - MIN_TAG_STANDOFF_DISTANCE)
+                    standoffBranch = "TAG_CLOSE";
+                    // Close toward the high-BV cluster (down to the minimum safe distance), not toward the nearest unit.
+                    aggressionMod = Math.abs(distToCluster - MIN_TAG_STANDOFF_DISTANCE)
                           * getOwner().getBehaviorSettings().getHyperAggressionValue();
                 }
             } else {
@@ -1198,6 +1246,7 @@ public class BasicPathRanker extends PathRanker {
                     // instead of re-pathing toward an off-board enemy it can shell but never reach. Without this, every
                     // path scored the same (distToEnemy == -1 for all of them) and the tube shuffled aimlessly back and
                     // forth - the "2-step".
+                    standoffBranch = "NO_ONBOARD_ENEMY_HOLD";
                     holdingArtilleryInPlace = true;
                     aggressionMod = hexesMoved * ARTILLERY_HOLD_STILL_WEIGHT;
                 } else {
@@ -1206,25 +1255,37 @@ public class BasicPathRanker extends PathRanker {
                           : standoffDistance;
                     double hyperAggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
                     double deficit = standoffDistance - distToEnemy;
+                    standoffDeficit = deficit;
+                    standoffCurrentDist = currentDistToEnemy;
                     boolean startedSafelyBack = currentDistToEnemy >= standoffDistance;
                     if (deficit > 0) {
                         // This path ends inside the standoff: fall back to regain it. Neutralize any positive bravery
                         // (close-range damage) pull so the tube is not lured forward by the damage it could deal there -
                         // a negative bravery (it would take damage) is left intact, since that also argues for falling
                         // back. This is what stops an artillery tube from wading inside its own minimum range.
+                        standoffBranch = "FALL_BACK";
                         aggressionMod = (deficit * ARTILLERY_STANDOFF_URGENCY * hyperAggression)
                               + Math.max(0, braveryMod);
                     } else if (startedSafelyBack) {
                         // Already at or beyond standoff and staying there: hold position so the tube does not shuffle
                         // sideways (which gains nothing and can incur attacker-movement firing penalties); it may still
                         // turn in place to face the enemy. Mirrors setting artillery to Hold Position.
+                        standoffBranch = "HOLD_SAFELY_BACK";
                         holdingArtilleryInPlace = true;
                         aggressionMod = hexesMoved * ARTILLERY_HOLD_STILL_WEIGHT;
                     } else {
                         // Was inside the standoff and this path reaches safety - exactly the retreat we want, so do not
                         // penalize the move; bravery then settles the tube at the standoff edge, its best firing spot.
+                        standoffBranch = "REACHED_SAFETY";
                         holdingArtilleryInPlace = true;
                         aggressionMod = 0;
+                    }
+                    // Never advance the tube: if this path ends closer to the nearest enemy than where it stands now, add
+                    // a hard penalty regardless of branch. A legitimate fall-back only ever increases distance, so this
+                    // never punishes a real retreat - it kills the standoff "creep" where bravery/movement terms lured a
+                    // closer hex over the farther-back option.
+                    if (distToEnemy < currentDistToEnemy) {
+                        aggressionMod += (currentDistToEnemy - distToEnemy) * ARTILLERY_HOLD_STILL_WEIGHT;
                     }
                 }
             }
@@ -1232,6 +1293,8 @@ public class BasicPathRanker extends PathRanker {
             aggressionMod = calculateAggressionMod(movingUnit, pathCopy, game);
         }
         scores.put("closestEnemyDistance", distToEnemy);
+        scores.put("standoffDistance", (double) standoffDistance);
+        scores.put("standoffDeficit", standoffDeficit);
         scores.put("aggressionValue", getOwner().getBehaviorSettings().getHyperAggressionValue());
         scores.put("aggressionIndex", (double) getOwner().getBehaviorSettings().getHyperAggressionIndex());
         scores.put("aggressionMod", aggressionMod);
@@ -1269,11 +1332,19 @@ public class BasicPathRanker extends PathRanker {
               game,
               false,
               1)).map(Targetable::getPosition).orElse(null);
+        // Standoff artillery points at the highest BV concentration (the cluster) rather than the enemy median/nearest
+        // unit: a stable heading toward the dense high-value group keeps its Arrow IV firing arc on target and its rear
+        // protected, and stops it spinning to re-face a fast-moving lone scout each turn. When it is already facing the
+        // cluster (within tolerance) facingMod is 0, so it neither moves nor turns - it only re-faces if the cluster
+        // genuinely shifts.
+        Coords facingTarget = (standoffArtillery && (highValueClusterPosition != null))
+              ? highValueClusterPosition
+              : null;
         double facingMod = calculateFacingMod(movingUnit,
               game,
               pathCopy,
-              medianEnemyPosition,
-              closestEnemyPositionNotZeroDistance);
+              (facingTarget != null) ? facingTarget : medianEnemyPosition,
+              (facingTarget != null) ? facingTarget : closestEnemyPositionNotZeroDistance);
         scores.put("finalFacing", (double) pathCopy.getFinalFacing());
         scores.put("facingDiff", facingMod / FACING_MOD_MULTIPLIER);
         scores.put("facingMod", facingMod);
@@ -1325,6 +1396,11 @@ public class BasicPathRanker extends PathRanker {
               .append(LOG_DECIMAL.format(distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game)))
               .append(" * ")
               .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getHyperAggressionValue()))
+              .append("; standoff: ").append(standoffBranch)
+              .append(" standoffDist=").append(standoffDistance)
+              .append(" distToEnemy=").append(LOG_DECIMAL.format(distToEnemy))
+              .append(" curDist=").append(LOG_DECIMAL.format(standoffCurrentDist))
+              .append(" deficit=").append(LOG_DECIMAL.format(standoffDeficit))
               .append("] - herdingMod [");
         if (friendsCoords != null) {
             formula.append(LOG_DECIMAL.format(herdingMod))

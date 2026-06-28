@@ -109,6 +109,12 @@ public class ArtilleryTargetingControl {
     // of unobserved indirect fire. This makes the bot spend homing ammo when - and only when - a spotter is in place.
     private static final double TAG_GUIDED_HIT_ODDS = 0.75;
 
+    // Multiplier applied to a crippled (forced-withdrawal) target's value when ranking TAG/homing targets. A crippled
+    // unit is already mission-killed, so it is heavily deprioritized - the bot should not spend a TAG and a homing
+    // strike finishing a near-dead unit (which, being downed/easy to hit, would otherwise win on hit-probability alone)
+    // while real threats remain.
+    private static final double CRIPPLED_TARGET_TAG_FACTOR = 0.1;
+
     // per TacOps, this is the to-hit modifier for indirect artillery attacks.
     private static final int ARTILLERY_ATTACK_MODIFIER = 7;
 
@@ -1556,15 +1562,23 @@ public class ArtilleryTargetingControl {
     /**
      * @param target A candidate TAG/homing target
      *
-     * @return A relative "worth killing" value for ranking targets - the target's initial battle value (BV) for an
-     *       entity (so an assault outranks a light), or a neutral {@code 1.0} for non-entity targets (ranked by to-hit
-     *       alone). Floored at {@code 1.0} so a zero-BV target still ranks by its hit probability.
+     * @return A relative "worth killing" value for ranking targets - the target's CURRENT battle value (BV), which
+     *       reflects damage already taken (a battered unit is worth less), for an entity (so an assault outranks a
+     *       light), further reduced for a crippled (mission-killed) target; or a neutral {@code 1.0} for non-entity
+     *       targets (ranked by to-hit alone). Floored at {@code 1.0} so even a deprioritized target still ranks by its
+     *       hit probability.
      */
     private double tagTargetValue(Targetable target) {
-        if (target instanceof Entity entity) {
-            return Math.max(1.0, entity.getInitialBV());
+        if (!(target instanceof Entity entity)) {
+            return 1.0;
         }
-        return 1.0;
+        // Current (damage-adjusted) BV, not initial BV, so a battered high-tonnage unit is valued by what is left of it.
+        double value = Math.max(1.0, entity.calculateBattleValue());
+        if (entity.isCrippled()) {
+            // Already mission-killed: don't spend a TAG/homing strike finishing it while real threats remain.
+            value *= CRIPPLED_TARGET_TAG_FACTOR;
+        }
+        return Math.max(1.0, value);
     }
 
     private static class HelperAmmo {

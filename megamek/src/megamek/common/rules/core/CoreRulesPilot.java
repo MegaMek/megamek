@@ -47,10 +47,16 @@ import java.util.Vector;
 
 public class CoreRulesPilot extends RulesPilot {
 
-    private Vector<Report> doPilotHits(Entity e, int hit, int crewPos, boolean toughness, TWGameManager twGameManager) {
+    // Handle pilot hits. Core p.117
+    public Vector<Report> pilotHits(Game game, Entity e, int totalHits, int damage, int crewPos,
+          TWGameManager twGameManager) {
+        boolean toughness = game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS);
         Vector<Report> vDesc = new Vector<>();
 
+        int hit = totalHits - damage + 1;
+
         int rollTarget = Game.rulesManager.getRulesCharts().escalatingFailure(hit);
+
         if (toughness) {
             rollTarget -= e.getCrew().getToughness(crewPos);
         }
@@ -110,20 +116,7 @@ public class CoreRulesPilot extends RulesPilot {
             }
             return vDesc;
         }
-    }
-    // Handle pilot hits. Core p.117
-    public Vector<Report> pilotHits(Game game, Entity e, int totalHits, int damage, int crewPos,
-          TWGameManager twGameManager) {
-        boolean toughness = game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS);
-        Vector<Report> vDesc = new Vector<>();
 
-        if (game.getPhase() == GamePhase.MOVEMENT) {
-            for (int hit = (totalHits - damage) + 1; hit <= totalHits; hit++) {
-                vDesc = doPilotHits(e, hit, crewPos, toughness, twGameManager);
-            }
-        } else {
-                int hit = (totalHits - damage) + 1;
-                vDesc = doPilotHits(e,hit,crewPos,toughness, twGameManager);
-        }
+        return vDesc;
     }
 }

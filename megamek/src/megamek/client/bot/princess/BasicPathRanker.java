@@ -122,6 +122,10 @@ public class BasicPathRanker extends PathRanker {
 
     protected int blackIce = -1;
 
+    // Per-spotter memory of the last priority target it positioned for, keyed by the spotter's entity id. Drives the
+    // TAG-spotter positioning hysteresis so it keeps painting one high-value target instead of flipping each turn.
+    private final Map<Integer, Integer> lastSpotterPriorityTarget = new HashMap<>();
+
     public BasicPathRanker(Princess owningPrincess) {
         super(owningPrincess);
         bestDamageByEnemies = new TreeMap<>();
@@ -701,6 +705,19 @@ public class BasicPathRanker extends PathRanker {
     // the bot prefers a non-jumping path and only jumps when that is the only way to reach a designating position.
     private static final double TAG_JUMP_PENALTY = 10.0;
 
+    // TAG-spotter priority-target tuning (designation-zone positioning). A crippled (mission-killed) enemy is worth
+    // far less as a TAG/homing target, so it is heavily deprioritized when choosing the priority target.
+    private static final double SPOTTER_CRIPPLED_VALUE_FACTOR = 0.1;
+
+    // Hysteresis: the spotter keeps painting its current (persisted) priority target across turns unless a different
+    // enemy is worth at least this multiple of it - stops a round-to-round flip onto a marginally higher-value unit.
+    private static final double SPOTTER_PRIORITY_SWITCH_MARGIN = 1.5;
+
+    // Penalty for a candidate hex that cannot designate the priority target (no line of sight or out of TAG range). It
+    // is added to a pull toward the target, so the spotter moves to regain a shot; large enough that any hex that CAN
+    // designate the priority target is preferred. Tunable from the [TagPos] log.
+    private static final double TAG_NO_PRIORITY_LOS_PENALTY = 200.0;
+
     /**
      * @param unit The unit being moved
      *
@@ -772,6 +789,106 @@ public class BasicPathRanker extends PathRanker {
             }
         }
         return clusterAnchor;
+    }
+
+    /**
+     * The spotter's priority target this turn and where the choice came from.
+     *
+     * @param target The enemy to position for and paint, or {@code null} if there is no on-board enemy
+     * @param source {@code "PERSISTED"} (held from a previous turn), {@code "VALUE"} (this turn's highest-value enemy),
+     *               or {@code "none"} (no target)
+     */
+    private record SpotterPriority(@Nullable Entity target, String source) {}
+
+    /**
+     * @param entity An enemy entity
+     *
+     * @return The entity's "worth painting" value - current (damage-adjusted) battle value, heavily reduced for a
+     *       crippled (mission-killed) unit - mirrors {@code ArtilleryTargetingControl.tagTargetValue} so positioning
+     *       and firing agree on which target matters.
+     */
+    private double spotterTargetValue(Entity entity) {
+        double value = Math.max(1.0, entity.calculateBattleValue());
+        if (entity.isCrippled()) {
+            value *= SPOTTER_CRIPPLED_VALUE_FACTOR;
+        }
+        return Math.max(1.0, value);
+    }
+
+    /**
+     * @param enemies The enemy units
+     *
+     * @return The deployed on-board enemy with the highest {@link #spotterTargetValue}, or {@code null} if there is
+     *       none
+     */
+    private @Nullable Entity highestValueEnemy(List<Entity> enemies) {
+        Entity best = null;
+        double bestValue = -1.0;
+        for (Entity enemy : enemies) {
+            if (!enemy.isDeployed() || enemy.isOffBoard() || (enemy.getPosition() == null)) {
+                continue;
+            }
+            double value = spotterTargetValue(enemy);
+            if (value > bestValue) {
+                bestValue = value;
+                best = enemy;
+            }
+        }
+        return best;
+    }
+
+    /**
+     * Picks the enemy a TAG spotter should position for and paint this turn. It keeps last turn's target (persistence)
+     * while that target is still a live, on-board enemy and no other enemy is worth at least
+     * {@link #SPOTTER_PRIORITY_SWITCH_MARGIN} times as much - otherwise it locks onto the current highest-value enemy.
+     * Because the homing tubes also commit to the highest-value enemy, the spotter and the missiles converge on the
+     * same target from shared game state, without messaging.
+     *
+     * @param spotter The TAG-carrying spotter being moved
+     * @param enemies The enemy units
+     * @param game    The current game
+     *
+     * @return The chosen priority target and its source (never {@code null}; its {@code target()} is {@code null} only
+     *       when there is no on-board enemy)
+     */
+    private SpotterPriority determineSpotterPriorityTarget(Entity spotter, List<Entity> enemies, Game game) {
+        Entity highestValue = highestValueEnemy(enemies);
+        if (highestValue == null) {
+            lastSpotterPriorityTarget.remove(spotter.getId());
+            return new SpotterPriority(null, "none");
+        }
+        Integer persistedId = lastSpotterPriorityTarget.get(spotter.getId());
+        if (persistedId != null) {
+            Entity persisted = game.getEntity(persistedId);
+            boolean persistedValid = (persisted != null) && persisted.isDeployed() && !persisted.isOffBoard()
+                  && (persisted.getPosition() != null) && persisted.isEnemyOf(spotter) && !persisted.isDestroyed();
+            if (persistedValid && (spotterTargetValue(highestValue)
+                  < (SPOTTER_PRIORITY_SWITCH_MARGIN * spotterTargetValue(persisted)))) {
+                lastSpotterPriorityTarget.put(spotter.getId(), persisted.getId());
+                return new SpotterPriority(persisted, "PERSISTED");
+            }
+        }
+        lastSpotterPriorityTarget.put(spotter.getId(), highestValue.getId());
+        return new SpotterPriority(highestValue, "VALUE");
+    }
+
+    /**
+     * @param tagUnit  The TAG-carrying spotter
+     * @param from     The hex it would designate from (a path's final position)
+     * @param target   The specific enemy it wants to designate
+     * @param tagRange The spotter's TAG range
+     * @param game     The current game
+     *
+     * @return {@code true} if, from the given hex, the spotter has both TAG range and line of sight to that specific
+     *       target (so it can actually paint it for the homing rounds)
+     */
+    private boolean canDesignateTarget(Entity tagUnit, @Nullable Coords from, Entity target, int tagRange, Game game) {
+        Coords targetPosition = target.getPosition();
+        if ((from == null) || (tagRange <= 0) || (targetPosition == null)) {
+            return false;
+        }
+        return (from.distance(targetPosition) <= tagRange)
+              && LosEffects.calculateLOS(game, tagUnit, target, from, targetPosition, true).canSee();
     }
 
     /**
@@ -1205,32 +1322,64 @@ public class BasicPathRanker extends PathRanker {
         String standoffBranch = "none";
         double standoffDeficit = 0.0;
         double standoffCurrentDist = -1.0;
+        // TAG-spotter positioning diagnostics ([TagPos]): which target it positions for, where it came from, and the
+        // shot it can get from the chosen hex - so a playtest can see why the spotter moved where it did.
+        String prioritySource = "none";
+        String priorityTargetName = "-";
+        int priorityTargetId = -1;
+        double distToPriority = -1.0;
+        boolean losToPriority = false;
         if (!isNotAirborne) {
             aggressionMod = 0;
         } else if (standoffDistance > 0) {
             boolean tagSpotter = !hasOperationalArtillery(movingUnit);
             if (tagSpotter) {
-                // A spotter that can actually designate from this hex (line of sight + TAG range to an enemy) holds its
-                // standoff band; one that cannot see a target closes to regain line of sight - but only down to a
-                // minimum safe distance, so a fragile spotter never charges to point-blank just to get a shot.
-                boolean canDesignate = canDesignateFrom(movingUnit, path.getFinalCoords(), enemies,
-                      maxOperationalTagRange(movingUnit), game);
-                if (canDesignate) {
-                    standoffBranch = "TAG_DESIGNATE";
-                    // Stand off relative to the high-BV cluster, not the nearest unit, so a lone scout cannot decoy it.
-                    aggressionMod = Math.abs(distToCluster - standoffDistance)
-                          * getOwner().getBehaviorSettings().getHyperAggressionValue();
-                    // Prefer to walk/run when this hex can already designate: jumping would add a large attacker-moved
-                    // penalty to the TAG roll and likely waste the designation. Still allow a jump if it is the only way
-                    // to reach a designating position (the penalty just makes a non-jumping option win when one exists).
-                    if (path.isJumping()) {
-                        aggressionMod += TAG_JUMP_PENALTY;
+                // Position for a TAG shot on the PRIORITY target (the highest-value enemy, held across turns), not just
+                // any enemy. Every hex with line of sight + TAG range to it is acceptable (a designation ZONE, not a
+                // single ring); within the safe-and-accurate band [MIN_TAG_STANDOFF_DISTANCE, standoffDistance] the
+                // positioning penalty is flat, so survivability/herding choose the hex. A hex that cannot designate the
+                // priority target is penalized and pulled toward regaining line of sight on it.
+                int tagRange = maxOperationalTagRange(movingUnit);
+                double hyperAggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
+                SpotterPriority priority = determineSpotterPriorityTarget(movingUnit, enemies, game);
+                Entity priorityTarget = priority.target();
+                prioritySource = priority.source();
+                if ((priorityTarget != null) && (priorityTarget.getPosition() != null)) {
+                    priorityTargetName = priorityTarget.getShortName();
+                    priorityTargetId = priorityTarget.getId();
+                    distToPriority = path.getFinalCoords().distance(priorityTarget.getPosition());
+                    losToPriority = canDesignateTarget(movingUnit,
+                          path.getFinalCoords(),
+                          priorityTarget,
+                          tagRange,
+                          game);
+                    if (losToPriority) {
+                        standoffBranch = "TAG_DESIGNATE";
+                        if (distToPriority > standoffDistance) {
+                            aggressionMod = (distToPriority - standoffDistance) * hyperAggression;
+                        } else if (distToPriority < MIN_TAG_STANDOFF_DISTANCE) {
+                            aggressionMod = (MIN_TAG_STANDOFF_DISTANCE - distToPriority) * hyperAggression;
+                        } else {
+                            // Inside the zone: any hex here is an equally good TAG position - let other terms decide.
+                            aggressionMod = 0;
+                        }
+                        // Prefer to walk/run when this hex can already designate: jumping piles a large attacker-moved
+                        // penalty onto the TAG roll and likely wastes the designation a homing round relies on.
+                        if (path.isJumping()) {
+                            aggressionMod += TAG_JUMP_PENALTY;
+                        }
+                    } else {
+                        // Cannot designate the priority target from here: move toward line of sight / range on it.
+                        standoffBranch = "TAG_CLOSE";
+                        aggressionMod = TAG_NO_PRIORITY_LOS_PENALTY
+                              + (Math.max(0, distToPriority - standoffDistance) * hyperAggression);
                     }
                 } else {
-                    standoffBranch = "TAG_CLOSE";
-                    // Close toward the high-BV cluster (down to the minimum safe distance), not toward the nearest unit.
-                    aggressionMod = Math.abs(distToCluster - MIN_TAG_STANDOFF_DISTANCE)
-                          * getOwner().getBehaviorSettings().getHyperAggressionValue();
+                    // No identifiable priority target (no on-board enemy): fall back to the cluster-distance band.
+                    boolean canDesignate = canDesignateFrom(movingUnit, path.getFinalCoords(), enemies, tagRange, game);
+                    standoffBranch = canDesignate ? "TAG_DESIGNATE" : "TAG_CLOSE";
+                    int band = canDesignate ? standoffDistance : MIN_TAG_STANDOFF_DISTANCE;
+                    aggressionMod = Math.abs(distToCluster - band) * hyperAggression;
                 }
             } else {
                 // Artillery holds position - it fires from range and the enemy closes on its own, so it should never
@@ -1295,6 +1444,9 @@ public class BasicPathRanker extends PathRanker {
         scores.put("closestEnemyDistance", distToEnemy);
         scores.put("standoffDistance", (double) standoffDistance);
         scores.put("standoffDeficit", standoffDeficit);
+        scores.put("distToCluster", distToCluster);
+        scores.put("distToPriority", distToPriority);
+        scores.put("priorityTargetId", (double) priorityTargetId);
         scores.put("aggressionValue", getOwner().getBehaviorSettings().getHyperAggressionValue());
         scores.put("aggressionIndex", (double) getOwner().getBehaviorSettings().getHyperAggressionIndex());
         scores.put("aggressionMod", aggressionMod);
@@ -1400,8 +1552,15 @@ public class BasicPathRanker extends PathRanker {
               .append(" standoffDist=").append(standoffDistance)
               .append(" distToEnemy=").append(LOG_DECIMAL.format(distToEnemy))
               .append(" curDist=").append(LOG_DECIMAL.format(standoffCurrentDist))
-              .append(" deficit=").append(LOG_DECIMAL.format(standoffDeficit))
-              .append("] - herdingMod [");
+              .append(" deficit=").append(LOG_DECIMAL.format(standoffDeficit));
+        if (!"none".equals(prioritySource)) {
+            formula.append(" [TagPos] priority=").append(priorityTargetName)
+                  .append("/").append(prioritySource)
+                  .append(" distToPriority=").append(LOG_DECIMAL.format(distToPriority))
+                  .append(" distToCluster=").append(LOG_DECIMAL.format(distToCluster))
+                  .append(" losPriority=").append(losToPriority);
+        }
+        formula.append("] - herdingMod [");
         if (friendsCoords != null) {
             formula.append(LOG_DECIMAL.format(herdingMod))
                   .append(" = ")

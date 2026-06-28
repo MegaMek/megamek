@@ -35,7 +35,6 @@ package megamek.common.rules.core;
 
 import megamek.common.Report;
 import megamek.common.compute.Compute;
-import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;

@@ -4086,14 +4086,11 @@ public class Compute {
                             // Other armor-penetrating ammo types should be
                             // tested here, such as Tandem-charge SRMs
 
-                            // PLAYTEST added
                             if (((ammoBinType.getAmmoType() == AmmoTypeEnum.AC)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.LAC)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.AC_IMP)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.PAC))
-                                  && (ammoBinType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)
-                                  || ammoBinType.getMunitionType()
-                                  .contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST))) {
+                                  && (ammoBinType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING))) {
                                 if ((target instanceof Mek) || (target instanceof Tank)) {
                                     ammoMultiple = 1.0 + (weaponType.getRackSize() / 10.0);
                                 }

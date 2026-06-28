@@ -37,4 +37,16 @@ package megamek.common.rules.core;
 import megamek.common.rules.RulesCharts;
 
 public class CoreRulesCharts extends RulesCharts {
+    // Escalating failure rules. Same as pilot numbers. Core p.111, 180
+    public int escalatingFailure(int round) {
+        return switch (round) {
+                case 0 -> 2;
+                case 1 -> 3;
+                case 2 -> 5;
+                case 3 -> 7;
+                case 4 -> 10;
+                case 5 -> 11;
+                default -> Integer.MAX_VALUE;
+        };
+    }
 }

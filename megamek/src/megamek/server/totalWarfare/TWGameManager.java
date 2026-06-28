@@ -18627,7 +18627,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return A completed <code>Report</code> if the position was assumed by another crew members, otherwise null.
      */
-    private Report createCrewTakeoverReport(Entity e, int slot, boolean wasPilot, boolean wasGunner) {
+    public Report createCrewTakeoverReport(Entity e, int slot, boolean wasPilot, boolean wasGunner) {
         if (wasPilot && e.getCrew().getCurrentPilotIndex() != slot) {
             Report r = new Report(5560);
             r.subject = e.getId();
@@ -18674,69 +18674,7 @@ public class TWGameManager extends AbstractGameManager {
             return vDesc;
         }
 
-        for (int hit = (totalHits - damage) + 1; hit <= totalHits; hit++) {
-            int rollTarget = Compute.getConsciousnessNumber(hit);
-            if (game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
-                rollTarget -= e.getCrew().getToughness(crewPos);
-            }
-            boolean edgeUsed = false;
-            do {
-                if (edgeUsed) {
-                    e.getCrew().decreaseEdge();
-                }
-                Roll diceRoll = Compute.rollD6(2);
-                int rollValue = diceRoll.getIntValue();
-                String rollCalc = String.valueOf(rollValue);
-
-                if (e.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE)) {
-                    rollValue = Math.min(12, rollValue + 1);
-                    rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 1] max 12";
-                }
-
-                Report r = new Report(6030);
-                r.indent(2);
-                r.subject = e.getId();
-                r.add(e.getCrew().getCrewType().getRoleName(crewPos));
-                r.addDesc(e);
-                r.add(e.getCrew().getName(crewPos));
-                r.add(rollTarget);
-                r.addDataWithTooltip(rollCalc, diceRoll.getReport());
-
-                if (rollValue >= rollTarget) {
-                    e.getCrew().setKoThisRound(false, crewPos);
-                    r.choose(true);
-                } else {
-                    e.getCrew().setKoThisRound(true, crewPos);
-                    r.choose(false);
-                    if (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
-                          e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)) {
-                        edgeUsed = true;
-                        vDesc.add(r);
-                        r = new Report(6520);
-                        r.subject = e.getId();
-                        r.addDesc(e);
-                        r.add(e.getCrew().getName(crewPos));
-                        r.add(e.getCrew().getOptions().intOption(OptionsConstants.EDGE));
-                    } // if
-                    // return true;
-                } // else
-                vDesc.add(r);
-            } while (e.getCrew().isKoThisRound(crewPos) &&
-                  (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
-                        e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)));
-            // end of do-while
-            if (e.getCrew().isKoThisRound(crewPos)) {
-                boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;
-                boolean wasGunner = e.getCrew().getCurrentGunnerIndex() == crewPos;
-                e.getCrew().setUnconscious(true, crewPos);
-                Report r = createCrewTakeoverReport(e, crewPos, wasPilot, wasGunner);
-                if (null != r) {
-                    vDesc.add(r);
-                }
-                return vDesc;
-            }
-        }
-        return vDesc;
+        return Game.rulesManager.getRulesPilot().pilotHits(game, e, totalHits, damage, crewPos, this);
     }
 
     /**
@@ -18765,7 +18703,7 @@ public class TWGameManager extends AbstractGameManager {
                             rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 1] max 12";
                         }
 
-                        int rollTarget = Compute.getConsciousnessNumber(entity.getCrew().getHits(pos));
+                        int rollTarget = Game.rulesManager.getRulesCharts().escalatingFailure(entity.getCrew().getHits(pos));
                         Report r = new Report(6029);
                         r.subject = entity.getId();
                         r.add(entity.getCrew().getCrewType().getRoleName(pos));

@@ -5530,25 +5530,6 @@ public class Compute {
     }
 
     /**
-     * Returns the consciousness roll number
-     *
-     * @param hit - the <code>int</code> number of the crew hit currently being rolled.
-     *
-     * @return The <code>int</code> number that must be rolled on 2d6 for the crew to stay conscious.
-     */
-    public static int getConsciousnessNumber(int hit) {
-        return switch (hit) {
-            case 0 -> 2;
-            case 1 -> 3;
-            case 2 -> 5;
-            case 3 -> 7;
-            case 4 -> 10;
-            case 5 -> 11;
-            default -> Integer.MAX_VALUE;
-        };
-    }
-
-    /**
      * Check for ferrous metal content in terrain on path from a to b return the total content.
      */
     public static int getMetalInPath(Entity ae, Coords a, Coords b) {

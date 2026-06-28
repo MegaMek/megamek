@@ -33,5 +33,16 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.Report;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.server.totalWarfare.TWGameManager;
+
+import java.util.Vector;
+
 public abstract class RulesPilot {
+
+    // Handle pilot hits
+    public abstract Vector<Report> pilotHits(Game game, Entity e, int totalHits, int damage, int crewPos,
+          TWGameManager twGameManager);
 }

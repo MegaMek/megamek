@@ -33,7 +33,97 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.Report;
+import megamek.common.compute.Compute;
+import megamek.common.enums.GamePhase;
+import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesPilot;
+import megamek.common.units.Entity;
+import megamek.server.totalWarfare.TWGameManager;
+
+import java.util.Vector;
 
 public class CoreRulesPilot extends RulesPilot {
+
+    private Vector<Report> doPilotHits(Entity e, int hit, int crewPos, boolean toughness, TWGameManager twGameManager) {
+        Vector<Report> vDesc = new Vector<>();
+
+        int rollTarget = Game.rulesManager.getRulesCharts().escalatingFailure(hit);
+        if (toughness) {
+            rollTarget -= e.getCrew().getToughness(crewPos);
+        }
+        boolean edgeUsed = false;
+        do {
+            if (edgeUsed) {
+                e.getCrew().decreaseEdge();
+            }
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollCalc = String.valueOf(rollValue);
+
+            if (e.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE)) {
+                rollValue = Math.min(12, rollValue + 1);
+                rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 1] max 12";
+            }
+
+            Report r = new Report(6030);
+            r.indent(2);
+            r.subject = e.getId();
+            r.add(e.getCrew().getCrewType().getRoleName(crewPos));
+            r.addDesc(e);
+            r.add(e.getCrew().getName(crewPos));
+            r.add(rollTarget);
+            r.addDataWithTooltip(rollCalc, diceRoll.getReport());
+
+            if (rollValue >= rollTarget) {
+                e.getCrew().setKoThisRound(false, crewPos);
+                r.choose(true);
+            } else {
+                e.getCrew().setKoThisRound(true, crewPos);
+                r.choose(false);
+                if (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
+                      e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)) {
+                    edgeUsed = true;
+                    vDesc.add(r);
+                    r = new Report(6520);
+                    r.subject = e.getId();
+                    r.addDesc(e);
+                    r.add(e.getCrew().getName(crewPos));
+                    r.add(e.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                } // if
+                // return true;
+            } // else
+            vDesc.add(r);
+        } while (e.getCrew().isKoThisRound(crewPos) &&
+              (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
+                    e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)));
+        // end of do-while
+        if (e.getCrew().isKoThisRound(crewPos)) {
+            boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;
+            boolean wasGunner = e.getCrew().getCurrentGunnerIndex() == crewPos;
+            e.getCrew().setUnconscious(true, crewPos);
+            Report r = twGameManager.createCrewTakeoverReport(e, crewPos, wasPilot, wasGunner);
+            if (null != r) {
+                vDesc.add(r);
+            }
+            return vDesc;
+        }
+    }
+    // Handle pilot hits. Core p.117
+    public Vector<Report> pilotHits(Game game, Entity e, int totalHits, int damage, int crewPos,
+          TWGameManager twGameManager) {
+        boolean toughness = game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS);
+        Vector<Report> vDesc = new Vector<>();
+
+        if (game.getPhase() == GamePhase.MOVEMENT) {
+            for (int hit = (totalHits - damage) + 1; hit <= totalHits; hit++) {
+                vDesc = doPilotHits(e, hit, crewPos, toughness, twGameManager);
+            }
+        } else {
+                int hit = (totalHits - damage) + 1;
+                vDesc = doPilotHits(e,hit,crewPos,toughness, twGameManager);
+        }
+    }
 }

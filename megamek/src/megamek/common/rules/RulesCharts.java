@@ -36,4 +36,6 @@ package megamek.common.rules;
 
 
 public abstract class RulesCharts {
+    // Escalating failures charts
+    public abstract int escalatingFailure(int round);
 }

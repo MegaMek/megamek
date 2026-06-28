@@ -48,6 +48,7 @@ import megamek.common.game.Game;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.Entity;
+import megamek.logging.MMLogger;
 
 /**
  * Sends artillery call-for-fire "net toasts" (Shot / Splash, counter-battery, homing-inbound reminders) to the
@@ -57,6 +58,8 @@ import megamek.common.units.Entity;
  * @author HammerGS
  */
 public class ArtilleryNotifications {
+    private static final MMLogger LOGGER = MMLogger.create(ArtilleryNotifications.class);
+
     private final TWGameManager gameManager;
 
     // De-duplicates artillery call-for-fire toasts so a multi-tube volley raises one toast per moment, not per tube.
@@ -81,6 +84,7 @@ public class ArtilleryNotifications {
     public void sendArtilleryNetToast(String momentKey, Entity firingEntity, int momentRound) {
         Player owner = firingEntity.getOwner();
         if (owner == null) {
+            LOGGER.debug("[Artillery] No net toast for {}: firing entity has no owner", firingEntity.getShortName());
             return;
         }
         // Reset the per-round dedupe set when the round advances so it stays bounded over a long game.
@@ -90,6 +94,8 @@ public class ArtilleryNotifications {
         }
         String dedupeKey = firingEntity.getId() + ":" + momentKey + ":" + momentRound;
         if (!sentNetToasts.add(dedupeKey)) {
+            LOGGER.debug("[Artillery] Net toast '{}' for {} already sent this round - skipping duplicate",
+                  momentKey, owner.getName());
             return;
         }
         String message = Messages.getString("Artillery.netToast." + momentKey, owner.getName());
@@ -115,6 +121,8 @@ public class ArtilleryNotifications {
           int momentRound) {
         Player observerOwner = observer.getOwner();
         if ((observerOwner == null) || (enemyBattery == null) || (impactHex == null)) {
+            LOGGER.debug("[Artillery] No counter-battery toast for {}: owner={}, enemyBattery={}, impactHex={}",
+                  observer.getShortName(), observerOwner, enemyBattery, impactHex);
             return;
         }
         if (momentRound != sentNetToastsRound) {
@@ -123,6 +131,8 @@ public class ArtilleryNotifications {
         }
         String dedupeKey = "counterBattery:" + enemyBattery.getId() + ":" + observerOwner.getTeam() + ":" + momentRound;
         if (!sentNetToasts.add(dedupeKey)) {
+            LOGGER.debug("[Artillery] Counter-battery toast for battery {} already sent to team {} this round",
+                  enemyBattery.getId(), observerOwner.getTeam());
             return;
         }
         String message = Messages.getString("Artillery.counterBatteryToast",
@@ -143,6 +153,7 @@ public class ArtilleryNotifications {
      */
     public void remindHomingArtilleryInbound() {
         Game game = gameManager.getGame();
+        int remindersSent = 0;
         for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks.hasMoreElements(); ) {
             ArtilleryAttackAction artilleryAttack = attacks.nextElement();
             // <= 1 covers both the move phase before the landing turn and the landing turn's own move phase (after the
@@ -157,7 +168,11 @@ public class ArtilleryNotifications {
             Entity firingEntity = artilleryAttack.getEntity(game);
             if (firingEntity != null) {
                 sendArtilleryNetToast("homingInbound", firingEntity, game.getRoundCount());
+                remindersSent++;
             }
+        }
+        if (remindersSent > 0) {
+            LOGGER.debug("[Artillery] Reminded teams of {} inbound homing round(s) to TAG this turn", remindersSent);
         }
     }
 

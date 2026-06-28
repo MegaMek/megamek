@@ -2068,7 +2068,7 @@ public class ClientGUI extends AbstractClientGUI
                 // would otherwise never reach the server and enemy rounds would stay hidden. The server's reply
                 // refreshes the list.
                 getClient().sendArtilleryRevealPreference(
-                      GUIP.getBoolean(GUIPreferences.ADVANCED_REVEAL_ALL_ARTILLERY_ROUNDS));
+                      GUIP.getBoolean(GUIPreferences.REVEAL_ALL_ARTILLERY_ROUNDS));
                 getRoundsInAirDialog().refresh();
             }
             getRoundsInAirDialog().setVisible(visible);
@@ -3769,8 +3769,8 @@ public class ClientGUI extends AbstractClientGUI
             case GUIPreferences.MINI_MAP_ENABLED -> setMapVisible(GUIP.getMinimapEnabled());
             case GUIPreferences.PLAYER_LIST_ENABLED -> setPlayerListVisible(GUIP.getPlayerListEnabled());
             case GUIPreferences.ROUNDS_IN_AIR_ENABLED -> setRoundsInAirVisible(GUIP.getRoundsInAirEnabled());
-            case GUIPreferences.ADVANCED_REVEAL_ALL_ARTILLERY_ROUNDS -> {
-                getClient().sendArtilleryRevealPreference(GUIP.getBoolean(GUIPreferences.ADVANCED_REVEAL_ALL_ARTILLERY_ROUNDS));
+            case GUIPreferences.REVEAL_ALL_ARTILLERY_ROUNDS -> {
+                getClient().sendArtilleryRevealPreference(GUIP.getBoolean(GUIPreferences.REVEAL_ALL_ARTILLERY_ROUNDS));
                 if (roundsInAirDialog != null) {
                     roundsInAirDialog.refresh();
                 }

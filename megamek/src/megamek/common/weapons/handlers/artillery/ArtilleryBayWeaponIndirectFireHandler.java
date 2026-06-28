@@ -203,7 +203,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             return true;
         }
         final Vector<Integer> spottersBefore = aaa.getSpotterIds();
-        Coords origPos = target.getPosition();
+        Coords originalPosition = target.getPosition();
         Coords targetPos = target.getPosition();
         final int playerId = aaa.getPlayerId();
         boolean targetIsEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
@@ -411,10 +411,10 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                   + game.getPlayer(aaa.getPlayerId()).getName();
             SpecialHexDisplay bayMissMarker = new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_MISS,
                   game.getRoundCount(), game.getPlayer(aaa.getPlayerId()), artyMsg);
-            game.getBoard().addSpecialHexDisplay(origPos, bayMissMarker);
+            game.getBoard().addSpecialHexDisplay(originalPosition, bayMissMarker);
             while (numWeaponsHit > 0) {
                 // We'll generate a new report and scatter for each weapon fired
-                targetPos = Compute.scatterDirectArty(origPos, moF);
+                targetPos = Compute.scatterDirectArty(originalPosition, moF);
                 if (game.getBoard().contains(targetPos)) {
                     targets.add(targetPos);
                     // The bay scatters each weapon separately; draw the drift line to the first on-board impact.
@@ -528,7 +528,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 // Deliver a round to each target hex
                 for (Coords c : targets) {
 
-                    handleArtilleryDriftMarker(origPos, c, aaa,
+                    handleArtilleryDriftMarker(originalPosition, c, aaa,
                           gameManager.deliverArtilleryInferno(c, attackingEntity, subjectId, vPhaseReport));
                 }
             }
@@ -619,7 +619,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 if (!mineClear && game.containsMinefield(c)) {
                     ArtilleryHandlerHelper.getMinefields(vPhaseReport, c, game, attackingEntity, gameManager);
                 }
-                handleArtilleryDriftMarker(origPos, c, aaa,
+                handleArtilleryDriftMarker(originalPosition, c, aaa,
                       gameManager.artilleryDamageArea(c, ammoType, subjectId, attackingEntity, isFlak,
                             height, mineClear, vPhaseReport, asfFlak));
             }

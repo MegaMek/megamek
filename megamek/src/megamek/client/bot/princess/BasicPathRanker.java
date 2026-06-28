@@ -892,6 +892,185 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
+     * The result of evaluating one candidate path against the artillery / TAG-spotter standoff doctrine: the aggression
+     * modifier to apply plus the diagnostics surfaced in the {@code [Move]} breakdown.
+     *
+     * @param aggressionMod           the standoff aggression penalty for this path
+     * @param holdingArtilleryInPlace {@code true} if the tube is holding position (skip the movement-TMM reward)
+     * @param standoffArtillery       {@code true} for the artillery-tube branch (ignores the herd pull, faces the
+     *                                cluster)
+     * @param branch                  the branch that fired (e.g. {@code TAG_DESIGNATE}, {@code FALL_BACK},
+     *                                {@code none})
+     * @param deficit                 how far inside its standoff the tube ends (artillery branch), else {@code 0}
+     * @param currentDist             the tube's current distance to the nearest enemy (artillery branch), else
+     *                                {@code -1}
+     * @param prioritySource          where the spotter's priority came from
+     *                                ({@code PERSISTED}/{@code VALUE}/{@code none})
+     * @param priorityTargetName      the spotter's priority target display name, or {@code "-"}
+     * @param priorityTargetId        the spotter's priority target id, or {@code -1}
+     * @param distToPriority          distance from the path end to the priority target, or {@code -1}
+     * @param losToPriority           {@code true} if the path end can designate the priority target
+     */
+    private record StandoffEvaluation(double aggressionMod, boolean holdingArtilleryInPlace, boolean standoffArtillery,
+          String branch, double deficit, double currentDist, String prioritySource, String priorityTargetName,
+          int priorityTargetId, double distToPriority, boolean losToPriority) {}
+
+    /**
+     * Evaluates one candidate path against the artillery / TAG-spotter standoff doctrine. Extracted from
+     * {@link #rankPath} to keep that method readable: artillery tubes hold or fall back to a standoff distance and
+     * never advance the tube; TAG spotters position in a designation zone around their highest-value priority target.
+     *
+     * @param movingUnit       the unit being moved
+     * @param path             the candidate path
+     * @param pathCopy         a clone of the path (used by the non-standoff aggression calculation)
+     * @param game             the current game
+     * @param enemies          the enemy units
+     * @param isNotAirborne    {@code false} for an airborne aero on a ground map (which ignores aggression)
+     * @param standoffDistance the desired standoff distance (already including the closure buffer), or {@code 0}
+     * @param distToEnemy      this path's distance to the nearest enemy
+     * @param distToCluster    this path's distance to the highest-BV enemy cluster
+     * @param braveryMod       this path's bravery modifier (neutralized when a tube falls back inside its standoff)
+     *
+     * @return the standoff evaluation for this path
+     */
+    private StandoffEvaluation evaluateStandoff(Entity movingUnit, MovePath path, MovePath pathCopy, Game game,
+          List<Entity> enemies, boolean isNotAirborne, int standoffDistance, double distToEnemy, double distToCluster,
+          double braveryMod) {
+        boolean holdingArtilleryInPlace = false;
+        // True whenever this unit is being ranked by the artillery standoff branch (whether safely holding or falling
+        // back). Such a tube ignores the herd pull entirely so it never creeps toward the advancing friendly line.
+        boolean standoffArtillery = false;
+        double aggressionMod;
+        // Diagnostics for the artillery/TAG standoff decision, surfaced in the [Move] breakdown so a playtest can see
+        // which branch drove a tube's move and pinpoint a 2-step shuffle (the branch that fires each turn + the deficit).
+        String standoffBranch = "none";
+        double standoffDeficit = 0.0;
+        double standoffCurrentDist = -1.0;
+        // TAG-spotter positioning diagnostics ([TagPos]): which target it positions for, where it came from, and the
+        // shot it can get from the chosen hex - so a playtest can see why the spotter moved where it did.
+        String prioritySource = "none";
+        String priorityTargetName = "-";
+        int priorityTargetId = -1;
+        double distToPriority = -1.0;
+        boolean losToPriority = false;
+        if (!isNotAirborne) {
+            aggressionMod = 0;
+        } else if (standoffDistance > 0) {
+            boolean tagSpotter = !hasOperationalArtillery(movingUnit);
+            if (tagSpotter) {
+                // Position for a TAG shot on the PRIORITY target (the highest-value enemy, held across turns), not just
+                // any enemy. Every hex with line of sight + TAG range to it is acceptable (a designation ZONE, not a
+                // single ring); within the safe-and-accurate band [MIN_TAG_STANDOFF_DISTANCE, standoffDistance] the
+                // positioning penalty is flat, so survivability/herding choose the hex. A hex that cannot designate the
+                // priority target is penalized and pulled toward regaining line of sight on it.
+                int tagRange = maxOperationalTagRange(movingUnit);
+                double hyperAggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
+                SpotterPriority priority = determineSpotterPriorityTarget(movingUnit, enemies, game);
+                Entity priorityTarget = priority.target();
+                prioritySource = priority.source();
+                if ((priorityTarget != null) && (priorityTarget.getPosition() != null)) {
+                    priorityTargetName = priorityTarget.getShortName();
+                    priorityTargetId = priorityTarget.getId();
+                    distToPriority = path.getFinalCoords().distance(priorityTarget.getPosition());
+                    losToPriority = canDesignateTarget(movingUnit,
+                          path.getFinalCoords(),
+                          priorityTarget,
+                          tagRange,
+                          game);
+                    if (losToPriority) {
+                        standoffBranch = "TAG_DESIGNATE";
+                        if (distToPriority > standoffDistance) {
+                            aggressionMod = (distToPriority - standoffDistance) * hyperAggression;
+                        } else if (distToPriority < MIN_TAG_STANDOFF_DISTANCE) {
+                            aggressionMod = (MIN_TAG_STANDOFF_DISTANCE - distToPriority) * hyperAggression;
+                        } else {
+                            // Inside the zone: any hex here is an equally good TAG position - let other terms decide.
+                            aggressionMod = 0;
+                        }
+                        // Prefer to walk/run when this hex can already designate: jumping piles a large attacker-moved
+                        // penalty onto the TAG roll and likely wastes the designation a homing round relies on.
+                        if (path.isJumping()) {
+                            aggressionMod += TAG_JUMP_PENALTY;
+                        }
+                    } else {
+                        // Cannot designate the priority target from here: move toward line of sight / range on it.
+                        standoffBranch = "TAG_CLOSE";
+                        aggressionMod = TAG_NO_PRIORITY_LOS_PENALTY
+                              + (Math.max(0, distToPriority - standoffDistance) * hyperAggression);
+                    }
+                } else {
+                    // No identifiable priority target (no on-board enemy): fall back to the cluster-distance band.
+                    boolean canDesignate = canDesignateFrom(movingUnit, path.getFinalCoords(), enemies, tagRange, game);
+                    standoffBranch = canDesignate ? "TAG_DESIGNATE" : "TAG_CLOSE";
+                    int band = canDesignate ? standoffDistance : MIN_TAG_STANDOFF_DISTANCE;
+                    aggressionMod = Math.abs(distToCluster - band) * hyperAggression;
+                }
+            } else {
+                // Artillery holds position - it fires from range and the enemy closes on its own, so it should never
+                // walk its tube forward. Its floor is the larger of how far back it already is and the minimum indirect
+                // range.
+                standoffArtillery = true;
+                double hexesMoved = (movingUnit.getPosition() != null)
+                      ? movingUnit.getPosition().distance(path.getFinalCoords())
+                      : 0;
+                if (distToEnemy < 0) {
+                    // No on-board enemy to stand off from (e.g. they all fled off-board): the tube can already deliver
+                    // indirect and counter-battery fire on off-board targets from where it stands, so it holds position
+                    // instead of re-pathing toward an off-board enemy it can shell but never reach. Without this, every
+                    // path scored the same (distToEnemy == -1 for all of them) and the tube shuffled aimlessly back and
+                    // forth - the "2-step".
+                    standoffBranch = "NO_ONBOARD_ENEMY_HOLD";
+                    holdingArtilleryInPlace = true;
+                    aggressionMod = hexesMoved * ARTILLERY_HOLD_STILL_WEIGHT;
+                } else {
+                    double currentDistToEnemy = (movingUnit.getPosition() != null)
+                          ? distanceToClosestEnemy(movingUnit, movingUnit.getPosition(), game)
+                          : standoffDistance;
+                    double hyperAggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
+                    double deficit = standoffDistance - distToEnemy;
+                    standoffDeficit = deficit;
+                    standoffCurrentDist = currentDistToEnemy;
+                    boolean startedSafelyBack = currentDistToEnemy >= standoffDistance;
+                    if (deficit > 0) {
+                        // This path ends inside the standoff: fall back to regain it. Neutralize any positive bravery
+                        // (close-range damage) pull so the tube is not lured forward by the damage it could deal there -
+                        // a negative bravery (it would take damage) is left intact, since that also argues for falling
+                        // back. This is what stops an artillery tube from wading inside its own minimum range.
+                        standoffBranch = "FALL_BACK";
+                        aggressionMod = (deficit * ARTILLERY_STANDOFF_URGENCY * hyperAggression)
+                              + Math.max(0, braveryMod);
+                    } else if (startedSafelyBack) {
+                        // Already at or beyond standoff and staying there: hold position so the tube does not shuffle
+                        // sideways (which gains nothing and can incur attacker-movement firing penalties); it may still
+                        // turn in place to face the enemy. Mirrors setting artillery to Hold Position.
+                        standoffBranch = "HOLD_SAFELY_BACK";
+                        holdingArtilleryInPlace = true;
+                        aggressionMod = hexesMoved * ARTILLERY_HOLD_STILL_WEIGHT;
+                    } else {
+                        // Was inside the standoff and this path reaches safety - exactly the retreat we want, so do not
+                        // penalize the move; bravery then settles the tube at the standoff edge, its best firing spot.
+                        standoffBranch = "REACHED_SAFETY";
+                        holdingArtilleryInPlace = true;
+                        aggressionMod = 0;
+                    }
+                    // Never advance the tube: if this path ends closer to the nearest enemy than where it stands now, add
+                    // a hard penalty regardless of branch. A legitimate fall-back only ever increases distance, so this
+                    // never punishes a real retreat - it kills the standoff "creep" where bravery/movement terms lured a
+                    // closer hex over the farther-back option.
+                    if (distToEnemy < currentDistToEnemy) {
+                        aggressionMod += (currentDistToEnemy - distToEnemy) * ARTILLERY_HOLD_STILL_WEIGHT;
+                    }
+                }
+            }
+        } else {
+            aggressionMod = calculateAggressionMod(movingUnit, pathCopy, game);
+        }
+        return new StandoffEvaluation(aggressionMod, holdingArtilleryInPlace, standoffArtillery, standoffBranch,
+              standoffDeficit, standoffCurrentDist, prioritySource, priorityTargetName, priorityTargetId,
+              distToPriority, losToPriority);
+    }
+
+    /**
      * @param unit The unit to check
      *
      * @return {@code true} if the unit has an undamaged artillery weapon (so it should fight from standoff range as a tube)
@@ -1312,135 +1491,19 @@ public class BasicPathRanker extends PathRanker {
             // how much faster the average enemy is than this unit (0 if it can outrun them).
             standoffDistance += Math.max(0, averageEnemyRunMP(enemies) - movingUnit.getRunMP());
         }
-        boolean holdingArtilleryInPlace = false;
-        // True whenever this unit is being ranked by the artillery standoff branch (whether safely holding or falling
-        // back). Such a tube ignores the herd pull entirely so it never creeps toward the advancing friendly line.
-        boolean standoffArtillery = false;
-        double aggressionMod;
-        // Diagnostics for the artillery/TAG standoff decision, surfaced in the [Move] breakdown so a playtest can see
-        // which branch drove a tube's move and pinpoint a 2-step shuffle (the branch that fires each turn + the deficit).
-        String standoffBranch = "none";
-        double standoffDeficit = 0.0;
-        double standoffCurrentDist = -1.0;
-        // TAG-spotter positioning diagnostics ([TagPos]): which target it positions for, where it came from, and the
-        // shot it can get from the chosen hex - so a playtest can see why the spotter moved where it did.
-        String prioritySource = "none";
-        String priorityTargetName = "-";
-        int priorityTargetId = -1;
-        double distToPriority = -1.0;
-        boolean losToPriority = false;
-        if (!isNotAirborne) {
-            aggressionMod = 0;
-        } else if (standoffDistance > 0) {
-            boolean tagSpotter = !hasOperationalArtillery(movingUnit);
-            if (tagSpotter) {
-                // Position for a TAG shot on the PRIORITY target (the highest-value enemy, held across turns), not just
-                // any enemy. Every hex with line of sight + TAG range to it is acceptable (a designation ZONE, not a
-                // single ring); within the safe-and-accurate band [MIN_TAG_STANDOFF_DISTANCE, standoffDistance] the
-                // positioning penalty is flat, so survivability/herding choose the hex. A hex that cannot designate the
-                // priority target is penalized and pulled toward regaining line of sight on it.
-                int tagRange = maxOperationalTagRange(movingUnit);
-                double hyperAggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
-                SpotterPriority priority = determineSpotterPriorityTarget(movingUnit, enemies, game);
-                Entity priorityTarget = priority.target();
-                prioritySource = priority.source();
-                if ((priorityTarget != null) && (priorityTarget.getPosition() != null)) {
-                    priorityTargetName = priorityTarget.getShortName();
-                    priorityTargetId = priorityTarget.getId();
-                    distToPriority = path.getFinalCoords().distance(priorityTarget.getPosition());
-                    losToPriority = canDesignateTarget(movingUnit,
-                          path.getFinalCoords(),
-                          priorityTarget,
-                          tagRange,
-                          game);
-                    if (losToPriority) {
-                        standoffBranch = "TAG_DESIGNATE";
-                        if (distToPriority > standoffDistance) {
-                            aggressionMod = (distToPriority - standoffDistance) * hyperAggression;
-                        } else if (distToPriority < MIN_TAG_STANDOFF_DISTANCE) {
-                            aggressionMod = (MIN_TAG_STANDOFF_DISTANCE - distToPriority) * hyperAggression;
-                        } else {
-                            // Inside the zone: any hex here is an equally good TAG position - let other terms decide.
-                            aggressionMod = 0;
-                        }
-                        // Prefer to walk/run when this hex can already designate: jumping piles a large attacker-moved
-                        // penalty onto the TAG roll and likely wastes the designation a homing round relies on.
-                        if (path.isJumping()) {
-                            aggressionMod += TAG_JUMP_PENALTY;
-                        }
-                    } else {
-                        // Cannot designate the priority target from here: move toward line of sight / range on it.
-                        standoffBranch = "TAG_CLOSE";
-                        aggressionMod = TAG_NO_PRIORITY_LOS_PENALTY
-                              + (Math.max(0, distToPriority - standoffDistance) * hyperAggression);
-                    }
-                } else {
-                    // No identifiable priority target (no on-board enemy): fall back to the cluster-distance band.
-                    boolean canDesignate = canDesignateFrom(movingUnit, path.getFinalCoords(), enemies, tagRange, game);
-                    standoffBranch = canDesignate ? "TAG_DESIGNATE" : "TAG_CLOSE";
-                    int band = canDesignate ? standoffDistance : MIN_TAG_STANDOFF_DISTANCE;
-                    aggressionMod = Math.abs(distToCluster - band) * hyperAggression;
-                }
-            } else {
-                // Artillery holds position - it fires from range and the enemy closes on its own, so it should never
-                // walk its tube forward. Its floor is the larger of how far back it already is and the minimum indirect
-                // range.
-                standoffArtillery = true;
-                double hexesMoved = (movingUnit.getPosition() != null)
-                      ? movingUnit.getPosition().distance(path.getFinalCoords())
-                      : 0;
-                if (distToEnemy < 0) {
-                    // No on-board enemy to stand off from (e.g. they all fled off-board): the tube can already deliver
-                    // indirect and counter-battery fire on off-board targets from where it stands, so it holds position
-                    // instead of re-pathing toward an off-board enemy it can shell but never reach. Without this, every
-                    // path scored the same (distToEnemy == -1 for all of them) and the tube shuffled aimlessly back and
-                    // forth - the "2-step".
-                    standoffBranch = "NO_ONBOARD_ENEMY_HOLD";
-                    holdingArtilleryInPlace = true;
-                    aggressionMod = hexesMoved * ARTILLERY_HOLD_STILL_WEIGHT;
-                } else {
-                    double currentDistToEnemy = (movingUnit.getPosition() != null)
-                          ? distanceToClosestEnemy(movingUnit, movingUnit.getPosition(), game)
-                          : standoffDistance;
-                    double hyperAggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
-                    double deficit = standoffDistance - distToEnemy;
-                    standoffDeficit = deficit;
-                    standoffCurrentDist = currentDistToEnemy;
-                    boolean startedSafelyBack = currentDistToEnemy >= standoffDistance;
-                    if (deficit > 0) {
-                        // This path ends inside the standoff: fall back to regain it. Neutralize any positive bravery
-                        // (close-range damage) pull so the tube is not lured forward by the damage it could deal there -
-                        // a negative bravery (it would take damage) is left intact, since that also argues for falling
-                        // back. This is what stops an artillery tube from wading inside its own minimum range.
-                        standoffBranch = "FALL_BACK";
-                        aggressionMod = (deficit * ARTILLERY_STANDOFF_URGENCY * hyperAggression)
-                              + Math.max(0, braveryMod);
-                    } else if (startedSafelyBack) {
-                        // Already at or beyond standoff and staying there: hold position so the tube does not shuffle
-                        // sideways (which gains nothing and can incur attacker-movement firing penalties); it may still
-                        // turn in place to face the enemy. Mirrors setting artillery to Hold Position.
-                        standoffBranch = "HOLD_SAFELY_BACK";
-                        holdingArtilleryInPlace = true;
-                        aggressionMod = hexesMoved * ARTILLERY_HOLD_STILL_WEIGHT;
-                    } else {
-                        // Was inside the standoff and this path reaches safety - exactly the retreat we want, so do not
-                        // penalize the move; bravery then settles the tube at the standoff edge, its best firing spot.
-                        standoffBranch = "REACHED_SAFETY";
-                        holdingArtilleryInPlace = true;
-                        aggressionMod = 0;
-                    }
-                    // Never advance the tube: if this path ends closer to the nearest enemy than where it stands now, add
-                    // a hard penalty regardless of branch. A legitimate fall-back only ever increases distance, so this
-                    // never punishes a real retreat - it kills the standoff "creep" where bravery/movement terms lured a
-                    // closer hex over the farther-back option.
-                    if (distToEnemy < currentDistToEnemy) {
-                        aggressionMod += (currentDistToEnemy - distToEnemy) * ARTILLERY_HOLD_STILL_WEIGHT;
-                    }
-                }
-            }
-        } else {
-            aggressionMod = calculateAggressionMod(movingUnit, pathCopy, game);
-        }
+        StandoffEvaluation standoff = evaluateStandoff(movingUnit, path, pathCopy, game, enemies, isNotAirborne,
+              standoffDistance, distToEnemy, distToCluster, braveryMod);
+        double aggressionMod = standoff.aggressionMod();
+        boolean holdingArtilleryInPlace = standoff.holdingArtilleryInPlace();
+        boolean standoffArtillery = standoff.standoffArtillery();
+        String standoffBranch = standoff.branch();
+        double standoffDeficit = standoff.deficit();
+        double standoffCurrentDist = standoff.currentDist();
+        String prioritySource = standoff.prioritySource();
+        String priorityTargetName = standoff.priorityTargetName();
+        int priorityTargetId = standoff.priorityTargetId();
+        double distToPriority = standoff.distToPriority();
+        boolean losToPriority = standoff.losToPriority();
         scores.put("closestEnemyDistance", distToEnemy);
         scores.put("standoffDistance", (double) standoffDistance);
         scores.put("standoffDeficit", standoffDeficit);

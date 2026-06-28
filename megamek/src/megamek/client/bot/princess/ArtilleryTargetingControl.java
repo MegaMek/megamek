@@ -483,7 +483,7 @@ public class ArtilleryTargetingControl {
         // Count how many enemies are predicted to converge on this hex (accumulate, do not overwrite) so the heat -
         // and the marker opacity it drives - reflects every enemy feeding the hex.
         heatMapPredictedHexes.merge(predicted, 1, Integer::sum);
-        LOGGER.info("{}: leading {} (move {}, flight {}) {} hexes toward force centre {} -> predicted impact {}",
+        LOGGER.debug("{}: leading {} (move {}, flight {}) {} hexes toward force centre {} -> predicted impact {}",
               owner.getLocalPlayer().getName(), enemy.getDisplayName(), moveRate, flightTime, leadHexes, anchor,
               predicted);
         return predicted;
@@ -675,23 +675,84 @@ public class ArtilleryTargetingControl {
     }
 
     /**
-     * Counts friendly (same-team) homing rounds already declared this targeting phase whose aim hex is within homing
-     * radius of the given designation - i.e. rounds already committed to home onto that target. Lets the team stop
-     * over-committing homing past a target's weight-class cap, coordinating across separate bot players via
-     * {@link Game#getActions()} (the same mechanism as the artillery dog-pile spread).
+     * Whether a candidate homing shot is worth firing, computed from the committed designations and the shot's legality.
+     *
+     * @param designation         the committed TAG designation this shot would home onto (within
+     *                            {@link Compute#HOMING_RADIUS}), or {@code null} if the shot is aimed outside every one
+     * @param saturated           {@code true} if that designation already has its weight-class fill of homing committed
+     * @param guidedByTag         {@code true} if this is a legal homing shot guided onto a non-saturated designation
+     * @param unguidedAutonomous  {@code true} if this is autonomous (non-player-ordered) homing with no guiding
+     *                            designation - it would scatter, so it must not be fired
+     */
+    private record HomingEligibility(@Nullable Coords designation, boolean saturated, boolean guidedByTag,
+          boolean unguidedAutonomous) {}
+
+    /**
+     * Evaluates whether a candidate homing shot is guided (and thus worth a near-certain-hit credit) or should be held.
+     * A homing round homes onto a friendly TAG within {@link Compute#HOMING_RADIUS} of its aim hex, so it is credited
+     * only when it is aimed near a committed designation that is legal to fire at and not already saturated (the team
+     * has its weight-class fill of homing committed, counting both this phase's declarations and rounds already in
+     * flight). Autonomous homing with no guiding designation must not be fired blind - it just scatters.
+     *
+     * @param isHoming                   whether the candidate shot uses a homing round
+     * @param target                     the candidate target
+     * @param wfi                        the candidate weapon-fire info (for the to-hit legality)
+     * @param tagDesignations            the predicted friendly TAG designations this turn
+     * @param homingCommittedThisVolley  homing already committed per designation within this unit's volley
+     * @param shooter                    the firing unit (its team defines "friendly")
+     * @param game                       the current game
+     * @param artilleryCommandAndControl the bot's artillery orders (for the player-ordered-mission check)
+     *
+     * @return the homing eligibility for this shot
+     */
+    private HomingEligibility evaluateHomingEligibility(boolean isHoming, Targetable target, WeaponFireInfo wfi,
+          Map<Coords, Entity> tagDesignations, Map<Coords, Integer> homingCommittedThisVolley, Entity shooter,
+          Game game, ArtilleryCommandAndControl artilleryCommandAndControl) {
+        Coords homingDesignation = (isHoming && (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY))
+              ? nearestDesignationWithinRadius(target.getPosition(), tagDesignations.keySet())
+              : null;
+        boolean designationSaturated = (homingDesignation != null)
+              && ((homingRoundsAlreadyAimedNear(homingDesignation, shooter, game)
+              + homingCommittedThisVolley.getOrDefault(homingDesignation, 0))
+              >= weightClassHomingCap(tagDesignations.get(homingDesignation)));
+        boolean guidedByTag = isHoming
+              && (homingDesignation != null)
+              && !designationSaturated
+              && !wfi.getToHit().cannotSucceed();
+        boolean unguidedAutonomousHoming = isHoming && !guidedByTag
+              && !isOrderedFireMissionTarget(artilleryCommandAndControl, target);
+        return new HomingEligibility(homingDesignation, designationSaturated, guidedByTag, unguidedAutonomousHoming);
+    }
+
+    /**
+     * Counts friendly (same-team) homing rounds already committed to home onto the given designation, so the team stops
+     * over-committing past a target's weight-class cap. This is the sum of two sources:
+     * <ul>
+     *   <li>rounds <em>declared this targeting phase</em> ({@link Game#getActions()}) - cross-bot coordination, the
+     *       same mechanism as the artillery dog-pile spread; and</li>
+     *   <li>rounds <em>already in flight</em> from previous turns ({@link Game#getArtilleryAttacks()}) - rounds inbound
+     *       to this target count against its cap too, so the team does not pour fresh salvos onto a target that already
+     *       has enough homing on the way to kill it (the multi-round over-commit seen in playtests).</li>
+     * </ul>
      *
      * @param designation The predicted designation hex
      * @param shooter     The firing unit, whose team defines "friendly"
      * @param game        The current game
      *
-     * @return The number of friendly homing rounds already aimed within {@link Compute#HOMING_RADIUS} of the
-     *       designation
+     * @return The number of friendly homing rounds (declared this phase plus already in flight) aimed within
+     *       {@link Compute#HOMING_RADIUS} of the designation
      */
     private int homingRoundsAlreadyAimedNear(Coords designation, Entity shooter, Game game) {
         int count = 0;
         for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements(); ) {
             if ((actions.nextElement() instanceof ArtilleryAttackAction artilleryAttack)
                   && isFriendlyHomingNear(artilleryAttack, designation, shooter, game)) {
+                count++;
+            }
+        }
+        for (Enumeration<ArtilleryAttackAction> inFlightAttacks = game.getArtilleryAttacks();
+              inFlightAttacks.hasMoreElements(); ) {
+            if (isFriendlyHomingNear(inFlightAttacks.nextElement(), designation, shooter, game)) {
                 count++;
             }
         }
@@ -802,7 +863,7 @@ public class ArtilleryTargetingControl {
                 for (int facingChange : FireControl.getValidFacingChanges(shooter)) {
                     FiringPlan twistedPlan = calculateIndirectArtilleryPlan(shooter, game, owner, facingChange);
                     if (!twistedPlan.isEmpty()) {
-                        LOGGER.info("{}: {} twisting {} to bring artillery to bear",
+                        LOGGER.debug("{}: {} twisting {} to bring artillery to bear",
                               owner.getLocalPlayer().getName(), shooter.getDisplayName(), facingChange);
                         plan = twistedPlan;
                         break;
@@ -1052,9 +1113,10 @@ public class ArtilleryTargetingControl {
         int homingAimMissCount = 0;
         int homingSaturatedCount = 0;
         // Within this unit's volley, how many homing rounds it has already committed to each designation. Combined with
-        // the cross-bot count (game.getActions()), this enforces the per-target weight-class cap so one unit's tubes do
-        // not all pile onto the same light target. Cross-INSTANCE over-commit across separate Princess players is still
-        // only best-effort (separate bots plan before either declares) - see the global-budget TODO in the design doc.
+        // the cross-bot count + in-flight rounds (homingRoundsAlreadyAimedNear), this enforces the per-target
+        // weight-class cap so one unit's tubes do not all pile onto the same target, and the team stops adding salvos to
+        // a target that already has enough homing inbound to kill it. Cross-INSTANCE over-commit across separate
+        // Princess players that plan before either declares is still only best-effort - see the design doc TODO.
         Map<Coords, Integer> homingCommittedThisVolley = new HashMap<>();
         // Of the impossible homing shots, how many were actually aimed within homing radius of a committed designation -
         // i.e. the guided shots the bot WANTED to make but the to-hit rejected as illegal.
@@ -1209,23 +1271,12 @@ public class ArtilleryTargetingControl {
                         // actually legal (a tube inside its minimum indirect range cannot fire at all) and the
                         // designation is not already saturated (the team has its weight-class fill of homing committed,
                         // so a further hit would just overkill that target instead of helping).
-                        Coords homingDesignation = (isHoming
-                              && (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY))
-                              ? nearestDesignationWithinRadius(target.getPosition(), tagDesignations.keySet())
-                              : null;
-                        boolean designationSaturated = (homingDesignation != null)
-                              && ((homingRoundsAlreadyAimedNear(homingDesignation, shooter, game)
-                              + homingCommittedThisVolley.getOrDefault(homingDesignation, 0))
-                              >= weightClassHomingCap(tagDesignations.get(homingDesignation)));
-                        boolean guidedByTag = isHoming
-                              && (homingDesignation != null)
-                              && !designationSaturated
-                              && !wfi.getToHit().cannotSucceed();
-                        // Autonomous homing must be guided: if it is not within a committed designation's radius (and
-                        // the player did not order this hex), do not fire it blind - without a TAG it just scatters.
-                        // This holds homing on turn 1 when no designation exists yet, and ends the old spray.
-                        boolean unguidedAutonomousHoming = isHoming && !guidedByTag
-                              && !isOrderedFireMissionTarget(artilleryCommandAndControl, target);
+                        HomingEligibility homing = evaluateHomingEligibility(isHoming, target, wfi, tagDesignations,
+                              homingCommittedThisVolley, shooter, game, artilleryCommandAndControl);
+                        Coords homingDesignation = homing.designation();
+                        boolean designationSaturated = homing.saturated();
+                        boolean guidedByTag = homing.guidedByTag();
+                        boolean unguidedAutonomousHoming = homing.unguidedAutonomous();
                         if (isHoming) {
                             shooterHasHomingAmmo = true;
                             if (guidedByTag) {
@@ -1316,7 +1367,7 @@ public class ArtilleryTargetingControl {
                             } else if (damageValue == maxDamage) {
                                 topValuedFireInfos.add(wfi);
                             }
-                            LOGGER.info("{}: {} firing ordered homing mission at {} without a confirmed TAG - "
+                            LOGGER.debug("{}: {} firing ordered homing mission at {} without a confirmed TAG - "
                                         + "trusting the player to designate",
                                   owner.getLocalPlayer().getName(), shooter.getDisplayName(), target.getPosition());
                         } else if (isOrderedFireMissionTarget(artilleryCommandAndControl, target)) {
@@ -1363,13 +1414,13 @@ public class ArtilleryTargetingControl {
                           && !guidedHomingShot
                           && !counterBatteryShot
                           && (clusterSizeNear(actualFireInfo, shooter, game) < MIN_AUTO_CLUSTER_UNITS)) {
-                        LOGGER.info("{}: {} holding {} - predicted impact at {} covers fewer than {} units",
+                        LOGGER.debug("{}: {} holding {} - predicted impact at {} covers fewer than {} units",
                               owner.getLocalPlayer().getName(), shooter.getDisplayName(), currentWeapon.getName(),
                               actualFireInfo.getTarget().getPosition(), MIN_AUTO_CLUSTER_UNITS);
                         continue;
                     }
                     if (guidedHomingShot) {
-                        LOGGER.info("{}: {} firing TAG-guided homing at {} - friendly spotter can designate a target "
+                        LOGGER.debug("{}: {} firing TAG-guided homing at {} - friendly spotter can designate a target "
                                     + "within homing radius",
                               owner.getLocalPlayer().getName(), shooter.getDisplayName(),
                               actualFireInfo.getTarget().getPosition());
@@ -1385,7 +1436,7 @@ public class ArtilleryTargetingControl {
                         // Record the battery so another tube this phase does not dog-pile it (opportunistic fire only;
                         // a forced counter-battery order ignores this and still commits every tube).
                         counterBatteryAssignedBatteryIds.add(actualFireInfo.getTarget().getId());
-                        LOGGER.info("{}: {} firing counter-battery at observed off-board enemy battery {}",
+                        LOGGER.debug("{}: {} firing counter-battery at observed off-board enemy battery {}",
                               owner.getLocalPlayer().getName(), shooter.getDisplayName(),
                               actualFireInfo.getTarget().getDisplayName());
                     }
@@ -1406,7 +1457,7 @@ public class ArtilleryTargetingControl {
                         // Reserve this hex so the unit's remaining tubes spread to other hexes - for ordered volleys and
                         // for automatic fire alike - instead of stacking another shell on the same spot.
                         volleyAssignedHexes.add(actualFireInfo.getTarget().getPosition());
-                        LOGGER.info("{}: {} firing {} ({}) at {} (expected value {}, probability {})",
+                        LOGGER.debug("{}: {} firing {} ({}) at {} (expected value {}, probability {})",
                               owner.getLocalPlayer().getName(), shooter.getDisplayName(),
                               currentWeapon.getName(), actualFireInfo.getAmmo().getType().getShortName(),
                               actualFireInfo.getTarget().getPosition(),
@@ -1432,7 +1483,7 @@ public class ArtilleryTargetingControl {
                               currentWeapon.getName());
                     }
                 } else {
-                    LOGGER.info("{}: {} found no valid fire solution for {} against {} target(s) "
+                    LOGGER.debug("{}: {} found no valid fire solution for {} against {} target(s) "
                                 + "(all zero expected value or zero hit probability)",
                           owner.getLocalPlayer().getName(), shooter.getDisplayName(),
                           currentWeapon.getName(), targetSet.size());
@@ -1442,14 +1493,14 @@ public class ArtilleryTargetingControl {
 
                 if (tagInfo != null) {
                     boolean designated = owner.getDesignatedTagTargets().contains(tagInfo.getTarget().getId());
-                    LOGGER.info("[TAG] {}: {} firing TAG at {} (probability {}){}",
+                    LOGGER.debug("[TAG] {}: {} firing TAG at {} (probability {}){}",
                           owner.getLocalPlayer().getName(), shooter.getDisplayName(),
                           tagInfo.getTarget().getDisplayName(), tagInfo.getProbabilityToHit(),
                           designated ? " - player-designated TAG target" : "");
                     TAGPlan.add(tagInfo);
                     TAGPlan.setUtility(returnValue.getUtility() + tagInfo.getProbabilityToHit());
                 } else {
-                    LOGGER.info("[TAG] {}: {} has a TAG but found no target to TAG this phase",
+                    LOGGER.debug("[TAG] {}: {} has a TAG but found no target to TAG this phase",
                           owner.getLocalPlayer().getName(), shooter.getDisplayName());
                 }
             }

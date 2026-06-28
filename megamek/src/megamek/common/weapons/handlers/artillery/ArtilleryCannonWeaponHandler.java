@@ -164,7 +164,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         } else {
             Board board = game.getBoard(target);
             if (!board.isSpace()) {
-                Coords origPos = targetPos;
+                Coords originalPosition = targetPos;
                 targetPos = Compute.scatter(targetPos, (Math.abs(toHit.getMoS()) + 1) / 2);
                 if (board.contains(targetPos)) {
                     // misses and scatters to another hex
@@ -176,7 +176,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                               "Artillery cannon missed here on round " + game.getRoundCount() + ", drifted to "
                                     + targetPos.getBoardNum());
                         cannonMissMarker.setDriftHex(targetPos);
-                        board.addSpecialHexDisplay(origPos, cannonMissMarker);
+                        board.addSpecialHexDisplay(originalPosition, cannonMissMarker);
                     } else {
                         report = new Report(3192);
                     }

@@ -375,7 +375,6 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return false;
         }
 
-
         // Absolute level / altitude, for blast calculations
         int height = 0;
         Hex finalHex = game.getBoard().getHex(finalPos);

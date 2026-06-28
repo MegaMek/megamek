@@ -227,7 +227,7 @@ public class ArtilleryCommandAndControl {
      *
      * @param shooter the shooter unit
      *
-     * @return true if the shooter has already fired during this volley
+     * @return {@code true} if the shooter has already fired during this volley
      */
     public boolean hasAlreadyFired(Entity shooter) {
         return shooterUnits.contains(shooter.getId());

@@ -2171,12 +2171,12 @@ public final class BoardView extends AbstractBoardView
         if (!firingCountdowns.isEmpty()) {
             // A firing marker's countdown wins over a predicted label; merge distinct countdowns with '/'.
             if ((firingCountdowns.size() == 1) && (firingCountdowns.first() == 0)) {
-                label = "SPLASH";
+                label = Messages.getString("BoardView.artillery.splash");
             } else {
-                label = "T-" + joinValues(firingCountdowns);
+                label = Messages.getString("BoardView.artillery.firingCountdown", joinValues(firingCountdowns));
             }
         } else if (!predictedTurns.isEmpty()) {
-            label = "T" + joinValues(predictedTurns);
+            label = Messages.getString("BoardView.artillery.predictedTurns", joinValues(predictedTurns));
         } else {
             return;
         }

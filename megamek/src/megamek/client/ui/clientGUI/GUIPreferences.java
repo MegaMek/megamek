@@ -346,7 +346,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ROUNDS_IN_AIR_POS_X = "RoundsInAirPosX";
     public static final String ROUNDS_IN_AIR_POS_Y = "RoundsInAirPosY";
     public static final String ROUNDS_IN_AIR_ENABLED = "RoundsInAirEnabled";
-    public static final String ADVANCED_REVEAL_ALL_ARTILLERY_ROUNDS = "AdvancedRevealAllArtilleryRounds";
+    // Hidden testing/debug flag: reveals ALL in-flight artillery (both teams' target hexes) to this client, overriding
+    // the normal hidden-information rule that a player sees only their own and allied rounds' target hexes. Deliberately
+    // NOT prefixed "Advanced" so it does not appear in the Client Settings > Advanced list - it can only be enabled by
+    // manually adding RevealAllArtilleryRounds=true to clientsettings.xml.
+    public static final String REVEAL_ALL_ARTILLERY_ROUNDS = "RevealAllArtilleryRounds";
     public static final String PLAYER_LIST_AUTO_DISPLAY_REPORT_PHASE = "PlayerListAutoDisplayReportPhase";
     public static final String PLAYER_LIST_AUTO_DISPLAY_NON_REPORT_PHASE = "PlayerListAutoDisplayNonReportPhase";
     public static final String MINI_MAP_COLOURS = "MinimapColours";
@@ -855,7 +859,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ROUNDS_IN_AIR_ENABLED, false);
         store.setDefault(ROUNDS_IN_AIR_POS_X, 200);
         store.setDefault(ROUNDS_IN_AIR_POS_Y, 150);
-        store.setDefault(ADVANCED_REVEAL_ALL_ARTILLERY_ROUNDS, false);
+        store.setDefault(REVEAL_ALL_ARTILLERY_ROUNDS, false);
         store.setDefault(PLAYER_LIST_AUTO_DISPLAY_REPORT_PHASE, 1);
         store.setDefault(PLAYER_LIST_AUTO_DISPLAY_NON_REPORT_PHASE, 0);
 

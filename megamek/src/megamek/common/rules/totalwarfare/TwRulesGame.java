@@ -37,4 +37,8 @@ package megamek.common.rules.totalwarfare;
 import megamek.common.rules.core.CoreRulesGame;
 
 public class TwRulesGame extends CoreRulesGame {
+
+    // Ammo dumping is allowed
+    @Override
+    public boolean ammoDumping() { return true; }
 }

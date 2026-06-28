@@ -36,4 +36,5 @@ package megamek.common.rules;
 
 
 public abstract class RulesMovement {
+    public abstract boolean skidEnabled();
 }

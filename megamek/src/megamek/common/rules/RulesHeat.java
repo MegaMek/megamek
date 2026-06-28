@@ -35,4 +35,7 @@ package megamek.common.rules;
 
 
 public abstract class RulesHeat {
+
+    // Does stating generate heat
+    public abstract int standingHeat();
 }

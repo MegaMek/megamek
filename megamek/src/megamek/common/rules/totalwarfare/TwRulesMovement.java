@@ -38,4 +38,10 @@ package megamek.common.rules.totalwarfare;
 import megamek.common.rules.core.CoreRulesMovement;
 
 public class TwRulesMovement extends CoreRulesMovement {
+
+    // TW has skidding
+    @Override
+    public boolean skidEnabled() {
+        return true;
+    }
 }

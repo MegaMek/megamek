@@ -37,4 +37,9 @@ package megamek.common.rules.core;
 import megamek.common.rules.RulesHeat;
 
 public class CoreRulesHeat extends RulesHeat {
+
+    // Attempts to stand do not generate heat Core p.100
+    public int standingHeat() {
+        return 0;
+    }
 }

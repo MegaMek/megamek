@@ -49,4 +49,7 @@ public abstract class RulesPsr {
 
     // Any modifier for standing
     public abstract void standing(PilotingRollData r);
+
+    // Do we need to change facing when we fall?
+    public abstract void facingChangeAfterFall(Entity entity, int facing);
 }

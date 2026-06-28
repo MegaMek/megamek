@@ -8787,6 +8787,10 @@ public abstract class Entity extends TurnOrdered
             return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "units don't skid from getting up");
         }
 
+        if (!Game.rulesManager.getRulesMovement().skidEnabled()) {
+            return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "skidding not enabled");
+        }
+
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         // If we aren't traveling along a road, apply terrain modifiers

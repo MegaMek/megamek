@@ -64,4 +64,7 @@ public class CoreRulesPsr extends RulesPsr {
     public void standing(PilotingRollData r) {
         r.addModifier(-1, "trying to stand");
     }
+
+    // No change of facing after a fall in Core p.115
+    public void facingChangeAfterFall(Entity entity, int facing) {};
 }

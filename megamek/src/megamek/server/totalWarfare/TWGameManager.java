@@ -22617,7 +22617,7 @@ public class TWGameManager extends AbstractGameManager {
             // facing after fall
             String side;
             int table;
-            int facing = Compute.d6() - 1;
+            int facing = Game.rulesManager.getRulesCharts().getFacingForFall();
             table = switch (facing) {
                 case 1, 2 -> {
                     side = "right side";
@@ -24757,8 +24757,7 @@ public class TWGameManager extends AbstractGameManager {
         entity.setElevation(newElevation);
         // Only 'meks change facing when they fall
         if (entity instanceof Mek) {
-            entity.setFacing((entity.getFacing() + (facing)) % 6);
-            entity.setSecondaryFacing(entity.getFacing());
+            Game.rulesManager.getRulesPsr().facingChangeAfterFall(entity, facing);
         }
 
         // if falling into a bog-down hex, the entity automatically gets stuck (except
@@ -24982,7 +24981,11 @@ public class TWGameManager extends AbstractGameManager {
      * The mek falls into an unoccupied hex from the given height above
      */
     private Vector<Report> doEntityFall(Entity entity, Coords fallPos, int height, PilotingRollData roll) {
-        return doEntityFall(entity, fallPos, height, Compute.d6(1) - 1, roll, false, false);
+        return doEntityFall(entity, fallPos, height,
+              Game.rulesManager.getRulesCharts().getFacingForFall(),
+              roll,
+              false,
+              false);
     }
 
     /**

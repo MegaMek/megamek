@@ -34,6 +34,7 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.compute.Compute;
 import megamek.common.rules.RulesCharts;
 
 public class CoreRulesCharts extends RulesCharts {
@@ -48,5 +49,12 @@ public class CoreRulesCharts extends RulesCharts {
                 case 5 -> 11;
                 default -> Integer.MAX_VALUE;
         };
+    }
+
+    public int getFacingForFall() {
+        if (Compute.d6(1) == 1) {
+            return 3;
+        }
+        return 0;
     }
 }

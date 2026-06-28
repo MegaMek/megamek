@@ -38,4 +38,7 @@ package megamek.common.rules;
 public abstract class RulesCharts {
     // Escalating failures charts
     public abstract int escalatingFailure(int round);
+
+    // Get facing for a fall
+    public abstract int getFacingForFall();
 }

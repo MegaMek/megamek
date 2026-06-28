@@ -37,4 +37,8 @@ package megamek.common.rules.totalwarfare;
 import megamek.common.rules.core.CoreRulesHeat;
 
 public class TwRulesHeat extends CoreRulesHeat {
+    // Attempts to stand generates heat
+    public int standingHeat() {
+        return 1;
+    }
 }

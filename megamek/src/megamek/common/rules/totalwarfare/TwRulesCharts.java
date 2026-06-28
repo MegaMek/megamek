@@ -35,7 +35,14 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.common.compute.Compute;
 import megamek.common.rules.core.CoreRulesCharts;
 
 public class TwRulesCharts extends CoreRulesCharts {
+
+    // When falling, roll to see the new facing
+    @Override
+    public int getFacingForFall() {
+        return Compute.d6(1) - 1;
+    }
 }

@@ -49,6 +49,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.game.Game;
 import megamek.common.interfaces.PhaseUpdated;
 import megamek.common.interfaces.RoundUpdated;
 import megamek.common.options.IGameOptions;
@@ -847,7 +848,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public void setPendingDump(boolean b) {
-        m_bPendingDump = b;
+        if (Game.rulesManager.getRulesGame().ammoDumping()) {
+            m_bPendingDump = b;
+        } else  {
+            m_bPendingDump = false;
+        }
     }
 
     public boolean isDumping() {
@@ -855,7 +860,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public void setDumping(boolean b) {
-        m_bDumping = b;
+        if (Game.rulesManager.getRulesGame().ammoDumping()) {
+            m_bDumping = b;
+        } else  {
+            m_bDumping = false;
+        }
     }
 
     /**

@@ -35,4 +35,7 @@ package megamek.common.rules;
 
 
 public abstract class RulesGame {
+
+    // Allow ammo dumping
+    public abstract boolean ammoDumping();
 }

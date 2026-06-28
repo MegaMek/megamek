@@ -38,4 +38,8 @@ package megamek.common.rules.core;
 import megamek.common.rules.RulesMovement;
 
 public class CoreRulesMovement extends RulesMovement {
+    // No skidding in Core Rules
+    public boolean skidEnabled() {
+        return false;
+    }
 }

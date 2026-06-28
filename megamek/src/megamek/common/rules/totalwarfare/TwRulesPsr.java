@@ -60,4 +60,10 @@ public class TwRulesPsr extends CoreRulesPsr {
     // No modifier to stand
     @Override
     public void standing(PilotingRollData r) { }
+
+    @Override
+    public void facingChangeAfterFall(Entity entity, int facing){
+        entity.setFacing((entity.getFacing() + (facing)) % 6);
+        entity.setSecondaryFacing(entity.getFacing());
+    }
 }

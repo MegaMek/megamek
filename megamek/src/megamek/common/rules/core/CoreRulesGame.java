@@ -37,4 +37,9 @@ package megamek.common.rules.core;
 import megamek.common.rules.RulesGame;
 
 public class CoreRulesGame extends RulesGame {
+
+    // Ammo dumping is not in Core
+    public boolean ammoDumping() {
+        return false;
+    }
 }

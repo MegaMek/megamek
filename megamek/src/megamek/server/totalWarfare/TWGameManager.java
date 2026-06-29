@@ -18643,7 +18643,7 @@ public class TWGameManager extends AbstractGameManager {
             return vDesc;
         }
 
-        return Game.rulesManager.getRulesPilot().pilotHits(game, e, totalHits, damage, crewPos, this);
+        return Game.rulesManager.getRulesPilot().pilotHits(game, e, totalHits, damage, crewPos);
     }
 
     /**

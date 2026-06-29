@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,41 +35,35 @@ package megamek.client.bot.princess.commands;
 import java.util.List;
 
 import megamek.client.bot.Messages;
-import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
-import megamek.server.commands.arguments.MultiWordStringArgument;
+import megamek.server.commands.arguments.BooleanArgument;
 
 /**
- * Command to change the behavior of the bot.
+ * Command to order the bot to hold position: its units stay where they are (they still fight from their current
+ * location) until the hold order is lifted with {@code hold-position : false}.
  *
- * @author Luana Coppio
+ * @author HammerGS
  */
-public class BehaviorCommand implements ChatCommand {
-    private static final String BEHAVIOR = "behavior";
+public class HoldPositionCommand implements ChatCommand {
+    private static final String HOLD = "hold";
 
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-              // saved behavior names may contain spaces, so this must consume all remaining words
-              new MultiWordStringArgument(BEHAVIOR, Messages.getString("Princess.command.behavior.behavior"))
+              new BooleanArgument(HOLD, Messages.getString("Princess.command.holdPosition.hold"), true)
         );
     }
 
     @Override
     public void execute(Princess princess, Arguments arguments) {
-        String behavior = arguments.getString(BEHAVIOR);
-
-        BehaviorSettings newBehavior = BehaviorSettingsFactory.getInstance().getBehavior(behavior);
-
-        if (newBehavior == null) {
-            princess.sendChat(Messages.getString("Princess.command.behavior.unknownBehavior", behavior));
-            return;
+        BooleanArgument holdArgument = arguments.get(HOLD, BooleanArgument.class);
+        princess.setHoldPosition(holdArgument.getValue());
+        if (holdArgument.getValue()) {
+            princess.sendChat(Messages.getString("Princess.command.holdPosition.holding"));
+        } else {
+            princess.sendChat(Messages.getString("Princess.command.holdPosition.resuming"));
         }
-
-        princess.setBehaviorSettings(newBehavior);
-        princess.sendChat(Messages.getString("Princess.command.behavior.behaviorChanged", behavior));
     }
 }

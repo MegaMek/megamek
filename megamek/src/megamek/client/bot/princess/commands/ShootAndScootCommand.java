@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,41 +35,36 @@ package megamek.client.bot.princess.commands;
 import java.util.List;
 
 import megamek.client.bot.Messages;
-import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
-import megamek.server.commands.arguments.MultiWordStringArgument;
+import megamek.server.commands.arguments.BooleanArgument;
 
 /**
- * Command to change the behavior of the bot.
+ * Command to toggle "shoot and scoot" for the bot's artillery. While the bot is holding position, an artillery unit
+ * with usable ammo that has an enemy inside its minimum effective range breaks the hold and displaces to regain
+ * standoff; every other unit keeps holding. Disabled with {@code shoot-and-scoot : false}.
  *
- * @author Luana Coppio
+ * @author HammerGS
  */
-public class BehaviorCommand implements ChatCommand {
-    private static final String BEHAVIOR = "behavior";
+public class ShootAndScootCommand implements ChatCommand {
+    private static final String SCOOT = "scoot";
 
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-              // saved behavior names may contain spaces, so this must consume all remaining words
-              new MultiWordStringArgument(BEHAVIOR, Messages.getString("Princess.command.behavior.behavior"))
+              new BooleanArgument(SCOOT, Messages.getString("Princess.command.shootAndScoot.scoot"), true)
         );
     }
 
     @Override
     public void execute(Princess princess, Arguments arguments) {
-        String behavior = arguments.getString(BEHAVIOR);
-
-        BehaviorSettings newBehavior = BehaviorSettingsFactory.getInstance().getBehavior(behavior);
-
-        if (newBehavior == null) {
-            princess.sendChat(Messages.getString("Princess.command.behavior.unknownBehavior", behavior));
-            return;
+        BooleanArgument scootArgument = arguments.get(SCOOT, BooleanArgument.class);
+        princess.setShootAndScoot(scootArgument.getValue());
+        if (scootArgument.getValue()) {
+            princess.sendChat(Messages.getString("Princess.command.shootAndScoot.enabled"));
+        } else {
+            princess.sendChat(Messages.getString("Princess.command.shootAndScoot.disabled"));
         }
-
-        princess.setBehaviorSettings(newBehavior);
-        princess.sendChat(Messages.getString("Princess.command.behavior.behaviorChanged", behavior));
     }
 }

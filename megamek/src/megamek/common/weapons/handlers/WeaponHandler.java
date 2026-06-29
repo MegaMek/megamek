@@ -2295,25 +2295,26 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
-     * Used by certain artillery handlers to draw drift markers with "hit" graphics if anything is caught in the blast,
-     * or "drift" marker if nothing is damaged. No-op for direct hits.
+     * Used by certain artillery handlers to draw a drift marker at the hex an artillery round actually landed on when it
+     * missed its target. The round is always marked as a drift: a drift that lands on a unit is still a drift, and the
+     * resulting damage is already shown in the combat report. (It must not be marked as a hit - {@link
+     * SpecialHexDisplay#drawNow} deliberately suppresses "hit" markers whose text says they drifted, which would leave
+     * the landing hex with no marker at all.) No-op for direct hits.
+     *
+     * @param targetPos The hex that was targeted
+     * @param finalPos  The hex the round actually drifted to
+     * @param aaa       The artillery attack
+     * @param hitIds    Ids of units caught in the blast; retained because callers produce it as a side effect of
+     *                  resolving the blast damage, but no longer used to choose the marker type
      */
     protected void handleArtilleryDriftMarker(Coords targetPos, Coords finalPos, ArtilleryAttackAction aaa,
           Vector<Integer> hitIds) {
         if (bMissed) {
             String msg = Messages.getString("ArtilleryMessage.drifted") + " " + targetPos.getBoardNum();
-            final SpecialHexDisplay shd;
-            if (hitIds.isEmpty()) {
-                shd = new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_DRIFT,
-                      game.getRoundCount(),
-                      game.getPlayer(aaa.getPlayerId()),
-                      msg);
-            } else {
-                shd = new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
-                      game.getRoundCount(),
-                      game.getPlayer(aaa.getPlayerId()),
-                      msg);
-            }
+            SpecialHexDisplay shd = new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_DRIFT,
+                  game.getRoundCount(),
+                  game.getPlayer(aaa.getPlayerId()),
+                  msg);
             game.getBoard(aaa.getTarget(game)).addSpecialHexDisplay(finalPos, shd);
         }
     }

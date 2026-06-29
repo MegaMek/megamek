@@ -42,6 +42,24 @@
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
+        <RollingFile name="PrincessLog"
+                     fileName="logs/princess.log"
+                     filePattern="logs/princess_%i.log.gz"
+                     append="true"
+                     bufferedIO="false">
+            <PatternLayout pattern="${layout}" />
+            <Policies>
+                <OnStartupTriggeringPolicy minSize="1" />
+                <SizeBasedTriggeringPolicy size="5MB" />
+            </Policies>
+
+            <DefaultRolloverStrategy max="5">
+                <Delete basePath="logs" maxDepth="1">
+                    <IfFileName regex="princess_\d+\.log(\.gz)?$" />
+                    <IfAccumulatedFileSize exceeds="25MB" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
         <File name="MegaMekLog" fileName="logs/megamek.log" append="false">
             <PatternLayout pattern="${layout}" />
         </File>
@@ -58,9 +76,28 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="megamek.client.bot" level="error" additivity="false">
-            <AppenderRef ref="${env:mm.profile:-null}" />
-            <AppenderRef ref="UnifiedLog" />
+        <!--
+          All bot (Princess) decision logging goes to logs/princess.log at debug level for
+          troubleshooting: chat command reception/parsing, artillery orders and fire plans,
+          flee/behavior changes, and movement decisions. Errors are additionally copied to
+          the console profile and the unified log. Set level="trace" for per-path scoring
+          detail (extremely verbose, short test games only).
+        -->
+        <Logger name="megamek.client.bot" level="debug" additivity="false">
+            <AppenderRef ref="PrincessLog" />
+            <AppenderRef ref="${env:mm.profile:-null}" level="error" />
+            <AppenderRef ref="UnifiedLog" level="error" />
+        </Logger>
+        <!--
+          These two log a line for every weapon/target/path evaluation at debug, which rolls the
+          princess.log window over in a single turn and buries the decision lines. Keep them at
+          info; set to debug for per-shot to-hit detail in short test games.
+        -->
+        <Logger name="megamek.client.bot.princess.WeaponFireInfo" level="info" additivity="false">
+            <AppenderRef ref="PrincessLog" />
+        </Logger>
+        <Logger name="megamek.client.bot.princess.Precognition" level="info" additivity="false">
+            <AppenderRef ref="PrincessLog" />
         </Logger>
         <Logger name="BotLogger" level="info" additivity="false">
             <AppenderRef ref="BotLog" />

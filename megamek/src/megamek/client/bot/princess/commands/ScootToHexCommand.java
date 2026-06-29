@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,41 +35,38 @@ package megamek.client.bot.princess.commands;
 import java.util.List;
 
 import megamek.client.bot.Messages;
-import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
-import megamek.server.commands.arguments.MultiWordStringArgument;
+import megamek.server.commands.arguments.HexNumberArgument;
 
 /**
- * Command to change the behavior of the bot.
+ * Command to set a fallback hex the bot's artillery pulls back to under shoot-and-scoot. Threatened artillery heads to
+ * this hex (which may take several turns) and then holds and fires from there. Setting the hex also enables
+ * shoot-and-scoot.
  *
- * @author Luana Coppio
+ * @author HammerGS
  */
-public class BehaviorCommand implements ChatCommand {
-    private static final String BEHAVIOR = "behavior";
+public class ScootToHexCommand implements ChatCommand {
+    private static final String HEX = "hexNumber";
 
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-              // saved behavior names may contain spaces, so this must consume all remaining words
-              new MultiWordStringArgument(BEHAVIOR, Messages.getString("Princess.command.behavior.behavior"))
+              new HexNumberArgument(HEX, Messages.getString("Princess.command.scootToHex.hex"))
         );
     }
 
     @Override
     public void execute(Princess princess, Arguments arguments) {
-        String behavior = arguments.getString(BEHAVIOR);
-
-        BehaviorSettings newBehavior = BehaviorSettingsFactory.getInstance().getBehavior(behavior);
-
-        if (newBehavior == null) {
-            princess.sendChat(Messages.getString("Princess.command.behavior.unknownBehavior", behavior));
+        HexNumberArgument hexArgument = arguments.get(HEX, HexNumberArgument.class);
+        if (!princess.getGame().getBoard().contains(hexArgument.getValue())) {
+            princess.sendChat(Messages.getString("Princess.command.scootToHex.hexNotFound",
+                  hexArgument.getValue().toFriendlyString()));
             return;
         }
-
-        princess.setBehaviorSettings(newBehavior);
-        princess.sendChat(Messages.getString("Princess.command.behavior.behaviorChanged", behavior));
+        princess.setShootAndScootHex(hexArgument.getValue());
+        princess.sendChat(Messages.getString("Princess.command.scootToHex.success",
+              hexArgument.getValue().toFriendlyString()));
     }
 }

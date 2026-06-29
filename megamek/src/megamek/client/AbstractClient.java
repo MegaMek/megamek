@@ -275,6 +275,18 @@ public abstract class AbstractClient implements IClient {
     }
 
     /**
+     * Sends this player's "reveal all artillery rounds" testing preference to the server. When {@code true}, the server
+     * includes enemy artillery attacks in this player's artillery packet so the Rounds in the Air view can show both
+     * sides; when {@code false}, only this player's team's rounds are sent (normal double-blind behavior).
+     *
+     * @param revealAll Whether to reveal all in-flight artillery to this player
+     */
+    public void sendArtilleryRevealPreference(boolean revealAll) {
+        send(new Packet(PacketCommand.CLIENT_ARTILLERY_REVEAL, revealAll));
+        flushConn();
+    }
+
+    /**
      * Receives player information from the message packet.
      *
      * @param packet The packet we received.

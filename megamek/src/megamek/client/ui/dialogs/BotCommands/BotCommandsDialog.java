@@ -69,8 +69,8 @@ public class BotCommandsDialog extends JDialog {
         this.clientGUI = clientGUI;
         this.setTitle(Messages.getString("ClientGUI.BotCommand"));
 
-        this.setSize(UIUtil.scaleForGUI(600, 120));
-        this.setMinimumSize(UIUtil.scaleForGUI(600, 120));
+        this.setSize(UIUtil.scaleForGUI(770, 130));
+        this.setMinimumSize(UIUtil.scaleForGUI(770, 130));
         this.setResizable(true);
 
         // Center on the game window when there is no saved position yet (sentinel -1,-1); otherwise restore the

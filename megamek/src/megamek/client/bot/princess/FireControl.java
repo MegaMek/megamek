@@ -86,6 +86,11 @@ import org.apache.logging.log4j.Level;
 public class FireControl {
     private final static MMLogger LOGGER = MMLogger.create(FireControl.class);
 
+    // A unit whose best firing plan does less than this much expected damage will spot for indirect fire instead of
+    // taking the near-worthless shot (when it has a target in line of sight). Package-visible so Princess applies the
+    // same threshold when choosing spotting over firing. Tunable; full payoff-based selection is tracked as P009.
+    static final double MIN_USEFUL_FIRING_DAMAGE = 1.0;
+
     protected static final double DAMAGE_UTILITY = 1.0;
     protected static final double CRITICAL_UTILITY = 10.0;
     protected static final double KILL_UTILITY = 50.0;
@@ -2588,9 +2593,26 @@ public class FireControl {
         // legally can't spot
         // am firing and don't have a command console to mitigate the spotting penalty
         // otherwise, attempt to spot the closest enemy
-        if (spotter.isSpotting() || !spotter.canSpot() || spotter.isNarcedBy(INarcPod.HAYWIRE) ||
-              (plan != null) && (plan.getExpectedDamage() > 0) &&
-                    !spotter.getCrew().hasActiveCommandConsole()) {
+        // Split the disqualifiers so each failure logs its own reason - a playtest can grep princess.log for
+        // [Spot] to see exactly why a unit did or did not spot.
+        if (spotter.isSpotting()) {
+            LOGGER.debug("[Spot] {}: not spotting - already spotting this round", spotter.getDisplayName());
+            return null;
+        }
+        if (!spotter.canSpot()) {
+            LOGGER.debug("[Spot] {}: not spotting - unit cannot spot (sprinted, off-board, evading or inactive)",
+                  spotter.getDisplayName());
+            return null;
+        }
+        if (spotter.isNarcedBy(INarcPod.HAYWIRE)) {
+            LOGGER.debug("[Spot] {}: not spotting - jammed by a HAYWIRE iNarc pod", spotter.getDisplayName());
+            return null;
+        }
+        boolean firingForUsefulDamage = (plan != null) && (plan.getExpectedDamage() >= MIN_USEFUL_FIRING_DAMAGE);
+        if (firingForUsefulDamage && !spotter.getCrew().hasActiveCommandConsole()) {
+            LOGGER.debug("[Spot] {}: not spotting - firing for {} damage (>= {}) with no command console to offset "
+                        + "the spotting penalty", spotter.getDisplayName(), plan.getExpectedDamage(),
+                  MIN_USEFUL_FIRING_DAMAGE);
             return null;
         }
 
@@ -2632,9 +2654,12 @@ public class FireControl {
         // otherwise, we still can't spot
         if (!closestTargets.isEmpty()) {
             Targetable target = closestTargets.get(Compute.randomInt(closestTargets.size()));
+            LOGGER.debug("[Spot] {}: spotting {} at {} hexes for indirect fire", spotter.getDisplayName(),
+                  target.getDisplayName(), spotter.getPosition().distance(target.getPosition()));
             return new SpotAction(spotter.getId(), target.getId());
         }
 
+        LOGGER.debug("[Spot] {}: not spotting - no enemy in line of sight", spotter.getDisplayName());
         return null;
     }
 

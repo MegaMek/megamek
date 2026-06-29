@@ -81,6 +81,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_KEY_REPEAT_DELAY = "AdvancedKeyRepeatDelay";
     public static final String ADVANCED_KEY_REPEAT_RATE = "AdvancedKeyRepeatRate";
     public static final String ADVANCED_SHOW_FPS = "AdvancedShowFPS";
+    // Testing/observer aid: reveal otherwise-obscured artillery markers (e.g. enemy incoming) on the local view only
+    public static final String ADVANCED_REVEAL_OBSCURED_ARTILLERY = "AdvancedRevealObscuredArtillery";
+    // Testing aid: have Princess paint her artillery heat map (predicted impacts + chosen targets) on the board
+    public static final String ADVANCED_SHOW_BOT_ARTILLERY_HEATMAP = "AdvancedShowBotArtilleryHeatMap";
     public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
     public static final String ADVANCED_SAVE_LOBBY_ON_START = "AdvancedSaveLobbyOnStart";
 
@@ -124,6 +128,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public static final String SHOW_ARTILLERY_MISSES = "ShowArtilleryMisses";
     public static final String SHOW_ARTILLERY_DRIFTS = "ShowArtilleryHits";
+    public static final String SHOW_ARTILLERY_DRIFT_ARROWS = "ShowArtilleryDriftArrows";
     public static final String SHOW_BOMB_MISSES = "ShowBombMisses";
     public static final String SHOW_BOMB_DRIFTS = "ShowBombDrifts";
     public static final String SHOW_DEPLOY_ZONES_ARTY_AUTO = "ShowDeployZonesArtyAuto";
@@ -338,6 +343,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String PLAYER_LIST_POS_X = "PlayerListPosX";
     public static final String PLAYER_LIST_POS_Y = "PlayerListPosY";
     public static final String PLAYER_LIST_ENABLED = "PlayerListEnabled";
+    public static final String ROUNDS_IN_AIR_POS_X = "RoundsInAirPosX";
+    public static final String ROUNDS_IN_AIR_POS_Y = "RoundsInAirPosY";
+    public static final String ROUNDS_IN_AIR_ENABLED = "RoundsInAirEnabled";
+    // Hidden testing/debug flag: reveals ALL in-flight artillery (both teams' target hexes) to this client, overriding
+    // the normal hidden-information rule that a player sees only their own and allied rounds' target hexes. Deliberately
+    // NOT prefixed "Advanced" so it does not appear in the Client Settings > Advanced list - it can only be enabled by
+    // manually adding RevealAllArtilleryRounds=true to clientsettings.xml.
+    public static final String REVEAL_ALL_ARTILLERY_ROUNDS = "RevealAllArtilleryRounds";
     public static final String PLAYER_LIST_AUTO_DISPLAY_REPORT_PHASE = "PlayerListAutoDisplayReportPhase";
     public static final String PLAYER_LIST_AUTO_DISPLAY_NON_REPORT_PHASE = "PlayerListAutoDisplayNonReportPhase";
     public static final String MINI_MAP_COLOURS = "MinimapColours";
@@ -631,6 +644,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(SHOW_ARTILLERY_MISSES, true);
         store.setDefault(SHOW_ARTILLERY_DRIFTS, true);
+        store.setDefault(SHOW_ARTILLERY_DRIFT_ARROWS, true);
+        store.setDefault(ADVANCED_REVEAL_OBSCURED_ARTILLERY, false);
+        store.setDefault(ADVANCED_SHOW_BOT_ARTILLERY_HEATMAP, false);
         store.setDefault(SHOW_BOMB_MISSES, true);
         store.setDefault(SHOW_BOMB_DRIFTS, false);
         store.setDefault(SHOW_DEPLOY_ZONES_ARTY_AUTO, false);
@@ -671,6 +687,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_REPORT_PHASE, 2);
         store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_NON_REPORT_PHASE, 2);
         store.setDefault(FORCE_DISPLAY_ENABLED, false);
+
+        // without these defaults the auto-display values read 0 (= HIDE) and the Bot Commands dialog
+        // is force-hidden on every phase change; 2 (= MANUAL) leaves it as the player set it
+        store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE, 2);
+        store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE, 2);
+        store.setDefault(BOT_COMMANDS_ENABLED, false);
         store.setDefault(FORCE_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(FORCE_DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(FORCE_DISPLAY_BTN_ID, true);
@@ -834,6 +856,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(PLAYER_LIST_ENABLED, true);
         store.setDefault(PLAYER_LIST_POS_X, 200);
         store.setDefault(PLAYER_LIST_POS_Y, 150);
+        store.setDefault(ROUNDS_IN_AIR_ENABLED, false);
+        store.setDefault(ROUNDS_IN_AIR_POS_X, 200);
+        store.setDefault(ROUNDS_IN_AIR_POS_Y, 150);
+        store.setDefault(REVEAL_ALL_ARTILLERY_ROUNDS, false);
         store.setDefault(PLAYER_LIST_AUTO_DISPLAY_REPORT_PHASE, 1);
         store.setDefault(PLAYER_LIST_AUTO_DISPLAY_NON_REPORT_PHASE, 0);
 
@@ -1476,6 +1502,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getPlayerListPosY() {
         return store.getInt(PLAYER_LIST_POS_Y);
+    }
+
+    public boolean getRoundsInAirEnabled() {
+        return store.getBoolean(ROUNDS_IN_AIR_ENABLED);
+    }
+
+    public int getRoundsInAirPosX() {
+        return store.getInt(ROUNDS_IN_AIR_POS_X);
+    }
+
+    public int getRoundsInAirPosY() {
+        return store.getInt(ROUNDS_IN_AIR_POS_Y);
     }
 
     public int getPlayerListAutoDisplayReportPhase() {
@@ -2405,6 +2443,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(PLAYER_LIST_POS_Y, i);
     }
 
+    public void setRoundsInAirEnabled(boolean b) {
+        store.setValue(ROUNDS_IN_AIR_ENABLED, b);
+    }
+
+    public void toggleRoundsInAirEnabled() {
+        setRoundsInAirEnabled(!getRoundsInAirEnabled());
+    }
+
+    public void setRoundsInAirPosX(int i) {
+        store.setValue(ROUNDS_IN_AIR_POS_X, i);
+    }
+
+    public void setRoundsInAirPosY(int i) {
+        store.setValue(ROUNDS_IN_AIR_POS_Y, i);
+    }
+
     public void setPlayerListAutoDisplayReportPhase(int i) {
         store.setValue(PLAYER_LIST_AUTO_DISPLAY_REPORT_PHASE, i);
     }
@@ -3039,6 +3093,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getShowArtilleryDrifts() {
         return getBoolean(SHOW_ARTILLERY_DRIFTS);
+    }
+
+    public void setShowArtilleryDriftArrows(boolean b) {
+        store.setValue(SHOW_ARTILLERY_DRIFT_ARROWS, b);
+    }
+
+    public boolean getShowArtilleryDriftArrows() {
+        return getBoolean(SHOW_ARTILLERY_DRIFT_ARROWS);
     }
 
     public void setShowBombMisses(boolean b) {

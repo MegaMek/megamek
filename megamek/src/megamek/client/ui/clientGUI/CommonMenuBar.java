@@ -98,6 +98,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JCheckBoxMenuItem gameRoundReport = new JCheckBoxMenuItem(getString("CommonMenuBar.viewRoundReport"));
     private final JMenuItem gameEditBots = new JMenuItem(getString("CommonMenuBar.editBots"));
     private final JCheckBoxMenuItem gamePlayerList = new JCheckBoxMenuItem(getString("CommonMenuBar.viewPlayerList"));
+    private final JCheckBoxMenuItem gameRoundsInAir =
+          new JCheckBoxMenuItem(getString("CommonMenuBar.viewRoundsInAir"));
     private final JMenuItem gameGameOptions = new JMenuItem(getString("CommonMenuBar.viewGameOptions"));
     private final JMenuItem gamePlayerSettings = new JMenuItem(getString("CommonMenuBar.viewPlayerSettings"));
     private final JMenuItem gameNetworkInformation = new JMenuItem(getString("CommonMenuBar.viewNetworkInformation"));
@@ -324,6 +326,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(gameRoundReport, menu, VIEW_ROUND_REPORT, GUIP.getMiniReportEnabled());
         GUIP.setPlayerListEnabled(false);
         initMenuItem(gamePlayerList, menu, VIEW_PLAYER_LIST, GUIP.getPlayerListEnabled());
+        GUIP.setRoundsInAirEnabled(false);
+        initMenuItem(gameRoundsInAir, menu, VIEW_ROUNDS_IN_AIR, GUIP.getRoundsInAirEnabled());
         GUIP.setForceDisplayEnabled(false);
         initMenuItem(viewForceDisplay, menu, VIEW_FORCE_DISPLAY, GUIP.getForceDisplayEnabled());
         initMenuItem(viewNovaNetworks, menu, VIEW_NOVA_NETWORKS);
@@ -558,6 +562,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         fileUnitsBrowse.setEnabled(isMainMenu);
         boardSaveAsImageUnits.setEnabled(isInGame);
         gamePlayerList.setEnabled(isInGame);
+        gameRoundsInAir.setEnabled(isInGame);
         viewLabels.setEnabled(isInGameBoardView);
 
         gameGameOptions.setEnabled(isInGame || isLobby);
@@ -635,6 +640,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             case GUIPreferences.FORCE_DISPLAY_ENABLED -> viewForceDisplay.setSelected(GUIP.getForceDisplayEnabled());
             case GUIPreferences.MINI_REPORT_ENABLED -> gameRoundReport.setSelected(GUIP.getMiniReportEnabled());
             case GUIPreferences.PLAYER_LIST_ENABLED -> gamePlayerList.setSelected(GUIP.getPlayerListEnabled());
+            case GUIPreferences.ROUNDS_IN_AIR_ENABLED -> gameRoundsInAir.setSelected(GUIP.getRoundsInAirEnabled());
             case RecentBoardList.RECENT_BOARDS_UPDATED -> initializeRecentBoardsMenu();
             case GUIPreferences.BOT_COMMANDS_ENABLED, GUIPreferences.BOT_COMMANDS_LOCATION ->
                   updateBotCommandsSelection();

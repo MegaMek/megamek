@@ -442,6 +442,21 @@ public class BotCommandsPanel extends JPanel {
         return false;
     }
 
+    /**
+     * @param botPlayer The bot to inspect
+     *
+     * @return {@code true} if the bot owns at least one unit with an artillery weapon (on or off board), so the
+     *       artillery orders menu is worth offering for it - a bot with no artillery is left out of the popup entirely
+     */
+    private boolean botHasArtillery(Player botPlayer) {
+        for (InGameObject unit : getUnitsOwnedBy(botPlayer)) {
+            if ((unit instanceof Entity entity) && entity.hasArtillery()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void holdPosition(Player botPlayer) {
         sendChatCommand(botPlayer, ChatCommands.HOLD_POSITION);
     }
@@ -871,7 +886,7 @@ public class BotCommandsPanel extends JPanel {
             botMenu.add(createArtilleryFireMissionMenu(botPlayer, "ArtilleryVolley", ArtilleryOrder.VOLLEY));
             botMenu.add(createArtilleryFireMissionMenu(botPlayer, "ArtilleryBarrage", ArtilleryOrder.BARRAGE));
             botMenu.add(createCounterBatteryMenu(botPlayer));
-        });
+        }, this::botHasArtillery);
     }
 
     /**

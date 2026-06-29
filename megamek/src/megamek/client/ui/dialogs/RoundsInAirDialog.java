@@ -51,7 +51,9 @@ import javax.swing.table.DefaultTableModel;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.common.Player;
 import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.EnemyArtilleryInbound;
 import megamek.common.board.Coords;
 import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.game.Game;
@@ -112,8 +114,9 @@ public class RoundsInAirDialog extends JDialog {
 
     private static String[] columnNames() {
         return new String[] {
-              Messages.getString("RoundsInAirDialog.col.firedBy"),
+              Messages.getString("RoundsInAirDialog.col.team"),
               Messages.getString("RoundsInAirDialog.col.player"),
+              Messages.getString("RoundsInAirDialog.col.firedBy"),
               Messages.getString("RoundsInAirDialog.col.landsIn"),
               Messages.getString("RoundsInAirDialog.col.targetHex"),
               Messages.getString("RoundsInAirDialog.col.warhead")
@@ -121,49 +124,80 @@ public class RoundsInAirDialog extends JDialog {
     }
 
     /**
-     * Rebuilds the table from the current in-flight artillery attacks, sorted so the soonest-landing rounds are at the
-     * top. Safe to call repeatedly (e.g. on every phase change).
+     * Rebuilds the table from the current in-flight artillery, sorted so the soonest-landing rounds are at the top. Own
+     * and allied rounds are shown in full; enemy rounds (a redacted, team-safe feed from the server) show only their
+     * landing time, with the target hex and warhead listed as "Unknown". Safe to call repeatedly (e.g. on phase change).
      */
     public void refresh() {
         tableModel.setRowCount(0);
         Game game = client.getGame();
+
+        // Own and allied rounds: full detail.
         List<ArtilleryAttackAction> attacks = new ArrayList<>();
         for (Enumeration<ArtilleryAttackAction> attackEnumeration = game.getArtilleryAttacks();
               attackEnumeration.hasMoreElements(); ) {
             attacks.add(attackEnumeration.nextElement());
         }
         attacks.sort(Comparator.comparingInt(ArtilleryAttackAction::getTurnsTilHit));
-
         for (ArtilleryAttackAction attack : attacks) {
             tableModel.addRow(new Object[] {
-                  firingUnitName(game, attack),
-                  playerName(game, attack),
-                  landsInText(attack),
+                  teamName(game, attack.getPlayerId()),
+                  playerName(game, attack.getPlayerId()),
+                  firingUnitName(game, attack.getEntityId()),
+                  landsInText(attack.getTurnsTilHit()),
                   targetHexText(game, attack),
                   warheadName(attack)
             });
         }
+
+        // Enemy rounds: redacted - landing time only; the target hex and warhead are withheld (shown as "Unknown").
+        List<EnemyArtilleryInbound> enemyInbound = new ArrayList<>(game.getEnemyArtilleryInbound());
+        enemyInbound.sort(Comparator.comparingInt(EnemyArtilleryInbound::turnsTilHit));
+        String unknown = Messages.getString("RoundsInAirDialog.unknown");
+        for (EnemyArtilleryInbound inbound : enemyInbound) {
+            tableModel.addRow(new Object[] {
+                  teamName(game, inbound.playerId()),
+                  playerName(game, inbound.playerId()),
+                  firingUnitName(game, inbound.firingEntityId()),
+                  landsInText(inbound.turnsTilHit()),
+                  unknown,
+                  unknown
+            });
+        }
     }
 
-    private static String firingUnitName(Game game, ArtilleryAttackAction attack) {
-        Entity firingEntity = attack.getEntity(game);
+    private static String teamName(Game game, int playerId) {
+        Player player = game.getPlayer(playerId);
+        if (player == null) {
+            return Messages.getString("RoundsInAirDialog.unknownPlayer");
+        }
+        int team = player.getTeam();
+        return ((team >= 0) && (team < Player.TEAM_NAMES.length)) ? Player.TEAM_NAMES[team] : String.valueOf(team);
+    }
+
+    private static String firingUnitName(Game game, int firingEntityId) {
+        Entity firingEntity = game.getEntity(firingEntityId);
         return (firingEntity != null) ? firingEntity.getShortName()
               : Messages.getString("RoundsInAirDialog.unknownUnit");
     }
 
-    private static String playerName(Game game, ArtilleryAttackAction attack) {
-        return (game.getPlayer(attack.getPlayerId()) != null) ? game.getPlayer(attack.getPlayerId()).getName()
-              : Messages.getString("RoundsInAirDialog.unknownPlayer");
+    private static String playerName(Game game, int playerId) {
+        Player player = game.getPlayer(playerId);
+        return (player != null) ? player.getName() : Messages.getString("RoundsInAirDialog.unknownPlayer");
     }
 
-    private static String landsInText(ArtilleryAttackAction attack) {
-        int turns = attack.getTurnsTilHit();
+    private static String landsInText(int turns) {
         return (turns <= 0) ? Messages.getString("RoundsInAirDialog.landsThisTurn")
               : Messages.getString("RoundsInAirDialog.landsInTurns", turns);
     }
 
     private static String targetHexText(Game game, ArtilleryAttackAction attack) {
         Targetable target = attack.getTarget(game);
+        // A counter-battery shot aims at an off-board enemy battery, whose virtual board number is meaningless as a
+        // grid square, so label it instead of printing that number (or losing the value entirely).
+        if ((target != null) && target.isOffBoard()) {
+            return Messages.getString("RoundsInAirDialog.counterBattery");
+        }
         if ((target != null) && (target.getPosition() != null)) {
             return target.getPosition().getBoardNum();
         }

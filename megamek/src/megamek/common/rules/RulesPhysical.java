@@ -33,5 +33,13 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.units.Entity;
+
 public abstract class RulesPhysical {
+
+    // Do shields boost punch damage
+    public abstract int getShieldDamageBoost(Entity entity, int armLoc);
+
+    // Return the claw to-hit modifier
+    public abstract int getClawToHitModifier();
 }

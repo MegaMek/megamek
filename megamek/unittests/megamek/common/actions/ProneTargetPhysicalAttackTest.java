@@ -55,7 +55,6 @@ import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
-import megamek.common.rules.core.CoreRulesTarget;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -142,7 +141,7 @@ public class ProneTargetPhysicalAttackTest {
         when(mockAttacker.hasWorkingSystem(anyInt(), anyInt())).thenReturn(true);
         when(mockAttacker.hasSystem(anyInt(), anyInt())).thenReturn(true);
         when(mockAttacker.weaponFiredFrom(anyInt())).thenReturn(false);
-        when(mockAttacker.hasActiveShield(anyInt())).thenReturn(false);
+        when(mockAttacker.hasRaisedShield(anyInt())).thenReturn(false);
         when(mockAttacker.getGrappled()).thenReturn(Entity.NONE);
         when(mockAttacker.getGrappleSide()).thenReturn(Entity.GRAPPLE_BOTH);
         when(mockAttacker.relHeight()).thenReturn(2);

@@ -230,7 +230,7 @@ class ComputeToHitIsImpossible {
         // If the attacker is actively using a shield, weapons in the same location are blocked
         if (weapon != null
               && attacker.hasShield()
-              && attacker.hasActiveShield(weapon.getLocation(), weapon.isRearMounted())) {
+              && attacker.hasRaisedShield(weapon.getLocation(), weapon.isRearMounted())) {
             return Messages.getString("WeaponAttackAction.ActiveShieldBlocking");
         }
 

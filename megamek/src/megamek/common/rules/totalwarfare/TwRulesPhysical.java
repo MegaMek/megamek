@@ -34,6 +34,15 @@ package megamek.common.rules.totalwarfare;
  */
 
 import megamek.common.rules.core.CoreRulesPhysical;
+import megamek.common.units.Entity;
 
 public class TwRulesPhysical extends CoreRulesPhysical {
+
+    // Shields do not provide punch damage bonus
+    @Override
+    public int getShieldDamageBoost(Entity entity, int armLoc) { return 0; }
+
+    // Do claws modify the to-hit number
+    @Override
+    public int getClawToHitModifier() { return 1; }
 }

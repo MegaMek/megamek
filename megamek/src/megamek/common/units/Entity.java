@@ -149,9 +149,6 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
-import megamek.common.rules.RulesPsr;
-import megamek.common.rules.core.CoreRulesPsr;
-import megamek.common.rules.totalwarfare.TwRulesPsr;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.
@@ -6097,28 +6094,28 @@ public abstract class Entity extends TurnOrdered
     /**
      * Does the Mek have an active shield This should only be called after hasShield has been called.
      */
-    public boolean hasActiveShield(int location, boolean rear) {
+    public boolean hasRaisedShield(int location, boolean rear) {
         return true;
     }
 
     /**
      * Does the Mek have an active shield This should only be called by hasActiveShield(location, rear)
      */
-    public boolean hasActiveShield(int location) {
+    public boolean hasRaisedShield(int location) {
         return false;
     }
 
     /**
      * Does the Mek have a passive shield This should only be called after hasShield has been called.
      */
-    public boolean hasPassiveShield(int location, boolean rear) {
+    public boolean hasLoweredShield(int location, boolean rear) {
         return false;
     }
 
     /**
      * Does the Mek have a passive shield This should only be called by hasPassiveShield(location, rear)
      */
-    public boolean hasPassiveShield(int location) {
+    public boolean hasLoweredShield(int location) {
         return false;
     }
 

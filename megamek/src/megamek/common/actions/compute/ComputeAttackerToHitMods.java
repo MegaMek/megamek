@@ -292,7 +292,7 @@ public class ComputeAttackerToHitMods {
         if (attacker.hasShield() && (weapon != null)) {
             // active shield has already been checked as it makes shots impossible
             // time to check passive defense and no defense
-            if (attacker.hasPassiveShield(weapon.getLocation(), weapon.isRearMounted())) {
+            if (attacker.hasLoweredShield(weapon.getLocation(), weapon.isRearMounted())) {
                 // PLAYTEST3 shield modifiers no longer apply.
                 if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                     toHit.addModifier(+2, Messages.getString("WeaponAttackAction.PassiveShield"));

@@ -548,7 +548,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 if (counter.getType() == null
                       || !counter.isReady() || counter.isMissing()
                       // no AMS when a shield in the AMS location
-                      || (pdEnt.hasShield() && pdEnt.hasActiveShield(counter.getLocation(), false))
+                      || (pdEnt.hasShield() && pdEnt.hasRaisedShield(counter.getLocation(), false))
                       // shutdown means no AMS
                       || pdEnt.isShutDown()) {
                     continue;

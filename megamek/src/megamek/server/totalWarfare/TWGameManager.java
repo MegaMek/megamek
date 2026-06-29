@@ -13884,15 +13884,15 @@ public class TWGameManager extends AbstractGameManager {
                       te.locationIsLeg(loc) &&
                       !te.isLocationBad(loc) &&
                       !te.isLocationDoomed(loc) &&
-                      !te.hasActiveShield(loc) &&
-                      !te.hasPassiveShield(loc);
+                      !te.hasRaisedShield(loc) &&
+                      !te.hasLoweredShield(loc);
 
                 boolean mightGrapple = ((te instanceof Mek) &&
                       ((loc == Mek.LOC_LEFT_ARM) || (loc == Mek.LOC_RIGHT_ARM)) &&
                       !te.isLocationBad(loc) &&
                       !te.isLocationDoomed(loc) &&
-                      !te.hasActiveShield(loc) &&
-                      !te.hasPassiveShield(loc) &&
+                      !te.hasRaisedShield(loc) &&
+                      !te.hasLoweredShield(loc) &&
                       !te.hasNoDefenseShield(loc)) ||
                       ((te instanceof ProtoMek) &&
                             ((loc == ProtoMek.LOC_LEFT_ARM) ||
@@ -18643,7 +18643,7 @@ public class TWGameManager extends AbstractGameManager {
             return vDesc;
         }
 
-        return Game.rulesManager.getRulesPilot().pilotHits(game, e, totalHits, damage, crewPos);
+        return Game.rulesManager.getRulesPilot().pilotHits(e, totalHits, damage, crewPos, game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS));
     }
 
     /**

@@ -295,7 +295,7 @@ public abstract class MekWithArms extends Mek {
     }
 
     @Override
-    public boolean hasActiveShield(int location) {
+    public boolean hasRaisedShield(int location) {
         if ((location != Mek.LOC_RIGHT_ARM) && (location != Mek.LOC_LEFT_ARM)) {
             return false;
         }
@@ -320,16 +320,16 @@ public abstract class MekWithArms extends Mek {
     }
 
     @Override
-    public boolean hasPassiveShield(int location, boolean rear) {
+    public boolean hasLoweredShield(int location, boolean rear) {
         return switch (location) {
-            case Mek.LOC_LEFT_ARM, Mek.LOC_LEFT_TORSO -> !rear && hasPassiveShield(Mek.LOC_LEFT_ARM);
-            case Mek.LOC_RIGHT_ARM, Mek.LOC_RIGHT_TORSO -> !rear && hasPassiveShield(Mek.LOC_RIGHT_ARM);
+            case Mek.LOC_LEFT_ARM, Mek.LOC_LEFT_TORSO -> !rear && hasLoweredShield(Mek.LOC_LEFT_ARM);
+            case Mek.LOC_RIGHT_ARM, Mek.LOC_RIGHT_TORSO -> !rear && hasLoweredShield(Mek.LOC_RIGHT_ARM);
             default -> false;
         };
     }
 
     @Override
-    public boolean hasPassiveShield(int location) {
+    public boolean hasLoweredShield(int location) {
         if (isShutDown() || (getCrew().isKoThisRound() || getCrew().isUnconscious())) {
             return false;
         }

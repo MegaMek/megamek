@@ -372,7 +372,7 @@ public class BipedMek extends MekWithArms {
     }
 
     @Override
-    public boolean hasActiveShield(int location, boolean rear) {
+    public boolean hasRaisedShield(int location, boolean rear) {
 
         return switch (location) {
             case Mek.LOC_CENTER_TORSO, Mek.LOC_HEAD -> {
@@ -380,11 +380,11 @@ public class BipedMek extends MekWithArms {
                 if (rear) {
                     yield false;
                 }
-                yield hasActiveShield(Mek.LOC_LEFT_ARM) || hasActiveShield(Mek.LOC_RIGHT_ARM);
+                yield hasRaisedShield(Mek.LOC_LEFT_ARM) || hasRaisedShield(Mek.LOC_RIGHT_ARM);
             }
             // else
-            case Mek.LOC_LEFT_ARM, Mek.LOC_LEFT_TORSO, Mek.LOC_LEFT_LEG -> hasActiveShield(Mek.LOC_LEFT_ARM);
-            default -> hasActiveShield(Mek.LOC_RIGHT_ARM);
+            case Mek.LOC_LEFT_ARM, Mek.LOC_LEFT_TORSO, Mek.LOC_LEFT_LEG -> hasRaisedShield(Mek.LOC_LEFT_ARM);
+            default -> hasRaisedShield(Mek.LOC_RIGHT_ARM);
         };
     }
 

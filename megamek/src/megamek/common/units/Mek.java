@@ -6037,15 +6037,15 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
 
     public int shieldAbsorptionDamage(int damage, int location, boolean rear) {
         int damageAbsorption = damage;
-        if (hasActiveShield(location, rear)) {
+        if (hasRaisedShield(location, rear)) {
             switch (location) {
                 case Mek.LOC_CENTER_TORSO:
                 case Mek.LOC_HEAD:
-                    if (hasActiveShield(Mek.LOC_RIGHT_ARM)) {
+                    if (hasRaisedShield(Mek.LOC_RIGHT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_RIGHT_ARM,
                               damageAbsorption);
                     }
-                    if (hasActiveShield(Mek.LOC_LEFT_ARM)) {
+                    if (hasRaisedShield(Mek.LOC_LEFT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_LEFT_ARM,
                               damageAbsorption);
                     }
@@ -6053,13 +6053,13 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
                 case Mek.LOC_LEFT_ARM:
                 case Mek.LOC_LEFT_TORSO:
                 case Mek.LOC_LEFT_LEG:
-                    if (hasActiveShield(Mek.LOC_LEFT_ARM)) {
+                    if (hasRaisedShield(Mek.LOC_LEFT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_LEFT_ARM,
                               damageAbsorption);
                     }
                     break;
                 default:
-                    if (hasActiveShield(Mek.LOC_RIGHT_ARM)) {
+                    if (hasRaisedShield(Mek.LOC_RIGHT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_RIGHT_ARM,
                               damageAbsorption);
                     }
@@ -6067,18 +6067,18 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
             }
         }
 
-        if (hasPassiveShield(location, rear)) {
+        if (hasLoweredShield(location, rear)) {
             switch (location) {
                 case Mek.LOC_LEFT_ARM:
                 case Mek.LOC_LEFT_TORSO:
-                    if (hasPassiveShield(Mek.LOC_LEFT_ARM)) {
+                    if (hasLoweredShield(Mek.LOC_LEFT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_LEFT_ARM,
                               damageAbsorption);
                     }
                     break;
                 case Mek.LOC_RIGHT_ARM:
                 case Mek.LOC_RIGHT_TORSO:
-                    if (hasPassiveShield(Mek.LOC_RIGHT_ARM)) {
+                    if (hasLoweredShield(Mek.LOC_RIGHT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_RIGHT_ARM,
                               damageAbsorption);
                     }

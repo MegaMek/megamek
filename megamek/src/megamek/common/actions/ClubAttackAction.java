@@ -414,15 +414,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
                       "Hand actuator destroyed");
             }
         } else if (shield) {
-            if (!ae.hasPassiveShield(club.getLocation())) {
-                // PLAYTEST3 no_shield mode is now the default
-                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && !ae.hasActiveShield(club.getLocation())) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                          "Shield not in default mode");
-                } else {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                          "Shield not in passive mode");
-                }
+            if (!ae.hasLoweredShield(club.getLocation())) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                      "Shield is not lowered");
             }
         } else {
             // check if location is present

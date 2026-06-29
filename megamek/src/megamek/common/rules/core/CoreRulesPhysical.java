@@ -33,7 +33,55 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.CriticalSlot;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.rules.RulesPhysical;
+import megamek.common.units.Entity;
 
 public class CoreRulesPhysical extends RulesPhysical {
+
+    // Shield rules for damage while punching. Core p.195
+    public int getShieldDamageBoost(Entity entity, int armLoc) {
+        if (entity.hasShield()) {
+            for (int slot = 0; slot < entity.getNumberOfCriticalSlots(armLoc); slot++) {
+                CriticalSlot cs = entity.getCritical(armLoc, slot);
+
+                if (cs == null) {
+                    continue;
+                }
+
+                if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
+                    continue;
+                }
+
+                Mounted<?> m = cs.getMount();
+                EquipmentType type = m.getType();
+                if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
+                    if ((((MiscMounted) m).getDamageAbsorption(entity, armLoc) > 0)
+                          && (((MiscMounted) m).getCurrentDamageCapacity(entity, armLoc) > 0)) {
+                        if (type.hasFlag(MiscTypeFlag.S_SHIELD_LARGE)) {
+                            return 3;
+                        } else if (type.hasFlag(MiscTypeFlag.S_SHIELD_MEDIUM)) {
+                            return 2;
+                        } else if (type.hasFlag(MiscTypeFlag.S_SHIELD_SMALL)) {
+                            return 1;
+                        }
+                    } else {
+                        // Shield DA or DC is 0, so no bonus
+                        return 0;
+                    }
+                }
+            }
+        }
+
+        // if there is no shield, or fallback
+        return 0;
+    }
+
+    // Claws now have a TN modifier of 0. Core p.194
+    public int getClawToHitModifier() { return 0; }
 }

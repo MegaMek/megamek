@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2009-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -369,29 +369,29 @@ public class Quirks extends AbstractOptions {
      * that has no arms (such as a quad), nor by one that lacks any direct-fire ranged weapon in its arms, with the
      * exception of OmniMeks (whose arm loadout varies by configuration).
      *
-     * @param en the entity to test
+     * @param entity the entity to test
      *
      * @return {@code true} if the Mek may take the Overhead Arms quirk, otherwise {@code false}
      */
-    private static boolean isOverheadArmsLegalFor(Entity en) {
-        if (en.entityIsQuad()) {
+    private static boolean isOverheadArmsLegalFor(Entity entity) {
+        if (entity.entityIsQuad()) {
             return false;
         }
-        if (en.isOmni()) {
+        if (entity.isOmni()) {
             return true;
         }
-        return hasArmMountedDirectFireWeapon(en);
+        return hasArmMountedDirectFireWeapon(entity);
     }
 
     /**
      * Checks whether the entity carries at least one direct-fire ranged weapon mounted in an arm location.
      *
-     * @param en the entity to test
+     * @param entity the entity to test
      *
      * @return {@code true} if a direct-fire weapon is mounted in the left or right arm, otherwise {@code false}
      */
-    private static boolean hasArmMountedDirectFireWeapon(Entity en) {
-        for (WeaponMounted weapon : en.getWeaponList()) {
+    private static boolean hasArmMountedDirectFireWeapon(Entity entity) {
+        for (WeaponMounted weapon : entity.getWeaponList()) {
             int location = weapon.getLocation();
             boolean armMounted = (location == Mek.LOC_LEFT_ARM) || (location == Mek.LOC_RIGHT_ARM);
             if (armMounted && (weapon.getType() != null) && weapon.getType().hasFlag(WeaponType.F_DIRECT_FIRE)) {

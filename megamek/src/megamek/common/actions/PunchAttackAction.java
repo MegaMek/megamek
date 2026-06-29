@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -350,7 +350,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
         // Overhead Arms quirk (BMM p.85): arm-mounted physical attacks suffer a +2 to-hit penalty.
         if (ae.hasQuirk(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)) {
-            toHit.addModifier(2, "Overhead Arms");
+            toHit.addModifier(2, Messages.getString("PhysicalAttackAction.OverheadArms"));
         }
 
         // elevation

@@ -40,14 +40,12 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.core.CoreRulesPilot;
 import megamek.common.units.Entity;
-import megamek.server.totalWarfare.TWGameManager;
 
 import java.util.Vector;
 
 public class TwRulesPilot extends CoreRulesPilot {
 
-    public Vector<Report> pilotHits(Game game, Entity e, int totalHits, int damage, int crewPos,
-          TWGameManager twGameManager) {
+    public Vector<Report> pilotHits(Game game, Entity e, int totalHits, int damage, int crewPos) {
         Vector<Report> vDesc = new Vector<>();
         for (int hit = (totalHits - damage) + 1; hit <= totalHits; hit++) {
             int rollTarget = Game.rulesManager.getRulesCharts().escalatingFailure(hit);
@@ -104,7 +102,7 @@ public class TwRulesPilot extends CoreRulesPilot {
                 boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;
                 boolean wasGunner = e.getCrew().getCurrentGunnerIndex() == crewPos;
                 e.getCrew().setUnconscious(true, crewPos);
-                Report r = twGameManager.createCrewTakeoverReport(e, crewPos, wasPilot, wasGunner);
+                Report r = createCrewTakeoverReport(e, crewPos, wasPilot, wasGunner);
                 if (null != r) {
                     vDesc.add(r);
                 }

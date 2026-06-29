@@ -36,16 +36,17 @@ package megamek.common.rules;
 import megamek.common.Report;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
-import megamek.server.totalWarfare.TWGameManager;
 
 import java.util.Vector;
 
 public abstract class RulesPilot {
 
     // Handle pilot hits
-    public abstract Vector<Report> pilotHits(Game game, Entity e, int totalHits, int damage, int crewPos,
-          TWGameManager twGameManager);
+    public abstract Vector<Report> pilotHits(Game game, Entity e, int totalHits, int damage, int crewPos);
 
     // How many pilot hits for an explosion
     public abstract int getExplosionPilotHits();
+
+    // Crew takeover report. required by damage
+    public abstract Report createCrewTakeoverReport(Entity e, int slot, boolean wasPilot, boolean wasGunner);
 }

@@ -7266,8 +7266,8 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Returns the entity's active (switched-on) minesweeper, or {@code null} if it has none, the sweeper is not ready,
-     * its armor is depleted, or the player has deactivated it in the End Phase (TO:AuE p.138, Corrected Sixth Printing).
-     * A unit may mount only one minesweeper.
+     * its armor is depleted, or the player has deactivated it in the End Phase (TO:AuE p.138, Corrected Sixth
+     * Printing). A unit may mount only one minesweeper.
      */
     private static @Nullable Mounted<?> getActiveMinesweeper(Entity entity) {
         for (Mounted<?> mounted : entity.getMisc()) {
@@ -8206,7 +8206,8 @@ public class TWGameManager extends AbstractGameManager {
 
             // build up heat from movement
             if (entity.moved == EntityMovementType.MOVE_NONE) {
-                entity.changeHeatBuildup(entity.getStandingHeat(), Messages.getString("HeatBreakdown.movementStanding"));
+                entity.changeHeatBuildup(entity.getStandingHeat(),
+                      Messages.getString("HeatBreakdown.movementStanding"));
             } else if ((entity.moved == EntityMovementType.MOVE_WALK) ||
                   (entity.moved == EntityMovementType.MOVE_VTOL_WALK) ||
                   (entity.moved == EntityMovementType.MOVE_CAREFUL_STAND)) {
@@ -8216,7 +8217,8 @@ public class TWGameManager extends AbstractGameManager {
                   (entity.moved == EntityMovementType.MOVE_SKID)) {
                 entity.changeHeatBuildup(entity.getRunHeat(), Messages.getString("HeatBreakdown.movementRunning"));
             } else if (entity.moved == EntityMovementType.MOVE_JUMP && !entity.isJumpingWithMechanicalBoosters()) {
-                entity.changeHeatBuildup(entity.getJumpHeat(entity.delta_distance), Messages.getString("HeatBreakdown.movementJumping"));
+                entity.changeHeatBuildup(entity.getJumpHeat(entity.delta_distance),
+                      Messages.getString("HeatBreakdown.movementJumping"));
             } else if (entity.moved == EntityMovementType.MOVE_SPRINT ||
                   entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) {
                 entity.changeHeatBuildup(entity.getSprintHeat(), Messages.getString("HeatBreakdown.movementSprinting"));
@@ -15720,8 +15722,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * End-phase resolution for Bridge-Building Engineers, TO:AUE p.152. Delegates to {@link BridgeBuildPhaseHandler}
-     * so the bridge rules do not add to this already very large class.
+     * End-phase resolution for Bridge-Building Engineers, TO:AUE p.152. Delegates to {@link BridgeBuildPhaseHandler} so
+     * the bridge rules do not add to this already very large class.
      */
     void checkBuildBridges() {
         new BridgeBuildPhaseHandler(this).checkBuildBridges();
@@ -18571,7 +18573,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.add(crew.getHits(pos));
                     vDesc.addElement(r);
                     if (crew.isDead(pos)) {
-                        r = createCrewTakeoverReport(en, pos, wasPilot, wasGunner);
+                        r = Game.rulesManager.getRulesPilot().createCrewTakeoverReport(en, pos, wasPilot, wasGunner);
                         if (null != r) {
                             vDesc.addElement(r);
                         }
@@ -18616,40 +18618,7 @@ public class TWGameManager extends AbstractGameManager {
         return vDesc;
     }
 
-    /**
-     * Convenience method that fills in a report showing that a crew member of a multicrew cockpit has taken over for
-     * another incapacitated crew member.
-     *
-     * @param e         The <code>Entity</code> for the crew.
-     * @param slot      The slot index of the crew member that was incapacitated.
-     * @param wasPilot  Whether the crew member was the pilot before becoming incapacitated.
-     * @param wasGunner Whether the crew member was the gunner before becoming incapacitated.
-     *
-     * @return A completed <code>Report</code> if the position was assumed by another crew members, otherwise null.
-     */
-    public Report createCrewTakeoverReport(Entity e, int slot, boolean wasPilot, boolean wasGunner) {
-        if (wasPilot && e.getCrew().getCurrentPilotIndex() != slot) {
-            Report r = new Report(5560);
-            r.subject = e.getId();
-            r.indent(4);
-            r.add(e.getCrew().getNameAndRole(e.getCrew().getCurrentPilotIndex()));
-            r.add(e.getCrew().getCrewType().getRoleName(e.getCrew().getCrewType().getPilotPos()));
-            r.addDesc(e);
-            return r;
-        }
-        if (wasGunner && e.getCrew().getCurrentGunnerIndex() != slot) {
-            Report r = new Report(5560);
-            r.subject = e.getId();
-            r.indent(4);
-            r.add(e.getCrew().getNameAndRole(e.getCrew().getCurrentGunnerIndex()));
-            r.add(e.getCrew().getCrewType().getRoleName(e.getCrew().getCrewType().getGunnerPos()));
-            r.addDesc(e);
-            return r;
-        }
-        return null;
-    }
-
-    /**
+        /**
      * resolves consciousness rolls for one entity
      *
      * @param e       The <code>Entity</code> that took damage
@@ -18703,7 +18672,8 @@ public class TWGameManager extends AbstractGameManager {
                             rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 1] max 12";
                         }
 
-                        int rollTarget = Game.rulesManager.getRulesCharts().escalatingFailure(entity.getCrew().getHits(pos));
+                        int rollTarget = Game.rulesManager.getRulesCharts()
+                              .escalatingFailure(entity.getCrew().getHits(pos));
                         Report r = new Report(6029);
                         r.subject = entity.getId();
                         r.add(entity.getCrew().getCrewType().getRoleName(pos));
@@ -20535,7 +20505,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.addDesc(en);
                     r.add(en.getCrew().getName(crewSlot));
                     reports.addElement(r);
-                    r = createCrewTakeoverReport(en, crewSlot, wasPilot, wasGunner);
+                    r = Game.rulesManager.getRulesPilot().createCrewTakeoverReport(en, crewSlot, wasPilot, wasGunner);
                     if (null != r) {
                         reports.add(r);
                     }
@@ -24366,7 +24336,7 @@ public class TWGameManager extends AbstractGameManager {
         mounted.setShotsLeft(0);
 
         int pilotDamage = Game.rulesManager.getRulesPilot().getExplosionPilotHits();
-        
+
         if (en instanceof Aero) {
             pilotDamage = 1;
         }
@@ -25227,9 +25197,9 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Removes the fire from a hex on a specific board, clearing any flamer-started-fire marker and notifying the
-     * clients that view that board. Fire processing runs once per board (see
-     * {@link megamek.server.FireProcessor}), so the board id must be passed through to keep the per-board
-     * {@link Board#removeFlamerStartedFire(Coords)} state and the hex update on the correct board.
+     * clients that view that board. Fire processing runs once per board (see {@link megamek.server.FireProcessor}), so
+     * the board id must be passed through to keep the per-board {@link Board#removeFlamerStartedFire(Coords)} state and
+     * the hex update on the correct board.
      *
      * @param boardId    the id of the board the burning hex is on
      * @param fireCoords {@link Coords} of the hex on fire

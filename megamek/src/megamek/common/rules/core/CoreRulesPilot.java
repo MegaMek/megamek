@@ -40,15 +40,13 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesPilot;
 import megamek.common.units.Entity;
-import megamek.server.totalWarfare.TWGameManager;
 
 import java.util.Vector;
 
 public class CoreRulesPilot extends RulesPilot {
 
     // Handle pilot hits. Core p.117
-    public Vector<Report> pilotHits(Game game, Entity e, int totalHits, int damage, int crewPos,
-          TWGameManager twGameManager) {
+    public Vector<Report> pilotHits(Game game, Entity e, int totalHits, int damage, int crewPos) {
         boolean toughness = game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS);
         Vector<Report> vDesc = new Vector<>();
 
@@ -109,7 +107,7 @@ public class CoreRulesPilot extends RulesPilot {
             boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;
             boolean wasGunner = e.getCrew().getCurrentGunnerIndex() == crewPos;
             e.getCrew().setUnconscious(true, crewPos);
-            Report r = twGameManager.createCrewTakeoverReport(e, crewPos, wasPilot, wasGunner);
+            Report r = createCrewTakeoverReport(e, crewPos, wasPilot, wasGunner);
             if (null != r) {
                 vDesc.add(r);
             }
@@ -119,6 +117,39 @@ public class CoreRulesPilot extends RulesPilot {
         return vDesc;
     }
 
+    /**
+     * Convenience method that fills in a report showing that a crew member of a multicrew cockpit has taken over for
+     * another incapacitated crew member.
+     *
+     * @param e         The <code>Entity</code> for the crew.
+     * @param slot      The slot index of the crew member that was incapacitated.
+     * @param wasPilot  Whether the crew member was the pilot before becoming incapacitated.
+     * @param wasGunner Whether the crew member was the gunner before becoming incapacitated.
+     *
+     * @return A completed <code>Report</code> if the position was assumed by another crew members, otherwise null.
+     */
+    public Report createCrewTakeoverReport(Entity e, int slot, boolean wasPilot, boolean wasGunner) {
+        if (wasPilot && e.getCrew().getCurrentPilotIndex() != slot) {
+            Report r = new Report(5560);
+            r.subject = e.getId();
+            r.indent(4);
+            r.add(e.getCrew().getNameAndRole(e.getCrew().getCurrentPilotIndex()));
+            r.add(e.getCrew().getCrewType().getRoleName(e.getCrew().getCrewType().getPilotPos()));
+            r.addDesc(e);
+            return r;
+        }
+        if (wasGunner && e.getCrew().getCurrentGunnerIndex() != slot) {
+            Report r = new Report(5560);
+            r.subject = e.getId();
+            r.indent(4);
+            r.add(e.getCrew().getNameAndRole(e.getCrew().getCurrentGunnerIndex()));
+            r.add(e.getCrew().getCrewType().getRoleName(e.getCrew().getCrewType().getGunnerPos()));
+            r.addDesc(e);
+            return r;
+        }
+        return null;
+    }
+    
     // How many pilot hits for an explosion Core p.117
     public int getExplosionPilotHits() {
         return 1;

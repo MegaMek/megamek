@@ -33,13 +33,22 @@
 
 package megamek.client.ui.util;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
+import java.awt.RenderingHints;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.Icon;
 
 import megamek.MMConstants;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
@@ -103,6 +112,74 @@ public final class FontHandler {
     public static Font symbolFont() {
         ensureInitialization();
         return new Font("Material Symbols Rounded", Font.PLAIN, 12);
+    }
+
+    /**
+     * Creates an {@link Icon} that paints a single Google Material Symbol glyph from {@link #symbolFont()}, sized and
+     * tinted as requested. The glyph is drawn live on each repaint so it stays crisp on HiDPI displays, and is sized to
+     * the glyph's ink box so it carries no uneven side bearing. Code points are listed at
+     * <a href="https://fonts.google.com/icons">fonts.google.com/icons</a>.
+     *
+     * @param codePoint the Material Symbols code point, for example {@code 0xE5D7} for {@code unfold_more}
+     * @param size      the glyph height in (already scaled) pixels
+     * @param color     the color to paint the glyph
+     *
+     * @return an {@link Icon} drawing the glyph, or {@code null} if the symbols font cannot display the code point
+     */
+    public static Icon symbolIcon(int codePoint, int size, Color color) {
+        Font font = symbolFont().deriveFont((float) size);
+        if (!font.canDisplay(codePoint)) {
+            return null;
+        }
+        return new MaterialSymbolIcon(font, new String(Character.toChars(codePoint)), color);
+    }
+
+    /**
+     * An {@link Icon} that paints one glyph live through the host component's graphics, sized to the glyph's ink box.
+     */
+    private static final class MaterialSymbolIcon implements Icon {
+        private final Font font;
+        private final String glyph;
+        private final Color color;
+        private final int width;
+        private final int height;
+        private final int drawX;
+
+        private MaterialSymbolIcon(Font font, String glyph, Color color) {
+            this.font = font;
+            this.glyph = glyph;
+            this.color = color;
+
+            BufferedImage scratch = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D graphics = scratch.createGraphics();
+            FontMetrics metrics = graphics.getFontMetrics(font);
+            height = Math.max(1, metrics.getHeight());
+            Rectangle2D inkBounds = font.createGlyphVector(graphics.getFontRenderContext(), glyph).getVisualBounds();
+            width = Math.max(1, (int) Math.ceil(inkBounds.getWidth()));
+            drawX = (int) Math.round(-inkBounds.getX());
+            graphics.dispose();
+        }
+
+        @Override
+        public void paintIcon(Component component, Graphics g, int x, int y) {
+            Graphics2D graphics = (Graphics2D) g.create();
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            graphics.setFont(font);
+            graphics.setColor(color);
+            graphics.drawString(glyph, x + drawX, y + graphics.getFontMetrics().getAscent());
+            graphics.dispose();
+        }
+
+        @Override
+        public int getIconWidth() {
+            return width;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return height;
+        }
     }
 
     /**

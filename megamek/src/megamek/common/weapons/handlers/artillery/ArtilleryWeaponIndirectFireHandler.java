@@ -54,6 +54,9 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.scatter.Scatter;
+import megamek.common.compute.scatter.ScatterMethod;
+import megamek.common.compute.scatter.ScatterResult;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.Munitions;
@@ -613,8 +616,6 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      */
     private Coords handleReportsAndDirectScatter(boolean isFlak, Coords targetPos, Vector<Report> vPhaseReport,
           ArtilleryAttackAction aaa) {
-        Coords originalTargetPos = targetPos;
-
         Report r;
         // special report for off-board target
         if (target.isOffBoard()) {
@@ -656,17 +657,16 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                                   artyMsg));
             }
         } else {
-            // direct fire artillery only scatters by one d6
-            // we do this here to avoid duplicating handle()
-            // in the ArtilleryWeaponDirectFireHandler
+            // Standard scatter rolls 1d6 for the direction and uses the margin of failure as the
+            // distance; with the Advanced Scatter option the distance is rolled with dice instead.
+            // Resolved here so it is not duplicated in ArtilleryWeaponDirectFireHandler.
             Coords originalPosition = targetPos;
-            // getMoS() is negative on a miss; the scatter distance is its magnitude.
-            int scatterDistance = Math.abs(toHit.getMoS());
-            if (attackingEntity.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)) {
-                // Oblique Artilleryman reduces scatter distance by two hexes, minimum 0 (CamOps p.78).
-                scatterDistance = Math.max(scatterDistance - 2, 0);
-            }
-            targetPos = Compute.scatterDirectArty(targetPos, scatterDistance);
+            // Oblique Artilleryman reduces scatter distance by two hexes, minimum 0 (CamOps p.78, 5th printing).
+            int scatterReduction = attackingEntity.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)
+                  ? Scatter.SPA_SCATTER_REDUCTION : 0;
+            ScatterResult scatterResult = ScatterMethod.forGame(game)
+                  .omnidirectional(targetPos, toHit.getMoS(), scatterReduction);
+            targetPos = scatterResult.landing();
             if (game.getBoard().contains(targetPos)) {
                 // misses and scatters to another hex
                 if (!isFlak) {
@@ -692,7 +692,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             } else if (target.isOffBoard()) {
                 // off-board targets should report scatter distance
                 r = new Report(9995);
-                r.add(originalTargetPos.distance(targetPos));
+                r.add(scatterResult.distanceHexes());
                 r.subject = subjectId;
                 r.indent();
                 vPhaseReport.addElement(r);

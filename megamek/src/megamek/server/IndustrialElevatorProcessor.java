@@ -129,6 +129,10 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
                         IndustrialElevator elevator = IndustrialElevator.fromTerrain(
                               location, terrain.getLevel(), terrain.getExits());
                         game.addIndustrialElevator(elevator);
+                        // Show the platform's starting level on the board; the board carries this to clients
+                        if (elevator.syncDisplayLevel(game)) {
+                            markHexUpdate(elevator.getCoords(), elevator.getBoardId());
+                        }
                     }
                 }
             }
@@ -249,7 +253,8 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
                 // Update entity elevations that were on the platform
                 updateEntitiesOnPlatform(game, elevator, previousLevel, newLevel);
 
-                // Mark hex for update
+                // Update the hex so the tileset shows the platform's new level, then mark it for re-render
+                elevator.syncDisplayLevel(game);
                 markHexUpdate(elevator.getCoords(), elevator.getBoardId());
             }
         }

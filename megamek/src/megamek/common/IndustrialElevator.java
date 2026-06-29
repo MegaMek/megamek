@@ -42,6 +42,8 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 
 /**
  * Represents a player-controlled industrial elevator within a building.
@@ -401,6 +403,30 @@ public class IndustrialElevator implements Serializable {
     public int encodeExits() {
         int capacityTens = capacityTons / CAPACITY_MULTIPLIER;
         return (shaftTop << SHAFT_TOP_SHIFT) | (capacityTens & CAPACITY_MASK);
+    }
+
+    /**
+     * Rewrites this elevator's hex so the board tileset renders the platform at its current level. After initialization
+     * the shaft geometry is held in this object, so the terrain's level field is free to carry the platform position
+     * for display. Callers must notify clients of the hex change (for example {@code gameManager.sendChangedHex} or
+     * {@code markHexUpdate}).
+     *
+     * @param game the game whose board holds this elevator's hex
+     *
+     * @return {@code true} if the displayed level changed and clients need to be notified
+     */
+    public boolean syncDisplayLevel(Game game) {
+        Hex hex = game.getBoard(getBoardId()).getHex(getCoords());
+        if (hex == null) {
+            return false;
+        }
+        Terrain terrain = hex.getTerrain(Terrains.INDUSTRIAL_ELEVATOR);
+        if ((terrain == null) || (terrain.getLevel() == platformLevel)) {
+            return false;
+        }
+        hex.removeTerrain(Terrains.INDUSTRIAL_ELEVATOR);
+        hex.addTerrain(new Terrain(Terrains.INDUSTRIAL_ELEVATOR, platformLevel, true, terrain.getExits()));
+        return true;
     }
 
     @Override

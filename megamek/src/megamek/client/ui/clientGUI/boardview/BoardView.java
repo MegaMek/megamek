@@ -4808,10 +4808,20 @@ public final class BoardView extends AbstractBoardView
 
     @Override
     public void boardChangedHex(BoardEvent boardEvent) {
-        hexImageCache.remove(boardEvent.getCoords());
-        // Also repaint the surrounding hexes because of shadows, border etc.
-        for (int direction : allDirections) {
-            hexImageCache.remove(boardEvent.getCoords().translated(direction));
+        Coords coords = boardEvent.getCoords();
+        Hex hex = game.getBoard(boardId).getHex(coords);
+        // An elevator changes its terrain overlay level, which the isometric view can draw beyond the immediate
+        // neighbors. A per-hex cache clear leaves the isometric view stale (it only recovers on a full reload), so
+        // for elevator hexes clear the whole hex image cache - the same thing a board reload does.
+        if ((hex != null) && (hex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR)
+              || hex.containsTerrain(Terrains.SOLARIS_ELEVATOR))) {
+            clearHexImageCache();
+        } else {
+            hexImageCache.remove(coords);
+            // Also repaint the surrounding hexes because of shadows, border etc.
+            for (int direction : allDirections) {
+                hexImageCache.remove(coords.translated(direction));
+            }
         }
         clearShadowMap();
         boardPanel.repaint();

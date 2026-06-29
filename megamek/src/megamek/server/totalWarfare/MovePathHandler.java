@@ -188,6 +188,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
         IndustrialElevator elevator = getGame().getIndustrialElevator(BoardLocation.of(curPos, curBoardId));
         if (elevator != null) {
             elevator.setPlatformLevel(curElevation);
+            // Update the hex so the tileset shows the platform at its new level
+            if (elevator.syncDisplayLevel(getGame())) {
+                gameManager.sendChangedHex(curPos, curBoardId);
+            }
             gameManager.sendIndustrialElevatorUpdate();
         }
     }

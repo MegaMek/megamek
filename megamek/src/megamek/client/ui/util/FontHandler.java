@@ -144,18 +144,28 @@ public final class FontHandler {
         private final int width;
         private final int height;
         private final int drawX;
+        private final int drawY;
 
         private MaterialSymbolIcon(Font font, String glyph, Color color) {
             this.font = font;
             this.glyph = glyph;
             this.color = color;
 
+            // Swing needs a fixed icon size up front, so measure the glyph once and cache it. The 1x1 image only
+            // exists to obtain a real Graphics2D, and therefore accurate font metrics; nothing is ever drawn into it.
             BufferedImage scratch = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = scratch.createGraphics();
             FontMetrics metrics = graphics.getFontMetrics(font);
+            // Height uses the full line metrics (ascent + descent + leading) so every icon shares one vertical box;
+            // glyphs then line up on a common baseline instead of jumping around as the height varies per symbol.
             height = Math.max(1, metrics.getHeight());
+            drawY = metrics.getAscent();
+            // Width uses the visual (ink) bounds instead, because Material Symbols bake uneven left/right side bearing
+            // into each glyph; trimming to the painted pixels lets a single icon center cleanly inside a button.
             Rectangle2D inkBounds = font.createGlyphVector(graphics.getFontRenderContext(), glyph).getVisualBounds();
             width = Math.max(1, (int) Math.ceil(inkBounds.getWidth()));
+            // getX() is the left bearing (offset from the pen origin to the first visible pixel); cancel it so the
+            // glyph paints flush at x = 0 with no leading gap.
             drawX = (int) Math.round(-inkBounds.getX());
             graphics.dispose();
         }
@@ -167,7 +177,7 @@ public final class FontHandler {
             graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             graphics.setFont(font);
             graphics.setColor(color);
-            graphics.drawString(glyph, x + drawX, y + graphics.getFontMetrics().getAscent());
+            graphics.drawString(glyph, x + drawX, y + drawY);
             graphics.dispose();
         }
 

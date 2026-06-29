@@ -5998,11 +5998,11 @@ public class Compute {
         } else if (attacker.getElevation() > defender.getElevation()) {
             // Can't attack if flying
             reason = "Cannot do leg attack while flying.";
-        } else if ((attacker.getMovementMode().isUMUInfantry())
-              && (game.getHexOf(defender) != null)
-              && !(game.getHexOf(defender).hasDepth1WaterOrDeeper())) {
+        } else if (attacker.getMovementMode().isUMUInfantry()
+              && (game.getHexOf(defender) instanceof megamek.common.Hex defenderHex)
+              && !defenderHex.hasDepth1WaterOrDeeper()) {
             // UMU equipped infantry can only make leg attacks if the target is in depth 1+ water
-            reason = "Cannot make leg attacks unless the target is in depth 1 or deeper water";
+            reason = "Cannot make leg attacks unless the target is in depth 1 or deeper water.";
         } else if (attacker instanceof BattleArmor inf) {
             // Handle BattleArmor attackers.
             toReturn = new ToHitData(inf.getCrew().getPiloting(),

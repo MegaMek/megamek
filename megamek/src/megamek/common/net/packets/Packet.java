@@ -54,6 +54,7 @@ import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
 import megamek.common.TemporaryECMField;
 import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.EnemyArtilleryInbound;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -290,6 +291,25 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketDataException("Vector", object, index);
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return the {@link EnemyArtilleryInbound} entries at the specified index, or an empty list if the object is absent
+     *       (e.g. an older packet without this field) or not a list
+     */
+    public List<EnemyArtilleryInbound> getEnemyArtilleryInbound(int index) {
+        Object object = getObject(index);
+        List<EnemyArtilleryInbound> result = new ArrayList<>();
+        if (object instanceof List<?> list) {
+            for (Object item : list) {
+                if (item instanceof EnemyArtilleryInbound value) {
+                    result.add(value);
+                }
+            }
+        }
+        return result;
     }
 
     /**

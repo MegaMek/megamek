@@ -39,6 +39,7 @@ import java.util.Set;
 import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType.Munitions;
@@ -82,6 +83,22 @@ public class ArtilleryNotifications {
      * @param momentRound  the round the moment occurs in, used only to scope de-duplication
      */
     public void sendArtilleryNetToast(String momentKey, Entity firingEntity, int momentRound) {
+        sendArtilleryNetToast(momentKey, firingEntity, momentRound, null);
+    }
+
+    /**
+     * Sends a single artillery call-for-fire toast naming the target grid, to the firing player and their teammates
+     * only - never to enemies. The target grid is the team-only channel for the aim point: it travels in this toast
+     * (and the team-only map marker), never in the shared phase report, so the other team cannot read it.
+     *
+     * @param momentKey    the call-for-fire moment ({@code Artillery.netToast.<momentKey>})
+     * @param firingEntity the artillery unit (its owner and team define the audience)
+     * @param momentRound  the round the moment occurs in, used only to scope de-duplication
+     * @param targetGrid   the target grid square to name in the toast (team-only), or {@code null} for a moment with no
+     *                     specific target hex
+     */
+    public void sendArtilleryNetToast(String momentKey, Entity firingEntity, int momentRound,
+          @Nullable String targetGrid) {
         Player owner = firingEntity.getOwner();
         if (owner == null) {
             LOGGER.debug("[Artillery] No net toast for {}: firing entity has no owner", firingEntity.getShortName());
@@ -98,7 +115,9 @@ public class ArtilleryNotifications {
                   momentKey, owner.getName());
             return;
         }
-        String message = Messages.getString("Artillery.netToast." + momentKey, owner.getName());
+        String message = (targetGrid == null)
+              ? Messages.getString("Artillery.netToast." + momentKey, owner.getName())
+              : Messages.getString("Artillery.netToast." + momentKey, owner.getName(), targetGrid);
         for (Player player : gameManager.getGame().getPlayersList()) {
             if (!player.isEnemyOf(owner)) {
                 gameManager.send(player.getId(), new Packet(PacketCommand.SEND_TOAST,

@@ -1611,6 +1611,9 @@ public class ArtilleryTargetingControl {
     }
 
     /**
+     * Shared "worth killing" value for ranking artillery/TAG targets, used both by TAG/homing target selection here and
+     * by the TAG-spotter positioning in {@link BasicPathRanker}.
+     *
      * @param target A candidate TAG/homing target
      *
      * @return A relative "worth killing" value for ranking targets - the target's CURRENT battle value (BV), which
@@ -1619,7 +1622,7 @@ public class ArtilleryTargetingControl {
      *       targets (ranked by to-hit alone). Floored at {@code 1.0} so even a deprioritized target still ranks by its
      *       hit probability.
      */
-    private double tagTargetValue(Targetable target) {
+    static double tagTargetValue(Targetable target) {
         if (!(target instanceof Entity entity)) {
             return 1.0;
         }

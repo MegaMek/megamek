@@ -102,8 +102,9 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
                 addHeat();
-                // Report the firing itself
-                Report report = new Report(3121);
+                // Report the firing itself - name it counter-battery when the target is an off-board enemy battery.
+                boolean counterBattery = (target != null) && target.isOffBoard();
+                Report report = new Report(counterBattery ? 3127 : 3121);
                 report.indent();
                 report.newlines = 0;
                 report.subject = subjectId;

@@ -113,4 +113,10 @@ public class TwRulesPilot extends CoreRulesPilot {
         }
         return vDesc;
     }
+
+    // How many pilot hits for an explosion
+    @Override
+    public int getExplosionPilotHits() {
+        return 2;
+    }
 }

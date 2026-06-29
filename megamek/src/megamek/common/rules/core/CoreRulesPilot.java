@@ -118,4 +118,9 @@ public class CoreRulesPilot extends RulesPilot {
 
         return vDesc;
     }
+
+    // How many pilot hits for an explosion Core p.117
+    public int getExplosionPilotHits() {
+        return 1;
+    }
 }

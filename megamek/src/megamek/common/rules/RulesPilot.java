@@ -45,4 +45,7 @@ public abstract class RulesPilot {
     // Handle pilot hits
     public abstract Vector<Report> pilotHits(Game game, Entity e, int totalHits, int damage, int crewPos,
           TWGameManager twGameManager);
+
+    // How many pilot hits for an explosion
+    public abstract int getExplosionPilotHits();
 }

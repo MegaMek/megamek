@@ -24365,7 +24365,8 @@ public class TWGameManager extends AbstractGameManager {
 
         mounted.setShotsLeft(0);
 
-        int pilotDamage = 2;
+        int pilotDamage = Game.rulesManager.getRulesPilot().getExplosionPilotHits();
+        
         if (en instanceof Aero) {
             pilotDamage = 1;
         }

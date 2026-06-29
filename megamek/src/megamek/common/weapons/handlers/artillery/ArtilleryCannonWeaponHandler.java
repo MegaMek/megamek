@@ -58,6 +58,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
+import megamek.common.weapons.ArtilleryHandlerHelper;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.logging.MMLogger;
@@ -189,7 +190,8 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                     report.add(targetPos.getBoardNum());
                     vPhaseReport.addElement(report);
                 } else {
-                    // misses and scatters off-board
+                    // misses and scatters off-board: draw the drift arrow to the board edge the round crossed, since
+                    // there is no on-board landing hex.
                     if (isFlak) {
                         report = new Report(3193);
                     } else {
@@ -197,6 +199,16 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                     }
                     report.subject = subjectId;
                     vPhaseReport.addElement(report);
+
+                    SpecialHexDisplay offBoardMissMarker = new SpecialHexDisplay(
+                          SpecialHexDisplay.Type.ARTILLERY_MISS, game.getRoundCount(), attackingEntity.getOwner(),
+                          "Artillery cannon missed here on round " + game.getRoundCount() + ", drifted off the board");
+                    Coords edgeHex = ArtilleryHandlerHelper.nearestOnBoardHexTowardOffBoard(board, originalPosition,
+                          targetPos);
+                    if (edgeHex != null) {
+                        offBoardMissMarker.setDriftHex(edgeHex);
+                    }
+                    board.addSpecialHexDisplay(originalPosition, offBoardMissMarker);
                     return !bMissed;
                 }
             } else {

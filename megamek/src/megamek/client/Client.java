@@ -1200,6 +1200,9 @@ public class Client extends AbstractClient {
                 case SENDING_ARTILLERY_ATTACKS:
                     Vector<ArtilleryAttackAction> artilleryAttackActions = packet.getArtilleryAttackAction(0);
                     game.setArtilleryVector(artilleryAttackActions);
+                    // Redacted enemy rounds (landing time only; target/munition withheld by the server) for the
+                    // Rounds-in-Air window; this list never feeds the board, so it cannot leak the enemy aim point.
+                    game.setEnemyArtilleryInbound(packet.getEnemyArtilleryInbound(1));
                     // Fire a board-change event so views tracking in-flight artillery (e.g. the Rounds in the Air
                     // window) refresh now. This packet arrives AFTER the phase-change event, so a phase-change-only
                     // refresh would always be one phase stale - notably for off-board counter-battery rounds.

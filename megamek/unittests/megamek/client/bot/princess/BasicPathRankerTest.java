@@ -704,6 +704,12 @@ class BasicPathRankerTest {
                   .append(decimalFormat.format(distanceToEnemy))
                   .append(" * ")
                   .append(decimalFormat.format(hyperAggressionValue))
+                  .append("; standoff: none standoffDist=0 distToEnemy=")
+                  .append(decimalFormat.format(distanceToEnemy))
+                  .append(" curDist=")
+                  .append(decimalFormat.format(-1.0))
+                  .append(" deficit=")
+                  .append(decimalFormat.format(0.0))
                   .append("] - herdingMod [");
 
             if (noFriends) {

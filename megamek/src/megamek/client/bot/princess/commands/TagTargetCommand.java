@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,41 +35,31 @@ package megamek.client.bot.princess.commands;
 import java.util.List;
 
 import megamek.client.bot.Messages;
-import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
-import megamek.server.commands.arguments.MultiWordStringArgument;
+import megamek.server.commands.arguments.UnitArgument;
 
 /**
- * Command to change the behavior of the bot.
+ * Command to designate an enemy unit for the bot to put its TAG on, so a player's homing artillery has a known
+ * designation. The bot's TAG fire prefers a designated target when it is hittable, instead of choosing autonomously.
  *
- * @author Luana Coppio
+ * @author HammerGS
  */
-public class BehaviorCommand implements ChatCommand {
-    private static final String BEHAVIOR = "behavior";
+public class TagTargetCommand implements ChatCommand {
+    private static final String UNIT_ID = "unitID";
 
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-              // saved behavior names may contain spaces, so this must consume all remaining words
-              new MultiWordStringArgument(BEHAVIOR, Messages.getString("Princess.command.behavior.behavior"))
+              new UnitArgument(UNIT_ID, Messages.getString("Princess.command.tagTarget.unitID"))
         );
     }
 
     @Override
     public void execute(Princess princess, Arguments arguments) {
-        String behavior = arguments.getString(BEHAVIOR);
-
-        BehaviorSettings newBehavior = BehaviorSettingsFactory.getInstance().getBehavior(behavior);
-
-        if (newBehavior == null) {
-            princess.sendChat(Messages.getString("Princess.command.behavior.unknownBehavior", behavior));
-            return;
-        }
-
-        princess.setBehaviorSettings(newBehavior);
-        princess.sendChat(Messages.getString("Princess.command.behavior.behaviorChanged", behavior));
+        UnitArgument unitArgument = arguments.get(UNIT_ID, UnitArgument.class);
+        princess.addDesignatedTagTarget(unitArgument.getValue());
+        princess.sendChat(Messages.getString("Princess.command.tagTarget.success"));
     }
 }

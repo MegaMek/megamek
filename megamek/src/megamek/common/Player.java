@@ -140,6 +140,9 @@ public final class Player extends TurnOrdered {
     //Voting should not be stored in save game so marked transient
     private transient boolean votedToAllowTeamChange = false;
     private transient boolean votedToAllowGameMaster = false;
+    // Testing aid (client-set, server-only): when true the server includes enemy artillery attacks in this player's
+    // artillery packet so the Rounds in the Air view can show both sides. Transient - never serialized or saved.
+    private transient boolean artilleryRevealAll = false;
 
     private HexArea fleeArea = new BorderHexArea(true, true, true, true);
     //endregion Variable Declarations
@@ -381,6 +384,22 @@ public final class Player extends TurnOrdered {
      */
     public boolean getSeeAll() {
         return seeAll;
+    }
+
+    /**
+     * @param artilleryRevealAll Whether the server should reveal all in-flight artillery (both teams) to this player -
+     *                           a client-set testing aid for the Rounds in the Air view
+     */
+    public void setArtilleryRevealAll(boolean artilleryRevealAll) {
+        this.artilleryRevealAll = artilleryRevealAll;
+    }
+
+    /**
+     * @return {@code true} if the server should include enemy artillery attacks in this player's artillery packet (the
+     *       Rounds in the Air testing reveal); {@code false} for normal team-only (double-blind) behavior
+     */
+    public boolean isArtilleryRevealAll() {
+        return artilleryRevealAll;
     }
 
     /**

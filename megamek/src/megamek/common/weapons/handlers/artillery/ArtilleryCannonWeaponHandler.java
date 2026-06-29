@@ -40,6 +40,7 @@ import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.Report;
+import megamek.common.SpecialHexDisplay;
 import megamek.common.ToHitData;
 import megamek.common.actions.NukeDetonatedAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -164,6 +165,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         } else {
             Board board = game.getBoard(target);
             if (!board.isSpace()) {
+                Coords originalPosition = targetPos;
                 // Artillery cannons use half the usual scatter distance (rounded up).
                 int standardDistance = (Math.abs(toHit.getMoS()) + 1) / 2;
                 targetPos = ScatterMethod.forGame(game)
@@ -173,6 +175,13 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                     // misses and scatters to another hex
                     if (!isFlak) {
                         report = new Report(3195);
+                        // Mark the targeted hex and record the drift so the board view can draw the drift line.
+                        SpecialHexDisplay cannonMissMarker = new SpecialHexDisplay(
+                              SpecialHexDisplay.Type.ARTILLERY_MISS, game.getRoundCount(), attackingEntity.getOwner(),
+                              "Artillery cannon missed here on round " + game.getRoundCount() + ", drifted to "
+                                    + targetPos.getBoardNum());
+                        cannonMissMarker.setDriftHex(targetPos);
+                        board.addSpecialHexDisplay(originalPosition, cannonMissMarker);
                     } else {
                         report = new Report(3192);
                     }

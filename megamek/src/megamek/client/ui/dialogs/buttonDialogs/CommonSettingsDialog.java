@@ -104,6 +104,15 @@ import megamek.logging.MMLogger;
 
 /**
  * The Client Settings Dialog offering GUI options concerning tooltips, map display, keybinds etc.
+ *
+ * <p>Hidden testing/debug preferences are intentionally NOT shown in the Advanced list (they are filtered out via
+ * {@link #HIDDEN_ADVANCED_OPTIONS}) and can only be enabled by manually adding them to {@code clientsettings.xml}:
+ * <pre>{@code
+ * <preference name="RevealAllArtilleryRounds" value="true"/>          reveal BOTH teams' in-flight artillery target hexes
+ * <preference name="AdvancedShowBotArtilleryHeatMap" value="true"/>   draw Princess's predicted/firing artillery heat map
+ * <preference name="AdvancedRevealObscuredArtillery" value="true"/>   reveal otherwise-obscured artillery hex markers
+ * }</pre>
+ * Each defaults to {@code false}; remove the line (or set {@code false}) to disable.
  */
 public class CommonSettingsDialog extends AbstractButtonDialog
       implements ItemListener, FocusListener, ListSelectionListener, ChangeListener {
@@ -305,6 +314,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           "CommonSettingsDialog.hexes.ShowArtilleryMisses"));
     private final JCheckBox artilleryDisplayDriftedHits = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.hexes.ShowArtilleryDriftedHits"));
+    private final JCheckBox artilleryDisplayDriftArrows = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.hexes.ShowArtilleryDriftArrows"));
     private final JCheckBox bombsDisplayMisses = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.hexes.ShowBombMisses"));
     private final JCheckBox bombsDisplayDrifts = new JCheckBox(Messages.getString(
@@ -836,6 +847,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         comps.add(checkboxEntry(artilleryDisplayDriftedHits,
               Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryDriftedHits.tooltip")));
         artilleryDisplayDriftedHits.setSelected(GUIP.getShowArtilleryDrifts());
+        comps.add(checkboxEntry(artilleryDisplayDriftArrows,
+              Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryDriftArrows.tooltip")));
+        artilleryDisplayDriftArrows.setSelected(GUIP.getShowArtilleryDriftArrows());
         comps.add(checkboxEntry(bombsDisplayMisses,
               Messages.getString("CommonSettingsDialog.hexes.ShowBombMisses.tooltip")));
         bombsDisplayMisses.setSelected(GUIP.getShowBombMisses());
@@ -2545,6 +2559,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         artilleryDisplayMisses.setSelected(GUIP.getShowArtilleryMisses());
         artilleryDisplayDriftedHits.setSelected(GUIP.getShowArtilleryDrifts());
+        artilleryDisplayDriftArrows.setSelected(GUIP.getShowArtilleryDriftArrows());
         bombsDisplayMisses.setSelected(GUIP.getShowBombMisses());
         bombsDisplayDrifts.setSelected(GUIP.getShowBombDrifts());
 
@@ -2748,6 +2763,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         GUIP.setShowArtilleryMisses(artilleryDisplayMisses.isSelected());
         GUIP.setShowArtilleryDrifts(artilleryDisplayDriftedHits.isSelected());
+        GUIP.setShowArtilleryDriftArrows(artilleryDisplayDriftArrows.isSelected());
         GUIP.setShowBombMisses(bombsDisplayMisses.isSelected());
         GUIP.setShowBombDrifts(bombsDisplayDrifts.isSelected());
 
@@ -3800,17 +3816,30 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         return panel;
     }
 
+    // Advanced-preference keys deliberately hidden from the Advanced settings list: testing/debug gates that must only
+    // be enabled by manually editing clientsettings.xml, never via the UI. They keep their "Advanced" prefix so the
+    // value still loads from clientsettings.xml; they are simply filtered out of the displayed list here.
+    // (AdvancedRevealAllArtilleryRounds is the legacy key for the now-renamed RevealAllArtilleryRounds gate.)
+    private static final Set<String> HIDDEN_ADVANCED_OPTIONS = Set.of(
+          "AdvancedRevealAllArtilleryRounds",
+          "AdvancedShowBotArtilleryHeatMap",
+          "AdvancedRevealObscuredArtillery");
+
     private JPanel getAdvancedSettingsPanel() {
         JPanel p = new JPanel();
 
-        String[] s = GUIP.getAdvancedProperties();
-        AdvancedOptionData[] opts = new AdvancedOptionData[s.length];
-        for (int i = 0;
-              i < s.length;
-              i++) {
-            s[i] = s[i].substring(s[i].indexOf("Advanced") + 8);
-            opts[i] = new AdvancedOptionData(s[i]);
+        String[] advancedProperties = GUIP.getAdvancedProperties();
+        List<AdvancedOptionData> visibleOptions = new ArrayList<>();
+        for (String advancedProperty : advancedProperties) {
+            // Skip deliberately-hidden testing gates so they never appear in the Advanced list - they are controlled
+            // only by manually editing clientsettings.xml.
+            if (HIDDEN_ADVANCED_OPTIONS.contains(advancedProperty)) {
+                continue;
+            }
+            visibleOptions.add(new AdvancedOptionData(
+                  advancedProperty.substring(advancedProperty.indexOf("Advanced") + 8)));
         }
+        AdvancedOptionData[] opts = visibleOptions.toArray(new AdvancedOptionData[0]);
         Arrays.sort(opts);
         advancedKeys = new JList<>(opts);
         advancedKeys.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

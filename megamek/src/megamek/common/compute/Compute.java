@@ -2257,10 +2257,14 @@ public class Compute {
         Entity spotter = null;
         int distance = -1;
 
-        // Compute friendly spotters
-        for (Entity friend : game.getPlayerEntities(attacker.getOwner(), true)) {
+        // Compute friendly spotters. Consider every friendly (same-team) unit, not just the attacker's own player's
+        // units: on a multi-bot team the TAG spotter is frequently a different player's unit (e.g. the artillery is one
+        // Princess and the TAG spotter another on the same team), so an own-player-only search misses it and a homing
+        // round a teammate could guide is never fired.
+        for (Entity friend : game.getEntitiesVector()) {
 
             if (friend == null
+                  || friend.isEnemyOf(attacker)
                   || !friend.isDeployed()
                   || friend.isOffBoard()
                   || (friend.getTransportId() != Entity.NONE)

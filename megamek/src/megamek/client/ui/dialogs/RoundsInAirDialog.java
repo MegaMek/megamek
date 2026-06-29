@@ -131,40 +131,50 @@ public class RoundsInAirDialog extends JDialog {
     public void refresh() {
         tableModel.setRowCount(0);
         Game game = client.getGame();
+        List<RoundRow> rows = new ArrayList<>();
 
         // Own and allied rounds: full detail.
-        List<ArtilleryAttackAction> attacks = new ArrayList<>();
         for (Enumeration<ArtilleryAttackAction> attackEnumeration = game.getArtilleryAttacks();
               attackEnumeration.hasMoreElements(); ) {
-            attacks.add(attackEnumeration.nextElement());
-        }
-        attacks.sort(Comparator.comparingInt(ArtilleryAttackAction::getTurnsTilHit));
-        for (ArtilleryAttackAction attack : attacks) {
-            tableModel.addRow(new Object[] {
+            ArtilleryAttackAction attack = attackEnumeration.nextElement();
+            rows.add(new RoundRow(attack.getTurnsTilHit(), new Object[] {
                   teamName(game, attack.getPlayerId()),
                   playerName(game, attack.getPlayerId()),
                   firingUnitName(game, attack.getEntityId()),
                   landsInText(attack.getTurnsTilHit()),
                   targetHexText(game, attack),
                   warheadName(attack)
-            });
+            }));
         }
 
         // Enemy rounds: redacted - landing time only; the target hex and warhead are withheld (shown as "Unknown").
-        List<EnemyArtilleryInbound> enemyInbound = new ArrayList<>(game.getEnemyArtilleryInbound());
-        enemyInbound.sort(Comparator.comparingInt(EnemyArtilleryInbound::turnsTilHit));
         String unknown = Messages.getString("RoundsInAirDialog.unknown");
-        for (EnemyArtilleryInbound inbound : enemyInbound) {
-            tableModel.addRow(new Object[] {
+        for (EnemyArtilleryInbound inbound : game.getEnemyArtilleryInbound()) {
+            rows.add(new RoundRow(inbound.turnsTilHit(), new Object[] {
                   teamName(game, inbound.playerId()),
                   playerName(game, inbound.playerId()),
                   firingUnitName(game, inbound.firingEntityId()),
                   landsInText(inbound.turnsTilHit()),
                   unknown,
                   unknown
-            });
+            }));
+        }
+
+        // Sort allied and enemy rounds together so the soonest-landing round is always at the top, regardless of side.
+        rows.sort(Comparator.comparingInt(RoundRow::turnsTilHit));
+        for (RoundRow row : rows) {
+            tableModel.addRow(row.cells());
         }
     }
+
+    /**
+     * One row of the table, carrying its landing time separately so allied and enemy rounds can be sorted together by
+     * soonest landing before being rendered.
+     *
+     * @param turnsTilHit Turns until this round lands (the sort key)
+     * @param cells       The rendered cell values for the row, in column order
+     */
+    private record RoundRow(int turnsTilHit, Object[] cells) {}
 
     private static String teamName(Game game, int playerId) {
         Player player = game.getPlayer(playerId);

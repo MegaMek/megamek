@@ -142,7 +142,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 handledAmmoAndReport = true;
 
                 // "Shot, over" - the battery announces the round is on the way, characterised by fire type
-                reportShot(artilleryAttackAction);
+                reportShot();
 
                 artyMsg = "Artillery fire Incoming, landing on round "
                       + (game.getRoundCount() + artilleryAttackAction.getTurnsTilHit())
@@ -540,10 +540,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * Sends the team-only "Shot, over" call-for-fire toast naming the target grid. The aim point travels only in this
      * team toast (and the team-only map marker), never in the shared phase report - which would leak it to the enemy,
      * who otherwise sees exactly the same announcement as in {@code main} (the firing unit + "will land in N turns").
-     *
-     * @param artilleryAttackAction The artillery attack being fired
      */
-    private void reportShot(ArtilleryAttackAction artilleryAttackAction) {
+    private void reportShot() {
         if (attackingEntity == null) {
             return;
         }

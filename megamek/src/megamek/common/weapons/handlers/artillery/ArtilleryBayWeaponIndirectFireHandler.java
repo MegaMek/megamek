@@ -395,7 +395,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                   new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
                         game.getRoundCount(), game.getPlayer(aaa.getPlayerId()), artyMsg));
         } else {
-            // Oblique Artilleryman reduces scatter distance by two hexes, minimum 0 (CamOps p.78).
+            // Oblique Artilleryman reduces scatter distance by two hexes, minimum 0 (CamOps p.78, 5th printing).
             int scatterReduction = attackingEntity.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)
                   ? Scatter.SPA_SCATTER_REDUCTION : 0;
             ScatterMethod scatterMethod = ScatterMethod.forGame(game);

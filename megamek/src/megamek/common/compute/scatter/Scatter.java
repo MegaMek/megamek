@@ -49,7 +49,7 @@ public final class Scatter {
 
     /**
      * Hexes by which the Oblique Artilleryman and Golden Goose abilities reduce a missed shot's scatter distance, to a
-     * minimum of {@code 0} (CamOps p.78).
+     * minimum of {@code 0} (CamOps, 5th printing: Oblique Artilleryman p.78, Golden Goose p.75).
      */
     public static final int SPA_SCATTER_REDUCTION = 2;
 

@@ -262,7 +262,7 @@ public class BombAttackHandler extends WeaponHandler {
                           new SpecialHexDisplay(Type.BOMB_HIT, game.getRoundCount(),
                                 player, bombMsg));
                 } else {
-                    // Golden Goose reduces bomb scatter distance by two hexes, minimum 0 (CamOps p.78).
+                    // Golden Goose reduces bomb scatter distance by two hexes, minimum 0 (CamOps p.75, 5th printing).
                     int scatterReduction = attackingEntity.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)
                           ? Scatter.SPA_SCATTER_REDUCTION : 0;
                     ScatterMethod scatterMethod = ScatterMethod.forGame(game);

@@ -661,7 +661,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // distance; with the Advanced Scatter option the distance is rolled with dice instead.
             // Resolved here so it is not duplicated in ArtilleryWeaponDirectFireHandler.
             Coords originalPosition = targetPos;
-            // Oblique Artilleryman reduces scatter distance by two hexes, minimum 0 (CamOps p.78).
+            // Oblique Artilleryman reduces scatter distance by two hexes, minimum 0 (CamOps p.78, 5th printing).
             int scatterReduction = attackingEntity.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)
                   ? Scatter.SPA_SCATTER_REDUCTION : 0;
             ScatterResult scatterResult = ScatterMethod.forGame(game)

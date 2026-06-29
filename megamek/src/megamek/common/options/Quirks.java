@@ -43,6 +43,8 @@ import java.util.List;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.units.Aero;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
@@ -232,6 +234,14 @@ public class Quirks extends AbstractOptions {
             }
         }
 
+        // Overhead Arms cannot be combined with Low-Mounted Arms (BMM pg. 85)
+        if (qName.equals(QUIRK_POS_OVERHEAD_ARMS) && en.hasQuirk(QUIRK_NEG_LOW_ARMS)) {
+            return false;
+        }
+        if (qName.equals(QUIRK_NEG_LOW_ARMS) && en.hasQuirk(QUIRK_POS_OVERHEAD_ARMS)) {
+            return false;
+        }
+
         if (qName.equals(QUIRK_NEG_GAS_HOG)) {
             return en.hasEngine() &&
                   ((en.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
@@ -248,6 +258,7 @@ public class Quirks extends AbstractOptions {
                       && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM);
                 case QUIRK_NEG_OVERSIZED -> en.getWeight() >= 60;
                 case QUIRK_POS_COMPACT -> en.getWeight() <= 55;
+                case QUIRK_POS_OVERHEAD_ARMS -> isOverheadArmsLegalFor(en);
                 default -> quirk.isNoneOf(QUIRK_POS_ATMOSPHERE_FLYER,
                       QUIRK_NEG_ATMOSPHERE_INSTABILITY, QUIRK_POS_DOCKING_ARMS,
                       QUIRK_NEG_FRAGILE_FUEL, QUIRK_POS_INTERNAL_BOMB, QUIRK_POS_TRAILER_HITCH,
@@ -350,6 +361,43 @@ public class Quirks extends AbstractOptions {
                   QUIRK_NEG_PROTOTYPE, QUIRK_NEG_SENSOR_GHOSTS);
         }
 
+        return false;
+    }
+
+    /**
+     * Determines whether a Mek is eligible for the Overhead Arms quirk (BMM pg. 85). The quirk cannot be taken by a Mek
+     * that has no arms (such as a quad), nor by one that lacks any direct-fire ranged weapon in its arms, with the
+     * exception of OmniMeks (whose arm loadout varies by configuration).
+     *
+     * @param en the entity to test
+     *
+     * @return {@code true} if the Mek may take the Overhead Arms quirk, otherwise {@code false}
+     */
+    private static boolean isOverheadArmsLegalFor(Entity en) {
+        if (en.entityIsQuad()) {
+            return false;
+        }
+        if (en.isOmni()) {
+            return true;
+        }
+        return hasArmMountedDirectFireWeapon(en);
+    }
+
+    /**
+     * Checks whether the entity carries at least one direct-fire ranged weapon mounted in an arm location.
+     *
+     * @param en the entity to test
+     *
+     * @return {@code true} if a direct-fire weapon is mounted in the left or right arm, otherwise {@code false}
+     */
+    private static boolean hasArmMountedDirectFireWeapon(Entity en) {
+        for (WeaponMounted weapon : en.getWeaponList()) {
+            int location = weapon.getLocation();
+            boolean armMounted = (location == Mek.LOC_LEFT_ARM) || (location == Mek.LOC_RIGHT_ARM);
+            if (armMounted && (weapon.getType() != null) && weapon.getType().hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                return true;
+            }
+        }
         return false;
     }
 

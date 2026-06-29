@@ -568,6 +568,11 @@ public class ClubAttackAction extends PhysicalAttackAction {
             }
         }
 
+        // Overhead Arms quirk (BMM p.85): arm-mounted physical weapon attacks suffer a +2 to-hit penalty.
+        if (armMounted && ae.hasQuirk(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)) {
+            toHit.addModifier(2, "Overhead Arms");
+        }
+
         // elevation
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_CLUBS_PUNCH)
               && (target instanceof Mek)) {

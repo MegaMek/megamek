@@ -348,6 +348,11 @@ public class PunchAttackAction extends PhysicalAttackAction {
             toHit.addModifier(-1, "BattleFist");
         }
 
+        // Overhead Arms quirk (BMM p.85): arm-mounted physical attacks suffer a +2 to-hit penalty.
+        if (ae.hasQuirk(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)) {
+            toHit.addModifier(2, "Overhead Arms");
+        }
+
         // elevation
         if (isConvertedQuadVee(target, game)) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);

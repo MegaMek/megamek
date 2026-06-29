@@ -46,8 +46,7 @@ import java.util.Vector;
 public class CoreRulesPilot extends RulesPilot {
 
     // Handle pilot hits. Core p.117
-    public Vector<Report> pilotHits(Game game, Entity e, int totalHits, int damage, int crewPos) {
-        boolean toughness = game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS);
+    public Vector<Report> pilotHits(Entity e, int totalHits, int damage, int crewPos, boolean toughness) {
         Vector<Report> vDesc = new Vector<>();
 
         int hit = totalHits - damage + 1;

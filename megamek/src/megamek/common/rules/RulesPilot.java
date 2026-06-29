@@ -42,7 +42,7 @@ import java.util.Vector;
 public abstract class RulesPilot {
 
     // Handle pilot hits
-    public abstract Vector<Report> pilotHits(Game game, Entity e, int totalHits, int damage, int crewPos);
+    public abstract Vector<Report> pilotHits(Entity e, int totalHits, int damage, int crewPos, boolean toughness);
 
     // How many pilot hits for an explosion
     public abstract int getExplosionPilotHits();

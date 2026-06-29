@@ -45,11 +45,11 @@ import java.util.Vector;
 
 public class TwRulesPilot extends CoreRulesPilot {
 
-    public Vector<Report> pilotHits(Game game, Entity e, int totalHits, int damage, int crewPos) {
+    public Vector<Report> pilotHits(Entity e, int totalHits, int damage, int crewPos, boolean toughness) {
         Vector<Report> vDesc = new Vector<>();
         for (int hit = (totalHits - damage) + 1; hit <= totalHits; hit++) {
             int rollTarget = Game.rulesManager.getRulesCharts().escalatingFailure(hit);
-            if (game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
+            if (toughness) {
                 rollTarget -= e.getCrew().getToughness(crewPos);
             }
             boolean edgeUsed = false;

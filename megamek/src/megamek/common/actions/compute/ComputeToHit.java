@@ -1053,7 +1053,8 @@ public class ComputeToHit {
         if (elevatedLosMods.getValue() == TargetRoll.IMPOSSIBLE) {
             return null;
         }
-        logger.debug("[OverheadArms] {}: arm weapon in location {} - terrain LOS modifier reduced from +{} to +{}",
+        logger.debug("[OverheadArms] {}: arm weapon in location {} - terrain LOS modifier recalculated one level "
+                    + "higher: +{} (normal) -> +{} (elevated)",
               mek.getShortName(), weaponLocation, baseLosMods.getValue(), elevatedLosMods.getValue());
         return new OverheadArmsLos(elevatedLos, elevatedLosMods);
     }

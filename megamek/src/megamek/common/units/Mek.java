@@ -2650,6 +2650,11 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
             return Compute.firingArcFromVGLFacing(mounted.getFacing());
         }
+        // Directional Torso Mount (BMM p.83): front/rear (2-point) or full 360 (quad 3-point)
+        OptionalInt directionalTorsoMountArc = getDirectionalTorsoMountArc(mounted);
+        if (directionalTorsoMountArc.isPresent()) {
+            return directionalTorsoMountArc.getAsInt();
+        }
         // rear mounted?
         if (mounted.isRearMounted()) {
             return Compute.ARC_REAR;
@@ -2662,6 +2667,30 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
             case LOC_LEFT_ARM -> getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_LEFT_ARM;
             default -> Compute.ARC_360;
         };
+    }
+
+    /**
+     * Computes the firing arc for a weapon in a Directional Torso Mount (BMM p.83).
+     * <p>
+     * The 3-point version (quad Meks only) operates as a full 360-degree turret. The 2-point version fires into either
+     * the front arc or the rear arc depending on the mount's current facing; because torso-mounted weapons are measured
+     * against the secondary facing (see {@link #isSecondaryArcWeapon(int)}), the chosen arc rotates with torso twists
+     * as normal. When the mount has been locked by damage, the last chosen arc is retained because the underlying
+     * front/rear flag is frozen.
+     *
+     * @param mounted the weapon being checked
+     *
+     * @return the {@code Compute.ARC_*} constant for the mount, or an empty {@link OptionalInt} if this weapon is not
+     *       in a Directional Torso Mount
+     */
+    protected OptionalInt getDirectionalTorsoMountArc(Mounted<?> mounted) {
+        if (mounted.hasDirectional360TorsoMount()) {
+            return OptionalInt.of(Compute.ARC_360);
+        }
+        if (mounted.hasDirectionalTorsoMount()) {
+            return OptionalInt.of(mounted.isDirectionalMountRear() ? Compute.ARC_REAR : Compute.ARC_FORWARD);
+        }
+        return OptionalInt.empty();
     }
 
     /**

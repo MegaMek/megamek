@@ -114,6 +114,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         FIRE_MODE("fireMode"),
         FIRE_SPOT("fireSpot"),
         FIRE_FLIP_ARMS("fireFlipArms"),
+        FIRE_FLIP_MOUNT("fireFlipMount"),
         FIRE_FIND_CLUB("fireFindClub"),
         FIRE_STRAFE("fireStrafe"),
         FIRE_SEARCHLIGHT("fireSearchlight"),
@@ -485,6 +486,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
             setFindClubEnabled(FindClubAction.canMekFindClub(game, en));
             setFlipArmsEnabled(!currentEntity().getAlreadyTwisted() && currentEntity().canFlipArms());
+            updateFlipMount();
             updateSearchlight();
             updateRHS();
             updateClearTurret();
@@ -499,6 +501,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 setTwistEnabled(false);
                 setFindClubEnabled(false);
                 setFlipArmsEnabled(false);
+                setFlipMountEnabled(false);
                 setStrafeEnabled(false);
                 clientgui.getUnitDisplay().wPan.setToHit("Hidden units are only allowed to spot!");
             }
@@ -603,6 +606,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         butSkipTurn.setEnabled(false);
         setNextTargetEnabled(false);
         setFlipArmsEnabled(false);
+        setFlipMountEnabled(false);
         setFireModeEnabled(false);
         setFireCalledEnabled(false);
         setFireClearTurretEnabled(false);
@@ -1742,6 +1746,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         updateSuicideImplants();
         updateClearWeaponJam();
         updateClearTurret();
+        updateFlipMount();
 
         // Hidden units can only spot
         if ((attacker != null) && attacker.isHidden()) {
@@ -1994,6 +1999,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             jumpToTarget(true, onlyValidTargets, ignoreAllies);
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_FLIP_ARMS.getCmd())) {
             updateFlipArms(!currentEntity().getArmsFlipped());
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_FLIP_MOUNT.getCmd())) {
+            flipDirectionalMount();
             // Fire Mode - More Fire Mode button handling - Rasia
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_MODE.getCmd())) {
             changeMode(true);
@@ -2042,6 +2049,54 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         addAttack(new FlipArmsAction(currentEntity, armsFlipped));
         updateTarget();
         refreshAll();
+    }
+
+    /**
+     * Flips the currently selected weapon's Directional Torso Mount (BMM p.83) between the front and rear arc. Like a
+     * torso twist, changing the arc clears any pending attacks; unlike a torso twist the chosen arc persists across
+     * rounds. Ignored if the mount has been locked by damage.
+     */
+    public void flipDirectionalMount() {
+        if (currentEntity() == null) {
+            return;
+        }
+        WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        int weaponNumber = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        if ((weapon == null) || (weaponNumber == -1)) {
+            return;
+        }
+        if (!weapon.hasDirectionalTorsoMount()) {
+            logger.debug("[DirTorsoMount] {}: flip ignored - selected weapon {} is not a directional mount",
+                  currentEntity().getShortName(), weapon.getName());
+            return;
+        }
+        if (weapon.isDirectionalMountLocked()) {
+            logger.debug("[DirTorsoMount] {}: flip ignored - mount for {} is locked",
+                  currentEntity().getShortName(), weapon.getName());
+            return;
+        }
+        boolean newRear = !weapon.isDirectionalMountRear();
+        clearAttacks();
+        weapon.setDirectionalMountRear(newRear);
+        addAttack(new DirectionalMountFacingAction(currentEntity, weaponNumber, newRear));
+        logger.debug("[DirTorsoMount] {}: {} mount set to {} arc",
+              currentEntity().getShortName(), weapon.getName(), newRear ? "rear" : "front");
+        updateTarget();
+        refreshAll();
+        // refreshAll() resets the selection to the first weapon; keep the flipped weapon selected so
+        // the player retains context and can see its updated arc indicator.
+        clientgui.getUnitDisplay().wPan.selectWeapon(weapon);
+    }
+
+    /**
+     * Enables the flip-mount button only when the selected weapon is in a Directional Torso Mount whose arc can still
+     * be changed (it has not been locked by damage).
+     */
+    protected void updateFlipMount() {
+        WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        boolean canFlip = (currentEntity() != null) && (weapon != null)
+              && weapon.hasDirectionalTorsoMount() && !weapon.isDirectionalMountLocked();
+        setFlipMountEnabled(canFlip);
     }
 
     protected void updateSearchlight() {
@@ -2261,6 +2316,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     protected void setFlipArmsEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_FLIP_ARMS).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FLIP_ARMS.getCmd(), enabled);
+    }
+
+    protected void setFlipMountEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_FLIP_MOUNT).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FLIP_MOUNT.getCmd(), enabled);
     }
 
     protected void setSpotEnabled(boolean enabled) {

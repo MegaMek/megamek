@@ -102,6 +102,7 @@ public class OptionsConstants {
     public static final String QUIRK_WEAPON_POS_JETTISON_CAPABLE = "jettison_capable";
     public static final String QUIRK_WEAPON_POS_STABLE_WEAPON = "stable_weapon";
     public static final String QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT = "direct_torso_mount";
+    public static final String QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD = "direct_torso_mount_quad";
     //These have been made specific to weapons.
     public static final String QUIRK_WEAPON_POS_MOD_WEAPONS = "mod_weapons";
     public static final String QUIRK_WEAPON_POS_FAST_RELOAD = "fast_reload";

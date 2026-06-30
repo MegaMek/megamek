@@ -705,10 +705,6 @@ public class BasicPathRanker extends PathRanker {
     // the bot prefers a non-jumping path and only jumps when that is the only way to reach a designating position.
     private static final double TAG_JUMP_PENALTY = 10.0;
 
-    // TAG-spotter priority-target tuning (designation-zone positioning). A crippled (mission-killed) enemy is worth
-    // far less as a TAG/homing target, so it is heavily deprioritized when choosing the priority target.
-    private static final double SPOTTER_CRIPPLED_VALUE_FACTOR = 0.1;
-
     // Hysteresis: the spotter keeps painting its current (persisted) priority target across turns unless a different
     // enemy is worth at least this multiple of it - stops a round-to-round flip onto a marginally higher-value unit.
     private static final double SPOTTER_PRIORITY_SWITCH_MARGIN = 1.5;
@@ -801,25 +797,10 @@ public class BasicPathRanker extends PathRanker {
     private record SpotterPriority(@Nullable Entity target, String source) {}
 
     /**
-     * @param entity An enemy entity
-     *
-     * @return The entity's "worth painting" value - current (damage-adjusted) battle value, heavily reduced for a
-     *       crippled (mission-killed) unit - mirrors {@code ArtilleryTargetingControl.tagTargetValue} so positioning
-     *       and firing agree on which target matters.
-     */
-    private double spotterTargetValue(Entity entity) {
-        double value = Math.max(1.0, entity.calculateBattleValue());
-        if (entity.isCrippled()) {
-            value *= SPOTTER_CRIPPLED_VALUE_FACTOR;
-        }
-        return Math.max(1.0, value);
-    }
-
-    /**
      * @param enemies The enemy units
      *
-     * @return The deployed on-board enemy with the highest {@link #spotterTargetValue}, or {@code null} if there is
-     *       none
+     * @return The deployed on-board enemy with the highest {@link ArtilleryTargetingControl#tagTargetValue}, or
+     *       {@code null} if there is none
      */
     private @Nullable Entity highestValueEnemy(List<Entity> enemies) {
         Entity best = null;
@@ -828,7 +809,7 @@ public class BasicPathRanker extends PathRanker {
             if (!enemy.isDeployed() || enemy.isOffBoard() || (enemy.getPosition() == null)) {
                 continue;
             }
-            double value = spotterTargetValue(enemy);
+            double value = ArtilleryTargetingControl.tagTargetValue(enemy);
             if (value > bestValue) {
                 bestValue = value;
                 best = enemy;
@@ -862,8 +843,8 @@ public class BasicPathRanker extends PathRanker {
             Entity persisted = game.getEntity(persistedId);
             boolean persistedValid = (persisted != null) && persisted.isDeployed() && !persisted.isOffBoard()
                   && (persisted.getPosition() != null) && persisted.isEnemyOf(spotter) && !persisted.isDestroyed();
-            if (persistedValid && (spotterTargetValue(highestValue)
-                  < (SPOTTER_PRIORITY_SWITCH_MARGIN * spotterTargetValue(persisted)))) {
+            if (persistedValid && (ArtilleryTargetingControl.tagTargetValue(highestValue)
+                  < (SPOTTER_PRIORITY_SWITCH_MARGIN * ArtilleryTargetingControl.tagTargetValue(persisted)))) {
                 lastSpotterPriorityTarget.put(spotter.getId(), persisted.getId());
                 return new SpotterPriority(persisted, "PERSISTED");
             }

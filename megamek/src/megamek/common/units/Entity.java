@@ -12316,6 +12316,19 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
+    /**
+     * @return {@code true} if this unit mounts at least one artillery weapon (regardless of whether it is currently
+     *       loaded or operational)
+     */
+    public boolean hasArtillery() {
+        for (WeaponMounted weapon : getWeaponList()) {
+            if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isCanon() {
         return canon;
     }

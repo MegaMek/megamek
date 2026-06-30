@@ -424,7 +424,9 @@ public class MapMenu extends JPopupMenu {
         JMenu targetHexMenu = createTargetHexMenuItem(bot);
         menu.add(targetHexMenu);
         menu.add(createWaypointMenu(bot));
-        menu.add(createArtilleryMenu(bot));
+        if (botHasArtillery(bot)) {
+            menu.add(createArtilleryMenu(bot));
+        }
         for (Entity entity : client.getGame().getEntitiesVector(coords)) {
             prioritizeTargetUnitMenu.add(createPrioritizeTargetUnitMenu(bot, entity));
             ignoreTargetMenu.add(createIgnoreTargetUnitMenu(bot, entity));
@@ -618,6 +620,21 @@ public class MapMenu extends JPopupMenu {
               coords.hexCode(board))));
         targetHexMenu.add(item);
         return targetHexMenu;
+    }
+
+    /**
+     * @param bot The bot player
+     *
+     * @return {@code true} if the bot owns at least one unit with an artillery weapon, so the artillery orders menu is
+     *       worth offering (a bot with no artillery would otherwise get an empty, useless menu)
+     */
+    private boolean botHasArtillery(Player bot) {
+        for (Entity entity : client.getGame().getPlayerEntities(bot, false)) {
+            if (entity.hasArtillery()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

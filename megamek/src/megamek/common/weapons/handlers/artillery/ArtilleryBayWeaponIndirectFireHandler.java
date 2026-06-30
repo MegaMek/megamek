@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,6 +51,8 @@ import megamek.common.actions.NukeDetonatedAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.scatter.Scatter;
+import megamek.common.compute.scatter.ScatterMethod;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
@@ -156,8 +158,9 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
                 addHeat();
-                // Report the firing itself
-                Report r = new Report(3121);
+                // Report the firing itself - name it counter-battery when the target is an off-board enemy battery.
+                boolean counterBattery = (target != null) && target.isOffBoard();
+                Report r = new Report(counterBattery ? 3127 : 3121);
                 r.indent();
                 r.newlines = 0;
                 r.subject = subjectId;
@@ -393,16 +396,10 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                   new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
                         game.getRoundCount(), game.getPlayer(aaa.getPlayerId()), artyMsg));
         } else {
-            int moF = toHit.getMoS();
-            if (attackingEntity.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)) {
-                // getMoS returns a negative MoF
-                // simple math is better so lets make it positive
-                if ((-moF - 2) < 1) {
-                    moF = 0;
-                } else {
-                    moF = moF + 2;
-                }
-            }
+            // Oblique Artilleryman reduces scatter distance by two hexes, minimum 0 (CamOps p.78, 5th printing).
+            int scatterReduction = attackingEntity.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)
+                  ? Scatter.SPA_SCATTER_REDUCTION : 0;
+            ScatterMethod scatterMethod = ScatterMethod.forGame(game);
             // We're only going to display one missed shot hex on the board, at the intended
             // target
             // Any drifted shots will be indicated at their end points
@@ -414,7 +411,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             game.getBoard().addSpecialHexDisplay(originalPosition, bayMissMarker);
             while (numWeaponsHit > 0) {
                 // We'll generate a new report and scatter for each weapon fired
-                targetPos = Compute.scatterDirectArty(originalPosition, moF);
+                targetPos = scatterMethod.omnidirectional(originalPosition, toHit.getMoS(), scatterReduction).landing();
                 if (game.getBoard().contains(targetPos)) {
                     targets.add(targetPos);
                     // The bay scatters each weapon separately; draw the drift line to the first on-board impact.

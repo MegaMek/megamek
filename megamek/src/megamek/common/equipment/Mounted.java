@@ -57,6 +57,7 @@ import megamek.common.options.WeaponQuirks;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
 import megamek.common.units.Tank;
 import megamek.common.util.RoundWeight;
 import megamek.common.weapons.AmmoWeapon;
@@ -1571,10 +1572,12 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * @return {@code true} if this weapon is in the 3-point Directional Torso Mount, which operates as a full
-     *       360-degree turret (quad Meks only), per BMM p.83.
+     *       360-degree turret. This version is available only to quad Meks (BMM p.83); the quad requirement is
+     *       enforced here as well as during construction so the 360-degree arc can never be granted to a biped.
      */
     public boolean hasDirectional360TorsoMount() {
-        return hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD);
+        return (entity instanceof QuadMek)
+              && hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD);
     }
 
     /**

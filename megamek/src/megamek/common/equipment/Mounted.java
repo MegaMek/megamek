@@ -56,6 +56,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.util.RoundWeight;
 import megamek.common.weapons.AmmoWeapon;
@@ -95,6 +96,12 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean sponsonTurretMounted = false; // is this mounted in a sponson turret
     private boolean pintleTurretMounted = false; // is this mounted in a pintle turret
     private int facing = -1; // facing for turrets
+    // Directional Torso Mount quirk (BMM p.83): true when this weapon's mount currently points to the
+    // rear arc rather than the front arc. Unlike a torso twist this persists across rounds.
+    private boolean directionalMountRear = false;
+    // Directional Torso Mount quirk (BMM p.83): true when the mount's rotation mechanism has been
+    // destroyed (2D6 9+ on a location hit). The weapon still fires, but its arc is locked.
+    private boolean directionalMountLocked = false;
 
     private int mode; // Equipment's current state. On or Off. Six shot or
     // Four shot, etc
@@ -475,6 +482,16 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
         if (pintleTurretMounted) {
             desc.append(" (PT)");
+        }
+        // Directional Torso Mount (BMM p.83): show the player when the mount is flipped to the rear arc,
+        // and whether the mount has been locked by damage.
+        if (hasDirectionalTorsoMount() && !hasDirectional360TorsoMount()) {
+            if (isDirectionalMountRear()) {
+                desc.append(" (R)");
+            }
+            if (isDirectionalMountLocked()) {
+                desc.append(" (Locked)");
+            }
         }
         // Append the facing for VGLs or if mounted on an AbstractBuildingEntity
         if (((getType() instanceof WeaponType) && getType().hasFlag(WeaponType.F_VGL))
@@ -1513,6 +1530,90 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     public int getFacing() {
         return facing;
+    }
+
+    /**
+     * @return {@code true} if this weapon is in a Directional Torso Mount of either type (the 2-point front/rear
+     *       version or the 3-point quad 360-degree version), per BMM p.83. This is true when the weapon carries a
+     *       Directional Torso Mount weapon quirk directly, or when its unit carries the chassis-wide
+     *       {@code directional_torso_mount} quirk and this weapon is in its scope (see
+     *       {@link #isCoveredByUnitDirectionalTorsoMount()}). Respects the quirks game option (see
+     *       {@link #hasQuirk(String)}).
+     */
+    public boolean hasDirectionalTorsoMount() {
+        return hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT)
+              || hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD)
+              || isCoveredByUnitDirectionalTorsoMount();
+    }
+
+    /**
+     * Determines whether this weapon is covered by its unit's chassis-wide Directional Torso Mount quirk
+     * ({@link OptionsConstants#QUIRK_POS_DIRECTIONAL_TORSO_MOUNT}). The unit-level quirk applies the 2-point
+     * (front/rear) directional mount to every eligible torso-mounted weapon: it must be a weapon in a torso location
+     * (left, right or center), not already turret-mounted, and not a weapon with location placement restrictions such
+     * as a Heavy Gauss rifle (BMM p.83).
+     *
+     * @return {@code true} if the unit-level Directional Torso Mount quirk applies to this weapon
+     */
+    private boolean isCoveredByUnitDirectionalTorsoMount() {
+        if (!(entity instanceof Mek mek)
+              || !mek.hasQuirk(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)) {
+            return false;
+        }
+        if (!(getType() instanceof WeaponType weaponType) || mekTurretMounted) {
+            return false;
+        }
+        if (WeaponQuirks.hasLocationPlacementRestriction(weaponType)) {
+            return false;
+        }
+        return mek.locationIsTorso(getLocation());
+    }
+
+    /**
+     * @return {@code true} if this weapon is in the 3-point Directional Torso Mount, which operates as a full
+     *       360-degree turret (quad Meks only), per BMM p.83.
+     */
+    public boolean hasDirectional360TorsoMount() {
+        return hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD);
+    }
+
+    /**
+     * @return {@code true} if this weapon's Directional Torso Mount currently points to the rear arc rather than the
+     *       front arc. Only meaningful for the 2-point version; the 360-degree version ignores this. Persists across
+     *       rounds (unlike a torso twist).
+     */
+    public boolean isDirectionalMountRear() {
+        return directionalMountRear;
+    }
+
+    /**
+     * Sets the current arc of a 2-point Directional Torso Mount. Has no effect once the mount is locked (see
+     * {@link #isDirectionalMountLocked()}).
+     *
+     * @param rear {@code true} to point the mount to the rear arc, {@code false} for the front arc
+     */
+    public void setDirectionalMountRear(boolean rear) {
+        if (!directionalMountLocked) {
+            directionalMountRear = rear;
+        }
+    }
+
+    /**
+     * @return {@code true} if the Directional Torso Mount's rotation mechanism has been destroyed (2D6 9+ on a hit to
+     *       its location, BMM p.83). The weapon still fires, but its arc can no longer be changed.
+     */
+    public boolean isDirectionalMountLocked() {
+        return directionalMountLocked;
+    }
+
+    /**
+     * Marks the Directional Torso Mount's rotation mechanism as destroyed, locking the weapon in its current arc. The
+     * weapon remains able to fire.
+     *
+     * @param locked {@code true} to lock the mount in its current arc
+     */
+    public void setDirectionalMountLocked(boolean locked) {
+        directionalMountLocked = locked;
     }
 
     public int getOriginalShots() {

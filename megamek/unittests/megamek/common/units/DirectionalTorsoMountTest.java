@@ -142,6 +142,21 @@ class DirectionalTorsoMountTest {
         }
 
         @Test
+        @DisplayName("The 3-point 360 quirk grants a turret only on quads; a biped falls back to front/rear")
+        void threePointIsQuadOnlyInEngine() {
+            BipedMek mek = new BipedMek();
+            Mounted<?> weapon = mountWithDirectionalQuirk(mek,
+                  OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD);
+
+            assertFalse(weapon.hasDirectional360TorsoMount(),
+                  "A biped must never get the 360-degree turret, even with the quad quirk set");
+            // It still behaves as a (2-point) directional mount rather than a fixed forward weapon.
+            assertEquals(Compute.ARC_FORWARD, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
+            weapon.setDirectionalMountRear(true);
+            assertEquals(Compute.ARC_REAR, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
+        }
+
+        @Test
         @DisplayName("Without the quirk a torso weapon keeps its normal forward arc")
         void noQuirkKeepsForwardArc() {
             BipedMek mek = new BipedMek();

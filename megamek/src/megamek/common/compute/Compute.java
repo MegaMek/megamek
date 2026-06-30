@@ -5999,9 +5999,13 @@ public class Compute {
         } else if (attacker.getElevation() > defender.getElevation()) {
             // Can't attack if flying
             reason = "Cannot do leg attack while flying.";
+        } else if (attacker.getMovementMode().isUMUInfantry()
+              && (game.getHexOf(defender) instanceof megamek.common.Hex defenderHex)
+              && !defenderHex.hasDepth1WaterOrDeeper()) {
+            // UMU equipped infantry can only make leg attacks if the target is in depth 1+ water
+            reason = "Cannot make leg attacks unless the target is in depth 1 or deeper water.";
         } else if (attacker instanceof BattleArmor inf) {
             // Handle BattleArmor attackers.
-
             toReturn = new ToHitData(inf.getCrew().getPiloting(),
                   "anti-mek skill",
                   ToHitData.HIT_KICK,
@@ -6103,6 +6107,10 @@ public class Compute {
         // target is already swarmed
         else if (defender.getSwarmAttackerId() != Entity.NONE) {
             reason = "Only one swarm allowed at a time.";
+        }
+        // UMU Infantry cannot make swarm attacks
+        else if (attacker.getMovementMode().isUMUInfantry()) {
+            reason = "UMU equipped infantry cannot make swarm attacks.";
         }
         // Handle BattleArmor attackers.
         else if (attacker instanceof BattleArmor inf) {

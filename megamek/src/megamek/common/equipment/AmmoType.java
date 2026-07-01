@@ -1283,6 +1283,30 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
 
+    private static final MunitionMutator CASELESS_MUNITION_MUTATOR_FOR_PROTO = new MunitionMutator("Caseless",
+          1,
+          Munitions.M_CASELESS,
+          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
+                .setClanAdvancement(3070, DATE_NONE, 3109, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),
+          "164, TO:AUE");
+
+    private static final MunitionMutator FLAK_MUNITION_MUTATOR_FOR_PROTO = new MunitionMutator("Flak",
+          1,
+          Munitions.M_FLAK,
+          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
+                .setClanAdvancement(DATE_NONE, DATE_NONE, 3070, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, true, false, false)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),
+          "164, TO:AUE");
+
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     private static final MunitionMutator CLAN_FLECHETTE_MUNITION_MUTATOR_FOR_PROTO = new MunitionMutator("Flechette",
           1,
@@ -1294,20 +1318,6 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(DATE_NONE, 3095, 3105, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
                 .setProductionFactions(Faction.CHH)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),
-          "208, TM");
-
-    private static final MunitionMutator CLAN_PRECISION_MUNITION_MUTATOR_FOR_PROTO = new MunitionMutator("Precision",
-          2,
-          Munitions.M_PRECISION,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
-                .setTechRating(TechRating.F)
-                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
-                .setClanAdvancement(3070, 3073, 3145, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(Faction.CBS)
-                .setProductionFactions(Faction.CBS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
 
@@ -3630,10 +3640,9 @@ public class AmmoType extends EquipmentType {
         // Create the munition types for Clan Protomek AC rounds. Ammo Tech Ratings based off the weapon itself
         munitions.clear();
         munitions.add(CLAN_ARMOR_PIERCING_MUNITION_MUTATOR_FOR_PROTO);
-        munitions.add(CASELESS_MUNITION_MUTATOR);
-        munitions.add(FLAK_MUNITION_MUTATOR);
+        munitions.add(CASELESS_MUNITION_MUTATOR_FOR_PROTO);
+        munitions.add(FLAK_MUNITION_MUTATOR_FOR_PROTO);
         munitions.add(CLAN_FLECHETTE_MUNITION_MUTATOR_FOR_PROTO);
-        munitions.add(CLAN_PRECISION_MUNITION_MUTATOR_FOR_PROTO);
         munitions.add(CLAN_TRACER_MUNITION_MUTATOR_FOR_PROTO);
         AmmoType.createMunitions(clanProtoAcAmmo, munitions);
 
@@ -4748,12 +4757,18 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLPROAC2Ammo() {
 
         AmmoType ammo = new AmmoType();
-        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 11 LINES
         ammo.name = "ProtoMech AC/2 Ammo";
         ammo.shortName = "Proto AC/2";
         ammo.setInternalName("Clan ProtoMech AC/2 Ammo");
         ammo.addLookupName("CLProtoAC2Ammo");
         ammo.addLookupName("CLProtoAC2 Ammo");
+        ammo.addLookupName("Clan ProtoMech AC/2 Precision Ammo", false);
+        ammo.addLookupName("Clan ProtoMech AC/2 Ammo - Precision", false);
+        ammo.addLookupName("CLProtoAC2Ammo - Precision", false);
+        ammo.addLookupName("CLProtoAC2 Ammo - Precision", false);
+        ammo.addLookupName("CLProtoAC2Precision Ammo", false);
+        ammo.addLookupName("CLProtoAC2 Precision Ammo", false);
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoTypeEnum.PAC;
@@ -4776,12 +4791,18 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLPROAC4Ammo() {
         AmmoType ammo = new AmmoType();
-        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 11 LINES
         ammo.name = "ProtoMech AC/4 Ammo";
         ammo.shortName = "Proto AC/4";
         ammo.setInternalName("Clan ProtoMech AC/4 Ammo");
         ammo.addLookupName("CLProtoAC4Ammo");
         ammo.addLookupName("CLProtoAC4 Ammo");
+        ammo.addLookupName("Clan ProtoMech AC/4 Precision Ammo", false);
+        ammo.addLookupName("Clan ProtoMech AC/4 Ammo - Precision", false);
+        ammo.addLookupName("CLProtoAC4Ammo - Precision", false);
+        ammo.addLookupName("CLProtoAC4 Ammo - Precision", false);
+        ammo.addLookupName("CLProtoAC4Precision Ammo", false);
+        ammo.addLookupName("CLProtoAC4 Precision Ammo", false);
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoTypeEnum.PAC;
@@ -4804,12 +4825,18 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLPROAC8Ammo() {
         AmmoType ammo = new AmmoType();
-        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 11 LINES
         ammo.name = "ProtoMech AC/8 Ammo";
         ammo.shortName = "Proto AC/8";
         ammo.setInternalName("Clan ProtoMech AC/8 Ammo");
         ammo.addLookupName("CLProtoAC8Ammo");
         ammo.addLookupName("CLProtoAC8 Ammo");
+        ammo.addLookupName("Clan ProtoMech AC/8 Precision Ammo", false);
+        ammo.addLookupName("Clan ProtoMech AC/8 Ammo - Precision", false);
+        ammo.addLookupName("CLProtoAC8Ammo - Precision", false);
+        ammo.addLookupName("CLProtoAC8 Ammo - Precision", false);
+        ammo.addLookupName("CLProtoAC8Precision Ammo", false);
+        ammo.addLookupName("CLProtoAC8 Precision Ammo", false);
         ammo.damagePerShot = 1;
         ammo.rackSize = 8;
         ammo.ammoType = AmmoTypeEnum.PAC;

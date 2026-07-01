@@ -2672,23 +2672,19 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     /**
      * Computes the firing arc for a weapon in a Directional Torso Mount (BMM p.83).
      * <p>
-     * The 3-point version (quad Meks only) operates as a full 360-degree turret. The 2-point version fires into either
-     * the front arc or the rear arc depending on the mount's current facing; because torso-mounted weapons are measured
-     * against the secondary facing (see {@link #isSecondaryArcWeapon(int)}), the chosen arc rotates with torso twists
-     * as normal. When the mount has been locked by damage, the last chosen arc is retained because the underlying
-     * front/rear flag is frozen.
+     * The mount behaves like a turret: it always fires into a forward arc, but that arc is measured against the unit's
+     * (secondary) facing plus the mount's facing offset (see {@code ComputeArc.getFacing} and
+     * {@link Mounted#getDirectionalMountFacing()}). The 2-point version restricts the offset to forward or rear; the
+     * 3-point quad turret may rotate to any of the six facings. The mount therefore returns {@code ARC_FORWARD} and the
+     * direction is conveyed entirely by the offset, exactly as Mek turret-mounted weapons work.
      *
      * @param mounted the weapon being checked
      *
-     * @return the {@code Compute.ARC_*} constant for the mount, or an empty {@link OptionalInt} if this weapon is not
-     *       in a Directional Torso Mount
+     * @return {@code ARC_FORWARD} if this weapon is in a Directional Torso Mount, otherwise an empty {@link OptionalInt}
      */
     protected OptionalInt getDirectionalTorsoMountArc(Mounted<?> mounted) {
-        if (mounted.hasDirectional360TorsoMount()) {
-            return OptionalInt.of(Compute.ARC_360);
-        }
         if (mounted.hasDirectionalTorsoMount()) {
-            return OptionalInt.of(mounted.isDirectionalMountRear() ? Compute.ARC_REAR : Compute.ARC_FORWARD);
+            return OptionalInt.of(Compute.ARC_FORWARD);
         }
         return OptionalInt.empty();
     }

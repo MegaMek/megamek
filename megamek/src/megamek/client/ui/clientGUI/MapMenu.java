@@ -185,6 +185,15 @@ public class MapMenu extends JPopupMenu {
 
                 } else if ((currentPanel instanceof PhysicalDisplay)) {
                     addIfNotEmptyWithSeparator(createPhysicalMenu(false));
+
+                } else if (currentPanel instanceof TargetingPhaseDisplay) {
+                    if (getComponentCount() > 0) {
+                        addSeparator();
+                    }
+                    // Turrets and Directional Torso Mounts can also be aimed during the targeting (TAG) phase
+                    // (issue #6518); the facing change is sent immediately, so it applies in this phase too.
+                    addIfNotEmpty(createRotateTurretMenu());
+                    removeSeparatorIfLast();
                 }
             }
         }
@@ -1841,16 +1850,35 @@ public class MapMenu extends JPopupMenu {
     private JMenu createRotateTurretMenu() {
         JMenu menu = new JMenu();
         menu.setText("Turret Rotation");
-        if (myEntity instanceof Mek) {
+        if (myEntity instanceof Mek mek) {
             for (Mounted<?> mount : myEntity.getMisc()) {
                 if (mount.getType().hasFlag(MiscType.F_SHOULDER_TURRET) ||
                       mount.getType().hasFlag(MiscType.F_HEAD_TURRET) ||
                       mount.getType().hasFlag(MiscType.F_QUAD_TURRET)) {
-                    menu.add(createRotateTurretJMenuItem((Mek) myEntity, mount));
+                    menu.add(createRotateTurretJMenuItem(mek, mount));
+                }
+            }
+            // Directional Torso Mount weapons (BMM p.83) rotate like a turret: front/rear for the 2-point version,
+            // any of the six facings for the 3-point quad turret.
+            for (WeaponMounted weapon : mek.getWeaponList()) {
+                if (weapon.hasDirectionalTorsoMount()) {
+                    menu.add(createRotateDirectionalMountJMenuItem(mek, weapon));
                 }
             }
         }
         return menu;
+    }
+
+    private JMenuItem createRotateDirectionalMountJMenuItem(final Mek mek, final WeaponMounted weapon) {
+        String label = "Rotate Directional Mount: " + weapon.getName()
+              + " (" + mek.getLocationAbbr(weapon.getLocation()) + ")";
+        JMenuItem item = new JMenuItem(label);
+        item.setEnabled(!weapon.isDirectionalMountLocked());
+        item.addActionListener(evt -> {
+            TurretFacingDialog dialog = new TurretFacingDialog(gui.frame, mek, weapon, gui, true);
+            dialog.setVisible(true);
+        });
+        return item;
     }
 
     private void selectTarget() {

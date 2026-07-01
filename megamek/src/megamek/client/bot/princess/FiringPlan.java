@@ -207,8 +207,9 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
         if (!directionalMountFacings.isEmpty()) {
             int shooterId = getFirst().getShooter().getId();
             for (Map.Entry<Integer, Boolean> mountFacing : directionalMountFacings.entrySet()) {
-                actionVector.add(new DirectionalMountFacingAction(shooterId, mountFacing.getKey(),
-                      mountFacing.getValue()));
+                // Princess currently aims directional mounts front/rear only; map that to a facing offset (0/3).
+                int facing = mountFacing.getValue() ? 3 : 0;
+                actionVector.add(new DirectionalMountFacingAction(shooterId, mountFacing.getKey(), facing));
             }
         }
 

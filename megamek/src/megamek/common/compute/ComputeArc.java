@@ -45,7 +45,6 @@ import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Mek;
-import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.units.UnitPosition;
 import megamek.logging.MMLogger;
@@ -181,16 +180,9 @@ public class ComputeArc {
     }
 
     private static int getFacing(int weaponId, Entity attacker) {
-        int facing = attacker.isSecondaryArcWeapon(weaponId) ? attacker.getSecondaryFacing() : attacker.getFacing();
-
-        if ((attacker instanceof Tank tank) && (tank.getEquipment(weaponId).getLocation() == tank.getLocTurret2())) {
-            facing = tank.getDualTurretFacing();
-        }
-
-        if (attacker.getEquipment(weaponId).isMekTurretMounted()) {
-            facing = attacker.getSecondaryFacing() + (attacker.getEquipment(weaponId).getFacing() % 6);
-        }
-        return facing;
+        // Delegates to the shared helper so the to-hit arc, the field-of-fire overlay and the rotation UI all
+        // compute a weapon's effective facing (twist / turret / directional mount) identically.
+        return TurretFacing.weaponFacing(attacker, weaponId);
     }
 
     /**

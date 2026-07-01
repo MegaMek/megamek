@@ -58,6 +58,7 @@ import megamek.codeUtilities.MathUtility;
 import megamek.common.Hex;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 
@@ -72,6 +73,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
     Mek mek;
     Tank tank;
     Mounted<?> turret;
+    boolean directionalMount;
     ButtonGroup buttonGroup = new ButtonGroup();
     ClientGUI clientgui;
 
@@ -251,6 +253,92 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
               (parent.getLocation().y + (parent.getSize().height / 2)) - (getSize().height / 2));
     }
 
+    /**
+     * Facing picker for a Directional Torso Mount (BMM p.83). The 2-point mount allows only the forward and rear
+     * facings; the 3-point quad turret allows all six. Reuses the same six-facing layout as the turret dialogs.
+     *
+     * @param parent                 the parent frame
+     * @param mek                    the unit carrying the mount
+     * @param directionalMountWeapon the weapon whose mount facing is being set
+     * @param clientgui              the client GUI, used to send the facing change and refresh the firing arc
+     * @param isDirectionalMount     marker distinguishing this from the mek-turret constructor; always {@code true}
+     */
+    public TurretFacingDialog(JFrame parent, Mek mek, WeaponMounted directionalMountWeapon, ClientGUI clientgui,
+          boolean isDirectionalMount) {
+        super(parent, "Directional Torso Mount facing", false);
+        super.setResizable(false);
+        this.mek = mek;
+        this.turret = directionalMountWeapon;
+        this.clientgui = clientgui;
+        this.directionalMount = isDirectionalMount;
+        butOkay.addActionListener(this);
+        butCancel.addActionListener(this);
+
+        for (int i = 0; i <= 5; i++) {
+            JRadioButton button = new JRadioButton();
+            button.setActionCommand(i + "");
+            facings.add(button);
+            buttonGroup.add(button);
+        }
+        int frontFacing = mek.getFacing();
+        int mountFacing = directionalMountWeapon.getDirectionalMountFacing();
+        for (JRadioButton button : facings) {
+            if (button.getActionCommand().equals(((frontFacing + mountFacing) % 6) + "")) {
+                button.setSelected(true);
+            }
+        }
+        setLayout(new BorderLayout());
+        JPanel tempPanel = new JPanel(new BorderLayout());
+        JPanel panNorth = new JPanel(new GridBagLayout());
+        JPanel panWest = new JPanel(new BorderLayout());
+        JPanel panEast = new JPanel(new BorderLayout());
+        JPanel panSouth = new JPanel(new GridBagLayout());
+        panNorth.add(facings.getFirst());
+        panSouth.add(facings.get(3));
+        panWest.add(facings.get(5), BorderLayout.NORTH);
+        panWest.add(facings.get(4), BorderLayout.SOUTH);
+        panEast.add(facings.get(1), BorderLayout.NORTH);
+        panEast.add(facings.get(2), BorderLayout.SOUTH);
+        // The 2-point mount may only face forward or rear; disable the other four absolute facings.
+        if (!directionalMountWeapon.hasDirectional360TorsoMount()) {
+            for (int offset = 1; offset <= 5; offset++) {
+                if (offset != 3) {
+                    facings.get((frontFacing + offset) % 6).setEnabled(false);
+                }
+            }
+        }
+        if (directionalMountWeapon.isDirectionalMountLocked()) {
+            for (JRadioButton button : facings) {
+                button.setEnabled(false);
+            }
+        }
+        tempPanel.add(panNorth, BorderLayout.NORTH);
+        tempPanel.add(panWest, BorderLayout.WEST);
+
+        JLabel labImage = new JLabel();
+        clientgui.loadPreviewImage(labImage, mek);
+        Image mekImage = ((ImageIcon) labImage.getIcon()).getImage();
+        Image hexImage = clientgui.getTilesetManager().baseFor(new Hex());
+        BufferedImage toDraw = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = toDraw.createGraphics();
+        g2.drawImage(hexImage, 0, 0, null);
+        g2.drawImage(mekImage, 0, 0, null);
+        labImage.setIcon(new ImageIcon(toDraw));
+        labImage.setHorizontalAlignment(SwingConstants.CENTER);
+        labImage.setOpaque(false);
+        tempPanel.add(labImage, BorderLayout.CENTER);
+        tempPanel.add(panEast, BorderLayout.EAST);
+        tempPanel.add(panSouth, BorderLayout.SOUTH);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(butOkay);
+        buttonPanel.add(butCancel);
+        add(tempPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+        pack();
+        setLocation((parent.getLocation().x + (parent.getSize().width / 2)) - (getSize().width / 2),
+              (parent.getLocation().y + (parent.getSize().height / 2)) - (getSize().height / 2));
+    }
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource().equals(butCancel)) {
@@ -258,6 +346,16 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         } else if (ae.getSource().equals(butOkay)) {
             int facing = MathUtility.parseInt(buttonGroup.getSelection().getActionCommand(), 0);
             int locToChange;
+            if (directionalMount) {
+                int offset = ((6 - mek.getFacing()) + facing) % 6;
+                turret.setDirectionalMountFacing(offset);
+                clientgui.getClient().sendMountFacingChange(mek.getId(), mek.getEquipmentNum(turret), offset);
+                if (clientgui.getUnitDisplay() != null) {
+                    clientgui.getUnitDisplay().wPan.selectWeapon(mek.getEquipmentNum(turret));
+                }
+                dispose();
+                return;
+            }
             if (mek != null) {
                 facing = ((6 - mek.getFacing()) + facing) % 6;
                 turret.setFacing(facing);

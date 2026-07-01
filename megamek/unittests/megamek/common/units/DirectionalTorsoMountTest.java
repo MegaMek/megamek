@@ -454,10 +454,11 @@ class DirectionalTorsoMountTest {
                 Optional<Report> report = DirectionalTorsoMountRules.rollLockFromLocationDamage(
                       mek, Mek.LOC_RIGHT_TORSO);
 
-                assertFalse(report.isPresent(), "An 8 result should not lock the mount");
+                // The check is always reported (so the player sees the roll), but an 8 does not lock the mount.
+                assertTrue(report.isPresent(), "The surviving check should still be reported");
             }
 
-            assertFalse(weapon.isDirectionalMountLocked());
+            assertFalse(weapon.isDirectionalMountLocked(), "An 8 result should not lock the mount");
         }
 
         @Test
@@ -508,6 +509,28 @@ class DirectionalTorsoMountTest {
 
             DirectionalTorsoMountRules.applyMountFacing(mek, mek.getEquipmentNum(weapon), 0);
             assertEquals(0, weapon.getDirectionalMountFacing());
+        }
+
+        @Test
+        @DisplayName("A facing change rotates every weapon in the mount's location together")
+        void applyMountFacingRotatesWholeMount() {
+            BipedMek mek = new BipedMek();
+            Mounted<?> firstWeapon = mountWithDirectionalQuirk(mek,
+                  OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT);
+            Mounted<?> secondWeapon;
+            try {
+                secondWeapon = mek.addEquipment(erLargeLaser(), Mek.LOC_RIGHT_TORSO);
+                secondWeapon.getQuirks().getOption(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT)
+                      .setValue(true);
+            } catch (Exception exception) {
+                throw new RuntimeException(exception);
+            }
+
+            // Setting the facing via one weapon must flip the whole mount (both weapons in the location).
+            DirectionalTorsoMountRules.applyMountFacing(mek, mek.getEquipmentNum(firstWeapon), 3);
+            assertEquals(3, firstWeapon.getDirectionalMountFacing());
+            assertEquals(3, secondWeapon.getDirectionalMountFacing(),
+                  "Both weapons in the mount share one facing and rotate together");
         }
 
         @Test

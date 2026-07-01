@@ -155,13 +155,6 @@ public class TWDamageManager implements IDamageManager {
                   .ifPresent(reportVec::add);
         }
 
-        // A Directional Torso Mount is destroyed and its weapon locked in its current arc on a 2D6 roll
-        // of 9+ each time its location takes a hit (BMM p.83).
-        if ((damage > 0) && (entity instanceof Mek directionalMountMek)) {
-            DirectionalTorsoMountRules.rollLockFromLocationDamage(directionalMountMek, hit.getLocation())
-                  .ifPresent(reportVec::add);
-        }
-
         // If this unit is hit in the arm, and it's carrying something that should be damaged on arm hits, let's roll
         // and determine if the unit being carried is hit instead
         if ((hit.getLocation() == Mek.LOC_LEFT_ARM || hit.getLocation() == Mek.LOC_RIGHT_ARM)) {
@@ -516,6 +509,14 @@ public class TWDamageManager implements IDamageManager {
         // This flag indicates the hit was directly to IS
         if (mods.wasDamageIS) {
             Report.addNewline(reportVec);
+        }
+
+        // A Directional Torso Mount is destroyed and its weapon locked in its current arc on a 2D6 roll of 9+ each
+        // time its location takes a hit (BMM p.83). Rolled after the location's damage is reported so the mount
+        // report reads in order, following the "takes damage / armor remaining" line for this hit.
+        if ((damage > 0) && (entity instanceof Mek directionalMountMek)) {
+            DirectionalTorsoMountRules.rollLockFromLocationDamage(directionalMountMek, hit.getLocation())
+                  .ifPresent(reportVec::add);
         }
         return reportVec;
     }

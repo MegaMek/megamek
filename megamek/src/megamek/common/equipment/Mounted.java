@@ -1549,7 +1549,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      *       version or the 3-point quad 360-degree version), per BMM p.83. This is true when the weapon carries a
      *       Directional Torso Mount weapon quirk directly, or when its unit carries the chassis-wide
      *       {@code directional_torso_mount} quirk and this weapon is in its scope (see
-     *       {@link #isCoveredByUnitDirectionalTorsoMount()}). Respects the quirks game option (see
+     *       {@link #isInUnitTorsoMountSet(String)}). Respects the quirks game option (see
      *       {@link #hasQuirk(String)}).
      */
     public boolean hasDirectionalTorsoMount() {

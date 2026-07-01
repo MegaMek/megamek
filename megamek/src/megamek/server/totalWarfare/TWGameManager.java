@@ -6305,10 +6305,10 @@ public class TWGameManager extends AbstractGameManager {
                                     entity.setSecondaryFacing(tta.getFacing());
                                 }
                             }
-                            case DirectionalMountFacingAction dmfa -> {
+                            case DirectionalMountFacingAction mountFacingAction -> {
                                 if (entity instanceof Mek directionalMek) {
                                     DirectionalTorsoMountRules.applyMountFacing(directionalMek,
-                                          dmfa.getWeaponNumber(), dmfa.getFacing());
+                                          mountFacingAction.getWeaponNumber(), mountFacingAction.getFacing());
                                 }
                             }
                             case FlipArmsAction faa -> entity.setArmsFlipped(faa.getIsFlipped());
@@ -10455,10 +10455,10 @@ public class TWGameManager extends AbstractGameManager {
                         entity.postProcessFacingChange();
                     }
                 }
-                case DirectionalMountFacingAction dmfa -> {
+                case DirectionalMountFacingAction mountFacingAction -> {
                     if (entity instanceof Mek directionalMek) {
                         DirectionalTorsoMountRules.applyMountFacing(directionalMek,
-                              dmfa.getWeaponNumber(), dmfa.getFacing());
+                              mountFacingAction.getWeaponNumber(), mountFacingAction.getFacing());
                     }
                 }
                 case FlipArmsAction faa -> entity.setArmsFlipped(faa.getIsFlipped());

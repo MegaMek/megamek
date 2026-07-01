@@ -5470,6 +5470,12 @@ public class Compute {
      * @param advancedAMS - the roll can now go below 2, indicating no damage
      */
     public static int missilesHit(int missiles, int nMod, boolean hotLoaded, boolean streak, boolean advancedAMS) {
+        // No missiles fired means no hits. This also guards against a battle armor squad whose
+        // shooting strength has been reduced to zero (e.g. all troopers disabled by Improved
+        // Magnetic Pulse missiles), which otherwise falls through to the hit-table lookup below.
+        if (missiles <= 0) {
+            return 0;
+        }
         int nRoll = Compute.d6(2);
 
         if (hotLoaded) {

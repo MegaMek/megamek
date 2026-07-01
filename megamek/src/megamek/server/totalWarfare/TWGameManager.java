@@ -633,8 +633,30 @@ public class TWGameManager extends AbstractGameManager {
 
     void resetEntityRound() {
         for (Entity entity : game.getEntitiesVector()) {
+            // Snapshot Magnetic Pulse effect state so we can notify the player when it wears off.
+            boolean wasMagneticPulseAffected = entity.getMagneticPulseRounds() > 0;
+            boolean wasImpAffected = isAffectedByImprovedMagneticPulse(entity);
+
             entity.newRound(game.getRoundCount());
+
+            if (wasMagneticPulseAffected && (entity.getMagneticPulseRounds() == 0)) {
+                sendMagneticPulseToast(entity, false, false);
+            }
+            if (wasImpAffected && !isAffectedByImprovedMagneticPulse(entity)) {
+                sendMagneticPulseToast(entity, true, false);
+            }
         }
+    }
+
+    /**
+     * @return true if the unit is currently under any iATM Improved Magnetic Pulse effect - the to-hit / movement / ECM
+     *       effect on Meks, vehicles, fighters and ProtoMeks, or disabled troopers on battle armor.
+     */
+    private static boolean isAffectedByImprovedMagneticPulse(Entity entity) {
+        if (entity.getImpToHitModifier() > 0) {
+            return true;
+        }
+        return (entity instanceof BattleArmor battleArmor) && (battleArmor.getImpDisabledTroopers() > 0);
     }
 
     /**
@@ -31504,6 +31526,24 @@ public class TWGameManager extends AbstractGameManager {
     public void sendToast(GameToastEvent.Level level, String message, @Nullable Entity entity) {
         int entityId = (entity != null) ? entity.getId() : Entity.NONE;
         send(new Packet(PacketCommand.SEND_TOAST, level, message, entityId));
+    }
+
+    /**
+     * Sends a toast when a unit gains or loses a Magnetic Pulse missile effect (IO p.182 / IMP rules),
+     * so the player sees the debuff appear and expire rather than only in the report log.
+     *
+     * @param target   the affected unit
+     * @param improved true for the iATM Improved Magnetic Pulse effect, false for the standard MP effect
+     * @param applied  true when the unit becomes affected, false when the effect wears off
+     */
+    public void sendMagneticPulseToast(Entity target, boolean improved, boolean applied) {
+        String key;
+        if (improved) {
+            key = applied ? "MagneticPulse.impAffectedToast" : "MagneticPulse.impExpiredToast";
+        } else {
+            key = applied ? "MagneticPulse.affectedToast" : "MagneticPulse.expiredToast";
+        }
+        sendToast(GameToastEvent.Level.INFO, Messages.getString(key, target.getShortName()), target);
     }
 
     // Artillery call-for-fire notifications (Shot/Splash, counter-battery, homing-inbound) live in their own helper to

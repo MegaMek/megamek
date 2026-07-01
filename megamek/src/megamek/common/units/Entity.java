@@ -925,6 +925,11 @@ public abstract class Entity extends TurnOrdered
     protected boolean empInterferenceHeat = false;
     protected int empShutdownRounds = 0;
 
+    // Magnetic Pulse (MP) missile effect (IO p.62): for how many more rounds does this unit
+    // suffer the +1 to-hit penalty on its own weapon attacks? Set to 2 on hit so the effect
+    // lasts through the End Phase of the turn following the attack.
+    protected int magneticPulseRounds = 0;
+
     // for how many rounds has blue shield been active?
     private int blueShieldRounds = 0;
 
@@ -3529,6 +3534,10 @@ public abstract class Entity extends TurnOrdered
             mp = Math.max(0, mp - getHeatMPReduction());
         }
 
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules). Zero unless
+        // this unit was recently hit by IMP missiles; Running/Sprint recalculate from this value.
+        mp = Math.max(0, mp - getImpMpReduction());
+
         if (!mpCalculationSetting.ignoreCargo()) {
             mp = Math.max(mp - getCargoMpReduction(this), 0);
         }
@@ -3728,11 +3737,14 @@ public abstract class Entity extends TurnOrdered
     }
 
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
+        int mp;
         if (mpCalculationSetting.ignoreGravity()) {
-            return getOriginalJumpMP();
+            mp = getOriginalJumpMP();
         } else {
-            return applyGravityEffectsOnMP(getOriginalJumpMP());
+            mp = applyGravityEffectsOnMP(getOriginalJumpMP());
         }
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        return Math.max(0, mp - getImpMpReduction());
     }
 
     public int getJumpType() {
@@ -7627,6 +7639,9 @@ public abstract class Entity extends TurnOrdered
         }
         if (empShutdownRounds > 0) {
             empShutdownRounds--;
+        }
+        if (magneticPulseRounds > 0) {
+            magneticPulseRounds--;
         }
         if (taserFeedBackRounds > 0) {
             taserFeedBackRounds--;
@@ -14167,6 +14182,38 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Applies the Magnetic Pulse (MP) missile effect to this unit (IO p.62). While active the unit takes a +1 to-hit
+     * penalty on all of its own weapon attacks. Additional MP hits do not extend or stack the effect.
+     */
+    public void setMagneticPulseHit() {
+        // 2 rounds so the effect persists through the End Phase of the turn after the attack.
+        magneticPulseRounds = 2;
+    }
+
+    public int getMagneticPulseRounds() {
+        return magneticPulseRounds;
+    }
+
+    /**
+     * Applies a Magnetic Pulse (MP) missile salvo that hit this unit (TO:AUE p.182). MP missiles deal no damage; they
+     * impose a +1 to-hit penalty on the unit's own weapon attacks, and add outside heat to fusion-powered units at +1
+     * per {@code heatDivisor} warheads (5 for LRM, 3 for SRM, rounded down). MP missiles have no effect against
+     * conventional infantry.
+     *
+     * @param missiles    number of MP warheads that hit this unit
+     * @param heatDivisor warheads needed per +1 heat (5 for LRM, 3 for SRM)
+     */
+    public void applyMagneticPulse(int missiles, int heatDivisor) {
+        if ((missiles <= 0) || isConventionalInfantry()) {
+            return;
+        }
+        setMagneticPulseHit();
+        if (hasEngine() && getEngine().isFusion()) {
+            heatFromExternal += missiles / heatDivisor;
+        }
+    }
+
+    /**
      * Sets EMP mine interference effect on this entity.
      *
      * @param rounds Number of rounds the interference lasts
@@ -14207,14 +14254,74 @@ public abstract class Entity extends TurnOrdered
         return empShutdownRounds;
     }
 
+    /**
+     * Records Improved Magnetic Pulse (iATM IMP) missile hits on this unit (IO IMP rules). The hit
+     * count drives the to-hit, movement and hostile-ECM effects (see {@link #getImpToHitModifier()},
+     * {@link #getImpMpReduction()}). Only fusion-powered units also take outside heat, at +1 per 3
+     * warheads that hit (rounded down, with the remainder carried across the turn's salvos).
+     *
+     * @param missiles number of IMP warheads that hit this unit
+     */
     public void addIMPHits(int missiles) {
-        // effects last for only one turn.
+        // The effect window spans this turn and the following turn (see doNewRoundIMP).
         impThisTurn += missiles;
-        int heatAdd = missiles + impThisTurnHeatHelp;
-        impThisTurnHeatHelp = heatAdd % 3;
-        heatAdd = heatAdd - impThisTurnHeatHelp;
-        heatAdd = heatAdd / 3;
-        heatFromExternal += heatAdd;
+        // Non-fusion units ignore the heat effect (IO IMP rules).
+        if (hasEngine() && getEngine().isFusion()) {
+            int heatAdd = missiles + impThisTurnHeatHelp;
+            impThisTurnHeatHelp = heatAdd % 3;
+            heatAdd = heatAdd - impThisTurnHeatHelp;
+            heatAdd = heatAdd / 3;
+            heatFromExternal += heatAdd;
+        }
+    }
+
+    /**
+     * @return the number of IMP warheads currently affecting this unit (those that hit this turn or the previous turn).
+     *       Drives the IMP to-hit, movement and ECM effects.
+     */
+    private int getActiveImpHits() {
+        return impThisTurn + impLastTurn;
+    }
+
+    /**
+     * @return the +to-hit penalty this unit currently suffers on its own weapon attacks from iATM IMP missiles: +1 per
+     *       3 warheads that hit, capped at +2 (or +3 for ProtoMeks). This applies to fusion and non-fusion units alike
+     *       (IO IMP rules).
+     */
+    public int getImpToHitModifier() {
+        int activeHits = getActiveImpHits();
+        if (activeHits <= 0) {
+            return 0;
+        }
+        int cap = isProtoMek() ? 3 : 2;
+        return Math.min(cap, activeHits / 3);
+    }
+
+    /**
+     * @return the Walking/Cruise and Jumping/Thrust MP reduction this unit currently suffers from iATM IMP missiles: -1
+     *       per 3 warheads that hit, capped at -2 (or -3 for ProtoMeks). Non-fusion units ignore this reduction (IO IMP
+     *       rules).
+     */
+    public int getImpMpReduction() {
+        if (!(hasEngine() && getEngine().isFusion())) {
+            return 0;
+        }
+        int activeHits = getActiveImpHits();
+        if (activeHits <= 0) {
+            return 0;
+        }
+        int cap = isProtoMek() ? 3 : 2;
+        return Math.min(cap, activeHits / 3);
+    }
+
+    /**
+     * @return true if this unit is currently treated as standing inside a hostile standard ECM field because of
+     *       Improved Magnetic Pulse (iATM IMP) missile hits (IO IMP rules). Becomes true once at least 3 IMP warheads
+     *       are affecting the unit (the same threshold as the +1 to-hit effect). Applies to fusion and non-fusion units
+     *       alike.
+     */
+    public boolean isImpEcmAffected() {
+        return getActiveImpHits() >= 3;
     }
 
     private void doNewRoundIMP() {

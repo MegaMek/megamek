@@ -183,6 +183,30 @@ class MagneticPulseTest {
         }
 
         @Test
+        @DisplayName("Heat remainder carries across salvos in the same turn (aligns with IMP)")
+        void heatRemainderCarriesAcrossSalvos() {
+            Mek mek = fusionMek();
+            // Two SRM salvos of 2 warheads each: per-salvo flooring would give 0+0, but the remainder
+            // carries so the combined 4 warheads / 3 = +1 heat.
+            mek.applyMagneticPulse(2, 3);
+            mek.applyMagneticPulse(2, 3);
+
+            assertEquals(1, mek.heatFromExternal, "2 + 2 SRM warheads across salvos -> +1 heat (carried)");
+        }
+
+        @Test
+        @DisplayName("LRM and SRM heat rates stay separate in the same turn (MML mixed modes)")
+        void mixedLrmSrmHeatRatesDoNotCrossContaminate() {
+            Mek mek = fusionMek();
+            // An MML firing LRM mode then SRM mode: the LRM remainder must not be divided by the SRM
+            // rate. Correct result is floor(7/5) + floor(5/3) = 1 + 1 = 2, not 3.
+            mek.applyMagneticPulse(7, 5); // LRM rate
+            mek.applyMagneticPulse(5, 3); // SRM rate
+
+            assertEquals(2, mek.heatFromExternal, "7 LRM/5 + 5 SRM/3 -> +2 heat (rates not mixed)");
+        }
+
+        @Test
         @DisplayName("Non-fusion units take the to-hit window but no heat")
         void nonFusionTakesToHitButNoHeat() {
             Mek mek = iceMek();

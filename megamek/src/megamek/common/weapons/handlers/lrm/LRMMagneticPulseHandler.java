@@ -43,6 +43,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
+import megamek.common.units.MagneticPulseState;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -55,8 +56,8 @@ public class LRMMagneticPulseHandler extends LRMHandler {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** Warheads needed per +1 heat for LRM-class launchers (IO p.62). */
-    private static final int LRM_HEAT_DIVISOR = 5;
+    /** Warheads needed per +1 heat for LRM-class launchers (TO:AUE p.182). */
+    private static final int LRM_HEAT_DIVISOR = MagneticPulseState.LRM_HEAT_DIVISOR;
 
     private boolean effectApplied = false;
 
@@ -77,20 +78,31 @@ public class LRMMagneticPulseHandler extends LRMHandler {
         // The damage loop calls this once per cluster with the full hit count first; apply the
         // pulse effect a single time using that total. MP missiles deal no damage, so the normal
         // damage application is skipped entirely.
-        if (!effectApplied) {
-            effectApplied = true;
-            int warheads = Math.max(0, hits - Math.max(0, bldgAbsorbs));
-            boolean wasAffected = entityTarget.getMagneticPulseRounds() > 0;
-            entityTarget.applyMagneticPulse(warheads, LRM_HEAT_DIVISOR);
+        if (effectApplied) {
+            return;
+        }
+        effectApplied = true;
 
-            Report report = new Report(3344);
+        // MP missiles have no effect against conventional infantry (TO:AUE p.182).
+        if (entityTarget.isConventionalInfantry()) {
+            Report report = new Report(3348);
             report.subject = subjectId;
             report.indent(2);
             vPhaseReport.addElement(report);
+            return;
+        }
 
-            if (!wasAffected && (entityTarget.getMagneticPulseRounds() > 0)) {
-                gameManager.sendMagneticPulseToast(entityTarget, false, true);
-            }
+        int warheads = Math.max(0, hits - Math.max(0, bldgAbsorbs));
+        boolean wasAffected = entityTarget.getMagneticPulseRounds() > 0;
+        entityTarget.applyMagneticPulse(warheads, LRM_HEAT_DIVISOR);
+
+        Report report = new Report(3344);
+        report.subject = subjectId;
+        report.indent(2);
+        vPhaseReport.addElement(report);
+
+        if (!wasAffected && (entityTarget.getMagneticPulseRounds() > 0)) {
+            gameManager.sendMagneticPulseToast(entityTarget, false, true);
         }
     }
 }

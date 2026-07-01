@@ -165,12 +165,23 @@ public abstract class Entity extends TurnOrdered
 
     @Deprecated(since = "0.51.0", forRemoval = true)
     public int getImpLastTurn() {
-        return impLastTurn;
+        return getMagneticPulseState().getImpLastTurn();
     }
 
     @Deprecated(since = "0.51.0", forRemoval = true)
     public void setImpLastTurn(int impLastTurn) {
-        this.impLastTurn = impLastTurn;
+        getMagneticPulseState().setImpLastTurn(impLastTurn);
+    }
+
+    /**
+     * @return this unit's Magnetic Pulse effect state, lazily created so it is non-null even after an older save (which
+     *       predates the field) is loaded.
+     */
+    private MagneticPulseState getMagneticPulseState() {
+        if (magneticPulseState == null) {
+            magneticPulseState = new MagneticPulseState();
+        }
+        return magneticPulseState;
     }
 
     public enum InvalidSourceBuildReason {
@@ -925,10 +936,10 @@ public abstract class Entity extends TurnOrdered
     protected boolean empInterferenceHeat = false;
     protected int empShutdownRounds = 0;
 
-    // Magnetic Pulse (MP) missile effect (IO p.62): for how many more rounds does this unit
-    // suffer the +1 to-hit penalty on its own weapon attacks? Set to 2 on hit so the effect
-    // lasts through the End Phase of the turn following the attack.
-    protected int magneticPulseRounds = 0;
+    // Magnetic Pulse (MP, TO:AUE p.182) and Improved Magnetic Pulse (iATM IMP) missile effect state.
+    // All counters, heat remainders and derived modifiers live in this helper; the methods below are
+    // thin delegators. May be null after loading an older save, so access it via getMagneticPulseState().
+    private MagneticPulseState magneticPulseState = new MagneticPulseState();
 
     // for how many rounds has blue shield been active?
     private int blueShieldRounds = 0;
@@ -959,18 +970,6 @@ public abstract class Entity extends TurnOrdered
      * turn.
      */
     private String newC3NetIdString = null;
-
-    /**
-     * Keeps track of the number of iATM improved magnetic pulse (IMP) his this entity took this turn.
-     */
-    private int impThisTurn = 0;
-
-    /**
-     * Keeps track of the number of iATM improved magnetic pulse (IMP) his this entity took last turn.
-     */
-    private int impLastTurn = 0;
-
-    private int impThisTurnHeatHelp = 0;
 
     protected boolean military;
 
@@ -1098,8 +1097,6 @@ public abstract class Entity extends TurnOrdered
         setC3NetId(this);
         quirks.initialize();
         secondaryPositions = new HashMap<>();
-        impThisTurn = 0;
-        impLastTurn = 0;
 
         weaponSortOrder = GUIP.getDefaultWeaponSortOrder();
 
@@ -7555,7 +7552,7 @@ public abstract class Entity extends TurnOrdered
 
         newRoundNovaNetSwitch();
         newRoundVariableRangeSwitch();
-        doNewRoundIMP();
+        getMagneticPulseState().newRound();
 
         // reset hexes passed through
         setPassedThrough(new Vector<>());
@@ -7639,9 +7636,6 @@ public abstract class Entity extends TurnOrdered
         }
         if (empShutdownRounds > 0) {
             empShutdownRounds--;
-        }
-        if (magneticPulseRounds > 0) {
-            magneticPulseRounds--;
         }
         if (taserFeedBackRounds > 0) {
             taserFeedBackRounds--;
@@ -14173,12 +14167,11 @@ public abstract class Entity extends TurnOrdered
      * penalty on all of its own weapon attacks. Additional MP hits do not extend or stack the effect.
      */
     public void setMagneticPulseHit() {
-        // 2 rounds so the effect persists through the End Phase of the turn after the attack.
-        magneticPulseRounds = 2;
+        getMagneticPulseState().applyStandardPulse();
     }
 
     public int getMagneticPulseRounds() {
-        return magneticPulseRounds;
+        return getMagneticPulseState().getStandardRounds();
     }
 
     /**
@@ -14194,9 +14187,9 @@ public abstract class Entity extends TurnOrdered
         if ((missiles <= 0) || isConventionalInfantry()) {
             return;
         }
-        setMagneticPulseHit();
+        getMagneticPulseState().applyStandardPulse();
         if (hasEngine() && getEngine().isFusion()) {
-            heatFromExternal += missiles / heatDivisor;
+            heatFromExternal += getMagneticPulseState().computeStandardHeat(missiles, heatDivisor);
         }
     }
 
@@ -14250,24 +14243,11 @@ public abstract class Entity extends TurnOrdered
      * @param missiles number of IMP warheads that hit this unit
      */
     public void addIMPHits(int missiles) {
-        // The effect window spans this turn and the following turn (see doNewRoundIMP).
-        impThisTurn += missiles;
+        getMagneticPulseState().addImpHits(missiles);
         // Non-fusion units ignore the heat effect (IO IMP rules).
         if (hasEngine() && getEngine().isFusion()) {
-            int heatAdd = missiles + impThisTurnHeatHelp;
-            impThisTurnHeatHelp = heatAdd % 3;
-            heatAdd = heatAdd - impThisTurnHeatHelp;
-            heatAdd = heatAdd / 3;
-            heatFromExternal += heatAdd;
+            heatFromExternal += getMagneticPulseState().computeImpHeat(missiles);
         }
-    }
-
-    /**
-     * @return the number of IMP warheads currently affecting this unit (those that hit this turn or the previous turn).
-     *       Drives the IMP to-hit, movement and ECM effects.
-     */
-    private int getActiveImpHits() {
-        return impThisTurn + impLastTurn;
     }
 
     /**
@@ -14276,12 +14256,7 @@ public abstract class Entity extends TurnOrdered
      *       (IO IMP rules).
      */
     public int getImpToHitModifier() {
-        int activeHits = getActiveImpHits();
-        if (activeHits <= 0) {
-            return 0;
-        }
-        int cap = isProtoMek() ? 3 : 2;
-        return Math.min(cap, activeHits / 3);
+        return getMagneticPulseState().getImpToHitModifier(isProtoMek());
     }
 
     /**
@@ -14290,15 +14265,7 @@ public abstract class Entity extends TurnOrdered
      *       rules).
      */
     public int getImpMpReduction() {
-        if (!(hasEngine() && getEngine().isFusion())) {
-            return 0;
-        }
-        int activeHits = getActiveImpHits();
-        if (activeHits <= 0) {
-            return 0;
-        }
-        int cap = isProtoMek() ? 3 : 2;
-        return Math.min(cap, activeHits / 3);
+        return getMagneticPulseState().getImpMpReduction(hasEngine() && getEngine().isFusion(), isProtoMek());
     }
 
     /**
@@ -14308,12 +14275,7 @@ public abstract class Entity extends TurnOrdered
      *       alike.
      */
     public boolean isImpEcmAffected() {
-        return getActiveImpHits() >= 3;
-    }
-
-    private void doNewRoundIMP() {
-        impLastTurn = impThisTurn;
-        impThisTurn = 0;
+        return getMagneticPulseState().isImpEcmAffected();
     }
 
     /**

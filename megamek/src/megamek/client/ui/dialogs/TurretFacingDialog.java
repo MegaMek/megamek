@@ -59,6 +59,7 @@ import megamek.common.Hex;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.units.DirectionalTorsoMountRules;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 
@@ -322,7 +323,11 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         BufferedImage toDraw = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = toDraw.createGraphics();
         g2.drawImage(hexImage, 0, 0, null);
+        // The preview image always points north; rotate it to the Mek's actual board facing so the six facing
+        // buttons line up with what the player sees on the map (otherwise front/rear appears flipped).
+        g2.rotate(Math.toRadians(mek.getFacing() * 60.0), toDraw.getWidth() / 2.0, toDraw.getHeight() / 2.0);
         g2.drawImage(mekImage, 0, 0, null);
+        g2.dispose();
         labImage.setIcon(new ImageIcon(toDraw));
         labImage.setHorizontalAlignment(SwingConstants.CENTER);
         labImage.setOpaque(false);
@@ -348,7 +353,8 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
             int locToChange;
             if (directionalMount) {
                 int offset = ((6 - mek.getFacing()) + facing) % 6;
-                turret.setDirectionalMountFacing(offset);
+                // The whole mount (every directional weapon in this location) shares one facing; rotate them together.
+                DirectionalTorsoMountRules.setMountFacing(mek, turret.getLocation(), offset);
                 clientgui.getClient().sendMountFacingChange(mek.getId(), mek.getEquipmentNum(turret), offset);
                 if (clientgui.getUnitDisplay() != null) {
                     clientgui.getUnitDisplay().wPan.selectWeapon(mek.getEquipmentNum(turret));

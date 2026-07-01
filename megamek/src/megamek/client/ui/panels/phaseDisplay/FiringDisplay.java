@@ -1818,10 +1818,22 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
     private void addTorsoTwistAction(int direction) {
         if (direction != currentEntity().getSecondaryFacing()) {
+            // Keep the player's selected weapon selected across the twist; updateForNewAction() -> refreshAll()
+            // would otherwise jump the weapon list back to the first weapon.
+            WeaponMounted selectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+            // A Directional Torso Mount arc (BMM p.83) is declared independently of the twist, so preserve it:
+            // clearAttacks() would otherwise drop the mount facing action while rebuilding the attacks.
+            List<DirectionalMountFacingAction> mountFacings = pendingDirectionalMountFacings(-1);
             clearAttacks();
             addAttack(new TorsoTwistAction(currentEntity, direction));
             currentEntity().setSecondaryFacing(direction);
+            for (DirectionalMountFacingAction mountFacing : mountFacings) {
+                addAttack(mountFacing);
+            }
             updateForNewAction();
+            if (selectedWeapon != null) {
+                clientgui.getUnitDisplay().wPan.selectWeapon(selectedWeapon);
+            }
         }
     }
 
@@ -2061,8 +2073,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     }
 
     /**
-     * Flips the currently selected weapon's Directional Torso Mount (BMM p.83) between the front and rear arc. Like a
-     * torso twist, changing the arc clears any pending attacks; unlike a torso twist the chosen arc persists across
+     * Flips the currently selected weapon's Directional Torso Mount (BMM p.83) between the front and rear arc. The
+     * facing is a mount offset relative to the unit's (possibly twisted) facing and is declared as a pending action
+     * alongside the attacks, so it composes with a torso twist in either order without cancelling it. Every weapon in
+     * the mount's location shares the facing and flips together. Unlike a torso twist the chosen arc persists across
      * rounds. Ignored if the mount has been locked by damage.
      */
     public void flipDirectionalMount() {
@@ -2096,16 +2110,69 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
         boolean newRear = !weapon.isDirectionalMountRear();
         int newFacing = newRear ? 3 : 0;
+        int flippedLocation = weapon.getLocation();
+
+        // clearAttacks() below resets the secondary facing and drops every pending action; capture the declared
+        // torso twist, arms-flip and any other-location mount facings so the flip does not undo them (BMM p.83:
+        // the mount arc is declared alongside - and independently of - a torso twist).
+        int twistedFacing = currentEntity().getSecondaryFacing();
+        boolean wasTwisted = twistedFacing != currentEntity().getFacing();
+        boolean wasArmsFlipped = currentEntity().getArmsFlipped();
+        List<DirectionalMountFacingAction> otherMountFacings = pendingDirectionalMountFacings(flippedLocation);
+
         clearAttacks();
-        weapon.setDirectionalMountFacing(newFacing);
+
+        if (wasTwisted) {
+            currentEntity().setSecondaryFacing(twistedFacing);
+            addAttack(new TorsoTwistAction(currentEntity, twistedFacing));
+        }
+        if (wasArmsFlipped) {
+            currentEntity().setArmsFlipped(true);
+            addAttack(new FlipArmsAction(currentEntity, true));
+        }
+        for (DirectionalMountFacingAction mountFacing : otherMountFacings) {
+            addAttack(mountFacing);
+        }
+
+        // The whole mount (every directional weapon in this location) shares one facing, so flip them together.
+        DirectionalTorsoMountRules.setMountFacing(currentEntity(), flippedLocation, newFacing);
         addAttack(new DirectionalMountFacingAction(currentEntity, weaponNumber, newFacing));
         logger.info("[DirTorsoMount] {}: {} flipped to {} (facing offset {}); queued facing action",
               currentEntity().getShortName(), weapon.getName(), newRear ? "REAR" : "FRONT", newFacing);
         updateTarget();
-        refreshAll();
-        // refreshAll() resets the selection to the first weapon; keep the flipped weapon selected so
-        // the player retains context and can see its updated arc indicator.
+        // Rebuild the weapon display and reselect the flipped weapon (mirrors the mode-change flow). refreshAll()
+        // is avoided here: it calls selectFirstWeapon() and short-circuits the unit-display rebuild when the entity
+        // object is unchanged, which is what dropped the selection and left the arc indicator stale.
+        clientgui.onAllBoardViews(boardView -> boardView.redrawEntity(currentEntity()));
+        clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
         clientgui.getUnitDisplay().wPan.selectWeapon(weapon);
+        updateDonePanel();
+        clientgui.updateFiringArc(currentEntity());
+    }
+
+    /**
+     * Collects the pending Directional Torso Mount facing actions (BMM p.83) so they can be re-added after a
+     * {@link #clearAttacks()} that is only meant to rebuild the weapon attacks (a torso twist or another mount flip).
+     * The mount arc is a persistent, separately-declared state, not a weapon attack, so it must survive the clear.
+     *
+     * @param excludedLocation a location to omit because the caller re-declares it itself, or -1 to keep all
+     *
+     * @return the pending mount facing actions to preserve
+     */
+    private List<DirectionalMountFacingAction> pendingDirectionalMountFacings(int excludedLocation) {
+        List<DirectionalMountFacingAction> mountFacings = new ArrayList<>();
+        if (currentEntity() == null) {
+            return mountFacings;
+        }
+        for (EntityAction action : attacks) {
+            if (action instanceof DirectionalMountFacingAction mountFacing) {
+                Mounted<?> mount = currentEntity().getEquipment(mountFacing.getWeaponNumber());
+                if ((mount != null) && (mount.getLocation() != excludedLocation)) {
+                    mountFacings.add(mountFacing);
+                }
+            }
+        }
+        return mountFacings;
     }
 
     /**
@@ -2183,9 +2250,17 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      */
     protected void updateRotateTurret() {
         WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
-        boolean canRotate = (currentEntity() != null) && (weapon != null)
-              && TurretFacing.isRotatable(currentEntity(), weapon)
-              && !(weapon.hasDirectionalTorsoMount() && weapon.isDirectionalMountLocked());
+        if ((currentEntity() == null) || (weapon == null)) {
+            setRotateTurretEnabled(false);
+            return;
+        }
+        // A 2-point Directional Torso Mount is flipped front/rear with the Flip Mount button, so it does not use
+        // the rotate dialog; only the 3-point 360 quad turret (and Mek/vehicle turrets) use the rotate button.
+        boolean isTwoPointDirectionalMount = weapon.hasDirectionalTorsoMount() && !weapon.hasDirectional360TorsoMount();
+        boolean isLockedDirectionalMount = weapon.hasDirectionalTorsoMount() && weapon.isDirectionalMountLocked();
+        boolean canRotate = TurretFacing.isRotatable(currentEntity(), weapon)
+              && !isTwoPointDirectionalMount
+              && !isLockedDirectionalMount;
         setRotateTurretEnabled(canRotate);
     }
 

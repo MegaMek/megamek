@@ -40,8 +40,10 @@ import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.swing.JComponent;
@@ -1858,10 +1860,12 @@ public class MapMenu extends JPopupMenu {
                     menu.add(createRotateTurretJMenuItem(mek, mount));
                 }
             }
-            // Directional Torso Mount weapons (BMM p.83) rotate like a turret: front/rear for the 2-point version,
-            // any of the six facings for the 3-point quad turret.
+            // Only the 3-point 360 quad turret uses the rotate dialog; the 2-point front/rear mount is flipped
+            // with the Flip Mount button instead, so it is not offered here. A mount is a whole location, so offer
+            // one entry per location - every directional weapon there shares the mount's facing and rotates together.
+            Set<Integer> directionalLocations = new HashSet<>();
             for (WeaponMounted weapon : mek.getWeaponList()) {
-                if (weapon.hasDirectionalTorsoMount()) {
+                if (weapon.hasDirectional360TorsoMount() && directionalLocations.add(weapon.getLocation())) {
                     menu.add(createRotateDirectionalMountJMenuItem(mek, weapon));
                 }
             }
@@ -1870,8 +1874,7 @@ public class MapMenu extends JPopupMenu {
     }
 
     private JMenuItem createRotateDirectionalMountJMenuItem(final Mek mek, final WeaponMounted weapon) {
-        String label = "Rotate Directional Mount: " + weapon.getName()
-              + " (" + mek.getLocationAbbr(weapon.getLocation()) + ")";
+        String label = "Rotate Directional Mount (" + mek.getLocationAbbr(weapon.getLocation()) + ")";
         JMenuItem item = new JMenuItem(label);
         item.setEnabled(!weapon.isDirectionalMountLocked());
         item.addActionListener(evt -> {

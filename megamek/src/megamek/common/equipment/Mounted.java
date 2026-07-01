@@ -488,9 +488,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (pintleTurretMounted) {
             desc.append(" (PT)");
         }
-        // Directional Torso Mount (BMM p.83): show which way the mount is currently aimed (forward shows no
-        // suffix), and whether the mount has been locked by damage.
+        // Directional Torso Mount (BMM p.83): mark the weapon as a directional mount so the player can see at a
+        // glance that it can flip/rotate, then show which way it is aimed (forward shows no facing suffix) and
+        // whether the mount has been locked by damage.
         if (hasDirectionalTorsoMount()) {
+            desc.append(" (DTM)");
             switch (directionalMountFacing) {
                 case 1 -> desc.append(" (FR)");
                 case 2 -> desc.append(" (RR)");

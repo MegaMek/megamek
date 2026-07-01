@@ -2497,11 +2497,25 @@ public class FireControl {
      */
     private boolean usesDirectionalTorsoMounts(Entity shooter) {
         for (final WeaponMounted weapon : shooter.getWeaponList()) {
-            if (weapon.hasDirectionalTorsoMount() && !weapon.isDirectionalMountLocked()) {
+            if (isPlannableDirectionalMount(weapon)) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * @param weapon the weapon to test
+     *
+     * @return {@code true} if the weapon is a 2-point Directional Torso Mount whose arc Princess can plan (front or
+     *       rear). The 3-point 360-degree quad turret is deliberately excluded: Princess only plans the front/rear
+     *       flip and cannot represent that mount's 0-5 facing offset, so it must not be mutated by the fire planner
+     *       (doing so would snap it to front/rear).
+     */
+    private static boolean isPlannableDirectionalMount(WeaponMounted weapon) {
+        return weapon.hasDirectionalTorsoMount()
+              && !weapon.hasDirectional360TorsoMount()
+              && !weapon.isDirectionalMountLocked();
     }
 
     /**
@@ -2513,7 +2527,7 @@ public class FireControl {
     private Map<Integer, Boolean> saveDirectionalMountFacings(Entity shooter) {
         final Map<Integer, Boolean> saved = new HashMap<>();
         for (final WeaponMounted weapon : shooter.getWeaponList()) {
-            if (weapon.hasDirectionalTorsoMount() && !weapon.isDirectionalMountLocked()) {
+            if (isPlannableDirectionalMount(weapon)) {
                 saved.put(shooter.getEquipmentNum(weapon), weapon.isDirectionalMountRear());
             }
         }
@@ -2547,7 +2561,7 @@ public class FireControl {
             return flips;
         }
         for (final WeaponMounted weapon : shooter.getWeaponList()) {
-            if (!weapon.hasDirectionalTorsoMount() || weapon.isDirectionalMountLocked()) {
+            if (!isPlannableDirectionalMount(weapon)) {
                 continue;
             }
             final int weaponNumber = shooter.getEquipmentNum(weapon);

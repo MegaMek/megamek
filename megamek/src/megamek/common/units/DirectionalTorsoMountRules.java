@@ -70,7 +70,9 @@ public final class DirectionalTorsoMountRules {
      * @param mek      the Mek whose location took a hit
      * @param location the location that took a hit
      *
-     * @return a {@link Report} describing the locked mount if it was locked, otherwise empty
+     * @return a {@link Report} for the check when the location holds a still-rotatable directional mount - describing
+     *       either the destroyed/locked mount (9+) or that the mount held (under 9), so the player always sees the
+     *       roll; empty when the location has no (still-rotatable) directional mount and no roll is made
      */
     public static Optional<Report> rollLockFromLocationDamage(Mek mek, int location) {
         boolean hasRotatableMount = mek.getWeaponList().stream()

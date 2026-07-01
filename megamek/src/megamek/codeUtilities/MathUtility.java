@@ -564,8 +564,10 @@ public class MathUtility {
     }
 
     /**
-     * Utility function to handle parsing strings into boolean and to handle the possible NumberFormatException with
-     * logging and a returned default value of {@code false}.
+     * Parses a string into a boolean, returning {@code false} when the input is {@code null} or empty.
+     *
+     * <p>Note: {@link Boolean#parseBoolean(String)} returns {@code true} only for (case-insensitive)
+     * {@code "true"}.</p>
      *
      * @param value String value to parse.
      *

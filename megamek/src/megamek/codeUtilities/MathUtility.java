@@ -569,8 +569,7 @@ public class MathUtility {
      *
      * @param value String value to parse.
      *
-     * @return The <code>boolean</code> value or defaultValue.
-     */
+     * @return The {@code boolean} value, or {@code false} if {@code value} is {@code null} or empty.
     public static boolean parseBoolean(final String value) {
         return parseBoolean(value, false);
     }

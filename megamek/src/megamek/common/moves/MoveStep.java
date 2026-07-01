@@ -2171,11 +2171,15 @@ public class MoveStep implements Serializable {
 
         // check to see if it's trying to flee and can legally do so.
         if (type == MoveStepType.FLEE) {
-            if (isStandAttempted()) {
-                entity.setProne(false);
-            }
             if (entity.canFlee(curPos)) {
                 movementType = EntityMovementType.MOVE_LEGAL;
+            }
+            if (isStandAttempted()) {
+                entity.setProne(false);
+                if (entity.canFlee(curPos)) {
+                    movementType = EntityMovementType.MOVE_LEGAL;
+                    entity.setProne(true);
+                }
             }
         }
 

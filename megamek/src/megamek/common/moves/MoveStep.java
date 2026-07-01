@@ -2174,7 +2174,7 @@ public class MoveStep implements Serializable {
             if (entity.canFlee(curPos)) {
                 movementType = EntityMovementType.MOVE_LEGAL;
             }
-            if (isStandAttempted()) {
+            if (entity.isProne() && isStandAttempted()) {
                 entity.setProne(false);
                 if (entity.canFlee(curPos)) {
                     movementType = EntityMovementType.MOVE_LEGAL;

@@ -43,6 +43,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
@@ -312,42 +313,9 @@ public class BipedMek extends MekWithArms {
             roll.addModifier(-2, "AES bonus");
         }
 
-        for (int loc : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG)) {
-            // PLAYTEST2 destroyed leg
-            if (isLocationBad(loc)) {
-                if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    roll.addModifier(4, getLocationName(loc) + " destroyed");
-                } else {
-                    roll.addModifier(5, getLocationName(loc) + " destroyed");
-                }
-            } else {
-                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
-                    // PLAYTEST2 now +1
-                    if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                        roll.addModifier(1, getLocationName(loc) + " Hip Actuator destroyed");
-                    } else {
-                        roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
-                    }
-                    if (!gameOptions()
-                          .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
-                        continue;
-                    }
-                }
-                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc) > 0) {
-                    roll.addModifier(1, getLocationName(loc) + " Upper Leg Actuator destroyed");
-                }
-                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc) > 0) {
-                    roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
-                }
-                // PLAYTEST2 foot actuator no longer +1
-                if (!gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
-                        roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
-                    }
-                }
-            }
-        }
-
+        Game.rulesManager.getRulesPsr().legDamageModifiers(this, roll, gameOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE));
+        
         return super.addEntityBonuses(roll);
     }
 

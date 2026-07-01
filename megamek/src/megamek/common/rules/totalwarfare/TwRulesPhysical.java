@@ -45,4 +45,9 @@ public class TwRulesPhysical extends CoreRulesPhysical {
     // Do claws modify the to-hit number
     @Override
     public int getClawToHitModifier() { return 1; }
+    
+    // Shields stay for round
+    @Override
+    public boolean phaseChangeShield() { return false; }
+    
 }

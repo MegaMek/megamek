@@ -18618,7 +18618,7 @@ public class TWGameManager extends AbstractGameManager {
         return vDesc;
     }
 
-        /**
+    /**
      * resolves consciousness rolls for one entity
      *
      * @param e       The <code>Entity</code> that took damage

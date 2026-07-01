@@ -37,6 +37,7 @@ package megamek.common.rules;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.MekWithArms;
 
 /*
 This abstract class is to handle rules that are in relation to PSRs. 
@@ -52,4 +53,7 @@ public abstract class RulesPsr {
 
     // Do we need to change facing when we fall?
     public abstract void facingChangeAfterFall(Entity entity, int facing);
+    
+    // Apply leg damage modifiers to PSR
+    public abstract void legDamageModifiers(MekWithArms unit, PilotingRollData roll, boolean toLegDamage);
 }

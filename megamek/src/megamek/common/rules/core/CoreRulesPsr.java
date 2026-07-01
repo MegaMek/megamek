@@ -35,12 +35,17 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.CriticalSlot;
+import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesPsr;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 import megamek.common.units.Entity;
+import megamek.common.units.MekWithArms;
+
+import java.util.List;
 
 /* This class is for Core Rules that involve PSR checks and modifiers
  */
@@ -67,4 +72,27 @@ public class CoreRulesPsr extends RulesPsr {
 
     // No change of facing after a fall in Core p.115
     public void facingChangeAfterFall(Entity entity, int facing) {};
+    
+    // Leg PSR numbers changed. Core p.90, 93
+    public void legDamageModifiers(MekWithArms unit, final PilotingRollData roll, final boolean toLegDamage) {
+        for (int loc : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG)) {
+            if (unit.isLocationBad(loc)) {
+                roll.addModifier(4, unit.getLocationName(loc) + " destroyed");
+                
+            } else {
+                if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
+                    roll.addModifier(1, unit.getLocationName(loc) + " Hip Actuator destroyed");
+                    if (toLegDamage) {
+                        continue;
+                    }
+                }
+                if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc) > 0) {
+                    roll.addModifier(1, unit.getLocationName(loc) + " Upper Leg Actuator destroyed");
+                }
+                if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc) > 0) {
+                    roll.addModifier(1, unit.getLocationName(loc) + " Lower Leg Actuator destroyed");
+                }
+            }
+        }
+    }
 }

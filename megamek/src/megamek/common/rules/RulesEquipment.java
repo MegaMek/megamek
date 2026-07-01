@@ -35,4 +35,6 @@ package megamek.common.rules;
  */
 
 public abstract class RulesEquipment {
+    // Does AMS allow for multiple shots
+    public abstract boolean getAmsMultiShot();
 }

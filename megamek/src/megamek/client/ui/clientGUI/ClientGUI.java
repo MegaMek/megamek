@@ -3240,7 +3240,7 @@ public class ClientGUI extends AbstractClientGUI
                     JScrollPane amsScrollPane = new JScrollPane(amsList);
                     if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS)) {
                         amsList.setSelectionModel(new AmsAssignGUI(amsList, amsOptions.size()));
-                    } else if (entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    } else if (Game.rulesManager.getRulesEquipment().getAmsMultiShot()) {
                         amsList.setSelectionModel(new AmsAssignGUI(amsList, 2));
                     } else {
                         amsList.setSelectionModel(new AmsAssignGUI(amsList, 1));

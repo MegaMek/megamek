@@ -89,7 +89,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean hotLoaded = false; // Hot loading for ammoType
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
-    // PLAYTEST3 entries
     private boolean autocannonHit = false;
     private boolean AMSused = false;
     private boolean mekTurretMounted = false; // is this mounted in a mek turret
@@ -403,7 +402,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public void newRound(int roundNumber) {
         setUsedThisRound(false);
 
-        // PLAYTEST3 reset AMS usage value
         setAMSused(false);
 
         if ((type != null) && (type.hasModes() && (pendingMode != -1))) {
@@ -417,10 +415,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public void newPhase(GamePhase phase) {
 
         jammed = jammedThisPhase;
-
-        // PLAYTEST3 reset shield mode at the beginning of the phase
-        if (entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
+        
+        if ((type instanceof MiscType) && ((MiscType) type).isShield() && Game.rulesManager.getRulesPhysical().phaseChangeShield()) {
+            if (!this.getEntity().isCharging() || phase.isEnd())
+            {
                 this.setMode(MiscType.S_NO_SHIELD);
             }
         }

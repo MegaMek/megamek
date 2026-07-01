@@ -2737,7 +2737,6 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISTHBUltra10Ammo());
         EquipmentType.addType(AmmoType.createISTHBUltra20Ammo());
 
-        // PLAYTEST3 Caseless RAC ammo
         base = AmmoType.createISRotary2Ammo();
         racAmmos.add(base);
         EquipmentType.addType(base);
@@ -3557,7 +3556,6 @@ public class AmmoType extends EquipmentType {
         munitions.add(TRACER_MUNITION_MUTATOR);
         AmmoType.createMunitions(acAmmos, munitions);
 
-        // PLAYTEST create the munition types for RAC rounds.
         munitions.clear();
         munitions.add(CASELESS_MUNITION_MUTATOR);
         AmmoType.createMunitions(racAmmos, munitions);

@@ -37,4 +37,7 @@ package megamek.common.rules.totalwarfare;
 import megamek.common.rules.core.CoreRulesEquipment;
 
 public class TwRulesEquipment extends CoreRulesEquipment {
+    // AMS can shoot once
+    @Override
+    public boolean getAmsMultiShot() { return false;}
 }

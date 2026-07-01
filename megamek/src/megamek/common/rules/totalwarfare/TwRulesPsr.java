@@ -35,12 +35,16 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import megamek.common.CriticalSlot;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.core.CoreRulesPsr;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
+import megamek.common.units.MekWithArms;
+
+import java.util.List;
 
 public class TwRulesPsr extends CoreRulesPsr {
     public void checkRunningWithDamage(Entity e, PilotingRollData r, int gyroDamage, EntityMovementType overallMoveType) {
@@ -65,5 +69,30 @@ public class TwRulesPsr extends CoreRulesPsr {
     public void facingChangeAfterFall(Entity entity, int facing){
         entity.setFacing((entity.getFacing() + (facing)) % 6);
         entity.setSecondaryFacing(entity.getFacing());
+    }
+
+    @Override
+    public void legDamageModifiers(MekWithArms unit, final PilotingRollData roll, final boolean toLegDamage) {
+        for (int loc : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG)) {
+            if (unit.isLocationBad(loc)) {
+                roll.addModifier(5, unit.getLocationName(loc) + " destroyed");
+            } else {
+                if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
+                    roll.addModifier(2, unit.getLocationName(loc) + " Hip Actuator destroyed");
+                    if (toLegDamage) {
+                        continue;
+                    }
+                }
+                if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc) > 0) {
+                    roll.addModifier(1, unit.getLocationName(loc) + " Upper Leg Actuator destroyed");
+                }
+                if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc) > 0) {
+                    roll.addModifier(1, unit.getLocationName(loc) + " Lower Leg Actuator destroyed");
+                }
+                if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
+                    roll.addModifier(1, unit.getLocationName(loc) + " Foot Actuator destroyed");
+                }
+            }
+        }
     }
 }

@@ -61,6 +61,7 @@ class GetUpStep implements PhasePass {
         // meks with 1 MP are allowed to get up
         moveStep.setMp(cachedEntityState.getRunMP() == 1 ? 1 : 2);
         moveStep.setHasJustStood(true);
+        moveStep.setStandAttempted(true);
         return PhasePassResult.BREAK;
     }
 }

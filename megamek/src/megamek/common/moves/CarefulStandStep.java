@@ -65,6 +65,7 @@ class CarefulStandStep implements PhasePass {
             moveStep.setMp(cachedEntityState.getWalkMP());
         }
         moveStep.setHasJustStood(true);
+        moveStep.setStandAttempted(true);
         return PhasePassResult.BREAK;
     }
 }

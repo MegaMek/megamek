@@ -1867,10 +1867,11 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         }
 
         if (!mpCalculationSetting.ignoreGravity()) {
-            return Math.max(applyGravityEffectsOnMP(mp), 0);
+            mp = applyGravityEffectsOnMP(mp);
         }
 
-        return Math.max(mp, 0);
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        return Math.max(0, mp - getImpMpReduction());
     }
 
     /**

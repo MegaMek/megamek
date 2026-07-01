@@ -239,6 +239,12 @@ class ComputeToHitIsImpossible {
             return Messages.getString("WeaponAttackAction.AttackerNotReady");
         }
 
+        // A battle armor squad with every trooper disabled by Improved Magnetic Pulse missiles has no
+        // active troopers left to fire this turn (IO IMP rules).
+        if ((attacker instanceof BattleArmor battleArmor) && (battleArmor.getShootingStrength() == 0)) {
+            return Messages.getString("WeaponAttackAction.BaAllTroopersDisabled");
+        }
+
         // If the attacker is involved in a grapple
         if (attacker.getGrappled() != Entity.NONE) {
             int grappleOpponent = attacker.getGrappled();

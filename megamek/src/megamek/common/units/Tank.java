@@ -440,6 +440,9 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
             mp = (int) ((getEngine().getRating() + lowestSuspensionFactor) / trainWeight);
         }
 
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        mp = Math.max(0, mp - getImpMpReduction());
+
         return Math.max(mp, 0);
     }
 

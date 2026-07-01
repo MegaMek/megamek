@@ -36,33 +36,34 @@ package megamek.common.actions;
 import java.io.Serial;
 
 /**
- * Sets the current arc of a weapon's Directional Torso Mount (BMM p.83) to the front or rear arc. Like a torso twist
- * this is declared during the firing phase and rides inside the attack packet, but unlike a torso twist the chosen arc
- * persists across rounds until deliberately changed again.
+ * Sets the facing of a weapon's Directional Torso Mount (BMM p.83). The facing is an offset (0-5) from the unit's
+ * facing - 0 = forward, 3 = rear; the 2-point mount uses only those two, the 3-point quad turret may use any. Like a
+ * torso twist this is declared during the firing phase and rides inside the attack packet, but unlike a torso twist the
+ * chosen facing persists across rounds until deliberately changed again.
  */
 public class DirectionalMountFacingAction extends AbstractEntityAction {
     @Serial
     private static final long serialVersionUID = 1L;
 
     private final int weaponNumber;
-    private final boolean rear;
+    private final int facing;
 
     /**
      * @param entityId     the acting entity's id
      * @param weaponNumber the equipment number of the Directional Torso Mount weapon to reface
-     * @param rear         {@code true} to point the mount to the rear arc, {@code false} for the front
+     * @param facing       the chosen facing offset (0-5) from the unit's facing
      */
-    public DirectionalMountFacingAction(int entityId, int weaponNumber, boolean rear) {
+    public DirectionalMountFacingAction(int entityId, int weaponNumber, int facing) {
         super(entityId);
         this.weaponNumber = weaponNumber;
-        this.rear = rear;
+        this.facing = facing;
     }
 
     public int getWeaponNumber() {
         return weaponNumber;
     }
 
-    public boolean isRear() {
-        return rear;
+    public int getFacing() {
+        return facing;
     }
 }

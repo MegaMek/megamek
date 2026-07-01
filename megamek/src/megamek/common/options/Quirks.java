@@ -43,15 +43,7 @@ import java.util.List;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.GunEmplacement;
-import megamek.common.units.Aero;
-import megamek.common.units.Dropship;
-import megamek.common.units.Entity;
-import megamek.common.units.Jumpship;
-import megamek.common.units.Mek;
-import megamek.common.units.ProtoMek;
-import megamek.common.units.Tank;
-import megamek.common.units.VTOL;
-import megamek.common.units.Warship;
+import megamek.common.units.*;
 
 /**
  * Contains the options determining Unit Quirks of a unit (but not weapon quirks). When changing this, note that all
@@ -80,7 +72,10 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, QUIRK_POS_COMMAND_MEK, false);
         addOption(posQuirk, QUIRK_POS_COMPACT, false);
         addOption(posQuirk, QUIRK_POS_COWL, false);
-        addOption(posQuirk, QUIRK_POS_DIRECTIONAL_TORSO_MOUNT, false);
+        // Directional Torso Mount chassis quirks carry a torso-location set as their value (BMM p.83),
+        // so they are registered as STRING options (default empty = inactive), like the Obsolete quirk.
+        addOption(posQuirk, QUIRK_POS_DIRECTIONAL_TORSO_MOUNT, "");
+        addOption(posQuirk, QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360, "");
         addOption(posQuirk, QUIRK_POS_DISTRACTING, false);
         addOption(posQuirk, QUIRK_POS_DOCKING_ARMS, false);
         addOption(posQuirk, QUIRK_POS_EASY_MAINTAIN, false);
@@ -248,6 +243,8 @@ public class Quirks extends AbstractOptions {
                       && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM);
                 case QUIRK_NEG_OVERSIZED -> en.getWeight() >= 60;
                 case QUIRK_POS_COMPACT -> en.getWeight() <= 55;
+                // The 3-point (360 turret) Directional Torso Mount is available only to quads (BMM p.83).
+                case QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360 -> en instanceof QuadMek;
                 default -> quirk.isNoneOf(QUIRK_POS_ATMOSPHERE_FLYER,
                       QUIRK_NEG_ATMOSPHERE_INSTABILITY, QUIRK_POS_DOCKING_ARMS,
                       QUIRK_NEG_FRAGILE_FUEL, QUIRK_POS_INTERNAL_BOMB, QUIRK_POS_TRAILER_HITCH,

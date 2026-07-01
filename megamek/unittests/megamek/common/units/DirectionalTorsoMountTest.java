@@ -53,6 +53,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
+import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.rolls.Roll;
 import org.junit.jupiter.api.BeforeAll;
@@ -114,7 +115,7 @@ class DirectionalTorsoMountTest {
         }
 
         @Test
-        @DisplayName("2-point mount fires into the rear arc when flipped")
+        @DisplayName("2-point mount uses a forward arc with a rear facing offset when flipped")
         void twoPointFiresRearWhenFlipped() {
             BipedMek mek = new BipedMek();
             Mounted<?> weapon = mountWithDirectionalQuirk(mek,
@@ -123,26 +124,29 @@ class DirectionalTorsoMountTest {
             weapon.setDirectionalMountRear(true);
 
             assertTrue(weapon.isDirectionalMountRear());
-            assertEquals(Compute.ARC_REAR, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
+            assertEquals(3, weapon.getDirectionalMountFacing(), "Rear is facing offset 3");
+            // The mount aims like a turret: the arc shape is always forward; the rear-ness is the offset.
+            assertEquals(Compute.ARC_FORWARD, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
         }
 
         @Test
-        @DisplayName("3-point quad mount always fires into a full 360-degree arc")
-        void threePointQuadIs360() {
+        @DisplayName("3-point quad mount is a turret that can rotate to any of the six facings")
+        void threePointQuadRotates() {
             QuadMek mek = new QuadMek();
             Mounted<?> weapon = mountWithDirectionalQuirk(mek,
                   OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD);
 
             assertTrue(weapon.hasDirectional360TorsoMount());
-            assertEquals(Compute.ARC_360, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
+            // A turret always returns a forward arc; the direction is the rotatable facing offset (0-5).
+            assertEquals(Compute.ARC_FORWARD, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
 
-            // The front/rear flag is irrelevant for the 360-degree version.
-            weapon.setDirectionalMountRear(true);
-            assertEquals(Compute.ARC_360, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
+            weapon.setDirectionalMountFacing(2);
+            assertEquals(2, weapon.getDirectionalMountFacing(), "The 360 turret can rotate to any facing");
+            assertEquals(Compute.ARC_FORWARD, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
         }
 
         @Test
-        @DisplayName("The 3-point 360 quirk grants a turret only on quads; a biped falls back to front/rear")
+        @DisplayName("The 3-point 360 quad quirk is inert on a biped (quad-only)")
         void threePointIsQuadOnlyInEngine() {
             BipedMek mek = new BipedMek();
             Mounted<?> weapon = mountWithDirectionalQuirk(mek,
@@ -150,10 +154,12 @@ class DirectionalTorsoMountTest {
 
             assertFalse(weapon.hasDirectional360TorsoMount(),
                   "A biped must never get the 360-degree turret, even with the quad quirk set");
-            // It still behaves as a (2-point) directional mount rather than a fixed forward weapon.
+            // The quad-only quirk simply does not apply to a biped: the weapon is not a directional mount
+            // at all and keeps its normal forward arc, unaffected by the rear flag.
+            assertFalse(weapon.hasDirectionalTorsoMount());
             assertEquals(Compute.ARC_FORWARD, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
             weapon.setDirectionalMountRear(true);
-            assertEquals(Compute.ARC_REAR, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
+            assertEquals(Compute.ARC_FORWARD, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
         }
 
         @Test
@@ -190,8 +196,9 @@ class DirectionalTorsoMountTest {
             mek.newRound(2);
 
             assertTrue(weapon.isDirectionalMountRear(),
-                  "The mount arc must survive the End Phase / new round reset");
-            assertEquals(Compute.ARC_REAR, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
+                  "The mount facing must survive the End Phase / new round reset");
+            assertEquals(3, weapon.getDirectionalMountFacing());
+            assertEquals(Compute.ARC_FORWARD, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
         }
 
         @Test
@@ -225,6 +232,28 @@ class DirectionalTorsoMountTest {
 
             weapon.setDirectionalMountLocked(true);
             assertTrue(weapon.getDesc().contains("(Locked)"), "A locked mount shows the (Locked) indicator");
+        }
+
+        @Test
+        @DisplayName("Chassis torso-set quirk value survives a serialization round-trip")
+        void chassisTorsoSetSurvivesSerialization() throws Exception {
+            QuadMek mek = new QuadMek();
+            unitLevelMek(mek, erLargeLaser(), Mek.LOC_RIGHT_TORSO,
+                  OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360, "LT RT");
+
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+            try (ObjectOutputStream objectOut = new ObjectOutputStream(byteOut)) {
+                objectOut.writeObject(mek);
+            }
+            Mek deserializedMek;
+            try (ObjectInputStream objectIn = new ObjectInputStream(
+                  new ByteArrayInputStream(byteOut.toByteArray()))) {
+                deserializedMek = (Mek) objectIn.readObject();
+            }
+
+            assertEquals("LT RT", deserializedMek.getQuirks()
+                        .getOption(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360).stringValue(),
+                  "The chassis torso-set value must survive transmission");
         }
 
         @Test
@@ -262,10 +291,16 @@ class DirectionalTorsoMountTest {
      * weapon-level quirk.
      */
     private static Mounted<?> unitLevelMek(Mek mek, WeaponType weaponType, int location) {
+        return unitLevelMek(mek, weaponType, location,
+              OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT, "H LT RT CT");
+    }
+
+    private static Mounted<?> unitLevelMek(Mek mek, WeaponType weaponType, int location,
+          String chassisQuirk, String torsoValue) {
         Game game = new Game();
         game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
         mek.setGame(game);
-        mek.getQuirks().getOption(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT).setValue(true);
+        mek.getQuirks().getOption(chassisQuirk).setValue(torsoValue);
         try {
             return mek.addEquipment(weaponType, location);
         } catch (Exception exception) {
@@ -287,7 +322,8 @@ class DirectionalTorsoMountTest {
                   "A torso weapon on a unit with the chassis-wide quirk is a directional mount");
             assertEquals(Compute.ARC_FORWARD, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
             weapon.setDirectionalMountRear(true);
-            assertEquals(Compute.ARC_REAR, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
+            assertEquals(3, weapon.getDirectionalMountFacing());
+            assertEquals(Compute.ARC_FORWARD, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
         }
 
         @Test
@@ -322,7 +358,7 @@ class DirectionalTorsoMountTest {
         }
 
         @Test
-        @DisplayName("Unit-level quirk is the 2-point version even on a quad (front/rear, not 360)")
+        @DisplayName("Unit-level 2-pt quirk is front/rear even on a quad (not 360)")
         void unitLevelIsTwoPointOnQuad() {
             QuadMek mek = new QuadMek();
             Mounted<?> weapon = unitLevelMek(mek, erLargeLaser(), Mek.LOC_RIGHT_TORSO);
@@ -330,7 +366,48 @@ class DirectionalTorsoMountTest {
             assertFalse(weapon.hasDirectional360TorsoMount());
             assertEquals(Compute.ARC_FORWARD, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
             weapon.setDirectionalMountRear(true);
-            assertEquals(Compute.ARC_REAR, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
+            assertEquals(3, weapon.getDirectionalMountFacing());
+            assertEquals(Compute.ARC_FORWARD, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
+        }
+
+        @Test
+        @DisplayName("The chassis quirk only covers the torsos listed in its value")
+        void unitLevelOnlyCoversListedTorsos() {
+            BipedMek inSet = new BipedMek();
+            Mounted<?> leftWeapon = unitLevelMek(inSet, erLargeLaser(), Mek.LOC_LEFT_TORSO,
+                  OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT, "LT");
+            assertTrue(leftWeapon.hasDirectionalTorsoMount(), "LT is in the set, so its weapon is covered");
+
+            BipedMek outOfSet = new BipedMek();
+            Mounted<?> rightWeapon = unitLevelMek(outOfSet, erLargeLaser(), Mek.LOC_RIGHT_TORSO,
+                  OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT, "LT");
+            assertFalse(rightWeapon.hasDirectionalTorsoMount(), "RT is not in the set, so its weapon is not covered");
+        }
+
+        @Test
+        @DisplayName("The 360 chassis quirk makes a quad's listed-torso weapons a rotatable turret")
+        void unitLevel360OnQuad() {
+            QuadMek mek = new QuadMek();
+            Mounted<?> weapon = unitLevelMek(mek, erLargeLaser(), Mek.LOC_RIGHT_TORSO,
+                  OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360, "LT RT");
+
+            assertTrue(weapon.hasDirectional360TorsoMount());
+            assertEquals(Compute.ARC_FORWARD, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
+            weapon.setDirectionalMountFacing(4);
+            assertEquals(4, weapon.getDirectionalMountFacing(), "The 360 turret can rotate to any facing");
+        }
+
+        @Test
+        @DisplayName("The 360 chassis quirk has no effect on a biped (quad-only)")
+        void unitLevel360IgnoredOnBiped() {
+            BipedMek mek = new BipedMek();
+            Mounted<?> weapon = unitLevelMek(mek, erLargeLaser(), Mek.LOC_RIGHT_TORSO,
+                  OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360, "LT RT");
+
+            assertFalse(weapon.hasDirectional360TorsoMount(), "A biped never gets the 360 turret");
+            assertFalse(weapon.hasDirectionalTorsoMount(),
+                  "The 360 chassis quirk alone does not make a biped weapon directional");
+            assertEquals(Compute.ARC_FORWARD, mek.getWeaponArc(mek.getEquipmentNum(weapon)));
         }
     }
 
@@ -420,17 +497,33 @@ class DirectionalTorsoMountTest {
     class FacingActionTests {
 
         @Test
-        @DisplayName("Applying a facing change sets the mount to the requested arc")
+        @DisplayName("Applying a facing change sets the mount to the requested facing")
         void applyMountFacingSetsArc() {
             BipedMek mek = new BipedMek();
             Mounted<?> weapon = mountWithDirectionalQuirk(mek,
                   OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT);
 
-            DirectionalTorsoMountRules.applyMountFacing(mek, mek.getEquipmentNum(weapon), true);
-            assertTrue(weapon.isDirectionalMountRear());
+            DirectionalTorsoMountRules.applyMountFacing(mek, mek.getEquipmentNum(weapon), 3);
+            assertEquals(3, weapon.getDirectionalMountFacing());
 
-            DirectionalTorsoMountRules.applyMountFacing(mek, mek.getEquipmentNum(weapon), false);
-            assertFalse(weapon.isDirectionalMountRear());
+            DirectionalTorsoMountRules.applyMountFacing(mek, mek.getEquipmentNum(weapon), 0);
+            assertEquals(0, weapon.getDirectionalMountFacing());
+        }
+
+        @Test
+        @DisplayName("A 2-point mount rejects a non front/rear facing; a 360 turret accepts any")
+        void applyMountFacingValidatesByType() {
+            BipedMek bipedMek = new BipedMek();
+            Mounted<?> twoPoint = mountWithDirectionalQuirk(bipedMek,
+                  OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT);
+            DirectionalTorsoMountRules.applyMountFacing(bipedMek, bipedMek.getEquipmentNum(twoPoint), 2);
+            assertEquals(0, twoPoint.getDirectionalMountFacing(), "2-point mount rejects facing 2 (front/rear only)");
+
+            QuadMek quadMek = new QuadMek();
+            Mounted<?> turret = mountWithDirectionalQuirk(quadMek,
+                  OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD);
+            DirectionalTorsoMountRules.applyMountFacing(quadMek, quadMek.getEquipmentNum(turret), 2);
+            assertEquals(2, turret.getDirectionalMountFacing(), "360 turret accepts any facing");
         }
 
         @Test
@@ -441,8 +534,8 @@ class DirectionalTorsoMountTest {
                   OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT);
             weapon.setDirectionalMountLocked(true);
 
-            DirectionalTorsoMountRules.applyMountFacing(mek, mek.getEquipmentNum(weapon), true);
-            assertFalse(weapon.isDirectionalMountRear(), "A locked mount must not change arc");
+            DirectionalTorsoMountRules.applyMountFacing(mek, mek.getEquipmentNum(weapon), 3);
+            assertEquals(0, weapon.getDirectionalMountFacing(), "A locked mount must not change facing");
         }
 
         @Test
@@ -459,8 +552,8 @@ class DirectionalTorsoMountTest {
                 throw new RuntimeException(exception);
             }
 
-            DirectionalTorsoMountRules.applyMountFacing(mek, mek.getEquipmentNum(weapon), true);
-            assertFalse(weapon.isDirectionalMountRear());
+            DirectionalTorsoMountRules.applyMountFacing(mek, mek.getEquipmentNum(weapon), 3);
+            assertEquals(0, weapon.getDirectionalMountFacing());
         }
     }
 
@@ -505,6 +598,19 @@ class DirectionalTorsoMountTest {
             assertTrue(WeaponQuirks.isQuirkDisallowed(
                   quirkOption(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT),
                   new Tank(), erLargeLaser()));
+        }
+
+        @Test
+        @DisplayName("The 360 chassis quirk is offered only on quads; the 2-pt chassis quirk on any Mek")
+        void chassisQuirkEligibility() {
+            Quirks quirks = new Quirks();
+            IOption mount360 = quirks.getOption(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360);
+            assertTrue(Quirks.isQuirkDisallowed(mount360, new BipedMek()), "360 chassis quirk is quad-only");
+            assertFalse(Quirks.isQuirkDisallowed(mount360, new QuadMek()), "360 chassis quirk allowed on quads");
+
+            IOption mount2pt = quirks.getOption(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT);
+            assertFalse(Quirks.isQuirkDisallowed(mount2pt, new BipedMek()), "2-pt chassis quirk allowed on bipeds");
+            assertFalse(Quirks.isQuirkDisallowed(mount2pt, new QuadMek()), "2-pt chassis quirk allowed on quads");
         }
     }
 }

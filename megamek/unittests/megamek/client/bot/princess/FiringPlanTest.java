@@ -203,7 +203,7 @@ class FiringPlanTest {
         DirectionalMountFacingAction facingAction = (DirectionalMountFacingAction) mountActions.get(0);
         assertEquals(7, facingAction.getEntityId());
         assertEquals(3, facingAction.getWeaponNumber());
-        assertTrue(facingAction.isRear());
+        assertEquals(3, facingAction.getFacing(), "rear maps to facing offset 3");
         assertEquals(mockWeaponAttackActionMG, mountActions.get(1));
 
         // Test an empty firing plan.

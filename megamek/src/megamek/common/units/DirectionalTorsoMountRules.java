@@ -108,26 +108,33 @@ public final class DirectionalTorsoMountRules {
      * @param weaponNumber the equipment number of the weapon whose mount arc is being set
      * @param rear         {@code true} to point the mount to the rear arc, {@code false} for the front
      */
-    public static void applyMountFacing(Mek entity, int weaponNumber, boolean rear) {
+    public static void applyMountFacing(Mek entity, int weaponNumber, int facing) {
         Mounted<?> weapon = entity.getEquipment(weaponNumber);
         if (weapon == null) {
-            LOGGER.debug("[DirTorsoMount] {}: cannot reface mount - no equipment #{}",
+            LOGGER.info("[DirTorsoMount] {}: server cannot reface mount - no equipment #{}",
                   entity.getShortName(), weaponNumber);
             return;
         }
         if (!weapon.hasDirectionalTorsoMount()) {
-            LOGGER.debug("[DirTorsoMount] {}: equipment #{} ({}) is not a Directional Torso Mount weapon",
+            LOGGER.info("[DirTorsoMount] {}: server ignored facing - equipment #{} ({}) is not a directional mount",
                   entity.getShortName(), weaponNumber, weapon.getName());
             return;
         }
         if (weapon.isDirectionalMountLocked()) {
-            LOGGER.debug("[DirTorsoMount] {}: {} mount is locked; arc change ignored",
+            LOGGER.info("[DirTorsoMount] {}: server ignored facing - {} mount is locked",
                   entity.getShortName(), weapon.getName());
             return;
         }
-        weapon.setDirectionalMountRear(rear);
-        LOGGER.debug("[DirTorsoMount] {}: {} mount set to {} arc",
-              entity.getShortName(), weapon.getName(), rear ? "rear" : "front");
+        int normalizedFacing = ((facing % 6) + 6) % 6;
+        // The 2-point mount may only face forward (0) or rear (3); only the 3-point quad turret rotates freely.
+        if (!weapon.hasDirectional360TorsoMount() && (normalizedFacing != 0) && (normalizedFacing != 3)) {
+            LOGGER.info("[DirTorsoMount] {}: server rejected facing {} - {} is a 2-point mount (front/rear only)",
+                  entity.getShortName(), normalizedFacing, weapon.getName());
+            return;
+        }
+        weapon.setDirectionalMountFacing(normalizedFacing);
+        LOGGER.info("[DirTorsoMount] {}: server applied {} mount facing offset -> {}",
+              entity.getShortName(), weapon.getName(), normalizedFacing);
     }
 
     /**

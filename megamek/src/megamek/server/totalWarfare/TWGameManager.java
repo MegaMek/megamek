@@ -6308,7 +6308,7 @@ public class TWGameManager extends AbstractGameManager {
                             case DirectionalMountFacingAction dmfa -> {
                                 if (entity instanceof Mek directionalMek) {
                                     DirectionalTorsoMountRules.applyMountFacing(directionalMek,
-                                          dmfa.getWeaponNumber(), dmfa.isRear());
+                                          dmfa.getWeaponNumber(), dmfa.getFacing());
                                 }
                             }
                             case FlipArmsAction faa -> entity.setArmsFlipped(faa.getIsFlipped());
@@ -10458,7 +10458,7 @@ public class TWGameManager extends AbstractGameManager {
                 case DirectionalMountFacingAction dmfa -> {
                     if (entity instanceof Mek directionalMek) {
                         DirectionalTorsoMountRules.applyMountFacing(directionalMek,
-                              dmfa.getWeaponNumber(), dmfa.isRear());
+                              dmfa.getWeaponNumber(), dmfa.getFacing());
                     }
                 }
                 case FlipArmsAction faa -> entity.setArmsFlipped(faa.getIsFlipped());
@@ -26797,7 +26797,12 @@ public class TWGameManager extends AbstractGameManager {
         if (m == null) {
             return;
         }
-        m.setFacing(facing);
+        // A Directional Torso Mount (BMM p.83) stores its facing separately and validates legal facings by mount type.
+        if (m.hasDirectionalTorsoMount() && (e instanceof Mek directionalMek)) {
+            DirectionalTorsoMountRules.applyMountFacing(directionalMek, equipId, facing);
+        } else {
+            m.setFacing(facing);
+        }
     }
 
     /**

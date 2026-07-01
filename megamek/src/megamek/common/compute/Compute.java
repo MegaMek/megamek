@@ -47,6 +47,7 @@ import megamek.common.board.Board;
 import megamek.common.board.BoardHelper;
 import megamek.common.board.Coords;
 import megamek.common.board.CrossBoardAttackHelper;
+import megamek.common.compute.scatter.Scatter;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.MoveStepType;
@@ -2256,10 +2257,14 @@ public class Compute {
         Entity spotter = null;
         int distance = -1;
 
-        // Compute friendly spotters
-        for (Entity friend : game.getPlayerEntities(attacker.getOwner(), true)) {
+        // Compute friendly spotters. Consider every friendly (same-team) unit, not just the attacker's own player's
+        // units: on a multi-bot team the TAG spotter is frequently a different player's unit (e.g. the artillery is one
+        // Princess and the TAG spotter another on the same team), so an own-player-only search misses it and a homing
+        // round a teammate could guide is never fired.
+        for (Entity friend : game.getEntitiesVector()) {
 
             if (friend == null
+                  || friend.isEnemyOf(attacker)
                   || !friend.isDeployed()
                   || friend.isOffBoard()
                   || (friend.getTransportId() != Entity.NONE)
@@ -5994,9 +5999,13 @@ public class Compute {
         } else if (attacker.getElevation() > defender.getElevation()) {
             // Can't attack if flying
             reason = "Cannot do leg attack while flying.";
+        } else if (attacker.getMovementMode().isUMUInfantry()
+              && (game.getHexOf(defender) instanceof megamek.common.Hex defenderHex)
+              && !defenderHex.hasDepth1WaterOrDeeper()) {
+            // UMU equipped infantry can only make leg attacks if the target is in depth 1+ water
+            reason = "Cannot make leg attacks unless the target is in depth 1 or deeper water.";
         } else if (attacker instanceof BattleArmor inf) {
             // Handle BattleArmor attackers.
-
             toReturn = new ToHitData(inf.getCrew().getPiloting(),
                   "anti-mek skill",
                   ToHitData.HIT_KICK,
@@ -6098,6 +6107,10 @@ public class Compute {
         // target is already swarmed
         else if (defender.getSwarmAttackerId() != Entity.NONE) {
             reason = "Only one swarm allowed at a time.";
+        }
+        // UMU Infantry cannot make swarm attacks
+        else if (attacker.getMovementMode().isUMUInfantry()) {
+            reason = "UMU equipped infantry cannot make swarm attacks.";
         }
         // Handle BattleArmor attackers.
         else if (attacker instanceof BattleArmor inf) {
@@ -6442,16 +6455,7 @@ public class Compute {
      * @return the <code>Coords</code> scattered to and distance (moF)
      */
     public static Coords scatterAltitudeBombs(Coords coords, int facing, int moF) {
-        int dir = 0;
-        int scatterDirection = Compute.d6(1);
-        dir = switch (scatterDirection) {
-            case 1, 2 -> (facing - 1) % 6;
-            case 3, 4 -> facing;
-            case 5, 6 -> (facing + 1) % 6;
-            default -> dir;
-        };
-
-        return coords.translated(dir, moF);
+        return Scatter.frontArc(coords, facing, moF).landing();
     }
 
     /**
@@ -6467,16 +6471,19 @@ public class Compute {
     }
 
     /**
-     * scatter from a hex according, roll d6 to choose scatter direction
+     * Scatters from a hex in a random direction, rolling 1d6 to pick one of the six straight-line
+     * directions.
      *
-     * @param coords The <code>Coords</code> to scatter from
-     * @param margin the <code>int</code> margin of failure, scatter distance will be the margin of failure
+     * @param coords the <code>Coords</code> to scatter from
+     * @param margin the scatter distance in hexes; its magnitude is used, so a negative value (such
+     *               as a negative margin of failure) scatters the same distance as its positive
+     *               counterpart. Callers may also pass a fixed distance unrelated to a margin of
+     *               failure.
      *
      * @return the <code>Coords</code> scattered to
      */
     public static Coords scatter(Coords coords, int margin) {
-        int scatterDirection = Compute.d6(1) - 1;
-        return coords.translated(scatterDirection, margin);
+        return Scatter.omnidirectional(coords, margin).landing();
     }
 
     /**

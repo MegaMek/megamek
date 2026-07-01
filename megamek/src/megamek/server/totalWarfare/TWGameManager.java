@@ -969,6 +969,9 @@ public class TWGameManager extends AbstractGameManager {
                 case PLAYER_TEAM_CHANGE:
                     ServerLobbyHelper.receiveLobbyTeamChange(packet, connId, getGame(), this);
                     break;
+                case CLIENT_ARTILLERY_REVEAL:
+                    receiveArtilleryRevealPreference(connId, packet);
+                    break;
                 default:
                     break;
             }
@@ -10513,7 +10516,7 @@ public class TWGameManager extends AbstractGameManager {
                     Entity target = game.getEntity(bloodStalkerAction.getTargetID());
 
                     if (target != null) {
-                        target.setBloodStalkerTarget(bloodStalkerAction.getTargetID());
+                        entity.setBloodStalkerTarget(bloodStalkerAction.getTargetID());
                         Report r = new Report(10000);
                         r.subject = entity.getId();
                         r.add(entity.getDisplayName());
@@ -27412,22 +27415,64 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Applies a player's "reveal all artillery rounds" testing preference (see
+     * {@link PacketCommand#CLIENT_ARTILLERY_REVEAL}) and immediately resends that player's artillery packet so their
+     * Rounds in the Air view updates at once. Only affects the requesting player's own packet - other players (and
+     * bots, which never send this) are unchanged.
+     *
+     * @param connId The connection id of the player whose preference changed
+     * @param packet The packet carrying the boolean reveal preference
+     */
+    private void receiveArtilleryRevealPreference(int connId, Packet packet) throws InvalidPacketDataException {
+        Player player = game.getPlayer(connId);
+        if (player == null) {
+            return;
+        }
+        player.setArtilleryRevealAll(packet.getBooleanValue(0));
+        send(connId, createArtilleryPacket(player));
+    }
+
+    /**
      * Creates a packet containing off board artillery attacks
      */
     Packet createArtilleryPacket(Player p) {
         Vector<ArtilleryAttackAction> v = new Vector<>();
+        List<EnemyArtilleryInbound> enemyInbound = new ArrayList<>();
         int team = p.getTeam();
         for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements(); ) {
             WeaponHandler wh = (WeaponHandler) i.nextElement();
             if (wh.weaponAttackAction instanceof ArtilleryAttackAction aaa) {
-                if ((aaa.getPlayerId() == p.getId()) ||
-                      ((team != Player.TEAM_NONE) && (team == game.getPlayer(aaa.getPlayerId()).getTeam())) ||
-                      p.canIgnoreDoubleBlind()) {
+                boolean ownOrAllied = (aaa.getPlayerId() == p.getId())
+                      || ((team != Player.TEAM_NONE) && (team == game.getPlayer(aaa.getPlayerId()).getTeam()));
+                if (ownOrAllied || p.canIgnoreDoubleBlind() || p.isArtilleryRevealAll()) {
                     v.addElement(aaa);
+                } else if (enemyArtilleryRoundIsKnownTo(aaa, p)) {
+                    // The player knows an enemy round is inbound (its firing is announced in the report) but not its
+                    // target hex or munition - send only a redacted summary so the Rounds-in-Air window can list it with
+                    // "Unknown" target/warhead, without ever sending the aim point to the client.
+                    enemyInbound.add(new EnemyArtilleryInbound(aaa.getEntityId(), aaa.getPlayerId(),
+                          aaa.getTurnsTilHit()));
                 }
             }
         }
-        return new Packet(PacketCommand.SENDING_ARTILLERY_ATTACKS, v);
+        return new Packet(PacketCommand.SENDING_ARTILLERY_ATTACKS, v, enemyInbound);
+    }
+
+    /**
+     * @param aaa An enemy artillery attack in flight
+     * @param p   The viewing player
+     *
+     * @return {@code true} if the player is entitled to know the enemy round exists (so it can be listed, redacted, in
+     *       the Rounds-in-Air window): always without double-blind, and under double-blind only when the firing unit is
+     *       off-board (treated as public) or the player has detected it - matching when the firing is announced in the
+     *       report
+     */
+    private boolean enemyArtilleryRoundIsKnownTo(ArtilleryAttackAction aaa, Player p) {
+        if (!doBlind()) {
+            return true;
+        }
+        Entity firingEntity = aaa.getEntity(game);
+        return (firingEntity != null) && (firingEntity.isOffBoard() || firingEntity.hasSeenEntity(p));
     }
 
     private Packet createIlluminatedHexesPacket() {
@@ -31443,6 +31488,59 @@ public class TWGameManager extends AbstractGameManager {
         send(new Packet(PacketCommand.SEND_TOAST, level, message, entityId));
     }
 
+    // Artillery call-for-fire notifications (Shot/Splash, counter-battery, homing-inbound) live in their own helper to
+    // keep that logic out of this already-large class; the methods below are thin delegators.
+    private final ArtilleryNotifications artilleryNotifications = new ArtilleryNotifications(this);
+
+    /**
+     * Sends a single artillery call-for-fire toast (Shot / Splash / Rounds complete) to the firing player and their
+     * teammates only. Delegates to {@link ArtilleryNotifications#sendArtilleryNetToast}.
+     *
+     * @param momentKey    the call-for-fire moment ({@code Artillery.netToast.<momentKey>})
+     * @param firingEntity the artillery unit (its owner and team define the audience)
+     * @param momentRound  the round the moment occurs in, used to scope de-duplication
+     */
+    public void sendArtilleryNetToast(String momentKey, Entity firingEntity, int momentRound) {
+        artilleryNotifications.sendArtilleryNetToast(momentKey, firingEntity, momentRound);
+    }
+
+    /**
+     * Sends a single artillery call-for-fire toast naming the target grid, to the firing player and their teammates
+     * only. The grid is the team-only channel for the aim point. Delegates to
+     * {@link ArtilleryNotifications#sendArtilleryNetToast(String, Entity, int, String)}.
+     *
+     * @param momentKey    the call-for-fire moment ({@code Artillery.netToast.<momentKey>})
+     * @param firingEntity the artillery unit (its owner and team define the audience)
+     * @param momentRound  the round the moment occurs in, used to scope de-duplication
+     * @param targetGrid   the target grid square to name in the toast (team-only), or {@code null} for none
+     */
+    public void sendArtilleryNetToast(String momentKey, Entity firingEntity, int momentRound,
+          @Nullable String targetGrid) {
+        artilleryNotifications.sendArtilleryNetToast(momentKey, firingEntity, momentRound, targetGrid);
+    }
+
+    /**
+     * Sends a radio-flavored counter-battery toast to the team that just spotted an enemy off-board battery's fall of
+     * shot. Delegates to {@link ArtilleryNotifications#sendCounterBatteryObservedToast}.
+     *
+     * @param observer     the friendly unit that observed the enemy battery's fall of shot
+     * @param enemyBattery the off-board enemy battery that was spotted
+     * @param impactHex    the hex the enemy rounds landed on (what the observer saw)
+     * @param momentRound  the round the observation happens in, used to scope de-duplication
+     */
+    public void sendCounterBatteryObservedToast(Entity observer, Entity enemyBattery, Coords impactHex,
+          int momentRound) {
+        artilleryNotifications.sendCounterBatteryObservedToast(observer, enemyBattery, impactHex, momentRound);
+    }
+
+    /**
+     * Reminds each team with a homing artillery round landing next round to put a TAG on the target. Delegates to
+     * {@link ArtilleryNotifications#remindHomingArtilleryInbound}.
+     */
+    public void remindHomingArtilleryInbound() {
+        artilleryNotifications.remindHomingArtilleryInbound();
+    }
+
     /**
      * Resolve any Infantry units which are fortifying hexes
      */
@@ -31601,7 +31699,8 @@ public class TWGameManager extends AbstractGameManager {
 
             if (ah.cares(game.getPhase())) {
                 int aId = ah.getAttackerId();
-                if ((aId != lastAttackerId) && !ah.announcedEntityFiring()) {
+                if ((aId != lastAttackerId) && !ah.announcedEntityFiring()
+                      && ah.producesReportThisPhase(game.getPhase())) {
                     // report who is firing
                     if (pointblankShot) {
                         r = new Report(3102);
@@ -31629,7 +31728,8 @@ public class TWGameManager extends AbstractGameManager {
             }
             if (ah.cares(game.getPhase())) {
                 int aId = ah.getAttackerId();
-                if ((aId != lastAttackerId) && !ah.announcedEntityFiring()) {
+                if ((aId != lastAttackerId) && !ah.announcedEntityFiring()
+                      && ah.producesReportThisPhase(game.getPhase())) {
                     // if this is a new attacker then resolve any standard-to-cap damage from previous
                     handleAttackReports.addAll(checkFatalThresholds(aId, lastAttackerId));
                     // report who is firing

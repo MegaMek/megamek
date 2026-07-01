@@ -69,9 +69,11 @@ public record CubeCoords(double q, double r, double s) implements Serializable {
      * @return a new Coords object with the offset coordinates
      */
     public Coords toOffset() {
-        int x = (int) q;
-        int y = (int) (r + q / 2);
-        return new Coords(x, y);
+        int offset = -1;
+        int column = (int) q;
+        int parity = column & 1;
+        int row = (int) (r + (q + offset * parity) / 2.0);
+        return new Coords(column, row);
     }
 
     /**

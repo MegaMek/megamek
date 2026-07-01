@@ -40,7 +40,7 @@ import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
-import megamek.server.commands.arguments.StringArgument;
+import megamek.server.commands.arguments.MultiWordStringArgument;
 
 /**
  * Command to change the behavior of the bot.
@@ -53,7 +53,8 @@ public class BehaviorCommand implements ChatCommand {
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-              new StringArgument(BEHAVIOR, Messages.getString("Princess.command.behavior.behavior"))
+              // saved behavior names may contain spaces, so this must consume all remaining words
+              new MultiWordStringArgument(BEHAVIOR, Messages.getString("Princess.command.behavior.behavior"))
         );
     }
 

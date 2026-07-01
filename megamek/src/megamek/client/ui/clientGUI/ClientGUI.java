@@ -103,6 +103,7 @@ import megamek.client.ui.dialogs.InformDialog;
 import megamek.client.ui.dialogs.MMAboutDialog;
 import megamek.client.ui.dialogs.PlayerListDialog;
 import megamek.client.ui.dialogs.RandomNameDialog;
+import megamek.client.ui.dialogs.RoundsInAirDialog;
 import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.EditBotsDialog;
@@ -134,6 +135,7 @@ import megamek.client.ui.tileset.EntityImage;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.BASE64ToolKit;
+import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
@@ -153,6 +155,7 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
+import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.event.board.GameBoardNewEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.event.entity.GameEntityNewEvent;
@@ -279,9 +282,18 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_LOS_SETTING = "viewLOSSetting";
     public static final String VIEW_PLAYER_SETTINGS = "viewPlayerSettings";
     public static final String VIEW_PLAYER_LIST = "viewPlayerList";
+    public static final String VIEW_ROUNDS_IN_AIR = "viewRoundsInAir";
     public static final String VIEW_RESET_WINDOW_POSITIONS = "viewResetWindowPos";
     public static final String VIEW_BOT_COMMANDS = "viewBotCommands";
+    public static final String VIEW_BOT_COMMANDS_OFF = "viewBotCommandsOff";
+    public static final String VIEW_BOT_COMMANDS_FLOAT = "viewBotCommandsFloat";
+    public static final String VIEW_BOT_COMMANDS_DOCK = "viewBotCommandsDock";
     // endregion view menu
+
+    /** Bot commands panel location: shown in a floating dialog. */
+    public static final int BOT_COMMANDS_LOCATION_FLOATING = 0;
+    /** Bot commands panel location: docked into the top of the board area. */
+    public static final int BOT_COMMANDS_LOCATION_DOCKED = 1;
 
     // region fire menu
     public static final String FIRE_SAVE_WEAPON_ORDER = "saveWeaponOrder";
@@ -361,6 +373,7 @@ public class ClientGUI extends AbstractClientGUI
     private UnitDisplayDialog unitDisplayDialog;
 
     private BotCommandsDialog botCommandsDialog;
+    private BotCommandsPanel botCommandsPanel;
 
     public ForceDisplayPanel forceDisplayPanel;
     private ForceDisplayDialog forceDisplayDialog;
@@ -380,6 +393,7 @@ public class ClientGUI extends AbstractClientGUI
     private NetworkInformationDialog networkInformationDialog;
     private MegaMekUnitSelectorDialog mekSelectorDialog;
     private PlayerListDialog playerListDialog;
+    private RoundsInAirDialog roundsInAirDialog;
     private RandomArmyDialog randomArmyDialog;
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
@@ -709,6 +723,10 @@ public class ClientGUI extends AbstractClientGUI
         this.botCommandsDialog = botCommandsDialog;
     }
 
+    public BotCommandsPanel getBotCommandsPanel() {
+        return botCommandsPanel;
+    }
+
     public MiniReportDisplayPanel getMiniReportDisplay() {
         return miniReportDisplayPanel;
     }
@@ -733,6 +751,15 @@ public class ClientGUI extends AbstractClientGUI
     public void setPlayerListDialog(final PlayerListDialog playerListDialog) {
         this.playerListDialog = playerListDialog;
         this.playerListDialog.setFocusableWindowState(false);
+    }
+
+    public RoundsInAirDialog getRoundsInAirDialog() {
+        return roundsInAirDialog;
+    }
+
+    public void setRoundsInAirDialog(final RoundsInAirDialog roundsInAirDialog) {
+        this.roundsInAirDialog = roundsInAirDialog;
+        this.roundsInAirDialog.setFocusableWindowState(false);
     }
 
     @Override
@@ -886,12 +913,19 @@ public class ClientGUI extends AbstractClientGUI
         setMiniReportVisible(GUIP.getMiniReportEnabled());
 
         setPlayerListDialog(new PlayerListDialog(frame, client, false));
+        setRoundsInAirDialog(new RoundsInAirDialog(frame, client));
 
         RulerDialog.color1 = GUIP.getRulerColor1();
         RulerDialog.color2 = GUIP.getRulerColor2();
 
         setBotCommandsDialog(new BotCommandsDialog(frame, this));
-        getBotCommandsDialog().add(new BotCommandsPanel(getClient(), audioService, null));
+        botCommandsPanel = new BotCommandsPanel(getClient(), audioService, null, this);
+        // Place the panel in its configured location (floating dialog or docked strip) before first use.
+        setBotCommandsLocation(GUIP.getBotCommandsEnabled());
+        // The Bot Commands submenu can no longer carry a working menu accelerator, so wire the show/hide hotkey here.
+        if (controller != null) {
+            controller.registerCommandAction(KeyCommandBind.BOT_COMMANDS.cmd, GUIP::toggleBotCommandsEnabled);
+        }
 
         client.changePhase(GamePhase.UNKNOWN);
         MekSummaryCache mekSummaryCache = MekSummaryCache.getInstance();
@@ -1263,6 +1297,9 @@ public class ClientGUI extends AbstractClientGUI
             case VIEW_PLAYER_LIST:
                 GUIP.togglePlayerListEnabled();
                 break;
+            case VIEW_ROUNDS_IN_AIR:
+                GUIP.toggleRoundsInAirEnabled();
+                break;
             case VIEW_ROUND_REPORT:
                 GUIP.toggleRoundReportEnabled();
                 break;
@@ -1278,8 +1315,16 @@ public class ClientGUI extends AbstractClientGUI
             case VIEW_MINI_MAP:
                 GUIP.toggleMinimapEnabled();
                 break;
-            case VIEW_BOT_COMMANDS:
-                GUIP.toggleBotCommandsEnabled();
+            case VIEW_BOT_COMMANDS_OFF:
+                GUIP.setBotCommandsEnabled(false);
+                break;
+            case VIEW_BOT_COMMANDS_FLOAT:
+                GUIP.setBotCommandsLocation(BOT_COMMANDS_LOCATION_FLOATING);
+                GUIP.setBotCommandsEnabled(true);
+                break;
+            case VIEW_BOT_COMMANDS_DOCK:
+                GUIP.setBotCommandsLocation(BOT_COMMANDS_LOCATION_DOCKED);
+                GUIP.setBotCommandsEnabled(true);
                 break;
             case VIEW_TOGGLE_HEX_COORDS:
                 GUIP.toggleCoords();
@@ -1905,23 +1950,18 @@ public class ClientGUI extends AbstractClientGUI
 
     private void maybeShowBotCommands() {
         GamePhase phase = getClient().getGame().getPhase();
+        boolean phaseAllowsPanel;
         if (phase.isReport()) {
-            int action = GUIP.getBotCommandsAutoDisplayReportPhase();
-            if (action == GUIPreferences.SHOW) {
-                GUIP.setBotCommandsEnabled(true);
-            } else if (action == GUIPreferences.HIDE) {
-                GUIP.setBotCommandsEnabled(false);
-            }
+            phaseAllowsPanel = GUIP.getBotCommandsAutoDisplayReportPhase() != GUIPreferences.HIDE;
         } else if (phase.isOnMap()) {
-            int action = GUIP.getBotCommandsAutoDisplayNonReportPhase();
-            if (action == GUIPreferences.SHOW) {
-                GUIP.setBotCommandsEnabled(true);
-            } else if (action == GUIPreferences.HIDE) {
-                GUIP.setBotCommandsEnabled(false);
-            }
+            phaseAllowsPanel = GUIP.getBotCommandsAutoDisplayNonReportPhase() != GUIPreferences.HIDE;
         } else {
-            GUIP.setBotCommandsEnabled(false);
+            // Lounge and other non-board phases never show the panel, but the player's on/off choice is kept.
+            phaseAllowsPanel = false;
         }
+        // BOT_COMMANDS_ENABLED is the persistent user choice (Off/Float/Dock); honor it here, never overwrite it,
+        // so the chosen mode is remembered across phases and across sessions.
+        setBotCommandsLocation(GUIP.getBotCommandsEnabled() && phaseAllowsPanel);
     }
 
     /** Shows or hides the minimap based on the current menu setting. */
@@ -2020,6 +2060,22 @@ public class ClientGUI extends AbstractClientGUI
         }
     }
 
+    void setRoundsInAirVisible(boolean visible) {
+        if (getRoundsInAirDialog() != null) {
+            if (visible) {
+                // Push the current "reveal all artillery" preference to the server on open. The preference change
+                // listener only fires the push when the toggle CHANGES, so a value already set to true at game start
+                // would otherwise never reach the server and enemy rounds would stay hidden. The server's reply
+                // refreshes the list.
+                getClient().sendArtilleryRevealPreference(
+                      GUIP.getBoolean(GUIPreferences.REVEAL_ALL_ARTILLERY_ROUNDS));
+                getRoundsInAirDialog().refresh();
+            }
+            getRoundsInAirDialog().setVisible(visible);
+            conditionalRequestFocus(visible);
+        }
+    }
+
     /** Shows or hides the Unit Display based on the current menu setting. */
     public void maybeShowUnitDisplay() {
         GamePhase phase = getClient().getGame().getPhase();
@@ -2087,11 +2143,35 @@ public class ClientGUI extends AbstractClientGUI
         }
     }
 
-    void setBotCommandsDialogVisible(boolean visible) {
-        if (getBotCommandsDialog() != null) {
-            getBotCommandsDialog().setVisible(visible);
-            conditionalRequestFocus(visible);
+    /**
+     * Places the bot commands panel in its configured location and sets its visibility. Mirrors
+     * {@link #setUnitDisplayLocation(boolean)}: the single panel instance is reparented between the floating dialog and
+     * the docked strip at the top of the board area, so no command functionality is lost when switching. Floating mode
+     * keeps the panel's original size and two-row layout; docked mode uses a single-row strip.
+     *
+     * @param visible whether the bot commands panel should be shown
+     */
+    void setBotCommandsLocation(boolean visible) {
+        if ((botCommandsPanel == null) || (getBotCommandsDialog() == null) || (panTop == null)) {
+            return;
         }
+        boolean docked = GUIP.getBotCommandsLocation() == BOT_COMMANDS_LOCATION_DOCKED;
+        botCommandsPanel.setDockedLayout(docked);
+        if (docked) {
+            getBotCommandsDialog().setVisible(false);
+            panTop.add(botCommandsPanel, BorderLayout.NORTH);
+            botCommandsPanel.setVisible(visible);
+            logger.debug("[BotPanel] docked at top of board, visible={}", visible);
+        } else {
+            panTop.remove(botCommandsPanel);
+            getBotCommandsDialog().add(botCommandsPanel);
+            botCommandsPanel.setVisible(true);
+            getBotCommandsDialog().setVisible(visible);
+            logger.debug("[BotPanel] floating dialog, visible={}", visible);
+        }
+        panTop.revalidate();
+        panTop.repaint();
+        conditionalRequestFocus(visible);
     }
 
     private void saveSplitPaneLocations() {
@@ -2842,6 +2922,16 @@ public class ClientGUI extends AbstractClientGUI
     private final GameListener gameListener = new GameListenerAdapter() {
 
         @Override
+        public void gameBoardChanged(GameBoardChangeEvent e) {
+            // Keep the Rounds in the Air window current the moment in-flight artillery changes. The artillery packet
+            // arrives after the phase-change event, so a phase-change-only refresh would lag a phase (and miss
+            // off-board counter-battery rounds entirely until the next phase).
+            if (roundsInAirDialog != null) {
+                roundsInAirDialog.refresh();
+            }
+        }
+
+        @Override
         public void gameBoardNew(GameBoardNewEvent e) {
             Board newBoard = e.getNewBoard();
             final int boardId = e.getBoardId();
@@ -2939,6 +3029,11 @@ public class ClientGUI extends AbstractClientGUI
             // Swap to this phase's panel.
             GamePhase phase = getClient().getGame().getPhase();
             switchPanel(phase);
+
+            // Keep the Rounds in the Air list current as rounds are declared, fly, and land each phase.
+            if (roundsInAirDialog != null) {
+                roundsInAirDialog.refresh();
+            }
 
             // Once per round, remind the player of own platoons busy raising bridges (TO:AUE); building
             // platoons are ineligible for all phases, so no phase display ever selects them
@@ -3673,6 +3768,13 @@ public class ClientGUI extends AbstractClientGUI
         switch (e.getName()) {
             case GUIPreferences.MINI_MAP_ENABLED -> setMapVisible(GUIP.getMinimapEnabled());
             case GUIPreferences.PLAYER_LIST_ENABLED -> setPlayerListVisible(GUIP.getPlayerListEnabled());
+            case GUIPreferences.ROUNDS_IN_AIR_ENABLED -> setRoundsInAirVisible(GUIP.getRoundsInAirEnabled());
+            case GUIPreferences.REVEAL_ALL_ARTILLERY_ROUNDS -> {
+                getClient().sendArtilleryRevealPreference(GUIP.getBoolean(GUIPreferences.REVEAL_ALL_ARTILLERY_ROUNDS));
+                if (roundsInAirDialog != null) {
+                    roundsInAirDialog.refresh();
+                }
+            }
             case GUIPreferences.UNIT_DISPLAY_ENABLED, GUIPreferences.UNIT_DISPLAY_LOCATION ->
                   setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
             case GUIPreferences.FORCE_DISPLAY_ENABLED -> setForceDisplayVisible(GUIP.getForceDisplayEnabled());
@@ -3690,7 +3792,10 @@ public class ClientGUI extends AbstractClientGUI
                  GUIPreferences.SOUND_BING_FILENAME_MY_TURN,
                  GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN -> audioService.loadSoundFiles();
             case GUIPreferences.MASTER_VOLUME -> audioService.setVolume();
-            case GUIPreferences.BOT_COMMANDS_ENABLED -> setBotCommandsDialogVisible(GUIP.getBotCommandsEnabled());
+            case GUIPreferences.BOT_COMMANDS_ENABLED, GUIPreferences.BOT_COMMANDS_LOCATION ->
+                  // Route through maybeShowBotCommands() so the phase rules (non-board phases never show the panel)
+                  // are enforced consistently, whether the change came from the menu, the hotkey, or a phase change.
+                  maybeShowBotCommands();
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -48,6 +48,7 @@ import megamek.common.GameBoardTestCase;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.actions.ActivateBloodStalkerAction;
 import megamek.common.bays.CargoBay;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -56,10 +57,10 @@ import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.MountedHelper;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.*;
 import megamek.common.weapons.DamageType;
@@ -933,5 +934,51 @@ class TWGameManagerTest {
                     DamageType.NONE
               )
         );
+    }
+
+    /**
+     * Issue #8125: activating Blood Stalker must set the stalker flag on the acting unit (the owner of the SPA), not on
+     * the designated enemy. The old code set it on the enemy, so the enemy ended up stalking itself and took the +2
+     * non-target penalty on its own shots, while the owner gained no benefit at all. Per TacOps:AR, the modifiers apply
+     * only to the warrior with the ability (-1 against the designated target, +2 against everyone else); the target's
+     * own shooting is unaffected.
+     */
+    @Test
+    void testActivateBloodStalkerSetsTargetOnOwnerNotEnemy() {
+        BipedMek owner = new BipedMek();
+        owner.setId(1);
+        owner.getCrew().getOptions().getOption(OptionsConstants.GUNNERY_BLOOD_STALKER).setValue(true);
+        game.addEntity(owner);
+
+        BipedMek prey = new BipedMek();
+        prey.setId(2);
+        game.addEntity(prey);
+
+        game.addAction(new ActivateBloodStalkerAction(owner.getId(), prey.getId()));
+        gameManager.resolveAllButWeaponAttacks();
+
+        assertEquals(prey.getId(), owner.getBloodStalkerTarget(),
+              "Blood Stalker owner should track the designated enemy");
+        assertEquals(Entity.NONE, prey.getBloodStalkerTarget(),
+              "Designated enemy must not receive a Blood Stalker target of its own");
+    }
+
+    /**
+     * Issue #8125: activating Blood Stalker against a target that is no longer on the board (already destroyed/removed)
+     * must leave the owner without a stalker flag and must not throw.
+     */
+    @Test
+    void testActivateBloodStalkerWithMissingTargetDoesNothing() {
+        BipedMek owner = new BipedMek();
+        owner.setId(1);
+        owner.getCrew().getOptions().getOption(OptionsConstants.GUNNERY_BLOOD_STALKER).setValue(true);
+        game.addEntity(owner);
+
+        int missingTargetId = 999;
+        game.addAction(new ActivateBloodStalkerAction(owner.getId(), missingTargetId));
+
+        assertDoesNotThrow(() -> gameManager.resolveAllButWeaponAttacks());
+        assertEquals(Entity.NONE, owner.getBloodStalkerTarget(),
+              "Owner should have no Blood Stalker target when the designated enemy is gone");
     }
 }

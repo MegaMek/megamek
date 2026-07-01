@@ -101,8 +101,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
                 addHeat();
-                // Report the firing itself
-                Report report = new Report(3121);
+                // Report the firing itself - name it counter-battery when the target is an off-board enemy battery.
+                boolean counterBattery = (target != null) && target.isOffBoard();
+                Report report = new Report(counterBattery ? 3127 : 3121);
                 report.indent();
                 report.newlines = 0;
                 report.subject = subjectId;
@@ -111,6 +112,16 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 vPhaseReport.addElement(report);
                 Report.addNewline(vPhaseReport);
                 handledAmmoAndReport = true;
+
+                // "Shot, out" - homing round, will guide onto a tagged target (team-only toast; the target grid never
+                // goes in the shared phase report, so the enemy cannot read the aim point).
+                boolean offBoardTarget = (target == null) || (target.getPosition() == null) || target.isOffBoard();
+                String shotGrid = offBoardTarget
+                      ? Messages.getString("Artillery.offBoardTarget")
+                      : target.getPosition().getBoardNum();
+                if (attackingEntity != null) {
+                    gameManager.sendArtilleryNetToast("shot", attackingEntity, game.getRoundCount(), shotGrid);
+                }
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
@@ -123,6 +134,11 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         if (aaa.getTurnsTilHit() > 0) {
             aaa.decrementTurnsTilHit();
             return true;
+        }
+        // "Splash, over" - homing rounds about to land and seek the tagged target near the aim hex (team-only toast)
+        if ((target != null) && (target.getPosition() != null) && (attackingEntity != null)) {
+            gameManager.sendArtilleryNetToast("splash", attackingEntity, game.getRoundCount(),
+                  target.getPosition().getBoardNum());
         }
         Entity entityTarget;
         try {

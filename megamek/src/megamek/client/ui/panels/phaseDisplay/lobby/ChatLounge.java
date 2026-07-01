@@ -341,7 +341,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     transient LobbyKeyDispatcher lobbyKeyDispatcher = new LobbyKeyDispatcher(this);
 
     private static final String CL_KEY_FILE_EXTENSION_XML = ".xml";
-    private static final String CL_KEY_FILEPATH_MAP_ASSEMBLY_HELP = "docs/help/en/Map and Board Stuff/MapAssemblyHelp.html";
+    private static final String CL_KEY_FILEPATH_MAP_ASSEMBLY_HELP = "docs/Customization/MegaMek/Map and Board Stuff/MapAssemblyHelp.html";
     private static final String CL_KEY_FILEPATH_MAP_SETUP = "/mapsetup";
     private static final String CL_KEY_NAME_HELP_PANE = "helpPane";
 

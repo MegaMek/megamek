@@ -56,6 +56,7 @@ import megamek.common.TemporaryECMField;
 import megamek.common.WoodsClearingTracker;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
+import megamek.common.actions.EnemyArtilleryInbound;
 import megamek.common.actions.EntityAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
@@ -195,6 +196,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private Map<BoardLocation, Integer> hexesBeingCut = new HashMap<>();
     private Vector<AttackHandler> attacks = new Vector<>();
     private Vector<ArtilleryAttackAction> offboardArtilleryAttacks = new Vector<>();
+    // Client-display only: redacted summaries of enemy artillery rounds in flight (landing time only; target and
+    // munition withheld), used by the Rounds-in-Air window. Transient - it is pushed fresh from the server each update
+    // and never persisted with a saved game.
+    private transient List<EnemyArtilleryInbound> enemyArtilleryInbound = new ArrayList<>();
     private Vector<OrbitalBombardment> orbitalBombardmentAttacks = new Vector<>();
     private int lastEntityId;
 
@@ -2500,6 +2505,22 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     public Enumeration<ArtilleryAttackAction> getArtilleryAttacks() {
         return offboardArtilleryAttacks.elements();
+    }
+
+    /**
+     * @param inbound Redacted enemy artillery-in-flight summaries for the Rounds-in-Air window (target/munition already
+     *                withheld by the server), or {@code null} to clear
+     */
+    public void setEnemyArtilleryInbound(List<EnemyArtilleryInbound> inbound) {
+        enemyArtilleryInbound = (inbound != null) ? inbound : new ArrayList<>();
+    }
+
+    /**
+     * @return The redacted enemy artillery-in-flight summaries (landing time only; target and munition withheld); never
+     *       {@code null} (empty when none, or after deserializing a saved game where this transient field is unset)
+     */
+    public List<EnemyArtilleryInbound> getEnemyArtilleryInbound() {
+        return (enemyArtilleryInbound != null) ? enemyArtilleryInbound : new ArrayList<>();
     }
 
     @Deprecated(since = "0.51.0", forRemoval = true)

@@ -40,7 +40,6 @@ import java.io.Serial;
 import java.util.List;
 
 import megamek.common.battleArmor.BattleArmor;
-import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscType;
@@ -235,16 +234,16 @@ public class WeaponQuirks extends AbstractOptions {
 
     /**
      * Determines whether a weapon has location placement restrictions that forbid it from being placed in a Directional
-     * Torso Mount (BMM p.83). The Heavy Gauss rifle and Improved Heavy Gauss rifle are the canonical examples - they
-     * may only be mounted in a torso location and never in a turret-style mount.
+     * Torso Mount (BMM p.83). A weapon that can be split across two locations (its critical slots span more than one
+     * location, e.g. the Heavy Gauss and Improved Heavy Gauss rifles) cannot occupy a single-location Directional Torso
+     * Mount.
      *
      * @param weaponType the weapon being checked
      *
      * @return {@code true} if the weapon may not be placed in a Directional Torso Mount
      */
     public static boolean hasLocationPlacementRestriction(WeaponType weaponType) {
-        return (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.GAUSS_HEAVY)
-              || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.IGAUSS_HEAVY);
+        return weaponType.isSplittableOverCriticalSlots();
     }
 
     private static class WeaponQuirksInfo extends AbstractOptionsInfo {

@@ -281,7 +281,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
             facings.add(button);
             buttonGroup.add(button);
         }
-        int frontFacing = mek.getFacing();
+        int frontFacing = directionalMountBaseFacing();
         int mountFacing = directionalMountWeapon.getDirectionalMountFacing();
         for (JRadioButton button : facings) {
             if (button.getActionCommand().equals(((frontFacing + mountFacing) % 6) + "")) {
@@ -344,6 +344,17 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
               (parent.getLocation().y + (parent.getSize().height / 2)) - (getSize().height / 2));
     }
 
+    /**
+     * @return the base facing a Directional Torso Mount weapon's arc is measured against - the secondary facing when
+     *       the weapon is a secondary-arc (torso-twist) weapon, otherwise the primary facing. This matches
+     *       {@link megamek.common.compute.TurretFacing#weaponFacing(megamek.common.units.Entity, int)}, so the radio
+     *       selection and the offset sent to the server stay consistent with the effective arc even when twisted.
+     */
+    private int directionalMountBaseFacing() {
+        int weaponNumber = mek.getEquipmentNum(turret);
+        return mek.isSecondaryArcWeapon(weaponNumber) ? mek.getSecondaryFacing() : mek.getFacing();
+    }
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource().equals(butCancel)) {
@@ -351,8 +362,10 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         } else if (ae.getSource().equals(butOkay)) {
             int facing = MathUtility.parseInt(buttonGroup.getSelection().getActionCommand(), 0);
             int locToChange;
-            if (directionalMount) {
-                int offset = ((6 - mek.getFacing()) + facing) % 6;
+            if (directionalMount && (mek != null)) {
+                // The mount offset composes with torso twist, so it is measured against the weapon's base facing
+                // (secondary facing when twisted) - the same base TurretFacing.weaponFacing() uses for the arc.
+                int offset = ((6 - directionalMountBaseFacing()) + facing) % 6;
                 // The whole mount (every directional weapon in this location) shares one facing; rotate them together.
                 DirectionalTorsoMountRules.setMountFacing(mek, turret.getLocation(), offset);
                 clientgui.getClient().sendMountFacingChange(mek.getId(), mek.getEquipmentNum(turret), offset);

@@ -4757,7 +4757,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLPROAC2Ammo() {
 
         AmmoType ammo = new AmmoType();
-        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 11 LINES
         ammo.name = "ProtoMech AC/2 Ammo";
         ammo.shortName = "Proto AC/2";
         ammo.setInternalName("Clan ProtoMech AC/2 Ammo");
@@ -4791,7 +4791,7 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLPROAC4Ammo() {
         AmmoType ammo = new AmmoType();
-        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 11 LINES
         ammo.name = "ProtoMech AC/4 Ammo";
         ammo.shortName = "Proto AC/4";
         ammo.setInternalName("Clan ProtoMech AC/4 Ammo");
@@ -4825,7 +4825,7 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLPROAC8Ammo() {
         AmmoType ammo = new AmmoType();
-        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 11 LINES
         ammo.name = "ProtoMech AC/8 Ammo";
         ammo.shortName = "Proto AC/8";
         ammo.setInternalName("Clan ProtoMech AC/8 Ammo");

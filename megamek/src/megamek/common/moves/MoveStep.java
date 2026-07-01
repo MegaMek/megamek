@@ -2178,8 +2178,8 @@ public class MoveStep implements Serializable {
                 entity.setProne(false);
                 if (entity.canFlee(curPos)) {
                     movementType = EntityMovementType.MOVE_LEGAL;
-                    entity.setProne(true);
                 }
+                entity.setProne(true);
             }
         }
 

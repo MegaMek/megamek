@@ -920,6 +920,12 @@ public class CLIATMHandler extends ATMHandler {
                   || (entityTarget instanceof Aero))) {
                 int impModifierBefore = entityTarget.getImpToHitModifier();
                 entityTarget.addIMPHits(impWarheads);
+                if (impWarheads > 0) {
+                    Report interferenceReport = new Report(3349);
+                    interferenceReport.subject = subjectId;
+                    interferenceReport.indent(2);
+                    vPhaseReport.addElement(interferenceReport);
+                }
                 if ((impModifierBefore == 0) && (entityTarget.getImpToHitModifier() > 0)) {
                     gameManager.sendMagneticPulseToast(entityTarget, true, true);
                 }
